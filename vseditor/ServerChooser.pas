@@ -34,7 +34,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.StdCtrls, Vcl.ExtCtrls,
-  FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
   ValueSetEditorCore, ValueSetEditorRegisterServerForm;
 
 type

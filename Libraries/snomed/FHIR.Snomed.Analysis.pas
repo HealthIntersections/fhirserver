@@ -33,11 +33,11 @@ interface
 
 uses
   SysUtils, Classes, Math,
-  StringSupport, EncodeSupport, ParseMap, TextUtilities,
-  AdvStringBuilders, AdvObjectLists, AdvJson, AdvZipParts, AdvZipWriters, AdvMemories,
-  FHIRResources, FHIRTypes, FHIRConstants, FHIRParser,
-  FHIR.Snomed.Services, FHIRParserBase,
-  AdvObjects, AdvFiles, AdvNameBuffers;
+  FHIR.Support.Strings, FHIR.Web.ParseMap, FHIR.Support.Text,
+  FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Zip, FHIR.Support.Stream,
+  FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Constants, FHIR.Tools.Parser,
+  FHIR.Snomed.Services, FHIR.Base.Parser,
+  FHIR.Support.Objects;
 
 type
   TRelationship = class (TAdvObject)

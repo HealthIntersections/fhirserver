@@ -37,9 +37,9 @@ uses
   SysUtils, Classes,
   DUnitX.TestFramework,
   TextUtilities,
-  AdvObjects, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRMetaModel,
-  FHIRContext, FHIRTestWorker, FHIRStructureMapUtilities, FHIRProfileUtilities;
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.ElementModel,
+  FHIR.Tools.Context, FHIRTestWorker, FHIR.Tools.MapUtilities, FHIR.Tools.Profiles;
 
 type
   StructureMapTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)

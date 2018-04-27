@@ -33,17 +33,17 @@ Interface
 
 Uses
   SysUtils, Classes,
-  MathSupport, FileSupport,
-  AdvFiles, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
-  DecimalSupport, ParserSupport, MXML,
-  FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, UcumServiceInterface,
-  FHIRParser,
-  FHIRResources, FHIRTypes, FHIRUtilities,
-  CDSHooksUtilities,
+  FHIR.Support.Math, FHIR.Support.System,
+  FHIR.Support.Collections, FHIR.Support.Objects,
+  FHIR.Support.Decimal, FHIR.Support.Text, FHIR.Support.MXml,
+  FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, FHIR.Ucum.IFace,
+  FHIR.Tools.Parser,
+  FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities,
+  FHIR.CdsHooks.Utilities,
   TerminologyServices;
 
 Type
-  TUcumPair = UcumServiceInterface.TUcumPair;
+  TUcumPair = FHIR.Ucum.IFace.TUcumPair;
 
   TUCUMContext = class (TCodeSystemProviderContext)
   private

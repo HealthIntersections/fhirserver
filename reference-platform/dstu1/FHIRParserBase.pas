@@ -1,4 +1,4 @@
-Unit FHIRParserBase;
+Unit FHIR.Base.Parser;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -36,12 +36,12 @@ This is the dstu1 version of the FHIR code
 Interface
 
 uses
-  SysUtils, Classes, ActiveX, MsXml, FHIRBase, FHIRResources, FHIRTypes, Math,
-  BytesSupport, FHIRConstants, EncdDecd,
-  FHIRSupport,
-  MsXmlParser, AdvBuffers, AdvStringLists, StringSupport, DecimalSupport, EncodeSupport, 
-  XmlBuilder, AdvXmlBuilders, TextUtilities, FHIRTags,
-  DateSupport, MXmlBuilder, AdvJSON, AdvVCLStreams, FHIRAtomFeed, AdvStringStreams, AdvStringBuilders, FHIRLang;
+  SysUtils, Classes, ActiveX, FHIR.Support.MsXml, FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Types, Math,
+  FHIR.Support.Binary, FHIR.Tools.Constants, EncdDecd,
+  FHIR.Tools.Session,
+  MsXmlParser, AdvBuffers, AdvStringLists, FHIR.Support.Strings, FHIR.Support.Decimal, 
+  FHIR.Xml.Builder, AdvXmlBuilders, TextUtilities, FHIR.Tools.Tags,
+  FHIR.Support.DateTime, MXmlBuilder, FHIR.Support.Json, AdvVCLStreams, FHIRAtomFeed, AdvStringStreams, AdvStringBuilders, FHIR.Base.Lang;
 
 const
   ATOM_NS = 'http://www.w3.org/2005/Atom';
@@ -294,8 +294,8 @@ Implementation
 
 uses
   RegExpr,
-  FHIRParser,
-  FHIRUtilities;
+  FHIR.Tools.Parser,
+  FHIR.Tools.Utilities;
 
 Function TFHIRXmlParserBase.LoadXml(stream : TStream) : IXmlDomDocument2;
 Var

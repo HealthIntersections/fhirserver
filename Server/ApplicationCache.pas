@@ -31,9 +31,9 @@ interface
 
 uses
   SysUtils,
-  kCritSct,
-  AdvObjects, AdvGenerics,
-  FHIRResources, FHIRUtilities;
+  FHIR.Support.Lock,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Tools.Resources, FHIR.Tools.Utilities;
 
 type
   TEndorsement = class (TAdvObject)

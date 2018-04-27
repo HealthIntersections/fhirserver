@@ -33,11 +33,11 @@ interface
 
 uses
   SysUtils, classes,
-  ActiveX, ComObj, Variants, StringSupport, FileSupport, AdvGenerics,
-  FHIRBase, FHIRParser,
-  FHIRTestWorker4, FHIRResources4, FHIRPath4, FHIRTypes4, FHIRPathNode4,
+  ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Tools.Parser,
+  FHIRTestWorker4, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
 //  FHIR.Ucum.Services,
-  MXML, DUnitX.TestFramework;
+  FHIR.Support.MXml, DUnitX.TestFramework;
 
 Type
   [TextFixture]

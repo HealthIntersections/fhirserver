@@ -33,8 +33,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.StdCtrls, FMX.Objects, FMX.Controls.Presentation,
-  OSXUIUtils,
-  FHIRConstants,
+  FHIR.Ui.OSX,
+  FHIR.Tools.Constants,
   toolkitversion;
 
 type

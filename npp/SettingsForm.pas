@@ -34,7 +34,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Buttons,
   Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
-  VirtualTrees, Vcl.ComCtrls, SmartOnFhirUtilities, EditRegisteredServerDialog;
+  VirtualTrees, Vcl.ComCtrls, FHIR.Client.SmartUtilities, FHIR.Client.ServerDialog;
 
 type
   TSettingForm = class(TNppForm)
@@ -103,7 +103,7 @@ implementation
 
 uses
   FHIRPluginSettings,
-  FHIRConstants,
+  FHIR.Tools.Constants,
   FHIRPlugin,
   FHIRVisualiser,
   FHIRToolboxForm;

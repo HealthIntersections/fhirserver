@@ -32,10 +32,10 @@ interface
 
 uses
   SysUtils,
-  StringSupport, GuidSupport, DateSupport,
-  AdvExceptions, AdvGenerics,
+  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime,
+  FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Database.Manager,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSupport, FHIRLang, FHIROperations,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Session, FHIR.Base.Lang, FHIR.Tools.Operations,
   FHIRStorageService, TerminologyServices, TerminologyServerStore, TerminologyServer, ClosureManager;
 
 type

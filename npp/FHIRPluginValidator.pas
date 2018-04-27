@@ -33,11 +33,11 @@ interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-  MsXml, MsXmlParser,
-  StringSupport,
-  AdvObjects, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts, AdvGenerics,
-  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRProfileUtilities,
-  FHIRConstants, FHIRClient, FHIRBase, FHIRContext;
+  FHIR.Support.MsXml, MsXmlParser,
+  FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Validator, FHIR.Tools.Parser, FHIR.Tools.Utilities, FHIR.Tools.Profiles,
+  FHIR.Tools.Constants, FHIR.Tools.Client, FHIR.Base.Objects, FHIR.Tools.Context;
 
 Type
   TFHIRPluginValidatorContext = class (TBaseWorkerContext)

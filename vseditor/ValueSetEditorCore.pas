@@ -34,11 +34,11 @@ interface
 uses
   SysUtils, Classes, IniFiles, ZLib, Math, RegExpr,
   Dialogs,
-  SystemSupport, StringSupport, FileSupport,  ShellSupport, GuidSupport, EncodeSupport,
-  AdvObjects, AdvStringMatches, AdvStringObjectMatches, AdvObjectLists, AdvBuffers, AdvWinInetClients, AdvMemories, AdvFiles, AdvGenerics,
-  MsXmlParser, IdUri, IdHTTP, AdvJSON,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRParserBase, FHIRConstants,
-  FHIRUtilities, FHIRClient;
+  SystemSupport, FHIR.Support.Strings, FHIR.Support.System,  FHIR.Support.Shell, GuidSupport, EncodeSupport,
+  FHIR.Support.Objects, AdvStringMatches, AdvStringObjectMatches, AdvObjectLists, AdvBuffers, FHIR.Support.WInInet, AdvMemories, AdvFiles, FHIR.Support.Generics,
+  MsXmlParser, IdUri, IdHTTP, FHIR.Support.Json,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.Constants,
+  FHIR.Tools.Utilities, FHIR.Tools.Client;
 
 Const
   UIState_Welcome = 0;

@@ -34,8 +34,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Grids,
-  FHIRResources, Vcl.ComCtrls, FHIRtypes, StringSupport, NppForms, FHIRContext, FHIRClient,
-  AdvObjects, AdvGenerics, AdvJson, GuidSupport, FHIRUtilities;
+  FHIR.Tools.Resources, Vcl.ComCtrls, FHIR.Tools.Types, FHIR.Support.Strings, NppForms, FHIR.Tools.Context, FHIR.Tools.Client,
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, GuidSupport, FHIR.Tools.Utilities;
 
 type
   TClosureDirection = (cdNull, cdSubsumes, cdSubsumed);

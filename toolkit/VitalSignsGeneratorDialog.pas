@@ -6,9 +6,9 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls,
-  StringSupport, DateSupport, DecimalSupport,
-  AdvObjects, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
+  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Decimal,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities,
   ToolkitSettings, FMX.Edit;
 
 type

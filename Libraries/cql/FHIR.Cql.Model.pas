@@ -31,9 +31,9 @@ interface
 
 uses
   SysUtils, Classes,
-  ParserSupport,
-  AdvObjects, AdvGenerics,
-  FHIRBase, FHIRPathNode;
+  FHIR.Support.Text,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Tools.PathNode;
 
 type
   TCqlContextType = (CqlContextPatient, CqlContextPopulation);

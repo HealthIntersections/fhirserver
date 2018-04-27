@@ -35,8 +35,8 @@ interface
 uses
   Windows, SysUtils, Classes,
   DUnitX.TestFramework,
-  FHIRBase, FHIRParser, FHIRParserBase,
-  FHIRResources4, FHIRMetaModel4, FHIRContext4, FHIRTestWorker4,
+  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser,
+  FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIRTestWorker4,
   XmlTests, JsonTests;
 
 type

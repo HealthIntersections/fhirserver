@@ -32,10 +32,10 @@ interface
 uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
-  TextUtilities,
-  AdvObjects,
-  AdvJson, JWT,
-  FHIRTypes, FHIRResources, FHIRUtilities;
+  FHIR.Support.Text,
+  FHIR.Support.Objects,
+  FHIR.Support.Json, FHIR.Support.Certs,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities;
 
 type
   TClientApplicationVerifier = class (TAdvObject)

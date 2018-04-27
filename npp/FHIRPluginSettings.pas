@@ -33,9 +33,9 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  AdvObjects, AdvJson,
-  FHIRTypes,
-  SmartOnFhirUtilities, CDSHooksUtilities, FHIRClientSettings;
+  FHIR.Support.Objects, FHIR.Support.Json,
+  FHIR.Tools.Types,
+  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities, FHIR.Client.Settings;
 
 const
   DEF_ActivePage = 0;

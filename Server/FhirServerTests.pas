@@ -32,10 +32,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, ShellSupport, IniFiles,
-  AdvObjects, GuidSupport, AdvXmlBuilders,
-  FHIRTypes, FHIRResources, FHIRParser,
-  TerminologyServer, FHIRDataStore, FHIRClient, FHIRPath;
+  SysUtils, Classes, FHIR.Support.Shell, IniFiles,
+  FHIR.Support.Objects, GuidSupport, AdvXmlBuilders,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser,
+  TerminologyServer, FHIRDataStore, FHIR.Tools.Client, FHIR.Tools.PathEngine;
 
 procedure ExecuteFhirServerTests(all: boolean);
 //Type
@@ -72,8 +72,8 @@ implementation
 
 uses
   FHIR.Snomed.Services, FHIR.Snomed.Expressions, SCIMSearch, FHIRSearchSyntax,
-  FHIR.Ucum.Tests, TwilioClient, DigitalSignatures, QuestionnaireBuilder,
-  MarkdownDaringFireballTests, AdvJson;
+  FHIR.Ucum.Tests, TwilioClient, FHIR.Support.Signatures, FHIR.Tools.Questionnaire,
+  MarkdownDaringFireballTests, FHIR.Support.Json;
 
 const
   {$IFDEF FHIR2}

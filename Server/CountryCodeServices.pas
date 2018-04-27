@@ -33,9 +33,9 @@ interface
 
 uses
   SysUtils, Classes, RegularExpressions,
-  StringSupport,
-  AdvObjects, AdvGenerics, AdvFiles, AdvTextExtractors, AdvExceptions,
-  FHIRTypes, FHIRResources, TerminologyServices;
+  FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Exceptions,
+  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
 
 type
   TCountryCodeConcept = class (TCodeSystemProviderContext)

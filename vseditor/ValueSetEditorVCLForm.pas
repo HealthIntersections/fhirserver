@@ -35,10 +35,10 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, VirtualTrees, Vcl.ComCtrls,
   Math, Clipbrd,
-  FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
   ValueSetEditorCore, ValueSetEditorRegisterServerForm, Vcl.Menus, Vcl.Buttons,
-  Vcl.ImgList, VirtualStringTreeComboBox, StringSupport, Vcl.Imaging.pngimage,
-  Vcl.OleCtrls, SHDocVw, ServerChooser, Vcl.ToolWin, LookAheadUnit, ValueSetEditorAbout,
+  Vcl.ImgList, VirtualStringTreeComboBox, FHIR.Support.Strings, Vcl.Imaging.pngimage,
+  Vcl.OleCtrls, SHDocVw, ServerChooser, Vcl.ToolWin, FHIR.Ui.Lookahead, ValueSetEditorAbout,
   ServerOperationForm, System.ImageList;
 
 Const

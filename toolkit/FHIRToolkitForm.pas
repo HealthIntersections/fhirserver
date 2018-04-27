@@ -36,9 +36,9 @@ uses
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders, libeay32,
   SystemSupport, TextUtilities, Logging,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRClientBase, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport, FHIRConstants,
-  FHIRContext, FHIRProfileUtilities,
-  SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Client.Base, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
+  FHIR.Tools.Context, FHIR.Tools.Profiles,
+  FHIR.Client.SmartUtilities, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog;

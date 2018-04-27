@@ -33,9 +33,8 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  StringSupport, TextUtilities,
-  AdvObjects, AdvGenerics, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
-  FHIRTypes, FHIRResources, TerminologyServices;
+  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
 
 type
   TIETFLanguageCodeConcept = class (TCodeSystemProviderContext)

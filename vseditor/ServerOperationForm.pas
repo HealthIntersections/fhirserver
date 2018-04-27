@@ -34,8 +34,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   ActiveX,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DProgress, Vcl.StdCtrls, Vcl.ExtCtrls,
-  ValueSetEditorCore, FHIRClient;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FHIR.Ui.Progress, Vcl.StdCtrls, Vcl.ExtCtrls,
+  ValueSetEditorCore, FHIR.Tools.Client;
 
 type
   TServerOperationEvent = procedure (event : TFhirHTTPClientStatusEvent; details : String) of Object;

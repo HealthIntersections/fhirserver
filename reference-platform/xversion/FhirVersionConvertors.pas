@@ -4,8 +4,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIRBase, FHIRParserBase, FHIRLang,
-  {FHIRParser2, }FHIRResources3, FHIRParser3, FHIRResources4, FHIRParser4,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang,
+  {FHIR.R2.Parser, }FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R4.Resources, FHIR.R4.Parser,
   VersionConvertor_30_40;
 
 type
@@ -110,18 +110,18 @@ begin
   case vSource of
     fhirVersionRelease3:
       begin
-        if not (resource is FHIRResources3.TFhirResource) then
+        if not (resource is FHIR.R3.Resources.TFhirResource) then
           raise EFHIRException.CreateLang('Unsupported Version conversion source resource is not actually %s', lang, [CODES_TFHIRVersion[vSource]] );
         case vDest of
-          fhirVersionRelease4: exit(TVersionConvertor_30_40.convertResource(resource as FHIRResources3.TFhirResource));
+          fhirVersionRelease4: exit(TVersionConvertor_30_40.convertResource(resource as FHIR.R3.Resources.TFhirResource));
         end;
       end;
     fhirVersionRelease4:
       begin
-        if not (resource is FHIRResources4.TFhirResource) then
+        if not (resource is FHIR.R4.Resources.TFhirResource) then
           raise EFHIRException.CreateLang('Unsupported Version conversion source resource is not actually %s', lang, [CODES_TFHIRVersion[vSource]] );
         case vDest of
-          fhirVersionRelease3: exit(TVersionConvertor_30_40.convertResource(resource as FHIRResources4.TFhirResource));
+          fhirVersionRelease3: exit(TVersionConvertor_30_40.convertResource(resource as FHIR.R4.Resources.TFhirResource));
         end;
       end;
   end;

@@ -5,8 +5,8 @@ interface
 uses
   SysUtils, Classes,
   JNI, JNIWrapper, JavaRuntime,
-  AdvObjects, AdvJson,
-  FHIRBase, FHIRResources, FHIRParser, FHIRUtilities;
+  FHIR.Support.Objects, FHIR.Support.Json,
+  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Utilities;
 
 
 type

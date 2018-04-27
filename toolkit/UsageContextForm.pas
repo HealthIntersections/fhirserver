@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.TabControl,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts,
-  FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client,
   ToolkitUtilities, BaseDialog;
 
 type

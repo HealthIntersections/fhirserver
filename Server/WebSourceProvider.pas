@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FileSupport, TextUtilities,
-  AdvObjects, AdvZipReaders, AdvZipParts, AdvFiles, AdvGenerics, AdvBuffers;
+  FHIR.Support.System, FHIR.Support.Text,
+  FHIR.Support.Objects, FHIR.Support.Zip, FHIR.Support.Stream, FHIR.Support.Generics;
 
 type
   TFHIRWebServerSourceProvider = {abstract} class (TAdvObject)
@@ -125,7 +125,7 @@ var
   fn : String;
 begin
   fn := path([FSourcePath, filename]);
-  result := TextUtilities.FileToString(fn, TEncoding.UTF8);
+  result := FHIR.Support.Text.FileToString(fn, TEncoding.UTF8);
 end;
 
 { TFHIRWebServerSourceZipProvider }

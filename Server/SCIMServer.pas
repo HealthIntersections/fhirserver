@@ -34,12 +34,12 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
-  FHIR.Utilities.SCrypt, ParseMap, TextUtilities,
-  FHIR.Database.Manager, AdvJSON, KCritSct, DateSupport,
-  StringSupport, EncodeSupport,  FHIRSupport,
-  AdvObjects, AdvObjectLists, AdvExceptions,
+  FHIR.Utilities.SCrypt, FHIR.Web.ParseMap, FHIR.Support.Text,
+  FHIR.Database.Manager, FHIR.Support.Json, FHIR.Support.Lock, FHIR.Support.DateTime,
+  FHIR.Support.Strings,  FHIR.Tools.Session,
+  FHIR.Support.Objects, FHIR.Support.Exceptions,
   ServerUtilities,
-  FHIRUserProvider, SCIMSearch, SCIMObjects;
+  FHIRUserProvider, SCIMSearch, FHIR.Base.Scim;
 
 Type
   TSCIMCharIssuer = class (TAdvObject)
@@ -113,7 +113,7 @@ Type
 implementation
 
 uses
-  FHIRSecurity;
+  FHIR.Tools.Security;
 
 { TSCIMServer }
 

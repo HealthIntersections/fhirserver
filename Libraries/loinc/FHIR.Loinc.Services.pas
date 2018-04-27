@@ -32,12 +32,12 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
-  StringSupport, FileSupport, BytesSupport, TextUtilities,
-  AdvObjects, AdvObjectLists, AdvZipWriters, AdvFiles,
+  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Text,
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Stream,
   RegularExpressions, YuStemmer,
-  FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations,
-  CDSHooksUtilities,
-  TerminologyServices, DateSupport;
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Operations,
+  FHIR.CdsHooks.Utilities,
+  TerminologyServices, FHIR.Support.DateTime;
 
 {axes
 

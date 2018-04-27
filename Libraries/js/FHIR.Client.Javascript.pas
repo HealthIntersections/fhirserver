@@ -5,8 +5,8 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Javascript,
-  AdvObjects,
-  FHIRResources, FHIRClient, FHIRUtilities;
+  FHIR.Support.Objects,
+  FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities;
 
 type
   TFHIRClientJSHelper = class (TAdvObject)
@@ -238,7 +238,7 @@ var
 begin
   this := TFHIRClientJSHelper.Create;
   js.ownObject(this);
-  def := js.defineClass('FHIRClient', nil, 'FHIRClient', this.CreateFHIRClientJs);
+  def := js.defineClass('FHIR.Tools.Client', nil, 'FHIR.Tools.Client', this.CreateFHIRClientJs);
   def.defineRoutine('address', nil, this.FHIRClientAddressJs);
   def.defineRoutine('capabilities', nil, this.FHIRClientCapabilitiesJs);
   def.defineRoutine('transaction', nil, this.FHIRClientTransactionJs);

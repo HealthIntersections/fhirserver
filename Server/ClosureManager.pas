@@ -33,10 +33,10 @@ interface
 
 Uses
   SysUtils, Generics.Collections,
-  StringSupport, kCritSct,
-  AdvObjects, AdvGenerics,
+  FHIR.Support.Strings, FHIR.Support.Lock,
+  FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Database.Manager,
-  FHIRResources, FHIRTypes, FHIRUtilities,
+  FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities,
   TerminologyServerStore;
 
 Type

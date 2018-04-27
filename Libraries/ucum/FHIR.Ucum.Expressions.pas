@@ -32,10 +32,9 @@ Interface
 
 uses
   SysUtils,
-  StringSupport,
-  AdvStringBuilders,
-  DecimalSupport,
-  AdvObjects,
+  FHIR.Support.Strings,
+  FHIR.Support.Decimal,
+  FHIR.Support.Objects,
   FHIR.Ucum.Handlers,
   FHIR.Ucum.Base;
 

@@ -34,7 +34,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, ShellApi,
-  FHIRProfileUtilities, FHIRContext;
+  FHIR.Tools.Profiles, FHIR.Tools.Context;
 
 type
   TAboutForm = class(TNppForm)
@@ -72,9 +72,9 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRConstants,
+  FHIR.Tools.Constants,
   FHIRPlugin,
-  FHIRPath,
+  FHIR.Tools.PathEngine,
   nppbuildcount;
 
 procedure TAboutForm.FormShow(Sender: TObject);

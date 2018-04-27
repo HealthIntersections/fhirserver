@@ -33,13 +33,13 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  ParseMap,
-  EncodeSupport, StringSupport, TextUtilities,
-  AdvObjects, AdvStringMatches, AdvNameBuffers,
+  FHIR.Web.ParseMap,
+  FHIR.Support.Strings, FHIR.Support.Text,
+  FHIR.Support.Objects, FHIR.Support.Stream,
   IdContext, IdCustomHTTPServer,
-  FHIRLang, FHIRContext, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes, FHIRXhtml, FHIRBase,
-  HtmlPublisher, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
-  TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIROperations;
+  FHIR.Base.Lang, FHIR.Tools.Context, FHIR.Tools.Session, FHIR.Tools.Utilities, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Base.Xhtml, FHIR.Base.Objects,
+  FHIR.Web.HtmlGen, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
+  TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIR.Tools.Operations;
 
 Type
   TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
@@ -101,7 +101,7 @@ Type
     procedure ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
   public
-    constructor create(server : TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPath : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
+    constructor create(server : TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -110,8 +110,8 @@ Type
 implementation
 
 uses
-  FHIRLog,
-  FHIRParser;
+  FHIR.Debug.Logging,
+  FHIR.Tools.Parser;
 
 { TTerminologyWebServer }
 
@@ -146,11 +146,11 @@ begin
   end;
 end;
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPath : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
   create;
   FServer := server;
-  FFHIRPath := FHIRPath;
+  FFHIRPath := FHIRPathEngine;
   FReturnProcessFileEvent := ReturnProcessFileEvent;
   FServer.webBase := BaseURl;
   FWorker := worker;

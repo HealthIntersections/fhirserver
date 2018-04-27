@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  AdvObjects;
+  FHIR.Support.Objects;
 
 Type
   TSCIMStorageServiceConnection = class (TAdvObject)

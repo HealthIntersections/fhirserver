@@ -32,8 +32,8 @@ Interface
 
 Uses
   SysUtils, Contnrs, Classes,
-  StringSupport, MathSupport, DateSupport, ThreadSupport, AdvGenerics,
-  AdvObjects, AdvObjectLists, AdvStringLists, AdvIntegerLists, AdvNames, AdvCSVExtractors, AdvFiles, AdvExceptions,
+  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime, FHIR.Support.Generics, FHIR.Support.System,
+  FHIR.Support.Objects, FHIR.Support.Collections,  FHIR.Support.Text, FHIR.Support.Exceptions, FHIR.Support.Stream,
   YuStemmer, FHIR.Loinc.Services;
 
 Const

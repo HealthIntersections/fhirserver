@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils,
-  AdvObjects;
+  FHIR.Support.Objects;
 
 Type
   TSCIMSearchItemType = (sitTest, sitCriteria, sitValuePath);

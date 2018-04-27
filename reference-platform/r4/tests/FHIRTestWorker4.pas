@@ -35,10 +35,10 @@ interface
 uses
   {$IFDEF WINDOWS}Windows, WinAPI.ShellAPI, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd,
-  StringSupport, FileSupport,
-  FHIRBase, FHIRParser, FHIRSupport, 
-  FHIRTypes4, FHIRResources4, FHIRConstants4, FHIRContext4, FHIRProfileUtilities4, FHIRPath4,
-  AdvJson, DUnitX.TestFramework;
+  FHIR.Support.Strings, FHIR.Support.System,
+  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Tools.Session, 
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.PathEngine,
+  FHIR.Support.Json, DUnitX.TestFramework;
 
 var
   GBasePath : String;
@@ -87,7 +87,7 @@ Type
 implementation
 
 uses
-  TextUtilities, IdGlobalProtocols, BytesSupport;
+  IdGlobalProtocols, FHIR.Support.Binary;
 
 
 

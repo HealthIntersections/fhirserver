@@ -1,4 +1,4 @@
-unit SCIMObjects;
+unit FHIR.Base.Scim;
 
 {
 Copyright (c) 2011+, HL7, Inc and Health Intersections Pty Ltd
@@ -36,8 +36,8 @@ interface
 
 uses
   SysUtils,
-  AdvObjects, AdvObjectLists,
-  AdvJSON, DateAndTime;
+  FHIR.Support.Objects, AdvObjectLists,
+  FHIR.Support.Json, DateAndTime;
 
 Const
   SCIM_ADMIN = 'http://www.healthintersections.com.au/scim/entitlement/admin';

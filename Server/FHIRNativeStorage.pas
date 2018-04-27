@@ -32,18 +32,18 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  kCritSct, DateSupport,   StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport, EncodeSupport,
-  ParseMap, TextUtilities,
-  AdvNames, AdvObjects, AdvObjectLists, AdvStringMatches, AdvExclusiveCriticalSections, AdvMemories, AdvVclStreams,
-  AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
-  FHIR.Database.Manager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL, JWT,
-  FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
-  FHIRTags, FHIRValueSetExpander, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel, FHIRPathNode,
-  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL, FHIRClient,
-  FHIRFactory, FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
-  CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
-  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
-  FHIRValidator, FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIRCodeGenerator, ServerJavascriptHost;
+  FHIR.Support.Lock, FHIR.Support.DateTime,   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Decimal, FHIR.Support.Binary,
+  FHIR.Web.ParseMap, FHIR.Support.Text,
+   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Controllers,
+  FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
+  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Misc.GraphQL, FHIR.Support.Certs,
+  FHIR.Tools.Resources, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.Constants, FHIR.Tools.Context, FHIR.Tools.Operations, FHIR.Base.Xhtml,
+  FHIR.Tools.Tags, FHIRValueSetExpander, FHIRIndexManagers, FHIR.Tools.Session, FHIR.Tools.DiffEngine, FHIR.Tools.ElementModel, FHIR.Tools.PathNode,
+  FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles, FHIR.Tools.PathEngine, FHIR.Tools.GraphQL, FHIR.Tools.Client,
+  FHIR.Tools.Factory, FHIR.Tools.Narrative, FHIR.Tools.Narrative2, FHIR.Tools.Questionnaire,
+  FHIR.CdsHooks.Utilities, {$IFNDEF FHIR2}FHIR.Tools.MapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
+  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, FHIR.Base.Scim, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
+  FHIR.Tools.Validator, FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIR.Tools.CodeGen, ServerJavascriptHost;
 
 const
   MAXSQLDATE = 365 * 3000;
@@ -752,9 +752,9 @@ implementation
 
 uses
   IdMessage, IdSMTP, IdSSLOpenSSL, IdExplicitTLSClientServerBase,
-  SystemService,
-  MimeMessage,
-  FHIRLog,
+  FHIR.Support.Service,
+  FHIR.Support.Mime,
+  FHIR.Debug.Logging,
   TerminologyServerStore,
   TerminologyOperations,
   SearchProcessor;

@@ -334,7 +334,7 @@ implementation
 uses
 	{$IFDEF ScryptUnitTests}ScryptTests,{$ENDIF}
 	{$IFDEF MSWINDOWS}Windows, ComObj, ActiveX,{$ENDIF}
-	Math, GuidSupport;
+	Math, FHIR.Support.System;
 
 {$IFDEF COMPILER_7_DOWN}
 function MAKELANGID(p, s: WORD): WORD;

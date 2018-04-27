@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FileSupport, AdvObjects, AdvBuffers,
-  FHIRBase, FHIRSupport, FHIRParser,
-  FHIRContext4, FHIRTestWorker4, FHIRValidator4, 
+  FHIR.Support.System, FHIR.Support.Objects, FHIR.Support.Stream,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Parser,
+  FHIR.R4.Context, FHIRTestWorker4, FHIR.R4.Validator, 
   DUnitX.TestFramework;
 
 type
@@ -117,8 +117,8 @@ type
 implementation
 
 uses
-  SysUtils, Classes, StringSupport,
-  FHIRParserBase, FHIRTypes, FHIRResources;
+  SysUtils, Classes, FHIR.Support.Strings,
+  FHIR.Base.Parser, FHIR.Tools.Types, FHIR.Tools.Resources;
 
 { TFHIRValidatorTests }
 
@@ -142,7 +142,7 @@ var
 begin
   src := TAdvBuffer.Create;
   try
-    src.LoadFromFileName(Filesupport.path([GBasePath, path]));
+    src.LoadFromFileName(FHIR.Support.System.path([GBasePath, path]));
     ctxt := TFHIRValidatorContext.Create;
     try
       ctxt.ResourceIdRule := risOptional;
@@ -189,7 +189,7 @@ begin
   else
     p := TFHIRJsonParser.Create(nil, 'en');
   try
-    f := TFilestream.create(FileSupport.path([GBasePath, path]), fmOpenRead + fmShareDenywrite);
+    f := TFilestream.create(FHIR.Support.System.path([GBasePath, path]), fmOpenRead + fmShareDenywrite);
     try
       p.source := f;
       p.Parse;

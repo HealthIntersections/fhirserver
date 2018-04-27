@@ -32,9 +32,9 @@ interface
 uses
   SysUtils, Classes,
   IdHttp, IdSSLOpenSSL,
-  StringSupport, GuidSupport, TextUtilities, BytesSupport,
-  AdvObjects,
-  SmartOnFhirUtilities;
+  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Text, FHIR.Support.Binary,
+  FHIR.Support.Objects,
+  FHIR.Client.SmartUtilities;
 
 type
   TSmartOnFhirTestingLogin = class (TAdvObject)

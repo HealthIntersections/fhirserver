@@ -32,14 +32,12 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, psapi, {$ENDIF}
-  SysUtils, kCritSct,
-  FileSupport,
-  StringSupport,
-  AdvObjects,
-  AdvObjectLists,
-  AdvStringBuilders,
-  AdvStringLists;
+  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, psapi, {$ENDIF}
+  SysUtils, FHIR.Support.Lock,
+  FHIR.Support.System,
+  FHIR.Support.Strings,
+  FHIR.Support.Objects,
+  FHIR.Support.Collections;
 
 Type
   TLogFullPolicy = (lfpStop, lfpWipe, lfpChop, lfpCycle);

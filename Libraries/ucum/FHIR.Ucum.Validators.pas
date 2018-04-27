@@ -32,13 +32,13 @@ Interface
 
 Uses
   SysUtils,
-  DecimalSupport,
+  FHIR.Support.Decimal,
   FHIR.Ucum.Base,
   FHIR.Ucum.Expressions,
   FHIR.Ucum.Handlers,
-  AdvStringLists,
-  AdvNames,
-  AdvObjects;
+  FHIR.Support.Collections,
+  
+  FHIR.Support.Objects;
 
 Type
   TUcumValidator = class (TAdvObject)

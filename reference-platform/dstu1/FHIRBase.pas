@@ -1,4 +1,4 @@
-unit FHIRBase;
+unit FHIR.Base.Objects;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -45,15 +45,15 @@ Uses
   Classes,
   
   SysUtils,
-  AdvExceptions,
-  AdvObjects,
+  FHIR.Support.Exceptions,
+  FHIR.Support.Objects,
   AdvObjectLists,
   AdvBuffers,
   AdvStringMatches,
   AdvStringLists,
-  DateSupport,
+  FHIR.Support.DateTime,
   EncodeSupport,
-  DecimalSupport;
+  FHIR.Support.Decimal;
 
 Type
   {@Enum TFHIRCommandType
@@ -496,10 +496,10 @@ type
 Implementation
 
 Uses
-  StringSupport,
-  FHIRUtilities,
-  FHIRTypes,
-  FHIRResources;
+  FHIR.Support.Strings,
+  FHIR.Tools.Utilities,
+  FHIR.Tools.Types,
+  FHIR.Tools.Resources;
 
 type
   TFHIRQueryProcessor = class (TAdvObject)

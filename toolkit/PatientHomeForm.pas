@@ -6,9 +6,9 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,
-  DateSupport,
-  AdvObjects, AdvGenerics,
-  FHIRResources, FHIRClient, FHIRUtilities,
+  FHIR.Support.DateTime,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities,
   BaseFrame, DocumentGenerationForm;
 
 type

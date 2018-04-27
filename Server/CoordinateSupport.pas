@@ -38,7 +38,7 @@ Interface
 
 Uses
   Windows,
-  MathSupport;
+  FHIR.Support.Math;
 
 
 Type

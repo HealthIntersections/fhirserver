@@ -39,9 +39,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  AdvObjects, AdvGenerics, StringSupport,
-  FHIR.Database.Manager, DateSupport,
-  FHIRTypes, FHIRResources, FHIROperations;
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings,
+  FHIR.Database.Manager, FHIR.Support.DateTime,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations;
 
 type
   TObservationStatsParameter = (

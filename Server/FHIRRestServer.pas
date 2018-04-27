@@ -76,30 +76,29 @@ Unit FHIRRestServer;
 Interface
 
 Uses
-{$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} OSXUtils, {$ENDIF} SyncObjs,
+{$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} FHIR.Support.Osx, {$ENDIF} SyncObjs,
   SysUtils, Classes, IniFiles, System.Generics.Collections, {JCL JclDebug,}
-  EncdDecd, HMAC, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
+  EncdDecd,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
-  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie,
+  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, FHIR.Support.Mime, IdCookie,
   IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders,
-  IdGlobalProtocols, IdWebSocket,
+  IdGlobalProtocols, FHIR.Web.Socket,
 
-  EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport,
-  ThreadSupport, CertificateSupport, SystemSupport, HashSupport, Logging,
+  FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Strings,
+  FHIR.Support.Certs, Logging,
 
-  AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders,
-  AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions,
-  AdvGenerics, AdvFiles, AdvZipWriters,
+  FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Exceptions, FHIR.Support.Text,
+  FHIR.Support.Generics,
 
-  kCritSct, ParseMap, TextUtilities, FHIR.Database.Manager, HTMLPublisher, KDBDialects,
-  AdvJSON, libeay32, RDFUtilities, JWT,
+  FHIR.Support.Lock, FHIR.Web.ParseMap, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
+  FHIR.Support.JSON, FHIR.Web.Rdf,
 
-  MXML, GraphQL, {$IFDEF MSWINDOWS} MsXml, MsXmlParser, {$ENDIF}
-  FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
-  FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService,
-  FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities, FHIRXhtmlComposer,
-  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, CDSHooksClientManager,
-  FHIRXhtml, FHIRGraphQL,
+  FHIR.Support.MXml, FHIR.Misc.GraphQL, {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF}
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Constants,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Tags, FHIR.Tools.Session, FHIR.Base.Lang, FHIRStorageService,
+  FHIR.Tools.Utilities, FHIR.Tools.Security, FHIR.Client.SmartUtilities, FHIR.Tools.XhtmlComp,
+  FHIR.Tools.Questionnaire, FHIR.Tools.Client, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
+  FHIR.Base.Xhtml, FHIR.Tools.GraphQL,
   {$IFNDEF NO_CONVERSION}
   FHIRVersionConvertors,
   {$ENDIF}
@@ -424,10 +423,9 @@ Uses
 {$IFDEF MSWINDOWS}
   Registry,
 {$ENDIF}
-  FHIRLog,
+  FHIR.Debug.Logging,
 
-  FileSupport,
-  FacebookSupport;
+  FHIR.Misc.Facebook;
 
 Function GetMimeTypeForExt(AExt: String): String;
 {$IFDEF MSWINDOWS}
@@ -4535,28 +4533,6 @@ begin
   result := proc.Output;
 end;
 {$ENDIF}
-// function TFhirWebServer.transform2(resource: TFhirResource; lang, xslt: String): string;
-// var
-// xslt2: AltovaXMLLib_TLB.XSLT2;
-// xml : TFHIRXmlComposer;
-// s : String;
-// AltovaXml : AltovaXMLLib_TLB.Application;
-// begin
-// xml := TFHIRXmlComposer.Create(lang);
-// try
-// s := xml.Compose('', '', '', resource, false, nil);
-// finally
-// xml.Free;
-// end;
-//
-// AltovaXml := AltovaXMLLib_TLB.CoApplication.Create;
-// xslt2 := AltovaXml.XSLT2;
-// xslt2.InputXMLFromText := s;
-// xslt2.XSLFileName := xslt;
-// result := xslt2.ExecuteAndGetResultAsString;
-// xslt2 := nil;
-// AltovaXml := nil;
-// end;
 
 { TFHIRWebServerClientInfo }
 

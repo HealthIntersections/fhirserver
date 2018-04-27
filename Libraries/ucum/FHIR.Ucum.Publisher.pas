@@ -33,7 +33,7 @@ Interface
 Uses
   classes,
   Math,
-  AdvObjects,
+  FHIR.Support.Objects,
   SysUtils,
   WordProcessorDocuments,
   WordProcessorEntities,
@@ -73,7 +73,7 @@ Implementation
 
 Uses
   EncodeSupport,
-  StringSupport;
+  FHIR.Support.Strings;
 
 Function ShowUnit(s : String; sPost : String = ''):String;
 Begin

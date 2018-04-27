@@ -41,10 +41,10 @@ todo:
 
 }
 uses
-  SysUtils, Classes, StringSupport, GuidSupport,
-  DateSupport,
-  AdvStringObjectMatches, AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
-  FHIRBase, FHIRLang, FHIRTypes, FHIRResources, FHIRUtilities, FHIRXhtml,
+  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.System,
+  FHIR.Support.DateTime,
+  FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Base.Xhtml,
   TerminologyServices, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services,
   TerminologyServer, TerminologyServerStore;
 

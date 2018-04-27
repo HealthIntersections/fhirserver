@@ -31,10 +31,9 @@ interface
 
 uses
   SysUtils, Classes,
-  EncodeSupport,
-  AdvJson,
-  SmartOnFHIRUtilities,
-  FHIRClientSettings;
+  FHIR.Support.Json, FHIR.Support.Strings,
+  FHIR.Client.SmartUtilities,
+  FHIR.Client.Settings;
 
 const
   DEF_TIMEOUT = 10;

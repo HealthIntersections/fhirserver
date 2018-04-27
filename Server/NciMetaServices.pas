@@ -33,10 +33,10 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport, AdvObjects, AdvObjectLists,
+  FHIR.Support.Strings, FHIR.Support.Objects, AdvObjectLists,
   YuStemmer,
   FHIR.Database.Manager,
-  FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
+  FHIR.Tools.Types, FHIRComponents, FHIR.Tools.Resources, TerminologyServices, DateAndTime;
 
 type
   TNciMetaConcept = class (TCodeSystemProviderContext)

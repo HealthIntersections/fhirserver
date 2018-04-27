@@ -35,9 +35,9 @@ uses
   FMX.Controls.Presentation, FMX.TabControl, FMX.ListBox, FMX.Layouts, FMX.DateTimeCtrls,
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   IdComponent,
-  DateSupport, StringSupport,
-  AdvGenerics,
-  FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
+  FHIR.Support.DateTime, FHIR.Support.Strings,
+  FHIR.Support.Generics,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities,
   BaseFrame, AppEndorserFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog,
   ProviderDirectoryForm, PatientHomeForm, BulkDataForm;
 

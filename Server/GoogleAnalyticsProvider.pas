@@ -7,8 +7,8 @@ interface
 uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
-  kCritSct, EncodeSupport,
-  AdvGenerics, AdvObjects;
+  FHIR.Support.Lock,
+  FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Objects;
 
 type
   TGoogleAnalyaticsEventData = class (TAdvObject)

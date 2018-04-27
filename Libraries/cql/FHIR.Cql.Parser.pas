@@ -31,9 +31,9 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  StringSupport, ParserSupport, DecimalSupport,
-  AdvObjects, AdvGenerics,
-  FHIRBase, FHIRPathNode, FHIRPath,
+  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Decimal,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Tools.PathNode, FHIR.Tools.PathEngine,
   FHIR.CQL.Model;
 
 Type

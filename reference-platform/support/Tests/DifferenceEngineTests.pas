@@ -33,16 +33,16 @@ interface
 
 uses
   Windows, SysUtils, classes,
-  StringSupport, AdvGenerics, TextUtilities,
-  FHIRBase, FHIRParserBase, FHIRParser,
+  FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Text,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Parser,
   {$IFDEF FHIR3}
-  FHIRTestWorker3, FHIRResources3, FHIRTypes3,
+  FHIRTestWorker3, FHIR.R3.Resources, FHIR.R3.Types,
   {$ENDIF}
   {$IFDEF FHIR4}
-  FHIRTestWorker4, FHIRResources4, FHIRTypes4,
+  FHIRTestWorker4, FHIR.R4.Resources, FHIR.R4.Types,
   {$ENDIF}
-  DifferenceEngine,
-  MXML, DUnitX.TestFramework;
+  FHIR.Tools.DiffEngine,
+  FHIR.Support.MXml, DUnitX.TestFramework;
 
 Type
   [TextFixture]

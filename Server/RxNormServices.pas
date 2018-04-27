@@ -33,11 +33,11 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  StringSupport, ThreadSupport,
-  AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
+  FHIR.Support.Strings, FHIR.Support.System,
+  FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
   YuStemmer, 
   FHIR.Database.Manager,
-  FHIRTypes, FHIRResources, FHIROperations, FHIRUtilities, CDSHooksUtilities,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities,
   TerminologyServices;
 
 type

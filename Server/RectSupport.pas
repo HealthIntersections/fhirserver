@@ -34,7 +34,7 @@ Interface
 
 Uses
   Windows,
-  CoordinateSupport, MathSupport;
+  CoordinateSupport, FHIR.Support.Math;
 
 
 Type

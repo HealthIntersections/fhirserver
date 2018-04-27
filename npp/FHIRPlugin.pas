@@ -68,15 +68,15 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX,
   NppPlugin, SciSupport,
-  GuidSupport, FileSupport, SystemSupport,
-  AdvObjects, AdvGenerics, AdvBuffers, AdvWinInetClients,
-  ParserSupport, XmlBuilder, MsXml, MsXmlParser, TextUtilities,
+  GuidSupport, FHIR.Support.System, SystemSupport,
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.WInInet,
+  ParserSupport, FHIR.Support.Zip, FHIR.Support.MsXml, MsXmlParser, TextUtilities,
 
-  FHIRBase, FHIRPathNode, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
-  FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml, FHIRContext, FHIRExpressionComposer,
-  SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount, PluginUtilities,
+  FHIR.Base.Objects, FHIR.Tools.PathNode, FHIR.Tools.Validator, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.Constants,
+  FHIRPluginSettings, FHIRPluginValidator, FHIR.Tools.Narrative, FHIR.Tools.PathEngine, FHIR.Base.Xhtml, FHIR.Tools.Context, FHIR.Tools.ExpressionComposer,
+  FHIR.Client.SmartUtilities, FHIR.Client.SmartLogin, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes, CodeGenerationForm,
-  FHIRVisualiser, FHIRPathDebugger3, WelcomeScreen, UpgradePrompt, DifferenceEngine, ResDisplayForm;
+  FHIRVisualiser, FHIR.R3.PathDebugger, WelcomeScreen, UpgradePrompt, FHIR.Tools.DiffEngine, ResDisplayForm;
 
 const
   INDIC_INFORMATION = 21;

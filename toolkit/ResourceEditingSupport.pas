@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  DateSupport,
-  FHIRTypes, FHIRResources,
+  FHIR.Support.DateTime,
+  FHIR.Tools.Types, FHIR.Tools.Resources,
   FMX.DateTimeCtrls;
 
 function displayLang(lang : String) : string;

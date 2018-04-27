@@ -33,10 +33,10 @@ interface
 
 uses
   SysUtils,
-  ParseMap, StringSupport, EncodeSupport,
-  AdvObjects, AdvGenerics,
+  FHIR.Web.ParseMap, FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Database.Manager,
-  FHIRSupport, FHIRIndexBase,
+  FHIR.Tools.Session, FHIR.Tools.Indexing,
   FHIRIndexManagers;
 
 Type

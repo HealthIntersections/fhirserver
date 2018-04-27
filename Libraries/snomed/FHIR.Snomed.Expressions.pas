@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, AdvObjects, AdvGenerics, Generics.Defaults;
+  SysUtils, Classes, FHIR.Support.Objects, FHIR.Support.Generics, Generics.Defaults;
 
 const
   MAX_TERM_LENGTH = 1024;

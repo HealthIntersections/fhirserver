@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  AdvObjects, AdvBuffers,
-  FHIRBase, FHIRSupport, FHIRTestWorker3, FHIRParser,
-  FHIRContext3, FHIRValidator3,
+  FHIR.Support.Objects, AdvBuffers,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIRTestWorker3, FHIR.Tools.Parser,
+  FHIR.R3.Context, FHIR.R3.Validator,
   DUnitX.TestFramework;
 
 type
@@ -117,9 +117,9 @@ type
 implementation
 
 uses
-  SysUtils, Classes, StringSupport,
-  FHIRParserBase,
-  FHIRTypes3, FHIRResources3;
+  SysUtils, Classes, FHIR.Support.Strings,
+  FHIR.Base.Parser,
+  FHIR.R3.Types, FHIR.R3.Resources;
 
 { TFHIRValidatorTests }
 

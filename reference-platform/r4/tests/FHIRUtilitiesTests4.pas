@@ -32,11 +32,9 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  IdSSLOpenSSLHeaders, libeay32,
-  TextUtilities,
-  AdvZipParts,
-  FHIRBase, FHIRParser, 
-  FHIRTypes4, FHIRResources4, FHIRUtilities4;
+  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Text, FHIR.Support.Zip,
+  FHIR.Base.Objects, FHIR.Tools.Parser, 
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
 
 type
   [TextFixture]

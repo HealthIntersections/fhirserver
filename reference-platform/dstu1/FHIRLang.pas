@@ -1,4 +1,4 @@
-unit FHIRLang;
+unit FHIR.Base.Lang;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -47,8 +47,8 @@ implementation
 
 uses
   SysUtils, classes,
-  StringSupport,
-  AdvExceptions,
+  FHIR.Support.Strings,
+  FHIR.Support.Exceptions,
   AfsResourceVolumes,
   AfsVolumes,
 

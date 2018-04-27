@@ -4,9 +4,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  AdvObjects, AdvGenerics,
-  FHIRTypes, FHIRResources, FHIROperations,
-  CDSHooksUtilities,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations,
+  FHIR.CdsHooks.Utilities,
   TerminologyServices;
 
 type

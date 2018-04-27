@@ -32,9 +32,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, kCritSct,
-  AdvObjects, AdvGenerics,
-  FHIRTags;
+  SysUtils, Classes, FHIR.Support.Lock,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Tools.Tags;
 
 type
   TFHIRTagManager = class (TAdvObject)

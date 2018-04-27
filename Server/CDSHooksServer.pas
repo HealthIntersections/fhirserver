@@ -32,9 +32,9 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
-  AdvObjects, AdvGenerics, AdvJson,
-  FHIRSupport, FHIRClient,
-  CDSHooksUtilities, ServerUtilities, FHIRServerContext;
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json,
+  FHIR.Tools.Session, FHIR.Tools.Client,
+  FHIR.CdsHooks.Utilities, ServerUtilities, FHIRServerContext;
 
 type
   TCDSHooksProcessor = class (TAdvObject)

@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRLang, FHIRUtilities;
+  FHIR.Support.Strings,
+  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Base.Lang, FHIR.Tools.Utilities;
 
 function LoadBinaryResource(lang : String; b: TBytes): TFhirBinary;
 

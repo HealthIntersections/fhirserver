@@ -5,8 +5,8 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   TextUtilities,
-  AdvJson,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRJavascript, FHIRParser,
+  FHIR.Support.Json,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIRJavascript, FHIR.Tools.Parser,
   JavaBridge,
   DUnitX.TestFramework;
 

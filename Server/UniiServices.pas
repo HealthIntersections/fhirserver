@@ -33,10 +33,10 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport,
-  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches, AdvExceptions,
+  FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Exceptions,
   FHIR.Database.Manager,
-  FHIRTypes, FHIRResources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
 
 type
   TUniiConcept = class (TCodeSystemProviderContext)
@@ -107,7 +107,7 @@ Procedure ImportUnii(filename : String; dbm : TKDBManager);
 implementation
 
 uses
-  FHIRLog;
+  FHIR.Debug.Logging;
 
 { TUniiServices }
 

@@ -1,4 +1,4 @@
-unit FHIRParser;
+unit FHIR.Tools.Parser;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -39,7 +39,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  SysUtils, Classes, ActiveX, StringSupport, DateSupport, MsXml, FHIRParserBase,  FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, FHIRAtomFeed;
+  SysUtils, Classes, ActiveX, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.MsXml, FHIR.Base.Parser,  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRComponents, FHIR.Tools.Types, MsXmlParser, FHIR.Xml.Builder, FHIR.Support.Json, FHIRAtomFeed;
 
 Type
 

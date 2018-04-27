@@ -32,11 +32,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, kCritSct,
-  DateSupport, GuidSupport, StringSupport, HashSupport,
-  AdvObjects, AdvGenerics, AdvJson,
-  JWT,
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSecurity,
+  SysUtils, Classes, FHIR.Support.Lock,
+  FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Certs,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Security,
   SCIMServer,
   FHIRUserProvider, ServerUtilities, FHIRStorageService, ServerValidator;
 

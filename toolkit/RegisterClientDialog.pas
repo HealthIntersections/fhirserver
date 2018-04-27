@@ -34,9 +34,9 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Edit,
   IdHttp, IdSSLOpenSSL,
-  AdvJson,
+  FHIR.Support.Json,
   JWT,
-  SmartOnFhirUtilities;
+  FHIR.Client.SmartUtilities;
 
 type
   TRegisterClientForm = class(TForm)

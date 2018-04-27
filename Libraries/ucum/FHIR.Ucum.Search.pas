@@ -31,9 +31,9 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  StringSupport,
-  AdvPersistentLists,
-  Advobjects,
+  FHIR.Support.Strings,
+  FHIR.Support.Collections,
+  FHIR.Support.Objects,
   RegularExpressions,
   FHIR.Ucum.Base;
 

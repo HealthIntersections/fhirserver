@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils, Classes,
-  AdvObjects, AdvStringObjectMatches,
-  FHIRTypes, FHIRResources, FHIRUtilities, FHIRBase,
+  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Base.Objects,
   TerminologyServices, TerminologyServerStore;
 
 Type
@@ -225,7 +225,7 @@ var
 begin
   list := TStringList.Create;
   try
-    list.Duplicates := dupIgnore;
+    list.Duplicates := Classes.dupIgnore;
     list.CaseSensitive := false;
     result := check(system, version, code, abstractOk, list, msg);
   finally
@@ -366,7 +366,7 @@ begin
   try
     list := TStringList.Create;
     try
-      list.Duplicates := dupIgnore;
+      list.Duplicates := Classes.dupIgnore;
       list.CaseSensitive := false;
       if check(coding.system, coding.version, coding.code, abstractOk, list, message) then
       begin
@@ -425,7 +425,7 @@ begin
   try
     list := TStringList.Create;
     try
-      list.Duplicates := dupIgnore;
+      list.Duplicates := Classes.dupIgnore;
       list.CaseSensitive := false;
       ok := TFhirBoolean.Create(false);
       result.AddParameter('result', ok);

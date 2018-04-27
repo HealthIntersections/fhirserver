@@ -1,4 +1,4 @@
-unit FHIRTags;
+unit FHIR.Tools.Tags;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIRBase;
+  FHIR.Base.Objects;
 
 const
   TAG_FHIR_SCHEME = 'http://hl7.org/fhir/tag';

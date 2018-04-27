@@ -36,10 +36,10 @@ uses
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus,FMX.WebBrowser,
   System.ImageList, FMX.ImgList, FMX.Effects, FMX.Filter.Effects,
-  DateSupport, StringSupport, DecimalSupport,
-  AdvGenerics, CSVSupport,
-  FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
-  QuestionnaireRenderer,
+  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal,
+  FHIR.Support.Generics, FHIR.Support.Text,
+  FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session,
+  FHIR.Tools.Questionnaire2,
   BaseResourceFrame,
   ToolkitUtilities, QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel, TranslationsEditorDialog, UsageContextForm;
 

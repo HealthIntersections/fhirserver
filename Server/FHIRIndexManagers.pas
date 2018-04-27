@@ -47,12 +47,12 @@ combinations to enable:
 }
 uses
   SysUtils, Classes, Generics.Collections,
-  AdvObjects, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvGenerics,
-  EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport, DateSupport, KCritSct,
+  FHIR.Support.Objects,  FHIR.Support.Xml, FHIR.Support.Generics,
+  FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Lock,
   FHIR.Database.Manager,
-  FHIRBase, FHIRIndexBase, FHIRContext, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities, FHIRXhtml,
+  FHIR.Base.Objects, FHIR.Tools.Indexing, FHIR.Tools.Context, FHIR.Tools.Session, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Tags, FHIR.Tools.Utilities, FHIR.Tools.Parser, FHIR.Tools.PathEngine, FHIR.Tools.Profiles, FHIR.Base.Xhtml,
   TerminologyServer, ServerUtilities,
-  FHIR.Ucum.Services, UcumServiceInterface;
+  FHIR.Ucum.Services, FHIR.Ucum.IFace;
 
 Const
   INDEX_ENTRY_LENGTH = 210;
@@ -363,7 +363,7 @@ function normaliseDecimal(v : String): String;
 implementation
 
 uses
-  FHIRIndexInformation;
+  FHIR.Tools.IndexInfo;
 
 Function EncodeNYSIISValue(value : TFhirString) : String; overload;
 begin

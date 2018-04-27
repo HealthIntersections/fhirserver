@@ -33,7 +33,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.ListBox, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIRResources;
+  FHIR.Tools.Resources;
 
 type
   TOrganizationSelectionForm = class(TForm)

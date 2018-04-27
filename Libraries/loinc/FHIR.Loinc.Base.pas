@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses 
-  AdvNames,
+  
   AdvPersistentLists;
 
 Type

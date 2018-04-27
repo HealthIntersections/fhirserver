@@ -31,9 +31,9 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Math, KCritSct,
-  AdvObjects, AdvStringMatches,
-  HTMLPublisher, FHIR.LOINC.Services;
+  SysUtils, Classes, Math, FHIR.Support.Lock,
+  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Web.HtmlGen, FHIR.LOINC.Services;
 
 Const
   MAX_ROWS = 50;
@@ -63,7 +63,7 @@ Type
     Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher);
     function descLength(i: cardinal): String;
   Public
-    Constructor Create(oLoinc : TLoincServices; FHIRPath, lang : String);
+    Constructor Create(oLoinc : TLoincServices; FHIRPathEngine, lang : String);
     Destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;
@@ -72,8 +72,7 @@ Type
 Implementation
 
 Uses
-  EncodeSupport,
-  StringSupport;
+  FHIR.Support.Strings;
 
 function StringToBoolDef(s : String; def : boolean):boolean;
 begin
@@ -832,7 +831,7 @@ begin
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FLoinc := oLoinc.Link;
-  FFHIRPath := FHIRPath;
+  FFHIRPath := FHIRPathEngine;
   langs := FLoinc.langsForLang(lang);
 end;
 

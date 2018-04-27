@@ -93,7 +93,7 @@
         <DCC_MapFile>3</DCC_MapFile>
         <VerInfo_Build>0</VerInfo_Build>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-        <DCC_UnitAlias>FHIRAuthMap=FHIRAuthMap3;FHIRConstants=FHIRConstants3;FHIRContext=FHIRContext3;FHIRIndexInformation=FHIRIndexInformation3;FHIRJavascriptReg=FHIRJavascriptReg3;FHIRMetaModel=FHIRMetaModel3;FHIRNarrativeGenerator=FHIRNarrativeGenerator3;FHIROperations=FHIROperations3;FHIRParserJson=FHIRParserJson3;FHIRParserTurtle=FHIRParserTurtle3;FHIRParserXml=FHIRParserXml3;FHIRPathNode=FHIRPathNode3;FHIRProfileUtilities=FHIRProfileUtilities3;FHIRResources=FHIRResources3;FHIRStructureMapUtilities=FHIRStructureMapUtilities3;FHIRTags=FHIRTags3;FHIRTestWorker=FHIRTestWorker3;FHIRTypes=FHIRTypes3;FHIRUtilities=FHIRUtilities3;FHIRValidator=FHIRValidator3;FhirOpBase=FhirOpBase3;FhirPath=FhirPath3;NarrativeGenerator=NarrativeGenerator3;QuestionnaireBuilder=QuestionnaireBuilder3;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R3.AuthMap;FHIR.Tools.Constants=FHIR.R3.Constants;FHIR.Tools.Context=FHIR.R3.Context;FHIR.Tools.IndexInfo=FHIR.R3.IndexInfo;FHIR.Tools.Javascript=FHIR.R3.Javascript;FHIR.Tools.ElementModel=FHIR.R3.ElementModel;FHIR.Tools.Narrative=FHIR.R3.Narrative;FHIR.Tools.Operations=FHIR.R3.Operations;FHIR.Tools.Json=FHIR.R3.Json;FHIR.Tools.Turtle=FHIR.R3.Turtle;FHIR.Tools.Xml=FHIR.R3.Xml;FHIR.Tools.PathNode=FHIR.R3.PathNode;FHIR.Tools.Profiles=FHIR.R3.Profiles;FHIR.Tools.Resources=FHIR.R3.Resources;FHIR.Tools.MapUtilities=FHIR.R3.MapUtilities;FHIR.Tools.Tags=FHIR.R3.Tags;FHIRTestWorker=FHIRTestWorker3;FHIR.Tools.Types=FHIR.R3.Types;FHIR.Tools.Utilities=FHIR.R3.Utilities;FHIR.Tools.Validator=FHIR.R3.Validator;FHIR.Tools.OpBase=FHIR.R3.OpBase;FHIR.Tools.PathEngine=FHIR.R3.PathEngine;FHIR.Tools.Narrative2=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire=FHIR.R3.Questionnaire;$(DCC_UnitAlias)</DCC_UnitAlias>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -120,127 +120,81 @@
             <Form>FHIRToolbox</Form>
         </DCCReference>
         <DCCReference Include="FHIRPluginSettings.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRValidator3.pas"/>
-        <DCCReference Include="..\reference-platform\Support\StringSupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\MathSupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvObjects.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvExceptions.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvFactories.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FileSupport.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Strings.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Math.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Objects.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Exceptions.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.System.pas"/>
         <DCCReference Include="..\reference-platform\Support\MemorySupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\DateSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.DateTime.pas"/>
         <DCCReference Include="..\reference-platform\Support\ErrorSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\SystemSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\ThreadSupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\EncodeSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvControllers.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvPersistents.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvFilers.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Filers.pas"/>
         <DCCReference Include="..\reference-platform\Support\ColourSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\CurrencySupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvPersistentLists.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvObjectLists.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvItems.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvCollections.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvIterators.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvClassHashes.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvHashes.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\reference-platform\Support\HashSupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStringHashes.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvProfilers.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStringIntegerMatches.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStreams.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvParameters.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvExclusiveCriticalSections.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvThreads.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvSignals.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvIntegerMatches.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvBuffers.pas"/>
-        <DCCReference Include="..\reference-platform\Support\BytesSupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStringBuilders.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvFiles.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvLargeIntegerMatches.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStringLargeIntegerMatches.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStringLists.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvCSVFormatters.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvTextFormatters.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvFormatters.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvCSVExtractors.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvTextExtractors.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvExtractors.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvCharacterSets.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvOrdinalSets.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStreamReaders.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStringStreams.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvGenerics.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvJSON.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvVCLStreams.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStringObjectMatches.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvNameBuffers.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvMemories.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
-        <DCCReference Include="..\reference-platform\Support\DecimalSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Binary.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Generics.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Json.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Base.Objects.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Decimal.pas"/>
         <DCCReference Include="..\reference-platform\Support\GUIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\HL7V2DateSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvNames.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvStringMatches.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRUtilities3.pas"/>
-        <DCCReference Include="..\reference-platform\Support\OIDSupport.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\Support\TextUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Tools.Session.pas"/>
         <DCCReference Include="..\reference-platform\Support\JWT.pas"/>
         <DCCReference Include="..\reference-platform\Support\HMAC.pas"/>
         <DCCReference Include="..\reference-platform\Support\libeay32.pas"/>
-        <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRResources3.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRTypes3.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRConstants3.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRTags3.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AfsResourceVolumes.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AfsVolumes.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AfsStreamManagers.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvObjectMatches.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRParser.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParserXml3.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParserJson3.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParserTurtle3.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Base.Scim.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Types.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Constants.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Tools.Security.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Tags.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Base.Lang.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Tools.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Xml.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Json.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Turtle.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\reference-platform\Support\MsXmlParser.pas"/>
-        <DCCReference Include="..\reference-platform\Support\XMLBuilder.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvWinInetClients.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.WInInet.pas"/>
         <DCCReference Include="..\reference-platform\support\MXmlBuilder.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvXmlBuilders.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvXMLFormatters.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvXMLEntities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities3.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvZipReaders.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvZipDeclarations.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvZipParts.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvZipUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvZipWorkers.pas"/>
-        <DCCReference Include="..\reference-platform\Support\kCritSct.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Profiles.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="FHIRPluginValidator.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIRClient.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Tools.Client.pas"/>
         <DCCReference Include="NewResourceForm.pas">
             <Form>ResourceNewForm</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRNarrativeGenerator3.pas"/>
-        <DCCReference Include="..\reference-platform\client\EditRegisteredServerDialog.pas">
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.ServerDialog.pas">
             <Form>EditRegisteredServerForm</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\Support\ParseMap.pas"/>
-        <DCCReference Include="..\reference-platform\client\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.SmartUtilities.pas"/>
         <DCCReference Include="FetchResourceForm.pas">
             <Form>FetchResourceFrm</Form>
         </DCCReference>
         <DCCReference Include="..\..\Components\treeview\Source\VirtualTrees.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRPath3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathEngine.pas"/>
         <DCCReference Include="FHIRPathDocumentation.pas">
             <Form>FHIRPathDocumentationForm</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\Support\MimeMessage.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Mime.pas"/>
         <DCCReference Include="PathDialogForms.pas">
             <Form>PathDialogForm</Form>
         </DCCReference>
@@ -250,7 +204,7 @@
         <DCCReference Include="FHIRVisualiser.pas">
             <Form>FHIRVisualizer</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRPathDebugger3.pas">
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathDebugger.pas">
             <Form>FHIRPathDebuggerForm</Form>
         </DCCReference>
         <DCCReference Include="WelcomeScreen.pas">
@@ -261,52 +215,54 @@
             <Form>UpgradePromptForm</Form>
         </DCCReference>
         <DCCReference Include="PluginUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Utilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
-        <DCCReference Include="..\reference-platform\Support\ShellSupport.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Shell.pas"/>
         <DCCReference Include="CDSBrowserForm.pas">
             <Form>CDSBrowser</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRMetaModel3.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRXhtml.pas"/>
-        <DCCReference Include="..\reference-platform\support\InternetFetcher.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRContext3.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRStructureMapUtilities3.pas"/>
-        <DCCReference Include="..\reference-platform\support\DifferenceEngine.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.Rdf.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.ElementModel.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Base.Xhtml.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.Fetcher.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Context.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.MapUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Tools.DiffEngine.pas"/>
         <DCCReference Include="ResDisplayForm.pas">
             <Form>ResourceDisplayForm</Form>
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
-        <DCCReference Include="..\reference-platform\support\MXML.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\reference-platform\support\ParserSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
         <DCCReference Include="CodeGenerationForm.pas">
             <Form>CodeGeneratorForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\support\FHIRCodeGenerator.pas"/>
-        <DCCReference Include="..\reference-platform\support\TurtleParser.pas"/>
-        <DCCReference Include="..\reference-platform\client\SmartOnFhirLogin.pas">
+        <DCCReference Include="..\reference-platform\support\FHIR.Tools.CodeGen.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.SmartLogin.pas">
             <Form>SmartOnFhirLoginForm</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIRClientSettings.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
-        <DCCReference Include="..\reference-platform\support\DigitalSignatures.pas"/>
-        <DCCReference Include="..\reference-platform\support\UcumServiceInterface.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRPathNode3.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParserBase3.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRBase3.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRXhtmlComposer.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIRExpressionComposer.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParser3.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIRClientBase.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRClient3.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIRClientHTTP.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIRClientThreaded.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Client.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Settings.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Tools.Indexing.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathNode.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.ParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Base.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Tools.XhtmlComp.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Tools.ExpressionComposer.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Base.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Client.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.HTTP.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Threaded.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Text.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Zip.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

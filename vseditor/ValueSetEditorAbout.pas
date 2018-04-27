@@ -60,7 +60,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRConstants;
+  FHIR.Tools.Constants;
 
 procedure TValueSetEditorAboutForm.FormCreate(Sender: TObject);
 begin

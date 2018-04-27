@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, Sysutils, DUnitX.TestFramework,
-  TextUtilities,
+  FHIR.Support.Text,
   IETFLanguageCodeServices;
 
 

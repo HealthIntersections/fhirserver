@@ -39,7 +39,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.StdCtrls, Vcl.ExtCtrls, NppForms,
   SystemSupport,
-  FHIRResources, FHIRUtilities, clipbrd, NppPlugin, Vcl.OleCtrls, SHDocVw, ActiveX, TextUtilities;
+  FHIR.Tools.Resources, FHIR.Tools.Utilities, clipbrd, NppPlugin, Vcl.OleCtrls, SHDocVw, ActiveX, TextUtilities;
 
 const
   MIN_COL_WIDTH = 260;

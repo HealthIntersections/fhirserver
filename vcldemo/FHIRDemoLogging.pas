@@ -13,9 +13,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  DateSupport, EncodeSupport,
-  JWT, SmartOnFhirUtilities,
-  FHIRBase, FHIRTypes, FHIRClient, FHIRResources, FHIRConstants, FHIRUtilities;
+  FHIR.Support.DateTime, FHIR.Support.Strings,
+  JWT, FHIR.Client.SmartUtilities,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Client, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities;
 
 type
   TLoggingService = {abstract} class

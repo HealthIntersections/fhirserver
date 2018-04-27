@@ -7,8 +7,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Memo,
   FMX.ScrollBox, FMX.Edit, FMX.StdCtrls, FMX.Controls.Presentation,
-  AdvGenerics,
-  FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIR.Support.Generics,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
   ToolKitUtilities;
 
 type

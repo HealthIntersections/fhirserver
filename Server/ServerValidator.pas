@@ -33,9 +33,9 @@ Interface
 
 Uses
   SysUtils, Classes,
-  StringSupport, kCritSct,
-  AdvObjects, AdvGenerics, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRTypes, FHIRResources, FHIRParser, FHIRContext, FHIRUtilities, FHIRSupport, FHIRProfileUtilities, FHIRConstants,
+  FHIR.Support.Strings, FHIR.Support.Lock,
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Zip,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Context, FHIR.Tools.Utilities, FHIR.Tools.Session, FHIR.Tools.Profiles, FHIR.Tools.Constants,
   TerminologyServer;
 
 Type

@@ -4,10 +4,10 @@ interface
 
 uses
   SysUtils, Classes,
-  DateSupport, StringSupport,
+  FHIR.Support.DateTime, FHIR.Support.Strings,
   FHIR.Javascript,
-  AdvObjects,
-  FHIRBase, FHIRResources, FHIRClient, FHIRUtilities, FHIRSupport;
+  FHIR.Support.Objects,
+  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Session;
 
 type
   TFHIRServerJSHelper = class (TAdvObject)

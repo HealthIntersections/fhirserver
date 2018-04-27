@@ -33,9 +33,9 @@ interface
 
 uses
   SysUtils,
-  AdvObjects,
+  FHIR.Support.Objects,
   IdContext, IdCustomHTTPServer,
-  FHIRSupport, SCIMObjects,
+  FHIR.Tools.Session, FHIR.Base.Scim,
   ServerUtilities;
 
 Const

@@ -34,10 +34,10 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, IniFiles,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Menus, FMX.Platform,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Edit, IOUtils,
-  OSXUIUtils,
-  FileSupport, SystemSupport, kCritSct, StringSupport, DateSupport,
-  FHIRBase, FHIRResources, FHIRParser, FHIRSecurity,
-  FHIRServerContext, FHIRUserProvider, FHIRStorageService, FHIRRestServer, ServerUtilities, FHIRLog,
+  FHIR.Ui.OSX,
+  FHIR.Support.System, SystemSupport, FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Security,
+  FHIRServerContext, FHIRUserProvider, FHIRStorageService, FHIRRestServer, ServerUtilities, FHIR.Debug.Logging,
   VocabPocServerCore, TerminologyServer, WebSourceProvider;
 
 const

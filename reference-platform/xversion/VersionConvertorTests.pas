@@ -5,9 +5,9 @@ interface
 uses
   SysUtils,
   DUnitX.TestFramework,
-  TextUtilities,
-  FHIRBase, FHIRParserBase,
-  FHIRParser3, FHIRParser4,
+  FHIR.Support.Text,
+  FHIR.Base.Objects, FHIR.Base.Parser,
+  FHIR.R3.Parser, FHIR.R4.Parser,
   FhirVersionConvertors;
 
 type

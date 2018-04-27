@@ -31,10 +31,10 @@ interface
 
 uses
   SysUtils,
-  DateSupport, KCritSct, StringSupport,
-  AdvObjects, AdvGenerics, AdvCSVExtractors, AdvStringLists, AdvFiles,
+  FHIR.Support.DateTime, FHIR.Support.Lock, FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Generics, AdvCSVExtractors, AdvStringLists, AdvFiles,
   FHIR.Database.Manager,
-  FHIRBase, FHIRConstants, FHIRTypes, FHIRResources;
+  FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources;
 
 // fake name generator
 

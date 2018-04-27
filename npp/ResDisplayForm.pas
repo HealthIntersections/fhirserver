@@ -34,7 +34,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, TextUtilities, NppForms, NppPlugin,
-  Vcl.OleCtrls, SHDocVw, Vcl.ComCtrls, FileSupport, SystemSupport;
+  Vcl.OleCtrls, SHDocVw, Vcl.ComCtrls, FHIR.Support.System, SystemSupport;
 
 type
   TResourceDisplayForm = class(TNppForm)

@@ -35,7 +35,7 @@ uses
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   IniFiles,
   SystemSupport,
-  FHIRClient,
+  FHIR.Tools.Client,
   ServerForm;
 
 type

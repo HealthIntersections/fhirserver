@@ -32,11 +32,11 @@ interface
 uses
   Windows, Sysutils, Classes, IniFiles,
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
-  DateSupport, StringSupport, FileSupport,
-  AdvObjects, AdvGenerics, AdvStringBuilders,
-  FHIRConstants, FHIRBase, FHIRLang, FHIRTypes, FHIRResources, FHIRSupport, FHIRUtilities,
-  FHIRClient, SCIMObjects,
-  SmartOnFhirUtilities, SmartOnFhirTestingLogin,
+  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.System,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Tools.Constants, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Utilities,
+  FHIR.Tools.Client, FHIR.Base.Scim,
+  FHIR.Client.SmartUtilities, SmartOnFhirTestingLogin,
   FHIRServerConstants, ServerUtilities, FHIRServerContext, FHIRStorageService, FHIRUserProvider,
   FHIRRestServer, WebSourceProvider;
 

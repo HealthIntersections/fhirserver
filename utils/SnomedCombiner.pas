@@ -33,8 +33,8 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  ThreadSupport, GuidSupport, FileSupport, StringSupport,
-  AdvGenerics, AdvObjects,
+  ThreadSupport, GuidSupport, FHIR.Support.System, FHIR.Support.Strings,
+  FHIR.Support.Generics, FHIR.Support.Objects,
   FHIR.Snomed.Services;
 
 Type

@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  AdvObjects, System.Generics.Defaults, FHIRBase, FHIRPathNode;
+  FHIR.Support.Objects, System.Generics.Defaults, FHIR.Base.Objects, FHIR.Tools.PathNode;
 
 type
   TTreeDataPointer = record

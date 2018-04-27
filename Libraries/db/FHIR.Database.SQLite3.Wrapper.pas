@@ -38,7 +38,7 @@ interface
 uses
   SysUtils, Classes, Types,
   FHIR.Database.SQLite3.Objects,
-  DateSupport;
+  FHIR.Support.DateTime;
 
 type
   ESQLite3Error = class(Exception);

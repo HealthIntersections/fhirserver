@@ -32,11 +32,10 @@ Interface
 
 Uses
   SysUtils,
-  DecimalSupport,
+  FHIR.Support.Decimal,
   FHIR.Ucum.Base,
-  AdvStringLists,
-  AdvNames,
-  AdvObjects;
+  
+  FHIR.Support.Objects, FHIR.Support.Collections;
 
 Type
   TUcumUnitHandler = class (TAdvName)

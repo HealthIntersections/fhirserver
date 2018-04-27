@@ -54,10 +54,10 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
-  StringSupport, FileSupport, BytesSupport, MathSupport,
-  AdvStringLists, AdvObjectLists, AdvObjects, AdvGenerics,
-  YuStemmer, DateSupport,
-  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
+  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Math,
+  FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Generics,
+  YuStemmer, FHIR.Support.DateTime,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations,
   FHIR.Snomed.Expressions, TerminologyServices;
 
 Const

@@ -39,10 +39,10 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
 
-  StringSupport, DateSupport,
-  AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
+  FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
   FHIR.Database.Manager,
-  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations, FHIRSupport,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations, FHIR.Tools.Session,
   TerminologyServices, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
   IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, FHIR.Snomed.Expressions;
@@ -126,8 +126,8 @@ Type
 implementation
 
 uses
-  FHIRLog,
-  FHIRConstants,
+  FHIR.Debug.Logging,
+  FHIR.Tools.Constants,
   FHIRValueSetExpander;
 
 

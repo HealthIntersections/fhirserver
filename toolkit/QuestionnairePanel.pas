@@ -33,7 +33,7 @@ uses
   Sysutils, Classes, Generics.Collections, UITypes, Types,
   FMX.Controls, FMX.StdCtrls, FMX.ImgList, FMX.Layouts, FMX.Objects,
   FMX.Dialogs, FMX.Graphics, FMX.DialogService,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
   ToolKitSettings, BaseFrame,
   QuestionnaireItemPanel, QuestionnaireItemDialog;
 

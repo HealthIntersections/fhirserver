@@ -35,10 +35,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, GuidSupport, ThreadSupport,
-  AdvObjects, AdvExceptions,
-  FHIR.Database.Manager, KDBDialects, TextUtilities,
-  FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
+  SysUtils, Classes, FHIR.Support.System,
+  FHIR.Support.Objects, FHIR.Support.Exceptions,
+  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Text,
+  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRIndexManagers, FHIR.Tools.Utilities,
   SCIMServer;
 
 const

@@ -33,11 +33,11 @@ interface
 
 uses
   SysUtils, Classes, DUnitX.TestFramework, Variants, IOUtils,
-  StringSupport, TextUtilities, FileSupport,
-  AdvObjects, AdvGenerics,
-  MXML,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRParser,
-  GraphQL, FHIRGraphQL, GraphDefinitionEngine,
+  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.MXml,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser,
+  FHIR.Misc.GraphQL, FHIR.Tools.GraphQL, GraphDefinitionEngine,
   FHIRTestWorker, JsonTests;
 
 type

@@ -32,9 +32,9 @@ interface
 uses
   SysUtils, Classes,
   IdContext,
-  AdvGenerics, AdvJson,
-  FHIRSupport, FHIRTypes, FHIRResources, FHIRUtilities,
-  CDSHooksUtilities,
+  FHIR.Support.Generics, FHIR.Support.Json,
+  FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
+  FHIR.CdsHooks.Utilities,
   CDSHooksServer, FHIRServerContext, FHIRStorageService;
 
 type

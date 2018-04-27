@@ -4,10 +4,10 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  StringSupport, DateSupport, EncodeSupport,
-  AdvObjects,
-  ParseMap,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRSupport, FHIRClient, FHIRUtilities,
+  FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Support.Objects,
+  FHIR.Web.ParseMap,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Client, FHIR.Tools.Utilities,
   FHIRServerContext;
 
 Type

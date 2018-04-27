@@ -32,8 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  AdvObjects,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRSupport, FHIRSecurity;
+  FHIR.Support.Objects,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Security;
 
 Type
   TAccessControlEngine = {abstract} class (TAdvObject)

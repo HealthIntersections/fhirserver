@@ -33,10 +33,10 @@ interface
 
 uses
   SysUtils, Classes, DUnitX.TestFramework, Variants,
-  StringSupport, TextUtilities,
-  AdvObjects, AdvGenerics,
-  MXML,
-  GraphQL, FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRGraphQL,
+  FHIR.Support.Strings, FHIR.Support.Text,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.MXml,
+  FHIR.Misc.GraphQL, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.GraphQL,
   FHIRTestWorker, JsonTests;
 
 type

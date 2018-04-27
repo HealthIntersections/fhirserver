@@ -33,10 +33,10 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport,
-  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
+  FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Text,
   FHIR.Database.Manager,
-  FHIRTypes, FHIRResources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
 
 type
   TUriHolder = class (TCodeSystemProviderContext)

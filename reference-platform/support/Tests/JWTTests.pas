@@ -33,9 +33,9 @@ Interface
 
 Uses
   SysUtils,
-  StringSupport, GuidSupport,
-  AdvObjects, AdvJson,
-  libeay32, JWT,
+  FHIR.Support.Strings, FHIR.Support.System,
+  FHIR.Support.Objects, FHIR.Support.Json,
+  FHIR.Support.Certs,
   DUnitX.TestFramework;
 
 Type

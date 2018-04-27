@@ -30,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIRResources,
-  FHIRUtilities,
+  FHIR.Tools.Resources,
+  FHIR.Tools.Utilities,
   CDSHooksServer;
 
 type

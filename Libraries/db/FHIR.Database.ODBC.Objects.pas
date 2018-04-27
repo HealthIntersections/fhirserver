@@ -40,8 +40,8 @@ interface
 
 Uses
   SysUtils, Classes, FHIR.Database.ODBC.Headers,
-  StringSupport, MathSupport, DateSupport,
-  KDBDialects;
+  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime,
+  FHIR.Database.Dialects;
 
 const
   EnterString = #0#0;
@@ -690,7 +690,7 @@ Type
     Function GetColInt64(Col: SQLUSMALLINT): Int64;
     Function GetColDate(Col: SQLUSMALLINT): TDate;
     Function GetColTime(Col: SQLUSMALLINT): TTime;
-    Function GetColTimeStamp(Col: SQLUSMALLINT): DateSupport.TTimeStamp;
+    Function GetColTimeStamp(Col: SQLUSMALLINT): FHIR.Support.DateTime.TTimeStamp;
     Function GetColMemory(Col: SQLUSMALLINT): TMemoryStream;
     Function GetColVariant(Col: SQLUSMALLINT): Variant;
 
@@ -725,7 +725,7 @@ Type
     Procedure SetColTime(Col: SQLUSMALLINT;
                          AValue: TTime);
     Procedure SetColTimeStamp(Col: SQLUSMALLINT;
-                              AValue: DateSupport.TTimeStamp);
+                              AValue: FHIR.Support.DateTime.TTimeStamp);
     Procedure SetColMemory(Col: SQLUSMALLINT;
                            AValue: TMemoryStream);
     Procedure SetColVariant(Col: SQLUSMALLINT;
@@ -746,7 +746,7 @@ Type
     Function GetColInt64ByName(ColName: String): Int64;
     Function GetColDateByName(ColName: String): TDate;
     Function GetColTimeByName(ColName: String): TTime;
-    Function GetColTimeStampByName(ColName: String): DateSupport.TTimeStamp;
+    Function GetColTimeStampByName(ColName: String): FHIR.Support.DateTime.TTimeStamp;
     Function GetColMemoryByName(ColName: String): TMemoryStream;
     Function GetColVariantByName(ColName: String): Variant;
 
@@ -781,7 +781,7 @@ Type
     Procedure SetColTimeByName(ColName: String;
                                AValue: TTime);
     Procedure SetColTimeStampByName(ColName: String;
-                                    AValue: DateSupport.TTimeStamp);
+                                    AValue: FHIR.Support.DateTime.TTimeStamp);
     Procedure SetColMemoryByName(ColName: String;
                                  AValue: TMemoryStream);
     Procedure SetColVariantByName(ColName: String;
@@ -802,7 +802,7 @@ Type
     Function GetCellInt64(Col, Row: SQLUSMALLINT): Int64;
     Function GetCellDate(Col, Row: SQLUSMALLINT): TDate;
     Function GetCellTime(Col, Row: SQLUSMALLINT): TTime;
-    Function GetCellTimeStamp(Col, Row: SQLUSMALLINT): DateSupport.TTimeStamp;
+    Function GetCellTimeStamp(Col, Row: SQLUSMALLINT): FHIR.Support.DateTime.TTimeStamp;
     Function GetCellMemory(Col, Row: SQLUSMALLINT): TMemoryStream;
     Function GetCellVariant(Col, Row: SQLUSMALLINT): Variant;
 
@@ -837,7 +837,7 @@ Type
     Procedure SetCellTime(Col, Row: SQLUSMALLINT;
                           AValue: TTime);
     Procedure SetCellTimeStamp(Col, Row: SQLUSMALLINT;
-                               AValue: DateSupport.TTimeStamp);
+                               AValue: FHIR.Support.DateTime.TTimeStamp);
     Procedure SetCellMemory(Col, Row: SQLUSMALLINT;
                             AValue: TMemoryStream);
     Procedure SetCellVariant(Col, Row: SQLUSMALLINT;
@@ -874,7 +874,7 @@ Type
     Function GetCellTimeByName(ColName: String;
                                Row: SQLUSMALLINT): TTime;
     Function GetCellTimeStampByName(ColName: String;
-                                    Row: SQLUSMALLINT): DateSupport.TTimeStamp;
+                                    Row: SQLUSMALLINT): FHIR.Support.DateTime.TTimeStamp;
     Function GetCellMemoryByName(ColName: String;
                                  Row: SQLUSMALLINT): TMemoryStream;
     Function GetCellVariantByName(ColName: String;
@@ -927,7 +927,7 @@ Type
                                 AValue: TTime);
     Procedure SetCellTimeStampByName(ColName: String;
                                      Row: SQLUSMALLINT;
-                                     AValue: DateSupport.TTimeStamp);
+                                     AValue: FHIR.Support.DateTime.TTimeStamp);
     Procedure SetCellMemoryByName(ColName: String;
                                   Row: SQLUSMALLINT;
                                   AValue: TMemoryStream);
@@ -1044,7 +1044,7 @@ Type
     Procedure BindTime(Param: SQLUSMALLINT;
                        Var ParamValue: TTime);
     Procedure BindTimeStamp(Param: SQLUSMALLINT;
-                            Var ParamValue: DateSupport.TTimeStamp);
+                            Var ParamValue: FHIR.Support.DateTime.TTimeStamp);
     Procedure BindMemory(Param: SQLUSMALLINT;
                          Var ParamValue: TMemoryStream;
                          Binary: Boolean);
@@ -1083,7 +1083,7 @@ Type
     Procedure BindTimeByName(ParamName: String;
                              Var ParamValue: TTime);
     Procedure BindTimeStampByName(ParamName: String;
-                                  Var ParamValue: DateSupport.TTimeStamp);
+                                  Var ParamValue: FHIR.Support.DateTime.TTimeStamp);
     Procedure BindMemoryByName(ParamName: String;
                                Var ParamValue: TMemoryStream;
                                Binary: Boolean);
@@ -1120,7 +1120,7 @@ Type
     Procedure BindTimes(Param: SQLUSMALLINT;
                         Var ParamValue: Array Of TTime);
     Procedure BindTimeStamps(Param: SQLUSMALLINT;
-                             Var ParamValue: Array Of DateSupport.TTimeStamp);
+                             Var ParamValue: Array Of FHIR.Support.DateTime.TTimeStamp);
 
     Procedure BindNullsByName(ParamName: String);
     Procedure BindSinglesByName(ParamName: String;
@@ -1150,7 +1150,7 @@ Type
     Procedure BindTimesByName(ParamName: String;
                               Var ParamValue: Array Of TTime);
     Procedure BindTimeStampsByName(ParamName: String;
-                                   Var ParamValue: Array Of DateSupport.TTimeStamp);
+                                   Var ParamValue: Array Of FHIR.Support.DateTime.TTimeStamp);
 
     Property Handle: SQLHSTMT Read GetHandle;
     Property Active: Boolean Read FActive;
@@ -1214,7 +1214,7 @@ Type
     Property ColInt64[Col: SQLUSMALLINT]: Int64 Read GetColInt64 Write SetColInt64;
     Property ColDate[Col: SQLUSMALLINT]: TDate Read GetColDate Write SetColDate;
     Property ColTime[Col: SQLUSMALLINT]: TTime Read GetColTime Write SetColTime;
-    Property ColTimeStamp[Col: SQLUSMALLINT]: DateSupport.TTimeStamp Read GetColTimeStamp Write SetColTimeStamp;
+    Property ColTimeStamp[Col: SQLUSMALLINT]: FHIR.Support.DateTime.TTimeStamp Read GetColTimeStamp Write SetColTimeStamp;
     Property ColMemory[Col: SQLUSMALLINT]: TMemoryStream Read GetColMemory Write SetColMemory;
     Property ColVariant[Col: SQLUSMALLINT]: Variant Read GetColVariant Write SetColVariant;
 
@@ -1233,7 +1233,7 @@ Type
     Property ColInt64ByName[ColName: String]: Int64 Read GetColInt64ByName Write SetColInt64ByName;
     Property ColDateByName[ColName: String]: TDate Read GetColDateByName Write SetColDateByName;
     Property ColTimeByName[ColName: String]: TTime Read GetColTimeByName Write SetColTimeByName;
-    Property ColTimeStampByName[ColName: String]: DateSupport.TTimeStamp Read GetColTimeStampByName Write SetColTimeStampByName;
+    Property ColTimeStampByName[ColName: String]: FHIR.Support.DateTime.TTimeStamp Read GetColTimeStampByName Write SetColTimeStampByName;
     Property ColMemoryByName[ColName: String]: TMemoryStream Read GetColMemoryByName Write SetColMemoryByName;
     Property ColVariantByName[ColName: String]: Variant Read GetColVariantByName Write SetColVariantByName;
 
@@ -1252,7 +1252,7 @@ Type
     Property CellInt64[Col, Row: SQLUSMALLINT]: Int64 Read GetCellInt64 Write SetCellInt64;
     Property CellDate[Col, Row: SQLUSMALLINT]: TDate Read GetCellDate Write SetCellDate;
     Property CellTime[Col, Row: SQLUSMALLINT]: TTime Read GetCellTime Write SetCellTime;
-    Property CellTimeStamp[Col, Row: SQLUSMALLINT]: DateSupport.TTimeStamp Read GetCellTimeStamp Write SetCellTimeStamp;
+    Property CellTimeStamp[Col, Row: SQLUSMALLINT]: FHIR.Support.DateTime.TTimeStamp Read GetCellTimeStamp Write SetCellTimeStamp;
     Property CellMemory[Col, Row: SQLUSMALLINT]: TMemoryStream Read GetCellMemory Write SetCellMemory;
     Property CellVariant[Col, Row: SQLUSMALLINT]: Variant Read GetCellVariant Write SetCellVariant;
 
@@ -1287,7 +1287,7 @@ Type
     Property CellTimeByName[ColName: String;
                             Row: SQLUSMALLINT]: TTime Read GetCellTimeByName Write SetCellTimeByName;
     Property CellTimeStampByName[ColName: String;
-                                 Row: SQLUSMALLINT]: DateSupport.TTimeStamp Read GetCellTimeStampByName Write SetCellTimeStampByName;
+                                 Row: SQLUSMALLINT]: FHIR.Support.DateTime.TTimeStamp Read GetCellTimeStampByName Write SetCellTimeStampByName;
     Property CellMemoryByName[ColName: String;
                               Row: SQLUSMALLINT]: TMemoryStream Read GetCellMemoryByName Write SetCellMemoryByName;
     Property CellVariantByName[ColName: String;
@@ -2049,7 +2049,7 @@ Function ToInteger(CValue: SQLPOINTER;
 Function ToInt64(CValue: SQLPOINTER;
                  CType: SQLSMALLINT): Int64;
 Function ToTimeStamp(CValue: SQLPOINTER;
-                     CType: SQLSMALLINT): DateSupport.TTimeStamp;
+                     CType: SQLSMALLINT): FHIR.Support.DateTime.TTimeStamp;
 function NullTS: TTimeStamp;
 
 { Private Utilities }
@@ -2478,7 +2478,7 @@ Begin
     Begin
       Result:= False;
       If Length(SValue) >= 21 Then
-        With DateSupport.TTimeStamp(CValue^) Do
+        With FHIR.Support.DateTime.TTimeStamp(CValue^) Do
         Begin
           Val(SValue[1]+SValue[2]+SValue[3]+SValue[4], Year, Code);
           If Code = 0 Then
@@ -2559,7 +2559,7 @@ Begin
       With TTime(CValue^) Do
         Result:= LeadingZeros(Hour, 1)+':'+LeadingZeros(Minute, 1)+':'+LeadingZeros(Second, 1);
     SQL_C_TYPE_TIMESTAMP:
-      With DateSupport.TTimeStamp(CValue^) Do
+      With FHIR.Support.DateTime.TTimeStamp(CValue^) Do
         Result:= LeadingZeros(Year, 1)+'-'+LeadingZeros(Month, 1)+'-'+LeadingZeros(Day, 1)+' '+
           LeadingZeros(Hour, 1)+':'+LeadingZeros(Minute, 1)+':'+LeadingZeros(Second, 1)+'.'+
           LeadingZeros(Fraction, Fractional-1);
@@ -2679,7 +2679,7 @@ Begin
 End;
 
 Function ToTimeStamp(CValue: SQLPOINTER;
-                     CType: SQLSMALLINT): DateSupport.TTimeStamp;
+                     CType: SQLSMALLINT): FHIR.Support.DateTime.TTimeStamp;
 Begin
   Result:= NullTS;
   Case CType Of
@@ -2697,7 +2697,7 @@ Begin
     End;
     SQL_C_TYPE_TIMESTAMP:
     Begin
-      Result:= DateSupport.TTimeStamp(CValue^);
+      Result:= FHIR.Support.DateTime.TTimeStamp(CValue^);
     End;
   End;
 End;
@@ -4811,7 +4811,7 @@ Begin
       UpperSQL:= StringReplace(UpperSQL, ',', ' ', [rfReplaceAll, rfIgnoreCase]);
       UpperSQL:= StringReplace(UpperSQL, '(', ' ', [rfReplaceAll, rfIgnoreCase]);
       UpperSQL:= StringReplace(UpperSQL, ')', ' ', [rfReplaceAll, rfIgnoreCase]);
-      UpperSQL:= StringSupport.StringReplace(UpperSQL, StringSupport.setControls, ' ');
+      UpperSQL:= FHIR.Support.Strings.StringReplace(UpperSQL, FHIR.Support.Strings.setControls, ' ');
 
       FromLoc:= Pos(' FROM ', UpperSQL);
       If (FromLoc > 0) And
@@ -5495,7 +5495,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.BindTimeStamp(Param: SQLUSMALLINT;
-                               Var ParamValue: DateSupport.TTimeStamp);
+                               Var ParamValue: FHIR.Support.DateTime.TTimeStamp);
 Var
   ParamType: SQLSMALLINT;
 Begin
@@ -5619,7 +5619,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.BindTimeStampByName(ParamName: String;
-                                     Var ParamValue: DateSupport.TTimeStamp);
+                                     Var ParamValue: FHIR.Support.DateTime.TTimeStamp);
 Begin
   BindTimeStamp(ParamByName(ParamName), ParamValue);
 End;
@@ -5771,7 +5771,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.BindTimeStamps(Param: SQLUSMALLINT;
-                                Var ParamValue: Array Of DateSupport.TTimeStamp);
+                                Var ParamValue: Array Of FHIR.Support.DateTime.TTimeStamp);
 Var
   ParamType: SQLSMALLINT;
 Begin
@@ -5863,7 +5863,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.BindTimeStampsByName(ParamName: String;
-                                      Var ParamValue: Array Of DateSupport.TTimeStamp);
+                                      Var ParamValue: Array Of FHIR.Support.DateTime.TTimeStamp);
 Begin
   BindTimeStamps(ParamByName(ParamName), ParamValue);
 End;
@@ -7511,7 +7511,7 @@ Begin
   Result:= GetCellTime(Col, 1);
 End;
 
-Function TOdbcStatement.GetColTimeStamp(Col: SQLUSMALLINT): DateSupport.TTimeStamp;
+Function TOdbcStatement.GetColTimeStamp(Col: SQLUSMALLINT): FHIR.Support.DateTime.TTimeStamp;
 Begin
   Result:= GetCellTimeStamp(Col, 1);
 End;
@@ -7632,7 +7632,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.SetColTimeStamp(Col: SQLUSMALLINT;
-                                 AValue: DateSupport.TTimeStamp);
+                                 AValue: FHIR.Support.DateTime.TTimeStamp);
 Begin
   SetCellTimeStamp(Col, 1, AValue);
 End;
@@ -7732,7 +7732,7 @@ Begin
   Result:= GetColTime(ColByName(ColName));
 End;
 
-Function TOdbcStatement.GetColTimeStampByName(ColName: String): DateSupport.TTimeStamp;
+Function TOdbcStatement.GetColTimeStampByName(ColName: String): FHIR.Support.DateTime.TTimeStamp;
 Begin
   Result:= GetColTimeStamp(ColByName(ColName));
 End;
@@ -7838,7 +7838,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.SetColTimeStampByName(ColName: String;
-                                       AValue: DateSupport.TTimeStamp);
+                                       AValue: FHIR.Support.DateTime.TTimeStamp);
 Begin
   SetColTimeStamp(ColByName(ColName), AValue);
 End;
@@ -8143,7 +8143,7 @@ End;
 
 Function TOdbcStatement.GetCellDate(Col, Row: SQLUSMALLINT): TDate;
 Var
-  TS: DateSupport.TTimeStamp;
+  TS: FHIR.Support.DateTime.TTimeStamp;
 Begin
   TS:= GetCellTimeStamp(Col, Row);
   With Result Do
@@ -8156,7 +8156,7 @@ End;
 
 Function TOdbcStatement.GetCellTime(Col, Row: SQLUSMALLINT): TTime;
 Var
-  TS: DateSupport.TTimeStamp;
+  TS: FHIR.Support.DateTime.TTimeStamp;
 Begin
   TS:= GetCellTimeStamp(Col, Row);
   With Result Do
@@ -8167,7 +8167,7 @@ Begin
   End;
 End;
 
-Function TOdbcStatement.GetCellTimeStamp(Col, Row: SQLUSMALLINT): DateSupport.TTimeStamp;
+Function TOdbcStatement.GetCellTimeStamp(Col, Row: SQLUSMALLINT): FHIR.Support.DateTime.TTimeStamp;
 Var
   //temp: TRowPtr;
   LrRowRec : TRowRec;
@@ -8481,7 +8481,7 @@ Procedure TOdbcStatement.SetCellDate(Col, Row: SQLUSMALLINT;
 Var
   temp: TRowPtr;
   s: String;
-  ts: DateSupport.TTimeStamp;
+  ts: FHIR.Support.DateTime.TTimeStamp;
 Begin
   temp:= RowRec(Col, Row);
   If temp <> Nil Then
@@ -8519,7 +8519,7 @@ Procedure TOdbcStatement.SetCellTime(Col, Row: SQLUSMALLINT;
 Var
   temp: TRowPtr;
   s: String;
-  ts: DateSupport.TTimeStamp;
+  ts: FHIR.Support.DateTime.TTimeStamp;
 Begin
   temp:= RowRec(Col, Row);
   If temp <> Nil Then
@@ -8553,7 +8553,7 @@ Begin
 End;
 
 Procedure TOdbcStatement.SetCellTimeStamp(Col, Row: SQLUSMALLINT;
-                                  AValue: DateSupport.TTimeStamp);
+                                  AValue: FHIR.Support.DateTime.TTimeStamp);
 Var
   temp: TRowPtr;
   s: String;
@@ -8724,7 +8724,7 @@ Begin
 End;
 
 Function TOdbcStatement.GetCellTimeStampByName(ColName: String;
-                                       Row: SQLUSMALLINT): DateSupport.TTimeStamp;
+                                       Row: SQLUSMALLINT): FHIR.Support.DateTime.TTimeStamp;
 Begin
   Result:= GetCellTimeStamp(ColByName(ColName), Row);
 End;
@@ -8848,7 +8848,7 @@ End;
 
 Procedure TOdbcStatement.SetCellTimeStampByName(ColName: String;
                                         Row: SQLUSMALLINT;
-                                        AValue: DateSupport.TTimeStamp);
+                                        AValue: FHIR.Support.DateTime.TTimeStamp);
 Begin
   SetCellTimeStamp(ColByName(ColName), Row, AValue);
 End;

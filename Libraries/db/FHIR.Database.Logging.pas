@@ -33,8 +33,8 @@ interface
 
 uses
   Classes,
-  AdvObjects,
-  kCritSct,
+  FHIR.Support.Objects,
+  FHIR.Support.Lock,
   SysUtils;
 
 type
@@ -82,10 +82,10 @@ type
 implementation
 
 uses
-  DateSupport,
+  FHIR.Support.DateTime,
   Math,
   IdGlobal,
-  StringSupport;
+  FHIR.Support.Strings;
 
 const
   ASSERT_UNIT = 'KDBLogger';

@@ -123,9 +123,9 @@ implementation
 
 Uses
   FHIRPluginSettings,
-  EditRegisteredServerDialog,
+  FHIR.Client.ServerDialog,
   FHIRPlugin,
-  FHIRPath;
+  FHIR.Tools.PathEngine;
 
 procedure OpMessage(msgShort, msgLong : String);
 begin

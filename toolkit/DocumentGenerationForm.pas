@@ -7,8 +7,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Edit,
   FMX.ListBox, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Layouts, FMX.TreeView,
   FMX.WebBrowser, FMX.TabControl, FMX.Controls.Presentation,
-  AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient,
+  FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client,
   ToolkitSettings, System.ImageList, FMX.ImgList;
 
 type

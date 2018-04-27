@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  KDBDialects,
+  FHIR.Database.Dialects,
   FHIR.Database.Manager,
   FHIR.Database.Settings;
 

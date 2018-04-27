@@ -33,13 +33,13 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  KCritSct, StringSupport, ThreadSupport, TextUtilities, ParseMap,
-  AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, AdvStringBuilders, AdvExceptions,
-  KDBDialects, DateSupport, GraphQL,
+  FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Text, FHIR.Web.ParseMap,
+  FHIR.Support.Objects, FHIR.Support.Generics,  FHIR.Support.Exceptions, FHIR.Support.Collections,
+  FHIR.Database.Dialects, FHIR.Support.DateTime, FHIR.Misc.GraphQL,
 
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRFactory, FHIRClientBase,
-  FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase, FHIRIndexBase, FHIRGraphQL, FHIRXhtmlComposer,
-  CDSHooksUtilities,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Base.Lang, FHIR.Tools.Factory, FHIR.Client.Base,
+  FHIR.Tools.Client, FHIR.Tools.Context, FHIR.Base.Xhtml, FHIR.Tools.IndexInfo, FHIR.Base.Parser, FHIR.Tools.Indexing, FHIR.Tools.GraphQL, FHIR.Tools.XhtmlComp,
+  FHIR.CdsHooks.Utilities,
   ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;
 
 

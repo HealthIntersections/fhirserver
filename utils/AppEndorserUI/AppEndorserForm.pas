@@ -31,8 +31,8 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, IniFiles,
-  SystemSupport, DateSupport, GuidSupport, FileSupport, StringSupport,
-  FHIRClient, FHIRTypes, FHIRResources, FHIRUtilities, FHIRParser,
+  SystemSupport, FHIR.Support.DateTime, GuidSupport, FHIR.Support.System, FHIR.Support.Strings,
+  FHIR.Tools.Client, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Parser,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
   FMX.StdCtrls, FMX.ListView, FMX.Layouts, FMX.TreeView, FMX.Platform,

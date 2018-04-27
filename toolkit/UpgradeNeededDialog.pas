@@ -32,7 +32,7 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
-  FMX.Controls.Presentation, OSXUiUtils, ToolkitSettings;
+  FMX.Controls.Presentation, FHIR.Ui.OSX, ToolkitSettings;
 
 type
   TUpgradeNeededForm = class(TForm)

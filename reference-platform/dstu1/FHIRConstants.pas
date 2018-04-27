@@ -1,7 +1,7 @@
-{!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, FHIRComponents, FHIRComponents_Wrapper, FHIRResources, FHIRResources_Wrapper}
+{!Wrapper uses FHIR.Base.Objects, FHIRBase_Wrapper, FHIR.Tools.Types, FHIRTypes_Wrapper, FHIRComponents, FHIRComponents_Wrapper, FHIR.Tools.Resources, FHIRResources_Wrapper}
 {!ignore ALL_RESOURCE_TYPES}
 
-unit FHIRConstants;
+unit FHIR.Tools.Constants;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -41,7 +41,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers,  FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
+  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, AdvBuffers,  FHIR.Base.Objects, FHIR.Tools.Types, FHIRComponents, FHIR.Tools.Resources;
 
 Const
   CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'AdverseReaction', 'Alert', 'AllergyIntolerance', 'CarePlan', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Device', 'DeviceObservationReport', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'Encounter', 'FamilyHistory', 'Group', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationPrescription', 'MedicationStatement', 'MessageHeader', 'Observation', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Other', 'Patient', 'Practitioner', 'Procedure', 'Profile', 'Provenance', 'Query', 'Questionnaire', 'RelatedPerson', 'SecurityEvent', 'Specimen', 'Substance', 'Supply', 'ValueSet', 'Binary');

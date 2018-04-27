@@ -33,10 +33,10 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport, DateSupport,
-  AdvObjects, AdvGenerics,
+  FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Javascript, FHIR.Support.Javascript,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRClient;
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client;
 
 type
   TFHIRJavascriptDefinedElement = class (TAdvObject)
@@ -78,7 +78,7 @@ type
 implementation
 
 uses
-  FHIRJavascriptReg,
+  FHIR.Tools.Javascript,
   FHIR.Client.Javascript,
   ServerEventJs;
 

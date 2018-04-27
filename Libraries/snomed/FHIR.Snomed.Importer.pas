@@ -32,27 +32,12 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  Generics.Collections,
-  ThreadSupport,
-  FHIR.Loinc.Services,
-  Classes,
-  FileSupport,
-  DateSupport,
-  Inifiles,
-  SysUtils,
-  FHIR.Snomed.Services,
-  FHIR.Snomed.Expressions,
-  BytesSupport,
-  AnsiStringBuilder,
-//  KClasses,
-//  Kprocs,
-  AdvObjects,
-  AdvObjectLists,
-  AdvIntegerLists,
-  AdvNames,
-  StringSupport,
-  FHIR.Database.Manager,
-  KDBDialects,
+  SysUtils, Classes, Inifiles, Generics.Collections,
+
+  FHIR.Support.Text, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Strings,
+
+  FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
+  FHIR.Database.Manager, FHIR.Database.Dialects,
   YuStemmer;
 
 //Const

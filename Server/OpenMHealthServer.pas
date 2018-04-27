@@ -34,8 +34,8 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer,
-  AdvObjects, AdvJson, DateSupport,
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRUtilities;
+  FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.DateTime,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities;
 
 type
   TOpenMHealthAdaptor = class (TFHIRFormatAdaptor)

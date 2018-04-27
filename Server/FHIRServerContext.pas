@@ -32,11 +32,11 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
-  OIDSupport, kCritSct, FileSupport, SystemSupport,
-  AdvObjects, AdvGenerics, AdvStringMatches,
-  FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities, FHIRFactory,
-  FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
+  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
+  FHIR.Support.Lock, FHIR.Support.System, FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRIndexManagers, FHIR.Tools.Utilities, FHIR.Tools.Factory,
+  FHIR.Tools.Validator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
   FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, FHIR.Misc.ApplicationVerifier,
   ApplicationCache, ServerJavascriptHost;
 

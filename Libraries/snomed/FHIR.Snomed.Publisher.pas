@@ -33,9 +33,9 @@ Interface
 
 Uses
   SysUtils, Classes, Math,
-  MathSupport, kCritSct,
-  AdvObjects, AdvStringMatches,
-  HTMLPublisher, FHIR.Snomed.Services;
+  FHIR.Support.Math, FHIR.Support.Lock,
+  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Web.HtmlGen, FHIR.Snomed.Services;
 
 Const
   MAX_ROWS = 100;
@@ -71,7 +71,7 @@ Type
     Procedure ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
     Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher);
   Public
-    Constructor Create(oSnomed : TSnomedServices; FHIRPath : String);
+    Constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
     Destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
@@ -82,8 +82,7 @@ Type
 Implementation
 
 Uses
-  EncodeSupport,
-  StringSupport;
+  FHIR.Support.Strings;
 
 Function Screen(Const s, s2: String):String;
 Begin
@@ -1470,7 +1469,7 @@ begin
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FSnomed := oSnomed.Link;
-  FFHIRPath := FHIRPath;
+  FFHIRPath := FHIRPathEngine;
 end;
 
 destructor TSnomedPublisher.Destroy;

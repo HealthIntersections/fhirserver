@@ -1,6 +1,6 @@
 unit FHIRAtomFeed;
 
-{!Wrapper uses FHIRResources,FHIRTypes,MSSEWrap}
+{!Wrapper uses FHIR.Tools.Resources,FHIR.Tools.Types,MSSEWrap}
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -40,15 +40,15 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport, BytesSupport,
-  AdvJson,
-  FHIRBase,
-  FHIRTypes,
-  FHIRResources,
+  FHIR.Support.Strings, FHIR.Support.Binary,
+  FHIR.Support.Json,
+  FHIR.Base.Objects,
+  FHIR.Tools.Types,
+  FHIR.Tools.Resources,
   
   AdvMemories,
   AdvStringBuilders,
-  AdvObjects,
+  FHIR.Support.Objects,
   AdvObjectLists;
 
 type

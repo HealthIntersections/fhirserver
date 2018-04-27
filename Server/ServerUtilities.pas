@@ -34,8 +34,8 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
-  AdvObjects, AdvGenerics,
-  FHIRResources, FHIRConstants, FHIRSupport;
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Session;
 
 type
   TProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;

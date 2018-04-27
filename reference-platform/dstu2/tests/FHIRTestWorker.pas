@@ -35,10 +35,10 @@ interface
 
 uses
   SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
-  StringSupport,
-  FHIRBase, FHIRParser, FHIRSupport, 
-  FHIRTypes2, FHIRResources2, FHIRConstants2, FHIRProfileUtilities2, FHIRPath2, FHIRContext2,
-  MsXml, MsXmlParser, AdvJson,
+  FHIR.Support.Strings,
+  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Tools.Session, 
+  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Profiles, FHIR.R2.PathEngine, FHIR.R2.Context,
+  FHIR.Support.MsXml, MsXmlParser, FHIR.Support.Json,
   DUnitX.TestFramework;
 
 var
@@ -72,7 +72,7 @@ Type
 implementation
 
 uses
-  TextUtilities, IdGlobalProtocols, BytesSupport;
+  TextUtilities, IdGlobalProtocols, FHIR.Support.Binary;
 
 
 

@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Javascript,
-  FHIRTypes, FHIRResources, FHIRUtilities, FHIR.Javascript.Base,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Javascript.Base,
   DUnitX.TestFramework;
 
 

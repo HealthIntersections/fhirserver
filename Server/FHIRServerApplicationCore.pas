@@ -65,16 +65,16 @@ interface
 
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
-  AdvExceptions,
-  SystemService, SystemSupport, FileSupport, ThreadSupport, StringSupport,
-  InternetFetcher,
+  FHIR.Support.Exceptions,
+  FHIR.Support.Service, SystemSupport, FHIR.Support.System, ThreadSupport, FHIR.Support.Strings,
+  FHIR.Web.Fetcher,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, RxNormServices, UniiServices,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
-  FHIR.Database.Manager, FHIR.Database.ODBC, KDBDialects, FHIR.Database.SQLite,
-  FHIRResources,
+  FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
+  FHIR.Tools.Resources,
   TerminologyServer,
-  FHIRStorageService, FHIRFactory,
-  FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
+  FHIRStorageService, FHIR.Tools.Factory,
+  FHIRRestServer, DBInstaller, FHIR.Tools.Constants, FHIRNativeStorage, FHIR.Base.Objects, FHIR.Tools.PathEngine,
   FHIRServerConstants, FHIRServerContext, ServerUtilities, WebSourceProvider,
   SCIMServer, CDSHooksServices, ServerJavascriptHost;
 
@@ -137,7 +137,7 @@ procedure ExecuteFhirServer;
 implementation
 
 uses
-  FHIRLog, JclDebug;
+  FHIR.Debug.Logging, JclDebug;
 
 procedure CauseException;
 begin

@@ -33,16 +33,16 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  StringSupport,
-  AdvObjects, AdvStringLists,
-  FHIRTypes, FHIRResources, CDSHooksUtilities, FHIROperations,
+  FHIR.Support.Strings,
+  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations,
   YuStemmer;
 
 Type
   ETerminologySetup = class (Exception);
   ETerminologyError = class (Exception);
 
-  TFhirFilterOperatorEnum = FHIRTypes.TFhirFilterOperatorEnum;
+  TFhirFilterOperatorEnum = FHIR.Tools.Types.TFhirFilterOperatorEnum;
 
   TCodeSystemProviderContext = class (TAdvObject)
   public

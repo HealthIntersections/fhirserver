@@ -33,8 +33,8 @@ Interface
 
 Uses
   SysUtils,
-  StringSupport, DecimalSupport,
-  AdvObjects,
+  FHIR.Support.Strings, FHIR.Support.Decimal,
+  FHIR.Support.Objects,
   DUnitX.TestFramework;
 
 Type

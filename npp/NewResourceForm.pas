@@ -35,7 +35,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
   nppforms,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRPluginValidator, FHIRProfileUtilities, FHIRParserBase, FHIRParser, FHIRContext;
+  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Types, FHIRPluginValidator, FHIR.Tools.Profiles, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Tools.Context;
 
 type
   TResourceNewForm = class(TNppForm)

@@ -8,8 +8,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
-  FHIR.Javascript, EncodeSupport,
-  AdvObjects, AdvObjectLists, AdvGenerics;
+  FHIR.Javascript,
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics;
 
 type
   TAdvJavascript = class (TJavascript)

@@ -32,10 +32,10 @@ interface
 uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL, IdComponent,
-  OSXUIUtils,
+  FHIR.Ui.OSX,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls,
-  AdvObjects,
-  FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient;
+  FHIR.Support.Objects,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client;
 
 function checkUpgrade : String;
 procedure doUpgrade(newVersion : String);

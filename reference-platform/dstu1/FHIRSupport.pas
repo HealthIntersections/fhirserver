@@ -1,4 +1,4 @@
-unit FHIRSupport;
+unit FHIR.Tools.Session;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -33,7 +33,7 @@ This is the dstu1 version of the FHIR code
 {$ENDIF}
 
 
-{!Wrapper uses Classes,FHIRBase,FHIRResources,FHIRResources_Wrapper, FHIRTypes_Wrapper, FHIRTypes, FHIRAtomFeed}
+{!Wrapper uses Classes,FHIR.Base.Objects,FHIR.Tools.Resources,FHIRResources_Wrapper, FHIRTypes_Wrapper, FHIR.Tools.Types, FHIRAtomFeed}
 
 interface
 
@@ -41,11 +41,11 @@ uses
   Classes,
   SysUtils,
   IdGlobal, IdSoapMime,
-  Parsemap, TextUtilities,
-  StringSupport, DecimalSupport, GuidSupport,
-  AdvObjects, AdvBuffers, AdvStringLists,
-   JWT, SCIMObjects,
-  FHirBase, FHirResources, FHIRConstants, FHIRComponents, FHIRTypes, FHIRAtomFeed;
+  FHIR.Web.ParseMap, TextUtilities,
+  FHIR.Support.Strings, FHIR.Support.Decimal, GuidSupport,
+  FHIR.Support.Objects, AdvBuffers, AdvStringLists,
+   JWT, FHIR.Base.Scim,
+  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRComponents, FHIR.Tools.Types, FHIRAtomFeed;
 
 Const
    HTTP_OK_200 = 200;
@@ -714,8 +714,8 @@ Function IdHead(s : String):String;
 implementation
 
 uses
-  FHIRParser,
-  FHIRParserBase;
+  FHIR.Tools.Parser,
+  FHIR.Base.Parser;
 
 { ERestfulException }
 

@@ -7,8 +7,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ScrollBox,
   FMX.Memo, FMX.StdCtrls, FMX.Edit, FMX.ListBox, FMX.Controls.Presentation,
   FMX.Ani,
-  FileSupport, KCritSct,
-  FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient,
+  FHIR.Support.System, FHIR.Support.Lock,
+  FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client,
   BaseDialog, ToolkitSettings;
 
 type

@@ -34,10 +34,10 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  FileSupport, TextUtilities,
-  AdvObjects, AdvGenerics,
-  FHIRBase, FHIRParser, 
-  FHIRTypes4, FHIRResources4, FHIRMetaModel4, FHIRContext4, FHIRTestWorker4, FHIRStructureMapUtilities4, FHIRProfileUtilities4;
+  FHIR.Support.System, FHIR.Support.Text,
+  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Tools.Parser, 
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIRTestWorker4, FHIR.R4.MapUtilities, FHIR.R4.Profiles;
 
 type
   StructureMapTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)

@@ -33,8 +33,8 @@ interface
 
 Uses
   SysUtils, Classes, Soap.EncdDecd, System.NetEncoding,
-  StringSupport, GuidSupport, BytesSupport,
-  AdvObjects, AdvJson,
+  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary,
+  FHIR.Support.Objects, FHIR.Support.Json,
   DUnitX.TestFramework;
 
 Type
@@ -72,7 +72,7 @@ function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : bool
 implementation
 
 uses
-  IdGlobalProtocols, TextUtilities, ShellSupport, XmlTests;
+  IdGlobalProtocols, FHIR.Support.Text, FHIR.Support.Shell, XmlTests;
 
 { TJsonTests }
 

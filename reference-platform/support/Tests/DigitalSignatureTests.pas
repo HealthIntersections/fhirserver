@@ -33,7 +33,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  DigitalSignatures,
+  FHIR.Support.Signatures,
   DUnitX.TestFramework;
 
 Type

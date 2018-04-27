@@ -35,7 +35,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.EditBox,
   FMX.SpinBox, FMX.Edit, FMX.StdCtrls, FMX.TabControl, FMX.Controls.Presentation,
   IniFiles, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Layouts, FMX.ListBox,
-  ToolkitSettings, EditRegisteredServerDialogFMX, SmartOnFhirUtilities;
+  ToolkitSettings, FHIR.Client.ServerDialogFMX, FHIR.Client.SmartUtilities;
 
 type
   TSettingsForm = class(TForm)

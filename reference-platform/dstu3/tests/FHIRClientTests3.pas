@@ -33,17 +33,17 @@ interface
 
 uses
 //  SysUtils, Classes, Math, RegExpr, Generics.Collections, Character,
-//  StringSupport, TextUtilities, SystemSupport, MathSupport,
-//  AdvObjects, AdvGenerics, DecimalSupport, 
-//  XmlBuilder,
+//  FHIR.Support.Strings, TextUtilities, SystemSupport, FHIR.Support.Math,
+//  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Decimal, 
+//  FHIR.Xml.Builder,
 //
-//  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRProfileUtilities, FHIRConstants,
-//  FHIRParser;
+//  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Profiles, FHIR.Tools.Constants,
+//  FHIR.Tools.Parser;
   SysUtils, Classes,
-  StringSupport,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser,
-  FHIRContext,
-  FHIRPath, FHIRTestWorker,
+  FHIR.Support.Strings,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Parser,
+  FHIR.Tools.Context,
+  FHIR.Tools.PathEngine, FHIRTestWorker,
   DUnitX.TestFramework;
 
 

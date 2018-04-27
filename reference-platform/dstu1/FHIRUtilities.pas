@@ -1,4 +1,4 @@
-unit FHIRUtilities;
+unit FHIR.Tools.Utilities;
 
 {
 Copyright (c) 2011+, HL7, Inc and Health Intersections Pty Ltd
@@ -36,12 +36,12 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport, GuidSupport, DateSupport,
-  AdvObjects,
+  FHIR.Support.Strings, GuidSupport, FHIR.Support.DateTime,
+  FHIR.Support.Objects,
 
   IdSoapMime, TextUtilities, ZLib,
 
-  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRAtomFeed, FHIRComponents, FHIRResources, FHIRConstants;
+  FHIR.Tools.Session, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Objects, FHIR.Tools.Types, FHIRAtomFeed, FHIRComponents, FHIR.Tools.Resources, FHIR.Tools.Constants;
 
 Type
   ETooCostly = class (Exception);
@@ -302,7 +302,7 @@ Begin
   else if sName = '' then
     result := ffAsIs
   else
-    raise ERestfulException.create('FHIRBase', 'RecogniseFHIRFormat', 'Unknown format '+sName, HTTP_ERR_BAD_REQUEST);
+    raise ERestfulException.create('FHIR.Base.Objects', 'RecogniseFHIRFormat', 'Unknown format '+sName, HTTP_ERR_BAD_REQUEST);
 End;
 
 

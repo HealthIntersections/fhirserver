@@ -33,7 +33,7 @@ interface
 
 uses
   Classes, DB, Contnrs,
-   FHIR.Database.Manager, AdvExceptions;
+   FHIR.Database.Manager, FHIR.Support.Exceptions;
 
 const
   {$IFDEF VER170}
@@ -359,7 +359,7 @@ implementation
 
 uses
   SysUtils,
-  StringSupport;
+  FHIR.Support.Strings;
 
 
 function FetchColumnMetaData(AField : TField):TKDBColumn;

@@ -30,9 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  AdvObjects,
-  FHIRClient,
-  CDSHooksUtilities;
+  FHIR.Support.Objects,
+  FHIR.Tools.Client,
+  FHIR.CdsHooks.Utilities;
 
 implementation
 

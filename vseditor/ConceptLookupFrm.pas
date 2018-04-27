@@ -34,7 +34,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ValueSetEditorCore, VirtualTrees,
-  Vcl.StdCtrls, Vcl.ExtCtrls, FHIRResources, FHIRTypes, FHIRUtilities, ServerChooser;
+  Vcl.StdCtrls, Vcl.ExtCtrls, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities, ServerChooser;
 
 type
   TConceptLookupForm = class(TForm)

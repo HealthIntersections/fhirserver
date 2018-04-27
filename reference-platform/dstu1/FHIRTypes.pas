@@ -1,6 +1,6 @@
-{!Wrapper uses FHIRBase, FHIRBase_Wrapper}
+{!Wrapper uses FHIR.Base.Objects, FHIRBase_Wrapper}
 
-unit FHIRTypes;
+unit FHIR.Tools.Types;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -39,7 +39,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers,  FHIRBase;
+  Classes, SysUtils, FHIR.Support.Decimal, FHIR.Support.Strings, AdvBuffers,  FHIR.Base.Objects;
 
 Type
   {@Enum TFhirNarrativeStatus

@@ -31,11 +31,12 @@ interface
 
 uses
   SysUtils,
-  StringSupport, FileSupport, MathSupport, ParseMap,
-  AdvObjects, AdvGenerics, AdvJson,
-  GraphQL,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRContext, FHIRPath, FHIRPathNode,
-  FHIRGraphQL;
+  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Math, FHIR.Web.ParseMap,
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json,
+  FHIR.Misc.GraphQL,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
+  FHIR.Tools.Context, FHIR.Tools.PathEngine, FHIR.Tools.PathNode,
+  FHIR.Tools.GraphQL;
 
 type
   EGraphDefinitionEngine = class (Exception);

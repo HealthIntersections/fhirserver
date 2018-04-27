@@ -63,9 +63,9 @@ implementation
 
 uses
   SysUtils, Classes, SyncObjs,
-  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF}
-  SystemSupport, DateSupport, FileSupport, kCritSct,
-  AdvObjects, AdvFiles;
+  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}
+  FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Lock,
+  FHIR.Support.Objects, FHIR.Support.Stream;
 
 var
   globalInt : cardinal;

@@ -32,13 +32,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, kCritSct, Generics.Defaults, Generics.Collections,
-  StringSupport, TextUtilities,
-  AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
+  SysUtils, Classes, FHIR.Support.Lock, Generics.Defaults, Generics.Collections,
+  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Exceptions,
   FHIR.Database.Manager,
-  FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Operations, FHIR.CdsHooks.Utilities,
   TerminologyServices, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, RxNormServices, UniiServices, ACIRServices, UriServices, ICD10Services,
-  AreaCodeServices, IETFLanguageCodeServices, FHIRLog,
+  AreaCodeServices, IETFLanguageCodeServices, FHIR.Debug.Logging,
   YuStemmer;
 
 const

@@ -45,12 +45,12 @@ interface
 
 uses
   SysUtils, Classes, SyncObjs,
-  DateSupport, StringSupport, GuidSupport, BytesSupport,
-  kCritSct, FHIR.Database.Manager, KDBDialects,  ParseMap,
-  AdvObjects, AdvObjectLists, AdvGenerics, AdvBuffers, AdvJson,
-  IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket, IdText, IdAttachment, IdPop3, IdMessageParts,
-  FHIRBase, FHIRLang, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient, FHIRPathNode,
-  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext, FHIRLog, ServerUtilities;
+  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary,
+  FHIR.Support.Lock, FHIR.Database.Manager, FHIR.Database.Dialects,  FHIR.Web.ParseMap,
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Json,
+  IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPop3, IdMessageParts,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.PathNode,
+  FHIR.Tools.Session, FHIRIndexManagers, FHIRServerUtilities, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.PathEngine, FHIR.Tools.Context, FHIR.Debug.Logging, ServerUtilities;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
@@ -393,8 +393,8 @@ begin
             rule(evd.trigger.data.profileList.IsEmpty, 'DataRequirement profile must be absent');
             if evd.trigger.condition <> nil then
             begin
-              rule(evd.trigger.condition.language = 'text\fhirpath', 'Condition language must be FHIRPath');
-              rule(evd.trigger.condition.expression <> '', 'Condition FHIRPath must not be blank');
+              rule(evd.trigger.condition.language = 'text\FHIR.Tools.PathEngine', 'Condition language must be FHIR.Tools.PathEngine');
+              rule(evd.trigger.condition.expression <> '', 'Condition FHIR.Tools.PathEngine must not be blank');
               try
                 expr := fpp.parse(evd.trigger.condition.expression);
                 evd.trigger.condition.expressionElement.Tag := expr;
