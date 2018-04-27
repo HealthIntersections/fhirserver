@@ -63,6 +63,8 @@ object ResourceDisplayForm: TResourceDisplayForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Presentation'
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 281
       ExplicitHeight = 165
       object WebBrowser1: TWebBrowser
@@ -87,6 +89,8 @@ object ResourceDisplayForm: TResourceDisplayForm
     object TabSheet2: TTabSheet
       Caption = 'Source'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 281
       ExplicitHeight = 165
       object Memo1: TMemo

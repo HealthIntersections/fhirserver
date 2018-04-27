@@ -104,6 +104,7 @@ function fullResourceUri(base: String; url : String) : String; overload;
 function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
 function isHistoryURL(url : String) : boolean;
 procedure splitHistoryUrl(var url : String; var history : String);
+procedure RemoveBOM(var s : String);
 function isAbsoluteUrl(s: String): boolean;
 function languageMatches(spec, possible : String) : boolean;
 
@@ -773,23 +774,6 @@ function gen(obj : TFhirTiming) : String; overload;
 function gen(obj : TFhirUsageContext) : String; overload;
 
 function gen(t : TFhirType):String; overload;
-
-//procedure degen(coding : TFHIRCoding; value:String); overload;
-//procedure degen(code : TFhirCodeableConcept; value:String); overload;
-//procedure degen(ref : TFhirReference; value : String); overload;
-//procedure degen(id : TFhirIdentifier; value : String); overload;
-//procedure degen(obj : TFhirAnnotation; value : String); overload;
-//procedure degen(obj : TFhirAttachment; value : String); overload;
-//procedure degen(obj : TFhirQuantity; value : String); overload;
-//procedure degen(obj : TFhirRange; value : String); overload;
-//procedure degen(obj : TFhirPeriod; value : String); overload;
-//procedure degen(obj : TFhirRatio; value : String); overload;
-//procedure degen(obj : TFhirSampledData; value : String); overload;
-//procedure degen(obj : TFhirSignature; value : String); overload;
-//procedure degen(obj : TFhirAddress; value : String); overload;
-//procedure degen(obj : TFhirContactPoint; value : String); overload;
-//procedure degen(obj : TFhirTiming; value : String); overload;
-//procedure degen(obj : TFhirUsageContext; value : String); overload;
 
 function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
@@ -3599,6 +3583,12 @@ begin
       end;
 end;
 
+procedure RemoveBOM(var s : String);
+begin
+  if s.startsWith(#$FEFF) then
+    s := s.substring(1);
+end;
+
 
 { TFhirResourceMetaHelper }
 
@@ -3706,6 +3696,13 @@ begin
     Result := Result + PathDelim;
 end;
 
+function IncludeTrailingURLSlash(const S: string): string;
+begin
+  Result := S;
+  if not IsSlash(Result, High(Result)) then
+    Result := Result + '/';
+end;
+
 function UrlPath(const parts : array of String) : String;
 var
   i : integer;
@@ -3715,7 +3712,7 @@ begin
   else
     result := parts[0];
   for i := 1 to high(parts) do
-    result := IncludeTrailingSlash(result) + parts[i];
+    result := IncludeTrailingURLSlash(result) + parts[i];
 end;
 
 

@@ -33,7 +33,6 @@ interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-  FHIR.Support.MsXml, MsXmlParser,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Validator, FHIR.Tools.Parser, FHIR.Tools.Utilities, FHIR.Tools.Profiles,

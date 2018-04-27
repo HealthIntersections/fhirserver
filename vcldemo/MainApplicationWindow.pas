@@ -37,7 +37,6 @@ uses
   Generics.Collections,
   Generics.Defaults,
   VirtualTrees,
-  SystemSupport,
   FHIR.Support.System,
   FHIR.Support.Strings,
   FHIR.Support.DateTime,

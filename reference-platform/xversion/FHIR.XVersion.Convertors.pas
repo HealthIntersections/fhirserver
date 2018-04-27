@@ -1,4 +1,4 @@
-unit FhirVersionConvertors;
+unit FHIR.XVersion.Convertors;
 
 interface
 
@@ -6,7 +6,7 @@ uses
   SysUtils, Classes,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang,
   {FHIR.R2.Parser, }FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R4.Resources, FHIR.R4.Parser,
-  VersionConvertor_30_40;
+  FHIR.XVersion.Conv_30_40;
 
 type
   TFhirVersionConvertors = class

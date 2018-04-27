@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.DateTime, HashSupport, GuidSupport, FHIR.Support.Strings,
+  FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Generics, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Base.Scim, FHIR.Tools.Security, FHIR.Tools.Utilities, FHIR.Tools.Search, FHIR.Tools.PathEngine, FHIR.Base.Lang,
   FHIRStorageService, FHIRUserProvider, TerminologyServer, FHIRServerContext,

@@ -33,14 +33,14 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin, SystemSupport,
+  Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin, FHIR.Support.System,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Support.Stream,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
   FHIR.Tools.PathNode,
-  FHIRPathDocumentation, Vcl.Buttons, Vcl.OleCtrls, SHDocVw, TextUtilities, FHIR.Base.Objects,
+  FHIRPathDocumentation, Vcl.Buttons, Vcl.OleCtrls, SHDocVw, FHIR.Support.Text, FHIR.Base.Objects,
   FHIR.Support.Generics, PluginUtilities, VirtualTrees, FHIR.Support.Lock, FHIR.Support.Shell,
   IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer, FHIR.Client.SmartUtilities,
-  GUIDSupport, CDSBrowserForm, FHIR.CdsHooks.Client;
+  CDSBrowserForm, FHIR.CdsHooks.Client;
 
 const
   UMSG = WM_USER + 1;

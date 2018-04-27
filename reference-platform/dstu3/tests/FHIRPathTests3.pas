@@ -36,7 +36,7 @@ uses
   ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Tools.Parser,
   FHIRTestWorker3, FHIR.R3.Resources, FHIR.R3.PathNode, FHIR.R3.PathEngine, FHIR.R3.Types,
-  FHIR.Support.MsXml, MsXmlParser, DUnitX.TestFramework;
+  FHIR.Support.MsXml, DUnitX.TestFramework;
 
 Type
   [TextFixture]

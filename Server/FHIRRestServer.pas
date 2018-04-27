@@ -100,7 +100,7 @@ Uses
   FHIR.Tools.Questionnaire, FHIR.Tools.Client, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIR.Base.Xhtml, FHIR.Tools.GraphQL,
   {$IFNDEF NO_CONVERSION}
-  FHIRVersionConvertors,
+  FHIR.XVersion.Convertors,
   {$ENDIF}
 
   TerminologyServer, TerminologyServerStore, FHIR.Snomed.Services, FHIR.Snomed.Publisher,

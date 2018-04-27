@@ -38,8 +38,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.StdCtrls, Vcl.ExtCtrls, NppForms,
-  SystemSupport,
-  FHIR.Tools.Resources, FHIR.Tools.Utilities, clipbrd, NppPlugin, Vcl.OleCtrls, SHDocVw, ActiveX, TextUtilities;
+  FHIR.Support.System,
+  FHIR.Tools.Resources, FHIR.Tools.Utilities, clipbrd, NppPlugin, Vcl.OleCtrls, SHDocVw, ActiveX, FHIR.Support.Text;
 
 const
   MIN_COL_WIDTH = 260;

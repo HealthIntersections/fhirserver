@@ -32,9 +32,8 @@ interface
 
 uses
   SysUtils, Classes, Math, RegularExpressions, Generics.Collections, Character,
-  FHIR.Support.Strings, TextUtilities, SystemSupport, FHIR.Support.Math,
+  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Decimal, FHIR.Support.DateTime,
-  ParserSupport,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Tools.Parser,
   FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities, FHIR.R3.Context, FHIR.R3.Constants;

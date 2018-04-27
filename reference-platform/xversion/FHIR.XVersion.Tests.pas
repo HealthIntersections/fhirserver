@@ -1,4 +1,4 @@
-unit VersionConvertorTests;
+unit FHIR.XVersion.Tests;
 
 interface
 
@@ -8,7 +8,7 @@ uses
   FHIR.Support.Text,
   FHIR.Base.Objects, FHIR.Base.Parser,
   FHIR.R3.Parser, FHIR.R4.Parser,
-  FhirVersionConvertors;
+  FHIR.XVersion.Convertors;
 
 type
   [TextFixture]

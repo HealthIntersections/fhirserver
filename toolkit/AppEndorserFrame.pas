@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, GuidSupport,
+  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.Parser, FHIR.Base.Objects,
   BaseFrame, OrganizationChooser;
 

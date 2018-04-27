@@ -95,7 +95,7 @@ Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeComposer(Style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeComposer(style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function IsId(s : String) : boolean;
@@ -3770,6 +3770,13 @@ begin
     Result := Result + PathDelim;
 end;
 
+function IncludeTrailingURLSlash(const S: string): string;
+begin
+  Result := S;
+  if not IsSlash(Result, High(Result)) then
+    Result := Result + '/';
+end;
+
 function UrlPath(const parts : array of String) : String;
 var
   i : integer;
@@ -3779,7 +3786,7 @@ begin
   else
     result := parts[0];
   for i := 1 to high(parts) do
-    result := IncludeTrailingSlash(result) + parts[i];
+    result := IncludeTrailingURLSlash(result) + parts[i];
 end;
 
 

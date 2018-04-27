@@ -40,7 +40,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} NppForms,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
   ActiveX, ole2, SHDocVw, IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, FHIR.Web.ParseMap, FHIR.Client.SmartUtilities,
-  GuidSupport;
+  FHIR.Support.System;
 
 const
   UMSG = WM_USER + 1;

@@ -158,7 +158,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings, textUtilities;
+  FHIRPluginSettings, FHIR.Support.Text;
 
 
 function getId(expr : TFHIRPathExpressionNode; op : boolean) : String;

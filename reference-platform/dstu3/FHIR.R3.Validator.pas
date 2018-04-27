@@ -33,10 +33,10 @@ interface
 Uses
   SysUtils, Classes, System.Character, RegularExpressions, ActiveX, ComObj,
 
-  FHIR.Support.Strings, FHIR.Support.Math, TextUtilities,
+  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Stream,
 
-  ParserSupport, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
+  FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Parser, FHIR.Tools.Session, FHIR.Base.Xhtml,
   FHIR.R3.PathNode, FHIR.R3.Context, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.PathEngine, FHIR.R3.ElementModel;

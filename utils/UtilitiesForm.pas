@@ -34,7 +34,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.strUtils, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls,
-  Vcl.ExtCtrls, Vcl.ImgList, FHIR.Support.System, SystemSupport, Inifiles, FHIR.Support.Shell,
+  Vcl.ExtCtrls, Vcl.ImgList, FHIR.Support.System, Inifiles, FHIR.Support.Shell,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FHIR.Tools.DiffEngine, Registry;
 
 type

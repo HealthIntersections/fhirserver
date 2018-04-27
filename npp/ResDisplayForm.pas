@@ -33,8 +33,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, TextUtilities, NppForms, NppPlugin,
-  Vcl.OleCtrls, SHDocVw, Vcl.ComCtrls, FHIR.Support.System, SystemSupport;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, FHIR.Support.Text, NppForms, NppPlugin,
+  Vcl.OleCtrls, SHDocVw, Vcl.ComCtrls, FHIR.Support.System;
 
 type
   TResourceDisplayForm = class(TNppForm)

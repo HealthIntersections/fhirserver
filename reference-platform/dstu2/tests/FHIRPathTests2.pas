@@ -1,4 +1,4 @@
-unit FluentPathTests;
+unit FHIRPathTests2;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,10 +34,10 @@ interface
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.Generics,
-  FHIRTestWorker,
+  FHIRTestWorker2,
   FHIR.Base.Objects, FHIR.Tools.Parser,
   FHIR.R2.PathNode, FHIR.R2.Resources, FHIR.R2.PathEngine, FHIR.R2.Types,
-  FHIR.Support.MsXml, MsXmlParser, DUnitX.TestFramework;
+  FHIR.Support.MsXml, DUnitX.TestFramework;
 
 Type
   [TextFixture]

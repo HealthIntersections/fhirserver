@@ -72,7 +72,7 @@ Type
 implementation
 
 uses
-  TextUtilities, IdGlobalProtocols, FHIR.Support.Binary;
+  FHIR.Support.Text, IdGlobalProtocols, FHIR.Support.Binary;
 
 
 

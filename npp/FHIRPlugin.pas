@@ -68,9 +68,9 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX,
   NppPlugin, SciSupport,
-  GuidSupport, FHIR.Support.System, SystemSupport,
+  FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.WInInet,
-  ParserSupport, FHIR.Support.Zip, FHIR.Support.MsXml, MsXmlParser, TextUtilities,
+  FHIR.Support.Text, FHIR.Support.Zip, FHIR.Support.MsXml,
 
   FHIR.Base.Objects, FHIR.Tools.PathNode, FHIR.Tools.Validator, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.Constants,
   FHIRPluginSettings, FHIRPluginValidator, FHIR.Tools.Narrative, FHIR.Tools.PathEngine, FHIR.Base.Xhtml, FHIR.Tools.Context, FHIR.Tools.ExpressionComposer,

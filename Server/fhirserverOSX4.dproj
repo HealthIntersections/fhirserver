@@ -167,17 +167,17 @@
         <DCCReference Include="..\reference-platform\support\AdvStringMatches.pas"/>
         <DCCReference Include="..\reference-platform\support\JWT.pas">
             <Form>,
-  FHIR.Tools.Parser in &apos;..\reference-platform\support\FHIR.Tools.Parser.pas&apos;,
+  FHIR.Tools.Parser in &apos;..\reference-platform\tools\FHIR.Tools.Parser.pas&apos;,
   FHIR.R4.Xml in &apos;..\reference-platform\r4\FHIR.R4.Xml.pas&apos;,
   FHIR.R4.Json in &apos;..\reference-platform\r4\FHIR.R4.Json.pas&apos;,
   FHIR.R4.Turtle in &apos;..\reference-platform\r4\FHIR.R4.Turtle.pas&apos;,
   FHIR.R4.Resources in &apos;..\reference-platform\r4\FHIR.R4.Resources.pas&apos;,
   FHIR.R4.Types in &apos;..\reference-platform\r4\FHIR.R4.Types.pas&apos;,
-  FHIR.Base.Parser in &apos;..\reference-platform\support\FHIR.Base.Parser.pas&apos;,
+  FHIR.Base.Parser in &apos;..\reference-platform\base\FHIR.Base.Parser.pas&apos;,
   AdvXmlBuilders in &apos;..\reference-platform\support\AdvXmlBuilders.pas&apos;,
   AdvXMLFormatters in &apos;..\reference-platform\support\AdvXMLFormatters.pas&apos;,
   AdvXMLEntities in &apos;..\reference-platform\support\AdvXMLEntities.pas&apos;,
-  FHIR.Base.Objects in &apos;..\reference-platform\support\FHIR.Base.Objects.pas&apos;,
+  FHIR.Base.Objects in &apos;..\reference-platform\base\FHIR.Base.Objects.pas&apos;,
   AdvNames in &apos;..\reference-platform\support\AdvNames.pas&apos;,
   FHIR.R4.Utilities in &apos;..\reference-platform\r4\FHIR.R4.Utilities.pas&apos;,
   AdvZipWriters in &apos;..\reference-platform\support\AdvZipWriters.pas&apos;,
@@ -189,14 +189,14 @@
   AdvZipWorkers in &apos;..\reference-platform\support\AdvZipWorkers.pas&apos;,
   FHIR.Web.Fetcher in &apos;..\reference-platform\support\FHIR.Web.Fetcher.pas&apos;{,
   FHIR.R4.Context in &apos;..\reference-platform\r4\FHIR.R4.Context.pas&apos;,
-  FHIR.Tools.Session in &apos;..\reference-platform\support\FHIR.Tools.Session.pas&apos;,
-  FHIR.Base.Scim in &apos;..\reference-platform\support\FHIR.Base.Scim.pas&apos;,
+  FHIR.Tools.Session in &apos;..\reference-platform\tools\FHIR.Tools.Session.pas&apos;,
+  FHIR.Base.Scim in &apos;..\reference-platform\base\FHIR.Base.Scim.pas&apos;,
   GraphQL in &apos;..\reference-platform\support\GraphQL.pas&apos;,
   FHIR.R4.Constants in &apos;..\reference-platform\r4\FHIR.R4.Constants.pas&apos;,
-  FHIR.Tools.Security in &apos;..\reference-platform\support\FHIR.Tools.Security.pas&apos;,
+  FHIR.Tools.Security in &apos;..\reference-platform\tools\FHIR.Tools.Security.pas&apos;,
   FHIR.R4.Tags in &apos;..\reference-platform\r4\FHIR.R4.Tags.pas&apos;,
-  FHIR.Base.Lang in &apos;..\reference-platform\support\FHIR.Base.Lang.pas&apos;,
-  FHIR.Base.Xhtml in &apos;..\reference-platform\support\FHIR.Base.Xhtml.pas&apos;,
+  FHIR.Base.Lang in &apos;..\reference-platform\base\FHIR.Base.Lang.pas&apos;,
+  FHIR.Base.Xhtml in &apos;..\reference-platform\base\FHIR.Base.Xhtml.pas&apos;,
   FHIR.R4.ElementModel in &apos;..\reference-platform\r4\FHIR.R4.ElementModel.pas&apos;,
   FHIR.R4.Profiles in &apos;..\reference-platform\r4\FHIR.R4.Profiles.pas&apos;,
   AdvZipReaders in &apos;..\reference-platform\support\AdvZipReaders.pas&apos;,
@@ -215,7 +215,7 @@
         <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Wrapper.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\tests\FHIRTestWorker4.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Base.Objects.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Objects.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvNames.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
@@ -228,16 +228,16 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Types.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Tools.Session.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Base.Scim.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Session.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Constants.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Tools.Security.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Security.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Tags.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Base.Lang.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Tools.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Base.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvXmlBuilders.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvXMLFormatters.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvXMLEntities.pas"/>
@@ -250,7 +250,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Debug.Logging.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Fetcher.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Tools.Indexing.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

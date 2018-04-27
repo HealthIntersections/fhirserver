@@ -1,4 +1,4 @@
-unit VersionConvertor_30_40;
+unit FHIR.XVersion.Conv_30_40;
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
