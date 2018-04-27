@@ -71,8 +71,8 @@ procedure ExecuteFhirServerTests(all: boolean);
 implementation
 
 uses
-  SnomedServices, SnomedExpressions, SCIMSearch, FHIRSearchSyntax,
-  UcumTests, TwilioClient, DigitalSignatures, QuestionnaireBuilder,
+  FHIR.Snomed.Services, FHIR.Snomed.Expressions, SCIMSearch, FHIRSearchSyntax,
+  FHIR.Ucum.Tests, TwilioClient, DigitalSignatures, QuestionnaireBuilder,
   MarkdownDaringFireballTests, AdvJson;
 
 const

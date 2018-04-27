@@ -45,7 +45,7 @@ uses
   DateSupport,
   AdvStringObjectMatches, AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
   FHIRBase, FHIRLang, FHIRTypes, FHIRResources, FHIRUtilities, FHIRXhtml,
-  TerminologyServices, FHIR.Loinc.Services, SnomedServices, UcumServices,
+  TerminologyServices, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services,
   TerminologyServer, TerminologyServerStore;
 
 const

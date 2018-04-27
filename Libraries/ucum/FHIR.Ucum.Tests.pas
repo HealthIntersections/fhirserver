@@ -1,4 +1,4 @@
-unit UcumTests;
+unit FHIR.Ucum.Tests;
 
 // -tests  -definitions
 
@@ -37,7 +37,7 @@ uses
   StringSupport, DecimalSupport,
   AdvObjects,
   MXML,
-  UcumServices;
+  FHIR.Ucum.Services;
 
 type
   UcumTestCaseAttribute = class (CustomTestCaseSourceAttribute)

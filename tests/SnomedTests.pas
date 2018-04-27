@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, Sysutils, SnomedServices, SnomedExpressions,
+  Windows, Sysutils, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   DUnitX.TestFramework;
 
 type

@@ -68,7 +68,7 @@ Uses
   AdvExceptions,
   SystemService, SystemSupport, FileSupport, ThreadSupport, StringSupport,
   InternetFetcher,
-  SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
+  FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, RxNormServices, UniiServices,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, KDBDialects, FHIR.Database.SQLite,
   FHIRResources,

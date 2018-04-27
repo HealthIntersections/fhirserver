@@ -42,7 +42,7 @@ uses
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL, FHIRClient,
   FHIRFactory, FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
   CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
-  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices, MPISearch,
+  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
   FHIRValidator, FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIRCodeGenerator, ServerJavascriptHost;
 
 const

@@ -1,4 +1,4 @@
-Unit UcumHandlers;
+Unit FHIR.Ucum.Handlers;
 
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -33,7 +33,7 @@ Interface
 Uses
   SysUtils,
   DecimalSupport,
-  Ucum,
+  FHIR.Ucum.Base,
   AdvStringLists,
   AdvNames,
   AdvObjects;

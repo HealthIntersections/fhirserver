@@ -52,7 +52,7 @@ uses
   FHIR.Database.Manager,
   FHIRBase, FHIRIndexBase, FHIRContext, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities, FHIRXhtml,
   TerminologyServer, ServerUtilities,
-  UcumServices, UcumServiceInterface;
+  FHIR.Ucum.Services, UcumServiceInterface;
 
 Const
   INDEX_ENTRY_LENGTH = 210;

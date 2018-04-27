@@ -104,8 +104,8 @@ Uses
   FHIRVersionConvertors,
   {$ENDIF}
 
-  TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher,
-  SnomedExpressions, FHIR.Loinc.Services, FHIR.Loinc.Publisher,
+  TerminologyServer, TerminologyServerStore, FHIR.Snomed.Services, FHIR.Snomed.Publisher,
+  FHIR.Snomed.Expressions, FHIR.Loinc.Services, FHIR.Loinc.Publisher,
   TerminologyWebServer, AuthServer, FHIR.Misc.Twilio, ReverseClient, CDSHooksServer,
   WebSourceProvider, GoogleAnalyticsProvider,
 

@@ -35,7 +35,7 @@ uses
   Windows, SysUtils, Classes,
   ThreadSupport, GuidSupport, FileSupport, StringSupport,
   AdvGenerics, AdvObjects,
-  SnomedServices;
+  FHIR.Snomed.Services;
 
 Type
   TTabWriter = class (TAdvObject)

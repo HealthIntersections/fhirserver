@@ -35,7 +35,7 @@ uses
   AdvGenerics, AdvJson,
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, SCIMObjects, FHIRSecurity, FHIRUtilities, FHIRSearch, FHIRPath, FHIRLang,
   FHIRStorageService, FHIRUserProvider, TerminologyServer, FHIRServerContext,
-  UcumServices, TerminologyOperations;
+  FHIR.Ucum.Services, TerminologyOperations;
 
 const
   TX_SEARCH_PAGE_DEFAULT = 10;

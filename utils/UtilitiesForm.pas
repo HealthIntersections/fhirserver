@@ -202,7 +202,7 @@ implementation
 Uses
   EncodeSupport, DateSupport,
   FHIR.Database.Manager, FHIR.Database.ODBC,
-  SnomedImporter, SnomedCombiner, SnomedServices,
+  FHIR.Snomed.Importer, SnomedCombiner, FHIR.Snomed.Services,
   FHIR.Loinc.Importer, RxNormServices;
 
 procedure TForm4.FormCreate(Sender: TObject);

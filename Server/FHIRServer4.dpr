@@ -80,7 +80,7 @@ Grahame, I see you don't respond to either of the following:
  http://hl7connect.healthintersections.com.au/svc/fhir/condition/search?subject=patient/350
  http://hl7connect.healthintersections.com.au/svc/fhir/condition/search?subject=patient/@350
 cross resource search
-ucum search
+FHIR.Ucum.Base search
 
 }
 
@@ -172,19 +172,19 @@ uses
   AdvStringObjectMatches in '..\reference-platform\Support\AdvStringObjectMatches.pas',
   FHIRIndexManagers in 'FHIRIndexManagers.pas',
   AdvNames in '..\reference-platform\Support\AdvNames.pas',
-  UcumServices in '..\Libraries\ucum\UcumServices.pas',
+  FHIR.Ucum.Services in '..\Libraries\Ucum\FHIR.Ucum.Services.pas',
   AdvClassLists in '..\reference-platform\Support\AdvClassLists.pas',
   AdvPointers in '..\reference-platform\Support\AdvPointers.pas',
-  UcumHandlers in '..\Libraries\ucum\UcumHandlers.pas',
-  Ucum in '..\Libraries\ucum\Ucum.pas',
-  UcumValidators in '..\Libraries\ucum\UcumValidators.pas',
-  UcumExpressions in '..\Libraries\ucum\UcumExpressions.pas',
-  UcumSearch in '..\Libraries\ucum\UcumSearch.pas',
+  FHIR.Ucum.Handlers in '..\Libraries\Ucum\FHIR.Ucum.Handlers.pas',
+  FHIR.Ucum.Base in '..\Libraries\Ucum\FHIR.Ucum.Base.pas',
+  FHIR.Ucum.Validators in '..\Libraries\Ucum\FHIR.Ucum.Validators.pas',
+  FHIR.Ucum.Expressions in '..\Libraries\Ucum\FHIR.Ucum.Expressions.pas',
+  FHIR.Ucum.Search in '..\Libraries\Ucum\FHIR.Ucum.Search.pas',
   FHIRValueSetExpander in 'FHIRValueSetExpander.pas',
   YuStemmer in '..\Libraries\Stem\YuStemmer.pas',
   FHIR.Loinc.Services in '..\Libraries\loinc\FHIR.Loinc.Services.pas',
   DISystemCompat in '..\Libraries\Stem\DISystemCompat.pas',
-  SnomedServices in '..\Libraries\Snomed\SnomedServices.pas',
+  FHIR.Snomed.Services in '..\Libraries\Snomed\FHIR.Snomed.Services.pas',
   InternetFetcher in '..\reference-platform\Support\InternetFetcher.pas',
   FacebookSupport in '..\reference-platform\Support\FacebookSupport.pas',
   SystemService in '..\reference-platform\Support\SystemService.pas',
@@ -200,12 +200,12 @@ uses
   FHIR.Database.Utilities in '..\Libraries\db\FHIR.Database.Utilities.pas',
   FHIR.Database.Settings in '..\Libraries\db\FHIR.Database.Settings.pas',
   CurrencySupport in '..\reference-platform\Support\CurrencySupport.pas',
-  SnomedImporter in '..\Libraries\snomed\SnomedImporter.pas',
+  FHIR.Snomed.Importer in '..\Libraries\snomed\FHIR.Snomed.Importer.pas',
   AdvProfilers in '..\reference-platform\Support\AdvProfilers.pas',
   AnsiStringBuilder in '..\reference-platform\Support\AnsiStringBuilder.pas',
   AdvIntegerMatches in '..\reference-platform\Support\AdvIntegerMatches.pas',
-  SnomedPublisher in '..\Libraries\snomed\SnomedPublisher.pas',
-  SnomedExpressions in '..\Libraries\snomed\SnomedExpressions.pas',
+  FHIR.Snomed.Publisher in '..\Libraries\snomed\FHIR.Snomed.Publisher.pas',
+  FHIR.Snomed.Expressions in '..\Libraries\snomed\FHIR.Snomed.Expressions.pas',
   HTMLPublisher in '..\reference-platform\Support\HTMLPublisher.pas',
   FHIR.Loinc.Importer in '..\Libraries\loinc\FHIR.Loinc.Importer.pas',
   FHIR.Loinc.Publisher in '..\Libraries\loinc\FHIR.Loinc.Publisher.pas',
@@ -236,7 +236,7 @@ uses
   RxNormServices in 'RxNormServices.pas',
   OIDSupport in '..\reference-platform\Support\OIDSupport.pas',
   IETFLanguageCodeServices in 'IETFLanguageCodeServices.pas',
-  SnomedAnalysis in '..\Libraries\snomed\SnomedAnalysis.pas',
+  FHIR.Snomed.Analysis in '..\Libraries\snomed\FHIR.Snomed.Analysis.pas',
   FHIRSubscriptionManager in 'FHIRSubscriptionManager.pas',
   ServerValidator in 'ServerValidator.pas',
   IdWebSocket in '..\reference-platform\Support\IdWebSocket.pas',

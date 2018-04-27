@@ -1,4 +1,4 @@
-unit SnomedImporter;
+unit FHIR.Snomed.Importer;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -40,8 +40,8 @@ uses
   DateSupport,
   Inifiles,
   SysUtils,
-  SnomedServices,
-  SnomedExpressions,
+  FHIR.Snomed.Services,
+  FHIR.Snomed.Expressions,
   BytesSupport,
   AnsiStringBuilder,
 //  KClasses,

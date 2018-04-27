@@ -1,5 +1,5 @@
 
-unit UcumServices;
+unit FHIR.Ucum.Services;
 
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -36,7 +36,7 @@ Uses
   MathSupport, FileSupport,
   AdvFiles, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
   DecimalSupport, ParserSupport, MXML,
-  UcumHandlers, UcumValidators, UcumExpressions, Ucum, UcumServiceInterface,
+  FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, UcumServiceInterface,
   FHIRParser,
   FHIRResources, FHIRTypes, FHIRUtilities,
   CDSHooksUtilities,
@@ -277,7 +277,7 @@ Type
 Implementation
 
 Uses
-  UcumSearch;
+  FHIR.Ucum.Search;
 
 { TUcumServices }
 

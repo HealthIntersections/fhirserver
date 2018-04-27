@@ -43,9 +43,9 @@ uses
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   FHIR.Database.Manager,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations, FHIRSupport,
-  TerminologyServices, SnomedServices, FHIR.Loinc.Services, UcumServices, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
+  TerminologyServices, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
   IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
-  TerminologyServerStore, SnomedExpressions;
+  TerminologyServerStore, FHIR.Snomed.Expressions;
 
 Type
   TDataBaseConnectionEvent = function (name : String; max, timeout : integer; driver, server, database, username, password : String; forCreate : boolean) : TKDBManager of object;

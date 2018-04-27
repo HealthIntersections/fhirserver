@@ -39,7 +39,7 @@ uses
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
   FHIR.Database.Manager, KDBDialects,
   FHIRIndexBase, FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext, FHIRClient,
-  UcumServices;
+  FHIR.Ucum.Services;
 
 type
   TQuantityOperation = (qopEqual, qopNotEqual, qopLess, qopLessEqual, qopGreater, qopGreaterEqual, qopStartsAfter, qopEndsBefore, qopApproximate);

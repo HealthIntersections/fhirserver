@@ -1,4 +1,4 @@
-unit SnomedServices;
+unit FHIR.Snomed.Services;
 
 // URL: http://snomed.info/sct/[module]/version/[e.g. 20150131]'
 //  intl: 900000000000207008
@@ -58,7 +58,7 @@ Uses
   AdvStringLists, AdvObjectLists, AdvObjects, AdvGenerics,
   YuStemmer, DateSupport,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
-  SnomedExpressions, TerminologyServices;
+  FHIR.Snomed.Expressions, TerminologyServices;
 
 Const
   SNOMED_CACHE_VERSION = '15'; // 15: add default language refset
@@ -92,7 +92,7 @@ const
 
   COMBINED_MODULE_ID = 11000201108;
 type
-  ESnomedServices = SnomedExpressions.ESnomedServices;
+  ESnomedServices = FHIR.Snomed.Expressions.ESnomedServices;
 
   UInt64Array = Array of UInt64;
   TCardinalArray = array of Cardinal;

@@ -1,4 +1,4 @@
-unit SnomedPublisher;
+unit FHIR.Snomed.Publisher;
 
 
 {
@@ -35,7 +35,7 @@ Uses
   SysUtils, Classes, Math,
   MathSupport, kCritSct,
   AdvObjects, AdvStringMatches,
-  HTMLPublisher, SnomedServices;
+  HTMLPublisher, FHIR.Snomed.Services;
 
 Const
   MAX_ROWS = 100;

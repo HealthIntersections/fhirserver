@@ -290,15 +290,15 @@
         <DCCReference Include="..\..\Libraries\TerminologyServices.pas"/>
         <DCCReference Include="..\..\Libraries\stem\YuStemmer.pas"/>
         <DCCReference Include="..\..\Libraries\stem\DISystemCompat.pas"/>
-        <DCCReference Include="..\..\Libraries\snomed\SnomedServices.pas"/>
-        <DCCReference Include="..\..\Libraries\snomed\SnomedExpressions.pas"/>
+        <DCCReference Include="..\..\Libraries\snomed\FHIR.Snomed.Services.pas"/>
+        <DCCReference Include="..\..\Libraries\snomed\FHIR.Snomed.Expressions.pas"/>
         <DCCReference Include="..\..\Libraries\loinc\FHIR.Loinc.Services.pas"/>
-        <DCCReference Include="..\..\Libraries\ucum\UcumServices.pas"/>
-        <DCCReference Include="..\..\Libraries\ucum\UcumHandlers.pas"/>
-        <DCCReference Include="..\..\Libraries\ucum\Ucum.pas"/>
-        <DCCReference Include="..\..\Libraries\ucum\UcumValidators.pas"/>
-        <DCCReference Include="..\..\Libraries\ucum\UcumExpressions.pas"/>
-        <DCCReference Include="..\..\Libraries\ucum\UcumSearch.pas"/>
+        <DCCReference Include="..\..\Libraries\Ucum\FHIR.Ucum.Services.pas"/>
+        <DCCReference Include="..\..\Libraries\Ucum\FHIR.Ucum.Handlers.pas"/>
+        <DCCReference Include="..\..\Libraries\Ucum\FHIR.Ucum.Base.pas"/>
+        <DCCReference Include="..\..\Libraries\Ucum\FHIR.Ucum.Validators.pas"/>
+        <DCCReference Include="..\..\Libraries\Ucum\FHIR.Ucum.Expressions.pas"/>
+        <DCCReference Include="..\..\Libraries\Ucum\FHIR.Ucum.Search.pas"/>
         <DCCReference Include="..\..\Server\RxNormServices.pas"/>
         <DCCReference Include="..\..\Server\UniiServices.pas"/>
         <DCCReference Include="..\..\reference-platform\support\AdvStringIntegerMatches.pas"/>
@@ -335,10 +335,10 @@
         <DCCReference Include="..\..\reference-platform\r4\QuestionnaireBuilder4.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\NarrativeGenerator4.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIRGraphQL.pas"/>
-        <DCCReference Include="..\..\Libraries\snomed\SnomedPublisher.pas"/>
+        <DCCReference Include="..\..\Libraries\snomed\FHIR.Snomed.Publisher.pas"/>
         <DCCReference Include="..\..\Libraries\loinc\FHIR.Loinc.Publisher.pas"/>
         <DCCReference Include="..\..\Server\TerminologyWebServer.pas"/>
-        <DCCReference Include="..\..\Libraries\snomed\SnomedAnalysis.pas"/>
+        <DCCReference Include="..\..\Libraries\snomed\FHIR.Snomed.Analysis.pas"/>
         <DCCReference Include="..\..\Server\FHIRServerConstants.pas"/>
         <DCCReference Include="..\..\Server\AuthServer.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FacebookSupport.pas"/>
@@ -407,10 +407,10 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Win64\Debug\ucum-essence.xml" Configuration="Debug" Class="File">
+                <DeployFile LocalName="Win64\Debug\FHIR.Ucum.Base-essence.xml" Configuration="Debug" Class="File">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>ucum-essence.xml</RemoteName>
+                        <RemoteName>FHIR.Ucum.Base-essence.xml</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

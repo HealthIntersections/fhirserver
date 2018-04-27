@@ -1,4 +1,4 @@
-Unit UcumSearch;
+Unit FHIR.Ucum.Search;
 
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -35,7 +35,7 @@ Uses
   AdvPersistentLists,
   Advobjects,
   RegularExpressions,
-  UCum;
+  FHIR.Ucum.Base;
 
 Type
   TUcumSearch = class (TAdvObject)

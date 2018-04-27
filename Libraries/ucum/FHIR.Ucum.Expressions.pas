@@ -1,4 +1,4 @@
-Unit UcumExpressions;
+Unit FHIR.Ucum.Expressions;
 
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -36,8 +36,8 @@ uses
   AdvStringBuilders,
   DecimalSupport,
   AdvObjects,
-  Ucumhandlers,
-  Ucum;
+  FHIR.Ucum.Handlers,
+  FHIR.Ucum.Base;
 
 Type
   EUcumException = class (Exception);

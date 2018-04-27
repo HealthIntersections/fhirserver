@@ -1,4 +1,4 @@
-unit SnomedAnalysis;
+unit FHIR.Snomed.Analysis;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -36,7 +36,7 @@ uses
   StringSupport, EncodeSupport, ParseMap, TextUtilities,
   AdvStringBuilders, AdvObjectLists, AdvJson, AdvZipParts, AdvZipWriters, AdvMemories,
   FHIRResources, FHIRTypes, FHIRConstants, FHIRParser,
-  SnomedServices, FHIRParserBase,
+  FHIR.Snomed.Services, FHIRParserBase,
   AdvObjects, AdvFiles, AdvNameBuffers;
 
 type
