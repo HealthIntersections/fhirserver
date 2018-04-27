@@ -35,7 +35,7 @@ Uses
   SysUtils, Generics.Collections,
   StringSupport, kCritSct,
   AdvObjects, AdvGenerics,
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRResources, FHIRTypes, FHIRUtilities,
   TerminologyServerStore;
 

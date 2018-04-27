@@ -38,7 +38,7 @@ Uses
   decimalSupport,
   IniFiles,
   KProcs,
-  KDBManager,
+  FHIR.Database.Manager,
   Ucum,
   gwDatabaseUtils,
   gwUcum,

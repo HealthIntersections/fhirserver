@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRTypes, FHIRResources, TerminologyServices;
 
 type

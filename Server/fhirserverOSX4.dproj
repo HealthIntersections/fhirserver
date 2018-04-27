@@ -202,18 +202,18 @@
   AdvZipReaders in &apos;..\reference-platform\support\AdvZipReaders.pas&apos;,
   FhirPath4 in &apos;..\reference-platform\r4\FhirPath.4pas&apos;</Form>
         </DCCReference>
-        <DCCReference Include="..\Libraries\db\KDBTests.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Tests.pas"/>
         <DCCReference Include="..\reference-platform\support\KDBDialects.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBManager.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBLogging.pas"/>
-        <DCCReference Include="..\Libraries\db\KSettings.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBOdbc.pas"/>
-        <DCCReference Include="..\Libraries\db\ODBCObjects.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBSQLite.pas"/>
-        <DCCReference Include="..\Libraries\db\SQLite3.pas"/>
-        <DCCReference Include="..\Libraries\db\SQLite3Wrap.pas"/>
-        <DCCReference Include="..\Libraries\db\SQLite3Utils.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Manager.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Logging.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Settings.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.ODBC.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.ODBC.Objects.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.ODBC.Headers.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Objects.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Wrapper.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\tests\FHIRTestWorker4.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvNames.pas"/>

@@ -36,7 +36,7 @@ uses
   StringSupport, ThreadSupport,
   AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
   YuStemmer, 
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRTypes, FHIRResources, FHIROperations, FHIRUtilities, CDSHooksUtilities,
   TerminologyServices;
 

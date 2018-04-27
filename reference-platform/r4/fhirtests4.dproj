@@ -219,8 +219,8 @@
         <DCCReference Include="..\support\FHIRLog.pas"/>
         <DCCReference Include="..\..\Server\Logging.pas"/>
         <DCCReference Include="..\support\FHIRIndexBase.pas"/>
-        <DCCReference Include="..\..\Libraries\js\Javascript.pas"/>
-        <DCCReference Include="..\..\Libraries\js\ChakraCommon.pas"/>
+        <DCCReference Include="..\..\Libraries\js\FHIR.Javascript.pas"/>
+        <DCCReference Include="..\..\Libraries\js\FHIR.Javascript.Chakra.pas"/>
         <DCCReference Include="..\..\Libraries\js\JavascriptTests.pas"/>
         <DCCReference Include="..\support\DigitalSignatures.pas"/>
         <DCCReference Include="..\support\UcumServiceInterface.pas"/>

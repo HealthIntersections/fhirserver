@@ -34,7 +34,7 @@ Interface
 uses
   Generics.Collections,
   ThreadSupport,
-  LoincServices,
+  FHIR.Loinc.Services,
   Classes,
   FileSupport,
   DateSupport,
@@ -51,7 +51,7 @@ uses
   AdvIntegerLists,
   AdvNames,
   StringSupport,
-  KDBManager,
+  FHIR.Database.Manager,
   KDBDialects,
   YuStemmer;
 

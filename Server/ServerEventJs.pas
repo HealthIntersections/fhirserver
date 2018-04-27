@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   DateSupport, StringSupport,
-  Javascript,
+  FHIR.Javascript,
   AdvObjects,
   FHIRBase, FHIRResources, FHIRClient, FHIRUtilities, FHIRSupport;
 

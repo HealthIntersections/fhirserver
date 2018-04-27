@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   StringSupport, AdvObjects, AdvObjectLists,
   YuStemmer,
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRTypes, FHIRComponents, FHIRResources, TerminologyServices, DateAndTime;
 
 type

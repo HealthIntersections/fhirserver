@@ -93,7 +93,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <Icon_MainIcon>fhir.ico</Icon_MainIcon>
-        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -remount -tests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\Loinc\2.48\mafile.CSV&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-debug -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\Snapshot&quot; -remount -tests -xindex -xloinc &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.48\loinc.csv&quot; -load &quot;C:\work\org.hl7.fhir\build\publish\examples.zip&quot; -mafile &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.48\mafile.CSV&quot;</Debugger_RunParams>
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
         <BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
@@ -134,7 +134,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\Loinc\LOINCDB.MDB</Debugger_RunParams>
+        <Debugger_RunParams>-debug -ini C:\work\fhirserver\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\FHIR.Loinc.Base\LOINCDB.MDB</Debugger_RunParams>
         <Manifest_File>None</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
@@ -246,7 +246,7 @@
         <DCCReference Include="..\Libraries\ucum\UcumSearch.pas"/>
         <DCCReference Include="FHIRValueSetExpander.pas"/>
         <DCCReference Include="..\Libraries\Stem\YuStemmer.pas"/>
-        <DCCReference Include="..\Libraries\loinc\LoincServices.pas"/>
+        <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Services.pas"/>
         <DCCReference Include="..\Libraries\Stem\DISystemCompat.pas"/>
         <DCCReference Include="..\Libraries\Snomed\SnomedServices.pas"/>
         <DCCReference Include="..\reference-platform\Support\InternetFetcher.pas"/>
@@ -259,10 +259,10 @@
         <DCCReference Include="..\reference-platform\Support\AdvMethods.pas"/>
         <DCCReference Include="DBInstaller.pas"/>
         <DCCReference Include="..\reference-platform\Support\KDBDialects.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBLogging.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBManager.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBUtils.pas"/>
-        <DCCReference Include="..\Libraries\db\KSettings.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Logging.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Manager.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Utilities.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Settings.pas"/>
         <DCCReference Include="..\reference-platform\Support\CurrencySupport.pas"/>
         <DCCReference Include="..\Libraries\snomed\SnomedImporter.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvProfilers.pas"/>
@@ -271,8 +271,8 @@
         <DCCReference Include="..\Libraries\snomed\SnomedPublisher.pas"/>
         <DCCReference Include="..\Libraries\snomed\SnomedExpressions.pas"/>
         <DCCReference Include="..\reference-platform\Support\HTMLPublisher.pas"/>
-        <DCCReference Include="..\Libraries\loinc\LoincImporter.pas"/>
-        <DCCReference Include="..\Libraries\loinc\LoincPublisher.pas"/>
+        <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Importer.pas"/>
+        <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Publisher.pas"/>
         <DCCReference Include="TerminologyServer.pas"/>
         <DCCReference Include="TerminologyServerStore.pas"/>
         <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
@@ -287,7 +287,7 @@
         <DCCReference Include="..\reference-platform\Support\JWT.pas"/>
         <DCCReference Include="SCIMServer.pas"/>
         <DCCReference Include="SCIMSearch.pas"/>
-        <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
+        <DCCReference Include="..\Libraries\security\FHIR.Misc.Twilio.pas"/>
         <DCCReference Include="FHIRSearchSyntax.pas"/>
         <DCCReference Include="..\reference-platform\Support\ShellSupport.pas"/>
         <DCCReference Include="RectSupport.pas"/>
@@ -365,30 +365,30 @@
         <DCCReference Include="..\reference-platform\support\TurtleParser.pas"/>
         <DCCReference Include="..\reference-platform\support\CertificateSupport.pas"/>
         <DCCReference Include="GraphDefinitionEngine.pas"/>
-        <DCCReference Include="..\Libraries\security\ClientApplicationVerifier.pas"/>
+        <DCCReference Include="..\Libraries\security\FHIR.Misc.ApplicationVerifier.pas"/>
         <DCCReference Include="JWTService.pas"/>
         <DCCReference Include="FHIRRestServer.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
         <DCCReference Include="Modules\HackingHealthLogic.pas"/>
-        <DCCReference Include="..\Libraries\security\SCrypt.pas"/>
+        <DCCReference Include="..\Libraries\security\FHIR.Utilities.SCrypt.pas"/>
         <DCCReference Include="TerminologyOperations.pas"/>
         <DCCReference Include="WebSourceProvider.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBOdbc.pas"/>
-        <DCCReference Include="..\Libraries\db\ODBCObjects.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
-        <DCCReference Include="..\Libraries\db\SQLite3.pas"/>
-        <DCCReference Include="..\Libraries\db\SQLite3Utils.pas"/>
-        <DCCReference Include="..\Libraries\db\SQLite3Wrap.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBSQLite.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.ODBC.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.ODBC.Objects.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.ODBC.Headers.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Objects.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Utilities.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Wrapper.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite.pas"/>
         <DCCReference Include="ServerPostHandlers.pas"/>
         <DCCReference Include="ServerJavascriptHost.pas"/>
-        <DCCReference Include="..\Libraries\js\FHIRJavascript.pas"/>
-        <DCCReference Include="..\Libraries\js\Javascript.pas"/>
-        <DCCReference Include="..\Libraries\js\ChakraCommon.pas"/>
-        <DCCReference Include="..\Libraries\js\AdvJavascript.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIR.Javascript.Base.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIR.Javascript.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIR.Javascript.Chakra.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIR.Support.Javascript.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRJavascriptReg4.pas"/>
-        <DCCReference Include="..\Libraries\js\FHIRClientJs.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIR.Client.Javascript.pas"/>
         <DCCReference Include="ServerEventJs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRFactory.pas"/>
         <DCCReference Include="CountryCodeServices.pas"/>

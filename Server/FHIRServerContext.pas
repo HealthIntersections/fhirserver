@@ -37,7 +37,7 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches,
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities, FHIRFactory,
   FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
-  FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier,
+  FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, FHIR.Misc.ApplicationVerifier,
   ApplicationCache, ServerJavascriptHost;
 
 Const

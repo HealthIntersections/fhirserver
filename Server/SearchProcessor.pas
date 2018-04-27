@@ -37,7 +37,7 @@ uses
   StringSupport, EncodeSupport,
   AdvObjects, DateSupport, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
-  KDBManager, KDBDialects,
+  FHIR.Database.Manager, KDBDialects,
   FHIRIndexBase, FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext, FHIRClient,
   UcumServices;
 

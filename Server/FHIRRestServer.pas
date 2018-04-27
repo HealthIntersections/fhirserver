@@ -91,7 +91,7 @@ Uses
   AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions,
   AdvGenerics, AdvFiles, AdvZipWriters,
 
-  kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects,
+  kCritSct, ParseMap, TextUtilities, FHIR.Database.Manager, HTMLPublisher, KDBDialects,
   AdvJSON, libeay32, RDFUtilities, JWT,
 
   MXML, GraphQL, {$IFDEF MSWINDOWS} MsXml, MsXmlParser, {$ENDIF}
@@ -105,12 +105,12 @@ Uses
   {$ENDIF}
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher,
-  SnomedExpressions, LoincServices, LoincPublisher,
-  TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer,
+  SnomedExpressions, FHIR.Loinc.Services, FHIR.Loinc.Publisher,
+  TerminologyWebServer, AuthServer, FHIR.Misc.Twilio, ReverseClient, CDSHooksServer,
   WebSourceProvider, GoogleAnalyticsProvider,
 
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer,
-  ServerUtilities, ClientApplicationVerifier, JWTService, TerminologyServices, ServerJavascriptHost,
+  ServerUtilities, FHIR.Misc.ApplicationVerifier, JWTService, TerminologyServices, ServerJavascriptHost,
   ServerPostHandlers{$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Const

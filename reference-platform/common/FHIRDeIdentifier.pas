@@ -33,7 +33,7 @@ uses
   SysUtils,
   DateSupport, KCritSct, StringSupport,
   AdvObjects, AdvGenerics, AdvCSVExtractors, AdvStringLists, AdvFiles,
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources;
 
 // fake name generator

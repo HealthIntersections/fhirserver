@@ -36,11 +36,11 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections, IniFiles,
   IdContext, IdCustomHTTPServer, IdCookie,
-  ParseMap, KDBManager, KDBDialects, KCritSct, StringSupport, EncodeSupport, GUIDSupport, DateSupport, TextUtilities,
+  ParseMap, FHIR.Database.Manager, KDBDialects, KCritSct, StringSupport, EncodeSupport, GUIDSupport, DateSupport, TextUtilities,
   AdvObjects, AdvMemories, AdvJSON, AdvExceptions, AdvGenerics,
   FacebookSupport, SCIMServer, SCIMObjects, JWT, SmartOnFhirUtilities,
   FHIRSupport, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities,
-  FHIRUserProvider, ServerUtilities, FHIRServerContext, FHIRStorageService, ClientApplicationVerifier,
+  FHIRUserProvider, ServerUtilities, FHIRServerContext, FHIRStorageService, FHIR.Misc.ApplicationVerifier,
   JWTService, ApplicationCache;
 
 Const

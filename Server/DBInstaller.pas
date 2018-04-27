@@ -37,7 +37,7 @@ interface
 uses
   SysUtils, Classes, GuidSupport, ThreadSupport,
   AdvObjects, AdvExceptions,
-  KDBManager, KDBDialects, TextUtilities,
+  FHIR.Database.Manager, KDBDialects, TextUtilities,
   FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
   SCIMServer;
 

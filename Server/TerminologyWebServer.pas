@@ -38,7 +38,7 @@ uses
   AdvObjects, AdvStringMatches, AdvNameBuffers,
   IdContext, IdCustomHTTPServer,
   FHIRLang, FHIRContext, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes, FHIRXhtml, FHIRBase,
-  HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions, SnomedAnalysis,
+  HtmlPublisher, SnomedPublisher, SnomedServices, FHIR.Loinc.Publisher, FHIR.Loinc.Services, SnomedExpressions, SnomedAnalysis,
   TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIROperations;
 
 Type

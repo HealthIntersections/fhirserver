@@ -201,9 +201,9 @@ implementation
 
 Uses
   EncodeSupport, DateSupport,
-  KDBManager, KDBOdbc,
+  FHIR.Database.Manager, FHIR.Database.ODBC,
   SnomedImporter, SnomedCombiner, SnomedServices,
-  LoincImporter, RxNormServices;
+  FHIR.Loinc.Importer, RxNormServices;
 
 procedure TForm4.FormCreate(Sender: TObject);
 var

@@ -36,7 +36,7 @@ uses
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvObjectLists, AdvStringMatches, AdvExclusiveCriticalSections, AdvMemories, AdvVclStreams,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
-  KDBManager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL, JWT,
+  FHIR.Database.Manager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL, JWT,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
   FHIRTags, FHIRValueSetExpander, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel, FHIRPathNode,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL, FHIRClient,

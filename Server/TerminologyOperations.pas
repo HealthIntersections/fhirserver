@@ -34,7 +34,7 @@ uses
   SysUtils,
   StringSupport, GuidSupport, DateSupport,
   AdvExceptions, AdvGenerics,
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSupport, FHIRLang, FHIROperations,
   FHIRStorageService, TerminologyServices, TerminologyServerStore, TerminologyServer, ClosureManager;
 

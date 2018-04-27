@@ -40,7 +40,7 @@ interface
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   AdvObjects, AdvGenerics, StringSupport,
-  KDBManager, DateSupport,
+  FHIR.Database.Manager, DateSupport,
   FHIRTypes, FHIRResources, FHIROperations;
 
 type

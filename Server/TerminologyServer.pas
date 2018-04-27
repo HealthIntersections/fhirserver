@@ -41,9 +41,9 @@ uses
 
   StringSupport, DateSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations, FHIRSupport,
-  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
+  TerminologyServices, SnomedServices, FHIR.Loinc.Services, UcumServices, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
   IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, SnomedExpressions;
 

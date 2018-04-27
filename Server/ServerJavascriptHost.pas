@@ -4,11 +4,11 @@ interface
 
 uses
   SysUtils, Classes,
-  kCritSct, Javascript,
+  kCritSct, FHIR.Javascript,
   StringSupport,
   AdvObjects, AdvGenerics,
   FHIRBase, FHIRTypes, FHIRResources, FHIRSupport, FHIRClient,
-  FHIRJavascript;
+  FHIR.Javascript.Base;
 
 {$IFDEF FHIR2}
 Type

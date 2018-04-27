@@ -35,9 +35,9 @@ uses
   SysUtils, Classes, kCritSct, Generics.Defaults, Generics.Collections,
   StringSupport, TextUtilities,
   AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
-  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, ACIRServices, UriServices, ICD10Services,
+  TerminologyServices, FHIR.Loinc.Services, UCUMServices, SnomedServices, RxNormServices, UniiServices, ACIRServices, UriServices, ICD10Services,
   AreaCodeServices, IETFLanguageCodeServices, FHIRLog,
   YuStemmer;
 

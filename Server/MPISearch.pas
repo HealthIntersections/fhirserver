@@ -35,7 +35,7 @@ uses
   SysUtils,
   ParseMap, StringSupport, EncodeSupport,
   AdvObjects, AdvGenerics,
-  KDBManager,
+  FHIR.Database.Manager,
   FHIRSupport, FHIRIndexBase,
   FHIRIndexManagers;
 

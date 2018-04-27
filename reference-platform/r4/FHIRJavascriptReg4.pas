@@ -36,7 +36,7 @@ interface
 // FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
 
 uses
-  Javascript, FHIRJavascript;
+  FHIR.Javascript, FHIR.Javascript.Base;
 
 procedure registerFHIRTypes(js : TFHIRJavascript);
 
