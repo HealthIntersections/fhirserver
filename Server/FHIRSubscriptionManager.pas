@@ -70,7 +70,7 @@ Type
     procedure FinishTempStream; override;
   end;
 
-  TSubscriptionTracker = class (TAdvObject)
+  TSubscriptionTracker = class (TFslObject)
   private
     FKey: Integer;
     FErrorCount: Integer;
@@ -83,10 +83,10 @@ Type
     Property ErrorCount : Integer read FErrorCount write FErrorCount;
   end;
 
-  TWebSocketQueueInfo = class (TAdvObject)
+  TWebSocketQueueInfo = class (TFslObject)
   private
     FConnected: boolean;
-    FQueue: TAdvList<TAdvBuffer>;
+    FQueue: TFslList<TFslBuffer>;
     FEvent: TEvent;
     FPersistent: boolean;
   public
@@ -97,21 +97,21 @@ Type
     property Connected : boolean read FConnected write FConnected;
     property Persistent : boolean read FPersistent write FPersistent;
     property Event : TEvent read FEvent;
-    property Queue : TAdvList<TAdvBuffer> read FQueue;
+    property Queue : TFslList<TFslBuffer> read FQueue;
   end;
 
-  TSubscriptionTrackerList = class (TAdvObjectList)
+  TSubscriptionTrackerList = class (TFslObjectList)
   private
     function GetTracker(i: integer): TSubscriptionTracker;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     procedure addOrUpdate(Key : integer; info : String; status : TFhirSubscriptionStatusEnum); overload;
     function getByKey(Key : integer) : TSubscriptionTracker;
     property TrackerItem[i : integer] : TSubscriptionTracker read GetTracker; default;
   end;
 
-  TSubscriptionEntry = class (TAdvObject)
+  TSubscriptionEntry = class (TFslObject)
   private
     FSubscription : TFhirSubscription;
     FKey : Integer;
@@ -127,11 +127,11 @@ Type
     Property Subscription : TFhirSubscription read FSubscription write SetSubscription;
   end;
 
-  TSubscriptionEntryList = class (TAdvObjectList)
+  TSubscriptionEntryList = class (TFslObjectList)
   private
     function GetEntry(i: integer): TSubscriptionEntry;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     procedure add(Key, ResourceType : Integer; id : String; Subscription : TFhirSubscription); overload;
     function getByKey(Key : integer) : TSubscriptionEntry;
@@ -140,14 +140,14 @@ Type
 
   TGetSessionEvent = function (userkey : Integer) : TFhirSession of object;
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
-  TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TAdvList<TFHIRCompartmentId>; params : TParseMap; conn : TKDBConnection): String of object;
+  TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : TParseMap; conn : TKDBConnection): String of object;
 
   TSubscriptionManager = class (TFHIRServerWorker)
   private
     FLock : TCriticalSection;
     FSubscriptions : TSubscriptionEntryList;
     {$IFDEF FHIR4}
-    FEventDefinitions : TAdvMap<TFHIREventDefinition>;
+    FEventDefinitions : TFslMap<TFHIREventDefinition>;
     {$ENDIF}
     FSubscriptionTrackers  : TSubscriptionTrackerList;
     FLastSubscriptionKey, FLastNotificationQueueKey, FLastWebSocketKey : integer;
@@ -176,7 +176,7 @@ Type
     FLastPopCheck : TDateTime;
 
     FCloseAll : boolean;
-    FSemaphores : TAdvMap<TWebSocketQueueInfo>;
+    FSemaphores : TFslMap<TWebSocketQueueInfo>;
 
     fpp : TFHIRPathParser;
     fpe : TFHIRPathEngine;
@@ -187,7 +187,7 @@ Type
     procedure wsWake(id : String);
     function wsPersists(id : String; b : TBytes) : boolean;
 
-//    procedure go(id : String; content : TAdvBuffer);
+//    procedure go(id : String; content : TFslBuffer);
 //    procedure goAll;
 //    procedure done(id : String);
 
@@ -237,7 +237,7 @@ Type
     procedure HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
     function checkForClose(connection: TIdWebSocket; id : String; worked: boolean): boolean;
   public
-    Constructor Create(ServerContext : TAdvObject);
+    Constructor Create(ServerContext : TFslObject);
     Destructor Destroy; Override;
 
     procedure loadQueue(conn : TKDBConnection);
@@ -281,19 +281,19 @@ uses
 
 { TSubscriptionManager }
 
-constructor TSubscriptionManager.Create(ServerContext : TAdvObject);
+constructor TSubscriptionManager.Create(ServerContext : TFslObject);
 begin
   inherited Create(TFHIRServerContext(ServerContext));
   FLock := TCriticalSection.Create('Subscriptions');
   FSubscriptions := TSubscriptionEntryList.Create;
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
-  FSemaphores := TAdvMap<TWebSocketQueueInfo>.Create;
+  FSemaphores := TFslMap<TWebSocketQueueInfo>.Create;
   fpp := TFHIRPathParser.create;
   fpe := TFHIRPathEngine.Create(TFHIRServerContext(ServerContext).ValidatorContext.Link, nil);
   FCloseAll := false;
   FLastPopCheck := 0;
   {$IFDEF FHIR4}
-  FEventDefinitions := TAdvMap<TFHIREventDefinition>.create;
+  FEventDefinitions := TFslMap<TFHIREventDefinition>.create;
   {$ENDIF}
 end;
 
@@ -1851,7 +1851,7 @@ begin
   result := TSubscriptionEntry(ObjectByIndex[i]);
 end;
 
-function TSubscriptionEntryList.ItemClass: TAdvObjectClass;
+function TSubscriptionEntryList.ItemClass: TFslObjectClass;
 begin
   result := TSubscriptionEntry;
 end;
@@ -1899,7 +1899,7 @@ begin
   result := TSubscriptionTracker(ObjectByIndex[i]);
 end;
 
-function TSubscriptionTrackerList.ItemClass: TAdvObjectClass;
+function TSubscriptionTrackerList.ItemClass: TFslObjectClass;
 begin
   result := TSubscriptionTracker;
 end;
@@ -1953,7 +1953,7 @@ end;
 function TSubscriptionManager.wsPersists(id : String; b : TBytes) : boolean;
 var
   info : TWebSocketQueueInfo;
-  buf : TAdvBuffer;
+  buf : TFslBuffer;
 begin
   FLock.Lock;
   try
@@ -1965,7 +1965,7 @@ begin
       result := info.Persistent;
       if not result then
       begin
-        buf := TAdvBuffer.Create;
+        buf := TFslBuffer.Create;
         info.FQueue.Add(buf);
         buf.AsBytes := b;
       end;
@@ -2087,7 +2087,7 @@ constructor TWebSocketQueueInfo.create;
 begin
   inherited;
   FConnected := false;
-  FQueue := TAdvList<TAdvBuffer>.create;
+  FQueue := TFslList<TFslBuffer>.create;
   FEvent := TEvent.Create;
   FEvent.ResetEvent;
 end;

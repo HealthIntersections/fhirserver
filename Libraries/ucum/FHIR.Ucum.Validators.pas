@@ -41,10 +41,10 @@ Uses
   FHIR.Support.Objects;
 
 Type
-  TUcumValidator = class (TAdvObject)
+  TUcumValidator = class (TFslObject)
   Private
     Fmodel : TUcumModel;
-    Fresult : TAdvStringList;
+    Fresult : TFslStringList;
     Fhandlers : TUcumRegistry;
 
     procedure checkCodes;
@@ -54,7 +54,7 @@ Type
     Constructor Create(oModel : TUcumModel; handlers : TUcumRegistry);
     Destructor Destroy; Override;
 
-    Procedure validate(oList : TAdvStringList);
+    Procedure validate(oList : TFslStringList);
   End;
 
 Implementation
@@ -76,7 +76,7 @@ Begin
   Inherited;
 End;
 
-Procedure TUcumValidator.validate(oList :  TAdvStringList);
+Procedure TUcumValidator.validate(oList :  TFslStringList);
 Begin
   Fresult := oList.Link;
   checkCodes();

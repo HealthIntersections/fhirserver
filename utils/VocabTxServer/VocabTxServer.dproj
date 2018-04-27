@@ -222,7 +222,7 @@
         <DCCReference Include="..\..\reference-platform\client\FHIR.Tools.Client.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.Operations.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.OpBase.pas"/>
-        <DCCReference Include="..\..\Libraries\TerminologyServices.pas"/>
+        <DCCReference Include="..\..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="..\..\Libraries\stem\YuStemmer.pas"/>
         <DCCReference Include="..\..\Libraries\stem\DISystemCompat.pas"/>
         <DCCReference Include="..\..\Libraries\snomed\FHIR.Snomed.Services.pas"/>
@@ -237,7 +237,6 @@
         <DCCReference Include="..\..\Server\RxNormServices.pas"/>
         <DCCReference Include="..\..\Server\UniiServices.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Debug.Logging.pas"/>
-        <DCCReference Include="..\..\Server\logging.pas"/>
         <DCCReference Include="..\..\Server\ACIRServices.pas"/>
         <DCCReference Include="..\..\Server\AreaCodeServices.pas"/>
         <DCCReference Include="..\..\Server\IETFLanguageCodeServices.pas"/>
@@ -391,6 +390,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Win64\Debug\VocabTxServer.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>VocabTxServer.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="OSX32\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
@@ -400,12 +405,6 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win64\Debug\VocabTxServer.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
-                        <RemoteName>VocabTxServer.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

@@ -53,7 +53,7 @@ const
   CODES_DIFF_OP : Array [TDifferenceOperation] of String = ('add', 'insert', 'delete', 'replace', 'move');
 
 type
-  TDifference = class (TAdvObject)
+  TDifference = class (TFslObject)
   private
     FPath : String;
     FOp : TDIfferenceOperation;
@@ -72,7 +72,7 @@ type
     property Index2 : integer read FIndex2;
   end;
 
-  TDifferenceList = class (TAdvList<TDifference>)
+  TDifferenceList = class (TFslList<TDifference>)
   public
     procedure replace(path : String; value : TFHIRObject);
     procedure add(path, name : String; value : TFHIRObject);
@@ -81,7 +81,7 @@ type
     procedure move(path : String; source, target : integer);
   end;
 
-  TDifferenceMatch = class (TAdvObject)
+  TDifferenceMatch = class (TFslObject)
   private
     FSourceIndex : integer;
     FTargetIndex : integer;
@@ -89,14 +89,14 @@ type
     Constructor Create(sourceIndex, targetIndex : integer);
   end;
 
-  TDifferenceMatchList = class (TAdvList<TDifferenceMatch>)
+  TDifferenceMatchList = class (TFslList<TDifferenceMatch>)
   public
     function listUnchanged(l1, l2 : integer) : boolean;
     function matchedTarget(ti : integer) : TDifferenceMatch;
     function matchedSource(si : integer) : TDifferenceMatch;
   end;
 
-  TOffset = class (TAdvObject)
+  TOffset = class (TFslObject)
   private
     FInserted : boolean;
     FIndex: integer;
@@ -104,7 +104,7 @@ type
     property index : integer read FIndex;
   end;
 
-  TOffSetList = class (TAdvList<TOffset>)
+  TOffSetList = class (TFslList<TOffset>)
   public
     function hasUsed(index : integer) : boolean;
     procedure inc(var index : integer);
@@ -113,7 +113,7 @@ type
     function adjust(index : integer) : integer;
   end;
 
-  TDifferenceEngine = class (TAdvObject)
+  TDifferenceEngine = class (TFslObject)
   private
     fpe : TFHIRPathEngine;
 

@@ -35,7 +35,7 @@ uses
 {
 to test:
 
-TAdvFile
+TFslFile
 stuff in file support
 
 
@@ -84,7 +84,7 @@ end;
 procedure TOSXTests.TestAdvFile;
 var
   filename : String;
-  f : TAdvFile;
+  f : TFslFile;
   s : AnsiString;
 begin
   filename := Path([SystemTemp, 'delphi.file.test.txt']);
@@ -94,7 +94,7 @@ begin
     FileDelete(filename);
   end;
   Assert.IsFalse(FileExists(filename));
-  f := TAdvFile.Create(filename, fmCreate);
+  f := TFslFile.Create(filename, fmCreate);
   try
     f.Write(TEST_FILE_CONTENT[1], length(TEST_FILE_CONTENT));
   finally
@@ -102,7 +102,7 @@ begin
   end;
   Assert.IsTrue(FileExists(filename));
   Assert.IsTrue(FileSize(filename) = 27);
-  f := TAdvFile.Create(filename, fmOpenRead);
+  f := TFslFile.Create(filename, fmOpenRead);
   try
     SetLength(s, f.Size);
     f.Read(s[1], f.Size);
@@ -120,9 +120,9 @@ end;
 
 procedure TOSXTests.TestAdvObject;
 var
-  obj : TAdvObject;
+  obj : TFslObject;
 begin
-  obj := TAdvObject.Create;
+  obj := TFslObject.Create;
   try
     Assert.IsTrue(obj.AdvObjectReferenceCount = 0);
     obj.Link;

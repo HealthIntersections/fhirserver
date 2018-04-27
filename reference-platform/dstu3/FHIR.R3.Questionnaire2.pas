@@ -38,7 +38,7 @@ uses
   FHIR.R3.Types, FHIR.R3.Resources;
 
 type
-  TQuestionnaireRenderer = class (TAdvObject)
+  TQuestionnaireRenderer = class (TFslObject)
   private
     FTerminologyServer: TFHIRClient;
     FQuestionnaire: TFHIRQuestionnaire;

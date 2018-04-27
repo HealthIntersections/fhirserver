@@ -41,7 +41,7 @@ Type
   TJsonObject = class;
   TJsonArray = class;
 
-  TJsonNode = class (TAdvObject)
+  TJsonNode = class (TFslObject)
   private
     FPath: String;
   protected
@@ -61,7 +61,7 @@ Type
     class function compare(n1, n2 : TJsonNode) : boolean; overload;
   end;
 
-  TJsonArrayEnumerator = class (TAdvObject)
+  TJsonArrayEnumerator = class (TFslObject)
   private
     FArray : TJsonArray;
     cursor : integer;
@@ -74,7 +74,7 @@ Type
 
   TJsonArray = class (TJsonNode)
   private
-    FItems : TAdvObjectList;
+    FItems : TFslObjectList;
     function GetCount: integer;
     function GetItem(i: integer): TJsonNode;
     function GetObj(i: integer): TJsonObject;
@@ -155,7 +155,7 @@ Type
   TJsonObject = class (TJsonNode)
   private
     FName : String;
-    FProperties : TAdvMap<TJsonNode>;
+    FProperties : TFslMap<TJsonNode>;
     function GetString(name: String): String;
     function GetNumber(name: String): String;
     function GetArray(name: String): TJsonArray;
@@ -200,12 +200,12 @@ Type
     procedure clear(name : String = '');
 
     Property name : String read FName write FName;
-    Property properties : TAdvMap<TJsonNode> read FProperties;
+    Property properties : TFslMap<TJsonNode> read FProperties;
   end;
 
   TJsonPointerTerminalState = (tsNotFound, tsFound, tsAtEnd);
 
-  TJsonPointerMatch = class (TAdvObject)
+  TJsonPointerMatch = class (TFslObject)
   private
     FName: String;
     FNode: TJsonNode;
@@ -217,9 +217,9 @@ Type
     property node : TJsonNode read FNode write SetNode;
   end;
 
-  TJsonPointerQuery = class (TAdvObject)
+  TJsonPointerQuery = class (TFslObject)
   private
-    FMatches : TAdvList<TJsonPointerMatch>;
+    FMatches : TFslList<TJsonPointerMatch>;
     FTerminalState: TJsonPointerTerminalState;
     function GetLast: TJsonNode;
     function GetLastName: String;
@@ -237,9 +237,9 @@ Type
     property secondLast : TJsonNode read GetSecondLast;
   end;
 
-  TJSONWriter = class (TAdvTextFormatter)
+  TJSONWriter = class (TFslTextFormatter)
   private
-    FBuilder : TAdvStringBuilder;
+    FBuilder : TFslStringBuilder;
   protected
     procedure doValue(name, value : String); virtual;
 
@@ -289,7 +289,7 @@ Type
     class Function writeObject(obj : TJsonObject; pretty : boolean = false) : TBytes; overload;
     class Function writeObjectStr(obj : TJsonObject; pretty : boolean = false) : String; overload;
     class Procedure writeObject(stream : TStream; obj : TJsonObject; pretty : boolean = false); overload;
-    class Procedure writeObject(stream : TAdvStream; obj : TJsonObject; pretty : boolean = false); overload;
+    class Procedure writeObject(stream : TFslStream; obj : TJsonObject; pretty : boolean = false); overload;
   end;
 
   TJsonWriterDirect = class (TJSONWriter)
@@ -320,12 +320,12 @@ Type
 
   TCanonicalJsonNodeType = (jntProperty, jntObject, jntArray);
 
-  TCanonicalJsonNode = class (TAdvObject)
+  TCanonicalJsonNode = class (TFslObject)
   private
     FType : TCanonicalJsonNodeType;
     FName : String;
     FValue : String;
-    FChildren : TAdvList<TCanonicalJsonNode>;
+    FChildren : TFslList<TCanonicalJsonNode>;
   public
     constructor Create(aType : TCanonicalJsonNodeType);
     destructor Destroy; override;
@@ -336,7 +336,7 @@ Type
   TJsonWriterCanonical = class (TJSONWriter)
   private
     FObject : TCanonicalJsonNode;
-    FStack : TAdvList<TCanonicalJsonNode>;
+    FStack : TFslList<TCanonicalJsonNode>;
     procedure commitObject(node : TCanonicalJsonNode);
     procedure commitArray(node : TCanonicalJsonNode);
   protected
@@ -356,7 +356,7 @@ Type
 
   TJSONLexType = (jltOpen, jltClose, jltString, jltNumber, jltColon, jltComma, jltOpenArray, jltCloseArray, jltEof, jltNull, jltBoolean);
 
-  TJSONLexer = class (TAdvTextExtractor)
+  TJSONLexer = class (TFslTextExtractor)
   Private
     FPeek : String;
     FValue: TStringBuilder;
@@ -372,7 +372,7 @@ Type
     Function Path : String;
     function GetValue: String;
   Public
-    Constructor Create(oStream : TAdvStream); Overload;
+    Constructor Create(oStream : TFslStream); Overload;
     Destructor Destroy; Override;
     Procedure Start;
     Property LexType : TJSONLexType read FLexType;
@@ -383,7 +383,7 @@ Type
 
   TJsonParserItemType = (jpitObject, jpitString, jpitNumber, jpitBoolean, jpitArray, jpitEnd, jpitEof, jpitNull);
 
-  TJSONParser = class (TAdvObject)
+  TJSONParser = class (TFslObject)
   Private
     FLex : TJSONLexer;
     FNameStart : TSourceLocation;
@@ -402,7 +402,7 @@ Type
     procedure readArray(arr : TJsonArray; root : boolean);
   Public
     Constructor Create(oStream : TStream); Overload;
-    Constructor Create(oStream : TAdvStream);  Overload;
+    Constructor Create(oStream : TFslStream);  Overload;
     Destructor Destroy; Override;
     Property ItemType : TJsonParserItemType read FItemType;
     Property ItemName : String read FItemName;
@@ -413,18 +413,18 @@ Type
     Procedure JsonError(sMsg : String);
     Procedure CheckState(aState : TJsonParserItemType);
     function readNode : TJsonNode;
-    class Function Parse(stream : TAdvStream; timeToAbort : cardinal = 0): TJsonObject; overload;
+    class Function Parse(stream : TFslStream; timeToAbort : cardinal = 0): TJsonObject; overload;
     class Function Parse(stream : TStream; timeToAbort : cardinal = 0): TJsonObject; overload;
     class Function Parse(b : TBytes; timeToAbort : cardinal = 0): TJsonObject; overload;
     class Function Parse(s : String; timeToAbort : cardinal = 0): TJsonObject; overload;
-    class Function ParseNode(stream : TAdvStream; timeToAbort : cardinal = 0): TJsonNode; overload;
+    class Function ParseNode(stream : TFslStream; timeToAbort : cardinal = 0): TJsonNode; overload;
     class Function ParseNode(stream : TStream; timeToAbort : cardinal = 0): TJsonNode; overload;
     class Function ParseNode(b : TBytes; timeToAbort : cardinal = 0): TJsonNode; overload;
     class Function ParseNode(s : String; timeToAbort : cardinal = 0): TJsonNode; overload;
     class Function ParseFile(fn : String) : TJsonObject; overload;
   End;
 
-  TJsonPatchEngine = class (TAdvObject)
+  TJsonPatchEngine = class (TFslObject)
   private
     FPatch: TJsonArray;
     FTarget: TJsonNode;
@@ -475,7 +475,7 @@ end;
 Constructor TJSONWriter.Create;
 Begin
   Inherited ;
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TFslStringBuilder.Create;
 End;
 
 Destructor TJSONWriter.Destroy;
@@ -506,8 +506,8 @@ end;
 
 function TJSONWriter.toString: String;
 begin
-  if (Stream <> nil) and (Stream is TAdvStringStream) then
-    result := TAdvStringStream(Stream).Data
+  if (Stream <> nil) and (Stream is TFslStringStream) then
+    result := TFslStringStream(Stream).Data
   else
     result := inherited toString;
 end;
@@ -611,7 +611,7 @@ begin
 end;
 
 
-class procedure TJSONWriter.writeObject(stream: TAdvStream; obj: TJsonObject; pretty : boolean = false);
+class procedure TJSONWriter.writeObject(stream: TFslStream; obj: TJsonObject; pretty : boolean = false);
 var
   this : TJsonWriterDirect;
 begin
@@ -765,9 +765,9 @@ end;
 
 class procedure TJSONWriter.writeObject(stream: TStream; obj: TJsonObject; pretty: boolean);
 var
-  s : TAdvVCLStream;
+  s : TFslVCLStream;
 begin
-  s := TAdvVCLStream.Create;
+  s := TFslVCLStream.Create;
   try
     s.Stream := stream;
     writeObject(s, obj, pretty);
@@ -829,7 +829,7 @@ end;
 procedure TJsonWriterDirect.Start;
 begin
   if not HasStream then
-    Stream := TAdvStringStream.create;
+    Stream := TFslStringStream.create;
   ProduceLine('{');
   LevelDown;
 end;
@@ -1112,7 +1112,7 @@ begin
   insert(ch, FPeek, 1);
 end;
 
-constructor TJSONLexer.Create(oStream: TAdvStream);
+constructor TJSONLexer.Create(oStream: TFslStream);
 begin
   Inherited Create(oStream);
   FLocation.line := 1;
@@ -1152,10 +1152,10 @@ end;
 
 constructor TJSONParser.Create(oStream: TStream);
 var
-  oVCLStream : TAdvVclStream;
+  oVCLStream : TFslVclStream;
 begin
   inherited Create;
-  oVCLStream := TAdvVCLStream.Create;
+  oVCLStream := TFslVCLStream.Create;
   Try
     oVCLStream.Stream := oStream;
     FLex := TJSONLexer.Create(oVCLStream.Link);
@@ -1171,7 +1171,7 @@ begin
     JsonError('Unexpected state. Expected '+Codes_TJsonParserItemType[aState]+', but found '+Codes_TJsonParserItemType[FItemType]);
 end;
 
-constructor TJSONParser.Create(oStream: TAdvStream);
+constructor TJSONParser.Create(oStream: TFslStream);
 begin
   inherited Create;
   FLex := TJSONLexer.Create(oStream.Link);
@@ -1256,7 +1256,7 @@ begin
   End;
 end;
 
-class function TJSONParser.Parse(stream: TAdvStream; timeToAbort : cardinal = 0): TJsonObject;
+class function TJSONParser.Parse(stream: TFslStream; timeToAbort : cardinal = 0): TJsonObject;
 var
   p : TJSONParser;
 begin
@@ -1329,7 +1329,7 @@ begin
   end;
 end;
 
-class function TJSONParser.ParseNode(stream: TAdvStream; timeToAbort : cardinal = 0): TJsonNode;
+class function TJSONParser.ParseNode(stream: TFslStream; timeToAbort : cardinal = 0): TJsonNode;
 var
   p : TJSONParser;
 begin
@@ -1690,7 +1690,7 @@ end;
 constructor TJsonArray.create;
 begin
   inherited Create;
-  FItems := TAdvObjectList.Create;
+  FItems := TFslObjectList.Create;
 end;
 
 destructor TJsonArray.destroy;
@@ -1891,7 +1891,7 @@ end;
 constructor TJsonObject.create;
 begin
   inherited Create;
-  FProperties := TAdvMap<TJsonNode>.Create;
+  FProperties := TFslMap<TJsonNode>.Create;
 end;
 
 destructor TJsonObject.destroy;
@@ -2513,7 +2513,7 @@ end;
 constructor TJsonPointerQuery.Create;
 begin
   inherited Create;
-  FMatches := TAdvList<TJsonPointerMatch>.create;
+  FMatches := TFslList<TJsonPointerMatch>.create;
 end;
 
 destructor TJsonPointerQuery.Destroy;
@@ -2703,7 +2703,7 @@ end;
 procedure TJsonWriterCanonical.Start;
 begin
   FObject := TCanonicalJsonNode.Create(jntObject);
-  FStack := TAdvList<TCanonicalJsonNode>.create;
+  FStack := TFslList<TCanonicalJsonNode>.create;
   FStack.Add(FObject.Link);
 end;
 
@@ -2780,7 +2780,7 @@ constructor TCanonicalJsonNode.Create(aType : TCanonicalJsonNodeType);
 begin
   inherited Create;
   FType := aType;
-  FChildren := TAdvList<TCanonicalJsonNode>.create;
+  FChildren := TFslList<TCanonicalJsonNode>.create;
 end;
 
 destructor TCanonicalJsonNode.Destroy;

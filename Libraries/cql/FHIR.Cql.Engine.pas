@@ -7,7 +7,7 @@ uses
 
 
 Type
-  TCqlEngine = class (TAdvObject)
+  TCqlEngine = class (TFslObject)
   private
   public
     Constructor Create; override;

@@ -38,7 +38,7 @@ uses
   FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser,
   FHIR.Misc.GraphQL, FHIR.Tools.GraphQL, GraphDefinitionEngine,
-  FHIRTestWorker, JsonTests;
+  FHIR.Tests.Worker, JsonTests;
 
 type
   GraphDefinitionTestCaseAttribute = class (CustomTestCaseSourceAttribute)
@@ -51,8 +51,8 @@ type
   private
     function findTest(name : String) : TMXmlElement;
     function loadContext(context : String) : TFhirResource;
-    function ResolveReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
-    procedure ListResources(appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFHIRResource>);
+    function ResolveReference(appInfo : TFslObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
+    procedure ListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResource>);
   public
     [GraphDefinitionTestCase]  procedure TestCase(name : String);
   end;
@@ -95,7 +95,7 @@ end;
 
 { TFHIRGraphDefinitionTests }
 
-procedure TFHIRGraphDefinitionTests.ListResources(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>; list: TAdvList<TFHIRResource>);
+procedure TFHIRGraphDefinitionTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResource>);
 begin
   if requestType = 'Condition' then
     list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\condition-example.xml'))
@@ -130,7 +130,7 @@ begin
   end;
 end;
 
-function TFHIRGraphDefinitionTests.ResolveReference(appInfo : TAdvObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
+function TFHIRGraphDefinitionTests.ResolveReference(appInfo : TFslObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
 var
   parts : TArray<String>;
   res : TFHIRResource;

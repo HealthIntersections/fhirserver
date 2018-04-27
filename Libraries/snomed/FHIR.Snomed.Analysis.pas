@@ -40,7 +40,7 @@ uses
   FHIR.Support.Objects;
 
 type
-  TRelationship = class (TAdvObject)
+  TRelationship = class (TFslObject)
   public
     FRelationship : cardinal;
     FCount : cardinal;
@@ -54,11 +54,11 @@ type
     FBranches : TCardinalArray;
   end;
 
-  TRelationshipList = class (TAdvObjectList)
+  TRelationshipList = class (TFslObjectList)
   private
     function GetEntry(i: integer): TRelationship;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     Property entry[i : integer] : TRelationship read GetEntry; default;
     function getById(id : cardinal) : TRelationship;
@@ -91,7 +91,7 @@ type
     relid, reltype, source, target, group : cardinal;
   end;
 
-  TSnomedAnalysis = class (TAdvObject)
+  TSnomedAnalysis = class (TFslObject)
   private
     FSnomed : TSnomedServices;
     FRoots : TCardinalArray;
@@ -104,30 +104,30 @@ type
 //    function intersection(one, two : TCardinalArray) : TCardinalArray;
     procedure registerSCTRoots(ids : Array of String);
 
-    procedure assess(b : TAdvStringBuilder; id : String);
+    procedure assess(b : TFslStringBuilder; id : String);
     function getProps(id, prop : cardinal) : TPropertyArray;
     function findRelationshipInGroup(concept: cardinal; group : integer; siblingtype: cardinal; relationship : TSnomedRelationship) : boolean;
     procedure listChildren(id : cardinal; list : TStringList);
     function prepSubColumn(json : TJsonObject) : TColumnDetail;
-    procedure processSubColumn(json : TJsonObject; tbl : TAdvStringBuilder; det : TColumnDetail; child, relid, target, group : cardinal);
-    procedure processSubTable(parts : TAdvZipPartList; json : TJsonObject; children : TStringList);
+    procedure processSubColumn(json : TJsonObject; tbl : TFslStringBuilder; det : TColumnDetail; child, relid, target, group : cardinal);
+    procedure processSubTable(parts : TFslZipPartList; json : TJsonObject; children : TStringList);
     function prepColumn(json : TJsonObject) : TColumnDetail;
-    procedure processColumn(json : TJsonObject; tbl : TAdvStringBuilder; det : TColumnDetail; child : cardinal);
-    procedure processTable(parts : TAdvZipPartList; json : TJsonObject);
-    procedure processScript(buf : TAdvNameBuffer; script : string);
+    procedure processColumn(json : TJsonObject; tbl : TFslStringBuilder; det : TColumnDetail; child : cardinal);
+    procedure processTable(parts : TFslZipPartList; json : TJsonObject);
+    procedure processScript(buf : TFslNameBuffer; script : string);
     procedure cleanUpColumn(detail : TColumnDetail);
   public
     Constructor Create(snomed : TSnomedServices); overload;
     Destructor Destroy; override;
 
-    function generate(params : TParseMap) : TAdvNameBuffer;
+    function generate(params : TParseMap) : TFslNameBuffer;
   end;
 
 implementation
 
 { TSnomedAnalysis }
 
-procedure TSnomedAnalysis.assess(b: TAdvStringBuilder; id: String);
+procedure TSnomedAnalysis.assess(b: TFslStringBuilder; id: String);
 var
   list : TRelationshipList;
   did : UInt64;
@@ -318,13 +318,13 @@ begin
   end;
 end;
 
-function TSnomedAnalysis.generate(params : TParseMap): TAdvNameBuffer;
+function TSnomedAnalysis.generate(params : TParseMap): TFslNameBuffer;
 var
-  b : TAdvStringBuilder;
+  b : TFslStringBuilder;
   st : TStringList;
   s : String;
 begin
-  b  := TAdvStringBuilder.Create;
+  b  := TFslStringBuilder.Create;
   try
     b.appendLine('<?xml version="1.0" encoding="UTF-8"?>');
     b.appendLine('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"');
@@ -411,7 +411,7 @@ begin
 
     if params.VarExists('script') then
     begin
-      result := TAdvNameBuffer.Create;
+      result := TFslNameBuffer.Create;
       try
         processScript(result, params.GetVar('script'));
         result.Link;
@@ -489,7 +489,7 @@ begin
     b.appendLine('</body>');
     b.appendLine('</html>');
 
-    result := TAdvNameBuffer.Create;
+    result := TFslNameBuffer.Create;
     result.Name := 'text/html';
     result.Encoding := TEncoding.UTF8;
     result.AsUnicode := b.AsString;
@@ -785,7 +785,7 @@ begin
     raise Exception.Create('Unknown column source '+src);
 end;
 
-procedure TSnomedAnalysis.processColumn(json: TJsonObject; tbl: TAdvStringBuilder; det : TColumnDetail; child: cardinal);
+procedure TSnomedAnalysis.processColumn(json: TJsonObject; tbl: TFslStringBuilder; det : TColumnDetail; child: cardinal);
 var
   props : TPropertyArray;
 begin
@@ -803,14 +803,14 @@ begin
   end;
 end;
 
-procedure TSnomedAnalysis.processScript(buf : TAdvNameBuffer; script : string);
+procedure TSnomedAnalysis.processScript(buf : TFslNameBuffer; script : string);
 var
   json : TJsonObject;
   n : TJsonNode;
-  parts : TAdvZipPartList;
-  zip : TAdvZipWriter;
+  parts : TFslZipPartList;
+  zip : TFslZipWriter;
 begin
-  parts := TAdvZipPartList.Create;
+  parts := TFslZipPartList.Create;
   try
     json := TJSONParser.Parse(script);
     try
@@ -822,10 +822,10 @@ begin
     finally
       json.Free;
     end;
-    zip := TAdvZipWriter.Create;
+    zip := TFslZipWriter.Create;
     try
-      zip.Stream := TAdvMemoryStream.Create;
-      TAdvMemoryStream(zip.Stream).Buffer := buf.Link;
+      zip.Stream := TFslMemoryStream.Create;
+      TFslMemoryStream(zip.Stream).Buffer := buf.Link;
       buf.Name := 'application/zip';
       zip.Parts := parts.Link;
       zip.WriteZip;
@@ -837,22 +837,22 @@ begin
   end;
 end;
 
-procedure TSnomedAnalysis.processTable(parts : TAdvZipPartList; json : TJsonObject);
+procedure TSnomedAnalysis.processTable(parts : TFslZipPartList; json : TJsonObject);
 var
-  tbl : TAdvStringBuilder;
+  tbl : TFslStringBuilder;
   root, child : cardinal;
   children : TStringList;
   i, j : integer;
   n : TJsonNode;
   det : TColumnDetail;
-  part : TAdvZipPart;
+  part : TFslZipPart;
 //  index, c, , d : cardinal;
 //  propCs : array of cardinal;
 //  p : TCardinalArray;
 begin
   FSnomed.Concept.FindConcept(StrToUInt64(json['root']), root);
 
-  tbl := TAdvStringBuilder.Create;
+  tbl := TFslStringBuilder.Create;
   try
     children := TStringList.create;
     try
@@ -884,7 +884,7 @@ begin
         end;
         tbl.Append(#10);
       end;
-      part := TAdvZipPart.Create;
+      part := TFslZipPart.Create;
       parts.Add(part);
       part.Name := json['name']+'.txt';
       part.Encoding := TEncoding.UTF8;
@@ -965,7 +965,7 @@ begin
 
 end;
 
-procedure TSnomedAnalysis.processSubColumn(json: TJsonObject; tbl: TAdvStringBuilder; det : TColumnDetail; child, relid, target, group: cardinal);
+procedure TSnomedAnalysis.processSubColumn(json: TJsonObject; tbl: TFslStringBuilder; det : TColumnDetail; child, relid, target, group: cardinal);
 var
   s : String;
   k : cardinal;
@@ -1021,9 +1021,9 @@ begin
   end;
 end;
 
-procedure TSnomedAnalysis.processSubTable(parts : TAdvZipPartList; json : TJsonObject; children : TStringList);
+procedure TSnomedAnalysis.processSubTable(parts : TFslZipPartList; json : TJsonObject; children : TStringList);
 var
-  tbl : TAdvStringBuilder;
+  tbl : TFslStringBuilder;
   child : cardinal;
   i, j, t : integer;
   n : TJsonNode;
@@ -1031,7 +1031,7 @@ var
   props : TPropertyArray;
   prop : TProperty;
   det : TColumnDetail;
-  part : TAdvZipPart;
+  part : TFslZipPart;
   grpCondType, grpCondValue : cardinal;
   l, r : String;
   rel : TSnomedRelationship;
@@ -1052,7 +1052,7 @@ begin
       raise Exception.Create('Specified group condition '+json['group-condition']+' not found');
   end;
 
-  tbl := TAdvStringBuilder.Create;
+  tbl := TFslStringBuilder.Create;
   try
     j := 0;
     for n in json.arr['columns'] do
@@ -1096,7 +1096,7 @@ begin
     end;
     for det in FColumns do
       cleanUpColumn(det);
-    part := TAdvZipPart.Create;
+    part := TFslZipPart.Create;
     parts.Add(part);
     part.Name := json['name']+'.txt';
     part.Encoding := TEncoding.UTF8;
@@ -1165,7 +1165,7 @@ begin
   result := TRelationship(ObjectByIndex[i]);
 end;
 
-function TRelationshipList.ItemClass: TAdvObjectClass;
+function TRelationshipList.ItemClass: TFslObjectClass;
 begin
   result := TRelationship;
 end;

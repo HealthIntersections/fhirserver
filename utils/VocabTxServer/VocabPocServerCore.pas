@@ -74,7 +74,7 @@ type
     Constructor create(server : TTerminologyServer; ServerContext : TFHIRServerContext; lang : String);
     Destructor Destroy; override;
 
-    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TAdvList<TFHIRCompartmentId>): boolean; override;
+    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TFslList<TFHIRCompartmentId>): boolean; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; override;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; override;
   end;
@@ -92,7 +92,7 @@ type
     // no OAuth Support
 
     // server total counts:
-    function FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>) : TStringList; override;
+    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; override;
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -139,7 +139,7 @@ begin
   inherited;
 end;
 
-function TTerminologyServerStorage.FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>): TStringList;
+function TTerminologyServerStorage.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>): TStringList;
 begin
   result := TStringList.create;
   result.AddObject('ValueSet', TObject(FServer.ValueSetCount));
@@ -404,9 +404,9 @@ end;
 
 procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 var
-  search : TAdvList<TSearchParameter>;
+  search : TFslList<TSearchParameter>;
   list, l : TFhirObjectList;
-  filtered : TAdvList<TFHIRMetadataResource>;
+  filtered : TFslList<TFHIRMetadataResource>;
   o : TFHIRObject;
   res : TFhirMetadataResource;
   bundle : TFHIRBundle;
@@ -477,7 +477,7 @@ begin
           raise Exception.Create('Unsupported Resource Type '+request.resourceName);
 
         try
-          filtered := TAdvList<TFHIRMetadataResource>.create;
+          filtered := TFslList<TFHIRMetadataResource>.create;
           try
             for o in list do
             begin
@@ -656,7 +656,7 @@ begin
   end;
 end;
 
-function TTerminologyServerOperationEngine.FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TAdvList<TFHIRCompartmentId>): boolean;
+function TTerminologyServerOperationEngine.FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TFslList<TFHIRCompartmentId>): boolean;
 var
   res : TFhirMetadataResource;
 begin

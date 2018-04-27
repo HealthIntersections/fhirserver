@@ -35,7 +35,7 @@ type
   private
     FResource: TFHIRResource;
     FElement: TFHIRString;
-    FExtensions : TAdvList<TFhirExtension>;
+    FExtensions : TFslList<TFhirExtension>;
     procedure SetElement(const Value: TFHIRString);
     procedure SetResource(const Value: TFHIRResource);
   public
@@ -125,7 +125,7 @@ end;
 constructor TTranslationsEditorForm.Create;
 begin
   inherited;
-  FExtensions := TAdvList<TFhirExtension>.create;
+  FExtensions := TFslList<TFhirExtension>.create;
 end;
 
 destructor TTranslationsEditorForm.Destroy;

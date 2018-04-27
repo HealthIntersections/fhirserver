@@ -44,12 +44,12 @@ Const
 
 
 Type
-  TProfileManager = class (TAdvObject)
+  TProfileManager = class (TFslObject)
   private
     lock : TCriticalSection;
-    FProfilesById : TAdvMap<TFHIRStructureDefinition>; // all current profiles by identifier (ValueSet.identifier)
-    FProfilesByURL : TAdvMap<TFHIRStructureDefinition>; // all current profiles by their URL
-//    FExtensions : TAdvStringObjectMatch;
+    FProfilesById : TFslMap<TFHIRStructureDefinition>; // all current profiles by identifier (ValueSet.identifier)
+    FProfilesByURL : TFslMap<TFHIRStructureDefinition>; // all current profiles by their URL
+//    FExtensions : TFslStringObjectMatch;
     function GetProfileByUrl(url: String): TFHirStructureDefinition;
     function GetProfileByType(aType: TFhirResourceType): TFHirStructureDefinition; // all profiles by the key they are known from (mainly to support drop)
 
@@ -64,18 +64,18 @@ Type
 
     function getExtensionDefn(source : TFHirStructureDefinition; url : String; var profile : TFHirStructureDefinition; var extension : TFHirStructureDefinition) : boolean;
     function getProfileStructure(source : TFHirStructureDefinition; url : String; var profile : TFHirStructureDefinition) : boolean;
-    function getLinks(non_resources : boolean) : TAdvStringMatch;
+    function getLinks(non_resources : boolean) : TFslStringMatch;
 
     property ProfileByURL[url : String] : TFHirStructureDefinition read GetProfileByUrl; default;
     property ProfileByType[aType : TFhirResourceType] : TFHirStructureDefinition read GetProfileByType;
-    property ProfilesByURL : TAdvMap<TFHIRStructureDefinition> read FProfilesByURL;
+    property ProfilesByURL : TFslMap<TFHIRStructureDefinition> read FProfilesByURL;
   end;
 
   {
   This encapsulates a reference to an element definition within a structure.
   The path may be replace
   }
-  TProfileDefinition = class (TAdvObject)
+  TProfileDefinition = class (TFslObject)
   private
     FProfiles : TProfileManager;
     FProfile : TFHirStructureDefinition;
@@ -104,7 +104,7 @@ Type
   protected
     FLock : TCriticalSection;
     FProfiles : TProfileManager;
-    FCustomResources : TAdvMap<TFHIRCustomResourceInformation>;
+    FCustomResources : TFslMap<TFHIRCustomResourceInformation>;
     FNonSecureNames : TArray<String>;
 
     procedure SetProfiles(const Value: TProfileManager);
@@ -124,11 +124,11 @@ Type
     procedure setNonSecureTypes(names : Array of String);
     function hasCustomResourceDefinition(sd : TFHIRStructureDefinition) : boolean;
 
-    function getResourceNames : TAdvStringSet; override;
+    function getResourceNames : TFslStringSet; override;
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
     function getStructure(url : String) : TFHIRStructureDefinition; override;
-    function allStructures : TAdvMap<TFHIRStructureDefinition>.TValueCollection; override;
+    function allStructures : TFslMap<TFHIRStructureDefinition>.TValueCollection; override;
     function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; override;
     function getCustomResource(name : String) : TFHIRCustomResourceInformation; override;
     function hasCustomResource(name : String) : boolean; override;
@@ -137,13 +137,13 @@ Type
 
   end;
 
-  TProfileUtilities = class (TAdvObject)
+  TProfileUtilities = class (TFslObject)
   private
     context : TFHIRWorkerContext;
     messages : TFhirOperationOutcomeIssueList;
     procedure log(message : String);
     function fixedPath(contextPath, pathSimple : String) : String;
-    function  getDiffMatches(context : TFhirStructureDefinitionDifferential; path : String; istart, iend : integer;  profileName : String) : TAdvList<TFhirElementDefinition>;
+    function  getDiffMatches(context : TFhirStructureDefinitionDifferential; path : String; istart, iend : integer;  profileName : String) : TFslList<TFhirElementDefinition>;
     function updateURLs(url : String; element : TFhirElementDefinition) : TFhirElementDefinition;
     procedure updateFromBase(derived, base : TFhirElementDefinition);
     procedure markDerived(outcome : TFhirElementDefinition);
@@ -164,9 +164,9 @@ Type
     function ruleMatches(diff, base : TFhirResourceSlicingRulesEnum) : boolean;
     function summariseSlicing(slice : TFhirElementDefinitionSlicing) : String;
     procedure updateFromSlicing(dst, src : TFhirElementDefinitionSlicing);
-    function getSiblings(list : TFhirElementDefinitionList; current : TFhirElementDefinition) : TAdvList<TFhirElementDefinition>;
+    function getSiblings(list : TFhirElementDefinitionList; current : TFhirElementDefinition) : TFslList<TFhirElementDefinition>;
     procedure processPaths(result, base : TFhirStructureDefinitionSnapshot; differential: TFhirStructureDefinitionDifferential; baseCursor, diffCursor, baseLimit, diffLimit : integer; url, profileName, contextPath : String; trimDifferential : boolean; contextName, resultPathBase : String; slicingHandled : boolean);
-    function populate(profile: TFHIRStructureDefinition; item: TFHIRObject; definition: TFHIRElementDefinition; stack: TAdvList<TFhirElementDefinition>): TFHIRResource;
+    function populate(profile: TFHIRStructureDefinition; item: TFHIRObject; definition: TFHIRElementDefinition; stack: TFslList<TFhirElementDefinition>): TFHIRResource;
     function getFirstCode(ed: TFHIRElementDefinition): TFhirCoding;
     function overWriteWithCurrent(profile,
       usage: TFHIRElementDefinition): TFHIRElementDefinition;
@@ -301,13 +301,13 @@ procedure TProfileUtilities.processPaths(result, base : TFhirStructureDefinition
 var
   currentBase : TFhirElementDefinition;
   cpath, path, p : String;
-  diffMatches : TAdvList<TFhirElementDefinition>;
+  diffMatches : TFslList<TFhirElementDefinition>;
   outcome, original, baseItem, diffItem, template : TFhirElementDefinition;
   dt, sd : TFHIRStructureDefinition;
   nbl, ndc, ndl, start, i, diffpos : integer;
   closed, isExt : boolean;
   dSlice, bSlice : TFhirElementDefinitionSlicing;
-  baseMatches : TAdvList<TFhirElementDefinition>;
+  baseMatches : TFslList<TFhirElementDefinition>;
 begin
   // just repeat processing entries until we run out of our allowed scope (1st entry, the allowed scope is all the entries)
   while (baseCursor <= baseLimit) do
@@ -707,7 +707,7 @@ begin
   end;
 end;
 
-function TProfileUtilities.populate(profile: TFHIRStructureDefinition; item : TFHIRObject; definition : TFHIRElementDefinition; stack : TAdvList<TFhirElementDefinition>): TFHIRResource;
+function TProfileUtilities.populate(profile: TFHIRStructureDefinition; item : TFHIRObject; definition : TFHIRElementDefinition; stack : TFslList<TFhirElementDefinition>): TFHIRResource;
 var
   children : TFhirElementDefinitionList;
   ed : TFhirElementDefinition;
@@ -783,7 +783,7 @@ end;
 function TProfileUtilities.populateByProfile(profile: TFHIRStructureDefinition): TFHIRResource;
 var
   path : String;
-  estack : TAdvList<TFhirElementDefinition>;
+  estack : TFslList<TFhirElementDefinition>;
 begin
   if profile.kind <> StructureDefinitionKindResource then
     raise Exception.Create('Unsuitable type of profile for creating a resource');
@@ -794,7 +794,7 @@ begin
     path := profile.baseType
   else
     path := profile.name;
-  estack := TAdvList<TFhirElementDefinition>.create;
+  estack := TFslList<TFhirElementDefinition>.create;
   try
     result := CreateResourceByName(path);
     try
@@ -929,12 +929,12 @@ begin
   result := element;
 end;
 
-function TProfileUtilities.getSiblings(list : TFhirElementDefinitionList; current : TFhirElementDefinition) : TAdvList<TFhirElementDefinition>;
+function TProfileUtilities.getSiblings(list : TFhirElementDefinitionList; current : TFhirElementDefinition) : TFslList<TFhirElementDefinition>;
 var
   path : String;
   cursor : integer;
 begin
-  result := TAdvList<TFhirElementDefinition>.create;
+  result := TFslList<TFhirElementDefinition>.create;
   path := current.path;
   cursor := list.indexOf(current)+1;
   while (cursor < list.Count) and (list[cursor].path.length >= path.length) do
@@ -1013,12 +1013,12 @@ begin
   result := definition.path.endsWith('.extension') or definition.path.endsWith('.modifierExtension');
 end;
 
-function  TProfileUtilities.getDiffMatches(context : TFhirStructureDefinitionDifferential; path : String; istart, iend : integer;  profileName : String) : TAdvList<TFhirElementDefinition>;
+function  TProfileUtilities.getDiffMatches(context : TFhirStructureDefinitionDifferential; path : String; istart, iend : integer;  profileName : String) : TFslList<TFhirElementDefinition>;
 var
   i : integer;
   statedPath : String;
 begin
-  result := TAdvList<TFhirElementDefinition>.create;
+  result := TFslList<TFhirElementDefinition>.create;
   for i := istart to iend do
   begin
     statedPath := context.elementList[i].path;
@@ -1490,7 +1490,7 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.allStructures: TAdvMap<TFHIRStructureDefinition>.TValueCollection;
+function TBaseWorkerContext.allStructures: TFslMap<TFHIRStructureDefinition>.TValueCollection;
 begin
   result := FProfiles.ProfilesByURL.Values;
 end;
@@ -1500,7 +1500,7 @@ begin
   inherited;
   FLock := TCriticalSection.Create('worker-context');
   FProfiles := TProfileManager.Create;
-  FCustomResources := TAdvMap<TFHIRCustomResourceInformation>.create;
+  FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create;
 end;
 
 destructor TBaseWorkerContext.Destroy;
@@ -1535,11 +1535,11 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.getResourceNames: TAdvStringSet;
+function TBaseWorkerContext.getResourceNames: TFslStringSet;
 var
   a : TFhirResourceType;
 begin
-  result := TAdvStringSet.Create;
+  result := TFslStringSet.Create;
   try
     for a := Low(TFhirResourceType) to High(TFhirResourceType) do
       if a <> frtNull then
@@ -1604,22 +1604,22 @@ end;
 
 procedure TBaseWorkerContext.LoadFromDefinitions(filename: string);
 var
-  b : TAdvBuffer;
-  m : TAdvMemoryStream;
-  r : TAdvZipReader;
+  b : TFslBuffer;
+  m : TFslMemoryStream;
+  r : TFslZipReader;
   i : integer;
-  mem : TAdvMemoryStream;
+  mem : TFslMemoryStream;
   vcl : TVclStream;
   xml : TFHIRXmlParser;
 begin
   // read the zip, loading the resources we need
-  b := TAdvBuffer.create;
+  b := TFslBuffer.create;
   try
     b.LoadFromFileName(filename);
-    m := TAdvMemoryStream.create;
+    m := TFslMemoryStream.create;
     try
       m.Buffer := b.Link;
-      r := TAdvZipReader.create;
+      r := TFslZipReader.create;
       try
         r.Stream := m.Link;
         r.ReadZip;
@@ -1629,7 +1629,7 @@ begin
             // ignore
           else if ExtractFileExt(r.Parts[i].Name) = '.xml' then
           begin
-            mem := TAdvMemoryStream.create;
+            mem := TFslMemoryStream.create;
             try
               mem.Buffer := r.Parts[i].Link;
               vcl := TVCLStream.create;
@@ -1817,8 +1817,8 @@ constructor TProfileManager.Create;
 begin
   inherited;
   lock := TCriticalSection.Create('profiles');
-  FProfilesById := TAdvMap<TFhirStructureDefinition>.create;
-  FProfilesByURL := TAdvMap<TFhirStructureDefinition>.create;
+  FProfilesById := TFslMap<TFhirStructureDefinition>.create;
+  FProfilesByURL := TFslMap<TFhirStructureDefinition>.create;
 end;
 
 destructor TProfileManager.Destroy;
@@ -1863,14 +1863,14 @@ begin
 
 end;
 
-function TProfileManager.getLinks(non_resources : boolean): TAdvStringMatch;
+function TProfileManager.getLinks(non_resources : boolean): TFslStringMatch;
 var
   p : TFHirStructureDefinition;
   url : String;
 begin
   lock.Lock('getLinks');
   try
-    result := TAdvStringMatch.Create;
+    result := TFslStringMatch.Create;
     try
       for url in FProfilesByURL.Keys do
       begin

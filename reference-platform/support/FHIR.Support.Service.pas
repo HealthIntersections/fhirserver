@@ -37,7 +37,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.System;
 
 type
-  TSystemService = { Abstract } class (TAdvObject)
+  TSystemService = { Abstract } class (TFslObject)
   Private
     FHandle : SERVICE_STATUS_HANDLE;
     FSystemName : String;
@@ -89,7 +89,7 @@ const
   USER_CONTROL_OFFSET = $80;
 
 type
-  TServiceManagerHandle = class (TAdvObject)
+  TServiceManagerHandle = class (TFslObject)
   private
     FMachine : String;
     FHandle : SC_HANDLE;
@@ -103,7 +103,7 @@ type
 
   TServiceStatusEnum = (ssError, ssNotInstalled, ssRunning, ssStopped, ssStarting, ssStopping, ssOther);
 
-  TServiceHandle = class (TAdvObject)
+  TServiceHandle = class (TFslObject)
   private
     FManHnd : SC_HANDLE;
     FService : String;
@@ -144,7 +144,6 @@ uses
   FHIR.Support.Strings,
   FHIR.Support.Lock,
   SysUtils,
-  Logging,
   FHIR.Debug.Logging;
 
 const

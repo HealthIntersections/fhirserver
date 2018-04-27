@@ -39,12 +39,12 @@ uses
   FHIR.Base.Objects, FHIRBaseX, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Parser, FHIR.Tools.Utilities, FHIR.Tools.PathNode, FHIR.Tools.PathEngine;
 
 type
-  TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
-  TFHIRGraphQLEngineLookupEvent = function (appInfo : TAdvObject; requestType, id : String; var res : TFHIRResource) : boolean of Object;
-  TFHIRGraphQLEngineListResourcesEvent = procedure (appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFHIRResource>) of Object;
-  TFHIRGraphQLEngineSearchEvent = function (appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>) : TFHIRBundle of Object;
+  TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TFslObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
+  TFHIRGraphQLEngineLookupEvent = function (appInfo : TFslObject; requestType, id : String; var res : TFHIRResource) : boolean of Object;
+  TFHIRGraphQLEngineListResourcesEvent = procedure (appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResource>) of Object;
+  TFHIRGraphQLEngineSearchEvent = function (appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>) : TFHIRBundle of Object;
 
-  TFHIRGraphQLEngine = class (TAdvObject)
+  TFHIRGraphQLEngine = class (TFslObject)
   private
     FOnFollowReference : TFHIRGraphQLEngineDereferenceEvent;
     FOnSearch : TFHIRGraphQLEngineSearchEvent;
@@ -54,8 +54,8 @@ type
     FFocus : TFHIRResource;
     FOutput : TGraphQLObjectValue;
     FGraphQL : TGraphQLPackage;
-    FAppinfo : TAdvObject;
-    FWorkingVariables: TAdvMap<TGraphQLArgument>;
+    FAppinfo : TFslObject;
+    FWorkingVariables: TFslMap<TGraphQLArgument>;
     FPathEngine : TFHIRPathEngine;
     FMagicExpression : TFHIRPathExpressionNode;
 
@@ -65,33 +65,33 @@ type
     function listStatus(field: TGraphQLField; isList: boolean): TGraphQLArgumentListStatus;
 
     function getSingleValue(arg : TGraphQLArgument) : string;
-    function resolveValues(arg : TGraphQLArgument; max : integer = -1; vars : String = '') : TAdvList<TGraphQLValue>;
+    function resolveValues(arg : TGraphQLArgument; max : integer = -1; vars : String = '') : TFslList<TGraphQLValue>;
 
     function checkBooleanDirective(dir : TGraphQLDirective) : Boolean;
-    function checkDirectives(directives : TAdvList<TGraphQLDirective>) : boolean;
-    procedure checkNoDirectives(directives : TAdvList<TGraphQLDirective>);
-    function hasArgument(arguments : TAdvList<TGraphQLArgument>; name, value : String) : boolean;
-    function targetTypeOk(arguments : TAdvList<TGraphQLArgument>; dest : TFHIRResource) : boolean;
+    function checkDirectives(directives : TFslList<TGraphQLDirective>) : boolean;
+    procedure checkNoDirectives(directives : TFslList<TGraphQLDirective>);
+    function hasArgument(arguments : TFslList<TGraphQLArgument>; name, value : String) : boolean;
+    function targetTypeOk(arguments : TFslList<TGraphQLArgument>; dest : TFHIRResource) : boolean;
 
-    function filter(context : TFhirResource; prop:TFHIRProperty; arguments : TAdvList<TGraphQLArgument>; values : TFHIRObjectList; extensionMode : boolean)  : TAdvList<TFHIRObject>;
-    function filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundle)  : TAdvList<TFHIRResource>; overload;
-    function filterResources(FHIRPathEngine : TGraphQLArgument; list : TAdvList<TFHIRResource>)  : TAdvList<TFHIRResource>; overload;
-    procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
+    function filter(context : TFhirResource; prop:TFHIRProperty; arguments : TFslList<TGraphQLArgument>; values : TFHIRObjectList; extensionMode : boolean)  : TFslList<TFHIRObject>;
+    function filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundle)  : TFslList<TFHIRResource>; overload;
+    function filterResources(FHIRPathEngine : TGraphQLArgument; list : TFslList<TFHIRResource>)  : TFslList<TFHIRResource>; overload;
+    procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
     procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
     procedure processReverseReferenceList(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
     procedure processReverseReferenceSearch(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
-    procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
-    procedure processSearch(target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
+    procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TFslList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
+    procedure processSearch(target : TGraphQLObjectValue; selection : TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
     procedure processSearchSingle(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
     procedure processSearchSimple(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
     procedure processSearchFull(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
-    procedure SetAppInfo(const Value: TAdvObject);
+    procedure SetAppInfo(const Value: TFslObject);
     procedure processVariables(op : TGraphQLOperation);
   public
     Constructor Create; override;
     Destructor Destroy; override;
-    property appInfo : TAdvObject read FAppinfo write SetAppInfo;
+    property appInfo : TFslObject read FAppinfo write SetAppInfo;
 
     // the focus resource - if there is one. If there isn't, then the focus is a collection
     property focus : TFHIRResource read FFocus write SetFocus;
@@ -147,7 +147,7 @@ implementation
 
 function TFHIRGraphQLEngine.checkBooleanDirective(dir: TGraphQLDirective): Boolean;
 var
-  vl : TAdvList<TGraphQLValue>;
+  vl : TFslList<TGraphQLValue>;
 begin
   if dir.Arguments.Count <> 1 then
     raise EGraphQLException.Create('Unable to process @'+dir.Name+': expected a single argument "if"');
@@ -161,7 +161,7 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.checkDirectives(directives: TAdvList<TGraphQLDirective>) : boolean;
+function TFHIRGraphQLEngine.checkDirectives(directives: TFslList<TGraphQLDirective>) : boolean;
 var
   dir, skip, include : TGraphQLDirective;
 begin
@@ -197,7 +197,7 @@ begin
 end;
 
 procedure TFHIRGraphQLEngine.checkNoDirectives(
-  directives: TAdvList<TGraphQLDirective>);
+  directives: TFslList<TGraphQLDirective>);
 begin
 
 end;
@@ -205,7 +205,7 @@ end;
 constructor TFHIRGraphQLEngine.Create;
 begin
   inherited;
-  FWorkingVariables := TAdvMap<TGraphQLArgument>.create;
+  FWorkingVariables := TFslMap<TGraphQLArgument>.create;
   FPathEngine := TFHIRPathEngine.Create(nil, nil);
   FMagicExpression := TFHIRPathExpressionNode.Create(0);
 end;
@@ -222,7 +222,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRGraphQLEngine.SetAppInfo(const Value: TAdvObject);
+procedure TFHIRGraphQLEngine.SetAppInfo(const Value: TFslObject);
 begin
   FAppinfo.Free;
   FAppinfo := Value;
@@ -250,11 +250,11 @@ begin
     result := listStatusNotSpecified;
 end;
 
-function TFHIRGraphQLEngine.targetTypeOk(arguments: TAdvList<TGraphQLArgument>; dest: TFHIRResource): boolean;
+function TFHIRGraphQLEngine.targetTypeOk(arguments: TFslList<TGraphQLArgument>; dest: TFHIRResource): boolean;
 var
   list : TStringList;
   arg : TGraphQLArgument;
-  vl : TAdvList<TGraphQLValue>;
+  vl : TFslList<TGraphQLValue>;
   v : TGraphQLValue;
 begin
   list := TStringList.Create;
@@ -312,7 +312,7 @@ begin
     processObject(FFocus, FFocus, FOutput, op.SelectionSet, false, '');
 end;
 
-function TFHIRGraphQLEngine.filter(context : TFhirResource; prop:TFHIRProperty; arguments: TAdvList<TGraphQLArgument>; values: TFHIRObjectList; extensionMode : boolean): TAdvList<TFHIRObject>;
+function TFHIRGraphQLEngine.filter(context : TFhirResource; prop:TFHIRProperty; arguments: TFslList<TGraphQLArgument>; values: TFHIRObjectList; extensionMode : boolean): TFslList<TFHIRObject>;
   function hasExtensions(obj : TFHIRObject) : boolean;
   begin
     if obj is TFhirBackboneElement then
@@ -339,13 +339,13 @@ var
   p : TFHIRProperty;
   v : TFHIRObject;
   node: TFHIRPathExpressionNode;
-  vl : TAdvList<TGraphQLValue>;
+  vl : TFslList<TGraphQLValue>;
   i, t, offset, count : integer;
 begin
   offset := 0;
   count := MAXINT;
 
-  result := TAdvList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.create;
   try
     if values.Count > 0 then
     begin
@@ -423,13 +423,13 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundle): TAdvList<TFHIRResource>;
+function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundle): TFslList<TFHIRResource>;
 var
   be : TFhirBundleEntry;
   fpe : TFHIRPathEngine;
   node : TFHIRPathExpressionNode;
 begin
-  result := TAdvList<TFHIRResource>.create;
+  result := TFslList<TFHIRResource>.create;
   try
     if bnd.entryList.Count > 0 then
     begin
@@ -459,13 +459,13 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; list : TAdvList<TFhirResource>): TAdvList<TFHIRResource>;
+function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; list : TFslList<TFhirResource>): TFslList<TFHIRResource>;
 var
   v : TFHIRResource;
   fpe : TFHIRPathEngine;
   node : TFHIRPathExpressionNode;
 begin
-  result := TAdvList<TFHIRResource>.create;
+  result := TFslList<TFHIRResource>.create;
   try
     if list.Count > 0 then
     begin
@@ -497,7 +497,7 @@ end;
 
 
 
-function TFHIRGraphQLEngine.hasArgument(arguments: TAdvList<TGraphQLArgument>; name, value: String): boolean;
+function TFHIRGraphQLEngine.hasArgument(arguments: TFslList<TGraphQLArgument>; name, value: String): boolean;
 var
   arg : TGraphQLArgument;
 begin
@@ -507,7 +507,7 @@ begin
   result := false;
 end;
 
-procedure TFHIRGraphQLEngine.processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
+procedure TFHIRGraphQLEngine.processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TFslList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
 var
   arg: TGraphQLArgument;
   value: TFHIRObject;
@@ -622,12 +622,12 @@ begin
 end;
 
 
-procedure TFHIRGraphQLEngine.processObject(context : TFHIRResource; source: TFHIRObject; target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
+procedure TFHIRGraphQLEngine.processObject(context : TFHIRResource; source: TFHIRObject; target: TGraphQLObjectValue; selection: TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
 var
   sel : TGraphQLSelection;
   prop : TFHIRProperty;
   fragment : TGraphQLFragment;
-  vl : TAdvList<TFHIRObject>;
+  vl : TFslList<TFHIRObject>;
 begin
   for sel in selection do
   begin
@@ -750,17 +750,17 @@ end;
 
 procedure TFHIRGraphQLEngine.processReverseReferenceList(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
 var
-  list, vl : TAdvList<TFHIRResource>;
+  list, vl : TFslList<TFHIRResource>;
   v : TFhirResource;
-  params : TAdvList<TGraphQLArgument>;
+  params : TFslList<TGraphQLArgument>;
   a, arg, parg : TGraphQLArgument;
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnListResources) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
-  list := TAdvList<TFhirResource>.create;
+  list := TFslList<TFhirResource>.create;
   try
-    params := TAdvList<TGraphQLArgument>.create;
+    params := TFslList<TGraphQLArgument>.create;
     try
       parg := nil;
       for a in field.Arguments do
@@ -811,13 +811,13 @@ procedure TFHIRGraphQLEngine.processReverseReferenceSearch(source: TFHIRResource
 var
   bnd : TFHIRBundle;
   bndWrapper : TFHIRGraphQLSearchWrapper;
-  params : TAdvList<TGraphQLArgument>;
+  params : TFslList<TGraphQLArgument>;
   a, arg, parg : TGraphQLArgument;
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnSearch) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
-  params := TAdvList<TGraphQLArgument>.create;
+  params := TFslList<TGraphQLArgument>.create;
   try
     parg := nil;
     for a in field.Arguments do
@@ -852,7 +852,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processSearch(target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
+procedure TFHIRGraphQLEngine.processSearch(target: TGraphQLObjectValue; selection: TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
 var
   sel : TGraphQLSelection;
 begin
@@ -906,14 +906,14 @@ end;
 
 procedure TFHIRGraphQLEngine.processSearchSimple(target: TGraphQLObjectValue; field: TGraphQLField; inheritedList : boolean; suffix : string);
 var
-  list, vl : TAdvList<TFHIRResource>;
+  list, vl : TFslList<TFHIRResource>;
   v : TFhirResource;
   arg : TGraphQLArgument;
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnListResources) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
-  list := TAdvList<TFhirResource>.create;
+  list := TFslList<TFhirResource>.create;
   try
     FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), field.Arguments, list);
     arg := nil;
@@ -949,12 +949,12 @@ var
   bndWrapper : TFHIRGraphQLSearchWrapper;
   arg, carg : TGraphQLArgument;
   new : TGraphQLObjectValue;
-  params : TAdvList<TGraphQLArgument>;
+  params : TFslList<TGraphQLArgument>;
   l,r: String;
 begin
   if not assigned(FOnSearch) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
-  params := TAdvList<TGraphQLArgument>.create;
+  params := TFslList<TGraphQLArgument>.create;
   try
     carg := nil;
     for arg in field.Arguments do
@@ -1049,7 +1049,7 @@ end;
 
 function TFHIRGraphQLSearchWrapper.getPropertyValue(propName: string): TFHIRProperty;
 var
-  list : TAdvList<TFHIRGraphQLSearchEdge>;
+  list : TFslList<TFHIRGraphQLSearchEdge>;
   be : TFHIRBundleEntry;
 begin
   if propName = 'first' then
@@ -1068,11 +1068,11 @@ begin
     result := TFHIRProperty.Create(self, propname, 'integer', false, TFhirInteger, extractParam('_count', true))
   else if propName = 'edges' then
   begin
-    list := TAdvList<TFHIRGraphQLSearchEdge>.create;
+    list := TFslList<TFHIRGraphQLSearchEdge>.create;
     try
       for be in FBundle.entryList do
         list.Add(TFHIRGraphQLSearchEdge.create(be.Link));
-      result := TFHIRProperty.Create(self, propname, 'edge', true, TFhirInteger, TAdvList<TFHIRObject>(list));
+      result := TFHIRProperty.Create(self, propname, 'edge', true, TFhirInteger, TFslList<TFHIRObject>(list));
     finally
       list.Free;
     end;
@@ -1136,7 +1136,7 @@ end;
 
 function TFHIRGraphQLEngine.getSingleValue(arg: TGraphQLArgument): string;
 var
-  vl : TAdvList<TGraphQLValue>;
+  vl : TFslList<TGraphQLValue>;
 begin
   vl := resolveValues(arg, 1);
   try
@@ -1148,13 +1148,13 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.resolveValues(arg: TGraphQLArgument; max: integer; vars : String): TAdvList<TGraphQLValue>;
+function TFHIRGraphQLEngine.resolveValues(arg: TGraphQLArgument; max: integer; vars : String): TFslList<TGraphQLValue>;
 var
   v : TGraphQLValue;
   a : TGraphQLArgument;
-  vl : TAdvList<TGraphQLValue>;
+  vl : TFslList<TGraphQLValue>;
 begin
-  result := TAdvList<TGraphQLValue>.create;
+  result := TFslList<TGraphQLValue>.create;
   try
     for v in arg.Values do
       if not (v is TGraphQLVariableValue) then

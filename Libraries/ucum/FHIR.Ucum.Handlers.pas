@@ -38,7 +38,7 @@ Uses
   FHIR.Support.Objects, FHIR.Support.Collections;
 
 Type
-  TUcumUnitHandler = class (TAdvName)
+  TUcumUnitHandler = class (TFslName)
   private
     FUnits: String;
     FValue: TSmartDecimal;
@@ -66,7 +66,7 @@ Type
     Constructor Create(sCode, sUnits : String; oValue : integer = 1); Overload;
   End;
 
-  TUcumRegistry = class (TAdvNameList)
+  TUcumRegistry = class (TFslNameList)
   private
     function GetHandlerByCode(code: String): TUcumUnitHandler;
   public

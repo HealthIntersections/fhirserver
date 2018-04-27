@@ -78,9 +78,9 @@ Const
   SYSTEM_ID = 'http://example.org/mrn-id';
 
 Type
-  TCSVData = class (TAdvObject)
+  TCSVData = class (TFslObject)
   private
-    FRows : TAdvList<TAdvStringList>;
+    FRows : TFslList<TFslStringList>;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -88,8 +88,8 @@ Type
     procedure load(path : String; names : array of String);
     procedure save(path : String);
 
-    function GetById(id : String) : TAdvStringList;
-    function addRow(data : TAdvStringList) : integer;
+    function GetById(id : String) : TFslStringList;
+    function addRow(data : TFslStringList) : integer;
   end;
 
   TExampleServerData = class (TObject)
@@ -107,8 +107,8 @@ Type
   private
     FData : TExampleServerData;
 
-    function dataFromPatient(pat : TFHIRPatient) : TAdvStringList;
-    function patientFromData(data : TAdvStringList) : TFHIRPatient;
+    function dataFromPatient(pat : TFHIRPatient) : TFslStringList;
+    function patientFromData(data : TFslStringList) : TFHIRPatient;
 
     function patientCreate(request: TFHIRRequest; response : TFHIRResponse) : String;
     procedure patientUpdate(request: TFHIRRequest; response : TFHIRResponse);
@@ -137,7 +137,7 @@ Type
     // no OAuth Support
 
     // server total counts:
-    function FetchResourceCounts(comps : TAdvList<TFHIRCompartmentId>) : TStringList; override;
+    function FetchResourceCounts(comps : TFslList<TFHIRCompartmentId>) : TStringList; override;
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -197,7 +197,7 @@ implementation
 constructor TCSVData.Create;
 begin
   inherited create;
-  FRows := TAdvList<TAdvStringList>.create;
+  FRows := TFslList<TFslStringList>.create;
 end;
 
 destructor TCSVData.Destroy;
@@ -208,20 +208,20 @@ end;
 
 procedure TCSVData.load(path: String; names : array of String);
 var
-  csv : TAdvCSVExtractor;
-  f : TAdvFile;
-  ts : TAdvStringList;
+  csv : TFslCSVExtractor;
+  f : TFslFile;
+  ts : TFslStringList;
   s : String;
 begin
   if FileExists(path) then
   begin
-    f := TAdvFile.Create(path, fmOpenRead);
+    f := TFslFile.Create(path, fmOpenRead);
     try
-      csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8);
+      csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
       try
         while csv.More do
         begin
-         ts := TAdvStringList.Create;
+         ts := TFslStringList.Create;
          FRows.Add(ts);
          csv.ConsumeEntries(ts);
          csv.ConsumeLine;
@@ -235,7 +235,7 @@ begin
   end
   else
   begin
-    ts := TAdvStringList.Create;
+    ts := TFslStringList.Create;
     FRows.Add(ts);
     for s in names do
       ts.Add(s);
@@ -244,13 +244,13 @@ end;
 
 procedure TCSVData.save(path: String);
 var
-  csv : TAdvCSVFormatter;
-  f : TAdvFile;
-  ts : TAdvStringList;
+  csv : TFslCSVFormatter;
+  f : TFslFile;
+  ts : TFslStringList;
 begin
-  f := TAdvFile.Create(path, fmCreate);
+  f := TFslFile.Create(path, fmCreate);
   try
-    csv := TAdvCSVFormatter.Create;
+    csv := TFslCSVFormatter.Create;
     try
       csv.Stream := f.Link;
       csv.Encoding := TEncoding.UTF8;
@@ -267,13 +267,13 @@ begin
   end;
 end;
 
-function TCSVData.addRow(data: TAdvStringList): integer;
+function TCSVData.addRow(data: TFslStringList): integer;
 begin
   result := FRows.Count;
   FRows.Add(data.Link);
 end;
 
-function TCSVData.GetById(id: String): TAdvStringList;
+function TCSVData.GetById(id: String): TFslStringList;
 var
   index : integer;
 begin
@@ -421,7 +421,7 @@ begin
   end;
 end;
 
-function TExampleFHIROperationEngine.patientFromData(data: TAdvStringList): TFHIRPatient;
+function TExampleFHIROperationEngine.patientFromData(data: TFslStringList): TFHIRPatient;
 begin
   result := TFHIRPatient.Create;
   try
@@ -450,11 +450,11 @@ begin
   end;
 end;
 
-function TExampleFHIROperationEngine.dataFromPatient(pat: TFHIRPatient): TAdvStringList;
+function TExampleFHIROperationEngine.dataFromPatient(pat: TFHIRPatient): TFslStringList;
 var
   id : TFhirIdentifier;
 begin
-  result := TAdvStringList.Create;
+  result := TFslStringList.Create;
   try
     result.add(pat.meta.versionId);
     result.add(pat.meta.lastUpdated.ToHL7);
@@ -490,7 +490,7 @@ end;
 
 function TExampleFHIROperationEngine.patientCreate(request: TFHIRRequest; response: TFHIRResponse) : String;
 var
-  data : TAdvStringList;
+  data : TFslStringList;
 begin
   if request.Resource.meta = nil then
     request.Resource.meta := TFHIRMeta.Create;
@@ -515,7 +515,7 @@ end;
 
 procedure TExampleFHIROperationEngine.patientUpdate(request: TFHIRRequest; response: TFHIRResponse);
 var
-  odata, ndata : TAdvStringList;
+  odata, ndata : TFslStringList;
 begin
   odata := FData.FPatients.GetById(request.Id);
   if odata = nil then
@@ -549,7 +549,7 @@ end;
 
 function TExampleFHIROperationEngine.patientRead(request: TFHIRRequest; response: TFHIRResponse) : boolean;
 var
-  data : TAdvStringList;
+  data : TFslStringList;
 begin
   result := false;
   data := FData.FPatients.GetById(request.Id);
@@ -602,7 +602,7 @@ begin
 end;
 
 
-function TExampleFhirServerStorage.FetchResourceCounts(comps : TAdvList<TFHIRCompartmentId>): TStringList;
+function TExampleFhirServerStorage.FetchResourceCounts(comps : TFslList<TFHIRCompartmentId>): TStringList;
 begin
   FData.FLock.Lock();
   try

@@ -134,7 +134,7 @@ Type
     FVersion : String;
     FDisplay : String;
     FAbstract : Boolean;
-    FDesignationList : TAdvList<TFHIRLookupOpRespDesignation>;
+    FDesignationList : TFslList<TFHIRLookupOpRespDesignation>;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -147,7 +147,7 @@ Type
     property version : String read FVersion write FVersion;
     property display : String read FDisplay write FDisplay;
     property abstract : Boolean read FAbstract write FAbstract;
-    property designationList : TAdvList<TFHIRLookupOpRespDesignation> read FDesignationList;
+    property designationList : TFslList<TFHIRLookupOpRespDesignation> read FDesignationList;
   end;
 
   //Operation validate-code (Value Set based Validation)
@@ -384,7 +384,7 @@ Type
     FCoding : TFhirCoding;
     FCodeableConcept : TFhirCodeableConcept;
     FTarget : String;
-    FDependencyList : TAdvList<TFHIRTranslateOpReqDependency>;
+    FDependencyList : TFslList<TFHIRTranslateOpReqDependency>;
     procedure SetCoding(value : TFhirCoding);
     procedure SetCodeableConcept(value : TFhirCodeableConcept);
   protected
@@ -402,7 +402,7 @@ Type
     property coding : TFhirCoding read FCoding write SetCoding;
     property codeableConcept : TFhirCodeableConcept read FCodeableConcept write SetCodeableConcept;
     property target : String read FTarget write FTarget;
-    property dependencyList : TAdvList<TFHIRTranslateOpReqDependency> read FDependencyList;
+    property dependencyList : TFslList<TFHIRTranslateOpReqDependency> read FDependencyList;
   end;
 
   TFHIRTranslateOpRespProduct = class (TFHIROperationObject)
@@ -425,7 +425,7 @@ Type
   private
     FEquivalence : String;
     FConcept : TFhirCoding;
-    FProductList : TAdvList<TFHIRTranslateOpRespProduct>;
+    FProductList : TFslList<TFHIRTranslateOpRespProduct>;
     procedure SetConcept(value : TFhirCoding);
   protected
     function isKnownName(name : String) : boolean; override;
@@ -436,14 +436,14 @@ Type
     function asParams(name : String) : TFHIRParametersParameter; override;
     property equivalence : String read FEquivalence write FEquivalence;
     property concept : TFhirCoding read FConcept write SetConcept;
-    property productList : TAdvList<TFHIRTranslateOpRespProduct> read FProductList;
+    property productList : TFslList<TFHIRTranslateOpRespProduct> read FProductList;
   end;
 
   TFHIRTranslateOpResponse = class (TFHIROperationResponse)
   private
     FResult : Boolean;
     FMessage : String;
-    FMatchList : TAdvList<TFHIRTranslateOpRespMatch>;
+    FMatchList : TFslList<TFHIRTranslateOpRespMatch>;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -454,14 +454,14 @@ Type
     function asParams : TFHIRParameters; override;
     property result : Boolean read FResult write FResult;
     property message : String read FMessage write FMessage;
-    property matchList : TAdvList<TFHIRTranslateOpRespMatch> read FMatchList;
+    property matchList : TFslList<TFHIRTranslateOpRespMatch> read FMatchList;
   end;
 
   //Operation closure (Closure Table Maintenance)
   TFHIRClosureOpRequest = class (TFHIROperationRequest)
   private
     FName : String;
-    FConceptList : TAdvList<TFhirCoding>;
+    FConceptList : TFslList<TFhirCoding>;
     FVersion : String;
   protected
     function isKnownName(name : String) : boolean; override;
@@ -472,7 +472,7 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property name : String read FName write FName;
-    property conceptList : TAdvList<TFhirCoding> read FConceptList;
+    property conceptList : TFslList<TFhirCoding> read FConceptList;
     property version : String read FVersion write FVersion;
   end;
 
@@ -590,7 +590,7 @@ Type
     FQuestionnaire : TFhirQuestionnaire;
     FQuestionnaireRef : TFhirReference;
     FSubject : TFhirReference;
-    FContentList : TAdvList<TFhirReference>;
+    FContentList : TFslList<TFhirReference>;
     FLocal : Boolean;
     procedure SetQuestionnaire(value : TFhirQuestionnaire);
     procedure SetQuestionnaireRef(value : TFhirReference);
@@ -607,7 +607,7 @@ Type
     property questionnaire : TFhirQuestionnaire read FQuestionnaire write SetQuestionnaire;
     property questionnaireRef : TFhirReference read FQuestionnaireRef write SetQuestionnaireRef;
     property subject : TFhirReference read FSubject write SetSubject;
-    property contentList : TAdvList<TFhirReference> read FContentList;
+    property contentList : TFslList<TFhirReference> read FContentList;
     property local : Boolean read FLocal write FLocal;
   end;
 
@@ -901,7 +901,7 @@ end;
 constructor TFHIRLookupOpResponse.create;
 begin
   inherited create();
-  FDesignationList := TAdvList<TFHIRLookupOpRespDesignation>.create;
+  FDesignationList := TFslList<TFHIRLookupOpRespDesignation>.create;
 end;
 
 procedure TFHIRLookupOpResponse.load(params : TFHIRParameters);
@@ -1606,7 +1606,7 @@ end;
 constructor TFHIRTranslateOpRequest.create;
 begin
   inherited create();
-  FDependencyList := TAdvList<TFHIRTranslateOpReqDependency>.create;
+  FDependencyList := TFslList<TFHIRTranslateOpReqDependency>.create;
 end;
 
 procedure TFHIRTranslateOpRequest.load(params : TFHIRParameters);
@@ -1733,7 +1733,7 @@ end;
 constructor TFHIRTranslateOpRespMatch.create;
 begin
   inherited create();
-  FProductList := TAdvList<TFHIRTranslateOpRespProduct>.create;
+  FProductList := TFslList<TFHIRTranslateOpRespProduct>.create;
 end;
 
 constructor TFHIRTranslateOpRespMatch.create(params : TFhirParametersParameter);
@@ -1741,7 +1741,7 @@ var
   p : TFhirParametersParameter;
 begin
   inherited create();
-  FProductList := TAdvList<TFHIRTranslateOpRespProduct>.create;
+  FProductList := TFslList<TFHIRTranslateOpRespProduct>.create;
   FEquivalence := params.str['equivalence'];
   FConcept := (params.param['concept'].value as TFhirCoding).Link; {ob.5d}
   for p in params.partList do
@@ -1785,7 +1785,7 @@ end;
 constructor TFHIRTranslateOpResponse.create;
 begin
   inherited create();
-  FMatchList := TAdvList<TFHIRTranslateOpRespMatch>.create;
+  FMatchList := TFslList<TFHIRTranslateOpRespMatch>.create;
 end;
 
 procedure TFHIRTranslateOpResponse.load(params : TFHIRParameters);
@@ -1839,7 +1839,7 @@ end;
 constructor TFHIRClosureOpRequest.create;
 begin
   inherited create();
-  FConceptList := TAdvList<TFhirCoding>.create;
+  FConceptList := TFslList<TFhirCoding>.create;
 end;
 
 procedure TFHIRClosureOpRequest.load(params : TFHIRParameters);
@@ -2219,7 +2219,7 @@ end;
 constructor TFHIRPopulateOpRequest.create;
 begin
   inherited create();
-  FContentList := TAdvList<TFhirReference>.create;
+  FContentList := TFslList<TFhirReference>.create;
 end;
 
 procedure TFHIRPopulateOpRequest.load(params : TFHIRParameters);

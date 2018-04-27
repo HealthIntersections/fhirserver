@@ -54,7 +54,7 @@ type
     vmFocus // information about the current selected element
   );
 
-  TWebBuffer = class (TAdvBuffer)
+  TWebBuffer = class (TFslBuffer)
   private
     FContentType: String;
   public
@@ -103,18 +103,18 @@ type
     { Private declarations }
 
     FLastHtml : String;
-    FValList : TAdvList<TFHIRAnnotation>;
-    FMatchList : TAdvList<TFHIRAnnotation>;
+    FValList : TFslList<TFHIRAnnotation>;
+    FMatchList : TFslList<TFHIRAnnotation>;
     FExpression : TFHIRPathExpressionNode;
     FFocusPath : String;
-    FFocusObjects : TAdvList<TFHIRObject>;
+    FFocusObjects : TFslList<TFHIRObject>;
     FCDSManager : TCDSHooksManager;
 
     FLock : TCriticalSection;
-    FCards : TAdvList<TCDSHookCard>;
+    FCards : TFslList<TCDSHookCard>;
     FCDSErrors : TStringList;
     FWebServer : TIdHTTPServer;
-    FWebCache : TAdvMap<TWebBuffer>;
+    FWebCache : TFslMap<TWebBuffer>;
 
     function generateBasicCard(path: String; focus: TFHIRObject): TCDSHookCard;
     procedure generateTypeCard(focus, next: TFHIRObject);
@@ -132,8 +132,8 @@ type
   public
     { Public declarations }
     procedure setNarrative(s : String);
-    procedure setValidationOutcomes(errors : TAdvList<TFHIRAnnotation>);
-    procedure setPathOutcomes(matches : TAdvList<TFHIRAnnotation>; expression : TFHIRPathExpressionNode);
+    procedure setValidationOutcomes(errors : TFslList<TFHIRAnnotation>);
+    procedure setPathOutcomes(matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNode);
     procedure setFocusInfo(path : String; focus : Array of TFHIRObject);
 
     property CDSManager : TCDSHooksManager read FCDSManager;
@@ -237,12 +237,12 @@ var
 begin
   inherited;
   VisualiserMode := TVisualiserMode(PageControl1.TabIndex+1);
-  FCards := TAdvList<TCDSHookCard>.create;
+  FCards := TFslList<TCDSHookCard>.create;
   FCDSErrors := TStringList.Create;
-  FFocusObjects := TAdvList<TFHIRObject>.create;
+  FFocusObjects := TFslList<TFHIRObject>.create;
 
   FLock := TCriticalSection.Create('vis.web');
-  FWebCache := TAdvMap<TWebBuffer>.create;
+  FWebCache := TFslMap<TWebBuffer>.create;
   FWebserver := TIdHTTPServer.Create(nil);
   SHandle := FWebserver.Bindings.Add;
   SHandle.IP := '127.0.0.1';
@@ -570,7 +570,7 @@ begin
   end;
 end;
 
-procedure TFHIRVisualizer.setPathOutcomes(matches : TAdvList<TFHIRAnnotation>; expression : TFHIRPathExpressionNode);
+procedure TFHIRVisualizer.setPathOutcomes(matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNode);
 var
   a : TFHIRAnnotation;
   li : TListItem;
@@ -596,7 +596,7 @@ begin
     vtExpressions.RootNodeCount := 1;
 end;
 
-procedure TFHIRVisualizer.setValidationOutcomes(errors: TAdvList<TFHIRAnnotation>);
+procedure TFHIRVisualizer.setValidationOutcomes(errors: TFslList<TFHIRAnnotation>);
 var
   a : TFHIRAnnotation;
   li : TListItem;

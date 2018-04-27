@@ -336,7 +336,6 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\reference-platform\client\FHIR.Ui.ComboFMX.pas"/>
-        <DCCReference Include="..\Server\Logging.pas"/>
         <DCCReference Include="PatientHomeForm.pas">
             <Form>PatientHomeFrame</Form>
             <FormType>fmx</FormType>

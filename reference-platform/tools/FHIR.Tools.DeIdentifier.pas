@@ -39,7 +39,7 @@ uses
 // fake name generator
 
 type
-  TPseudoData = class (TAdvObject)
+  TPseudoData = class (TFslObject)
   private
     FName: TFHIRHumanName;
     FTelecom: TFHIRContactPoint;
@@ -60,10 +60,10 @@ type
     property photo : TFhirAttachment read FPhoto write SetPhoto;
   end;
 
-  TFakeDataRepository = class (TAdvObject)
+  TFakeDataRepository = class (TFslObject)
   private
-    FMale : TAdvList<TPseudoData>;
-    FFemale : TAdvList<TPseudoData>;
+    FMale : TFslList<TPseudoData>;
+    FFemale : TFslList<TPseudoData>;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -71,13 +71,13 @@ type
     function getRandom(gender : TFhirAdministrativeGenderEnum) : TPseudoData;
   end;
 
-  TFHIRDeIdentifier = class (TAdvObject)
+  TFHIRDeIdentifier = class (TFslObject)
   private
     FPractitioners: boolean;
     FPersist: boolean;
     FDatabase : TKDBManager;
     FMakeFakeData: boolean;
-    FDataCache : TAdvMap<TPseudoData>;
+    FDataCache : TFslMap<TPseudoData>;
     FLock : TCriticalSection;
     NextKey : integer;
 
@@ -113,7 +113,7 @@ implementation
 constructor TFHIRDeIdentifier.Create;
 begin
   inherited;
-  FDataCache := TAdvMap<TPseudoData>.create;
+  FDataCache := TFslMap<TPseudoData>.create;
   FLock := TCriticalSection.create('DeIdentifier');
 end;
 
@@ -492,8 +492,8 @@ end;
 constructor TFakeDataRepository.Create;
 begin
   inherited;
-  FMale := TAdvList<TPseudoData>.create;
-  FFemale := TAdvList<TPseudoData>.create;
+  FMale := TFslList<TPseudoData>.create;
+  FFemale := TFslList<TPseudoData>.create;
 end;
 
 destructor TFakeDataRepository.Destroy;
@@ -505,13 +505,13 @@ end;
 
 procedure TFakeDataRepository.loadFromFile(filename: String);
 var
-  csv : TAdvCSVExtractor;
-  line : TAdvStringList;
+  csv : TFslCSVExtractor;
+  line : TFslStringList;
   pd : TPseudoData;
 begin
-  line := TAdvStringList.Create;
+  line := TFslStringList.Create;
   try
-    csv := TAdvCSVExtractor.Create(TAdvFile.Create(filename, fmOpenRead + fmShareDenyWrite));
+    csv := TFslCSVExtractor.Create(TFslFile.Create(filename, fmOpenRead + fmShareDenyWrite));
     try
       csv.ConsumeEntries(line); // headers
       while not csv.EndOfStream do

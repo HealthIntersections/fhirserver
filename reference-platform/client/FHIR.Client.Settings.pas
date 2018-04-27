@@ -35,7 +35,7 @@ uses
   FHIR.Tools.Types, FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities;
 
 type
-  TFHIRClientSettings = class (TAdvObject)
+  TFHIRClientSettings = class (TFslObject)
   private
     FFilename : String;
     copy :  TJsonObject;

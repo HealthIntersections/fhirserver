@@ -50,7 +50,7 @@ Const
 type
   TDoSearchEvent = function (session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundle of object;
 
-  TFhirLoginToken = Class (TAdvObject)
+  TFhirLoginToken = Class (TFslObject)
   private
     FProvider : TFHIRAuthProvider;
     FPath : String;
@@ -62,7 +62,7 @@ type
   // predefined token per user for testing
 
   // this is a server that lives at /oauth2 (or elsewhere, if configured)
-  TAuth2Server = class (TAdvObject)
+  TAuth2Server = class (TFslObject)
   private
     FLock : TCriticalSection;
     FServerContext : TFHIRServerContext;
@@ -72,7 +72,7 @@ type
 
     FFacebookAppid : String;
     FFacebookAppSecret : String;
-    FLoginTokens : TAdvMap<TFhirLoginToken>;
+    FLoginTokens : TFslMap<TFhirLoginToken>;
     FGoogleAppid : String;
     FGoogleAppSecret : String;
     FGoogleAppKey : String;
@@ -166,7 +166,7 @@ begin
   FHost := host;
   FSSLPort := SSLPort;
   FLock := TCriticalSection.Create('auth-server');
-  FLoginTokens := TAdvMap<TFhirLoginToken>.create;
+  FLoginTokens := TFslMap<TFhirLoginToken>.create;
   FNonceList := TStringList.create;
   FNonceList.Sorted := true;
 
@@ -532,7 +532,7 @@ var
   json, item, endorser : TJsonObject;
   jwt : TJWT;
   jwk : TJWKList;
-  endorsements: TAdvList<TEndorsement>;
+  endorsements: TFslList<TEndorsement>;
   endorsement : TEndorsement;
   app : TFhirDevice;
   list : TJsonArray;
@@ -559,7 +559,7 @@ begin
         try
           if jwt <> nil then
           begin
-            endorsements := TAdvList<TEndorsement>.create;
+            endorsements := TFslList<TEndorsement>.create;
             try
               app := ServerContext.ApplicationCache.recogniseJWT(jwt.originalSource, endorsements);
               try
@@ -1300,11 +1300,11 @@ var
   code, clientId, clientSecret, uri, errCode, client_id : string;
   pclientid, pname, predirect, pstate, pscope : String;
   json : TJSONWriter;
-  buffer : TAdvMemoryStream;
+  buffer : TFslMemoryStream;
   launch, scope : String;
   client : TRegisteredClientInformation;
 begin
-  buffer := TAdvMemoryStream.Create;
+  buffer := TFslMemoryStream.Create;
   try
     try
       // first, we check the fixed value
@@ -1401,11 +1401,11 @@ procedure TAuth2Server.HandleTokenData(AContext: TIdContext; request: TIdHTTPReq
 var
   token, clientId, clientSecret : string;
   json : TJSONWriter;
-  buffer : TAdvMemoryStream;
+  buffer : TFslMemoryStream;
   check : boolean;
   client : TRegisteredClientInformation;
 begin
-  buffer := TAdvMemoryStream.Create;
+  buffer := TFslMemoryStream.Create;
   try
     try
       if request.AuthUsername <> 'Bearer' then

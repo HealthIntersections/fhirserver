@@ -46,10 +46,10 @@ Type
   TFHIRSessionManager = class (TFHIRServerWorker)
   private
     FLock: TCriticalSection;
-    FSessions: TAdvMap<TFHIRSession>;
+    FSessions: TFslMap<TFHIRSession>;
     FLastSessionKey: integer;
   public
-    constructor Create(ServerContext : TAdvObject);
+    constructor Create(ServerContext : TFslObject);
     destructor Destroy; override;
 
     property LastSessionKey: integer read FLastSessionKey write FLastSessionKey;
@@ -82,7 +82,7 @@ constructor TFHIRSessionManager.Create;
 begin
   inherited Create(ServerContext);
   FLock := TCriticalSection.Create('session-manager');
-  FSessions := TAdvMap<TFHIRSession>.Create;
+  FSessions := TFslMap<TFHIRSession>.Create;
 end;
 
 destructor TFHIRSessionManager.Destroy;

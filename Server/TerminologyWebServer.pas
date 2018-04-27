@@ -39,12 +39,12 @@ uses
   IdContext, IdCustomHTTPServer,
   FHIR.Base.Lang, FHIR.Tools.Context, FHIR.Tools.Session, FHIR.Tools.Utilities, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Base.Xhtml, FHIR.Base.Objects,
   FHIR.Web.HtmlGen, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
-  TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIR.Tools.Operations;
+  TerminologyServer, FHIR.Tx.Service, TerminologyServerStore, FHIRServerConstants, FHIR.Tools.Operations;
 
 Type
   TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
 
-  TTerminologyWebServer = class (TAdvObject)
+  TTerminologyWebServer = class (TFslObject)
   private
     FWorker : TFHIRWorkerContext;
     FServer : TTerminologyServer;
@@ -623,7 +623,7 @@ procedure TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdH
 {var
   vs : String;
   vars : TDictionary<String, String>;
-  list : TAdvStringMatch;
+  list : TFslStringMatch;
   ts : TStringList;
   i : integer;
   }
@@ -744,7 +744,7 @@ end;
 
 //Procedure TTerminologyWebServer.BuildCsByName(html : THtmlPublisher; id : String);
 //{var
-//  list : TAdvStringMatch;
+//  list : TFslStringMatch;
 //  ts : TStringList;
 //  i: Integer;}
 //begin
@@ -774,7 +774,7 @@ end;
 //
 //Procedure TTerminologyWebServer.BuildCsByURL(html : THtmlPublisher; id : String);
 //{var
-//  list : TAdvStringMatch;
+//  list : TFslStringMatch;
 //  ts : TStringList;
 //  i: Integer; }
 //begin
@@ -804,7 +804,7 @@ end;
 //
 //Procedure TTerminologyWebServer.BuildVsByName(html : THtmlPublisher; id : String);
 //{var
-//  list : TAdvStringMatch;
+//  list : TFslStringMatch;
 //  ts : TStringList;
 //  i: Integer;
 //  }
@@ -834,7 +834,7 @@ end;
 //
 //Procedure TTerminologyWebServer.BuildVsByURL(html : THtmlPublisher; id : String);
 ////var
-////  list : TAdvStringMatch;
+////  list : TFslStringMatch;
 ////  ts : TStringList;
 ////  i: Integer;
 ////  vs : TFHIRValueSet;
@@ -897,7 +897,7 @@ var
   parts : TArray<String>;
   ss, t : TSnomedServices;
   pm : TParseMap;
-  buf : TAdvNameBuffer;
+  buf : TFslNameBuffer;
 begin
   if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin

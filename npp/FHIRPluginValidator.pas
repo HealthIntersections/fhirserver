@@ -44,8 +44,8 @@ Type
     FUrl : String;
     FServer : TFhirClient;
     FCapabilityStatement : TFHIRCapabilityStatement;
-    FValueSets : TAdvMap<TFHIRValueSet>;
-    FCodeSystems : TAdvMap<TFHIRCodeSystem>;
+    FValueSets : TFslMap<TFHIRValueSet>;
+    FCodeSystems : TFslMap<TFHIRCodeSystem>;
     procedure checkClient;
     function  findCode(list : TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : TFhirCodeSystemConcept;
   protected
@@ -87,8 +87,8 @@ end;
 constructor TFHIRPluginValidatorContext.Create(terminologyServer : String);
 begin
   inherited Create;
-  FValueSets := TAdvMap<TFHIRValueSet>.create;
-  FCodeSystems := TAdvMap<TFHIRCodeSystem>.create;
+  FValueSets := TFslMap<TFHIRValueSet>.create;
+  FCodeSystems := TFslMap<TFHIRCodeSystem>.create;
   FUrl := terminologyServer;
 end;
 

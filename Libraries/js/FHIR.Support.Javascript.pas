@@ -12,17 +12,17 @@ uses
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics;
 
 type
-  TAdvJavascript = class (TJavascript)
+  TFslJavascript = class (TJavascript)
   protected
     procedure freeObject(obj : TObject); override;
   end;
 
-  TAdvObjectListManager = class (TJavascriptArrayManager)
+  TFslObjectListManager = class (TJavascriptArrayManager)
   private
-    FList : TAdvObjectList;
+    FList : TFslObjectList;
     FClassDefinition : TJavascriptClassDefinition;
   public
-    constructor Create(list : TAdvObjectList; def : TJavascriptClassDefinition);
+    constructor Create(list : TFslObjectList; def : TJavascriptClassDefinition);
     destructor Destroy; override;
 
     function count : integer; override;
@@ -30,12 +30,12 @@ type
     function push(this : TJsValue; params : TJsValues) : TJsValue; override;
   end;
 
-  TAdvListManager<T: TAdvObject> = class (TJavascriptArrayManager)
+  TFslListManager<T: TFslObject> = class (TJavascriptArrayManager)
   private
-    FList : TAdvList<T>;
+    FList : TFslList<T>;
     FClassDefinition : TJavascriptClassDefinition;
   public
-    constructor Create(list : TAdvList<T>; def : TJavascriptClassDefinition);
+    constructor Create(list : TFslList<T>; def : TJavascriptClassDefinition);
     destructor Destroy; override;
 
     function count : integer; override;
@@ -59,42 +59,42 @@ begin
   result := DecodeBase64(AnsiString(value));
 end;
 
-{ TAdvJavascript }
+{ TFslJavascript }
 
-procedure TAdvJavascript.freeObject(obj: TObject);
+procedure TFslJavascript.freeObject(obj: TObject);
 begin
-  if obj is TAdvObject then
-    TAdvObject(obj).Free
+  if obj is TFslObject then
+    TFslObject(obj).Free
   else
     obj.Free;
 end;
 
-{ TAdvListManager<T> }
+{ TFslListManager<T> }
 
-constructor TAdvListManager<T>.create(list: TAdvList<T>; def : TJavascriptClassDefinition);
+constructor TFslListManager<T>.create(list: TFslList<T>; def : TJavascriptClassDefinition);
 begin
   inherited Create;
   FList := list;
   FClassDefinition := def;
 end;
 
-destructor TAdvListManager<T>.Destroy;
+destructor TFslListManager<T>.Destroy;
 begin
   FList.Free;
   inherited;
 end;
 
-function TAdvListManager<T>.count: integer;
+function TFslListManager<T>.count: integer;
 begin
   result := FList.Count;
 end;
 
-function TAdvListManager<T>.item(i: integer): JsValueRef;
+function TFslListManager<T>.item(i: integer): JsValueRef;
 begin
   result := FJavascript.wrap(FList[i].Link, FClassDefinition, true);
 end;
 
-function TAdvListManager<T>.push(this : TJsValue; params : TJsValues) : TJsValue;
+function TFslListManager<T>.push(this : TJsValue; params : TJsValues) : TJsValue;
 var
   o : T;
   owns : boolean;
@@ -115,46 +115,46 @@ begin
   result := FJavascript.wrap(FList.Count);
 end;
 
-{ TAdvObjectListManager }
+{ TFslObjectListManager }
 
-constructor TAdvObjectListManager.create(list: TAdvObjectList; def : TJavascriptClassDefinition);
+constructor TFslObjectListManager.create(list: TFslObjectList; def : TJavascriptClassDefinition);
 begin
   inherited Create;
   FList := list;
   FClassDefinition := def;
 end;
 
-destructor TAdvObjectListManager.Destroy;
+destructor TFslObjectListManager.Destroy;
 begin
   FList.Free;
   inherited;
 end;
 
-function TAdvObjectListManager.count: integer;
+function TFslObjectListManager.count: integer;
 begin
   result := FList.Count;
 end;
 
-function TAdvObjectListManager.item(i: integer): JsValueRef;
+function TFslObjectListManager.item(i: integer): JsValueRef;
 begin
   result := FJavascript.wrap(FList[i].Link, FClassDefinition, true);
 end;
 
-function TAdvObjectListManager.push(this : TJsValue; params : TJsValues) : TJsValue;
+function TFslObjectListManager.push(this : TJsValue; params : TJsValues) : TJsValue;
 var
   p : TJsValue;
-  o : TAdvObject;
+  o : TFslObject;
   pl : TJsValues;
   owns : boolean;
 begin
   setLength(pl, 1);
   for p in params do
   begin
-    o := FJavascript.getWrapped<TAdvObject>(p).Link;
+    o := FJavascript.getWrapped<TFslObject>(p).Link;
     if o = nil then
     begin
       pl[0] := p;
-      o := FClassDefinition.Factory(FJavascript, FClassDefinition, pl, owns) as TAdvObject;
+      o := FClassDefinition.Factory(FJavascript, FClassDefinition, pl, owns) as TFslObject;
     end;
     try
       Flist.add(o.Link);

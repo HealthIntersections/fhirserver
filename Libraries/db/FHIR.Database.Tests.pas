@@ -37,7 +37,7 @@ Uses
   FHIR.Support.DateTime, FHIR.Support.Text,
   FHIR.Database.Dialects,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper,
-  DUnitX.TestFramework, FHIRTestWorker;
+  DUnitX.TestFramework, FHIR.Tests.Worker;
 
 Type
 

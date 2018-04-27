@@ -10,7 +10,7 @@ uses
 Type
   EUCUMServices = class (Exception);
 
-  TUcumPair = class (TAdvObject)
+  TUcumPair = class (TFslObject)
   private
     FUnitCode: String;
     FValue: TSmartDecimal;
@@ -21,7 +21,7 @@ Type
     Property UnitCode : String read FUnitCode write FUnitCode;
   End;
 
-  TUcumServiceInterface = class (TAdvObject)
+  TUcumServiceInterface = class (TFslObject)
   public
     Function multiply(o1, o2 : TUcumPair) : TUcumPair; virtual;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; virtual;

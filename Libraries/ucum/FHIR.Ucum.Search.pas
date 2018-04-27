@@ -38,10 +38,10 @@ Uses
   FHIR.Ucum.Base;
 
 Type
-  TUcumSearch = class (TAdvObject)
+  TUcumSearch = class (TFslObject)
   Private
     FRegex : TRegEx;
-    Procedure searchUnits(model : TUcumModel; concepts : TUcumConceptList; units : TAdvPersistentList; text : String; isRegex : boolean);
+    Procedure searchUnits(model : TUcumModel; concepts : TUcumConceptList; units : TFslPersistentList; text : String; isRegex : boolean);
     function matchesUnit(model : TUcumModel; oUnit : TUcumUnit; text : String; isRegex : boolean) : boolean;
     Procedure searchPrefixes(concepts : TUcumConceptList; prefixes : TUcumPrefixList; text : String; isRegex : boolean);
     function matchesConcept(concept : TUcumConcept; text : String; isRegex : boolean) : boolean;
@@ -76,7 +76,7 @@ begin
   End;
 end;
 
-Procedure TUcumSearch.searchUnits(model : TUcumModel; concepts : TUcumConceptList; units : TAdvPersistentList; text : String; isRegex : boolean);
+Procedure TUcumSearch.searchUnits(model : TUcumModel; concepts : TUcumConceptList; units : TFslPersistentList; text : String; isRegex : boolean);
 var
   i : integer;
 begin

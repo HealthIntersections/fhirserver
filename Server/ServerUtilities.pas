@@ -40,7 +40,7 @@ uses
 type
   TProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
 
-  TFHIRResourceConfig = class (TAdvObject)
+  TFHIRResourceConfig = class (TFslObject)
   public
     name : String;
     enum : TFHIRResourceType;
@@ -65,19 +65,19 @@ type
     constructor Create; override;
   end;
 
-  TFHIRServerWorker = class (TAdvObject)
+  TFHIRServerWorker = class (TFslObject)
   private
-    FServerContext : TAdvObject; // no link
+    FServerContext : TFslObject; // no link
   public
-    Constructor Create(ServerContext : TAdvObject);
+    Constructor Create(ServerContext : TFslObject);
     Destructor Destroy; override;
 
-    Property ServerContext : TAdvObject read FServerContext;
+    Property ServerContext : TFslObject read FServerContext;
   end;
 
   TFHIRServerIniFileVersionOption = (voVersioningNotApplicable, voMaybeVersioned, voMustBeVersioned);
 
-  TFHIRServerIniFile = class (TAdvObject)
+  TFHIRServerIniFile = class (TFslObject)
   private
     FIni : TCustomIniFile;
     function GetFileName: string;
@@ -101,7 +101,7 @@ type
     procedure DeleteKey(const Section, Ident: String);
   end;
 
-function buildCompartmentsSQL(resconfig : TAdvMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>) : String;
+function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 
 implementation
 
@@ -126,7 +126,7 @@ end;
 
 { TFHIRServerWorker }
 
-constructor TFHIRServerWorker.Create(ServerContext: TAdvObject);
+constructor TFHIRServerWorker.Create(ServerContext: TFslObject);
 begin
   inherited Create;
   FServerContext := ServerContext;
@@ -240,7 +240,7 @@ begin
   FIni.WriteString(section, ident, value);
 end;
 
-function buildCompartmentsSQL(resconfig : TAdvMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>) : String;
+function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 var
   first : boolean;
   c : TFHIRCompartmentId;

@@ -36,17 +36,17 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics;
 
 Type
-  TAdvString = class (TAdvObject)
+  TFslString = class (TFslObject)
   private
     FString : String;
   public
     constructor create(value : String);
-    function Link :  TAdvString; overload;
+    function Link :  TFslString; overload;
   end;
 
-  TAdvGenericsTests = class (TAdvObject)
+  TFslGenericsTests = class (TFslObject)
   private
-    class procedure testSimple(obj : TAdvObject);
+    class procedure testSimple(obj : TFslObject);
     class procedure testiterate;
     class procedure testRemove;
     class procedure testAddAll;
@@ -60,13 +60,13 @@ Type
 implementation
 
 
-{ TAdvGenericsTests }
+{ TFslGenericsTests }
 
-class procedure TAdvGenericsTests.execute;
+class procedure TFslGenericsTests.execute;
 var
-  x : TAdvObject;
+  x : TFslObject;
 begin
-  x := TAdvObject.Create;
+  x := TFslObject.Create;
   // you should get one leak when you execute these tests. this exists to make sure that the leak tracking system is working
 
   testSimple(x);
@@ -77,29 +77,29 @@ begin
   testMap;
 end;
 
-class procedure TAdvGenericsTests.testSimple;
+class procedure TFslGenericsTests.testSimple;
 var
-  l : TAdvList<TAdvObject>;
+  l : TFslList<TFslObject>;
 begin
-  l := TAdvList<TAdvObject>.create;
+  l := TFslList<TFslObject>.create;
   try
-    l.Add(TAdvObject.Create);
+    l.Add(TFslObject.Create);
   finally
     l.Free;
   end;
 end;
 
-class procedure TAdvGenericsTests.testAddAll;
+class procedure TFslGenericsTests.testAddAll;
 var
-  l : TList<TAdvObject>;
-  l2 : TList<TAdvString>;
-  o : TAdvString;
+  l : TList<TFslObject>;
+  l2 : TList<TFslString>;
+  o : TFslString;
 begin
-  l := TList<TAdvObject>.create;
-  l2 := TList<TAdvString>.create;
+  l := TList<TFslObject>.create;
+  l2 := TList<TFslString>.create;
   try
-    l.Add(TAdvObject.Create);
-    l2.Add(TAdvString.create('test'));
+    l.Add(TFslObject.Create);
+    l2.Add(TFslString.create('test'));
     for o in l2 do
       l.add(o.Link);
   finally
@@ -108,44 +108,44 @@ begin
   end;
 end;
 
-class procedure TAdvGenericsTests.testRemove;
+class procedure TFslGenericsTests.testRemove;
 var
-  l : TAdvList<TAdvObject>;
+  l : TFslList<TFslObject>;
 begin
-  l := TAdvList<TAdvObject>.create;
+  l := TFslList<TFslObject>.create;
   try
-    l.Add(TAdvObject.Create);
+    l.Add(TFslObject.Create);
     l.Delete(0);
-    l.Add(TAdvObject.Create);
+    l.Add(TFslObject.Create);
   finally
     l.Free;
   end;
 end;
 
-class procedure TAdvGenericsTests.testReplace;
+class procedure TFslGenericsTests.testReplace;
 var
-  l : TAdvList<TAdvObject>;
+  l : TFslList<TFslObject>;
 begin
-  l := TAdvList<TAdvObject>.create;
+  l := TFslList<TFslObject>.create;
   try
-    l.Add(TAdvObject.Create);
-    l[0] := TAdvObject.Create;
+    l.Add(TFslObject.Create);
+    l[0] := TFslObject.Create;
   finally
     l.Free;
   end;
 end;
 
-class procedure TAdvGenericsTests.testIterate;
+class procedure TFslGenericsTests.testIterate;
 var
-  l : TAdvList<TAdvObject>;
+  l : TFslList<TFslObject>;
   c : integer;
-  o : TAdvObject;
+  o : TFslObject;
 begin
-  l := TAdvList<TAdvObject>.create;
+  l := TFslList<TFslObject>.create;
   try
-    l.Add(TAdvObject.Create);
-    l.Add(TAdvObject.Create);
-    l.Add(TAdvObject.Create);
+    l.Add(TFslObject.Create);
+    l.Add(TFslObject.Create);
+    l.Add(TFslObject.Create);
     c := 0;
     for o in l do
       if (o = l[c]) then
@@ -157,15 +157,15 @@ begin
   end;
 end;
 
-class procedure TAdvGenericsTests.testMap;
+class procedure TFslGenericsTests.testMap;
 var
-  map : TAdvMap<TAdvString>;
+  map : TFslMap<TFslString>;
 begin
-  map := TAdvMap<TAdvString>.create;
+  map := TFslMap<TFslString>.create;
   try
-    map.Add('test1', TAdvString.create('test1'));
-    map.Add('test2', TAdvString.create('test2'));
-    map.AddOrSetValue('test2', TAdvString.create('test3'));
+    map.Add('test1', TFslString.create('test1'));
+    map.Add('test2', TFslString.create('test2'));
+    map.AddOrSetValue('test2', TFslString.create('test3'));
     if map['test1'].FString <> 'test1' then
       raise Exception.Create('Mismatch');
     if map['test2'].FString <> 'test3' then
@@ -176,17 +176,17 @@ begin
   end;
 end;
 
-{ TAdvString }
+{ TFslString }
 
-constructor TAdvString.create(value: String);
+constructor TFslString.create(value: String);
 begin
   inherited Create;
   FString := value;
 end;
 
-function TAdvString.Link: TAdvString;
+function TFslString.Link: TFslString;
 begin
- result := TAdvString(inherited link);
+ result := TFslString(inherited link);
 end;
 
 end.

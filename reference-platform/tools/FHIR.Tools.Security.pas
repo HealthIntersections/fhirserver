@@ -55,15 +55,15 @@ Const
   SCIM_OPENID_PREFIX = 'http://openid.net/specs/openid-connect-core-1_0#';
 
 type
-  TFHIRSecurityRights = class (TAdvObject)
+  TFHIRSecurityRights = class (TFslObject)
   private
     id:integer;
     FSource : String;
     FUserInfo : boolean;
     FAdministerUsers : boolean;
     FReadAll : boolean;
-    FReadAllowed : TAdvStringSet;
-    FWriteAllowed : TAdvStringSet;
+    FReadAllowed : TFslStringSet;
+    FWriteAllowed : TFslStringSet;
     FWorker : TFHIRWorkerContext;
 
     function isNonSecure(name : String) : boolean;
@@ -177,8 +177,8 @@ begin
   id := gid;
   FWorker := worker;
 
-  FReadAllowed := TAdvStringSet.create;
-  FWriteAllowed := TAdvStringSet.create;
+  FReadAllowed := TFslStringSet.create;
+  FWriteAllowed := TFslStringSet.create;
 end;
 
 function TFHIRSecurityRights.isNonSecure(name: String): boolean;

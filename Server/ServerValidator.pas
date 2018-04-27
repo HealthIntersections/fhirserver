@@ -45,7 +45,7 @@ Type
     FTerminologyServer : TTerminologyServer;
     FProfile : TFhirExpansionProfile;
     FLock : TCriticalSection;
-    FQuestionnaires : TAdvMap<TFhirQuestionnaire>;
+    FQuestionnaires : TFslMap<TFhirQuestionnaire>;
 
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
@@ -88,7 +88,7 @@ begin
   FProfile := TFhirExpansionProfile.create;
   FProfile.includeDefinition := false;
   FProfile.limitedExpansion := false;
-  FQuestionnaires := TAdvMap<TFhirQuestionnaire>.create;
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create;
 end;
 
 destructor TFHIRServerWorkerContext.Destroy;

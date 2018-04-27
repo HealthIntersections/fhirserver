@@ -37,15 +37,15 @@ Uses
 
 
 Type
-  TAdvObjectClass = Class Of TAdvObject;
-  TAdvClass = TAdvObjectClass;
+  TFslObjectClass = Class Of TFslObject;
+  TFslClass = TFslObjectClass;
 
-  TAdvReferenceCount = Integer;
+  TFslReferenceCount = Integer;
 
-  TAdvObject = Class(TObject)
+  TFslObject = Class(TObject)
     Private
       // Reference counted using Interlocked* Windows API functions.
-      FAdvObjectReferenceCount : TAdvReferenceCount;
+      FAdvObjectReferenceCount : TFslReferenceCount;
 
     Protected
       // Declared here for ease of implementing interfaces.
@@ -62,14 +62,14 @@ Type
       // May be called from Nil or invalid references (so can't be virtual).
       Function Invariant(Const sMethod, sMessage : String) : Boolean; Overload;
       Function Invariants(Const sLocation : String; oObject : TObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
-      Function Invariants(Const sLocation : String; oObject : TAdvObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
+      Function Invariants(Const sLocation : String; oObject : TFslObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
       Function Invariants(Const sLocation : String; aReference, aClass : TClass; Const sReference : String) : Boolean; Overload;
 
       Function CheckCondition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
       Function CheckCondition(bCorrect : Boolean; Const sMethod, sMessage : String) : Boolean; Overload;
 
       // Override to introduce additional or alternate behaviour.
-      Function Assignable(Const sLocation : String; oObject : TAdvObject; Const sObject : String) : Boolean; Overload; Virtual;
+      Function Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean; Overload; Virtual;
       Function Alterable(Const sMethod : String) : Boolean; Overload; Virtual;
       Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
       Procedure RaiseError(Const sMethod, sMessage : String); Overload; Virtual;
@@ -87,23 +87,23 @@ Type
 
       // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
       Procedure Free; Overload;
-      Function Link : TAdvObject; Overload;
-      Function Unlink : TAdvObject; Overload;
-      Function Clone : TAdvObject; Overload;
-      Function ClassType : TAdvObjectClass; Overload;
+      Function Link : TFslObject; Overload;
+      Function Unlink : TFslObject; Overload;
+      Function Clone : TFslObject; Overload;
+      Function ClassType : TFslObjectClass; Overload;
 
       // Assignment.
       Function Assignable : Boolean; Overload; Virtual;
-      Function Duplicate : TAdvObject; Overload; Virtual;
-      Procedure Assign(oObject : TAdvObject); Overload; Virtual;
+      Function Duplicate : TFslObject; Overload; Virtual;
+      Procedure Assign(oObject : TFslObject); Overload; Virtual;
 
       // Determine if self is a valid reference of the specified class.
       Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
 
-      Property AdvObjectReferenceCount : TAdvReferenceCount Read FAdvObjectReferenceCount;
+      Property AdvObjectReferenceCount : TFslReferenceCount Read FAdvObjectReferenceCount;
   End;
 
-  PAdvObject = ^TAdvObject;
+  PAdvObject = ^TFslObject;
 
   EAdvInvariant = Class(EAdvException)
     Public
@@ -117,26 +117,26 @@ Type
 Implementation
 
 
-Constructor TAdvObject.Create;
+Constructor TFslObject.Create;
 Begin 
   Inherited;
 End;
 
 
-Destructor TAdvObject.Destroy;
+Destructor TFslObject.Destroy;
 Begin
   Inherited;
 End;  
 
 
-Procedure TAdvObject.AfterConstruction;
+Procedure TFslObject.AfterConstruction;
 Begin 
   Inherited;
 
 End;  
 
 
-Procedure TAdvObject.BeforeDestruction;
+Procedure TFslObject.BeforeDestruction;
 Begin 
   // TODO: really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
   Assert(CheckCondition(FAdvObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
@@ -145,51 +145,51 @@ Begin
 End;  
 
 
-Procedure TAdvObject.AllowDestructionChildren;
+Procedure TFslObject.AllowDestructionChildren;
 Begin
 End;
 
 
-Procedure TAdvObject.PreventDestructionChildren;
+Procedure TFslObject.PreventDestructionChildren;
 Begin
 End;
 
 
-Procedure TAdvObject.FreezeChildren;
+Procedure TFslObject.FreezeChildren;
 Begin
 End;
 
-Procedure TAdvObject.FreeReference;
+Procedure TFslObject.FreeReference;
 Begin
   If (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
     Destroy;
 End;
 
 
-Procedure TAdvObject.Free;
+Procedure TFslObject.Free;
 Begin
   If Assigned(Self) Then
   Begin
-    Assert(Invariants('Free', TAdvObject));
+    Assert(Invariants('Free', TFslObject));
 
     FreeReference;
   End;
 End;  
 
 
-Function TAdvObject.ClassType : TAdvObjectClass;
+Function TFslObject.ClassType : TFslObjectClass;
 Begin 
-  Result := TAdvObjectClass(Inherited ClassType);
+  Result := TFslObjectClass(Inherited ClassType);
 End;  
 
 
-Function TAdvObject.Unlink : TAdvObject;
+Function TFslObject.Unlink : TFslObject;
 Begin 
   Result := Self;
 
   If Assigned(Self) Then
   Begin 
-    Assert(Invariants('Unlink', TAdvObject));
+    Assert(Invariants('Unlink', TFslObject));
 
     If (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
     Begin 
@@ -200,30 +200,30 @@ Begin
 End;  
 
 
-Function TAdvObject.Link : TAdvObject;
+Function TFslObject.Link : TFslObject;
 Begin 
   Result := Self;
 
   If Assigned(Self) Then
   Begin 
-    Assert(Invariants('Link', TAdvObject));
+    Assert(Invariants('Link', TFslObject));
 
     InterlockedIncrement(FAdvObjectReferenceCount);
   End;  
 End;  
 
 
-Function TAdvObject.Duplicate : TAdvObject;
+Function TFslObject.Duplicate : TFslObject;
 Begin 
   Result := ClassType.Create;
 End;  
 
 
-Function TAdvObject.Clone : TAdvObject;
+Function TFslObject.Clone : TFslObject;
 Begin 
   If Assigned(Self) Then
   Begin
-    Assert(Invariants('Clone', TAdvObject));
+    Assert(Invariants('Clone', TFslObject));
 
     Result := Duplicate;
     Result.Assign(Self);
@@ -237,11 +237,11 @@ Begin
 End;  
 
 
-Function TAdvObject._AddRef : Integer;
+Function TFslObject._AddRef : Integer;
 Begin 
   If Assigned(Self) Then
   Begin 
-    Assert(Invariants('_AddRef', TAdvObject));
+    Assert(Invariants('_AddRef', TFslObject));
 
     Result := InterlockedIncrement(FAdvObjectReferenceCount);
   End   
@@ -252,11 +252,11 @@ Begin
 End;
 
 
-Function TAdvObject._Release: Integer;
+Function TFslObject._Release: Integer;
 Begin
   If Assigned(Self) Then
   Begin
-    Assert(Invariants('_Release', TAdvObject));
+    Assert(Invariants('_Release', TFslObject));
 
     Result := InterlockedDecrement(FAdvObjectReferenceCount);
 
@@ -270,7 +270,7 @@ Begin
 End;  
 
 
-Function TAdvObject.QueryInterface(Const IID: TGUID; Out Obj): HResult;
+Function TFslObject.QueryInterface(Const IID: TGUID; Out Obj): HResult;
 //Const
 //  // Extra typecast to longint prevents a warning about subrange bounds
 //  SUPPORT_INTERFACE : Array[Boolean] Of HResult = (Longint($80004002), 0);
@@ -283,31 +283,31 @@ Begin
 End;
 
 
-Function TAdvObject.Assignable : Boolean;
+Function TFslObject.Assignable : Boolean;
 Begin 
   Result := True;
 End;  
 
 
-Function TAdvObject.ErrorClass : EAdvExceptionClass;
+Function TFslObject.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvException;
 End;  
 
 
-Procedure TAdvObject.RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String);
+Procedure TFslObject.RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String);
 Begin
   Raise aException.Create(Self, sMethod, sMessage);
 End;
 
 
-Procedure TAdvObject.RaiseError(Const sMethod, sMessage : String);
+Procedure TFslObject.RaiseError(Const sMethod, sMessage : String);
 Begin
   RaiseError(ErrorClass, sMethod, sMessage);
 End;  
 
 
-Function TAdvObject.Assignable(Const sLocation : String; oObject : TAdvObject; Const sObject : String) : Boolean;
+Function TFslObject.Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean;
 Begin 
   Invariants(sLocation, oObject, ClassType, sObject);
 
@@ -318,7 +318,7 @@ Begin
 End;
 
 
-Procedure TAdvObject.Assign(oObject : TAdvObject);
+Procedure TFslObject.Assign(oObject : TFslObject);
 Begin 
   Assert(CheckCondition(Assignable, 'Assign', 'Object is not marked as assignable.'));
   Assert(Assignable('Assign', oObject, 'oObject'));
@@ -327,7 +327,7 @@ Begin
 End;  
 
 
-Function TAdvObject.Invariants(Const sLocation: String; aReference, aClass: TClass; Const sReference : String): Boolean;
+Function TFslObject.Invariants(Const sLocation: String; aReference, aClass: TClass; Const sReference : String): Boolean;
 Begin 
   // Ensure class is assigned.
   If Not Assigned(aReference) Then
@@ -341,7 +341,7 @@ Begin
 End;  
 
 
-Function TAdvObject.Invariants(Const sLocation : String; oObject : TObject; aClass: TClass; Const sObject : String) : Boolean;
+Function TFslObject.Invariants(Const sLocation : String; oObject : TObject; aClass: TClass; Const sObject : String) : Boolean;
 Begin 
   If Not Assigned(aClass) Then
     Invariant('Invariants', 'aClass was not assigned.');
@@ -354,7 +354,7 @@ Begin
 End;
 
 
-Function TAdvObject.Invariants(Const sLocation : String; oObject: TAdvObject; aClass: TClass; Const sObject : String) : Boolean;
+Function TFslObject.Invariants(Const sLocation : String; oObject: TFslObject; aClass: TClass; Const sObject : String) : Boolean;
 Begin
   Invariants(sLocation, TObject(oObject), aClass, sObject);
 
@@ -362,7 +362,7 @@ Begin
 End;
 
 
-Function TAdvObject.Invariants(Const sLocation: String; aClass: TClass) : Boolean;
+Function TFslObject.Invariants(Const sLocation: String; aClass: TClass) : Boolean;
 Begin
   Invariants(sLocation, TObject(Self), aClass, 'Self');
 
@@ -370,7 +370,7 @@ Begin
 End;
 
 
-Function TAdvObject.CheckCondition(bCorrect: Boolean; Const sMethod, sMessage: String): Boolean;
+Function TFslObject.CheckCondition(bCorrect: Boolean; Const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
@@ -381,7 +381,7 @@ Begin
 End;
 
 
-Function TAdvObject.CheckCondition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean;
+Function TFslObject.CheckCondition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean;
 Begin 
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
@@ -392,7 +392,7 @@ Begin
 End;  
 
 
-Function TAdvObject.Invariant(Const sMethod, sMessage: String): Boolean;
+Function TFslObject.Invariant(Const sMethod, sMessage: String): Boolean;
 Begin 
   // Call this method as you would the Error method to raise an exception.
   // Use this when you are not sure if self is valid as it is a non-virtual method.
@@ -403,12 +403,12 @@ Begin
 End;  
 
 
-Function TAdvObject.Alterable(Const sMethod: String): Boolean;
+Function TFslObject.Alterable(Const sMethod: String): Boolean;
 Begin
   Result := True;
 End;  
 
-Class Procedure TAdvObject.ClassError(Const sMethod, sMessage: String);
+Class Procedure TFslObject.ClassError(Const sMethod, sMessage: String);
 Begin
   Raise EAdvException.Create(Nil, sMethod, sMessage);
 End;

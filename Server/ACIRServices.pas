@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
 
 type
   TACIRConcept = class (TCodeSystemProviderContext)
@@ -67,8 +67,8 @@ type
 
   TACIRServices = class (TCodeSystemProvider)
   private
-    FList : TAdvList<TACIRConcept>;
-    FMap : TAdvMap<TACIRConcept>;
+    FList : TFslList<TACIRConcept>;
+    FMap : TFslMap<TACIRConcept>;
 
     procedure load;
   public
@@ -118,8 +118,8 @@ implementation
 Constructor TACIRServices.create();
 begin
   inherited Create;
-  FList := TAdvList<TACIRConcept>.create;
-  FMap := TAdvMap<TACIRConcept>.create;
+  FList := TFslList<TACIRConcept>.create;
+  FMap := TFslMap<TACIRConcept>.create;
 
   Load;
 end;

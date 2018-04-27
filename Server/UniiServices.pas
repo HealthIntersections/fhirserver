@@ -36,7 +36,7 @@ uses
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Exceptions,
   FHIR.Database.Manager,
-  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
 
 type
   TUniiConcept = class (TCodeSystemProviderContext)
@@ -197,11 +197,11 @@ end;
 
 Procedure ImportUnii(filename : String; dbm : TKDBManager);
 var
-  tab : TAdvTextExtractor;
-  f : TAdvFile;
+  tab : TFslTextExtractor;
+  f : TFslFile;
   s : String;
   cols : TArray<String>;
-  map : TAdvStringIntegerMatch;
+  map : TFslStringIntegerMatch;
   key, last, lastDesc : integer;
   db : TKDBConnection;
 begin
@@ -213,12 +213,12 @@ begin
     db.ExecSQL('Delete from UNIIDesc');
     db.ExecSQL('Delete from UNII');
 
-    map := TAdvStringIntegerMatch.create;
+    map := TFslStringIntegerMatch.create;
     try
       map.forced := true;
-      f := TAdvFile.Create(filename, fmOpenRead);
+      f := TFslFile.Create(filename, fmOpenRead);
       try
-        tab := TAdvTextExtractor.Create(f.Link, TEncoding.UTF8);
+        tab := TFslTextExtractor.Create(f.Link, TEncoding.UTF8);
         try
           s := tab.ConsumeLine;
           while tab.More do

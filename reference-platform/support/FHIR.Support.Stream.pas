@@ -40,12 +40,12 @@ Uses
 
 type
 
-  TAdvStream = Class(TAdvObject)
+  TFslStream = Class(TFslObject)
     Protected
       Function ErrorClass : EAdvExceptionClass; Override;
 
     Public
-      Function Link : TAdvStream;
+      Function Link : TFslStream;
 
       Function Assignable : Boolean; Override;
 
@@ -56,29 +56,29 @@ type
       Function Writeable : Int64; Virtual;
   End;
 
-  TAdvStreamClass = Class Of TAdvStream;
+  TFslStreamClass = Class Of TFslStream;
 
-  TAdvStreamList = Class(TAdvObjectList)
+  TFslStreamList = Class(TFslObjectList)
     Private
-      Function GetStream(iIndex: Integer): TAdvStream;
-      Procedure SetStream(iIndex: Integer; Const Value: TAdvStream);
+      Function GetStream(iIndex: Integer): TFslStream;
+      Procedure SetStream(iIndex: Integer; Const Value: TFslStream);
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
     Public
-      Property Streams[iIndex : Integer] : TAdvStream Read GetStream Write SetStream; Default;
+      Property Streams[iIndex : Integer] : TFslStream Read GetStream Write SetStream; Default;
   End;
 
-  TAdvStreamAdapter = Class(TAdvStream)
+  TFslStreamAdapter = Class(TFslStream)
     Private
-      FStream : TAdvStream;
+      FStream : TFslStream;
 
     Protected
     {$IFOPT C+}
-      Function GetStream: TAdvStream; Virtual;
+      Function GetStream: TFslStream; Virtual;
     {$ENDIF}
-      Procedure SetStream(oStream : TAdvStream); Virtual;
+      Procedure SetStream(oStream : TFslStream); Virtual;
 
     Public
       Constructor Create; Override;
@@ -92,10 +92,10 @@ type
 
       Function HasStream : Boolean; Virtual;
 
-      Property Stream : TAdvStream Read {$IFOPT C+}GetStream{$ELSE}FStream{$ENDIF} Write SetStream;
+      Property Stream : TFslStream Read {$IFOPT C+}GetStream{$ELSE}FStream{$ENDIF} Write SetStream;
   End;
 
-  TAdvAccessStream = Class(TAdvStream)
+  TFslAccessStream = Class(TFslStream)
     Protected
       Function GetPosition : Int64; Virtual;
       Procedure SetPosition(Const Value : Int64); Virtual;
@@ -104,20 +104,20 @@ type
       Procedure SetSize(Const Value : Int64); Virtual;
 
     Public
-      Function Link : TAdvAccessStream;
+      Function Link : TFslAccessStream;
 
       Property Size : Int64 Read GetSize Write SetSize;
       Property Position : Int64 Read GetPosition Write SetPosition;
   End;
 
-  TAdvAccessStreamList = Class(TAdvStreamList)
+  TFslAccessStreamList = Class(TFslStreamList)
   End;
 
-  TAdvAccessStreamClass = Class Of TAdvAccessStream;
+  TFslAccessStreamClass = Class Of TFslAccessStream;
 
-  TAdvAccessStreamAdapter = Class(TAdvAccessStream)
+  TFslAccessStreamAdapter = Class(TFslAccessStream)
     Private
-      FStream : TAdvAccessStream;
+      FStream : TFslAccessStream;
 
     Protected
       Function GetPosition : Int64; Override;
@@ -126,8 +126,8 @@ type
       Function GetSize : Int64; Override;
       Procedure SetSize(Const Value : Int64); Override;
 
-      Function GetStream: TAdvAccessStream; Virtual;
-      Procedure SetStream(oStream : TAdvAccessStream); Virtual;
+      Function GetStream: TFslAccessStream; Virtual;
+      Procedure SetStream(oStream : TFslAccessStream); Virtual;
 
     Public
       Constructor Create; Override;
@@ -139,16 +139,16 @@ type
       Function Readable : Int64; Override;
       Function Writeable : Int64; Override;
 
-      Property Stream : TAdvAccessStream Read GetStream Write SetStream;
+      Property Stream : TFslAccessStream Read GetStream Write SetStream;
   End; 
 
   EAdvStream = Class(EAdvException);
 
   EAdvExceptionClass = FHIR.Support.Exceptions.EAdvExceptionClass;
 
-  TAdvObjectClass = FHIR.Support.Objects.TAdvObjectClass;
+  TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
 
-  TAdvStringStream = Class(TAdvAccessStream)
+  TFslStringStream = Class(TFslAccessStream)
     Private
       FData : AnsiString;
       FIndex : Cardinal;
@@ -175,7 +175,7 @@ type
       Property Bytes : TBytes Read GetBytes Write SetBytes;
   End;
 
-  TAdvFile = Class(TAdvAccessStream)
+  TFslFile = Class(TFslAccessStream)
   Private
     FStream : TFileStream;
     function GetHandle: THandle;
@@ -194,7 +194,7 @@ type
     constructor Create(const AFileName: string; Mode: Word); overload;
     Destructor Destroy; override;
 
-    function Link : TAdvFile; overload;
+    function Link : TFslFile; overload;
 
     Procedure Read(Var aBuffer; iCount : Cardinal); Override;
     Procedure Write(Const aBuffer; iCount : Cardinal); Override;
@@ -206,12 +206,12 @@ type
 
   EAdvFile = Class(EAdvStream);
 
-    {@class TAdvBuffer
+    {@class TFslBuffer
     A list of bytes
   }
   {!.Net HL7Connect.Util.Buffer}
 
-  TAdvBuffer = Class(TAdvPersistent)
+  TFslBuffer = Class(TFslPersistent)
     Private
       FData : Pointer;
       FCapacity : Integer;
@@ -242,13 +242,13 @@ type
 {$ENDIF}
       Destructor Destroy; Override;
 
-      Function Link : TAdvBuffer;
-      Function Clone : TAdvBuffer;
+      Function Link : TFslBuffer;
+      Function Clone : TFslBuffer;
 
-      Procedure Define(oFiler : TAdvFiler); Override;
-      Procedure Load(oFiler : TAdvFiler); Override;
-      Procedure Save(oFiler : TAdvFiler); Override;
-      Procedure Assign(oObject : TAdvObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
+      Procedure Load(oFiler : TFslFiler); Override;
+      Procedure Save(oFiler : TFslFiler); Override;
+      Procedure Assign(oObject : TFslObject); Override;
 
       {!script show}
 
@@ -270,20 +270,20 @@ type
       Procedure SaveToFileName(Const sFilename : String);
 
       {!script hide}
-      Function Equal(oBuffer : TAdvBuffer) : Boolean;
-      Procedure Copy(oBuffer : TAdvBuffer);
-      Procedure CopyRange(oBuffer : TAdvBuffer; Const iIndex, iLength : Integer);
-      Function Compare(oBuffer : TAdvBuffer) : Integer;
+      Function Equal(oBuffer : TFslBuffer) : Boolean;
+      Procedure Copy(oBuffer : TFslBuffer);
+      Procedure CopyRange(oBuffer : TFslBuffer; Const iIndex, iLength : Integer);
+      Function Compare(oBuffer : TFslBuffer) : Integer;
 
       Procedure Move(Const iSource, iTarget, iLength : Integer);
 
       Function Offset(iIndex : Integer) : Pointer;
       Function StartsWith(Const sValue : String) : Boolean;
 
-      Procedure LoadFromFile(oFile : TAdvFile);
-      Procedure SaveToFile(oFile : TAdvFile);
-      Procedure LoadFromStream(oStream : TAdvStream); overload;
-      Procedure SaveToStream(oStream : TAdvStream); overload;
+      Procedure LoadFromFile(oFile : TFslFile);
+      Procedure SaveToFile(oFile : TFslFile);
+      Procedure LoadFromStream(oStream : TFslStream); overload;
+      Procedure SaveToStream(oStream : TFslStream); overload;
       Procedure LoadFromStream(oStream : TStream); overload;
       Procedure SaveToStream(oStream : TStream); overload;
 
@@ -315,14 +315,14 @@ type
 
   End;
 
-  TAdvBufferClass = Class Of TAdvBuffer;
+  TFslBufferClass = Class Of TFslBuffer;
 
 
   PByte = ^Byte;
 
-  TAdvMemoryStream = Class(TAdvAccessStream)
+  TFslMemoryStream = Class(TFslAccessStream)
     Private
-      FBuffer : TAdvBuffer;
+      FBuffer : TFslBuffer;
       FCurrentPointer : PByte;
       FSize : Int64;
       FPosition : Int64;
@@ -334,7 +334,7 @@ type
       Function GetDataPointer : Pointer;
       Procedure SetDataPointer(Const Value : Pointer);
 
-      Procedure SetBuffer(Const Value: TAdvBuffer);
+      Procedure SetBuffer(Const Value: TFslBuffer);
 
       Function GetAsText: String;
       Procedure SetAsText(Const Value: String);
@@ -356,11 +356,11 @@ type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Clone : TAdvMemoryStream;
-      Function Link : TAdvMemoryStream;
+      Function Clone : TFslMemoryStream;
+      Function Link : TFslMemoryStream;
 
-      Procedure Assign(oObject : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler);
+      Procedure Assign(oObject : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler);
 
       Procedure Read(Var aBuffer; iSize : Cardinal); Override;
       Procedure Write(Const aBuffer; iSize : Cardinal); Override;
@@ -372,20 +372,20 @@ type
 
       Function Assignable : Boolean; Override;
 
-      Function Equal(oMemory : TAdvMemoryStream) : Boolean;
+      Function Equal(oMemory : TFslMemoryStream) : Boolean;
 
-      Property Buffer : TAdvBuffer Read FBuffer Write SetBuffer;
+      Property Buffer : TFslBuffer Read FBuffer Write SetBuffer;
       Property DataPointer : Pointer Read GetDataPointer Write SetDataPointer;
       Property CurrentPointer : PByte Read FCurrentPointer;
       Property Capacity : Int64 Read GetCapacity Write SetCapacity;
-      Property Size; // declared in TAdvAccessStream.
+      Property Size; // declared in TFslAccessStream.
       Property Expand : Boolean Read FExpand Write FExpand;
       Property AsText : String Read GetAsText Write SetAsText;
   End;
 
   EAdvMemoryStream = Class(EAdvStream);
 
-  TAdvVCLStream = Class(TAdvStream)
+  TFslVCLStream = Class(TFslStream)
     Private
       FStream : TStream;
 
@@ -404,24 +404,24 @@ type
 
   TVCLStream = Class(TStream)
     Private
-      FStream : TAdvStream;
+      FStream : TFslStream;
 
-      Function GetStream: TAdvStream;
-      Procedure SetStream(Const Value: TAdvStream);
+      Function GetStream: TFslStream;
+      Procedure SetStream(Const Value: TFslStream);
 
     Protected
       Procedure SetSize(NewSize: LongInt); Override;
 
     Public
       Constructor Create; Overload; Virtual;
-      Constructor Create(Stream : TAdvStream); Overload; Virtual;
+      Constructor Create(Stream : TFslStream); Overload; Virtual;
       Destructor Destroy; Override;
 
       Function Read(Var aBuffer; iCount: LongInt): LongInt; Override;
       Function Write(Const aBuffer; iCount: LongInt): LongInt; Override;
       Function Seek(iOffset: LongInt; iOrigin: Word): LongInt; Override;
 
-      Property Stream : TAdvStream Read GetStream Write SetStream;
+      Property Stream : TFslStream Read GetStream Write SetStream;
   End;
 
   // dealing with changes to the Stream Interface:
@@ -438,17 +438,17 @@ type
   {$ENDIF}
 
   {$IFDEF MSWINDOWS}
-  TAdvStreamAdapterI = Class(TStreamAdapter)
+  TFslStreamAdapterI = Class(TStreamAdapter)
     Public
       Function Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; Override; Stdcall;
   End;
 
-  TAdvIStreamAdapter = Class(TAdvObject, IStream)
+  TFslIStreamAdapter = Class(TFslObject, IStream)
     Private
-      FStream : TAdvAccessStream;
+      FStream : TFslAccessStream;
 
-      Function GetStream: TAdvAccessStream;
-      Procedure SetStream(Const Value: TAdvAccessStream);
+      Function GetStream: TFslAccessStream;
+      Procedure SetStream(Const Value: TFslAccessStream);
 
     Public
       Constructor Create; Override;
@@ -466,7 +466,7 @@ type
       function Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult; stdcall;
       function Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult; stdcall;
 
-      Property Stream: TAdvAccessStream Read GetStream Write SetStream;
+      Property Stream: TFslAccessStream Read GetStream Write SetStream;
   End;
   {$ENDIF}
 
@@ -474,7 +474,7 @@ type
 
 
 Type
-  TAdvStreamFilerReferenceHashEntry = Class(TAdvHashEntry)
+  TFslStreamFilerReferenceHashEntry = Class(TFslHashEntry)
     Private
       FKey : Pointer;
       FValue : Pointer;
@@ -485,71 +485,71 @@ Type
       Procedure Generate; Override;
 
     Public
-      Procedure Assign(oSource : TAdvObject); Override;
+      Procedure Assign(oSource : TFslObject); Override;
 
       Property Key : Pointer Read FKey Write SetKey;
       Property Value : Pointer Read FValue Write FValue;
   End;
 
-  TAdvStreamFilerReferenceHashTable = Class(TAdvHashTable)
+  TFslStreamFilerReferenceHashTable = Class(TFslHashTable)
     Protected
-      Function ItemClass : TAdvHashEntryClass; Override;
+      Function ItemClass : TFslHashEntryClass; Override;
 
-      Function Equal(oA, oB : TAdvHashEntry) : Integer; Override;
+      Function Equal(oA, oB : TFslHashEntry) : Integer; Override;
   End;
 
-  TAdvStreamFilerReferenceManager = Class(TAdvObject)
+  TFslStreamFilerReferenceManager = Class(TFslObject)
     Private
-      FHashTable : TAdvStreamFilerReferenceHashTable;
-      FLookupHashEntry : TAdvStreamFilerReferenceHashEntry;
+      FHashTable : TFslStreamFilerReferenceHashTable;
+      FLookupHashEntry : TFslStreamFilerReferenceHashEntry;
 
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvStreamFilerReferenceManager;
+      Function Link : TFslStreamFilerReferenceManager;
 
       Procedure Clear;
 
-      Procedure Bind(oKey, oValue : TAdvPersistent); 
-      Function Get(oKey : TAdvPersistent) : TAdvPersistent; 
-      Function Exists(oKey : TAdvPersistent) : Boolean; 
+      Procedure Bind(oKey, oValue : TFslPersistent); 
+      Function Get(oKey : TFslPersistent) : TFslPersistent; 
+      Function Exists(oKey : TFslPersistent) : Boolean; 
 
-      Property HashTable : TAdvStreamFilerReferenceHashTable Read FHashTable;
+      Property HashTable : TFslStreamFilerReferenceHashTable Read FHashTable;
   End;
 
-  TAdvStreamFilerResourceManager = Class(TAdvObject)
+  TFslStreamFilerResourceManager = Class(TFslObject)
     Public
-      Function Link : TAdvStreamFilerResourceManager;
+      Function Link : TFslStreamFilerResourceManager;
 
       Procedure Clear; Virtual;
 
-      Function ResolveObject(Const sResource : String; Const aClass : TAdvObjectClass) : TAdvObject; Virtual;
-      Function ResolveID(Const oObject : TAdvObject) : String; Virtual;
+      Function ResolveObject(Const sResource : String; Const aClass : TFslObjectClass) : TFslObject; Virtual;
+      Function ResolveID(Const oObject : TFslObject) : String; Virtual;
   End;
 
-  TAdvStreamFiler = Class(TAdvFiler)
+  TFslStreamFiler = Class(TFslFiler)
     Private
-      FStream : TAdvStream;
-      FReferenceManager : TAdvStreamFilerReferenceManager;
-      FResourceManager : TAdvStreamFilerResourceManager;
+      FStream : TFslStream;
+      FReferenceManager : TFslStreamFilerReferenceManager;
+      FResourceManager : TFslStreamFilerResourceManager;
       FReferential : Boolean;
       FPermitExternalStreamManipulation : Boolean;
 
     {$IFOPT C+}
-      Function GetResourceManager: TAdvStreamFilerResourceManager;
+      Function GetResourceManager: TFslStreamFilerResourceManager;
     {$ENDIF}
-      Procedure SetResourceManager(Const Value: TAdvStreamFilerResourceManager);
+      Procedure SetResourceManager(Const Value: TFslStreamFilerResourceManager);
 
     {$IFOPT C+}
-      Function GetReferenceManager: TAdvStreamFilerReferenceManager;
+      Function GetReferenceManager: TFslStreamFilerReferenceManager;
     {$ENDIF}
-      Procedure SetReferenceManager(Const Value: TAdvStreamFilerReferenceManager);
+      Procedure SetReferenceManager(Const Value: TFslStreamFilerReferenceManager);
 
     {$IFOPT C+}
-      Function GetStream: TAdvStream;
+      Function GetStream: TFslStream;
     {$ENDIF}
-      Procedure SetStream(oStream : TAdvStream);
+      Procedure SetStream(oStream : TFslStream);
 
     Protected
       Procedure ApplyStream; Virtual;
@@ -558,7 +558,7 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvStreamFiler;
+      Function Link : TFslStreamFiler;
 
       Procedure Clear; Virtual; 
 
@@ -566,23 +566,23 @@ Type
       Function HasReferenceManager : Boolean;
       Function HasStream : Boolean;
 
-      Property Stream : TAdvStream Read {$IFOPT C+}GetStream{$ELSE}FStream{$ENDIF} Write SetStream;
-      Property ResourceManager : TAdvStreamFilerResourceManager Read {$IFOPT C+}GetResourceManager{$ELSE}FResourceManager{$ENDIF} Write SetResourceManager;
-      Property ReferenceManager : TAdvStreamFilerReferenceManager Read {$IFOPT C+}GetReferenceManager{$ELSE}FReferenceManager{$ENDIF} Write SetReferenceManager;
+      Property Stream : TFslStream Read {$IFOPT C+}GetStream{$ELSE}FStream{$ENDIF} Write SetStream;
+      Property ResourceManager : TFslStreamFilerResourceManager Read {$IFOPT C+}GetResourceManager{$ELSE}FResourceManager{$ENDIF} Write SetResourceManager;
+      Property ReferenceManager : TFslStreamFilerReferenceManager Read {$IFOPT C+}GetReferenceManager{$ELSE}FReferenceManager{$ENDIF} Write SetReferenceManager;
       Property Referential : Boolean Read FReferential Write FReferential;
       Property PermitExternalStreamManipulation : Boolean Read FPermitExternalStreamManipulation Write FPermitExternalStreamManipulation;
   End;
 
-  TAdvStreamFilerClass = Class Of TAdvStreamFiler;
+  TFslStreamFilerClass = Class Of TFslStreamFiler;
 
-  TAdvObject = FHIR.Support.Objects.TAdvObject;
+  TFslObject = FHIR.Support.Objects.TFslObject;
 
 
 Type
-  TAdvBinaryFiler = Class(TAdvStreamFiler)
+  TFslBinaryFiler = Class(TFslStreamFiler)
     Private
 //    FReducedClassNames : Boolean;
-//    FReducedClassList : TAdvClassList;
+//    FReducedClassList : TFslClassList;
 
     Protected
       Procedure DefineBlock(Var Value; Count : Integer); Virtual;
@@ -591,7 +591,7 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvBinaryFiler;
+      Function Link : TFslBinaryFiler;
 
       Procedure Clear; Override;
 
@@ -622,7 +622,7 @@ Type
 //    Property ReducedClassNames : Boolean Read FReducedClassNames Write FReducedClassNames;
   End;
 
-  TAdvBinaryWriter = Class(TAdvBinaryFiler)
+  TFslBinaryWriter = Class(TFslBinaryFiler)
     Private
       Procedure WriteString(Const sValue : String);
       Procedure WriteClass(Const sValue : String);
@@ -631,19 +631,19 @@ Type
       Procedure DefineBlock(Var Value; Count : Integer); Override;
 
     Public
-      Procedure DefineValue(Value : TAdvTag); Override;
+      Procedure DefineValue(Value : TFslTag); Override;
 
-      Procedure DefineClass(Var Value; aClass : TAdvObjectClass = Nil); Override;
-      Procedure DefineReference(Var Value; aClass : TAdvObjectClass = Nil); Override;
-      Procedure DefineObject(Var Value; aClass : TAdvObjectClass = Nil); Override;
-      Procedure DefineResource(Var Value; aClass : TAdvObjectClass = Nil); Override;
+      Procedure DefineClass(Var Value; aClass : TFslObjectClass = Nil); Override;
+      Procedure DefineReference(Var Value; aClass : TFslObjectClass = Nil); Override;
+      Procedure DefineObject(Var Value; aClass : TFslObjectClass = Nil); Override;
+      Procedure DefineResource(Var Value; aClass : TFslObjectClass = Nil); Override;
       Procedure DefineChar(Var Value : Char); Override;
       Procedure DefineString(Var Value : TLongString); Override;
   End;
 
-  TAdvBinaryReader = Class(TAdvBinaryFiler)
+  TFslBinaryReader = Class(TFslBinaryFiler)
     Private
-      FCache : TAdvTag;
+      FCache : TFslTag;
 
       Function ReadString: String;
       Function ReadClass: String;
@@ -654,65 +654,65 @@ Type
     Public
       Procedure Clear; Override;
 
-      Function Peek : TAdvTag; Override;
+      Function Peek : TFslTag; Override;
 
-      Procedure DefineValue(Value : TAdvTag); Override;
+      Procedure DefineValue(Value : TFslTag); Override;
 
-      Procedure DefineClass(Var Value; aClass : TAdvObjectClass = Nil); Override;
-      Procedure DefineReference(Var Value; aClass : TAdvObjectClass = Nil); Override;
-      Procedure DefineObject(Var Value; aClass : TAdvObjectClass = Nil); Override;
-      Procedure DefineResource(Var Value; aClass : TAdvObjectClass = Nil); Override;
+      Procedure DefineClass(Var Value; aClass : TFslObjectClass = Nil); Override;
+      Procedure DefineReference(Var Value; aClass : TFslObjectClass = Nil); Override;
+      Procedure DefineObject(Var Value; aClass : TFslObjectClass = Nil); Override;
+      Procedure DefineResource(Var Value; aClass : TFslObjectClass = Nil); Override;
       Procedure DefineChar(Var Value : Char); Override;
       Procedure DefineString(Var Value : TLongString); Override;
   End;
 
-  TAdvBufferList = Class(TAdvPersistentList)
+  TFslBufferList = Class(TFslPersistentList)
     Private
-      Function GetBuffer(iIndex: Integer): TAdvBuffer;
+      Function GetBuffer(iIndex: Integer): TFslBuffer;
 
     Protected
-      Function ItemClass: TAdvObjectClass; Override;
+      Function ItemClass: TFslObjectClass; Override;
 
     Public
-      Property Buffers[iIndex : Integer] : TAdvBuffer Read GetBuffer; Default;
+      Property Buffers[iIndex : Integer] : TFslBuffer Read GetBuffer; Default;
   End;
 
 
-  TAdvNameBuffer = Class(TAdvBuffer)
+  TFslNameBuffer = Class(TFslBuffer)
     Private
       FName : String;
 
     Public
-      Function Link : TAdvNameBuffer;
-      Function Clone : TAdvNameBuffer;
+      Function Link : TFslNameBuffer;
+      Function Clone : TFslNameBuffer;
 
-      Procedure Assign(oObject : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Assign(oObject : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
       Property Name : String Read FName Write FName;
   End;
 
-  TAdvNameBufferList = Class(TAdvBufferList)
+  TFslNameBufferList = Class(TFslBufferList)
     Private
-      Function GetBuffer(iIndex : Integer) : TAdvNameBuffer;
+      Function GetBuffer(iIndex : Integer) : TFslNameBuffer;
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
-      Procedure DefaultCompare(Out aEvent : TAdvItemListCompare); Override;
+      Procedure DefaultCompare(Out aEvent : TFslItemListCompare); Override;
 
       Function CompareByName(pA, pB : Pointer) : Integer; Virtual;
 
     Public
-      Function Link : TAdvNameBufferList;
-      Function Clone : TAdvNameBufferList; 
+      Function Link : TFslNameBufferList;
+      Function Clone : TFslNameBufferList; 
 
-      Function GetByName(Const sName : String) : TAdvNameBuffer;
+      Function GetByName(Const sName : String) : TFslNameBuffer;
       Function IndexByName(Const sName : String) : Integer;
       Function ExistsByName(Const sName : String) : Boolean;
-      Procedure Merge(oBuffers : TAdvNameBufferList);
+      Procedure Merge(oBuffers : TFslNameBufferList);
 
-      Property Buffer[iIndex : Integer] : TAdvNameBuffer Read GetBuffer; Default;
+      Property Buffer[iIndex : Integer] : TFslNameBuffer Read GetBuffer; Default;
   End;
 
 
@@ -733,14 +733,14 @@ Type
 
   EAfs = Class(EAdvException);
 
-  TAfsObject = Class(TAdvStringHashEntry)
+  TAfsObject = Class(TFslStringHashEntry)
   Protected
     Procedure RaiseError(Const sMethod, sException : String); Override;
   End; { TAfsObject }
 
   TAfsClass = Class Of TAfsObject;
 
-  TAfsIterator = Class(TAdvIterator)
+  TAfsIterator = Class(TFslIterator)
   Private
     FVolume : TAfsVolume;
     Procedure SetVolume(Const Value: TAfsVolume);
@@ -797,7 +797,7 @@ Type
 
   TAfsVolumeClass = Class Of TAfsVolume;
 
-  TAfsStream = Class(TAdvAccessStream)
+  TAfsStream = Class(TFslAccessStream)
   Private
     FVolume : TAfsVolume;
     FHandle : TAfsHandle;
@@ -837,7 +837,7 @@ Type
     Destructor Destroy; Override;
     Constructor Create(oVolume : TAfsVolume; Const sName : String = ''); Overload;
 
-    Procedure Assign(oSource : TAdvObject); Override;
+    Procedure Assign(oSource : TFslObject); Override;
 
     Procedure Open; Overload; Virtual;
     Procedure Open(amMode : TAfsMode; asShare : TAfsShare = asRead); Overload;
@@ -854,7 +854,7 @@ Type
 
   TAfsEntityClass = Class Of TAfsEntity;
 
-  TAfsEntities = Class(TAdvStringHashTable)
+  TAfsEntities = Class(TFslStringHashTable)
   End; { TAfsEntities }
 
   TAfsContainer = Class(TAfsEntity)
@@ -880,16 +880,16 @@ Type
   TAfsFile = Class(TAfsEntity)
   End; { TAfsFile }
 
-  TAfsList = Class(TAdvObjectList)
+  TAfsList = Class(TFslObjectList)
   Private
     Function GetEntities(Index : Integer) : TAfsEntity;
     Procedure SetEntities(Index : Integer; Const Value : TAfsEntity);
   Protected
     Function CompareName(pA, pB : Pointer) : Integer; Overload; Virtual;
 
-    Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+    Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
-    Function ItemClass : TAdvClass; Override;
+    Function ItemClass : TFslClass; Override;
   Public
     Property Entities[Index : Integer] : TAfsEntity Read GetEntities Write SetEntities; Default;
   End; { TAfsList }
@@ -904,11 +904,11 @@ Type
 
 
 Type
-  TAfsStreamManager = Class(TAdvPersistent)
+  TAfsStreamManager = Class(TFslPersistent)
   Private
     FVolume  : TAfsVolume;
     FMode    : TAfsMode;
-    FStreams : TAdvObjectMatch;
+    FStreams : TFslObjectMatch;
 
     Procedure SetVolume(Const Value: TAfsVolume);
 
@@ -919,8 +919,8 @@ Type
     Procedure Open; Overload; Virtual;
     Procedure Close; Overload; Virtual;
 
-    Function Open(Const sName : String) : TAdvStream; Overload; Virtual;
-    Procedure Close(oStream : TAdvStream); Overload; Virtual;
+    Function Open(Const sName : String) : TFslStream; Overload; Virtual;
+    Procedure Close(oStream : TFslStream); Overload; Virtual;
     Procedure Delete(Const sName : String); Overload; Virtual;
     Procedure Clear; Overload; Virtual;
 
@@ -970,65 +970,65 @@ Implementation
 uses
   FHIR.Support.Binary, FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.Factory;
 
-Function TAdvStream.Link : TAdvStream;
+Function TFslStream.Link : TFslStream;
 Begin
-  Result := TAdvStream(Inherited Link);
+  Result := TFslStream(Inherited Link);
 End;
 
 
-Function TAdvStream.ErrorClass : EAdvExceptionClass;
+Function TFslStream.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvStream;
 End;
 
 
-Procedure TAdvStream.Read(Var Buffer; iCount: Cardinal);
+Procedure TFslStream.Read(Var Buffer; iCount: Cardinal);
 Begin
 End;
 
 
-Procedure TAdvStream.Write(Const Buffer; iCount: Cardinal);
+Procedure TFslStream.Write(Const Buffer; iCount: Cardinal);
 Begin
 End;
 
 
-Function TAdvStream.Readable : Int64;
-Begin
-  Result := 0;
-End;
-
-
-Function TAdvStream.Writeable : Int64;
+Function TFslStream.Readable : Int64;
 Begin
   Result := 0;
 End;
 
 
-Function TAdvStream.Assignable: Boolean;
+Function TFslStream.Writeable : Int64;
+Begin
+  Result := 0;
+End;
+
+
+Function TFslStream.Assignable: Boolean;
 Begin
   Result := False;
 End;
 
 
-Function TAdvStreamList.ItemClass: TAdvObjectClass;
+Function TFslStreamList.ItemClass: TFslObjectClass;
 Begin
-  Result := TAdvStream;
+  Result := TFslStream;
 End;
 
 
-Function TAdvStreamList.GetStream(iIndex: Integer): TAdvStream;
+Function TFslStreamList.GetStream(iIndex: Integer): TFslStream;
 Begin
-  Result := TAdvStream(ObjectByIndex[iIndex]);
+  Result := TFslStream(ObjectByIndex[iIndex]);
 End;
 
 
-Procedure TAdvStreamList.SetStream(iIndex: Integer; Const Value: TAdvStream);
+Procedure TFslStreamList.SetStream(iIndex: Integer; Const Value: TFslStream);
 Begin
   ObjectByIndex[iIndex] := Value;
 End;
 
 
-Constructor TAdvStreamAdapter.Create;
+Constructor TFslStreamAdapter.Create;
 Begin
   Inherited;
 
@@ -1036,7 +1036,7 @@ Begin
 End;
 
 
-Destructor TAdvStreamAdapter.Destroy;
+Destructor TFslStreamAdapter.Destroy;
 Begin
   FStream.Free;
   FStream := Nil;
@@ -1045,147 +1045,147 @@ Begin
 End;
 
 {$IFOPT C+}
-Function TAdvStreamAdapter.GetStream: TAdvStream;
+Function TFslStreamAdapter.GetStream: TFslStream;
 Begin
-  Assert(Invariants('GetStream', FStream, TAdvStream, 'FStream'));
+  Assert(Invariants('GetStream', FStream, TFslStream, 'FStream'));
 
   Result := FStream;
 End;
 {$ENDIF}
 
-Procedure TAdvStreamAdapter.SetStream(oStream : TAdvStream);
+Procedure TFslStreamAdapter.SetStream(oStream : TFslStream);
 Begin
-  Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TAdvStream, 'oStream'));
+  Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TFslStream, 'oStream'));
 
   FStream.Free;
   FStream := oStream;
 End;
 
 
-Function TAdvStreamAdapter.HasStream: Boolean;
+Function TFslStreamAdapter.HasStream: Boolean;
 Begin
   Result := Assigned(FStream);
 End;
 
 
-Procedure TAdvStreamAdapter.Read(Var Buffer; iCount: Cardinal);
+Procedure TFslStreamAdapter.Read(Var Buffer; iCount: Cardinal);
 Begin 
   Stream.Read(Buffer, iCount);
 End;
 
 
-Procedure TAdvStreamAdapter.Write(Const Buffer; iCount: Cardinal);
+Procedure TFslStreamAdapter.Write(Const Buffer; iCount: Cardinal);
 Begin
   Stream.Write(Buffer, iCount);
 End;
 
 
-Function TAdvStreamAdapter.Readable : Int64;
+Function TFslStreamAdapter.Readable : Int64;
 Begin
   Result := Stream.Readable;
 End;  
 
 
-Function TAdvStreamAdapter.Writeable : Int64;
+Function TFslStreamAdapter.Writeable : Int64;
 Begin 
   Result := Stream.Writeable;
 End;  
 
 
-Function TAdvAccessStream.Link : TAdvAccessStream;
+Function TFslAccessStream.Link : TFslAccessStream;
 Begin 
-  Result := TAdvAccessStream(Inherited Link);
+  Result := TFslAccessStream(Inherited Link);
 End;
 
 
-Function TAdvAccessStream.GetPosition : Int64;
+Function TFslAccessStream.GetPosition : Int64;
 Begin 
   Result := 0;
 End;  
 
 
-Function TAdvAccessStream.GetSize : Int64;
+Function TFslAccessStream.GetSize : Int64;
 Begin 
   Result := 0;
 End;  
 
 
-Procedure TAdvAccessStream.SetPosition(Const Value: Int64);
+Procedure TFslAccessStream.SetPosition(Const Value: Int64);
 Begin 
 End;  
 
 
-Procedure TAdvAccessStream.SetSize(Const Value: Int64);
+Procedure TFslAccessStream.SetSize(Const Value: Int64);
 Begin 
 End;
 
 
-Function TAdvAccessStreamAdapter.GetPosition : Int64;
+Function TFslAccessStreamAdapter.GetPosition : Int64;
 Begin
   Result := Stream.Position;
 End;
 
 
-Function TAdvAccessStreamAdapter.GetSize : Int64;
+Function TFslAccessStreamAdapter.GetSize : Int64;
 Begin 
   Result := Stream.Size;
 End;  
 
 
-Procedure TAdvAccessStreamAdapter.SetPosition(Const Value: Int64);
+Procedure TFslAccessStreamAdapter.SetPosition(Const Value: Int64);
 Begin
   Stream.Position := Value;
 End;  
 
 
-Procedure TAdvAccessStreamAdapter.SetSize(Const Value: Int64);
+Procedure TFslAccessStreamAdapter.SetSize(Const Value: Int64);
 Begin 
   Stream.Size := Value;
 End;  
 
 
-Procedure TAdvAccessStreamAdapter.Read(Var Buffer; iCount: Cardinal);
+Procedure TFslAccessStreamAdapter.Read(Var Buffer; iCount: Cardinal);
 Begin 
   Stream.Read(Buffer, iCount);
 End;  
 
 
-Procedure TAdvAccessStreamAdapter.Write(Const Buffer; iCount: Cardinal);
+Procedure TFslAccessStreamAdapter.Write(Const Buffer; iCount: Cardinal);
 Begin
   Stream.Write(Buffer, iCount);
 End;  
 
 
-Function TAdvAccessStreamAdapter.Writeable : Int64;
+Function TFslAccessStreamAdapter.Writeable : Int64;
 Begin
   Result := Stream.Writeable;
 End;
 
 
-Function TAdvAccessStreamAdapter.Readable : Int64;
+Function TFslAccessStreamAdapter.Readable : Int64;
 Begin
   Result := Stream.Readable;
 End;
 
 
-Function TAdvAccessStreamAdapter.GetStream: TAdvAccessStream;
+Function TFslAccessStreamAdapter.GetStream: TFslAccessStream;
 Begin
-  Assert(Invariants('GetStream', FStream, TAdvAccessStream, 'FStream'));
+  Assert(Invariants('GetStream', FStream, TFslAccessStream, 'FStream'));
 
   Result := FStream;
 End;
 
 
-Procedure TAdvAccessStreamAdapter.SetStream(oStream: TAdvAccessStream);
+Procedure TFslAccessStreamAdapter.SetStream(oStream: TFslAccessStream);
 Begin
-  Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TAdvAccessStream, 'oStream'));
+  Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TFslAccessStream, 'oStream'));
 
   FStream.Free;
   FStream := oStream;
 End;
 
 
-Constructor TAdvAccessStreamAdapter.Create;
+Constructor TFslAccessStreamAdapter.Create;
 Begin
   Inherited;
 
@@ -1193,7 +1193,7 @@ Begin
 End;
 
 
-Destructor TAdvAccessStreamAdapter.Destroy;
+Destructor TFslAccessStreamAdapter.Destroy;
 Begin
   FStream.Free;
   FStream := Nil;
@@ -1202,7 +1202,7 @@ Begin
 End;
 
 
-Procedure TAdvStringStream.Read(Var aBuffer; iCount: Cardinal);
+Procedure TFslStringStream.Read(Var aBuffer; iCount: Cardinal);
 Begin
   If FIndex + iCount > Size Then
     RaiseError('Read', 'Unable to read past end of string.');
@@ -1212,7 +1212,7 @@ Begin
 End;
 
 
-Procedure TAdvStringStream.Write(Const aBuffer; iCount: Cardinal);
+Procedure TFslStringStream.Write(Const aBuffer; iCount: Cardinal);
 Begin
   If FIndex + iCount > Size Then
     Size := FIndex + iCount;
@@ -1222,42 +1222,42 @@ Begin
 End;
 
 
-Function TAdvStringStream.Writeable : Int64;
+Function TFslStringStream.Writeable : Int64;
 Begin
   Result := High(Result);
 End;
 
 
-Function TAdvStringStream.Readable : Int64;
+Function TFslStringStream.Readable : Int64;
 Begin
   Result := Size - Position;
 End;
 
 
-function TAdvStringStream.GetBytes: TBytes;
+function TFslStringStream.GetBytes: TBytes;
 begin
   result := AnsiStringAsBytes(FData);
 end;
 
-Function TAdvStringStream.GetPosition : Int64;
+Function TFslStringStream.GetPosition : Int64;
 Begin
   Result := FIndex;
 End;
 
 
-Procedure TAdvStringStream.SetPosition(Const iValue: Int64);
+Procedure TFslStringStream.SetPosition(Const iValue: Int64);
 Begin
   FIndex := iValue;
 End;
 
 
-Function TAdvStringStream.GetSize : Int64;
+Function TFslStringStream.GetSize : Int64;
 Begin
   Result := Length(FData);
 End;
 
 
-Procedure TAdvStringStream.SetSize(Const iValue: Int64);
+Procedure TFslStringStream.SetSize(Const iValue: Int64);
 Begin
   SetLength(FData, iValue);
   If FIndex > Cardinal(Length(FData)) Then
@@ -1265,12 +1265,12 @@ Begin
 End;
 
 
-procedure TAdvStringStream.SetBytes(const Value: TBytes);
+procedure TFslStringStream.SetBytes(const Value: TBytes);
 begin
   FData := BytesAsAnsiString(value);
 end;
 
-Procedure TAdvStringStream.SetData(Const Value: AnsiString);
+Procedure TFslStringStream.SetData(Const Value: AnsiString);
 Begin
   FData := Value;
   If FIndex > Cardinal(Length(FData)) Then
@@ -1281,31 +1281,31 @@ End;
 
 
 
-Procedure TAdvVCLStream.Read(Var aBuffer; iCount: Cardinal);
+Procedure TFslVCLStream.Read(Var aBuffer; iCount: Cardinal);
 Begin
   Stream.Read(aBuffer, iCount);
 End;
 
 
-Procedure TAdvVCLStream.Write(Const aBuffer; iCount: Cardinal);
+Procedure TFslVCLStream.Write(Const aBuffer; iCount: Cardinal);
 Begin
   Stream.Write(aBuffer, iCount);
 End;
 
 
-Function TAdvVCLStream.Readable : Int64;
+Function TFslVCLStream.Readable : Int64;
 Begin
   Result := Stream.Size - Stream.Position;
 End;
 
 
-Function TAdvVCLStream.Writeable : Int64;
+Function TFslVCLStream.Writeable : Int64;
 Begin
   Result := Stream.Size - Stream.Position;
 End;
 
 
-Function TAdvVCLStream.GetStream: TStream;
+Function TFslVCLStream.GetStream: TStream;
 Begin
   Assert(CheckCondition(Assigned(FStream), 'GetStream', 'No VCL Stream available.'));
 
@@ -1313,7 +1313,7 @@ Begin
 End;
 
 
-Procedure TAdvVCLStream.SetStream(Const Value: TStream);
+Procedure TFslVCLStream.SetStream(Const Value: TStream);
 Begin
   FStream := Value;
 End;
@@ -1327,7 +1327,7 @@ Begin
 End;
 
 
-constructor TVCLStream.Create(Stream: TAdvStream);
+constructor TVCLStream.Create(Stream: TFslStream);
 begin
   Create;
   FStream := Stream;
@@ -1356,12 +1356,12 @@ End;
 
 Function TVCLStream.Seek(iOffset: Integer; iOrigin: Word): LongInt;
 Var
-  oAccess : TAdvAccessStream;
+  oAccess : TFslAccessStream;
 Begin
-  If Not (Stream Is TAdvAccessStream) Then
+  If Not (Stream Is TFslAccessStream) Then
     Raise EAdvStream.Create(Self, 'Seek', 'Unable to seek in a non-access stream'); // Error is not available.
 
-  oAccess := TAdvAccessStream(Stream);
+  oAccess := TFslAccessStream(Stream);
 
   Case iOrigin Of
     soFromBeginning : Result := iOffset;
@@ -1377,24 +1377,24 @@ End;
 
 Procedure TVCLStream.SetSize(NewSize: Integer);
 Var
-  oAccess : TAdvAccessStream;
+  oAccess : TFslAccessStream;
 Begin
-  If Not (Stream Is TAdvAccessStream) Then
+  If Not (Stream Is TFslAccessStream) Then
     Raise EAdvStream.Create(Self, 'SetSize', 'Unable to set the size of a non-access stream'); // Error is not available.
 
-  oAccess := TAdvAccessStream(Stream);
+  oAccess := TFslAccessStream(Stream);
 
   oAccess.Size := NewSize;
 End;
 
 
-Function TVCLStream.GetStream: TAdvStream;
+Function TVCLStream.GetStream: TFslStream;
 Begin
   Result := FStream;
 End;
 
 
-Procedure TVCLStream.SetStream(Const Value: TAdvStream);
+Procedure TVCLStream.SetStream(Const Value: TFslStream);
 Begin
   FStream.Free;
   FStream := Value;
@@ -1408,7 +1408,7 @@ Begin
 End;
 
 {$IFDEF MSWINDOWS}
-Function TAdvStreamAdapterI.Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult;
+Function TFslStreamAdapterI.Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult;
 Begin
   // TStreamAdapter.stat does not clear the STATSTG structure.
   // http://qc.embarcadero.com/wc/qcmain.aspx?d=45528
@@ -1418,14 +1418,14 @@ Begin
 End;
 
 
-Constructor TAdvIStreamAdapter.Create;
+Constructor TFslIStreamAdapter.Create;
 Begin
   Inherited;
 
-  FStream := TAdvAccessStream.Create;
+  FStream := TFslAccessStream.Create;
 End;
 
-Destructor TAdvIStreamAdapter.Destroy;
+Destructor TFslIStreamAdapter.Destroy;
 Begin
   FStream.Free;
 
@@ -1433,7 +1433,7 @@ Begin
 End;
 
 
-Function TAdvIStreamAdapter.Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult;
+Function TFslIStreamAdapter.Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult;
 
 Var
   iReadable : TStreamFixedUInt;
@@ -1460,7 +1460,7 @@ Begin
   End;
 End;
 
-Function TAdvIStreamAdapter.Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult;
+Function TFslIStreamAdapter.Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult;
 Begin
   Try
     If pv = Nil Then
@@ -1481,7 +1481,7 @@ Begin
 End;
 
 
-Function TAdvIStreamAdapter.Seek(dlibMove: Largeint; dwOrigin: TStreamDWORD; out libNewPosition: TStreamLargeUInt): HResult;
+Function TFslIStreamAdapter.Seek(dlibMove: Largeint; dwOrigin: TStreamDWORD; out libNewPosition: TStreamLargeUInt): HResult;
 Var
   iNewPos: Integer;
 Begin
@@ -1512,13 +1512,13 @@ Begin
 End;
 
 
-Function TAdvIStreamAdapter.Revert: HResult;
+Function TFslIStreamAdapter.Revert: HResult;
 Begin
   Result := STG_E_REVERTED;
 End;
 
 
-Function TAdvIStreamAdapter.SetSize(libNewSize: TStreamLargeUInt): HResult;
+Function TFslIStreamAdapter.SetSize(libNewSize: TStreamLargeUInt): HResult;
 Begin
   Try
     Stream.Size := LongInt(libNewSize);
@@ -1533,7 +1533,7 @@ Begin
 End;
 
 
-Function TAdvIStreamAdapter.Stat(out statstg: TStatStg; grfStatFlag: TStreamDWORD): HResult;
+Function TFslIStreamAdapter.Stat(out statstg: TStatStg; grfStatFlag: TStreamDWORD): HResult;
 Begin
   Result := S_OK;
   Try
@@ -1551,25 +1551,25 @@ Begin
 End;
 
 
-Function TAdvIStreamAdapter.UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult;
+Function TFslIStreamAdapter.UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult;
 Begin
   Result := STG_E_INVALIDFUNCTION;
 End;
 
 
-Function TAdvIStreamAdapter.Clone(Out stm: IStream): HResult;
+Function TFslIStreamAdapter.Clone(Out stm: IStream): HResult;
 Begin
   Result := E_NOTIMPL;
 End;
 
 
-Function TAdvIStreamAdapter.Commit(grfCommitFlags: TStreamDWORD): HResult;
+Function TFslIStreamAdapter.Commit(grfCommitFlags: TStreamDWORD): HResult;
 Begin
   Result := S_OK;
 End;
 
 
-Function TAdvIStreamAdapter.CopyTo(stm: IStream; cb: TStreamLargeUInt; out cbRead: TStreamLargeUInt; out cbWritten: TStreamLargeUInt): HResult;
+Function TFslIStreamAdapter.CopyTo(stm: IStream; cb: TStreamLargeUInt; out cbRead: TStreamLargeUInt; out cbWritten: TStreamLargeUInt): HResult;
 Const
   MaxBufSize = 1024 * 1024;  // 1mb
 Var
@@ -1637,20 +1637,20 @@ Begin
 End;
 
 
-Function TAdvIStreamAdapter.LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult;
+Function TFslIStreamAdapter.LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult;
 Begin
   Result := STG_E_INVALIDFUNCTION;
 End;
 
 
-Procedure TAdvIStreamAdapter.SetStream(Const Value: TAdvAccessStream);
+Procedure TFslIStreamAdapter.SetStream(Const Value: TFslAccessStream);
 Begin
   FStream.Free;
   FStream := Value;
 End;
 
 
-Function TAdvIStreamAdapter.GetStream: TAdvAccessStream;
+Function TFslIStreamAdapter.GetStream: TFslAccessStream;
 Begin
   Result := FStream;
 End;
@@ -1659,31 +1659,31 @@ End;
 
 
 
-Procedure TAdvStreamFilerReferenceHashEntry.Assign(oSource: TAdvObject);
+Procedure TFslStreamFilerReferenceHashEntry.Assign(oSource: TFslObject);
 Begin
   Inherited;
 
-  Key := TAdvStreamFilerReferenceHashEntry(oSource).Key;
-  Value := TAdvStreamFilerReferenceHashEntry(oSource).Value;
+  Key := TFslStreamFilerReferenceHashEntry(oSource).Key;
+  Value := TFslStreamFilerReferenceHashEntry(oSource).Value;
 End;
 
 
-Function TAdvStreamFilerReferenceHashTable.Equal(oA, oB: TAdvHashEntry): Integer;
+Function TFslStreamFilerReferenceHashTable.Equal(oA, oB: TFslHashEntry): Integer;
 Begin
   Result := Inherited Equal(oA, oB);
 
   If Result = 0 Then
-    Result := IntegerCompare(Integer(TAdvStreamFilerReferenceHashEntry(oA).Key), Integer(TAdvStreamFilerReferenceHashEntry(oB).Key));
+    Result := IntegerCompare(Integer(TFslStreamFilerReferenceHashEntry(oA).Key), Integer(TFslStreamFilerReferenceHashEntry(oB).Key));
 End;
 
 
-Function TAdvStreamFilerReferenceHashTable.ItemClass: TAdvHashEntryClass;
+Function TFslStreamFilerReferenceHashTable.ItemClass: TFslHashEntryClass;
 Begin
-  Result := TAdvStreamFilerReferenceHashEntry;
+  Result := TFslStreamFilerReferenceHashEntry;
 End;
 
 
-Procedure TAdvStreamFilerReferenceHashEntry.Generate;
+Procedure TFslStreamFilerReferenceHashEntry.Generate;
 Begin
   Inherited;
 
@@ -1691,7 +1691,7 @@ Begin
 End;
 
 
-Procedure TAdvStreamFilerReferenceHashEntry.SetKey(Const Value: Pointer);
+Procedure TFslStreamFilerReferenceHashEntry.SetKey(Const Value: Pointer);
 Begin
   If FKey <> Value Then
   Begin
@@ -1701,18 +1701,18 @@ Begin
 End;
 
 
-Constructor TAdvStreamFilerReferenceManager.Create;
+Constructor TFslStreamFilerReferenceManager.Create;
 Begin
   Inherited;
 
-  FHashTable := TAdvStreamFilerReferenceHashTable.Create;
+  FHashTable := TFslStreamFilerReferenceHashTable.Create;
   FHashTable.Capacity := 47;
 
-  FLookupHashEntry := TAdvStreamFilerReferenceHashEntry.Create;
+  FLookupHashEntry := TFslStreamFilerReferenceHashEntry.Create;
 End;
 
 
-Destructor TAdvStreamFilerReferenceManager.Destroy;
+Destructor TFslStreamFilerReferenceManager.Destroy;
 Begin
   FHashTable.Free;
   FLookupHashEntry.Free;
@@ -1721,25 +1721,25 @@ Begin
 End;
 
 
-Function TAdvStreamFilerReferenceManager.Link: TAdvStreamFilerReferenceManager;
+Function TFslStreamFilerReferenceManager.Link: TFslStreamFilerReferenceManager;
 Begin
-  Result := TAdvStreamFilerReferenceManager(Inherited Link);
+  Result := TFslStreamFilerReferenceManager(Inherited Link);
 End;
 
 
-Procedure TAdvStreamFilerReferenceManager.Clear;
+Procedure TFslStreamFilerReferenceManager.Clear;
 Begin
   FHashTable.Clear;
 End;
 
 
-Procedure TAdvStreamFilerReferenceManager.Bind(oKey, oValue: TAdvPersistent);
+Procedure TFslStreamFilerReferenceManager.Bind(oKey, oValue: TFslPersistent);
 Var
-  oHashEntry : TAdvStreamFilerReferenceHashEntry;
+  oHashEntry : TFslStreamFilerReferenceHashEntry;
 Begin
   If Assigned(oKey) Then
   Begin
-    oHashEntry := TAdvStreamFilerReferenceHashEntry.Create;
+    oHashEntry := TFslStreamFilerReferenceHashEntry.Create;
     oHashEntry.Key := Pointer(oKey);
     oHashEntry.Value := Pointer(oValue);
     FHashTable.Add(oHashEntry);
@@ -1747,22 +1747,22 @@ Begin
 End;
 
 
-Function TAdvStreamFilerReferenceManager.Get(oKey : TAdvPersistent): TAdvPersistent;
+Function TFslStreamFilerReferenceManager.Get(oKey : TFslPersistent): TFslPersistent;
 Var
-  oHashEntry : TAdvStreamFilerReferenceHashEntry;
+  oHashEntry : TFslStreamFilerReferenceHashEntry;
 Begin
   FLookupHashEntry.Key := Pointer(oKey);
 
-  oHashEntry := TAdvStreamFilerReferenceHashEntry(FHashTable.Get(FLookupHashEntry));
+  oHashEntry := TFslStreamFilerReferenceHashEntry(FHashTable.Get(FLookupHashEntry));
 
   If Assigned(oHashEntry) Then
-    Result := TAdvPersistent(oHashEntry.Value)
+    Result := TFslPersistent(oHashEntry.Value)
   Else
     Result := Nil;
 End;
 
 
-Function TAdvStreamFilerReferenceManager.Exists(oKey: TAdvPersistent): Boolean;
+Function TFslStreamFilerReferenceManager.Exists(oKey: TFslPersistent): Boolean;
 Begin
   FLookupHashEntry.Key := Pointer(oKey);
 
@@ -1770,12 +1770,12 @@ Begin
 End;
 
 
-Procedure TAdvStreamFilerResourceManager.Clear;
+Procedure TFslStreamFilerResourceManager.Clear;
 Begin
 End;
 
 
-Function TAdvStreamFilerResourceManager.ResolveObject(Const sResource: String; Const aClass : TAdvObjectClass): TAdvObject;
+Function TFslStreamFilerResourceManager.ResolveObject(Const sResource: String; Const aClass : TFslObjectClass): TFslObject;
 Begin
   RaiseError('ResolveObject', 'ResolveObject must be overriden.');
 
@@ -1783,7 +1783,7 @@ Begin
 End;  
 
 
-Function TAdvStreamFilerResourceManager.ResolveID(Const oObject: TAdvObject): String;
+Function TFslStreamFilerResourceManager.ResolveID(Const oObject: TFslObject): String;
 Begin 
   RaiseError('ResolveID', 'ResolveObject must be overriden.');
 
@@ -1791,17 +1791,17 @@ Begin
 End;  
 
 
-Function TAdvStreamFilerResourceManager.Link : TAdvStreamFilerResourceManager;
+Function TFslStreamFilerResourceManager.Link : TFslStreamFilerResourceManager;
 Begin
-  Result := TAdvStreamFilerResourceManager(Inherited Link);
+  Result := TFslStreamFilerResourceManager(Inherited Link);
 End;
 
 
-Constructor TAdvStreamFiler.Create;
+Constructor TFslStreamFiler.Create;
 Begin
   Inherited;
 
-  FReferenceManager := TAdvStreamFilerReferenceManager.Create;
+  FReferenceManager := TFslStreamFilerReferenceManager.Create;
   FResourceManager := Nil;
   FStream := Nil;
 
@@ -1809,7 +1809,7 @@ Begin
 End;
 
 
-Destructor TAdvStreamFiler.Destroy;
+Destructor TFslStreamFiler.Destroy;
 Begin
   FStream.Free;
   FReferenceManager.Free;
@@ -1819,25 +1819,25 @@ Begin
 End;
 
 
-Function TAdvStreamFiler.Link : TAdvStreamFiler;
+Function TFslStreamFiler.Link : TFslStreamFiler;
 Begin
-  Result := TAdvStreamFiler(Inherited Link);
+  Result := TFslStreamFiler(Inherited Link);
 End;
 
 
 {$IFOPT C+}
-Function TAdvStreamFiler.GetStream: TAdvStream;
+Function TFslStreamFiler.GetStream: TFslStream;
 Begin
-  Assert(Invariants('GetStream', FStream, TAdvStream, 'FStream'));
+  Assert(Invariants('GetStream', FStream, TFslStream, 'FStream'));
 
   Result := FStream;
 End;
 {$ENDIF}
 
 
-Procedure TAdvStreamFiler.SetStream(oStream : TAdvStream);
+Procedure TFslStreamFiler.SetStream(oStream : TFslStream);
 Begin
-  Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TAdvStream, 'oStream'));
+  Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TFslStream, 'oStream'));
 
   FStream.Free;
   FStream := oStream;
@@ -1847,68 +1847,68 @@ Begin
 End;
 
 
-Function TAdvStreamFiler.HasStream: Boolean;
+Function TFslStreamFiler.HasStream: Boolean;
 Begin
   Result := Assigned(FStream);
 End;
 
 
 {$IFOPT C+}
-Function TAdvStreamFiler.GetResourceManager : TAdvStreamFilerResourceManager;
+Function TFslStreamFiler.GetResourceManager : TFslStreamFilerResourceManager;
 Begin
-  Assert(Invariants('GetResourceManager', FResourceManager, TAdvStreamFilerResourceManager, 'FResourceManager'));
+  Assert(Invariants('GetResourceManager', FResourceManager, TFslStreamFilerResourceManager, 'FResourceManager'));
 
   Result := FResourceManager;
 End;
 {$ENDIF}
 
 
-Procedure TAdvStreamFiler.SetResourceManager(Const Value: TAdvStreamFilerResourceManager);
+Procedure TFslStreamFiler.SetResourceManager(Const Value: TFslStreamFilerResourceManager);
 Begin
-  Assert((Not Assigned(Value)) Or Invariants('SetResourceManager', Value, TAdvStreamFilerResourceManager, 'Value'));
+  Assert((Not Assigned(Value)) Or Invariants('SetResourceManager', Value, TFslStreamFilerResourceManager, 'Value'));
 
   FResourceManager.Free;
   FResourceManager := Value;
 End;
 
 
-Function TAdvStreamFiler.HasResourceManager : Boolean;
+Function TFslStreamFiler.HasResourceManager : Boolean;
 Begin
   Result := Assigned(FResourceManager);
 End;
 
 
 {$IFOPT C+}
-Function TAdvStreamFiler.GetReferenceManager : TAdvStreamFilerReferenceManager;
+Function TFslStreamFiler.GetReferenceManager : TFslStreamFilerReferenceManager;
 Begin
-  Assert(Invariants('GetReferenceManager', FReferenceManager, TAdvStreamFilerReferenceManager, 'FReferenceManager'));
+  Assert(Invariants('GetReferenceManager', FReferenceManager, TFslStreamFilerReferenceManager, 'FReferenceManager'));
 
   Result := FReferenceManager;
 End;
 {$ENDIF}
 
 
-Procedure TAdvStreamFiler.SetReferenceManager(Const Value: TAdvStreamFilerReferenceManager);
+Procedure TFslStreamFiler.SetReferenceManager(Const Value: TFslStreamFilerReferenceManager);
 Begin
-  Assert((Not Assigned(Value)) Or Invariants('SetReferenceManager', Value, TAdvStreamFilerReferenceManager, 'Value'));
+  Assert((Not Assigned(Value)) Or Invariants('SetReferenceManager', Value, TFslStreamFilerReferenceManager, 'Value'));
 
   FReferenceManager.Free;
   FReferenceManager := Value;
 End;
 
 
-Function TAdvStreamFiler.HasReferenceManager : Boolean;
+Function TFslStreamFiler.HasReferenceManager : Boolean;
 Begin
   Result := Assigned(FReferenceManager);
 End;
 
 
-Procedure TAdvStreamFiler.ApplyStream;
+Procedure TFslStreamFiler.ApplyStream;
 Begin
 End;
 
 
-Procedure TAdvStreamFiler.Clear;
+Procedure TFslStreamFiler.Clear;
 Begin
   If HasReferenceManager Then
     ReferenceManager.Clear;
@@ -1920,16 +1920,16 @@ End;
 
 
 
-Constructor TAdvBinaryFiler.Create;
+Constructor TFslBinaryFiler.Create;
 Begin
   Inherited;
 
-//FReducedClassList := TAdvClassList.Create;
+//FReducedClassList := TFslClassList.Create;
 //FReducedClassList.Sorted;
 End;
 
 
-Destructor TAdvBinaryFiler.Destroy;
+Destructor TFslBinaryFiler.Destroy;
 Begin
 //FReducedClassList.Free;
 
@@ -1937,13 +1937,13 @@ Begin
 End;
 
 
-Function TAdvBinaryFiler.Link : TAdvBinaryFiler;
+Function TFslBinaryFiler.Link : TFslBinaryFiler;
 Begin
-  Result := TAdvBinaryFiler(Inherited Link);
+  Result := TFslBinaryFiler(Inherited Link);
 End;
 
 
-Procedure TAdvBinaryFiler.Clear;
+Procedure TFslBinaryFiler.Clear;
 Begin
   Inherited;
 
@@ -1951,12 +1951,12 @@ Begin
 End;
 
 
-Procedure TAdvBinaryFiler.DefineBlock(Var Value; Count: Integer);
+Procedure TFslBinaryFiler.DefineBlock(Var Value; Count: Integer);
 Begin
 End;
 
 
-Procedure TAdvBinaryFiler.DefineBinary(Var Buffer; iCount : Integer);
+Procedure TFslBinaryFiler.DefineBinary(Var Buffer; iCount : Integer);
 Begin 
   Inherited;
 
@@ -1966,7 +1966,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineBoolean(Var Value: Boolean);
+Procedure TFslBinaryFiler.DefineBoolean(Var Value: Boolean);
 Begin 
   Inherited;
 
@@ -1974,7 +1974,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineInteger(Var Value: Integer);
+Procedure TFslBinaryFiler.DefineInteger(Var Value: Integer);
 Begin 
   Inherited;
 
@@ -1982,7 +1982,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineInteger(Var Value: Int64);
+Procedure TFslBinaryFiler.DefineInteger(Var Value: Int64);
 Begin 
   Inherited;
 
@@ -1990,7 +1990,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineInteger(Var Value: Cardinal);
+Procedure TFslBinaryFiler.DefineInteger(Var Value: Cardinal);
 Begin
   Inherited;
 
@@ -1998,7 +1998,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineInteger(Var Value: Word);
+Procedure TFslBinaryFiler.DefineInteger(Var Value: Word);
 Begin 
   Inherited;
 
@@ -2006,7 +2006,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineInteger(Var Value: Byte);
+Procedure TFslBinaryFiler.DefineInteger(Var Value: Byte);
 Begin 
   Inherited;
 
@@ -2014,7 +2014,7 @@ Begin
 End; 
 
 
-Procedure TAdvBinaryFiler.DefineReal(Var Value: Real);
+Procedure TFslBinaryFiler.DefineReal(Var Value: Real);
 Begin
   Inherited;
 
@@ -2022,7 +2022,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineReal(Var Value: Extended);
+Procedure TFslBinaryFiler.DefineReal(Var Value: Extended);
 Begin 
   Inherited;
 
@@ -2030,7 +2030,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineString(Var Value: TShortString);
+Procedure TFslBinaryFiler.DefineString(Var Value: TShortString);
 Begin 
   Inherited;
 
@@ -2039,13 +2039,13 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineString(Var Value: TLongString);
+Procedure TFslBinaryFiler.DefineString(Var Value: TLongString);
 Begin
   Inherited;
 End;
 
 
-Procedure TAdvBinaryFiler.DefineEnumerated(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
+Procedure TFslBinaryFiler.DefineEnumerated(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
 Begin
   // TODO: remove (Peek = atEnumerated8) as it only required for legacy streams
 
@@ -2066,7 +2066,7 @@ Begin
 End;
 
 
-Procedure TAdvBinaryFiler.DefineSet(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
+Procedure TFslBinaryFiler.DefineSet(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
 Begin 
   Inherited;
 
@@ -2074,7 +2074,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineDateTime(Var Value: TDateTime);
+Procedure TFslBinaryFiler.DefineDateTime(Var Value: TDateTime);
 Begin
   Inherited;
 
@@ -2082,7 +2082,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineCurrency(Var Value: TCurrency);
+Procedure TFslBinaryFiler.DefineCurrency(Var Value: TCurrency);
 Begin 
   Inherited;
 
@@ -2090,7 +2090,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineDuration(Var Value: TDuration);
+Procedure TFslBinaryFiler.DefineDuration(Var Value: TDuration);
 Begin 
   Inherited;
 
@@ -2098,7 +2098,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryFiler.DefineColour(Var Value: TColour);
+Procedure TFslBinaryFiler.DefineColour(Var Value: TColour);
 Begin
   Inherited;
 
@@ -2106,19 +2106,19 @@ Begin
 End;
 
 
-Procedure TAdvBinaryWriter.DefineBlock(Var Value; Count: Integer);
+Procedure TFslBinaryWriter.DefineBlock(Var Value; Count: Integer);
 Begin
   Stream.Write(Value, Count);
 End;
 
 
-Procedure TAdvBinaryWriter.DefineValue(Value: TAdvTag);
+Procedure TFslBinaryWriter.DefineValue(Value: TFslTag);
 Begin
   DefineBlock(Value, SizeOf(Value));
 End;
 
 
-Procedure TAdvBinaryWriter.WriteString(const sValue: String);
+Procedure TFslBinaryWriter.WriteString(const sValue: String);
 Var
   iLength : Integer;
 {$IFNDEF VER130}
@@ -2137,7 +2137,7 @@ Begin
 end;
 
 
-Procedure TAdvBinaryWriter.WriteClass(const sValue: String);
+Procedure TFslBinaryWriter.WriteClass(const sValue: String);
 Var
   iLength : Byte;
 {$IFNDEF VER130}
@@ -2158,7 +2158,7 @@ Begin
 end;
 
 
-Procedure TAdvBinaryWriter.DefineString(Var Value: TLongString);
+Procedure TFslBinaryWriter.DefineString(Var Value: TLongString);
 Begin
   Inherited;
 
@@ -2166,7 +2166,7 @@ Begin
 End;
 
 
-Procedure TAdvBinaryWriter.DefineChar(Var Value : Char);
+Procedure TFslBinaryWriter.DefineChar(Var Value : Char);
 {$IFNDEF VER130}
 Var
   Bytes : TBytes;
@@ -2183,7 +2183,7 @@ Begin
 End;
 
 
-Procedure TAdvBinaryWriter.DefineClass(Var Value; aClass : TAdvObjectClass);
+Procedure TFslBinaryWriter.DefineClass(Var Value; aClass : TFslObjectClass);
 Begin
   If Assigned(TClass(Value)) Then
   Begin
@@ -2200,7 +2200,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryWriter.DefineReference(Var Value; aClass : TAdvObjectClass);
+Procedure TFslBinaryWriter.DefineReference(Var Value; aClass : TFslObjectClass);
 Var
   oValue : TObject;
 Begin 
@@ -2221,13 +2221,13 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryWriter.DefineObject(Var Value; aClass : TAdvObjectClass);
+Procedure TFslBinaryWriter.DefineObject(Var Value; aClass : TFslObjectClass);
 Var
-  oObject : TAdvPersistent;
+  oObject : TFslPersistent;
 //aClassType : TClass;
 //iClassTypeIndex : Integer;
 Begin
-  oObject := TAdvPersistent(Value);
+  oObject := TFslPersistent(Value);
 
   If Not Assigned(oObject) Then
   Begin
@@ -2239,7 +2239,7 @@ Begin
   End
   Else
   Begin
-    Assert(Assigned(aClass) Or Invariants('DefineObject', oObject, TAdvPersistent, 'oObject'));
+    Assert(Assigned(aClass) Or Invariants('DefineObject', oObject, TFslPersistent, 'oObject'));
     Assert(Not Assigned(aClass) Or Invariants('DefineObject', oObject, aClass, 'oObject'));
 
     // Write the object tag.
@@ -2282,18 +2282,18 @@ Begin
 End;
 
 
-Procedure TAdvBinaryWriter.DefineResource(Var Value; aClass: TAdvObjectClass);
+Procedure TFslBinaryWriter.DefineResource(Var Value; aClass: TFslObjectClass);
 Var
-  oObject : TAdvObject;
+  oObject : TFslObject;
   sResource : String;
 Begin
-  oObject := TAdvObject(Value);
+  oObject := TFslObject(Value);
 
   If Not Assigned(oObject) Then
     DefineValue(atNil)
   Else
   Begin
-    Assert(Assigned(aClass) Or Invariants('DefineResource', oObject, TAdvObject, 'oObject'));
+    Assert(Assigned(aClass) Or Invariants('DefineResource', oObject, TFslObject, 'oObject'));
     Assert(Not Assigned(aClass) Or Invariants('DefineResource', oObject, aClass, 'oObject'));
 
     // Write the resource tag.
@@ -2308,7 +2308,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryReader.Clear;
+Procedure TFslBinaryReader.Clear;
 Begin
   Inherited;
 
@@ -2316,13 +2316,13 @@ Begin
 End;
 
 
-Procedure TAdvBinaryReader.DefineBlock(Var Value; Count: Integer);
+Procedure TFslBinaryReader.DefineBlock(Var Value; Count: Integer);
 Begin
   Stream.Read(Value, Count);
 End;
 
 
-Function TAdvBinaryReader.Peek : TAdvTag;
+Function TFslBinaryReader.Peek : TFslTag;
 Begin 
   If FCache = atUnknown Then
     DefineBlock(FCache, SizeOf(FCache)); // Read the tag off the stream
@@ -2331,10 +2331,10 @@ Begin
 End;
 
 
-Procedure TAdvBinaryReader.DefineValue(Value: TAdvTag);
+Procedure TFslBinaryReader.DefineValue(Value: TFslTag);
 Begin 
   If FCache = atUnknown Then
-    DefineBlock(FCache, SizeOf(TAdvTag));
+    DefineBlock(FCache, SizeOf(TFslTag));
 
   // If read tag doesn't match the supplied type then an exception has occurred
   If FCache <> Value Then
@@ -2345,7 +2345,7 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryReader.DefineClass(Var Value; aClass : TAdvObjectClass);
+Procedure TFslBinaryReader.DefineClass(Var Value; aClass : TFslObjectClass);
 Var
   sClass : String;
 Begin
@@ -2374,11 +2374,11 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryReader.DefineReference(Var Value; aClass : TAdvObjectClass);
+Procedure TFslBinaryReader.DefineReference(Var Value; aClass : TFslObjectClass);
 Var
   pObject : ^TObject;
-  oReference : TAdvPersistent;
-  oObject : TAdvPersistent;
+  oReference : TFslPersistent;
+  oObject : TFslPersistent;
 Begin 
   pObject := @TObject(Value);
 
@@ -2409,24 +2409,24 @@ Begin
 End;  
 
 
-Procedure TAdvBinaryReader.DefineObject(Var Value; aClass : TAdvObjectClass);
+Procedure TFslBinaryReader.DefineObject(Var Value; aClass : TFslObjectClass);
 Var
   sClass  : String;
-  pObject : ^TAdvPersistent;
-  oReference : TAdvPersistent;
+  pObject : ^TFslPersistent;
+  oReference : TFslPersistent;
 {$IFOPT C+}
-  aRequiredClass : TAdvObjectClass;
+  aRequiredClass : TFslObjectClass;
 {$ENDIF}
 Begin
 {$IFOPT C+}
   If aClass = Nil Then
-    aRequiredClass := TAdvPersistent
+    aRequiredClass := TFslPersistent
   Else
     aRequiredClass := aClass;
 {$ENDIF}
 
   // Pointer to the variable parameter, this is done so we can change its value.
-  pObject := @TAdvPersistent(Value);
+  pObject := @TFslPersistent(Value);
 
   // Read the type off the stream
   Case Peek Of
@@ -2447,7 +2447,7 @@ Begin
 
       If Not Assigned(pObject^) Then
       Begin
-        pObject^ := TAdvPersistent(Factory.Make(sClass));
+        pObject^ := TFslPersistent(Factory.Make(sClass));
       End
       Else
       Begin
@@ -2487,7 +2487,7 @@ Begin
       DefineBlock(oReference, SizeOf(oReference));
 
       pObject^.Free;
-      pObject^ := TAdvPersistent(TAdvObject(ReferenceManager.Get(oReference)).Link);
+      pObject^ := TFslPersistent(TFslObject(ReferenceManager.Get(oReference)).Link);
     End; 
   Else
     RaiseError('DefineObject', StringFormat('Expected ''%s'', ''%s'' or ''%s'' but found ''%s''', [TagToString(atObject), TagToString(atReference), TagToString(atNil), TagToString(Peek)]));
@@ -2495,14 +2495,14 @@ Begin
 End;
 
 
-Procedure TAdvBinaryReader.DefineResource(Var Value; aClass: TAdvObjectClass);
+Procedure TFslBinaryReader.DefineResource(Var Value; aClass: TFslObjectClass);
 Var
   sResource : String;
-  oObject : TAdvObject;
-  pObject : ^TAdvObject;
+  oObject : TFslObject;
+  pObject : ^TFslObject;
 Begin
   // Pointer to the variable parameter, this is done so we can change its value.
-  pObject := @TAdvObject(Value);
+  pObject := @TFslObject(Value);
 
   Case Peek Of
     atNil :
@@ -2527,7 +2527,7 @@ Begin
         If Assigned(aClass) Then
           Invariants('DefineResource', oObject, aClass, 'oObject')
         Else
-          Invariants('DefineResource', oObject, TAdvObject, 'oObject');
+          Invariants('DefineResource', oObject, TFslObject, 'oObject');
       End;
     {$ENDIF}
 
@@ -2540,7 +2540,7 @@ Begin
 End;
 
 
-Function TAdvBinaryReader.ReadClass : String;
+Function TFslBinaryReader.ReadClass : String;
 Var
   iLength : Byte;
 {$IFNDEF VER130}
@@ -2561,7 +2561,7 @@ Begin
 End;
 
 
-Function TAdvBinaryReader.ReadString : String;
+Function TFslBinaryReader.ReadString : String;
 Var
   iLength : Integer;
 {$IFNDEF VER130}
@@ -2582,7 +2582,7 @@ Begin
 End;
 
 
-Procedure TAdvBinaryReader.DefineString(Var Value: TLongString);
+Procedure TFslBinaryReader.DefineString(Var Value: TLongString);
 Begin
   Inherited;
 
@@ -2590,7 +2590,7 @@ Begin
 End;
 
 
-Procedure TAdvBinaryReader.DefineChar(Var Value : Char);
+Procedure TFslBinaryReader.DefineChar(Var Value : Char);
 {$IFNDEF VER130}
 Var
   aBuffer : TBytes;
@@ -2609,7 +2609,7 @@ End;
 
 
 
-Constructor TAdvBuffer.Create;
+Constructor TFslBuffer.Create;
 Begin 
   Inherited;
   {$IFNDEF VER130}
@@ -2619,7 +2619,7 @@ Begin
 End;  
 
 
-Destructor TAdvBuffer.Destroy;
+Destructor TFslBuffer.Destroy;
 Begin 
   If FOwned Then
     MemoryDestroy(FData, FCapacity);
@@ -2628,33 +2628,33 @@ Begin
 End;  
 
 
-Function TAdvBuffer.Clone : TAdvBuffer;
+Function TFslBuffer.Clone : TFslBuffer;
 Begin 
-  Result := TAdvBuffer(Inherited Clone);
+  Result := TFslBuffer(Inherited Clone);
 End;  
 
 
-Function TAdvBuffer.Link : TAdvBuffer;
+Function TFslBuffer.Link : TFslBuffer;
 Begin 
-  Result := TAdvBuffer(Inherited Link);
+  Result := TFslBuffer(Inherited Link);
 End;  
 
 
-Procedure TAdvBuffer.Assign(oObject : TAdvObject);
+Procedure TFslBuffer.Assign(oObject : TFslObject);
 Begin 
   Inherited;
 
-  Copy(TAdvBuffer(oObject));
+  Copy(TFslBuffer(oObject));
 End;
 
 
-Procedure TAdvBuffer.Define(oFiler : TAdvFiler);
+Procedure TFslBuffer.Define(oFiler : TFslFiler);
 Begin 
   Inherited;
 End;
 
 
-Procedure TAdvBuffer.Load(oFiler: TAdvFiler);
+Procedure TFslBuffer.Load(oFiler: TFslFiler);
 Var
   iCapacity : Integer;
 Begin
@@ -2675,7 +2675,7 @@ Begin
 End;
 
 
-Procedure TAdvBuffer.Save(oFiler: TAdvFiler);
+Procedure TFslBuffer.Save(oFiler: TFslFiler);
 Begin
   Define(oFiler);
 
@@ -2684,15 +2684,15 @@ Begin
 End;
 
 
-Procedure TAdvBuffer.LoadFromStream(oStream: TAdvStream);
+Procedure TFslBuffer.LoadFromStream(oStream: TFslStream);
 Begin
-  Assert(Invariants('LoadFromStream', oStream, TAdvStream, 'oStream'));
+  Assert(Invariants('LoadFromStream', oStream, TFslStream, 'oStream'));
 
   oStream.Read(Data^, Capacity);
 End;
 
 
-Procedure TAdvBuffer.LoadFromStream(oStream: TStream);
+Procedure TFslBuffer.LoadFromStream(oStream: TStream);
 Begin
 //  Assert(Invariants('LoadFromStream', oStream, TStream, 'oStream'));
 
@@ -2701,15 +2701,15 @@ Begin
 End;
 
 
-Procedure TAdvBuffer.SaveToStream(oStream: TAdvStream);
+Procedure TFslBuffer.SaveToStream(oStream: TFslStream);
 Begin
-  Assert(Invariants('SaveToStream', oStream, TAdvStream, 'oStream'));
+  Assert(Invariants('SaveToStream', oStream, TFslStream, 'oStream'));
 
   oStream.Write(Data^, Capacity);
 End;
 
 
-Procedure TAdvBuffer.SaveToStream(oStream: TStream);
+Procedure TFslBuffer.SaveToStream(oStream: TStream);
 var
   i : integer;
 Begin
@@ -2721,9 +2721,9 @@ Begin
 End;
 
 
-Procedure TAdvBuffer.LoadFromFile(oFile: TAdvFile);
+Procedure TFslBuffer.LoadFromFile(oFile: TFslFile);
 Begin
-  Assert(Invariants('LoadFromFile', oFile, TAdvFile, 'oFile'));
+  Assert(Invariants('LoadFromFile', oFile, TFslFile, 'oFile'));
 
   Capacity := oFile.Size;
 
@@ -2731,19 +2731,19 @@ Begin
 End;
 
 
-Procedure TAdvBuffer.SaveToFile(oFile: TAdvFile);
+Procedure TFslBuffer.SaveToFile(oFile: TFslFile);
 Begin
-  Assert(Invariants('SaveToFile', oFile, TAdvFile, 'oFile'));
+  Assert(Invariants('SaveToFile', oFile, TFslFile, 'oFile'));
 
   SaveToStream(oFile);
 End;
 
 
-Procedure TAdvBuffer.LoadFromFileName(Const sFilename: String);
+Procedure TFslBuffer.LoadFromFileName(Const sFilename: String);
 Var
-  oFile : TAdvFile;
+  oFile : TFslFile;
 Begin
-  oFile := TAdvFile.Create(sFilename, fmOpenRead);
+  oFile := TFslFile.Create(sFilename, fmOpenRead);
   Try
     LoadFromFile(oFile);
   Finally
@@ -2752,11 +2752,11 @@ Begin
 End;
 
 
-Procedure TAdvBuffer.SaveToFileName(Const sFilename: String);
+Procedure TFslBuffer.SaveToFileName(Const sFilename: String);
 Var
-  oFile : TAdvFile;
+  oFile : TFslFile;
 Begin
-  oFile := TAdvFile.Create(sFilename, fmCreate);
+  oFile := TFslFile.Create(sFilename, fmCreate);
   Try
     SaveToFile(oFile);
   Finally
@@ -2765,24 +2765,24 @@ Begin
 End;
 
 
-Procedure TAdvBuffer.Clear;
+Procedure TFslBuffer.Clear;
 Begin 
 
   Capacity := 0;
 End;  
 
 
-Function TAdvBuffer.Equal(oBuffer: TAdvBuffer): Boolean;
+Function TFslBuffer.Equal(oBuffer: TFslBuffer): Boolean;
 Begin
-  Assert(Invariants('Equal', oBuffer, TAdvBuffer, 'oBuffer'));
+  Assert(Invariants('Equal', oBuffer, TFslBuffer, 'oBuffer'));
 
   Result := Compare(oBuffer) = 0;
 End;
 
 
-Function TAdvBuffer.Compare(oBuffer: TAdvBuffer): Integer;
+Function TFslBuffer.Compare(oBuffer: TFslBuffer): Integer;
 Begin
-  Assert(Invariants('Compare', oBuffer, TAdvBuffer, 'oBuffer'));
+  Assert(Invariants('Compare', oBuffer, TFslBuffer, 'oBuffer'));
 
   Result := IntegerCompare(Capacity, oBuffer.Capacity);
 
@@ -2791,7 +2791,7 @@ Begin
 End;  
 
 
-Procedure TAdvBuffer.SetCapacity(Const Value: Integer);
+Procedure TFslBuffer.SetCapacity(Const Value: Integer);
 Begin 
   If (Value <> Capacity) Then
   Begin 
@@ -2805,7 +2805,7 @@ Begin
 End;  
 
 
-Procedure TAdvBuffer.SetData(Const Value: Pointer);
+Procedure TFslBuffer.SetData(Const Value: Pointer);
 Begin 
 
   If FData <> Value Then
@@ -2818,14 +2818,14 @@ Begin
 End;  
 
 
-Procedure TAdvBuffer.SetOwned(Const Value: Boolean);
+Procedure TFslBuffer.SetOwned(Const Value: Boolean);
 Begin 
 
   FOwned := Value;
 End;  
 
 
-Function TAdvBuffer.GetAsText : AnsiString;
+Function TFslBuffer.GetAsText : AnsiString;
 Begin
   Result := ExtractAscii(Capacity);
 End;
@@ -2833,7 +2833,7 @@ End;
 
 {$IFNDEF VER130}
 
-function TAdvBuffer.GetAsUnicode: String;
+function TFslBuffer.GetAsUnicode: String;
 var
   chars: SysUtils.TCharArray;
 begin
@@ -2841,13 +2841,13 @@ begin
   SetString(Result, PChar(chars), Length(chars));
 end;
 
-procedure TAdvBuffer.SetAsUnicode(const Value: String);
+procedure TFslBuffer.SetAsUnicode(const Value: String);
 begin
   AsBytes := FEncoding.GetBytes(Value);
 end;
 {$ENDIF}
 
-Procedure TAdvBuffer.SetAsText(Const Value: AnsiString);
+Procedure TFslBuffer.SetAsText(Const Value: AnsiString);
 Begin
 
   Capacity := Length(Value);
@@ -2855,15 +2855,15 @@ Begin
 End;
 
 
-Procedure TAdvBuffer.Copy(oBuffer: TAdvBuffer);
+Procedure TFslBuffer.Copy(oBuffer: TFslBuffer);
 Begin
   CopyRange(oBuffer, 0, oBuffer.Capacity);
 End;
 
 
-Procedure TAdvBuffer.CopyRange(oBuffer: TAdvBuffer; Const iIndex, iLength : Integer);
+Procedure TFslBuffer.CopyRange(oBuffer: TFslBuffer; Const iIndex, iLength : Integer);
 Begin
-  Assert(Invariants('CopyRange', oBuffer, TAdvBuffer, 'oBuffer'));
+  Assert(Invariants('CopyRange', oBuffer, TFslBuffer, 'oBuffer'));
   Assert(CheckCondition((iIndex >= 0) And (iIndex + iLength <= oBuffer.Capacity), 'CopyRange', 'Attempted to copy invalid part of the buffer.'));
 
   SetCapacity(iLength);
@@ -2872,7 +2872,7 @@ Begin
 End;  
 
 
-Procedure TAdvBuffer.Move(Const iSource, iTarget, iLength : Integer);
+Procedure TFslBuffer.Move(Const iSource, iTarget, iLength : Integer);
 Begin
   Assert(CheckCondition((iSource >= 0) And (iSource + iLength <= Capacity), 'Copy', 'Attempted to move from an invalid part of the buffer.'));
   Assert(CheckCondition((iTarget >= 0) And (iTarget + iLength <= Capacity), 'Copy', 'Attempted to move to an invalid part of the buffer.'));
@@ -2881,7 +2881,7 @@ Begin
 End;  
 
 
-Function TAdvBuffer.Offset(iIndex: Integer): Pointer;
+Function TFslBuffer.Offset(iIndex: Integer): Pointer;
 Begin 
   Assert(CheckCondition((iIndex >= 0) And (iIndex <= Capacity), 'Offset', 'Attempted to access invalid offset in the buffer.'));
 
@@ -2889,32 +2889,32 @@ Begin
 End;  
 
 
-Function TAdvBufferList.GetBuffer(iIndex: Integer): TAdvBuffer;
+Function TFslBufferList.GetBuffer(iIndex: Integer): TFslBuffer;
 Begin 
-  Result := TAdvBuffer(ObjectByIndex[iIndex]);
+  Result := TFslBuffer(ObjectByIndex[iIndex]);
 End;  
 
 
-Function TAdvBufferList.ItemClass : TAdvObjectClass;
+Function TFslBufferList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvBuffer;
+  Result := TFslBuffer;
 End;
 
 
-Function TAdvBuffer.ExtractAscii(Const iLength: Integer): AnsiString;
+Function TFslBuffer.ExtractAscii(Const iLength: Integer): AnsiString;
 Begin
   Result := MemoryToString(Data, iLength);
 End;
 
 {$IFNDEF VER130}
-Function TAdvBuffer.ExtractUnicode(Const iLength: Integer): String;
+Function TFslBuffer.ExtractUnicode(Const iLength: Integer): String;
 Begin
   result := System.copy(GetAsUnicode, 1, iLength);
 End;
 {$ENDIF}
 
 
-Function TAdvBuffer.StartsWith(Const sValue: String): Boolean;
+Function TFslBuffer.StartsWith(Const sValue: String): Boolean;
 Begin
   {$IFDEF VER130}
   Result := (Length(sValue) <= Capacity) And StringStartsWith(ExtractAscii(Length(sValue)), sValue);
@@ -2925,36 +2925,36 @@ End;
 
 
 {$IFNDEF UT}
-constructor TAdvBuffer.Create(sText: String);
+constructor TFslBuffer.Create(sText: String);
 begin
   Create;
   AsUnicode := stext;
 end;
 {$ENDIF}
 
-function TAdvBuffer.GetAsBytes: TBytes;
+function TFslBuffer.GetAsBytes: TBytes;
 begin
   SetLength(result, Capacity);
   if Capacity > 0 then
     System.move(FData^, result[0], capacity);
 end;
 
-procedure TAdvBuffer.SetAsBytes(const Value: TBytes);
+procedure TFslBuffer.SetAsBytes(const Value: TBytes);
 begin
   SetCapacity(length(Value));
   if capacity > 0 then
     System.move(Value[0], FData^, Capacity);
 end;
 
-Procedure TAdvNameBuffer.Assign(oObject : TAdvObject);
+Procedure TFslNameBuffer.Assign(oObject : TFslObject);
 Begin
   Inherited;
 
-  FName := TAdvNameBuffer(oObject).FName;
+  FName := TFslNameBuffer(oObject).FName;
 End;
 
 
-Procedure TAdvNameBuffer.Define(oFiler : TAdvFiler);
+Procedure TFslNameBuffer.Define(oFiler : TFslFiler);
 Begin
   Inherited;
 
@@ -2962,37 +2962,37 @@ Begin
 End;
 
 
-Function TAdvNameBuffer.Link : TAdvNameBuffer;
+Function TFslNameBuffer.Link : TFslNameBuffer;
 Begin
-  Result := TAdvNameBuffer(Inherited Link);
+  Result := TFslNameBuffer(Inherited Link);
 End;
 
 
-Function TAdvNameBuffer.Clone : TAdvNameBuffer;
+Function TFslNameBuffer.Clone : TFslNameBuffer;
 Begin
-  Result := TAdvNameBuffer(Inherited Clone);
+  Result := TFslNameBuffer(Inherited Clone);
 End;
 
 
-Function TAdvNameBufferList.Clone : TAdvNameBufferList;
+Function TFslNameBufferList.Clone : TFslNameBufferList;
 Begin
-  Result := TAdvNameBufferList(Inherited Clone);
+  Result := TFslNameBufferList(Inherited Clone);
 End;
 
 
-Function TAdvNameBufferList.Link : TAdvNameBufferList;
+Function TFslNameBufferList.Link : TFslNameBufferList;
 Begin
-  Result := TAdvNameBufferList(Inherited Link);
+  Result := TFslNameBufferList(Inherited Link);
 End;
 
 
-Function TAdvNameBufferList.ItemClass : TAdvObjectClass;
+Function TFslNameBufferList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvNameBuffer;
+  Result := TFslNameBuffer;
 End;
 
 
-Procedure TAdvNameBufferList.Merge(oBuffers : TAdvNameBufferList);
+Procedure TFslNameBufferList.Merge(oBuffers : TFslNameBufferList);
 Var
   iLoop : Integer;
 Begin
@@ -3001,35 +3001,35 @@ Begin
 End;
 
 
-Function TAdvNameBufferList.GetBuffer(iIndex : Integer) : TAdvNameBuffer;
+Function TFslNameBufferList.GetBuffer(iIndex : Integer) : TFslNameBuffer;
 Begin
-  Result := TAdvNameBuffer(ObjectByIndex[iIndex]);
+  Result := TFslNameBuffer(ObjectByIndex[iIndex]);
 End;
 
 
-Function TAdvNameBufferList.GetByName(Const sName : String) : TAdvNameBuffer;
+Function TFslNameBufferList.GetByName(Const sName : String) : TFslNameBuffer;
 Begin
-  Result := TAdvNameBuffer(Get(IndexByName(sName)));
+  Result := TFslNameBuffer(Get(IndexByName(sName)));
 End;
 
 
-Function TAdvNameBufferList.ExistsByName(Const sName : String) : Boolean;
+Function TFslNameBufferList.ExistsByName(Const sName : String) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(sName));
 End;
 
 
-Function TAdvNameBufferList.CompareByName(pA, pB: Pointer): Integer;
+Function TFslNameBufferList.CompareByName(pA, pB: Pointer): Integer;
 Begin
-  Result := StringCompare(TAdvNameBuffer(pA).Name, TAdvNameBuffer(pB).Name);
+  Result := StringCompare(TFslNameBuffer(pA).Name, TFslNameBuffer(pB).Name);
 End;
 
 
-Function TAdvNameBufferList.IndexByName(Const sName: String): Integer;
+Function TFslNameBufferList.IndexByName(Const sName: String): Integer;
 Var
-  oBuffer : TAdvNameBuffer;
+  oBuffer : TFslNameBuffer;
 Begin
-  oBuffer := TAdvNameBuffer(ItemNew);
+  oBuffer := TFslNameBuffer(ItemNew);
   Try
     oBuffer.Name := sName;
 
@@ -3041,22 +3041,22 @@ Begin
 End;
 
 
-Procedure TAdvNameBufferList.DefaultCompare(Out aEvent: TAdvItemListCompare);
+Procedure TFslNameBufferList.DefaultCompare(Out aEvent: TFslItemListCompare);
 Begin
   aEvent := CompareByName;
 End;
 
 
-Constructor TAdvMemoryStream.Create;
+Constructor TFslMemoryStream.Create;
 Begin
   Inherited;
 
-  FBuffer := TAdvBuffer.Create;
+  FBuffer := TFslBuffer.Create;
   FExpand := True;
 End;
 
 
-Destructor TAdvMemoryStream.Destroy;
+Destructor TFslMemoryStream.Destroy;
 Begin
   FBuffer.Free;
 
@@ -3064,33 +3064,33 @@ Begin
 End;
 
 
-Function TAdvMemoryStream.Clone : TAdvMemoryStream;
+Function TFslMemoryStream.Clone : TFslMemoryStream;
 Begin
-  Result := TAdvMemoryStream(Inherited Clone);
+  Result := TFslMemoryStream(Inherited Clone);
 End;  
 
 
-Function TAdvMemoryStream.Link : TAdvMemoryStream;
+Function TFslMemoryStream.Link : TFslMemoryStream;
 Begin 
-  Result := TAdvMemoryStream(Inherited Link);
+  Result := TFslMemoryStream(Inherited Link);
 End;  
 
 
-Procedure TAdvMemoryStream.Assign(oObject: TAdvObject);
+Procedure TFslMemoryStream.Assign(oObject: TFslObject);
 Begin 
   Inherited;
 
-  FBuffer.Assign(TAdvMemoryStream(oObject).Buffer);
-  FSize := TAdvMemoryStream(oObject).Size;
-  FPosition := TAdvMemoryStream(oObject).Position;
+  FBuffer.Assign(TFslMemoryStream(oObject).Buffer);
+  FSize := TFslMemoryStream(oObject).Size;
+  FPosition := TFslMemoryStream(oObject).Position;
 
   UpdateCurrentPointer;
 End;  
 
 
-Procedure TAdvMemoryStream.Define(oFiler: TAdvFiler);
+Procedure TFslMemoryStream.Define(oFiler: TFslFiler);
 Begin 
-  // Introduced to circumvent the inability of a TAdvStream descendent to be persistent.
+  // Introduced to circumvent the inability of a TFslStream descendent to be persistent.
 
   oFiler['Buffer'].DefineObject(FBuffer);
   oFiler['Size'].DefineInteger(FSize);
@@ -3100,13 +3100,13 @@ Begin
 End;  
 
 
-Procedure TAdvMemoryStream.UpdateCurrentPointer;
+Procedure TFslMemoryStream.UpdateCurrentPointer;
 Begin 
   FCurrentPointer := Pointer(NativeUInt(FBuffer.Data) + FPosition);
 End;  
 
 
-Procedure TAdvMemoryStream.Read(Var aBuffer; iSize : Cardinal);
+Procedure TFslMemoryStream.Read(Var aBuffer; iSize : Cardinal);
 Begin
   If iSize > 0 Then
   Begin 
@@ -3122,7 +3122,7 @@ Begin
 End;  
 
 
-Procedure TAdvMemoryStream.Write(Const aBuffer; iSize : Cardinal);
+Procedure TFslMemoryStream.Write(Const aBuffer; iSize : Cardinal);
 Begin
   If iSize > 0 Then
   Begin
@@ -3143,13 +3143,13 @@ Begin
 End;  
 
 
-Function TAdvMemoryStream.Readable : Int64;
+Function TFslMemoryStream.Readable : Int64;
 Begin 
   Result := FSize - FPosition;
 End;  
 
 
-Function TAdvMemoryStream.Writeable : Int64;
+Function TFslMemoryStream.Writeable : Int64;
 Begin 
   If FExpand Then
     Result := MaxInt
@@ -3158,13 +3158,13 @@ Begin
 End;  
 
 
-Function TAdvMemoryStream.GetSize : Int64;
+Function TFslMemoryStream.GetSize : Int64;
 Begin 
   Result := FSize;
 End;  
 
 
-Procedure TAdvMemoryStream.SetSize(Const Value: Int64);
+Procedure TFslMemoryStream.SetSize(Const Value: Int64);
 Begin 
   Assert(CheckCondition(Value >= 0, 'SetSize', 'Attempted to set size to an invalid value.'));
 
@@ -3183,13 +3183,13 @@ Begin
 End;
 
 
-Function TAdvMemoryStream.GetPosition : Int64;
+Function TFslMemoryStream.GetPosition : Int64;
 Begin 
   Result := FPosition;
 End;  
 
 
-Procedure TAdvMemoryStream.SetPosition(Const Value: Int64);
+Procedure TFslMemoryStream.SetPosition(Const Value: Int64);
 Begin
   Assert(CheckCondition((Value >= 0) And (Value <= FBuffer.Capacity), 'SetPosition', 'Attempted to set position outside of memory.'));
 
@@ -3198,13 +3198,13 @@ Begin
 End;  
 
 
-Function TAdvMemoryStream.GetCapacity : Int64;
+Function TFslMemoryStream.GetCapacity : Int64;
 Begin 
   Result := FBuffer.Capacity;
 End;  
 
 
-Procedure TAdvMemoryStream.SetCapacity(Const Value: Int64);
+Procedure TFslMemoryStream.SetCapacity(Const Value: Int64);
 Begin 
   Assert(CheckCondition((Value >= Size), 'SetCapacity', StringFormat('Unable to change the capacity to less than the size %d.', [Value])));
 
@@ -3213,22 +3213,22 @@ Begin
 End;
 
 
-Function TAdvMemoryStream.GetDataPointer : Pointer;
+Function TFslMemoryStream.GetDataPointer : Pointer;
 Begin 
   Result := FBuffer.Data;
 End;  
 
 
-Procedure TAdvMemoryStream.SetDataPointer(Const Value: Pointer);
+Procedure TFslMemoryStream.SetDataPointer(Const Value: Pointer);
 Begin 
   FBuffer.Data := Value;
   UpdateCurrentPointer;
 End;  
 
 
-Procedure TAdvMemoryStream.SetBuffer(Const Value: TAdvBuffer);
+Procedure TFslMemoryStream.SetBuffer(Const Value: TFslBuffer);
 Begin 
-  Assert(Not Assigned(Value) Or Invariants('SetBuffer', Value, TAdvBuffer, 'Value'));
+  Assert(Not Assigned(Value) Or Invariants('SetBuffer', Value, TFslBuffer, 'Value'));
 
   FBuffer.Free;
   FBuffer := Value;
@@ -3250,7 +3250,7 @@ Begin
 End;
 
 
-Function TAdvMemoryStream.GetAsText : String;
+Function TFslMemoryStream.GetAsText : String;
 Begin
 {$IFDEF VER130}
   Result := MemoryToString(DataPointer, Size);
@@ -3260,7 +3260,7 @@ Begin
 End;
 
 
-Procedure TAdvMemoryStream.SetAsText(Const Value: String);
+Procedure TFslMemoryStream.SetAsText(Const Value: String);
 {$IFNDEF VER130}
 Var
   aBytes : TBytes;
@@ -3280,19 +3280,19 @@ Begin
 End;  
 
 
-Function TAdvMemoryStream.ErrorClass : EAdvExceptionClass;
+Function TFslMemoryStream.ErrorClass : EAdvExceptionClass;
 Begin 
   Result := EAdvMemoryStream;
 End;  
 
 
-Function TAdvMemoryStream.Equal(oMemory: TAdvMemoryStream): Boolean;
+Function TFslMemoryStream.Equal(oMemory: TFslMemoryStream): Boolean;
 Begin 
   Result := (Size = oMemory.Size) And (MemoryCompare(Buffer.Data, oMemory.Buffer.Data, Size) = 0);
 End;  
 
 
-Procedure TAdvMemoryStream.DeleteRange(Const iFromPosition, iToPosition: Integer);
+Procedure TFslMemoryStream.DeleteRange(Const iFromPosition, iToPosition: Integer);
 Var
   iDifference : Integer;
 Begin 
@@ -3309,90 +3309,90 @@ Begin
 End;  
 
 
-Function TAdvMemoryStream.ValidPosition(Const iValue: Int64): Boolean;
+Function TFslMemoryStream.ValidPosition(Const iValue: Int64): Boolean;
 Begin
   Result := (iValue >= 0) And (iValue <= Size);
 End;
 
 
-Function TAdvMemoryStream.Assignable: Boolean;
+Function TFslMemoryStream.Assignable: Boolean;
 Begin
   Result := True;
 End;
 
 
-{ TAdvFile }
+{ TFslFile }
 
-constructor TAdvFile.Create(const AFileName: string; Mode: Word);
+constructor TFslFile.Create(const AFileName: string; Mode: Word);
 begin
   inherited create;
   FStream := TFileStream.Create(AFileName, mode);
 end;
 
-destructor TAdvFile.Destroy;
+destructor TFslFile.Destroy;
 begin
   FStream.Free;
   inherited;
 end;
 
-function TAdvFile.ErrorClass: EAdvExceptionClass;
+function TFslFile.ErrorClass: EAdvExceptionClass;
 begin
   Result := EAdvFile;
 end;
 
-function TAdvFile.GetHandle: THandle;
+function TFslFile.GetHandle: THandle;
 begin
   result := FStream.Handle;
 end;
 
-function TAdvFile.GetPosition: Int64;
+function TFslFile.GetPosition: Int64;
 begin
   result := FStream.Position;
 end;
 
-function TAdvFile.GetSize: Int64;
+function TFslFile.GetSize: Int64;
 begin
   result := FStream.Size;
 end;
 
-function TAdvFile.Link: TAdvFile;
+function TFslFile.Link: TFslFile;
 begin
-  result := TAdvFile(Inherited Link);
+  result := TFslFile(Inherited Link);
 end;
 
-procedure TAdvFile.RaiseError(aException: EAdvExceptionClass; const sMethod, sMessage: String);
+procedure TFslFile.RaiseError(aException: EAdvExceptionClass; const sMethod, sMessage: String);
 begin
   Inherited RaiseError(aException, sMethod, StringFormat('%s: ''%s''', [sMessage, FStream.FileName]));
 end;
 
-procedure TAdvFile.Read(var aBuffer; iCount: Cardinal);
+procedure TFslFile.Read(var aBuffer; iCount: Cardinal);
 begin
   if FStream.Read(aBuffer, iCount) < iCount then
     RaiseError('Read', 'Unable to read past end of file');
 end;
 
-function TAdvFile.Readable: Int64;
+function TFslFile.Readable: Int64;
 begin
   result := FStream.Size - FStream.Position;
 end;
 
-procedure TAdvFile.SetPosition(const Value: Int64);
+procedure TFslFile.SetPosition(const Value: Int64);
 begin
   FStream.Position := value;
 end;
 
-procedure TAdvFile.SetSize(const iValue: Int64);
+procedure TFslFile.SetSize(const iValue: Int64);
 begin
   FStream.Size := iValue;
 end;
 
-procedure TAdvFile.Write(const aBuffer; iCount: Cardinal);
+procedure TFslFile.Write(const aBuffer; iCount: Cardinal);
 begin
   If (FStream.Write(aBuffer, iCount) < iCount) Then
     RaiseError('Read', 'Unable to write the entire buffer');
 end;
 
-function TAdvFile.Writeable: Int64;
+function TFslFile.Writeable: Int64;
 begin
   result := 0; // ?
 end;
@@ -3558,7 +3558,7 @@ Begin { Constructor TAfsEntity.Create }
   Name := sName;
 End;  { Constructor TAfsEntity.Create }
 
-Procedure TAfsEntity.Assign(oSource : TAdvObject);
+Procedure TAfsEntity.Assign(oSource : TFslObject);
 
 Begin { Procedure TAfsEntity.Assign }
   Inherited;
@@ -3660,13 +3660,13 @@ Begin { Function TAfsList.DefaultCompare }
 End;  { Function TAfsList.DefaultCompare }
 
 
-Procedure TAfsList.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TAfsList.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin { Procedure TAfsList.DefaultCompare }
   aCompare := CompareName;
 End;  { Procedure TAfsList.DefaultCompare }
 
 
-Function TAfsList.ItemClass : TAdvClass;
+Function TAfsList.ItemClass : TFslClass;
 Begin { Function TAfsList.ItemClass }
   Result := TAfsEntity;
 End;  { Function TAfsList.ItemClass }
@@ -3718,7 +3718,7 @@ Constructor TAfsStreamManager.Create;
 Begin { Constructor TAfsStreamManager.Create }
   Inherited;
 
-  FStreams := TAdvObjectMatch.Create;
+  FStreams := TFslObjectMatch.Create;
 End;  { Constructor TAfsStreamManager.Create }
 
 
@@ -3743,7 +3743,7 @@ Begin { Procedure TAfsStreamManager.Close }
 End;  { Procedure TAfsStreamManager.Close }
 
 
-Function TAfsStreamManager.Open(Const sName : String) : TAdvStream;
+Function TAfsStreamManager.Open(Const sName : String) : TFslStream;
 Var
   oFile : TAfsFile;
 Begin { Function TAfsStreamManager.Open }
@@ -3761,7 +3761,7 @@ Begin { Function TAfsStreamManager.Open }
 End;  { Function TAfsStreamManager.Open }
 
 
-Procedure TAfsStreamManager.Close(oStream : TAdvStream);
+Procedure TAfsStreamManager.Close(oStream : TFslStream);
 Var
   iIndex : Integer;
   oFile : TAfsFile;
@@ -3800,7 +3800,7 @@ End;  { Procedure TAfsStreamManager.SetVolume }
 
 
 Type
-  TAfsResourceFile = Class(TAdvMemoryStream)
+  TAfsResourceFile = Class(TFslMemoryStream)
   Private
     FMode : TAfsMode;
     FName : String;
@@ -3823,7 +3823,7 @@ Type
   Private
     FModule : THandle;
     FCurrent : TAfsFile;
-    FItems : TAdvStringList;
+    FItems : TFslStringList;
     FIndex : Integer;
   Protected
     Function GetCurrent : TAfsEntity; Override;
@@ -3836,7 +3836,7 @@ Type
     Function More : Boolean; Override;
 
     Property Module : THandle Read FModule;
-    Property Items : TAdvStringList Read FItems;
+    Property Items : TFslStringList Read FItems;
   End; { TAfsResourceIterator }
 
 
@@ -4177,7 +4177,7 @@ Begin { Constructor TAfsResourceIterator.Create }
   Inherited Create;
 
   FCurrent := TAfsFile.Create;
-  FItems := TAdvStringList.Create;
+  FItems := TFslStringList.Create;
 End;  { Constructor TAfsResourceIterator.Create }
 
 

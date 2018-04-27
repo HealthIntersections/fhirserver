@@ -39,7 +39,7 @@ Type
   TFHIRSearchParamModifier = (spmNull, spmMissing, spmExact, spmContains, spmText, spmIn, spmBelow, spmAbove, spmNotIn, spmType);
   TFHIRSearchParamPrefix = (sppNull, sppNotEqual, sppGreaterThan, sppLessThan, sppGreaterOrEquals, sppLesserOrEquals, sppStartsAfter, sppEndsBefore, sppAproximately);
 
-  TSearchParameter = class (TAdvObject)
+  TSearchParameter = class (TFslObject)
   private
     FModifier: TFHIRSearchParamModifier;
     FValue: String;
@@ -68,12 +68,12 @@ Type
     property next : TSearchParameter read FNext write SetNext;
   end;
 
-  TSearchParser = class (TAdvObject)
+  TSearchParser = class (TFslObject)
   private
     class function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
   public
-    class Function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : TParseMap) : TAdvList<TSearchParameter>;
-    class Function buildUrl(search : TAdvList<TSearchParameter>): String;
+    class Function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : TParseMap) : TFslList<TSearchParameter>;
+    class Function buildUrl(search : TFslList<TSearchParameter>): String;
   end;
 
 implementation
@@ -217,7 +217,7 @@ end;
 
 { TSearchParser }
 
-class function TSearchParser.buildUrl(search: TAdvList<TSearchParameter>): String;
+class function TSearchParser.buildUrl(search: TFslList<TSearchParameter>): String;
 var
   b : TStringBuilder;
   sp : TSearchParameter;
@@ -236,13 +236,13 @@ begin
 
 end;
 
-class function TSearchParser.parse(indexes : TFHIRIndexInformation; resourceType : String; pm: TParseMap): TAdvList<TSearchParameter>;
+class function TSearchParser.parse(indexes : TFHIRIndexInformation; resourceType : String; pm: TParseMap): TFslList<TSearchParameter>;
 var
   iName, iValue : integer;
   name, value : String;
   sp : TSearchParameter;
 begin
-  result := TAdvList<TSearchParameter>.create;
+  result := TFslList<TSearchParameter>.create;
   try
     for iName := 0 to pm.getItemCount - 1 do
     begin

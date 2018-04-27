@@ -88,7 +88,7 @@ function idb(b : TIdBytes) : TBytes;  overload;
 Type
   // 1st, JWK
 
-  TJWK = class (TAdvObject)
+  TJWK = class (TFslObject)
   private
     FObj : TJsonObject;
     function GetExponent: TBytes;
@@ -164,12 +164,12 @@ Type
     function Load(privkey : boolean) : PRSA;
   end;
 
-  TJWKList = class (TAdvObjectList)
+  TJWKList = class (TFslObjectList)
   private
     function GetKey(index: integer): TJWK;
     procedure Setkey(index: integer; const Value: TJWK);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     constructor create(obj : TJsonObject); overload;
     constructor create(source : String); overload;
@@ -215,7 +215,7 @@ Type
    +---------------+------------------------------+--------------------+
 }
 
-  TJWT = class (TAdvObject)
+  TJWT = class (TFslObject)
   private
     FHeader : TJsonObject;
     FPayLoad : TJsonObject;
@@ -343,7 +343,7 @@ Type
     function userName : String;
   end;
 
-  TJWTUtils = class (TAdvObject)
+  TJWTUtils = class (TFslObject)
   private
     class function loadRSAPrivateKey(pemfile, pempassword : AnsiString) : PRSA;
     class function loadRSAPublicKey(pemfile : AnsiString) : PRSA; overload;
@@ -834,7 +834,7 @@ begin
   result := TJWK(ObjectByIndex[index]);
 end;
 
-function TJWKList.ItemClass: TAdvObjectClass;
+function TJWKList.ItemClass: TFslObjectClass;
 begin
   result := TJWK;
 end;

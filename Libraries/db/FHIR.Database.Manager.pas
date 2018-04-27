@@ -113,7 +113,7 @@ type
   // Meta data
   TKDBTableType = (kdbUser, kdbView, kdbSystem);
 
-  TKDBColumn = class (TAdvObject)
+  TKDBColumn = class (TFslObject)
   private
     FName: String;
     FLength: Integer;
@@ -129,21 +129,21 @@ type
     function Describe : String;
   end;
 
-  TKDBIndex = class (TAdvObject)
+  TKDBIndex = class (TFslObject)
   private
     FUnique: Boolean;
     FName: String;
-    FColumns: TAdvList<TKDBColumn>;
+    FColumns: TFslList<TKDBColumn>;
   public
     constructor Create; override;
     destructor Destroy; override;
     property Name : String read FName write FName;
     property Unique : Boolean read FUnique write FUnique;
-    property Columns : TAdvList<TKDBColumn> read FColumns;
+    property Columns : TFslList<TKDBColumn> read FColumns;
     function Describe : String;
   end;
 
-  TKDBRelationship = class (TAdvObject)
+  TKDBRelationship = class (TFslObject)
   private
     FColumn: String;
     FDestTable : String;
@@ -155,12 +155,12 @@ type
     function Describe : String;
   end;
 
-  TKDBTable = class (TAdvObject)
+  TKDBTable = class (TFslObject)
   private
     FName: String;
-    FColumns: TAdvList<TKDBColumn>;
-    FIndexes: TAdvList<TKDBIndex>;
-    FRelationships : TAdvList<TKDBRelationship>;
+    FColumns: TFslList<TKDBColumn>;
+    FIndexes: TFslList<TKDBIndex>;
+    FRelationships : TFslList<TKDBRelationship>;
     FTableType: TKDBTableType;
     FOwner: String;
     FDescription: String;
@@ -170,9 +170,9 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function Link : TKDBTable; overload;
-    property Columns : TAdvList<TKDBColumn> read FColumns;
-    property Indexes : TAdvList<TKDBIndex> read FIndexes;
-    Property Relationships : TAdvList<TKDBRelationship> read FRelationships;
+    property Columns : TFslList<TKDBColumn> read FColumns;
+    property Indexes : TFslList<TKDBIndex> read FIndexes;
+    Property Relationships : TFslList<TKDBRelationship> read FRelationships;
     property Name : String read FName write FName;
     property TableType : TKDBTableType read FTableType write FTableType;
     property Owner : String read FOwner write FOwner;
@@ -182,16 +182,16 @@ type
     function hasColumn(name : String) : boolean;
   end;
 
-  TKDBMetaData = class (TAdvObject)
+  TKDBMetaData = class (TFslObject)
   private
-    FTables: TAdvList<TKDBTable>;
+    FTables: TFslList<TKDBTable>;
     FProcedures : TStringList;
     FSupportsProcedures : Boolean;
   public
     constructor Create; override;
     destructor Destroy; override;
 
-    property Tables : TAdvList<TKDBTable> read FTables;
+    property Tables : TFslList<TKDBTable> read FTables;
     property Procedures : TStringList read FProcedures;
     property SupportsProcedures : Boolean read FSupportsProcedures write FSupportsProcedures;
 
@@ -201,7 +201,7 @@ type
 
   TKDBManager = class;
   TOnChangeConnectionCount = procedure (oSender : TKDBManager) of Object;
-  TKDBBoundParam = class (TAdvObject);
+  TKDBBoundParam = class (TFslObject);
 
   {!Script Show}
 
@@ -211,11 +211,11 @@ type
     to get a connection. The connection must always be returned using
     TDBConnPool.YieldConnection otherwise the connection will leak.
   }
-  TKDBConnection = class (TAdvObject)
+  TKDBConnection = class (TFslObject)
   Private
     FOwner: TKDBManager;
     FNoFree : Boolean;
-    FBoundItems : TAdvMap<TKDBBoundParam>;
+    FBoundItems : TFslMap<TKDBBoundParam>;
     FUsage : String;
     FUsed : TDateTime;
     FTables : TStrings;
@@ -684,13 +684,13 @@ type
 
   TKDBConnectionProc = reference to Procedure (conn : TKDBConnection);
 
-  TKDBManager = class(TAdvObject)
+  TKDBManager = class(TFslObject)
   Private
     FSemaphore : TSemaphore;
     FWaitCreate : boolean;
-    FConnections : TAdvList<TKDBConnection>;
-    FAvail: TAdvList<TKDBConnection>;
-    FInUse : TAdvList<TKDBConnection>;
+    FConnections : TFslList<TKDBConnection>;
+    FAvail: TFslList<TKDBConnection>;
+    FInUse : TFslList<TKDBConnection>;
     FDBLogger : TKDBLogger;
     FClosing : boolean;
     FOnChangeConnectionCount : TOnChangeConnectionCount;
@@ -754,7 +754,7 @@ type
 
   TKDBManagerEvent = procedure (AConnMan : TKDBManager; ABeingCreated : Boolean) of object;
 
-  TKDBHook = class (TAdvObject)
+  TKDBHook = class (TFslObject)
   private
     FHook : TKDBManagerEvent;
     FName : String;
@@ -762,10 +762,10 @@ type
     constructor create(Name : String; Hook : TKDBManagerEvent);
   end;
 
-  TKDBManagerList = class (TAdvObject)
+  TKDBManagerList = class (TFslObject)
   private
     FLock : TCriticalSection;
-    FHooks : TAdvList<TKDBHook>;
+    FHooks : TFslList<TKDBHook>;
     FList : TList<TKDBManager>;
     procedure AddConnMan(AConnMan : TKDBManager);
     procedure RemoveConnMan(AConnMan : TKDBManager);
@@ -821,7 +821,7 @@ begin
   FSQL := '';
   FTerminated := true;
   FInTransaction := false;
-  FBoundItems := TAdvMap<TKDBBoundParam>.create;
+  FBoundItems := TFslMap<TKDBBoundParam>.create;
   FTables := TStringList.create;
 end;
 
@@ -1320,9 +1320,9 @@ begin
   FSemaphore := TSemaphore.Create(nil, 0, 4{ $FFFF}, '');
   FWaitCreate := false;
 
-  FConnections := TAdvList<TKDBConnection>.create;
-  FAvail := TAdvList<TKDBConnection>.create;
-  FInUse := TAdvList<TKDBConnection>.create;
+  FConnections := TFslList<TKDBConnection>.create;
+  FAvail := TFslList<TKDBConnection>.create;
+  FInUse := TFslList<TKDBConnection>.create;
 
   FClosing := false;
   GManagers.AddConnMan(self);
@@ -1695,7 +1695,7 @@ constructor TKDBManagerList.create;
 begin
   inherited create;
   FLock := TCriticalSection.create;
-  FHooks := TAdvList<TKDBHook>.create;
+  FHooks := TFslList<TKDBHook>.create;
   FList := TList<TKDBManager>.create;
 end;
 
@@ -1834,7 +1834,7 @@ begin
   result := TKDBColumn(Inherited Link);
 end;
 
-function CommaText(list : TAdvList<TKDBColumn>) : String;
+function CommaText(list : TFslList<TKDBColumn>) : String;
 var
   s : TStringBuilder;
   b : boolean;
@@ -1861,7 +1861,7 @@ end;
 constructor TKDBIndex.create;
 begin
   inherited;
-  FColumns := TAdvList<TKDBColumn>.create;
+  FColumns := TFslList<TKDBColumn>.create;
 end;
 
 destructor TKDBIndex.destroy;
@@ -1895,9 +1895,9 @@ End;
 constructor TKDBTable.create;
 begin
   inherited;
-  FColumns := TAdvList<TKDBColumn>.CREATE;
-  FIndexes := TAdvList<TKDBIndex>.create;
-  FRelationships := TAdvList<TKDBRelationship>.create;
+  FColumns := TFslList<TKDBColumn>.CREATE;
+  FIndexes := TFslList<TKDBIndex>.create;
+  FRelationships := TFslList<TKDBRelationship>.create;
 end;
 
 destructor TKDBTable.destroy;
@@ -1927,7 +1927,7 @@ end;
 constructor TKDBMetaData.create;
 begin
   inherited;
-  FTables := TAdvList<TKDBTable>.create;
+  FTables := TFslList<TKDBTable>.create;
   FProcedures := TStringList.create;
 end;
 

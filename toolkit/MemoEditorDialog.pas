@@ -59,7 +59,7 @@ type
   private
     FResource: TFHIRResource;
     FElement: TFHIRMarkdown;
-    FExtensions : TAdvList<TFhirExtension>;
+    FExtensions : TFslList<TFhirExtension>;
     FCurrentIndex : integer;
     FPrimary : String;
     FOffset : integer;
@@ -237,7 +237,7 @@ end;
 constructor TMemoEditorForm.Create(owner: TComponent);
 begin
   inherited;
-  FExtensions := TAdvList<TFhirExtension>.create;
+  FExtensions := TFslList<TFhirExtension>.create;
 end;
 
 destructor TMemoEditorForm.Destroy;

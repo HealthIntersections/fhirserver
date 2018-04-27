@@ -81,7 +81,7 @@ const
 type
   { Foundation Stuff }
 
-  TCqlElement = {abstract} class (TAdvObject)
+  TCqlElement = {abstract} class (TFslObject)
   private
     FStartPosition : TSourceLocation;
     FEndPosition : TSourceLocation;
@@ -105,8 +105,8 @@ type
     FKind: TCqlTypeKind;
     FId: String;
     FLibraryName: String;
-    FParameters: TAdvList<TCqlTypeSpecifier>;
-    FElements: TAdvMap<TCqlTypeSpecifier>;
+    FParameters: TFslList<TCqlTypeSpecifier>;
+    FElements: TFslMap<TCqlTypeSpecifier>;
 
   public
     Constructor Create; override;
@@ -116,8 +116,8 @@ type
     property Kind : TCqlTypeKind read FKind write FKind;
     property LibraryName : String read FLibraryName write FLibraryName;
     property Id : String read FId write FId;
-    Property Parameters : TAdvList<TCqlTypeSpecifier> read FParameters;
-    Property Elements : TAdvMap<TCqlTypeSpecifier> read FElements;
+    Property Parameters : TFslList<TCqlTypeSpecifier> read FParameters;
+    Property Elements : TFslMap<TCqlTypeSpecifier> read FElements;
   end;
 
 
@@ -154,29 +154,29 @@ type
     FWithStmt: TCqlExpressionNode;
     FSuchThat: TCqlExpressionNode;
     FWhere: TCqlExpressionNode;
-    FElements : TAdvMap<TCqlExpressionNode>;
-    FItems : TAdvList<TCqlExpressionNode>;
+    FElements : TFslMap<TCqlExpressionNode>;
+    FItems : TFslList<TCqlExpressionNode>;
     FLibraryName: String;
     FReturnType: TCqlExpressionReturnType;
     FReturn: TCqlExpressionNode;
     FThenStmt: TCqlExpressionNode;
     FIfTest: TCqlExpressionNode;
     FElseStmt: TCqlExpressionNode;
-    FSort: TAdvList<TCqlExpressionNode>;
+    FSort: TFslList<TCqlExpressionNode>;
     FTypeInfo: TCqlTypeSpecifier;
     FSortOrder: TCqlSortOrder;
     FIntervalOpDetails : TCqlIntervalOperationDetails;
     procedure SetWithStmt(const Value: TCqlExpressionNode);
     procedure SetSuchThat(const Value: TCqlExpressionNode);
     procedure SetWhere(const Value: TCqlExpressionNode);
-    function getElements: TAdvMap<TCqlExpressionNode>;
+    function getElements: TFslMap<TCqlExpressionNode>;
     procedure SetReturn(const Value: TCqlExpressionNode);
     procedure SetElseStmt(const Value: TCqlExpressionNode);
     procedure SetIfTest(const Value: TCqlExpressionNode);
     procedure SetThenStmt(const Value: TCqlExpressionNode);
-    function getItems: TAdvList<TCqlExpressionNode>;
+    function getItems: TFslList<TCqlExpressionNode>;
     procedure SetTypeInfo(const Value: TCqlTypeSpecifier);
-    function GetSort: TAdvList<TCqlExpressionNode>;
+    function GetSort: TFslList<TCqlExpressionNode>;
   public
     Destructor Destroy; override;
     function Link : TCqlExpressionNode; overload;
@@ -197,7 +197,7 @@ type
     property where : TCqlExpressionNode read FWhere write SetWhere;
     property returnType : TCqlExpressionReturnType read FReturnType write FReturnType;
     property return : TCqlExpressionNode read FReturn write SetReturn;
-    property sort : TAdvList<TCqlExpressionNode> read GetSort;
+    property sort : TFslList<TCqlExpressionNode> read GetSort;
     property sortOrder : TCqlSortOrder read FSortOrder write FSortOrder;
 
     // if
@@ -205,8 +205,8 @@ type
     property thenStmt : TCqlExpressionNode read FThenStmt write SetThenStmt;
     property elseStmt : TCqlExpressionNode read FElseStmt write SetElseStmt;
 
-    property elements : TAdvMap<TCqlExpressionNode> read getElements; // tuple
-    property items : TAdvList<TCqlExpressionNode> read getItems; // list
+    property elements : TFslMap<TCqlExpressionNode> read getElements; // tuple
+    property items : TFslList<TCqlExpressionNode> read getItems; // list
 
     property TypeInfo : TCqlTypeSpecifier read FTypeInfo write SetTypeInfo;
     property IntervalOpDetails : TCqlIntervalOperationDetails read FIntervalOpDetails write FIntervalOpDetails;
@@ -257,14 +257,14 @@ type
 
   TCqlValueSetReference = class (TCqlTerminologyReference)
   private
-    FCodeSystems : TAdvList<TCqlScopedIdReference>;
-    function GetCodeSystems: TAdvList<TCqlScopedIdReference>;
+    FCodeSystems : TFslList<TCqlScopedIdReference>;
+    function GetCodeSystems: TFslList<TCqlScopedIdReference>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     function Link : TCqlValueSetReference; overload;
 
-    property CodeSystems : TAdvList<TCqlScopedIdReference> read GetCodeSystems;
+    property CodeSystems : TFslList<TCqlScopedIdReference> read GetCodeSystems;
   end;
 
   TCqlCodeDefinition = class (TCqlNamed)
@@ -285,14 +285,14 @@ type
   TCqlConceptDefinition = class (TCqlNamed)
   private
     FDisplay: String;
-    FCodes : TAdvList<TCqlScopedIdReference>;
+    FCodes : TFslList<TCqlScopedIdReference>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     function Link : TCqlConceptDefinition; overload;
 
     property display : String read FDisplay write FDisplay;
-    property Codes : TAdvList<TCqlScopedIdReference> read FCodes;
+    property Codes : TFslList<TCqlScopedIdReference> read FCodes;
   end;
 
 
@@ -324,7 +324,7 @@ type
 
   TCqlFunctionDefinition = class (TCqlStatement)
   private
-    FParameters: TAdvList<TCqlFunctionParameterDefinition>;
+    FParameters: TFslList<TCqlFunctionParameterDefinition>;
     FBody: TCqlExpressionNode;
     FTypeInfo: TCqlTypeSpecifier;
     procedure SetBody(const Value: TCqlExpressionNode);
@@ -334,7 +334,7 @@ type
     Destructor Destroy; override;
     function Link : TCqlFunctionDefinition; overload;
 
-    property parameters : TAdvList<TCqlFunctionParameterDefinition> read FParameters;
+    property parameters : TFslList<TCqlFunctionParameterDefinition> read FParameters;
     property typeInfo : TCqlTypeSpecifier read FTypeInfo write SetTypeInfo;
     property body : TCqlExpressionNode read FBody write SetBody;
   end;
@@ -374,30 +374,30 @@ type
   TCqlLibrary = class (TCqlVersioned)
   private
     FVersion : String;
-    FUsing : TAdvList<TCqlUsing>;
-    FIncludes : TAdvList<TCqlInclude>;
-    FParameters : TAdvList<TCqlParameterDefinition>;
-    FCodeSystems : TAdvList<TCqlCodeSystemReference>;
-    FValueSets : TAdvList<TCqlValueSetReference>;
-    FCodes : TAdvList<TCqlCodeDefinition>;
-    FConcepts : TAdvList<TCqlConceptDefinition>;
-    FDefinitions : TAdvList<TCqlExpressionDefinition>;
-    FFunctions: TAdvList<TCqlFunctionDefinition>;
+    FUsing : TFslList<TCqlUsing>;
+    FIncludes : TFslList<TCqlInclude>;
+    FParameters : TFslList<TCqlParameterDefinition>;
+    FCodeSystems : TFslList<TCqlCodeSystemReference>;
+    FValueSets : TFslList<TCqlValueSetReference>;
+    FCodes : TFslList<TCqlCodeDefinition>;
+    FConcepts : TFslList<TCqlConceptDefinition>;
+    FDefinitions : TFslList<TCqlExpressionDefinition>;
+    FFunctions: TFslList<TCqlFunctionDefinition>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     function Link : TCqlLibrary; overload;
 
     property Version : String read FVersion write FVersion;
-    property Using : TAdvList<TCqlUsing> read FUsing;
-    property Includes : TAdvList<TCqlInclude> read FIncludes;
-    property Parameters : TAdvList<TCqlParameterDefinition> read FParameters;
-    property CodeSystems : TAdvList<TCqlCodeSystemReference> read FCodeSystems;
-    property ValueSets : TAdvList<TCqlValueSetReference> read FValueSets;
-    property Codes : TAdvList<TCqlCodeDefinition> read FCodes;
-    property Concepts : TAdvList<TCqlConceptDefinition> read FConcepts;
-    property Definitions : TAdvList<TCqlExpressionDefinition> read FDefinitions;
-    property Functions : TAdvList<TCqlFunctionDefinition> read FFunctions;
+    property Using : TFslList<TCqlUsing> read FUsing;
+    property Includes : TFslList<TCqlInclude> read FIncludes;
+    property Parameters : TFslList<TCqlParameterDefinition> read FParameters;
+    property CodeSystems : TFslList<TCqlCodeSystemReference> read FCodeSystems;
+    property ValueSets : TFslList<TCqlValueSetReference> read FValueSets;
+    property Codes : TFslList<TCqlCodeDefinition> read FCodes;
+    property Concepts : TFslList<TCqlConceptDefinition> read FConcepts;
+    property Definitions : TFslList<TCqlExpressionDefinition> read FDefinitions;
+    property Functions : TFslList<TCqlFunctionDefinition> read FFunctions;
   end;
 
 implementation
@@ -436,10 +436,10 @@ begin
   inherited;
 end;
 
-function TCqlValueSetReference.GetCodeSystems: TAdvList<TCqlScopedIdReference>;
+function TCqlValueSetReference.GetCodeSystems: TFslList<TCqlScopedIdReference>;
 begin
   if FCodeSystems = nil then
-    FCodeSystems := TAdvList<TCqlScopedIdReference>.create;
+    FCodeSystems := TFslList<TCqlScopedIdReference>.create;
   result := FCodeSystems;
 end;
 
@@ -501,15 +501,15 @@ end;
 constructor TCqlLibrary.Create;
 begin
   inherited;
-  FUsing := TAdvList<TCqlUsing>.Create;
-  FIncludes := TAdvList<TCqlInclude>.create;
-  FParameters := TAdvList<TCqlParameterDefinition>.create;
-  FCodeSystems := TAdvList<TCqlCodeSystemReference>.create;
-  FValueSets := TAdvList<TCqlValueSetReference>.create;
-  FCodes := TAdvList<TCqlCodeDefinition>.create;
-  FConcepts := TAdvList<TCqlConceptDefinition>.create;
-  FDefinitions := TAdvList<TCqlExpressionDefinition>.create;
-  FFunctions := TAdvList<TCqlFunctionDefinition>.create;
+  FUsing := TFslList<TCqlUsing>.Create;
+  FIncludes := TFslList<TCqlInclude>.create;
+  FParameters := TFslList<TCqlParameterDefinition>.create;
+  FCodeSystems := TFslList<TCqlCodeSystemReference>.create;
+  FValueSets := TFslList<TCqlValueSetReference>.create;
+  FCodes := TFslList<TCqlCodeDefinition>.create;
+  FConcepts := TFslList<TCqlConceptDefinition>.create;
+  FDefinitions := TFslList<TCqlExpressionDefinition>.create;
+  FFunctions := TFslList<TCqlFunctionDefinition>.create;
 end;
 
 destructor TCqlLibrary.Destroy;
@@ -583,7 +583,7 @@ end;
 constructor TCqlConceptDefinition.Create;
 begin
   inherited;
-  FCodes := TAdvList<TCqlScopedIdReference>.create;
+  FCodes := TFslList<TCqlScopedIdReference>.create;
 end;
 
 destructor TCqlConceptDefinition.Destroy;
@@ -602,8 +602,8 @@ end;
 constructor TCqlTypeSpecifier.Create;
 begin
   inherited;
-  FParameters := TAdvList<TCqlTypeSpecifier>.create;
-  FElements := TAdvMap<TCqlTypeSpecifier>.create;
+  FParameters := TFslList<TCqlTypeSpecifier>.create;
+  FElements := TFslMap<TCqlTypeSpecifier>.create;
 end;
 
 destructor TCqlTypeSpecifier.Destroy;
@@ -648,7 +648,7 @@ end;
 constructor TCqlFunctionDefinition.Create;
 begin
   inherited;
-  FParameters := TAdvList<TCqlFunctionParameterDefinition>.create;
+  FParameters := TFslList<TCqlFunctionParameterDefinition>.create;
 end;
 
 destructor TCqlFunctionDefinition.Destroy;
@@ -695,24 +695,24 @@ begin
   inherited;
 end;
 
-function TCqlExpressionNode.getElements: TAdvMap<TCqlExpressionNode>;
+function TCqlExpressionNode.getElements: TFslMap<TCqlExpressionNode>;
 begin
   if FElements = nil then
-    FElements := TAdvMap<TCqlExpressionNode>.create;
+    FElements := TFslMap<TCqlExpressionNode>.create;
   result := FElements;
 end;
 
-function TCqlExpressionNode.getItems: TAdvList<TCqlExpressionNode>;
+function TCqlExpressionNode.getItems: TFslList<TCqlExpressionNode>;
 begin
   if FItems = nil then
-    FItems := TAdvList<TCqlExpressionNode>.create;
+    FItems := TFslList<TCqlExpressionNode>.create;
   result := FItems;
 end;
 
-function TCqlExpressionNode.GetSort: TAdvList<TCqlExpressionNode>;
+function TCqlExpressionNode.GetSort: TFslList<TCqlExpressionNode>;
 begin
   if FSort = nil then
-    FSort := TAdvList<TCqlExpressionNode>.create;
+    FSort := TFslList<TCqlExpressionNode>.create;
   result := FSort;
 end;
 

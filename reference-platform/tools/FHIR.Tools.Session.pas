@@ -90,7 +90,7 @@ Const
 Type
   {$M+}
 
-  TFHIRCompartmentId = class (TAdvObject)
+  TFHIRCompartmentId = class (TFslObject)
   private
     FEnum: TFhirResourceType;
     FId: String;
@@ -107,7 +107,7 @@ Type
   TFHIRRequest = class;
   TFHIRResponse = class;
 
-  TFHIRFormatAdaptor = {abstract} class (TAdvObject)
+  TFHIRFormatAdaptor = {abstract} class (TFslObject)
   public
     Function Link : TFHIRFormatAdaptor; Overload;
 
@@ -131,7 +131,7 @@ Type
     resource is not updated by the OAuth information)
   }
   {!.Net HL7Connect.Fhir.Request}
-  TFhirSession = class (TAdvObject)
+  TFhirSession = class (TFslObject)
   private
     Fworker : TFHIRWorkerContext;
     FProviderCode : TFHIRAuthProvider;
@@ -160,7 +160,7 @@ Type
     FUserKey: integer;
     FTestScript: TFhirTestScript;
     FExternalUserKey: integer;
-    FCompartments : TAdvList<TFHIRCompartmentId>;
+    FCompartments : TFslList<TFHIRCompartmentId>;
 
     procedure SetJwt(const Value: TJWT);
     procedure SetUser(const Value: TSCIMUser);
@@ -284,7 +284,7 @@ Type
     property sessionLength : String read FsessionLength write FsessionLength;
     Property TestScript : TFhirTestScript read FTestScript write SetTestScript;
     property ExternalUserKey : integer read FExternalUserKey write FExternalUserKey;
-    property Compartments : TAdvList<TFHIRCompartmentId> read FCompartments;
+    property Compartments : TFslList<TFHIRCompartmentId> read FCompartments;
 
     function isAnonymous : boolean;
   end;
@@ -300,7 +300,7 @@ Type
     but the other properties can be changed as desired
   }
   {!.Net HL7Connect.Fhir.Request}
-  TFHIRRequest = class (TAdvObject)
+  TFHIRRequest = class (TFslObject)
   Private
     Fworker: TFHIRWorkerContext;
     FCompartmentInformation : TFHIRCompartmentList;
@@ -317,7 +317,7 @@ Type
     FversionId: String;
     FlastModifiedDate: TDateTime;
     FParams: TParseMap;
-    FSource: TAdvBuffer;
+    FSource: TFslBuffer;
 //    FcontentLocation: String;
     FDefaultSearch: boolean;
     FLang: String;
@@ -347,7 +347,7 @@ Type
     FElements: TStringList;
     FVersion: TFHIRVersion;
     procedure SetResource(const Value: TFhirResource);
-    procedure SetSource(const Value: TAdvBuffer);
+    procedure SetSource(const Value: TFslBuffer);
     procedure SetSession(const Value: TFhirSession);
     procedure SetProvenance(const Value: TFhirProvenance);
     procedure processParams;
@@ -374,7 +374,7 @@ Type
     Function LogSummary : String;
     function XMLSummary : String;
     Procedure CopyPost(stream : TStream);
-    Property Source : TAdvBuffer read FSource write SetSource;
+    Property Source : TFslBuffer read FSource write SetSource;
     Property Session : TFhirSession read FSession write SetSession;
     Property ip : string read FIp write FIp;
     Property form : TMimeMessage read FForm write SetForm;
@@ -390,7 +390,7 @@ Type
     // form
     // also, the base must be stipped out before calling this
     function preAnalyse(url : String) : String;
-    procedure analyse(sCommand, sUrl : String; out relativeReferenceAdjustment : integer; adaptors : TAdvMap<TFHIRFormatAdaptor>);
+    procedure analyse(sCommand, sUrl : String; out relativeReferenceAdjustment : integer; adaptors : TFslMap<TFHIRFormatAdaptor>);
 
     Property DefaultSearch : boolean read FDefaultSearch write FDefaultSearch;
 
@@ -488,7 +488,7 @@ Type
     }
     Property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
     property hasCompartments : boolean read GetHasCompartments;
-    function SessionCompartments : TAdvList<TFHIRCompartmentId>;
+    function SessionCompartments : TFslList<TFHIRCompartmentId>;
 
 
     {@member contentLocation
@@ -530,7 +530,7 @@ Type
     property loadObjects : boolean read FLoadObjects write FLoadObjects;
   End;
 
-  TFHIRBundleBuilder = class (TAdvObject)
+  TFHIRBundleBuilder = class (TFslObject)
   private
     FHasSecureOp: boolean;
   protected
@@ -570,7 +570,7 @@ Type
     type of the resource may have unexpected catastrophic outcomes.
   }
   {!.Net HL7Connect.Fhir.Response}
-  TFHIRResponse = class (TAdvObject)
+  TFHIRResponse = class (TFslObject)
   private
     FHTTPCode: Integer;
     FBody: String;
@@ -590,7 +590,7 @@ Type
     FOutcome: TFHIROperationOutcome;
     FCacheControl : TFHIRCacheControl;
     FProgress: String;
-    FStream : TAdvStream;
+    FStream : TFslStream;
     FOnCreateBuilder: TCreateBundleBuilderEvent;
     FVersion: TFHIRVersion;
 
@@ -598,7 +598,7 @@ Type
     function GetBundle: TFhirBundle;
     procedure SetBundle(const Value: TFhirBundle);
     procedure SetOutcome(const Value: TFHIROperationOutcome);
-    procedure SetStream(const Value: TAdvStream);
+    procedure SetStream(const Value: TFslStream);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -646,7 +646,7 @@ Type
     Property Bundle : TFhirBundle read GetBundle write SetBundle;
 
     Property outcome : TFHIROperationOutcome read FOutcome write SetOutcome;
-    Property Stream : TAdvStream read FStream write SetStream;
+    Property Stream : TFslStream read FStream write SetStream;
 
     {@member Format
       The format for the response, if known and identified (xml, or json). Derived
@@ -772,7 +772,7 @@ begin
 end;
 
 
-procedure TFHIRRequest.analyse(sCommand, sUrl: String; out relativeReferenceAdjustment : integer; adaptors : TAdvMap<TFHIRFormatAdaptor>);
+procedure TFHIRRequest.analyse(sCommand, sUrl: String; out relativeReferenceAdjustment : integer; adaptors : TFslMap<TFHIRFormatAdaptor>);
 Var
   sId, sType : String;
   aResourceType : TFHIRResourceType;
@@ -1141,7 +1141,7 @@ begin
   SetLength(b, t);
   Stream.Read(b[0], t);
   stream.position := p;
-  FSource := TAdvBuffer.create;
+  FSource := TFslBuffer.create;
   FSource.AsBytes := b;
 end;
 
@@ -1286,7 +1286,7 @@ begin
   FSummary := soFull;
 end;
 
-function TFHIRRequest.SessionCompartments: TAdvList<TFHIRCompartmentId>;
+function TFHIRRequest.SessionCompartments: TFslList<TFHIRCompartmentId>;
 begin
   if Session = nil then
     result := nil
@@ -1369,7 +1369,7 @@ begin
   FSession := Value;
 end;
 
-procedure TFHIRRequest.SetSource(const Value: TAdvBuffer);
+procedure TFHIRRequest.SetSource(const Value: TFslBuffer);
 begin
   FSource.Free;
   FSource := Value;
@@ -1453,7 +1453,7 @@ begin
   FResource := Value;
 end;
 
-procedure TFHIRResponse.SetStream(const Value: TAdvStream);
+procedure TFHIRResponse.SetStream(const Value: TFslStream);
 begin
   FStream.Free;
   FStream := Value;
@@ -1497,7 +1497,7 @@ begin
   FWOrker := worker;
   FSecure := secure;
   FFirstCreated := now;
-  FCompartments := TAdvList<TFHIRCompartmentId>.create;
+  FCompartments := TFslList<TFHIRCompartmentId>.create;
 end;
 
 procedure TFhirSession.describe(b: TStringBuilder);

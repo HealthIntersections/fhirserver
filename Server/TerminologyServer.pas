@@ -43,7 +43,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
   FHIR.Database.Manager,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations, FHIR.Tools.Session,
-  TerminologyServices, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
+  FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
   IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, FHIR.Snomed.Expressions;
 
@@ -52,9 +52,9 @@ Type
 
   TTerminologyServer = class (TTerminologyServerStore)
   private
-    FExpansions : TAdvStringObjectMatch;
-    FDependencies : TAdvStringObjectMatch; // object is TAdvStringList of identity
-    FClosures : TAdvMap<TClosureManager>;
+    FExpansions : TFslStringObjectMatch;
+    FDependencies : TFslStringObjectMatch; // object is TFslStringList of identity
+    FClosures : TFslMap<TClosureManager>;
     FWebBase : String;
     FOnConnectDB : TDataBaseConnectionEvent;
 
@@ -136,11 +136,11 @@ uses
 constructor TTerminologyServer.Create(db : TKDBManager);
 begin
   inherited;
-  FExpansions := TAdvStringObjectMatch.create;
+  FExpansions := TFslStringObjectMatch.create;
   FExpansions.PreventDuplicates;
-  FDependencies := TAdvStringObjectMatch.create;
+  FDependencies := TFslStringObjectMatch.create;
   FDependencies.PreventDuplicates;
-  FClosures := TAdvMap<TClosureManager>.create;
+  FClosures := TFslMap<TClosureManager>.create;
 end;
 
 destructor TTerminologyServer.Destroy;
@@ -315,14 +315,14 @@ end;
 
 procedure TTerminologyServer.AddDependency(name, value : String);
 var
-  ts : TAdvStringList;
+  ts : TFslStringList;
 begin
   // must be in lock
   if FDependencies.ExistsByKey(name) then
-    ts := FDependencies.GetValueByKey(name) as TAdvStringList
+    ts := FDependencies.GetValueByKey(name) as TFslStringList
   else
   begin
-    ts := TAdvStringList.Create;
+    ts := TFslStringList.Create;
     FDependencies.Add(name, ts);
   end;
   if not ts.ExistsByValue(value) then
@@ -331,13 +331,13 @@ end;
 
 procedure TTerminologyServer.invalidateVS(id: String);
 var
-  ts : TAdvStringList;
+  ts : TFslStringList;
   i : integer;
 begin
   // must be in lock
   if FDependencies.ExistsByKey(id) then
   begin
-    ts := FDependencies.GetValueByKey(id) as TAdvStringList;
+    ts := FDependencies.GetValueByKey(id) as TFslStringList;
     for i := 0 to ts.Count - 1 do
       if FExpansions.ExistsByKey(ts[i]) then
         FExpansions.DeleteByKey(ts[i]);
@@ -697,7 +697,7 @@ var
   s : string;
   first : boolean;
   exp : TSnomedExpression;
-  list : TAdvList<TMatchingConcept>;
+  list : TFslList<TMatchingConcept>;
   mc : TMatchingConcept;
   match : TFHIRComposeOpRespMatch;
   ref : TSnomedRefinementGroup;

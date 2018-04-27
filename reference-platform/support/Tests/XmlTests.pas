@@ -84,8 +84,8 @@ Type
     function findTestCase(name : String) : TMXmlElement;
     function findSample(id : String) : TMXmlElement;
     function findSampleMs(id : String) : IXMLDOMElement;
-    procedure runTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
-    procedure runMsTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
+    procedure runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
+    procedure runMsTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
   Published
     [SetupFixture] procedure setup;
     [TearDownFixture] procedure teardown;
@@ -710,10 +710,10 @@ begin
   result := nil;
 end;
 
-procedure TXPathEngineTests.runTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
+procedure TXPathEngineTests.runTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
 var
   focus, outcome : TMXmlElement;
-  nodes : TAdvList<TMXmlNode>;
+  nodes : TFslList<TMXmlNode>;
   node : TMXmlNode;
   i : integer;
 begin
@@ -775,7 +775,7 @@ begin
   end;
 end;
 
-procedure TXPathEngineTests.runMsTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
+procedure TXPathEngineTests.runMsTest(test : TMXmlElement; outcomes : TFslList<TMXmlElement>);
 var
   focus : IXMLDOMElement;
   outcome: TMXmlElement;
@@ -850,7 +850,7 @@ end;
 procedure TXPathEngineTests.PathTest(Name: String);
 var
   test : TMXmlElement;
-  outcomes : TAdvList<TMXmlElement>;
+  outcomes : TFslList<TMXmlElement>;
 begin
   test := findTestCase(name);
   outcomes := tests.selectElements('node', test.element('outcomes'));

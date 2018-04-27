@@ -36,13 +36,13 @@ uses
   FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Text,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Parser,
   {$IFDEF FHIR2}
-  FHIRTestWorker2, FHIR.R2.Resources, FHIR.R2.Types,
+  FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types,
   {$ENDIF}
   {$IFDEF FHIR3}
-  FHIRTestWorker3, FHIR.R3.Resources, FHIR.R3.Types,
+  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.Types,
   {$ENDIF}
   {$IFDEF FHIR4}
-  FHIRTestWorker4, FHIR.R4.Resources, FHIR.R4.Types,
+  FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types,
   {$ENDIF}
   FHIR.Tools.DiffEngine,
   FHIR.Support.MXml, DUnitX.TestFramework;

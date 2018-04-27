@@ -43,12 +43,12 @@ Type
 
   TFSFilterItemType = (fsitParameter, fsitLogical);
 
-  TFSFilter = class (TAdvObject)
+  TFSFilter = class (TFslObject)
   public
     function FilterItemType : TFSFilterItemType; virtual; abstract;
   end;
 
-  TFSFilterParameterPath = class (TAdvObject)
+  TFSFilterParameterPath = class (TFslObject)
   private
     FName : String;
     FFilter: TFSFilter;
@@ -97,7 +97,7 @@ Type
 
   TFSFilterLexType = (fsltEnded, fsltName, fsltString, fsltNUmber, fsltDot, fsltOpen, fsltClose, fsltOpenSq, fsltCloseSq);
 
-  TFSFilterParser = class (TAdvObject)
+  TFSFilterParser = class (TFslObject)
   private
     original : String;
     cursor: integer;
@@ -122,7 +122,7 @@ Type
     class function parse(expression : String) : TFSFilter; overload;
   end;
 
-  TFSCharIssuer = class (TAdvObject)
+  TFSCharIssuer = class (TFslObject)
   private
     cursor : char;
   public

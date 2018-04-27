@@ -37,14 +37,14 @@ Uses
 Type
   TInternetFetcherMethod = (imfGet, imfPost);
 
-  TInternetFetcher = Class (TAdvObject)
+  TInternetFetcher = Class (TFslObject)
   Private
     FURL: String;
-    FBuffer: TAdvBuffer;
+    FBuffer: TFslBuffer;
     FUsername: String;
     FPassword: String;
     FMethod: TInternetFetcherMethod;
-    procedure SetBuffer(const Value: TAdvBuffer);
+    procedure SetBuffer(const Value: TFslBuffer);
     procedure SetPassword(const Value: String);
     procedure SetUsername(const Value: String);
   Public
@@ -53,7 +53,7 @@ Type
     Destructor Destroy; Override;
 
     Property URL : String read FURL write FURL;
-    Property Buffer : TAdvBuffer read FBuffer write SetBuffer;
+    Property Buffer : TFslBuffer read FBuffer write SetBuffer;
 
     Function CanFetch : Boolean;
     Procedure Fetch;
@@ -89,7 +89,7 @@ end;
 constructor TInternetFetcher.Create;
 begin
   inherited;
-  FBuffer := TAdvBuffer.create;
+  FBuffer := TFslBuffer.create;
   FMethod := imfGet;
 end;
 
@@ -198,7 +198,7 @@ begin
   End;
 end;
 
-procedure TInternetFetcher.SetBuffer(const Value: TAdvBuffer);
+procedure TInternetFetcher.SetBuffer(const Value: TFslBuffer);
 begin
   FBuffer.Free;
   FBuffer := Value;

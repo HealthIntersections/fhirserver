@@ -196,7 +196,7 @@ type
     procedure grdPropertiesCellClick(const Column: TColumn; const Row: Integer);
     procedure grdFiltersCellClick(const Column: TColumn; const Row: Integer);
   private
-    flatConcepts : TAdvList<TFhirCodeSystemConcept>;
+    flatConcepts : TFslList<TFhirCodeSystemConcept>;
     selchanging : boolean;
 
     function GetCodeSystem: TFHIRCodeSystem;
@@ -822,7 +822,7 @@ end;
 constructor TCodeSystemEditorFrame.Create(owner: TComponent);
 begin
   inherited;
-  flatConcepts := TAdvList<TFhirCodeSystemConcept>.create;
+  flatConcepts := TFslList<TFhirCodeSystemConcept>.create;
 end;
 
 destructor TCodeSystemEditorFrame.Destroy;

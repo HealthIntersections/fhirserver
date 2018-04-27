@@ -905,7 +905,7 @@ Type
     constructor Create; override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirResource; overload;
     function Clone : TFhirResource; overload;
     {!script show}
@@ -941,7 +941,7 @@ Type
   {!.Net HL7Connect.Fhir.Binary}
   TFhirBinary = class (TFhirResource)
   private
-    FContent : TAdvBuffer;
+    FContent : TFslBuffer;
     FContentType : string;
   protected
     function GetResourceType : TFhirResourceType; override;
@@ -950,13 +950,13 @@ Type
     Constructor Create; Overload; Override;
     Destructor Destroy; Override;
   published
-    Property Content : TAdvBuffer read FContent;
+    Property Content : TFslBuffer read FContent;
     Property ContentType : string read FContentType write FContentType;
   end;
   
 
 
-  TFhirResourceListEnumerator = class (TAdvObject)
+  TFhirResourceListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirResourceList;
@@ -1069,7 +1069,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAdverseReaction; overload;
     function Clone : TFhirAdverseReaction; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -1154,7 +1154,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAlert; overload;
     function Clone : TFhirAlert; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -1242,7 +1242,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAllergyIntolerance; overload;
     function Clone : TFhirAllergyIntolerance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -1348,7 +1348,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCarePlan; overload;
     function Clone : TFhirCarePlan; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -1465,7 +1465,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirComposition; overload;
     function Clone : TFhirComposition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -1619,7 +1619,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConceptMap; overload;
     function Clone : TFhirConceptMap; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -1780,7 +1780,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCondition; overload;
     function Clone : TFhirCondition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -1959,7 +1959,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformance; overload;
     function Clone : TFhirConformance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2151,7 +2151,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDevice; overload;
     function Clone : TFhirDevice; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2284,7 +2284,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDeviceObservationReport; overload;
     function Clone : TFhirDeviceObservationReport; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2363,7 +2363,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDiagnosticOrder; overload;
     function Clone : TFhirDiagnosticOrder; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2478,7 +2478,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDiagnosticReport; overload;
     function Clone : TFhirDiagnosticReport; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2627,7 +2627,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDocumentManifest; overload;
     function Clone : TFhirDocumentManifest; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2797,7 +2797,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDocumentReference; overload;
     function Clone : TFhirDocumentReference; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3018,7 +3018,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirEncounter; overload;
     function Clone : TFhirEncounter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3137,7 +3137,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirFamilyHistory; overload;
     function Clone : TFhirFamilyHistory; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3209,7 +3209,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirGroup; overload;
     function Clone : TFhirGroup; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3334,7 +3334,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImagingStudy; overload;
     function Clone : TFhirImagingStudy; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3516,7 +3516,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunization; overload;
     function Clone : TFhirImmunization; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3665,7 +3665,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunizationRecommendation; overload;
     function Clone : TFhirImmunizationRecommendation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3728,7 +3728,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirList; overload;
     function Clone : TFhirList; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3842,7 +3842,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirLocation; overload;
     function Clone : TFhirLocation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3983,7 +3983,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedia; overload;
     function Clone : TFhirMedia; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4123,7 +4123,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedication; overload;
     function Clone : TFhirMedication; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4222,7 +4222,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationAdministration; overload;
     function Clone : TFhirMedicationAdministration; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4332,7 +4332,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationDispense; overload;
     function Clone : TFhirMedicationDispense; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4421,7 +4421,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationPrescription; overload;
     function Clone : TFhirMedicationPrescription; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4527,7 +4527,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationStatement; overload;
     function Clone : TFhirMedicationStatement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4625,7 +4625,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMessageHeader; overload;
     function Clone : TFhirMessageHeader; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4763,7 +4763,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirObservation; overload;
     function Clone : TFhirObservation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4888,7 +4888,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOperationOutcome; overload;
     function Clone : TFhirOperationOutcome; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4936,7 +4936,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOrder; overload;
     function Clone : TFhirOrder; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5036,7 +5036,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOrderResponse; overload;
     function Clone : TFhirOrderResponse; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5130,7 +5130,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOrganization; overload;
     function Clone : TFhirOrganization; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5221,7 +5221,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOther; overload;
     function Clone : TFhirOther; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5307,7 +5307,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPatient; overload;
     function Clone : TFhirPatient; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5453,7 +5453,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPractitioner; overload;
     function Clone : TFhirPractitioner; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5584,7 +5584,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProcedure; overload;
     function Clone : TFhirProcedure; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5741,7 +5741,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfile; overload;
     function Clone : TFhirProfile; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5901,7 +5901,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProvenance; overload;
     function Clone : TFhirProvenance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5989,7 +5989,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQuery; overload;
     function Clone : TFhirQuery; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6055,7 +6055,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQuestionnaire; overload;
     function Clone : TFhirQuestionnaire; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6149,7 +6149,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirRelatedPerson; overload;
     function Clone : TFhirRelatedPerson; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6225,7 +6225,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSecurityEvent; overload;
     function Clone : TFhirSecurityEvent; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6288,7 +6288,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSpecimen; overload;
     function Clone : TFhirSpecimen; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6375,7 +6375,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSubstance; overload;
     function Clone : TFhirSubstance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6439,7 +6439,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSupply; overload;
     function Clone : TFhirSupply; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6546,7 +6546,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSet; overload;
     function Clone : TFhirValueSet; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7764,7 +7764,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'text', 'Narrative', FText.Link));
 end;
 
-procedure TFhirResource.Assign(oSource : TAdvObject);
+procedure TFhirResource.Assign(oSource : TFslObject);
 begin
   inherited;
   FFormat := TFhirResource(oSource).FFormat;
@@ -7797,7 +7797,7 @@ end;
 constructor TFhirBinary.Create;
 begin
   inherited;
-  FContent := TAdvBuffer.create;
+  FContent := TFslBuffer.create;
 end;
 
 destructor TFhirBinary.Destroy;
@@ -7949,7 +7949,7 @@ begin
   result := false;
 end;
 
-procedure TFhirAdverseReaction.Assign(oSource : TAdvObject);
+procedure TFhirAdverseReaction.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirAdverseReaction(oSource).FIdentifierList);
@@ -8110,7 +8110,7 @@ begin
   result := false;
 end;
 
-procedure TFhirAlert.Assign(oSource : TAdvObject);
+procedure TFhirAlert.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirAlert(oSource).FIdentifierList);
@@ -8279,7 +8279,7 @@ begin
   result := false;
 end;
 
-procedure TFhirAllergyIntolerance.Assign(oSource : TAdvObject);
+procedure TFhirAllergyIntolerance.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirAllergyIntolerance(oSource).FIdentifierList);
@@ -8514,7 +8514,7 @@ begin
   result := false;
 end;
 
-procedure TFhirCarePlan.Assign(oSource : TAdvObject);
+procedure TFhirCarePlan.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirCarePlan(oSource).FIdentifierList);
@@ -8727,7 +8727,7 @@ begin
   result := true;
 end;
 
-procedure TFhirComposition.Assign(oSource : TAdvObject);
+procedure TFhirComposition.Assign(oSource : TFslObject);
 begin
   inherited;
   identifier := TFhirComposition(oSource).identifier.Clone;
@@ -8994,7 +8994,7 @@ begin
   result := true;
 end;
 
-procedure TFhirConceptMap.Assign(oSource : TAdvObject);
+procedure TFhirConceptMap.Assign(oSource : TFslObject);
 begin
   inherited;
   identifierObject := TFhirConceptMap(oSource).identifierObject.Clone;
@@ -9377,7 +9377,7 @@ begin
   result := false;
 end;
 
-procedure TFhirCondition.Assign(oSource : TAdvObject);
+procedure TFhirCondition.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirCondition(oSource).FIdentifierList);
@@ -9680,7 +9680,7 @@ begin
   result := true;
 end;
 
-procedure TFhirConformance.Assign(oSource : TAdvObject);
+procedure TFhirConformance.Assign(oSource : TFslObject);
 begin
   inherited;
   identifierObject := TFhirConformance(oSource).identifierObject.Clone;
@@ -10103,7 +10103,7 @@ begin
   result := false;
 end;
 
-procedure TFhirDevice.Assign(oSource : TAdvObject);
+procedure TFhirDevice.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirDevice(oSource).FIdentifierList);
@@ -10440,7 +10440,7 @@ begin
   result := false;
 end;
 
-procedure TFhirDeviceObservationReport.Assign(oSource : TAdvObject);
+procedure TFhirDeviceObservationReport.Assign(oSource : TFslObject);
 begin
   inherited;
   instantObject := TFhirDeviceObservationReport(oSource).instantObject.Clone;
@@ -10583,7 +10583,7 @@ begin
   result := false;
 end;
 
-procedure TFhirDiagnosticOrder.Assign(oSource : TAdvObject);
+procedure TFhirDiagnosticOrder.Assign(oSource : TFslObject);
 begin
   inherited;
   subject := TFhirDiagnosticOrder(oSource).subject.Clone;
@@ -10804,7 +10804,7 @@ begin
   result := true;
 end;
 
-procedure TFhirDiagnosticReport.Assign(oSource : TAdvObject);
+procedure TFhirDiagnosticReport.Assign(oSource : TFslObject);
 begin
   inherited;
   name := TFhirDiagnosticReport(oSource).name.Clone;
@@ -11072,7 +11072,7 @@ begin
   result := false;
 end;
 
-procedure TFhirDocumentManifest.Assign(oSource : TAdvObject);
+procedure TFhirDocumentManifest.Assign(oSource : TFslObject);
 begin
   inherited;
   masterIdentifier := TFhirDocumentManifest(oSource).masterIdentifier.Clone;
@@ -11350,7 +11350,7 @@ begin
   result := false;
 end;
 
-procedure TFhirDocumentReference.Assign(oSource : TAdvObject);
+procedure TFhirDocumentReference.Assign(oSource : TFslObject);
 begin
   inherited;
   masterIdentifier := TFhirDocumentReference(oSource).masterIdentifier.Clone;
@@ -11871,7 +11871,7 @@ begin
   result := true;
 end;
 
-procedure TFhirEncounter.Assign(oSource : TAdvObject);
+procedure TFhirEncounter.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirEncounter(oSource).FIdentifierList);
@@ -12110,7 +12110,7 @@ begin
   result := true;
 end;
 
-procedure TFhirFamilyHistory.Assign(oSource : TAdvObject);
+procedure TFhirFamilyHistory.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirFamilyHistory(oSource).FIdentifierList);
@@ -12232,7 +12232,7 @@ begin
   result := true;
 end;
 
-procedure TFhirGroup.Assign(oSource : TAdvObject);
+procedure TFhirGroup.Assign(oSource : TFslObject);
 begin
   inherited;
   identifier := TFhirGroup(oSource).identifier.Clone;
@@ -12461,7 +12461,7 @@ begin
   result := false;
 end;
 
-procedure TFhirImagingStudy.Assign(oSource : TAdvObject);
+procedure TFhirImagingStudy.Assign(oSource : TFslObject);
 begin
   inherited;
   dateTimeObject := TFhirImagingStudy(oSource).dateTimeObject.Clone;
@@ -12855,7 +12855,7 @@ begin
   result := false;
 end;
 
-procedure TFhirImmunization.Assign(oSource : TAdvObject);
+procedure TFhirImmunization.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirImmunization(oSource).FIdentifierList);
@@ -13190,7 +13190,7 @@ begin
   result := false;
 end;
 
-procedure TFhirImmunizationRecommendation.Assign(oSource : TAdvObject);
+procedure TFhirImmunizationRecommendation.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirImmunizationRecommendation(oSource).FIdentifierList);
@@ -13282,7 +13282,7 @@ begin
   result := false;
 end;
 
-procedure TFhirList.Assign(oSource : TAdvObject);
+procedure TFhirList.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirList(oSource).FIdentifierList);
@@ -13493,7 +13493,7 @@ begin
   result := false;
 end;
 
-procedure TFhirLocation.Assign(oSource : TAdvObject);
+procedure TFhirLocation.Assign(oSource : TFslObject);
 begin
   inherited;
   identifier := TFhirLocation(oSource).identifier.Clone;
@@ -13765,7 +13765,7 @@ begin
   result := true;
 end;
 
-procedure TFhirMedia.Assign(oSource : TAdvObject);
+procedure TFhirMedia.Assign(oSource : TFslObject);
 begin
   inherited;
   FType_ := TFhirMedia(oSource).FType_.Link;
@@ -14105,7 +14105,7 @@ begin
   result := true;
 end;
 
-procedure TFhirMedication.Assign(oSource : TAdvObject);
+procedure TFhirMedication.Assign(oSource : TFslObject);
 begin
   inherited;
   nameObject := TFhirMedication(oSource).nameObject.Clone;
@@ -14309,7 +14309,7 @@ begin
   result := false;
 end;
 
-procedure TFhirMedicationAdministration.Assign(oSource : TAdvObject);
+procedure TFhirMedicationAdministration.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirMedicationAdministration(oSource).FIdentifierList);
@@ -14517,7 +14517,7 @@ begin
   result := false;
 end;
 
-procedure TFhirMedicationDispense.Assign(oSource : TAdvObject);
+procedure TFhirMedicationDispense.Assign(oSource : TFslObject);
 begin
   inherited;
   identifier := TFhirMedicationDispense(oSource).identifier.Clone;
@@ -14671,7 +14671,7 @@ begin
   result := false;
 end;
 
-procedure TFhirMedicationPrescription.Assign(oSource : TAdvObject);
+procedure TFhirMedicationPrescription.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirMedicationPrescription(oSource).FIdentifierList);
@@ -14888,7 +14888,7 @@ begin
   result := false;
 end;
 
-procedure TFhirMedicationStatement.Assign(oSource : TAdvObject);
+procedure TFhirMedicationStatement.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirMedicationStatement(oSource).FIdentifierList);
@@ -15041,7 +15041,7 @@ begin
   result := false;
 end;
 
-procedure TFhirMessageHeader.Assign(oSource : TAdvObject);
+procedure TFhirMessageHeader.Assign(oSource : TFslObject);
 begin
   inherited;
   identifierObject := TFhirMessageHeader(oSource).identifierObject.Clone;
@@ -15280,7 +15280,7 @@ begin
   result := false;
 end;
 
-procedure TFhirObservation.Assign(oSource : TAdvObject);
+procedure TFhirObservation.Assign(oSource : TFslObject);
 begin
   inherited;
   name := TFhirObservation(oSource).name.Clone;
@@ -15572,7 +15572,7 @@ begin
   result := false;
 end;
 
-procedure TFhirOperationOutcome.Assign(oSource : TAdvObject);
+procedure TFhirOperationOutcome.Assign(oSource : TFslObject);
 begin
   inherited;
   FIssueList.Assign(TFhirOperationOutcome(oSource).FIssueList);
@@ -15648,7 +15648,7 @@ begin
   result := false;
 end;
 
-procedure TFhirOrder.Assign(oSource : TAdvObject);
+procedure TFhirOrder.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirOrder(oSource).FIdentifierList);
@@ -15825,7 +15825,7 @@ begin
   result := false;
 end;
 
-procedure TFhirOrderResponse.Assign(oSource : TAdvObject);
+procedure TFhirOrderResponse.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirOrderResponse(oSource).FIdentifierList);
@@ -16031,7 +16031,7 @@ begin
   result := false;
 end;
 
-procedure TFhirOrganization.Assign(oSource : TAdvObject);
+procedure TFhirOrganization.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirOrganization(oSource).FIdentifierList);
@@ -16201,7 +16201,7 @@ begin
   result := false;
 end;
 
-procedure TFhirOther.Assign(oSource : TAdvObject);
+procedure TFhirOther.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirOther(oSource).FIdentifierList);
@@ -16356,7 +16356,7 @@ begin
   result := true;
 end;
 
-procedure TFhirPatient.Assign(oSource : TAdvObject);
+procedure TFhirPatient.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirPatient(oSource).FIdentifierList);
@@ -16606,7 +16606,7 @@ begin
   result := true;
 end;
 
-procedure TFhirPractitioner.Assign(oSource : TAdvObject);
+procedure TFhirPractitioner.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirPractitioner(oSource).FIdentifierList);
@@ -16813,7 +16813,7 @@ begin
   result := true;
 end;
 
-procedure TFhirProcedure.Assign(oSource : TAdvObject);
+procedure TFhirProcedure.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirProcedure(oSource).FIdentifierList);
@@ -17067,7 +17067,7 @@ begin
   result := true;
 end;
 
-procedure TFhirProfile.Assign(oSource : TAdvObject);
+procedure TFhirProfile.Assign(oSource : TFslObject);
 begin
   inherited;
   identifierObject := TFhirProfile(oSource).identifierObject.Clone;
@@ -17471,7 +17471,7 @@ begin
   result := false;
 end;
 
-procedure TFhirProvenance.Assign(oSource : TAdvObject);
+procedure TFhirProvenance.Assign(oSource : TFslObject);
 begin
   inherited;
   FTargetList.Assign(TFhirProvenance(oSource).FTargetList);
@@ -17650,7 +17650,7 @@ begin
   result := false;
 end;
 
-procedure TFhirQuery.Assign(oSource : TAdvObject);
+procedure TFhirQuery.Assign(oSource : TFslObject);
 begin
   inherited;
   identifierObject := TFhirQuery(oSource).identifierObject.Clone;
@@ -17767,7 +17767,7 @@ begin
   result := true;
 end;
 
-procedure TFhirQuestionnaire.Assign(oSource : TAdvObject);
+procedure TFhirQuestionnaire.Assign(oSource : TFslObject);
 begin
   inherited;
   FStatus := TFhirQuestionnaire(oSource).FStatus.Link;
@@ -17967,7 +17967,7 @@ begin
   result := true;
 end;
 
-procedure TFhirRelatedPerson.Assign(oSource : TAdvObject);
+procedure TFhirRelatedPerson.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirRelatedPerson(oSource).FIdentifierList);
@@ -18103,7 +18103,7 @@ begin
   result := false;
 end;
 
-procedure TFhirSecurityEvent.Assign(oSource : TAdvObject);
+procedure TFhirSecurityEvent.Assign(oSource : TFslObject);
 begin
   inherited;
   event := TFhirSecurityEvent(oSource).event.Clone;
@@ -18208,7 +18208,7 @@ begin
   result := false;
 end;
 
-procedure TFhirSpecimen.Assign(oSource : TAdvObject);
+procedure TFhirSpecimen.Assign(oSource : TFslObject);
 begin
   inherited;
   FIdentifierList.Assign(TFhirSpecimen(oSource).FIdentifierList);
@@ -18368,7 +18368,7 @@ begin
   result := false;
 end;
 
-procedure TFhirSubstance.Assign(oSource : TAdvObject);
+procedure TFhirSubstance.Assign(oSource : TFslObject);
 begin
   inherited;
   type_ := TFhirSubstance(oSource).type_.Clone;
@@ -18493,7 +18493,7 @@ begin
   result := false;
 end;
 
-procedure TFhirSupply.Assign(oSource : TAdvObject);
+procedure TFhirSupply.Assign(oSource : TFslObject);
 begin
   inherited;
   kind := TFhirSupply(oSource).kind.Clone;
@@ -18644,7 +18644,7 @@ begin
   result := true;
 end;
 
-procedure TFhirValueSet.Assign(oSource : TAdvObject);
+procedure TFhirValueSet.Assign(oSource : TFslObject);
 begin
   inherited;
   identifierObject := TFhirValueSet(oSource).identifierObject.Clone;

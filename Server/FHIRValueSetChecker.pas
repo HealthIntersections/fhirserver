@@ -35,13 +35,13 @@ uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Base.Objects,
-  TerminologyServices, TerminologyServerStore;
+  FHIR.Tx.Service, TerminologyServerStore;
 
 Type
-  TValueSetChecker = class (TAdvObject)
+  TValueSetChecker = class (TFslObject)
   private
     FStore : TTerminologyServerStore;
-    FOthers : TAdvStringObjectMatch; // checkers or code system providers
+    FOthers : TFslStringObjectMatch; // checkers or code system providers
     fvs : TFHIRValueSet;
     FId: String;
     FProfile : TFhirExpansionProfile;
@@ -74,7 +74,7 @@ begin
   Create;
   FStore := store;
   FId := id;
-  FOthers := TAdvStringObjectMatch.create;
+  FOthers := TFslStringObjectMatch.create;
   FOthers.PreventDuplicates;
 end;
 

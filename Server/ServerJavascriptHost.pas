@@ -22,7 +22,7 @@ Const
 Type
   TEventScriptLanguage = (langJavascript, langFHIRPath);
 
-  TEventScript = class (TAdvObject)
+  TEventScript = class (TFslObject)
   private
     FId : String;
     FCommand : TFhirTriggerTypeEnum;
@@ -40,18 +40,18 @@ Type
     property Resources : TStringList read FResources;
   end;
 
-  TEventScriptRegistry = class (TAdvObject)
+  TEventScriptRegistry = class (TFslObject)
   private
     FLock : TCriticalSection;
-    FScripts : TAdvMap<TEventScript>;
+    FScripts : TFslMap<TEventScript>;
   public
     constructor Create; override;
     destructor Destroy; override;
 
     function link : TEventScriptRegistry; overload;
 
-    procedure getScripts(list: TAdvList<TEventScript>);
-    procedure getApplicableScripts(event : TFhirTriggerTypeEnum; resource : String; list : TAdvList<TEventScript>);
+    procedure getScripts(list: TFslList<TEventScript>);
+    procedure getApplicableScripts(event : TFhirTriggerTypeEnum; resource : String; list : TFslList<TEventScript>);
 
 {$IFDEF FHIR4}
     procedure checkResource(event : TFhirEventDefinition);
@@ -64,7 +64,7 @@ Type
 
   // we create one of these for evrey thread, but it will only actually create a javscript engine when it needs to.
   // then, we retain it as long as we can
-  TJsHost = class (TAdvObject)
+  TJsHost = class (TFslObject)
   private
     FRegistry: TEventScriptRegistry;
     FEngine : TFHIRJavascript;
@@ -89,12 +89,12 @@ implementation
 
 procedure TJsHost.checkChanges(event: TFhirTriggerTypeEnum; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResource);
 var
-  scripts : TAdvList<TEventScript>;
+  scripts : TFslList<TEventScript>;
   script : TEventScript;
   rn : String;
   s, b, a, c : TJsValue;
 begin
-  scripts := TAdvList<TEventScript>.create;
+  scripts := TFslList<TEventScript>.create;
   try
     if before <> nil then
       rn := before.fhirType
@@ -140,12 +140,12 @@ end;
 
 procedure TJsHost.previewRequest(session : TFHIRSession; request: TFHIRRequest);
 var
-  scripts : TAdvList<TEventScript>;
+  scripts : TFslList<TEventScript>;
   script : TEventScript;
   rn : String;
   s, r : TJsValue;
 begin
-  scripts := TAdvList<TEventScript>.create;
+  scripts := TFslList<TEventScript>.create;
   try
     FRegistry.getApplicableScripts(TriggerTypeDataAccessed, '', scripts);
     if (scripts.count > 0) then
@@ -173,7 +173,7 @@ constructor TEventScriptRegistry.Create;
 begin
   inherited;
   FLock := TCriticalSection.create;
-  FScripts := TAdvMap<TEventScript>.create;
+  FScripts := TFslMap<TEventScript>.create;
 end;
 
 destructor TEventScriptRegistry.Destroy;
@@ -196,7 +196,7 @@ begin
     result := (specified.Count = 0) or (specified.IndexOf(actual) > -1);
 end;
 
-procedure TEventScriptRegistry.getApplicableScripts(event: TFhirTriggerTypeEnum; resource: String; list: TAdvList<TEventScript>);
+procedure TEventScriptRegistry.getApplicableScripts(event: TFhirTriggerTypeEnum; resource: String; list: TFslList<TEventScript>);
 var
   e : TEventScript;
 begin
@@ -212,7 +212,7 @@ begin
   end;
 end;
 
-procedure TEventScriptRegistry.getScripts(list : TAdvList<TEventScript>);
+procedure TEventScriptRegistry.getScripts(list : TFslList<TEventScript>);
 var
   e : TEventScript;
 begin

@@ -43,7 +43,7 @@ Const
   SCIM_SYSTEM_USER = 'SYSTEM';
 
 type
-  TFHIRUserProvider = class (TAdvObject)
+  TFHIRUserProvider = class (TFslObject)
   private
     FOnProcessFile : TProcessFileEvent;
   public

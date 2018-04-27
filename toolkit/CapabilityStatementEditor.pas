@@ -338,7 +338,7 @@ var
   indexes : TFhirIndexList;
   compartments : TFHIRCompartmentList;
   builder : TFHIRIndexBuilder;
-  list : TAdvList<TFhirIndex>;
+  list : TFslList<TFhirIndex>;
   index : TFhirIndex;
   p : TFhirCapabilityStatementRestResourceSearchParam;
   tiRes : TTreeViewItem;
@@ -545,7 +545,7 @@ var
   indexes : TFhirIndexList;
   compartments : TFHIRCompartmentList;
   builder : TFHIRIndexBuilder;
-  list : TAdvList<TFhirIndex>;
+  list : TFslList<TFhirIndex>;
   index : TFhirIndex;
   found : boolean;
   p : TFhirCapabilityStatementRestResourceSearchParam;

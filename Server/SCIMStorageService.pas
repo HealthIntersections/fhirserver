@@ -35,11 +35,11 @@ uses
   FHIR.Support.Objects;
 
 Type
-  TSCIMStorageServiceConnection = class (TAdvObject)
+  TSCIMStorageServiceConnection = class (TFslObject)
   public
   end;
 
-  TSCIMStorageService = class (TAdvObject)
+  TSCIMStorageService = class (TFslObject)
   public
     function CheckId(id : String; var username, hash : String) : boolean; virtual;
     function CheckLogin(username, password : String) : boolean; virtual;

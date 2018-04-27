@@ -38,7 +38,7 @@ uses
 
 type
 
-  TNarrativeGenerator = class (TAdvObject)
+  TNarrativeGenerator = class (TFslObject)
   private
     Fprefix : String;
     FProfiles : TProfileManager;

@@ -1753,7 +1753,7 @@ type
     Pressed: Boolean; DropMark: TVTDropMarkMode) of object;
   TVTHeaderPaintQueryElementsEvent = procedure(Sender: TVTHeader; var PaintInfo: THeaderPaintInfo;
     var Elements: THeaderPaintElements) of object;
-  TVTAdvancedHeaderPaintEvent = procedure(Sender: TVTHeader; var PaintInfo: THeaderPaintInfo;
+  TVTFslancedHeaderPaintEvent = procedure(Sender: TVTHeader; var PaintInfo: THeaderPaintInfo;
     const Elements: THeaderPaintElements) of object;
   TVTBeforeAutoFitColumnsEvent = procedure(Sender: TVTHeader; var SmartAutoFitType: TSmartAutoFitType) of object;
   TVTBeforeAutoFitColumnEvent = procedure(Sender: TVTHeader; Column: TColumnIndex; var SmartAutoFitType: TSmartAutoFitType;
@@ -2176,7 +2176,7 @@ type
     FOnHeaderDrawQueryElements: TVTHeaderPaintQueryElementsEvent; // Used for advanced header painting to query the
                                                  // application for the elements, which are drawn by it and which should
                                                  // be drawn by the tree.
-    FOnAdvancedHeaderDraw: TVTAdvancedHeaderPaintEvent; // Used when owner draw is enabled for the header and a column
+    FOnAdvancedHeaderDraw: TVTFslancedHeaderPaintEvent; // Used when owner draw is enabled for the header and a column
                                                  // is set to owner draw mode. But only if OnHeaderDrawQueryElements
                                                  // returns at least one element to be drawn by the application.
                                                  // In this case OnHeaderDraw is not used.
@@ -2736,7 +2736,7 @@ type
     property WantTabs: Boolean read FWantTabs write FWantTabs default False;
 
     property OnAddToSelection: TVTAddToSelectionEvent read FOnAddToSelection write FOnAddToSelection;
-    property OnAdvancedHeaderDraw: TVTAdvancedHeaderPaintEvent read FOnAdvancedHeaderDraw write FOnAdvancedHeaderDraw;
+    property OnAdvancedHeaderDraw: TVTFslancedHeaderPaintEvent read FOnAdvancedHeaderDraw write FOnAdvancedHeaderDraw;
     property OnAfterAutoFitColumn: TVTAfterAutoFitColumnEvent read FOnAfterAutoFitColumn write FOnAfterAutoFitColumn;
     property OnAfterAutoFitColumns: TVTAfterAutoFitColumnsEvent read FOnAfterAutoFitColumns write FOnAfterAutoFitColumns;
     property OnAfterCellPaint: TVTAfterCellPaintEvent read FOnAfterCellPaint write FOnAfterCellPaint;

@@ -65,7 +65,7 @@ Type
     procedure next; override;
   end;
 
-  TCqlFunction = class (TAdvObject)
+  TCqlFunction = class (TFslObject)
   private
     FName: String;
     FIndex: integer;
@@ -84,10 +84,10 @@ Type
     property index : integer read FIndex write FIndex;
   end;
 
-  TCqlFunctionRegistry = class (TAdvObject)
+  TCqlFunctionRegistry = class (TFslObject)
   private
-    FMap : TAdvMap<TCqlFunction>;
-    FList : TAdvList<TCqlFunction>;
+    FMap : TFslMap<TCqlFunction>;
+    FList : TFslList<TCqlFunction>;
     procedure add(func : TCqlFunction);
     procedure populate;
     function GetDefinition(i: integer): TCqlFunction;
@@ -1120,8 +1120,8 @@ end;
 constructor TCqlFunctionRegistry.Create;
 begin
   inherited;
-  FMap := TAdvMap<TCqlFunction>.create;
-  FList := TAdvList<TCqlFunction>.create;
+  FMap := TFslMap<TCqlFunction>.create;
+  FList := TFslList<TCqlFunction>.create;
   Populate;
 end;
 

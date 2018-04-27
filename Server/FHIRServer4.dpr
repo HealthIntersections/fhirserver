@@ -135,7 +135,7 @@ uses
   FHIR.Loinc.Publisher in '..\Libraries\loinc\FHIR.Loinc.Publisher.pas',
   TerminologyServer in 'TerminologyServer.pas',
   TerminologyServerStore in 'TerminologyServerStore.pas',
-  TerminologyServices in '..\Libraries\TerminologyServices.pas',
+  FHIR.Tx.Service in '..\Libraries\FHIR.Tx.Service.pas',
   FHIRValueSetChecker in 'FHIRValueSetChecker.pas',
   TerminologyWebServer in 'TerminologyWebServer.pas',
   FHIRServerConstants in 'FHIRServerConstants.pas',

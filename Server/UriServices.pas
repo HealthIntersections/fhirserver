@@ -36,7 +36,7 @@ uses
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Text,
   FHIR.Database.Manager,
-  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
 
 type
   TUriHolder = class (TCodeSystemProviderContext)

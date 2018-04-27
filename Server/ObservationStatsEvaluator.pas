@@ -57,7 +57,7 @@ Const
   HUNITS_TObservationStatsParameter : Array [TObservationStatsParameter] of String =('*',       '*',       '*',       '',      '',           '*',      '',        '*',   '',         '*',   '*',   '*',       '*',       '*',     '*',   '*',   '*',   '*',   '',     '',         '',           '');
 
 Type
-  TObservation = class (TAdvObject)
+  TObservation = class (TFslObject)
   private
     Key : integer;
     ConceptKey : integer;
@@ -70,18 +70,18 @@ Type
     function v(mode : TObservationStatsMode): Double;
   end;
 
-  TObservationStatsEvaluator = class (TAdvObject, IComparer<TObservation>)
+  TObservationStatsEvaluator = class (TFslObject, IComparer<TObservation>)
   private
     FConn : TKDBConnection;
     FSubject: String;
-    FConcepts : TAdvList<TFHIRCoding>;
+    FConcepts : TFslList<TFHIRCoding>;
     FFinish: TDateTime;
     FStart: TDateTime;
     FParameters: TObservationStatsParameterSet;
     FResp: TFHIRStatsOpResponse;
     FSubjectKey: integer;
-    FAllData : TAdvList<TObservation>; // by date
-    FValidData : TAdvList<TObservation>; // by date
+    FAllData : TFslList<TObservation>; // by date
+    FValidData : TFslList<TObservation>; // by date
     FMode : TObservationStatsMode;
     FUnit : string;
     FObservations : TList<Integer>;
@@ -142,7 +142,7 @@ Type
 
     property subject : String read FSubject write FSubject;
     property subjectKey : integer read FSubjectKey write FSubjectKey;
-    property concepts : TAdvList<TFHIRCoding> read FConcepts;
+    property concepts : TFslList<TFHIRCoding> read FConcepts;
     property start : TDateTime read FStart write FStart;
     property finish : TDateTime read FFinish write FFinish;
     property parameters : TObservationStatsParameterSet read FParameters write FParameters;
@@ -154,14 +154,14 @@ Type
 
   end;
 
-  TObservationLastNEvaluator = class (TAdvObject)
+  TObservationLastNEvaluator = class (TFslObject)
   private
     FConn : TKDBConnection;
 
     FCount: integer;
     FObservations : TStringList;
     FSubjectKey: integer;
-    FConcepts: TAdvList<TFHIRCoding>;
+    FConcepts: TFslList<TFHIRCoding>;
     FCategory: TFHIRCoding;
     procedure SetCategory(const Value: TFHIRCoding);
     function GetObservations: String;
@@ -176,7 +176,7 @@ Type
     // in
     property subjectKey : integer read FSubjectKey write FSubjectKey;
     property category : TFHIRCoding read FCategory write SetCategory;
-    property concepts : TAdvList<TFHIRCoding> read FConcepts;
+    property concepts : TFslList<TFHIRCoding> read FConcepts;
     property count : integer read FCount write FCount;
 
     procedure execute;
@@ -206,7 +206,7 @@ constructor TObservationStatsEvaluator.Create(conn: TKDBConnection);
 begin
   inherited create;
   FConn := conn;
-  FConcepts := TAdvList<TFHIRCoding>.create;
+  FConcepts := TFslList<TFHIRCoding>.create;
   FResp := TFHIRStatsOpResponse.Create;
   FObservations := TList<Integer>.create;
 end;
@@ -248,8 +248,8 @@ begin
     obs.effective := TFhirPeriod.Create;
     TFhirPeriod(obs.effective).start := TDateTimeEx.makeUTC(start);
     TFhirPeriod(obs.effective).end_ := TDateTimeEx.makeUTC(finish);
-    FAllData := TAdvList<TObservation>.create;
-    FValidData := TAdvList<TObservation>.create;
+    FAllData := TFslList<TObservation>.create;
+    FValidData := TFslList<TObservation>.create;
     try
       loadData(c);
       comp := obs.componentList.Append;
@@ -786,7 +786,7 @@ begin
   FObservations.Sorted := true;
   FObservations.Duplicates := dupIgnore;
   FSubjectKey := 0;
-  FConcepts := TAdvList<TFHIRCoding>.create;
+  FConcepts := TFslList<TFHIRCoding>.create;
 end;
 
 destructor TObservationLastNEvaluator.Destroy;

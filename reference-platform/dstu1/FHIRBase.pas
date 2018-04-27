@@ -128,7 +128,7 @@ type
   TFHIRObjectList = class;
   TFHIRPropertyList = class;
 
-  TFHIRProperty = class (TAdvObject)
+  TFHIRProperty = class (TFslObject)
   Private
     FName : String;
     FType : String;
@@ -147,7 +147,7 @@ type
   End;
 
 
-  TFHIRPropertyListEnumerator = class (TAdvObject)
+  TFHIRPropertyListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFHIRPropertyList;
@@ -159,7 +159,7 @@ type
     property Current : TFHIRProperty read GetCurrent;
   end;
 
-  TFHIRPropertyList = class (TAdvObjectList)
+  TFHIRPropertyList = class (TFslObjectList)
   private
     Function GetProperty(iIndex : Integer) : TFHIRProperty;
   public
@@ -169,7 +169,7 @@ type
   End;
 
 
-  TFHIRPropertyIterator = class (TAdvObject)
+  TFHIRPropertyIterator = class (TFslObject)
   private
     FFocus : TFHIRObject;
     FProperties : TFHIRPropertyList;
@@ -185,11 +185,11 @@ type
   End;
 
   {$M+}
-  TFHIRObject = class (TAdvObject)
+  TFHIRObject = class (TFslObject)
   private
-    FTag : TAdvObject;
+    FTag : TFslObject;
     FTagValue : String;
-    procedure SetTag(const Value: TAdvObject);
+    procedure SetTag(const Value: TFslObject);
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); virtual;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Virtual;
@@ -199,11 +199,11 @@ type
     procedure ListChildrenByName(name : string; list : TFHIRObjectList);
     procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
     Function PerformQuery(path : String):TFHIRObjectList;
-    property Tag : TAdvObject read FTag write SetTag;
+    property Tag : TFslObject read FTag write SetTag;
     property TagValue : String read FTagValue write FTagValue;
   end;
 
-  TFHIRObjectListEnumerator = class (TAdvObject)
+  TFHIRObjectListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFHIRObjectList;
@@ -215,11 +215,11 @@ type
     property Current : TFHIRObject read GetCurrent;
   end;
 
-  TFHIRObjectList = class (TAdvObjectList)
+  TFHIRObjectList = class (TFslObjectList)
   private
     Function GetItemN(index : Integer) : TFHIRObject;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     function Link : TFHIRObjectList; Overload;
     function Clone : TFHIRObjectList; Overload;
@@ -239,7 +239,7 @@ type
     property value : string read FValue write FValue;
   end;
 
-  TFHIRSearchParameters = class (TAdvStringMatch);
+  TFHIRSearchParameters = class (TFslStringMatch);
 
   TFHIRAttributeList = class;
   TFHIRAttribute = class (TFHIRObject)
@@ -253,12 +253,12 @@ type
 
     function Link : TFHIRAttribute; Overload;
     function Clone : TFHIRAttribute; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     property Name : String read FName write FName;
     property Value : String read FValue write FValue;
   end;
 
-  TFHIRAttributeListEnumerator = class (TAdvObject)
+  TFHIRAttributeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFHIRAttributeList;
@@ -309,7 +309,7 @@ type
     {!script hide}
     function Link : TFhirXHtmlNode; Overload;
     function Clone : TFhirXHtmlNode; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     property Attributes : TFHIRAttributeList read FAttributes;
     function allChildrenAreText : boolean;
     {!script show}
@@ -387,7 +387,7 @@ type
     function SetAttribute(name, value : String) : TFhirXHtmlNode;
   end;
 
-  TFHIRXhtmlNodeListEnumerator = class (TAdvObject)
+  TFHIRXhtmlNodeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFHIRXhtmlNodeList;
@@ -462,10 +462,10 @@ type
   {!.Net HL7Connect.Fhir.Base}
   TFHIRBase = class (TFHIRObject)
   private
-    FCommentsStart: TAdvStringList;
-    FCommentsEnd: TAdvStringList;
-    function GetCommentsStart: TAdvStringList;
-    function GetCommentsEnd: TAdvStringList;
+    FCommentsStart: TFslStringList;
+    FCommentsEnd: TFslStringList;
+    function GetCommentsStart: TFslStringList;
+    function GetCommentsEnd: TFslStringList;
   protected
 //    Procedure GetChildrenByName(name : string; list : TFHIRObjectList); override;
 //   Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -474,7 +474,7 @@ type
     {!script hide}
     Function Link : TFHIRBase; Overload;
     Function Clone : TFHIRBase; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     {!script show}
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
@@ -484,11 +484,11 @@ type
     {@member comments
       comments from the XML stream. No support for comments in JSON
     }
-    Property xml_commentsStart : TAdvStringList read GetCommentsStart;
-    Property xml_commentsEnd : TAdvStringList read GetCommentsEnd;
+    Property xml_commentsStart : TFslStringList read GetCommentsStart;
+    Property xml_commentsEnd : TFslStringList read GetCommentsEnd;
   end;
 
-  TFHIRBaseFactory = class (TAdvObject)
+  TFHIRBaseFactory = class (TFslObject)
   private
   public
   end;
@@ -502,7 +502,7 @@ Uses
   FHIR.Tools.Resources;
 
 type
-  TFHIRQueryProcessor = class (TAdvObject)
+  TFHIRQueryProcessor = class (TFslObject)
   private
     FPath: String;
     FResults: TFHIRObjectList;
@@ -538,7 +538,7 @@ end;
 (*
 { TFHIRResourceReference }
 
-procedure TFHIRResourceReference.Assign(oSource: TAdvObject);
+procedure TFHIRResourceReference.Assign(oSource: TFslObject);
 begin
   inherited;
   resourceType := TFHIRResourceReference(oSource).resourceType;
@@ -560,7 +560,7 @@ end;
 
 { TFHIRBase }
 
-procedure TFHIRBase.Assign(oSource: TAdvObject);
+procedure TFHIRBase.Assign(oSource: TFslObject);
 begin
   inherited;
   if TFHIRBase(oSource).HasXmlCommentsStart then
@@ -596,10 +596,10 @@ begin
   raise Exception.Create('"FhirType" is not overridden');
 end;
 
-function TFHIRBase.GetCommentsStart: TAdvStringList;
+function TFHIRBase.GetCommentsStart: TFslStringList;
 begin
   if FCommentsStart = nil then
-    FCommentsStart := TAdvStringList.Create;
+    FCommentsStart := TFslStringList.Create;
   result := FCommentsStart;
 end;
 
@@ -608,10 +608,10 @@ begin
   result := (FCommentsStart <> nil) and (FCommentsStart.count > 0);
 end;
 
-function TFHIRBase.GetCommentsEnd: TAdvStringList;
+function TFHIRBase.GetCommentsEnd: TFslStringList;
 begin
   if FCommentsEnd = nil then
-    FCommentsEnd := TAdvStringList.Create;
+    FCommentsEnd := TFslStringList.Create;
   result := FCommentsEnd;
 end;
 
@@ -785,7 +785,7 @@ end;
 
 { TFHIRAttribute }
 
-procedure TFHIRAttribute.Assign(oSource: TAdvObject);
+procedure TFHIRAttribute.Assign(oSource: TFslObject);
 begin
   inherited;
   FName := TFHIRAttribute(oSource).FName;
@@ -904,7 +904,7 @@ begin
   end;
 end;
 
-procedure TFhirXHtmlNode.Assign(oSource: TAdvObject);
+procedure TFhirXHtmlNode.Assign(oSource: TFslObject);
 begin
   inherited;
   NodeType := TFhirXHtmlNode(oSource).FNodeType;
@@ -1057,7 +1057,7 @@ begin
   raise Exception.Create('The property "'+propName+' is unknown"');
 end;
 
-procedure TFHIRObject.SetTag(const Value: TAdvObject);
+procedure TFHIRObject.SetTag(const Value: TFslObject);
 begin
   FTag.Free;
   FTag := Value;
@@ -1171,7 +1171,7 @@ begin
   result := TFHIRObject(ObjectByIndex[index]);
 end;
 
-function TFHIRObjectList.ItemClass: TAdvObjectClass;
+function TFHIRObjectList.ItemClass: TFslObjectClass;
 begin
   result := TFHIRObject;
 end;
@@ -1268,7 +1268,7 @@ end;
 
 { TFHIRBuffer }
 
-procedure TFHIRBuffer.Assign(oSource: TAdvObject);
+procedure TFHIRBuffer.Assign(oSource: TFslObject);
 begin
   inherited;
   FBuffer.Assign(TFHIRBuffer(oSource).FBuffer);
@@ -1282,10 +1282,10 @@ end;
 constructor TFHIRBuffer.Create;
 begin
   inherited;
-  FBuffer := TAdvBuffer.Create;
+  FBuffer := TFslBuffer.Create;
 end;
 
-constructor TFHIRBuffer.Create(buffer: TAdvBuffer);
+constructor TFHIRBuffer.Create(buffer: TFslBuffer);
 begin
   Create;
   FBuffer.Assign(buffer);
@@ -1324,7 +1324,7 @@ begin
   FBuffer.SaveToFileName(filename);
 end;
 
-procedure TFHIRBuffer.SetBuffer(const Value: TAdvBuffer);
+procedure TFHIRBuffer.SetBuffer(const Value: TFslBuffer);
 begin
   FBuffer.Free;
   FBuffer := Value;

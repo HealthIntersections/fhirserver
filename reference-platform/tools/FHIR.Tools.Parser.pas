@@ -94,7 +94,7 @@ uses
 
 procedure TFHIRNDJsonComposer.Compose(stream: TStream; oResource: TFhirResourceV);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TFHIRJsonComposer;
   be : TFhirBundleEntry;
   first : boolean;
@@ -121,9 +121,9 @@ begin
           json.Free;
         end;
       end
-      else if be.tag is TAdvBuffer then
+      else if be.tag is TFslBuffer then
       begin
-        TAdvBuffer(be.tag).SaveToStream(stream);
+        TFslBuffer(be.tag).SaveToStream(stream);
       end;
     end;
   end

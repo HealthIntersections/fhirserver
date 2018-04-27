@@ -43,7 +43,7 @@ type
 
   TFHIRAnnotationLevel = (alError, alWarning, alHint, alMatch);
 
-  TFHIRAnnotation = class (TAdvObject)
+  TFHIRAnnotation = class (TFslObject)
   private
     FLevel: TFHIRAnnotationLevel;
     FMessage: String;
@@ -62,7 +62,7 @@ type
     property line : integer read FLine write FLine;
   end;
 
-  TFHIRAnnotationComparer = class (TAdvObject, IComparer<TFHIRAnnotation>)
+  TFHIRAnnotationComparer = class (TFslObject, IComparer<TFHIRAnnotation>)
   public
     function Compare(const Left, Right: TFHIRAnnotation): Integer;
   end;

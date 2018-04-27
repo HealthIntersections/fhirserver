@@ -41,7 +41,7 @@ Type
   TSCIMSearchFilterOperation = (sfoEq, sfoNe, sfoCo, sfoSw, sfoEw, sfoGt, sfoLt, sfoGe, sfoLe, sfoPr);
   TSCIMSearchFilterLogicalOperation = (sfloAnd, sfloOr, sfloNot);
 
-  TSCIMSearchFilter = class (TAdvObject)
+  TSCIMSearchFilter = class (TFslObject)
   public
     function SearchItemType : TSCIMSearchItemType; virtual;
   end;
@@ -89,7 +89,7 @@ Type
   TSCIMSearchLexType = (sltEnded, sltName, sltString, sltNUmber, sltOpen, sltClose, sltOpenSq, sltCloseSq);
 
 
-  TSCIMSearchParser = class (TAdvObject)
+  TSCIMSearchParser = class (TFslObject)
   private
     original : String;
     cursor: integer;

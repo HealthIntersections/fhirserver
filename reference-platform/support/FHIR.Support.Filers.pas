@@ -36,13 +36,13 @@ Uses
   FHIR.Support.Objects, FHIR.Support.Exceptions;
 
 type
-  TAdvTag =
+  TFslTag =
     (atUnknown, atBoolean, atInteger32, atLongString, atReal, atBinary, atEnumerated8,
      atObject, atClass, atBegin, atEnd, atNil, atInteger64, atInteger16, atInteger8,
      atShortString, atSet, atCharacter, atReference, atResource, atDateTime, atColour, atExtended,
      atDuration, atCurrency, atEnumerated16);
 
-  TAdvFiler = Class(TAdvObject)
+  TFslFiler = Class(TFslObject)
     Private
       FField : String;
 
@@ -50,11 +50,11 @@ type
       Procedure RaiseError(Const sMethod, sMessage : String); Override;
 
       Function GetField : String; Virtual;
-      Function SetField(Const sField : String) : TAdvFiler; Virtual;
+      Function SetField(Const sField : String) : TFslFiler; Virtual;
       Function UseField : String; Virtual;
 
     Public
-      Procedure DefineValue(Value : TAdvTag); Virtual;
+      Procedure DefineValue(Value : TFslTag); Virtual;
       Procedure DefineBegin; Virtual;
       Procedure DefineEnd; Virtual;
 
@@ -89,329 +89,329 @@ type
       Procedure DefineColour(Var Value : TColour); Virtual;
       Procedure DefineCurrency(Var Value : TCurrency); Virtual;
 
-      Procedure DefineClass(Var Value; aClass : TAdvObjectClass = Nil); Virtual;
-      Procedure DefineObject(Var Value; aClass : TAdvObjectClass = Nil); Virtual;
-      Procedure DefineReference(Var Value; aClass : TAdvObjectClass = Nil); Virtual;
-      Procedure DefineResource(Var Value; aClass : TAdvObjectClass = Nil); Virtual;
+      Procedure DefineClass(Var Value; aClass : TFslObjectClass = Nil); Virtual;
+      Procedure DefineObject(Var Value; aClass : TFslObjectClass = Nil); Virtual;
+      Procedure DefineReference(Var Value; aClass : TFslObjectClass = Nil); Virtual;
+      Procedure DefineResource(Var Value; aClass : TFslObjectClass = Nil); Virtual;
 
-      Function Peek : TAdvTag; Overload; Virtual;
+      Function Peek : TFslTag; Overload; Virtual;
       Function PeekField : String; Overload; Virtual;
 
-      Property Fields[Const sField : String] : TAdvFiler Read SetField; Default;
+      Property Fields[Const sField : String] : TFslFiler Read SetField; Default;
       Property Field : String Read GetField;
   End;
 
-  TAdvFilerClass = Class Of TAdvFiler;
+  TFslFilerClass = Class Of TFslFiler;
 
   EAdvFiler = Class(EAdvException);
 
-  TAdvObjectClass = FHIR.Support.Objects.TAdvObjectClass;
+  TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
 
   TLongString = FHIR.Support.Strings.TLongString;
   TShortString = FHIR.Support.Strings.TShortString;
   TDuration = FHIR.Support.DateTime.TDuration;
 
 
-Function StringToTag(Const sValue : String) : TAdvTag;
-Function TagToString(atType : TAdvTag) : String;
+Function StringToTag(Const sValue : String) : TFslTag;
+Function TagToString(atType : TFslTag) : String;
 
 type
   {$TYPEINFO ON}
-  TAdvPersistent = Class(TAdvObject)
+  TFslPersistent = Class(TFslObject)
     Protected
       Function Fileable(Const sLocation : String) : Boolean; Overload; Virtual;
 
     Public
-      Function Link : TAdvPersistent; Overload;
-      Function Clone : TAdvPersistent; Overload;
+      Function Link : TFslPersistent; Overload;
+      Function Clone : TFslPersistent; Overload;
 
-      Procedure Define(oFiler : TAdvFiler); Overload; Virtual;
-      Procedure Load(oFiler : TAdvFiler); Overload; Virtual;
-      Procedure Save(oFiler : TAdvFiler); Overload; Virtual;
+      Procedure Define(oFiler : TFslFiler); Overload; Virtual;
+      Procedure Load(oFiler : TFslFiler); Overload; Virtual;
+      Procedure Save(oFiler : TFslFiler); Overload; Virtual;
 
       Function Fileable : Boolean; Overload; Virtual;
   End;
 
-  TAdvPersistentClass = Class Of TAdvPersistent;
+  TFslPersistentClass = Class Of TFslPersistent;
 
   EAdvExceptionClass = FHIR.Support.Objects.EAdvExceptionClass;
   EAdvException = FHIR.Support.Objects.EAdvException;
-  TAdvObject = FHIR.Support.Objects.TAdvObject;
+  TFslObject = FHIR.Support.Objects.TFslObject;
 
 Implementation
 
 Const
-  TAG_STRING : Array[TAdvTag] Of String =
+  TAG_STRING : Array[TFslTag] Of String =
     ('Unknown', 'Boolean', 'Integer', 'String', 'Real', 'Binary', 'Enumerated',
      'Object', 'Class', 'Begin', 'End', 'Nil', 'Integer64', 'Integer16', 'Integer8',
      'ShortString', 'Set', 'Character', 'Reference', 'Resource', 'DateTime', 'Colour',
      'Extended', 'Duration', 'Currency', 'Enumerated16');
 
 
-Function StringToTag(Const sValue : String) : TAdvTag;
+Function StringToTag(Const sValue : String) : TFslTag;
 Begin
   // Returns atUnknown if it isn't a valid string.
 
-  Result := High(TAdvTag);
-  While (Result > Low(TAdvTag)) And Not StringEquals(TAG_STRING[Result], sValue) Do
+  Result := High(TFslTag);
+  While (Result > Low(TFslTag)) And Not StringEquals(TAG_STRING[Result], sValue) Do
     Dec(Result);
 End;
 
 
-Function TagToString(atType : TAdvTag) : String;
+Function TagToString(atType : TFslTag) : String;
 Begin
-  If (Integer(atType) > Integer(High(TAdvTag))) Or (Integer(atType) < 0) Then
+  If (Integer(atType) > Integer(High(TFslTag))) Or (Integer(atType) < 0) Then
     Result := StringFormat('Invalid (%d)', [Integer(atType)])
   Else
     Result := TAG_STRING[atType];
 End;
 
 
-Procedure TAdvFiler.RaiseError(Const sMethod, sMessage: String);
+Procedure TFslFiler.RaiseError(Const sMethod, sMessage: String);
 Begin
   RaiseError(EAdvFiler, sMethod, sMessage);
 End;
 
 
-Procedure TAdvFiler.DefineValue(Value : TAdvTag);
+Procedure TFslFiler.DefineValue(Value : TFslTag);
 Begin
 End;
 
 
-Procedure TAdvFiler.DefineBegin;
+Procedure TFslFiler.DefineBegin;
 Begin
   DefineValue(atBegin);
 End;
 
 
-Procedure TAdvFiler.DefineEnd;
+Procedure TFslFiler.DefineEnd;
 Begin
   DefineValue(atEnd);
 End;
 
 
-Procedure TAdvFiler.DefineBinary(Var Value; iCount : Integer);
+Procedure TFslFiler.DefineBinary(Var Value; iCount : Integer);
 Begin
   DefineValue(atBinary);
 End;
 
 
-Procedure TAdvFiler.DefineBoolean(Var Value : Boolean);
+Procedure TFslFiler.DefineBoolean(Var Value : Boolean);
 Begin
   DefineValue(atBoolean);
 End;
 
 
-Procedure TAdvFiler.DefineInteger(Var Value : Integer);
+Procedure TFslFiler.DefineInteger(Var Value : Integer);
 Begin
   DefineValue(atInteger32);
 End;
 
 
-Procedure TAdvFiler.DefineInteger(Var Value : Int64);
+Procedure TFslFiler.DefineInteger(Var Value : Int64);
 Begin
   DefineValue(atInteger64);
 End;
 
 
-Procedure TAdvFiler.DefineInteger(Var Value : Cardinal);
+Procedure TFslFiler.DefineInteger(Var Value : Cardinal);
 Begin
   DefineValue(atInteger32);
 End;
 
 
-Procedure TAdvFiler.DefineInteger(Var Value : Word);
+Procedure TFslFiler.DefineInteger(Var Value : Word);
 Begin
   DefineValue(atInteger16);
 End;
 
 
-Procedure TAdvFiler.DefineInteger(Var Value : Byte);
+Procedure TFslFiler.DefineInteger(Var Value : Byte);
 Begin
   DefineValue(atInteger8);
 End;
 
 
-Procedure TAdvFiler.DefineReal(Var Value : Real);
+Procedure TFslFiler.DefineReal(Var Value : Real);
 Begin
   DefineValue(atReal);
 End;
 
 
-Procedure TAdvFiler.DefineReal(Var Value : Extended);
+Procedure TFslFiler.DefineReal(Var Value : Extended);
 Begin
   DefineValue(atExtended);
 End;
 
-Procedure TAdvFiler.DefineString(Var Value : AnsiString);
+Procedure TFslFiler.DefineString(Var Value : AnsiString);
 Begin
   DefineValue(atLongString);
 End;
 
-Procedure TAdvFiler.DefineChar(Var Value : Char);
+Procedure TFslFiler.DefineChar(Var Value : Char);
 Begin
   DefineValue(atCharacter);
 End;
 
 {$IFNDEF FPC}
 {$IFNDEF VER130}
-Procedure TAdvFiler.DefineString(Var Value : TLongString);
+Procedure TFslFiler.DefineString(Var Value : TLongString);
 Begin
   DefineValue(atLongString);
 End;
 
 
 
-procedure TAdvFiler.DefineString(var Value: AnsiChar);
+procedure TFslFiler.DefineString(var Value: AnsiChar);
 begin
   DefineValue(atCharacter);
 end;
 
 
 
-Procedure TAdvFiler.DefineString(Var Value : TShortString);
+Procedure TFslFiler.DefineString(Var Value : TShortString);
 Begin
   DefineValue(atShortString);
 End;
 {$ENDIF}
 {$ENDIF}
 
-Procedure TAdvFiler.DefineEnumerated(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
+Procedure TFslFiler.DefineEnumerated(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
 Begin
   DefineValue(atEnumerated8);
 End;
 
 
-Procedure TAdvFiler.DefineSet(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
+Procedure TFslFiler.DefineSet(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
 Begin
   DefineValue(atSet);
 End;
 
 
-Procedure TAdvFiler.DefineDateTime(Var Value : TDateTime);
+Procedure TFslFiler.DefineDateTime(Var Value : TDateTime);
 Begin
   DefineValue(atDateTime);
 End;
 
 
-Procedure TAdvFiler.DefineDuration(Var Value : TDuration);
+Procedure TFslFiler.DefineDuration(Var Value : TDuration);
 Begin
   DefineValue(atDuration);
 End;
 
 
-Procedure TAdvFiler.DefineColour(Var Value : TColour);
+Procedure TFslFiler.DefineColour(Var Value : TColour);
 Begin
   DefineValue(atColour);
 End;
 
 
-Procedure TAdvFiler.DefineCurrency(Var Value : TCurrency);
+Procedure TFslFiler.DefineCurrency(Var Value : TCurrency);
 Begin
   DefineValue(atCurrency);
 End;
 
 
-Procedure TAdvFiler.DefineClass(Var Value; aClass : TAdvObjectClass);
+Procedure TFslFiler.DefineClass(Var Value; aClass : TFslObjectClass);
 Begin
   DefineValue(atClass);
 End;
 
 
-Procedure TAdvFiler.DefineObject(Var Value; aClass : TAdvObjectClass);
+Procedure TFslFiler.DefineObject(Var Value; aClass : TFslObjectClass);
 Begin
   DefineValue(atObject);
 End;
 
 
-Procedure TAdvFiler.DefineReference(Var Value; aClass : TAdvObjectClass);
+Procedure TFslFiler.DefineReference(Var Value; aClass : TFslObjectClass);
 Begin
   DefineValue(atReference);
 End;
 
 
-Procedure TAdvFiler.DefineResource(Var Value; aClass: TAdvObjectClass);
+Procedure TFslFiler.DefineResource(Var Value; aClass: TFslObjectClass);
 Begin
   DefineValue(atResource);
 End;
 
 
-Function TAdvFiler.GetField : String;
+Function TFslFiler.GetField : String;
 Begin
   Result := FField;
 End;
 
 
-Function TAdvFiler.SetField(Const sField: String): TAdvFiler;
+Function TFslFiler.SetField(Const sField: String): TFslFiler;
 Begin
   FField := sField;
   Result := Self;
 End;
 
 
-Function TAdvFiler.UseField : String;
+Function TFslFiler.UseField : String;
 Begin
   Result := FField;
   FField := '';
 End;
 
 
-Function TAdvFiler.PeekField : String;
+Function TFslFiler.PeekField : String;
 Begin
   Peek;
   Result := Field;
 End;
 
 
-Function TAdvFiler.Peek : TAdvTag;
+Function TFslFiler.Peek : TFslTag;
 Begin
   Result := atUnknown;
 End;
 
 
-Function TAdvPersistent.Clone : TAdvPersistent;
+Function TFslPersistent.Clone : TFslPersistent;
 Begin
-  Result := TAdvPersistent(Inherited Clone);
+  Result := TFslPersistent(Inherited Clone);
 End;
 
 
-Function TAdvPersistent.Link : TAdvPersistent;
+Function TFslPersistent.Link : TFslPersistent;
 Begin
-  Result := TAdvPersistent(Inherited Link);
+  Result := TFslPersistent(Inherited Link);
 End;
 
 
-Procedure TAdvPersistent.Define(oFiler: TAdvFiler);
+Procedure TFslPersistent.Define(oFiler: TFslFiler);
 Begin
   Assert(Fileable('Define'));
 End;
 
 
-Procedure TAdvPersistent.Save(oFiler : TAdvFiler);
+Procedure TFslPersistent.Save(oFiler : TFslFiler);
 Begin
-  Assert(Invariants('Save', oFiler, TAdvFiler, 'oFiler'));
+  Assert(Invariants('Save', oFiler, TFslFiler, 'oFiler'));
 
   Define(oFiler);
 End;
 
 
-Procedure TAdvPersistent.Load(oFiler : TAdvFiler);
+Procedure TFslPersistent.Load(oFiler : TFslFiler);
 Begin
-  Assert(Invariants('Load', oFiler, TAdvFiler, 'oFiler'));
+  Assert(Invariants('Load', oFiler, TFslFiler, 'oFiler'));
 
   Define(oFiler);
 End;
 
 
-Function TAdvPersistent.Fileable : Boolean;
+Function TFslPersistent.Fileable : Boolean;
 Begin
   Result := True;
 End;
 
 
-Function TAdvPersistent.Fileable(Const sLocation: String): Boolean;
+Function TFslPersistent.Fileable(Const sLocation: String): Boolean;
 Begin
-  Invariants(sLocation, TAdvObject);
+  Invariants(sLocation, TFslObject);
 
   If Not Fileable Then
     Invariant(sLocation, 'Object is marked as unfileable.');

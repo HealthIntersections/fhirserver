@@ -60,7 +60,7 @@ type
     indy : TIdHTTP;
     ssl : TIdSSLIOHandlerSocketOpenSSL;
     {$IFDEF MSWINDOWS}
-    http : TAdvWinInetClient;
+    http : TFslWinInetClient;
     {$ENDIF}
 
     procedure createClient;
@@ -116,7 +116,7 @@ type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
 
     // special case that gives direct access to the communicator...
-    function custom(path : String; headers : THTTPHeaders) : TAdvBuffer; override;
+    function custom(path : String; headers : THTTPHeaders) : TFslBuffer; override;
     procedure terminate; override;
 
     // special functions
@@ -342,7 +342,7 @@ begin
   begin
     if certFile <> '' then
       raise Exception.Create('Certificates are not supported with winInet yet'); // have to figure out how to do that ...
-    http := TAdvWinInetClient.Create;
+    http := TFslWinInetClient.Create;
     http.UseWindowsProxySettings := true;
     http.UserAgent := 'FHIR Client';
   end;
@@ -554,7 +554,7 @@ begin
         httpPost :
           begin
           http.RequestMethod := 'POST';
-          http.Request := TADvBuffer.create;
+          http.Request := TFslBuffer.create;
           http.Request.LoadFromStream(source);
           end;
         httpPut :
@@ -575,7 +575,7 @@ begin
           end;
       end;
 
-      http.Response := TAdvBuffer.create;
+      http.Response := TFslBuffer.create;
       http.Execute;
 
       code := StrToInt(http.ResponseCode);
@@ -875,13 +875,13 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.custom(path: String; headers: THTTPHeaders): TAdvBuffer;
+function TFHIRHTTPCommunicator.custom(path: String; headers: THTTPHeaders): TFslBuffer;
 var
   ret : TStream;
 begin
   ret := exchange(Furl+'/'+path, httpGet, nil, headers);
   try
-    result := TAdvBuffer.Create;
+    result := TFslBuffer.Create;
     try
       result.LoadFromStream(ret);
       result.link;

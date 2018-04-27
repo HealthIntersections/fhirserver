@@ -106,7 +106,7 @@ type
     FServer: TRegisteredFHIRServer;
     procedure loadCapabilityStatement;
     function hookIndex(c : TFHIRCoding) : integer;
-    procedure listHooks(list : TAdvList<TRegisteredCDSHook>);
+    procedure listHooks(list : TFslList<TRegisteredCDSHook>);
     procedure loadHooks;
     procedure readExtension(ext: TFHIRExtension; preFetch: TStringList; var name: String; var c: String);
     procedure SetServer(const Value: TRegisteredFHIRServer);
@@ -141,7 +141,7 @@ begin
     ShowMessage('This end point doesn''t support SMART on FHIR');
 end;
 
-procedure TEditRegisteredServerForm.listHooks(list : TAdvList<TRegisteredCDSHook>);
+procedure TEditRegisteredServerForm.listHooks(list : TFslList<TRegisteredCDSHook>);
 var
   i : integer;
   cds : TRegisteredCDSHook;

@@ -101,50 +101,50 @@ Function Bit(iFlags : Word; aFlag : TZipFlag) : Boolean;
 Function TimeAndDateToDateTime(iDate, iTime : Word) : TDateTime;
 Procedure DateTimeToTimeAndDate(aValue : TDateTime; Out iDate, iTime : Word);
 
-Function GetCRC(oBuffer : TAdvBuffer) : LongWord;
+Function GetCRC(oBuffer : TFslBuffer) : LongWord;
 
 type
-    TAdvZipPart = Class(TAdvNameBuffer)
+    TFslZipPart = Class(TFslNameBuffer)
     Private
       FTimestamp: TDateTime;
       FComment : String;
 
     Public
-      Function Link : TAdvZipPart;
-      Function Clone : TAdvZipPart;
+      Function Link : TFslZipPart;
+      Function Clone : TFslZipPart;
 
-      Procedure Assign(oObject : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Assign(oObject : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
       Property Timestamp : TDateTime Read FTimestamp Write FTimestamp;
       Property Comment : String Read FComment Write FComment;
   End;
 
-  TAdvZipPartList = Class(TAdvNameBufferList)
+  TFslZipPartList = Class(TFslNameBufferList)
     Private
-      Function GetPart(iIndex : Integer) : TAdvZipPart;
+      Function GetPart(iIndex : Integer) : TFslZipPart;
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
     Public
-      Function Link : TAdvZipPartList;
-      Function Clone : TAdvZipPartList;
+      Function Link : TFslZipPartList;
+      Function Clone : TFslZipPartList;
 
-      Function GetByName(Const sName : String) : TAdvZipPart;
+      Function GetByName(Const sName : String) : TFslZipPart;
 
-      Property Part[iIndex : Integer] : TAdvZipPart Read GetPart; Default;
+      Property Part[iIndex : Integer] : TFslZipPart Read GetPart; Default;
   End;
 
 
-  TAdvZipWorker = Class (TAdvObject)
+  TFslZipWorker = Class (TFslObject)
     Private
-      FStream : TAdvStream;
-      FParts : TAdvZipPartList;
-      Function GetStream : TAdvStream;
-      Function GetParts : TAdvZipPartList;
-      Procedure SetStream(oValue : TAdvStream);
-      Procedure SetParts(oValue : TAdvZipPartList);
+      FStream : TFslStream;
+      FParts : TFslZipPartList;
+      Function GetStream : TFslStream;
+      Function GetParts : TFslZipPartList;
+      Procedure SetStream(oValue : TFslStream);
+      Procedure SetParts(oValue : TFslZipPartList);
 
     Public
       Constructor Create; Override;
@@ -153,11 +153,11 @@ type
       Function HasStream : Boolean;
       Function HasParts : Boolean;
 
-      Property Stream : TAdvStream Read GetStream Write SetStream;
-      Property Parts : TAdvZipPartList Read GetParts Write SetParts;
+      Property Stream : TFslStream Read GetStream Write SetStream;
+      Property Parts : TFslZipPartList Read GetParts Write SetParts;
   End;
 
-  TAdvZipReader = Class (TAdvZipWorker)
+  TFslZipReader = Class (TFslZipWorker)
     Private
       Function EndCondition(iLongWord : LongWord) : Boolean;
       Function ReadLongWord : LongWord;
@@ -166,11 +166,11 @@ type
       Procedure ReadPart;
       Procedure Skip(iCount : Integer);
       Function ReadString(iLength : Word):AnsiString;
-      Procedure ReadData(partName : string; iFlags, iComp : Word; iSizeComp, iSizeUncomp : LongWord; oBuffer : TAdvBuffer);
-      Procedure ReadDeflate(iFlags : Word; partName : string; iSizeComp, iSizeUncomp : LongWord; oBuffer: TAdvBuffer);
-      Procedure ReadUncompressed(iSizeComp : LongWord; oBuffer: TAdvBuffer);
-      Procedure ReadUnknownLengthDeflate(partName : string; oBuffer : TAdvBuffer);
-      Procedure ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TAdvBuffer);
+      Procedure ReadData(partName : string; iFlags, iComp : Word; iSizeComp, iSizeUncomp : LongWord; oBuffer : TFslBuffer);
+      Procedure ReadDeflate(iFlags : Word; partName : string; iSizeComp, iSizeUncomp : LongWord; oBuffer: TFslBuffer);
+      Procedure ReadUncompressed(iSizeComp : LongWord; oBuffer: TFslBuffer);
+      Procedure ReadUnknownLengthDeflate(partName : string; oBuffer : TFslBuffer);
+      Procedure ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
       Procedure ReadDirectory(iCount : Integer);
       Procedure ReadDigSig;
       Procedure ReadTermination;
@@ -179,7 +179,7 @@ type
   End;
 
   Type
-  TAdvZippedData = Class (TAdvObject)
+  TFslZippedData = Class (TFslObject)
     Private
       FOffset : Integer;
       FCrc : LongWord;
@@ -188,19 +188,19 @@ type
       FTime : Word;
   End;
 
-  TAdvZipWriter = Class (TAdvZipWorker)
+  TFslZipWriter = Class (TFslZipWorker)
     Private
-      FPartInfo : TAdvObjectMatch;
+      FPartInfo : TFslObjectMatch;
       FOffset : Integer;
       FDirOffset : Integer;
       Procedure WriteLongWord(iValue : LongWord);
       Procedure WriteWord(iValue : Word);
       Procedure WriteString(Const sValue : AnsiString);
 
-      Procedure Compress(oSource, oDestination : TAdvBuffer);
+      Procedure Compress(oSource, oDestination : TFslBuffer);
 
-      Procedure WritePart(oPart : TAdvZipPart);
-      Procedure WriteDirectory(oPart : TAdvZipPart);
+      Procedure WritePart(oPart : TFslZipPart);
+      Procedure WriteDirectory(oPart : TFslZipPart);
       Procedure WriteEnd(iCount : Integer);
     Public
       Constructor Create; Override;
@@ -213,48 +213,48 @@ type
 Implementation
 
 
-Constructor TAdvZipWorker.Create;
+Constructor TFslZipWorker.Create;
 Begin
   Inherited;
-  FParts := TAdvZipPartList.Create;
+  FParts := TFslZipPartList.Create;
 End;
 
-Destructor TAdvZipWorker.Destroy;
+Destructor TFslZipWorker.Destroy;
 Begin
   FStream.Free;
   FParts.Free;
   Inherited;
 End;
 
-Function TAdvZipWorker.GetParts: TAdvZipPartList;
+Function TFslZipWorker.GetParts: TFslZipPartList;
 Begin
-  Assert(Invariants('GetParts', FParts, TAdvZipPartList, 'Parts'));
+  Assert(Invariants('GetParts', FParts, TFslZipPartList, 'Parts'));
   Result := FParts;
 End;
 
-Function TAdvZipWorker.GetStream: TAdvStream;
+Function TFslZipWorker.GetStream: TFslStream;
 Begin
-  Assert(Invariants('GetStream', FStream, TAdvStream, 'Stream'));
+  Assert(Invariants('GetStream', FStream, TFslStream, 'Stream'));
   Result := FStream;
 End;
 
-Function TAdvZipWorker.HasParts: Boolean;
+Function TFslZipWorker.HasParts: Boolean;
 Begin
   Result := FParts <> Nil;
 End;
 
-Function TAdvZipWorker.HasStream: Boolean;
+Function TFslZipWorker.HasStream: Boolean;
 Begin
   Result := FStream <> Nil;
 End;
 
-Procedure TAdvZipWorker.SetParts(oValue: TAdvZipPartList);
+Procedure TFslZipWorker.SetParts(oValue: TFslZipPartList);
 Begin
   FParts.Free;
   FParts := oValue;
 End;
 
-Procedure TAdvZipWorker.SetStream(oValue: TAdvStream);
+Procedure TFslZipWorker.SetStream(oValue: TFslStream);
 Begin
   FStream.Free;
   FStream := oValue;
@@ -269,15 +269,15 @@ Begin
 End;
 
 
-Procedure TAdvZipPart.Assign(oObject : TAdvObject);
+Procedure TFslZipPart.Assign(oObject : TFslObject);
 Begin
   Inherited;
-  FTimestamp := TAdvZipPart(oObject).FTimestamp;
-  FComment := TAdvZipPart(oObject).FComment;
+  FTimestamp := TFslZipPart(oObject).FTimestamp;
+  FComment := TFslZipPart(oObject).FComment;
 End;
 
 
-Procedure TAdvZipPart.Define(oFiler : TAdvFiler);
+Procedure TFslZipPart.Define(oFiler : TFslFiler);
 Begin
   Inherited;
   oFiler['Timestamp'].DefineDateTime(FTimestamp);
@@ -285,69 +285,69 @@ Begin
 End;
 
 
-Function TAdvZipPart.Link : TAdvZipPart;
+Function TFslZipPart.Link : TFslZipPart;
 Begin
-  Result := TAdvZipPart(Inherited Link);
+  Result := TFslZipPart(Inherited Link);
 End;
 
 
-Function TAdvZipPart.Clone : TAdvZipPart;
+Function TFslZipPart.Clone : TFslZipPart;
 Begin
-  Result := TAdvZipPart(Inherited Clone);
+  Result := TFslZipPart(Inherited Clone);
 End;
 
 
-Function TAdvZipPartList.Clone : TAdvZipPartList;
+Function TFslZipPartList.Clone : TFslZipPartList;
 Begin
-  Result := TAdvZipPartList(Inherited Clone);
+  Result := TFslZipPartList(Inherited Clone);
 End;
 
 
-Function TAdvZipPartList.Link : TAdvZipPartList;
+Function TFslZipPartList.Link : TFslZipPartList;
 Begin
-  Result := TAdvZipPartList(Inherited Link);
+  Result := TFslZipPartList(Inherited Link);
 End;
 
 
-Function TAdvZipPartList.ItemClass : TAdvObjectClass;
+Function TFslZipPartList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvZipPart;
+  Result := TFslZipPart;
 End;
 
 
 
-Function TAdvZipPartList.GetPart(iIndex : Integer) : TAdvZipPart;
+Function TFslZipPartList.GetPart(iIndex : Integer) : TFslZipPart;
 Begin
-  Result := TAdvZipPart(ObjectByIndex[iIndex]);
+  Result := TFslZipPart(ObjectByIndex[iIndex]);
 End;
 
 
-Function TAdvZipPartList.GetByName(Const sName: String): TAdvZipPart;
+Function TFslZipPartList.GetByName(Const sName: String): TFslZipPart;
 Begin
-  Result := TAdvZipPart(Inherited GetByName(sName));
+  Result := TFslZipPart(Inherited GetByName(sName));
 End;
 
 
-Function TAdvZipReader.ReadLongWord: LongWord;
-Begin
-  Result := 0;
-  Stream.Read(Result, SizeOf(Result));
-End;
-
-Function TAdvZipReader.ReadWord: Word;
+Function TFslZipReader.ReadLongWord: LongWord;
 Begin
   Result := 0;
   Stream.Read(Result, SizeOf(Result));
 End;
 
-Function TAdvZipReader.ReadByte: Byte;
+Function TFslZipReader.ReadWord: Word;
+Begin
+  Result := 0;
+  Stream.Read(Result, SizeOf(Result));
+End;
+
+Function TFslZipReader.ReadByte: Byte;
 Begin
   Result := 0;
   Stream.Read(Result, SizeOf(Result));
 End;
 
 
-Procedure TAdvZipReader.ReadPart;
+Procedure TFslZipReader.ReadPart;
 Var
   iFlags : Word;
   iComp : Word;
@@ -357,9 +357,9 @@ Var
   iExtraLen : Word;
   iDate : Word;
   iTime : Word;
-  oBuffer : TAdvZipPart;
+  oBuffer : TFslZipPart;
 Begin
-  oBuffer := TAdvZipPart(Parts.New);
+  oBuffer := TFslZipPart(Parts.New);
   Try
     ReadWord;                          // version needed to extract       2 bytes
     iFlags := ReadWord;               // general purpose bit flag        2 bytes
@@ -385,7 +385,7 @@ Begin
   End;
 End;
 
-Procedure TAdvZipReader.ReadZip;
+Procedure TFslZipReader.ReadZip;
 Var
   iSig : LongWord;
   iCount : Integer;
@@ -418,14 +418,14 @@ Begin
   // we ignore the rest of the file!
 End;
 
-Procedure TAdvZipReader.ReadUncompressed(iSizeComp : LongWord; oBuffer: TAdvBuffer);
+Procedure TFslZipReader.ReadUncompressed(iSizeComp : LongWord; oBuffer: TFslBuffer);
 Begin
   oBuffer.Capacity := iSizeComp;
   If (iSizeComp > 0) Then
     Stream.Read(oBuffer.Data^, oBuffer.Capacity);
 End;
 
-Procedure TAdvZipReader.ReadDeflate(iFlags : Word; partName : string; iSizeComp, iSizeUncomp : LongWord; oBuffer: TAdvBuffer);
+Procedure TFslZipReader.ReadDeflate(iFlags : Word; partName : string; iSizeComp, iSizeUncomp : LongWord; oBuffer: TFslBuffer);
 Var
   pIn : PAnsiChar;
 Begin
@@ -445,18 +445,18 @@ Begin
   End;
 End;
 
-Function TAdvZipReader.EndCondition(iLongWord : LongWord) : Boolean;
+Function TFslZipReader.EndCondition(iLongWord : LongWord) : Boolean;
 Begin
   Result := //(Stream.Readable = 0) Or // shouldn't run out - should run into the central directory
             (iLongWord = SIG_DATA_DESCRIPTOR);
 End;
 
 
-Procedure TAdvZipReader.ReadUnknownLengthDeflate(partName : string; oBuffer : TAdvBuffer);
+Procedure TFslZipReader.ReadUnknownLengthDeflate(partName : string; oBuffer : TFslBuffer);
 Var
   iCurrent, iCRC : LongWord;
   iByte : Byte;
-  oMem : TAdvMemoryStream;
+  oMem : TFslMemoryStream;
   iSizeComp : LongWord;
   iSizeUncomp : LongWord;
   count : integer;
@@ -468,7 +468,7 @@ Begin
   // that this will terminate early (1 in 2^32)
   // then we lop off the last 12 bytes, and treat this is the decompressible
   // we can start with a 4 byte read because we know we have at least 12 bytes
-  oMem := TAdvMemoryStream.Create;
+  oMem := TFslMemoryStream.Create;
   Try
     iByte := 120;
     oMem.Write(iByte, 1);
@@ -519,7 +519,7 @@ Begin
 End;
 
 
-Procedure TAdvZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TAdvBuffer);
+Procedure TFslZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
 Var
   oSrc : TStream;
   oDecompressor : TZDecompressionStream;
@@ -552,7 +552,7 @@ Begin
   End;
 End;
 
-Procedure TAdvZipReader.ReadData(partName : string; iFlags, iComp : Word; iSizeComp, iSizeUncomp: LongWord; oBuffer: TAdvBuffer);
+Procedure TFslZipReader.ReadData(partName : string; iFlags, iComp : Word; iSizeComp, iSizeUncomp: LongWord; oBuffer: TFslBuffer);
 Begin
   Case iComp Of
     METHOD_NONE: ReadUncompressed(iSizeComp, oBuffer);
@@ -562,20 +562,20 @@ Begin
   End;
 End;
 
-Function TAdvZipReader.ReadString(iLength: Word): AnsiString;
+Function TFslZipReader.ReadString(iLength: Word): AnsiString;
 Begin
   SetLength(Result, iLength);
   If (iLength > 0) Then
     Stream.Read(Result[1], iLength);
 End;
 
-Procedure TAdvZipReader.Skip(iCount: Integer);
+Procedure TFslZipReader.Skip(iCount: Integer);
 Begin
   If iCount > 0 Then
     ReadString(iCount);
 End;
 
-Procedure TAdvZipReader.ReadDigSig;
+Procedure TFslZipReader.ReadDigSig;
 Var
   iLen : Word;
 Begin
@@ -583,9 +583,9 @@ Begin
   Skip(iLen);
 End;
 
-Procedure TAdvZipReader.ReadDirectory(iCount: Integer);
+Procedure TFslZipReader.ReadDirectory(iCount: Integer);
 Var
-  oPart : TAdvZipPart;
+  oPart : TFslZipPart;
   iNameLen : Word;
   iExtraLen : Word;
   iCommLen : Word;
@@ -612,26 +612,26 @@ Begin
   oPart.Comment := string(ReadString(iCommLen));
 End;
 
-Procedure TAdvZipReader.ReadTermination;
+Procedure TFslZipReader.ReadTermination;
 Begin
 
 End;
 
 
-Constructor TAdvZipWriter.Create;
+Constructor TFslZipWriter.Create;
 Begin
   Inherited;
-  FPartInfo := TAdvObjectMatch.Create;
+  FPartInfo := TFslObjectMatch.Create;
 End;
 
-Destructor TAdvZipWriter.Destroy;
+Destructor TFslZipWriter.Destroy;
 Begin
   FPartInfo.Free;
   Inherited;
 End;
 
 
-Procedure TAdvZipWriter.WriteZip;
+Procedure TFslZipWriter.WriteZip;
 Var
   iLoop : Integer;
 Begin
@@ -647,21 +647,21 @@ Begin
 End;
 
 
-Procedure TAdvZipWriter.WriteLongWord(iValue : LongWord);
+Procedure TFslZipWriter.WriteLongWord(iValue : LongWord);
 Begin
   Stream.Write(iValue, 4);
   Inc(FOffset, 4);
 End;
 
 
-Procedure TAdvZipWriter.WriteWord(iValue : Word);
+Procedure TFslZipWriter.WriteWord(iValue : Word);
 Begin
   Stream.Write(iValue, 2);
   Inc(FOffset, 2);
 End;
 
 
-Procedure TAdvZipWriter.WriteString(Const sValue : AnsiString);
+Procedure TFslZipWriter.WriteString(Const sValue : AnsiString);
 Begin
   If (sValue <> '') Then
   Begin
@@ -671,12 +671,12 @@ Begin
 End;
 
 
-Procedure TAdvZipWriter.WritePart(oPart: TAdvZipPart);
+Procedure TFslZipWriter.WritePart(oPart: TFslZipPart);
 Var
-  oCompressed : TAdvBuffer;
-  oInfo : TAdvZippedData;
+  oCompressed : TFslBuffer;
+  oInfo : TFslZippedData;
 Begin
-  oInfo := TAdvZippedData.Create;
+  oInfo := TFslZippedData.Create;
   Try
     oInfo.FOffset := FOffset;
     WriteLongWord(SIG_LOCAL_FILE_HEADER);
@@ -692,7 +692,7 @@ Begin
     oInfo.FCrc := GetCRC(oPart);
     WriteLongWord(oInfo.FCrc);     // crc-32
 
-    oCompressed := TAdvBuffer.Create;
+    oCompressed := TFslBuffer.Create;
     Try
       If (oPart.Capacity > 0) Then
         Compress(oPart, oCompressed);
@@ -720,11 +720,11 @@ Begin
 End;
 
 
-procedure TAdvZipWriter.addFile(name, actual: String);
+procedure TFslZipWriter.addFile(name, actual: String);
 var
-  part : TAdvZipPart;
+  part : TFslZipPart;
 begin
-  part := TAdvZipPart.Create;
+  part := TFslZipPart.Create;
   try
     part.Name := name;
     part.Timestamp := FileGetModified(actual);
@@ -735,7 +735,7 @@ begin
   end;
 end;
 
-Procedure TAdvZipWriter.Compress(oSource, oDestination: TAdvBuffer);
+Procedure TFslZipWriter.Compress(oSource, oDestination: TFslBuffer);
 Var
   oCompressor: TCompressionStream;
   oCompressedStream: TMemoryStream;
@@ -758,11 +758,11 @@ Begin
   End;
 End;
 
-Procedure TAdvZipWriter.WriteDirectory(oPart: TAdvZipPart);
+Procedure TFslZipWriter.WriteDirectory(oPart: TFslZipPart);
 Var
-  oInfo : TAdvZippedData;
+  oInfo : TFslZippedData;
 Begin
-  oInfo := TAdvZippedData(FPartInfo.GetValueByKey(oPart));
+  oInfo := TFslZippedData(FPartInfo.GetValueByKey(oPart));
 
   WriteLongWord(SIG_CENTRAL_DIRECTORY_HEADER);
   WriteWord($14); // version made by                 2 bytes
@@ -789,7 +789,7 @@ Begin
 
 End;
 
-Procedure TAdvZipWriter.WriteEnd(iCount : Integer);
+Procedure TFslZipWriter.WriteEnd(iCount : Integer);
 Var
   iOffset : Integer;
 Begin
@@ -827,7 +827,7 @@ Begin
   iDate := LongRec(iCombined).Hi;
 End;
 
-Function GetCRC(oBuffer : TAdvBuffer) : LongWord;
+Function GetCRC(oBuffer : TFslBuffer) : LongWord;
 Const
   CRCtable: Array[0..255] Of LongWord = (
     $00000000, $77073096, $EE0E612C, $990951BA, $076DC419, $706AF48F, $E963A535,

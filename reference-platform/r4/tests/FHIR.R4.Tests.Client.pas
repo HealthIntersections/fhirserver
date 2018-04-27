@@ -1,4 +1,4 @@
-unit FHIRClientTests4;
+unit FHIR.R4.Tests.Client;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -41,7 +41,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Base.Objects, FHIR.Tools.Parser,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIRTestWorker4,
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Tests.Worker,
   DUnitX.TestFramework;
 
 

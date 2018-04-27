@@ -51,7 +51,7 @@ procedure writeExtension(src : TFHIRDomainResource; url : String; value : String
 procedure writeExtension(src : TFHIRDomainResource; url : String; value : TFhirType); overload;
 
 type
-  TCodeableConceptLookup = class (TAdvObject)
+  TCodeableConceptLookup = class (TFslObject)
   private
     FValueSet: String;
     FChanging : boolean;

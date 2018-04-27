@@ -1,4 +1,4 @@
-unit TerminologyServices;
+unit FHIR.Tx.Service;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -44,22 +44,22 @@ Type
 
   TFhirFilterOperatorEnum = FHIR.Tools.Types.TFhirFilterOperatorEnum;
 
-  TCodeSystemProviderContext = class (TAdvObject)
+  TCodeSystemProviderContext = class (TFslObject)
   public
     function Link : TCodeSystemProviderContext; overload;
   end;
 
-  TCodeSystemProviderFilterContext = class (TAdvObject)
+  TCodeSystemProviderFilterContext = class (TFslObject)
   public
     function Link : TCodeSystemProviderFilterContext; overload;
   end;
 
-  TCodeSystemProviderFilterPreparationContext = class (TAdvObject)
+  TCodeSystemProviderFilterPreparationContext = class (TFslObject)
   public
     function Link : TCodeSystemProviderFilterPreparationContext; overload;
   end;
 
-  TSearchFilterText = class (TAdvObject)
+  TSearchFilterText = class (TFslObject)
   private
     FFilter: string;
     FStems : TStringList;
@@ -77,12 +77,12 @@ Type
     function null : Boolean;
     function passes(value : String) : boolean; overload;
     function passes(value : String; var rating : double) : boolean; overload;
-    function passes(stems : TAdvStringList; var rating : double) : boolean; overload;
+    function passes(stems : TFslStringList; var rating : double) : boolean; overload;
     property filter : string read FFilter;
     property stems : TStringList read FStems;
   end;
 
-  TCodeSystemProvider = {abstract} class (TAdvObject)
+  TCodeSystemProvider = {abstract} class (TFslObject)
   private
     FUseCount : cardinal;
   public
@@ -318,7 +318,7 @@ begin
   End;
 end;
 
-function TSearchFilterText.passes(stems: TAdvStringList; var rating : double): boolean;
+function TSearchFilterText.passes(stems: TFslStringList; var rating : double): boolean;
 var
   i : integer;
   all, any, this : boolean;

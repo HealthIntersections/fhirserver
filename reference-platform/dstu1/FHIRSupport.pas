@@ -83,7 +83,7 @@ Type
     resource is not updated by the OAuth information)
   }
   {!.Net HL7Connect.Fhir.Request}
-  TFhirSession = class (TAdvObject)
+  TFhirSession = class (TFslObject)
   private
     FProvider : TFHIRAuthProvider;
     FId : String;
@@ -206,7 +206,7 @@ Type
     but the other properties can be changed as desired
   }
   {!.Net HL7Connect.Fhir.Request}
-  TFHIRRequest = class (TAdvObject)
+  TFHIRRequest = class (TFslObject)
   Private
     FId: String;
     FSubId: String;
@@ -221,13 +221,13 @@ Type
     FversionId: String;
     FlastModifiedDate: TDateTime;
     FParams: TParseMap;
-    FSource: TAdvBuffer;
+    FSource: TFslBuffer;
     FcontentLocation: String;
     FDefaultSearch: boolean;
     FLang: String;
     FSession: TFhirSession;
     FCategories : TFHIRAtomCategoryList;
-    FContent : TAdvBuffer;
+    FContent : TFslBuffer;
     FIp: string;
     FCompartments: String;
     FCompartmentId: String;
@@ -235,7 +235,7 @@ Type
     FOperationName: String;
     procedure SeTFhirResource(const Value: TFhirResource);
     procedure SetFeed(const Value: TFHIRAtomFeed);
-    procedure SetSource(const Value: TAdvBuffer);
+    procedure SetSource(const Value: TFslBuffer);
     procedure SetSession(const Value: TFhirSession);
   Public
     Constructor Create; Override;
@@ -249,7 +249,7 @@ Type
     Function LogSummary : String;
     function XMLSummary : String;
     Procedure CopyPost(stream : TStream);
-    Property Source : TAdvBuffer read FSource write SetSource;
+    Property Source : TFslBuffer read FSource write SetSource;
     Property Session : TFhirSession read FSession write SetSession;
     Property ip : string read FIp write FIp;
     Property form : TIdSoapMimeMessage read FForm write FForm;
@@ -262,7 +262,7 @@ Type
     }
     property Parameters : TParseMap read FParams;
 
-    Property Content : TAdvBuffer read FContent;
+    Property Content : TFslBuffer read FContent;
     {!Script Show}
 
   published
@@ -385,7 +385,7 @@ Type
     type of the resource may have unexpected catastrophic outcomes.
   }
   {!.Net HL7Connect.Fhir.Response}
-  TFHIRResponse = class (TAdvObject)
+  TFHIRResponse = class (TFslObject)
   private
     FHTTPCode: Integer;
     FBody: String;
@@ -693,7 +693,7 @@ Type
       make a new Binary resource
     }
     {!script nolink}
-    function makeBinaryContent(source : TAdvBuffer; mimeType : String) : TFhirBinary;
+    function makeBinaryContent(source : TFslBuffer; mimeType : String) : TFhirBinary;
 
     {@member makeRequest
       make a new Fhir request (for a conversion parameter)
@@ -760,7 +760,7 @@ begin
   SetLength(b, t);
   Stream.Read(b[0], t);
   stream.position := p;
-  FContent := TAdvBuffer.create;
+  FContent := TFslBuffer.create;
   FContent.AsBytes := b;
 end;
 
@@ -835,7 +835,7 @@ begin
   FSession := Value;
 end;
 
-procedure TFHIRRequest.SetSource(const Value: TAdvBuffer);
+procedure TFHIRRequest.SetSource(const Value: TFslBuffer);
 begin
   FSource.Free;
   FSource := Value;
@@ -1162,7 +1162,7 @@ begin
   result := TFhirBinary.create;
 end;
 
-function TFHIRFactory.makeBinaryContent(source: TAdvBuffer; mimeType: String): TFhirBinary;
+function TFHIRFactory.makeBinaryContent(source: TFslBuffer; mimeType: String): TFhirBinary;
 begin
   result := makeBinary;
   result.Content.Assign(source);

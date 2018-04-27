@@ -62,10 +62,10 @@ type
     FRel : String;
   public
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomLink; overload;
     function Clone : TFHIRAtomLink; overload;
-    procedure AsHeader(b : TAdvStringBuilder);
+    procedure AsHeader(b : TFslStringBuilder);
     {!script show}
 
   published
@@ -88,7 +88,7 @@ type
     // procedure SetItemN(index : Integer; value : TFHIRAtomLink);
     procedure SetRel(name: string; const Value: string);
   protected
-    function ItemClass: TAdvObjectClass; Override;
+    function ItemClass: TFslObjectClass; Override;
     Procedure InsertByIndex(index : Integer; value : TFHIRAtomLink);
 
   public
@@ -166,7 +166,7 @@ type
     FTagKey: integer;
   public
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomCategory; overload;
     function Clone : TFHIRAtomCategory; overload;
     Property TagKey : integer read FTagKey write FTagKey;
@@ -198,7 +198,7 @@ type
     procedure SetJson(value : TBytes); overload;
     procedure SetJson(obj : TJsonObject); overload;
   protected
-    function ItemClass: TAdvObjectClass; Override;
+    function ItemClass: TFslObjectClass; Override;
     Procedure InsertByIndex(index : Integer; value : TFHIRAtomCategory);
 
   public
@@ -290,7 +290,7 @@ type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomBase; overload;
     function Clone : TFHIRAtomBase; overload;
     Function HasTag(schemeUri, tag : string) : boolean;
@@ -354,7 +354,7 @@ type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomEntry; overload;
     function Clone : TFHIRAtomEntry; overload;
     {!script show}
@@ -462,7 +462,7 @@ type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomFeed; overload;
     function Clone : TFHIRAtomFeed; overload;
     Property isSearch : Boolean read FisSearch write FisSearch;
@@ -517,7 +517,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRAtomBase.Assign(oSource: TAdvObject);
+procedure TFHIRAtomBase.Assign(oSource: TFslObject);
 begin
   inherited;
   Fid := TFHIRAtomBase(oSource).Fid;
@@ -554,7 +554,7 @@ end;
 
 { TFHIRAtomEntry }
 
-procedure TFHIRAtomEntry.Assign(oSource: TAdvObject);
+procedure TFHIRAtomEntry.Assign(oSource: TFslObject);
 begin
   inherited;
   summary  := TFHIRAtomEntry(oSource).summary.clone;
@@ -628,7 +628,7 @@ begin
   end;
 end;
 
-procedure TFHIRAtomFeed.Assign(oSource: TAdvObject);
+procedure TFHIRAtomFeed.Assign(oSource: TFslObject);
 begin
   inherited;
   Fentries.Assign(TFHIRAtomFeed(oSource).Fentries);
@@ -756,7 +756,7 @@ end;
 
 { TFHIRAtomLink }
 
-procedure TFHIRAtomLink.AsHeader(b: TAdvStringBuilder);
+procedure TFHIRAtomLink.AsHeader(b: TFslStringBuilder);
 begin
   b.Append('<');
   b.Append(FURL);
@@ -765,7 +765,7 @@ begin
   b.Append('"');
 end;
 
-procedure TFHIRAtomLink.Assign(oSource: TAdvObject);
+procedure TFHIRAtomLink.Assign(oSource: TFslObject);
 begin
   inherited;
   url := TFHIRAtomLink(oSource).URL;
@@ -814,10 +814,10 @@ end;
 
 function TFHIRAtomLinkList.AsHeader: String;
 var
-  b : TAdvStringBuilder;
+  b : TFslStringBuilder;
   i : integer;
 begin
-  b := TAdvStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for i := 0 to Count - 1 do
     begin
@@ -938,7 +938,7 @@ begin
     AddValue(value, name);
 end;
 
-function TFHIRAtomLinkList.ItemClass: TAdvObjectClass;
+function TFHIRAtomLinkList.ItemClass: TFslObjectClass;
 begin
   result := TFHIRAtomLink;
 end;
@@ -1055,7 +1055,7 @@ begin
 end;
 
 
-function TFHIRAtomCategoryList.ItemClass: TAdvObjectClass;
+function TFHIRAtomCategoryList.ItemClass: TFslObjectClass;
 begin
   result := TFHIRAtomCategory;
 end;
@@ -1064,9 +1064,9 @@ function TFHIRAtomCategoryList.GetJson: TBytes;
 var
   i : integer;
   json : TJSONWriter;
-  strm : TAdvMemoryStream;
+  strm : TFslMemoryStream;
 begin
-  strm := TAdvMemoryStream.Create;
+  strm := TFslMemoryStream.Create;
   try
     json := TJSONWriter.Create;
     try
@@ -1200,7 +1200,7 @@ end;
 
 { TFHIRAtomCategory }
 
-procedure TFHIRAtomCategory.Assign(oSource: TAdvObject);
+procedure TFHIRAtomCategory.Assign(oSource: TFslObject);
 begin
   inherited;
   FScheme := TFHIRAtomCategory(oSource).FScheme;

@@ -65,20 +65,20 @@ Type
 
   TClosureTableRecordSource = class (TFHIRCoding)
   private
-    FTargets: TAdvList<TFHIRCoding>;
+    FTargets: TFslList<TFHIRCoding>;
   public
     constructor Create; override;
     destructor Destroy; override;
     function link :  TClosureTableRecordSource; overload;
 
-    property targets : TAdvList<TFHIRCoding> read FTargets;
+    property targets : TFslList<TFHIRCoding> read FTargets;
     procedure add(uri, code : String);
   end;
 
-  TClosureTableRecord = class (TAdvObject)
+  TClosureTableRecord = class (TFslObject)
   private
-    FConcepts: TAdvList<TFHIRCoding>;
-    FMaps : TAdvList<TClosureTableRecordSource>;
+    FConcepts: TFslList<TFHIRCoding>;
+    FMaps : TFslList<TClosureTableRecordSource>;
 
     FId: string;
     FName: String;
@@ -101,13 +101,13 @@ Type
     property id : string read FId write FId;
     property name : String read FName write FName;
     property version : String read FVersion write FVersion;
-    property concepts : TAdvList<TFHIRCoding> read FConcepts;
-    property maps : TAdvList<TClosureTableRecordSource> read FMaps;
+    property concepts : TFslList<TFHIRCoding> read FConcepts;
+    property maps : TFslList<TClosureTableRecordSource> read FMaps;
     property links[row, col: integer] : TClosureDirection read GetLinks;
     property mapCount : integer read GetMapCount;
   end;
 
-  TValidationOutcomeMark = class (TAdvObject)
+  TValidationOutcomeMark = class (TFslObject)
   private
     FMessage: string;
     FObj: TFHIRElement;
@@ -122,12 +122,12 @@ Type
     property message : string read FMessage write FMessage;
   end;
 
-  TValidationOutcomeMarkList = class (TAdvObjectList)
+  TValidationOutcomeMarkList = class (TFslObjectList)
   private
     function GetMark(index: integer): TValidationOutcomeMark;
   protected
     Function CompareByElement(pA, pB : Pointer) : Integer;
-    function itemClass : TAdvObjectClass; override;
+    function itemClass : TFslObjectClass; override;
   public
     Constructor Create; Override;
     property mark[index : integer] : TValidationOutcomeMark read GetMark; default;
@@ -135,7 +135,7 @@ Type
     procedure AddElement(elem : TFHIRElement; field : Integer; kind : TValidationOutcomeKind; message : String);
   end;
 
-  TValueSetEditorCoreSettings = Class (TAdvObject)
+  TValueSetEditorCoreSettings = Class (TFslObject)
   private
     ini : TIniFile;
     FMRUList : TStringList;
@@ -218,7 +218,7 @@ Type
 
   TValueSetEditorCodeSystemCodeStatus = (cscsUnknown, cscsOK, cscsPending, cscsInvalidSystem);
 
-  TValueSetEditorCodeSystem = class (TAdvObject)
+  TValueSetEditorCodeSystem = class (TFslObject)
   public
     function getCodeStatus(code : String; var msg : String) : TValueSetEditorCodeSystemCodeStatus; virtual;
     function isWrongDisplay(code : String; display : String) : boolean; virtual;
@@ -247,7 +247,7 @@ Type
     function filterValueOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
   end;
 
-  TServerCodeSystemCacheItem = class (TAdvObject)
+  TServerCodeSystemCacheItem = class (TFslObject)
   private
     status : TValueSetEditorCodeSystemCodeStatus;
     message : String;
@@ -262,7 +262,7 @@ Type
   private
     FSystem : String;
     FClient : TFhirHTTPClient;
-    FCache : TAdvStringObjectMatch;
+    FCache : TFslStringObjectMatch;
     FFilename : String;
 
     function HasCache(code : String; var item : TServerCodeSystemCacheItem) : boolean;
@@ -281,7 +281,7 @@ Type
     function filterValueOK(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
   end;
 
-  TValueSetEditorServerCache = class (TAdvObject)
+  TValueSetEditorServerCache = class (TFslObject)
   private
     FLoaded : boolean;
     FDoesSearch : boolean;
@@ -293,12 +293,12 @@ Type
     FKey : integer;
     ini : TInifile;
     Flist : TFHIRValueSetList;
-    valuesets : TAdvStringObjectMatch; // uri and actual value set (might be a summary)
-    FCodeSystems : TAdvStringObjectMatch; // uri and actual value set (might be a summary)
+    valuesets : TFslStringObjectMatch; // uri and actual value set (might be a summary)
+    FCodeSystems : TFslStringObjectMatch; // uri and actual value set (might be a summary)
     sortedCodesystems : TStringList;
     sortedValueSets : TStringList;
-    specialCodeSystems : TAdvStringObjectMatch;
-    closures : TAdvMap<TClosureTableRecord>;
+    specialCodeSystems : TFslStringObjectMatch;
+    closures : TFslMap<TClosureTableRecord>;
     procedure SeeValueset(vs : TFhirValueSet; isSummary, loading : boolean);
     function LoadFullCodeSystem(uri : String) : TFhirValueSet;
     procedure CheckConnection;
@@ -316,7 +316,7 @@ Type
     Property URL : string read FUrl write FUrl;
     property List : TFHIRValueSetList read FList;
     Property Name : String read FName;
-    Property CodeSystems : TAdvStringObjectMatch read FCodeSystems;
+    Property CodeSystems : TFslStringObjectMatch read FCodeSystems;
     Property LastUpdated : String read FLastUpdated;
 
     procedure loadClosures(list : TStrings);
@@ -329,14 +329,14 @@ Type
     property password : String read Fpassword write Fpassword;
   end;
 
-  TValueSetEditorContext = class (TAdvObject)
+  TValueSetEditorContext = class (TFslObject)
   private
     FSettings: TValueSetEditorCoreSettings;
     FWorkingServer : TValueSetEditorServerCache;
-    FServers : TAdvList<TValueSetEditorServerCache>;
+    FServers : TFslList<TValueSetEditorServerCache>;
 
     FValueSet : TFhirValueSet; // working value set
-    FCodeSystemContexts : TAdvStringObjectMatch;
+    FCodeSystemContexts : TFslStringObjectMatch;
     FVersionCount : integer;
     FOnStateChange: TNotifyEvent;
     FLastCommitSource : String;
@@ -344,7 +344,7 @@ Type
     FExpansion: TFhirValueSetExpansion;
     FOnPreview: TNotifyEvent;
     FPreview: TFhirValueSetExpansion;
-    FExpansions : TAdvStringObjectMatch;
+    FExpansions : TFslStringObjectMatch;
     FValidationErrors : TValidationOutcomeMarkList;
     FOnValidate: TNotifyEvent;
     FServerFilter: String;
@@ -381,7 +381,7 @@ Type
     function CheckServer(url : String; var msg : String; var doesSearch : boolean) : boolean;
     procedure SetNominatedServer(url : String);
     Property WorkingServer : TValueSetEditorServerCache read FWorkingServer;
-    Property Servers : TAdvList<TValueSetEditorServerCache> read FServers;
+    Property Servers : TFslList<TValueSetEditorServerCache> read FServers;
     procedure AddServer(name, address, username, password : String; doesSearch : boolean);
     procedure DeleteServer(name : String);
     procedure UpdateServer(server : TValueSetEditorServerCache);
@@ -771,7 +771,7 @@ end;
 procedure TValueSetEditorServerCache.UpdateFromServer(event : TFhirHTTPClientStatusEvent);
 var
   client : TFhirHTTPClient;
-  params : TAdvStringMatch;
+  params : TFslStringMatch;
   list : TFHIRBundle;
   i : integer;
   vs : TFhirValueSet;
@@ -780,7 +780,7 @@ begin
   try
     client.UseIndy := true;
     client.OnClientStatus := Event;
-    params := TAdvStringMatch.Create;
+    params := TFslStringMatch.Create;
     try
       params.Add('_since', FLastUpdated);
       params.Add('_count', '50');
@@ -809,7 +809,7 @@ end;
 procedure TValueSetEditorServerCache.SynchroniseServer(event : TFhirHTTPClientStatusEvent);
 var
   client : TFhirHTTPClient;
-  params : TAdvStringMatch;
+  params : TFslStringMatch;
   list : TFHIRBundle;
   i : integer;
   vs : TFhirValueSet;
@@ -818,7 +818,7 @@ begin
   try
     client.UseIndy := true;
     client.OnClientStatus := event;
-    params := TAdvStringMatch.Create;
+    params := TFslStringMatch.Create;
     try
       params.Add('_summary', 'true');
       params.Add('_count', 'all');
@@ -923,7 +923,7 @@ var
   s : String;
 begin
   inherited;
-  FCodeSystemContexts := TAdvStringObjectMatch.create;
+  FCodeSystemContexts := TFslStringObjectMatch.create;
   FCodeSystemContexts.Forced := true;
   FCodeSystemContexts.PreventDuplicates;
 
@@ -935,7 +935,7 @@ begin
     else
       Settings.AddServer('Health Intersections General Server', 'http://fhir-dev.healthintersections.com.au/open', '', '', true);
 
-  FServers := TAdvList<TValueSetEditorServerCache>.create;
+  FServers := TFslList<TValueSetEditorServerCache>.create;
   loadServers;
   if FSettings.WorkingServer <> '' then
     SetNominatedServer(FSettings.WorkingServer)
@@ -943,7 +943,7 @@ begin
     SetNominatedServer(Servers[0].URL);
 
 
-  FExpansions := TAdvStringObjectMatch.create;
+  FExpansions := TFslStringObjectMatch.create;
   ClearAllVersions;
   FVersionCount := 0;
   if FileExists(FSettings.ValuesetItemPath) then
@@ -1111,7 +1111,7 @@ end;
 function TValueSetEditorContext.FetchValueSetBySystem(uri: String): TFhirValueSet;
 var
   client : TFhirHTTPClient;
-  params : TAdvStringMatch;
+  params : TFslStringMatch;
   feed : TFHIRBundle;
 begin
   result := nil;
@@ -1119,7 +1119,7 @@ begin
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
-    params := TAdvStringMatch.Create;
+    params := TFslStringMatch.Create;
     try
       params.Add('system', uri);
       feed := client.search(frtValueset, false, params);
@@ -1144,7 +1144,7 @@ end;
 function TValueSetEditorContext.GetCodeSystemValidator(uri: String): TValueSetEditorCodeSystem;
 var
   vs : TFhirValueSet;
-  obj : TAdvObject;
+  obj : TFslObject;
   i : integer;
 begin
   if FCodeSystemContexts.ExistsByKey(uri) then
@@ -1206,7 +1206,7 @@ end;
 
 procedure TValueSetEditorContext.GetList(context: String; list: TStrings);
 var
-  obj : TAdvObject;
+  obj : TFslObject;
   code : String;
   i: Integer;
   vs : TFhirValueSet;
@@ -1313,7 +1313,7 @@ end;
 procedure TValueSetEditorContext.GetPreview(uri: String);
 var
   client : TFhirHTTPClient;
-  params : TAdvStringMatch;
+  params : TFslStringMatch;
   feed : TFHIRBundle;
 begin
   FPreview.Free;
@@ -1331,7 +1331,7 @@ begin
     try
       client.UseIndy := true;
       client.OnClientStatus := nil;
-      params := TAdvStringMatch.Create;
+      params := TFslStringMatch.Create;
       try
         params.Add('_query', 'expand');
         params.Add('identifier', uri);
@@ -1424,7 +1424,7 @@ end;
 function TValueSetEditorContext.NameCodeSystem(uri: String): String;
 var
   client : TFhirHTTPClient;
-  params : TAdvStringMatch;
+  params : TFslStringMatch;
   list : TFHIRBundle;
 begin
   if uri = '' then
@@ -1458,7 +1458,7 @@ begin
       try
         client.UseIndy := true;
         client.OnClientStatus := nil;
-        params := TAdvStringMatch.Create;
+        params := TFslStringMatch.Create;
         try
           params.Add('system', uri);
           list := client.search(frtValueset, false, params);
@@ -1490,7 +1490,7 @@ end;
 function TValueSetEditorContext.NameValueSet(uri: String): String;
 var
   client : TFhirHTTPClient;
-  params : TAdvStringMatch;
+  params : TFslStringMatch;
   list : TFHIRBundle;
 begin
   if (uri = '') then
@@ -1506,7 +1506,7 @@ begin
       try
         client.UseIndy := true;
         client.OnClientStatus := nil;
-        params := TAdvStringMatch.Create;
+        params := TFslStringMatch.Create;
         try
           params.Add('identifier', uri);
           list := client.search(frtValueset, false, params);
@@ -2115,7 +2115,7 @@ begin
   SortedBy(CompareByElement);
 end;
 
-function TValidationOutcomeMarkList.itemClass: TAdvObjectClass;
+function TValidationOutcomeMarkList.itemClass: TFslObjectClass;
 begin
   result := TValidationOutcomeMark;
 end;
@@ -2439,18 +2439,18 @@ begin
   FDoesSearch := doesSearch;
   ini := TIniFile.Create(IncludeTrailingPathDelimiter(base)+'server.ini');
   Flist := TFHIRValueSetList.Create;
-  valuesets := TAdvStringObjectMatch.Create;
+  valuesets := TFslStringObjectMatch.Create;
   valuesets.Forced := true;
   valuesets.PreventDuplicates;
-  Fcodesystems := TAdvStringObjectMatch.Create;
+  Fcodesystems := TFslStringObjectMatch.Create;
   Fcodesystems.Forced := true;
   Fcodesystems.PreventDuplicates;
   sortedCodesystems := TStringList.Create;
   sortedCodesystems.Sorted := true;
   sortedValueSets := TStringList.Create;
   sortedValueSets.Sorted := true;
-  specialCodeSystems := TAdvStringObjectMatch.create;
-  closures := TAdvMap<TClosureTableRecord>.create;
+  specialCodeSystems := TFslStringObjectMatch.create;
+  closures := TFslMap<TClosureTableRecord>.create;
 
 end;
 
@@ -2746,7 +2746,7 @@ begin
   FSystem := uri;
   FClient := TFhirHTTPClient.create(nil, url, true);
   Fclient.UseIndy := true;
-  FCache := TAdvStringObjectMatch.create;
+  FCache := TFslStringObjectMatch.create;
   FFilename := filename;
   if FileExists(FFilename) then
     Load;
@@ -2852,11 +2852,11 @@ end;
 
 procedure TServerCodeSystem.loadCode(code: String; var item: TServerCodeSystemCacheItem);
 var
-  params : TAdvStringMatch;
+  params : TFslStringMatch;
   feed : TFHIRBundle;
   vs : TFhirValueSet;
 begin
-  params := TAdvStringMatch.Create;
+  params := TFslStringMatch.Create;
   try
     params.forced := true;
     params.Matches['_query'] := 'expand';
@@ -2892,10 +2892,10 @@ procedure TServerCodeSystem.Load;
 var
   json, o, d : TJsonObject;
   n, n1 : TJsonNode;
-  f : TAdvFile;
+  f : TFslFile;
   item : TServerCodeSystemCacheItem;
 begin
-  f := TAdvFile.Create;
+  f := TFslFile.Create;
   try
     f.Name := FFilename;
     f.OpenRead;
@@ -2932,12 +2932,12 @@ end;
 procedure TServerCodeSystem.Save;
 var
   json : TJSONWriter;
-  f : TAdvFile;
+  f : TFslFile;
   i : integer;
   c : String;
   item : TServerCodeSystemCacheItem;
 begin
-  f := TAdvFile.Create;
+  f := TFslFile.Create;
   try
     f.Name := FFilename;
     f.OpenCreate;
@@ -3115,8 +3115,8 @@ end;
 constructor TClosureTableRecord.create;
 begin
   inherited;
-  FMaps := TAdvList<TClosureTableRecordSource>.create;
-  FConcepts := TAdvList<TFHIRCoding>.create;
+  FMaps := TFslList<TClosureTableRecordSource>.create;
+  FConcepts := TFslList<TFHIRCoding>.create;
 end;
 
 function TClosureTableRecord.GetLinks(row, col: integer): TClosureDirection;
@@ -3221,7 +3221,7 @@ end;
 constructor TClosureTableRecordSource.Create;
 begin
   inherited Create;
-  FTargets := TAdvList<TFHIRCoding>.create;
+  FTargets := TFslList<TFHIRCoding>.create;
 end;
 
 destructor TClosureTableRecordSource.Destroy;
@@ -3278,7 +3278,7 @@ end.
 procedure TValueSetEditorContext.listServerValuesets(url: String);
 var
   client : TFhirHTTPClient;
-  params : TAdvStringMatch;
+  params : TFslStringMatch;
   c : TFHIRJsonComposer;
   f : TFileStream;
   i : Integer;
@@ -3289,7 +3289,7 @@ begin
   client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
-    params := TAdvStringMatch.Create;
+    params := TFslStringMatch.Create;
     try
       params.Add('_summary', 'true');
       params.Add('_count', '1000');

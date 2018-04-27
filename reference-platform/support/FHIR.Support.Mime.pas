@@ -37,7 +37,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream;
 
 type
-  TMimeBase = class (TAdvObject)
+  TMimeBase = class (TFslObject)
   private
     FHeaders: TIdHeaderList;
     procedure ReadHeaders(AStream : TStream);
@@ -52,9 +52,9 @@ type
 
   TMimePart = class (TMimeBase)
   private
-    FContent: TAdvBuffer;
+    FContent: TFslBuffer;
     FId : string;
-    procedure SetContent(const AValue: TAdvBuffer);
+    procedure SetContent(const AValue: TFslBuffer);
     procedure DecodeContent;
     procedure ReadFromStream(AStream : TStream; ABoundary : AnsiString);
     procedure WriteToStream(AStream : TStream);
@@ -68,7 +68,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    property Content : TAdvBuffer read FContent write SetContent;
+    property Content : TFslBuffer read FContent write SetContent;
     property Id : String read FId write SetId;
     property MediaType : String read GetMediaType write SetMediaType;
     property ContentDisposition : String read GetContentDisposition write SetContentDisposition;
@@ -80,7 +80,7 @@ type
 
   TMimeMessage = class (TMimeBase)
   private
-    FParts: TAdvList<TMimePart>;
+    FParts: TFslList<TMimePart>;
     FBoundary : Ansistring;
     FStart : String;
     FMainType : String;
@@ -91,7 +91,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function Link : TMimeMessage; overload;
-    property Parts : TAdvList<TMimePart> read FParts;
+    property Parts : TFslList<TMimePart> read FParts;
     function AddPart(id: String) : TMimePart;
     property MainPart : TMimePart read GetMainPart;
     property Boundary : ansistring read FBoundary write FBoundary;
@@ -216,7 +216,7 @@ end;
 constructor TMimePart.create;
 begin
   inherited;
-  FContent := TAdvBuffer.create;
+  FContent := TFslBuffer.create;
 end;
 
 destructor TMimePart.destroy;
@@ -328,7 +328,7 @@ begin
   DecodeContent;
 end;
 
-procedure TMimePart.SetContent(const AValue: TAdvBuffer);
+procedure TMimePart.SetContent(const AValue: TFslBuffer);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TMimePart.SetContent';
 begin
   FContent.Free;
@@ -563,7 +563,7 @@ end;
 constructor TMimeMessage.create;
 begin
   inherited create;
-  FParts := TAdvList<TMimePart>.create;
+  FParts := TFslList<TMimePart>.create;
 end;
 
 destructor TMimeMessage.destroy;

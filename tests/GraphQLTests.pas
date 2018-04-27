@@ -37,7 +37,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Support.MXml,
   FHIR.Misc.GraphQL, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.GraphQL,
-  FHIRTestWorker, JsonTests;
+  FHIR.Tests.Worker, JsonTests;
 
 type
   GraphQLParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
@@ -61,11 +61,11 @@ type
   [TextFixture]
   TFHIRGraphQLTests = class (TObject)
   private
-    function ResolveReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
-//    procedure ResolveReverseReference(appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; start, limit : integer; list : TAdvList<TFhirResource>);
-    function LookupResource(appInfo : TAdvObject; requestType, id : String; var res : TFHIRResource) : boolean;
-    procedure ListResources(appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFHIRResource>);
-    function Search(appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>) : TFHIRBundle;
+    function ResolveReference(appInfo : TFslObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
+//    procedure ResolveReverseReference(appInfo : TFslObject; focusType, focusId, requestType, requestParam : String; params : TFslList<TGraphQLArgument>; start, limit : integer; list : TFslList<TFhirResource>);
+    function LookupResource(appInfo : TFslObject; requestType, id : String; var res : TFHIRResource) : boolean;
+    procedure ListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResource>);
+    function Search(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>) : TFHIRBundle;
   public
     [GraphQLTestCase]
     procedure TestCase(source,output,context,resource,opName: String);
@@ -163,7 +163,7 @@ end;
 
 { TFHIRGraphQLTests }
 
-procedure TFHIRGraphQLTests.ListResources(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>; list: TAdvList<TFHIRResource>);
+procedure TFHIRGraphQLTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResource>);
 begin
   if requestType = 'Condition' then
     list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\condition-example.xml'))
@@ -174,7 +174,7 @@ begin
   end;
 end;
 
-function TFHIRGraphQLTests.LookupResource(appInfo: TAdvObject; requestType, id: String; var res: TFHIRResource): boolean;
+function TFHIRGraphQLTests.LookupResource(appInfo: TFslObject; requestType, id: String; var res: TFHIRResource): boolean;
 var
   filename : String;
 begin
@@ -184,7 +184,7 @@ begin
     res := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
 end;
 
-function TFHIRGraphQLTests.ResolveReference(appInfo : TAdvObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
+function TFHIRGraphQLTests.ResolveReference(appInfo : TFslObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
 var
   parts : TArray<String>;
   res : TFHIRResource;
@@ -215,7 +215,7 @@ begin
   end;
 end;
 
-function TFHIRGraphQLTests.Search(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>): TFHIRBundle;
+function TFHIRGraphQLTests.Search(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>): TFHIRBundle;
 begin
   result := TFhirBundle.Create;
   try

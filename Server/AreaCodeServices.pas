@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Exceptions,
-  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
 
 type
   TAreaCodeConcept = class (TCodeSystemProviderContext)
@@ -53,7 +53,7 @@ type
 
   TAreaCodeConceptFilter = class (TCodeSystemProviderFilterContext)
   private
-    FList : TAdvList<TAreaCodeConcept>;
+    FList : TFslList<TAreaCodeConcept>;
     FCursor : integer;
   public
     constructor Create; override;
@@ -63,8 +63,8 @@ type
 
   TAreaCodeServices = class (TCodeSystemProvider)
   private
-    FCodes : TAdvList<TAreaCodeConcept>;
-    FMap : TAdvMap<TAreaCodeConcept>;
+    FCodes : TFslList<TAreaCodeConcept>;
+    FMap : TFslMap<TAreaCodeConcept>;
 
     procedure load;
   public
@@ -111,8 +111,8 @@ implementation
 Constructor TAreaCodeServices.create();
 begin
   inherited Create;
-  FCodes := TAdvList<TAreaCodeConcept>.create;
-  FMap := TAdvMap<TAreaCodeConcept>.create;
+  FCodes := TFslList<TAreaCodeConcept>.create;
+  FMap := TFslMap<TAreaCodeConcept>.create;
   Load;
 end;
 
@@ -594,7 +594,7 @@ end;
 constructor TAreaCodeConceptFilter.Create;
 begin
   inherited;
-  FList := TAdvList<TAreaCodeConcept>.Create;
+  FList := TFslList<TAreaCodeConcept>.Create;
   FCursor := -1;
 end;
 

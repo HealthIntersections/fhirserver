@@ -55,7 +55,7 @@ uses
 type
   TMainWindowForm = class;
 
-  TAllergiesComparer = class (TAdvObject, IComparer<TFhirAllergyIntolerance>)
+  TAllergiesComparer = class (TFslObject, IComparer<TFhirAllergyIntolerance>)
   private
     FColumn: integer;
     FDesc : boolean;
@@ -64,7 +64,7 @@ type
     function Compare(const Left, Right: TFhirAllergyIntolerance): Integer;
   end;
 
-  TMedicationsComparer = class (TAdvObject, IComparer<TFHIRResource>)
+  TMedicationsComparer = class (TFslObject, IComparer<TFHIRResource>)
   private
     FColumn: integer;
     FDesc : boolean;
@@ -73,11 +73,11 @@ type
     function Compare(const Left, Right: TFHIRResource): Integer;
   end;
 
-  TValueNode = class (TAdvObject)
+  TValueNode = class (TFslObject)
   private
     FName : String;
     FValue : TFHIRElement;
-    FChildren : TAdvList<TValueNode>;
+    FChildren : TFslList<TValueNode>;
   public
     constructor Create(name : string; element : TFHIRElement);
     destructor Destroy; override;
@@ -147,12 +147,12 @@ type
     FIni : TIniFile;
     FPatientId : String;
     FProgressForm : TProgressWindow;
-    FAllergies : TAdvList<TFHIRAllergyIntolerance>;
-    FMedications : TAdvList<TFHIRResource>;
+    FAllergies : TFslList<TFHIRAllergyIntolerance>;
+    FMedications : TFslList<TFHIRResource>;
     FLoaded : boolean;
     FAllergiesComparer : TAllergiesComparer;
     FMedicationsComparer : TMedicationsComparer;
-    FValues : TAdvList<TValueNode>;
+    FValues : TFslList<TValueNode>;
     FLogService : TLoggingService;
 
     procedure displayAllergy(allergy : TFhirAllergyIntolerance);
@@ -187,16 +187,16 @@ begin
   FLogService := TFileLoggingService.create(path([AppExePath, 'fhir-vcl-demo.log']));
   FProgressForm := TProgressWindow.Create(self);
   FIni := TIniFile.Create(Path([SystemTemp, 'fhir-vcl-demo.ini']));
-  FAllergies := TAdvList<TFHIRAllergyIntolerance>.create;
+  FAllergies := TFslList<TFHIRAllergyIntolerance>.create;
   FAllergiesComparer := TAllergiesComparer.create;
   FAllergiesComparer.FWindow := self;
   FAllergiesComparer.FColumn := 0;
   FMedicationsComparer := TMedicationsComparer.create;
   FMedicationsComparer.FWindow := self;
   FMedicationsComparer.FColumn := 0;
-  FMedications := TAdvList<TFHIRResource>.create;
+  FMedications := TFslList<TFHIRResource>.create;
 
-  FValues := TAdvList<TValueNode>.create;
+  FValues := TFslList<TValueNode>.create;
 end;
 
 procedure TMainWindowForm.FormActivate(Sender: TObject);
@@ -404,9 +404,9 @@ end;
 procedure TMainWindowForm.displayResourceNarrative(res: TFhirDomainResource);
 var
   doc : OleVariant;
-  b : TAdvStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TAdvStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     TFHIRXhtmlParser.compose(res.text.div_, b, false);
 
@@ -862,7 +862,7 @@ begin
   inherited Create;
   FName := name;
   FValue := element;
-  FChildren := TAdvList<TValueNode>.create;
+  FChildren := TFslList<TValueNode>.create;
 end;
 
 destructor TValueNode.Destroy;

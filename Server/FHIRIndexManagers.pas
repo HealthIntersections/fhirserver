@@ -65,7 +65,7 @@ Type
 
   TFHIRGetNextKey = function (keytype : TKeyType; aType : String; var id : string) : Integer of Object;
 
-  TFhirIndexEntry = class (TAdvObject)
+  TFhirIndexEntry = class (TFslObject)
   private
     FKey: integer;
     FEntryKey : integer;
@@ -97,17 +97,17 @@ Type
     Property TargetType : TFhirResourceType read FTargetType write FTargetType;
   end;
 
-  TFhirIndexEntryList = class (TAdvList<TFhirIndexEntry>)
+  TFhirIndexEntryList = class (TFslList<TFhirIndexEntry>)
   private
     FKeyEvent : TFHIRGetNextKey;
-    procedure filter(indexes : TFhirIndexList; name : String; list : TAdvList<TFhirIndexEntry>);
+    procedure filter(indexes : TFhirIndexList; name : String; list : TFslList<TFhirIndexEntry>);
   public
     function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : TFHIRResourceType; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer; overload;
     function add(key, parent : integer; index : TFhirComposite) : integer; overload;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
   end;
 
-  TFhirCompartmentEntry = class (TAdvObject)
+  TFhirCompartmentEntry = class (TFslObject)
   private
     FCKey: integer;
     FKey: integer;
@@ -123,13 +123,13 @@ Type
     property CKey : integer read FCKey write FCKey; // key for the resource that creates this compartment
   end;
 
-  TFhirCompartmentEntryList = class (TAdvList<TFhirCompartmentEntry>)
+  TFhirCompartmentEntryList = class (TFslList<TFhirCompartmentEntry>)
   public
     procedure add(key, tkey, ckey : integer; enum : TFhirResourceType; id : string);
     procedure removeById(id : String);
   end;
 
-  TFhirIndexSpaces = class (TAdvObject)
+  TFhirIndexSpaces = class (TFslObject)
   private
     FLock : TCriticalSection;
     FSpaces : TStringList;
@@ -141,7 +141,7 @@ Type
     function ResolveSpace(space : String; var key :integer) : boolean;
   end;
 
-  TFHIRIndexInformation = class (TAdvObject)
+  TFHIRIndexInformation = class (TFslObject)
   private
     FIndexes : TFhirIndexList;
     FComposites : TFhirCompositeList;
@@ -170,7 +170,7 @@ Type
   end;
 
   {$HINTS OFF}
-  TFhirIndexManager = class (TAdvObject)
+  TFhirIndexManager = class (TFslObject)
   private
     FInfo : TFHIRIndexInformation;
     FKeyEvent : TFHIRGetNextKey;
@@ -182,7 +182,7 @@ Type
     FBases : TStringList;
     FValidationInfo : TFHIRWorkerContext;
     FTerminologyServer : TTerminologyServer;
-    FResConfig: TAdvMap<TFHIRResourceConfig>;
+    FResConfig: TFslMap<TFHIRResourceConfig>;
     FforTesting : boolean;
     FUcum : TUcumServices;
 
@@ -348,12 +348,12 @@ Type
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
-    constructor Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>; Ucum : TUcumServices);
+    constructor Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TFslMap<TFHIRResourceConfig>; Ucum : TUcumServices);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
     property Bases : TStringList read FBases write FBases;
-    function execute(key : integer; id: String; resource : TFhirResource; tags : TFHIRTagList) : TAdvList<TFHIRCompartmentId>;
+    function execute(key : integer; id: String; resource : TFhirResource; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
     property Definitions : TFHIRIndexInformation read FInfo;
   end;
@@ -486,7 +486,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexEntryList.filter(indexes : TFhirIndexList;  name: String; list: TAdvList<TFhirIndexEntry>);
+procedure TFhirIndexEntryList.filter(indexes : TFhirIndexList;  name: String; list: TFslList<TFhirIndexEntry>);
 var
   i : integer;
 begin
@@ -498,7 +498,7 @@ end;
 
 { TFhirIndexManager }
 
-constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>; Ucum : TUcumServices);
+constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TFslMap<TFHIRResourceConfig>; Ucum : TUcumServices);
 begin
   inherited Create;
   FCompartments := TFhirCompartmentEntryList.create;
@@ -530,7 +530,7 @@ end;
 function TFhirIndexManager.EncodeXhtml(r: TFhirDomainResource): TBytes;
 var
   x, body : TFhirXHtmlNode;
-  xc : TAdvXmlBuilder;
+  xc : TFslXmlBuilder;
 begin
     if r.ResourceType <> frtBinary then
     begin
@@ -871,7 +871,7 @@ begin
   end;
 end;
 
-function TFhirIndexManager.execute(key : integer; id : String; resource : TFhirResource; tags : TFHIRTagList) : TAdvList<TFHIRCompartmentId>;
+function TFhirIndexManager.execute(key : integer; id : String; resource : TFhirResource; tags : TFHIRTagList) : TFslList<TFHIRCompartmentId>;
 var
   i : integer;
   entry : TFhirIndexEntry;
@@ -986,7 +986,7 @@ begin
   end;
   FConnection.terminate;
 
-  result := TAdvList<TFHIRCompartmentId>.create;
+  result := TFslList<TFHIRCompartmentId>.create;
   try
     if FCompartments.Count > 0 then
     begin

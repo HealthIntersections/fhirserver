@@ -37,7 +37,7 @@ Uses
   FHIR.Support.Objects;
 
 Type
-  TTwilioClient = class (TAdvObject)
+  TTwilioClient = class (TFslObject)
   private
     FBody: String;
     FFrom: String;

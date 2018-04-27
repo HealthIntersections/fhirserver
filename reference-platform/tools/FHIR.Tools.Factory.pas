@@ -167,7 +167,7 @@ type
       make a new Binary resource
     }
     {!script nolink}
-    function makeBinaryContent(source : TAdvBuffer; mimeType : String) : TFhirBinary;
+    function makeBinaryContent(source : TFslBuffer; mimeType : String) : TFhirBinary;
 
     {@member makeRequest
       make a new Fhir request (for a conversion parameter)
@@ -478,7 +478,7 @@ begin
   result := TFhirBinary.create;
 end;
 
-function TFHIRFactory.makeBinaryContent(source: TAdvBuffer; mimeType: String): TFhirBinary;
+function TFHIRFactory.makeBinaryContent(source: TFslBuffer; mimeType: String): TFhirBinary;
 begin
   result := makeBinary;
   result.Content := source.AsBytes;

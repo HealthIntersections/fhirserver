@@ -80,7 +80,7 @@ Type
  *
  * @author Grahame
   }
-  TQuestionnaireBuilder = class (TAdvObject)
+  TQuestionnaireBuilder = class (TFslObject)
   private
     FProfiles : TProfileManager;
     lastid : integer;
@@ -91,7 +91,7 @@ Type
     FQuestionnaireId: String;
     FFactory : TFHIRFactory;
     FOnExpand : TGetValueSetExpansion;
-    vsCache : TAdvStringMatch;
+    vsCache : TFslStringMatch;
     FPrebuiltQuestionnaire: TFhirQuestionnaire;
     FOnLookupCode : TLookupCodeEvent;
     FOnLookupReference : TLookupReferenceEvent;
@@ -1175,7 +1175,7 @@ begin
     raise Exception.create('Unhandled Data Type: '+t.Code+' on element '+element.Path);
 end;
 
-function isPrimitive(obj : TAdvObject) : boolean; overload;
+function isPrimitive(obj : TFslObject) : boolean; overload;
 begin
   result := (obj is TFHIRBoolean) or (obj is TFHIRInteger) or (obj is TFHIRDecimal) or (obj is TFHIRBase64Binary) or (obj is TFHIRInstant) or (obj is TFHIRString) or (obj is TFHIRUri) or
             (obj is TFHIRDate) or (obj is TFHIRDateTime) or (obj is TFHIRTime) or (obj is TFHIRCode) or (obj is TFHIROid) or (obj is TFHIRUuid) or (obj is TFHIRId) or (obj is TFhirReference);
@@ -1239,7 +1239,7 @@ end;
 constructor TQuestionnaireBuilder.create;
 begin
   inherited create;
-  vsCache := TAdvStringMatch.create;
+  vsCache := TFslStringMatch.create;
   FDependencies := TList<String>.create;
   FLang := lang;
 end;

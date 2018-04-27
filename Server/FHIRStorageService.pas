@@ -51,7 +51,7 @@ Type
   TFHIRStorageService = class;
   TFHIROperationEngine = class;
 
-  TOperationContext = class (TAdvObject)
+  TOperationContext = class (TFslObject)
   private
     FUpload : boolean;
     FCallback : TInstallerCallback;
@@ -67,7 +67,7 @@ Type
     procedure progress(i : integer);
   end;
 
-  TFhirOperation = {abstract} class (TAdvObject)
+  TFhirOperation = {abstract} class (TFslObject)
   protected
     function resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref : String) : integer;
     function CreateBaseDefinition(base : String) : TFHIROperationDefinition;
@@ -84,20 +84,20 @@ Type
     function formalURL : String; virtual;
   end;
 
-  TMatchingResource = class (TAdvName)
+  TMatchingResource = class (TFslName)
   public
     key : integer;
     version : integer;
   end;
 
-  TMatchingResourceList = class (TAdvNameList)
+  TMatchingResourceList = class (TFslNameList)
   private
     function GetEntry(iIndex: Integer): TMatchingResource;
   public
     Property entries[iIndex : Integer] : TMatchingResource Read GetEntry; Default;
   end;
 
-  TAsyncTaskInformation = class (TAdvObject)
+  TAsyncTaskInformation = class (TFslObject)
   private
     FKey: integer;
     FNames: TArray<String>;
@@ -111,7 +111,7 @@ Type
 
   TRegisteredClientMode = (rcmOAuthClient, rcmBackendServices);
 
-  TRegisteredClientInformation = class (TAdvObject)
+  TRegisteredClientInformation = class (TFslObject)
   private
     FRedirects: TStringList;
     FMode: TRegisteredClientMode;
@@ -149,15 +149,15 @@ Type
 
   TFindResourceOptions = set of TFindResourceOption;
 
-  TFHIROperationEngine = class (TAdvObject)
+  TFHIROperationEngine = class (TFslObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
     FLang : String;
     procedure AddCDSHooks(conf : TFhirCapabilityStatementRest);
-    procedure addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
+    procedure addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TFslStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
   protected
-    FServerContext : TAdvObject;
-    FOperations : TAdvList<TFhirOperation>;
+    FServerContext : TFslObject;
+    FOperations : TFslList<TFhirOperation>;
     procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); virtual;
 
     procedure StartTransaction; virtual;
@@ -180,7 +180,7 @@ Type
     procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
   public
-    constructor create(ServerContext : TAdvObject; lang : String);
+    constructor create(ServerContext : TFslObject; lang : String);
     destructor Destroy; override;
 
     procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
@@ -195,12 +195,12 @@ Type
     function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TExceptionType) : Boolean; virtual;
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
-    function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; virtual;
-    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TAdvList<TFHIRCompartmentId>): boolean; virtual;
+    function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TFslList<TFHIRResource>; virtual;
+    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; virtual;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; virtual;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; virtual;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; virtual;
-    function ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; SessionCompartments : TAdvList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; virtual;
+    function ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; SessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; virtual;
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual;
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; virtual;
 
@@ -209,7 +209,7 @@ Type
 
   TFHIRInternalCommunicator = class (TFHIRClientCommunicator)
   private
-    FServerContext : TAdvObject;
+    FServerContext : TFslObject;
     FEngine : TFHIROperationEngine;
     FContext: TFHIRWorkerContext;
     FSession: TFHIRSession;
@@ -239,7 +239,7 @@ Type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
   end;
 
-  TFHIRStorageService = class (TAdvObject)
+  TFHIRStorageService = class (TFslObject)
   protected
     function GetTotalResourceCount: integer; virtual;
   public
@@ -258,7 +258,7 @@ Type
     function FetchAuthorization(hash : String; var PatientId : String; var ConsentKey, SessionKey : Integer; var Expiry : TDateTime; var jwt : String) : boolean; virtual;
 
     // server total counts:
-    function FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>) : TStringList; virtual; // comps = comma delimited list of patient compartments
+    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; virtual; // comps = comma delimited list of patient compartments
     Property TotalResourceCount: integer read GetTotalResourceCount;
 
 
@@ -280,7 +280,7 @@ Type
 
     function createOperationContext(lang : String) : TFHIROperationEngine; virtual;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); overload; virtual;
-    function createClient(lang : String; ServerContext : TAdvObject; context: TFHIRWorkerContext; session: TFHIRSession) : TFHIRClient; virtual;
+    function createClient(lang : String; ServerContext : TFslObject; context: TFHIRWorkerContext; session: TFHIRSession) : TFHIRClient; virtual;
     Procedure Yield(client : TFHIRClient; exception : Exception); overload; virtual;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
@@ -292,13 +292,13 @@ Type
     procedure MarkTaskForDownload(key : integer; names : TStringList); virtual;
     function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message, originalRequest : String; var transactionTime, expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; virtual;
     procedure recordDownload(key : integer; name : String); virtual;
-    procedure fetchExpiredTasks(tasks : TAdvList<TAsyncTaskInformation>); virtual;
+    procedure fetchExpiredTasks(tasks : TFslList<TAsyncTaskInformation>); virtual;
     procedure MarkTaskDeleted(key : integer); virtual;
 
     function getClientInfo(id : String) : TRegisteredClientInformation; virtual;
     function getClientName(id : String) : string; virtual;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; virtual;
-    procedure fetchClients(list : TAdvList<TRegisteredClientInformation>); virtual;
+    procedure fetchClients(list : TFslList<TRegisteredClientInformation>); virtual;
   end;
 
 
@@ -340,12 +340,12 @@ begin
   raise Exception.Create('This server does not support OAuth');
 end;
 
-procedure TFHIRStorageService.fetchClients(list: TAdvList<TRegisteredClientInformation>);
+procedure TFHIRStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
 begin
   raise Exception.Create('The function "fetchClients" must be overridden in '+className);
 end;
 
-procedure TFHIRStorageService.fetchExpiredTasks(tasks: TAdvList<TAsyncTaskInformation>);
+procedure TFHIRStorageService.fetchExpiredTasks(tasks: TFslList<TAsyncTaskInformation>);
 begin
   raise Exception.Create('This server does not support Async tasks');
 end;
@@ -360,7 +360,7 @@ begin
   raise Exception.Create('The function "FetchResource()" must be overridden in '+className);
 end;
 
-function TFHIRStorageService.FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>): TStringList;
+function TFHIRStorageService.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>): TStringList;
 begin
   raise Exception.Create('The function "FetchResourceCounts(comps : String): TStringList" must be overridden in '+className);
 end;
@@ -547,12 +547,12 @@ begin
   raise Exception.Create('The function "CommitTransaction" must be overridden in '+className);
 end;
 
-constructor TFHIROperationEngine.create(ServerContext : TAdvObject; lang: String);
+constructor TFHIROperationEngine.create(ServerContext : TFslObject; lang: String);
 begin
   inherited create;
   FServerContext := ServerContext;
   FLang := lang;
-  FOperations := TAdvList<TFhirOperation>.create;
+  FOperations := TFslList<TFhirOperation>.create;
 end;
 
 function TFHIROperationEngine.createClient(lang: String; session: TFHIRSession): TFHIRClient;
@@ -679,7 +679,7 @@ var
   oConf : TFhirCapabilityStatement;
   res : TFhirCapabilityStatementRestResource;
   a : String;
-  html : TAdvStringBuilder;
+  html : TFslStringBuilder;
   c : TFhirContactPoint;
   i : integer;
   op : TFhirCapabilityStatementRestOperation;
@@ -759,7 +759,7 @@ begin
       OnPopulateConformance(self, oConf);
     AddCDSHooks(oConf.restList[0]);
 
-    html := TAdvStringBuilder.Create;
+    html := TFslStringBuilder.Create;
     try
       html.append('<div><h2>'+ServerContext.OwnerName+' Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+' released '+SERVER_RELEASE_DATE+'. '+
        'Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
@@ -1122,7 +1122,7 @@ begin
   raise Exception.Create('This server does not implement the "VersionRead" function');
 end;
 
-function TFHIROperationEngine.FindResource(aType, sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TAdvList<TFHIRCompartmentId>): boolean;
+function TFHIROperationEngine.FindResource(aType, sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
 begin
   raise Exception.Create('This server does not implement the "FindResource" function');
 end;
@@ -1142,7 +1142,7 @@ begin
   raise Exception.Create('Must override "getResourceByUrl" function in '+className);
 end;
 
-function TFHIROperationEngine.getResourcesByParam(aType: TFhirResourceType; name, value: string; var needSecure: boolean): TAdvList<TFHIRResource>;
+function TFHIROperationEngine.getResourcesByParam(aType: TFhirResourceType; name, value: string; var needSecure: boolean): TFslList<TFHIRResource>;
 begin
   raise Exception.Create('This server does not implement the "getResourcesByParam" function');
 end;
@@ -1152,7 +1152,7 @@ begin
   raise Exception.Create('The function "LookupReference(context: TFHIRRequest; id: String): TResourceWithReference" must be overridden in '+className);
 end;
 
-function TFHIROperationEngine.ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
+function TFHIROperationEngine.ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
 begin
   raise Exception.Create('This server does not implement the "GetResourceByKey" function');
 end;
@@ -1185,7 +1185,7 @@ begin
   ext.addExtension('activity', TCDSHooks.identifierView);
 end;
 
-procedure TFHIROperationEngine.addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
+procedure TFHIROperationEngine.addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TFslStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
 var
   param : TFhirCapabilityStatementRestResourceSearchParam;
 begin
@@ -1217,7 +1217,7 @@ begin
   raise Exception.Create('Asynchronous Processing is not supported on this server');
 end;
 
-function TFHIRStorageService.createClient(lang: String; ServerContext : TAdvObject; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
+function TFHIRStorageService.createClient(lang: String; ServerContext : TFslObject; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
 var
   int : TFHIRInternalCommunicator;
 begin

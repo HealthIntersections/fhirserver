@@ -50,12 +50,12 @@ Const
   MAX_ROWS = 200;
 
 Type
-  TUcumPublisher = class (TAdvObject)
+  TUcumPublisher = class (TFslObject)
   Private
     FUcum : TUcumServices;
     Procedure UcumHeading(oPublisher : THL7v2DOcumentPublisher; sTitle, sPrefix : String);
-    Procedure ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
-    Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
+    Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
+    Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
     procedure PublishHome(const sPrefix: String; oBuilder: THL7V2DocumentPublisher);
     procedure PublishAllUnits(const sPrefix: String; oBuilder: THL7V2DocumentPublisher);
     procedure PublishSpecialUnits(const sPrefix: String; oBuilder: THL7V2DocumentPublisher);
@@ -66,7 +66,7 @@ Type
     Constructor Create(oUcum : TUcumServices);
     Destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
-    Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
+    Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher); Overload; Virtual;
   End;
 
 Implementation
@@ -83,7 +83,7 @@ Begin
     result := s+sPost;
 End;
 
-Procedure TUcumPublisher.PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
+Procedure TUcumPublisher.PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; oBuilder : THL7V2DocumentPublisher);
 Var
   sURL : String;
   sType : String;
@@ -112,7 +112,7 @@ Begin
 End;
 
 
-Procedure TUcumPublisher.ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
+Procedure TUcumPublisher.ProcessMap(Const sPath : String; oMap : TFslStringMatch);
 Var
   sLeft, sRight : String;
   sName, sValue : String;
@@ -130,9 +130,9 @@ End;
 
 Procedure TUcumPublisher.PublishDict(Const sPath, sPrefix : String; oBuilder : THL7V2DocumentPublisher);
 Var
-  oMap : TAdvStringMatch;
+  oMap : TFslStringMatch;
 Begin
-  oMap := TAdvStringMatch.Create;
+  oMap := TFslStringMatch.Create;
   Try
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, oBuilder);
@@ -143,7 +143,7 @@ End;
 
 
 
-procedure TUcumPublisher.PublishDict(oMap: TAdvStringMatch; const sPrefix: String; oBuilder: THL7V2DocumentPublisher);
+procedure TUcumPublisher.PublishDict(oMap: TFslStringMatch; const sPrefix: String; oBuilder: THL7V2DocumentPublisher);
 begin
   Try
     PublishDictInternal(oMap, sPrefix, oBuilder);
@@ -159,7 +159,7 @@ end;
 procedure TUcumPublisher.PublishHome(const sPrefix: String; oBuilder: THL7V2DocumentPublisher);
 var
   i : Integer;
-  o : TAdvStringList;
+  o : TFslStringList;
 Begin
   oBuilder.AddTitle('Unified Code for Units of Measure (UCUM)');
 
@@ -177,7 +177,7 @@ Begin
     oBuilder.StartTable(['Properties', 'Units']);
     oBuilder.StartTableRow;
 
-    o := TAdvStringList.Create;
+    o := TFslStringList.Create;
     Try
       FUcum.getProperties(o);
       oBuilder.StartTableCell();

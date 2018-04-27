@@ -1,4 +1,4 @@
-unit FHIRPathTests4;
+unit FHIR.R4.Tests.PathEngine;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -35,7 +35,7 @@ uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Tools.Parser,
-  FHIRTestWorker4, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
+  FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
 //  FHIR.Ucum.Services,
   FHIR.Support.MXml, DUnitX.TestFramework;
 
@@ -156,7 +156,7 @@ var
   node : TFHIRPathExpressionNode;
   p : TFHIRXmlParser;
   f :  TFileStream;
-  expected : TAdvList<TMXmlElement>;
+  expected : TFslList<TMXmlElement>;
   i : integer;
 begin
   test := findTest(name);
@@ -209,7 +209,7 @@ begin
       if (s <> '') then
         writeln(s);
 
-      expected := TAdvList<TMXmlElement>.Create;
+      expected := TFslList<TMXmlElement>.Create;
       try
         test.listElements('output', expected);
         Assert.isTrue(outcome.count = expected.count, StringFormat('Expected %d objects but found %d for %s', [expected.count, outcome.count, expression]));

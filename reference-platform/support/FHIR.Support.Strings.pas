@@ -234,7 +234,7 @@ Function isOid(oid : String) : Boolean;
 function UriForKnownOid(oid : String) : String;
 
 type
-  TAnsiStringBuilder = Class(TAdvObject)
+  TAnsiStringBuilder = Class(TFslObject)
     Private
       FContent : AnsiString;
       FLength : Integer;
@@ -296,14 +296,14 @@ Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiCh
 
 Type
   {$IFDEF NO_BUILDER}
-  TAdvStringBuilder = Class(TAdvObject)
+  TFslStringBuilder = Class(TFslObject)
     Private
       FContent : String;
       FLength : Integer;
       FBufferSize : integer;
 
-      Procedure Append(Const oStream : TAdvStream; iBytes : Integer); Overload;
-      Procedure Insert(Const oStream : TAdvStream; iBytes : Integer; iIndex : Integer); Overload;
+      Procedure Append(Const oStream : TFslStream; iBytes : Integer); Overload;
+      Procedure Insert(Const oStream : TFslStream; iBytes : Integer; iIndex : Integer); Overload;
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
@@ -320,7 +320,7 @@ Type
       Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
       Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
       Procedure Append(const bBytes : Array of Byte; amount : Integer); Overload;
-      Procedure Append(Const oBuilder : TAdvStringBuilder); Overload;
+      Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
       Procedure AppendEOL;
 
       Procedure CommaAdd(Const sStr : String); Overload;
@@ -332,7 +332,7 @@ Type
 
       // index is zero based. zero means insert before first character
       Procedure Insert(Const sStr : String; iIndex : Integer); Overload;
-      Procedure Insert(Const oBuilder : TAdvStringBuilder; iIndex : Integer); Overload;
+      Procedure Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer); Overload;
 
       Procedure Delete(iIndex, iLength : Integer);
 
@@ -347,7 +347,7 @@ Type
 
 
   {$ELSE}
-  TAdvStringBuilder = Class (TAdvObject)
+  TFslStringBuilder = Class (TFslObject)
     Private
       FBuilder : TStringBuilder;
 
@@ -366,7 +366,7 @@ Type
       Procedure AppendLine(Const sStr : String); Overload;
       Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
       Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-      Procedure Append(Const oBuilder : TAdvStringBuilder); Overload;
+      Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
       Procedure AppendEOL;
 
       Procedure CommaAdd(Const sStr : String); Overload;
@@ -378,7 +378,7 @@ Type
 
       // index is zero based. zero means insert before first character
       Procedure Insert(Const sStr : String; iIndex : Integer); Overload;
-      Procedure Insert(Const oBuilder : TAdvStringBuilder; iIndex : Integer); Overload;
+      Procedure Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer); Overload;
 
       Procedure Delete(iIndex, iLength : Integer);
 
@@ -389,7 +389,7 @@ Type
   {$ENDIF}
 
 type
-  TCommaBuilder = class (TAdvObject)
+  TCommaBuilder = class (TFslObject)
   private
     list : TStringList;
     FIgnoreDuplicates: Boolean;
@@ -2173,7 +2173,7 @@ Const
   BUFFER_INCREMENT_SIZE = 1024;
 
 
-Constructor TAdvStringBuilder.Create;
+Constructor TFslStringBuilder.Create;
 Begin
   Inherited;
 
@@ -2181,26 +2181,26 @@ Begin
 End;
 
 
-Destructor TAdvStringBuilder.Destroy;
+Destructor TFslStringBuilder.Destroy;
 Begin
   inherited;
 End;
 
 
-Procedure TAdvStringBuilder.Clear;
+Procedure TFslStringBuilder.Clear;
 Begin
   FContent := '';
   FLength := 0;
 End;
 
 
-Function TAdvStringBuilder.ToString : String;
+Function TFslStringBuilder.ToString : String;
 Begin
   Result := Copy(FContent, 1, FLength);
 End;
 
 
-Procedure TAdvStringBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+Procedure TFslStringBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
 Var
   iLen : Integer;
 Begin
@@ -2221,13 +2221,13 @@ Begin
 End;
 
 
-Function TAdvStringBuilder.AsString: String;
+Function TFslStringBuilder.AsString: String;
 Begin
   Result := ToString;
 End;
 
 
-Procedure TAdvStringBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+Procedure TFslStringBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
 Begin
   If (iCount > 0) Then
   Begin
@@ -2243,7 +2243,7 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.Append(ch : Char);
+Procedure TFslStringBuilder.Append(ch : Char);
 Begin
   If FLength + 1 > System.Length(FContent) Then
     SetLength(FContent, System.Length(FContent) + FBufferSize);
@@ -2253,7 +2253,7 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.Append(Const sStr : String);
+Procedure TFslStringBuilder.Append(Const sStr : String);
 Begin
  If (sStr <> '') Then
   Begin
@@ -2267,25 +2267,25 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.Append(Const oBuilder : TAdvStringBuilder);
+Procedure TFslStringBuilder.Append(Const oBuilder : TFslStringBuilder);
 Begin
   Append(oBuilder.ToString);
 End;
 
 
-Procedure TAdvStringBuilder.AppendEOL;
+Procedure TFslStringBuilder.AppendEOL;
 Begin
   Append(cReturn);
 End;
 
 
-Procedure TAdvStringBuilder.Append(Const iInt : Integer);
+Procedure TFslStringBuilder.Append(Const iInt : Integer);
 Begin
   Append(IntegerToString(iInt));
 End;
 
 
-Procedure TAdvStringBuilder.Insert(Const sStr : String; iIndex : Integer);
+Procedure TFslStringBuilder.Insert(Const sStr : String; iIndex : Integer);
 Begin
   If (sStr <> '') Then
   Begin
@@ -2302,20 +2302,20 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.Insert(Const oBuilder : TAdvStringBuilder; iIndex : Integer);
+Procedure TFslStringBuilder.Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer);
 Begin
   Insert(oBuilder.ToString, iIndex);
 End;
 
 
-Procedure TAdvStringBuilder.Delete(iIndex, iLength : Integer);
+Procedure TFslStringBuilder.Delete(iIndex, iLength : Integer);
 Begin
   System.Delete(FContent, iIndex+1, iLength);
   Dec(FLength, iLength);
 End;
 
 
-Function TAdvStringBuilder.IndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
+Function TFslStringBuilder.IndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
 Var
   iLoop : Integer;
   iUpper : Integer;
@@ -2336,7 +2336,7 @@ Begin
 End;
 
 
-Function TAdvStringBuilder.LastIndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
+Function TFslStringBuilder.LastIndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
 Var
   iLoop : Integer;
   iUpper : Integer;
@@ -2356,7 +2356,7 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.Append(Const oStream : TAdvStream; iBytes : Integer);
+Procedure TFslStringBuilder.Append(Const oStream : TFslStream; iBytes : Integer);
 Begin
   If (iBytes > 0) Then
   Begin
@@ -2370,7 +2370,7 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.Insert(Const oStream : TAdvStream; iBytes : Integer; iIndex : Integer);
+Procedure TFslStringBuilder.Insert(Const oStream : TFslStream; iBytes : Integer; iIndex : Integer);
 Begin
   If (iBytes > 0) Then
   Begin
@@ -2388,7 +2388,7 @@ End;
 
 
 
-Procedure TAdvStringBuilder.CommaAdd(const sStr: String);
+Procedure TFslStringBuilder.CommaAdd(const sStr: String);
 Begin
   if Length > 0 Then
     Append(', ');
@@ -2396,7 +2396,7 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.AddCardinalAsBytes(iVal: Cardinal);
+Procedure TFslStringBuilder.AddCardinalAsBytes(iVal: Cardinal);
 Var
   s : AnsiString;
 Begin
@@ -2406,7 +2406,7 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.AddWordAsBytes(iVal: word);
+Procedure TFslStringBuilder.AddWordAsBytes(iVal: word);
 Var
   s : AnsiString;
 Begin
@@ -2416,7 +2416,7 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.AddInt64AsBytes(iVal: Int64);
+Procedure TFslStringBuilder.AddInt64AsBytes(iVal: Int64);
 Var
   s : AnsiString;
 Begin
@@ -2426,7 +2426,7 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.AddByteAsBytes(iVal: Byte);
+Procedure TFslStringBuilder.AddByteAsBytes(iVal: Byte);
 Var
   s : AnsiString;
 Begin
@@ -2436,13 +2436,13 @@ Begin
 End;
 
 
-Procedure TAdvStringBuilder.AppendLine(const sStr: String);
+Procedure TFslStringBuilder.AppendLine(const sStr: String);
 Begin
   Append(sStr);
   AppendEOL;
 End;
 
-procedure TAdvStringBuilder.Append(const bBytes: array of Byte; amount: Integer);
+procedure TFslStringBuilder.Append(const bBytes: array of Byte; amount: Integer);
 var
   i : integer;
 begin
@@ -2452,7 +2452,7 @@ begin
 end;
 
 
-procedure TAdvStringBuilder.Overwrite(index: integer; content: String);
+procedure TFslStringBuilder.Overwrite(index: integer; content: String);
 begin
   if index < 1 Then
     Error('Overwrite', 'index < 1');
@@ -2462,7 +2462,7 @@ begin
     Move(Content[1], FContent[index], System.length(Content));
 end;
 
-procedure TAdvStringBuilder.Read(index: integer; var buffer; ilength: integer);
+procedure TFslStringBuilder.Read(index: integer; var buffer; ilength: integer);
 begin
   if index < 1 Then
     Error('Read', 'index < 1');
@@ -2474,71 +2474,71 @@ end;
 {$ELSE}
 
 
-Procedure TAdvStringBuilder.Clear;
+Procedure TFslStringBuilder.Clear;
 Begin
   FBuilder.Clear;
 End;
 
 
-Function TAdvStringBuilder.GetAsString : String;
+Function TFslStringBuilder.GetAsString : String;
 Begin
   Result := FBuilder.ToString;
 End;
 
 
 
-Procedure TAdvStringBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+Procedure TFslStringBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
 Begin
   FBuilder.Append(StringPadRight(sStr, cPad, iCount));
 End;
 
-Procedure TAdvStringBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+Procedure TFslStringBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
 Begin
   FBuilder.Append(StringPadRight(copy(sStr, 1, iCount), cPad, iCount));
 End;
 
 
-Procedure TAdvStringBuilder.Append(ch : Char);
+Procedure TFslStringBuilder.Append(ch : Char);
 Begin
   FBuilder.Append(ch);
 End;
 
-Procedure TAdvStringBuilder.Append(Const sStr : String);
+Procedure TFslStringBuilder.Append(Const sStr : String);
 Begin
   FBuilder.Append(sStr);
 End;
 
 
 
-Procedure TAdvStringBuilder.Append(Const oBuilder : TAdvStringBuilder);
+Procedure TFslStringBuilder.Append(Const oBuilder : TFslStringBuilder);
 Begin
   Append(oBuilder.AsString);
 End;
 
 
-procedure TAdvStringBuilder.Append(const sStr: AnsiString);
+procedure TFslStringBuilder.Append(const sStr: AnsiString);
 begin
 
 end;
 
-Procedure TAdvStringBuilder.AppendEOL;
+Procedure TFslStringBuilder.AppendEOL;
 Begin
   Append(cReturn);
 End;
 
 
-Procedure TAdvStringBuilder.Insert(Const sStr : String; iIndex : Integer);
+Procedure TFslStringBuilder.Insert(Const sStr : String; iIndex : Integer);
 Begin
   FBuilder.Insert(iIndex, sStr);
 End;
 
 
-Procedure TAdvStringBuilder.Insert(Const oBuilder : TAdvStringBuilder; iIndex : Integer);
+Procedure TFslStringBuilder.Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer);
 Begin
   Insert(oBuilder.AsString, iIndex);
 End;
 
-procedure TAdvStringBuilder.WriteToStream(aStream: TStream; encoding : TEncoding);
+procedure TFslStringBuilder.WriteToStream(aStream: TStream; encoding : TEncoding);
 var
   a : TBytes;
 Begin
@@ -2549,37 +2549,37 @@ Begin
     aStream.Write(a[0], System.length(a));
 End;
 
-Procedure TAdvStringBuilder.Delete(iIndex, iLength : Integer);
+Procedure TFslStringBuilder.Delete(iIndex, iLength : Integer);
 Begin
   FBuilder.Remove(iIndex, iLength);
 End;
 
 
-destructor TAdvStringBuilder.Destroy;
+destructor TFslStringBuilder.Destroy;
 begin
   FBuilder.Free;
   inherited;
 end;
 
-function TAdvStringBuilder.GetLength: Integer;
+function TFslStringBuilder.GetLength: Integer;
 begin
   result := FBuilder.Length;
 end;
 
-constructor TAdvStringBuilder.Create;
+constructor TFslStringBuilder.Create;
 begin
   inherited;
   FBuilder := TStringBuilder.Create;
 end;
 
-procedure TAdvStringBuilder.CommaAdd(const sStr: String);
+procedure TFslStringBuilder.CommaAdd(const sStr: String);
 begin
   if Length > 0 Then
     Append(', ');
   Append(sStr);
 end;
 
-procedure TAdvStringBuilder.AddCardinalAsBytes(iVal: Cardinal);
+procedure TFslStringBuilder.AddCardinalAsBytes(iVal: Cardinal);
 var
   s : AnsiString;
 begin
@@ -2588,7 +2588,7 @@ begin
   Append(s);
 end;
 
-procedure TAdvStringBuilder.AddWordAsBytes(iVal: word);
+procedure TFslStringBuilder.AddWordAsBytes(iVal: word);
 var
   s : AnsiString;
 begin
@@ -2597,7 +2597,7 @@ begin
   Append(s);
 end;
 
-procedure TAdvStringBuilder.AddInt64AsBytes(iVal: Int64);
+procedure TFslStringBuilder.AddInt64AsBytes(iVal: Int64);
 var
   s : AnsiString;
 begin
@@ -2606,7 +2606,7 @@ begin
   Append(s);
 end;
 
-procedure TAdvStringBuilder.AddByteAsBytes(iVal: Byte);
+procedure TFslStringBuilder.AddByteAsBytes(iVal: Byte);
 var
   s : AnsiString;
 begin
@@ -2615,7 +2615,7 @@ begin
   Append(s);
 end;
 
-procedure TAdvStringBuilder.AppendLine(const sStr: String);
+procedure TFslStringBuilder.AppendLine(const sStr: String);
 begin
   Append(sStr);
   AppendEOL;

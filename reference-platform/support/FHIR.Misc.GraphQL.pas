@@ -43,7 +43,7 @@ Type
   TGraphQLFragment = class;
   TGraphQLArgument = class;
 
-  TGraphQLValue = class (TAdvObject)
+  TGraphQLValue = class (TFslObject)
   public
     Function Link : TGraphQLValue; overload;
     procedure write(str : TStringBuilder; indent : integer); virtual;
@@ -101,21 +101,21 @@ Type
 
   TGraphQLObjectValue = class (TGraphQLValue)
   private
-    FFields : TAdvList<TGraphQLArgument>;
+    FFields : TFslList<TGraphQLArgument>;
   public
     Constructor Create; overload; override;
     Constructor Create(json : TJsonObject); overload;
     Destructor Destroy; override;
     Function Link : TGraphQLObjectValue; overload;
-    property Fields : TAdvList<TGraphQLArgument> read FFields;
+    property Fields : TFslList<TGraphQLArgument> read FFields;
     function addField(name : String; listStatus : TGraphQLArgumentListStatus) : TGraphQLArgument;
     procedure write(str : TStringBuilder; indent : integer); override;
   end;
 
-  TGraphQLArgument = class (TAdvObject)
+  TGraphQLArgument = class (TFslObject)
   private
     FName: String;
-    FValues: TAdvList<TGraphQLValue>;
+    FValues: TFslList<TGraphQLValue>;
     FListStatus: TGraphQLArgumentListStatus;
     procedure write(str : TStringBuilder; indent : integer);
     procedure valuesFromNode(json : TJsonNode);
@@ -128,60 +128,60 @@ Type
     Function Link : TGraphQLArgument; overload;
     property Name : String read FName write FName;
     property listStatus : TGraphQLArgumentListStatus read FListStatus write FListStatus;
-    property Values : TAdvList<TGraphQLValue> read FValues;
+    property Values : TFslList<TGraphQLValue> read FValues;
 
     function hasValue(value : String) : boolean;
     procedure addValue(value : TGraphQLValue);
 
   end;
 
-  TGraphQLDirective = class (TAdvObject)
+  TGraphQLDirective = class (TFslObject)
   private
     FName: String;
-    FArguments: TAdvList<TGraphQLArgument>;
+    FArguments: TFslList<TGraphQLArgument>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     Function Link : TGraphQLDirective; overload;
     property Name : String read FName write FName;
-    Property Arguments : TAdvList<TGraphQLArgument> read FArguments;
+    Property Arguments : TFslList<TGraphQLArgument> read FArguments;
   end;
 
-  TGraphQLField = class (TAdvObject)
+  TGraphQLField = class (TFslObject)
   private
     FName: String;
-    FSelectionSet: TAdvList<TGraphQLSelection>;
+    FSelectionSet: TFslList<TGraphQLSelection>;
     FAlias: String;
-    FArguments: TAdvList<TGraphQLArgument>;
-    FDirectives: TAdvList<TGraphQLDirective>;
+    FArguments: TFslList<TGraphQLArgument>;
+    FDirectives: TFslList<TGraphQLDirective>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     Function Link : TGraphQLField; overload;
     property Alias : String read FAlias write FAlias;
     Property Name : String read FName write FName;
-    Property Arguments : TAdvList<TGraphQLArgument> read FArguments;
-    property Directives : TAdvList<TGraphQLDirective> read FDirectives;
-    property SelectionSet : TAdvList<TGraphQLSelection> read FSelectionSet;
+    Property Arguments : TFslList<TGraphQLArgument> read FArguments;
+    property Directives : TFslList<TGraphQLDirective> read FDirectives;
+    property SelectionSet : TFslList<TGraphQLSelection> read FSelectionSet;
     function argument(name : String) : TGraphQLArgument;
     function hasDirective(name : String) : boolean;
     function directive(name : String) : TGraphQLDirective;
   end;
 
-  TGraphQLFragmentSpread = class (TAdvObject)
+  TGraphQLFragmentSpread = class (TFslObject)
   private
     FName: String;
-    FDirectives: TAdvList<TGraphQLDirective>;
+    FDirectives: TFslList<TGraphQLDirective>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     Function Link : TGraphQLFragmentSpread; overload;
     property Name : String read FName write FName;
-    property Directives : TAdvList<TGraphQLDirective> read FDirectives;
+    property Directives : TFslList<TGraphQLDirective> read FDirectives;
     function hasDirective(name : String) : boolean;
   end;
 
-  TGraphQLSelection = class (TAdvObject)
+  TGraphQLSelection = class (TFslObject)
   private
     FField : TGraphQLField;
     FInlineFragment: TGraphQLFragment;
@@ -198,7 +198,7 @@ Type
     property InlineFragment : TGraphQLFragment read FInlineFragment write SetInlineFragment;
   end;
 
-  TGraphQLVariable = class (TAdvObject)
+  TGraphQLVariable = class (TFslObject)
   private
     FName: String;
     FDefaultValue: TGraphQLValue;
@@ -213,61 +213,61 @@ Type
   end;
 
   TGraphQLOperationType = (qglotQuery, qglotMutation);
-  TGraphQLOperation = class (TAdvObject)
+  TGraphQLOperation = class (TFslObject)
   private
     FName: String;
     FoperationType: TGraphQLOperationType;
-    FSelectionSet: TAdvList<TGraphQLSelection>;
-    FVariables: TAdvList<TGraphQLVariable>;
-    FDirectives: TAdvList<TGraphQLDirective>;
+    FSelectionSet: TFslList<TGraphQLSelection>;
+    FVariables: TFslList<TGraphQLVariable>;
+    FDirectives: TFslList<TGraphQLDirective>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     Function Link : TGraphQLOperation; overload;
     property operationType : TGraphQLOperationType read FoperationType write FoperationType;
     property Name : String read FName write FName;
-    property Variables : TAdvList<TGraphQLVariable> read FVariables;
-    property Directives : TAdvList<TGraphQLDirective> read FDirectives;
-    property SelectionSet : TAdvList<TGraphQLSelection> read FSelectionSet;
+    property Variables : TFslList<TGraphQLVariable> read FVariables;
+    property Directives : TFslList<TGraphQLDirective> read FDirectives;
+    property SelectionSet : TFslList<TGraphQLSelection> read FSelectionSet;
     function hasDirective(name : String) : boolean;
   end;
 
-  TGraphQLFragment = class (TAdvObject)
+  TGraphQLFragment = class (TFslObject)
   private
     FName: String;
     FTypeCondition: String;
-    FSelectionSet: TAdvList<TGraphQLSelection>;
-    FDirectives: TAdvList<TGraphQLDirective>;
+    FSelectionSet: TFslList<TGraphQLSelection>;
+    FDirectives: TFslList<TGraphQLDirective>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     Function Link : TGraphQLFragment; overload;
     property Name : String read FName write FName;
     property TypeCondition : String read FTypeCondition write FTypeCondition;
-    property Directives : TAdvList<TGraphQLDirective> read FDirectives;
-    property SelectionSet : TAdvList<TGraphQLSelection> read FSelectionSet;
+    property Directives : TFslList<TGraphQLDirective> read FDirectives;
+    property SelectionSet : TFslList<TGraphQLSelection> read FSelectionSet;
     function hasDirective(name : String) : boolean;
   end;
 
-  TGraphQLDocument = class (TAdvObject)
+  TGraphQLDocument = class (TFslObject)
   private
-    FFragments: TAdvList<TGraphQLFragment>;
-    FOperations: TAdvList<TGraphQLOperation>;
+    FFragments: TFslList<TGraphQLFragment>;
+    FOperations: TFslList<TGraphQLOperation>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     Function Link : TGraphQLDocument; overload;
-    property Operations : TAdvList<TGraphQLOperation> read FOperations;
-    property Fragments : TAdvList<TGraphQLFragment> read FFragments;
+    property Operations : TFslList<TGraphQLOperation> read FOperations;
+    property Fragments : TFslList<TGraphQLFragment> read FFragments;
     function fragment(name : String) : TGraphQLFragment;
     function operation(name : String) : TGraphQLOperation;
   end;
 
-  TGraphQLPackage = class (TAdvObject)
+  TGraphQLPackage = class (TFslObject)
   private
     FDocument: TGraphQLDocument;
     FOperationName: String;
-    FVariables: TAdvList<TGraphQLArgument>;
+    FVariables: TFslList<TGraphQLArgument>;
     procedure SetDocument(const Value: TGraphQLDocument);
   public
     Constructor Create; overload; override;
@@ -276,7 +276,7 @@ Type
     function Link : TGraphQLPackage; overload;
     property Document : TGraphQLDocument read FDocument write SetDocument;
     property OperationName : String read FOperationName write FOperationName;
-    property Variables : TAdvList<TGraphQLArgument> read FVariables;
+    property Variables : TFslList<TGraphQLArgument> read FVariables;
   end;
 
   TGraphQLPunctuator = (gqlpBang, gqlpDollar, gqlpOpenBrace, gqlpCloseBrace, gqlpEllipse, gqlpColon, gqlpEquals, gqlpAt, gqlpOpenSquare, gqlpCloseSquare, gqlpOpenCurly, gqlpVertical, gqlpCloseCurly);
@@ -289,7 +289,7 @@ type
 
 // graphql documents are in unicode
 // ignore: BOM, tab, space, #10,#13, comma, comment
-  TGraphQLParser = class (TAdvTextExtractor)
+  TGraphQLParser = class (TFslTextExtractor)
   private
     // lexer
     FToken : TStringBuilder;
@@ -338,7 +338,7 @@ implementation
 constructor TGraphQLArgument.Create;
 begin
   inherited;
-  FValues := TAdvList<TGraphQLValue>.create;
+  FValues := TFslList<TGraphQLValue>.create;
 end;
 
 procedure TGraphQLArgument.addValue(value: TGraphQLValue);
@@ -448,7 +448,7 @@ end;
 constructor TGraphQLDirective.Create;
 begin
   inherited;
-  FArguments := TAdvList<TGraphQLArgument>.create;
+  FArguments := TFslList<TGraphQLArgument>.create;
 end;
 
 destructor TGraphQLDirective.Destroy;
@@ -477,9 +477,9 @@ end;
 constructor TGraphQLField.Create;
 begin
   inherited;
-  FSelectionSet := TAdvList<TGraphQLSelection>.create;
-  FArguments := TAdvList<TGraphQLArgument>.create;
-  FDirectives := TAdvList<TGraphQLDirective>.create;
+  FSelectionSet := TFslList<TGraphQLSelection>.create;
+  FArguments := TFslList<TGraphQLArgument>.create;
+  FDirectives := TFslList<TGraphQLDirective>.create;
 end;
 
 destructor TGraphQLField.Destroy;
@@ -520,7 +520,7 @@ end;
 constructor TGraphQLFragmentSpread.Create;
 begin
   inherited;
-  FDirectives := TAdvList<TGraphQLDirective>.create;
+  FDirectives := TFslList<TGraphQLDirective>.create;
 end;
 
 destructor TGraphQLFragmentSpread.Destroy;
@@ -606,9 +606,9 @@ end;
 constructor TGraphQLOperation.Create;
 begin
   inherited;
-  FSelectionSet := TAdvList<TGraphQLSelection>.create;
-  FVariables := TAdvList<TGraphQLVariable>.create;
-  FDirectives := TAdvList<TGraphQLDirective>.create;
+  FSelectionSet := TFslList<TGraphQLSelection>.create;
+  FVariables := TFslList<TGraphQLVariable>.create;
+  FDirectives := TFslList<TGraphQLDirective>.create;
 end;
 
 destructor TGraphQLOperation.Destroy;
@@ -640,8 +640,8 @@ end;
 constructor TGraphQLFragment.Create;
 begin
   inherited;
-  FSelectionSet := TAdvList<TGraphQLSelection>.create;
-  FDirectives := TAdvList<TGraphQLDirective>.create;
+  FSelectionSet := TFslList<TGraphQLSelection>.create;
+  FDirectives := TFslList<TGraphQLDirective>.create;
 end;
 
 destructor TGraphQLFragment.Destroy;
@@ -671,8 +671,8 @@ end;
 constructor TGraphQLDocument.Create;
 begin
   inherited;
-  FFragments := TAdvList<TGraphQLFragment>.create;
-  FOperations := TAdvList<TGraphQLOperation>.create;
+  FFragments := TFslList<TGraphQLFragment>.create;
+  FOperations := TFslList<TGraphQLOperation>.create;
 end;
 
 destructor TGraphQLDocument.Destroy;
@@ -847,10 +847,10 @@ end;
 class function TGraphQLParser.parse(source: String): TGraphQLPackage;
 var
   this : TGraphQLParser;
-  stream : TAdvStringStream;
+  stream : TFslStringStream;
   doc : TGraphQLDocument;
 begin
-  stream := TAdvStringStream.Create;
+  stream := TFslStringStream.Create;
   try
     stream.Bytes := TENcoding.UTF8.GetBytes(source);
     this := TGraphQLParser.Create(stream.link);
@@ -874,10 +874,10 @@ end;
 class function TGraphQLParser.parse(source: TStream): TGraphQLPackage;
 var
   this : TGraphQLParser;
-  stream : TAdvVCLStream;
+  stream : TFslVCLStream;
   doc : TGraphQLDocument;
 begin
-  stream := TAdvVCLStream.Create;
+  stream := TFslVCLStream.Create;
   try
     stream.Stream := source;
     this := TGraphQLParser.Create(stream.link);
@@ -1073,14 +1073,14 @@ var
   vl : TJsonObject;
   n : String;
   this : TGraphQLParser;
-  stream : TAdvStringStream;
+  stream : TFslStringStream;
 begin
   json := TJSONParser.Parse(source);
   try
     result := TGraphQLPackage.Create(TGraphQLDocument.Create);
     try
       result.FOperationName := json.str['operationName'];
-      stream := TAdvStringStream.Create;
+      stream := TFslStringStream.Create;
       try
         stream.Bytes := TENcoding.UTF8.GetBytes(json.str['query']);
         this := TGraphQLParser.Create(stream.link);
@@ -1450,7 +1450,7 @@ end;
 constructor TGraphQLObjectValue.Create;
 begin
   inherited;
-  FFields := TAdvList<TGraphQLArgument>.create;
+  FFields := TFslList<TGraphQLArgument>.create;
 end;
 
 constructor TGraphQLObjectValue.Create(json: TJsonObject);
@@ -1504,7 +1504,7 @@ end;
 constructor TGraphQLPackage.Create;
 begin
   inherited;
-  FVariables := TAdvList<TGraphQLArgument>.create;
+  FVariables := TFslList<TGraphQLArgument>.create;
 end;
 
 constructor TGraphQLPackage.Create(document: TGraphQLDocument);

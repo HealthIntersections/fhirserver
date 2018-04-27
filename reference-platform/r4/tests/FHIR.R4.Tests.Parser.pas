@@ -1,4 +1,4 @@
-unit FHIRParserTests4;
+unit FHIR.R4.Tests.Parser;
 
 
 {
@@ -36,7 +36,7 @@ uses
   Windows, SysUtils, Classes,
   DUnitX.TestFramework,
   FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser,
-  FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIRTestWorker4,
+  FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker,
   XmlTests, JsonTests;
 
 type

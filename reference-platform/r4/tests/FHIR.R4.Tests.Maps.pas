@@ -1,4 +1,4 @@
-unit StructureMapTests;
+unit FHIR.R4.Tests.Maps;
 
 
 {
@@ -29,17 +29,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
-
 interface
 
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  TextUtilities,
+  FHIR.Support.System, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.ElementModel,
-  FHIR.Tools.Context, FHIRTestWorker, FHIR.Tools.MapUtilities, FHIR.Tools.Profiles;
+  FHIR.Base.Objects, FHIR.Tools.Parser,
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.MapUtilities, FHIR.R4.Profiles;
 
 type
   StructureMapTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
@@ -51,7 +49,7 @@ type
   private
   public
     function oid2Uri(oid : String) : String; override;
-    function translate(appInfo : TAdvObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
+    function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
     procedure log(s : String); override;
   end;
 
@@ -121,7 +119,7 @@ end;
 
 constructor StructureMapTestCaseAttribute.Create;
 begin
-  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\guides\ccda\maps', '.map');
+  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\guides\ccda\maps', '.map', 0);
 end;
 
 { TMapTransformTests }
@@ -137,7 +135,6 @@ end;
 procedure TMapTransformTests.loadMaps(folder: String);
 var
   sr : TSearchRec;
-  s : String;
 begin
   if FindFirst(Folder+'\*.map', faAnyFile, SR) = 0 then
     repeat
@@ -148,9 +145,9 @@ end;
 procedure TMapTransformTests.setup;
 begin
   ctxt := TTestingWorkerContext.Use;
-  (ctxt as TBaseWorkerContext).LoadFromDefinitions(IncludeTrailingBackslash(GBasePath)+'build\guides\ccda\cda\cda.zip');
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TAdvMap<TFHIRStructureMap>.create, TTestTransformerServices.Create);
-  loadMaps(IncludeTrailingBackslash(GBasePath)+'build\guides\ccda\maps');
+  (ctxt as TBaseWorkerContext).LoadFromDefinitions(Path([GBasePath, 'build', 'guides', 'ccda', 'cda', 'cda.zip']));
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create, TTestTransformerServices.Create);
+  loadMaps(Path([GBasePath, 'build', 'guides', 'ccda', 'maps']));
 end;
 
 procedure TMapTransformTests.teardown;
@@ -161,7 +158,6 @@ end;
 
 procedure TMapTransformTests.testCD;
 var
-  res : TFhirResource;
   x : TFHIRXmlParser;
   s : TStringStream;
   cd : TFhirCodeableConcept;
@@ -204,12 +200,12 @@ begin
     result := 'http://unknown.com/what?';
 end;
 
-function TTestTransformerServices.translate(appInfo: TAdvObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
+function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
   raise Exception.Create('Not done yet');
 end;
 
 initialization
   TDUnitX.RegisterTestFixture(TMapParserTests);
-  TDUnitX.RegisterTestFixture(TMapTransformTests);
+//  TDUnitX.RegisterTestFixture(TMapTransformTests);
 end.

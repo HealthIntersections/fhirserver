@@ -86,7 +86,7 @@ uses
 
 procedure TFHIRXhtmlComposer.Compose(stream: TStream; oResource: TFhirResourceV);
 var
-  s : TAdvStringBuilder;
+  s : TFslStringBuilder;
   ss : TBytesStream;
   xml : TFHIRXmlComposer;
   c : integer;
@@ -123,7 +123,7 @@ begin
     title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', lang)+' "'+id+'" '+GetFhirMessage('NAME_VERSION', lang)+' "'+ver + '" ('+CODES_TFhirResourceType[res.ResourceType]+') ', xmlText);
 
   c := 0;
-  s := TAdvStringBuilder.create;
+  s := TFslStringBuilder.create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -226,10 +226,10 @@ const
 {
 procedure TFHIRXhtmlComposer.Compose(stream: TStream; oMeta: TFhirMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty: Boolean; links: TFhirBundleLinkList);
 var
-  s : TAdvStringBuilder;
+  s : TFslStringBuilder;
   i : integer;
 begin
-  s := TAdvStringBuilder.create;
+  s := TFslStringBuilder.create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -308,7 +308,7 @@ end;
 
 procedure TFHIRXhtmlComposer.ComposeBundle(stream: TStream; bundle: TFHIRBundle);
 var
-  s : TAdvStringBuilder;
+  s : TFslStringBuilder;
   i : integer;
   e : TFhirBundleEntry;
   ss : TBytesStream;
@@ -317,7 +317,7 @@ var
   t, link, text, sl, ul : String;
   a : TArray<String>;
 begin
-  s := TAdvStringBuilder.create;
+  s := TFslStringBuilder.create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -849,7 +849,7 @@ end.
 
 //procedure TFHIRXhtmlComposer.Compose(stream: TStream; oFeed: TFHIRAtomFeed; isPretty: Boolean);
 //var
-//  s : TAdvStringBuilder;
+//  s : TFslStringBuilder;
 //  i : integer;
 //  a : string;
 //  e : TFHIRAtomEntry;
@@ -859,7 +859,7 @@ end.
 //  u : string;
 //begin
 //  a := oFeed.authorUri;
-//  s := TAdvStringBuilder.create;
+//  s := TFslStringBuilder.create;
 //  try
 //    s.append(
 //'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+

@@ -42,7 +42,7 @@ uses
 Type
   TMPICertainty = (mcNull, mcCertain, mcProbable, mcPossible);
 
-  TMPISearchProcessor = class (TAdvObject)
+  TMPISearchProcessor = class (TFslObject)
   private
     // inputs
     Fparams: TParseMap;
@@ -61,7 +61,7 @@ Type
     FFirstName : String;
     FFamilyName : String;
     FIdentifier : String;
-    FSessionCompartments: TAdvList<TFHIRCompartmentId>;
+    FSessionCompartments: TFslList<TFHIRCompartmentId>;
     FCompartment: TFHIRCompartmentId;
 
 
@@ -80,13 +80,13 @@ Type
     procedure runPossibleSearch1;
     procedure runPossibleSearch2;
     procedure SetCompartment(const Value: TFHIRCompartmentId);
-    procedure SetSessionCompartments(const Value: TAdvList<TFHIRCompartmentId>);
+    procedure SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
   public
     Destructor Destroy; override;
 
     property typekey : integer read Ftypekey write Ftypekey;
     property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
-    property sessionCompartments : TAdvList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
+    property sessionCompartments : TFslList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
     property baseURL : string read FbaseURL write FbaseURL;
     property lang : string read Flang write Flang;
     property params : TParseMap read Fparams write Setparams;
@@ -289,7 +289,7 @@ begin
   Fsession := Value;
 end;
 
-procedure TMPISearchProcessor.SetSessionCompartments(const Value: TAdvList<TFHIRCompartmentId>);
+procedure TMPISearchProcessor.SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
 begin
   FSessionCompartments.Free;
   FSessionCompartments := Value;

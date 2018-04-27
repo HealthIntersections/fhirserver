@@ -119,7 +119,7 @@ Function removeCaseAndAccents(s : String) : String;
 
 
 type
-  TResourceWithReference = class (TAdvObject)
+  TResourceWithReference = class (TFslObject)
   private
     FReference: String;
     FResource: TFHIRResource;

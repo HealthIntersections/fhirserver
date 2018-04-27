@@ -93,7 +93,7 @@ type
     FCSTab : TTabItem;
     FCsForm : TCapabilityStatementEditorFrame;
     FPatBundle, FConfBundle : TFhirBundle;
-    FConfMatches : TAdvList<TFHIRResource>;
+    FConfMatches : TFslList<TFHIRResource>;
     function client : TFhirClient;
     procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
@@ -376,7 +376,7 @@ begin
   cbxProfile.ItemIndex := Settings.getValue('Registry-search', 'profile', 0);
 
   btnFetchMore.Visible := false;
-  FConfMatches := TAdvList<TFHIRResource>.create;
+  FConfMatches := TFslList<TFHIRResource>.create;
 end;
 
 

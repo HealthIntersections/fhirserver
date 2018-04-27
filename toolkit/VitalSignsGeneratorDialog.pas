@@ -12,7 +12,7 @@ uses
   ToolkitSettings, FMX.Edit;
 
 type
-  TDataPoint = class (TAdvObject)
+  TDataPoint = class (TFslObject)
   private
     FDiastolic: String;
     FSaturation: String;
@@ -45,7 +45,7 @@ type
   private
     FClient: TFHIRClient;
     FSettings: TFHIRToolkitSettings;
-    FData : TAdvList<TDataPoint>;
+    FData : TFslList<TDataPoint>;
     FObservations : TFhirBundle;
     procedure SetClient(const Value: TFHIRClient);
     procedure SetSettings(const Value: TFHIRToolkitSettings);
@@ -110,7 +110,7 @@ procedure TVitalSignsGeneratorForm.loadData;
     d.Temperature := Temperature;
   end;
 begin
-  FData := TAdvList<TDataPoint>.create;
+  FData := TFslList<TDataPoint>.create;
   dp(0, '80', '120', '95', '37.1');
   dp(1, '80.23134274', '121.3510661', '95.12530267', '37.09470397');
   dp(2, '80.46225173', '122.6983105', '95.25041128', '37.0894059');

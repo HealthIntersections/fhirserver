@@ -58,7 +58,7 @@ Uses
   FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Generics,
   YuStemmer, FHIR.Support.DateTime,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations,
-  FHIR.Snomed.Expressions, TerminologyServices;
+  FHIR.Snomed.Expressions, FHIR.Tx.Service;
 
 Const
   SNOMED_CACHE_VERSION = '15'; // 15: add default language refset
@@ -120,11 +120,11 @@ type
 
   // We store snomed as three Strings
   //   each entry in the String starts with a byte length, and then the series of characters as bytes
-  TSnomedStrings = class (TAdvObject)
+  TSnomedStrings = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       Function GetEntry(iIndex : Cardinal):String;
 
@@ -140,11 +140,11 @@ const
 
 Type
   // word index. Every word is 5 bytes - a 4 byte index into the strings, and a 1 byte flag
-  TSnomedWords = class (TAdvObject)
+  TSnomedWords = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
@@ -156,11 +156,11 @@ Type
   End;
 
   // stem word index. Every word is 8 bytes - a 4 byte index into the strings, and a 4 byte index into the references
-  TSnomedStems = class (TAdvObject)
+  TSnomedStems = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var reference : Cardinal);
       Function Count : Integer;
@@ -173,11 +173,11 @@ Type
 
 
   // 2. a list of list of references
-  TSnomedReferences = class (TAdvObject)
+  TSnomedReferences = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       Function GetReferences(iIndex : Cardinal) : TCardinalArray;
       Function Getlength(iIndex : Cardinal) : Cardinal;
@@ -216,11 +216,11 @@ const
   FLAG_PendingMove = 11;
 
 Type
-  TSnomedDescriptions = class (TAdvObject)
+  TSnomedDescriptions = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       function Count : Cardinal;
       Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
@@ -234,11 +234,11 @@ Type
       Procedure SetRefsets(iIndex : Cardinal; refsets, valueses : Cardinal);
   End;
 
-  TSnomedDescriptionIndex = class (TAdvObject)
+  TSnomedDescriptionIndex = class (TFslObject)
   Private
     FMaster : TBytes;
     FLength : Cardinal;
-    FBuilder : TAdvBytesBuilder;
+    FBuilder : TFslBytesBuilder;
   Public
     Function FindDescription(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
 
@@ -269,11 +269,11 @@ Const
   CONCEPT_SIZE = 56;
 
 Type
-  TSnomedConceptList = class (TAdvObject)
+  TSnomedConceptList = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       Function FindConcept(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
       function getConceptId(iIndex : Cardinal) : UInt64;
@@ -322,11 +322,11 @@ Const
   REFSET_SIZE = 28;
 
 Type
-  TSnomedRelationshipList = class (TAdvObject)
+  TSnomedRelationshipList = class (TFslObject)
     private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       // for Persistence
       Procedure GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Active, Defining : Boolean; var Group : Integer);
@@ -356,11 +356,11 @@ Type
   TRefSetMemberEntryArray = array of TRefSetMemberEntry;
 
   // 2. a list of list of references
-  TSnomedReferenceSetMembers = class (TAdvObject)
+  TSnomedReferenceSetMembers = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       Function GetMembers(iIndex : Cardinal) : TSnomedReferenceSetMemberArray;
       Function GetMemberCount(iIndex : Cardinal) : cardinal;
@@ -371,11 +371,11 @@ Type
   End;
 
 
-  TSnomedReferenceSetIndex = class (TAdvObject)
+  TSnomedReferenceSetIndex = class (TFslObject)
   Private
     FMaster : TBytes;
     FLength : Cardinal;
-    FBuilder : TAdvBytesBuilder;
+    FBuilder : TFslBytesBuilder;
   Public
     Procedure GetReferenceSet(iIndex: Cardinal; var iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
@@ -395,14 +395,14 @@ operations
   is valid (id)
 }
 
-  TSnomedConceptSummary = class (TAdvObject)
+  TSnomedConceptSummary = class (TFslObject)
   private
     FIsPrimitive: boolean;
     FConcept: String;
     FDescription: String;
-    FParents: TAdvStringList;
+    FParents: TFslStringList;
     FStatus: TSnomedConceptStatus;
-    FChildren: TAdvStringList;
+    FChildren: TFslStringList;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -410,8 +410,8 @@ operations
     Property Description : String read FDescription;
     Property IsPrimitive : boolean read FIsPrimitive;
     Property Status : TSnomedConceptStatus read FStatus;
-    Property Children : TAdvStringList read FChildren;
-    Property Parents : TAdvStringList read FParents;
+    Property Children : TFslStringList read FChildren;
+    Property Parents : TFslStringList read FParents;
   End;
 
 *)
@@ -449,17 +449,17 @@ operations
 
   TSnomedRefinementGroupMatchState = (gmsNoMatch, gmsIdentical, gmsSubsumed);
 
-  TMatchingConcept = class (TAdvObject)
+  TMatchingConcept = class (TFslObject)
   private
     FMatched : String;
-    FUnmatched : TAdvList<TSnomedRefinementGroup>;
+    FUnmatched : TFslList<TSnomedRefinementGroup>;
   public
     Constructor Create(match : String); overload;
-    Constructor Create(match : String; nonmatched : TAdvList<TSnomedRefinementGroup>); overload;
+    Constructor Create(match : String; nonmatched : TFslList<TSnomedRefinementGroup>); overload;
     Destructor Destroy; override;
 
     property matched : String read FMatched;
-    property Unmatched : TAdvList<TSnomedRefinementGroup> read FUnmatched;
+    property Unmatched : TFslList<TSnomedRefinementGroup> read FUnmatched;
   end;
 
   TSnomedServices = class (TCodeSystemProvider)
@@ -513,16 +513,16 @@ operations
 //    function findRefinement(ref: cardinal; b : TSnomedExpression): TSnomedExpression;
 //    procedure findRefinements(exp: TSnomedExpression; relationship, focus: Cardinal);
     function findMatchingGroup(r : TSnomedRefinementGroup; exp : TSnomedExpression) : TSnomedRefinementGroup; overload;
-    function findMatchingGroup(r : TSnomedRefinementGroup; grps : TAdvList<TSnomedRefinementGroup>) : TSnomedRefinementGroup; overload;
+    function findMatchingGroup(r : TSnomedRefinementGroup; grps : TFslList<TSnomedRefinementGroup>) : TSnomedRefinementGroup; overload;
     function groupsMatch(a, b : TSnomedRefinementGroup): boolean;
     function subsumesGroup(a, b : TSnomedRefinementGroup): boolean;
     function subsumesConcept(a, b : TSnomedConcept): boolean;
 
     procedure createDefinedExpr(reference : Cardinal; exp : TSnomedExpression; ancestor : boolean); overload;
-    procedure findMatchingConcepts(list : TAdvList<TMatchingConcept>; reference : cardinal; refinements : TAdvList<TSnomedRefinementGroup>);
-    function checkGroupStateInRefinements(grp : TSnomedRefinementGroup; refinements : TAdvList<TSnomedRefinementGroup>; grps : TAdvList<TSnomedRefinementGroup>) : TSnomedRefinementGroupMatchState;
-    function listNonMatchingGroups(tgt, src : TAdvList<TSnomedRefinementGroup>) : TAdvList<TSnomedRefinementGroup>;
-    procedure mergeRefinements(list : TAdvList<TSnomedRefinement>);
+    procedure findMatchingConcepts(list : TFslList<TMatchingConcept>; reference : cardinal; refinements : TFslList<TSnomedRefinementGroup>);
+    function checkGroupStateInRefinements(grp : TSnomedRefinementGroup; refinements : TFslList<TSnomedRefinementGroup>; grps : TFslList<TSnomedRefinementGroup>) : TSnomedRefinementGroupMatchState;
+    function listNonMatchingGroups(tgt, src : TFslList<TSnomedRefinementGroup>) : TFslList<TSnomedRefinementGroup>;
+    procedure mergeRefinements(list : TFslList<TSnomedRefinement>);
     function mergeGroups(grp1, grp2 : TSnomedRefinementGroup) : boolean;
     procedure rationaliseExpr(exp: TSnomedExpression);
     function GetEditionName: String;
@@ -642,19 +642,19 @@ operations
     function displayExpression(source : TSnomedExpression) : String;  overload;
     function expressionsEquivalent(a, b : TSnomedExpression; var msg : String) : boolean;  overload;
     function normaliseExpression(exp : TSnomedExpression) : TSnomedExpression;  overload;
-    function condenseExpression(exp : TSnomedExpression) : TAdvList<TMatchingConcept>;  overload;
+    function condenseExpression(exp : TSnomedExpression) : TFslList<TMatchingConcept>;  overload;
     function expressionSubsumes(a, b : TSnomedExpression) : boolean;  overload;
     function createNormalForm(reference : Cardinal) : TSnomedExpression; overload;
 
   End;
 
-  TSnomedServiceList = class (TAdvObjectList)
+  TSnomedServiceList = class (TFslObjectList)
   Private
     FDefinition: TSnomedServices;
     function GetDefinition(iIndex: Integer): TSnomedServices;
     procedure SetDefinition(const Value: TSnomedServices);
   Protected
-    Function ItemClass : TAdvObjectClass; Override;
+    Function ItemClass : TFslObjectClass; Override;
   Public
     Destructor Destroy; Override;
 
@@ -707,7 +707,7 @@ end;
 
 procedure TSnomedStrings.Reopen;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
   FBuilder.Append(FMaster);
 end;
 
@@ -732,7 +732,7 @@ end;
 
 procedure TSnomedStrings.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 { TSnomedReferences }
@@ -782,7 +782,7 @@ end;
 
 procedure TSnomedReferences.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 function TSnomedReferences.Getlength(iIndex: Cardinal): Cardinal;
@@ -811,7 +811,7 @@ end;
 
 procedure TSnomedDescriptions.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 Function TSnomedDescriptions.AddDescription(iDesc : Cardinal; id : UInt64; date : TSnomedDate; concept, module, kind, caps : Cardinal; active : Boolean; lang : byte) : Cardinal;
@@ -894,7 +894,7 @@ end;
 
 procedure TSnomedConceptList.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 Function TSnomedConceptList.AddConcept(iIdentity : UInt64; effectiveTime : TSnomedDate; iFlags : Byte) : Cardinal;
@@ -2078,13 +2078,13 @@ begin
   result := FConcept.FindConcept(StringToIdOrZero(conceptId), i);
 end;
 
-function TSnomedServices.condenseExpression(exp: TSnomedExpression): TAdvList<TMatchingConcept>;
+function TSnomedServices.condenseExpression(exp: TSnomedExpression): TFslList<TMatchingConcept>;
 var
-  grps : TAdvList<TSnomedRefinementGroup>;
+  grps : TFslList<TSnomedRefinementGroup>;
   ref : TSnomedRefinement;
   grp : TSnomedRefinementGroup;
 begin
-  grps := TAdvList<TSnomedRefinementGroup>.create;
+  grps := TFslList<TSnomedRefinementGroup>.create;
   try
     grps.AddAll(exp.refinementGroups);
     for ref in exp.refinements do
@@ -2094,7 +2094,7 @@ begin
       grp.refinements.Add(ref.Link);
     end;
 
-    result := TAdvList<TMatchingConcept>.create;
+    result := TFslList<TMatchingConcept>.create;
     try
       if (exp.concepts.Count = 1) then
       begin
@@ -2519,7 +2519,7 @@ end;
 
 procedure TSnomedRelationshipList.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 Function TSnomedRelationshipList.AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Active, Defining : Boolean; Group : integer) : Cardinal;
@@ -2608,7 +2608,7 @@ end;
 
 procedure TSnomedWords.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 { TSnomedStems }
@@ -2651,7 +2651,7 @@ end;
 
 procedure TSnomedStems.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 { TSnomedServiceList }
@@ -2691,7 +2691,7 @@ begin
   result := FDefinition <> Nil;
 end;
 
-function TSnomedServiceList.ItemClass: TAdvObjectClass;
+function TSnomedServiceList.ItemClass: TFslObjectClass;
 begin
   result := TSnomedServices;
 end;
@@ -2775,7 +2775,7 @@ end;
 
 procedure TSnomedReferenceSetIndex.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 { TSnomedDescriptionIndex }
@@ -2822,7 +2822,7 @@ end;
 
 procedure TSnomedDescriptionIndex.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 { TSnomedReferenceSetMembers }
@@ -2914,7 +2914,7 @@ end;
 
 procedure TSnomedReferenceSetMembers.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 function TSnomedServices.buildValueSet(url : String): TFhirValueSet;
@@ -3775,7 +3775,7 @@ var
   Group : integer;
   Active, Defining : boolean;
   ref : TSnomedRefinement;
-  groups : TAdvMap<TSnomedRefinementGroup>;
+  groups : TFslMap<TSnomedRefinementGroup>;
   grp : TSnomedRefinementGroup;
 begin
   if isPrimitive(reference) then
@@ -3789,7 +3789,7 @@ begin
       createDefinedExpr(c, exp, true);
     if not ancestor or not ASSUME_CLASSIFIED then
     begin
-      groups := TAdvMap<TSnomedRefinementGroup>.create;
+      groups := TFslMap<TSnomedRefinementGroup>.create;
       try
         for r in GetDefiningRelationships(reference) do
         begin
@@ -3964,7 +3964,7 @@ begin
 end;
 
 function TSnomedServices.mergeGroups(grp1, grp2: TSnomedRefinementGroup): boolean;
-  function getRef(c : cardinal; list: TAdvList<TSnomedRefinement>) : TSnomedRefinement;
+  function getRef(c : cardinal; list: TFslList<TSnomedRefinement>) : TSnomedRefinement;
   var
     t : TSnomedRefinement;
   begin
@@ -4043,7 +4043,7 @@ begin
   end;
 end;
 
-procedure TSnomedServices.mergeRefinements(list : TAdvList<TSnomedRefinement>);
+procedure TSnomedServices.mergeRefinements(list : TFslList<TSnomedRefinement>);
 var
   i, j : integer;
   ref1, ref2 : TSnomedRefinement;
@@ -4217,7 +4217,7 @@ begin
   result := (a.reference <> NO_REFERENCE) and (b.reference <> NO_REFERENCE) and Subsumes(a.reference, b.reference);
 end;
 
-procedure TSnomedServices.findMatchingConcepts(list: TAdvList<TMatchingConcept>; reference: cardinal; refinements: TAdvList<TSnomedRefinementGroup>);
+procedure TSnomedServices.findMatchingConcepts(list: TFslList<TMatchingConcept>; reference: cardinal; refinements: TFslList<TSnomedRefinementGroup>);
 var
   children : TCardinalArray;
   child : Cardinal;
@@ -4226,7 +4226,7 @@ var
   grp : TSnomedRefinementGroup;
   state : TSnomedRefinementGroupMatchState;
   ref : TSnomedRefinement;
-  grps, grpNM : TAdvList<TSnomedRefinementGroup>;
+  grps, grpNM : TFslList<TSnomedRefinementGroup>;
   s : String;
 begin
   children := GetConceptChildren(reference);
@@ -4246,7 +4246,7 @@ begin
 
       allMatched := true;
       oneUnMatched := false;
-      grps := TAdvList<TSnomedRefinementGroup>.create;
+      grps := TFslList<TSnomedRefinementGroup>.create;
       try
         for grp in exp.refinementGroups do
         begin
@@ -4285,7 +4285,7 @@ begin
   end;
 end;
 
-function TSnomedServices.checkGroupStateInRefinements(grp : TSnomedRefinementGroup; refinements : TAdvList<TSnomedRefinementGroup>; grps : TAdvList<TSnomedRefinementGroup>) : TSnomedRefinementGroupMatchState;
+function TSnomedServices.checkGroupStateInRefinements(grp : TSnomedRefinementGroup; refinements : TFslList<TSnomedRefinementGroup>; grps : TFslList<TSnomedRefinementGroup>) : TSnomedRefinementGroupMatchState;
 var
   g : TSnomedRefinementGroup;
 begin
@@ -4302,11 +4302,11 @@ begin
   end;
 end;
 
-function TSnomedServices.listNonMatchingGroups(tgt, src : TAdvList<TSnomedRefinementGroup>) : TAdvList<TSnomedRefinementGroup>;
+function TSnomedServices.listNonMatchingGroups(tgt, src : TFslList<TSnomedRefinementGroup>) : TFslList<TSnomedRefinementGroup>;
 var
   g, r : TSnomedRefinementGroup;
 begin
-  result := TAdvList<TSnomedRefinementGroup>.create;
+  result := TFslList<TSnomedRefinementGroup>.create;
   try
     for g in tgt do
     begin
@@ -4345,7 +4345,7 @@ begin
   end;
 end;
 
-function TSnomedServices.findMatchingGroup(r : TSnomedRefinementGroup; grps : TAdvList<TSnomedRefinementGroup>) : TSnomedRefinementGroup;
+function TSnomedServices.findMatchingGroup(r : TSnomedRefinementGroup; grps : TFslList<TSnomedRefinementGroup>) : TSnomedRefinementGroup;
 var
   t : TSnomedRefinementGroup;
   refs, reft : TSnomedRefinement;
@@ -4787,14 +4787,14 @@ constructor TMatchingConcept.Create(match : String);
 begin
   inherited Create;
   FMatched := match;
-  FUnmatched := TAdvList<TSnomedRefinementGroup>.create;
+  FUnmatched := TFslList<TSnomedRefinementGroup>.create;
 end;
 
-constructor TMatchingConcept.Create(match : String; nonmatched: TAdvList<TSnomedRefinementGroup>);
+constructor TMatchingConcept.Create(match : String; nonmatched: TFslList<TSnomedRefinementGroup>);
 begin
   inherited Create;
   FMatched := match;
-  FUnmatched := TAdvList<TSnomedRefinementGroup>.create;
+  FUnmatched := TFslList<TSnomedRefinementGroup>.create;
   FUnmatched.AddAll(nonmatched);
 end;
 

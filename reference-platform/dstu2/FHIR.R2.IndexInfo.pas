@@ -43,7 +43,7 @@ uses
 
 Type
 
-  TFHIRIndexBuilder = class (TAdvObject)
+  TFHIRIndexBuilder = class (TFslObject)
   private
     {$IFDEF FHIR_ACCOUNT}
     procedure buildIndexesForAccount(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);

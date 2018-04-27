@@ -113,7 +113,7 @@ uses
   FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities;
 
 type
-  TRegisteredCDSHook = class (TAdvObject)
+  TRegisteredCDSHook = class (TFslObject)
   private
     Fname: String;
     FpreFetch: TStringList;
@@ -134,7 +134,7 @@ const
   CODES_TSmartAppLaunchMode : array [TSmartAppLaunchMode] of string = ('None', 'OAuth Client', 'Backend Services');
 type
   // information about a server required to get Smart App Launch working
-  TRegisteredFHIRServer = class (TAdvObject)
+  TRegisteredFHIRServer = class (TFslObject)
   private
     Fname: String;
     FfhirEndpoint: String;
@@ -142,7 +142,7 @@ type
     Fclientid: String;
     Fclientsecret: String;
     FautoUseHooks: boolean;
-    Fcdshooks: TAdvList<TRegisteredCDSHook>;
+    Fcdshooks: TFslList<TRegisteredCDSHook>;
     Fredirectport: integer;
     FtokenEndpoint: String;
     FauthorizeEndpoint: String;
@@ -204,7 +204,7 @@ type
     property passphrase : String read Fpassphrase write Fpassphrase;
 
     // what CDS hooks are used on this server
-    property cdshooks : TAdvList<TRegisteredCDSHook> read Fcdshooks;
+    property cdshooks : TFslList<TRegisteredCDSHook> read Fcdshooks;
 
     // whether to use hooks automatically, or only if the server is connected
     property autoUseHooks : boolean read FautoUseHooks write FautoUseHooks;
@@ -219,7 +219,7 @@ type
   end;
 
   // result of a Smart App Launch authorization
-  TSmartOnFhirAccessToken = class (TAdvObject)
+  TSmartOnFhirAccessToken = class (TFslObject)
   private
     FidToken: TJWT;
     Fscopes: String;
@@ -253,7 +253,7 @@ type
   TSmartLoginState = (stStarting, stDone, stComplete, stError);
   TIdleEvent = procedure(out stop : boolean) of object;
   TOpenURLEvent = procedure(url : String) of object;
-  TSmartAppLaunchLogin = class (TAdvObject)
+  TSmartAppLaunchLogin = class (TFslObject)
   private
     FOnIdle: TIdleEvent;
     Ftoken: TSmartOnFhirAccessToken;
@@ -498,7 +498,7 @@ end;
 constructor TRegisteredFHIRServer.Create;
 begin
   inherited;
-  Fcdshooks := TAdvList<TRegisteredCDSHook>.create;
+  Fcdshooks := TFslList<TRegisteredCDSHook>.create;
 end;
 
 destructor TRegisteredFHIRServer.Destroy;

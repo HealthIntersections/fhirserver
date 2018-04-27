@@ -41,7 +41,7 @@ uses
 
 Type
 
-  THtmlPublisher = class (TAdvObject)
+  THtmlPublisher = class (TFslObject)
   private
     FBuilder : TStringBuilder;
     FBaseURL: String;

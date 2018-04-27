@@ -37,7 +37,7 @@ Uses
   RegularExpressions, YuStemmer,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Operations,
   FHIR.CdsHooks.Utilities,
-  TerminologyServices, FHIR.Support.DateTime;
+  FHIR.Tx.Service, FHIR.Support.DateTime;
 
 {axes
 
@@ -87,11 +87,11 @@ type
   //   the fifth structure is the multi-axial heirarchy - parent, children, descendants, concepts, and descendent concepts
 
   // 0. language list
-  TLoincLanguages = class (TAdvObject)
+  TLoincLanguages = class (TFslObject)
   private
     FMaster : TBytes;
     FLength : Cardinal;
-    FBuilder : TAdvBytesBuilder;
+    FBuilder : TFslBytesBuilder;
   public
 
     procedure GetEntry(iIndex : byte; var lang, country : String);
@@ -105,11 +105,11 @@ type
   // 1. a list of strings
   //   each entry in the String starts with a byte length, and then the series of characters (2 bytes)
   // we store loinc descriptions, and other names in here
-  TLoincStrings = class (TAdvObject)
+  TLoincStrings = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       Function GetEntry(iIndex : Cardinal; var lang : byte):String;
 
@@ -136,11 +136,11 @@ const
 
 Type
   // word index. Every word is 5 bytes - a 4 byte index into the strings, and a 1 byte flag
-  TLoincWords = class (TAdvObject)
+  TLoincWords = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
@@ -152,11 +152,11 @@ Type
   End;
 
   // stem word index. Every word is 4 bytes - a 4 byte index into the strings
-  TLoincStems = class (TAdvObject)
+  TLoincStems = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal);
       Function Count : Integer;
@@ -169,11 +169,11 @@ Type
 
 
   // 2. a list of list of references
-  TLOINCReferences = class (TAdvObject)
+  TLOINCReferences = class (TFslObject)
     Private
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
     Public
       Function GetCardinals(iIndex : Cardinal) : TCardinalArray;
       Function Getlength(iIndex : Cardinal) : Cardinal;
@@ -185,12 +185,12 @@ Type
   End;
 
   // 3. a list of concepts
-  TLOINCConcepts = class (TAdvObject)
+  TLOINCConcepts = class (TFslObject)
     Private
       FRefs:TLOINCReferences; // no own
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
       function getForLang(langs : TLangArray; ref : cardinal) : cardinal;
     Public
       Constructor Create(refs : TLOINCReferences);
@@ -231,13 +231,13 @@ Const
   FLAGS_SURV = $80;
 
 Type
-  TLOINCCodeList = class (TAdvObject)
+  TLOINCCodeList = class (TFslObject)
     Private
       FRefs:TLOINCReferences; // no own
       FCodeLength, FReclength : Cardinal;
       FMaster : TBytes;
       FLength : Cardinal;
-      FBuilder : TAdvBytesBuilder;
+      FBuilder : TFslBytesBuilder;
       procedure SetCodeLength(const Value: Cardinal);
       function getForLang(langs : TLangArray;  ref : cardinal) : cardinal;
     Public
@@ -279,10 +279,10 @@ Type
 //    descendentconcepts : Cardinal;
 //  End;
 
-  TLOINCHeirarchyEntryList = class (TAdvObject)
+  TLOINCHeirarchyEntryList = class (TFslObject)
   Private
     FMaster : TBytes;
-    FBuilder : TAdvBytesBuilder;
+    FBuilder : TFslBytesBuilder;
   Public
     Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
     Procedure GetEntry(iIndex: Cardinal; var code, text, parent, children, descendants, concepts, descendentConcepts, stems : Cardinal);
@@ -298,10 +298,10 @@ Type
     Function Count : Integer;
   End;
 
-  TLOINCAnswersList = class (TAdvObject)
+  TLOINCAnswersList = class (TFslObject)
   Private
     FMaster : TBytes;
-    FBuilder : TAdvBytesBuilder;
+    FBuilder : TFslBytesBuilder;
   Public
     Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
     Procedure GetEntry(iIndex: Cardinal; var code, description, answers : Cardinal);
@@ -423,14 +423,14 @@ Type
 
   End;
 
-  TLOINCServiceList = class (TAdvObjectList)
+  TLOINCServiceList = class (TFslObjectList)
   Private
     FDefinition: TLOINCServices;
     function GetService(i: integer): TLOINCServices;
     procedure SetDefinition(const Value: TLOINCServices);
     function GetDefinition: TLOINCServices;
   Protected
-    Function ItemClass : TAdvObjectClass; Override;
+    Function ItemClass : TFslObjectClass; Override;
   Public
     Destructor Destroy; Override;
 
@@ -496,7 +496,7 @@ end;
 
 procedure TLoincStrings.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 { TLOINCReferences }
@@ -574,7 +574,7 @@ end;
 
 procedure TLOINCReferences.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 function TLOINCReferences.Getlength(iIndex: Cardinal): Cardinal;
@@ -643,7 +643,7 @@ end;
 
 procedure TLOINCConcepts.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 
@@ -651,7 +651,7 @@ end;
 
 procedure TLOINCCodeList.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 
@@ -1103,7 +1103,7 @@ var
   a : TLoincSubsetId;
   i : integer;
   v : String;
-  zip : TAdvZipWriter;
+  zip : TFslZipWriter;
   procedure WriteBytes(b : TBytes);
   begin
    oWrite.WriteInteger(length(b));
@@ -1153,9 +1153,9 @@ begin
     StringToFile('    <td>'+FVersion+'</td>'+#13#10+
                  '    <td>'+statedDate+'</td>'+#13#10+
                  '    <td><a href="loinc_'+v+'.zip"><img src="zip.gif"/> Zip</a></td>'+#13#10, path([ExtractFileDir(sFilename), 'loinc.inc']), TEncoding.ASCII);
-    zip := TAdvZipWriter.Create;
+    zip := TFslZipWriter.Create;
     try
-      zip.Stream := TAdvFile.create(path(['C:\work\com.healthintersections.fhir\website\FhirServer', 'loinc_'+v+'.zip']), fmCreate);
+      zip.Stream := TFslFile.create(path(['C:\work\com.healthintersections.fhir\website\FhirServer', 'loinc_'+v+'.zip']), fmCreate);
       zip.addFile('loinc_'+v+'.cache', sFilename);
       zip.WriteZip;
     finally
@@ -1536,7 +1536,7 @@ begin
   result := FDefinition <> nil;
 end;
 
-function TLOINCServiceList.ItemClass: TAdvObjectClass;
+function TLOINCServiceList.ItemClass: TFslObjectClass;
 begin
   result := TLOINCServices;
 end;
@@ -1586,7 +1586,7 @@ end;
 
 procedure TLoincWords.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 { TLoincStems }
@@ -1625,7 +1625,7 @@ end;
 
 procedure TLoincStems.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 function TLoincServices.FindStem(s: String; var index: Integer): Boolean;
@@ -2420,7 +2420,7 @@ end;
 
 procedure TLOINCHeirarchyEntryList.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 function TLOINCHeirarchyEntryList.AddEntry(code, text, parent, children, descendants, concepts, descendentConcepts: Cardinal): Cardinal;
@@ -2585,7 +2585,7 @@ end;
 
 procedure TLOINCAnswersList.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 function TLOINCServices.GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
@@ -2643,7 +2643,7 @@ end;
 
 procedure TLoincLanguages.StartBuild;
 begin
-  FBuilder := TAdvBytesBuilder.Create;
+  FBuilder := TFslBytesBuilder.Create;
 end;
 
 function nolang : TLangArray;

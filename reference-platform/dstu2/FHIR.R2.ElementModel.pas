@@ -39,7 +39,7 @@ uses
 
 
 type
-  TFHIRMMProperty = class (TAdvObject)
+  TFHIRMMProperty = class (TFslObject)
   private
     FContext : TFHIRWorkerContext;
     FDefinition : TFHIRElementDefinition;
@@ -83,7 +83,7 @@ type
 	  FType : String;
 	  FValue : String;
   	FIndex : integer;
-  	FChildren : TAdvList<TFHIRMMElement>;
+  	FChildren : TFslList<TFHIRMMElement>;
 	  FProperty : TFHIRMMProperty;
     FlocStart: TSourceLocation;
     FlocEnd: TSourceLocation;
@@ -91,7 +91,7 @@ type
     FXhtml : TFhirXHtmlNode;
 
     function GetType: String;
-    function GetChildren: TAdvList<TFHIRMMElement>;
+    function GetChildren: TFslList<TFHIRMMElement>;
     function GetComments: TStringList;
     procedure SetXhtml(const Value: TFhirXHtmlNode);
   public
@@ -105,7 +105,7 @@ type
     property name : String read FName;
     property type_ : String read GetType write FType;
     property value : String read FValue write FValue;
-    property children : TAdvList<TFHIRMMElement> read GetChildren;
+    property children : TFslList<TFHIRMMElement> read GetChildren;
     property comments : TStringList read GetComments;
     property prop : TFHIRMMProperty read FProperty;
     property index : integer read FIndex write FIndex;
@@ -121,7 +121,7 @@ type
     function hasIndex : boolean;
     procedure GetChildrenByName(name : String; children : TFHIRSelectionList); override;
     function getNamedChild(name : String) : TFHIRMMElement;
-    procedure getNamedChildren(name : String; list : TAdvList<TFHIRMMElement>);
+    procedure getNamedChildren(name : String; list : TFslList<TFHIRMMElement>);
     function getNamedChildValue(name : String) : string;
 
     procedure numberChildren;
@@ -134,17 +134,17 @@ type
     function hasPrimitiveValue : boolean; override;
     function fhirType : String; override;
     function primitiveValue : String; override;
-    procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRObject>); override;
+    procedure getProperty(name : String; checkValid : boolean; list : TFslList<TFHIRObject>); override;
   end;
 
   TFHIRValidationPolicy = (fvpNONE, fvpQUICK, fvpEVERYTHING);
 
-  TFHIRMMParserBase = class (TAdvObject)
+  TFHIRMMParserBase = class (TFslObject)
 	protected
     FContext : TFHIRWorkerContext;
    	FPolicy : TFHIRValidationPolicy;
     FErrors : TFhirOperationOutcomeIssueList;
-	  function getChildProperties(prop : TFHIRMMProperty; elementName, statedType : String) : TAdvList<TFHIRMMProperty>;
+	  function getChildProperties(prop : TFHIRMMProperty; elementName, statedType : String) : TFslList<TFHIRMMProperty>;
     function getDefinition(line, col : integer; ns, name : String) : TFHIRStructureDefinition; overload;
     function getDefinition(line, col : integer; name : String) : TFHIRStructureDefinition; overload;
   public
@@ -155,12 +155,12 @@ type
     procedure logError(line, col : integer; path : String; type_ : TFhirIssueTypeEnum; message : String; level : TFhirIssueSeverityEnum);
 
     function parse(stream : TStream) : TFHIRMMElement; overload; virtual; abstract;
-    function parse(stream : TAdvStream) : TFHIRMMElement; overload; virtual;
-    function parse(buffer : TAdvBuffer) : TFHIRMMElement; overload; virtual;
+    function parse(stream : TFslStream) : TFHIRMMElement; overload; virtual;
+    function parse(buffer : TFslBuffer) : TFHIRMMElement; overload; virtual;
     procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);  virtual; abstract;
   end;
 
-  TFHIRMMManager = class (TAdvObject)
+  TFHIRMMManager = class (TFslObject)
   public
     class function parseFile(context : TFHIRWorkerContext; filename : string; inputFormat : TFhirFormat) : TFHIRMMElement;
     class function parse(context : TFHIRWorkerContext; source : TStream; inputFormat : TFhirFormat) : TFHIRMMElement;
@@ -183,9 +183,9 @@ type
   	function convertForDateFormat(fmt, av : String) : String;
   	procedure reapComments(element : TMXmlElement; context : TFHIRMMElement);
 
-    function getElementProp(props : TAdvList<TFHIRMMProperty>; nodeName : String) : TFHIRMMProperty;
-  	function getAttrProp(props : TAdvList<TFHIRMMProperty>; nodeName : String) : TFHIRMMProperty;
-   	function getTextProp(props : TAdvList<TFHIRMMProperty>) : TFHIRMMProperty;
+    function getElementProp(props : TFslList<TFHIRMMProperty>; nodeName : String) : TFHIRMMProperty;
+  	function getAttrProp(props : TFslList<TFHIRMMProperty>; nodeName : String) : TFHIRMMProperty;
+   	function getTextProp(props : TFslList<TFHIRMMProperty>) : TFHIRMMProperty;
     function isAttr(prop : TFHIRMMProperty) : boolean;
     function isText(prop : TFHIRMMProperty) : boolean;
 
@@ -210,14 +210,14 @@ type
     procedure checkObject(obj : TJsonObject; path : String);
   	procedure parseChildren(path : String; obj : TJsonObject; context : TFHIRMMElement; hasResourceType : boolean);
 
-    procedure parseChildComplex(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String);
+    procedure parseChildComplex(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TFslStringSet; prop : TFHIRMMProperty; name : String);
     procedure parseChildComplexInstance(path : String; obj: TJsonObject; context : TFHIRMMElement; prop : TFHIRMMProperty; name : String; e : TJsonNode);
-    procedure parseChildPrimitive(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String);
-    procedure parseChildPrimitiveInstance(npath : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String; main, fork : TJsonNode);
+    procedure parseChildPrimitive(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TFslStringSet; prop : TFHIRMMProperty; name : String);
+    procedure parseChildPrimitiveInstance(npath : String; obj: TJsonObject; context : TFHIRMMElement; processed : TFslStringSet; prop : TFHIRMMProperty; name : String; main, fork : TJsonNode);
     procedure parseResource(path : String; obj: TJsonObject; context : TFHIRMMElement);
 
     procedure composeElement(e : TFHIRMMElement); overload;
-    procedure composeElement(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement); overload;
+    procedure composeElement(path : String; e : TFHIRMMElement; done : TFslStringSet; child : TFHIRMMElement); overload;
     procedure composeList(path : String; list : TFHIRObjectList); overload;
     procedure composeList(path : String; list : TFHIRSelectionList); overload;
     procedure primitiveValue(name : String; item : TFHIRMMElement);
@@ -227,7 +227,7 @@ type
     function parse(stream : TStream) : TFHIRMMElement; overload; override;
     function parse(obj : TJsonObject) : TFHIRMMElement; overload;
     procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload; override;
-    procedure compose(e : TFHIRMMElement; stream : TAdvStream; pretty : boolean; base : String); overload;
+    procedure compose(e : TFHIRMMElement; stream : TFslStream; pretty : boolean; base : String); overload;
   end;
 
   TFHIRMMResourceLoader = class (TFHIRMMParserBase)
@@ -255,7 +255,7 @@ type
     class function CreateFromBase(context : TFHIRWorkerContext; base : TFHIRObject) : TFHIRCustomResource;
 
     property Root : TFHIRMMElement read FRoot write SetRoot;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRCustomResource; overload;
     function Clone : TFHIRCustomResource; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -263,7 +263,7 @@ type
     function FhirType : string; override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
-    procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRObject>); override;
+    procedure getProperty(name : String; checkValid : boolean; list : TFslList<TFHIRObject>); override;
   end;
 
 
@@ -607,10 +607,10 @@ begin
   end;
 end;
 
-function TFHIRMMElement.GetChildren: TAdvList<TFHIRMMElement>;
+function TFHIRMMElement.GetChildren: TFslList<TFHIRMMElement>;
 begin
   if FChildren = nil then
-    FChildren := TAdvList<TFHIRMMElement>.create;
+    FChildren := TFslList<TFHIRMMElement>.create;
   result := FChildren;
 end;
 
@@ -627,7 +627,7 @@ begin
   result := GetType;
 end;
 
-procedure TFHIRMMElement.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRObject>);
+procedure TFHIRMMElement.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
 var
   child : TFHIRMMElement;
 begin
@@ -696,7 +696,7 @@ var
   end;
 end;
 
-procedure TFHIRMMElement.getNamedChildren(name: String; list: TAdvList<TFHIRMMElement>);
+procedure TFHIRMMElement.getNamedChildren(name: String; list: TFslList<TFHIRMMElement>);
 var
   c : TFHIRMMElement;
         begin
@@ -774,7 +774,7 @@ begin
 	 raise Exception.create(message+Stringformat(' at line %d col %d', [line, col]));
 end;
 
-function TFHIRMMParserBase.parse(stream: TAdvStream): TFHIRMMElement;
+function TFHIRMMParserBase.parse(stream: TFslStream): TFHIRMMElement;
 var
   vcl : TVCLStream;
 begin
@@ -787,11 +787,11 @@ begin
   end;
 end;
 
-function TFHIRMMParserBase.parse(buffer: TAdvBuffer): TFHIRMMElement;
+function TFHIRMMParserBase.parse(buffer: TFslBuffer): TFHIRMMElement;
 var
-  mem : TAdvMemoryStream;
+  mem : TFslMemoryStream;
 begin
-  mem := TAdvMemoryStream.Create;
+  mem := TFslMemoryStream.Create;
   try
     mem.Buffer := buffer.Link;
     result := parse(mem);
@@ -840,7 +840,7 @@ begin
 end;
 
 
-function TFHIRMMParserBase.getChildProperties(prop: TFHIRMMProperty; elementName, statedType: String): TAdvList<TFHIRMMProperty>;
+function TFHIRMMParserBase.getChildProperties(prop: TFHIRMMProperty; elementName, statedType: String): TFslList<TFHIRMMProperty>;
 var
   ed : TFhirElementDefinition;
   sd : TFhirStructureDefinition;
@@ -896,7 +896,7 @@ begin
         children := FContext.getChildMap(sd, sd.snapshot.elementList[0]);
       end;
     end;
-    result := TAdvList<TFHIRMMProperty>.create;
+    result := TFslList<TFHIRMMProperty>.create;
     for child in children do
       result.add(TFHIRMMProperty.create(FContext.link, child.link, sd.link));
   finally
@@ -1137,7 +1137,7 @@ end;
 
 procedure TFHIRMMXmlParser.parseChildren(path : String; node : TMXmlElement; context : TFHIRMMElement);
 var
-  properties : TAdvList<TFHIRMMProperty>;
+  properties : TFslList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
   s, text : String;
   i : integer;
@@ -1242,7 +1242,7 @@ begin
       end;
 
 
-function TFHIRMMXmlParser.getElementProp(props : TAdvList<TFHIRMMProperty>; nodeName : String) : TFHIRMMProperty;
+function TFHIRMMXmlParser.getElementProp(props : TFslList<TFHIRMMProperty>; nodeName : String) : TFHIRMMProperty;
 var
   p : TFHIRMMProperty;
 begin
@@ -1257,7 +1257,7 @@ begin
   exit(nil);
     end;
 
-function TFHIRMMXmlParser.getAttrProp(props : TAdvList<TFHIRMMProperty>; nodeName : String) : TFHIRMMProperty;
+function TFHIRMMXmlParser.getAttrProp(props : TFslList<TFHIRMMProperty>; nodeName : String) : TFHIRMMProperty;
 var
   p : TFHIRMMProperty;
 begin
@@ -1268,7 +1268,7 @@ begin
 end;
 
 
-function TFHIRMMXmlParser.getTextProp(props : TAdvList<TFHIRMMProperty>) : TFHIRMMProperty;
+function TFHIRMMXmlParser.getTextProp(props : TFslList<TFHIRMMProperty>) : TFHIRMMProperty;
 var
   p : TFHIRMMProperty;
 begin
@@ -1355,7 +1355,7 @@ procedure TFHIRMMXmlParser.compose(e : TFHIRMMElement; stream : TStream; pretty 
 var
   xml : TXmlBuilder;
 begin
-  xml := TAdvXmlBuilder.Create;
+  xml := TFslXmlBuilder.Create;
   try
     xml.IsPretty := pretty;
     xml.NoHeader := true;
@@ -1499,15 +1499,15 @@ end;
 
 procedure TFHIRMMJsonParser.parseChildren(path : String; obj: TJsonObject; context : TFHIRMMElement; hasResourceType : boolean);
 var
-  properties : TAdvList<TFHIRMMProperty>;
+  properties : TFslList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
-  processed : TAdvStringSet;
+  processed : TFslStringSet;
   tr : TFHIRElementDefinitionType;
   ename, name : String;
 begin
   //no-comments reapComments(obj, context);
   properties := getChildProperties(context.Prop, context.Name, '');
-  processed := TAdvStringSet.create;
+  processed := TFslStringSet.create;
   try
     if (hasResourceType) then
       processed.add('resourceType');
@@ -1558,7 +1558,7 @@ end;
   end;
 end;
 
-procedure TFHIRMMJsonParser.parseChildComplex(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String);
+procedure TFHIRMMJsonParser.parseChildComplex(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TFslStringSet; prop : TFHIRMMProperty; name : String);
 var
   npath : String;
   e : TJsonNode;
@@ -1618,7 +1618,7 @@ begin
     result := arr.item[i];
 end;
 
-procedure TFHIRMMJsonParser.parseChildPrimitive(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String);
+procedure TFHIRMMJsonParser.parseChildPrimitive(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TFslStringSet; prop : TFHIRMMProperty; name : String);
 var
   npath : String;
   main, fork : TJsonNode;
@@ -1655,7 +1655,7 @@ begin
   end;
 end;
 
-procedure TFHIRMMJsonParser.parseChildPrimitiveInstance(npath : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String; main, fork : TJsonNode);
+procedure TFHIRMMJsonParser.parseChildPrimitiveInstance(npath : String; obj: TJsonObject; context : TFHIRMMElement; processed : TFslStringSet; prop : TFHIRMMProperty; name : String; main, fork : TJsonNode);
 var
   n : TFHIRMMElement;
   child : TJsonObject;
@@ -1760,9 +1760,9 @@ end;
 }
 procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
 begin
-  oStream := TAdvVCLStream.Create;
+  oStream := TFslVCLStream.Create;
   try
     oStream.Stream := stream;
     compose(e, oStream, pretty, base);
@@ -1771,7 +1771,7 @@ begin
   end;
 end;
 
-procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TAdvStream; pretty : boolean; base : String);
+procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TFslStream; pretty : boolean; base : String);
 begin
   json := TJSONWriter.Create;
   try
@@ -1787,11 +1787,11 @@ end;
 
 procedure TFHIRMMJsonParser.composeElement(e : TFHIRMMElement);
 var
-  done : TAdvStringSet;
+  done : TFslStringSet;
   child : TFHIRMMElement;
 begin
   json.value('resourceType', e.type_);
-  done := TAdvStringSet.create;
+  done := TFslStringSet.create;
   try
     {no-comments composeComments(e); }
     for child in e.Children do
@@ -1801,7 +1801,7 @@ begin
   end;
 end;
 
-procedure TFHIRMMJsonParser.composeElement(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement);
+procedure TFHIRMMJsonParser.composeElement(path : String; e : TFHIRMMElement; done : TFslStringSet; child : TFHIRMMElement);
 var
   list : TFHIRSelectionList;
 begin
@@ -1826,7 +1826,7 @@ var
   name : String;
   complex, prim : boolean;
   o : TFHIRObject;
-  done : TAdvStringSet;
+  done : TFslStringSet;
 begin
   item := list[0] as TFHIRMMElement;
   // there will be at least one element
@@ -1873,7 +1873,7 @@ begin
         begin
           json.value('resourceType', item.type_);
         end;
-        done := TAdvStringSet.create;
+        done := TFslStringSet.create;
         try
           for child in item.Children do
             composeElement(path+'.'+name+'[]', item, done, child);
@@ -1902,7 +1902,7 @@ end;
 procedure TFHIRMMJsonParser.composeElement(path : String; element : TFHIRMMElement);
 var
   name : string;
-  done : TAdvStringSet;
+  done : TFslStringSet;
   child :  TFHIRMMElement;
 begin
   name := element.Name;
@@ -1918,7 +1918,7 @@ begin
     {no-comments composeComments(element);}
     if (element.Prop.isResource()) then
       json.value('resourceType', element.Type_);
-    done := TAdvStringSet.create;
+    done := TFslStringSet.create;
     try
       for child in element.Children do
         composeElement(path+'.'+element.Name, element, done, child);
@@ -1997,7 +1997,7 @@ end;
 
 procedure TFHIRMMResourceLoader.parseChildren(path: String; obj: TFHIRObject; context: TFHIRMMElement);
 var
-  properties : TAdvList<TFHIRMMProperty>;
+  properties : TFslList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
   name : String;
   tr : TFHIRElementDefinitionType;
@@ -2091,7 +2091,7 @@ begin
   result := TFHIRCustomResource(inherited Link);
 end;
 
-procedure TFHIRCustomResource.Assign(oSource: TAdvObject);
+procedure TFHIRCustomResource.Assign(oSource: TFslObject);
 begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.Assign');
 end;
@@ -2121,7 +2121,7 @@ begin
   FRoot.GetChildrenByName(child_name, list);
 end;
 
-procedure TFHIRCustomResource.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRObject>);
+procedure TFHIRCustomResource.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
 begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.getProperty');
 end;

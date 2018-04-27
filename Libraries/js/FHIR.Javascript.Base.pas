@@ -39,16 +39,16 @@ uses
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client;
 
 type
-  TFHIRJavascriptDefinedElement = class (TAdvObject)
+  TFHIRJavascriptDefinedElement = class (TFslObject)
   private
     FDefiningType : String;
     FName : String;
     FFHIRType : String;
   end;
 
-  TFHIRJavascript = class (TAdvJavascript)
+  TFHIRJavascript = class (TFslJavascript)
   private
-    FDefinedElements : TAdvMap<TFHIRJavascriptDefinedElement>;
+    FDefinedElements : TFslMap<TFHIRJavascriptDefinedElement>;
     FFactory : TFhirResourceFactory;
   public
     constructor Create; override;
@@ -87,7 +87,7 @@ uses
 constructor TFHIRJavascript.Create;
 begin
   inherited;
-  FDefinedElements := TAdvMap<TFHIRJavascriptDefinedElement>.create;
+  FDefinedElements := TFslMap<TFHIRJavascriptDefinedElement>.create;
   FFactory := TFhirResourceFactory.Create;
   registerFHIRTypes(self);
   TFHIRClientJSHelper.registerFHIRClient(self);
@@ -216,7 +216,7 @@ begin
       result := p.Values.jsHandle
     else
     begin
-      result := js.makeManagedArray(TAdvObjectListManager.Create(p.Values.Link, js.getDefinedClass(def.FFHIRType)));
+      result := js.makeManagedArray(TFslObjectListManager.Create(p.Values.Link, js.getDefinedClass(def.FFHIRType)));
       p.Values.jsHandle := result;
       p.Values.jsInstance := js.InstanceId;
     end;

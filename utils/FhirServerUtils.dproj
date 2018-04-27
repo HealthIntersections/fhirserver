@@ -182,7 +182,7 @@
         <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Publisher.pas"/>
         <DCCReference Include="..\server\TerminologyServer.pas"/>
         <DCCReference Include="..\server\TerminologyServerStore.pas"/>
-        <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
+        <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="..\server\TerminologyWebServer.pas"/>
         <DCCReference Include="..\server\FHIRServerConstants.pas"/>
         <DCCReference Include="..\server\FHIRServerUtilities.pas"/>
@@ -242,7 +242,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Debug.Logging.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.AuthMap.pas"/>
-        <DCCReference Include="..\Server\Logging.pas"/>
         <DCCReference Include="..\Server\FHIRIndexManagers.pas"/>
         <DCCReference Include="..\Server\ServerUtilities.pas"/>
         <DCCReference Include="..\Server\ServerAdaptations.pas"/>
@@ -349,14 +348,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

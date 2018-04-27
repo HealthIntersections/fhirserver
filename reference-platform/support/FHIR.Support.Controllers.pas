@@ -38,17 +38,17 @@ Uses
   FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Collections;
 
 Type
-  TAdvThreadHandle = TThreadHandle;
-  TAdvThreadID = TThreadID;
+  TFslThreadHandle = TThreadHandle;
+  TFslThreadID = TThreadID;
 
-  TAdvThreadDelegate = Procedure Of Object;
+  TFslThreadDelegate = Procedure Of Object;
 
-  TAdvThread = Class(TAdvObject)
+  TFslThread = Class(TFslObject)
     Private
       FInternal : TThread; // Handle to the Windows thread.
-      FID : TAdvThreadID;         // Unique ID of the Windows thread.
+      FID : TFslThreadID;         // Unique ID of the Windows thread.
       FActive : Boolean;          // Run thread has finished.
-      FDelegate : TAdvThreadDelegate;
+      FDelegate : TFslThreadDelegate;
 
     Protected
       Procedure Execute; Virtual;
@@ -61,7 +61,7 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvThread;
+      Function Link : TFslThread;
 
       Procedure Open;
       Procedure Close;
@@ -73,29 +73,29 @@ Type
 
       Function Active : Boolean;
 
-      Property ID : TAdvThreadID Read FID Write FID;
-      Property Delegate : TAdvThreadDelegate Read FDelegate Write FDelegate;
+      Property ID : TFslThreadID Read FID Write FID;
+      Property Delegate : TFslThreadDelegate Read FDelegate Write FDelegate;
 //    Property Processor : Cardinal Write SetProcessor; // see comments in SetProcessor
   End;
 
-  TAdvThreadClass = Class Of TAdvThread;
+  TFslThreadClass = Class Of TFslThread;
 
-  TAdvThreadList = Class(TAdvObjectList)
+  TFslThreadList = Class(TFslObjectList)
     Private
-      Function GetThread(iIndex: Integer): TAdvThread;
+      Function GetThread(iIndex: Integer): TFslThread;
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
     Public
       Function Active : Boolean;
 
-      Property Threads[iIndex : Integer] : TAdvThread Read GetThread; Default;
+      Property Threads[iIndex : Integer] : TFslThread Read GetThread; Default;
   End;
 
-  TAdvObjectClass = FHIR.Support.Objects.TAdvObjectClass;
+  TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
 
-  TAdvExclusiveCriticalSection = Class(TAdvObject)
+  TFslExclusiveCriticalSection = Class(TFslObject)
     Private
       FHandle : TRTLCriticalSection;
 
@@ -110,9 +110,9 @@ Type
       Property Handle : TRTLCriticalSection Read FHandle;
   End;
 
-  TAdvExclusiveStateCriticalSection = Class(TAdvExclusiveCriticalSection)
+  TFslExclusiveStateCriticalSection = Class(TFslExclusiveCriticalSection)
     Private
-      FThreadID : TAdvThreadHandle;
+      FThreadID : TFslThreadHandle;
       FNested : Integer;
 
     Protected
@@ -126,18 +126,18 @@ Type
 
       Function IsNestedLocked : Boolean;
       Function IsLocked : Boolean;
-      Function IsLockedToThread(Const aThread : TAdvThreadHandle) : Boolean;
+      Function IsLockedToThread(Const aThread : TFslThreadHandle) : Boolean;
       Function IsLockedToCurrentThread : Boolean;
   End;
 
 
 Type
-  TAdvSignalHandle = THandle;
+  TFslSignalHandle = THandle;
 
-  TAdvSignal = Class(TAdvObject)
+  TFslSignal = Class(TFslObject)
     Private
       FName : String;
-      FHandle : TAdvSignalHandle;
+      FHandle : TFslSignalHandle;
       FAutoHide : Boolean;
 
     Protected
@@ -147,7 +147,7 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvSignal;
+      Function Link : TFslSignal;
 
       Procedure OpenShow;
       Procedure OpenHide;
@@ -161,25 +161,25 @@ Type
 
       Function Active : Boolean;
 
-      Property Handle : TAdvSignalHandle Read FHandle Write FHandle;
+      Property Handle : TFslSignalHandle Read FHandle Write FHandle;
       Property Name : String Read FName Write FName;
       Property AutoHide : Boolean Read FAutoHide Write FAutoHide;
   End;
 
-  TAdvSignalList = Class(TAdvObjectList)
+  TFslSignalList = Class(TFslObjectList)
     Private
-      Function GetSignalByIndex(iIndex: Integer): TAdvSignal;
+      Function GetSignalByIndex(iIndex: Integer): TFslSignal;
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
     Public
-      Property SignalByIndex[iIndex : Integer] : TAdvSignal Read GetSignalByIndex; Default;
+      Property SignalByIndex[iIndex : Integer] : TFslSignal Read GetSignalByIndex; Default;
   End;
 
-  TAdvSignalManager = Class(TAdvObject)
+  TFslSignalManager = Class(TFslObject)
     Private
-      FSignalList : TAdvSignalList;
+      FSignalList : TFslSignalList;
       FSignalHandleArray : TWOHandleArray;
       FSignalHandleCount : Integer;
       FActive : Boolean;
@@ -193,8 +193,8 @@ Type
       Procedure Prepare;
       Procedure Terminate;
 
-      Procedure AddSignal(oSignal : TAdvSignal);
-      Procedure DeleteSignal(oSignal : TAdvSignal);
+      Procedure AddSignal(oSignal : TFslSignal);
+      Procedure DeleteSignal(oSignal : TFslSignal);
       Procedure DeleteAllSignals;
 
       Function WaitTimeoutForAll(Const iTimeout : Cardinal) : Boolean;
@@ -203,30 +203,30 @@ Type
 
 
 Type
-  TAdvMethod = Procedure Of Object;
-  PAdvMethod = ^TAdvMethod;
+  TFslMethod = Procedure Of Object;
+  PAdvMethod = ^TFslMethod;
 
-  TAdvMethodItem = Record
+  TFslMethodItem = Record
     Code, Data : Pointer;
   End;
 
-  PAdvMethodItem = ^TAdvMethodItem;
+  PAdvMethodItem = ^TFslMethodItem;
 
-  TAdvMethodItemArray = Array[0..(MaxInt Div SizeOf(TAdvMethodItem)) - 1] Of TAdvMethodItem;
-  PAdvMethodItemArray = ^TAdvMethodItemArray;
+  TFslMethodItemArray = Array[0..(MaxInt Div SizeOf(TFslMethodItem)) - 1] Of TFslMethodItem;
+  PAdvMethodItemArray = ^TFslMethodItemArray;
 
-  TAdvMethodList = Class(TAdvItemList)
+  TFslMethodList = Class(TFslItemList)
     Private
       FMethodArray : PAdvMethodItemArray;
 
-      Function GetMethodItem(iIndex : Integer): TAdvMethod;
-      Procedure SetMethodItem(iIndex : Integer; Const aValue : TAdvMethod);
+      Function GetMethodItem(iIndex : Integer): TFslMethod;
+      Procedure SetMethodItem(iIndex : Integer; Const aValue : TFslMethod);
 
     Protected
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; Value: Pointer); Override;
 
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Function CompareItem(pA, pB: Pointer): Integer; Overload; Override;
 
@@ -238,121 +238,121 @@ Type
 
       Function CapacityLimit : Integer; Override;
 
-      Function Find(aValue : TAdvMethod; Out iResult : Integer) : Boolean;
+      Function Find(aValue : TFslMethod; Out iResult : Integer) : Boolean;
 
     Public
-      Function IndexByValue(aValue : TAdvMethod) : Integer;
-      Function ExistsByValue(aValue: TAdvMethod): Boolean;
+      Function IndexByValue(aValue : TFslMethod) : Integer;
+      Function ExistsByValue(aValue: TFslMethod): Boolean;
 
-      Function Add(aValue : TAdvMethod) : Integer;
-      Procedure Insert(iIndex : Integer; aValue : TAdvMethod);
-      Procedure DeleteByValue(aValue : TAdvMethod);
+      Function Add(aValue : TFslMethod) : Integer;
+      Procedure Insert(iIndex : Integer; aValue : TFslMethod);
+      Procedure DeleteByValue(aValue : TFslMethod);
 
-      Property MethodByIndex[iIndex : Integer] : TAdvMethod Read GetMethodItem Write SetMethodItem; Default;
+      Property MethodByIndex[iIndex : Integer] : TFslMethod Read GetMethodItem Write SetMethodItem; Default;
   End;
 
-  TAdvEvent = Procedure (Sender : TAdvObject) Of Object;
+  TFslEvent = Procedure (Sender : TFslObject) Of Object;
 
-  TAdvEventList = Class(TAdvMethodList)
+  TFslEventList = Class(TFslMethodList)
     Private
-      Function GetEvent(iIndex : Integer): TAdvEvent;
-      Procedure SetEvent(iIndex : Integer; Const aValue : TAdvEvent);
+      Function GetEvent(iIndex : Integer): TFslEvent;
+      Procedure SetEvent(iIndex : Integer; Const aValue : TFslEvent);
 
     Public
-      Function IndexByValue(aValue : TAdvEvent) : Integer;
-      Function ExistsByValue(aValue : TAdvEvent) : Boolean;
-      Function Add(aValue : TAdvEvent) : Integer;
-      Procedure Insert(iIndex : Integer; aValue : TAdvEvent);
-      Procedure DeleteByValue(aValue : TAdvEvent);
+      Function IndexByValue(aValue : TFslEvent) : Integer;
+      Function ExistsByValue(aValue : TFslEvent) : Boolean;
+      Function Add(aValue : TFslEvent) : Integer;
+      Procedure Insert(iIndex : Integer; aValue : TFslEvent);
+      Procedure DeleteByValue(aValue : TFslEvent);
 
-      Property EventByIndex[iIndex : Integer] : TAdvEvent Read GetEvent Write SetEvent; Default;
+      Property EventByIndex[iIndex : Integer] : TFslEvent Read GetEvent Write SetEvent; Default;
   End;
 
 
 
 Type
-  TAdvDispatched = Class(TAdvStringHashEntry)
+  TFslDispatched = Class(TFslStringHashEntry)
     Private
-      FEventList : TAdvEventList;
+      FEventList : TFslEventList;
 
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Override;
 
-      Property Events : TAdvEventList Read FEventList;
+      Property Events : TFslEventList Read FEventList;
   End;
 
-  TAdvDispatcher = Class(TAdvStringHashTable)
+  TFslDispatcher = Class(TFslStringHashTable)
     Private
-      FHashEntry : TAdvDispatched;
+      FHashEntry : TFslDispatched;
 
     Protected
-      Function ItemClass : TAdvHashEntryClass; Override;
+      Function ItemClass : TFslHashEntryClass; Override;
 
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Procedure AddDispatched(Const sName : String; aEvent : TAdvEvent);
-      Procedure RemoveDispatched(Const sName : String; aEvent : TAdvEvent);
-      Function GetDispatched(Const sName : String) : TAdvDispatched;
-      Function ForceDispatched(Const sName : String) : TAdvDispatched;
+      Procedure AddDispatched(Const sName : String; aEvent : TFslEvent);
+      Procedure RemoveDispatched(Const sName : String; aEvent : TFslEvent);
+      Function GetDispatched(Const sName : String) : TFslDispatched;
+      Function ForceDispatched(Const sName : String) : TFslDispatched;
       Function ExistsDispatched(Const sName : String) : Boolean;
 
-      Procedure Register(Const sName : String; aEvent : TAdvEvent; bRegister : Boolean = True); Overload;
+      Procedure Register(Const sName : String; aEvent : TFslEvent; bRegister : Boolean = True); Overload;
 
-      Function Call(oSender : TAdvObject; oDispatched : TAdvDispatched) : Boolean; Virtual;
+      Function Call(oSender : TFslObject; oDispatched : TFslDispatched) : Boolean; Virtual;
   End;
 
   EAdvDispatcher = Class(EAdvException);
 
-  TAdvStringEvent = Procedure (oSender : TAdvObject; Const sValue : String) Of Object;
+  TFslStringEvent = Procedure (oSender : TFslObject; Const sValue : String) Of Object;
 
-  TAdvStringDispatcher = Class(TAdvDispatcher)
+  TFslStringDispatcher = Class(TFslDispatcher)
     Public
-      Procedure Register(Const sName : String; aEvent : TAdvStringEvent; bRegister : Boolean = True); Overload;
+      Procedure Register(Const sName : String; aEvent : TFslStringEvent; bRegister : Boolean = True); Overload;
 
-      Function CallString(oSender : TAdvObject; Const sValue : String) : Boolean;
+      Function CallString(oSender : TFslObject; Const sValue : String) : Boolean;
   End;
 
-  TAdvIntegerEvent = Procedure (oSender : TAdvObject; Const iValue : Integer) Of Object;
+  TFslIntegerEvent = Procedure (oSender : TFslObject; Const iValue : Integer) Of Object;
 
-  TAdvIntegerDispatcher = Class(TAdvDispatcher)
+  TFslIntegerDispatcher = Class(TFslDispatcher)
     Public
-      Function CallInteger(oSender : TAdvObject; iValue : Integer) : Boolean; Overload;
+      Function CallInteger(oSender : TFslObject; iValue : Integer) : Boolean; Overload;
 
-      Procedure Register(iValue : Integer; aEvent : TAdvIntegerEvent; bRegister : Boolean = True); Overload;
+      Procedure Register(iValue : Integer; aEvent : TFslIntegerEvent; bRegister : Boolean = True); Overload;
   End;
 
-  TAdvObjectClassEvent = Procedure (oSender : TAdvObject; Const oValue : TAdvObject) Of Object;
+  TFslObjectClassEvent = Procedure (oSender : TFslObject; Const oValue : TFslObject) Of Object;
 
-  TAdvObjectClassDispatcher = Class(TAdvDispatcher)
+  TFslObjectClassDispatcher = Class(TFslDispatcher)
     Protected
-      Procedure CallClass(oDispatched : TAdvDispatched; oSender, oValue : TAdvObject); Overload;
+      Procedure CallClass(oDispatched : TFslDispatched; oSender, oValue : TFslObject); Overload;
 
     Public
-      Function CallClass(oSender, oValue : TAdvObject) : Boolean; Overload;
+      Function CallClass(oSender, oValue : TFslObject) : Boolean; Overload;
 
-      Procedure Register(Const aClass : TAdvObjectClass; aEvent : TAdvObjectClassEvent; bRegister : Boolean = True); Overload;
+      Procedure Register(Const aClass : TFslObjectClass; aEvent : TFslObjectClassEvent; bRegister : Boolean = True); Overload;
   End;
 
-  TAdvObjectEvent = Procedure (oSender : TAdvObject; Const oValue : TAdvObject) Of Object;
+  TFslObjectEvent = Procedure (oSender : TFslObject; Const oValue : TFslObject) Of Object;
 
-  TAdvObjectDispatcher = Class(TAdvDispatcher)
+  TFslObjectDispatcher = Class(TFslDispatcher)
     Public
-      Function Declare(oObject : TAdvObject) : String;
+      Function Declare(oObject : TFslObject) : String;
 
-      Procedure Register(Const aObject : TAdvObject; aEvent : TAdvObjectEvent; bRegister : Boolean = True); Overload;
+      Procedure Register(Const aObject : TFslObject; aEvent : TFslObjectEvent; bRegister : Boolean = True); Overload;
 
-      Function Call(oSender : TAdvObject; oDispatched : TAdvDispatched) : Boolean; Overload; Override;
+      Function Call(oSender : TFslObject; oDispatched : TFslDispatched) : Boolean; Overload; Override;
   End;
 
-  TAdvController = Class(TAdvPersistent)
+  TFslController = Class(TFslPersistent)
     Protected
       Function ErrorClass : EAdvExceptionClass; Override;
 
     Public
-      Function Link : TAdvController;
+      Function Link : TFslController;
 
       Procedure Open; Virtual;
       Procedure Close; Virtual;
@@ -360,18 +360,18 @@ Type
 
   EAdvController = Class(EAdvException);
 
-  TAdvControllerList = Class(TAdvPersistentList)
+  TFslControllerList = Class(TFslPersistentList)
     Private
-      Function GetControllerByIndex(Const iIndex : Integer) : TAdvController;
+      Function GetControllerByIndex(Const iIndex : Integer) : TFslController;
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
     Public
-      Property ControllerByIndex[Const iIndex : Integer] : TAdvController Read GetControllerByIndex; Default;
+      Property ControllerByIndex[Const iIndex : Integer] : TFslController Read GetControllerByIndex; Default;
   End;
 
-  TAdvParameters = Class(TAdvCollection)
+  TFslParameters = Class(TFslCollection)
     Protected
       Function GetParameter(iIndex : Integer) : String;
       Function GetKey(iIndex : Integer) : String;
@@ -414,14 +414,14 @@ Implementation
 type
   TInternalThread = class (TThread)
   private
-    FOwner : TAdvThread;
+    FOwner : TFslThread;
   protected
     procedure Execute; override;
   public
-    Constructor Create(thread : TAdvThread);
+    Constructor Create(thread : TFslThread);
   end;
 
-Constructor TAdvThread.Create;
+Constructor TFslThread.Create;
 Begin
   Inherited;
 
@@ -429,38 +429,38 @@ Begin
 End;
 
 
-Destructor TAdvThread.Destroy;
+Destructor TFslThread.Destroy;
 Begin
   Inherited;
 End;
 
 
-Function TAdvThread.Link: TAdvThread;
+Function TFslThread.Link: TFslThread;
 Begin
-  Result := TAdvThread(Inherited Link);
+  Result := TFslThread(Inherited Link);
 End;
 
 
-Procedure TAdvThread.Execute;
+Procedure TFslThread.Execute;
 Begin
   If Assigned(FDelegate) Then
     FDelegate;
 End;
 
 
-Procedure TAdvThread.Interrupt;
+Procedure TFslThread.Interrupt;
 Begin
 End;
 
 
-Function TAdvThread.Running: Boolean;
+Function TFslThread.Running: Boolean;
 Begin
   Result := True;
 End;
 
 
 
-Procedure TAdvThread.Open;
+Procedure TFslThread.Open;
 Begin
   If FActive Then
     RaiseError('Open', 'Thread is already active.');
@@ -473,13 +473,13 @@ Begin
 End;
 
 
-Procedure TAdvThread.Close;
+Procedure TFslThread.Close;
 Begin
   FInternal.Terminate;
 End;
 
 
-Procedure TAdvThread.Kill;
+Procedure TFslThread.Kill;
 Begin
   FInternal.Terminate;
   {$IFDEF MSWINDOWS}
@@ -492,7 +492,7 @@ Begin
 End;
 
 
-Procedure TAdvThread.Stop;
+Procedure TFslThread.Stop;
 Begin
   FActive := False;
 
@@ -500,37 +500,37 @@ Begin
 End;
 
 
-Procedure TAdvThread.Wait;
+Procedure TFslThread.Wait;
 Begin
   FInternal.WaitFor;
 End;
 
 
-Procedure TAdvThread.ExecuteYield(Const iTimeout: Cardinal);
+Procedure TFslThread.ExecuteYield(Const iTimeout: Cardinal);
 Begin
   FHIR.Support.System.ThreadSleep(iTimeout);
 End;
 
 
-Function TAdvThread.Active : Boolean;
+Function TFslThread.Active : Boolean;
 Begin
   Result := FActive And Running;
 End;
 
 
-Function TAdvThreadList.ItemClass : TAdvObjectClass;
+Function TFslThreadList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvThread;
+  Result := TFslThread;
 End;
 
 
-Function TAdvThreadList.GetThread(iIndex: Integer): TAdvThread;
+Function TFslThreadList.GetThread(iIndex: Integer): TFslThread;
 Begin
-  Result := TAdvThread(ObjectByIndex[iIndex]);
+  Result := TFslThread(ObjectByIndex[iIndex]);
 End;
 
 
-Function TAdvThreadList.Active : Boolean;
+Function TFslThreadList.Active : Boolean;
 Var
   iLoop : Integer;
 Begin
@@ -546,7 +546,7 @@ End;
 
 { TInternalThread }
 
-constructor TInternalThread.Create(thread: TAdvThread);
+constructor TInternalThread.Create(thread: TFslThread);
 begin
   FOwner := thread;
   inherited create(false);
@@ -563,7 +563,7 @@ begin
 end;
 
 
-Constructor TAdvExclusiveCriticalSection.Create;
+Constructor TFslExclusiveCriticalSection.Create;
 Begin
   Inherited;
 
@@ -571,7 +571,7 @@ Begin
 End;
 
 
-Destructor TAdvExclusiveCriticalSection.Destroy;
+Destructor TFslExclusiveCriticalSection.Destroy;
 Begin
   DeleteCriticalSection(FHandle);
 
@@ -579,25 +579,25 @@ Begin
 End;  
 
 
-Procedure TAdvExclusiveCriticalSection.Lock;
+Procedure TFslExclusiveCriticalSection.Lock;
 Begin
   EnterCriticalSection(FHandle);
 End;
 
 
-Function TAdvExclusiveCriticalSection.TryLock : Boolean;
+Function TFslExclusiveCriticalSection.TryLock : Boolean;
 Begin 
   Result := TryEnterCriticalSection(FHandle);
 End;  
 
 
-Procedure TAdvExclusiveCriticalSection.Unlock;
+Procedure TFslExclusiveCriticalSection.Unlock;
 Begin
   LeaveCriticalSection(FHandle);
 End;
 
 
-Procedure TAdvExclusiveStateCriticalSection.Lock;
+Procedure TFslExclusiveStateCriticalSection.Lock;
 Begin 
   Inherited;
 
@@ -605,7 +605,7 @@ Begin
 End;  
 
 
-Procedure TAdvExclusiveStateCriticalSection.Unlock;
+Procedure TFslExclusiveStateCriticalSection.Unlock;
 Begin 
   Assert(CheckCondition(IsLockedToCurrentThread, 'Unlock', 'Cannot unlock as the critical section is not locked to the current thread.'));
 
@@ -615,7 +615,7 @@ Begin
 End;  
 
 
-Function TAdvExclusiveStateCriticalSection.TryLock : Boolean;
+Function TFslExclusiveStateCriticalSection.TryLock : Boolean;
 Begin 
   Result := Inherited TryLock;
 
@@ -624,31 +624,31 @@ Begin
 End;  
 
 
-Function TAdvExclusiveStateCriticalSection.IsLocked : Boolean;
+Function TFslExclusiveStateCriticalSection.IsLocked : Boolean;
 Begin
   Result := FThreadID <> INVALID_HANDLE_VALUE;
 End;
 
 
-Function TAdvExclusiveStateCriticalSection.IsLockedToCurrentThread : Boolean;
+Function TFslExclusiveStateCriticalSection.IsLockedToCurrentThread : Boolean;
 Begin 
   Result := IsLockedToThread(GetCurrentThreadID);
 End;  
 
 
-Function TAdvExclusiveStateCriticalSection.IsLockedToThread(Const aThread: TAdvThreadHandle): Boolean;
+Function TFslExclusiveStateCriticalSection.IsLockedToThread(Const aThread: TFslThreadHandle): Boolean;
 Begin 
   Result := FThreadID = aThread;
 End;  
 
 
-Function TAdvExclusiveStateCriticalSection.IsNestedLocked : Boolean;
+Function TFslExclusiveStateCriticalSection.IsNestedLocked : Boolean;
 Begin 
   Result := FNested > 1;
 End;  
 
 
-Procedure TAdvExclusiveStateCriticalSection.Enter;
+Procedure TFslExclusiveStateCriticalSection.Enter;
 Begin 
   If FNested = 0 Then
     FThreadID := GetCurrentThreadID;
@@ -657,7 +657,7 @@ Begin
 End;  
 
 
-Procedure TAdvExclusiveStateCriticalSection.Leave;
+Procedure TFslExclusiveStateCriticalSection.Leave;
 Begin 
   Dec(FNested);
 
@@ -666,7 +666,7 @@ Begin
 End;
 
 
-Constructor TAdvSignal.Create;
+Constructor TFslSignal.Create;
 Begin
   Inherited;
 
@@ -674,7 +674,7 @@ Begin
 End;
 
 
-Destructor TAdvSignal.Destroy;
+Destructor TFslSignal.Destroy;
 Begin
   If Active Then
     Close;
@@ -683,13 +683,13 @@ Begin
 End;
 
 
-Function TAdvSignal.Link: TAdvSignal;
+Function TFslSignal.Link: TFslSignal;
 Begin
-  Result := TAdvSignal(Inherited Link);
+  Result := TFslSignal(Inherited Link);
 End;
 
 
-Procedure TAdvSignal.Open(bShow : Boolean);
+Procedure TFslSignal.Open(bShow : Boolean);
 Var
   pName : PChar;
 Begin
@@ -704,19 +704,19 @@ Begin
 End;
 
 
-Procedure TAdvSignal.OpenHide;
+Procedure TFslSignal.OpenHide;
 Begin
   Open(False);
 End;
 
 
-Procedure TAdvSignal.OpenShow;
+Procedure TFslSignal.OpenShow;
 Begin
   Open(True);
 End;
 
 
-Procedure TAdvSignal.Close;
+Procedure TFslSignal.Close;
 Begin
   Assert(CheckCondition(Active, 'Close', 'Signal must be active.'));
 
@@ -726,7 +726,7 @@ Begin
 End;
 
 
-Procedure TAdvSignal.Hide;
+Procedure TFslSignal.Hide;
 Begin
   Assert(CheckCondition(Active, 'Hide', 'Signal must be active.'));
 
@@ -735,7 +735,7 @@ Begin
 End;
 
 
-Procedure TAdvSignal.Show;
+Procedure TFslSignal.Show;
 Begin
   Assert(CheckCondition(Active, 'Show', 'Signal must be active.'));
 
@@ -744,7 +744,7 @@ Begin
 End;
 
 
-Procedure TAdvSignal.Flash;
+Procedure TFslSignal.Flash;
 Begin
   Assert(CheckCondition(Active, 'Flash', 'Signal must be active.'));
 
@@ -753,13 +753,13 @@ Begin
 End;
 
 
-Function TAdvSignal.Wait : Boolean;
+Function TFslSignal.Wait : Boolean;
 Begin
   Result := WaitTimeout(INFINITE);
 End;
 
 
-Function TAdvSignal.WaitTimeout(Const iTimeout: Cardinal) : Boolean;
+Function TFslSignal.WaitTimeout(Const iTimeout: Cardinal) : Boolean;
 Var
   iWaitResult : Cardinal;
 Begin
@@ -774,35 +774,35 @@ Begin
 End;
 
 
-Function TAdvSignalList.GetSignalByIndex(iIndex: Integer): TAdvSignal;
+Function TFslSignalList.GetSignalByIndex(iIndex: Integer): TFslSignal;
 Begin
-  Result := TAdvSignal(ObjectByIndex[iIndex]);
+  Result := TFslSignal(ObjectByIndex[iIndex]);
 End;
 
 
-Function TAdvSignalList.ItemClass: TAdvObjectClass;
+Function TFslSignalList.ItemClass: TFslObjectClass;
 Begin
-  Result := TAdvSignal;
+  Result := TFslSignal;
 End;
 
 
-Function TAdvSignal.Active: Boolean;
+Function TFslSignal.Active: Boolean;
 Begin
   Result := FHandle <> 0;
 End;
 
 
-Constructor TAdvSignalManager.Create;
+Constructor TFslSignalManager.Create;
 Begin
   Inherited;
 
-  FSignalList := TAdvSignalList.Create;
+  FSignalList := TFslSignalList.Create;
   FSignalList.SortedByReference;
   FSignalList.PreventDuplicates;
 End;
 
 
-Destructor TAdvSignalManager.Destroy;
+Destructor TFslSignalManager.Destroy;
 Begin
   If FActive Then
     Terminate;
@@ -813,7 +813,7 @@ Begin
 End;
 
 
-Procedure TAdvSignalManager.AddSignal(oSignal: TAdvSignal);
+Procedure TFslSignalManager.AddSignal(oSignal: TFslSignal);
 Begin
   Assert(CheckCondition(Not FActive, 'AddSignal', 'Cannot add a signal to a prepared signal manager.'));
 
@@ -828,7 +828,7 @@ Begin
 End;
 
 
-Procedure TAdvSignalManager.DeleteSignal(oSignal: TAdvSignal);
+Procedure TFslSignalManager.DeleteSignal(oSignal: TFslSignal);
 Begin
   Assert(CheckCondition(Not FActive, 'AddSignal', 'Cannot delete a signal to a prepared signal manager.'));
 
@@ -836,7 +836,7 @@ Begin
 End;
 
 
-Procedure TAdvSignalManager.DeleteAllSignals;
+Procedure TFslSignalManager.DeleteAllSignals;
 Begin
   Assert(CheckCondition(Not FActive, 'AddSignal', 'Cannot delete all signal with a prepared signal manager.'));
 
@@ -844,10 +844,10 @@ Begin
 End;
 
 
-Procedure TAdvSignalManager.Prepare;
+Procedure TFslSignalManager.Prepare;
 Var
   iSignalIndex : Integer;
-  oSignal : TAdvSignal;
+  oSignal : TFslSignal;
 Begin
   Assert(CheckCondition(Not FActive, 'Prepare', 'Cannot double prepare a signal manager.'));
 
@@ -870,7 +870,7 @@ Begin
 End;
 
 
-Procedure TAdvSignalManager.Terminate;
+Procedure TFslSignalManager.Terminate;
 Begin
   Assert(CheckCondition(FActive, 'Terminate', 'Cannot double terminate a signal manager.'));
 
@@ -879,7 +879,7 @@ Begin
 End;
 
 
-Function TAdvSignalManager.WaitTimeout(Const iTimeout: Cardinal; Const bAll: Boolean): Boolean;
+Function TFslSignalManager.WaitTimeout(Const iTimeout: Cardinal; Const bAll: Boolean): Boolean;
 Var
   iWaitResult : Cardinal;
 Begin
@@ -894,24 +894,24 @@ Begin
 End;
 
 
-Function TAdvSignalManager.WaitTimeoutForAll(Const iTimeout: Cardinal): Boolean;
+Function TFslSignalManager.WaitTimeoutForAll(Const iTimeout: Cardinal): Boolean;
 Begin
   Result := WaitTimeout(iTimeout, True);
 End;
 
 
-Function TAdvSignalManager.WaitTimeoutForAny(Const iTimeout: Cardinal): Boolean;
+Function TFslSignalManager.WaitTimeoutForAny(Const iTimeout: Cardinal): Boolean;
 Begin
   Result := WaitTimeout(iTimeout, False);
 End;
 
-Procedure TAdvMethodList.AssignItem(oItems : TAdvItemList; iIndex : Integer);
+Procedure TFslMethodList.AssignItem(oItems : TFslItemList; iIndex : Integer);
 Begin
-  FMethodArray^[iIndex] := TAdvMethodList(oItems).FMethodArray^[iIndex];
+  FMethodArray^[iIndex] := TFslMethodList(oItems).FMethodArray^[iIndex];
 End;
 
 
-Function TAdvMethodList.CompareItem(pA, pB : Pointer) : Integer;
+Function TFslMethodList.CompareItem(pA, pB : Pointer) : Integer;
 Begin
   Result := IntegerCompare(Integer(PAdvMethodItem(pA)^.Code), Integer(PAdvMethodItem(pB)^.Code));
 
@@ -920,44 +920,44 @@ Begin
 End;
 
 
-Procedure TAdvMethodList.InternalResize(iValue : Integer);
+Procedure TFslMethodList.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
-  MemoryResize(FMethodArray, Capacity * SizeOf(TAdvMethodItem), iValue * SizeOf(TAdvMethodItem));
+  MemoryResize(FMethodArray, Capacity * SizeOf(TFslMethodItem), iValue * SizeOf(TFslMethodItem));
 End;
 
 
-Procedure TAdvMethodList.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslMethodList.InternalEmpty(iIndex, iLength: Integer);
 Begin
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMethodArray) + (iIndex * SizeOf(TAdvMethodItem))), (iLength * SizeOf(TAdvMethodItem)));
+  MemoryZero(Pointer(NativeUInt(FMethodArray) + (iIndex * SizeOf(TFslMethodItem))), (iLength * SizeOf(TFslMethodItem)));
 End;
 
 
-Procedure TAdvMethodList.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslMethodList.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin
   Inherited;
 
-  System.Move(FMethodArray^[iSource], FMethodArray^[iTarget], iCount * SizeOf(TAdvMethodItem));
+  System.Move(FMethodArray^[iSource], FMethodArray^[iTarget], iCount * SizeOf(TFslMethodItem));
 End;
 
 
-Function TAdvMethodList.IndexByValue(aValue : TAdvMethod): Integer;
+Function TFslMethodList.IndexByValue(aValue : TFslMethod): Integer;
 Begin
   If Not Find(aValue, Result) Then
     Result := -1;
 End;
 
 
-Function TAdvMethodList.ExistsByValue(aValue: TAdvMethod): Boolean;
+Function TFslMethodList.ExistsByValue(aValue: TFslMethod): Boolean;
 Begin
   Result := ExistsByIndex(IndexByValue(aValue));
 End;
 
 
-Function TAdvMethodList.Add(aValue : TAdvMethod): Integer;
+Function TFslMethodList.Add(aValue : TFslMethod): Integer;
 Begin
   Result := -1;
 
@@ -980,15 +980,15 @@ Begin
 End;
 
 
-Procedure TAdvMethodList.Insert(iIndex : Integer; aValue : TAdvMethod);
+Procedure TFslMethodList.Insert(iIndex : Integer; aValue : TFslMethod);
 Begin
   InternalInsert(iIndex);
 
-  FMethodArray^[iIndex] := TAdvMethodItem(aValue);
+  FMethodArray^[iIndex] := TFslMethodItem(aValue);
 End;
 
 
-Procedure TAdvMethodList.InternalInsert(iIndex : Integer);
+Procedure TFslMethodList.InternalInsert(iIndex : Integer);
 Begin
   Inherited;
 
@@ -997,7 +997,7 @@ Begin
 End;
 
 
-Procedure TAdvMethodList.DeleteByValue(aValue : TAdvMethod);
+Procedure TFslMethodList.DeleteByValue(aValue : TFslMethod);
 Var
   iIndex : Integer;
 Begin
@@ -1008,9 +1008,9 @@ Begin
 End;
 
 
-Procedure TAdvMethodList.InternalExchange(iA, iB: Integer);
+Procedure TFslMethodList.InternalExchange(iA, iB: Integer);
 Var
-  aTemp : TAdvMethodItem;
+  aTemp : TFslMethodItem;
 Begin
   aTemp := FMethodArray^[iA];
   FMethodArray^[iA] := FMethodArray^[iB];
@@ -1018,7 +1018,7 @@ Begin
 End;
 
 
-Function TAdvMethodList.GetItem(iIndex : Integer): Pointer;
+Function TFslMethodList.GetItem(iIndex : Integer): Pointer;
 Begin
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -1026,7 +1026,7 @@ Begin
 End;
 
 
-Procedure TAdvMethodList.SetItem(iIndex : Integer; Value: Pointer);
+Procedure TFslMethodList.SetItem(iIndex : Integer; Value: Pointer);
 Begin
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -1034,89 +1034,89 @@ Begin
 End;
 
 
-Function TAdvMethodList.GetMethodItem(iIndex : Integer): TAdvMethod;
+Function TFslMethodList.GetMethodItem(iIndex : Integer): TFslMethod;
 Begin
   Assert(ValidateIndex('GetMethodItem', iIndex));
 
-  Result := TAdvMethod(FMethodArray^[iIndex]);
+  Result := TFslMethod(FMethodArray^[iIndex]);
 End;
 
 
-Procedure TAdvMethodList.SetMethodItem(iIndex : Integer; Const aValue : TAdvMethod);
+Procedure TFslMethodList.SetMethodItem(iIndex : Integer; Const aValue : TFslMethod);
 Begin
   Assert(ValidateIndex('SetMethodItem', iIndex));
 
-  FMethodArray^[iIndex] := TAdvMethodItem(aValue);
+  FMethodArray^[iIndex] := TFslMethodItem(aValue);
 End;
 
 
-Function TAdvMethodList.CapacityLimit : Integer;
+Function TFslMethodList.CapacityLimit : Integer;
 Begin
-  Result := High(TAdvMethodItemArray);
+  Result := High(TFslMethodItemArray);
 End;
 
 
-Function TAdvMethodList.Find(aValue: TAdvMethod; Out iResult: Integer): Boolean;
+Function TFslMethodList.Find(aValue: TFslMethod; Out iResult: Integer): Boolean;
 Begin
-  Result := Inherited Find(@TAdvMethodItem(aValue), iResult);
+  Result := Inherited Find(@TFslMethodItem(aValue), iResult);
 End;
 
 
-Function TAdvEventList.IndexByValue(aValue : TAdvEvent): Integer;
+Function TFslEventList.IndexByValue(aValue : TFslEvent): Integer;
 Begin
-  Result := Inherited IndexByValue(TAdvMethod(aValue));
+  Result := Inherited IndexByValue(TFslMethod(aValue));
 End;
 
 
-Function TAdvEventList.ExistsByValue(aValue: TAdvEvent): Boolean;
+Function TFslEventList.ExistsByValue(aValue: TFslEvent): Boolean;
 Begin
-  Result := Inherited ExistsByValue(TAdvMethod(aValue));
+  Result := Inherited ExistsByValue(TFslMethod(aValue));
 End;
 
 
-Function TAdvEventList.Add(aValue : TAdvEvent): Integer;
+Function TFslEventList.Add(aValue : TFslEvent): Integer;
 Begin
-  Result := Inherited Add(TAdvMethod(aValue));
+  Result := Inherited Add(TFslMethod(aValue));
 End;
 
 
-Procedure TAdvEventList.Insert(iIndex : Integer; aValue : TAdvEvent);
+Procedure TFslEventList.Insert(iIndex : Integer; aValue : TFslEvent);
 Begin
-  Inherited Insert(iIndex, TAdvMethod(aValue));
+  Inherited Insert(iIndex, TFslMethod(aValue));
 End;
 
 
-Procedure TAdvEventList.DeleteByValue(aValue : TAdvEvent);
+Procedure TFslEventList.DeleteByValue(aValue : TFslEvent);
 Begin
-  Inherited DeleteByValue(TAdvMethod(aValue));
+  Inherited DeleteByValue(TFslMethod(aValue));
 End;
 
 
-Function TAdvEventList.GetEvent(iIndex : Integer): TAdvEvent;
+Function TFslEventList.GetEvent(iIndex : Integer): TFslEvent;
 Begin
   Assert(ValidateIndex('GetEvent', iIndex));
 
-  Result := TAdvEvent(MethodByIndex[iIndex]);
+  Result := TFslEvent(MethodByIndex[iIndex]);
 End;
 
 
-Procedure TAdvEventList.SetEvent(iIndex : Integer; Const aValue : TAdvEvent);
+Procedure TFslEventList.SetEvent(iIndex : Integer; Const aValue : TFslEvent);
 Begin
   Assert(ValidateIndex('SetEvent', iIndex));
 
-  MethodByIndex[iIndex] := TAdvMethod(aValue);
+  MethodByIndex[iIndex] := TFslMethod(aValue);
 End;
 
 
-Constructor TAdvDispatched.Create;
+Constructor TFslDispatched.Create;
 Begin
   Inherited;
 
-  FEventList := TAdvEventList.Create;
+  FEventList := TFslEventList.Create;
 End;
 
 
-Destructor TAdvDispatched.Destroy;
+Destructor TFslDispatched.Destroy;
 Begin
   FEventList.Free;
 
@@ -1124,17 +1124,17 @@ Begin
 End;
 
 
-Constructor TAdvDispatcher.Create;
+Constructor TFslDispatcher.Create;
 Begin
   Inherited;
 
-  FHashEntry := TAdvDispatched(ItemNew);
+  FHashEntry := TFslDispatched(ItemNew);
 
   Capacity := 127;
 End;
 
 
-Destructor TAdvDispatcher.Destroy;
+Destructor TFslDispatcher.Destroy;
 Begin
   FHashEntry.Free;
 
@@ -1142,37 +1142,37 @@ Begin
 End;
 
 
-Function TAdvDispatcher.ItemClass : TAdvHashEntryClass;
+Function TFslDispatcher.ItemClass : TFslHashEntryClass;
 Begin
-  Result := TAdvDispatched;
+  Result := TFslDispatched;
 End;
 
 
-Function TAdvDispatcher.ForceDispatched(Const sName: String): TAdvDispatched;
-Begin
-  FHashEntry.Name := sName;
-
-  Result := TAdvDispatched(Force(FHashEntry));
-End;
-
-
-Function TAdvDispatcher.GetDispatched(Const sName: String): TAdvDispatched;
+Function TFslDispatcher.ForceDispatched(Const sName: String): TFslDispatched;
 Begin
   FHashEntry.Name := sName;
 
-  Result := TAdvDispatched(Get(FHashEntry));
+  Result := TFslDispatched(Force(FHashEntry));
 End;
 
 
-Procedure TAdvDispatcher.AddDispatched(Const sName : String; aEvent: TAdvEvent);
+Function TFslDispatcher.GetDispatched(Const sName: String): TFslDispatched;
+Begin
+  FHashEntry.Name := sName;
+
+  Result := TFslDispatched(Get(FHashEntry));
+End;
+
+
+Procedure TFslDispatcher.AddDispatched(Const sName : String; aEvent: TFslEvent);
 Begin
   ForceDispatched(sName).Events.Add(aEvent);
 End;
 
 
-Procedure TAdvDispatcher.RemoveDispatched(Const sName: String; aEvent: TAdvEvent);
+Procedure TFslDispatcher.RemoveDispatched(Const sName: String; aEvent: TFslEvent);
 Var
-  oDispatched : TAdvDispatched;
+  oDispatched : TFslDispatched;
 Begin
   oDispatched := GetDispatched(sName);
 
@@ -1186,7 +1186,7 @@ Begin
 End;
 
 
-Procedure TAdvDispatcher.Register(Const sName : String; aEvent : TAdvEvent; bRegister : Boolean);
+Procedure TFslDispatcher.Register(Const sName : String; aEvent : TFslEvent; bRegister : Boolean);
 Begin
 
   If bRegister Then
@@ -1196,24 +1196,24 @@ Begin
 End;
 
 
-Function TAdvDispatcher.Call(oSender: TAdvObject; oDispatched : TAdvDispatched) : Boolean;
+Function TFslDispatcher.Call(oSender: TFslObject; oDispatched : TFslDispatched) : Boolean;
 Var
   iLoop : Integer;
-  oFetched : TAdvDispatched;
+  oFetched : TFslDispatched;
 Begin
-  oFetched := TAdvDispatched(Get(oDispatched));
+  oFetched := TFslDispatched(Get(oDispatched));
 
   Result := Assigned(oFetched);
 
   If Result Then
   Begin
     For iLoop := 0 To oFetched.Events.Count - 1 Do
-      TAdvEvent(oFetched.Events[iLoop])(oSender);
+      TFslEvent(oFetched.Events[iLoop])(oSender);
   End;
 End;
 
 
-Function TAdvDispatcher.ExistsDispatched(Const sName: String): Boolean;
+Function TFslDispatcher.ExistsDispatched(Const sName: String): Boolean;
 Begin
   FHashEntry.Name := sName;
 
@@ -1221,15 +1221,15 @@ Begin
 End;
 
 
-Procedure TAdvStringDispatcher.Register(Const sName : String; aEvent : TAdvStringEvent; bRegister : Boolean);
+Procedure TFslStringDispatcher.Register(Const sName : String; aEvent : TFslStringEvent; bRegister : Boolean);
 Begin
-  TAdvDispatcher(Self).Register(sName, TAdvEvent(aEvent), bRegister);
+  TFslDispatcher(Self).Register(sName, TFslEvent(aEvent), bRegister);
 End;
 
 
-Function TAdvStringDispatcher.CallString(oSender: TAdvObject; Const sValue : String) : Boolean;
+Function TFslStringDispatcher.CallString(oSender: TFslObject; Const sValue : String) : Boolean;
 Var
-  oDispatched : TAdvDispatched;
+  oDispatched : TFslDispatched;
   iLoop       : Integer;
 Begin
   oDispatched := GetDispatched(sValue);
@@ -1239,29 +1239,29 @@ Begin
   If Result Then
   Begin
     For iLoop := 0 To oDispatched.Events.Count - 1 Do
-      TAdvStringEvent(oDispatched.Events[iLoop])(oSender, sValue);
+      TFslStringEvent(oDispatched.Events[iLoop])(oSender, sValue);
   End;
 End;
 
 
-Procedure TAdvObjectClassDispatcher.Register(Const aClass: TAdvObjectClass; aEvent: TAdvObjectClassEvent; bRegister : Boolean);
+Procedure TFslObjectClassDispatcher.Register(Const aClass: TFslObjectClass; aEvent: TFslObjectClassEvent; bRegister : Boolean);
 Begin
-  TAdvDispatcher(Self).Register(aClass.ClassName, TAdvEvent(aEvent), bRegister);
+  TFslDispatcher(Self).Register(aClass.ClassName, TFslEvent(aEvent), bRegister);
 End;
 
 
-Procedure TAdvObjectClassDispatcher.CallClass(oDispatched: TAdvDispatched; oSender, oValue: TAdvObject);
+Procedure TFslObjectClassDispatcher.CallClass(oDispatched: TFslDispatched; oSender, oValue: TFslObject);
 Var
   iLoop : Integer;
 Begin
   For iLoop := 0 To oDispatched.Events.Count - 1 Do
-    TAdvObjectClassEvent(oDispatched.Events[iLoop])(oSender, oValue);
+    TFslObjectClassEvent(oDispatched.Events[iLoop])(oSender, oValue);
 End;
 
 
-Function TAdvObjectClassDispatcher.CallClass(oSender, oValue : TAdvObject) : Boolean;
+Function TFslObjectClassDispatcher.CallClass(oSender, oValue : TFslObject) : Boolean;
 Var
-  oDispatched : TAdvDispatched;
+  oDispatched : TFslDispatched;
 Begin
   oDispatched := GetDispatched(oValue.ClassName);
 
@@ -1272,80 +1272,80 @@ Begin
 End;
 
 
-Procedure TAdvObjectDispatcher.Register(Const aObject: TAdvObject; aEvent: TAdvObjectEvent; bRegister : Boolean);
+Procedure TFslObjectDispatcher.Register(Const aObject: TFslObject; aEvent: TFslObjectEvent; bRegister : Boolean);
 Begin
-  TAdvDispatcher(Self).Register(Declare(aObject), TAdvEvent(aEvent), bRegister);
+  TFslDispatcher(Self).Register(Declare(aObject), TFslEvent(aEvent), bRegister);
 End;
 
 
-Function TAdvObjectDispatcher.Declare(oObject: TAdvObject): String;
+Function TFslObjectDispatcher.Declare(oObject: TFslObject): String;
 Begin
   Result := IntegerToString(Integer(oObject));
 End;
 
 
-Procedure TAdvIntegerDispatcher.Register(iValue: Integer; aEvent: TAdvIntegerEvent; bRegister : Boolean);
+Procedure TFslIntegerDispatcher.Register(iValue: Integer; aEvent: TFslIntegerEvent; bRegister : Boolean);
 Begin
-  TAdvDispatcher(Self).Register(IntegerToString(iValue), TAdvEvent(aEvent), bRegister);
+  TFslDispatcher(Self).Register(IntegerToString(iValue), TFslEvent(aEvent), bRegister);
 End;
 
 
-Function TAdvObjectDispatcher.Call(oSender: TAdvObject; oDispatched: TAdvDispatched): Boolean;
+Function TFslObjectDispatcher.Call(oSender: TFslObject; oDispatched: TFslDispatched): Boolean;
 Var
   iLoop  : Integer;
-  oValue : TAdvObject;
-  oFetched : TAdvDispatched;
+  oValue : TFslObject;
+  oFetched : TFslDispatched;
 Begin
-  oFetched := TAdvDispatched(Get(oDispatched));
+  oFetched := TFslDispatched(Get(oDispatched));
 
   Result := Assigned(oFetched);
 
   If Result Then
   Begin
-    oValue := TAdvObject(StringToInteger32(oFetched.Name));
+    oValue := TFslObject(StringToInteger32(oFetched.Name));
 
     For iLoop := 0 To oFetched.Events.Count - 1 Do
-      TAdvObjectEvent(oFetched.Events[iLoop])(oSender, oValue);
+      TFslObjectEvent(oFetched.Events[iLoop])(oSender, oValue);
   End;
 End;
 
 
-Function TAdvIntegerDispatcher.CallInteger(oSender: TAdvObject; iValue : Integer) : Boolean;
+Function TFslIntegerDispatcher.CallInteger(oSender: TFslObject; iValue : Integer) : Boolean;
 Begin
   Result := Call(oSender, GetDispatched(IntegerToString(iValue)));
 End;
 
-Function TAdvController.Link: TAdvController;
+Function TFslController.Link: TFslController;
 Begin
-  Result := TAdvController(Inherited Link);
+  Result := TFslController(Inherited Link);
 End;
 
 
-Function TAdvController.ErrorClass: EAdvExceptionClass;
+Function TFslController.ErrorClass: EAdvExceptionClass;
 Begin
   Result := EAdvController;
 End;
 
 
-Procedure TAdvController.Open;
+Procedure TFslController.Open;
 Begin
 End;
 
 
-Procedure TAdvController.Close;
+Procedure TFslController.Close;
 Begin
 End;
 
 
-Function TAdvControllerList.ItemClass : TAdvObjectClass;
+Function TFslControllerList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvController;
+  Result := TFslController;
 End;
 
 
-Function TAdvControllerList.GetControllerByIndex(Const iIndex : Integer) : TAdvController;
+Function TFslControllerList.GetControllerByIndex(Const iIndex : Integer) : TFslController;
 Begin
-  Result := TAdvController(ObjectByIndex[iIndex]);
+  Result := TFslController(ObjectByIndex[iIndex]);
 End;
 
 
@@ -1353,37 +1353,37 @@ Const
   setSwitches = ['/', '\', '-'];
 
 
-Function TAdvParameters.Switched(Const sSwitch: String): Boolean;
+Function TFslParameters.Switched(Const sSwitch: String): Boolean;
 Begin
   Result := FindCmdLineSwitch(sSwitch, setSwitches, True);
 End;
 
 
-Function TAdvParameters.Valid(iIndex: Integer): Boolean;
+Function TFslParameters.Valid(iIndex: Integer): Boolean;
 Begin
   Result := (iIndex >= 0) And (iIndex < Count);
 End;
 
 
-Function TAdvParameters.Executable : String;
+Function TFslParameters.Executable : String;
 Begin
   Result := ParamStr(0);
 End;
 
 
-Function TAdvParameters.Folder : String;
+Function TFslParameters.Folder : String;
 Begin
   Result := PathFolder(ParamStr(0));
 End;
 
 
-Function TAdvParameters.GetCount : Integer;
+Function TFslParameters.GetCount : Integer;
 Begin
   Result := ParamCount;
 End;
 
 
-Function TAdvParameters.GetParameter(iIndex: Integer): String;
+Function TFslParameters.GetParameter(iIndex: Integer): String;
 Begin
   Assert(CheckCondition(Valid(iIndex), 'GetParameter', StringFormat('Index not valid in bounds [0..%d]', [iIndex])));
 
@@ -1391,7 +1391,7 @@ Begin
 End;
 
 
-Function TAdvParameters.AsText : String;
+Function TFslParameters.AsText : String;
 Var
   iIndex : Integer;
 Begin
@@ -1402,7 +1402,7 @@ Begin
 End;
 
 
-Function TAdvParameters.Get(Const sKey: String): String;
+Function TFslParameters.Get(Const sKey: String): String;
 Var
   iIndex : Integer;
 Begin
@@ -1415,7 +1415,7 @@ Begin
 End;
 
 
-Function TAdvParameters.IndexOf(Const sKey: String): Integer;
+Function TFslParameters.IndexOf(Const sKey: String): Integer;
 Begin
   Result := Count - 1;
   While (Result >= 0) And Not StringEquals(sKey, Keys[Result]) Do
@@ -1423,13 +1423,13 @@ Begin
 End;
 
 
-Function TAdvParameters.Exists(Const sKey: String): Boolean;
+Function TFslParameters.Exists(Const sKey: String): Boolean;
 Begin
   Result := Valid(IndexOf(sKey));
 End;
 
 
-Function TAdvParameters.GetKey(iIndex: Integer): String;
+Function TFslParameters.GetKey(iIndex: Integer): String;
 Var
   sValue : String;
 Begin
@@ -1437,7 +1437,7 @@ Begin
 End;
 
 
-Function TAdvParameters.GetValue(iIndex: Integer): String;
+Function TFslParameters.GetValue(iIndex: Integer): String;
 Var
   sKey : String;
 Begin
@@ -1445,7 +1445,7 @@ Begin
 End;
 
 
-Procedure TAdvParameters.GetKeyValue(iIndex: Integer; Out sKey, sValue: String);
+Procedure TFslParameters.GetKeyValue(iIndex: Integer; Out sKey, sValue: String);
 Var
   sParameter : String;
 Begin

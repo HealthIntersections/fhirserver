@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Exceptions,
-  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
 
 type
   TUSStateConcept = class (TCodeSystemProviderContext)
@@ -51,7 +51,7 @@ type
 
   TUSStateConceptFilter = class (TCodeSystemProviderFilterContext)
   private
-    FList : TAdvList<TUSStateConcept>;
+    FList : TFslList<TUSStateConcept>;
     FCursor : integer;
   public
     constructor Create; override;
@@ -61,8 +61,8 @@ type
 
   TUSStateServices = class (TCodeSystemProvider)
   private
-    FCodes : TAdvList<TUSStateConcept>;
-    FMap : TAdvMap<TUSStateConcept>;
+    FCodes : TFslList<TUSStateConcept>;
+    FMap : TFslMap<TUSStateConcept>;
 
     procedure load;
   public
@@ -109,8 +109,8 @@ implementation
 Constructor TUSStateServices.create();
 begin
   inherited Create;
-  FCodes := TAdvList<TUSStateConcept>.create;
-  FMap := TAdvMap<TUSStateConcept>.create;
+  FCodes := TFslList<TUSStateConcept>.create;
+  FMap := TFslMap<TUSStateConcept>.create;
   Load;
 end;
 
@@ -355,7 +355,7 @@ end;
 constructor TUSStateConceptFilter.Create;
 begin
   inherited;
-  FList := TAdvList<TUSStateConcept>.Create;
+  FList := TFslList<TUSStateConcept>.Create;
   FCursor := -1;
 end;
 

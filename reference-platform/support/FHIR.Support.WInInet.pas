@@ -42,7 +42,7 @@ Type
 
   TProgressEvent = procedure (sender : TObject; msg : String) of object;
 
-  TAdvWinInetClient = Class(TAdvObject)
+  TFslWinInetClient = Class(TFslObject)
     Private
       FUserAgent : String;
       FRequestType: String;
@@ -51,8 +51,8 @@ Type
       FResponseType: String;
       FSoapAction: String;
       FRequestMethod: String;
-      FResponse: TAdvBuffer;
-      FRequest: TAdvBuffer;
+      FResponse: TFslBuffer;
+      FRequest: TFslBuffer;
       FSecure : Boolean;
       FServer : String;
       FPort : String;
@@ -74,8 +74,8 @@ Type
       FOnProgress: TProgressEvent;
 
       Procedure Check(ACondition : Boolean; Const ALocation, ADescription, ADetail : String; iError : Cardinal);
-      Procedure SetResponse(Const Value: TAdvBuffer);
-      Procedure SetRequest(Const Value: TAdvBuffer);
+      Procedure SetResponse(Const Value: TFslBuffer);
+      Procedure SetRequest(Const Value: TFslBuffer);
       Procedure Connect;
       Procedure Disconnect;
       Procedure SetUserAgent(Const Value: String);
@@ -122,13 +122,13 @@ Type
 
       Property RequestMethod : String Read FRequestMethod Write FRequestMethod;
       Property RequestType : String Read FRequestType Write FRequestType;
-      Property Request : TAdvBuffer Read FRequest Write SetRequest;
+      Property Request : TFslBuffer Read FRequest Write SetRequest;
       Property SoapAction : String Read FSoapAction Write FSoapAction;
 
       Property ResponseCode : String Read FResponseCode Write FResponseCode;
       Property ResponseText : String Read FResponseText Write FResponseText;
       Property ResponseType : String Read FResponseType Write FResponseType;
-      Property Response : TAdvBuffer Read FResponse Write SetResponse;
+      Property Response : TFslBuffer Read FResponse Write SetResponse;
 
       Property IgnoreContentTypeHeader : Boolean Read FIgnoreContentTypeHeader Write FIgnoreContentTypeHeader;
       Property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
@@ -351,36 +351,36 @@ Begin
   End;
 End;
 
-Constructor TAdvWinInetClient.Create;
+Constructor TFslWinInetClient.Create;
 Begin
   Inherited;
   FHeaders := TDictionary<String, String>.create;;
 
 {$IFDEF VER130}
-  Check(@mInternetOpen <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenA', 0);
-  Check(@mInternetConnect <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetConnectA', 0);
-  Check(@mHttpQueryInfo <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpQueryInfoA', 0);
-  Check(@mHttpOpenRequest <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpOpenRequestA', 0);
-  Check(@mHttpSendRequest <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpSendRequestA', 0);
+  Check(@mInternetOpen <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenA', 0);
+  Check(@mInternetConnect <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetConnectA', 0);
+  Check(@mHttpQueryInfo <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpQueryInfoA', 0);
+  Check(@mHttpOpenRequest <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpOpenRequestA', 0);
+  Check(@mHttpSendRequest <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpSendRequestA', 0);
 {$ELSE}
-  Check(@mInternetOpen <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenW', 0);
-  Check(@mInternetConnect <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetConnectW', 0);
-  Check(@mHttpQueryInfo <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpQueryInfoW', 0);
-  Check(@mHttpOpenRequest <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpOpenRequestW', 0);
-  Check(@mHttpSendRequest <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpSendRequestW', 0);
+  Check(@mInternetOpen <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenW', 0);
+  Check(@mInternetConnect <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetConnectW', 0);
+  Check(@mHttpQueryInfo <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpQueryInfoW', 0);
+  Check(@mHttpOpenRequest <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpOpenRequestW', 0);
+  Check(@mHttpSendRequest <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'HttpSendRequestW', 0);
 
 {$ENDIF}
-  Check(GHandle >= 32, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_DLL, DLL_WININET, 0);
-  Check(@mInternetCloseHandle <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetCloseHandle', 0);
-  Check(@mInternetQueryDataAvailable <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetQueryDataAvailable', 0);
-  Check(@mInternetReadFile <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetReadFile', 0);
-  Check(@mInternetQueryOption <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetQueryOption', 0);
-  Check(@mInternetSetOption <> Nil, 'TAdvWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetSetOption', 0);
+  Check(GHandle >= 32, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_DLL, DLL_WININET, 0);
+  Check(@mInternetCloseHandle <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetCloseHandle', 0);
+  Check(@mInternetQueryDataAvailable <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetQueryDataAvailable', 0);
+  Check(@mInternetReadFile <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetReadFile', 0);
+  Check(@mInternetQueryOption <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetQueryOption', 0);
+  Check(@mInternetSetOption <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetSetOption', 0);
   FUserAgent := 'Kestral Software';
 End;
 
 
-Destructor TAdvWinInetClient.Destroy;
+Destructor TFslWinInetClient.Destroy;
 Begin
   if FReqHandle <> nil then
     mInternetCloseHandle(FReqHandle);
@@ -395,13 +395,13 @@ Begin
 End;
 
 
-Function TAdvWinInetClient.ErrorClass: EAdvExceptionClass;
+Function TFslWinInetClient.ErrorClass: EAdvExceptionClass;
 Begin
   Result := EAdvWinInetClient;
 End;
 
 
-Function TAdvWinInetClient.ErrorMessage(Const sDetail : String; iError : Cardinal) : String;
+Function TFslWinInetClient.ErrorMessage(Const sDetail : String; iError : Cardinal) : String;
 Begin
   If iError = 0 Then
     Result := '[' + sDetail + ']'
@@ -414,20 +414,20 @@ Begin
 End;
 
 
-Procedure TAdvWinInetClient.Check(ACondition : Boolean; Const ALocation, ADescription, aDetail : String; iError : Cardinal);
+Procedure TFslWinInetClient.Check(ACondition : Boolean; Const ALocation, ADescription, aDetail : String; iError : Cardinal);
 Begin
   If Not ACondition Then
     RaiseError(ALocation, ADescription + ' ' + ErrorMessage(aDetail, iError));
 End;
 
 
-Procedure TAdvWinInetClient.Execute;
+Procedure TFslWinInetClient.Execute;
 Var
   sHeaders : String;
   pData : Pointer;
   iSize, err : DWord;
   bOk : Boolean;
-  oResponse : TAdvMemoryStream;
+  oResponse : TFslMemoryStream;
   dwFlags : DWORD;
   dwBuffLen : DWORD;
   again : boolean;
@@ -436,7 +436,7 @@ Begin
   if FReqHandle <> nil then
     mInternetCloseHandle(FReqHandle);
 
-  Assert(Invariants('Execute', FResponse, TAdvBuffer, 'Response'));
+  Assert(Invariants('Execute', FResponse, TFslBuffer, 'Response'));
   if assigned(FOnProgress) then
     FOnProgress(self, 'Connecting');
   Connect;
@@ -462,16 +462,16 @@ Begin
       FReqHandle := mHttpOpenRequest(FConnection, PChar(FRequestMethod), PChar(FResource), Nil, Nil, Nil,
           INTERNET_FLAG_KEEP_CONNECTION Or INTERNET_FLAG_NO_CACHE_WRITE Or INTERNET_FLAG_PRAGMA_NOCACHE, 0);
 
-    Check(FReqHandle <> Nil, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_OPEN, FResource, GetLastError);
+    Check(FReqHandle <> Nil, 'TFslWinInetClient.DoExecute', RS_OP_WININET_REQ_OPEN, FResource, GetLastError);
 //    If FSecure Then
 //    Begin
 //      err := GetLastError;
 //      dwBuffLen := 4;
 //      bOk := mInternetQueryOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, pointer(@dwFlags), dwBuffLen);
-//      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
+//      Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
 //      dwFlags := dwFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA;
 //      bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, @dwFlags, dwBuffLen);
-//      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+//      Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
 //      again := true;
 //    End;
 
@@ -479,22 +479,22 @@ Begin
     If FUsername <> '' Then
     Begin
       bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_USERNAME, pchar(FUsername), Length(FUsername));
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+      Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
     End;
     If FPassword <> '' Then
     Begin
       bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PASSWORD, pchar(FPassword), Length(FPassword));
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+      Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
     End;
     If FProxyUsername <> '' Then
     Begin
       bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PROXY_USERNAME, pchar(FProxyUsername), Length(FProxyUsername));
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+      Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
     End;
     If FProxyPassword <> '' Then
     Begin
       bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_PROXY_PASSWORD, pchar(FProxyPassword), Length(FProxyPassword));
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+      Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
     End;
 
     If Assigned(FRequest) Then
@@ -508,19 +508,19 @@ Begin
         err := GetLastError;
         dwBuffLen := 4;
         bOk := mInternetQueryOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, pointer(@dwFlags), dwBuffLen);
-        Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
+        Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_QUERY_OPTION, FResource, GetLastError);
         dwFlags := dwFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA;
         bOk := mInternetSetOption(FReqHandle, INTERNET_OPTION_SECURITY_FLAGS, @dwFlags, dwBuffLen);
-        Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
+        Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_SET_OPTION, FResource, GetLastError);
         FSecure := true;
         again := true;
       End;
 
   until not again;
 
-  Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_REQ_SEND, FResource, err);
+  Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_REQ_SEND, FResource, err);
 
-  oResponse := TAdvMemoryStream.Create;
+  oResponse := TFslMemoryStream.Create;
   GetMem(pData, 1024);
   Try
     FResponseCode := GetHeader(FReqHandle, HTTP_QUERY_STATUS_CODE);
@@ -543,7 +543,7 @@ Begin
       bOk := mInternetReadFile(FReqHandle, pData, 1024, iSize);
 
       // TODO: non-exception when reponse fails?
-      Check(bOk, 'TAdvWinInetClient.DoExecute', RS_OP_WININET_READ, FResource, GetLastError);
+      Check(bOk, 'TFslWinInetClient.DoExecute', RS_OP_WININET_READ, FResource, GetLastError);
 
       if assigned(FOnProgress) then
         FOnProgress(self, 'Receiving ('+ inttostr(oResponse.Size)+' bytes)');
@@ -560,7 +560,7 @@ Begin
 End;
 
 
-Function TAdvWinInetClient.GetHeader(ARequest: HInternet; AHeader: DWord): String;
+Function TFslWinInetClient.GetHeader(ARequest: HInternet; AHeader: DWord): String;
 Var
   pData : pointer;
   iSize : DWord;
@@ -579,11 +579,11 @@ Begin
         FreeMem(pData);
         Getmem(pData, iSize);
         bOk := mHttpQueryInfo(ARequest, AHeader, pData, iSize, iIndex);
-        Check(bOk, 'TAdvWinInetClient.GetHeader', RS_OP_WININET_QUERY, '2', GetLastError);
+        Check(bOk, 'TFslWinInetClient.GetHeader', RS_OP_WININET_QUERY, '2', GetLastError);
       End
       Else
       Begin
-        Check(False, 'TAdvWinInetClient.GetHeader', RS_OP_WININET_QUERY, '1', GetLastError);
+        Check(False, 'TFslWinInetClient.GetHeader', RS_OP_WININET_QUERY, '1', GetLastError);
       End;
     End;
 
@@ -602,7 +602,7 @@ Begin
 End;
 
 
-function TAdvWinInetClient.getResponseHeader(name : string): String;
+function TFslWinInetClient.getResponseHeader(name : string): String;
 begin
   if name = 'Content-Type' then
     result := GetHeader(FReqHandle, HTTP_QUERY_CONTENT_TYPE)
@@ -612,7 +612,7 @@ begin
     raise Exception.Create('unknown header');
 end;
 
-Procedure TAdvWinInetClient.Connect;
+Procedure TFslWinInetClient.Connect;
 Var
   sProxy : String;
 Begin
@@ -642,7 +642,7 @@ Begin
 End;
 
 
-Procedure TAdvWinInetClient.Disconnect;
+Procedure TFslWinInetClient.Disconnect;
 Begin
   If FConnection <> Nil Then
   Begin
@@ -658,78 +658,78 @@ Begin
 End;
 
 
-Procedure TAdvWinInetClient.SetResponse(Const Value: TAdvBuffer);
+Procedure TFslWinInetClient.SetResponse(Const Value: TFslBuffer);
 Begin
   FResponse.Free;
   FResponse := Value;
 End;
 
-Procedure TAdvWinInetClient.SetRequest(Const Value: TAdvBuffer);
+Procedure TFslWinInetClient.SetRequest(Const Value: TFslBuffer);
 Begin
   FRequest.Free;
   FRequest := Value;
 End;
 
-Procedure TAdvWinInetClient.SetUserAgent(Const Value: String);
+Procedure TFslWinInetClient.SetUserAgent(Const Value: String);
 Begin
   Disconnect;
   FUserAgent := Value;
 End;
 
-Procedure TAdvWinInetClient.SetPort(Const Value: String);
+Procedure TFslWinInetClient.SetPort(Const Value: String);
 Begin
   Disconnect;
   FPort := Value;
 End;
 
-Procedure TAdvWinInetClient.SetResource(Const Value: String);
+Procedure TFslWinInetClient.SetResource(Const Value: String);
 Begin
   Disconnect;
   FResource := Value;
 End;
 
-Procedure TAdvWinInetClient.SetServer(Const Value: String);
+Procedure TFslWinInetClient.SetServer(Const Value: String);
 Begin
   Disconnect;
   FServer := Value;
 End;
 
-Procedure TAdvWinInetClient.SetSecure(Const Value: Boolean);
+Procedure TFslWinInetClient.SetSecure(Const Value: Boolean);
 Begin
   Disconnect;
   FSecure := Value;
 End;
 
 
-Procedure TAdvWinInetClient.SetProxyPort(Const Value: Integer);
+Procedure TFslWinInetClient.SetProxyPort(Const Value: Integer);
 Begin
   Disconnect;
   FProxyPort := Value;
 End;
 
 
-Procedure TAdvWinInetClient.SetProxySecure(Const Value: Boolean);
+Procedure TFslWinInetClient.SetProxySecure(Const Value: Boolean);
 Begin
   Disconnect;
   FProxySecure := Value;
 End;
 
 
-Procedure TAdvWinInetClient.SetProxyServer(Const Value: String);
+Procedure TFslWinInetClient.SetProxyServer(Const Value: String);
 Begin
   Disconnect;
   FProxyServer := Value;
 End;
 
 
-Procedure TAdvWinInetClient.SetUseWindowsProxySettings(Const Value: Boolean);
+Procedure TFslWinInetClient.SetUseWindowsProxySettings(Const Value: Boolean);
 Begin
   Disconnect;
   FUseWindowsProxySettings := Value;
 End;
 
 
-procedure TAdvWinInetClient.SetAddress(Const Value: String);
+procedure TFslWinInetClient.SetAddress(Const Value: String);
 Var
   sTemp : String;
   sLeft : String;

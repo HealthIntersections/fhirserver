@@ -35,7 +35,7 @@ uses
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders, FHIR.Support.Certs,
-  Logging,
+  FHIR.Debug.Logging,
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Client.Base, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
   FHIR.Tools.Context, FHIR.Tools.Profiles, FHIR.Support.System, FHIR.Support.Text,
   FHIR.Client.SmartUtilities, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,

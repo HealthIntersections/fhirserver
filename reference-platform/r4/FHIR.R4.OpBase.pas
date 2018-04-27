@@ -36,7 +36,7 @@ uses
   FHIR.R4.Types, FHIR.R4.Resources;
 type
 
-  TFHIROpExtension = class (TAdvObject)
+  TFHIROpExtension = class (TFslObject)
   private
     FName : String;
     FValue : TFHIRType;
@@ -48,10 +48,10 @@ type
     property value : TFHIRType read FValue write SetValue;
   end;
 
-  TFHIROperationBaseObject = class (TAdvObject)
+  TFHIROperationBaseObject = class (TFslObject)
   private
-    FExtensions : TAdvList<TFHIROpExtension>;
-    function GetExtensions: TAdvList<TFHIROpExtension>;
+    FExtensions : TFslList<TFHIROpExtension>;
+    function GetExtensions: TFslList<TFHIROpExtension>;
   protected
     function isKnownName(name : String) : boolean; overload; virtual;
     procedure loadExtensions(params : TFHIRParameters); overload;
@@ -61,7 +61,7 @@ type
     procedure writeExtensions(params : TFhirParametersParameter); overload;
   public
     destructor Destroy; override;
-    property extensions : TAdvList<TFHIROpExtension> read GetExtensions;
+    property extensions : TFslList<TFHIROpExtension> read GetExtensions;
     procedure addExtension(name : String; value : TFHIRType); overload;
     procedure addExtension(name : String; value : string); overload;
     procedure addExtension(name : String; value : boolean); overload;
@@ -192,10 +192,10 @@ begin
   inherited;
 end;
 
-function TFHIROperationBaseObject.GetExtensions: TAdvList<TFHIROpExtension>;
+function TFHIROperationBaseObject.GetExtensions: TFslList<TFHIROpExtension>;
 begin
   if FExtensions = nil then
-    FExtensions := TAdvList<TFHIROpExtension>.create;
+    FExtensions := TFslList<TFHIROpExtension>.create;
   result := FExtensions;
 end;
 

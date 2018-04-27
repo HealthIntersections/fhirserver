@@ -38,7 +38,7 @@ uses
   YuStemmer, 
   FHIR.Database.Manager,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities,
-  TerminologyServices;
+  FHIR.Tx.Service;
 
 type
   TUMLSConcept = class (TCodeSystemProviderContext)
@@ -63,7 +63,7 @@ type
 
   TUMLSPrep = class (TCodeSystemProviderFilterPreparationContext)
   private
-    filters : TAdvList<TUMLSFilter>;
+    filters : TFslList<TUMLSFilter>;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -741,7 +741,7 @@ end;
 constructor TUMLSPrep.Create;
 begin
   inherited;
-  filters := TAdvList<TUMLSFilter>.Create;
+  filters := TFslList<TUMLSFilter>.Create;
 end;
 
 destructor TUMLSPrep.Destroy;

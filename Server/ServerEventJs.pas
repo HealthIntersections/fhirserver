@@ -10,7 +10,7 @@ uses
   FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Session;
 
 type
-  TFHIRServerJSHelper = class (TAdvObject)
+  TFHIRServerJSHelper = class (TFslObject)
   private
     function FHIRRequestGetBaseUrlJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
     function FHIRRequestGetCommandTypeJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;

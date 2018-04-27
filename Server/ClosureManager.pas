@@ -40,7 +40,7 @@ Uses
   TerminologyServerStore;
 
 Type
-  TSubsumptionMatch = class (TAdvObject)
+  TSubsumptionMatch = class (TFslObject)
   private
     FKeySrc: integer;
     FcodeSrc: String;
@@ -58,7 +58,7 @@ Type
     property codeTgt : String read FcodeTgt write FcodeTgt;
   end;
 
-  TClosureManager = class (TAdvObject)
+  TClosureManager = class (TFslObject)
   private
     FStore : TTerminologyServerStore; // not linked, as this is the owner
     FName : String;
@@ -83,7 +83,7 @@ Type
     procedure processEntry(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code: String);
 
     // this is the inline variant; subsumption is determined immediately
-    procedure processConcepts(conn: TKDBConnection; codings : TAdvList<TFHIRCoding>; map : TFHIRConceptMap);
+    procedure processConcepts(conn: TKDBConnection; codings : TFslList<TFHIRCoding>; map : TFHIRConceptMap);
 
     procedure reRun(conn: TKDBConnection; map : TFHIRConceptMap; version : integer);
   end;
@@ -159,7 +159,7 @@ begin
   end;
 end;
 
-procedure TClosureManager.processConcepts(conn: TKDBConnection; codings : TAdvList<TFHIRCoding>; map : TFHIRConceptMap);
+procedure TClosureManager.processConcepts(conn: TKDBConnection; codings : TFslList<TFHIRCoding>; map : TFHIRConceptMap);
 var
   coding : TFHIRCoding;
   ck, cek : integer;
@@ -189,14 +189,14 @@ end;
 
 procedure TClosureManager.processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMap);
 var
-  matches : TAdvList<TSubsumptionMatch>;
+  matches : TFslList<TSubsumptionMatch>;
   match : TSubsumptionMatch;
   group, g : TFhirConceptMapGroup;
   element, e : TFhirConceptMapGroupElement;
   target, t : TFhirConceptMapGroupElementTarget;
 begin
   group := nil;
-  matches := TAdvList<TSubsumptionMatch>.create;
+  matches := TFslList<TSubsumptionMatch>.create;
   try
     conn.SQL := 'select ConceptKey, URL, Code from Concepts where ConceptKey in (select SubsumesKey from ClosureEntries where ClosureKey = '+inttostr(FKey)+' and ClosureEntryKey <> '+inttostr(ClosureEntryKey)+')';
     conn.prepare;
@@ -290,11 +290,11 @@ end;
 procedure TClosureManager.reRun(conn: TKDBConnection; map: TFHIRConceptMap; version: integer);
 var
   key : String;
-  elements : TAdvMap<TFhirConceptMapGroupElement>;
+  elements : TFslMap<TFhirConceptMapGroupElement>;
   element : TFhirConceptMapGroupElement;
   target : TFhirConceptMapGroupElementTarget;
 begin
-  elements := TAdvMap<TFhirConceptMapGroupElement>.create;
+  elements := TFslMap<TFhirConceptMapGroupElement>.create;
   try
     conn.SQL := 'Select ClosureEntryKey, src.URL as UrlSrc, src.Code as CodeSrc, tgt.URL as UrlTgt, tgt.Code as CodeTgt '+
        'from ClosureEntries, Concepts as src, Concepts as tgt '+

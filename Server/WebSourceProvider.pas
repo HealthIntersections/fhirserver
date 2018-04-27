@@ -35,7 +35,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Zip, FHIR.Support.Stream, FHIR.Support.Generics;
 
 type
-  TFHIRWebServerSourceProvider = {abstract} class (TAdvObject)
+  TFHIRWebServerSourceProvider = {abstract} class (TFslObject)
   public
     function AltFile(path, base: String): String;
     function getSource(filename : String) : String; virtual;
@@ -56,7 +56,7 @@ type
 
   TFHIRWebServerSourceZipProvider = class (TFHIRWebServerSourceProvider)
   private
-    FZip : TAdvMap<TAdvBuffer>; // where to find web content
+    FZip : TFslMap<TFslBuffer>; // where to find web content
   public
     Constructor Create(path : String);
     Destructor Destroy; override;
@@ -132,7 +132,7 @@ end;
 
 function TFHIRWebServerSourceZipProvider.asStream(filename: String): TStream;
 var
-  src : TAdvBuffer;
+  src : TFslBuffer;
 begin
   if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
     raise Exception.Create('Unable to find '+filename);
@@ -143,14 +143,14 @@ end;
 
 constructor TFHIRWebServerSourceZipProvider.Create(path: String);
 var
-  zip : TAdvZipReader;
+  zip : TFslZipReader;
   i : integer;
 begin
   inherited Create;
-  FZip := TAdvMap<TAdvBuffer>.create;
-  zip := TAdvZipReader.Create;
+  FZip := TFslMap<TFslBuffer>.create;
+  zip := TFslZipReader.Create;
   try
-    zip.Stream := TAdvFile.Create(path, fmOpenRead);
+    zip.Stream := TFslFile.Create(path, fmOpenRead);
     zip.ReadZip;
     for i := 0 to zip.Parts.Count - 1 do
       FZip.Add(zip.Parts[i].Name, zip.Parts[i].Link);
@@ -172,7 +172,7 @@ end;
 
 function TFHIRWebServerSourceZipProvider.getSource(filename: String): String;
 var
-  src : TAdvBuffer;
+  src : TFslBuffer;
 begin
   if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
     raise Exception.Create('Unable to find '+filename);

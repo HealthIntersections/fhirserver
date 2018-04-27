@@ -32,7 +32,7 @@ type
     FCapabilityStatement: TFhirCapabilityStatement;
     FClient: TFHIRClient;
 
-    FResources : TAdvMap<TFHIRResource>;
+    FResources : TFslMap<TFHIRResource>;
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
     procedure SetClient(const Value: TFHIRClient);
     procedure SetPatient(const Value: TFHIRPatient);
@@ -71,10 +71,10 @@ var
   form : TDocumentGeneratorForm;
   cmp :  TFHIRComposition;
   doc : TFHIRBundle;
-  prac : TAdvList<TFHIRPractitioner>;
+  prac : TFslList<TFHIRPractitioner>;
 begin
   cmp := lbCompositions.Items.Objects[lbCompositions.itemIndex] as TFhirComposition;
-  prac := TAdvList<TFHIRPractitioner>.create;
+  prac := TFslList<TFHIRPractitioner>.create;
   try
     doc := nil;
     work('Fetch Document', true, procedure
@@ -121,7 +121,7 @@ begin
   lblName.text := gen(patient.nameList[0]);
 
   if FResources = nil then
-    FResources := TAdvMap<TFhirResource>.create;
+    FResources := TFslMap<TFhirResource>.create;
 
   work('Loading Patient Data', true,
     procedure

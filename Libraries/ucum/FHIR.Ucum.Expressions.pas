@@ -41,7 +41,7 @@ uses
 Type
   EUcumException = class (Exception);
 
-  TUcumComponent = class (TAdvObject)
+  TUcumComponent = class (TFslObject)
   public
     Function Link : TUcumComponent; Overload;
   End;
@@ -100,7 +100,7 @@ Type
 
   TUcumLexerTokenType = (NONE, NUMBER, SYMBOL, SOLIDUS, PERIOD, OPEN, CLOSE, ANNOTATION);
 
-  TUcumLexer = class (TAdvObject)
+  TUcumLexer = class (TFslObject)
   private
     Fsource : String;
     Findex : integer;
@@ -125,7 +125,7 @@ Type
     function getTokenAsInt() : integer;
   End;
 
-  TUcumExpressionParser = class (TAdvObject)
+  TUcumExpressionParser = class (TFslObject)
   private
     FModel : TUcumModel;
     FLexer : TUcumLexer;
@@ -138,24 +138,24 @@ Type
   End;
 
 
-  TUcumExpressionComposer = class (TAdvObject)
+  TUcumExpressionComposer = class (TFslObject)
   private
-    class Procedure composeTerm(oBuilder : TAdvStringBuilder; term : TUcumTerm);
-    class Procedure composeComp(oBuilder : TAdvStringBuilder; comp : TUcumComponent);
-    class Procedure composeSymbol(oBuilder : TAdvStringBuilder; symbol : TUcumSymbol);
-    class Procedure composeFactor(oBuilder : TAdvStringBuilder; comp : TUcumFactor);
-    class Procedure composeOp(oBuilder : TAdvStringBuilder; op : TUcumOperator);
+    class Procedure composeTerm(oBuilder : TFslStringBuilder; term : TUcumTerm);
+    class Procedure composeComp(oBuilder : TFslStringBuilder; comp : TUcumComponent);
+    class Procedure composeSymbol(oBuilder : TFslStringBuilder; symbol : TUcumSymbol);
+    class Procedure composeFactor(oBuilder : TFslStringBuilder; comp : TUcumFactor);
+    class Procedure composeOp(oBuilder : TFslStringBuilder; op : TUcumOperator);
   public
     class Function compose(Term : TUcumTerm) : String;
   End;
 
-  TUcumFormalStructureComposer = class (TAdvObject)
+  TUcumFormalStructureComposer = class (TFslObject)
   private
-    class Procedure composeTerm(oBldr : TAdvStringBuilder; oTerm : TUcumTerm);
-    class Procedure composeComp(oBldr : TAdvStringBuilder; oComp : TUcumComponent);
-    class Procedure composeSymbol(oBldr : TAdvStringBuilder; oSymbol : TUcumSymbol);
-    class Procedure composeFactor(oBldr : TAdvStringBuilder; oFactor : TUcumFactor);
-    class Procedure composeOp(oBldr : TAdvStringBuilder; aOperator : TUcumOperator);
+    class Procedure composeTerm(oBldr : TFslStringBuilder; oTerm : TUcumTerm);
+    class Procedure composeComp(oBldr : TFslStringBuilder; oComp : TUcumComponent);
+    class Procedure composeSymbol(oBldr : TFslStringBuilder; oSymbol : TUcumSymbol);
+    class Procedure composeFactor(oBldr : TFslStringBuilder; oFactor : TUcumFactor);
+    class Procedure composeOp(oBldr : TFslStringBuilder; aOperator : TUcumOperator);
   Public
     class Function compose(oTerm : TUcumTerm) : String;
   End;
@@ -163,7 +163,7 @@ Type
 
 
 
-  TUcumCanonical = class (TAdvObject)
+  TUcumCanonical = class (TFslObject)
   private
     FValue : TSmartDecimal;
     FUnit : TUcumTerm;
@@ -180,7 +180,7 @@ Type
     Property Unit_ : TUcumTerm read FUnit write SetUnit;
   End;
 
-  TUcumConverter = class (TAdvObject)
+  TUcumConverter = class (TFslObject)
   private
     Fmodel : TUcumModel;
     Fhandlers : TUcumRegistry;
@@ -651,13 +651,13 @@ End;
 
 class Function TUcumExpressionComposer.compose(Term : TUcumTerm) : String;
 var
-  oBuilder : TAdvStringBuilder;
+  oBuilder : TFslStringBuilder;
 begin
   if (Term = nil) Then
     result := '1'
   Else
   Begin
-    oBuilder := TAdvStringBuilder.Create;
+    oBuilder := TFslStringBuilder.Create;
     try
       composeTerm(oBuilder, Term);
       result := oBuilder.AsString;
@@ -668,7 +668,7 @@ begin
 End;
 
 
-class Procedure TUcumExpressionComposer.composeTerm(oBuilder : TAdvStringBuilder; Term : TUcumTerm);
+class Procedure TUcumExpressionComposer.composeTerm(oBuilder : TFslStringBuilder; Term : TUcumTerm);
 Begin
   if (Term.Component <> nil) Then
     composeComp(oBuilder, Term.Component);
@@ -679,7 +679,7 @@ Begin
 End;
 
 
-class Procedure TUcumExpressionComposer.composeComp(oBuilder : TAdvStringBuilder; comp : TUcumComponent);
+class Procedure TUcumExpressionComposer.composeComp(oBuilder : TFslStringBuilder; comp : TUcumComponent);
 Begin
   if (comp is TUcumFactor) Then
     composeFactor(oBuilder, TUcumFactor(comp))
@@ -695,7 +695,7 @@ Begin
     oBuilder.append('?');
 End;
 
-class Procedure TUcumExpressionComposer.composeSymbol(oBuilder : TAdvStringBuilder; symbol : TUcumSymbol);
+class Procedure TUcumExpressionComposer.composeSymbol(oBuilder : TFslStringBuilder; symbol : TUcumSymbol);
 Begin
   if (symbol.Prefix <> nil) Then
     oBuilder.append(symbol.Prefix.Code);
@@ -704,12 +704,12 @@ Begin
     oBuilder.append(inttostr(symbol.Exponent));
 End;
 
-class Procedure TUcumExpressionComposer.composeFactor(oBuilder : TAdvStringBuilder; comp : TUcumFactor);
+class Procedure TUcumExpressionComposer.composeFactor(oBuilder : TFslStringBuilder; comp : TUcumFactor);
 begin
   oBuilder.append(inttostr(comp.Factor));
 End;
 
-class Procedure TUcumExpressionComposer.composeOp(oBuilder : TAdvStringBuilder; op : TUcumOperator);
+class Procedure TUcumExpressionComposer.composeOp(oBuilder : TFslStringBuilder; op : TUcumOperator);
 begin
   if (op = DIVISION) Then
     oBuilder.append('/')
@@ -1164,9 +1164,9 @@ end;
 
 class Function TUcumFormalStructureComposer.compose(oTerm : TUcumTerm) : String;
 var
-  oBldr : TAdvStringBuilder;
+  oBldr : TFslStringBuilder;
 Begin
-  oBldr := TAdvStringBuilder.Create;
+  oBldr := TFslStringBuilder.Create;
   Try
     composeTerm(oBldr, oTerm);
     result := obldr.AsString;
@@ -1175,7 +1175,7 @@ Begin
   End;
 End;
 
-class Procedure TUcumFormalStructureComposer.composeTerm(oBldr : TAdvStringBuilder; oTerm : TUcumTerm);
+class Procedure TUcumFormalStructureComposer.composeTerm(oBldr : TFslStringBuilder; oTerm : TUcumTerm);
 Begin
   if (oTerm.Component <> nil) Then
     composeComp(oBldr, oTerm.Component);
@@ -1190,7 +1190,7 @@ Begin
     composeTerm(oBldr, oTerm.Term);
 End;
 
-class Procedure TUcumFormalStructureComposer.composeComp(oBldr : TAdvStringBuilder; oComp : TUcumComponent);
+class Procedure TUcumFormalStructureComposer.composeComp(oBldr : TFslStringBuilder; oComp : TUcumComponent);
 Begin
   if (oComp is TUcumFactor) Then
     composeFactor(oBldr, TUcumFactor(oComp))
@@ -1202,7 +1202,7 @@ Begin
     oBldr.append('?');
 End;
 
-class Procedure TUcumFormalStructureComposer.composeSymbol(oBldr : TAdvStringBuilder; oSymbol : TUcumSymbol);
+class Procedure TUcumFormalStructureComposer.composeSymbol(oBldr : TFslStringBuilder; oSymbol : TUcumSymbol);
 Begin
   if oSymbol.Exponent <> 1 then
     oBldr.append('(');
@@ -1219,7 +1219,7 @@ Begin
     oBldr.append(')');
 End;
 
-class Procedure TUcumFormalStructureComposer.composeFactor(oBldr : TAdvStringBuilder; oFactor : TUcumFactor);
+class Procedure TUcumFormalStructureComposer.composeFactor(oBldr : TFslStringBuilder; oFactor : TUcumFactor);
 Begin
   if (oFactor.Factor = 1) and (oFactor.Annotation <> '') then
     oBldr.append('"'+oFactor.Annotation+'"')
@@ -1227,7 +1227,7 @@ Begin
     oBldr.append(inttostr(oFactor.Factor));
 End;
 
-class Procedure TUcumFormalStructureComposer.composeOp(oBldr : TAdvStringBuilder; aOperator : TUcumOperator);
+class Procedure TUcumFormalStructureComposer.composeOp(oBldr : TFslStringBuilder; aOperator : TUcumOperator);
 Begin
   if (aOperator = DIVISION) Then
     oBldr.append(' / ')

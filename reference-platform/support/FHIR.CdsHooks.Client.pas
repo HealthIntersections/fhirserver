@@ -49,7 +49,7 @@ type
   // note: this event is called in the non-primary thread
   TOnCDSHookResponse = procedure (manager : TCDSHooksManager; server : TRegisteredFHIRServer; context : TObject; response : TCDSHookResponse; error : string) of object;
 
-  TCDSHooksManagerServerInfo = class (TAdvObject)
+  TCDSHooksManagerServerInfo = class (TFslObject)
   private
     FinUse: boolean;
     Finfo: TRegisteredFHIRServer;
@@ -66,7 +66,7 @@ type
     property inUse : boolean read FinUse write FinUse;
   end;
 
-  TCDSHooksManagerCachedResponse = class (TAdvObject)
+  TCDSHooksManagerCachedResponse = class (TFslObject)
   private
     FResponse: TCDSHookResponse;
     FError: String;
@@ -78,7 +78,7 @@ type
     property error : String read FError write FError;
   end;
 
-  TCDSHooksManagerWorkThread = class (TAdvThread)
+  TCDSHooksManagerWorkThread = class (TFslThread)
   private
     Fmanager : TCDSHooksManager;
     Frequest: TCDSHookRequest;
@@ -111,13 +111,13 @@ type
   end;
 
   // manages an array of CDS Servers that might provide cdshooks support
-  TCDSHooksManager = class (TAdvObject)
+  TCDSHooksManager = class (TFslObject)
   private
     FOnAuthToServer: TOnAuthToServer;
-    FServers : TAdvList<TCDSHooksManagerServerInfo>;
+    FServers : TFslList<TCDSHooksManagerServerInfo>;
     FLock : TCriticalSection;
-    FThreads : TAdvList<TCDSHooksManagerWorkThread>;
-    FCache : TAdvMap<TCDSHooksManagerCachedResponse>;
+    FThreads : TFslList<TCDSHooksManagerWorkThread>;
+    FCache : TFslMap<TCDSHooksManagerCachedResponse>;
 
     function getEntry(url : String) : TCDSHooksManagerServerInfo;
     procedure checkConnectServer(server : TCDSHooksManagerServerInfo);
@@ -163,7 +163,7 @@ type
     procedure dropCache;
   end;
 
-function presentAsHtml(cards : TAdvList<TCDSHookCard>; inprogress, errors : TStringList) : String;
+function presentAsHtml(cards : TFslList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 
 implementation
 
@@ -311,7 +311,7 @@ begin
     result := 'about:security-risk';
 end;
 
-function presentAsHtml(cards : TAdvList<TCDSHookCard>; inprogress, errors : TStringList) : String;
+function presentAsHtml(cards : TFslList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 var
   b : TStringBuilder;
   card : TCDSHookCard;
@@ -399,10 +399,10 @@ end;
 constructor TCDSHooksManager.Create;
 begin
   inherited;
-  FServers := TAdvList<TCDSHooksManagerServerInfo>.create;
+  FServers := TFslList<TCDSHooksManagerServerInfo>.create;
   FLock := TCriticalSection.Create('TCDSHooksManager');
-  FThreads := TAdvList<TCDSHooksManagerWorkThread>.create;
-  FCache := TAdvMap<TCDSHooksManagerCachedResponse>.create;
+  FThreads := TFslList<TCDSHooksManagerWorkThread>.create;
+  FCache := TFslMap<TCDSHooksManagerCachedResponse>.create;
 end;
 
 destructor TCDSHooksManager.Destroy;

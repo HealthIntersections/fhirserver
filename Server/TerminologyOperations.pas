@@ -36,7 +36,7 @@ uses
   FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Session, FHIR.Base.Lang, FHIR.Tools.Operations,
-  FHIRStorageService, TerminologyServices, TerminologyServerStore, TerminologyServer, ClosureManager;
+  FHIRStorageService, FHIR.Tx.Service, TerminologyServerStore, TerminologyServer, ClosureManager;
 
 type
   TFhirTerminologyOperation = class (TFhirOperation)
@@ -990,7 +990,7 @@ var
   n, v : String;
   cm : TClosureManager;
   map : TFhirConceptMap;
-  concepts : TAdvList<TFHIRCoding>;
+  concepts : TFslList<TFHIRCoding>;
   procedure errorResp(code : integer; message : String);
   begin
     response.HTTPCode := code;
@@ -1055,7 +1055,7 @@ begin
               else
               begin
                 map.name := 'Updates for Closure Table '+n;
-                concepts := TAdvList<TFHIRCoding>.create;
+                concepts := TFslList<TFHIRCoding>.create;
                 try
                   for p in params.parameterList do
                     if p.Name = 'concept' then

@@ -123,7 +123,6 @@ uses
   AddRestOperationDialog in 'AddRestOperationDialog.pas' {AddRestOperationForm},
   RegistryForm in 'RegistryForm.pas' {RegistryFrame: TFrame},
   FHIR.Ui.ComboFMX in '..\reference-platform\client\FHIR.Ui.ComboFMX.pas',
-  Logging in '..\Server\Logging.pas',
   PatientHomeForm in 'PatientHomeForm.pas' {PatientHomeFrame: TFrame},
   FHIR.Support.Signatures in '..\reference-platform\support\FHIR.Support.Signatures.pas',
   DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm},

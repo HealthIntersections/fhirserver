@@ -35,7 +35,7 @@ uses
   FHIR.Base.Objects, FHIR.R3.Types, FHIR.R3.Resources;
 
 type
-  TValidationResult = class (TAdvObject)
+  TValidationResult = class (TFslObject)
   private
     FSeverity : TFhirIssueSeverityEnum;
     FMessage  : String;
@@ -50,10 +50,10 @@ type
     function isOk : boolean;
   end;
 
-  TFHIRCustomResourceInformation = class (TAdvObject)
+  TFHIRCustomResourceInformation = class (TFslObject)
   private
     FName: String;
-    FSearchParameters: TAdvList<TFHIRSearchParameter>;
+    FSearchParameters: TFslList<TFHIRSearchParameter>;
     FDefinition: TFHIRStructureDefinition;
   public
     Constructor Create(definition : TFHIRStructureDefinition);
@@ -61,7 +61,7 @@ type
     function Link : TFHIRCustomResourceInformation; overload;
     property Name : String read FName;
     property Definition : TFHIRStructureDefinition read FDefinition;
-    property SearchParameters : TAdvList<TFHIRSearchParameter> read FSearchParameters;
+    property SearchParameters : TFslList<TFHIRSearchParameter> read FSearchParameters;
   end;
 
 
@@ -71,8 +71,8 @@ type
   public
     function link : TFHIRWorkerContext; overload;
 
-    function allStructures : TAdvMap<TFHIRStructureDefinition>.TValueCollection; virtual; abstract;
-    function getResourceNames : TAdvStringSet; virtual; abstract;
+    function allStructures : TFslMap<TFHIRStructureDefinition>.TValueCollection; virtual; abstract;
+    function getResourceNames : TFslStringSet; virtual; abstract;
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; virtual; abstract;
     function expand(vs : TFhirValueSet) : TFHIRValueSet; virtual; abstract;
     function supportsSystem(system, version : string) : boolean; virtual; abstract;
@@ -135,7 +135,7 @@ begin
   inherited Create;
   FDefinition := definition;
   FName := definition.snapshot.elementList[0].path;
-  FSearchParameters := TAdvList<TFHIRSearchParameter>.create;
+  FSearchParameters := TFslList<TFHIRSearchParameter>.create;
 end;
 
 destructor TFHIRCustomResourceInformation.Destroy;

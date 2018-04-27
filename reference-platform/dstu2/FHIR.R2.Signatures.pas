@@ -35,7 +35,7 @@ uses
   FHIR.Support.Signatures;
 
 type
-  TFHIRDigitalSignature = class (TAdvObject)
+  TFHIRDigitalSignature = class (TFslObject)
   private
   public
   end;

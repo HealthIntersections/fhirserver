@@ -1,4 +1,4 @@
-unit FHIRPathTests3;
+unit FHIR.R3.Tests.PathEngine;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -35,7 +35,7 @@ uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Tools.Parser,
-  FHIRTestWorker3, FHIR.R3.Resources, FHIR.R3.PathNode, FHIR.R3.PathEngine, FHIR.R3.Types,
+  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.PathNode, FHIR.R3.PathEngine, FHIR.R3.Types,
   FHIR.Support.MsXml, DUnitX.TestFramework;
 
 Type

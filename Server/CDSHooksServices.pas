@@ -383,7 +383,7 @@ function TCDAHooksIdentifierViewService.HandleRequest(server: TFHIRServerContext
 var
   params: TFHIRParameters;
   id : TFhirIdentifier;
-  systems : TAdvList<TFHIRResource>;
+  systems : TFslList<TFHIRResource>;
   card : TCDSHookCard;
   engine : TFHIROperationEngine;
   needSecure: boolean;

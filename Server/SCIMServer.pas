@@ -42,7 +42,7 @@ uses
   FHIRUserProvider, SCIMSearch, FHIR.Base.Scim;
 
 Type
-  TSCIMCharIssuer = class (TAdvObject)
+  TSCIMCharIssuer = class (TFslObject)
   private
     cursor : char;
   public

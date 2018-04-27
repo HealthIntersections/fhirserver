@@ -46,7 +46,7 @@ Type
 
   TConceptDisplayType = (cdDesc, cdConceptId, cdBoth);
 
-  TSnomedPublisher = class (TAdvObject)
+  TSnomedPublisher = class (TFslObject)
   Private
     FSnomed : TSnomedServices;
     Lock : TCriticalSection;
@@ -68,13 +68,13 @@ Type
     Procedure PublishSearch(Const sPrefix, sText, sContext : String; iStart: Integer; all : boolean; html : THtmlPublisher);
     Procedure PublishHome(Const sPrefix : String; html : THtmlPublisher);
 
-    Procedure ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
-    Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher);
+    Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
+    Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher);
   Public
     Constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
     Destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher); Overload; Virtual;
-    Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
+    Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishTerm(Const sTerm : String; html : THtmlPublisher); Overload; Virtual;
   End;
 
@@ -114,7 +114,7 @@ begin
     result := def;
 end;
 
-Procedure TSnomedPublisher.PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THtmlPublisher);
+Procedure TSnomedPublisher.PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher);
 Var
   sURL : String;
   sId : String;
@@ -135,7 +135,7 @@ Begin
     PublishHome(sURL, html)
 End;
 
-Procedure TSnomedPublisher.ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
+Procedure TSnomedPublisher.ProcessMap(Const sPath : String; oMap : TFslStringMatch);
 Var
   sLeft, sRight : String;
   sName, sValue : String;
@@ -156,9 +156,9 @@ End;
 
 Procedure TSnomedPublisher.PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher);
 Var
-  oMap : TAdvStringMatch;
+  oMap : TFslStringMatch;
 Begin
-  oMap := TAdvStringMatch.Create;
+  oMap := TFslStringMatch.Create;
   Try
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, html);
@@ -167,7 +167,7 @@ Begin
   End;
 End;
 
-procedure TSnomedPublisher.PublishDict(oMap: TAdvStringMatch; const sPrefix: String; html: THtmlPublisher);
+procedure TSnomedPublisher.PublishDict(oMap: TFslStringMatch; const sPrefix: String; html: THtmlPublisher);
 begin
   Try
     PublishDictInternal(oMap, sPrefix, html);

@@ -10,20 +10,20 @@ uses
   FHIR.Tools.PathNode;
 
 type
-  TFHIRExpressionNodeComposer = class (TAdvObject)
+  TFHIRExpressionNodeComposer = class (TFslObject)
   private
     FStyle : TFHIROutputStyle;
     FWorker : TFHIRWorkerContextV;
     FLang : String;
-    procedure ComposeXml(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet);
+    procedure ComposeXml(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure composeXmlExpression(xml: TXmlBuilder; expr: TFHIRPathExpressionNode);
-    procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet);
+    procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure ComposeJsonExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
   public
     Constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; lang : String); Virtual;
 
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TAdvStringSet); Virtual;
-    function Compose(expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TAdvStringSet): String; Overload;
+    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TFslStringSet); Virtual;
+    function Compose(expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TFslStringSet): String; Overload;
   end;
 
 implementation
@@ -39,7 +39,7 @@ begin
   FStyle := Style;
 end;
 
-function TFHIRExpressionNodeComposer.Compose(expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items: TFHIRObjectList; types : TAdvStringSet): String;
+function TFHIRExpressionNodeComposer.Compose(expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items: TFHIRObjectList; types : TFslStringSet): String;
 var
   stream : TBytesStream;
 begin
@@ -52,7 +52,7 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionNodeComposer.ComposeExpression(stream: TStream; expr: TFHIRPathExpressionNode; fmt: TFHIRFormat; items: TFHIRObjectList; types: TAdvStringSet);
+procedure TFHIRExpressionNodeComposer.ComposeExpression(stream: TStream; expr: TFHIRPathExpressionNode; fmt: TFHIRFormat; items: TFHIRObjectList; types: TFslStringSet);
 begin
   case fmt of
     ffXml : ComposeXml(stream, expr, items, types);
@@ -62,7 +62,7 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionNodeComposer.composeXml(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet);
+procedure TFHIRExpressionNodeComposer.composeXml(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TFslStringSet);
 var
   xml : TXmlBuilder;
   base : TFHIRObject;
@@ -70,7 +70,7 @@ var
 begin
   x := TFHIRXmlComposer.Create(FWorker, FStyle, FLang);
   try
-    xml := TAdvXmlBuilder.Create;
+    xml := TFslXmlBuilder.Create;
     try
       xml.IsPretty := FStyle = OutputStylePretty;
       xml.NoHeader := true;
@@ -173,9 +173,9 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionNodeComposer.ComposeJson(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet);
+procedure TFHIRExpressionNodeComposer.ComposeJson(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TFslStringSet);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TJSONWriter;
   base : TFHIRObject;
   j : TFHIRJsonComposer;
@@ -184,7 +184,7 @@ begin
   try
     json := TJsonWriterDirect.create;
     try
-      oStream := TAdvVCLStream.Create;
+      oStream := TFslVCLStream.Create;
       json.Stream := oStream;
       oStream.Stream := stream;
       json.HasWhitespace := FStyle = OutputStylePretty;

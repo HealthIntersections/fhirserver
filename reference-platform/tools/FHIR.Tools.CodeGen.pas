@@ -36,7 +36,7 @@ uses
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Context, FHIR.Base.Xhtml, FHIR.Tools.Utilities;
 
 type
-  TFHIRCodeGenerator = class (TAdvObject)
+  TFHIRCodeGenerator = class (TFslObject)
   private
     FResource: TFHIRResource;
     FContext: TFHIRWorkerContext;

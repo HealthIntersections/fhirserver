@@ -441,7 +441,7 @@ end;
 begin
   IdOpenSSLSetLibPath(ExtractFilePath(paramstr(0)));
   if paramstr(1) = '-test' then
-    TAdvGenericsTests.execute
+    TFslGenericsTests.execute
   else
     DoBuildEntry;
 end.

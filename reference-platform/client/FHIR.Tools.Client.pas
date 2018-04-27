@@ -71,7 +71,7 @@ Type
 
   TFHIRClientAsyncContextState = (asyncReady, asyncInitialQuery, asyncInitialWait, asyncDelay, asyncPing, asyncPingWait, asyncReadyToDownload, async);
 
-  TFHIRClientAsyncTask = class (TAdvObject)
+  TFHIRClientAsyncTask = class (TFslObject)
   private
     FClient : TFhirClientV;
     FFolder: String;
@@ -203,7 +203,7 @@ var
   headers : THTTPHeaders;
   p, t : String;
   a : TFhirResourceType;
-  buf : TAdvBuffer;
+  buf : TFslBuffer;
 begin
   headers.accept := 'application/fhir+json';
   headers.prefer := 'respond-async';

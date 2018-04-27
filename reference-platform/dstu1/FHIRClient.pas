@@ -56,7 +56,7 @@ Type
   TFhirHTTPClientHTTPVerb = (get, post, put, delete);
 
   // this is meant ot be used once, and then disposed of
-  TFhirHTTPClient = class (TAdvObject)
+  TFhirHTTPClient = class (TFslObject)
   private
     FUrl : String;
     FJson : Boolean;
@@ -72,7 +72,7 @@ Type
     function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream) : TFhirResource;
     procedure parseCategories(categories : TFHIRAtomCategoryList);
     procedure encodeTags(tags : TFHIRAtomCategoryList);
-    function makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+    function makeMultipart(stream: TStream; streamName: string; params: TFslStringMatch; var mp : TStream) : String;
   public
     constructor Create(url : String; json : boolean); overload;
     destructor Destroy; override;
@@ -89,8 +89,8 @@ Type
     function updateResource(id : String; resource : TFhirResource; tags : TFHIRAtomCategoryList) : TFHIRAtomEntry; overload;
     function updateResource(id, ver : String; resource : TFhirResource; tags : TFHIRAtomCategoryList) : TFHIRAtomEntry; overload; // version specific update - this is encouraged where possible
     procedure deleteResource(atype : TFhirResourceType; id : String; tags : TFHIRAtomCategoryList);
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRAtomFeed;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRAtomFeed;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TFslStringMatch) : TFHIRAtomFeed;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TFslStringMatch; resource : TFhirResource) : TFHIRAtomFeed;
   end;
 
 implementation
@@ -221,7 +221,7 @@ begin
   end;
 end;
 
-function encodeParams(params : TAdvStringMatch) : String;
+function encodeParams(params : TFslStringMatch) : String;
 var
   i : integer;
 begin
@@ -230,7 +230,7 @@ begin
     result := result + params.KeyByIndex[i]+'='+EncodeMIME(params.ValueByIndex[i])+'&';
 end;
 
-function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRAtomFeed;
+function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: TFslStringMatch): TFHIRAtomFeed;
 var
   s : String;
   feed : TFHIRAtomFeed;
@@ -258,7 +258,7 @@ begin
 
 end;
 
-function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRAtomFeed;
+function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TFslStringMatch; resource: TFhirResource): TFHIRAtomFeed;
 Var
   src, frm : TStream;
   ct : String;
@@ -481,7 +481,7 @@ begin
   end;
 end;
 
-function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TFslStringMatch; var mp : TStream) : String;
 var
   m : TIdSoapMimeMessage;
   p : TIdSoapMimePart;

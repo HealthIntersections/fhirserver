@@ -37,7 +37,7 @@ uses
 
 Type
 
-  TVersionConvertor_30_40 = class (TAdvObject)
+  TVersionConvertor_30_40 = class (TFslObject)
   private
     class procedure copyElement(src : FHIR.R3.Types.TFhirElement; tgt : FHIR.R4.Types.TFhirElement); overload;
     class procedure copyElement(src : FHIR.R4.Types.TFhirElement; tgt : FHIR.R3.Types.TFhirElement); overload;

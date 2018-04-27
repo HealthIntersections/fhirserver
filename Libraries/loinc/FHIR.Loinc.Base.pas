@@ -35,27 +35,27 @@ Uses
   AdvPersistentLists;
 
 Type
-  TLOINCStrucure = class (TAdvObject)
+  TLOINCStrucure = class (TFslObject)
 
   End;
 
-  TLOINCCode = class (TAdvName)
+  TLOINCCode = class (TFslName)
   private
     FDisplayName: String;
   Public
-    Procedure Define(oFiler : TAdvFiler); Override;
-    Procedure Assign(oSource : TAdvObject); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
+    Procedure Assign(oSource : TFslObject); Override;
     Function Link :TLOINCCode; Overload;
     Function Clone :TLOINCCode; Overload;
 
     Property DisplayName : String read FDisplayName write FDisplayName;
   End;
 
-  TLOINCList = class (TAdvNameList)
+  TLOINCList = class (TFslNameList)
   private
     function GetCode(iIndex: integer): TLOINCCode;
   Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
   Public
     Function GetByName(Const sName : String) : TLOINCCode; Overload;
 
@@ -66,7 +66,7 @@ implementation
 
 { TLOINCCode }
 
-procedure TLOINCCode.Assign(oSource: TAdvObject);
+procedure TLOINCCode.Assign(oSource: TFslObject);
 begin
   inherited;
   FDisplayName := TLOINCCode(oSource).FDisplayName;
@@ -77,7 +77,7 @@ begin
   result := TLOINCCode(Inherited Clone);
 end;
 
-procedure TLOINCCode.Define(oFiler: TAdvFiler);
+procedure TLOINCCode.Define(oFiler: TFslFiler);
 begin
   inherited;
   oFiler['DisplayMame'].DefineString(FDisplayName);
@@ -100,7 +100,7 @@ begin
   result := TLOINCCode(Inherited ObjectByIndex[iIndex]);
 end;
 
-function TLOINCList.ItemClass: TAdvObjectClass;
+function TLOINCList.ItemClass: TFslObjectClass;
 begin
   result := TLOINCCode;
 end;

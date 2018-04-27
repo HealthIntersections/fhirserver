@@ -51,7 +51,7 @@ type
     FFilter: String;
     FTypeKey: integer;
     FCompartment: TFHIRCompartmentId;
-    FSessionCompartments : TAdvList<TFHIRCompartmentId>;
+    FSessionCompartments : TFslList<TFHIRCompartmentId>;
     FParams: TParseMap;
     FType: String;
     FBaseURL: String;
@@ -64,7 +64,7 @@ type
     FStrict : boolean;
     FConnection: TKDBConnection;
     FWarnings : TFhirOperationOutcomeIssueList;
-    FResConfig : TAdvMap<TFHIRResourceConfig>;
+    FResConfig : TFslMap<TFHIRResourceConfig>;
 
     function order(s : String) : String;
     function fetchGroup(id : String) : TFHIRGroup;
@@ -99,20 +99,20 @@ type
     procedure ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure SetConnection(const Value: TKDBConnection);
     procedure SetCompartment(const Value: TFHIRCompartmentId);
-    procedure SetSessionCompartments(const Value: TAdvList<TFHIRCompartmentId>);
-    procedure SetResConfig(const Value: TAdvMap<TFHIRResourceConfig>);
+    procedure SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
+    procedure SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
   public
-    constructor create(serverContext : TAdvObject);
+    constructor create(serverContext : TFslObject);
     Destructor Destroy; override;
     procedure Build;
 //procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
 
     // inbound
-    property resConfig : TAdvMap<TFHIRResourceConfig> read FResConfig write SetResConfig;
+    property resConfig : TFslMap<TFHIRResourceConfig> read FResConfig write SetResConfig;
     property typekey : integer read FTypeKey write FTypeKey;
     property type_ : String read FType write FType;
     property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
-    property sessionCompartments : TAdvList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
+    property sessionCompartments : TFslList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
     property baseURL : String read FBaseURL write FBaseURL;
     property lang : String read FLang write FLang;
     property params : TParseMap read FParams write FParams;
@@ -1224,7 +1224,7 @@ begin
 end;
 
 
-procedure TSearchProcessor.SetResConfig(const Value: TAdvMap<TFHIRResourceConfig>);
+procedure TSearchProcessor.SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
 begin
   FResConfig.Free;
   FResConfig := Value;
@@ -1236,7 +1236,7 @@ begin
   FSession := Value;
 end;
 
-procedure TSearchProcessor.SetSessionCompartments(const Value: TAdvList<TFHIRCompartmentId>);
+procedure TSearchProcessor.SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
 begin
   FSessionCompartments.Free;
   FSessionCompartments := Value;
@@ -1410,7 +1410,7 @@ begin
     raise exception.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));
 end;
 
-constructor TSearchProcessor.create(serverContext : TAdvObject);
+constructor TSearchProcessor.create(serverContext : TFslObject);
 begin
   Inherited Create(serverContext);
   FStrict := false;

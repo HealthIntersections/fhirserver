@@ -257,7 +257,7 @@ end;
 Type
   TInstallerCallback = procedure(IntParam: Integer; StrParam: WideString) of object;
 
-  TCommandCapturer = class (TAdvObject)
+  TCommandCapturer = class (TFslObject)
   private
     carry : String;
     callback : TInstallerCallback;

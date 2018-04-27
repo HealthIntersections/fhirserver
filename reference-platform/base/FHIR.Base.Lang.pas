@@ -81,7 +81,7 @@ uses
   FHIR.Support.MXml;
 
 Type
-  TFHIRMessage = class (TAdvObject)
+  TFHIRMessage = class (TFslObject)
   private
     FMessages : TDictionary<String,String>;
   public
@@ -89,7 +89,7 @@ Type
     Destructor Destroy; override;
   end;
 var
-  GMessages : TAdvMap<TFHIRMessage>;
+  GMessages : TFslMap<TFHIRMessage>;
 
 Function LoadSource : TBytes;
 {$IFDEF MACOS}
@@ -127,7 +127,7 @@ begin
 
   source := TMXmlParser.parse(LoadSource, [xpDropWhitespace, xpDropComments]);
   try
-    GMessages := TAdvMap<TFHIRMessage>.create;
+    GMessages := TFslMap<TFHIRMessage>.create;
     child := source.document.firstElement;
     while child <> nil do
     begin

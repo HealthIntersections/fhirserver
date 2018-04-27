@@ -39,7 +39,7 @@ uses
 
 procedure ExecuteFhirServerTests(all: boolean);
 //Type
-//  TFhirServerTests = class (TAdvObject)
+//  TFhirServerTests = class (TFslObject)
 //  private
 //    FIni: TIniFile;
 //    FTerminologyServer: TTerminologyServer;
@@ -56,7 +56,7 @@ procedure ExecuteFhirServerTests(all: boolean);
 //    procedure executeAfter;
 //  end;
 //
-//  TFHIRQuestionnaireBuilderTests = class (TAdvObject)
+//  TFHIRQuestionnaireBuilderTests = class (TFslObject)
 //  private
 //    FDataStore: TFHIRNativeStorageService;
 //    function LoadJsonResource(filename : String) : TFhirResource;
@@ -152,7 +152,7 @@ begin
 //////  {$ELSE}
 //////  TFHIRParserTests.runTests('C:\work\org.hl7.fhir\build\publish\examples');
 //////  {$ENDIF}
-//////  TAdvXmlBuilderCanonicalizationTests.test;
+//////  TFslXmlBuilderCanonicalizationTests.test;
 //////  {$IFDEF FHIR2}
 //////  TFhirHTTPClientTests.tests('http://local.healthintersections.com.au:960/open');
 //////  {$ELSE}

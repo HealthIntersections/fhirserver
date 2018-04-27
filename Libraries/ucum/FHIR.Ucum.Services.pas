@@ -40,7 +40,7 @@ Uses
   FHIR.Tools.Parser,
   FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities,
   FHIR.CdsHooks.Utilities,
-  TerminologyServices;
+  FHIR.Tx.Service;
 
 Type
   TUcumPair = FHIR.Ucum.IFace.TUcumPair;
@@ -95,7 +95,7 @@ Type
 
     Function UcumVersion : String;
 
-    Procedure Validate(oErrors : TAdvStringList); Overload;
+    Procedure Validate(oErrors : TFslStringList); Overload;
 
     (**
      * Search through the UCUM concepts for any concept containing matching text.
@@ -114,7 +114,7 @@ Type
      *
      * @return
      *)
-    Procedure getProperties(oList : TAdvStringList);
+    Procedure getProperties(oList : TFslStringList);
 
     (**
      * for a given property, return the commonly used units
@@ -123,7 +123,7 @@ Type
      * @return
      * @throws OHFException
      *)
-    Procedure getCommonUnits(propertyName : String; oList : TAdvStringList);
+    Procedure getCommonUnits(propertyName : String; oList : TFslStringList);
 
     (**
      * validate whether a unit code are valid UCUM units
@@ -247,13 +247,13 @@ Type
     //function subsumes(codeA, codeB : String) : String; override;
   End;
 
-  TUcumServiceList = class (TAdvObjectList)
+  TUcumServiceList = class (TFslObjectList)
   Private
     FDefinition: TUcumServices;
     function GetDefinition(iIndex: Integer): TUcumServices;
     procedure SetDefinition(const Value: TUcumServices);
   Protected
-    Function ItemClass : TAdvObjectClass; Override;
+    Function ItemClass : TFslObjectClass; Override;
   Public
     Destructor Destroy; Override;
 
@@ -459,7 +459,7 @@ begin
   result := '';
 end;
 
-procedure TUcumServices.getCommonUnits(propertyName: String; oList : TAdvStringList);
+procedure TUcumServices.getCommonUnits(propertyName: String; oList : TFslStringList);
 var
   i : integer;
 begin
@@ -476,7 +476,7 @@ begin
   result := nil;
 end;
 
-procedure TUcumServices.getProperties(oList: TAdvStringList);
+procedure TUcumServices.getProperties(oList: TFslStringList);
 var
   i : integer;
 begin
@@ -578,7 +578,7 @@ begin
   End;
 end;
 
-procedure TUcumServices.Validate(oErrors: TAdvStringList);
+procedure TUcumServices.Validate(oErrors: TFslStringList);
 var
   oValidator : TUcumValidator;
 begin
@@ -749,7 +749,7 @@ begin
   End;
 end;
 
-function TUcumServiceList.ItemClass: TAdvObjectClass;
+function TUcumServiceList.ItemClass: TFslObjectClass;
 begin
   result := TUcumServices;
 end;
@@ -817,7 +817,7 @@ procedure TUcumServices.Import(const sFilename: String);
 var
   oXml : TMXmlDocument;
   oElem : TMXmlElement;
-  oErrors : TAdvStringList;
+  oErrors : TFslStringList;
 begin
   oXml := TMXmlParser.parseFile(sFilename, [xpDropWhitespace]);
   try
@@ -840,7 +840,7 @@ begin
        raise EUCUMServices.create('unrecognised element '+oElem.Name);
       oElem := oElem.nextElement;
     End;
-    oErrors := TAdvStringList.Create;
+    oErrors := TFslStringList.Create;
     Try
       Validate(oErrors);
       if oErrors.Count > 0 then

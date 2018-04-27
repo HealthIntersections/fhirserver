@@ -43,34 +43,34 @@ Const Ucum_CACHE_VERSION = 3;
 type
   TConceptKind  = (UcumNull, UcumPREFIX, UcumBASEUNIT, UcumUNIT);
 
-  TUcumProperty = class (TAdvName)
+  TUcumProperty = class (TFslName)
   private
-    FCommonUnits : TAdvStringList;
+    FCommonUnits : TFslStringList;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
     function Link : TUcumProperty; Overload;
-    Procedure Define(oFiler : TAdvFiler); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
 
-    Property CommonUnits : TAdvStringlist read FCommonUnits;
+    Property CommonUnits : TFslStringlist read FCommonUnits;
   end;
 
-  TUcumPropertyList = class (TAdvNameList)
+  TUcumPropertyList = class (TFslNameList)
   Private
     function GetUcumProperty(iIndex : integer): TUcumProperty;
   Protected
-    Function ItemClass : TAdvObjectClass; override;
+    Function ItemClass : TFslObjectClass; override;
   Public
     Property UcumProperty[iIndex : integer] : TUcumProperty read GetUcumProperty; default;
   End;
 
-  TUcumConcept = class (TAdvPersistent)
+  TUcumConcept = class (TFslPersistent)
   private
     Fkind : TConceptKind;
     Fcode : String;
     FcodeUC : String;
     FprintSymbol : String;
-    Fnames : TAdvStringList;
+    Fnames : TFslStringList;
     FText: String;
   protected
     Function GetKind : TConceptKind; virtual;
@@ -78,21 +78,21 @@ type
     Constructor Create; Override;
     Destructor Destroy; Override;
     function Link : TUcumConcept; Overload;
-    Procedure Define(oFiler : TAdvFiler); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
 
     Property kind : TConceptKind read Getkind;
     Property code : String read Fcode write FCode;    // case sensitive code for this concept
     Property codeUC : String read FcodeUC write FcodeUC;    // case insensitive code for this concept
     Property printSymbol : String read FprintSymbol write FPrintSymbol;    // print symbol for this code
-    Property names : TAdvStringList read Fnames;    // names for the concept
+    Property names : TFslStringList read Fnames;    // names for the concept
     Property Text : String read FText write FText;
   End;
 
-  TUcumConceptList = class (TAdvPersistentList)
+  TUcumConceptList = class (TFslPersistentList)
   Private
     function GetUcumItem(iIndex : integer): TUcumConcept;
   Protected
-    Function ItemClass : TAdvObjectClass; override;
+    Function ItemClass : TFslObjectClass; override;
   Public
     Property UcumItem[iIndex : integer] : TUcumConcept read GetUcumItem; default;
   End;
@@ -105,17 +105,17 @@ type
   public
 
     function Link : TUcumPrefix; Overload;
-    Procedure Define(oFiler : TAdvFiler); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
     Property value : TSmartDecimal read Fvalue write FValue;  //value for the prefix - 1^-24 through to 1^24
 
     procedure SetPrecision(i : integer);
   End;
 
-  TUcumPrefixList = class (TAdvPersistentList)
+  TUcumPrefixList = class (TFslPersistentList)
   Private
     function GetUcumItem(iIndex : integer): TUcumPrefix;
   Protected
-    Function ItemClass : TAdvObjectClass; override;
+    Function ItemClass : TFslObjectClass; override;
   Public
     Property UcumItem[iIndex : integer] : TUcumPrefix read GetUcumItem; default;
   End;
@@ -125,7 +125,7 @@ type
     FProperty : Integer;
   Public
     function Link : TUcumUnit; Overload;
-    Procedure Define(oFiler : TAdvFiler); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
     Property PropertyType : Integer read FProperty write FProperty; // the kind of thing this represents
   End;
 
@@ -136,15 +136,15 @@ type
     Function GetKind : TConceptKind; Override;
   public
     function Link : TUcumBaseUnit; Overload;
-    Procedure Define(oFiler : TAdvFiler); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
     Property dim : Char read FDim write FDim;
   End;
 
-  TUcumBaseUnitList = class (TAdvPersistentList)
+  TUcumBaseUnitList = class (TFslPersistentList)
   Private
     function GetUcumItem(iIndex : integer): TUcumBaseUnit;
   Protected
-    Function ItemClass : TAdvObjectClass; override;
+    Function ItemClass : TFslObjectClass; override;
   Public
     Function ExistsByCode(const sCode : String) : Boolean;
     Function GetByCode(const sCode : String) : TUcumBaseUnit;
@@ -152,7 +152,7 @@ type
     Property UcumItem[iIndex : integer] : TUcumBaseUnit read GetUcumItem; default;
   End;
 
-  TUcumValue = class (TAdvPersistent)
+  TUcumValue = class (TFslPersistent)
   private
     Funit : String;
     FunitUC : String;
@@ -160,7 +160,7 @@ type
     Ftext : String;
   public
     function Link : TUcumValue; Overload;
-    Procedure Define(oFiler : TAdvFiler); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
     Property unit_ : String read Funit write FUnit;
     Property unitUC : String read FunitUC write FUnitUC;
     Property value : TSmartDecimal read FValue write FValue;
@@ -181,18 +181,18 @@ type
     Constructor Create; Override;
     Destructor Destroy; Override;
     function Link : TUcumDefinedUnit; Overload;
-    Procedure Define(oFiler : TAdvFiler); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
     Property metric : boolean read Fmetric write FMetric; // whether this is a metric unit or not
     Property isSpecial : boolean read FisSpecial write FIsSpecial; // special means?
     Property class_ : String read Fclass_ write FClass_; // The class of this unit
     Property value : TUcumValue read Fvalue; // Value details
   End;
 
-  TUcumDefinedUnitList = class (TAdvPersistentList)
+  TUcumDefinedUnitList = class (TFslPersistentList)
   Private
     function GetUcumItem(iIndex : integer): TUcumDefinedUnit;
   Protected
-    Function ItemClass : TAdvObjectClass; override;
+    Function ItemClass : TFslObjectClass; override;
   Public
     Function ExistsByCode(const sCode : String) : Boolean;
     Function GetByCode(const sCode : String) : TUcumDefinedUnit;
@@ -201,7 +201,7 @@ type
   End;
 
 
-  TUcumModel = class (TAdvPersistent)
+  TUcumModel = class (TFslPersistent)
   private
     FProperties : TUcumPropertyList;
     Fprefixes : TUcumPrefixList;
@@ -214,7 +214,7 @@ type
     Destructor Destroy; Override;
 
     function Link : TUcumModel; Overload;
-    Procedure Define(oFiler : TAdvFiler); Override;
+    Procedure Define(oFiler : TFslFiler); Override;
 
     Procedure clear;
 
@@ -238,10 +238,10 @@ implementation
 constructor TUcumConcept.Create;
 begin
   inherited;
-  Fnames := TAdvStringList.Create;
+  Fnames := TFslStringList.Create;
 end;
 
-procedure TUcumConcept.Define(oFiler: TAdvFiler);
+procedure TUcumConcept.Define(oFiler: TFslFiler);
 begin
   inherited;
   oFiler['kind'].DefineEnumerated(FKind, CODES_CONCEPT_KIND);
@@ -271,7 +271,7 @@ end;
 
 { TUcumPrefix }
 
-procedure TUcumPrefix.Define(oFiler: TAdvFiler);
+procedure TUcumPrefix.Define(oFiler: TFslFiler);
 begin
   inherited;
   oFiler['value'].DefineObject(FValue);
@@ -295,7 +295,7 @@ end;
 
 { TUcumUnit }
 
-procedure TUcumUnit.Define(oFiler: TAdvFiler);
+procedure TUcumUnit.Define(oFiler: TFslFiler);
 begin
   inherited;
   oFiler['Property'].DefineInteger(FProperty);
@@ -308,7 +308,7 @@ end;
 
 { TUcumBaseUnit }
 
-procedure TUcumBaseUnit.Define(oFiler: TAdvFiler);
+procedure TUcumBaseUnit.Define(oFiler: TFslFiler);
 begin
   inherited;
   oFiler['dim'].DefineChar(Fdim);
@@ -328,7 +328,7 @@ end;
 
 { TUcumValue }
 
-procedure TUcumValue.Define(oFiler: TAdvFiler);
+procedure TUcumValue.Define(oFiler: TFslFiler);
 begin
   inherited;
   oFiler['unit'].DefineString(Funit);
@@ -357,7 +357,7 @@ begin
   Fvalue := TUcumValue.Create;
 end;
 
-procedure TUcumDefinedUnit.Define(oFiler: TAdvFiler);
+procedure TUcumDefinedUnit.Define(oFiler: TFslFiler);
 begin
   inherited;
   oFiler['metric'].Defineboolean(Fmetric);
@@ -390,7 +390,7 @@ begin
   result := TUcumPrefix(inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumPrefixList.ItemClass: TAdvObjectClass;
+function TUcumPrefixList.ItemClass: TFslObjectClass;
 begin
   result := TUcumPrefix;
 end;
@@ -420,7 +420,7 @@ begin
   result := TUcumBaseUnit(inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumBaseUnitList.ItemClass: TAdvObjectClass;
+function TUcumBaseUnitList.ItemClass: TFslObjectClass;
 begin
   result := TUcumBaseUnit;
 end;
@@ -450,7 +450,7 @@ begin
   result := TUcumDefinedUnit(inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumDefinedUnitList.ItemClass: TAdvObjectClass;
+function TUcumDefinedUnitList.ItemClass: TFslObjectClass;
 begin
   result := TUcumDefinedUnit;
 end;
@@ -476,7 +476,7 @@ begin
   FProperties := TUcumPropertyList.Create;
 end;
 
-procedure TUcumModel.Define(oFiler: TAdvFiler);
+procedure TUcumModel.Define(oFiler: TFslFiler);
 var
   i : integer;
 begin
@@ -522,7 +522,7 @@ begin
   result := TUcumConcept(inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumConceptList.ItemClass: TAdvObjectClass;
+function TUcumConceptList.ItemClass: TFslObjectClass;
 begin
   result := TUcumConcept;
 end;
@@ -534,7 +534,7 @@ begin
   result := TUcumProperty(Inherited ObjectByIndex[iIndex]);
 end;
 
-function TUcumPropertyList.ItemClass: TAdvObjectClass;
+function TUcumPropertyList.ItemClass: TFslObjectClass;
 begin
   result := TUcumProperty;
 end;
@@ -544,10 +544,10 @@ end;
 constructor TUcumProperty.Create;
 begin
   inherited;
-  FCommonUnits := TAdvStringList.Create;
+  FCommonUnits := TFslStringList.Create;
 end;
 
-procedure TUcumProperty.Define(oFiler: TAdvFiler);
+procedure TUcumProperty.Define(oFiler: TFslFiler);
 begin
   inherited;
   oFiler['CommonUnits'].DefineObject(FCommonUnits);

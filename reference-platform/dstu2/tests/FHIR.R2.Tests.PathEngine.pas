@@ -1,4 +1,4 @@
-unit FHIRPathTests2;
+unit FHIR.R2.Tests.PathEngine;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.Generics,
-  FHIRTestWorker2,
+  FHIR.R2.Tests.Worker,
   FHIR.Base.Objects, FHIR.Tools.Parser,
   FHIR.R2.PathNode, FHIR.R2.Resources, FHIR.R2.PathEngine, FHIR.R2.Types,
   FHIR.Support.MsXml, DUnitX.TestFramework;

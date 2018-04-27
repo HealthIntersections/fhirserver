@@ -1,4 +1,4 @@
-unit FHIRUtilitiesTests4;
+unit FHIR.R4.Tests.Utilities;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -151,7 +151,7 @@ end;
 procedure TFHIRUtilityTests.TestZipPartCreation;
 var
   att : TFhirAttachment;
-  p : TAdvZipPart;
+  p : TFslZipPart;
 begin
   att := TFHIRAttachment.create;
   try

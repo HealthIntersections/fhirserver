@@ -36,7 +36,7 @@ uses
   FHIR.Tools.Resources, FHIR.Tools.Utilities;
 
 type
-  TEndorsement = class (TAdvObject)
+  TEndorsement = class (TFslObject)
   private
     FObservation: TFHIRObservation;
     FOrganization: TFHIROrganization;
@@ -50,14 +50,14 @@ type
     property Organization : TFHIROrganization read FOrganization write SetOrganization;
   end;
 
-  TApplicationCache = class (TAdvObject)
+  TApplicationCache = class (TFslObject)
   private
     FLock : TCriticalSection;
 
-    FById : TAdvMap<TFHIRDevice>;
-    FByJWT : TAdvMap<TFHIRDevice>;
-    FEndorsements : TAdvMap<TFhirObservation>;
-    FOrgs : TAdvMap<TFhirOrganization>;
+    FById : TFslMap<TFHIRDevice>;
+    FByJWT : TFslMap<TFHIRDevice>;
+    FEndorsements : TFslMap<TFhirObservation>;
+    FOrgs : TFslMap<TFhirOrganization>;
     procedure seeApplication(app : TFHIRDevice);
     procedure seeObservation(obs : TFHIRObservation);
     procedure seeOrganization(org : TFhirOrganization);
@@ -69,7 +69,7 @@ type
     procedure seeResource(res : TFhirResource);
     procedure checkResource(res : TFhirResource);
 
-    function recogniseJWT(jwt : String; endorsements : TAdvList<TEndorsement>): TFHIRDevice;
+    function recogniseJWT(jwt : String; endorsements : TFslList<TEndorsement>): TFHIRDevice;
   end;
 
 implementation
@@ -89,10 +89,10 @@ constructor TApplicationCache.Create;
 begin
   inherited;
   FLock := TCriticalSection.create('app-cache');
-  FById := TAdvMap<TFHIRDevice>.create;
-  FByJWT := TAdvMap<TFHIRDevice>.create;
-  FEndorsements := TAdvMap<TFhirObservation>.create;
-  FOrgs := TAdvMap<TFhirOrganization>.create;
+  FById := TFslMap<TFHIRDevice>.create;
+  FByJWT := TFslMap<TFHIRDevice>.create;
+  FEndorsements := TFslMap<TFhirObservation>.create;
+  FOrgs := TFslMap<TFhirOrganization>.create;
 end;
 
 destructor TApplicationCache.Destroy;
@@ -110,7 +110,7 @@ begin
   result := TApplicationCache(inherited link);
 end;
 
-function TApplicationCache.recogniseJWT(jwt : String; endorsements: TAdvList<TEndorsement>): TFHIRDevice;
+function TApplicationCache.recogniseJWT(jwt : String; endorsements: TFslList<TEndorsement>): TFHIRDevice;
 var
   obs : TFHIRObservation;
   item : TEndorsement;

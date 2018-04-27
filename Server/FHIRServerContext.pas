@@ -45,11 +45,11 @@ Const
   OAUTH_SESSION_PREFIX = 'urn:oauth:';
 
 Type
-  TQuestionnaireCache = class(TAdvObject)
+  TQuestionnaireCache = class(TFslObject)
   private
     FLock: TCriticalSection;
-    FQuestionnaires: TAdvMap<TFhirQuestionnaire>;
-    FForms: TAdvStringMatch;
+    FQuestionnaires: TFslMap<TFhirQuestionnaire>;
+    FForms: TFslStringMatch;
     FValueSetDependencies: TDictionary<String, TList<string>>;
   public
     Constructor Create; Override;
@@ -66,13 +66,13 @@ Type
     procedure clear; overload;
   end;
 
-  TFHIRServerContext = class (TAdvObject)
+  TFHIRServerContext = class (TFslObject)
   private
     FLock: TCriticalSection;
     FStorage : TFHIRStorageService;
     FQuestionnaireCache: TQuestionnaireCache;
     FBases: TStringList;
-    FResConfig: TAdvMap<TFHIRResourceConfig>;
+    FResConfig: TFslMap<TFHIRResourceConfig>;
     FUserProvider : TFHIRUserProvider;
     FValidatorContext : TFHIRServerWorkerContext;
     FValidator: TFHIRValidator;
@@ -81,12 +81,12 @@ Type
     FSubscriptionManager : TSubscriptionManager;
     FSessionManager : TFHIRSessionManager;
     FTagManager : TFHIRTagManager;
-    FNamingSystems : TAdvMap<TFHIRNamingSystem>;
+    FNamingSystems : TFslMap<TFHIRNamingSystem>;
     FApplicationCache : TApplicationCache;
     FEventScriptRegistry : TEventScriptRegistry;
     FFactory: TFHIRFactory;
     {$IFNDEF FHIR2}
-    FMaps : TAdvMap<TFHIRStructureMap>;
+    FMaps : TFslMap<TFHIRStructureMap>;
     {$ENDIF}
 
     FOwnerName: String;
@@ -122,7 +122,7 @@ Type
     property QuestionnaireCache: TQuestionnaireCache read FQuestionnaireCache;
     property Storage : TFHIRStorageService read FStorage;
     Property Bases: TStringList read FBases;
-    Property ResConfig: TAdvMap<TFHIRResourceConfig> read FResConfig;
+    Property ResConfig: TFslMap<TFHIRResourceConfig> read FResConfig;
     Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
     Property Validator: TFHIRValidator read FValidator;
     Property TerminologyServer: TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -158,7 +158,7 @@ Type
     procedure seeNamingSystem(key : integer; ns : TFhirNamingSystem);
     {$IFNDEF FHIR2}
     procedure seeMap(map : TFHIRStructureMap);
-    function getMaps : TAdvMap<TFHIRStructureMap>;
+    function getMaps : TFslMap<TFHIRStructureMap>;
     {$ENDIF}
     function nextRequestId : string;
   end;
@@ -173,8 +173,8 @@ constructor TQuestionnaireCache.Create;
 begin
   inherited;
   FLock := TCriticalSection.Create('TQuestionnaireCache');
-  FQuestionnaires := TAdvMap<TFhirQuestionnaire>.Create;
-  FForms := TAdvStringMatch.Create;
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create;
+  FForms := TFslStringMatch.Create;
   FForms.Forced := true;
   FValueSetDependencies := TDictionary < String, TList < string >>.Create;
 end;
@@ -326,7 +326,7 @@ begin
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FBases := TStringList.Create;
   FBases.add('http://localhost/');
-  FResConfig := TAdvMap<TFHIRResourceConfig>.create;
+  FResConfig := TFslMap<TFHIRResourceConfig>.create;
   for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
   begin
     cfg := TFHIRResourceConfig.Create;
@@ -339,12 +339,12 @@ begin
   FValidator := TFHIRValidator.Create(FValidatorContext.link);
   FSessionManager := TFHIRSessionManager.Create(self);
   FTagManager := TFHIRTagManager.create;
-  FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
+  FNamingSystems := TFslMap<TFHIRNamingSystem>.create;
   FApplicationCache := TApplicationCache.create;
   FEventScriptRegistry := TEventScriptRegistry.Create;
 
   {$IFNDEF FHIR2}
-  FMaps := TAdvMap<TFHIRStructureMap>.create;
+  FMaps := TFslMap<TFHIRStructureMap>.create;
   {$ENDIF}
   if DirectoryExists('c:\temp') then
     FTaskFolder := 'c:\temp\fhir-server-tasks'
@@ -463,13 +463,13 @@ end;
 
 
 {$IFNDEF FHIR2}
-function TFHIRServerContext.getMaps: TAdvMap<TFHIRStructureMap>;
+function TFHIRServerContext.getMaps: TFslMap<TFHIRStructureMap>;
 var
   s : String;
 begin
   FLock.Lock;
   try
-    result := TAdvMap<TFHIRStructureMap>.create;
+    result := TFslMap<TFHIRStructureMap>.create;
     for s in FMaps.Keys do
       result.Add(s, FMaps[s].Link);
   finally

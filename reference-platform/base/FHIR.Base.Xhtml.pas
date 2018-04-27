@@ -52,7 +52,7 @@ Type
 
     function Link : TFHIRAttribute; Overload;
     function Clone : TFHIRAttribute; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     property Name : String read FName write FName;
     property Value : String read FValue write FValue;
     function isEmpty : boolean; override;
@@ -61,7 +61,7 @@ Type
     function equalsShallow(other : TFHIRObject) : boolean; override;
   end;
 
-  TFHIRAttributeListEnumerator = class (TAdvObject)
+  TFHIRAttributeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFHIRAttributeList;
@@ -118,7 +118,7 @@ Type
     {!script hide}
     function Link : TFhirXHtmlNode; Overload;
     function Clone : TFhirXHtmlNode; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     property Attributes : TFHIRAttributeList read GetAttributes;
     function allChildrenAreText : boolean;
     function isPrimitive : boolean; override;
@@ -204,7 +204,7 @@ Type
     function SetAttribute(name, value : String) : TFhirXHtmlNode;
   end;
 
-  TFHIRXhtmlNodeListEnumerator = class (TAdvObject)
+  TFHIRXhtmlNodeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFHIRXhtmlNodeList;
@@ -287,7 +287,7 @@ Type
     class Function parse(lang : String; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode; Overload;
 
     class procedure compose(node: TFhirXHtmlNode; xml : TXmlBuilder); overload;
-    class procedure compose(node: TFhirXHtmlNode; s : TAdvStringBuilder; canonicalise : boolean; indent : integer = 0; relativeReferenceAdjustment : integer = 0); overload;
+    class procedure compose(node: TFhirXHtmlNode; s : TFslStringBuilder; canonicalise : boolean; indent : integer = 0; relativeReferenceAdjustment : integer = 0); overload;
     class function  compose(node: TFhirXHtmlNode; canonicalise : boolean = false) : String; overload;
 
     class Function attributeIsOk(policy : TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; name, attr, value : String) : boolean;
@@ -372,7 +372,7 @@ end;
 
 { TFHIRAttribute }
 
-procedure TFHIRAttribute.Assign(oSource: TAdvObject);
+procedure TFHIRAttribute.Assign(oSource: TFslObject);
 begin
   inherited;
   FName := TFHIRAttribute(oSource).FName;
@@ -624,7 +624,7 @@ begin
   end;
 end;
 
-procedure TFhirXHtmlNode.Assign(oSource: TAdvObject);
+procedure TFhirXHtmlNode.Assign(oSource: TFslObject);
 begin
   inherited;
   NodeType := TFhirXHtmlNode(oSource).FNodeType;
@@ -977,9 +977,9 @@ end;
 
 class function TFHIRXhtmlParser.compose(node: TFhirXHtmlNode; canonicalise : boolean): String;
 var
-  b : TAdvStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TAdvStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     compose(node, b, canonicalise);
     result := b.AsString;
@@ -1043,7 +1043,7 @@ begin
 end;
 
 
-class procedure TFHIRXhtmlParser.compose(node: TFhirXHtmlNode; s: TAdvStringBuilder; canonicalise : boolean; indent, relativeReferenceAdjustment: integer);
+class procedure TFHIRXhtmlParser.compose(node: TFhirXHtmlNode; s: TFslStringBuilder; canonicalise : boolean; indent, relativeReferenceAdjustment: integer);
 var
   i : Integer;
   function canonical(s: String) : String;

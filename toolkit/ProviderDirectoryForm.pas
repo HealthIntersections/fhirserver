@@ -130,10 +130,10 @@ type
     FCSTab : TTabItem;
     FCsForm : TCapabilityStatementEditorFrame;
     FHSBundle : TFhirBundle;
-    FHSMatches : TAdvList<TFhirHealthcareService>;
+    FHSMatches : TFslList<TFhirHealthcareService>;
     FPrBundle : TFhirBundle;
-    FPrMatches : TAdvList<TFhirPractitionerRole>;
-    FOtherResources : TAdvMap<TFHIRResource>;
+    FPrMatches : TFslList<TFhirPractitionerRole>;
+    FOtherResources : TFslMap<TFHIRResource>;
     FRows : TStringList;
     procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     function resolve(ref : TFHIRReference) : TFHIRResource;
@@ -1024,9 +1024,9 @@ begin
   cbxPayload.ItemIndex := Settings.getValue('Provider-Directory-search', 'Category', -1);
 
   btnFetchMore.Visible := false;
-  FHSMatches := TAdvList<TFhirHealthcareService>.create;
-  FPrMatches := TAdvList<TFhirPractitionerRole>.create;
-  FOtherResources := TAdvMap<TFHIRResource>.create;
+  FHSMatches := TFslList<TFhirHealthcareService>.create;
+  FPrMatches := TFslList<TFhirPractitionerRole>.create;
+  FOtherResources := TFslMap<TFHIRResource>.create;
   FRows := TStringList.Create;
 end;
 

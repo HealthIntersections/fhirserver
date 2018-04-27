@@ -93,7 +93,7 @@ type
   private
     FPlugin : TFHIRPlugin;
     function getServerLink(doc: IXMLDOMDocument2): string;
-    function loadXml(b: TAdvBuffer): IXMLDOMDocument2;
+    function loadXml(b: TFslBuffer): IXMLDOMDocument2;
     function getUpgradeNotes(doc: IXMLDOMDocument2; current: String): string;
   public
     constructor Create(plugin : TFHIRPlugin);
@@ -104,8 +104,8 @@ type
   private
     tipShowing : boolean;
     tipText : AnsiString;
-    errors : TAdvList<TFHIRAnnotation>;
-    matches : TAdvList<TFHIRAnnotation>;
+    errors : TFslList<TFHIRAnnotation>;
+    matches : TFslList<TFHIRAnnotation>;
     errorSorter : TFHIRAnnotationComparer;
     FWorker : TFHIRWorkerContext;
     FValidator : TFHIRValidator;
@@ -145,7 +145,7 @@ type
     function compose(cnt : TFHIRResource; fmt : TFHIRFormat) : String; overload;
 
     procedure evaluatePath(r : TFHIRResource; out items : TFHIRSelectionList; out expr : TFHIRPathExpressionNode; out types : TFHIRTypeDetails);
-    function showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TAdvStringSet) : string;
+    function showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TFslStringSet) : string;
 
     // smart on fhir stuff
     function DoSmartOnFHIR(server : TRegisteredFHIRServer) : boolean;
@@ -256,10 +256,10 @@ begin
   nonFHIRFiles := TStringList.create;
   nonFHIRFiles.Sorted := true;
   nonFHIRFiles.Duplicates := dupIgnore;
-  errors := TAdvList<TFHIRAnnotation>.create;
+  errors := TFslList<TFHIRAnnotation>.create;
   errorSorter := TFHIRAnnotationComparer.create;
   errors.Sort(errorSorter);
-  matches := TAdvList<TFHIRAnnotation>.create;
+  matches := TFslList<TFHIRAnnotation>.create;
   matches.Sort(errorSorter);
 
   self.PluginName := '&FHIR';
@@ -485,7 +485,7 @@ end;
 procedure TFHIRPlugin.FuncValidate;
 var
   src : String;
-  buffer : TAdvBuffer;
+  buffer : TFslBuffer;
   error : TFHIRAnnotation;
   op : TFHIROperationOutcome;
   iss : TFhirOperationOutcomeIssue;
@@ -498,7 +498,7 @@ begin
   if (fmt <> ffUnspecified) then
   begin
     try
-      buffer := TAdvBuffer.Create;
+      buffer := TFslBuffer.Create;
       try
         buffer.AsUnicode := src;
         loadValidator;
@@ -952,7 +952,7 @@ end;
 
 procedure TFHIRPlugin.FuncNarrative;
 var
-  buffer : TAdvBuffer;
+  buffer : TFslBuffer;
   fmt : TFHIRFormat;
   s : TStringStream;
   res : TFHIRResource;
@@ -1385,7 +1385,7 @@ begin
   squiggle(INDIC_MATCH, 11, 3); }
 end;
 
-function TFHIRPlugin.showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TAdvStringSet): string;
+function TFHIRPlugin.showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TFslStringSet): string;
 var
   comp : TFHIRExpressionNodeComposer;
 begin
@@ -1751,7 +1751,7 @@ begin
   inherited create(false);
 end;
 
-function TUpgradeCheckThread.loadXml(b : TAdvBuffer): IXMLDOMDocument2;
+function TUpgradeCheckThread.loadXml(b : TFslBuffer): IXMLDOMDocument2;
 var
   v, vAdapter : Variant;
   s : TBytesStream;
@@ -1815,17 +1815,17 @@ end;
 
 procedure TUpgradeCheckThread.Execute;
 var
-  web : TAdvWinInetClient;
+  web : TFslWinInetClient;
   doc : IXMLDOMDocument2;
   bc : string;
 begin
   try
-    web := TAdvWinInetClient.Create;
+    web := TFslWinInetClient.Create;
     try
       web.UseWindowsProxySettings := true;
       web.Server := 'www.healthintersections.com.au';
       web.Resource := 'FhirServer/fhirnpp.rss';
-      web.Response := TAdvBuffer.Create;
+      web.Response := TFslBuffer.Create;
       web.Execute;
       doc := loadXml(web.Response);
       bc := getServerLink(doc);

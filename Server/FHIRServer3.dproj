@@ -198,7 +198,7 @@
         <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Publisher.pas"/>
         <DCCReference Include="TerminologyServer.pas"/>
         <DCCReference Include="TerminologyServerStore.pas"/>
-        <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
+        <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="FHIRValueSetChecker.pas"/>
         <DCCReference Include="TerminologyWebServer.pas"/>
         <DCCReference Include="FHIRServerConstants.pas"/>

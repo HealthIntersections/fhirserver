@@ -42,7 +42,7 @@ Uses
 type
   TByte = Byte;
 
-  TAdvBytesBuilder = Class (TAdvObject)
+  TFslBytesBuilder = Class (TFslObject)
     Private
       FContent : TBytes;
       FLength : Integer;
@@ -107,7 +107,7 @@ Implementation
 
 {$IFNDEF UT}
 
-function TAdvBytesBuilder.AsBytes : TBytes;
+function TFslBytesBuilder.AsBytes : TBytes;
 Begin
   result := AsString;
 End;
@@ -150,10 +150,10 @@ End;
 
 Function BytesAsMime(a : TBytes) : String;
 var
-  o : TAdvStringBuilder;
+  o : TFslStringBuilder;
   i : integer;
 begin
-  o := TAdvStringBuilder.Create;
+  o := TFslStringBuilder.Create;
   try
     for i := 1 to length(a) do
       if (a[i] >= char(32)) or (a[i] <= char(127)) Then
@@ -190,14 +190,14 @@ Const
 
 
   (*
-Procedure TAdvBytesBuilder.Clear;
+Procedure TFslBytesBuilder.Clear;
 Begin
   FContent := '';
   FLength := 0;
 End;
 
 
-Function TAdvBytesBuilder.AsBytes : TBytes;
+Function TFslBytesBuilder.AsBytes : TBytes;
 Begin
 //  Result := Copy(FContent, 1, FLength);
   SetLength(result, FLength);
@@ -205,14 +205,14 @@ Begin
 End;
 
 
-Procedure TAdvBytesBuilder.WriteToStream(aStream : TAdvStream);
+Procedure TFslBytesBuilder.WriteToStream(aStream : TFslStream);
 Begin
   If FLength > 0 Then
     aStream.Write(FContent[1], FLength);
 End;
 
 
-Procedure TAdvBytesBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+Procedure TFslBytesBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
 Var
   iLen : Integer;
 Begin
@@ -232,7 +232,7 @@ Begin
   End;
 End;
 
-Procedure TAdvBytesBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
+Procedure TFslBytesBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
 Begin
   If (iCount > 0) Then
   Begin
@@ -248,7 +248,7 @@ Begin
 End;
 
 
-Procedure TAdvBytesBuilder.Append(ch : Char);
+Procedure TFslBytesBuilder.Append(ch : Char);
 Begin
   If FLength + 1 > System.Length(FContent) Then
     SetLength(FContent, System.Length(FContent) + FBufferSize);
@@ -257,7 +257,7 @@ Begin
   Inc(FLength);
 End;
 
-Procedure TAdvBytesBuilder.Append(Const sStr : String);
+Procedure TFslBytesBuilder.Append(Const sStr : String);
 Begin
   If (sStr <> '') Then
   Begin
@@ -271,7 +271,7 @@ Begin
 End;
 
 
-Procedure TAdvBytesBuilder.Append(Const oStream : TAdvStream; iBytes : Integer);
+Procedure TFslBytesBuilder.Append(Const oStream : TFslStream; iBytes : Integer);
 Begin
   If (iBytes > 0) Then
   Begin
@@ -285,19 +285,19 @@ Begin
 End;
 
 
-Procedure TAdvBytesBuilder.Append(Const oBuilder : TAdvBytesBuilder);
+Procedure TFslBytesBuilder.Append(Const oBuilder : TFslBytesBuilder);
 Begin
   Append(oBuilder.AsBytes);
 End;
 
 
-Procedure TAdvBytesBuilder.AppendEOL;
+Procedure TFslBytesBuilder.AppendEOL;
 Begin
   Append(cReturn);
 End;
 
 
-Procedure TAdvBytesBuilder.Insert(Const sStr : String; iIndex : Integer);
+Procedure TFslBytesBuilder.Insert(Const sStr : String; iIndex : Integer);
 Begin
   If (sStr <> '') Then
   Begin
@@ -314,7 +314,7 @@ Begin
 End;
 
 
-Procedure TAdvBytesBuilder.Insert(Const oStream : TAdvStream; iBytes : Integer; iIndex : Integer);
+Procedure TFslBytesBuilder.Insert(Const oStream : TFslStream; iBytes : Integer; iIndex : Integer);
 Begin
   If (iBytes > 0) Then
   Begin
@@ -331,13 +331,13 @@ Begin
 End;
 
 
-Procedure TAdvBytesBuilder.Insert(Const oBuilder : TAdvBytesBuilder; iIndex : Integer);
+Procedure TFslBytesBuilder.Insert(Const oBuilder : TFslBytesBuilder; iIndex : Integer);
 Begin
   Insert(oBuilder.AsBytes, iIndex);
 End;
 
 
-Procedure TAdvBytesBuilder.Delete(iIndex, iLength : Integer);
+Procedure TFslBytesBuilder.Delete(iIndex, iLength : Integer);
 Begin
   System.Delete(FContent, iIndex+1, iLength);
   Dec(FLength, iLength);
@@ -345,20 +345,20 @@ End;
 
 
 
-constructor TAdvBytesBuilder.Create;
+constructor TFslBytesBuilder.Create;
 begin
   inherited;
   FBufferSize := BUFFER_INCREMENT_SIZE;
 end;
 
-procedure TAdvBytesBuilder.CommaAdd(const sStr: String);
+procedure TFslBytesBuilder.CommaAdd(const sStr: String);
 begin
   if Length > 0 Then
     Append(', ');
   Append(sStr);
 end;
 
-procedure TAdvBytesBuilder.AddCardinalAsBytes(iVal: Cardinal);
+procedure TFslBytesBuilder.AddCardinalAsBytes(iVal: Cardinal);
 var
   s : String;
 begin
@@ -367,7 +367,7 @@ begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.AddWordAsBytes(iVal: word);
+procedure TFslBytesBuilder.AddWordAsBytes(iVal: word);
 var
   s : String;
 begin
@@ -376,7 +376,7 @@ begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.AddInt64AsBytes(iVal: Int64);
+procedure TFslBytesBuilder.AddInt64AsBytes(iVal: Int64);
 var
   s : String;
 begin
@@ -385,7 +385,7 @@ begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.AddByteAsBytes(iVal: TByte);
+procedure TFslBytesBuilder.AddByteAsBytes(iVal: TByte);
 var
   s : String;
 begin
@@ -394,7 +394,7 @@ begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.Append(const bBytes: array of TByte; amount: Integer);
+procedure TFslBytesBuilder.Append(const bBytes: array of TByte; amount: Integer);
 var
   i : integer;
 begin
@@ -403,12 +403,12 @@ begin
 
 end;
 
-procedure TAdvBytesBuilder.Append(const aBytes: TBytes);
+procedure TFslBytesBuilder.Append(const aBytes: TBytes);
 begin
 
 end;
 
-procedure TAdvBytesBuilder.Insert(const aBytes: TBytes; iIndex: Integer);
+procedure TFslBytesBuilder.Insert(const aBytes: TBytes; iIndex: Integer);
 begin
 
 end;
@@ -440,7 +440,7 @@ Begin
 End;
 
 (*
-procedure TAdvBytesBuilder.Append(b: TByte);
+procedure TFslBytesBuilder.Append(b: TByte);
 begin
   Append(AnsiChar(b));
 end;
@@ -503,10 +503,10 @@ End;
 
 Function BytesAsMime(a : TBytes) : String;
 var
-  o : TAdvStringBuilder;
+  o : TFslStringBuilder;
   i : integer;
 begin
-  o := TAdvStringBuilder.Create;
+  o := TFslStringBuilder.Create;
   try
     for i := low(a) to high(a) do
       if (a[i] >= 32) or (a[i] <= 127) Then
@@ -565,13 +565,13 @@ Begin
   End;
 End;
 
-constructor TAdvBytesBuilder.Create;
+constructor TFslBytesBuilder.Create;
 begin
   inherited;
   FBufferSize := BUFFER_INCREMENT_SIZE;
 end;
 
-function TAdvBytesBuilder.EndsWith(aBytes: TBytes): Boolean;
+function TFslBytesBuilder.EndsWith(aBytes: TBytes): Boolean;
 var
   i : integer;
 begin
@@ -581,7 +581,7 @@ begin
       result := result And (aBytes[i] = FContent[FLength - System.Length(aBytes) + i]);
 end;
 
-procedure TAdvBytesBuilder.Read(index : integer; var buffer; ilength: integer);
+procedure TFslBytesBuilder.Read(index : integer; var buffer; ilength: integer);
 begin
   if index < 1 Then
     RaiseError('Read', 'index < 1');
@@ -590,7 +590,7 @@ begin
   Move(FContent[index], buffer, ilength);
 end;
 
-procedure TAdvBytesBuilder.WriteCardinal(index: integer; val: cardinal);
+procedure TFslBytesBuilder.WriteCardinal(index: integer; val: cardinal);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -599,7 +599,7 @@ begin
   Move(val, FContent[index], 4);
 end;
 
-procedure TAdvBytesBuilder.WriteString(index: integer; val: String);
+procedure TFslBytesBuilder.WriteString(index: integer; val: String);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -608,7 +608,7 @@ begin
   Move(val[1], FContent[index], (val.Length*2));
 end;
 
-procedure TAdvBytesBuilder.WriteUInt64(index: integer; val: UInt64);
+procedure TFslBytesBuilder.WriteUInt64(index: integer; val: UInt64);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -617,7 +617,7 @@ begin
   Move(val, FContent[index], 8);
 end;
 
-procedure TAdvBytesBuilder.WriteWord(index: integer; val: word);
+procedure TFslBytesBuilder.WriteWord(index: integer; val: word);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -626,20 +626,20 @@ begin
   Move(val, FContent[index], 2);
 end;
 
-Procedure TAdvBytesBuilder.Clear;
+Procedure TFslBytesBuilder.Clear;
 Begin
   FContent := nil;
   FLength := 0;
 End;
 
 
-Function TAdvBytesBuilder.AsBytes : TBytes;
+Function TFslBytesBuilder.AsBytes : TBytes;
 Begin
   Result := Copy(FContent, 0, FLength);
 End;
 
 
-Procedure TAdvBytesBuilder.Append(ch : AnsiChar);
+Procedure TFslBytesBuilder.Append(ch : AnsiChar);
 Begin
   If FLength + 1 > System.Length(FContent) Then
     SetLength(FContent, System.Length(FContent) + FBufferSize);
@@ -648,7 +648,7 @@ Begin
   Inc(FLength);
 End;
 
-Procedure TAdvBytesBuilder.Append(b : Byte);
+Procedure TFslBytesBuilder.Append(b : Byte);
 Begin
   If FLength + 1 > System.Length(FContent) Then
     SetLength(FContent, System.Length(FContent) + FBufferSize);
@@ -657,7 +657,7 @@ Begin
   Inc(FLength);
 End;
 
-procedure TAdvBytesBuilder.AddAnsiString(val: AnsiString);
+procedure TFslBytesBuilder.AddAnsiString(val: AnsiString);
 Var
   s : TBytes;
 Begin
@@ -666,12 +666,12 @@ Begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.addBase64(val: TBytes);
+procedure TFslBytesBuilder.addBase64(val: TBytes);
 begin
   AddAnsiString(EncodeBase64(@val[0], System.length(val)));
 end;
 
-procedure TAdvBytesBuilder.AddCardinal(val: cardinal);
+procedure TFslBytesBuilder.AddCardinal(val: cardinal);
 Var
   s : TBytes;
 Begin
@@ -680,7 +680,7 @@ Begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.AddInteger(val: integer);
+procedure TFslBytesBuilder.AddInteger(val: integer);
 Var
   s : TBytes;
 Begin
@@ -689,7 +689,7 @@ Begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.AddString(val: String);
+procedure TFslBytesBuilder.AddString(val: String);
 Var
   s : TBytes;
 Begin
@@ -701,7 +701,7 @@ Begin
   end;
 end;
 
-procedure TAdvBytesBuilder.AddUInt64(val: UInt64);
+procedure TFslBytesBuilder.AddUInt64(val: UInt64);
 Var
   s : TBytes;
 Begin
@@ -710,12 +710,12 @@ Begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.AddUtf8(val: String);
+procedure TFslBytesBuilder.AddUtf8(val: String);
 begin
   append(TEncoding.UTF8.GetBytes(val));
 end;
 
-procedure TAdvBytesBuilder.AddWord(val: word);
+procedure TFslBytesBuilder.AddWord(val: word);
 Var
   s : TBytes;
 Begin
@@ -724,7 +724,7 @@ Begin
   Append(s);
 end;
 
-procedure TAdvBytesBuilder.Append(mem: Pointer; len: word);
+procedure TFslBytesBuilder.Append(mem: Pointer; len: word);
 begin
   If len > 0 Then
   Begin
@@ -737,7 +737,7 @@ begin
   End;
 end;
 
-Procedure TAdvBytesBuilder.Append(Const bytes : TBytes);
+Procedure TFslBytesBuilder.Append(Const bytes : TBytes);
 Begin
   If System.Length(bytes) > 0 Then
   Begin

@@ -42,12 +42,12 @@ Const
 Type
   TBaseWrapper = class;
 
-  TPropertyWrapper = { abstract } class(TAdvObject)
+  TPropertyWrapper = { abstract } class(TFslObject)
   public
     function getOwner(): TFHIRObject; virtual;
     function getName(): String; virtual;
     function hasValues(): boolean; virtual;
-    function getValues(): TAdvList<TBaseWrapper>; virtual;
+    function getValues(): TFslList<TBaseWrapper>; virtual;
     function getTypeCode(): String; virtual;
     function getDefinition(): String; virtual;
     function getMinCardinality(): Integer; virtual;
@@ -55,19 +55,19 @@ Type
     function getStructure(): TFHIRStructureDefinition; virtual;
   end;
 
-  TResourceWrapper = { abstract } class(TAdvObject)
+  TResourceWrapper = { abstract } class(TFslObject)
   public
-    function getContained(): TAdvList<TResourceWrapper>; virtual;
+    function getContained(): TFslList<TResourceWrapper>; virtual;
     function getId(): String; virtual;
     function getNarrative(): TFHIRXhtmlNode; virtual;
     function getName(): String; virtual;
-    function children(): TAdvList<TPropertyWrapper>; virtual;
+    function children(): TFslList<TPropertyWrapper>; virtual;
   end;
 
-  TBaseWrapper = { abstract } class(TAdvObject)
+  TBaseWrapper = { abstract } class(TFslObject)
   public
     function getBase(): TFHIRObject; virtual;
-    function children(): TAdvList<TPropertyWrapper>; virtual;
+    function children(): TFslList<TPropertyWrapper>; virtual;
     function getChildByName(tail: String): TPropertyWrapper; virtual;
   end;
 
@@ -78,8 +78,8 @@ Type
     FType : String;
     FStructure : TFHIRStructureDefinition;
     FDefinition : TFHIRElementDefinition;
-    FChildren : TAdvList<TFHIRElementDefinition>;
-    FList : TAdvList<TPropertyWrapper>;
+    FChildren : TFslList<TFHIRElementDefinition>;
+    FList : TFslList<TPropertyWrapper>;
     public
     Constructor create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
     end;
@@ -93,13 +93,13 @@ Type
   TPropertyWrapperDirect = class(TPropertyWrapper)
   private
     FWrapped: TFHIRProperty;
-    FList: TAdvList<TBaseWrapper>;
+    FList: TFslList<TBaseWrapper>;
   public
     Constructor create(wrapped: TFHIRProperty);
     function getOwner(): TFHIRObject; override;
     function getName(): String; override;
     function hasValues(): boolean; override;
-    function getValues(): TAdvList<TBaseWrapper>; override;
+    function getValues(): TFslList<TBaseWrapper>; override;
     function getTypeCode(): String; override;
     function getDefinition(): String; override;
     function getMinCardinality(): Integer; override;
@@ -112,25 +112,25 @@ Type
     FWrapped: TFHIRResource;
   public
     Constructor create(wrapped: TFHIRResource);
-    function getContained(): TAdvList<TResourceWrapper>; override;
+    function getContained(): TFslList<TResourceWrapper>; override;
     function getId(): String; override;
     function getNarrative(): TFHIRXhtmlNode; override;
     function getName(): String; override;
-    function children(): TAdvList<TPropertyWrapper>; override;
+    function children(): TFslList<TPropertyWrapper>; override;
   end;
 
   TBaseWrapperDirect = class(TBaseWrapper)
   private
     FWrapped: TFHIRObject;
-    FList: TAdvList<TPropertyWrapper>;
+    FList: TFslList<TPropertyWrapper>;
   public
     Constructor create(wrapped: TFHIRObject);
     function getBase(): TFHIRObject; override;
-    function children(): TAdvList<TPropertyWrapper>; override;
+    function children(): TFslList<TPropertyWrapper>; override;
     function getChildByName(tail: String): TPropertyWrapper; override;
   end;
 
-  TFHIRNarrativeGenerator = class(TAdvObject)
+  TFHIRNarrativeGenerator = class(TFslObject)
   private
     FPrefix: String; // for links
     context: TFHIRWorkerContext;
@@ -164,22 +164,22 @@ Type
 
     function lookupCode(system, version, code: String): String;
 
-    function getChildrenForPath(elements: TFHIRElementDefinitionList; path: String): TAdvList<TFHIRElementDefinition>;
-    function splitExtensions(profile: TFHIRStructureDefinition; children: TAdvList<TPropertyWrapper>): TAdvList<TPropertyWrapper>;
-    Function getElementDefinition(elements: TAdvList<TFHIRElementDefinition>; path: String; p: TPropertyWrapper): TFHIRElementDefinition; overload;
+    function getChildrenForPath(elements: TFHIRElementDefinitionList; path: String): TFslList<TFHIRElementDefinition>;
+    function splitExtensions(profile: TFHIRStructureDefinition; children: TFslList<TPropertyWrapper>): TFslList<TPropertyWrapper>;
+    Function getElementDefinition(elements: TFslList<TFHIRElementDefinition>; path: String; p: TPropertyWrapper): TFHIRElementDefinition; overload;
     Function getElementDefinition(elements: TFHIRElementDefinitionList; path: String; p: TPropertyWrapper): TFHIRElementDefinition; overload;
     Function exemptFromRendering(child: TFHIRElementDefinition): boolean;
-    procedure filterGrandChildren(grandChildren: TAdvList<TFHIRElementDefinition>; s: String; prop: TPropertyWrapper);
+    procedure filterGrandChildren(grandChildren: TFslList<TFHIRElementDefinition>; s: String; prop: TPropertyWrapper);
     function isBase(code: String): boolean;
     function isPrimitive(e: TFHIRElementDefinition): boolean;
-    function isDefaultValue(displayHints: TDictionary<String, String>; list: TAdvList<TBaseWrapper>): boolean; overload;
+    function isDefaultValue(displayHints: TDictionary<String, String>; list: TFslList<TBaseWrapper>): boolean; overload;
     function isDefault(displayHints: TDictionary<String, String>; primitiveType: TFHIRPrimitiveType): boolean; overload;
     Function renderAsList(child: TFHIRElementDefinition): boolean;
-    function canDoTable(path: String; p: TPropertyWrapper; grandChildren: TAdvList<TFHIRElementDefinition>): boolean;
-    procedure addColumnHeadings(tr: TFHIRXhtmlNode; grandChildren: TAdvList<TFHIRElementDefinition>);
-    procedure addColumnValues(res: TResourceWrapper; tr: TFHIRXhtmlNode; grandChildren: TAdvList<TFHIRElementDefinition>; v: TBaseWrapper; showCodeDetails: boolean;
+    function canDoTable(path: String; p: TPropertyWrapper; grandChildren: TFslList<TFHIRElementDefinition>): boolean;
+    procedure addColumnHeadings(tr: TFHIRXhtmlNode; grandChildren: TFslList<TFHIRElementDefinition>);
+    procedure addColumnValues(res: TResourceWrapper; tr: TFHIRXhtmlNode; grandChildren: TFslList<TFHIRElementDefinition>; v: TBaseWrapper; showCodeDetails: boolean;
       displayHints: TDictionary<String, String>);
-    function getValues(path: String; p: TPropertyWrapper; e: TFHIRElementDefinition): TAdvList<TPropertyWrapper>;
+    function getValues(path: String; p: TPropertyWrapper; e: TFHIRElementDefinition): TFslList<TPropertyWrapper>;
     function canCollapse(e: TFHIRElementDefinition): boolean;
     Function resolveReference(res: TResourceWrapper; url: String): TResourceWrapperWithReference;
     procedure generateResourceSummary(x: TFHIRXhtmlNode; res: TResourceWrapper; textAlready: boolean; showCodeDetails: boolean);
@@ -197,9 +197,9 @@ Type
     function readDisplayHints(defn: TFHIRElementDefinition): TDictionary<String, String>;
 
     procedure generateByProfile(res: TResourceWrapper; profile: TFHIRStructureDefinition; e: TBaseWrapper; allElements: TFHIRElementDefinitionList; defn: TFHIRElementDefinition;
-      children: TAdvList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean); overload;
+      children: TFslList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean); overload;
     procedure generateByProfile(res: TFHIRResource; profile: TFHIRStructureDefinition; e: TFHIRObject; allElements: TFHIRElementDefinitionList; defn: TFHIRElementDefinition;
-      children: TAdvList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean); overload;
+      children: TFslList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean); overload;
     procedure generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean); overload;
     procedure inject(r: TFHIRDomainResource; x: TFHIRXhtmlNode; status: TFhirNarrativeStatusEnum);
   public
@@ -245,13 +245,13 @@ begin
   result := FWrapped.hasValue;
 end;
 
-function TPropertyWrapperDirect.getValues(): TAdvList<TBaseWrapper>;
+function TPropertyWrapperDirect.getValues(): TFslList<TBaseWrapper>;
 var
   b: TFHIRObject;
 begin
   if (FList = nil) then
   begin
-    FList := TAdvList<TBaseWrapper>.create();
+    FList := TFslList<TBaseWrapper>.create();
     for b in FWrapped.Values do
       if b = nil then
         FList.add(nil)
@@ -299,14 +299,14 @@ begin
   result := FWrapped;
 end;
 
-function TBaseWrapperDirect.children(): TAdvList<TPropertyWrapper>;
+function TBaseWrapperDirect.children(): TFslList<TPropertyWrapper>;
 var
   p: TFHIRProperty;
   list: TFHIRPropertyList;
 begin
   if (FList = nil) then
   begin
-    FList := TAdvList<TPropertyWrapper>.create();
+    FList := TFslList<TPropertyWrapper>.create();
     list := FWrapped.createPropertyList(false);
     try
       for p in list do
@@ -326,7 +326,7 @@ begin
   pl := nil;
   if (FList = nil) then
   begin
-    FList := TAdvList<TPropertyWrapper>.create();
+    FList := TFslList<TPropertyWrapper>.create();
     list := FWrapped.createPropertyList(false);
     try
       for p in list do
@@ -350,13 +350,13 @@ begin
   self.FWrapped := wrapped;
 end;
 
-function TResourceWrapperDirect.getContained(): TAdvList<TResourceWrapper>;
+function TResourceWrapperDirect.getContained(): TFslList<TResourceWrapper>;
 var
   dr: TFHIRDomainResource;
   c: TFHIRResource;
-  list: TAdvList<TResourceWrapper>;
+  list: TFslList<TResourceWrapper>;
 begin
-  list := TAdvList<TResourceWrapper>.create();
+  list := TFslList<TResourceWrapper>.create();
   try
     if (FWrapped is TFHIRDomainResource) then
     begin
@@ -393,15 +393,15 @@ begin
   result := CODES_TFHIRREsourceType[FWrapped.ResourceType];
 end;
 
-function TResourceWrapperDirect.children(): TAdvList<TPropertyWrapper>;
+function TResourceWrapperDirect.children(): TFslList<TPropertyWrapper>;
 var
   p: TFHIRProperty;
-  list: TAdvList<TPropertyWrapper>;
+  list: TFslList<TPropertyWrapper>;
   pList: TFHIRPropertyList;
 begin
   pList := FWrapped.createPropertyList(false);
   try
-    list := TAdvList<TPropertyWrapper>.create();
+    list := TFslList<TPropertyWrapper>.create();
     try
       for p in pList do
         list.add(TPropertyWrapperDirect.create(p));
@@ -478,7 +478,7 @@ end;
 procedure TFHIRNarrativeGenerator.generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean);
 var
   x: TFHIRXhtmlNode;
-  c: TAdvList<TFHIRElementDefinition>;
+  c: TFslList<TFHIRElementDefinition>;
 begin
   x := TFHIRXhtmlNode.create('div');
   if showCodeDetails then
@@ -502,7 +502,7 @@ begin
 end;
 
 procedure TFHIRNarrativeGenerator.generateByProfile(res: TFHIRResource; profile: TFHIRStructureDefinition; e: TFHIRObject; allElements: TFHIRElementDefinitionList;
-  defn: TFHIRElementDefinition; children: TAdvList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean);
+  defn: TFHIRElementDefinition; children: TFslList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean);
 var
   r: TResourceWrapperDirect;
 begin
@@ -525,13 +525,13 @@ begin
 end;
 
 procedure TFHIRNarrativeGenerator.generateByProfile(res: TResourceWrapper; profile: TFHIRStructureDefinition; e: TBaseWrapper; allElements: TFHIRElementDefinitionList;
-  defn: TFHIRElementDefinition; children: TAdvList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean);
+  defn: TFHIRElementDefinition; children: TFslList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean);
 var
   p: TPropertyWrapper;
-  pList: TAdvList<TPropertyWrapper>;
+  pList: TFslList<TPropertyWrapper>;
   child: TFHIRElementDefinition;
   displayHints: TDictionary<String, String>;
-  grandChildren: TAdvList<TFHIRElementDefinition>;
+  grandChildren: TFslList<TFHIRElementDefinition>;
   para, list, tbl, tr, bq: TFHIRXhtmlNode;
   name: String;
   v: TBaseWrapper;
@@ -641,20 +641,20 @@ begin
   end;
 end;
 
-procedure TFHIRNarrativeGenerator.filterGrandChildren(grandChildren: TAdvList<TFHIRElementDefinition>; s: String; prop: TPropertyWrapper);
+procedure TFHIRNarrativeGenerator.filterGrandChildren(grandChildren: TFslList<TFHIRElementDefinition>; s: String; prop: TPropertyWrapper);
 var
-  toRemove: TAdvList<TFHIRElementDefinition>;
+  toRemove: TFslList<TFHIRElementDefinition>;
   b: TBaseWrapper;
-  list: TAdvList<TFHIRElementDefinition>;
+  list: TFslList<TFHIRElementDefinition>;
   ed: TFHIRElementDefinition;
   p: TPropertyWrapper;
 begin
-  toRemove := TAdvList<TFHIRElementDefinition>.create();
+  toRemove := TFslList<TFHIRElementDefinition>.create();
   try
     toRemove.addAll(grandChildren);
     for b in prop.getValues do
     begin
-      list := TAdvList<TFHIRElementDefinition>.create;
+      list := TFslList<TFHIRElementDefinition>.create;
       try
         for ed in toRemove do
         begin
@@ -673,10 +673,10 @@ begin
   end;
 end;
 
-function TFHIRNarrativeGenerator.splitExtensions(profile: TFHIRStructureDefinition; children: TAdvList<TPropertyWrapper>): TAdvList<TPropertyWrapper>;
+function TFHIRNarrativeGenerator.splitExtensions(profile: TFHIRStructureDefinition; children: TFslList<TPropertyWrapper>): TFslList<TPropertyWrapper>;
 var
-  results: TAdvList<TPropertyWrapper>;
-  map: TAdvMap<TPropertyWrapper>;
+  results: TFslList<TPropertyWrapper>;
+  map: TFslMap<TPropertyWrapper>;
   p, pe: TPropertyWrapper;
   v: TBaseWrapper;
   ex: TFHIRExtension;
@@ -684,9 +684,9 @@ var
   ed: TFHIRStructureDefinition;
   def: TFHIRElementDefinition;
 begin
-  results := TAdvList<TPropertyWrapper>.create;
+  results := TFslList<TPropertyWrapper>.create;
   try
-    map := TAdvMap<TPropertyWrapper>.create;
+    map := TFslMap<TPropertyWrapper>.create;
     try
       for p in children do
         if (p.getName() = 'extension') or (p.getName() = 'modifierExtension') then
@@ -741,7 +741,7 @@ begin
   end;
 end;
 
-function TFHIRNarrativeGenerator.isDefaultValue(displayHints: TDictionary<String, String>; list: TAdvList<TBaseWrapper>): boolean;
+function TFHIRNarrativeGenerator.isDefaultValue(displayHints: TDictionary<String, String>; list: TFslList<TBaseWrapper>): boolean;
 begin
   if (list.Count <> 1) then
     result := false
@@ -784,7 +784,7 @@ begin
   end
 end;
 
-procedure TFHIRNarrativeGenerator.addColumnHeadings(tr: TFHIRXhtmlNode; grandChildren: TAdvList<TFHIRElementDefinition>);
+procedure TFHIRNarrativeGenerator.addColumnHeadings(tr: TFHIRXhtmlNode; grandChildren: TFslList<TFHIRElementDefinition>);
 var
   e: TFHIRElementDefinition;
 begin
@@ -792,7 +792,7 @@ begin
     tr.addTag('td').addTag('b').addText(capitalize(tail(e.path)));
 end;
 
-procedure TFHIRNarrativeGenerator.addColumnValues(res: TResourceWrapper; tr: TFHIRXhtmlNode; grandChildren: TAdvList<TFHIRElementDefinition>; v: TBaseWrapper;
+procedure TFHIRNarrativeGenerator.addColumnValues(res: TResourceWrapper; tr: TFHIRXhtmlNode; grandChildren: TFslList<TFHIRElementDefinition>; v: TBaseWrapper;
   showCodeDetails: boolean; displayHints: TDictionary<String, String>);
 var
   e: TFHIRElementDefinition;
@@ -808,10 +808,10 @@ begin
   end;
 end;
 
-function TFHIRNarrativeGenerator.canDoTable(path: String; p: TPropertyWrapper; grandChildren: TAdvList<TFHIRElementDefinition>): boolean;
+function TFHIRNarrativeGenerator.canDoTable(path: String; p: TPropertyWrapper; grandChildren: TFslList<TFHIRElementDefinition>): boolean;
 var
   e: TFHIRElementDefinition;
-  values: TAdvList<TPropertyWrapper>;
+  values: TFslList<TPropertyWrapper>;
 begin
   result := true;
   for e in grandChildren do
@@ -835,13 +835,13 @@ begin
   context := cc;
 end;
 
-function TFHIRNarrativeGenerator.getValues(path: String; p: TPropertyWrapper; e: TFHIRElementDefinition): TAdvList<TPropertyWrapper>;
+function TFHIRNarrativeGenerator.getValues(path: String; p: TPropertyWrapper; e: TFHIRElementDefinition): TFslList<TPropertyWrapper>;
 var
-  res: TAdvList<TPropertyWrapper>;
+  res: TFslList<TPropertyWrapper>;
   v: TBaseWrapper;
   g: TPropertyWrapper;
 begin
-  res := TAdvList<TPropertyWrapper>.create();
+  res := TFslList<TPropertyWrapper>.create();
   try
     for v in p.getValues do
     begin
@@ -879,7 +879,7 @@ begin
   result := (code = 'Element') or (code = 'BackboneElement');
 end;
 
-Function TFHIRNarrativeGenerator.getElementDefinition(elements: TAdvList<TFHIRElementDefinition>; path: String; p: TPropertyWrapper): TFHIRElementDefinition;
+Function TFHIRNarrativeGenerator.getElementDefinition(elements: TFslList<TFHIRElementDefinition>; path: String; p: TPropertyWrapper): TFHIRElementDefinition;
 var
   element: TFHIRElementDefinition;
 begin
@@ -1483,7 +1483,7 @@ begin
   end;
 end;
 
-// function ConceptDefinitionComponent TFHIRNarrativeGenerator.findCode(String code, TAdvList<ConceptDefinitionComponent> list) begin
+// function ConceptDefinitionComponent TFHIRNarrativeGenerator.findCode(String code, TFslList<ConceptDefinitionComponent> list) begin
 // for (ConceptDefinitionComponent t : list) begin
 // if (code.equals(t.code)) then
 // return t;
@@ -1908,11 +1908,11 @@ begin
   result := s;
 end;
 
-function TFHIRNarrativeGenerator.getChildrenForPath(elements: TFHIRElementDefinitionList; path: String): TAdvList<TFHIRElementDefinition>;
+function TFHIRNarrativeGenerator.getChildrenForPath(elements: TFHIRElementDefinitionList; path: String): TFslList<TFHIRElementDefinition>;
 var
   e, t, e1: TFHIRElementDefinition;
   name: String;
-  results: TAdvList<TFHIRElementDefinition>;
+  results: TFslList<TFHIRElementDefinition>;
 begin
   // do we need to do a name reference substitution?
   for e in elements do
@@ -1934,7 +1934,7 @@ begin
     end;
   end;
 
-  results := TAdvList<TFHIRElementDefinition>.create();
+  results := TFslList<TFHIRElementDefinition>.create();
   try
     for e in elements do
     begin
@@ -2196,7 +2196,7 @@ end;
   new XhtmlComposer().compose(div, x);
   end;
 
-  private String getDisplay(TAdvList<OtherElementComponent> list, String s)begin
+  private String getDisplay(TFslList<OtherElementComponent> list, String s)begin
   for (OtherElementComponent c : list) begin
   if (s.equals(c.ElementList)) then
   return getDisplayForConcept(c.getCodeSystem(), c.code);
@@ -2219,7 +2219,7 @@ end;
   return s;
   end;
 
-  private String getCode(TAdvList<OtherElementComponent> list, String s, boolean withSystem) begin
+  private String getCode(TFslList<OtherElementComponent> list, String s, boolean withSystem) begin
   for (OtherElementComponent c : list) begin
   if (s.equals(c.ElementList)) then
   if (withSystem) then
@@ -2307,7 +2307,7 @@ end;
   return count;
   end;
 
-  private Integer conceptCount(TAdvList<ValueSetExpansionContainsComponent> list) begin
+  private Integer conceptCount(TFslList<ValueSetExpansionContainsComponent> list) begin
   Integer count := 0;
   for (ValueSetExpansionContainsComponent c : list) begin
   if (!c.getAbstract()) then
@@ -2317,7 +2317,7 @@ end;
   return count;
   end;
 
-  private Integer countConcepts(TAdvList<ConceptDefinitionComponent> list) begin
+  private Integer countConcepts(TFslList<ConceptDefinitionComponent> list) begin
   Integer count := list.Count;
   for (ConceptDefinitionComponent c : list)
   if (c.hasConcept()) then
@@ -2445,7 +2445,7 @@ end;
   end;
   end;
   end;
-  TAdvList<String> langs := TAdvList<String>();
+  TFslList<String> langs := TFslList<String>();
 
   if (header) then begin
   TFHIRXhtmlNode h := x.addTag('h2');
@@ -2488,7 +2488,7 @@ end;
   return hasExtensions;
   end;
 
-  private void addLanguageRow(ConceptDefinitionComponent c, TFHIRXhtmlNode t, TAdvList<String> langs) begin
+  private void addLanguageRow(ConceptDefinitionComponent c, TFHIRXhtmlNode t, TFslList<String> langs) begin
   TFHIRXhtmlNode tr := t.addTag('tr');
   tr.addTag('td').addText(c.code);
   for (String lang : langs) begin
@@ -2501,7 +2501,7 @@ end;
   end;
   end;
 
-  private void scanLangs(ConceptDefinitionComponent c, TAdvList<String> langs) begin
+  private void scanLangs(ConceptDefinitionComponent c, TFslList<String> langs) begin
   for (ConceptDefinitionDesignationComponent designation : c.getDesignation()) begin
   String lang := designation.getLanguage();
   if (langs <> nil) and (!langs.contains(lang)) then
@@ -2611,7 +2611,7 @@ end;
 
   for (TFHIRConceptMap m : mymaps.keySet()) begin
   td := tr.addTag('td');
-  TAdvList<TargetElementComponent> mappings := findMappingsForCode(c.code, m);
+  TFslList<TargetElementComponent> mappings := findMappingsForCode(c.code, m);
   boolean first := true;
   for (TargetElementComponent mapping : mappings) begin
   if (!first) then
@@ -2686,7 +2686,7 @@ end;
   end;
   for (TFHIRConceptMap m : maps.keySet()) begin
   td := tr.addTag('td');
-  TAdvList<TargetElementComponent> mappings := findMappingsForCode(c.code, m);
+  TFslList<TargetElementComponent> mappings := findMappingsForCode(c.code, m);
   boolean first := true;
   for (TargetElementComponent mapping : mappings) begin
   if (!first) then
@@ -2756,8 +2756,8 @@ end;
   end;
   end;
 
-  private TAdvList<TargetElementComponent> findMappingsForCode(String code, TFHIRConceptMap map) begin
-  TAdvList<TargetElementComponent> mappings := TAdvList<TargetElementComponent>();
+  private TFslList<TargetElementComponent> findMappingsForCode(String code, TFHIRConceptMap map) begin
+  TFslList<TargetElementComponent> mappings := TFslList<TargetElementComponent>();
 
   for (SourceElementComponent c : map.ElementList) begin
   if (c.code.equals(code)) then
@@ -3236,12 +3236,12 @@ end;
   root.addTag('hr');
   root.ChildNodes.add(((DomainResource)subject).text.getDiv());
   end;
-  TAdvList<SectionComponent> sections := comp.getSection();
+  TFslList<SectionComponent> sections := comp.getSection();
   renderSections(feed, root, sections, 1);
   return root;
   end;
 
-  private void renderSections(Bundle feed, TFHIRXhtmlNode node, TAdvList<SectionComponent> sections, Integer level) begin
+  private void renderSections(Bundle feed, TFHIRXhtmlNode node, TFslList<SectionComponent> sections, Integer level) begin
   for (SectionComponent section : sections) begin
   node.addTag('hr');
   if (section.hasTitleElement()) then
@@ -3283,12 +3283,12 @@ end;
   end;
 
   @Override
-  public TAdvList<PropertyWrapper> children() begin
+  public TFslList<PropertyWrapper> children() begin
   if (list = nil) then begin
   children := ProfileUtilities.getChildList(structure, definition);
-  list := TAdvList<FHIR.Tools.Narrative2.PropertyWrapper>();
+  list := TFslList<FHIR.Tools.Narrative2.PropertyWrapper>();
   for (child : TFHIRElementDefinition : children) begin
-  TAdvList<Element> elements := TAdvList<Element>();
+  TFslList<Element> elements := TFslList<Element>();
   XMLUtil.getNamedChildrenWithWildcard(element, tail(child.getPath()), elements);
   list.add(new PropertyWrapperElement(structure, child, elements));
   end;
@@ -3310,10 +3310,10 @@ end;
 
   private structure : TFHIRStructureDefinition;
   private definition : TFHIRElementDefinition;
-  private TAdvList<Element> values;
-  private TAdvList<BaseWrapper> list;
+  private TFslList<Element> values;
+  private TFslList<BaseWrapper> list;
 
-  public PropertyWrapperElement(structure : TFHIRStructureDefinition, definition : TFHIRElementDefinition, TAdvList<Element> values) begin
+  public PropertyWrapperElement(structure : TFHIRStructureDefinition, definition : TFHIRElementDefinition, TFslList<Element> values) begin
   self.structure := structure;
   self.definition := definition;
   self.values := values;
@@ -3330,9 +3330,9 @@ end;
   end;
 
   @Override
-  public TAdvList<BaseWrapper> getValues() begin
+  public TFslList<BaseWrapper> getValues() begin
   if (list = nil) then begin
-  list := TAdvList<FHIR.Tools.Narrative2.BaseWrapper>();
+  list := TFslList<FHIR.Tools.Narrative2.BaseWrapper>();
   for (Element e : values)
   list.add(new BaseWrapperElement(e, determineType(e), structure, definition));
   end;
@@ -3393,8 +3393,8 @@ end;
 
   private Element wrapped;
   private StructureDefinition definition;
-  private TAdvList<ResourceWrapper> list;
-  private TAdvList<PropertyWrapper> list2;
+  private TFslList<ResourceWrapper> list;
+  private TFslList<PropertyWrapper> list2;
 
   public ResurceWrapperElement(Element wrapped, StructureDefinition definition) begin
   self.wrapped := wrapped;
@@ -3402,11 +3402,11 @@ end;
   end;
 
   @Override
-  public TAdvList<ResourceWrapper> getContained()begin
+  public TFslList<ResourceWrapper> getContained()begin
   if (list = nil) then begin
-  TAdvList<Element> children := TAdvList<Element>();
+  TFslList<Element> children := TFslList<Element>();
   XMLUtil.getNamedChildren(wrapped, 'contained', children);
-  list := TAdvList<FHIR.Tools.Narrative2.ResourceWrapper>();
+  list := TFslList<FHIR.Tools.Narrative2.ResourceWrapper>();
   for (Element e : children) begin
   Element c := XMLUtil.getFirstChild(e);
   list.add(new ResurceWrapperElement(c, context.fetchResource(StructureDefinition.class, 'http://hl7.org/fhir/StructureDefinition/'+c.getNodeName())));
@@ -3437,12 +3437,12 @@ end;
   end;
 
   @Override
-  public TAdvList<PropertyWrapper> children() begin
+  public TFslList<PropertyWrapper> children() begin
   if (list2 = nil) then begin
-  TAdvList<TFHIRElementDefinition> children := ProfileUtilities.getChildList(definition, definition.snapshot.ElementList[0]);
-  list2 := TAdvList<FHIR.Tools.Narrative2.PropertyWrapper>();
+  TFslList<TFHIRElementDefinition> children := ProfileUtilities.getChildList(definition, definition.snapshot.ElementList[0]);
+  list2 := TFslList<FHIR.Tools.Narrative2.PropertyWrapper>();
   for (child : TFHIRElementDefinition : children) begin
-  TAdvList<Element> elements := TAdvList<Element>();
+  TFslList<Element> elements := TFslList<Element>();
   XMLUtil.getNamedChildrenWithWildcard(wrapped, tail(child.getPath()), elements);
   list2.add(new PropertyWrapperElement(definition, child, elements));
   end;
@@ -3489,7 +3489,7 @@ begin
   result := '';
 end;
 
-function TPropertyWrapper.getValues: TAdvList<TBaseWrapper>;
+function TPropertyWrapper.getValues: TFslList<TBaseWrapper>;
 begin
   result := nil;
 end;
@@ -3501,12 +3501,12 @@ end;
 
 { TResourceWrapper }
 
-function TResourceWrapper.children: TAdvList<TPropertyWrapper>;
+function TResourceWrapper.children: TFslList<TPropertyWrapper>;
 begin
   result := nil;
 end;
 
-function TResourceWrapper.getContained: TAdvList<TResourceWrapper>;
+function TResourceWrapper.getContained: TFslList<TResourceWrapper>;
 begin
   result := nil;
 end;
@@ -3528,7 +3528,7 @@ end;
 
 { TBaseWrapper }
 
-function TBaseWrapper.children: TAdvList<TPropertyWrapper>;
+function TBaseWrapper.children: TFslList<TPropertyWrapper>;
 begin
   result := nil;
 end;

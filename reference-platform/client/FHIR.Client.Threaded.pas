@@ -39,7 +39,7 @@ uses
 type
   TThreadManagementEvent = procedure (sender : TFhirClientV; var stop : boolean) of object;
 
-  TFhirThreadedClientPackage = class (TAdvObject)
+  TFhirThreadedClientPackage = class (TFslObject)
   private
     FCommand: TFHIRCommandType;
     FSummary: boolean;
@@ -58,7 +58,7 @@ type
     FLastURL: String;
     FLastStatus : integer;
     FHeaders : THTTPHeaders;
-    FBuffer : TAdvBuffer;
+    FBuffer : TFslBuffer;
     procedure SetResult(const Value: TFhirResourceV);
     procedure SetResource(const Value: TFhirResourceV);
   public
@@ -121,7 +121,7 @@ type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
 
     // special case that gives direct access to the communicator...
-    function custom(path : String; headers : THTTPHeaders) : TAdvBuffer; override;
+    function custom(path : String; headers : THTTPHeaders) : TFslBuffer; override;
     procedure terminate; override; // only works for some communicators
   end;
 
@@ -280,7 +280,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.custom(path: String; headers: THTTPHeaders): TAdvBuffer;
+function TFhirThreadedCommunicator.custom(path: String; headers: THTTPHeaders): TFslBuffer;
 var
   pack : TFhirThreadedClientPackage;
 begin

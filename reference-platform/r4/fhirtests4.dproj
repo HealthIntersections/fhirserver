@@ -129,7 +129,6 @@
         <DCCReference Include="..\support\FHIR.Web.Fetcher.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\support\FHIR.Debug.Logging.pas"/>
-        <DCCReference Include="..\..\Server\Logging.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Exceptions.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Collections.pas"/>
@@ -163,8 +162,8 @@
         <DCCReference Include="FHIR.R4.Turtle.pas"/>
         <DCCReference Include="..\support\Tests\DecimalTests.pas"/>
         <DCCReference Include="..\support\Tests\DifferenceEngineTests.pas"/>
-        <DCCReference Include="tests\FHIRPathTests4.pas"/>
-        <DCCReference Include="tests\FHIRTestWorker4.pas"/>
+        <DCCReference Include="tests\FHIR.R4.Tests.PathEngine.pas"/>
+        <DCCReference Include="tests\FHIR.R4.Tests.Worker.pas"/>
         <DCCReference Include="..\support\Tests\JWTTests.pas"/>
         <DCCReference Include="..\support\Tests\JsonTests.pas"/>
         <DCCReference Include="..\support\Tests\XmlTests.pas"/>

@@ -45,7 +45,7 @@ Type
   TXmlCanonicalisationMethod = (xcmCanonicalise, xcmComments, xcmTrimWhitespace, {xcmPrefixRewrite, } xcmQNameAware);
   TXmlCanonicalisationMethodSet = set of TXmlCanonicalisationMethod;
 
-  TXmlBuilderNamespaceList = class (TAdvStringMatch)
+  TXmlBuilderNamespaceList = class (TFslStringMatch)
   private
     FDefaultNS : String;
     FNew: TStringList;
@@ -58,14 +58,14 @@ Type
     function link : TXmlBuilderNamespaceList; overload;
     function clone : TXmlBuilderNamespaceList; overload;
 
-    Procedure Assign(oObject : TAdvObject); Override;
+    Procedure Assign(oObject : TFslObject); Override;
 
     Property DefaultNS : String read FDefaultNS write SetDefaultNS;
     Property DefaultSet : boolean read FDefaultSet write FDefaultSet;
     Property new : TStringList read FNew;
   end;
 
-  TXmlBuilder = {abstract} class (TAdvObject)
+  TXmlBuilder = {abstract} class (TFslObject)
   private
     function GetCurrentNamespaces: TXmlBuilderNamespaceList;
     function getNSAbbrev(iElement: TMXMLElement): String;
@@ -74,7 +74,7 @@ Type
     FCanonicalise: TXmlCanonicalisationMethodSet;
     FIsPretty: Boolean;
     FCharEncoding: String;
-    FNamespaces : TAdvObjectList;
+    FNamespaces : TFslObjectList;
   Public
     constructor Create; override;
     destructor Destroy; override;
@@ -83,7 +83,7 @@ Type
     procedure StartFragment; overload; virtual; abstract;
     procedure Finish; overload; virtual; abstract;
     procedure Build(oStream: TStream);   overload; virtual; abstract;
-    procedure Build(oStream: TAdvStream);   overload; virtual; abstract;
+    procedure Build(oStream: TFslStream);   overload; virtual; abstract;
     function Build : String;   overload; virtual; abstract;
 
     function SourceLocation : TSourceLocation;  overload; virtual; abstract;
@@ -124,21 +124,21 @@ Type
 Type
   EAdvXMLObject = Class(EAdvException);
 
-  TAdvXMLParserNamespaces = Class (TAdvStringMatch)
+  TFslXMLParserNamespaces = Class (TFslStringMatch)
     Private
       FDefaultNamespace : String;
 
     Public
       Constructor Create; Override;
 
-      Function Clone : TAdvXMLParserNamespaces; Overload;
+      Function Clone : TFslXMLParserNamespaces; Overload;
 
-      Procedure Assign(oObject : TAdvObject); Override;
+      Procedure Assign(oObject : TFslObject); Override;
 
       Property DefaultNamespace : String Read FDefaultNamespace Write FDefaultNamespace;
   End;
 
-  TAdvXMLAttribute = Class(TAdvPersistent)
+  TFslXMLAttribute = Class(TFslPersistent)
     Private
       FNamespace : String;
       FName : String;
@@ -149,11 +149,11 @@ Type
       Function ErrorClass : EAdvExceptionClass; Override;
 
     Public
-      Function Link : TAdvXMLAttribute;
-      Function Clone : TAdvXMLAttribute;
+      Function Link : TFslXMLAttribute;
+      Function Clone : TFslXMLAttribute;
 
-      Procedure Assign(oObject : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Assign(oObject : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
       Property Namespace : String Read FNamespace Write FNamespace;
       Property Name : String Read FName Write FName;
@@ -161,18 +161,18 @@ Type
       Property SortKey : String read FSortKey write FSortKey;
   End;
 
-  TAdvXMLElementType = (AdvXMLElementTypeUnknown, AdvXMLElementTypeNode, AdvXMLElementTypeText, AdvXMLElementTypeComment);
+  TFslXMLElementType = (AdvXMLElementTypeUnknown, AdvXMLElementTypeNode, AdvXMLElementTypeText, AdvXMLElementTypeComment);
 
-  TAdvXMLElementIterator = Class;
-  TAdvXMLElementList = Class;
+  TFslXMLElementIterator = Class;
+  TFslXMLElementList = Class;
 
-  TAdvXMLAttributeList = Class(TAdvPersistentList)
+  TFslXMLAttributeList = Class(TFslPersistentList)
     Private
-      Function GetElementByIndex(Const iIndex : Integer) : TAdvXMLAttribute;
-      Procedure SetElementByIndex(Const iIndex : Integer; Const oValue : TAdvXMLAttribute);
+      Function GetElementByIndex(Const iIndex : Integer) : TFslXMLAttribute;
+      Procedure SetElementByIndex(Const iIndex : Integer; Const oValue : TFslXMLAttribute);
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
       Function CompareByNamespacedName(pA, pB : Pointer) : Integer;
       Function CompareByNamespace(pA, pB : Pointer) : Integer;
@@ -180,23 +180,23 @@ Type
       Function CompareByValue(pA, pB : Pointer) : Integer;
       Function CompareBySortKey(pA, pB : Pointer) : Integer;
 
-      Function Get(Const aValue : Integer) : TAdvXMLAttribute; Reintroduce;
+      Function Get(Const aValue : Integer) : TFslXMLAttribute; Reintroduce;
 
     Public
-      Function Link : TAdvXMLAttributeList;
-      Function Clone : TAdvXMLAttributeList;
+      Function Link : TFslXMLAttributeList;
+      Function Clone : TFslXMLAttributeList;
 
-      Function New : TAdvXMLAttribute; Reintroduce;
+      Function New : TFslXMLAttribute; Reintroduce;
 
       Function IndexByNamespacedName(Const aNamespace, aName : String) : Integer;
       Function IndexByNamespace(Const aValue : String) : Integer;
       Function IndexByName(Const aValue : String) : Integer;
       Function IndexByValue(Const aValue : String) : Integer;
 
-      Function GetByNamespacedName(Const aNamespace, aName : String) : TAdvXMLAttribute;
-      Function GetByNamespace(Const aValue : String) : TAdvXMLAttribute;
-      Function GetByName(Const aValue : String) : TAdvXMLAttribute;
-      Function GetByValue(Const aValue : String) : TAdvXMLAttribute;
+      Function GetByNamespacedName(Const aNamespace, aName : String) : TFslXMLAttribute;
+      Function GetByNamespace(Const aValue : String) : TFslXMLAttribute;
+      Function GetByName(Const aValue : String) : TFslXMLAttribute;
+      Function GetByValue(Const aValue : String) : TFslXMLAttribute;
 
       Function ExistsByNamespacedName(Const aNamespace, aName : String) : Boolean;
       Function ExistsByNamespace(Const aValue : String) : Boolean;
@@ -215,10 +215,10 @@ Type
       Function IsSortedByValue : Boolean;
       Function IsSortedBySortKey : Boolean;
 
-      Property ElementByIndex[Const iIndex : Integer] : TAdvXMLAttribute Read GetElementByIndex Write SetElementByIndex; Default;
+      Property ElementByIndex[Const iIndex : Integer] : TFslXMLAttribute Read GetElementByIndex Write SetElementByIndex; Default;
   End;
 
-  TAdvXMLAttributeMatch = Class(TAdvStringMatch)
+  TFslXMLAttributeMatch = Class(TFslStringMatch)
     Private
       Function GetAttribute(Const sKey: String): String;
       Procedure SetAttribute(Const sKey, sValue: String);
@@ -229,16 +229,16 @@ Type
       Property Attribute[Const sKey : String] : String Read GetAttribute Write SetAttribute; Default;
   End;
 
-  TAdvXMLElement = Class(TAdvPersistent)
+  TFslXMLElement = Class(TFslPersistent)
     Private
-      FElementType : TAdvXMLElementType;
+      FElementType : TFslXMLElementType;
 
       // if element
       FNamespace : String;
       FName : String;
       FID : String;
-      FChildrenElementList : TAdvXMLElementList;
-      FAttributeList : TAdvXMLAttributeList;
+      FChildrenElementList : TFslXMLElementList;
+      FAttributeList : TFslXMLAttributeList;
 
       // if comment or Text
       FContent : String;
@@ -246,16 +246,16 @@ Type
       Function GetNamespace : String;
       Function GetName : String;
       Function GetId : String;
-      Function GetChildren : TAdvXMLElementList;
-      Function GetAttributes : TAdvXMLAttributeList;
+      Function GetChildren : TFslXMLElementList;
+      Function GetAttributes : TFslXMLAttributeList;
       Function GetContent : String;
 
-      Procedure SetElementType(Const Value : TAdvXMLElementType);
+      Procedure SetElementType(Const Value : TFslXMLElementType);
       Procedure SetNamespace(Const Value : String);
       Procedure SetName(Const Value : String);
       Procedure SetId(Const Value : String);
-      Procedure SetChildren(Const Value : TAdvXMLElementList);
-      Procedure SetAttributes(Const Value : TAdvXMLAttributeList);
+      Procedure SetChildren(Const Value : TFslXMLElementList);
+      Procedure SetAttributes(Const Value : TFslXMLAttributeList);
       Procedure SetContent(Const Value : String);
 
     Protected
@@ -265,15 +265,15 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvXMLElement;
-      Function Clone : TAdvXMLElement;
+      Function Link : TFslXMLElement;
+      Function Clone : TFslXMLElement;
 
-      Procedure Assign(oObject : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Assign(oObject : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
-      Function Iterator(Const sNamespace, sName : String) : TAdvXMLElementIterator; Overload;
-      Function Iterator(Const sName : String) : TAdvXMLElementIterator; Overload;
-      Function Iterator(aElementType : TAdvXMLElementType) : TAdvXMLElementIterator; Overload;
+      Function Iterator(Const sNamespace, sName : String) : TFslXMLElementIterator; Overload;
+      Function Iterator(Const sName : String) : TFslXMLElementIterator; Overload;
+      Function Iterator(aElementType : TFslXMLElementType) : TFslXMLElementIterator; Overload;
 
       Procedure Clear;
 
@@ -286,48 +286,48 @@ Type
       Function HasText : Boolean;
       Function HasComment : Boolean;
 
-      Property ElementType : TAdvXMLElementType Read FElementType Write SetElementType;
+      Property ElementType : TFslXMLElementType Read FElementType Write SetElementType;
       Property Namespace : String Read GetNamespace Write SetNamespace;
       Property Name : String Read GetName Write SetName;
       Property Id : String Read GetId Write SetId;
-      Property Children : TAdvXMLElementList Read GetChildren Write SetChildren;
-      Property Attributes : TAdvXMLAttributeList Read GetAttributes Write SetAttributes;
+      Property Children : TFslXMLElementList Read GetChildren Write SetChildren;
+      Property Attributes : TFslXMLAttributeList Read GetAttributes Write SetAttributes;
       Property Content : String Read GetContent Write SetContent;
   End;
 
-  TAdvXMLElementList = Class(TAdvPersistentList)
+  TFslXMLElementList = Class(TFslPersistentList)
     Private
-      Function GetElement(Const iIndex : Integer) : TAdvXMLElement;
-      Procedure SetElement(Const iIndex : Integer; Const oValue : TAdvXMLElement);
+      Function GetElement(Const iIndex : Integer) : TFslXMLElement;
+      Procedure SetElement(Const iIndex : Integer; Const oValue : TFslXMLElement);
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
       Function CompareById(pA, pB : Pointer) : Integer;
       Function CompareByName(pA, pB : Pointer) : Integer;
 
-      Function Get(Const aValue : Integer) : TAdvXMLElement; Reintroduce;
+      Function Get(Const aValue : Integer) : TFslXMLElement; Reintroduce;
 
     Public
-      Function Link : TAdvXMLElementList;
-      Function Clone : TAdvXMLElementList;
+      Function Link : TFslXMLElementList;
+      Function Clone : TFslXMLElementList;
 
-      Function New : TAdvXMLElement; Reintroduce;
+      Function New : TFslXMLElement; Reintroduce;
 
       Function IndexById(Const aValue : String) : Integer;
-      Function GetById(Const aValue : String) : TAdvXMLElement;
+      Function GetById(Const aValue : String) : TFslXMLElement;
       Function ExistsById(Const aValue : String) : Boolean;
 
       Function IndexByName(Const aValue : String) : Integer;
-      Function GetByName(Const aValue : String) : TAdvXMLElement;
+      Function GetByName(Const aValue : String) : TFslXMLElement;
       Function ExistsByName(Const aValue : String) : Boolean;
 
-      Property Elements[Const iIndex : Integer] : TAdvXMLElement Read GetElement Write SetElement; Default;
+      Property Elements[Const iIndex : Integer] : TFslXMLElement Read GetElement Write SetElement; Default;
   End;
 
-  TAdvXMLElementIterator = Class(TAdvPersistentListIterator)
+  TFslXMLElementIterator = Class(TFslPersistentListIterator)
     Private
-      FElementType : TAdvXMLElementType;
+      FElementType : TFslXMLElementType;
       FNamespace : String;
       FName : String;
 
@@ -335,15 +335,15 @@ Type
       Function Skip : Boolean; Overload; Override;
 
     Public
-      Function Current : TAdvXMLElement; Reintroduce;
+      Function Current : TFslXMLElement; Reintroduce;
   End;
 
-  TAdvXMLDocument = Class(TAdvPersistent)
+  TFslXMLDocument = Class(TFslPersistent)
     Private
-      FRootElement : TAdvXMLElement;
+      FRootElement : TFslXMLElement;
 
-      Function GetRootElement : TAdvXMLElement;
-      Procedure SetRootElement(Const Value : TAdvXMLElement);
+      Function GetRootElement : TFslXMLElement;
+      Procedure SetRootElement(Const Value : TFslXMLElement);
 
     Protected
       Function ErrorClass : EAdvExceptionClass; Override;
@@ -352,41 +352,41 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvXMLDocument;
-      Function Clone : TAdvXMLDocument;
+      Function Link : TFslXMLDocument;
+      Function Clone : TFslXMLDocument;
 
-      Procedure Assign(oObject : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Assign(oObject : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
       Procedure Clear;
 
       Function HasRootElement : Boolean;
-      Property RootElement : TAdvXMLElement Read GetRootElement Write SetRootElement;
+      Property RootElement : TFslXMLElement Read GetRootElement Write SetRootElement;
   End;
 
-  TAdvXMLDocumentList = Class(TAdvPersistentList)
+  TFslXMLDocumentList = Class(TFslPersistentList)
     Private
-      Function GetElementByIndex(Const iIndex : Integer) : TAdvXMLDocument;
-      Procedure SetElementByIndex(Const iIndex : Integer; Const oValue : TAdvXMLDocument);
+      Function GetElementByIndex(Const iIndex : Integer) : TFslXMLDocument;
+      Procedure SetElementByIndex(Const iIndex : Integer; Const oValue : TFslXMLDocument);
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
-      Function Get(Const aValue : Integer) : TAdvXMLDocument; Reintroduce;
+      Function Get(Const aValue : Integer) : TFslXMLDocument; Reintroduce;
 
     Public
-      Function Link : TAdvXMLDocumentList;
-      Function Clone : TAdvXMLDocumentList;
+      Function Link : TFslXMLDocumentList;
+      Function Clone : TFslXMLDocumentList;
 
-      Function New : TAdvXMLDocument; Reintroduce;
+      Function New : TFslXMLDocument; Reintroduce;
 
-      Property ElementByIndex[Const iIndex : Integer] : TAdvXMLDocument Read GetElementByIndex Write SetElementByIndex; Default;
+      Property ElementByIndex[Const iIndex : Integer] : TFslXMLDocument Read GetElementByIndex Write SetElementByIndex; Default;
   End;
 
-  TAdvXMLNamespaceEntry = Class(TAdvObject)
+  TFslXMLNamespaceEntry = Class(TFslObject)
     Private
       FKey : String;
-      FValues : TAdvStringList;
+      FValues : TFslStringList;
 
       Function GetValue: String;
 
@@ -403,12 +403,12 @@ Type
       Property Value : String Read GetValue;
   End;
 
-  TAdvXMLNamespaceEntryList = Class(TAdvObjectList)
+  TFslXMLNamespaceEntryList = Class(TFslObjectList)
     Private
-      Function GetEntryByIndex(Const iIndex: Integer): TAdvXMLNamespaceEntry;
+      Function GetEntryByIndex(Const iIndex: Integer): TFslXMLNamespaceEntry;
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
       Function CompareByKey(pA, pB : Pointer) : Integer;
 
@@ -417,35 +417,35 @@ Type
 
       Procedure SortedByKey;
 
-      Property EntryByIndex[Const iIndex : Integer] : TAdvXMLNamespaceEntry Read GetEntryByIndex; Default;
+      Property EntryByIndex[Const iIndex : Integer] : TFslXMLNamespaceEntry Read GetEntryByIndex; Default;
   End;
 
-  TAdvXMLNamespaceLevel = Class(TAdvObject)
+  TFslXMLNamespaceLevel = Class(TFslObject)
     Private
-      FEntryList : TAdvXMLNamespaceEntryList;
+      FEntryList : TFslXMLNamespaceEntryList;
 
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Property EntryList : TAdvXMLNamespaceEntryList Read FEntryList;
+      Property EntryList : TFslXMLNamespaceEntryList Read FEntryList;
   End;
 
-  TAdvXMLNamespaceLevelList = Class(TAdvObjectList)
+  TFslXMLNamespaceLevelList = Class(TFslObjectList)
     Private
-      Function GetLevelByIndex(Const iIndex: Integer): TAdvXMLNamespaceLevel;
+      Function GetLevelByIndex(Const iIndex: Integer): TFslXMLNamespaceLevel;
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
     Public
-      Property LevelByIndex[Const iIndex : Integer] : TAdvXMLNamespaceLevel Read GetLevelByIndex; Default;
+      Property LevelByIndex[Const iIndex : Integer] : TFslXMLNamespaceLevel Read GetLevelByIndex; Default;
   End;
 
-  TAdvXMLNamespaceManager = Class(TAdvObject)
+  TFslXMLNamespaceManager = Class(TFslObject)
     Private
-      FEntryList : TAdvXMLNamespaceEntryList;
-      FLevelList : TAdvXMLNamespaceLevelList;
+      FEntryList : TFslXMLNamespaceEntryList;
+      FLevelList : TFslXMLNamespaceLevelList;
 
     Protected
       Function ErrorClass : EAdvExceptionClass; Override;
@@ -454,7 +454,7 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Procedure Push(Const oAttributes : TAdvStringMatch);
+      Procedure Push(Const oAttributes : TFslStringMatch);
       Procedure Pop;
 
       Function DefaultNamespace : String;
@@ -463,13 +463,13 @@ Type
       Function PrefixOf(Const sElementName: String) : String;
       Function NamespaceOf(Const sElementName: String) : String;
 
-      Procedure ListPrefixes(Const oPrefixNamespaces: TAdvStringMatch);
+      Procedure ListPrefixes(Const oPrefixNamespaces: TFslStringMatch);
   End;
 
-  TAdvXMLFormatter = Class(TAdvTextFormatter)
+  TFslXMLFormatter = Class(TFslTextFormatter)
     Private
-      FAttributes : TAdvXMLAttributeList;
-      FBuilder : TAdvStringBuilder;
+      FAttributes : TFslXMLAttributeList;
+      FBuilder : TFslStringBuilder;
       FLine : integer;
       FCol : integer;
       FLastText : boolean;
@@ -487,8 +487,8 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvXMLFormatter;
-      Function Clone : TAdvXMLFormatter;
+      Function Link : TFslXMLFormatter;
+      Function Clone : TFslXMLFormatter;
 
       Procedure ProduceHeader;
 
@@ -506,18 +506,18 @@ Type
       Procedure AddAttribute(Const sName, sValue : String; sNs : String = ''); // ns is only used for sorting in canonical mode
       Procedure AddNamespace(Const sAbbreviation, sURI : String);
 
-      Property Attributes : TAdvXMLAttributeList Read FAttributes;
+      Property Attributes : TFslXMLAttributeList Read FAttributes;
       property Line : integer read FLine;
       property Col : integer read FCol;
       property NoDense : Boolean read FNoDense write FNoDense;
       property CanonicalEntities : boolean read FCanonicalEntities write FCanonicalEntities;
   End;
 
-  TAdvXmlBuilder = class (TXmlBuilder)
+  TFslXmlBuilder = class (TXmlBuilder)
   private
-    mem : TAdvMemoryStream;
-    buf : TAdvBuffer;
-    xml : TAdvXMLFormatter;
+    mem : TFslMemoryStream;
+    buf : TFslBuffer;
+    xml : TFslXMLFormatter;
 
     depth : integer;
     started : boolean;
@@ -533,7 +533,7 @@ Type
     Procedure StartFragment; override;
     Procedure Finish; override;
     Procedure Build(oStream: TStream);  Overload; override;
-    Procedure Build(oStream: TAdvStream);  Overload; override;
+    Procedure Build(oStream: TFslStream);  Overload; override;
     Function Build : String;  Overload; override;
 
     Function SourceLocation : TSourceLocation; override;
@@ -556,7 +556,7 @@ Type
   End;
 
   // http://www.w3.org/TR/2012/WD-xml-c14n2-testcases-20120105/
-  TAdvXmlBuilderCanonicalizationTests = class (TAdvObject)
+  TFslXmlBuilderCanonicalizationTests = class (TFslObject)
   private
     class procedure check(source : String; can : TXmlCanonicalisationMethodSet; target : String);
     class procedure Test1;
@@ -569,7 +569,7 @@ Type
     class procedure Test;
   end;
 
-  TXmlPatchEngine = class (TAdvObject)
+  TXmlPatchEngine = class (TFslObject)
   private
     class procedure remove(doc : TMXmlDocument; sel : String; target : TMXmlElement);
     class procedure add(doc : TMXmlDocument; op : TMXmlElement; target : TMXmlElement);
@@ -584,15 +584,15 @@ Type
 
 
 Const
-  NAMES_ADVXMLELEMENTTYPE : Array [TAdvXMLElementType] Of String = ('Unknown', 'Element', 'Text', 'Comment');
+  NAMES_ADVXMLELEMENTTYPE : Array [TFslXMLElementType] Of String = ('Unknown', 'Element', 'Text', 'Comment');
 
 Type
   TMXmlBuilder = class (TXmlBuilder)
   private
     FExternal : Boolean;
-    FStack : TAdvList<TMXmlElement>;
+    FStack : TFslList<TMXmlElement>;
     FDoc : TMXmlDocument;
-    FAttributes : TAdvMap<TMXmlAttribute>;
+    FAttributes : TFslMap<TMXmlAttribute>;
     FSourceLocation : TSourceLocation;
     Function Pad(offset : integer = 0) : String;
     function ReadTextLength(s : string):String;
@@ -605,7 +605,7 @@ Type
     Procedure StartFragment; override;
     Procedure Finish; override;
     Procedure Build(oStream: TStream);  Overload; override;
-    Procedure Build(oStream: TAdvStream);  Overload; override;
+    Procedure Build(oStream: TFslStream);  Overload; override;
     Function Build : String;  Overload; override;
 
     Function SourceLocation : TSourceLocation; override;
@@ -626,14 +626,14 @@ Type
 
 implementation
 
-Procedure TAdvXmlBuilder.Start;
+Procedure TFslXmlBuilder.Start;
 var
   i: Integer;
 begin
-  buf := TAdvBuffer.Create;
-  mem := TAdvMemoryStream.Create;
+  buf := TFslBuffer.Create;
+  mem := TFslMemoryStream.Create;
   mem.Buffer := buf.Link;
-  xml := TAdvXMLFormatter.Create;
+  xml := TFslXMLFormatter.Create;
   xml.CanonicalEntities := CanonicalEntities;
   xml.HasWhitespace := IsPretty;
   xml.Stream := mem.Link;
@@ -656,12 +656,12 @@ begin
     xml.AddNamespace(CurrentNamespaces.ValueByIndex[i], CurrentNamespaces.KeyByIndex[i]);
 end;
 
-Procedure TAdvXmlBuilder.StartFragment;
+Procedure TFslXmlBuilder.StartFragment;
 begin
   raise Exception.Create('Not Supported yet');
 end;
 
-Procedure TAdvXmlBuilder.Finish;
+Procedure TFslXmlBuilder.Finish;
 begin
   xml.Free;
   xml := nil;
@@ -669,7 +669,7 @@ begin
   mem := nil;
 end;
 
-function TAdvXmlBuilder.getNSRep(uri, name: String): String;
+function TFslXmlBuilder.getNSRep(uri, name: String): String;
 begin
   if (uri = CurrentNamespaces.DefaultNS) then
     result := name
@@ -679,12 +679,12 @@ begin
     raise Exception.Create('Unregistered namespace '+uri);
 end;
 
-procedure TAdvXmlBuilder.inject(const bytes: TBytes);
+procedure TFslXmlBuilder.inject(const bytes: TBytes);
 begin
   xml.ProduceBytes(bytes);
 end;
 
-{function TAdvXmlBuilder.nsIsUsed(elem: IXmlNode; ns: String): boolean;
+{function TFslXmlBuilder.nsIsUsed(elem: IXmlNode; ns: String): boolean;
 var
   i : integer;
 begin
@@ -701,35 +701,35 @@ begin
 end;
 }
 
-Procedure TAdvXmlBuilder.Build(oStream: TStream);
+Procedure TFslXmlBuilder.Build(oStream: TStream);
 begin
   buf.SaveToStream(oStream);
 end;
 
-Procedure TAdvXmlBuilder.Build(oStream: TAdvStream);
+Procedure TFslXmlBuilder.Build(oStream: TFslStream);
 begin
   buf.SaveToStream(oStream);
 end;
 
-Function TAdvXmlBuilder.Build : String;
+Function TFslXmlBuilder.Build : String;
 begin
   result := buf.AsUnicode;
 end;
 
-procedure TAdvXmlBuilder.SetCanonicalEntities(const Value: boolean);
+procedure TFslXmlBuilder.SetCanonicalEntities(const Value: boolean);
 begin
   FCanonicalEntities := Value;
   if assigned(xml) then
     xml.CanonicalEntities := value;
 end;
 
-Function TAdvXmlBuilder.SourceLocation : TSourceLocation;
+Function TFslXmlBuilder.SourceLocation : TSourceLocation;
 begin
   result.line := 0; //xml.line;
   result.col := 0; //xml.col;
 end;
 
-Procedure TAdvXmlBuilder.Comment(Const sContent : String);
+Procedure TFslXmlBuilder.Comment(Const sContent : String);
 begin
   if not (xcmCanonicalise in FCanonicalise) or (xcmComments in FCanonicalise) then
   begin
@@ -741,7 +741,7 @@ begin
 end;
 
 
-{procedure TAdvXmlBuilder.defineNamespace(element, attribute: IXMLNode);
+{procedure TFslXmlBuilder.defineNamespace(element, attribute: IXMLNode);
 var
   ns : String;
 begin
@@ -765,24 +765,24 @@ begin
     xml.AddAttribute(attribute.NodeName, ns)
 end;
 }
-procedure TAdvXmlBuilder.defineNS(abbrev, uri: String);
+procedure TFslXmlBuilder.defineNS(abbrev, uri: String);
 begin
   CurrentNamespaces.Add(uri, abbrev);
 end;
 
-destructor TAdvXmlBuilder.destroy;
+destructor TFslXmlBuilder.destroy;
 begin
   buf.Free;
   inherited;
 end;
 
-procedure TAdvXmlBuilder.DocType(sText: String);
+procedure TFslXmlBuilder.DocType(sText: String);
 begin
   if not (xcmCanonicalise in FCanonicalise) then
     raise Exception.Create('Not supported');
 end;
 
-Procedure TAdvXmlBuilder.AddAttribute(Const sName, sValue : String);
+Procedure TFslXmlBuilder.AddAttribute(Const sName, sValue : String);
 begin
   if (sName = 'xmlns') and CurrentNamespaces.DefaultSet then
   begin
@@ -794,12 +794,12 @@ begin
   xml.AddAttribute(sName, sValue);
 end;
 
-Procedure TAdvXmlBuilder.AddAttributeNS(Const sNamespace, sName, sValue : String);
+Procedure TFslXmlBuilder.AddAttributeNS(Const sNamespace, sName, sValue : String);
 begin
   xml.AddAttribute(getNSRep(sNamespace, sName), sValue, sNamespace);
 end;
 
-function TAdvXmlBuilder.Tag(Const sName : String) : TSourceLocation;
+function TFslXmlBuilder.Tag(Const sName : String) : TSourceLocation;
 begin
   if (xcmCanonicalise in FCanonicalise) and started and (depth = 0) then
     xml.Produce(#10);
@@ -820,7 +820,7 @@ begin
   result.col := 0; //xml.col;
 end;
 
-function TAdvXmlBuilder.Open(Const sName : String) : TSourceLocation;
+function TFslXmlBuilder.Open(Const sName : String) : TSourceLocation;
 begin
   if (xcmCanonicalise in FCanonicalise) and started and (depth = 0) then
     xml.Produce(#10);
@@ -839,7 +839,7 @@ begin
   result.col := 0; //xml.col;
 end;
 
-procedure TAdvXmlBuilder.ProcessingInstruction(sName, sText: String);
+procedure TFslXmlBuilder.ProcessingInstruction(sName, sText: String);
 begin
   if (xcmCanonicalise in FCanonicalise) and started and (depth = 0) then
     xml.Produce(#10);
@@ -847,7 +847,7 @@ begin
   started := true;
 end;
 
-procedure TAdvXmlBuilder.CData(text: String);
+procedure TFslXmlBuilder.CData(text: String);
 begin
   if xcmCanonicalise in FCanonicalise then
     xml.ProduceText(text, eolnCanonical)
@@ -855,7 +855,7 @@ begin
     xml.produceCData(text)
 end;
 
-Procedure TAdvXmlBuilder.Close(Const sName : String);
+Procedure TFslXmlBuilder.Close(Const sName : String);
 begin
   xml.ProduceClose(sName);
   dec(depth);
@@ -873,7 +873,7 @@ begin
   end;
 end;
 
-function TAdvXmlBuilder.Text(Const sValue : String) : TSourceLocation;
+function TFslXmlBuilder.Text(Const sValue : String) : TSourceLocation;
 begin
   if (xcmCanonicalise in FCanonicalise) then
   begin
@@ -893,12 +893,12 @@ begin
 end;
 
 
-function TAdvXmlBuilder.Entity(Const sValue : String) : TSourceLocation;
+function TFslXmlBuilder.Entity(Const sValue : String) : TSourceLocation;
 begin
   raise Exception.Create('entities not supported');
 end;
 
-function TAdvXmlBuilder.TagText(Const sName, sValue : String) : TSourceLocation;
+function TFslXmlBuilder.TagText(Const sName, sValue : String) : TSourceLocation;
 begin
   if CurrentNamespaces.DefaultSet then
   begin
@@ -914,13 +914,13 @@ begin
   result.col := 0; //xml.col;
 end;
 
-{ TAdvXmlBuilderCanonicalizationTests }
+{ TFslXmlBuilderCanonicalizationTests }
 
-class procedure TAdvXmlBuilderCanonicalizationTests.check(source: String; can: TXmlCanonicalisationMethodSet; target: String);
+class procedure TFslXmlBuilderCanonicalizationTests.check(source: String; can: TXmlCanonicalisationMethodSet; target: String);
 {var
   doc : IXMLDocument;
   dom : TMXMLDocument;
-  xb : TAdvXmlBuilder;
+  xb : TFslXmlBuilder;
   s : String;}
 begin
 (*  dom := TMXMLDocument.Create;
@@ -930,7 +930,7 @@ begin
   dom.Options := [{doNodeAutoCreate, doNodeAutoIndent, doAttrNull,  doAutoPrefix, doAutoSave} doNamespaceDecl];
   doc.LoadFromXML(source);
 
-  xb := TAdvXmlBuilder.Create;
+  xb := TFslXmlBuilder.Create;
   try
     xb.Canonicalise := can;
     xb.Start;
@@ -945,7 +945,7 @@ begin
     *)
 end;
 
-class procedure TAdvXmlBuilderCanonicalizationTests.Test;
+class procedure TFslXmlBuilderCanonicalizationTests.Test;
 begin
   Test1;
   Test2;
@@ -954,7 +954,7 @@ begin
   Test5;
 end;
 
-class procedure TAdvXmlBuilderCanonicalizationTests.Test1;
+class procedure TFslXmlBuilderCanonicalizationTests.Test1;
 var
   s : String;
 begin
@@ -990,7 +990,7 @@ check(s, [xcmCanonicalise, xcmComments],
 '<!-- Comment 3 -->');
 end;
 
-class procedure TAdvXmlBuilderCanonicalizationTests.Test2;
+class procedure TFslXmlBuilderCanonicalizationTests.Test2;
 var
   s : String;
 begin
@@ -1024,7 +1024,7 @@ check(s, [xcmCanonicalise, xcmTrimWhitespace],
 '<doc><clean></clean><dirty>A   B</dirty><mixed>A<clean></clean>B<dirty>A   B</dirty>C</mixed></doc>');
 end;
 
-class procedure TAdvXmlBuilderCanonicalizationTests.Test3;
+class procedure TFslXmlBuilderCanonicalizationTests.Test3;
 var
   s : String;
 begin
@@ -1085,7 +1085,7 @@ check(s, [xcmCanonicalise, xcmTrimWhitespace],
 );
 end;
 
-class procedure TAdvXmlBuilderCanonicalizationTests.Test4;
+class procedure TFslXmlBuilderCanonicalizationTests.Test4;
 var
   s : String;
 begin
@@ -1118,7 +1118,7 @@ check(s, [xcmCanonicalise, xcmTrimWhitespace],
 );
 end;
 
-class procedure TAdvXmlBuilderCanonicalizationTests.Test5;
+class procedure TFslXmlBuilderCanonicalizationTests.Test5;
 var
   s : String;
 begin
@@ -1131,7 +1131,7 @@ begin
 
 end;
 
-(*procedure TAdvXmlBuilder.WriteXml(iElement: IXMLNode; first : boolean);
+(*procedure TFslXmlBuilder.WriteXml(iElement: IXMLNode; first : boolean);
 var
   attr : IXMLNode;
   a: Integer;
@@ -1170,7 +1170,7 @@ begin
   NSPop;
 end;
 
-procedure TAdvXmlBuilder.WriteXmlDocument(iDoc: IXMLDocument);
+procedure TFslXmlBuilder.WriteXmlDocument(iDoc: IXMLDocument);
 var
   n : IXMLNode;
   i : integer;
@@ -1195,7 +1195,7 @@ end;
     ntDocType, ntDocFragment, ntNotation);}
 
 
-procedure TAdvXmlBuilder.WriteXmlNode(iNode : IXMLNode; first : boolean);
+procedure TFslXmlBuilder.WriteXmlNode(iNode : IXMLNode; first : boolean);
 var
   n : IXMLNode;
   i : integer;
@@ -1219,7 +1219,7 @@ end;
  
 { TXmlBuilderNamespaceList }
 
-procedure TXmlBuilderNamespaceList.Assign(oObject: TAdvObject);
+procedure TXmlBuilderNamespaceList.Assign(oObject: TFslObject);
 begin
   inherited;
 
@@ -1261,7 +1261,7 @@ end;
 constructor TXmlBuilder.Create;
 begin
   inherited;
-  FNamespaces := TAdvObjectList.create;
+  FNamespaces := TFslObjectList.create;
   FNamespaces.Add(TXmlBuilderNamespaceList.Create());
 end;
 
@@ -1432,7 +1432,7 @@ end;
 
 class procedure TXmlPatchEngine.add(doc : TMXmlDocument; op : TMXmlElement; target : TMXmlElement);
 var
-  matches : TAdvList<TMXmlNode>;
+  matches : TFslList<TMXmlNode>;
   elem : TMXmlElement;
   sel, typ, pos : String;
 begin
@@ -1468,7 +1468,7 @@ end;
 
 class procedure TXmlPatchEngine.replace(doc : TMXmlDocument; op : TMXmlElement; target : TMXmlElement);
 var
-  matches : TAdvList<TMXmlNode>;
+  matches : TFslList<TMXmlNode>;
   n, ce : TMXmlElement;
   sel : String;
 begin
@@ -1508,7 +1508,7 @@ end;
 
 class procedure TXmlPatchEngine.remove(doc : TMXmlDocument; sel: String; target: TMXmlElement);
 var
-  matches : TAdvList<TMXmlNode>;
+  matches : TFslList<TMXmlNode>;
   elem : TMXmlElement;
   attrName : String;
 begin
@@ -1578,19 +1578,19 @@ begin
 end;
 
 
-Constructor TAdvXMLFormatter.Create;
+Constructor TFslXMLFormatter.Create;
 Begin
   Inherited;
 
-  FBuilder := TAdvStringBuilder.Create;
-  FAttributes := TAdvXMLAttributeList.Create;
+  FBuilder := TFslStringBuilder.Create;
+  FAttributes := TFslXMLAttributeList.Create;
   FLine := 1;
   FCol := 0;
   FLastText := true;
 End;
 
 
-Destructor TAdvXMLFormatter.Destroy;
+Destructor TFslXMLFormatter.Destroy;
 Begin
   FAttributes.Free;
   FBuilder.Free;
@@ -1599,13 +1599,13 @@ Begin
 End;  
 
 
-Function TAdvXMLFormatter.Clone : TAdvXMLFormatter;
+Function TFslXMLFormatter.Clone : TFslXMLFormatter;
 Begin 
-  Result := TAdvXMLFormatter(Inherited Clone);
+  Result := TFslXMLFormatter(Inherited Clone);
 End;  
 
 
-procedure TAdvXMLFormatter.commitPending;
+procedure TFslXMLFormatter.commitPending;
 begin
   if (FPending <> '') then
   begin
@@ -1616,20 +1616,20 @@ begin
   end;
 end;
 
-Function TAdvXMLFormatter.Link : TAdvXMLFormatter;
+Function TFslXMLFormatter.Link : TFslXMLFormatter;
 Begin 
-  Result := TAdvXMLFormatter(Inherited Link);
+  Result := TFslXMLFormatter(Inherited Link);
 End;  
 
 
-Procedure TAdvXMLFormatter.ProduceHeader;
+Procedure TFslXMLFormatter.ProduceHeader;
 Begin 
   ProducePretty('<?xml version="1.0"' + UseAttributes + '?>');
   ProducePretty('');
 End;  
 
 
-Procedure TAdvXMLFormatter.ProduceOpen(Const sName : String);
+Procedure TFslXMLFormatter.ProduceOpen(Const sName : String);
 Begin 
   Assert(CheckCondition(sName <> '', 'ProduceOpen', 'Open tag name must be specified.'));
 
@@ -1646,13 +1646,13 @@ Begin
 End;  
 
 
-procedure TAdvXMLFormatter.ProduceBytes(const aBytes: TBytes);
+procedure TFslXMLFormatter.ProduceBytes(const aBytes: TBytes);
 begin
   commitPending;
   inherited ProduceBytes(aBytes);
 end;
 
-procedure TAdvXMLFormatter.ProduceCData(const sText: String);
+procedure TFslXMLFormatter.ProduceCData(const sText: String);
 begin
   commitPending;
 
@@ -1660,7 +1660,7 @@ begin
   ProducePretty('<![CDATA[' + sText + ']]>');
 end;
 
-Procedure TAdvXMLFormatter.ProduceClose(Const sName: String);
+Procedure TFslXMLFormatter.ProduceClose(Const sName: String);
 Begin 
   Assert(CheckCondition(sName <> '', 'ProduceClose', 'Close tag name must be specified.'));
 
@@ -1677,7 +1677,7 @@ Begin
 End;  
 
 
-Procedure TAdvXMLFormatter.ProduceTextNoEscapeEoln(Const sName, sValue: String);
+Procedure TFslXMLFormatter.ProduceTextNoEscapeEoln(Const sName, sValue: String);
 Begin
   Assert(CheckCondition(sName <> '', 'ProduceText', 'Tag name for text must be specified.'));
   commitPending;
@@ -1687,7 +1687,7 @@ Begin
 End;
 
 
-procedure TAdvXMLFormatter.updateForText(s: String);
+procedure TFslXMLFormatter.updateForText(s: String);
 var
   i : integer;
 begin
@@ -1708,7 +1708,7 @@ begin
 End;
 
 
-Procedure TAdvXMLFormatter.ProduceText(Const sName, sValue: String);
+Procedure TFslXMLFormatter.ProduceText(Const sName, sValue: String);
 Begin
   Assert(CheckCondition(sName <> '', 'ProduceText', 'Tag name for text must be specified.'));
 
@@ -1718,7 +1718,7 @@ Begin
 End;
 
 
-Procedure TAdvXMLFormatter.ProduceText(Const sValue: String; processing : TEolnOption = eolnEscape);
+Procedure TFslXMLFormatter.ProduceText(Const sValue: String; processing : TEolnOption = eolnEscape);
 var
   s : String;
 Begin
@@ -1737,7 +1737,7 @@ Begin
 End;  
 
 
-Procedure TAdvXMLFormatter.ProduceTag(Const sName: String);
+Procedure TFslXMLFormatter.ProduceTag(Const sName: String);
 Begin 
   Assert(CheckCondition(sName <> '', 'ProduceTag', 'Tag name must be specified.'));
   commitPending;
@@ -1748,7 +1748,7 @@ Begin
 End;  
 
 
-Procedure TAdvXMLFormatter.ProduceComment(Const sComment: String);
+Procedure TFslXMLFormatter.ProduceComment(Const sComment: String);
 Begin
   commitPending;
 
@@ -1760,7 +1760,7 @@ Begin
 End;
 
 
-Function TAdvXMLFormatter.UseAttributes : String;
+Function TFslXMLFormatter.UseAttributes : String;
 Var
   iLoop : Integer;
 Begin
@@ -1774,11 +1774,11 @@ Begin
 End;
 
 
-Procedure TAdvXMLFormatter.AddAttribute(Const sName, sValue : String; sNs : String = '');
+Procedure TFslXMLFormatter.AddAttribute(Const sName, sValue : String; sNs : String = '');
 var
-  attr : TAdvXMLAttribute;
+  attr : TFslXMLAttribute;
 Begin
-  attr := TAdvXMLAttribute.Create;
+  attr := TFslXMLAttribute.Create;
   try
     attr.Name := sName;
     attr.Value := sValue;
@@ -1791,7 +1791,7 @@ Begin
 End;
 
 
-Procedure TAdvXMLFormatter.AddNamespace(Const sAbbreviation, sURI : String);
+Procedure TFslXMLFormatter.AddNamespace(Const sAbbreviation, sURI : String);
 Begin
   If sAbbreviation = '' Then
     AddAttribute('xmlns', sURI, #0)
@@ -1799,7 +1799,7 @@ Begin
     AddAttribute('xmlns:' + sAbbreviation, sURI, #0);
 End;
 
-procedure TAdvXMLFormatter.ProducePI(const sName, sText: String);
+procedure TFslXMLFormatter.ProducePI(const sName, sText: String);
 begin
   Assert(CheckCondition(sName <> '', 'ProducePI', 'PI name must be specified.'));
   commitPending;
@@ -1812,7 +1812,7 @@ begin
     ProducePretty('<?' + sName + UseAttributes + sText+ '?>');
 end;
 
-procedure TAdvXMLFormatter.ProducePretty(sValue: String);
+procedure TFslXMLFormatter.ProducePretty(sValue: String);
 var
   s : string;
 begin
@@ -1828,7 +1828,7 @@ begin
 end;
 
 
-Constructor TAdvXMLParserNamespaces.Create;
+Constructor TFslXMLParserNamespaces.Create;
 Begin
   Inherited;
 
@@ -1836,44 +1836,44 @@ Begin
 End;
 
 
-Function TAdvXMLParserNamespaces.Clone : TAdvXMLParserNamespaces;
+Function TFslXMLParserNamespaces.Clone : TFslXMLParserNamespaces;
 Begin
-  Result := TAdvXMLParserNamespaces(Inherited Clone);
+  Result := TFslXMLParserNamespaces(Inherited Clone);
 End;
 
 
-Procedure TAdvXMLParserNamespaces.Assign(oObject : TAdvObject);
-Begin
-  Inherited;
-
-  DefaultNamespace := TAdvXMLParserNamespaces(oObject).DefaultNamespace;
-End;
-
-
-Function TAdvXMLAttribute.Link : TAdvXMLAttribute;
-Begin
-  Result := TAdvXMLAttribute(Inherited Link);
-End;
-
-
-Function TAdvXMLAttribute.Clone : TAdvXMLAttribute;
-Begin
-  Result := TAdvXMLAttribute(Inherited Clone);
-End;
-
-
-Procedure TAdvXMLAttribute.Assign(oObject : TAdvObject);
+Procedure TFslXMLParserNamespaces.Assign(oObject : TFslObject);
 Begin
   Inherited;
 
-  Namespace := TAdvXMLAttribute(oObject).Namespace;
-  Name := TAdvXMLAttribute(oObject).Name;
-  Value := TAdvXMLAttribute(oObject).Value;
-  SortKey := TAdvXMLAttribute(oObject).SortKey;
+  DefaultNamespace := TFslXMLParserNamespaces(oObject).DefaultNamespace;
 End;
 
 
-Procedure TAdvXMLAttribute.Define(oFiler : TAdvFiler);
+Function TFslXMLAttribute.Link : TFslXMLAttribute;
+Begin
+  Result := TFslXMLAttribute(Inherited Link);
+End;
+
+
+Function TFslXMLAttribute.Clone : TFslXMLAttribute;
+Begin
+  Result := TFslXMLAttribute(Inherited Clone);
+End;
+
+
+Procedure TFslXMLAttribute.Assign(oObject : TFslObject);
+Begin
+  Inherited;
+
+  Namespace := TFslXMLAttribute(oObject).Namespace;
+  Name := TFslXMLAttribute(oObject).Name;
+  Value := TFslXMLAttribute(oObject).Value;
+  SortKey := TFslXMLAttribute(oObject).SortKey;
+End;
+
+
+Procedure TFslXMLAttribute.Define(oFiler : TFslFiler);
 Begin
   Inherited;
 
@@ -1884,82 +1884,82 @@ Begin
 End;
 
 
-Function TAdvXMLAttribute.ErrorClass : EAdvExceptionClass;
+Function TFslXMLAttribute.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvXMLObject;
 End;
 
 
-Function TAdvXMLAttributeList.Link : TAdvXMLAttributeList;
+Function TFslXMLAttributeList.Link : TFslXMLAttributeList;
 Begin
-  Result := TAdvXMLAttributeList(Inherited Link);
+  Result := TFslXMLAttributeList(Inherited Link);
 End;
 
 
-Function TAdvXMLAttributeList.Clone : TAdvXMLAttributeList;
+Function TFslXMLAttributeList.Clone : TFslXMLAttributeList;
 Begin
-  Result := TAdvXMLAttributeList(Inherited Clone);
+  Result := TFslXMLAttributeList(Inherited Clone);
 End;
 
 
-Function TAdvXMLAttributeList.New : TAdvXMLAttribute;
+Function TFslXMLAttributeList.New : TFslXMLAttribute;
 Begin
-  Result := TAdvXMLAttribute(Inherited New);
+  Result := TFslXMLAttribute(Inherited New);
 End;
 
 
-Function TAdvXMLAttributeList.ItemClass : TAdvObjectClass;
+Function TFslXMLAttributeList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvXMLAttribute;
+  Result := TFslXMLAttribute;
 End;
 
 
-Function TAdvXMLAttributeList.GetElementByIndex(Const iIndex : Integer) : TAdvXMLAttribute;
+Function TFslXMLAttributeList.GetElementByIndex(Const iIndex : Integer) : TFslXMLAttribute;
 Begin
-  Result := TAdvXMLAttribute(ObjectByIndex[iIndex]);
+  Result := TFslXMLAttribute(ObjectByIndex[iIndex]);
 End;
 
 
-Procedure TAdvXMLAttributeList.SetElementByIndex(Const iIndex : Integer; Const oValue : TAdvXMLAttribute);
+Procedure TFslXMLAttributeList.SetElementByIndex(Const iIndex : Integer; Const oValue : TFslXMLAttribute);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
 
-Function TAdvXMLAttributeList.CompareByNamespacedName(pA, pB : Pointer) : Integer;
+Function TFslXMLAttributeList.CompareByNamespacedName(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TAdvXMLAttribute(pA).Namespace, TAdvXMLAttribute(pB).Namespace);
+  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Namespace, TFslXMLAttribute(pB).Namespace);
   If Result = 0 Then
-    Result := FHIR.Support.Strings.StringCompare(TAdvXMLAttribute(pA).Name, TAdvXMLAttribute(pB).Name);
+    Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Name, TFslXMLAttribute(pB).Name);
 End;
 
 
-function TAdvXMLAttributeList.CompareBySortKey(pA, pB: Pointer): Integer;
+function TFslXMLAttributeList.CompareBySortKey(pA, pB: Pointer): Integer;
 begin
-  Result := FHIR.Support.Strings.StringCompare(TAdvXMLAttribute(pA).SortKey, TAdvXMLAttribute(pB).SortKey);
+  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).SortKey, TFslXMLAttribute(pB).SortKey);
 end;
 
-Function TAdvXMLAttributeList.CompareByNamespace(pA, pB : Pointer) : Integer;
+Function TFslXMLAttributeList.CompareByNamespace(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TAdvXMLAttribute(pA).Namespace, TAdvXMLAttribute(pB).Namespace);
+  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Namespace, TFslXMLAttribute(pB).Namespace);
 End;
 
 
-Function TAdvXMLAttributeList.CompareByName(pA, pB : Pointer) : Integer;
+Function TFslXMLAttributeList.CompareByName(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TAdvXMLAttribute(pA).Name, TAdvXMLAttribute(pB).Name);
+  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Name, TFslXMLAttribute(pB).Name);
 End;
 
 
-Function TAdvXMLAttributeList.CompareByValue(pA, pB : Pointer) : Integer;
+Function TFslXMLAttributeList.CompareByValue(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TAdvXMLAttribute(pA).Value, TAdvXMLAttribute(pB).Value);
+  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Value, TFslXMLAttribute(pB).Value);
 End;
 
 
-Function TAdvXMLAttributeList.IndexByNamespacedName(Const aNamespace, aName: String) : Integer;
+Function TFslXMLAttributeList.IndexByNamespacedName(Const aNamespace, aName: String) : Integer;
 Var
-  oElement : TAdvXMLAttribute;
+  oElement : TFslXMLAttribute;
 Begin
   oElement := New;
   Try
@@ -1976,9 +1976,9 @@ Begin
 End;
 
 
-Function TAdvXMLAttributeList.IndexByNamespace(Const aValue : String) : Integer;
+Function TFslXMLAttributeList.IndexByNamespace(Const aValue : String) : Integer;
 Var
-  oElement : TAdvXMLAttribute;
+  oElement : TFslXMLAttribute;
 Begin
   oElement := New;
   Try
@@ -1994,9 +1994,9 @@ Begin
 End;
 
 
-Function TAdvXMLAttributeList.IndexByName(Const aValue : String) : Integer;
+Function TFslXMLAttributeList.IndexByName(Const aValue : String) : Integer;
 Var
-  oElement : TAdvXMLAttribute;
+  oElement : TFslXMLAttribute;
 Begin
   oElement := New;
   Try
@@ -2012,9 +2012,9 @@ Begin
 End;
 
 
-Function TAdvXMLAttributeList.IndexByValue(Const aValue : String) : Integer;
+Function TFslXMLAttributeList.IndexByValue(Const aValue : String) : Integer;
 Var
-  oElement : TAdvXMLAttribute;
+  oElement : TFslXMLAttribute;
 Begin
   oElement := New;
   Try
@@ -2030,119 +2030,119 @@ Begin
 End;
 
 
-Function TAdvXMLAttributeList.Get(Const aValue : Integer) : TAdvXMLAttribute;
+Function TFslXMLAttributeList.Get(Const aValue : Integer) : TFslXMLAttribute;
 Begin
-  Result := TAdvXMLAttribute(Inherited Get(aValue));
+  Result := TFslXMLAttribute(Inherited Get(aValue));
 End;
 
 
-Function TAdvXMLAttributeList.GetByNamespacedName(Const aNamespace, aName : String) : TAdvXMLAttribute;
+Function TFslXMLAttributeList.GetByNamespacedName(Const aNamespace, aName : String) : TFslXMLAttribute;
 Begin
   Result := Get(IndexByNamespacedName(aNamespace, aName));
 End;
 
 
-Function TAdvXMLAttributeList.GetByNamespace(Const aValue : String) : TAdvXMLAttribute;
+Function TFslXMLAttributeList.GetByNamespace(Const aValue : String) : TFslXMLAttribute;
 Begin
   Result := Get(IndexByNamespace(aValue));
 End;
 
 
-Function TAdvXMLAttributeList.GetByName(Const aValue : String) : TAdvXMLAttribute;
+Function TFslXMLAttributeList.GetByName(Const aValue : String) : TFslXMLAttribute;
 Begin
   Result := Get(IndexByName(aValue));
 End;
 
 
-Function TAdvXMLAttributeList.GetByValue(Const aValue : String) : TAdvXMLAttribute;
+Function TFslXMLAttributeList.GetByValue(Const aValue : String) : TFslXMLAttribute;
 Begin
   Result := Get(IndexByValue(aValue));
 End;
 
 
-Function TAdvXMLAttributeList.ExistsByNamespacedName(Const aNamespace, aName : String) : Boolean;
+Function TFslXMLAttributeList.ExistsByNamespacedName(Const aNamespace, aName : String) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByNamespacedName(aNamespace, aName));
 End;
 
 
-Function TAdvXMLAttributeList.ExistsByNamespace(Const aValue : String) : Boolean;
+Function TFslXMLAttributeList.ExistsByNamespace(Const aValue : String) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByNamespace(aValue));
 End;
 
 
-Function TAdvXMLAttributeList.ExistsByName(Const aValue : String) : Boolean;
+Function TFslXMLAttributeList.ExistsByName(Const aValue : String) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(aValue));
 End;
 
 
-Function TAdvXMLAttributeList.ExistsByValue(Const aValue : String) : Boolean;
+Function TFslXMLAttributeList.ExistsByValue(Const aValue : String) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByValue(aValue));
 End;
 
 
-Procedure TAdvXMLAttributeList.SortedByNamespacedName;
+Procedure TFslXMLAttributeList.SortedByNamespacedName;
 Begin
   SortedBy(CompareByNamespacedName);
 End;
 
 
-procedure TAdvXMLAttributeList.SortedBySortKey;
+procedure TFslXMLAttributeList.SortedBySortKey;
 begin
   SortedBy(CompareBySortKey);
 end;
 
-Procedure TAdvXMLAttributeList.SortedByNamespace;
+Procedure TFslXMLAttributeList.SortedByNamespace;
 Begin
   SortedBy(CompareByNamespace);
 End;
 
 
-Procedure TAdvXMLAttributeList.SortedByName;
+Procedure TFslXMLAttributeList.SortedByName;
 Begin
   SortedBy(CompareByName);
 End;
 
 
-Procedure TAdvXMLAttributeList.SortedByValue;
+Procedure TFslXMLAttributeList.SortedByValue;
 Begin
   SortedBy(CompareByValue);
 End;
 
 
-Function TAdvXMLAttributeList.IsSortedByNamespacedName : Boolean;
+Function TFslXMLAttributeList.IsSortedByNamespacedName : Boolean;
 Begin
   Result := IsSortedBy(CompareByNamespacedName);
 End;
 
 
-function TAdvXMLAttributeList.IsSortedBySortKey: Boolean;
+function TFslXMLAttributeList.IsSortedBySortKey: Boolean;
 begin
   Result := IsSortedBy(CompareBySortKey);
 end;
 
-Function TAdvXMLAttributeList.IsSortedByNamespace : Boolean;
+Function TFslXMLAttributeList.IsSortedByNamespace : Boolean;
 Begin
   Result := IsSortedBy(CompareByNamespace);
 End;
 
 
-Function TAdvXMLAttributeList.IsSortedByName : Boolean;
+Function TFslXMLAttributeList.IsSortedByName : Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
 
 
-Function TAdvXMLAttributeList.IsSortedByValue : Boolean;
+Function TFslXMLAttributeList.IsSortedByValue : Boolean;
 Begin
   Result := IsSortedBy(CompareByValue);
 End;
 
 
-Constructor TAdvXMLAttributeMatch.Create;
+Constructor TFslXMLAttributeMatch.Create;
 Begin
   Inherited;
 
@@ -2150,19 +2150,19 @@ Begin
 End;
 
 
-Function TAdvXMLAttributeMatch.GetAttribute(Const sKey: String): String;
+Function TFslXMLAttributeMatch.GetAttribute(Const sKey: String): String;
 Begin
   Result := GetValueByKey(sKey);
 End;
 
 
-Procedure TAdvXMLAttributeMatch.SetAttribute(Const sKey, sValue: String);
+Procedure TFslXMLAttributeMatch.SetAttribute(Const sKey, sValue: String);
 Begin
   SetValueByKey(sKey, sValue);
 End;
 
 
-Constructor TAdvXMLElement.Create;
+Constructor TFslXMLElement.Create;
 Begin
   Inherited;
 
@@ -2171,7 +2171,7 @@ Begin
 End;
 
 
-Destructor TAdvXMLElement.Destroy;
+Destructor TFslXMLElement.Destroy;
 Begin
   FChildrenElementList.Free;
   FAttributeList.Free;
@@ -2180,45 +2180,45 @@ Begin
 End;
 
 
-Function TAdvXMLElement.Link : TAdvXMLElement;
+Function TFslXMLElement.Link : TFslXMLElement;
 Begin
-  Result := TAdvXMLElement(Inherited Link);
+  Result := TFslXMLElement(Inherited Link);
 End;
 
 
-Function TAdvXMLElement.Clone : TAdvXMLElement;
+Function TFslXMLElement.Clone : TFslXMLElement;
 Begin
-  Result := TAdvXMLElement(Inherited Clone);
+  Result := TFslXMLElement(Inherited Clone);
 End;
 
 
-Procedure TAdvXMLElement.Assign(oObject : TAdvObject);
+Procedure TFslXMLElement.Assign(oObject : TFslObject);
 Begin
   Inherited;
 
-  ElementType := TAdvXMLElement(oObject).ElementType;
+  ElementType := TFslXMLElement(oObject).ElementType;
 
   If HasNamespace Then
-    Namespace := TAdvXMLElement(oObject).Namespace;
+    Namespace := TFslXMLElement(oObject).Namespace;
 
   If HasName Then
-    Name := TAdvXMLElement(oObject).Name;
+    Name := TFslXMLElement(oObject).Name;
 
   If HasId Then
-    Id := TAdvXMLElement(oObject).Id;
+    Id := TFslXMLElement(oObject).Id;
 
   If HasChildren Then
-    Children := TAdvXMLElement(oObject).Children.Clone;
+    Children := TFslXMLElement(oObject).Children.Clone;
 
   If HasAttributes Then
-    Attributes := TAdvXMLElement(oObject).Attributes.Clone;
+    Attributes := TFslXMLElement(oObject).Attributes.Clone;
 
   If HasContent Then
-    Content := TAdvXMLElement(oObject).Content;
+    Content := TFslXMLElement(oObject).Content;
 End;
 
 
-Procedure TAdvXMLElement.Define(oFiler : TAdvFiler);
+Procedure TFslXMLElement.Define(oFiler : TFslFiler);
 Begin
   Inherited;
 
@@ -2226,13 +2226,13 @@ Begin
   oFiler['Namespace'].DefineString(FNamespace);
   oFiler['Name'].DefineString(FName);
   oFiler['Id'].DefineString(FId);
-  oFiler['Children'].DefineObject(FChildrenElementList, TAdvXMLElementList);
-  oFiler['Attributes'].DefineObject(FAttributeList, TAdvXMLAttributeList);
+  oFiler['Children'].DefineObject(FChildrenElementList, TFslXMLElementList);
+  oFiler['Attributes'].DefineObject(FAttributeList, TFslXMLAttributeList);
   oFiler['Content'].DefineString(FContent);
 End;
 
 
-Procedure TAdvXMLElement.Clear;
+Procedure TFslXMLElement.Clear;
 Begin
   FNamespace := '';
   FName := '';
@@ -2249,7 +2249,7 @@ Begin
     End;
   End
   Else If HasChildren Then
-    FChildrenElementList := TAdvXMLElementList.Create;
+    FChildrenElementList := TFslXMLElementList.Create;
 
   If Assigned(FAttributeList) Then
   Begin
@@ -2262,13 +2262,13 @@ Begin
     End;
   End
   Else If HasAttributes Then
-    FAttributeList := TAdvXMLAttributeList.Create;
+    FAttributeList := TFslXMLAttributeList.Create;
 
   FContent := '';
 End;
 
 
-Procedure TAdvXMLElement.SetElementType(Const Value : TAdvXMLElementType);
+Procedure TFslXMLElement.SetElementType(Const Value : TFslXMLElementType);
 Begin
   If Value <> FElementType Then
   Begin
@@ -2279,110 +2279,110 @@ Begin
 End;
 
 
-Function TAdvXMLElement.HasComment: Boolean;
+Function TFslXMLElement.HasComment: Boolean;
 Begin
   Result := FElementType = AdvXMLElementTypeComment;
 End;
 
 
-Function TAdvXMLElement.HasText: Boolean;
+Function TFslXMLElement.HasText: Boolean;
 Begin
   Result := FElementType = AdvXMLElementTypeText;
 End;
 
 
-Function TAdvXMLElement.HasNamespace : Boolean;
+Function TFslXMLElement.HasNamespace : Boolean;
 Begin
   Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
-Function TAdvXMLElement.HasName : Boolean;
+Function TFslXMLElement.HasName : Boolean;
 Begin
   Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
-Function TAdvXMLElement.HasId : Boolean;
+Function TFslXMLElement.HasId : Boolean;
 Begin
   Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
-Function TAdvXMLElement.HasChildren : Boolean;
+Function TFslXMLElement.HasChildren : Boolean;
 Begin
   Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
-Function TAdvXMLElement.HasAttributes : Boolean;
+Function TFslXMLElement.HasAttributes : Boolean;
 Begin
   Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
-Function TAdvXMLElement.HasContent : Boolean;
+Function TFslXMLElement.HasContent : Boolean;
 Begin
   Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType In [AdvXMLElementTypeText, AdvXMLElementTypeComment];
 End;
 
 
-Function TAdvXMLElement.GetNamespace : String;
+Function TFslXMLElement.GetNamespace : String;
 Begin
   Assert(CheckCondition(HasNamespace, 'GetNamespace', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Namespace'])));
   Result := FNamespace;
 End;
 
 
-Procedure TAdvXMLElement.SetNamespace(Const Value : String);
+Procedure TFslXMLElement.SetNamespace(Const Value : String);
 Begin
   Assert(CheckCondition(HasNamespace, 'SetNamespace', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Namespace'])));
   FNamespace := Value;
 End;
 
 
-Function TAdvXMLElement.GetName : String;
+Function TFslXMLElement.GetName : String;
 Begin
   Assert(CheckCondition(HasName, 'GetName', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Name'])));
   Result := FName;
 End;
 
 
-Procedure TAdvXMLElement.SetName(Const Value : String);
+Procedure TFslXMLElement.SetName(Const Value : String);
 Begin
   Assert(CheckCondition(HasName, 'SetName', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Name'])));
   FName := Value;
 End;
 
 
-Function TAdvXMLElement.GetId : String;
+Function TFslXMLElement.GetId : String;
 Begin
   Assert(CheckCondition(HasId, 'GetId', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Id'])));
   Result := FId;
 End;
 
 
-Procedure TAdvXMLElement.SetId(Const Value : String);
+Procedure TFslXMLElement.SetId(Const Value : String);
 Begin
   Assert(CheckCondition(HasId, 'SetId', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Id'])));
   FId := Value;
 End;
 
 
-Function TAdvXMLElement.GetChildren : TAdvXMLElementList;
+Function TFslXMLElement.GetChildren : TFslXMLElementList;
 Begin
   Assert(CheckCondition(HasChildren, 'GetChildren', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Children'])));
   Result := FChildrenElementList;
 End;
 
 
-Procedure TAdvXMLElement.SetChildren(Const Value : TAdvXMLElementList);
+Procedure TFslXMLElement.SetChildren(Const Value : TFslXMLElementList);
 Begin
   Assert(CheckCondition(HasChildren, 'SetChildren', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Children'])));
 
@@ -2391,14 +2391,14 @@ Begin
 End;
 
 
-Function TAdvXMLElement.GetAttributes : TAdvXMLAttributeList;
+Function TFslXMLElement.GetAttributes : TFslXMLAttributeList;
 Begin
   Assert(CheckCondition(HasAttributes, 'GetAttributes', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Attributes'])));
   Result := FAttributeList;
 End;
 
 
-Procedure TAdvXMLElement.SetAttributes(Const Value : TAdvXMLAttributeList);
+Procedure TFslXMLElement.SetAttributes(Const Value : TFslXMLAttributeList);
 Begin
   Assert(CheckCondition(HasAttributes, 'SetAttributes', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Attributes'])));
   FAttributeList.Free;
@@ -2406,7 +2406,7 @@ Begin
 End;
 
 
-Function TAdvXMLElement.GetContent : String;
+Function TFslXMLElement.GetContent : String;
 Var
   iLoop : Integer;
 Begin
@@ -2423,49 +2423,49 @@ Begin
 End;
 
 
-Procedure TAdvXMLElement.SetContent(Const Value : String);
+Procedure TFslXMLElement.SetContent(Const Value : String);
 Begin
   Assert(CheckCondition(HasContent, 'SetContent', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Content'])));
   FContent := Value;
 End;
 
 
-Function TAdvXMLElement.ErrorClass : EAdvExceptionClass;
+Function TFslXMLElement.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvXMLObject;
 End;
 
 
-Function TAdvXMLElement.Iterator(Const sNamespace, sName : String) : TAdvXMLElementIterator;
+Function TFslXMLElement.Iterator(Const sNamespace, sName : String) : TFslXMLElementIterator;
 Begin
   Result := Iterator(sName);
   Result.FNamespace := sNamespace;
 End;
 
 
-Function TAdvXMLElement.Iterator(Const sName : String) : TAdvXMLElementIterator;
+Function TFslXMLElement.Iterator(Const sName : String) : TFslXMLElementIterator;
 Begin
   Result := Iterator(AdvXMLElementTypeNode);
   Result.FName := sName;
 End;
 
 
-Function TAdvXMLElement.Iterator(aElementType : TAdvXMLElementType) : TAdvXMLElementIterator;
+Function TFslXMLElement.Iterator(aElementType : TFslXMLElementType) : TFslXMLElementIterator;
 Begin
-  Result := TAdvXMLElementIterator.Create;
+  Result := TFslXMLElementIterator.Create;
   Result.List := Children.Link;
   Result.FElementType := aElementType;
 End;
 
 
-Function TAdvXMLElementIterator.Current : TAdvXMLElement;
+Function TFslXMLElementIterator.Current : TFslXMLElement;
 Begin
-  Assert(Invariants('Current', Inherited Current, TAdvXMLElement, 'Current'));
-  Result := TAdvXMLElement(Inherited Current);
+  Assert(Invariants('Current', Inherited Current, TFslXMLElement, 'Current'));
+  Result := TFslXMLElement(Inherited Current);
 End;
 
 
-Function TAdvXMLElementIterator.Skip : Boolean;
+Function TFslXMLElementIterator.Skip : Boolean;
 Begin
   Result := False;
   If FElementType <> AdvXMLElementTypeUnknown Then
@@ -2477,66 +2477,66 @@ Begin
 End;
 
 
-Function TAdvXMLElementList.Link : TAdvXMLElementList;
+Function TFslXMLElementList.Link : TFslXMLElementList;
 Begin
-  Result := TAdvXMLElementList(Inherited Link);
+  Result := TFslXMLElementList(Inherited Link);
 End;
 
 
-Function TAdvXMLElementList.Clone : TAdvXMLElementList;
+Function TFslXMLElementList.Clone : TFslXMLElementList;
 Begin
-  Result := TAdvXMLElementList(Inherited Clone);
+  Result := TFslXMLElementList(Inherited Clone);
 End;
 
 
-Function TAdvXMLElementList.New : TAdvXMLElement;
+Function TFslXMLElementList.New : TFslXMLElement;
 Begin
-  Result := TAdvXMLElement(Inherited New);
+  Result := TFslXMLElement(Inherited New);
 End;
 
 
-Function TAdvXMLElementList.ItemClass : TAdvObjectClass;
+Function TFslXMLElementList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvXMLElement;
+  Result := TFslXMLElement;
 End;
 
 
-Function TAdvXMLElementList.GetElement(Const iIndex : Integer) : TAdvXMLElement;
+Function TFslXMLElementList.GetElement(Const iIndex : Integer) : TFslXMLElement;
 Begin
-  Result := TAdvXMLElement(ObjectByIndex[iIndex]);
+  Result := TFslXMLElement(ObjectByIndex[iIndex]);
 End;
 
 
-Procedure TAdvXMLElementList.SetElement(Const iIndex : Integer; Const oValue : TAdvXMLElement);
+Procedure TFslXMLElementList.SetElement(Const iIndex : Integer; Const oValue : TFslXMLElement);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
 
-Function TAdvXMLElementList.CompareById(pA, pB : Pointer) : Integer;
+Function TFslXMLElementList.CompareById(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TAdvXMLElement(pA).Id, TAdvXMLElement(pB).Id);
+  Result := FHIR.Support.Strings.StringCompare(TFslXMLElement(pA).Id, TFslXMLElement(pB).Id);
 End;
 
 
-Function TAdvXMLElementList.CompareByName(pA, pB : Pointer) : Integer;
+Function TFslXMLElementList.CompareByName(pA, pB : Pointer) : Integer;
 Begin
-  Result := IntegerCompare(Integer(TAdvXMLElement(pA).ElementType), Integer(TAdvXMLElement(pB).ElementType));
+  Result := IntegerCompare(Integer(TFslXMLElement(pA).ElementType), Integer(TFslXMLElement(pB).ElementType));
 
   If Result = 0 Then
-    Result := StringCompare(TAdvXMLElement(pA).Name, TAdvXMLElement(pB).Name);
+    Result := StringCompare(TFslXMLElement(pA).Name, TFslXMLElement(pB).Name);
 End;
 
 
-Function TAdvXMLElementList.Get(Const aValue : Integer) : TAdvXMLElement;
+Function TFslXMLElementList.Get(Const aValue : Integer) : TFslXMLElement;
 Begin
-  Result := TAdvXMLElement(Inherited Get(aValue));
+  Result := TFslXMLElement(Inherited Get(aValue));
 End;
 
 
-Function TAdvXMLElementList.IndexById(Const aValue : String) : Integer;
+Function TFslXMLElementList.IndexById(Const aValue : String) : Integer;
 Var
-  oElement : TAdvXMLElement;
+  oElement : TFslXMLElement;
 Begin
   oElement := New;
   Try
@@ -2550,21 +2550,21 @@ Begin
 End;
 
 
-Function TAdvXMLElementList.GetById(Const aValue : String) : TAdvXMLElement;
+Function TFslXMLElementList.GetById(Const aValue : String) : TFslXMLElement;
 Begin
   Result := Get(IndexById(aValue));
 End;
 
 
-Function TAdvXMLElementList.ExistsById(Const aValue : String) : Boolean;
+Function TFslXMLElementList.ExistsById(Const aValue : String) : Boolean;
 Begin
   Result := ExistsByIndex(IndexById(aValue));
 End;
 
 
-Function TAdvXMLElementList.IndexByName(Const aValue : String) : Integer;
+Function TFslXMLElementList.IndexByName(Const aValue : String) : Integer;
 Var
-  oElement : TAdvXMLElement;
+  oElement : TFslXMLElement;
 Begin
   oElement := New;
   Try
@@ -2579,19 +2579,19 @@ Begin
 End;
 
 
-Function TAdvXMLElementList.GetByName(Const aValue : String) : TAdvXMLElement;
+Function TFslXMLElementList.GetByName(Const aValue : String) : TFslXMLElement;
 Begin
   Result := Get(IndexByName(aValue));
 End;
 
 
-Function TAdvXMLElementList.ExistsByName(Const aValue : String) : Boolean;
+Function TFslXMLElementList.ExistsByName(Const aValue : String) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(aValue));
 End;
 
 
-Constructor TAdvXMLDocument.Create;
+Constructor TFslXMLDocument.Create;
 Begin
   Inherited;
 
@@ -2599,7 +2599,7 @@ Begin
 End;
 
 
-Destructor TAdvXMLDocument.Destroy;
+Destructor TFslXMLDocument.Destroy;
 Begin
   FRootElement.Free;
 
@@ -2607,120 +2607,120 @@ Begin
 End;
 
 
-Function TAdvXMLDocument.HasRootElement : Boolean;
+Function TFslXMLDocument.HasRootElement : Boolean;
 Begin
   Result := Assigned(FRootElement);
 End;
 
 
-Function TAdvXMLDocument.GetRootElement : TAdvXMLElement;
+Function TFslXMLDocument.GetRootElement : TFslXMLElement;
 Begin
-  Assert(Invariants('GetRootElement', FRootElement, TAdvXMLElement, 'FRootElement'));
+  Assert(Invariants('GetRootElement', FRootElement, TFslXMLElement, 'FRootElement'));
 
   Result := FRootElement;
 End;
 
 
-Procedure TAdvXMLDocument.SetRootElement(Const Value : TAdvXMLElement);
+Procedure TFslXMLDocument.SetRootElement(Const Value : TFslXMLElement);
 Begin
-  Assert(Not Assigned(Value) Or Invariants('SetRootElement', Value, TAdvXMLElement, 'Value'));
+  Assert(Not Assigned(Value) Or Invariants('SetRootElement', Value, TFslXMLElement, 'Value'));
 
   FRootElement.Free;
   FRootElement := Value;
 End;
 
 
-Function TAdvXMLDocument.Link : TAdvXMLDocument;
+Function TFslXMLDocument.Link : TFslXMLDocument;
 Begin
-  Result := TAdvXMLDocument(Inherited Link);
+  Result := TFslXMLDocument(Inherited Link);
 End;
 
 
-Function TAdvXMLDocument.Clone : TAdvXMLDocument;
+Function TFslXMLDocument.Clone : TFslXMLDocument;
 Begin
-  Result := TAdvXMLDocument(Inherited Clone);
+  Result := TFslXMLDocument(Inherited Clone);
 End;
 
 
-Procedure TAdvXMLDocument.Assign(oObject : TAdvObject);
-Begin
-  Inherited;
-
-  RootElement := TAdvXMLDocument(oObject).RootElement.Clone;
-End;
-
-
-Procedure TAdvXMLDocument.Define(oFiler : TAdvFiler);
+Procedure TFslXMLDocument.Assign(oObject : TFslObject);
 Begin
   Inherited;
 
-  oFiler['RootElement'].DefineObject(FRootElement, TAdvXMLElement);
+  RootElement := TFslXMLDocument(oObject).RootElement.Clone;
 End;
 
 
-Function TAdvXMLDocument.ErrorClass : EAdvExceptionClass;
+Procedure TFslXMLDocument.Define(oFiler : TFslFiler);
+Begin
+  Inherited;
+
+  oFiler['RootElement'].DefineObject(FRootElement, TFslXMLElement);
+End;
+
+
+Function TFslXMLDocument.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvXMLObject;
 End;
 
 
-Procedure TAdvXMLDocument.Clear;
+Procedure TFslXMLDocument.Clear;
 Begin
   RootElement := Nil;
 End;
 
 
-Function TAdvXMLDocumentList.Link : TAdvXMLDocumentList;
+Function TFslXMLDocumentList.Link : TFslXMLDocumentList;
 Begin
-  Result := TAdvXMLDocumentList(Inherited Link);
+  Result := TFslXMLDocumentList(Inherited Link);
 End;
 
 
-Function TAdvXMLDocumentList.Clone : TAdvXMLDocumentList;
+Function TFslXMLDocumentList.Clone : TFslXMLDocumentList;
 Begin
-  Result := TAdvXMLDocumentList(Inherited Clone);
+  Result := TFslXMLDocumentList(Inherited Clone);
 End;
 
 
-Function TAdvXMLDocumentList.New : TAdvXMLDocument;
+Function TFslXMLDocumentList.New : TFslXMLDocument;
 Begin
-  Result := TAdvXMLDocument(Inherited New);
+  Result := TFslXMLDocument(Inherited New);
 End;
 
 
-Function TAdvXMLDocumentList.ItemClass : TAdvObjectClass;
+Function TFslXMLDocumentList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvXMLDocument;
+  Result := TFslXMLDocument;
 End;
 
 
-Function TAdvXMLDocumentList.GetElementByIndex(Const iIndex : Integer) : TAdvXMLDocument;
+Function TFslXMLDocumentList.GetElementByIndex(Const iIndex : Integer) : TFslXMLDocument;
 Begin
-  Result := TAdvXMLDocument(ObjectByIndex[iIndex]);
+  Result := TFslXMLDocument(ObjectByIndex[iIndex]);
 End;
 
 
-Procedure TAdvXMLDocumentList.SetElementByIndex(Const iIndex : Integer; Const oValue : TAdvXMLDocument);
+Procedure TFslXMLDocumentList.SetElementByIndex(Const iIndex : Integer; Const oValue : TFslXMLDocument);
 Begin
   ObjectByIndex[iIndex] := oValue;
 End;
 
 
-Function TAdvXMLDocumentList.Get(Const aValue : Integer) : TAdvXMLDocument;
+Function TFslXMLDocumentList.Get(Const aValue : Integer) : TFslXMLDocument;
 Begin
-  Result := TAdvXMLDocument(Inherited Get(aValue));
+  Result := TFslXMLDocument(Inherited Get(aValue));
 End;
 
 
-Constructor TAdvXMLNamespaceEntry.Create;
+Constructor TFslXMLNamespaceEntry.Create;
 Begin
   Inherited;
 
-  FValues := TAdvStringList.Create;
+  FValues := TFslStringList.Create;
 End;
 
 
-Destructor TAdvXMLNamespaceEntry.Destroy;
+Destructor TFslXMLNamespaceEntry.Destroy;
 Begin
   FValues.Free;
 
@@ -2728,41 +2728,41 @@ Begin
 End;
 
 
-Function TAdvXMLNamespaceEntry.GetValue: String;
+Function TFslXMLNamespaceEntry.GetValue: String;
 Begin
   Result := FValues.StringByIndex[FValues.Count - 1];
 End;
 
 
-Function TAdvXMLNamespaceEntry.HasValue : Boolean;
+Function TFslXMLNamespaceEntry.HasValue : Boolean;
 Begin
   Result := Not FValues.IsEmpty;
 End;
 
 
-Procedure TAdvXMLNamespaceEntry.Pop;
+Procedure TFslXMLNamespaceEntry.Pop;
 Begin
   FValues.DeleteByIndex(FValues.Count - 1);
 End;
 
 
-Procedure TAdvXMLNamespaceEntry.Push(Const Value: String);
+Procedure TFslXMLNamespaceEntry.Push(Const Value: String);
 Begin
   FValues.Add(Value);
 End;
 
 
-Function TAdvXMLNamespaceEntryList.CompareByKey(pA, pB: Pointer): Integer;
+Function TFslXMLNamespaceEntryList.CompareByKey(pA, pB: Pointer): Integer;
 Begin
-  Result := StringCompare(TAdvXMLNamespaceEntry(pA).Key, TAdvXMLNamespaceEntry(pB).Key);
+  Result := StringCompare(TFslXMLNamespaceEntry(pA).Key, TFslXMLNamespaceEntry(pB).Key);
 End;
 
 
-Function TAdvXMLNamespaceEntryList.IndexByKey(Const sKey: String): Integer;
+Function TFslXMLNamespaceEntryList.IndexByKey(Const sKey: String): Integer;
 Var
-  oEntry : TAdvXMLNamespaceEntry;
+  oEntry : TFslXMLNamespaceEntry;
 Begin
-  oEntry := TAdvXMLNamespaceEntry(ItemNew);
+  oEntry := TFslXMLNamespaceEntry(ItemNew);
   Try
     oEntry.Key := sKey;
 
@@ -2773,34 +2773,34 @@ Begin
 End;
 
 
-Procedure TAdvXMLNamespaceEntryList.SortedByKey;
+Procedure TFslXMLNamespaceEntryList.SortedByKey;
 Begin
   SortedBy(CompareByKey);
 End;
 
 
-Function TAdvXMLNamespaceEntryList.ItemClass: TAdvObjectClass;
+Function TFslXMLNamespaceEntryList.ItemClass: TFslObjectClass;
 Begin
-  Result := TAdvXMLNamespaceEntry;
+  Result := TFslXMLNamespaceEntry;
 End;
 
 
-Function TAdvXMLNamespaceEntryList.GetEntryByIndex(Const iIndex: Integer): TAdvXMLNamespaceEntry;
+Function TFslXMLNamespaceEntryList.GetEntryByIndex(Const iIndex: Integer): TFslXMLNamespaceEntry;
 Begin
-  Result := TAdvXMLNamespaceEntry(ObjectByIndex[iIndex]);
+  Result := TFslXMLNamespaceEntry(ObjectByIndex[iIndex]);
 End;
 
 
-Constructor TAdvXMLNamespaceLevel.Create;
+Constructor TFslXMLNamespaceLevel.Create;
 Begin
   Inherited;
 
-  FEntryList := TAdvXMLNamespaceEntryList.Create;
+  FEntryList := TFslXMLNamespaceEntryList.Create;
   FEntryList.SortedByKey;
 End;
 
 
-Destructor TAdvXMLNamespaceLevel.Destroy;
+Destructor TFslXMLNamespaceLevel.Destroy;
 Begin
   FEntryList.Free;
 
@@ -2808,35 +2808,35 @@ Begin
 End;
 
 
-Function TAdvXMLNamespaceLevelList.ItemClass: TAdvObjectClass;
+Function TFslXMLNamespaceLevelList.ItemClass: TFslObjectClass;
 Begin
-  Result := TAdvXMLNamespaceLevel;
+  Result := TFslXMLNamespaceLevel;
 End;
 
 
-Function TAdvXMLNamespaceLevelList.GetLevelByIndex(Const iIndex: Integer): TAdvXMLNamespaceLevel;
+Function TFslXMLNamespaceLevelList.GetLevelByIndex(Const iIndex: Integer): TFslXMLNamespaceLevel;
 Begin
-  Result := TAdvXMLNamespaceLevel(ObjectByIndex[iIndex]);
+  Result := TFslXMLNamespaceLevel(ObjectByIndex[iIndex]);
 End;
 
 
-Constructor TAdvXMLNamespaceManager.Create;
+Constructor TFslXMLNamespaceManager.Create;
 Var
-  oDefaultEntry : TAdvXMLNamespaceEntry;
+  oDefaultEntry : TFslXMLNamespaceEntry;
 Begin
   Inherited;
 
-  FLevelList := TAdvXMLNamespaceLevelList.Create;
-  FEntryList := TAdvXMLNamespaceEntryList.Create;
+  FLevelList := TFslXMLNamespaceLevelList.Create;
+  FEntryList := TFslXMLNamespaceEntryList.Create;
 
   // Add default namespace entry.
-  oDefaultEntry := TAdvXMLNamespaceEntry.Create;
+  oDefaultEntry := TFslXMLNamespaceEntry.Create;
   oDefaultEntry.Key := '';
   oDefaultEntry.Push('');
   FEntryList.Add(oDefaultEntry);
 
   // Add "xml" default entry
-  oDefaultEntry := TAdvXMLNamespaceEntry.Create;
+  oDefaultEntry := TFslXMLNamespaceEntry.Create;
   oDefaultEntry.Key := 'xml';
   oDefaultEntry.Push('http://www.w3.org/XML/1998/namespace');
   FEntryList.Add(oDefaultEntry);
@@ -2846,7 +2846,7 @@ Begin
 End;
 
 
-Destructor TAdvXMLNamespaceManager.Destroy;
+Destructor TFslXMLNamespaceManager.Destroy;
 Begin
   FEntryList.Free;
   FLevelList.Free;
@@ -2855,22 +2855,22 @@ Begin
 End;
 
 
-Function TAdvXMLNamespaceManager.ErrorClass: EAdvExceptionClass;
+Function TFslXMLNamespaceManager.ErrorClass: EAdvExceptionClass;
 Begin
   Result := EAdvXMLNamespaceManager;
 End;
 
 
-Function TAdvXMLNamespaceManager.DefaultNamespace: String;
+Function TFslXMLNamespaceManager.DefaultNamespace: String;
 Begin
   Result := NamespaceOfPrefix('');
 End;
 
 
-Procedure TAdvXMLNamespaceManager.ListPrefixes(Const oPrefixNamespaces: TAdvStringMatch);
+Procedure TFslXMLNamespaceManager.ListPrefixes(Const oPrefixNamespaces: TFslStringMatch);
 Var
   iEntryIndex : Integer;
-  oEntry : TAdvXMLNamespaceEntry;
+  oEntry : TFslXMLNamespaceEntry;
 Begin
   oPrefixNamespaces.Clear;
 
@@ -2883,7 +2883,7 @@ Begin
 End;
 
 
-Function TAdvXMLNamespaceManager.LocalNameOf(Const sElementName: String): String;
+Function TFslXMLNamespaceManager.LocalNameOf(Const sElementName: String): String;
 Var
   iColonIndex : Integer;
 Begin
@@ -2896,13 +2896,13 @@ Begin
 End;
 
 
-Function TAdvXMLNamespaceManager.NamespaceOf(Const sElementName: String): String;
+Function TFslXMLNamespaceManager.NamespaceOf(Const sElementName: String): String;
 Begin
   Result := NamespaceOfPrefix(PrefixOf(sElementName));
 End;
 
 
-Function TAdvXMLNamespaceManager.NamespaceOfPrefix(Const sPrefix: String) : String;
+Function TFslXMLNamespaceManager.NamespaceOfPrefix(Const sPrefix: String) : String;
 Var
   iEntryIndex : Integer;
 Begin
@@ -2915,13 +2915,13 @@ Begin
 End;
 
 
-Procedure TAdvXMLNamespaceManager.Pop;
+Procedure TFslXMLNamespaceManager.Pop;
 Var
-  oLevel : TAdvXMLNamespaceLevel;
-  oEntry : TAdvXMLNamespaceEntry;
+  oLevel : TFslXMLNamespaceLevel;
+  oEntry : TFslXMLNamespaceEntry;
   iEntryIndex : Integer;
 Begin
-  oLevel := TAdvXMLNamespaceLevel(FLevelList.RemoveLast);
+  oLevel := TFslXMLNamespaceLevel(FLevelList.RemoveLast);
   Try
     For iEntryIndex := 0 To oLevel.EntryList.Count - 1  Do
     Begin
@@ -2938,7 +2938,7 @@ Begin
 End;
 
 
-Function TAdvXMLNamespaceManager.PrefixOf(Const sElementName: String): String;
+Function TFslXMLNamespaceManager.PrefixOf(Const sElementName: String): String;
 Var
   iColonIndex : Integer;
 Begin
@@ -2951,20 +2951,20 @@ Begin
 End;
 
 
-Procedure TAdvXMLNamespaceManager.Push(Const oAttributes: TAdvStringMatch);
+Procedure TFslXMLNamespaceManager.Push(Const oAttributes: TFslStringMatch);
 Const
   XMLNS_STRING = 'xmlns';
   XMLNS_LENGTH = Length(XMLNS_STRING);
 Var
-  oLevel : TAdvXMLNamespaceLevel;
+  oLevel : TFslXMLNamespaceLevel;
   iAttributeIndex : Integer;
   sName : String;
   sPrefix : String;
   sNamespace : String;
   iEntryIndex : Integer;
-  oEntry : TAdvXMLNamespaceEntry;
+  oEntry : TFslXMLNamespaceEntry;
 Begin
-  oLevel := TAdvXMLNamespaceLevel.Create;
+  oLevel := TFslXMLNamespaceLevel.Create;
   Try
     For iAttributeIndex := 0 To oAttributes.Count - 1 Do
     Begin
@@ -2994,7 +2994,7 @@ Begin
         Else
         Begin
           // ...or new one.
-          oEntry := TAdvXMLNamespaceEntry.Create;
+          oEntry := TFslXMLNamespaceEntry.Create;
           oEntry.Key := sPrefix;
           FEntryList.Add(oEntry);
         End;
@@ -3035,7 +3035,7 @@ begin
   FSourceLocation.col := 0;
 end;
 
-procedure TMXmlBuilder.Build(oStream: TAdvStream);
+procedure TMXmlBuilder.Build(oStream: TFslStream);
 var
   oVCL : TVCLStream;
 Begin
@@ -3237,8 +3237,8 @@ begin
   inherited;
   CurrentNamespaces.DefaultNS := 'urn:hl7-org:v3';
   CharEncoding := 'UTF-8';
-  FStack := TAdvList<TMXmlElement>.Create;
-  FAttributes := TAdvMap<TMXmlAttribute>.Create;
+  FStack := TFslList<TMXmlElement>.Create;
+  FAttributes := TFslMap<TMXmlAttribute>.Create;
 end;
 
 destructor TMXmlBuilder.Destroy;

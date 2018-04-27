@@ -2686,7 +2686,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElement; overload;
     function Clone : TFhirElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2718,7 +2718,7 @@ Type
   end;
 
 
-  TFhirElementListEnumerator = class (TAdvObject)
+  TFhirElementListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementList;
@@ -2737,7 +2737,7 @@ Type
     function GetItemN(index : Integer) : TFhirElement;
     procedure SetItemN(index : Integer; value : TFhirElement);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -2854,7 +2854,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirBackboneElement; overload;
     function Clone : TFhirBackboneElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2876,7 +2876,7 @@ Type
   end;
 
 
-  TFhirBackboneElementListEnumerator = class (TAdvObject)
+  TFhirBackboneElementListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirBackboneElementList;
@@ -2895,7 +2895,7 @@ Type
     function GetItemN(index : Integer) : TFhirBackboneElement;
     procedure SetItemN(index : Integer; value : TFhirBackboneElement);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -2983,7 +2983,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirBackboneType; overload;
     function Clone : TFhirBackboneType; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -3005,7 +3005,7 @@ Type
   end;
 
 
-  TFhirBackboneTypeListEnumerator = class (TAdvObject)
+  TFhirBackboneTypeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirBackboneTypeList;
@@ -3024,7 +3024,7 @@ Type
     function GetItemN(index : Integer) : TFhirBackboneType;
     procedure SetItemN(index : Integer; value : TFhirBackboneType);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -3118,7 +3118,7 @@ Type
     {!script hide}
     Function Link : TFhirEnum; Overload;
     Function Clone : TFhirEnum; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -3133,7 +3133,7 @@ Type
   End;    
 
 
-  TFhirEnumListEnumerator = class (TAdvObject)
+  TFhirEnumListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirEnumList;
@@ -3156,7 +3156,7 @@ Type
     function GetItemN(index : Integer) : TFhirEnum;
     procedure SetItemN(index : Integer; value : TFhirEnum);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     constructor Create(Systems, Codes : Array Of String);
@@ -3257,7 +3257,7 @@ Type
     {!script hide}
     Function Link : TFhirDate; Overload;
     Function Clone : TFhirDate; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -3271,7 +3271,7 @@ Type
   End;    
 
 
-  TFhirDateListEnumerator = class (TAdvObject)
+  TFhirDateListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDateList;
@@ -3290,7 +3290,7 @@ Type
     function GetItemN(index : Integer) : TFhirDate;
     procedure SetItemN(index : Integer; value : TFhirDate);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -3389,7 +3389,7 @@ Type
     {!script hide}
     Function Link : TFhirDateTime; Overload;
     Function Clone : TFhirDateTime; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -3403,7 +3403,7 @@ Type
   End;    
 
 
-  TFhirDateTimeListEnumerator = class (TAdvObject)
+  TFhirDateTimeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDateTimeList;
@@ -3422,7 +3422,7 @@ Type
     function GetItemN(index : Integer) : TFhirDateTime;
     procedure SetItemN(index : Integer; value : TFhirDateTime);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -3521,7 +3521,7 @@ Type
     {!script hide}
     Function Link : TFhirString; Overload;
     Function Clone : TFhirString; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -3535,7 +3535,7 @@ Type
   End;    
 
 
-  TFhirStringListEnumerator = class (TAdvObject)
+  TFhirStringListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirStringList;
@@ -3554,7 +3554,7 @@ Type
     function GetItemN(index : Integer) : TFhirString;
     procedure SetItemN(index : Integer; value : TFhirString);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -3653,7 +3653,7 @@ Type
     {!script hide}
     Function Link : TFhirInteger; Overload;
     Function Clone : TFhirInteger; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -3667,7 +3667,7 @@ Type
   End;    
 
 
-  TFhirIntegerListEnumerator = class (TAdvObject)
+  TFhirIntegerListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirIntegerList;
@@ -3686,7 +3686,7 @@ Type
     function GetItemN(index : Integer) : TFhirInteger;
     procedure SetItemN(index : Integer; value : TFhirInteger);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -3785,7 +3785,7 @@ Type
     {!script hide}
     Function Link : TFhirUri; Overload;
     Function Clone : TFhirUri; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -3799,7 +3799,7 @@ Type
   End;    
 
 
-  TFhirUriListEnumerator = class (TAdvObject)
+  TFhirUriListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirUriList;
@@ -3818,7 +3818,7 @@ Type
     function GetItemN(index : Integer) : TFhirUri;
     procedure SetItemN(index : Integer; value : TFhirUri);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -3917,7 +3917,7 @@ Type
     {!script hide}
     Function Link : TFhirInstant; Overload;
     Function Clone : TFhirInstant; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -3931,7 +3931,7 @@ Type
   End;    
 
 
-  TFhirInstantListEnumerator = class (TAdvObject)
+  TFhirInstantListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirInstantList;
@@ -3950,7 +3950,7 @@ Type
     function GetItemN(index : Integer) : TFhirInstant;
     procedure SetItemN(index : Integer; value : TFhirInstant);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -4049,7 +4049,7 @@ Type
     {!script hide}
     Function Link : TFhirXhtml; Overload;
     Function Clone : TFhirXhtml; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -4063,7 +4063,7 @@ Type
   End;    
 
 
-  TFhirXhtmlListEnumerator = class (TAdvObject)
+  TFhirXhtmlListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirXhtmlList;
@@ -4082,7 +4082,7 @@ Type
     function GetItemN(index : Integer) : TFhirXhtml;
     procedure SetItemN(index : Integer; value : TFhirXhtml);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -4181,7 +4181,7 @@ Type
     {!script hide}
     Function Link : TFhirBoolean; Overload;
     Function Clone : TFhirBoolean; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -4195,7 +4195,7 @@ Type
   End;    
 
 
-  TFhirBooleanListEnumerator = class (TAdvObject)
+  TFhirBooleanListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirBooleanList;
@@ -4214,7 +4214,7 @@ Type
     function GetItemN(index : Integer) : TFhirBoolean;
     procedure SetItemN(index : Integer; value : TFhirBoolean);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -4313,7 +4313,7 @@ Type
     {!script hide}
     Function Link : TFhirBase64Binary; Overload;
     Function Clone : TFhirBase64Binary; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -4327,7 +4327,7 @@ Type
   End;    
 
 
-  TFhirBase64BinaryListEnumerator = class (TAdvObject)
+  TFhirBase64BinaryListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirBase64BinaryList;
@@ -4346,7 +4346,7 @@ Type
     function GetItemN(index : Integer) : TFhirBase64Binary;
     procedure SetItemN(index : Integer; value : TFhirBase64Binary);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -4445,7 +4445,7 @@ Type
     {!script hide}
     Function Link : TFhirTime; Overload;
     Function Clone : TFhirTime; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -4459,7 +4459,7 @@ Type
   End;    
 
 
-  TFhirTimeListEnumerator = class (TAdvObject)
+  TFhirTimeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirTimeList;
@@ -4478,7 +4478,7 @@ Type
     function GetItemN(index : Integer) : TFhirTime;
     procedure SetItemN(index : Integer; value : TFhirTime);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -4577,7 +4577,7 @@ Type
     {!script hide}
     Function Link : TFhirDecimal; Overload;
     Function Clone : TFhirDecimal; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
@@ -4591,7 +4591,7 @@ Type
   End;    
 
 
-  TFhirDecimalListEnumerator = class (TAdvObject)
+  TFhirDecimalListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDecimalList;
@@ -4610,7 +4610,7 @@ Type
     function GetItemN(index : Integer) : TFhirDecimal;
     procedure SetItemN(index : Integer; value : TFhirDecimal);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -4707,7 +4707,7 @@ Type
   End;    
 
 
-  TFhirCodeListEnumerator = class (TAdvObject)
+  TFhirCodeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirCodeList;
@@ -4726,7 +4726,7 @@ Type
     function GetItemN(index : Integer) : TFhirCode;
     procedure SetItemN(index : Integer; value : TFhirCode);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -4823,7 +4823,7 @@ Type
   End;    
 
 
-  TFhirCanonicalListEnumerator = class (TAdvObject)
+  TFhirCanonicalListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirCanonicalList;
@@ -4842,7 +4842,7 @@ Type
     function GetItemN(index : Integer) : TFhirCanonical;
     procedure SetItemN(index : Integer; value : TFhirCanonical);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -4939,7 +4939,7 @@ Type
   End;    
 
 
-  TFhirOidListEnumerator = class (TAdvObject)
+  TFhirOidListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirOidList;
@@ -4958,7 +4958,7 @@ Type
     function GetItemN(index : Integer) : TFhirOid;
     procedure SetItemN(index : Integer; value : TFhirOid);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -5055,7 +5055,7 @@ Type
   End;    
 
 
-  TFhirUuidListEnumerator = class (TAdvObject)
+  TFhirUuidListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirUuidList;
@@ -5074,7 +5074,7 @@ Type
     function GetItemN(index : Integer) : TFhirUuid;
     procedure SetItemN(index : Integer; value : TFhirUuid);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -5171,7 +5171,7 @@ Type
   End;    
 
 
-  TFhirUrlListEnumerator = class (TAdvObject)
+  TFhirUrlListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirUrlList;
@@ -5190,7 +5190,7 @@ Type
     function GetItemN(index : Integer) : TFhirUrl;
     procedure SetItemN(index : Integer; value : TFhirUrl);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -5287,7 +5287,7 @@ Type
   End;    
 
 
-  TFhirMarkdownListEnumerator = class (TAdvObject)
+  TFhirMarkdownListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirMarkdownList;
@@ -5306,7 +5306,7 @@ Type
     function GetItemN(index : Integer) : TFhirMarkdown;
     procedure SetItemN(index : Integer; value : TFhirMarkdown);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -5403,7 +5403,7 @@ Type
   End;    
 
 
-  TFhirUnsignedIntListEnumerator = class (TAdvObject)
+  TFhirUnsignedIntListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirUnsignedIntList;
@@ -5422,7 +5422,7 @@ Type
     function GetItemN(index : Integer) : TFhirUnsignedInt;
     procedure SetItemN(index : Integer; value : TFhirUnsignedInt);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -5519,7 +5519,7 @@ Type
   End;    
 
 
-  TFhirIdListEnumerator = class (TAdvObject)
+  TFhirIdListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirIdList;
@@ -5538,7 +5538,7 @@ Type
     function GetItemN(index : Integer) : TFhirId;
     procedure SetItemN(index : Integer; value : TFhirId);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -5635,7 +5635,7 @@ Type
   End;    
 
 
-  TFhirPositiveIntListEnumerator = class (TAdvObject)
+  TFhirPositiveIntListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirPositiveIntList;
@@ -5654,7 +5654,7 @@ Type
     function GetItemN(index : Integer) : TFhirPositiveInt;
     procedure SetItemN(index : Integer; value : TFhirPositiveInt);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -5751,7 +5751,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirExtension; overload;
     function Clone : TFhirExtension; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5781,7 +5781,7 @@ Type
   end;
 
 
-  TFhirExtensionListEnumerator = class (TAdvObject)
+  TFhirExtensionListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirExtensionList;
@@ -5800,7 +5800,7 @@ Type
     function GetItemN(index : Integer) : TFhirExtension;
     procedure SetItemN(index : Integer; value : TFhirExtension);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -5891,7 +5891,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirNarrative; overload;
     function Clone : TFhirNarrative; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5918,7 +5918,7 @@ Type
   end;
 
 
-  TFhirNarrativeListEnumerator = class (TAdvObject)
+  TFhirNarrativeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirNarrativeList;
@@ -5937,7 +5937,7 @@ Type
     function GetItemN(index : Integer) : TFhirNarrative;
     procedure SetItemN(index : Integer; value : TFhirNarrative);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -6033,7 +6033,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirContributor; overload;
     function Clone : TFhirContributor; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6066,7 +6066,7 @@ Type
   end;
 
 
-  TFhirContributorListEnumerator = class (TAdvObject)
+  TFhirContributorListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirContributorList;
@@ -6085,7 +6085,7 @@ Type
     function GetItemN(index : Integer) : TFhirContributor;
     procedure SetItemN(index : Integer; value : TFhirContributor);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -6202,7 +6202,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAttachment; overload;
     function Clone : TFhirAttachment; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6276,7 +6276,7 @@ Type
   end;
 
 
-  TFhirAttachmentListEnumerator = class (TAdvObject)
+  TFhirAttachmentListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirAttachmentList;
@@ -6295,7 +6295,7 @@ Type
     function GetItemN(index : Integer) : TFhirAttachment;
     procedure SetItemN(index : Integer; value : TFhirAttachment);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -6389,7 +6389,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDataRequirementCodeFilter; overload;
     function Clone : TFhirDataRequirementCodeFilter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6423,7 +6423,7 @@ Type
   end;
 
 
-  TFhirDataRequirementCodeFilterListEnumerator = class (TAdvObject)
+  TFhirDataRequirementCodeFilterListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDataRequirementCodeFilterList;
@@ -6442,7 +6442,7 @@ Type
     function GetItemN(index : Integer) : TFhirDataRequirementCodeFilter;
     procedure SetItemN(index : Integer; value : TFhirDataRequirementCodeFilter);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -6533,7 +6533,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDataRequirementDateFilter; overload;
     function Clone : TFhirDataRequirementDateFilter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6563,7 +6563,7 @@ Type
   end;
 
 
-  TFhirDataRequirementDateFilterListEnumerator = class (TAdvObject)
+  TFhirDataRequirementDateFilterListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDataRequirementDateFilterList;
@@ -6582,7 +6582,7 @@ Type
     function GetItemN(index : Integer) : TFhirDataRequirementDateFilter;
     procedure SetItemN(index : Integer; value : TFhirDataRequirementDateFilter);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -6675,7 +6675,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDataRequirementSort; overload;
     function Clone : TFhirDataRequirementSort; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6704,7 +6704,7 @@ Type
   end;
 
 
-  TFhirDataRequirementSortListEnumerator = class (TAdvObject)
+  TFhirDataRequirementSortListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDataRequirementSortList;
@@ -6723,7 +6723,7 @@ Type
     function GetItemN(index : Integer) : TFhirDataRequirementSort;
     procedure SetItemN(index : Integer; value : TFhirDataRequirementSort);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -6833,7 +6833,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDataRequirement; overload;
     function Clone : TFhirDataRequirement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6887,7 +6887,7 @@ Type
   end;
 
 
-  TFhirDataRequirementListEnumerator = class (TAdvObject)
+  TFhirDataRequirementListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDataRequirementList;
@@ -6906,7 +6906,7 @@ Type
     function GetItemN(index : Integer) : TFhirDataRequirement;
     procedure SetItemN(index : Integer; value : TFhirDataRequirement);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -6997,7 +6997,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDosageDoseAndRate; overload;
     function Clone : TFhirDosageDoseAndRate; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7030,7 +7030,7 @@ Type
   end;
 
 
-  TFhirDosageDoseAndRateListEnumerator = class (TAdvObject)
+  TFhirDosageDoseAndRateListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDosageDoseAndRateList;
@@ -7049,7 +7049,7 @@ Type
     function GetItemN(index : Integer) : TFhirDosageDoseAndRate;
     procedure SetItemN(index : Integer; value : TFhirDosageDoseAndRate);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -7168,7 +7168,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDosage; overload;
     function Clone : TFhirDosage; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7255,7 +7255,7 @@ Type
   end;
 
 
-  TFhirDosageListEnumerator = class (TAdvObject)
+  TFhirDosageListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDosageList;
@@ -7274,7 +7274,7 @@ Type
     function GetItemN(index : Integer) : TFhirDosage;
     procedure SetItemN(index : Integer; value : TFhirDosage);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -7371,7 +7371,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMarketingStatus; overload;
     function Clone : TFhirMarketingStatus; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7416,7 +7416,7 @@ Type
   end;
 
 
-  TFhirMarketingStatusListEnumerator = class (TAdvObject)
+  TFhirMarketingStatusListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirMarketingStatusList;
@@ -7435,7 +7435,7 @@ Type
     function GetItemN(index : Integer) : TFhirMarketingStatus;
     procedure SetItemN(index : Integer; value : TFhirMarketingStatus);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -7538,7 +7538,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirIdentifier; overload;
     function Clone : TFhirIdentifier; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7589,7 +7589,7 @@ Type
   end;
 
 
-  TFhirIdentifierListEnumerator = class (TAdvObject)
+  TFhirIdentifierListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirIdentifierList;
@@ -7608,7 +7608,7 @@ Type
     function GetItemN(index : Integer) : TFhirIdentifier;
     procedure SetItemN(index : Integer; value : TFhirIdentifier);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -7697,7 +7697,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSubstanceAmountReferenceRange; overload;
     function Clone : TFhirSubstanceAmountReferenceRange; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7725,7 +7725,7 @@ Type
   end;
 
 
-  TFhirSubstanceAmountReferenceRangeListEnumerator = class (TAdvObject)
+  TFhirSubstanceAmountReferenceRangeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirSubstanceAmountReferenceRangeList;
@@ -7744,7 +7744,7 @@ Type
     function GetItemN(index : Integer) : TFhirSubstanceAmountReferenceRange;
     procedure SetItemN(index : Integer; value : TFhirSubstanceAmountReferenceRange);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -7839,7 +7839,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSubstanceAmount; overload;
     function Clone : TFhirSubstanceAmount; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7879,7 +7879,7 @@ Type
   end;
 
 
-  TFhirSubstanceAmountListEnumerator = class (TAdvObject)
+  TFhirSubstanceAmountListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirSubstanceAmountList;
@@ -7898,7 +7898,7 @@ Type
     function GetItemN(index : Integer) : TFhirSubstanceAmount;
     procedure SetItemN(index : Integer; value : TFhirSubstanceAmount);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -8003,7 +8003,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCoding; overload;
     function Clone : TFhirCoding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8056,7 +8056,7 @@ Type
   end;
 
 
-  TFhirCodingListEnumerator = class (TAdvObject)
+  TFhirCodingListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirCodingList;
@@ -8075,7 +8075,7 @@ Type
     function GetItemN(index : Integer) : TFhirCoding;
     procedure SetItemN(index : Integer; value : TFhirCoding);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -8186,7 +8186,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSampledData; overload;
     function Clone : TFhirSampledData; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8251,7 +8251,7 @@ Type
   end;
 
 
-  TFhirSampledDataListEnumerator = class (TAdvObject)
+  TFhirSampledDataListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirSampledDataList;
@@ -8270,7 +8270,7 @@ Type
     function GetItemN(index : Integer) : TFhirSampledData;
     procedure SetItemN(index : Integer; value : TFhirSampledData);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -8359,7 +8359,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirRatio; overload;
     function Clone : TFhirRatio; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8387,7 +8387,7 @@ Type
   end;
 
 
-  TFhirRatioListEnumerator = class (TAdvObject)
+  TFhirRatioListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirRatioList;
@@ -8406,7 +8406,7 @@ Type
     function GetItemN(index : Integer) : TFhirRatio;
     procedure SetItemN(index : Integer; value : TFhirRatio);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -8509,7 +8509,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSubstanceMoiety; overload;
     function Clone : TFhirSubstanceMoiety; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8566,7 +8566,7 @@ Type
   end;
 
 
-  TFhirSubstanceMoietyListEnumerator = class (TAdvObject)
+  TFhirSubstanceMoietyListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirSubstanceMoietyList;
@@ -8585,7 +8585,7 @@ Type
     function GetItemN(index : Integer) : TFhirSubstanceMoiety;
     procedure SetItemN(index : Integer; value : TFhirSubstanceMoiety);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -8684,7 +8684,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirReference; overload;
     function Clone : TFhirReference; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8728,7 +8728,7 @@ Type
   end;
 
 
-  TFhirReferenceListEnumerator = class (TAdvObject)
+  TFhirReferenceListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirReferenceList;
@@ -8747,7 +8747,7 @@ Type
     function GetItemN(index : Integer) : TFhirReference;
     procedure SetItemN(index : Integer; value : TFhirReference);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -8844,7 +8844,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirTriggerDefinitionCondition; overload;
     function Clone : TFhirTriggerDefinitionCondition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8883,7 +8883,7 @@ Type
   end;
 
 
-  TFhirTriggerDefinitionConditionListEnumerator = class (TAdvObject)
+  TFhirTriggerDefinitionConditionListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirTriggerDefinitionConditionList;
@@ -8902,7 +8902,7 @@ Type
     function GetItemN(index : Integer) : TFhirTriggerDefinitionCondition;
     procedure SetItemN(index : Integer; value : TFhirTriggerDefinitionCondition);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -9001,7 +9001,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirTriggerDefinition; overload;
     function Clone : TFhirTriggerDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9045,7 +9045,7 @@ Type
   end;
 
 
-  TFhirTriggerDefinitionListEnumerator = class (TAdvObject)
+  TFhirTriggerDefinitionListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirTriggerDefinitionList;
@@ -9064,7 +9064,7 @@ Type
     function GetItemN(index : Integer) : TFhirTriggerDefinition;
     procedure SetItemN(index : Integer; value : TFhirTriggerDefinition);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -9157,7 +9157,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPeriod; overload;
     function Clone : TFhirPeriod; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9189,7 +9189,7 @@ Type
   end;
 
 
-  TFhirPeriodListEnumerator = class (TAdvObject)
+  TFhirPeriodListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirPeriodList;
@@ -9208,7 +9208,7 @@ Type
     function GetItemN(index : Integer) : TFhirPeriod;
     procedure SetItemN(index : Integer; value : TFhirPeriod);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -9313,7 +9313,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQuantity; overload;
     function Clone : TFhirQuantity; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9363,7 +9363,7 @@ Type
   end;
 
 
-  TFhirQuantityListEnumerator = class (TAdvObject)
+  TFhirQuantityListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirQuantityList;
@@ -9382,7 +9382,7 @@ Type
     function GetItemN(index : Integer) : TFhirQuantity;
     procedure SetItemN(index : Integer; value : TFhirQuantity);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -9471,7 +9471,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirRange; overload;
     function Clone : TFhirRange; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9499,7 +9499,7 @@ Type
   end;
 
 
-  TFhirRangeListEnumerator = class (TAdvObject)
+  TFhirRangeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirRangeList;
@@ -9518,7 +9518,7 @@ Type
     function GetItemN(index : Integer) : TFhirRange;
     procedure SetItemN(index : Integer; value : TFhirRange);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -9625,7 +9625,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirRelatedArtifact; overload;
     function Clone : TFhirRelatedArtifact; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9680,7 +9680,7 @@ Type
   end;
 
 
-  TFhirRelatedArtifactListEnumerator = class (TAdvObject)
+  TFhirRelatedArtifactListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirRelatedArtifactList;
@@ -9699,7 +9699,7 @@ Type
     function GetItemN(index : Integer) : TFhirRelatedArtifact;
     procedure SetItemN(index : Integer; value : TFhirRelatedArtifact);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -9794,7 +9794,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAnnotation; overload;
     function Clone : TFhirAnnotation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9831,7 +9831,7 @@ Type
   end;
 
 
-  TFhirAnnotationListEnumerator = class (TAdvObject)
+  TFhirAnnotationListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirAnnotationList;
@@ -9850,7 +9850,7 @@ Type
     function GetItemN(index : Integer) : TFhirAnnotation;
     procedure SetItemN(index : Integer; value : TFhirAnnotation);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -9944,7 +9944,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProductShelfLife; overload;
     function Clone : TFhirProductShelfLife; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9981,7 +9981,7 @@ Type
   end;
 
 
-  TFhirProductShelfLifeListEnumerator = class (TAdvObject)
+  TFhirProductShelfLifeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirProductShelfLifeList;
@@ -10000,7 +10000,7 @@ Type
     function GetItemN(index : Integer) : TFhirProductShelfLife;
     procedure SetItemN(index : Integer; value : TFhirProductShelfLife);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -10092,7 +10092,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirContactDetail; overload;
     function Clone : TFhirContactDetail; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10121,7 +10121,7 @@ Type
   end;
 
 
-  TFhirContactDetailListEnumerator = class (TAdvObject)
+  TFhirContactDetailListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirContactDetailList;
@@ -10140,7 +10140,7 @@ Type
     function GetItemN(index : Integer) : TFhirContactDetail;
     procedure SetItemN(index : Integer; value : TFhirContactDetail);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -10229,7 +10229,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirUsageContext; overload;
     function Clone : TFhirUsageContext; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10257,7 +10257,7 @@ Type
   end;
 
 
-  TFhirUsageContextListEnumerator = class (TAdvObject)
+  TFhirUsageContextListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirUsageContextList;
@@ -10276,7 +10276,7 @@ Type
     function GetItemN(index : Integer) : TFhirUsageContext;
     procedure SetItemN(index : Integer; value : TFhirUsageContext);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -10384,7 +10384,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSignature; overload;
     function Clone : TFhirSignature; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10444,7 +10444,7 @@ Type
   end;
 
 
-  TFhirSignatureListEnumerator = class (TAdvObject)
+  TFhirSignatureListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirSignatureList;
@@ -10463,7 +10463,7 @@ Type
     function GetItemN(index : Integer) : TFhirSignature;
     procedure SetItemN(index : Integer; value : TFhirSignature);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -10575,7 +10575,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProdCharacteristic; overload;
     function Clone : TFhirProdCharacteristic; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10647,7 +10647,7 @@ Type
   end;
 
 
-  TFhirProdCharacteristicListEnumerator = class (TAdvObject)
+  TFhirProdCharacteristicListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirProdCharacteristicList;
@@ -10666,7 +10666,7 @@ Type
     function GetItemN(index : Integer) : TFhirProdCharacteristic;
     procedure SetItemN(index : Integer; value : TFhirProdCharacteristic);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -10758,7 +10758,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCodeableConcept; overload;
     function Clone : TFhirCodeableConcept; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10787,7 +10787,7 @@ Type
   end;
 
 
-  TFhirCodeableConceptListEnumerator = class (TAdvObject)
+  TFhirCodeableConceptListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirCodeableConceptList;
@@ -10806,7 +10806,7 @@ Type
     function GetItemN(index : Integer) : TFhirCodeableConcept;
     procedure SetItemN(index : Integer; value : TFhirCodeableConcept);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -10919,7 +10919,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirParameterDefinition; overload;
     function Clone : TFhirParameterDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10980,7 +10980,7 @@ Type
   end;
 
 
-  TFhirParameterDefinitionListEnumerator = class (TAdvObject)
+  TFhirParameterDefinitionListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirParameterDefinitionList;
@@ -10999,7 +10999,7 @@ Type
     function GetItemN(index : Integer) : TFhirParameterDefinition;
     procedure SetItemN(index : Integer; value : TFhirParameterDefinition);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -11102,7 +11102,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirContactPoint; overload;
     function Clone : TFhirContactPoint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -11147,7 +11147,7 @@ Type
   end;
 
 
-  TFhirContactPointListEnumerator = class (TAdvObject)
+  TFhirContactPointListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirContactPointList;
@@ -11166,7 +11166,7 @@ Type
     function GetItemN(index : Integer) : TFhirContactPoint;
     procedure SetItemN(index : Integer; value : TFhirContactPoint);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -11274,7 +11274,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirHumanName; overload;
     function Clone : TFhirHumanName; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -11327,7 +11327,7 @@ Type
   end;
 
 
-  TFhirHumanNameListEnumerator = class (TAdvObject)
+  TFhirHumanNameListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirHumanNameList;
@@ -11346,7 +11346,7 @@ Type
     function GetItemN(index : Integer) : TFhirHumanName;
     procedure SetItemN(index : Integer; value : TFhirHumanName);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -11452,7 +11452,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMeta; overload;
     function Clone : TFhirMeta; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -11503,7 +11503,7 @@ Type
   end;
 
 
-  TFhirMetaListEnumerator = class (TAdvObject)
+  TFhirMetaListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirMetaList;
@@ -11522,7 +11522,7 @@ Type
     function GetItemN(index : Integer) : TFhirMeta;
     procedure SetItemN(index : Integer; value : TFhirMeta);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -11644,7 +11644,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAddress; overload;
     function Clone : TFhirAddress; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -11721,7 +11721,7 @@ Type
   end;
 
 
-  TFhirAddressListEnumerator = class (TAdvObject)
+  TFhirAddressListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirAddressList;
@@ -11740,7 +11740,7 @@ Type
     function GetItemN(index : Integer) : TFhirAddress;
     procedure SetItemN(index : Integer; value : TFhirAddress);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -11840,7 +11840,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionSlicing; overload;
     function Clone : TFhirElementDefinitionSlicing; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -11880,7 +11880,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionSlicingListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionSlicingListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionSlicingList;
@@ -11899,7 +11899,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinitionSlicing;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionSlicing);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -11992,7 +11992,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionSlicingDiscriminator; overload;
     function Clone : TFhirElementDefinitionSlicingDiscriminator; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -12021,7 +12021,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionSlicingDiscriminatorListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionSlicingDiscriminatorListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionSlicingDiscriminatorList;
@@ -12040,7 +12040,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinitionSlicingDiscriminator;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionSlicingDiscriminator);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -12137,7 +12137,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionBase; overload;
     function Clone : TFhirElementDefinitionBase; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -12176,7 +12176,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionBaseListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionBaseListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionBaseList;
@@ -12195,7 +12195,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinitionBase;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionBase);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -12299,7 +12299,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionType; overload;
     function Clone : TFhirElementDefinitionType; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -12340,7 +12340,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionTypeListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionTypeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionTypeList;
@@ -12359,7 +12359,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinitionType;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionType);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -12450,7 +12450,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionExample; overload;
     function Clone : TFhirElementDefinitionExample; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -12480,7 +12480,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionExampleListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionExampleListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionExampleList;
@@ -12499,7 +12499,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinitionExample;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionExample);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -12612,7 +12612,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionConstraint; overload;
     function Clone : TFhirElementDefinitionConstraint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -12676,7 +12676,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionConstraintListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionConstraintListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionConstraintList;
@@ -12695,7 +12695,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinitionConstraint;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionConstraint);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -12790,7 +12790,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionBinding; overload;
     function Clone : TFhirElementDefinitionBinding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -12824,7 +12824,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionBindingListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionBindingListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionBindingList;
@@ -12843,7 +12843,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinitionBinding;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionBinding);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -12944,7 +12944,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionMapping; overload;
     function Clone : TFhirElementDefinitionMapping; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -12990,7 +12990,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionMappingListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionMappingListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionMappingList;
@@ -13009,7 +13009,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinitionMapping;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionMapping);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -13204,7 +13204,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinition; overload;
     function Clone : TFhirElementDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -13413,7 +13413,7 @@ Type
   end;
 
 
-  TFhirElementDefinitionListEnumerator = class (TAdvObject)
+  TFhirElementDefinitionListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirElementDefinitionList;
@@ -13432,7 +13432,7 @@ Type
     function GetItemN(index : Integer) : TFhirElementDefinition;
     procedure SetItemN(index : Integer; value : TFhirElementDefinition);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -13576,7 +13576,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirTimingRepeat; overload;
     function Clone : TFhirTimingRepeat; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -13682,7 +13682,7 @@ Type
   end;
 
 
-  TFhirTimingRepeatListEnumerator = class (TAdvObject)
+  TFhirTimingRepeatListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirTimingRepeatList;
@@ -13701,7 +13701,7 @@ Type
     function GetItemN(index : Integer) : TFhirTimingRepeat;
     procedure SetItemN(index : Integer; value : TFhirTimingRepeat);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -13793,7 +13793,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirTiming; overload;
     function Clone : TFhirTiming; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -13825,7 +13825,7 @@ Type
   end;
 
 
-  TFhirTimingListEnumerator = class (TAdvObject)
+  TFhirTimingListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirTimingList;
@@ -13844,7 +13844,7 @@ Type
     function GetItemN(index : Integer) : TFhirTiming;
     procedure SetItemN(index : Integer; value : TFhirTiming);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -13929,7 +13929,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCount; overload;
     function Clone : TFhirCount; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -13947,7 +13947,7 @@ Type
   end;
 
 
-  TFhirCountListEnumerator = class (TAdvObject)
+  TFhirCountListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirCountList;
@@ -13966,7 +13966,7 @@ Type
     function GetItemN(index : Integer) : TFhirCount;
     procedure SetItemN(index : Integer; value : TFhirCount);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -14051,7 +14051,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMoney; overload;
     function Clone : TFhirMoney; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -14069,7 +14069,7 @@ Type
   end;
 
 
-  TFhirMoneyListEnumerator = class (TAdvObject)
+  TFhirMoneyListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirMoneyList;
@@ -14088,7 +14088,7 @@ Type
     function GetItemN(index : Integer) : TFhirMoney;
     procedure SetItemN(index : Integer; value : TFhirMoney);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -14173,7 +14173,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAge; overload;
     function Clone : TFhirAge; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -14191,7 +14191,7 @@ Type
   end;
 
 
-  TFhirAgeListEnumerator = class (TAdvObject)
+  TFhirAgeListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirAgeList;
@@ -14210,7 +14210,7 @@ Type
     function GetItemN(index : Integer) : TFhirAge;
     procedure SetItemN(index : Integer; value : TFhirAge);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -14295,7 +14295,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDistance; overload;
     function Clone : TFhirDistance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -14313,7 +14313,7 @@ Type
   end;
 
 
-  TFhirDistanceListEnumerator = class (TAdvObject)
+  TFhirDistanceListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDistanceList;
@@ -14332,7 +14332,7 @@ Type
     function GetItemN(index : Integer) : TFhirDistance;
     procedure SetItemN(index : Integer; value : TFhirDistance);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -14417,7 +14417,7 @@ Type
     constructor Create; Override;
     destructor Destroy; override;
     {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDuration; overload;
     function Clone : TFhirDuration; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -14435,7 +14435,7 @@ Type
   end;
 
 
-  TFhirDurationListEnumerator = class (TAdvObject)
+  TFhirDurationListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFhirDurationList;
@@ -14454,7 +14454,7 @@ Type
     function GetItemN(index : Integer) : TFhirDuration;
     procedure SetItemN(index : Integer; value : TFhirDuration);
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
 
     {!script hide}
@@ -15441,7 +15441,7 @@ begin
   result := id;
 end;
 
-procedure TFhirElement.Assign(oSource : TAdvObject);
+procedure TFhirElement.Assign(oSource : TFslObject);
 begin
   inherited;
   idElement := TFhirElement(oSource).idElement.Clone;
@@ -15684,7 +15684,7 @@ begin
   result := TFhirElement(ObjectByIndex[index]);
 end;
 
-function TFhirElementList.ItemClass: TAdvObjectClass;
+function TFhirElementList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElement;
 end;
@@ -15809,7 +15809,7 @@ begin
   inherited;
 end;
 
-procedure TFhirBackboneElement.Assign(oSource : TAdvObject);
+procedure TFhirBackboneElement.Assign(oSource : TFslObject);
 begin
   inherited;
   if (TFhirBackboneElement(oSource).FModifierExtensionList = nil) then
@@ -16013,7 +16013,7 @@ begin
   result := TFhirBackboneElement(ObjectByIndex[index]);
 end;
 
-function TFhirBackboneElementList.ItemClass: TAdvObjectClass;
+function TFhirBackboneElementList.ItemClass: TFslObjectClass;
 begin
   result := TFhirBackboneElement;
 end;
@@ -16080,7 +16080,7 @@ begin
   inherited;
 end;
 
-procedure TFhirBackboneType.Assign(oSource : TAdvObject);
+procedure TFhirBackboneType.Assign(oSource : TFslObject);
 begin
   inherited;
   if (TFhirBackboneType(oSource).FModifierExtensionList = nil) then
@@ -16284,7 +16284,7 @@ begin
   result := TFhirBackboneType(ObjectByIndex[index]);
 end;
 
-function TFhirBackboneTypeList.ItemClass: TAdvObjectClass;
+function TFhirBackboneTypeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirBackboneType;
 end;
@@ -16371,7 +16371,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'enum', false, nil, FValue));
 end;
 
-procedure TFhirEnum.Assign(oSource : TAdvObject);
+procedure TFhirEnum.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirEnum(oSource).Value;
@@ -16529,7 +16529,7 @@ begin
   result := TFhirEnum(ObjectByIndex[index]);
 end;
 
-function TFhirEnumList.ItemClass: TAdvObjectClass;
+function TFhirEnumList.ItemClass: TFslObjectClass;
 begin
   result := TFhirEnum;
 end;
@@ -16616,7 +16616,7 @@ begin
       oList.add(TFHIRProperty.create(self, 'value', 'date', false, nil, FValue.toString));
 end;
 
-procedure TFhirDate.Assign(oSource : TAdvObject);
+procedure TFhirDate.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirDate(oSource).Value;
@@ -16766,7 +16766,7 @@ begin
   result := TFhirDate(ObjectByIndex[index]);
 end;
 
-function TFhirDateList.ItemClass: TAdvObjectClass;
+function TFhirDateList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDate;
 end;
@@ -16853,7 +16853,7 @@ begin
       oList.add(TFHIRProperty.create(self, 'value', 'dateTime', false, nil, FValue.toString));
 end;
 
-procedure TFhirDateTime.Assign(oSource : TAdvObject);
+procedure TFhirDateTime.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirDateTime(oSource).Value;
@@ -17003,7 +17003,7 @@ begin
   result := TFhirDateTime(ObjectByIndex[index]);
 end;
 
-function TFhirDateTimeList.ItemClass: TAdvObjectClass;
+function TFhirDateTimeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDateTime;
 end;
@@ -17089,7 +17089,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'string', false, nil, FValue));
 end;
 
-procedure TFhirString.Assign(oSource : TAdvObject);
+procedure TFhirString.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirString(oSource).Value;
@@ -17233,7 +17233,7 @@ begin
   result := TFhirString(ObjectByIndex[index]);
 end;
 
-function TFhirStringList.ItemClass: TAdvObjectClass;
+function TFhirStringList.ItemClass: TFslObjectClass;
 begin
   result := TFhirString;
 end;
@@ -17319,7 +17319,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'integer', false, nil, FValue));
 end;
 
-procedure TFhirInteger.Assign(oSource : TAdvObject);
+procedure TFhirInteger.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirInteger(oSource).Value;
@@ -17463,7 +17463,7 @@ begin
   result := TFhirInteger(ObjectByIndex[index]);
 end;
 
-function TFhirIntegerList.ItemClass: TAdvObjectClass;
+function TFhirIntegerList.ItemClass: TFslObjectClass;
 begin
   result := TFhirInteger;
 end;
@@ -17549,7 +17549,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'uri', false, nil, FValue));
 end;
 
-procedure TFhirUri.Assign(oSource : TAdvObject);
+procedure TFhirUri.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirUri(oSource).Value;
@@ -17693,7 +17693,7 @@ begin
   result := TFhirUri(ObjectByIndex[index]);
 end;
 
-function TFhirUriList.ItemClass: TAdvObjectClass;
+function TFhirUriList.ItemClass: TFslObjectClass;
 begin
   result := TFhirUri;
 end;
@@ -17780,7 +17780,7 @@ begin
       oList.add(TFHIRProperty.create(self, 'value', 'instant', false, nil, FValue.toString));
 end;
 
-procedure TFhirInstant.Assign(oSource : TAdvObject);
+procedure TFhirInstant.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirInstant(oSource).Value;
@@ -17930,7 +17930,7 @@ begin
   result := TFhirInstant(ObjectByIndex[index]);
 end;
 
-function TFhirInstantList.ItemClass: TAdvObjectClass;
+function TFhirInstantList.ItemClass: TFslObjectClass;
 begin
   result := TFhirInstant;
 end;
@@ -18016,7 +18016,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'xhtml', false, nil, FValue));
 end;
 
-procedure TFhirXhtml.Assign(oSource : TAdvObject);
+procedure TFhirXhtml.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirXhtml(oSource).Value;
@@ -18160,7 +18160,7 @@ begin
   result := TFhirXhtml(ObjectByIndex[index]);
 end;
 
-function TFhirXhtmlList.ItemClass: TAdvObjectClass;
+function TFhirXhtmlList.ItemClass: TFslObjectClass;
 begin
   result := TFhirXhtml;
 end;
@@ -18246,7 +18246,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'boolean', false, nil, LCBooleanToString(FValue)));
 end;
 
-procedure TFhirBoolean.Assign(oSource : TAdvObject);
+procedure TFhirBoolean.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirBoolean(oSource).Value;
@@ -18390,7 +18390,7 @@ begin
   result := TFhirBoolean(ObjectByIndex[index]);
 end;
 
-function TFhirBooleanList.ItemClass: TAdvObjectClass;
+function TFhirBooleanList.ItemClass: TFslObjectClass;
 begin
   result := TFhirBoolean;
 end;
@@ -18476,7 +18476,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'base64Binary', false, nil, FValue));
 end;
 
-procedure TFhirBase64Binary.Assign(oSource : TAdvObject);
+procedure TFhirBase64Binary.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirBase64Binary(oSource).Value;
@@ -18620,7 +18620,7 @@ begin
   result := TFhirBase64Binary(ObjectByIndex[index]);
 end;
 
-function TFhirBase64BinaryList.ItemClass: TAdvObjectClass;
+function TFhirBase64BinaryList.ItemClass: TFslObjectClass;
 begin
   result := TFhirBase64Binary;
 end;
@@ -18706,7 +18706,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'time', false, nil, FValue));
 end;
 
-procedure TFhirTime.Assign(oSource : TAdvObject);
+procedure TFhirTime.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirTime(oSource).Value;
@@ -18850,7 +18850,7 @@ begin
   result := TFhirTime(ObjectByIndex[index]);
 end;
 
-function TFhirTimeList.ItemClass: TAdvObjectClass;
+function TFhirTimeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirTime;
 end;
@@ -18936,7 +18936,7 @@ begin
     oList.add(TFHIRProperty.create(self, 'value', 'decimal', false, nil, FValue));
 end;
 
-procedure TFhirDecimal.Assign(oSource : TAdvObject);
+procedure TFhirDecimal.Assign(oSource : TFslObject);
 begin
   inherited;
   FValue := TFhirDecimal(oSource).Value;
@@ -19080,7 +19080,7 @@ begin
   result := TFhirDecimal(ObjectByIndex[index]);
 end;
 
-function TFhirDecimalList.ItemClass: TAdvObjectClass;
+function TFhirDecimalList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDecimal;
 end;
@@ -19240,7 +19240,7 @@ begin
   result := TFhirCode(ObjectByIndex[index]);
 end;
 
-function TFhirCodeList.ItemClass: TAdvObjectClass;
+function TFhirCodeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirCode;
 end;
@@ -19400,7 +19400,7 @@ begin
   result := TFhirCanonical(ObjectByIndex[index]);
 end;
 
-function TFhirCanonicalList.ItemClass: TAdvObjectClass;
+function TFhirCanonicalList.ItemClass: TFslObjectClass;
 begin
   result := TFhirCanonical;
 end;
@@ -19560,7 +19560,7 @@ begin
   result := TFhirOid(ObjectByIndex[index]);
 end;
 
-function TFhirOidList.ItemClass: TAdvObjectClass;
+function TFhirOidList.ItemClass: TFslObjectClass;
 begin
   result := TFhirOid;
 end;
@@ -19720,7 +19720,7 @@ begin
   result := TFhirUuid(ObjectByIndex[index]);
 end;
 
-function TFhirUuidList.ItemClass: TAdvObjectClass;
+function TFhirUuidList.ItemClass: TFslObjectClass;
 begin
   result := TFhirUuid;
 end;
@@ -19880,7 +19880,7 @@ begin
   result := TFhirUrl(ObjectByIndex[index]);
 end;
 
-function TFhirUrlList.ItemClass: TAdvObjectClass;
+function TFhirUrlList.ItemClass: TFslObjectClass;
 begin
   result := TFhirUrl;
 end;
@@ -20040,7 +20040,7 @@ begin
   result := TFhirMarkdown(ObjectByIndex[index]);
 end;
 
-function TFhirMarkdownList.ItemClass: TAdvObjectClass;
+function TFhirMarkdownList.ItemClass: TFslObjectClass;
 begin
   result := TFhirMarkdown;
 end;
@@ -20200,7 +20200,7 @@ begin
   result := TFhirUnsignedInt(ObjectByIndex[index]);
 end;
 
-function TFhirUnsignedIntList.ItemClass: TAdvObjectClass;
+function TFhirUnsignedIntList.ItemClass: TFslObjectClass;
 begin
   result := TFhirUnsignedInt;
 end;
@@ -20360,7 +20360,7 @@ begin
   result := TFhirId(ObjectByIndex[index]);
 end;
 
-function TFhirIdList.ItemClass: TAdvObjectClass;
+function TFhirIdList.ItemClass: TFslObjectClass;
 begin
   result := TFhirId;
 end;
@@ -20520,7 +20520,7 @@ begin
   result := TFhirPositiveInt(ObjectByIndex[index]);
 end;
 
-function TFhirPositiveIntList.ItemClass: TAdvObjectClass;
+function TFhirPositiveIntList.ItemClass: TFslObjectClass;
 begin
   result := TFhirPositiveInt;
 end;
@@ -20615,7 +20615,7 @@ begin
   inherited;
 end;
 
-procedure TFhirExtension.Assign(oSource : TAdvObject);
+procedure TFhirExtension.Assign(oSource : TFslObject);
 begin
   inherited;
   urlElement := TFhirExtension(oSource).urlElement.Clone;
@@ -20830,7 +20830,7 @@ begin
   result := TFhirExtension(ObjectByIndex[index]);
 end;
 
-function TFhirExtensionList.ItemClass: TAdvObjectClass;
+function TFhirExtensionList.ItemClass: TFslObjectClass;
 begin
   result := TFhirExtension;
 end;
@@ -20925,7 +20925,7 @@ begin
   inherited;
 end;
 
-procedure TFhirNarrative.Assign(oSource : TAdvObject);
+procedure TFhirNarrative.Assign(oSource : TFslObject);
 begin
   inherited;
   FStatus := TFhirNarrative(oSource).FStatus.Link;
@@ -21138,7 +21138,7 @@ begin
   result := TFhirNarrative(ObjectByIndex[index]);
 end;
 
-function TFhirNarrativeList.ItemClass: TAdvObjectClass;
+function TFhirNarrativeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirNarrative;
 end;
@@ -21234,7 +21234,7 @@ begin
   inherited;
 end;
 
-procedure TFhirContributor.Assign(oSource : TAdvObject);
+procedure TFhirContributor.Assign(oSource : TFslObject);
 begin
   inherited;
   FType_ := TFhirContributor(oSource).FType_.Link;
@@ -21501,7 +21501,7 @@ begin
   result := TFhirContributor(ObjectByIndex[index]);
 end;
 
-function TFhirContributorList.ItemClass: TAdvObjectClass;
+function TFhirContributorList.ItemClass: TFslObjectClass;
 begin
   result := TFhirContributor;
 end;
@@ -21575,7 +21575,7 @@ begin
   inherited;
 end;
 
-procedure TFhirAttachment.Assign(oSource : TAdvObject);
+procedure TFhirAttachment.Assign(oSource : TFslObject);
 begin
   inherited;
   contentTypeElement := TFhirAttachment(oSource).contentTypeElement.Clone;
@@ -22011,7 +22011,7 @@ begin
   result := TFhirAttachment(ObjectByIndex[index]);
 end;
 
-function TFhirAttachmentList.ItemClass: TAdvObjectClass;
+function TFhirAttachmentList.ItemClass: TFslObjectClass;
 begin
   result := TFhirAttachment;
 end;
@@ -22134,7 +22134,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDataRequirementCodeFilter.Assign(oSource : TAdvObject);
+procedure TFhirDataRequirementCodeFilter.Assign(oSource : TFslObject);
 begin
   inherited;
   pathElement := TFhirDataRequirementCodeFilter(oSource).pathElement.Clone;
@@ -22383,7 +22383,7 @@ begin
   result := TFhirDataRequirementCodeFilter(ObjectByIndex[index]);
 end;
 
-function TFhirDataRequirementCodeFilterList.ItemClass: TAdvObjectClass;
+function TFhirDataRequirementCodeFilterList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDataRequirementCodeFilter;
 end;
@@ -22451,7 +22451,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDataRequirementDateFilter.Assign(oSource : TAdvObject);
+procedure TFhirDataRequirementDateFilter.Assign(oSource : TFslObject);
 begin
   inherited;
   pathElement := TFhirDataRequirementDateFilter(oSource).pathElement.Clone;
@@ -22666,7 +22666,7 @@ begin
   result := TFhirDataRequirementDateFilter(ObjectByIndex[index]);
 end;
 
-function TFhirDataRequirementDateFilterList.ItemClass: TAdvObjectClass;
+function TFhirDataRequirementDateFilterList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDataRequirementDateFilter;
 end;
@@ -22734,7 +22734,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDataRequirementSort.Assign(oSource : TAdvObject);
+procedure TFhirDataRequirementSort.Assign(oSource : TFslObject);
 begin
   inherited;
   pathElement := TFhirDataRequirementSort(oSource).pathElement.Clone;
@@ -22967,7 +22967,7 @@ begin
   result := TFhirDataRequirementSort(ObjectByIndex[index]);
 end;
 
-function TFhirDataRequirementSortList.ItemClass: TAdvObjectClass;
+function TFhirDataRequirementSortList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDataRequirementSort;
 end;
@@ -23041,7 +23041,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDataRequirement.Assign(oSource : TAdvObject);
+procedure TFhirDataRequirement.Assign(oSource : TFslObject);
 begin
   inherited;
   FType_ := TFhirDataRequirement(oSource).FType_.Link;
@@ -23450,7 +23450,7 @@ begin
   result := TFhirDataRequirement(ObjectByIndex[index]);
 end;
 
-function TFhirDataRequirementList.ItemClass: TAdvObjectClass;
+function TFhirDataRequirementList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDataRequirement;
 end;
@@ -23519,7 +23519,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDosageDoseAndRate.Assign(oSource : TAdvObject);
+procedure TFhirDosageDoseAndRate.Assign(oSource : TFslObject);
 begin
   inherited;
   type_ := TFhirDosageDoseAndRate(oSource).type_.Clone;
@@ -23727,7 +23727,7 @@ begin
   result := TFhirDosageDoseAndRate(ObjectByIndex[index]);
 end;
 
-function TFhirDosageDoseAndRateList.ItemClass: TAdvObjectClass;
+function TFhirDosageDoseAndRateList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDosageDoseAndRate;
 end;
@@ -23806,7 +23806,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDosage.Assign(oSource : TAdvObject);
+procedure TFhirDosage.Assign(oSource : TFslObject);
 begin
   inherited;
   sequenceElement := TFhirDosage(oSource).sequenceElement.Clone;
@@ -24258,7 +24258,7 @@ begin
   result := TFhirDosage(ObjectByIndex[index]);
 end;
 
-function TFhirDosageList.ItemClass: TAdvObjectClass;
+function TFhirDosageList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDosage;
 end;
@@ -24329,7 +24329,7 @@ begin
   inherited;
 end;
 
-procedure TFhirMarketingStatus.Assign(oSource : TAdvObject);
+procedure TFhirMarketingStatus.Assign(oSource : TFslObject);
 begin
   inherited;
   country := TFhirMarketingStatus(oSource).country.Clone;
@@ -24586,7 +24586,7 @@ begin
   result := TFhirMarketingStatus(ObjectByIndex[index]);
 end;
 
-function TFhirMarketingStatusList.ItemClass: TAdvObjectClass;
+function TFhirMarketingStatusList.ItemClass: TFslObjectClass;
 begin
   result := TFhirMarketingStatus;
 end;
@@ -24685,7 +24685,7 @@ begin
   inherited;
 end;
 
-procedure TFhirIdentifier.Assign(oSource : TAdvObject);
+procedure TFhirIdentifier.Assign(oSource : TFslObject);
 begin
   inherited;
   FUse := TFhirIdentifier(oSource).FUse.Link;
@@ -24996,7 +24996,7 @@ begin
   result := TFhirIdentifier(ObjectByIndex[index]);
 end;
 
-function TFhirIdentifierList.ItemClass: TAdvObjectClass;
+function TFhirIdentifierList.ItemClass: TFslObjectClass;
 begin
   result := TFhirIdentifier;
 end;
@@ -25064,7 +25064,7 @@ begin
   inherited;
 end;
 
-procedure TFhirSubstanceAmountReferenceRange.Assign(oSource : TAdvObject);
+procedure TFhirSubstanceAmountReferenceRange.Assign(oSource : TFslObject);
 begin
   inherited;
   lowLimit := TFhirSubstanceAmountReferenceRange(oSource).lowLimit.Clone;
@@ -25263,7 +25263,7 @@ begin
   result := TFhirSubstanceAmountReferenceRange(ObjectByIndex[index]);
 end;
 
-function TFhirSubstanceAmountReferenceRangeList.ItemClass: TAdvObjectClass;
+function TFhirSubstanceAmountReferenceRangeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirSubstanceAmountReferenceRange;
 end;
@@ -25333,7 +25333,7 @@ begin
   inherited;
 end;
 
-procedure TFhirSubstanceAmount.Assign(oSource : TAdvObject);
+procedure TFhirSubstanceAmount.Assign(oSource : TFslObject);
 begin
   inherited;
   amount := TFhirSubstanceAmount(oSource).amount.Clone;
@@ -25577,7 +25577,7 @@ begin
   result := TFhirSubstanceAmount(ObjectByIndex[index]);
 end;
 
-function TFhirSubstanceAmountList.ItemClass: TAdvObjectClass;
+function TFhirSubstanceAmountList.ItemClass: TFslObjectClass;
 begin
   result := TFhirSubstanceAmount;
 end;
@@ -25648,7 +25648,7 @@ begin
   inherited;
 end;
 
-procedure TFhirCoding.Assign(oSource : TAdvObject);
+procedure TFhirCoding.Assign(oSource : TFslObject);
 begin
   inherited;
   systemElement := TFhirCoding(oSource).systemElement.Clone;
@@ -25983,7 +25983,7 @@ begin
   result := TFhirCoding(ObjectByIndex[index]);
 end;
 
-function TFhirCodingList.ItemClass: TAdvObjectClass;
+function TFhirCodingList.ItemClass: TFslObjectClass;
 begin
   result := TFhirCoding;
 end;
@@ -26056,7 +26056,7 @@ begin
   inherited;
 end;
 
-procedure TFhirSampledData.Assign(oSource : TAdvObject);
+procedure TFhirSampledData.Assign(oSource : TFslObject);
 begin
   inherited;
   origin := TFhirSampledData(oSource).origin.Clone;
@@ -26444,7 +26444,7 @@ begin
   result := TFhirSampledData(ObjectByIndex[index]);
 end;
 
-function TFhirSampledDataList.ItemClass: TAdvObjectClass;
+function TFhirSampledDataList.ItemClass: TFslObjectClass;
 begin
   result := TFhirSampledData;
 end;
@@ -26512,7 +26512,7 @@ begin
   inherited;
 end;
 
-procedure TFhirRatio.Assign(oSource : TAdvObject);
+procedure TFhirRatio.Assign(oSource : TFslObject);
 begin
   inherited;
   numerator := TFhirRatio(oSource).numerator.Clone;
@@ -26711,7 +26711,7 @@ begin
   result := TFhirRatio(ObjectByIndex[index]);
 end;
 
-function TFhirRatioList.ItemClass: TAdvObjectClass;
+function TFhirRatioList.ItemClass: TFslObjectClass;
 begin
   result := TFhirRatio;
 end;
@@ -26784,7 +26784,7 @@ begin
   inherited;
 end;
 
-procedure TFhirSubstanceMoiety.Assign(oSource : TAdvObject);
+procedure TFhirSubstanceMoiety.Assign(oSource : TFslObject);
 begin
   inherited;
   role := TFhirSubstanceMoiety(oSource).role.Clone;
@@ -27094,7 +27094,7 @@ begin
   result := TFhirSubstanceMoiety(ObjectByIndex[index]);
 end;
 
-function TFhirSubstanceMoietyList.ItemClass: TAdvObjectClass;
+function TFhirSubstanceMoietyList.ItemClass: TFslObjectClass;
 begin
   result := TFhirSubstanceMoiety;
 end;
@@ -27164,7 +27164,7 @@ begin
   inherited;
 end;
 
-procedure TFhirReference.Assign(oSource : TAdvObject);
+procedure TFhirReference.Assign(oSource : TFslObject);
 begin
   inherited;
   referenceElement := TFhirReference(oSource).referenceElement.Clone;
@@ -27450,7 +27450,7 @@ begin
   result := TFhirReference(ObjectByIndex[index]);
 end;
 
-function TFhirReferenceList.ItemClass: TAdvObjectClass;
+function TFhirReferenceList.ItemClass: TFslObjectClass;
 begin
   result := TFhirReference;
 end;
@@ -27546,7 +27546,7 @@ begin
   inherited;
 end;
 
-procedure TFhirTriggerDefinitionCondition.Assign(oSource : TAdvObject);
+procedure TFhirTriggerDefinitionCondition.Assign(oSource : TFslObject);
 begin
   inherited;
   descriptionElement := TFhirTriggerDefinitionCondition(oSource).descriptionElement.Clone;
@@ -27818,7 +27818,7 @@ begin
   result := TFhirTriggerDefinitionCondition(ObjectByIndex[index]);
 end;
 
-function TFhirTriggerDefinitionConditionList.ItemClass: TAdvObjectClass;
+function TFhirTriggerDefinitionConditionList.ItemClass: TFslObjectClass;
 begin
   result := TFhirTriggerDefinitionCondition;
 end;
@@ -27889,7 +27889,7 @@ begin
   inherited;
 end;
 
-procedure TFhirTriggerDefinition.Assign(oSource : TAdvObject);
+procedure TFhirTriggerDefinition.Assign(oSource : TFslObject);
 begin
   inherited;
   FType_ := TFhirTriggerDefinition(oSource).FType_.Link;
@@ -28163,7 +28163,7 @@ begin
   result := TFhirTriggerDefinition(ObjectByIndex[index]);
 end;
 
-function TFhirTriggerDefinitionList.ItemClass: TAdvObjectClass;
+function TFhirTriggerDefinitionList.ItemClass: TFslObjectClass;
 begin
   result := TFhirTriggerDefinition;
 end;
@@ -28231,7 +28231,7 @@ begin
   inherited;
 end;
 
-procedure TFhirPeriod.Assign(oSource : TAdvObject);
+procedure TFhirPeriod.Assign(oSource : TFslObject);
 begin
   inherited;
   startElement := TFhirPeriod(oSource).startElement.Clone;
@@ -28458,7 +28458,7 @@ begin
   result := TFhirPeriod(ObjectByIndex[index]);
 end;
 
-function TFhirPeriodList.ItemClass: TAdvObjectClass;
+function TFhirPeriodList.ItemClass: TFslObjectClass;
 begin
   result := TFhirPeriod;
 end;
@@ -28556,7 +28556,7 @@ begin
   inherited;
 end;
 
-procedure TFhirQuantity.Assign(oSource : TAdvObject);
+procedure TFhirQuantity.Assign(oSource : TFslObject);
 begin
   inherited;
   valueElement := TFhirQuantity(oSource).valueElement.Clone;
@@ -28892,7 +28892,7 @@ begin
   result := TFhirQuantity(ObjectByIndex[index]);
 end;
 
-function TFhirQuantityList.ItemClass: TAdvObjectClass;
+function TFhirQuantityList.ItemClass: TFslObjectClass;
 begin
   result := TFhirQuantity;
 end;
@@ -28960,7 +28960,7 @@ begin
   inherited;
 end;
 
-procedure TFhirRange.Assign(oSource : TAdvObject);
+procedure TFhirRange.Assign(oSource : TFslObject);
 begin
   inherited;
   low := TFhirRange(oSource).low.Clone;
@@ -29159,7 +29159,7 @@ begin
   result := TFhirRange(ObjectByIndex[index]);
 end;
 
-function TFhirRangeList.ItemClass: TAdvObjectClass;
+function TFhirRangeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirRange;
 end;
@@ -29258,7 +29258,7 @@ begin
   inherited;
 end;
 
-procedure TFhirRelatedArtifact.Assign(oSource : TAdvObject);
+procedure TFhirRelatedArtifact.Assign(oSource : TFslObject);
 begin
   inherited;
   FType_ := TFhirRelatedArtifact(oSource).FType_.Link;
@@ -29608,7 +29608,7 @@ begin
   result := TFhirRelatedArtifact(ObjectByIndex[index]);
 end;
 
-function TFhirRelatedArtifactList.ItemClass: TAdvObjectClass;
+function TFhirRelatedArtifactList.ItemClass: TFslObjectClass;
 begin
   result := TFhirRelatedArtifact;
 end;
@@ -29677,7 +29677,7 @@ begin
   inherited;
 end;
 
-procedure TFhirAnnotation.Assign(oSource : TAdvObject);
+procedure TFhirAnnotation.Assign(oSource : TFslObject);
 begin
   inherited;
   author := TFhirAnnotation(oSource).author.Clone;
@@ -29921,7 +29921,7 @@ begin
   result := TFhirAnnotation(ObjectByIndex[index]);
 end;
 
-function TFhirAnnotationList.ItemClass: TAdvObjectClass;
+function TFhirAnnotationList.ItemClass: TFslObjectClass;
 begin
   result := TFhirAnnotation;
 end;
@@ -29991,7 +29991,7 @@ begin
   inherited;
 end;
 
-procedure TFhirProductShelfLife.Assign(oSource : TAdvObject);
+procedure TFhirProductShelfLife.Assign(oSource : TFslObject);
 begin
   inherited;
   identifier := TFhirProductShelfLife(oSource).identifier.Clone;
@@ -30238,7 +30238,7 @@ begin
   result := TFhirProductShelfLife(ObjectByIndex[index]);
 end;
 
-function TFhirProductShelfLifeList.ItemClass: TAdvObjectClass;
+function TFhirProductShelfLifeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirProductShelfLife;
 end;
@@ -30306,7 +30306,7 @@ begin
   inherited;
 end;
 
-procedure TFhirContactDetail.Assign(oSource : TAdvObject);
+procedure TFhirContactDetail.Assign(oSource : TFslObject);
 begin
   inherited;
   nameElement := TFhirContactDetail(oSource).nameElement.Clone;
@@ -30543,7 +30543,7 @@ begin
   result := TFhirContactDetail(ObjectByIndex[index]);
 end;
 
-function TFhirContactDetailList.ItemClass: TAdvObjectClass;
+function TFhirContactDetailList.ItemClass: TFslObjectClass;
 begin
   result := TFhirContactDetail;
 end;
@@ -30611,7 +30611,7 @@ begin
   inherited;
 end;
 
-procedure TFhirUsageContext.Assign(oSource : TAdvObject);
+procedure TFhirUsageContext.Assign(oSource : TFslObject);
 begin
   inherited;
   code := TFhirUsageContext(oSource).code.Clone;
@@ -30807,7 +30807,7 @@ begin
   result := TFhirUsageContext(ObjectByIndex[index]);
 end;
 
-function TFhirUsageContextList.ItemClass: TAdvObjectClass;
+function TFhirUsageContextList.ItemClass: TFslObjectClass;
 begin
   result := TFhirUsageContext;
 end;
@@ -30880,7 +30880,7 @@ begin
   inherited;
 end;
 
-procedure TFhirSignature.Assign(oSource : TAdvObject);
+procedure TFhirSignature.Assign(oSource : TFslObject);
 begin
   inherited;
   if (TFhirSignature(oSource).FType_List = nil) then
@@ -31237,7 +31237,7 @@ begin
   result := TFhirSignature(ObjectByIndex[index]);
 end;
 
-function TFhirSignatureList.ItemClass: TAdvObjectClass;
+function TFhirSignatureList.ItemClass: TFslObjectClass;
 begin
   result := TFhirSignature;
 end;
@@ -31314,7 +31314,7 @@ begin
   inherited;
 end;
 
-procedure TFhirProdCharacteristic.Assign(oSource : TAdvObject);
+procedure TFhirProdCharacteristic.Assign(oSource : TFslObject);
 begin
   inherited;
   height := TFhirProdCharacteristic(oSource).height.Clone;
@@ -31719,7 +31719,7 @@ begin
   result := TFhirProdCharacteristic(ObjectByIndex[index]);
 end;
 
-function TFhirProdCharacteristicList.ItemClass: TAdvObjectClass;
+function TFhirProdCharacteristicList.ItemClass: TFslObjectClass;
 begin
   result := TFhirProdCharacteristic;
 end;
@@ -31787,7 +31787,7 @@ begin
   inherited;
 end;
 
-procedure TFhirCodeableConcept.Assign(oSource : TAdvObject);
+procedure TFhirCodeableConcept.Assign(oSource : TFslObject);
 begin
   inherited;
   if (TFhirCodeableConcept(oSource).FCodingList = nil) then
@@ -32024,7 +32024,7 @@ begin
   result := TFhirCodeableConcept(ObjectByIndex[index]);
 end;
 
-function TFhirCodeableConceptList.ItemClass: TAdvObjectClass;
+function TFhirCodeableConceptList.ItemClass: TFslObjectClass;
 begin
   result := TFhirCodeableConcept;
 end;
@@ -32124,7 +32124,7 @@ begin
   inherited;
 end;
 
-procedure TFhirParameterDefinition.Assign(oSource : TAdvObject);
+procedure TFhirParameterDefinition.Assign(oSource : TFslObject);
 begin
   inherited;
   nameElement := TFhirParameterDefinition(oSource).nameElement.Clone;
@@ -32524,7 +32524,7 @@ begin
   result := TFhirParameterDefinition(ObjectByIndex[index]);
 end;
 
-function TFhirParameterDefinitionList.ItemClass: TAdvObjectClass;
+function TFhirParameterDefinitionList.ItemClass: TFslObjectClass;
 begin
   result := TFhirParameterDefinition;
 end;
@@ -32649,7 +32649,7 @@ begin
   inherited;
 end;
 
-procedure TFhirContactPoint.Assign(oSource : TAdvObject);
+procedure TFhirContactPoint.Assign(oSource : TFslObject);
 begin
   inherited;
   FSystem := TFhirContactPoint(oSource).FSystem.Link;
@@ -32961,7 +32961,7 @@ begin
   result := TFhirContactPoint(ObjectByIndex[index]);
 end;
 
-function TFhirContactPointList.ItemClass: TAdvObjectClass;
+function TFhirContactPointList.ItemClass: TFslObjectClass;
 begin
   result := TFhirContactPoint;
 end;
@@ -33061,7 +33061,7 @@ begin
   inherited;
 end;
 
-procedure TFhirHumanName.Assign(oSource : TAdvObject);
+procedure TFhirHumanName.Assign(oSource : TFslObject);
 begin
   inherited;
   FUse := TFhirHumanName(oSource).FUse.Link;
@@ -33443,7 +33443,7 @@ begin
   result := TFhirHumanName(ObjectByIndex[index]);
 end;
 
-function TFhirHumanNameList.ItemClass: TAdvObjectClass;
+function TFhirHumanNameList.ItemClass: TFslObjectClass;
 begin
   result := TFhirHumanName;
 end;
@@ -33515,7 +33515,7 @@ begin
   inherited;
 end;
 
-procedure TFhirMeta.Assign(oSource : TAdvObject);
+procedure TFhirMeta.Assign(oSource : TFslObject);
 begin
   inherited;
   versionIdElement := TFhirMeta(oSource).versionIdElement.Clone;
@@ -33880,7 +33880,7 @@ begin
   result := TFhirMeta(ObjectByIndex[index]);
 end;
 
-function TFhirMetaList.ItemClass: TAdvObjectClass;
+function TFhirMetaList.ItemClass: TFslObjectClass;
 begin
   result := TFhirMeta;
 end;
@@ -34010,7 +34010,7 @@ begin
   inherited;
 end;
 
-procedure TFhirAddress.Assign(oSource : TAdvObject);
+procedure TFhirAddress.Assign(oSource : TFslObject);
 begin
   inherited;
   FUse := TFhirAddress(oSource).FUse.Link;
@@ -34492,7 +34492,7 @@ begin
   result := TFhirAddress(ObjectByIndex[index]);
 end;
 
-function TFhirAddressList.ItemClass: TAdvObjectClass;
+function TFhirAddressList.ItemClass: TFslObjectClass;
 begin
   result := TFhirAddress;
 end;
@@ -34751,7 +34751,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinitionSlicing.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinitionSlicing.Assign(oSource : TFslObject);
 begin
   inherited;
   if (TFhirElementDefinitionSlicing(oSource).FDiscriminatorList = nil) then
@@ -35047,7 +35047,7 @@ begin
   result := TFhirElementDefinitionSlicing(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionSlicingList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionSlicingList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinitionSlicing;
 end;
@@ -35115,7 +35115,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinitionSlicingDiscriminator.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinitionSlicingDiscriminator.Assign(oSource : TFslObject);
 begin
   inherited;
   FType_ := TFhirElementDefinitionSlicingDiscriminator(oSource).FType_.Link;
@@ -35348,7 +35348,7 @@ begin
   result := TFhirElementDefinitionSlicingDiscriminator(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionSlicingDiscriminatorList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionSlicingDiscriminatorList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinitionSlicingDiscriminator;
 end;
@@ -35417,7 +35417,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinitionBase.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinitionBase.Assign(oSource : TFslObject);
 begin
   inherited;
   pathElement := TFhirElementDefinitionBase(oSource).pathElement.Clone;
@@ -35689,7 +35689,7 @@ begin
   result := TFhirElementDefinitionBase(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionBaseList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionBaseList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinitionBase;
 end;
@@ -35760,7 +35760,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinitionType.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinitionType.Assign(oSource : TFslObject);
 begin
   inherited;
   codeElement := TFhirElementDefinitionType(oSource).codeElement.Clone;
@@ -36114,7 +36114,7 @@ begin
   result := TFhirElementDefinitionType(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionTypeList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionTypeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinitionType;
 end;
@@ -36182,7 +36182,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinitionExample.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinitionExample.Assign(oSource : TFslObject);
 begin
   inherited;
   label_Element := TFhirElementDefinitionExample(oSource).label_Element.Clone;
@@ -36397,7 +36397,7 @@ begin
   result := TFhirElementDefinitionExample(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionExampleList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionExampleList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinitionExample;
 end;
@@ -36470,7 +36470,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinitionConstraint.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinitionConstraint.Assign(oSource : TFslObject);
 begin
   inherited;
   keyElement := TFhirElementDefinitionConstraint(oSource).keyElement.Clone;
@@ -36874,7 +36874,7 @@ begin
   result := TFhirElementDefinitionConstraint(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionConstraintList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionConstraintList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinitionConstraint;
 end;
@@ -36943,7 +36943,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinitionBinding.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinitionBinding.Assign(oSource : TFslObject);
 begin
   inherited;
   FStrength := TFhirElementDefinitionBinding(oSource).FStrength.Link;
@@ -37188,7 +37188,7 @@ begin
   result := TFhirElementDefinitionBinding(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionBindingList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionBindingList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinitionBinding;
 end;
@@ -37258,7 +37258,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinitionMapping.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinitionMapping.Assign(oSource : TFslObject);
 begin
   inherited;
   identityElement := TFhirElementDefinitionMapping(oSource).identityElement.Clone;
@@ -37563,7 +37563,7 @@ begin
   result := TFhirElementDefinitionMapping(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionMappingList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionMappingList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinitionMapping;
 end;
@@ -37662,7 +37662,7 @@ begin
   inherited;
 end;
 
-procedure TFhirElementDefinition.Assign(oSource : TAdvObject);
+procedure TFhirElementDefinition.Assign(oSource : TFslObject);
 begin
   inherited;
   pathElement := TFhirElementDefinition(oSource).pathElement.Clone;
@@ -38779,7 +38779,7 @@ begin
   result := TFhirElementDefinition(ObjectByIndex[index]);
 end;
 
-function TFhirElementDefinitionList.ItemClass: TAdvObjectClass;
+function TFhirElementDefinitionList.ItemClass: TFslObjectClass;
 begin
   result := TFhirElementDefinition;
 end;
@@ -38941,7 +38941,7 @@ begin
   inherited;
 end;
 
-procedure TFhirTimingRepeat.Assign(oSource : TAdvObject);
+procedure TFhirTimingRepeat.Assign(oSource : TFslObject);
 begin
   inherited;
   bounds := TFhirTimingRepeat(oSource).bounds.Clone;
@@ -39628,7 +39628,7 @@ begin
   result := TFhirTimingRepeat(ObjectByIndex[index]);
 end;
 
-function TFhirTimingRepeatList.ItemClass: TAdvObjectClass;
+function TFhirTimingRepeatList.ItemClass: TFslObjectClass;
 begin
   result := TFhirTimingRepeat;
 end;
@@ -39697,7 +39697,7 @@ begin
   inherited;
 end;
 
-procedure TFhirTiming.Assign(oSource : TAdvObject);
+procedure TFhirTiming.Assign(oSource : TFslObject);
 begin
   inherited;
   if (TFhirTiming(oSource).FEventList = nil) then
@@ -39930,7 +39930,7 @@ begin
   result := TFhirTiming(ObjectByIndex[index]);
 end;
 
-function TFhirTimingList.ItemClass: TAdvObjectClass;
+function TFhirTimingList.ItemClass: TFslObjectClass;
 begin
   result := TFhirTiming;
 end;
@@ -39996,7 +39996,7 @@ begin
   inherited;
 end;
 
-procedure TFhirCount.Assign(oSource : TAdvObject);
+procedure TFhirCount.Assign(oSource : TFslObject);
 begin
   inherited;
 end;
@@ -40165,7 +40165,7 @@ begin
   result := TFhirCount(ObjectByIndex[index]);
 end;
 
-function TFhirCountList.ItemClass: TAdvObjectClass;
+function TFhirCountList.ItemClass: TFslObjectClass;
 begin
   result := TFhirCount;
 end;
@@ -40231,7 +40231,7 @@ begin
   inherited;
 end;
 
-procedure TFhirMoney.Assign(oSource : TAdvObject);
+procedure TFhirMoney.Assign(oSource : TFslObject);
 begin
   inherited;
 end;
@@ -40400,7 +40400,7 @@ begin
   result := TFhirMoney(ObjectByIndex[index]);
 end;
 
-function TFhirMoneyList.ItemClass: TAdvObjectClass;
+function TFhirMoneyList.ItemClass: TFslObjectClass;
 begin
   result := TFhirMoney;
 end;
@@ -40466,7 +40466,7 @@ begin
   inherited;
 end;
 
-procedure TFhirAge.Assign(oSource : TAdvObject);
+procedure TFhirAge.Assign(oSource : TFslObject);
 begin
   inherited;
 end;
@@ -40635,7 +40635,7 @@ begin
   result := TFhirAge(ObjectByIndex[index]);
 end;
 
-function TFhirAgeList.ItemClass: TAdvObjectClass;
+function TFhirAgeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirAge;
 end;
@@ -40701,7 +40701,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDistance.Assign(oSource : TAdvObject);
+procedure TFhirDistance.Assign(oSource : TFslObject);
 begin
   inherited;
 end;
@@ -40870,7 +40870,7 @@ begin
   result := TFhirDistance(ObjectByIndex[index]);
 end;
 
-function TFhirDistanceList.ItemClass: TAdvObjectClass;
+function TFhirDistanceList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDistance;
 end;
@@ -40936,7 +40936,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDuration.Assign(oSource : TAdvObject);
+procedure TFhirDuration.Assign(oSource : TFslObject);
 begin
   inherited;
 end;
@@ -41105,7 +41105,7 @@ begin
   result := TFhirDuration(ObjectByIndex[index]);
 end;
 
-function TFhirDurationList.ItemClass: TAdvObjectClass;
+function TFhirDurationList.ItemClass: TFslObjectClass;
 begin
   result := TFhirDuration;
 end;

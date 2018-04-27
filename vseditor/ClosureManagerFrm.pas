@@ -42,20 +42,20 @@ type
 
   TClosureTableRecordSource = class (TFHIRCoding)
   private
-    FTargets: TAdvList<TFHIRCoding>;
+    FTargets: TFslList<TFHIRCoding>;
   public
     constructor Create; override;
     destructor Destroy; override;
     function link :  TClosureTableRecordSource; overload;
 
-    property targets : TAdvList<TFHIRCoding> read FTargets;
+    property targets : TFslList<TFHIRCoding> read FTargets;
     procedure add(uri, code : String);
   end;
 
-  TClosureTableRecord = class (TAdvObject)
+  TClosureTableRecord = class (TFslObject)
   private
-    FConcepts: TAdvList<TFHIRCoding>;
-    FMaps : TAdvList<TClosureTableRecordSource>;
+    FConcepts: TFslList<TFHIRCoding>;
+    FMaps : TFslList<TClosureTableRecordSource>;
 
     FId: string;
     FName: String;
@@ -78,8 +78,8 @@ type
     property id : string read FId write FId;
     property name : String read FName write FName;
     property version : String read FVersion write FVersion;
-    property concepts : TAdvList<TFHIRCoding> read FConcepts;
-    property maps : TAdvList<TClosureTableRecordSource> read FMaps;
+    property concepts : TFslList<TFHIRCoding> read FConcepts;
+    property maps : TFslList<TClosureTableRecordSource> read FMaps;
     property links[row, col: integer] : TClosureDirection read GetLinks;
     property mapCount : integer read GetMapCount;
   end;
@@ -373,7 +373,7 @@ end;
 constructor TClosureTableRecordSource.Create;
 begin
   inherited Create;
-  FTargets := TAdvList<TFHIRCoding>.create;
+  FTargets := TFslList<TFHIRCoding>.create;
 end;
 
 destructor TClosureTableRecordSource.Destroy;
@@ -505,8 +505,8 @@ end;
 constructor TClosureTableRecord.create;
 begin
   inherited;
-  FMaps := TAdvList<TClosureTableRecordSource>.create;
-  FConcepts := TAdvList<TFHIRCoding>.create;
+  FMaps := TFslList<TClosureTableRecordSource>.create;
+  FConcepts := TFslList<TFHIRCoding>.create;
 end;
 
 function TClosureTableRecord.GetLinks(row, col: integer): TClosureDirection;

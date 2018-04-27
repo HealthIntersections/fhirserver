@@ -73,7 +73,7 @@ type
     function CheckLogin(username, password : String; var key : integer) : boolean; override;
   end;
 
-  TTestOAuthLogin = class (TAdvObject)
+  TTestOAuthLogin = class (TFslObject)
   private
     client_id, name, redirect, state, scope, jwt, patient: String;
   public
@@ -88,7 +88,7 @@ type
     FLastUserEvidence : TFHIRUseridEvidence;
     FLastSystemEvidence : TFHIRSystemIdEvidence;
 
-    FOAuths : TAdvMap<TTestOAuthLogin>;
+    FOAuths : TFslMap<TTestOAuthLogin>;
 
     procedure reset;
   protected
@@ -169,7 +169,7 @@ end;
 constructor TTestStorageService.Create;
 begin
   inherited;
-  FOAuths := TAdvMap<TTestOAuthLogin>.create;
+  FOAuths := TFslMap<TTestOAuthLogin>.create;
 end;
 
 function TTestStorageService.createOperationContext(lang: String): TFHIROperationEngine;

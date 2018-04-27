@@ -56,7 +56,7 @@ Type
     property ScimType : String read FScimType;
   end;
 
-  TSCIMObject = class (TAdvObject)
+  TSCIMObject = class (TFslObject)
   private
     FCreated : TDateTimeEx;
     FLastModified : TDateTimeEx;
@@ -98,7 +98,7 @@ Type
     property json : TJsonObject read FJson;
   end;
 
-  TSCIMContact = class (TAdvObject)
+  TSCIMContact = class (TFslObject)
   private
     FJson : TJsonObject;
     function GetType: String;
@@ -116,16 +116,16 @@ Type
     Property Primary : Boolean read GetPrimary write SetPrimary;
   end;
 
-  TSCIMContactList = class (TAdvObjectList)
+  TSCIMContactList = class (TFslObjectList)
   private
     function GetContact(index: integer): TSCIMContact;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     Property Contact[index: integer] : TSCIMContact read GetContact; default;
   end;
 
-  TSCIMAddress = class (TAdvObject)
+  TSCIMAddress = class (TFslObject)
   private
     FJson : TJsonObject;
     function GetType: String;
@@ -158,11 +158,11 @@ Type
     Property Formatted : String read GetFormatted write SetFormatted;
   end;
 
-  TSCIMAddressList = class (TAdvObjectList)
+  TSCIMAddressList = class (TFslObjectList)
   private
     function GetAddress(index: integer): TSCIMAddress;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     Property Address[index: integer] : TSCIMAddress read GetAddress; default;
   end;
@@ -958,7 +958,7 @@ begin
   result := TSCIMContact(ObjectByindex[index]);
 end;
 
-function TSCIMContactList.ItemClass: TAdvObjectClass;
+function TSCIMContactList.ItemClass: TFslObjectClass;
 begin
   result := TSCIMContact;
 end;
@@ -1067,7 +1067,7 @@ begin
   result := TSCIMAddress(ObjectByindex[index]);
 end;
 
-function TSCIMAddressList.ItemClass: TAdvObjectClass;
+function TSCIMAddressList.ItemClass: TFslObjectClass;
 begin
   result := TSCIMAddress;
 end;

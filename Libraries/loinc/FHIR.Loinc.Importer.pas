@@ -52,7 +52,7 @@ Type
   THeirarchyEntryList = class;
   TCodeList = class;
 
-  TConcept = class (TAdvName)
+  TConcept = class (TFslName)
   private
     Index : Cardinal;
     Codes : TObjectList;
@@ -64,16 +64,16 @@ Type
 
   TConceptArray = Array of TConcept;
 
-  TConceptManager = class (TAdvNameList)
+  TConceptManager = class (TFslNameList)
   public
     Function See(lang: byte; sName : String; oCode : TObject) : TConcept;
     Function Store(langCount, lang: byte; sName : String; oImp : TLOINCImporter) : Cardinal;
   End;
 
-  TDescribed = class  (TAdvObject)
+  TDescribed = class  (TFslObject)
   private
     index : Cardinal;
-    Stems : TAdvIntegerList;
+    Stems : TFslIntegerList;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -93,11 +93,11 @@ Type
     Destructor Destroy; Override;
   End;
 
-  THeirarchyEntryList = class (TAdvObjectList)
+  THeirarchyEntryList = class (TFslObjectList)
   private
     function GetEntry(iIndex: Integer): THeirarchyEntry;
   protected
-    Function ItemClass : TAdvObjectClass; Override;
+    Function ItemClass : TFslObjectClass; Override;
     Function CompareByCode(pA, pB: Pointer): Integer; Virtual;
     Function CompareByText(pA, pB: Pointer): Integer; Virtual;
     Function FindByCode(entry : THeirarchyEntry; Out iIndex: Integer): Boolean; Overload;
@@ -133,11 +133,11 @@ Type
     Function Compare(pA, pB : Pointer) : Integer;
   End;
 
-  TCodeList = class (TAdvObjectList)
+  TCodeList = class (TFslObjectList)
   private
     function GetEntry(iIndex: Integer): TCode;
   protected
-    Function ItemClass : TAdvObjectClass; Override;
+    Function ItemClass : TFslObjectClass; Override;
     Function CompareByCode(pA, pB: Pointer): Integer; Virtual;
     Function FindByCode(entry : TCode; Out iIndex: Integer): Boolean; Overload;
   public
@@ -151,11 +151,11 @@ Type
 
   TAnswerList = class;
 
-  TAnswer = class (TAdvObject)
+  TAnswer = class (TFslObject)
   private
     FCode: String;
     FDescription: String;
-    FParents: TAdvList<TAnswerList>;
+    FParents: TFslList<TAnswerList>;
     FIndex : integer;
   public
     constructor Create; override;
@@ -163,14 +163,14 @@ Type
     Property Code : String read FCode write FCode;
     Property Description : String read FDescription write FDescription;
     Property Index : Integer read FIndex write FIndex;
-    Property Parents : TAdvList<TAnswerList> read FParents;
+    Property Parents : TFslList<TAnswerList> read FParents;
   end;
 
-  TAnswerList = class (TAdvObject)
+  TAnswerList = class (TFslObject)
   private
     FCode: String;
     FDescription: String;
-    FAnswers : TAdvList<TAnswer>;
+    FAnswers : TFslList<TAnswer>;
     FIndex : integer;
   public
     Constructor Create; Override;
@@ -178,10 +178,10 @@ Type
 
     Property Code : String read FCode write FCode;
     Property Description : String read FDescription write FDescription;
-    Property Answers : TAdvList<TAnswer> read FAnswers;
+    Property Answers : TFslList<TAnswer> read FAnswers;
   end;
 
-  TLoincLanguageCodes = class (TAdvObject)
+  TLoincLanguageCodes = class (TFslObject)
   private
     FComponent : String;
     FProperty : String;
@@ -213,11 +213,11 @@ Type
     property RelatedNames : TStringList read FRelatedNames;
   end;
 
-  TLoincLanguage = class (TAdvObject)
+  TLoincLanguage = class (TFslObject)
   private
     FLang : String;
     FCountry : String;
-    FCodes : TAdvMap<TLoincLanguageCodes>;
+    FCodes : TFslMap<TLoincLanguageCodes>;
   public
     Constructor Create; overload; Override;
     Constructor Create(lang, country : String); overload;
@@ -226,10 +226,10 @@ Type
 
     Property Lang : String read FLang write FLang;
     Property Country : String read FCountry write FCountry;
-    Property Codes : TAdvMap<TLoincLanguageCodes> read FCodes;
+    Property Codes : TFslMap<TLoincLanguageCodes> read FCodes;
   end;
 
-  TLoincImporter = class (TAdvObject)
+  TLoincImporter = class (TFslObject)
   private
     callback : TInstallerCallback;
     lastmessage : String;
@@ -245,10 +245,10 @@ Type
     FWords : TLoincWords;
     FStems : TLoincStems;
     FEntries : TLOINCHeirarchyEntryList;
-    FAnswerLists : TAdvMap<TAnswerList>;
-    FAnswerMap : TAdvMap<TAnswer>;
+    FAnswerLists : TFslMap<TAnswerList>;
+    FAnswerMap : TFslMap<TAnswer>;
     FAnswers : TLOINCAnswersList;
-    FLanguages : TAdvList<TLoincLanguage>;
+    FLanguages : TFslList<TLoincLanguage>;
     FLangs : TLoincLanguages;
 
     FStrings : TStringList;
@@ -365,7 +365,7 @@ procedure TLoincImporter.SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte)
 var
   i, m : integer;
   sStem : String;
-  oList : TAdvObjectList;
+  oList : TFslObjectList;
 begin
   sDesc := lowercase(sdesc);
   if not FWordList.Find(sDesc, i) Then
@@ -381,12 +381,12 @@ begin
   sStem := FStemmer.calc(sDesc);
   if not FStemList.Find(sStem, i) Then
   Begin
-    oList := TAdvObjectList.Create;
+    oList := TFslObjectList.Create;
     oList.SortedByReference;
     FStemList.AddObject(sStem, oList);
   End
   Else
-    oList := TAdvObjectList(FStemList.Objects[i]);
+    oList := TFslObjectList(FStemList.Objects[i]);
   if not oList.ExistsByReference(oObj) Then
     oList.Add(oObj.Link);
 End;
@@ -482,7 +482,7 @@ var
   iLength : Integer;
   iCount : Integer;
   oCodes : TCodeList;
-  oTemp : TAdvObjectList;
+  oTemp : TFslObjectList;
   oCode : TCode;
   iLoop, iLang : Integer;
   oNames : TStringList;
@@ -505,9 +505,9 @@ var
   ma : Text;
   ln : String;
   a : TLoincSubsetId;
-  csv : TAdvCSVExtractor;
-  items : TAdvStringList;
-  f : TAdvFile;
+  csv : TFslCSVExtractor;
+  items : TFslStringList;
+  f : TFslFile;
   st, st2 : TStringList;
   answerlist : TAnswerList;
   answer : TAnswer;
@@ -525,8 +525,8 @@ begin
   oScale := TConceptManager.Create;
   oMethod := TConceptManager.Create;
   oClass := TConceptManager.Create;
-  FAnswerLists := TAdvMap<TAnswerList>.Create;
-  FAnswerMap := TAdvMap<TAnswer>.create;
+  FAnswerLists := TFslMap<TAnswerList>.Create;
+  FAnswerMap := TFslMap<TAnswer>.create;
   oHeirarchy := THeirarchyEntryList.Create;
   Try
     oComps.SortedByName;
@@ -548,10 +548,10 @@ begin
 
     iCount := 0;
     Progress(0, 0, 'Loading Concepts');
-    items := TAdvStringList.create;
-    f := TAdvFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead);
+    items := TFslStringList.create;
+    f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead);
     try
-      csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8);
+      csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
       Try
         // headers
         csv.ConsumeEntries(items);
@@ -912,7 +912,7 @@ begin
     Begin
       if i mod STEP_COUNT = 0 then
         Progress(11,  i / FStemList.Count, '');
-      oTemp := TAdvObjectList(FStemList.Objects[i]);
+      oTemp := TFslObjectList(FStemList.Objects[i]);
       iStem := FDesc.AddEntry(0, FStemList[i]);
       FStems.AddStem(iStem);
       for j := 0 to oTemp.Count - 1 Do
@@ -985,16 +985,16 @@ End;
 
 procedure TLoincImporter.ReadLanguageVariants;
 var
-  f : TAdvFile;
-  items : TAdvStringList;
-  csv : TAdvCSVExtractor;
+  f : TFslFile;
+  items : TFslStringList;
+  csv : TFslCSVExtractor;
   lang : TLoincLanguage;
   i : integer;
 begin
-  items := TAdvStringList.create;
-  f := TAdvFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_LinguisticVariants.csv', fmOpenRead);
+  items := TFslStringList.create;
+  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_LinguisticVariants.csv', fmOpenRead);
   try
-    csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8);
+    csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
     Try
       csv.ConsumeEntries(items);
       i := 0;
@@ -1050,7 +1050,7 @@ var
   oLang : TLoincLanguage;
 begin
   FStart := now;
-  FLanguages := TAdvList<TLoincLanguage>.create;
+  FLanguages := TFslList<TLoincLanguage>.create;
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
   FStemmer := GetStemmer_8('english');
@@ -1313,18 +1313,18 @@ end;
 
 procedure TLoincImporter.readLanguage(i : integer; index: String; lang: TLoincLanguage);
 var
-  f : TAdvFile;
-  items : TAdvStringList;
-  csv : TAdvCSVExtractor;
+  f : TFslFile;
+  items : TFslStringList;
+  csv : TFslCSVExtractor;
   code : TLoincLanguageCodes;
   s, p : String;
   j : integer;
 begin
   Progress(i, 0, 'Loading Language '+lang.Lang+'-'+lang.Country);
-  items := TAdvStringList.create;
-  f := TAdvFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_'+lang.Lang+'_'+lang.Country+'_'+index+'_LinguisticVariant.csv', fmOpenRead);
+  items := TFslStringList.create;
+  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_'+lang.Lang+'_'+lang.Country+'_'+index+'_LinguisticVariant.csv', fmOpenRead);
   try
-    csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8, false, f.Size);
+    csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8, false, f.Size);
     Try
       csv.ConsumeEntries(items);
       j := 0;
@@ -1566,7 +1566,7 @@ begin
   result := THeirarchyEntry(ObjectByIndex[iIndex]);
 end;
 
-function THeirarchyEntryList.ItemClass: TAdvObjectClass;
+function THeirarchyEntryList.ItemClass: TFslObjectClass;
 begin
   result := THeirarchyEntry;
 end;
@@ -1622,7 +1622,7 @@ begin
   result := TCode(ObjectByIndex[iIndex]);
 end;
 
-function TCodeList.ItemClass: TAdvObjectClass;
+function TCodeList.ItemClass: TFslObjectClass;
 begin
   result := TCode;
 end;
@@ -1638,7 +1638,7 @@ end;
 constructor TDescribed.Create;
 begin
   inherited;
-  Stems := TAdvIntegerList.Create;
+  Stems := TFslIntegerList.Create;
 end;
 
 destructor TDescribed.Destroy;
@@ -1653,7 +1653,7 @@ end;
 constructor TAnswerList.Create;
 begin
   inherited;
-  FAnswers := TAdvList<TAnswer>.create();
+  FAnswers := TFslList<TAnswer>.create();
 end;
 
 destructor TAnswerList.Destroy;
@@ -1667,7 +1667,7 @@ end;
 constructor TAnswer.create;
 begin
   inherited create;
-  FParents := TAdvList<TAnswerList>.create;
+  FParents := TFslList<TAnswerList>.create;
 end;
 
 destructor TAnswer.destroy;
@@ -1722,7 +1722,7 @@ end;
 constructor TLoincLanguage.Create;
 begin
   inherited;
-  FCodes := TAdvMap<TLoincLanguageCodes>.create;
+  FCodes := TFslMap<TLoincLanguageCodes>.create;
 end;
 
 constructor TLoincLanguage.Create(lang, country: String);

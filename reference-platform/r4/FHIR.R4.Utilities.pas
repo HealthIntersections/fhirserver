@@ -201,12 +201,12 @@ type
   TFHIRBundleBuilderNDJson = class (TFHIRBundleBuilder)
   private
     FFileBase : String;
-    FFiles : TAdvMap<TAdvFile>;
-    function fileForType(rType : String) : TAdvFile;
+    FFiles : TFslMap<TFslFile>;
+    function fileForType(rType : String) : TFslFile;
     procedure writeResource(res : TFHIRResource); overload;
-    procedure writeResource(rType : String; cnt : TAdvBuffer); overload;
+    procedure writeResource(rType : String; cnt : TFslBuffer); overload;
   public
-    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TAdvMap<TAdvFile>);
+    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TFslMap<TFslFile>);
     destructor Destroy; override;
 
     procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
@@ -226,7 +226,7 @@ type
   TFhirNamingSystemContact = TFHIRContactDetail;
   TFhirConformanceContact = TFHIRContactDetail;
 
-  TResourceWithReference = class (TAdvObject)
+  TResourceWithReference = class (TFslObject)
   private
     FReference: String;
     FResource: TFHIRResource;
@@ -752,7 +752,7 @@ type
 
   TFHIRAttachmentHelper = class helper for TFHIRAttachment
   public
-    function asZipPart(i: integer) : TAdvZipPart;
+    function asZipPart(i: integer) : TFslZipPart;
   end;
 
   TFHIRPractitionerHelper = class helper for TFHIRPractitioner
@@ -903,7 +903,7 @@ begin
 end;
 
 
-function DetectFormat(oContent : TAdvBuffer) : TFHIRParserClass; overload;
+function DetectFormat(oContent : TFslBuffer) : TFHIRParserClass; overload;
 var
   s : String;
 begin
@@ -1819,7 +1819,7 @@ function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; lang
 var
   ct : String;
   parser : TFHIRParser;
-  mem : TAdvMemoryStream;
+  mem : TFslMemoryStream;
   s : TVCLStream;
 begin
   parser := nil;
@@ -1836,7 +1836,7 @@ begin
     end;
     if parser = nil then
       parser := DetectFormat(part.content).Create(worker.link, lang);
-    mem := TAdvMemoryStream.Create;
+    mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
       s := TVCLStream.Create;
@@ -1881,7 +1881,7 @@ var
   ct : String;
   parser : TFHIRParser;
   s : TVCLStream;
-  mem : TAdvMemoryStream;
+  mem : TFslMemoryStream;
 begin
   parser := nil;
   try
@@ -1897,7 +1897,7 @@ begin
     end;
     if parser = nil then
       parser := DetectFormat(part.content).Create(worker.link, Lang);
-    mem := TAdvMemoryStream.Create;
+    mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
       s := TVCLStream.Create;
@@ -3876,10 +3876,10 @@ end;
 
 function TFhirValueSetHelper.source: string;
 var
-  b : TAdvStringBuilder;
+  b : TFslStringBuilder;
   comp : TFhirValueSetComposeInclude;
 begin
-  b := TAdvStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     if (compose <> nil) then
       for comp in compose.includeList do
@@ -5522,17 +5522,17 @@ end;
 
 function TFHIRDocumentReferenceHelper.asZip(var filename: String): TStream;
 var
-  vcl : TAdvVCLStream;
-  zip : TAdvZipWriter;
+  vcl : TFslVCLStream;
+  zip : TFslZipWriter;
   content : TFhirDocumentReferenceContent;
   i : integer;
 begin
   result := TMemoryStream.Create;
   try
-    vcl := TAdvVCLStream.Create;
+    vcl := TFslVCLStream.Create;
     try
       vcl.Stream := result;
-      zip := TAdvZipWriter.Create;
+      zip := TFslZipWriter.Create;
       try
         zip.Stream := vcl.Link;
         i := 0;
@@ -5642,7 +5642,7 @@ End;
 {$ENDIF}
 
 
-function TFHIRAttachmentHelper.asZipPart(i: integer): TAdvZipPart;
+function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
 {$IFDEF MACOS}
 begin
   raise Exception.Create('Not done yet');
@@ -5651,7 +5651,7 @@ end;
 var
   fetcher : TInternetFetcher;
 begin
-  result := TAdvZipPart.Create;
+  result := TFslZipPart.Create;
   try
     if (url <> '') and (Length(data) = 0) then
     begin
@@ -6111,7 +6111,7 @@ end;
 
 { TFHIRBundleBuilderNDJson }
 
-constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TAdvMap<TAdvFile>);
+constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TFslMap<TFslFile>);
 begin
   inherited Create(bundle);
   FFileBase := fileBase;
@@ -6125,19 +6125,19 @@ begin
   inherited;
 end;
 
-function TFHIRBundleBuilderNDJson.fileForType(rType: String): TAdvFile;
+function TFHIRBundleBuilderNDJson.fileForType(rType: String): TFslFile;
 begin
   if not FFiles.TryGetValue(rType, result) then
   begin
-    result := TAdvFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
+    result := TFslFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
     FFiles.Add(rType, result);
   end;
 end;
 
 procedure TFHIRBundleBuilderNDJson.addEntry(entry: TFhirBundleEntry; first : boolean);
 begin
-  if (entry.Tag <> nil) and (entry.Tag is TAdvBuffer) then
-    writeResource(entry.Tags['type'], entry.Tag as TAdvBuffer)
+  if (entry.Tag <> nil) and (entry.Tag is TFslBuffer) then
+    writeResource(entry.Tags['type'], entry.Tag as TFslBuffer)
   else if entry.resource <> nil then
     writeResource(entry.resource);
   entry.Tag := nil;
@@ -6161,7 +6161,7 @@ end;
 
 procedure TFHIRBundleBuilderNDJson.writeResource(res: TFHIRResource);
 var
-  f : TAdvFile;
+  f : TFslFile;
   json : TFHIRJsonComposer;
   b : ansichar;
 begin
@@ -6179,9 +6179,9 @@ begin
   end;
 end;
 
-procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TAdvBuffer);
+procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TFslBuffer);
 var
-  f : TAdvFile;
+  f : TFslFile;
   b : ansiChar;
 begin
   f := fileForType(rType);

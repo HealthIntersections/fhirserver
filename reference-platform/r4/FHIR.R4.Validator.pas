@@ -44,7 +44,7 @@ Uses
 Type
   EDiscriminatorException = class (Exception);
 
-  TNodeStack = class(TAdvObject)
+  TNodeStack = class(TFslObject)
   private
     parent: TNodeStack;
     literalPath: String; // fhir path format
@@ -61,7 +61,7 @@ Type
     Destructor Destroy; Override;
   end;
 
-  TElementInfo = class(TAdvObject)
+  TElementInfo = class(TFslObject)
   private
     name: String;
     element: TFHIRMMElement;
@@ -78,7 +78,7 @@ Type
     Constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
   end;
 
-  TChildIterator = class(TAdvObject)
+  TChildIterator = class(TFslObject)
   private
     parent: TFHIRMMElement;
     basePath: String;
@@ -98,7 +98,7 @@ Type
   TCheckDisplayOption = (cdoIgnore, cdopCheck, cdoCheckCaseAndSpace, cdoCheckCase, cdoCheckSpace);
   TResourceIdStatus = (risOptional, risRequired, risProhibited);
 
-  TFHIRValidatorContext = class (TAdvObject)
+  TFHIRValidatorContext = class (TFslObject)
   private
     FCheckDisplay: TCheckDisplayOption;
     FBPWarnings: TBestPracticeWarningLevel;
@@ -106,7 +106,7 @@ Type
     FResourceIdRule: TResourceIdStatus;
     FIsAnyExtensionsAllowed: boolean;
     FErrors: TFhirOperationOutcomeIssueList;
-    Fowned : TAdvObjectList;
+    Fowned : TFslObjectList;
     FOperationDescription : String;
     procedure SetErrors(const Value: TFhirOperationOutcomeIssueList);
   public
@@ -123,7 +123,7 @@ Type
     property Errors : TFhirOperationOutcomeIssueList read FErrors write SetErrors;
   end;
 
-  TValidationProfileSet = class (TAdvObject)
+  TValidationProfileSet = class (TFslObject)
   private
     FCanonical : TStringList;
     FDefinitions : TFHIRStructureDefinitionList;
@@ -134,7 +134,7 @@ Type
     destructor Destroy; override;
   end;
 
-  TFHIRValidator = class(TAdvObject)
+  TFHIRValidator = class(TFslObject)
   private
     // configuration items
     FContext: TFHIRWorkerContext;
@@ -154,7 +154,7 @@ Type
 
     // function isKnownType(code : String) : boolean;
     function genFullUrl(bundleBase, entryBase, ty, id: String): String;
-    Function resolveInBundle(entries: TAdvList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement; overload;
+    Function resolveInBundle(entries: TFslList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement; overload;
     function resolveInBundle(bundle : TFHIRObject; url : String) : TFHIRObject; overload;
     function getProfileForType(ctxt : TFHIRValidatorContext; type_: String): TFHIRStructureDefinition;
     function sliceMatches(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; slice, ed: TFHIRElementDefinition; profile: TFHIRStructureDefinition): boolean;
@@ -175,7 +175,7 @@ Type
     function findElement(profile: TFHIRStructureDefinition; name: String): TFHIRElementDefinition;
     // function getDefinitionByTailNameChoice(children : TFHIRElementDefinitionList; name : String) : TFHIRElementDefinition;
     function resolveBindingReference(ctxt : TFHIRValidatorContext; context : TFHIRDomainResource; reference: TFHIRType): TFHIRValueSet;
-    function getExtensionByUrl(extensions: TAdvList<TFHIRMMElement>; url: String): TFHIRMMElement;
+    function getExtensionByUrl(extensions: TFslList<TFHIRMMElement>; url: String): TFHIRMMElement;
 
     procedure checkQuantityValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRQuantity);
     procedure checkAddressValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRAddress);
@@ -207,9 +207,9 @@ Type
 
     function idStatusForEntry(ep : TFHIRMMElement; ei : TElementInfo): TResourceIdStatus;
     procedure checkInvariants(ctxt : TFHIRValidatorContext; path : String; profile: TFHIRStructureDefinition; ed: TFhirElementDefinition; typename, typeProfile : String; resource, element: TFHIRMMElement);
-    procedure validateSections(ctxt : TFHIRValidatorContext; entries: TAdvList<TFHIRMMElement>; focus: TFHIRMMElement; stack: TNodeStack; fullUrl, id: String);
-    procedure validateBundleReference(ctxt : TFHIRValidatorContext; entries: TAdvList<TFHIRMMElement>; ref: TFHIRMMElement; name: String; stack: TNodeStack; fullUrl, type_, id: String);
-    procedure validateDocument(ctxt : TFHIRValidatorContext; entries: TAdvList<TFHIRMMElement>; composition: TFHIRMMElement; stack: TNodeStack; fullUrl, id: String);
+    procedure validateSections(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; focus: TFHIRMMElement; stack: TNodeStack; fullUrl, id: String);
+    procedure validateBundleReference(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; ref: TFHIRMMElement; name: String; stack: TNodeStack; fullUrl, type_, id: String);
+    procedure validateDocument(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; composition: TFHIRMMElement; stack: TNodeStack; fullUrl, id: String);
     procedure validateElement(ctxt : TFHIRValidatorContext; profile: TFHIRStructureDefinition; definition: TFHIRElementDefinition; cprofile: TFHIRStructureDefinition; context: TFHIRElementDefinition; resource, element: TFHIRMMElement; actualType: String; stack: TNodeStack; inCodeableConcept: boolean);
     procedure validateMessage(ctxt : TFHIRValidatorContext; bundle: TFHIRMMElement);
     procedure validateBundle(ctxt : TFHIRValidatorContext; bundle: TFHIRMMElement; stack: TNodeStack);
@@ -223,7 +223,7 @@ Type
     procedure validateQuestionnaireResponseItemQuantity(ctxt : TFHIRValidatorContext; answer: TFHIRMMElement; stack: TNodeStack);
     function validateQuestionnaireResponseItemType(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; types: array of String) : string;
     procedure validateQuestionannaireResponseItem(qsrc : TFhirQuestionnaire; qItem : TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; inProgress : boolean); overload;
-    procedure validateQuestionannaireResponseItem(qsrc : TFhirQuestionnaire; qItem : TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; elements: TAdvList<TFHIRMMElement>; stack: TNodeStack; inProgress : boolean); overload;
+    procedure validateQuestionannaireResponseItem(qsrc : TFhirQuestionnaire; qItem : TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; elements: TFslList<TFHIRMMElement>; stack: TNodeStack; inProgress : boolean); overload;
     procedure validateQuestionannaireResponseItems(qsrc : TFhirQuestionnaire; qItems : TFhirQuestionnaireItemList; ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; inProgress : boolean);
     procedure validateQuestionannaireResponse(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack);
 {$ENDIF}
@@ -232,7 +232,7 @@ Type
     procedure validateResource(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; profiles : TValidationProfileSet; idRule: TResourceIdStatus; stack: TNodeStack);
     procedure checkInnerNS(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
-    function FHIRPathResolveReference(source : TFHIRPathEngine; appInfo : TAdvObject; url : String) : TFHIRObject;
+    function FHIRPathResolveReference(source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject;
   public
     Constructor Create(context: TFHIRWorkerContext);
     Destructor Destroy; Override;
@@ -255,9 +255,9 @@ Type
     procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String); overload;
     procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profiles: TValidationProfileSet); overload;
 
-    procedure validate(ctxt : TFHIRValidatorContext; source : TAdvBuffer; format : TFHIRFormat); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; source : TAdvBuffer; format : TFHIRFormat; profile : String); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; source : TAdvBuffer; format : TFHIRFormat; profiles : TValidationProfileSet); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat; profile : String); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat; profiles : TValidationProfileSet); overload;
 
     procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResource); overload;
     procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResource; profile : string); overload;
@@ -501,7 +501,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.FHIRPathResolveReference(source: TFHIRPathEngine; appInfo: TAdvObject; url: String): TFHIRObject;
+function TFHIRValidator.FHIRPathResolveReference(source: TFHIRPathEngine; appInfo: TFslObject; url: String): TFHIRObject;
 begin
   if not (appInfo is TFHIRObject) then
     exit(nil);
@@ -797,7 +797,7 @@ end;
 
 procedure TFHIRValidator.validateQuestionannaireResponseItem(qsrc : TFhirQuestionnaire; qItem : TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; inProgress : boolean);
 var
-  answers, items : TAdvList<TFHIRMMElement>;
+  answers, items : TFslList<TFHIRMMElement>;
   answer, item : TFHIRMMElement;
   ns : TNodeStack;
   text : String;
@@ -805,7 +805,7 @@ begin
   text := element.getNamedChildValue('text');
   rule(ctxt, IssueTypeInvalid, element.locStart, element.locEnd, stack.literalPath, (text = '') or (text = qItem.text), 'If text exists, it must match the questionnaire definition for linkId '+qItem.linkId);
 
-  answers := TAdvList<TFHIRMMElement>.create;
+  answers := TFslList<TFHIRMMElement>.create;
   try
     element.getNamedChildren('answer', answers);
     if inProgress then
@@ -854,7 +854,7 @@ begin
     validateQuestionannaireResponseItems(qsrc, qitem.itemList, errors, element, stack, inProgress)
   else
   begin
-    items := TAdvList<TFHIRMMElement>.create;
+    items := TFslList<TFHIRMMElement>.create;
     try
       element.getNamedChildren('item', items);
       for item in items do
@@ -872,7 +872,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateQuestionannaireResponseItem(qsrc: TFhirQuestionnaire; qItem: TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; elements: TAdvList<TFHIRMMElement>; stack: TNodeStack; inProgress : boolean);
+procedure TFHIRValidator.validateQuestionannaireResponseItem(qsrc: TFhirQuestionnaire; qItem: TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; elements: TFslList<TFHIRMMElement>; stack: TNodeStack; inProgress : boolean);
 var
   ns : TNodeStack;
   element : TFHIRMMElement;
@@ -892,8 +892,8 @@ end;
 
 procedure TFHIRValidator.validateQuestionannaireResponseItems(qsrc : TFhirQuestionnaire; qItems : TFhirQuestionnaireItemList; ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; inProgress : boolean);
 var
-  items, mapItem : TAdvList<TFHIRMMElement>;
-  map : TAdvMap<TAdvList<TFHIRMMElement>>;
+  items, mapItem : TFslList<TFHIRMMElement>;
+  map : TFslMap<TFslList<TFHIRMMElement>>;
   index, lastIndex : integer;
   item : TFHIRMMElement;
   ns : TNodeStack;
@@ -909,11 +909,11 @@ var
         exit(i);
   end;
 begin
-  items := TAdvList<TFHIRMMElement>.create;
+  items := TFslList<TFHIRMMElement>.create;
   try
     element.getNamedChildren('item', items);
     // now, sort into stacks
-    map := TAdvMap<TAdvList<TFHIRMMElement>>.create;
+    map := TFslMap<TFslList<TFHIRMMElement>>.create;
     try
       lastIndex := -1;
       for item in items do
@@ -943,7 +943,7 @@ begin
             lastIndex := index;
             if not map.TryGetValue(linkId, mapItem) then
             begin
-              mapItem := TAdvList<TFHIRMMElement>.create;
+              mapItem := TFslList<TFHIRMMElement>.create;
               map.Add(linkId, mapitem);
             end;
             mapItem.Add(item.Link);
@@ -974,12 +974,12 @@ end;
 
 function TFHIRValidator.validateQuestionnaireResponseItemType(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; types: array of String) : string;
 var
-  values : TAdvList<TFHIRMMElement>;
+  values : TFslList<TFHIRMMElement>;
   ns : TNodeStack;
   s, l : String;
 begin
   result := '';
-  values := TAdvList<TFHIRMMElement>.create;
+  values := TFslList<TFHIRMMElement>.create;
   try
     element.getNamedChildrenWithWildcard('value[x]', values);
     if values.Count > 0 then
@@ -1012,10 +1012,10 @@ end;
 
 function getFirstEntry(bundle: TFHIRMMElement): TFHIRMMElement;
 var
-  list: TAdvList<TFHIRMMElement>;
+  list: TFslList<TFHIRMMElement>;
   resource: TFHIRMMElement;
 begin
-  list := TAdvList<TFHIRMMElement>.Create;
+  list := TFslList<TFHIRMMElement>.Create;
   try
     bundle.getNamedChildren('entry', list);
     if (list.count = 0) then
@@ -1130,7 +1130,7 @@ end;
 procedure TFHIRValidator.checkDeclaredProfiles(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; stack: TNodeStack);
 var
   meta: TFHIRMMElement;
-  profiles: TAdvList<TFHIRMMElement>;
+  profiles: TFslList<TFHIRMMElement>;
   i: integer;
   profile: TFHIRMMElement;
   ref, p: String;
@@ -1139,7 +1139,7 @@ begin
   meta := element.getNamedChild('meta');
   if (meta <> nil) then
   begin
-    profiles := TAdvList<TFHIRMMElement>.Create();
+    profiles := TFslList<TFHIRMMElement>.Create();
     try
       meta.getNamedChildren('profile', profiles);
       i := 0;
@@ -1164,7 +1164,7 @@ end;
 
 procedure TFHIRValidator.validateBundle(ctxt : TFHIRValidatorContext; bundle: TFHIRMMElement; stack: TNodeStack);
 var
-  entries: TAdvList<TFHIRMMElement>;
+  entries: TFslList<TFHIRMMElement>;
   type_, id: String;
   firstEntry: TFHIRMMElement;
   firstStack: TNodeStack;
@@ -1172,7 +1172,7 @@ var
   resource, res: TFHIRMMElement;
   localStack : TNodeStack;
 begin
-  entries := TAdvList<TFHIRMMElement>.Create();
+  entries := TFslList<TFHIRMMElement>.Create();
   try
     bundle.getNamedChildren('entry', entries);
     type_ := bundle.getNamedChildValue('type');
@@ -1215,7 +1215,7 @@ procedure TFHIRValidator.validateMessage(ctxt : TFHIRValidatorContext; bundle: T
 begin
 end;
 
-procedure TFHIRValidator.validateDocument(ctxt : TFHIRValidatorContext; entries: TAdvList<TFHIRMMElement>; composition: TFHIRMMElement; stack: TNodeStack; fullUrl, id: String);
+procedure TFHIRValidator.validateDocument(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; composition: TFHIRMMElement; stack: TNodeStack; fullUrl, id: String);
 var
   ns : TNodeStack;
   elem : TFHIRMMElement;
@@ -1244,15 +1244,15 @@ end;
 // String firstBase := nil;
 // firstBase := ebase = nil ? base : ebase;
 
-procedure TFHIRValidator.validateSections(ctxt : TFHIRValidatorContext; entries: TAdvList<TFHIRMMElement>; focus: TFHIRMMElement; stack: TNodeStack;
+procedure TFHIRValidator.validateSections(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; focus: TFHIRMMElement; stack: TNodeStack;
   fullUrl, id: String);
 var
-  sections: TAdvList<TFHIRMMElement>;
+  sections: TFslList<TFHIRMMElement>;
   section: TFHIRMMElement;
   i: integer;
   localStack: TNodeStack;
 begin
-  sections := TAdvList<TFHIRMMElement>.Create();
+  sections := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('entry', sections);
     i := 0;
@@ -1272,7 +1272,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateBundleReference(ctxt : TFHIRValidatorContext; entries: TAdvList<TFHIRMMElement>; ref: TFHIRMMElement; name: String;
+procedure TFHIRValidator.validateBundleReference(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; ref: TFHIRMMElement; name: String;
   stack: TNodeStack; fullUrl, type_, id: String);
 var
   target: TFHIRMMElement;
@@ -1285,7 +1285,7 @@ begin
   end;
 end;
 
-Function TFHIRValidator.resolveInBundle(entries: TAdvList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
+Function TFHIRValidator.resolveInBundle(entries: TFslList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
 var
   entry, res : TFHIRMMElement;
   fu, u, t, i, et, eid: String;
@@ -1490,7 +1490,7 @@ procedure TFHIRValidator.validateElement(ctxt : TFHIRValidatorContext; profile: 
   cprofile: TFHIRStructureDefinition; context: TFHIRElementDefinition; resource, element: TFHIRMMElement; actualType: String; stack: TNodeStack; inCodeableConcept: boolean);
 var
   childDefinitions: TFHIRElementDefinitionList;
-  children: TAdvList<TElementInfo>;
+  children: TFslList<TElementInfo>;
   iter: TChildIterator;
   slice, ed, td: TFHIRElementDefinition;
   process, match, childUnsupportedSlicing: boolean;
@@ -1509,7 +1509,7 @@ begin
   checkInvariants(ctxt, stack.literalPath, profile, definition, '', '', resource, element);
 
   // get the list of direct defined children, including slices
-  children := TAdvList<TElementInfo>.Create();
+  children := TFslList<TElementInfo>.Create();
   childDefinitions := getChildMap(profile, definition.slicename, definition.path, definition.ContentReference);
   try
     if (childDefinitions.isEmpty()) then
@@ -2109,11 +2109,11 @@ end;
 
 function TFHIRValidator.getFromBundle(bundle: TFHIRMMElement; ref: String): TFHIRMMElement;
 var
-  entries: TAdvList<TFHIRMMElement>;
+  entries: TFslList<TFHIRMMElement>;
   we, res: TFHIRMMElement;
   url: String;
 begin
-  entries := TAdvList<TFHIRMMElement>.Create();
+  entries := TFslList<TFHIRMMElement>.Create();
   try
     bundle.getNamedChildren('entry', entries);
     for we in entries do
@@ -2153,10 +2153,10 @@ end;
 
 function TFHIRValidator.getContainedById(container: TFHIRMMElement; id: String): TFHIRMMElement;
 var
-  contained: TAdvList<TFHIRMMElement>;
+  contained: TFslList<TFHIRMMElement>;
   we : TFHIRMMElement;
 begin
-  contained := TAdvList<TFHIRMMElement>.Create();
+  contained := TFslList<TFHIRMMElement>.Create();
   try
     container.getNamedChildren('contained', contained);
     for we in contained do
@@ -2755,11 +2755,11 @@ end;
 function readAsCodeableConcept(element: TFHIRMMElement): TFHIRCodeableConcept;
 var
   cc: TFHIRCodeableConcept;
-  list: TAdvList<TFHIRMMElement>;
+  list: TFslList<TFHIRMMElement>;
   item: TFHIRMMElement;
 begin
   cc := TFHIRCodeableConcept.Create;
-  list := TAdvList<TFHIRMMElement>.Create;
+  list := TFslList<TFHIRMMElement>.Create;
   try
     element.getNamedChildren('coding', list);
     for item in list do
@@ -2994,7 +2994,7 @@ end;
 // // collect all the slices for the path
 // List<TFHIRElementDefinition> childset := walker.current();
 // // collect all the elements that match it by name
-// TAdvList<TFHIRMMElement> children := TAdvList<TFHIRMMElement>.create();
+// TFslList<TFHIRMMElement> children := TFslList<TFHIRMMElement>.create();
 // focus.getNamedChildrenWithWildcard(walker.name(), children);
 //
 // if (children.Count = 0) begin
@@ -3115,7 +3115,7 @@ end;
 procedure TFHIRValidator.checkFixedValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFhirElement; propName: String);
 var
   value: String;
-  extensions: TAdvList<TFHIRMMElement>;
+  extensions: TFslList<TFHIRMMElement>;
   e: TFhirExtension;
   ex: TFHIRMMElement;
 begin
@@ -3195,7 +3195,7 @@ begin
       checkSampledDataValue(ctxt, path, focus, TFHIRSampledData(fixed))
     else
       rule(ctxt, IssueTypeException, focus.locStart, focus.locEnd, path, false, 'Unhandled fixed value type ' + fixed.ClassName);
-    extensions := TAdvList<TFHIRMMElement>.Create();
+    extensions := TFslList<TFHIRMMElement>.Create();
     try
       focus.getNamedChildren('extension', extensions);
       if (fixed.extensionList.count = 0) then
@@ -3220,7 +3220,7 @@ end;
 
 procedure TFHIRValidator.checkAddressValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRAddress);
 var
-  lines: TAdvList<TFHIRMMElement>;
+  lines: TFslList<TFHIRMMElement>;
   i: integer;
 begin
   checkFixedValue(ctxt, path + '.use', focus.getNamedChild('use'), fixed.UseElement, 'use');
@@ -3230,7 +3230,7 @@ begin
   checkFixedValue(ctxt, path + '.country', focus.getNamedChild('country'), fixed.CountryElement, 'country');
   checkFixedValue(ctxt, path + '.zip', focus.getNamedChild('zip'), fixed.PostalCodeElement, 'postalCode');
 
-  lines := TAdvList<TFHIRMMElement>.Create();
+  lines := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('line', lines);
     if (rule(ctxt, IssueTypeVALUE, focus.locStart, focus.locEnd, path, lines.count = fixed.lineList.count, 'Expected ' + inttostr(fixed.lineList.count) + ' but found ' +
@@ -3317,14 +3317,14 @@ end;
 
 procedure TFHIRValidator.checkHumanNameValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRHumanName);
 var
-  parts: TAdvList<TFHIRMMElement>;
+  parts: TFslList<TFHIRMMElement>;
   i: integer;
 begin
   checkFixedValue(ctxt, path + '.use', focus.getNamedChild('use'), fixed.UseElement, 'use');
   checkFixedValue(ctxt, path + '.text', focus.getNamedChild('text'), fixed.TextElement, 'text');
   checkFixedValue(ctxt, path + '.period', focus.getNamedChild('period'), fixed.Period, 'period');
 
-  parts := TAdvList<TFHIRMMElement>.Create();
+  parts := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('family', parts);
     if fixed.family <> '' then
@@ -3362,11 +3362,11 @@ end;
 
 procedure TFHIRValidator.checkCodeableConceptValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRCodeableConcept);
 var
-  codings: TAdvList<TFHIRMMElement>;
+  codings: TFslList<TFHIRMMElement>;
   i: integer;
 begin
   checkFixedValue(ctxt, path + '.text', focus.getNamedChild('text'), fixed.TextElement, 'text');
-  codings := TAdvList<TFHIRMMElement>.Create();
+  codings := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('coding', codings);
     if (rule(ctxt, IssueTypeVALUE, focus.locStart, focus.locEnd, path, codings.count = fixed.CodingList.count, 'Expected ' + inttostr(fixed.CodingList.count) + ' but found ' +
@@ -3382,12 +3382,12 @@ end;
 
 procedure TFHIRValidator.checkTimingValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRTiming);
 var
-  events: TAdvList<TFHIRMMElement>;
+  events: TFslList<TFHIRMMElement>;
   i: integer;
 begin
   checkFixedValue(ctxt, path + '.repeat', focus.getNamedChild('repeat'), fixed.repeat_, 'value');
 
-  events := TAdvList<TFHIRMMElement>.Create();
+  events := TFslList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('event', events);
     if (rule(ctxt, IssueTypeVALUE, focus.locStart, focus.locEnd, path, events.count = fixed.eventList.count, 'Expected ' + inttostr(fixed.eventList.count) + ' but found ' +
@@ -3439,7 +3439,7 @@ begin
   checkFixedValue(ctxt, path + '.code', focus.getNamedChild('code'), fixed.CodeElement, 'code');
 end;
 
-function TFHIRValidator.getExtensionByUrl(extensions: TAdvList<TFHIRMMElement>; url: String): TFHIRMMElement;
+function TFHIRValidator.getExtensionByUrl(extensions: TFslList<TFHIRMMElement>; url: String): TFHIRMMElement;
 var
   e: TFHIRMMElement;
 begin
@@ -3453,7 +3453,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; source: TAdvBuffer; format: TFHIRFormat; profiles : TValidationProfileSet);
+procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat; profiles : TValidationProfileSet);
 var
   p : TFHIRMMParserBase;
   element : TFHIRMMElement;
@@ -3486,7 +3486,7 @@ begin
 end;
 
 
-procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; source: TAdvBuffer; format: TFHIRFormat; profile: String);
+procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat; profile: String);
 var
   profiles : TValidationProfileSet;
 begin
@@ -3498,7 +3498,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; source: TAdvBuffer; format: TFHIRFormat);
+procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat);
 var
   profiles : TValidationProfileSet;
 begin
@@ -3635,7 +3635,7 @@ end;
 constructor TFHIRValidatorContext.create;
 begin
   inherited;
-  FOwned := TAdvObjectList.create;
+  FOwned := TFslObjectList.create;
   FErrors := TFHIROperationOutcomeIssueList.create;
 end;
 

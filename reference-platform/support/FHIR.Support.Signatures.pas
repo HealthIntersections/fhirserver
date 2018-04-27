@@ -85,7 +85,7 @@ Const
 Type
   TSignatureMethod = (sdXmlDSASha1, sdXmlRSASha1, sdXmlDSASha256, sdXmlRSASha256);
 
-  TDigitalSignatureReference = class (TAdvObject)
+  TDigitalSignatureReference = class (TFslObject)
   private
     FUrl: String;
     FTransforms: TStringList;
@@ -99,17 +99,17 @@ Type
     property content : TBytes read FContent write FContent;
   end;
 
-  TDigitalSignatureReferenceList = class (TAdvObjectList)
+  TDigitalSignatureReferenceList = class (TFslObjectList)
   private
     function getReference(i: integer): TDigitalSignatureReference;
 
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     property reference[i : integer] : TDigitalSignatureReference read getReference; default;
   end;
 
-  TKeyInfo = class (TAdvObject)
+  TKeyInfo = class (TFslObject)
   private
     dsa : PDSA;
     rsa : PRSA;
@@ -122,7 +122,7 @@ Type
 
   TSignatureLocationFinderMethod = reference to function (doc : TMXmlDocument) : TMXmlElement;
 
-  TDigitalSigner = class (TAdvObject)
+  TDigitalSigner = class (TFslObject)
   private
     FPublicKey: AnsiString;
     FPrivateKey: AnsiString;
@@ -275,12 +275,12 @@ end;
 
 function TDigitalSigner.canonicaliseXml(method: TXmlCanonicalisationMethodSet; source: TBytes): TBytes;
 var
-  xb : TAdvXmlBuilder;
+  xb : TFslXmlBuilder;
   dom : TMXmlDocument;
 begin
   dom := loadXml(source);
   try
-    xb := TAdvXmlBuilder.Create;
+    xb := TFslXmlBuilder.Create;
     try
       xb.Canonicalise := method;
       xb.Start;
@@ -298,11 +298,11 @@ end;
 
 function TDigitalSigner.canonicaliseXml(method : TXmlCanonicalisationMethodSet; source: TBytes; var dom : TMXmlDocument): TBytes;
 var
-  xb : TAdvXmlBuilder;
+  xb : TFslXmlBuilder;
 begin
   dom := loadXml(source);
 
-  xb := TAdvXmlBuilder.Create;
+  xb := TFslXmlBuilder.Create;
   try
     xb.Canonicalise := method;
     xb.Start;
@@ -316,9 +316,9 @@ end;
 
 function TDigitalSigner.canonicaliseXml(method : TXmlCanonicalisationMethodSet; dom: TMXmlElement): TBytes;
 var
-  xb : TAdvXmlBuilder;
+  xb : TFslXmlBuilder;
 begin
-  xb := TAdvXmlBuilder.Create;
+  xb := TFslXmlBuilder.Create;
   try
     xb.Canonicalise := method;
     xb.Start;
@@ -332,9 +332,9 @@ end;
 
 function TDigitalSigner.canonicaliseXml(method : TXmlCanonicalisationMethodSet; dom: TMXMLDocument): TBytes;
 var
-  xb : TAdvXmlBuilder;
+  xb : TFslXmlBuilder;
 begin
-  xb := TAdvXmlBuilder.Create;
+  xb := TFslXmlBuilder.Create;
   try
     xb.Canonicalise := method;
     xb.Start;
@@ -973,7 +973,7 @@ begin
   result := TDigitalSignatureReference(ObjectByIndex[i]);
 end;
 
-function TDigitalSignatureReferenceList.itemClass: TAdvObjectClass;
+function TDigitalSignatureReferenceList.itemClass: TFslObjectClass;
 begin
   result := TDigitalSignatureReference;
 end;

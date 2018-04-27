@@ -42,7 +42,7 @@ Const
 Type
   TTurtleDocument = class;
 
-  TTurtleObject = class (TAdvObject)
+  TTurtleObject = class (TFslObject)
   protected
 		FStart : TSourceLocation;
 		FStop : TSourceLocation;
@@ -93,7 +93,7 @@ Type
 
 	TTurtleList = class (TTurtleObject)
   private
-    Flist : TAdvList<TTurtleObject>;
+    Flist : TFslList<TTurtleObject>;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
@@ -102,14 +102,14 @@ Type
     Destructor Destroy; override;
     function Link : TTurtleList; overload;
     function hasValue(value : String) : boolean; override;
-    property List : TAdvList<TTurtleObject> read FList;
+    property List : TFslList<TTurtleObject> read FList;
     function isSimple : boolean; override;
     function singleLiteral : String; override;
   end;
 
 	TTurtleComplex = class (TTurtleObject)
   private
-    FPredicates : TAdvMap<TTurtleObject>;
+    FPredicates : TFslMap<TTurtleObject>;
     FNames : TStringList;
   protected
     function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
@@ -118,13 +118,13 @@ Type
     Destructor Destroy; override;
     function Link : TTurtleComplex; overload;
     function hasValue(value : String) : boolean; override;
-    property predicates : TAdvMap<TTurtleObject> read FPredicates;
+    property predicates : TFslMap<TTurtleObject> read FPredicates;
     function addPredicate(uri : String) : TTurtleComplex; overload;
     procedure addPredicate(uri : String; obj : TTurtleObject); overload;
     procedure addPredicate(uri : String; s : String); overload;
     procedure addUriPredicate(uri : String; s : String); overload;
     procedure addPredicate(uri : String; s, t : String); overload;
-    procedure addPredicates(values : TAdvMap<TTurtleObject>);
+    procedure addPredicates(values : TFslMap<TTurtleObject>);
     function predicate(uri : String) : TTurtleObject;
     function singleLiteral : String; overload; override;
     function isSimple : boolean; override;
@@ -136,7 +136,7 @@ Type
     function complexes(uri : String) : TArray<TTurtleComplex>;
   end;
 
-  TTurtlePredicate = class (TAdvObject)
+  TTurtlePredicate = class (TFslObject)
   private
     FURL : TTurtleURL;
     FValue : TTurtleComplex;
@@ -149,15 +149,15 @@ Type
     property Value : TTurtleComplex read FValue;
   end;
 
-  TTurtleDocument = class (TAdvObject)
+  TTurtleDocument = class (TFslObject)
   private
     FPrefixes : TDictionary<String, String>;
-    FObjects : TAdvList<TTurtlePredicate>;
+    FObjects : TFslList<TTurtlePredicate>;
     FBase : String;
   public
     Constructor Create; override;
     Destructor Destroy; override;
-    property objects : TAdvList<TTurtlePredicate> read FObjects;
+    property objects : TFslList<TTurtlePredicate> read FObjects;
     property prefixes : TDictionary<String, String> read FPrefixes;
     function getPredicate(uri : String) : TTurtlePredicate;
     function getObject(uri : String) : TTurtleComplex;
@@ -178,7 +178,7 @@ const
   LEX_TYPES : array [TLexerTokenType] of String = ('null', 'token', 'word', 'uri', 'literal');
 
 type
-  TTurtleLexer = class (TAdvObject)
+  TTurtleLexer = class (TFslObject)
   private
     FSource : String;
     FType : TLexerTokenType;
@@ -204,7 +204,7 @@ type
     procedure error(message : String);
   end;
 
-  TTurtleParser = class (TAdvObject)
+  TTurtleParser = class (TFslObject)
   private
     class procedure parse(lexer : TTurtleLexer; doc : TTurtleDocument); overload;
     class function anonymousId : TTurtleURL;
@@ -212,16 +212,16 @@ type
   public
     class function parse(source : String) : TTurtleDocument; overload;
     class function parse(source : TStream) : TTurtleDocument; overload;
-    class function parse(source : TAdvStream) : TTurtleDocument; overload;
+    class function parse(source : TFslStream) : TTurtleDocument; overload;
   end;
 
-  TTurtleComposer = class (TAdvObject)
+  TTurtleComposer = class (TFslObject)
   public
     class procedure writePrefixes(b : TStringBuilder; doc : TTurtleDocument);
   public
     class function compose(doc : TTurtleDocument) : String; overload;
     class procedure compose(doc : TTurtleDocument; dest : TStream); overload;
-    class procedure compose(doc : TTurtleDocument; dest : TAdvStream); overload;
+    class procedure compose(doc : TTurtleDocument; dest : TFslStream); overload;
   end;
 
 function ttlLiteral(s : String) : String;
@@ -416,14 +416,14 @@ end;
 constructor TTurtleList.Create(start : TSourceLocation; obj: TTurtleObject);
 begin
   Inherited Create(start);
-  FList := TAdvList<TTurtleObject>.create;
+  FList := TFslList<TTurtleObject>.create;
   FList.Add(obj.Link);
 end;
 
 constructor TTurtleList.Create(start : TSourceLocation);
 begin
   Inherited Create(start);
-  FList := TAdvList<TTurtleObject>.create;
+  FList := TFslList<TTurtleObject>.create;
 end;
 
 destructor TTurtleList.Destroy;
@@ -493,7 +493,7 @@ end;
 constructor TTurtleComplex.Create(start : TSourceLocation);
 begin
   inherited;
-  FPredicates := TAdvMap<TTurtleObject>.create;
+  FPredicates := TFslMap<TTurtleObject>.create;
   FNames := TStringList.Create;
   Fnames.Duplicates := dupIgnore;
 end;
@@ -667,7 +667,7 @@ begin
   addPredicate(uri, result);
 end;
 
-procedure TTurtleComplex.addPredicates(values: TAdvMap<TTurtleObject>);
+procedure TTurtleComplex.addPredicates(values: TFslMap<TTurtleObject>);
 begin
   FPredicates.addAll(values);
 end;
@@ -1037,7 +1037,7 @@ begin
   end;
 end;
 
-class function TTurtleParser.parse(source : TAdvStream) : TTurtleDocument;
+class function TTurtleParser.parse(source : TFslStream) : TTurtleDocument;
 var
   lexer : TTurtleLexer;
 begin
@@ -1388,7 +1388,7 @@ end;
 constructor TTurtleDocument.Create;
 begin
   inherited;
-  FObjects := TAdvList<TTurtlePredicate>.create;
+  FObjects := TFslList<TTurtlePredicate>.create;
   FPrefixes := TDictionary<String, String>.create;
   FPrefixes.clear();
   FPrefixes.add('_', 'urn:uuid:4425b440-2c33-4488-b9fc-cf9456139995#');
@@ -1470,7 +1470,7 @@ begin
   StringToStream(compose(doc), dest, TEncoding.UTF8);
 end;
 
-class procedure TTurtleComposer.compose(doc: TTurtleDocument; dest: TAdvStream);
+class procedure TTurtleComposer.compose(doc: TTurtleDocument; dest: TFslStream);
 begin
   StringToStream(compose(doc), dest, TEncoding.UTF8);
 end;

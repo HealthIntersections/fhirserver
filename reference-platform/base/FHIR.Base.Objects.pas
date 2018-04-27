@@ -141,7 +141,7 @@ Type
   TFHIRSummaryOption = (soFull, soSummary, soText, soData, soCount);
 
 
-//  TFhirTag = class (TAdvName)
+//  TFhirTag = class (TFslName)
 //  private
 //    FKey : integer;
 //    FDisplay : String;
@@ -192,7 +192,7 @@ type
   TFHIRSelection = class;
   TFHIRSelectionList = class;
 
-  TFHIRProperty = class (TAdvObject)
+  TFHIRProperty = class (TFslObject)
   Private
     FOwner : TFHIRObject; // noown
     FName : String;
@@ -205,7 +205,7 @@ type
   Public
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
-    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TAdvList<TFHIRObject>); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFHIRObject>); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
     Constructor CreateEnum(oOwner : TFHIRObject; Const sName : String;     bList: boolean; cClass : TClass; enumName : String; sValue : String); Overload;
@@ -224,7 +224,7 @@ type
   End;
 
 
-  TFHIRPropertyListEnumerator = class (TAdvObject)
+  TFHIRPropertyListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFHIRPropertyList;
@@ -236,7 +236,7 @@ type
     property Current : TFHIRProperty read GetCurrent;
   end;
 
-  TFHIRPropertyList = class (TAdvObjectList)
+  TFHIRPropertyList = class (TFslObjectList)
   private
     Function GetProperty(iIndex : Integer) : TFHIRProperty;
     Function GetPropertyByName(name : String) : TFHIRProperty;
@@ -248,7 +248,7 @@ type
   End;
 
 
-  TFHIRPropertyIterator = class (TAdvObject)
+  TFHIRPropertyIterator = class (TFslObject)
   private
     FFocus : TFHIRObject;
     FProperties : TFHIRPropertyList;
@@ -264,23 +264,23 @@ type
   End;
 
   {$M+}
-  TFHIRObject = class (TAdvObject)
+  TFHIRObject = class (TFslObject)
   private
     FTags : TDictionary<String,String>;
-    FTag : TAdvObject;
+    FTag : TFslObject;
     FTagObject : TObject;
     FLocationStart : TSourceLocation;
     FLocationEnd : TSourceLocation;
-    FCommentsStart: TAdvStringList;
-    FCommentsEnd: TAdvStringList;
+    FCommentsStart: TFslStringList;
+    FCommentsEnd: TFslStringList;
     FFormat : TFHIRFormat;
     FNoCompose: boolean;
     FTagInt: integer;
     FJsHandle: pointer;
     FJsInstance: cardinal;
-    function GetCommentsStart: TAdvStringList;
-    function GetCommentsEnd: TAdvStringList;
-    procedure SetTag(const Value: TAdvObject);
+    function GetCommentsStart: TFslStringList;
+    function GetCommentsEnd: TFslStringList;
+    procedure SetTag(const Value: TFslObject);
     procedure SetTags(name: String; const Value: String);
     function getTags(name: String): String;
   protected
@@ -299,7 +299,7 @@ type
     Destructor Destroy; override;
     function Link : TFHIRObject;
     function Clone : TFHIRObject; Overload;
-    procedure Assign(oSource : TAdvObject); override;
+    procedure Assign(oSource : TFslObject); override;
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
 
@@ -326,7 +326,7 @@ type
     // tags...
     Property Tags[name : String] : String read getTags write SetTags;
     function HasTag(name : String): boolean;
-    property Tag : TAdvObject read FTag write SetTag;
+    property Tag : TFslObject read FTag write SetTag;
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
     property TagInt : integer read FTagInt write FTagInt;
 
@@ -351,7 +351,7 @@ type
     function hasType(t : String) : boolean; overload;
     function hasType(tl : Array of String) : boolean; overload;
     function describe : String; virtual;
-    procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRObject>); virtual;
+    procedure getProperty(name : String; checkValid : boolean; list : TFslList<TFHIRObject>); virtual;
     function ToString : String; override;
     function isEmpty : boolean; virtual;
     procedure dropEmpty;
@@ -361,8 +361,8 @@ type
     {@member comments
       comments from the XML stream. No support for comments in JSON
     }
-    Property xml_commentsStart : TAdvStringList read GetCommentsStart;
-    Property xml_commentsEnd : TAdvStringList read GetCommentsEnd;
+    Property xml_commentsStart : TFslStringList read GetCommentsStart;
+    Property xml_commentsEnd : TFslStringList read GetCommentsEnd;
 
     Property _source_format : TFHIRFormat read FFormat write FFormat;
 
@@ -374,7 +374,7 @@ type
 
   TFHIRObjectClass = class of TFHIRObject;
 
-  TFHIRObjectListEnumerator = class (TAdvObject)
+  TFHIRObjectListEnumerator = class (TFslObject)
   private
     FIndex : integer;
     FList : TFHIRObjectList;
@@ -386,7 +386,7 @@ type
     property Current : TFHIRObject read GetCurrent;
   end;
 
-  TFHIRObjectList = class (TAdvObjectList)
+  TFHIRObjectList = class (TFslObjectList)
   private
     FTags : TDictionary<String,String>;
     FJsHandle: pointer;
@@ -395,7 +395,7 @@ type
     procedure SetTags(name: String; const Value: String);
     function getTags(name: String): String;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     Constructor Create(item : TFHIRObject); overload;
     Constructor Create(items : TFHIRObjectList); overload;
@@ -418,7 +418,7 @@ type
     function link : TFHIRResourceV; overload;
   end;
 
-  TFHIRWorkerContextV = class (TAdvObject)
+  TFHIRWorkerContextV = class (TFslObject)
   protected
     function GetVersion: TFHIRVersion; virtual;
   public
@@ -445,12 +445,12 @@ type
   end;
 
 
-  TFHIRObjectFactory = class (TAdvObject)
+  TFHIRObjectFactory = class (TFslObject)
   private
   public
   end;
 
-  TFHIRSelection = class (TAdvObject)
+  TFHIRSelection = class (TFslObject)
   private
     FParent : TFHIRObject;
     FName : String;
@@ -465,7 +465,7 @@ type
     property value : TFHIRObject read FValue;
   end;
 
-  TFHIRSelectionList = class (TAdvList<TFHIRSelection>)
+  TFHIRSelectionList = class (TFslList<TFHIRSelection>)
   public
     Constructor Create; overload; override;
     Constructor Create(focus : TFHIRObject); overload;
@@ -474,7 +474,7 @@ type
     procedure add(value : TFHIRObject); overload;
     procedure add(parent : TFHIRObject; name : String; value : TFHIRObject); overload;
     procedure addAll(value : TFHIRObjectList); overload;
-    procedure addAll(value : TAdvList<TFHIRObject>); overload;
+    procedure addAll(value : TFslList<TFHIRObject>); overload;
     procedure addAll(parent : TFHIRObject; name : String; value : TFHIRObjectList); overload;
 
     function asValues : TFHIRObjectList;
@@ -546,7 +546,7 @@ begin
   result := TFHIRObject(Inherited Clone);
 end;
 
-procedure TFHIRObject.Assign(oSource: TAdvObject);
+procedure TFHIRObject.Assign(oSource: TFslObject);
 begin
   inherited;
   if TFHIRObject(oSource).HasXmlCommentsStart then
@@ -637,7 +637,7 @@ begin
   raise Exception.Create('The property "'+propName+'" is unknown (setting value)"');
 end;
 
-procedure TFHIRObject.SetTag(const Value: TAdvObject);
+procedure TFHIRObject.SetTag(const Value: TFslObject);
 begin
   FTag.Free;
   FTag := Value;
@@ -687,10 +687,10 @@ begin
   raise Exception.Create('"fhirType" is not overridden in '+className);
 end;
 
-function TFHIRObject.GetCommentsStart: TAdvStringList;
+function TFHIRObject.GetCommentsStart: TFslStringList;
 begin
   if FCommentsStart = nil then
-    FCommentsStart := TAdvStringList.Create;
+    FCommentsStart := TFslStringList.Create;
   result := FCommentsStart;
 end;
 
@@ -699,7 +699,7 @@ begin
   raise Exception.Create('"getId" is not overridden in '+className);
 end;
 
-procedure TFHIRObject.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRObject>);
+procedure TFHIRObject.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
 begin
   if checkValid then
     raise Exception.Create('Property '+name+' is not valid');
@@ -748,10 +748,10 @@ begin
   result := false;
 end;
 
-function TFHIRObject.GetCommentsEnd: TAdvStringList;
+function TFHIRObject.GetCommentsEnd: TFslStringList;
 begin
   if FCommentsEnd = nil then
-    FCommentsEnd := TAdvStringList.Create;
+    FCommentsEnd := TFslStringList.Create;
   result := FCommentsEnd;
 end;
 
@@ -883,7 +883,7 @@ begin
     result := '';
 end;
 
-function TFHIRObjectList.ItemClass: TAdvObjectClass;
+function TFHIRObjectList.ItemClass: TFslObjectClass;
 begin
   result := TFHIRObject;
 end;
@@ -1017,7 +1017,7 @@ begin
     FList.Add(FOwner.makeCodeValue(sValue));
 end;
 
-constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass; oList: TAdvList<TFHIRObject>);
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass; oList: TFslList<TFHIRObject>);
 var
   i : integer;
 begin
@@ -1281,7 +1281,7 @@ begin
   add(TFHIRSelection.Create(parent, name, value));
 end;
 
-procedure TFHIRSelectionList.addAll(value: TAdvList<TFHIRObject>);
+procedure TFHIRSelectionList.addAll(value: TFslList<TFHIRObject>);
 var
   o : TFHIRObject;
 begin

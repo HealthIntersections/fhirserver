@@ -69,9 +69,9 @@ type
     function describe : String; override;
   end;
 
-  TFHIRTagList = class (TAdvObject)
+  TFHIRTagList = class (TFslObject)
   private
-    FList : TAdvList<TFHIRTag>;
+    FList : TFslList<TFHIRTag>;
     function GetCount: Integer;
     function GetTag(index: integer): TFHIRTag;
   public
@@ -118,7 +118,7 @@ end;
 Constructor TFHIRTagList.Create;
 begin
   inherited;
-  FList := TAdvList<TFHIRTag>.create;
+  FList := TFslList<TFHIRTag>.create;
 end;
 
 
@@ -226,12 +226,12 @@ function TFHIRTagList.json: TArray<byte>;
 var
   json : TJSONWriter;
   s : TBytesStream;
-  vs : TAdvVCLStream;
+  vs : TFslVCLStream;
   t : TFHIRTag;
 begin
   s := TBytesStream.Create;
   try
-    vs := TAdvVCLStream.Create;
+    vs := TFslVCLStream.Create;
     try
       vs.Stream := s;
       json := TJSONWriterDirect.Create;

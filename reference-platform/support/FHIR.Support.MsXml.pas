@@ -7622,7 +7622,7 @@ Type
     FLocation : TSourceLocation;
     FExceptionMessage : String;
   protected
-    FXmlComments : TAdvStringList;
+    FXmlComments : TFslStringList;
     procedure startElement(sourceLocation : TSourceLocation; uri, localname : string; attrs : IVBSAXAttributes); overload; virtual;
     procedure endElement(sourceLocation : TSourceLocation); overload; virtual;
     procedure text(chars : String; sourceLocation : TSourceLocation); virtual;
@@ -7659,10 +7659,10 @@ Type
     FStack : TList<IXMLDOMElement>;
     FDom : IXMLDOMDocument2;
     FLastStart : TSourceLocation;
-    FLocations : TAdvList<TSourceLocationObject>;
+    FLocations : TFslList<TSourceLocationObject>;
     FTimeToAbort : Cardinal;
   public
-    constructor create(locations : TAdvList<TSourceLocationObject>; timeToAbort : cardinal);
+    constructor create(locations : TFslList<TSourceLocationObject>; timeToAbort : cardinal);
     destructor Destroy; override;
     property DOm : IXMLDOMDocument2 read FDom;
     procedure startElement(sourceLocation : TSourceLocation; uri, localname : string; attrs : IVBSAXAttributes); override;
@@ -7671,22 +7671,22 @@ Type
   end;
 
 
-  TMsXmlParser = class (TAdvObject)
+  TMsXmlParser = class (TFslObject)
   Private
   Public
     Class Function Parse(Const sFilename : String) : IXMLDomDocument2; Overload;
     Class Function Parse(Const oSource : TStream) : IXMLDomDocument2; Overload;
-    Class Function Parse(Const oSource : TAdvStream) : IXMLDomDocument2; Overload;
-    Class Function Parse(Const oSource : TAdvBuffer) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const oSource : TFslStream) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const oSource : TFslBuffer) : IXMLDomDocument2; Overload;
     Class Function Parse(Const bytes : TBytes) : IXMLDomDocument2; Overload;
     Class Function ParseString(Const sSource : String) : IXMLDomDocument2; Overload;
 
-    Class Function Parse(Const sFilename : String; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
-    Class Function Parse(Const oSource : TStream; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
-    Class Function Parse(Const oSource : TAdvStream; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
-    Class Function Parse(Const oSource : TAdvBuffer; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
-    Class Function Parse(Const bytes : TBytes; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
-    Class Function ParseString(Const sSource : String; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const sFilename : String; locations : TFslList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const oSource : TStream; locations : TFslList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const oSource : TFslStream; locations : TFslList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const oSource : TFslBuffer; locations : TFslList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const bytes : TBytes; locations : TFslList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function ParseString(Const sSource : String; locations : TFslList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
 
     Class Function GetAttribute(oElement : IXMLDOMElement; Const sName : String) : String; overload;
     Class Function GetAttribute(oElement : IXMLDOMElement; Const sNamespace, sName : String) : String; overload;
@@ -7698,8 +7698,8 @@ Type
 
     Class Procedure ParseByHandler(Const sFilename : String; handler : TMsXmlSaxHandler); Overload;
     Class Procedure ParseByHandler(Const oSource : TStream; handler : TMsXmlSaxHandler); Overload;
-    Class Procedure ParseByHandler(Const oSource : TAdvStream; handler : TMsXmlSaxHandler); Overload;
-    Class Procedure ParseByHandler(Const oSource : TAdvBuffer; handler : TMsXmlSaxHandler); Overload;
+    Class Procedure ParseByHandler(Const oSource : TFslStream; handler : TMsXmlSaxHandler); Overload;
+    Class Procedure ParseByHandler(Const oSource : TFslBuffer; handler : TMsXmlSaxHandler); Overload;
   End;
 
 Procedure DetermineMsXmlProgId;
@@ -15318,19 +15318,19 @@ begin
   result := parse(sFileName, nil);
 end;
 
-Class function TMsXmlParser.Parse(const sFilename: String; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
+Class function TMsXmlParser.Parse(const sFilename: String; locations : TFslList<TSourceLocationObject>): IXMLDomDocument2;
 var
   oFile : TFileStream;
-  oWeb : TAdvWinInetClient;
+  oWeb : TFslWinInetClient;
 begin
   if StringStartsWith(sFilename, 'http:') or StringStartsWith(sFilename, 'https:') or StringStartsWith(sFilename, 'ftp:')  Then
   Begin
-    oWeb := TAdvWinInetClient.Create;
+    oWeb := TFslWinInetClient.Create;
     Try
 //      oWeb.SetAddress(sFilename);
       oWeb.RequestMethod := 'GET';
-      oWeb.Request := TAdvBuffer.Create;
-      oWeb.Response := TAdvBuffer.Create;
+      oWeb.Request := TFslBuffer.Create;
+      oWeb.Response := TFslBuffer.Create;
       oWeb.Execute;
       if oWeb.ResponseCode <> '200' Then
         Raise Exception.Create('HTTP Error '+oWeb.ResponseCode);
@@ -15356,7 +15356,7 @@ begin
   result := parse(oSource, nil);
 end;
 
-Class function TMsXmlParser.Parse(const oSource: TStream; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
+Class function TMsXmlParser.Parse(const oSource: TStream; locations : TFslList<TSourceLocationObject>): IXMLDomDocument2;
 Var
   iDom : IXMLDomDocument2;
   vAdapter : Variant;
@@ -15399,12 +15399,12 @@ begin
 end;
 
 
-class function TMsXmlParser.Parse(const oSource: TAdvStream): IXMLDomDocument2;
+class function TMsXmlParser.Parse(const oSource: TFslStream): IXMLDomDocument2;
 begin
   result := parse(oSource, nil);
 end;
 
-class function TMsXmlParser.Parse(const oSource: TAdvStream; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
+class function TMsXmlParser.Parse(const oSource: TFslStream; locations : TFslList<TSourceLocationObject>): IXMLDomDocument2;
 Var
   oWrapper : TVCLStream;
 begin
@@ -15532,16 +15532,16 @@ end;
 class procedure TMsXmlParser.ParseByHandler(const sFilename: String; handler: TMsXmlSaxHandler);
 var
   oFile : TFileStream;
-  oWeb : TAdvWinInetClient;
+  oWeb : TFslWinInetClient;
 begin
   if StringStartsWith(sFilename, 'http:') or StringStartsWith(sFilename, 'https:') or StringStartsWith(sFilename, 'ftp:')  Then
   Begin
-    oWeb := TAdvWinInetClient.Create;
+    oWeb := TFslWinInetClient.Create;
     Try
 //      oWeb.SetAddress(sFilename);
       oWeb.RequestMethod := 'GET';
-      oWeb.Request := TAdvBuffer.Create;
-      oWeb.Response := TAdvBuffer.Create;
+      oWeb.Request := TFslBuffer.Create;
+      oWeb.Response := TFslBuffer.Create;
       oWeb.Execute;
       if oWeb.ResponseCode <> '200' Then
         Raise Exception.Create('HTTP Error '+oWeb.ResponseCode);
@@ -15562,11 +15562,11 @@ begin
 
 end;
 
-class procedure TMsXmlParser.ParseByHandler(const oSource: TAdvBuffer; handler: TMsXmlSaxHandler);
+class procedure TMsXmlParser.ParseByHandler(const oSource: TFslBuffer; handler: TMsXmlSaxHandler);
 var
-  oMem : TAdvMemoryStream;
+  oMem : TFslMemoryStream;
 begin
-  oMem := TAdvMemoryStream.Create;
+  oMem := TFslMemoryStream.Create;
   try
     oMem.Buffer := oSource.Link;
     ParseByHandler(oMem, handler);
@@ -15580,7 +15580,7 @@ begin
   result := parseString(sSource, nil);
 end;
 
-class function TMsXmlParser.ParseString(const sSource: String; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
+class function TMsXmlParser.ParseString(const sSource: String; locations : TFslList<TSourceLocationObject>): IXMLDomDocument2;
 var
   oMem : TBytesStream;
 begin
@@ -15592,7 +15592,7 @@ begin
   End;
 end;
 
-class procedure TMsXmlParser.ParseByHandler(const oSource: TAdvStream; handler: TMsXmlSaxHandler);
+class procedure TMsXmlParser.ParseByHandler(const oSource: TFslStream; handler: TMsXmlSaxHandler);
 Var
   oWrapper : TVCLStream;
 begin
@@ -15633,16 +15633,16 @@ Begin
   End;
 end;
 
-class function TMsXmlParser.Parse(const oSource: TAdvBuffer): IXMLDomDocument2;
+class function TMsXmlParser.Parse(const oSource: TFslBuffer): IXMLDomDocument2;
 begin
   result := parse(oSource, nil);
 end;
 
-class function TMsXmlParser.Parse(const oSource: TAdvBuffer; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
+class function TMsXmlParser.Parse(const oSource: TFslBuffer; locations : TFslList<TSourceLocationObject>): IXMLDomDocument2;
 var
-  oMem : TAdvMemoryStream;
+  oMem : TFslMemoryStream;
 begin
-  oMem := TAdvMemoryStream.Create;
+  oMem := TFslMemoryStream.Create;
   try
     oMem.Buffer := oSource.Link;
     result := Parse(oMem, locations);
@@ -15657,7 +15657,7 @@ begin
   result := parse(bytes, nil);
 end;
 
-class function TMsXmlParser.Parse(const bytes: TBytes; locations: TAdvList<TSourceLocationObject>): IXMLDomDocument2;
+class function TMsXmlParser.Parse(const bytes: TBytes; locations: TFslList<TSourceLocationObject>): IXMLDomDocument2;
 var
   b : TBytesStream;
 begin
@@ -15681,7 +15681,7 @@ end;
 constructor TMsXmlSaxHandler.create;
 begin
   inherited;
-  FXmlComments := TAdvStringList.create;
+  FXmlComments := TFslStringList.create;
 end;
 
 destructor TMsXmlSaxHandler.destroy;
@@ -15802,7 +15802,7 @@ end;
 
 { TLocatingSaxToDomParser }
 
-constructor TLocatingSaxToDomParser.create(locations : TAdvList<TSourceLocationObject>; timeToAbort : cardinal);
+constructor TLocatingSaxToDomParser.create(locations : TFslList<TSourceLocationObject>; timeToAbort : cardinal);
 begin
   FStack := TList<IXMLDOMElement>.create;
   FDom := CoDOMDocument.Create;

@@ -198,7 +198,7 @@
         <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Publisher.pas"/>
         <DCCReference Include="TerminologyServer.pas"/>
         <DCCReference Include="TerminologyServerStore.pas"/>
-        <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
+        <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="FHIRValueSetChecker.pas"/>
         <DCCReference Include="TerminologyWebServer.pas"/>
         <DCCReference Include="FHIRServerConstants.pas"/>
@@ -263,7 +263,6 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Context.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Debug.Logging.pas"/>
-        <DCCReference Include="Logging.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.AuthMap.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.DiffEngine.pas"/>
         <DCCReference Include="ACIRServices.pas"/>
@@ -387,14 +386,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServer2.rsm</RemoteName>
+                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRServer2.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

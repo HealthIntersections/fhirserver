@@ -45,7 +45,7 @@ uses
   FHIR.Support.DateTime,
   FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Base.Xhtml,
-  TerminologyServices, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services,
+  FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services,
   TerminologyServer, TerminologyServerStore;
 
 const
@@ -56,7 +56,7 @@ const
 
 
 Type
-  TFHIRValueSetExpander = class (TAdvObject)
+  TFHIRValueSetExpander = class (TFslObject)
   private
     FLimit : integer;
     FCount : integer;
@@ -64,19 +64,19 @@ Type
     FProfile : TFhirExpansionProfile;
 
     FStore : TTerminologyServer;
-    procedure processCodeAndDescendants(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
+    procedure processCodeAndDescendants(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TFslStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
 
-    procedure handleDefine(cs : TFhirCodeSystem; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirCodeSystem2; defines : TFhirCodeSystemConceptList; filter : TSearchFilterText; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
-    procedure importValueSet(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; vs : TFHIRValueSet; expansion : TFhirValueSetExpansion; importHash : TStringList);
-    procedure processCodes(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cset : TFhirValueSetComposeInclude; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
-    procedure handleCompose(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
+    procedure handleDefine(cs : TFhirCodeSystem; list : TFhirValueSetExpansionContainsList; map : TFslStringObjectMatch; source : TFhirCodeSystem2; defines : TFhirCodeSystemConceptList; filter : TSearchFilterText; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
+    procedure importValueSet(list : TFhirValueSetExpansionContainsList; map : TFslStringObjectMatch; vs : TFHIRValueSet; expansion : TFhirValueSetExpansion; importHash : TStringList);
+    procedure processCodes(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TFslStringObjectMatch; cset : TFhirValueSetComposeInclude; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
+    procedure handleCompose(list : TFhirValueSetExpansionContainsList; map : TFslStringObjectMatch; source : TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
 
     procedure hashImport(hash : TStringList; cc : TFhirValueSetExpansionContains);
-    function makeImportHash(imports : TAdvList<TFHIRValueSet>; start : integer) : TStringList;
+    function makeImportHash(imports : TFslList<TFHIRValueSet>; start : integer) : TStringList;
     function passesImportFilter(importHash : TStringList; system, code : string) : boolean;
 
-    procedure processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, version, code, display, definition: string; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
-    procedure addDefinedCode(cs : TFhirCodeSystem; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; system : string; c : TFhirCodeSystemConcept; profile : TFhirExpansionProfile; importHash : TStringList);
+    procedure processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; system, version, code, display, definition: string; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
+    procedure addDefinedCode(cs : TFhirCodeSystem; list : TFhirValueSetExpansionContainsList; map : TFslStringObjectMatch; system : string; c : TFhirCodeSystemConcept; profile : TFhirExpansionProfile; importHash : TStringList);
     function key(system, code, display : String): string; overload;
     function key(c : TFhirValueSetExpansionContains) : string;  overload;
     function chooseDisplay(c: TFhirCodeSystemConcept;  profile: TFHIRExpansionProfile): String; overload;
@@ -110,7 +110,7 @@ end;
 function TFHIRValueSetExpander.Expand(source: TFHIRValueSet; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFHIRValueSet;
 var
   list : TFhirValueSetExpansionContainsList;
-  map : TAdvStringObjectMatch;
+  map : TFslStringObjectMatch;
   i, t, o : integer;
   c : TFhirValueSetExpansionContains;
   //e : TFhirExtension;
@@ -167,7 +167,7 @@ begin
     dependencies.Add(source.url);
 
   filter := TSearchFilterText.create(textFilter);
-  map := TAdvStringObjectMatch.create;
+  map := TFslStringObjectMatch.create;
   map.PreventDuplicates;
   list := TFhirValueSetExpansionContainsList.create;
   try
@@ -304,7 +304,7 @@ begin
     hashImport(hash, ccc);
 end;
 
-function TFHIRValueSetExpander.makeImportHash(imports: TAdvList<TFHIRValueSet>; start: integer): TStringList;
+function TFHIRValueSetExpander.makeImportHash(imports: TFslList<TFHIRValueSet>; start: integer): TStringList;
 var
   i : integer;
   vs : TFHIRValueSet;
@@ -328,7 +328,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.handleCompose(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source: TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
+procedure TFHIRValueSetExpander.handleCompose(list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; source: TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
 var
   i : integer;
   {$IFDEF FHIR2}
@@ -352,7 +352,7 @@ begin
     processCodes(true, list, map, source.excludeList[i], filter, dependencies, expansion, profile, notClosed);
 end;
 
-procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystem; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; source : TFhirCodeSystem2; defines : TFhirCodeSystemConceptList; filter : TSearchFilterText; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
+procedure TFHIRValueSetExpander.handleDefine(cs : TFhirCodeSystem; list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; source : TFhirCodeSystem2; defines : TFhirCodeSystemConceptList; filter : TSearchFilterText; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
 var
   i : integer;
   cm : TFhirCodeSystemConcept;
@@ -398,7 +398,7 @@ begin
 {$ENDIF}
 end;
 
-procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystem; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system: string; c: TFhirCodeSystemConcept; profile : TFhirExpansionProfile; importHash : TStringList);
+procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystem; list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; system: string; c: TFhirCodeSystemConcept; profile : TFhirExpansionProfile; importHash : TStringList);
 var
   i : integer;
 begin
@@ -422,7 +422,7 @@ begin
     result := importHash.find(system+#1+code, i);
 end;
 
-procedure TFHIRValueSetExpander.processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, version, code, display, definition: string; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
+procedure TFHIRValueSetExpander.processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; system, version, code, display, definition: string; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
 var
   n : TFHIRValueSetExpansionContains;
   s : String;
@@ -501,7 +501,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.importValueSet(list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; vs : TFHIRValueSet; expansion : TFhirValueSetExpansion; importHash : TStringList);
+procedure TFHIRValueSetExpander.importValueSet(list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; vs : TFHIRValueSet; expansion : TFhirValueSetExpansion; importHash : TStringList);
 var
   i : integer;
   c : TFhirValueSetExpansionContains;
@@ -523,7 +523,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCodes(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
+procedure TFHIRValueSetExpander.processCodes(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; cset: TFhirValueSetComposeInclude; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
 var
   cs : TCodeSystemProvider;
   i, offset, count : integer;
@@ -535,13 +535,13 @@ var
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
   s, display : String;
-  imports : TAdvList<TFHIRValueSet>;
+  imports : TFslList<TFHIRValueSet>;
   hash : TStringList;
   uri : TFhirUri;
   base : TFHIRValueSet;
   ex : TFHIRExtension;
 begin
-  imports := TAdvList<TFHIRValueSet>.create;
+  imports := TFslList<TFHIRValueSet>.create;
   try
     cset.checkNoModifiers('ValueSetExpander.processCodes', 'set');
     {$IFNDEF FHIR2}
@@ -708,7 +708,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
+procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
 var
   i : integer;
   param : TFhirValueSetExpansionParameter;

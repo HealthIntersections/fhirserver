@@ -38,7 +38,7 @@ uses
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities;
 
 type
-  TClientApplicationVerifier = class (TAdvObject)
+  TClientApplicationVerifier = class (TFslObject)
   private
     FServer: String;
     FCertificate: String;

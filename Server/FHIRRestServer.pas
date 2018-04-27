@@ -85,7 +85,7 @@ Uses
   IdGlobalProtocols, FHIR.Web.Socket,
 
   FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Strings,
-  FHIR.Support.Certs, Logging,
+  FHIR.Support.Certs, FHIR.Debug.Logging,
 
   FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Exceptions, FHIR.Support.Text,
   FHIR.Support.Generics,
@@ -109,7 +109,7 @@ Uses
   WebSourceProvider, GoogleAnalyticsProvider,
 
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer,
-  ServerUtilities, FHIR.Misc.ApplicationVerifier, JWTService, TerminologyServices, ServerJavascriptHost,
+  ServerUtilities, FHIR.Misc.ApplicationVerifier, JWTService, FHIR.Tx.Service, ServerJavascriptHost,
   ServerPostHandlers{$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Const
@@ -160,7 +160,7 @@ Type
     FServer : TFhirWebServer;
     FRequest : TFHIRRequest;
     FFormat : TFHIRFormat;
-    files : TAdvMap<TAdvFile>;
+    files : TFslMap<TFslFile>;
     FBundle : TFHIRBundle;
     procedure SetRequest(const Value: TFHIRRequest);
     procedure SetServer(const Value: TFhirWebServer);
@@ -185,7 +185,7 @@ Type
     Property Request : TFHIRRequest read FRequest write SetRequest;
   end;
 
-  TFHIRWebServerClientInfo = class(TAdvObject)
+  TFHIRWebServerClientInfo = class(TFslObject)
   private
     FContext: TIdContext;
     FActivity: String;
@@ -203,9 +203,9 @@ Type
 
 {$IFDEF MSWINDOWS}
 
-  TFHIRWebServerPatientViewContext = class(TAdvObject)
+  TFHIRWebServerPatientViewContext = class(TFslObject)
   private
-    FCards: TAdvList<TCDSHookCard>;
+    FCards: TFslList<TCDSHookCard>;
     FErrors: TStringList;
     FManager: TCDSHooksManager;
     procedure SetManager(const Value: TCDSHooksManager);
@@ -214,11 +214,11 @@ Type
     Destructor Destroy; Override;
     property manager: TCDSHooksManager read FManager write SetManager;
     property Errors: TStringList read FErrors;
-    property cards: TAdvList<TCDSHookCard> read FCards;
+    property cards: TFslList<TCDSHookCard> read FCards;
   end;
 {$ENDIF}
 
-  TFhirWebServer = Class(TAdvObject)
+  TFhirWebServer = Class(TFslObject)
   Private
     FIni: TFHIRServerIniFile;
     FLock: TCriticalSection;
@@ -272,22 +272,22 @@ Type
     FStartTime: cardinal;
     FTotalTime: cardinal;
     FRestTime: cardinal;
-    FClients: TAdvList<TFHIRWebServerClientInfo>;
+    FClients: TFslList<TFHIRWebServerClientInfo>;
     FServerContext: TFHIRServerContext;
     FTerminologyWebServer: TTerminologyWebServer;
     FMaintenanceThread: TFhirServerMaintenanceThread;
     FSubscriptionThread: TFhirServerSubscriptionThread;
     FEmailThread: TFhirServerEmailThread;
     FAuthServer: TAuth2Server;
-    FAdaptors: TAdvMap<TFHIRFormatAdaptor>;
-    carry: TAdvZipReader; // for uploading support
+    FAdaptors: TFslMap<TFHIRFormatAdaptor>;
+    carry: TFslZipReader; // for uploading support
     carryName: String;
     FPatientViewServers: TDictionary<String, String>;
 {$IFDEF MSWINDOWS}
-    FPatientHooks: TAdvMap<TFHIRWebServerPatientViewContext>;
+    FPatientHooks: TFslMap<TFHIRWebServerPatientViewContext>;
 {$ENDIF}
-    FReverseProxyList: TAdvList<TReverseProxyInfo>;
-    FReverseProxyByVersion : TAdvMap<TReverseProxyInfo>;
+    FReverseProxyList: TFslList<TReverseProxyInfo>;
+    FReverseProxyByVersion : TFslMap<TReverseProxyInfo>;
     FCDSHooksServer: TCDSHooksServer;
     FIsTerminologyServerOnly: boolean;
     FThreads : TList<TAsyncTaskThread>;
@@ -335,7 +335,7 @@ Type
     // Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
     Procedure ReadTags(header: String; request: TFHIRRequest); overload;
     function CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
-    Function BuildFhirHomePage(compList : TAdvList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
     Function BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean): String;
     Function BuildFhirUploadPage(lang, host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
@@ -423,8 +423,6 @@ Uses
 {$IFDEF MSWINDOWS}
   Registry,
 {$ENDIF}
-  FHIR.Debug.Logging,
-
   FHIR.Misc.Facebook;
 
 Function GetMimeTypeForExt(AExt: String): String;
@@ -628,13 +626,13 @@ Begin
     FOutLog.Policy.AllowExceptions := false;
   end;
 
-  FClients := TAdvList<TFHIRWebServerClientInfo>.Create;
+  FClients := TFslList<TFHIRWebServerClientInfo>.Create;
   FPatientViewServers := TDictionary<String, String>.Create;
 {$IFDEF MSWINDOWS}
-  FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.Create;
+  FPatientHooks := TFslMap<TFHIRWebServerPatientViewContext>.Create;
 {$ENDIF}
-  FReverseProxyList := TAdvList<TReverseProxyInfo>.Create;
-  FReverseProxyByVersion := TAdvMap<TReverseProxyInfo>.Create;
+  FReverseProxyList := TFslList<TReverseProxyInfo>.Create;
+  FReverseProxyByVersion := TFslMap<TReverseProxyInfo>.Create;
   FServerContext := Context;
 
   loadConfiguration;
@@ -678,7 +676,7 @@ Begin
   ServerContext.JWTServices.JWKAddress := FAuthServer.KeyPath;
   ServerContext.ClientApplicationVerifier.server := FIni.ReadString(voMaybeVersioned, 'web', 'cavs', FAuthServer.CavsPath);
 
-  FAdaptors := TAdvMap<TFHIRFormatAdaptor>.Create;
+  FAdaptors := TFslMap<TFHIRFormatAdaptor>.Create;
 {$IFDEF FHIR3}
   FAdaptors.Add('dataPoints', TOpenMHealthAdaptor.Create);
 {$ENDIF}
@@ -1195,12 +1193,12 @@ end;
 function TFhirWebServer.patientAppList(base, id : String): string;
 var
   b : TStringBuilder;
-  apps : TAdvList<TRegisteredClientInformation>;
+  apps : TFslList<TRegisteredClientInformation>;
   app : TRegisteredClientInformation;
 begin
   b := TStringBuilder.Create;
   try
-    apps := TAdvList<TRegisteredClientInformation>.create;
+    apps := TFslList<TRegisteredClientInformation>.create;
     try
       FServerContext.Storage.fetchClients(apps);
       for app in apps do
@@ -2625,7 +2623,7 @@ Begin
             oRequest.resource := ProcessZip(lang, oPostStream, NewGuidURN, 'http://hl7.org/fhir', false, nil, nil, cursor)
           else
           begin
-            oRequest.Source := TAdvBuffer.Create;
+            oRequest.Source := TFslBuffer.Create;
             if sContentEncoding = 'gzip' then
             begin
               mem := TMemoryStream.Create;
@@ -2738,10 +2736,10 @@ end;
 Function TFhirWebServer.ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext;
   var cursor: integer): TFHIRBundle;
 var
-  rdr: TAdvZipReader;
+  rdr: TFslZipReader;
   p: TFHIRParser;
   i, k: integer;
-  s: TAdvVCLStream;
+  s: TFslVCLStream;
   e: TFHIRBundleEntry;
   bnd: TFHIRBundle;
   inc: TStringList;
@@ -2759,19 +2757,19 @@ begin
       inc.CommaText := ini.ReadString(voVersioningNotApplicable, 'control', 'include', '');
     result.id := NewGuidURN;
     // result.base := base;
-    rdr := carry.link as TAdvZipReader;
+    rdr := carry.link as TFslZipReader;
     try
       if (rdr = nil) or (name <> carryName) then
       begin
         rdr.Free;
         carry.Free;
-        rdr := TAdvZipReader.Create;
-        s := TAdvVCLStream.Create;
+        rdr := TFslZipReader.Create;
+        s := TFslVCLStream.Create;
         s.stream := oStream;
         rdr.stream := s;
-        rdr.Parts := TAdvZipPartList.Create;
+        rdr.Parts := TFslZipPartList.Create;
         rdr.ReadZip;
-        carry := rdr.link as TAdvZipReader;
+        carry := rdr.link as TFslZipReader;
         carryName := name;
       end;
 
@@ -3245,8 +3243,8 @@ var
   key, i : integer;
   l : TFhirBundleLink;
   n, f : string;
-  zip : TAdvZipWriter;
-  m : TAdvMemoryStream;
+  zip : TFslZipWriter;
+  m : TFslMemoryStream;
 begin
   names := TStringList.Create;
   try
@@ -3268,9 +3266,9 @@ begin
       begin
         if request.SubId = 'zip' then
         begin
-          m := TAdvMemoryStream.Create;
+          m := TFslMemoryStream.Create;
           try
-            zip := TAdvZipWriter.Create;
+            zip := TFslZipWriter.Create;
             try
               zip.Stream := m.Link;
               for n in names do
@@ -3305,7 +3303,7 @@ begin
           begin
             response.HTTPCode := 200;
             response.Message := 'OK';
-            response.Stream := TAdvFile.create(f, fmOpenRead + fmShareDenyWrite);
+            response.Stream := TFslFile.create(f, fmOpenRead + fmShareDenyWrite);
             response.ContentType := MIMETYPES_TFHIRFormat[response.format];
             FServerContext.Storage.recordDownload(key, request.subId);
           end;
@@ -3425,13 +3423,13 @@ begin
   result := result + TFHIRXhtmlComposer.Footer(lang, lang, logid);
 end;
 
-function TFhirWebServer.BuildFhirHomePage(compList : TAdvList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TFhirWebServer.BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   counts: TStringList;
   a: String;
   s: String;
   names: TStringList;
-  profiles: TAdvStringMatch;
+  profiles: TFslStringMatch;
   i, j, ix: integer;
   b: TStringBuilder;
   pol: String;
@@ -3449,7 +3447,7 @@ begin
     end;
 
     pol := FServerContext.Storage.ProfilesAsOptionList;
-    profiles := TAdvStringMatch.Create;
+    profiles := TFslStringMatch.Create;
     try
       profiles.forced := true;
       counts := FServerContext.Storage.FetchResourceCounts(compList);
@@ -3648,13 +3646,13 @@ end;
 
 procedure TFhirWebServer.logRequest(secure : boolean; id: String; request: TIdHTTPRequestInfo);
 var
-  package : TAdvBytesBuilder;
+  package : TFslBytesBuilder;
   b : TBytes;
 begin
   if FInLog = nil then
     exit;
 
-  package := TAdvBytesBuilder.Create;
+  package := TFslBytesBuilder.Create;
   try
     package.addUtf8('-----------------------------------------------------------------'#13#10);
     package.addUtf8(id);
@@ -3694,10 +3692,10 @@ end;
 procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
   procedure log(msg : String);
   var
-    package : TAdvBytesBuilder;
+    package : TFslBytesBuilder;
     b : TBytes;
   begin
-    package := TAdvBytesBuilder.Create;
+    package := TFslBytesBuilder.Create;
     try
       package.addUtf8('-----------------------------------------------------------------'#13#10);
       package.addUtf8(id);
@@ -4078,11 +4076,11 @@ end;
 
 procedure TFhirWebServer.CheckAsyncTasks;
 var
-  tasks : TAdvList<TAsyncTaskInformation>;
+  tasks : TFslList<TAsyncTaskInformation>;
   task : TAsyncTaskInformation;
   n, fn : string;
 begin
-  tasks := TAdvList<TAsyncTaskInformation>.create;
+  tasks := TFslList<TAsyncTaskInformation>.create;
   try
     ServerContext.Storage.fetchExpiredTasks(tasks);
     for task in tasks do
@@ -4554,7 +4552,7 @@ end;
 constructor TFHIRWebServerPatientViewContext.Create;
 begin
   inherited;
-  FCards := TAdvList<TCDSHookCard>.Create;
+  FCards := TFslList<TCDSHookCard>.Create;
   FErrors := TStringList.Create;
 end;
 
@@ -4773,7 +4771,7 @@ begin
   FBundle := TFHIRBundle.create(aType);
   if context.Format = ffNDJson then
   begin
-    files := TAdvMap<TAdvFile>.create;
+    files := TFslMap<TFslFile>.create;
     builder := TFHIRBundleBuilderNDJson.Create(FBundle.link, IncludeTrailingPathDelimiter(FServer.ServerContext.TaskFolder)+'task-'+inttostr(FKey), files.link)
   end
   else

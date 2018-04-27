@@ -192,7 +192,7 @@ type
     procedure btnEditCodeClick(Sender: TObject);
     procedure btnRemoveCodeClick(Sender: TObject);
   private
-    flatItems : TAdvList<TFhirQuestionnaireItem>;
+    flatItems : TFslList<TFhirQuestionnaireItem>;
     FLoading : boolean;
     FSelected : TFhirQuestionnaireItem;
     FPanel : TQuestionnairePanel;
@@ -665,7 +665,7 @@ end;
 constructor TQuestionnaireEditorFrame.Create(owner: TComponent);
 begin
   inherited;
-  flatItems := TAdvList<TFhirQuestionnaireItem>.create;
+  flatItems := TFslList<TFhirQuestionnaireItem>.create;
 end;
 
 destructor TQuestionnaireEditorFrame.Destroy;

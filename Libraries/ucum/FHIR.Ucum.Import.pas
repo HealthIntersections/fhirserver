@@ -111,7 +111,7 @@ var
   Reg : TSystemConfiguration;
   bAbort : Boolean;
   iCount : integer;
-  oErrors : TAdvStringList;
+  oErrors : TFslStringList;
   oIni : TIniFile;
   newKey : integer;
   sFilename : String;
@@ -177,7 +177,7 @@ begin
            raise exception.create('unrecognised element '+oElem.nodename);
           oElem := TMsXmlParser.NextSibling(oElem);
         End;
-        oErrors := TAdvStringList.Create;
+        oErrors := TFslStringList.Create;
         Try
           GUcum.Validate(oErrors);
           if oErrors.Count > 0 then
@@ -362,14 +362,14 @@ end;
 Procedure TUcumImportAction.LoadCommonUnits(oIni : TIniFile);
 var
   oList : TStringList;
-  oUnits : TAdvStringList;
+  oUnits : TFslStringList;
   i, j : integer;
   s : string;
 Begin
   oList := TStringList.Create;
   Try
     oIni.ReadSection('common units', oList);
-    oUnits := TAdvStringList.Create;
+    oUnits := TFslStringList.Create;
     Try
       for i := 0 to oList.Count - 1 Do
       begin

@@ -75,7 +75,7 @@ const
 
 
 Type
-  TFHIRDatabaseInstaller = class (TAdvObject)
+  TFHIRDatabaseInstaller = class (TFslObject)
   private
     Fcallback : TInstallerCallback;
     FConn : TKDBConnection;

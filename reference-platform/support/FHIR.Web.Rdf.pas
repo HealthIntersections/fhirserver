@@ -54,7 +54,7 @@ type
   TRDFGenerator = class;
   TRDFPredicate = class;
 
-  TRDFTriple = {abstract} class (TADvObject)
+  TRDFTriple = {abstract} class (TFslObject)
   private
     uri : String;
   public
@@ -71,7 +71,7 @@ type
   TRDFComplex = class (TRDFTriple)
   private
     FGen : TRDFGenerator;
-    FPredicates : TAdvList<TRDFPredicate>;
+    FPredicates : TFslList<TRDFPredicate>;
   public
     Constructor Create(gen : TRDFGenerator);
     Destructor Destroy; override;
@@ -83,7 +83,7 @@ type
     function complex : TRDFComplex;
   end;
 
-  TRDFPredicate = class (TAdvObject)
+  TRDFPredicate = class (TFslObject)
   private
     FPredicate : String;
     FObj : TRDFTriple;
@@ -106,11 +106,11 @@ type
     procedure labl(labl: String);
   end;
 
-  TRDFSection = class (TAdvObject)
+  TRDFSection = class (TFslObject)
   private
     FGen : TRDFGenerator;
     FName : String;
-    FSubjects : TAdvList<TRDFSubject>;
+    FSubjects : TFslList<TRDFSubject>;
   public
     Constructor Create(gen : TRDFGenerator);
     Destructor Destroy; override;
@@ -127,9 +127,9 @@ type
     function subject(subject : String): TRDFSubject;
   end;
 
-  TRDFGenerator = class (TAdvObject)
+  TRDFGenerator = class (TFslObject)
   private
-    FSections : TAdvList<TRDFSection>;
+    FSections : TFslList<TRDFSection>;
     FSubjectSet : TList<String>;
     FPredicateSet : TList<String>;
     FObjectSet : TList<String>;
@@ -223,7 +223,7 @@ end;
 constructor TRDFComplex.Create(gen : TRDFGenerator);
 begin
   inherited Create;
-  FPredicates := TAdvList<TRDFPredicate>.create;
+  FPredicates := TFslList<TRDFPredicate>.create;
   FGen := gen;
 end;
 
@@ -397,7 +397,7 @@ constructor TRDFSection.Create(gen: TRDFGenerator);
 begin
   inherited create;
   FGen := gen;
-  FSubjects := TAdvList<TRDFSubject>.create;
+  FSubjects := TFslList<TRDFSubject>.create;
 end;
 
 destructor TRDFSection.Destroy;
@@ -468,7 +468,7 @@ end;
 constructor TRDFGenerator.Create();
 begin
   inherited Create;
-  FSections := TAdvList<TRDFSection>.create;
+  FSections := TFslList<TRDFSection>.create;
   FSubjectSet := TList<String>.create;
   FPredicateSet := TList<String>.create;
   FObjectSet := TList<String>.create;

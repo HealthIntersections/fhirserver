@@ -38,7 +38,7 @@ uses
   FHIR.Snomed.Services;
 
 Type
-  TTabWriter = class (TAdvObject)
+  TTabWriter = class (TFslObject)
   private
     FStream : TFileStream;
     FDiv : boolean;
@@ -50,7 +50,7 @@ Type
     procedure endRecord;
   end;
 
-  TSnomedCombinedStoreEntry = class (TAdvObject)
+  TSnomedCombinedStoreEntry = class (TFslObject)
   private
     id : int64;
   public
@@ -58,7 +58,7 @@ Type
     Constructor create(i : int64); overload;
   end;
 
-  TSnomedCombinedItem = class (TAdvObject)
+  TSnomedCombinedItem = class (TFslObject)
   private
     FId : Int64;
   public
@@ -96,9 +96,9 @@ Type
     function copy : TSnomedCombinedRelationship;
   end;
 
-  TSnomedCombinedRelationshipGroup = class (TAdvObject)
+  TSnomedCombinedRelationshipGroup = class (TFslObject)
   private
-    FRelationships : TAdvList<TSnomedCombinedRelationship>;
+    FRelationships : TFslList<TSnomedCombinedRelationship>;
     FGroup : Integer;
     source : TSnomedServices;
   public
@@ -110,14 +110,14 @@ Type
 
   TSnomedCombinedConcept = class (TSnomedCombinedItem)
   private
-    FDescriptions : TAdvList<TSnomedCombinedDescription>;
+    FDescriptions : TFslList<TSnomedCombinedDescription>;
     FFlags : byte;
     FModule : Int64;
     FDate : TSnomedDate;
     source : TSnomedServices;
     FNoGroup : TSnomedCombinedRelationshipGroup;
-    FGroups : TAdvList<TSnomedCombinedRelationshipGroup>;
-    FChildren : TAdvList<TSnomedCombinedConcept>;
+    FGroups : TFslList<TSnomedCombinedRelationshipGroup>;
+    FChildren : TFslList<TSnomedCombinedConcept>;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -126,7 +126,7 @@ Type
     function link : TSnomedCombinedConcept; overload;
   end;
 
-  TSnomedCombinedReferenceSetEntry = class (TAdvObject)
+  TSnomedCombinedReferenceSetEntry = class (TFslObject)
   private
     id : TGuid;
     date : TSnomedDate;
@@ -138,7 +138,7 @@ Type
     Destructor Destroy; Override;
   end;
 
-  TSnomedCombinedReferenceSet = class (TAdvObject)
+  TSnomedCombinedReferenceSet = class (TFslObject)
   private
     FName : String;
     FFilename : String;
@@ -146,7 +146,7 @@ Type
     FTypes : TStringList;
     FFields : TStringList;
     DefaultLanguage : boolean;
-    FMembers : TAdvMap<TSnomedCombinedReferenceSetEntry>;
+    FMembers : TFslMap<TSnomedCombinedReferenceSetEntry>;
     function getByItem(item : TSnomedCombinedItem; values : TStringList) : TSnomedCombinedReferenceSetEntry;
   public
     Constructor Create; Override;
@@ -154,7 +154,7 @@ Type
     function abbrev : String;
   end;
 
-  TSnomedCombinedDependency = class (TAdvObject)
+  TSnomedCombinedDependency = class (TFslObject)
   private
     id : TGuid;
     FDate : TSnomedDate;
@@ -165,17 +165,17 @@ Type
   public
   end;
 
-  TSnomedCombiner = class (TAdvObject)
+  TSnomedCombiner = class (TFslObject)
   private
     FInternational: TSnomedServices;
-    FOthers: TAdvList<TSnomedServices>;
+    FOthers: TFslList<TSnomedServices>;
 
-    FStore : TAdvMap<TSnomedCombinedStoreEntry>;
-    FDependencies : TAdvMap<TSnomedCombinedDependency>;
-    FConcepts : TAdvMap<TSnomedCombinedConcept>;
-    FDescriptions : TAdvMap<TSnomedCombinedDescription>;
-    FRelationships : TAdvMap<TSnomedCombinedRelationship>;
-    FRefSets : TAdvMap<TSnomedCombinedReferenceSet>;
+    FStore : TFslMap<TSnomedCombinedStoreEntry>;
+    FDependencies : TFslMap<TSnomedCombinedDependency>;
+    FConcepts : TFslMap<TSnomedCombinedConcept>;
+    FDescriptions : TFslMap<TSnomedCombinedDescription>;
+    FRelationships : TFslMap<TSnomedCombinedRelationship>;
+    FRefSets : TFslMap<TSnomedCombinedReferenceSet>;
 
     FCallback: TInstallerCallback;
     FCurrent, FTotal, FPercent, FLast, FPathCount, FDescCount, FRelnCount : cardinal;
@@ -222,7 +222,7 @@ Type
     procedure classify; overload;
     procedure classify(concept : TSnomedCombinedConcept); overload;
     procedure forceRelationship(concept : TSnomedCombinedConcept; group : TSnomedCombinedRelationshipGroup; relationship : TSnomedCombinedRelationship);
-    function exists(list  : TAdvList<TSnomedCombinedRelationship>; relationship : TSnomedCombinedRelationship) : boolean;
+    function exists(list  : TFslList<TSnomedCombinedRelationship>; relationship : TSnomedCombinedRelationship) : boolean;
 
     procedure addToRefSet(rsId, conceptId : UInt64);
     procedure identify;
@@ -243,7 +243,7 @@ Type
     procedure Execute;
 
     property international : TSnomedServices read FInternational write SetInternational;
-    property others : TAdvList<TSnomedServices> read FOthers;
+    property others : TFslList<TSnomedServices> read FOthers;
     property callback : TInstallerCallback read FCallback write FCallback;
 
     property issues : TStringList read FIssues;
@@ -328,7 +328,7 @@ constructor TSnomedCombinedRelationshipGroup.Create(source : TSnomedServices);
 begin
   inherited Create;
   self.source := source;
-  FRelationships := TAdvList<TSnomedCombinedRelationship>.create;
+  FRelationships := TFslList<TSnomedCombinedRelationship>.create;
 end;
 
 destructor TSnomedCombinedRelationshipGroup.Destroy;
@@ -357,9 +357,9 @@ end;
 constructor TSnomedCombinedConcept.Create;
 begin
   inherited;
-  FDescriptions := TAdvList<TSnomedCombinedDescription>.create;
-  FGroups := TAdvList<TSnomedCombinedRelationshipGroup>.create;
-  FChildren := TAdvList<TSnomedCombinedConcept>.create;
+  FDescriptions := TFslList<TSnomedCombinedDescription>.create;
+  FGroups := TFslList<TSnomedCombinedRelationshipGroup>.create;
+  FChildren := TFslList<TSnomedCombinedConcept>.create;
 end;
 
 destructor TSnomedCombinedConcept.Destroy;
@@ -392,13 +392,13 @@ end;
 constructor TSnomedCombiner.Create;
 begin
   inherited;
-  FStore := TAdvMap<TSnomedCombinedStoreEntry>.create;
-  FOthers := TAdvList<TSnomedServices>.create;
-  FConcepts := TAdvMap<TSnomedCombinedConcept>.create(500000);
-  FDependencies := TAdvMap<TSnomedCombinedDependency>.Create;
-  FDescriptions := TAdvMap<TSnomedCombinedDescription>.create(1500000);
-  FRelationships := TAdvMap<TSnomedCombinedRelationship>.create(3000000);
-  FRefSets := TAdvMap<TSnomedCombinedReferenceSet>.create(1000);
+  FStore := TFslMap<TSnomedCombinedStoreEntry>.create;
+  FOthers := TFslList<TSnomedServices>.create;
+  FConcepts := TFslMap<TSnomedCombinedConcept>.create(500000);
+  FDependencies := TFslMap<TSnomedCombinedDependency>.Create;
+  FDescriptions := TFslMap<TSnomedCombinedDescription>.create(1500000);
+  FRelationships := TFslMap<TSnomedCombinedRelationship>.create(3000000);
+  FRefSets := TFslMap<TSnomedCombinedReferenceSet>.create(1000);
   FSummary := TStringList.create;
   FIssues := TStringList.create;
 end;
@@ -1496,7 +1496,7 @@ begin
   end;
 end;
 
-function TSnomedCombiner.exists(list: TAdvList<TSnomedCombinedRelationship>; relationship: TSnomedCombinedRelationship): boolean;
+function TSnomedCombiner.exists(list: TFslList<TSnomedCombinedRelationship>; relationship: TSnomedCombinedRelationship): boolean;
 var
   t : TSnomedCombinedRelationship;
 begin
@@ -1570,7 +1570,7 @@ begin
   inherited;
   FTypes := TStringList.create;
   FFields := TStringList.create;
-  FMembers := TAdvMap<TSnomedCombinedReferenceSetEntry>.create;
+  FMembers := TFslMap<TSnomedCombinedReferenceSetEntry>.create;
 end;
 
 destructor TSnomedCombinedReferenceSet.Destroy;

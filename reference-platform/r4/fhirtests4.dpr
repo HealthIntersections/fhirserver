@@ -55,7 +55,6 @@ uses
   FHIR.Web.Fetcher in '..\support\FHIR.Web.Fetcher.pas',
   FHIR.Support.Turtle in '..\support\FHIR.Support.Turtle.pas',
   FHIR.Debug.Logging in '..\support\FHIR.Debug.Logging.pas',
-  Logging in '..\..\Server\Logging.pas',
   FHIR.Support.Signatures in '..\support\FHIR.Support.Signatures.pas',
   FHIR.Support.Exceptions in '..\support\FHIR.Support.Exceptions.pas',
   FHIR.Support.Collections in '..\support\FHIR.Support.Collections.pas',
@@ -90,8 +89,8 @@ uses
   FHIR.R4.Turtle in 'FHIR.R4.Turtle.pas',
   DecimalTests in '..\support\Tests\DecimalTests.pas',
   DifferenceEngineTests in '..\support\Tests\DifferenceEngineTests.pas',
-  FHIRPathTests4 in 'tests\FHIRPathTests4.pas',
-  FHIRTestWorker4 in 'tests\FHIRTestWorker4.pas',
+  FHIR.R4.Tests.PathEngine in 'tests\FHIR.R4.Tests.PathEngine.pas',
+  FHIR.R4.Tests.Worker in 'tests\FHIR.R4.Tests.Worker.pas',
   JWTTests in '..\support\Tests\JWTTests.pas',
   JsonTests in '..\support\Tests\JsonTests.pas',
   XmlTests in '..\support\Tests\XmlTests.pas';

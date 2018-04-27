@@ -38,7 +38,7 @@ Uses
 
 Type
   TCharArray = SysUtils.TCharArray;
-  TAdvCharacterSet = Class(TAdvOrdinalSet)
+  TFslCharacterSet = Class(TFslOrdinalSet)
     Private
       FDataSet : TCharSet;
 
@@ -58,7 +58,7 @@ Type
   End;
 
 
-  TAdvTextReader = class (TAdvObject)
+  TFslTextReader = class (TFslObject)
   public
     procedure Close; virtual; abstract;
     function Peek: Integer; virtual; abstract;
@@ -71,7 +71,7 @@ Type
     Function ReadString(Var s : String; iLength : Integer) : Integer;
   end;
 
-  TAdvStringReader = class(TAdvTextReader)
+  TFslStringReader = class(TFslTextReader)
   private
     FContent : String;
     FCursor : integer;
@@ -86,7 +86,7 @@ Type
     procedure Close; override;
   end;
 
-  TAdvStreamReader = class(TAdvTextReader)
+  TFslStreamReader = class(TFslTextReader)
   private
     FBufferedData: TCharArray;
     FBufferStart : Integer;
@@ -95,7 +95,7 @@ Type
     FDetectBOM: Boolean;
     FNoDataInStream: Boolean;
     FSkipPreamble: Boolean;
-    FStream: TAdvStream;
+    FStream: TFslStream;
     FCursor : Integer;
     FEncoding: TEncoding;
     FCheckEncoding : boolean;
@@ -105,13 +105,13 @@ Type
     procedure FillBuffer(var Encoding: TEncoding);
     function GetEndOfStream: Boolean;
   protected
-    Property Stream : TAdvStream read FStream;
+    Property Stream : TFslStream read FStream;
   public
-    constructor Create(aStream: TAdvStream); overload;
-    constructor Create(aStream: TAdvStream; DetectBOM: Boolean); overload;
+    constructor Create(aStream: TFslStream); overload;
+    constructor Create(aStream: TFslStream; DetectBOM: Boolean); overload;
     constructor Create(const Filename: string); overload;
     constructor Create(const Filename: string; DetectBOM: Boolean); overload;
-    constructor Create(aStream: TAdvStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0); overload;
+    constructor Create(aStream: TFslStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0); overload;
     constructor Create(const Filename: string; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0); overload;
     destructor Destroy; override;
     procedure Close; override;
@@ -123,16 +123,16 @@ Type
     function ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer; override;
     function ReadLine: string; override;
     function ReadToEnd: string; override;
-    property BaseStream: TAdvStream read FStream;
+    property BaseStream: TFslStream read FStream;
     property CurrentEncoding: TEncoding read FEncoding;
     property EndOfStream: Boolean read GetEndOfStream;
   end;
 
-  TAdvFormatter = Class(TAdvStreamAdapter)
+  TFslFormatter = Class(TFslStreamAdapter)
     Protected
       Function ErrorClass : EAdvExceptionClass; Overload; Override;
 
-      Procedure SetStream(oStream : TAdvStream); Override;
+      Procedure SetStream(oStream : TFslStream); Override;
 
     Public
       Procedure Clear; Overload; Virtual;
@@ -144,12 +144,12 @@ Type
   EAdvFormatter = Class(EAdvStream);
 
   EAdvExtractor = Class(EAdvException);
-  TAdvExtractor = Class(TAdvStreamAdapter)
+  TFslExtractor = Class(TFslStreamAdapter)
     Protected
 
       Function ErrorClass : EAdvExceptionClass; Overload; Override;
 
-      Procedure SetStream(oStream : TAdvStream); Override;
+      Procedure SetStream(oStream : TFslStream); Override;
 
     Public
       Procedure Clear; Virtual;
@@ -157,7 +157,7 @@ Type
       Function More : Boolean; Virtual;
   End;
 
-  TAdvTextFormatter = Class(TAdvFormatter)
+  TFslTextFormatter = Class(TFslFormatter)
     Private
       FLevel : Integer;
       FHasWhitespace : Boolean;
@@ -174,7 +174,7 @@ Type
     Public
       Constructor Create; Override;
 
-      Function Link : TAdvTextFormatter;
+      Function Link : TFslTextFormatter;
 
       Procedure Clear; Override;
 
@@ -196,14 +196,14 @@ Type
       {$ENDIF}
   End;
 
-  TAdvTextFormatterClass = Class Of TAdvTextFormatter;
+  TFslTextFormatterClass = Class Of TFslTextFormatter;
 
-  TAdvTextExtractor = Class(TAdvStreamReader)
+  TFslTextExtractor = Class(TFslStreamReader)
     Private
       FLine : Integer;
       FCache : String;
 
-      FBuilder : TAdvStringBuilder;
+      FBuilder : TFslStringBuilder;
 
     Protected
       Function ErrorClass : EAdvExceptionClass; Override;
@@ -231,7 +231,7 @@ Type
 
       Function ConsumeWhileCharacter(Const cToken : Char) : String;
       Function ConsumeWhileCharacterSet(Const aTokenSet : TCharSet) : String; Overload;
-      Function ConsumeWhileCharacterSet(Const oCharacterSet : TAdvCharacterSet) : String; Overload;
+      Function ConsumeWhileCharacterSet(Const oCharacterSet : TFslCharacterSet) : String; Overload;
 
       Function ConsumeUntilCharacter(Const cToken : Char) : String;
       Function ConsumeUntilCharacterSet(Const aTokenSet : TCharSet) : String;
@@ -254,7 +254,7 @@ Type
   EAdvTextExtractor = Class(EAdvExtractor);
 
 
-  TAdvCSVExtractor = Class(TAdvTextExtractor)
+  TFslCSVExtractor = Class(TFslTextExtractor)
     Private
       FSeparator : Char;
       FQuote : Char;
@@ -263,7 +263,7 @@ Type
     Public
       Constructor Create; Override;
 
-      Procedure ConsumeEntries(oEntries : TAdvStringList); Overload; 
+      Procedure ConsumeEntries(oEntries : TFslStringList); Overload; 
       Procedure ConsumeEntries; Overload;
       Function ConsumeEntry : String;
       Function MoreEntries : Boolean;
@@ -273,7 +273,7 @@ Type
       Property HasQuote : Boolean Read FHasQuote Write FHasQuote;
   End;
 
-  TAdvCSVFormatter = Class(TAdvTextFormatter)
+  TFslCSVFormatter = Class(TFslTextFormatter)
     Private
       FSeparator : Char;
       FQuote : Char;
@@ -287,7 +287,7 @@ Type
       Procedure Clear; Override;
 
       Procedure ProduceEntryStringArray(Const aEntryStringArray : Array Of String);
-      Procedure ProduceEntryStringList(oEntryStringList : TAdvStringList);
+      Procedure ProduceEntryStringList(oEntryStringList : TFslStringList);
       Procedure ProduceEntry(Const sEntry : String);
       Procedure ProduceSeparator;
 
@@ -298,7 +298,7 @@ Type
       Property HasQuote : Boolean Read FHasQuote Write FHasQuote;
   End;
 
-  TCSVWriter = class (TAdvCSVFormatter)
+  TCSVWriter = class (TFslCSVFormatter)
   private
   public
     procedure cell(s : String); overload;
@@ -325,14 +325,14 @@ function FormatXMLForTextArea(AStr: String): String;
 
 function StringToUTF8Stream(value : String) : TStream;
 function UTF8StreamToString(value : TStream) : String; overload;
-function UTF8StreamToString(value : TAdvAccessStream) : String; overload;
+function UTF8StreamToString(value : TFslAccessStream) : String; overload;
 
 function FileToString(filename : String; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
 function StreamToString(stream : TStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String; overload;
-function StreamToString(stream : TAdvStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String; overload;
+function StreamToString(stream : TFslStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String; overload;
 procedure StringToFile(content, filename : String; encoding : TEncoding);
 procedure StringToStream(content: String; stream : TStream; encoding : TEncoding); overload;
-procedure StringToStream(content: String; stream : TAdvStream; encoding : TEncoding); overload;
+procedure StringToStream(content: String; stream : TFslStream; encoding : TEncoding); overload;
 
 procedure BytesToFile(bytes : TBytes; filename : String);
 function FileToBytes(filename : String; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : TBytes;
@@ -345,7 +345,7 @@ type
     line, col : integer;
   end;
 
-  TSourceLocationObject = class (TAdvObject)
+  TSourceLocationObject = class (TFslObject)
   public
     locationStart : TSourceLocation;
     locationEnd : TSourceLocation;
@@ -366,7 +366,7 @@ Implementation
 uses
   FHIR.Support.Math;
 
-Constructor TAdvCSVExtractor.Create;
+Constructor TFslCSVExtractor.Create;
 Begin 
   Inherited;
 
@@ -376,7 +376,7 @@ Begin
 End;  
 
 
-Procedure TAdvCSVExtractor.ConsumeEntries(oEntries : TAdvStringList);
+Procedure TFslCSVExtractor.ConsumeEntries(oEntries : TFslStringList);
 Var
   sEntry : String;
 Begin 
@@ -396,7 +396,7 @@ Begin
 End;  
 
 
-Function TAdvCSVExtractor.ConsumeEntry : String;
+Function TFslCSVExtractor.ConsumeEntry : String;
 Var
   bMore : Boolean;
 Begin
@@ -465,20 +465,20 @@ Begin
 End;
 
 
-Procedure TAdvCSVExtractor.ConsumeEntries;
+Procedure TFslCSVExtractor.ConsumeEntries;
 Begin 
   ConsumeEntries(Nil);
 End;  
 
 
-Function TAdvCSVExtractor.MoreEntries : Boolean;
+Function TFslCSVExtractor.MoreEntries : Boolean;
 Begin 
   Result := More And Not CharInSet(NextCharacter, setVertical);
 End;
 
 
 
-Constructor TAdvCSVFormatter.Create;
+Constructor TFslCSVFormatter.Create;
 Begin
   Inherited;
 
@@ -489,13 +489,13 @@ Begin
 End;
 
 
-Destructor TAdvCSVFormatter.Destroy;
+Destructor TFslCSVFormatter.Destroy;
 Begin
   Inherited;
 End;
 
 
-Procedure TAdvCSVFormatter.Clear;
+Procedure TFslCSVFormatter.Clear;
 Begin
   Inherited;
 
@@ -503,7 +503,7 @@ Begin
 End;
 
 
-Procedure TAdvCSVFormatter.ProduceEntryStringList(oEntryStringList: TAdvStringList);
+Procedure TFslCSVFormatter.ProduceEntryStringList(oEntryStringList: TFslStringList);
 Var
   iEntryIndex : Integer;
 Begin
@@ -512,7 +512,7 @@ Begin
 End;
 
 
-Procedure TAdvCSVFormatter.ProduceEntryStringArray(Const aEntryStringArray: Array Of String);
+Procedure TFslCSVFormatter.ProduceEntryStringArray(Const aEntryStringArray: Array Of String);
 Var
   iEntryIndex : Integer;
 Begin
@@ -521,7 +521,7 @@ Begin
 End;
 
 
-Procedure TAdvCSVFormatter.ProduceEntry(Const sEntry : String);
+Procedure TFslCSVFormatter.ProduceEntry(Const sEntry : String);
 Begin
   If FEmptyLine Then
     FEmptyLine := False
@@ -536,7 +536,7 @@ Begin
 End;
 
 
-Procedure TAdvCSVFormatter.ProduceNewLine;
+Procedure TFslCSVFormatter.ProduceNewLine;
 Begin
   Inherited;
 
@@ -544,13 +544,13 @@ Begin
 End;
 
 
-Procedure TAdvCSVFormatter.ProduceSeparator;
+Procedure TFslCSVFormatter.ProduceSeparator;
 Begin 
   Produce(FSeparator);
 End;
 
 
-Constructor TAdvTextFormatter.Create;
+Constructor TFslTextFormatter.Create;
 Begin
   Inherited;
 
@@ -563,13 +563,13 @@ Begin
 End;
 
 
-Function TAdvTextFormatter.Link : TAdvTextFormatter;
+Function TFslTextFormatter.Link : TFslTextFormatter;
 Begin
-  Result := TAdvTextFormatter(Inherited Link);
+  Result := TFslTextFormatter(Inherited Link);
 End;
 
 
-Procedure TAdvTextFormatter.Clear;
+Procedure TFslTextFormatter.Clear;
 Begin 
   Inherited;
 
@@ -577,7 +577,7 @@ Begin
 End;  
 
 
-Function TAdvTextFormatter.BeforeWhitespace : String;
+Function TFslTextFormatter.BeforeWhitespace : String;
 Begin 
   // Multiply of the space character by FLevel * 2 is more efficient than Multiply of string '  ' by FLevel because it uses FillChar.
 
@@ -588,7 +588,7 @@ Begin
 End;  
 
 
-Function TAdvTextFormatter.AfterWhitespace : String;
+Function TFslTextFormatter.AfterWhitespace : String;
 Begin 
   If FHasWhitespace Then
     Result := cReturn
@@ -597,51 +597,51 @@ Begin
 End;
 
 
-Procedure TAdvTextFormatter.ProduceFragment(Const sValue: String);
+Procedure TFslTextFormatter.ProduceFragment(Const sValue: String);
 Begin 
   Produce(sValue);
 End;  
 
 
-Procedure TAdvTextFormatter.ProduceLine(Const sValue: String);
+Procedure TFslTextFormatter.ProduceLine(Const sValue: String);
 Begin
   Produce(BeforeWhitespace + sValue + AfterWhitespace);
 End;
 
 
-Procedure TAdvTextFormatter.ProduceNewLine;
+Procedure TFslTextFormatter.ProduceNewLine;
 Begin 
   Produce(cReturn);
 End;  
 
 
-Procedure TAdvTextFormatter.LevelDown;
+Procedure TFslTextFormatter.LevelDown;
 Begin 
   Inc(FLevel);
 End;  
 
 
-Procedure TAdvTextFormatter.LevelUp;
+Procedure TFslTextFormatter.LevelUp;
 Begin 
   Dec(FLevel);
 End;  
 
 
-Procedure TAdvTextFormatter.ProduceInline(Const sValue: String);
+Procedure TFslTextFormatter.ProduceInline(Const sValue: String);
 Begin
   Produce(sValue);
 End;
 
 
-Constructor TAdvTextExtractor.Create;
+Constructor TFslTextExtractor.Create;
 Begin
   Inherited;
 
-  FBuilder := TAdvStringBuilder.Create;
+  FBuilder := TFslStringBuilder.Create;
 End;
 
 
-Destructor TAdvTextExtractor.Destroy;
+Destructor TFslTextExtractor.Destroy;
 Begin
   FBuilder.Free;
 
@@ -649,7 +649,7 @@ Begin
 End;
 
 
-Procedure TAdvTextExtractor.CacheAdd(Const sValue: String);
+Procedure TFslTextExtractor.CacheAdd(Const sValue: String);
 Begin
   Inherited;
 
@@ -657,7 +657,7 @@ Begin
 End;
 
 
-Procedure TAdvTextExtractor.CacheRemove(Const sValue: String);
+Procedure TFslTextExtractor.CacheRemove(Const sValue: String);
 Begin
   Inherited;
 
@@ -665,7 +665,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeLine : String;
+Function TFslTextExtractor.ConsumeLine : String;
 Begin
   Result := ConsumeUntilCharacterSet(setVertical);
 
@@ -673,20 +673,20 @@ Begin
 End;
 
 
-Procedure TAdvTextExtractor.RaiseError(Const sMethod, sMessage: String);
+Procedure TFslTextExtractor.RaiseError(Const sMethod, sMessage: String);
 Begin
   Inherited RaiseError(sMethod, StringFormat('Line %d: %s', [FLine, sMessage]));
 End;
 
 
-Function TAdvTextExtractor.ErrorClass: EAdvExceptionClass;
+Function TFslTextExtractor.ErrorClass: EAdvExceptionClass;
 Begin
   Result := EAdvTextExtractor;
 End;
 
 
 
-Procedure TAdvTextExtractor.ProduceString(Const sToken : String);
+Procedure TFslTextExtractor.ProduceString(Const sToken : String);
 Begin
   FCache := sToken + FCache;
 
@@ -694,13 +694,13 @@ Begin
 End;
 
 
-Procedure TAdvTextExtractor.ProduceCharacter(Const cToken : Char);
+Procedure TFslTextExtractor.ProduceCharacter(Const cToken : Char);
 Begin
   ProduceString(cToken);
 End;
 
 
-Function TAdvTextExtractor.MatchString(Const sToken: String): Boolean;
+Function TFslTextExtractor.MatchString(Const sToken: String): Boolean;
 Var
   iCacheLength : Integer;
   iTokenLength : Integer;
@@ -724,7 +724,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.MatchStringArray(Const aTokenSet: Array Of String): Integer;
+Function TFslTextExtractor.MatchStringArray(Const aTokenSet: Array Of String): Integer;
 Begin
   Result := High(aTokenSet);
   While (Result >= Low(aTokenSet)) And Not MatchString(aTokenSet[Result]) Do
@@ -732,7 +732,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.NextCharacter : Char;
+Function TFslTextExtractor.NextCharacter : Char;
 var
   Buffer: SysUtils.TCharArray;
 Begin
@@ -752,7 +752,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeCharacter : Char;
+Function TFslTextExtractor.ConsumeCharacter : Char;
 Begin
   Result := NextCharacter;
 
@@ -762,7 +762,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeCharacter(Const cToken : Char) : Char;
+Function TFslTextExtractor.ConsumeCharacter(Const cToken : Char) : Char;
 
   Function ToCharacter(Const cChar : Char) : String;
   Begin
@@ -780,7 +780,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeString(Const sToken : String) : String;
+Function TFslTextExtractor.ConsumeString(Const sToken : String) : String;
 Begin
   If Not MatchString(sToken) Then
     RaiseError('Consume(String)', StringFormat('Expected token ''%s'' but found token ''%s''', [sToken, Copy(FCache, 1, Length(sToken))]));
@@ -793,7 +793,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeCharacterCount(Const iCharacterCount : Integer) : String;
+Function TFslTextExtractor.ConsumeCharacterCount(Const iCharacterCount : Integer) : String;
 Var
   iLoop : Integer;
 Begin
@@ -804,7 +804,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeUntilCharacterSet(Const aTokenSet: TCharSet): String;
+Function TFslTextExtractor.ConsumeUntilCharacterSet(Const aTokenSet: TCharSet): String;
 Begin
   FBuilder.Clear;
   While More And Not CharInSet(NextCharacter, aTokenSet) Do
@@ -813,7 +813,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeUntilString(Const sToken: String): String;
+Function TFslTextExtractor.ConsumeUntilString(Const sToken: String): String;
 Begin
   FBuilder.Clear;
   While More And Not MatchString(sToken) Do
@@ -822,7 +822,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeUntilString(Const aStringArray: Array Of String): String;
+Function TFslTextExtractor.ConsumeUntilString(Const aStringArray: Array Of String): String;
 Begin
   FBuilder.Clear;
   While More And Not (MatchStringArray(aStringArray) >= 0) Do
@@ -831,7 +831,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeUntilCharacter(Const cToken : Char) : String;
+Function TFslTextExtractor.ConsumeUntilCharacter(Const cToken : Char) : String;
 Begin
   FBuilder.Clear;
   While More And (NextCharacter <> cToken) Do
@@ -840,7 +840,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeRestStream : String;
+Function TFslTextExtractor.ConsumeRestStream : String;
 Begin
   FBuilder.Clear;
   While More Do
@@ -849,7 +849,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeWhileCharacter(Const cToken : Char) : String;
+Function TFslTextExtractor.ConsumeWhileCharacter(Const cToken : Char) : String;
 Begin
   FBuilder.Clear;
   While More And (NextCharacter = cToken) Do
@@ -858,7 +858,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeWhileCharacterSet(Const aTokenSet : TCharSet) : String;
+Function TFslTextExtractor.ConsumeWhileCharacterSet(Const aTokenSet : TCharSet) : String;
 Begin
   FBuilder.Clear;
   While More And CharInSet(NextCharacter, aTokenSet) Do
@@ -867,7 +867,7 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.ConsumeWhileCharacterSet(Const oCharacterSet: TAdvCharacterSet): String;
+Function TFslTextExtractor.ConsumeWhileCharacterSet(Const oCharacterSet: TFslCharacterSet): String;
 Begin
   FBuilder.Clear;
   While More And oCharacterSet.ContainsValue(NextCharacter) Do
@@ -876,32 +876,32 @@ Begin
 End;
 
 
-Function TAdvTextExtractor.CacheLength: Integer;
+Function TFslTextExtractor.CacheLength: Integer;
 Begin
   Result := Length(FCache);
 End;
 
 
-Function TAdvTextExtractor.StreamPosition: Int64;
+Function TFslTextExtractor.StreamPosition: Int64;
 Begin
-  Assert(Invariants('StreamPosition', BaseStream, TAdvAccessStream, 'Stream'));
+  Assert(Invariants('StreamPosition', BaseStream, TFslAccessStream, 'Stream'));
 
-  Result := TAdvAccessStream(BaseStream).Position - CacheLength;
+  Result := TFslAccessStream(BaseStream).Position - CacheLength;
 End;
 
 
-Function TAdvTextExtractor.More : Boolean;
+Function TFslTextExtractor.More : Boolean;
 Begin
   Result := Not Inherited EndOfStream Or (Length(FCache) > 0);
 End;
 
-Function TAdvExtractor.ErrorClass : EAdvExceptionClass;
+Function TFslExtractor.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvExtractor;
 End;
 
 
-Procedure TAdvExtractor.SetStream(oStream: TAdvStream);
+Procedure TFslExtractor.SetStream(oStream: TFslStream);
 Begin
   Inherited;
 
@@ -909,35 +909,35 @@ Begin
 End;
 
 
-Procedure TAdvExtractor.Clear;
+Procedure TFslExtractor.Clear;
 Begin
 End;
 
 
-Function TAdvExtractor.More: Boolean;
+Function TFslExtractor.More: Boolean;
 Begin
   Result := (Stream.Readable > 0);
 End;
 
 
 
-Function TAdvFormatter.ErrorClass : EAdvExceptionClass;
+Function TFslFormatter.ErrorClass : EAdvExceptionClass;
 Begin 
   Result := EAdvFormatter;
 End;
 
 
-Procedure TAdvFormatter.Clear;
+Procedure TFslFormatter.Clear;
 Begin
 End;
 
 
-Procedure TAdvFormatter.ProduceBytes(Const aBytes : TBytes);
+Procedure TFslFormatter.ProduceBytes(Const aBytes : TBytes);
 Begin
   Write(aBytes[0], Length(aBytes));
 End;
 
-Procedure TAdvFormatter.Produce(Const sText: String);
+Procedure TFslFormatter.Produce(Const sText: String);
 {$IFDEF VER130}
 Begin
   Write(Pointer(sText)^, Length(sText));
@@ -955,7 +955,7 @@ End;
 {$ENDIF}
 
 
-Procedure TAdvFormatter.SetStream(oStream: TAdvStream);
+Procedure TFslFormatter.SetStream(oStream: TFslStream);
 Begin
   Inherited;
 
@@ -963,19 +963,19 @@ Begin
 End;
 
 
-{ TAdvStreamReader }
+{ TFslStreamReader }
 
-constructor TAdvStreamReader.Create(aStream: TAdvStream);
+constructor TFslStreamReader.Create(aStream: TFslStream);
 begin
   Create(aStream, TEncoding.UTF8, True);
 end;
 
-constructor TAdvStreamReader.Create(aStream: TAdvStream; DetectBOM: Boolean);
+constructor TFslStreamReader.Create(aStream: TFslStream; DetectBOM: Boolean);
 begin
   Create(aStream, TEncoding.UTF8, DetectBOM);
 end;
 
-constructor TAdvStreamReader.Create(aStream: TAdvStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0);
+constructor TFslStreamReader.Create(aStream: TFslStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0);
 begin
   Create;
 
@@ -1002,11 +1002,11 @@ begin
   FCursor := 0;
 end;
 
-constructor TAdvStreamReader.Create(const Filename: string; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0);
+constructor TFslStreamReader.Create(const Filename: string; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0);
 var
-  oFile : TAdvFile;
+  oFile : TFslFile;
 begin
-  oFile := TAdvFile.Create(FileName, fmOpenRead);
+  oFile := TFslFile.Create(FileName, fmOpenRead);
   Try
     Create(oFile.Link, Encoding, DetectBOM, BufferSize);
   Finally
@@ -1014,23 +1014,23 @@ begin
   End;
 end;
 
-constructor TAdvStreamReader.Create(const Filename: string; DetectBOM: Boolean);
+constructor TFslStreamReader.Create(const Filename: string; DetectBOM: Boolean);
 begin
   Create(Filename, TEncoding.UTF8, DetectBOM);
 end;
 
-constructor TAdvStreamReader.Create(const Filename: string);
+constructor TFslStreamReader.Create(const Filename: string);
 begin
   Create(Filename, TEncoding.UTF8, true);
 end;
 
-destructor TAdvStreamReader.Destroy;
+destructor TFslStreamReader.Destroy;
 begin
   Close;
   inherited;
 end;
 
-procedure TAdvStreamReader.Close;
+procedure TFslStreamReader.Close;
 begin
   FStream.Free;
   FStream := nil;
@@ -1039,7 +1039,7 @@ begin
   FClosed := true;
 end;
 
-procedure TAdvStreamReader.DiscardBufferedData;
+procedure TFslStreamReader.DiscardBufferedData;
 begin
   if not FClosed then
   begin
@@ -1049,7 +1049,7 @@ begin
   end;
 end;
 
-function TAdvStreamReader.DetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
+function TFslStreamReader.DetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
 var
   LEncoding: TEncoding;
 begin
@@ -1067,7 +1067,7 @@ begin
   FDetectBOM := False;
 end;
 
-procedure TAdvStreamReader.FillBuffer(var Encoding: TEncoding);
+procedure TFslStreamReader.FillBuffer(var Encoding: TEncoding);
 const
   BufferPadding = 4;
 var
@@ -1135,14 +1135,14 @@ begin
   end;
 end;
 
-function TAdvStreamReader.GetEndOfStream: Boolean;
+function TFslStreamReader.GetEndOfStream: Boolean;
 begin
   if not FNoDataInStream and (not FClosed) and (FBufferEnd <= FBufferStart) then
     FillBuffer(FEncoding);
   Result := FNoDataInStream and ((FClosed) or (FBufferEnd = FBufferStart));
 end;
 
-function TAdvStreamReader.Peek: Integer;
+function TFslStreamReader.Peek: Integer;
 begin
   Result := -1;
   if (not FClosed) and (not EndOfStream) then
@@ -1153,7 +1153,7 @@ begin
   end;
 end;
 
-function TAdvStreamReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
+function TFslStreamReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
   Result := -1;
   if (not FClosed) and (not EndOfStream) then
@@ -1171,12 +1171,12 @@ begin
   end;
 end;
 
-function TAdvStreamReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
+function TFslStreamReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
   Result := Read(Buffer, Index, Count);
 end;
 
-function TAdvStreamReader.Read: Integer;
+function TFslStreamReader.Read: Integer;
 begin
   Result := -1;
   if (not FClosed) and (not EndOfStream) then
@@ -1188,7 +1188,7 @@ begin
   end;
 end;
 
-function TAdvStreamReader.ReadLine: string;
+function TFslStreamReader.ReadLine: string;
 {var
   NewLineIndex: Integer;
   PostNewLineIndex: Integer;}
@@ -1245,7 +1245,7 @@ begin
   inc(FBufferStart, PostNewLineIndex);}
 end;
 
-function TAdvStreamReader.ReadToEnd: string;
+function TFslStreamReader.ReadToEnd: string;
 begin
   raise Exception.Create('This needs debugging for FBufferStart');
   Result := '';
@@ -1261,7 +1261,7 @@ begin
   end;
 end;
 
-function TAdvStreamReader.SkipPreamble(Encoding: TEncoding; Buffer: TBytes): Integer;
+function TFslStreamReader.SkipPreamble(Encoding: TEncoding; Buffer: TBytes): Integer;
 var
   I: Integer;
   LPreamble: TBytes;
@@ -1288,9 +1288,9 @@ begin
 end;
 
 
-{ TAdvTextReader }
+{ TFslTextReader }
 
-function TAdvTextReader.ReadString(var s: String; iLength: Integer): Integer;
+function TFslTextReader.ReadString(var s: String; iLength: Integer): Integer;
 var
   oBuffer : TCharArray;
 begin
@@ -1299,21 +1299,21 @@ begin
   SetString(s, pchar(oBuffer), result);
 end;
 
-{ TAdvStringReader }
+{ TFslStringReader }
 
-procedure TAdvStringReader.Close;
+procedure TFslStringReader.Close;
 begin
  // nothing
 end;
 
-constructor TAdvStringReader.Create(content: String);
+constructor TFslStringReader.Create(content: String);
 begin
   inherited Create;
   FContent := content;
   FCursor := 1;
 end;
 
-function TAdvStringReader.Peek: Integer;
+function TFslStringReader.Peek: Integer;
 begin
   if FCursor > FContent.Length then
     result := -1
@@ -1321,7 +1321,7 @@ begin
     result := ord(FContent[FCursor]);
 end;
 
-function TAdvStringReader.Read: Integer;
+function TFslStringReader.Read: Integer;
 begin
   if FCursor > FContent.Length then
     result := -1
@@ -1332,28 +1332,28 @@ begin
   end;
 end;
 
-function TAdvStringReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
+function TFslStringReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TAdvStringReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
+function TFslStringReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TAdvStringReader.ReadLine: string;
+function TFslStringReader.ReadLine: string;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TAdvStringReader.ReadToEnd: string;
+function TFslStringReader.ReadToEnd: string;
 begin
   raise Exception.Create('Not done yet');
 end;
 
 
-Constructor TAdvCharacterSet.Create;
+Constructor TFslCharacterSet.Create;
 Begin
   Inherited;
 
@@ -1363,31 +1363,31 @@ Begin
 End;
 
 
-Destructor TAdvCharacterSet.Destroy;
+Destructor TFslCharacterSet.Destroy;
 Begin
   Inherited;
 End;
 
 
-Procedure TAdvCharacterSet.AddRange(Const aFromValue, aToValue: Char);
+Procedure TFslCharacterSet.AddRange(Const aFromValue, aToValue: Char);
 Begin
   FDataSet := FDataSet + [aFromValue..aToValue];
 End;
 
 
-Procedure TAdvCharacterSet.AddValue(Const aValue: Char);
+Procedure TFslCharacterSet.AddValue(Const aValue: Char);
 Begin
   FDataSet := FDataSet + [aValue];
 End;
 
 
-Function TAdvCharacterSet.ContainsValue(Const aValue: Char): Boolean;
+Function TFslCharacterSet.ContainsValue(Const aValue: Char): Boolean;
 Begin
   Result := CharInSet(aValue, FDataSet);
 End;
 
 
-Function TAdvCharacterSet.GetAsText : String;
+Function TFslCharacterSet.GetAsText : String;
 Var
   iLoop : Integer;
   iStart : Integer;
@@ -1411,9 +1411,9 @@ Begin
 End;
 
 
-Procedure TAdvCharacterSet.SetAsText(Const Value: String);
+Procedure TFslCharacterSet.SetAsText(Const Value: String);
 Var
-  oStrings : TAdvStringList;
+  oStrings : TFslStringList;
   iLoop    : Integer;
   sField   : String;
   sLeft    : String;
@@ -1421,7 +1421,7 @@ Var
 Begin
   Fill(False);
 
-  oStrings := TAdvStringList.Create;
+  oStrings := TFslStringList.Create;
   Try
     oStrings.Symbol := ',';
 
@@ -1452,7 +1452,7 @@ var
 begin
   csv := TCSVWriter.Create;
   try
-    csv.Stream := TAdvFile.Create(filename, fmCreate);
+    csv.Stream := TFslFile.Create(filename, fmCreate);
     for s in headers do
       csv.cell(s);
     csv.line;
@@ -1879,7 +1879,7 @@ begin
     stream.write(bytes[0], length(bytes));
 end;
 
-procedure StringToStream(content: String; stream : TAdvStream; encoding : TEncoding);
+procedure StringToStream(content: String; stream : TFslStream; encoding : TEncoding);
 var
   bytes : TBytes;
 begin
@@ -1919,7 +1919,7 @@ begin
   result := encoding.GetString(bytes);
 end;
 
-function StreamToString(stream : TAdvStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
+function StreamToString(stream : TFslStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
 var
   bytes : TBytes;
 begin
@@ -1944,7 +1944,7 @@ begin
   result := TEncoding.UTF8.GetString(b);
 end;
 
-function UTF8StreamToString(value : TAdvAccessStream) : String;
+function UTF8StreamToString(value : TFslAccessStream) : String;
 var
   b : TBytes;
 begin

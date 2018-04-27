@@ -168,8 +168,8 @@ type
     FCsForm : TCapabilityStatementEditorFrame;
     FPdForm : TProviderDirectoryFrame;
     FPatBundle, FConfBundle : TFhirBundle;
-    FConfMatches : TAdvList<TFHIRResource>;
-    FPatMatches : TAdvList<TFHIRPatient>;
+    FConfMatches : TFslList<TFHIRResource>;
+    FPatMatches : TFslList<TFHIRPatient>;
     procedure SetClient(const Value: TFHIRClient);
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
     procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
@@ -749,8 +749,8 @@ begin
   cbPUseLastUpdated.IsChecked := Settings.getValue('Patient-search', 'updated-opt', false);
 
   btnFetchMore.Visible := false;
-  FConfMatches := TAdvList<TFHIRResource>.create;
-  FPatMatches := TAdvList<TFHIRPatient>.create;
+  FConfMatches := TFslList<TFHIRResource>.create;
+  FPatMatches := TFslList<TFHIRPatient>.create;
   cbxSearchTypeChange(nil);
   cbxPDobChange(nil);
   cbxPDeceasedChange(nil);

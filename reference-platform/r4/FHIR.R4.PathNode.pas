@@ -59,11 +59,11 @@ const
 
 
 type
-  TFHIRProfiledType = class (TAdvObject)
+  TFHIRProfiledType = class (TFslObject)
   private
     Furi : String;
     FProfiles : TStringList; // or, not and
-    FBindings : TAdvList<TFHIRElementDefinitionBinding>;
+    FBindings : TFslList<TFHIRElementDefinitionBinding>;
   public
     constructor Create(s : string);
     destructor Destroy; override;
@@ -71,7 +71,7 @@ type
 
     property uri : String read FUri;
     property profiles : TStringList read FProfiles;
-    property bindings : TAdvList<TFHIRElementDefinitionBinding> read FBindings;
+    property bindings : TFslList<TFHIRElementDefinitionBinding> read FBindings;
 
     function hasProfiles : boolean;
     function hasBindings : boolean;
@@ -84,16 +84,16 @@ type
     class function ns(s : String) : String;
   end;
 
-  TFHIRTypeDetails = class (TAdvObject)
+  TFHIRTypeDetails = class (TFslObject)
   private
     id : integer;
-    FTypes : TAdvList<TFHIRProfiledType>;
+    FTypes : TFslList<TFHIRProfiledType>;
     FCollectionStatus : TFHIRCollectionStatus;
     function typesContains(t : String) : boolean;
     function getSystemType(url : string) : String;
   public
     constructor create(status : TFHIRCollectionStatus; types : array of String);
-    constructor createList(status : TFHIRCollectionStatus; types : TAdvList<TFHIRProfiledType>); overload;
+    constructor createList(status : TFHIRCollectionStatus; types : TFslList<TFHIRProfiledType>); overload;
     constructor createList(status : TFHIRCollectionStatus; types : TStringList); overload;
     destructor Destroy; override;
     function Link : TFHIRTypeDetails; overload;
@@ -113,19 +113,19 @@ type
     function intersect(right : TFHIRTypeDetails) : TFHIRTypeDetails;
     function hasNoTypes() : boolean;
     function toSingleton : TFHIRTypeDetails;
-    property types : TAdvList<TFHIRProfiledType> read FTypes;
+    property types : TFslList<TFHIRProfiledType> read FTypes;
     property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
     function describe : String;
     function type_ : String;
   end;
 
-  TFHIRPathExpressionNode = class (TAdvObject)
+  TFHIRPathExpressionNode = class (TFslObject)
   private
     FTag : integer;
     FName: String;
     FConstant : TFHIRObject;
     FFunctionId : TFHIRPathFunction;
-    FParameters : TAdvList<TFHIRPathExpressionNode>;
+    FParameters : TFslList<TFHIRPathExpressionNode>;
     FInner: TFHIRPathExpressionNode;
     FGroup: TFHIRPathExpressionNode;
     FOperation : TFHIRPathOperation;
@@ -175,7 +175,7 @@ type
     property name : String read FName write FName;
     property constant : TFHIRObject read FConstant write SetConstant;
     property FunctionId : TFHIRPathFunction read FFunctionId write SetFunctionId;
-    property Parameters : TAdvList<TFHIRPathExpressionNode> read FParameters;
+    property Parameters : TFslList<TFHIRPathExpressionNode> read FParameters;
     property Inner : TFHIRPathExpressionNode read FInner write SetInner;
     property Group : TFHIRPathExpressionNode read FGroup write SetGroup;
     property Operation : TFHIRPathOperation read FOperation write FOperation;
@@ -308,7 +308,7 @@ procedure TFHIRPathExpressionNode.SetFunctionId(const Value: TFHIRPathFunction);
 begin
   FFunctionId := Value;
   if FParameters = nil then
-    FParameters := TAdvList<TFHIRPathExpressionNode>.create;
+    FParameters := TFslList<TFHIRPathExpressionNode>.create;
 end;
 
 procedure TFHIRPathExpressionNode.SetOpNext(const Value: TFHIRPathExpressionNode);
@@ -500,7 +500,7 @@ end;
 procedure TFHIRProfiledType.addBinding(b: TFHIRElementDefinitionBinding);
 begin
   if (Fbindings = nil) then
-    Fbindings := TAdvList<TFHIRElementDefinitionBinding>.create;
+    Fbindings := TFslList<TFHIRElementDefinitionBinding>.create;
   FBindings.add(b);
 end;
 
@@ -554,10 +554,10 @@ end;
 var
   gc : integer = 0;
 
-constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TAdvList<TFHIRProfiledType>);
+constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TFslList<TFHIRProfiledType>);
 begin
   inherited Create;
-  FTypes := TAdvList<TFHIRProfiledType>.create;
+  FTypes := TFslList<TFHIRProfiledType>.create;
   FCollectionStatus := status;
   FTypes.AddAll(types);
   inc(gc);
@@ -567,7 +567,7 @@ end;
 constructor TFHIRTypeDetails.create(status: TFHIRCollectionStatus; types: array of String);
 begin
   inherited Create;
-  FTypes := TAdvList<TFHIRProfiledType>.create;
+  FTypes := TFslList<TFHIRProfiledType>.create;
   FCollectionStatus := status;
   addTypes(types);
   inc(gc);
@@ -577,7 +577,7 @@ end;
 constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
 begin
   inherited Create;
-  FTypes := TAdvList<TFHIRProfiledType>.create;
+  FTypes := TFslList<TFHIRProfiledType>.create;
   FCollectionStatus := status;
   addTypes(types);
   inc(gc);

@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
 
 type
   TIETFLanguageCodeConcept = class (TCodeSystemProviderContext)
@@ -55,7 +55,7 @@ type
 
   end;
 
-  TIETFLanguageEntry = class (TAdvObject)
+  TIETFLanguageEntry = class (TFslObject)
   private
     FCode: String;
     FDisplay: String;
@@ -94,13 +94,13 @@ type
     function Link : TIETFLanguageVariant; overload;
   end;
 
-  TIETFLanguageDefinitions = class (TAdvObject)
+  TIETFLanguageDefinitions = class (TFslObject)
   private
-    FLanguages : TAdvMap<TIETFLanguageLanguage>;
-    FExtLanguages : TAdvMap<TIETFLanguageExtLang>;
-    FScripts : TAdvMap<TIETFLanguageScript>;
-    FRegions : TAdvMap<TIETFLanguageRegion>;
-    FVariants : TAdvMap<TIETFLanguageVariant>;
+    FLanguages : TFslMap<TIETFLanguageLanguage>;
+    FExtLanguages : TFslMap<TIETFLanguageExtLang>;
+    FScripts : TFslMap<TIETFLanguageScript>;
+    FRegions : TFslMap<TIETFLanguageRegion>;
+    FVariants : TFslMap<TIETFLanguageVariant>;
     function readVars(st : TStringList; i : integer; vars : TDictionary<string, string>) :integer;
     function loadLanguage(vars : TDictionary<string, string>; i : integer) :integer;
     function loadExtLang(vars : TDictionary<string, string>; i : integer) :integer;
@@ -495,11 +495,11 @@ end;
 constructor TIETFLanguageDefinitions.Create;
 begin
   inherited Create;
-  FLanguages := TAdvMap<TIETFLanguageLanguage>.create;
-  FExtLanguages := TAdvMap<TIETFLanguageExtLang>.create;
-  FScripts := TAdvMap<TIETFLanguageScript>.create;
-  FRegions := TAdvMap<TIETFLanguageRegion>.create;
-  FVariants := TAdvMap<TIETFLanguageVariant>.create;
+  FLanguages := TFslMap<TIETFLanguageLanguage>.create;
+  FExtLanguages := TFslMap<TIETFLanguageExtLang>.create;
+  FScripts := TFslMap<TIETFLanguageScript>.create;
+  FRegions := TFslMap<TIETFLanguageRegion>.create;
+  FVariants := TFslMap<TIETFLanguageVariant>.create;
   Load(source);
 end;
 

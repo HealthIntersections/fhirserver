@@ -12,7 +12,7 @@ uses
 type
   TJByteArray = TDshortintArray; //array of jbyte;
 
-  TJavaLibraryWrapper = class (TAdvObject)
+  TJavaLibraryWrapper = class (TFslObject)
   private
     Jvm : TJavaRuntime;
     JLibraryClass : TJavaClass;

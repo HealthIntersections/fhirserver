@@ -7,7 +7,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations,
   FHIR.CdsHooks.Utilities,
-  TerminologyServices;
+  FHIR.Tx.Service;
 
 type
   TICD10Node = class (TCodeSystemProviderContext)
@@ -17,7 +17,7 @@ type
     FLocalDisplay : String;
     FDescendentCount : integer;
 
-    FChildren : TAdvList<TICD10Node>;
+    FChildren : TFslList<TICD10Node>;
     function hasChildren : boolean;
     procedure addChild(child : TICD10Node);
   public
@@ -31,8 +31,8 @@ type
     FUrl : String;
     FVersion : String;
     FIsDefault : boolean;
-    FRoots : TAdvList<TICD10Node>;
-    FCodes : TAdvList<TICD10Node>;
+    FRoots : TFslList<TICD10Node>;
+    FCodes : TFslList<TICD10Node>;
     FLanguage : String;
     FTitle : String;
     FStack : Array[0..5] of TICD10Node;
@@ -109,7 +109,7 @@ end;
 procedure TICD10Node.addChild(child: TICD10Node);
 begin
   if FChildren = nil then
-    FChildren := TAdvList<TICD10Node>.create;
+    FChildren := TFslList<TICD10Node>.create;
   FChildren.add(child.link);
 end;
 
@@ -128,8 +128,8 @@ end;
 constructor TICD10Provider.Create(isDefault : boolean; filename: String);
 begin
   inherited create;
-  FRoots := TAdvList<TICD10Node>.create;
-  FCodes := TAdvList<TICD10Node>.create;
+  FRoots := TFslList<TICD10Node>.create;
+  FCodes := TFslList<TICD10Node>.create;
   FIsDefault := isDefault;
   load(filename);
 end;

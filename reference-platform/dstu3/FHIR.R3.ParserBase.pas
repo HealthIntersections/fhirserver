@@ -121,13 +121,13 @@ compose
     Procedure Compose(stream : TStream; oResource : TFhirResourceV; links : TFhirBundleLinkList = nil); Overload; Virtual;
 
 
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet); Virtual;
-    function Compose(expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet): String; Overload;
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet); overload; override;
+    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet); Virtual;
+    function Compose(expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet): String; Overload;
+    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet); overload; override;
     procedure ComposeExpression(xml : TXmlBuilder; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet); overload; override;
+    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet); overload; override;
     procedure ComposeExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet); overload; override;
+    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet); overload; override;
 
 text
     function render(op : TFHIROperationOutcome) : String;
@@ -161,7 +161,7 @@ var
 begin
   xml := nil;
   try
-    FComments := TAdvStringList.create;
+    FComments := TFslStringList.create;
     try
       if (Element = nil) then
       begin
@@ -245,12 +245,12 @@ begin
   end
   else
   begin
-    xml := TAdvXmlBuilder.Create;
+    xml := TFslXmlBuilder.Create;
     try
       xml.IsPretty := isPretty;
       xml.NoHeader := NoHeader;
       if isCanonical then
-        TAdvXmlBuilder(xml).CanonicalEntities := true;
+        TFslXmlBuilder(xml).CanonicalEntities := true;
       xml.CurrentNamespaces.DefaultNS := FHIR_NS;
       xml.Start;
       if not isCanonical and (FComment <> '') then
@@ -421,15 +421,15 @@ begin
 end;
 
 
-procedure TFHIRJsonComposerBase.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet);
+procedure TFHIRJsonComposerBase.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TFslStringSet);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TJSONWriter;
   base : TFHIRObject;
 begin
   json := TJsonWriterDirect.create;
   try
-    oStream := TAdvVCLStream.Create;
+    oStream := TFslVCLStream.Create;
     json.Stream := oStream;
     oStream.Stream := stream;
     json.HasWhitespace := isPretty;
@@ -541,7 +541,7 @@ begin
   start;
   xml := nil;
   try
-    FComments := TAdvStringList.create;
+    FComments := TFslStringList.create;
     try
       if (Element = nil) then
       begin
@@ -564,7 +564,7 @@ begin
 end;
 
 
-function TFHIRComposer.Compose(expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet): String;
+function TFHIRComposer.Compose(expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TFslStringSet): String;
 var
   stream : TBytesStream;
 begin
@@ -579,19 +579,19 @@ end;
 
 
 
-procedure TFHIRComposer.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet);
+procedure TFHIRComposer.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TFslStringSet);
 begin
   raise Exception.Create('ComposeExpression is Not supported for '+className);
 end;
 
 
 
-procedure TFHIRXmlComposerBase.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet);
+procedure TFHIRXmlComposerBase.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TFslStringSet);
 var
   xml : TXmlBuilder;
   base : TFHIRObject;
 begin
-  xml := TAdvXmlBuilder.Create;
+  xml := TFslXmlBuilder.Create;
   try
     xml.IsPretty := isPretty;
     xml.NoHeader := NoHeader;
@@ -628,7 +628,7 @@ begin
 end;
 
 
-procedure TFHIRTurtleComposerBase.ComposeExpression(stream: TStream; expr: TFHIRPathExpressionNode; items: TFHIRObjectList; types: TAdvStringSet);
+procedure TFHIRTurtleComposerBase.ComposeExpression(stream: TStream; expr: TFHIRPathExpressionNode; items: TFHIRObjectList; types: TFslStringSet);
 begin
   raise Exception.Create('not implemented yet');
 end;

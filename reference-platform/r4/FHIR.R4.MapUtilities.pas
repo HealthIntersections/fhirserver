@@ -45,7 +45,7 @@ const
   CODES_TVariableMode : array [TVariableMode] of string = ('input', 'output');
 
 type
-  TVariable = class (TAdvObject)
+  TVariable = class (TFslObject)
   private
     Fname: String;
     Fmode: TVariableMode;
@@ -61,9 +61,9 @@ type
     property obj : TFHIRObject read Fobj write Fobj;
   end;
 
-  TVariables = class (TAdvObject)
+  TVariables = class (TFslObject)
   private
-		list : TAdvList<TVariable>;
+		list : TFslList<TVariable>;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -74,20 +74,20 @@ type
 		function get(mode : TVariableMode; name : String) : TFHIRObject;
   end;
 
-  TTransformerServices = class abstract (TAdvObject)
+  TTransformerServices = class abstract (TFslObject)
   private
   public
     function oid2Uri(oid : String) : String; virtual; abstract;
-    function translate(appInfo : TAdvObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; virtual; abstract;
+    function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; virtual; abstract;
     procedure log(s : String); virtual; abstract;
   end;
 
-  TFHIRStructureMapUtilities = class (TAdvObject)
+  TFHIRStructureMapUtilities = class (TFslObject)
   private
 	  FWorker : TFHIRWorkerContext;
    	fpp : TFHIRPathParser;
    	fpe : TFHIRPathEngine;
-  	FLib : TAdvMap<TFHIRStructureMap>;
+  	FLib : TFslMap<TFHIRStructureMap>;
   	FServices : TTransformerServices;
     procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderUses(b : TStringBuilder; map : TFHIRStructureMap);
@@ -117,27 +117,27 @@ type
     procedure parseParameter(target : TFHIRStructureMapGroupRuleTarget; lexer : TFHIRPathLexer);
 
     procedure log(s : String);
-    procedure getChildrenByName(item : TFHIRObject; name : String; result : TAdvList<TFHIRObject>);
-    function runTransform(appInfo : TAdvObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
-    procedure executeGroup(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup);
-    procedure executeRule(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule);
-    function analyseSource(appInfo : TAdvObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TAdvList<TVariables>;
-    procedure processTarget(appInfo : TAdvObject; vars : TVariables; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget);
-    procedure executeDependency(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
+    procedure getChildrenByName(item : TFHIRObject; name : String; result : TFslList<TFHIRObject>);
+    function runTransform(appInfo : TFslObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
+    procedure executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup);
+    procedure executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule);
+    function analyseSource(appInfo : TFslObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TFslList<TVariables>;
+    procedure processTarget(appInfo : TFslObject; vars : TVariables; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget);
+    procedure executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
     function getParamString(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : String;
     function getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
-    function translate(appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject; overload;
-    function translate(appInfo : TAdvObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
+    function translate(appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject; overload;
+    function translate(appInfo : TFslObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
   public
-    constructor Create(context : TFHIRWorkerContext; lib : TAdvMap<TFHIRStructureMap>; services : TTransformerServices);
+    constructor Create(context : TFHIRWorkerContext; lib : TFslMap<TFHIRStructureMap>; services : TTransformerServices);
     destructor Destroy; override;
 
-  	property Lib : TAdvMap<TFHIRStructureMap> read FLib;
+  	property Lib : TFslMap<TFHIRStructureMap> read FLib;
 
     function render(map : TFHIRStructureMap) : String; overload;
     function render(map : TFHIRConceptMap) : String; overload;
 	  function parse(text : String) : TFHIRStructureMap;
-    procedure transform(appInfo : TAdvObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
+    procedure transform(appInfo : TFslObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
   end;
 
 
@@ -146,7 +146,7 @@ implementation
 { TFHIRStructureMapUtilities }
 
 constructor TFHIRStructureMapUtilities.Create(context: TFHIRWorkerContext;
-  lib: TAdvMap<TFHIRStructureMap>; services: TTransformerServices);
+  lib: TFslMap<TFHIRStructureMap>; services: TTransformerServices);
 begin
   inherited Create;
 	FWorker := context;
@@ -1058,7 +1058,7 @@ begin
 end;
 
 
-procedure TFHIRStructureMapUtilities.transform(appInfo : TAdvObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
+procedure TFHIRStructureMapUtilities.transform(appInfo : TFslObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
 var
   vars : TVariables;
 begin
@@ -1073,7 +1073,7 @@ begin
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.executeGroup(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup);
+procedure TFHIRStructureMapUtilities.executeGroup(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup);
 var
   r : TFHIRStructureMapGroupRule;
 begin
@@ -1084,10 +1084,10 @@ begin
     executeRule(indent+'  ', appInfo, map, vars, group, r);
 end;
 
-procedure TFHIRStructureMapUtilities.executeRule(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule);
+procedure TFHIRStructureMapUtilities.executeRule(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule);
 var
   srcVars, v : TVariables;
-  sources : TAdvList<TVariables>;
+  sources : TFslList<TVariables>;
   t : TFHIRStructureMapGroupRuleTarget;
   childrule : TFHIRStructureMapGroupRule;
   dependent : TFHIRStructureMapGroupRuleDependent;
@@ -1125,7 +1125,7 @@ begin
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.executeDependency(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
+procedure TFHIRStructureMapUtilities.executeDependency(indent : String; appInfo : TFslObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
 var
   targetMap, impMap : TFHIRStructureMap;
   target, grp : TFHIRStructureMapGroup;
@@ -1200,7 +1200,7 @@ begin
 end;
 
 
-procedure TFHIRStructureMapUtilities.getChildrenByName(item : TFHIRObject; name : String; result : TAdvList<TFHIRObject>);
+procedure TFHIRStructureMapUtilities.getChildrenByName(item : TFHIRObject; name : String; result : TFslList<TFHIRObject>);
 var
   v : TFHIRSelection;
   list : TFHIRSelectionList;
@@ -1230,11 +1230,11 @@ begin
   exit(g);
 end;
 
-function TFHIRStructureMapUtilities.analyseSource(appInfo : TAdvObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TAdvList<TVariables>;
+function TFHIRStructureMapUtilities.analyseSource(appInfo : TFslObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TFslList<TVariables>;
 var
   b, r : TFHIRObject;
   expr : TFHIRPathExpressionNode;
-  items : TAdvList<TFHIRObject>;
+  items : TFslList<TFHIRObject>;
   v : TVariables;
 begin
   b := vars.get(vmINPUT, src.Context);
@@ -1267,13 +1267,13 @@ begin
       raise Exception.create('Check condition failed');
   end;
 
-  items := TAdvList<TFHIRObject>.create;
+  items := TFslList<TFHIRObject>.create;
   try
     if (src.Element = '') then
       items.add(b.link)
     else
       getChildrenByName(b, src.Element, items);
-    result := TAdvList<TVariables>.create;
+    result := TFslList<TVariables>.create;
     try
       for r in items do
       begin
@@ -1296,7 +1296,7 @@ begin
 end;
 
 
-procedure TFHIRStructureMapUtilities.processTarget(appInfo : TAdvObject; vars : TVariables; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget);
+procedure TFHIRStructureMapUtilities.processTarget(appInfo : TFslObject; vars : TVariables; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget);
 var
   dest, v : TFHIRObject;
 begin
@@ -1325,7 +1325,7 @@ begin
   end;
 end;
 
-function TFHIRStructureMapUtilities.runTransform(appInfo : TAdvObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
+function TFHIRStructureMapUtilities.runTransform(appInfo : TFslObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
 var
   factory : TFhirResourceFactory;
   expr : TFHIRPathExpressionNode;
@@ -1452,7 +1452,7 @@ begin
 end;
 
 
-function TFHIRStructureMapUtilities.translate(appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject;
+function TFHIRStructureMapUtilities.translate(appInfo : TFslObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject;
 var
   src : TFHIRObject;
   id, fld : String;
@@ -1463,20 +1463,20 @@ begin
   result := translate(appInfo, map, src, id, fld);
 end;
 
-function TFHIRStructureMapUtilities.translate(appInfo : TAdvObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject;
+function TFHIRStructureMapUtilities.translate(appInfo : TFslObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject;
 var
   src, outcome : TFHIRCoding;
-  b : TAdvList<TFHIRObject>;
+  b : TFslList<TFHIRObject>;
   uri, message : String;
   cmap : TFhirConceptMap;
   r : TFHIRResource;
   done : boolean;
-  list : TAdvList<TFhirConceptMapGroupElement>;
+  list : TFslList<TFhirConceptMapGroupElement>;
   g : TFhirConceptMapGroup;
   e : TFhirConceptMapGroupElement;
   tgt : TFhirConceptMapGroupElementTarget;
 begin
-  b := TAdvList<TFHIRObject>.create;
+  b := TFslList<TFHIRObject>.create;
   g := nil;
   src := TFHIRCoding.create;
   try
@@ -1542,7 +1542,7 @@ begin
         end
         else
         begin
-          list := TAdvList<TFhirConceptMapGroupElement>.create;
+          list := TFslList<TFhirConceptMapGroupElement>.create;
           try
             for g in cmap.GroupList do
               for e in g.ElementList do
@@ -1632,7 +1632,7 @@ end;
 constructor TVariables.create;
 begin
   inherited;
-  list := TAdvList<TVariable>.create;
+  list := TFslList<TVariable>.create;
 end;
 
 destructor TVariables.destroy;

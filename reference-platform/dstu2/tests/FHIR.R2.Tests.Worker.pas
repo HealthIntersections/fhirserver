@@ -1,4 +1,4 @@
-unit FHIRTestWorker2;
+unit FHIR.R2.Tests.Worker;
 
 {.$.DEFINE DIFF}
 

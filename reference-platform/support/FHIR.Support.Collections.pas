@@ -38,7 +38,7 @@ Uses
 
 
 Type
-  TAdvIterator = Class(TAdvPersistent)
+  TFslIterator = Class(TFslPersistent)
     Protected
       Function ErrorClass : EAdvExceptionClass; Overload; Override;
 
@@ -52,9 +52,9 @@ Type
       Function More : Boolean; Virtual;
   End;
 
-  TAdvIteratorClass = Class Of TAdvIterator;
+  TFslIteratorClass = Class Of TFslIterator;
 
-  TAdvCollection = Class(TAdvPersistent)
+  TFslCollection = Class(TFslPersistent)
     Protected
       Function ErrorClass : EAdvExceptionClass; Override;
 
@@ -65,26 +65,26 @@ Type
 
       Procedure Clear; Virtual;
 
-      Function Iterator : TAdvIterator; Overload; Virtual;
+      Function Iterator : TFslIterator; Overload; Virtual;
   End;
 
   EAdvCollection = Class(EAdvException);
 
-  TAdvItemListCompare = Function (pA, pB : Pointer) : Integer Of Object;
-  PAdvItemsCompare = ^TAdvItemListCompare;
+  TFslItemListCompare = Function (pA, pB : Pointer) : Integer Of Object;
+  PAdvItemsCompare = ^TFslItemListCompare;
 
-  TAdvItemListDuplicates = (dupAccept, dupIgnore, dupException);
+  TFslItemListDuplicates = (dupAccept, dupIgnore, dupException);
 
-  TAdvItemListDirection = Integer;
+  TFslItemListDirection = Integer;
 
-  TAdvItemList = Class(TAdvCollection)
+  TFslItemList = Class(TFslCollection)
     Private
       FCount : Integer;
       FCapacity : Integer;
       FSorted : Boolean;
-      FComparison : TAdvItemListCompare;
-      FDuplicates : TAdvItemListDuplicates;
-      FDirection : TAdvItemListDirection;
+      FComparison : TFslItemListCompare;
+      FDuplicates : TFslItemListDuplicates;
+      FDirection : TFslItemListDirection;
 
     Protected
       Function ErrorClass : EAdvExceptionClass; Overload; Override;
@@ -97,16 +97,16 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Virtual; Abstract;
       Procedure SetItem(iIndex : Integer; pValue : Pointer); Virtual; Abstract;
 
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Virtual;
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Virtual;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Virtual;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Virtual;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Virtual;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Virtual;
 
       Function CompareItem(pA, pB : Pointer) : Integer; Virtual;
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Virtual;
-      Function Find(pValue : Pointer; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil): Boolean; Overload; Virtual;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Virtual;
+      Function Find(pValue : Pointer; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil): Boolean; Overload; Virtual;
 
-      Procedure DirectionBy(Const Value : TAdvItemListDirection); Virtual;
-      Procedure DuplicateBy(Const Value : TAdvItemListDuplicates); Virtual;
+      Procedure DirectionBy(Const Value : TFslItemListDirection); Virtual;
+      Procedure DuplicateBy(Const Value : TFslItemListDuplicates); Virtual;
 
       Procedure SortedBy(Const bValue : Boolean); Overload; Virtual;
 
@@ -121,7 +121,7 @@ Type
 
       Procedure InternalClear; Override;
       Procedure InternalSort; Overload;
-      Procedure InternalSort(aCompare : TAdvItemListCompare; iDirection : TAdvItemListDirection = 0); Overload;
+      Procedure InternalSort(aCompare : TFslItemListCompare; iDirection : TFslItemListDirection = 0); Overload;
 
       Function Insertable(Const sMethod : String; iIndex : Integer) : Boolean; Overload; Virtual;
       Function Deleteable(Const sMethod : String; iIndex : Integer) : Boolean; Overload; Virtual;
@@ -136,17 +136,17 @@ Type
       Function CountLimit : Integer; Virtual;
 
       Property ItemByIndex[iIndex : Integer] : Pointer Read GetItem Write SetItem; Default;
-      Property DefaultComparison : TAdvItemListCompare Read FComparison;
+      Property DefaultComparison : TFslItemListCompare Read FComparison;
 
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Procedure Assign(oSource : TAdvObject); Override;
+      Procedure Assign(oSource : TFslObject); Override;
 
-      Procedure Load(oFiler : TAdvFiler); Override;
-      Procedure Save(oFiler : TAdvFiler); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Load(oFiler : TFslFiler); Override;
+      Procedure Save(oFiler : TFslFiler); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
       Procedure DeleteByIndex(iIndex : Integer); Virtual;
       Procedure DeleteRange(iFromIndex, iToIndex: Integer);
@@ -161,15 +161,15 @@ Type
       Function IsAllowDuplicates : Boolean;
       Function IsPreventDuplicates : Boolean;
 
-      Function IsComparedBy(Const aCompare : TAdvItemListCompare) : Boolean;
-      Procedure ComparedBy(Const Value : TAdvItemListCompare);
+      Function IsComparedBy(Const aCompare : TFslItemListCompare) : Boolean;
+      Procedure ComparedBy(Const Value : TFslItemListCompare);
 
       Procedure Uncompared;
       Function IsCompared : Boolean;
       Function IsUnCompared : Boolean;
 
-      Function IsSortedBy(Const aCompare : TAdvItemListCompare) : Boolean;
-      Procedure SortedBy(Const aCompare : TAdvItemListCompare); Overload; Virtual;
+      Function IsSortedBy(Const aCompare : TFslItemListCompare) : Boolean;
+      Procedure SortedBy(Const aCompare : TFslItemListCompare); Overload; Virtual;
 
       Procedure SortAscending;
       Procedure SortDescending;
@@ -182,8 +182,8 @@ Type
       Function IsSorted : Boolean;
       Function IsUnsorted : Boolean;
 
-      Function IsOrderedBy(Const Value : TAdvItemListCompare) : Boolean;
-      Procedure OrderedBy(Const Value : TAdvItemListCompare);
+      Function IsOrderedBy(Const Value : TFslItemListCompare) : Boolean;
+      Procedure OrderedBy(Const Value : TFslItemListCompare);
       Procedure Unordered;
 
       Function IsEmpty : Boolean;
@@ -196,44 +196,44 @@ Type
 
 
 Type
-  TAdvLargeIntegerMatchKey = Int64;
-  TAdvLargeIntegerMatchValue = Int64;
+  TFslLargeIntegerMatchKey = Int64;
+  TFslLargeIntegerMatchValue = Int64;
 
-  TAdvLargeIntegerMatchItem = Record
-    Key   : TAdvLargeIntegerMatchKey;
-    Value : TAdvLargeIntegerMatchValue;
+  TFslLargeIntegerMatchItem = Record
+    Key   : TFslLargeIntegerMatchKey;
+    Value : TFslLargeIntegerMatchValue;
   End; 
 
-  PAdvLargeIntegerMatchItem = ^TAdvLargeIntegerMatchItem;
+  PAdvLargeIntegerMatchItem = ^TFslLargeIntegerMatchItem;
 
-  TAdvLargeIntegerMatchItems = Array[0..(MaxInt Div SizeOf(TAdvLargeIntegerMatchItem)) - 1] Of TAdvLargeIntegerMatchItem;
-  PAdvLargeIntegerMatchItems = ^TAdvLargeIntegerMatchItems;
+  TFslLargeIntegerMatchItems = Array[0..(MaxInt Div SizeOf(TFslLargeIntegerMatchItem)) - 1] Of TFslLargeIntegerMatchItem;
+  PAdvLargeIntegerMatchItems = ^TFslLargeIntegerMatchItems;
 
-  TAdvLargeIntegerMatch = Class(TAdvItemList)
+  TFslLargeIntegerMatch = Class(TFslItemList)
     Private
       FMatches : PAdvLargeIntegerMatchItems;
-      FDefault : TAdvLargeIntegerMatchValue;
+      FDefault : TFslLargeIntegerMatchValue;
       FForced  : Boolean;
 
-      Function GetKey(iIndex: Integer): TAdvLargeIntegerMatchKey;
-      Procedure SetKey(iIndex: Integer; Const iValue: TAdvLargeIntegerMatchKey);
+      Function GetKey(iIndex: Integer): TFslLargeIntegerMatchKey;
+      Procedure SetKey(iIndex: Integer; Const iValue: TFslLargeIntegerMatchKey);
 
-      Function GetValue(iIndex: Integer): TAdvLargeIntegerMatchValue;
-      Procedure SetValue(iIndex: Integer; Const iValue: TAdvLargeIntegerMatchValue);
+      Function GetValue(iIndex: Integer): TFslLargeIntegerMatchValue;
+      Procedure SetValue(iIndex: Integer; Const iValue: TFslLargeIntegerMatchValue);
 
-      Function GetMatch(iKey : TAdvLargeIntegerMatchKey): TAdvLargeIntegerMatchValue;
-      Procedure SetMatch(iKey: TAdvLargeIntegerMatchKey; Const iValue: TAdvLargeIntegerMatchValue);
+      Function GetMatch(iKey : TFslLargeIntegerMatchKey): TFslLargeIntegerMatchValue;
+      Procedure SetMatch(iKey: TFslLargeIntegerMatchKey; Const iValue: TFslLargeIntegerMatchValue);
 
-      Function GetPair(iIndex: Integer): TAdvLargeIntegerMatchItem;
-      Procedure SetPair(iIndex: Integer; Const Value: TAdvLargeIntegerMatchItem);
+      Function GetPair(iIndex: Integer): TFslLargeIntegerMatchItem;
+      Procedure SetPair(iIndex: Integer; Const Value: TFslLargeIntegerMatchItem);
 
     Protected
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iValue : Integer); Override;
       Procedure InternalCopy(iSource, iTarget, iCount : Integer); Override;
@@ -245,99 +245,99 @@ Type
       Function CompareByValue(pA, pB : Pointer): Integer; 
       Function CompareByKeyValue(pA, pB : Pointer) : Integer; 
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Override;
 
       Function CapacityLimit : Integer; Override;
 
-      Function Find(Const aKey : TAdvLargeIntegerMatchKey; Const aValue: TAdvLargeIntegerMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean;
-      Function FindByKey(Const aKey : TAdvLargeIntegerMatchKey; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean;
+      Function Find(Const aKey : TFslLargeIntegerMatchKey; Const aValue: TFslLargeIntegerMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean;
+      Function FindByKey(Const aKey : TFslLargeIntegerMatchKey; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean;
 
     Public
-      Function Link : TAdvLargeIntegerMatch;
+      Function Link : TFslLargeIntegerMatch;
 
-      Function Add(aKey : TAdvLargeIntegerMatchKey; aValue : TAdvLargeIntegerMatchValue): Integer; 
-      Procedure Insert(iIndex : Integer; iKey : TAdvLargeIntegerMatchKey; iValue : TAdvLargeIntegerMatchValue); 
+      Function Add(aKey : TFslLargeIntegerMatchKey; aValue : TFslLargeIntegerMatchValue): Integer; 
+      Procedure Insert(iIndex : Integer; iKey : TFslLargeIntegerMatchKey; iValue : TFslLargeIntegerMatchValue); 
 
-      Function IndexByKey(aKey : TAdvLargeIntegerMatchKey) : Integer; 
-      Function IndexByKeyValue(Const aKey : TAdvLargeIntegerMatchKey; Const aValue : TAdvLargeIntegerMatchValue) : Integer; 
+      Function IndexByKey(aKey : TFslLargeIntegerMatchKey) : Integer; 
+      Function IndexByKeyValue(Const aKey : TFslLargeIntegerMatchKey; Const aValue : TFslLargeIntegerMatchValue) : Integer; 
 
-      Function ExistsByKey(aKey : TAdvLargeIntegerMatchKey) : Boolean; 
-      Function ExistsByKeyValue(Const aKey : TAdvLargeIntegerMatchKey; Const aValue : TAdvLargeIntegerMatchValue) : Boolean; 
+      Function ExistsByKey(aKey : TFslLargeIntegerMatchKey) : Boolean; 
+      Function ExistsByKeyValue(Const aKey : TFslLargeIntegerMatchKey; Const aValue : TFslLargeIntegerMatchValue) : Boolean; 
 
-      Function EqualTo(Const oIntegerMatch : TAdvLargeIntegerMatch) : Boolean;
+      Function EqualTo(Const oIntegerMatch : TFslLargeIntegerMatch) : Boolean;
 
-      Procedure DeleteByKey(aKey : TAdvLargeIntegerMatchKey); 
+      Procedure DeleteByKey(aKey : TFslLargeIntegerMatchKey); 
 
-      Procedure ForceIncrementByKey(Const aKey : TAdvLargeIntegerMatchKey); 
+      Procedure ForceIncrementByKey(Const aKey : TFslLargeIntegerMatchKey); 
 
       Procedure SortedByKey; 
       Procedure SortedByValue; 
       Procedure SortedByKeyValue; 
 
-      Property Matches[iKey : TAdvLargeIntegerMatchKey] : TAdvLargeIntegerMatchValue Read GetMatch Write SetMatch; Default;
-      Property Keys[iIndex : Integer] : TAdvLargeIntegerMatchKey Read GetKey Write SetKey;
-      Property Values[iIndex : Integer] : TAdvLargeIntegerMatchValue Read GetValue Write SetValue;
-      Property Pairs[iIndex : Integer] : TAdvLargeIntegerMatchItem Read GetPair Write SetPair;
+      Property Matches[iKey : TFslLargeIntegerMatchKey] : TFslLargeIntegerMatchValue Read GetMatch Write SetMatch; Default;
+      Property Keys[iIndex : Integer] : TFslLargeIntegerMatchKey Read GetKey Write SetKey;
+      Property Values[iIndex : Integer] : TFslLargeIntegerMatchValue Read GetValue Write SetValue;
+      Property Pairs[iIndex : Integer] : TFslLargeIntegerMatchItem Read GetPair Write SetPair;
       Property Forced : Boolean Read FForced Write FForced;
-      Property Default : TAdvLargeIntegerMatchValue Read FDefault Write FDefault;
+      Property Default : TFslLargeIntegerMatchValue Read FDefault Write FDefault;
   End;
   
-  TAdvObjectIterator = Class(TAdvIterator)
+  TFslObjectIterator = Class(TFslIterator)
     Public
-      Function Current : TAdvObject; Virtual;
+      Function Current : TFslObject; Virtual;
   End;
 
-  TAdvStringIterator = Class(TAdvIterator)
+  TFslStringIterator = Class(TFslIterator)
     Public
       Function Current : String; Virtual;
   End;
 
-  TAdvIntegerIterator = Class(TAdvIterator)
+  TFslIntegerIterator = Class(TFslIterator)
     Public
       Function Current : Integer; Virtual;
   End;
 
-  TAdvRealIterator = Class(TAdvIterator)
+  TFslRealIterator = Class(TFslIterator)
     Public
       Function Current : Real; Virtual;
   End;
 
-  TAdvExtendedIterator = Class(TAdvIterator)
+  TFslExtendedIterator = Class(TFslIterator)
     Public
       Function Current : Extended; Virtual;
   End;
 
-  TAdvBooleanIterator = Class(TAdvIterator)
+  TFslBooleanIterator = Class(TFslIterator)
     Public
       Function Current : Boolean; Virtual;
   End;
 
-  TAdvLargeIntegerIterator = Class(TAdvIterator)
+  TFslLargeIntegerIterator = Class(TFslIterator)
     Public
       Function Current : Int64; Virtual;
   End;
 
-  TAdvPointerIterator = Class(TAdvIterator)
+  TFslPointerIterator = Class(TFslIterator)
     Public
       Function Current : Pointer; Virtual;
   End;
 
-  TAdvObjectClassIterator = Class(TAdvIterator)
+  TFslObjectClassIterator = Class(TFslIterator)
     Public
       Function Current : TClass; Virtual;
   End;
 
-  TAdvDateTimeIterator = Class(TAdvIterator)
+  TFslDateTimeIterator = Class(TFslIterator)
     Public
       Function Current : TDateTime; Virtual;
   End;
 
-  TAdvDurationIterator = Class(TAdvIterator)
+  TFslDurationIterator = Class(TFslIterator)
     Public
       Function Current : TDuration; Virtual;
   End;
 
-  TAdvCurrencyIterator = Class(TAdvIterator)
+  TFslCurrencyIterator = Class(TFslIterator)
     Public
       Function Current : TCurrency; Virtual;
   End;
@@ -348,41 +348,41 @@ Type
 
 
 Type
-  TAdvIntegerObjectMatchKey = Integer;
-  TAdvIntegerObjectMatchValue = TAdvObject;
+  TFslIntegerObjectMatchKey = Integer;
+  TFslIntegerObjectMatchValue = TFslObject;
 
-  TAdvIntegerObjectMatchItem = Record
-    Key : TAdvIntegerObjectMatchKey;
-    Value : TAdvIntegerObjectMatchValue;
+  TFslIntegerObjectMatchItem = Record
+    Key : TFslIntegerObjectMatchKey;
+    Value : TFslIntegerObjectMatchValue;
   End;
 
-  PAdvIntegerObjectMatchItem = ^TAdvIntegerObjectMatchItem;
+  PAdvIntegerObjectMatchItem = ^TFslIntegerObjectMatchItem;
 
-  TAdvIntegerObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TAdvIntegerObjectMatchItem)) - 1] Of TAdvIntegerObjectMatchItem;
-  PAdvIntegerObjectMatchItemArray = ^TAdvIntegerObjectMatchItemArray;
+  TFslIntegerObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslIntegerObjectMatchItem)) - 1] Of TFslIntegerObjectMatchItem;
+  PAdvIntegerObjectMatchItemArray = ^TFslIntegerObjectMatchItemArray;
 
-  TAdvIntegerObjectMatch = Class(TAdvItemList)
+  TFslIntegerObjectMatch = Class(TFslItemList)
     Private
       FItemArray : PAdvIntegerObjectMatchItemArray;
-      FDefaultKey : TAdvIntegerObjectMatchKey;
-      FDefaultValue : TAdvIntegerObjectMatchValue;
-      FNominatedValueClass : TAdvObjectClass;
+      FDefaultKey : TFslIntegerObjectMatchKey;
+      FDefaultValue : TFslIntegerObjectMatchValue;
+      FNominatedValueClass : TFslObjectClass;
       FForced : Boolean;
 
-      Function GetKeyByIndex(iIndex: Integer): TAdvIntegerObjectMatchKey;
-      Procedure SetKeyByIndex(iIndex: Integer; Const aKey : TAdvIntegerObjectMatchKey);
+      Function GetKeyByIndex(iIndex: Integer): TFslIntegerObjectMatchKey;
+      Procedure SetKeyByIndex(iIndex: Integer; Const aKey : TFslIntegerObjectMatchKey);
 
-      Function GetValueByIndex(iIndex: Integer): TAdvIntegerObjectMatchValue;
-      Procedure SetValueByIndex(iIndex: Integer; Const aValue: TAdvIntegerObjectMatchValue);
-    Function GetMatchByIndex(iIndex: Integer): TAdvIntegerObjectMatchItem;
+      Function GetValueByIndex(iIndex: Integer): TFslIntegerObjectMatchValue;
+      Procedure SetValueByIndex(iIndex: Integer; Const aValue: TFslIntegerObjectMatchValue);
+    Function GetMatchByIndex(iIndex: Integer): TFslIntegerObjectMatchItem;
 
     Protected
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -395,31 +395,31 @@ Type
       Function CompareByKey(pA, pB : Pointer): Integer; Virtual;
       Function CompareByValue(pA, pB : Pointer): Integer; Virtual;
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
-      Function Find(Const aKey : TAdvIntegerObjectMatchKey; Const aValue : TAdvIntegerObjectMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean; Overload;
+      Function Find(Const aKey : TFslIntegerObjectMatchKey; Const aValue : TFslIntegerObjectMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean; Overload;
 
       Function CapacityLimit : Integer; Override;
 
       Function ValidateIndex(Const sMethod: String; iIndex: Integer): Boolean; Overload; Override;
-      Function ValidateValue(Const sMethod: String; oObject: TAdvObject; Const sObject: String): Boolean; Virtual;
+      Function ValidateValue(Const sMethod: String; oObject: TFslObject; Const sObject: String): Boolean; Virtual;
 
-      Function ItemClass : TAdvObjectClass;
+      Function ItemClass : TFslObjectClass;
 
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvIntegerObjectMatch;
+      Function Link : TFslIntegerObjectMatch;
 
-      Function Add(Const aKey : TAdvIntegerObjectMatchKey; Const aValue : TAdvIntegerObjectMatchValue): Integer;
-      Procedure AddAll(Const oIntegerObjectMatch : TAdvIntegerObjectMatch);
-      Procedure Insert(iIndex : Integer; Const aKey : TAdvIntegerObjectMatchKey; Const aValue : TAdvIntegerObjectMatchValue);
+      Function Add(Const aKey : TFslIntegerObjectMatchKey; Const aValue : TFslIntegerObjectMatchValue): Integer;
+      Procedure AddAll(Const oIntegerObjectMatch : TFslIntegerObjectMatch);
+      Procedure Insert(iIndex : Integer; Const aKey : TFslIntegerObjectMatchKey; Const aValue : TFslIntegerObjectMatchValue);
 
-      Function IndexByKey(Const aKey : TAdvIntegerObjectMatchKey) : Integer;
-      Function IndexByValue(Const aValue : TAdvIntegerObjectMatchValue) : Integer;
-      Function ExistsByKey(Const aKey : TAdvIntegerObjectMatchKey) : Boolean;
-      Function ExistsByValue(Const aValue : TAdvIntegerObjectMatchValue) : Boolean;
+      Function IndexByKey(Const aKey : TFslIntegerObjectMatchKey) : Integer;
+      Function IndexByValue(Const aValue : TFslIntegerObjectMatchValue) : Integer;
+      Function ExistsByKey(Const aKey : TFslIntegerObjectMatchKey) : Boolean;
+      Function ExistsByValue(Const aValue : TFslIntegerObjectMatchValue) : Boolean;
 
       Procedure SortedByValue;
       Procedure SortedByKey;
@@ -427,61 +427,61 @@ Type
       Function IsSortedByKey : Boolean;
       Function IsSortedByValue : Boolean;
 
-      Function GetKeyByValue(Const aValue : TAdvIntegerObjectMatchValue) : TAdvIntegerObjectMatchKey;
-      Function GetValueByKey(Const aKey : TAdvIntegerObjectMatchKey) : TAdvIntegerObjectMatchValue;
-      Procedure SetValueByKey(Const aKey : TAdvIntegerObjectMatchKey; Const aValue: TAdvIntegerObjectMatchValue);
+      Function GetKeyByValue(Const aValue : TFslIntegerObjectMatchValue) : TFslIntegerObjectMatchKey;
+      Function GetValueByKey(Const aKey : TFslIntegerObjectMatchKey) : TFslIntegerObjectMatchValue;
+      Procedure SetValueByKey(Const aKey : TFslIntegerObjectMatchKey; Const aValue: TFslIntegerObjectMatchValue);
 
-      Procedure DeleteByKey(Const aKey : TAdvIntegerObjectMatchKey);
-      Procedure DeleteByValue(Const aValue : TAdvIntegerObjectMatchValue);
+      Procedure DeleteByKey(Const aKey : TFslIntegerObjectMatchKey);
+      Procedure DeleteByValue(Const aValue : TFslIntegerObjectMatchValue);
 
       Property Forced : Boolean Read FForced Write FForced;
-      Property DefaultKey : TAdvIntegerObjectMatchKey Read FDefaultKey Write FDefaultKey;
-      Property DefaultValue : TAdvIntegerObjectMatchValue Read FDefaultValue Write FDefaultValue;
-      Property NominatedValueClass : TAdvObjectClass Read FNominatedValueClass Write FNominatedValueClass;
-      Property MatchByIndex[iIndex : Integer] : TAdvIntegerObjectMatchItem Read GetMatchByIndex; Default;
-      Property KeyByIndex[iIndex : Integer] : TAdvIntegerObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
-      Property ValueByIndex[iIndex : Integer] : TAdvIntegerObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
+      Property DefaultKey : TFslIntegerObjectMatchKey Read FDefaultKey Write FDefaultKey;
+      Property DefaultValue : TFslIntegerObjectMatchValue Read FDefaultValue Write FDefaultValue;
+      Property NominatedValueClass : TFslObjectClass Read FNominatedValueClass Write FNominatedValueClass;
+      Property MatchByIndex[iIndex : Integer] : TFslIntegerObjectMatchItem Read GetMatchByIndex; Default;
+      Property KeyByIndex[iIndex : Integer] : TFslIntegerObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
+      Property ValueByIndex[iIndex : Integer] : TFslIntegerObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
   End;
 
 
-  TAdvIntegerMatchKey = Integer;
-  TAdvIntegerMatchValue = Integer;
+  TFslIntegerMatchKey = Integer;
+  TFslIntegerMatchValue = Integer;
 
-  TAdvIntegerMatchItem = Record
-    Key   : TAdvIntegerMatchKey;
-    Value : TAdvIntegerMatchValue;
+  TFslIntegerMatchItem = Record
+    Key   : TFslIntegerMatchKey;
+    Value : TFslIntegerMatchValue;
   End;
 
-  PAdvInteger32MatchItem = ^TAdvIntegerMatchItem;
+  PAdvInteger32MatchItem = ^TFslIntegerMatchItem;
 
-  TAdvIntegerMatchItems = Array[0..(MaxInt Div SizeOf(TAdvIntegerMatchItem)) - 1] Of TAdvIntegerMatchItem;
-  PAdvInteger32MatchItems = ^TAdvIntegerMatchItems;
+  TFslIntegerMatchItems = Array[0..(MaxInt Div SizeOf(TFslIntegerMatchItem)) - 1] Of TFslIntegerMatchItem;
+  PAdvInteger32MatchItems = ^TFslIntegerMatchItems;
 
-  TAdvIntegerMatch = Class(TAdvItemList)
+  TFslIntegerMatch = Class(TFslItemList)
     Private
       FMatches : PAdvInteger32MatchItems;
-      FDefault : TAdvIntegerMatchValue;
+      FDefault : TFslIntegerMatchValue;
       FForced  : Boolean;
 
-      Function GetKey(iIndex: Integer): TAdvIntegerMatchKey;
-      Procedure SetKey(iIndex: Integer; Const iValue: TAdvIntegerMatchKey);
+      Function GetKey(iIndex: Integer): TFslIntegerMatchKey;
+      Procedure SetKey(iIndex: Integer; Const iValue: TFslIntegerMatchKey);
 
-      Function GetValue(iIndex: Integer): TAdvIntegerMatchValue;
-      Procedure SetValue(iIndex: Integer; Const iValue: TAdvIntegerMatchValue);
+      Function GetValue(iIndex: Integer): TFslIntegerMatchValue;
+      Procedure SetValue(iIndex: Integer; Const iValue: TFslIntegerMatchValue);
 
-      Function GetMatch(iKey : TAdvIntegerMatchKey): Integer;
-      Procedure SetMatch(iKey: TAdvIntegerMatchKey; Const iValue: TAdvIntegerMatchValue);
+      Function GetMatch(iKey : TFslIntegerMatchKey): Integer;
+      Procedure SetMatch(iKey: TFslIntegerMatchKey; Const iValue: TFslIntegerMatchValue);
 
-      Function GetPair(iIndex: Integer): TAdvIntegerMatchItem;
-      Procedure SetPair(iIndex: Integer; Const Value: TAdvIntegerMatchItem);
+      Function GetPair(iIndex: Integer): TFslIntegerMatchItem;
+      Procedure SetPair(iIndex: Integer; Const Value: TFslIntegerMatchItem);
 
     Protected
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iValue : Integer); Override;
       Procedure InternalCopy(iSource, iTarget, iCount : Integer); Override;
@@ -493,57 +493,57 @@ Type
       Function CompareByValue(pA, pB : Pointer): Integer; 
       Function CompareByKeyValue(pA, pB : Pointer) : Integer; 
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
       Function CapacityLimit : Integer; Override;
 
-      Function Find(Const aKey : TAdvIntegerMatchKey; Const aValue: TAdvIntegerMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean;
-      Function FindByKey(Const aKey : TAdvIntegerMatchKey; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean;
+      Function Find(Const aKey : TFslIntegerMatchKey; Const aValue: TFslIntegerMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean;
+      Function FindByKey(Const aKey : TFslIntegerMatchKey; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean;
 
     Public
-      Function Link : TAdvIntegerMatch; 
+      Function Link : TFslIntegerMatch; 
 
-      Function Add(aKey : TAdvIntegerMatchKey; aValue : TAdvIntegerMatchValue): Integer; 
-      Procedure Insert(iIndex : Integer; iKey : TAdvIntegerMatchKey; iValue : TAdvIntegerMatchValue); 
+      Function Add(aKey : TFslIntegerMatchKey; aValue : TFslIntegerMatchValue): Integer; 
+      Procedure Insert(iIndex : Integer; iKey : TFslIntegerMatchKey; iValue : TFslIntegerMatchValue); 
 
-      Function IndexByKey(aKey : TAdvIntegerMatchKey) : Integer; 
-      Function IndexByKeyValue(Const aKey : TAdvIntegerMatchKey; Const aValue : TAdvIntegerMatchValue) : Integer; 
+      Function IndexByKey(aKey : TFslIntegerMatchKey) : Integer; 
+      Function IndexByKeyValue(Const aKey : TFslIntegerMatchKey; Const aValue : TFslIntegerMatchValue) : Integer; 
 
-      Function ExistsByKey(aKey : TAdvIntegerMatchKey) : Boolean; 
-      Function ExistsByKeyValue(Const aKey : TAdvIntegerMatchKey; Const aValue : TAdvIntegerMatchValue) : Boolean; 
+      Function ExistsByKey(aKey : TFslIntegerMatchKey) : Boolean; 
+      Function ExistsByKeyValue(Const aKey : TFslIntegerMatchKey; Const aValue : TFslIntegerMatchValue) : Boolean; 
 
-      Function EqualTo(Const oIntegerMatch : TAdvIntegerMatch) : Boolean;
+      Function EqualTo(Const oIntegerMatch : TFslIntegerMatch) : Boolean;
 
-      Procedure DeleteByKey(aKey : TAdvIntegerMatchKey); 
+      Procedure DeleteByKey(aKey : TFslIntegerMatchKey); 
 
-      Procedure ForceIncrementByKey(Const aKey : TAdvIntegerMatchKey); 
+      Procedure ForceIncrementByKey(Const aKey : TFslIntegerMatchKey); 
 
       Procedure SortedByKey; 
       Procedure SortedByValue; 
       Procedure SortedByKeyValue;
 
-      Property Matches[iKey : TAdvIntegerMatchKey] : TAdvIntegerMatchValue Read GetMatch Write SetMatch; Default;
-      Property KeyByIndex[iIndex : Integer] : TAdvIntegerMatchKey Read GetKey Write SetKey;
-      Property ValueByIndex[iIndex : Integer] : TAdvIntegerMatchValue Read GetValue Write SetValue;
-      Property Pairs[iIndex : Integer] : TAdvIntegerMatchItem Read GetPair Write SetPair;
+      Property Matches[iKey : TFslIntegerMatchKey] : TFslIntegerMatchValue Read GetMatch Write SetMatch; Default;
+      Property KeyByIndex[iIndex : Integer] : TFslIntegerMatchKey Read GetKey Write SetKey;
+      Property ValueByIndex[iIndex : Integer] : TFslIntegerMatchValue Read GetValue Write SetValue;
+      Property Pairs[iIndex : Integer] : TFslIntegerMatchItem Read GetPair Write SetPair;
       Property Forced : Boolean Read FForced Write FForced;
-      Property Default : TAdvIntegerMatchValue Read FDefault Write FDefault;
+      Property Default : TFslIntegerMatchValue Read FDefault Write FDefault;
   End;
 
-  TAdvIntegerListItem = Integer;
-  PAdvIntegerListItem = ^TAdvIntegerListItem;
-  TAdvIntegerListItemArray = Array[0..(MaxInt Div SizeOf(TAdvIntegerListItem)) - 1] Of TAdvIntegerListItem;
-  PAdvIntegerListItemArray = ^TAdvIntegerListItemArray;
+  TFslIntegerListItem = Integer;
+  PAdvIntegerListItem = ^TFslIntegerListItem;
+  TFslIntegerListItemArray = Array[0..(MaxInt Div SizeOf(TFslIntegerListItem)) - 1] Of TFslIntegerListItem;
+  PAdvIntegerListItemArray = ^TFslIntegerListItemArray;
 
-  TAdvIntegerList = Class(TAdvItemList)
+  TFslIntegerList = Class(TFslItemList)
     Private
       FIntegerArray : PAdvIntegerListItemArray;
 
-      Function GetIntegerByIndex(iIndex : Integer) : TAdvIntegerListItem;
-      Procedure SetIntegerByIndex(iIndex : Integer; Const aValue : TAdvIntegerListItem);
+      Function GetIntegerByIndex(iIndex : Integer) : TFslIntegerListItem;
+      Procedure SetIntegerByIndex(iIndex : Integer; Const aValue : TFslIntegerListItem);
 
-      Function GetIntegers(iIndex : Integer) : TAdvIntegerListItem;
-      Procedure SetIntegers(iIndex : Integer; Const Value : TAdvIntegerListItem);
+      Function GetIntegers(iIndex : Integer) : TFslIntegerListItem;
+      Procedure SetIntegers(iIndex : Integer; Const Value : TFslIntegerListItem);
 
     Protected
       Function GetAsText : String; 
@@ -551,9 +551,9 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue : Pointer); Override;
 
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iCapacity : Integer); Override;
       Procedure InternalCopy(iSource, iTarget, iCount : Integer); Override;
@@ -563,38 +563,38 @@ Type
       Function CapacityLimit : Integer; Override;
 
     Public
-      Function Link : TAdvIntegerList;
-      Function Clone : TAdvIntegerList;
+      Function Link : TFslIntegerList;
+      Function Clone : TFslIntegerList;
 
-      Function Add(aValue : TAdvIntegerListItem) : Integer; Overload; 
-      Procedure Insert(iIndex : Integer; aValue : TAdvIntegerListItem); 
-      Procedure Toggle(aValue : TAdvIntegerListItem); 
+      Function Add(aValue : TFslIntegerListItem) : Integer; Overload; 
+      Procedure Insert(iIndex : Integer; aValue : TFslIntegerListItem); 
+      Procedure Toggle(aValue : TFslIntegerListItem); 
 
-      Function IndexByValue(Const iValue : TAdvIntegerListItem) : Integer; 
-      Function ExistsByValue(Const iValue : TAdvIntegerListItem) : Boolean; 
-      Procedure DeleteByValue(Const iValue : TAdvIntegerListItem); 
-      Procedure AddAll(oIntegers : TAdvIntegerList);
-      Procedure DeleteAllByValue(oIntegers : TAdvIntegerList);
-      Function EqualTo(oIntegers : TAdvIntegerList) : Boolean;
+      Function IndexByValue(Const iValue : TFslIntegerListItem) : Integer; 
+      Function ExistsByValue(Const iValue : TFslIntegerListItem) : Boolean; 
+      Procedure DeleteByValue(Const iValue : TFslIntegerListItem); 
+      Procedure AddAll(oIntegers : TFslIntegerList);
+      Procedure DeleteAllByValue(oIntegers : TFslIntegerList);
+      Function EqualTo(oIntegers : TFslIntegerList) : Boolean;
 
-      Function ExistsAll(oIntegerList : TAdvIntegerList) : Boolean; 
+      Function ExistsAll(oIntegerList : TFslIntegerList) : Boolean; 
 
-      Function Iterator : TAdvIterator; Override;
+      Function Iterator : TFslIterator; Override;
 
       Function Sum : Int64; 
-      Function Mean : TAdvIntegerListItem;
+      Function Mean : TFslIntegerListItem;
 
       Property AsText : String Read GetAsText;
-      Property Integers[iIndex : Integer] : TAdvIntegerListItem Read GetIntegers Write SetIntegers;
-      Property IntegerByIndex[iIndex : Integer] : TAdvIntegerListItem Read GetIntegerByIndex Write SetIntegerByIndex; Default;
+      Property Integers[iIndex : Integer] : TFslIntegerListItem Read GetIntegers Write SetIntegers;
+      Property IntegerByIndex[iIndex : Integer] : TFslIntegerListItem Read GetIntegerByIndex Write SetIntegerByIndex; Default;
   End; 
 
-  TAdvIntegerListIterator = Class(TAdvIntegerIterator)
+  TFslIntegerListIterator = Class(TFslIntegerIterator)
     Private
-      FIntegerList : TAdvIntegerList;
+      FIntegerList : TFslIntegerList;
       FIndex : Integer;
 
-      Procedure SetIntegerList(Const Value: TAdvIntegerList);
+      Procedure SetIntegerList(Const Value: TFslIntegerList);
 
     Public
       Constructor Create; Override;
@@ -608,47 +608,47 @@ Type
       Function More : Boolean; Override;
       Function Current : Integer; Override;
 
-      Property IntegerList : TAdvIntegerList Read FIntegerList Write SetIntegerList;
+      Property IntegerList : TFslIntegerList Read FIntegerList Write SetIntegerList;
   End; 
   
-  TAdvInt64MatchKey = Int64;
-  TAdvInt64MatchValue = Int64;
+  TFslInt64MatchKey = Int64;
+  TFslInt64MatchValue = Int64;
 
-  TAdvInt64MatchItem = Record
-    Key   : TAdvInt64MatchKey;
-    Value : TAdvInt64MatchValue;
+  TFslInt64MatchItem = Record
+    Key   : TFslInt64MatchKey;
+    Value : TFslInt64MatchValue;
   End; 
 
-  PAdvInteger64MatchItem = ^TAdvInt64MatchItem;
+  PAdvInteger64MatchItem = ^TFslInt64MatchItem;
 
-  TAdvInt64MatchItems = Array[0..(MaxInt Div SizeOf(TAdvInt64MatchItem)) - 1] Of TAdvInt64MatchItem;
-  PAdvInteger64MatchItems = ^TAdvInt64MatchItems;
+  TFslInt64MatchItems = Array[0..(MaxInt Div SizeOf(TFslInt64MatchItem)) - 1] Of TFslInt64MatchItem;
+  PAdvInteger64MatchItems = ^TFslInt64MatchItems;
 
-  TAdvInt64Match = Class(TAdvItemList)
+  TFslInt64Match = Class(TFslItemList)
     Private
       FMatches : PAdvInteger64MatchItems;
-      FDefault : TAdvInt64MatchValue;
+      FDefault : TFslInt64MatchValue;
       FForced  : Boolean;
 
-      Function GetKey(iIndex: Integer): TAdvInt64MatchKey;
-      Procedure SetKey(iIndex: Integer; Const iValue: TAdvInt64MatchKey);
+      Function GetKey(iIndex: Integer): TFslInt64MatchKey;
+      Procedure SetKey(iIndex: Integer; Const iValue: TFslInt64MatchKey);
 
-      Function GetValue(iIndex: Integer): TAdvInt64MatchValue;
-      Procedure SetValue(iIndex: Integer; Const iValue: TAdvInt64MatchValue);
+      Function GetValue(iIndex: Integer): TFslInt64MatchValue;
+      Procedure SetValue(iIndex: Integer; Const iValue: TFslInt64MatchValue);
 
-      Function GetMatch(iKey : TAdvInt64MatchKey): TAdvInt64MatchValue;
-      Procedure SetMatch(iKey: TAdvInt64MatchKey; Const iValue: TAdvInt64MatchValue);
+      Function GetMatch(iKey : TFslInt64MatchKey): TFslInt64MatchValue;
+      Procedure SetMatch(iKey: TFslInt64MatchKey; Const iValue: TFslInt64MatchValue);
 
-      Function GetPair(iIndex: Integer): TAdvInt64MatchItem;
-      Procedure SetPair(iIndex: Integer; Const Value: TAdvInt64MatchItem);
+      Function GetPair(iIndex: Integer): TFslInt64MatchItem;
+      Procedure SetPair(iIndex: Integer; Const Value: TFslInt64MatchItem);
 
     Protected
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iValue : Integer); Override;
       Procedure InternalCopy(iSource, iTarget, iCount : Integer); Override;
@@ -660,41 +660,41 @@ Type
       Function CompareByValue(pA, pB : Pointer): Integer; 
       Function CompareByKeyValue(pA, pB : Pointer) : Integer; 
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
       Function CapacityLimit : Integer; Override;
 
-      Function Find(Const aKey : TAdvInt64MatchKey; Const aValue: TAdvInt64MatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean;
-      Function FindByKey(Const aKey : TAdvInt64MatchKey; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean;
+      Function Find(Const aKey : TFslInt64MatchKey; Const aValue: TFslInt64MatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean;
+      Function FindByKey(Const aKey : TFslInt64MatchKey; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean;
 
     Public
-      Function Link : TAdvInt64Match;
+      Function Link : TFslInt64Match;
 
-      Function Add(aKey : TAdvInt64MatchKey; aValue : TAdvInt64MatchValue): Integer;
-      Procedure Insert(iIndex : Integer; iKey : TAdvInt64MatchKey; iValue : TAdvInt64MatchValue);
+      Function Add(aKey : TFslInt64MatchKey; aValue : TFslInt64MatchValue): Integer;
+      Procedure Insert(iIndex : Integer; iKey : TFslInt64MatchKey; iValue : TFslInt64MatchValue);
 
-      Function IndexByKey(aKey : TAdvInt64MatchKey) : Integer;
-      Function IndexByKeyValue(Const aKey : TAdvInt64MatchKey; Const aValue : TAdvInt64MatchValue) : Integer;
+      Function IndexByKey(aKey : TFslInt64MatchKey) : Integer;
+      Function IndexByKeyValue(Const aKey : TFslInt64MatchKey; Const aValue : TFslInt64MatchValue) : Integer;
 
-      Function ExistsByKey(aKey : TAdvInt64MatchKey) : Boolean;
-      Function ExistsByKeyValue(Const aKey : TAdvInt64MatchKey; Const aValue : TAdvInt64MatchValue) : Boolean;
+      Function ExistsByKey(aKey : TFslInt64MatchKey) : Boolean;
+      Function ExistsByKeyValue(Const aKey : TFslInt64MatchKey; Const aValue : TFslInt64MatchValue) : Boolean;
 
-      Function EqualTo(Const oIntegerMatch : TAdvInt64Match) : Boolean;
+      Function EqualTo(Const oIntegerMatch : TFslInt64Match) : Boolean;
 
-      Procedure DeleteByKey(aKey : TAdvInt64MatchKey);
+      Procedure DeleteByKey(aKey : TFslInt64MatchKey);
 
-      Procedure ForceIncrementByKey(Const aKey : TAdvInt64MatchKey);
+      Procedure ForceIncrementByKey(Const aKey : TFslInt64MatchKey);
 
       Procedure SortedByKey; 
       Procedure SortedByValue; 
       Procedure SortedByKeyValue; 
 
-      Property Matches[iKey : TAdvInt64MatchKey] : TAdvInt64MatchValue Read GetMatch Write SetMatch; Default;
-      Property KeyByIndex[iIndex : Integer] : TAdvInt64MatchKey Read GetKey Write SetKey;
-      Property ValueByIndex[iIndex : Integer] : TAdvInt64MatchValue Read GetValue Write SetValue;
-      Property Pairs[iIndex : Integer] : TAdvInt64MatchItem Read GetPair Write SetPair;
+      Property Matches[iKey : TFslInt64MatchKey] : TFslInt64MatchValue Read GetMatch Write SetMatch; Default;
+      Property KeyByIndex[iIndex : Integer] : TFslInt64MatchKey Read GetKey Write SetKey;
+      Property ValueByIndex[iIndex : Integer] : TFslInt64MatchValue Read GetValue Write SetValue;
+      Property Pairs[iIndex : Integer] : TFslInt64MatchItem Read GetPair Write SetPair;
       Property Forced : Boolean Read FForced Write FForced;
-      Property Default : TAdvInt64MatchValue Read FDefault Write FDefault;
+      Property Default : TFslInt64MatchValue Read FDefault Write FDefault;
   End;
 
 
@@ -702,7 +702,7 @@ Type
   TPointerItems = Array[0..(MaxInt Div SizeOf(TPointerItem)) - 1] Of TPointerItem;
   PPointerItems = ^TPointerItems;
 
-  TAdvPointerList = Class(TAdvItemList)
+  TFslPointerList = Class(TFslItemList)
     Private
       FPointerArray : PPointerItems;
 
@@ -713,7 +713,7 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iValue : Integer); Override;
       Procedure InternalCopy(iSource, iTarget, iCount : Integer); Override;
@@ -724,7 +724,7 @@ Type
       Function CapacityLimit : Integer; Override;
 
     Public
-      Function Iterator : TAdvIterator; Override;
+      Function Iterator : TFslIterator; Override;
 
       Function IndexByValue(pValue : TPointerItem) : Integer;
       Function ExistsByValue(pValue : TPointerItem) : Boolean;
@@ -737,12 +737,12 @@ Type
       Property PointerByIndex[iIndex : Integer] : Pointer Read GetPointerByIndex Write SetPointerByIndex; Default;
   End;
 
-  TAdvPointerListIterator = Class(TAdvPointerIterator)
+  TFslPointerListIterator = Class(TFslPointerIterator)
     Private
-      FPointerArray : TAdvPointerList;
+      FPointerArray : TFslPointerList;
       FIndex : Integer;
 
-      Procedure SetPointers(Const Value: TAdvPointerList);
+      Procedure SetPointers(Const Value: TFslPointerList);
 
     Public
       Constructor Create; Override;
@@ -756,25 +756,25 @@ Type
       Function More : Boolean; Override;
       Function Current : Pointer; Override;
 
-      Property Pointers : TAdvPointerList Read FPointerArray Write SetPointers;
+      Property Pointers : TFslPointerList Read FPointerArray Write SetPointers;
   End;
 
-  TAdvPointers = TAdvPointerList;
+  TFslPointers = TFslPointerList;
 
 
-  TAdvClassList = Class(TAdvPointerList)
+  TFslClassList = Class(TFslPointerList)
     Private
       Function GetClassByIndex(Const iIndex : Integer): TClass;
       Procedure SetClassByIndex(Const iIndex : Integer; Const Value : TClass);
 
     Protected
-      Function ItemClass : TAdvObjectClass; Virtual;
+      Function ItemClass : TFslObjectClass; Virtual;
 
     Public
-      Function Iterator : TAdvIterator; Override;
+      Function Iterator : TFslIterator; Override;
 
       Function Add(Const aClass : TClass) : Integer;
-      Procedure AddAll(Const oClassList : TAdvClassList);
+      Procedure AddAll(Const oClassList : TFslClassList);
       Procedure AddArray(Const aClasses : Array Of TClass);
       Function IndexByClassType(aClass : TClass) : Integer;
       Function ExistsByClassType(aClass : TClass) : Boolean;
@@ -783,12 +783,12 @@ Type
       Property ClassByIndex[Const iIndex : Integer] : TClass Read GetClassByIndex Write SetClassByIndex; Default;
   End; 
 
-  TAdvClassListIterator = Class(TAdvObjectClassIterator)
+  TFslClassListIterator = Class(TFslObjectClassIterator)
     Private
-      FClassList : TAdvClassList;
+      FClassList : TFslClassList;
       FIndex : Integer;
 
-      Procedure SetClassList(Const Value : TAdvClassList);
+      Procedure SetClassList(Const Value : TFslClassList);
 
     Public
       Constructor Create; Override;
@@ -802,36 +802,36 @@ Type
       Function More : Boolean; Override;
       Function Current : TClass; Override;
 
-      Property ClassList : TAdvClassList Read FClassList Write SetClassList;
+      Property ClassList : TFslClassList Read FClassList Write SetClassList;
   End;
 
-  TAdvHashEntryCode = Integer;
+  TFslHashEntryCode = Integer;
 
-  TAdvHashEntry = Class(TAdvPersistent)
+  TFslHashEntry = Class(TFslPersistent)
     Private
-      FCode : TAdvHashEntryCode;
-      FNextHashEntry : TAdvHashEntry;
+      FCode : TFslHashEntryCode;
+      FNextHashEntry : TFslHashEntry;
 
     Protected
       Procedure Generate; Virtual;
 
-      Property Code : TAdvHashEntryCode Read FCode Write FCode;
+      Property Code : TFslHashEntryCode Read FCode Write FCode;
 
     Public
-      Procedure Assign(oSource : TAdvObject); Override;
-      Procedure Load(oFiler : TAdvFiler); Override;
+      Procedure Assign(oSource : TFslObject); Override;
+      Procedure Load(oFiler : TFslFiler); Override;
 
-      Function Link : TAdvHashEntry;
-      Function Clone : TAdvHashEntry;
+      Function Link : TFslHashEntry;
+      Function Clone : TFslHashEntry;
   End;
 
-  PAdvHashEntry = ^TAdvHashEntry;
-  TAdvHashEntryClass = Class Of TAdvHashEntry;
+  PAdvHashEntry = ^TFslHashEntry;
+  TFslHashEntryClass = Class Of TFslHashEntry;
 
-  TAdvHashEntryArray = Array [0..MaxInt Div SizeOf(TAdvHashEntry) - 1] Of TAdvHashEntry;
-  PAdvHashEntryArray = ^TAdvHashEntryArray;
+  TFslHashEntryArray = Array [0..MaxInt Div SizeOf(TFslHashEntry) - 1] Of TFslHashEntry;
+  PAdvHashEntryArray = ^TFslHashEntryArray;
 
-  TAdvHashTable = Class(TAdvCollection)
+  TFslHashTable = Class(TFslCollection)
     Private
       FTable : PAdvHashEntryArray;
       FCount : Integer;
@@ -846,79 +846,79 @@ Type
     Protected
       Function ErrorClass : EAdvExceptionClass; Override;
 
-      Function Resolve(oHashEntry : TAdvHashEntry) : Cardinal;
-      Function Duplicate(oHashEntry : TAdvHashEntry) : TAdvHashEntry;
+      Function Resolve(oHashEntry : TFslHashEntry) : Cardinal;
+      Function Duplicate(oHashEntry : TFslHashEntry) : TFslHashEntry;
 
       Procedure Rehash;
 
       Procedure InternalClear; Override;
 
-      Function Find(oSource, oHashEntry : TAdvHashEntry) : TAdvHashEntry;
-      Procedure Insert(iIndex : Integer; oHashEntry: TAdvHashEntry);
+      Function Find(oSource, oHashEntry : TFslHashEntry) : TFslHashEntry;
+      Procedure Insert(iIndex : Integer; oHashEntry: TFslHashEntry);
 
-      Function Equal(oA, oB : TAdvHashEntry) : Integer; Virtual;
+      Function Equal(oA, oB : TFslHashEntry) : Integer; Virtual;
 
-      Function ItemClass : TAdvHashEntryClass; Virtual;
-      Function ItemNew : TAdvHashEntry; Virtual;
+      Function ItemClass : TFslHashEntryClass; Virtual;
+      Function ItemNew : TFslHashEntry; Virtual;
 
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvHashTable;
-      Function Clone : TAdvHashTable;
+      Function Link : TFslHashTable;
+      Function Clone : TFslHashTable;
 
-      Procedure Assign(oObject : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
-      Procedure Load(oFiler : TAdvFiler); Override;
-      Procedure Save(oFiler : TAdvFiler); Override;
+      Procedure Assign(oObject : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
+      Procedure Load(oFiler : TFslFiler); Override;
+      Procedure Save(oFiler : TFslFiler); Override;
 
       Procedure PreventRehash;
       Procedure AllowRehash;
 
       Procedure PredictCapacityByExpectedCount(Const iCount : Integer);
 
-      Function ProduceHashEntry : TAdvHashEntry;
-      Procedure ConsumeHashEntry(oHashEntry : TAdvHashEntry);
+      Function ProduceHashEntry : TFslHashEntry;
+      Procedure ConsumeHashEntry(oHashEntry : TFslHashEntry);
 
-      Function Iterator : TAdvIterator; Override;
+      Function Iterator : TFslIterator; Override;
 
       Function IsEmpty : Boolean;
 
-      Procedure Add(oHashEntry : TAdvHashEntry); Overload; Virtual;
-      Function Delete(oHashEntry : TAdvHashEntry) : Boolean; Overload; Virtual;
-      Function Force(oHashEntry : TAdvHashEntry) : TAdvHashEntry; Virtual;
-      Function Replace(oHashEntry : TAdvHashEntry) : TAdvHashEntry; Overload; Virtual;
-      Function Get(oHashEntry : TAdvHashEntry) : TAdvHashEntry; Virtual;
-      Function Exists(oHashEntry : TAdvHashEntry) : Boolean; Overload; Virtual;
+      Procedure Add(oHashEntry : TFslHashEntry); Overload; Virtual;
+      Function Delete(oHashEntry : TFslHashEntry) : Boolean; Overload; Virtual;
+      Function Force(oHashEntry : TFslHashEntry) : TFslHashEntry; Virtual;
+      Function Replace(oHashEntry : TFslHashEntry) : TFslHashEntry; Overload; Virtual;
+      Function Get(oHashEntry : TFslHashEntry) : TFslHashEntry; Virtual;
+      Function Exists(oHashEntry : TFslHashEntry) : Boolean; Overload; Virtual;
 
       Property Capacity : Integer Read FCapacity Write SetCapacity;
       Property Balance : Real Read FBalance Write SetBalance;
       Property Count : Integer Read FCount;
   End;
 
-  PAdvObject = ^TAdvObject;
-  TAdvObjectArray = array[0..(MaxInt div SizeOf(TAdvObject)) - 1] of TAdvObject;
-  PAdvObjectArray = ^TAdvObjectArray;
+  PAdvObject = ^TFslObject;
+  TFslObjectArray = array[0..(MaxInt div SizeOf(TFslObject)) - 1] of TFslObject;
+  PAdvObjectArray = ^TFslObjectArray;
 
-  TAdvObjectListClass = class of TAdvObjectList;
-  TAdvObjectListIterator = class;
-  TAdvObjectListIteratorClass = class of TAdvObjectListIterator;
+  TFslObjectListClass = class of TFslObjectList;
+  TFslObjectListIterator = class;
+  TFslObjectListIteratorClass = class of TFslObjectListIterator;
 
-  TAdvObjectList = class(TAdvItemList)
+  TFslObjectList = class(TFslItemList)
   private
     FObjectArray: PAdvObjectArray;
 
-    FItemClass: TAdvObjectClass;
+    FItemClass: TFslObjectClass;
 
-    function GetObject(iIndex: integer): TAdvObject;
-    procedure SetObject(iIndex: integer; const oValue: TAdvObject);
+    function GetObject(iIndex: integer): TFslObject;
+    procedure SetObject(iIndex: integer; const oValue: TFslObject);
 
-    function GetObjectByIndex(const iIndex: integer): TAdvObject;
-    procedure SetObjectByIndex(const iIndex: integer; const Value: TAdvObject);
+    function GetObjectByIndex(const iIndex: integer): TFslObject;
+    procedure SetObjectByIndex(const iIndex: integer; const Value: TFslObject);
 
-    function GetItemClass: TAdvObjectClass;
-    procedure SetItemClass(const Value: TAdvObjectClass);
+    function GetItemClass: TFslObjectClass;
+    procedure SetItemClass(const Value: TFslObjectClass);
 
   protected
     function ErrorClass: EAdvExceptionClass; override;
@@ -927,9 +927,9 @@ Type
     procedure SetItem(iIndex: integer; pValue: Pointer); override;
     function AddressOfItem(iIndex: integer): PAdvObject;
 
-    procedure LoadItem(oFiler: TAdvFiler; iIndex: integer); override;
-    procedure SaveItem(oFiler: TAdvFiler; iIndex: integer); override;
-    procedure AssignItem(oItems: TAdvItemList; iIndex: integer); override;
+    procedure LoadItem(oFiler: TFslFiler; iIndex: integer); override;
+    procedure SaveItem(oFiler: TFslFiler; iIndex: integer); override;
+    procedure AssignItem(oItems: TFslItemList; iIndex: integer); override;
 
     procedure InternalTruncate(iValue: integer); override;
     procedure InternalResize(iValue: integer); override;
@@ -941,28 +941,28 @@ Type
 
     function ValidateIndex(const sMethod: string; iIndex: integer): boolean;
       override;
-    function ValidateItem(const sMethod: string; oObject: TAdvObject;
+    function ValidateItem(const sMethod: string; oObject: TFslObject;
       const sObject: string): boolean; virtual;
 
     function Find(pValue: Pointer; Out iIndex: integer;
-      aCompare: TAdvItemListCompare = nil): boolean; overload; override;
-    function Find(oValue: TAdvObject): integer; overload;
+      aCompare: TFslItemListCompare = nil): boolean; overload; override;
+    function Find(oValue: TFslObject): integer; overload;
 
-    function GetByIndex(iIndex: integer): TAdvObject; overload;
+    function GetByIndex(iIndex: integer): TFslObject; overload;
 
     function CompareByClass(pA, pB: Pointer): integer; overload;
     function CompareByReference(pA, pB: Pointer): integer; overload;
 
-    function ItemNew: TAdvObject; virtual;
-    function ItemClass: TAdvObjectClass; virtual;
-    function IteratorClass: TAdvObjectListIteratorClass; virtual;
+    function ItemNew: TFslObject; virtual;
+    function ItemClass: TFslObjectClass; virtual;
+    function IteratorClass: TFslObjectListIteratorClass; virtual;
     function CapacityLimit: integer; override;
 
-    function Insertable(const sMethod: string; oObject: TAdvObject): boolean;
+    function Insertable(const sMethod: string; oObject: TFslObject): boolean;
       overload;
-    function Replaceable(const sMethod: string; oOld, oNew: TAdvObject): boolean;
+    function Replaceable(const sMethod: string; oOld, oNew: TFslObject): boolean;
       overload;
-    function Deleteable(const sMethod: string; oObject: TAdvObject): boolean;
+    function Deleteable(const sMethod: string; oObject: TFslObject): boolean;
       overload;
 
     function Deleteable(const sMethod: string; iIndex: integer): boolean;
@@ -979,75 +979,75 @@ Type
     constructor Create; override;
     destructor Destroy; override;
 
-    function Link: TAdvObjectList;
-    function Clone: TAdvObjectList;
+    function Link: TFslObjectList;
+    function Clone: TFslObjectList;
 
-    procedure Collect(oList: TAdvObjectList);
-    procedure AddAll(oList: TAdvObjectList);
+    procedure Collect(oList: TFslObjectList);
+    procedure AddAll(oList: TFslObjectList);
 
-    function Add(oValue: TAdvObject): integer; overload; virtual;
-    procedure Insert(iIndex: integer; oValue: TAdvObject); overload;
+    function Add(oValue: TFslObject): integer; overload; virtual;
+    procedure Insert(iIndex: integer; oValue: TFslObject); overload;
     procedure Move(iSource, iTarget: integer); overload;
 
-    function IndexBy(oValue: TAdvObject; aCompare: TAdvItemListCompare): integer;
-    function ExistsBy(oValue: TAdvObject; aCompare: TAdvItemListCompare): boolean;
-    function GetBy(oValue: TAdvObject; aCompare: TAdvItemListCompare): TAdvObject;
-    function ForceBy(oValue: TAdvObject; aCompare: TAdvItemListCompare): TAdvObject;
-    procedure DeleteBy(oValue: TAdvObject; aCompare: TAdvItemListCompare);
+    function IndexBy(oValue: TFslObject; aCompare: TFslItemListCompare): integer;
+    function ExistsBy(oValue: TFslObject; aCompare: TFslItemListCompare): boolean;
+    function GetBy(oValue: TFslObject; aCompare: TFslItemListCompare): TFslObject;
+    function ForceBy(oValue: TFslObject; aCompare: TFslItemListCompare): TFslObject;
+    procedure DeleteBy(oValue: TFslObject; aCompare: TFslItemListCompare);
 
     procedure SortedByClass;
     procedure OrderedByClass;
     function IsSortedByClass: boolean;
     function IsOrderedByClass: boolean;
-    function IndexByClass(aClass: TAdvObjectClass): integer; overload;
-    function IndexByClass(oValue: TAdvObject): integer; overload;
-    function GetByClass(aClass: TAdvObjectClass): TAdvObject;
-    function ExistsByClass(aClass: TAdvObjectClass): boolean;
-    procedure DeleteByClass(aClass: TAdvObjectClass);
+    function IndexByClass(aClass: TFslObjectClass): integer; overload;
+    function IndexByClass(oValue: TFslObject): integer; overload;
+    function GetByClass(aClass: TFslObjectClass): TFslObject;
+    function ExistsByClass(aClass: TFslObjectClass): boolean;
+    procedure DeleteByClass(aClass: TFslObjectClass);
 
     procedure SortedByReference;
     procedure OrderedByReference;
     function IsSortedByReference: boolean;
     function IsOrderedByReference: boolean;
-    function IndexByReference(oValue: TAdvObject): integer;
-    function ExistsByReference(oValue: TAdvObject): boolean;
-    procedure DeleteByReference(oValue: TAdvObject);
-    procedure DeleteAllByReference(oValue: TAdvObjectList);
+    function IndexByReference(oValue: TFslObject): integer;
+    function ExistsByReference(oValue: TFslObject): boolean;
+    procedure DeleteByReference(oValue: TFslObject);
+    procedure DeleteAllByReference(oValue: TFslObjectList);
 
-    function ContainsAllByReference(oObjectList: TAdvObjectList): boolean;
-    function ContainsAnyByReference(oObjectList: TAdvObjectList): boolean;
+    function ContainsAllByReference(oObjectList: TFslObjectList): boolean;
+    function ContainsAnyByReference(oObjectList: TFslObjectList): boolean;
 
-    function ExistsByDefault(oValue: TAdvObject): boolean;
-    function IndexByDefault(oValue: TAdvObject): integer;
-    procedure DeleteByDefault(oValue: TAdvObject);
+    function ExistsByDefault(oValue: TFslObject): boolean;
+    function IndexByDefault(oValue: TFslObject): integer;
+    procedure DeleteByDefault(oValue: TFslObject);
 
-    function RemoveFirst: TAdvObject;
-    function RemoveLast: TAdvObject;
+    function RemoveFirst: TFslObject;
+    function RemoveLast: TFslObject;
 
-    function Iterator: TAdvIterator; override;
-    function ProduceIterator: TAdvObjectListIterator; overload;
-    procedure ConsumeIterator(oIterator: TAdvObjectListIterator); overload;
+    function Iterator: TFslIterator; override;
+    function ProduceIterator: TFslObjectListIterator; overload;
+    procedure ConsumeIterator(oIterator: TFslObjectListIterator); overload;
 
-    function Get(iIndex: integer): TAdvObject; overload;
-    function New: TAdvObject; overload; virtual;
+    function Get(iIndex: integer): TFslObject; overload;
+    function New: TFslObject; overload; virtual;
 
-    property ObjectByIndex[const iIndex: integer]: TAdvObject
+    property ObjectByIndex[const iIndex: integer]: TFslObject
       read GetObjectByIndex write SetObjectByIndex; default;
-    property Objects[const iIndex: integer]: TAdvObject
+    property Objects[const iIndex: integer]: TFslObject
       read GetObjectByIndex write SetObjectByIndex;
-    property NominatedClass: TAdvObjectClass read GetItemClass write SetItemClass;
+    property NominatedClass: TFslObjectClass read GetItemClass write SetItemClass;
   end;
 
   EAdvObjectList = class(EAdvItemList);
 
-  TAdvObjectListIterator = class(TAdvObjectIterator)
+  TFslObjectListIterator = class(TFslObjectIterator)
   private
-    FList: TAdvObjectList;
+    FList: TFslObjectList;
     FIndex: integer;
     FDeleted: boolean;
 
-    procedure SetList(const Value: TAdvObjectList);
-    function GetList: TAdvObjectList;
+    procedure SetList(const Value: TFslObjectList);
+    function GetList: TFslObjectList;
 
   protected
     procedure StepBack;
@@ -1064,53 +1064,53 @@ Type
     procedure Back; override;
     function More: boolean; override;
 
-    function Current: TAdvObject; override;
+    function Current: TFslObject; override;
     procedure Delete;
 
     property Index: integer read FIndex write FIndex;
-    property List: TAdvObjectList read GetList write SetList;
+    property List: TFslObjectList read GetList write SetList;
   end;
 
-  TAdvObject = FHIR.Support.Objects.TAdvObject;
-  TAdvObjectClass = FHIR.Support.Objects.TAdvObjectClass;
+  TFslObject = FHIR.Support.Objects.TFslObject;
+  TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
 
-  TAdvPersistentList = Class(TAdvObjectList)
+  TFslPersistentList = Class(TFslObjectList)
     Private
-      Function GetPersistentByIndex(Const iIndex : Integer) : TAdvPersistent;
-      Procedure SetPersistentByIndex(Const iIndex : Integer; Const oValue : TAdvPersistent);
+      Function GetPersistentByIndex(Const iIndex : Integer) : TFslPersistent;
+      Procedure SetPersistentByIndex(Const iIndex : Integer; Const oValue : TFslPersistent);
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
     Public
-      Property PersistentByIndex[Const iIndex : Integer] : TAdvPersistent Read GetPersistentByIndex Write SetPersistentByIndex; Default;
+      Property PersistentByIndex[Const iIndex : Integer] : TFslPersistent Read GetPersistentByIndex Write SetPersistentByIndex; Default;
   End;
 
-  TAdvPersistentListIterator = Class(TAdvObjectListIterator)
+  TFslPersistentListIterator = Class(TFslObjectListIterator)
   End;
 
-  TAdvPersistentListClass = Class Of TAdvPersistentList;
+  TFslPersistentListClass = Class Of TFslPersistentList;
 
-  TAdvHashTableList = Class(TAdvPersistentList)
+  TFslHashTableList = Class(TFslPersistentList)
     Private
-      Function GetHash(iIndex: Integer): TAdvHashTable;
+      Function GetHash(iIndex: Integer): TFslHashTable;
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
     Public
-      Property Hashes[iIndex : Integer] : TAdvHashTable Read GetHash; Default;
+      Property Hashes[iIndex : Integer] : TFslHashTable Read GetHash; Default;
   End;
 
-  TAdvHashTableIterator = Class(TAdvObjectIterator)
+  TFslHashTableIterator = Class(TFslObjectIterator)
     Private
-      FHashTable : TAdvHashTable;
+      FHashTable : TFslHashTable;
       FIndex : Integer;
-      FCurrentHashEntry : TAdvHashEntry;
-      FNextHashEntry : TAdvHashEntry;
+      FCurrentHashEntry : TFslHashEntry;
+      FNextHashEntry : TFslHashEntry;
 
-      Function GetHashTable: TAdvHashTable;
-      Procedure SetHashTable(Const Value: TAdvHashTable);
+      Function GetHashTable: TFslHashTable;
+      Procedure SetHashTable(Const Value: TFslHashTable);
 
     Public
       Constructor Create; Override;
@@ -1121,50 +1121,50 @@ Type
       Function More : Boolean; Override;
 
       Function Count : Integer;
-      Function Current : TAdvObject; Override;
+      Function Current : TFslObject; Override;
 
-      Property HashTable : TAdvHashTable Read GetHashTable Write SetHashTable;
+      Property HashTable : TFslHashTable Read GetHashTable Write SetHashTable;
   End;
 
   EAdvHashTable = Class(EAdvCollection);
 
 
 
-  TAdvStringObjectMatchKey = String;
-  TAdvStringObjectMatchValue = TAdvObject;
+  TFslStringObjectMatchKey = String;
+  TFslStringObjectMatchValue = TFslObject;
 
-  TAdvStringObjectMatchItem = Record
-    Key   : TAdvStringObjectMatchKey;
-    Value : TAdvStringObjectMatchValue;
+  TFslStringObjectMatchItem = Record
+    Key   : TFslStringObjectMatchKey;
+    Value : TFslStringObjectMatchValue;
   End;
 
-  PAdvStringObjectMatchItem = ^TAdvStringObjectMatchItem;
+  PAdvStringObjectMatchItem = ^TFslStringObjectMatchItem;
 
-  TAdvStringObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TAdvStringObjectMatchItem)) - 1] Of TAdvStringObjectMatchItem;
-  PAdvStringObjectMatchItemArray = ^TAdvStringObjectMatchItemArray;
+  TFslStringObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslStringObjectMatchItem)) - 1] Of TFslStringObjectMatchItem;
+  PAdvStringObjectMatchItemArray = ^TFslStringObjectMatchItemArray;
 
-  TAdvStringCompareCallback = Function (Const sA, sB : String) : Integer;
+  TFslStringCompareCallback = Function (Const sA, sB : String) : Integer;
 
-  TAdvStringObjectMatch = Class(TAdvItemList)
+  TFslStringObjectMatch = Class(TFslItemList)
     Private
       FMatchArray : PAdvStringObjectMatchItemArray;
-      FDefaultKey : TAdvStringObjectMatchKey;
-      FDefaultValue : TAdvStringObjectMatchValue;
-      FCompareKey : TAdvStringCompareCallback;
-      FNominatedValueClass : TAdvObjectClass;
+      FDefaultKey : TFslStringObjectMatchKey;
+      FDefaultValue : TFslStringObjectMatchValue;
+      FCompareKey : TFslStringCompareCallback;
+      FNominatedValueClass : TFslObjectClass;
       FSymbol : String;
       FForced : Boolean;
 
-      Function GetKeyByIndex(iIndex: Integer): TAdvStringObjectMatchKey;
-      Procedure SetKeyByIndex(iIndex: Integer; Const aKey : TAdvStringObjectMatchKey);
+      Function GetKeyByIndex(iIndex: Integer): TFslStringObjectMatchKey;
+      Procedure SetKeyByIndex(iIndex: Integer; Const aKey : TFslStringObjectMatchKey);
 
-      Function GetValueByIndex(iIndex: Integer): TAdvStringObjectMatchValue;
-      Procedure SetValueByIndex(iIndex: Integer; Const aValue: TAdvStringObjectMatchValue);
+      Function GetValueByIndex(iIndex: Integer): TFslStringObjectMatchValue;
+      Procedure SetValueByIndex(iIndex: Integer; Const aValue: TFslStringObjectMatchValue);
 
-      Function GetMatch(Const aKey : TAdvStringObjectMatchKey): TAdvStringObjectMatchValue;
-      Procedure SetMatch(Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue);
+      Function GetMatch(Const aKey : TFslStringObjectMatchKey): TFslStringObjectMatchValue;
+      Procedure SetMatch(Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue);
 
-      Function GetMatchByIndex(iIndex: Integer): TAdvStringObjectMatchItem;
+      Function GetMatchByIndex(iIndex: Integer): TFslStringObjectMatchItem;
 
       Function GetAsText: String;
       Procedure SetAsText(Const Value: String);
@@ -1176,12 +1176,12 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Function ValidateIndex(Const sMethod: String; iIndex: Integer): Boolean; Override;
-      Function ValidateItem(Const sMethod: String; oObject: TAdvObject; Const sObject: String): Boolean; Virtual;
+      Function ValidateItem(Const sMethod: String; oObject: TFslObject; Const sObject: String): Boolean; Virtual;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -1194,32 +1194,32 @@ Type
       Function CompareByKey(pA, pB : Pointer): Integer; Virtual;
       Function CompareByValue(pA, pB : Pointer): Integer; Virtual;
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Override;
 
-      Function Find(Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean;
+      Function Find(Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean;
 
       Function CapacityLimit : Integer; Override;
 
-      Function ItemClass : TAdvObjectClass; Virtual;
+      Function ItemClass : TFslObjectClass; Virtual;
 
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvStringObjectMatch; Overload;
+      Function Link : TFslStringObjectMatch; Overload;
 
-      Function IndexByKey(Const aKey : TAdvStringObjectMatchKey) : Integer;
-      Function IndexByValue(Const aValue : TAdvStringObjectMatchValue) : Integer;
+      Function IndexByKey(Const aKey : TFslStringObjectMatchKey) : Integer;
+      Function IndexByValue(Const aValue : TFslStringObjectMatchValue) : Integer;
 
-      Function ExistsByKey(Const aKey : TAdvStringObjectMatchKey) : Boolean;
-      Function ExistsByValue(Const aValue : TAdvStringObjectMatchValue) : Boolean;
+      Function ExistsByKey(Const aKey : TFslStringObjectMatchKey) : Boolean;
+      Function ExistsByValue(Const aValue : TFslStringObjectMatchValue) : Boolean;
 
-      Procedure AddAll(oSourceStringObjectMatch : TAdvStringObjectMatch);
+      Procedure AddAll(oSourceStringObjectMatch : TFslStringObjectMatch);
 
-      Function Add(Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue): Integer; Overload;
-      Procedure Insert(iIndex : Integer; Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue); Overload;
-      Function FindByKey(Const aKey : TAdvStringObjectMatchKey; Out iIndex : Integer) : Boolean; Overload;
-      Function FindByValue(Const aValue : TAdvStringObjectMatchValue; Out iIndex : Integer) : Boolean; Overload;
+      Function Add(Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue): Integer; Overload;
+      Procedure Insert(iIndex : Integer; Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue); Overload;
+      Function FindByKey(Const aKey : TFslStringObjectMatchKey; Out iIndex : Integer) : Boolean; Overload;
+      Function FindByValue(Const aValue : TFslStringObjectMatchValue; Out iIndex : Integer) : Boolean; Overload;
 
       Procedure SortedByKey;
       Procedure SortedByValue;
@@ -1227,61 +1227,61 @@ Type
       Function IsSortedByKey : Boolean;
       Function IsSortedByValue : Boolean;
 
-      Function GetKeyByValue(Const aValue : TAdvStringObjectMatchValue) : TAdvStringObjectMatchKey;
-      Function GetValueByKey(Const aKey : TAdvStringObjectMatchKey) : TAdvStringObjectMatchValue;
-      Procedure SetValueByKey(Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue);
+      Function GetKeyByValue(Const aValue : TFslStringObjectMatchValue) : TFslStringObjectMatchKey;
+      Function GetValueByKey(Const aKey : TFslStringObjectMatchKey) : TFslStringObjectMatchValue;
+      Procedure SetValueByKey(Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue);
 
-      Procedure DeleteByKey(Const aKey : TAdvStringObjectMatchKey);
-      Procedure DeleteByValue(Const aValue : TAdvStringObjectMatchValue);
+      Procedure DeleteByKey(Const aKey : TFslStringObjectMatchKey);
+      Procedure DeleteByValue(Const aValue : TFslStringObjectMatchValue);
 
-      Property Matches[Const aKey : TAdvStringObjectMatchKey] : TAdvStringObjectMatchValue Read GetMatch Write SetMatch; Default;
+      Property Matches[Const aKey : TFslStringObjectMatchKey] : TFslStringObjectMatchValue Read GetMatch Write SetMatch; Default;
       Property Forced : Boolean Read FForced Write FForced;
-      Property DefaultKey : TAdvStringObjectMatchKey Read FDefaultKey Write FDefaultKey;
-      Property DefaultValue : TAdvStringObjectMatchValue Read FDefaultValue Write FDefaultValue;
+      Property DefaultKey : TFslStringObjectMatchKey Read FDefaultKey Write FDefaultKey;
+      Property DefaultValue : TFslStringObjectMatchValue Read FDefaultValue Write FDefaultValue;
       Property AsText : String Read GetAsText Write SetAsText;
       Property Symbol : String Read FSymbol Write FSymbol;
       Property Sensitive : Boolean Read GetSensitive Write SetSensitive;
-      Property NominatedValueClass : TAdvObjectClass Read FNominatedValueClass Write FNominatedValueClass;
-      Property MatchByIndex[iIndex : Integer] : TAdvStringObjectMatchItem Read GetMatchByIndex;
-      Property KeyByIndex[iIndex : Integer] : TAdvStringObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
-      Property Keys[iIndex : Integer] : TAdvStringObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
-      Property ValueByIndex[iIndex : Integer] : TAdvStringObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
-      Property Values[iIndex : Integer] : TAdvStringObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
+      Property NominatedValueClass : TFslObjectClass Read FNominatedValueClass Write FNominatedValueClass;
+      Property MatchByIndex[iIndex : Integer] : TFslStringObjectMatchItem Read GetMatchByIndex;
+      Property KeyByIndex[iIndex : Integer] : TFslStringObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
+      Property Keys[iIndex : Integer] : TFslStringObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
+      Property ValueByIndex[iIndex : Integer] : TFslStringObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
+      Property Values[iIndex : Integer] : TFslStringObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
   End;
 
 Type
-  TAdvStringMatchKey = String;
-  TAdvStringMatchValue = String;
+  TFslStringMatchKey = String;
+  TFslStringMatchValue = String;
 
-  TAdvStringMatchItem = Record
-    Key : TAdvStringMatchKey;
-    Value : TAdvStringMatchValue;
+  TFslStringMatchItem = Record
+    Key : TFslStringMatchKey;
+    Value : TFslStringMatchValue;
   End;
 
-  PAdvStringMatchItem = ^TAdvStringMatchItem;
+  PAdvStringMatchItem = ^TFslStringMatchItem;
 
-  TAdvStringMatchItems = Array[0..(MaxInt Div SizeOf(TAdvStringMatchItem)) - 1] Of TAdvStringMatchItem;
-  PAdvStringMatchItems = ^TAdvStringMatchItems;
+  TFslStringMatchItems = Array[0..(MaxInt Div SizeOf(TFslStringMatchItem)) - 1] Of TFslStringMatchItem;
+  PAdvStringMatchItems = ^TFslStringMatchItems;
 
-  TAdvStringMatch = Class(TAdvItemList)
+  TFslStringMatch = Class(TFslItemList)
     Private
       FMatchArray : PAdvStringMatchItems;
-      FDefaultValue : TAdvStringMatchValue;
+      FDefaultValue : TFslStringMatchValue;
       FSymbol : String;
       FSeparator : String;
       FForced : Boolean;
 
-      Function GetKeyByIndex(iIndex: Integer): TAdvStringMatchKey;
-      Procedure SetKeyByIndex(iIndex: Integer; Const aKey : TAdvStringMatchKey);
+      Function GetKeyByIndex(iIndex: Integer): TFslStringMatchKey;
+      Procedure SetKeyByIndex(iIndex: Integer; Const aKey : TFslStringMatchKey);
 
-      Function GetValueByIndex(iIndex: Integer): TAdvStringMatchValue;
-      Procedure SetValueByIndex(iIndex: Integer; Const aValue: TAdvStringMatchValue);
+      Function GetValueByIndex(iIndex: Integer): TFslStringMatchValue;
+      Procedure SetValueByIndex(iIndex: Integer; Const aValue: TFslStringMatchValue);
 
-      Function GetMatchByIndex(Const iIndex : Integer) : TAdvStringMatchItem;
-      Procedure SetMatchByIndex(Const iIndex : Integer; Const Value : TAdvStringMatchItem);
+      Function GetMatchByIndex(Const iIndex : Integer) : TFslStringMatchItem;
+      Procedure SetMatchByIndex(Const iIndex : Integer; Const Value : TFslStringMatchItem);
 
-      Function GetMatch(Const aKey : TAdvStringMatchKey): TAdvStringMatchValue;
-      Procedure SetMatch(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue);
+      Function GetMatch(Const aKey : TFslStringMatchKey): TFslStringMatchValue;
+      Procedure SetMatch(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue);
 
     Protected
       Function CapacityLimit : Integer; Override;
@@ -1291,9 +1291,9 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -1308,67 +1308,67 @@ Type
       Function CompareByValue(pA, pB : Pointer): Integer; Virtual;
       Function CompareMatch(pA, pB: Pointer): Integer; Virtual;
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
-      Function Find(Const aKey : TAdvStringMatchKey; Const aValue: TAdvStringMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean; Overload;
+      Function Find(Const aKey : TFslStringMatchKey; Const aValue: TFslStringMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean; Overload;
 
       Function GetAsText : String; 
       Procedure SetAsText(Const sValue: String); 
 
-      Function DefaultValue(Const aKey : TAdvStringMatchKey) : TAdvStringMatchValue; Virtual; 
+      Function DefaultValue(Const aKey : TFslStringMatchKey) : TFslStringMatchValue; Virtual; 
 
     Public
       Constructor Create; Override;
 
-      Procedure Assign(oObject : TAdvObject); Override;
+      Procedure Assign(oObject : TFslObject); Override;
 
-      Function Link : TAdvStringMatch;
-      Function Clone : TAdvStringMatch; 
+      Function Link : TFslStringMatch;
+      Function Clone : TFslStringMatch; 
 
-      Procedure AddAll(oStringMatch : TAdvStringMatch);
+      Procedure AddAll(oStringMatch : TFslStringMatch);
 
-      Function IndexByKey(Const aKey : TAdvStringMatchKey) : Integer;
-      Function IndexByCaseSensitiveKey(Const aKey : TAdvStringMatchKey) : Integer;
-      Function IndexByValue(Const aValue : TAdvStringMatchValue) : Integer;
-      Function ForceByKey(Const aKey : TAdvStringMatchKey) : TAdvStringMatchValue;
-      Function ExistsByKey(Const aKey : TAdvStringMatchKey) : Boolean;
-      Procedure DeleteByKey(Const aKey : TAdvStringMatchKey);
-      Function ExistsByValue(Const aValue : TAdvStringMatchValue) : Boolean;
-      Function ExistsByKeyAndValue(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue) : Boolean;
+      Function IndexByKey(Const aKey : TFslStringMatchKey) : Integer;
+      Function IndexByCaseSensitiveKey(Const aKey : TFslStringMatchKey) : Integer;
+      Function IndexByValue(Const aValue : TFslStringMatchValue) : Integer;
+      Function ForceByKey(Const aKey : TFslStringMatchKey) : TFslStringMatchValue;
+      Function ExistsByKey(Const aKey : TFslStringMatchKey) : Boolean;
+      Procedure DeleteByKey(Const aKey : TFslStringMatchKey);
+      Function ExistsByValue(Const aValue : TFslStringMatchValue) : Boolean;
+      Function ExistsByKeyAndValue(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue) : Boolean;
 
-      Function IndexOf(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue) : Integer;
-      Function Add(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue): Integer;
-      Procedure Insert(iIndex : Integer; Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue);
+      Function IndexOf(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue) : Integer;
+      Function Add(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue): Integer;
+      Procedure Insert(iIndex : Integer; Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue);
 
-      Function EqualTo(oMatch : TAdvStringMatch) : Boolean;
+      Function EqualTo(oMatch : TFslStringMatch) : Boolean;
 
-      Function GetValueByKey(Const aKey : TAdvStringMatchKey): TAdvStringMatchValue;
-      Procedure SetValueByKey(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue);
+      Function GetValueByKey(Const aKey : TFslStringMatchKey): TFslStringMatchValue;
+      Procedure SetValueByKey(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue);
 
       Procedure SortedByCaseSensitiveKey;
       Procedure SortedByKey;
       Procedure SortedByValue;
 
-      Property Matches[Const aKey : TAdvStringMatchKey] : TAdvStringMatchValue Read GetMatch Write SetMatch; Default;
+      Property Matches[Const aKey : TFslStringMatchKey] : TFslStringMatchValue Read GetMatch Write SetMatch; Default;
       Property Forced : Boolean Read FForced Write FForced;
-      Property Default : TAdvStringMatchValue Read FDefaultValue Write FDefaultValue;
+      Property Default : TFslStringMatchValue Read FDefaultValue Write FDefaultValue;
       Property Symbol : String Read FSymbol Write FSymbol;
       Property Separator : String Read FSeparator Write FSeparator;
-      Property MatchByIndex[Const iIndex : Integer] : TAdvStringMatchItem Read GetMatchByIndex Write SetMatchByIndex;
-      Property KeyByIndex[iIndex : Integer] : TAdvStringMatchKey Read GetKeyByIndex Write SetKeyByIndex;
-      Property ValueByIndex[iIndex : Integer] : TAdvStringMatchValue Read GetValueByIndex Write SetValueByIndex;
-      Property Keys[iIndex : Integer] : TAdvStringMatchKey Read GetKeyByIndex Write SetKeyByIndex;
-      Property Values[iIndex : Integer] : TAdvStringMatchValue Read GetValueByIndex Write SetValueByIndex;
+      Property MatchByIndex[Const iIndex : Integer] : TFslStringMatchItem Read GetMatchByIndex Write SetMatchByIndex;
+      Property KeyByIndex[iIndex : Integer] : TFslStringMatchKey Read GetKeyByIndex Write SetKeyByIndex;
+      Property ValueByIndex[iIndex : Integer] : TFslStringMatchValue Read GetValueByIndex Write SetValueByIndex;
+      Property Keys[iIndex : Integer] : TFslStringMatchKey Read GetKeyByIndex Write SetKeyByIndex;
+      Property Values[iIndex : Integer] : TFslStringMatchValue Read GetValueByIndex Write SetValueByIndex;
       Property AsText : String Read GetAsText Write SetAsText;
   End;
 
   EAdvStringMatch = Class(EAdvItemList);
 
-  TAdvStringListItem = String;
-  TAdvStringListItemArray = Array[0..(MaxInt Div SizeOf(TAdvStringListItem)) - 1] Of TAdvStringListItem;
-  PAdvStringListItemArray = ^TAdvStringListItemArray;
+  TFslStringListItem = String;
+  TFslStringListItemArray = Array[0..(MaxInt Div SizeOf(TFslStringListItem)) - 1] Of TFslStringListItem;
+  PAdvStringListItemArray = ^TFslStringListItemArray;
 
-  TAdvStringHashEntry = Class(TAdvHashEntry)
+  TFslStringHashEntry = Class(TFslHashEntry)
     Private
       FName : String;
 
@@ -1378,58 +1378,58 @@ Type
       Procedure Generate; Override;
 
     Public
-      Procedure Assign(oSource : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Assign(oSource : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
       Property Name : String Read FName Write SetName;
   End;
 
-  TAdvStringHashEntryClass = Class Of TAdvStringHashEntry;
+  TFslStringHashEntryClass = Class Of TFslStringHashEntry;
 
-  TAdvStringHashTable = Class(TAdvHashTable)
+  TFslStringHashTable = Class(TFslHashTable)
     Protected
-      Function Equal(oA, oB : TAdvHashEntry) : Integer; Override;
+      Function Equal(oA, oB : TFslHashEntry) : Integer; Override;
 
-      Function ItemClass : TAdvHashEntryClass; Override;
+      Function ItemClass : TFslHashEntryClass; Override;
 
     Public
-      Function Link : TAdvStringHashTable;
+      Function Link : TFslStringHashTable;
 
-      Function Iterator : TAdvIterator; Override;
+      Function Iterator : TFslIterator; Override;
   End;
 
-  TAdvStringHashTableIterator = Class(TAdvHashTableIterator)
+  TFslStringHashTableIterator = Class(TFslHashTableIterator)
     Public
-      Function Current : TAdvStringHashEntry; Reintroduce;
+      Function Current : TFslStringHashEntry; Reintroduce;
   End;
 
 
 
 
-  TAdvObjectClassHashEntry = Class(TAdvStringHashEntry)
+  TFslObjectClassHashEntry = Class(TFslStringHashEntry)
     Private
       FData : TClass;
 
     Public
-      Procedure Assign(oSource : TAdvObject); Override;
+      Procedure Assign(oSource : TFslObject); Override;
 
       Property Data : TClass Read FData Write FData; // no set data as hashed classname may be different to FData.ClassName.
   End;
 
-  TAdvObjectClassHashTable = Class(TAdvStringHashTable)
+  TFslObjectClassHashTable = Class(TFslStringHashTable)
     Protected
-      Function ItemClass : TAdvHashEntryClass; Override;
+      Function ItemClass : TFslHashEntryClass; Override;
 
     Public
-      Function Iterator : TAdvIterator; Override;
+      Function Iterator : TFslIterator; Override;
   End;
 
-  TAdvObjectClassHashTableIterator = Class(TAdvObjectClassIterator)
+  TFslObjectClassHashTableIterator = Class(TFslObjectClassIterator)
     Private
-      FInternal : TAdvStringHashTableIterator;
+      FInternal : TFslStringHashTableIterator;
 
-      Function GetHashTable: TAdvObjectClassHashTable;
-      Procedure SetHashTable(Const Value: TAdvObjectClassHashTable);
+      Function GetHashTable: TFslObjectClassHashTable;
+      Procedure SetHashTable(Const Value: TFslObjectClassHashTable);
 
     Public
       Constructor Create; Override;
@@ -1443,16 +1443,16 @@ Type
       Function More : Boolean; Override;
       Function Current : TClass; Override;
 
-      Property HashTable : TAdvObjectClassHashTable Read GetHashTable Write SetHashTable;
+      Property HashTable : TFslObjectClassHashTable Read GetHashTable Write SetHashTable;
   End;
 
-  TAdvStringList = Class(TAdvItemList)
+  TFslStringList = Class(TFslItemList)
     Private
       FStringArray : PAdvStringListItemArray;
       FSymbol : String;
 
-      Function GetStringByIndex(iIndex : Integer) : TAdvStringListItem;
-      Procedure SetStringByIndex(iIndex : Integer; Const sValue : TAdvStringListItem);
+      Function GetStringByIndex(iIndex : Integer) : TFslStringListItem;
+      Procedure SetStringByIndex(iIndex : Integer; Const sValue : TFslStringListItem);
 
       Function GetSensitive : Boolean;
       Procedure SetSensitive(Const bValue: Boolean);
@@ -1467,9 +1467,9 @@ Type
       Function GetAsText : String; Virtual;
       Procedure SetAsText(Const sValue : String); Virtual;
 
-      Procedure LoadItem(Filer : TAdvFiler; iIndex : Integer); Override;
-      Procedure SaveItem(Filer : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(Items : TAdvItemList; iIndex : Integer); Override;
+      Procedure LoadItem(Filer : TFslFiler; iIndex : Integer); Override;
+      Procedure SaveItem(Filer : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(Items : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -1479,7 +1479,7 @@ Type
       Procedure InternalDelete(iIndex : Integer); Overload; Override;
       Procedure InternalExchange(iA, iB : Integer); Overload; Override;
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
       Function CompareInsensitive(pA, pB : Pointer): Integer;
       Function CompareSensitive(pA, pB : Pointer): Integer;
@@ -1489,28 +1489,28 @@ Type
     Public
       Constructor Create; Override;
 
-      Function Link : TAdvStringList;
-      Function Clone : TAdvStringList;
+      Function Link : TFslStringList;
+      Function Clone : TFslStringList;
 
       Procedure SaveToText(Const sFilename : String);
       Procedure LoadFromText(Const sFilename : String);
 
-      Function Iterator : TAdvIterator; Override;
+      Function Iterator : TFslIterator; Override;
 
-      Procedure AddAll(oStrings : TAdvStringList);
+      Procedure AddAll(oStrings : TFslStringList);
       Procedure AddAllStringArray(Const aValues : Array Of String);
 
-      Function IndexByValue(Const sValue : TAdvStringListItem) : Integer;
-      Function ExistsByValue(Const sValue : TAdvStringListItem) : Boolean;
-      Function Add(Const sValue : TAdvStringListItem) : Integer;
-      Procedure Insert(iIndex : Integer; Const sValue : TAdvStringListItem);
-      Procedure DeleteByValue(Const sValue : TAdvStringListItem); 
+      Function IndexByValue(Const sValue : TFslStringListItem) : Integer;
+      Function ExistsByValue(Const sValue : TFslStringListItem) : Boolean;
+      Function Add(Const sValue : TFslStringListItem) : Integer;
+      Procedure Insert(iIndex : Integer; Const sValue : TFslStringListItem);
+      Procedure DeleteByValue(Const sValue : TFslStringListItem); 
 
-      Function Equals(oStrings : TAdvStringList) : Boolean; Reintroduce;
-      Function Compare(oStrings : TAdvStringList) : Integer;
-      Function ExistsAny(oStrings : TAdvStringList) : Boolean;
+      Function Equals(oStrings : TFslStringList) : Boolean; Reintroduce;
+      Function Compare(oStrings : TFslStringList) : Integer;
+      Function ExistsAny(oStrings : TFslStringList) : Boolean;
 
-      Function Find(Const sValue : TAdvStringListItem; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean; Overload;
+      Function Find(Const sValue : TFslStringListItem; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean; Overload;
 
       // script wrappers
       procedure SetItems(iIndex : integer; sValue : String);
@@ -1518,22 +1518,22 @@ Type
       procedure delete(iIndex : integer);
       procedure populate(iCount : integer);
       Function IndexOf(value : String): Integer;
-      Property Items[iIndex : Integer] : TAdvStringListItem Read GetStringByIndex Write SetStringByIndex;
+      Property Items[iIndex : Integer] : TFslStringListItem Read GetStringByIndex Write SetStringByIndex;
       Property Text : String read GetAsText write SetAsText;
 
-      Property StringByIndex[iIndex : Integer] : TAdvStringListItem Read GetStringByIndex Write SetStringByIndex; Default;
+      Property StringByIndex[iIndex : Integer] : TFslStringListItem Read GetStringByIndex Write SetStringByIndex; Default;
       Property AsText : String Read GetAsText Write SetAsText;
       Property AsCSV : String Read GetAsCSV Write SetAsCSV;
       Property Symbol : String Read FSymbol Write FSymbol;
       Property Sensitive : Boolean Read GetSensitive Write SetSensitive;
   End;
 
-  TAdvStringListIterator = Class(TAdvStringIterator)
+  TFslStringListIterator = Class(TFslStringIterator)
     Private
-      FStringList : TAdvStringList;
+      FStringList : TFslStringList;
       FIndex : Integer;
 
-      Procedure SetStringList(Const Value: TAdvStringList);
+      Procedure SetStringList(Const Value: TFslStringList);
 
     Public
       Constructor Create; Override;
@@ -1547,40 +1547,40 @@ Type
       Function More : Boolean; Override;
       Function Current : String; Override;
 
-      Property StringList : TAdvStringList Read FStringList Write SetStringList;
+      Property StringList : TFslStringList Read FStringList Write SetStringList;
   End;
 
 
 Type
-  TAdvStringLargeIntegerMatchKey = String;
-  TAdvStringLargeIntegerMatchValue = Int64;
+  TFslStringLargeIntegerMatchKey = String;
+  TFslStringLargeIntegerMatchValue = Int64;
 
-  TAdvStringLargeIntegerMatchItem = Record
-    Key : TAdvStringLargeIntegerMatchKey;
-    Value : TAdvStringLargeIntegerMatchValue;
+  TFslStringLargeIntegerMatchItem = Record
+    Key : TFslStringLargeIntegerMatchKey;
+    Value : TFslStringLargeIntegerMatchValue;
   End;
 
-  PAdvStringLargeIntegerMatchItem = ^TAdvStringLargeIntegerMatchItem;
+  PAdvStringLargeIntegerMatchItem = ^TFslStringLargeIntegerMatchItem;
 
-  TAdvStringLargeIntegerMatchItemArray = Array[0..(MaxInt Div SizeOf(TAdvStringLargeIntegerMatchItem)) - 1] Of TAdvStringLargeIntegerMatchItem;
-  PAdvStringLargeIntegerMatchItemArray = ^TAdvStringLargeIntegerMatchItemArray;
+  TFslStringLargeIntegerMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslStringLargeIntegerMatchItem)) - 1] Of TFslStringLargeIntegerMatchItem;
+  PAdvStringLargeIntegerMatchItemArray = ^TFslStringLargeIntegerMatchItemArray;
 
-  TAdvStringLargeIntegerMatch = Class(TAdvItemList)
+  TFslStringLargeIntegerMatch = Class(TFslItemList)
     Private
       FMatchArray : PAdvStringLargeIntegerMatchItemArray;
       FDefault : Integer;
       FForced : Boolean;
-      FCompareKey : TAdvStringCompareCallback;
+      FCompareKey : TFslStringCompareCallback;
       FSymbol : String;
 
       Function GetKey(iIndex : Integer): String;
-      Procedure SetKey(iIndex : Integer; Const aKey : TAdvStringLargeIntegerMatchKey);
+      Procedure SetKey(iIndex : Integer; Const aKey : TFslStringLargeIntegerMatchKey);
 
-      Function GetValue(iIndex : Integer): TAdvStringLargeIntegerMatchValue;
-      Procedure SetValue(iIndex : Integer; Const aValue : TAdvStringLargeIntegerMatchValue);
+      Function GetValue(iIndex : Integer): TFslStringLargeIntegerMatchValue;
+      Procedure SetValue(iIndex : Integer; Const aValue : TFslStringLargeIntegerMatchValue);
 
-      Function GetMatch(Const aKey : TAdvStringLargeIntegerMatchKey): TAdvStringLargeIntegerMatchValue;
-      Procedure SetMatch(Const aKey : TAdvStringLargeIntegerMatchKey; Const aValue : TAdvStringLargeIntegerMatchValue);
+      Function GetMatch(Const aKey : TFslStringLargeIntegerMatchKey): TFslStringLargeIntegerMatchValue;
+      Procedure SetMatch(Const aKey : TFslStringLargeIntegerMatchKey; Const aValue : TFslStringLargeIntegerMatchValue);
 
       Function GetAsText : String;
       Function GetKeysAsText : String;
@@ -1594,9 +1594,9 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;      
       Procedure InternalResize(iValue : Integer); Override;
@@ -1609,9 +1609,9 @@ Type
       Function CompareKey(pA, pB : Pointer) : Integer; Virtual;
       Function CompareValue(pA, pB : Pointer) : Integer; Virtual;
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
-      Function Find(Const aKey : TAdvStringLargeIntegerMatchKey; Const aValue : TAdvStringLargeIntegerMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean; Overload;
+      Function Find(Const aKey : TFslStringLargeIntegerMatchKey; Const aValue : TFslStringLargeIntegerMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean; Overload;
 
       Function CapacityLimit : Integer; Override;
 
@@ -1619,19 +1619,19 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvStringLargeIntegerMatch; 
-      Function Clone : TAdvStringLargeIntegerMatch;
+      Function Link : TFslStringLargeIntegerMatch; 
+      Function Clone : TFslStringLargeIntegerMatch;
 
-      Function IndexByKey(Const aKey : TAdvStringLargeIntegerMatchKey) : Integer; 
-      Function ExistsByKey(Const aKey : TAdvStringLargeIntegerMatchKey) : Boolean;
-      Function IndexByValue(Const aValue : TAdvStringLargeIntegerMatchValue) : Integer;
-      Function ExistsByValue(Const aValue : TAdvStringLargeIntegerMatchValue) : Boolean;
-      Function Add(Const aKey : TAdvStringLargeIntegerMatchKey; Const aValue : TAdvStringLargeIntegerMatchValue) : Integer; Overload;
-      Function Force(Const aKey : TAdvStringLargeIntegerMatchKey) : TAdvStringLargeIntegerMatchValue; Overload;
-      Procedure Insert(iIndex : Integer; Const aKey : TAdvStringLargeIntegerMatchKey; Const aValue : TAdvStringLargeIntegerMatchValue); Overload;
+      Function IndexByKey(Const aKey : TFslStringLargeIntegerMatchKey) : Integer; 
+      Function ExistsByKey(Const aKey : TFslStringLargeIntegerMatchKey) : Boolean;
+      Function IndexByValue(Const aValue : TFslStringLargeIntegerMatchValue) : Integer;
+      Function ExistsByValue(Const aValue : TFslStringLargeIntegerMatchValue) : Boolean;
+      Function Add(Const aKey : TFslStringLargeIntegerMatchKey; Const aValue : TFslStringLargeIntegerMatchValue) : Integer; Overload;
+      Function Force(Const aKey : TFslStringLargeIntegerMatchKey) : TFslStringLargeIntegerMatchValue; Overload;
+      Procedure Insert(iIndex : Integer; Const aKey : TFslStringLargeIntegerMatchKey; Const aValue : TFslStringLargeIntegerMatchValue); Overload;
 
-      Function GetByKey(Const aKey : TAdvStringLargeIntegerMatchKey) : TAdvStringLargeIntegerMatchValue; 
-      Function GetByValue(Const aValue : TAdvStringLargeIntegerMatchValue) : TAdvStringLargeIntegerMatchKey;
+      Function GetByKey(Const aKey : TFslStringLargeIntegerMatchKey) : TFslStringLargeIntegerMatchValue; 
+      Function GetByValue(Const aValue : TFslStringLargeIntegerMatchValue) : TFslStringLargeIntegerMatchKey;
 
       Function IsSortedByKey: Boolean;
       Function IsSortedByValue: Boolean;
@@ -1639,9 +1639,9 @@ Type
       Procedure SortedByKey;
       Procedure SortedByValue;
 
-      Property Matches[Const sIndex : TAdvStringLargeIntegerMatchKey] : TAdvStringLargeIntegerMatchValue Read GetMatch Write SetMatch; Default;
-      Property KeyByIndex[iIndex : Integer] : TAdvStringLargeIntegerMatchKey Read GetKey Write SetKey;
-      Property ValueByIndex[iIndex : Integer] : TAdvStringLargeIntegerMatchValue Read GetValue Write SetValue;
+      Property Matches[Const sIndex : TFslStringLargeIntegerMatchKey] : TFslStringLargeIntegerMatchValue Read GetMatch Write SetMatch; Default;
+      Property KeyByIndex[iIndex : Integer] : TFslStringLargeIntegerMatchKey Read GetKey Write SetKey;
+      Property ValueByIndex[iIndex : Integer] : TFslStringLargeIntegerMatchValue Read GetValue Write SetValue;
       Property Forced : Boolean Read FForced Write FForced;
       Property Default : Integer Read FDefault Write FDefault;
       Property KeysAsText : String Read GetKeysAsText;
@@ -1652,36 +1652,36 @@ Type
 
   EAdvStringLargeIntegerMatch = Class(EAdvException);
 
-  TAdvStringIntegerMatchKey = String;
-  TAdvStringIntegerMatchValue = Integer;
+  TFslStringIntegerMatchKey = String;
+  TFslStringIntegerMatchValue = Integer;
 
-  TAdvStringIntegerMatchItem = Record
-    Key : TAdvStringIntegerMatchKey;
-    Value : TAdvStringIntegerMatchValue;
+  TFslStringIntegerMatchItem = Record
+    Key : TFslStringIntegerMatchKey;
+    Value : TFslStringIntegerMatchValue;
   End;
 
-  PAdvStringIntegerMatchItem = ^TAdvStringIntegerMatchItem;
+  PAdvStringIntegerMatchItem = ^TFslStringIntegerMatchItem;
 
-  TAdvStringIntegerMatchItemArray = Array[0..(MaxInt Div SizeOf(TAdvStringIntegerMatchItem)) - 1] Of TAdvStringIntegerMatchItem;
-  PAdvStringIntegerMatchItemArray = ^TAdvStringIntegerMatchItemArray;
+  TFslStringIntegerMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslStringIntegerMatchItem)) - 1] Of TFslStringIntegerMatchItem;
+  PAdvStringIntegerMatchItemArray = ^TFslStringIntegerMatchItemArray;
 
-  TAdvStringIntegerMatch = Class(TAdvItemList)
+  TFslStringIntegerMatch = Class(TFslItemList)
     Private
       FMatchArray : PAdvStringIntegerMatchItemArray;
-      FDefaultKey : TAdvStringIntegerMatchKey;
-      FDefaultValue : TAdvStringIntegerMatchValue;
+      FDefaultKey : TFslStringIntegerMatchKey;
+      FDefaultValue : TFslStringIntegerMatchValue;
       FForced : Boolean;
-      FCompareKey : TAdvStringCompareCallback;
+      FCompareKey : TFslStringCompareCallback;
       FSymbol : String;
 
       Function GetKey(iIndex : Integer): String;
-      Procedure SetKey(iIndex : Integer; Const aKey : TAdvStringIntegerMatchKey);
+      Procedure SetKey(iIndex : Integer; Const aKey : TFslStringIntegerMatchKey);
 
       Function GetValue(iIndex : Integer): Integer;
-      Procedure SetValue(iIndex : Integer; Const aValue : TAdvStringIntegerMatchValue);
+      Procedure SetValue(iIndex : Integer; Const aValue : TFslStringIntegerMatchValue);
 
-      Function GetMatch(Const aKey : TAdvStringIntegerMatchKey): TAdvStringIntegerMatchValue;
-      Procedure SetMatch(Const aKey : TAdvStringIntegerMatchKey; Const aValue : TAdvStringIntegerMatchValue);
+      Function GetMatch(Const aKey : TFslStringIntegerMatchKey): TFslStringIntegerMatchValue;
+      Procedure SetMatch(Const aKey : TFslStringIntegerMatchKey; Const aValue : TFslStringIntegerMatchValue);
 
       Function GetAsText : String;
       Function GetKeysAsText : String;
@@ -1695,9 +1695,9 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -1710,9 +1710,9 @@ Type
       Function CompareKey(pA, pB : Pointer) : Integer; Virtual;
       Function CompareValue(pA, pB : Pointer) : Integer; Virtual;
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
-      Function Find(Const aKey : TAdvStringIntegerMatchKey; Const aValue : TAdvStringIntegerMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil) : Boolean; Overload;
+      Function Find(Const aKey : TFslStringIntegerMatchKey; Const aValue : TFslStringIntegerMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil) : Boolean; Overload;
 
       Function CapacityLimit : Integer; Override;
 
@@ -1720,21 +1720,21 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvStringIntegerMatch; 
-      Function Clone : TAdvStringIntegerMatch;
+      Function Link : TFslStringIntegerMatch; 
+      Function Clone : TFslStringIntegerMatch;
 
-      Procedure AddAll(oStringIntegerMatch : TAdvStringIntegerMatch);
+      Procedure AddAll(oStringIntegerMatch : TFslStringIntegerMatch);
 
-      Function IndexByKey(Const aKey : TAdvStringIntegerMatchKey) : Integer; 
-      Function ExistsByKey(Const aKey : TAdvStringIntegerMatchKey) : Boolean;
-      Function IndexByValue(Const aValue : TAdvStringIntegerMatchValue) : Integer;
-      Function ExistsByValue(Const aValue : TAdvStringIntegerMatchValue) : Boolean;
-      Function Add(Const aKey : TAdvStringIntegerMatchKey; Const aValue : TAdvStringIntegerMatchValue) : Integer; Overload;
-      Function ForceByKey(Const aKey : TAdvStringIntegerMatchKey) : TAdvStringIntegerMatchValue;
-      Procedure Insert(iIndex : Integer; Const aKey : TAdvStringIntegerMatchKey; Const aValue : TAdvStringIntegerMatchValue); Overload;
+      Function IndexByKey(Const aKey : TFslStringIntegerMatchKey) : Integer; 
+      Function ExistsByKey(Const aKey : TFslStringIntegerMatchKey) : Boolean;
+      Function IndexByValue(Const aValue : TFslStringIntegerMatchValue) : Integer;
+      Function ExistsByValue(Const aValue : TFslStringIntegerMatchValue) : Boolean;
+      Function Add(Const aKey : TFslStringIntegerMatchKey; Const aValue : TFslStringIntegerMatchValue) : Integer; Overload;
+      Function ForceByKey(Const aKey : TFslStringIntegerMatchKey) : TFslStringIntegerMatchValue;
+      Procedure Insert(iIndex : Integer; Const aKey : TFslStringIntegerMatchKey; Const aValue : TFslStringIntegerMatchValue); Overload;
 
-      Function GetValueByKey(Const aKey : TAdvStringIntegerMatchKey) : TAdvStringIntegerMatchValue;
-      Function GetKeyByValue(Const aValue : TAdvStringIntegerMatchValue) : TAdvStringIntegerMatchKey;
+      Function GetValueByKey(Const aKey : TFslStringIntegerMatchKey) : TFslStringIntegerMatchValue;
+      Function GetKeyByValue(Const aValue : TFslStringIntegerMatchValue) : TFslStringIntegerMatchKey;
 
       Function IsSortedByKey: Boolean;
       Function IsSortedByValue: Boolean;
@@ -1742,12 +1742,12 @@ Type
       Procedure SortedByKey;
       Procedure SortedByValue;
 
-      Property Matches[Const sIndex : TAdvStringIntegerMatchKey] : TAdvStringIntegerMatchValue Read GetMatch Write SetMatch; Default;
-      Property KeyByIndex[iIndex : Integer] : TAdvStringIntegerMatchKey Read GetKey Write SetKey;
-      Property ValueByIndex[iIndex : Integer] : TAdvStringIntegerMatchValue Read GetValue Write SetValue;
+      Property Matches[Const sIndex : TFslStringIntegerMatchKey] : TFslStringIntegerMatchValue Read GetMatch Write SetMatch; Default;
+      Property KeyByIndex[iIndex : Integer] : TFslStringIntegerMatchKey Read GetKey Write SetKey;
+      Property ValueByIndex[iIndex : Integer] : TFslStringIntegerMatchValue Read GetValue Write SetValue;
       Property Forced : Boolean Read FForced Write FForced;
-      Property DefaultKey : TAdvStringIntegerMatchKey Read FDefaultKey Write FDefaultKey;
-      Property DefaultValue : TAdvStringIntegerMatchValue Read FDefaultValue Write FDefaultValue;
+      Property DefaultKey : TFslStringIntegerMatchKey Read FDefaultKey Write FDefaultKey;
+      Property DefaultValue : TFslStringIntegerMatchValue Read FDefaultValue Write FDefaultValue;
       Property KeysAsText : String Read GetKeysAsText;
       Property AsText : String Read GetAsText;
       Property Symbol : String Read FSymbol Write FSymbol;
@@ -1758,12 +1758,12 @@ Type
 
 
 
-  TAdvOrdinalSetPart = Integer;
-  PAdvOrdinalSetPart = ^TAdvOrdinalSetPart;
-  TAdvOrdinalSetPartArray = Array[0..7] Of TAdvOrdinalSetPart;
-  PAdvOrdinalSetPartArray = ^TAdvOrdinalSetPartArray;
+  TFslOrdinalSetPart = Integer;
+  PAdvOrdinalSetPart = ^TFslOrdinalSetPart;
+  TFslOrdinalSetPartArray = Array[0..7] Of TFslOrdinalSetPart;
+  PAdvOrdinalSetPartArray = ^TFslOrdinalSetPartArray;
 
-  TAdvOrdinalSet = Class(TAdvCollection)
+  TFslOrdinalSet = Class(TFslCollection)
     Private
       FOwns : Boolean;
       FPartArray : PAdvOrdinalSetPartArray; // pointer to the block of memory associated with the set.
@@ -1789,10 +1789,10 @@ Type
     Public
       Destructor Destroy; Override;
 
-      Procedure Assign(oObject : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Assign(oObject : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
-      Function Iterator : TAdvIterator; Override;
+      Function Iterator : TFslIterator; Override;
 
       Procedure New(Const iCount : Integer);
       Procedure Hook(Const aValue; iCount : Integer); Virtual; // no overload as we have an untyped parameter.
@@ -1819,15 +1819,15 @@ Type
       Property IsChecked[Const iIndex : Integer] : Boolean Read GetIsChecked Write SetIsChecked; Default;
   End;
 
-  TAdvOrdinalSetIterator = Class(TAdvIterator)
+  TFslOrdinalSetIterator = Class(TFslIterator)
     Private
-      FOrdinalSet : TAdvOrdinalSet;
+      FOrdinalSet : TFslOrdinalSet;
       FValue : PAdvOrdinalSetPart;
       FPart : Integer;
       FLoop : Integer;
       FIndex : Integer;
 
-      Procedure SetOrdinalSet(Const Value: TAdvOrdinalSet);
+      Procedure SetOrdinalSet(Const Value: TFslOrdinalSet);
 
     Public
       Constructor Create; Override;
@@ -1842,41 +1842,41 @@ Type
       Procedure Uncheck;
 
       Property Index : Integer Read FIndex;
-      Property OrdinalSet : TAdvOrdinalSet Read FOrdinalSet Write SetOrdinalSet;
+      Property OrdinalSet : TFslOrdinalSet Read FOrdinalSet Write SetOrdinalSet;
   End;
 
-  TAdvObjectMatchKey = TAdvObject;
-  TAdvObjectMatchValue = TAdvObject;
+  TFslObjectMatchKey = TFslObject;
+  TFslObjectMatchValue = TFslObject;
 
-  TAdvObjectMatchItem = Record
-    Key : TAdvObjectMatchKey;
-    Value : TAdvObjectMatchValue;
+  TFslObjectMatchItem = Record
+    Key : TFslObjectMatchKey;
+    Value : TFslObjectMatchValue;
   End;
 
-  PAdvObjectMatchItem = ^TAdvObjectMatchItem;
+  PAdvObjectMatchItem = ^TFslObjectMatchItem;
 
-  TAdvObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TAdvObjectMatchItem)) - 1] Of TAdvObjectMatchItem;
-  PAdvObjectMatchItemArray = ^TAdvObjectMatchItemArray;
+  TFslObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslObjectMatchItem)) - 1] Of TFslObjectMatchItem;
+  PAdvObjectMatchItemArray = ^TFslObjectMatchItemArray;
 
-  TAdvObjectMatch = Class(TAdvItemList)
+  TFslObjectMatch = Class(TFslItemList)
     Private
       FMatchArray : PAdvObjectMatchItemArray;
-      FDefaultKey : TAdvObjectMatchKey;
-      FDefaultValue : TAdvObjectMatchValue;
+      FDefaultKey : TFslObjectMatchKey;
+      FDefaultValue : TFslObjectMatchValue;
       FForced : Boolean;
-      FNominatedKeyClass : TAdvObjectClass;
-      FNominatedValueClass : TAdvObjectClass;
+      FNominatedKeyClass : TFslObjectClass;
+      FNominatedValueClass : TFslObjectClass;
 
-      FKeyComparisonDelegate : TAdvItemListCompare;
-      FValueComparisonDelegate : TAdvItemListCompare;
+      FKeyComparisonDelegate : TFslItemListCompare;
+      FValueComparisonDelegate : TFslItemListCompare;
 
-      Function GetKeyByIndex(iIndex: Integer): TAdvObjectMatchKey;
-      Procedure SetKeyByIndex(iIndex: Integer; Const aKey : TAdvObjectMatchKey);
+      Function GetKeyByIndex(iIndex: Integer): TFslObjectMatchKey;
+      Procedure SetKeyByIndex(iIndex: Integer; Const aKey : TFslObjectMatchKey);
 
-      Function GetValueByIndex(iIndex: Integer): TAdvObjectMatchValue;
-      Procedure SetValueByIndex(iIndex: Integer; Const aValue: TAdvObjectMatchValue);
+      Function GetValueByIndex(iIndex: Integer): TFslObjectMatchValue;
+      Procedure SetValueByIndex(iIndex: Integer; Const aValue: TFslObjectMatchValue);
 
-      Function GetMatchByIndex(iIndex : Integer) : TAdvObjectMatchItem;
+      Function GetMatchByIndex(iIndex : Integer) : TFslObjectMatchItem;
 
       Function GetAsText : String;
 
@@ -1884,9 +1884,9 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; aValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TAdvFiler; iIndex : Integer); Override;
-      Procedure AssignItem(oItems : TAdvItemList; iIndex : Integer); Override;
+      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
       Procedure InternalResize(iValue : Integer); Override;
@@ -1900,38 +1900,38 @@ Type
 
       Function CapacityLimit : Integer; Override;
 
-      Procedure DefaultCompare(Out aCompare : TAdvItemListCompare); Overload; Override;
+      Procedure DefaultCompare(Out aCompare : TFslItemListCompare); Overload; Override;
 
       Function CompareByKeyReference(pA, pB : Pointer): Integer;
       Function CompareByValueReference(pA, pB : Pointer): Integer;
 
-      Function Find(Const aKey : TAdvObjectMatchKey; Const aValue: TAdvObjectMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare = Nil): Boolean; Overload;
+      Function Find(Const aKey : TFslObjectMatchKey; Const aValue: TFslObjectMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare = Nil): Boolean; Overload;
 
-      Function ValidateKey(Const sMethod : String; oObject : TAdvObject; Const sObject : String) : Boolean; Virtual;
-      Function ValidateValue(Const sMethod : String; oObject : TAdvObject; Const sObject : String) : Boolean; Virtual;
+      Function ValidateKey(Const sMethod : String; oObject : TFslObject; Const sObject : String) : Boolean; Virtual;
+      Function ValidateValue(Const sMethod : String; oObject : TFslObject; Const sObject : String) : Boolean; Virtual;
 
-      Function ItemKeyClass : TAdvObjectClass; Virtual;
-      Function ItemValueClass : TAdvObjectClass; Virtual;
+      Function ItemKeyClass : TFslObjectClass; Virtual;
+      Function ItemValueClass : TFslObjectClass; Virtual;
 
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      Function Link : TAdvObjectMatch; Overload;
+      Function Link : TFslObjectMatch; Overload;
 
-      Function IndexByValue(Const aValue : TAdvObjectMatchValue) : Integer;
-      Function IndexByKey(Const aKey : TAdvObjectMatchKey) : Integer;
-      Function ExistsByValue(Const aValue : TAdvObjectMatchValue) : Boolean;
-      Function ExistsByKey(Const aKey : TAdvObjectMatchKey) : Boolean;
-      Function Add(Const aKey : TAdvObjectMatchKey; Const aValue : TAdvObjectMatchValue): Integer;
-      Procedure Insert(iIndex : Integer; Const aKey : TAdvObjectMatchKey; Const aValue : TAdvObjectMatchValue);
-      Procedure Delete(Const aKey : TAdvObjectMatchKey; Const aValue : TAdvObjectMatchValue);
-      Function GetKeyByValue(Const aValue : TAdvObjectMatchValue) : TAdvObjectMatchKey;
+      Function IndexByValue(Const aValue : TFslObjectMatchValue) : Integer;
+      Function IndexByKey(Const aKey : TFslObjectMatchKey) : Integer;
+      Function ExistsByValue(Const aValue : TFslObjectMatchValue) : Boolean;
+      Function ExistsByKey(Const aKey : TFslObjectMatchKey) : Boolean;
+      Function Add(Const aKey : TFslObjectMatchKey; Const aValue : TFslObjectMatchValue): Integer;
+      Procedure Insert(iIndex : Integer; Const aKey : TFslObjectMatchKey; Const aValue : TFslObjectMatchValue);
+      Procedure Delete(Const aKey : TFslObjectMatchKey; Const aValue : TFslObjectMatchValue);
+      Function GetKeyByValue(Const aValue : TFslObjectMatchValue) : TFslObjectMatchKey;
 
-      Function GetValueByKey(Const aKey : TAdvObjectMatchKey): TAdvObjectMatchValue;
-      Procedure SetValueByKey(Const aKey: TAdvObjectMatchKey; Const aValue: TAdvObjectMatchValue);
+      Function GetValueByKey(Const aKey : TFslObjectMatchKey): TFslObjectMatchValue;
+      Procedure SetValueByKey(Const aKey: TFslObjectMatchKey; Const aValue: TFslObjectMatchValue);
 
-      Procedure Merge(oMatch : TAdvObjectMatch);
+      Procedure Merge(oMatch : TFslObjectMatch);
 
       Procedure SortedByKey;
       Procedure SortedByValue;
@@ -1940,21 +1940,21 @@ Type
       Function IsSortedByValue : Boolean;
 
       Property Forced : Boolean Read FForced Write FForced;
-      Property DefaultKey : TAdvObjectMatchKey Read FDefaultKey Write FDefaultKey;
-      Property DefaultValue : TAdvObjectMatchValue Read FDefaultValue Write FDefaultValue;
-      Property KeyComparisonDelegate : TAdvItemListCompare Read FKeyComparisonDelegate Write FKeyComparisonDelegate;
-      Property ValueComparisonDelegate : TAdvItemListCompare Read FValueComparisonDelegate Write FValueComparisonDelegate;
-      Property MatchByIndex[iIndex : Integer] : TAdvObjectMatchItem Read GetMatchByIndex;
-      Property KeyByIndex[iIndex : Integer] : TAdvObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
-      Property ValueByIndex[iIndex : Integer] : TAdvObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
-      Property Keys[iIndex : Integer] : TAdvObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
-      Property Values[iIndex : Integer] : TAdvObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
-      Property NominatedKeyClass : TAdvObjectClass Read FNominatedKeyClass Write FNominatedKeyClass;
-      Property NominatedValueClass : TAdvObjectClass Read FNominatedValueClass Write FNominatedValueClass;
+      Property DefaultKey : TFslObjectMatchKey Read FDefaultKey Write FDefaultKey;
+      Property DefaultValue : TFslObjectMatchValue Read FDefaultValue Write FDefaultValue;
+      Property KeyComparisonDelegate : TFslItemListCompare Read FKeyComparisonDelegate Write FKeyComparisonDelegate;
+      Property ValueComparisonDelegate : TFslItemListCompare Read FValueComparisonDelegate Write FValueComparisonDelegate;
+      Property MatchByIndex[iIndex : Integer] : TFslObjectMatchItem Read GetMatchByIndex;
+      Property KeyByIndex[iIndex : Integer] : TFslObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
+      Property ValueByIndex[iIndex : Integer] : TFslObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
+      Property Keys[iIndex : Integer] : TFslObjectMatchKey Read GetKeyByIndex Write SetKeyByIndex;
+      Property Values[iIndex : Integer] : TFslObjectMatchValue Read GetValueByIndex Write SetValueByIndex;
+      Property NominatedKeyClass : TFslObjectClass Read FNominatedKeyClass Write FNominatedKeyClass;
+      Property NominatedValueClass : TFslObjectClass Read FNominatedValueClass Write FNominatedValueClass;
       Property AsText : String Read GetAsText;
   End;
 
-  TAdvName = Class(TAdvPersistent)
+  TFslName = Class(TFslPersistent)
     Private
       FName : String;
 
@@ -1963,58 +1963,58 @@ Type
       Procedure SetName(Const Value: String); Virtual;
 
     Public
-      Function Link : TAdvName;
-      Function Clone : TAdvName;
+      Function Link : TFslName;
+      Function Clone : TFslName;
 
-      Procedure Assign(oSource : TAdvObject); Override;
-      Procedure Define(oFiler : TAdvFiler); Override;
+      Procedure Assign(oSource : TFslObject); Override;
+      Procedure Define(oFiler : TFslFiler); Override;
 
       Property Name : String Read GetName Write SetName;
   End;
 
-  TAdvNameClass = Class Of TAdvName;
+  TFslNameClass = Class Of TFslName;
 
-  TAdvNameList = Class(TAdvPersistentList)
+  TFslNameList = Class(TFslPersistentList)
     Private
       FSymbol : String;
 
-      Function GetName(iIndex : Integer) : TAdvName;
-      Procedure SetName(iIndex : Integer; oName : TAdvName);
+      Function GetName(iIndex : Integer) : TFslName;
+      Procedure SetName(iIndex : Integer; oName : TFslName);
 
       Function GetAsText: String;
       Procedure SetAsText(Const Value: String);
 
     Protected
-      Function ItemClass : TAdvObjectClass; Override;
+      Function ItemClass : TFslObjectClass; Override;
 
       Function CompareByName(pA, pB: Pointer): Integer; Virtual;
 
-      Procedure DefaultCompare(Out aEvent : TAdvItemListCompare); Override;
+      Procedure DefaultCompare(Out aEvent : TFslItemListCompare); Override;
 
       Function FindByName(Const sName: String; Out iIndex: Integer): Boolean; Overload;
-      Function FindByName(oName : TAdvName; Out iIndex: Integer): Boolean; Overload;
+      Function FindByName(oName : TFslName; Out iIndex: Integer): Boolean; Overload;
 
     Public
       Constructor Create; Override;
 
-      Function Link : TAdvNameList;
-      Function Clone : TAdvNameList;
+      Function Link : TFslNameList;
+      Function Clone : TFslNameList;
 
       Procedure SortedByName;
       Function IsSortedByName : Boolean;
 
       Function IndexByName(Const sName : String) : Integer; Overload;
-      Function IndexByName(Const oName : TAdvName) : Integer; Overload;
-      Function ExistsByName(Const oName : TAdvName) : Boolean; Overload;
+      Function IndexByName(Const oName : TFslName) : Integer; Overload;
+      Function ExistsByName(Const oName : TFslName) : Boolean; Overload;
       Function ExistsByName(Const sName : String) : Boolean; Overload;
-      Function GetByName(Const sName : String) : TAdvName; Overload;
-      Function GetByName(oName : TAdvName) : TAdvName; Overload;
-      Function EnsureByName(Const sName : String) : TAdvName; Overload;
-      Function ForceByName(Const sName : String) : TAdvName;
+      Function GetByName(Const sName : String) : TFslName; Overload;
+      Function GetByName(oName : TFslName) : TFslName; Overload;
+      Function EnsureByName(Const sName : String) : TFslName; Overload;
+      Function ForceByName(Const sName : String) : TFslName;
       Procedure RemoveByName(Const sName : String);
       Function AddByName(Const sName : String) : Integer;
 
-      Property Names[iIndex : Integer] : TAdvName Read GetName Write SetName; Default;
+      Property Names[iIndex : Integer] : TFslName Read GetName Write SetName; Default;
       Property AsText : String Read GetAsText Write SetAsText;
       Property Symbol : String Read FSymbol Write FSymbol;
   End;
@@ -2027,7 +2027,7 @@ uses
   FHIR.Support.Stream, FHIR.Support.Text;
 
 
-Procedure TAdvCollection.BeforeDestruction;
+Procedure TFslCollection.BeforeDestruction;
 Begin
   InternalClear;
 
@@ -2035,24 +2035,24 @@ Begin
 End;
 
 
-Procedure TAdvCollection.Clear;
+Procedure TFslCollection.Clear;
 Begin 
   InternalClear;
 End;  
 
 
-Procedure TAdvCollection.InternalClear;
+Procedure TFslCollection.InternalClear;
 Begin
 End;  
 
 
-Function TAdvCollection.ErrorClass : EAdvExceptionClass;
+Function TFslCollection.ErrorClass : EAdvExceptionClass;
 Begin 
   Result := EAdvCollection;
 End;  
 
 
-Function TAdvCollection.Iterator : TAdvIterator;
+Function TFslCollection.Iterator : TFslIterator;
 Begin 
   RaiseError('Iterator', 'No iterator specified.');
 
@@ -2060,25 +2060,25 @@ Begin
 End;  
 
 
-Function TAdvLargeIntegerMatch.Link : TAdvLargeIntegerMatch;
+Function TFslLargeIntegerMatch.Link : TFslLargeIntegerMatch;
 Begin
-  Result := TAdvLargeIntegerMatch(Inherited Link);
+  Result := TFslLargeIntegerMatch(Inherited Link);
 End;
 
 
-Function TAdvLargeIntegerMatch.CompareByKey(pA, pB: Pointer): Integer;
+Function TFslLargeIntegerMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(PAdvLargeIntegerMatchItem(pA)^.Key, PAdvLargeIntegerMatchItem(pB)^.Key);
 End;
 
 
-Function TAdvLargeIntegerMatch.CompareByValue(pA, pB: Pointer): Integer;
+Function TFslLargeIntegerMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(PAdvLargeIntegerMatchItem(pA)^.Value, PAdvLargeIntegerMatchItem(pB)^.Value);
 End;  
 
 
-Function TAdvLargeIntegerMatch.CompareByKeyValue(pA, pB: Pointer): Integer;
+Function TFslLargeIntegerMatch.CompareByKeyValue(pA, pB: Pointer): Integer;
 Begin
   Result := CompareByKey(pA, pB);
 
@@ -2087,16 +2087,16 @@ Begin
 End;
 
 
-Procedure TAdvLargeIntegerMatch.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslLargeIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslLargeIntegerMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  iKey : TAdvLargeIntegerMatchKey;
-  iValue : TAdvLargeIntegerMatchValue;
+  iKey : TFslLargeIntegerMatchKey;
+  iValue : TFslLargeIntegerMatchValue;
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -2109,7 +2109,7 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslLargeIntegerMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin
   oFiler['Match'].DefineBegin;
 
@@ -2120,63 +2120,63 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.AssignItem(oItems: TAdvItemList; iIndex: Integer);
+Procedure TFslLargeIntegerMatch.AssignItem(oItems: TFslItemList; iIndex: Integer);
 Begin 
   Inherited;
 
-  FMatches^[iIndex] := TAdvLargeIntegerMatch(oItems).FMatches^[iIndex];
+  FMatches^[iIndex] := TFslLargeIntegerMatch(oItems).FMatches^[iIndex];
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslLargeIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
 Begin
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMatches) + NativeUInt(iIndex * SizeOf(TAdvLargeIntegerMatchItem))), (iLength * SizeOf(TAdvLargeIntegerMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatches) + NativeUInt(iIndex * SizeOf(TFslLargeIntegerMatchItem))), (iLength * SizeOf(TFslLargeIntegerMatchItem)));
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.InternalResize(iValue : Integer);
+Procedure TFslLargeIntegerMatch.InternalResize(iValue : Integer);
 Begin 
   Inherited;
 
-  MemoryResize(FMatches, Capacity * SizeOf(TAdvLargeIntegerMatchItem), iValue * SizeOf(TAdvLargeIntegerMatchItem));
+  MemoryResize(FMatches, Capacity * SizeOf(TFslLargeIntegerMatchItem), iValue * SizeOf(TFslLargeIntegerMatchItem));
 End;
 
 
-Procedure TAdvLargeIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslLargeIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FMatches^[iSource], @FMatches^[iTarget], iCount * SizeOf(TAdvLargeIntegerMatchItem));
+  MemoryMove(@FMatches^[iSource], @FMatches^[iTarget], iCount * SizeOf(TFslLargeIntegerMatchItem));
 End;  
 
 
-Function TAdvLargeIntegerMatch.IndexByKey(aKey : TAdvLargeIntegerMatchKey): Integer;
+Function TFslLargeIntegerMatch.IndexByKey(aKey : TFslLargeIntegerMatchKey): Integer;
 Begin 
   If Not FindByKey(aKey, Result, {$IFDEF FPC}@{$ENDIF}CompareByKey) Then
     Result := -1;
 End;  
 
 
-Function TAdvLargeIntegerMatch.IndexByKeyValue(Const aKey : TAdvLargeIntegerMatchKey; Const aValue : TAdvLargeIntegerMatchValue) : Integer;
+Function TFslLargeIntegerMatch.IndexByKeyValue(Const aKey : TFslLargeIntegerMatchKey; Const aValue : TFslLargeIntegerMatchValue) : Integer;
 Begin
   If Not Find(aKey, aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareByKeyValue) Then
     Result := -1;
 End;
 
 
-Function TAdvLargeIntegerMatch.ExistsByKey(aKey : TAdvLargeIntegerMatchKey): Boolean;
+Function TFslLargeIntegerMatch.ExistsByKey(aKey : TFslLargeIntegerMatchKey): Boolean;
 Begin
   Result := ExistsByIndex(IndexByKey(aKey));
 End;  
 
 
-Function TAdvLargeIntegerMatch.ExistsByKeyValue(Const aKey : TAdvLargeIntegerMatchKey; Const aValue : TAdvLargeIntegerMatchValue) : Boolean;
+Function TFslLargeIntegerMatch.ExistsByKeyValue(Const aKey : TFslLargeIntegerMatchKey; Const aValue : TFslLargeIntegerMatchValue) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByKeyValue(aKey, aValue));
 End;
 
 
-Function TAdvLargeIntegerMatch.Add(aKey : TAdvLargeIntegerMatchKey; aValue : TAdvLargeIntegerMatchValue): Integer;
+Function TFslLargeIntegerMatch.Add(aKey : TFslLargeIntegerMatchKey; aValue : TFslLargeIntegerMatchValue): Integer;
 Begin 
   Result := -1;
 
@@ -2199,7 +2199,7 @@ Begin
 End;
 
 
-Procedure TAdvLargeIntegerMatch.Insert(iIndex: Integer; iKey : TAdvLargeIntegerMatchKey; iValue : TAdvLargeIntegerMatchValue);
+Procedure TFslLargeIntegerMatch.Insert(iIndex: Integer; iKey : TFslLargeIntegerMatchKey; iValue : TFslLargeIntegerMatchValue);
 Begin 
   InternalInsert(iIndex);
 
@@ -2208,7 +2208,7 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.InternalInsert(iIndex: Integer);
+Procedure TFslLargeIntegerMatch.InternalInsert(iIndex: Integer);
 Begin 
   Inherited;
 
@@ -2217,9 +2217,9 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.InternalExchange(iA, iB : Integer);
+Procedure TFslLargeIntegerMatch.InternalExchange(iA, iB : Integer);
 Var
-  aTemp : TAdvLargeIntegerMatchItem;
+  aTemp : TFslLargeIntegerMatchItem;
   pA    : Pointer;
   pB    : Pointer;
 Begin 
@@ -2232,7 +2232,7 @@ Begin
 End;  
 
 
-Function TAdvLargeIntegerMatch.GetItem(iIndex: Integer): Pointer;
+Function TFslLargeIntegerMatch.GetItem(iIndex: Integer): Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -2240,7 +2240,7 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.SetItem(iIndex: Integer; pValue: Pointer);
+Procedure TFslLargeIntegerMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -2248,7 +2248,7 @@ Begin
 End;  
 
 
-Function TAdvLargeIntegerMatch.GetKey(iIndex: Integer): TAdvLargeIntegerMatchKey;
+Function TFslLargeIntegerMatch.GetKey(iIndex: Integer): TFslLargeIntegerMatchKey;
 Begin 
   Assert(ValidateIndex('GetKey', iIndex));
 
@@ -2256,7 +2256,7 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.SetKey(iIndex: Integer; Const iValue: TAdvLargeIntegerMatchKey);
+Procedure TFslLargeIntegerMatch.SetKey(iIndex: Integer; Const iValue: TFslLargeIntegerMatchKey);
 Begin 
   Assert(ValidateIndex('SetKey', iIndex));
 
@@ -2264,7 +2264,7 @@ Begin
 End;
 
 
-Function TAdvLargeIntegerMatch.GetValue(iIndex: Integer): TAdvLargeIntegerMatchValue;
+Function TFslLargeIntegerMatch.GetValue(iIndex: Integer): TFslLargeIntegerMatchValue;
 Begin 
   Assert(ValidateIndex('GetValue', iIndex));
 
@@ -2272,7 +2272,7 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.SetValue(iIndex: Integer; Const iValue: TAdvLargeIntegerMatchValue);
+Procedure TFslLargeIntegerMatch.SetValue(iIndex: Integer; Const iValue: TFslLargeIntegerMatchValue);
 Begin 
   Assert(ValidateIndex('SetValue', iIndex));
 
@@ -2280,7 +2280,7 @@ Begin
 End;  
 
 
-Function TAdvLargeIntegerMatch.GetPair(iIndex: Integer): TAdvLargeIntegerMatchItem;
+Function TFslLargeIntegerMatch.GetPair(iIndex: Integer): TFslLargeIntegerMatchItem;
 Begin 
   Assert(ValidateIndex('GetPair', iIndex));
 
@@ -2288,7 +2288,7 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.SetPair(iIndex: Integer; Const Value: TAdvLargeIntegerMatchItem);
+Procedure TFslLargeIntegerMatch.SetPair(iIndex: Integer; Const Value: TFslLargeIntegerMatchItem);
 Begin 
   Assert(ValidateIndex('SetPair', iIndex));
 
@@ -2296,7 +2296,7 @@ Begin
 End;  
 
 
-Function TAdvLargeIntegerMatch.GetMatch(iKey : TAdvLargeIntegerMatchKey): TAdvLargeIntegerMatchValue;
+Function TFslLargeIntegerMatch.GetMatch(iKey : TFslLargeIntegerMatchKey): TFslLargeIntegerMatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -2313,7 +2313,7 @@ Begin
 End;  
 
 
-Procedure TAdvLargeIntegerMatch.SetMatch(iKey : TAdvLargeIntegerMatchKey; Const iValue: TAdvLargeIntegerMatchValue);
+Procedure TFslLargeIntegerMatch.SetMatch(iKey : TFslLargeIntegerMatchKey; Const iValue: TFslLargeIntegerMatchValue);
 Var
   iIndex : Integer;
 Begin 
@@ -2328,15 +2328,15 @@ Begin
 End;  
 
 
-Function TAdvLargeIntegerMatch.CapacityLimit : Integer;
+Function TFslLargeIntegerMatch.CapacityLimit : Integer;
 Begin
-  Result := High(TAdvLargeIntegerMatchItems);
+  Result := High(TFslLargeIntegerMatchItems);
 End;
 
 
-Function TAdvLargeIntegerMatch.Find(Const aKey: TAdvLargeIntegerMatchKey; Const aValue: TAdvLargeIntegerMatchValue; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslLargeIntegerMatch.Find(Const aKey: TFslLargeIntegerMatchKey; Const aValue: TFslLargeIntegerMatchValue; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Var
-  aItem : TAdvLargeIntegerMatchItem;
+  aItem : TFslLargeIntegerMatchItem;
 Begin
   aItem.Key := aKey;
   aItem.Value := aValue;
@@ -2345,31 +2345,31 @@ Begin
 End;
 
 
-Function TAdvLargeIntegerMatch.FindByKey(Const aKey: TAdvLargeIntegerMatchKey; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslLargeIntegerMatch.FindByKey(Const aKey: TFslLargeIntegerMatchKey; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Begin
   Result := Find(aKey, 0, iIndex, aCompare);
 End;
 
 
-Procedure TAdvLargeIntegerMatch.SortedByKey;
+Procedure TFslLargeIntegerMatch.SortedByKey;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKey);
 End;
 
 
-Procedure TAdvLargeIntegerMatch.SortedByValue;
+Procedure TFslLargeIntegerMatch.SortedByValue;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByValue);
 End;
 
 
-Procedure TAdvLargeIntegerMatch.SortedByKeyValue;
+Procedure TFslLargeIntegerMatch.SortedByKeyValue;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKeyValue);
 End;
 
 
-Procedure TAdvLargeIntegerMatch.ForceIncrementByKey(Const aKey: TAdvLargeIntegerMatchKey);
+Procedure TFslLargeIntegerMatch.ForceIncrementByKey(Const aKey: TFslLargeIntegerMatchKey);
 Var
   iIndex : Integer;
 Begin
@@ -2380,15 +2380,15 @@ Begin
 End;
 
 
-Procedure TAdvLargeIntegerMatch.DeleteByKey(aKey: TAdvLargeIntegerMatchKey);
+Procedure TFslLargeIntegerMatch.DeleteByKey(aKey: TFslLargeIntegerMatchKey);
 Begin
   DeleteByIndex(IndexByKey(aKey));
 End;
 
 
-Function TAdvLargeIntegerMatch.EqualTo(Const oIntegerMatch : TAdvLargeIntegerMatch) : Boolean;
+Function TFslLargeIntegerMatch.EqualTo(Const oIntegerMatch : TFslLargeIntegerMatch) : Boolean;
 Var
-  aPair : TAdvLargeIntegerMatchItem;
+  aPair : TFslLargeIntegerMatchItem;
   iIndex : Integer;
 Begin
   Result := oIntegerMatch.Count = Count;
@@ -2407,7 +2407,7 @@ End;
 
 
 
-Constructor TAdvIntegerObjectMatch.Create;
+Constructor TFslIntegerObjectMatch.Create;
 Begin
   Inherited;
 
@@ -2415,31 +2415,31 @@ Begin
 End;
 
 
-Destructor TAdvIntegerObjectMatch.Destroy;
+Destructor TFslIntegerObjectMatch.Destroy;
 Begin
   Inherited;
 End;
 
 
-Function TAdvIntegerObjectMatch.Link : TAdvIntegerObjectMatch;
+Function TFslIntegerObjectMatch.Link : TFslIntegerObjectMatch;
 Begin
-  Result := TAdvIntegerObjectMatch(Inherited Link);
+  Result := TFslIntegerObjectMatch(Inherited Link);
 End;
 
 
-Function TAdvIntegerObjectMatch.CompareByKey(pA, pB: Pointer): Integer;
+Function TFslIntegerObjectMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(PAdvIntegerObjectMatchItem(pA)^.Key, PAdvIntegerObjectMatchItem(pB)^.Key);
 End;
 
 
-Function TAdvIntegerObjectMatch.CompareByValue(pA, pB: Pointer): Integer;
+Function TFslIntegerObjectMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(Integer(PAdvIntegerObjectMatchItem(pA)^.Value), Integer(PAdvIntegerObjectMatchItem(pB)^.Value));
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslIntegerObjectMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -2450,10 +2450,10 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslIntegerObjectMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  iKey : TAdvIntegerObjectMatchKey;
-  oValue : TAdvIntegerObjectMatchValue;
+  iKey : TFslIntegerObjectMatchKey;
+  oValue : TFslIntegerObjectMatchValue;
 Begin 
   oValue := Nil;
   Try
@@ -2471,27 +2471,27 @@ Begin
 End;
 
 
-Procedure TAdvIntegerObjectMatch.AssignItem(oItems : TAdvItemList; iIndex: Integer);
+Procedure TFslIntegerObjectMatch.AssignItem(oItems : TFslItemList; iIndex: Integer);
 Begin
   Inherited;
 
-  FItemArray^[iIndex].Key := TAdvIntegerObjectMatch(oItems).FItemArray^[iIndex].Key;
-  FItemArray^[iIndex].Value := TAdvIntegerObjectMatch(oItems).FItemArray^[iIndex].Value.Clone;
+  FItemArray^[iIndex].Key := TFslIntegerObjectMatch(oItems).FItemArray^[iIndex].Key;
+  FItemArray^[iIndex].Value := TFslIntegerObjectMatch(oItems).FItemArray^[iIndex].Value.Clone;
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.InternalEmpty(iIndex, iLength : Integer);
+Procedure TFslIntegerObjectMatch.InternalEmpty(iIndex, iLength : Integer);
 Begin
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FItemArray) + (iIndex * SizeOf(TAdvIntegerObjectMatchItem))), (iLength * SizeOf(TAdvIntegerObjectMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FItemArray) + (iIndex * SizeOf(TFslIntegerObjectMatchItem))), (iLength * SizeOf(TFslIntegerObjectMatchItem)));
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.InternalTruncate(iValue : Integer);
+Procedure TFslIntegerObjectMatch.InternalTruncate(iValue : Integer);
 Var
   iLoop : Integer;
-  oValue : TAdvObject;
+  oValue : TFslObject;
 Begin
   Inherited;
 
@@ -2504,47 +2504,47 @@ Begin
 End;
 
 
-Procedure TAdvIntegerObjectMatch.InternalResize(iValue : Integer);
+Procedure TFslIntegerObjectMatch.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
-  MemoryResize(FItemArray, Capacity * SizeOf(TAdvIntegerObjectMatchItem), iValue * SizeOf(TAdvIntegerObjectMatchItem));
+  MemoryResize(FItemArray, Capacity * SizeOf(TFslIntegerObjectMatchItem), iValue * SizeOf(TFslIntegerObjectMatchItem));
 End;
 
 
-Procedure TAdvIntegerObjectMatch.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslIntegerObjectMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FItemArray^[iSource], @FItemArray^[iTarget], iCount * SizeOf(TAdvIntegerObjectMatchItem));
+  MemoryMove(@FItemArray^[iSource], @FItemArray^[iTarget], iCount * SizeOf(TFslIntegerObjectMatchItem));
 End;  
 
 
-Function TAdvIntegerObjectMatch.IndexByKey(Const aKey : TAdvIntegerObjectMatchKey): Integer;
+Function TFslIntegerObjectMatch.IndexByKey(Const aKey : TFslIntegerObjectMatchKey): Integer;
 Begin 
   If Not Find(aKey, Nil, Result, CompareByKey) Then
     Result := -1;
 End;  
 
 
-Function TAdvIntegerObjectMatch.IndexByValue(Const aValue : TAdvIntegerObjectMatchValue): Integer;
+Function TFslIntegerObjectMatch.IndexByValue(Const aValue : TFslIntegerObjectMatchValue): Integer;
 Begin
   If Not Find(0, aValue, Result, CompareByValue) Then
     Result := -1;
 End;  
 
 
-Function TAdvIntegerObjectMatch.ExistsByKey(Const aKey : TAdvIntegerObjectMatchKey): Boolean;
+Function TFslIntegerObjectMatch.ExistsByKey(Const aKey : TFslIntegerObjectMatchKey): Boolean;
 Begin
   Result := ExistsByIndex(IndexByKey(aKey));
 End;
 
 
-Function TAdvIntegerObjectMatch.ExistsByValue(Const aValue : TAdvIntegerObjectMatchValue): Boolean;
+Function TFslIntegerObjectMatch.ExistsByValue(Const aValue : TFslIntegerObjectMatchValue): Boolean;
 Begin
   Result := ExistsByIndex(IndexByValue(aValue));
 End;  
 
 
-Function TAdvIntegerObjectMatch.Add(Const aKey : TAdvIntegerObjectMatchKey; Const aValue : TAdvIntegerObjectMatchValue) : Integer;
+Function TFslIntegerObjectMatch.Add(Const aKey : TFslIntegerObjectMatchKey; Const aValue : TFslIntegerObjectMatchValue) : Integer;
 Begin
   Assert(ValidateValue('Add', aValue, 'aValue'));
 
@@ -2571,18 +2571,18 @@ Begin
 End;
 
 
-Procedure TAdvIntegerObjectMatch.AddAll(Const oIntegerObjectMatch : TAdvIntegerObjectMatch);
+Procedure TFslIntegerObjectMatch.AddAll(Const oIntegerObjectMatch : TFslIntegerObjectMatch);
 Var
   iIntegerObjectMatchIndex : Integer;
 Begin
-  Assert(Invariants('AddAll', oIntegerObjectMatch, TAdvIntegerObjectMatch, 'oIntegerObjectMatch'));
+  Assert(Invariants('AddAll', oIntegerObjectMatch, TFslIntegerObjectMatch, 'oIntegerObjectMatch'));
 
   For iIntegerObjectMatchIndex := 0 To oIntegerObjectMatch.Count - 1 Do
     Add(oIntegerObjectMatch.KeyByIndex[iIntegerObjectMatchIndex], oIntegerObjectMatch.ValueByIndex[iIntegerObjectMatchIndex].Link);
 End;
 
 
-Procedure TAdvIntegerObjectMatch.Insert(iIndex : Integer; Const aKey : TAdvIntegerObjectMatchKey; Const aValue : TAdvIntegerObjectMatchValue);
+Procedure TFslIntegerObjectMatch.Insert(iIndex : Integer; Const aKey : TFslIntegerObjectMatchKey; Const aValue : TFslIntegerObjectMatchValue);
 Begin
   Assert(ValidateValue('Insert', aValue, 'aValue'));
 
@@ -2593,7 +2593,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.InternalInsert(iIndex : Integer);
+Procedure TFslIntegerObjectMatch.InternalInsert(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -2602,7 +2602,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.InternalDelete(iIndex : Integer);
+Procedure TFslIntegerObjectMatch.InternalDelete(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -2611,9 +2611,9 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.InternalExchange(iA, iB: Integer);
+Procedure TFslIntegerObjectMatch.InternalExchange(iA, iB: Integer);
 Var
-  aTemp : TAdvIntegerObjectMatchItem;
+  aTemp : TFslIntegerObjectMatchItem;
   pA    : PAdvIntegerObjectMatchItem;
   pB    : PAdvIntegerObjectMatchItem;
 Begin 
@@ -2626,7 +2626,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerObjectMatch.GetItem(iIndex : Integer) : Pointer;
+Function TFslIntegerObjectMatch.GetItem(iIndex : Integer) : Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -2634,7 +2634,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.SetItem(iIndex: Integer; pValue: Pointer);
+Procedure TFslIntegerObjectMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -2642,7 +2642,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerObjectMatch.GetKeyByIndex(iIndex : Integer): TAdvIntegerObjectMatchKey;
+Function TFslIntegerObjectMatch.GetKeyByIndex(iIndex : Integer): TFslIntegerObjectMatchKey;
 Begin
   Assert(ValidateIndex('GetKeyByIndex', iIndex));
 
@@ -2650,7 +2650,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.SetKeyByIndex(iIndex : Integer; Const aKey : TAdvIntegerObjectMatchKey);
+Procedure TFslIntegerObjectMatch.SetKeyByIndex(iIndex : Integer; Const aKey : TFslIntegerObjectMatchKey);
 Begin
   Assert(ValidateIndex('SetKeyByIndex', iIndex));
 
@@ -2658,7 +2658,7 @@ Begin
 End;
 
 
-Function TAdvIntegerObjectMatch.GetValueByIndex(iIndex : Integer): TAdvIntegerObjectMatchValue;
+Function TFslIntegerObjectMatch.GetValueByIndex(iIndex : Integer): TFslIntegerObjectMatchValue;
 Begin
   Assert(ValidateIndex('GetValueByIndex', iIndex));
 
@@ -2666,7 +2666,7 @@ Begin
 End;
 
 
-Procedure TAdvIntegerObjectMatch.SetValueByIndex(iIndex : Integer; Const aValue: TAdvIntegerObjectMatchValue);
+Procedure TFslIntegerObjectMatch.SetValueByIndex(iIndex : Integer; Const aValue: TFslIntegerObjectMatchValue);
 Begin
   Assert(ValidateIndex('SetValueByIndex', iIndex));
   Assert(ValidateValue('SetValueByIndex', aValue, 'aValue'));
@@ -2676,7 +2676,7 @@ Begin
 End;
 
 
-Function TAdvIntegerObjectMatch.GetKeyByValue(Const aValue: TAdvIntegerObjectMatchValue): TAdvIntegerObjectMatchKey;
+Function TFslIntegerObjectMatch.GetKeyByValue(Const aValue: TFslIntegerObjectMatchValue): TFslIntegerObjectMatchKey;
 Var
   iIndex : Integer;
 Begin
@@ -2694,7 +2694,7 @@ Begin
 End;
 
 
-Function TAdvIntegerObjectMatch.GetValueByKey(Const aKey : TAdvIntegerObjectMatchKey): TAdvIntegerObjectMatchValue;
+Function TFslIntegerObjectMatch.GetValueByKey(Const aKey : TFslIntegerObjectMatchKey): TFslIntegerObjectMatchValue;
 Var
   iIndex : Integer;
 Begin
@@ -2712,7 +2712,7 @@ Begin
 End;
 
 
-Procedure TAdvIntegerObjectMatch.SetValueByKey(Const aKey : TAdvIntegerObjectMatchKey; Const aValue : TAdvIntegerObjectMatchValue);
+Procedure TFslIntegerObjectMatch.SetValueByKey(Const aKey : TFslIntegerObjectMatchKey; Const aValue : TFslIntegerObjectMatchValue);
 Var
   iIndex : Integer;
 Begin
@@ -2729,21 +2729,21 @@ Begin
 End;
 
 
-Function TAdvIntegerObjectMatch.CapacityLimit : Integer;
+Function TFslIntegerObjectMatch.CapacityLimit : Integer;
 Begin
-  Result := High(TAdvIntegerObjectMatchItemArray);
+  Result := High(TFslIntegerObjectMatchItemArray);
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslIntegerObjectMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin
   aCompare := CompareByKey;
 End;  
 
 
-Function TAdvIntegerObjectMatch.Find(Const aKey: TAdvIntegerObjectMatchKey; Const aValue: TAdvIntegerObjectMatchValue; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslIntegerObjectMatch.Find(Const aKey: TFslIntegerObjectMatchKey; Const aValue: TFslIntegerObjectMatchValue; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Var
-  aItem : TAdvIntegerObjectMatchItem;
+  aItem : TFslIntegerObjectMatchItem;
 Begin 
   aItem.Key := aKey;
   aItem.Value := aValue;
@@ -2752,25 +2752,25 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.SortedByKey;
+Procedure TFslIntegerObjectMatch.SortedByKey;
 Begin 
   SortedBy(CompareByKey);
 End;  
 
 
-Procedure TAdvIntegerObjectMatch.SortedByValue;
+Procedure TFslIntegerObjectMatch.SortedByValue;
 Begin 
   SortedBy(CompareByValue);
 End;  
 
 
-Function TAdvIntegerObjectMatch.ItemClass : TAdvObjectClass;
+Function TFslIntegerObjectMatch.ItemClass : TFslObjectClass;
 Begin 
-  Result := TAdvObject;
+  Result := TFslObject;
 End;  
 
 
-Function TAdvIntegerObjectMatch.ValidateIndex(Const sMethod : String; iIndex: Integer): Boolean;
+Function TFslIntegerObjectMatch.ValidateIndex(Const sMethod : String; iIndex: Integer): Boolean;
 Begin
   Inherited ValidateIndex(sMethod, iIndex);
 
@@ -2780,7 +2780,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerObjectMatch.ValidateValue(Const sMethod : String; oObject : TAdvObject; Const sObject : String) : Boolean;
+Function TFslIntegerObjectMatch.ValidateValue(Const sMethod : String; oObject : TFslObject; Const sObject : String) : Boolean;
 Begin
   If Assigned(oObject) Then
     Invariants(sMethod, oObject, FNominatedValueClass, sObject);
@@ -2789,31 +2789,31 @@ Begin
 End;  
 
 
-Function TAdvIntegerObjectMatch.IsSortedByKey : Boolean;
+Function TFslIntegerObjectMatch.IsSortedByKey : Boolean;
 Begin
   Result := IsSortedBy(CompareByKey);
 End;  
 
 
-Function TAdvIntegerObjectMatch.IsSortedByValue : Boolean;
+Function TFslIntegerObjectMatch.IsSortedByValue : Boolean;
 Begin 
   Result := IsSortedBy(CompareByValue);
 End;
 
 
-Procedure TAdvIntegerObjectMatch.DeleteByKey(Const aKey: TAdvIntegerObjectMatchKey);
+Procedure TFslIntegerObjectMatch.DeleteByKey(Const aKey: TFslIntegerObjectMatchKey);
 Begin
   DeleteByIndex(IndexByKey(aKey));
 End;
 
 
-Procedure TAdvIntegerObjectMatch.DeleteByValue(Const aValue: TAdvIntegerObjectMatchValue);
+Procedure TFslIntegerObjectMatch.DeleteByValue(Const aValue: TFslIntegerObjectMatchValue);
 Begin
   DeleteByIndex(IndexByValue(aValue));
 End;
 
 
-Function TAdvIntegerObjectMatch.GetMatchByIndex(iIndex: Integer): TAdvIntegerObjectMatchItem;
+Function TFslIntegerObjectMatch.GetMatchByIndex(iIndex: Integer): TFslIntegerObjectMatchItem;
 Begin
   Assert(ValidateIndex('GetMatchByIndex', iIndex));
 
@@ -2821,25 +2821,25 @@ Begin
 End;
 
 
-Function TAdvIntegerMatch.Link : TAdvIntegerMatch;
+Function TFslIntegerMatch.Link : TFslIntegerMatch;
 Begin
-  Result := TAdvIntegerMatch(Inherited Link);
+  Result := TFslIntegerMatch(Inherited Link);
 End;
 
 
-Function TAdvIntegerMatch.CompareByKey(pA, pB: Pointer): Integer;
+Function TFslIntegerMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin 
   Result := IntegerCompare(PAdvInteger32MatchItem(pA)^.Key, PAdvInteger32MatchItem(pB)^.Key);
 End;
 
 
-Function TAdvIntegerMatch.CompareByValue(pA, pB: Pointer): Integer;
+Function TFslIntegerMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(PAdvInteger32MatchItem(pA)^.Value, PAdvInteger32MatchItem(pB)^.Value);
 End;  
 
 
-Function TAdvIntegerMatch.CompareByKeyValue(pA, pB: Pointer): Integer;
+Function TFslIntegerMatch.CompareByKeyValue(pA, pB: Pointer): Integer;
 Begin
   Result := CompareByKey(pA, pB);
 
@@ -2848,16 +2848,16 @@ Begin
 End;
 
 
-Procedure TAdvIntegerMatch.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
 End;  
 
 
-Procedure TAdvIntegerMatch.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslIntegerMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  iKey : TAdvIntegerMatchKey;
-  iValue : TAdvIntegerMatchValue;
+  iKey : TFslIntegerMatchKey;
+  iValue : TFslIntegerMatchValue;
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -2870,7 +2870,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslIntegerMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -2881,63 +2881,63 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.AssignItem(oItems: TAdvItemList; iIndex: Integer);
+Procedure TFslIntegerMatch.AssignItem(oItems: TFslItemList; iIndex: Integer);
 Begin 
   Inherited;
 
-  FMatches^[iIndex] := TAdvIntegerMatch(oItems).FMatches^[iIndex];
+  FMatches^[iIndex] := TFslIntegerMatch(oItems).FMatches^[iIndex];
 End;  
 
 
-Procedure TAdvIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMatches) + NativeUInt(iIndex * SizeOf(TAdvIntegerMatchItem))), (iLength * SizeOf(TAdvIntegerMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatches) + NativeUInt(iIndex * SizeOf(TFslIntegerMatchItem))), (iLength * SizeOf(TFslIntegerMatchItem)));
 End;  
 
 
-Procedure TAdvIntegerMatch.InternalResize(iValue : Integer);
+Procedure TFslIntegerMatch.InternalResize(iValue : Integer);
 Begin 
   Inherited;
 
-  MemoryResize(FMatches, Capacity * SizeOf(TAdvIntegerMatchItem), iValue * SizeOf(TAdvIntegerMatchItem));
+  MemoryResize(FMatches, Capacity * SizeOf(TFslIntegerMatchItem), iValue * SizeOf(TFslIntegerMatchItem));
 End;  
 
 
-Procedure TAdvIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FMatches^[iSource], @FMatches^[iTarget], iCount * SizeOf(TAdvIntegerMatchItem));
+  MemoryMove(@FMatches^[iSource], @FMatches^[iTarget], iCount * SizeOf(TFslIntegerMatchItem));
 End;  
 
 
-Function TAdvIntegerMatch.IndexByKey(aKey : TAdvIntegerMatchKey): Integer;
+Function TFslIntegerMatch.IndexByKey(aKey : TFslIntegerMatchKey): Integer;
 Begin
   If Not FindByKey(aKey, Result, {$IFDEF FPC}@{$ENDIF}CompareByKey) Then
     Result := -1;
 End;  
 
 
-Function TAdvIntegerMatch.IndexByKeyValue(Const aKey : TAdvIntegerMatchKey; Const aValue : TAdvIntegerMatchValue) : Integer;
+Function TFslIntegerMatch.IndexByKeyValue(Const aKey : TFslIntegerMatchKey; Const aValue : TFslIntegerMatchValue) : Integer;
 Begin
   If Not Find(aKey, aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareByKeyValue) Then
     Result := -1;
 End;
 
 
-Function TAdvIntegerMatch.ExistsByKey(aKey : TAdvIntegerMatchKey): Boolean;
+Function TFslIntegerMatch.ExistsByKey(aKey : TFslIntegerMatchKey): Boolean;
 Begin
   Result := ExistsByIndex(IndexByKey(aKey));
 End;
 
 
-Function TAdvIntegerMatch.ExistsByKeyValue(Const aKey : TAdvIntegerMatchKey; Const aValue : TAdvIntegerMatchValue) : Boolean;
+Function TFslIntegerMatch.ExistsByKeyValue(Const aKey : TFslIntegerMatchKey; Const aValue : TFslIntegerMatchValue) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByKeyValue(aKey, aValue));
 End;
 
 
-Function TAdvIntegerMatch.Add(aKey : TAdvIntegerMatchKey; aValue : TAdvIntegerMatchValue): Integer;
+Function TFslIntegerMatch.Add(aKey : TFslIntegerMatchKey; aValue : TFslIntegerMatchValue): Integer;
 Begin 
   Result := -1;
 
@@ -2960,7 +2960,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.Insert(iIndex: Integer; iKey : TAdvIntegerMatchKey; iValue : TAdvIntegerMatchValue);
+Procedure TFslIntegerMatch.Insert(iIndex: Integer; iKey : TFslIntegerMatchKey; iValue : TFslIntegerMatchValue);
 Begin 
   InternalInsert(iIndex);
 
@@ -2969,7 +2969,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.InternalInsert(iIndex: Integer);
+Procedure TFslIntegerMatch.InternalInsert(iIndex: Integer);
 Begin 
   Inherited;
 
@@ -2978,9 +2978,9 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.InternalExchange(iA, iB : Integer);
+Procedure TFslIntegerMatch.InternalExchange(iA, iB : Integer);
 Var
-  aTemp : TAdvIntegerMatchItem;
+  aTemp : TFslIntegerMatchItem;
   pA    : Pointer;
   pB    : Pointer;
 Begin 
@@ -2993,7 +2993,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerMatch.GetItem(iIndex: Integer): Pointer;
+Function TFslIntegerMatch.GetItem(iIndex: Integer): Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -3001,7 +3001,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.SetItem(iIndex: Integer; pValue: Pointer);
+Procedure TFslIntegerMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -3009,7 +3009,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerMatch.GetKey(iIndex: Integer): TAdvIntegerMatchKey;
+Function TFslIntegerMatch.GetKey(iIndex: Integer): TFslIntegerMatchKey;
 Begin 
   Assert(ValidateIndex('GetKey', iIndex));
 
@@ -3017,7 +3017,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.SetKey(iIndex: Integer; Const iValue: TAdvIntegerMatchKey);
+Procedure TFslIntegerMatch.SetKey(iIndex: Integer; Const iValue: TFslIntegerMatchKey);
 Begin 
   Assert(ValidateIndex('SetKey', iIndex));
 
@@ -3025,7 +3025,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerMatch.GetValue(iIndex: Integer): TAdvIntegerMatchValue;
+Function TFslIntegerMatch.GetValue(iIndex: Integer): TFslIntegerMatchValue;
 Begin 
   Assert(ValidateIndex('GetValue', iIndex));
 
@@ -3033,7 +3033,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.SetValue(iIndex: Integer; Const iValue: TAdvIntegerMatchValue);
+Procedure TFslIntegerMatch.SetValue(iIndex: Integer; Const iValue: TFslIntegerMatchValue);
 Begin 
   Assert(ValidateIndex('SetValue', iIndex));
 
@@ -3041,7 +3041,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerMatch.GetPair(iIndex: Integer): TAdvIntegerMatchItem;
+Function TFslIntegerMatch.GetPair(iIndex: Integer): TFslIntegerMatchItem;
 Begin 
   Assert(ValidateIndex('GetPair', iIndex));
 
@@ -3049,7 +3049,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.SetPair(iIndex: Integer; Const Value: TAdvIntegerMatchItem);
+Procedure TFslIntegerMatch.SetPair(iIndex: Integer; Const Value: TFslIntegerMatchItem);
 Begin 
   Assert(ValidateIndex('SetPair', iIndex));
 
@@ -3057,7 +3057,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerMatch.GetMatch(iKey : TAdvIntegerMatchKey): TAdvIntegerMatchValue;
+Function TFslIntegerMatch.GetMatch(iKey : TFslIntegerMatchKey): TFslIntegerMatchValue;
 Var
   iIndex : Integer;
 Begin
@@ -3074,7 +3074,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerMatch.SetMatch(iKey : TAdvIntegerMatchKey; Const iValue: TAdvIntegerMatchValue);
+Procedure TFslIntegerMatch.SetMatch(iKey : TFslIntegerMatchKey; Const iValue: TFslIntegerMatchValue);
 Var
   iIndex : Integer;
 Begin 
@@ -3089,15 +3089,15 @@ Begin
 End;  
 
 
-Function TAdvIntegerMatch.CapacityLimit : Integer;
+Function TFslIntegerMatch.CapacityLimit : Integer;
 Begin
-  Result := High(TAdvIntegerMatchItems);
+  Result := High(TFslIntegerMatchItems);
 End;
 
 
-Function TAdvIntegerMatch.Find(Const aKey: TAdvIntegerMatchKey; Const aValue: TAdvIntegerMatchValue; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslIntegerMatch.Find(Const aKey: TFslIntegerMatchKey; Const aValue: TFslIntegerMatchValue; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Var
-  aItem : TAdvIntegerMatchItem;
+  aItem : TFslIntegerMatchItem;
 Begin
   aItem.Key := aKey;
   aItem.Value := aValue;
@@ -3106,31 +3106,31 @@ Begin
 End;
 
 
-Function TAdvIntegerMatch.FindByKey(Const aKey: TAdvIntegerMatchKey; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslIntegerMatch.FindByKey(Const aKey: TFslIntegerMatchKey; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Begin
   Result := Find(aKey, 0, iIndex, aCompare);
 End;
 
 
-Procedure TAdvIntegerMatch.SortedByKey;
+Procedure TFslIntegerMatch.SortedByKey;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKey);
 End;
 
 
-Procedure TAdvIntegerMatch.SortedByValue;
+Procedure TFslIntegerMatch.SortedByValue;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByValue);
 End;
 
 
-Procedure TAdvIntegerMatch.SortedByKeyValue;
+Procedure TFslIntegerMatch.SortedByKeyValue;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKeyValue);
 End;
 
 
-Procedure TAdvIntegerMatch.ForceIncrementByKey(Const aKey: TAdvIntegerMatchKey);
+Procedure TFslIntegerMatch.ForceIncrementByKey(Const aKey: TFslIntegerMatchKey);
 Var
   iIndex : Integer;
 Begin
@@ -3141,15 +3141,15 @@ Begin
 End;
 
 
-Procedure TAdvIntegerMatch.DeleteByKey(aKey: TAdvIntegerMatchKey);
+Procedure TFslIntegerMatch.DeleteByKey(aKey: TFslIntegerMatchKey);
 Begin
   DeleteByIndex(IndexByKey(aKey));
 End;
 
 
-Function TAdvIntegerMatch.EqualTo(Const oIntegerMatch : TAdvIntegerMatch) : Boolean;
+Function TFslIntegerMatch.EqualTo(Const oIntegerMatch : TFslIntegerMatch) : Boolean;
 Var
-  aPair : TAdvIntegerMatchItem;
+  aPair : TFslIntegerMatchItem;
   iIndex : Integer;
 Begin
   Result := oIntegerMatch.Count = Count;
@@ -3167,15 +3167,15 @@ Begin
 End;
 
 
-Procedure TAdvIntegerList.SaveItem(oFiler : TAdvFiler; iIndex : Integer);
+Procedure TFslIntegerList.SaveItem(oFiler : TFslFiler; iIndex : Integer);
 Begin 
   oFiler['Integer'].DefineInteger(FIntegerArray^[iIndex]);
 End;  
 
 
-Procedure TAdvIntegerList.LoadItem(oFiler : TAdvFiler; iIndex : Integer);
+Procedure TFslIntegerList.LoadItem(oFiler : TFslFiler; iIndex : Integer);
 Var
-  iValue : TAdvIntegerListItem;
+  iValue : TFslIntegerListItem;
 Begin
   oFiler['Integer'].DefineInteger(iValue);
 
@@ -3183,62 +3183,62 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerList.AssignItem(oItems : TAdvItemList; iIndex : Integer);
+Procedure TFslIntegerList.AssignItem(oItems : TFslItemList; iIndex : Integer);
 Begin 
-  FIntegerArray^[iIndex] := TAdvIntegerList(oItems).FIntegerArray^[iIndex];
+  FIntegerArray^[iIndex] := TFslIntegerList(oItems).FIntegerArray^[iIndex];
 End;  
 
 
-Function TAdvIntegerList.Clone: TAdvIntegerList;
+Function TFslIntegerList.Clone: TFslIntegerList;
 Begin 
-  Result := TAdvIntegerList(Inherited Clone);
+  Result := TFslIntegerList(Inherited Clone);
 End;
 
 
-Function TAdvIntegerList.Link: TAdvIntegerList;
+Function TFslIntegerList.Link: TFslIntegerList;
 Begin 
-  Result := TAdvIntegerList(Inherited Link);
+  Result := TFslIntegerList(Inherited Link);
 End;  
 
 
-Procedure TAdvIntegerList.InternalEmpty(iIndex, iLength : Integer);
+Procedure TFslIntegerList.InternalEmpty(iIndex, iLength : Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FIntegerArray) + (iIndex * SizeOf(TAdvIntegerListItem))), (iLength * SizeOf(TAdvIntegerListItem)));
+  MemoryZero(Pointer(NativeUInt(FIntegerArray) + (iIndex * SizeOf(TFslIntegerListItem))), (iLength * SizeOf(TFslIntegerListItem)));
 End;  
 
 
-Procedure TAdvIntegerList.InternalResize(iCapacity : Integer);
+Procedure TFslIntegerList.InternalResize(iCapacity : Integer);
 Begin 
   Inherited;
   
-  MemoryResize(FIntegerArray, Capacity * SizeOf(TAdvIntegerListItem), iCapacity * SizeOf(TAdvIntegerListItem));
+  MemoryResize(FIntegerArray, Capacity * SizeOf(TFslIntegerListItem), iCapacity * SizeOf(TFslIntegerListItem));
 End;
 
 
-Procedure TAdvIntegerList.InternalCopy(iSource, iTarget, iCount : Integer);
+Procedure TFslIntegerList.InternalCopy(iSource, iTarget, iCount : Integer);
 Begin 
   Inherited;
 
-  MemoryMove(@FIntegerArray^[iSource], @FIntegerArray^[iTarget], iCount * SizeOf(TAdvIntegerListItem));
+  MemoryMove(@FIntegerArray^[iSource], @FIntegerArray^[iTarget], iCount * SizeOf(TFslIntegerListItem));
 End;  
 
 
-Function TAdvIntegerList.IndexByValue(Const iValue : TAdvIntegerListItem): Integer;
+Function TFslIntegerList.IndexByValue(Const iValue : TFslIntegerListItem): Integer;
 Begin
   If Not Find(Pointer(iValue), Result) Then
     Result := -1;
 End;
 
 
-Function TAdvIntegerList.ExistsByValue(Const iValue : TAdvIntegerListItem) : Boolean;
+Function TFslIntegerList.ExistsByValue(Const iValue : TFslIntegerListItem) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByValue(iValue));
 End;
 
 
-Function TAdvIntegerList.Add(aValue : TAdvIntegerListItem): Integer;
+Function TFslIntegerList.Add(aValue : TFslIntegerListItem): Integer;
 Begin 
   Result := -1;
 
@@ -3259,7 +3259,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerList.Insert(iIndex : Integer; aValue : TAdvIntegerListItem);
+Procedure TFslIntegerList.Insert(iIndex : Integer; aValue : TFslIntegerListItem);
 Begin 
   InternalInsert(iIndex);
 
@@ -3267,7 +3267,7 @@ Begin
 End;
 
 
-Procedure TAdvIntegerList.DeleteByValue(Const iValue: TAdvIntegerListItem);
+Procedure TFslIntegerList.DeleteByValue(Const iValue: TFslIntegerListItem);
 Var
   iIndex : Integer;
 Begin
@@ -3278,7 +3278,7 @@ Begin
 End;
 
 
-Procedure TAdvIntegerList.DeleteAllByValue(oIntegers: TAdvIntegerList);
+Procedure TFslIntegerList.DeleteAllByValue(oIntegers: TFslIntegerList);
 Var
   iIndex : Integer;
 Begin
@@ -3287,22 +3287,22 @@ Begin
 End;
 
 
-Procedure TAdvIntegerList.InternalExchange(iA, iB : Integer);
+Procedure TFslIntegerList.InternalExchange(iA, iB : Integer);
 Var
-  aTemp : TAdvIntegerListItem;
+  aTemp : TFslIntegerListItem;
   pA    : Pointer;
   pB    : Pointer;
 Begin 
   pA := @FIntegerArray^[iA];
   pB := @FIntegerArray^[iB];
 
-  aTemp := TAdvIntegerListItem(pA^);
-  TAdvIntegerListItem(pA^) := TAdvIntegerListItem(pB^);
-  TAdvIntegerListItem(pB^) := aTemp;
+  aTemp := TFslIntegerListItem(pA^);
+  TFslIntegerListItem(pA^) := TFslIntegerListItem(pB^);
+  TFslIntegerListItem(pB^) := aTemp;
 End;  
 
 
-Procedure TAdvIntegerList.AddAll(oIntegers: TAdvIntegerList);
+Procedure TFslIntegerList.AddAll(oIntegers: TFslIntegerList);
 Var
   iLoop : Integer;
 Begin 
@@ -3311,12 +3311,12 @@ Begin
 End;
 
 
-Function TAdvIntegerList.EqualTo(oIntegers : TAdvIntegerList) : Boolean;
+Function TFslIntegerList.EqualTo(oIntegers : TFslIntegerList) : Boolean;
 Var
   iLoop : Integer;
   iCount : Integer;
 Begin 
-  Assert(Invariants('EqualTo', oIntegers, TAdvIntegerList, 'oIntegers'));
+  Assert(Invariants('EqualTo', oIntegers, TFslIntegerList, 'oIntegers'));
 
   If IsAllowDuplicates Then
     RaiseError('EqualTo', 'Equality checking not supported by integer collection containing duplicates.');
@@ -3335,7 +3335,7 @@ Begin
 End;
 
 
-Procedure TAdvIntegerList.Toggle(aValue : TAdvIntegerListItem);
+Procedure TFslIntegerList.Toggle(aValue : TFslIntegerListItem);
 Var
   iIndex : Integer;
 Begin 
@@ -3348,7 +3348,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerList.GetAsText : String;
+Function TFslIntegerList.GetAsText : String;
 Var
   iIndex : Integer;
 Begin
@@ -3359,7 +3359,7 @@ Begin
 End;
 
 
-Function TAdvIntegerList.GetItem(iIndex : Integer): Pointer;
+Function TFslIntegerList.GetItem(iIndex : Integer): Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -3367,15 +3367,15 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerList.SetItem(iIndex : Integer; pValue : Pointer);
+Procedure TFslIntegerList.SetItem(iIndex : Integer; pValue : Pointer);
 Begin
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FIntegerArray^[iIndex] := TAdvIntegerListItem(pValue);
+  FIntegerArray^[iIndex] := TFslIntegerListItem(pValue);
 End;  
 
 
-Function TAdvIntegerList.GetIntegerByIndex(iIndex : Integer): TAdvIntegerListItem;
+Function TFslIntegerList.GetIntegerByIndex(iIndex : Integer): TFslIntegerListItem;
 Begin
   Assert(ValidateIndex('GetIntegerByIndex', iIndex));
 
@@ -3383,7 +3383,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerList.SetIntegerByIndex(iIndex : Integer; Const aValue : TAdvIntegerListItem);
+Procedure TFslIntegerList.SetIntegerByIndex(iIndex : Integer; Const aValue : TFslIntegerListItem);
 Begin
   Assert(ValidateIndex('SetIntegerByIndex', iIndex));
 
@@ -3391,7 +3391,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerList.Sum : Int64;
+Function TFslIntegerList.Sum : Int64;
 Var
   iLoop : Integer;
 Begin 
@@ -3401,7 +3401,7 @@ Begin
 End;  
 
 
-Function TAdvIntegerList.Mean : TAdvIntegerListItem;
+Function TFslIntegerList.Mean : TFslIntegerListItem;
 Begin 
   If Count > 0 Then
     Result := Sum Div Count
@@ -3410,20 +3410,20 @@ Begin
 End;  
 
 
-Function TAdvIntegerList.CapacityLimit : Integer;
+Function TFslIntegerList.CapacityLimit : Integer;
 Begin
-  Result := High(TAdvIntegerListItemArray);
+  Result := High(TFslIntegerListItemArray);
 End;  
 
 
-Function TAdvIntegerList.Iterator : TAdvIterator;
+Function TFslIntegerList.Iterator : TFslIterator;
 Begin 
-  Result := TAdvIntegerListIterator.Create;
-  TAdvIntegerListIterator(Result).IntegerList := TAdvIntegerList(Self.Link);
+  Result := TFslIntegerListIterator.Create;
+  TFslIntegerListIterator(Result).IntegerList := TFslIntegerList(Self.Link);
 End;
 
 
-Constructor TAdvIntegerListIterator.Create;
+Constructor TFslIntegerListIterator.Create;
 Begin 
   Inherited;
 
@@ -3431,7 +3431,7 @@ Begin
 End;
 
 
-Destructor TAdvIntegerListIterator.Destroy;
+Destructor TFslIntegerListIterator.Destroy;
 Begin
   FIntegerList.Free;
 
@@ -3439,7 +3439,7 @@ Begin
 End;
 
 
-Procedure TAdvIntegerListIterator.First;
+Procedure TFslIntegerListIterator.First;
 Begin
   Inherited;
 
@@ -3447,7 +3447,7 @@ Begin
 End;
 
 
-Procedure TAdvIntegerListIterator.Last;
+Procedure TFslIntegerListIterator.Last;
 Begin
   Inherited;
 
@@ -3455,7 +3455,7 @@ Begin
 End;
 
 
-Procedure TAdvIntegerListIterator.Next;
+Procedure TFslIntegerListIterator.Next;
 Begin
   Inherited;
 
@@ -3463,7 +3463,7 @@ Begin
 End;  
 
 
-Procedure TAdvIntegerListIterator.Back;
+Procedure TFslIntegerListIterator.Back;
 Begin
   Inherited;
 
@@ -3471,42 +3471,42 @@ Begin
 End;  
 
 
-Function TAdvIntegerListIterator.Current : Integer;
+Function TFslIntegerListIterator.Current : Integer;
 Begin
   Result := FIntegerList[FIndex];
 End;  
 
 
-Function TAdvIntegerListIterator.More : Boolean;
+Function TFslIntegerListIterator.More : Boolean;
 Begin 
   Result := FIntegerList.ExistsByIndex(FIndex);
 End;  
 
 
-Procedure TAdvIntegerListIterator.SetIntegerList(Const Value : TAdvIntegerList);
+Procedure TFslIntegerListIterator.SetIntegerList(Const Value : TFslIntegerList);
 Begin
   FIntegerList.Free;
   FIntegerList := Value;
 End;
 
 
-Function TAdvIntegerList.GetIntegers(iIndex : Integer) : TAdvIntegerListItem;
+Function TFslIntegerList.GetIntegers(iIndex : Integer) : TFslIntegerListItem;
 Begin
   Result := IntegerByIndex[iIndex];
 End;
 
 
-Procedure TAdvIntegerList.SetIntegers(iIndex : Integer; Const Value : TAdvIntegerListItem);
+Procedure TFslIntegerList.SetIntegers(iIndex : Integer; Const Value : TFslIntegerListItem);
 Begin
   IntegerByIndex[iIndex] := Value;
 End;
 
 
-Function TAdvIntegerList.ExistsAll(oIntegerList : TAdvIntegerList) : Boolean;
+Function TFslIntegerList.ExistsAll(oIntegerList : TFslIntegerList) : Boolean;
 Var
   iIndex : Integer;
 Begin
-  Assert(Invariants('ExistsAll', oIntegerList, TAdvIntegerList, 'oIntegerList'));
+  Assert(Invariants('ExistsAll', oIntegerList, TFslIntegerList, 'oIntegerList'));
 
   Result := True;
 
@@ -3521,25 +3521,25 @@ Begin
 End;
 
 
-Function TAdvInt64Match.Link : TAdvInt64Match;
+Function TFslInt64Match.Link : TFslInt64Match;
 Begin
-  Result := TAdvInt64Match(Inherited Link);
+  Result := TFslInt64Match(Inherited Link);
 End;
 
 
-Function TAdvInt64Match.CompareByKey(pA, pB: Pointer): Integer;
+Function TFslInt64Match.CompareByKey(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(PAdvInteger32MatchItem(pA)^.Key, PAdvInteger32MatchItem(pB)^.Key);
 End;
 
 
-Function TAdvInt64Match.CompareByValue(pA, pB: Pointer): Integer;
+Function TFslInt64Match.CompareByValue(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(PAdvInteger32MatchItem(pA)^.Value, PAdvInteger32MatchItem(pB)^.Value);
 End;  
 
 
-Function TAdvInt64Match.CompareByKeyValue(pA, pB: Pointer): Integer;
+Function TFslInt64Match.CompareByKeyValue(pA, pB: Pointer): Integer;
 Begin
   Result := CompareByKey(pA, pB);
 
@@ -3548,16 +3548,16 @@ Begin
 End;
 
 
-Procedure TAdvInt64Match.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslInt64Match.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
 End;  
 
 
-Procedure TAdvInt64Match.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslInt64Match.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  iKey : TAdvInt64MatchKey;
-  iValue : TAdvInt64MatchValue;
+  iKey : TFslInt64MatchKey;
+  iValue : TFslInt64MatchValue;
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -3570,7 +3570,7 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslInt64Match.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -3581,63 +3581,63 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.AssignItem(oItems: TAdvItemList; iIndex: Integer);
+Procedure TFslInt64Match.AssignItem(oItems: TFslItemList; iIndex: Integer);
 Begin 
   Inherited;
 
-  FMatches^[iIndex] := TAdvInt64Match(oItems).FMatches^[iIndex];
+  FMatches^[iIndex] := TFslInt64Match(oItems).FMatches^[iIndex];
 End;  
 
 
-Procedure TAdvInt64Match.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslInt64Match.InternalEmpty(iIndex, iLength: Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMatches) + (iIndex * SizeOf(TAdvInt64MatchItem))), (iLength * SizeOf(TAdvInt64MatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatches) + (iIndex * SizeOf(TFslInt64MatchItem))), (iLength * SizeOf(TFslInt64MatchItem)));
 End;  
 
 
-Procedure TAdvInt64Match.InternalResize(iValue : Integer);
+Procedure TFslInt64Match.InternalResize(iValue : Integer);
 Begin 
   Inherited;
 
-  MemoryResize(FMatches, Capacity * SizeOf(TAdvInt64MatchItem), iValue * SizeOf(TAdvInt64MatchItem));
+  MemoryResize(FMatches, Capacity * SizeOf(TFslInt64MatchItem), iValue * SizeOf(TFslInt64MatchItem));
 End;  
 
 
-Procedure TAdvInt64Match.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslInt64Match.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FMatches^[iSource], @FMatches^[iTarget], iCount * SizeOf(TAdvInt64MatchItem));
+  MemoryMove(@FMatches^[iSource], @FMatches^[iTarget], iCount * SizeOf(TFslInt64MatchItem));
 End;  
 
 
-Function TAdvInt64Match.IndexByKey(aKey : TAdvInt64MatchKey): Integer;
+Function TFslInt64Match.IndexByKey(aKey : TFslInt64MatchKey): Integer;
 Begin 
   If Not FindByKey(aKey, Result, {$IFDEF FPC}@{$ENDIF}CompareByKey) Then
     Result := -1;
 End;  
 
 
-Function TAdvInt64Match.IndexByKeyValue(Const aKey : TAdvInt64MatchKey; Const aValue : TAdvInt64MatchValue) : Integer;
+Function TFslInt64Match.IndexByKeyValue(Const aKey : TFslInt64MatchKey; Const aValue : TFslInt64MatchValue) : Integer;
 Begin
   If Not Find(aKey, aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareByKeyValue) Then
     Result := -1;
 End;
 
 
-Function TAdvInt64Match.ExistsByKey(aKey : TAdvInt64MatchKey): Boolean;
+Function TFslInt64Match.ExistsByKey(aKey : TFslInt64MatchKey): Boolean;
 Begin
   Result := ExistsByIndex(IndexByKey(aKey));
 End;  
 
 
-Function TAdvInt64Match.ExistsByKeyValue(Const aKey : TAdvInt64MatchKey; Const aValue : TAdvInt64MatchValue) : Boolean;
+Function TFslInt64Match.ExistsByKeyValue(Const aKey : TFslInt64MatchKey; Const aValue : TFslInt64MatchValue) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByKeyValue(aKey, aValue));
 End;
 
 
-Function TAdvInt64Match.Add(aKey : TAdvInt64MatchKey; aValue : TAdvInt64MatchValue): Integer;
+Function TFslInt64Match.Add(aKey : TFslInt64MatchKey; aValue : TFslInt64MatchValue): Integer;
 Begin 
   Result := -1;
 
@@ -3660,7 +3660,7 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.Insert(iIndex: Integer; iKey : TAdvInt64MatchKey; iValue : TAdvInt64MatchValue);
+Procedure TFslInt64Match.Insert(iIndex: Integer; iKey : TFslInt64MatchKey; iValue : TFslInt64MatchValue);
 Begin 
   InternalInsert(iIndex);
 
@@ -3669,7 +3669,7 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.InternalInsert(iIndex: Integer);
+Procedure TFslInt64Match.InternalInsert(iIndex: Integer);
 Begin 
   Inherited;
 
@@ -3678,9 +3678,9 @@ Begin
 End;
 
 
-Procedure TAdvInt64Match.InternalExchange(iA, iB : Integer);
+Procedure TFslInt64Match.InternalExchange(iA, iB : Integer);
 Var
-  aTemp : TAdvInt64MatchItem;
+  aTemp : TFslInt64MatchItem;
   pA    : Pointer;
   pB    : Pointer;
 Begin 
@@ -3693,7 +3693,7 @@ Begin
 End;  
 
 
-Function TAdvInt64Match.GetItem(iIndex: Integer): Pointer;
+Function TFslInt64Match.GetItem(iIndex: Integer): Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -3701,7 +3701,7 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.SetItem(iIndex: Integer; pValue: Pointer);
+Procedure TFslInt64Match.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -3709,7 +3709,7 @@ Begin
 End;  
 
 
-Function TAdvInt64Match.GetKey(iIndex: Integer): TAdvInt64MatchKey;
+Function TFslInt64Match.GetKey(iIndex: Integer): TFslInt64MatchKey;
 Begin 
   Assert(ValidateIndex('GetKey', iIndex));
 
@@ -3717,7 +3717,7 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.SetKey(iIndex: Integer; Const iValue: TAdvInt64MatchKey);
+Procedure TFslInt64Match.SetKey(iIndex: Integer; Const iValue: TFslInt64MatchKey);
 Begin 
   Assert(ValidateIndex('SetKey', iIndex));
 
@@ -3725,7 +3725,7 @@ Begin
 End;  
 
 
-Function TAdvInt64Match.GetValue(iIndex: Integer): TAdvInt64MatchValue;
+Function TFslInt64Match.GetValue(iIndex: Integer): TFslInt64MatchValue;
 Begin 
   Assert(ValidateIndex('GetValue', iIndex));
 
@@ -3733,7 +3733,7 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.SetValue(iIndex: Integer; Const iValue: TAdvInt64MatchValue);
+Procedure TFslInt64Match.SetValue(iIndex: Integer; Const iValue: TFslInt64MatchValue);
 Begin 
   Assert(ValidateIndex('SetValue', iIndex));
 
@@ -3741,7 +3741,7 @@ Begin
 End;  
 
 
-Function TAdvInt64Match.GetPair(iIndex: Integer): TAdvInt64MatchItem;
+Function TFslInt64Match.GetPair(iIndex: Integer): TFslInt64MatchItem;
 Begin 
   Assert(ValidateIndex('GetPair', iIndex));
 
@@ -3749,7 +3749,7 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.SetPair(iIndex: Integer; Const Value: TAdvInt64MatchItem);
+Procedure TFslInt64Match.SetPair(iIndex: Integer; Const Value: TFslInt64MatchItem);
 Begin 
   Assert(ValidateIndex('SetPair', iIndex));
 
@@ -3757,7 +3757,7 @@ Begin
 End;  
 
 
-Function TAdvInt64Match.GetMatch(iKey : TAdvInt64MatchKey): TAdvInt64MatchValue;
+Function TFslInt64Match.GetMatch(iKey : TFslInt64MatchKey): TFslInt64MatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -3774,7 +3774,7 @@ Begin
 End;  
 
 
-Procedure TAdvInt64Match.SetMatch(iKey : TAdvInt64MatchKey; Const iValue: TAdvInt64MatchValue);
+Procedure TFslInt64Match.SetMatch(iKey : TFslInt64MatchKey; Const iValue: TFslInt64MatchValue);
 Var
   iIndex : Integer;
 Begin 
@@ -3789,15 +3789,15 @@ Begin
 End;  
 
 
-Function TAdvInt64Match.CapacityLimit : Integer;
+Function TFslInt64Match.CapacityLimit : Integer;
 Begin
-  Result := High(TAdvInt64MatchItems);
+  Result := High(TFslInt64MatchItems);
 End;
 
 
-Function TAdvInt64Match.Find(Const aKey: TAdvInt64MatchKey; Const aValue: TAdvInt64MatchValue; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslInt64Match.Find(Const aKey: TFslInt64MatchKey; Const aValue: TFslInt64MatchValue; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Var
-  aItem : TAdvInt64MatchItem;
+  aItem : TFslInt64MatchItem;
 Begin
   aItem.Key := aKey;
   aItem.Value := aValue;
@@ -3806,31 +3806,31 @@ Begin
 End;
 
 
-Function TAdvInt64Match.FindByKey(Const aKey: TAdvInt64MatchKey; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslInt64Match.FindByKey(Const aKey: TFslInt64MatchKey; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Begin
   Result := Find(aKey, 0, iIndex, aCompare);
 End;
 
 
-Procedure TAdvInt64Match.SortedByKey;
+Procedure TFslInt64Match.SortedByKey;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKey);
 End;
 
 
-Procedure TAdvInt64Match.SortedByValue;
+Procedure TFslInt64Match.SortedByValue;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByValue);
 End;
 
 
-Procedure TAdvInt64Match.SortedByKeyValue;
+Procedure TFslInt64Match.SortedByKeyValue;
 Begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKeyValue);
 End;
 
 
-Procedure TAdvInt64Match.ForceIncrementByKey(Const aKey: TAdvInt64MatchKey);
+Procedure TFslInt64Match.ForceIncrementByKey(Const aKey: TFslInt64MatchKey);
 Var
   iIndex : Integer;
 Begin
@@ -3841,15 +3841,15 @@ Begin
 End;
 
 
-Procedure TAdvInt64Match.DeleteByKey(aKey: TAdvInt64MatchKey);
+Procedure TFslInt64Match.DeleteByKey(aKey: TFslInt64MatchKey);
 Begin
   DeleteByIndex(IndexByKey(aKey));
 End;
 
 
-Function TAdvInt64Match.EqualTo(Const oIntegerMatch : TAdvInt64Match) : Boolean;
+Function TFslInt64Match.EqualTo(Const oIntegerMatch : TFslInt64Match) : Boolean;
 Var
-  aPair : TAdvInt64MatchItem;
+  aPair : TFslInt64MatchItem;
   iIndex : Integer;
 Begin
   Result := oIntegerMatch.Count = Count;
@@ -3867,7 +3867,7 @@ Begin
 End;
 
 
-Procedure TAdvClassList.AddArray(Const aClasses: Array Of TClass);
+Procedure TFslClassList.AddArray(Const aClasses: Array Of TClass);
 Var
   iLoop : Integer;
 Begin 
@@ -3876,34 +3876,34 @@ Begin
 End;
 
 
-Function TAdvClassList.IndexByClassType(aClass: TClass): Integer;
+Function TFslClassList.IndexByClassType(aClass: TClass): Integer;
 Begin
   If Not Find(aClass, Result) Then
     Result := -1;
 End;
 
 
-Function TAdvClassList.ExistsByClassType(aClass : TClass) : Boolean;
+Function TFslClassList.ExistsByClassType(aClass : TClass) : Boolean;
 Begin
   Result := ExistsByIndex(IndexByClassType(aClass));
 End;
 
 
-Function TAdvClassList.Iterator : TAdvIterator;
+Function TFslClassList.Iterator : TFslIterator;
 Begin 
-  Result := TAdvClassListIterator.Create;
+  Result := TFslClassListIterator.Create;
 
-  TAdvClassListIterator(Result).ClassList := TAdvClassList(Self.Link);
+  TFslClassListIterator(Result).ClassList := TFslClassList(Self.Link);
 End;  
 
 
-Function TAdvClassList.Add(Const aClass: TClass): Integer;
+Function TFslClassList.Add(Const aClass: TClass): Integer;
 Begin
   Result := Inherited Add(Pointer(aClass));
 End;
 
 
-Procedure TAdvClassList.AddAll(Const oClassList : TAdvClassList);
+Procedure TFslClassList.AddAll(Const oClassList : TFslClassList);
 Var
   iClassIndex : Integer;
 Begin
@@ -3912,33 +3912,33 @@ Begin
 End;
 
 
-Function TAdvClassList.ItemClass : TAdvObjectClass;
+Function TFslClassList.ItemClass : TFslObjectClass;
 Begin
-  // TODO: have to constrain this class to lists of TAdvObjectClass's only to enforce this
+  // TODO: have to constrain this class to lists of TFslObjectClass's only to enforce this
 
-  Result := TAdvObject;
+  Result := TFslObject;
 End;
 
 
-Function TAdvClassList.GetClassByIndex(Const iIndex : Integer) : TClass;
+Function TFslClassList.GetClassByIndex(Const iIndex : Integer) : TClass;
 Begin
   Result := TClass(PointerByIndex[iIndex]);
 End;
 
 
-Procedure TAdvClassList.SetClassByIndex(Const iIndex : Integer; Const Value : TClass);
+Procedure TFslClassList.SetClassByIndex(Const iIndex : Integer; Const Value : TClass);
 Begin
   PointerByIndex[iIndex] := Value;
 End;
 
 
-Function TAdvClassList.Find(Const aClass: TClass; Out iIndex: Integer): Boolean;
+Function TFslClassList.Find(Const aClass: TClass; Out iIndex: Integer): Boolean;
 Begin
   Result := Inherited Find(aClass, iIndex)
 End;
 
 
-Constructor TAdvClassListIterator.Create;
+Constructor TFslClassListIterator.Create;
 Begin
   Inherited;
 
@@ -3946,7 +3946,7 @@ Begin
 End;
 
 
-Destructor TAdvClassListIterator.Destroy;
+Destructor TFslClassListIterator.Destroy;
 Begin
   FClassList.Free;
 
@@ -3954,7 +3954,7 @@ Begin
 End;
 
 
-Procedure TAdvClassListIterator.First;
+Procedure TFslClassListIterator.First;
 Begin
   Inherited;
 
@@ -3962,7 +3962,7 @@ Begin
 End;  
 
 
-Procedure TAdvClassListIterator.Last;
+Procedure TFslClassListIterator.Last;
 Begin 
   Inherited;
 
@@ -3970,7 +3970,7 @@ Begin
 End;
 
 
-Procedure TAdvClassListIterator.Next;
+Procedure TFslClassListIterator.Next;
 Begin
   Inherited;
 
@@ -3978,7 +3978,7 @@ Begin
 End;
 
 
-Procedure TAdvClassListIterator.Back;
+Procedure TFslClassListIterator.Back;
 Begin
   Inherited;
 
@@ -3986,41 +3986,41 @@ Begin
 End;
 
 
-Function TAdvClassListIterator.Current : TClass;
+Function TFslClassListIterator.Current : TClass;
 Begin
   Result := FClassList[FIndex];
 End;
 
 
-Function TAdvClassListIterator.More : Boolean;
+Function TFslClassListIterator.More : Boolean;
 Begin
   Result := FClassList.ExistsByIndex(FIndex);
 End;
 
 
-Procedure TAdvClassListIterator.SetClassList(Const Value : TAdvClassList);
+Procedure TFslClassListIterator.SetClassList(Const Value : TFslClassList);
 Begin
   FClassList.Free;
   FClassList := Value;
 End;
 
-Procedure TAdvObjectClassHashEntry.Assign(oSource: TAdvObject);
+Procedure TFslObjectClassHashEntry.Assign(oSource: TFslObject);
 Begin 
   Inherited;
 
-  FData := TAdvObjectClassHashEntry(oSource).Data;
+  FData := TFslObjectClassHashEntry(oSource).Data;
 End;  
 
 
-Constructor TAdvObjectClassHashTableIterator.Create;
+Constructor TFslObjectClassHashTableIterator.Create;
 Begin 
   Inherited;
 
-  FInternal := TAdvStringHashTableIterator.Create;
+  FInternal := TFslStringHashTableIterator.Create;
 End;  
 
 
-Destructor TAdvObjectClassHashTableIterator.Destroy;
+Destructor TFslObjectClassHashTableIterator.Destroy;
 Begin 
   FInternal.Free;
 
@@ -4028,26 +4028,26 @@ Begin
 End;  
 
 
-Function TAdvObjectClassHashTable.ItemClass : TAdvHashEntryClass;
+Function TFslObjectClassHashTable.ItemClass : TFslHashEntryClass;
 Begin 
-  Result := TAdvObjectClassHashEntry;
+  Result := TFslObjectClassHashEntry;
 End;  
 
 
-Function TAdvObjectClassHashTable.Iterator : TAdvIterator;
+Function TFslObjectClassHashTable.Iterator : TFslIterator;
 Begin 
-  Result := TAdvObjectClassHashTableIterator.Create;
-  TAdvObjectClassHashTableIterator(Result).HashTable := TAdvObjectClassHashTable(Self.Link);
+  Result := TFslObjectClassHashTableIterator.Create;
+  TFslObjectClassHashTableIterator(Result).HashTable := TFslObjectClassHashTable(Self.Link);
 End;  
 
 
-Function TAdvObjectClassHashTableIterator.Current : TClass;
+Function TFslObjectClassHashTableIterator.Current : TClass;
 Begin 
-  Result := TAdvObjectClassHashEntry(FInternal.Current).Data;
+  Result := TFslObjectClassHashEntry(FInternal.Current).Data;
 End;
 
 
-Procedure TAdvObjectClassHashTableIterator.First;
+Procedure TFslObjectClassHashTableIterator.First;
 Begin 
   Inherited;
 
@@ -4055,7 +4055,7 @@ Begin
 End;  
 
 
-Procedure TAdvObjectClassHashTableIterator.Last;
+Procedure TFslObjectClassHashTableIterator.Last;
 Begin
   Inherited;
 
@@ -4063,7 +4063,7 @@ Begin
 End;  
 
 
-Procedure TAdvObjectClassHashTableIterator.Next;
+Procedure TFslObjectClassHashTableIterator.Next;
 Begin 
   Inherited;
 
@@ -4071,7 +4071,7 @@ Begin
 End;  
 
 
-Procedure TAdvObjectClassHashTableIterator.Back;
+Procedure TFslObjectClassHashTableIterator.Back;
 Begin
   Inherited;
 
@@ -4079,25 +4079,25 @@ Begin
 End;  
 
 
-Function TAdvObjectClassHashTableIterator.More : Boolean;
+Function TFslObjectClassHashTableIterator.More : Boolean;
 Begin
   Result := FInternal.More;
 End;  
 
 
-Function TAdvObjectClassHashTableIterator.GetHashTable : TAdvObjectClassHashTable;
+Function TFslObjectClassHashTableIterator.GetHashTable : TFslObjectClassHashTable;
 Begin 
-  Result := TAdvObjectClassHashTable(FInternal.HashTable);
+  Result := TFslObjectClassHashTable(FInternal.HashTable);
 End;
 
 
-Procedure TAdvObjectClassHashTableIterator.SetHashTable(Const Value: TAdvObjectClassHashTable);
+Procedure TFslObjectClassHashTableIterator.SetHashTable(Const Value: TFslObjectClassHashTable);
 Begin 
   FInternal.HashTable := Value;
 End;
 
 
-Constructor TAdvStringObjectMatch.Create;
+Constructor TFslStringObjectMatch.Create;
 Begin
   Inherited;
 
@@ -4105,20 +4105,20 @@ Begin
 End;
 
 
-Destructor TAdvStringObjectMatch.Destroy;
+Destructor TFslStringObjectMatch.Destroy;
 Begin
   Inherited;
 End;
 
 
-Procedure TAdvStringObjectMatch.AssignItem(oItems : TAdvItemList; iIndex: Integer);
+Procedure TFslStringObjectMatch.AssignItem(oItems : TFslItemList; iIndex: Integer);
 Begin
-  FMatchArray^[iIndex].Key := TAdvStringObjectMatch(oItems).FMatchArray^[iIndex].Key;
-  FMatchArray^[iIndex].Value := TAdvStringObjectMatch(oItems).FMatchArray^[iIndex].Value.Clone;
+  FMatchArray^[iIndex].Key := TFslStringObjectMatch(oItems).FMatchArray^[iIndex].Key;
+  FMatchArray^[iIndex].Value := TFslStringObjectMatch(oItems).FMatchArray^[iIndex].Value.Clone;
 End;
 
 
-Procedure TAdvStringObjectMatch.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslStringObjectMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin
   oFiler['Match'].DefineBegin;
 
@@ -4129,10 +4129,10 @@ Begin
 End;
 
 
-Procedure TAdvStringObjectMatch.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslStringObjectMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  sKey   : TAdvStringObjectMatchKey;
-  oValue : TAdvStringObjectMatchValue;
+  sKey   : TFslStringObjectMatchKey;
+  oValue : TFslStringObjectMatchValue;
 Begin 
   oValue := Nil;
   Try
@@ -4150,18 +4150,18 @@ Begin
 End;  
 
 
-Procedure TAdvStringObjectMatch.InternalEmpty(iIndex, iLength : Integer);
+Procedure TFslStringObjectMatch.InternalEmpty(iIndex, iLength : Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TAdvStringObjectMatchItem))), (iLength * SizeOf(TAdvStringObjectMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TFslStringObjectMatchItem))), (iLength * SizeOf(TFslStringObjectMatchItem)));
 End;  
 
 
-Procedure TAdvStringObjectMatch.InternalTruncate(iValue : Integer);
+Procedure TFslStringObjectMatch.InternalTruncate(iValue : Integer);
 Var
   iLoop : Integer;
-  oValue : TAdvObject;
+  oValue : TFslObject;
 Begin
   Inherited;
 
@@ -4178,35 +4178,35 @@ Begin
 End;
 
 
-Procedure TAdvStringObjectMatch.InternalResize(iValue : Integer);
+Procedure TFslStringObjectMatch.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
-  MemoryResize(FMatchArray, Capacity * SizeOf(TAdvStringObjectMatchItem), iValue * SizeOf(TAdvStringObjectMatchItem));
+  MemoryResize(FMatchArray, Capacity * SizeOf(TFslStringObjectMatchItem), iValue * SizeOf(TFslStringObjectMatchItem));
 End;
 
 
-Procedure TAdvStringObjectMatch.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslStringObjectMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TAdvStringObjectMatchItem));
+  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TFslStringObjectMatchItem));
 End;  
 
 
-Function TAdvStringObjectMatch.CompareByKey(pA, pB: Pointer): Integer;
+Function TFslStringObjectMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin
   Result := FCompareKey(PAdvStringObjectMatchItem(pA)^.Key, PAdvStringObjectMatchItem(pB)^.Key);
 End;
 
 
-Function TAdvStringObjectMatch.CompareByValue(pA, pB: Pointer): Integer;
+Function TFslStringObjectMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(Integer(PAdvStringObjectMatchItem(pA)^.Value), Integer(PAdvStringObjectMatchItem(pB)^.Value));
 End;
 
 
-Function TAdvStringObjectMatch.Find(Const aKey: TAdvStringObjectMatchKey; Const aValue: TAdvStringObjectMatchValue; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslStringObjectMatch.Find(Const aKey: TFslStringObjectMatchKey; Const aValue: TFslStringObjectMatchValue; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Var
-  aItem : TAdvStringObjectMatchItem;
+  aItem : TFslStringObjectMatchItem;
 Begin
   aItem.Key := aKey;
   aItem.Value := aValue;
@@ -4215,33 +4215,33 @@ Begin
 End;
 
 
-Function TAdvStringObjectMatch.FindByKey(Const aKey: TAdvStringObjectMatchKey; Out iIndex: Integer): Boolean;
+Function TFslStringObjectMatch.FindByKey(Const aKey: TFslStringObjectMatchKey; Out iIndex: Integer): Boolean;
 Begin
   Result := Find(aKey, Nil, iIndex, CompareByKey);
 End;
 
 
-Function TAdvStringObjectMatch.FindByValue(Const aValue: TAdvStringObjectMatchValue; Out iIndex: Integer) : Boolean;
+Function TFslStringObjectMatch.FindByValue(Const aValue: TFslStringObjectMatchValue; Out iIndex: Integer) : Boolean;
 Begin
   Result := Find('', aValue, iIndex, CompareByValue);
 End;
 
 
-Function TAdvStringObjectMatch.IndexByKey(Const aKey : TAdvStringObjectMatchKey) : Integer;
+Function TFslStringObjectMatch.IndexByKey(Const aKey : TFslStringObjectMatchKey) : Integer;
 Begin
   If Not Find(aKey, Nil, Result, CompareByKey) Then
     Result := -1;
 End;
 
 
-Function TAdvStringObjectMatch.IndexByValue(Const aValue : TAdvStringObjectMatchValue) : Integer;
+Function TFslStringObjectMatch.IndexByValue(Const aValue : TFslStringObjectMatchValue) : Integer;
 Begin
   If Not Find('', aValue, Result, CompareByValue) Then
     Result := -1;
 End;
 
 
-Function TAdvStringObjectMatch.Add(Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue) : Integer;
+Function TFslStringObjectMatch.Add(Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue) : Integer;
 Begin 
   Assert(ValidateItem('Add', aValue, 'aValue'));
 
@@ -4266,7 +4266,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringObjectMatch.Insert(iIndex : Integer; Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue);
+Procedure TFslStringObjectMatch.Insert(iIndex : Integer; Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue);
 Begin 
   Assert(ValidateItem('Insert', aValue, 'aValue'));
 
@@ -4277,7 +4277,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringObjectMatch.InternalInsert(iIndex : Integer);
+Procedure TFslStringObjectMatch.InternalInsert(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -4286,7 +4286,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringObjectMatch.InternalDelete(iIndex : Integer);
+Procedure TFslStringObjectMatch.InternalDelete(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -4296,9 +4296,9 @@ Begin
 End;  
 
 
-Procedure TAdvStringObjectMatch.InternalExchange(iA, iB: Integer);
+Procedure TFslStringObjectMatch.InternalExchange(iA, iB: Integer);
 Var
-  aTemp : TAdvStringObjectMatchItem;
+  aTemp : TFslStringObjectMatchItem;
   pA    : PAdvStringObjectMatchItem;
   pB    : PAdvStringObjectMatchItem;
 Begin 
@@ -4311,7 +4311,7 @@ Begin
 End;
 
 
-Function TAdvStringObjectMatch.GetItem(iIndex : Integer) : Pointer;
+Function TFslStringObjectMatch.GetItem(iIndex : Integer) : Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -4319,7 +4319,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringObjectMatch.SetItem(iIndex: Integer; pValue: Pointer);
+Procedure TFslStringObjectMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -4327,7 +4327,7 @@ Begin
 End;  
 
 
-Function TAdvStringObjectMatch.GetKeyByIndex(iIndex : Integer): TAdvStringObjectMatchKey;
+Function TFslStringObjectMatch.GetKeyByIndex(iIndex : Integer): TFslStringObjectMatchKey;
 Begin
   Assert(ValidateIndex('GetKeyByIndex', iIndex));
 
@@ -4335,7 +4335,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringObjectMatch.SetKeyByIndex(iIndex : Integer; Const aKey : TAdvStringObjectMatchKey);
+Procedure TFslStringObjectMatch.SetKeyByIndex(iIndex : Integer; Const aKey : TFslStringObjectMatchKey);
 Begin
   Assert(ValidateIndex('SetKeyByIndex', iIndex));
 
@@ -4343,7 +4343,7 @@ Begin
 End;  
 
 
-Function TAdvStringObjectMatch.GetValueByIndex(iIndex : Integer): TAdvStringObjectMatchValue;
+Function TFslStringObjectMatch.GetValueByIndex(iIndex : Integer): TFslStringObjectMatchValue;
 Begin
   Assert(ValidateIndex('GetValueByIndex', iIndex));
 
@@ -4351,7 +4351,7 @@ Begin
 End;
 
 
-Procedure TAdvStringObjectMatch.SetValueByIndex(iIndex : Integer; Const aValue: TAdvStringObjectMatchValue);
+Procedure TFslStringObjectMatch.SetValueByIndex(iIndex : Integer; Const aValue: TFslStringObjectMatchValue);
 Begin
   Assert(ValidateIndex('SetValueByIndex', iIndex));
   Assert(ValidateItem('SetValueByIndex', aValue, 'aValue'));
@@ -4361,7 +4361,7 @@ Begin
 End;
 
 
-Procedure TAdvStringObjectMatch.SetValueByKey(Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue);
+Procedure TFslStringObjectMatch.SetValueByKey(Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue);
 Var
   iIndex : Integer;
 Begin
@@ -4378,9 +4378,9 @@ Begin
 End;
 
 
-Function TAdvStringObjectMatch.GetSensitive : Boolean;
+Function TFslStringObjectMatch.GetSensitive : Boolean;
 Var
-  aCompare : TAdvStringCompareCallback;
+  aCompare : TFslStringCompareCallback;
 Begin
   aCompare := StringCompareSensitive;
 
@@ -4388,7 +4388,7 @@ Begin
 End;
 
 
-Procedure TAdvStringObjectMatch.SetSensitive(Const Value: Boolean);
+Procedure TFslStringObjectMatch.SetSensitive(Const Value: Boolean);
 Begin
   If Value Then
     FCompareKey := StringCompareSensitive
@@ -4397,7 +4397,7 @@ Begin
 End;
 
 
-Function TAdvStringObjectMatch.GetAsText: String;
+Function TFslStringObjectMatch.GetAsText: String;
 Var
   iItem, iSymbol : Integer;
   iLoop, iSize : Integer;
@@ -4430,7 +4430,7 @@ Begin
 End;
 
 
-Procedure TAdvStringObjectMatch.SetAsText(Const Value: String);
+Procedure TFslStringObjectMatch.SetAsText(Const Value: String);
 Var
   sTemp : String;
   iPos : Integer;
@@ -4455,26 +4455,26 @@ Begin
 End;
 
 
-Function TAdvStringObjectMatch.CapacityLimit : Integer;
+Function TFslStringObjectMatch.CapacityLimit : Integer;
 Begin 
-  Result := High(TAdvStringObjectMatchItemArray);
+  Result := High(TFslStringObjectMatchItemArray);
 End;  
 
 
-Procedure TAdvStringObjectMatch.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslStringObjectMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
   aCompare := CompareByKey;
   FCompareKey := StringCompareInsensitive;
 End;
 
 
-Function TAdvStringObjectMatch.ItemClass : TAdvObjectClass;
+Function TFslStringObjectMatch.ItemClass : TFslObjectClass;
 Begin 
-  Result := TAdvObject;
+  Result := TFslObject;
 End;  
 
 
-Function TAdvStringObjectMatch.ValidateIndex(Const sMethod : String; iIndex: Integer): Boolean;
+Function TFslStringObjectMatch.ValidateIndex(Const sMethod : String; iIndex: Integer): Boolean;
 Begin 
   Inherited ValidateIndex(sMethod, iIndex);
 
@@ -4484,7 +4484,7 @@ Begin
 End;  
 
 
-Function TAdvStringObjectMatch.ValidateItem(Const sMethod : String; oObject : TAdvObject; Const sObject : String) : Boolean;
+Function TFslStringObjectMatch.ValidateItem(Const sMethod : String; oObject : TFslObject; Const sObject : String) : Boolean;
 Begin 
   If Assigned(oObject) Then
     Invariants(sMethod, oObject, NominatedValueClass, sObject);
@@ -4493,43 +4493,43 @@ Begin
 End;  
 
 
-Function TAdvStringObjectMatch.ExistsByKey(Const aKey : TAdvStringObjectMatchKey) : Boolean;
+Function TFslStringObjectMatch.ExistsByKey(Const aKey : TFslStringObjectMatchKey) : Boolean;
 Begin
   Result := IndexByKey(aKey) >= 0;
 End;
 
 
-Function TAdvStringObjectMatch.ExistsByValue(Const aValue : TAdvStringObjectMatchValue) : Boolean;
+Function TFslStringObjectMatch.ExistsByValue(Const aValue : TFslStringObjectMatchValue) : Boolean;
 Begin
   Result := IndexByValue(aValue) >= 0;
 End;
 
 
-Procedure TAdvStringObjectMatch.SortedByKey;
+Procedure TFslStringObjectMatch.SortedByKey;
 Begin 
   SortedBy(CompareByKey);
 End;  
 
 
-Procedure TAdvStringObjectMatch.SortedByValue;
+Procedure TFslStringObjectMatch.SortedByValue;
 Begin
   SortedBy(CompareByValue);
 End;  
 
 
-Function TAdvStringObjectMatch.IsSortedByKey : Boolean;
+Function TFslStringObjectMatch.IsSortedByKey : Boolean;
 Begin 
   Result := IsSortedBy(CompareByKey);
 End;
 
 
-Function TAdvStringObjectMatch.IsSortedByValue : Boolean;
+Function TFslStringObjectMatch.IsSortedByValue : Boolean;
 Begin 
   Result := IsSortedBy(CompareByValue);
 End;  
 
 
-Function TAdvStringObjectMatch.GetKeyByValue(Const aValue: TAdvStringObjectMatchValue): TAdvStringObjectMatchKey;
+Function TFslStringObjectMatch.GetKeyByValue(Const aValue: TFslStringObjectMatchValue): TFslStringObjectMatchKey;
 Var
   iIndex : Integer;
 Begin
@@ -4550,7 +4550,7 @@ Begin
 End;
 
 
-Function TAdvStringObjectMatch.GetValueByKey(Const aKey: TAdvStringObjectMatchKey): TAdvStringObjectMatchValue;
+Function TFslStringObjectMatch.GetValueByKey(Const aKey: TFslStringObjectMatchKey): TFslStringObjectMatchValue;
 Var
   iIndex : Integer;
 Begin
@@ -4571,7 +4571,7 @@ Begin
 End;
 
 
-Procedure TAdvStringObjectMatch.AddAll(oSourceStringObjectMatch: TAdvStringObjectMatch);
+Procedure TFslStringObjectMatch.AddAll(oSourceStringObjectMatch: TFslStringObjectMatch);
 Var
   iIndex : Integer;
 Begin
@@ -4583,13 +4583,13 @@ Begin
 End;
 
 
-Function TAdvStringObjectMatch.Link: TAdvStringObjectMatch;
+Function TFslStringObjectMatch.Link: TFslStringObjectMatch;
 Begin
-  Result := TAdvStringObjectMatch(Inherited Link);
+  Result := TFslStringObjectMatch(Inherited Link);
 End;
 
 
-Function TAdvStringObjectMatch.GetMatchByIndex(iIndex: Integer): TAdvStringObjectMatchItem;
+Function TFslStringObjectMatch.GetMatchByIndex(iIndex: Integer): TFslStringObjectMatchItem;
 Begin
   Assert(ValidateIndex('GetMatchByIndex', iIndex));
 
@@ -4597,7 +4597,7 @@ Begin
 End;
 
 
-Function TAdvStringObjectMatch.GetMatch(Const aKey : TAdvStringObjectMatchKey): TAdvStringObjectMatchValue;
+Function TFslStringObjectMatch.GetMatch(Const aKey : TFslStringObjectMatchKey): TFslStringObjectMatchValue;
 Var
   iIndex : Integer;
 Begin
@@ -4615,7 +4615,7 @@ Begin
 End;
 
 
-Procedure TAdvStringObjectMatch.SetMatch(Const aKey : TAdvStringObjectMatchKey; Const aValue : TAdvStringObjectMatchValue);
+Procedure TFslStringObjectMatch.SetMatch(Const aKey : TFslStringObjectMatchKey; Const aValue : TFslStringObjectMatchValue);
 Var
   iIndex : Integer;
 Begin
@@ -4631,19 +4631,19 @@ Begin
     RaiseError('SetMatch', StringFormat('Unable to set the value for the specified key ''%s''.', [aKey]));
 End;
 
-Procedure TAdvStringObjectMatch.DeleteByKey(Const aKey: TAdvStringObjectMatchKey);
+Procedure TFslStringObjectMatch.DeleteByKey(Const aKey: TFslStringObjectMatchKey);
 Begin
   DeleteByIndex(IndexByKey(aKey));
 End;
 
 
-Procedure TAdvStringObjectMatch.DeleteByValue(Const aValue: TAdvStringObjectMatchValue);
+Procedure TFslStringObjectMatch.DeleteByValue(Const aValue: TFslStringObjectMatchValue);
 Begin
   DeleteByIndex(IndexByValue(aValue));
 End;
 
 
-Constructor TAdvStringMatch.Create;
+Constructor TFslStringMatch.Create;
 Begin
   Inherited;
 
@@ -4652,35 +4652,35 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.Assign(oObject: TAdvObject);
+Procedure TFslStringMatch.Assign(oObject: TFslObject);
 Begin 
   Inherited;
 
-  FDefaultValue := TAdvStringMatch(oObject).FDefaultValue;
-  FForced := TAdvStringMatch(oObject).FForced;
-  FSymbol := TAdvStringMatch(oObject).FSymbol;
+  FDefaultValue := TFslStringMatch(oObject).FDefaultValue;
+  FForced := TFslStringMatch(oObject).FForced;
+  FSymbol := TFslStringMatch(oObject).FSymbol;
 End;  
 
 
-Function TAdvStringMatch.Link : TAdvStringMatch;
+Function TFslStringMatch.Link : TFslStringMatch;
 Begin 
-  Result := TAdvStringMatch(Inherited Link);
+  Result := TFslStringMatch(Inherited Link);
 End;  
 
 
-Function TAdvStringMatch.Clone : TAdvStringMatch;
+Function TFslStringMatch.Clone : TFslStringMatch;
 Begin 
-  Result := TAdvStringMatch(Inherited Clone);
+  Result := TFslStringMatch(Inherited Clone);
 End;  
 
 
-Procedure TAdvStringMatch.DefaultCompare(Out aCompare : TAdvItemListCompare);
+Procedure TFslStringMatch.DefaultCompare(Out aCompare : TFslItemListCompare);
 Begin 
   aCompare := CompareByKey;
 End;  
 
 
-Function TAdvStringMatch.CompareMatch(pA, pB: Pointer): Integer;
+Function TFslStringMatch.CompareMatch(pA, pB: Pointer): Integer;
 Begin 
   Result := StringCompare(PAdvStringMatchItem(pA)^.Key, PAdvStringMatchItem(pB)^.Key);
 
@@ -4689,28 +4689,28 @@ Begin
 End;  
 
 
-Function TAdvStringMatch.CompareByKey(pA, pB: Pointer): Integer;
+Function TFslStringMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin 
   Result := StringCompareInsensitive(PAdvStringMatchItem(pA)^.Key, PAdvStringMatchItem(pB)^.Key);
 End;
 
 
-Function TAdvStringMatch.CompareByValue(pA, pB: Pointer): Integer;
+Function TFslStringMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
   Result := StringCompareInsensitive(PAdvStringMatchItem(pA)^.Value, PAdvStringMatchItem(pB)^.Value);
 End;
 
 
-Function TAdvStringMatch.CompareByCaseSensitiveKey(pA, pB: Pointer): Integer;
+Function TFslStringMatch.CompareByCaseSensitiveKey(pA, pB: Pointer): Integer;
 Begin
   Result := StringCompareSensitive(PAdvStringMatchItem(pA)^.Key, PAdvStringMatchItem(pB)^.Key);
 End;
 
 
-Procedure TAdvStringMatch.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslStringMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  sKey : TAdvStringMatchKey;
-  sValue : TAdvStringMatchValue;
+  sKey : TFslStringMatchKey;
+  sValue : TFslStringMatchValue;
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -4723,7 +4723,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslStringMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -4734,23 +4734,23 @@ Begin
 End;
 
 
-Procedure TAdvStringMatch.AssignItem(oItems : TAdvItemList; iIndex: Integer);
+Procedure TFslStringMatch.AssignItem(oItems : TFslItemList; iIndex: Integer);
 Begin 
   Inherited;
 
-  FMatchArray^[iIndex] := TAdvStringMatch(oItems).FMatchArray^[iIndex];
+  FMatchArray^[iIndex] := TFslStringMatch(oItems).FMatchArray^[iIndex];
 End;  
 
 
-Procedure TAdvStringMatch.InternalEmpty(iIndex, iLength : Integer);
+Procedure TFslStringMatch.InternalEmpty(iIndex, iLength : Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TAdvStringMatchItem))), (iLength * SizeOf(TAdvStringMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TFslStringMatchItem))), (iLength * SizeOf(TFslStringMatchItem)));
 End;  
 
 
-Procedure TAdvStringMatch.InternalTruncate(iValue : Integer);
+Procedure TFslStringMatch.InternalTruncate(iValue : Integer);
 Begin
   Inherited;
 
@@ -4760,61 +4760,61 @@ Begin
 End;
 
 
-Procedure TAdvStringMatch.InternalResize(iValue : Integer);
+Procedure TFslStringMatch.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
-  MemoryResize(FMatchArray, Capacity * SizeOf(TAdvStringMatchItem), iValue * SizeOf(TAdvStringMatchItem));
+  MemoryResize(FMatchArray, Capacity * SizeOf(TFslStringMatchItem), iValue * SizeOf(TFslStringMatchItem));
 End;
 
 
-Procedure TAdvStringMatch.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslStringMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TAdvStringMatchItem));
+  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TFslStringMatchItem));
 End;  
 
 
-Function TAdvStringMatch.IndexByKey(Const aKey: TAdvStringMatchKey): Integer;
+Function TFslStringMatch.IndexByKey(Const aKey: TFslStringMatchKey): Integer;
 Begin
   If Not Find(aKey, '', Result, CompareByKey) Then
     Result := -1;
 End;
 
 
-Function TAdvStringMatch.IndexByCaseSensitiveKey(Const aKey: TAdvStringMatchKey): Integer;
+Function TFslStringMatch.IndexByCaseSensitiveKey(Const aKey: TFslStringMatchKey): Integer;
 Begin
   If Not Find(aKey, '', Result, CompareByCaseSensitiveKey) Then
     Result := -1;
 End;  
 
 
-Function TAdvStringMatch.IndexByValue(Const aValue: TAdvStringMatchValue): Integer;
+Function TFslStringMatch.IndexByValue(Const aValue: TFslStringMatchValue): Integer;
 Begin 
   If Not Find('', aValue, Result, CompareByValue) Then
     Result := -1;
 End;
 
 
-Function TAdvStringMatch.IndexOf(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue): Integer;
+Function TFslStringMatch.IndexOf(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue): Integer;
 Begin
   If Not Find(aKey, aValue, Result, CompareMatch) Then
     Result := -1;
 End;
 
 
-Function TAdvStringMatch.ExistsByKeyAndValue(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue) : Boolean;
+Function TFslStringMatch.ExistsByKeyAndValue(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue) : Boolean;
 Begin
   Result := IndexOf(aKey, aValue) >= 0;
 End;
 
 
-Function TAdvStringMatch.ExistsByKey(Const aKey: TAdvStringMatchKey): Boolean;
+Function TFslStringMatch.ExistsByKey(Const aKey: TFslStringMatchKey): Boolean;
 Begin
   Result := IndexByKey(aKey) >= 0;
 End;
 
 
-Procedure TAdvStringMatch.DeleteByKey(Const aKey : TAdvStringMatchKey);
+Procedure TFslStringMatch.DeleteByKey(Const aKey : TFslStringMatchKey);
 Var
   iIndex : Integer;
 Begin
@@ -4827,13 +4827,13 @@ End;
 
 
 
-Function TAdvStringMatch.ExistsByValue(Const aValue: TAdvStringMatchValue): Boolean;
+Function TFslStringMatch.ExistsByValue(Const aValue: TFslStringMatchValue): Boolean;
 Begin
   Result := IndexByValue(aValue) >= 0;
 End;
 
 
-Function TAdvStringMatch.Add(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue) : Integer;
+Function TFslStringMatch.Add(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue) : Integer;
 Begin
   Result := -1;
 
@@ -4856,7 +4856,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.Insert(iIndex : Integer; Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue);
+Procedure TFslStringMatch.Insert(iIndex : Integer; Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue);
 Begin 
   InternalInsert(iIndex);
 
@@ -4865,7 +4865,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.InternalInsert(iIndex : Integer);
+Procedure TFslStringMatch.InternalInsert(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -4874,7 +4874,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.InternalDelete(iIndex : Integer);
+Procedure TFslStringMatch.InternalDelete(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -4882,9 +4882,9 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.InternalExchange(iA, iB: Integer);
+Procedure TFslStringMatch.InternalExchange(iA, iB: Integer);
 Var
-  aTemp : TAdvStringMatchItem;
+  aTemp : TFslStringMatchItem;
   pA    : PAdvStringMatchItem;
   pB    : PAdvStringMatchItem;
 Begin 
@@ -4897,7 +4897,7 @@ Begin
 End;  
 
 
-Function TAdvStringMatch.GetItem(iIndex : Integer) : Pointer;
+Function TFslStringMatch.GetItem(iIndex : Integer) : Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -4905,7 +4905,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.SetItem(iIndex: Integer; pValue: Pointer);
+Procedure TFslStringMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -4913,7 +4913,7 @@ Begin
 End;  
 
 
-Function TAdvStringMatch.GetKeyByIndex(iIndex : Integer): TAdvStringMatchKey;
+Function TFslStringMatch.GetKeyByIndex(iIndex : Integer): TFslStringMatchKey;
 Begin 
   Assert(ValidateIndex('GetKeyByIndex', iIndex));
 
@@ -4921,7 +4921,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.SetKeyByIndex(iIndex : Integer; Const aKey : TAdvStringMatchKey);
+Procedure TFslStringMatch.SetKeyByIndex(iIndex : Integer; Const aKey : TFslStringMatchKey);
 Begin 
   Assert(ValidateIndex('SetKeyByIndex', iIndex));
 
@@ -4929,7 +4929,7 @@ Begin
 End;  
 
 
-Function TAdvStringMatch.GetValueByIndex(iIndex : Integer): TAdvStringMatchValue;
+Function TFslStringMatch.GetValueByIndex(iIndex : Integer): TFslStringMatchValue;
 Begin 
   Assert(ValidateIndex('GetValueByIndex', iIndex));
 
@@ -4937,7 +4937,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.SetValueByIndex(iIndex : Integer; Const aValue: TAdvStringMatchValue);
+Procedure TFslStringMatch.SetValueByIndex(iIndex : Integer; Const aValue: TFslStringMatchValue);
 Begin 
   Assert(ValidateIndex('SetValueByIndex', iIndex));
 
@@ -4945,7 +4945,7 @@ Begin
 End;  
 
 
-Function TAdvStringMatch.GetValueByKey(Const aKey : TAdvStringMatchKey): TAdvStringMatchValue;
+Function TFslStringMatch.GetValueByKey(Const aKey : TFslStringMatchKey): TFslStringMatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -4963,7 +4963,7 @@ Begin
 End;
 
 
-Procedure TAdvStringMatch.SetValueByKey(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue);
+Procedure TFslStringMatch.SetValueByKey(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue);
 Var
   iIndex : Integer;
 Begin 
@@ -4978,7 +4978,7 @@ Begin
 End;  
 
 
-Function TAdvStringMatch.GetAsText : String;
+Function TFslStringMatch.GetAsText : String;
 Var
   iLoop : Integer;
 Begin 
@@ -4988,7 +4988,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringMatch.SetAsText(Const sValue: String);
+Procedure TFslStringMatch.SetAsText(Const sValue: String);
 Var
   sTemp   : String;
   sItem   : String;
@@ -5027,15 +5027,15 @@ Begin
 End;
 
 
-Function TAdvStringMatch.CapacityLimit : Integer;
+Function TFslStringMatch.CapacityLimit : Integer;
 Begin 
-  Result := High(TAdvStringMatchItems);
+  Result := High(TFslStringMatchItems);
 End;  
 
 
-Function TAdvStringMatch.Find(Const aKey : TAdvStringMatchKey; Const aValue: TAdvStringMatchValue; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslStringMatch.Find(Const aKey : TFslStringMatchKey; Const aValue: TFslStringMatchValue; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Var
-  aItem : TAdvStringMatchItem;
+  aItem : TFslStringMatchItem;
 Begin 
   aItem.Key := aKey;
   aItem.Value := aValue;
@@ -5044,13 +5044,13 @@ Begin
 End;  
 
 
-Function TAdvStringMatch.DefaultValue(Const aKey: TAdvStringMatchKey): TAdvStringMatchValue;
+Function TFslStringMatch.DefaultValue(Const aKey: TFslStringMatchKey): TFslStringMatchValue;
 Begin 
   Result := FDefaultValue;
 End;  
 
 
-Function TAdvStringMatch.ForceByKey(Const aKey: TAdvStringMatchKey): TAdvStringMatchValue;
+Function TFslStringMatch.ForceByKey(Const aKey: TFslStringMatchKey): TFslStringMatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -5061,7 +5061,7 @@ Begin
 End;  
 
 
-Function TAdvStringMatch.EqualTo(oMatch: TAdvStringMatch): Boolean;
+Function TFslStringMatch.EqualTo(oMatch: TFslStringMatch): Boolean;
 Var
   iLoop : Integer;
   iIndex : Integer;
@@ -5087,43 +5087,43 @@ Begin
 End;
 
 
-Procedure TAdvStringMatch.SortedByKey;
+Procedure TFslStringMatch.SortedByKey;
 Begin
   SortedBy(CompareByKey);
 End;
 
 
-Procedure TAdvStringMatch.SortedByCaseSensitiveKey;
+Procedure TFslStringMatch.SortedByCaseSensitiveKey;
 Begin
   SortedBy(CompareByCaseSensitiveKey);
 End;
 
 
-Procedure TAdvStringMatch.SortedByValue;
+Procedure TFslStringMatch.SortedByValue;
 Begin
   SortedBy(CompareByValue);
 End;
 
 
-Function TAdvStringMatch.GetMatchByIndex(Const iIndex : Integer) : TAdvStringMatchItem;
+Function TFslStringMatch.GetMatchByIndex(Const iIndex : Integer) : TFslStringMatchItem;
 Begin
   Result := PAdvStringMatchItem(Inherited ItemByIndex[iIndex])^;
 End;
 
 
-Procedure TAdvStringMatch.SetMatchByIndex(Const iIndex : Integer; Const Value : TAdvStringMatchItem);
+Procedure TFslStringMatch.SetMatchByIndex(Const iIndex : Integer; Const Value : TFslStringMatchItem);
 Begin
   PAdvStringMatchItem(Inherited ItemByIndex[iIndex])^ := Value;
 End;
 
 
-Function TAdvStringMatch.ErrorClass: EAdvExceptionClass;
+Function TFslStringMatch.ErrorClass: EAdvExceptionClass;
 Begin
   Result := EAdvStringMatch;
 End;
 
 
-Procedure TAdvStringMatch.AddAll(oStringMatch: TAdvStringMatch);
+Procedure TFslStringMatch.AddAll(oStringMatch: TFslStringMatch);
 Var
   iIndex : Integer;
 Begin
@@ -5136,7 +5136,7 @@ Begin
 End;
 
 
-Function TAdvStringMatch.GetMatch(Const aKey : TAdvStringMatchKey): TAdvStringMatchValue;
+Function TFslStringMatch.GetMatch(Const aKey : TFslStringMatchKey): TFslStringMatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -5154,7 +5154,7 @@ Begin
 End;
 
 
-Procedure TAdvStringMatch.SetMatch(Const aKey : TAdvStringMatchKey; Const aValue : TAdvStringMatchValue);
+Procedure TFslStringMatch.SetMatch(Const aKey : TFslStringMatchKey; Const aValue : TFslStringMatchValue);
 Var
   iIndex : Integer;
 Begin
@@ -5170,7 +5170,7 @@ End;
 
 
 
-Constructor TAdvStringList.Create;
+Constructor TFslStringList.Create;
 Begin
   Inherited;
 
@@ -5178,27 +5178,27 @@ Begin
 End;
 
 
-Function TAdvStringList.Clone: TAdvStringList;
+Function TFslStringList.Clone: TFslStringList;
 Begin
-  Result := TAdvStringList(Inherited Clone);
+  Result := TFslStringList(Inherited Clone);
 End;
 
 
-Function TAdvStringList.Link: TAdvStringList;
+Function TFslStringList.Link: TFslStringList;
 Begin
-  Result := TAdvStringList(Inherited Link);
+  Result := TFslStringList(Inherited Link);
 End;
 
 
-Procedure TAdvStringList.SaveItem(Filer: TAdvFiler; iIndex: Integer);
+Procedure TFslStringList.SaveItem(Filer: TFslFiler; iIndex: Integer);
 Begin
   Filer['String'].DefineString(FStringArray^[iIndex]);
 End;
 
 
-Procedure TAdvStringList.LoadItem(Filer: TAdvFiler; iIndex: Integer);
+Procedure TFslStringList.LoadItem(Filer: TFslFiler; iIndex: Integer);
 Var
-  sValue : TAdvStringListItem;
+  sValue : TFslStringListItem;
 Begin
   Filer['String'].DefineString(sValue);
 
@@ -5206,27 +5206,27 @@ Begin
 End;
 
 
-Procedure TAdvStringList.AssignItem(Items: TAdvItemList; iIndex: Integer);
+Procedure TFslStringList.AssignItem(Items: TFslItemList; iIndex: Integer);
 Begin
-  FStringArray^[iIndex] := TAdvStringList(Items).FStringArray^[iIndex];
+  FStringArray^[iIndex] := TFslStringList(Items).FStringArray^[iIndex];
 End;
 
 
-Function TAdvStringList.Find(Const sValue : TAdvStringListItem; Out iIndex : Integer; aCompare : TAdvItemListCompare): Boolean;
+Function TFslStringList.Find(Const sValue : TFslStringListItem; Out iIndex : Integer; aCompare : TFslItemListCompare): Boolean;
 Begin
   Result := Inherited Find(@sValue, iIndex, aCompare);
 End;
 
 
-Procedure TAdvStringList.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslStringList.InternalEmpty(iIndex, iLength: Integer);
 Begin
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FStringArray) + NativeUInt(iIndex * SizeOf(TAdvStringListItem))), (iLength * SizeOf(TAdvStringListItem)));
+  MemoryZero(Pointer(NativeUInt(FStringArray) + NativeUInt(iIndex * SizeOf(TFslStringListItem))), (iLength * SizeOf(TFslStringListItem)));
 End;
 
 
-Procedure TAdvStringList.InternalTruncate(iValue : Integer);
+Procedure TFslStringList.InternalTruncate(iValue : Integer);
 Begin
   Inherited;
 
@@ -5236,36 +5236,36 @@ Begin
 End;
 
 
-Procedure TAdvStringList.InternalResize(iValue : Integer);
+Procedure TFslStringList.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
-  MemoryResize(FStringArray, Capacity * SizeOf(TAdvStringListItem), iValue * SizeOf(TAdvStringListItem));
+  MemoryResize(FStringArray, Capacity * SizeOf(TFslStringListItem), iValue * SizeOf(TFslStringListItem));
 End;
 
 
-Procedure TAdvStringList.InternalCopy(iSource, iTarget, iCount : Integer);
+Procedure TFslStringList.InternalCopy(iSource, iTarget, iCount : Integer);
 Begin
   Inherited;
 
-  MemoryMove(@FStringArray^[iSource], @FStringArray^[iTarget], iCount * SizeOf(TAdvStringListItem));
+  MemoryMove(@FStringArray^[iSource], @FStringArray^[iTarget], iCount * SizeOf(TFslStringListItem));
 End;
 
 
-Function TAdvStringList.IndexByValue(Const sValue : TAdvStringListItem): Integer;
+Function TFslStringList.IndexByValue(Const sValue : TFslStringListItem): Integer;
 Begin
   If Not Find(sValue, Result) Then
     Result := -1;
 End;
 
 
-Function TAdvStringList.ExistsByValue(Const sValue : TAdvStringListItem): Boolean;
+Function TFslStringList.ExistsByValue(Const sValue : TFslStringListItem): Boolean;
 Begin
   Result := ExistsByIndex(IndexByValue(sValue));
 End;
 
 
-Procedure TAdvStringList.AddAll(oStrings: TAdvStringList);
+Procedure TFslStringList.AddAll(oStrings: TFslStringList);
 Var
   iLoop : Integer;
 Begin
@@ -5274,7 +5274,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.AddAllStringArray(Const aValues : Array Of String);
+Procedure TFslStringList.AddAllStringArray(Const aValues : Array Of String);
 Var
   iLoop : Integer;
 Begin
@@ -5283,7 +5283,7 @@ Begin
 End;
 
 
-Function TAdvStringList.Add(Const sValue : TAdvStringListItem) : Integer;
+Function TFslStringList.Add(Const sValue : TFslStringListItem) : Integer;
 Begin
   Result := -1;
 
@@ -5304,7 +5304,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.InternalInsert(iIndex : Integer);
+Procedure TFslStringList.InternalInsert(iIndex : Integer);
 Begin
   Inherited;
 
@@ -5312,7 +5312,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.Insert(iIndex : Integer; Const sValue : TAdvStringListItem);
+Procedure TFslStringList.Insert(iIndex : Integer; Const sValue : TFslStringListItem);
 Begin
   InternalInsert(iIndex);
 
@@ -5320,7 +5320,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.InternalDelete(iIndex: Integer);
+Procedure TFslStringList.InternalDelete(iIndex: Integer);
 Begin
   Inherited;
 
@@ -5328,7 +5328,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.DeleteByValue(Const sValue : TAdvStringListItem);
+Procedure TFslStringList.DeleteByValue(Const sValue : TFslStringListItem);
 Var
   iIndex : Integer;
 Begin
@@ -5339,7 +5339,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.InternalExchange(iA, iB : Integer);
+Procedure TFslStringList.InternalExchange(iA, iB : Integer);
 Var
   iTemp : Integer;
   pA  : Pointer;
@@ -5354,7 +5354,7 @@ Begin
 End;
 
 
-Function TAdvStringList.GetItem(iIndex : Integer) : Pointer;
+Function TFslStringList.GetItem(iIndex : Integer) : Pointer;
 Begin
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -5362,7 +5362,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.SetItem(iIndex : Integer; pValue : Pointer);
+Procedure TFslStringList.SetItem(iIndex : Integer; pValue : Pointer);
 Begin
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -5370,7 +5370,7 @@ Begin
 End;
 
 
-Function TAdvStringList.GetStringByIndex(iIndex : Integer) : String;
+Function TFslStringList.GetStringByIndex(iIndex : Integer) : String;
 Begin
   Assert(ValidateIndex('GetStringByIndex', iIndex));
 
@@ -5378,7 +5378,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.SetStringByIndex(iIndex : Integer; Const sValue : TAdvStringListItem);
+Procedure TFslStringList.SetStringByIndex(iIndex : Integer; Const sValue : TFslStringListItem);
 Begin
   Assert(ValidateIndex('SetStringByIndex', iIndex));
 
@@ -5386,7 +5386,7 @@ Begin
 End;
 
 
-Function TAdvStringList.GetAsText : String;
+Function TFslStringList.GetAsText : String;
 Var
   iItem, iSymbol : Integer;
   iLoop, iSize : Integer;
@@ -5428,7 +5428,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.SetAsText(Const sValue: String);
+Procedure TFslStringList.SetAsText(Const sValue: String);
 Var
   sTemp : String;
   iPos : Integer;
@@ -5453,7 +5453,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringList.LoadFromText(Const sFilename: String);
+Procedure TFslStringList.LoadFromText(Const sFilename: String);
 Var
   aFile : TextFile;
   sTemp : String;
@@ -5473,7 +5473,7 @@ Begin
 End;
 
 
-Procedure TAdvStringList.SaveToText(Const sFilename : String);
+Procedure TFslStringList.SaveToText(Const sFilename : String);
 Var
   aFile : TextFile;
   iLoop : Integer;
@@ -5490,37 +5490,37 @@ Begin
 End;
 
 
-Function TAdvStringList.CapacityLimit : Integer;
+Function TFslStringList.CapacityLimit : Integer;
 Begin
-  Result := High(TAdvStringListItemArray);
+  Result := High(TFslStringListItemArray);
 End;
 
 
-Function TAdvStringList.CompareInsensitive(pA, pB: Pointer): Integer;
+Function TFslStringList.CompareInsensitive(pA, pB: Pointer): Integer;
 Begin
   Result := StringCompareInsensitive(String(pA^), String(pB^));
 End;
 
 
-Function TAdvStringList.CompareSensitive(pA, pB: Pointer): Integer;
+Function TFslStringList.CompareSensitive(pA, pB: Pointer): Integer;
 Begin
   Result := StringCompareSensitive(String(pA^), String(pB^));
 End;
 
 
-Procedure TAdvStringList.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslStringList.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin
   aCompare := CompareInsensitive;
 End;
 
 
-Function TAdvStringList.GetSensitive : Boolean;
+Function TFslStringList.GetSensitive : Boolean;
 Begin
   Result := IsComparedBy(CompareSensitive);
 End;
 
 
-Procedure TAdvStringList.SetSensitive(Const bValue: Boolean);
+Procedure TFslStringList.SetSensitive(Const bValue: Boolean);
 Begin
   If bValue Then
     ComparedBy(CompareSensitive)
@@ -5529,14 +5529,14 @@ Begin
 End;
 
 
-Function TAdvStringList.Iterator : TAdvIterator;
+Function TFslStringList.Iterator : TFslIterator;
 Begin
-  Result := TAdvStringListIterator.Create;
-  TAdvStringListIterator(Result).StringList := TAdvStringList(Self.Link);
+  Result := TFslStringListIterator.Create;
+  TFslStringListIterator(Result).StringList := TFslStringList(Self.Link);
 End;
 
 
-Constructor TAdvStringListIterator.Create;
+Constructor TFslStringListIterator.Create;
 Begin
   Inherited;
 
@@ -5544,7 +5544,7 @@ Begin
 End;
 
 
-Destructor TAdvStringListIterator.Destroy;
+Destructor TFslStringListIterator.Destroy;
 Begin
   FStringList.Free;
 
@@ -5552,7 +5552,7 @@ Begin
 End;
 
 
-Procedure TAdvStringListIterator.First;
+Procedure TFslStringListIterator.First;
 Begin
   Inherited;
 
@@ -5560,7 +5560,7 @@ Begin
 End;
 
 
-Procedure TAdvStringListIterator.Last;
+Procedure TFslStringListIterator.Last;
 Begin
   Inherited;
 
@@ -5568,7 +5568,7 @@ Begin
 End;
 
 
-Procedure TAdvStringListIterator.Next;
+Procedure TFslStringListIterator.Next;
 Begin
   Inherited;
 
@@ -5576,7 +5576,7 @@ Begin
 End;
 
 
-Procedure TAdvStringListIterator.Back;
+Procedure TFslStringListIterator.Back;
 Begin
   Inherited;
 
@@ -5584,34 +5584,34 @@ Begin
 End;
 
 
-Function TAdvStringListIterator.Current : String;
+Function TFslStringListIterator.Current : String;
 Begin
   Result := FStringList[FIndex];
 End;
 
 
-Function TAdvStringListIterator.More : Boolean;
+Function TFslStringListIterator.More : Boolean;
 Begin
   Result := FStringList.ExistsByIndex(FIndex);
 End;
 
 
-Procedure TAdvStringListIterator.SetStringList(Const Value : TAdvStringList);
+Procedure TFslStringListIterator.SetStringList(Const Value : TFslStringList);
 Begin
   FStringList.Free;
   FStringList := Value;
 End;
 
 
-Function TAdvStringList.GetAsCSV : String;
+Function TFslStringList.GetAsCSV : String;
 Var
-  oStream : TAdvStringStream;
-  oFormatter : TAdvCSVFormatter;
+  oStream : TFslStringStream;
+  oFormatter : TFslCSVFormatter;
   chars: SysUtils.TCharArray;
 Begin
-  oStream := TAdvStringStream.Create;
+  oStream := TFslStringStream.Create;
   Try
-    oFormatter := TAdvCSVFormatter.Create;
+    oFormatter := TFslCSVFormatter.Create;
     Try
       oFormatter.Stream := oStream.Link;
 
@@ -5628,15 +5628,15 @@ Begin
 End;
 
 
-Procedure TAdvStringList.SetAsCSV(Const sValue: String);
+Procedure TFslStringList.SetAsCSV(Const sValue: String);
 Var
-  oStream : TAdvStringStream;
-  oExtractor : TAdvCSVExtractor;
+  oStream : TFslStringStream;
+  oExtractor : TFslCSVExtractor;
 Begin
-  oStream := TAdvStringStream.Create;
+  oStream := TFslStringStream.Create;
   Try
     oStream.Bytes := TEncoding.UTF8.GetBytes(sValue);
-    oExtractor := TAdvCSVExtractor.Create(oStream.Link, TEncoding.UTF8);
+    oExtractor := TFslCSVExtractor.Create(oStream.Link, TEncoding.UTF8);
     Try
       oExtractor.ConsumeEntries(Self);
     Finally
@@ -5648,11 +5648,11 @@ Begin
 End;
 
 
-Function TAdvStringList.Compare(oStrings : TAdvStringList) : Integer;
+Function TFslStringList.Compare(oStrings : TFslStringList) : Integer;
 Var
   iLoop : Integer;
 Begin
-  Assert(Invariants('Compare', oStrings, TAdvStringList, 'oStrings'));
+  Assert(Invariants('Compare', oStrings, TFslStringList, 'oStrings'));
 
   Result := IntegerCompare(Count, oStrings.Count);
   iLoop := 0;
@@ -5666,13 +5666,13 @@ Begin
 End; 
 
 
-Function TAdvStringList.Equals(oStrings : TAdvStringList) : Boolean;
+Function TFslStringList.Equals(oStrings : TFslStringList) : Boolean;
 Begin
   Result := Compare(oStrings) = 0;
 End;
 
 
-Function TAdvStringList.ExistsAny(oStrings : TAdvStringList) : Boolean;
+Function TFslStringList.ExistsAny(oStrings : TFslStringList) : Boolean;
 Var
   iLoop : Integer;
 Begin
@@ -5689,34 +5689,34 @@ Begin
 End;
 
 
-procedure TAdvStringList.SetItems(iIndex: integer; sValue: String);
+procedure TFslStringList.SetItems(iIndex: integer; sValue: String);
 begin
   StringByIndex[iIndex] := sValue;
 end;
 
-function TAdvStringList.GetItems(iIndex: integer): String;
+function TFslStringList.GetItems(iIndex: integer): String;
 begin
   result := StringByIndex[iIndex];
 end;
 
-procedure TAdvStringList.delete(iIndex: integer);
+procedure TFslStringList.delete(iIndex: integer);
 begin
   DeleteByIndex(iIndex);
 end;
 
-procedure TAdvStringList.populate(iCount: integer);
+procedure TFslStringList.populate(iCount: integer);
 begin
   while Count < iCount Do
     Add('');
 end;
 
-function TAdvStringList.IndexOf(value: String): Integer;
+function TFslStringList.IndexOf(value: String): Integer;
 begin
   result := IndexByValue(value);
 end;
 
 
-Constructor TAdvStringLargeIntegerMatch.Create;
+Constructor TFslStringLargeIntegerMatch.Create;
 Begin
   Inherited;
 
@@ -5724,37 +5724,37 @@ Begin
 End;
 
 
-Destructor TAdvStringLargeIntegerMatch.Destroy;
+Destructor TFslStringLargeIntegerMatch.Destroy;
 Begin
   Inherited;
 End;
 
 
-Function TAdvStringLargeIntegerMatch.ErrorClass: EAdvExceptionClass;
+Function TFslStringLargeIntegerMatch.ErrorClass: EAdvExceptionClass;
 Begin
   Result := EAdvStringLargeIntegerMatch;
 End;
 
 
-Function TAdvStringLargeIntegerMatch.Clone: TAdvStringLargeIntegerMatch;
+Function TFslStringLargeIntegerMatch.Clone: TFslStringLargeIntegerMatch;
 Begin
-  Result := TAdvStringLargeIntegerMatch(Inherited Clone);
+  Result := TFslStringLargeIntegerMatch(Inherited Clone);
 End;
 
 
-Function TAdvStringLargeIntegerMatch.Link: TAdvStringLargeIntegerMatch;
+Function TFslStringLargeIntegerMatch.Link: TFslStringLargeIntegerMatch;
 Begin
-  Result := TAdvStringLargeIntegerMatch(Inherited Link);
+  Result := TFslStringLargeIntegerMatch(Inherited Link);
 End;
 
 
-Procedure TAdvStringLargeIntegerMatch.AssignItem(oItems: TAdvItemList; iIndex: Integer);
+Procedure TFslStringLargeIntegerMatch.AssignItem(oItems: TFslItemList; iIndex: Integer);
 Begin
-  FMatchArray^[iIndex] := TAdvStringLargeIntegerMatch(oItems).FMatchArray^[iIndex];
+  FMatchArray^[iIndex] := TFslStringLargeIntegerMatch(oItems).FMatchArray^[iIndex];
 End;
 
 
-Procedure TAdvStringLargeIntegerMatch.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslStringLargeIntegerMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -5765,10 +5765,10 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslStringLargeIntegerMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  sKey : TAdvStringLargeIntegerMatchKey;
-  iValue : TAdvStringLargeIntegerMatchValue;
+  sKey : TFslStringLargeIntegerMatchKey;
+  iValue : TFslStringLargeIntegerMatchValue;
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -5781,15 +5781,15 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslStringLargeIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
 Begin 
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TAdvStringLargeIntegerMatchItem))), (iLength * SizeOf(TAdvStringLargeIntegerMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TFslStringLargeIntegerMatchItem))), (iLength * SizeOf(TFslStringLargeIntegerMatchItem)));
 End;
 
 
-Procedure TAdvStringLargeIntegerMatch.InternalTruncate(iValue: Integer);
+Procedure TFslStringLargeIntegerMatch.InternalTruncate(iValue: Integer);
 Begin
   Inherited;
 
@@ -5799,42 +5799,42 @@ Begin
 End;
 
 
-Procedure TAdvStringLargeIntegerMatch.InternalResize(iValue : Integer);
+Procedure TFslStringLargeIntegerMatch.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
-  MemoryResize(FMatchArray, Capacity * SizeOf(TAdvStringLargeIntegerMatchItem), iValue * SizeOf(TAdvStringLargeIntegerMatchItem));
+  MemoryResize(FMatchArray, Capacity * SizeOf(TFslStringLargeIntegerMatchItem), iValue * SizeOf(TFslStringLargeIntegerMatchItem));
 End;
 
 
-Procedure TAdvStringLargeIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslStringLargeIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TAdvStringLargeIntegerMatchItem));
+  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TFslStringLargeIntegerMatchItem));
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.CompareKey(pA, pB: Pointer): Integer;
+Function TFslStringLargeIntegerMatch.CompareKey(pA, pB: Pointer): Integer;
 Begin 
   Result := FCompareKey(PAdvStringLargeIntegerMatchItem(pA)^.Key, PAdvStringLargeIntegerMatchItem(pB)^.Key);
 End;
 
 
-Function TAdvStringLargeIntegerMatch.CompareValue(pA, pB: Pointer): Integer;
+Function TFslStringLargeIntegerMatch.CompareValue(pA, pB: Pointer): Integer;
 Begin 
   Result := IntegerCompare(PAdvStringLargeIntegerMatchItem(pA)^.Value, PAdvStringLargeIntegerMatchItem(pB)^.Value);
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslStringLargeIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareKey;
   FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareInsensitive;
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.Find(Const aKey: TAdvStringLargeIntegerMatchKey; Const aValue: TAdvStringLargeIntegerMatchValue; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslStringLargeIntegerMatch.Find(Const aKey: TFslStringLargeIntegerMatchKey; Const aValue: TFslStringLargeIntegerMatchValue; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Var
-  aItem : TAdvStringLargeIntegerMatchItem;
+  aItem : TFslStringLargeIntegerMatchItem;
 Begin 
   aItem.Key := aKey;
   aItem.Value := aValue;
@@ -5843,33 +5843,33 @@ Begin
 End;
 
 
-Function TAdvStringLargeIntegerMatch.IndexByKey(Const aKey : TAdvStringLargeIntegerMatchKey) : Integer;
+Function TFslStringLargeIntegerMatch.IndexByKey(Const aKey : TFslStringLargeIntegerMatchKey) : Integer;
 Begin 
   If Not Find(aKey, 0, Result, {$IFDEF FPC}@{$ENDIF}CompareKey) Then
     Result := -1;
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.ExistsByKey(Const aKey : TAdvStringLargeIntegerMatchKey) : Boolean;
+Function TFslStringLargeIntegerMatch.ExistsByKey(Const aKey : TFslStringLargeIntegerMatchKey) : Boolean;
 Begin 
   Result := ExistsByIndex(IndexByKey(aKey));
 End;
 
 
-Function TAdvStringLargeIntegerMatch.IndexByValue(Const aValue : TAdvStringLargeIntegerMatchValue) : Integer;
+Function TFslStringLargeIntegerMatch.IndexByValue(Const aValue : TFslStringLargeIntegerMatchValue) : Integer;
 Begin 
   If Not Find('', aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareValue) Then
     Result := -1;
 End;
 
 
-Function TAdvStringLargeIntegerMatch.ExistsByValue(Const aValue : TAdvStringLargeIntegerMatchValue) : Boolean;
+Function TFslStringLargeIntegerMatch.ExistsByValue(Const aValue : TFslStringLargeIntegerMatchValue) : Boolean;
 Begin 
   Result := ExistsByIndex(IndexByValue(aValue));
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.Add(Const aKey : TAdvStringLargeIntegerMatchKey; Const aValue : TAdvStringLargeIntegerMatchValue) : Integer;
+Function TFslStringLargeIntegerMatch.Add(Const aKey : TFslStringLargeIntegerMatchKey; Const aValue : TFslStringLargeIntegerMatchValue) : Integer;
 Begin 
   Result := -1;
 
@@ -5890,7 +5890,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.Insert(iIndex : Integer; Const aKey : TAdvStringLargeIntegerMatchKey; Const aValue : TAdvStringLargeIntegerMatchValue);
+Procedure TFslStringLargeIntegerMatch.Insert(iIndex : Integer; Const aKey : TFslStringLargeIntegerMatchKey; Const aValue : TFslStringLargeIntegerMatchValue);
 Begin 
   InternalInsert(iIndex);
 
@@ -5899,7 +5899,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.InternalInsert(iIndex : Integer);
+Procedure TFslStringLargeIntegerMatch.InternalInsert(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -5908,7 +5908,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.InternalDelete(iIndex : Integer);
+Procedure TFslStringLargeIntegerMatch.InternalDelete(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -5916,9 +5916,9 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.InternalExchange(iA, iB : Integer);
+Procedure TFslStringLargeIntegerMatch.InternalExchange(iA, iB : Integer);
 Var
-  aTemp : TAdvStringLargeIntegerMatchItem;
+  aTemp : TFslStringLargeIntegerMatchItem;
   pA : Pointer;
   pB : Pointer;
 Begin
@@ -5931,7 +5931,7 @@ Begin
 End;
 
 
-Function TAdvStringLargeIntegerMatch.Force(Const aKey: TAdvStringLargeIntegerMatchKey): TAdvStringLargeIntegerMatchValue;
+Function TFslStringLargeIntegerMatch.Force(Const aKey: TFslStringLargeIntegerMatchKey): TFslStringLargeIntegerMatchValue;
 Var
   iIndex : Integer;
 Begin
@@ -5942,7 +5942,7 @@ Begin
 End;
 
 
-Function TAdvStringLargeIntegerMatch.GetItem(iIndex : Integer) : Pointer;
+Function TFslStringLargeIntegerMatch.GetItem(iIndex : Integer) : Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -5950,7 +5950,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.SetItem(iIndex : Integer; pValue : Pointer);
+Procedure TFslStringLargeIntegerMatch.SetItem(iIndex : Integer; pValue : Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -5958,7 +5958,7 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.GetKey(iIndex : Integer) : String;
+Function TFslStringLargeIntegerMatch.GetKey(iIndex : Integer) : String;
 Begin 
   Assert(ValidateIndex('GetKey', iIndex));
 
@@ -5966,7 +5966,7 @@ Begin
 End;
 
 
-Procedure TAdvStringLargeIntegerMatch.SetKey(iIndex : Integer; Const aKey : TAdvStringLargeIntegerMatchKey);
+Procedure TFslStringLargeIntegerMatch.SetKey(iIndex : Integer; Const aKey : TFslStringLargeIntegerMatchKey);
 Begin 
   Assert(ValidateIndex('SetKey', iIndex));
 
@@ -5974,7 +5974,7 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.GetValue(iIndex : Integer) : TAdvStringLargeIntegerMatchValue;
+Function TFslStringLargeIntegerMatch.GetValue(iIndex : Integer) : TFslStringLargeIntegerMatchValue;
 Begin 
   Assert(ValidateIndex('GetValue', iIndex));
 
@@ -5982,7 +5982,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.SetValue(iIndex : Integer; Const aValue : TAdvStringLargeIntegerMatchValue);
+Procedure TFslStringLargeIntegerMatch.SetValue(iIndex : Integer; Const aValue : TFslStringLargeIntegerMatchValue);
 Begin 
   Assert(ValidateIndex('SetValue', iIndex));
 
@@ -5990,7 +5990,7 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.GetMatch(Const aKey : TAdvStringLargeIntegerMatchKey) : TAdvStringLargeIntegerMatchValue;
+Function TFslStringLargeIntegerMatch.GetMatch(Const aKey : TFslStringLargeIntegerMatchKey) : TFslStringLargeIntegerMatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -6008,7 +6008,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.SetMatch(Const aKey : TAdvStringLargeIntegerMatchKey; Const aValue : TAdvStringLargeIntegerMatchValue);
+Procedure TFslStringLargeIntegerMatch.SetMatch(Const aKey : TFslStringLargeIntegerMatchKey; Const aValue : TFslStringLargeIntegerMatchValue);
 Var
   iIndex : Integer;
 Begin 
@@ -6023,7 +6023,7 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.GetAsText : String;
+Function TFslStringLargeIntegerMatch.GetAsText : String;
 Var
   iLoop : Integer;
 Begin 
@@ -6033,7 +6033,7 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.GetKeysAsText : String;
+Function TFslStringLargeIntegerMatch.GetKeysAsText : String;
 Var
   iLoop : Integer;
 Begin
@@ -6043,15 +6043,15 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.CapacityLimit : Integer;
+Function TFslStringLargeIntegerMatch.CapacityLimit : Integer;
 Begin 
-  Result := High(TAdvStringLargeIntegerMatchItemArray);
+  Result := High(TFslStringLargeIntegerMatchItemArray);
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.GetSensitive : Boolean;
+Function TFslStringLargeIntegerMatch.GetSensitive : Boolean;
 Var
-  aCompare : TAdvStringCompareCallback;
+  aCompare : TFslStringCompareCallback;
 Begin
   aCompare := {$IFDEF FPC}@{$ENDIF}StringCompareSensitive;
 
@@ -6059,7 +6059,7 @@ Begin
 End;
 
 
-Procedure TAdvStringLargeIntegerMatch.SetSensitive(Const Value: Boolean);
+Procedure TFslStringLargeIntegerMatch.SetSensitive(Const Value: Boolean);
 Begin
   If Value Then
     FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareSensitive
@@ -6068,7 +6068,7 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.GetByValue(Const aValue: TAdvStringLargeIntegerMatchValue): TAdvStringLargeIntegerMatchKey;
+Function TFslStringLargeIntegerMatch.GetByValue(Const aValue: TFslStringLargeIntegerMatchValue): TFslStringLargeIntegerMatchKey;
 Var
   iIndex : Integer;
 Begin 
@@ -6081,7 +6081,7 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.GetByKey(Const aKey : TAdvStringLargeIntegerMatchKey): TAdvStringLargeIntegerMatchValue;
+Function TFslStringLargeIntegerMatch.GetByKey(Const aKey : TFslStringLargeIntegerMatchKey): TFslStringLargeIntegerMatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -6094,31 +6094,31 @@ Begin
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.IsSortedByKey : Boolean;
+Function TFslStringLargeIntegerMatch.IsSortedByKey : Boolean;
 Begin
   Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareKey);
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.SortedByKey;
+Procedure TFslStringLargeIntegerMatch.SortedByKey;
 Begin 
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareKey);
 End;  
 
 
-Function TAdvStringLargeIntegerMatch.IsSortedByValue : Boolean;
+Function TFslStringLargeIntegerMatch.IsSortedByValue : Boolean;
 Begin 
   Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareValue);
 End;  
 
 
-Procedure TAdvStringLargeIntegerMatch.SortedByValue;
+Procedure TFslStringLargeIntegerMatch.SortedByValue;
 Begin 
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareValue);
 End;
 
 
-Constructor TAdvStringIntegerMatch.Create;
+Constructor TFslStringIntegerMatch.Create;
 Begin
   Inherited;
 
@@ -6126,37 +6126,37 @@ Begin
 End;
 
 
-Destructor TAdvStringIntegerMatch.Destroy;
+Destructor TFslStringIntegerMatch.Destroy;
 Begin
   Inherited;
 End;
 
 
-Function TAdvStringIntegerMatch.ErrorClass: EAdvExceptionClass;
+Function TFslStringIntegerMatch.ErrorClass: EAdvExceptionClass;
 Begin
   Result := EAdvStringIntegerMatch;
 End;
 
 
-Function TAdvStringIntegerMatch.Clone: TAdvStringIntegerMatch;
+Function TFslStringIntegerMatch.Clone: TFslStringIntegerMatch;
 Begin
-  Result := TAdvStringIntegerMatch(Inherited Clone);
+  Result := TFslStringIntegerMatch(Inherited Clone);
 End;
 
 
-Function TAdvStringIntegerMatch.Link: TAdvStringIntegerMatch;
+Function TFslStringIntegerMatch.Link: TFslStringIntegerMatch;
 Begin
-  Result := TAdvStringIntegerMatch(Inherited Link);
+  Result := TFslStringIntegerMatch(Inherited Link);
 End;
 
 
-Procedure TAdvStringIntegerMatch.AssignItem(oItems: TAdvItemList; iIndex: Integer);
+Procedure TFslStringIntegerMatch.AssignItem(oItems: TFslItemList; iIndex: Integer);
 Begin
-  FMatchArray^[iIndex] := TAdvStringIntegerMatch(oItems).FMatchArray^[iIndex];
+  FMatchArray^[iIndex] := TFslStringIntegerMatch(oItems).FMatchArray^[iIndex];
 End;
 
 
-Procedure TAdvStringIntegerMatch.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslStringIntegerMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -6167,10 +6167,10 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslStringIntegerMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  sKey : TAdvStringIntegerMatchKey;
-  iValue : TAdvStringIntegerMatchValue;
+  sKey : TFslStringIntegerMatchKey;
+  iValue : TFslStringIntegerMatchValue;
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -6183,15 +6183,15 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslStringIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
 Begin
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TAdvStringIntegerMatchItem))), (iLength * SizeOf(TAdvStringIntegerMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TFslStringIntegerMatchItem))), (iLength * SizeOf(TFslStringIntegerMatchItem)));
 End;  
 
 
-Procedure TAdvStringIntegerMatch.InternalTruncate(iValue: Integer);
+Procedure TFslStringIntegerMatch.InternalTruncate(iValue: Integer);
 Begin
   Inherited;
 
@@ -6201,42 +6201,42 @@ Begin
 End;
 
 
-Procedure TAdvStringIntegerMatch.InternalResize(iValue : Integer);
+Procedure TFslStringIntegerMatch.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
-  MemoryResize(FMatchArray, Capacity * SizeOf(TAdvStringIntegerMatchItem), iValue * SizeOf(TAdvStringIntegerMatchItem));
+  MemoryResize(FMatchArray, Capacity * SizeOf(TFslStringIntegerMatchItem), iValue * SizeOf(TFslStringIntegerMatchItem));
 End;  
 
 
-Procedure TAdvStringIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslStringIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TAdvStringIntegerMatchItem));
+  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TFslStringIntegerMatchItem));
 End;
 
 
-Function TAdvStringIntegerMatch.CompareKey(pA, pB: Pointer): Integer;
+Function TFslStringIntegerMatch.CompareKey(pA, pB: Pointer): Integer;
 Begin 
   Result := FCompareKey(PAdvStringIntegerMatchItem(pA)^.Key, PAdvStringIntegerMatchItem(pB)^.Key);
 End;  
 
 
-Function TAdvStringIntegerMatch.CompareValue(pA, pB: Pointer): Integer;
+Function TFslStringIntegerMatch.CompareValue(pA, pB: Pointer): Integer;
 Begin 
   Result := IntegerCompare(PAdvStringIntegerMatchItem(pA)^.Value, PAdvStringIntegerMatchItem(pB)^.Value);
 End;  
 
 
-Procedure TAdvStringIntegerMatch.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslStringIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareKey;
   FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareInsensitive;
 End;  
 
 
-Function TAdvStringIntegerMatch.Find(Const aKey: TAdvStringIntegerMatchKey; Const aValue: TAdvStringIntegerMatchValue; Out iIndex: Integer; aCompare: TAdvItemListCompare): Boolean;
+Function TFslStringIntegerMatch.Find(Const aKey: TFslStringIntegerMatchKey; Const aValue: TFslStringIntegerMatchValue; Out iIndex: Integer; aCompare: TFslItemListCompare): Boolean;
 Var
-  aItem : TAdvStringIntegerMatchItem;
+  aItem : TFslStringIntegerMatchItem;
 Begin 
   aItem.Key := aKey;
   aItem.Value := aValue;
@@ -6245,33 +6245,33 @@ Begin
 End;  
 
 
-Function TAdvStringIntegerMatch.IndexByKey(Const aKey : TAdvStringIntegerMatchKey) : Integer;
+Function TFslStringIntegerMatch.IndexByKey(Const aKey : TFslStringIntegerMatchKey) : Integer;
 Begin 
   If Not Find(aKey, 0, Result, {$IFDEF FPC}@{$ENDIF}CompareKey) Then
     Result := -1;
 End;  
 
 
-Function TAdvStringIntegerMatch.ExistsByKey(Const aKey : TAdvStringIntegerMatchKey) : Boolean;
+Function TFslStringIntegerMatch.ExistsByKey(Const aKey : TFslStringIntegerMatchKey) : Boolean;
 Begin 
   Result := ExistsByIndex(IndexByKey(aKey));
 End;
 
 
-Function TAdvStringIntegerMatch.IndexByValue(Const aValue : TAdvStringIntegerMatchValue) : Integer;
+Function TFslStringIntegerMatch.IndexByValue(Const aValue : TFslStringIntegerMatchValue) : Integer;
 Begin 
   If Not Find('', aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareValue) Then
     Result := -1;
 End;  
 
 
-Function TAdvStringIntegerMatch.ExistsByValue(Const aValue : TAdvStringIntegerMatchValue) : Boolean;
+Function TFslStringIntegerMatch.ExistsByValue(Const aValue : TFslStringIntegerMatchValue) : Boolean;
 Begin 
   Result := ExistsByIndex(IndexByValue(aValue));
 End;  
 
 
-Function TAdvStringIntegerMatch.Add(Const aKey : TAdvStringIntegerMatchKey; Const aValue : TAdvStringIntegerMatchValue) : Integer;
+Function TFslStringIntegerMatch.Add(Const aKey : TFslStringIntegerMatchKey; Const aValue : TFslStringIntegerMatchValue) : Integer;
 Begin
   Result := -1;
 
@@ -6292,7 +6292,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.Insert(iIndex : Integer; Const aKey : TAdvStringIntegerMatchKey; Const aValue : TAdvStringIntegerMatchValue);
+Procedure TFslStringIntegerMatch.Insert(iIndex : Integer; Const aKey : TFslStringIntegerMatchKey; Const aValue : TFslStringIntegerMatchValue);
 Begin 
   InternalInsert(iIndex);
 
@@ -6301,7 +6301,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.InternalInsert(iIndex : Integer);
+Procedure TFslStringIntegerMatch.InternalInsert(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -6310,7 +6310,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.InternalDelete(iIndex : Integer);
+Procedure TFslStringIntegerMatch.InternalDelete(iIndex : Integer);
 Begin 
   Inherited;
 
@@ -6318,9 +6318,9 @@ Begin
 End;
 
 
-Procedure TAdvStringIntegerMatch.InternalExchange(iA, iB : Integer);
+Procedure TFslStringIntegerMatch.InternalExchange(iA, iB : Integer);
 Var
-  aTemp : TAdvStringIntegerMatchItem;
+  aTemp : TFslStringIntegerMatchItem;
   pA : Pointer;
   pB : Pointer;
 Begin
@@ -6333,7 +6333,7 @@ Begin
 End;
 
 
-Function TAdvStringIntegerMatch.ForceByKey(Const aKey: TAdvStringIntegerMatchKey): TAdvStringIntegerMatchValue;
+Function TFslStringIntegerMatch.ForceByKey(Const aKey: TFslStringIntegerMatchKey): TFslStringIntegerMatchValue;
 Var
   iIndex : Integer;
 Begin
@@ -6344,7 +6344,7 @@ Begin
 End;
 
 
-Function TAdvStringIntegerMatch.GetItem(iIndex : Integer) : Pointer;
+Function TFslStringIntegerMatch.GetItem(iIndex : Integer) : Pointer;
 Begin 
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -6352,7 +6352,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.SetItem(iIndex : Integer; pValue : Pointer);
+Procedure TFslStringIntegerMatch.SetItem(iIndex : Integer; pValue : Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -6360,7 +6360,7 @@ Begin
 End;  
 
 
-Function TAdvStringIntegerMatch.GetKey(iIndex : Integer) : String;
+Function TFslStringIntegerMatch.GetKey(iIndex : Integer) : String;
 Begin 
   Assert(ValidateIndex('GetKey', iIndex));
 
@@ -6368,7 +6368,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.SetKey(iIndex : Integer; Const aKey : TAdvStringIntegerMatchKey);
+Procedure TFslStringIntegerMatch.SetKey(iIndex : Integer; Const aKey : TFslStringIntegerMatchKey);
 Begin 
   Assert(ValidateIndex('SetKey', iIndex));
 
@@ -6376,7 +6376,7 @@ Begin
 End;  
 
 
-Function TAdvStringIntegerMatch.GetValue(iIndex : Integer) : TAdvStringIntegerMatchValue;
+Function TFslStringIntegerMatch.GetValue(iIndex : Integer) : TFslStringIntegerMatchValue;
 Begin 
   Assert(ValidateIndex('GetValue', iIndex));
 
@@ -6384,7 +6384,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.SetValue(iIndex : Integer; Const aValue : TAdvStringIntegerMatchValue);
+Procedure TFslStringIntegerMatch.SetValue(iIndex : Integer; Const aValue : TFslStringIntegerMatchValue);
 Begin 
   Assert(ValidateIndex('SetValue', iIndex));
 
@@ -6392,7 +6392,7 @@ Begin
 End;  
 
 
-Function TAdvStringIntegerMatch.GetMatch(Const aKey : TAdvStringIntegerMatchKey) : TAdvStringIntegerMatchValue;
+Function TFslStringIntegerMatch.GetMatch(Const aKey : TFslStringIntegerMatchKey) : TFslStringIntegerMatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -6410,7 +6410,7 @@ Begin
 End;  
 
 
-Procedure TAdvStringIntegerMatch.SetMatch(Const aKey : TAdvStringIntegerMatchKey; Const aValue : TAdvStringIntegerMatchValue);
+Procedure TFslStringIntegerMatch.SetMatch(Const aKey : TFslStringIntegerMatchKey; Const aValue : TFslStringIntegerMatchValue);
 Var
   iIndex : Integer;
 Begin 
@@ -6425,7 +6425,7 @@ Begin
 End;  
 
 
-Function TAdvStringIntegerMatch.GetAsText : String;
+Function TFslStringIntegerMatch.GetAsText : String;
 Var
   iLoop : Integer;
 Begin 
@@ -6435,7 +6435,7 @@ Begin
 End;
 
 
-Function TAdvStringIntegerMatch.GetKeysAsText : String;
+Function TFslStringIntegerMatch.GetKeysAsText : String;
 Var
   iLoop : Integer;
 Begin 
@@ -6445,15 +6445,15 @@ Begin
 End;  
 
 
-Function TAdvStringIntegerMatch.CapacityLimit : Integer;
+Function TFslStringIntegerMatch.CapacityLimit : Integer;
 Begin 
-  Result := High(TAdvStringIntegerMatchItemArray);
+  Result := High(TFslStringIntegerMatchItemArray);
 End;
 
 
-Function TAdvStringIntegerMatch.GetSensitive : Boolean;
+Function TFslStringIntegerMatch.GetSensitive : Boolean;
 Var
-  aCompare : TAdvStringCompareCallback;
+  aCompare : TFslStringCompareCallback;
 Begin 
   aCompare := {$IFDEF FPC}@{$ENDIF}StringCompareSensitive;
 
@@ -6461,7 +6461,7 @@ Begin
 End;
 
 
-Procedure TAdvStringIntegerMatch.SetSensitive(Const Value: Boolean);
+Procedure TFslStringIntegerMatch.SetSensitive(Const Value: Boolean);
 Begin
   If Value Then
     FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareSensitive
@@ -6470,7 +6470,7 @@ Begin
 End;  
 
 
-Function TAdvStringIntegerMatch.GetKeyByValue(Const aValue: TAdvStringIntegerMatchValue): TAdvStringIntegerMatchKey;
+Function TFslStringIntegerMatch.GetKeyByValue(Const aValue: TFslStringIntegerMatchValue): TFslStringIntegerMatchKey;
 Var
   iIndex : Integer;
 Begin 
@@ -6483,7 +6483,7 @@ Begin
 End;
 
 
-Function TAdvStringIntegerMatch.GetValueByKey(Const aKey : TAdvStringIntegerMatchKey): TAdvStringIntegerMatchValue;
+Function TFslStringIntegerMatch.GetValueByKey(Const aKey : TFslStringIntegerMatchKey): TFslStringIntegerMatchValue;
 Var
   iIndex : Integer;
 Begin 
@@ -6496,31 +6496,31 @@ Begin
 End;  
 
 
-Function TAdvStringIntegerMatch.IsSortedByKey : Boolean;
+Function TFslStringIntegerMatch.IsSortedByKey : Boolean;
 Begin 
   Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareKey);
 End;  
 
 
-Procedure TAdvStringIntegerMatch.SortedByKey;
+Procedure TFslStringIntegerMatch.SortedByKey;
 Begin 
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareKey);
 End;  
 
 
-Function TAdvStringIntegerMatch.IsSortedByValue : Boolean;
+Function TFslStringIntegerMatch.IsSortedByValue : Boolean;
 Begin 
   Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareValue);
 End;  
 
 
-Procedure TAdvStringIntegerMatch.SortedByValue;
+Procedure TFslStringIntegerMatch.SortedByValue;
 Begin 
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareValue);
 End;  
 
 
-Procedure TAdvStringIntegerMatch.AddAll(oStringIntegerMatch: TAdvStringIntegerMatch);
+Procedure TFslStringIntegerMatch.AddAll(oStringIntegerMatch: TFslStringIntegerMatch);
 Var
   iIndex : Integer;
 Begin
@@ -6533,13 +6533,13 @@ Begin
 End;
 
 
-Procedure TAdvStringHashEntry.Generate;
+Procedure TFslStringHashEntry.Generate;
 Begin 
   Code := FHIR.Support.System.HashStringToCode32(FName);
 End;
 
 
-Procedure TAdvStringHashEntry.SetName(Const Value: String);
+Procedure TFslStringHashEntry.SetName(Const Value: String);
 Begin 
   FName := Value;
 
@@ -6547,15 +6547,15 @@ Begin
 End;
 
 
-Procedure TAdvStringHashEntry.Assign(oSource: TAdvObject);
+Procedure TFslStringHashEntry.Assign(oSource: TFslObject);
 Begin 
   Inherited;
 
-  Name := TAdvStringHashEntry(oSource).Name;
+  Name := TFslStringHashEntry(oSource).Name;
 End;
 
 
-Procedure TAdvStringHashEntry.Define(oFiler : TAdvFiler);
+Procedure TFslStringHashEntry.Define(oFiler : TFslFiler);
 Begin 
   Inherited;
 
@@ -6563,59 +6563,59 @@ Begin
 End;  
 
 
-Function TAdvStringHashTable.Equal(oA, oB: TAdvHashEntry): Integer;
+Function TFslStringHashTable.Equal(oA, oB: TFslHashEntry): Integer;
 Begin
   Result := Inherited Equal(oA, oB);
 
   If Result = 0 Then
-    Result := StringCompare(TAdvStringHashEntry(oA).Name, TAdvStringHashEntry(oB).Name);
+    Result := StringCompare(TFslStringHashEntry(oA).Name, TFslStringHashEntry(oB).Name);
 End;  
 
 
-Function TAdvStringHashTable.ItemClass : TAdvHashEntryClass;
+Function TFslStringHashTable.ItemClass : TFslHashEntryClass;
 Begin 
-  Result := TAdvStringHashEntry;
+  Result := TFslStringHashEntry;
 End;  
 
 
-Function TAdvStringHashTable.Iterator : TAdvIterator;
+Function TFslStringHashTable.Iterator : TFslIterator;
 Begin
-  Result := TAdvStringHashTableIterator.Create;
-  TAdvStringHashTableIterator(Result).HashTable := Self.Link;
+  Result := TFslStringHashTableIterator.Create;
+  TFslStringHashTableIterator(Result).HashTable := Self.Link;
 End;  
 
 
-Function TAdvStringHashTableIterator.Current : TAdvStringHashEntry;
+Function TFslStringHashTableIterator.Current : TFslStringHashEntry;
 Begin 
-  Result := TAdvStringHashEntry(Inherited Current);
+  Result := TFslStringHashEntry(Inherited Current);
 End;
 
 
-Function TAdvStringHashTable.Link: TAdvStringHashTable;
+Function TFslStringHashTable.Link: TFslStringHashTable;
 Begin
-  Result := TAdvStringHashTable(Inherited Link);
+  Result := TFslStringHashTable(Inherited Link);
 End;
 
 
-Function TAdvPersistentList.ItemClass : TAdvObjectClass;
+Function TFslPersistentList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvPersistent;
+  Result := TFslPersistent;
 End;
 
 
-Function TAdvPersistentList.GetPersistentByIndex(Const iIndex : Integer) : TAdvPersistent;
+Function TFslPersistentList.GetPersistentByIndex(Const iIndex : Integer) : TFslPersistent;
 Begin
-  Result := TAdvPersistent(ObjectByIndex[iIndex]);
+  Result := TFslPersistent(ObjectByIndex[iIndex]);
 End;
 
 
-Procedure TAdvPersistentList.SetPersistentByIndex(Const iIndex : Integer; Const oValue : TAdvPersistent);
+Procedure TFslPersistentList.SetPersistentByIndex(Const iIndex : Integer; Const oValue : TFslPersistent);
 Begin
   ObjectByIndex[iIndex] := oValue;
 End;
 
 
-Destructor TAdvOrdinalSet.Destroy;
+Destructor TFslOrdinalSet.Destroy;
 Begin
   PartsDispose;
 
@@ -6623,7 +6623,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.PartsDispose;
+Procedure TFslOrdinalSet.PartsDispose;
 Begin
   If FOwns Then
     MemoryDestroy(FPartArray, FSize);
@@ -6635,7 +6635,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.PartsNew;
+Procedure TFslOrdinalSet.PartsNew;
 Begin
   If Not FOwns Then
   Begin
@@ -6647,42 +6647,42 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.SetCount(Const iValue: Integer);
+Procedure TFslOrdinalSet.SetCount(Const iValue: Integer);
 Begin
   FCount := iValue;
   Resize(RealCeiling(Count / 8));
 End;
 
 
-Procedure TAdvOrdinalSet.SetSize(Const Value: Integer);
+Procedure TFslOrdinalSet.SetSize(Const Value: Integer);
 Begin
   Resize(Value);
   FCount := (FSize * 8);
 End;  
 
 
-Procedure TAdvOrdinalSet.Assign(oObject: TAdvObject);
+Procedure TFslOrdinalSet.Assign(oObject: TFslObject);
 Begin
   Inherited;
 
   PartsDispose;
 
-  FSize := TAdvOrdinalSet(oObject).Size;
-  FCount := TAdvOrdinalSet(oObject).Count;
+  FSize := TFslOrdinalSet(oObject).Size;
+  FCount := TFslOrdinalSet(oObject).Count;
 
   PartsNew;
 
-  MemoryMove(TAdvOrdinalSet(oObject).FPartArray, FPartArray, FSize);
+  MemoryMove(TFslOrdinalSet(oObject).FPartArray, FPartArray, FSize);
 End;
 
 
-Procedure TAdvOrdinalSet.Define(oFiler: TAdvFiler);
+Procedure TFslOrdinalSet.Define(oFiler: TFslFiler);
 Begin
   Inherited;
 End;
 
 
-Function TAdvOrdinalSet.ValidateIndex(Const sMethod : String; Const iIndex : Integer) : Boolean;
+Function TFslOrdinalSet.ValidateIndex(Const sMethod : String; Const iIndex : Integer) : Boolean;
 Begin
   If Not IntegerBetweenInclusive(0, iIndex, FCount - 1) Then
     Invariant(sMethod, StringFormat('Invalid index (%d In [0..%d])', [iIndex, FCount - 1]));
@@ -6691,7 +6691,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.Fill(bChecked : Boolean);
+Procedure TFslOrdinalSet.Fill(bChecked : Boolean);
 Begin
   If bChecked Then
     MemoryFill(FPartArray, FSize)
@@ -6700,7 +6700,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.Resize(Const iValue: Integer);
+Procedure TFslOrdinalSet.Resize(Const iValue: Integer);
 Begin
   If FOwns Then
   Begin
@@ -6712,14 +6712,14 @@ Begin
 End;
 
 
-Function TAdvOrdinalSet.Iterator : TAdvIterator;
+Function TFslOrdinalSet.Iterator : TFslIterator;
 Begin
-  Result := TAdvOrdinalSetIterator.Create;
-  TAdvOrdinalSetIterator(Result).OrdinalSet := TAdvOrdinalSet(Self.Link);
+  Result := TFslOrdinalSetIterator.Create;
+  TFslOrdinalSetIterator(Result).OrdinalSet := TFslOrdinalSet(Self.Link);
 End;
 
 
-Procedure TAdvOrdinalSet.New(Const iCount: Integer);
+Procedure TFslOrdinalSet.New(Const iCount: Integer);
 Begin
   PartsDispose;
 
@@ -6730,7 +6730,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.Hook(Const aValue; iCount : Integer);
+Procedure TFslOrdinalSet.Hook(Const aValue; iCount : Integer);
 Begin
   FPartArray := PAdvOrdinalSetPartArray(@aValue);
   FCount := iCount;
@@ -6739,7 +6739,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.Unhook;
+Procedure TFslOrdinalSet.Unhook;
 Begin
   FPartArray := Nil;
   FCount := 0;
@@ -6747,7 +6747,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.Check(iIndex: Integer);
+Procedure TFslOrdinalSet.Check(iIndex: Integer);
 Var
   pPart : PAdvOrdinalSetPart;
 Begin
@@ -6759,7 +6759,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.CheckRange(iFromIndex, iToIndex : Integer);
+Procedure TFslOrdinalSet.CheckRange(iFromIndex, iToIndex : Integer);
 Var
   iLoop : Integer;
 Begin
@@ -6768,7 +6768,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.UncheckRange(iFromIndex, iToIndex : Integer);
+Procedure TFslOrdinalSet.UncheckRange(iFromIndex, iToIndex : Integer);
 Var
   iLoop : Integer;
 Begin
@@ -6777,7 +6777,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.Uncheck(iIndex: Integer);
+Procedure TFslOrdinalSet.Uncheck(iIndex: Integer);
 Var
   pPart : PAdvOrdinalSetPart;
 Begin
@@ -6789,7 +6789,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.Toggle(iIndex: Integer);
+Procedure TFslOrdinalSet.Toggle(iIndex: Integer);
 Var
   pPart : PAdvOrdinalSetPart;
   iFlag : Integer;
@@ -6807,7 +6807,7 @@ Begin
 End;
 
 
-Function TAdvOrdinalSet.Checked(iIndex: Integer): Boolean;
+Function TFslOrdinalSet.Checked(iIndex: Integer): Boolean;
 Begin
   Assert(ValidateIndex('Checked', iIndex));
 
@@ -6815,7 +6815,7 @@ Begin
 End;
 
 
-Function TAdvOrdinalSet.CheckedRange(iFromIndex, iToIndex: Integer): Boolean;
+Function TFslOrdinalSet.CheckedRange(iFromIndex, iToIndex: Integer): Boolean;
 Var
   iIndex : Integer;
 Begin
@@ -6831,7 +6831,7 @@ Begin
 End;
 
 
-Function TAdvOrdinalSet.AllChecked : Boolean;
+Function TFslOrdinalSet.AllChecked : Boolean;
 Var
   iLoop : Integer;
 Begin
@@ -6847,7 +6847,7 @@ Begin
 End;
 
 
-Function TAdvOrdinalSet.AnyChecked : Boolean;
+Function TFslOrdinalSet.AnyChecked : Boolean;
 Var
   iLoop : Integer;
 Begin
@@ -6863,7 +6863,7 @@ Begin
 End;
 
 
-Function TAdvOrdinalSet.NoneChecked : Boolean;
+Function TFslOrdinalSet.NoneChecked : Boolean;
 Var
   iLoop : Integer;
 Begin
@@ -6879,7 +6879,7 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSetIterator.First;
+Procedure TFslOrdinalSetIterator.First;
 Begin
   FPart := Low(FOrdinalSet.FPartArray^);
   FIndex := 0;
@@ -6892,25 +6892,25 @@ Begin
 End;
 
 
-Function TAdvOrdinalSetIterator.Checked : Boolean;
+Function TFslOrdinalSetIterator.Checked : Boolean;
 Begin
   Result := (FValue^ And (1 Shl FLoop)) <> 0;
 End;  
 
 
-Procedure TAdvOrdinalSetIterator.Check;
+Procedure TFslOrdinalSetIterator.Check;
 Begin 
   FValue^ := FValue^ Or (1 Shl FLoop);
 End;  
 
 
-Procedure TAdvOrdinalSetIterator.Uncheck;
+Procedure TFslOrdinalSetIterator.Uncheck;
 Begin 
   FValue^ := FValue^ And Not (1 Shl FLoop);
 End;  
 
 
-Procedure TAdvOrdinalSetIterator.Next;
+Procedure TFslOrdinalSetIterator.Next;
 Begin
   Inc(FLoop);
   Inc(FIndex);
@@ -6927,13 +6927,13 @@ Begin
 End;  
 
 
-Function TAdvOrdinalSetIterator.More : Boolean;
+Function TFslOrdinalSetIterator.More : Boolean;
 Begin 
   Result := (FIndex < FOrdinalSet.Count) And (FPart <= High(FOrdinalSet.FPartArray^));
 End;  
 
 
-Constructor TAdvOrdinalSetIterator.Create;
+Constructor TFslOrdinalSetIterator.Create;
 Begin
   Inherited;
 
@@ -6941,7 +6941,7 @@ Begin
 End;  
 
 
-Destructor TAdvOrdinalSetIterator.Destroy;
+Destructor TFslOrdinalSetIterator.Destroy;
 Begin 
   FOrdinalSet.Free;
 
@@ -6949,20 +6949,20 @@ Begin
 End;  
 
 
-Procedure TAdvOrdinalSetIterator.SetOrdinalSet(Const Value: TAdvOrdinalSet);
+Procedure TFslOrdinalSetIterator.SetOrdinalSet(Const Value: TFslOrdinalSet);
 Begin 
   FOrdinalSet.Free;
   FOrdinalSet := Value;
 End;  
 
 
-Function TAdvOrdinalSet.GetIsChecked(Const iIndex: Integer): Boolean;
+Function TFslOrdinalSet.GetIsChecked(Const iIndex: Integer): Boolean;
 Begin
   Result := Checked(iIndex);
 End;
 
 
-Procedure TAdvOrdinalSet.SetIsChecked(Const iIndex: Integer; Const Value: Boolean);
+Procedure TFslOrdinalSet.SetIsChecked(Const iIndex: Integer; Const Value: Boolean);
 Begin
   If Value Then
     Check(iIndex)
@@ -6971,20 +6971,20 @@ Begin
 End;
 
 
-Procedure TAdvOrdinalSet.CheckAll;
+Procedure TFslOrdinalSet.CheckAll;
 Begin
   Fill(True);
 End;
 
 
-Procedure TAdvOrdinalSet.UncheckAll;
+Procedure TFslOrdinalSet.UncheckAll;
 Begin
   Fill(False);
 End;
 
 
 
-Constructor TAdvObjectMatch.Create;
+Constructor TFslObjectMatch.Create;
 Begin
   Inherited;
 
@@ -6996,31 +6996,31 @@ Begin
 End;
 
 
-Destructor TAdvObjectMatch.Destroy;
+Destructor TFslObjectMatch.Destroy;
 Begin
   Inherited;
 End;
 
 
-Function TAdvObjectMatch.Link : TAdvObjectMatch;
+Function TFslObjectMatch.Link : TFslObjectMatch;
 Begin
-  Result := TAdvObjectMatch(Inherited Link);
+  Result := TFslObjectMatch(Inherited Link);
 End;
 
 
-Function TAdvObjectMatch.CompareByKeyReference(pA, pB: Pointer): Integer;
+Function TFslObjectMatch.CompareByKeyReference(pA, pB: Pointer): Integer;
 Begin
   Result := IntegerCompare(Integer(PAdvObjectMatchItem(pA)^.Key), Integer(PAdvObjectMatchItem(pB)^.Key));
 End;  
 
 
-Function TAdvObjectMatch.CompareByValueReference(pA, pB: Pointer): Integer;
+Function TFslObjectMatch.CompareByValueReference(pA, pB: Pointer): Integer;
 Begin 
   Result := IntegerCompare(Integer(PAdvObjectMatchItem(pA)^.Value), Integer(PAdvObjectMatchItem(pB)^.Value));
 End;  
 
 
-Procedure TAdvObjectMatch.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslObjectMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin 
   oFiler['Match'].DefineBegin;
 
@@ -7031,10 +7031,10 @@ Begin
 End;
 
 
-Procedure TAdvObjectMatch.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslObjectMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Var
-  oKey : TAdvObjectMatchKey;
-  oValue : TAdvObjectMatchValue;
+  oKey : TFslObjectMatchKey;
+  oValue : TFslObjectMatchValue;
 Begin 
   oKey := Nil;
   oValue := Nil;
@@ -7054,28 +7054,28 @@ Begin
 End;  
 
 
-Procedure TAdvObjectMatch.AssignItem(oItems : TAdvItemList; iIndex: Integer);
+Procedure TFslObjectMatch.AssignItem(oItems : TFslItemList; iIndex: Integer);
 Begin 
   Inherited;
 
-  FMatchArray^[iIndex].Key := TAdvObjectMatch(oItems).FMatchArray^[iIndex].Key.Clone;
-  FMatchArray^[iIndex].Value := TAdvObjectMatch(oItems).FMatchArray^[iIndex].Value.Clone;  
+  FMatchArray^[iIndex].Key := TFslObjectMatch(oItems).FMatchArray^[iIndex].Key.Clone;
+  FMatchArray^[iIndex].Value := TFslObjectMatch(oItems).FMatchArray^[iIndex].Value.Clone;  
 End;  
 
 
-Procedure TAdvObjectMatch.InternalEmpty(iIndex, iLength : Integer);
+Procedure TFslObjectMatch.InternalEmpty(iIndex, iLength : Integer);
 Begin
   Inherited;
 
-  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TAdvObjectMatchItem))), (iLength * SizeOf(TAdvObjectMatchItem)));
+  MemoryZero(Pointer(NativeUInt(FMatchArray) + NativeUInt(iIndex * SizeOf(TFslObjectMatchItem))), (iLength * SizeOf(TFslObjectMatchItem)));
 End;
 
 
-Procedure TAdvObjectMatch.InternalTruncate(iValue : Integer);
+Procedure TFslObjectMatch.InternalTruncate(iValue : Integer);
 Var
   iLoop : Integer;
-  oKey  : TAdvObjectMatchKey;
-  oValue : TAdvObjectMatchValue;
+  oKey  : TFslObjectMatchKey;
+  oValue : TFslObjectMatchValue;
 Begin
   Inherited;
 
@@ -7093,47 +7093,47 @@ Begin
 End;
 
 
-Procedure TAdvObjectMatch.InternalResize(iValue : Integer);
+Procedure TFslObjectMatch.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
-  MemoryResize(FMatchArray, Capacity * SizeOf(TAdvObjectMatchItem), iValue * SizeOf(TAdvObjectMatchItem));
+  MemoryResize(FMatchArray, Capacity * SizeOf(TFslObjectMatchItem), iValue * SizeOf(TFslObjectMatchItem));
 End;
 
 
-Procedure TAdvObjectMatch.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslObjectMatch.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin 
-  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TAdvObjectMatchItem));
+  MemoryMove(@FMatchArray^[iSource], @FMatchArray^[iTarget], iCount * SizeOf(TFslObjectMatchItem));
 End;  
 
 
-Function TAdvObjectMatch.IndexByKey(Const aKey: TAdvObjectMatchKey): Integer;
+Function TFslObjectMatch.IndexByKey(Const aKey: TFslObjectMatchKey): Integer;
 Begin
   If Not Find(aKey, Nil, Result, FKeyComparisonDelegate) Then
     Result := -1;
 End;
 
 
-Function TAdvObjectMatch.IndexByValue(Const aValue: TAdvObjectMatchValue): Integer;
+Function TFslObjectMatch.IndexByValue(Const aValue: TFslObjectMatchValue): Integer;
 Begin
   If Not Find(Nil, aValue, Result, FValueComparisonDelegate) Then
     Result := -1;
 End;
 
 
-Function TAdvObjectMatch.ExistsByKey(Const aKey: TAdvObjectMatchKey): Boolean;
+Function TFslObjectMatch.ExistsByKey(Const aKey: TFslObjectMatchKey): Boolean;
 Begin
   Result := ExistsByIndex(IndexByKey(aKey));
 End;
 
 
-Function TAdvObjectMatch.ExistsByValue(Const aValue: TAdvObjectMatchValue): Boolean;
+Function TFslObjectMatch.ExistsByValue(Const aValue: TFslObjectMatchValue): Boolean;
 Begin
   Result := ExistsByIndex(IndexByValue(aValue));
 End;
 
 
-Function TAdvObjectMatch.Add(Const aKey : TAdvObjectMatchKey; Const aValue : TAdvObjectMatchValue) : Integer;
+Function TFslObjectMatch.Add(Const aKey : TFslObjectMatchKey; Const aValue : TFslObjectMatchValue) : Integer;
 Begin 
   Assert(ValidateKey('Add', aKey, 'aKey'));
   Assert(ValidateValue('Add', aValue, 'aValue'));
@@ -7160,7 +7160,7 @@ Begin
 End;  
 
 
-Procedure TAdvObjectMatch.Insert(iIndex : Integer; Const aKey : TAdvObjectMatchKey; Const aValue : TAdvObjectMatchValue);
+Procedure TFslObjectMatch.Insert(iIndex : Integer; Const aKey : TFslObjectMatchKey; Const aValue : TFslObjectMatchValue);
 Begin
   Assert(ValidateKey('Insert', aKey, 'aKey'));
   Assert(ValidateValue('Insert', aValue, 'aValue'));
@@ -7172,7 +7172,7 @@ Begin
 End;
 
 
-Procedure TAdvObjectMatch.InternalInsert(iIndex : Integer);
+Procedure TFslObjectMatch.InternalInsert(iIndex : Integer);
 Begin
   Inherited;
 
@@ -7181,7 +7181,7 @@ Begin
 End;
 
 
-Procedure TAdvObjectMatch.InternalDelete(iIndex : Integer);
+Procedure TFslObjectMatch.InternalDelete(iIndex : Integer);
 Begin
   Inherited;
 
@@ -7193,9 +7193,9 @@ Begin
 End;
 
 
-Procedure TAdvObjectMatch.InternalExchange(iA, iB: Integer);
+Procedure TFslObjectMatch.InternalExchange(iA, iB: Integer);
 Var
-  aTemp : TAdvObjectMatchItem;
+  aTemp : TFslObjectMatchItem;
   pA : Pointer;
   pB : Pointer;
 Begin
@@ -7208,7 +7208,7 @@ Begin
 End;
 
 
-Procedure TAdvObjectMatch.Delete(Const aKey: TAdvObjectMatchKey; Const aValue: TAdvObjectMatchValue);
+Procedure TFslObjectMatch.Delete(Const aKey: TFslObjectMatchKey; Const aValue: TFslObjectMatchValue);
 Var
   iIndex : Integer;
 Begin
@@ -7219,7 +7219,7 @@ Begin
 End;
 
 
-Function TAdvObjectMatch.GetItem(iIndex : Integer): Pointer;
+Function TFslObjectMatch.GetItem(iIndex : Integer): Pointer;
 Begin
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -7227,7 +7227,7 @@ Begin
 End;
 
 
-Procedure TAdvObjectMatch.SetItem(iIndex: Integer; aValue: Pointer);
+Procedure TFslObjectMatch.SetItem(iIndex: Integer; aValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -7235,7 +7235,7 @@ Begin
 End;  
 
 
-Function TAdvObjectMatch.GetKeyByIndex(iIndex : Integer): TAdvObjectMatchKey;
+Function TFslObjectMatch.GetKeyByIndex(iIndex : Integer): TFslObjectMatchKey;
 Begin 
   Assert(ValidateIndex('GetKeyByIndex', iIndex));
 
@@ -7243,7 +7243,7 @@ Begin
 End;
 
 
-Procedure TAdvObjectMatch.SetKeyByIndex(iIndex : Integer; Const aKey : TAdvObjectMatchKey);
+Procedure TFslObjectMatch.SetKeyByIndex(iIndex : Integer; Const aKey : TFslObjectMatchKey);
 Begin 
   Assert(ValidateIndex('SetKeyByIndex', iIndex));
   Assert(ValidateKey('SetKeyByIndex', aKey, 'aKey'));
@@ -7253,7 +7253,7 @@ Begin
 End;  
 
 
-Function TAdvObjectMatch.GetValueByIndex(iIndex : Integer): TAdvObjectMatchValue;
+Function TFslObjectMatch.GetValueByIndex(iIndex : Integer): TFslObjectMatchValue;
 Begin 
   Assert(ValidateIndex('GetValueByIndex', iIndex));
 
@@ -7261,7 +7261,7 @@ Begin
 End;  
 
 
-Procedure TAdvObjectMatch.SetValueByIndex(iIndex : Integer; Const aValue: TAdvObjectMatchValue);
+Procedure TFslObjectMatch.SetValueByIndex(iIndex : Integer; Const aValue: TFslObjectMatchValue);
 Begin 
   Assert(ValidateIndex('SetValueByIndex', iIndex));
   Assert(ValidateValue('SetValueByIndex', aValue, 'aValue'));
@@ -7271,7 +7271,7 @@ Begin
 End;
 
 
-Function TAdvObjectMatch.GetValueByKey(Const aKey : TAdvObjectMatchKey): TAdvObjectMatchValue;
+Function TFslObjectMatch.GetValueByKey(Const aKey : TFslObjectMatchKey): TFslObjectMatchValue;
 Var
   iIndex : Integer;
 Begin
@@ -7291,7 +7291,7 @@ Begin
 End;  
 
 
-Procedure TAdvObjectMatch.SetValueByKey(Const aKey : TAdvObjectMatchKey; Const aValue: TAdvObjectMatchValue);
+Procedure TFslObjectMatch.SetValueByKey(Const aKey : TFslObjectMatchKey; Const aValue: TFslObjectMatchValue);
 Var
   iIndex : Integer;
 Begin 
@@ -7312,7 +7312,7 @@ Begin
 End;
 
 
-Function TAdvObjectMatch.GetAsText : String;
+Function TFslObjectMatch.GetAsText : String;
 Var
   iLoop : Integer;
 Begin 
@@ -7322,7 +7322,7 @@ Begin
 End;  
 
 
-Procedure TAdvObjectMatch.Merge(oMatch: TAdvObjectMatch);
+Procedure TFslObjectMatch.Merge(oMatch: TFslObjectMatch);
 Var
   iLoop : Integer;
 Begin 
@@ -7331,21 +7331,21 @@ Begin
 End;
 
 
-Function TAdvObjectMatch.CapacityLimit : Integer;
+Function TFslObjectMatch.CapacityLimit : Integer;
 Begin 
-  Result := High(TAdvObjectMatchItemArray);
+  Result := High(TFslObjectMatchItemArray);
 End;  
 
 
-Procedure TAdvObjectMatch.DefaultCompare(Out aCompare: TAdvItemListCompare);
+Procedure TFslObjectMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin
   aCompare := CompareByKeyReference;
 End;  
 
 
-Function TAdvObjectMatch.Find(Const aKey : TAdvObjectMatchKey; Const aValue : TAdvObjectMatchValue; Out iIndex : Integer; aCompare : TAdvItemListCompare) : Boolean;
+Function TFslObjectMatch.Find(Const aKey : TFslObjectMatchKey; Const aValue : TFslObjectMatchValue; Out iIndex : Integer; aCompare : TFslItemListCompare) : Boolean;
 Var
-  aItem : TAdvObjectMatchItem;
+  aItem : TFslObjectMatchItem;
 Begin
   Assert(ValidateKey('Find', aKey, 'aKey'));
   Assert(ValidateValue('Find', aValue, 'aValue'));
@@ -7357,19 +7357,19 @@ Begin
 End;
 
 
-Function TAdvObjectMatch.IsSortedByKey : Boolean;
+Function TFslObjectMatch.IsSortedByKey : Boolean;
 Begin 
   Result := IsSortedBy(FKeyComparisonDelegate);
 End;
 
 
-Function TAdvObjectMatch.IsSortedByValue : Boolean;
+Function TFslObjectMatch.IsSortedByValue : Boolean;
 Begin
   Result := IsSortedBy(FValueComparisonDelegate);
 End;  
 
 
-Function TAdvObjectMatch.ValidateIndex(Const sMethod : String; iIndex: Integer): Boolean;
+Function TFslObjectMatch.ValidateIndex(Const sMethod : String; iIndex: Integer): Boolean;
 Begin 
   Inherited ValidateIndex(sMethod, iIndex);
 
@@ -7380,7 +7380,7 @@ Begin
 End;  
 
 
-Function TAdvObjectMatch.ValidateKey(Const sMethod : String; oObject : TAdvObject; Const sObject : String) : Boolean;
+Function TFslObjectMatch.ValidateKey(Const sMethod : String; oObject : TFslObject; Const sObject : String) : Boolean;
 Begin 
   If Assigned(oObject) Then
     Invariants(sMethod, oObject, FNominatedKeyClass, sObject);
@@ -7389,7 +7389,7 @@ Begin
 End;  
 
 
-Function TAdvObjectMatch.ValidateValue(Const sMethod : String; oObject : TAdvObject; Const sObject : String) : Boolean;
+Function TFslObjectMatch.ValidateValue(Const sMethod : String; oObject : TFslObject; Const sObject : String) : Boolean;
 Begin 
   If Assigned(oObject) Then
     Invariants(sMethod, oObject, FNominatedValueClass, sObject);
@@ -7398,31 +7398,31 @@ Begin
 End;
 
 
-Function TAdvObjectMatch.ItemKeyClass : TAdvObjectClass;
+Function TFslObjectMatch.ItemKeyClass : TFslObjectClass;
 Begin
-  Result := TAdvObject;
+  Result := TFslObject;
 End;
 
 
-Function TAdvObjectMatch.ItemValueClass : TAdvObjectClass;
+Function TFslObjectMatch.ItemValueClass : TFslObjectClass;
 Begin
-  Result := TAdvObject;
+  Result := TFslObject;
 End;
 
 
-Procedure TAdvObjectMatch.SortedByKey;
+Procedure TFslObjectMatch.SortedByKey;
 Begin
   SortedBy(FKeyComparisonDelegate);
 End;
 
 
-Procedure TAdvObjectMatch.SortedByValue;
+Procedure TFslObjectMatch.SortedByValue;
 Begin
   SortedBy(FValueComparisonDelegate);
 End;
 
 
-Function TAdvObjectMatch.GetKeyByValue(Const aValue: TAdvObjectMatchValue): TAdvObjectMatchKey;
+Function TFslObjectMatch.GetKeyByValue(Const aValue: TFslObjectMatchValue): TFslObjectMatchKey;
 Var
   iIndex : Integer;
 Begin
@@ -7435,7 +7435,7 @@ Begin
 End;
 
 
-Function TAdvObjectMatch.GetMatchByIndex(iIndex : Integer) : TAdvObjectMatchItem;
+Function TFslObjectMatch.GetMatchByIndex(iIndex : Integer) : TFslObjectMatchItem;
 Begin
   Assert(ValidateIndex('GetMatchByIndex', iIndex));
 
@@ -7443,7 +7443,7 @@ Begin
 End;
 
 
-constructor TAdvObjectList.Create;
+constructor TFslObjectList.Create;
 begin
   inherited;
 
@@ -7451,45 +7451,45 @@ begin
 end;
 
 
-destructor TAdvObjectList.Destroy;
+destructor TFslObjectList.Destroy;
 begin
   inherited;
 end;
 
 
-function TAdvObjectList.Link: TAdvObjectList;
+function TFslObjectList.Link: TFslObjectList;
 begin
-  Result := TAdvObjectList(inherited Link);
+  Result := TFslObjectList(inherited Link);
 end;
 
 
-function TAdvObjectList.Clone: TAdvObjectList;
+function TFslObjectList.Clone: TFslObjectList;
 begin
-  Result := TAdvObjectList(inherited Clone);
+  Result := TFslObjectList(inherited Clone);
 end;
 
 
-function TAdvObjectList.ErrorClass: EAdvExceptionClass;
+function TFslObjectList.ErrorClass: EAdvExceptionClass;
 begin
   Result := EAdvObjectList;
 end;
 
 
-procedure TAdvObjectList.AssignItem(oItems: TAdvItemList; iIndex: integer);
+procedure TFslObjectList.AssignItem(oItems: TFslItemList; iIndex: integer);
 begin
-  FObjectArray^[iIndex] := TAdvObjectList(oItems).FObjectArray^[iIndex].Clone;
+  FObjectArray^[iIndex] := TFslObjectList(oItems).FObjectArray^[iIndex].Clone;
 end;
 
 
-procedure TAdvObjectList.SaveItem(oFiler: TAdvFiler; iIndex: integer);
+procedure TFslObjectList.SaveItem(oFiler: TFslFiler; iIndex: integer);
 begin
   oFiler['Object'].DefineObject(FObjectArray^[iIndex]);
 end;
 
 
-procedure TAdvObjectList.LoadItem(oFiler: TAdvFiler; iIndex: integer);
+procedure TFslObjectList.LoadItem(oFiler: TFslFiler; iIndex: integer);
 var
-  oObject: TAdvObject;
+  oObject: TFslObject;
 begin
   oObject := nil;
   try
@@ -7502,7 +7502,7 @@ begin
 end;
 
 
-function TAdvObjectList.ValidateIndex(const sMethod: string; iIndex: integer): boolean;
+function TFslObjectList.ValidateIndex(const sMethod: string; iIndex: integer): boolean;
 begin
   Result := inherited ValidateIndex(sMethod, iIndex);
 
@@ -7511,8 +7511,8 @@ begin
 end;
 
 
-function TAdvObjectList.ValidateItem(const sMethod: string;
-  oObject: TAdvObject; const sObject: string): boolean;
+function TFslObjectList.ValidateItem(const sMethod: string;
+  oObject: TFslObject; const sObject: string): boolean;
 begin
   if Assigned(oObject) or not AllowUnassigned then
     Invariants(sMethod, oObject, FItemClass, sObject);
@@ -7521,9 +7521,9 @@ begin
 end;
 
 
-procedure TAdvObjectList.InternalTruncate(iValue: integer);
+procedure TFslObjectList.InternalTruncate(iValue: integer);
 var
-  oValue: TAdvObject;
+  oValue: TFslObject;
   iLoop: integer;
 begin
   inherited;
@@ -7544,33 +7544,33 @@ begin
 end;
 
 
-procedure TAdvObjectList.InternalResize(iValue: integer);
+procedure TFslObjectList.InternalResize(iValue: integer);
 begin
   inherited;
 
-  MemoryResize(FObjectArray, Capacity * SizeOf(TAdvObject), iValue * SizeOf(TAdvObject));
+  MemoryResize(FObjectArray, Capacity * SizeOf(TFslObject), iValue * SizeOf(TFslObject));
 end;
 
 
-procedure TAdvObjectList.InternalEmpty(iIndex, iLength: integer);
+procedure TFslObjectList.InternalEmpty(iIndex, iLength: integer);
 begin
   inherited;
 
-  MemoryZero(Pointer(NativeUInt(FObjectArray) + NativeUInt((iIndex * SizeOf(TAdvObject)))),
-    (iLength * SizeOf(TAdvObject)));
+  MemoryZero(Pointer(NativeUInt(FObjectArray) + NativeUInt((iIndex * SizeOf(TFslObject)))),
+    (iLength * SizeOf(TFslObject)));
 end;
 
 
-procedure TAdvObjectList.InternalCopy(iSource, iTarget, iCount: integer);
+procedure TFslObjectList.InternalCopy(iSource, iTarget, iCount: integer);
 begin
   inherited;
 
   MemoryMove(@FObjectArray^[iSource], @FObjectArray^[iTarget], iCount *
-    SizeOf(TAdvObject));
+    SizeOf(TFslObject));
 end;
 
 
-procedure TAdvObjectList.InternalInsert(iIndex: integer);
+procedure TFslObjectList.InternalInsert(iIndex: integer);
 begin
   inherited;
 
@@ -7578,7 +7578,7 @@ begin
 end;
 
 
-procedure TAdvObjectList.InternalDelete(iIndex: integer);
+procedure TFslObjectList.InternalDelete(iIndex: integer);
 begin
   inherited;
 
@@ -7589,26 +7589,26 @@ begin
 end;
 
 
-function TAdvObjectList.ItemClass: TAdvObjectClass;
+function TFslObjectList.ItemClass: TFslObjectClass;
 begin
-  Result := TAdvObject;
+  Result := TFslObject;
 end;
 
 
-function TAdvObjectList.ItemNew: TAdvObject;
+function TFslObjectList.ItemNew: TFslObject;
 begin
   Result := FItemClass.Create;
 end;
 
 
-procedure TAdvObjectList.Collect(oList: TAdvObjectList);
+procedure TFslObjectList.Collect(oList: TFslObjectList);
 begin
   oList.Clear;
   oList.AddAll(Self);
 end;
 
 
-procedure TAdvObjectList.AddAll(oList: TAdvObjectList);
+procedure TFslObjectList.AddAll(oList: TFslObjectList);
 var
   iIndex: integer;
 begin
@@ -7624,13 +7624,13 @@ begin
 end;
 
 
-procedure TAdvObjectList.DeleteByDefault(oValue: TAdvObject);
+procedure TFslObjectList.DeleteByDefault(oValue: TFslObject);
 begin
   DeleteBy(oValue, DefaultComparison);
 end;
 
 
-procedure TAdvObjectList.DeleteBy(oValue: TAdvObject; aCompare: TAdvItemListCompare);
+procedure TFslObjectList.DeleteBy(oValue: TFslObject; aCompare: TFslItemListCompare);
 var
   iIndex: integer;
 begin
@@ -7643,15 +7643,15 @@ begin
 end;
 
 
-function TAdvObjectList.IndexBy(oValue: TAdvObject; aCompare: TAdvItemListCompare): integer;
+function TFslObjectList.IndexBy(oValue: TFslObject; aCompare: TFslItemListCompare): integer;
 begin
   if not Find(oValue, Result, aCompare) then
     Result := -1;
 end;
 
 
-function TAdvObjectList.ExistsBy(oValue: TAdvObject;
-  aCompare: TAdvItemListCompare): boolean;
+function TFslObjectList.ExistsBy(oValue: TFslObject;
+  aCompare: TFslItemListCompare): boolean;
 var
   iIndex: integer;
 begin
@@ -7659,8 +7659,8 @@ begin
 end;
 
 
-function TAdvObjectList.GetBy(oValue: TAdvObject;
-  aCompare: TAdvItemListCompare): TAdvObject;
+function TFslObjectList.GetBy(oValue: TFslObject;
+  aCompare: TFslItemListCompare): TFslObject;
 var
   iIndex: integer;
 begin
@@ -7671,8 +7671,8 @@ begin
 end;
 
 
-function TAdvObjectList.ForceBy(oValue: TAdvObject;
-  aCompare: TAdvItemListCompare): TAdvObject;
+function TFslObjectList.ForceBy(oValue: TFslObject;
+  aCompare: TFslItemListCompare): TFslObject;
 var
   iIndex: integer;
 begin
@@ -7687,24 +7687,24 @@ begin
 end;
 
 
-function TAdvObjectList.CompareByReference(pA, pB: Pointer): integer;
+function TFslObjectList.CompareByReference(pA, pB: Pointer): integer;
 begin
   Result := IntegerCompare(integer(pA), integer(pB));
 end;
 
 
-function TAdvObjectList.CompareByClass(pA, pB: Pointer): integer;
+function TFslObjectList.CompareByClass(pA, pB: Pointer): integer;
 var
-  aClassA: TAdvObjectClass;
-  aClassB: TAdvObjectClass;
+  aClassA: TFslObjectClass;
+  aClassB: TFslObjectClass;
 begin
   if Assigned(pA) then
-    aClassA := TAdvObject(pA).ClassType
+    aClassA := TFslObject(pA).ClassType
   else
     aClassA := nil;
 
   if Assigned(pB) then
-    aClassB := TAdvObject(pB).ClassType
+    aClassB := TFslObject(pB).ClassType
   else
     aClassB := nil;
 
@@ -7712,15 +7712,15 @@ begin
 end;
 
 
-function TAdvObjectList.Find(oValue: TAdvObject): integer;
+function TFslObjectList.Find(oValue: TFslObject): integer;
 begin
   Find(oValue, Result);
 end;
 
 
-function TAdvObjectList.IndexByClass(aClass: TAdvObjectClass): integer;
+function TFslObjectList.IndexByClass(aClass: TFslObjectClass): integer;
 var
-  oValue: TAdvObject;
+  oValue: TFslObject;
 begin
   Assert(Invariants('IndexByClass', aClass, FItemClass, 'aClass'));
 
@@ -7733,7 +7733,7 @@ begin
 end;
 
 
-function TAdvObjectList.IndexByClass(oValue: TAdvObject): integer;
+function TFslObjectList.IndexByClass(oValue: TFslObject): integer;
 begin
   Assert(ValidateItem('IndexByClass', oValue, 'oValue'));
 
@@ -7745,19 +7745,19 @@ begin
 end;
 
 
-function TAdvObjectList.ExistsByClass(aClass: TAdvObjectClass): boolean;
+function TFslObjectList.ExistsByClass(aClass: TFslObjectClass): boolean;
 begin
   Result := ExistsByIndex(IndexByClass(aClass));
 end;
 
 
-function TAdvObjectList.GetByClass(aClass: TAdvObjectClass): TAdvObject;
+function TFslObjectList.GetByClass(aClass: TFslObjectClass): TFslObject;
 begin
   Result := Get(IndexByClass(aClass));
 end;
 
 
-function TAdvObjectList.IndexByReference(oValue: TAdvObject): integer;
+function TFslObjectList.IndexByReference(oValue: TFslObject): integer;
 begin
   Assert(ValidateItem('IndexByReference', oValue, 'oValue'));
 
@@ -7769,13 +7769,13 @@ begin
 end;
 
 
-function TAdvObjectList.ExistsByReference(oValue: TAdvObject): boolean;
+function TFslObjectList.ExistsByReference(oValue: TFslObject): boolean;
 begin
   Result := ExistsByIndex(IndexByReference(oValue));
 end;
 
 
-function TAdvObjectList.IndexByDefault(oValue: TAdvObject): integer;
+function TFslObjectList.IndexByDefault(oValue: TFslObject): integer;
 begin
   Assert(ValidateItem('IndexByDefault', oValue, 'oValue'));
 
@@ -7783,13 +7783,13 @@ begin
 end;
 
 
-function TAdvObjectList.ExistsByDefault(oValue: TAdvObject): boolean;
+function TFslObjectList.ExistsByDefault(oValue: TFslObject): boolean;
 begin
   Result := ExistsByIndex(IndexByDefault(oValue));
 end;
 
 
-function TAdvObjectList.Add(oValue: TAdvObject): integer;
+function TFslObjectList.Add(oValue: TFslObject): integer;
 begin
   Assert(ValidateItem('Add', oValue, 'oValue'));
 
@@ -7814,7 +7814,7 @@ begin
 end;
 
 
-procedure TAdvObjectList.Insert(iIndex: integer; oValue: TAdvObject);
+procedure TFslObjectList.Insert(iIndex: integer; oValue: TFslObject);
 begin
   Assert(ValidateItem('Insert', oValue, 'oValue'));
   Assert(CheckCondition(not IsSorted or (Find(oValue) = iIndex), 'Insert',
@@ -7829,7 +7829,7 @@ begin
 end;
 
 
-procedure TAdvObjectList.DeleteByReference(oValue: TAdvObject);
+procedure TFslObjectList.DeleteByReference(oValue: TFslObject);
 begin
   DeleteBy(oValue,
 {$IFDEF FPC}
@@ -7839,7 +7839,7 @@ begin
 end;
 
 
-procedure TAdvObjectList.DeleteAllByReference(oValue: TAdvObjectList);
+procedure TFslObjectList.DeleteAllByReference(oValue: TFslObjectList);
 var
   iIndex: integer;
 begin
@@ -7848,7 +7848,7 @@ begin
 end;
 
 
-procedure TAdvObjectList.DeleteByClass(aClass: TAdvObjectClass);
+procedure TFslObjectList.DeleteByClass(aClass: TFslObjectClass);
 var
   iIndex: integer;
 begin
@@ -7864,7 +7864,7 @@ begin
 end;
 
 
-function TAdvObjectList.RemoveLast: TAdvObject;
+function TFslObjectList.RemoveLast: TFslObject;
 begin
   if Count <= 0 then
     Result := nil
@@ -7878,7 +7878,7 @@ begin
 end;
 
 
-function TAdvObjectList.RemoveFirst: TAdvObject;
+function TFslObjectList.RemoveFirst: TFslObject;
 begin
   if Count <= 0 then
     Result := nil
@@ -7898,7 +7898,7 @@ begin
 end;
 
 
-procedure TAdvObjectList.InternalExchange(iA, iB: integer);
+procedure TFslObjectList.InternalExchange(iA, iB: integer);
 var
   iTemp: integer;
   pA: Pointer;
@@ -7913,9 +7913,9 @@ begin
 end;
 
 
-procedure TAdvObjectList.Move(iSource, iTarget: integer);
+procedure TFslObjectList.Move(iSource, iTarget: integer);
 var
-  oObject: TAdvObject;
+  oObject: TFslObject;
 begin
   Assert(CheckCondition(iSource <> iTarget, 'Move', 'Can''t move the same index.'));
 
@@ -7937,16 +7937,16 @@ begin
 end;
 
 
-function TAdvObjectList.Find(pValue: Pointer; Out iIndex: integer;
-  aCompare: TAdvItemListCompare): boolean;
+function TFslObjectList.Find(pValue: Pointer; Out iIndex: integer;
+  aCompare: TFslItemListCompare): boolean;
 begin
-  Assert(Invariants('Find', TAdvObject(pValue), FItemClass, 'pValue'));
+  Assert(Invariants('Find', TFslObject(pValue), FItemClass, 'pValue'));
 
   Result := inherited Find(pValue, iIndex, aCompare);
 end;
 
 
-function TAdvObjectList.AddressOfItem(iIndex: integer): PAdvObject;
+function TFslObjectList.AddressOfItem(iIndex: integer): PAdvObject;
 begin
   Assert(ValidateIndex('AddressOfItem', iIndex));
 
@@ -7954,13 +7954,13 @@ begin
 end;
 
 
-function TAdvObjectList.GetItemClass: TAdvObjectClass;
+function TFslObjectList.GetItemClass: TFslObjectClass;
 begin
   Result := FItemClass;
 end;
 
 
-procedure TAdvObjectList.SetItemClass(const Value: TAdvObjectClass);
+procedure TFslObjectList.SetItemClass(const Value: TFslObjectClass);
 begin
   Assert(CheckCondition(Count = 0, 'SetItemClass',
     'Cannot change ItemClass once objects are present in the list.'));
@@ -7969,7 +7969,7 @@ begin
 end;
 
 
-function TAdvObjectList.GetItem(iIndex: integer): Pointer;
+function TFslObjectList.GetItem(iIndex: integer): Pointer;
 begin
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -7977,15 +7977,15 @@ begin
 end;
 
 
-procedure TAdvObjectList.SetItem(iIndex: integer; pValue: Pointer);
+procedure TFslObjectList.SetItem(iIndex: integer; pValue: Pointer);
 begin
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FObjectArray^[iIndex] := TAdvObject(pValue);
+  FObjectArray^[iIndex] := TFslObject(pValue);
 end;
 
 
-function TAdvObjectList.GetObject(iIndex: integer): TAdvObject;
+function TFslObjectList.GetObject(iIndex: integer): TFslObject;
 begin
   Assert(ValidateIndex('GetObject', iIndex));
 
@@ -7993,7 +7993,7 @@ begin
 end;
 
 
-procedure TAdvObjectList.SetObject(iIndex: integer; const oValue: TAdvObject);
+procedure TFslObjectList.SetObject(iIndex: integer; const oValue: TFslObject);
 begin
   Assert(ValidateIndex('SetObject', iIndex));
   Assert(Replaceable('SetObject', iIndex));
@@ -8008,13 +8008,13 @@ begin
 end;
 
 
-function TAdvObjectList.CapacityLimit: integer;
+function TFslObjectList.CapacityLimit: integer;
 begin
-  Result := High(TAdvObjectArray);
+  Result := High(TFslObjectArray);
 end;
 
 
-function TAdvObjectList.Get(iIndex: integer): TAdvObject;
+function TFslObjectList.Get(iIndex: integer): TFslObject;
 begin
   if ExistsByIndex(iIndex) then
     Result := ObjectByIndex[iIndex]
@@ -8023,67 +8023,67 @@ begin
 end;
 
 
-function TAdvObjectList.GetByIndex(iIndex: integer): TAdvObject;
+function TFslObjectList.GetByIndex(iIndex: integer): TFslObject;
 begin
   Result := ObjectByIndex[iIndex];
 end;
 
 
-function TAdvObjectList.Iterator: TAdvIterator;
+function TFslObjectList.Iterator: TFslIterator;
 begin
   Result := ProduceIterator;
 end;
 
 
-procedure TAdvObjectList.SortedByClass;
+procedure TFslObjectList.SortedByClass;
 begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByClass);
 end;
 
 
-procedure TAdvObjectList.OrderedByClass;
+procedure TFslObjectList.OrderedByClass;
 begin
   OrderedBy({$IFDEF FPC}@{$ENDIF}CompareByClass);
 end;
 
 
-function TAdvObjectList.IsSortedByClass: boolean;
+function TFslObjectList.IsSortedByClass: boolean;
 begin
   Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareByClass);
 end;
 
 
-function TAdvObjectList.IsOrderedByClass: boolean;
+function TFslObjectList.IsOrderedByClass: boolean;
 begin
   Result := IsOrderedBy({$IFDEF FPC}@{$ENDIF}CompareByClass);
 end;
 
 
-procedure TAdvObjectList.SortedByReference;
+procedure TFslObjectList.SortedByReference;
 begin
   SortedBy({$IFDEF FPC}@{$ENDIF}CompareByReference);
 end;
 
 
-procedure TAdvObjectList.OrderedByReference;
+procedure TFslObjectList.OrderedByReference;
 begin
   OrderedBy({$IFDEF FPC}@{$ENDIF}CompareByReference);
 end;
 
 
-function TAdvObjectList.IsSortedByReference: boolean;
+function TFslObjectList.IsSortedByReference: boolean;
 begin
   Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareByReference);
 end;
 
 
-function TAdvObjectList.IsOrderedByReference: boolean;
+function TFslObjectList.IsOrderedByReference: boolean;
 begin
   Result := IsOrderedBy({$IFDEF FPC}@{$ENDIF}CompareByReference);
 end;
 
 
-function TAdvObjectList.Deleteable(const sMethod: string; iIndex: integer): boolean;
+function TFslObjectList.Deleteable(const sMethod: string; iIndex: integer): boolean;
 begin
   Result := inherited Deleteable(sMethod, iIndex);
 
@@ -8091,7 +8091,7 @@ begin
 end;
 
 
-function TAdvObjectList.Deleteable(const sMethod: string; oObject: TAdvObject): boolean;
+function TFslObjectList.Deleteable(const sMethod: string; oObject: TFslObject): boolean;
 begin
   Alterable(sMethod);
 
@@ -8099,7 +8099,7 @@ begin
 end;
 
 
-function TAdvObjectList.Insertable(const sMethod: string; oObject: TAdvObject): boolean;
+function TFslObjectList.Insertable(const sMethod: string; oObject: TFslObject): boolean;
 begin
   Alterable(sMethod);
 
@@ -8107,8 +8107,8 @@ begin
 end;
 
 
-function TAdvObjectList.Replaceable(const sMethod: string;
-  oOld, oNew: TAdvObject): boolean;
+function TFslObjectList.Replaceable(const sMethod: string;
+  oOld, oNew: TFslObject): boolean;
 begin
   Alterable(sMethod);
   ValidateItem(sMethod, oOld, 'oOld');
@@ -8118,7 +8118,7 @@ begin
 end;
 
 
-function TAdvObjectList.Extendable(const sMethod: string; iCount: integer): boolean;
+function TFslObjectList.Extendable(const sMethod: string; iCount: integer): boolean;
 begin
   Result := inherited Extendable(sMethod, iCount);
 
@@ -8128,35 +8128,35 @@ begin
 end;
 
 
-function TAdvObjectList.New: TAdvObject;
+function TFslObjectList.New: TFslObject;
 begin
   Result := ItemNew;
 end;
 
 
-procedure TAdvObjectList.InternalAfterInclude(iIndex: integer);
+procedure TFslObjectList.InternalAfterInclude(iIndex: integer);
 begin
 end;
 
 
-procedure TAdvObjectList.InternalBeforeExclude(iIndex: integer);
+procedure TFslObjectList.InternalBeforeExclude(iIndex: integer);
 begin
 end;
 
 
-function TAdvObjectList.AllowUnassigned: boolean;
+function TFslObjectList.AllowUnassigned: boolean;
 begin
   Result := True;
 end;
 
 
-function TAdvObjectList.IteratorClass: TAdvObjectListIteratorClass;
+function TFslObjectList.IteratorClass: TFslObjectListIteratorClass;
 begin
-  Result := TAdvObjectListIterator;
+  Result := TFslObjectListIterator;
 end;
 
 
-procedure TAdvObjectList.ConsumeIterator(oIterator: TAdvObjectListIterator);
+procedure TFslObjectList.ConsumeIterator(oIterator: TFslObjectListIterator);
 begin
   Assert(Invariants('ConsumeIterator', oIterator, IteratorClass, 'oIterator'));
   Assert(CheckCondition(oIterator.List = Self, 'ConsumeIterator',
@@ -8166,27 +8166,27 @@ begin
 end;
 
 
-function TAdvObjectList.ProduceIterator: TAdvObjectListIterator;
+function TFslObjectList.ProduceIterator: TFslObjectListIterator;
 begin
   Result := IteratorClass.Create;
   Result.List := Self.Link;
 end;
 
 
-function TAdvObjectList.GetObjectByIndex(const iIndex: integer): TAdvObject;
+function TFslObjectList.GetObjectByIndex(const iIndex: integer): TFslObject;
 begin
   Result := GetObject(iIndex);
 end;
 
 
-procedure TAdvObjectList.SetObjectByIndex(const iIndex: integer;
-  const Value: TAdvObject);
+procedure TFslObjectList.SetObjectByIndex(const iIndex: integer;
+  const Value: TFslObject);
 begin
   SetObject(iIndex, Value);
 end;
 
 
-constructor TAdvObjectListIterator.Create;
+constructor TFslObjectListIterator.Create;
 begin
   inherited;
 
@@ -8194,7 +8194,7 @@ begin
 end;
 
 
-destructor TAdvObjectListIterator.Destroy;
+destructor TFslObjectListIterator.Destroy;
 begin
   FList.Free;
 
@@ -8202,7 +8202,7 @@ begin
 end;
 
 
-procedure TAdvObjectListIterator.First;
+procedure TFslObjectListIterator.First;
 begin
   inherited;
 
@@ -8213,7 +8213,7 @@ begin
 end;
 
 
-procedure TAdvObjectListIterator.Last;
+procedure TFslObjectListIterator.Last;
 begin
   inherited;
 
@@ -8224,7 +8224,7 @@ begin
 end;
 
 
-procedure TAdvObjectListIterator.Back;
+procedure TFslObjectListIterator.Back;
 begin
   inherited;
 
@@ -8235,7 +8235,7 @@ begin
 end;
 
 
-procedure TAdvObjectListIterator.Next;
+procedure TFslObjectListIterator.Next;
 begin
   inherited;
 
@@ -8248,7 +8248,7 @@ begin
 end;
 
 
-function TAdvObjectListIterator.Current: TAdvObject;
+function TFslObjectListIterator.Current: TFslObject;
 begin
   Assert(CheckCondition(not FDeleted, 'Current', 'Current element has been deleted'));
 
@@ -8256,13 +8256,13 @@ begin
 end;
 
 
-function TAdvObjectListIterator.More: boolean;
+function TFslObjectListIterator.More: boolean;
 begin
   Result := List.ExistsByIndex(FIndex);
 end;
 
 
-procedure TAdvObjectListIterator.Delete;
+procedure TFslObjectListIterator.Delete;
 begin
   Assert(CheckCondition(not FDeleted, 'Delete', 'Current element has already been deleted'));
 
@@ -8271,44 +8271,44 @@ begin
 end;
 
 
-function TAdvObjectListIterator.GetList: TAdvObjectList;
+function TFslObjectListIterator.GetList: TFslObjectList;
 begin
-  Assert(Invariants('GetList', FList, TAdvObjectList, 'FList'));
+  Assert(Invariants('GetList', FList, TFslObjectList, 'FList'));
 
   Result := FList;
 end;
 
 
-procedure TAdvObjectListIterator.SetList(const Value: TAdvObjectList);
+procedure TFslObjectListIterator.SetList(const Value: TFslObjectList);
 begin
-  Assert(not Assigned(FList) or Invariants('SetList', Value, TAdvObjectList, 'Value'));
+  Assert(not Assigned(FList) or Invariants('SetList', Value, TFslObjectList, 'Value'));
 
   FList.Free;
   FList := Value;
 end;
 
 
-procedure TAdvObjectListIterator.StepBack;
+procedure TFslObjectListIterator.StepBack;
 begin
   while More and Skip do
     Dec(FIndex);
 end;
 
 
-procedure TAdvObjectListIterator.StepNext;
+procedure TFslObjectListIterator.StepNext;
 begin
   while More and Skip do
     Inc(FIndex);
 end;
 
 
-function TAdvObjectListIterator.Skip: boolean;
+function TFslObjectListIterator.Skip: boolean;
 begin
   Result := False;
 end;
 
 
-function TAdvObjectList.ContainsAllByReference(oObjectList: TAdvObjectList): boolean;
+function TFslObjectList.ContainsAllByReference(oObjectList: TFslObjectList): boolean;
 var
   iObjectIndex: integer;
 begin
@@ -8322,7 +8322,7 @@ begin
 end;
 
 
-function TAdvObjectList.ContainsAnyByReference(oObjectList: TAdvObjectList): boolean;
+function TFslObjectList.ContainsAnyByReference(oObjectList: TFslObjectList): boolean;
 var
   iObjectIndex: integer;
 begin
@@ -8343,7 +8343,7 @@ Type
   End;
 
 
-Constructor TAdvItemList.Create;
+Constructor TFslItemList.Create;
 Begin
   Inherited;
 
@@ -8353,7 +8353,7 @@ Begin
 End;
 
 
-Destructor TAdvItemList.Destroy;
+Destructor TFslItemList.Destroy;
 Begin
   InternalResize(0);
 
@@ -8361,13 +8361,13 @@ Begin
 End;
 
 
-Function TAdvItemList.ErrorClass : EAdvExceptionClass;
+Function TFslItemList.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvItemList;
 End;
 
 
-Procedure TAdvItemList.Assign(oSource: TAdvObject);
+Procedure TFslItemList.Assign(oSource: TFslObject);
 Var
   iLoop : Integer;
 Begin
@@ -8377,10 +8377,10 @@ Begin
 
   Assert(CheckCondition(Count = 0, 'Assign', 'Collection must be empty of all items after clear.'));
 
-  Count := TAdvItemList(oSource).Count;
+  Count := TFslItemList(oSource).Count;
 
   For iLoop := 0 To Count - 1 Do
-    AssignItem(TAdvItemList(oSource), iLoop);
+    AssignItem(TFslItemList(oSource), iLoop);
 
   If Count > 0 Then
   Begin
@@ -8390,18 +8390,18 @@ Begin
 
     // Comparison is set this way because we can't directly assign a method pointer off another object.
     TMethod(FComparison).Data := Self;
-    TMethod(FComparison).Code := TMethod(TAdvItemList(oSource).FComparison).Code;
+    TMethod(FComparison).Code := TMethod(TFslItemList(oSource).FComparison).Code;
 
-    FSorted := TAdvItemList(oSource).FSorted;
-    FDirection := TAdvItemList(oSource).FDirection;
-    FDuplicates := TAdvItemList(oSource).FDuplicates;
+    FSorted := TFslItemList(oSource).FSorted;
+    FDirection := TFslItemList(oSource).FDirection;
+    FDuplicates := TFslItemList(oSource).FDuplicates;
   End;
 End;
 
 
-Procedure TAdvItemList.Load(oFiler : TAdvFiler);
+Procedure TFslItemList.Load(oFiler : TFslFiler);
 Begin
-  Assert(Invariants('Load', oFiler, TAdvFiler, 'oFiler'));
+  Assert(Invariants('Load', oFiler, TFslFiler, 'oFiler'));
 
   Clear;
 
@@ -8416,11 +8416,11 @@ Begin
 End;
 
 
-Procedure TAdvItemList.Save(oFiler : TAdvFiler);
+Procedure TFslItemList.Save(oFiler : TFslFiler);
 Var
   iLoop  : Integer;
 Begin
-  Assert(Invariants('Save', oFiler, TAdvFiler, 'oFiler'));
+  Assert(Invariants('Save', oFiler, TFslFiler, 'oFiler'));
 
   Define(oFiler);
 
@@ -8433,34 +8433,34 @@ Begin
 End;
 
 
-Procedure TAdvItemList.Define(oFiler: TAdvFiler);
+Procedure TFslItemList.Define(oFiler: TFslFiler);
 Begin
   Inherited;
 End;
 
 
-Procedure TAdvItemList.LoadItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslItemList.LoadItem(oFiler: TFslFiler; iIndex: Integer);
 Begin
 End;
 
 
-Procedure TAdvItemList.SaveItem(oFiler: TAdvFiler; iIndex: Integer);
+Procedure TFslItemList.SaveItem(oFiler: TFslFiler; iIndex: Integer);
 Begin
 End;
 
 
-Procedure TAdvItemList.AssignItem(oItems : TAdvItemList; iIndex: Integer);
+Procedure TFslItemList.AssignItem(oItems : TFslItemList; iIndex: Integer);
 Begin
 End;
 
 
-Function TAdvItemList.ExistsByIndex(Const iIndex : Integer) : Boolean;
+Function TFslItemList.ExistsByIndex(Const iIndex : Integer) : Boolean;
 Begin
   Result := (iIndex >= 0) And (iIndex < FCount);
 End;
 
 
-Function TAdvItemList.ValidateIndex(Const sMethod: String; iIndex: Integer) : Boolean;
+Function TFslItemList.ValidateIndex(Const sMethod: String; iIndex: Integer) : Boolean;
 Begin
   If Not ExistsByIndex(iIndex) Then
     Invariant(sMethod, StringFormat('Invalid index (%d In [0..%d])', [iIndex, FCount - 1]));
@@ -8469,7 +8469,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.InternalClear;
+Procedure TFslItemList.InternalClear;
 Begin
   Inherited;
 
@@ -8478,7 +8478,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.InternalGrow;
+Procedure TFslItemList.InternalGrow;
 Var
   iDelta : Integer;
 Begin
@@ -8493,27 +8493,27 @@ Begin
 End;
 
 
-Procedure TAdvItemList.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslItemList.InternalEmpty(iIndex, iLength: Integer);
 Begin
 End;
 
 
-Procedure TAdvItemList.InternalResize(iValue : Integer);
+Procedure TFslItemList.InternalResize(iValue : Integer);
 Begin
 End;
 
 
-Procedure TAdvItemList.InternalTruncate(iValue: Integer);
+Procedure TFslItemList.InternalTruncate(iValue: Integer);
 Begin
 End;
 
 
-Procedure TAdvItemList.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslItemList.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin
 End;
 
 
-Procedure TAdvItemList.InternalSort;
+Procedure TFslItemList.InternalSort;
 
   Procedure QuickSort(L, R: Integer);
   Var
@@ -8571,7 +8571,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.InternalSort(aCompare: TAdvItemListCompare; iDirection : TAdvItemListDirection);
+Procedure TFslItemList.InternalSort(aCompare: TFslItemListCompare; iDirection : TFslItemListDirection);
 Begin
   Assert(CheckCondition(Assigned(aCompare), 'Sort', 'Comparison parameter must be assigned.'));
 
@@ -8586,7 +8586,7 @@ Begin
 End;
 
 
-Function TAdvItemList.Find(pValue : Pointer; Out iIndex: Integer; aCompare : TAdvItemListCompare): Boolean;
+Function TFslItemList.Find(pValue : Pointer; Out iIndex: Integer; aCompare : TFslItemListCompare): Boolean;
 Var
   L, H, I, C : Integer;
 Begin
@@ -8634,19 +8634,19 @@ Begin
 End;
 
 
-Function TAdvItemList.CompareItem(pA, pB : Pointer): Integer;
+Function TFslItemList.CompareItem(pA, pB : Pointer): Integer;
 Begin
   Result := IntegerCompare(Integer(pA), Integer(pB));
 End;
 
 
-Procedure TAdvItemList.DefaultCompare(Out aCompare : TAdvItemListCompare);
+Procedure TFslItemList.DefaultCompare(Out aCompare : TFslItemListCompare);
 Begin
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareItem;
 End;
 
 
-Procedure TAdvItemList.InternalInsert(iIndex : Integer);
+Procedure TFslItemList.InternalInsert(iIndex : Integer);
 Begin
   // Insert is allowed one element past the end of the items
   Assert(Insertable('InternalInsert', iIndex));
@@ -8664,12 +8664,12 @@ Begin
 End;
 
 
-Procedure TAdvItemList.InternalDelete(iIndex : Integer);
+Procedure TFslItemList.InternalDelete(iIndex : Integer);
 Begin
 End;
 
 
-Procedure TAdvItemList.DeleteByIndex(iIndex: Integer);
+Procedure TFslItemList.DeleteByIndex(iIndex: Integer);
 Begin
   Assert(Deleteable('DeleteByIndex', iIndex));
 
@@ -8682,7 +8682,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.DeleteRange(iFromIndex, iToIndex : Integer);
+Procedure TFslItemList.DeleteRange(iFromIndex, iToIndex : Integer);
 Var
   iLoop : Integer;
 Begin
@@ -8698,7 +8698,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.InternalExchange(iA, iB : Integer);
+Procedure TFslItemList.InternalExchange(iA, iB : Integer);
 Var
   pTemp : Pointer;
 Begin
@@ -8708,7 +8708,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.SetCapacity(Const iValue: Integer);
+Procedure TFslItemList.SetCapacity(Const iValue: Integer);
 Begin
   Assert(CheckCondition((iValue >= FCount) And (iValue <= CapacityLimit), 'SetCapacity', StringFormat('Unable to change the capacity to %d', [iValue])));
 
@@ -8717,7 +8717,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.SetCount(Const iValue: Integer);
+Procedure TFslItemList.SetCount(Const iValue: Integer);
 Var
   iIndex : Integer;
 Begin
@@ -8738,7 +8738,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.SortedBy(Const bValue : Boolean);
+Procedure TFslItemList.SortedBy(Const bValue : Boolean);
 Begin
 
   If FSorted <> bValue Then
@@ -8751,7 +8751,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.ComparedBy(Const Value: TAdvItemListCompare);
+Procedure TFslItemList.ComparedBy(Const Value: TFslItemListCompare);
 Begin
   Assert(Alterable('ComparedBy'));
 
@@ -8763,7 +8763,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.DirectionBy(Const Value: TAdvItemListDirection);
+Procedure TFslItemList.DirectionBy(Const Value: TFslItemListDirection);
 Begin
   Assert(Alterable('DirectionBy'));
 
@@ -8775,7 +8775,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.DuplicateBy(Const Value: TAdvItemListDuplicates);
+Procedure TFslItemList.DuplicateBy(Const Value: TFslItemListDuplicates);
 Begin
   Assert(Alterable('DuplicateBy'));
 
@@ -8783,7 +8783,7 @@ Begin
 End;
 
 
-Function TAdvItemList.CapacityLimit : Integer;
+Function TFslItemList.CapacityLimit : Integer;
 Begin
   Invariant('CapacityLimit', 'CapacityLimit not specified.');
 
@@ -8791,50 +8791,50 @@ Begin
 End;
 
 
-Function TAdvItemList.CountLimit : Integer;
+Function TFslItemList.CountLimit : Integer;
 Begin
   Result := CapacityLimit;
 End;
 
 
-Function TAdvItemList.IsComparedBy(Const aCompare: TAdvItemListCompare) : Boolean;
+Function TFslItemList.IsComparedBy(Const aCompare: TFslItemListCompare) : Boolean;
 Begin
   Result := (TMethod(FComparison).Data = TMethod(aCompare).Data) And (TMethod(FComparison).Code = TMethod(aCompare).Code);
 End;
 
 
-Function TAdvItemList.IsCompared : Boolean;
+Function TFslItemList.IsCompared : Boolean;
 Begin
   Result := Assigned(@FComparison);
 End;
 
 
-Function TAdvItemList.IsUncompared : Boolean;
+Function TFslItemList.IsUncompared : Boolean;
 Begin
   Result := Not IsCompared;
 End;
 
 
-Function TAdvItemList.IsSortedBy(Const aCompare: TAdvItemListCompare) : Boolean;
+Function TFslItemList.IsSortedBy(Const aCompare: TFslItemListCompare) : Boolean;
 Begin
   Result := FSorted And IsComparedBy(aCompare);
 End;
 
 
-Procedure TAdvItemList.SortedBy(Const aCompare: TAdvItemListCompare);
+Procedure TFslItemList.SortedBy(Const aCompare: TFslItemListCompare);
 Begin
   ComparedBy(aCompare);
   SortedBy(True);
 End;
 
 
-Procedure TAdvItemList.AllowDuplicates;
+Procedure TFslItemList.AllowDuplicates;
 Begin
   DuplicateBy(dupAccept);
 End;
 
 
-Procedure TAdvItemList.IgnoreDuplicates;
+Procedure TFslItemList.IgnoreDuplicates;
 Begin
   DuplicateBy(dupIgnore);
 
@@ -8842,7 +8842,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.PreventDuplicates;
+Procedure TFslItemList.PreventDuplicates;
 Begin
   DuplicateBy(dupException);
 
@@ -8850,86 +8850,86 @@ Begin
 End;
 
 
-Function TAdvItemList.IsAllowDuplicates : Boolean;
+Function TFslItemList.IsAllowDuplicates : Boolean;
 Begin
   Result := FDuplicates = dupAccept;
 End;
 
 
-Function TAdvItemList.IsIgnoreDuplicates : Boolean;
+Function TFslItemList.IsIgnoreDuplicates : Boolean;
 Begin
   Result := FDuplicates = dupIgnore;
 End;
 
 
-Function TAdvItemList.IsPreventDuplicates : Boolean;
+Function TFslItemList.IsPreventDuplicates : Boolean;
 Begin
   Result := FDuplicates = dupException;
 End;
 
 
-Procedure TAdvItemList.Sorted;
+Procedure TFslItemList.Sorted;
 Begin
   SortedBy(True);
 End;
 
 
-Procedure TAdvItemList.Unsorted;
+Procedure TFslItemList.Unsorted;
 Begin
   SortedBy(False);
 End;
 
 
-Procedure TAdvItemList.Uncompared;
+Procedure TFslItemList.Uncompared;
 Begin
   FComparison := Nil;
   FSorted := False;
 End;
 
 
-Procedure TAdvItemList.SortAscending;
+Procedure TFslItemList.SortAscending;
 Begin
   DirectionBy(1);
 End;
 
 
-Procedure TAdvItemList.SortDescending;
+Procedure TFslItemList.SortDescending;
 Begin
   DirectionBy(-1);
 End;
 
 
-Function TAdvItemList.IsSortAscending : Boolean;
+Function TFslItemList.IsSortAscending : Boolean;
 Begin
   Result := FDirection > 0;
 End;
 
 
-Function TAdvItemList.IsSortDescending : Boolean;
+Function TFslItemList.IsSortDescending : Boolean;
 Begin
   Result := FDirection < 0;
 End;
 
 
-Function TAdvItemList.IsSorted : Boolean;
+Function TFslItemList.IsSorted : Boolean;
 Begin
   Result := FSorted;
 End;
 
 
-Function TAdvItemList.IsUnsorted : Boolean;
+Function TFslItemList.IsUnsorted : Boolean;
 Begin
   Result := Not FSorted;
 End;
 
 
-Function TAdvItemList.IsEmpty : Boolean;
+Function TFslItemList.IsEmpty : Boolean;
 Begin
   Result := FCount <= 0;
 End;
 
 
-Function TAdvItemList.Deleteable(Const sMethod: String; iIndex: Integer): Boolean;
+Function TFslItemList.Deleteable(Const sMethod: String; iIndex: Integer): Boolean;
 Begin
   Result := Alterable(sMethod);
 
@@ -8937,7 +8937,7 @@ Begin
 End;
 
 
-Function TAdvItemList.Deleteable(Const sMethod: String; iFromIndex, iToIndex: Integer): Boolean;
+Function TFslItemList.Deleteable(Const sMethod: String; iFromIndex, iToIndex: Integer): Boolean;
 Var
   iLoop : Integer;
 Begin
@@ -8954,7 +8954,7 @@ Begin
 End;
 
 
-Function TAdvItemList.Insertable(Const sMethod: String; iIndex: Integer): Boolean;
+Function TFslItemList.Insertable(Const sMethod: String; iIndex: Integer): Boolean;
 Begin
   Result := Alterable(sMethod);
 
@@ -8963,7 +8963,7 @@ Begin
 End;
 
 
-Function TAdvItemList.Replaceable(Const sMethod: String; iIndex: Integer): Boolean;
+Function TFslItemList.Replaceable(Const sMethod: String; iIndex: Integer): Boolean;
 Begin
   Result := Alterable(sMethod);
 
@@ -8972,7 +8972,7 @@ Begin
 End;
 
 
-Function TAdvItemList.Extendable(Const sMethod: String; iCount: Integer): Boolean;
+Function TFslItemList.Extendable(Const sMethod: String; iCount: Integer): Boolean;
 Begin
   Result := Alterable(sMethod);
 
@@ -8981,7 +8981,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.Exchange(iA, iB: Integer);
+Procedure TFslItemList.Exchange(iA, iB: Integer);
 Begin
   Assert(ValidateIndex('Exchange', iA));
   Assert(ValidateIndex('Exchange', iB));
@@ -8993,13 +8993,13 @@ Begin
 End;
 
 
-Function TAdvItemList.Replacable : Boolean;
+Function TFslItemList.Replacable : Boolean;
 Begin
   Result := True;
 End;
 
 
-Function TAdvItemList.IsOrderedBy(Const Value: TAdvItemListCompare): Boolean;
+Function TFslItemList.IsOrderedBy(Const Value: TFslItemListCompare): Boolean;
 Var
   iIndex : Integer;
 Begin
@@ -9013,7 +9013,7 @@ Begin
 End;
 
 
-Procedure TAdvItemList.OrderedBy(Const Value: TAdvItemListCompare);
+Procedure TFslItemList.OrderedBy(Const Value: TFslItemListCompare);
 Begin
   FComparison := Value;
   FSorted := False;
@@ -9021,20 +9021,20 @@ Begin
 End;
 
 
-Procedure TAdvItemList.Unordered;
+Procedure TFslItemList.Unordered;
 Begin
   FComparison := Nil;
   FSorted := False;
 End;
 
 
-Procedure TAdvPointerList.AssignItem(oItems : TAdvItemList; iIndex : Integer);
+Procedure TFslPointerList.AssignItem(oItems : TFslItemList; iIndex : Integer);
 Begin
-  FPointerArray^[iIndex] := TAdvPointerList(oItems).FPointerArray^[iIndex];
+  FPointerArray^[iIndex] := TFslPointerList(oItems).FPointerArray^[iIndex];
 End;
 
 
-Procedure TAdvPointerList.InternalResize(iValue : Integer);
+Procedure TFslPointerList.InternalResize(iValue : Integer);
 Begin
   Inherited;
 
@@ -9042,7 +9042,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerList.InternalEmpty(iIndex, iLength: Integer);
+Procedure TFslPointerList.InternalEmpty(iIndex, iLength: Integer);
 Begin
   Inherited;
 
@@ -9050,7 +9050,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerList.InternalCopy(iSource, iTarget, iCount: Integer);
+Procedure TFslPointerList.InternalCopy(iSource, iTarget, iCount: Integer);
 Begin
   Inherited;
 
@@ -9058,20 +9058,20 @@ Begin
 End;
 
 
-Function TAdvPointerList.IndexByValue(pValue : TPointerItem): Integer;
+Function TFslPointerList.IndexByValue(pValue : TPointerItem): Integer;
 Begin
   If Not Find(pValue, Result) Then
     Result := -1;
 End;
 
 
-Function TAdvPointerList.ExistsByValue(pValue : TPointerItem): Boolean;
+Function TFslPointerList.ExistsByValue(pValue : TPointerItem): Boolean;
 Begin
   Result := ExistsByIndex(IndexByValue(pValue));
 End;
 
 
-Function TAdvPointerList.Add(pValue : TPointerItem): Integer;
+Function TFslPointerList.Add(pValue : TPointerItem): Integer;
 Begin
   Result := -1;
 
@@ -9092,7 +9092,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerList.Insert(iIndex : Integer; pValue: TPointerItem);
+Procedure TFslPointerList.Insert(iIndex : Integer; pValue: TPointerItem);
 Begin
   InternalInsert(iIndex);
 
@@ -9100,7 +9100,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerList.InternalInsert(iIndex : Integer);
+Procedure TFslPointerList.InternalInsert(iIndex : Integer);
 Begin
   Inherited;
 
@@ -9108,7 +9108,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerList.DeleteByValue(pValue : TPointerItem);
+Procedure TFslPointerList.DeleteByValue(pValue : TPointerItem);
 Var
   iIndex : Integer;
 Begin
@@ -9119,7 +9119,7 @@ Begin
 End;
 
 
-Function TAdvPointerList.RemoveFirst : TPointerItem;
+Function TFslPointerList.RemoveFirst : TPointerItem;
 Begin
   If Count <= 0 Then
     Result := Nil
@@ -9131,7 +9131,7 @@ Begin
 End;
 
 
-Function TAdvPointerList.RemoveLast : TPointerItem;
+Function TFslPointerList.RemoveLast : TPointerItem;
 Begin
   If Count <= 0 Then
     Result := Nil
@@ -9142,7 +9142,7 @@ Begin
   End;
 End;
 
-Procedure TAdvPointerList.InternalExchange(iA, iB : Integer);
+Procedure TFslPointerList.InternalExchange(iA, iB : Integer);
 Var
   iTemp : Integer;
   ptrA  : Pointer;
@@ -9157,7 +9157,7 @@ Begin
 End;
 
 
-Function TAdvPointerList.GetItem(iIndex: Integer): Pointer;
+Function TFslPointerList.GetItem(iIndex: Integer): Pointer;
 Begin
   Assert(ValidateIndex('GetItem', iIndex));
 
@@ -9165,7 +9165,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerList.SetItem(iIndex : Integer; pValue: Pointer);
+Procedure TFslPointerList.SetItem(iIndex : Integer; pValue: Pointer);
 Begin
   Assert(ValidateIndex('SetItem', iIndex));
 
@@ -9173,7 +9173,7 @@ Begin
 End;
 
 
-Function TAdvPointerList.GetPointerByIndex(iIndex : Integer): TPointerItem;
+Function TFslPointerList.GetPointerByIndex(iIndex : Integer): TPointerItem;
 Begin
   Assert(ValidateIndex('GetPointerByIndex', iIndex));
 
@@ -9181,7 +9181,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerList.SetPointerByIndex(iIndex : Integer; Const pValue : TPointerItem);
+Procedure TFslPointerList.SetPointerByIndex(iIndex : Integer; Const pValue : TPointerItem);
 Begin
   Assert(ValidateIndex('SetPointerByIndex', iIndex));
 
@@ -9189,20 +9189,20 @@ Begin
 End;
 
 
-Function TAdvPointerList.CapacityLimit : Integer;
+Function TFslPointerList.CapacityLimit : Integer;
 Begin
   Result := High(TPointerItems);
 End;
 
 
-Function TAdvPointerList.Iterator : TAdvIterator;
+Function TFslPointerList.Iterator : TFslIterator;
 Begin
-  Result := TAdvPointerListIterator.Create;
-  TAdvPointerListIterator(Result).Pointers := TAdvPointerList(Self.Link);
+  Result := TFslPointerListIterator.Create;
+  TFslPointerListIterator(Result).Pointers := TFslPointerList(Self.Link);
 End;
 
 
-Constructor TAdvPointerListIterator.Create;
+Constructor TFslPointerListIterator.Create;
 Begin
   Inherited;
 
@@ -9210,7 +9210,7 @@ Begin
 End;
 
 
-Destructor TAdvPointerListIterator.Destroy;
+Destructor TFslPointerListIterator.Destroy;
 Begin
   FPointerArray.Free;
 
@@ -9218,7 +9218,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerListIterator.First;
+Procedure TFslPointerListIterator.First;
 Begin
   Inherited;
 
@@ -9226,7 +9226,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerListIterator.Last;
+Procedure TFslPointerListIterator.Last;
 Begin
   Inherited;
 
@@ -9234,7 +9234,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerListIterator.Next;
+Procedure TFslPointerListIterator.Next;
 Begin
   Inherited;
 
@@ -9242,7 +9242,7 @@ Begin
 End;
 
 
-Procedure TAdvPointerListIterator.Back;
+Procedure TFslPointerListIterator.Back;
 Begin
   Inherited;
 
@@ -9250,19 +9250,19 @@ Begin
 End;
 
 
-Function TAdvPointerListIterator.Current : Pointer;
+Function TFslPointerListIterator.Current : Pointer;
 Begin
   Result := FPointerArray[FIndex];
 End;
 
 
-Function TAdvPointerListIterator.More : Boolean;
+Function TFslPointerListIterator.More : Boolean;
 Begin
   Result := FPointerArray.ExistsByIndex(FIndex);
 End;
 
 
-Procedure TAdvPointerListIterator.SetPointers(Const Value: TAdvPointerList);
+Procedure TFslPointerListIterator.SetPointers(Const Value: TFslPointerList);
 Begin
   FPointerArray.Free;
   FPointerArray := Value;
@@ -9270,15 +9270,15 @@ End;
 
 
 
-Procedure TAdvHashEntry.Assign(oSource: TAdvObject);
+Procedure TFslHashEntry.Assign(oSource: TFslObject);
 Begin
   Inherited;
 
-  FCode := TAdvHashEntry(oSource).Code;
+  FCode := TFslHashEntry(oSource).Code;
 End;
 
 
-Procedure TAdvHashEntry.Load(oFiler: TAdvFiler);
+Procedure TFslHashEntry.Load(oFiler: TFslFiler);
 Begin
   Inherited;
 
@@ -9286,24 +9286,24 @@ Begin
 End;
 
 
-Function TAdvHashEntry.Link : TAdvHashEntry;
+Function TFslHashEntry.Link : TFslHashEntry;
 Begin
-  Result := TAdvHashEntry(Inherited Link);
+  Result := TFslHashEntry(Inherited Link);
 End;
 
 
-Function TAdvHashEntry.Clone : TAdvHashEntry;
+Function TFslHashEntry.Clone : TFslHashEntry;
 Begin
-  Result := TAdvHashEntry(Inherited Clone);
+  Result := TFslHashEntry(Inherited Clone);
 End;
 
 
-Procedure TAdvHashEntry.Generate;
+Procedure TFslHashEntry.Generate;
 Begin
 End;
 
 
-Constructor TAdvHashTable.Create;
+Constructor TFslHashTable.Create;
 Begin
   Inherited;
 
@@ -9311,51 +9311,51 @@ Begin
 End;
 
 
-Destructor TAdvHashTable.Destroy;
+Destructor TFslHashTable.Destroy;
 Begin
-  MemoryDestroy(FTable, FCapacity * SizeOf(TAdvHashEntry));
+  MemoryDestroy(FTable, FCapacity * SizeOf(TFslHashEntry));
 
   Inherited;
 End;
 
 
-Function TAdvHashTable.ErrorClass : EAdvExceptionClass;
+Function TFslHashTable.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvHashTable;
 End;
 
 
-Function TAdvHashTable.Link : TAdvHashTable;
+Function TFslHashTable.Link : TFslHashTable;
 Begin
-  Result := TAdvHashTable(Inherited Link);
+  Result := TFslHashTable(Inherited Link);
 End;
 
 
-Function TAdvHashTable.Clone : TAdvHashTable;
+Function TFslHashTable.Clone : TFslHashTable;
 Begin
-  Result := TAdvHashTable(Inherited Clone);
+  Result := TFslHashTable(Inherited Clone);
 End;
 
 
-Procedure TAdvHashTable.Assign(oObject : TAdvObject);
+Procedure TFslHashTable.Assign(oObject : TFslObject);
 Var
-  oIterator : TAdvHashTableIterator;
+  oIterator : TFslHashTableIterator;
 Begin
   Inherited;
 
   Clear;
 
-  Capacity := TAdvHashTable(oObject).Capacity;
-  Balance := TAdvHashTable(oObject).Balance;
+  Capacity := TFslHashTable(oObject).Capacity;
+  Balance := TFslHashTable(oObject).Balance;
 
   // TODO: Implement without iterator for optimal algorithm.
 
-  oIterator := TAdvHashTableIterator(Iterator);
+  oIterator := TFslHashTableIterator(Iterator);
   Try
     oIterator.First;
     While oIterator.More Do
     Begin
-      Add(Duplicate(TAdvHashEntry(oIterator.Current)));
+      Add(Duplicate(TFslHashEntry(oIterator.Current)));
 
       oIterator.Next;
     End;
@@ -9365,7 +9365,7 @@ Begin
 End;
 
 
-Procedure TAdvHashTable.Define(oFiler: TAdvFiler);
+Procedure TFslHashTable.Define(oFiler: TFslFiler);
 Begin
   Inherited;
 
@@ -9373,9 +9373,9 @@ Begin
 End;
 
 
-Procedure TAdvHashTable.Load(oFiler: TAdvFiler);
+Procedure TFslHashTable.Load(oFiler: TFslFiler);
 Var
-  oHashEntry : TAdvHashEntry;
+  oHashEntry : TFslHashEntry;
 Begin
   Define(oFiler);
 
@@ -9397,9 +9397,9 @@ Begin
 End;
 
 
-Procedure TAdvHashTable.Save(oFiler: TAdvFiler);
+Procedure TFslHashTable.Save(oFiler: TFslFiler);
 Var
-  oHashEntry : TAdvHashEntry;
+  oHashEntry : TFslHashEntry;
   iLoop     : Integer;
 Begin
   Define(oFiler);
@@ -9422,23 +9422,23 @@ Begin
 End;
 
 
-Function TAdvHashTable.ItemClass : TAdvHashEntryClass;
+Function TFslHashTable.ItemClass : TFslHashEntryClass;
 Begin
-  Result := TAdvHashEntry;
+  Result := TFslHashEntry;
 End;
 
 
-Function TAdvHashTable.ItemNew : TAdvHashEntry;
+Function TFslHashTable.ItemNew : TFslHashEntry;
 Begin
   Result := ItemClass.Create;
 End;
 
 
-Procedure TAdvHashTable.InternalClear;
+Procedure TFslHashTable.InternalClear;
 Var
   iLoop : Integer;
-  oHashEntry : TAdvHashEntry;
-  oNext : TAdvHashEntry;
+  oHashEntry : TFslHashEntry;
+  oNext : TFslHashEntry;
 Begin
   Inherited;
 
@@ -9464,7 +9464,7 @@ Begin
 End;
 
 
-Function TAdvHashTable.Find(oSource, oHashEntry : TAdvHashEntry): TAdvHashEntry;
+Function TFslHashTable.Find(oSource, oHashEntry : TFslHashEntry): TFslHashEntry;
 Begin
   Assert(Not Assigned(oSource) Or Invariants('Find', oSource, ItemClass, 'oSource'));
   Assert(Invariants('Find', oHashEntry, ItemClass, 'oHashEntry'));
@@ -9475,13 +9475,13 @@ Begin
 End;
 
 
-Function TAdvHashTable.Equal(oA, oB: TAdvHashEntry): Integer;
+Function TFslHashTable.Equal(oA, oB: TFslHashEntry): Integer;
 Begin
   Result := IntegerCompare(oA.Code, oB.Code);
 End;
 
 
-Function TAdvHashTable.Resolve(oHashEntry: TAdvHashEntry): Cardinal;
+Function TFslHashTable.Resolve(oHashEntry: TFslHashEntry): Cardinal;
 Begin
   Assert(CheckCondition(FCapacity > 0, 'Resolve', 'Capacity must be greater than zero'));
 
@@ -9489,11 +9489,11 @@ Begin
 End;
 
 
-Procedure TAdvHashTable.Rehash;
+Procedure TFslHashTable.Rehash;
 Var
   pTable : PAdvHashEntryArray;
-  oHashEntry : TAdvHashEntry;
-  oNext : TAdvHashEntry;
+  oHashEntry : TFslHashEntry;
+  oNext : TFslHashEntry;
   iCapacity : Integer;
   iLoop : Integer;
 Begin
@@ -9536,12 +9536,12 @@ Begin
       End;
     End;
   Finally
-    MemoryDestroy(pTable, iCapacity * SizeOf(TAdvHashEntry));
+    MemoryDestroy(pTable, iCapacity * SizeOf(TFslHashEntry));
   End;
 End;
 
 
-Procedure TAdvHashTable.Add(oHashEntry : TAdvHashEntry);
+Procedure TFslHashTable.Add(oHashEntry : TFslHashEntry);
 Begin
   Assert(Invariants('Add', oHashEntry, ItemClass, 'oHashEntry'));
 
@@ -9558,11 +9558,11 @@ Begin
 End;
 
 
-Procedure TAdvHashTable.Insert(iIndex : Integer; oHashEntry : TAdvHashEntry);
+Procedure TFslHashTable.Insert(iIndex : Integer; oHashEntry : TFslHashEntry);
 Var
   pFirst : PAdvHashEntry;
 Begin
-  Assert(Invariants('Insert', oHashEntry, TAdvHashEntry, 'oHashEntry'));
+  Assert(Invariants('Insert', oHashEntry, TFslHashEntry, 'oHashEntry'));
   Assert(CheckCondition((iIndex >= 0) And (iIndex < FCapacity), 'Insert', 'Index must be within the hash table'));
 
   pFirst := @FTable^[iIndex];
@@ -9574,7 +9574,7 @@ Begin
 End;
 
 
-Function TAdvHashTable.Force(oHashEntry: TAdvHashEntry): TAdvHashEntry;
+Function TFslHashTable.Force(oHashEntry: TFslHashEntry): TFslHashEntry;
 Var
   iIndex : Integer;
 Begin
@@ -9596,7 +9596,7 @@ Begin
 End;
 
 
-Function TAdvHashTable.Replace(oHashEntry : TAdvHashEntry) : TAdvHashEntry;
+Function TFslHashTable.Replace(oHashEntry : TFslHashEntry) : TFslHashEntry;
 Var
   iIndex : Integer;
 Begin
@@ -9622,10 +9622,10 @@ Begin
 End;
 
 
-Function TAdvHashTable.Delete(oHashEntry: TAdvHashEntry) : Boolean;
+Function TFslHashTable.Delete(oHashEntry: TFslHashEntry) : Boolean;
 Var
-  oLast  : TAdvHashEntry;
-  oNext  : TAdvHashEntry;
+  oLast  : TFslHashEntry;
+  oNext  : TFslHashEntry;
   pFirst : PAdvHashEntry;
 Begin
   Assert(Invariants('Delete', oHashEntry, ItemClass, 'oHashEntry'));
@@ -9669,7 +9669,7 @@ Begin
 End;
 
 
-Function TAdvHashTable.Get(oHashEntry : TAdvHashEntry) : TAdvHashEntry;
+Function TFslHashTable.Get(oHashEntry : TFslHashEntry) : TFslHashEntry;
 Begin
   Assert(Invariants('Get', oHashEntry, ItemClass, 'oHashEntry'));
 
@@ -9680,15 +9680,15 @@ Begin
 End;
 
 
-Function TAdvHashTable.Duplicate(oHashEntry: TAdvHashEntry): TAdvHashEntry;
+Function TFslHashTable.Duplicate(oHashEntry: TFslHashEntry): TFslHashEntry;
 Begin
   Assert(Invariants('Duplicate', oHashEntry, ItemClass, 'oHashEntry'));
 
-  Result := TAdvHashEntry(oHashEntry.Clone);
+  Result := TFslHashEntry(oHashEntry.Clone);
 End;
 
 
-Function TAdvHashTable.Exists(oHashEntry: TAdvHashEntry): Boolean;
+Function TFslHashTable.Exists(oHashEntry: TFslHashEntry): Boolean;
 Begin
   Assert(Invariants('Exists', oHashEntry, ItemClass, 'oHashEntry'));
 
@@ -9696,24 +9696,24 @@ Begin
 End;
 
 
-Function TAdvHashTable.Iterator : TAdvIterator;
+Function TFslHashTable.Iterator : TFslIterator;
 Begin
-  Result := TAdvHashTableIterator.Create;
-  TAdvHashTableIterator(Result).HashTable := Self.Link;
+  Result := TFslHashTableIterator.Create;
+  TFslHashTableIterator(Result).HashTable := Self.Link;
 End;
 
 
-Procedure TAdvHashTable.SetCapacity(Const Value: Integer);
+Procedure TFslHashTable.SetCapacity(Const Value: Integer);
 Begin
 
   If Value <> FCapacity Then
   Begin
     Assert(CheckCondition(FCount = 0, 'SetCapacity', StringFormat('Unable to change capacity to %d when there are entries in the hash table', [Value])));
 
-    MemoryResize(FTable, FCapacity * SizeOf(TAdvHashEntry), Value * SizeOf(TAdvHashEntry));
+    MemoryResize(FTable, FCapacity * SizeOf(TFslHashEntry), Value * SizeOf(TFslHashEntry));
 
     If Value > FCapacity Then
-      MemoryZero(Pointer(NativeUInt(FTable) + NativeUInt(FCapacity * SizeOf(TAdvHashEntry))), (Value - FCapacity) * SizeOf(TAdvHashEntry));
+      MemoryZero(Pointer(NativeUInt(FTable) + NativeUInt(FCapacity * SizeOf(TFslHashEntry))), (Value - FCapacity) * SizeOf(TFslHashEntry));
 
     FCapacity := Value;
     FThreshold := Trunc(FCapacity * FBalance);
@@ -9721,7 +9721,7 @@ Begin
 End;
 
 
-Procedure TAdvHashTable.SetBalance(Const Value: Real);
+Procedure TFslHashTable.SetBalance(Const Value: Real);
 Begin
   Assert(CheckCondition((Value > 0.0) And (Value < 1.0), 'SetBalance', 'Balance must be set to valid positive percentage.'));
 
@@ -9730,19 +9730,19 @@ Begin
 End;
 
 
-Function TAdvHashTableList.GetHash(iIndex: Integer): TAdvHashTable;
+Function TFslHashTableList.GetHash(iIndex: Integer): TFslHashTable;
 Begin
-  Result := TAdvHashTable(ObjectByIndex[iIndex]);
+  Result := TFslHashTable(ObjectByIndex[iIndex]);
 End;
 
 
-Function TAdvHashTableList.ItemClass : TAdvObjectClass;
+Function TFslHashTableList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvHashTable;
+  Result := TFslHashTable;
 End;
 
 
-Constructor TAdvHashTableIterator.Create;
+Constructor TFslHashTableIterator.Create;
 Begin
   Inherited;
 
@@ -9750,7 +9750,7 @@ Begin
 End;
 
 
-Destructor TAdvHashTableIterator.Destroy;
+Destructor TFslHashTableIterator.Destroy;
 Begin
   FHashTable.Free;
 
@@ -9758,7 +9758,7 @@ Begin
 End;
 
 
-Procedure TAdvHashTableIterator.First;
+Procedure TFslHashTableIterator.First;
 Begin
   FIndex := 0;
   FCurrentHashEntry := Nil;
@@ -9769,13 +9769,13 @@ Begin
 End;
 
 
-Function TAdvHashTableIterator.Count : Integer;
+Function TFslHashTableIterator.Count : Integer;
 Begin
   Result := FHashTable.Count;
 End;
 
 
-Function TAdvHashTableIterator.Current : TAdvObject;
+Function TFslHashTableIterator.Current : TFslObject;
 Begin
   Assert(Invariants('Current', FCurrentHashEntry, FHashTable.ItemClass, 'FCurrentHashEntry'));
 
@@ -9783,13 +9783,13 @@ Begin
 End;
 
 
-Function TAdvHashTableIterator.More : Boolean;
+Function TFslHashTableIterator.More : Boolean;
 Begin
   Result := Assigned(FCurrentHashEntry);
 End;
 
 
-Procedure TAdvHashTableIterator.Next;
+Procedure TFslHashTableIterator.Next;
 Begin
   FCurrentHashEntry := FNextHashEntry;
 
@@ -9806,32 +9806,32 @@ Begin
 End;
 
 
-Function TAdvHashTableIterator.GetHashTable: TAdvHashTable;
+Function TFslHashTableIterator.GetHashTable: TFslHashTable;
 Begin
   Result := FHashTable;
 End;
 
 
-Procedure TAdvHashTableIterator.SetHashTable(Const Value: TAdvHashTable);
+Procedure TFslHashTableIterator.SetHashTable(Const Value: TFslHashTable);
 Begin
   FHashTable.Free;
   FHashTable := Value;
 End;
 
 
-Function TAdvHashTable.ProduceHashEntry: TAdvHashEntry;
+Function TFslHashTable.ProduceHashEntry: TFslHashEntry;
 Begin
   Result := ItemNew;
 End;
 
 
-Procedure TAdvHashTable.ConsumeHashEntry(oHashEntry : TAdvHashEntry);
+Procedure TFslHashTable.ConsumeHashEntry(oHashEntry : TFslHashEntry);
 Begin
   oHashEntry.Free;
 End;
 
 
-Procedure TAdvHashTable.PredictCapacityByExpectedCount(Const iCount: Integer);
+Procedure TFslHashTable.PredictCapacityByExpectedCount(Const iCount: Integer);
 Begin
   Capacity := RealCeiling(iCount / Balance) + 1;
 
@@ -9839,63 +9839,63 @@ Begin
 End;
 
 
-Procedure TAdvHashTable.AllowRehash;
+Procedure TFslHashTable.AllowRehash;
 Begin
   FPreventRehash := False;
 End;
 
 
-Procedure TAdvHashTable.PreventRehash;
+Procedure TFslHashTable.PreventRehash;
 Begin
   FPreventRehash := True;
 End;
 
 
-Function TAdvHashTable.IsEmpty: Boolean;
+Function TFslHashTable.IsEmpty: Boolean;
 Begin
   Result := Count = 0;
 End;
 
 
-Function TAdvIterator.ErrorClass : EAdvExceptionClass;
+Function TFslIterator.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvIterator;
 End;
 
 
-Procedure TAdvIterator.First;
+Procedure TFslIterator.First;
 Begin
 End;
 
 
-Procedure TAdvIterator.Last;
+Procedure TFslIterator.Last;
 Begin
 End;
 
 
-Function TAdvIterator.More : Boolean;
+Function TFslIterator.More : Boolean;
 Begin
   Result := False;
 End;
 
 
-Procedure TAdvIterator.Next;
+Procedure TFslIterator.Next;
 Begin
 End;
 
 
-Procedure TAdvIterator.Back;
+Procedure TFslIterator.Back;
 Begin
 End;
 
 
-Procedure TAdvIterator.Previous;
+Procedure TFslIterator.Previous;
 Begin
   Back;
 End;
 
 
-Function TAdvObjectIterator.Current : TAdvObject;
+Function TFslObjectIterator.Current : TFslObject;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9903,7 +9903,7 @@ Begin
 End;
 
 
-Function TAdvStringIterator.Current : String;
+Function TFslStringIterator.Current : String;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9911,7 +9911,7 @@ Begin
 End;
 
 
-Function TAdvIntegerIterator.Current : Integer;
+Function TFslIntegerIterator.Current : Integer;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9919,7 +9919,7 @@ Begin
 End;
 
 
-Function TAdvRealIterator.Current : Real;
+Function TFslRealIterator.Current : Real;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9927,7 +9927,7 @@ Begin
 End;
 
 
-Function TAdvExtendedIterator.Current : Extended;
+Function TFslExtendedIterator.Current : Extended;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9935,7 +9935,7 @@ Begin
 End;
 
 
-Function TAdvBooleanIterator.Current : Boolean;
+Function TFslBooleanIterator.Current : Boolean;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9943,7 +9943,7 @@ Begin
 End;
 
 
-Function TAdvLargeIntegerIterator.Current : Int64;
+Function TFslLargeIntegerIterator.Current : Int64;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9951,7 +9951,7 @@ Begin
 End;
 
 
-Function TAdvPointerIterator.Current : Pointer;
+Function TFslPointerIterator.Current : Pointer;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9959,7 +9959,7 @@ Begin
 End;
 
 
-Function TAdvObjectClassIterator.Current : TClass;
+Function TFslObjectClassIterator.Current : TClass;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9967,7 +9967,7 @@ Begin
 End;
 
 
-Function TAdvDateTimeIterator.Current : TDateTime;
+Function TFslDateTimeIterator.Current : TDateTime;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9975,7 +9975,7 @@ Begin
 End;
 
 
-Function TAdvDurationIterator.Current : TDuration;
+Function TFslDurationIterator.Current : TDuration;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9983,7 +9983,7 @@ Begin
 End;
 
 
-Function TAdvCurrencyIterator.Current : TCurrency;
+Function TFslCurrencyIterator.Current : TCurrency;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -9992,27 +9992,27 @@ End;
 
 
 
-Function TAdvName.Link : TAdvName;
+Function TFslName.Link : TFslName;
 Begin
-  Result := TAdvName(Inherited Link);
+  Result := TFslName(Inherited Link);
 End;
 
 
-Function TAdvName.Clone : TAdvName;
+Function TFslName.Clone : TFslName;
 Begin
-  Result := TAdvName(Inherited Clone);
+  Result := TFslName(Inherited Clone);
 End;
 
 
-Procedure TAdvName.Assign(oSource : TAdvObject);
+Procedure TFslName.Assign(oSource : TFslObject);
 Begin
   Inherited;
 
-  FName := TAdvName(oSource).Name;
+  FName := TFslName(oSource).Name;
 End;
 
 
-Procedure TAdvName.Define(oFiler : TAdvFiler);
+Procedure TFslName.Define(oFiler : TFslFiler);
 Begin
   Inherited;
 
@@ -10020,19 +10020,19 @@ Begin
 End;
 
 
-Function TAdvName.GetName: String;
+Function TFslName.GetName: String;
 Begin
   Result := FName;
 End;
 
 
-Procedure TAdvName.SetName(Const Value: String);
+Procedure TFslName.SetName(Const Value: String);
 Begin
   FName := Value;
 End;
 
 
-Constructor TAdvNameList.Create;
+Constructor TFslNameList.Create;
 Begin
   Inherited;
 
@@ -10040,47 +10040,47 @@ Begin
 End;
 
 
-Function TAdvNameList.Link : TAdvNameList;
+Function TFslNameList.Link : TFslNameList;
 Begin
-  Result := TAdvNameList(Inherited Link);
+  Result := TFslNameList(Inherited Link);
 End;
 
 
-Function TAdvNameList.Clone : TAdvNameList;
+Function TFslNameList.Clone : TFslNameList;
 Begin
-  Result := TAdvNameList(Inherited Clone);
+  Result := TFslNameList(Inherited Clone);
 End;
 
 
-Function TAdvNameList.ItemClass : TAdvObjectClass;
+Function TFslNameList.ItemClass : TFslObjectClass;
 Begin
-  Result := TAdvName;
+  Result := TFslName;
 End;
 
 
-Procedure TAdvNameList.DefaultCompare(Out aEvent: TAdvItemListCompare);
+Procedure TFslNameList.DefaultCompare(Out aEvent: TFslItemListCompare);
 Begin
   aEvent := CompareByName;
 End;
 
 
-Function TAdvNameList.CompareByName(pA, pB : Pointer) : Integer;
+Function TFslNameList.CompareByName(pA, pB : Pointer) : Integer;
 Begin
-  Result := StringCompare(TAdvName(pA).Name, TAdvName(pB).Name);
+  Result := StringCompare(TFslName(pA).Name, TFslName(pB).Name);
 End;
 
 
-Function TAdvNameList.FindByName(oName: TAdvName; Out iIndex: Integer): Boolean;
+Function TFslNameList.FindByName(oName: TFslName; Out iIndex: Integer): Boolean;
 Begin
   Result := Find(oName, iIndex, CompareByName);
 End;
 
 
-Function TAdvNameList.FindByName(Const sName : String; Out iIndex : Integer) : Boolean;
+Function TFslNameList.FindByName(Const sName : String; Out iIndex : Integer) : Boolean;
 Var
-  oName : TAdvName;
+  oName : TFslName;
 Begin
-  oName := TAdvName(ItemNew);
+  oName := TFslName(ItemNew);
   Try
     oName.Name := sName;
 
@@ -10091,7 +10091,7 @@ Begin
 End;
 
 
-Function TAdvNameList.EnsureByName(Const sName : String) : TAdvName;
+Function TFslNameList.EnsureByName(Const sName : String) : TFslName;
 Begin
   Result := GetByName(sName);
 
@@ -10099,7 +10099,7 @@ Begin
 End;
 
 
-Function TAdvNameList.GetByName(Const sName: String): TAdvName;
+Function TFslNameList.GetByName(Const sName: String): TFslName;
 Var
   iIndex : Integer;
 Begin
@@ -10110,38 +10110,38 @@ Begin
 End;
 
 
-Function TAdvNameList.IndexByName(Const sName : String) : Integer;
+Function TFslNameList.IndexByName(Const sName : String) : Integer;
 Begin
   If Not FindByName(sName, Result) Then
     Result := -1;
 End;
 
 
-Function TAdvNameList.ExistsByName(Const sName: String): Boolean;
+Function TFslNameList.ExistsByName(Const sName: String): Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(sName));
 End;
 
 
-Function TAdvNameList.IndexByName(Const oName : TAdvName) : Integer;
+Function TFslNameList.IndexByName(Const oName : TFslName) : Integer;
 Begin
   If Not FindByName(oName, Result) Then
     Result := -1;
 End;
 
 
-Function TAdvNameList.ExistsByName(Const oName : TAdvName): Boolean;
+Function TFslNameList.ExistsByName(Const oName : TFslName): Boolean;
 Begin
   Result := ExistsByIndex(IndexByName(oName));
 End;
 
 
-Function TAdvNameList.ForceByName(Const sName: String): TAdvName;
+Function TFslNameList.ForceByName(Const sName: String): TFslName;
 Var
-  oName  : TAdvName;
+  oName  : TFslName;
   iIndex : Integer;
 Begin
-  oName := TAdvName(ItemNew);
+  oName := TFslName(ItemNew);
   Try
     oName.Name := sName;
 
@@ -10158,7 +10158,7 @@ Begin
 End;
 
 
-Function TAdvNameList.GetByName(oName : TAdvName): TAdvName;
+Function TFslNameList.GetByName(oName : TFslName): TFslName;
 Var
   iIndex : Integer;
 Begin
@@ -10169,7 +10169,7 @@ Begin
 End;
 
 
-Procedure TAdvNameList.RemoveByName(Const sName: String);
+Procedure TFslNameList.RemoveByName(Const sName: String);
 Var
   iIndex : Integer;
 Begin
@@ -10180,11 +10180,11 @@ Begin
 End;
 
 
-Function TAdvNameList.AddByName(Const sName: String): Integer;
+Function TFslNameList.AddByName(Const sName: String): Integer;
 Var
-  oItem : TAdvName;
+  oItem : TFslName;
 Begin
-  oItem := TAdvName(ItemNew);
+  oItem := TFslName(ItemNew);
   Try
     oItem.Name := sName;
 
@@ -10195,36 +10195,36 @@ Begin
 End;
 
 
-Function TAdvNameList.IsSortedByName : Boolean;
+Function TFslNameList.IsSortedByName : Boolean;
 Begin
   Result := IsSortedBy(CompareByName);
 End;
 
 
-Procedure TAdvNameList.SortedByName;
+Procedure TFslNameList.SortedByName;
 Begin
   SortedBy(CompareByName);
 End;
 
 
-Function TAdvNameList.GetName(iIndex : Integer) : TAdvName;
+Function TFslNameList.GetName(iIndex : Integer) : TFslName;
 Begin
-  Result := TAdvName(ObjectByIndex[iIndex]);
+  Result := TFslName(ObjectByIndex[iIndex]);
 End;
 
 
-Procedure TAdvNameList.SetName(iIndex : Integer; oName : TAdvName);
+Procedure TFslNameList.SetName(iIndex : Integer; oName : TFslName);
 Begin
   ObjectByIndex[iIndex] := oName;
 End;
 
 
-Function TAdvNameList.GetAsText : String;
+Function TFslNameList.GetAsText : String;
 Var
-  oStrings : TAdvStringList;
+  oStrings : TFslStringList;
   iLoop    : Integer;
 Begin
-  oStrings := TAdvStringList.Create;
+  oStrings := TFslStringList.Create;
   Try
     oStrings.Symbol := FSymbol;
 
@@ -10238,15 +10238,15 @@ Begin
 End;
 
 
-Procedure TAdvNameList.SetAsText(Const Value: String);
+Procedure TFslNameList.SetAsText(Const Value: String);
 Var
-  oStrings : TAdvStringList;
+  oStrings : TFslStringList;
   iLoop    : Integer;
-  oItem    : TAdvName;
+  oItem    : TFslName;
 Begin
   Clear;
 
-  oStrings := TAdvStringList.Create;
+  oStrings := TFslStringList.Create;
   Try
     oStrings.Symbol := FSymbol;
 
@@ -10254,7 +10254,7 @@ Begin
 
     For iLoop := 0 To oStrings.Count - 1 Do
     Begin
-      oItem := TAdvName(ItemNew);
+      oItem := TFslName(ItemNew);
       Try
         oItem.Name := StringTrimWhitespace(oStrings[iLoop]);
 

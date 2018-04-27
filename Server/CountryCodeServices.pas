@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, RegularExpressions,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Exceptions,
-  FHIR.Tools.Types, FHIR.Tools.Resources, TerminologyServices;
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
 
 type
   TCountryCodeConcept = class (TCodeSystemProviderContext)
@@ -51,7 +51,7 @@ type
 
   TCountryCodeConceptFilter = class (TCodeSystemProviderFilterContext)
   private
-    FList : TAdvList<TCountryCodeConcept>;
+    FList : TFslList<TCountryCodeConcept>;
     FCursor : integer;
   public
     constructor Create; override;
@@ -61,8 +61,8 @@ type
 
   TCountryCodeServices = class (TCodeSystemProvider)
   private
-    FCodes : TAdvList<TCountryCodeConcept>;
-    FMap : TAdvMap<TCountryCodeConcept>;
+    FCodes : TFslList<TCountryCodeConcept>;
+    FMap : TFslMap<TCountryCodeConcept>;
 
     procedure load;
   public
@@ -109,8 +109,8 @@ implementation
 Constructor TCountryCodeServices.create();
 begin
   inherited Create;
-  FCodes := TAdvList<TCountryCodeConcept>.create;
-  FMap := TAdvMap<TCountryCodeConcept>.create;
+  FCodes := TFslList<TCountryCodeConcept>.create;
+  FMap := TFslMap<TCountryCodeConcept>.create;
   Load;
 end;
 
@@ -1070,7 +1070,7 @@ end;
 constructor TCountryCodeConceptFilter.Create;
 begin
   inherited;
-  FList := TAdvList<TCountryCodeConcept>.Create;
+  FList := TFslList<TCountryCodeConcept>.Create;
   FCursor := -1;
 end;
 

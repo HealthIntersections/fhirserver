@@ -41,7 +41,7 @@ uses
 type
   EGraphDefinitionEngine = class (Exception);
 
-  TFHIRGraphDefinitionParser = class (TAdvObject)
+  TFHIRGraphDefinitionParser = class (TFslObject)
   private
     FLexer : TFHIRPathLexer;
 
@@ -68,7 +68,7 @@ type
     class function asString(definition : TFhirGraphDefinition; header : boolean) : String;
   end;
 
-  TFHIRGraphDefinitionEngine = class (TAdvObject)
+  TFHIRGraphDefinitionEngine = class (TFslObject)
   private
     FContext : TFHIRWorkerContext;
     FPathEngine : TFHIRPathEngine;
@@ -83,7 +83,7 @@ type
     FDepthLimit: integer;
     FBaseUrl: String;
     FValidating: boolean;
-    FAppinfo: TAdvObject;
+    FAppinfo: TFslObject;
     procedure SetBundle(const Value: TFHIRBundle);
     procedure SetDefinition(const Value: TFhirGraphDefinition);
     procedure SetStart(const Value: TFHIRResource);
@@ -94,14 +94,14 @@ type
     procedure processLink(focusPath : String; focus : TFHIRResource; link : TFhirGraphDefinitionLink; depth : integer);
     procedure processLinkPath(focusPath: String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
     procedure processLinkTarget(focusPath: String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
-    procedure parseParams(params : TAdvList<TGraphQLArgument>; value : String; res : TFHIRResource);
+    procedure parseParams(params : TFslList<TGraphQLArgument>; value : String; res : TFHIRResource);
 
-    procedure SetAppInfo(const Value: TAdvObject);
+    procedure SetAppInfo(const Value: TFslObject);
   public
     constructor Create(context : TFHIRWorkerContext); virtual;
     destructor Destroy; override;
 
-    property appInfo : TAdvObject read FAppinfo write SetAppInfo;
+    property appInfo : TFslObject read FAppinfo write SetAppInfo;
     property baseURL : String read FBaseUrl write FBaseURL;
     property definition : TFhirGraphDefinition read FDefinition write SetDefinition;
     property start : TFHIRResource read FStart write SetStart;
@@ -139,7 +139,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRGraphDefinitionEngine.SetAppInfo(const Value: TAdvObject);
+procedure TFHIRGraphDefinitionEngine.SetAppInfo(const Value: TFslObject);
 begin
   FAppinfo.Free;
   FAppinfo := Value;
@@ -209,7 +209,7 @@ begin
   result := test;
 end;
 
-procedure TFHIRGraphDefinitionEngine.parseParams(params: TAdvList<TGraphQLArgument>; value: String; res: TFHIRResource);
+procedure TFHIRGraphDefinitionEngine.parseParams(params: TFslList<TGraphQLArgument>; value: String; res: TFHIRResource);
 var
   p : TParseMap;
   i, j : integer;
@@ -307,8 +307,8 @@ end;
 procedure TFHIRGraphDefinitionEngine.processLinkTarget(focusPath : String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
 var
   path : String;
-  list : TAdvList<TFHIRResource>;
-  params : TAdvList<TGraphQLArgument>;
+  list : TFslList<TFHIRResource>;
+  params : TFslList<TGraphQLArgument>;
   res : TFhirResource;
   l : TFhirGraphDefinitionLink;
 begin
@@ -317,9 +317,9 @@ begin
   check(link.targetList[0].params.Contains('{ref}'), 'If there is no path, the target must have parameters that include a parameter using {ref} at '+focusPath);
   path := focusPath+' -> '+CODES_TFhirResourceTypesEnum[link.targetList[0].type_]+'?'+link.targetList[0].params;
 
-  list := TAdvList<TFHIRResource>.create;
+  list := TFslList<TFHIRResource>.create;
   try
-    params := TAdvList<TGraphQLArgument>.create;
+    params := TFslList<TGraphQLArgument>.create;
     try
       parseParams(params, link.targetList[0].params, focus);
       FOnListResources(appInfo, CODES_TFhirResourceTypesEnum[link.targetList[0].type_], params, list);

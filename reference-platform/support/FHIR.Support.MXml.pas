@@ -61,7 +61,7 @@ var
 Type
   TMXmlElement = class;
 
-  TMXmlNode = class (TAdvObject)
+  TMXmlNode = class (TFslObject)
   private
     FParent : TMXmlElement; // no own
   public
@@ -139,12 +139,12 @@ Type
 
   TMXmlElement = class (TMXmlNamedNode)
   private
-    FAttributes : TAdvMap<TMXmlAttribute>;
-    FChildren : TAdvList<TMXmlElement>;
+    FAttributes : TFslMap<TMXmlAttribute>;
+    FChildren : TFslList<TMXmlElement>;
     FText : string;
     FNext : TMXmlElement;
-    function GetAttributes: TAdvMap<TMXmlAttribute>;
-    function GetChildren: TAdvList<TMXmlElement>;
+    function GetAttributes: TFslMap<TMXmlAttribute>;
+    function GetChildren: TFslList<TMXmlElement>;
     function GetHasAttributes: boolean;
     function GetHasChildren: boolean;
     function GetHasText: boolean;
@@ -167,9 +167,9 @@ Type
     Destructor Destroy; override;
     Function Link : TMXmlElement; overload;
 
-    property Attributes : TAdvMap<TMXmlAttribute> read GetAttributes;
+    property Attributes : TFslMap<TMXmlAttribute> read GetAttributes;
     property HasAttributes  : boolean read GetHasAttributes;
-    property Children : TAdvList<TMXmlElement> read GetChildren;
+    property Children : TFslList<TMXmlElement> read GetChildren;
     property HasChildren : boolean read GetHasChildren;
     property Text : string read GetText write SetText;
     property HasText : boolean read GetHasText;
@@ -190,7 +190,7 @@ Type
     property attributeNS[ns, name : String] : String read GetAttributeNS write SetAttributeNS;
     function element(name : String) : TMXmlElement;
     function elementNS(ns, name : String) : TMXmlElement;
-    procedure listElements(name : String; list : TAdvList<TMXmlElement>);
+    procedure listElements(name : String; list : TFslList<TMXmlElement>);
     procedure addChild(node : TMXmlElement; fix : boolean);
     function addElement(name : String) : TMXmlElement;
     function addElementNS(ns, name : String) : TMXmlElement;
@@ -200,22 +200,22 @@ Type
     function ToString : String; override;
   end;
 
-  TMXPathExpressionNode = class (TAdvObject)
+  TMXPathExpressionNode = class (TFslObject)
   private
     FNodeType : TMXPathExpressionNodeType;
     FAxis : TMXPathExpressionAxis;
     FValue : String;
-    FFilters: TAdvList<TMXPathExpressionNode>;
+    FFilters: TFslList<TMXPathExpressionNode>;
     FNext: TMXPathExpressionNode;
     FOp : TMXPathExpressionOperation;
     FNextOp : TMXPathExpressionNode;
     FGroup : TMXPathExpressionNode;
-    FParams : TAdvList<TMXPathExpressionNode>;
+    FParams : TFslList<TMXPathExpressionNode>;
     procedure SetNext(const Value: TMXPathExpressionNode);
     procedure SetNextOp(const Value: TMXPathExpressionNode);
     procedure SetGroup(const Value: TMXPathExpressionNode);
-    function GetParams: TAdvList<TMXPathExpressionNode>;
-    function GetFilters: TAdvList<TMXPathExpressionNode>;
+    function GetParams: TFslList<TMXPathExpressionNode>;
+    function GetFilters: TFslList<TMXPathExpressionNode>;
     function buildConstant : TMXmlNode;
   public
     Destructor Destroy; override;
@@ -224,21 +224,21 @@ Type
 
     property NodeType : TMXPathExpressionNodeType read FNodeType write FNodeType;
     property axis : TMXPathExpressionAxis read FAxis write FAxis;
-    property filters : TAdvList<TMXPathExpressionNode> read GetFilters;
+    property filters : TFslList<TMXPathExpressionNode> read GetFilters;
     function hasFilters : Boolean;
     property next : TMXPathExpressionNode read FNext write SetNext;
     property op : TMXPathExpressionOperation read FOp write FOp;
     property NextOp : TMXPathExpressionNode read FNextOp write SetNextOp;
     property Group : TMXPathExpressionNode read FGroup write SetGroup;
-    property Params : TAdvList<TMXPathExpressionNode> read GetParams;
+    property Params : TFslList<TMXPathExpressionNode> read GetParams;
     property value : String read FValue write FValue;
 
     Function ToString : String; override;
   end;
 
-  TXPathVariables = class (TAdvObject)
+  TXPathVariables = class (TFslObject)
   private
-    FMap : TAdvMap<TMXmlNode>;
+    FMap : TFslMap<TMXmlNode>;
   public
     constructor Create; overload; override;
     constructor Create(name : String; value : TMXmlNode); overload;
@@ -253,8 +253,8 @@ Type
   TMXmlDocument = class(TMXmlElement)
   private
     FNamespaceAbbreviations : TDictionary<String, String>;
-    function list(value : boolean) : TAdvList<TMXmlNode>;
-    function contains(list : TAdvList<TMXmlNode>; item : TMXmlNode) : boolean;
+    function list(value : boolean) : TFslList<TMXmlNode>;
+    function contains(list : TFslList<TMXmlNode>; item : TMXmlNode) : boolean;
 
     function funcExists(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode) : TMXmlNode;
     function funcCount(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode) : TMXmlNode;
@@ -262,43 +262,43 @@ Type
     function funcContains(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode) : TMXmlNode;
     function funcTranslate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode) : TMXmlNode;
     function funcTextTest(Context : TObject; node : TMXmlNamedNode) : boolean;
-    procedure funcText(expr: TMXPathExpressionNode; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
-    procedure funcComment(focus: TMXmlNode; work: TAdvList<TMXmlNode>);
-    procedure funcDistinctValues(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
-    procedure funcPosition(position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
-    procedure funcLocalName(focus: TMXmlNode; work: TAdvList<TMXmlNode>);
-    procedure funcName(focus: TMXmlNode; work: TAdvList<TMXmlNode>);
-    procedure funcStartsWith(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
-    procedure funcMatches(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
-    procedure funcSubStringAfter(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+    procedure funcText(expr: TMXPathExpressionNode; focus: TMXmlNode; work: TFslList<TMXmlNode>);
+    procedure funcComment(focus: TMXmlNode; work: TFslList<TMXmlNode>);
+    procedure funcDistinctValues(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
+    procedure funcPosition(position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
+    procedure funcLocalName(focus: TMXmlNode; work: TFslList<TMXmlNode>);
+    procedure funcName(focus: TMXmlNode; work: TFslList<TMXmlNode>);
+    procedure funcStartsWith(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
+    procedure funcMatches(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
+    procedure funcSubStringAfter(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
     function funcNormalizeSpace(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode) : TMXmlNode;
     function funcConcat(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus : TMXmlNode) : TMXmlNode;
     function funcString(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus : TMXmlNode) : TMXmlNode;
     function funcNumber(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus : TMXmlNode) : TMXmlNode;
 
-    function opEqual(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opNotEqual(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opAnd(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opPlus(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opMinus(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opOr(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opUnion(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opLessThan(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opLessThanEqual(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opGreaterThan(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    function opGreaterThanEqual(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
+    function opEqual(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opNotEqual(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opAnd(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opPlus(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opMinus(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opOr(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opUnion(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opLessThan(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opLessThanEqual(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opGreaterThan(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    function opGreaterThanEqual(left, right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
 
     function passesFilter(index : integer; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode; filter : TMXPathExpressionNode) : boolean;
     function evaluateNameForNode(Context : TObject; node : TMXmlNamedNode) : boolean;
-    procedure evaluateName(expr: TMXPathExpressionNode; atEntry : boolean; item: TMXmlNode; focus: TAdvList<TMXmlNode>);
-    procedure iterate(node: TMXMLNode; axis: TMXPathExpressionAxis; list : TAdvList<TMXmlNode>; context: TObject; event: TMXMLIterationEvent);
-    procedure evaluateFunction(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode; work : TAdvList<TMXmlNode>); overload;
-    function preOperate(left : TAdvList<TMXmlNode>; op : TMXPathExpressionOperation) : TAdvList<TMXmlNode>;
-    function operate(left : TAdvList<TMXmlNode>; op : TMXPathExpressionOperation; right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
-    procedure evaluateIterator(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus, work : TAdvList<TMXmlNode>);
-    function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>; overload;
-    function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode) : TAdvList<TMXmlNode>; overload;
-    function evaluateString(nodes : TAdvList<TMXmlNode>): String;
+    procedure evaluateName(expr: TMXPathExpressionNode; atEntry : boolean; item: TMXmlNode; focus: TFslList<TMXmlNode>);
+    procedure iterate(node: TMXMLNode; axis: TMXPathExpressionAxis; list : TFslList<TMXmlNode>; context: TObject; event: TMXMLIterationEvent);
+    procedure evaluateFunction(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode; work : TFslList<TMXmlNode>); overload;
+    function preOperate(left : TFslList<TMXmlNode>; op : TMXPathExpressionOperation) : TFslList<TMXmlNode>;
+    function operate(left : TFslList<TMXmlNode>; op : TMXPathExpressionOperation; right : TFslList<TMXmlNode>) : TFslList<TMXmlNode>;
+    procedure evaluateIterator(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus, work : TFslList<TMXmlNode>);
+    function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus : TFslList<TMXmlNode>) : TFslList<TMXmlNode>; overload;
+    function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode) : TFslList<TMXmlNode>; overload;
+    function evaluateString(nodes : TFslList<TMXmlNode>): String;
     function GetDocElement: TMXmlElement;
   public
     Constructor Create; override;
@@ -308,11 +308,11 @@ Type
 
     property docElement : TMXmlElement read GetDocElement;
     function ToXml(pretty : boolean = false; xmlHeader : boolean = false) : String; overload;
-    function select(xpath : String; focus : TMXmlElement) : TAdvList<TMXmlNode>; overload;
-    function selectElements(xpath : String; focus : TMXmlElement) : TAdvList<TMXmlElement>; overload;
-    function select(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TAdvList<TMXmlNode>; overload;
-    function selectElements(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TAdvList<TMXmlElement>; overload;
-    function evaluateBoolean(nodes : TAdvList<TMXmlNode>): boolean;
+    function select(xpath : String; focus : TMXmlElement) : TFslList<TMXmlNode>; overload;
+    function selectElements(xpath : String; focus : TMXmlElement) : TFslList<TMXmlElement>; overload;
+    function select(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TFslList<TMXmlNode>; overload;
+    function selectElements(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TFslList<TMXmlElement>; overload;
+    function evaluateBoolean(nodes : TFslList<TMXmlNode>): boolean;
     property NamespaceAbbreviations : TDictionary<String, String> read FNamespaceAbbreviations;
   end;
 
@@ -322,9 +322,9 @@ Type
   EMXmlDocument = class (Exception);
   EMXPathEngine = class (Exception);
 
-  TMXmlParser = class (TAdvObject)
+  TMXmlParser = class (TFslObject)
   private
-    reader : TAdvTextReader;
+    reader : TFslTextReader;
     options : TMXmlParserOptions;
     b : TStringBuilder;
 
@@ -354,7 +354,7 @@ Type
   public
     class function parse(content : String; options : TMXmlParserOptions) : TMXmlDocument; overload;
     class function parse(content : TStream; options : TMXmlParserOptions) :  TMXmlDocument; overload;
-    class function parse(content : TAdvStream; options : TMXmlParserOptions) : TMXmlDocument; overload;
+    class function parse(content : TFslStream; options : TMXmlParserOptions) : TMXmlDocument; overload;
     class function parse(content : TBytes; options : TMXmlParserOptions) : TMXmlDocument; overload;
     class function parseFile(name : String; options : TMXmlParserOptions) : TMXmlDocument; overload;
 
@@ -618,17 +618,17 @@ begin
         exit(attr.Value);
 end;
 
-function TMXmlElement.GetAttributes: TAdvMap<TMXmlAttribute>;
+function TMXmlElement.GetAttributes: TFslMap<TMXmlAttribute>;
 begin
   if (FAttributes = nil) then
-    FAttributes := TAdvMap<TMXmlAttribute>.create;
+    FAttributes := TFslMap<TMXmlAttribute>.create;
   result := FAttributes;
 end;
 
-function TMXmlElement.GetChildren: TAdvList<TMXmlElement>;
+function TMXmlElement.GetChildren: TFslList<TMXmlElement>;
 begin
   if (FChildren = nil) then
-    FChildren := TAdvList<TMXmlElement>.create;
+    FChildren := TFslList<TMXmlElement>.create;
   result := FChildren;
 end;
 
@@ -672,7 +672,7 @@ begin
   result := TMXmlElement(inherited Link);
 end;
 
-procedure TMXmlElement.listElements(name: String; list: TAdvList<TMXmlElement>);
+procedure TMXmlElement.listElements(name: String; list: TFslList<TMXmlElement>);
 var
   t : TMXmlElement;
   n : string;
@@ -896,9 +896,9 @@ end;
 
 class function TMXmlParser.parse(content: TStream; options : TMXmlParserOptions): TMXmlDocument;
 var
-  s : TAdvVCLStream;
+  s : TFslVCLStream;
 begin
-  s := TAdvVCLStream.create;
+  s := TFslVCLStream.create;
   try
     s.Stream := content;
     result := parse(s, options);
@@ -914,7 +914,7 @@ begin
   this := TMXmlParser.create;
   try
     this.options := options;
-    this.reader := TAdvStringReader.create(content);
+    this.reader := TFslStringReader.create(content);
     try
       result := this.parse();
     finally
@@ -925,14 +925,14 @@ begin
   end;
 end;
 
-class function TMXmlParser.parse(content: TAdvStream; options : TMXmlParserOptions): TMXmlDocument;
+class function TMXmlParser.parse(content: TFslStream; options : TMXmlParserOptions): TMXmlDocument;
 var
   this : TMXmlParser;
 begin
   this := TMXmlParser.create;
   try
     this.options := options;
-    this.reader := TAdvStreamReader.create(content.Link, TEncoding.UTF8, true);
+    this.reader := TFslStreamReader.create(content.Link, TEncoding.UTF8, true);
     try
       result := this.parse;
     finally
@@ -945,9 +945,9 @@ end;
 
 class function TMXmlParser.parseFile(name: String; options : TMXmlParserOptions): TMXmlDocument;
 var
-  s : TAdvFile;
+  s : TFslFile;
 begin
-  s := TAdvFile.create(name, fmOpenRead + fmShareDenyWrite);
+  s := TFslFile.create(name, fmOpenRead + fmShareDenyWrite);
   try
     result := parse(s, options);
   finally
@@ -982,7 +982,7 @@ var
 begin
   this := TMXmlParser.Create;
   try
-    this.reader := TAdvStringReader.Create(content);
+    this.reader := TFslStringReader.Create(content);
     try
       result := this.parseXPath;
       this.moveOperationsToProximal(result);
@@ -1774,17 +1774,17 @@ begin
   inherited;
 end;
 
-function TMXPathExpressionNode.GetFilters: TAdvList<TMXPathExpressionNode>;
+function TMXPathExpressionNode.GetFilters: TFslList<TMXPathExpressionNode>;
 begin
   if FFilters = nil then
-    FFilters := TAdvList<TMXPathExpressionNode>.create;
+    FFilters := TFslList<TMXPathExpressionNode>.create;
   result := FFilters;
 end;
 
-function TMXPathExpressionNode.GetParams: TAdvList<TMXPathExpressionNode>;
+function TMXPathExpressionNode.GetParams: TFslList<TMXPathExpressionNode>;
 begin
   if FParams = nil then
-    FParams := TAdvList<TMXPathExpressionNode>.create;
+    FParams := TFslList<TMXPathExpressionNode>.create;
   result := FParams;
 end;
 
@@ -1891,7 +1891,7 @@ end;
 
 { TMXmlDocument }
 
-function TMXmlDocument.contains(list: TAdvList<TMXmlNode>; item: TMXmlNode): boolean;
+function TMXmlDocument.contains(list: TFslList<TMXmlNode>; item: TMXmlNode): boolean;
 var
   n : TMXmlNode;
 begin
@@ -1919,18 +1919,18 @@ begin
   inherited;
 end;
 
-function TMXmlDocument.evaluate(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.evaluate(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
-  fwork, work, work2 : TAdvList<TMXmlNode>;
+  fwork, work, work2 : TFslList<TMXmlNode>;
   item : TMXmlNode;
-  list : TAdvList<TMXmlNode>;
+  list : TFslList<TMXmlNode>;
   next, last : TMXPathExpressionNode;
   i : integer;
   f : TMXPathExpressionNode;
 begin
-  work := TAdvList<TMXmlNode>.create;
-  fwork := TAdvList<TMXmlNode>.create;
-  list := TAdvList<TMXmlNode>.create;
+  work := TFslList<TMXmlNode>.create;
+  fwork := TFslList<TMXmlNode>.create;
+  list := TFslList<TMXmlNode>.create;
   try
     for item in focus do
     begin
@@ -2014,11 +2014,11 @@ begin
   end;
 end;
 
-function TMXmlDocument.evaluate(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position: integer; item: TMXmlNode): TAdvList<TMXmlNode>;
+function TMXmlDocument.evaluate(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position: integer; item: TMXmlNode): TFslList<TMXmlNode>;
 var
-  work : TAdvList<TMXmlNode>;
+  work : TFslList<TMXmlNode>;
 begin
-  work := TAdvList<TMXmlNode>.create;
+  work := TFslList<TMXmlNode>.create;
   try
     work.add(item.Link);
     result := evaluate(expr, atEntry, variables, position, work);
@@ -2027,7 +2027,7 @@ begin
   end;
 end;
 
-function TMXmlDocument.evaluateBoolean(nodes: TAdvList<TMXmlNode>): boolean;
+function TMXmlDocument.evaluateBoolean(nodes: TFslList<TMXmlNode>): boolean;
 begin
   if (nodes = nil) or (nodes.Empty) then
     result := false
@@ -2044,7 +2044,7 @@ begin
     result := true;
 end;
 
-procedure TMXmlDocument.evaluateFunction(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.evaluateFunction(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode; work: TFslList<TMXmlNode>);
 begin
   case StringArrayIndexOfSensitive(['exists', 'count', 'not', 'text', 'comment', 'distinct-values', 'position',
       'starts-with', 'local-name', 'true', 'false', 'contains', 'concat', 'string', 'number', 'name', 'matches',
@@ -2074,9 +2074,9 @@ begin
   end;
 end;
 
-procedure TMXmlDocument.evaluateIterator(expr: TMXPathExpressionNode; atEntry: boolean; variables : TXPathVariables; position : integer; focus, work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.evaluateIterator(expr: TMXPathExpressionNode; atEntry: boolean; variables : TXPathVariables; position : integer; focus, work: TFslList<TMXmlNode>);
 var
-  list, res : TAdvList<TMXmlNode>;
+  list, res : TFslList<TMXmlNode>;
   vars : TXPathVariables;
   n : TMXmlNode;
 begin
@@ -2108,7 +2108,7 @@ end;
 
 function TMXmlDocument.funcCount(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
-  work : TAdvList<TMXmlNode>;
+  work : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
     raise EMXPathEngine.Create('Wrong number of parameters for count: expected 1 but found '+inttostr(expr.Params.Count));
@@ -2120,11 +2120,11 @@ begin
   end;
 end;
 
-procedure TMXmlDocument.funcDistinctValues(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcDistinctValues(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
 var
   i, j : integer;
   matched : boolean;
-  list : TAdvList<TMXmlNode>;
+  list : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
     raise EMXPathEngine.Create('Wrong number of parameters for distinct-values: expected 1 but found '+inttostr(expr.Params.Count));
@@ -2147,7 +2147,7 @@ begin
   end;
 end;
 
-function TMXmlDocument.opEqual(left, right : TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opEqual(left, right : TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   i : integer;
 begin
@@ -2161,7 +2161,7 @@ end;
 
 function TMXmlDocument.funcExists(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
-  work : TAdvList<TMXmlNode>;
+  work : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
     raise EMXPathEngine.Create('Wrong number of parameters for exists: expected 1 but found '+inttostr(expr.Params.Count));
@@ -2173,7 +2173,7 @@ begin
   end;
 end;
 
-procedure TMXmlDocument.funcLocalName(focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcLocalName(focus: TMXmlNode; work: TFslList<TMXmlNode>);
 begin
   if focus is TMXmlNamedNode then
     work.Add(TMXmlString.Create(TMXmlNamedNode(focus).LocalName))
@@ -2181,9 +2181,9 @@ begin
     work.Add(TMXmlString.Create(''))
 end;
 
-procedure TMXmlDocument.funcMatches(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcMatches(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
 var
-  p1, p2 : TAdvList<TMXmlNode>;
+  p1, p2 : TFslList<TMXmlNode>;
   reg : TRegEx;
 begin
   if expr.Params.Count <> 2 then
@@ -2208,7 +2208,7 @@ begin
 
 end;
 
-procedure TMXmlDocument.funcName(focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcName(focus: TMXmlNode; work: TFslList<TMXmlNode>);
 begin
   if focus is TMXmlNamedNode then
     work.Add(TMXmlString.Create(TMXmlNamedNode(focus).Name))
@@ -2223,7 +2223,7 @@ var
   n : TMXmlNode;
   ch : char;
   ws : boolean;
-  work: TAdvList<TMXmlNode>;
+  work: TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
     raise EMXPathEngine.Create('Wrong number of parameters for normalize-space: expected at least 1 but found '+inttostr(expr.Params.Count));
@@ -2262,7 +2262,7 @@ end;
 
 function TMXmlDocument.funcNot(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
-  work : TAdvList<TMXmlNode>;
+  work : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
     raise EMXPathEngine.Create('Wrong number of parameters for not: expected 1 but found '+inttostr(expr.Params.Count));
@@ -2278,7 +2278,7 @@ end;
 function TMXmlDocument.funcNumber(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
   b : TStringBuilder;
-  work: TAdvList<TMXmlNode>;
+  work: TFslList<TMXmlNode>;
   n : TMXmlNode;
 begin
   if expr.Params.Count <> 1 then
@@ -2301,14 +2301,14 @@ begin
 
 end;
 
-procedure TMXmlDocument.funcPosition(position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcPosition(position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
 begin
   work.Add(TMXmlNumber.Create(position));
 end;
 
-procedure TMXmlDocument.funcStartsWith(expr : TMXPathExpressionNode; atEntry : boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcStartsWith(expr : TMXPathExpressionNode; atEntry : boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
 var
-  p1, p2 : TAdvList<TMXmlNode>;
+  p1, p2 : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 2 then
     raise EMXPathEngine.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
@@ -2331,7 +2331,7 @@ end;
 function TMXmlDocument.funcString(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
   b : TStringBuilder;
-  work: TAdvList<TMXmlNode>;
+  work: TFslList<TMXmlNode>;
   n : TMXmlNode;
 begin
   if expr.Params.Count <> 1 then
@@ -2351,9 +2351,9 @@ begin
   end;
 end;
 
-procedure TMXmlDocument.funcSubStringAfter(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcSubStringAfter(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode; work: TFslList<TMXmlNode>);
 var
-  p1, p2 : TAdvList<TMXmlNode>;
+  p1, p2 : TFslList<TMXmlNode>;
   s1, s2 : String;
 begin
   if expr.Params.Count <> 2 then
@@ -2381,7 +2381,7 @@ begin
   end;
 end;
 
-procedure TMXmlDocument.funcText(expr: TMXPathExpressionNode; focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcText(expr: TMXPathExpressionNode; focus: TMXmlNode; work: TFslList<TMXmlNode>);
 begin
   iterate(focus, expr.axis, work, nil, funcTextTest);
 end;
@@ -2413,7 +2413,7 @@ end;
 
 function TMXmlDocument.funcTranslate(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
-  p1, p2, p3 : TAdvList<TMXmlNode>;
+  p1, p2, p3 : TFslList<TMXmlNode>;
 begin
   result := nil;
   if expr.Params.Count <> 3 then
@@ -2447,7 +2447,7 @@ begin
       exit(t);
 end;
 
-procedure TMXmlDocument.funcComment(focus: TMXmlNode; work: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.funcComment(focus: TMXmlNode; work: TFslList<TMXmlNode>);
 var
   child : TMXmlElement;
 begin
@@ -2461,7 +2461,7 @@ function TMXmlDocument.funcConcat(expr: TMXPathExpressionNode; atEntry: boolean;
 var
   b : TStringBuilder;
   p : TMXPathExpressionNode;
-  work: TAdvList<TMXmlNode>;
+  work: TFslList<TMXmlNode>;
   n : TMXmlNode;
 begin
   if expr.Params.Count = 0 then
@@ -2486,7 +2486,7 @@ end;
 
 function TMXmlDocument.funcContains(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
-  p1, p2 : TAdvList<TMXmlNode>;
+  p1, p2 : TFslList<TMXmlNode>;
   n : TMXmlNode;
 begin
   if expr.Params.Count <> 2 then
@@ -2512,22 +2512,22 @@ begin
   end;
 end;
 
-function TMXmlDocument.list(value: boolean): TAdvList<TMXmlNode>;
+function TMXmlDocument.list(value: boolean): TFslList<TMXmlNode>;
 begin
-  result := TAdvList<TMXmlNode>.create;
+  result := TFslList<TMXmlNode>.create;
   result.Add(TMXmlBoolean.Create(value));
 end;
 
 
 function TMXmlDocument.passesFilter(index: integer; atEntry : boolean; variables : TXPathVariables; position : integer; item: TMXmlNode; filter: TMXPathExpressionNode): boolean;
 var
-  focus, list : TAdvList<TMXmlNode>;
+  focus, list : TFslList<TMXmlNode>;
 begin
   if (filter.NodeType = xentConstant) and StringIsInteger32(filter.value) and (filter.FOp = xeoNull) then
     result := StringToInteger32(filter.value) = position
   else
   begin
-    focus := TAdvList<TMXmlNode>.create;
+    focus := TFslList<TMXmlNode>.create;
     try
       focus.Add(item.Link);
       list := evaluate(filter, atEntry, variables, position, focus);
@@ -2542,13 +2542,13 @@ begin
   end;
 end;
 
-function isBoolean(list : TAdvList<TMXmlNode>; b : boolean) : boolean;
+function isBoolean(list : TFslList<TMXmlNode>; b : boolean) : boolean;
 begin
   result := (list.count = 1) and (list[0] is TMXmlBoolean) and (TMXmlBoolean(list[0]).value = b);
 end;
 
 
-function TMXmlDocument.preOperate(left: TAdvList<TMXmlNode>; op: TMXPathExpressionOperation): TAdvList<TMXmlNode>;
+function TMXmlDocument.preOperate(left: TFslList<TMXmlNode>; op: TMXPathExpressionOperation): TFslList<TMXmlNode>;
 begin
   result := nil;
   case op of
@@ -2559,9 +2559,9 @@ begin
   end;
 end;
 
-function TMXmlDocument.opAnd(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opAnd(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 begin
-  result := TAdvList<TMXmlNode>.Create;
+  result := TFslList<TMXmlNode>.Create;
   try
     if (left.Empty) and (right.empty) then
       // nothing
@@ -2579,7 +2579,7 @@ begin
   end;
 end;
 
-function TMXmlDocument.operate(left: TAdvList<TMXmlNode>; op: TMXPathExpressionOperation; right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.operate(left: TFslList<TMXmlNode>; op: TMXPathExpressionOperation; right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 begin
   case op of
     xeoEquals: result := opEqual(left, right);
@@ -2599,12 +2599,12 @@ begin
   end;
 end;
 
-function TMXmlDocument.opGreaterThan(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opGreaterThan(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   sl, sr: String;
   o : boolean;
 begin
-  result := TAdvList<TMXmlNode>.Create;
+  result := TFslList<TMXmlNode>.Create;
   try
     if (left.Count <> 1) or (right.Count <> 1) then
       // nothing
@@ -2626,12 +2626,12 @@ begin
   end;
 end;
 
-function TMXmlDocument.opGreaterThanEqual(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opGreaterThanEqual(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   sl, sr: String;
   o : boolean;
 begin
-  result := TAdvList<TMXmlNode>.Create;
+  result := TFslList<TMXmlNode>.Create;
   try
     if (left.Count <> 1) or (right.Count <> 1) then
       // nothing
@@ -2653,12 +2653,12 @@ begin
   end;
 end;
 
-function TMXmlDocument.opLessThan(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opLessThan(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   sl, sr: String;
   o : boolean;
 begin
-  result := TAdvList<TMXmlNode>.Create;
+  result := TFslList<TMXmlNode>.Create;
   try
     if (left.Count <> 1) or (right.Count <> 1) then
       // nothing
@@ -2680,12 +2680,12 @@ begin
   end;
 end;
 
-function TMXmlDocument.opLessThanEqual(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opLessThanEqual(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   sl, sr: String;
   o : boolean;
 begin
-  result := TAdvList<TMXmlNode>.Create;
+  result := TFslList<TMXmlNode>.Create;
   try
     if (left.Count <> 1) or (right.Count <> 1) then
       // nothing
@@ -2707,11 +2707,11 @@ begin
   end;
 end;
 
-function TMXmlDocument.opMinus(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opMinus(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   sl, sr, so: String;
 begin
-  result := TAdvList<TMXmlNode>.Create;
+  result := TFslList<TMXmlNode>.Create;
   try
     if (left.Count <> 1) or (right.Count <> 1) then
       // nothing
@@ -2734,7 +2734,7 @@ begin
 
 end;
 
-function TMXmlDocument.opNotEqual(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opNotEqual(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   i : integer;
 begin
@@ -2746,9 +2746,9 @@ begin
   result := list(false);
 end;
 
-function TMXmlDocument.opOr(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opOr(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 begin
-  result := TAdvList<TMXmlNode>.Create;
+  result := TFslList<TMXmlNode>.Create;
   try
     if (left.Empty) and (right.Empty) then
       // nothing
@@ -2764,11 +2764,11 @@ begin
   end;
 end;
 
-function TMXmlDocument.opPlus(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opPlus(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   sl, sr, so: String;
 begin
-  result := TAdvList<TMXmlNode>.Create;
+  result := TFslList<TMXmlNode>.Create;
   try
     if (left.Count <> 1) or (right.Count <> 1) then
       // nothing
@@ -2790,11 +2790,11 @@ begin
   end;
 end;
 
-function TMXmlDocument.opUnion(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opUnion(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   item : TMXmlNode;
 begin
-  result := TAdvList<TMXmlNode>.create;
+  result := TFslList<TMXmlNode>.create;
   try
     for item in left do
       if not contains(result, item) then
@@ -2808,10 +2808,10 @@ begin
   end;
 end;
 
-procedure TMXmlDocument.iterate(node : TMXMLNode; axis : TMXPathExpressionAxis; list : TAdvList<TMXmlNode>; context : TObject; event : TMXMLIterationEvent);
+procedure TMXmlDocument.iterate(node : TMXMLNode; axis : TMXPathExpressionAxis; list : TFslList<TMXmlNode>; context : TObject; event : TMXMLIterationEvent);
 var
   count : integer;
-  procedure iterateChildren(children : TAdvList<TMXmlElement>; recurse : boolean);
+  procedure iterateChildren(children : TFslList<TMXmlElement>; recurse : boolean);
   var
     e : TMXmlElement;
   begin
@@ -2890,7 +2890,7 @@ begin
   end;
 end;
 
-function TMXmlDocument.evaluateString(nodes: TAdvList<TMXmlNode>): String;
+function TMXmlDocument.evaluateString(nodes: TFslList<TMXmlNode>): String;
 var
   i : integer;
 begin
@@ -2907,17 +2907,17 @@ begin
   end;
 end;
 
-procedure TMXmlDocument.evaluateName(expr: TMXPathExpressionNode; atEntry : boolean; item: TMXmlNode; focus: TAdvList<TMXmlNode>);
+procedure TMXmlDocument.evaluateName(expr: TMXPathExpressionNode; atEntry : boolean; item: TMXmlNode; focus: TFslList<TMXmlNode>);
 begin
   iterate(item, expr.FAxis, focus, expr, evaluateNameForNode);
 end;
-//    procedure (expr: TMXPathExpressionNode; atEntry : boolean; item : TMXmlNode; focus: TAdvList<TMXmlNode>); overload;
+//    procedure (expr: TMXPathExpressionNode; atEntry : boolean; item : TMXmlNode; focus: TFslList<TMXmlNode>); overload;
 {function TMXmlDocument.matchesXPathName(name, namespace, localName, pattern: String; wildcards : boolean): boolean;
 var
 begin
 end;
 }
-//  procedure checkChildren(children : TAdvList<TMXmlElement>; recurse : boolean);
+//  procedure checkChildren(children : TFslList<TMXmlElement>; recurse : boolean);
 //  var
 //    c : TMXmlElement;
 //  begin
@@ -2967,7 +2967,7 @@ end;
 //  else
 //    raise EMXPathEngine.create('Not done yet');
 
-function TMXmlDocument.select(xpath: String; focus: TMXmlElement): TAdvList<TMXmlNode>;
+function TMXmlDocument.select(xpath: String; focus: TMXmlElement): TFslList<TMXmlNode>;
 var
   expr : TMXPathExpressionNode;
 begin
@@ -2979,12 +2979,12 @@ begin
   end;
 end;
 
-function TMXmlDocument.selectElements(xpath: String; focus: TMXmlElement): TAdvList<TMXmlElement>;
+function TMXmlDocument.selectElements(xpath: String; focus: TMXmlElement): TFslList<TMXmlElement>;
 var
-  list : TAdvList<TMXmlNode>;
+  list : TFslList<TMXmlNode>;
   item : TMXmlNode;
 begin
-  result := TAdvList<TMXmlElement>.create;
+  result := TFslList<TMXmlElement>.create;
   try
     list := select(xpath, focus);
     try
@@ -3002,17 +3002,17 @@ begin
   end;
 end;
 
-function TMXmlDocument.select(xpath: TMXPathExpressionNode; focus: TMXmlElement): TAdvList<TMXmlNode>;
+function TMXmlDocument.select(xpath: TMXPathExpressionNode; focus: TMXmlElement): TFslList<TMXmlNode>;
 var
-  work : TAdvList<TMXmlNode>;
+  work : TFslList<TMXmlNode>;
   variables : TXPathVariables;
 begin
   if NO_SELECT then
-    exit(TAdvList<TMXmlNode>.create);
+    exit(TFslList<TMXmlNode>.create);
 
   variables := TXPathVariables.Create('%current', focus.Link);
   try
-    work := TAdvList<TMXmlNode>.create;
+    work := TFslList<TMXmlNode>.create;
     try
       work.Add(focus.Link);
       result := evaluate(xpath, true, variables, 0, work);
@@ -3024,12 +3024,12 @@ begin
   end;
 end;
 
-function TMXmlDocument.selectElements(xpath: TMXPathExpressionNode; focus: TMXmlElement): TAdvList<TMXmlElement>;
+function TMXmlDocument.selectElements(xpath: TMXPathExpressionNode; focus: TMXmlElement): TFslList<TMXmlElement>;
 var
-  list : TAdvList<TMXmlNode>;
+  list : TFslList<TMXmlNode>;
   item : TMXmlNode;
 begin
-  result := TAdvList<TMXmlElement>.create;
+  result := TFslList<TMXmlElement>.create;
   try
     list := select(xpath, focus);
     try
@@ -3115,7 +3115,7 @@ end;
 constructor TXPathVariables.Create;
 begin
   inherited;
-  FMap := TAdvMap<TMXmlNode>.create;
+  FMap := TFslMap<TMXmlNode>.create;
 end;
 
 constructor TXPathVariables.Create(name: String; value: TMXmlNode);

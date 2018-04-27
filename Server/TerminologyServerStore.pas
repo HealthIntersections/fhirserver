@@ -36,7 +36,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Exceptions,
   FHIR.Database.Manager,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Operations, FHIR.CdsHooks.Utilities,
-  TerminologyServices, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, RxNormServices, UniiServices, ACIRServices, UriServices, ICD10Services,
+  FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, RxNormServices, UniiServices, ACIRServices, UriServices, ICD10Services,
   AreaCodeServices, IETFLanguageCodeServices, FHIR.Debug.Logging,
   YuStemmer;
 
@@ -44,23 +44,23 @@ const
   URI_VERSION_BREAK = '#';
 
 Type
-  TConceptAdornment = class (TAdvStringList)
+  TConceptAdornment = class (TFslStringList)
   private
     FParent: TFHIRCodeSystemConcept;
   public
     property parent : TFHIRCodeSystemConcept read FParent write FParent; // not owned, can't be
   end;
 
-  TCodeSystemAdornment = class (TAdvObject)
+  TCodeSystemAdornment = class (TFslObject)
   private
-    FMap : TAdvMap<TFhirCodeSystemConcept>;
+    FMap : TFslMap<TFhirCodeSystemConcept>;
   public
-    constructor Create(map : TAdvMap<TFhirCodeSystemConcept>);
+    constructor Create(map : TFslMap<TFhirCodeSystemConcept>);
     destructor Destroy; override;
-    property map : TAdvMap<TFhirCodeSystemConcept> read FMap;
+    property map : TFslMap<TFhirCodeSystemConcept> read FMap;
   end;
 
-  TLoadedConceptMap = class (TAdvObject)
+  TLoadedConceptMap = class (TFslObject)
   private
     FSource: TFhirValueSet;
     FResource: TFhirConceptMap;
@@ -80,11 +80,11 @@ Type
     function HasTranslation(system, code : String; out maps : TFhirConceptMapGroupElementTargetList) : boolean; overload;
   end;
 
-  TLoadedConceptMapList = class (TAdvObjectList)
+  TLoadedConceptMapList = class (TFslObjectList)
   private
     function getMap(iIndex: integer): TLoadedConceptMap;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     Property map[iIndex : integer] : TLoadedConceptMap read getMap; default;
 
@@ -97,7 +97,7 @@ Type
     destructor Destroy; override;
   end;
 
-  TFhirCodeSystemConceptMatch = class (TAdvObject)
+  TFhirCodeSystemConceptMatch = class (TFslObject)
   private
     FItem : TFhirCodeSystemConcept;
     FRating : double;
@@ -109,7 +109,7 @@ Type
   TFhirCodeSystemProviderFilterContext = class (TCodeSystemProviderFilterContext, IComparer<TFhirCodeSystemConceptMatch>)
   private
     ndx : integer;
-    concepts : TAdvList<TFhirCodeSystemConceptMatch>;
+    concepts : TFslList<TFhirCodeSystemConceptMatch>;
 
     procedure Add(item : TFhirCodeSystemConcept; rating : double);
     function Compare(const Left, Right: TFhirCodeSystemConceptMatch): Integer;
@@ -119,13 +119,13 @@ Type
     destructor Destroy; override;
   end;
 
-  TFHIRCodeSystemEntry = class (TAdvObject)
+  TFHIRCodeSystemEntry = class (TFslObject)
   private
     FCodeSystem : TFHIRCodeSystem;
     FValueset : TFHIRValueSet;
-    FSupplements : TAdvList<TFHIRCodeSystem>;
+    FSupplements : TFslList<TFHIRCodeSystem>;
     function GetHasSupplements: boolean;
-    function GetSupplements: TAdvList<TFHIRCodeSystem>;
+    function GetSupplements: TFslList<TFHIRCodeSystem>;
     procedure SetCodeSystem(const Value: TFHIRCodeSystem);
   public
     Constructor Create({$IFNDEF FHIR2} cs : TFhirCodeSystem {$ELSE} cs : TFHIRValueSet {$ENDIF});
@@ -135,13 +135,13 @@ Type
 
     property CodeSystem : TFHIRCodeSystem read FCodeSystem write SetCodeSystem;
     Property hasSupplements : boolean read GetHasSupplements;
-    property Supplements : TAdvList<TFHIRCodeSystem> read GetSupplements;
+    property Supplements : TFslList<TFHIRCodeSystem> read GetSupplements;
   end;
 
   TFhirCodeSystemProvider = class (TCodeSystemProvider)
   private
     FCs : TFhirCodeSystemEntry;
-    FMap : TAdvMap<TFhirCodeSystemConcept>;
+    FMap : TFslMap<TFhirCodeSystemConcept>;
 
     function LocateCode(code : String) : TFhirCodeSystemConcept;
     function doLocate(code : String) : TFhirCodeSystemProviderContext; overload;
@@ -193,11 +193,11 @@ Type
   // the terminology server maintains a cache of terminology related resources
   // the rest server notifies terminology server whenever this list changes
   // (and at start up)
-  TTerminologyServerStore = class (TAdvObject)
+  TTerminologyServerStore = class (TFslObject)
   private
     FLoinc : TLOINCServices;
-    FSnomed : TAdvList<TSnomedServices>;
-    FIcd10 : TAdvList<TICD10Provider>;
+    FSnomed : TFslList<TSnomedServices>;
+    FIcd10 : TFslList<TICD10Provider>;
     FDefSnomed : TSnomedServices;
     FUcum : TUcumServices;
     FRxNorm : TRxNormServices;
@@ -217,21 +217,21 @@ Type
     // by their local url
     // by their canonical url
     // if they're a value set, by their code system url
-    FValueSetsById : TAdvMap<TFHIRValueSet>; // by local system's id
-    FValueSetsByURL : TAdvMap<TFHIRValueSet>; // by canonical url
-    FCodeSystemsById : TAdvMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
-    FCodeSystemsByUrl : TAdvMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
-    FCodeSystemsByVsUrl : TAdvMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
-    FSupplementsById : TAdvMap<TFHIRCodeSystem>; // All supplements
+    FValueSetsById : TFslMap<TFHIRValueSet>; // by local system's id
+    FValueSetsByURL : TFslMap<TFHIRValueSet>; // by canonical url
+    FCodeSystemsById : TFslMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
+    FCodeSystemsByUrl : TFslMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
+    FCodeSystemsByVsUrl : TFslMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
+    FSupplementsById : TFslMap<TFHIRCodeSystem>; // All supplements
 
-    FBaseValueSets : TAdvMap<TFHIRValueSet>; // value sets out of the specification - these can be overriden, but they never go away
-    FBaseCodeSystems : TAdvMap<TFHIRCodeSystemEntry>; // value sets out of the specification - these can be overriden, but they never go away
+    FBaseValueSets : TFslMap<TFHIRValueSet>; // value sets out of the specification - these can be overriden, but they never go away
+    FBaseCodeSystems : TFslMap<TFHIRCodeSystemEntry>; // value sets out of the specification - these can be overriden, but they never go away
 
-    FBaseConceptMaps : TAdvMap<TLoadedConceptMap>; // value sets out of the specification - these can be overriden, but they never go away
-    FConceptMapsById : TAdvMap<TLoadedConceptMap>;
-    FConceptMapsByURL : TAdvMap<TLoadedConceptMap>;
+    FBaseConceptMaps : TFslMap<TLoadedConceptMap>; // value sets out of the specification - these can be overriden, but they never go away
+    FConceptMapsById : TFslMap<TLoadedConceptMap>;
+    FConceptMapsByURL : TFslMap<TLoadedConceptMap>;
 
-    FProviderClasses : TAdvMap<TCodeSystemProvider>;
+    FProviderClasses : TFslMap<TCodeSystemProvider>;
     FMaintenanceThreadStatus : String;
     FSubscriptionThreadStatus : String;
     FEmailThreadStatus : String;
@@ -269,8 +269,8 @@ Type
     Function Link : TTerminologyServerStore; overload;
 
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
-    Property Snomed : TAdvList<TSnomedServices> read FSnomed;
-    Property Icd10 : TAdvList<TICD10Provider> read FIcd10;
+    Property Snomed : TFslList<TSnomedServices> read FSnomed;
+    Property Icd10 : TFslList<TICD10Provider> read FIcd10;
     Property DefSnomed : TSnomedServices read FDefSnomed write SetDefSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
@@ -301,7 +301,7 @@ Type
     function GetCodeSystemList : TFHIRCodeSystemList;
     function GetValueSetList : TFHIRValueSetList;
     function GetConceptMapList : TLoadedConceptMapList;
-    Property ProviderClasses : TAdvMap<TCodeSystemProvider> read FProviderClasses;
+    Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
     function ValueSetCount : integer;
     function CodeSystemCount : integer;
 
@@ -780,7 +780,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirValueSetCodeSystem);
     end;
     result.SortAscending;
   end;
-  procedure processConcepts(parent : TFhirCodeSystemConcept; list : TFhirCodeSystemConceptList; map : TAdvMap<TFhirCodeSystemConcept>);
+  procedure processConcepts(parent : TFhirCodeSystemConcept; list : TFhirCodeSystemConceptList; map : TFslMap<TFhirCodeSystemConcept>);
   var
     c : TFhirCodeSystemConcept;
   begin
@@ -795,9 +795,9 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirValueSetCodeSystem);
     end;
   end;
 var
-  map : TAdvMap<TFhirCodeSystemConcept>;
+  map : TFslMap<TFhirCodeSystemConcept>;
 begin
-  map := TAdvMap<TFhirCodeSystemConcept>.create;
+  map := TFslMap<TFhirCodeSystemConcept>.create;
   cs.Tag := TCodeSystemAdornment.create(map);
   processConcepts(nil, cs.conceptList, map);
 end;
@@ -881,26 +881,26 @@ var
 begin
   inherited Create;
   FLock := TCriticalSection.Create('Terminology Server Store');
-  FProviderClasses := TAdvMap<TCodeSystemProvider>.Create;
+  FProviderClasses := TFslMap<TCodeSystemProvider>.Create;
 
   FDB := db;
 
-  FValueSetsById := TAdvMap<TFhirValueSet>.create;
-  FValueSetsByURL := TAdvMap<TFhirValueSet>.create;
-  FCodeSystemsById := TAdvMap<TFhirCodeSystemEntry>.create;
-  FCodeSystemsByUrl := TAdvMap<TFhirCodeSystemEntry>.create;
-  FCodeSystemsByVsUrl := TAdvMap<TFhirCodeSystemEntry>.create;
-  FBaseValueSets := TAdvMap<TFhirValueSet>.create;
-  FBaseCodeSystems := TAdvMap<TFHIRCodeSystemEntry>.create;
-  FSupplementsById := TAdvMap<TFHIRCodeSystem>.create;
+  FValueSetsById := TFslMap<TFhirValueSet>.create;
+  FValueSetsByURL := TFslMap<TFhirValueSet>.create;
+  FCodeSystemsById := TFslMap<TFhirCodeSystemEntry>.create;
+  FCodeSystemsByUrl := TFslMap<TFhirCodeSystemEntry>.create;
+  FCodeSystemsByVsUrl := TFslMap<TFhirCodeSystemEntry>.create;
+  FBaseValueSets := TFslMap<TFhirValueSet>.create;
+  FBaseCodeSystems := TFslMap<TFHIRCodeSystemEntry>.create;
+  FSupplementsById := TFslMap<TFHIRCodeSystem>.create;
 
 
-  FBaseConceptMaps := TAdvMap<TLoadedConceptMap>.create;
-  FConceptMapsById := TAdvMap<TLoadedConceptMap>.create;
-  FConceptMapsByURL := TAdvMap<TLoadedConceptMap>.create;
+  FBaseConceptMaps := TFslMap<TLoadedConceptMap>.create;
+  FConceptMapsById := TFslMap<TLoadedConceptMap>.create;
+  FConceptMapsByURL := TFslMap<TLoadedConceptMap>.create;
 
-  FSnomed := TAdvList<TSnomedServices>.create;
-  FIcd10 := TAdvList<TICD10Provider>.create;
+  FSnomed := TFslList<TSnomedServices>.create;
+  FIcd10 := TFslList<TICD10Provider>.create;
   p := TUriServices.Create();
   FProviderClasses.Add(p.system(nil), p);
   FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
@@ -2297,7 +2297,7 @@ end;
 procedure TFhirCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponse);
 {$IFNDEF FHIR2}
 var
-  concepts : TAdvList<TFhirCodeSystemConcept>;
+  concepts : TFslList<TFhirCodeSystemConcept>;
   cc, context : TFhirCodeSystemConcept;
   parent, child : TFhirCodeSystemConcept;
   ccd : TFhirCodeSystemConceptDesignation;
@@ -2310,7 +2310,7 @@ var
 begin
   {$IFNDEF FHIR2}
   context := TFHIRCodeSystemProviderContext(ctxt).context;
-  concepts := TAdvList<TFhirCodeSystemConcept>.create;
+  concepts := TFslList<TFhirCodeSystemConcept>.create;
   try
     concepts.Add(context.Link);
     for css in FCs.Supplements do
@@ -2495,12 +2495,12 @@ end;
 procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFhirCodeSystemConceptList; pp: TFhirCodeSystemProperty; value: String; list: TFhirCodeSystemProviderFilterContext);
 var
   c, cc : TFhirCodeSystemConcept;
-  concepts : TAdvList<TFhirCodeSystemConcept>;
+  concepts : TFslList<TFhirCodeSystemConcept>;
   css : TFhirCodeSystem;
   cp : TFhirCodeSystemConceptProperty;
   ok : boolean;
 begin
-  concepts := TAdvList<TFhirCodeSystemConcept>.create;
+  concepts := TFslList<TFhirCodeSystemConcept>.create;
   try
     for c in src do
     begin
@@ -2619,7 +2619,7 @@ begin
   for i := 0 to source.Count - 1 do
   begin
     code := source[i];
-    if filter.passes(code.tag as TAdvStringList, rating) then
+    if filter.passes(code.tag as TFslStringList, rating) then
       dest.Add(code.Link, rating);
     filterCodes(dest, code.conceptList, filter);
   end;
@@ -2759,7 +2759,7 @@ end;
 constructor TFhirCodeSystemProviderFilterContext.Create;
 begin
   inherited Create;
-  self.concepts := TAdvList<TFhirCodeSystemConceptMatch>.create;
+  self.concepts := TFslList<TFhirCodeSystemConceptMatch>.create;
   ndx := -1;
 end;
 
@@ -2799,7 +2799,7 @@ begin
   result := TLoadedConceptMap(ObjectByIndex[iIndex]);
 end;
 
-function TLoadedConceptMapList.itemClass: TAdvObjectClass;
+function TLoadedConceptMapList.itemClass: TFslObjectClass;
 begin
   result := TLoadedConceptMap;
 end;
@@ -2821,7 +2821,7 @@ end;
 
 { TCodeSystemAdornment }
 
-constructor TCodeSystemAdornment.Create(map: TAdvMap<TFhirCodeSystemConcept>);
+constructor TCodeSystemAdornment.Create(map: TFslMap<TFhirCodeSystemConcept>);
 begin
   inherited Create;
   FMap := map;
@@ -2856,10 +2856,10 @@ begin
   result := (FSupplements <> nil) and (FSupplements.Count > 0);
 end;
 
-function TFHIRCodeSystemEntry.GetSupplements: TAdvList<TFHIRCodeSystem>;
+function TFHIRCodeSystemEntry.GetSupplements: TFslList<TFHIRCodeSystem>;
 begin
   if FSupplements = nil then
-    FSupplements := TAdvList<TFHIRCodeSystem>.create;
+    FSupplements := TFslList<TFHIRCodeSystem>.create;
   result := FSupplements;
 end;
 

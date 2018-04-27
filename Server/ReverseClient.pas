@@ -40,7 +40,7 @@ Const
   SECURE_TOKEN_HEADER = 'X-Proxy-SSL-Token';
 
 Type
-  TReverseProxyInfo = class(TAdvObject)
+  TReverseProxyInfo = class(TFslObject)
   private
     Fpath: String;
     Ftarget: String;
@@ -51,7 +51,7 @@ Type
     property target : String read Ftarget write Ftarget;
   end;
 
-  TReverseClient = class (TAdvObject)
+  TReverseClient = class (TFslObject)
   private
     Frequest: TIdHTTPRequestInfo;
     Fresponse: TIdHTTPResponseInfo;

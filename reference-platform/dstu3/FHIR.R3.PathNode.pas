@@ -69,7 +69,7 @@ const
 
 
 type
-  TFHIRTypeDetails = class (TAdvObject)
+  TFHIRTypeDetails = class (TFslObject)
   private
     id : integer;
     FTypes : TStringList;
@@ -95,13 +95,13 @@ type
     function type_ : String;
   end;
 
-  TFHIRPathExpressionNode = class (TAdvObject)
+  TFHIRPathExpressionNode = class (TFslObject)
   private
     FTag : integer;
     FName: String;
     FConstant : string;
     FFunctionId : TFHIRPathFunction;
-    FParameters : TAdvList<TFHIRPathExpressionNode>;
+    FParameters : TFslList<TFHIRPathExpressionNode>;
     FInner: TFHIRPathExpressionNode;
     FGroup: TFHIRPathExpressionNode;
     FOperation : TFHIRPathOperation;
@@ -150,7 +150,7 @@ type
     property name : String read FName write FName;
     property constant : String read FConstant write FConstant;
     property FunctionId : TFHIRPathFunction read FFunctionId write SetFunctionId;
-    property Parameters : TAdvList<TFHIRPathExpressionNode> read FParameters;
+    property Parameters : TFslList<TFHIRPathExpressionNode> read FParameters;
     property Inner : TFHIRPathExpressionNode read FInner write SetInner;
     property Group : TFHIRPathExpressionNode read FGroup write SetGroup;
     property Operation : TFHIRPathOperation read FOperation write FOperation;
@@ -284,7 +284,7 @@ procedure TFHIRPathExpressionNode.SetFunctionId(const Value: TFHIRPathFunction);
 begin
   FFunctionId := Value;
   if FParameters = nil then
-    FParameters := TAdvList<TFHIRPathExpressionNode>.create;
+    FParameters := TFslList<TFHIRPathExpressionNode>.create;
 end;
 
 procedure TFHIRPathExpressionNode.SetOpNext(const Value: TFHIRPathExpressionNode);

@@ -49,7 +49,7 @@ const
 type
   TFetchResourceFrm = class;
 
-  TSearchEntryPanel = class (TAdvObject)
+  TSearchEntryPanel = class (TFslObject)
   private
     form : TFetchResourceFrm;
     definition : TFhirCapabilityStatementRestResourceSearchParam;
@@ -122,9 +122,9 @@ type
     FProfiles : TProfileManager;
 
     FType : TFhirResourceType;
-    FSearchItems : TAdvList<TSearchEntryPanel>;
+    FSearchItems : TFslList<TSearchEntryPanel>;
     FColumns : TDictionary<String, String>;
-    FMatches : TAdvList<TFHIRResource>;
+    FMatches : TFslList<TFHIRResource>;
     FLinks : TDictionary<String, String>;
     FSelectedId: String;
     FSelectedType: TFhirResourceType;
@@ -471,9 +471,9 @@ end;
 
 procedure TFetchResourceFrm.FormCreate(Sender: TObject);
 begin
-  FSearchItems := TAdvList<TSearchEntryPanel>.create;
+  FSearchItems := TFslList<TSearchEntryPanel>.create;
   FColumns := TDictionary<String, String>.create;
-  FMatches := TAdvList<TFHIRResource>.create;
+  FMatches := TFslList<TFHIRResource>.create;
   FLinks := TDictionary<String, String>.create;
 end;
 

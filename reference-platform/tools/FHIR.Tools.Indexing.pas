@@ -45,7 +45,7 @@ uses
   {$ENDIF}
 
 type
-  TFhirIndex = class (TAdvObject)
+  TFhirIndex = class (TFslObject)
   private
     FResourceType : String;
     FKey: Integer;
@@ -63,7 +63,7 @@ type
     destructor Destroy; override;
     function Link : TFhirIndex; Overload;
     function Clone : TFhirIndex; Overload;
-    procedure Assign(source : TAdvObject); Override;
+    procedure Assign(source : TFslObject); Override;
 
     property ResourceType : String read FResourceType write FResourceType;
     property Name : String read FName write FName;
@@ -82,11 +82,11 @@ type
     function summary : String;
   end;
 
-  TFhirIndexList = class (TAdvObjectList)
+  TFhirIndexList = class (TFslObjectList)
   private
     function GetItemN(iIndex: integer): TFhirIndex;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     function Link : TFhirIndexList; Overload;
 
@@ -95,10 +95,10 @@ type
     function add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum; url : String): TFhirIndex; overload;
     function add(resourceType : String; sp : TFhirSearchParameter): TFhirIndex; overload;
     Property Item[iIndex : integer] : TFhirIndex read GetItemN; default;
-    function listByType(aType : String) : TAdvList<TFhirIndex>;
+    function listByType(aType : String) : TFslList<TFhirIndex>;
   end;
 
-  TFhirComposite = class (TAdvObject)
+  TFhirComposite = class (TFslObject)
   private
     FResourceType : String;
     FKey: Integer;
@@ -110,7 +110,7 @@ type
 
     function Link : TFhirComposite; Overload;
     function Clone : TFhirComposite; Overload;
-    procedure Assign(source : TAdvObject); Override;
+    procedure Assign(source : TFslObject); Override;
 
     property ResourceType : String read FResourceType write FResourceType;
     property Name : String read FName write FName;
@@ -118,11 +118,11 @@ type
     Property Components : TDictionary<String, String> read FComponents;
   end;
 
-  TFhirCompositeList = class (TAdvObjectList)
+  TFhirCompositeList = class (TFslObjectList)
   private
     function GetItemN(iIndex: integer): TFhirComposite;
   protected
-    function ItemClass : TAdvObjectClass; override;
+    function ItemClass : TFslObjectClass; override;
   public
     function Link : TFhirCompositeList; Overload;
 
@@ -132,19 +132,19 @@ type
   end;
 
   // this defines the compartments. Contains the search parameters that define the compartment
-  TFHIRCompartmentList = class (TAdvObject)
+  TFHIRCompartmentList = class (TFslObject)
   private
-    FPatientCompartment : TAdvMap<TAdvStringSet>;
-    FPractitionerCompartment : TAdvMap<TAdvStringSet>;
-    FEncounterCompartment : TAdvMap<TAdvStringSet>;
-    FRelatedPersonCompartment : TAdvMap<TAdvStringSet>;
-    FDeviceCompartment : TAdvMap<TAdvStringSet>;
+    FPatientCompartment : TFslMap<TFslStringSet>;
+    FPractitionerCompartment : TFslMap<TFslStringSet>;
+    FEncounterCompartment : TFslMap<TFslStringSet>;
+    FRelatedPersonCompartment : TFslMap<TFslStringSet>;
+    FDeviceCompartment : TFslMap<TFslStringSet>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     Function Link : TFHIRCompartmentList; overload;
     function existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
-    function getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
+    function getIndexNames(comp: TFHIRResourceType; resource : String) : TFslStringSet;
     function hasCompartment(comp: TFHIRResourceType) : boolean;
     procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String); overload;
 //    procedure register(comp: TFHIRResourceType; resource : String; list : String); overload;
@@ -155,7 +155,7 @@ implementation
 
 { TFhirIndex }
 
-procedure TFhirIndex.assign(source: TAdvObject);
+procedure TFhirIndex.assign(source: TFslObject);
 begin
   inherited;
   FKey := TFhirIndex(source).FKey;
@@ -270,7 +270,7 @@ begin
   result := TFhirIndex(ObjectByIndex[iIndex]);
 end;
 
-function TFhirIndexList.ItemClass: TAdvObjectClass;
+function TFhirIndexList.ItemClass: TFslObjectClass;
 begin
   result := TFhirIndex;
 end;
@@ -280,11 +280,11 @@ begin
   result := TFhirIndexList(Inherited Link);
 end;
 
-function TFhirIndexList.listByType(aType: String): TAdvList<TFhirIndex>;
+function TFhirIndexList.listByType(aType: String): TFslList<TFhirIndex>;
 var
   i : integer;
 begin
-  result := TAdvList<TFhirIndex>.create;
+  result := TFslList<TFhirIndex>.create;
   try
     for i := 0 to Count - 1 do
       if (Item[i].ResourceType = aType) then
@@ -297,7 +297,7 @@ end;
 
 { TFhirComposite }
 
-procedure TFhirComposite.Assign(source: TAdvObject);
+procedure TFhirComposite.Assign(source: TFslObject);
 var
   s : String;
 begin
@@ -375,7 +375,7 @@ begin
   );
 end;
 
-function TFhirCompositeList.ItemClass: TAdvObjectClass;
+function TFhirCompositeList.ItemClass: TFslObjectClass;
 begin
   result := TFhirComposite;
 end;
@@ -392,11 +392,11 @@ end;
 constructor TFHIRCompartmentList.Create;
 begin
   inherited;
-  FPatientCompartment := TAdvMap<TAdvStringSet>.create;
-  FPractitionerCompartment := TAdvMap<TAdvStringSet>.create;
-  FEncounterCompartment := TAdvMap<TAdvStringSet>.create;
-  FRelatedPersonCompartment := TAdvMap<TAdvStringSet>.create;
-  FDeviceCompartment := TAdvMap<TAdvStringSet>.create;
+  FPatientCompartment := TFslMap<TFslStringSet>.create;
+  FPractitionerCompartment := TFslMap<TFslStringSet>.create;
+  FEncounterCompartment := TFslMap<TFslStringSet>.create;
+  FRelatedPersonCompartment := TFslMap<TFslStringSet>.create;
+  FDeviceCompartment := TFslMap<TFslStringSet>.create;
 end;
 
 destructor TFHIRCompartmentList.Destroy;
@@ -422,7 +422,7 @@ begin
   end;
 end;
 
-function TFHIRCompartmentList.getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
+function TFHIRCompartmentList.getIndexNames(comp: TFHIRResourceType; resource : String) : TFslStringSet;
 begin
   case comp of
     frtPatient : result := FPatientCompartment[resource];
@@ -461,11 +461,11 @@ end;
 procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource : String; indexes : array of String);
 begin
   case comp of
-    frtPatient : FPatientCompartment.add(resource, TAdvStringSet.create(indexes));
-    frtPractitioner : FPractitionerCompartment.Add(resource, TAdvStringSet.create(indexes));
-    frtEncounter : FEncounterCompartment.add(resource, TAdvStringSet.create(indexes));
-    frtRelatedPerson : FRelatedPersonCompartment.add(resource, TAdvStringSet.create(indexes));
-    frtDevice : FDeviceCompartment.add(resource, TAdvStringSet.create(indexes));
+    frtPatient : FPatientCompartment.add(resource, TFslStringSet.create(indexes));
+    frtPractitioner : FPractitionerCompartment.Add(resource, TFslStringSet.create(indexes));
+    frtEncounter : FEncounterCompartment.add(resource, TFslStringSet.create(indexes));
+    frtRelatedPerson : FRelatedPersonCompartment.add(resource, TFslStringSet.create(indexes));
+    frtDevice : FDeviceCompartment.add(resource, TFslStringSet.create(indexes));
   else
     raise Exception.Create('Unknown compartment');
   end;

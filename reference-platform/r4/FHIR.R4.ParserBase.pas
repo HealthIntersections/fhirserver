@@ -154,7 +154,7 @@ var
 begin
   xml := nil;
   try
-    FComments := TAdvStringList.create;
+    FComments := TFslStringList.create;
     try
       if (Element = nil) then
       begin
@@ -238,12 +238,12 @@ begin
   end
   else
   begin
-    xml := TAdvXmlBuilder.Create;
+    xml := TFslXmlBuilder.Create;
     try
       xml.IsPretty := isPretty;
       xml.NoHeader := NoHeader;
       if isCanonical then
-        TAdvXmlBuilder(xml).CanonicalEntities := true;
+        TFslXmlBuilder(xml).CanonicalEntities := true;
       xml.CurrentNamespaces.DefaultNS := FHIR_NS;
       xml.Start;
       if not isCanonical and (FComment <> '') then
@@ -392,7 +392,7 @@ begin
   start;
   xml := nil;
   try
-    FComments := TAdvStringList.create;
+    FComments := TFslStringList.create;
     try
       if (Element = nil) then
       begin

@@ -40,7 +40,7 @@ uses
 type
   TKDBReportFormat = (krfText, krfHTML, krfXML);
 
-  TKDBLogEntry = {private} class (TAdvObject)
+  TKDBLogEntry = {private} class (TFslObject)
   private
     FUsage : String;
     FTotalCount : integer;
@@ -62,7 +62,7 @@ type
     destructor Destroy; override;
   end;
 
-  TKDBLogger = class (TAdvObject)
+  TKDBLogger = class (TFslObject)
   private
     FList : TStringList;
     FTotal : Integer;

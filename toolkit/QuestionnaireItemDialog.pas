@@ -220,7 +220,7 @@ type
     FSettings: TFHIRToolkitSettings;
     FOnWork: TWorkEvent;
     FQuestionnaire: TFhirQuestionnaire;
-    FUnits : TAdvList<TFHIRCoding>;
+    FUnits : TFslList<TFHIRCoding>;
     procedure SetItem(const Value: TFhirQuestionnaireItem);
     procedure loadInitialValue;
     procedure saveInitialValue;
@@ -803,7 +803,7 @@ var
   a : TFhirResourceType;
   i : integer;
 begin
-  FUnits := TAdvList<TFHIRCoding>.create;
+  FUnits := TFslList<TFHIRCoding>.create;
   for a := Low(TFhirResourceType) to High(TFhirResourceType) do
     if not (a in [frtNull, frtCustom]) then
       lbXResources.items.add(CODES_TFhirResourceType[a]);

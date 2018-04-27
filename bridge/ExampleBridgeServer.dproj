@@ -143,7 +143,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Questionnaire.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.SmartUtilities.pas"/>
-        <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
+        <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Logging.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Manager.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Settings.pas"/>
@@ -192,7 +192,6 @@
         <DCCReference Include="..\Server\TerminologyWebServer.pas"/>
         <DCCReference Include="..\Server\UniiServices.pas"/>
         <DCCReference Include="..\Server\UriServices.pas"/>
-        <DCCReference Include="..\Server\logging.pas"/>
         <DCCReference Include="..\Server\FHIRUserProvider.pas"/>
         <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.GraphQL.pas"/>

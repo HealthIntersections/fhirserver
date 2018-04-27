@@ -79,7 +79,7 @@ Type
 
   TRelationshipArray = array of TRelationship;
 
-  TRefSet = class (TAdvName)
+  TRefSet = class (TFslName)
   private
     index, filename : Cardinal;
     noStoreIds : boolean;
@@ -95,12 +95,12 @@ Type
     function contains(term : cardinal; var values : cardinal) : boolean;
   end;
 
-  TRefSetList = class (TAdvNameList)
+  TRefSetList = class (TFslNameList)
   public
     function GetRefset(id : String) : TRefset;
   end;
 
-  TConcept = class (TAdvObject)
+  TConcept = class (TFslObject)
   Private
     Index : Cardinal;
     Identity : UInt64;
@@ -116,7 +116,7 @@ Type
     Active : boolean;
 //    FClosed : Boolean;
 //    FClosure : TCardinalArray;
-    Stems : TAdvIntegerList;
+    Stems : TFslIntegerList;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -129,7 +129,7 @@ Type
     constructor create(aStem : String);
   End;
 
-  TSnomedImporter = class (TAdvObject)
+  TSnomedImporter = class (TFslObject)
   private
     callback : TInstallerCallback;
     lastmessage : String;
@@ -143,7 +143,7 @@ Type
     ClosureCount : Integer;
 
     FStringsTemp : TStringList;
-    FConcepts : TAdvObjectList;
+    FConcepts : TFslObjectList;
 
     FStrings : TSnomedStrings;
     FRefs : TSnomedReferences;
@@ -340,7 +340,7 @@ End;
 constructor TConcept.Create;
 begin
   inherited;
-  Stems := TAdvIntegerList.Create;
+  Stems := TFslIntegerList.Create;
   Stems.SortAscending;
 end;
 
@@ -429,7 +429,7 @@ begin
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
   FStringsTemp := TStringList.Create;
-  FConcepts := TAdvObjectList.Create;
+  FConcepts := TFslObjectList.Create;
   FStemmer := GetStemmer_8('english');
   Frefsets := TRefSetList.Create;
   try
@@ -697,7 +697,7 @@ var
   iDescId : UInt64;
   sDesc : String;
   i, j, iStem : integer;
-  oList : TAdvIntegerList;
+  oList : TFslIntegerList;
   aCardinals : TCardinalArray;
   iConceptIndex : integer;
   aIndex : TIndexArray;
@@ -816,7 +816,7 @@ begin
   Begin
     if OverallCount mod 5011 = 0 then
       Progress(STEP_PROCESS_STEMS, i / FStemList.Count, '');
-    oList := TAdvIntegerList(FStemList.Objects[i]);
+    oList := TFslIntegerList(FStemList.Objects[i]);
     SetLength(aCardinals, oList.Count);
     for j := 0 to oList.Count - 1 Do
       aCardinals[j] := TConcept(FConcepts[oList[j]]).Index;
@@ -1335,7 +1335,7 @@ end;
 procedure TSnomedImporter.SeeWord(sDesc: String; iConceptIndex : Integer; active, FSN : boolean);
 var
   i, m : integer;
-  oList : TAdvIntegerList;
+  oList : TFslIntegerList;
   oWord : TWordCache;
 begin
   sDesc := lowercase(sdesc);
@@ -1351,12 +1351,12 @@ begin
 
   if not FStemList.Find(oWord.Stem, i) Then
   Begin
-    oList := TAdvIntegerList.Create;
+    oList := TFslIntegerList.Create;
     oList.SortAscending;
     FStemList.AddObject(oWord.Stem, oList);
   End
   Else
-    oList := TAdvIntegerList(FStemList.Objects[i]);
+    oList := TFslIntegerList(FStemList.Objects[i]);
   if not oList.ExistsByValue(iConceptIndex) Then
     oList.Add(iConceptIndex);
 End;

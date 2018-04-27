@@ -37,7 +37,7 @@ uses
   FHIR.Client.SmartUtilities;
 
 type
-  TSmartOnFhirTestingLogin = class (TAdvObject)
+  TSmartOnFhirTestingLogin = class (TFslObject)
   private
     FScopes: String;
     FToken: TSmartOnFhirAccessToken;

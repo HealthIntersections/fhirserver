@@ -39,7 +39,7 @@ Const
   MAX_ROWS = 50;
 
 Type
-  TloincPublisher = class (TAdvObject)
+  TloincPublisher = class (TFslObject)
   Private
     Lock : TCriticalSection;
     FSearchCache : TStringList;
@@ -59,14 +59,14 @@ Type
     Procedure PublishHeirarchyEntry(sCode : String; iStart : Integer; Const sPrefix : String; html : THTMLPublisher);
 
 
-    Procedure ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
-    Procedure PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher);
+    Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
+    Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher);
     function descLength(i: cardinal): String;
   Public
     Constructor Create(oLoinc : TLoincServices; FHIRPathEngine, lang : String);
     Destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher); Overload; Virtual;
-    Procedure PublishDict(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;
+    Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;
   End;
 
 Implementation
@@ -98,7 +98,7 @@ begin
 end;
 
 
-Procedure TloincPublisher.PublishDictInternal(oMap : TAdvStringMatch; Const sPrefix : String; html : THTMLPublisher);
+Procedure TloincPublisher.PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher);
 Var
   sURL : String;
   sId : String;
@@ -129,7 +129,7 @@ End;
 
 
 
-Procedure TloincPublisher.ProcessMap(Const sPath : String; oMap : TAdvStringMatch);
+Procedure TloincPublisher.ProcessMap(Const sPath : String; oMap : TFslStringMatch);
 Var
   sLeft, sRight : String;
   sName, sValue : String;
@@ -150,9 +150,9 @@ End;
 
 Procedure TloincPublisher.PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher);
 Var
-  oMap : TAdvStringMatch;
+  oMap : TFslStringMatch;
 Begin
-  oMap := TAdvStringMatch.Create;
+  oMap := TFslStringMatch.Create;
   Try
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, html);
@@ -163,7 +163,7 @@ End;
 
 
 
-procedure TloincPublisher.PublishDict(oMap: TAdvStringMatch; const sPrefix: String; html: THTMLPublisher);
+procedure TloincPublisher.PublishDict(oMap: TFslStringMatch; const sPrefix: String; html: THTMLPublisher);
 begin
   Try
     PublishDictInternal(oMap, sPrefix, html);

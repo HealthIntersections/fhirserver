@@ -11,7 +11,7 @@ uses
   FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Objects;
 
 type
-  TGoogleAnalyaticsEventData = class (TAdvObject)
+  TGoogleAnalyaticsEventData = class (TFslObject)
   private
     FResourceName: String;
     FUserId: String;
@@ -30,10 +30,10 @@ type
     property userAgent : String read FUserAgent write FUserAgent;
   end;
 
-  TGoogleAnalyticsProvider = class (TAdvObject)
+  TGoogleAnalyticsProvider = class (TFslObject)
   private
     FLock : TCriticalSection;
-    FEvents : TAdvList<TGoogleAnalyaticsEventData>;
+    FEvents : TFslList<TGoogleAnalyaticsEventData>;
     FServerId: String;
     FCycle : integer;
     procedure post(cnt : String);
@@ -57,7 +57,7 @@ constructor TGoogleAnalyticsProvider.Create;
 begin
   inherited;
   FLock := TCriticalSection.Create('GoogleAnalytics');
-  FEvents := TAdvList<TGoogleAnalyaticsEventData>.create;
+  FEvents := TFslList<TGoogleAnalyaticsEventData>.create;
 end;
 
 destructor TGoogleAnalyticsProvider.Destroy;

@@ -71,19 +71,19 @@ type
     function getNamespace : String;
   end;
 
-  TFHIRPathExecutionContext = class (TAdvObject)
+  TFHIRPathExecutionContext = class (TFslObject)
   private
-    FAppInfo : TAdvObject;
+    FAppInfo : TFslObject;
     FResource : TFHIRObject;
     FContext : TFHIRObject;
     FThis : TFHIRObject;
     FTotal : TFHIRSelectionList;
     procedure SetTotal(const Value: TFHIRSelectionList);
   public
-    Constructor Create(appInfo : TAdvObject; resource : TFHIRObject; context : TFHIRObject);
+    Constructor Create(appInfo : TFslObject; resource : TFHIRObject; context : TFHIRObject);
     destructor Destroy; override;
     function Link : TFHIRPathExecutionContext; overload;
-    property appInfo : TAdvObject read FappInfo;
+    property appInfo : TFslObject read FappInfo;
     property resource : TFHIRObject read FResource;
     property context : TFHIRObject read Fcontext;
     property this : TFHIRObject read FThis;
@@ -91,21 +91,21 @@ type
     function changeThis(this : TFHIRObject) : TFHIRPathExecutionContext;
   end;
 
-  TFHIRPathExecutionTypeContext = class (TAdvObject)
+  TFHIRPathExecutionTypeContext = class (TFslObject)
   private
-    FAppInfo : TAdvObject;
+    FAppInfo : TFslObject;
     FResourceType : String;
     FContext : TFHIRTypeDetails;
   public
-    Constructor Create(appInfo : TAdvObject; resourceType : String; context : TFHIRTypeDetails);
+    Constructor Create(appInfo : TFslObject; resourceType : String; context : TFHIRTypeDetails);
     destructor Destroy; override;
     function Link : TFHIRPathExecutionTypeContext; overload;
-    property appInfo : TAdvObject read FappInfo;
+    property appInfo : TFslObject read FappInfo;
     property resourceType : String read FResourceType;
     property context : TFHIRTypeDetails read FContext;
   end;
 
-  TFHIRPathLexer = class (TAdvObject)
+  TFHIRPathLexer = class (TFslObject)
   private
     FCursor : integer;
     FCurrentLocation : TSourceLocation;
@@ -174,7 +174,7 @@ type
     function processConstant : TFHIRObject; overload;
   end;
 
-  TFHIRPathParser = class (TAdvObject)
+  TFHIRPathParser = class (TFslObject)
   private
     function parseExpression(lexer: TFHIRPathLexer; proximal : boolean): TFHIRPathExpressionNode;
     procedure organisePrecedence(lexer : TFHIRPathLexer; var node: TFHIRPathExpressionNode);
@@ -190,7 +190,7 @@ type
     function parse(lexer : TFHIRPathLexer) : TFHIRPathExpressionNode; overload;
   end;
 
-  TFHIRPathDebugPackage = class (TAdvObject)
+  TFHIRPathDebugPackage = class (TFslObject)
   private
     FSourceEnd: TSourceLocation;
     Fcontext: TFHIRPathExecutionContext;
@@ -221,9 +221,9 @@ type
   TFHIRPathEngine = class;
 
   TFHIRPathDebugEvent = procedure (source : TFHIRPathEngine; package : TFHIRPathDebugPackage) of object;
-  TFHIRResolveReferenceEvent = function (source : TFHIRPathEngine; appInfo : TAdvObject; url : String) : TFHIRObject of object;
+  TFHIRResolveReferenceEvent = function (source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject of object;
 
-  TFHIRPathEngine = class (TAdvObject)
+  TFHIRPathEngine = class (TFslObject)
   private
     worker : TFHIRWorkerContext;
     FOndebug : TFHIRPathDebugEvent;
@@ -247,7 +247,7 @@ type
     procedure ListChildrenByName(focus: TFHIRObject; name : String; results: TFHIRSelectionList);
 
     function childTypes(focus : TFHIRTypeDetails; mask : string) : TFHIRTypeDetails;
-    procedure checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TAdvList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
+    procedure checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TFslList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
     function executeType(ctxt: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode; atEntry : boolean) : TFHIRTypeDetails; overload;
     function executeType(focus: String; exp: TFHIRPathExpressionNode; atEntry : boolean) : TFHIRTypeDetails; overload;
     function evaluateFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails;
@@ -371,7 +371,7 @@ type
 
     function resolveConstant(context : TFHIRPathExecutionContext; constant : TFHIRObject) : TFHIRObject; overload;
     function resolveConstant(context : TFHIRPathExecutionContext; s : String) : TFHIRObject; overload;
-    function processDateConstant(appinfo : TAdvObject; value : String) : TFHIRObject; overload;
+    function processDateConstant(appinfo : TFslObject; value : String) : TFHIRObject; overload;
     procedure getClassInfoChildTypesByName(name: String; result: TFHIRTypeDetails);
     procedure getSimpleTypeChildTypesByName(name: String; result: TFHIRTypeDetails);
   protected
@@ -388,21 +388,21 @@ type
     function parse(path : String) : TFHIRPathExpressionNode; overload;
 
     // check that paths referred to in the expression are valid
-    function check(appInfo : TAdvObject; resourceType, context, path : String; expr : TFHIRPathExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
+    function check(appInfo : TFslObject; resourceType, context, path : String; expr : TFHIRPathExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
 
     // evaluate a path and return the matching elements
-    function evaluate(appInfo : TAdvObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload;
-    function evaluate(appInfo : TAdvObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : TFHIRSelectionList; overload;
-    function evaluate(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload;
-    function evaluate(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : TFHIRSelectionList; overload;
+    function evaluate(appInfo : TFslObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload;
+    function evaluate(appInfo : TFslObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : TFHIRSelectionList; overload;
+    function evaluate(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload;
+    function evaluate(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : TFHIRSelectionList; overload;
 
     // evaluate a path and return true or false
-    function evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; path : String) : boolean; overload;
-    function evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : boolean; overload;
+    function evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; path : String) : boolean; overload;
+    function evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : boolean; overload;
 
     // evaluate a path and return a string describing the outcome
-    function evaluateToString(appInfo : TAdvObject; base : TFHIRObject; path : String) : string; overload;
-    function evaluateToString(appInfo : TAdvObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : string; overload;
+    function evaluateToString(appInfo : TFslObject; base : TFHIRObject; path : String) : string; overload;
+    function evaluateToString(appInfo : TFslObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : string; overload;
 
     // worker routine for converting a set of objects to a string representation
     function convertToString(items : TFHIRSelectionList) : String; overload;
@@ -873,7 +873,7 @@ end;
 
 { TFHIRPathEngine }
 
-function TFHIRPathEngine.check(appInfo : TAdvObject; resourceType, context, path : String; expr : TFHIRPathExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
+function TFHIRPathEngine.check(appInfo : TFslObject; resourceType, context, path : String; expr : TFHIRPathExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
 var
   types : TFHIRTypeDetails;
   ctxt : TFHIRPathExecutionTypeContext;
@@ -1080,7 +1080,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluate(appInfo : TAdvObject; base: TFHIRObject; path: String): TFHIRSelectionList;
+function TFHIRPathEngine.evaluate(appInfo : TFslObject; base: TFHIRObject; path: String): TFHIRSelectionList;
 var
   exp : TFHIRPathExpressionNode;
   list : TFHIRSelectionList;
@@ -1105,7 +1105,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluate(appInfo : TAdvObject; base: TFHIRObject; expr : TFHIRPathExpressionNode): TFHIRSelectionList;
+function TFHIRPathEngine.evaluate(appInfo : TFslObject; base: TFHIRObject; expr : TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   list : TFHIRSelectionList;
   ctxt : TFHIRPathExecutionContext;
@@ -1124,7 +1124,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluate(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; path: String): TFHIRSelectionList;
+function TFHIRPathEngine.evaluate(appInfo : TFslObject; resource : TFHIRObject; base: TFHIRObject; path: String): TFHIRSelectionList;
 var
   exp : TFHIRPathExpressionNode;
   list : TFHIRSelectionList;
@@ -1191,7 +1191,7 @@ begin
     raise EFHIRPath.create(StringFormat('Unable to determine equivalence between %s and %s', [left.fhirType(), right.fhirType()]));
 end;
 
-function TFHIRPathEngine.evaluate(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; expr : TFHIRPathExpressionNode): TFHIRSelectionList;
+function TFHIRPathEngine.evaluate(appInfo : TFslObject; resource : TFHIRObject; base: TFHIRObject; expr : TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   list : TFHIRSelectionList;
   ctxt : TFHIRPathExecutionContext;
@@ -1216,7 +1216,7 @@ begin
   raise EFHIRPath.create('Unknown Function '+exp.name);
 end;
 
-function TFHIRPathEngine.evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; path: String): boolean;
+function TFHIRPathEngine.evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base: TFHIRObject; path: String): boolean;
 var
   res : TFHIRSelectionList;
 begin
@@ -1228,7 +1228,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluateToBoolean(appInfo: TAdvObject; resource, base: TFHIRObject; expr: TFHIRPathExpressionNode): boolean;
+function TFHIRPathEngine.evaluateToBoolean(appInfo: TFslObject; resource, base: TFHIRObject; expr: TFHIRPathExpressionNode): boolean;
 var
   res : TFHIRSelectionList;
 begin
@@ -1240,7 +1240,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluateToString(appInfo: TAdvObject; base: TFHIRObject; expr: TFHIRPathExpressionNode): string;
+function TFHIRPathEngine.evaluateToString(appInfo: TFslObject; base: TFHIRObject; expr: TFHIRPathExpressionNode): string;
 var
   res : TFHIRSelectionList;
 begin
@@ -1252,7 +1252,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluateToString(appInfo : TAdvObject; base: TFHIRObject; path: String): string;
+function TFHIRPathEngine.evaluateToString(appInfo : TFslObject; base: TFHIRObject; path: String): string;
 var
   res : TFHIRSelectionList;
 begin
@@ -3936,7 +3936,7 @@ begin
     raise EFHIRPath.create('Invaild FHIR Constant '+c.FValue);
 end;
 
-function TFHIRPathEngine.processDateConstant(appinfo : TAdvObject; value : String) : TFHIRObject;
+function TFHIRPathEngine.processDateConstant(appinfo : TFslObject; value : String) : TFHIRObject;
 var
   i : integer;
   v : string;
@@ -4307,7 +4307,7 @@ begin
   raise EFHIRPath.create('Unknown Function '+exp.name);
 end;
 
-procedure TFHIRPathEngine.checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TAdvList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
+procedure TFHIRPathEngine.checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TFslList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
 var
   i : integer;
   pt, actual : TFHIRTypeDetails;
@@ -4362,12 +4362,12 @@ end;
 function TFHIRPathEngine.evaluateFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails;
 var
   expr : TFHIRPathExpressionNode;
-  paramTypes : TAdvList<TFHIRTypeDetails>;
+  paramTypes : TFslList<TFHIRTypeDetails>;
   nc : TFHIRPathExecutionTypeContext;
   s, c : boolean;
   pt : TFHIRProfiledType;
 begin
-  paramTypes := TAdvList<TFHIRTypeDetails>.create;
+  paramTypes := TFslList<TFHIRTypeDetails>.create;
   try
     if (exp.FunctionId in [pfIs, pfAs]) then
       paramTypes.add(TFHIRTypeDetails.create(csSINGLETON, [FP_string]))
@@ -4908,10 +4908,10 @@ procedure TFHIRPathEngine.ListChildTypesByName(type_, name : String; result : TF
 var
   url, tail, specifiedType, path, tn, r, rn : String;
   sd, dt, sdi : TFhirStructureDefinition;
-  sdl : TAdvList<TFhirStructureDefinition>;
+  sdl : TFslList<TFhirStructureDefinition>;
   m, ed : TFhirElementDefinition;
   t : TFhirElementDefinitionType;
-  rt : TAdvStringSet;
+  rt : TFslStringSet;
 begin
   if (type_ = '') then
     raise EFHIRPath.create('No type provided in BuildToolPathEvaluator.ListChildTypesByName');
@@ -4947,7 +4947,7 @@ begin
     if (sd = nil) then
       raise EFHIRPath.create('Unknown type '+type_); // this really is an error, because we can only get to here if the internal infrastrucgture is wrong
     m := nil;
-    sdl := TAdvList<TFhirStructureDefinition>.create;
+    sdl := TFslList<TFhirStructureDefinition>.create;
     try
       if (type_.contains('#')) then
         m := getElementDefinition(sd, type_.substring(type_.indexOf('#')+1), true, specifiedType);
@@ -5656,7 +5656,7 @@ end;
 
 { TFHIRPathExecutionTypeContext }
 
-constructor TFHIRPathExecutionTypeContext.Create(appInfo: TAdvObject; resourceType : String; context : TFHIRTypeDetails);
+constructor TFHIRPathExecutionTypeContext.Create(appInfo: TFslObject; resourceType : String; context : TFHIRTypeDetails);
 begin
   inherited Create;
   FAppInfo := appInfo;
@@ -5690,7 +5690,7 @@ begin
   end;
 end;
 
-constructor TFHIRPathExecutionContext.Create(appInfo: TAdvObject; resource: TFHIRObject; context: TFHIRObject);
+constructor TFHIRPathExecutionContext.Create(appInfo: TFslObject; resource: TFHIRObject; context: TFHIRObject);
 begin
   inherited Create;
   FAppInfo := appInfo;

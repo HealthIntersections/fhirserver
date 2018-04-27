@@ -37,7 +37,7 @@ uses
   FHIR.CdsHooks.Utilities, ServerUtilities, FHIRServerContext;
 
 type
-  TCDSHooksProcessor = class (TAdvObject)
+  TCDSHooksProcessor = class (TFslObject)
   private
     Frequest: TCDSHookRequest;
     Fresponse: TCDSHookResponse;
@@ -60,7 +60,7 @@ type
 
   TCDSHooksProcessorClass = class of TCDSHooksProcessor;
 
-  TCDSHooksService = class (TAdvObject)
+  TCDSHooksService = class (TFslObject)
   private
     Procedure HandleRequest(base : String; server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo); overload;
   protected
@@ -81,12 +81,12 @@ type
 
   TCDSHooksServer = class (TFHIRServerWorker)
   private
-    FServices : TAdvMap<TCDSHooksService>;
+    FServices : TFslMap<TCDSHooksService>;
     function GetActive: boolean;
     Procedure HandleServiceList(response: TIdHTTPResponseInfo);
     function getBase(secure : boolean; basePath : String; request : TIdHTTPRequestInfo) : string;
   public
-    Constructor Create(ServerContext : TAdvObject);
+    Constructor Create(ServerContext : TFslObject);
     Destructor Destroy; override;
 
     procedure RegisterService(service : TCDSHooksService);
@@ -99,10 +99,10 @@ implementation
 
 { TCDSHooksServer }
 
-constructor TCDSHooksServer.Create(ServerContext : TAdvObject);
+constructor TCDSHooksServer.Create(ServerContext : TFslObject);
 begin
   inherited Create(ServerContext);
-  FServices := TAdvMap<TCDSHooksService>.create;
+  FServices := TFslMap<TCDSHooksService>.create;
 end;
 
 destructor TCDSHooksServer.Destroy;

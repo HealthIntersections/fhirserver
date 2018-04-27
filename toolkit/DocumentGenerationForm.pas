@@ -55,7 +55,7 @@ type
     FClient: TFHIRClient;
     FBundle: TFhirBundle;
     FSettings: TFHIRToolkitSettings;
-    FAuthors: TAdvList<TFHIRPractitioner>;
+    FAuthors: TFslList<TFHIRPractitioner>;
     FDocumentReference: TFhirDocumentReference;
     FProvenance: TFhirProvenance;
     procedure SetClient(const Value: TFHIRClient);
@@ -64,10 +64,10 @@ type
     procedure SetSettings(const Value: TFHIRToolkitSettings);
 
     procedure LoadDocumentStructure;
-    procedure loadComposition(doc : TTreeViewItem; cmp : TFHIRComposition; refList : TAdvList<TFhirResource>);
+    procedure loadComposition(doc : TTreeViewItem; cmp : TFHIRComposition; refList : TFslList<TFhirResource>);
     procedure Remember;
     procedure Prepare;
-    procedure SetAuthors(const Value: TAdvList<TFHIRPractitioner>);
+    procedure SetAuthors(const Value: TFslList<TFHIRPractitioner>);
     procedure SetDocumentReference(const Value: TFhirDocumentReference);
     procedure SetProvenance(const Value: TFhirProvenance);
   public
@@ -79,7 +79,7 @@ type
     property Provenance : TFhirProvenance read FProvenance write SetProvenance;
     property DocumentReference : TFhirDocumentReference read FDocumentReference write SetDocumentReference;
     property Patient : TFHIRPatient read FPatient write SetPatient;
-    property Authors : TAdvList<TFHIRPractitioner> read FAuthors write SetAuthors;
+    property Authors : TFslList<TFHIRPractitioner> read FAuthors write SetAuthors;
   end;
 
 var
@@ -240,7 +240,7 @@ begin
     cbxIdentity.ItemIndex := 0;
 end;
 
-procedure TDocumentGeneratorForm.loadComposition(doc : TTreeViewItem; cmp : TFHIRComposition; refList : TAdvList<TFhirResource>);
+procedure TDocumentGeneratorForm.loadComposition(doc : TTreeViewItem; cmp : TFHIRComposition; refList : TFslList<TFhirResource>);
   procedure addItem(name : String; ref : TFhirReference; mand : boolean; p : TTreeViewItem);
   var
     s : String;
@@ -357,7 +357,7 @@ var
   bi, ei : TTreeViewItem;
   be : TFhirBundleEntry;
   first : boolean;
-  refList : TAdvList<TFhirResource>;
+  refList : TFslList<TFhirResource>;
 begin
   bi := TTreeViewItem.Create(tvStructure);
   bi.ImageIndex := 4;
@@ -365,7 +365,7 @@ begin
   tvStructure.AddObject(bi);
   bi.TagObject := Document;
 
-  refList := TAdvList<TFhirResource>.create;
+  refList := TFslList<TFhirResource>.create;
   try
     first := true;
     for be in Document.entryList do
@@ -454,7 +454,7 @@ begin
     Settings.storeValue('documents', 'author', (cbxIdentity.Items.Objects[cbxIdentity.ItemIndex] as TFhirResource).id);
 end;
 
-procedure TDocumentGeneratorForm.SetAuthors(const Value: TAdvList<TFHIRPractitioner>);
+procedure TDocumentGeneratorForm.SetAuthors(const Value: TFslList<TFHIRPractitioner>);
 begin
   FAuthors.Free;
   FAuthors := Value;

@@ -36,7 +36,7 @@ uses
   FHIR.Support.Objects;
 
 Type
-  TAdvEnumerable<T : class> = class (TAdvObject)
+  TFslEnumerable<T : class> = class (TFslObject)
   private
   {$HINTS OFF}
     function ToArrayImpl(Count: Integer): TArray<T>; // used by descendants
@@ -72,13 +72,13 @@ Type
 {$ENDIF}
 
 
-  // Actually, T must be TAdvObject, but this doesn't work because of forwards class definitions
-  TAdvList<T : class> = class (TAdvEnumerable<T>)
+  // Actually, T must be TFslObject, but this doesn't work because of forwards class definitions
+  TFslList<T : class> = class (TFslEnumerable<T>)
   private
     function GetEmpty: boolean;
   type
     arrayofT = array of T;
-    TAdvListRemoveFunction =  reference to function(item : T):boolean;
+    TFslListRemoveFunction =  reference to function(item : T):boolean;
   var
     FItems: arrayofT;
     FCount: Integer;
@@ -111,7 +111,7 @@ Type
     constructor Create(const Collection: TEnumerable<T>); overload;
     destructor Destroy; override;
 
-    function link : TAdvList<t>; overload;
+    function link : TFslList<t>; overload;
 
     class procedure Error(const Msg: string; Data: NativeInt); overload; virtual;
 {$IFNDEF NEXTGEN}
@@ -130,13 +130,13 @@ Type
     procedure InsertRange(Index: Integer; const Collection: IEnumerable<T>); overload;
     procedure InsertRange(Index: Integer; const Collection: TEnumerable<T>); overload;
 
-    procedure AddAll(list : TAdvList<T>);
+    procedure AddAll(list : TFslList<T>);
 
     procedure Pack; overload;
 
     function Remove(const Value: T): Integer;
-    procedure RemoveAll(list : TAdvList<T>); overload;
-    procedure RemoveAll(filter : TAdvListRemoveFunction); overload;
+    procedure RemoveAll(list : TFslList<T>); overload;
+    procedure RemoveAll(filter : TFslListRemoveFunction); overload;
     function RemoveItem(const Value: T; Direction: TDirection): Integer;
     procedure Delete(Index: Integer);
     procedure DeleteRange(AIndex, ACount: Integer);
@@ -152,7 +152,7 @@ Type
 
     procedure Clear;
 
-    function Expand: TAdvList<T>;
+    function Expand: TFslList<T>;
 
     function Contains(const Value: T): Boolean;
     function IndexOf(const Value: T): Integer;
@@ -179,30 +179,30 @@ Type
     property OnNotify: TCollectionNotifyEvent<T> read FOnNotify write FOnNotify;
 
     type
-      TAdvEnumerator = class(TEnumerator<T>)
+      TFslEnumerator = class(TEnumerator<T>)
       private
-        FList: TAdvList<T>;
+        FList: TFslList<T>;
         FIndex: Integer;
         function GetCurrent: T;
       protected
         function DoGetCurrent: T; override;
         function DoMoveNext: Boolean; override;
       public
-        constructor Create(const AList: TAdvList<T>);
+        constructor Create(const AList: TFslList<T>);
         property Current: T read GetCurrent;
         function MoveNext: Boolean;
       end;
 
-    function GetEnumerator: TAdvEnumerator; reintroduce;
+    function GetEnumerator: TFslEnumerator; reintroduce;
   end;
 
-  TAdvPair<T : TAdvObject> = record
+  TFslPair<T : TFslObject> = record
     Key: String;
     Value: T;
     constructor Create(const AKey: String; const AValue: T);
   end;
 
-  TAdvMap<T : TAdvObject> = class(TEnumerable<TAdvPair<T>>)
+  TFslMap<T : TFslObject> = class(TEnumerable<TFslPair<T>>)
   private
     type
       TItem = record
@@ -212,7 +212,7 @@ Type
       end;
       TItemArray = array of TItem;
   private
-    FAdvObjectReferenceCount : TAdvReferenceCount;
+    FAdvObjectReferenceCount : TFslReferenceCount;
     FItems: TItemArray;
     FCount: Integer;
     FGrowThreshold: Integer;
@@ -233,14 +233,14 @@ Type
   private
     function GetEmpty: Boolean;
   protected
-    function DoGetEnumerator: TEnumerator<TAdvPair<T>>; override;
+    function DoGetEnumerator: TEnumerator<TFslPair<T>>; override;
     procedure KeyNotify(const Key: String; Action: TCollectionNotification); virtual;
     procedure ValueNotify(const Value: T; Action: TCollectionNotification); virtual;
   public
     constructor Create(ACapacity: Integer = 0); overload;
-    constructor Create(const Collection: TEnumerable<TAdvPair<T>>); overload;
+    constructor Create(const Collection: TEnumerable<TFslPair<T>>); overload;
     destructor Destroy; override;
-    function Link : TAdvMap<T>; overload;
+    function Link : TFslMap<T>; overload;
     Procedure Free; Overload;
 
     procedure Add(const Key: String; const Value: T);
@@ -251,64 +251,64 @@ Type
     procedure AddOrSetValue(const Key: String; const Value: T);
     function ContainsKey(const Key: String): Boolean;
     function ContainsValue(const Value: T): Boolean;
-    function ToArray: TArray<TAdvPair<T>>; override; final;
+    function ToArray: TArray<TFslPair<T>>; override; final;
 
-    procedure addAll(other : TAdvMap<T>);
+    procedure addAll(other : TFslMap<T>);
     property Items[const Key: String]: T read GetItem write SetItem; default;
     property Count: Integer read FCount;
     property IsEmpty : Boolean read GetEmpty;
 
     type
-      TAdvPairEnumerator = class(TEnumerator<TAdvPair<T>>)
+      TFslPairEnumerator = class(TEnumerator<TFslPair<T>>)
       private
-        FMap: TAdvMap<T>;
+        FMap: TFslMap<T>;
         FIndex: Integer;
-        function GetCurrent: TAdvPair<T>;
+        function GetCurrent: TFslPair<T>;
       protected
-        function DoGetCurrent: TAdvPair<T>; override;
+        function DoGetCurrent: TFslPair<T>; override;
         function DoMoveNext: Boolean; override;
       public
-        constructor Create(const AMap: TAdvMap<T>);
-        property Current: TAdvPair<T> read GetCurrent;
+        constructor Create(const AMap: TFslMap<T>);
+        property Current: TFslPair<T> read GetCurrent;
         function MoveNext: Boolean;
       end;
 
       TKeyEnumerator = class(TEnumerator<String>)
       private
-        FMap: TAdvMap<T>;
+        FMap: TFslMap<T>;
         FIndex: Integer;
         function GetCurrent: String;
       protected
         function DoGetCurrent: String; override;
         function DoMoveNext: Boolean; override;
       public
-        constructor Create(const AMap: TAdvMap<T>);
+        constructor Create(const AMap: TFslMap<T>);
         property Current: String read GetCurrent;
         function MoveNext: Boolean;
       end;
 
       TValueEnumerator = class(TEnumerator<T>)
       private
-        FMap: TAdvMap<T>;
+        FMap: TFslMap<T>;
         FIndex: Integer;
         function GetCurrent: T;
       protected
         function DoGetCurrent: T; override;
         function DoMoveNext: Boolean; override;
       public
-        constructor Create(const AMap: TAdvMap<T>);
+        constructor Create(const AMap: TFslMap<T>);
         property Current: T read GetCurrent;
         function MoveNext: Boolean;
       end;
 
       TValueCollection = class(TEnumerable<T>)
       private
-        FMap: TAdvMap<T>;
+        FMap: TFslMap<T>;
         function GetCount: Integer;
       protected
         function DoGetEnumerator: TEnumerator<T>; override;
       public
-        constructor Create(const AMap: TAdvMap<T>);
+        constructor Create(const AMap: TFslMap<T>);
         function GetEnumerator: TValueEnumerator; reintroduce;
         function ToArray: TArray<T>; override; final;
         property Count: Integer read GetCount;
@@ -316,12 +316,12 @@ Type
 
       TKeyCollection = class(TEnumerable<String>)
       private
-        FMap: TAdvMap<T>;
+        FMap: TFslMap<T>;
         function GetCount: Integer;
       protected
         function DoGetEnumerator: TEnumerator<String>; override;
       public
-        constructor Create(const AMap: TAdvMap<T>);
+        constructor Create(const AMap: TFslMap<T>);
         function GetEnumerator: TKeyEnumerator; reintroduce;
         function ToArray: TArray<String>; override; final;
         property Count: Integer read GetCount;
@@ -336,7 +336,7 @@ Type
     function GetValues: TValueCollection;
     function GetSortedKeys: TStringList;
   public
-    function GetEnumerator: TAdvPairEnumerator; reintroduce;
+    function GetEnumerator: TFslPairEnumerator; reintroduce;
     property Keys: TKeyCollection read GetKeys;
     property SortedKeys : TStringList read GetSortedKeys;
     property Values: TValueCollection read GetValues;
@@ -344,27 +344,27 @@ Type
     property OnValueNotify: TCollectionNotifyEvent<T> read FOnValueNotify write FOnValueNotify;
   end;
 
-  TAdvStringDictionary = class (TDictionary<String, String>)
+  TFslStringDictionary = class (TDictionary<String, String>)
   private
-    FAdvObjectReferenceCount : TAdvReferenceCount;
+    FAdvObjectReferenceCount : TFslReferenceCount;
   public
     // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
     Procedure Free; Overload;
-    Function Link : TAdvStringDictionary; Overload;
+    Function Link : TFslStringDictionary; Overload;
   end;
 
-  TAdvStringSet = class (TAdvObject)
+  TFslStringSet = class (TFslObject)
   private
     // not sorted - this doesn't get long enough to make it worth sorting
     FItems : TArray<String>;
   public
     Constructor Create(initial : String); overload;
     Constructor Create(initial : array of String); overload;
-    Constructor Create(c1, c2 : TAdvStringSet); overload;
+    Constructor Create(c1, c2 : TFslStringSet); overload;
     Destructor Destroy; override;
-    function Link : TAdvStringSet; overload;
+    function Link : TFslStringSet; overload;
 
-    procedure addAll(collection : TAdvStringSet);
+    procedure addAll(collection : TFslStringSet);
     procedure add(value : String);
 
     function contains(s : String) : boolean;
@@ -374,48 +374,48 @@ Type
     function AsString(sep : String = ', ') : String;
 
     type
-      TAdvStringSetEnumerator = class(TEnumerator<string>)
+      TFslStringSetEnumerator = class(TEnumerator<string>)
       private
-        FSet: TAdvStringSet;
+        FSet: TFslStringSet;
         FIndex: Integer;
         function GetCurrent: string;
       protected
         function DoGetCurrent: string; override;
         function DoMoveNext: Boolean; override;
       public
-        constructor Create(const aSet: TAdvStringSet);
+        constructor Create(const aSet: TFslStringSet);
         property Current: String read GetCurrent;
         function MoveNext: Boolean;
       end;
 
-    function GetEnumerator: TAdvStringSetEnumerator;
+    function GetEnumerator: TFslStringSetEnumerator;
   end;
 
 implementation
 
-{ TAdvEnumerable<T> }
+{ TFslEnumerable<T> }
 
-function TAdvEnumerable<T>.GetEnumerator: TEnumerator<T>;
+function TFslEnumerable<T>.GetEnumerator: TEnumerator<T>;
 begin
   Result := DoGetEnumerator;
 end;
 
-function TAdvEnumerable<T>.ToArray: TArray<T>;
+function TFslEnumerable<T>.ToArray: TArray<T>;
 var
-  buf: TAdvList<T>;
+  buf: TFslList<T>;
   x: T;
 begin
-  buf := TAdvList<T>.Create;
+  buf := TFslList<T>.Create;
   try
     for x in Self do
-      buf.Add(TAdvObject(x).Link);
+      buf.Add(TFslObject(x).Link);
     Result := buf.ToArray; // relies on TList<T>.ToArray override
   finally
     buf.Free;
   end;
 end;
 
-function TAdvEnumerable<T>.ToArrayImpl(Count: Integer): TArray<T>;
+function TFslEnumerable<T>.ToArrayImpl(Count: Integer): TArray<T>;
 var
   x: T;
 begin
@@ -424,26 +424,26 @@ begin
   Count := 0;
   for x in Self do
   begin
-    TObject(Result[Count]) := TAdvObject(x).Link;
+    TObject(Result[Count]) := TFslObject(x).Link;
     Inc(Count);
   end;
 end;
 
-{ TAdvList<T> }
+{ TFslList<T> }
 
-function TAdvList<T>.GetCapacity: Integer;
+function TFslList<T>.GetCapacity: Integer;
 begin
   Result := Length(FItems);
 end;
 
-procedure TAdvList<T>.SetCapacity(Value: Integer);
+procedure TFslList<T>.SetCapacity(Value: Integer);
 begin
   if Value < Count then
     Count := Value;
   SetLength(FItems, Value);
 end;
 
-procedure TAdvList<T>.SetCount(Value: Integer);
+procedure TFslList<T>.SetCount(Value: Integer);
 begin
   if Value < 0 then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
@@ -454,14 +454,14 @@ begin
   FCount := Value;
 end;
 
-function TAdvList<T>.GetItem(Index: Integer): T;
+function TFslList<T>.GetItem(Index: Integer): T;
 begin
   if (Index < 0) or (Index >= Count) then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
   Result := FItems[Index];
 end;
 
-procedure TAdvList<T>.SetItem(Index: Integer; const Value: T);
+procedure TFslList<T>.SetItem(Index: Integer; const Value: T);
 var
   oldItem: T;
 begin
@@ -474,11 +474,11 @@ begin
     Notify(oldItem, cnRemoved);
     Notify(Value, cnAdded);
   finally
-    TAdvObject(oldItem).free;
+    TFslObject(oldItem).free;
   end;
 end;
 
-procedure TAdvList<T>.Grow(ACount: Integer);
+procedure TFslList<T>.Grow(ACount: Integer);
 var
   newCount: Integer;
 begin
@@ -494,7 +494,7 @@ begin
   Capacity := newCount;
 end;
 
-procedure TAdvList<T>.GrowCheck(ACount: Integer);
+procedure TFslList<T>.GrowCheck(ACount: Integer);
 begin
   if ACount > Length(FItems) then
     Grow(ACount)
@@ -502,13 +502,13 @@ begin
     OutOfMemoryError;
 end;
 
-procedure TAdvList<T>.Notify(const Item: T; Action: TCollectionNotification);
+procedure TFslList<T>.Notify(const Item: T; Action: TCollectionNotification);
 begin
   if Assigned(FOnNotify) then
     FOnNotify(Self, Item, Action);
 end;
 
-procedure TAdvList<T>.Pack;
+procedure TFslList<T>.Pack;
 var
   PackedCount : Integer;
   StartIndex : Integer;
@@ -553,12 +553,12 @@ begin
   FCount := PackedCount;
 end;
 
-constructor TAdvList<T>.Create;
+constructor TFslList<T>.Create;
 begin
   Create(TComparer<T>.Default);
 end;
 
-constructor TAdvList<T>.Create(const AComparer: IComparer<T>);
+constructor TFslList<T>.Create(const AComparer: IComparer<T>);
 begin
   inherited Create;
   FArrayManager := TMoveArrayManager<T>.Create;
@@ -567,7 +567,7 @@ begin
     FComparer := TComparer<T>.Default;
 end;
 
-constructor TAdvList<T>.Create(const Collection: TEnumerable<T>);
+constructor TFslList<T>.Create(const Collection: TEnumerable<T>);
 begin
   inherited Create;
   FArrayManager := TMoveArrayManager<T>.Create;
@@ -575,29 +575,29 @@ begin
   InsertRange(0, Collection);
 end;
 
-destructor TAdvList<T>.Destroy;
+destructor TFslList<T>.Destroy;
 begin
   Clear;
   FArrayManager.Free;
   inherited;
 end;
 
-class procedure TAdvList<T>.Error(const Msg: string; Data: NativeInt);
+class procedure TFslList<T>.Error(const Msg: string; Data: NativeInt);
 begin
   raise EListError.CreateFmt(Msg, [Data]) at ReturnAddress;
 end;
 
-class procedure TAdvList<T>.Error(Msg: PResStringRec; Data: NativeInt);
+class procedure TFslList<T>.Error(Msg: PResStringRec; Data: NativeInt);
 begin
   raise EListError.CreateFmt(LoadResString(Msg), [Data]) at ReturnAddress;
 end;
 
-function TAdvList<T>.DoGetEnumerator: TEnumerator<T>;
+function TFslList<T>.DoGetEnumerator: TEnumerator<T>;
 begin
   Result := GetEnumerator;
 end;
 
-function TAdvList<T>.Add(const Value: T): Integer;
+function TFslList<T>.Add(const Value: T): Integer;
 begin
   GrowCheck(Count + 1);
   Result := Count;
@@ -606,41 +606,41 @@ begin
   Notify(Value, cnAdded);
 end;
 
-procedure TAdvList<T>.AddRange(const Values: array of T);
+procedure TFslList<T>.AddRange(const Values: array of T);
 begin
   InsertRange(Count, Values);
 end;
 
-procedure TAdvList<T>.AddRange(const Collection: IEnumerable<T>);
+procedure TFslList<T>.AddRange(const Collection: IEnumerable<T>);
 begin
   InsertRange(Count, Collection);
 end;
 
-procedure TAdvList<T>.AddAll(list: TAdvList<T>);
+procedure TFslList<T>.AddAll(list: TFslList<T>);
 var
   item: T;
 begin
   for item in list do
-    Add(TAdvObject(item).link); // yes we link here too
+    Add(TFslObject(item).link); // yes we link here too
 end;
 
-procedure TAdvList<T>.AddRange(const Collection: TEnumerable<T>);
+procedure TFslList<T>.AddRange(const Collection: TEnumerable<T>);
 begin
   InsertRange(Count, Collection);
 end;
 
-function TAdvList<T>.BinarySearch(const Item: T; out Index: Integer): Boolean;
+function TFslList<T>.BinarySearch(const Item: T; out Index: Integer): Boolean;
 begin
   Result := TArray.BinarySearch<T>(FItems, Item, Index, FComparer, 0, Count);
 end;
 
-function TAdvList<T>.BinarySearch(const Item: T; out Index: Integer;
+function TFslList<T>.BinarySearch(const Item: T; out Index: Integer;
   const AComparer: IComparer<T>): Boolean;
 begin
   Result := TArray.BinarySearch<T>(FItems, Item, Index, AComparer, 0, Count);
 end;
 
-procedure TAdvList<T>.Insert(Index: Integer; const Value: T);
+procedure TFslList<T>.Insert(Index: Integer; const Value: T);
 begin
   if (Index < 0) or (Index > Count) then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
@@ -656,7 +656,7 @@ begin
   Notify(Value, cnAdded);
 end;
 
-procedure TAdvList<T>.InsertRange(Index: Integer; const Values: array of T);
+procedure TFslList<T>.InsertRange(Index: Integer; const Values: array of T);
 var
   I: Integer;
 begin
@@ -671,7 +671,7 @@ begin
   end;
 
   for I := 0 to Length(Values) - 1 do
-    TObject(FItems[Index + I]) := TAdvObject(Values[I]).Link; // yes, here we link. This means that the user cannot construct an array of objects and link them assuming this will respect that
+    TObject(FItems[Index + I]) := TFslObject(Values[I]).Link; // yes, here we link. This means that the user cannot construct an array of objects and link them assuming this will respect that
 
   Inc(FCount, Length(Values));
 
@@ -679,29 +679,29 @@ begin
     Notify(Values[I], cnAdded);
 end;
 
-procedure TAdvList<T>.InsertRange(Index: Integer; const Collection: IEnumerable<T>);
+procedure TFslList<T>.InsertRange(Index: Integer; const Collection: IEnumerable<T>);
 var
   item: T;
 begin
   for item in Collection do
   begin
-    Insert(Index, TAdvObject(item).link); // yes we link here too
+    Insert(Index, TFslObject(item).link); // yes we link here too
     Inc(Index);
   end;
 end;
 
-procedure TAdvList<T>.InsertRange(Index: Integer; const Collection: TEnumerable<T>);
+procedure TFslList<T>.InsertRange(Index: Integer; const Collection: TEnumerable<T>);
 var
   item: T;
 begin
   for item in Collection do
   begin
-    Insert(Index, TAdvObject(item).Link);
+    Insert(Index, TFslObject(item).Link);
     Inc(Index);
   end;
 end;
 
-procedure TAdvList<T>.Exchange(Index1, Index2: Integer);
+procedure TFslList<T>.Exchange(Index1, Index2: Integer);
 var
   temp: T;
 begin
@@ -710,12 +710,12 @@ begin
   FItems[Index2] := temp;
 end;
 
-function TAdvList<T>.Extract(const Value: T): T;
+function TFslList<T>.Extract(const Value: T): T;
 begin
   Result := ExtractItem(Value, TDirection.FromBeginning);
 end;
 
-function TAdvList<T>.ExtractItem(const Value: T; Direction: TDirection): T;
+function TFslList<T>.ExtractItem(const Value: T; Direction: TDirection): T;
 var
   index: Integer;
 begin
@@ -729,19 +729,19 @@ begin
   end;
 end;
 
-function TAdvList<T>.First: T;
+function TFslList<T>.First: T;
 begin
   Result := Items[0];
 end;
 
-function TAdvList<T>.Remove(const Value: T): Integer;
+function TFslList<T>.Remove(const Value: T): Integer;
 begin
   Result := IndexOf(Value);
   if Result >= 0 then
     Delete(Result);
 end;
 
-procedure TAdvList<T>.RemoveAll(filter: TAdvListRemoveFunction);
+procedure TFslList<T>.RemoveAll(filter: TFslListRemoveFunction);
 var
   i : integer;
 begin
@@ -750,22 +750,22 @@ begin
       Delete(i);
 end;
 
-procedure TAdvList<T>.RemoveAll(list: TAdvList<T>);
+procedure TFslList<T>.RemoveAll(list: TFslList<T>);
 var
   item: T;
 begin
   for item in list do
-    Remove(TAdvObject(item));
+    Remove(TFslObject(item));
 end;
 
-function TAdvList<T>.RemoveItem(const Value: T; Direction: TDirection): Integer;
+function TFslList<T>.RemoveItem(const Value: T; Direction: TDirection): Integer;
 begin
   Result := IndexOfItem(Value, Direction);
   if Result >= 0 then
     Delete(Result);
 end;
 
-procedure TAdvList<T>.Replace(old, new: T);
+procedure TFslList<T>.Replace(old, new: T);
 var
   i : integer;
 begin
@@ -776,7 +776,7 @@ begin
   Delete(i+1);
 end;
 
-procedure TAdvList<T>.DoDelete(Index: Integer; Notification: TCollectionNotification);
+procedure TFslList<T>.DoDelete(Index: Integer; Notification: TCollectionNotification);
 var
   oldItem: T;
 begin
@@ -793,16 +793,16 @@ begin
   try
     Notify(oldItem, Notification);
   finally
-    TAdvObject(oldItem).free;
+    TFslObject(oldItem).free;
   end;
 end;
 
-procedure TAdvList<T>.Delete(Index: Integer);
+procedure TFslList<T>.Delete(Index: Integer);
 begin
   DoDelete(Index, cnRemoved);
 end;
 
-procedure TAdvList<T>.DeleteRange(AIndex, ACount: Integer);
+procedure TFslList<T>.DeleteRange(AIndex, ACount: Integer);
 var
   oldItems: array of T;
   tailCount, I: Integer;
@@ -830,29 +830,29 @@ begin
       Notify(oldItems[I], cnRemoved);
   finally
     for I := 0 to Length(oldItems) - 1 do
-      TAdvObject(oldItems[I]).free;
+      TFslObject(oldItems[I]).free;
   end;
 end;
 
-procedure TAdvList<T>.Clear;
+procedure TFslList<T>.Clear;
 begin
   Count := 0;
   Capacity := 0;
 end;
 
-function TAdvList<T>.Expand: TAdvList<T>;
+function TFslList<T>.Expand: TFslList<T>;
 begin
   if FCount = Length(FItems) then
     GrowCheck(FCount + 1);
   Result := Self;
 end;
 
-function TAdvList<T>.Contains(const Value: T): Boolean;
+function TFslList<T>.Contains(const Value: T): Boolean;
 begin
   Result := IndexOf(Value) >= 0;
 end;
 
-function TAdvList<T>.IndexOf(const Value: T): Integer;
+function TFslList<T>.IndexOf(const Value: T): Integer;
 var
   i: Integer;
 begin
@@ -862,7 +862,7 @@ begin
   Result := -1;
 end;
 
-function TAdvList<T>.IndexOfItem(const Value: T; Direction: TDirection): Integer;
+function TFslList<T>.IndexOfItem(const Value: T; Direction: TDirection): Integer;
 var
   P: T;
   i: Integer;
@@ -881,12 +881,12 @@ begin
   end;
 end;
 
-function TAdvList<T>.Last: T;
+function TFslList<T>.Last: T;
 begin
   Result := Items[Count - 1];
 end;
 
-function TAdvList<T>.LastIndexOf(const Value: T): Integer;
+function TFslList<T>.LastIndexOf(const Value: T): Integer;
 var
   i: Integer;
 begin
@@ -896,12 +896,12 @@ begin
   Result := -1;
 end;
 
-function TAdvList<T>.link: TAdvList<t>;
+function TFslList<T>.link: TFslList<t>;
 begin
-  result := TAdvList<T>(inherited Link);
+  result := TFslList<T>(inherited Link);
 end;
 
-procedure TAdvList<T>.Move(CurIndex, NewIndex: Integer);
+procedure TFslList<T>.Move(CurIndex, NewIndex: Integer);
 var
   temp: T;
 begin
@@ -921,7 +921,7 @@ begin
   FItems[NewIndex] := temp;
 end;
 
-procedure TAdvList<T>.DoQuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
+procedure TFslList<T>.DoQuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
 Var
   I, J, K : Integer;
   temp : T;
@@ -962,21 +962,21 @@ Begin
   Until I >= R;
 End;
 
-procedure TAdvList<T>.QuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
+procedure TFslList<T>.QuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
 Begin
   If R-L > 1 Then
     DoQuickSort(Values, Comparer, l, R);
 end;
 
 
-procedure TAdvList<T>.MySort(var Values: array of T; const Comparer: IComparer<T>; Index, Count: Integer);
+procedure TFslList<T>.MySort(var Values: array of T; const Comparer: IComparer<T>; Index, Count: Integer);
 begin
   if Count <= 1 then
     Exit;
   QuickSort(Values, Comparer, Index, Index + Count - 1);
 end;
 
-procedure TAdvList<T>.Reverse;
+procedure TFslList<T>.Reverse;
 var
   tmp: T;
   b, e: Integer;
@@ -993,18 +993,18 @@ begin
   end;
 end;
 
-procedure TAdvList<T>.Sort;
+procedure TFslList<T>.Sort;
 begin
   MySort(FItems, FComparer, 0, Count);
 end;
 
-procedure TAdvList<T>.Sort(const AComparer: IComparer<T>);
+procedure TFslList<T>.Sort(const AComparer: IComparer<T>);
 begin
   MySort(FItems, AComparer, 0, Count);
 end;
 
 // no ownership on the array - it cannot be kept alive after the list is freed
-function TAdvList<T>.ToArray: TArray<T>;
+function TFslList<T>.ToArray: TArray<T>;
 var
   i: Integer;
 begin
@@ -1013,46 +1013,46 @@ begin
     Result[i] := Items[i];
 end;
 
-procedure TAdvList<T>.TrimExcess;
+procedure TFslList<T>.TrimExcess;
 begin
   Capacity := Count;
 end;
 
-function TAdvList<T>.GetEmpty: boolean;
+function TFslList<T>.GetEmpty: boolean;
 begin
   result := Count = 0;
 end;
 
-function TAdvList<T>.GetEnumerator: TAdvEnumerator;
+function TFslList<T>.GetEnumerator: TFslEnumerator;
 begin
-  Result := TAdvEnumerator.Create(Self);
+  Result := TFslEnumerator.Create(Self);
 end;
 
-{ TAdvList<T>.TAdvEnumerator }
+{ TFslList<T>.TFslEnumerator }
 
-constructor TAdvList<T>.TAdvEnumerator.Create(const AList: TAdvList<T>);
+constructor TFslList<T>.TFslEnumerator.Create(const AList: TFslList<T>);
 begin
   inherited Create;
   FList := AList;
   FIndex := -1;
 end;
 
-function TAdvList<T>.TAdvEnumerator.DoGetCurrent: T;
+function TFslList<T>.TFslEnumerator.DoGetCurrent: T;
 begin
   Result := GetCurrent;
 end;
 
-function TAdvList<T>.TAdvEnumerator.DoMoveNext: Boolean;
+function TFslList<T>.TFslEnumerator.DoMoveNext: Boolean;
 begin
   Result := MoveNext;
 end;
 
-function TAdvList<T>.TAdvEnumerator.GetCurrent: T;
+function TFslList<T>.TFslEnumerator.GetCurrent: T;
 begin
   Result := FList[FIndex];
 end;
 
-function TAdvList<T>.TAdvEnumerator.MoveNext: Boolean;
+function TFslList<T>.TFslEnumerator.MoveNext: Boolean;
 begin
   if FIndex >= FList.Count then
     Exit(False);
@@ -1060,19 +1060,19 @@ begin
   Result := FIndex < FList.Count;
 end;
 
-{ TAdvPair<T> }
+{ TFslPair<T> }
 
-constructor TAdvPair<T>.Create(const AKey: String; const AValue: T);
+constructor TFslPair<T>.Create(const AKey: String; const AValue: T);
 begin
   Key := AKey;
   Value := AValue;
 end;
 
-{ TAdvMap<T> }
+{ TFslMap<T> }
 const
   EMPTY_HASH = -1;
 
-procedure TAdvMap<T>.Rehash(NewCapPow2: Integer);
+procedure TFslMap<T>.Rehash(NewCapPow2: Integer);
 var
   oldItems, newItems: TItemArray;
   i: Integer;
@@ -1094,7 +1094,7 @@ begin
       RehashAdd(oldItems[i].HashCode, oldItems[i].Key, oldItems[i].Value);
 end;
 
-procedure TAdvMap<T>.SetCapacity(ACapacity: Integer);
+procedure TFslMap<T>.SetCapacity(ACapacity: Integer);
 var
   newCap: Integer;
 begin
@@ -1112,7 +1112,7 @@ begin
   end
 end;
 
-procedure TAdvMap<T>.Grow;
+procedure TFslMap<T>.Grow;
 var
   newCap: Integer;
 begin
@@ -1122,7 +1122,7 @@ begin
   Rehash(newCap);
 end;
 
-function TAdvMap<T>.GetBucketIndex(const Key: String; HashCode: Integer): Integer;
+function TFslMap<T>.GetBucketIndex(const Key: String; HashCode: Integer): Integer;
 var
   start, hc: Integer;
 begin
@@ -1149,7 +1149,7 @@ begin
   end;
 end;
 
-function TAdvMap<T>.GetItem(const Key: String): T;
+function TFslMap<T>.GetItem(const Key: String): T;
 var
   index: Integer;
 begin
@@ -1159,7 +1159,7 @@ begin
   Result := FItems[index].Value;
 end;
 
-procedure TAdvMap<T>.SetItem(const Key: String; const Value: T);
+procedure TFslMap<T>.SetItem(const Key: String; const Value: T);
 var
   index: Integer;
   oldValue: T;
@@ -1174,11 +1174,11 @@ begin
     ValueNotify(oldValue, cnRemoved);
     ValueNotify(Value, cnAdded);
   finally
-    TAdvObject(oldValue).free;
+    TFslObject(oldValue).free;
   end;
 end;
 
-procedure TAdvMap<T>.RehashAdd(HashCode: Integer; const Key: String; const Value: T);
+procedure TFslMap<T>.RehashAdd(HashCode: Integer; const Key: String; const Value: T);
 var
   index: Integer;
 begin
@@ -1188,13 +1188,13 @@ begin
   FItems[index].Value := Value;
 end;
 
-procedure TAdvMap<T>.KeyNotify(const Key: String; Action: TCollectionNotification);
+procedure TFslMap<T>.KeyNotify(const Key: String; Action: TCollectionNotification);
 begin
   if Assigned(FOnKeyNotify) then
     FOnKeyNotify(Self, Key, Action);
 end;
 
-function TAdvMap<T>.Link: TAdvMap<T>;
+function TFslMap<T>.Link: TFslMap<T>;
 begin
   Result := Self;
 
@@ -1202,13 +1202,13 @@ begin
     InterlockedIncrement(FAdvObjectReferenceCount);
 end;
 
-procedure TAdvMap<T>.ValueNotify(const Value: T; Action: TCollectionNotification);
+procedure TFslMap<T>.ValueNotify(const Value: T; Action: TCollectionNotification);
 begin
   if Assigned(FOnValueNotify) then
     FOnValueNotify(Self, Value, Action);
 end;
 
-constructor TAdvMap<T>.Create(ACapacity: Integer = 0);
+constructor TFslMap<T>.Create(ACapacity: Integer = 0);
 begin
   inherited Create;
   if ACapacity < 0 then
@@ -1216,16 +1216,16 @@ begin
   SetCapacity(ACapacity);
 end;
 
-constructor TAdvMap<T>.Create(const Collection: TEnumerable<TAdvPair<T>>);
+constructor TFslMap<T>.Create(const Collection: TEnumerable<TFslPair<T>>);
 var
-  item: TAdvPair<T>;
+  item: TFslPair<T>;
 begin
   Create(0);
   for item in Collection do
     AddOrSetValue(item.Key, item.Value);
 end;
 
-destructor TAdvMap<T>.Destroy;
+destructor TFslMap<T>.Destroy;
 begin
   Clear;
   FKeyCollection.Free;
@@ -1234,7 +1234,7 @@ begin
   inherited;
 end;
 
-procedure TAdvMap<T>.Add(const Key: String; const Value: T);
+procedure TFslMap<T>.Add(const Key: String; const Value: T);
 var
   index, hc: Integer;
 begin
@@ -1249,14 +1249,14 @@ begin
   DoAdd(hc, not index, Key, Value);
 end;
 
-function TAdvMap<T>.InCircularRange(Bottom, Item, TopInc: Integer): Boolean;
+function TFslMap<T>.InCircularRange(Bottom, Item, TopInc: Integer): Boolean;
 begin
   Result := (Bottom < Item) and (Item <= TopInc) // normal
     or (TopInc < Bottom) and (Item > Bottom) // top wrapped
     or (TopInc < Bottom) and (Item <= TopInc) // top and item wrapped
 end;
 
-function TAdvMap<T>.DoRemove(const Key: String; HashCode: Integer; Notification: TCollectionNotification): T;
+function TFslMap<T>.DoRemove(const Key: String; HashCode: Integer; Notification: TCollectionNotification): T;
 var
   gap, index, hc, bucket: Integer;
 begin
@@ -1314,12 +1314,12 @@ begin
   ValueNotify(Result, Notification);
 end;
 
-procedure TAdvMap<T>.Remove(const Key: String);
+procedure TFslMap<T>.Remove(const Key: String);
 begin
-  TAdvObject(DoRemove(Key, Hash(Key), cnRemoved)).Free;
+  TFslObject(DoRemove(Key, Hash(Key), cnRemoved)).Free;
 end;
 
-procedure TAdvMap<T>.Clear;
+procedure TFslMap<T>.Clear;
 var
   i: Integer;
   oldItems: TItemArray;
@@ -1336,23 +1336,23 @@ begin
       Continue;
     KeyNotify(oldItems[i].Key, cnRemoved);
     ValueNotify(oldItems[i].Value, cnRemoved);
-    TAdvObject(oldItems[i].Value).free;
+    TFslObject(oldItems[i].Value).free;
   end;
 end;
 
-function TAdvMap<T>.ToArray: TArray<TAdvPair<T>>;
+function TFslMap<T>.ToArray: TArray<TFslPair<T>>;
 begin
   raise Exception.Create('unimplemented');
 //  result := ToArrayImpl(Count);
 end;
 
-procedure TAdvMap<T>.TrimExcess;
+procedure TFslMap<T>.TrimExcess;
 begin
   // Ensure at least one empty slot for GetBucketIndex to terminate.
   SetCapacity(Count + 1);
 end;
 
-function TAdvMap<T>.TryGetValue(const Key: String; out Value: T): Boolean;
+function TFslMap<T>.TryGetValue(const Key: String; out Value: T): Boolean;
 var
   index: Integer;
 begin
@@ -1364,7 +1364,7 @@ begin
     Value := nil;
 end;
 
-procedure TAdvMap<T>.DoAdd(HashCode, Index: Integer; const Key: String; const Value: T);
+procedure TFslMap<T>.DoAdd(HashCode, Index: Integer; const Key: String; const Value: T);
 begin
   FItems[Index].HashCode := HashCode;
   FItems[Index].Key := Key;
@@ -1376,12 +1376,12 @@ begin
   ValueNotify(Value, cnAdded);
 end;
 
-function TAdvMap<T>.DoGetEnumerator: TEnumerator<TAdvPair<T>>;
+function TFslMap<T>.DoGetEnumerator: TEnumerator<TFslPair<T>>;
 begin
   Result := GetEnumerator;
 end;
 
-procedure TAdvMap<T>.DoSetValue(Index: Integer; const Value: T);
+procedure TFslMap<T>.DoSetValue(Index: Integer; const Value: T);
 var
   oldValue: T;
 begin
@@ -1390,17 +1390,17 @@ begin
 
   ValueNotify(oldValue, cnRemoved);
   ValueNotify(Value, cnAdded);
-  TAdvObject(oldValue).Free;
+  TFslObject(oldValue).Free;
 end;
 
-procedure TAdvMap<T>.Free;
+procedure TFslMap<T>.Free;
 begin
   If Assigned(Self) and (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
     Destroy;
 end;
 
 
-procedure TAdvMap<T>.addAll(other: TAdvMap<T>);
+procedure TFslMap<T>.addAll(other: TFslMap<T>);
 var
   s : String;
 begin
@@ -1408,7 +1408,7 @@ begin
     AddOrSetValue(s, other[s].link);
 end;
 
-procedure TAdvMap<T>.AddOrSetValue(const Key: String; const Value: T);
+procedure TFslMap<T>.AddOrSetValue(const Key: String; const Value: T);
 var
   hc: Integer;
   index: Integer;
@@ -1424,12 +1424,12 @@ begin
 end;
 
 
-function TAdvMap<T>.ContainsKey(const Key: String): Boolean;
+function TFslMap<T>.ContainsKey(const Key: String): Boolean;
 begin
   Result := GetBucketIndex(Key, Hash(Key)) >= 0;
 end;
 
-function TAdvMap<T>.ContainsValue(const Value: T): Boolean;
+function TFslMap<T>.ContainsValue(const Value: T): Boolean;
 var
   i: Integer;
 begin
@@ -1439,26 +1439,26 @@ begin
   Result := False;
 end;
 
-function TAdvMap<T>.GetEmpty: Boolean;
+function TFslMap<T>.GetEmpty: Boolean;
 begin
   result := Count = 0;
 end;
 
-function TAdvMap<T>.GetEnumerator: TAdvPairEnumerator;
+function TFslMap<T>.GetEnumerator: TFslPairEnumerator;
 begin
-  Result := TAdvPairEnumerator.Create(Self);
+  Result := TFslPairEnumerator.Create(Self);
 end;
 
-function TAdvMap<T>.GetKeys: TKeyCollection;
+function TFslMap<T>.GetKeys: TKeyCollection;
 begin
   if FKeyCollection = nil then
     FKeyCollection := TKeyCollection.Create(Self);
   Result := FKeyCollection;
 end;
 
-function TAdvMap<T>.GetSortedKeys: TStringList;
+function TFslMap<T>.GetSortedKeys: TStringList;
 var
-  p : TAdvPair<T>;
+  p : TFslPair<T>;
 begin
   if FSortedKeys = nil then
   begin
@@ -1470,7 +1470,7 @@ begin
   result := FSortedKeys;
 end;
 
-function TAdvMap<T>.GetValues: TValueCollection;
+function TFslMap<T>.GetValues: TValueCollection;
 begin
   if FValueCollection = nil then
     FValueCollection := TValueCollection.Create(Self);
@@ -1479,30 +1479,30 @@ end;
 
 // Pairs
 
-constructor TAdvMap<T>.TAdvPairEnumerator.Create(const AMap: TAdvMap<T>);
+constructor TFslMap<T>.TFslPairEnumerator.Create(const AMap: TFslMap<T>);
 begin
   inherited Create;
   FIndex := -1;
   FMap := AMap;
 end;
 
-function TAdvMap<T>.TAdvPairEnumerator.DoGetCurrent: TAdvPair<T>;
+function TFslMap<T>.TFslPairEnumerator.DoGetCurrent: TFslPair<T>;
 begin
   Result := GetCurrent;
 end;
 
-function TAdvMap<T>.TAdvPairEnumerator.DoMoveNext: Boolean;
+function TFslMap<T>.TFslPairEnumerator.DoMoveNext: Boolean;
 begin
   Result := MoveNext;
 end;
 
-function TAdvMap<T>.TAdvPairEnumerator.GetCurrent: TAdvPair<T>;
+function TFslMap<T>.TFslPairEnumerator.GetCurrent: TFslPair<T>;
 begin
   Result.Key := FMap.FItems[FIndex].Key;
   Result.Value := FMap.FItems[FIndex].Value;
 end;
 
-function TAdvMap<T>.TAdvPairEnumerator.MoveNext: Boolean;
+function TFslMap<T>.TFslPairEnumerator.MoveNext: Boolean;
 begin
   while FIndex < Length(FMap.FItems) - 1 do
   begin
@@ -1515,29 +1515,29 @@ end;
 
 // Keys
 
-constructor TAdvMap<T>.TKeyEnumerator.Create(const AMap : TAdvMap<T>);
+constructor TFslMap<T>.TKeyEnumerator.Create(const AMap : TFslMap<T>);
 begin
   inherited Create;
   FIndex := -1;
   FMap := AMap;
 end;
 
-function TAdvMap<T>.TKeyEnumerator.DoGetCurrent: String;
+function TFslMap<T>.TKeyEnumerator.DoGetCurrent: String;
 begin
   Result := GetCurrent;
 end;
 
-function TAdvMap<T>.TKeyEnumerator.DoMoveNext: Boolean;
+function TFslMap<T>.TKeyEnumerator.DoMoveNext: Boolean;
 begin
   Result := MoveNext;
 end;
 
-function TAdvMap<T>.TKeyEnumerator.GetCurrent: String;
+function TFslMap<T>.TKeyEnumerator.GetCurrent: String;
 begin
   Result := FMap.FItems[FIndex].Key;
 end;
 
-function TAdvMap<T>.TKeyEnumerator.MoveNext: Boolean;
+function TFslMap<T>.TKeyEnumerator.MoveNext: Boolean;
 begin
   while FIndex < Length(FMap.FItems) - 1 do
   begin
@@ -1550,29 +1550,29 @@ end;
 
 // Values
 
-constructor TAdvMap<T>.TValueEnumerator.Create(const AMap : TAdvMap<T>);
+constructor TFslMap<T>.TValueEnumerator.Create(const AMap : TFslMap<T>);
 begin
   inherited Create;
   FIndex := -1;
   FMap := AMap;
 end;
 
-function TAdvMap<T>.TValueEnumerator.DoGetCurrent: T;
+function TFslMap<T>.TValueEnumerator.DoGetCurrent: T;
 begin
   Result := GetCurrent;
 end;
 
-function TAdvMap<T>.TValueEnumerator.DoMoveNext: Boolean;
+function TFslMap<T>.TValueEnumerator.DoMoveNext: Boolean;
 begin
   Result := MoveNext;
 end;
 
-function TAdvMap<T>.TValueEnumerator.GetCurrent: T;
+function TFslMap<T>.TValueEnumerator.GetCurrent: T;
 begin
   Result := FMap.FItems[FIndex].Value;
 end;
 
-function TAdvMap<T>.TValueEnumerator.MoveNext: Boolean;
+function TFslMap<T>.TValueEnumerator.MoveNext: Boolean;
 begin
   while FIndex < Length(FMap.FItems) - 1 do
   begin
@@ -1583,74 +1583,74 @@ begin
   Result := False;
 end;
 
-{ TAdvMap<T>.TValueCollection }
+{ TFslMap<T>.TValueCollection }
 
-constructor TAdvMap<T>.TValueCollection.Create(const AMap : TAdvMap<T>);
+constructor TFslMap<T>.TValueCollection.Create(const AMap : TFslMap<T>);
 begin
   inherited Create;
   FMap := AMap;
 end;
 
-function TAdvMap<T>.TValueCollection.DoGetEnumerator: TEnumerator<T>;
+function TFslMap<T>.TValueCollection.DoGetEnumerator: TEnumerator<T>;
 begin
   Result := GetEnumerator;
 end;
 
-function TAdvMap<T>.TValueCollection.GetCount: Integer;
+function TFslMap<T>.TValueCollection.GetCount: Integer;
 begin
   Result := FMap.Count;
 end;
 
-function TAdvMap<T>.TValueCollection.GetEnumerator: TValueEnumerator;
+function TFslMap<T>.TValueCollection.GetEnumerator: TValueEnumerator;
 begin
   Result := TValueEnumerator.Create(FMap);
 end;
 
-function TAdvMap<T>.TValueCollection.ToArray: TArray<T>;
+function TFslMap<T>.TValueCollection.ToArray: TArray<T>;
 begin
   raise Exception.Create('unimplemented');
 //  Result := ToArrayImpl(FMap.Count);
 end;
 
-{ TAdvMap<T>.TKeyCollection }
+{ TFslMap<T>.TKeyCollection }
 
-constructor TAdvMap<T>.TKeyCollection.Create(const AMap : TAdvMap<T>);
+constructor TFslMap<T>.TKeyCollection.Create(const AMap : TFslMap<T>);
 begin
   inherited Create;
   FMap := AMap;
 end;
 
-function TAdvMap<T>.TKeyCollection.DoGetEnumerator: TEnumerator<String>;
+function TFslMap<T>.TKeyCollection.DoGetEnumerator: TEnumerator<String>;
 begin
   Result := GetEnumerator;
 end;
 
-function TAdvMap<T>.TKeyCollection.GetCount: Integer;
+function TFslMap<T>.TKeyCollection.GetCount: Integer;
 begin
   Result := FMap.Count;
 end;
 
-function TAdvMap<T>.TKeyCollection.GetEnumerator: TKeyEnumerator;
+function TFslMap<T>.TKeyCollection.GetEnumerator: TKeyEnumerator;
 begin
   Result := TKeyEnumerator.Create(FMap);
 end;
 
-function TAdvMap<T>.TKeyCollection.ToArray: TArray<String>;
+function TFslMap<T>.TKeyCollection.ToArray: TArray<String>;
 begin
   raise Exception.Create('unimplemented');
 //  Result := ToArrayImpl(FMap.Count);
 end;
 
 
-{ TAdvStringDictionary }
+{ TFslStringDictionary }
 
-procedure TAdvStringDictionary.Free;
+procedure TFslStringDictionary.Free;
 begin
   If Assigned(Self) and (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
     Destroy;
 end;
 
-function TAdvStringDictionary.Link: TAdvStringDictionary;
+function TFslStringDictionary.Link: TFslStringDictionary;
 begin
   Result := Self;
   If Assigned(Self) Then
@@ -1710,7 +1710,7 @@ end;
 
 
 {$R-}
-function TAdvMap<T>.Hash(const Key: String): Integer;
+function TFslMap<T>.Hash(const Key: String): Integer;
 var
   LResult: UInt32;
   I: Integer;
@@ -1724,16 +1724,16 @@ begin
   Result := LResult
 end;
 
-{ TAdvStringSet }
+{ TFslStringSet }
 
-constructor TAdvStringSet.Create(c1, c2: TAdvStringSet);
+constructor TFslStringSet.Create(c1, c2: TFslStringSet);
 begin
   create;
   addAll(c1);
   addAll(c2);
 end;
 
-constructor TAdvStringSet.Create(initial: array of String);
+constructor TFslStringSet.Create(initial: array of String);
 var
   s : String;
 begin
@@ -1742,39 +1742,39 @@ begin
     add(s);
 end;
 
-destructor TAdvStringSet.Destroy;
+destructor TFslStringSet.Destroy;
 begin
   inherited;
 end;
 
-function TAdvStringSet.GetEnumerator: TAdvStringSetEnumerator;
+function TFslStringSet.GetEnumerator: TFslStringSetEnumerator;
 begin
-  Result := TAdvStringSetEnumerator.Create(Self);
+  Result := TFslStringSetEnumerator.Create(Self);
 end;
 
-function TAdvStringSet.isEmpty: boolean;
+function TFslStringSet.isEmpty: boolean;
 begin
   result := length(FItems) = 0;
 end;
 
-constructor TAdvStringSet.Create(initial: String);
+constructor TFslStringSet.Create(initial: String);
 begin
   create;
   add(initial);
 end;
 
-function TAdvStringSet.Link: TAdvStringSet;
+function TFslStringSet.Link: TFslStringSet;
 begin
-  result := TAdvStringSet(inherited Link);
+  result := TFslStringSet(inherited Link);
 end;
 
-procedure TAdvStringSet.remove(s: String);
+procedure TFslStringSet.remove(s: String);
 begin
   if contains(s) then
     raise Exception.Create('Not done yet');
 end;
 
-function TAdvStringSet.ToString: String;
+function TFslStringSet.ToString: String;
 var
   b : TStringBuilder;
   f : boolean;
@@ -1797,7 +1797,7 @@ begin
   end;
 end;
 
-procedure TAdvStringSet.add(value: String);
+procedure TFslStringSet.add(value: String);
 begin
   if not contains(value) then
   begin
@@ -1806,7 +1806,7 @@ begin
   end;
 end;
 
-procedure TAdvStringSet.addAll(collection: TAdvStringSet);
+procedure TFslStringSet.addAll(collection: TFslStringSet);
 var
   s : String;
 begin
@@ -1814,7 +1814,7 @@ begin
     add(s);
 end;
 
-function TAdvStringSet.AsString(sep: String): String;
+function TFslStringSet.AsString(sep: String): String;
 var
   b : TStringBuilder;
   f : boolean;
@@ -1837,7 +1837,7 @@ begin
   end;
 end;
 
-function TAdvStringSet.contains(s: String): boolean;
+function TFslStringSet.contains(s: String): boolean;
 var
   i : String;
 begin
@@ -1848,31 +1848,31 @@ begin
   result := false;
 end;
 
-{ TAdvStringSet.TAdvStringSetEnumerator }
+{ TFslStringSet.TFslStringSetEnumerator }
 
-constructor TAdvStringSet.TAdvStringSetEnumerator.Create(const aSet: TAdvStringSet);
+constructor TFslStringSet.TFslStringSetEnumerator.Create(const aSet: TFslStringSet);
 begin
   inherited Create;
   FSet := aSet;
   FIndex := -1;
 end;
 
-function TAdvStringSet.TAdvStringSetEnumerator.DoGetCurrent: String;
+function TFslStringSet.TFslStringSetEnumerator.DoGetCurrent: String;
 begin
   Result := GetCurrent;
 end;
 
-function TAdvStringSet.TAdvStringSetEnumerator.DoMoveNext: Boolean;
+function TFslStringSet.TFslStringSetEnumerator.DoMoveNext: Boolean;
 begin
   Result := MoveNext;
 end;
 
-function TAdvStringSet.TAdvStringSetEnumerator.GetCurrent: String;
+function TFslStringSet.TFslStringSetEnumerator.GetCurrent: String;
 begin
   Result := FSet.FItems[FIndex];
 end;
 
-function TAdvStringSet.TAdvStringSetEnumerator.MoveNext: Boolean;
+function TFslStringSet.TFslStringSetEnumerator.MoveNext: Boolean;
 begin
   if FIndex >= Length(FSet.FItems) then
     Exit(False);

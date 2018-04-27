@@ -36,7 +36,7 @@ uses
   FHIR.Support.Certs;
 
 type
-  TJWTServices = class (TAdvObject)
+  TJWTServices = class (TFslObject)
   private
     FCert: String;
     FPassword: String;

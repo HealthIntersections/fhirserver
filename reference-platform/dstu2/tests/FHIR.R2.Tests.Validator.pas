@@ -1,4 +1,4 @@
-unit FHIRValidatorTests3;
+unit FHIRValidatorTests;
 
 
 {
@@ -34,8 +34,8 @@ interface
 
 uses
   FHIR.Support.Objects, AdvBuffers,
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIRTestWorker3, FHIR.Tools.Parser,
-  FHIR.R3.Context, FHIR.R3.Validator,
+  FHIR.Base.Objects,  FHIR.Tools.Session, FHIRTestWorker, FHIR.R2.Validator, FHIR.Tools.Parser,
+  FHIR.R2.Context,
   DUnitX.TestFramework;
 
 type
@@ -46,7 +46,6 @@ type
 
     procedure validate(path : String; errorCount : integer; fmt : TFHIRFormat);
     procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);
-    procedure testBuildPatientExampleB;
   public
 
     [SetupFixture] procedure setup;
@@ -107,10 +106,9 @@ type
     [TestCase] procedure testJsonGroupBad2;
     [TestCase] procedure testJsonGroupBad3;
     [TestCase] procedure testJsonGroupEmpty;
-    [TestCase] procedure testJsonListXhtmlXXE;
-    [TestCase] procedure testParametersReference;
-    procedure testXmlListXXE;
-    [TestCase] procedure testXmlListXXE2;
+
+    [TestCase] procedure testResource;
+    [TestCase] procedure testResourceBundle;
 
   end;
 
@@ -119,7 +117,7 @@ implementation
 uses
   SysUtils, Classes, FHIR.Support.Strings,
   FHIR.Base.Parser,
-  FHIR.R3.Types, FHIR.R3.Resources;
+  FHIR.R2.Types, FHIR.R2.Resources;
 
 { TFHIRValidatorTests }
 
@@ -135,13 +133,13 @@ end;
 
 procedure TFHIRValidatorTests.validate(path: String; errorCount: integer; fmt : TFHIRFormat);
 var
-  src : TAdvBuffer;
+  src : TFslBuffer;
   val : TFHIRValidator;
   ctxt : TFHIRValidatorContext;
   ec : integer;
   msg : TFhirOperationOutcomeIssue;
 begin
-  src := TAdvBuffer.Create;
+  src := TFslBuffer.Create;
   try
     src.LoadFromFileName(IncludeTrailingBackslash(GBasePath)+path);
     ctxt := TFHIRValidatorContext.Create;
@@ -155,16 +153,11 @@ begin
       end;
       ec := 0;
       for msg in ctxt.Errors do
-      begin
         if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
         begin
-        if msg.locationList.count = 1 then
-          System.writeln('Error @ '+ msg.locationList[0].value+': '+msg.details.text)
-        else
-          System.writeln('Error @ unknown: '+msg.details.text);
-        inc(ec);
+          inc(ec);
+          writeln(msg.details.text);
         end;
-      end;
       Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d', [errorCount, ec]));
     finally
       ctxt.Free;
@@ -210,7 +203,7 @@ begin
           if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
           begin
             inc(ec);
-            s := s + msg.expressionList[0].value+': '+ msg.details.text+'. ';
+            s := s + msg.locationList[0].value+': '+ msg.details.text+'. ';
           end;
         Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
       finally
@@ -257,12 +250,12 @@ end;
 
 procedure TFHIRValidatorTests.testXmlListEmpty1;
 begin
-  validate('build\tests\validation-examples\list-empty1.xml', 3, ffXml);
+  validate('build\tests\validation-examples\list-empty1.xml', 2, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListEmpty2;
 begin
-  validate('build\tests\validation-examples\list-empty2.xml', 3, ffXml);
+  validate('build\tests\validation-examples\list-empty2.xml', 2, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListUnknownAttr;
@@ -293,16 +286,6 @@ end;
 procedure TFHIRValidatorTests.testXmlListXhtml2;
 begin
   validate('build\tests\validation-examples\list-xhtml-correct2.xml', 0, ffXml);
-end;
-
-procedure TFHIRValidatorTests.testXmlListXXE;
-begin
-  validate('build\tests\validation-examples\list-xhtml-xxe1.xml', 1, ffXml);
-end;
-
-procedure TFHIRValidatorTests.testXmlListXXE2;
-begin
-  validate('build\tests\validation-examples\list-xhtml-xxe2.xml', 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXhtmlWrongNs1;
@@ -342,7 +325,7 @@ end;
 
 procedure TFHIRValidatorTests.testXmlContainedBad;
 begin
-  validate('build\tests\validation-examples\list-contained-bad.xml', 2, ffXml);
+  validate('build\tests\validation-examples\list-contained-bad.xml', 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlBundle;
@@ -377,16 +360,8 @@ end;
 
 procedure TFHIRValidatorTests.testXmlGroupEmpty;
 begin
-  validate('build\tests\validation-examples\group-choice-empty.xml', 2, ffXml);
+  validate('build\tests\validation-examples\group-choice-empty.xml', 1, ffXml);
 end;
-
-procedure TFHIRValidatorTests.testParametersReference;
-begin
-  validate('build\tests\validation-examples\params-reference.xml', 0, ffXml);
-end;
-
-
-// --- json --------------------------------------------------------------------------
 
 procedure TFHIRValidatorTests.testJsonListMinimal;
 begin
@@ -405,7 +380,7 @@ end;
 
 procedure TFHIRValidatorTests.testJsonListEmpty1;
 begin
-  validate('build\tests\validation-examples\list-empty1.json', 3, ffJson);
+  validate('build\tests\validation-examples\list-empty1.json', 2, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListEmpty2;
@@ -438,11 +413,6 @@ begin
   validate('build\tests\validation-examples\list-xhtml-correct2.json', 0, ffJson);
 end;
 
-procedure TFHIRValidatorTests.testJsonListXhtmlXXE;
-begin
-  validate('build\tests\validation-examples\list-xhtml-xxe.json', 1, ffJson);
-end;
-
 procedure TFHIRValidatorTests.testJsonListXhtmlBadSyntax;
 begin
   validate('build\tests\validation-examples\list-xhtml-syntax.json', 1, ffJson);
@@ -456,6 +426,16 @@ end;
 procedure TFHIRValidatorTests.testJsonListXhtmlWrongNS2;
 begin
   validate('build\tests\validation-examples\list-xhtml-wrongns2.json', 1, ffJson);
+end;
+
+procedure TFHIRValidatorTests.testResource;
+begin
+  validateResource('build\tests\validation-examples\list-minimal.xml', 0, ffXml);
+end;
+
+procedure TFHIRValidatorTests.testResourceBundle;
+begin
+  validateResource('build\tests\validation-examples\bundle-continua.json', 7, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlBadElement;
@@ -480,7 +460,7 @@ end;
 
 procedure TFHIRValidatorTests.testJsonContainedBad;
 begin
-  validate('build\tests\validation-examples\list-contained-bad.json', 2, ffJson);
+  validate('build\tests\validation-examples\list-contained-bad.json', 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonBundle;
@@ -523,11 +503,8 @@ begin
   validate('build\tests\validation-examples\group-choice-empty.json', 1, ffJson);
 end;
 
-procedure TFHIRValidatorTests.testBuildPatientExampleB;
-begin
-  validate('publish\patient-example-b.xml', 0, ffJson);
-end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
 end.
+

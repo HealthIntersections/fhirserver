@@ -39,7 +39,7 @@ uses
   FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities;
 
 Type
-  TFhirOperationOutcomeW = class (TAdvObject)
+  TFhirOperationOutcomeW = class (TFslObject)
   protected
     FRes : TFHIRResourceV;
   public
@@ -75,7 +75,7 @@ Type
     function asString : string;
   end;
 
-  TFHIRClientLogger = class (TAdvObject)
+  TFHIRClientLogger = class (TFslObject)
   public
     function Link : TFHIRClientLogger; overload;
     procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);  virtual;
@@ -93,7 +93,7 @@ Type
   // when constructing, the client takes a parameter for the actual communicator that does all the work
   TFhirClientV = class;
 
-  TBundleHandler = class (TAdvObject)
+  TBundleHandler = class (TFslObject)
   private
     FResource : TFhirResourceV;
   public
@@ -109,7 +109,7 @@ Type
   TBundleHandlerClass = class of TBundleHandler;
 
   // never use this directly - always use a TFHIRClientV descendent
-  TFHIRClientCommunicator = class (TAdvObject)
+  TFHIRClientCommunicator = class (TFslObject)
   protected
     FClient : TFHIRClientV; // not linked
     FBundleHandler : TBundleHandlerClass;
@@ -137,13 +137,13 @@ Type
     function cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse; virtual;
 
     // special case that gives direct access to the communicator...
-    function custom(path : String; headers : THTTPHeaders) : TAdvBuffer; virtual;
+    function custom(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
     procedure terminate; virtual; // only works for some communicators
   end;
 
   TFhirHTTPClientStatusEvent = procedure (client : TObject; details : String) of Object;
 
-  TFhirClientV = {abstract} class (TAdvObject)
+  TFhirClientV = {abstract} class (TFslObject)
   private
     FCommunicator : TFHIRClientCommunicator;
     FWorker : TFHIRWorkerContextV;
@@ -207,7 +207,7 @@ Type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList) : TFHIRResourceV;
 
     // special case that gives direct access to the communicator...
-    function custom(path : String; headers : THTTPHeaders) : TAdvBuffer; virtual;
+    function custom(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
     function cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse; virtual;
 
     procedure terminate; virtual; // only works for some communicators
@@ -323,7 +323,7 @@ begin
   raise Exception.Create('Must override createResourceV in '+className);
 end;
 
-function TFHIRClientCommunicator.custom(path: String; headers: THTTPHeaders): TAdvBuffer;
+function TFHIRClientCommunicator.custom(path: String; headers: THTTPHeaders): TFslBuffer;
 begin
   raise Exception.Create('Must override custom in '+className);
 end;
@@ -584,7 +584,7 @@ begin
   result := FCommunicator.historyTypeV(aType, allRecords, encodeParams(params));
 end;
 
-function TFhirClientV.custom(path : String; headers : THTTPHeaders) : TAdvBuffer;
+function TFhirClientV.custom(path : String; headers : THTTPHeaders) : TFslBuffer;
 begin
   result := FCommunicator.custom(path, headers);
 end;

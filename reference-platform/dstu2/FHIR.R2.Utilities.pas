@@ -191,12 +191,12 @@ type
   TFHIRBundleBuilderNDJson = class (TFHIRBundleBuilder)
   private
     FFileBase : String;
-    FFiles : TAdvMap<TAdvFile>;
-    function fileForType(rType : String) : TAdvFile;
+    FFiles : TFslMap<TFslFile>;
+    function fileForType(rType : String) : TFslFile;
     procedure writeResource(res : TFHIRResource); overload;
-    procedure writeResource(rType : String; cnt : TAdvBuffer); overload;
+    procedure writeResource(rType : String; cnt : TFslBuffer); overload;
   public
-    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TAdvMap<TAdvFile>);
+    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TFslMap<TFslFile>);
     destructor Destroy; override;
 
     procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
@@ -226,7 +226,7 @@ type
   TFhirCapabilityStatementRestSecurity = TFhirConformanceRestSecurity;
 
 
-  TResourceWithReference = class (TAdvObject)
+  TResourceWithReference = class (TFslObject)
   private
     FReference: String;
     FResource: TFHIRResource;
@@ -611,7 +611,7 @@ type
 
   TFhirSystemVersionProcessingModeEnum = (SystemVersionProcessingModeDefault, SystemVersionProcessingModeCheck, SystemVersionProcessingModeOverride);
 
-  TFhirExpansionProfileFixedVersion = class (TAdvObject)
+  TFhirExpansionProfileFixedVersion = class (TFslObject)
   private
     FVersion: String;
     FSystem: String;
@@ -622,7 +622,7 @@ type
     property mode : TFhirSystemVersionProcessingModeEnum read FMode write FMode;
   end;
 
-  TFhirExpansionProfile = class (TAdvObject)
+  TFhirExpansionProfile = class (TFslObject)
   private
     FincludeDefinition: boolean;
     FlimitedExpansion: boolean;
@@ -632,7 +632,7 @@ type
     FexcludeNotForUI: boolean;
     FexcludePostCoordinated: boolean;
     FincludeDesignations: boolean;
-    FcodeSystemList : TAdvList<TFhirExpansionProfileFixedVersion>;
+    FcodeSystemList : TFslList<TFhirExpansionProfileFixedVersion>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -649,7 +649,7 @@ type
     property excludeNotForUI : boolean read FexcludeNotForUI write FexcludeNotForUI;
     property excludePostCoordinated : boolean read FexcludePostCoordinated write FexcludePostCoordinated;
 
-    property fixedVersionList : TAdvList<TFhirExpansionProfileFixedVersion> read FcodeSystemList;
+    property fixedVersionList : TFslList<TFhirExpansionProfileFixedVersion> read FcodeSystemList;
     function codeSystem : TFhirExpansionProfile;
     function include : TFhirExpansionProfile;
     class function defaultProfile : TFhirExpansionProfile;
@@ -801,7 +801,7 @@ begin
 end;
 
 
-function DetectFormat(oContent : TAdvBuffer) : TFHIRParserClass; overload;
+function DetectFormat(oContent : TFslBuffer) : TFHIRParserClass; overload;
 var
   s : String;
 begin
@@ -1697,7 +1697,7 @@ function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; lang
 var
   ct : String;
   parser : TFHIRParser;
-  mem : TAdvMemoryStream;
+  mem : TFslMemoryStream;
   s : TVCLStream;
 begin
   parser := nil;
@@ -1714,7 +1714,7 @@ begin
     end;
     if parser = nil then
       parser := DetectFormat(part.content).Create(worker.link, lang);
-    mem := TAdvMemoryStream.Create;
+    mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
       s := TVCLStream.Create;
@@ -1759,7 +1759,7 @@ var
   ct : String;
   parser : TFHIRParser;
   s : TVCLStream;
-  mem : TAdvMemoryStream;
+  mem : TFslMemoryStream;
 begin
   parser := nil;
   try
@@ -1775,7 +1775,7 @@ begin
     end;
     if parser = nil then
       parser := DetectFormat(part.content).Create(worker.link, Lang);
-    mem := TAdvMemoryStream.Create;
+    mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
       s := TVCLStream.Create;
@@ -3496,10 +3496,10 @@ begin
 end;
 function TFhirValueSetHelper.source: string;
 var
-  b : TAdvStringBuilder;
+  b : TFslStringBuilder;
   comp : TFhirValueSetComposeInclude;
 begin
-  b := TAdvStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     if (compose <> nil) then
       for comp in compose.includeList do
@@ -4550,7 +4550,7 @@ end;
 constructor TFhirExpansionProfile.Create;
 begin
   inherited;
-  FcodeSystemList := TAdvList<TFhirExpansionProfileFixedVersion>.create;
+  FcodeSystemList := TFslList<TFhirExpansionProfileFixedVersion>.create;
 end;
 
 class function TFhirExpansionProfile.defaultProfile: TFhirExpansionProfile;
@@ -5383,7 +5383,7 @@ end;
 
 { TFHIRBundleBuilderNDJson }
 
-constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TAdvMap<TAdvFile>);
+constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TFslMap<TFslFile>);
 begin
   inherited Create(bundle);
   FFileBase := fileBase;
@@ -5397,19 +5397,19 @@ begin
   inherited;
 end;
 
-function TFHIRBundleBuilderNDJson.fileForType(rType: String): TAdvFile;
+function TFHIRBundleBuilderNDJson.fileForType(rType: String): TFslFile;
 begin
   if not FFiles.TryGetValue(rType, result) then
   begin
-    result := TAdvFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
+    result := TFslFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
     FFiles.Add(rType, result);
   end;
 end;
 
 procedure TFHIRBundleBuilderNDJson.addEntry(entry: TFhirBundleEntry; first : boolean);
 begin
-  if (entry.Tag <> nil) and (entry.Tag is TAdvBuffer) then
-    writeResource(entry.Tags['type'], entry.Tag as TAdvBuffer)
+  if (entry.Tag <> nil) and (entry.Tag is TFslBuffer) then
+    writeResource(entry.Tags['type'], entry.Tag as TFslBuffer)
   else if entry.resource <> nil then
     writeResource(entry.resource);
   entry.Tag := nil;
@@ -5433,7 +5433,7 @@ end;
 
 procedure TFHIRBundleBuilderNDJson.writeResource(res: TFHIRResource);
 var
-  f : TAdvFile;
+  f : TFslFile;
   json : TFHIRJsonComposer;
   b : ansichar;
 begin
@@ -5451,9 +5451,9 @@ begin
   end;
 end;
 
-procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TAdvBuffer);
+procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TFslBuffer);
 var
-  f : TAdvFile;
+  f : TFslFile;
   b : ansiChar;
 begin
   f := fileForType(rType);

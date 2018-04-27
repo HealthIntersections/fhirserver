@@ -117,7 +117,7 @@ Type
   TFHIRXmlParserBase = class (TFHIRParser)
   Private
     FElement: TMXmlElement;
-    FComments : TAdvStringList;
+    FComments : TFslStringList;
 
     Function LoadXml(stream : TStream) : TMXmlDocument;
     Function PathForElement(element : TMXmlElement) : String;
@@ -200,7 +200,7 @@ Type
     procedure Parse; Overload; Override;
   End;
 
-  TFHIRComposer = {abstract} class (TAdvObject)
+  TFHIRComposer = {abstract} class (TFslObject)
   private
     FLang: String;
     FSummaryOption: TFHIRSummaryOption;
@@ -289,7 +289,7 @@ Type
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
-    Procedure Compose(stream : TAdvStream; oResource : TFhirResourceV); overload;
+    Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); overload;
     Procedure Compose(json: TJSONWriter; oResource : TFhirResourceV); Overload;
     Function MimeType : String; Override;
     function Extension : String; Override;
@@ -351,7 +351,7 @@ var
 begin
   xml := nil;
   try
-    FComments := TAdvStringList.create;
+    FComments := TFslStringList.create;
     try
       if (Element = nil) then
       begin
@@ -524,12 +524,12 @@ procedure TFHIRXmlComposerBase.Compose(stream: TStream; oResource: TFhirResource
 var
   xml : TXmlBuilder;
 begin
-  xml := TAdvXmlBuilder.Create;
+  xml := TFslXmlBuilder.Create;
   try
     xml.IsPretty := isPretty;
     xml.NoHeader := NoHeader;
     if isCanonical then
-      TAdvXmlBuilder(xml).CanonicalEntities := true;
+      TFslXmlBuilder(xml).CanonicalEntities := true;
     xml.CurrentNamespaces.DefaultNS := FHIR_NS;
     xml.Start;
     if not isCanonical and (FComment <> '') then
@@ -676,7 +676,7 @@ end;
 
 procedure TFHIRJsonComposerBase.Compose(stream: TStream; oResource: TFhirResourceV);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TJSONWriter;
 begin
   if isCanonical then
@@ -684,7 +684,7 @@ begin
   else
     json := TJsonWriterDirect.create;
   try
-    oStream := TAdvVCLStream.Create;
+    oStream := TFslVCLStream.Create;
     json.Stream := oStream;
     oStream.Stream := stream;
     json.HasWhitespace := isPretty;
@@ -717,7 +717,7 @@ begin
   ComposeResourceV(json, oResource);
 end;
 
-procedure TFHIRJsonComposerBase.Compose(stream: TAdvStream; oResource: TFhirResourceV);
+procedure TFHIRJsonComposerBase.Compose(stream: TFslStream; oResource: TFhirResourceV);
 var
   v : TVCLStream;
 begin
@@ -800,12 +800,12 @@ end;
 
 procedure TFHIRJsonComposerBase.ComposeItem(stream: TStream; name: String; item: TFHIRObject);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TJSONWriter;
 begin
   json := TJsonWriterDirect.create;
   try
-    oStream := TAdvVCLStream.Create;
+    oStream := TFslVCLStream.Create;
     json.Stream := oStream;
     oStream.Stream := stream;
     json.HasWhitespace := isPretty;
@@ -819,13 +819,13 @@ end;
 
 procedure TFHIRJsonComposerBase.ComposeItems(stream: TStream; name: String; items: TFHIRObjectList);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TJSONWriter;
   base : TFHIRObject;
 begin
   json := TJsonWriterDirect.create;
   try
-    oStream := TAdvVCLStream.Create;
+    oStream := TFslVCLStream.Create;
     json.Stream := oStream;
     oStream.Stream := stream;
     json.HasWhitespace := isPretty;
@@ -842,12 +842,12 @@ end;
 
 procedure TFHIRJsonComposerBase.composeInnerResource(json: TJSONWriter; name: String; holder : TFHIRObject; oResource: TFhirResourceV);
 var
-  blob : TAdvBuffer;
+  blob : TFslBuffer;
   bytes : TBytes;
 begin
   if (holder <> nil) and (holder.Tag <> nil) and json.canInject then
   begin
-    blob := holder.Tag as TAdvBuffer;
+    blob := holder.Tag as TFslBuffer;
     bytes := blob.AsBytes;
     json.ValueBytes(name, bytes);
   end
@@ -1059,11 +1059,11 @@ end;
 
 procedure TFHIRXmlComposerBase.ComposeInnerResource(xml: TXmlBuilder; name: String; holder : TFHIRObject; value: TFhirResourceV);
 var
-  blob : TAdvBuffer;
+  blob : TFslBuffer;
 begin
   if (holder <> nil) and (holder.Tag <> nil) then
   begin
-    blob := holder.Tag as TAdvBuffer;
+    blob := holder.Tag as TFslBuffer;
     xml.open(name);
     xml.inject(blob.AsBytes);
     xml.close(name);
@@ -1080,7 +1080,7 @@ procedure TFHIRXmlComposerBase.ComposeItem(stream: TStream; name: String; item: 
 var
   xml : TXmlBuilder;
 begin
-  xml := TAdvXmlBuilder.Create;
+  xml := TFslXmlBuilder.Create;
   try
     xml.IsPretty := isPretty;
     xml.NoHeader := NoHeader;
@@ -1099,7 +1099,7 @@ var
   xml : TXmlBuilder;
   item : TFHIRObject;
 begin
-  xml := TAdvXmlBuilder.Create;
+  xml := TFslXmlBuilder.Create;
   try
     xml.IsPretty := isPretty;
     xml.NoHeader := NoHeader;
@@ -1307,7 +1307,7 @@ begin
   start;
   xml := nil;
   try
-    FComments := TAdvStringList.create;
+    FComments := TFslStringList.create;
     try
       if (Element = nil) then
       begin

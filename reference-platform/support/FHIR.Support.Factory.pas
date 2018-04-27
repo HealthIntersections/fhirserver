@@ -40,13 +40,13 @@ Uses
 
 
 Type
-  TAdvFactorySerial = Cardinal;
+  TFslFactorySerial = Cardinal;
 
-  TAdvFactory = Class(TAdvObject)
+  TFslFactory = Class(TFslObject)
     Private
-      FClassHashTable : TAdvObjectClassHashTable;            // Class factory
-      FLookupClassHashEntry : TAdvObjectClassHashEntry;  // Accessor to the class factory
-      FCritical : TAdvExclusiveCriticalSection;                   // Critical section for instance repository
+      FClassHashTable : TFslObjectClassHashTable;            // Class factory
+      FLookupClassHashEntry : TFslObjectClassHashEntry;  // Accessor to the class factory
+      FCritical : TFslExclusiveCriticalSection;                   // Critical section for instance repository
       FCriticalDepth : Integer;                   // Number of nested critical section locks.
       FProfiled : Boolean;                        // Save the profile report when the application finishes.
       FLaunched : Boolean;                        // Launch the profile   report when the application finishes.
@@ -87,7 +87,7 @@ Type
       Function Make(Const aClass : TClass) : TObject; Overload;
 
       // Register Objects (Always returns True so can be called from Assert without raising an error and compiled out when $C-).
-      Function Construct(oObject : TObject; Out iSerial : TAdvFactorySerial) : Boolean; Overload;
+      Function Construct(oObject : TObject; Out iSerial : TFslFactorySerial) : Boolean; Overload;
       Function Construct(oObject : TObject) : Boolean; Overload;
       Function Destruct(oObject : TObject) : Boolean; Overload;
       Function Valid(oObject : TObject) : Boolean;
@@ -104,7 +104,7 @@ Type
       Function MarkIndestructable(oObject : TObject) : Boolean;
       Function IsIndestructable(oObject : TObject) : Boolean;
 
-      Property ClassHashTable : TAdvObjectClassHashTable Read FClassHashTable;
+      Property ClassHashTable : TFslObjectClassHashTable Read FClassHashTable;
       Property Profiled : Boolean Read FProfiled Write FProfiled;
       Property Launched : Boolean Read FLaunched Write FLaunched;
       Property Folder : String Read FFolder Write FFolder;
@@ -112,14 +112,14 @@ Type
 
   EAdvFactory = Class(EAdvException);
 
-  TAdvObjectClass = FHIR.Support.Objects.TAdvObjectClass;
+  TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
 
 
 Const
-  SERIAL_INVALID = High(TAdvFactorySerial);
+  SERIAL_INVALID = High(TFslFactorySerial);
 
 
-Function Factory : TAdvFactory;
+Function Factory : TFslFactory;
 Function HasFactory : Boolean;
 
 
@@ -127,10 +127,10 @@ Implementation
 
 
 Var
-  gFactory : TAdvFactory;
+  gFactory : TFslFactory;
 
 
-Function Factory : TAdvFactory;
+Function Factory : TFslFactory;
 Begin
   Result := gFactory;
 End;
@@ -142,7 +142,7 @@ Begin
 End;
 
 
-Constructor TAdvFactory.Create;
+Constructor TFslFactory.Create;
 Begin
   Inherited;
 
@@ -150,17 +150,17 @@ Begin
   FLaunched := True;
   FFolder := SystemTemp;
 
-  FClassHashTable := TAdvObjectClassHashTable.Create;
-  FLookupClassHashEntry := TAdvObjectClassHashEntry.Create;
+  FClassHashTable := TFslObjectClassHashTable.Create;
+  FLookupClassHashEntry := TFslObjectClassHashEntry.Create;
 
-  FCritical := TAdvExclusiveCriticalSection.Create;
+  FCritical := TFslExclusiveCriticalSection.Create;
 
 
   FClassHashTable.Capacity := 50021; // 0.2MB of array pointers
 End;
 
 
-Destructor TAdvFactory.Destroy;
+Destructor TFslFactory.Destroy;
 Begin
   FCritical.Free;
   FClassHashTable.Free;
@@ -170,21 +170,21 @@ Begin
 End;
 
 
-Function TAdvFactory.ActiveClassTracking: Boolean;
+Function TFslFactory.ActiveClassTracking: Boolean;
 Begin
   Result := Active;
 End;
 
 
 
-Function TAdvFactory.Active : Boolean;
+Function TFslFactory.Active : Boolean;
 Begin
   Result := Assigned(Self);
 End;
 
 
 
-Procedure TAdvFactory.Open;
+Procedure TFslFactory.Open;
 Begin
   // Add the following objects to the Object hash.
   Assert(Construct(Self));
@@ -225,18 +225,18 @@ Begin
   RegisterClass(EStackOverflow);
   RegisterClass(EWin32Error);
 {$ENDIF}
-  RegisterClass(TAdvStringList);
-  RegisterClass(TAdvIntegerMatch);
-  RegisterClass(TAdvLargeIntegerMatch);
-  RegisterClass(TAdvStringIntegerMatch);
-  RegisterClass(TAdvStringLargeIntegerMatch);
-  RegisterClassArray([TAdvBuffer, TAdvBufferList]);
+  RegisterClass(TFslStringList);
+  RegisterClass(TFslIntegerMatch);
+  RegisterClass(TFslLargeIntegerMatch);
+  RegisterClass(TFslStringIntegerMatch);
+  RegisterClass(TFslStringLargeIntegerMatch);
+  RegisterClassArray([TFslBuffer, TFslBufferList]);
 
-  RegisterClassAlias(TAdvStringList, 'TAdvStrings');
+  RegisterClassAlias(TFslStringList, 'TFslStrings');
 End;
 
 
-Procedure TAdvFactory.Close;
+Procedure TFslFactory.Close;
 Begin
   // Ensure the classes HashEntrys are destroyed.
   FClassHashTable.Clear;
@@ -251,13 +251,13 @@ Begin
 End;
 
 
-Function TAdvFactory.ErrorClass : EAdvExceptionClass;
+Function TFslFactory.ErrorClass : EAdvExceptionClass;
 Begin
   Result := EAdvFactory;
 End;
 
 
-Procedure TAdvFactory.RegisterClassAlias(Const aClass: TClass; Const sName: String);
+Procedure TFslFactory.RegisterClassAlias(Const aClass: TClass; Const sName: String);
 Begin
   // Pass a value for sName to alias a class as a different name.  This is
   // useful for backwards compatiblity programming.
@@ -269,13 +269,13 @@ Begin
 End;
 
 
-Procedure TAdvFactory.RegisterClass(Const aClass: TClass);
+Procedure TFslFactory.RegisterClass(Const aClass: TClass);
 Begin
   RegisterClassAlias(aClass, aClass.ClassName);
 End;
 
 
-Procedure TAdvFactory.RegisterClassArray(Const aClassArray : Array Of TClass);
+Procedure TFslFactory.RegisterClassArray(Const aClassArray : Array Of TClass);
 Var
   iClassIndex : Integer;
 Begin
@@ -284,11 +284,11 @@ Begin
 End;
 
 
-Procedure TAdvFactory.UnregisterClass(Const aClass : TClass);
+Procedure TFslFactory.UnregisterClass(Const aClass : TClass);
 Var
-  oLookup : TAdvObjectClassHashEntry;
+  oLookup : TFslObjectClassHashEntry;
 Begin
-  oLookup := TAdvObjectClassHashEntry.Create;
+  oLookup := TFslObjectClassHashEntry.Create;
   Try
     oLookup.Name := aClass.ClassName;
     oLookup.Data := aClass;
@@ -300,16 +300,16 @@ Begin
 End;
 
 
-Function TAdvFactory.Get(Const sName: String): TClass;
+Function TFslFactory.Get(Const sName: String): TClass;
 Var
-  oLookup : TAdvObjectClassHashEntry;
-  oClass  : TAdvObjectClassHashEntry;
+  oLookup : TFslObjectClassHashEntry;
+  oClass  : TFslObjectClassHashEntry;
 Begin 
-  oLookup := TAdvObjectClassHashEntry.Create;
+  oLookup := TFslObjectClassHashEntry.Create;
   Try
     oLookup.Name := sName;
 
-    oClass := TAdvObjectClassHashEntry(FClassHashTable.Get(oLookup));
+    oClass := TFslObjectClassHashEntry(FClassHashTable.Get(oLookup));
 
     If Assigned(oClass) Then
       Result := oClass.Data
@@ -321,7 +321,7 @@ Begin
 End;
 
 
-Function TAdvFactory.Make(Const sName : String) : TObject;
+Function TFslFactory.Make(Const sName : String) : TObject;
 Var
   aClass : TClass;
 Begin
@@ -334,24 +334,24 @@ Begin
 End;  
 
 
-Function TAdvFactory.Make(Const aClass: TClass): TObject;
+Function TFslFactory.Make(Const aClass: TClass): TObject;
 Begin
-  If aClass.InheritsFrom(TAdvObject) Then
-    Result := TAdvObjectClass(aClass).Create
+  If aClass.InheritsFrom(TFslObject) Then
+    Result := TFslObjectClass(aClass).Create
   Else
     Result := aClass.Create;
 End;
 
 
-Function TAdvFactory.IsEquivalentClass(Const aClass : TClass; Const sName : String): Boolean;
+Function TFslFactory.IsEquivalentClass(Const aClass : TClass; Const sName : String): Boolean;
 Begin
   Result := Assigned(aClass) And (StringEquals(aClass.ClassName, sName) Or (aClass = Get(sName)));
 End;
 
 
-Function TAdvFactory.IsRegisteredClass(Const aClass : TClass): Boolean;
+Function TFslFactory.IsRegisteredClass(Const aClass : TClass): Boolean;
 Var
-  oIterator : TAdvObjectClassHashTableIterator;
+  oIterator : TFslObjectClassHashTableIterator;
 Begin
   Assert(CheckCondition(Assigned(aClass), 'IsRegisteredClass', 'Class to be validated must be assigned.'));
 
@@ -361,7 +361,7 @@ Begin
   Begin
     // TODO: more optimal implementation for finding if a TClass is registered.
 
-    oIterator := TAdvObjectClassHashTableIterator(FClassHashTable.Iterator);
+    oIterator := TFslObjectClassHashTableIterator(FClassHashTable.Iterator);
     Try
       oIterator.First;
 
@@ -379,27 +379,27 @@ End;
 
 
 
-Procedure TAdvFactory.Lock;
+Procedure TFslFactory.Lock;
 Begin 
   FCritical.Lock;
   Inc(FCriticalDepth);
 End;  
 
 
-Procedure TAdvFactory.Unlock;
+Procedure TFslFactory.Unlock;
 Begin 
   Dec(FCriticalDepth);
   FCritical.Unlock;
 End;  
 
 
-Function TAdvFactory.Nested : Boolean;
+Function TFslFactory.Nested : Boolean;
 Begin
   Result := (FCriticalDepth > 1);
 End;
 
 
-Function TAdvFactory.Construct(oObject: TObject; Out iSerial : TAdvFactorySerial): Boolean;
+Function TFslFactory.Construct(oObject: TObject; Out iSerial : TFslFactorySerial): Boolean;
 Begin 
   // Add the object to the Object hash and return a unique serial number.
 
@@ -408,7 +408,7 @@ Begin
 End;
 
 
-Function TAdvFactory.Construct(oObject: TObject) : Boolean;
+Function TFslFactory.Construct(oObject: TObject) : Boolean;
 Begin
   // Add the object to the Object hash.
 
@@ -417,7 +417,7 @@ Begin
 End;  
 
 
-Function TAdvFactory.Destruct(oObject: TObject) : Boolean;
+Function TFslFactory.Destruct(oObject: TObject) : Boolean;
 Begin 
   // Remove the object from the Object hash.
 
@@ -426,7 +426,7 @@ Begin
 End;
 
 
-Function TAdvFactory.Valid(oObject: TObject): Boolean;
+Function TFslFactory.Valid(oObject: TObject): Boolean;
 Begin 
   // Returns true if the object is assigned, valid and of the correct class.
 
@@ -435,21 +435,21 @@ Begin
 End;
 
 
-Procedure TAdvFactory.Track(oObject: TObject);
+Procedure TFslFactory.Track(oObject: TObject);
 Begin 
   // Mark the Object as requiring a breakpoint if Notify is called with the same Object.
 
 End;
 
 
-Procedure TAdvFactory.Notify(oObject: TObject);
+Procedure TFslFactory.Notify(oObject: TObject);
 Begin
   // Interrupt the application execution with a breakpoint if the Object has been tracked.
 
 End;
 
 
-Function TAdvFactory.MarkDestructable(oObject: TObject) : Boolean;
+Function TFslFactory.MarkDestructable(oObject: TObject) : Boolean;
 Begin 
   // Mark the object as Destructable - not ever needing to be freed and won't turn up in leak profiler.
 
@@ -458,7 +458,7 @@ Begin
 End;
 
 
-Function TAdvFactory.MarkIndestructable(oObject: TObject) : Boolean;
+Function TFslFactory.MarkIndestructable(oObject: TObject) : Boolean;
 Begin 
   // Mark the object as Indestructable - not ever needing to be freed and won't turn up in leak profiler.
 
@@ -467,14 +467,14 @@ Begin
 End;  
 
 
-Function TAdvFactory.IsIndestructable(oObject: TObject): Boolean;
+Function TFslFactory.IsIndestructable(oObject: TObject): Boolean;
 Begin 
   Result := False;
 
 End;  
 
 
-Function TAdvFactory.Freeze(oObject: TObject): Boolean;
+Function TFslFactory.Freeze(oObject: TObject): Boolean;
 Begin 
   Result := True;
 
@@ -482,7 +482,7 @@ Begin
 End;
 
 
-Function TAdvFactory.IsFrozen(oObject: TObject): Boolean;
+Function TFslFactory.IsFrozen(oObject: TObject): Boolean;
 Begin 
   Result := False;
 
@@ -492,14 +492,14 @@ End;
 
 Procedure Initialise;
 Begin 
-  gFactory := TAdvFactory.Create;
+  gFactory := TFslFactory.Create;
   gFactory.Open;
 End;  
 
 
 Procedure Finalise;
 Var
-  oTemporary : TAdvFactory;
+  oTemporary : TFslFactory;
 Begin 
   Try
     gFactory.Close;
@@ -519,7 +519,7 @@ Begin
 End;
 
 
-procedure TAdvFactory.RegisterClasses(const aClassArray: array of TClass);
+procedure TFslFactory.RegisterClasses(const aClassArray: array of TClass);
 Var
   iClassIndex : Integer;
 Begin

@@ -101,7 +101,7 @@ Type
   TFHIRXmlParserBase = class (TFHIRParser)
   Private
     FElement: IXmlDomElement;
-    FComments : TAdvStringList;
+    FComments : TFslStringList;
     Function LoadXml(stream : TStream) : IXmlDomDocument2;
     Function PathForElement(element : IXmlDomNode) : String;
     procedure SeTFhirElement(const Value: IXmlDomElement);
@@ -184,7 +184,7 @@ Type
     Procedure ComposeResource(xml : TXmlBuilder; statedType, id, ver : String; oResource : TFhirResource; links : TFHIRAtomLinkList); overload; virtual;
     Procedure ComposeBinary(xml : TXmlBuilder; binary : TFhirBinary);
     procedure ComposeXHtmlNode(xml : TXmlBuilder; node: TFhirXHtmlNode; ignoreRoot : boolean); overload;
-    procedure ComposeXHtmlNode(s : TAdvStringBuilder; node: TFhirXHtmlNode; indent, relativeReferenceAdjustment : integer); overload;
+    procedure ComposeXHtmlNode(s : TFslStringBuilder; node: TFhirXHtmlNode; indent, relativeReferenceAdjustment : integer); overload;
     function ResourceMediaType: String; virtual;
 
     function asString(value : TDateTimeEx):String;
@@ -326,7 +326,7 @@ var
   xml : IXmlDomDocument2;
   root : IXmlDomElement;
 begin
-  FComments := TAdvStringList.create;
+  FComments := TFslStringList.create;
   try
     if (Element = nil) then
     begin
@@ -707,7 +707,7 @@ begin
     TFhirBinary(oResource).Content.SaveToStream(stream)
   else
   begin
-    xml := TAdvXmlBuilder.Create;
+    xml := TFslXmlBuilder.Create;
     try
       xml.IsPretty := isPretty;
       xml.CurrentNamespaces.DefaultNS := FHIR_NS;
@@ -810,7 +810,7 @@ var
   xml : TXmlBuilder;
   i : integer;
 begin
-  xml := TAdvXmlBuilder.Create;
+  xml := TFslXmlBuilder.Create;
   try
     xml.IsPretty := isPretty;
     xml.CurrentNamespaces.DefaultNS := FHIR_NS;
@@ -840,12 +840,12 @@ end;
 
 procedure TFHIRJsonComposerBase.Compose(stream: TStream; statedType, id, ver : String; oResource: TFhirResource; isPretty : Boolean; links : TFHIRAtomLinkList);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TJSONWriter;
 begin
   json := TJSONWriter.Create;
   try
-    oStream := TAdvVCLStream.Create;
+    oStream := TFslVCLStream.Create;
     json.Stream := oStream;
     oStream.Stream := stream;
     json.Start;
@@ -905,7 +905,7 @@ var
 begin
   s := TStringStream.Create('');
   try
-    xml := TAdvXmlBuilder.Create;
+    xml := TFslXmlBuilder.Create;
     try
       xml.IsPretty := false;
       xml.CharEncoding := '';
@@ -938,13 +938,13 @@ end;
 
 procedure TFHIRJsonComposerBase.Compose(stream: TStream; oFeed: TFHIRAtomFeed; isPretty: Boolean);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TJSONWriter;
   i : integer;
 begin
   json := TJSONWriter.Create;
   try
-    oStream := TAdvVCLStream.Create;
+    oStream := TFslVCLStream.Create;
     json.Stream := oStream;
     oStream.Stream := stream;
 //    json.IsPretty := isPretty;
@@ -1119,13 +1119,13 @@ end;
 
 procedure TFHIRJsonComposerBase.Compose(stream: TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags: TFHIRAtomCategoryList; isPretty: Boolean);
 var
-  oStream : TAdvVCLStream;
+  oStream : TFslVCLStream;
   json : TJSONWriter;
   i : integer;
 begin
   json := TJSONWriter.Create;
   try
-    oStream := TAdvVCLStream.Create;
+    oStream := TFslVCLStream.Create;
     json.Stream := oStream;
     oStream.Stream := stream;
     json.Start;
@@ -1438,7 +1438,7 @@ var
   xml : IXmlDomDocument2;
   root : IXmlDomElement;
 begin
-  FComments := TAdvStringList.create;
+  FComments := TFslStringList.create;
   try
     if (Element = nil) then
     begin
@@ -1479,7 +1479,7 @@ procedure TFHIRXmlComposerBase.Compose(stream: TStream; oFeed: TFHIRAtomFeed; is
 var
   xml : TXmlBuilder;
 begin
-  xml := TAdvXmlBuilder.Create;
+  xml := TFslXmlBuilder.Create;
   try
     xml.IsPretty := isPretty;
     xml.CurrentNamespaces.DefaultNS := ATOM_NS;
@@ -1664,7 +1664,7 @@ end;
 
 procedure TFHIRXhtmlComposer.Compose(stream: TStream; statedType, id, ver : String; oResource: TFhirResource; isPretty: Boolean; links : TFHIRAtomLinkList);
 var
-  s : TAdvStringBuilder;
+  s : TFslStringBuilder;
   ss : TStringStream;
   xml : TFHIRXmlComposer;
   c : integer;
@@ -1679,7 +1679,7 @@ begin
     title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', lang)+' "'+id+'" '+GetFhirMessage('NAME_VERSION', lang)+' "'+ver + '" ('+CODES_TFhirResourceType[oResource.ResourceType]+') ');
 
   c := 0;
-  s := TAdvStringBuilder.create;
+  s := TFslStringBuilder.create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -1771,7 +1771,7 @@ end;
 
 procedure TFHIRXhtmlComposer.Compose(stream: TStream; oFeed: TFHIRAtomFeed; isPretty: Boolean);
 var
-  s : TAdvStringBuilder;
+  s : TFslStringBuilder;
   i : integer;
   a : string;
   e : TFHIRAtomEntry;
@@ -1781,7 +1781,7 @@ var
   u : string;
 begin
   a := oFeed.authorUri;
-  s := TAdvStringBuilder.create;
+  s := TFslStringBuilder.create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -1915,10 +1915,10 @@ end;
 
 procedure TFHIRXhtmlComposer.Compose(stream: TStream; ResourceType: TFhirResourceType; statedType, id, ver: String; oTags: TFHIRAtomCategoryList; isPretty: Boolean);
 var
-  s : TAdvStringBuilder;
+  s : TFslStringBuilder;
   i : integer;
 begin
-  s := TAdvStringBuilder.create;
+  s := TFslStringBuilder.create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -2407,7 +2407,7 @@ begin
 end;
 
 
-procedure TFHIRComposer.ComposeXHtmlNode(s: TAdvStringBuilder; node: TFhirXHtmlNode; indent, relativeReferenceAdjustment : integer);
+procedure TFHIRComposer.ComposeXHtmlNode(s: TFslStringBuilder; node: TFhirXHtmlNode; indent, relativeReferenceAdjustment : integer);
 var
   i : Integer;
 begin

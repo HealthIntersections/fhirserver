@@ -9,7 +9,7 @@ uses
   FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities;
 
 type
-  TFHIRClientJSHelper = class (TAdvObject)
+  TFHIRClientJSHelper = class (TFslObject)
   private
     function CreateFHIRClientJs(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
     function FHIRClientAddressJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;

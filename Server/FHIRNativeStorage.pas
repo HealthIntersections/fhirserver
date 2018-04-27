@@ -42,7 +42,7 @@ uses
   FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles, FHIR.Tools.PathEngine, FHIR.Tools.GraphQL, FHIR.Tools.Client,
   FHIR.Tools.Factory, FHIR.Tools.Narrative, FHIR.Tools.Narrative2, FHIR.Tools.Questionnaire,
   FHIR.CdsHooks.Utilities, {$IFNDEF FHIR2}FHIR.Tools.MapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
-  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, FHIR.Base.Scim, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
+  ServerUtilities, ServerValidator, FHIR.Tx.Service, TerminologyServer, FHIR.Base.Scim, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
   FHIR.Tools.Validator, FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIR.Tools.CodeGen, ServerJavascriptHost;
 
 const
@@ -58,7 +58,7 @@ const
   OP_MASK_TAG = 'this-tag-used-for-the-mask-operation-outcome';
 
 type
-  TKeyPair = class (TAdvObject)
+  TKeyPair = class (TFslObject)
   private
     type_ : String;
     key : string;
@@ -66,7 +66,7 @@ type
     constructor create(t_ : String; key : string);
   end;
 
-  TKeyList = class (TAdvList<TKeyPair>)
+  TKeyList = class (TFslList<TKeyPair>)
   private
   public
     function forType(t_: String) : String;
@@ -75,7 +75,7 @@ type
 
   TFHIRTransactionEntryState = (tesIgnore, tesRead, tesCreate, tesUpdate, tesDelete);
 
-  TFHIRTransactionEntry = class (TAdvName)
+  TFHIRTransactionEntry = class (TFslName)
   private
     state : TFHIRTransactionEntryState;
     id : String;
@@ -92,7 +92,7 @@ type
     function summary : string;
   end;
 
-  TFHIRTransactionEntryList = class (TAdvNameList)
+  TFHIRTransactionEntryList = class (TFslNameList)
   private
     FDropDuplicates: boolean;
     function GetEntry(iIndex: Integer): TFHIRTransactionEntry;
@@ -140,12 +140,12 @@ type
 
     procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; loadObjects : boolean; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
     function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean): boolean;
-    function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
+    function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
     function BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
-    procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
-    procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+    procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+    procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     function getResourceByReference(source : TFHIRResource; url : string; req : TFHIRRequest; allowNil : boolean; var needSecure : boolean): TFHIRResource;
-    function loadResources(keys : TList<integer>) : TAdvList<TFHIRResource>;
+    function loadResources(keys : TList<integer>) : TFslList<TFHIRResource>;
     function loadResourceVersion(versionKey : integer; allowNil : boolean) : TFHIRResource;
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
 
@@ -168,7 +168,7 @@ type
     function EncodeResource(r : TFhirResource; xml : boolean; summary : TFHIRSummaryOption) : TBytes;
     procedure SaveProvenance(session : TFhirSession; prv : TFHIRProvenance);
 
-    procedure CheckCompartments(actual, allowed : TAdvList<TFHIRCompartmentId>);
+    procedure CheckCompartments(actual, allowed : TFslList<TFHIRCompartmentId>);
     procedure executeReadInTransaction(entry : TFhirBundleEntryRequest; request: TFHIRRequest; response : TFHIRResponse);
 
     procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundleBuilder; keys : TKeyList; base, lang, field : String; comp : TFHIRParserClass);
@@ -183,10 +183,10 @@ type
     procedure ExecuteGraphQLInstance(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); override;
 
-    function GraphLookup(appInfo : TAdvObject; requestType, id : String; var res : TFHIRResource) : boolean;
-    function GraphFollowReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
-    function GraphSearch(appInfo : TAdvObject; requestType : String; params : TAdvList<TGraphQLArgument>) : TFHIRBundle;
-    procedure GraphListResources(appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFHIRResource>);
+    function GraphLookup(appInfo : TFslObject; requestType, id : String; var res : TFHIRResource) : boolean;
+    function GraphFollowReference(appInfo : TFslObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
+    function GraphSearch(appInfo : TFslObject; requestType : String; params : TFslList<TGraphQLArgument>) : TFHIRBundle;
+    procedure GraphListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResource>);
     function GetServerContext: TFHIRServerContext;
 
     function processCanonicalSearch(request : TFHIRRequest; bundle : TFHIRBundleBuilder) : boolean;
@@ -226,10 +226,10 @@ type
 //    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
 
     function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
-    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TAdvList<TFHIRCompartmentId>): boolean; override;
+    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; override;
-    function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; override;
-    function ResolveSearchId(resourceName : String; requestCompartment: TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; override;
+    function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TFslList<TFHIRResource>; override;
+    function ResolveSearchId(resourceName : String; requestCompartment: TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; override;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; override;
 
@@ -562,7 +562,7 @@ type
     property ServerContext : TFHIRServerContext read FServerContext;
 
     function oid2Uri(oid : String) : String; override;
-    function translate(appInfo : TAdvObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
+    function translate(appInfo : TFslObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
     procedure log(s : String); override;
   end;
   {$ENDIF}
@@ -654,13 +654,13 @@ type
     procedure checkDefinitions;
 
     procedure DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
-    function DoExecuteSearch(typekey: integer; compartment : TFHIRCompartmentId; sessionCompartments: TAdvList<TFHIRCompartmentId>; params: TParseMap; conn: TKDBConnection): String;
+    function DoExecuteSearch(typekey: integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: TParseMap; conn: TKDBConnection): String;
     function getTypeForKey(key: integer): String;
     procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
     procedure checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
-    procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TAdvBuffer; b : TStringBuilder);
+    procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TFslBuffer; b : TStringBuilder);
 
-    procedure loadCustomResources(guides : TAdvStringSet);
+    procedure loadCustomResources(guides : TFslStringSet);
     procedure StoreObservation(conn: TKDBConnection; key : integer);
     procedure UnStoreObservation(conn: TKDBConnection; key : integer);
     procedure ProcessObservationContent(conn: TKDBConnection; key, rk: integer; obs : TFHIRObservation; subj : integer; categories : TArray<Integer>);
@@ -729,7 +729,7 @@ type
     function FetchAuthorization(uuid : String; var PatientId : String; var ConsentKey, SessionKey : Integer; var Expiry : TDateTime; var jwt : String) : boolean; override;
     function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; override;
 
-    function FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>) : TStringList; override;
+    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; override;
     function FetchResource(key : integer) : TFHIRResource; override;
     function createAsyncTask(url, id : string; format : TFHIRFormat) : integer; override;
     procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); override;
@@ -737,12 +737,12 @@ type
     function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message, request : String; var transactionTime, expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; override;
     procedure setAsyncTaskDetails(key : integer; transactionTime : TDateTimeEx; request : String); override;
     procedure recordDownload(key : integer; name : String); override;
-    procedure fetchExpiredTasks(tasks : TAdvList<TAsyncTaskInformation>); override;
+    procedure fetchExpiredTasks(tasks : TFslList<TAsyncTaskInformation>); override;
     procedure MarkTaskDeleted(key : integer); override;
     function getClientInfo(id : String) : TRegisteredClientInformation; override;
     function getClientName(id : String) : string; override;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
-    procedure fetchClients(list : TAdvList<TRegisteredClientInformation>); override;
+    procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
     Property DB: TKDBManager read FDB;
@@ -836,7 +836,7 @@ begin
 end;
 
 type
-  TDateTimeExWrapper = class (TAdvObject)
+  TDateTimeExWrapper = class (TFslObject)
   private
     FValue : TDateTimeEx;
   public
@@ -962,9 +962,9 @@ begin
     begin
       entry := TFHIRBundleEntry.Create;
       try
-        entry.Tag := TAdvBuffer.create;
+        entry.Tag := TFslBuffer.create;
         entry.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
-        TAdvBuffer(entry.Tag).AsBytes := FConnection.ColBlobByName[field];
+        TFslBuffer(entry.Tag).AsBytes := FConnection.ColBlobByName[field];
         entry.Tags['type'] := type_;
         if (purpose <> SearchEntryModeNull) then
         begin
@@ -1933,7 +1933,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL: String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
+function TFHIRNativeOperationEngine.BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL: String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
 var
   id : string;
 begin
@@ -1950,7 +1950,7 @@ begin
     ProcessDefaultSearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, op, link, sql, total, summaryStatus, strict, reverse);
 end;
 
-procedure TFHIRNativeOperationEngine.ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+procedure TFHIRNativeOperationEngine.ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
 var
   sp : TSearchProcessor;
   s : String;
@@ -2012,7 +2012,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : string; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+procedure TFHIRNativeOperationEngine.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : string; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
 var
   mpi : TMPISearchProcessor;
   s : String;
@@ -2562,7 +2562,7 @@ var
   parser : TFHIRParser;
   json, json2 : TJsonObject;
   xml : TMXmlDocument;
-  ms : TAdvMemoryStream;
+  ms : TFslMemoryStream;
   src : TBytes;
 begin
   result := false;
@@ -2644,7 +2644,7 @@ begin
               TFHIRJsonParser(parser).parse(json2);
               request.Resource := parser.resource.Link as TFHIRResource;
               request.PostFormat := ffJson;
-              ms := TAdvMemoryStream.Create;
+              ms := TFslMemoryStream.Create;
               try
                 request.Source.Clear;
                 ms.Buffer := request.Source.Link;
@@ -2924,7 +2924,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.FindResource(aType : String; sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response : TFhirResponse; sessionCompartments : TAdvList<TFHIRCompartmentId>): boolean;
+function TFHIRNativeOperationEngine.FindResource(aType : String; sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response : TFhirResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
 var
   cmp : String;
 begin
@@ -3108,14 +3108,14 @@ var
   ig : TFHIRImplementationGuide;
   package : TFhirImplementationGuidePackage;
   needsSecure : boolean;
-  crs : TAdvList<TFHIRCustomResourceInformation>;
+  crs : TFslList<TFHIRCustomResourceInformation>;
   cr : TFHIRCustomResourceInformation;
   sp : TFhirSearchParameter;
 {$ENDIF}
 begin
 {$IFDEF FHIR3}
   result := false;
-  crs := TAdvList<TFHIRCustomResourceInformation>.create;
+  crs := TFslList<TFHIRCustomResourceInformation>.create;
   try
     ig := GetResourceByKey(key, needsSecure) as TFHIRImplementationGuide;
     try
@@ -3143,16 +3143,16 @@ begin
 {$ENDIF}
 end;
 
-function TFHIRNativeOperationEngine.loadResources(keys: TList<integer>): TAdvList<TFHIRResource>;
+function TFHIRNativeOperationEngine.loadResources(keys: TList<integer>): TFslList<TFHIRResource>;
 var
   parser : TFHIRParser;
   s : TBytes;
-  sb : TAdvStringBuilder;
+  sb : TFslStringBuilder;
   k : integer;
 begin
-  result := TAdvList<TFHIRResource>.create;
+  result := TFslList<TFHIRResource>.create;
   try
-    sb := TAdvStringBuilder.create;
+    sb := TFslStringBuilder.create;
     try
       for k in keys do
         sb.CommaAdd(inttostr(k));
@@ -3215,13 +3215,13 @@ var
   ig : TFHIRImplementationGuide;
   package : TFhirImplementationGuidePackage;
   needsSecure : boolean;
-  crs : TAdvList<TFHIRCustomResourceInformation>;
+  crs : TFslList<TFHIRCustomResourceInformation>;
   cr : TFHIRCustomResourceInformation;
   sp : TFhirSearchParameter;
 {$ENDIF}
 begin
 {$IFDEF FHIR3}
-  crs := TAdvList<TFHIRCustomResourceInformation>.create;
+  crs := TFslList<TFHIRCustomResourceInformation>.create;
   try
     ig := GetResourceById(nil, 'ImplementationGuide', id, '', needsSecure) as TFHIRImplementationGuide;
     try
@@ -3256,12 +3256,12 @@ var
   rd : TFhirImplementationGuidePackageResource;
   res : TFHIRResource;
   sd : TFhirStructureDefinition;
-  list : TAdvList<TFhirSearchParameter>;
+  list : TFslList<TFhirSearchParameter>;
   cr : TFHIRCustomResourceInformation;
   needsSecure : boolean;
 begin
   sd := nil;
-  list := TAdvList<TFhirSearchParameter>.create;
+  list := TFslList<TFhirSearchParameter>.create;
   try
     for rd in package.resourceList do
     begin
@@ -3457,7 +3457,7 @@ begin
   result := (StringArrayIndexOfSensitive(CODES_TFHIRResourceType, l) > -1) and IsId(r);
 end;
 
-function TFHIRNativeOperationEngine.ResolveSearchId(resourceName : String; requestCompartment: TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
+function TFHIRNativeOperationEngine.ResolveSearchId(resourceName : String; requestCompartment: TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
 var
   sp : TSearchProcessor;
   p : TParseMap;
@@ -4146,7 +4146,7 @@ var
   src, dest : TFhirBundleEntry;
   url : String;
   dummy : integer;
-  mem : TAdvMemoryStream;
+  mem : TFslMemoryStream;
   comp : TFHIRXmlComposer;
   m : TVCLStream;
 begin
@@ -4179,12 +4179,12 @@ begin
           request.IfMatch := src.request.ifMatch;
           request.IfNoneExist := src.request.ifNoneExist;
           request.resource := src.resource.link;
-          request.Source := TAdvBuffer.Create;
+          request.Source := TFslBuffer.Create;
           request.PostFormat := ffXml;
           if not context.upload and ServerContext.validate and (request.resource <> nil) then
           begin
             comp := TFHIRXmlComposer.Create(ServerContext.ValidatorContext.Link, OutputStylePretty, 'en');
-            mem := TAdvMemoryStream.Create;
+            mem := TFslMemoryStream.Create;
             m := TVCLStream.Create;
             try
               m.Stream := mem.Link;
@@ -4745,12 +4745,12 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.GetResourcesByParam(aType : TFhirResourceType; name, value: String; var needSecure : boolean): TAdvList<TFHIRResource>;
+function TFHIRNativeOperationEngine.GetResourcesByParam(aType : TFhirResourceType; name, value: String; var needSecure : boolean): TFslList<TFHIRResource>;
 var
   s : TBytes;
   parser : TFHIRParser;
 begin
-  result := TAdvList<TFHIRResource>.create;
+  result := TFslList<TFHIRResource>.create;
   try
     FConnection.SQL := 'Select Secure, JsonContent from Versions where '+
       'ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and IndexKey in (Select IndexKey from Indexes where name = '''+name+''') and Value = :v) '+
@@ -4786,7 +4786,7 @@ begin
   result := TFHIRServerContext(FServerContext);
 end;
 
-function TFHIRNativeOperationEngine.GraphFollowReference(appInfo : TAdvObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
+function TFHIRNativeOperationEngine.GraphFollowReference(appInfo : TFslObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
 var
   req : TFHIRRequest;
   secure : boolean;
@@ -4800,7 +4800,7 @@ begin
     target.Free;
 end;
 
-procedure TFHIRNativeOperationEngine.GraphListResources(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>; list: TAdvList<TFHIRResource>);
+procedure TFHIRNativeOperationEngine.GraphListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResource>);
 var
   sql : String;
   rk : integer;
@@ -4875,7 +4875,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.GraphLookup(appInfo: TAdvObject; requestType, id: String; var res: TFHIRResource): boolean;
+function TFHIRNativeOperationEngine.GraphLookup(appInfo: TFslObject; requestType, id: String; var res: TFHIRResource): boolean;
 var
   req : TFHIRRequest;
   secure : boolean;
@@ -4891,7 +4891,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.GraphSearch(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>) : TFHIRBundle;
+function TFHIRNativeOperationEngine.GraphSearch(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>) : TFHIRBundle;
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
@@ -5507,7 +5507,7 @@ begin
   Reindex;
 end;
 
-procedure TFHIRNativeOperationEngine.CheckCompartments(actual, allowed : TAdvList<TFHIRCompartmentId>);
+procedure TFHIRNativeOperationEngine.CheckCompartments(actual, allowed : TFslList<TFHIRCompartmentId>);
 var
   a, b : TFHIRCompartmentId;
   ok : boolean;
@@ -6361,7 +6361,7 @@ var
   s : string;
   ose : TObservationStatsEvaluator;
   c : TFhirCoding;
-  list : TAdvList<TFHIRResource>;
+  list : TFslList<TFHIRResource>;
   res : TFHIRResource;
 begin
   try
@@ -8580,7 +8580,7 @@ var
   params : TFHIRTransformOpRequest;
   rkey, versionKey : integer;
   needSecure : boolean;
-  lib : TAdvMap<TFHIRStructureMap>;
+  lib : TFslMap<TFHIRStructureMap>;
   map : TFHIRStructureMap;
   utils : TFHIRStructureMapUtilities;
   outcome : TFHIRObject;
@@ -8723,7 +8723,7 @@ begin
   result := ServerContext.oid2URI(oid);
 end;
 
-function TServerTransformerServices.translate(appInfo: TAdvObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
+function TServerTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
   raise EFHIRException.CreateLang('NOT_DONE_YET', 'en'{?});
 end;
@@ -8859,7 +8859,7 @@ procedure TFHIRNativeStorageService.Initialise(ini: TFHIRServerIniFile);
 var
   conn: TKDBConnection;
   rn, fn : String;
-  implGuides : TAdvStringSet;
+  implGuides : TFslStringSet;
   cfg : TFHIRResourceConfig;
 begin
   ServerContext.SubscriptionManager := TSubscriptionManager.Create(ServerContext);
@@ -8885,7 +8885,7 @@ begin
   ServerContext.SubscriptionManager.OnExecuteSearch := DoExecuteSearch;
   ServerContext.SubscriptionManager.OnGetSessionEvent := ServerContext.SessionManager.GetSessionByKey;
 
-  implGuides := TAdvStringSet.create;
+  implGuides := TFslStringSet.create;
   try
     conn := FDB.GetConnection('setup');
     try
@@ -9177,7 +9177,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.DoExecuteSearch(typekey: integer; compartment : TFHIRCompartmentId; sessionCompartments: TAdvList<TFHIRCompartmentId>; params: TParseMap; conn: TKDBConnection): String;
+function TFHIRNativeStorageService.DoExecuteSearch(typekey: integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params: TParseMap; conn: TKDBConnection): String;
 var
   sp: TSearchProcessor;
 begin
@@ -9261,7 +9261,7 @@ begin
 end;
 
 
-procedure TFHIRNativeStorageService.fetchClients(list: TAdvList<TRegisteredClientInformation>);
+procedure TFHIRNativeStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
 var
   client : TRegisteredClientInformation;
 begin
@@ -9297,7 +9297,7 @@ begin
   );
 end;
 
-procedure TFHIRNativeStorageService.fetchExpiredTasks(tasks: TAdvList<TAsyncTaskInformation>);
+procedure TFHIRNativeStorageService.fetchExpiredTasks(tasks: TFslList<TAsyncTaskInformation>);
 begin
   DB.connection('async',
     procedure (conn : TKDBConnection)
@@ -9392,7 +9392,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>): TStringList;
+function TFHIRNativeStorageService.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>): TStringList;
 var
   conn : TKDBConnection;
   j : integer;
@@ -9986,7 +9986,7 @@ begin
 end;
 
 
-procedure TFHIRNativeStorageService.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TAdvBuffer; b : TStringBuilder);
+procedure TFHIRNativeStorageService.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TFslBuffer; b : TStringBuilder);
 var
   ctxt : TFHIRValidatorContext;
   issue : TFHIROperationOutcomeIssue;
@@ -10026,7 +10026,7 @@ end;
 procedure TFHIRNativeStorageService.RunValidation;
 var
   conn : TKDBConnection;
-  bufJ, bufX : TAdvBuffer;
+  bufJ, bufX : TFslBuffer;
   b : TStringBuilder;
   i : integer;
 begin
@@ -10041,8 +10041,8 @@ begin
         i := 0;
         while conn.FetchNext do
         begin
-          bufJ := TAdvBuffer.create;
-          bufX := TAdvBuffer.create;
+          bufJ := TFslBuffer.create;
+          bufX := TFslBuffer.create;
           try
             bufJ.asBytes := conn.ColBlobByName['JsonContent'];
             bufX.asBytes := conn.ColBlobByName['XmlContent'];
@@ -10065,7 +10065,7 @@ begin
         raise;
       end;
     end;
-    bufJ := TAdvBuffer.Create;
+    bufJ := TFslBuffer.Create;
     try
       bufJ.AsUnicode := b.ToString;
       bufJ.SaveToFileName('c:\temp\validation.txt');
@@ -10714,10 +10714,10 @@ end;
 function TFHIRNativeStorageService.ProfilesAsOptionList: String;
 var
   i: integer;
-  builder: TAdvStringBuilder;
-  Profiles: TAdvStringMatch;
+  builder: TFslStringBuilder;
+  Profiles: TFslStringMatch;
 begin
-  builder := TAdvStringBuilder.Create;
+  builder := TFslStringBuilder.Create;
   try
     Profiles := ServerContext.ValidatorContext.Profiles.getLinks(false);
     try
@@ -11003,7 +11003,7 @@ begin
 end;
 
 
-procedure TFHIRNativeStorageService.loadCustomResources(guides: TAdvStringSet);
+procedure TFHIRNativeStorageService.loadCustomResources(guides: TFslStringSet);
 var
   storage: TFHIRNativeOperationEngine;
   s : String;

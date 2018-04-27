@@ -41,7 +41,7 @@ const
   { TMultiValList: any parsed items found without names will be collected under this name }
 
 type
-  TMultiValList = class(TAdvObject)
+  TMultiValList = class(TFslObject)
   Private
     fItemList: TStringList;
     FSource: String;
@@ -85,7 +85,7 @@ type
     property Value[const Name: String]: String Read GetVar; default;
   end;
 
-  TContentType = class (TAdvObject)
+  TContentType = class (TFslObject)
   private
     FParams: TDictionary<String, String>;
     FBase: String;
@@ -98,7 +98,7 @@ type
     destructor Destroy; override;
 
     class function parseSingle(s : String) : TContentType;
-    class function parseList(s : String) : TAdvList<TContentType>;
+    class function parseList(s : String) : TFslList<TContentType>;
 
     property base : String read FBase write FBase;
     property main : String read GetMain write SetMain;
@@ -652,11 +652,11 @@ begin
     FBase := 'application/'+Value;
 end;
 
-class function TContentType.parseList(s : String): TAdvList<TContentType>;
+class function TContentType.parseList(s : String): TFslList<TContentType>;
 var
   e : String;
 begin
-  result := TAdvList<TContentType>.create;
+  result := TFslList<TContentType>.create;
   try
     for e in s.Split([',']) do
       result.add(parseSingle(e));

@@ -48,7 +48,7 @@ type
 
   ESettingsError = class(Exception);
 
-  TSettingsAdapter = class(TAdvObject)
+  TSettingsAdapter = class(TFslObject)
   Private
   Protected
     procedure ApplyTo(const ATarget: TSettingsAdapter); Virtual;

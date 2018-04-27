@@ -11,7 +11,7 @@ uses
   FHIRServerContext;
 
 Type
-  TFHIRServerPostHandler = class (TAdvObject)
+  TFHIRServerPostHandler = class (TFslObject)
   private
     FParams: TParseMap;
     FSecure: boolean;

@@ -37,11 +37,11 @@ uses
   FHIR.Tools.Tags;
 
 type
-  TFHIRTagManager = class (TAdvObject)
+  TFHIRTagManager = class (TFslObject)
   private
     FLock: TCriticalSection;
     FTags: TFHIRTagList;
-    FTagsByKey: TAdvMap<TFHIRTag>;
+    FTagsByKey: TFslMap<TFHIRTag>;
     FLastTagVersionKey: integer;
     FLastTagKey: integer;
   public
@@ -76,7 +76,7 @@ begin
   inherited create;
   FLock := TCriticalSection.Create('session-manager');
   FTags := TFHIRTagList.Create;
-  FTagsByKey := TAdvMap<TFHIRTag>.Create;
+  FTagsByKey := TFslMap<TFHIRTag>.Create;
 end;
 
 procedure TFHIRTagManager.crossLink;

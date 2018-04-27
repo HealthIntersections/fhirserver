@@ -53,7 +53,7 @@ type
     class function isKnownHook(c : String) : boolean;
   end;
 
-  TCDSRequestOAuthDetails = class (TAdvObject)
+  TCDSRequestOAuthDetails = class (TFslObject)
   private
     FExpires : integer;
     FScopes : string;
@@ -64,7 +64,7 @@ type
     Property Token : string read FToken write FToken;
   end;
 
-  TCDSHookRequest = class (TAdvObject)
+  TCDSHookRequest = class (TFslObject)
   private
     FHook : String;
     FHookInstance : String;
@@ -75,8 +75,8 @@ type
     Fpatient: String;
     Fencounter: String;
     FLang : String;
-    FContext: TAdvList<TFHIRResource>;
-    FPreFetch : TAdvMap<TFhirBundleEntry>;
+    FContext: TFslList<TFHIRResource>;
+    FPreFetch : TFslMap<TFhirBundleEntry>;
     FBaseUrl: String;
 
   public
@@ -97,13 +97,13 @@ type
     property user : String read Fuser write Fuser;
     property patient : String read Fpatient write Fpatient;
     property encounter : String read Fencounter write Fencounter;
-    property context : TAdvList<TFHIRResource> read FContext;
-    property preFetch : TAdvMap<TFhirBundleEntry> read FPreFetch;
+    property context : TFslList<TFHIRResource> read FContext;
+    property preFetch : TFslMap<TFhirBundleEntry> read FPreFetch;
     property lang : String read FLang write FLang;
     property baseURL : String read FBaseUrl write FBaseUrl;
   end;
 
-  TCDSHookCardSuggestion = class (TAdvObject)
+  TCDSHookCardSuggestion = class (TFslObject)
   private
     FLabel: String;
     FUUID: String;
@@ -123,7 +123,7 @@ type
     property delete : String read FDelete write FDelete;
   end;
 
-  TCDSHookCardLink = class (TAdvObject)
+  TCDSHookCardLink = class (TFslObject)
   private
     FLabel: String;
     FUrl: String;
@@ -141,15 +141,15 @@ type
     property type_ : String read FType write FType;
   end;
 
-  TCDSHookCard = class (TAdvObject)
+  TCDSHookCard = class (TFslObject)
   private
     FSourceURL: String;
     Fdetail: String;
     FsourceLabel: String;
     Fsummary: String;
     Findicator: String;
-    FSuggestions: TAdvList<TCDSHookCardSuggestion>;
-    FLinks: TAdvList<TCDSHookCardLink>;
+    FSuggestions: TFslList<TCDSHookCardSuggestion>;
+    FLinks: TFslList<TCDSHookCardLink>;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -165,13 +165,13 @@ type
     property indicator : String read Findicator write Findicator;
     property sourceLabel : String read FsourceLabel write FsourceLabel;
     property sourceURL : String read FSourceURL write FSourceURL;
-    property suggestions : TAdvList<TCDSHookCardSuggestion> read FSuggestions;
-    property links : TAdvList<TCDSHookCardLink> read FLinks;
+    property suggestions : TFslList<TCDSHookCardSuggestion> read FSuggestions;
+    property links : TFslList<TCDSHookCardLink> read FLinks;
 
     procedure addLink(label_, uri : String);
   end;
 
-  TCDSHookDecision = class (TAdvObject)
+  TCDSHookDecision = class (TFslObject)
   private
     FCreate: TStringList;
     FDelete: TStringList;
@@ -187,10 +187,10 @@ type
     property Delete : TStringList read FDelete;
   end;
 
-  TCDSHookResponse = class (TAdvObject)
+  TCDSHookResponse = class (TFslObject)
   private
-    FCards: TAdvList<TCDSHookCard>;
-    FDecisions : TAdvList<TCDSHookDecision>;
+    FCards: TFslList<TCDSHookCard>;
+    FDecisions : TFslList<TCDSHookDecision>;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -199,19 +199,19 @@ type
     function Link : TCDSHookResponse; overload;
     function AsJson : String;
 
-    property cards : TAdvList<TCDSHookCard> read FCards;
+    property cards : TFslList<TCDSHookCard> read FCards;
     function addCard : TCDSHookCard;
-    property decisions : TAdvList<TCDSHookDecision> read FDecisions;
+    property decisions : TFslList<TCDSHookDecision> read FDecisions;
     function addDecision : TCDSHookDecision;
   end;
 
-  TCDSHookCache = class (TAdvObject)
+  TCDSHookCache = class (TFslObject)
   public
     function has(request : TCDSHookRequest; var response : TCDSHookResponse) : boolean;
     procedure see(reuqest : TCDSHookRequest; response : TCDSHookResponse);
   end;
 
-function presentAsHtml(cards : TAdvList<TCDSHookCard>; inprogress, errors : TStringList) : String;
+function presentAsHtml(cards : TFslList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 
 implementation
 
@@ -359,7 +359,7 @@ begin
     result := 'about:security-risk';
 end;
 
-function presentAsHtml(cards : TAdvList<TCDSHookCard>; inprogress, errors : TStringList) : String;
+function presentAsHtml(cards : TFslList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 var
   b : TStringBuilder;
   card : TCDSHookCard;
@@ -443,14 +443,14 @@ end;
 
 function TCDSHookRequest.AsJson: String;
 var
-  ss : TAdvStringStream;
+  ss : TFslStringStream;
   writer : TJSONWriter;
   c : TFhirResource;
   comp : TFHIRJsonComposer;
   s : String;
   be : TFhirBundleEntry;
 begin
-  ss := TAdvStringStream.Create;
+  ss := TFslStringStream.Create;
   try
     writer := TJsonWriterDirect.create;
     try
@@ -524,8 +524,8 @@ end;
 constructor TCDSHookRequest.Create;
 begin
   inherited Create;
-  FContext := TAdvList<TFHIRResource>.create;
-  FPreFetch := TAdvMap<TFhirBundleEntry>.create;
+  FContext := TFslList<TFHIRResource>.create;
+  FPreFetch := TFslMap<TFhirBundleEntry>.create;
 end;
 
 constructor TCDSHookRequest.Create(json: TJsonObject);
@@ -743,8 +743,8 @@ end;
 constructor TCDSHookCard.Create;
 begin
   inherited Create;
-  FSuggestions := TAdvList<TCDSHookCardSuggestion>.create;
-  FLinks := TAdvList<TCDSHookCardLink>.create;
+  FSuggestions := TFslList<TCDSHookCardSuggestion>.create;
+  FLinks := TFslList<TCDSHookCardLink>.create;
 end;
 
 
@@ -814,13 +814,13 @@ end;
 
 function TCDSHookResponse.AsJson: String;
 var
-  ss : TAdvStringStream;
+  ss : TFslStringStream;
   writer : TJSONWriter;
 //  c : TFhirResource;
 //  comp : TFHIRJsonComposer;
   card : TCDSHookCard;
 begin
-  ss := TAdvStringStream.Create;
+  ss := TFslStringStream.Create;
   try
     writer := TJsonWriterDirect.create;
     try
@@ -865,8 +865,8 @@ end;
 constructor TCDSHookResponse.Create;
 begin
   inherited Create;
-  FCards := TAdvList<TCDSHookCard>.create;
-  FDecisions := TAdvList<TCDSHookDecision>.create;
+  FCards := TFslList<TCDSHookCard>.create;
+  FDecisions := TFslList<TCDSHookDecision>.create;
 end;
 
 destructor TCDSHookResponse.Destroy;
