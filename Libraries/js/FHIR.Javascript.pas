@@ -220,7 +220,7 @@ valueOf()	Returns the primitive value of an array
   protected
     procedure freeObject(obj : TObject); virtual;
   public
-    constructor Create; virtual;
+    constructor Create(chakraPath : String); virtual;
     destructor Destroy; override;
 
     property InstanceId : cardinal read FInstanceId;
@@ -636,13 +636,17 @@ end;
 threadvar
   gjs : TJavascript;
 
-constructor TJavascript.Create;
+constructor TJavascript.Create(chakraPath : String);
+var
+  msg : String;
 begin
-  inherited;
+  inherited create;
 
   if gjs <> nil then
     raise Exception.Create('There is already a javascript runtime on this thread');
   gjs := self;
+  if not loadChakra(chakraPath, msg) then
+    raise EJavascriptScript.Create('Error Loading Chakra: '+msg);
   FDefinedClasses := TDictionary<String,TJavascriptClassDefinition>.create;
   FOwnedObjects := TObjectList<TObject>.create;
   registerConsoleLog;
@@ -659,6 +663,7 @@ begin
       def.Free;
   FDefinedClasses.Free;
   gjs := nil;
+  unloadChakra;
   inherited;
 end;
 

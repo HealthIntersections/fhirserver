@@ -71,7 +71,7 @@ Type
     procedure SetRegistry(const Value: TEventScriptRegistry);
     procedure checkHasEngine;
   public
-    constructor Create; override;
+    constructor Create(chakraPath : String);
     destructor Destroy; override;
 
     property registry : TEventScriptRegistry read FRegistry write SetRegistry;
@@ -122,13 +122,14 @@ end;
 procedure TJsHost.checkHasEngine;
 begin
   if FEngine = nil then
-    FEngine := TFHIRJavascript.Create;
+    raise EJavascriptApplication.Create('Javascript is not supported on this server');
 end;
 
-constructor TJsHost.Create;
+constructor TJsHost.Create(chakraPath : String);
 begin
-  inherited;
-
+  inherited create;
+  if (chakraPath <> '') then
+    FEngine := TFHIRJavascript.Create(chakraPath);
 end;
 
 destructor TJsHost.Destroy;

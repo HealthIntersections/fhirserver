@@ -15,6 +15,9 @@ outright wrong)
 
 interface
 
+uses
+  Windows;
+
 type
 
   bool = Boolean;
@@ -277,11 +280,11 @@ type
             _Out_ JsRuntimeHandle *runtime);
 
   }
-  function JsCreateRuntime(
+  TJsCreateRuntime = function (
     attributes: JsRuntimeAttributes;
     threadService: JsThreadServiceCallback;
     var runtime: JsRuntimeHandle
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -291,7 +294,7 @@ type
 //  }
 //  function JsCollectGarbage(
 //    runtime: JsRuntimeHandle
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
    CHAKRA_API
@@ -299,9 +302,9 @@ type
           _In_ JsRuntimeHandle runtime);
 
   }
-  function JsDisposeRuntime(
+  TJsDisposeRuntime = function(
     runtime: JsRuntimeHandle
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -310,10 +313,10 @@ type
 //            _Out_ size_t *memoryUsage);
 //
 //  }
-//  function JsGetRuntimeMemoryUsage(
+//  TJsGetRuntimeMemoryUsage = function (
 //    runtime: JsRuntimeHandle;
 //    var memoryUsage: size_t
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -322,10 +325,10 @@ type
 //            _Out_ size_t *memoryLimit);
 //
 //  }
-//  function JsGetRuntimeMemoryLimit(
+//  TJsGetRuntimeMemoryLimit = function (
 //    runtime: JsRuntimeHandle;
 //    var memoryLimit: size_t
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -333,10 +336,10 @@ type
 //            _In_ JsRuntimeHandle runtime,
 //            _In_ size_t memoryLimit);
 //  }
-//  function JsSetRuntimeMemoryLimit(
+//  TJsSetRuntimeMemoryLimit = function (
 //    runtime: JsRuntimeHandle;
 //    var memoryLimit: size_t
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //     CHAKRA_API
@@ -345,11 +348,11 @@ type
 //            _In_opt_ void *callbackState,
 //            _In_ JsMemoryAllocationCallback allocationCallback);
 //  }
-//  function JsSetRuntimeMemoryAllocationCallback(
+//  TJsSetRuntimeMemoryAllocationCallback = function (
 //    runtime: JsRuntimeHandle;
 //    callbackState: Pointer;
 //    allocationCallback: JsMemoryAllocationCallback
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -358,11 +361,11 @@ type
 //            _In_opt_ void *callbackState,
 //            _In_ JsBeforeCollectCallback beforeCollectCallback);
 //  }
-//  function JsSetRuntimeBeforeCollectCallback(
+//  TJsSetRuntimeBeforeCollectCallback = function (
 //    runtime: JsRuntimeHandle;
 //    callbackState: Pointer;
 //    beforeCollectCallback: JsBeforeCollectCallback
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -370,10 +373,10 @@ type
 //            _In_ JsRef ref,
 //            _Out_opt_ unsigned int *count);
 //  }
-//  function JsAddRef(
+//  TJsAddRef = function (
 //    ref: JsRef;
 //    var count: LongWord
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -381,10 +384,10 @@ type
 //            _In_ JsRef ref,
 //            _Out_opt_ unsigned int *count);
 //  }
-//  function JsRelease(
+//  TJsRelease = function (
 //    ref: JsRef;
 //    var count: LongWord
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -393,11 +396,11 @@ type
             _In_opt_ void *callbackState,
             _In_ JsObjectBeforeCollectCallback objectBeforeCollectCallback);
   }
-  function JsSetObjectBeforeCollectCallback(
+  TJsSetObjectBeforeCollectCallback = function (
     ref: JsRef;
     callbackState: Pointer;
     objectBeforeCollectCallback: JsObjectBeforeCollectCallback
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
@@ -405,28 +408,28 @@ type
             _In_ JsRuntimeHandle runtime,
             _Out_ JsContextRef *newContext);
   }
-  function JsCreateContext(
+  TJsCreateContext = function (
     runtime: JsRuntimeHandle;
     var newContext: JsContextRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
 //        JsGetCurrentContext(
 //            _Out_ JsContextRef *currentContext);
 //  }
-//  function JsGetCurrentContext(
+//  TJsGetCurrentContext = function (
 //    var currentContext: JsContextRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
         JsSetCurrentContext(
             _In_ JsContextRef context);
   }
-  function JsSetCurrentContext(
+  TJsSetCurrentContext = function (
     context: JsContextRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -434,10 +437,10 @@ type
 //            _In_ JsValueRef object,
 //            _Out_ JsContextRef *context);
 //  }
-//  function JsGetContextOfObject(
+//  TJsGetContextOfObject = function (
 //    _object: JsValueRef;
 //    var context: JsContextRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //     CHAKRA_API
@@ -445,10 +448,10 @@ type
 //            _In_ JsContextRef context,
 //            _Out_ void **data);
 //  }
-//  function JsGetContextData(
+//  TJsGetContextData = function (
 //    context: JsContextRef;
 //    var data: Pointer
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -456,10 +459,10 @@ type
 //            _In_ JsContextRef context,
 //            _In_ void *data);
 //  }
-//  function JsSetContextData(
+//  TJsSetContextData = function (
 //    context: JsContextRef;
 //    data: Pointer
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //     CHAKRA_API
@@ -467,19 +470,19 @@ type
 //            _In_ JsContextRef context,
 //            _Out_ JsRuntimeHandle *runtime);
 //  }
-//  function JsGetRuntime(
+//  TJsGetRuntime = function (
 //    context: JsContextRef;
 //    var runtime: JsRuntimeHandle
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //     CHAKRA_API
 //        JsIdle(
 //            _Out_opt_ unsigned int *nextIdleTick);
 //  }
-//  function JsIdle(
+//  TJsIdle = function (
 //    var nextIdleTick: LongWord
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -489,12 +492,12 @@ type
 //            _In_z_ const char *sourceUrl,
 //            _Out_ JsValueRef *result);
 //  }
-//  function JsParseScript(
+//  TJsParseScript = function (
 //    const script: PChar;
 //    sourceContext: JsSourceContext;
 //    const sourceUrl: PChar;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //     CHAKRA_API
@@ -505,13 +508,13 @@ type
 //            _In_ JsParseScriptAttributes parseAttributes,
 //            _Out_ JsValueRef *result);
 //  }
-//  function JsParseScriptWithAttributesUtf8(
+//  TJsParseScriptWithAttributesUtf8 = function (
 //    const script: PAnsiChar;
 //    sourceContext: JsSourceContext;
 //    const sourceUrl: PAnsiChar;
 //    parseAttributes: JsParseScriptAttributes;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -521,12 +524,12 @@ type
             _In_z_ const char *sourceUrl,
             _Out_ JsValueRef *result);
   }
-  function JsRunScript(
+  TJsRunScript = function (
     const script: PChar;
     sourceContext: JsSourceContext;
     const sourceUrl: PChar;
     var result: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
   CHAKRA_API
@@ -537,12 +540,12 @@ type
         _In_ JsParseScriptAttributes parseAttributes,
         _Out_ JsValueRef *result);
   }
- function JsRun(
+ TJsRun = function (
           script: JsValueRef;
           sourceContext: JsSourceContext;
           sourceUrl: JsValueRef;
           parseAttributes: JsParseScriptAttributes;
-          out result: JsValueRef): JsErrorCode; stdcall; external DLL_NAME;
+          out result: JsValueRef): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -551,11 +554,11 @@ type
 //            _Out_writes_to_opt_(*bufferSize, *bufferSize) ChakraBytePtr buffer,
 //            _Inout_ unsigned int *bufferSize);
 //  }
-//  function JsSerializeScriptUtf8(
+//  TJsSerializeScriptUtf8 = function (
 //    const script: PAnsiChar;
 //    buffer: ChakraBytePtr;
 //    var bufferSize: LongWord
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -567,14 +570,14 @@ type
 //            _In_z_ const char *sourceUrl,
 //            _Out_ JsValueRef * result);
 //  }
-//  function JsParseSerializedScriptUtf8(
+//  TJsParseSerializedScriptUtf8 = function (
 //    scriptLoadCallback: JsSerializedScriptLoadUtf8SourceCallback;
 //    scriptUnloadCallback: JsSerializedScriptUnloadCallback;
 //    buffer: ChakraBytePtr;
 //    sourceContext: JsSourceContext;
 //    const sourceUrl: PAnsiChar;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -586,14 +589,14 @@ type
 //            _In_z_ const char *sourceUrl,
 //            _Out_opt_ JsValueRef * result);
 //  }
-//  function JsRunSerializedScriptUtf8(
+//  TJsRunSerializedScriptUtf8 = function (
 //    scriptLoadCallback: JsSerializedScriptLoadUtf8SourceCallback;
 //    scriptUnloadCallback: JsSerializedScriptUnloadCallback;
 //    buffer: ChakraBytePtr;
 //    sourceContext: JsSourceContext;
 //    const sourceUrl: PAnsiChar;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -601,10 +604,10 @@ type
 //            _In_z_ const char *name,
 //            _Out_ JsPropertyIdRef *propertyId);
 //  }
-//  function JsGetPropertyIdFromNameUtf8(
+//  TJsGetPropertyIdFromNameUtf8 = function (
 //    const name: PAnsiChar;
 //    var propertyId: JsPropertyIdRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -612,10 +615,10 @@ type
 //            _In_ JsPropertyIdRef propertyId,
 //            _Outptr_result_z_ char **name);
 //  }
-//  function JsGetPropertyNameFromIdUtf8Copy(
+//  TJsGetPropertyNameFromIdUtf8Copy = function (
 //    propertyId: JsPropertyIdRef;
 //    var name: PAnsiChar
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -624,11 +627,11 @@ type
             _In_ size_t stringLength,
             _Out_ JsValueRef *value);
   }
-  function JsPointerToString(
+  TJsPointerToString = function (
     const stringValue: PChar;
     stringLength: size_t;
     var value: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
@@ -637,11 +640,11 @@ type
             _Outptr_result_buffer_(*stringLength) char **stringValue,
             _Out_ size_t *stringLength);
   }
-  function JsStringToPointer(
+  TJsStringToPointer = function (
     value: JsValueRef;
     var stringValue: PChar;
     var stringLength: size_t
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -649,10 +652,10 @@ type
 //            _In_ JsPropertyIdRef propertyId,
 //            _Out_ JsValueRef *symbol);
 //  }
-//  function JsGetSymbolFromPropertyId(
+//  TJsGetSymbolFromPropertyId = function (
 //    propertyId: JsPropertyIdRef;
 //    var symbol: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -660,10 +663,10 @@ type
 //            _In_ JsPropertyIdRef propertyId,
 //            _Out_ JsPropertyIdType* propertyIdType);
 //  }
-//  function JsGetPropertyIdType(
+//  TJsGetPropertyIdType = function (
 //    propertyId: JsPropertyIdRef;
 //    var propertyIdType: JsPropertyIdType
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -671,10 +674,10 @@ type
 //            _In_ JsValueRef symbol,
 //            _Out_ JsPropertyIdRef *propertyId);
 //  }
-//  function JsGetPropertyIdFromSymbol(
+//  TJsGetPropertyIdFromSymbol = function (
 //    symbol: JsValueRef;
 //    var propertyId: JsPropertyIdRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -682,10 +685,10 @@ type
 //            _In_ JsValueRef description,
 //            _Out_ JsValueRef *result);
 //  }
-//  function JsCreateSymbol(
+//  TJsCreateSymbol = function (
 //    description: JsValueRef;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -693,46 +696,46 @@ type
 //            _In_ JsValueRef object,
 //            _Out_ JsValueRef *propertySymbols);
 //  }
-//  function JsGetOwnPropertySymbols(
+//  TJsGetOwnPropertySymbols = function (
 //    _object: JsValueRef;
 //    var propertySymbols: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
 //        JsGetUndefinedValue(
 //            _Out_ JsValueRef *undefinedValue);
 //  }
-//  function JsGetUndefinedValue(
+//  TJsGetUndefinedValue = function (
 //    var undefinedValue: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
         JsGetNullValue(
             _Out_ JsValueRef *nullValue);
   }
-  function JsGetNullValue(
+  TJsGetNullValue = function (
     var nullValue: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
 //        JsGetTrueValue(
 //            _Out_ JsValueRef *trueValue);
 //  }
-//  function JsGetTrueValue(
+//  TJsGetTrueValue = function (
 //    var trueValue: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
 //        JsGetFalseValue(
 //            _Out_ JsValueRef *falseValue);
 //  }
-//  function JsGetFalseValue(
+//  TJsGetFalseValue = function (
 //    var falseValue: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
      CHAKRA_API
@@ -740,10 +743,10 @@ type
             _In_ bool value,
             _Out_ JsValueRef *booleanValue);
   }
-  function JsBoolToBoolean(
+  TJsBoolToBoolean = function (
     value: bool;
     var booleanValue: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
@@ -751,10 +754,10 @@ type
             _In_ JsValueRef value,
             _Out_ bool *boolValue);
   }
-  function JsBooleanToBool(
+  TJsBooleanToBool = function (
     value: JsValueRef;
     var boolValue: bool
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -762,10 +765,10 @@ type
 //            _In_ JsValueRef value,
 //            _Out_ JsValueRef *booleanValue);
 //  }
-//  function JsConvertValueToBoolean(
+//  TJsConvertValueToBoolean = function (
 //    value: JsValueRef;
 //    var booleanValue: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -773,10 +776,10 @@ type
             _In_ JsValueRef value,
             _Out_ JsValueType *type);
   }
-  function JsGetValueType(
+  TJsGetValueType = function (
     value: JsValueRef;
     var _type: int // if you just use JsValueType directly, you'll get the stack trashed in 64bit
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -784,10 +787,10 @@ type
 //            _In_ double doubleValue,
 //            _Out_ JsValueRef *value);
 //  }
-//  function JsDoubleToNumber(
+//  TJsDoubleToNumber = function (
 //    doubleValue: double;
 //    var value: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -795,10 +798,10 @@ type
             _In_ int intValue,
             _Out_ JsValueRef *value);
   }
-  function JsIntToNumber(
+  TJsIntToNumber = function (
     intValue: int;
     var value: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -806,10 +809,10 @@ type
 //            _In_ JsValueRef value,
 //            _Out_ double *doubleValue);
 //  }
-//  function JsNumberToDouble(
+//  TJsNumberToDouble = function (
 //    value: JsValueRef;
 //    var doubleValue: double
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -817,10 +820,10 @@ type
             _In_ JsValueRef value,
             _Out_ int *intValue);
   }
-  function JsNumberToInt(
+  TJsNumberToInt = function (
     value: JsValueRef;
     var intValue: int
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -828,10 +831,10 @@ type
 //            _In_ JsValueRef value,
 //            _Out_ JsValueRef *numberValue);
 //  }
-//  function JsConvertValueToNumber(
+//  TJsConvertValueToNumber = function (
 //    value: JsValueRef;
 //    var numberValue: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -839,10 +842,10 @@ type
 //            _In_ JsValueRef stringValue,
 //            _Out_ int *length);
 //  }
-//  function JsGetStringLength(
+//  TJsGetStringLength = function (
 //    stringValue: JsValueRef;
 //    var length: int
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -850,28 +853,28 @@ type
             _In_ JsValueRef value,
             _Out_ JsValueRef *stringValue);
   }
-  function JsConvertValueToString(
+  TJsConvertValueToString = function (
     value: JsValueRef;
     var stringValue: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
         JsGetGlobalObject(
             _Out_ JsValueRef *globalObject);
   }
-  function JsGetGlobalObject(
+  TJsGetGlobalObject = function (
     var globalObject: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
         JsCreateObject(
             _Out_ JsValueRef *object);
   }
-  function JsCreateObject(
+  TJsCreateObject = function (
     var _object: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 
  {
@@ -881,10 +884,10 @@ type
         _In_ size_t length,
         _Out_ JsValueRef *value);
         }
-  function JsCreateString(
+  TJsCreateString = function (
         content: PAnsiChar;
         length: size_t;
-        out value: JsValueRef): JsErrorCode; stdcall; external DLL_NAME;
+        out value: JsValueRef): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
@@ -893,11 +896,11 @@ type
             _In_opt_ JsFinalizeCallback finalizeCallback,
             _Out_ JsValueRef *object);
   }
-  function JsCreateExternalObject(
+  TJsCreateExternalObject = function (
     data: Pointer;
     finalizeCallback: JsFinalizeCallback;
     var _object: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -905,10 +908,10 @@ type
 //            _In_ JsValueRef value,
 //            _Out_ JsValueRef *object);
 //  }
-//  function JsConvertValueToObject(
+//  TJsConvertValueToObject = function (
 //    value: JsValueRef;
 //    var _object: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -916,10 +919,10 @@ type
 //            _In_ JsValueRef object,
 //            _Out_ JsValueRef *prototypeObject);
 //  }
-//  function JsGetPrototype(
+//  TJsGetPrototype = function (
 //    _object: JsValueRef;
 //    var prototypeObject: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -927,10 +930,10 @@ type
 //            _In_ JsValueRef object,
 //            _In_ JsValueRef prototypeObject);
 //  }
-//  function JsSetPrototype(
+//  TJsSetPrototype = function (
 //    _object: JsValueRef;
 //    prototypeObject: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -939,11 +942,11 @@ type
 //            _In_ JsValueRef constructor,
 //            _Out_ bool *result);
 //  }
-//  function JsInstanceOf(
+//  TJsInstanceOf = function (
 //    var _object: JsValueRef;
 //    _constructor: JsValueRef;
 //    var result: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -951,10 +954,10 @@ type
 //            _In_ JsValueRef object,
 //            _Out_ bool *value);
 //  }
-//  function JsGetExtensionAllowed(
+//  TJsGetExtensionAllowed = function (
 //    _objec: JsValueRef;
 //    var value: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
   CHAKRA_API
@@ -963,19 +966,19 @@ type
         _In_ size_t length,
         _Out_ JsPropertyIdRef *propertyId);
   }
-  function JsCreatePropertyId(
+  TJsCreatePropertyId = function (
         name : PAnsiChar;
         length : cardinal;
-        var propertyId : JsPropertyIdRef) : JsErrorCode; stdcall; external DLL_NAME;
+        var propertyId : JsPropertyIdRef) : JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
 //        JsPreventExtension(
 //            _In_ JsValueRef object);
 //  }
-//  function JsPreventExtension(
+//  TJsPreventExtension = function (
 //    _object: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -984,11 +987,11 @@ type
             _In_ JsPropertyIdRef propertyId,
             _Out_ JsValueRef *value);
   }
-  function JsGetProperty(
+  TJsGetProperty = function (
     _object: JsValueRef;
     propertyId: JsPropertyIdRef;
     var value: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -997,11 +1000,11 @@ type
 //            _In_ JsPropertyIdRef propertyId,
 //            _Out_ JsValueRef *propertyDescriptor);
 //  }
-//  function JsGetOwnPropertyDescriptor(
+//  TJsGetOwnPropertyDescriptor = function (
 //    _object: JsValueRef;
 //    propertyId: JsPropertyIdRef;
 //    var propertyDescriptor: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -1009,10 +1012,10 @@ type
             _In_ JsValueRef object,
             _Out_ JsValueRef *propertyNames);
   }
-  function JsGetOwnPropertyNames(
+  TJsGetOwnPropertyNames = function (
     _object: JsValueRef;
     var propertyNames: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
@@ -1022,12 +1025,12 @@ type
             _In_ JsValueRef value,
             _In_ bool useStrictRules);
   }
-  function JsSetProperty(
+  TJsSetProperty = function (
     _object: JsValueRef;
     propertyId: JsPropertyIdRef;
     value: JsValueRef;
     useStrictRules: bool
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -1036,11 +1039,11 @@ type
 //            _In_ JsPropertyIdRef propertyId,
 //            _Out_ bool *hasProperty);
 //  }
-//  function JsHasProperty(
+//  TJsHasProperty = function (
 //    _object: JsValueRef;
 //    propertyId: JsPropertyIdRef;
 //    var hasProperty: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1050,12 +1053,12 @@ type
 //            _In_ bool useStrictRules,
 //            _Out_ JsValueRef *result);
 //  }
-//  function JsDeleteProperty(
+//  TJsDeleteProperty = function (
 //    _object: JsValueRef;
 //    propertyId: JsPropertyIdRef;
 //    useStrictRules: bool;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -1065,12 +1068,12 @@ type
             _In_ JsValueRef propertyDescriptor,
             _Out_ bool *result);
   }
-  function JsDefineProperty(
+  TJsDefineProperty = function (
     _object: JsValueRef;
     propertyId: JsPropertyIdRef;
     propertyDescriptor: JsValueRef;
     var result: bool
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -1079,11 +1082,11 @@ type
 //            _In_ JsValueRef index,
 //            _Out_ bool *result);
 //  }
-//  function JsHasIndexedProperty(
+//  TJsHasIndexedProperty = function (
 //    _object: JsValueRef;
 //    index: JsValueRef;
 //    var result: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -1092,11 +1095,11 @@ type
             _In_ JsValueRef index,
             _Out_ JsValueRef *result);
   }
-  function JsGetIndexedProperty(
+  TJsGetIndexedProperty = function (
     _object: JsValueRef;
     index: JsValueRef;
     var result: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
@@ -1105,11 +1108,11 @@ type
             _In_ JsValueRef index,
             _In_ JsValueRef value);
   }
-  function JsSetIndexedProperty(
+  TJsSetIndexedProperty = function (
     _object: JsValueRef;
     index: JsValueRef;
     value: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -1117,10 +1120,10 @@ type
 //            _In_ JsValueRef object,
 //            _In_ JsValueRef index);
 //  }
-//  function JsDeleteIndexedProperty(
+//  TJsDeleteIndexedProperty = function (
 //    _object: JsValueRef;
 //    index: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1128,10 +1131,10 @@ type
 //            _In_ JsValueRef object,
 //            _Out_ bool* value);
 //  }
-//  function JsHasIndexedPropertiesExternalData(
+//  TJsHasIndexedPropertiesExternalData = function (
 //    _object: JsValueRef;
 //    var value: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1141,12 +1144,12 @@ type
 //            _Out_ JsTypedArrayType* arrayType,
 //            _Out_ unsigned int* elementLength);
 //  }
-//  function JsGetIndexedPropertiesExternalData(
+//  TJsGetIndexedPropertiesExternalData = function (
 //    _object: JsValueRef;
 //    data: Pointer;
 //    var arrayType: JsTypedArrayType;
 //    var elementLength: uint
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1156,12 +1159,12 @@ type
 //            _In_ JsTypedArrayType arrayType,
 //            _In_ unsigned int elementLength);
 //  }
-//  function JsSetIndexedPropertiesToExternalData(
+//  TJsSetIndexedPropertiesToExternalData = function (
 //    _object: JsValueRef;
 //    data: Pointer;
 //    arrayType: JsTypedArrayType;
 //    elementLength: uint
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1170,11 +1173,11 @@ type
 //            _In_ JsValueRef object2,
 //            _Out_ bool *result);
 //  }
-//  function JsEquals(
+//  TJsEquals = function (
 //    object1: JsValueRef;
 //    object2: JsValueRef;
 //    var result: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1183,11 +1186,11 @@ type
 //            _In_ JsValueRef object2,
 //            _Out_ bool *result);
 //  }
-//  function JsStrictEquals(
+//  TJsStrictEquals = function (
 //    object1: JsValueRef;
 //    object2: JsValueRef;
 //    var result: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -1195,10 +1198,10 @@ type
             _In_ JsValueRef object,
             _Out_ bool *value);
   }
-  function JsHasExternalData(
+  TJsHasExternalData = function (
     _object: JsValueRef;
     var value: bool
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
@@ -1206,10 +1209,10 @@ type
             _In_ JsValueRef object,
             _Out_ void **externalData);
   }
-  function JsGetExternalData(
+  TJsGetExternalData = function (
     _object: JsValueRef;
     var externalData: Pointer
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -1217,10 +1220,10 @@ type
 //            _In_ JsValueRef object,
 //            _In_opt_ void *externalData);
 //  }
-//  function JsSetExternalData(
+//  TJsSetExternalData = function (
 //    _object: JsValueRef;
 //    var externalData: Pointer
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -1228,10 +1231,10 @@ type
             _In_ unsigned int length,
             _Out_ JsValueRef *result);
   }
-  function JsCreateArray(
+  TJsCreateArray = function (
     length: uint;
     var result: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -1239,10 +1242,10 @@ type
 //            _In_ unsigned int byteLength,
 //            _Out_ JsValueRef *result);
 //  }
-//  function JsCreateArrayBuffer(
+//  TJsCreateArrayBuffer = function (
 //    byteLength: uint;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
@@ -1253,13 +1256,13 @@ type
             _In_opt_ void *callbackState,
             _Out_ JsValueRef *result);
   }
-  function JsCreateExternalArrayBuffer(
+  TJsCreateExternalArrayBuffer = function (
     data: Pointer;
     byteLength: uint;
     finalizeCallback: JsFinalizeCallback;
     callbackState: Pointer;
     var result: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -1270,13 +1273,13 @@ type
 //            _In_ unsigned int elementLength,
 //            _Out_ JsValueRef *result);
 //  }
-//  function JsCreateTypedArray(
+//  TJsCreateTypedArray = function (
 //    arrayType: JsTypedArrayType;
 //    baseArray: JsValueRef;
 //    byteOffset: uint;
 //    elementLength: uint;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1286,12 +1289,12 @@ type
 //            _In_ unsigned int byteLength,
 //            _Out_ JsValueRef *result);
 //  }
-//  function JsCreateDataView(
+//  TJsCreateDataView = function (
 //    arrayBuffer: JsValueRef;
 //    byteOffset: uint;
 //    byteLength: uint;
 //    result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1302,13 +1305,13 @@ type
 //            _Out_opt_ unsigned int *byteOffset,
 //            _Out_opt_ unsigned int *byteLength);
 //  }
-//  function JsGetTypedArrayInfo(
+//  TJsGetTypedArrayInfo = function (
 //    typedArray: JsValueRef;
 //    var arrayType: JsTypedArrayType;
 //    var arrayBuffer: JsValueRef;
 //    var byteOffset: uint;
 //    var byteLength: uint
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1317,11 +1320,11 @@ type
 //            _Outptr_result_bytebuffer_(*bufferLength) ChakraBytePtr *buffer,
 //            _Out_ unsigned int *bufferLength);
 //  }
-//  function JsGetArrayBufferStorage(
+//  TJsGetArrayBufferStorage = function (
 //    arrayBuffer: JsValueRef;
 //    var buffer: ChakraBytePtr;
 //    var bufferLength: uint
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //      CHAKRA_API
@@ -1332,13 +1335,13 @@ type
 //            _Out_opt_ JsTypedArrayType *arrayType,
 //            _Out_opt_ int *elementSize);
 //  }
-//  function JsGetTypedArrayStorage(
+//  TJsGetTypedArrayStorage = function (
 //    typedArray: JsValueRef;
 //    var buffer: ChakraBytePtr;
 //    var bufferLength: uint;
 //    var arrayType: JsTypedArrayType;
 //    var elementSize: int
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1347,54 +1350,54 @@ type
 //            _Outptr_result_bytebuffer_(*bufferLength) ChakraBytePtr *buffer,
 //            _Out_ unsigned int *bufferLength);
 //  }
-//  function JsGetDataViewStorage(
+//  TJsGetDataViewStorage = function (
 //    dataView: JsValueRef;
 //    var buffer: ChakraBytePtr;
 //    var bufferLength: uint
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
         JsCallFunction(
-            _In_ JsValueRef function,
+            _In_ TJsValueRe = function f
             _In_reads_(argumentCount) JsValueRef *arguments,
             _In_ unsigned short argumentCount,
             _Out_opt_ JsValueRef *result);
   }
-  function JsCallFunction(
+  TJsCallFunction = function (
     _function: JsValueRef;
     arguments: PJsValueRef;
     argumentCount: short;
     var result: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
 //        JsConstructObject(
-//            _In_ JsValueRef function,
+//            _In_ TJsValueRe = function f
 //            _In_reads_(argumentCount) JsValueRef *arguments,
 //            _In_ unsigned short argumentCount,
 //            _Out_ JsValueRef *result);
 //  }
-//  function JsConstructObject(
+//  TJsConstructObject = function (
 //    _function: JsValueRef;
 //    arguments: PJsValueRef;
 //    argumentCount: short;
 //    var result: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
         JsCreateFunction(
             _In_ JsNativeFunction nativeFunction,
             _In_opt_ void *callbackState,
-            _Out_ JsValueRef *function);
+            _Out_ TJsValueRef * = function ;
   }
-  function JsCreateFunction(
+  TJsCreateFunction = function (
     nativeFunction: JsNativeFunction;
     callbackState: Pointer;
     var _function: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
@@ -1402,14 +1405,14 @@ type
 //            _In_ JsValueRef name,
 //            _In_ JsNativeFunction nativeFunction,
 //            _In_opt_ void *callbackState,
-//            _Out_ JsValueRef *function);
+//            _Out_ TJsValueRef * = function ;
 //  }
-//  function JsCreateNamedFunction(
+//  TJsCreateNamedFunction = function (
 //    name: JsValueRef;
 //    nativeFunction: JsNativeFunction;
 //    callbackState: Pointer;
 //    var _function: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1417,10 +1420,10 @@ type
 //            _In_ JsValueRef message,
 //            _Out_ JsValueRef *error);
 //  }
-//  function JsCreateError(
+//  TJsCreateError = function (
 //    _message: JsValueRef;
 //    var error: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1428,10 +1431,10 @@ type
 //            _In_ JsValueRef message,
 //            _Out_ JsValueRef *error);
 //  }
-//  function JsCreateRangeError(
+//  TJsCreateRangeError = function (
 //    _message: JsValueRef;
 //    var error: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1439,10 +1442,10 @@ type
 //            _In_ JsValueRef message,
 //            _Out_ JsValueRef *error);
 //  }
-//  function JsCreateReferenceError(
+//  TJsCreateReferenceError = function (
 //    _message: JsValueRef;
 //    var error: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1450,10 +1453,10 @@ type
 //            _In_ JsValueRef message,
 //            _Out_ JsValueRef *error);
 //  }
-//  function JsCreateSyntaxError(
+//  TJsCreateSyntaxError = function (
 //    _message: JsValueRef;
 //    var error: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1461,10 +1464,10 @@ type
 //            _In_ JsValueRef message,
 //            _Out_ JsValueRef *error);
 //  }
-//  function JsCreateTypeError(
+//  TJsCreateTypeError = function (
 //    _message: JsValueRef;
 //    var error: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1472,55 +1475,55 @@ type
 //            _In_ JsValueRef message,
 //            _Out_ JsValueRef *error);
 //  }
-//  function JsCreateURIError(
+//  TJsCreateURIError = function (
 //    _message: JsValueRef;
 //    var error: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
 //        JsHasException(
 //            _Out_ bool *hasException);
 //  }
-//  function JsHasException(
+//  TJsHasException = function (
 //    var hasException: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
   {
     CHAKRA_API
         JsGetAndClearException(
             _Out_ JsValueRef *exception);
   }
-  function JsGetAndClearException(
+  TJsGetAndClearException = function (
     var exception: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
   {
     CHAKRA_API
         JsSetException(
             _In_ JsValueRef exception);
   }
-  function JsSetException(
+  TJsSetException = function (
     exception: JsValueRef
-  ): JsErrorCode; stdcall; external DLL_NAME;
+  ): JsErrorCode; stdcall;
 
 //  {
 //    CHAKRA_API
 //        JsDisableRuntimeExecution(
 //            _In_ JsRuntimeHandle runtime);
 //  }
-//  function JsDisableRuntimeExecution(
+//  TJsDisableRuntimeExecution = function (
 //    runtime: JsRuntimeHandle
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
 //        JsEnableRuntimeExecution(
 //            _In_ JsRuntimeHandle runtime);
 //  }
-//  function JsEnableRuntimeExecution(
+//  TJsEnableRuntimeExecution = function (
 //    runtime: JsRuntimeHandle
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1528,10 +1531,10 @@ type
 //            _In_ JsRuntimeHandle runtime,
 //            _Out_ bool *isDisabled);
 //  }
-//  function JsIsRuntimeExecutionDisabled(
+//  TJsIsRuntimeExecutionDisabled = function (
 //    runtime: JsRuntimeHandle;
 //    var isDisabled: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
@@ -1539,20 +1542,238 @@ type
 //            _In_ JsPromiseContinuationCallback promiseContinuationCallback,
 //            _In_opt_ void *callbackState);
 //  }
-//  function JsSetPromiseContinuationCallback(
+//  TJsSetPromiseContinuationCallback = function (
 //    promiseContinuationCallback: JsPromiseContinuationCallback;
 //    callbackState: Pointer
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
 //  {
 //    CHAKRA_API
 //        JsStringFree(
 //            _In_ char* stringValue);
 //  }
-//  function JsStringFree(
+//  TJsStringFree = function (
 //    stringValue: PAnsiChar
-//  ): JsErrorCode; stdcall; external DLL_NAME;
+//  ): JsErrorCode; stdcall;
 //
+
+var
+  JsCreateRuntime : TJsCreateRuntime;
+  JsDisposeRuntime : TJsDisposeRuntime;
+//  JsGetRuntimeMemoryUsage : TJsGetRuntimeMemoryUsage;
+//  JsGetRuntimeMemoryLimit : TJsGetRuntimeMemoryLimit;
+//  JsSetRuntimeMemoryLimit : TJsSetRuntimeMemoryLimit;
+//  JsSetRuntimeMemoryAllocationCallback : TJsSetRuntimeMemoryAllocationCallback;
+//  JsSetRuntimeBeforeCollectCallback : TJsSetRuntimeBeforeCollectCallback;
+//  JsAddRef : TJsAddRef;
+//  JsRelease : TJsRelease;
+  JsSetObjectBeforeCollectCallback : TJsSetObjectBeforeCollectCallback;
+  JsCreateContext : TJsCreateContext;
+//  JsGetCurrentContext : TJsGetCurrentContext;
+  JsSetCurrentContext : TJsSetCurrentContext;
+//  JsGetContextOfObject : TJsGetContextOfObject;
+//  JsGetContextData : TJsGetContextData;
+//  JsSetContextData : TJsSetContextData;
+//  JsGetRuntime : TJsGetRuntime;
+//  JsIdle : TJsIdle;
+//  JsParseScript : TJsParseScript;
+//  JsParseScriptWithAttributesUtf8 : TJsParseScriptWithAttributesUtf8;
+  JsRunScript : TJsRunScript;
+ JsRun : TJsRun;
+//  JsSerializeScriptUtf8 : TJsSerializeScriptUtf8;
+//  JsParseSerializedScriptUtf8 : TJsParseSerializedScriptUtf8;
+//  JsRunSerializedScriptUtf8 : TJsRunSerializedScriptUtf8;
+//  JsGetPropertyIdFromNameUtf8 : TJsGetPropertyIdFromNameUtf8;
+//  JsGetPropertyNameFromIdUtf8Copy : TJsGetPropertyNameFromIdUtf8Copy;
+  JsPointerToString : TJsPointerToString;
+  JsStringToPointer : TJsStringToPointer;
+//  JsGetSymbolFromPropertyId : TJsGetSymbolFromPropertyId;
+//  JsGetPropertyIdType : TJsGetPropertyIdType;
+//  JsGetPropertyIdFromSymbol : TJsGetPropertyIdFromSymbol;
+//  JsCreateSymbol : TJsCreateSymbol;
+//  JsGetOwnPropertySymbols : TJsGetOwnPropertySymbols;
+//  JsGetUndefinedValue : TJsGetUndefinedValue;
+  JsGetNullValue : TJsGetNullValue;
+//  JsGetTrueValue : TJsGetTrueValue;
+//  JsGetFalseValue : TJsGetFalseValue;
+  JsBoolToBoolean : TJsBoolToBoolean;
+  JsBooleanToBool : TJsBooleanToBool;
+//  JsConvertValueToBoolean : TJsConvertValueToBoolean;
+  JsGetValueType : TJsGetValueType;
+//  JsDoubleToNumber : TJsDoubleToNumber;
+  JsIntToNumber : TJsIntToNumber;
+//  JsNumberToDouble : TJsNumberToDouble;
+  JsNumberToInt : TJsNumberToInt;
+//  JsConvertValueToNumber : TJsConvertValueToNumber;
+//  JsGetStringLength : TJsGetStringLength;
+  JsConvertValueToString : TJsConvertValueToString;
+  JsGetGlobalObject : TJsGetGlobalObject;
+  JsCreateObject : TJsCreateObject;
+  JsCreateString : TJsCreateString;
+  JsCreateExternalObject : TJsCreateExternalObject;
+//  JsConvertValueToObject : TJsConvertValueToObject;
+//  JsGetPrototype : TJsGetPrototype;
+//  JsSetPrototype : TJsSetPrototype;
+//  JsInstanceOf : TJsInstanceOf;
+//  JsGetExtensionAllowed : TJsGetExtensionAllowed;
+  JsCreatePropertyId : TJsCreatePropertyId;
+//  JsPreventExtension : TJsPreventExtension;
+  JsGetProperty : TJsGetProperty;
+  JsGetOwnPropertyNames : TJsGetOwnPropertyNames;
+//  JsGetOwnPropertyDescriptor : TJsGetOwnPropertyDescriptor;
+  JsSetProperty : TJsSetProperty;
+//JsHasPropertyJsHasProperty//  JsDeleteProperty : TJsDeleteProperty;
+  JsDefineProperty : TJsDefineProperty;
+//JsDefinePropertyJsDefineProperty//  JsHasIndexedProperty : TJsHasIndexedProperty;
+  JsGetIndexedProperty : TJsGetIndexedProperty;
+  JsSetIndexedProperty : TJsSetIndexedProperty;
+//  JsDeleteIndexedProperty : TJsDeleteIndexedProperty;
+//  JsHasIndexedPropertiesExternalData : TJsHasIndexedPropertiesExternalData;
+//  JsGetIndexedPropertiesExternalData : TJsGetIndexedPropertiesExternalData;
+//  JsSetIndexedPropertiesToExternalData : TJsSetIndexedPropertiesToExternalData;
+//  JsEquals : TJsEquals;
+//  JsStrictEquals : TJsStrictEquals;
+  JsHasExternalData : TJsHasExternalData;
+  JsGetExternalData : TJsGetExternalData;
+//  JsSetExternalData : TJsSetExternalData;
+  JsCreateArray : TJsCreateArray;
+//  JsCreateArrayBuffer : TJsCreateArrayBuffer;
+  JsCreateExternalArrayBuffer : TJsCreateExternalArrayBuffer;
+//  JsCreateTypedArray : TJsCreateTypedArray;
+//  JsCreateDataView : TJsCreateDataView;
+//  JsGetTypedArrayInfo : TJsGetTypedArrayInfo;
+//  JsGetArrayBufferStorage : TJsGetArrayBufferStorage;
+//  JsGetTypedArrayStorage : TJsGetTypedArrayStorage;
+//  JsGetDataViewStorage : TJsGetDataViewStorage;
+  JsCallFunction : TJsCallFunction;
+//  JsConstructObject : TJsConstructObject;
+  JsCreateFunction : TJsCreateFunction;
+//  JsCreateNamedFunction : TJsCreateNamedFunction;
+//  JsCreateError : TJsCreateError;
+//  JsCreateRangeError : TJsCreateRangeError;
+//  JsCreateReferenceError : TJsCreateReferenceError;
+//  JsCreateSyntaxError : TJsCreateSyntaxError;
+//  JsCreateTypeError : TJsCreateTypeError;
+//  JsCreateURIError : TJsCreateURIError;
+//  JsHasException : TJsHasException;
+  JsGetAndClearException : TJsGetAndClearException;
+  JsSetException : TJsSetException;
+//  JsDisableRuntimeExecution : TJsDisableRuntimeExecution;
+//  JsEnableRuntimeExecution : TJsEnableRuntimeExecution;
+//  JsIsRuntimeExecutionDisabled : TJsIsRuntimeExecutionDisabled;
+//  JsSetPromiseContinuationCallback : TJsSetPromiseContinuationCallback;
+//  JsStringFree : TJsStringFree;
+
+function loadChakra(chakraPath : String; var msg : String) : boolean;
+procedure unloadChakra;
+
 implementation
+
+uses
+  FHIR.Support.System;
+
+var
+  GHandle : THandle;
+
+function loadChakra(chakraPath : String; var msg : String) : boolean;
+var
+  ok : boolean;
+  function doLoad(name : String) : FARPROC;
+  begin
+    result := GetProcAddress(GHandle, pchar(name));
+    if result = nil then
+    begin
+      ok := false;
+      msg := msg + 'Unable to load function '+name+#13#10;
+    end;
+  end;
+begin
+  ok := false;
+  msg := '';
+  GHandle := LoadLibrary(DLL_NAME);
+  If GHandle < 32 Then
+    msg := 'Error Loading Chakra.dll: '+ErrorAsString(GetLastError)
+  else
+  begin
+    ok := true;
+    @JsCreateRuntime := doload('JsCreateRuntime');
+    @JsDisposeRuntime := doLoad('JsDisposeRuntime');
+    @JsSetObjectBeforeCollectCallback := doLoad('JsSetObjectBeforeCollectCallback');
+    @JsCreateContext := doLoad('JsCreateContext');
+    @JsSetCurrentContext := doLoad('JsSetCurrentContext');
+    @JsRunScript := doLoad('JsRunScript');
+    @JsRun := doLoad('JsRun');
+    @JsPointerToString := doLoad('JsPointerToString');
+    @JsStringToPointer := doLoad('JsStringToPointer');
+    @JsGetNullValue := doLoad('JsGetNullValue');
+    @JsBoolToBoolean := doLoad('JsBoolToBoolean');
+    @JsBooleanToBool := doLoad('JsBooleanToBool');
+    @JsGetValueType := doLoad('JsGetValueType');
+    @JsIntToNumber := doLoad('JsIntToNumber');
+    @JsNumberToInt := doLoad('JsNumberToInt');
+    @JsConvertValueToString := doLoad('JsConvertValueToString');
+    @JsGetGlobalObject := doLoad('JsGetGlobalObject');
+    @JsCreateObject := doLoad('JsCreateObject');
+    @JsCreateString := doLoad('JsCreateString');
+    @JsCreateExternalObject := doLoad('JsCreateExternalObject');
+    @JsCreatePropertyId := doLoad('JsCreatePropertyId');
+    @JsGetProperty := doLoad('JsGetProperty');
+    @JsGetOwnPropertyNames := doLoad('JsGetOwnPropertyNames');
+    @JsSetProperty := doLoad('JsSetProperty');
+    @JsDefineProperty := doLoad('JsDefineProperty');
+    @JsGetIndexedProperty := doLoad('JsGetIndexedProperty');
+    @JsSetIndexedProperty := doLoad('JsSetIndexedProperty');
+    @JsHasExternalData := doLoad('JsHasExternalData');
+    @JsGetExternalData := doLoad('JsGetExternalData');
+    @JsCreateArray := doLoad('JsCreateArray');
+    @JsCreateExternalArrayBuffer := doLoad('JsCreateExternalArrayBuffer');
+    @JsCallFunction := doLoad('JsCallFunction');
+    @JsCreateFunction := doLoad('JsCreateFunction');
+    @JsGetAndClearException := doLoad('JsGetAndClearException');
+    @JsSetException := doLoad('JsSetException');
+  end;
+  result := ok;
+end;
+
+procedure unloadChakra;
+begin
+  @JsCreateRuntime := nil;
+  @JsDisposeRuntime := nil;
+  @JsSetObjectBeforeCollectCallback := nil;
+  @JsCreateContext := nil;
+  @JsSetCurrentContext := nil;
+  @JsRunScript := nil;
+  @JsRun := nil;
+  @JsPointerToString := nil;
+  @JsStringToPointer := nil;
+  @JsGetNullValue := nil;
+  @JsBoolToBoolean := nil;
+  @JsBooleanToBool := nil;
+  @JsGetValueType := nil;
+  @JsIntToNumber := nil;
+  @JsNumberToInt := nil;
+  @JsConvertValueToString := nil;
+  @JsGetGlobalObject := nil;
+  @JsCreateObject := nil;
+  @JsCreateString := nil;
+  @JsCreateExternalObject := nil;
+  @JsCreatePropertyId := nil;
+  @JsGetProperty := nil;
+  @JsGetOwnPropertyNames := nil;
+  @JsSetProperty := nil;
+  @JsDefineProperty := nil;
+  @JsGetIndexedProperty := nil;
+  @JsSetIndexedProperty := nil;
+  @JsHasExternalData := nil;
+  @JsGetExternalData := nil;
+  @JsCreateArray := nil;
+  @JsCreateExternalArrayBuffer := nil;
+  @JsCallFunction := nil;
+  @JsCreateFunction := nil;
+  @JsGetAndClearException := nil;
+  @JsSetException := nil;
+  FreeLibrary(GHandle);
+  GHandle := 0;
+end;
 
 end.

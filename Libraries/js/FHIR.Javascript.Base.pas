@@ -51,7 +51,7 @@ type
     FDefinedElements : TFslMap<TFHIRJavascriptDefinedElement>;
     FFactory : TFhirResourceFactory;
   public
-    constructor Create; override;
+    constructor Create(chakraPath : String); override;
     destructor Destroy; override;
 
     procedure registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter : TJsGetterFunction; setter : TJsSetterProcedure);
@@ -84,7 +84,7 @@ uses
 
 { TFHIRJavascript }
 
-constructor TFHIRJavascript.Create;
+constructor TFHIRJavascript.Create(chakraPath : String);
 begin
   inherited;
   FDefinedElements := TFslMap<TFHIRJavascriptDefinedElement>.create;

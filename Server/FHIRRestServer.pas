@@ -745,7 +745,7 @@ begin
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
 {$ENDIF}
-  GJsHost := TJsHost.Create;
+  GJsHost := TJsHost.Create(FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
   GJsHost.registry := ServerContext.EventScriptRegistry.Link;
   AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
   FLock.Lock;
@@ -4589,7 +4589,7 @@ begin
 {$IFDEF MSWINDOWS}
     CoInitialize(nil);
 {$ENDIF}
-    GJsHost := TJsHost.Create;
+    GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
     GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
 
     repeat
@@ -4660,7 +4660,7 @@ end;
 
 procedure TFhirServerSubscriptionThread.Execute;
 begin
-  GJsHost := TJsHost.Create;
+  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
   GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerSubscriptionThread');
   try
@@ -4703,7 +4703,7 @@ procedure TFhirServerEmailThread.Execute;
 var
   i: integer;
 begin
-  GJsHost := TJsHost.Create;
+  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
   GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerEmailThread');
   try
@@ -4786,7 +4786,7 @@ var
   us, cs: String;
   ctxt : TOperationContext;
 begin
-  GJsHost := TJsHost.Create;
+  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
   try
     GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
     status(atsWaiting, 'Waiting to start');

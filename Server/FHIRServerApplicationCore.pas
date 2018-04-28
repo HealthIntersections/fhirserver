@@ -151,6 +151,7 @@ var
   dispName : String;
   dir, fn, ver, ldate, lver, dest : String;
   svc : TFHIRService;
+  ini : TIniFile;
 begin
   AllocConsole;
   try
@@ -162,27 +163,26 @@ begin
     end;
 
     CoInitialize(nil);
-    GJsHost := TJsHost.Create;
+    if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
+      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
+    if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
+      svcName := 'FHIRServer';
+    if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
+      dispName := 'FHIR Server';
+    iniName := iniName.replace('.dstu', '.dev');
+
+    if JclExceptionTrackingActive then
+      logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' with stack dumps on')
+    else
+      logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
+    if filelog then
+      logt('Log File = '+logfile);
+    logt('FHIR Version '+FHIR_GENERATED_VERSION);
+    dispName := dispName + ' '+SERVER_VERSION+' (FHIR v '+FHIR_GENERATED_VERSION+')';
+
+    svc := TFHIRService.Create(svcName, dispName, iniName);
     try
-      if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
-        iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
-
-      if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
-        svcName := 'FHIRServer';
-      if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
-        dispName := 'FHIR Server';
-      iniName := iniName.replace('.dstu', '.dev');
-
-      if JclExceptionTrackingActive then
-        logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' with stack dumps on')
-      else
-        logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
-      if filelog then
-        logt('Log File = '+logfile);
-      logt('FHIR Version '+FHIR_GENERATED_VERSION);
-      dispName := dispName + ' '+SERVER_VERSION+' (FHIR v '+FHIR_GENERATED_VERSION+')';
-
-      svc := TFHIRService.Create(svcName, dispName, iniName);
+      GJsHost := TJsHost.Create(svc.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
       try
         if FindCmdLineSwitch('installer') then
         begin
@@ -273,10 +273,10 @@ begin
           svc.Execute;
         end;
       finally
-        svc.Free;
+        GJsHost.free;
       end;
     finally
-      GJsHost.free;
+      svc.Free;
     end;
   except
     on e : Exception do
