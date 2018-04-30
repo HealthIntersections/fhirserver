@@ -128,6 +128,9 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "
 Source: "C:\work\fhirserver\Exec\64\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\64\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\64\FHIRServer4.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\64\FHIRServer2.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r2; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\64\FHIRServer3.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\64\FHIRServer4.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r4; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\64\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 

@@ -44,6 +44,7 @@ var
   consolelog : boolean = false;
   logfile : String = '';
   logevent : TLogEvent;
+  log_as_starting : boolean;
 
 procedure logt(s : String);
 procedure logtn(s : String);
@@ -140,6 +141,7 @@ end;
 procedure logt(s : String);
 var
   today : integer;
+  delta : String;
 begin
   checklog;
   if starttime = 0 then
@@ -160,11 +162,14 @@ begin
     lastDay := today;
   end;
 
+  delta := '';
+  if log_as_starting then
+    delta := FormatDateTime('hh:nn:ss', now - startTime)+' ';
   if filelog then
-    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s+#13#10);
+    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+delta+s+#13#10);
   if consolelog then
     try
-      System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s);
+      System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+delta+s);
     except
       consolelog := false;
     end;
@@ -464,16 +469,25 @@ begin
   v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
   for sb in st.SmallBlockTypeStates do
     v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
-  result := ' '+memToMb(v);
+  if v > 0 then
+    result := ' '+memToMb(v);
+
   hProcess := GetCurrentProcess;
-  if (GetProcessMemoryInfo(hProcess, @pmc, SizeOf(pmc))) then
-    result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
-  CloseHandle(hProcess);
+  try
+    if (GetProcessMemoryInfo(hProcess, @pmc, SizeOf(pmc))) then
+      if result = '' then
+        result := memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage)
+      else
+        result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
+  finally
+    CloseHandle(hProcess);
+  end;
 end;
 
 
 
 Initialization
+  log_as_starting := true;
 Finalization
   if log <> nil then
     log.Free;

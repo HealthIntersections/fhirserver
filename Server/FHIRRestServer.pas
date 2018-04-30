@@ -98,6 +98,7 @@ Uses
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Tags, FHIR.Tools.Session, FHIR.Base.Lang, FHIRStorageService,
   FHIR.Tools.Utilities, FHIR.Tools.Security, FHIR.Client.SmartUtilities, FHIR.Tools.XhtmlComp,
   FHIR.Tools.Questionnaire, FHIR.Tools.Client, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
+  FHIR.Support.Service,
   FHIR.Base.Xhtml, FHIR.Tools.GraphQL,
   {$IFNDEF NO_CONVERSION}
   FHIR.XVersion.Convertors,
@@ -1233,7 +1234,10 @@ var
   rp: TReverseProxyInfo;
   version : TFHIRVersion;
   id : string;
+  t: cardinal;
 begin
+  t := GetTickCount;
+  SetThreadName('WebRequest - '+request.Document);
   Session := nil;
   MarkEntry(AContext, request, response);
   try
@@ -1318,8 +1322,12 @@ begin
       end;
     end;
     logResponse(id, response);
+    t := GetTickCount - t;
+    logt(id+' http: '+request.RawHTTPCommand+' from '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+' in '+inttostr(t)+'ms . mem= '+MemoryStatus);
+    response.CloseConnection := false;
   finally
     MarkExit(AContext);
+    SetThreadName('');
   end;
 end;
 
@@ -1365,7 +1373,9 @@ var
   cert: TIdX509;
   id : String;
   JWT: TJWT;
+  t: cardinal;
 begin
+  t := GetTickCount;
   check := false;
   cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
@@ -1464,6 +1474,9 @@ begin
       end;
     end;
     logResponse(id, response);
+    t := GetTickCount - t;
+    logt(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+MemoryStatus);
+    logt(GService.ThreadStatus);
   finally
     MarkExit(AContext);
     Session.Free;
@@ -3191,8 +3204,6 @@ begin
     cs := '$' + request.OperationName
   else
     cs := 'cmd=' + CODES_TFHIRCommandType[request.CommandType];
-  logt('Request: ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' +
-    inttostr(t)+'  ('+MemoryStatus+')');
 end;
 
 procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -4582,7 +4593,7 @@ end;
 
 procedure TFhirServerMaintenanceThread.Execute;
 begin
-
+  SetThreadName('Server Maintenance Thread');
   logt('Starting TFhirServerMaintenanceThread');
   try
     FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'starting';
@@ -4647,6 +4658,7 @@ begin
   except
     logt('Failing TFhirServerMaintenanceThread');
   end;
+  SetThreadName('');
 end;
 
 { TFhirServerSubscriptionThread }
@@ -4660,6 +4672,7 @@ end;
 
 procedure TFhirServerSubscriptionThread.Execute;
 begin
+  SetThreadName('Server Subscription Thread');
   GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
   GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerSubscriptionThread');
@@ -4688,6 +4701,7 @@ begin
   end;
   GJsHost.Free;
   GJsHost := nil;
+  SetThreadName('');
 end;
 
 { TFhirServerEmailThread }
@@ -4703,6 +4717,7 @@ procedure TFhirServerEmailThread.Execute;
 var
   i: integer;
 begin
+  SetThreadName('Server Email Thread');
   GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
   GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerEmailThread');
@@ -4736,7 +4751,7 @@ begin
   end;
   GJsHost.Free;
   GJsHost := nil;
-
+  SetThreadName('');
 end;
 
 { TAsyncTaskThread }
@@ -4786,6 +4801,7 @@ var
   us, cs: String;
   ctxt : TOperationContext;
 begin
+  SetThreadName('Server Async Thread');
   GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
   try
     GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
@@ -4828,14 +4844,14 @@ begin
       saveOutcome(response);
       status(atsComplete, 'Complete');
       t := GetTickCount - t;
-      logt('Finish Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t));
+      logt('Finish Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms');
     finally
       response.Free;
     end;
   except
     on e : exception do
     begin
-      logt('Error Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+': '+e.Message);
+      logt('Error Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+'ms: '+e.Message);
       status(atsError, e.Message);
     end;
   end;
@@ -4848,6 +4864,7 @@ begin
   FreeOnTerminate := true;
   GJsHost.Free;
   GJsHost := nil;
+  SetThreadName('');
 end;
 
 procedure TAsyncTaskThread.kill;

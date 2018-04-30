@@ -4,23 +4,23 @@ unit FHIR.Support.Service;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
@@ -32,8 +32,7 @@ interface
 
 uses
   FastMM4,
-  Windows, WinSvc, PSApi,
-  Classes,
+  Windows, WinSvc, PSApi, TlHelp32, SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.System;
 
 type
@@ -47,6 +46,7 @@ type
     FStopReason : String;
     FTellUser : boolean;
     FIsContained: Boolean;
+    FStartTime : TDateTime;
     procedure InternalExecute;
     procedure SetStatus(AState, AControls : DWord);
     procedure CommandInstall;
@@ -68,7 +68,7 @@ type
     function CheckClose(var s: String): Boolean; Virtual;
   Public
     constructor Create(const ASystemName, ADisplayName: String);
-    procedure DebugExecute;
+    procedure ConsoleExecute;
     procedure ServiceExecute;
     Procedure ContainedStart;
     Procedure ContainedStop;
@@ -79,6 +79,7 @@ type
     procedure Stop(AReason : String; ATellUser : boolean = true);
     procedure Execute;
     Property DisplayName : String read FDisplayName;
+    function ThreadStatus: String;
   end;
 
 var
@@ -143,7 +144,6 @@ uses
   FHIR.Support.DateTime,
   FHIR.Support.Strings,
   FHIR.Support.Lock,
-  SysUtils,
   FHIR.Debug.Logging;
 
 const
@@ -158,6 +158,7 @@ begin
   assert(not assigned(GService), ASSERT_LOCATION+': There can only be one service in a process');
   assert(IsValidIdent(ASystemName), ASSERT_LOCATION+': SystemName is not valid');
   assert(ADisplayName <> '', ASSERT_LOCATION+': Display Name is not valid' );
+  FStartTime := now;
   FSystemName := ASystemName;
   FDisplayName := ADisplayName;
   FTellUser := true;
@@ -201,13 +202,99 @@ begin
   // nothing
 end;
 
+type
+  TOpenThreadFunc = function(DesiredAccess: DWORD; InheritHandle: BOOL; ThreadID: DWORD): THandle; stdcall;
+var
+  OpenThreadFunc: TOpenThreadFunc;
+
+function OpenThread(id : DWORD) : THandle;
+const
+  THREAD_GET_CONTEXT       = $0008;
+  THREAD_QUERY_INFORMATION = $0040;
+var
+  Kernel32Lib, ThreadHandle: THandle;
+begin
+  Result := 0;
+  if @OpenThreadFunc = nil then
+  begin
+    Kernel32Lib := GetModuleHandle(kernel32);
+    OpenThreadFunc := GetProcAddress(Kernel32Lib, 'OpenThread');
+  end;
+  result := OpenThreadFunc(THREAD_QUERY_INFORMATION, False, id);
+end;
+
+
+function FileTimeZero : TDateTime;
+begin
+  result := EncodeDate(1601, 1, 1);
+end;
+function TSystemService.ThreadStatus : String;
+var
+  SnapProcHandle: THandle;
+  NextProc      : Boolean;
+  TThreadEntry  : TThreadEntry32;
+  Proceed       : Boolean;
+  pid, count, tid : Cardinal;
+  c, e, k, u : _FILETIME;
+  sc, se, sk, su, s, sn : String;
+  h : THandle;
+begin
+  pid := GetCurrentProcessId;
+  tid := GetCurrentThreadId;
+  result := '';
+  Count := 0;
+  SnapProcHandle := CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0); //Takes a snapshot of the all threads
+  Proceed := (SnapProcHandle <> INVALID_HANDLE_VALUE);
+  if Proceed then
+    try
+      TThreadEntry.dwSize := SizeOf(TThreadEntry);
+      NextProc := Thread32First(SnapProcHandle, TThreadEntry);//get the first Thread
+      while NextProc do
+      begin
+        if TThreadEntry.th32OwnerProcessID = PID then //Check the owner Pid against the PID requested
+        begin
+          Inc(count);
+          if TThreadEntry.th32ThreadID = tid then
+            s := ' <- this thread'
+          else
+            s := '';
+          sn := inttostr(TThreadEntry.th32ThreadID)+' "'+GetThreadName(TThreadEntry.th32ThreadID)+'":';
+          h := OpenThread(TThreadEntry.th32ThreadID);
+          if h <> 0 then
+            try
+              GetThreadTimes(h, c, e, k, u);
+              sc := DescribePeriod(FileTimeToDateTime(c, true)-FStartTime);
+              if (e.dwLowDateTime = 0) and (e.dwHighDateTime = 0) then
+                se := 'n/a'
+              else
+                se := DescribePeriod(now-FileTimeToDateTime(e, true));
+
+              sk := DescribePeriod(FileTimeToDateTime(k, false)-FileTimeZero);
+              su := DescribePeriod(FileTimeToDateTime(u, false)-FileTimeZero);
+              result := result + sn+sc+' '+se+' '+sk+' '+su+s+#13#10
+            finally
+              CloseHandle(h);
+            end
+          else
+            result := result + sn+' '+ErrorAsString+s+#13#10
+        end;
+        NextProc := Thread32Next(SnapProcHandle, TThreadEntry);//get the Next Thread
+      end;
+    finally
+      CloseHandle(SnapProcHandle);//Close the Handle
+    end;
+  result := result+inttostr(count)+' threads';
+end;
+
 procedure TSystemService.dump;
 begin
+  logt(ThreadStatus);
   logt(DumpLocks);
 end;
 
 function DebugCtrlC(dwCtrlType : DWORD) :BOOL;
 begin
+  logt('Ctrl-C');
   result := true;
   SetConsoleCtrlHandler(@DebugCtrlC, false);
   GService.dump;
@@ -215,9 +302,10 @@ begin
 
 end;
 
-procedure TSystemService.DebugExecute;
-const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.DebugExecute';
+procedure TSystemService.ConsoleExecute;
+const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.ConsoleExecute';
 begin
+  SetThreadName('Service.Execute.Console');
   AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
   SetConsoleCtrlHandler(@DebugCtrlC, true);
@@ -236,7 +324,7 @@ var
   LMemMgr: {$IFDEF VER130}TMemoryManager {$ELSE}TMemoryManagerEx{$ENDIF};
 Begin
   exit;
-  DebugThreadName := 'DeathThread';
+  SetThreadName('DeathThread');
   Try
     Sleep(150);
     try
@@ -362,7 +450,7 @@ end;
 
 procedure ServiceMainEntry(dwArgc: DWORD; lpszArgv: pointer); Stdcall;
 begin
-  DebugThreadName := 'Service';
+  SetThreadName('Service');
   GService.FHandle := RegisterServiceCtrlHandler(PChar(lpszArgv^), @ServiceCallHandler);
   if GService.FHandle <> 0 then
     begin
@@ -374,7 +462,7 @@ begin
     end;
     end;
 
-  DebugThreadName := '';
+  SetThreadName('');
 end;
 
 var
@@ -464,8 +552,8 @@ begin
   end;
   If LCanRun then
     begin
-    if FindCmdLineSwitch('debug', ['-', '/'], true) then
-      DebugExecute
+    if FindCmdLineSwitch('console', ['-', '/'], true) or FindCmdLineSwitch('debug', ['-', '/'], true) then
+      ConsoleExecute
     else
       ServiceExecute;
     end;

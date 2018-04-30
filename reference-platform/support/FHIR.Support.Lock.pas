@@ -367,11 +367,11 @@ var
   aTime : Int64;
 Begin
   QueryPerformanceCounter(aTime);
-  Result := IntToStr(TCriticalSection.CurrentCount) + ' Critical Sections (@'+InttoStr(ms(aTime))+')'+crlf;
+  Result := IntToStr(TCriticalSection.CurrentCount) + ' Locked Critical Sections (@'+InttoStr(ms(aTime))+')'+crlf;
   oCrit := GFirst;
   While oCrit <> nil Do
   Begin
-//    if oCrit.EntryCount > 0 Then
+    if oCrit.EntryCount > 0 Then
       Result := Result + oCrit.DebugSummary + crlf;
     oCrit := oCrit.FNext;
   End;

@@ -411,7 +411,7 @@ begin
     if i = 0 then
       FRoots.add(node.link)
     else
-      FStack[i-1].addChild(node.Link);
+      FStack[i-1].addChild(node);
     node.FLocalDisplay := cells[1];
     if length(cells) > 2 then
       node.FDisplay := cells[2]

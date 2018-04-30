@@ -554,12 +554,14 @@ end;
 
 procedure TInternalThread.execute;
 begin
+  SetThreadName('TInternalThread');
   Try
     FOwner.Execute;
   Except
     // ignore any further exceptions
   End;
   FOwner.FActive := False;
+  SetThreadName('');
 end;
 
 

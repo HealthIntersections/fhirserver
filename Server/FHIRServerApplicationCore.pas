@@ -222,7 +222,7 @@ begin
         begin
           svc.UninstallDatabase;
           svc.InstallDatabase;
-          svc.DebugExecute;
+          svc.ConsoleExecute;
         end
         else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
           svc.LoadByProfile(fn, false)
@@ -333,6 +333,7 @@ begin
     end;
   end;
   logt('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
+  log_as_starting := false;
 end;
 
 procedure TFHIRService.DoStop;

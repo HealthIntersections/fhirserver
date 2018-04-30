@@ -682,6 +682,7 @@ var
   resp : TCDSHookResponse;
   client : TFhirClient;
 begin
+  SetThreadName('CDSHooks manager');
   {$IFDEF MSWINDOWS}
   CoInitialize(nil);
   {$ENDIF}
@@ -728,6 +729,7 @@ begin
     CoUninitialize;
     {$ENDIF}
   end;
+  SetThreadName('');
 end;
 
 function TCDSHooksManagerWorkThread.Link: TCDSHooksManagerWorkThread;

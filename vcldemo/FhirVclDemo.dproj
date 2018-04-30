@@ -114,6 +114,7 @@
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R2.AuthMap;FHIR.Tools.Constants=FHIR.R2.Constants;FHIR.Tools.Context=FHIR.R2.Context;FHIR.Tools.IndexInfo=FHIR.R2.IndexInfo;FHIR.Tools.Javascript=FHIR.R2.Javascript;FHIR.Tools.ElementModel=FHIR.R2.ElementModel;FHIR.Tools.Narrative=FHIR.R2.Narrative;FHIR.Tools.Operations=FHIR.R2.Operations;FHIR.Tools.Json=FHIR.R2.Json;FHIR.Tools.Turtle=FHIRParserTurtle2;FHIR.Tools.Xml=FHIR.R2.Xml;FHIR.Tools.PathNode=FHIR.R2.PathNode;FHIR.Tools.Profiles=FHIR.R2.Profiles;FHIR.Tools.Resources=FHIR.R2.Resources;FHIR.Tools.MapUtilities=FHIRStructureMapUtilities2;FHIR.Tools.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Tools.Types=FHIR.R2.Types;FHIR.Tools.Utilities=FHIR.R2.Utilities;FHIR.Tools.Validator=FHIR.R2.Validator;FHIR.Tools.OpBase=FHIR.R2.OpBase;FHIR.Tools.PathEngine=FHIR.R2.PathEngine;FHIR.Tools.Narrative2=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire=FHIR.R2.Questionnaire;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d264</DCC_DcuOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>

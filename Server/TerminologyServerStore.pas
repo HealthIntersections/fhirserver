@@ -1014,6 +1014,7 @@ begin
 
   FProviderClasses.Free;
 
+  FIcd10.Free;
   FLoinc.free;
   FDefSnomed.Free;
   FSnomed.free;

@@ -37,7 +37,6 @@ uses
   FHIR.Support.WInInet in '..\..\reference-platform\support\FHIR.Support.WInInet.pas',
   {$ENDIF }
   FHIR.CdsHooks.Client in '..\..\reference-platform\support\FHIR.CdsHooks.Client.pas',
-  FHIR.Support.System in '..\..\reference-platform\support\FHIR.Support.System.pas',
   FHIR.Support.Osx in '..\..\reference-platform\support\FHIR.Support.Osx.pas',
   FHIR.Support.Strings in '..\..\reference-platform\support\FHIR.Support.Strings.pas',
   FHIR.Support.Math in '..\..\reference-platform\support\FHIR.Support.Math.pas',
@@ -191,7 +190,9 @@ uses
   FHIR.Support.Controllers in '..\..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\..\reference-platform\support\FHIR.Misc.GraphQL.pas',
-  FHIR.Support.MsXml in '..\..\reference-platform\support\FHIR.Support.MsXml.pas';
+  FHIR.Support.MsXml in '..\..\reference-platform\support\FHIR.Support.MsXml.pas',
+  FHIR.Support.System in '..\..\reference-platform\support\FHIR.Support.System.pas',
+  FHIR.Support.Service in '..\..\reference-platform\support\FHIR.Support.Service.pas';
 
 {$R *.res}
 

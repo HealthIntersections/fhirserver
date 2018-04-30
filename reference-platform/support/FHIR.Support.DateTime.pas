@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, SysConst, DateUtils, Math, System.TimeSpan,
+  Windows, SysUtils, SysConst, DateUtils, Math, System.TimeSpan,
   FHIR.Support.Strings, FHIR.Support.Math;
 
 Const
@@ -208,6 +208,8 @@ Function DateTimeCompare(Const aA, aB : TDateTime) : Integer; Overload;
 Function DateTimeCompare(Const aA, aB, aThreshold : TDateTime) : Integer; Overload;
 function DescribePeriod(Period: TDateTime): String;
 Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDateTime) : String;
+Function CheckDateFormat(Const sFormat, sContent : String; Var sError : String) : Boolean;
+function FileTimeToDateTime(Time: TFileTime; bTz : boolean): TDateTime;
 
 Implementation
 
@@ -1524,6 +1526,335 @@ function sameInstant(t1, t2 : TDateTime) : boolean;
 begin
   result := abs(t1-t2) < DATETIME_SECOND_ONE;
 end;
+
+
+Function CheckTimezone(bTimezone : Boolean; Const sContent, sOrigFormat : String; Var sError : String) : Boolean;
+Begin
+  If sContent <> '' Then
+    Begin
+    If bTimezone Then
+      Begin
+      Result := CheckDateFormat('HHNN', sContent, sError);
+      If Not Result Then
+        sError := sError + ' in the timezone portion';
+      End
+    Else
+      Begin
+      sError := 'The value "'+sContent+'" does not conform to the expected format for the date "'+sOrigFormat+'" because a timezone was found';
+      Result := False;
+      End
+    End
+  Else
+    Result := True;
+End;
+
+Function Splice(Var sSource : String; sMatch : String) : Boolean; Overload;
+Begin
+  If Copy(sSource, 1, Length(sMatch)) = sMatch Then
+    Begin
+    Result := True;
+    sSource := Copy(sSource, Length(sMatch)+ 1, $FF);
+    End
+  Else
+    Result := False;
+End;
+
+Function Splice(Var sSource : String; iLength : Integer) : String; Overload;
+Begin
+  Result := Copy(sSource, 1, iLength);
+  sSource := Copy(sSource, iLength + 1, $FF);
+End;
+
+Function CheckYear(sValue : String; Var sError : String; Var iYear : Integer) : Boolean;
+Begin
+  Result := False;
+  If Length(sValue) <> 4 Then
+    sError := 'Year Value '+sValue+' is not 4 digits in length'
+  Else If Not StringIsInteger32(sValue) Then
+    sError := 'Year Value '+sValue+' is not numerical'
+  Else
+    Begin
+    iYear := StringToInteger32(sValue);
+    If (iYear <= 0) Then
+      sError := 'Year Value '+sValue+': negative numbers are not supported'
+    Else
+      Result := True;
+    End;
+End;
+
+Function CheckMonth(sValue : String; Var sError : String; Var iMonth : Integer) : Boolean;
+Begin
+  Result := False;
+  If Length(sValue) <> 2 Then
+    sError := 'Month Value '+sValue+' is not 2 digits in length'
+  Else If Not StringIsInteger32(sValue) Then
+    sError := 'Month Value '+sValue+' is not numerical'
+  Else
+    Begin
+    iMonth := StringToInteger32(sValue);
+    If (iMonth <= 0) Or (iMonth > 12) Then
+      sError := 'Month Value '+sValue+': month must be 1 - 12'
+    Else
+      Result := True;
+    End;
+End;
+
+Function CheckDay(sValue : String; iYear, iMonth : Integer; Var sError : String) : Boolean;
+Var
+  iDay : Integer;
+Begin
+  Result := False;
+  If Length(sValue) <> 2 Then
+    sError := 'Day Value '+sValue+' is not 2 digits in length'
+  Else If Not StringIsInteger32(sValue) Then
+    sError := 'Day Value '+sValue+' is not numerical'
+  Else
+    Begin
+    iDay := StringToInteger32(sValue);
+    If (iDay <= 0) Then
+      sError := 'Day Value '+sValue+': Day must be >= 1'
+    Else If iMonth = 0 Then
+      sError := 'Day Value '+sValue+': Month must be known'
+    Else If iDay > MONTHS_DAYS[IsLeapYear(iYear)][TMonthOfYear(iMonth-1)] Then
+      sError := 'Day Value '+sValue+': Value is not valid for '+MONTHOFYEAR_SHORT[TMonthOfYear(iMonth-1)]+'-'+IntegerToString(iYear)
+    Else
+      Result := True;
+    End;
+End;
+
+Function CheckHour(sValue : String; Var sError : String) : Boolean;
+Var
+  iHour : Integer;
+Begin
+  Result := False;
+  If Length(sValue) <> 2 Then
+    sError := 'Hour Value '+sValue+' is not 2 digits in length'
+  Else If Not StringIsInteger32(sValue) Then
+    sError := 'Hour Value '+sValue+' is not numerical'
+  Else
+    Begin
+    iHour := StringToInteger32(sValue);
+    If (iHour < 0) Or (iHour > 23) Then
+      sError := 'Hour Value '+sValue+': Hour must be 0 and 23'
+    Else
+      Result := True;
+    End;
+End;
+
+Function CheckMinute(sValue : String; Var sError : String) : Boolean;
+Var
+  iMinute : Integer;
+Begin
+  Result := False;
+  If Length(sValue) <> 2 Then
+    sError := 'Minute Value '+sValue+' is not 2 digits in length'
+  Else If Not StringIsInteger32(sValue) Then
+    sError := 'Minute Value '+sValue+' is not numerical'
+  Else
+    Begin
+    iMinute := StringToInteger32(sValue);
+    If (iMinute < 0) Or (iMinute > 59) Then
+      sError := 'Minute Value '+sValue+': Minute must be 0 and 59'
+    Else
+      Result := True;
+    End;
+End;
+
+Function CheckSecond(sValue : String; Var sError : String) : Boolean;
+Var
+  iSecond : Integer;
+Begin
+  Result := False;
+  If Length(sValue) <> 2 Then
+    sError := 'Second Value '+sValue+' is not 2 digits in length'
+  Else If Not StringIsInteger32(sValue) Then
+    sError := 'Second Value '+sValue+' is not numerical'
+  Else
+    Begin
+    iSecond := StringToInteger32(sValue);
+    If (iSecond < 0) Or (iSecond > 59) Then
+      sError := 'Second Value '+sValue+': Second must be 0 and 59'
+    Else
+      Result := True;
+    End;
+End;
+
+Function CheckDot(sValue : String; Var sError : String; Var bInFraction : Boolean) : Boolean;
+Begin
+  If sValue = '.' Then
+    Begin
+    Result := True;
+    bInFraction := True;
+    End
+  Else
+    Begin
+    Result := False;
+    sError := 'Expected "."';
+    End;
+End;
+
+Function CheckFraction(sValue : String; Var sError : String) : Boolean;
+Begin
+  Result := False;
+  If Not StringIsInteger32(sValue) Then
+    sError := 'Fraction Value '+sValue+' is not numerical'
+  Else
+    Result := True;
+End;
+
+
+Function CheckSection(sFormat, sContent : String; Var iYear, iMonth : Integer; Var sError : String; Var bInFraction : Boolean) : Boolean;
+Begin
+  Result := True;
+
+  If Splice(sFormat, 'YYYY') Then
+    Result := CheckYear(splice(sContent, 4), sError, iYear);
+
+  If Result And Splice(sFormat, 'MM') Then
+    Result := CheckMonth(splice(sContent, 2), sError, iMonth);
+
+  If Result And Splice(sFormat, 'DD') Then
+    Result := CheckDay(splice(sContent, 2), iYear, iMonth, sError);
+
+  If Result And Splice(sFormat, 'HH') Then
+    Result := CheckHour(splice(sContent, 2), sError);
+
+  If Result And Splice(sFormat, 'NN') Then
+    Result := CheckMinute(splice(sContent, 2), sError);
+
+  If Result And Not bInFraction And Splice(sFormat, 'SS') Then
+    Result := CheckSecond(splice(sContent, 2), sError);
+
+  If Result And Not bInFraction And Splice(sFormat, '.') Then
+    Result := CheckDot(splice(sContent, 2), sError, bInFraction);
+
+  While Result And bInFraction And Splice(sFormat, 'S') Do
+    Result := CheckFraction(splice(sContent, 2), sError);
+
+  If sFormat <> '' Then
+    Begin
+    Result := False;
+    sError := 'The Date Format '+sFormat+' is not known';
+    End;
+End;
+
+Function CheckSections(sFormat, sContent : String; Const  sOrigFormat, sOrigValue : String; Var sError : String) : Boolean;
+Var
+  bFirst : Boolean;
+  sToken : String;
+  sSection : String;
+  bInFraction : Boolean;
+  iYear : Integer;
+  iMonth : Integer;
+Begin
+  Result := True;
+  sFormat := StringStrip(sFormat, ']');
+  bInFraction := False;
+  bFirst := True;
+  iYear := 0;
+  iMonth := 0;
+  Repeat
+    StringSplit(sFormat, '[', sToken, sFormat);
+    If sToken <> '' Then  // support use of [ at first point to make everything optional
+      Begin
+      sSection := Copy(sContent, 1, Length(sToken));
+      If sSection = '' Then
+        Begin
+        If bFirst Then
+          Begin
+          Result := False;
+          sError := StringFormat('The section %s in the Date format %s was not found in the value %s', [sToken, sOrigFormat, sOrigValue]);
+          End;
+        End
+      Else If Length(sSection) < Length(sToken) Then
+        Begin
+        Result := False;
+        sError := StringFormat('The section %s in the Date format %s was not completed in the value %s - value was %s', [sToken, sOrigFormat, sSection, sOrigValue]);
+        End
+      Else If Not CheckSection(sToken, sSection, iYear, iMonth, sError, bInFraction) Then
+        Begin
+        Result := False;
+        sError := StringFormat('%s (in the Date format %s and the value %s)', [sError, sOrigFormat, sOrigValue]);
+        End
+      Else
+        sContent := Copy(sContent, Length(sSection)+1, $FF);
+      End;
+    bFirst := False;
+  Until Not Result Or (sFormat = '') Or (sContent = '');
+End;
+
+Function CheckDateFormat(Const sFormat, sContent : String; Var sError : String) : Boolean;
+Var
+  bTimezone : Boolean;
+  sValue : String;
+  sTimezone : String;
+  sDateFormat : String;
+Begin
+  sDateFormat := sFormat;
+  bTimezone := Pos('[+/-ZZZZ]', sDateFormat) > 0;
+  If bTimezone Then
+    Delete(sDateFormat, Pos('[+/-ZZZZ]', sDateFormat), 9);
+  StringSplit(sContent, ['+', '-'], sValue, sTimezone);
+
+  Result := CheckSections(sDateFormat, sValue, sFormat, sContent, sError);
+
+  If Result Then
+    Result := CheckTimezone(bTimezone, sTimezone, sFormat, sError);
+End;
+
+{$IFDEF MSWINDOWS}
+function FileTimeToDateTime(Time: TFileTime; bTz : boolean): TDateTime;
+{$ENDIF MSWINDOWS}
+{$IFDEF POSIX}
+function FileTimeToDateTime(Time: time_t; bTz : boolean): TDateTime;
+{$ENDIF POSIX}
+
+  function InternalEncodeDateTime(const AYear, AMonth, ADay, AHour, AMinute, ASecond,
+    AMilliSecond: Word): TDateTime;
+  var
+    LTime: TDateTime;
+    Success: Boolean;
+  begin
+    Result := 0;
+    Success := TryEncodeDate(AYear, AMonth, ADay, Result);
+    if Success then
+    begin
+      Success := TryEncodeTime(AHour, AMinute, ASecond, AMilliSecond, LTime);
+      if Success then
+        if Result >= 0 then
+          Result := Result + LTime
+        else
+          Result := Result - LTime
+    end;
+  end;
+
+{$IFDEF MSWINDOWS}
+var
+  LFileTime: TFileTime;
+  SysTime: TSystemTime;
+begin
+  Result := 0;
+  if bTz then
+    FileTimeToLocalFileTime(Time, LFileTime)
+  else
+    lFileTime := time;
+
+  if FileTimeToSystemTime(LFileTime, SysTime) then
+    Result := InternalEncodeDateTime(SysTime.wYear, SysTime.wMonth, SysTime.wDay,
+      SysTime.wHour, SysTime.wMinute, SysTime.wSecond, SysTime.wMilliseconds);
+end;
+{$ENDIF MSWINDOWS}
+{$IFDEF POSIX}
+var
+  LDecTime: tm;
+begin
+  Result := 0;
+
+  if localtime_r(Time, LDecTime) <> nil then
+    Result := InternalEncodeDateTime(LDecTime.tm_year + 1900, LDecTime.tm_mon + 1,
+      LDecTime.tm_mday, LDecTime.tm_hour, LDecTime.tm_min, LDecTime.tm_sec, 0);
+end;
+{$ENDIF POSIX}
 
 End. // DateSupport //
 

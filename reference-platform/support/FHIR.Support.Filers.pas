@@ -40,7 +40,7 @@ type
     (atUnknown, atBoolean, atInteger32, atLongString, atReal, atBinary, atEnumerated8,
      atObject, atClass, atBegin, atEnd, atNil, atInteger64, atInteger16, atInteger8,
      atShortString, atSet, atCharacter, atReference, atResource, atDateTime, atColour, atExtended,
-     atDuration, atCurrency, atEnumerated16);
+     atDuration, atCurrency, atEnumerated16, atWideCharacter, atWideString, atDateTimeOffset);
 
   TFslFiler = Class(TFslObject)
     Private
@@ -145,7 +145,7 @@ Const
     ('Unknown', 'Boolean', 'Integer', 'String', 'Real', 'Binary', 'Enumerated',
      'Object', 'Class', 'Begin', 'End', 'Nil', 'Integer64', 'Integer16', 'Integer8',
      'ShortString', 'Set', 'Character', 'Reference', 'Resource', 'DateTime', 'Colour',
-     'Extended', 'Duration', 'Currency', 'Enumerated16');
+     'Extended', 'Duration', 'Currency', 'Enumerated16', 'WideChar', 'WideString', 'DateTimeOffset');
 
 
 Function StringToTag(Const sValue : String) : TFslTag;

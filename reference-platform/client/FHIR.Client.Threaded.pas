@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Stream,
+  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.System,
   FHIR.Base.Objects, FHIR.Client.Base;
 
 type
@@ -175,6 +175,7 @@ procedure TFhirThreadedClientThread.execute;
 var
   id : String;
 begin
+  SetThreadName('FHIR.Client.Thread');
   try
     try
       case FPackage.command of
@@ -220,6 +221,7 @@ begin
   finally
     FPackage.FDone := true;
   end;
+  SetThreadName('');
 end;
 
 { TFhirThreadedCommunicator }

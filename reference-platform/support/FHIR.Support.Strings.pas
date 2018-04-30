@@ -4,27 +4,27 @@ Unit FHIR.Support.Strings;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -109,6 +109,10 @@ Function StringArrayIndexOfInsensitive(Const aNames : Array Of String; Const sNa
 Function StringArrayIndexOfSensitive(Const aNames : Array Of String; Const sName : String): Integer; Overload;
 Function StringArrayIndexOf(Const aNames : Array Of String; Const sName: String) : Integer; Overload;
 Function StringArrayToString(Const aNames : Array Of String): String; Overload;
+Function StringExists(Const sValue, sFind : String) : Boolean; Overload;
+Function StringExists(Const sValue : String; Const aFind : TCharSet) : Boolean; Overload;
+Function StringExistsInsensitive(Const sValue, sFind : String): Boolean; Overload;
+Function StringExistsSensitive(Const sValue, sFind : String): Boolean; Overload;
 
 Function StringArrayExistsInsensitive(Const aNames : Array Of String; Const sName : String) : Boolean; Overload;
 Function StringArrayExistsSensitive(Const aNames : Array Of String; Const sName : String) : Boolean; Overload;
@@ -134,8 +138,6 @@ Function StringMultiply(cChar : Char; iCount : Integer) : String; Overload;
 
 Function StringFind(Const sValue, sFind : String) : Integer; Overload;
 Function StringFind(Const sValue : String; aFind : TCharSet) : Integer; Overload;
-Function StringExistsInsensitive(Const sValue, sFind : String): Boolean; Overload;
-Function StringExistsSensitive(Const sValue, sFind : String): Boolean; Overload;
 Function StringKeep(Const sValue : String; Const aFind : TCharSet) : String; Overload;
 Function StringReplace(Const sValue, sFind, sReplace : String) : String; Overload;
 Function StringReplace(Const sValue : String; Const aFind : TCharSet; cReplace : Char) : String; Overload;
@@ -424,6 +426,7 @@ Function DecodeMIMEURL(Const sValue : String) : String;  overload;
 Function SizeOfDecodeHexadecimal(Const aBuffer; iSize : Cardinal) : Cardinal; Overload;
 Function DecodeHexadecimal(Const cHigh, cLow : AnsiChar) : Byte; Overload;
 Procedure DecodeHexadecimal(Const sValue : AnsiString; Var aBuffer; iCount : Integer); Overload;
+Function StringIsHexadecimal(Const sValue : String) : Boolean;
 
 Function SizeOfEncodeHexadecimal(Const aBuffer; iSize : Cardinal) : Cardinal; Overload;
 Function EncodeHexadecimal(Const iValue : Byte) : AnsiString; Overload;
@@ -914,6 +917,20 @@ Function StringArrayExists(Const aNames: Array Of String; Const sName: String): 
 Begin
   Result := StringArrayExistsInsensitive(aNames, sName);
 End;
+
+Function StringExists(Const sValue, sFind : String) : Boolean;
+Begin
+  Result := StringExistsInsensitive(sValue, sFind);
+End;
+
+
+Function StringExists(Const sValue : String; Const aFind : TCharSet) : Boolean;
+Begin
+  Result := StringFind(sValue, aFind) > 0;
+End;
+
+
+
 
 Function StringUpper(Const sValue : String) : String;
 Begin
@@ -2914,6 +2931,12 @@ Begin
     Result := False;
   End;
 End;
+
+Function StringIsHexadecimal(Const sValue : String) : Boolean;
+Begin
+  Result := (sValue <> '') And (StringContainsOnly(sValue, setHexadecimal));
+End;
+
 
 Procedure DecodeHexadecimal(Const cHigh, cLow : AnsiChar; Out iValue : Byte); overload;
 Var

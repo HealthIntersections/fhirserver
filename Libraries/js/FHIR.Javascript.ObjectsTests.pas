@@ -30,7 +30,7 @@ implementation
 
 procedure TFHIRJavascriptTests.Setup;
 begin
-  FJs := TFHIRJavascript.Create;
+  FJs := TFHIRJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
   FJs.OnLog := JSLog;
   FLog := TStringList.create;
 end;
