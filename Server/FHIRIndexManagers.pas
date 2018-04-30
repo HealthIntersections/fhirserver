@@ -1011,15 +1011,7 @@ begin
     end;
     result.link;
   finally
-    result.Destroy;
-/////////////////////////////////////////////////////////////
-// hmm...
-//    result.Destroy points to Fhir.Support.Generics. TFslList<T>.Destroy;
-//    result.free points to Fhir.Support.Objects.  TFslObject.Free;
-// casting it as TFslList<TFHIRCompartmentId> did not seem to fix it
-/////////////////////////////////////////////////////////////
-
-
+    result.free;
   end;
 end;
 

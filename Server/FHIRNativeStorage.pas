@@ -1060,6 +1060,7 @@ var
   needSecure : boolean;
   list : TMatchingResourceList;
   src : Tbytes;
+  comps : TFslList<TFHIRCompartmentId>;
 begin
   key := 0;
   CheckCreateNarrative(request);
@@ -1200,7 +1201,12 @@ begin
             FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
 
           CreateIndexer;
-          CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.SessionCompartments);
+          comps := FIndexer.execute(resourceKey, sId, request.resource, tags);
+          try
+            CheckCompartments(comps, request.SessionCompartments);
+          finally
+            comps.free
+          end;
           FRepository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, request.Lang, src);
           if request.resourceEnum = frtPatient then
             FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
@@ -2368,6 +2374,7 @@ var
   needSecure : boolean;
   list : TMatchingResourceList;
   src : TBytes;
+  comps : TFslList<TFHIRCompartmentId>;
 begin
   CheckCreateNarrative(request);
 
@@ -2519,7 +2526,7 @@ begin
           FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
           CommitTags(tags, key);
           CreateIndexer;
-          FIndexer.execute(resourceKey, request.id, request.resource, tags);
+          FIndexer.execute(resourceKey, request.id, request.resource, tags).free;
           FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, request.Lang, src);
           if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
             FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
@@ -2754,7 +2761,7 @@ begin
           FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
           CommitTags(tags, key);
           CreateIndexer;
-          FIndexer.execute(resourceKey, request.id, request.resource, tags);
+          FIndexer.execute(resourceKey, request.id, request.resource, tags).free;
           FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, request.Lang, src);
 
           if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
@@ -5411,7 +5418,7 @@ begin
             FConnection.terminate;
             Connection.StartTransact;
             try
-              FIndexer.execute(Integer(list.objects[i]), list[i], r, tags);
+              FIndexer.execute(Integer(list.objects[i]), list[i], r, tags).free;
               Connection.Commit;
             except
               on e:exception do
@@ -8220,7 +8227,7 @@ begin
           if not deleted and (resourceVersionKey = versionKey) then
           begin
             native(manager).CreateIndexer;
-            native(manager).FIndexer.execute(resourceKey, request.Id, parser.resource as TFHIRResource, tags);
+            native(manager).FIndexer.execute(resourceKey, request.Id, parser.resource as TFHIRResource, tags).free;
           end;
         finally
           parser.free;
