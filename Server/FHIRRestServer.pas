@@ -81,7 +81,7 @@ Uses
   EncdDecd,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, FHIR.Support.Mime, IdCookie,
-  IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders,
+  IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool,
   IdGlobalProtocols, FHIR.Web.Socket,
 
   FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Strings,
@@ -1009,6 +1009,8 @@ Begin
   if FActualPort > 0 then
   begin
     FPlainServer := TIdHTTPServer.Create(Nil);
+    FPlainServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
+    TIdSchedulerOfThreadPool(FPlainServer.Scheduler).PoolSize := 20;
     FPlainServer.ServerSoftware := 'Health Intersections FHIR Server';
     FPlainServer.ParseParams := false;
     FPlainServer.DefaultPort := FActualPort;
@@ -1030,6 +1032,8 @@ Begin
     If (FRootCertFile <> '') and (Not FileExists(FRootCertFile)) Then
       Raise exception.Create('SSL Certificate "' + FRootCertFile + ' could not be found');
     FSSLServer := TIdHTTPServer.Create(Nil);
+    FSSLServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
+    TIdSchedulerOfThreadPool(FSSLServer.Scheduler).PoolSize := 20;
     FSSLServer.ServerSoftware := 'Health Intersections FHIR Server';
     FSSLServer.ParseParams := false;
     FSSLServer.DefaultPort := FActualSSLPort;
@@ -1068,12 +1072,14 @@ Begin
   if FSSLServer <> nil then
   begin
     FSSLServer.active := false;
+    FSSLServer.Scheduler.Free;
     FreeAndNil(FSSLServer);
     FreeAndNil(FIOHandler);
     UnloadEAYExtensions;
   end;
   if FPlainServer <> nil then
   begin
+    FPlainServer.Scheduler.Free;
     FPlainServer.active := false;
     FreeAndNil(FPlainServer);
   end;
@@ -1324,7 +1330,7 @@ begin
     logResponse(id, response);
     t := GetTickCount - t;
     logt(id+' http: '+request.RawHTTPCommand+' from '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+' in '+inttostr(t)+'ms . mem= '+MemoryStatus);
-    response.CloseConnection := false;
+    response.CloseConnection := true;
   finally
     MarkExit(AContext);
     SetThreadName('');
