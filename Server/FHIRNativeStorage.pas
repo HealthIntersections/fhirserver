@@ -883,6 +883,8 @@ end;
 
 destructor TFHIRNativeOperationEngine.Destroy;
 begin
+/// Just checking: The Create method adds a bunch of Operations, and I'm not sure they are destroyed. To be checked.
+///    Possibly also related with TFslObject and TFslList  - as noted in FHIRIndexManagers.pas
   FIndexer.Free;
   FRepository.Free;
   inherited;

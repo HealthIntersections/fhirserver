@@ -994,7 +994,9 @@ begin
       FConnection.prepare;
       for i := 0 to FCompartments.Count - 1 Do
       begin
+// Will these compartments be freed? See below.
         result.Add(TFhirCompartmentId.Create(FCompartments[i].FEnum, FCompartments[i].Id));
+//
         FConnection.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
         FConnection.BindInteger('r', FCompartments[i].key);
         FConnection.BindInteger('ct', FCompartments[i].typekey);
@@ -1009,7 +1011,15 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.Destroy;
+/////////////////////////////////////////////////////////////
+// hmm...
+//    result.Destroy points to Fhir.Support.Generics. TFslList<T>.Destroy;
+//    result.free points to Fhir.Support.Objects.  TFslObject.Free;
+// casting it as TFslList<TFHIRCompartmentId> did not seem to fix it
+/////////////////////////////////////////////////////////////
+
+
   end;
 end;
 

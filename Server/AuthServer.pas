@@ -660,6 +660,7 @@ begin
 
       ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params.GetVar('patient'));
       if params.GetVar('patient') <> '' then
+// Will these compartments be freed?
         session.Compartments.Add(TFHIRCompartmentId.Create(frtPatient, params.GetVar('patient')));
 
       session.scopes := scopes.CommaText.Replace(',', ' ');

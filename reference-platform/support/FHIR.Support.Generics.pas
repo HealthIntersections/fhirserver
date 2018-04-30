@@ -577,6 +577,8 @@ end;
 
 destructor TFslList<T>.Destroy;
 begin
+// Clear method only sets lenght to 0, does not destroy any objects, does it?
+// Is the sequence below ok?
   Clear;
   FArrayManager.Free;
   inherited;
