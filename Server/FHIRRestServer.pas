@@ -4623,6 +4623,7 @@ begin
         end;
         FLastSweep := Now;
       end;
+      if (FServer <>nil) and (FServer.ServerContext <> nil) and (FServer.ServerContext.ForLoad) then
       if not FServer.ServerContext.ForLoad then
       begin
         if (not terminated) then

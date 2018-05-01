@@ -877,6 +877,7 @@ var
   entry : TFhirIndexEntry;
   dummy : string;
   keys : string;
+  comps: TFslList<TFHIRCompartmentId>;
 begin
   checkTags(resource, tags);
   FforTesting := tags.hasTestingTag;
@@ -986,7 +987,7 @@ begin
   end;
   FConnection.terminate;
 
-  result := TFslList<TFHIRCompartmentId>.create;
+  comps := TFslList<TFHIRCompartmentId>.create;
   try
     if FCompartments.Count > 0 then
     begin
@@ -994,9 +995,7 @@ begin
       FConnection.prepare;
       for i := 0 to FCompartments.Count - 1 Do
       begin
-// Will these compartments be freed? See below.
-        result.Add(TFhirCompartmentId.Create(FCompartments[i].FEnum, FCompartments[i].Id));
-//
+        comps.Add(TFhirCompartmentId.Create(FCompartments[i].FEnum, FCompartments[i].Id));
         FConnection.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
         FConnection.BindInteger('r', FCompartments[i].key);
         FConnection.BindInteger('ct', FCompartments[i].typekey);
@@ -1009,7 +1008,7 @@ begin
       end;
       FConnection.terminate;
     end;
-    result.link;
+    result := comps.link;
   finally
     result.free;
   end;
