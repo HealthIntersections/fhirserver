@@ -877,6 +877,8 @@ var
   entry : TFhirIndexEntry;
   dummy : string;
   keys : string;
+//JCT:1: Maybe add this temp variable
+  resultTemp: TFslList<TFHIRCompartmentId>;
 begin
   checkTags(resource, tags);
   FforTesting := tags.hasTestingTag;
@@ -986,7 +988,8 @@ begin
   end;
   FConnection.terminate;
 
-  result := TFslList<TFHIRCompartmentId>.create;
+  resultTemp := TFslList<TFHIRCompartmentId>.create; //JCT:1:
+//JCT:1:   result := TFslList<TFHIRCompartmentId>.create;
   try
     if FCompartments.Count > 0 then
     begin
@@ -994,9 +997,8 @@ begin
       FConnection.prepare;
       for i := 0 to FCompartments.Count - 1 Do
       begin
-// Will these compartments be freed? See below.
-        result.Add(TFhirCompartmentId.Create(FCompartments[i].FEnum, FCompartments[i].Id));
-//
+//JCT:1: use the temp variable                result.Add(TFhirCompartmentId.Create(FCompartments[i].FEnum, FCompartments[i].Id));
+        resultTemp.Add(TFhirCompartmentId.Create(FCompartments[i].FEnum, FCompartments[i].Id));
         FConnection.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
         FConnection.BindInteger('r', FCompartments[i].key);
         FConnection.BindInteger('ct', FCompartments[i].typekey);
@@ -1009,17 +1011,11 @@ begin
       end;
       FConnection.terminate;
     end;
-    result.link;
+result:=resultTemp;
+//JCT:1:        result.link;
   finally
-    result.Destroy;
-/////////////////////////////////////////////////////////////
-// hmm...
-//    result.Destroy points to Fhir.Support.Generics. TFslList<T>.Destroy;
-//    result.free points to Fhir.Support.Objects.  TFslObject.Free;
-// casting it as TFslList<TFHIRCompartmentId> did not seem to fix it
-/////////////////////////////////////////////////////////////
-
-
+    result.free;
+    resultTemp.free;
   end;
 end;
 

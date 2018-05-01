@@ -1060,6 +1060,8 @@ var
   needSecure : boolean;
   list : TMatchingResourceList;
   src : Tbytes;
+//JCT:2: This must be created separately because it must be freed here.
+  TempCompList:TFslList<TFHIRCompartmentId>;
 begin
   key := 0;
   CheckCreateNarrative(request);
@@ -1200,7 +1202,12 @@ begin
             FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
 
           CreateIndexer;
-          CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.SessionCompartments);
+//JCT:2: this leaks       CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.SessionCompartments);
+//JCT:2: use this instead:
+          TempCompList:= FIndexer.execute(resourceKey, sId, request.resource, tags);
+          CheckCompartments(TempCompList, request.SessionCompartments);
+          TempCompList.Free;
+//JCT:2: until here
           FRepository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, request.Lang, src);
           if request.resourceEnum = frtPatient then
             FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');

@@ -1324,7 +1324,9 @@ begin
     logResponse(id, response);
     t := GetTickCount - t;
     logt(id+' http: '+request.RawHTTPCommand+' from '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+' in '+inttostr(t)+'ms . mem= '+MemoryStatus);
-    response.CloseConnection := false;
+//JCT3: This brings more leaks
+//    response.CloseConnection := false;
+// why is it there?
   finally
     MarkExit(AContext);
     SetThreadName('');
@@ -1640,6 +1642,7 @@ Begin
         end
         else
           oStream := TStringStream.Create(request.UnparsedParams);
+//JCT:4: until here only ostream could leak, so i found that the try...finalize loops were shifted.
 
         try
           oResponse := TFHIRResponse.Create;
@@ -1760,8 +1763,9 @@ Begin
                         ProcessAsyncRequest(Context, oRequest, oResponse)
                       else
                         ProcessRequest(Context, oRequest, oResponse);
+//JCT:4: Context is freed but should be on an outer statement.
                     finally
-                      Context.Free;
+//JCT:4: Let's remove from here                     Context.Free;
                     end;
                   except
                     on e: EAbort do
@@ -1778,6 +1782,8 @@ Begin
                       raise;
                     end;
                   end;
+//JCT:4: Let's try freeing Context here
+                  Context.Free;
                   cacheResponse(response, oResponse.CacheControl);
                   RecordExchange(oRequest, oResponse);
                   ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'));
@@ -1811,15 +1817,24 @@ Begin
                 end;
               end;
             finally
-              oRequest.Free;
+//JCT:4: Take this from here
+//             oRequest.Free;
             end;
           Finally
-            oResponse.Free;
+//JCT:4: Put it here
+              oRequest.Free;
+//JCT:4: Take this from here
+//            oResponse.Free;
           End;
         finally
-          oStream.Free;
+//JCT:4: Put it here
+            oResponse.Free;
+//JCT:4: Take this from here
+//          oStream.Free;
         end;
       finally
+//JCT:4: Put it here
+          oStream.Free;
         form.Free;
       end;
     except
@@ -4617,6 +4632,7 @@ begin
         end;
         FLastSweep := Now;
       end;
+      if (FServer <>nil) and (FServer.ServerContext <> nil) and (FServer.ServerContext.ForLoad) then
       if not FServer.ServerContext.ForLoad then
       begin
         if (not terminated) then
