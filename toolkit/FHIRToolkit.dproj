@@ -335,7 +335,7 @@
             <Form>MemoEditorForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Settings.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Registry.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.ServerDialogFMX.pas">
             <Form>EditRegisteredServerForm</Form>
             <FormType>fmx</FormType>

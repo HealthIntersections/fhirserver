@@ -162,7 +162,7 @@ uses
   FHIR.Ui.OSX in '..\Libraries\ui\FHIR.Ui.OSX.pas',
   ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm},
   MemoEditorDialog in 'MemoEditorDialog.pas' {MemoEditorForm},
-  FHIR.Client.Settings in '..\reference-platform\client\FHIR.Client.Settings.pas',
+  FHIR.Client.Registry in '..\reference-platform\client\FHIR.Client.Registry.pas',
   FHIR.Client.ServerDialogFMX in '..\reference-platform\client\FHIR.Client.ServerDialogFMX.pas' {EditRegisteredServerForm},
   ToolkitSettings in 'ToolkitSettings.pas',
   CodeSystemEditor in 'CodeSystemEditor.pas' {CodeSystemEditorFrame: TFrame},

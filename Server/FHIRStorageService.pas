@@ -37,7 +37,8 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics,  FHIR.Support.Exceptions, FHIR.Support.Collections,
   FHIR.Database.Dialects, FHIR.Support.DateTime, FHIR.Misc.GraphQL,
 
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Base.Lang, FHIR.Tools.Factory, FHIR.Client.Base,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Base.Lang, FHIR.Tools.Factory,
+  FHIR.Client.Base, FHIR.Tools.Common,
   FHIR.Tools.Client, FHIR.Tools.Context, FHIR.Base.Xhtml, FHIR.Tools.IndexInfo, FHIR.Base.Parser, FHIR.Tools.Indexing, FHIR.Tools.GraphQL, FHIR.Tools.XhtmlComp,
   FHIR.CdsHooks.Utilities,
   ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;

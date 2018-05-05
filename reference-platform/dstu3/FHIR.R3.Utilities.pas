@@ -47,10 +47,6 @@ uses
 
 
 const
-  ExceptionTypeTranslations : array [TExceptionType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
-    IssueTypeInvariant, IssueTypeSecurity, IssueTypeLogin, IssueTypeUnknown, IssueTypeExpired, IssueTypeForbidden, IssueTypeSuppressed, IssueTypeProcessing,
-    IssueTypeNotSupported, IssueTypeDuplicate, IssueTypeNotFound, IssueTypeTooLong, IssueTypeCodeInvalid, IssueTypeExtension, IssueTypeTooCostly, IssueTypeBusinessRule,
-    IssueTypeConflict, IssueTypeIncomplete, IssueTypeTransient, IssueTypeLockError, IssueTypeNoStore, IssueTypeException, IssueTypeTimeout, IssueTypeThrottled, IssueTypeInformational);
 
   MIN_DATE = DATETIME_MIN;
   MAX_DATE = DATETIME_MAX;
@@ -105,7 +101,6 @@ function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
 function isHistoryURL(url : String) : boolean;
 procedure splitHistoryUrl(var url : String; var history : String);
 procedure RemoveBOM(var s : String);
-function isAbsoluteUrl(s: String): boolean;
 function languageMatches(spec, possible : String) : boolean;
 
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
@@ -4729,11 +4724,6 @@ procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String);
 begin
   if modifierExtensionList.Count > 0 then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
-end;
-
-function isAbsoluteUrl(s: String): boolean;
-begin
-  result := s.StartsWith('urn:') or s.StartsWith('http:') or s.StartsWith('https:') or s.StartsWith('ftp:');
 end;
 
 { TFhirCodeListHelper }

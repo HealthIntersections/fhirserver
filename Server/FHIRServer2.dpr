@@ -205,7 +205,13 @@ uses
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
-  FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas';
+  FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
+  FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
+  FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
+  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
+  FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
+  FHIR.R2.Common in '..\reference-platform\dstu2\FHIR.R2.Common.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

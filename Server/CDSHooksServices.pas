@@ -209,8 +209,11 @@ begin
     check(issues, request.patient <> '', 'patient is required');
     check(issues, request.encounter <> '', 'encounter is required');
     check(issues, request.context.Count > 0, 'at least one resource is required in context');
-    {$IFNDEF FHIR2}
-    for res in request.context do
+  raise Exception.Create('to do');
+
+(*
+{$IFNDEF FHIR2}
+   for res in request.context do
     begin
       if check(issues, res.ResourceType = frtProcedureRequest, 'Context resources must be a ProcedureRequest') then
       begin
@@ -278,7 +281,7 @@ begin
         b.Free;
       end;
       card.indicator := 'warning';
-    end;
+    end; *)
   finally
     issues.Free;
   end;
@@ -490,7 +493,9 @@ var
   id : TFhirIdentifier;
   ok : boolean;
 begin
-  result := nil;
+  raise Exception.Create('to do');
+
+(*  result := nil;
   // do we know that patient?
   if Session = nil then
     ok := engine.FindResource('Patient', request.patient, [], key, versionKey, nil,  nil, nil)
@@ -532,7 +537,7 @@ begin
         matches.Free;
       end;
     end;
-  end;
+  end; *)
 end;
 
 function TCDAHooksPatientViewService.buildPatientView(server: TFHIRServerContext; engine: TFHIROperationEngine; base : String; secure : boolean; patient: TFHIRPatient; session : TFHIRSession): TCDSHookResponse;

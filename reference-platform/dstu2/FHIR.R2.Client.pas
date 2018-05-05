@@ -33,24 +33,10 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Client.Base,
-  FHIR.R2.Parser, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Utilities, FHIR.R2.Context;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Client.Base, FHIR.XVersion.Resources,
+  FHIR.R2.Parser, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Utilities, FHIR.R2.Context, FHIR.R2.Common;
 
 Type
-  TFhirOperationOutcome2 = class (TFhirOperationOutcomeW)
-  public
-    function hasText : boolean; override;
-    function text : String; override;
-    function code : TExceptionType; override;
-  end;
-
-  TBundleHandler2 = class (TBundleHandler)
-  public
-    function next(bnd : TFHIRResourceV) : String; overload; override;
-    procedure addEntries(bnd : TFHIRResourceV); override;
-    procedure clearLinks; override;
-  end;
-
   TFhirClient2 = class (TFhirClientV)
   protected
     function opWrapper : TFhirOperationOutcomeWClass; override;
@@ -81,47 +67,6 @@ Type
 
 
 implementation
-
-{ TFhirOperationOutcome2 }
-
-function TFhirOperationOutcome2.code: TExceptionType;
-var
-  a : TExceptionType;
-  op : TFhirOperationOutcome;
-begin
-  op := Fres as TFhirOperationOutcome;
-  result := etNull;
-  if not op.issueList.IsEmpty then
-    for a := low(TExceptionType) to High(TExceptionType) do
-      if ExceptionTypeTranslations[a] = op.issueList[0].code then
-       exit(a);
-end;
-
-function TFhirOperationOutcome2.hasText: boolean;
-var
-  op : TFhirOperationOutcome;
-begin
-  op := Fres as TFhirOperationOutcome;
-  if (op.text <> nil) and (op.text.div_ <> nil) then
-    result := true
-  else if (op.issueList.Count > 0) and (op.issueList[0].diagnostics <> '') then
-    result := true
-  else
-    result := false;
-end;
-
-function TFhirOperationOutcome2.text: String;
-var
-  op : TFhirOperationOutcome;
-begin
-  op := Fres as TFhirOperationOutcome;
-  if (op.text <> nil) and (op.text.div_ <> nil) then
-    result := op.text.div_.AsPlainText
-  else if (op.issueList.Count > 0) and (op.issueList[0].diagnostics <> '') then
-    result := op.issueList[0].diagnostics
-  else
-    result := '';
-end;
 
 function TFhirClient2.makeParser(fmt : TFHIRFormat) : TFHIRParser;
 begin
@@ -238,32 +183,6 @@ end;
 function TFhirClient2.link: TFhirClient2;
 begin
   result := TFhirClient2(inherited link);
-end;
-
-{ TBundleHandler2 }
-
-procedure TBundleHandler2.addEntries(bnd: TFHIRResourceV);
-var
-  b : TFHIRBundle;
-begin
-  b := bnd as TFHIRBundle;
-  TFhirBundle(resource).entryList.AddAll(b.entryList);
-end;
-
-procedure TBundleHandler2.clearLinks;
-var
-  b : TFHIRBundle;
-begin
-  b := resource as TFHIRBundle;
-  b.link_List.Clear;
-end;
-
-function TBundleHandler2.next(bnd: TFHIRResourceV): String;
-var
-  b : TFHIRBundle;
-begin
-  b := bnd as TFHIRBundle;
-  result := b.Links['next'];
 end;
 
 end.

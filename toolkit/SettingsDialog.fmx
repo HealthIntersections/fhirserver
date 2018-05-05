@@ -44,7 +44,7 @@ object SettingsForm: TSettingsForm
     Size.Width = 449.000000000000000000
     Size.Height = 203.000000000000000000
     Size.PlatformDefault = False
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 1
     TabPosition = PlatformDefault
     Sizes = (
@@ -58,7 +58,7 @@ object SettingsForm: TSettingsForm
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 107.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
@@ -207,7 +207,7 @@ object SettingsForm: TSettingsForm
       CustomIcon = <
         item
         end>
-      IsSelected = False
+      IsSelected = True
       Size.Width = 127.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False

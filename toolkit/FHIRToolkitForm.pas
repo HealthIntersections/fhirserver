@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Platform,
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
-  IdSSLOpenSSLHeaders, FHIR.Support.Certs,
+  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Generics,
   FHIR.Debug.Logging,
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Client.Base, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
   FHIR.Tools.Context, FHIR.Tools.Profiles, FHIR.Support.System, FHIR.Support.Text,
@@ -155,6 +155,7 @@ type
     FUpgradeChecked : boolean;
     FRegistryTab : TTabItem;
     ToolkitLogger : TToolkitLogger;
+    FServers : TFslList<TRegisteredFHIRServer>;
 
     procedure saveFiles;
     procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
@@ -173,6 +174,7 @@ type
     procedure DoIdle(out stop : boolean);
     procedure DoOpenURL(url : String);
     procedure checkVersion(reportIfCurrent: boolean);
+    procedure loadServers;
   public
     procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
     procedure threadMonitorProc(sender : TFhirClientV; var stop : boolean);
@@ -209,7 +211,7 @@ begin
     if form.ShowModal = mrOk then
     begin
       FSettings.registerServer('', form.Server);
-      FSettings.ListServers('', lbServers.Items);
+      loadServers;
       lbServersClick(nil);
     end;
   finally
@@ -228,92 +230,90 @@ var
   smart : TSmartAppLaunchLogin;
   ok : boolean;
 begin
-  server := FSettings.serverInfo('', lbServers.ItemIndex);
+  server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data);
+  http := TFhirClients.makeHTTP(nil, server.fhirEndpoint, false, FSettings.Timeout* 1000, FSettings.proxy);
   try
-    http := TFhirClients.makeHTTP(nil, server.fhirEndpoint, false, FSettings.Timeout* 1000, FSettings.proxy);
-    try
-      (http.Communicator as TFHIRHTTPCommunicator).username := server.username;
-      (http.Communicator as TFHIRHTTPCommunicator).password := server.password;
-      if server.isSSL then
-      begin
-        (http.Communicator as TFHIRHTTPCommunicator).certFile := server.SSLPublicCert;
-        (http.Communicator as TFHIRHTTPCommunicator).certKey := server.SSLPrivateKey;
-        (http.Communicator as TFHIRHTTPCommunicator).certPWord := server.SSLPassphrase;
-      end;
-      http.Logger := ToolkitLogger.Link;
-      ok := false;
-      if server.SmartAppLaunchMode <> salmNone then
-      begin
-        dowork(self, 'Logging in', true,
-          procedure
-          begin
-            smart := TSmartAppLaunchLogin.Create;
-            try
-              smart.server := server.Link;
-              smart.scopes := ['user/*.*'];
-              smart.OnIdle := DoIdle;
-              smart.OnOpenURL := DoOpenURL;
-              smart.name := 'FHIR Toolkit';
-              smart.version := '0.0.'+inttostr(BuildCount);
-              ok := smart.login;
-              if ok then
-                http.smartToken := smart.token.link;
-            finally
-              smart.Free;
-            end;
-          end);
-      end
-      else
-        ok := true;
-      if not ok then
-        exit;
-      client := TFhirClients.makeThreaded(nil, http.link, threadMonitorProc);
-      try
-        cs := nil;
-        doWork(nil, 'Connect', true,
-          procedure
-          begin
-            cs := client.conformance(false);
-          end);
-        try
-          if (cs <> nil) then
-          begin
-            tab := tbMain.Add(TTabItem);
-            tab.Text := server.name;
-            tbMain.ActiveTab := tab;
-            serverForm := TServerFrame.create(tab);
-            serverForm.Parent := tab;
-            tab.TagObject := serverForm;
-            serverForm.OnWork := dowork;
-            serverForm.TagObject := tab;
-            serverForm.tabs := tbMain;
-            serverForm.Settings := FSettings.Link;
-            serverForm.Tab := tab;
-            serverForm.Align := TAlignLayout.Client;
-            serverForm.Client := client.link;
-            serverForm.CapabilityStatement := cs.link;
-            serverForm.OnOpenResource := OpenResourcefromClient;
-            serverForm.OnWork :=  dowork;
-            serverForm.load;
-
-            if lbServers.ItemIndex > 0 then
-            begin
-              lbServers.Items.Exchange(0, lbServers.ItemIndex);
-              FSettings.moveServer('', lbServers.ItemIndex, -lbServers.ItemIndex);
-              lbServers.ItemIndex := 0;
-            end;
+    (http.Communicator as TFHIRHTTPCommunicator).username := server.username;
+    (http.Communicator as TFHIRHTTPCommunicator).password := server.password;
+    if server.isSSL then
+    begin
+      (http.Communicator as TFHIRHTTPCommunicator).certFile := server.SSLPublicCert;
+      (http.Communicator as TFHIRHTTPCommunicator).certKey := server.SSLPrivateKey;
+      (http.Communicator as TFHIRHTTPCommunicator).certPWord := server.SSLPassphrase;
+    end;
+    http.Logger := ToolkitLogger.Link;
+    ok := false;
+    if server.SmartAppLaunchMode <> salmNone then
+    begin
+      dowork(self, 'Logging in', true,
+        procedure
+        begin
+          smart := TSmartAppLaunchLogin.Create;
+          try
+            smart.server := server.Link;
+            smart.scopes := ['user/*.*'];
+            smart.OnIdle := DoIdle;
+            smart.OnOpenURL := DoOpenURL;
+            smart.name := 'FHIR Toolkit';
+            smart.version := '0.0.'+inttostr(BuildCount);
+            ok := smart.login;
+            if ok then
+              http.smartToken := smart.token.link;
+          finally
+            smart.Free;
           end;
-        finally
-          cs.free;
+        end);
+    end
+    else
+      ok := true;
+    if not ok then
+      exit;
+    client := TFhirClients.makeThreaded(nil, http.link, threadMonitorProc);
+    try
+      cs := nil;
+      doWork(nil, 'Connect', true,
+        procedure
+        begin
+          cs := client.conformance(false);
+        end);
+      try
+        if (cs <> nil) then
+        begin
+          tab := tbMain.Add(TTabItem);
+          tab.Text := server.name;
+          tbMain.ActiveTab := tab;
+          serverForm := TServerFrame.create(tab);
+          serverForm.Parent := tab;
+          tab.TagObject := serverForm;
+          serverForm.OnWork := dowork;
+          serverForm.TagObject := tab;
+          serverForm.tabs := tbMain;
+          serverForm.Settings := FSettings.Link;
+          serverForm.Tab := tab;
+          serverForm.Align := TAlignLayout.Client;
+          serverForm.Client := client.link;
+          serverForm.CapabilityStatement := cs.link;
+          serverForm.OnOpenResource := OpenResourcefromClient;
+          serverForm.OnWork :=  dowork;
+          serverForm.load;
+
+          if lbServers.ItemIndex > 0 then
+          begin
+            lbServers.Items.Exchange(0, lbServers.ItemIndex);
+            FSettings.moveServerBefore('',
+              TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data),
+              TRegisteredFHIRServer(lbServers.ListItems[0].data));
+            lbServers.ItemIndex := 0;
+          end;
         end;
       finally
-        client.Free;
+        cs.free;
       end;
     finally
-      http.Free;
+      client.Free;
     end;
   finally
-    server.free;
+    http.Free;
   end;
 end;
 
@@ -336,11 +336,11 @@ begin
   try
     form.SoftwareId := ToolkitIdentifier;
     form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
-    form.Server := FSettings.serverInfo('', lbServers.ItemIndex);
+    form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data).Link;
     if form.ShowModal = mrOk then
     begin
-      FSettings.updateServerInfo('', lbServers.ItemIndex, form.Server);
-      FSettings.ListServers('', lbServers.Items);
+      FSettings.updateServerInfo('', form.Server);
+      loadServers;
       lbServersClick(nil);
     end;
   finally
@@ -425,7 +425,7 @@ var
   i : integer;
 begin
   i := lbServers.ItemIndex;
-  FSettings.DeleteServer('', lbServers.ItemIndex);
+  FSettings.DeleteServer('', TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data));
   lbServers.items.Delete(i);
   if i = lbServers.items.Count then
     dec(i);
@@ -772,8 +772,14 @@ end;
 
 procedure TMasterToolsForm.FormCreate(Sender: TObject);
 begin
-  FSettings := TFHIRToolkitSettings.Create(IncludeTrailingPathDelimiter(SystemTemp) + 'fhir-toolkit-settings.json');
-  FSettings.ListServers('', lbServers.Items);
+  FSettings := TFHIRToolkitSettings.Create(IncludeTrailingPathDelimiter(SystemTemp) + 'fhir-toolkit-settings.json',
+    {$IFDEF FHIR3}
+     [fhirVersionRelease3]
+    {$ELSE}
+     [fhirVersionRelease4]
+    {$ENDIF}
+    );
+  loadServers;
   lbServers.ItemIndex := 0;
   lbServersClick(self);
   FSettings.getValues('Files'+versionSettingsString, lbFiles.Items);
@@ -809,6 +815,7 @@ begin
   FSettings.Free;
   FIndexes.Free;
   FContext.Free;
+  FServers.Free;
   ToolkitLogger.Free;
   if UpgradeOnClose then
   begin
@@ -849,6 +856,23 @@ begin
   btnConnect.Enabled := lbServers.ItemIndex >= 0;
   btnRemoveServer.Enabled := lbServers.ItemIndex >= 0;
   btnEditServer.Enabled := lbServers.ItemIndex >= 0;
+end;
+
+procedure TMasterToolsForm.loadServers;
+var
+  i : integer;
+begin
+  if FServers = nil then
+    FServers := TFslList<TRegisteredFHIRServer>.create
+  else
+    FServers.Clear;
+  lbServers.Items.Clear;
+  FSettings.ListServers('', FServers);
+  for i := 0 to FServers.Count - 1 do
+  begin
+    lbServers.Items.add(FServers[i].name + ': '+FServers[i].fhirEndpoint);
+    lbServers.ListItems[i].Data := FServers[i];
+  end;
 end;
 
 procedure TMasterToolsForm.mnuResourceLanguageClick(Sender: TObject);

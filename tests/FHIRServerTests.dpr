@@ -167,7 +167,6 @@ uses
   FHIRSessionManager in '..\Server\FHIRSessionManager.pas',
   FHIRStorageService in '..\Server\FHIRStorageService.pas',
   FHIR.Tools.GraphQL in '..\reference-platform\tools\FHIR.Tools.GraphQL.pas',
-  FHIR.R4.Tests.Worker in '..\reference-platform\r4\tests\FHIR.R4.Tests.Worker.pas',
   JsonTests in '..\reference-platform\support\Tests\JsonTests.pas',
   XmlTests in '..\reference-platform\support\Tests\XmlTests.pas',
   GraphQLTests in 'GraphQLTests.pas',
@@ -275,7 +274,15 @@ uses
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
-  FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas';
+  FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
+  FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
+  FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
+  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
+  FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
+  FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
+  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
+  FHIR.R4.Tests.Worker in '..\reference-platform\r4\tests\FHIR.R4.Tests.Worker.pas';
 
 var
   runner : ITestRunner;

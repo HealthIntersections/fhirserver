@@ -33,14 +33,19 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin, FHIR.Support.System,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Support.Stream,
-  Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
-  FHIR.Tools.PathNode,
-  FHIRPathDocumentation, Vcl.Buttons, Vcl.OleCtrls, SHDocVw, FHIR.Support.Text, FHIR.Base.Objects,
-  FHIR.Support.Generics, PluginUtilities, VirtualTrees, FHIR.Support.Lock, FHIR.Support.Shell,
-  IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer, FHIR.Client.SmartUtilities,
-  CDSBrowserForm, FHIR.CdsHooks.Client;
+  Vcl.Dialogs, Vcl.StdCtrls, Vcl.ToolWin, Vcl.ComCtrls, System.ImageList, Vcl.ImgList,
+  Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes, Vcl.Buttons, Vcl.OleCtrls, SHDocVw,
+  IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer,
+  VirtualTrees,
+
+  NppPlugin, NppDockingForms,
+
+  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Generics, FHIR.Support.Lock, FHIR.Support.Shell,
+
+  FHIR.Base.Objects, FHIR.Base.PathEngine,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
+  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
+  FHIRPathDocumentation, PluginUtilities, CDSBrowserForm;
 
 const
   UMSG = WM_USER + 1;
@@ -105,7 +110,7 @@ type
     FLastHtml : String;
     FValList : TFslList<TFHIRAnnotation>;
     FMatchList : TFslList<TFHIRAnnotation>;
-    FExpression : TFHIRPathExpressionNode;
+    FExpression : TFHIRPathExpressionNodeV;
     FFocusPath : String;
     FFocusObjects : TFslList<TFHIRObject>;
     FCDSManager : TCDSHooksManager;
@@ -133,7 +138,7 @@ type
     { Public declarations }
     procedure setNarrative(s : String);
     procedure setValidationOutcomes(errors : TFslList<TFHIRAnnotation>);
-    procedure setPathOutcomes(matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNode);
+    procedure setPathOutcomes(matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNodeV);
     procedure setFocusInfo(path : String; focus : Array of TFHIRObject);
 
     property CDSManager : TCDSHooksManager read FCDSManager;
@@ -257,17 +262,18 @@ procedure TFHIRVisualizer.reregisterAllCDSServers;
 var
   i : integer;
   server : TRegisteredFHIRServer;
+  l : TFslList<TRegisteredFHIRServer>;
 begin
   FCDSManager.clearServers;
-  for i := 0 to Settings.ServerCount('') - 1 do
-  begin
-    server := Settings.serverInfo('', i);
-    try
+  l := TFslList<TRegisteredFHIRServer>.create;
+  try
+    for server in l do
+    begin
       if server.cdshooks.Count > 0 then
         FCDSManager.registerServer(server);
-    finally
-      server.Free;
     end;
+  finally
+    l.Free;
   end;
 end;
 
@@ -284,6 +290,7 @@ begin
   FCDSManager.Free;
   FCDSErrors.Free;
   FCards.Free;
+  FWebCache.free;
   FWebServer.Free;
 end;
 
@@ -570,7 +577,7 @@ begin
   end;
 end;
 
-procedure TFHIRVisualizer.setPathOutcomes(matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNode);
+procedure TFHIRVisualizer.setPathOutcomes(matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNodeV);
 var
   a : TFHIRAnnotation;
   li : TListItem;
@@ -634,21 +641,10 @@ begin
   p := vtExpressions.GetNodeData(node);
   if p.expr = nil then
     CellText := '??'
-  else if (p.op) then
-  begin
-    CellText := CODES_TFHIRPathOperation[p.expr.Operation];
-    CellText := CellText + ': '+p.expr.OpTypes.describe;
-  end
+  else if (p.isOp) then
+    CellText := p.expr.nodeOpName
   else
-  begin
-    case p.expr.kind of
-      enkName : CellText := p.expr.name;
-      enkFunction : CellText := CODES_TFHIRPathFunctions[p.expr.FunctionId]+'()';
-      enkConstant : CellText := '"'+p.expr.constant+'"';
-      enkGroup : CellText := '(Group)';
-    end;
-    CellText := CellText + ': '+p.expr.Types.describe;
-  end;
+    CellText := p.expr.nodeName;
 end;
 
 procedure TFHIRVisualizer.vtExpressionsInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
@@ -656,73 +652,43 @@ var
   p : PTreeDataPointer;
 begin
   p := vtExpressions.GetNodeData(node);
-  if p.op then
+  if p.isOp then
     ChildCount := 0
   else
-  begin
-    ChildCount := p.expr.ParameterCount;
-    if (p.expr.Inner <> nil) then
-      inc(ChildCount);
-    if (p.expr.Group <> nil) then
-      inc(ChildCount);
-    if (p.expr.Operation <> popNull) then
-      inc(ChildCount, 2);
-  end;
+    ChildCount := p.expr.nodeChildCount;
 end;
 
-procedure TFHIRVisualizer.vtExpressionsInitNode(Sender: TBaseVirtualTree;
-  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+procedure TFHIRVisualizer.vtExpressionsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   p, pp : PTreeDataPointer;
-  pe : TFHIRPathExpressionNode;
-  i : integer;
+  pe : TFHIRPathExpressionNodeV;
+  offset : integer;
 begin
   p := vtExpressions.GetNodeData(Node);
   if ParentNode = nil then
   begin
     p.expr := FExpression;
+    Node.CheckType := ctNone;
   end
   else
   begin
+    Node.CheckType := ctCheckBox;
     pp := vtExpressions.GetNodeData(parentNode);
     pe := pp.expr;
-
-    // possible nodes:
-    case pe.kind of
-      enkName: i := 0; // no child nodes
-      enkFunction:
-        begin
-          i := pe.Parameters.Count;
-          if node.Index < i then
-            p.expr := pe.Parameters[node.Index];
-        end;
-      enkConstant: i := 0; // no children
-      enkGroup:
-        begin
-        i := 1;
-        if node.Index = 0 then
-          p.expr := pe.Group;
-        end;
-    end;
-    if (pe.Inner <> nil) then
-    begin
-      if node.Index = i then
-        p.expr := pe.Inner;
-      inc(i);
-    end;
-    case node.Index - i of
+    p.expr := pe.nodeGetChild(node.Index, offset);
+    case node.Index - offset of
       0: begin
          p.expr := pe;
-         p.op := true;
+         p.isOp := true;
          end;
-      1: p.expr := pe.OpNext;
-    else if node.index - i > 0 then
+      1: p.expr := pe.nodeOpNext;
+    else if node.index - offset > 0 then
       raise Exception.Create('not done yet');
     end;
   end;
   if p.expr.tag = 1 then
     node.CheckState := csCheckedNormal;
-  if not p.op and ((p.expr.Inner <> nil) or (p.expr.Group <> nil) or (p.expr.ParameterCount > 0) or (p.expr.OpNext <> nil)) then
+  if not p.isOp and (p.expr.nodeChildCount > 0) then
      InitialStates := [ivsHasChildren];
 end;
 

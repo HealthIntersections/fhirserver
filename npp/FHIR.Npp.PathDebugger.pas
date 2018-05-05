@@ -1,5 +1,4 @@
-﻿unit FHIRPathDebugger4;
-
+﻿unit FHIR.Npp.PathDebugger;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -36,11 +35,13 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} NppForms,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Buttons, Vcl.ComCtrls, System.ImageList, Vcl.ImgList, VirtualTrees, 
-  AdvObjectLists, FHIR.Support.Generics, 
-  FHIR.Base.Objects, 
-  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.PathEngine, FHIR.R4.Profiles, FHIR.R4.ParserBase, FHIR.R4.Parser, FHIR.R4.Context, 
-  nppplugin, pluginutilities;
+  Vcl.Buttons, Vcl.ComCtrls, System.ImageList, Vcl.ImgList,
+  VirtualTrees,
+  FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine,
+//  FHIR.R3.Resources,  FHIR.R3.Types,  FHIR.R3.PathEngine, FHIR.R3.Profiles, FHIR.R3.PathNode, FHIR.R3.Context,
+  FHIR.CdsHooks.Client,
+  pluginutilities, nppplugin;
 
 const
   UMSG = WM_USER + 1;
@@ -105,22 +106,23 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
-    FResource : TFHIRResource;
+    FResource : TFHIRResourceV;
     FContext : TFHIRObject;
     FFormat : TFHIRFormat;
-    FExpression : TFHIRPathExpressionNode;
-    FEngine : TFHIRPathEngine;
-    FServices : TFHIRWorkerContext;
+    FExpression : TFHIRPathExpressionNodeV;
+    FEngine : TFHIRPathEngineV;
+    FServices : TFHIRWorkerContextV;
+    FFactory : TFHIRVersionFactory;
     FLog : String;
     FLayoutInProgress : boolean;
     FMode : TExecutionMode;
     FSkip : TStringList;
     FDone : TStringList;
-    FCurrent : TFHIRPathExpressionNode;
+    FCurrent : TFHIRPathExpressionNodeV;
     FCurrentIsOp : boolean;
     FFreq : Int64;
     FStartLast : Int64;
-    FTypes : TFHIRTypeDetails;
+    FTypes : TFHIRTypeDetailsV;
     FOutcome : TFHIRSelectionList;
 
     procedure ResetNode(Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
@@ -137,7 +139,7 @@ type
     procedure Go;
     procedure Init(var Msg: TMessage); message UMSG;
     function WantStop(package : TFHIRPathDebugPackage) : boolean;
-    procedure DoDebug(source : TFHIRPathEngine; package : TFHIRPathDebugPackage);
+    procedure DoDebug(source : TFHIRPathEngineV; package : TFHIRPathDebugPackage);
 
   public
     { Public declarations }
@@ -148,19 +150,20 @@ var
 
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
-    services : TFHIRWorkerContext;
-    resource : TFHIRResource; context : TFHIRObject; path : String; fmt : TFHIRFormat;
-    out types : TFHIRTypeDetails; out items : TFHIRSelectionList) : boolean;
+    services : TFHIRWorkerContextV;
+    factory : TFHIRVersionFactory;
+    resource : TFHIRResourceV; context : TFHIRObject; path : String; fmt : TFHIRFormat;
+    out types : TFHIRTypeDetailsV; out items : TFHIRSelectionList) : boolean;
 
 implementation
 
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings, textUtilities;
+  FHIRPluginSettings, FHIR.Support.Text;
 
 
-function getId(expr : TFHIRPathExpressionNode; op : boolean) : String;
+function getId(expr : TFHIRPathExpressionNodeV; op : boolean) : String;
 begin
   if (op) then
     result := inttostr(expr.uniqueId)+'.op'
@@ -192,9 +195,10 @@ begin
 end;
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
-    services : TFHIRWorkerContext;
-    resource : TFHIRResource; context : TFHIRObject; path : String; fmt : TFHIRFormat;
-    out types : TFHIRTypeDetails; out items : TFHIRSelectionList) : boolean;
+    services : TFHIRWorkerContextV;
+    factory : TFHIRVersionFactory;
+    resource : TFHIRResourceV; context : TFHIRObject; path : String; fmt : TFHIRFormat;
+    out types : TFHIRTypeDetailsV; out items : TFHIRSelectionList) : boolean;
 begin
   FHIRPathDebuggerForm := TFHIRPathDebuggerForm.Create(owner);
   try
@@ -202,6 +206,7 @@ begin
     FHIRPathDebuggerForm.FContext := context.link;
     FHIRPathDebuggerForm.FFormat := fmt;
     FHIRPathDebuggerForm.FServices := services.link;
+    FHIRPathDebuggerForm.FFactory := factory.Link;
     FHIRPathDebuggerForm.mSource.Text := path;
     result := FHIRPathDebuggerForm.ShowModal = mrOk;
     types := FHIRPathDebuggerForm.FTypes.Link;
@@ -220,6 +225,7 @@ begin
   FExpression.Free;
   FEngine.Free;
   FServices.Free;
+  FFactory.Free;
   FSkip.Free;
   FDone.Free;
   inherited;
@@ -309,10 +315,10 @@ begin
   mInput2.Text := '';
   mOutcome.Text := '';
   mConsole.Text := '';
-  FEngine := TFHIRPathEngine.create(FServices.link);
+  FEngine := FFactory.makePathEngine(FServices.link, nil);
   FEngine.OnDebug := DoDebug;
   try
-    FExpression := FEngine.parse(mSource.Text);
+    FExpression := FEngine.parseV(mSource.Text);
   except
     on e : Exception do
     begin
@@ -351,39 +357,29 @@ begin
     Settings.DebuggerBreaksWidth := Panel4.Width;
 end;
 
-procedure UpdateMarks(expr : TFHIRPathExpressionNode; marks : TStringList);
-var
-  c : TFHIRPathExpressionNode;
+procedure UpdateMarks(expr : TFHIRPathExpressionNodeV; marks : TStringList);
 begin
   if expr = nil then
     exit;
-  if marks.IndexOf(inttostr(expr.uniqueId)) > -1 then
-    expr.tag := 1
-  else
-    expr.tag := 0;
+  expr.visitAll(procedure (item : TFHIRPathExpressionNodeV)
+    begin
+      if marks.IndexOf(inttostr(item.uniqueId)) > -1 then
+        item.tag := 1
+      else
+        item.tag := 0;
+    end);
 
-  if expr.ParameterCount > 0 then
-    for c in expr.Parameters do
-      UpdateMarks(c, marks);
-  UpdateMarks(expr.Inner, marks);
-  UpdateMarks(expr.Group, marks);
-  UpdateMarks(expr.OpNext, marks);
 end;
 
-procedure GetMarks(expr : TFHIRPathExpressionNode; marks : TStringList);
-var
-  c : TFHIRPathExpressionNode;
+procedure GetMarks(expr : TFHIRPathExpressionNodeV; marks : TStringList);
 begin
   if expr = nil then
     exit;
-  if expr.tag = 1 then
-    marks.Add(inttostr(expr.uniqueId));
-  if expr.ParameterCount > 0 then
-    for c in expr.Parameters do
-      GetMarks(c, marks);
-  GetMarks(expr.Inner, marks);
-  GetMarks(expr.Group, marks);
-  GetMarks(expr.OpNext, marks);
+  expr.visitAll(procedure (item : TFHIRPathExpressionNodeV)
+    begin
+      if item.tag = 1 then
+        marks.Add(inttostr(item.uniqueId));
+    end);
 end;
 
 procedure TFHIRPathDebuggerForm.ApplyMarks;
@@ -466,11 +462,11 @@ begin
   else
   begin
     if (FFormat = ffJson) then
-      comp := TFHIRJsonComposer.Create(FServices.link, 'en')
+      comp := TFHIRJsonComposer.Create(FServices.link, OutputStylePretty, 'en')
     else
-      comp := TFHIRXmlComposer.Create(FServices.link, 'en');
+      comp := TFHIRXmlComposer.Create(FServices.link, OutputStylePretty, 'en');
     try
-      memo.Text := comp.Compose(name, obj, true)
+      memo.Text := comp.Compose(name, obj)
     finally
       comp.Free;
     end;
@@ -481,21 +477,18 @@ procedure TFHIRPathDebuggerForm.Compose(memo: TMemo; obj: TFHIRObject; name : St
 var
   comp : TFHIRComposer;
 begin
-  if (FFormat = ffJson) then
-    comp := TFHIRJsonComposer.Create(FServices.link, 'en')
-  else
-    comp := TFHIRXmlComposer.Create(FServices.link, 'en');
+  comp := FFactory.makeComposer(FServices.Link, FFormat, 'en', OutputStylePretty);
   try
-    if obj is TFHIRResource then
-      memo.Text := comp.Compose(TFHIRResource(obj), true)
+    if obj is TFHIRResourceV then
+      memo.Text := comp.Compose(TFHIRResourceV(obj))
     else
-      memo.Text := comp.Compose(name, obj, true)
+      memo.Text := comp.Compose(name, obj)
   finally
     comp.Free;
   end;
 end;
 
-procedure TFHIRPathDebuggerForm.DoDebug(source : TFHIRPathEngine; package : TFHIRPathDebugPackage);
+procedure TFHIRPathDebuggerForm.DoDebug(source : TFHIRPathEngineV; package : TFHIRPathDebugPackage);
 var
   id : string;
   tc : Int64;
@@ -520,7 +513,7 @@ begin
     vtExpressions.Invalidate;
     l := trunc(((tc-FStartLast)/FFreq)*1000000);
     if FCurrentIsOp then
-      Log(CODES_TFHIRPathOperation[FCurrent.Operation]+' ('+inttostr(l)+'μs)')
+      Log(FCurrent.nodeOpName+' ('+inttostr(l)+'μs)')
     else
       Log(FCurrent.summary()+' ('+inttostr(l)+'μs)');
 
@@ -560,9 +553,9 @@ var
   p : PTreeDataPointer;
 begin
   p := vtExpressions.GetNodeData(node);
-  if (p.expr = FCurrent) and (p.op = FCurrentIsOp) then
+  if (p.expr = FCurrent) and (p.isOp = FCurrentIsOp) then
     ImageIndex := 2
-  else if FDone.indexof(getid(p.expr, p.op)) > -1 then
+  else if FDone.indexof(getid(p.expr, p.isOp)) > -1 then
     ImageIndex := 1
   else
     ImageIndex := 0;
@@ -575,14 +568,10 @@ begin
   p := vtExpressions.GetNodeData(node);
   if p.expr = nil then
     CellText := '??'
-  else if (p.op) then
-    CellText := CODES_TFHIRPathOperation[p.expr.Operation]
-  else case p.expr.kind of
-    enkName : CellText := p.expr.name;
-    enkFunction : CellText := CODES_TFHIRPathFunctions[p.expr.FunctionId]+'()';
-    enkConstant : CellText := '"'+p.expr.constant+'"';
-    enkGroup : CellText := '(Group)';
-  end;
+  else if (p.isOp) then
+    CellText := p.expr.nodeOpName
+  else
+    CellText := p.expr.NodeName;
 end;
 
 procedure TFHIRPathDebuggerForm.vtExpressionsInitChildren(Sender: TBaseVirtualTree; Node: PVirtualNode; var ChildCount: Cardinal);
@@ -590,25 +579,17 @@ var
   p : PTreeDataPointer;
 begin
   p := vtExpressions.GetNodeData(node);
-  if p.op then
+  if p.isOp then
     ChildCount := 0
   else
-  begin
-    ChildCount := p.expr.ParameterCount;
-    if (p.expr.Inner <> nil) then
-      inc(ChildCount);
-    if (p.expr.Group <> nil) then
-      inc(ChildCount);
-    if (p.expr.Operation <> popNull) then
-      inc(ChildCount, 2);
-  end;
+    ChildCount := p.expr.nodeChildCount;
 end;
 
 procedure TFHIRPathDebuggerForm.vtExpressionsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   p, pp : PTreeDataPointer;
-  pe : TFHIRPathExpressionNode;
-  i : integer;
+  pe : TFHIRPathExpressionNodeV;
+  offset : integer;
 begin
   p := vtExpressions.GetNodeData(Node);
   if ParentNode = nil then
@@ -621,43 +602,20 @@ begin
     Node.CheckType := ctCheckBox;
     pp := vtExpressions.GetNodeData(parentNode);
     pe := pp.expr;
-
-    // possible nodes:
-    case pe.kind of
-      enkName: i := 0; // no child nodes
-      enkFunction:
-        begin
-          i := pe.Parameters.Count;
-          if node.Index < i then
-            p.expr := pe.Parameters[node.Index];
-        end;
-      enkConstant: i := 0; // no children
-      enkGroup:
-        begin
-        i := 1;
-        if node.Index = 0 then
-          p.expr := pe.Group;
-        end;
-    end;
-    if (pe.Inner <> nil) then
-    begin
-      if node.Index = i then
-        p.expr := pe.Inner;
-      inc(i);
-    end;
-    case node.Index - i of
+    p.expr := pe.nodeGetChild(node.Index, offset);
+    case node.Index - offset of
       0: begin
          p.expr := pe;
-         p.op := true;
+         p.isOp := true;
          end;
-      1: p.expr := pe.OpNext;
-    else if node.index - i > 0 then
+      1: p.expr := pe.nodeOpNext;
+    else if node.index - offset > 0 then
       raise Exception.Create('not done yet');
     end;
   end;
   if p.expr.tag = 1 then
     node.CheckState := csCheckedNormal;
-  if not p.op and ((p.expr.Inner <> nil) or (p.expr.Group <> nil) or (p.expr.ParameterCount > 0) or (p.expr.OpNext <> nil)) then
+  if not p.isOp and (p.expr.nodeChildCount > 0) then
      InitialStates := [ivsHasChildren];
 end;
 
@@ -673,5 +631,6 @@ begin
 end;
 
 end.
+
 
 

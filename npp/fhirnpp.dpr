@@ -93,7 +93,7 @@ uses
   PathDialogForms in 'PathDialogForms.pas' {PathDialogForm},
   ValidationOutcomes in 'ValidationOutcomes.pas' {ValidationOutcomeForm},
   FHIRVisualiser in 'FHIRVisualiser.pas' {FHIRVisualizer},
-  FHIR.R3.PathDebugger in '..\reference-platform\dstu3\FHIR.R3.PathDebugger.pas' {FHIRPathDebuggerForm},
+  FHIR.Npp.PathDebugger in 'FHIR.Npp.PathDebugger.pas' {FHIRPathDebuggerForm},
   WelcomeScreen in 'WelcomeScreen.pas' {WelcomeScreenForm},
   nppbuildcount in 'nppbuildcount.pas',
   UpgradePrompt in 'UpgradePrompt.pas' {UpgradePromptForm},
@@ -118,7 +118,7 @@ uses
   FHIR.Support.Turtle in '..\reference-platform\support\FHIR.Support.Turtle.pas',
   FHIR.Client.SmartLogin in '..\reference-platform\client\FHIR.Client.SmartLogin.pas' {SmartOnFhirLoginForm},
   FHIR.CdsHooks.Client in '..\reference-platform\support\FHIR.CdsHooks.Client.pas',
-  FHIR.Client.Settings in '..\reference-platform\client\FHIR.Client.Settings.pas',
+  FHIR.Client.Registry in '..\reference-platform\client\FHIR.Client.Registry.pas',
   FHIR.Tools.Indexing in '..\reference-platform\tools\FHIR.Tools.Indexing.pas',
   FHIR.Support.Signatures in '..\reference-platform\support\FHIR.Support.Signatures.pas',
   FHIR.Ucum.IFace in '..\reference-platform\support\FHIR.Ucum.IFace.pas',
@@ -138,7 +138,24 @@ uses
   FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
-  FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas';
+  FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
+  FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
+  FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
+  FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
+  FHIR.R3.Factory in '..\reference-platform\dstu3\FHIR.R3.Factory.pas',
+  FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
+  FHIR.R4.Constants in '..\reference-platform\r4\FHIR.R4.Constants.pas',
+  FHIR.R4.Types in '..\reference-platform\r4\FHIR.R4.Types.pas',
+  FHIR.R4.Base in '..\reference-platform\r4\FHIR.R4.Base.pas',
+  FHIR.R4.ElementModel in '..\reference-platform\r4\FHIR.R4.ElementModel.pas',
+  FHIR.R4.Resources in '..\reference-platform\r4\FHIR.R4.Resources.pas',
+  FHIR.R4.Utilities in '..\reference-platform\r4\FHIR.R4.Utilities.pas',
+  FHIR.R4.Context in '..\reference-platform\r4\FHIR.R4.Context.pas',
+  FHIR.R4.PathNode in '..\reference-platform\r4\FHIR.R4.PathNode.pas',
+  FHIR.R4.Profiles in '..\reference-platform\r4\FHIR.R4.Profiles.pas',
+  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
+  FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas';
 
 {$R *.res}
 
@@ -295,6 +312,6 @@ uses
   FHIR.Support.Turtle in '..\reference-platform\support\FHIR.Support.Turtle.pas',
   FHIR.Client.SmartLogin in '..\reference-platform\client\FHIR.Client.SmartLogin.pas' {SmartOnFhirLoginForm},
   FHIR.CdsHooks.Client in '..\reference-platform\support\FHIR.CdsHooks.Client.pas',
-  FHIR.Client.Settings in '..\reference-platform\client\FHIR.Client.Settings.pas';
+  FHIR.Client.Registry in '..\reference-platform\client\FHIR.Client.Registry.pas';
 
 

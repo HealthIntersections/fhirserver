@@ -35,25 +35,10 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser,
-  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.XVersion.Resources,
+  FHIR.Client.SmartUtilities;
 
 Type
-  TFhirOperationOutcomeW = class (TFslObject)
-  protected
-    FRes : TFHIRResourceV;
-  public
-    constructor Create(res : TFHIRResourceV);
-    destructor Destroy; override;
-
-    function link : TFhirOperationOutcomeW; overload;
-
-    function hasText : boolean; virtual;
-    function text : String; virtual;
-    function code :  TExceptionType; virtual;
-  end;
-  TFhirOperationOutcomeWClass = class of TFhirOperationOutcomeW;
-
   EFHIRClientException = class (Exception)
   private
     FIssue : TFhirOperationOutcomeW;
@@ -93,21 +78,6 @@ Type
   // when constructing, the client takes a parameter for the actual communicator that does all the work
   TFhirClientV = class;
 
-  TBundleHandler = class (TFslObject)
-  private
-    FResource : TFhirResourceV;
-  public
-    constructor Create(bnd : TFHIRResourceV);
-    destructor Destroy; override;
-    property resource : TFHIRResourceV read FResource;
-    function next : String; overload;
-    function next(bnd : TFHIRResourceV) : String; overload; virtual;
-    procedure addEntries(bnd : TFHIRResourceV); virtual;
-    procedure clearLinks; virtual;
-  end;
-
-  TBundleHandlerClass = class of TBundleHandler;
-
   // never use this directly - always use a TFHIRClientV descendent
   TFHIRClientCommunicator = class (TFslObject)
   protected
@@ -134,10 +104,10 @@ Type
     function operationV(atype : TFHIRResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual;
     function operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual;
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; virtual;
-    function cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse; virtual;
 
     // special case that gives direct access to the communicator...
-    function custom(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
+    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; virtual;
     procedure terminate; virtual; // only works for some communicators
   end;
 
@@ -207,47 +177,13 @@ Type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList) : TFHIRResourceV;
 
     // special case that gives direct access to the communicator...
-    function custom(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
-    function cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse; virtual;
+    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; virtual;
 
     procedure terminate; virtual; // only works for some communicators
   end;
 
 implementation
-
-{ TFhirOperationOutcomeW }
-
-function TFhirOperationOutcomeW.code: TExceptionType;
-begin
-  raise Exception.Create('Must override code in '+className);
-end;
-
-constructor TFhirOperationOutcomeW.create(res: TFHIRResourceV);
-begin
-  inherited create;
-  FRes := res;
-end;
-
-destructor TFhirOperationOutcomeW.Destroy;
-begin
-  FRes.Free;
-  inherited;
-end;
-
-function TFhirOperationOutcomeW.hasText: boolean;
-begin
-  raise Exception.Create('Must override hasText in '+className);
-end;
-
-function TFhirOperationOutcomeW.link: TFhirOperationOutcomeW;
-begin
-  result := TFhirOperationOutcomeW(inherited Link);
-end;
-
-function TFhirOperationOutcomeW.text: String;
-begin
-  raise Exception.Create('Must override text in '+className);
-end;
 
 { EFHIRClientException }
 
@@ -308,11 +244,6 @@ begin
   raise Exception.Create('Must override address in '+className);
 end;
 
-function TFHIRClientCommunicator.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
-begin
-  raise Exception.Create('Must override cdshook in '+className);
-end;
-
 function TFHIRClientCommunicator.conformanceV(summary: boolean): TFHIRResourceV;
 begin
   raise Exception.Create('Must override conformanceV in '+className);
@@ -323,9 +254,14 @@ begin
   raise Exception.Create('Must override createResourceV in '+className);
 end;
 
-function TFHIRClientCommunicator.custom(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFHIRClientCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
 begin
-  raise Exception.Create('Must override custom in '+className);
+  raise Exception.Create('Must override customGet in '+className);
+end;
+
+function TFHIRClientCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslBuffer): TFslBuffer;
+begin
+  raise Exception.Create('Must override customPost in '+className);
 end;
 
 procedure TFHIRClientCommunicator.deleteResourceV(atype: TFHIRResourceTypeV; id: String);
@@ -504,11 +440,6 @@ begin
   result := FCommunicator.address;
 end;
 
-function TFhirClientV.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
-begin
-  result := FCommunicator.cdshook(id, request);
-end;
-
 function TFhirClientV.conformanceV(summary : boolean) : TFHIRResourceV;
 begin
   result := FCommunicator.conformanceV(summary);
@@ -584,9 +515,14 @@ begin
   result := FCommunicator.historyTypeV(aType, allRecords, encodeParams(params));
 end;
 
-function TFhirClientV.custom(path : String; headers : THTTPHeaders) : TFslBuffer;
+function TFhirClientV.customGet(path : String; headers : THTTPHeaders) : TFslBuffer;
 begin
-  result := FCommunicator.custom(path, headers);
+  result := FCommunicator.customGet(path, headers);
+end;
+
+function TFhirClientV.customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer;
+begin
+  result := FCommunicator.customPost(path, headers, body);
 end;
 
 procedure TFhirClientV.terminate;  // only works for some communicators
@@ -613,41 +549,6 @@ begin
     result := result + s+'='+EncodeMIME(params.ValueFromIndex[i])+'&';
   end;
 end;
-
-{ TBundleHandler }
-
-procedure TBundleHandler.addEntries(bnd: TFHIRResourceV);
-begin
-  raise Exception.Create('Must override addEntries in '+ClassName);
-end;
-
-procedure TBundleHandler.clearLinks;
-begin
-  raise Exception.Create('Must override clearLinks in '+ClassName);
-end;
-
-constructor TBundleHandler.Create(bnd: TFHIRResourceV);
-begin
-  inherited Create;
-  FResource := bnd;
-end;
-
-destructor TBundleHandler.Destroy;
-begin
-  FResource.Free;
-  inherited;
-end;
-
-function TBundleHandler.next(bnd: TFHIRResourceV): String;
-begin
-  raise Exception.Create('Must override next in '+ClassName);
-end;
-
-function TBundleHandler.next: String;
-begin
-  result := next(FResource);
-end;
-
 
 end.
 

@@ -71,6 +71,7 @@ Uses
   FHIR.Support.Lock, FHIR.Support.DateTime, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Text, FHIR.Support.Stream,
 
+  FHIR.Base.Objects,
   FHIR.Tools.Types, FHIR.Base.Lang, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Session, FHIR.Tools.Utilities, FHIR.Base.Scim,
   FHIRUserProvider, FHIRServerContext, FHIRStorageService, FHIRRestServer, ServerUtilities, WebSourceProvider;
 

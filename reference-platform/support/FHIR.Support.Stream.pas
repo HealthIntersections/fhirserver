@@ -154,8 +154,8 @@ type
       FIndex : Cardinal;
 
       Procedure SetData(Const Value: AnsiString);
-    function GetBytes: TBytes;
-    procedure SetBytes(const Value: TBytes);
+      function GetBytes: TBytes;
+      procedure SetBytes(const Value: TBytes);
 
     Protected
       Function GetPosition : Int64; Override;

@@ -3199,6 +3199,7 @@ inherited FHIRToolbox: TFHIRToolbox
     00000000000000000000000000000000000000000000}
   Scaled = False
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnHide = FormHide
   OnKeyPress = FormKeyPress
   OnShow = FormShow
@@ -3407,7 +3408,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = tbTransactionClick
     end
     object tbServerValidate: TToolButton
-      Left = 512
+      Left = 535
       Top = 0
       Hint = 'Validate resource on server'
       Enabled = False
@@ -3457,7 +3458,7 @@ inherited FHIRToolbox: TFHIRToolbox
     Left = 764
     Top = 4
     Bitmap = {
-      494C010115009800D40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010115009800E80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006000000001002000000000000060
       00000000000000000000000000000000000000000000C9C9CA00A6A9AC008F94
       9A009B9FA300BEBEBE00C1C1BF00B1B0BF00B2B1BF00C1C1BF00BEBEBE009B9F

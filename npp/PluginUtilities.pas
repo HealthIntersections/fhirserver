@@ -32,12 +32,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Objects, System.Generics.Defaults, FHIR.Base.Objects, FHIR.Tools.PathNode;
+  FHIR.Support.Objects, System.Generics.Defaults, FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine;
 
 type
   TTreeDataPointer = record
-    expr : TFHIRPathExpressionNode;
-    op : boolean;
+    expr : TFHIRPathExpressionNodeV;
+    isOp : boolean;
   end;
   PTreeDataPointer = ^TTreeDataPointer;
 

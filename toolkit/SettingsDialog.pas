@@ -35,7 +35,9 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.EditBox,
   FMX.SpinBox, FMX.Edit, FMX.StdCtrls, FMX.TabControl, FMX.Controls.Presentation,
   IniFiles, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Layouts, FMX.ListBox,
-  ToolkitSettings, FHIR.Client.ServerDialogFMX, FHIR.Client.SmartUtilities;
+  ToolkitSettings,
+  FHIR.Support.Generics,
+  FHIR.Client.ServerDialogFMX, FHIR.Client.SmartUtilities;
 
 type
   TSettingsForm = class(TForm)
@@ -76,7 +78,9 @@ type
     procedure btnEditClick(Sender: TObject);
   private
     FSettings :  TFHIRToolkitSettings;
+    FServers : TFslList<TRegisteredFHIRServer>;
     procedure SetSettings(const Value: TFHIRToolkitSettings);
+    procedure LoadServers;
   public
     Destructor Destroy; override;
     Property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
@@ -99,7 +103,7 @@ begin
     if form.ShowModal = mrOk then
     begin
       FSettings.registerServer('Terminology', form.Server);
-      FSettings.ListServers('Terminology', lbServers.Items);
+      LoadServers;
       lbServersClick(nil);
     end;
   finally
@@ -112,7 +116,7 @@ var
   i : integer;
 begin
   i := lbServers.ItemIndex;
-  FSettings.DeleteServer('Terminology', lbServers.ItemIndex);
+  FSettings.DeleteServer('Terminology', TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].Data));
   lbServers.items.Delete(i);
   if i = lbServers.items.Count then
     dec(i);
@@ -122,12 +126,27 @@ end;
 
 procedure TSettingsForm.btnDownClick(Sender: TObject);
 var
-  i : integer;
+  focus : TRegisteredFHIRServer;
+  dest : TRegisteredFHIRServer;
 begin
-  i := lbServers.ItemIndex;
-  FSettings.moveServer('Terminology', i, 2);
-  FSettings.ListServers('Terminology', lbServers.Items);
-  lbServers.ItemIndex := i+1;
+  focus := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].Data);
+  dest := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex+1].Data);
+  FSettings.moveServerAfter('Terminology', focus, dest);
+  LoadServers;
+  lbServers.ItemIndex := lbServers.ItemIndex+1;
+  lbServersClick(nil);
+end;
+
+procedure TSettingsForm.btnUpClick(Sender: TObject);
+var
+  focus : TRegisteredFHIRServer;
+  dest : TRegisteredFHIRServer;
+begin
+  focus := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].Data);
+  dest := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex-1].Data);
+  FSettings.moveServerBefore('Terminology', focus, dest);
+  LoadServers;
+  lbServers.ItemIndex := lbServers.ItemIndex-1;
   lbServersClick(nil);
 end;
 
@@ -138,11 +157,11 @@ var
 begin
   form := TEditRegisteredServerForm.create(self);
   try
-    form.Server := FSettings.serverInfo('Terminology', lbServers.ItemIndex);
+    form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].Data).Link;
     if form.ShowModal = mrOk then
     begin
-      FSettings.updateServerInfo('Terminology', lbServers.ItemIndex, form.Server);
-      FSettings.ListServers('Terminology', lbServers.Items);
+      FSettings.updateServerInfo('Terminology', form.Server);
+      LoadServers;
       lbServersClick(nil);
     end;
   finally
@@ -150,20 +169,10 @@ begin
   end;
 end;
 
-procedure TSettingsForm.btnUpClick(Sender: TObject);
-var
-  i : integer;
-begin
-  i := lbServers.ItemIndex;
-  FSettings.moveServer('Terminology', i, -1);
-  FSettings.ListServers('Terminology', lbServers.Items);
-  lbServers.ItemIndex := i-1;
-  lbServersClick(nil);
-end;
-
 destructor TSettingsForm.Destroy;
 begin
   FSettings.Free;
+  FServers.Free;
   inherited;
 end;
 
@@ -192,7 +201,7 @@ begin
   edtProxy.Text := FSettings.Proxy;
   edtTimeout.Value := FSettings.timeout;
   cbCheckUpgrades.IsChecked := FSettings.CheckForUpgradesOnStart;
-  FSettings.ListServers('Terminology', lbServers.Items);
+  LoadServers;
   lbServers.ItemIndex := 0;
   lbServersClick(nil);
   edtUsername.Text := FSettings.RegistryUsername;
@@ -206,6 +215,23 @@ begin
   btnDown.enabled := (lbServers.ItemIndex > -1) and (lbServers.ItemIndex < FSettings.ServerCount('Terminology') - 1);
   btnUp.enabled := lbServers.ItemIndex > 0;
   btnDelete.enabled := (lbServers.ItemIndex >= 0) and (FSettings.ServerCount('Terminology') > 1);
+end;
+
+procedure TSettingsForm.LoadServers;
+var
+  i : integer;
+begin
+  if FServers = nil then
+    FServers := TFslList<TRegisteredFHIRServer>.create
+  else
+    FServers.Clear;
+  lbServers.Items.Clear;
+  FSettings.ListServers('Terminology', FServers);
+  for i := 0 to FServers.Count - 1 do
+  begin
+    lbServers.Items.add(FServers[i].name + ': '+FServers[i].fhirEndpoint);
+    lbServers.ListItems[i].Data := FServers[i];
+  end;
 end;
 
 procedure TSettingsForm.SetSettings(const Value: TFHIRToolkitSettings);

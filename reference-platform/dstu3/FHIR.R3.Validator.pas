@@ -38,8 +38,9 @@ Uses
 
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Parser, FHIR.Tools.Session, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.XVersion.Resources,
   FHIR.R3.PathNode, FHIR.R3.Context, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.PathEngine, FHIR.R3.ElementModel;
+
 
 Type
   EDiscriminatorException = class (Exception);
@@ -94,35 +95,6 @@ Type
     function count: integer;
   end;
 
-  TBestPracticeWarningLevel = (bpwlIgnore, bpwlHint, bpwlWarning, bpwlError);
-  TCheckDisplayOption = (cdoIgnore, cdopCheck, cdoCheckCaseAndSpace, cdoCheckCase, cdoCheckSpace);
-  TResourceIdStatus = (risOptional, risRequired, risProhibited);
-
-  TFHIRValidatorContext = class (TFslObject)
-  private
-    FCheckDisplay: TCheckDisplayOption;
-    FBPWarnings: TBestPracticeWarningLevel;
-    FSuppressLoincSnomedMessages: boolean;
-    FResourceIdRule: TResourceIdStatus;
-    FIsAnyExtensionsAllowed: boolean;
-    FErrors: TFhirOperationOutcomeIssueList;
-    Fowned : TFslObjectList;
-    FOperationDescription : String;
-    procedure SetErrors(const Value: TFhirOperationOutcomeIssueList);
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-
-    property CheckDisplay : TCheckDisplayOption read FCheckDisplay write FCheckDisplay;
-    property BPWarnings: TBestPracticeWarningLevel read FBPWarnings write FBPWarnings;
-    property SuppressLoincSnomedMessages: boolean read FSuppressLoincSnomedMessages write FSuppressLoincSnomedMessages;
-    property ResourceIdRule: TResourceIdStatus read FResourceIdRule write FResourceIdRule;
-    property IsAnyExtensionsAllowed: boolean read FIsAnyExtensionsAllowed write FIsAnyExtensionsAllowed;
-    property OperationDescription : String read FOperationDescription write FOperationDescription;
-
-    property Errors : TFhirOperationOutcomeIssueList read FErrors write SetErrors;
-  end;
-
   TValidationProfileSet = class (TFslObject)
   private
     FCanonical : TStringList;
@@ -134,7 +106,7 @@ Type
     destructor Destroy; override;
   end;
 
-  TFHIRValidator = class(TFslObject)
+  TFHIRValidator3 = class(TFHIRValidatorV)
   private
     // configuration items
     FContext: TFHIRWorkerContext;
@@ -234,7 +206,7 @@ Type
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     function FHIRPathResolveReference(source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject;
   public
-    Constructor Create(context: TFHIRWorkerContext);
+    Constructor Create(context: TFHIRWorkerContextV); override;
     Destructor Destroy; Override;
 
     Property Context : TFHIRWorkerContext read FContext;
@@ -243,33 +215,36 @@ Type
     procedure validate(ctxt : TFHIRValidatorContext; element : TFHIRMMElement; profiles: TValidationProfileSet); overload;
     procedure validate(ctxt : TFHIRValidatorContext; element : TFHIRMMElement; profile: String); overload;
 
-    procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject); overload; override;
     procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profiles: TValidationProfileSet); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String); overload; override;
 
-    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profile: String); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement); overload; override;
+    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profile: String); overload; override;
     procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profiles: TValidationProfileSet); overload;
 
-    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument); overload; override;
+    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String); overload; override;
     procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profiles: TValidationProfileSet); overload;
 
-    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat; profile : String); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat); overload; override;
+    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat; profile : String); overload; override;
     procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat; profiles : TValidationProfileSet); overload;
 
-    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResource); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResource; profile : string); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResource; profiles : TValidationProfileSet); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV); overload; override;
+    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV; profile : string); overload; override;
+    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV; profiles : TValidationProfileSet); overload;
 
     function  describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
   end;
 
+  TFHIRValidator = TFHIRValidator3;
+
 implementation
 
 uses
-  FHIR.Base.Parser, 
+  FHIR.Base.Parser,
+  FHIR.R3.Common,
   FHIR.R3.Utilities, 
   FHIR.R3.Profiles;
 
@@ -449,24 +424,24 @@ begin
   end;
 end;
 
-{ TFHIRValidator }
+{ TFHIRValidator3 }
 
-constructor TFHIRValidator.Create(context: TFHIRWorkerContext);
+constructor TFHIRValidator3.Create(context: TFHIRWorkerContextV);
 begin
-  inherited Create;
-  FContext := context;
+  inherited Create(context);
+  FContext := context as TFHIRWorkerContext;
   FPathEngine := TFHIRPathEngine.create(FContext.link, nil);
   FPathEngine.OnResolveReference := FHIRPathResolveReference;
 end;
 
-destructor TFHIRValidator.Destroy;
+destructor TFHIRValidator3.Destroy;
 begin
   FPathEngine.Free;
   FContext.Free;
   inherited;
 end;
 
-function TFHIRValidator.ResolveInBundle(bundle : TFHIRObject; url : String) : TFHIRObject;
+function TFHIRValidator3.ResolveInBundle(bundle : TFHIRObject; url : String) : TFHIRObject;
 var
   propE, propFU, propR : TFHIRProperty;
   item : TFHIRObject;
@@ -501,7 +476,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.FHIRPathResolveReference(source: TFHIRPathEngine; appInfo: TFslObject; url: String): TFHIRObject;
+function TFHIRValidator3.FHIRPathResolveReference(source: TFHIRPathEngine; appInfo: TFslObject; url: String): TFHIRObject;
 begin
   if not (appInfo is TFHIRObject) then
     exit(nil);
@@ -512,7 +487,7 @@ begin
     result := ResolveInBundle(FEntryElement, url);
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement);
 var
   profiles : TValidationProfileSet;
 begin
@@ -524,7 +499,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; obj: TJsonObject);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; obj: TJsonObject);
 var
   profiles : TValidationProfileSet;
 begin
@@ -536,7 +511,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profile: String);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profile: String);
 var
   profiles : TValidationProfileSet;
 begin
@@ -548,14 +523,14 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profiles: TValidationProfileSet);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profiles: TValidationProfileSet);
 var
   w : TFHIRMMElement;
   x : TFHIRMMXmlParser;
 begin
   x := TFHIRMMXmlParser.create(FContext.Link);
   try
-    x.setupValidation(fvpEverything, ctxt.errors.Link);
+    x.setupValidation(fvpEverything, ctxt.Issues.Link);
     w := x.Parse(element);
     try
       validate(ctxt, w, profiles);
@@ -567,14 +542,14 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profiles: TValidationProfileSet);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profiles: TValidationProfileSet);
 var
   w : TFHIRMMElement;
   j : TFHIRMMJsonParser;
 begin
     j := TFHIRMMJsonParser.create(FContext.Link);
     try
-      j.setupValidation(fvpEverything, ctxt.errors.Link);
+      j.setupValidation(fvpEverything, ctxt.Issues.Link);
       w := j.Parse(obj);
       try
         validate(ctxt, w, profiles);
@@ -586,7 +561,7 @@ begin
     end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String);
 var
   profiles : TValidationProfileSet;
 begin
@@ -598,7 +573,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument);
 var
   profiles : TValidationProfileSet;
 begin
@@ -610,7 +585,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String);
 var
   profiles : TValidationProfileSet;
 begin
@@ -622,12 +597,12 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profiles: TValidationProfileSet);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profiles: TValidationProfileSet);
 begin
   validate(ctxt, document.document, profiles);
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; profiles: TValidationProfileSet);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; profiles: TValidationProfileSet);
 var
   stack : TNodeStack;
 begin
@@ -640,12 +615,12 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TFHIRMMElement);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; element: TFHIRMMElement);
 begin
   validate(ctxt, element, nil);
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; profile: String);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; profile: String);
 var
   profiles : TValidationProfileSet;
 begin
@@ -685,7 +660,7 @@ begin
   end;
 end;
 {$IFDEF DSTU21}
-function TFHIRValidator.findQuestionnaireItem(qsrc: TFhirQuestionnaire; linkId: String; var qItem: TFhirQuestionnaireItem): boolean;
+function TFHIRValidator3.findQuestionnaireItem(qsrc: TFhirQuestionnaire; linkId: String; var qItem: TFhirQuestionnaireItem): boolean;
   procedure FindItem(list : TFhirQuestionnaireItemList);
   var
     item : TFhirQuestionnaireItem;
@@ -707,7 +682,7 @@ begin
   findItem(qsrc.itemList);
 end;
 
-procedure TFHIRValidator.validateAnswerCode(ctxt : TFHIRValidatorContext; value: TFHIRMMElement; stack: TNodeStack; optionList: TFhirCodingList);
+procedure TFHIRValidator3.validateAnswerCode(ctxt : TFHIRValidatorContext; value: TFHIRMMElement; stack: TNodeStack; optionList: TFhirCodingList);
 var
   system, code : String;
   found : boolean;
@@ -725,7 +700,7 @@ begin
   rule(ctxt, IssueTypeStructure, value.locStart, value.locEnd, stack.literalPath, found, 'The code '+system+'::'+code+' is not a valid option');
 end;
 
-procedure TFHIRValidator.validateAnswerCode(ctxt : TFHIRValidatorContext; value: TFHIRMMElement; stack: TNodeStack; qSrc : TFhirQuestionnaire; vsRef: TFhirReference);
+procedure TFHIRValidator3.validateAnswerCode(ctxt : TFHIRValidatorContext; value: TFHIRMMElement; stack: TNodeStack; qSrc : TFhirQuestionnaire; vsRef: TFhirReference);
 var
   vs : TFhirValueSet;
   c : TFHIRCoding;
@@ -754,7 +729,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateAnswerCode(ctxt : TFHIRValidatorContext; answer: TFHIRMMElement; stack: TNodeStack; qSrc : TFhirQuestionnaire; qitem: TFhirQuestionnaireItem);
+procedure TFHIRValidator3.validateAnswerCode(ctxt : TFHIRValidatorContext; answer: TFHIRMMElement; stack: TNodeStack; qSrc : TFhirQuestionnaire; qitem: TFhirQuestionnaireItem);
 var
   v : TFHIRMMElement;
   ns : TNodeStack;
@@ -773,7 +748,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateQuestionannaireResponse(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack);
+procedure TFHIRValidator3.validateQuestionannaireResponse(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack);
 var
   q : TFHIRMMElement;
   qsrc : TFhirQuestionnaire;
@@ -795,7 +770,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateQuestionannaireResponseItem(qsrc : TFhirQuestionnaire; qItem : TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; inProgress : boolean);
+procedure TFHIRValidator3.validateQuestionannaireResponseItem(qsrc : TFhirQuestionnaire; qItem : TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; inProgress : boolean);
 var
   answers, items : TFslList<TFHIRMMElement>;
   answer, item : TFHIRMMElement;
@@ -872,7 +847,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateQuestionannaireResponseItem(qsrc: TFhirQuestionnaire; qItem: TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; elements: TFslList<TFHIRMMElement>; stack: TNodeStack; inProgress : boolean);
+procedure TFHIRValidator3.validateQuestionannaireResponseItem(qsrc: TFhirQuestionnaire; qItem: TFhirQuestionnaireItem; ctxt : TFHIRValidatorContext; elements: TFslList<TFHIRMMElement>; stack: TNodeStack; inProgress : boolean);
 var
   ns : TNodeStack;
   element : TFHIRMMElement;
@@ -890,7 +865,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateQuestionannaireResponseItems(qsrc : TFhirQuestionnaire; qItems : TFhirQuestionnaireItemList; ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; inProgress : boolean);
+procedure TFHIRValidator3.validateQuestionannaireResponseItems(qsrc : TFhirQuestionnaire; qItems : TFhirQuestionnaireItemList; ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; inProgress : boolean);
 var
   items, mapItem : TFslList<TFHIRMMElement>;
   map : TFslMap<TFslList<TFHIRMMElement>>;
@@ -967,12 +942,12 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateQuestionnaireResponseItemQuantity(ctxt : TFHIRValidatorContext; answer: TFHIRMMElement; stack: TNodeStack);
+procedure TFHIRValidator3.validateQuestionnaireResponseItemQuantity(ctxt : TFHIRValidatorContext; answer: TFHIRMMElement; stack: TNodeStack);
 begin
 
 end;
 
-function TFHIRValidator.validateQuestionnaireResponseItemType(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; types: array of String) : string;
+function TFHIRValidator3.validateQuestionnaireResponseItemType(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack; types: array of String) : string;
 var
   values : TFslList<TFHIRMMElement>;
   ns : TNodeStack;
@@ -1036,7 +1011,7 @@ end;
 {
   * The actual base entry point
 }
-procedure TFHIRValidator.validateResource(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; profiles : TValidationProfileSet; idRule: TResourceIdStatus; stack: TNodeStack);
+procedure TFHIRValidator3.validateResource(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; profiles : TValidationProfileSet; idRule: TResourceIdStatus; stack: TNodeStack);
 var
   resourceName: String;
   type_, p: String;
@@ -1098,7 +1073,7 @@ end;
 // the instance at root is valid against the schema and schematron
 // the instance validator had no issues against the base resource profile
 // profile is valid, and matches the resource name
-procedure TFHIRValidator.start(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; stack: TNodeStack);
+procedure TFHIRValidator3.start(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; stack: TNodeStack);
 var
   pu : TProfileUsage;
 begin
@@ -1127,7 +1102,7 @@ begin
     end;
 end;
 
-procedure TFHIRValidator.checkDeclaredProfiles(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; stack: TNodeStack);
+procedure TFHIRValidator3.checkDeclaredProfiles(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; stack: TNodeStack);
 var
   meta: TFHIRMMElement;
   profiles: TFslList<TFHIRMMElement>;
@@ -1162,7 +1137,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateBundle(ctxt : TFHIRValidatorContext; bundle: TFHIRMMElement; stack: TNodeStack);
+procedure TFHIRValidator3.validateBundle(ctxt : TFHIRValidatorContext; bundle: TFHIRMMElement; stack: TNodeStack);
 var
   entries: TFslList<TFHIRMMElement>;
   type_, id: String;
@@ -1211,11 +1186,11 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateMessage(ctxt : TFHIRValidatorContext; bundle: TFHIRMMElement);
+procedure TFHIRValidator3.validateMessage(ctxt : TFHIRValidatorContext; bundle: TFHIRMMElement);
 begin
 end;
 
-procedure TFHIRValidator.validateDocument(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; composition: TFHIRMMElement; stack: TNodeStack; fullUrl, id: String);
+procedure TFHIRValidator3.validateDocument(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; composition: TFHIRMMElement; stack: TNodeStack; fullUrl, id: String);
 var
   ns : TNodeStack;
   elem : TFHIRMMElement;
@@ -1244,7 +1219,7 @@ end;
 // String firstBase := nil;
 // firstBase := ebase = nil ? base : ebase;
 
-procedure TFHIRValidator.validateSections(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; focus: TFHIRMMElement; stack: TNodeStack;
+procedure TFHIRValidator3.validateSections(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; focus: TFHIRMMElement; stack: TNodeStack;
   fullUrl, id: String);
 var
   sections: TFslList<TFHIRMMElement>;
@@ -1272,7 +1247,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validateBundleReference(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; ref: TFHIRMMElement; name: String;
+procedure TFHIRValidator3.validateBundleReference(ctxt : TFHIRValidatorContext; entries: TFslList<TFHIRMMElement>; ref: TFHIRMMElement; name: String;
   stack: TNodeStack; fullUrl, type_, id: String);
 var
   target: TFHIRMMElement;
@@ -1285,7 +1260,7 @@ begin
   end;
 end;
 
-Function TFHIRValidator.resolveInBundle(entries: TFslList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
+Function TFHIRValidator3.resolveInBundle(entries: TFslList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
 var
   entry, res : TFHIRMMElement;
   fu, u, t, i, et, eid: String;
@@ -1341,13 +1316,13 @@ begin
   end;
 end;
 
-function TFHIRValidator.getProfileForType(ctxt : TFHIRValidatorContext; type_: String): TFHIRStructureDefinition;
+function TFHIRValidator3.getProfileForType(ctxt : TFHIRValidatorContext; type_: String): TFHIRStructureDefinition;
 begin
   result := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + type_));
-  ctxt.FOwned.add(result);
+  ctxt.Owned.add(result);
 end;
 
-procedure TFHIRValidator.validateObservation(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack);
+procedure TFHIRValidator3.validateObservation(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; stack: TNodeStack);
 begin
   // all observations should have a subject, a performer, and a time
   bpCheck(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, element.getNamedChild('subject') <> nil, 'All observations should have a subject');
@@ -1356,7 +1331,7 @@ begin
     (element.getNamedChild('effectivePeriod') <> nil), 'All observations should have an effectiveDateTime or an effectivePeriod');
 end;
 
-procedure TFHIRValidator.bpCheck(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; literalPath: String; test: boolean; message: String);
+procedure TFHIRValidator3.bpCheck(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; literalPath: String; test: boolean; message: String);
 begin
   case ctxt.BPWarnings of
     bpwlHint:
@@ -1414,58 +1389,66 @@ begin
   end;
 end;
 
-function TFHIRValidator.resolveType(ctxt : TFHIRValidatorContext; t: String): TFHIRElementDefinition;
+function TFHIRValidator3.resolveType(ctxt : TFHIRValidatorContext; t: String): TFHIRElementDefinition;
 var
   url: String;
   sd: TFHIRStructureDefinition;
 begin
   url := 'http://hl7.org/fhir/StructureDefinition/' + t;
   sd := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, url));
-  ctxt.FOwned.add(sd);
+  ctxt.Owned.add(sd);
   if (sd = nil) or (sd.Snapshot = nil) then
     result := nil
   else
     result := sd.Snapshot.ElementList[0];
 end;
 
-function TFHIRValidator.rule(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; path: String; thePass: boolean; msg: String): boolean;
+function TFHIRValidator3.rule(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; path: String; thePass: boolean; msg: String): boolean;
 var
   vm: TFhirOperationOutcomeIssue;
 begin
   if not thePass then
   begin
     vm := TFhirOperationOutcomeIssue.Create;
-    ctxt.FErrors.Add(vm);
-    vm.severity := IssueSeverityError;
-    vm.expressionList.append.value := path;
-    vm.code := t;
-    vm.details := TFHIRCodeableConcept.Create;
-    vm.details.text := msg;
+    try
+      vm.severity := IssueSeverityError;
+      vm.expressionList.append.value := path;
+      vm.code := t;
+      vm.details := TFHIRCodeableConcept.Create;
+      vm.details.text := msg;
+      ctxt.Issues.Add(TFhirOperationOutcomeIssue3.Create(vm.Link));
+    finally
+      vm.Free;
+    end;
   end;
   result := thePass;
 end;
 
-function TFHIRValidator.rule(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; path: String; thePass: boolean; msg: String): boolean;
+function TFHIRValidator3.rule(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; path: String; thePass: boolean; msg: String): boolean;
 var
   vm: TFhirOperationOutcomeIssue;
 begin
   if not thePass then
   begin
     vm := TFhirOperationOutcomeIssue.Create;
-    ctxt.FErrors.Add(vm);
-    vm.Tags['s-l'] := inttostr(locStart.line);
-    vm.Tags['s-c'] := inttostr(locStart.col);
-    vm.Tags['e-l'] := inttostr(locEnd.line);
-    vm.Tags['e-c'] := inttostr(locEnd.col);
-    vm.severity := IssueSeverityError;
-    if locStart.line + locStart.col > 0 then
-      vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')'
-    else
-      vm.expressionList.append.value := path;
-    vm.code := t;
-    vm.details := TFHIRCodeableConcept.Create;
-    vm.details.text := msg;
-    vm.locationList.add(path);
+    try
+      vm.Tags['s-l'] := inttostr(locStart.line);
+      vm.Tags['s-c'] := inttostr(locStart.col);
+      vm.Tags['e-l'] := inttostr(locEnd.line);
+      vm.Tags['e-c'] := inttostr(locEnd.col);
+      vm.severity := IssueSeverityError;
+      if locStart.line + locStart.col > 0 then
+        vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')'
+      else
+        vm.expressionList.append.value := path;
+      vm.code := t;
+      vm.details := TFHIRCodeableConcept.Create;
+      vm.details.text := msg;
+      vm.locationList.add(path);
+      ctxt.Issues.Add(TFhirOperationOutcomeIssue3.Create(vm.Link));
+    finally
+      vm.Free;
+    end;
   end;
   result := thePass;
 end;
@@ -1486,7 +1469,7 @@ begin
   result := (length(parts) > 2) and (parts[length(parts) - 1].startsWith('resource')) and ((parts[length(parts) - 2] = 'parameter')) or (parts[length(parts) - 2].startsWith('entry['));
 end;
 
-procedure TFHIRValidator.validateElement(ctxt : TFHIRValidatorContext; profile: TFHIRStructureDefinition; definition: TFHIRElementDefinition;
+procedure TFHIRValidator3.validateElement(ctxt : TFHIRValidatorContext; profile: TFHIRStructureDefinition; definition: TFHIRElementDefinition;
   cprofile: TFHIRStructureDefinition; context: TFHIRElementDefinition; resource, element: TFHIRMMElement; actualType: String; stack: TNodeStack; inCodeableConcept: boolean);
 var
   childDefinitions: TFHIRElementDefinitionList;
@@ -1793,7 +1776,7 @@ end;
   * @return
   * @;
 }
-function TFHIRValidator.sliceMatches(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; slice, ed: TFHIRElementDefinition; profile: TFHIRStructureDefinition): boolean;
+function TFHIRValidator3.sliceMatches(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; slice, ed: TFHIRElementDefinition; profile: TFHIRStructureDefinition): boolean;
 var
   s: TFhirElementDefinitionSlicingDiscriminator;
   discriminator: String;
@@ -1828,59 +1811,67 @@ begin
     end;
 end;
 
-function TFHIRValidator.valueMatchesCriteria(value: TFhirElement; criteria: TFHIRElementDefinition): boolean;
+function TFHIRValidator3.valueMatchesCriteria(value: TFhirElement; criteria: TFHIRElementDefinition): boolean;
 begin
   result := false;
 end;
 
-function TFHIRValidator.warning(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; path: String; thePass: boolean; msg: String): boolean;
+function TFHIRValidator3.warning(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; path: String; thePass: boolean; msg: String): boolean;
 var
   vm: TFhirOperationOutcomeIssue;
 begin
   if not thePass then
   begin
     vm := TFhirOperationOutcomeIssue.Create;
-    ctxt.FErrors.Add(vm);
-    vm.Tags['s-l'] := inttostr(locStart.line);
-    vm.Tags['s-c'] := inttostr(locStart.col);
-    vm.Tags['e-l'] := inttostr(locEnd.line);
-    vm.Tags['e-c'] := inttostr(locEnd.col);
-    vm.severity := IssueSeverityWarning;
-    vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')';
-    vm.code := t;
-    vm.details := TFHIRCodeableConcept.Create;
-    vm.details.text := msg;
+    try
+      vm.Tags['s-l'] := inttostr(locStart.line);
+      vm.Tags['s-c'] := inttostr(locStart.col);
+      vm.Tags['e-l'] := inttostr(locEnd.line);
+      vm.Tags['e-c'] := inttostr(locEnd.col);
+      vm.severity := IssueSeverityWarning;
+      vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')';
+      vm.code := t;
+      vm.details := TFHIRCodeableConcept.Create;
+      vm.details.text := msg;
+      ctxt.Issues.Add(TFhirOperationOutcomeIssue3.Create(vm));
+    finally
+      vm.Free;
+    end;
   end;
   result := thePass;
 end;
 
-function TFHIRValidator.getValueForDiscriminator(element: TFHIRMMElement; discriminator: String; criteria: TFHIRElementDefinition): TFhirElement;
+function TFHIRValidator3.getValueForDiscriminator(element: TFHIRMMElement; discriminator: String; criteria: TFHIRElementDefinition): TFhirElement;
 begin
   result := nil;
 end;
 
-function TFHIRValidator.hint(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; path: String; thePass: boolean; msg: String): boolean;
+function TFHIRValidator3.hint(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; path: String; thePass: boolean; msg: String): boolean;
 var
   vm: TFhirOperationOutcomeIssue;
 begin
   if not thePass then
   begin
     vm := TFhirOperationOutcomeIssue.Create;
-    ctxt.FErrors.Add(vm);
-    vm.Tags['s-l'] := inttostr(locStart.line);
-    vm.Tags['s-c'] := inttostr(locStart.col);
-    vm.Tags['e-l'] := inttostr(locEnd.line);
-    vm.Tags['e-c'] := inttostr(locEnd.col);
-    vm.severity := IssueSeverityInformation;
-    vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')';
-    vm.code := t;
-    vm.details := TFHIRCodeableConcept.Create;
-    vm.details.text := msg;
+    try
+      vm.Tags['s-l'] := inttostr(locStart.line);
+      vm.Tags['s-c'] := inttostr(locStart.col);
+      vm.Tags['e-l'] := inttostr(locEnd.line);
+      vm.Tags['e-c'] := inttostr(locEnd.col);
+      vm.severity := IssueSeverityInformation;
+      vm.expressionList.append.value := path + ' // line ' + inttostr(locStart.line) + ' col ' + inttostr(locStart.col) + ')';
+      vm.code := t;
+      vm.details := TFHIRCodeableConcept.Create;
+      vm.details.text := msg;
+      ctxt.Issues.Add(TFhirOperationOutcomeIssue3.Create(vm.Link));
+    finally
+      vm.Free;
+    end;
   end;
   result := thePass;
 end;
 
-function TFHIRValidator.idStatusForEntry(ep : TFHIRMMElement; ei: TElementInfo): TResourceIdStatus;
+function TFHIRValidator3.idStatusForEntry(ep : TFHIRMMElement; ei: TElementInfo): TResourceIdStatus;
 var
   e : TFHIRMMElement;
   s : String;
@@ -1917,7 +1908,7 @@ begin
 end;
 
 
-function TFHIRValidator.getCriteriaForDiscriminator(ctxt : TFHIRValidatorContext; path: String; ed: TFHIRElementDefinition; discriminator: String; profile: TFHIRStructureDefinition)
+function TFHIRValidator3.getCriteriaForDiscriminator(ctxt : TFHIRValidatorContext; path: String; ed: TFHIRElementDefinition; discriminator: String; profile: TFHIRStructureDefinition)
   : TFHIRElementDefinition;
 var
   childDefinitions, Snapshot: TFHIRElementDefinitionList;
@@ -1946,7 +1937,7 @@ begin
       end
       else
         ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
-      ctxt.FOwned.add(ty);
+      ctxt.Owned.add(ty);
       Snapshot := ty.Snapshot.ElementList;
       ed := Snapshot[0];
       index := 0;
@@ -1975,19 +1966,19 @@ begin
   end;
 end;
 
-function TFHIRValidator.checkResourceType(ctxt : TFHIRValidatorContext; ty: String): String;
+function TFHIRValidator3.checkResourceType(ctxt : TFHIRValidatorContext; ty: String): String;
 var
   t : TFHIRResource;
 begin
   t := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ty));
-  ctxt.FOwned.add(t);
+  ctxt.Owned.add(t);
   if (t <> nil) then
     result := ty
   else
     result := '';
 end;
 
-function TFHIRValidator.tryParse(ctxt : TFHIRValidatorContext; ref: String): String;
+function TFHIRValidator3.tryParse(ctxt : TFHIRValidatorContext; ref: String): String;
 var
   parts: TArray<String>;
 begin
@@ -2005,7 +1996,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkReference(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; profile: TFHIRStructureDefinition;
+procedure TFHIRValidator3.checkReference(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; profile: TFHIRStructureDefinition;
   container: TFHIRElementDefinition; parentType: String; stack: TNodeStack);
 var
   ref: String;
@@ -2064,7 +2055,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.resolve(ref: String; stack: TNodeStack): TFHIRMMElement;
+function TFHIRValidator3.resolve(ref: String; stack: TNodeStack): TFHIRMMElement;
 var
   res: TFHIRMMElement;
 begin
@@ -2107,7 +2098,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.getFromBundle(bundle: TFHIRMMElement; ref: String): TFHIRMMElement;
+function TFHIRValidator3.getFromBundle(bundle: TFHIRMMElement; ref: String): TFHIRMMElement;
 var
   entries: TFslList<TFHIRMMElement>;
   we, res: TFHIRMMElement;
@@ -2135,7 +2126,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.genFullUrl(bundleBase, entryBase, ty, id: String): String;
+function TFHIRValidator3.genFullUrl(bundleBase, entryBase, ty, id: String): String;
 var
   base: String;
 begin
@@ -2151,7 +2142,7 @@ begin
     result := base + '/' + ty + '/' + id;
 end;
 
-function TFHIRValidator.getContainedById(container: TFHIRMMElement; id: String): TFHIRMMElement;
+function TFHIRValidator3.getContainedById(container: TFHIRMMElement; id: String): TFHIRMMElement;
 var
   contained: TFslList<TFHIRMMElement>;
   we : TFHIRMMElement;
@@ -2173,7 +2164,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.getBaseType(ctxt : TFHIRValidatorContext; profile: TFHIRStructureDefinition; pr: String): String;
+function TFHIRValidator3.getBaseType(ctxt : TFHIRValidatorContext; profile: TFHIRStructureDefinition; pr: String): String;
 var
   p: TFHIRStructureDefinition;
 begin
@@ -2191,7 +2182,7 @@ begin
   // end;
 end;
 
-function TFHIRValidator.resolveProfile(ctxt : TFHIRValidatorContext; profile: TFHIRStructureDefinition; pr: String): TFHIRStructureDefinition;
+function TFHIRValidator3.resolveProfile(ctxt : TFHIRValidatorContext; profile: TFHIRStructureDefinition; pr: String): TFHIRStructureDefinition;
 var
   r: TFHIRResource;
 begin
@@ -2209,11 +2200,11 @@ begin
   else
   begin
     result := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, pr));
-    ctxt.FOwned.add(result);
+    ctxt.owned.add(result);
   end;
 end;
 
-function TFHIRValidator.checkExtension(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; def: TFHIRElementDefinition;
+function TFHIRValidator3.checkExtension(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; def: TFHIRElementDefinition;
   profile: TFHIRStructureDefinition; stack: TNodeStack): TFHIRStructureDefinition;
 var
   url: String;
@@ -2232,7 +2223,7 @@ begin
   end
   else
   begin
-    ctxt.FOwned.add(ex);
+    ctxt.owned.add(ex);
     if (def.isModifier) then
       rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
         'Extension modifier mismatch: the extension element is labelled as a modifier, but the underlying extension is not')
@@ -2257,11 +2248,11 @@ begin
   result := ex;
 end;
 
-function TFHIRValidator.allowUnknownExtension(ctxt : TFHIRValidatorContext; url: String): boolean;
+function TFHIRValidator3.allowUnknownExtension(ctxt : TFHIRValidatorContext; url: String): boolean;
 var
   s: String;
 begin
-  result := ctxt.FIsAnyExtensionsAllowed;
+  result := ctxt.IsAnyExtensionsAllowed;
   if (url.contains('example.org')) or (url.contains('acme.com')) or (url.contains('nema.org')) then
     result := true
   else if FExtensionDomains <> nil then
@@ -2270,12 +2261,12 @@ begin
         result := true;
 end;
 
-// function TFHIRValidator.isKnownType(code : String) : boolean;
+// function TFHIRValidator3.isKnownType(code : String) : boolean;
 // begin
 // result := TFHIRStructureDefinition(Fcontext.fetchResource(frtStructureDefinition, code.toLower)) <> nil;
 // end;
 
-// function TFHIRValidator.getElementByPath(definition : TFHIRStructureDefinition; path : String) : TFHIRElementDefinition;
+// function TFHIRValidator3.getElementByPath(definition : TFHIRStructureDefinition; path : String) : TFHIRElementDefinition;
 // var
 // e : TFHIRElementDefinition;
 // begin
@@ -2290,7 +2281,7 @@ end;
 // result := nil;
 // end;
 
-function TFHIRValidator.checkExtensionContext(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; definition: TFHIRStructureDefinition; stack: TNodeStack;
+function TFHIRValidator3.checkExtensionContext(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; definition: TFHIRStructureDefinition; stack: TNodeStack;
   extensionParent: String): boolean;
 var
   extUrl: String;
@@ -2395,7 +2386,7 @@ end;
 //
 
 
-function TFHIRValidator.findElement(profile: TFHIRStructureDefinition; name: String): TFHIRElementDefinition;
+function TFHIRValidator3.findElement(profile: TFHIRStructureDefinition; name: String): TFHIRElementDefinition;
 var
   c: TFHIRElementDefinition;
 begin
@@ -2412,14 +2403,14 @@ end;
 
 
 
-procedure TFHIRValidator.validateContains(ctxt : TFHIRValidatorContext; path: String; child: TFHIRElementDefinition; context: TFHIRElementDefinition; resource, element: TFHIRMMElement; stack: TNodeStack; idRule: TResourceIdStatus);
+procedure TFHIRValidator3.validateContains(ctxt : TFHIRValidatorContext; path: String; child: TFHIRElementDefinition; context: TFHIRElementDefinition; resource, element: TFHIRMMElement; stack: TNodeStack; idRule: TResourceIdStatus);
 var
   resourceName: String;
   profile: TFHIRStructureDefinition;
 begin
   resourceName := element.Type_;
   profile := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
-  ctxt.FOwned.add(profile);
+  ctxt.owned.add(profile);
   if (element.Special in [fsecBUNDLE_ENTRY, fsecBUNDLE_OUTCOME, fsecPARAMETER]) then
     resource := element;
   if (rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.addToLiteralPath(resourceName), profile <> nil, 'No profile found for contained resource of type "' + resourceName + '"')) then
@@ -2483,7 +2474,7 @@ begin
   result := fmt.contains('T');
 end;
 
-procedure TFHIRValidator.checkPrimitive(ctxt : TFHIRValidatorContext; path: String; ty: String; context: TFHIRElementDefinition; e: TFHIRMMElement; profile : TFhirStructureDefinition);
+procedure TFHIRValidator3.checkPrimitive(ctxt : TFHIRValidatorContext; path: String; ty: String; context: TFHIRElementDefinition; e: TFHIRMMElement; profile : TFhirStructureDefinition);
 var
   regex: TRegEx;
   xhtml : TFhirXHtmlNode;
@@ -2547,7 +2538,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkInnerNames(ctxt : TFHIRValidatorContext; e: TFHIRMMElement; path: String; list : TFhirXHtmlNodeList);
+procedure TFHIRValidator3.checkInnerNames(ctxt : TFHIRValidatorContext; e: TFHIRMMElement; path: String; list : TFhirXHtmlNodeList);
 var
   node : TFhirXHtmlNode;
   attr : TFHIRAttribute;
@@ -2564,7 +2555,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkInnerNS(ctxt : TFHIRValidatorContext; e: TFHIRMMElement; path: String; list : TFhirXHtmlNodeList);
+procedure TFHIRValidator3.checkInnerNS(ctxt : TFHIRValidatorContext; e: TFHIRMMElement; path: String; list : TFhirXHtmlNodeList);
 var
   node : TFhirXHtmlNode;
   ns : String;
@@ -2582,7 +2573,7 @@ end;
 
 
 // note that we don"t check the type here; it could be string, uri or code.
-procedure TFHIRValidator.checkPrimitiveBinding(ctxt : TFHIRValidatorContext; path: String; ty: String; context: TFHIRElementDefinition; element: TFHIRMMElement; profile : TFhirStructureDefinition);
+procedure TFHIRValidator3.checkPrimitiveBinding(ctxt : TFHIRValidatorContext; path: String; ty: String; context: TFHIRElementDefinition; element: TFHIRMMElement; profile : TFhirStructureDefinition);
 var
   value: String;
   Binding: TFhirElementDefinitionBinding;
@@ -2636,7 +2627,7 @@ begin
     uri.startsWith('urn:iso:') or uri.startsWith('urn:std:') or isValidFHIRUrn(uri);
 end;
 
-procedure TFHIRValidator.checkIdentifier(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
+procedure TFHIRValidator3.checkIdentifier(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
 var
   System: String;
 begin
@@ -2644,7 +2635,7 @@ begin
   rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, isAbsolute(System), 'Identifier.system must be an absolute reference, not a local reference ('+system+')');
 end;
 
-procedure TFHIRValidator.checkQuantity(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
+procedure TFHIRValidator3.checkQuantity(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
 var
   code: String;
   System: String;
@@ -2658,7 +2649,7 @@ begin
     checkCode(ctxt, element, path, code, System, '', units);
 end;
 
-procedure TFHIRValidator.checkCoding(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; profile: TFHIRStructureDefinition;
+procedure TFHIRValidator3.checkCoding(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; profile: TFHIRStructureDefinition;
   context: TFHIRElementDefinition; inCodeableConcept: boolean);
 var
   code: String;
@@ -2725,7 +2716,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.resolveBindingReference(ctxt : TFHIRValidatorContext; context : TFHIRDomainResource; reference: TFHIRType): TFHIRValueSet;
+function TFHIRValidator3.resolveBindingReference(ctxt : TFHIRValidatorContext; context : TFHIRDomainResource; reference: TFHIRType): TFHIRValueSet;
 var
   s : String;
   c : TFHIRResource;
@@ -2748,7 +2739,7 @@ begin
   else
     result := nil;
   if result <> nil then
-    ctxt.FOwned.add(result);
+    ctxt.owned.add(result);
 end;
 
 function readAsCodeableConcept(element: TFHIRMMElement): TFHIRCodeableConcept;
@@ -2771,7 +2762,7 @@ begin
   end;
 End;
 
-procedure TFHIRValidator.checkCodeableConcept(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; profile: TFHIRStructureDefinition;
+procedure TFHIRValidator3.checkCodeableConcept(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; profile: TFHIRStructureDefinition;
   context: TFHIRElementDefinition);
 var
   Binding: TFhirElementDefinitionBinding;
@@ -2838,7 +2829,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.checkCode(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; code, System, version, display: String): boolean;
+function TFHIRValidator3.checkCode(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; code, System, version, display: String): boolean;
 var
   s: TValidationResult;
 begin
@@ -2923,7 +2914,7 @@ end;
 // cursor := -1;
 // end;
 //
-// procedure TFHIRValidator.loadMap() begin
+// procedure TFHIRValidator3.loadMap() begin
 // int i := profile.SnapShot.getElement().indexOf(elementDefn) + 1;
 // String lead := elementDefn.Path;
 // while (i < profile.SnapShot.getElement().Count) begin
@@ -2959,7 +2950,7 @@ end;
 //
 // end;
 //
-// procedure TFHIRValidator.checkByProfile(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, profile : TFHIRStructureDefinition, TFHIRElementDefinition elementDefn) ; begin
+// procedure TFHIRValidator3.checkByProfile(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, profile : TFHIRStructureDefinition, TFHIRElementDefinition elementDefn) ; begin
 // // we have an element, and the structure that describes it.
 // // we know that"s it"s valid against the underlying spec - is it valid against this one?
 // // in the instance validator above, we assume that schema or schmeatron has taken care of cardinalities, but here, we have no such reliance.
@@ -3016,7 +3007,7 @@ end;
 // end;
 // end;
 // end;
-// procedure TFHIRValidator.checkBinding(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, profile : TFHIRStructureDefinition, TFHIRElementDefinition elementDefn, String type) throws EOperationOutcome, Exception begin
+// procedure TFHIRValidator3.checkBinding(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, profile : TFHIRStructureDefinition, TFHIRElementDefinition elementDefn, String type) throws EOperationOutcome, Exception begin
 // ElementDefinitionBindingComponent bc := elementDefn.Binding;
 //
 // if (bc <> nil ) and ( bc.ValueSet() <> nil ) and ( bc.ValueSet is TFHIRReference) begin
@@ -3047,15 +3038,15 @@ end;
 //
 // end;
 
-// procedure TFHIRValidator.checkBindingCode(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, vs : TFHIRValueSet) begin
+// procedure TFHIRValidator3.checkBindingCode(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, vs : TFHIRValueSet) begin
 // // rule(ctxt, 'exception', path, false, 'checkBindingCode not done yet');
 // end;
 //
-// procedure TFHIRValidator.checkBindingCoding(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, vs : TFHIRValueSet) begin
+// procedure TFHIRValidator3.checkBindingCoding(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, vs : TFHIRValueSet) begin
 // // rule(ctxt, 'exception', path, false, 'checkBindingCoding not done yet');
 // end;
 //
-// procedure TFHIRValidator.checkBindingCodeableConcept(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, vs : TFHIRValueSet) begin
+// procedure TFHIRValidator3.checkBindingCodeableConcept(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, vs : TFHIRValueSet) begin
 // // rule(ctxt, 'exception', path, false, 'checkBindingCodeableConcept not done yet');
 // end;
 //
@@ -3077,7 +3068,7 @@ end;
 // return false;
 // end;
 //
-// procedure TFHIRValidator.checkConstraint(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, ElementDefinitionConstraintComponent c) ; begin
+// procedure TFHIRValidator3.checkConstraint(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, ElementDefinitionConstraintComponent c) ; begin
 
 // try
 // begin
@@ -3099,7 +3090,7 @@ end;
 // end;
 // end;
 //
-// procedure TFHIRValidator.checkPrimitiveByProfile(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, TFHIRElementDefinition elementDefn) begin
+// procedure TFHIRValidator3.checkPrimitiveByProfile(errors : TFhirOperationOutcomeIssueList; path : String; focus : TFHIRMMElement, TFHIRElementDefinition elementDefn) begin
 // // two things to check - length, and fixed value
 // String value := focus.primitiveValue;
 // if (elementDefn.hasMaxLengthElement()) begin
@@ -3111,7 +3102,7 @@ end;
 // end;
 //
 
-procedure TFHIRValidator.checkFixedValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFhirElement; propName: String);
+procedure TFHIRValidator3.checkFixedValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFhirElement; propName: String);
 var
   value: String;
   extensions: TFslList<TFHIRMMElement>;
@@ -3217,7 +3208,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkAddressValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRAddress);
+procedure TFHIRValidator3.checkAddressValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRAddress);
 var
   lines: TFslList<TFHIRMMElement>;
   i: integer;
@@ -3243,7 +3234,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkContactPointValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRContactPoint);
+procedure TFHIRValidator3.checkContactPointValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRContactPoint);
 begin
   checkFixedValue(ctxt, path + '.system', focus.getNamedChild('system'), fixed.SystemElement, 'system');
   checkFixedValue(ctxt, path + '.value', focus.getNamedChild('value'), fixed.ValueElement, 'value');
@@ -3251,7 +3242,7 @@ begin
   checkFixedValue(ctxt, path + '.period', focus.getNamedChild('period'), fixed.Period, 'period');
 end;
 
-procedure TFHIRValidator.checkAttachmentValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRAttachment);
+procedure TFHIRValidator3.checkAttachmentValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRAttachment);
 begin
   checkFixedValue(ctxt, path + '.contentType', focus.getNamedChild('contentType'), fixed.ContentTypeElement, 'contentType');
   checkFixedValue(ctxt, path + '.language', focus.getNamedChild('language'), fixed.LanguageElement, 'language');
@@ -3262,7 +3253,7 @@ begin
   checkFixedValue(ctxt, path + '.title', focus.getNamedChild('title'), fixed.TitleElement, 'title');
 end;
 
-procedure TFHIRValidator.checkIdentifierValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRIdentifier);
+procedure TFHIRValidator3.checkIdentifierValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRIdentifier);
 begin
   checkFixedValue(ctxt, path + '.use', focus.getNamedChild('use'), fixed.UseElement, 'use');
   checkFixedValue(ctxt, path + '.label', focus.getNamedChild('type'), fixed.type_, 'type');
@@ -3272,7 +3263,7 @@ begin
   checkFixedValue(ctxt, path + '.assigner', focus.getNamedChild('assigner'), fixed.Assigner, 'assigner');
 end;
 
-procedure TFHIRValidator.checkInvariants(ctxt : TFHIRValidatorContext; path : String; profile: TFHIRStructureDefinition; ed: TFhirElementDefinition; typename, typeProfile : String; resource, element: TFHIRMMElement);
+procedure TFHIRValidator3.checkInvariants(ctxt : TFHIRValidatorContext; path : String; profile: TFHIRStructureDefinition; ed: TFhirElementDefinition; typename, typeProfile : String; resource, element: TFHIRMMElement);
 var
   inv : TFhirElementDefinitionConstraint;
   ok : boolean;
@@ -3306,7 +3297,7 @@ begin
     end;
 end;
 
-procedure TFHIRValidator.checkCodingValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRCoding);
+procedure TFHIRValidator3.checkCodingValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRCoding);
 begin
   checkFixedValue(ctxt, path + '.system', focus.getNamedChild('system'), fixed.SystemElement, 'system');
   checkFixedValue(ctxt, path + '.code', focus.getNamedChild('code'), fixed.CodeElement, 'code');
@@ -3314,7 +3305,7 @@ begin
   checkFixedValue(ctxt, path + '.userSelected', focus.getNamedChild('userSelected'), fixed.UserSelectedElement, 'userSelected');
 end;
 
-procedure TFHIRValidator.checkHumanNameValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRHumanName);
+procedure TFHIRValidator3.checkHumanNameValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRHumanName);
 var
   parts: TFslList<TFHIRMMElement>;
   i: integer;
@@ -3359,7 +3350,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkCodeableConceptValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRCodeableConcept);
+procedure TFHIRValidator3.checkCodeableConceptValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRCodeableConcept);
 var
   codings: TFslList<TFHIRMMElement>;
   i: integer;
@@ -3379,7 +3370,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkTimingValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRTiming);
+procedure TFHIRValidator3.checkTimingValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRTiming);
 var
   events: TFslList<TFHIRMMElement>;
   i: integer;
@@ -3400,25 +3391,25 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.checkPeriodValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRPeriod);
+procedure TFHIRValidator3.checkPeriodValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRPeriod);
 begin
   checkFixedValue(ctxt, path + '.start', focus.getNamedChild('start'), fixed.StartElement, 'start');
   checkFixedValue(ctxt, path + '.end', focus.getNamedChild('end'), fixed.End_Element, 'end');
 end;
 
-procedure TFHIRValidator.checkRangeValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRRange);
+procedure TFHIRValidator3.checkRangeValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRRange);
 begin
   checkFixedValue(ctxt, path + '.low', focus.getNamedChild('low'), fixed.Low, 'low');
   checkFixedValue(ctxt, path + '.high', focus.getNamedChild('high'), fixed.High, 'high');
 end;
 
-procedure TFHIRValidator.checkRatioValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRRatio);
+procedure TFHIRValidator3.checkRatioValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRRatio);
 begin
   checkFixedValue(ctxt, path + '.numerator', focus.getNamedChild('numerator'), fixed.Numerator, 'numerator');
   checkFixedValue(ctxt, path + '.denominator', focus.getNamedChild('denominator'), fixed.Denominator, 'denominator');
 end;
 
-procedure TFHIRValidator.checkSampledDataValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRSampledData);
+procedure TFHIRValidator3.checkSampledDataValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRSampledData);
 begin
   checkFixedValue(ctxt, path + '.origin', focus.getNamedChild('origin'), fixed.Origin, 'origin');
   checkFixedValue(ctxt, path + '.period', focus.getNamedChild('period'), fixed.PeriodElement, 'period');
@@ -3429,7 +3420,7 @@ begin
   checkFixedValue(ctxt, path + '.data', focus.getNamedChild('data'), fixed.DataElement, 'data');
 end;
 
-procedure TFHIRValidator.checkQuantityValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRQuantity);
+procedure TFHIRValidator3.checkQuantityValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRQuantity);
 begin
   checkFixedValue(ctxt, path + '.value', focus.getNamedChild('value'), fixed.ValueElement, 'value');
   checkFixedValue(ctxt, path + '.comparator', focus.getNamedChild('comparator'), fixed.ComparatorElement, 'comparator');
@@ -3438,7 +3429,7 @@ begin
   checkFixedValue(ctxt, path + '.code', focus.getNamedChild('code'), fixed.CodeElement, 'code');
 end;
 
-function TFHIRValidator.getExtensionByUrl(extensions: TFslList<TFHIRMMElement>; url: String): TFHIRMMElement;
+function TFHIRValidator3.getExtensionByUrl(extensions: TFslList<TFHIRMMElement>; url: String): TFHIRMMElement;
 var
   e: TFHIRMMElement;
 begin
@@ -3452,14 +3443,14 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat; profiles : TValidationProfileSet);
+procedure TFHIRValidator3.validate(ctxt : TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat; profiles : TValidationProfileSet);
 var
   p : TFHIRMMParserBase;
   element : TFHIRMMElement;
 begin
   p := TFHIRMMManager.makeParser(context, format);
   try
-    p.setupValidation(fvpEVERYTHING, ctxt.FErrors.Link);
+    p.setupValidation(fvpEVERYTHING, ctxt.Issues.Link);
     element := p.parse(source);
     try
       if (element <> nil) then
@@ -3472,11 +3463,14 @@ begin
   end;
 end;
 
-function TFHIRValidator.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
+function TFHIRValidator3.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
+var
+  o : TFhirOperationOutcomeIssueW;
 begin
   result := TFhirOperationOutcome.create;
   try
-    result.issueList.Assign(ctxt.Errors);
+    for o in ctxt.Issues do
+      result.issueList.add(o.issue.Link);
     BuildNarrative(result, ctxt.OperationDescription);
     result.Link;
   finally
@@ -3485,7 +3479,7 @@ begin
 end;
 
 
-procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat; profile: String);
+procedure TFHIRValidator3.validate(ctxt: TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat; profile: String);
 var
   profiles : TValidationProfileSet;
 begin
@@ -3497,7 +3491,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat);
+procedure TFHIRValidator3.validate(ctxt: TFHIRValidatorContext; source: TFslBuffer; format: TFHIRFormat);
 var
   profiles : TValidationProfileSet;
 begin
@@ -3509,7 +3503,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; resource: TFhirResource);
+procedure TFHIRValidator3.validate(ctxt: TFHIRValidatorContext; resource: TFhirResourceV);
 var
   profiles : TValidationProfileSet;
 begin
@@ -3521,7 +3515,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; resource: TFhirResource; profiles: TValidationProfileSet);
+procedure TFHIRValidator3.validate(ctxt: TFHIRValidatorContext; resource: TFhirResourceV; profiles: TValidationProfileSet);
 var
   loader : TFHIRMMResourceLoader;
   e : TFHIRMMElement;
@@ -3539,7 +3533,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; resource: TFhirResource; profile: string);
+procedure TFHIRValidator3.validate(ctxt: TFHIRValidatorContext; resource: TFhirResourceV; profile: string);
 var
   profiles : TValidationProfileSet;
 begin
@@ -3628,29 +3622,6 @@ begin
     sfx := '';
   result := basePath + '.' + name + sfx;
 end;
-
-{ TFHIRValidatorContext }
-
-constructor TFHIRValidatorContext.create;
-begin
-  inherited;
-  FOwned := TFslObjectList.create;
-  FErrors := TFHIROperationOutcomeIssueList.create;
-end;
-
-destructor TFHIRValidatorContext.destroy;
-  begin
-  FOwned.Free;
-  FErrors.Free;
-  inherited;
-end;
-
-procedure TFHIRValidatorContext.SetErrors(const Value: TFhirOperationOutcomeIssueList);
-begin
-  FErrors.Free;
-  FErrors := Value;
-end;
-
 
 { TValidationProfileSet }
 

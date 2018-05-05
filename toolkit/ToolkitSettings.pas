@@ -33,7 +33,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Json, FHIR.Support.Strings,
   FHIR.Client.SmartUtilities,
-  FHIR.Client.Settings;
+  FHIR.Client.Registry;
 
 const
   DEF_TIMEOUT = 10;
@@ -41,7 +41,7 @@ const
   DEF_CHECKUPGRADES = true;
 
 type
-  TFHIRToolkitSettings = class (TFHIRClientSettings)
+  TFHIRToolkitSettings = class (TFHIRClientRegistry)
   private
     function GetTimeout: integer;
     procedure SetTimeout(const Value: integer);
@@ -279,3 +279,4 @@ end.
 // FIni.ReadInteger('HTTP', 'timeout', 5)
 
 FIni.ReadString('HTTP', 'proxy', ''));
+

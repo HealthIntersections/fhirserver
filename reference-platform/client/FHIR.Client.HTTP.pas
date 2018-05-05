@@ -37,8 +37,8 @@ uses
   FHIR.Support.Stream, FHIR.Support.Mime, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdComponent,
   {$IFNDEF OSX}FHIR.Support.WInInet, {$ENDIF}
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Client.Base,
-  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities;
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.XVersion.Resources, FHIR.Client.Base,
+  FHIR.Client.SmartUtilities;
 
 type
   TFhirHTTPClientHTTPVerb = (httpGet, httpPost, httpPut, httpDelete, httpOptions, httpPatch);
@@ -116,12 +116,12 @@ type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
 
     // special case that gives direct access to the communicator...
-    function custom(path : String; headers : THTTPHeaders) : TFslBuffer; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
     procedure terminate; override;
 
     // special functions
     procedure authoriseByOWin(server, username, password : String);
-    function cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse; override;
   end;
 
 const
@@ -875,7 +875,7 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.custom(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFHIRHTTPCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
 var
   ret : TStream;
 begin
@@ -890,6 +890,32 @@ begin
     end;
   finally
     ret.Free;
+  end;
+end;
+
+function TFHIRHTTPCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslBuffer): TFslBuffer;
+var
+  req : TMemoryStream;
+  ret : TStream;
+begin
+  req := TMemoryStream.Create;
+  try
+    body.SaveToStream(req);
+    req.Position := 0;
+    ret := exchange(Furl+'/'+path, httpPost, req, headers);
+    try
+      result := TFslBuffer.Create;
+      try
+        result.LoadFromStream(ret);
+        result.link;
+      finally
+        result.Free;
+      end;
+    finally
+      ret.Free;
+    end;
+  finally
+    req.Free;
   end;
 end;
 
@@ -940,34 +966,6 @@ begin
   end;
 end;
 
-function TFHIRHTTPCommunicator.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
-var
-  b : TBytes;
-  req, resp : TStream;
-  json : TJsonObject;
-  headers : THTTPHeaders;
-begin
-  headers.contentType := 'application/json';
-  b := TEncoding.UTF8.GetBytes(request.AsJson);
-  req := TMemoryStream.Create;
-  try
-    req.Write(b[0], length(b));
-    req.Position := 0;
-    resp := exchange(UrlPath([FURL, 'cds-services', id]), httpPost, req, headers);
-    try
-      json := TJSONParser.Parse(resp);
-      try
-        result := TCDSHookResponse.Create(json);
-      finally
-        json.Free;
-      end;
-    finally
-      resp.free;
-    end;
-  finally
-    req.Free;
-  end;
-end;
 (*
 function TFHIRHTTPCommunicator.Convert(stream: TStream): TStream;
 var

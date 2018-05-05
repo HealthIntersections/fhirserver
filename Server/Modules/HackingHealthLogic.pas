@@ -30,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  SysUtils,
   FHIR.Tools.Resources,
   FHIR.Tools.Utilities,
   CDSHooksServer;
@@ -55,26 +56,28 @@ var
   req : TFhirProcedureRequest;
 begin
   result := false;
-  for res in request.context do
+  raise Exception.Create('to do');
+(*  for res in request.context do
     if res is TFhirProcedureRequest then
     begin
       req := res as TFhirProcedureRequest;
       if req.code.text = 'BNP' then
         exit(true);
-    end;
+    end;*)
 end;
 
 function THackingHealthBNPLogic.clinicIsED: boolean;
 var
   enc : TFhirEncounter;
 begin
-  if not request.preFetch.ContainsKey('encounter') then
+  raise Exception.Create('to do');
+(*  if not request.preFetch.ContainsKey('encounter') then
     result := false
   else
   begin
     enc := request.preFetch['encounter'].resource as TFhirEncounter;
     result := (enc.class_ <> nil) and (enc.class_.code = 'emergency');
-  end;
+  end;*)
 end;
 
 function THackingHealthBNPLogic.execute: boolean;
@@ -94,12 +97,13 @@ var
   bnd : TFhirBundle;
   be : TFhirBundleEntry;
 begin
-  bnd := request.preFetch['problems'].resource as TFhirBundle;
+  raise Exception.Create('to do');
+(*  bnd := request.preFetch['problems'].resource as TFhirBundle;
   result := false;
   for be in bnd.entryList do
     if (be.resource <> nil) and (be.resource is TFhirCondition) then
       if isDyspnoea(be.resource as TFhirCondition) then
-        exit(true);
+        exit(true);*)
 end;
 
 function THackingHealthBNPLogic.isDyspnoea(cond: TFhirCondition): boolean;

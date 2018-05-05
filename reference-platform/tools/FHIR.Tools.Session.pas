@@ -1165,7 +1165,7 @@ begin
   FWorker.Free;
   FPatchJson.Free;
   FTags.free;
-  FSession.Free;
+//  FSession.Free;  //possibly pass it to the end?
   FSource.Free;
   FResource.Free;
   FProvenance.Free;
@@ -1174,6 +1174,7 @@ begin
   FGraphQL.Free;
   FPatchXml.Free;
   FCompartment.Free;
+  FSession.Free;
   inherited;
 end;
 

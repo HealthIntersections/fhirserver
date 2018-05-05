@@ -119,7 +119,7 @@
         <Debugger_RunParams>-xnoload -xremount -xtests -xvalidate -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\data\terminologies\sct-us&quot; -sver &quot;http://snomed.info/sct/731000124108/version/20150901&quot; -xtests -xindex -xloinc &quot;C:\Data\terminologies\FHIR.Loinc.Base\2.54&quot; -lver 2.54 -xload C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot; -debug </Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
-        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R2.AuthMap;FHIR.Tools.Constants=FHIR.R2.Constants;FHIR.Tools.Context=FHIR.R2.Context;FHIR.Tools.IndexInfo=FHIR.R2.IndexInfo;FHIR.Tools.Javascript=FHIR.R2.Javascript;FHIR.Tools.ElementModel=FHIR.R2.ElementModel;FHIR.Tools.Narrative=FHIR.R2.Narrative;FHIR.Tools.Operations=FHIR.R2.Operations;FHIR.Tools.Json=FHIR.R2.Json;FHIR.Tools.Turtle=FHIRParserTurtle2;FHIR.Tools.Xml=FHIR.R2.Xml;FHIR.Tools.PathNode=FHIR.R2.PathNode;FHIR.Tools.Profiles=FHIR.R2.Profiles;FHIR.Tools.Resources=FHIR.R2.Resources;FHIR.Tools.MapUtilities=FHIRStructureMapUtilities2;FHIR.Tools.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Tools.Types=FHIR.R2.Types;FHIR.Tools.Utilities=FHIR.R2.Utilities;FHIR.Tools.Validator=FHIR.R2.Validator;FHIR.Tools.OpBase=FHIR.R2.OpBase;FHIR.Tools.PathEngine=FHIR.R2.PathEngine;FHIR.Tools.Narrative2=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire=FHIR.R2.Questionnaire;FHIRBaseX=FHIR.R2.Base;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R2.AuthMap;FHIR.Tools.Constants=FHIR.R2.Constants;FHIR.Tools.Context=FHIR.R2.Context;FHIR.Tools.IndexInfo=FHIR.R2.IndexInfo;FHIR.Tools.Javascript=FHIR.R2.Javascript;FHIR.Tools.ElementModel=FHIR.R2.ElementModel;FHIR.Tools.Narrative=FHIR.R2.Narrative;FHIR.Tools.Operations=FHIR.R2.Operations;FHIR.Tools.Json=FHIR.R2.Json;FHIR.Tools.Turtle=FHIRParserTurtle2;FHIR.Tools.Xml=FHIR.R2.Xml;FHIR.Tools.PathNode=FHIR.R2.PathNode;FHIR.Tools.Profiles=FHIR.R2.Profiles;FHIR.Tools.Resources=FHIR.R2.Resources;FHIR.Tools.MapUtilities=FHIRStructureMapUtilities2;FHIR.Tools.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Tools.Types=FHIR.R2.Types;FHIR.Tools.Utilities=FHIR.R2.Utilities;FHIR.Tools.Validator=FHIR.R2.Validator;FHIR.Tools.OpBase=FHIR.R2.OpBase;FHIR.Tools.PathEngine=FHIR.R2.PathEngine;FHIR.Tools.Narrative2=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire=FHIR.R2.Questionnaire;FHIRBaseX=FHIR.R2.Base;FHIR.Tools.Common=FHIR.R2.Common;$(DCC_UnitAlias)</DCC_UnitAlias>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -318,6 +318,12 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Common.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -386,14 +392,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServer2.rsm</RemoteName>
+                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRServer2.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

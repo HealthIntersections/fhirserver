@@ -59,6 +59,7 @@ Const
 
 Type
   TFHIRVersion = (fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4);
+  TFHIRVersionSet = set of TFHIRVersion;
 
 Const
   {$IFDEF FHIR2}
@@ -74,8 +75,7 @@ Const
   CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
   CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4');
   CURRENT_FHIR_VERSION = {$IFDEF FHIR1} fhirVersionRelease1 {$ENDIF} {$IFDEF FHIR2} fhirVersionRelease2 {$ENDIF}{$IFDEF FHIR3} fhirVersionRelease3 {$ENDIF} {$IFDEF FHIR4}  fhirVersionRelease4{$ENDIF} ;
-
-
+  FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
 
 Type
   {@Enum TFHIRCommandType
@@ -139,6 +139,9 @@ Type
   TFHIRXhtmlParserPolicy = (xppAllow, xppDrop, xppReject);
 
   TFHIRSummaryOption = (soFull, soSummary, soText, soData, soCount);
+
+  TExceptionType = (etNull, etInvalid, etStructure, etRequired, etValue, etInvariant, etSecurity, etLogin, etUnknown, etExpired, etForbidden, etSuppressed, etProcessing, etNotSupported, etDuplicate, etNotFound, etTooLong, etCodeInvalid, etExtension, etTooCostly, etBusinessRule, etConflict, etIncomplete, etTransient, etLockError, etNoStore, etException, etTimeout, etThrottled, etInformational);
+  TIssueSeverity = (isNull, isFatal, isError, isWarning, isInformation);
 
 
 //  TFhirTag = class (TFslName)

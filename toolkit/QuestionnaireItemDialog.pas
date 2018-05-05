@@ -427,7 +427,7 @@ begin
     bundle := TFhirBundle.create;
     params := TStringList.create;
     try
-      client := TFhirClients.makeThreaded(nil, TFhirClients.makeHTTP(nil, FSettings.serverAddress('Terminology', 0), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
+      client := TFhirClients.makeThreaded(nil, TFhirClients.makeHTTP(nil, FSettings.defaultAddress('Terminology'), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
       try
         params.addPair('_summary', 'true');
         OnWork(self, 'Fetching ValueSets', true,

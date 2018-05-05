@@ -35,7 +35,7 @@ uses
   Windows, SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Json,
   FHIR.Tools.Types,
-  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities, FHIR.Client.Settings;
+  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities, FHIR.Client.Registry;
 
 const
   DEF_ActivePage = 0;
@@ -47,7 +47,7 @@ const
 type
   TDefinitionsVersion = (defV2, defV3);
 
-  TFHIRPluginSettings = class (TFHIRClientSettings)
+  TFHIRPluginSettings = class (TFHIRClientRegistry)
   private
     function GetToolboxVisible: boolean;
     function GetVisualiserVisible: boolean;

@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Xhtml, FHIR.Base.PathEngine,
   {$IFDEF FHIR2}
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Utilities, FHIR.R2.PathEngine, FHIR.R2.Context,
   {$ENDIF}

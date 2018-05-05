@@ -37,9 +37,12 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.StdCtrls, Vcl.ExtCtrls, NppForms,
-  FHIR.Support.System,
-  FHIR.Tools.Resources, FHIR.Tools.Utilities, clipbrd, NppPlugin, Vcl.OleCtrls, SHDocVw, ActiveX, FHIR.Support.Text;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, clipbrd, Vcl.OleCtrls,
+  SHDocVw, ActiveX,
+  VirtualTrees, NppForms, NppPlugin,
+  FHIR.Support.System, FHIR.Support.Text, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.XVersion.Resources,
+  FHIR.Tools.Resources, FHIR.Tools.Utilities;
 
 const
   MIN_COL_WIDTH = 260;
@@ -67,7 +70,7 @@ type
 var
   ValidationOutcomeForm: TValidationOutcomeForm;
 
-function ValidationSummary(owner : TNppPlugin; outcome : TFHIROperationOutcome) : boolean;
+function ValidationSummary(owner : TNppPlugin; outcome : TFslList<TFHIROperationOutcomeIssueW>) : boolean;
 function ValidationError(owner : TNppPlugin; message : String) : boolean;
 
 implementation
@@ -77,18 +80,29 @@ implementation
 uses
   FHIRPluginSettings;
 
-function ValidationSummary(owner : TNppPlugin; outcome : TFHIROperationOutcome) : boolean;
+function ValidationSummary(owner : TNppPlugin; outcome : TFslList<TFHIROperationOutcomeIssueW>) : boolean;
+var
+  op : TFHIROperationOutcome;
+  iss : TFhirOperationOutcomeIssueW;
 begin
-  result := not Settings.NoValidationSummary;
-  if result then
-  begin
-    ValidationOutcomeForm := TValidationOutcomeForm.create(owner);
-    try
-      ValidationOutcomeForm.loadHtml(outcome.narrativeAsWebPage);
-      ValidationOutcomeForm.ShowModal;
-    finally
-      FreeAndNil(ValidationOutcomeForm);
+  op := TFhirOperationOutcome.Create;
+  try
+    for iss in outcome do
+      op.issueList.Add(iss.issue.Link);
+    BuildNarrative(op, 'Validation Outcomes');
+    result := not Settings.NoValidationSummary;
+    if result then
+    begin
+      ValidationOutcomeForm := TValidationOutcomeForm.create(owner);
+      try
+        ValidationOutcomeForm.loadHtml(op.narrativeAsWebPage);
+        ValidationOutcomeForm.ShowModal;
+      finally
+        FreeAndNil(ValidationOutcomeForm);
+      end;
     end;
+  finally
+    op.Free;
   end;
 end;
 

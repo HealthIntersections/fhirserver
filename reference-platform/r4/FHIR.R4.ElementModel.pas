@@ -34,8 +34,8 @@ uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream,
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.DateTime, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Base.Xhtml, FHIR.Base.Lang,
-  FHIR.R4.Base, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.PathNode;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.XVersion.Resources,
+  FHIR.R4.Base, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.PathNode, FHIR.R4.Common;
 
 
 type
@@ -196,7 +196,7 @@ type
 	protected
     FContext : TFHIRWorkerContext;
    	FPolicy : TFHIRValidationPolicy;
-    FErrors : TFhirOperationOutcomeIssueList;
+    FErrors : TFslList<TFhirOperationOutcomeIssueW>;
 	  function getChildProperties(prop : TFHIRMMProperty; elementName, statedType : String) : TFslList<TFHIRMMProperty>;
     function getDefinition(line, col : integer; ns, name : String) : TFHIRStructureDefinition; overload;
     function getDefinition(line, col : integer; name : String) : TFHIRStructureDefinition; overload;
@@ -204,20 +204,20 @@ type
     constructor create(context : TFHIRWorkerContext);
     destructor Destroy; override;
 
-    procedure setupValidation(policy : TFHIRValidationPolicy; errors : TFhirOperationOutcomeIssueList);
+    procedure setupValidation(policy : TFHIRValidationPolicy; errors : TFslList<TFhirOperationOutcomeIssueW>);
     procedure logError(line, col : integer; path : String; type_ : TFhirIssueTypeEnum; message : String; level : TFhirIssueSeverityEnum);
 
     function parse(stream : TStream) : TFHIRMMElement; overload; virtual; abstract;
     function parse(stream : TFslStream) : TFHIRMMElement; overload; virtual;
     function parse(buffer : TFslBuffer) : TFHIRMMElement; overload; virtual;
-    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);  overload; virtual; abstract;
+    procedure compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String);  overload; virtual; abstract;
   end;
 
   TFHIRMMManager = class (TFslObject)
   public
     class function parseFile(context : TFHIRWorkerContext; filename : string; inputFormat : TFhirFormat) : TFHIRMMElement;
     class function parse(context : TFHIRWorkerContext; source : TStream; inputFormat : TFhirFormat) : TFHIRMMElement;
-    class procedure compose(context : TFHIRWorkerContext; e : TFHIRMMElement; destination : TStream; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
+    class procedure compose(context : TFHIRWorkerContext; e : TFHIRMMElement; destination : TStream; outputFormat : TFhirFormat; style : TFHIROutputStyle; base : String = '');
     class procedure composeFile(context : TFHIRWorkerContext; e : TFHIRMMElement; filename : String; outputFormat : TFhirFormat; style : TFHIROutputStyle; base : String = '');
     class function makeParser(context : TFHIRWorkerContext; format : TFhirFormat) : TFHIRMMParserBase;
   end;
@@ -253,7 +253,7 @@ type
     function parse(document : TMXmlDocument) : TFHIRMMElement; overload;
     function parse(element : TMXmlElement) : TFHIRMMElement; overload;
     function parse(element : TMXmlElement; sd : TFHIRStructureDefinition) : TFHIRMMElement; overload;
-    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); override;
+    procedure compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String); override;
   end;
 
   TFHIRMMJsonParser = class (TFHIRMMParserBase)
@@ -279,8 +279,8 @@ type
   public
     function parse(stream : TStream) : TFHIRMMElement; overload; override;
     function parse(obj : TJsonObject) : TFHIRMMElement; overload;
-    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload; override;
-    procedure compose(e : TFHIRMMElement; stream : TFslStream; pretty : boolean; base : String); overload;
+    procedure compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String); overload; override;
+    procedure compose(e : TFHIRMMElement; stream : TFslStream; style : TFHIROutputStyle; base : String); overload;
   end;
 
   TFHIRMMResourceLoader = class (TFHIRMMParserBase)
@@ -289,7 +289,7 @@ type
   public
     function parse(r : TFHIRResource) : TFHIRMMElement; overload;
     function parse(r : TFHIRObject) : TFHIRMMElement; overload;
-    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload; override;
+    procedure compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String); overload; override;
   end;
 
   TFHIRCustomResource = class (TFHIRResource)
@@ -1109,7 +1109,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRMMParserBase.setupValidation(policy: TFHIRValidationPolicy; errors: TFhirOperationOutcomeIssueList);
+procedure TFHIRMMParserBase.setupValidation(policy: TFHIRValidationPolicy; errors: TFslList<TFhirOperationOutcomeIssueW>);
 begin
   FPolicy := policy;
   FErrors.Free;
@@ -1123,12 +1123,17 @@ var
 begin
   if (Fpolicy = fvpEVERYTHING) then
   begin
-    err := Ferrors.Append;
+    err := TFhirOperationOutcomeIssue.create;
+    try
     err.locationList.add(path);
     err.code := type_;
     err.severity := level;
     err.details :=  TFhirCodeableConcept.Create;
     err.details.text := message+Stringformat(' at line %d col %d', [line, col]);
+      Ferrors.add(TFhirOperationOutcomeIssue4.Create(err.Link));
+    finally
+      err.Free;
+    end;
   end
 	else if (level = IssueSeverityFatal) or ((level = IssueSeverityERROR) and (Fpolicy = fvpQUICK)) then
 	 raise Exception.create(message+Stringformat(' at line %d col %d', [line, col]));
@@ -1284,7 +1289,7 @@ var
 begin
   f := TFileStream.create(filename, fmCreate);
   try
-    compose(context, e, f, outputFormat, style = OutputStylePretty, base);
+    compose(context, e, f, outputFormat, style, base);
   finally
     f.free;
   end;
@@ -1302,13 +1307,13 @@ begin
   end;
 end;
 
-class procedure TFHIRMMManager.compose(context: TFHIRWorkerContext; e: TFHIRMMElement; destination: TStream; outputFormat: TFhirFormat; pretty: boolean; base: String);
+class procedure TFHIRMMManager.compose(context: TFHIRWorkerContext; e: TFHIRMMElement; destination: TStream; outputFormat: TFhirFormat; style : TFHIROutputStyle; base: String);
 var
   p : TFHIRMMParserBase;
 begin
   p := makeParser(context, outputFormat);
   try
-    p.compose(e, destination, pretty, base);
+    p.compose(e, destination, style, base);
   finally
     p.Free;
   end;
@@ -1533,7 +1538,7 @@ begin
       end
       else
       begin
-        logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Text should not be present', IssueSeverityERROR);
+        logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Text ("'+text+'") should not be present', IssueSeverityERROR);
       end;
     end;
 
@@ -1731,13 +1736,13 @@ begin
   result := PropertyRepresentationXMLTEXT in prop.Definition.Representation;
 end;
 
-procedure TFHIRMMXmlParser.compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);
+procedure TFHIRMMXmlParser.compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String);
 var
   xml : TXmlBuilder;
 begin
   xml := TFslXmlBuilder.Create;
   try
-    xml.IsPretty := pretty;
+    xml.IsPretty := style = OutputStylePretty;
     xml.NoHeader := true;
     xml.CurrentNamespaces.DefaultNS := e.Prop.getNamespace();
     xml.Start;
@@ -2137,26 +2142,26 @@ begin
   end;
 end;
 
-procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);
+procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TStream; style : TFHIROutputStyle; base : String);
 var
   oStream : TFslVCLStream;
 begin
   oStream := TFslVCLStream.Create;
   try
     oStream.Stream := stream;
-    compose(e, oStream, pretty, base);
+    compose(e, oStream, style, base);
   finally
     oStream.free;
   end;
 end;
 
-procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TFslStream; pretty : boolean; base : String);
+procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TFslStream; style : TFHIROutputStyle; base : String);
 begin
   json := TJsonWriterDirect.create;
   try
     json.Stream := stream.Link;
     json.Start;
-    json.HasWhitespace := pretty;
+    json.HasWhitespace := style = OutputStylePretty;
     composeElement(e);
     json.Finish;
   finally
@@ -2342,7 +2347,7 @@ begin
   end;
 end;
 
-procedure TFHIRMMResourceLoader.compose(e: TFHIRMMElement; stream: TStream; pretty: boolean; base: String);
+procedure TFHIRMMResourceLoader.compose(e: TFHIRMMElement; stream: TStream; style : TFHIROutputStyle; base: String);
 begin
   raise Exception.create('not implemented');
 end;

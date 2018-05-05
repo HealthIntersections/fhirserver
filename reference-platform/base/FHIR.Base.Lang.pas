@@ -55,8 +55,6 @@ Type
   EUnsafeOperation = class (Exception);
   DefinitionException = class (Exception);
 
-  TExceptionType = (etNull, etInvalid, etStructure, etRequired, etValue, etInvariant, etSecurity, etLogin, etUnknown, etExpired, etForbidden, etSuppressed, etProcessing, etNotSupported, etDuplicate, etNotFound, etTooLong, etCodeInvalid, etExtension, etTooCostly, etBusinessRule, etConflict, etIncomplete, etTransient, etLockError, etNoStore, etException, etTimeout, etThrottled, etInformational);
-
   ERestfulException = class (Exception)
   Private
     FContext : String;

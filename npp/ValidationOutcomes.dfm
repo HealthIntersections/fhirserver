@@ -25,8 +25,6 @@ object ValidationOutcomeForm: TValidationOutcomeForm
     Anchors = [akRight, akBottom]
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 654
-    ExplicitWidth = 724
     DesignSize = (
       777
       45)
@@ -41,7 +39,6 @@ object ValidationOutcomeForm: TValidationOutcomeForm
       Default = True
       ModalResult = 1
       TabOrder = 0
-      ExplicitLeft = 639
     end
     object btnOpen: TButton
       Left = 9
@@ -61,7 +58,6 @@ object ValidationOutcomeForm: TValidationOutcomeForm
       Anchors = [akLeft, akTop, akRight]
       Caption = 'Don'#39't show this summary next time'
       TabOrder = 2
-      ExplicitWidth = 533
     end
   end
   object Panel1: TPanel
@@ -73,8 +69,6 @@ object ValidationOutcomeForm: TValidationOutcomeForm
     BevelInner = bvLowered
     BorderWidth = 6
     TabOrder = 1
-    ExplicitWidth = 724
-    ExplicitHeight = 654
     object WebBrowser1: TWebBrowser
       Left = 8
       Top = 8

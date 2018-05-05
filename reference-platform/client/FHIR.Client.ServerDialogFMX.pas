@@ -35,9 +35,8 @@ uses
   FMX.Objects, FMX.ListBox, FMX.Edit, FMX.StdCtrls, FMX.TabControl,
   FMX.Controls.Presentation,
   FHIR.Support.Strings,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities,
-  FHIR.Client.SmartUtilities,
-  FHIR.Client.ClientDialogFMX;
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.XVersion.Resources,
+  FHIR.Client.Base, FHIR.Client.SmartUtilities, FHIR.Client.ClientDialogFMX;
 
 type
   TEditRegisteredServerForm = class(TForm)
@@ -107,6 +106,8 @@ type
     Button2: TButton;
     Button3: TButton;
     odPublicCert: TOpenDialog;
+    Label29: TLabel;
+    cbxVersion: TComboBox;
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCheckFormatClick(Sender: TObject);
@@ -120,18 +121,22 @@ type
     procedure Button3Click(Sender: TObject);
   private
     FServer: TRegisteredFHIRServer;
-    FCapabilityStatement: TFhirCapabilityStatement;
+    FCapabilityStatement: TFhirCapabilityStatementW;
     FRegister : String;
     FSoftwareVersion: String;
     FSoftwareId: String;
+    FVersions: TFHIRVersionFactories;
     procedure SetServer(const Value: TRegisteredFHIRServer);
-    procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
+    procedure SetCapabilityStatement(const Value: TFhirCapabilityStatementW);
     procedure loadCapabilityStatement;
+    procedure SetVersions(const Value: TFHIRVersionFactories);
+    function readVersion : TFHIRVersion;
   public
     property Server : TRegisteredFHIRServer read FServer write SetServer;
-    Property CapabilityStatement : TFhirCapabilityStatement read FCapabilityStatement write SetCapabilityStatement;
+    Property CapabilityStatement : TFhirCapabilityStatementW read FCapabilityStatement write SetCapabilityStatement;
     property SoftwareId : String read FSoftwareId write FSoftwareId;
     property SoftwareVersion : String read FSoftwareVersion write FSoftwareVersion;
+    property Versions : TFHIRVersionFactories read FVersions write SetVersions;
   end;
 
 var
@@ -145,21 +150,21 @@ procedure TEditRegisteredServerForm.btnCheckFormatClick(Sender: TObject);
 begin
   if FCapabilityStatement = nil then
     loadCapabilityStatement;
-  if FCapabilityStatement.formatList.hasCode('application/json+fhir') then
+  if FCapabilityStatement.hasFormat('application/json+fhir') then
     cbxFormat.ItemIndex := 2
-  else if FCapabilityStatement.formatList.hasCode('application/xml+fhir') then
+  else if FCapabilityStatement.hasFormat('application/xml+fhir') then
     cbxFormat.ItemIndex := 1
-  else if FCapabilityStatement.formatList.hasCode('application/fhir+json') then
+  else if FCapabilityStatement.hasFormat('application/fhir+json') then
     cbxFormat.ItemIndex := 2
-  else if FCapabilityStatement.formatList.hasCode('application/fhir+xml') then
+  else if FCapabilityStatement.hasFormat('application/fhir+xml') then
     cbxFormat.ItemIndex := 1
-  else if FCapabilityStatement.formatList.hasCode('text/turtle') then
+  else if FCapabilityStatement.hasFormat('text/turtle') then
     cbxFormat.ItemIndex := 3
-  else if FCapabilityStatement.formatList.hasCode('json') then
+  else if FCapabilityStatement.hasFormat('json') then
     cbxFormat.ItemIndex := 2
-  else if FCapabilityStatement.formatList.hasCode('xml') then
+  else if FCapabilityStatement.hasFormat('xml') then
     cbxFormat.ItemIndex := 1
-  else if FCapabilityStatement.formatList.hasCode('turtle') then
+  else if FCapabilityStatement.hasFormat('turtle') then
     cbxFormat.ItemIndex := 3
   else
     ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
@@ -284,11 +289,29 @@ end;
 procedure TEditRegisteredServerForm.FormDestroy(Sender: TObject);
 begin
   FServer.Free;
+  FVersions.Free;
   FCapabilityStatement.Free;
 end;
 
 procedure TEditRegisteredServerForm.FormShow(Sender: TObject);
+var
+  v : TFHIRVersion;
+  i :  integer;
 begin
+  cbxVersion.Items.Clear;
+  i := -1;
+  for v := Low(TFHIRVersion) to High(TFHIRVersion) do
+    if FVersions.hasVersion[v] then
+    begin
+      cbxVersion.Items.Add(FVersions[v].description);
+      cbxVersion.ListItems[cbxVersion.Items.Count - 1].Data := FVersions[v];
+      if FVersions[v].version = server.version then
+        i := cbxVersion.Items.Count - 1;
+    end;
+  if i = -1 then // not supported in this version
+    i := cbxVersion.Items.Count - 1;
+  cbxVersion.ItemIndex := i;
+
   TabControl1.ActiveTab := TabItem1;
   edtName.Text := FServer.name;
   edtURL.Text := FServer.fhirEndpoint;
@@ -317,29 +340,34 @@ end;
 
 procedure TEditRegisteredServerForm.loadCapabilityStatement;
 var
-  client : TFhirClient;
+  client : TFhirClientV;
 begin
   if not isAbsoluteUrl(edtUrl.Text) then
     raise Exception.Create('Plase supply a valid URL for the server');
 
   try
-    client := TFhirClients.makeHTTP(nil, edtUrl.text, true, 5000);
+    client := FVersions[readVersion].makeClientHTTP(nil, edtUrl.text, true, 5000);
     try
-      FCapabilityStatement := client.conformance(false);
+      FCapabilityStatement := FVersions[readVersion].wrapCapabilityStatement(client.conformanceV(false));
     finally
       client.Free;
     end;
   except
-    client := TFhirClients.makeHTTP(nil, edtUrl.text, false, 5000);
+    client := FVersions[readVersion].makeClientHTTP(nil, edtUrl.text, false, 5000);
     try
-      FCapabilityStatement := client.conformance(false);
+      FCapabilityStatement := FVersions[readVersion].wrapCapabilityStatement(client.conformanceV(false));
     finally
       client.Free;
     end;
   end;
 end;
 
-procedure TEditRegisteredServerForm.SetCapabilityStatement(const Value: TFhirCapabilityStatement);
+function TEditRegisteredServerForm.readVersion: TFHIRVersion;
+begin
+  result := TFHIRVersionFactory(cbxVersion.ListItems[cbxVersion.ItemIndex].Data).version;
+end;
+
+procedure TEditRegisteredServerForm.SetCapabilityStatement(const Value: TFhirCapabilityStatementW);
 begin
   FCapabilityStatement.Free;
   FCapabilityStatement := Value;
@@ -349,6 +377,12 @@ procedure TEditRegisteredServerForm.SetServer(const Value: TRegisteredFHIRServer
 begin
   FServer.Free;
   FServer := Value;
+end;
+
+procedure TEditRegisteredServerForm.SetVersions(const Value: TFHIRVersionFactories);
+begin
+  FVersions.Free;
+  FVersions := Value;
 end;
 
 end.

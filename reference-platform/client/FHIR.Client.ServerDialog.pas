@@ -33,8 +33,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.ExtCtrls, FHIR.Support.Strings,
-  Vcl.ComCtrls, Vcl.CheckLst, FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Support.Generics, FHIR.Tools.Utilities,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.CheckLst,
+  NppForms,
+  FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Objects,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.XVersion.Resources,
   FHIR.CdsHooks.Utilities, FHIR.Client.SmartUtilities;
 
 type
@@ -90,6 +92,8 @@ type
     edtPassphrase: TEdit;
     Label19: TLabel;
     edtClientId1: TEdit;
+    Label20: TLabel;
+    cbxVersion: TComboBox;
     procedure edtNameChange(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure btnFetchClick(Sender: TObject);
@@ -102,17 +106,24 @@ type
   private
     { Private declarations }
     FIndex : integer;
-    FCapabilityStatement : TFhirCapabilityStatement;
+    FCapabilityStatement : TFhirCapabilityStatementW;
     FServer: TRegisteredFHIRServer;
+    FVersions: TFHIRVersionFactories;
+    FServers : TFslList<TRegisteredFHIRServer>;
     procedure loadCapabilityStatement;
-    function hookIndex(c : TFHIRCoding) : integer;
+    function readServerVersion : TFHIRVersion;
+//    function hookIndex(c : TFslObject) : integer;
     procedure listHooks(list : TFslList<TRegisteredCDSHook>);
     procedure loadHooks;
-    procedure readExtension(ext: TFHIRExtension; preFetch: TStringList; var name: String; var c: String);
+//    procedure readExtension(ext: TFHIRExtensionW; preFetch: TStringList; var name: String; var c: String);
     procedure SetServer(const Value: TRegisteredFHIRServer);
+//    procedure readExtension(ext: TFHIRExtension; preFetch: TStringList;
+//      var name, c: String);
+    procedure SetVersions(const Value: TFHIRVersionFactories);
   public
     { Public declarations }
     procedure LoadFrom(i : integer);
+    property versions : TFHIRVersionFactories read FVersions write SetVersions;
 
   end;
 
@@ -124,7 +135,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings, FHIR.Tools.Client;
+  FHIRPluginSettings, FHIR.Client.Base;
 
 procedure TEditRegisteredServerForm.btnFetchClick(Sender: TObject);
 var
@@ -154,7 +165,7 @@ begin
     begin
       cds := TRegisteredCDSHook.Create;
       try
-        readExtension(TFHIRExtension(clHooks.items.Objects[i]), cds.preFetch, name, c);
+//        readExtension(TFHIRExtension(clHooks.items.Objects[i]), cds.preFetch, name, c);
         cds.name := name;
         cds.hook := c;
         list.Add(cds.link);
@@ -166,24 +177,29 @@ end;
 
 procedure TEditRegisteredServerForm.loadCapabilityStatement;
 var
-  client : TFhirClient;
+  client : TFhirClientV;
 begin
   try
-    clHooks.items.Clear;
-    client := TFhirClients.makeHTTP(nil, edtServer.text, true, 5000);
     try
-      FCapabilityStatement := client.conformance(false);
-    finally
-      client.Free;
+      clHooks.items.Clear;
+      client := FVersions[readServerVersion].makeClientHTTP(nil, edtServer.text, true, 5000);
+      try
+        FCapabilityStatement := FVersions[readServerVersion].wrapCapabilityStatement(client.conformanceV(false));
+      finally
+        client.Free;
+      end;
+      loadHooks;
+    except
+      client := FVersions[readServerVersion].makeClientHTTP(nil, edtServer.text, false, 5000);
+      try
+        FCapabilityStatement := FVersions[readServerVersion].wrapCapabilityStatement(client.conformanceV(false));
+      finally
+        client.Free;
+      end;
     end;
-    loadHooks;
   except
-    client := TFhirClients.makeHTTP(nil, edtServer.text, false, 5000);
-    try
-      FCapabilityStatement := client.conformance(false);
-    finally
-      client.Free;
-    end;
+    on e : Exception do
+      raise Exception.Create('Error reading Server conformance statement: "'+'" - tried both xml and json for '+FVersions[readServerVersion].description);
   end;
 end;
 
@@ -197,6 +213,7 @@ begin
     server.SmartAppLaunchMode := TSmartAppLaunchMode(cbxSmartMode.ItemIndex);
     server.fhirEndpoint := edtServer.Text;
     server.format := TFHIRFormat(cbxFormat.ItemIndex);
+    server.version := readServerVersion;
     server.tokenEndpoint := edtToken.Text;
     server.authorizeEndpoint := edtAuthorize.Text;
     if cbxSmartMode.itemIndex = 2 then
@@ -209,48 +226,47 @@ begin
     server.privatekey := edtPrivateKey.Text;
     server.passphrase := edtPassphrase.Text;
     listHooks(server.cdshooks);
-    if FIndex = -1 then
-      Settings.registerServer('', server)
-    else
-      Settings.updateServerInfo('', FIndex, server);
+    Settings.updateServerInfo('', server);
   finally
     server.Free;
   end;
 end;
 
 procedure TEditRegisteredServerForm.Button1Click(Sender: TObject);
-var
-  ext : TFHIRExtension;
-  i : integer;
+//var
+//  ext : TFHIRExtension;
+//  i : integer;
 begin
-  if FCapabilityStatement = nil then
-    loadCapabilityStatement;
-  for i := 0 to clHooks.Items.Count - 1 do
-    clHooks.Checked[i] := false;
-  for ext in FCapabilityStatement.extensionList do
-    if ext.url = 'http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity' then
-    begin
-      i := hookIndex(ext.value as TFHIRCoding);
-      if i > -1 then
-        clHooks.Checked[i] := true;
-    end;
+  raise Exception.Create('not done yet');
+//  if FCapabilityStatement = nil then
+//    loadCapabilityStatement;
+//  for i := 0 to clHooks.Items.Count - 1 do
+//    clHooks.Checked[i] := false;
+//  for ext in FCapabilityStatement.extensionList do
+//    if ext.url = 'http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity' then
+//    begin
+//      i := hookIndex(ext.value as TFHIRCoding);
+//      if i > -1 then
+//        clHooks.Checked[i] := true;
+//    end;
 end;
 
 procedure TEditRegisteredServerForm.Button3Click(Sender: TObject);
 begin
   if FCapabilityStatement = nil then
     loadCapabilityStatement;
-  if FCapabilityStatement.formatList.hasCode('application/json+fhir') then
+
+  if FCapabilityStatement.hasFormat('application/json+fhir') then
     cbxFormat.ItemIndex := 2
-  else if FCapabilityStatement.formatList.hasCode('application/xml+fhir') then
+  else if FCapabilityStatement.hasFormat('application/xml+fhir') then
     cbxFormat.ItemIndex := 1
-  else if FCapabilityStatement.formatList.hasCode('application/fhir+json') then
+  else if FCapabilityStatement.hasFormat('application/fhir+json') then
     cbxFormat.ItemIndex := 2
-  else if FCapabilityStatement.formatList.hasCode('application/fhir+xml') then
+  else if FCapabilityStatement.hasFormat('application/fhir+xml') then
     cbxFormat.ItemIndex := 1
-  else if FCapabilityStatement.formatList.hasCode('json') then
+  else if FCapabilityStatement.hasFormat('json') then
     cbxFormat.ItemIndex := 2
-  else if FCapabilityStatement.formatList.hasCode('xml') then
+  else if FCapabilityStatement.hasFormat('xml') then
     cbxFormat.ItemIndex := 1
   else
     ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
@@ -283,16 +299,27 @@ end;
 
 procedure TEditRegisteredServerForm.FormDestroy(Sender: TObject);
 begin
+  FVersions.Free;
   FCapabilityStatement.Free;
+  FServers.Free;
   inherited;
 end;
 
 procedure TEditRegisteredServerForm.FormShow(Sender: TObject);
+var
+  v : TFHIRVersion;
 begin
+  cbxVersion.Items.Clear;
+  for v := Low(TFHIRVersion) to High(TFHIRVersion) do
+    if FVersions.hasVersion[v] then
+     cbxVersion.Items.AddObject(FVersions[v].description, TObject(FVersions[v].version));
+
   if FIndex = -1 then
     loadHooks;
 end;
 
+
+(*
 procedure TEditRegisteredServerForm.readExtension(ext : TFHIRExtension; preFetch : TStringList; var name : String; var c : String);
 var
   iext : TFhirExtension;
@@ -306,20 +333,29 @@ begin
      if preFetch <> nil then
        preFetch.add(TFHIRPrimitiveType(iext.value).primitiveValue);
 end;
+*)
 
 procedure TEditRegisteredServerForm.SetServer(const Value: TRegisteredFHIRServer);
 begin
   FServer := Value;
 end;
 
+procedure TEditRegisteredServerForm.SetVersions(const Value: TFHIRVersionFactories);
+begin
+  FVersions.Free;
+  FVersions := Value;
+end;
+
 procedure TEditRegisteredServerForm.loadHooks;
-var
+(*var
   ext, iext : TFhirExtension;
   rest : TFhirCapabilityStatementRest;
   name : String;
   c : String;
-  err : String;
+  err : String; *)
 begin
+  raise Exception.Create('not done yet');
+  (*
   clHooks.items.Clear;
 
   if FCapabilityStatement = nil then
@@ -355,9 +391,15 @@ begin
         else
           clHooks.Items.Add(name+' (cannot be used because '+err+')');
   end;
+  *)
 end;
 
-function TEditRegisteredServerForm.hookIndex(c: TFHIRCoding): integer;
+function TEditRegisteredServerForm.readServerVersion: TFHIRVersion;
+begin
+  result := TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex]);
+end;
+
+(*function TEditRegisteredServerForm.hookIndex(c: TFHIRCoding): integer;
 var
   i : integer;
   h : TFhirCoding;
@@ -372,6 +414,7 @@ begin
   end;
   exit(-1);
 end;
+*)
 
 procedure TEditRegisteredServerForm.LoadFrom(i: integer);
 var
@@ -379,14 +422,29 @@ var
   c : TRegisteredCDSHook;
   a : string;
   name : string;
+  ndx : integer;
+  b : boolean;
 begin
   Caption := 'Edit Server';
   FIndex := i;
-  server := settings.serverInfo('', FIndex);
+  server := FServers[i].link;
   try
     edtName.Text := server.name;
     edtServer.Text := server.fhirEndpoint;
     cbxFormat.ItemIndex := ord(server.format);
+    b := false;
+    for ndx := 0 to cbxVersion.Items.Count - 1 do
+      if TFHIRVersion(cbxVersion.Items.Objects[ndx]) = server.version then
+      begin
+        b := true;
+        cbxVersion.ItemIndex := ndx;
+      end;
+    if not b then
+    begin
+      // the server has a stated version that isn't compatible in this context?
+      // we're going to... guess... at the latest version?
+      cbxVersion.ItemIndex := cbxVersion.Items.Count - 1 ;
+    end;
 
     try
       loadCapabilityStatement;
@@ -400,7 +458,7 @@ begin
       begin
         if clHooks.Items.Objects[i] <> nil then
         begin
-          readExtension(clHooks.Items.Objects[i] as TFHIRExtension, nil, name, a);
+//          readExtension(clHooks.Items.Objects[i] as TFHIRExtension, nil, name, a);
           if (a <> '') and (c.hook = a) then
             clHooks.checked[i] := true;
         end;

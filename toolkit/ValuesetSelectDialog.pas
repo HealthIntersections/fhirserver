@@ -34,7 +34,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls, FMX.ListBox,
   FMX.Edit, FMX.Controls.Presentation, FHIR.Support.System,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Client.SmartUtilities,
+  FHIR.Support.Generics,
   SettingsDialog, FMX.ComboEdit,
   ToolkitSettings;
 
@@ -87,9 +88,11 @@ type
     FSystem: String;
     FHasConcepts: boolean;
     FReplace: boolean;
+    FServers : TFslList<TRegisteredFHIRServer>;
     function selectedCount : integer;
     procedure SetExpansion(const Value: TFHIRValueSet);
     procedure SetSettings(const Value: TFHIRToolkitSettings);
+    procedure loadServers;
   public
     destructor Destroy; override;
 
@@ -138,7 +141,7 @@ begin
     form.TabControl1.TabIndex := 1;
     if form.showmodal = mrOk then
     begin
-      FSettings.ListServers('Terminology', cbxServer.Items);
+      loadServers;
       cbxServer.ItemIndex := 0;
     end;
   finally
@@ -208,6 +211,7 @@ begin
   FSettings.Free;
   FExpansion.Free;
   FClient.Free;
+  FServers.Free;
   inherited;
 end;
 
@@ -236,7 +240,7 @@ begin
   Width := FSettings.getValue('ValueSet.Select.Window', 'width', width);
   Height := FSettings.getValue('ValueSet.Select.Window', 'height', height);
 
-  FSettings.ListServers('Terminology', cbxServer.Items);
+  loadServers;
   cbxServer.ItemIndex := 0;
 
   cbeProperty.Text := FSettings.getValue('ValueSet.Select', 'Property', '');
@@ -270,7 +274,9 @@ begin
     btnReplace.Enabled := false;
 
     if FClient = nil then
-      FClient := TFhirClients.makeThreaded(nil, TFhirClients.makeHTTP(nil, FSettings.serverAddress('Terminology', cbxServer.itemIndex), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
+      FClient := TFhirClients.makeThreaded(nil, TFhirClients.makeHTTP(nil,
+        TRegisteredFHIRServer(cbxServer.ListItems[cbxServer.ItemIndex].Data).fhirEndpoint,
+        false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
 
     MasterToolsForm.dowork(self, 'Searching', true,
       procedure
@@ -320,6 +326,23 @@ begin
       contains.TagInt := 0;
   btnAppend.Enabled := selectedCount > 0;
   btnReplace.Enabled := HasConcepts and (selectedCount > 0);
+end;
+
+procedure TValuesetSelectForm.loadServers;
+var
+  i : integer;
+begin
+  if FServers = nil then
+    FServers := TFslList<TRegisteredFHIRServer>.create
+  else
+    FServers.Clear;
+  cbxServer.Items.Clear;
+  FSettings.ListServers('Terminology', FServers);
+  for i := 0 to FServers.Count - 1 do
+  begin
+    cbxServer.Items.add(FServers[i].name + ': '+FServers[i].fhirEndpoint);
+    cbxServer.ListItems[i].Data := FServers[i];
+  end;
 end;
 
 function TValuesetSelectForm.selectedCount: integer;

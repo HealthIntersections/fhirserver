@@ -38,6 +38,7 @@ uses
   FHIR.Support.Text, MarkDownProcessor, FHIR.Support.Lock, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Controllers, FHIR.Support.Json, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Client.SmartUtilities, FHIR.Tools.Parser,
+  FHIR.Client.base, FHIR.Client.HTTP,
   FHIR.CdsHooks.Utilities;
 
 type
@@ -89,9 +90,13 @@ type
     FHash : String;
     FAlive : boolean;
     FID: String;
+    FHeaders : THTTPHeaders;
     procedure Setrequest(const Value: TCDSHookRequest);
     procedure Setserver(const Value: TRegisteredFHIRServer);
     procedure SetToken(const Value: TSmartOnFhirAccessToken);
+
+    function makeBody : TFslBuffer;
+    function readBody(body : TFslBuffer) : TCDSHookResponse;
   protected
     Procedure Execute; override;
   public
@@ -679,12 +684,13 @@ end;
 
 procedure TCDSHooksManagerWorkThread.Execute;
 var
+  body, rep : TFslBuffer;
   resp : TCDSHookResponse;
   client : TFhirClient;
 begin
   SetThreadName('CDSHooks manager');
   {$IFDEF MSWINDOWS}
-  CoInitialize(nil);
+  CoInitialize(nil); // though there's no reason internal reason to initialize
   {$ENDIF}
   try
     try
@@ -693,16 +699,26 @@ begin
           client := TFhirClients.makeHTTP(nil, server.fhirEndpoint, true, 15000);
           try
             client.smartToken := token.link;
-            resp := client.cdshook(FID, FRequest);
+            body := makeBody;
             try
-              if FManager <> nil then
-              begin
-                FManager.cacheResponse(hash, server, resp);
-                if (FAlive) then
-                event(FManager, server, FContext, resp, '');
+              rep := client.customPost(UrlPath(['cds-services', id]), FHeaders, body);
+              try
+                resp := readBody(rep);
+                try
+                  if FManager <> nil then
+                  begin
+                    FManager.cacheResponse(hash, server, resp);
+                    if (FAlive) then
+                    event(FManager, server, FContext, resp, '');
+                  end;
+                finally
+                  resp.Free;
+                end;
+              finally
+                rep.Free;
               end;
             finally
-              resp.Free;
+              body.free;
             end;
           finally
             client.Free;
@@ -735,6 +751,29 @@ end;
 function TCDSHooksManagerWorkThread.Link: TCDSHooksManagerWorkThread;
 begin
   result := TCDSHooksManagerWorkThread(inherited Link);
+end;
+
+function TCDSHooksManagerWorkThread.makeBody: TFslBuffer;
+begin
+  result := TFslBuffer.Create;
+  try
+    result.AsBytes := TEncoding.UTF8.GetBytes(FRequest.AsJson);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TCDSHooksManagerWorkThread.readBody(body: TFslBuffer): TCDSHookResponse;
+var
+  json : TJsonObject;
+begin
+  json := TJSONParser.Parse(body.AsBytes);
+  try
+    result := TCDSHookResponse.Create(json);
+  finally
+    json.Free;
+  end;
 end;
 
 procedure TCDSHooksManagerWorkThread.Setrequest(const Value: TCDSHookRequest);
@@ -775,3 +814,38 @@ begin
 end;
 
 end.
+
+
+
+
+{function TFHIRHTTPCommunicator.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
+var
+  b : TBytes;
+  req, resp : TStream;
+  json : TJsonObject;
+  headers : THTTPHeaders;
+begin
+  headers.contentType := 'application/json';
+  b := TEncoding.UTF8.GetBytes(request.AsJson);
+  req := TMemoryStream.Create;
+  try
+    req.Write(b[0], length(b));
+    req.Position := 0;
+    resp := exchange(UrlPath([FURL, 'cds-services', id]), httpPost, req, headers);
+    try
+      json := TJSONParser.Parse(resp);
+      try
+        result := TCDSHookResponse.Create(json);
+      finally
+        json.Free;
+      end;
+    finally
+      resp.free;
+    end;
+  finally
+    req.Free;
+  end;
+end;
+}
+
+

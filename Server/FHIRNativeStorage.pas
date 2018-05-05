@@ -34,12 +34,13 @@ uses
   SysUtils, Classes, IniFiles, Generics.Collections,
   FHIR.Support.Lock, FHIR.Support.DateTime,   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Decimal, FHIR.Support.Binary,
   FHIR.Web.ParseMap, FHIR.Support.Text,
-   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Controllers,
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Controllers,
   FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
   FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Misc.GraphQL, FHIR.Support.Certs,
   FHIR.Tools.Resources, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.Constants, FHIR.Tools.Context, FHIR.Tools.Operations, FHIR.Base.Xhtml,
   FHIR.Tools.Tags, FHIRValueSetExpander, FHIRIndexManagers, FHIR.Tools.Session, FHIR.Tools.DiffEngine, FHIR.Tools.ElementModel, FHIR.Tools.PathNode,
   FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles, FHIR.Tools.PathEngine, FHIR.Tools.GraphQL, FHIR.Tools.Client,
+  FHIR.Base.Validator, FHIR.XVersion.Resources,
   FHIR.Tools.Factory, FHIR.Tools.Narrative, FHIR.Tools.Narrative2, FHIR.Tools.Questionnaire,
   FHIR.CdsHooks.Utilities, {$IFNDEF FHIR2}FHIR.Tools.MapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
   ServerUtilities, ServerValidator, FHIR.Tx.Service, TerminologyServer, FHIR.Base.Scim, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
@@ -9998,6 +9999,7 @@ end;
 procedure TFHIRNativeStorageService.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TFslBuffer; b : TStringBuilder);
 var
   ctxt : TFHIRValidatorContext;
+  o : TFHIROperationOutcomeIssueW;
   issue : TFHIROperationOutcomeIssue;
 begin
   try
@@ -10009,15 +10011,18 @@ begin
       {$ELSE}
       raise Exception.Create('Not done yet - call Java');
       {$ENDIF}
-      if (ctxt.Errors.Count = 0) then
+      if (ctxt.Issues.Count = 0) then
         logt(inttostr(i)+': '+rtype+'/'+id+': passed validation')
       else
       begin
         logt(inttostr(i)+': '+rtype+'/'+id+': failed validation');
         b.Append(inttostr(i)+': '+'http://local.healthintersections.com.au:960/open/'+rtype+'/'+id+' : failed validation'+#13#10);
-        for issue in ctxt.Errors do
+        for o in ctxt.Issues do
+        begin
+          issue  := o.issue as TFHIROperationOutcomeIssue;
           if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
             b.Append('  '+issue.Summary+#13#10);
+        end;
       end;
     finally
       ctxt.Free;

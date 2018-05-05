@@ -34,7 +34,7 @@ interface
 
 uses
   FHIR.Support.System, FHIR.Support.Objects, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Parser, FHIR.Base.Validator, FHIR.XVersion.Resources,
   FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.Validator,
   DUnitX.TestFramework;
 
@@ -138,7 +138,7 @@ var
 //  val : TFHIRValidator;
   ctxt : TFHIRValidatorContext;
   ec : integer;
-  msg : TFhirOperationOutcomeIssue;
+  msg : TFhirOperationOutcomeIssueW;
 begin
   src := TFslBuffer.Create;
   try
@@ -153,9 +153,9 @@ begin
 //        val.Free;
 //      end;
       ec := 0;
-      for msg in ctxt.Errors do
+      for msg in ctxt.Issues do
       begin
-        if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
+        if msg.severity in [isFatal, isError] then
         begin
 //        if msg.locationList.count = 1 then
 //          System.writeln('Error @ '+ msg.locationList[0].value+': '+msg.details.text)
@@ -181,7 +181,7 @@ var
 //  val : TFHIRValidator;
   ctxt : TFHIRValidatorContext;
   ec : integer;
-  msg : TFhirOperationOutcomeIssue;
+  msg : TFhirOperationOutcomeIssueW;
   s : string;
 begin
   if (fmt = ffXml) then
@@ -205,11 +205,11 @@ begin
 //        end;
         ec := 0;
         s := '';
-        for msg in ctxt.Errors do
-          if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
+        for msg in ctxt.Issues do
+          if msg.severity in [isFatal, isError] then
           begin
             inc(ec);
-            s := s + msg.expressionList[0].value+': '+ msg.details.text+'. ';
+            s := s + msg.display;
           end;
         Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
       finally

@@ -110,7 +110,7 @@ uses
   IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP, IdSSLOpenSSL,
   FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Certs, FHIR.Web.ParseMap, FHIR.Support.System, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities;
+  FHIR.Base.Objects, FHIR.XVersion.Resources;
 
 type
   TRegisteredCDSHook = class (TFslObject)
@@ -147,6 +147,7 @@ type
     FtokenEndpoint: String;
     FauthorizeEndpoint: String;
     FFormat: TFHIRFormat;
+    FVersion: TFHIRVersion;
     FPassword: String;
     FUserName: String;
     FissuerUrl: String;
@@ -155,6 +156,7 @@ type
     FSSLPassphrase: String;
     FSSLPublicCert: String;
     FSSLPrivateKey: String;
+    FId: integer;
   public
     constructor Create; override;
     Destructor Destroy; Override;
@@ -167,11 +169,17 @@ type
     function cdshookSummary : String;
     function doesHook(c : string; var hook : TRegisteredCDSHook) : boolean;
 
+    // internal use only (not persisted)
+    property id : integer read FId write FId;
+
     // user casual name for the server
     property name : String read Fname write Fname;
 
     // the FHIR Base endpoint for the server
     property fhirEndpoint : String read FfhirEndpoint write FfhirEndpoint;
+
+    // version of the server
+    property version : TFHIRVersion read FVersion write FVersion;
 
     // as is, choose from the conformance statement at run time. Else XML or JSON
     property format : TFHIRFormat read FFormat write FFormat;
@@ -299,7 +307,7 @@ type
   end;
 
 // given a conformance statement, check the server is using Smart App Launch, and extract the end points
-function usesSmartOnFHIR(conf : TFhirCapabilityStatement; var authorize, token, register: String): Boolean;
+function usesSmartOnFHIR(conf : TFhirCapabilityStatementW; var authorize, token, register: String): Boolean;
 
 // build the launch token (used by the form)
 function buildAuthUrl(server : TRegisteredFHIRServer; scopes, state : String) : String;
@@ -316,35 +324,20 @@ begin
   result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://localhost:'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
 end;
 
-function usesSmartOnFHIR(conf : TFhirCapabilityStatement; var authorize, token, register: String): Boolean;
-var
-  cc : TFhirCodeableConcept;
-  ex1, ex2 : TFhirExtension;
+function usesSmartOnFHIR(conf : TFhirCapabilityStatementW; var authorize, token, register: String): Boolean;
+//var
+//  cc : TFhirCodeableConcept;
+//  ex1, ex2 : TFhirExtension;
 begin
   result := false;
   authorize := '';
   token := '';
-  if conf.restList.Count <> 1 then
+  if conf.hasRest then
     raise Exception.Create('Unable to find rest entry in conformance statement');
-  if (conf.restList[0].security <> nil) then
-  begin
-    for cc in conf.restList[0].security.serviceList do
-      if cc.hasCode('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR') or cc.hasCode('http://hl7.org/fhir/restful-security-service', 'OAuth2') or
-        // temporary work around for Josh's server
-         cc.hasCode('http://hl7.org/fhir/vs/restful-security-service', 'SMART-on-FHIR') or cc.hasCode('http://hl7.org/fhir/vs/restful-security-service', 'OAuth2') then
-      begin
-        for ex1 in conf.restList[0].security.extensionList do
-          if ex1.url = 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris' then
-            for ex2 in ex1.extensionList do
-              if ex2.url = 'authorize' then
-                authorize := TFHIRUri(ex2.value).value
-              else if ex2.url = 'token' then
-                token := TFHIRUri(ex2.value).value
-              else if ex2.url = 'register' then
-                register := TFHIRUri(ex2.value).value;
-
-      end;
-  end;
+  if (conf.hasSecurity('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/restful-security-service', 'OAuth2') or
+     // work around for some servers
+      conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'OAuth2')) then
+    conf.readSmartExtension(authorize, token, register);
   result := (token <> '') and (authorize <> '');
 end;
 
@@ -553,6 +546,10 @@ begin
     FSmartAppLaunchMode := salmBackendClient
   else
     FSmartAppLaunchMode := salmNone;
+  if o.vStr['version']  = '' then
+    version := fhirVersionRelease3
+  else
+    version := TFHIRVersion(StringArrayIndexOfSensitive(CODES_TFHIRVersion, o.vStr['version']));
   if o.vStr['format']  = 'xml' then
     format := ffXml
   else if o.vStr['format']  = 'json' then
@@ -601,6 +598,7 @@ begin
   o.vStr['fhir'] := fhirEndpoint;
   o.vStr['username'] := username;
   o.vStr['password'] := '##'+strEncrypt(password, 35252);
+  o.vStr['version'] := CODES_TFHIRVersion[version];
   case format of
     ffXml: o.vStr['format'] := 'xml';
     ffJson: o.vStr['format'] := 'json';

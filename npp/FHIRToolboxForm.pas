@@ -35,6 +35,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
+  FHIR.Support.Generics,
+  FHIR.Client.SmartUtilities,
   FHIRPathDocumentation;
 
 type
@@ -99,11 +101,13 @@ type
     procedure ToolButton2Click(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
     procedure ToolButton5Click(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
     FMessageShort, FMessageLong : String;
     FFirstPathEdit : boolean;
     FHasValidPath : boolean;
+    FServers : TFslList<TRegisteredFHIRServer>;
   public
     { Public declarations }
     procedure connected(name, url, user, scopes : String);
@@ -248,6 +252,12 @@ begin
   Settings.ToolboxVisible := false;
 end;
 
+procedure TFHIRToolbox.FormDestroy(Sender: TObject);
+begin
+  FServers.Free;
+  inherited;
+end;
+
 procedure TFHIRToolbox.FormDock(Sender: TObject);
 begin
   SendMessage(self.Npp.NppData.NppHandle, NPPM_SETMENUITEMCHECK, self.CmdID, 1);
@@ -267,9 +277,19 @@ begin
 end;
 
 procedure TFHIRToolbox.loadServers;
+var
+  i : integer;
 begin
+  if FServers = nil then
+    FServers := TFslList<TRegisteredFHIRServer>.create
+  else
+    FServers.Clear;
   cbxServers.Items.Clear;
-  Settings.listServers('', cbxServers.Items);
+  Settings.ListServers('', FServers);
+  for i := 0 to FServers.Count - 1 do
+  begin
+    cbxServers.Items.addObject(FServers[i].name + ': '+FServers[i].fhirEndpoint, FServers[i]);
+  end;
   cbxServers.Items.Add('Register...');
   cbxServers.ItemIndex := 0;
   SendMessage(cbxServers.Handle, CB_SETDROPPEDWIDTH, 300, 0);

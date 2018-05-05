@@ -34,8 +34,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls,
   FMX.Edit, FMX.Controls.Presentation, FMX.ListBox, FMX.Platform,
-  FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client,
+  FHIR.Support.Text, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Client.SmartUtilities,
   SettingsDialog, BaseFrame, ProcessForm,
   ToolkitSettings;
 
@@ -85,12 +85,14 @@ type
     FSettings : TFHIRToolkitSettings;
     FClient : TFhirClient;
     FIsStopped : boolean;
+    FServers : TFslList<TRegisteredFHIRServer>;
     procedure SetValueSet(const Value: TFHIRValueSet);
     procedure SetExpansion(const Value: TFHIRValueSet);
     procedure SetSettings(const Value: TFHIRToolkitSettings);
     procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
     function GetStopped: boolean;
     procedure btnStopClick(Sender: TObject);
+    procedure loadServers;
   public
     destructor Destroy; override;
     property ValueSet : TFHIRValueSet read FValueSet write SetValueSet;
@@ -159,7 +161,7 @@ begin
     form.TabControl1.TabIndex := 1;
     if form.showmodal = mrOk then
     begin
-      FSettings.ListServers('Terminology', cbxServer.Items);
+      loadServers;
       cbxServer.ItemIndex := 0;
     end;
   finally
@@ -178,6 +180,7 @@ begin
   FExpansion.Free;
   FValueSet.Free;
   FClient.Free;
+  FServers.free;
   inherited;
 end;
 
@@ -254,7 +257,7 @@ begin
   Width := FSettings.getValue('Expansion.Window', 'width', width);
   Height := FSettings.getValue('Expansion.Window', 'height', height);
 
-  FSettings.ListServers('Terminology', cbxServer.Items);
+  loadServers;
   cbxServer.ItemIndex := 0;
 
   edtFilter.Text := FSettings.getValue('Expansion', 'Filter', '');
@@ -292,7 +295,9 @@ begin
   btnExport.Enabled := false;
 
   if FClient = nil then
-    FClient := TFhirClients.makeThreaded(nil, TFhirClients.makeHTTP(nil, FSettings.serverAddress('Terminology', cbxServer.itemIndex), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
+    FClient := TFhirClients.makeThreaded(nil, TFhirClients.makeHTTP(nil,
+     TRegisteredFHIRServer(cbxServer.ListItems[cbxServer.ItemIndex].Data).fhirEndpoint,
+     false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
 
   dowork(self, 'Expanding', true,
     procedure
@@ -346,6 +351,23 @@ begin
     3: value := contains.display;
     4: value := contains.system;
     5: value := contains.version;
+  end;
+end;
+
+procedure TValuesetExpansionForm.loadServers;
+var
+  i : integer;
+begin
+  if FServers = nil then
+    FServers := TFslList<TRegisteredFHIRServer>.create
+  else
+    FServers.Clear;
+  cbxServer.Items.Clear;
+  FSettings.ListServers('Terminology', FServers);
+  for i := 0 to FServers.Count - 1 do
+  begin
+    cbxServer.Items.add(FServers[i].name + ': '+FServers[i].fhirEndpoint);
+    cbxServer.ListItems[i].Data := FServers[i];
   end;
 end;
 

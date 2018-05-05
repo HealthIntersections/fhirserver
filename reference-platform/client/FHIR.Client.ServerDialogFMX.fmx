@@ -69,13 +69,13 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
       ExplicitSize.cx = 97.000000000000000000
       ExplicitSize.cy = 26.000000000000000000
       object btnCheckFormat: TButton
-        Position.X = 560.000000000000000000
-        Position.Y = 107.000000000000000000
-        Size.Width = 113.000000000000000000
-        Size.Height = 22.000000000000000000
+        Position.X = 552.000000000000000000
+        Position.Y = 88.000000000000000000
+        Size.Width = 121.000000000000000000
+        Size.Height = 49.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
-        Text = 'Check Format'
+        Text = 'Check With Server'
         OnClick = btnCheckFormatClick
       end
       object cbxFormat: TComboBox
@@ -87,16 +87,16 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           'Turtle')
         ItemIndex = 0
         Position.X = 80.000000000000000000
-        Position.Y = 107.000000000000000000
+        Position.Y = 115.000000000000000000
         Size.Width = 465.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
+        TabOrder = 4
       end
       object edtName: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 4
+        TabOrder = 5
         Position.X = 80.000000000000000000
         Position.Y = 14.000000000000000000
         Size.Width = 593.000000000000000000
@@ -108,7 +108,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
       object edtURL: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 5
+        TabOrder = 6
         Position.X = 80.000000000000000000
         Position.Y = 46.000000000000000000
         Size.Width = 593.000000000000000000
@@ -124,7 +124,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Name:'
-        TabOrder = 6
+        TabOrder = 7
       end
       object Label2: TLabel
         Position.X = 8.000000000000000000
@@ -133,7 +133,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'URL:'
-        TabOrder = 7
+        TabOrder = 8
       end
       object Label3: TLabel
         Anchors = [akLeft, akTop, akRight]
@@ -144,32 +144,32 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.PlatformDefault = False
         TextSettings.VertAlign = Leading
         Text = 'The URL must be a FHIR Server [base] URL'
-        TabOrder = 8
+        TabOrder = 9
       end
       object Label4: TLabel
         Position.X = 8.000000000000000000
-        Position.Y = 110.000000000000000000
+        Position.Y = 118.000000000000000000
         Size.Width = 49.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Format:'
-        TabOrder = 9
+        TabOrder = 11
       end
       object Label15: TLabel
         Position.X = 16.000000000000000000
         Position.Y = 174.000000000000000000
         Text = 'UserName:'
-        TabOrder = 15
+        TabOrder = 17
       end
       object Label16: TLabel
         Position.X = 344.000000000000000000
         Position.Y = 174.000000000000000000
         Text = 'Password:'
-        TabOrder = 16
+        TabOrder = 18
       end
       object edtUsername: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 20
+        TabOrder = 22
         Position.X = 96.000000000000000000
         Position.Y = 174.000000000000000000
         Size.Width = 225.000000000000000000
@@ -178,7 +178,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
       end
       object edtPassword: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 19
+        TabOrder = 21
         Password = True
         Position.X = 424.000000000000000000
         Position.Y = 174.000000000000000000
@@ -195,7 +195,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.PlatformDefault = False
         TextSettings.Font.StyleExt = {00070000000000000004000000}
         Text = 'Password based security'
-        TabOrder = 22
+        TabOrder = 24
       end
       object Label18: TLabel
         Anchors = [akLeft, akTop, akRight]
@@ -208,7 +208,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Text = 
           'Usually Username\Password is used instead of the Smart App Launc' +
           'h Process'
-        TabOrder = 23
+        TabOrder = 25
       end
       object Label24: TLabel
         StyledSettings = [Family, Size, FontColor]
@@ -219,17 +219,17 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.PlatformDefault = False
         TextSettings.Font.StyleExt = {00070000000000000004000000}
         Text = 'Client SSL Certificate'
-        TabOrder = 21
+        TabOrder = 23
       end
       object Label25: TLabel
         Position.X = 16.000000000000000000
         Position.Y = 262.000000000000000000
         Text = 'Public Cert:'
-        TabOrder = 10
+        TabOrder = 12
       end
       object edtSSLPublicCert: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 17
+        TabOrder = 19
         Position.X = 96.000000000000000000
         Position.Y = 262.000000000000000000
         Size.Width = 537.000000000000000000
@@ -240,11 +240,11 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Position.X = 16.000000000000000000
         Position.Y = 294.000000000000000000
         Text = 'Private Key:'
-        TabOrder = 13
+        TabOrder = 15
       end
       object edtSSLPrivateKey: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 14
+        TabOrder = 16
         Position.X = 96.000000000000000000
         Position.Y = 294.000000000000000000
         Size.Width = 537.000000000000000000
@@ -260,17 +260,17 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.PlatformDefault = False
         TextSettings.VertAlign = Leading
         Text = 'Use this for mutual TLS'
-        TabOrder = 18
+        TabOrder = 20
       end
       object Label28: TLabel
         Position.X = 16.000000000000000000
         Position.Y = 326.000000000000000000
         Text = 'Passphrase'
-        TabOrder = 11
+        TabOrder = 13
       end
       object edtSSLPassphrase: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 12
+        TabOrder = 14
         Password = True
         Position.X = 96.000000000000000000
         Position.Y = 326.000000000000000000
@@ -302,6 +302,30 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Title = 'Choose Public Cert'
         Left = 32
         Top = 432
+      end
+      object Label29: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 94.000000000000000000
+        Size.Width = 49.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Version:'
+        TabOrder = 10
+      end
+      object cbxVersion: TComboBox
+        Anchors = [akLeft, akTop, akRight]
+        Items.Strings = (
+          'Whatever'
+          'XML'
+          'JSON'
+          'Turtle')
+        ItemIndex = 0
+        Position.X = 80.000000000000000000
+        Position.Y = 91.000000000000000000
+        Size.Width = 465.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
       end
     end
     object TabItem2: TTabItem
@@ -390,7 +414,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Height = 185.000000000000000000
         Size.PlatformDefault = False
         TabIndex = 1
-        TabOrder = 20
+        TabOrder = 21
         TabPosition = None
         Sizes = (
           665s
@@ -623,7 +647,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Smart on FHIR Mode:'
-        TabOrder = 27
+        TabOrder = 28
       end
       object Label14: TLabel
         Anchors = [akLeft, akTop, akRight]

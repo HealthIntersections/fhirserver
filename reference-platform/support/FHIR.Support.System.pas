@@ -1063,7 +1063,7 @@ Finalization
   {$IFOPT C+}
   EnterCriticalSection(gCriticalSection);
   Try
-    Assert(gLiveMemorySize = 0);
+    Assert(gLiveMemorySize = 0, 'Memory leak of '+inttostr(gLiveMemorySize)+' bytes');
   Except
     // MessageBox(0, PChar(StringFormat('Memory has not been properly released (%d bytes). Please check your usage of Memory Create/Destroy/Resize routines.', [gLiveMemorySize])), 'MemorySupport', MB_OK);
   End;

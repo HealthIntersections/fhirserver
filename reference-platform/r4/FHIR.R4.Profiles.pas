@@ -35,7 +35,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Lock, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
   FHIR.Support.Stream, FHIR.Support.Zip,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Debug.Logging,
+  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser,
   FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.Constants;
 
 Const

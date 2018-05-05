@@ -102,7 +102,7 @@ uses
   FHIR.Ui.OSX in '..\Libraries\ui\FHIR.Ui.OSX.pas',
   ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm},
   MemoEditorDialog in 'MemoEditorDialog.pas' {MemoEditorForm},
-  FHIR.Client.Settings in '..\reference-platform\client\FHIR.Client.Settings.pas',
+  FHIR.Client.Registry in '..\reference-platform\client\FHIR.Client.Registry.pas',
   FHIR.Client.ServerDialogFMX in '..\reference-platform\client\FHIR.Client.ServerDialogFMX.pas' {EditRegisteredServerForm},
   ToolkitSettings in 'ToolkitSettings.pas',
   CodeSystemEditor in 'CodeSystemEditor.pas' {CodeSystemEditorFrame: TFrame},
@@ -148,7 +148,13 @@ uses
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   BulkDataForm in 'BulkDataForm.pas' {BulkDataDialog},
-  UsageContextForm in 'UsageContextForm.pas' {UsageContextDialog};
+  UsageContextForm in 'UsageContextForm.pas' {UsageContextDialog},
+  FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
+  FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
+  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Narrative in '..\npp\FHIR.Base.Narrative.pas',
+  FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
+  FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas';
 
 {$R *.res}
 

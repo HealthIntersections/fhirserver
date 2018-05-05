@@ -61,6 +61,7 @@ type
     FBuffer : TFslBuffer;
     procedure SetResult(const Value: TFhirResourceV);
     procedure SetResource(const Value: TFhirResourceV);
+    procedure SetBuffer(const Value: TFslBuffer);
   public
     destructor Destroy; override;
     function Link : TFhirThreadedClientPackage; overload;
@@ -78,6 +79,7 @@ type
     property id : String read FId write FId;
     property name : String read FName write FName;
     property resource : TFhirResourceV read FResource write SetResource;
+    property buffer : TFslBuffer read FBuffer write SetBuffer;
 
     property result : TFhirResourceV read FResult write SetResult;
     property error : String read FError write FError;
@@ -121,7 +123,8 @@ type
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
 
     // special case that gives direct access to the communicator...
-    function custom(path : String; headers : THTTPHeaders) : TFslBuffer; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
     procedure terminate; override; // only works for some communicators
   end;
 
@@ -140,6 +143,12 @@ end;
 function TFhirThreadedClientPackage.Link: TFhirThreadedClientPackage;
 begin
   result := TFhirThreadedClientPackage(inherited Link);
+end;
+
+procedure TFhirThreadedClientPackage.SetBuffer(const Value: TFslBuffer);
+begin
+  FBuffer.Free;
+  FBuffer := Value;
 end;
 
 procedure TFhirThreadedClientPackage.SetResource(const Value: TFhirResourceV);
@@ -207,7 +216,10 @@ begin
           else
             FPackage.result := FClient.operationV(FPackage.resourceType, FPackage.name, FPackage.resource);
         fcmdTask :
-            FPackage.FBuffer := FClient.custom(FPackage.paramString, FPackage.FHeaders);
+          if FPackage.FBuffer <> nil then
+            FPackage.Buffer := FClient.customPost(FPackage.paramString, FPackage.FHeaders, FPackage.Buffer)
+          else
+            FPackage.FBuffer := FClient.customGet(FPackage.paramString, FPackage.FHeaders);
       else
         raise Exception.Create('Not done yet');
       end;
@@ -282,7 +294,7 @@ begin
   end;
 end;
 
-function TFhirThreadedCommunicator.custom(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFhirThreadedCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
 var
   pack : TFhirThreadedClientPackage;
 begin
@@ -301,7 +313,28 @@ begin
   finally
     pack.free;
   end;
+end;
 
+function TFhirThreadedCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslBuffer): TFslBuffer;
+var
+  pack : TFhirThreadedClientPackage;
+begin
+  pack := TFhirThreadedClientPackage.create;
+  try
+    pack.command := fcmdTask;
+    pack.resourceType := '';
+    pack.paramString := path;
+    pack.Fheaders := Headers;
+    pack.buffer := body.Link;
+    pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    FHeaders := FInternal.LastHeaders;
+    result := pack.Fbuffer.link;
+    FClient.LastUrl := pack.lastUrl;
+    FClient.LastStatus := pack.lastStatus;
+  finally
+    pack.free;
+  end;
 end;
 
 procedure TFhirThreadedCommunicator.deleteResourceV(atype: TFhirResourceTypeV; id: String);

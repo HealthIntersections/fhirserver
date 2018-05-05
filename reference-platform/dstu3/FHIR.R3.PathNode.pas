@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, 
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context;
 
 type
@@ -69,7 +69,7 @@ const
 
 
 type
-  TFHIRTypeDetails = class (TFslObject)
+  TFHIRTypeDetails = class (TFHIRTypeDetailsV)
   private
     id : integer;
     FTypes : TStringList;
@@ -95,9 +95,8 @@ type
     function type_ : String;
   end;
 
-  TFHIRPathExpressionNode = class (TFslObject)
+  TFHIRPathExpressionNode = class (TFHIRPathExpressionNodeV)
   private
-    FTag : integer;
     FName: String;
     FConstant : string;
     FFunctionId : TFHIRPathFunction;
@@ -110,7 +109,6 @@ type
     FTypes : TFHIRTypeDetails;
     FOpTypes : TFHIRTypeDetails;
     FKind: TFHIRPathExpressionNodeKind;
-    FUniqueId : integer;
     FSourceLocationStart : TSourceLocation;
     FSourceLocationEnd : TSourceLocation;
     FOpSourceLocationStart : TSourceLocation;
@@ -131,13 +129,20 @@ type
     function Link : TFHIRPathExpressionNode; overload;
     function checkName : boolean;
 
-    property uniqueId : integer read FUniqueId;
+    // version overrides;
+    procedure visitAll(proc : TFHIRPathExpressionNodeVisitProc); override;
+    function nodeOpName : String; override;
+    function nodeName : String; override;
+    function nodeChildCount : integer; override;
+    function nodeOpNext : TFHIRPathExpressionNodeV; override;
+    function nodeGetChild(nodeIndex : integer; var offset : integer) : TFHIRPathExpressionNodeV; override;
+
     property SourceLocationStart : TSourceLocation read FSourceLocationStart write FSourceLocationStart;
     property SourceLocationEnd : TSourceLocation read FSourceLocationEnd write FSourceLocationEnd;
     property OpSourceLocationStart : TSourceLocation read FOpSourceLocationStart write FOpSourceLocationStart;
     property OpSourceLocationEnd : TSourceLocation read FOPSourceLocationEnd write FOpSourceLocationEnd;
 
-    function summary : String;
+    function summary : String; override;
     function ParameterCount : integer;
     function Canonical : String;
     function check(out msg : String; refCount : integer): boolean;
@@ -145,7 +150,6 @@ type
     function opLocation : String;
     function presentConstant : String;
 
-    property tag : integer read FTag write FTag;
     property kind : TFHIRPathExpressionNodeKind read FKind write FKind;
     property name : String read FName write FName;
     property constant : String read FConstant write FConstant;
@@ -262,6 +266,66 @@ begin
   result := inttostr(SourceLocationStart.line)+', '+inttostr(SourceLocationStart.col);
 end;
 
+function TFHIRPathExpressionNode.nodeChildCount: integer;
+begin
+  result := ParameterCount;
+  if (Inner <> nil) then
+    inc(result);
+  if (Group <> nil) then
+    inc(result);
+  if (Operation <> popNull) then
+    inc(result, 2);
+end;
+
+function TFHIRPathExpressionNode.nodeGetChild(nodeIndex: integer; var offset: integer): TFHIRPathExpressionNodeV;
+begin
+  result := nil;
+  offset := 0;
+  case kind of
+    enkName: offset := 0; // no child nodes
+    enkFunction:
+      begin
+        offset := Parameters.Count;
+        if nodeIndex < offset then
+          result := Parameters[nodeIndex];
+      end;
+    enkConstant: offset := 0; // no children
+    enkGroup:
+      begin
+        offset := 1;
+        if nodeIndex = 0 then
+          result := Group;
+      end;
+  end;
+  if (Inner <> nil) then
+  begin
+    if nodeIndex = offset then
+      result := Inner;
+    inc(offset);
+  end;
+end;
+
+function TFHIRPathExpressionNode.nodeName: String;
+begin
+  case kind of
+    enkName : result := name;
+    enkFunction : result := CODES_TFHIRPathFunctions[FunctionId]+'()';
+    enkConstant : result := '"'+constant+'"';
+    enkGroup : result := '(Group)';
+  end;
+  result := result + ': '+Types.describe;
+end;
+
+function TFHIRPathExpressionNode.nodeOpName: String;
+begin
+  result := CODES_TFHIRPathOperation[Operation];
+end;
+
+function TFHIRPathExpressionNode.nodeOpNext: TFHIRPathExpressionNodeV;
+begin
+  result := OpNext;
+end;
+
 function TFHIRPathExpressionNode.opLocation: String;
 begin
   result := inttostr(OpSourceLocationStart.line)+', '+inttostr(OpSourceLocationStart.col);
@@ -374,6 +438,22 @@ begin
   finally
     b.free;
   end;
+end;
+
+procedure TFHIRPathExpressionNode.visitAll(proc: TFHIRPathExpressionNodeVisitProc);
+var
+  c : TFHIRPathExpressionNode;
+begin
+  proc(self);
+  if ParameterCount > 0 then
+    for c in Parameters do
+      c.visitAll(proc);
+  if Inner <> nil then
+    Inner.visitAll(proc);
+  if Group <> nil then
+    Group.visitAll(proc);
+  if OpNext <> nil then
+    OpNext.visitAll(proc);
 end;
 
 procedure TFHIRPathExpressionNode.write(b: TStringBuilder);

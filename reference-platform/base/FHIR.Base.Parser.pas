@@ -37,7 +37,7 @@ uses
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Support.System,
   FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Text,
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle,
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Base.Lang, FHIR.Base.Xhtml;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml;
 
 const
   ATOM_NS = 'http://www.w3.org/2005/Atom';
@@ -224,6 +224,7 @@ Type
     function asString(value : TBytes):String; overload;
     function asString(value : string):String; overload;
     function asString(value : boolean):String; overload;
+    function GetFormat: TFHIRFormat; virtual; abstract;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); Virtual;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); Virtual;
   public
@@ -242,6 +243,7 @@ Type
     property NoHeader : Boolean read FNoHeader write FNoHeader;
     property ElementToCompose : TStringList read FElements;
     property LogId : string read FLogId write FLogId;
+    property Format : TFHIRFormat read GetFormat;
   End;
 
   TFHIRComposerClass = class of TFHIRComposer;
@@ -260,6 +262,7 @@ Type
     Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFHIRObject; value : TFhirResourceV); overload;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
+    function GetFormat: TFHIRFormat; override;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Procedure Compose(node : TMXmlElement; oResource : TFhirResourceV); Overload;
@@ -287,6 +290,7 @@ Type
 //    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
+    function GetFormat: TFHIRFormat; override;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); overload;
@@ -312,6 +316,7 @@ Type
 
     Procedure ComposeResourceV(parent :  TTurtleComplex; oResource : TFhirResourceV); overload; virtual;
     Procedure ComposeInnerResource(this : TTurtleComplex; parentType, name : String; elem : TFhirResourceV; useType : boolean; index : integer); overload;
+    function GetFormat: TFHIRFormat; override;
   public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Function MimeType : String; Override;
@@ -324,6 +329,7 @@ Type
   private
   protected
     function ResourceMediaType: String; override;
+    function GetFormat: TFHIRFormat; override;
   public
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
@@ -769,6 +775,11 @@ begin
   result := '.json';
 end;
 
+function TFHIRJsonComposerBase.GetFormat: TFHIRFormat;
+begin
+  result := ffJson;
+end;
+
 function TFHIRJsonComposerBase.MimeType: String;
 begin
  {$IFDEF FHIR2}
@@ -1123,6 +1134,11 @@ end;
 function TFHIRXmlComposerBase.Extension: String;
 begin
   result := '.xml';
+end;
+
+function TFHIRXmlComposerBase.GetFormat: TFHIRFormat;
+begin
+  result := ffXml;
 end;
 
 function TFHIRComposer.MimeType: String;
@@ -1507,6 +1523,11 @@ begin
   result := '.ttl';
 end;
 
+function TFHIRTurtleComposerBase.GetFormat: TFHIRFormat;
+begin
+  result := ffTurtle;
+end;
+
 procedure TFHIRTurtleComposerBase.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
   raise Exception.Create('not implemented yet');
@@ -1549,6 +1570,11 @@ end;
 function TFHIRTextComposer.Extension: String;
 begin
   result := '.txt';
+end;
+
+function TFHIRTextComposer.GetFormat: TFHIRFormat;
+begin
+  result := ffText;
 end;
 
 function TFHIRTextComposer.MimeType: String;

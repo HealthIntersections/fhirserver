@@ -113,7 +113,7 @@
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
-        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R4.AuthMap;FHIR.Tools.Constants=FHIR.R4.Constants;FHIR.Tools.Context=FHIR.R4.Context;FHIR.Tools.IndexInfo=FHIR.R4.IndexInfo;FHIR.Tools.Javascript=FHIR.R4.Javascript;FHIR.Tools.ElementModel=FHIR.R4.ElementModel;FHIR.Tools.Narrative=FHIR.R4.Narrative;FHIR.Tools.Operations=FHIR.R4.Operations;FHIR.Tools.Json=FHIR.R4.Json;FHIR.Tools.Turtle=FHIR.R4.Turtle;FHIR.Tools.Xml=FHIR.R4.Xml;FHIR.Tools.PathNode=FHIR.R4.PathNode;FHIR.Tools.Profiles=FHIR.R4.Profiles;FHIR.Tools.Resources=FHIR.R4.Resources;FHIR.Tools.MapUtilities=FHIR.R4.MapUtilities;FHIR.Tools.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Tools.Types=FHIR.R4.Types;FHIR.Tools.Utilities=FHIR.R4.Utilities;FHIR.Tools.Validator=FHIR.R4.Validator;FHIR.Tools.OpBase=FHIR.R4.OpBase;FHIR.Tools.PathEngine=FHIR.R4.PathEngine;FHIR.Tools.Narrative2=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire=FHIR.R4.Questionnaire;FHIRBaseX=FHIR.R4.Base;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R4.AuthMap;FHIR.Tools.Constants=FHIR.R4.Constants;FHIR.Tools.Context=FHIR.R4.Context;FHIR.Tools.IndexInfo=FHIR.R4.IndexInfo;FHIR.Tools.Javascript=FHIR.R4.Javascript;FHIR.Tools.ElementModel=FHIR.R4.ElementModel;FHIR.Tools.Narrative=FHIR.R4.Narrative;FHIR.Tools.Operations=FHIR.R4.Operations;FHIR.Tools.Json=FHIR.R4.Json;FHIR.Tools.Turtle=FHIR.R4.Turtle;FHIR.Tools.Xml=FHIR.R4.Xml;FHIR.Tools.PathNode=FHIR.R4.PathNode;FHIR.Tools.Profiles=FHIR.R4.Profiles;FHIR.Tools.Resources=FHIR.R4.Resources;FHIR.Tools.MapUtilities=FHIR.R4.MapUtilities;FHIR.Tools.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Tools.Types=FHIR.R4.Types;FHIR.Tools.Utilities=FHIR.R4.Utilities;FHIR.Tools.Validator=FHIR.R4.Validator;FHIR.Tools.OpBase=FHIR.R4.OpBase;FHIR.Tools.PathEngine=FHIR.R4.PathEngine;FHIR.Tools.Narrative2=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire=FHIR.R4.Questionnaire;FHIRBaseX=FHIR.R4.Base;FHIR.Tools.Common=FHIR.R4.Common;$(DCC_UnitAlias)</DCC_UnitAlias>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -316,6 +316,12 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -348,14 +354,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

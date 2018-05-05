@@ -35,7 +35,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Decimal, FHIR.Support.DateTime,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine,
   FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities, FHIR.R3.Context, FHIR.R3.Constants;
 
 const
@@ -49,20 +49,6 @@ type
   end;
 
   EFHIRPathDefinitionCheck = class (EFHIRPath);
-
-  TFHIRPathExecutionContext = class (TFslObject)
-  private
-    FAppInfo : TFslObject;
-    FResource : TFHIRObject;
-    FContext : TFHIRObject;
-  public
-    Constructor Create(appInfo : TFslObject; resource : TFHIRObject; context : TFHIRObject);
-    destructor Destroy; override;
-    function Link : TFHIRPathExecutionContext; overload;
-    property appInfo : TFslObject read FappInfo;
-    property resource : TFHIRObject read FResource;
-    property context : TFHIRObject read Fcontext;
-  end;
 
   TFHIRPathExecutionTypeContext = class (TFslObject)
   private
@@ -161,43 +147,12 @@ type
     function parse(lexer : TFHIRPathLexer) : TFHIRPathExpressionNode; overload;
   end;
 
-  TFHIRPathDebugPackage = class (TFslObject)
-  private
-    FSourceEnd: TSourceLocation;
-    Fcontext: TFHIRPathExecutionContext;
-    Finput2: TFHIRSelectionList;
-    Finput1: TFHIRSelectionList;
-    FExpression: TFHIRPathExpressionNode;
-    FSourceStart: TSourceLocation;
-    Foutcome: TFHIRSelectionList;
-    FIsOperation: boolean;
-    procedure Setcontext(const Value: TFHIRPathExecutionContext);
-    procedure SetExpression(const Value: TFHIRPathExpressionNode);
-    procedure Setinput1(const Value: TFHIRSelectionList);
-    procedure Setinput2(const Value: TFHIRSelectionList);
-    procedure Setoutcome(const Value: TFHIRSelectionList);
-  public
-    destructor Destroy; override;
-    function Link : TFHIRPathDebugPackage; overload;
-    property SourceStart : TSourceLocation read FSourceStart write FSourceStart;
-    property SourceEnd : TSourceLocation read FSourceEnd write FSourceEnd;
-    property Expression : TFHIRPathExpressionNode read FExpression write SetExpression;
-    property IsOperation : boolean read FIsOperation write FIsOperation;
-    property context : TFHIRPathExecutionContext read Fcontext write Setcontext;
-    property input1 : TFHIRSelectionList read Finput1 write Setinput1;
-    property input2 : TFHIRSelectionList read Finput2 write Setinput2;
-    property outcome : TFHIRSelectionList read Foutcome write Setoutcome;
-  end;
-
   TFHIRPathEngine = class;
-
-  TFHIRPathDebugEvent = procedure (source : TFHIRPathEngine; package : TFHIRPathDebugPackage) of object;
   TFHIRResolveReferenceEvent = function (source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject of object;
 
-  TFHIRPathEngine = class (TFslObject)
+  TFHIRPathEngine = class (TFHIRPathEngineV)
   private
     worker : TFHIRWorkerContext;
-    FOndebug : TFHIRPathDebugEvent;
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
     FOnResolveReference: TFHIRResolveReferenceEvent;
@@ -322,20 +277,21 @@ type
   public
     constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
-    property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
     property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
 
     // Parse a path for later use using execute
     function parse(path : String) : TFHIRPathExpressionNode; overload;
+    function parseV(path : String) : TFHIRPathExpressionNodeV; overload; override;
 
     // check that paths referred to in the expression are valid
-    function check(appInfo : TFslObject; resourceType, context, path : String; expr : TFHIRPathExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
+    function check(appInfo : TFslObject; resourceType, context, path : String; expr : TFHIRPathExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails; overload;
+    function check(appInfo : TFslObject; resourceType, context, path : String; expr : TFHIRPathExpressionNodeV; xPathStartsWithValueRef : boolean) : TFHIRTypeDetailsV; overload; override;
 
     // evaluate a path and return the matching elements
-    function evaluate(appInfo : TFslObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload;
-    function evaluate(appInfo : TFslObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : TFHIRSelectionList; overload;
-    function evaluate(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload;
-    function evaluate(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : TFHIRSelectionList; overload;
+    function evaluate(appInfo : TFslObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload; override;
+    function evaluate(appInfo : TFslObject; base : TFHIRObject; expr : TFHIRPathExpressionNodeV) : TFHIRSelectionList; overload; override;
+    function evaluate(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload; override;
+    function evaluate(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNodeV) : TFHIRSelectionList; overload; override;
 
     // evaluate a path and return true or false
     function evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; path : String) : boolean; overload;
@@ -465,7 +421,7 @@ procedure TFHIRPathEngine.debug(context : TFHIRPathExecutionContext; exp: TFHIRP
 var
   pack : TFHIRPathDebugPackage;
 begin
-  if assigned(FOndebug) then
+  if assigned(Ondebug) then
   begin
     pack := TFHIRPathDebugPackage.Create;
     try
@@ -485,7 +441,7 @@ begin
       pack.input1 := input1.Link;
       pack.input2 := input2.Link;
       pack.outcome := outcome.Link;
-      FOndebug(self, pack);
+      Ondebug(self, pack);
     finally
       pack.Free;
     end;
@@ -560,7 +516,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluate(appInfo : TFslObject; base: TFHIRObject; expr : TFHIRPathExpressionNode): TFHIRSelectionList;
+function TFHIRPathEngine.evaluate(appInfo : TFslObject; base: TFHIRObject; expr : TFHIRPathExpressionNodeV): TFHIRSelectionList;
 var
   list : TFHIRSelectionList;
   ctxt : TFHIRPathExecutionContext;
@@ -570,7 +526,7 @@ begin
   try
     ctxt := TFHIRPathExecutionContext.Create(appInfo.Link, nil, base.Link);
     try
-      result := execute(ctxt, list, expr, true);
+      result := execute(ctxt, list, expr as TFHIRPathExpressionNode, true);
     finally
       ctxt.Free;
     end;
@@ -642,7 +598,7 @@ begin
     raise EFHIRPath.create(StringFormat('Unable to determine equivalence between %s and %s', [left.fhirType(), right.fhirType()]));
 end;
 
-function TFHIRPathEngine.evaluate(appInfo : TFslObject; resource : TFHIRObject; base: TFHIRObject; expr : TFHIRPathExpressionNode): TFHIRSelectionList;
+function TFHIRPathEngine.evaluate(appInfo : TFslObject; resource : TFHIRObject; base: TFHIRObject; expr : TFHIRPathExpressionNodeV): TFHIRSelectionList;
 var
   list : TFHIRSelectionList;
   ctxt : TFHIRPathExecutionContext;
@@ -652,7 +608,7 @@ begin
   try
     ctxt := TFHIRPathExecutionContext.Create(appInfo.Link, resource.Link, base.Link);
     try
-      result := execute(ctxt, list, expr, true);
+      result := execute(ctxt, list, expr as TFHIRPathExpressionNode, true);
     finally
       ctxt.Free;
     end;
@@ -1253,7 +1209,7 @@ begin
         begin
           pc.clear();
           pc.add(item.link);
-          ctxt := TFHIRPathExecutionContext.Create(context.FAppInfo.Link, context.resource.Link, item.value.Link);
+          ctxt := TFHIRPathExecutionContext.Create(context.AppInfo.Link, context.resource.Link, item.value.Link);
           try
             work := execute(ctxt, pc, exp.parameters[0], false);
             try
@@ -1360,7 +1316,7 @@ begin
       begin
         pc.clear();
         pc.add(item.link);
-        ctxt := TFHIRPathExecutionContext.Create(context.FAppInfo.Link, context.resource.Link, item.value.Link);
+        ctxt := TFHIRPathExecutionContext.Create(context.AppInfo.Link, context.resource.Link, item.value.Link);
         try
           work := execute(ctxt, pc, exp.parameters[0], false);
           try
@@ -1653,7 +1609,7 @@ begin
       begin
         pc.Clear;
         pc.Add(item.Link);
-        ctxt := TFHIRPathExecutionContext.Create(context.FAppInfo.Link, context.resource.Link, item.value.Link);
+        ctxt := TFHIRPathExecutionContext.Create(context.AppInfo.Link, context.resource.Link, item.value.Link);
         try
           res := execute(ctxt, pc, exp.Parameters[0], false);
           try
@@ -2917,6 +2873,11 @@ begin
   raise EFHIRPath.create('Unknown Function '+exp.name);
 end;
 
+function TFHIRPathEngine.check(appInfo: TFslObject; resourceType, context, path: String; expr: TFHIRPathExpressionNodeV; xPathStartsWithValueRef: boolean): TFHIRTypeDetailsV;
+begin
+  result := check(appInfo, resourceType, context, path, expr as TFHIRPathExpressionNode, xPathStartsWithValueRef);
+end;
+
 procedure TFHIRPathEngine.checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TFslList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
 var
   i : integer;
@@ -3415,6 +3376,11 @@ begin
   finally
     parser.Free;
   end;
+end;
+
+function TFHIRPathEngine.parseV(path: String): TFHIRPathExpressionNodeV;
+begin
+  result := parse(path);
 end;
 
 procedure TFHIRPathEngine.ListChildrenByName(focus: TFHIRObject; name: String; results: TFHIRSelectionList);
@@ -4158,76 +4124,6 @@ end;
 function TFHIRPathExecutionTypeContext.Link: TFHIRPathExecutionTypeContext;
 begin
   result := TFHIRPathExecutionTypeContext(inherited link);
-end;
-
-{ TFHIRPathExecutionContext }
-
-constructor TFHIRPathExecutionContext.Create(appInfo: TFslObject; resource: TFHIRObject; context: TFHIRObject);
-begin
-  inherited Create;
-  FAppInfo := appInfo;
-  FResource := resource;
-  FContext := context;
-end;
-
-destructor TFHIRPathExecutionContext.Destroy;
-begin
-  FAppInfo.Free;
-  FResource.Free;
-  FContext.Free;
-  inherited;
-end;
-
-function TFHIRPathExecutionContext.Link: TFHIRPathExecutionContext;
-begin
-  result := TFHIRPathExecutionContext(inherited Link);
-end;
-
-{ TFHIRPathDebugPackage }
-
-destructor TFHIRPathDebugPackage.destroy;
-begin
-  Fcontext.Free;
-  Finput2.Free;
-  Finput1.Free;
-  FExpression.Free;
-  Foutcome.Free;
-  inherited;
-end;
-
-function TFHIRPathDebugPackage.Link: TFHIRPathDebugPackage;
-begin
-  result := TFHIRPathDebugPackage(inherited Link);
-end;
-
-procedure TFHIRPathDebugPackage.Setcontext(const Value: TFHIRPathExecutionContext);
-begin
-  Fcontext.Free;
-  Fcontext := Value;
-end;
-
-procedure TFHIRPathDebugPackage.SetExpression(const Value: TFHIRPathExpressionNode);
-begin
-  FExpression.Free;
-  FExpression := Value;
-end;
-
-procedure TFHIRPathDebugPackage.Setinput1(const Value: TFHIRSelectionList);
-begin
-  Finput1.Free;
-  Finput1 := Value;
-end;
-
-procedure TFHIRPathDebugPackage.Setinput2(const Value: TFHIRSelectionList);
-begin
-  Finput2.Free;
-  Finput2 := Value;
-end;
-
-procedure TFHIRPathDebugPackage.Setoutcome(const Value: TFHIRSelectionList);
-begin
-  Foutcome.Free;
-  Foutcome := Value;
 end;
 
 { TFHIRPathParser }

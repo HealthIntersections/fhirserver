@@ -179,7 +179,7 @@ var
   rng : TFhirRange;
 begin
   FLookup := TCodeableConceptLookup.create(edtCCText, lbCodes, lblErr,
-    TFhirClients.makeHTTP(nil, Settings.serverAddress('Terminology', 0),
+    TFhirClients.makeHTTP(nil, Settings.defaultAddress('Terminology'),
       false, Settings.timeout * 1000, Settings.proxy));
 
   edtSystem.text := '';

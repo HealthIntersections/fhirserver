@@ -92,7 +92,16 @@ uses
   FHIR.R2.Tests.Worker in 'tests\FHIR.R2.Tests.Worker.pas',
   JWTTests in '..\support\Tests\JWTTests.pas',
   JsonTests in '..\support\Tests\JsonTests.pas',
-  XmlTests in '..\support\Tests\XmlTests.pas';
+  XmlTests in '..\support\Tests\XmlTests.pas',
+  FHIR.XVersion.Resources in '..\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Factory in '..\base\FHIR.Base.Factory.pas',
+  FHIR.Base.Narrative in '..\base\FHIR.Base.Narrative.pas',
+  FHIR.Base.Validator in '..\base\FHIR.Base.Validator.pas',
+  FHIR.Base.PathEngine in '..\base\FHIR.Base.PathEngine.pas',
+  FHIR.Client.Base in '..\client\FHIR.Client.Base.pas',
+  FHIR.Client.SmartUtilities in '..\client\FHIR.Client.SmartUtilities.pas',
+  FHIR.Client.Threaded in '..\client\FHIR.Client.Threaded.pas',
+  FHIR.Client.HTTP in '..\client\FHIR.Client.HTTP.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

@@ -35,7 +35,10 @@ uses
   SysUtils, Classes,
   FHIR.Support.Text, MarkDownProcessor, FHIR.Support.Lock, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Client.SmartUtilities, FHIR.Base.Parser, FHIR.Tools.Parser;
+  FHIR.Base.Objects, FHIR.Base.Parser,
+  FHIR.Client.SmartUtilities;
+  {, FHIR.Tools.Parser
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities}
 
 type
   TCDSHooks = class
@@ -75,8 +78,8 @@ type
     Fpatient: String;
     Fencounter: String;
     FLang : String;
-    FContext: TFslList<TFHIRResource>;
-    FPreFetch : TFslMap<TFhirBundleEntry>;
+    FContext: TFslList<TFHIRResourceV>;
+    FPreFetch : TFslMap<TFhirObject>;
     FBaseUrl: String;
 
   public
@@ -97,8 +100,8 @@ type
     property user : String read Fuser write Fuser;
     property patient : String read Fpatient write Fpatient;
     property encounter : String read Fencounter write Fencounter;
-    property context : TFslList<TFHIRResource> read FContext;
-    property preFetch : TFslMap<TFhirBundleEntry> read FPreFetch;
+    property context : TFslList<TFHIRResourceV> read FContext;
+    property preFetch : TFslMap<TFhirObject{BundleEntry}> read FPreFetch;
     property lang : String read FLang write FLang;
     property baseURL : String read FBaseUrl write FBaseUrl;
   end;
@@ -445,12 +448,12 @@ function TCDSHookRequest.AsJson: String;
 var
   ss : TFslStringStream;
   writer : TJSONWriter;
-  c : TFhirResource;
-  comp : TFHIRJsonComposer;
+  c : TFhirResourceV;
+  comp : TFHIRComposer;
   s : String;
-  be : TFhirBundleEntry;
+  be : TFhirObject{BundleEntry};
 begin
-  ss := TFslStringStream.Create;
+(*  ss := TFslStringStream.Create;
   try
     writer := TJsonWriterDirect.create;
     try
@@ -519,25 +522,26 @@ begin
   finally
     ss.Free;
   end;
+  *)
 end;
 
 constructor TCDSHookRequest.Create;
 begin
   inherited Create;
-  FContext := TFslList<TFHIRResource>.create;
-  FPreFetch := TFslMap<TFhirBundleEntry>.create;
+//  FContext := TFslList<TFHIRResource>.create;
+//  FPreFetch := TFslMap<TFhirBundleEntry>.create;
 end;
 
 constructor TCDSHookRequest.Create(json: TJsonObject);
-var
+(*var
   a : TJsonArray;
   o, e : TJsonObject;
   n : TJsonNode;
   p : TFHIRJsonParser;
   s : String;
-  be : TFhirBundleEntry;
+  be : TFhirBundleEntry;*)
 begin
-  Create;
+(*  Create;
   Fencounter := json.str['encounter'];
   FfhirServer := json.str['fhirServer'];
   Fpatient := json.str['patient'];
@@ -593,6 +597,7 @@ begin
       end;
     end;
   end;
+  *)
 end;
 
 destructor TCDSHookRequest.Destroy;

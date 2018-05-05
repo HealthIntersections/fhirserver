@@ -182,7 +182,7 @@
         <DCCReference Include="FHIRVisualiser.pas">
             <Form>FHIRVisualizer</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathDebugger.pas">
+        <DCCReference Include="FHIR.Npp.PathDebugger.pas">
             <Form>FHIRPathDebuggerForm</Form>
         </DCCReference>
         <DCCReference Include="WelcomeScreen.pas">
@@ -222,7 +222,7 @@
             <Form>SmartOnFhirLoginForm</Form>
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Client.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Settings.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Registry.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
@@ -243,6 +243,23 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MsXml.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Constants.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Types.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Base.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.ElementModel.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathNode.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Profiles.pas"/>
+        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

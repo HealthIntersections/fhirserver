@@ -211,6 +211,12 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\npp\FHIR.Base.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Common.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

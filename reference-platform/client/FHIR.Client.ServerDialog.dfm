@@ -22,7 +22,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
     Top = 0
     Width = 449
     Height = 404
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -66,11 +66,18 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           WordWrap = True
         end
         object Formt: TLabel
-          Left = 14
-          Top = 122
+          Left = 18
+          Top = 146
           Width = 38
           Height = 13
           Caption = 'Format:'
+        end
+        object Label20: TLabel
+          Left = 18
+          Top = 114
+          Width = 39
+          Height = 13
+          Caption = 'Version:'
         end
         object edtName: TEdit
           Left = 62
@@ -92,7 +99,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         end
         object cbxFormat: TComboBox
           Left = 62
-          Top = 119
+          Top = 143
           Width = 365
           Height = 21
           Style = csDropDownList
@@ -109,14 +116,27 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           Width = 105
           Height = 25
           Anchors = [akLeft, akBottom]
-          Caption = 'Check Format'
+          Caption = 'Check Server'
           TabOrder = 3
           OnClick = Button3Click
+        end
+        object cbxVersion: TComboBox
+          Left = 63
+          Top = 111
+          Width = 365
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 4
+          Items.Strings = (
+            'R2 (1.0.2)'
+            'R3 (3.0.1)'
+            'R4 (3.3.0)')
         end
       end
     end
     object TabSheet2: TTabSheet
-      Caption = 'Smart on FHIR'
+      Caption = 'Smart App Launch'
       ImageIndex = 1
       ExplicitLeft = 0
       ExplicitTop = 0

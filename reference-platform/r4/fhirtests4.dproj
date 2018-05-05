@@ -167,6 +167,15 @@
         <DCCReference Include="..\support\Tests\JWTTests.pas"/>
         <DCCReference Include="..\support\Tests\JsonTests.pas"/>
         <DCCReference Include="..\support\Tests\XmlTests.pas"/>
+        <DCCReference Include="..\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\base\FHIR.Base.Factory.pas"/>
+        <DCCReference Include="..\base\FHIR.Base.Narrative.pas"/>
+        <DCCReference Include="..\base\FHIR.Base.Validator.pas"/>
+        <DCCReference Include="..\base\FHIR.Base.PathEngine.pas"/>
+        <DCCReference Include="..\client\FHIR.Client.Base.pas"/>
+        <DCCReference Include="..\client\FHIR.Client.SmartUtilities.pas"/>
+        <DCCReference Include="..\client\FHIR.Client.Threaded.pas"/>
+        <DCCReference Include="..\client\FHIR.Client.HTTP.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

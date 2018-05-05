@@ -34,7 +34,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, nppplugin, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.PathNode;
+  FHIR.Base.Objects, FHIR.Base.PathEngine;
 
 type
   TPathOutcomeDialogMode = (pomError, pomNoMatch, pomMatch);
@@ -55,7 +55,7 @@ type
 var
   PathDialogForm: TPathDialogForm;
 
-procedure pathOutcomeDialog(owner : TNppPlugin; path, rtype : String; types : TFHIRTypeDetails; mode : TPathOutcomeDialogMode; outcome : String);
+procedure pathOutcomeDialog(owner : TNppPlugin; path, rtype : String; types : TFHIRTypeDetailsV; mode : TPathOutcomeDialogMode; outcome : String);
 
 implementation
 
@@ -90,7 +90,7 @@ begin
   end;
 end;
 
-procedure pathOutcomeDialog(owner : TNppPlugin; path, rtype : String; types : TFHIRTypeDetails; mode : TPathOutcomeDialogMode; outcome : String);
+procedure pathOutcomeDialog(owner : TNppPlugin; path, rtype : String; types : TFHIRTypeDetailsV; mode : TPathOutcomeDialogMode; outcome : String);
 var
   t : string;
 begin

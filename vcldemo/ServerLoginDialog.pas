@@ -107,6 +107,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, IniFiles,
   FHIR.Support.Strings, FHIR.Support.Shell,
+  FHIR.XVersion.Resources,
+  FHIR.R2.Common,
   FHIR.Client.SmartUtilities, FHIR.Client.SmartLogin, FHIR.Base.Objects, FHIR.Tools.Client, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
   ProgressDialog, FHIRDemoLogging;
 
@@ -198,7 +200,7 @@ end;
 procedure TServerLoginForm.btnLoginClick(Sender: TObject);
 var
   server : TRegisteredFHIRServer;
-  conf : TFhirConformance;
+  conf : TFhirCapabilityStatementW;
   a, t, r : UnicodeString;
   login : TSmartAppLaunchLogin;
   form : TSmartOnFhirLoginForm;
@@ -240,7 +242,7 @@ begin
 
     cursor := crHourGlass;
     try
-      conf := FClient.conformance(false);
+      conf := TFHIRCapabilityStatement2.Create(FClient.conformance(false));
       try
         if usesSmartOnFHIR(conf, a, t, r) then
         begin

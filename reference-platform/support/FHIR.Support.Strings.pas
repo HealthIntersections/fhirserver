@@ -224,6 +224,7 @@ function capitalise(s : String) : String;
 function jsonEscape(s : String; isString : boolean) : String;
 
 function StringFindEndOfNumber(const s : String; index : integer) : integer;
+function isAbsoluteUrl(s: String): boolean;
 
 
 Const
@@ -1502,6 +1503,12 @@ begin
       end;
     end;
 end;
+
+function isAbsoluteUrl(s: String): boolean;
+begin
+  result := s.StartsWith('urn:') or s.StartsWith('http:') or s.StartsWith('https:') or s.StartsWith('ftp:');
+end;
+
 
 // http://stackoverflow.com/questions/1891196/convert-hi-ansi-chars-to-ascii-equivalent-e-e-in-delphi2007/1892432#1892432
 

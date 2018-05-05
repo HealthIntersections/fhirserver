@@ -38,7 +38,7 @@ uses
   FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser,
   FHIR.Misc.GraphQL, FHIR.Tools.GraphQL, GraphDefinitionEngine,
-  FHIR.Tests.Worker, JsonTests;
+  FHIR.R4.Tests.Worker, JsonTests;
 
 type
   GraphDefinitionTestCaseAttribute = class (CustomTestCaseSourceAttribute)

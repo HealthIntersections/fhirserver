@@ -34,8 +34,8 @@ uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream,
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.DateTime, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Session, FHIR.Base.Xhtml,
-  FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.XVersion.Resources,
+  FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.Common;
 
 
 type
@@ -196,7 +196,7 @@ type
 	protected
     FContext : TFHIRWorkerContext;
    	FPolicy : TFHIRValidationPolicy;
-    FErrors : TFhirOperationOutcomeIssueList;
+    FErrors : TFslList<TFhirOperationOutcomeIssueW>;
 	  function getChildProperties(prop : TFHIRMMProperty; elementName, statedType : String) : TFslList<TFHIRMMProperty>;
     function getDefinition(line, col : integer; ns, name : String) : TFHIRStructureDefinition; overload;
     function getDefinition(line, col : integer; name : String) : TFHIRStructureDefinition; overload;
@@ -204,7 +204,7 @@ type
     constructor create(context : TFHIRWorkerContext);
     destructor Destroy; override;
 
-    procedure setupValidation(policy : TFHIRValidationPolicy; errors : TFhirOperationOutcomeIssueList);
+    procedure setupValidation(policy : TFHIRValidationPolicy; errors : TFslList<TFhirOperationOutcomeIssueW>);
     procedure logError(line, col : integer; path : String; type_ : TFhirIssueTypeEnum; message : String; level : TFhirIssueSeverityEnum);
 
     function parse(stream : TStream) : TFHIRMMElement; overload; virtual; abstract;
@@ -1109,7 +1109,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRMMParserBase.setupValidation(policy: TFHIRValidationPolicy; errors: TFhirOperationOutcomeIssueList);
+procedure TFHIRMMParserBase.setupValidation(policy: TFHIRValidationPolicy; errors: TFslList<TFhirOperationOutcomeIssueW>);
 begin
   FPolicy := policy;
   FErrors.Free;
@@ -1123,12 +1123,17 @@ var
 begin
   if (Fpolicy = fvpEVERYTHING) then
   begin
-    err := Ferrors.Append;
-    err.locationList.add(path);
-    err.code := type_;
-    err.severity := level;
-    err.details :=  TFhirCodeableConcept.Create;
-    err.details.text := message+Stringformat(' at line %d col %d', [line, col]);
+    err := TFhirOperationOutcomeIssue.create;
+    try
+      err.locationList.add(path);
+      err.code := type_;
+      err.severity := level;
+      err.details :=  TFhirCodeableConcept.Create;
+      err.details.text := message+Stringformat(' at line %d col %d', [line, col]);
+      Ferrors.add(TFhirOperationOutcomeIssue3.Create(err.Link));
+    finally
+      err.Free;
+    end;
   end
 	else if (level = IssueSeverityFatal) or ((level = IssueSeverityERROR) and (Fpolicy = fvpQUICK)) then
 	 raise Exception.create(message+Stringformat(' at line %d col %d', [line, col]));

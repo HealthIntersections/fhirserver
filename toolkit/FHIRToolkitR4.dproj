@@ -280,7 +280,7 @@
             <Form>MemoEditorForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Settings.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Registry.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.ServerDialogFMX.pas">
             <Form>EditRegisteredServerForm</Form>
             <FormType>fmx</FormType>
@@ -378,6 +378,12 @@
         <DCCReference Include="UsageContextForm.pas">
             <Form>UsageContextDialog</Form>
         </DCCReference>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\npp\FHIR.Base.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

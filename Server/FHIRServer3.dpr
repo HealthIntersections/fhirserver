@@ -278,7 +278,14 @@ uses
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
   FHIR.XVersion.Convertors in '..\reference-platform\xversion\FHIR.XVersion.Convertors.pas',
-  FHIR.XVersion.Conv_30_40 in '..\reference-platform\xversion\FHIR.XVersion.Conv_30_40.pas';
+  FHIR.XVersion.Conv_30_40 in '..\reference-platform\xversion\FHIR.XVersion.Conv_30_40.pas',
+  FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
+  FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
+  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
+  FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
+  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
+  FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

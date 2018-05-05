@@ -35,7 +35,7 @@ uses
   SysUtils, Generics.Collections, EncdDecd,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Tools.Session,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Base.Xhtml, FHIR.Base.Narrative,
   FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Utilities;
 
 Const
@@ -45,6 +45,7 @@ Type
 
   TPropertyWrapper = { abstract } class(TFslObject)
   public
+    function link : TPropertyWrapper; overload;
     function getOwner(): TFHIRObject; virtual;
     function getName(): String; virtual;
     function hasValues(): boolean; virtual;
@@ -67,6 +68,7 @@ Type
 
   TBaseWrapper = { abstract } class(TFslObject)
   public
+    function link : TBaseWrapper; overload;
     function getBase(): TFHIRObject; virtual;
     function children(): TFslList<TPropertyWrapper>; virtual;
     function getChildByName(tail: String): TPropertyWrapper; virtual;
@@ -97,6 +99,7 @@ Type
     FList: TFslList<TBaseWrapper>;
   public
     Constructor create(wrapped: TFHIRProperty);
+    Destructor Destroy; override;
     function getOwner(): TFHIRObject; override;
     function getName(): String; override;
     function hasValues(): boolean; override;
@@ -113,6 +116,7 @@ Type
     FWrapped: TFHIRResource;
   public
     Constructor create(wrapped: TFHIRResource);
+    Destructor Destroy; override;
     function getContained(): TFslList<TResourceWrapper>; override;
     function getId(): String; override;
     function getNarrative(): TFHIRXhtmlNode; override;
@@ -124,14 +128,16 @@ Type
   private
     FWrapped: TFHIRObject;
     FList: TFslList<TPropertyWrapper>;
+    FOtherList: TFslList<TPropertyWrapper>;
   public
     Constructor create(wrapped: TFHIRObject);
+    Destructor Destroy; override;
     function getBase(): TFHIRObject; override;
     function children(): TFslList<TPropertyWrapper>; override;
     function getChildByName(tail: String): TPropertyWrapper; override;
   end;
 
-  TFHIRNarrativeGenerator = class(TFslObject)
+  TFHIRNarrativeGenerator = class(TFHIRNarrativeGeneratorBase)
   private
     FPrefix: String; // for links
     context: TFHIRWorkerContext;
@@ -204,8 +210,9 @@ Type
     procedure generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean); overload;
     procedure inject(r: TFHIRDomainResource; x: TFHIRXhtmlNode; status: TFhirNarrativeStatusEnum);
   public
-    Constructor Create(cc: TFHIRWorkerContext);
+    Constructor Create(cc: TFHIRWorkerContextV); override;
     Destructor Destroy; override;
+    procedure generate(res : TFHIRResourceV); overload; override;
     procedure generate(r: TFHIRDomainResource); overload;
 
     property Prefix: String read FPrefix write FPrefix; // for links
@@ -257,7 +264,7 @@ begin
       if b = nil then
         FList.add(nil)
       else
-        FList.add(TBaseWrapperDirect.create(b));
+        FList.add(TBaseWrapperDirect.create(b.link));
   end;
   result := FList;
 end;
@@ -265,6 +272,13 @@ end;
 function TPropertyWrapperDirect.getTypeCode(): String;
 begin
   result := FWrapped.Type_;
+end;
+
+destructor TPropertyWrapperDirect.Destroy;
+begin
+  FList.Free;
+  FWrapped.Free;
+  inherited;
 end;
 
 function TPropertyWrapperDirect.getDefinition(): String;
@@ -295,6 +309,15 @@ begin
   self.FWrapped := wrapped;
 end;
 
+destructor TBaseWrapperDirect.Destroy;
+begin
+  FWrapped.Free;
+  if FOtherList <> nil then
+    FOtherList.free;
+  FList.Free;
+  inherited;
+end;
+
 function TBaseWrapperDirect.getBase(): TFHIRObject;
 begin
   result := FWrapped;
@@ -311,7 +334,7 @@ begin
     list := FWrapped.createPropertyList(false);
     try
       for p in list do
-        FList.add(TPropertyWrapperDirect.create(p.Link as TFHIRProperty));
+        FList.add(TPropertyWrapperDirect.create(p.link as TFHIRProperty));
     finally
       list.Free;
     end;
@@ -325,23 +348,25 @@ var
   list: TFHIRPropertyList;
 begin
   pl := nil;
-  if (FList = nil) then
-  begin
-    FList := TFslList<TPropertyWrapper>.create();
     list := FWrapped.createPropertyList(false);
     try
       for p in list do
         if (p.name = tail) then
           pl := p;
+
+    if (pl = nil) then
+      result := nil
+    else
+    begin
+      result := TPropertyWrapperDirect.create(pl.link);
+      if FOtherList = nil then
+        FOtherList := TFslList<TPropertyWrapper>.create;
+      FOtherList.Add(result);
+    end;
     finally
       list.Free;
     end;
   end;
-  if (pl = nil) then
-    result := nil
-  else
-    result := TPropertyWrapperDirect.create(pl)
-end;
 
 Constructor TResourceWrapperDirect.create(wrapped: TFHIRResource);
 begin
@@ -349,6 +374,12 @@ begin
   if (wrapped = nil) then
     raise Exception.create('wrapped = nil');
   self.FWrapped := wrapped;
+end;
+
+destructor TResourceWrapperDirect.Destroy;
+begin
+  FWrapped.Free;
+  inherited;
 end;
 
 function TResourceWrapperDirect.getContained(): TFslList<TResourceWrapper>;
@@ -363,7 +394,7 @@ begin
     begin
       dr := TFHIRDomainResource(FWrapped);
       for c in dr.containedList do
-        list.add(TResourceWrapperDirect.create(c));
+        list.add(TResourceWrapperDirect.create(c.link));
     end;
     result := list.Link;
   finally
@@ -405,7 +436,7 @@ begin
     list := TFslList<TPropertyWrapper>.create();
     try
       for p in pList do
-        list.add(TPropertyWrapperDirect.create(p));
+        list.add(TPropertyWrapperDirect.create(p.link));
       result := list.Link;
     finally
       result.Free;
@@ -476,12 +507,18 @@ begin
   raise Exception.create('Not done yet');
 end;
 
+procedure TFHIRNarrativeGenerator.generate(res: TFHIRResourceV);
+begin
+  generate(res as TFHIRDomainResource);
+end;
+
 procedure TFHIRNarrativeGenerator.generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean);
 var
   x: TFHIRXhtmlNode;
   c: TFslList<TFHIRElementDefinition>;
 begin
   x := TFHIRXhtmlNode.create('div');
+  try
   if showCodeDetails then
     x.addTag('p').addTag('b').addText('Generated Narrative with Details')
   else
@@ -500,16 +537,25 @@ begin
     end;
   end;
   inject(r, x, NarrativeStatusGENERATED);
+  finally
+    x.free;
+  end;
 end;
 
 procedure TFHIRNarrativeGenerator.generateByProfile(res: TFHIRResource; profile: TFHIRStructureDefinition; e: TFHIRObject; allElements: TFHIRElementDefinitionList;
   defn: TFHIRElementDefinition; children: TFslList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean);
 var
   r: TResourceWrapperDirect;
+  b : TBaseWrapperDirect;
 begin
-  r := TResourceWrapperDirect.create(res);
+  r := TResourceWrapperDirect.create(res.link);
   try
-    generateByProfile(r, profile, TBaseWrapperDirect.create(e), allElements, defn, children, x, path, showCodeDetails);
+    b := TBaseWrapperDirect.create(e.link);
+    try
+      generateByProfile(r, profile, b, allElements, defn, children, x, path, showCodeDetails);
+    finally
+      b.free;
+    end;
   finally
     r.Free
   end;
@@ -722,10 +768,10 @@ begin
                       { def.getDefinition(), def.getMin(), def.getMax().equals('*') ? Integer.MAX_VALUE : Integer.parseInt(def.getMax()), } ex));
                     // TPropertyWrapperDirect(pe).Fwrapped.Structure := ed;
                   end;
-                  results.add(pe);
+                  results.add(pe.link);
                 end
                 else
-                  pe.getValues().add(v);
+                  pe.getValues().add(v.link);
               finally
                 ed.Free;
               end;
@@ -733,7 +779,7 @@ begin
           end;
         end
         else
-          results.add(p);
+          results.add(p.link);
     finally
       map.Free;
     end;
@@ -831,10 +877,10 @@ begin
   end;
 end;
 
-constructor TFHIRNarrativeGenerator.create(cc: TFHIRWorkerContext);
+constructor TFHIRNarrativeGenerator.create(cc: TFHIRWorkerContextV);
 begin
-  inherited create;
-  context := cc;
+  inherited create(cc);
+  context := cc as TFHIRWorkerContext;
 end;
 
 function TFHIRNarrativeGenerator.getValues(path: String; p: TPropertyWrapper; e: TFHIRElementDefinition): TFslList<TPropertyWrapper>;
@@ -850,7 +896,7 @@ begin
       for g in v.children() do
       begin
         if (path + '.' + p.getName() + '.' + g.getName() = e.path) then
-          res.add(p);
+          res.add(p.link);
       end;
     end;
     result := res.Link;
@@ -1303,7 +1349,7 @@ begin
     if (ae <> nil) then
     begin
       result.reference := url;
-      result.resource := TResourceWrapperDirect.create(ae);
+      result.resource := TResourceWrapperDirect.create(ae.link);
     end;
   finally
     ae.free;
@@ -3504,6 +3550,11 @@ begin
   result := false;
 end;
 
+function TPropertyWrapper.link: TPropertyWrapper;
+begin
+  result := TPropertyWrapper(inherited link);
+end;
+
 { TResourceWrapper }
 
 function TResourceWrapper.children: TFslList<TPropertyWrapper>;
@@ -3546,6 +3597,11 @@ end;
 function TBaseWrapper.getChildByName(tail: String): TPropertyWrapper;
 begin
   result := nil;
+end;
+
+function TBaseWrapper.link: TBaseWrapper;
+begin
+  result := TBaseWrapper(inherited link);
 end;
 
 end.

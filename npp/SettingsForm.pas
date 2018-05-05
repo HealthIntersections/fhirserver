@@ -34,7 +34,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Buttons,
   Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
-  VirtualTrees, Vcl.ComCtrls, FHIR.Client.SmartUtilities, FHIR.Client.ServerDialog;
+  VirtualTrees, Vcl.ComCtrls, FHIR.Client.SmartUtilities, FHIR.Client.ServerDialog,
+  FHIR.Support.Generics;
 
 type
   TSettingForm = class(TNppForm)
@@ -90,8 +91,10 @@ type
     procedure btnAddIGClick(Sender: TObject);
   private
     { Private declarations }
+    FServers : TFslList<TRegisteredFHIRServer>;
+    procedure LoadServers;
   public
-    { Public declarations }
+    destructor Destroy; override;
   end;
 
 var
@@ -148,17 +151,26 @@ begin
   Settings.AbandonChanges;
 end;
 
+destructor TSettingForm.Destroy;
+begin
+  FServers.Free;
+  inherited;
+end;
+
 procedure TSettingForm.btnUpClick(Sender: TObject);
 var
   i, c : integer;
   n : PVirtualNode;
+  focus : TRegisteredFHIRServer;
+  dest : TRegisteredFHIRServer;
 begin
   if (vtServers.GetFirstSelected() <> nil) and (vtServers.GetFirstSelected().Index > 0) then
   begin
     c := vtServers.GetFirstSelected().Index;
-    Settings.moveServer('', c, -1);
-    vtServers.Invalidate;
-    vtServers.ClearSelection;
+    focus := FServers[vtServers.GetFirstSelected().Index];
+    dest := FServers[vtServers.GetFirstSelected().Index-1];
+    Settings.moveServerBefore('', focus, dest);
+    LoadServers;
     n := vtServers.RootNode.FirstChild;
     for i := 1 to c - 1 do
       n := n.NextSibling;
@@ -186,9 +198,8 @@ begin
   if (vtServers.GetFirstSelected() <> nil) then
   begin
     i := vtServers.GetFirstSelected().Index;
-    Settings.deleteServer('', i);
-    vtServers.RootNodeCount := Settings.ServerCount('');
-    vtServers.Invalidate;
+    Settings.deleteServer('', FServers[i]);
+    loadServers;
   end;
 end;
 
@@ -196,13 +207,16 @@ procedure TSettingForm.btnDownClick(Sender: TObject);
 var
   i, c : integer;
   n : PVirtualNode;
+  focus : TRegisteredFHIRServer;
+  dest : TRegisteredFHIRServer;
 begin
   if (vtServers.GetFirstSelected() <> nil) and (vtServers.GetFirstSelected().Index < Settings.ServerCount('') - 1) then
   begin
     c := vtServers.GetFirstSelected().Index;
-    Settings.moveServer('', c, +2); // because +1 is immediately after, so no change
-    vtServers.Invalidate;
-    vtServers.ClearSelection;
+    focus := FServers[vtServers.GetFirstSelected().Index];
+    dest := FServers[vtServers.GetFirstSelected().Index+1];
+    Settings.moveServerAfter('', focus, dest);
+    LoadServers;
     n := vtServers.RootNode.FirstChild;
     for i := 1 to c + 1 do
       n := n.NextSibling;
@@ -267,20 +281,28 @@ begin
     lbAdditional.Items.Add(s);
 end;
 
+procedure TSettingForm.LoadServers;
+begin
+  if FServers = nil then
+    FServers := TFslList<TRegisteredFHIRServer>.create
+  else
+    FServers.Clear;
+  Settings.ListServers('', FServers);
+  vtServers.ClearSelection;
+  vtServers.RootNodeCount := FServers.Count;
+  vtServers.Invalidate;
+end;
+
 procedure TSettingForm.vtServersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   server : TRegisteredFHIRServer;
 begin
-  server := Settings.serverInfo('', Node.Index);
-  try
-    case Column of
-    0: CellText := server.name;
-    1: CellText := server.fhirEndpoint;
-    2: CellText := CODES_TSmartAppLaunchMode[server.SmartAppLaunchMode];
-    3: CellText := server.cdshookSummary;
-    end;
-  finally
-    server.free;
+  server := FServers[Node.Index];
+  case Column of
+  0: CellText := server.name;
+  1: CellText := server.fhirEndpoint;
+  2: CellText := CODES_TSmartAppLaunchMode[server.SmartAppLaunchMode];
+  3: CellText := server.cdshookSummary;
   end;
 end;
 

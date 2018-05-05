@@ -187,7 +187,13 @@ uses
   FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
-  FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas';
+  FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
+  FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
+  FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
+  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
+  FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
+  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas';
 
 var
   gsrv : TExampleFhirServer;

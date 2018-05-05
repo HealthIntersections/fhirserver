@@ -217,7 +217,7 @@ begin
   if t <> '' then
     p := '&_type='+t;
   log('Make request of '+p+' with headers '+headers.asString);
-  buf := FClient.custom(p, headers);
+  buf := FClient.customGet(p, headers);
   try
     if FClient.LastStatus = 202 then
     begin
