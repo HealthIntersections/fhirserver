@@ -35,7 +35,8 @@ uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
   FHIR.Support.Lock, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRIndexManagers, FHIR.Tools.Utilities, FHIR.Tools.Factory,
+  FHIR.Base.Factory,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRIndexManagers, FHIR.Tools.Utilities,
   FHIR.Tools.Validator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
   FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, FHIR.Misc.ApplicationVerifier,
   ApplicationCache, ServerJavascriptHost;

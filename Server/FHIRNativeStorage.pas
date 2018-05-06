@@ -39,9 +39,10 @@ uses
   FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Misc.GraphQL, FHIR.Support.Certs,
   FHIR.Tools.Resources, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.Constants, FHIR.Tools.Context, FHIR.Tools.Operations, FHIR.Base.Xhtml,
   FHIR.Tools.Tags, FHIRValueSetExpander, FHIRIndexManagers, FHIR.Tools.Session, FHIR.Tools.DiffEngine, FHIR.Tools.ElementModel, FHIR.Tools.PathNode,
-  FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles, FHIR.Tools.PathEngine, FHIR.Tools.GraphQL, FHIR.Tools.Client,
+  FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles,
+  FHIR.Tools.PathEngine, FHIR.Tools.GraphQL, FHIR.Tools.Client,
   FHIR.Base.Validator, FHIR.XVersion.Resources,
-  FHIR.Tools.Factory, FHIR.Tools.Narrative, FHIR.Tools.Narrative2, FHIR.Tools.Questionnaire,
+  FHIR.Tools.Narrative, FHIR.Tools.Narrative2, FHIR.Tools.Questionnaire,
   FHIR.CdsHooks.Utilities, {$IFNDEF FHIR2}FHIR.Tools.MapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
   ServerUtilities, ServerValidator, FHIR.Tx.Service, TerminologyServer, FHIR.Base.Scim, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
   FHIR.Tools.Validator, FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIR.Tools.CodeGen, ServerJavascriptHost;
@@ -8479,9 +8480,9 @@ begin
       native(manager).FConnection.Terminate;
       parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
       try
-        diff := TDifferenceEngine.create(native(manager).ServerContext.ValidatorContext.Link);
+        diff := TDifferenceEngine.create(native(manager).ServerContext.ValidatorContext.Link, native(manager).ServerContext.Factory.link);
         try
-          response.Resource := diff.generateDifference(parser.resource, request.Resource, html);
+          response.Resource := diff.generateDifference(parser.resource, request.Resource, html).Resource as TFHIRResource;
           response.HTTPCode := 200;
           response.Message := 'OK';
         finally
@@ -10019,7 +10020,7 @@ begin
         b.Append(inttostr(i)+': '+'http://local.healthintersections.com.au:960/open/'+rtype+'/'+id+' : failed validation'+#13#10);
         for o in ctxt.Issues do
         begin
-          issue  := o.issue as TFHIROperationOutcomeIssue;
+          issue  := o.Element as TFHIROperationOutcomeIssue;
           if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
             b.Append('  '+issue.Summary+#13#10);
         end;

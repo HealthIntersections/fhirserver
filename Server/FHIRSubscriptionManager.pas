@@ -578,7 +578,7 @@ var
   parser : TFHIRJsonParser;
   subscription : TFhirSubscription;
 begin
-  parser := TFHIRServerContext(ServerContext).Factory.newJsonParser(connection.request.AcceptLanguage);
+  parser := TFHIRJsonParser.Create(nil, connection.request.AcceptLanguage);
   try
     subscription := parser.ParseFragment(json, 'TFhirSubscription') as TFhirSubscription;
   finally

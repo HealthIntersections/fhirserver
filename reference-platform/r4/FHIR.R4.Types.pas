@@ -2818,6 +2818,7 @@ Type
     {!script hide}
     Function Link : TFhirType; Overload;
     Function Clone : TFhirType; Overload;
+    function isType : boolean; override;
     {!script show}
   End;
   TFHIRTypeClass = class of TFhirType;
@@ -2836,6 +2837,7 @@ Type
     function isPrimitive : boolean; override;
     function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
     {!script show}
   End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
@@ -3123,6 +3125,7 @@ Type
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
+    function isEnum : boolean; override;
     {!script show}
   Published
     {@member value
@@ -15740,6 +15743,11 @@ end;
 
 { TFhirType }
 
+function TFhirType.isType: boolean;
+begin
+  result := true;
+end;
+
 function TFhirType.Link : TFhirType;
 begin
   result := TFhirType(inherited Link);
@@ -15795,6 +15803,17 @@ begin
   result := StringValue;
 end;
 
+
+procedure TFHIRPrimitiveType.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'value') then
+  begin
+    StringValue := propValue.primitiveValue;
+    propValue.Free;
+  end
+  else
+    inherited;
+end;
 
 { TFhirBackboneElement }
 
@@ -16420,6 +16439,11 @@ end;
 function TFhirEnum.isEmpty : boolean;
 begin
   result := inherited isEmpty and (FValue = '');
+end;
+
+function TFhirEnum.isEnum: boolean;
+begin
+  result := true;
 end;
 
 function TFhirEnum.Link : TFhirEnum;

@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Objects,
+  FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Objects;
 
 Type
@@ -23,15 +23,20 @@ Type
 
   TBundleHandlerClass = class of TBundleHandler;
 
-  TFhirOperationOutcomeIssueW = class (TFslObject)
-  private
-    FIssue : TFHIRObject;
+  TFHIRXVersionElementWrapper = class (TFslObject)
+  protected
+    FElement : TFHIRObject;
   public
-    constructor Create(iss : TFHIRObject);
+    constructor Create(elem : TFHIRObject);
     destructor Destroy; override;
 
+    property Element : TFHIRObject read FElement;
+  end;
+
+  TFhirOperationOutcomeIssueW = class (TFHIRXVersionElementWrapper)
+  public
     function link : TFhirOperationOutcomeIssueW; overload;
-    property issue : TFHIRObject read FIssue;
+
 
     function display : String; virtual;
     function severity : TIssueSeverity; virtual;
@@ -40,15 +45,16 @@ Type
     msg := issue.details.text;            }
   end;
 
-  TFHIRXVersionResoourceWrapper = class (TFslObject)
+  TFHIRXVersionResourceWrapper = class (TFslObject)
   protected
     FRes : TFHIRResourceV;
   public
     constructor Create(res : TFHIRResourceV);
     destructor Destroy; override;
+    property Resource : TFHIRResourceV read FRes;
   end;
 
-  TFhirOperationOutcomeW = class (TFHIRXVersionResoourceWrapper)
+  TFhirOperationOutcomeW = class (TFHIRXVersionResourceWrapper)
   public
     function link : TFhirOperationOutcomeW; overload;
 
@@ -58,10 +64,7 @@ Type
   end;
   TFhirOperationOutcomeWClass = class of TFhirOperationOutcomeW;
 
-
-  TFHIRExtensionW = class (TFslObject);
-
-  TFHIRCapabilityStatementW = class (TFHIRXVersionResoourceWrapper)
+  TFHIRCapabilityStatementW = class (TFHIRXVersionResourceWrapper)
   public
     function link : TFHIRCapabilityStatementW; overload;
 
@@ -71,17 +74,54 @@ Type
     function hasFormat(fmt : String) : boolean; virtual;
   end;
 
+  TFhirParametersParameterW = class (TFHIRXVersionElementWrapper)
+  protected
+    FList : TFslList<TFhirParametersParameterW>;
+    function GetValue: TFHIRObject; virtual;
+    procedure SetValue(const Value: TFHIRObject); virtual;
+    procedure populateList; virtual;
+    function GetParameterParameter(name: String): TFhirParametersParameterW;  virtual;
+    function GetResourceParameter(name: String): TFHIRResourceV;  virtual;
+    function GetStringParameter(name: String): String;  virtual;
+  public
+    destructor Destroy; override;
+    function link : TFhirParametersParameterW; overload;
+
+    function name : String; virtual;
+    function hasValue : boolean;  virtual;
+    property value : TFHIRObject read GetValue write SetValue;
+
+    property res[name : String] : TFHIRResourceV read GetResourceParameter;
+    property str[name : String] : String read GetStringParameter;
+    property param[name : String] : TFhirParametersParameterW read GetParameterParameter;
+
+    function partList : TFslList<TFhirParametersParameterW>;
+    function appendPart(name : String) : TFhirParametersParameterW; virtual;
+  end;
+
+  TFHIRParametersW = class (TFHIRXVersionResourceWrapper)
+  protected
+    FList : TFslList<TFhirParametersParameterW>;
+    procedure populateList; virtual;
+  public
+    destructor Destroy; override;
+    function link : TFHIRParametersW; overload;
+
+    function parameterList : TFslList<TFhirParametersParameterW>;
+    function appendParameter(name : String) : TFhirParametersParameterW; virtual;
+  end;
+
 implementation
 
-{ TFHIRXVersionResoourceWrapper }
+{ TFHIRXVersionResourceWrapper }
 
-constructor TFHIRXVersionResoourceWrapper.create(res: TFHIRResourceV);
+constructor TFHIRXVersionResourceWrapper.create(res: TFHIRResourceV);
 begin
   inherited create;
   FRes := res;
 end;
 
-destructor TFHIRXVersionResoourceWrapper.Destroy;
+destructor TFHIRXVersionResourceWrapper.Destroy;
 begin
   FRes.Free;
   inherited;
@@ -110,18 +150,6 @@ begin
 end;
 
 { TFhirOperationOutcomeIssueW }
-
-constructor TFhirOperationOutcomeIssueW.Create(iss: TFHIRObject);
-begin
-  inherited create;
-  FIssue := iss;
-end;
-
-destructor TFhirOperationOutcomeIssueW.Destroy;
-begin
-  FIssue.Free;
-  inherited;
-end;
 
 function TFhirOperationOutcomeIssueW.display: String;
 begin
@@ -197,6 +225,119 @@ end;
 function TBundleHandler.next: String;
 begin
   result := next(FResource);
+end;
+
+{ TFhirParametersParameterW }
+
+function TFhirParametersParameterW.appendPart(name: String): TFhirParametersParameterW;
+begin
+  raise Exception.Create('Must override appendPart in '+ClassName);
+end;
+
+destructor TFhirParametersParameterW.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirParametersParameterW.GetParameterParameter(name: String): TFhirParametersParameterW;
+begin
+  raise Exception.Create('Must override GetParameterParameter in '+ClassName);
+end;
+
+function TFhirParametersParameterW.GetResourceParameter(name: String): TFHIRResourceV;
+begin
+  raise Exception.Create('Must override GetResourceParameter in '+ClassName);
+end;
+
+function TFhirParametersParameterW.GetStringParameter(name: String): String;
+begin
+  raise Exception.Create('Must override GetStringParameter in '+ClassName);
+end;
+
+function TFhirParametersParameterW.GetValue: TFHIRObject;
+begin
+  raise Exception.Create('Must override GetValue in '+ClassName);
+end;
+
+function TFhirParametersParameterW.hasValue: boolean;
+begin
+  raise Exception.Create('Must override hasValue in '+ClassName);
+end;
+
+function TFhirParametersParameterW.link: TFhirParametersParameterW;
+begin
+  result := TFhirParametersParameterW(inherited link);
+end;
+
+function TFhirParametersParameterW.name: String;
+begin
+  raise Exception.Create('Must override name in '+ClassName);
+end;
+
+function TFhirParametersParameterW.partList: TFslList<TFhirParametersParameterW>;
+begin
+  if FList = nil then
+    FList := TFslList<TFhirParametersParameterW>.create;
+  FList.Clear;
+  populateList;
+end;
+
+procedure TFhirParametersParameterW.populateList;
+begin
+  raise Exception.Create('Must override populateList in '+ClassName);
+end;
+
+procedure TFhirParametersParameterW.SetValue(const Value: TFHIRObject);
+begin
+  raise Exception.Create('Must override SetValue in '+ClassName);
+end;
+
+
+{ TFHIRXVersionElementWrapper }
+
+constructor TFHIRXVersionElementWrapper.Create(elem : TFHIRObject);
+begin
+  inherited create;
+  FElement := elem;
+end;
+
+destructor TFHIRXVersionElementWrapper.Destroy;
+begin
+  FElement.Free;
+  inherited;
+end;
+
+{ TFHIRParametersW }
+
+function TFHIRParametersW.appendParameter(name: String): TFhirParametersParameterW;
+begin
+  raise Exception.Create('Must override appendParameter in '+ClassName);
+end;
+
+destructor TFHIRParametersW.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFHIRParametersW.link: TFHIRParametersW;
+begin
+  result := TFHIRParametersW(inherited Link);
+
+end;
+
+function TFHIRParametersW.parameterList: TFslList<TFhirParametersParameterW>;
+begin
+  if FList = nil then
+    FList := TFslList<TFhirParametersParameterW>.create;
+  FList.Clear;
+  populateList;
+end;
+
+procedure TFHIRParametersW.populateList;
+begin
+  raise Exception.Create('Must override populateList in '+ClassName);
 end;
 
 end.

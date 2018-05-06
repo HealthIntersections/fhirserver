@@ -187,7 +187,7 @@ uses
   ServerEventJs in 'ServerEventJs.pas',
   FHIR.Javascript in '..\Libraries\js\FHIR.Javascript.pas',
   FHIR.Javascript.Chakra in '..\Libraries\js\FHIR.Javascript.Chakra.pas',
-  FHIR.Tools.Factory in '..\reference-platform\tools\FHIR.Tools.Factory.pas',
+  FHIR.R2.Factory in '..\reference-platform\dstu2\FHIR.R2.Factory.pas',
   USStatesServices in 'USStatesServices.pas',
   CountryCodeServices in 'CountryCodeServices.pas',
   FHIR.R2.PathNode in '..\reference-platform\dstu2\FHIR.R2.PathNode.pas',

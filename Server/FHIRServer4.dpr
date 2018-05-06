@@ -240,7 +240,6 @@ uses
   FHIR.R4.Javascript in '..\reference-platform\r4\FHIR.R4.Javascript.pas',
   FHIR.Client.Javascript in '..\Libraries\js\FHIR.Client.Javascript.pas',
   ServerEventJs in 'ServerEventJs.pas',
-  FHIR.Tools.Factory in '..\reference-platform\tools\FHIR.Tools.Factory.pas',
   CountryCodeServices in 'CountryCodeServices.pas',
   USStatesServices in 'USStatesServices.pas',
   FHIR.R4.Validator in '..\reference-platform\r4\FHIR.R4.Validator.pas',
@@ -285,7 +284,8 @@ uses
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
-  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas';
+  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
+  FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

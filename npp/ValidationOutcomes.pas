@@ -88,7 +88,7 @@ begin
   op := TFhirOperationOutcome.Create;
   try
     for iss in outcome do
-      op.issueList.Add(iss.issue.Link);
+      op.issueList.Add(iss.element.Link);
     BuildNarrative(op, 'Validation Outcomes');
     result := not Settings.NoValidationSummary;
     if result then

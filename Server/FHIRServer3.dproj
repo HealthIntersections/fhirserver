@@ -302,7 +302,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Javascript.pas"/>
         <DCCReference Include="..\Libraries\js\FHIR.Client.Javascript.pas"/>
         <DCCReference Include="ServerEventJs.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Factory.pas"/>
         <DCCReference Include="CountryCodeServices.pas"/>
         <DCCReference Include="USStatesServices.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>

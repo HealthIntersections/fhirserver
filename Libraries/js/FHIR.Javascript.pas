@@ -197,7 +197,7 @@ valueOf()	Returns the primitive value of an array
   end;
 
   // only one of these per thread
-  TJavascript = class // (TFslObject)
+  TJavascript = class
   private
     FRuntime : JsRuntimeHandle;
     FInstanceId : cardinal;

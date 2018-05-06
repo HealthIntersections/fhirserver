@@ -33,18 +33,10 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Xhtml, FHIR.Base.PathEngine,
-  {$IFDEF FHIR2}
-  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Utilities, FHIR.R2.PathEngine, FHIR.R2.Context,
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities, FHIR.R3.PathEngine, FHIR.R3.Context,
-  {$ENDIF}
-  {$IFDEF FHIR4}
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.PathEngine, FHIR.R4.Context,
-  {$ENDIF}
-  FHIR.Support.MXml;
+  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.MXml,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.PathEngine, FHIR.Base.Factory,
+  FHIR.XVersion.Resources;
+
 
 type
   TDifferenceOperation = (diffAdd, diffInsert, diffDelete, diffReplace, diffMove);
@@ -115,32 +107,34 @@ type
 
   TDifferenceEngine = class (TFslObject)
   private
-    fpe : TFHIRPathEngine;
+    FFactory : TFHIRFactory;
+    FContext : TFHIRWorkerContextV;
+    fpe : TFHIRPathEngineV;
 
     function matchRating(obj1, obj2 : TFHIRObject) : Double;
     procedure findCertainMatches(matches : TDifferenceMatchList; bl, ml : TFHIRObjectList);
     procedure findPossibleMatches(matches : TDifferenceMatchList; bl, ml : TFHIRObjectList);
     procedure makeListChanges(path : String; name : String; matches : TDifferenceMatchList; bl, ml : TFHIRObjectList; differences : TDifferenceList);
     procedure generate(path : String; base, modified : TFHIRObject; differences : TDifferenceList);
-    procedure encodeValue(part : TFhirParametersParameter; value : TFHIRObject);
-    function asParams(differences : TDifferenceList) : TFHIRParameters;
+    procedure encodeValue(part : TFhirParametersParameterW; value : TFHIRObject);
+    function asParams(differences : TDifferenceList) : TFHIRParametersW;
     function asValue(value : TFHIRObject) : string;
     function asHtml(differences : TDifferenceList) : string;
 
-    procedure populateObject(res : TFHIRObject; props : TFhirParametersParameter);
-    procedure applyAdd(res : TFHIRObject; path : String; name : String; value : TFhirParametersParameter);
-    procedure applyInsert(res : TFHIRObject; path : String; index : integer; value : TFhirParametersParameter);
+    procedure populateObject(res : TFHIRObject; props : TFhirParametersParameterW);
+    procedure applyAdd(res : TFHIRObject; path : String; name : String; value : TFhirParametersParameterW);
+    procedure applyInsert(res : TFHIRObject; path : String; index : integer; value : TFhirParametersParameterW);
     procedure applyDelete(res : TFHIRObject; path : String);
-    procedure applyReplace(res : TFHIRObject; path : String; value : TFhirParametersParameter);
+    procedure applyReplace(res : TFHIRObject; path : String; value : TFhirParametersParameterW);
     procedure applyMove(res : TFHIRObject; path : String; source, destination : integer);
 
-    function applyOperation(res : TFHIRObject; op : TFhirParametersParameter) : boolean;
+    function applyOperation(res : TFHIRObject; op : TFhirParametersParameterW) : boolean;
 
   public
-    constructor Create(context : TFHIRWorkerContext);
+    constructor Create(context : TFHIRWorkerContextV; factory : TFHIRFactory);
     destructor Destroy; override;
-    function generateDifference(base, modified : TFHIRObject; var html : String) : TFHIRParameters;
-    function applyDifference(base : TFHIRObject; delta : TFHIRParameters) : TFHIRObject;
+    function generateDifference(base, modified : TFHIRObject; var html : String) : TFHIRParametersW;
+    function applyDifference(base : TFHIRObject; delta : TFHIRParametersW) : TFHIRObject;
   end;
 
 implementation
@@ -258,7 +252,7 @@ end;
 
 { TDifferenceEngine }
 
-procedure TDifferenceEngine.applyAdd(res : TFHIRObject; path, name: String; value: TFhirParametersParameter);
+procedure TDifferenceEngine.applyAdd(res : TFHIRObject; path, name: String; value: TFhirParametersParameterW);
 var
   dest : TFHIRSelectionList;
   v : TFHIRObject;
@@ -270,7 +264,7 @@ begin
     if dest.Count > 1 then
       raise Exception.Create('Multiple locations found at '+path+' when adding');
 
-    if value.value <> nil then
+    if value.hasValue then
       dest[0].value.setProperty(name, value.value.Link)
     else
     begin
@@ -305,9 +299,9 @@ begin
   end;
 end;
 
-function TDifferenceEngine.applyDifference(base: TFHIRObject; delta: TFHIRParameters): TFHIRObject;
+function TDifferenceEngine.applyDifference(base: TFHIRObject; delta: TFHIRParametersW): TFHIRObject;
 var
-  op : TFhirParametersParameter;
+  op : TFhirParametersParameterW;
   de : boolean;
 begin
   de := false;
@@ -323,7 +317,7 @@ begin
   end;
 end;
 
-function TDifferenceEngine.generateDifference(base, modified: TFHIRObject; var html : String): TFHIRParameters;
+function TDifferenceEngine.generateDifference(base, modified: TFHIRObject; var html : String): TFHIRParametersW;
 var
   list : TDifferenceList;
 begin
@@ -397,9 +391,9 @@ begin
     result := c / t;
 end;
 
-procedure TDifferenceEngine.populateObject(res: TFHIRObject; props: TFhirParametersParameter);
+procedure TDifferenceEngine.populateObject(res: TFHIRObject; props: TFhirParametersParameterW);
 var
-  pp : TFhirParametersParameter;
+  pp : TFhirParametersParameterW;
   v : TFHIRObject;
 begin
   for pp in props.partList do
@@ -486,7 +480,7 @@ begin
   end;
 end;
 
-procedure TDifferenceEngine.applyInsert(res : TFHIRObject; path: String; index: integer; value: TFhirParametersParameter);
+procedure TDifferenceEngine.applyInsert(res : TFHIRObject; path: String; index: integer; value: TFhirParametersParameterW);
 var
   dest : TFHIRSelectionList;
   v : TFHIRObject;
@@ -531,7 +525,7 @@ begin
   end;
 end;
 
-function TDifferenceEngine.applyOperation(res: TFHIRObject; op: TFhirParametersParameter) : boolean;
+function TDifferenceEngine.applyOperation(res: TFHIRObject; op: TFhirParametersParameterW) : boolean;
 var
   t : string;
   d : TDifferenceOperation;
@@ -550,7 +544,7 @@ begin
   result := d = diffDelete;
 end;
 
-procedure TDifferenceEngine.applyReplace(res : TFHIRObject; path: String; value: TFhirParametersParameter);
+procedure TDifferenceEngine.applyReplace(res : TFHIRObject; path: String; value: TFhirParametersParameterW);
 var
   dest : TFHIRSelectionList;
   v : TFHIRObject;
@@ -633,67 +627,53 @@ begin
   end;
 end;
 
-function TDifferenceEngine.asParams(differences: TDifferenceList): TFHIRParameters;
+function TDifferenceEngine.asParams(differences: TDifferenceList): TFHIRParametersW;
 var
   diff : TDifference;
-  p, pp : TFhirParametersParameter;
+  p, pp : TFhirParametersParameterW;
 begin
-  result := TFhirParameters.Create;
+  result := FFactory.makeParameters;
   try
     for diff in differences do
     begin
       if diff.FOp = diffDelete then
       begin
-        p := result.parameterList.Append;
-        p.name := 'operation';
-        pp := p.partList.Append;
-        pp.name := 'type';
-        pp.value := TFhirCode.Create(CODES_DIFF_OP[diffDelete]);
-        pp := p.partList.Append;
-        pp.name := 'path';
-        pp.value := TFhirString.Create(diff.Path);
+        p := result.appendParameter('operation');
+        pp := p.appendPart('type');
+        pp.value := FFactory.makeCode(CODES_DIFF_OP[diffDelete]);
+        pp := p.appendPart('path');
+        pp.value := FFactory.makeString(diff.Path);
       end
       else if diff.FOp = diffMove then
       begin
-        p := result.parameterList.Append;
-        p.name := 'operation';
-        pp := p.partList.Append;
-        pp.name := 'type';
-        pp.value := TFhirCode.Create(CODES_DIFF_OP[diffMove]);
-        pp := p.partList.Append;
-        pp.name := 'path';
-        pp.value := TFhirString.Create(diff.Path);
-        pp := p.partList.Append;
-        pp.name := 'source';
-        pp.value := TFhirInteger.Create(inttostr(diff.Index));
-        pp := p.partList.Append;
-        pp.name := 'destination';
-        pp.value := TFhirInteger.Create(inttostr(diff.Index2));
+        p := result.appendParameter('operation');
+        pp := p.appendPart('type');
+        pp.value := FFactory.makeCode(CODES_DIFF_OP[diffMove]);
+        pp := p.appendPart('path');
+        pp.value := FFactory.makeString(diff.Path);
+        pp := p.appendPart('source');
+        pp.value := FFactory.makeInteger(inttostr(diff.Index));
+        pp := p.appendPart('destination');
+        pp.value := FFactory.makeInteger(inttostr(diff.Index2));
       end
       else
       begin
-        p := result.parameterList.Append;
-        p.name := 'operation';
-        pp := p.partList.Append;
-        pp.name := 'type';
-        pp.value := TFhirCode.Create(CODES_DIFF_OP[diff.FOp]);
-        pp := p.partList.Append;
-        pp.name := 'path';
-        pp.value := TFhirString.Create(diff.Path);
+        p := result.appendParameter('operation');
+        pp := p.appendPart('type');
+        pp.value := FFactory.makeCode(CODES_DIFF_OP[diff.FOp]);
+        pp := p.appendPart('path');
+        pp.value := FFactory.makeString(diff.Path);
         if diff.Name <> '' then
         begin
-          pp := p.partList.Append;
-          pp.name := 'name';
-          pp.value := TFhirString.Create(diff.Name);
+          pp := p.appendPart('name');
+          pp.value := FFactory.makeString(diff.Name);
         end;
         if diff.FOp = diffInsert then
         begin
-          pp := p.partList.Append;
-          pp.name := 'index';
-          pp.value := TFhirInteger.Create(inttostr(diff.Index));
+          pp := p.appendPart('index');
+          pp.value := FFactory.makeInteger(inttostr(diff.Index));
         end;
-        pp := p.partList.Append;
-        pp.name := 'value';
+        pp := p.appendPart('value');
         encodeValue(pp, diff.Value);
       end;
     end;
@@ -706,18 +686,18 @@ end;
 function TDifferenceEngine.asValue(value: TFHIRObject): string;
 var
   pl : TFHIRPropertyList;
-  c : TFHIRJsonComposer;
+  c : TFHIRComposer;
   b : TStringBuilder;
 begin
-  if value is TFHIREnum then
-    result := FormatTextToXml(TFHIREnum(value).value, xmlText)
+  if value.isEnum then
+    result := FormatTextToXml(value.primitiveValue, xmlText)
   else if (value is TFhirXHtmlNode) then
     result := FormatTextToXml(TFHIRXhtmlParser.compose(TFhirXHtmlNode(value)), xmlText)
-  else if (value is TFHIRType) and (Value.isPrimitive) then
+  else if (value.isType) and (Value.isPrimitive) then
     result := FormatTextToXml(Value.primitiveValue, xmlText)
-  else if (value is TFHIRType) and StringArrayExistsSensitive(['Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta'], Value.fhirType) then
+  else if (value.isType) and StringArrayExistsSensitive(['Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta'], Value.fhirType) then
   begin
-    c := TFHIRJsonComposer.Create(fpe.context.link, OutputStyleNormal, 'en');
+    c := FFactory.makeComposer(FContext.link, ffJson, 'en', OutputStyleNormal);
     try
       result := c.Compose('value', value);
     finally
@@ -755,33 +735,37 @@ begin
 
 end;
 
-constructor TDifferenceEngine.Create(context: TFHIRWorkerContext);
+constructor TDifferenceEngine.Create(context: TFHIRWorkerContextV; factory : TFHIRFactory);
 begin
   inherited create;
-  fpe := TFHIRPathEngine.Create(context, nil);
+  FFactory := factory;
+  FContext := context;
+  fpe := FFactory.makePathEngine(context.link, nil);
 end;
 
 destructor TDifferenceEngine.Destroy;
 begin
   fpe.Free;
+  FContext.Free;
+  FFactory.free;
   inherited;
 end;
 
-procedure TDifferenceEngine.encodeValue(part: TFhirParametersParameter; value: TFHIRObject);
+procedure TDifferenceEngine.encodeValue(part: TFhirParametersParameterW; value: TFHIRObject);
 var
   pl : TFHIRPropertyList;
   p : TFHIRProperty;
   b : TFHIRObject;
-  pp : TFhirParametersParameter;
+  pp : TFhirParametersParameterW;
 begin
-  if value is TFHIREnum then
-    part.value := TFHIRCode.create(TFHIREnum(value).value)
+  if value.isEnum then
+    part.value := FFactory.makeCode(value.primitiveValue)
   else if (value is TFhirXHtmlNode) then
   begin
-    part.value := TFhirString.Create(TFHIRXhtmlParser.compose(TFhirXHtmlNode(value)));
+    part.value := FFactory.makeString(TFHIRXhtmlParser.compose(TFhirXHtmlNode(value)));
   end
-  else if (value is TFHIRType) and (Value.isPrimitive or StringArrayExistsSensitive(['Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta'], Value.fhirType)) then
-    part.value := Value.Link as TFHIRType
+  else if (value.isType) and (Value.isPrimitive or StringArrayExistsSensitive(['Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta'], Value.fhirType)) then
+    part.value := Value.Link
   else
   begin
     // an anonymous type. So what we do here is create the value, but the value
@@ -793,8 +777,7 @@ begin
         p.forceValues;
         for b in p.Values do
         begin
-          pp := part.partList.Append;
-          pp.name := p.Name;
+          pp := part.appendPart(p.Name);
           encodeValue(pp, b as TFHIRObject);
         end;
       end;

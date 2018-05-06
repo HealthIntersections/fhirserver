@@ -3470,7 +3470,7 @@ begin
   result := TFhirOperationOutcome.create;
   try
     for o in ctxt.Issues do
-      result.issueList.add(o.issue.Link);
+      result.issueList.add(o.Element.Link);
     BuildNarrative(result, ctxt.OperationDescription);
     result.Link;
   finally

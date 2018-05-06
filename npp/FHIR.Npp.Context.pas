@@ -46,17 +46,17 @@ type
   private
     FContext : TFHIRNppContext; // no link
     FWorker : TFHIRWorkerContextV;
-    FFactory : TFHIRVersionFactory;
+    FFactory : TFHIRFactory;
     FSource: string;
     FError: String;
     procedure SetWorker(const Value: TFHIRWorkerContextV);
   public
-    constructor Create(factory : TFHIRVersionFactory);
+    constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
     function link : TFHIRNppVersionFactory; overload;
 
     property Worker : TFHIRWorkerContextV read FWorker write SetWorker;
-    property Factory : TFHIRVersionFactory read FFactory;
+    property Factory : TFHIRFactory read FFactory;
 
     property source : string read FSource write FSource;
     property error : String read FError write FError;
@@ -179,7 +179,7 @@ begin
   result := FFactory.makeGenerator(FWorker.link);
 end;
 
-constructor TFHIRNppVersionFactory.Create(factory : TFHIRVersionFactory);
+constructor TFHIRNppVersionFactory.Create(factory : TFHIRFactory);
 begin
   inherited create;
   FFactory := factory;

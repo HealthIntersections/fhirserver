@@ -169,7 +169,7 @@ uses
   ServerEventJs in '..\..\Server\ServerEventJs.pas',
   FHIR.Javascript in '..\..\Libraries\js\FHIR.Javascript.pas',
   FHIR.Javascript.Chakra in '..\..\Libraries\js\FHIR.Javascript.Chakra.pas',
-  FHIR.Tools.Factory in '..\..\reference-platform\tools\FHIR.Tools.Factory.pas',
+  FHIR.R4.Factory in '..\..\reference-platform\r4\FHIR.R4.Factory.pas',
   CountryCodeServices in '..\..\Server\CountryCodeServices.pas',
   USStatesServices in '..\..\Server\USStatesServices.pas',
   FHIR.R4.PathNode in '..\..\reference-platform\r4\FHIR.R4.PathNode.pas',
@@ -198,7 +198,8 @@ uses
   FHIR.XVersion.Resources in '..\..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
   FHIR.Base.Narrative in '..\..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\..\reference-platform\base\FHIR.Base.PathEngine.pas',
-  FHIR.R4.Common in '..\..\reference-platform\r4\FHIR.R4.Common.pas';
+  FHIR.R4.Common in '..\..\reference-platform\r4\FHIR.R4.Common.pas',
+  FHIR.R4.Narrative in '..\..\reference-platform\r4\FHIR.R4.Narrative.pas';
 
 {$R *.res}
 

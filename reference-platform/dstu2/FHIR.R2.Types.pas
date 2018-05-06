@@ -19,7 +19,7 @@ unit FHIR.R2.Types;
      prior written permission.
   
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
   IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
   INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
@@ -2047,7 +2047,7 @@ Type
     Procedure SetIdST(value : String);
     function GetExtensionList : TFhirExtensionList;
     function GetHasExtensionList : Boolean;
-  
+
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -2131,7 +2131,7 @@ Type
     }
     procedure AddItem(value : TFhirElement); overload;
 
-    
+
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -2329,6 +2329,7 @@ Type
     {!script hide}
     Function Link : TFhirType; Overload;
     Function Clone : TFhirType; Overload;
+    function isType : boolean; override;
     {!script show}
   End;
   TFHIRTypeClass = class of TFhirType;
@@ -2349,6 +2350,7 @@ Type
     function isPrimitive : boolean; override;
     function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
     {!script show}
   End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
@@ -2381,6 +2383,7 @@ Type
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
+    function isEnum : boolean; override;
     {!script show}
   Published
     {@member value
@@ -3054,7 +3057,7 @@ Type
 
   {@Class TFhirUri : TFhirPrimitiveType
     a complex Uri - has an Id attribute, and extensions.
-    
+
     Used where a FHIR element is a Uri, and extensions
   }
   TFhirUri = class (TFhirPrimitiveType)
@@ -3222,7 +3225,7 @@ Type
       The actual value of the instant
     }
     property value : TDateTimeEx read FValue write SetValue;
-  End;    
+  End;
 
 
   TFhirInstantListEnumerator = class (TFslObject)
@@ -3936,7 +3939,7 @@ Type
     }
     function Append : TFhirCode;
 
-    
+
     {@member AddItem
       Add an already existing FhirCode to the end of the list.
     }
@@ -3978,7 +3981,7 @@ Type
        Get the iIndexth FhirCode. (0 = first item)
     }
     procedure SetItemByIndex(index : Integer; value : TFhirCode);
-    
+
     {@member Count
       The number of items in the collection
     }
@@ -4314,7 +4317,7 @@ Type
     }
     procedure AddItem(value : String); overload;
 
-    
+
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -4440,7 +4443,7 @@ Type
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
-    
+
     {@member IndexOf
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -11038,6 +11041,11 @@ end;
 
 { TFhirType }
 
+function TFhirType.isType: boolean;
+begin
+  result := true;
+end;
+
 function TFhirType.Link : TFhirType;
 begin
   result := TFhirType(inherited Link);
@@ -11093,6 +11101,17 @@ begin
   result := StringValue;
 end;
 
+
+procedure TFHIRPrimitiveType.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'value') then
+  begin
+    StringValue := propValue.primitiveValue;
+    propValue.Free;
+  end
+  else
+    inherited;
+end;
 
 { TFhirEnum }
 
@@ -11176,6 +11195,11 @@ end;
 function TFhirEnum.isEmpty : boolean;
 begin
   result := inherited isEmpty and (FValue = '');
+end;
+
+function TFhirEnum.isEnum: boolean;
+begin
+  result := true;
 end;
 
 function TFhirEnum.Link : TFhirEnum;

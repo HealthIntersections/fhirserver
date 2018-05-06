@@ -34,15 +34,16 @@ interface
 uses
   Windows, SysUtils, classes,
   FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.XVersion.Resources,
+  FHIR.Tools.Parser,
   {$IFDEF FHIR2}
-  FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types,
+  FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Factory, FHIR.R2.Common,
   {$ENDIF}
   {$IFDEF FHIR3}
-  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.Types,
+  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Factory, FHIR.R3.Common,
   {$ENDIF}
   {$IFDEF FHIR4}
-  FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types,
+  FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Factory, FHIR.R4.Common,
   {$ENDIF}
   FHIR.Tools.DiffEngine,
   FHIR.Support.MXml, DUnitX.TestFramework;
@@ -64,6 +65,7 @@ Type
   private
     tests : TMXmlElement;
 
+    function makeFactory : TFHIRFactory;
     function findTest(index : integer) : TMXmlElement;
     function parseResource(elem : TMXmlElement) : TFhirResource;
     function AsXml(res : TFHIRResource) : String;
@@ -133,6 +135,13 @@ begin
   result := nil;
 end;
 
+function TDifferenceEngineTest.makeFactory: TFHIRFactory;
+begin
+  {$IFDEF FHIR2} result := TFHIRFactoryR2.Create; {$ENDIF}
+  {$IFDEF FHIR3} result := TFHIRFactoryR3.Create; {$ENDIF}
+  {$IFDEF FHIR4} result := TFHIRFactoryR4.Create; {$ENDIF}
+end;
+
 procedure TDifferenceEngineTest.DifferenceEngineTest(Name: String);
 var
   test : TMXmlElement;
@@ -195,12 +204,13 @@ var
   delta : TFhirParameters;
   outcome : TFhirResource;
   html : String;
+  w : TFhirParametersW;
 begin
   if (mode = 'both') or (mode = 'reverse') then
   begin
-    engine := TDifferenceEngine.Create(TTestingWorkerContext.Use);
+    engine := TDifferenceEngine.Create(TTestingWorkerContext.Use, makeFactory);
     try
-      delta := engine.generateDifference(input, output, html);
+      delta := engine.generateDifference(input, output, html).Resource as TFHIRParameters;
       try
         compareXml(name, 'Difference', diff, delta);
       finally
@@ -213,13 +223,18 @@ begin
 
   if (mode = 'both') or (mode = 'forwards') then
   begin
-    engine := TDifferenceEngine.Create(TTestingWorkerContext.Use);
+    engine := TDifferenceEngine.Create(TTestingWorkerContext.Use, makeFactory);
     try
-      outcome := engine.applyDifference(input, diff) as TFhirResource;
+      w := TFhirParameters4.create(diff.link);
       try
-        compareXml(name, 'Output', output, outcome);
+        outcome := engine.applyDifference(input, w) as TFhirResource;
+        try
+          compareXml(name, 'Output', output, outcome);
+        finally
+          outcome.Free;
+        end;
       finally
-        outcome.Free;
+        w.free;
       end;
     finally
       engine.free;

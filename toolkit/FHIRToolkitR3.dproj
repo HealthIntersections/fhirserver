@@ -374,9 +374,12 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
-        <DCCReference Include="..\npp\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

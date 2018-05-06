@@ -233,7 +233,6 @@ uses
   FHIR.Client.Javascript in '..\Libraries\js\FHIR.Client.Javascript.pas',
   ServerEventJs in '..\Server\ServerEventJs.pas',
   ServerJavascriptHost in '..\Server\ServerJavascriptHost.pas',
-  FHIR.Tools.Factory in '..\reference-platform\tools\FHIR.Tools.Factory.pas',
   IdUriParserTests in 'IdUriParserTests.pas',
   FHIR.Cql.Engine in '..\Libraries\cql\FHIR.Cql.Engine.pas',
   CountryCodeServices in '..\Server\CountryCodeServices.pas',
@@ -282,7 +281,8 @@ uses
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
   FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
-  FHIR.R4.Tests.Worker in '..\reference-platform\r4\tests\FHIR.R4.Tests.Worker.pas';
+  FHIR.R4.Tests.Worker in '..\reference-platform\r4\tests\FHIR.R4.Tests.Worker.pas',
+  FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas';
 
 var
   runner : ITestRunner;

@@ -304,7 +304,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Javascript.pas"/>
         <DCCReference Include="..\Libraries\js\FHIR.Client.Javascript.pas"/>
         <DCCReference Include="ServerEventJs.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Factory.pas"/>
         <DCCReference Include="CountryCodeServices.pas"/>
         <DCCReference Include="USStatesServices.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Validator.pas"/>
@@ -350,6 +349,7 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Factory.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

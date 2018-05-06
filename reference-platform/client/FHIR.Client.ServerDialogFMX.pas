@@ -364,7 +364,7 @@ end;
 
 function TEditRegisteredServerForm.readVersion: TFHIRVersion;
 begin
-  result := TFHIRVersionFactory(cbxVersion.ListItems[cbxVersion.ItemIndex].Data).version;
+  result := TFHIRFactory(cbxVersion.ListItems[cbxVersion.ItemIndex].Data).version;
 end;
 
 procedure TEditRegisteredServerForm.SetCapabilityStatement(const Value: TFhirCapabilityStatementW);

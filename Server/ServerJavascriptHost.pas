@@ -7,7 +7,8 @@ uses
   FHIR.Support.Lock, FHIR.Javascript,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Client,
+  FHIR.Base.Objects, FHIR.Base.Factory,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Client,
   FHIR.Javascript.Base;
 
 {$IFDEF FHIR2}
@@ -71,7 +72,7 @@ Type
     procedure SetRegistry(const Value: TEventScriptRegistry);
     procedure checkHasEngine;
   public
-    constructor Create(chakraPath : String);
+    constructor Create(chakraPath : String; factory : TFHIRFactory);
     destructor Destroy; override;
 
     property registry : TEventScriptRegistry read FRegistry write SetRegistry;
@@ -125,11 +126,11 @@ begin
     raise EJavascriptApplication.Create('Javascript is not supported on this server');
 end;
 
-constructor TJsHost.Create(chakraPath : String);
+constructor TJsHost.Create(chakraPath : String; factory : TFHIRFactory);
 begin
   inherited create;
   if (chakraPath <> '') then
-    FEngine := TFHIRJavascript.Create(chakraPath);
+    FEngine := TFHIRJavascript.Create(chakraPath, factory.link);
 end;
 
 destructor TJsHost.Destroy;

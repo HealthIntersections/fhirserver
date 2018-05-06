@@ -240,7 +240,7 @@ uses
   FHIR.R3.Javascript in '..\reference-platform\dstu3\FHIR.R3.Javascript.pas',
   FHIR.Client.Javascript in '..\Libraries\js\FHIR.Client.Javascript.pas',
   ServerEventJs in 'ServerEventJs.pas',
-  FHIR.Tools.Factory in '..\reference-platform\tools\FHIR.Tools.Factory.pas',
+  FHIR.R3.Factory in '..\reference-platform\dstu3\FHIR.R3.Factory.pas',
   CountryCodeServices in 'CountryCodeServices.pas',
   USStatesServices in 'USStatesServices.pas',
   FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas',

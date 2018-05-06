@@ -36,7 +36,8 @@ uses
   FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Javascript, FHIR.Support.Javascript,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client;
+  FHIR.Base.Objects, FHIR.Base.Factory;{,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client}
 
 type
   TFHIRJavascriptDefinedElement = class (TFslObject)
@@ -49,9 +50,9 @@ type
   TFHIRJavascript = class (TFslJavascript)
   private
     FDefinedElements : TFslMap<TFHIRJavascriptDefinedElement>;
-    FFactory : TFhirResourceFactory;
+    FFactory : TFhirFactory;
   public
-    constructor Create(chakraPath : String); override;
+    constructor Create(chakraPath : String; factory : TFHIRFactory);
     destructor Destroy; override;
 
     procedure registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter : TJsGetterFunction; setter : TJsSetterProcedure);
@@ -84,11 +85,11 @@ uses
 
 { TFHIRJavascript }
 
-constructor TFHIRJavascript.Create(chakraPath : String);
+constructor TFHIRJavascript.Create(chakraPath : String; factory : TFHIRFactory);
 begin
-  inherited;
+  inherited create(chakraPath);
   FDefinedElements := TFslMap<TFHIRJavascriptDefinedElement>.create;
-  FFactory := TFhirResourceFactory.Create;
+  FFactory := factory;
   registerFHIRTypes(self);
   TFHIRClientJSHelper.registerFHIRClient(self);
   TFHIRServerJsHelper.registerFHIRServerEvent(self);
@@ -173,7 +174,7 @@ var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
   p : TFHIRProperty;
-  res : TFHIRPrimitiveType;
+  res : TFHIRObject;
 begin
   obj := this as TFHIRObject;
   def := TFHIRJavascriptDefinedElement(propDef.context);
@@ -185,16 +186,16 @@ begin
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
     else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
     begin
-      res := TFHIRJavascript(propDef.Javascript).FFactory.makeByName(def.FFHIRType) as TFHIRPrimitiveType;
+      res := TFHIRJavascript(propDef.Javascript).FFactory.makeByName(def.FFHIRType);
       try
-        res.StringValue := js.asString(value);
+        res.setProperty('value', FFactory.makeString(js.asString(value)));
         obj.setProperty(def.FName, res.Link);
       finally
         res.Free;
       end;
     end
     else
-      (p.Values[0] as TFHIRPrimitiveType).StringValue := js.asString(value);
+      p.Values[0].setProperty('value', FFactory.makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -328,7 +329,7 @@ var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
   p : TFHIRProperty;
-  res : TFHIRPrimitiveType;
+  res : TFHIRObject;
 begin
   obj := this as TFHIRObject;
   def := TFHIRJavascriptDefinedElement(propDef.context);
@@ -340,16 +341,15 @@ begin
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
     else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
     begin
-      res := TFhirBase64Binary.Create;
+      res := FFactory.makeBase64Binary(js.asString(value));
       try
-        res.StringValue := js.asString(value);
         obj.setProperty(def.FName, res.Link);
       finally
         res.Free;
       end;
     end
     else
-      (p.Values[0] as TFHIRPrimitiveType).StringValue := js.asString(value);
+      p.Values[0].setProperty('value', FFactory.makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -372,7 +372,7 @@ begin
     else if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a boolean but it had mutiple values')
     else
-      result := js.wrap((p.Values[0] as TFHIRBoolean).Value)
+      result := js.wrap(StrToBool(p.Values[0].primitiveValue))
   finally
     p.Free;
   end;
@@ -383,7 +383,6 @@ var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
   p : TFHIRProperty;
-  res : TFHIRBoolean;
 begin
   obj := this as TFHIRObject;
   def := TFHIRJavascriptDefinedElement(propDef.context);
@@ -395,15 +394,10 @@ begin
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
     else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
     begin
-      res := TFHIRBoolean.create(js.asBoolean(value));
-      try
-        obj.setProperty(def.FName, res.Link);
-      finally
-        res.Free;
-      end;
+      obj.setProperty(def.FName, FFactory.makeBoolean(js.asBoolean(value)));
     end
     else
-      (p.Values[0] as TFHIRPrimitiveType).StringValue := js.asString(value);
+      p.Values[0].setProperty('value', FFactory.makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -437,7 +431,7 @@ var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
   p : TFHIRProperty;
-  res : TFHIRPrimitiveType;
+  res : TFHIRObject;
 begin
   obj := this as TFHIRObject;
   def := TFHIRJavascriptDefinedElement(propDef.context);
@@ -449,16 +443,16 @@ begin
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
     else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
     begin
-      res := TFHIRJavascript(propDef.Javascript).FFactory.makeByName(def.FFHIRType) as TFHIRPrimitiveType;
+      res := TFHIRJavascript(propDef.Javascript).FFactory.makeByName(def.FFHIRType);
       try
-        res.StringValue := js.asString(value);
+        res.setProperty('value', FFactory.makeString(js.asString(value)));
         obj.setProperty(def.FName, res.Link);
       finally
         res.Free;
       end
     end
     else
-      (p.Values[0] as TFHIRPrimitiveType).StringValue := js.asString(value);
+      p.Values[0].setProperty('value', FFactory.makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -492,7 +486,7 @@ var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
   p : TFHIRProperty;
-  res : TFHIRPrimitiveType;
+  res : TFHIRObject;
 begin
   obj := this as TFHIRObject;
   def := TFHIRJavascriptDefinedElement(propDef.context);
@@ -504,16 +498,16 @@ begin
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as an integer but it had mutiple values')
     else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
     begin
-      res := TFHIRJavascript(propDef.Javascript).FFactory.makeByName(def.FFHIRType) as TFHIRPrimitiveType;
+      res := TFHIRJavascript(propDef.Javascript).FFactory.makeByName(def.FFHIRType);
       try
-        res.StringValue := js.asString(value);
+        res.setProperty('value', FFactory.makeString(js.asString(value)));
         obj.setProperty(def.FName, res.Link);
       finally
         res.Free;
       end;
     end
     else
-      (p.Values[0] as TFHIRPrimitiveType).StringValue := js.asString(value);
+      p.Values[0].setProperty('value', FFactory.makeString(js.asString(value)));
   finally
     p.Free;
   end;
@@ -547,7 +541,6 @@ var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
   p : TFHIRProperty;
-  res : TFHIRPrimitiveType;
 begin
   obj := this as TFHIRObject;
   def := TFHIRJavascriptDefinedElement(propDef.context);
@@ -558,16 +551,9 @@ begin
      if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')
     else if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
-    begin
-      res := TFhirDecimal.create(js.asString(value));
-      try
-        obj.setProperty(def.FName, res.Link);
-      finally
-        res.Free;
-      end;
-    end
+      obj.setProperty(def.FName, FFactory.makeDecimal(js.asString(value)))
     else
-      (p.Values[0] as TFHIRPrimitiveType).StringValue := js.asString(value);
+      p.Values[0].setProperty('value', FFactory.makeString(js.asString(value)));
   finally
     p.Free;
   end;

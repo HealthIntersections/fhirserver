@@ -35,8 +35,8 @@ uses
   SysUtils, Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.System, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, 
-  FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.PathEngine;
+  FHIR.Base.Objects, FHIR.Base.Xhtml,
+  FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.PathEngine, FHIR.R3.Factory;
 
 type
   TVariableMode = (vmINPUT, vmOUTPUT);
@@ -1327,7 +1327,7 @@ end;
 
 function TFHIRStructureMapUtilities.runTransform(appInfo : TFslObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
 var
-  factory : TFhirResourceFactory;
+  factory : TFhirFactoryR3;
   expr : TFHIRPathExpressionNode;
   v : TFHIRSelectionList;
   src, len : String;
@@ -1337,7 +1337,7 @@ begin
   case tgt.Transform of
     MapTransformCreate :
       begin
-        factory := TFhirResourceFactory.Create;
+        factory := TFhirFactoryR3.Create;
         try
           result := factory.makeByName(getParamString(vars, tgt.ParameterList[0]));
         finally

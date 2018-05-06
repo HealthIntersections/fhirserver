@@ -112,7 +112,7 @@ type
     FExpression : TFHIRPathExpressionNodeV;
     FEngine : TFHIRPathEngineV;
     FServices : TFHIRWorkerContextV;
-    FFactory : TFHIRVersionFactory;
+    FFactory : TFHIRFactory;
     FLog : String;
     FLayoutInProgress : boolean;
     FMode : TExecutionMode;
@@ -151,7 +151,7 @@ var
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
     services : TFHIRWorkerContextV;
-    factory : TFHIRVersionFactory;
+    factory : TFHIRFactory;
     resource : TFHIRResourceV; context : TFHIRObject; path : String; fmt : TFHIRFormat;
     out types : TFHIRTypeDetailsV; out items : TFHIRSelectionList) : boolean;
 
@@ -196,7 +196,7 @@ end;
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
     services : TFHIRWorkerContextV;
-    factory : TFHIRVersionFactory;
+    factory : TFHIRFactory;
     resource : TFHIRResourceV; context : TFHIRObject; path : String; fmt : TFHIRFormat;
     out types : TFHIRTypeDetailsV; out items : TFHIRSelectionList) : boolean;
 begin

@@ -150,9 +150,12 @@ uses
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
   FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
-  FHIR.Base.Narrative in '..\npp\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
-  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas';
+  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
+  FHIR.R3.Factory in '..\reference-platform\dstu3\FHIR.R3.Factory.pas',
+  FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
+  FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
+  FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas';
 
 {$R *.res}
 

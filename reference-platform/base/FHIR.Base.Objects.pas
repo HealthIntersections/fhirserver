@@ -347,6 +347,8 @@ type
     function fhirType : String; virtual;
     function getId : String; virtual;
     function isPrimitive : boolean; virtual;
+    function isEnum : boolean; virtual;
+    function isType : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
     function isMetaDataBased : boolean; virtual;
@@ -445,12 +447,6 @@ type
     function getId : String; override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
-  end;
-
-
-  TFHIRObjectFactory = class (TFslObject)
-  private
-  public
   end;
 
   TFHIRSelection = class (TFslObject)
@@ -741,12 +737,22 @@ begin
   result := true;
 end;
 
+function TFHIRObject.isEnum: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRObject.isMetaDataBased: boolean;
 begin
   result := false;
 end;
 
 function TFHIRObject.isPrimitive: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRObject.isType: boolean;
 begin
   result := false;
 end;

@@ -746,7 +746,7 @@ begin
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
 {$ENDIF}
-  GJsHost := TJsHost.Create(FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
+  GJsHost := TJsHost.Create(FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServerContext.Factory);
   GJsHost.registry := ServerContext.EventScriptRegistry.Link;
   AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
   FLock.Lock;
@@ -2029,9 +2029,9 @@ begin
     p := TParseMap.Create(TEncoding.UTF8.GetString(request.Source.AsBytes), true);
     try
       if p.GetVar('srcformat') = 'json' then
-        prsr := FServerContext.Factory.newJsonParser(request.lang)
+        prsr := FServerContext.Factory.makeParser(ServerContext.ValidatorContext.Link, ffJson, request.lang)
       else
-        prsr := FServerContext.Factory.newXmlParser(request.lang);
+        prsr := FServerContext.Factory.makeParser(ServerContext.ValidatorContext.Link, ffXml, request.lang);
       try
         s := p.GetVar('source');
         prsr.Source := TStringStream.Create(s, TEncoding.UTF8);
@@ -2815,11 +2815,11 @@ begin
           if (rdr.Parts[i].name <> 'package.json') then
           begin
             if rdr.Parts[i].name.EndsWith('.json') then
-              p := FServerContext.Factory.newJsonParser(lang)
+              p := FServerContext.Factory.makeParser(ServerContext.ValidatorContext.Link, ffJson, lang)
             else if rdr.Parts[i].name.EndsWith('.map') then
               p := TFHIRTextParser.Create(FServerContext.ValidatorContext.link, lang)
             else
-              p := FServerContext.Factory.newXmlParser(lang);
+              p := FServerContext.Factory.makeParser(ServerContext.ValidatorContext.Link, ffXml, lang);
             try
               p.Source := TBytesStream.Create(rdr.Parts[i].AsBytes);
               p.AllowUnknownContent := true;
@@ -3004,7 +3004,7 @@ end;
 
 function TFhirWebServer.processProvenanceHeader(header, lang: String): TFhirProvenance;
 var
-  json: TFHIRJsonParser;
+  json: TFHIRParser;
   ss: TStringStream;
 begin
   if header = '' then
@@ -3013,7 +3013,7 @@ begin
   begin
     ss := TStringStream.Create(header, TEncoding.UTF8);
     try
-      json := FServerContext.Factory.newJsonParser(lang);
+      json := FServerContext.Factory.makeParser(ServerContext.ValidatorContext.Link, ffJson, lang);
       try
         json.Source := ss;
         json.Parse;
@@ -4606,7 +4606,7 @@ begin
 {$IFDEF MSWINDOWS}
     CoInitialize(nil);
 {$ENDIF}
-    GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
+    GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.Factory);
     GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
 
     repeat
@@ -4680,7 +4680,7 @@ end;
 procedure TFhirServerSubscriptionThread.Execute;
 begin
   SetThreadName('Server Subscription Thread');
-  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
+  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.Factory);
   GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerSubscriptionThread');
   try
@@ -4725,7 +4725,7 @@ var
   i: integer;
 begin
   SetThreadName('Server Email Thread');
-  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
+  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.Factory);
   GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerEmailThread');
   try
@@ -4809,7 +4809,7 @@ var
   ctxt : TOperationContext;
 begin
   SetThreadName('Server Async Thread');
-  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''));
+  GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.Factory);
   try
     GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
     status(atsWaiting, 'Waiting to start');

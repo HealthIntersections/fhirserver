@@ -167,7 +167,7 @@ uses
   FHIR.Javascript.Chakra in '..\Libraries\js\FHIR.Javascript.Chakra.pas',
   FHIR.Support.Javascript in '..\Libraries\js\FHIR.Support.Javascript.pas',
   FHIR.Support.Signatures in '..\reference-platform\support\FHIR.Support.Signatures.pas',
-  FHIR.Tools.Factory in '..\reference-platform\tools\FHIR.Tools.Factory.pas',
+  FHIR.R3.Factory in '..\reference-platform\dstu3\FHIR.R3.Factory.pas',
   CountryCodeServices in '..\Server\CountryCodeServices.pas',
   USStatesServices in '..\Server\USStatesServices.pas',
   FHIR.R3.PathNode in '..\reference-platform\dstu3\FHIR.R3.PathNode.pas',
@@ -193,7 +193,8 @@ uses
   FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
-  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas';
+  FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
+  FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas';
 
 var
   gsrv : TExampleFhirServer;

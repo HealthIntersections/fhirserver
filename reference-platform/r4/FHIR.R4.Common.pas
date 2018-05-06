@@ -58,6 +58,7 @@ type
 
   TFHIROperationOutcomeIssue4 = class (TFHIROperationOutcomeIssueW)
   private
+    function issue : TFHIROperationOutcomeIssue;
   public
     function display : String; override;
     function severity : TIssueSeverity; override;
@@ -71,6 +72,33 @@ type
     procedure readSmartExtension(var authorize, token, register: String); override;
     function hasFormat(fmt : String) : boolean; override;
   end;
+
+  TFhirParametersParameter4 = class (TFhirParametersParameterW)
+  private
+    function parameter : TFhirParametersParameter;
+  protected
+    function GetValue: TFHIRObject; override;
+    procedure SetValue(const Value: TFHIRObject); override;
+    procedure populateList; override;
+    function GetParameterParameter(name: String): TFhirParametersParameterW; override;
+    function GetResourceParameter(name: String): TFHIRResourceV; override;
+    function GetStringParameter(name: String): String; override;
+  public
+    function name : String; override;
+    function hasValue : boolean; override;
+    property value : TFHIRObject read GetValue write SetValue;
+    function appendPart(name : String) : TFhirParametersParameterW; override;
+  end;
+
+  TFHIRParameters4 = class (TFHIRParametersW)
+  private
+    function parameter : TFhirParameters;
+  protected
+    procedure populateList; override;
+  public
+    function appendParameter(name : String) : TFhirParametersParameterW; override;
+  end;
+
 
 implementation
 
@@ -150,18 +178,20 @@ function TFHIROperationOutcomeIssue4.display: String;
 var
   i : TFHIROperationOutcomeIssue;
 begin
-  i := issue as TFHIROperationOutcomeIssue;
+  i := issue;
   result := i.diagnostics;
   if (i.details <> nil) and (i.details.text <> '') then
     result := i.details.text;
 end;
 
-function TFHIROperationOutcomeIssue4.severity: TIssueSeverity;
-var
-  i : TFHIROperationOutcomeIssue;
+function TFHIROperationOutcomeIssue4.issue: TFHIROperationOutcomeIssue;
 begin
-  i := issue as TFHIROperationOutcomeIssue;
-  result := ISSUE_SEVERITY_MAP[i.severity];
+  result := FElement as TFHIROperationOutcomeIssue;
+end;
+
+function TFHIROperationOutcomeIssue4.severity: TIssueSeverity;
+begin
+  result := ISSUE_SEVERITY_MAP[issue.severity];
 end;
 
 
@@ -211,6 +241,103 @@ begin
           token := TFHIRUri(ex2.value).value
         else if ex2.url = 'register' then
           register := TFHIRUri(ex2.value).value;
+end;
+
+{ TFhirParametersParameter4 }
+
+function TFhirParametersParameter4.appendPart(name: String): TFhirParametersParameterW;
+begin
+  result := TFhirParametersParameter4.Create(parameter.partList.Append);
+  TFhirParametersParameter4(result).parameter.name := name;
+  FList.Add(result);
+end;
+
+function TFhirParametersParameter4.GetParameterParameter(name: String): TFhirParametersParameterW;
+var
+  t : TFhirParametersParameterW;
+begin
+  populateList;
+  result := nil;
+  for t in FList do
+    if t.name = name then
+      exit(t);
+end;
+
+function TFhirParametersParameter4.GetResourceParameter(name: String): TFHIRResourceV;
+var
+  t : TFhirParametersParameterW;
+begin
+  populateList;
+  result := nil;
+  for t in FList do
+    if t.name = name then
+      exit(TFhirParametersParameter4(t).parameter.resource);
+end;
+
+function TFhirParametersParameter4.GetStringParameter(name: String): String;
+var
+  t : TFhirParametersParameterW;
+begin
+  populateList;
+  result := '';
+  for t in FList do
+    if t.name = name then
+      exit(TFhirParametersParameter4(t).parameter.value.primitiveValue);
+end;
+
+function TFhirParametersParameter4.GetValue: TFHIRObject;
+begin
+  result := parameter.value;
+end;
+
+function TFhirParametersParameter4.hasValue: boolean;
+begin
+  result := parameter.value <> nil;
+end;
+
+function TFhirParametersParameter4.name: String;
+begin
+  result := parameter.name;
+end;
+
+function TFhirParametersParameter4.parameter: TFhirParametersParameter;
+begin
+  result := Element as TFhirParametersParameter;
+end;
+
+procedure TFhirParametersParameter4.populateList;
+var
+  t : TFhirParametersParameter;
+begin
+  for t in parameter.partList do
+    FList.Add(TFhirParametersParameter4.Create(t.Link));
+end;
+
+procedure TFhirParametersParameter4.SetValue(const Value: TFHIRObject);
+begin
+  parameter.value := value as TFHIRType;
+end;
+
+{ TFHIRParameters4 }
+
+function TFHIRParameters4.appendParameter(name: String): TFhirParametersParameterW;
+begin
+  result := TFhirParametersParameter4.Create(parameter.parameterList.Append);
+  TFhirParametersParameter4(result).parameter.name := name;
+  FList.Add(result);
+end;
+
+function TFHIRParameters4.parameter: TFhirParameters;
+begin
+  result := Resource as TFhirParameters;
+end;
+
+procedure TFHIRParameters4.populateList;
+var
+  t : TFhirParametersParameter;
+begin
+  for t in parameter.parameterList do
+    FList.Add(TFhirParametersParameter4.Create(t.Link));
 end;
 
 end.

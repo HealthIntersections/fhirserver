@@ -5,7 +5,17 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Javascript,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Javascript.Base,
+  FHIR.Base.Factory, FHIR.XVersion.Resources,
+  {$IFDEF FHIR2}
+  FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Factory, FHIR.R2.Common, FHIR.R2.Utilities,
+  {$ENDIF}
+  {$IFDEF FHIR3}
+  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Factory, FHIR.R3.Common, FHIR.R3.Utilities,
+  {$ENDIF}
+  {$IFDEF FHIR4}
+  FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Factory, FHIR.R4.Common, FHIR.R4.Utilities,
+  {$ENDIF}
+  FHIR.Javascript.Base,
   DUnitX.TestFramework;
 
 
@@ -16,6 +26,7 @@ Type
     FLog : TStringList;
     FJs : TFHIRJavascript;
     procedure JSLog(sender : TJavascript; message : String);
+    function makeFactory : TFHIRFactory;
   Published
     [SetUp]    Procedure Setup;
     [TearDown] Procedure TearDown;
@@ -28,9 +39,16 @@ implementation
 
 { TJavascriptTests }
 
+function TFHIRJavascriptTests.makeFactory: TFHIRFactory;
+begin
+  {$IFDEF FHIR2} result := TFHIRFactoryR2.Create; {$ENDIF}
+  {$IFDEF FHIR3} result := TFHIRFactoryR3.Create; {$ENDIF}
+  {$IFDEF FHIR4} result := TFHIRFactoryR4.Create; {$ENDIF}
+end;
+
 procedure TFHIRJavascriptTests.Setup;
 begin
-  FJs := TFHIRJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll');
+  FJs := TFHIRJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll', makeFactory);
   FJs.OnLog := JSLog;
   FLog := TStringList.create;
 end;

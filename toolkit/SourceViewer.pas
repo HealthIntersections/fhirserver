@@ -33,7 +33,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.ScrollBox, FMX.Memo, FMX.TabControl, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIR.Tools.Resources, FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Tools.DiffEngine;
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.XVersion.Resources,
+  FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.DiffEngine;
 
 type
   TSourceViewerForm = class(TForm)
@@ -54,12 +55,15 @@ type
   private
     FCurrent: TFHIRResource;
     FOriginal: TFHIRResource;
+    FFactory: TFHIRFactory;
     procedure SetCurrent(const Value: TFHIRResource);
     procedure SetOriginal(const Value: TFHIRResource);
 
     procedure render;
+    procedure SetFactory(const Value: TFHIRFactory);
   public
     destructor Destroy; override;
+    property factory : TFHIRFactory read FFactory write SetFactory;
     property current : TFHIRResource read FCurrent write SetCurrent;
     property original : TFHIRResource read FOriginal write SetOriginal;
   end;
@@ -75,6 +79,7 @@ implementation
 
 destructor TSourceViewerForm.Destroy;
 begin
+  FFactory.Free;
   FCurrent.Free;
   FOriginal.Free;
   inherited;
@@ -89,7 +94,7 @@ procedure TSourceViewerForm.render;
 var
   c : TFHIRComposer;
   engine : TDifferenceEngine;
-  diff : TFHIRParameters;
+  diff : TFHIRParametersW;
   html : string;
 begin
   if rbXml.IsChecked then
@@ -104,11 +109,11 @@ begin
       1 : mSource.Lines.Text := c.Compose(FOriginal);
       2 :
         begin
-        engine := TDifferenceEngine.Create(nil);
+        engine := TDifferenceEngine.Create(nil, FFactory.link);
         try
           diff := engine.generateDifference(FOriginal, FCurrent, html);
           try
-            mSource.Lines.Text := c.Compose(diff);
+            mSource.Lines.Text := c.Compose(diff.Resource);
           finally
             diff.Free;
           end;
@@ -126,6 +131,12 @@ procedure TSourceViewerForm.SetCurrent(const Value: TFHIRResource);
 begin
   FCurrent.Free;
   FCurrent := Value;
+end;
+
+procedure TSourceViewerForm.SetFactory(const Value: TFHIRFactory);
+begin
+  FFactory.Free;
+  FFactory := Value;
 end;
 
 procedure TSourceViewerForm.SetOriginal(const Value: TFHIRResource);

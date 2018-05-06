@@ -217,7 +217,7 @@
         <DCCReference Include="..\Libraries\js\FHIR.Javascript.Chakra.pas"/>
         <DCCReference Include="..\Libraries\js\FHIR.Support.Javascript.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Factory.pas"/>
         <DCCReference Include="..\Server\CountryCodeServices.pas"/>
         <DCCReference Include="..\Server\USStatesServices.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathNode.pas"/>
@@ -244,6 +244,7 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

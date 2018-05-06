@@ -113,7 +113,7 @@ type
   private
     FPlugin : TFHIRPlugin; // no link
     function getDefPath(version : TFHIRVersion): String;
-    procedure load(factory : TFHIRVersionFactory);
+    procedure load(factory : TFHIRFactory);
   public
     constructor Create(plugin : TFHIRPlugin);
     procedure Execute(); override;
@@ -172,7 +172,7 @@ type
     function parse(timeLimit : integer; var fmt : TFHIRFormat; var res : TFHIRResourceV) : boolean; overload;
 
     function parse(cnt : String; fmt : TFHIRFormat) : TFHIRResource; overload;
-    function compose(cnt : TFHIRResource; fmt : TFHIRFormat) : String; overload;
+    function compose(cnt : TFHIRResourceV; fmt : TFHIRFormat) : String; overload;
 
     procedure evaluatePath(r : TFHIRResource; out items : TFHIRSelectionList; out expr : TFHIRPathExpressionNodeV; out types : TFHIRTypeDetailsV);
     function showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TFslStringSet) : string;
@@ -331,7 +331,7 @@ begin
   configureSSL;
 end;
 
-function TFHIRPlugin.compose(cnt: TFHIRResource; fmt: TFHIRFormat): String;
+function TFHIRPlugin.compose(cnt: TFHIRResourceV; fmt: TFHIRFormat): String;
 var
   s : TStringStream;
   comp : TFHIRComposer;
@@ -498,16 +498,16 @@ var
   s, e : integer;
   msg : String;
 begin
-  s := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, StrToIntDef(issue.issue.Tags['s-l'], 1)-1, StrToIntDef(issue.issue.Tags['s-c'], 1)-1);
-  e := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, StrToIntDef(issue.issue.Tags['e-l'], 1)-1, StrToIntDef(issue.issue.Tags['e-c'], 1)-1);
+  s := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, StrToIntDef(issue.element.Tags['s-l'], 1)-1, StrToIntDef(issue.element.Tags['s-c'], 1)-1);
+  e := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, StrToIntDef(issue.element.Tags['e-l'], 1)-1, StrToIntDef(issue.element.Tags['e-c'], 1)-1);
   if (e = s) then
     e := s + 1;
   msg := issue.display;
   case issue.severity of
-    isWarning : result := TFHIRAnnotation.create(alWarning, StrToIntDef(issue.issue.Tags['s-l'], 1)-1, s, e, msg, msg);
-    isInformation : result := TFHIRAnnotation.create(alHint, StrToIntDef(issue.issue.Tags['s-l'], 1)-1, s, e, msg, msg);
+    isWarning : result := TFHIRAnnotation.create(alWarning, StrToIntDef(issue.element.Tags['s-l'], 1)-1, s, e, msg, msg);
+    isInformation : result := TFHIRAnnotation.create(alHint, StrToIntDef(issue.element.Tags['s-l'], 1)-1, s, e, msg, msg);
   else
-    result := TFHIRAnnotation.create(alError, StrToIntDef(issue.issue.Tags['s-l'], 1)-1, s, e, msg, msg);
+    result := TFHIRAnnotation.create(alError, StrToIntDef(issue.element.Tags['s-l'], 1)-1, s, e, msg, msg);
   end;
 end;
 
@@ -1131,7 +1131,8 @@ procedure TFHIRPlugin.funcDifference;
 var
   current, original, output : string;
   fmtc, fmto : TFHIRFormat;
-  rc, ro, op : TFHIRResource;
+  rc, ro : TFHIRResourceV;
+  op : TFHIRParametersW;
   diff : TDifferenceEngine;
   html : String;
 begin
@@ -1152,11 +1153,11 @@ begin
     try
       ro := parse(original, fmto);
       try
-        diff := TDifferenceEngine.Create(FContext.Version[FCurrentFileInfo.Version].Worker.link as TFHIRWorkerContext);
+        diff := TDifferenceEngine.Create(FContext.Version[FCurrentFileInfo.Version].Worker.link as TFHIRWorkerContext, FContext.Version[FCurrentFileInfo.Version].Factory.link);
         try
           op := diff.generateDifference(ro, rc, html);
           try
-            output := compose(op, fmtc);
+            output := compose(op.Resource, fmtc);
             ShowResource(self, 'Difference', html, output);
           finally
             op.free;
@@ -1972,7 +1973,7 @@ end;
 
 procedure TContextLoadingThread.Execute;
 begin
-  load(TFHIRVersionFactoryR3.create);
+  load(TFHIRFactoryR3.create);
 end;
 
 function TContextLoadingThread.getDefPath(version: TFHIRVersion): String;
@@ -1994,7 +1995,7 @@ begin
     end;
 end;
 
-procedure TContextLoadingThread.load(factory : TFHIRVersionFactory);
+procedure TContextLoadingThread.load(factory : TFHIRFactory);
 var
   vf : TFHIRNppVersionFactory;
   ctxt : TFHIRPluginValidatorContext;

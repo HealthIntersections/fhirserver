@@ -36,7 +36,8 @@ uses
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Generics,
   FHIR.Debug.Logging,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Client.Base, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
   FHIR.Tools.Context, FHIR.Tools.Profiles, FHIR.Support.System, FHIR.Support.Text,
   FHIR.Client.SmartUtilities, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
@@ -156,6 +157,7 @@ type
     FRegistryTab : TTabItem;
     ToolkitLogger : TToolkitLogger;
     FServers : TFslList<TRegisteredFHIRServer>;
+    FFactory : TFHIRFactory;
 
     procedure saveFiles;
     procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
@@ -186,6 +188,10 @@ var
 implementation
 
 {$R *.fmx}
+
+uses
+  {$IFDEF FHIR3} FHIR.R3.Factory; {$ENDIF}
+  {$IFDEF FHIR4} FHIR.R4.Factory; {$ENDIF}
 
 procedure TMasterToolsForm.addFileToList(filename: String);
 var
@@ -489,6 +495,7 @@ begin
     try
       form.current := frame.currentResource.Link;
       form.original := frame.originalResource.Link;
+      form.Factory := FFactory.link;
       form.ShowModal;
     finally
       form.Free;
@@ -797,6 +804,9 @@ begin
   {$ENDIF}
   Caption := 'FHIR Toolkit (R'+FHIR_GENERATED_PUBLICATION+')';
   ToolkitLogger := TToolkitLogger.create;
+  {$IFDEF FHIR2} FFactory := TFHIRFactoryR2.Create; {$ENDIF}
+  {$IFDEF FHIR3} FFactory := TFHIRFactoryR3.Create; {$ENDIF}
+  {$IFDEF FHIR4} FFactory := TFHIRFactoryR4.Create; {$ENDIF}
 end;
 
 procedure TMasterToolsForm.FormDestroy(Sender: TObject);

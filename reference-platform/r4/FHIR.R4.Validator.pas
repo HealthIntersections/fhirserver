@@ -3471,7 +3471,7 @@ begin
   result := TFhirOperationOutcome.create;
   try
     for o in ctxt.Issues do
-      result.issueList.Add(o.issue.Link);
+      result.issueList.Add(o.element.Link);
     BuildNarrative(result, ctxt.OperationDescription);
     result.Link;
   finally
