@@ -507,7 +507,7 @@ end;
 function TJSONWriter.toString: String;
 begin
   if (Stream <> nil) and (Stream is TFslStringStream) then
-    result := TFslStringStream(Stream).Data
+    result := string(TFslStringStream(Stream).Data)
   else
     result := inherited toString;
 end;
@@ -1096,7 +1096,7 @@ end;
 
 function TJSONLexer.GetValue: String;
 begin
-  result := FValue.ToString;
+  result := string(FValue.ToString);
 end;
 
 function TJSONLexer.Consume(aType: TJsonLexType): String;

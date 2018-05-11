@@ -3104,7 +3104,7 @@ begin
       src := resourceToBytes(self, ffXml, OutputStyleCanonical);
       dig := TDigitalSigner.Create;
       try
-        dig.PrivateKey := cert;
+        dig.PrivateKey := ansistring(cert);
         signature.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
       finally
         dig.free;
