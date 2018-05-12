@@ -719,7 +719,10 @@ begin
     doWork(nil, 'Loading Data', false,
       procedure
       begin
-        FContext := TBaseWorkerContext.Create;
+        FContext := TBaseWorkerContext.Create(
+          {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}
+          {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF}
+        );
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types-r'+FHIR_GENERATED_PUBLICATION+'.xml');
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources-r'+FHIR_GENERATED_PUBLICATION+'.xml');
         if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then

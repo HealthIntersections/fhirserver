@@ -35,7 +35,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Lock, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
   FHIR.Support.Stream, FHIR.Support.Zip,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser,
+  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Base.Factory,
   FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.Constants;
 
 Const
@@ -111,12 +111,13 @@ Type
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
   public
-    Constructor Create; Override;
+    Constructor Create(factory : TFHIRFactory); Override;
     Destructor Destroy; Override;
     function link : TBaseWorkerContext; overload;
 
     property Profiles : TProfileManager read FProfiles;
-    procedure SeeResource(r : TFhirResource); virtual;
+    procedure SeeResource(r : TFhirResource); overload; virtual;
+    procedure seeResource(res : TFHIRResourceV); overload; override;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
     procedure LoadFromFile(filename : string); overload;
@@ -1749,6 +1750,11 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+procedure TBaseWorkerContext.SeeResource(res: TFHIRResourceV);
+begin
+  SeeResource(res as TFHIRResource);
 end;
 
 procedure TBaseWorkerContext.Load(feed: TFHIRBundle);

@@ -35,6 +35,7 @@ Uses
   SysUtils, Classes, ActiveX, ComObj,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Factory,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Validator, FHIR.Tools.Parser, FHIR.Tools.Utilities, FHIR.Tools.Profiles,
   FHIR.Tools.Constants, FHIR.Tools.Client, FHIR.Base.Objects, FHIR.Tools.Context;
 
@@ -51,7 +52,7 @@ Type
   protected
     procedure SeeResource(r : TFhirResource); override;
   public
-    Constructor Create(terminologyServer : String); virtual;
+    Constructor Create(factory : TFHIRFactory; terminologyServer : String); virtual;
     Destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContext; overload;
@@ -84,9 +85,9 @@ begin
   end;
 end;
 
-constructor TFHIRPluginValidatorContext.Create(terminologyServer : String);
+constructor TFHIRPluginValidatorContext.Create(factory : TFHIRFactory; terminologyServer : String);
 begin
-  inherited Create;
+  inherited Create(factory);
   FValueSets := TFslMap<TFHIRValueSet>.create;
   FCodeSystems := TFslMap<TFHIRCodeSystem>.create;
   FUrl := terminologyServer;

@@ -44,6 +44,7 @@ Type
     FUsername: String;
     FPassword: String;
     FMethod: TInternetFetcherMethod;
+    FContentType: String;
     procedure SetBuffer(const Value: TFslBuffer);
     procedure SetPassword(const Value: String);
     procedure SetUsername(const Value: String);
@@ -61,6 +62,7 @@ Type
     Property Username : String read FUsername write SetUsername;
     Property Password : String read FPassword write SetPassword;
     Property Method : TInternetFetcherMethod read FMethod write FMethod;
+    Property ContentType : String read FContentType;
   End;
 
 Implementation
@@ -128,6 +130,7 @@ begin
             oMem.position := 0;
             FBuffer.Capacity := oMem.Size;
             oMem.read(Fbuffer.Data^, oMem.Size);
+            FContentType := oHTTP.Response.ContentType;
           Finally
             oMem.Free;
           End;
@@ -154,6 +157,7 @@ begin
               oMem.position := 0;
               FBuffer.Capacity := oMem.Size;
               oMem.read(Fbuffer.Data^, oMem.Size);
+              FContentType := oHTTP.Response.ContentType;
             Finally
               oMem.Free;
             End;

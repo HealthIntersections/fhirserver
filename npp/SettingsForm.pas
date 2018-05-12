@@ -35,7 +35,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Buttons,
   Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
   VirtualTrees, Vcl.ComCtrls, FHIR.Client.SmartUtilities, FHIR.Client.ServerDialog,
-  FHIR.Support.Generics;
+  FHIR.Support.Generics, FHIR.Base.Objects, FHIR.Base.Factory,
+  FHIR.Cache.PackageManager,
+  FHIR.Npp.Context;
 
 type
   TSettingForm = class(TNppForm)
@@ -66,16 +68,18 @@ type
     cbPathSummary: TCheckBox;
     GroupBox4: TGroupBox;
     cbValidationSummary: TCheckBox;
-    GroupBox5: TGroupBox;
-    rbR3: TRadioButton;
-    rbR2: TRadioButton;
     Panel5: TPanel;
     Label5: TLabel;
-    lbAdditional: TListBox;
-    btnAddIG: TButton;
-    btnDeleteIG: TButton;
+    cbR2: TCheckBox;
+    cbR3: TCheckBox;
+    cbR4: TCheckBox;
     Label3: TLabel;
+    Bevel1: TBevel;
+    Label4: TLabel;
     Button3: TButton;
+    lblR2Status: TLabel;
+    lblR3Status: TLabel;
+    lblR4Status: TLabel;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnEditAsTextClick(Sender: TObject);
@@ -88,13 +92,20 @@ type
     procedure btnDeleteClick(Sender: TObject);
     procedure btnUpClick(Sender: TObject);
     procedure btnDownClick(Sender: TObject);
-    procedure btnAddIGClick(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
     FServers : TFslList<TRegisteredFHIRServer>;
+    FVersions: TFHIRVersionFactories;
+    FCache : TFHIRPackageManager;
+    FContext : TFHIRNppContext;
     procedure LoadServers;
+    procedure SetVersions(const Value: TFHIRVersionFactories);
+    procedure SetContext(const Value: TFHIRNppContext);
   public
     destructor Destroy; override;
+    property versions : TFHIRVersionFactories read FVersions write SetVersions;
+    property Context : TFHIRNppContext read FContext write SetContext;
   end;
 
 var
@@ -106,10 +117,10 @@ implementation
 
 uses
   FHIRPluginSettings,
-  FHIR.Tools.Constants,
+  FHIR.R4.Constants,
   FHIRPlugin,
   FHIRVisualiser,
-  FHIRToolboxForm;
+  FHIRToolboxForm, FHIR.Cache.PackageManagerDialog;
 
 procedure TSettingForm.btnEditAsTextClick(Sender: TObject);
 begin
@@ -122,18 +133,10 @@ var
   b, s : String;
 begin
   Settings.TerminologyServer := edtServer.Text;
-  if rbR2.Checked then
-    Settings.DefinitionsVersion := defV2
-  else
-    Settings.DefinitionsVersion := defV3;
+  Settings.loadR2 := cbR2.Checked;
+  Settings.loadR3 := cbR3.Checked;
+  Settings.loadR4 := cbR4.Checked;
 
-  b := '';
-  for s in lbAdditional.Items do
-    if b = '' then
-      b := s
-    else
-      b := b +','+s;
-  Settings.AdditionalDefinitions := s;
   Settings.NoPathSummary := not cbPathSummary.checked;
   Settings.NoValidationSummary := not cbValidationSummary.checked;
   Settings.CommitChanges;
@@ -151,9 +154,35 @@ begin
   Settings.AbandonChanges;
 end;
 
+procedure TSettingForm.Button3Click(Sender: TObject);
+begin
+  PackageCacheForm := TPackageCacheForm.Create(self);
+  try
+    PackageCacheForm.ShowModal;
+    if FCache.packageExists('hl7.fhir.core', '1.0.2') then
+      cbR2.Checked := Settings.loadR2
+    else
+      cbR2.enabled := false;
+    if FCache.packageExists('hl7.fhir.core', '3.0.1') then
+      cbR3.Checked := Settings.loadR3
+    else
+      cbR3.enabled := false;
+    if FCache.packageExists('hl7.fhir.core', FHIR_GENERATED_VERSION) then
+      cbR4.Checked := Settings.loadR4
+    else
+      cbR4.enabled := false;
+  finally
+    PackageCacheForm.Free;
+  end;
+
+end;
+
 destructor TSettingForm.Destroy;
 begin
+  FContext.Free;
   FServers.Free;
+  FVersions.Free;
+  FCache.Free;
   inherited;
 end;
 
@@ -175,19 +204,6 @@ begin
     for i := 1 to c - 1 do
       n := n.NextSibling;
     vtServers.Selected[n] := true;
-  end;
-end;
-
-procedure TSettingForm.btnAddIGClick(Sender: TObject);
-var
-  od : TFileOpenDialog;
-begin
-  od := TFileOpenDialog.Create(nil);
-  try
-    if od.Execute then
-      lbAdditional.Items.Add(od.FileName);
-  finally
-    od.Free;
   end;
 end;
 
@@ -233,7 +249,8 @@ begin
     i := vtServers.GetFirstSelected().Index;
     EditRegisteredServerForm := TEditRegisteredServerForm.create(npp);
     try
-      EditRegisteredServerForm.loadFrom(i);
+      EditRegisteredServerForm.versions := FVersions.link;
+      EditRegisteredServerForm.Server := FServers[i].Link;
       if EditRegisteredServerForm.ShowModal = mrOk then
       begin
         vtServers.RootNodeCount := Settings.ServerCount('');
@@ -263,6 +280,7 @@ procedure TSettingForm.FormCreate(Sender: TObject);
 begin
   inherited;
   Settings.holdChanges;
+  FCache := TFHIRPackageManager.create(true);
 end;
 
 procedure TSettingForm.FormShow(Sender: TObject);
@@ -270,15 +288,24 @@ var
   s : String;
 begin
   edtServer.Text := Settings.TerminologyServer;
-  if settings.DefinitionsVersion = defV2 then
-    rbR2.Checked := true
+  if FCache.packageExists('hl7.fhir.core', '1.0.2') then
+    cbR2.Checked := Settings.loadR2
   else
-    rbr3.Checked := true;
+    cbR2.enabled := false;
+  if FCache.packageExists('hl7.fhir.core', '3.0.1') then
+    cbR3.Checked := Settings.loadR3
+  else
+    cbR3.enabled := false;
+  if FCache.packageExists('hl7.fhir.core', FHIR_GENERATED_VERSION) then
+    cbR4.Checked := Settings.loadR4
+  else
+    cbR4.enabled := false;
+  lblR2Status.Caption := CODES_TFHIRVersionLoadingStatus[Context.VersionLoading[fhirVersionRelease2]];
+  lblR3Status.Caption := CODES_TFHIRVersionLoadingStatus[Context.VersionLoading[fhirVersionRelease3]];
+  lblR4Status.Caption := CODES_TFHIRVersionLoadingStatus[Context.VersionLoading[fhirVersionRelease4]];
   vtServers.RootNodeCount := Settings.ServerCount('');
   cbPathSummary.checked := not Settings.NoPathSummary;
   cbValidationSummary.checked := not Settings.NoValidationSummary;
-  for s in Settings.AdditionalDefinitions.Split([',']) do
-    lbAdditional.Items.Add(s);
 end;
 
 procedure TSettingForm.LoadServers;
@@ -293,16 +320,32 @@ begin
   vtServers.Invalidate;
 end;
 
+procedure TSettingForm.SetContext(const Value: TFHIRNppContext);
+begin
+  FContext.Free;
+  FContext := Value;
+end;
+
+procedure TSettingForm.SetVersions(const Value: TFHIRVersionFactories);
+begin
+  FVersions.Free;
+  FVersions := Value;
+end;
+
 procedure TSettingForm.vtServersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   server : TRegisteredFHIRServer;
 begin
+  if FServers = nil then
+    loadServers;
   server := FServers[Node.Index];
   case Column of
   0: CellText := server.name;
   1: CellText := server.fhirEndpoint;
-  2: CellText := CODES_TSmartAppLaunchMode[server.SmartAppLaunchMode];
-  3: CellText := server.cdshookSummary;
+  2: CellText := CODES_TFHIRVersion[server.version];
+  3: CellText := CODES_TFHIRFormat[server.format];
+  4: CellText := CODES_TSmartAppLaunchMode[server.SmartAppLaunchMode];
+  5: CellText := server.cdshookSummary;
   end;
 end;
 

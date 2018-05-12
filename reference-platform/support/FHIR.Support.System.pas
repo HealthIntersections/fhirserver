@@ -39,6 +39,8 @@ Uses
 Function SystemTemp : String;
 Function SystemManualTemp : String;
 Function ProgData : String;
+Function UserFolder : String;
+function tempFileName(prefix : String): String;
 
 
 Type
@@ -59,36 +61,36 @@ procedure SetThreadName(name : String);
 function GetThreadName(id : integer) : String;
 
 type
-TColour = integer;
-THTMLColours = (
-      hcAliceblue, hcAntiquewhite, hcAqua, hcAquamarine, hcAzure,
-      hcBeige, hcBisque, hcBlack, hcBlanchedalmond, hcBlue,
-      hcBlueviolet, hcBrown, hcBurlywood, hcCadetblue, hcChartreuse,
-      hcChocolate, hcCoral, hcCornflowerblue, hcCornsilk, hcCrimson,
-      hcCyan, hcDarkblue, hcDarkcyan, hcDarkgoldenrod, hcDarkgray,
-      hcDarkgreen, hcDarkkhaki, hcDarkmagenta, hcDarkolivegreen, hcDarkorange,
-      hcDarkorchid, hcDarkred, hcDarksalmon, hcDarkseagreen, hcDarkslateblue,
-      hcDarkslategray, hcDarkturquoise, hcDarkviolet, hcdeeppink, hcDeepskyblue,
-      hcDimgray, hcDodgerblue, hcFirebrick, hcFloralwhite, hcForestgreen,
-      hcFuchsia, hcGainsboro, hcGhostwhite, hcGold, hcGoldenrod,
-      hcGray, hcGreen, hcGreenyellow, hcHoneydew, hcHotpink,
-      hcIndianred, hcIndigo, hcIvory, hcKhaki, hcLavendar,
-      hcLavenderblush, hcLawngreen, hcLemonchiffon, hcLightblue, hcLightcoral,
-      hcLightcyan, hcLightgoldenrodyellow, hcLightgreen, hcLightgrey, hcLightpink,
-      hcLightsalmon, hcLightseagreen, hcLightskyblue, hcLightslategray, hcLightsteelblue,
-      hcLightyellow, hcLime, hcLimegreen, hcLinen, hcMagenta,
-      hcMaroon, hcMediumauqamarine, hcMediumblue, hcMediumorchid, hcMediumpurple,
-      hcMediumseagreen, hcMediumslateblue, hcMediumspringgreen, hcMediumturquoise, hcMediumvioletred,
-      hcMidnightblue, hcMintcream, hcMistyrose, hcMoccasin, hcNavajowhite,
-      hcNavy, hcOldlace, hcOlive, hcOlivedrab, hcOrange,
-      hcOrangered, hcOrchid, hcPalegoldenrod, hcPalegreen, hcPaleturquoise,
-      hcPalevioletred, hcPapayawhip, hcPeachpuff, hcPeru, hcPink,
-      hcPlum, hcPowderblue, hcPurple, hcRed, hcRosybrown,
-      hcRoyalblue, hcSaddlebrown, hcSalmon, hcSandybrown, hcSeagreen,
-      hcSeashell, hcSienna, hcSilver, hcSkyblue, hcSlateblue,
-      hcSlategray, hcSnow, hcSpringgreen, hcSteelblue, hcTan,
-      hcTeal, hcThistle, hcTomato, hcTurquoise, hcViolet,
-      hcWheat, hcWhite, hcWhitesmoke, hcYellow, hcYellowGreen);
+  TColour = integer;
+  THTMLColours = (
+        hcAliceblue, hcAntiquewhite, hcAqua, hcAquamarine, hcAzure,
+        hcBeige, hcBisque, hcBlack, hcBlanchedalmond, hcBlue,
+        hcBlueviolet, hcBrown, hcBurlywood, hcCadetblue, hcChartreuse,
+        hcChocolate, hcCoral, hcCornflowerblue, hcCornsilk, hcCrimson,
+        hcCyan, hcDarkblue, hcDarkcyan, hcDarkgoldenrod, hcDarkgray,
+        hcDarkgreen, hcDarkkhaki, hcDarkmagenta, hcDarkolivegreen, hcDarkorange,
+        hcDarkorchid, hcDarkred, hcDarksalmon, hcDarkseagreen, hcDarkslateblue,
+        hcDarkslategray, hcDarkturquoise, hcDarkviolet, hcdeeppink, hcDeepskyblue,
+        hcDimgray, hcDodgerblue, hcFirebrick, hcFloralwhite, hcForestgreen,
+        hcFuchsia, hcGainsboro, hcGhostwhite, hcGold, hcGoldenrod,
+        hcGray, hcGreen, hcGreenyellow, hcHoneydew, hcHotpink,
+        hcIndianred, hcIndigo, hcIvory, hcKhaki, hcLavendar,
+        hcLavenderblush, hcLawngreen, hcLemonchiffon, hcLightblue, hcLightcoral,
+        hcLightcyan, hcLightgoldenrodyellow, hcLightgreen, hcLightgrey, hcLightpink,
+        hcLightsalmon, hcLightseagreen, hcLightskyblue, hcLightslategray, hcLightsteelblue,
+        hcLightyellow, hcLime, hcLimegreen, hcLinen, hcMagenta,
+        hcMaroon, hcMediumauqamarine, hcMediumblue, hcMediumorchid, hcMediumpurple,
+        hcMediumseagreen, hcMediumslateblue, hcMediumspringgreen, hcMediumturquoise, hcMediumvioletred,
+        hcMidnightblue, hcMintcream, hcMistyrose, hcMoccasin, hcNavajowhite,
+        hcNavy, hcOldlace, hcOlive, hcOlivedrab, hcOrange,
+        hcOrangered, hcOrchid, hcPalegoldenrod, hcPalegreen, hcPaleturquoise,
+        hcPalevioletred, hcPapayawhip, hcPeachpuff, hcPeru, hcPink,
+        hcPlum, hcPowderblue, hcPurple, hcRed, hcRosybrown,
+        hcRoyalblue, hcSaddlebrown, hcSalmon, hcSandybrown, hcSeagreen,
+        hcSeashell, hcSienna, hcSilver, hcSkyblue, hcSlateblue,
+        hcSlategray, hcSnow, hcSpringgreen, hcSteelblue, hcTan,
+        hcTeal, hcThistle, hcTomato, hcTurquoise, hcViolet,
+        hcWheat, hcWhite, hcWhitesmoke, hcYellow, hcYellowGreen);
 
 Const
   CURRENCY_MINIMUM = -922337203685477.58;
@@ -227,6 +229,7 @@ Function FileHandleOpen(Const aValue : Cardinal) : TFileHandle; Overload;
 Procedure FileHandleClose(Var aFileHandle : TFileHandle); Overload;
 Function PathFolder(Const sFilename : String) : String; Overload;
 Function ForceFolder(dir: String): Boolean;
+Function FolderDelete(Const sFolder : String) : Boolean; Overload;
 
 Function PathFilename(Const sFilename : String) : String; Overload;
 Function PathTitle(Const sFilename : String) : String; Overload;
@@ -283,6 +286,7 @@ Uses
   ActiveX,
   ComObj,
   {$ENDIF}
+  IOUtils,
   FHIR.Support.Decimal;
 
 
@@ -466,6 +470,20 @@ End;
 Function ForceFolder(dir: String): Boolean;
 begin
   result := SysUtils.ForceDirectories(dir);
+end;
+
+Function FolderDelete(Const sFolder : String) : Boolean;
+var
+  s : string;
+begin
+  result := true;
+  for s in TDirectory.GetDirectories(sFolder) do
+    if not FolderDelete(s) then
+      exit(false);
+  for s in TDirectory.GetFiles(sFolder) do
+    if not DeleteFile(s) then
+      exit(false);
+  SysUtils.RemoveDir(sFolder);
 end;
 
 Function FileHandleInvalid : TFileHandle;
@@ -790,6 +808,10 @@ Begin
 End;
 {$ENDIF}
 
+Function UserFolder : String;
+Begin
+  Result := ShellFolder(CSIDL_PROFILE);
+End;
 
 
 Var
@@ -1032,6 +1054,11 @@ begin
   finally
     LeaveCriticalSection(gCriticalSection);
   end;
+end;
+
+function tempFileName(prefix : String): String;
+begin
+  result := Path([SystemTemp, prefix+'-'+NewGuidId+'.tmp']);
 end;
 
 Initialization

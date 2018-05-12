@@ -36,7 +36,7 @@ uses
   Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
   FHIR.Support.Generics,
-  FHIR.Client.SmartUtilities,
+  FHIR.Base.Factory, FHIR.Client.SmartUtilities,
   FHIRPathDocumentation;
 
 type
@@ -70,6 +70,7 @@ type
     ToolButton2: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -102,6 +103,7 @@ type
     procedure ToolButton4Click(Sender: TObject);
     procedure ToolButton5Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure ToolButton6Click(Sender: TObject);
   private
     { Private declarations }
     FMessageShort, FMessageLong : String;
@@ -181,18 +183,7 @@ begin
   _FuncDisconnect;
   if cbxServers.ItemIndex = cbxServers.Items.Count - 1 then
   begin
-    EditRegisteredServerForm := TEditRegisteredServerForm.create(npp);
-    try
-      if EditRegisteredServerForm.ShowModal = mrOk then
-      begin
-        cbxServers.items.Insert(cbxServers.ItemIndex, EditRegisteredServerForm.edtName.Text+' ('+EditRegisteredServerForm.edtServer.Text+')');
-        cbxServers.ItemIndex := cbxServers.Items.Count - 2;
-      end
-      else
-        cbxServers.ItemIndex := 0;
-    finally
-      EditRegisteredServerForm.Free;
-    end;
+    FNpp.FuncSettings(true);
   end;
 end;
 
@@ -290,7 +281,7 @@ begin
   begin
     cbxServers.Items.addObject(FServers[i].name + ': '+FServers[i].fhirEndpoint, FServers[i]);
   end;
-  cbxServers.Items.Add('Register...');
+  cbxServers.Items.Add('Manager...');
   cbxServers.ItemIndex := 0;
   SendMessage(cbxServers.Handle, CB_SETDROPPEDWIDTH, 300, 0);
 end;
@@ -415,6 +406,11 @@ end;
 procedure TFHIRToolbox.ToolButton5Click(Sender: TObject);
 begin
   _FuncGenerateCode;
+end;
+
+procedure TFHIRToolbox.ToolButton6Click(Sender: TObject);
+begin
+  _FuncPackageManager;
 end;
 
 procedure TFHIRToolbox.tbConnectClick(Sender: TObject);

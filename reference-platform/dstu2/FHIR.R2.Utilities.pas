@@ -181,6 +181,7 @@ function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHI
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 type
+  {$IFDEF FHIR2}
   TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
   public
     procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
@@ -203,6 +204,7 @@ type
     function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
     function getBundle : TFHIRBundle; override;
   end;
+  {$ENDIF}
 
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
   TFHIRProfileStructureElement = TFhirElementDefinition;
@@ -5348,6 +5350,7 @@ begin
 end;
 
 
+{$IFDEF FHIR2}
 
 { TFHIRBundleBuilderSimple }
 
@@ -5464,6 +5467,7 @@ begin
   end;
   cnt.SaveToStream(f);
 end;
+{$ENDIF}
 
 { TFhirIdentifierHelper }
 

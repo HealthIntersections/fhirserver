@@ -51,8 +51,6 @@ type
   private
     function GetToolboxVisible: boolean;
     function GetVisualiserVisible: boolean;
-    function GetDefinitionsVersion: TDefinitionsVersion;
-    function GetAdditionalDefinitions: string;
     function GetTerminologyServer: string;
     function GetPath: String;
     function GetNoPathSummary: boolean;
@@ -67,8 +65,6 @@ type
     function GetNoWelcomeScreen: boolean;
     function GetBuildPrompt: String;
 
-    procedure SetDefinitionsVersion(const Value: TDefinitionsVersion);
-    procedure SetAdditionalDefinitions(const Value: string);
     procedure SetTerminologyServer(const Value: string);
     procedure SetPath(const Value: String);
     procedure SetToolboxVisible(const Value: boolean);
@@ -84,6 +80,12 @@ type
     procedure SetBackgroundValidation(const Value: boolean);
     procedure SetNoWelcomeScreen(const Value: boolean);
     procedure SetBuildPrompt(const Value: String);
+    function GetLoadR2: boolean;
+    function GetLoadR3: boolean;
+    function GetLoadR4: boolean;
+    procedure SetLoadR2(const Value: boolean);
+    procedure SetLoadR3(const Value: boolean);
+    procedure SetLoadR4(const Value: boolean);
   protected
     procedure initSettings; virtual;
   public
@@ -92,9 +94,10 @@ type
 
     property ToolboxVisible : boolean read GetToolboxVisible write SetToolboxVisible;
     property VisualiserVisible : boolean read GetVisualiserVisible write SetVisualiserVisible;
+    property loadR2 : boolean read GetLoadR2 write SetLoadR2;
+    property loadR3 : boolean read GetLoadR3 write SetLoadR3;
+    property loadR4 : boolean read GetLoadR4 write SetLoadR4;
     property TerminologyServer : string read GetTerminologyServer write SetTerminologyServer;
-    property DefinitionsVersion : TDefinitionsVersion read GetDefinitionsVersion write SetDefinitionsVersion;
-    property AdditionalDefinitions : string read GetAdditionalDefinitions write SetAdditionalDefinitions;
     property Path : String read GetPath write SetPath;
     property NoPathSummary : boolean read GetNoPathSummary write SetNoPathSummary;
     property NoValidationSummary : boolean read GetNoValidationSummary write SetNoValidationSummary;
@@ -134,11 +137,6 @@ end;
 function TFHIRPluginSettings.FontSize: integer;
 begin
   result := 10;
-end;
-
-function TFHIRPluginSettings.GetAdditionalDefinitions: string;
-begin
-  result := json.vStr['AdditionalDefinitions'];
 end;
 
 function TFHIRPluginSettings.GetBackgroundValidation: boolean;
@@ -217,15 +215,19 @@ begin
     result := StrToIntDef(o.vStr['Width'], DEF_Width);
 end;
 
-function TFHIRPluginSettings.GetDefinitionsVersion: TDefinitionsVersion;
-var
-  s : string;
+function TFHIRPluginSettings.GetLoadR2: boolean;
 begin
-  s := json.vStr['DefinitionsVersion'];
-  if (s = 'r2') then
-    result := defV2
-  else
-    result := defv3;
+  result := not json.bool['no-load-r2'];
+end;
+
+function TFHIRPluginSettings.GetLoadR3: boolean;
+begin
+  result := not json.bool['no-load-r3'];
+end;
+
+function TFHIRPluginSettings.GetLoadR4: boolean;
+begin
+  result := not json.bool['no-load-r4'];
 end;
 
 function TFHIRPluginSettings.GetNoPathSummary: boolean;
@@ -263,17 +265,11 @@ begin
   result := json.bool['Visualiser'];
 end;
 
-procedure TFHIRPluginSettings.SetAdditionalDefinitions(const Value: string);
-begin
-  if FShuttingDown then exit;
-  json.vStr['AdditionalDefinitions'] := Value;
-  Save;
-end;
-
 procedure TFHIRPluginSettings.SetBackgroundValidation(const Value: boolean);
 begin
   if FShuttingDown then exit;
   json.bool['BackgroundValidation'] := value;
+  Save;
 end;
 
 procedure TFHIRPluginSettings.SetBuildPrompt(const Value: String);
@@ -343,13 +339,25 @@ begin
   Save;
 end;
 
-procedure TFHIRPluginSettings.SetDefinitionsVersion(const Value: TDefinitionsVersion);
+procedure TFHIRPluginSettings.SetLoadR2(const Value: boolean);
 begin
-  if value = defV2 then
-    json.vStr['DefinitionsVersion'] := 'r2'
-  else
-    json.vStr['DefinitionsVersion'] := 'r3';
-  Save;
+  if FShuttingDown then exit;
+  json.bool['no-load-r2'] := not value;
+  save;
+end;
+
+procedure TFHIRPluginSettings.SetLoadR3(const Value: boolean);
+begin
+  if FShuttingDown then exit;
+  json.bool['no-load-r3'] := not value;
+  save;
+end;
+
+procedure TFHIRPluginSettings.SetLoadR4(const Value: boolean);
+begin
+  if FShuttingDown then exit;
+  json.bool['no-load-r4'] := not value;
+  save;
 end;
 
 procedure TFHIRPluginSettings.SetNoPathSummary(const Value: boolean);

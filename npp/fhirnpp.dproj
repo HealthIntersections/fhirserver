@@ -260,6 +260,41 @@
         <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
+        <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManagerDialog.pas">
+            <Form>PackageCacheForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Types.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Base.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Constants.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Context.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.ElementModel.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Common.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Profiles.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Xml.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.ParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Json.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.PathNode.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Client.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Xml.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.ParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Json.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Client.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Turtle.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

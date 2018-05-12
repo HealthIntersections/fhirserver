@@ -40,7 +40,7 @@ uses
 type
   TFHIRNppContext = class;
 
-  TFHIRVersionLoadingStatus = (vlsNotSupport, vlsLoading, vlsLoadingFailed, vlsLoaded);
+  TFHIRVersionLoadingStatus = (vlsNotSupported, vlsNotLoaded, vlsLoading, vlsLoadingFailed, vlsLoaded);
 
   TFHIRNppVersionFactory = class (TFslObject)
   private
@@ -70,8 +70,9 @@ type
 
   TFHIRNppContext = class (TFslObject)
   private
-    FVersions : TFslMap<TFHIRNppVersionFactory>;
-    FVersionStatus : TDictionary<TFHIRVersion, TFHIRVersionLoadingStatus>;
+    FVersionList : Array[TFHIRVersion] of TFHIRNppVersionFactory;
+    FVersionStatus : Array[TFHIRVersion] of TFHIRVersionLoadingStatus;
+    FVersions: TFHIRVersionFactories;
 
     function GetVersion(a: TFHIRVersion): TFHIRNppVersionFactory;
     procedure SetVersion(a: TFHIRVersion; const Value: TFHIRNppVersionFactory);
@@ -85,8 +86,12 @@ type
     property Version[a : TFHIRVersion] : TFHIRNppVersionFactory read GetVersion write SetVersion;
     property VersionLoading[a : TFHIRVersion] : TFHIRVersionLoadingStatus read GetVersionLoading write SetVersionLoading;
 
+    property versions : TFHIRVersionFactories read FVersions;
     function versionInfo : String;
   end;
+
+const
+  CODES_TFHIRVersionLoadingStatus : array [TFHIRVersionLoadingStatus] of String = ('Not Supported', 'Not Loaded', 'Loading', 'Loading Failed', 'Loaded');
 
 implementation
 
@@ -97,16 +102,21 @@ var
   v : TFHIRVersion;
 begin
   inherited;
-  FVersions := TFslMap<TFHIRNppVersionFactory>.create;
-  FVersionStatus := TDictionary<TFHIRVersion, TFHIRVersionLoadingStatus>.create;
+  FVersions := TFHIRVersionFactories.Create;
 
   for v := low(TFHIRVersion) to High(TFHIRVersion) do
-    VersionLoading[v] := vlsNotSupport;
+  begin
+    FVersionList[v] := nil;
+    VersionLoading[v] := vlsNotSupported;
+  end;
 end;
 
 destructor TFHIRNppContext.Destroy;
+var
+  v : TFHIRVersion;
 begin
-  FVersionStatus.Free;
+  for v := low(TFHIRVersion) to High(TFHIRVersion) do
+    FVersionList[v].Free;
   FVersions.Free;
   inherited;
 end;
@@ -118,8 +128,7 @@ begin
 
   if VersionLoading[a] <> vlsLoaded then
     raise Exception.Create('Version not loaded (yet?)');
-  if not FVersions.TryGetValue(CODES_TFHIRVersion[a], result) then
-    result := nil;
+  result := FVersionList[a];
 end;
 
 function TFHIRNppContext.GetVersionLoading(a: TFHIRVersion): TFHIRVersionLoadingStatus;
@@ -127,8 +136,7 @@ begin
   if (a = fhirVersionUnknown) then
     a := COMPILED_FHIR_VERSION;
 
-  if not FVersionStatus.TryGetValue(a, result) then
-    result := vlsNotSupport;
+ result := FVersionStatus[a];
 end;
 
 function TFHIRNppContext.Link: TFHIRNppContext;
@@ -141,15 +149,16 @@ begin
   if (a = fhirVersionUnknown) then
     raise Exception.Create('Illegal Version');
   value.FContext := self;
-  FVersions.AddOrSetValue(CODES_TFHIRVersion[a], value);
+  FVersionList[a] := value;
+  FVersions[a] := value.FFactory.link;
 end;
 
 
 procedure TFHIRNppContext.SetVersionLoading(a: TFHIRVersion; const Value: TFHIRVersionLoadingStatus);
 begin
-  if (a = fhirVersionUnknown) and (value <> vlsNotSupport) then
+  if (a = fhirVersionUnknown) and (value <> vlsNotSupported) then
     raise Exception.Create('Illegal Version');
-  FVersionStatus.AddOrSetValue(a, value);
+  FVersionStatus[a] := value;
 end;
 
 function TFHIRNppContext.versionInfo: String;
@@ -159,7 +168,7 @@ begin
   result := '';
   for v := fhirVersionRelease2 to fhirVersionRelease4 do
     case VersionLoading[v] of
-      vlsNotSupport : ; // nothing
+      vlsNotSupported, vlsNotLoaded : ; // nothing
       vlsLoading :
         result := result + 'R'+CODES_TFHIRVersion[v]+': Loading'+#13#10;
       vlsLoadingFailed : result := result + 'R'+CODES_TFHIRVersion[v]+': Loading from '+Version[v].source+' failed: '+Version[v].error+#13#10;

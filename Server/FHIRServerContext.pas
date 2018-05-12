@@ -168,6 +168,11 @@ Type
 
 implementation
 
+uses
+  {$IFDEF FHIR2} FHIR.R2.Factory; {$ENDIF}
+  {$IFDEF FHIR3} FHIR.R3.Factory; {$ENDIF}
+  {$IFDEF FHIR4} FHIR.R4.Factory; {$ENDIF}
+
 { TQuestionnaireCache }
 
 constructor TQuestionnaireCache.Create;
@@ -336,7 +341,10 @@ begin
     cfg.enum := a;
     FResConfig.Add(cfg.name,  cfg);
   end;
-  FValidatorContext := TFHIRServerWorkerContext.Create;
+  FValidatorContext := TFHIRServerWorkerContext.Create(
+    {$IFDEF FHIR2} TFHIRFactoryR2.create {$ENDIF}
+    {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}
+    {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF} );
   FValidator := TFHIRValidator.Create(FValidatorContext.link);
   FSessionManager := TFHIRSessionManager.Create(self);
   FTagManager := TFHIRTagManager.create;

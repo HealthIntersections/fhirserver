@@ -109,7 +109,6 @@ type
     FCapabilityStatement : TFhirCapabilityStatementW;
     FServer: TRegisteredFHIRServer;
     FVersions: TFHIRVersionFactories;
-    FServers : TFslList<TRegisteredFHIRServer>;
     procedure loadCapabilityStatement;
     function readServerVersion : TFHIRVersion;
 //    function hookIndex(c : TFslObject) : integer;
@@ -120,10 +119,11 @@ type
 //    procedure readExtension(ext: TFHIRExtension; preFetch: TStringList;
 //      var name, c: String);
     procedure SetVersions(const Value: TFHIRVersionFactories);
+    procedure Load;
   public
     { Public declarations }
-    procedure LoadFrom(i : integer);
     property versions : TFHIRVersionFactories read FVersions write SetVersions;
+    property server : TRegisteredFHIRServer read FServer write SetServer;
 
   end;
 
@@ -301,19 +301,12 @@ procedure TEditRegisteredServerForm.FormDestroy(Sender: TObject);
 begin
   FVersions.Free;
   FCapabilityStatement.Free;
-  FServers.Free;
+  FServer.Free;
   inherited;
 end;
 
 procedure TEditRegisteredServerForm.FormShow(Sender: TObject);
-var
-  v : TFHIRVersion;
 begin
-  cbxVersion.Items.Clear;
-  for v := Low(TFHIRVersion) to High(TFHIRVersion) do
-    if FVersions.hasVersion[v] then
-     cbxVersion.Items.AddObject(FVersions[v].description, TObject(FVersions[v].version));
-
   if FIndex = -1 then
     loadHooks;
 end;
@@ -338,6 +331,7 @@ end;
 procedure TEditRegisteredServerForm.SetServer(const Value: TRegisteredFHIRServer);
 begin
   FServer := Value;
+  load;
 end;
 
 procedure TEditRegisteredServerForm.SetVersions(const Value: TFHIRVersionFactories);
@@ -354,7 +348,7 @@ procedure TEditRegisteredServerForm.loadHooks;
   c : String;
   err : String; *)
 begin
-  raise Exception.Create('not done yet');
+ // raise Exception.Create('not done yet');
   (*
   clHooks.items.Clear;
 
@@ -416,67 +410,62 @@ begin
 end;
 *)
 
-procedure TEditRegisteredServerForm.LoadFrom(i: integer);
+procedure TEditRegisteredServerForm.Load;
 var
-  server : TRegisteredFHIRServer;
   c : TRegisteredCDSHook;
   a : string;
   name : string;
   ndx : integer;
   b : boolean;
+  i : integer;
+  v : TFHIRVersion;
 begin
+  cbxVersion.Items.Clear;
+  for v := Low(TFHIRVersion) to High(TFHIRVersion) do
+    if FVersions.hasVersion[v] then
+     cbxVersion.Items.AddObject(FVersions[v].description, TObject(FVersions[v].version));
+
   Caption := 'Edit Server';
-  FIndex := i;
-  server := FServers[i].link;
-  try
-    edtName.Text := server.name;
-    edtServer.Text := server.fhirEndpoint;
-    cbxFormat.ItemIndex := ord(server.format);
-    b := false;
-    for ndx := 0 to cbxVersion.Items.Count - 1 do
-      if TFHIRVersion(cbxVersion.Items.Objects[ndx]) = server.version then
-      begin
-        b := true;
-        cbxVersion.ItemIndex := ndx;
-      end;
-    if not b then
+  edtName.Text := server.name;
+  edtServer.Text := server.fhirEndpoint;
+  cbxFormat.ItemIndex := ord(server.format);
+  b := false;
+  for ndx := 0 to cbxVersion.Items.Count - 1 do
+    if TFHIRVersion(cbxVersion.Items.Objects[ndx]) = server.version then
     begin
-      // the server has a stated version that isn't compatible in this context?
-      // we're going to... guess... at the latest version?
-      cbxVersion.ItemIndex := cbxVersion.Items.Count - 1 ;
+      b := true;
+      cbxVersion.ItemIndex := ndx;
     end;
-
-    try
-      loadCapabilityStatement;
-    except
-
-    end;
-    for i := 0 to clHooks.Items.Count - 1 do
-      clHooks.checked[i] := false;
-    for c in server.cdshooks do
-      for i := 0 to clHooks.Items.Count - 1 do
-      begin
-        if clHooks.Items.Objects[i] <> nil then
-        begin
-//          readExtension(clHooks.Items.Objects[i] as TFHIRExtension, nil, name, a);
-          if (a <> '') and (c.hook = a) then
-            clHooks.checked[i] := true;
-        end;
-      end;
-
-    edtToken.Text := server.tokenEndpoint;
-    edtAuthorize.Text := server.authorizeEndpoint;
-    edtClientId.Text := server.clientid;
-    edtClientId1.Text := server.clientid;
-    edtClientSecret.Text := server.clientsecret;
-    edtRedirect.Text := IntToStr(server.redirectport);
-    edtIssuerURL.Text := server.issuerUrl;
-    edtPrivateKey.Text := server.privatekey;
-    edtPassphrase.Text := server.passphrase;
-    cbxSmartMode.ItemIndex := ord(server.SmartAppLaunchMode);
-  finally
-    server.Free;
+  if not b then
+  begin
+    // the server has a stated version that isn't compatible in this context?
+    // we're going to... guess... at the latest version?
+    cbxVersion.ItemIndex := cbxVersion.Items.Count - 1 ;
   end;
+
+  for i := 0 to clHooks.Items.Count - 1 do
+    clHooks.checked[i] := false;
+  for c in server.cdshooks do
+    for i := 0 to clHooks.Items.Count - 1 do
+    begin
+      if clHooks.Items.Objects[i] <> nil then
+      begin
+//          readExtension(clHooks.Items.Objects[i] as TFHIRExtension, nil, name, a);
+        if (a <> '') and (c.hook = a) then
+          clHooks.checked[i] := true;
+      end;
+    end;
+
+  edtToken.Text := server.tokenEndpoint;
+  edtAuthorize.Text := server.authorizeEndpoint;
+  edtClientId.Text := server.clientid;
+  edtClientId1.Text := server.clientid;
+  edtClientSecret.Text := server.clientsecret;
+  edtRedirect.Text := IntToStr(server.redirectport);
+  edtIssuerURL.Text := server.issuerUrl;
+  edtPrivateKey.Text := server.privatekey;
+  edtPassphrase.Text := server.passphrase;
+  cbxSmartMode.ItemIndex := ord(server.SmartAppLaunchMode);
 end;
 
 end.

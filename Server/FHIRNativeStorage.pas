@@ -41,7 +41,8 @@ uses
   FHIR.Tools.Tags, FHIRValueSetExpander, FHIRIndexManagers, FHIR.Tools.Session, FHIR.Tools.DiffEngine, FHIR.Tools.ElementModel, FHIR.Tools.PathNode,
   FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles,
   FHIR.Tools.PathEngine, FHIR.Tools.GraphQL, FHIR.Tools.Client,
-  FHIR.Base.Validator, FHIR.XVersion.Resources,
+  FHIR.Base.Validator, FHIR.XVersion.Resources, FHIR.Base.Factory,
+  FHIR.Cache.PackageManager,
   FHIR.Tools.Narrative, FHIR.Tools.Narrative2, FHIR.Tools.Questionnaire,
   FHIR.CdsHooks.Utilities, {$IFNDEF FHIR2}FHIR.Tools.MapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
   ServerUtilities, ServerValidator, FHIR.Tx.Service, TerminologyServer, FHIR.Base.Scim, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
@@ -757,6 +758,9 @@ uses
   FHIR.Support.Service,
   FHIR.Support.Mime,
   FHIR.Debug.Logging,
+  {$IFDEF FHIR4} FHIR.R4.Factory, {$ENDIF}
+  {$IFDEF FHIR3} FHIR.R3.Factory, {$ENDIF}
+  {$IFDEF FHIR2} FHIR.R2.Factory, {$ENDIF}
   TerminologyServerStore,
   TerminologyOperations,
   SearchProcessor;
@@ -8869,9 +8873,12 @@ end;
 procedure TFHIRNativeStorageService.Initialise(ini: TFHIRServerIniFile);
 var
   conn: TKDBConnection;
-  rn, fn : String;
+  rn : String;
   implGuides : TFslStringSet;
   cfg : TFHIRResourceConfig;
+  pcm : TFHIRPackageManager;
+  fact : TFHIRFactory;
+  res : TFslStringSet;
 begin
   ServerContext.SubscriptionManager := TSubscriptionManager.Create(ServerContext);
   ServerContext.SubscriptionManager.dataBase := FDB.Link;
@@ -9021,17 +9028,31 @@ begin
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
         {$IFDEF FHIR4}
-        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.json.zip');
+        fact := TFHIRFactoryR4.create;
         {$ELSE}
         {$IFDEF FHIR3}
-        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\definitions.json.zip');
+        fact := TFHIRFactoryR3.create;
         {$ELSE} // fhir2
-        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'validation.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation.json.zip');
+        fact := TFHIRFactoryR2.create;
         {$ENDIF}
         {$ENDIF}
-
-        logt('Load Validation Pack from ' + fn);
-        ServerContext.ValidatorContext.LoadFromDefinitions(fn);
+        try
+          logt('Load Package hl7.fhir.org-' + fact.versionString);
+          pcm := TFHIRPackageManager.Create(false);
+          try
+            res := TFslStringSet.Create(['CodeSystem', 'ValueSet', 'StructureDefinition', 'OperationDefinition',
+              'SearchParameter', 'ConceptMap']);
+            try
+              pcm.loadPackage('hl7.fhir.core', fact.versionString, res, ServerContext.ValidatorContext.loadResourceJson);
+            finally
+              res.free;
+            end;
+          finally
+            pcm.Free;
+          end;
+        finally
+          fact.Free;
+        end;
         if ServerContext.forLoad then
         begin
           logt('Load Custom Resources');

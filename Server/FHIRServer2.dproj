@@ -324,6 +324,8 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Common.pas"/>
+        <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -392,14 +394,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServer2.rsm</RemoteName>
+                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRServer2.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

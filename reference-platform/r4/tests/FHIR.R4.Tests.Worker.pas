@@ -36,8 +36,9 @@ uses
   {$IFDEF WINDOWS}Windows, WinAPI.ShellAPI, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd,
   FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Tools.Session, 
+  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Tools.Session,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.PathEngine,
+  FHIR.Cache.PackageManager,
   FHIR.Support.Json, DUnitX.TestFramework;
 
 var
@@ -87,7 +88,7 @@ Type
 implementation
 
 uses
-  IdGlobalProtocols, FHIR.Support.Binary;
+  IdGlobalProtocols, FHIR.Support.Binary, FHIR.R4.Factory;
 
 
 
@@ -113,13 +114,19 @@ end;
 
 
 class function TTestingWorkerContext.Use: TFHIRWorkerContext;
+var
+  pcm : TFHIRPackageManager;
 begin
   if GWorkerContext = nil then
   begin
-    GWorkerContext := TTestingWorkerContext.create;
-//    GWorkerContext.LoadFromDefinitions(path([GBasePath, 'build', 'publish', 'validation-min.xml.zip']));
-    GWorkerContext.LoadFromFile(path([GBasePath, 'build', 'publish', 'profiles-types.xml']));
-    GWorkerContext.LoadFromFile(path([GBasePath, 'build', 'publish', 'profiles-resources.xml']));
+    GWorkerContext := TTestingWorkerContext.create(TFHIRFactoryR4.create);
+    pcm := TFHIRPackageManager.Create(false);
+    try
+      pcm.loadPackage('hl7.fhir.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
+        GWorkerContext.loadResourceJson);
+    finally
+      pcm.Free;
+    end;
   end;
   result := GWorkerContext.link;
 end;

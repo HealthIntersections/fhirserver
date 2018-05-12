@@ -33,7 +33,8 @@ interface
 
 uses
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.R4.Types, FHIR.R4.Resources;
+  FHIR.Base.Objects, FHIR.Base.Factory,
+  FHIR.R4.Types, FHIR.R4.Resources;
 
 type
   TValidationResult = class (TFslObject)
@@ -66,7 +67,7 @@ type
   end;
 
 
-  TFHIRWorkerContext = class abstract (TFHIRWorkerContextV)
+  TFHIRWorkerContext = class abstract (TFHIRWorkerContextWithFactory)
   protected
     function GetVersion: TFHIRVersion; override;
   public

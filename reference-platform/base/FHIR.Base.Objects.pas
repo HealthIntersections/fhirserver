@@ -429,6 +429,7 @@ type
   public
     function link : TFHIRWorkerContextV; overload;
 
+    procedure loadResourceJson(rtype, id : String; json : TStream); virtual;
     Property version : TFHIRVersion read GetVersion;
   end;
 
@@ -1386,6 +1387,11 @@ end;
 function TFHIRWorkerContextV.link: TFHIRWorkerContextV;
 begin
   result := TFHIRWorkerContextV(inherited Link);
+end;
+
+procedure TFHIRWorkerContextV.loadResourceJson(rtype, id: String; json: TStream);
+begin
+  raise Exception.Create('Must override...');
 end;
 
 { TFHIRResourceV }

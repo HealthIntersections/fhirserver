@@ -35,6 +35,7 @@ Uses
   SysUtils, Classes,
   FHIR.Support.Strings, FHIR.Support.Lock,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Zip,
+  FHIR.Base.Factory,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Context, FHIR.Tools.Utilities, FHIR.Tools.Session, FHIR.Tools.Profiles, FHIR.Tools.Constants,
   TerminologyServer;
 
@@ -50,7 +51,7 @@ Type
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
   public
-    Constructor Create; Override;
+    Constructor Create(factory : TFHIRFactory); Override;
     Destructor Destroy; Override;
 
     Function Link : TFHIRServerWorkerContext; overload;
@@ -109,7 +110,7 @@ end;
 procedure TFHIRServerWorkerContext.SeeResource(r : TFhirResource);
 begin
   checkResource(r);
-  if (r.ResourceType in [frtValueSet, frtConceptMap {$IFDEF FHIR3}, frtCodeSystem{$ENDIF}]) then
+  if (r.ResourceType in [frtValueSet, frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem{$ENDIF}]) then
     FTerminologyServer.SeeSpecificationResource(r)
   else if r.resourceType = frtQuestionnaire then
   begin

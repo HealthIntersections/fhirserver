@@ -245,7 +245,7 @@ function TFhirParametersParameter2.appendPart(name: String): TFhirParametersPara
 begin
   result := TFhirParametersParameter2.Create(parameter.partList.Append);
   TFhirParametersParameter2(result).parameter.name := name;
-  FList.Add(result);
+  PartList.Add(result);
 end;
 
 function TFhirParametersParameter2.GetParameterParameter(name: String): TFhirParametersParameterW;
@@ -320,7 +320,7 @@ function TFHIRParameters2.appendParameter(name: String): TFhirParametersParamete
 begin
   result := TFhirParametersParameter2.Create(parameter.parameterList.Append);
   TFhirParametersParameter2(result).parameter.name := name;
-  FList.Add(result);
+  ParameterList.Add(result);
 end;
 
 function TFHIRParameters2.parameter: TFhirParameters;
@@ -333,7 +333,7 @@ var
   t : TFhirParametersParameter;
 begin
   for t in parameter.parameterList do
-    FList.Add(TFhirParametersParameter2.Create(t.Link));
+    Flist.Add(TFhirParametersParameter2.Create(t.Link));
 end;
 
 end.

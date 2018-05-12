@@ -131,7 +131,7 @@ type
   TSmartAppLaunchMode = (salmNone, salmOAuthClient, salmBackendClient);
 
 const
-  CODES_TSmartAppLaunchMode : array [TSmartAppLaunchMode] of string = ('None', 'OAuth Client', 'Backend Services');
+  CODES_TSmartAppLaunchMode : array [TSmartAppLaunchMode] of string = ('No Security', 'OAuth Client', 'Backend Services');
 type
   // information about a server required to get Smart App Launch working
   TRegisteredFHIRServer = class (TFslObject)

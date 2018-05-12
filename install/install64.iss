@@ -147,7 +147,7 @@ Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation-mi
 
 ; R3
 Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\definitions.json.zip";        DestDir: {app}\web;                                         Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\examples-json.zip";           DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\examples-json.zip";       DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r3;   Flags: ignoreversion
 ;Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                                 DestDir: {app}\load;        DestName: us-core.json.zip;     Components: r3;   Flags: ignoreversion
 ;Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-daf.json.zip;      Components: r3;   Flags: ignoreversion
 ;Source: "C:\work\org.hl7.fhir.us\sdc\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-sdc.json.zip;      Components: r3;   Flags: ignoreversion
@@ -156,7 +156,7 @@ Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\examples-json.
 ; R4
 Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";                               DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\definitions.xml.zip";                                DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                                  DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r4;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                             DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r4;   Flags: ignoreversion
 
 
 ; Load Data

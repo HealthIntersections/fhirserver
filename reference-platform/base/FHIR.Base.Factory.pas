@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes,
   FHIR.Support.Objects,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.XVersion.Resources,
@@ -42,6 +42,7 @@ type
   public
     function link : TFHIRFactory; overload;
     function version : TFHIRVersion; virtual;
+    function versionString : String; virtual;
     function description : String; virtual;
 
     function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; virtual;
@@ -79,9 +80,26 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function link : TFHIRVersionFactories; overload;
 
     property version[v : TFHIRVersion] : TFHIRFactory read getVersion write SetVersion; default;
     property hasVersion[v : TFHIRVersion] : boolean read getHasVersion;
+  end;
+
+  TFHIRWorkerContextWithFactory = class (TFHIRWorkerContextV)
+  private
+    FFactory : TFHIRFactory;
+  public
+    constructor Create(factory : TFHIRFactory); virtual;
+    destructor Destroy; override;
+
+    function link : TFHIRWorkerContextWithFactory;
+
+    property Factory : TFHIRFactory read FFactory;
+
+    procedure loadResourceJson(rtype, id : String; json : TStream); override;
+    procedure seeResource(res : TFHIRResourceV); virtual;
+
   end;
 
 implementation
@@ -108,7 +126,10 @@ end;
 
 function TFHIRFactory.makeClientHTTP(worker: TFHIRWorkerContextV; url: String; json: boolean; timeout: cardinal): TFhirClientV;
 begin
-  result := makeClientHTTP(worker, url, json, timeout);
+  if json then
+    result := makeClientHTTP(worker, url, ffJson, timeout, '')
+  else
+    result := makeClientHTTP(worker, url, ffXml, timeout, '');
 end;
 
 function TFHIRFactory.makeClientHTTP(worker: TFHIRWorkerContextV; url, mimeType: String): TFhirClientV;
@@ -209,6 +230,11 @@ begin
 end;
 
 
+function TFHIRFactory.versionString: String;
+begin
+  result := '??';
+end;
+
 function TFHIRFactory.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;
 begin
   raise Exception.Create('The function TFHIRFactory.wrapCapabilityStatement should never be called');
@@ -244,10 +270,52 @@ begin
   result := FVersionArray[v];
 end;
 
+function TFHIRVersionFactories.link: TFHIRVersionFactories;
+begin
+  result := TFHIRVersionFactories(inherited link);
+end;
+
 procedure TFHIRVersionFactories.SetVersion(v: TFHIRVersion; const Value: TFHIRFactory);
 begin
   FVersionArray[v].free;
   FVersionArray[v] := value;
+end;
+
+{ TFHIRWorkerContextWithFactory }
+
+constructor TFHIRWorkerContextWithFactory.Create(factory: TFHIRFactory);
+begin
+  inherited Create;
+  FFactory := factory;
+end;
+
+destructor TFHIRWorkerContextWithFactory.Destroy;
+begin
+  FFactory.link;
+  inherited;
+end;
+
+function TFHIRWorkerContextWithFactory.link: TFHIRWorkerContextWithFactory;
+begin
+  result := TFHIRWorkerContextWithFactory(inherited link);
+end;
+
+procedure TFHIRWorkerContextWithFactory.loadResourceJson(rtype, id: String; json: TStream);
+var
+  p : TFHIRParser;
+begin
+  p := Factory.makeParser(self.link, ffJson, 'en');
+  try
+    p.source := json;
+    p.Parse;
+    SeeResource(p.resource);
+  finally
+    p.Free;
+  end;
+end;
+
+procedure TFHIRWorkerContextWithFactory.seeResource(res: TFHIRResourceV);
+begin
 end;
 
 end.

@@ -402,18 +402,10 @@ begin
     for sd in worker.allStructures do
       if (sd.kind <> StructureDefinitionKindLogical) then
       begin
-        {$IFDEF FHIR3}
-        if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
-          allTypes.add(sd.id);
-        if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
-          primitiveTypes.add(sd.id);
-        {$ELSE}
-
         if (sd.constrainedType = '') then
           allTypes.add(sd.id);
         if (sd.constrainedType = '') and isPrimitiveType(sd.id) then
           primitiveTypes.add(sd.id);
-        {$ENDIF}
     end;
 end;
 

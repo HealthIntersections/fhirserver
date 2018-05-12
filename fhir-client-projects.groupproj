@@ -12,6 +12,9 @@
         <Projects Include="vcldemo\FhirVclDemo.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="utils\fpm\FhirPackageManager.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="npp\fhirnpp.dproj">
             <Dependencies/>
         </Projects>
@@ -53,6 +56,15 @@
     <Target Name="FhirVclDemo:Make">
         <MSBuild Projects="vcldemo\FhirVclDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="FhirPackageManager">
+        <MSBuild Projects="utils\fpm\FhirPackageManager.dproj"/>
+    </Target>
+    <Target Name="FhirPackageManager:Clean">
+        <MSBuild Projects="utils\fpm\FhirPackageManager.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FhirPackageManager:Make">
+        <MSBuild Projects="utils\fpm\FhirPackageManager.dproj" Targets="Make"/>
+    </Target>
     <Target Name="fhirnpp">
         <MSBuild Projects="npp\fhirnpp.dproj"/>
     </Target>
@@ -72,13 +84,13 @@
         <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;FhirVclDemo;fhirnpp;FHIRServerTests"/>
+        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;FhirVclDemo;FhirPackageManager;fhirnpp;FHIRServerTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FhirVclDemo:Clean;fhirnpp:Clean;FHIRServerTests:Clean"/>
+        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FhirVclDemo:Clean;FhirPackageManager:Clean;fhirnpp:Clean;FHIRServerTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;FhirVclDemo:Make;fhirnpp:Make;FHIRServerTests:Make"/>
+        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;FhirVclDemo:Make;FhirPackageManager:Make;fhirnpp:Make;FHIRServerTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -12,7 +12,8 @@ type
   TFHIRFactoryR3 = class (TFHIRFactory)
   public
     function version : TFHIRVersion; override;
-    function description : String; virtual;
+    function versionString : String; override;
+    function description : String; override;
     function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; override;
     function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; override;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
@@ -126,6 +127,11 @@ end;
 function TFHIRFactoryR3.version: TFHIRVersion;
 begin
   result := fhirVersionRelease3;
+end;
+
+function TFHIRFactoryR3.versionString: String;
+begin
+  result := FHIR_GENERATED_VERSION;
 end;
 
 function TFHIRFactoryR3.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;

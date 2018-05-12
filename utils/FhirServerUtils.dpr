@@ -218,7 +218,9 @@ uses
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
-  FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas';
+  FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas',
+  FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas';
 
 {$R *.res}
 

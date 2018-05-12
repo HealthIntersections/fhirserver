@@ -1,4 +1,5 @@
 inherited SettingForm: TSettingForm
+  ActiveControl = edtServer
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'FHIR notepad++ Plugin Settings'
@@ -48,9 +49,9 @@ inherited SettingForm: TSettingForm
         TabOrder = 0
         object GroupBox1: TGroupBox
           Left = 0
-          Top = 52
+          Top = 133
           Width = 691
-          Height = 75
+          Height = 49
           Align = alTop
           Caption = ' Terminology Server '
           Font.Charset = DEFAULT_CHARSET
@@ -62,7 +63,7 @@ inherited SettingForm: TSettingForm
           TabOrder = 0
           DesignSize = (
             691
-            75)
+            49)
           object Label1: TLabel
             Left = 12
             Top = 24
@@ -116,9 +117,9 @@ inherited SettingForm: TSettingForm
           Left = 0
           Top = 0
           Width = 691
-          Height = 52
+          Height = 133
           Align = alTop
-          Caption = '  FHIR Version'
+          Caption = '  FHIR Versions'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -126,51 +127,23 @@ inherited SettingForm: TSettingForm
           Font.Style = [fsBold]
           ParentFont = False
           TabOrder = 1
-          object rbR3: TRadioButton
-            Left = 18
-            Top = 24
-            Width = 79
-            Height = 17
-            Caption = 'R3'
-            Checked = True
-            TabOrder = 0
-            TabStop = True
-          end
-          object rbR2: TRadioButton
-            Left = 120
-            Top = 24
-            Width = 265
-            Height = 17
-            Caption = 'DSTU2'
-            TabOrder = 1
-          end
-        end
-        object GroupBox5: TGroupBox
-          Left = 0
-          Top = 127
-          Width = 691
-          Height = 193
-          Align = alClient
-          Caption = '  Additional Implementation Guides'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 2
-          DesignSize = (
-            691
-            193)
-          object Label3: TLabel
-            Left = 584
-            Top = 102
-            Width = 104
+          object Bevel1: TBevel
+            Left = 267
+            Top = 6
+            Width = 421
             Height = 79
+          end
+          object Label3: TLabel
+            Left = 288
+            Top = 13
+            Width = 386
+            Height = 61
             AutoSize = False
             Caption = 
-              'This should be a list of validation packes downloaded from the r' +
-              'elevant implementation guides'
+              'You can load any of these, though at least one is required. The ' +
+              'only penalty for supporting more than one version is the amount ' +
+              'of memory used loading the hl7.fhir.core package for the version' +
+              '. This setting only takes effect when Notepad++ is restarted'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -179,40 +152,114 @@ inherited SettingForm: TSettingForm
             ParentFont = False
             WordWrap = True
           end
-          object lbAdditional: TListBox
-            Left = 12
-            Top = 20
-            Width = 566
-            Height = 163
-            Anchors = [akLeft, akTop, akRight, akBottom]
-            ItemHeight = 13
+          object Label4: TLabel
+            Left = 24
+            Top = 96
+            Width = 273
+            Height = 13
+            Caption = 'These are only enabled when the packages are installed. '
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblR2Status: TLabel
+            Left = 103
+            Top = 21
+            Width = 39
+            Height = 13
+            Caption = 'Status...'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblR3Status: TLabel
+            Left = 103
+            Top = 42
+            Width = 39
+            Height = 13
+            Caption = 'Status...'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblR4Status: TLabel
+            Left = 103
+            Top = 65
+            Width = 39
+            Height = 13
+            Caption = 'Status...'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object cbR2: TCheckBox
+            Left = 24
+            Top = 21
+            Width = 73
+            Height = 17
+            Caption = 'R2 (1.0.2)'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             TabOrder = 0
           end
-          object btnAddIG: TButton
-            Left = 584
-            Top = 16
-            Width = 90
-            Height = 25
-            Caption = 'Add File'
+          object cbR3: TCheckBox
+            Left = 24
+            Top = 42
+            Width = 73
+            Height = 17
+            Caption = 'R3 (3.0.1)'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             TabOrder = 1
-            OnClick = btnAddIGClick
           end
-          object btnDeleteIG: TButton
-            Left = 584
-            Top = 71
-            Width = 90
-            Height = 25
-            Caption = 'Delete'
+          object cbR4: TCheckBox
+            Left = 24
+            Top = 65
+            Width = 73
+            Height = 17
+            Caption = 'R4 (3.4.0)'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             TabOrder = 2
           end
           object Button3: TButton
-            Left = 584
-            Top = 43
-            Width = 90
+            Left = 303
+            Top = 91
+            Width = 106
             Height = 25
-            Caption = 'Add URL'
-            Enabled = False
+            Caption = 'Package Manager'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
             TabOrder = 3
+            OnClick = Button3Click
           end
         end
         object Panel5: TPanel
@@ -222,7 +269,7 @@ inherited SettingForm: TSettingForm
           Height = 25
           Align = alBottom
           BevelOuter = bvLowered
-          TabOrder = 3
+          TabOrder = 2
           object Label5: TLabel
             Left = 4
             Top = 4
@@ -244,10 +291,6 @@ inherited SettingForm: TSettingForm
     object TabSheet3: TTabSheet
       Caption = 'Misc'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -332,10 +375,6 @@ inherited SettingForm: TSettingForm
     object TabSheet2: TTabSheet
       Caption = 'Servers'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -415,16 +454,24 @@ inherited SettingForm: TSettingForm
           end
           item
             Position = 1
-            Width = 341
+            Width = 237
             WideText = 'URL'
           end
           item
             Position = 2
+            WideText = 'Version'
+          end
+          item
+            Position = 3
+            WideText = 'Format'
+          end
+          item
+            Position = 4
             Width = 100
             WideText = 'Smart on FHIR'
           end
           item
-            Position = 3
+            Position = 5
             Width = 100
             WideText = 'CDS-Hooks'
           end>

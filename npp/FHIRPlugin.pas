@@ -73,12 +73,13 @@ uses
   FHIR.Support.Text, FHIR.Support.Zip, FHIR.Support.MsXml,
 
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.XVersion.Resources,
-  FHIR.R3.Factory,
+  FHIR.R4.Constants,
   FHIR.Tools.PathNode, FHIR.Tools.Validator, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.Constants,
   FHIR.Npp.Context,
   FHIRPluginSettings, FHIRPluginValidator, FHIR.Tools.Narrative, FHIR.Tools.PathEngine, FHIR.Base.Xhtml, FHIR.Tools.Context, FHIR.Tools.ExpressionComposer,
   FHIR.Client.SmartUtilities, FHIR.Client.SmartLogin, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes, CodeGenerationForm,
+  FHIR.Cache.PackageManagerDialog, FHIR.Cache.PackageManager,
   FHIRVisualiser, FHIR.Npp.PathDebugger, WelcomeScreen, UpgradePrompt, FHIR.Tools.DiffEngine, ResDisplayForm;
 
 const
@@ -112,10 +113,10 @@ type
   TContextLoadingThread = class(TThread)
   private
     FPlugin : TFHIRPlugin; // no link
-    function getDefPath(version : TFHIRVersion): String;
-    procedure load(factory : TFHIRFactory);
+    FFactory : TFHIRFactory;
   public
-    constructor Create(plugin : TFHIRPlugin);
+    constructor Create(plugin : TFHIRPlugin; factory : TFHIRFactory);
+    Destructor Destroy; override;
     procedure Execute(); override;
   end;
 
@@ -135,6 +136,7 @@ type
     FContext : TFHIRNppContext;
     FFileInfo : TFslMap<TFHIRPluginFileInformation>;
     FCurrentFileInfo : TFHIRPluginFileInformation;
+    FCache : TFHIRPackageManager;
 
     tipShowing : boolean;
     tipText : AnsiString;
@@ -181,7 +183,6 @@ type
     function DoSmartOnFHIR(server : TRegisteredFHIRServer) : boolean;
     procedure configureSSL;
 
-    procedure launchContextLoader;
     // version tracking
     procedure launchUpgradeCheck;
     procedure CheckUpgrade;
@@ -195,6 +196,7 @@ type
     destructor Destroy; override;
 
     function connected : boolean;
+    property Context : TFHIRNppContext read FContext;
 
     // user interface
     procedure FuncValidate;
@@ -202,7 +204,8 @@ type
     procedure FuncMatchesClear;
     procedure FuncToolbox;
     procedure FuncVisualiser;
-    procedure FuncSettings;
+    procedure FuncSettings(servers : boolean);
+    procedure FuncPackageManager;
     procedure FuncAbout;
     procedure FuncFormat;
     procedure FuncDebugPath;
@@ -242,6 +245,7 @@ procedure _FuncToolbox; cdecl;
 procedure _FuncVisualiser; cdecl;
 procedure _FuncAbout; cdecl;
 procedure _FuncSettings; cdecl;
+procedure _FuncPackageManager; cdecl;
 procedure _FuncDebugPath; cdecl;
 procedure _FuncExtractPath; cdecl;
 procedure _FuncJumpToPath; cdecl;
@@ -266,7 +270,10 @@ var
 implementation
 
 uses
-  IdSSLOpenSSLHeaders;
+  IdSSLOpenSSLHeaders,
+  FHIR.R2.Factory,
+  FHIR.R3.Factory,
+  FHIR.R4.Factory;
 
 var
   ms : String;
@@ -287,6 +294,7 @@ begin
   inherited;
   FContext := TFHIRNppContext.Create;
   FFileInfo := TFslMap<TFHIRPluginFileInformation>.create;
+  FCache := TFHIRPackageManager.Create(true);
 
   errors := TFslList<TFHIRAnnotation>.create;
   errorSorter := TFHIRAnnotationComparer.create;
@@ -323,6 +331,7 @@ begin
   self.AddFuncItem('POST resource as a &Transaction', _FuncTransaction);
   self.AddFuncItem('Validate &resource on server', _FuncServerValidate);
   self.AddFuncItem('-', Nil);
+  self.AddFuncItem('Pac&kage Manager', _FuncPackageManager);
   self.AddFuncItem('Confi&gure Tools', _FuncSettings);
   self.AddFuncItem('Vie&w Toolbox', _FuncToolbox);
   self.AddFuncItem('View Visuali&zer', _FuncVisualiser);
@@ -385,7 +394,12 @@ end;
 
 procedure _FuncSettings; cdecl;
 begin
-  FNpp.FuncSettings;
+  FNpp.FuncSettings(false);
+end;
+
+procedure _FuncPackageManager; cdecl;
+begin
+  FNpp.FuncPackageManager;
 end;
 
 procedure _FuncDebugPath; cdecl;
@@ -658,13 +672,6 @@ begin
   end;
 end;
 
-procedure TFHIRPlugin.launchContextLoader;
-begin
-  if (Settings.TerminologyServer = '') then
-    Settings.TerminologyServer := 'http://tx.fhir.org/r3';
-  TContextLoadingThread.create(self);
-end;
-
 procedure TFHIRPlugin.launchUpgradeCheck;
 begin
   // TUpgradeCheckThread.create(self);
@@ -726,15 +733,31 @@ begin
     ShowMessage('This does not appear to be valid FHIR content');
 end;
 
-procedure TFHIRPlugin.FuncSettings;
+procedure TFHIRPlugin.FuncSettings(servers : boolean);
 var
   a: TSettingForm;
 begin
   a := TSettingForm.Create(self);
   try
+    if servers then
+      a.PageControl1.ActivePageIndex := 2
+    else
+      a.PageControl1.ActivePageIndex := 0;
+    a.versions := FContext.versions.Link;
+    a.Context := FContext.link;
     a.ShowModal;
   finally
     a.Free;
+  end;
+end;
+
+procedure TFHIRPlugin.FuncPackageManager;
+begin
+  PackageCacheForm := TPackageCacheForm.Create(self);
+  try
+    PackageCacheForm.ShowModal;
+  finally
+    PackageCacheForm.Free;
   end;
 end;
 
@@ -1454,9 +1477,7 @@ begin
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_SETINDICATORCURRENT, level, 0));
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_INDICATORFILLRANGE, start, length));
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETTEXT, line, LPARAM(PAnsiChar(message))));
-
 end;
-
 
 
 procedure TFHIRPlugin.validate(r: TFHIRResource);
@@ -1474,8 +1495,8 @@ begin
   begin
     if status = vlsLoadingFailed then
       raise Exception.Create('Unable to load definitions for release '+CODES_TFHIRVersion[Version]);
-    if status = vlsNotSupport then
-      raise Exception.Create('Release '+CODES_TFHIRVersion[Version]+' not supported');
+    if status in [vlsNotSupported, vlsNotLoaded] then
+      raise Exception.Create('Release '+CODES_TFHIRVersion[Version]+' not supported or Loaded');
     if manualop then
       sleep(1000)
     else
@@ -1522,6 +1543,7 @@ end;
 
 destructor TFHIRPlugin.Destroy;
 begin
+  FCache.Free;
   FCurrentServer.Free;
   FLastRes.free;
   FFileInfo.Free;
@@ -1529,15 +1551,30 @@ begin
 end;
 
 procedure TFHIRPlugin.DoNppnReady;
-var
-  a : TFHIRVersion;
 begin
   Settings := TFHIRPluginSettings.create(IncludeTrailingPathDelimiter(GetPluginsConfigDir)+'fhirplugin.json',
     [fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4]);
-  for a := fhirVersionRelease2 to fhirVersionRelease4 do
-    FContext.VersionLoading[a] := vlsLoading;
+  if (Settings.TerminologyServer = '') then
+    Settings.TerminologyServer := 'http://tx.fhir.org/r3';
+  if Settings.loadR2 then
+    FContext.VersionLoading[fhirVersionRelease2] := vlsLoading;
+  if Settings.loadR3 then
+    FContext.VersionLoading[fhirVersionRelease3] := vlsLoading;
+  if Settings.loadR4 then
+    FContext.VersionLoading[fhirVersionRelease4] := vlsLoading;
   reset;
-  launchContextLoader;
+  if Settings.loadR2 and FCache.packageExists('hl7.fhir.core', '1.0.2') then
+    TContextLoadingThread.create(self, TFHIRFactoryR2.create)
+  else
+    FContext.VersionLoading[fhirVersionRelease2] := vlsNotLoaded;
+  if Settings.loadR3 and FCache.packageExists('hl7.fhir.core', '3.0.1') then
+    TContextLoadingThread.create(self, TFHIRFactoryR3.create)
+  else
+    FContext.VersionLoading[fhirVersionRelease3] := vlsNotLoaded;
+  if Settings.loadR4 and FCache.packageExists('hl7.fhir.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION) then
+    TContextLoadingThread.create(self, TFHIRFactoryR4.create)
+  else
+    FContext.VersionLoading[fhirVersionRelease4] := vlsNotLoaded;
   launchUpgradeCheck;
   if not Settings.NoWelcomeScreen then
     ShowWelcomeScreen(self);
@@ -1964,59 +2001,48 @@ end;
 
 { TContextLoadingThread }
 
-constructor TContextLoadingThread.Create(plugin: TFHIRPlugin);
+constructor TContextLoadingThread.Create(plugin : TFHIRPlugin; factory : TFHIRFactory);
 begin
   FPlugin := plugin;
+  FFactory := factory;
   FreeOnTerminate := true;
   inherited Create;
 end;
 
+destructor TContextLoadingThread.Destroy;
+begin
+  FFactory.free;
+  inherited;
+end;
+
 procedure TContextLoadingThread.Execute;
-begin
-  load(TFHIRFactoryR3.create);
-end;
-
-function TContextLoadingThread.getDefPath(version: TFHIRVersion): String;
-begin
-  case version of
-    fhirVersionRelease2 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir\fhir2-definitions.zip';
-    fhirVersionRelease3 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir\fhir3-definitions.zip';
-    fhirVersionRelease4 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir\fhir4-definitions.zip';
-  else
-    raise Exception.Create('not done yet');
-  end;
-  if not fileExists(result) then
-    case version of
-      fhirVersionRelease2 : result := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\igpack.zip';
-      fhirVersionRelease3 : result := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\igpack.zip';
-      fhirVersionRelease4 : result := 'C:\work\org.hl7.fhir\publish\igpack.zip';
-    else
-      raise Exception.Create('not done yet');
-    end;
-end;
-
-procedure TContextLoadingThread.load(factory : TFHIRFactory);
 var
   vf : TFHIRNppVersionFactory;
   ctxt : TFHIRPluginValidatorContext;
+  rset : TFslStringSet;
 begin
-  vf := TFHIRNppVersionFactory.Create(factory);
+  vf := TFHIRNppVersionFactory.Create(FFactory.link);
   try
     try
       FPlugin.FContext.Version[COMPILED_FHIR_VERSION] := vf.Link;
-      vf.source := getDefPath(factory.version);
-      ctxt := TFHIRPluginValidatorContext.Create(Settings.TerminologyServer);
+      ctxt := TFHIRPluginValidatorContext.Create(FFactory.link, Settings.TerminologyServer);
       try
-        ctxt.LoadFromDefinitions(vf.source);
+        // limit the amount of resource types loaded for convenience...
+        rset := TFslStringSet.Create(['StructureDefinition', 'CodeSystem', 'ValueSet']);
+        try
+          FPlugin.FCache.loadPackage('hl7.fhir.core', FFactory.versionString, rset, ctxt.loadResourceJson);
+        finally
+          rset.Free;
+        end;
         vf.Worker := ctxt.Link;
       finally
         ctxt.Free;
       end;
-      FPlugin.FContext.VersionLoading[factory.version] := vlsLoaded;
+      FPlugin.FContext.VersionLoading[FFactory.version] := vlsLoaded;
     except
       on e : Exception do
       begin
-        FPlugin.FContext.VersionLoading[factory.version] := vlsLoadingFailed;
+        FPlugin.FContext.VersionLoading[FFactory.version] := vlsLoadingFailed;
         vf.error := e.Message;
       end;
     end;

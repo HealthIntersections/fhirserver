@@ -211,7 +211,9 @@ uses
   FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
-  FHIR.R2.Common in '..\reference-platform\dstu2\FHIR.R2.Common.pas';
+  FHIR.R2.Common in '..\reference-platform\dstu2\FHIR.R2.Common.pas',
+  FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

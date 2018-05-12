@@ -281,6 +281,7 @@ begin
     FList := TFslList<TFhirParametersParameterW>.create;
   FList.Clear;
   populateList;
+  result := FList;
 end;
 
 procedure TFhirParametersParameterW.populateList;
@@ -333,6 +334,7 @@ begin
     FList := TFslList<TFhirParametersParameterW>.create;
   FList.Clear;
   populateList;
+  result := FList;
 end;
 
 procedure TFHIRParametersW.populateList;
