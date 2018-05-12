@@ -140,23 +140,16 @@ Source: "C:\work\fhirserver\Libraries\js\chakra\x64_release\ChakraCore.dll";    
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
 
-; Spec & IGs
-; R2
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";                DestDir: {app}\load;                                        Components: r2;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";     DestDir: {app}\web;         DestName: validation.json.zip;  Components: r2;   Flags: ignoreversion  
+; Packages
+Source: "C:\ProgramData\.fhir\packages\packages.ini"; DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
+Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-1.0.2\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-1.0.2"; Components: r2; Flags: recursesubdirs
+Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-3.0.1\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.0.1"; Components: r3; Flags: recursesubdirs
+Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-3.4.0\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.4.0"; Components: r4; Flags: recursesubdirs
 
-; R3
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\definitions.json.zip";        DestDir: {app}\web;                                         Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\examples-json.zip";       DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r3;   Flags: ignoreversion
-;Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                                 DestDir: {app}\load;        DestName: us-core.json.zip;     Components: r3;   Flags: ignoreversion
-;Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-daf.json.zip;      Components: r3;   Flags: ignoreversion
-;Source: "C:\work\org.hl7.fhir.us\sdc\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-sdc.json.zip;      Components: r3;   Flags: ignoreversion
-;Source: "C:\work\org.hl7.fhir.us\sdcde\output\examples.json.zip";                                DestDir: {app}\load;        DestName: us-sdcde.json.zip;    Components: r3;   Flags: ignoreversion
-
-; R4
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";                               DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.xml.zip";                                DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                             DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r4;   Flags: ignoreversion
+; Examples
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";      DestDir: {app}\load;  DestName: fhir.json.zip; Components: r2;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\examples-json.zip";  DestDir: {app}\load;  DestName: fhir.json.zip; Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                        DestDir: {app}\load;  DestName: fhir.json.zip; Components: r4;   Flags: ignoreversion
 
 
 ; Load Data
