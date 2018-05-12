@@ -4,11 +4,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=Version 1.0.200
+AppVerName=Version 1.0.231
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver32-1.0.200
+OutputBaseFilename=fhirserver32-1.0.231
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -141,9 +141,9 @@ Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion r
 
 ; Packages
 Source: "C:\ProgramData\.fhir\packages\packages.ini"; DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
-Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-1.0.2\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-1.0.2"; Components: r2; Flags: recursesubdirs
-Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-3.0.1\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.0.1"; Components: r3; Flags: recursesubdirs
-Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-3.4.0\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.4.0"; Components: r4; Flags: recursesubdirs
+Source: "C:\ProgramData\.fhir\packages\hl7.fhir.core-1.0.2\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-1.0.2"; Components: r2; Flags: recursesubdirs
+Source: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.0.1\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.0.1"; Components: r3; Flags: recursesubdirs
+Source: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.4.0\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.4.0"; Components: r4; Flags: recursesubdirs
 
 ; Examples
 Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";      DestDir: {app}\load;  DestName: fhir.json.zip; Components: r2;   Flags: ignoreversion
