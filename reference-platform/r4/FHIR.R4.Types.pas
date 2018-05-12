@@ -18513,7 +18513,7 @@ end;
 
 procedure TFhirBase64Binary.SetStringValue(value : string);
 begin
-  if (length(value) = 0) then SetLength(FValue, 0) else FValue := DecodeBase64(value);
+  if (length(value) = 0) then SetLength(FValue, 0) else FValue := DecodeBase64(widestring(value));
 end;
 
 function TFhirBase64Binary.equalsDeep(other : TFHIRObject) : boolean; 

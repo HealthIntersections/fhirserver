@@ -844,7 +844,7 @@ begin
     finally
       writer.Free;
     end;
-    result := ss.Data;
+    result := string(ss.Data);
   finally
     ss.Free;
   end;

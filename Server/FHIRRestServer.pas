@@ -565,7 +565,7 @@ end;
 
 function TFhirWebServer.loadFromRsaDer(cert: string): TJWKList;
 var
-  fn : String;
+  fn : AnsiString;
 begin
   fn := Path([SystemTemp, TDateTimeEx.makeUTC.toString('yyyymmmddhhnnss')+'.'+inttostr(HashStringToCode32(cert))+'.cer']);
   StringToFile(cert, fn, TEncoding.UTF8);
