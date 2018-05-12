@@ -35,7 +35,8 @@ type
   TFHIRPackageVersionInfo = class (TFHIRPackageObject)
   private
     FUrl : String;
-    FVersion : String;
+    FStatedVersion : String;
+    FActualVersion : String;
     FDependencies : TFslList<TFHIRPackageDependencyInfo>;
     FFhirVersion: string;
   public
@@ -45,7 +46,8 @@ type
     function summary : String; override;
     function childCount : integer; override;
 
-    property version : String read FVersion write FVersion;
+    property statedVersion : String read FStatedVersion write FStatedVersion;
+    property actualVersion : String read FActualVersion write FActualVersion;
     property fhirVersion : string read FFhirVersion write FFhirVersion;
     property url : String read FUrl write FUrl;
     property dependencies : TFslList<TFHIRPackageDependencyInfo> read FDependencies;
@@ -273,6 +275,7 @@ begin
       ts.Add(s);
     ts.Sort;
     for s in ts do
+    begin
       if s.Contains('-') and FileExists(Path([s, 'package', 'package.json'])) then
       begin
         npm := TJSONParser.ParseFile(Path([s, 'package', 'package.json']));
@@ -298,7 +301,8 @@ begin
               pck.Canonical := getUrl(pck.id);
             v := TFHIRPackageVersionInfo.Create;
             try
-              v.Version := npm.str['version'];
+              v.StatedVersion := s.Substring(s.LastIndexOf('-')+1);
+              v.ActualVersion := npm.str['version'];
               v.url := npm.str['url'];
               dep := npm.obj['dependencies'];
               for n in dep.properties.Keys do
@@ -332,6 +336,7 @@ begin
       for v in pck.versions do
         for d in v.dependencies do
           d.status := resolve(list, d);
+    end;
   finally
     ts.Free;
   end;
@@ -474,10 +479,10 @@ begin
     if t.id = dep.id then
     begin
       for v in t.versions do
-        if v.version = dep.version then
+        if v.actualVersion = dep.version then
           exit(stOK);
       for v in t.versions do
-        if v.version > dep.version then
+        if v.actualVersion > dep.version then
           exit(stMoreRecentVersion);
     end;
 end;
@@ -540,15 +545,12 @@ begin
   result := TFHIRPackageVersionInfo(inherited link);
 end;
 
-
 function TFHIRPackageVersionInfo.summary: String;
 begin
-  if FVersion = 'current' then
-    result := '(current) [FHIR v'+FFhirVersion+']'
-  else if FVersion = 'dev' then
-    result := '(dev) [FHIR v'+FFhirVersion+']'
+  if FActualVersion <> FStatedVersion then
+    result := FStatedVersion+' (v'+FActualVersion+') [FHIR v'+FFhirVersion+']'
   else
-    result := 'v'+FVersion+' [FHIR v'+FFhirVersion+']';
+    result := 'v'+FActualVersion+' [FHIR v'+FFhirVersion+']';
 end;
 
 { TFHIRPackageDependencyInfo }
