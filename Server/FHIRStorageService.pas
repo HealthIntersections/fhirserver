@@ -1081,6 +1081,7 @@ begin
       exit;
     end;
   end;
+  raise Exception.Create('Unsupported Operation '+request.OperationName+' on resource '+request.ResourceName);
 end;
 
 function TFHIROperationEngine.ExecutePatch(request: TFHIRRequest; response: TFHIRResponse): Boolean;

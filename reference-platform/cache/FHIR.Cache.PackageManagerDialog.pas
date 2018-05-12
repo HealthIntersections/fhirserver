@@ -96,9 +96,9 @@ begin
     pc := vtPackages.GetNodeData(ps.Parent);
     if ((pc.obj as TFHIRPackageInfo).id = 'hl7.fhir.core') and (pc.obj.childCount = 1) then
       MessageDlg('You cannot delete all the versions of hl7.fhir.core', mtError, [mbyes], 0)
-    else if MessageDlg('Delete v'+(pp.obj as TFHIRPackageVersionInfo).version+' of '+(pc.obj as TFHIRPackageInfo).id+'?', mtConfirmation, mbYesNo, 0) = mrYes then
+    else if MessageDlg('Delete v'+(pp.obj as TFHIRPackageVersionInfo).StatedVersion+' of '+(pc.obj as TFHIRPackageInfo).id+'?', mtConfirmation, mbYesNo, 0) = mrYes then
     begin
-      FCache.remove((pc.obj as TFHIRPackageInfo).id, (pp.obj as TFHIRPackageVersionInfo).version);
+      FCache.remove((pc.obj as TFHIRPackageInfo).id, (pp.obj as TFHIRPackageVersionInfo).StatedVersion);
       LoadPackages;
     end;
   end;

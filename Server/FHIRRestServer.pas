@@ -1793,6 +1793,9 @@ Begin
                     response.ETag := 'W/"' + oResponse.versionId + '"';
                   response.LastModified := oResponse.lastModifiedDate;
                   // todo: timezone
+                  response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address '+
+                    '(and logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued '+
+                    'use of the API constitutes agreement to these terms. See [link] for erasure requests');
                   if oResponse.tags.Count > 0 then
                     response.CustomHeaders.Add('Category: ' + oResponse.tags.AsHeader);
                   if oResponse.link_List.Count > 0 then
@@ -3506,6 +3509,7 @@ begin
           b.Append(' or get your bearer token (use this to get access to the secure API without needing OAuth login in the application).</p>');
         end;
 
+        b.Append('<p>GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address (and '+'logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued use of the API constitutes agreement to these terms. See [link] for erasure requests.</p>');
 
         b.Append(
           '</p>'#13#10 + '<hr/>'#13#10 + ''#13#10 + '<p>' + GetFhirMessage('SYSTEM_OPERATIONS', lang) + ':</p><ul><li> <a href="' + sBaseURL + '/metadata">' +
