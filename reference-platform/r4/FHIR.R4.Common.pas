@@ -247,7 +247,7 @@ end;
 
 function TFhirParametersParameter4.appendPart(name: String): TFhirParametersParameterW;
 begin
-  result := TFhirParametersParameter4.Create(parameter.partList.Append);
+  result := TFhirParametersParameter4.Create(parameter.partList.Append.Link);
   TFhirParametersParameter4(result).parameter.name := name;
   PartList.Add(result);
 end;
@@ -309,6 +309,7 @@ procedure TFhirParametersParameter4.populateList;
 var
   t : TFhirParametersParameter;
 begin
+  inherited;
   for t in parameter.partList do
     FList.Add(TFhirParametersParameter4.Create(t.Link));
 end;
@@ -322,7 +323,7 @@ end;
 
 function TFHIRParameters4.appendParameter(name: String): TFhirParametersParameterW;
 begin
-  result := TFhirParametersParameter4.Create(parameter.parameterList.Append);
+  result := TFhirParametersParameter4.Create(parameter.parameterList.Append.link);
   TFhirParametersParameter4(result).parameter.name := name;
   ParameterList.Add(result);
 end;
@@ -336,6 +337,7 @@ procedure TFHIRParameters4.populateList;
 var
   t : TFhirParametersParameter;
 begin
+  inherited;
   for t in parameter.parameterList do
     FList.Add(TFhirParametersParameter4.Create(t.Link));
 end;

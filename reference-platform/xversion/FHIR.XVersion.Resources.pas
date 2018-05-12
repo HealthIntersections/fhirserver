@@ -277,16 +277,15 @@ end;
 
 function TFhirParametersParameterW.partList: TFslList<TFhirParametersParameterW>;
 begin
-  if FList = nil then
-    FList := TFslList<TFhirParametersParameterW>.create;
-  FList.Clear;
   populateList;
   result := FList;
 end;
 
 procedure TFhirParametersParameterW.populateList;
 begin
-  raise Exception.Create('Must override populateList in '+ClassName);
+  if FList = nil then
+    FList := TFslList<TFhirParametersParameterW>.create;
+  FList.Clear;
 end;
 
 procedure TFhirParametersParameterW.SetValue(const Value: TFHIRObject);
@@ -330,16 +329,15 @@ end;
 
 function TFHIRParametersW.parameterList: TFslList<TFhirParametersParameterW>;
 begin
-  if FList = nil then
-    FList := TFslList<TFhirParametersParameterW>.create;
-  FList.Clear;
   populateList;
   result := FList;
 end;
 
 procedure TFHIRParametersW.populateList;
 begin
-  raise Exception.Create('Must override populateList in '+ClassName);
+  if FList = nil then
+    FList := TFslList<TFhirParametersParameterW>.create;
+  FList.Clear;
 end;
 
 end.
