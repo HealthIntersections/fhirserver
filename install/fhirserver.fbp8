@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = test
+        as.returnvalue = "fix bug in install"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -191,6 +191,7 @@ begin
       action.group
       begin
         description = "DUnit Tests"
+        enabled = false
         id = {77AF12F8-DBE0-4ABB-BD31-13E85E4F5E1D}
         action.files.delete
         begin
@@ -469,13 +470,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = true
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Tools.Common\=FHIR.R4.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d464
               usedebugdcu = true
               usepackages = false
@@ -629,13 +630,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Tools.Common\=FHIR.R4.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p464
               usedebugdcu = false
               usepackages = false
@@ -762,13 +763,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = true
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base;FHIR.Tools.Common\=FHIR.R3.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d364
               usedebugdcu = true
               usepackages = false
@@ -922,13 +923,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base;FHIR.Tools.Common\=FHIR.R3.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p364
               usedebugdcu = false
               usepackages = false
@@ -1055,13 +1056,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R2.AuthMap;FHIR.Tools.Constants\=FHIR.R2.Constants;FHIR.Tools.Context\=FHIR.R2.Context;FHIR.Tools.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Tools.Javascript\=FHIR.R2.Javascript;FHIR.Tools.ElementModel\=FHIR.R2.ElementModel;FHIR.Tools.Narrative\=FHIR.R2.Narrative;FHIR.Tools.Operations\=FHIR.R2.Operations;FHIR.Tools.Json\=FHIR.R2.Json;FHIR.Tools.Turtle\=FHIRParserTurtle2;FHIR.Tools.Xml\=FHIR.R2.Xml;FHIR.Tools.PathNode\=FHIR.R2.PathNode;FHIR.Tools.Profiles\=FHIR.R2.Profiles;FHIR.Tools.Resources\=FHIR.R2.Resources;FHIR.Tools.MapUtilities\=FHIRStructureMapUtilities2;FHIR.Tools.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorker2;FHIR.Tools.Types\=FHIR.R2.Types;FHIR.Tools.Utilities\=FHIR.R2.Utilities;FHIR.Tools.Validator\=FHIR.R2.Validator;FHIR.Tools.OpBase\=FHIR.R2.OpBase;FHIR.Tools.PathEngine\=FHIR.R2.PathEngine;FHIR.Tools.Narrative2\=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R2.AuthMap;FHIR.Tools.Constants\=FHIR.R2.Constants;FHIR.Tools.Context\=FHIR.R2.Context;FHIR.Tools.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Tools.Javascript\=FHIR.R2.Javascript;FHIR.Tools.ElementModel\=FHIR.R2.ElementModel;FHIR.Tools.Narrative\=FHIR.R2.Narrative;FHIR.Tools.Operations\=FHIR.R2.Operations;FHIR.Tools.Json\=FHIR.R2.Json;FHIR.Tools.Turtle\=FHIR.R2.Turtle;FHIR.Tools.Xml\=FHIR.R2.Xml;FHIR.Tools.PathNode\=FHIR.R2.PathNode;FHIR.Tools.Profiles\=FHIR.R2.Profiles;FHIR.Tools.Resources\=FHIR.R2.Resources;FHIR.Tools.MapUtilities\=FHIR.R2.MapUtilities;FHIR.Tools.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R2.Types;FHIR.Tools.Utilities\=FHIR.R2.Utilities;FHIR.Tools.Validator\=FHIR.R2.Validator;FHIR.Tools.OpBase\=FHIR.R2.OpBase;FHIR.Tools.PathEngine\=FHIR.R2.PathEngine;FHIR.Tools.Narrative2\=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base;FHIR.Tools.Common\=FHIR.R2.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d264
               usedebugdcu = false
               usepackages = false
@@ -1215,13 +1216,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R2.AuthMap;FHIR.Tools.Constants\=FHIR.R2.Constants;FHIR.Tools.Context\=FHIR.R2.Context;FHIR.Tools.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Tools.Javascript\=FHIR.R2.Javascript;FHIR.Tools.ElementModel\=FHIR.R2.ElementModel;FHIR.Tools.Narrative\=FHIR.R2.Narrative;FHIR.Tools.Operations\=FHIR.R2.Operations;FHIR.Tools.Json\=FHIR.R2.Json;FHIR.Tools.Turtle\=FHIRParserTurtle2;FHIR.Tools.Xml\=FHIR.R2.Xml;FHIR.Tools.PathNode\=FHIR.R2.PathNode;FHIR.Tools.Profiles\=FHIR.R2.Profiles;FHIR.Tools.Resources\=FHIR.R2.Resources;FHIR.Tools.MapUtilities\=FHIRStructureMapUtilities2;FHIR.Tools.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorker2;FHIR.Tools.Types\=FHIR.R2.Types;FHIR.Tools.Utilities\=FHIR.R2.Utilities;FHIR.Tools.Validator\=FHIR.R2.Validator;FHIR.Tools.OpBase\=FHIR.R2.OpBase;FHIR.Tools.PathEngine\=FHIR.R2.PathEngine;FHIR.Tools.Narrative2\=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R2.AuthMap;FHIR.Tools.Constants\=FHIR.R2.Constants;FHIR.Tools.Context\=FHIR.R2.Context;FHIR.Tools.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Tools.Javascript\=FHIR.R2.Javascript;FHIR.Tools.ElementModel\=FHIR.R2.ElementModel;FHIR.Tools.Narrative\=FHIR.R2.Narrative;FHIR.Tools.Operations\=FHIR.R2.Operations;FHIR.Tools.Json\=FHIR.R2.Json;FHIR.Tools.Turtle\=FHIR.R2.Turtle;FHIR.Tools.Xml\=FHIR.R2.Xml;FHIR.Tools.PathNode\=FHIR.R2.PathNode;FHIR.Tools.Profiles\=FHIR.R2.Profiles;FHIR.Tools.Resources\=FHIR.R2.Resources;FHIR.Tools.MapUtilities\=FHIR.R2.MapUtilities;FHIR.Tools.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R2.Types;FHIR.Tools.Utilities\=FHIR.R2.Utilities;FHIR.Tools.Validator\=FHIR.R2.Validator;FHIR.Tools.OpBase\=FHIR.R2.OpBase;FHIR.Tools.PathEngine\=FHIR.R2.PathEngine;FHIR.Tools.Narrative2\=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base;FHIR.Tools.Common\=FHIR.R2.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_2_64
               usedebugdcu = false
               usepackages = false
@@ -1348,13 +1349,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Tools.Common\=FHIR.R4.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p464
               usedebugdcu = false
               usepackages = false
@@ -1730,13 +1731,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = true
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Tools.Common\=FHIR.R4.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d432
               usedebugdcu = true
               usepackages = false
@@ -1890,13 +1891,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Tools.Common\=FHIR.R4.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p432
               usedebugdcu = false
               usepackages = false
@@ -2023,13 +2024,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = true
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base;FHIR.Tools.Common\=FHIR.R3.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d332
               usedebugdcu = true
               usepackages = false
@@ -2183,13 +2184,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base;FHIR.Tools.Common\=FHIR.R3.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p332
               usedebugdcu = false
               usepackages = false
@@ -2206,7 +2207,7 @@ begin
             deletehidden = false
             deletereadonly = false
             failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer2.exe
+            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer2.*
             id = {6C4977C8-E272-4A28-A7A2-FFE3C9F30DE4}
           end
           action.delphi.build
@@ -2316,13 +2317,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = true
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R2.AuthMap;FHIR.Tools.Constants\=FHIR.R2.Constants;FHIR.Tools.Context\=FHIR.R2.Context;FHIR.Tools.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Tools.Javascript\=FHIR.R2.Javascript;FHIR.Tools.ElementModel\=FHIR.R2.ElementModel;FHIR.Tools.Narrative\=FHIR.R2.Narrative;FHIR.Tools.Operations\=FHIR.R2.Operations;FHIR.Tools.Json\=FHIR.R2.Json;FHIR.Tools.Turtle\=FHIRParserTurtle2;FHIR.Tools.Xml\=FHIR.R2.Xml;FHIR.Tools.PathNode\=FHIR.R2.PathNode;FHIR.Tools.Profiles\=FHIR.R2.Profiles;FHIR.Tools.Resources\=FHIR.R2.Resources;FHIR.Tools.MapUtilities\=FHIRStructureMapUtilities2;FHIR.Tools.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorker2;FHIR.Tools.Types\=FHIR.R2.Types;FHIR.Tools.Utilities\=FHIR.R2.Utilities;FHIR.Tools.Validator\=FHIR.R2.Validator;FHIR.Tools.OpBase\=FHIR.R2.OpBase;FHIR.Tools.PathEngine\=FHIR.R2.PathEngine;FHIR.Tools.Narrative2\=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R2.AuthMap;FHIR.Tools.Constants\=FHIR.R2.Constants;FHIR.Tools.Context\=FHIR.R2.Context;FHIR.Tools.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Tools.Javascript\=FHIR.R2.Javascript;FHIR.Tools.ElementModel\=FHIR.R2.ElementModel;FHIR.Tools.Narrative\=FHIR.R2.Narrative;FHIR.Tools.Operations\=FHIR.R2.Operations;FHIR.Tools.Json\=FHIR.R2.Json;FHIR.Tools.Turtle\=FHIR.R2.Turtle;FHIR.Tools.Xml\=FHIR.R2.Xml;FHIR.Tools.PathNode\=FHIR.R2.PathNode;FHIR.Tools.Profiles\=FHIR.R2.Profiles;FHIR.Tools.Resources\=FHIR.R2.Resources;FHIR.Tools.MapUtilities\=FHIR.R2.MapUtilities;FHIR.Tools.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R2.Types;FHIR.Tools.Utilities\=FHIR.R2.Utilities;FHIR.Tools.Validator\=FHIR.R2.Validator;FHIR.Tools.OpBase\=FHIR.R2.OpBase;FHIR.Tools.PathEngine\=FHIR.R2.PathEngine;FHIR.Tools.Narrative2\=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base;FHIR.Tools.Common\=FHIR.R2.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d232
               usedebugdcu = true
               usepackages = false
@@ -2476,13 +2477,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R2.AuthMap;FHIR.Tools.Constants\=FHIR.R2.Constants;FHIR.Tools.Context\=FHIR.R2.Context;FHIR.Tools.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Tools.Javascript\=FHIR.R2.Javascript;FHIR.Tools.ElementModel\=FHIR.R2.ElementModel;FHIR.Tools.Narrative\=FHIR.R2.Narrative;FHIR.Tools.Operations\=FHIR.R2.Operations;FHIR.Tools.Json\=FHIR.R2.Json;FHIR.Tools.Turtle\=FHIRParserTurtle2;FHIR.Tools.Xml\=FHIR.R2.Xml;FHIR.Tools.PathNode\=FHIR.R2.PathNode;FHIR.Tools.Profiles\=FHIR.R2.Profiles;FHIR.Tools.Resources\=FHIR.R2.Resources;FHIR.Tools.MapUtilities\=FHIRStructureMapUtilities2;FHIR.Tools.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorker2;FHIR.Tools.Types\=FHIR.R2.Types;FHIR.Tools.Utilities\=FHIR.R2.Utilities;FHIR.Tools.Validator\=FHIR.R2.Validator;FHIR.Tools.OpBase\=FHIR.R2.OpBase;FHIR.Tools.PathEngine\=FHIR.R2.PathEngine;FHIR.Tools.Narrative2\=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R2.AuthMap;FHIR.Tools.Constants\=FHIR.R2.Constants;FHIR.Tools.Context\=FHIR.R2.Context;FHIR.Tools.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Tools.Javascript\=FHIR.R2.Javascript;FHIR.Tools.ElementModel\=FHIR.R2.ElementModel;FHIR.Tools.Narrative\=FHIR.R2.Narrative;FHIR.Tools.Operations\=FHIR.R2.Operations;FHIR.Tools.Json\=FHIR.R2.Json;FHIR.Tools.Turtle\=FHIR.R2.Turtle;FHIR.Tools.Xml\=FHIR.R2.Xml;FHIR.Tools.PathNode\=FHIR.R2.PathNode;FHIR.Tools.Profiles\=FHIR.R2.Profiles;FHIR.Tools.Resources\=FHIR.R2.Resources;FHIR.Tools.MapUtilities\=FHIR.R2.MapUtilities;FHIR.Tools.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R2.Types;FHIR.Tools.Utilities\=FHIR.R2.Utilities;FHIR.Tools.Validator\=FHIR.R2.Validator;FHIR.Tools.OpBase\=FHIR.R2.OpBase;FHIR.Tools.PathEngine\=FHIR.R2.PathEngine;FHIR.Tools.Narrative2\=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base;FHIR.Tools.Common\=FHIR.R2.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p232
               usedebugdcu = false
               usepackages = false
@@ -2609,13 +2610,13 @@ begin
               recordfieldalign = fa8
               referenceinfo = false
               safedivide = false
-              searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
+              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
               showhints = true
               showwarnings = true
               stackframes = false
               stringchecks = true
               typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base
+              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Tools.Common\=FHIR.R4.Common
               unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p432
               usedebugdcu = false
               usepackages = false
@@ -2928,7 +2929,6 @@ begin
         connecttimeoutinsec = 0
         cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
-        enabled = false
         enablekeepalives = false
         ftpconnectionname = HealthIntersections2
         ftphost = 27.123.25.1
@@ -2951,7 +2951,6 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections2
         detailedlogging = false
-        enabled = false
         enabletimeout = false
         filespec = fhirserver64-1.0.%BuildCount%.exe
         forcenextclockskewupdate = true
@@ -2976,7 +2975,6 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections2
         detailedlogging = false
-        enabled = false
         enabletimeout = false
         filespec = fhirserver32-1.0.%BuildCount%.exe
         forcenextclockskewupdate = true
@@ -2998,7 +2996,6 @@ begin
         addnewline = true
         allowdtds = false
         description = "update RSS"
-        enabled = false
         existsbehaviour = neCreate
         expanddocumentnodenamespace = false
         failifmultiple = false
@@ -3022,7 +3019,6 @@ begin
       action.variables.savetoini
       begin
         description = "Save BuildCount"
-        enabled = false
         erasesection = false
         id = {4F98E56B-5E79-4601-9312-F9B2D7BD0FBD}
         inifile = C:\\work\\ftp.ini
@@ -3039,7 +3035,6 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections2
         detailedlogging = false
-        enabled = false
         enabletimeout = false
         filespec = fhirserver.rss
         forcenextclockskewupdate = true
@@ -3059,7 +3054,6 @@ begin
       action.xml.document.transform
       begin
         allowdtds = false
-        enabled = false
         expanddocumentnodenamespace = false
         id = {CBD9C18F-C5C9-467B-8F29-5A7A94DB7945}
         outputfile = C:\\work\\fhirserver\\install\\fhirserver.htm
@@ -3075,7 +3069,6 @@ begin
       action.textfile.create
       begin
         createdirectory = true
-        enabled = false
         encoding = ANSI
         filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
                        "   <td\>%BuildDate%</td\>" +
@@ -3096,7 +3089,6 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections2
         detailedlogging = false
-        enabled = false
         enabletimeout = false
         filespec = fhirserver.htm
         forcenextclockskewupdate = true
@@ -3121,7 +3113,6 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections2
         detailedlogging = false
-        enabled = false
         enabletimeout = false
         filespec = server.inc
         forcenextclockskewupdate = true
@@ -3143,7 +3134,6 @@ begin
         autoreconnect = false
         connectionname = HealthIntersections2
         detailedlogging = false
-        enabled = false
         id = {58346928-77F3-4C2F-A158-2DF37D0A7337}
       end
     end
