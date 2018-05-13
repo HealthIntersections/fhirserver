@@ -587,6 +587,9 @@ type
     procedure AddParameter(name, value: string); overload;
     function AddParameter(name: String) : TFhirParametersParameter; overload;
     procedure AddParameter(p :  TFhirParametersParameter); overload;
+
+    function EncodeVersionsJson : TBytes;
+    function EncodeVersionsXml : TBytes;
   end;
 
   TFhirParametersParameterHelper = class helper for TFhirParametersParameter
@@ -3424,6 +3427,44 @@ end;
 procedure TFhirParametersHelper.AddParameter(p: TFhirParametersParameter);
 begin
   self.parameterList.Add(p);
+end;
+
+function TFhirParametersHelper.EncodeVersionsJson: TBytes;
+var
+  j : TJsonObject;
+  a : TJsonArray;
+  p : TFhirParametersParameter;
+  s : String;
+begin
+  j := TJsonObject.create;
+  try
+    a := j.forceArr['versions'];
+    for p in parameterList do
+      if p.name = 'version' then
+        a.add(p.value.primitiveValue);
+    s := TJSONWriter.writeObjectStr(j, true);
+  finally
+    j.free;
+  end;
+  result := TEncoding.UTF8.GetBytes(s);
+end;
+
+function TFhirParametersHelper.EncodeVersionsXml: TBytes;
+var
+  x : TMXmlDocument;
+  p : TFhirParametersParameter;
+  s : String;
+begin
+  x := TMXmlDocument.Create;
+  try
+    for p in parameterList do
+      if p.name = 'version' then
+        x.addElement('version').addText(p.value.primitiveValue);
+    s := x.ToXml(true);
+  finally
+    x.free;
+  end;
+  result := TEncoding.UTF8.GetBytes(s);
 end;
 
 { TFhirParametersParameterHelper }

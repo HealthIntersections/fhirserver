@@ -142,9 +142,9 @@ Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion r
 
 ; Packages
 Source: "C:\ProgramData\.fhir\packages\packages.ini"; DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
-Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-1.0.2\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-1.0.2"; Components: r2; Flags: recursesubdirs
-Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-3.0.1\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.0.1"; Components: r3; Flags: recursesubdirs
-Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-3.4.0\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.4.0"; Components: r4; Flags: recursesubdirs
+Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-1.0.2\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-1.0.2"; Components: r2; Flags: recursesubdirs onlyifdoesntexist
+Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-3.0.1\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.0.1"; Components: r3; Flags: recursesubdirs onlyifdoesntexist
+Source: "C:\ProgramData\.fhir\packages\packages.ini\hl7.fhir.core-3.4.0\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.4.0"; Components: r4; Flags: recursesubdirs onlyifdoesntexist
 
 ; Examples
 Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";      DestDir: {app}\load;  DestName: fhir.json.zip; Components: r2;   Flags: ignoreversion

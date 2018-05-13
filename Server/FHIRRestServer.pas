@@ -2917,6 +2917,19 @@ begin
             response.ContentDisposition := 'attachment;';
           response.Expires := Now + 0.25;
         end
+        // special $versions support
+        else if (oResponse.format = ffJson) and (request.Accept = 'application/json') and (oResponse.Resource is TFhirParameters) and (oRequest.OperationName = 'versions') then
+        begin
+          response.contentType := 'application/json';
+          b := (oResponse.Resource as TFhirParameters).EncodeVersionsJson;
+          stream.Write(b, length(b));
+        end
+        else if (oResponse.format = ffXml) and (request.Accept = 'application/xml') and (oResponse.Resource is TFhirParameters) and (oRequest.OperationName = 'versions') then
+        begin
+          response.contentType := 'application/xml';
+          b := (oResponse.Resource as TFhirParameters).EncodeVersionsXml;
+          stream.Write(b, length(b));
+        end
         else if (oRequest.Adaptor <> nil) then
         begin
           oRequest.Adaptor.Compose(oResponse, stream);

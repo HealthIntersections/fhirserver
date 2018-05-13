@@ -325,6 +325,17 @@ type
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
+  TFhirVersionsOperation = class (TFhirNativeOperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+  end;
+
 
 {$IFNDEF FHIR2}
 
@@ -809,6 +820,7 @@ begin
   FOperations.add(TFhirGenerateCodeOperation.create);
   FOperations.add(TFhirHandleQAPostOperation.create);
   FOperations.add(TFhirQuestionnaireGenerationOperation.create);
+  FOperations.add(TFhirVersionsOperation.create);
   FOperations.add(TFhirProcessClaimOperation.create);
   FOperations.add(TFhirCurrentTestScriptOperation.create);
   FOperations.add(TFhirGenerateSnapshotOperation.create);
@@ -11374,6 +11386,61 @@ end;
 function TFhirConvertOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtNull] + ALL_RESOURCE_TYPES;
+end;
+
+{ TFhirVersionsOperation }
+
+function TFhirVersionsOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirVersionsOperation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+var
+  profile : TFHirStructureDefinition;
+  p : TFhirParameters;
+begin
+  try
+    p := TFHIRParameters.Create;
+    try
+      p.AddParameter('version', 'r'+FHIR_GENERATED_PUBLICATION);
+      response.HTTPCode := 200;
+      response.Message := 'OK';
+      response.Body := '';
+      response.LastModifiedDate := now;
+      response.Resource := p.Link;
+    finally
+      p.Free;
+    end;
+    manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirVersionsOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirVersionsOperation.Name: String;
+begin
+  result := 'versions';
+end;
+
+function TFhirVersionsOperation.owningResource: TFhirResourceType;
+begin
+  result := frtNull;
+end;
+
+function TFhirVersionsOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtNull];
 end;
 
 end.
