@@ -82,6 +82,7 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
   public List<String> procs = new ArrayList<String>();
   public List<String> procsPub = new ArrayList<String>();
 
+  
   private String rId;
   boolean include = true;
 
@@ -160,9 +161,13 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
     write("uses\r\n");
     write("  ");
     for (int i = 0; i < uses.size(); i++) {
-      if (i > 0)
-        write(", ");
-      write(uses.get(i));
+      if ("\r\n".equals(uses.get(i)))
+        write("\r\n  ");
+      else {
+        write(uses.get(i));
+        if (i < uses.size()-1)
+          write(", ");
+      }
     }
     write(";\r\n");
     write("\r\n");
@@ -248,6 +253,12 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
     classFwds.add("{$ENDIF FHIR_"+n+"}\r\n");
     classDefs.add("{$ENDIF FHIR_"+n+"}\r\n");
     classImpls.add("{$ENDIF FHIR_"+n+"}\r\n");
+  }
+
+
+  public void usesBreak() {
+    uses.add("\r\n");
+    
   }
 
 
