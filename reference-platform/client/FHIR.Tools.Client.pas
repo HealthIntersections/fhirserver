@@ -35,11 +35,12 @@ uses
   SysUtils,
   FHIR.Support.DateTime, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded,
+  FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser,
   {$IFDEF FHIR2} FHIR.R2.Client, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Client, {$ENDIF}
   {$IFDEF FHIR4} FHIR.R4.Client, {$ENDIF}
   FHIR.Tools.Context, FHIR.Tools.Constants, FHIR.Tools.Resources;
+
 
 Type
   EFHIRClientException = FHIR.Client.Base.EFHIRClientException;
@@ -67,41 +68,6 @@ Type
     class function makeIndy(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : cardinal) : TFhirClient; overload;
 
     class function makeThreaded(worker : TFHIRWorkerContext; internal : TFhirClient; event : TThreadManagementEvent) : TFhirClient; overload;
-  end;
-
-  TFHIRClientAsyncContextState = (asyncReady, asyncInitialQuery, asyncInitialWait, asyncDelay, asyncPing, asyncPingWait, asyncReadyToDownload, async);
-
-  TFHIRClientAsyncTask = class (TFslObject)
-  private
-    FClient : TFhirClientV;
-    FFolder: String;
-    FTypes: TFhirResourceTypeSet;
-    FQuery: string;
-    FFormat : TFHIRFormat;
-    FSince: TDateTimeEx;
-    FLog : String;
-    FStart : TDateTime;
-    FStatus : TFHIRClientAsyncContextState;
-    FTaskLocation : String;
-    procedure SetTypes(const Value: TFhirResourceTypeSet);
-    procedure log(s : String);
-    procedure makeInitialRequest;
-  public
-    Constructor create(client : TFhirClientV);
-    Destructor Destroy; override;
-
-    // setup
-    property query : string read FQuery write FQuery;
-    property format : TFHIRFormat read FFormat write FFormat;
-    property folder : String read FFolder write FFolder;
-    property since : TDateTimeEx read FSince write FSince;
-    property types : TFhirResourceTypeSet read FTypes write SetTypes;
-
-    // operation
-    function logText : String;
-    function status : String;
-    procedure next;
-    function Finished : boolean;
   end;
 
 
@@ -162,108 +128,6 @@ end;
 class function TFhirClients.makeIndy(worker: TFHIRWorkerContext; url: String; json: boolean): TFhirClient;
 begin
   result := makeIndy(worker, url, json, 0);
-end;
-
-{ TFHIRClientAsyncTask }
-
-constructor TFHIRClientAsyncTask.create(client: TFhirClientV);
-begin
-  inherited Create;
-  FClient := client;
-  FLog := '';
-  FStart := now;
-  FStatus := asyncReady;
-  log('Initialised at '+FormatDateTime('c', now));
-end;
-
-destructor TFHIRClientAsyncTask.Destroy;
-begin
-  FClient.Free;
-  inherited;
-end;
-
-function TFHIRClientAsyncTask.Finished: boolean;
-begin
-  result := false;
-end;
-
-procedure TFHIRClientAsyncTask.log(s: String);
-begin
-  s := DescribePeriod(now - FStart) + ' '+ s + #13#10;
-  Flog := s + Flog;
-end;
-
-function TFHIRClientAsyncTask.logText : String;
-begin
-  result := Flog;
-end;
-
-procedure TFHIRClientAsyncTask.makeInitialRequest;
-var
-  headers : THTTPHeaders;
-  p, t : String;
-  a : TFhirResourceType;
-  buf : TFslBuffer;
-begin
-  headers.accept := 'application/fhir+json';
-  headers.prefer := 'respond-async';
-  p := FQuery+'?_outputFormat=application/fhir+ndjson';
-  if since.notNull then
-    p := p + '&_since='+since.toXML;
-  t := '';
-  for a := low(TFhirResourceType) to high(TFhirResourceType) do
-    if a in types then
-      CommaAdd(t, CODES_TFHIRResourceType[a]);
-  if t <> '' then
-    p := '&_type='+t;
-  log('Make request of '+p+' with headers '+headers.asString);
-  buf := FClient.customGet(p, headers);
-  try
-    if FClient.LastStatus = 202 then
-    begin
-      FTaskLocation := FClient.LastHeaders.ContentLocation;
-      FStatus := asyncDelay;
-      log('Accepted. Task Location = '+FTaskLocation);
-    end
-    else
-      raise Exception.Create('Error?');
-  finally
-    buf.Free;
-  end;
-end;
-
-procedure TFHIRClientAsyncTask.next;
-begin
-  case FStatus of
-    asyncReady: makeInitialRequest;
-    asyncInitialQuery: raise Exception.Create('Not done yet');
-    asyncInitialWait: raise Exception.Create('Not done yet');
-    asyncDelay: raise Exception.Create('Not done yet');
-    asyncPing: raise Exception.Create('Not done yet');
-    asyncPingWait: raise Exception.Create('Not done yet');
-    asyncReadyToDownload: raise Exception.Create('Not done yet');
-    async: raise Exception.Create('Not done yet');
-  end;
-end;
-
-procedure TFHIRClientAsyncTask.SetTypes(const Value: TFhirResourceTypeSet);
-begin
-  FTypes := Value;
-end;
-
-function TFHIRClientAsyncTask.status: String;
-begin
-  case FStatus of
-    asyncReady: result := 'Ready to make Request';
-    asyncInitialQuery: result := 'Not done yet';
-    asyncInitialWait: result := 'Not done yet';
-    asyncDelay: result := 'Not done yet';
-    asyncPing: result := 'Not done yet';
-    asyncPingWait: result := 'Not done yet';
-    asyncReadyToDownload: result := 'Not done yet';
-    async: result := 'Not done yet';
-  end;
-  result := 'Status to be determined';
 end;
 
 end.

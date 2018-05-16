@@ -250,7 +250,6 @@ type
     Property ByName[name : String] : TFHIRProperty read GetPropertyByName;
   End;
 
-
   TFHIRPropertyIterator = class (TFslObject)
   private
     FFocus : TFHIRObject;

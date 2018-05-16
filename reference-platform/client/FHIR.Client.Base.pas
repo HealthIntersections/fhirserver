@@ -56,7 +56,7 @@ Type
     location : String;
     contentLocation : String;
     lastOperationId : String; // some servers return an id that links to their own internal log for debugging
-
+    progress : String; // X-Progress fgrom bulk data
     function asString : string;
   end;
 
@@ -126,6 +126,7 @@ Type
     FFormat : TFHIRFormat;
     FLang : string;
     FSmartToken: TSmartOnFhirAccessToken;
+    FLastStatusMsg: String;
     procedure SetProvenance(const Value: TFHIRResourceV);
     procedure SetSmartToken(const Value: TSmartOnFhirAccessToken);
     function encodeParams(params: TStringList): String;
@@ -155,6 +156,7 @@ Type
     property LastURL : String read FLastURL write FLastURL;
     property LastHeaders : THTTPHeaders read GetHeaders;
     property LastStatus : integer read FLastStatus write FLastStatus;
+    property LastStatusMsg : String read FLastStatusMsg write FLastStatusMsg;
     property Logger : TFHIRClientLogger read FLogger write SetLogger;
     property provenance : TFHIRResourceV read FProvenance write SetProvenance;
     property smartToken : TSmartOnFhirAccessToken read FSmartToken write SetSmartToken;

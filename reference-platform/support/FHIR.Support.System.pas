@@ -533,10 +533,12 @@ begin
   for part in parts do
     if result = '' then
       result := part
-    else if result.EndsWith('/') then
+    else if not result.EndsWith('/') and not part.startsWith('/') then
+      result := result+'/'+part
+    else if not result.EndsWith('/') or not part.startsWith('/') then
       result := result+ part
     else
-      result := result+'/'+part;
+      result := result+ part.substring(1);
 end;
 
 Function CreateGUID : TGUID;

@@ -428,8 +428,10 @@ begin
       FHeaders.contentType := indy.Response.ContentType;
       FHeaders.location := indy.Response.Location;
       FHeaders.LastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
+      FHeaders.Progress := indy.Response.RawHeaders.Values['X-Progress'];
       FHeaders.contentLocation := indy.Response.RawHeaders.Values['Content-Location'];
       FClient.LastStatus := indy.ResponseCode;
+      FClient.LastStatusMsg := indy.ResponseText;
     except
       on E:EIdHTTPProtocolException do
       begin
@@ -441,7 +443,9 @@ begin
         FHeaders.location := indy.Response.Location;
         FHeaders.contentLocation := indy.Response.RawHeaders.Values['Content-Location'];
         FHeaders.LastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
+        FHeaders.Progress := indy.Response.RawHeaders.Values['X-Request-Id'];
         FClient.LastStatus := indy.ResponseCode;
+        FClient.LastStatusMsg := indy.ResponseText;
 
         if StringFind(cnt, 'OperationOutcome') > 0 then
         begin
@@ -580,6 +584,7 @@ begin
 
       code := StrToInt(http.ResponseCode);
       FClient.LastStatus := code;
+      FClient.LastStatusMsg := http.ResponseText;
       if (code < 200) or (code >= 600) Then
         raise exception.create('unexpected condition');
     if (code >= 300) and (code < 400) then
@@ -590,6 +595,7 @@ begin
   FHeaders.location := http.Headers['Location'];
   FHeaders.contentLocation := http.Headers['Content-Location'];
   FHeaders.LastOperationId := http.Headers['X-Request-Id'];
+  FHeaders.progress := http.Headers['X-Progress'];
 
   if code >= 300 then
     processException;
@@ -879,7 +885,7 @@ function TFHIRHTTPCommunicator.customGet(path: String; headers: THTTPHeaders): T
 var
   ret : TStream;
 begin
-  ret := exchange(Furl+'/'+path, httpGet, nil, headers);
+  ret := exchange(URLPath([Furl, path]), httpGet, nil, headers);
   try
     result := TFslBuffer.Create;
     try

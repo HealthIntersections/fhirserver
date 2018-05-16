@@ -33,12 +33,10 @@ unit FHIR.R3.IndexInfo;
 
 interface
 
-// FHIR v3.0.1 generated 2017-04-27T17:09:41+10:00
+// FHIR v3.0.1 generated 2018-04-24T14:35:17+10:00
 
 uses
-  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Stream, FHIR.Support.DateTime,
-  FHIR.Tools.Indexing, FHIR.Tools.Session, 
-  FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Constants;
+  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Stream, FHIR.Support.DateTime, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Constants, FHIR.Tools.Indexing;
 
 Type
 
@@ -1038,7 +1036,7 @@ begin
   indexes.add('Composition', 'encounter', 'Context of the Composition', SearchParamTypeREFERENCE, ['EpisodeOfCare', 'Encounter'], 'DocumentReference.context.encounter | RiskAssessment.context | DeviceRequest.context | Procedure.context | List.encounter | VisionPrescription.encounter | ProcedureRequest.context | Flag.encounter | Observation.context | DiagnosticReport.context | Nu'+'tritionOrder.encounter | Composition.encounter', SearchXpathUsageNormal);
   indexes.add('Composition', 'entry', 'A reference to data that supports this section', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Composition.section.entry', SearchXpathUsageNormal);
   indexes.add('Composition', 'identifier', 'Logical identifier of composition (version-independent)', SearchParamTypeTOKEN, [], 'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.identifier | List.identifier | Immunization.identi'+'fier | VisionPrescription.identifier | ProcedureRequest.identifier | Observation.identifier | DiagnosticReport.identifier | NutritionOrder.identifier | Condition.identifier | Composition.identifier | DetectedIssue.identifier | SupplyDelivery.identifi'+'er', SearchXpathUsageNormal);
-  indexes.add('Composition', 'patient', 'Who and/or what the composition is about', SearchParamTypeREFERENCE, ['Patient'], 'ReferralRequest.subject | DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory.patient | Encounter.sub'+'ject | DeviceUseStatement.subject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeOfCare.patient | Procedure.subject | List.subject | Immunization.patient | VisionPrescription.patient | ProcedureRequest.subject | Flag'+'.subject | Observation.subject | DiagnosticReport.subject | NutritionOrder.patient | Condition.subject | Composition.subject | DetectedIssue.patient | SupplyDelivery.patient | ClinicalImpression.subject', SearchXpathUsageNormal);
+  indexes.add('Composition', 'patient', 'Who and/or what the composition is about', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'ReferralRequest.subject | DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory.patient | Encounter.sub'+'ject | DeviceUseStatement.subject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeOfCare.patient | Procedure.subject | List.subject | Immunization.patient | VisionPrescription.patient | ProcedureRequest.subject | Flag'+'.subject | Observation.subject | DiagnosticReport.subject | NutritionOrder.patient | Condition.subject | Composition.subject | DetectedIssue.patient | SupplyDelivery.patient | ClinicalImpression.subject', SearchXpathUsageNormal);
   indexes.add('Composition', 'period', 'The period covered by the documentation', SearchParamTypeDATE, [], 'Composition.event.period', SearchXpathUsageNormal);
   indexes.add('Composition', 'related-id', 'Target of the relationship', SearchParamTypeTOKEN, [], 'Composition.relatesTo.target.as(Identifier)', SearchXpathUsageNormal);
   indexes.add('Composition', 'related-ref', 'Target of the relationship', SearchParamTypeREFERENCE, ['Composition'], 'Composition.relatesTo.target.as(Reference)', SearchXpathUsageNormal);

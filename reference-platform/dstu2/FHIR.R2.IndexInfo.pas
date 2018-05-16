@@ -31,15 +31,12 @@ unit FHIR.R2.IndexInfo;
   
 }
 
-
 interface
 
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  SysUtils, Classes, FHIR.Support.Objects, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.DateTime,
-  FHIR.Tools.Indexing, FHIR.Tools.Session, 
-  FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants;
+  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Stream, FHIR.Support.DateTime, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants, FHIR.Tools.Indexing;
 
 Type
 
@@ -1750,7 +1747,10 @@ begin
   indexes.add('Observation', 'data-absent-reason', 'The reason why the expected value in the element Observation.value[x] is missing.', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('Observation', 'date', 'Obtained date/time. If the obtained element is a period, a date that falls in the period', SearchParamTypeDATE, [], '', SearchXpathUsageNormal);
   indexes.add('Observation', 'device', 'The Device that generated the observation data.', SearchParamTypeREFERENCE, ['Device', 'DeviceMetric'], '', SearchXpathUsageNormal);
+  indexes.add('Observation', 'dna-variant', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName', SearchParamTypeTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName'').value', SearchXpathUsageNormal);
   indexes.add('Observation', 'encounter', 'Healthcare event related to the observation', SearchParamTypeREFERENCE, ['Encounter'], '', SearchXpathUsageNormal);
+  indexes.add('Observation', 'gene-dnavariant', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId', SearchParamTypeTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId'').value', SearchXpathUsageNormal);
+  indexes.add('Observation', 'gene-identifier', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsGene', SearchParamTypeTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsGene'').value', SearchXpathUsageNormal);
   indexes.add('Observation', 'identifier', 'The unique id for a particular observation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('Observation', 'patient', 'The subject that the observation is about (if patient)', SearchParamTypeREFERENCE, ['Group', 'Device', 'Patient', 'Location'], '', SearchXpathUsageNormal);
   indexes.add('Observation', 'performer', 'Who performed the observation', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Patient', 'RelatedPerson'], '', SearchXpathUsageNormal);

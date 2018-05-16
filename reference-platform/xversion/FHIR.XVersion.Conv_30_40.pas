@@ -590,10 +590,6 @@ Type
     class function convertCareTeam(src : FHIR.R4.Resources.TFhirCareTeam) : FHIR.R3.Resources.TFhirCareTeam; overload;
     class function convertCareTeamParticipantComponent(src : FHIR.R3.Resources.TFhirCareTeamParticipant) : FHIR.R4.Resources.TFhirCareTeamParticipant; overload;
     class function convertCareTeamParticipantComponent(src : FHIR.R4.Resources.TFhirCareTeamParticipant) : FHIR.R3.Resources.TFhirCareTeamParticipant; overload;
-    class function convertChargeItem(src : FHIR.R3.Resources.TFhirChargeItem) : FHIR.R4.Resources.TFhirChargeItem; overload;
-    class function convertChargeItem(src : FHIR.R4.Resources.TFhirChargeItem) : FHIR.R3.Resources.TFhirChargeItem; overload;
-    class function convertChargeItemParticipantComponent(src : FHIR.R3.Resources.TFhirChargeItemParticipant) : FHIR.R4.Resources.TFhirChargeItemParticipant; overload;
-    class function convertChargeItemParticipantComponent(src : FHIR.R4.Resources.TFhirChargeItemParticipant) : FHIR.R3.Resources.TFhirChargeItemParticipant; overload;
     class function convertClaim(src : FHIR.R3.Resources.TFhirClaim) : FHIR.R4.Resources.TFhirClaim; overload;
     class function convertClaim(src : FHIR.R4.Resources.TFhirClaim) : FHIR.R3.Resources.TFhirClaim; overload;
     class function convertRelatedClaimComponent(src : FHIR.R3.Resources.TFhirClaimRelated) : FHIR.R4.Resources.TFhirClaimRelated; overload;
@@ -11719,244 +11715,6 @@ begin
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertChargeItem(src : FHIR.R3.Resources.TFhirChargeItem) : FHIR.R4.Resources.TFhirChargeItem;
-var
-  tgt : FHIR.R4.Resources.TFhirChargeItem;
-  t1 : FHIR.R3.Types.TFhirUri;
-  t2 : FHIR.R3.Types.TFhirReference;
-  t3 : FHIR.R3.Resources.TFhirChargeItemParticipant;
-  t4 : FHIR.R3.Types.TFhirCodeableConcept;
-  t5 : FHIR.R3.Types.TFhirCodeableConcept;
-  t6 : FHIR.R3.Types.TFhirReference;
-  t7 : FHIR.R3.Types.TFhirReference;
-  t8 : FHIR.R3.Types.TFhirAnnotation;
-  t9 : FHIR.R3.Types.TFhirReference;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirChargeItem.Create();
-  try
-  copyDomainResource(src, tgt);
-  if (src.identifier <> nil) then
-    tgt.identifierList.add(convertIdentifier(src.Identifier));
-
-  for t1 in src.definitionList do
-  begin
-    tgt.definitionList.add(convertUri(t1));
-  end;
-  tgt.status := convertChargeItemStatus(src.status);
-
-  for t2 in src.partOfList do
-  begin
-    tgt.partOfList.add(convertReference(t2));
-  end;
-  tgt.code := convertCodeableConcept(src.code);
-
-  if (src.subject <> nil) then
-    tgt.subject := convertReference(src.subject);
-
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
-
-  if (src.occurrence <> nil) then
-    tgt.occurrence := convertType(src.occurrence);
-
-  for t3 in src.participantList do
-  begin
-    tgt.participantList.add(convertChargeItemParticipantComponent(t3));
-  end;
-  if (src.performingOrganization <> nil) then
-    tgt.performingOrganization := convertReference(src.performingOrganization);
-
-  if (src.requestingOrganization <> nil) then
-    tgt.requestingOrganization := convertReference(src.requestingOrganization);
-
-  if (src.quantity <> nil) then
-    tgt.quantity := convertQuantity(src.quantity);
-
-  for t4 in src.bodysiteList do
-  begin
-    tgt.bodysiteList.add(convertCodeableConcept(t4));
-  end;
-   tgt.factorOverride := src.factorOverride;
-
-  if (src.priceOverride <> nil) then
-    tgt.priceOverride := convertMoney(src.priceOverride);
-
-  if (src.overrideReason <> '') then
-    tgt.overrideReason := src.overrideReason;
-
-  if (src.enterer <> nil) then
-    tgt.enterer := convertReference(src.enterer);
-
-  tgt.enteredDate := src.enteredDate.link;
-
-  for t5 in src.reasonList do
-  begin
-    tgt.reasonList.add(convertCodeableConcept(t5));
-  end;
-  for t6 in src.serviceList do
-  begin
-    tgt.serviceList.add(convertReference(t6));
-  end;
-  for t7 in src.accountList do
-  begin
-    tgt.accountList.add(convertReference(t7));
-  end;
-  for t8 in src.noteList do
-  begin
-    tgt.noteList.add(convertAnnotation(t8));
-  end;
-  for t9 in src.supportingInformationList do
-  begin
-    tgt.supportingInformationList.add(convertReference(t9));
-  end;
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertChargeItem(src : FHIR.R4.Resources.TFhirChargeItem) : FHIR.R3.Resources.TFhirChargeItem;
-var
-  tgt : FHIR.R3.Resources.TFhirChargeItem;
-  t1 : FHIR.R4.Types.TFhirUri;
-  t2 : FHIR.R4.Types.TFhirReference;
-  t3 : FHIR.R4.Resources.TFhirChargeItemParticipant;
-  t4 : FHIR.R4.Types.TFhirCodeableConcept;
-  t5 : FHIR.R4.Types.TFhirCodeableConcept;
-  t6 : FHIR.R4.Types.TFhirReference;
-  t7 : FHIR.R4.Types.TFhirReference;
-  t8 : FHIR.R4.Types.TFhirAnnotation;
-  t9 : FHIR.R4.Types.TFhirReference;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirChargeItem.Create();
-  try
-  copyDomainResource(src, tgt);
-  if (src.identifierList.Count > 0) then
-    tgt.Identifier := convertIdentifier(src.IdentifierList[0]);
-
-  for t1 in src.definitionList do
-  begin
-    tgt.definitionList.add(convertUri(t1));
-  end;
-  tgt.status := convertChargeItemStatus(src.status);
-
-  for t2 in src.partOfList do
-  begin
-    tgt.partOfList.add(convertReference(t2));
-  end;
-  tgt.code := convertCodeableConcept(src.code);
-
-  if (src.subject <> nil) then
-    tgt.subject := convertReference(src.subject);
-
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
-
-  if (src.occurrence <> nil) then
-    tgt.occurrence := convertType(src.occurrence);
-
-  for t3 in src.participantList do
-  begin
-    tgt.participantList.add(convertChargeItemParticipantComponent(t3));
-  end;
-  if (src.performingOrganization <> nil) then
-    tgt.performingOrganization := convertReference(src.performingOrganization);
-
-  if (src.requestingOrganization <> nil) then
-    tgt.requestingOrganization := convertReference(src.requestingOrganization);
-
-  if (src.quantity <> nil) then
-    tgt.quantity := convertQuantity(src.quantity);
-
-  for t4 in src.bodysiteList do
-  begin
-    tgt.bodysiteList.add(convertCodeableConcept(t4));
-  end;
-  tgt.factorOverride := src.factorOverride;
-
-  if (src.priceOverride <> nil) then
-    tgt.priceOverride := convertMoney(src.priceOverride);
-
-  if (src.overrideReason <> '') then
-    tgt.overrideReason := src.overrideReason;
-
-  if (src.enterer <> nil) then
-    tgt.enterer := convertReference(src.enterer);
-
-  tgt.enteredDate := src.enteredDate;
-
-  for t5 in src.reasonList do
-  begin
-    tgt.reasonList.add(convertCodeableConcept(t5));
-  end;
-  for t6 in src.serviceList do
-  begin
-    tgt.serviceList.add(convertReference(t6));
-  end;
-  for t7 in src.accountList do
-  begin
-    tgt.accountList.add(convertReference(t7));
-  end;
-  for t8 in src.noteList do
-  begin
-    tgt.noteList.add(convertAnnotation(t8));
-  end;
-  for t9 in src.supportingInformationList do
-  begin
-    tgt.supportingInformationList.add(convertReference(t9));
-  end;
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertChargeItemParticipantComponent(src : FHIR.R3.Resources.TFhirChargeItemParticipant) : FHIR.R4.Resources.TFhirChargeItemParticipant;
-var
-  tgt : FHIR.R4.Resources.TFhirChargeItemParticipant;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirChargeItemParticipant.Create();
-  try
-  copyBackboneElement(src, tgt);
-  if (src.role <> nil) then
-    tgt.role := convertCodeableConcept(src.role);
-
-  if (src.actor <> nil) then
-    tgt.actor := convertReference(src.actor);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertChargeItemParticipantComponent(src : FHIR.R4.Resources.TFhirChargeItemParticipant) : FHIR.R3.Resources.TFhirChargeItemParticipant;
-var
-  tgt : FHIR.R3.Resources.TFhirChargeItemParticipant;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirChargeItemParticipant.Create();
-  try
-  copyBackboneElement(src, tgt);
-  if (src.role <> nil) then
-    tgt.role := convertCodeableConcept(src.role);
-
-  if (src.actor <> nil) then
-    tgt.actor := convertReference(src.actor);
 
   exit(tgt.link);
   finally
@@ -29072,8 +28830,6 @@ begin
     exit(convertCapabilityStatement(src as FHIR.R3.Resources.TFhirCapabilityStatement));
   if (src is FHIR.R3.Resources.TFhirCareTeam) then
     exit(convertCareTeam(src as FHIR.R3.Resources.TFhirCareTeam));
-  if (src is FHIR.R3.Resources.TFhirChargeItem) then
-    exit(convertChargeItem(src as FHIR.R3.Resources.TFhirChargeItem));
   if (src is FHIR.R3.Resources.TFhirClaim) then
     exit(convertClaim(src as FHIR.R3.Resources.TFhirClaim));
   if (src is FHIR.R3.Resources.TFhirClinicalImpression) then
@@ -29233,8 +28989,6 @@ begin
     exit(convertCapabilityStatement(src as FHIR.R4.Resources.TFhirCapabilityStatement));
   if (src is FHIR.R4.Resources.TFhirCareTeam) then
     exit(convertCareTeam(src as FHIR.R4.Resources.TFhirCareTeam));
-  if (src is FHIR.R4.Resources.TFhirChargeItem) then
-    exit(convertChargeItem(src as FHIR.R4.Resources.TFhirChargeItem));
   if (src is FHIR.R4.Resources.TFhirClaim) then
     exit(convertClaim(src as FHIR.R4.Resources.TFhirClaim));
   if (src is FHIR.R4.Resources.TFhirClinicalImpression) then

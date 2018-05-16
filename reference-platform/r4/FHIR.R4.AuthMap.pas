@@ -62,6 +62,7 @@ const
     tcClinical, // frtCarePlan
     tcClinical, // frtCareTeam
     tcFinancial, // frtChargeItem
+    tcFinancial, // frtChargeItemDefinition
     tcFinancial, // frtClaim
     tcFinancial, // frtClaimResponse
     tcClinical, // frtClinicalImpression

@@ -229,7 +229,8 @@ var
 begin
   arr := json.forceArr[srvname(purpose)];
   delta := server.id - dest.id;
-  arr.move(server.id, delta);
+  if delta <> 0 then
+    arr.move(server.id, delta);
 end;
 
 procedure TFHIRClientRegistry.moveServerAfter(purpose : String; server, dest: TRegisteredFHIRServer);

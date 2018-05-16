@@ -1,5 +1,7 @@
 unit FHIR.R2.Operations;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -29,15 +31,14 @@ unit FHIR.R2.Operations;
   
 }
 
-
 interface
 
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  SysUtils, Classes, Generics.Collections, FHIR.Support.Strings, FHIR.Support.Decimal,
-  FHIR.Support.Generics, FHIR.Web.ParseMap, FHIR.Support.DateTime, FHIR.Base.Objects, FHIR.Tools.OpBase,
-  FHIR.R2.Types, FHIR.R2.Resources;
+  SysUtils, Classes, Generics.Collections, 
+  FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Stream, FHIR.Support.Generics, FHIR.Web.ParseMap, FHIR.Support.DateTime, 
+  FHIR.R2.Base, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.OpBase;
 
 Type
 
@@ -803,7 +804,8 @@ begin
   FCode := params.str['code'];
   FSystem := params.str['system'];
   FVersion := params.str['version'];
-  FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
+  if params.param['coding'] <> nil then
+    FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
   FDate := TDateTimeEx.fromXml(params.str['date']);
   loadExtensions(params);
 end;
@@ -864,7 +866,8 @@ constructor TFHIRLookupOpRespDesignation.create(params : TFhirParametersParamete
 begin
   inherited create();
   FLanguage := params.str['language'];
-  FUse := (params.param['use'].value as TFhirCoding).Link; {ob.5d}
+  if params.param['use'] <> nil then
+    FUse := (params.param['use'].value as TFhirCoding).Link; {ob.5d}
   FValue := params.str['value'];
   loadExtensions(params);
 end;
@@ -992,8 +995,10 @@ begin
   FSystem := params.str['system'];
   FVersion := params.str['version'];
   FDisplay := params.str['display'];
-  FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
-  FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
+  if params.param['coding'] <> nil then
+    FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
+  if params.param['codeableConcept'] <> nil then
+    FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
   FDate := TDateTimeEx.fromXml(params.str['date']);
   FAbstract := params.bool['abstract'];
   loadExtensions(params);
@@ -1253,7 +1258,8 @@ end;
 
 procedure TFHIRMetaOpResponse.load(params : TFHIRParameters);
 begin
-  FReturn := (params.param['return'].value as TFhirMeta).Link; {ob.5d}
+  if params.param['return'] <> nil then
+    FReturn := (params.param['return'].value as TFhirMeta).Link; {ob.5d}
   loadExtensions(params);
 end;
 
@@ -1299,7 +1305,8 @@ end;
 
 procedure TFHIRMetaAddOpRequest.load(params : TFHIRParameters);
 begin
-  FMeta := (params.param['meta'].value as TFhirMeta).Link; {ob.5d}
+  if params.param['meta'] <> nil then
+    FMeta := (params.param['meta'].value as TFhirMeta).Link; {ob.5d}
   loadExtensions(params);
 end;
 
@@ -1345,7 +1352,8 @@ end;
 
 procedure TFHIRMetaAddOpResponse.load(params : TFHIRParameters);
 begin
-  FReturn := (params.param['return'].value as TFhirMeta).Link; {ob.5d}
+  if params.param['return'] <> nil then
+    FReturn := (params.param['return'].value as TFhirMeta).Link; {ob.5d}
   loadExtensions(params);
 end;
 
@@ -1391,7 +1399,8 @@ end;
 
 procedure TFHIRMetaDeleteOpRequest.load(params : TFHIRParameters);
 begin
-  FMeta := (params.param['meta'].value as TFhirMeta).Link; {ob.5d}
+  if params.param['meta'] <> nil then
+    FMeta := (params.param['meta'].value as TFhirMeta).Link; {ob.5d}
   loadExtensions(params);
 end;
 
@@ -1437,7 +1446,8 @@ end;
 
 procedure TFHIRMetaDeleteOpResponse.load(params : TFHIRParameters);
 begin
-  FReturn := (params.param['return'].value as TFhirMeta).Link; {ob.5d}
+  if params.param['return'] <> nil then
+    FReturn := (params.param['return'].value as TFhirMeta).Link; {ob.5d}
   loadExtensions(params);
 end;
 
@@ -1572,7 +1582,8 @@ constructor TFHIRTranslateOpReqDependency.create(params : TFhirParametersParamet
 begin
   inherited create();
   FElement := params.str['element'];
-  FConcept := (params.param['concept'].value as TFhirCodeableConcept).Link; {ob.5d}
+  if params.param['concept'] <> nil then
+    FConcept := (params.param['concept'].value as TFhirCodeableConcept).Link; {ob.5d}
   loadExtensions(params);
 end;
 
@@ -1617,8 +1628,10 @@ begin
   FSystem := params.str['system'];
   FVersion := params.str['version'];
   FValueSet := params.str['valueSet'];
-  FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
-  FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
+  if params.param['coding'] <> nil then
+    FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
+  if params.param['codeableConcept'] <> nil then
+    FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
   FTarget := params.str['target'];
   for p in params.parameterList do
     if p.name = 'dependency' then
@@ -1699,7 +1712,8 @@ constructor TFHIRTranslateOpRespProduct.create(params : TFhirParametersParameter
 begin
   inherited create();
   FElement := params.str['element'];
-  FConcept := (params.param['concept'].value as TFhirCoding).Link; {ob.5d}
+  if params.param['concept'] <> nil then
+    FConcept := (params.param['concept'].value as TFhirCoding).Link; {ob.5d}
   loadExtensions(params);
 end;
 
@@ -1743,7 +1757,8 @@ begin
   inherited create();
   FProductList := TFslList<TFHIRTranslateOpRespProduct>.create;
   FEquivalence := params.str['equivalence'];
-  FConcept := (params.param['concept'].value as TFhirCoding).Link; {ob.5d}
+  if params.param['concept'] <> nil then
+    FConcept := (params.param['concept'].value as TFhirCoding).Link; {ob.5d}
   for p in params.partList do
     if p.name = 'product' then
       FProductList.Add(TFHIRTranslateOpRespProduct.create(p));{a}
@@ -2228,8 +2243,10 @@ var
 begin
   FIdentifier := params.str['identifier'];
   FQuestionnaire := (params.res['questionnaire'] as TFhirQuestionnaire).Link;{ob.5a}
-  FQuestionnaireRef := (params.param['questionnaireRef'].value as TFhirReference).Link; {ob.5d}
-  FSubject := (params.param['subject'].value as TFhirReference).Link; {ob.5d}
+  if params.param['questionnaireRef'] <> nil then
+    FQuestionnaireRef := (params.param['questionnaireRef'].value as TFhirReference).Link; {ob.5d}
+  if params.param['subject'] <> nil then
+    FSubject := (params.param['subject'].value as TFhirReference).Link; {ob.5d}
   for p in params.parameterList do
     if p.name = 'content' then
       FContentList.Add((p.value as TFhirReference).Link);{a}

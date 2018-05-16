@@ -33,12 +33,10 @@ unit FHIR.R4.IndexInfo;
 
 interface
 
-// FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
+// FHIR v3.4.0 generated 2018-05-15T06:48:00+10:00
 
 uses
-  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.DateTime,
-  FHIR.Tools.Indexing, {FHIR.Tools.Session,}
-  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants;
+  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Stream, FHIR.Support.DateTime, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.Tools.Indexing;
 
 Type
 
@@ -91,6 +89,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM}
     procedure buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CHARGEITEMDEFINITION}
+    procedure buildIndexesForChargeItemDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_CLAIM}
     procedure buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -891,20 +892,46 @@ begin
   indexes.add('ChargeItem', 'factor-override', 'Factor overriding the associated rules', SearchParamTypeNUMBER, [], 'ChargeItem.factorOverride', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'identifier', 'Business Identifier for item', SearchParamTypeTOKEN, [], 'ChargeItem.identifier', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'occurrence', 'When the charged service was applied', SearchParamTypeDATE, [], 'ChargeItem.occurrence', SearchXpathUsageNormal);
-  indexes.add('ChargeItem', 'participant-actor', 'Individual who was performing', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'RelatedPerson'], 'ChargeItem.participant.actor', SearchXpathUsageNormal);
-  indexes.add('ChargeItem', 'participant-role', 'What type of performance was done', SearchParamTypeTOKEN, [], 'ChargeItem.participant.role', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'patient', 'Individual service was done for/to', SearchParamTypeREFERENCE, ['Patient'], 'ChargeItem.subject', SearchXpathUsageNormal);
+  indexes.add('ChargeItem', 'performer-actor', 'Individual who was performing', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'ChargeItem.performer.actor', SearchXpathUsageNormal);
+  indexes.add('ChargeItem', 'performer-function', 'What type of performance was done', SearchParamTypeTOKEN, [], 'ChargeItem.performer.function', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'performing-organization', 'Organization providing the charged sevice', SearchParamTypeREFERENCE, ['Organization'], 'ChargeItem.performingOrganization', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'price-override', 'Price overriding the associated rules', SearchParamTypeQUANTITY, [], 'ChargeItem.priceOverride', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'quantity', 'Quantity of which the charge item has been serviced', SearchParamTypeQUANTITY, [], 'ChargeItem.quantity', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'requesting-organization', 'Organization requesting the charged service', SearchParamTypeREFERENCE, ['Organization'], 'ChargeItem.requestingOrganization', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'service', 'Which rendered service is being charged?', SearchParamTypeREFERENCE, ['Immunization', 'MedicationDispense', 'SupplyDelivery', 'Observation', 'DiagnosticReport', 'ImagingStudy', 'MedicationAdministration', 'Procedure'], 'ChargeItem.service', SearchXpathUsageNormal);
   indexes.add('ChargeItem', 'subject', 'Individual service was done for/to', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'ChargeItem.subject', SearchXpathUsageNormal);
-  compartments.register(frtDevice, 'ChargeItem', ['enterer', 'participant-actor']);
+  compartments.register(frtDevice, 'ChargeItem', ['enterer', 'performer-actor']);
   compartments.register(frtEncounter, 'ChargeItem', ['context']);
   compartments.register(frtPatient, 'ChargeItem', ['subject']);
-  compartments.register(frtPractitioner, 'ChargeItem', ['enterer', 'participant-actor']);
-  compartments.register(frtRelatedPerson, 'ChargeItem', ['enterer', 'participant-actor']);
+  compartments.register(frtPractitioner, 'ChargeItem', ['enterer', 'performer-actor']);
+  compartments.register(frtRelatedPerson, 'ChargeItem', ['enterer', 'performer-actor']);
+end;
+{$ENDIF}
+
+{$IFDEF FHIR_CHARGEITEMDEFINITION}
+procedure TFHIRIndexBuilder.buildIndexesForChargeItemDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ChargeItemDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeREFERENCE, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', '_source', 'Identifies where the resource comes from', SearchParamTypeURI, [], 'Resource.meta.source', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'context-type', 'A type of use context assigned to the charge item definition', SearchParamTypeTOKEN, [], 'ChargeItemDefinition.useContext.code', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'date', 'The charge item definition publication date', SearchParamTypeDATE, [], 'ChargeItemDefinition.date', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'description', 'The description of the charge item definition', SearchParamTypeSTRING, [], 'ChargeItemDefinition.description', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'effective', 'The time during which the charge item definition is intended to be in use', SearchParamTypeDATE, [], 'ChargeItemDefinition.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'identifier', 'External identifier for the charge item definition', SearchParamTypeTOKEN, [], 'ChargeItemDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'jurisdiction', 'Intended jurisdiction for the charge item definition', SearchParamTypeTOKEN, [], 'ChargeItemDefinition.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'publisher', 'Name of the publisher of the charge item definition', SearchParamTypeSTRING, [], 'ChargeItemDefinition.publisher', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'status', 'The current status of the charge item definition', SearchParamTypeTOKEN, [], 'ChargeItemDefinition.status', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'title', 'The human-friendly name of the charge item definition', SearchParamTypeSTRING, [], 'ChargeItemDefinition.title', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'url', 'The uri that identifies the charge item definition', SearchParamTypeURI, [], 'ChargeItemDefinition.url', SearchXpathUsageNormal);
+  indexes.add('ChargeItemDefinition', 'version', 'The business version of the charge item definition', SearchParamTypeTOKEN, [], 'ChargeItemDefinition.version', SearchXpathUsageNormal);
 end;
 {$ENDIF}
 
@@ -2538,18 +2565,16 @@ begin
   indexes.add('MedicationKnowledge', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('MedicationKnowledge', 'classification', 'Specific category assigned to the medication', SearchParamTypeTOKEN, [], 'MedicationKnowledge.medicineClassification.classification', SearchXpathUsageNormal);
   indexes.add('MedicationKnowledge', 'classification-type', 'The type of category for the medication (for example, therapeutic classification, therapeutic sub-classification)', SearchParamTypeTOKEN, [], 'MedicationKnowledge.medicineClassification.type', SearchXpathUsageNormal);
-  indexes.add('MedicationKnowledge', 'code', 'Codes that identify this medication', SearchParamTypeTOKEN, [], 'MedicationKnowledge.code', SearchXpathUsageNormal);
-  indexes.add('MedicationKnowledge', 'expiration-date', 'When batch will expire', SearchParamTypeDATE, [], 'MedicationKnowledge.batch.expirationDate', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'code', 'Code that identifies this medication', SearchParamTypeTOKEN, [], 'MedicationKnowledge.code', SearchXpathUsageNormal);
   indexes.add('MedicationKnowledge', 'form', 'powder | tablets | capsule +', SearchParamTypeTOKEN, [], 'MedicationKnowledge.form', SearchXpathUsageNormal);
-  indexes.add('MedicationKnowledge', 'formulary', 'The formulary which applies to the price', SearchParamTypeTOKEN, [], 'MedicationKnowledge.cost.formulary', SearchXpathUsageNormal);
-  indexes.add('MedicationKnowledge', 'ingredient', 'Medication(s) or substance(s) contained in the medication', SearchParamTypeREFERENCE, ['Medication', 'Substance'], 'MedicationKnowledge.ingredient.item.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'ingredient', 'Medication(s) or substance(s) contained in the medication', SearchParamTypeREFERENCE, ['Substance'], 'MedicationKnowledge.ingredient.item.as(Reference)', SearchXpathUsageNormal);
   indexes.add('MedicationKnowledge', 'ingredient-code', 'Medication(s) or substance(s) contained in the medication', SearchParamTypeTOKEN, [], 'MedicationKnowledge.ingredient.item.as(CodeableConcept)', SearchXpathUsageNormal);
-  indexes.add('MedicationKnowledge', 'lot-number', 'Identifier assigned to batch', SearchParamTypeTOKEN, [], 'MedicationKnowledge.batch.lotNumber', SearchXpathUsageNormal);
   indexes.add('MedicationKnowledge', 'manufacturer', 'Manufacturer of the item', SearchParamTypeREFERENCE, ['Organization'], 'MedicationKnowledge.manufacturer', SearchXpathUsageNormal);
   indexes.add('MedicationKnowledge', 'monitoring-program-name', 'Name of the reviewing program', SearchParamTypeTOKEN, [], 'MedicationKnowledge.monitoringProgram.name', SearchXpathUsageNormal);
   indexes.add('MedicationKnowledge', 'monitoring-program-type', 'Type of program under which the medication is monitored', SearchParamTypeTOKEN, [], 'MedicationKnowledge.monitoringProgram.type', SearchXpathUsageNormal);
-  indexes.add('MedicationKnowledge', 'monograph', 'Associated documentation about the medication', SearchParamTypeREFERENCE, ['DocumentReference'], 'MedicationKnowledge.monograph', SearchXpathUsageNormal);
-  indexes.add('MedicationKnowledge', 'serial-number', 'Identifier assigned to a drug at the time of manufacture', SearchParamTypeTOKEN, [], 'MedicationKnowledge.batch.serialNumber', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'monograph', 'Associated documentation about the medication', SearchParamTypeREFERENCE, ['DocumentReference'], 'MedicationKnowledge.monograph.document', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'monograph-type', 'The category of medication document', SearchParamTypeTOKEN, [], 'MedicationKnowledge.monograph.type', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'source-cost', 'The source or owner for the price information', SearchParamTypeTOKEN, [], 'MedicationKnowledge.cost.source', SearchXpathUsageNormal);
   indexes.add('MedicationKnowledge', 'status', 'active | inactive | entered-in-error', SearchParamTypeTOKEN, [], 'MedicationKnowledge.status', SearchXpathUsageNormal);
 end;
 {$ENDIF}
@@ -3349,14 +3374,14 @@ begin
   indexes.add('ProductPlan', '_source', 'Identifies where the resource comes from', SearchParamTypeURI, [], 'Resource.meta.source', SearchXpathUsageNormal);
   indexes.add('ProductPlan', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ProductPlan', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ProductPlan', 'address', 'A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text', SearchParamTypeSTRING, [], 'ProductPlan.address', SearchXpathUsageNormal);
-  indexes.add('ProductPlan', 'address-city', 'A city specified in an address', SearchParamTypeSTRING, [], 'ProductPlan.address.city', SearchXpathUsageNormal);
-  indexes.add('ProductPlan', 'address-country', 'A country specified in an address', SearchParamTypeSTRING, [], 'ProductPlan.address.country', SearchXpathUsageNormal);
-  indexes.add('ProductPlan', 'address-postalcode', 'A postal code specified in an address', SearchParamTypeSTRING, [], 'ProductPlan.address.postalCode', SearchXpathUsageNormal);
-  indexes.add('ProductPlan', 'address-state', 'A state specified in an address', SearchParamTypeSTRING, [], 'ProductPlan.address.state', SearchXpathUsageNormal);
-  indexes.add('ProductPlan', 'address-use', 'A use code specified in an address', SearchParamTypeTOKEN, [], 'ProductPlan.address.use', SearchXpathUsageNormal);
-  indexes.add('ProductPlan', 'administered-by', 'Administrator of the product/plan', SearchParamTypeREFERENCE, ['Organization'], 'ProductPlan.administeredBy', SearchXpathUsageNormal);
-  indexes.add('ProductPlan', 'endpoint', 'Technical endpoints providing access to services operated for the organization', SearchParamTypeREFERENCE, ['Endpoint'], 'ProductPlan.endpoint', SearchXpathUsageNormal);
+  indexes.add('ProductPlan', 'address', 'A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text', SearchParamTypeSTRING, [], 'ProductPlan.contact.address', SearchXpathUsageNormal);
+  indexes.add('ProductPlan', 'address-city', 'A city specified in an address', SearchParamTypeSTRING, [], 'ProductPlan.contact.address.city', SearchXpathUsageNormal);
+  indexes.add('ProductPlan', 'address-country', 'A country specified in an address', SearchParamTypeSTRING, [], 'ProductPlan.contact.address.country', SearchXpathUsageNormal);
+  indexes.add('ProductPlan', 'address-postalcode', 'A postal code specified in an address', SearchParamTypeSTRING, [], 'ProductPlan.contact.address.postalCode', SearchXpathUsageNormal);
+  indexes.add('ProductPlan', 'address-state', 'A state specified in an address', SearchParamTypeSTRING, [], 'ProductPlan.contact.address.state', SearchXpathUsageNormal);
+  indexes.add('ProductPlan', 'address-use', 'A use code specified in an address', SearchParamTypeTOKEN, [], 'ProductPlan.contact.address.use', SearchXpathUsageNormal);
+  indexes.add('ProductPlan', 'administered-by', 'Product administrator', SearchParamTypeREFERENCE, ['Organization'], 'ProductPlan.administeredBy', SearchXpathUsageNormal);
+  indexes.add('ProductPlan', 'endpoint', 'Technical endpoint', SearchParamTypeREFERENCE, ['Endpoint'], 'ProductPlan.endpoint', SearchXpathUsageNormal);
   indexes.add('ProductPlan', 'identifier', 'Any identifier for the organization (not the accreditation issuer''s identifier)', SearchParamTypeTOKEN, [], 'ProductPlan.identifier', SearchXpathUsageNormal);
   indexes.add('ProductPlan', 'name', 'A portion of the organization''s name or alias', SearchParamTypeSTRING, [], 'name | alias', SearchXpathUsageNormal);
   indexes.add('ProductPlan', 'owned-by', 'An organization of which this organization forms a part', SearchParamTypeREFERENCE, ['Organization'], 'ProductPlan.ownedBy', SearchXpathUsageNormal);
@@ -4235,6 +4260,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_CHARGEITEM}
   buildIndexesForChargeItem(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CHARGEITEMDEFINITION}
+  buildIndexesForChargeItemDefinition(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_CLAIM}
   buildIndexesForClaim(Indexes, compartments);

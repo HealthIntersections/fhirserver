@@ -33,13 +33,12 @@ unit FHIR.R3.Operations;
 
 interface
 
-// FHIR v3.0.1 generated 2017-04-27T17:09:41+10:00
+// FHIR v3.0.1 generated 2018-04-24T14:35:17+10:00
 
 uses
-  SysUtils, Classes, Generics.Collections, FHIR.Support.Strings, FHIR.Support.Decimal,
-  FHIR.Support.Stream, FHIR.Support.Generics, FHIR.Web.ParseMap, FHIR.Support.DateTime,
-  FHIR.Base.Objects, 
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.OpBase;
+  SysUtils, Classes, Generics.Collections, 
+  FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Stream, FHIR.Support.Generics, FHIR.Web.ParseMap, FHIR.Support.DateTime, 
+  FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.OpBase;
 
 Type
 
@@ -1437,7 +1436,7 @@ Type
 implementation
 
 uses
-  FHIR.Tools.Utilities;
+  FHIR.R3.Utilities;
 
 procedure TFHIRApplyOpRequest.SetPatient(value : TFhirReference);
 begin
@@ -2551,7 +2550,8 @@ begin
   inherited create();
   FSubpropertyList := TFslList<TFHIRLookupOpRespSubproperty>.create;
   FCode := params.str['code'];
-  FValue := params.value.Link;
+  if params.hasParameter('value') then
+    FValue := params.param['value'].value.Link;
   FDescription := params.str['description'];
   for p in params.partList do
     if p.name = 'subproperty' then
@@ -2561,7 +2561,7 @@ end;
 
 destructor TFHIRLookupOpRespProperty_.Destroy;
 begin
-  FValue.free;
+  FValue.Free;
   FSubpropertyList.free;
   inherited;
 end;
