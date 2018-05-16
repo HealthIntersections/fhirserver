@@ -244,7 +244,7 @@ procedure TFhirExpandValueSetOperation.Execute(context : TOperationContext; mana
 var
   vs, dst : TFHIRValueSet;
   resourceKey, versionKey : integer;
-  url, cacheId, filter : String;
+  url, cacheId, filter, id : String;
   profile : TFhirExpansionProfile;
   limit, count, offset : integer;
   params : TFhirParameters;
@@ -286,7 +286,17 @@ begin
           else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
             vs := request.Resource.Link as TFhirValueSet
           else if params.hasParameter('context') then
-            raise Exception.Create('the "context" parameter is not yet supported')
+          begin
+            id := params.str['context'];
+            if params.hasParameter('operation') then
+              id := id+'-'+params.str['operation'];
+            vs := manager.GetResourceById(request, 'ValueSet', id, request.baseUrl, needSecure) as TFHIRValueSet;
+            if vs = nil then
+              raise Exception.Create('The context '+id+' was not understood');
+            cacheId := vs.url;
+            if vs.version <> '' then
+              cacheId := cacheId + vs.version;
+          end
           else
             raise Exception.Create('Unable to find value set to expand (not provided by id, identifier, or directly)');
 

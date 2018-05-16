@@ -213,6 +213,9 @@ begin
   try
     form.SoftwareId := 'FHIR Toolkit';
     form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
+    form.Versions := TFHIRVersionFactories.Create;
+    {$IFDEF FHIR3} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR3.Create; {$ENDIF}
+    {$IFDEF FHIR4} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR4.Create; {$ENDIF}
     form.Server := TRegisteredFHIRServer.Create;
     if form.ShowModal = mrOk then
     begin

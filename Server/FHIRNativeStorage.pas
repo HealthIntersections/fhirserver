@@ -379,11 +379,13 @@ type
 
   TFhirPatientEverythingOperation = class (TFhirEverythingOperation)
   protected
+    FIsExport : boolean;
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
     function resourceName : String; override;
     function isPrimaryResource(request: TFHIRRequest; rtype, id : String) : boolean; override;
   public
+    constructor create(isExport : boolean);
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
@@ -812,7 +814,8 @@ begin
   FOperations.add(TFhirConceptMapClosureOperation.create(ServerContext.TerminologyServer.Link, connection));
   FOperations.add(TFhirValidationOperation.create);
   FOperations.add(TFhirGenerateDocumentOperation.create);
-  FOperations.add(TFhirPatientEverythingOperation.create);
+  FOperations.add(TFhirPatientEverythingOperation.create(true));
+  FOperations.add(TFhirPatientEverythingOperation.create(false));
   FOperations.add(TFhirEncounterEverythingOperation.create);
   FOperations.add(TFhirGroupEverythingOperation.create);
   FOperations.add(TFhirGenerateQAOperation.create);
@@ -7155,7 +7158,10 @@ end;
 
 function TFhirPatientEverythingOperation.Name: String;
 begin
-  result := 'everything';
+  if FIsExport then
+    result := 'export'
+  else
+    result := 'everything';
 end;
 
 function TFhirPatientEverythingOperation.owningResource: TFhirResourceType;
@@ -7172,6 +7178,12 @@ end;
 function TFhirPatientEverythingOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtPatient];
+end;
+
+constructor TFhirPatientEverythingOperation.create(isExport: boolean);
+begin
+  inherited Create;
+  FIsExport := isExport;
 end;
 
 function TFhirPatientEverythingOperation.CreateDefinition(base : String): TFHIROperationDefinition;

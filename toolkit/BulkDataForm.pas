@@ -8,7 +8,8 @@ uses
   FMX.Memo, FMX.StdCtrls, FMX.Edit, FMX.ListBox, FMX.Controls.Presentation,
   FMX.Ani,
   FHIR.Support.System, FHIR.Support.Lock,
-  FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client,
+  FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
+  FHIR.Tools.Client, FHIR.Client.Async,
   BaseDialog, ToolkitSettings;
 
 type
@@ -216,13 +217,17 @@ begin
         exit;
       end;
     end;
-    lblProgress.Text := FAsync.status;
-    mLog.Text := FAsync.logText;
-    if FAsync.Finished then
+    if FAsync <> nil then
     begin
-      AniIndicator1.Enabled := false;
-      FASync.free;
-      FASync := nil;
+      lblProgress.Text := FAsync.status;
+      lblProgress.Repaint;
+      mLog.Text := FAsync.logText;
+      if FAsync.Finished then
+      begin
+        AniIndicator1.Enabled := false;
+        FASync.free;
+        FASync := nil;
+      end;
     end;
   end;
 end;

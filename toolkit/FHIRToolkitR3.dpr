@@ -155,7 +155,9 @@ uses
   FHIR.R3.Factory in '..\reference-platform\dstu3\FHIR.R3.Factory.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
-  FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas';
+  FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas',
+  FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas',
+  FHIR.R3.Javascript in '..\reference-platform\dstu3\FHIR.R3.Javascript.pas';
 
 {$R *.res}
 

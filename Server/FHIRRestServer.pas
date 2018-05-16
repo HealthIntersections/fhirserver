@@ -2977,6 +2977,14 @@ begin
             response.contentType := oComp.MimeType;
             oComp.SummaryOption := oRequest.Summary;
             oComp.ElementToCompose.Assign(oRequest.Elements);
+            if (oComp.ElementToCompose.Count > 0) or (oComp.SummaryOption in [soSummary, soText, soData]) then
+            begin
+              if res.meta = nil then
+                res.meta := TFHIRMeta.create;
+              if not res.meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED') then
+                 res.meta.addTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED', 'Subsetted');
+            end;
+
             oComp.LogId := oRequest.internalRequestId;
             oComp.Compose(stream, res);
           finally

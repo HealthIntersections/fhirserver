@@ -75,7 +75,8 @@ uses
   FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
-  FHIR.R2.Common in '..\reference-platform\dstu2\FHIR.R2.Common.pas';
+  FHIR.R2.Common in '..\reference-platform\dstu2\FHIR.R2.Common.pas',
+  FHIR.Support.Signatures in '..\reference-platform\support\FHIR.Support.Signatures.pas';
 
 {$R *.res}
 

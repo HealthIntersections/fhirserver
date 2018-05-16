@@ -380,6 +380,8 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Async.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Javascript.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

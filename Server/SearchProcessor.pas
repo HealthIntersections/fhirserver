@@ -1354,7 +1354,7 @@ begin
     end
     else case stype of
       SearchParamTypeNull:
-        raise Exception.Create('The search type could not be determined');
+        raise Exception.Create('The search type could not be determined for '+path.Name);
       SearchParamTypeNumber:    result := BuildParameterNumber(index, n, j, path.Name, filter.Operation, filter.Value);
       SearchParamTypeString :   result := BuildParameterString(index, n, j, path.Name, filter.Operation, filter.Value);
       SearchParamTypeDate:      result := buildParameterDate(index, n, j, path.Name, filter.Operation, filter.Value);
