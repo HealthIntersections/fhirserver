@@ -128,7 +128,7 @@
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Filers.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Zip.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Decimal.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.WInInet.pas"/>

@@ -91,7 +91,7 @@ uses
   AdvNames in '..\reference-platform\support\AdvNames.pas',
   FHIR.Tools.Utilities in '..\reference-platform\r4\FHIR.Tools.Utilities.pas',
   OIDSupport in '..\reference-platform\support\OIDSupport.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\support\FHIR.Web.Parsers.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   AdvZipDeclarations in '..\reference-platform\support\AdvZipDeclarations.pas',
   AdvZipParts in '..\reference-platform\support\AdvZipParts.pas',

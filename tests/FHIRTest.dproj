@@ -166,7 +166,7 @@
         <DCCReference Include="..\reference-platform\support\KDate.pas"/>
         <DCCReference Include="..\reference-platform\support\HL7V2DateSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvStringMatches.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\support\MsXmlParser.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvMemories.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Xml.Builder.pas"/>

@@ -95,7 +95,7 @@ uses
   KDate in '..\reference-platform\support\KDate.pas',
   HL7V2DateSupport in '..\reference-platform\support\HL7V2DateSupport.pas',
   AdvStringMatches in '..\reference-platform\support\AdvStringMatches.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\support\FHIR.Web.Parsers.pas',
   MsXmlParser in '..\reference-platform\support\MsXmlParser.pas',
   AdvMemories in '..\reference-platform\support\AdvMemories.pas',
   FHIR.Xml.Builder in '..\reference-platform\support\FHIR.Xml.Builder.pas',

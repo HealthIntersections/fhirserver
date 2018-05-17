@@ -191,7 +191,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Objects.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Fetcher.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Types.pas"/>

@@ -90,7 +90,7 @@ Uses
   FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Exceptions, FHIR.Support.Text,
   FHIR.Support.Generics,
 
-  FHIR.Support.Lock, FHIR.Web.ParseMap, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
+  FHIR.Support.Lock, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
   FHIR.Support.JSON, FHIR.Web.Rdf,
 
   FHIR.Support.MXml, FHIR.Misc.GraphQL, {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF}
@@ -99,7 +99,7 @@ Uses
   FHIR.Tools.Utilities, FHIR.Tools.Security, FHIR.Client.SmartUtilities, FHIR.Tools.XhtmlComp,
   FHIR.Tools.Questionnaire, FHIR.Tools.Client, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIR.Support.Service, FHIR.Tools.Common,
-  FHIR.Base.Xhtml, FHIR.Tools.GraphQL,
+  FHIR.Base.Xhtml, FHIR.Tools.GraphQL, FHIR.Base.Utilities,
   {$IFNDEF NO_CONVERSION}
   FHIR.XVersion.Convertors,
   {$ENDIF}
@@ -359,7 +359,7 @@ Type
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
     Procedure ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
-    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; fmt : TFHIRFormat; transactionTime : TDateTimeEx; names : TStringList) : string;
+    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime : TDateTimeEx; names : TStringList) : string;
     Procedure ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     function BuildRequest(lang, sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
@@ -819,7 +819,7 @@ begin
   result := ServeUnknownCertificate or FCertificateIdList.Find(Certificate.FingerprintAsString, i);
 end;
 
-function TFhirWebServer.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; fmt : TFHIRFormat; transactionTime: TDateTimeEx; names: TStringList): string;
+function TFhirWebServer.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; secure : boolean; fmt : TFHIRFormat; transactionTime: TDateTimeEx; names: TStringList): string;
 var
   j, o : TJsonObject;
   a : TJsonArray;
@@ -827,9 +827,9 @@ var
 begin
   j := TJsonObject.Create;
   try
+    j.str['transactionTime'] := transactionTime.toXML;
     j.str['request'] := reqUrl;
-    j.str['transaction_time'] := transactionTime.toXML;
-    j.bool['secure'] := true;
+    j.bool['secure'] := secure;
     a := j.forceArr['output'];
     for s in names do
     begin
@@ -2536,23 +2536,7 @@ Begin
     if (sCommand <> 'GET') then
     begin
       oRequest.Version := readVersion(sContentType);
-      if StringStartsWithInsensitive(sContentType, 'application/x-ndjson') or StringStartsWithInsensitive(sContentType, 'application/fhir+ndjson') then
-        oRequest.PostFormat := ffNDJson
-      else if StringStartsWithInsensitive(sContentType, 'application/json') or StringStartsWithInsensitive(sContentType, 'application/fhir+json') or
-        StringStartsWithInsensitive(sContentType, 'application/json+fhir') or StringStartsWithInsensitive(sContentType, 'json') or
-        StringStartsWithInsensitive(sContentType, 'text/json') Then
-        oRequest.PostFormat := ffJson
-      else if StringStartsWithInsensitive(sContentType, 'text/html') or StringStartsWithInsensitive(sContentType, 'html') or
-        StringStartsWithInsensitive(sContentType, 'application/x-zip-compressed') or StringStartsWithInsensitive(sContentType, 'application/zip') Then
-        oRequest.PostFormat := ffXhtml
-      else if StringStartsWithInsensitive(sContentType, 'text/fhir') Then
-        oRequest.PostFormat := ffText
-      else if StringStartsWithInsensitive(sContentType, 'text/turtle') Then
-        oRequest.PostFormat := ffTurtle
-      else if StringStartsWithInsensitive(sContentType, 'text/xml') or StringStartsWithInsensitive(sContentType, 'application/xml') or
-        StringStartsWithInsensitive(sContentType, 'application/fhir+xml') or StringStartsWithInsensitive(sContentType, 'application/xml+fhir') or
-        StringStartsWithInsensitive(sContentType, 'xml') Then
-        oRequest.PostFormat := ffXml;
+      oRequest.PostFormat := mimeTypeToFormat(sContentType, oRequest.PostFormat);
       if (sContentType <> 'application/x-www-form-urlencoded') and oRequest.Parameters.VarExists('_format') and (form = nil) and (oRequest.Parameters.GetVar('_format') <> '') then
         sContentType := oRequest.Parameters.GetVar('_format');
     end;
@@ -2560,37 +2544,7 @@ Begin
     oResponse.Version := readVersion(sContentAccept);
     if oRequest.Parameters.VarExists('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
       sContentAccept := oRequest.Parameters.GetVar('_format');
-    if StringStartsWithInsensitive(sContentAccept, 'application/x-ndjson') or StringStartsWithInsensitive(sContentAccept, 'application/fhir+ndjson') then
-      oResponse.format := ffNDJson
-    else if StringExistsSensitive(sContentAccept, 'application/json') or StringExistsSensitive(sContentAccept, 'application/fhir+json') or
-      StringExistsInsensitive(sContentAccept, 'json') Then
-      oResponse.format := ffJson
-    else if StringExistsSensitive(sContentAccept, 'text/xml') Then
-      oResponse.format := ffXml
-    else if StringExistsSensitive(sContentAccept, 'text/html') Then
-      oResponse.format := ffXhtml
-    else if StringExistsSensitive(sContentAccept, 'text/fhir') Then
-      oResponse.format := ffText
-    else if StringExistsSensitive(sContentAccept, 'text/turtle') Then
-      oResponse.format := ffTurtle
-    else if StringExistsSensitive(sContentAccept, 'application/xml') Then
-      oResponse.format := ffXml
-    else if StringExistsSensitive(sContentAccept, 'application/fhir+xml') Then
-      oResponse.format := ffXml
-    else if StringExistsSensitive(sContentAccept, '*/*') Then
-      // specially for stupid IE...
-      oResponse.format := ffXhtml
-    else if StringExistsInsensitive(sContentAccept, 'html') Then
-      oResponse.format := ffXhtml
-    else if StringExistsInsensitive(sContentAccept, 'xml') Then
-      oResponse.format := ffXml
-    else if StringExistsInsensitive(sContentAccept, 'text') Then
-      oResponse.format := ffText
-    else if StringExistsInsensitive(sContentAccept, 'rdf') Then
-      oResponse.format := ffTurtle
-    else if oRequest.PostFormat <> ffUnspecified then
-      oResponse.format := oRequest.PostFormat;
-
+    oResponse.format := mimeTypeToFormat(sContentAccept, oResponse.Format);
     if oRequest.Parameters.VarExists('_pretty') and (oRequest.Parameters.GetVar('_pretty') = 'true') then
       style := OutputStylePretty
     else if sContentAccept.Contains('pretty=') and (extractProp(sContentAccept, 'pretty') = 'true') then
@@ -3129,28 +3083,6 @@ begin
   result := FormatDateTime('c', Now);
 end;
 
-function parseMimeType(s : String) : TFHIRFormat;
-begin
-  if StringStartsWithInsensitive(s, 'application/x-ndjson') or StringStartsWithInsensitive(s, 'application/fhir+ndjson') then
-    result := ffNDJson
-  else if StringStartsWithInsensitive(s, 'application/json') or StringStartsWithInsensitive(s, 'application/fhir+json') or
-    StringStartsWithInsensitive(s, 'application/json+fhir') or StringStartsWithInsensitive(s, 'json') or
-    StringStartsWithInsensitive(s, 'text/json') Then
-    result := ffJson
-  else if StringStartsWithInsensitive(s, 'text/html') or StringStartsWithInsensitive(s, 'html') or
-    StringStartsWithInsensitive(s, 'application/x-zip-compressed') or StringStartsWithInsensitive(s, 'application/zip') Then
-    result := ffXhtml
-  else if StringStartsWithInsensitive(s, 'text/fhir') Then
-    result := ffText
-  else if StringStartsWithInsensitive(s, 'text/turtle') Then
-    result := ffTurtle
-  else if StringStartsWithInsensitive(s, 'text/xml') or StringStartsWithInsensitive(s, 'application/xml') or
-    StringStartsWithInsensitive(s, 'application/fhir+xml') or StringStartsWithInsensitive(s, 'application/xml+fhir') or
-    StringStartsWithInsensitive(s, 'xml') Then
-    result := ffXml
-  else
-    result := ffUnspecified;
-end;
 
 procedure TFhirWebServer.ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
@@ -3167,13 +3099,13 @@ begin
     FLock.Unlock;
   end;
   id := NewGuidId;
-  thread.key := ServerContext.Storage.createAsyncTask(request.url, id, response.Format);
-  thread.server := self.link as TFhirWebServer;
-  thread.request := request.Link;
-  if request.Parameters.VarExists('output-format') then
-    thread.Format := parseMimeType(request.Parameters.GetVar('output-format'))
+  if request.Parameters.VarExists('_outputFormat') then
+    thread.Format := mimeTypeToFormat(request.Parameters.GetVar('_outputFormat'))
   else
     thread.Format := response.Format;
+  thread.key := ServerContext.Storage.createAsyncTask(request.url, id, thread.Format, request.secure);
+  thread.server := self.link as TFhirWebServer;
+  thread.request := request.Link;
   thread.Start;
   response.HTTPCode := 202;
   response.Message := 'Accepted';
@@ -3181,7 +3113,7 @@ begin
   if response.format = ffXhtml then
   begin
     response.ContentType := 'text/html';
-    response.Body := makeTaskRedirect(request.baseUrl, id, 'Preparing', response.Format, nil);
+    response.Body := makeTaskRedirect(request.baseUrl, id, 'Preparing', thread.Format, nil);
   end;
 end;
 
@@ -3278,6 +3210,7 @@ var
   status : TAsyncTaskStatus;
   message, s, originalRequest : String;
   transactionTime, expires : TDateTimeEx;
+  secure : boolean;
   names : TStringList;
   outcome : TBytes;
   fmt : TFHIRFormat;
@@ -3289,7 +3222,7 @@ var
 begin
   names := TStringList.Create;
   try
-    if FServerContext.Storage.fetchTaskDetails(request.Id, key, status, fmt, message, originalRequest, transactionTime, expires, names, outcome) then
+    if FServerContext.Storage.fetchTaskDetails(request.Id, key, status, fmt, secure, message, originalRequest, transactionTime, expires, names, outcome) then
     begin
       if request.CommandType = fcmdDeleteTask then
       begin
@@ -3397,7 +3330,7 @@ begin
             else
             begin
               response.ContentType := 'application/json';
-              response.Body := encodeAsyncResponseAsJson(request, originalRequest, fmt, transactionTime, names);
+              response.Body := encodeAsyncResponseAsJson(request, originalRequest, secure, fmt, transactionTime, names);
             end;
             end;
           atsTerminated, atsError :

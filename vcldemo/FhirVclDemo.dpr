@@ -19,7 +19,7 @@ uses
   FHIR.Base.Objects in '..\reference-platform\base\FHIR.Base.Objects.pas',
   FHIR.Support.Binary in '..\reference-platform\support\FHIR.Support.Binary.pas',
   FHIR.R2.Utilities in '..\reference-platform\dstu2\FHIR.R2.Utilities.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\support\FHIR.Web.Parsers.pas',
   FHIR.Support.Json in '..\reference-platform\support\FHIR.Support.Json.pas',
   FHIR.Support.Mime in '..\reference-platform\support\FHIR.Support.Mime.pas',
   FHIR.Web.Fetcher in '..\reference-platform\support\FHIR.Web.Fetcher.pas',

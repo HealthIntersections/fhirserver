@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, System.Character,
-  FHIR.Web.ParseMap,
+  FHIR.Web.Parsers,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.DateTime, FHIR.Support.Decimal, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Base.Lang, FHIR.Tools.Constants, FHIR.Tools.Types,

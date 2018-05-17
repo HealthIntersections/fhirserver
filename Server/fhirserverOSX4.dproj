@@ -135,7 +135,7 @@
         <DCCReference Include="..\reference-platform\support\EncodeSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Generics.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvFiles.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Rdf.pas"/>
         <DCCReference Include="..\reference-platform\support\GUIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.System.pas"/>

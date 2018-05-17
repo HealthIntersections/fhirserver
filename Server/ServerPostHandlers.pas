@@ -6,7 +6,7 @@ uses
   SysUtils, Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects,
-  FHIR.Web.ParseMap,
+  FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Client, FHIR.Tools.Utilities,
   FHIRServerContext;
 

@@ -61,7 +61,8 @@ const
 //  ServerDBVersion = 19; // add RegisteredClients
 //  ServerDBVersion = 20; // add PseudoData
 //  ServerDBVersion = 21; // add ClientRegistrations.PatientContext
-  ServerDBVersion = 22; // add AsyncTasks.Request and AsyncTasks.TransactionTime
+//  ServerDBVersion = 22; // add AsyncTasks.Request and AsyncTasks.TransactionTime
+  ServerDBVersion = 23; // add AsyncTasks.Secure
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -726,6 +727,7 @@ begin
        ' Finished    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
        ' Expires     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
        ' Deleted     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+       ' Secure      int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
        ' Count       int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
        ' Downloads   int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
        ' Names       '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
@@ -1188,6 +1190,10 @@ begin
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.AsyncTasks ADD Request char(255) NULL');
       Fconn.ExecSQL('ALTER TABLE dbo.AsyncTasks ADD TransactionTime '+DBDateTimeType(FConn.Owner.Platform)+' NULL');
+    end;
+    if (version < 23) then
+    begin
+      Fconn.ExecSQL('ALTER TABLE dbo.AsyncTasks ADD Secure int NULL');
     end;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');

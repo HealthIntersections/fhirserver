@@ -55,7 +55,7 @@ uses
   FHIR.Base.Objects in '..\..\reference-platform\base\FHIR.Base.Objects.pas',
   FHIR.Support.Generics in '..\..\reference-platform\support\FHIR.Support.Generics.pas',
   FHIR.R4.Utilities in '..\..\reference-platform\r4\FHIR.R4.Utilities.pas',
-  FHIR.Web.ParseMap in '..\..\reference-platform\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\..\reference-platform\support\FHIR.Web.Parsers.pas',
   FHIR.Support.Json in '..\..\reference-platform\support\FHIR.Support.Json.pas',
   FHIR.Support.Mime in '..\..\reference-platform\support\FHIR.Support.Mime.pas',
   FHIR.Web.Fetcher in '..\..\reference-platform\support\FHIR.Web.Fetcher.pas',

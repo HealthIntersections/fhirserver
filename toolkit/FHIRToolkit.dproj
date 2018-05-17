@@ -226,7 +226,7 @@
         <DCCReference Include="..\reference-platform\support\AdvNames.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.Tools.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\support\OIDSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipDeclarations.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipParts.pas"/>

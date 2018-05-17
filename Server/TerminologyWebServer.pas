@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  FHIR.Web.ParseMap,
+  FHIR.Web.Parsers,
   FHIR.Support.Strings, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Stream,
   IdContext, IdCustomHTTPServer,

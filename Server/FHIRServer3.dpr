@@ -103,7 +103,7 @@ uses
   FHIR.Support.Filers in '..\reference-platform\Support\FHIR.Support.Filers.pas',
   FHIR.Support.Collections in '..\reference-platform\Support\FHIR.Support.Collections.pas',
   FHIR.Support.Stream in '..\reference-platform\Support\FHIR.Support.Stream.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\Support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\Support\FHIR.Web.Parsers.pas',
   FHIR.Support.Decimal in '..\reference-platform\Support\FHIR.Support.Decimal.pas',
   FHIR.Support.WInInet in '..\reference-platform\Support\FHIR.Support.WInInet.pas',
   FHIR.Support.Json in '..\reference-platform\Support\FHIR.Support.Json.pas',
@@ -287,7 +287,8 @@ uses
   FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
   FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
   FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
-  FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas';
+  FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

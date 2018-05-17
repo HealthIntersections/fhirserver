@@ -54,7 +54,7 @@ uses
   FHIR.Support.Turtle in '..\reference-platform\support\FHIR.Support.Turtle.pas',
   FHIR.Base.Objects in '..\reference-platform\base\FHIR.Base.Objects.pas',
   FHIR.R3.Utilities in '..\reference-platform\dstu3\FHIR.R3.Utilities.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\support\FHIR.Web.Parsers.pas',
   FHIR.Web.Fetcher in '..\reference-platform\support\FHIR.Web.Fetcher.pas',
   FHIR.R3.Context in '..\reference-platform\dstu3\FHIR.R3.Context.pas',
   FHIR.R3.Types in '..\reference-platform\dstu3\FHIR.R3.Types.pas',
@@ -156,8 +156,7 @@ uses
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
   FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas',
-  FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas',
-  FHIR.R3.Javascript in '..\reference-platform\dstu3\FHIR.R3.Javascript.pas';
+  FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas';
 
 {$R *.res}
 

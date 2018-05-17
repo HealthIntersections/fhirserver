@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
   FHIR.Support.Lock, FHIR.Support.DateTime,   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Decimal, FHIR.Support.Binary,
-  FHIR.Web.ParseMap, FHIR.Support.Text,
+  FHIR.Web.Parsers, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Controllers,
   FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
   FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Misc.GraphQL, FHIR.Support.Certs,
@@ -747,10 +747,10 @@ type
 
     function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; override;
     function FetchResource(key : integer) : TFHIRResource; override;
-    function createAsyncTask(url, id : string; format : TFHIRFormat) : integer; override;
+    function createAsyncTask(url, id : string; format : TFHIRFormat; secure : boolean) : integer; override;
     procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); override;
     procedure MarkTaskForDownload(key : integer; names : TStringList); override;
-    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message, request : String; var transactionTime, expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; override;
+    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, sourceUrl : String; var transactionTime, expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; override;
     procedure setAsyncTaskDetails(key : integer; transactionTime : TDateTimeEx; request : String); override;
     procedure recordDownload(key : integer; name : String); override;
     procedure fetchExpiredTasks(tasks : TFslList<TAsyncTaskInformation>); override;
@@ -8879,14 +8879,14 @@ begin
   FClaimQueue := TFHIRClaimList.Create;
 End;
 
-function TFHIRNativeStorageService.createAsyncTask(url, id: string; format : TFHIRFormat): integer;
+function TFHIRNativeStorageService.createAsyncTask(url, id: string; format : TFHIRFormat; secure : boolean): integer;
 var
   key : integer;
 begin
   key := NextAsyncTaskKey;
   DB.connection('async', procedure(conn : TKDBConnection)
     begin
-      conn.SQL := 'Insert into AsyncTasks (TaskKey, id, SourceUrl, Format, Status, Created) values ('+inttostr(key)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(url)+''', '+inttostr(ord(format))+', '+inttostr(ord(atsCreated))+', '+DBGetDate(DB.Platform)+')';
+      conn.SQL := 'Insert into AsyncTasks (TaskKey, id, SourceUrl, Format, Secure, Status, Created) values ('+inttostr(key)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(url)+''', '+inttostr(ord(format))+', '+booleanToSQL(secure)+', '+inttostr(ord(atsCreated))+', '+DBGetDate(DB.Platform)+')';
       conn.Prepare;
       conn.Execute;
       conn.Terminate;
@@ -9482,13 +9482,13 @@ begin
 
 end;
 
-function TFHIRNativeStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var message, request: String; var transactionTime, expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
+function TFHIRNativeStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, sourceUrl: String; var transactionTime, expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
 var
   conn : TKDBConnection;
 begin
   conn := FDB.GetConnection('async');
   try
-    conn.SQL := 'Select TaskKey, Status, Format, Message, Request, TransactionTime, Expires, Names, Outcome from AsyncTasks where Id = '''+SQLWrapString(id)+'''';
+    conn.SQL := 'Select TaskKey, Status, Format, Secure, Message, SourceUrl, TransactionTime, Expires, Names, Outcome from AsyncTasks where Id = '''+SQLWrapString(id)+'''';
     conn.Prepare;
     conn.Execute;
     result := conn.FetchNext;
@@ -9498,7 +9498,8 @@ begin
       status := TAsyncTaskStatus(conn.ColIntegerByName['status']);
       fmt := TFhirFormat(conn.ColIntegerByName['format']);
       message := conn.ColStringByName['Message'];
-      request := conn.ColStringByName['Request'];
+      secure := conn.ColIntegerByName['Secure'] <> 0;
+      sourceUrl := conn.ColStringByName['SourceUrl'];
       transactionTime := conn.ColDateTimeExByName['TransactionTime'];
       expires := conn.ColDateTimeExByName['Expires'];
       names.CommaText := TEncoding.UTF8.GetString(conn.ColBlobByName['Names']);

@@ -39,7 +39,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.StdCtrls, Vcl.ExtCtrls, NppForms, FHIR.Tools.Client,
   FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities, FHIR.Base.Objects, FHIR.Support.Objects, FHIR.Support.Generics, Math, FHIR.Support.Strings,
-  clipbrd, FHIR.Web.ParseMap, Generics.Collections,  FHIR.Tools.Profiles,
+  clipbrd, FHIR.Web.Parsers, Generics.Collections,  FHIR.Tools.Profiles,
   Vcl.Samples.Spin, FHIR.Tools.PathEngine;
 
 const

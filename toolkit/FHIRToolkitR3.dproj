@@ -191,7 +191,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Objects.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Fetcher.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Context.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Types.pas"/>
@@ -381,7 +381,6 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Async.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Javascript.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

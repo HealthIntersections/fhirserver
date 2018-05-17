@@ -106,7 +106,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Database.Dialects.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Mime.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Rdf.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Shell.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Strings.pas"/>

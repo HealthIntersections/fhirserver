@@ -54,7 +54,7 @@ uses
   FHIR.Support.Turtle in '..\reference-platform\support\FHIR.Support.Turtle.pas',
   FHIR.Base.Objects in '..\reference-platform\base\FHIR.Base.Objects.pas',
   FHIR.R4.Utilities in '..\reference-platform\r4\FHIR.R4.Utilities.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\support\FHIR.Web.Parsers.pas',
   FHIR.Web.Fetcher in '..\reference-platform\support\FHIR.Web.Fetcher.pas',
   FHIR.R4.Context in '..\reference-platform\r4\FHIR.R4.Context.pas',
   FHIR.R4.Types in '..\reference-platform\r4\FHIR.R4.Types.pas',

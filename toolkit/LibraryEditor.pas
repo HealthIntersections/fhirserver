@@ -35,7 +35,7 @@ uses
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList,
-  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Web.ParseMap,
+  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Web.Parsers,
   FHIR.Support.Generics, FHIR.Support.Text,
   FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session,
   BaseResourceFrame, ToolKitUtilities,
@@ -291,9 +291,9 @@ end;
 
 function TLibraryEditorFrame.getEncoding(s: String): TEncoding;
 var
-  c : TContentType;
+  c : TMimeContentType;
 begin
-  c := TContentType.parseSingle(s);
+  c := TMimeContentType.parseSingle(s);
   try
     if not c.hasParam('charset') then
       result := TEncoding.UTF8

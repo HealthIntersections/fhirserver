@@ -183,7 +183,7 @@
         <DCCReference Include="..\..\reference-platform\base\FHIR.Base.Objects.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Generics.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.Utilities.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Json.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Mime.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Web.Fetcher.pas"/>

@@ -201,7 +201,7 @@
         <DCCReference Include="..\reference-platform\Support\OIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\RegExpr.pas"/>
         <DCCReference Include="..\reference-platform\Support\TextUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\Support\JWT.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Json.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvVCLStreams.pas"/>

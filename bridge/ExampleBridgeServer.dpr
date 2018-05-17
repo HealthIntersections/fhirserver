@@ -56,7 +56,7 @@ uses
   FHIR.Database.Dialects in '..\reference-platform\support\FHIR.Database.Dialects.pas',
   FHIR.Support.Math in '..\reference-platform\support\FHIR.Support.Math.pas',
   FHIR.Support.Mime in '..\reference-platform\support\FHIR.Support.Mime.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\support\FHIR.Web.Parsers.pas',
   FHIR.Web.Rdf in '..\reference-platform\support\FHIR.Web.Rdf.pas',
   FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
   FHIR.Support.Strings in '..\reference-platform\support\FHIR.Support.Strings.pas',

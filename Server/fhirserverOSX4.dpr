@@ -66,7 +66,7 @@ uses
   EncodeSupport in '..\reference-platform\support\EncodeSupport.pas',
   FHIR.Support.Generics in '..\reference-platform\support\FHIR.Support.Generics.pas',
   AdvFiles in '..\reference-platform\support\AdvFiles.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\support\FHIR.Web.Parsers.pas',
   FHIR.Web.Rdf in '..\reference-platform\support\FHIR.Web.Rdf.pas',
   GUIDSupport in '..\reference-platform\support\GUIDSupport.pas',
   FHIR.Support.System in '..\reference-platform\support\FHIR.Support.System.pas',

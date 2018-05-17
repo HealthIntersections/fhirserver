@@ -136,7 +136,7 @@ uses
   AdvStringMatches in '..\reference-platform\Support\AdvStringMatches.pas',
   OIDSupport in '..\reference-platform\Support\OIDSupport.pas',
   TextUtilities in '..\reference-platform\Support\TextUtilities.pas',
-  FHIR.Web.ParseMap in '..\reference-platform\Support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\reference-platform\Support\FHIR.Web.Parsers.pas',
   JWT in '..\reference-platform\Support\JWT.pas',
   FHIR.Support.Json in '..\reference-platform\Support\FHIR.Support.Json.pas',
   AdvVCLStreams in '..\reference-platform\Support\AdvVCLStreams.pas',

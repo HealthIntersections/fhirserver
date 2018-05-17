@@ -202,6 +202,8 @@ begin
 end;
 
 procedure TBulkDataDialog.Timer1Timer(Sender: TObject);
+var
+  s : String;
 begin
   if FAsync <> nil then
   begin
@@ -225,8 +227,10 @@ begin
       if FAsync.Finished then
       begin
         AniIndicator1.Enabled := false;
+        s := FASync.Summary;
         FASync.free;
         FASync := nil;
+        MessageDlg(s, TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbok], 0);
       end;
     end;
   end;
