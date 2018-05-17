@@ -37,7 +37,7 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
 
-  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Decimal, FHIR.Web.ParseMap,
+  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Decimal, FHIR.Web.Parsers,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.System,
   FHIR.Support.MXml,
   FHIR.Support.Mime, FHIR.Support.Text, ZLib, FHIR.Web.Fetcher,

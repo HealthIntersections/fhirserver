@@ -98,7 +98,7 @@ uses
   FHIR.Tools.Resources in 'FHIR.Tools.Resources.pas',
   FHIR.Base.Parser in 'FHIR.Base.Parser.pas',
   FHIR.Tools.Session in 'FHIR.Tools.Session.pas',
-  FHIR.Web.ParseMap in '..\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\support\FHIR.Web.Parsers.pas',
   FHIRAtomFeed in 'FHIRAtomFeed.pas',
   MsXmlParser in '..\support\MsXmlParser.pas',
   AdvMemories in '..\support\AdvMemories.pas',

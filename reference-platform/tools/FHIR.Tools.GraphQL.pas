@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Web.ParseMap, FHIR.Misc.GraphQL,
+  FHIR.Web.Parsers, FHIR.Misc.GraphQL,
   FHIR.Base.Objects, FHIRBaseX, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Parser, FHIR.Tools.Utilities, FHIR.Tools.PathNode, FHIR.Tools.PathEngine;
 
 type

@@ -123,7 +123,7 @@
         <DCCReference Include="..\support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Mime.pas"/>
         <DCCReference Include="..\support\FHIR.Support.MsXml.pas"/>
-        <DCCReference Include="..\support\FHIR.Web.ParseMap.pas"/>
+        <DCCReference Include="..\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\support\FHIR.Web.Rdf.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Shell.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Strings.pas"/>

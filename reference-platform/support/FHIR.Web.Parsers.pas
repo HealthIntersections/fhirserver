@@ -1,4 +1,4 @@
-unit FHIR.Web.ParseMap;
+unit FHIR.Web.Parsers;
 
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -85,7 +85,7 @@ type
     property Value[const Name: String]: String Read GetVar; default;
   end;
 
-  TContentType = class (TFslObject)
+  TMimeContentType = class (TFslObject)
   private
     FParams: TDictionary<String, String>;
     FBase: String;
@@ -97,8 +97,8 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
-    class function parseSingle(s : String) : TContentType;
-    class function parseList(s : String) : TFslList<TContentType>;
+    class function parseSingle(s : String) : TMimeContentType;
+    class function parseList(s : String) : TFslList<TMimeContentType>;
 
     property base : String read FBase write FBase;
     property main : String read GetMain write SetMain;
@@ -114,7 +114,7 @@ uses
   SysUtils;
 
 const 
-  unitname = 'FHIR.Web.ParseMap';
+  unitname = 'FHIR.Web.Parsers';
 
   {------------------------------------------------------------------------------}
 constructor TMultiValList.Create;
@@ -601,21 +601,21 @@ begin
   result := TStringList(FItemList.Objects[index]);
 end;
 
-{ TContentType }
+{ TMimeContentType }
 
-constructor TContentType.Create;
+constructor TMimeContentType.Create;
 begin
   inherited;
   FParams := TDictionary<String, String>.create;
 end;
 
-destructor TContentType.Destroy;
+destructor TMimeContentType.Destroy;
 begin
   FParams.Free;
   inherited;
 end;
 
-function TContentType.GetMain: String;
+function TMimeContentType.GetMain: String;
 begin
   if FBase.Contains('/') then
     result := FBase.Substring(0, FBase.IndexOf('/'))
@@ -623,7 +623,7 @@ begin
     result := FBase;
 end;
 
-function TContentType.GetSub: String;
+function TMimeContentType.GetSub: String;
 begin
   if FBase.Contains('/') then
     result := FBase.Substring(FBase.IndexOf('/')+1)
@@ -631,12 +631,12 @@ begin
     result := '';
 end;
 
-function TContentType.hasParam(name: String): boolean;
+function TMimeContentType.hasParam(name: String): boolean;
 begin
   result := FParams.ContainsKey(name);
 end;
 
-procedure TContentType.SetMain(const Value: String);
+procedure TMimeContentType.SetMain(const Value: String);
 begin
   if FBase.Contains('/') then
     FBase := Value+'/'+sub
@@ -644,7 +644,7 @@ begin
     FBase := Value;
 end;
 
-procedure TContentType.SetSub(const Value: String);
+procedure TMimeContentType.SetSub(const Value: String);
 begin
   if FBase.Contains('/') then
     FBase := Main+'/'+value
@@ -652,11 +652,11 @@ begin
     FBase := 'application/'+Value;
 end;
 
-class function TContentType.parseList(s : String): TFslList<TContentType>;
+class function TMimeContentType.parseList(s : String): TFslList<TMimeContentType>;
 var
   e : String;
 begin
-  result := TFslList<TContentType>.create;
+  result := TFslList<TMimeContentType>.create;
   try
     for e in s.Split([',']) do
       result.add(parseSingle(e));
@@ -666,11 +666,11 @@ begin
   end;
 end;
 
-class function TContentType.parseSingle(s : String): TContentType;
+class function TMimeContentType.parseSingle(s : String): TMimeContentType;
 var
   p : string;
 begin
-  result := TContentType.Create;
+  result := TMimeContentType.Create;
   try
     for p in s.Split([';']) do
     begin

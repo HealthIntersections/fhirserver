@@ -33,9 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils,
-  FHIR.Support.DateTime, FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Stream,
+  SysUtils, Classes,
+  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser,
   {$IFDEF FHIR2} FHIR.R2.Client, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Client, {$ENDIF}
@@ -44,6 +43,7 @@ uses
 
 const
   WAIT_CYCLE_LENGTH = 10;
+  MAX_RETRY_COUNT = 5;
 
 type
   TFHIRClientAsyncContextState = (
@@ -52,11 +52,34 @@ type
     asyncWaiting,
     asyncDoPing,
     asyncPinging,
-    asyncFailed);
+    asyncFailed,
+    asyncDownload,
+    asyncDownloading,
+    asyncFinished);
+
+  TDownloadFile = class (TFslObject)
+  private
+    FUrl : String;
+    FResourceType : String;
+    FSize : integer;
+    FCount: integer;
+    FError: String;
+  public
+    constructor Create(resourceType, url : String);
+
+    function Link : TDownloadFile; overload;
+
+    property url : String read FUrl write FUrl;
+    property resourceType : String read FResourceType write FResourceType;
+    property count : integer read FCount write FCount;
+    property size : integer read FSize write FSize;
+    property error : String read FError write FError;
+  end;
 
   TFHIRClientAsyncTask = class (TFslObject)
   private
     FClient : TFhirClientV;
+    FFiles : TFslList<TDownloadFile>;
     FFolder: String;
     FTypes: TFhirResourceTypeSet;
     FQuery: string;
@@ -69,11 +92,16 @@ type
     FLastStatus : TDateTime;
     FError : String;
 
+    function getNextFile : TDownloadFile;
+    function waitingCount : integer;
+
+
     procedure SetTypes(const Value: TFhirResourceTypeSet);
     procedure log(s : String);
     procedure makeInitialRequest;
     procedure checkDelay;
     procedure doPing;
+    procedure doDownload;
   public
     Constructor create(client : TFhirClientV);
     Destructor Destroy; override;
@@ -90,6 +118,7 @@ type
     function status : String;
     procedure next;
     function Finished : boolean;
+    function Summary : String;
   end;
 
 
@@ -100,6 +129,16 @@ uses
   FHIR.Tools.Utilities;
 
 { TFHIRClientAsyncTask }
+
+function TFHIRClientAsyncTask.waitingCount: integer;
+var
+  t : TDownloadFile;
+begin
+  result := 0;
+  for t in FFiles do
+    if (t.size = 0) and (t.count < MAX_RETRY_COUNT) then
+      inc(result);
+end;
 
 procedure TFHIRClientAsyncTask.checkDelay;
 begin
@@ -117,13 +156,48 @@ begin
   FLog := '';
   FStart := now;
   FStatus := asyncReady;
+  FFiles := TFslList<TDownloadFile>.create;
   log('Initialised at '+FormatDateTime('c', now));
 end;
 
 destructor TFHIRClientAsyncTask.Destroy;
 begin
+  FFiles.Free;
   FClient.Free;
   inherited;
+end;
+
+procedure TFHIRClientAsyncTask.doDownload;
+var
+  df : TDownloadFile;
+  headers : THTTPHeaders;
+  buf : TFslBuffer;
+begin
+  FStatus := asyncDownloading;
+  df := getNextFile;
+  if df = nil then
+    exit;
+  try
+    df.count := df.count + 1;
+    buf := FClient.customGet(df.url, headers);
+    try
+      buf.SaveToFileName(Path([FFolder, df.resourceType+'.json']));
+    finally
+      buf.free;
+    end;
+    FError := '';
+    df.size := buf.Size;
+    if waitingCount = 0 then
+      FStatus := asyncFinished
+    else
+      FStatus := asyncDownload;
+  except
+    on e : Exception do
+    begin
+      df.error := e.Message;
+      FError := e.Message;
+    end;
+  end;
 end;
 
 procedure TFHIRClientAsyncTask.doPing;
@@ -131,6 +205,8 @@ var
   headers : THTTPHeaders;
   buf : TFslBuffer;
   p : TFHIRParser;
+  json, o : TJsonObject;
+  i : TJsonNode;
 begin
   FStatus := asyncPinging;
   headers.accept := 'application/fhir+json';
@@ -146,8 +222,20 @@ begin
       200 :
         begin
           log('Ready to download');
-          !
-          raise Exception.Create('not done yet');
+          json := TJSONParser.Parse(buf.AsBytes);
+          try
+            // check secure
+            // store the transaction time somewhere
+            FFiles.clear;
+            for i in json.forceArr['output'] do
+            begin
+              o := i as TJsonObject;
+              FFiles.Add(TDownloadFile.Create(o.str['type'], o.str['url'].Substring(FClient.address.Length+1)));
+            end;
+            FStatus := asyncDownload;
+          finally
+            json.Free;
+          end;
         end
       else if FClient.LastStatus >= 500 then
       begin
@@ -179,7 +267,23 @@ end;
 
 function TFHIRClientAsyncTask.Finished: boolean;
 begin
-  result := false;
+  result := FStatus = asyncFinished;
+end;
+
+function TFHIRClientAsyncTask.getNextFile: TDownloadFile;
+var
+  min : integer;
+  t : TDownloadFile;
+begin
+  min := MAXINT;
+  for t in FFiles do
+    if (min > t.count) and (t.size = 0) then
+      min := t.count;
+  result := nil;
+  for t in FFiles do
+    if t.FCount = min then
+      exit(t);
+  FStatus := asyncFinished;
 end;
 
 procedure TFHIRClientAsyncTask.log(s: String);
@@ -203,7 +307,7 @@ begin
   FStatus := asyncInitialQueryInProgress;
   headers.accept := 'application/fhir+json';
   headers.prefer := 'respond-async';
-  p := FQuery+'?_outputFormat=application/fhir+ndjson';
+  p := FQuery+'?_outputFormat=application/x-ndjson';
   if since.notNull then
     p := p + '&_since='+since.toXML;
   t := '';
@@ -241,6 +345,8 @@ begin
     asyncWaiting: checkDelay;
     asyncDoPing: doPing;
     asyncPinging: ; // nothing
+    asyncDownload : doDownload;
+    asyncDownloading: ; // nothing
     asyncFailed: raise Exception.Create('Error: '+FError);
   end;
 end;
@@ -256,11 +362,38 @@ begin
     asyncReady: result := 'Ready to make Request';
     asyncInitialQueryInProgress: result := 'Initial Query in Progress';
     asyncWaiting: result := 'Waiting for '+inttostr(WAIT_CYCLE_LENGTH - trunc((now - FLastStatus) * DATETIME_DAY_SECONDS))+' secs';
-    asyncDoPing: result := 'Read to checking on Progess';
+    asyncDoPing: result := 'Ready to check on Progess';
     asyncPinging: result := 'Checking on Progess';
     asyncFailed: result := 'Error: '+FError;
+    asyncDownload: result := 'Ready to download '+inttostr(waitingCount)+' files';
+    asyncDownloading: result := 'Downloading ('+inttostr(waitingCount)+' files to go)';
   end;
 end;
 
+
+function TFHIRClientAsyncTask.Summary: String;
+var
+  i : Int64;
+  t : TDownloadFile;
+begin
+  i := 0;
+  for t in FFiles do
+    inc(i, t.size);
+  result := 'Downloaded '+inttostr(FFiles.Count)+' count for '+DescribeBytes(i)+' bytes';
+end;
+
+{ TDownloadFile }
+
+constructor TDownloadFile.Create(resourceType, url : String);
+begin
+  inherited Create;
+  FResourceType := resourceType;
+  FUrl := url;
+end;
+
+function TDownloadFile.Link: TDownloadFile;
+begin
+  result := TDownloadFile(inherited Link);
+end;
 
 end.

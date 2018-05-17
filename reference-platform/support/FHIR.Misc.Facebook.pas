@@ -46,7 +46,7 @@ implementation
 uses
   FHIR.Web.Fetcher,
   IdHTTP, IdSSLOpenSSL, idHMAC, IdHMACSHA1, FHIR.Support.Binary,
-  FHIR.Support.Json, FHIR.Support.Certs, FHIR.Web.ParseMap;
+  FHIR.Support.Json, FHIR.Support.Certs, FHIR.Web.Parsers;
 
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 var
@@ -257,12 +257,12 @@ begin
       fetch.URL := 'https://https://www.fitbit.com/oauth/request_token';
       fetch.Fetch;
 
-  //      FHIR.Web.ParseMap := TParseMap.createSmart(fetch.Buffer.AsUnicode);
+  //      FHIR.Web.Parsers := TParseMap.createSmart(fetch.Buffer.AsUnicode);
   //      try
-  //        token := FHIR.Web.ParseMap.GetVar('access_token');
-  //        expires := FHIR.Web.ParseMap.GetVar('expires');
+  //        token := FHIR.Web.Parsers.GetVar('access_token');
+  //        expires := FHIR.Web.Parsers.GetVar('expires');
   //      finally
-  //        FHIR.Web.ParseMap.free;
+  //        FHIR.Web.Parsers.free;
   //      end;
   //      result := true;
     finally

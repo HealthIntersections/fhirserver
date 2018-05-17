@@ -48,7 +48,7 @@ uses
   FHIR.Support.Math in '..\support\FHIR.Support.Math.pas',
   FHIR.Support.Mime in '..\support\FHIR.Support.Mime.pas',
   FHIR.Support.MsXml in '..\support\FHIR.Support.MsXml.pas',
-  FHIR.Web.ParseMap in '..\support\FHIR.Web.ParseMap.pas',
+  FHIR.Web.Parsers in '..\support\FHIR.Web.Parsers.pas',
   FHIR.Web.Rdf in '..\support\FHIR.Web.Rdf.pas',
   FHIR.Support.Shell in '..\support\FHIR.Support.Shell.pas',
   FHIR.Support.Strings in '..\support\FHIR.Support.Strings.pas',
