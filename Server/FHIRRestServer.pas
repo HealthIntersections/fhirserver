@@ -1079,8 +1079,8 @@ Begin
   end;
   if FPlainServer <> nil then
   begin
-    FPlainServer.Scheduler.Free;
     FPlainServer.active := false;
+    FPlainServer.Scheduler.Free;
     FreeAndNil(FPlainServer);
   end;
 End;
@@ -1482,7 +1482,8 @@ begin
     logResponse(id, response);
     t := GetTickCount - t;
     logt(id+' https: '+inttostr(t)+'ms '+request.RawHTTPCommand+' '+inttostr(t)+' for '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+'. mem= '+MemoryStatus);
-    logt(GService.ThreadStatus);
+    if GService <> nil then
+      logt(GService.ThreadStatus);
   finally
     MarkExit(AContext);
     Session.Free;

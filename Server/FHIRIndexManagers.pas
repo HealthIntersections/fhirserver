@@ -2382,7 +2382,7 @@ begin
     if (resource.position.longitude <> '') and (resource.position.latitude <> '') then
       index('Location', key, 0, resource.position.longitude, resource.position.latitude, CODES_TSearchParamsLocation[spLocation_near]);
   end
-//    spLocation_Near_distance, {@enum.value spLocation_Near_distance A distance quantity to limit the near search to locations within a specific distance }
+//    spLocation_Near_distance, { A distance quantity to limit the near search to locations within a specific distance }
 end;
 
 procedure TFhirIndexManager.BuildIndexValuesDocumentReference(key: integer;id : String; context : TFhirResource; resource: TFhirDocumentReference);
@@ -2793,8 +2793,8 @@ begin
     indexValue(resource.componentList[i].value, 'component-');
   end;
 
-//  TODO:    spObservation_Code_value_x, {@enum.value "code-value-[x]" spObservation_Code_value_x Both code and one of the value parameters }
-//  TODO:    spObservation_CMPOnnet_Code_value_x, {@enum.value "code-value-[x]" spObservation_Code_value_x Both code and one of the value parameters }
+//  TODO:    spObservation_Code_value_x, { Both code and one of the value parameters }
+//  TODO:    spObservation_CMPOnnet_Code_value_x, { Both code and one of the value parameters }
 
 end;
 

@@ -1391,7 +1391,7 @@ begin
       end;
     end;
     response.ContentType := 'application/json';
-    response.ContentText := buffer.Buffer.AsUnicode;
+    response.ContentText := buffer.Buffer.AsText;
     response.WriteContent;
   finally
     buffer.Free;
@@ -1480,7 +1480,7 @@ begin
         end;
       end;
     end;
-    response.ContentText := buffer.Buffer.AsUnicode;
+    response.ContentText := buffer.Buffer.AsText;
     response.WriteContent;
   finally
     buffer.Free;

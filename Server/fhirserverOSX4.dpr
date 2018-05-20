@@ -47,7 +47,6 @@ uses
   AdvObjectLists in '..\reference-platform\support\AdvObjectLists.pas',
   MemorySupport in '..\reference-platform\support\MemorySupport.pas',
   AdvItems in '..\reference-platform\support\AdvItems.pas',
-  FHIR.Support.Filers in '..\reference-platform\support\FHIR.Support.Filers.pas',
   FHIR.Support.DateTime in '..\reference-platform\support\FHIR.Support.DateTime.pas',
   ErrorSupport in '..\reference-platform\support\ErrorSupport.pas',
   SystemSupport in '..\reference-platform\support\SystemSupport.pas',

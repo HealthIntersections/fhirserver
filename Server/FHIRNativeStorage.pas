@@ -2692,7 +2692,7 @@ begin
         else
         begin
           TXmlPatchEngine.execute(xml, xml, request.patchXml);
-          request.Source.AsUnicode := xml.ToXml;
+          request.Source.AsText := xml.ToXml;
           request.PostFormat := ffXml;
           parser := TFHIRXmlParser.Create(request.Context.link, request.lang);
           try
@@ -10128,7 +10128,7 @@ begin
     end;
     bufJ := TFslBuffer.Create;
     try
-      bufJ.AsUnicode := b.ToString;
+      bufJ.AsText := b.ToString;
       bufJ.SaveToFileName('c:\temp\validation.txt');
     finally
       bufJ.free;

@@ -176,7 +176,7 @@ var
 begin
   if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
     raise Exception.Create('Unable to find '+filename);
-  result := src.AsUnicode;
+  result := src.AsText;
 end;
 
 end.

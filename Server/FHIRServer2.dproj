@@ -162,7 +162,6 @@
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Exceptions.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Factory.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.System.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Filers.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Parsers.pas"/>
@@ -326,6 +325,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Common.pas"/>
         <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

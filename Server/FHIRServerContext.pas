@@ -384,8 +384,8 @@ begin
   FFactory.free;
 
   FValidator.free;
-//  if FValidatorContext.AdvObjectReferenceCount > 0 then
-//    raise Exception.Create('There are still '+inttostr(FValidatorContext.AdvObjectReferenceCount)+' uses of the WorkerContext live');
+//  if FValidatorContext.FslObjectReferenceCount > 0 then
+//    raise Exception.Create('There are still '+inttostr(FValidatorContext.FslObjectReferenceCount)+' uses of the WorkerContext live');
 
   FValidatorContext.Free;
   FResConfig.free;
