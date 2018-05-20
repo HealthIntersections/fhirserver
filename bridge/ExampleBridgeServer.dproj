@@ -245,6 +245,7 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
