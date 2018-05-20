@@ -159,3 +159,6 @@ System
 /reference-platform/dstu3gen
 /reference-platform/r4gen
 /reference-platform/r4gen
+/Libraries/archive
+/Server/*.rsb
+/utils/cde/samples

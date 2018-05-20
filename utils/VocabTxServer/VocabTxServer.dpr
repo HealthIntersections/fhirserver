@@ -50,7 +50,6 @@ uses
   FHIR.R4.Types in '..\..\reference-platform\r4\FHIR.R4.Types.pas',
   FHIR.Support.Binary in '..\..\reference-platform\support\FHIR.Support.Binary.pas',
   FHIR.Support.Stream in '..\..\reference-platform\support\FHIR.Support.Stream.pas',
-  FHIR.Support.Filers in '..\..\reference-platform\support\FHIR.Support.Filers.pas',
   FHIR.Support.Collections in '..\..\reference-platform\support\FHIR.Support.Collections.pas',
   FHIR.Base.Objects in '..\..\reference-platform\base\FHIR.Base.Objects.pas',
   FHIR.Support.Generics in '..\..\reference-platform\support\FHIR.Support.Generics.pas',
@@ -199,7 +198,8 @@ uses
   FHIR.Base.Narrative in '..\..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\..\reference-platform\r4\FHIR.R4.Common.pas',
-  FHIR.R4.Narrative in '..\..\reference-platform\r4\FHIR.R4.Narrative.pas';
+  FHIR.R4.Narrative in '..\..\reference-platform\r4\FHIR.R4.Narrative.pas',
+  FHIR.Base.Utilities in '..\..\reference-platform\base\FHIR.Base.Utilities.pas';
 
 {$R *.res}
 
