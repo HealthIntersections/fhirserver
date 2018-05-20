@@ -14,7 +14,6 @@ uses
   FHIR.Support.Exceptions in '..\reference-platform\support\FHIR.Support.Exceptions.pas',
   FHIR.Support.Generics in '..\reference-platform\support\FHIR.Support.Generics.pas',
   FHIR.Support.Stream in '..\reference-platform\support\FHIR.Support.Stream.pas',
-  FHIR.Support.Filers in '..\reference-platform\support\FHIR.Support.Filers.pas',
   FHIR.Support.Collections in '..\reference-platform\support\FHIR.Support.Collections.pas',
   FHIR.Base.Objects in '..\reference-platform\base\FHIR.Base.Objects.pas',
   FHIR.Support.Binary in '..\reference-platform\support\FHIR.Support.Binary.pas',
