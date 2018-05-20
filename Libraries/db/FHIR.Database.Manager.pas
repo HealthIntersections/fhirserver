@@ -48,22 +48,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-// This section used by scripting system
-
-{!Wrapper uses KClasses,Classes,KProcs,FHIR.Support.Filers,FHIR.Support.Objects,AdvIterators, MSSEWrap, MSSEWrap_Wrapper}
-
-// script access at this level is strictly controlled.
-// until further notice, connection managers cannot be created directly in scripts.
-// instead, you must expose the ability to create and manage connections elsewhere
-// portions of this functionality will not be available in the scripting layer
-
-{!ignore TKDBConnection.ExecSQLBatch} // not really supportable in script engine, and not important
-{!ignore TConnectionState}
-{!ignore TKDBManagerList}
-{!ignore TKDBManager}
-{!ignore @.KDBManagers}
-{!ignore KDB_ALL_PROVIDERS}
-
 
 interface
 
@@ -75,19 +59,16 @@ uses
   FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Database.Logging, FHIR.Database.Dialects, FHIR.Support.DateTime;
 
-{!Script Hide}
 const
   DEFAULT_CONNECTION_WAIT_LENGTH = 1000;
   DEFAULT_CONNECTION_REFRESH_PERIOD = 200;
   CONNECTION_UNKNOWN = 0;
   CONNECTION_OK = 1;
   CONNECTION_FAIL = 2;
-{!Script Show}
 
 type
   EKDBException = class (Exception);
 
-  {!Script Hide}
 
   // these are all the known providers. Just because the enumerations are defined doesn't
   // mean that the provider is supported by all 3 of compiler, application, and system
@@ -102,14 +83,12 @@ const
 
 type
 
-  {!Script Show}
 
-  {@enum TKDBColumnType
+  {
     Lists possible database Column types
   }
   TKDBColumnType = (ctUnknown, ctBoolean, ctInteger, ctNumeric, ctFloat, ctChar, ctDateTime, ctBlob, ctInt64, ctUnicode);
 
-  {!Script Hide}
   // Meta data
   TKDBTableType = (kdbUser, kdbView, kdbSystem);
 
@@ -203,9 +182,8 @@ type
   TOnChangeConnectionCount = procedure (oSender : TKDBManager) of Object;
   TKDBBoundParam = class (TFslObject);
 
-  {!Script Show}
 
-  {@Class TKDBConnection
+  {
     Database connection that exposes a SQL based interface to the appropriate database.
     These cannot be created directly - you must use a TDBConnPool.GetConnection call
     to get a connection. The connection must always be returned using
@@ -287,7 +265,7 @@ type
 
     function link : TKDBConnection; overload;
 
-    {@member Prepare
+    {
       After setting the SQL content, prepare the statement so Parameter
       Binding and execution can be done. You must call prepare before
       binding and execution.
@@ -297,20 +275,19 @@ type
     }
     procedure Prepare;
 
-    {@member Execute
+    {
       Execute the SQL Statement. Will raise an exception if there is a problem
     }
     procedure Execute;
 
-    {@member Terminate
+    {
       Clean up. You should call terminate before returning the
       connection to the pool or using it again
     }
     procedure Terminate;
 
 
-    {!Script Hide}
-    property Usage: String Read FUsage Write FUsage;
+      property Usage: String Read FUsage Write FUsage;
     property UseStarted : TDateTime read FUsed;
     property Holder: TObject Read FHolder Write FHolder;
     property Tag: Integer Read FTag Write FTag;
@@ -327,8 +304,7 @@ type
     procedure ExecSQLBatch(ASql: array of String);
 
     function FetchMetaData : TKDBMetaData;
-    {!Script Show}
-
+  
     // public for scripting engine - usually would be private
     function GetColCount: Integer;
     function GetColString(ACol: Integer): String;
@@ -352,33 +328,31 @@ type
     function GetColTypeByName(AName: String): TKDBColumnType;
     function GetColNullByName(AName: String): Boolean;
 
-    {!Script Hide}
-    function GetColKey(ACol: Integer): Integer;
+      function GetColKey(ACol: Integer): Integer;
     function GetColKeyByName(AName: String): Integer;
-    {!Script Show}
-
-    {@member ExecSQL
+  
+    {
      Execute a single SQL statement (update, insert, etc. Returns the number of rows affected). You can't use this meaningfully with select statements
     }
     function ExecSQL(ASql: String) : integer; overload;
     function ExecSQL(ASql: String; rows : integer) : integer; overload;
 
-    {@member DatabaseSize
+    {
       Get the size of the database
     }
     function DatabaseSize : int64;
 
-    {@member TableSize
+    {
       Get the size of the specified table
     }
     Function TableSize(sName : String):int64;
 
-    {@member SupportsSizing
+    {
       True if the underlying connection supports determining database and table size
     }
     function SupportsSizing : Boolean;
 
-    {@member CountSQL
+    {
      Execute a Count SQL Statement and return the value returned.
      Use an SQL Statement of the following form:
 
@@ -392,20 +366,20 @@ type
     }
     function CountSQL(ASql: String): Cardinal;
 
-    {@member ExistsByKey
+    {
       Quickly check whether table sTableName has a record where sKeyField has value iKey. assumes
       that keyField has an appropriate index.
     }
     Function ExistsByKey(Const sTableName, sKeyField : String; ikey : Integer) : Boolean;
 
-    {@member Lookup
+    {
       Given a tablename, return the value of ValueField where KeyField
       is the same as keyvalue. the keyfield can be a number or a string.
       if there is no match, Default will be returned as the value
     }
     function Lookup(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String): String;
 
-    {@member LookupString
+    {
       Given a tablename, return the value of ValueField where KeyField
       is the same as keyvalue. the keyfield can be a number or a string.
       if there is no match, Default will be returned as the value
@@ -414,7 +388,7 @@ type
     }
     function LookupString(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String): String;
 
-    {@member RenameTable
+    {
       Rename a table in the database. Each platform generally provides a
       specific mechanism to do this, but the implementation varies widely.
       this works on all supported platforms.
@@ -424,18 +398,18 @@ type
     }
     procedure RenameTable(AOldTableName, ANewTableName: String);
 
-    {@member DropTable
+    {
       Drop a table from the database. on most platforms this equates to
       executing the SQL statement Drop Table "tablename"
     }
     procedure DropTable(ATableName : String);
 
-    {@member DropColumn
+    {
       Drop a column from a table in the database.
     }
     procedure DropColumn(ATableName, AColumnName: String);
 
-    {@member RenameColumn
+    {
       Rename a Column in a table. Each platform generally provides a
       specific mechanism to do this, but the implementation varies widely.
       this works on all supported platforms.
@@ -445,34 +419,32 @@ type
     }
     procedure RenameColumn(ATableName, AOldColumnName, ANewColumnName: String; AColumnDetails: String = '');
 
-    {!Script hide}
-    procedure ListTables(AList : TStrings);
-    {!Script Show}
-
-    {@member Tables
+      procedure ListTables(AList : TStrings);
+  
+    {
       A List of all the tables in the database
     }
     property Tables : TStrings Read GetTables;
 
-    {@member ClearDatabase
+    {
       Completely drop non system content in database. For obvious reasons, this
       needs to be used with considerable care. Also it should be used before
       anything else has been done with the database.
     }
     procedure ClearDatabase;
 
-    {@member StartTransact
+    {
       Start a transaction. Close with Commit or RollBack.
     }
     procedure StartTransact;
 
-    {@member Commit
+    {
       Close a transaction and commit changes to the database.
       (note: Multi-stage commits & Rollbacks  are not supported)
     }
     procedure Commit;
 
-    {@member Rollback
+    {
       Abandon transaction (no changes to the database).
       (note: Multi-stage commits & Rollbacks are not supported)
     }
@@ -480,7 +452,7 @@ type
 
     property InTransaction : Boolean read FInTransaction;
 
-    {@member Fetchnext
+    {
        Iterate through the recordset after execute has been called.
        You must call Fetchnext before the the first record. Fetchnext
        will return false once there is no more records to retrieve.
@@ -489,18 +461,18 @@ type
     }
     function FetchNext: Boolean;
 
-    {@member ColByName
+    {
       Determine the index of a column by it's name
     }
     function ColByName(AColName: String): Integer;
 
-    {@member ColName
+    {
       Determine the Name of a column by it's index
     }
     function ColName(ACol: Integer): String;
 
 
-    {@member BindInt64
+    {
       Bind an Int64 value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:i)
@@ -508,52 +480,49 @@ type
     }
     procedure BindInt64(AParamName: String; AParamValue: Int64);
 
-    {@member BindInteger
+    {
       Bind an Integer value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:i)
       this will bind the value i to the parameter.
     }
     procedure BindInteger(AParamName: String; AParamValue: Integer);
-    {!Script Hide}
-    procedure BindKey(AParamName: String; AParamValue: Integer);
-    {!Script Show}
-
-    {@member BindDouble
+      procedure BindKey(AParamName: String; AParamValue: Integer);
+  
+    {
       Bind a Double (Float) value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:d)
     }
     procedure BindDouble(AParamName: String; AParamValue: Double);
 
-    {@member BindString
+    {
       Bind a String value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:s)
     }
     procedure BindString(AParamName: String; AParamValue: String);
 
-    {@member BindStringOrNull
+    {
       Bind a String value to a named parameter, or null
     }
     procedure BindStringOrNull(AParamName: String; AParamValue: String);
 
-    {@member BindTimeStamp
+    {
       Bind a TTimeStamp value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:t)
     }
     procedure BindTimeStamp(AParamName: String; AParamValue: FHIR.Support.DateTime.TTimeStamp);
 
-    {@member BindDateAndTime
+    {
       Bind a DateTime value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:t)
     }
     procedure BindDateTimeEx(AParamName: String; AParamValue: TDateTimeEx);
 
-    {!Script Hide}
-    {@member BindBlob
+      {
       Bind a Binary value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:t)
@@ -565,9 +534,8 @@ type
       called.
     }
     procedure BindBlob(AParamName: String; AParamValue: TBytes);
-    {!Script Show}
-
-    {@member BindBlobFromString
+  
+    {
       Bind a Binary value to a named parameter. But present a string for binding
       You can call this after using an SQL statement like this:
         insert into table (field) values (:t)
@@ -575,100 +543,96 @@ type
     }
     procedure BindBlobFromString(AParamName: String; AParamValue: String);
 
-    {@member BindIntegerFromBoolean
+    {
       Bind an integer from a boolean value. Database value will be 1 if true
     }
     procedure BindIntegerFromBoolean(AParamName: String; AParamValue: Boolean);
 
-    {@member BindNull
+    {
       Bind the Null value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:t)
     }
     procedure BindNull(AParamName: String);
 
-    {!Script Hide}
-    property ColKey       [ACol: Integer]: Integer Read GetColKey;
-    {!Script Show}
-
-    {@member ColType
+      property ColKey       [ACol: Integer]: Integer Read GetColKey;
+  
+    {
      Get Column Col Field Type
     }
     property ColType      [ACol: Integer]: TKDBColumnType Read GetColType;
-    {@member ColNull
+    {
      True if Column ACol(index) Value is Null
     }
     property ColNull      [ACol: Integer]: Boolean Read GetColNull;
-    {@member ColString
+    {
      Get true if Column ACol(index) is null
     }
     property ColString    [ACol: Integer]: String Read GetColString;
-    {@member ColInteger
+    {
     Get Column ACol(index) as an Integer
     }
     property ColInteger   [ACol: Integer]: Integer Read GetColInteger;
-    {@member ColInt64
+    {
     Get Column ACol(index) as a Int64
     }
     property ColInt64     [ACol: Integer]: Int64 Read GetColInt64;
-    {@member ColDouble
+    {
     Get Column ACol(index) as a Double (Float)
     }
     property ColDouble    [ACol: Integer]: Double Read GetColDouble;
 
-    {@member ColMemory
+    {
     Get Column ACol(index) as a blob
     }
     property ColBlob    [ACol: Integer]: TBytes Read GetColBlob;
     property ColBlobAsString [ACol: Integer]: String Read GetColBlobAsString;
-    {@member ColTimestamp
+    {
     Get Column ACol(index) as a TTimestamp
     }
     property ColTimestamp [ACol: Integer]: FHIR.Support.DateTime.TTimestamp Read GetColTimestamp;
 
-    {@member ColDateTimeEx
+    {
     Get Column ACol(index) as a DateAndTime
     }
     property ColDateTimeEx [ACol: Integer]: TDateTimeEx Read GetColDateTimeEx;
 
-    {!Script Hide}
-    property ColKeyByName       [AName: String]: Integer Read GetColKeyByName;
-    {!Script Show}
-
-    {@member ColTypeByName
+      property ColKeyByName       [AName: String]: Integer Read GetColKeyByName;
+  
+    {
       Get Column "AName" Field Type}
     property ColTypeByName      [AName: String]: TKDBColumnType Read GetColTypeByName;
-    {@member ColNullByName
+    {
       true if Column "AName" value is Null}
     property ColNullByName      [AName: String]: Boolean Read GetColNullByName;
-    {@member ColStringByName
+    {
       Get Column "AName" as a String}
     property ColStringByName    [AName: String]: String Read GetColStringByName;
-    {@member ColIntegerByName
+    {
       Get Column "AName" as an integer}
     property ColIntegerByName   [AName: String]: Integer Read GetColIntegerByName;
-    {@member ColInt64ByName
+    {
       Get Column "AName" as a Int64}
     property ColInt64ByName     [AName: String]: Int64 Read GetColInt64ByName;
-    {@member ColDoubleByName
+    {
       Get Column "AName" as a Double (Float)}
     property ColDoubleByName    [AName: String]: Double Read GetColDoubleByName;
-    {@member ColMemoryByName
+    {
       Get Column "AName" as a Blob}
     property ColBlobByName    [AName: String]: TBytes Read GetColBlobByName;
     property ColBlobAsStringByName[AName: String]: String Read GetColBlobAsStringByName;
-    {@member ColTimeStampByName
+    {
       Get Column "AName" as a TTimeStamp}
     property ColTimeStampByName [AName: String]: FHIR.Support.DateTime.TTimeStamp Read GetColTimeStampByName;
-    {@member ColDateTimeExByName
+    {
       Get Column "AName" as a TDateTimeEx}
     property ColDateTimeExByName [AName: String]: TDateTimeEx Read GetColDateTimeExByName;
-    {@member ColCount
+    {
       Number of columns in current result set
     }
     property ColCount: Integer Read GetColCount;
 
-    {@member RowsAffected
+    {
       The number of rows affected by an insert, update or delete.
       not valid after a select
     }
@@ -676,7 +640,7 @@ type
 
     property transactionId : String read FTransactionId write FTransactionId;
   published
-    {@member SQL
+    {
       The SQL string to execute
     }
     property SQL: String Read FSql Write FSql;
@@ -784,7 +748,7 @@ type
     function dump : String;
   end;
 
-{@routine DescribeType
+{
    Get a string Description of a given column type
 }
 function DescribeType(AColType: TKDBColumnType): String;
