@@ -46,7 +46,6 @@ uses
   FHIR.Support.Objects in '..\reference-platform\Support\FHIR.Support.Objects.pas',
   FHIR.Support.Exceptions in '..\reference-platform\Support\FHIR.Support.Exceptions.pas',
   FHIR.Support.System in '..\reference-platform\Support\FHIR.Support.System.pas',
-  FHIR.Support.Filers in '..\reference-platform\Support\FHIR.Support.Filers.pas',
   FHIR.Support.Collections in '..\reference-platform\Support\FHIR.Support.Collections.pas',
   FHIR.Support.Stream in '..\reference-platform\Support\FHIR.Support.Stream.pas',
   FHIR.Web.Parsers in '..\reference-platform\Support\FHIR.Web.Parsers.pas',
@@ -284,7 +283,8 @@ uses
   FHIR.R4.Tests.Worker in '..\reference-platform\r4\tests\FHIR.R4.Tests.Worker.pas',
   FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas',
   FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
-  FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas';
+  FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
 
 var
   runner : ITestRunner;
