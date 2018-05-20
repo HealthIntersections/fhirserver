@@ -372,7 +372,7 @@ begin
   wb := TWebBuffer.Create;
   try
     wb.ContentType := 'text/html';
-    wb.AsUnicode := page;
+    wb.AsText := page;
     FLock.Lock;
     try
       FWebCache.Add(result, wb.Link);

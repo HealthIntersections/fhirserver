@@ -544,7 +544,7 @@ begin
     try
       buffer := TFslBuffer.Create;
       try
-        buffer.AsUnicode := src;
+        buffer.AsText := src;
         ctxt := TFHIRValidatorContext.Create;
         try
           ctxt.ResourceIdRule := risOptional;
