@@ -387,6 +387,7 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Factory.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Async.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

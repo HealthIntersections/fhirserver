@@ -142,7 +142,7 @@
         <Icon_MainIcon>AppEndorser_Icon1.ico</Icon_MainIcon>
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
-        <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
+        <DCC_Define>FHIR3;FMX;$(DCC_Define)</DCC_Define>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <BT_BuildType>Debug</BT_BuildType>

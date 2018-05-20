@@ -240,7 +240,7 @@ var
   ok : boolean;
 begin
   server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data);
-  http := TFhirClients.makeHTTP(nil, server.fhirEndpoint, false, FSettings.Timeout* 1000, FSettings.proxy);
+  http := TFhirClients.makeHTTP(FContext, server.fhirEndpoint, server.format, FSettings.Timeout* 1000, FSettings.proxy);
   try
     (http.Communicator as TFHIRHTTPCommunicator).username := server.username;
     (http.Communicator as TFHIRHTTPCommunicator).password := server.password;
@@ -345,6 +345,7 @@ begin
   try
     form.SoftwareId := ToolkitIdentifier;
     form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
+    form.Versions := TFHIRVersionFactories.Create;
     form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data).Link;
     if form.ShowModal = mrOk then
     begin

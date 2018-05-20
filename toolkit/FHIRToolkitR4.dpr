@@ -42,7 +42,6 @@ uses
   FHIR.Support.Exceptions in '..\reference-platform\support\FHIR.Support.Exceptions.pas',
   FHIR.Support.Generics in '..\reference-platform\support\FHIR.Support.Generics.pas',
   FHIR.Support.Stream in '..\reference-platform\support\FHIR.Support.Stream.pas',
-  FHIR.Support.Filers in '..\reference-platform\support\FHIR.Support.Filers.pas',
   FHIR.Support.Collections in '..\reference-platform\support\FHIR.Support.Collections.pas',
   FHIR.Support.Binary in '..\reference-platform\support\FHIR.Support.Binary.pas',
   FHIR.Support.System in '..\reference-platform\support\FHIR.Support.System.pas',
@@ -157,7 +156,8 @@ uses
   FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
   FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas',
   FHIR.R4.Narrative in '..\reference-platform\r4\FHIR.R4.Narrative.pas',
-  FHIR.R4.Validator in '..\reference-platform\r4\FHIR.R4.Validator.pas';
+  FHIR.R4.Validator in '..\reference-platform\r4\FHIR.R4.Validator.pas',
+  FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas';
 
 {$R *.res}
 
