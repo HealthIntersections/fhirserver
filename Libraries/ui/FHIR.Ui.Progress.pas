@@ -104,7 +104,8 @@ function GetComCtlVersion: Integer;
 procedure Register;
 
 implementation
-{$R FHIR.Ui.Progress.res}
+
+{$R resources\FHIR.Ui.Progress.res}
 
 uses Consts, ComStrs;
 

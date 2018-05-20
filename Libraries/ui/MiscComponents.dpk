@@ -3,9 +3,9 @@ package MiscComponents;
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
-{$ASSERTIONS ON}
+{$ASSERTIONS OFF}
 {$BOOLEVAL OFF}
-{$DEBUGINFO ON}
+{$DEBUGINFO OFF}
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
@@ -33,10 +33,17 @@ requires
   vcl,
   vclactnband,
   vclx,
-  xmlrtl;
+  xmlrtl,
+  VirtualTreesR,
+  SynEdit_R,
+  soaprtl;
 
 contains
-  DProgress in 'DProgress.pas',
-  LookAheadUnit in 'LookAheadUnit.pas';
+  FHIR.UI.Progress in 'FHIR.UI.Progress.pas',
+  FHIR.UI.LookAhead in 'FHIR.UI.LookAhead.pas',
+  FHIR.Uix.Dialogs in 'FHIR.Uix.Dialogs.pas',
+  FHIR.Uix.Images in 'FHIR.Uix.Images.pas',
+  FHIR.Uix.Controls in 'FHIR.Uix.Controls.pas',
+  FHIR.Uix.Forms in 'FHIR.Uix.Forms.pas' {UixForm};
 
 end.

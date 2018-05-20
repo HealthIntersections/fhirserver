@@ -7,7 +7,32 @@ uses
   SysUtils, Classes, Vcl.Graphics, Types,
   GraphicEx, Jpeg, PNGImage,
   FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Math,
-  FHIR.Support.Filers, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Shell;
+  FHIR.Support.Exceptions, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Shell;
+
+Type
+  TRect = Windows.TRect;
+  TPoint = Windows.TPoint;
+
+
+Function Rect(iLeft, iTop, iRight, iBottom : Integer) : TRect; Overload;
+Procedure RectZero(Var aRect : TRect); Overload;
+Function RectZero : TRect; Overload;
+Function RectEmpty(Const aRect : TRect) : Boolean; Overload;
+Function RectEqual(Const A, B : TRect) : Boolean; Overload;
+
+Function RectOffset(Const aRect : TRect; iX, iY : Integer) : TRect; Overload;
+Function RectIntersect(Const A, B : TRect) : TRect; Overload;
+Function RectSubtract(Const A, B : TRect) : TRect; Overload;
+Function RectUnion(Const A, B : TRect) : TRect; Overload;
+Function RectHasIntersection(Const A, B : TRect) : Boolean; Overload;
+Function RectInflate(Const aRect : TRect; iValue : Integer) : TRect; Overload;
+Function RectInflate(Const aRect : TRect; iX, iY : Integer) : TRect; Overload;
+
+Function RectWidth(Const aRect : TRect) : Integer; Overload;
+Function RectHeight(Const aRect : TRect) : Integer; Overload;
+
+Function RectHit(Const aRect : TRect; Const aPoint : TPoint) : Boolean; Overload;
+Function RectBound(Const aRect, aBoundary : TRect) : TRect; Overload;
 
 
 Type
@@ -95,7 +120,7 @@ Type
 
   TFslVCLGraphic = class;
 
-  TFslGraphic = Class(TFslPersistent)
+  TFslGraphic = Class(TFslObject)
     Protected
       Function GetWidth: Integer; Virtual;
       Procedure SetWidth(Const Value: Integer); Virtual;
@@ -131,7 +156,7 @@ Type
       Property FrameIndex : Integer Read GetFrameIndex write SetFrameIndex;
   End;
 
-  TFslGraphicList = Class(TFslPersistentList)
+  TFslGraphicList = Class(TFslObjectList)
     Private
       Function GetGraphic(iIndex: Integer): TFslGraphic;
 
@@ -171,8 +196,6 @@ Type
       Function Clone : TFslVCLGraphic;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Save(oFiler : TFslFiler); Override;
-      Procedure Load(oFiler : TFslFiler); Override;
 
       Procedure LoadFromStream(oStream : TFslStream); Override;
       Procedure SaveToStream(oStream : TFslStream); Override;
@@ -368,7 +391,7 @@ Type
   TFslGraphicColour = TColour;
 
 
-  TFslGraphicObject = Class (TFslPersistent)
+  TFslGraphicObject = Class (TFslObject)
     Private
       FHandle : HGDIOBJ;
       FOnChange : TNotifyEvent;
@@ -385,8 +408,6 @@ Type
       Destructor Destroy; Override;
 
       Procedure AfterConstruction; Override;
-
-      Procedure Load(oFiler : TFslFiler); Override;
 
       Procedure Clear; Overload; Virtual;
       Procedure ClearHandle; Overload; Virtual;
@@ -428,7 +449,6 @@ Type
       Function Clone : TFslPen;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
 
       Procedure Clear; Override;
 
@@ -489,7 +509,6 @@ Type
       Function Clone : TFslBrush;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
 
       Procedure Clear; Override;
 
@@ -569,7 +588,6 @@ Type
       Function Clone : TFslFont;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
 
       Procedure Clear; Override;
       Procedure ClearStyles;
@@ -645,6 +663,24 @@ Type
 
     Public
       Property Graphics[iIndex : Integer] : TFslMetafile Read GetGraphic; Default;
+  End;
+
+Type
+  TFslIconGraphic = Class(TFslVCLGraphic)
+    Private
+      Function GetIcon : TIcon;
+      Procedure SetIcon(Const Value : TIcon);
+
+    Protected
+      Function HandleClass : TGraphicClass; Override;
+
+    Public
+      Function Link : TFslIconGraphic;
+
+      Procedure SetMaximumDimensions(Const iWidth, iHeight : Integer);
+      Procedure LoadFromResource(Const sResourceName : String);
+
+      Property Icon : TIcon Read GetIcon Write SetIcon;
   End;
 
 
@@ -1232,7 +1268,7 @@ Begin
       Else If oGraphicExGraphicClass = TGIFGraphic Then
         Result := TFslGIFGraphic.Create
       Else
-        Raise EAdvException.Create('TFslVCLGraphic', 'NewFromGraphic', StringFormat('Image file format ''%s'' is not supported.', [oGraphicExGraphicClass.ClassName]));
+        Raise EFslException.Create('TFslVCLGraphic', 'NewFromGraphic', StringFormat('Image file format ''%s'' is not supported.', [oGraphicExGraphicClass.ClassName]));
     End
     Else
     Begin
@@ -1371,55 +1407,6 @@ Begin
   Inherited;
 
   Handle.Assign(TFslVCLGraphic(oObject).Handle);
-End;
-
-
-Procedure TFslVCLGraphic.Load(oFiler: TFslFiler);
-Var
-  oMemory : TFslMemoryStream;
-Begin
-  Inherited;
-
-  FBuffer.Clear;
-  Try
-    oFiler['Stream'].DefineObject(FBuffer);
-
-    oMemory := TFslMemoryStream.Create;
-    Try
-      oMemory.Buffer := FBuffer.Link;
-
-      LoadFromStream(oMemory);
-    Finally
-      oMemory.Free;
-    End;
-  Finally
-    FBuffer.Clear;
-  End;
-End;
-
-
-Procedure TFslVCLGraphic.Save(oFiler: TFslFiler);
-Var
-  oMemory : TFslMemoryStream;
-Begin
-  Inherited;
-
-  FBuffer.Clear;
-  Try
-    oMemory := TFslMemoryStream.Create;
-    Try
-      oMemory.Buffer := FBuffer.Link;
-
-      oMemory.Expand := True;
-      SaveToStream(oMemory);
-    Finally
-      oMemory.Free;
-    End;
-
-    oFiler['Stream'].DefineObject(FBuffer);
-  Finally
-    FBuffer.Clear;
-  End;
 End;
 
 
@@ -1971,17 +1958,6 @@ Begin
 End;
 
 
-Procedure TFslPen.Define(oFiler: TFslFiler);
-Begin
-  Inherited;
-
-  oFiler['Width'].DefineInteger(FWidth);
-  oFiler['Colour'].DefineColour(FColour);
-  oFiler['EndStyle'].DefineEnumerated(FEndStyle, ADVPENENDSTYLE_CODES);
-  oFiler['JoinStyle'].DefineEnumerated(FJoinStyle, ADVPENJOINSTYLE_CODES);
-  oFiler['Style'].DefineEnumerated(FStyle, ADVPENSTYLE_CODES);
-End;
-
 
 Procedure TFslPen.Clear;
 Begin
@@ -2161,13 +2137,6 @@ Begin
 End;
 
 
-Procedure TFslGraphicObject.Load(oFiler: TFslFiler);
-Begin
-  Inherited;
-
-  ClearHandle;
-End;
-
 
 Procedure TFslGraphicObject.Clear;
 Begin
@@ -2277,15 +2246,6 @@ Begin
   FStyle := TFslBrush(oObject).FStyle;
 End;
 
-
-Procedure TFslBrush.Define(oFiler: TFslFiler);
-Begin
-  Inherited;
-
-  oFiler['Colour'].DefineColour(FColour);
-  oFiler['Style'].DefineEnumerated(FStyle, ADVBRUSHSTYLE_CODES);
-  oFiler['Bitmap'].DefineObject(FBitmap);
-End;
 
 
 Function TFslBrush.GetBitmap: TFslBitmapGraphic;
@@ -2406,23 +2366,6 @@ Begin
   Size := TFslFont(oObject).FSize;
 End;
 
-
-Procedure TFslFont.Define(oFiler: TFslFiler);
-Begin
-  Inherited;
-
-  oFiler['Italic'].DefineBoolean(FItalic);
-  oFiler['Underline'].DefineBoolean(FUnderline);
-  oFiler['StrikeOut'].DefineBoolean(FStrikeOut);
-  oFiler['Name'].DefineString(FName);
-  oFiler['CharRotation'].DefineInteger(FCharRotation);
-  oFiler['TextRotation'].DefineInteger(FTextRotation);
-  oFiler['Colour'].DefineColour(FColour);
-  oFiler['Family'].DefineEnumerated(FFamily, ADVFONTFAMILY_CODES);
-  oFiler['Pitch'].DefineEnumerated(FPitch, ADVFONTPITCH_CODES);
-  oFiler['Weight'].DefineEnumerated(FWeight, ADVFONTWEIGHT_CODES);
-  oFiler['Size'].DefineInteger(FSize);
-End;
 
 
 Procedure TFslFont.SetColour(Const Value: TFslGraphicColour);
@@ -2708,6 +2651,203 @@ End;
 Function TFslMetafileList.ItemClass: TFslObjectClass;
 Begin
   Result := TFslMetafile;
+End;
+
+
+
+Function Rect(iLeft, iTop, iRight, iBottom : Integer) : TRect;
+Begin
+  Result.Left := iLeft;
+  Result.Top := iTop;
+  Result.Right := iRight;
+  Result.Bottom := iBottom;
+End;
+
+
+Procedure RectZero(Var aRect : TRect);
+Begin
+  SetRectEmpty(Windows.TRect(aRect));
+End;
+
+
+Function RectZero : TRect;
+Begin
+  RectZero(Result);
+End;
+
+
+Function RectEmpty(Const aRect : TRect) : Boolean;
+Begin
+  Result := Windows.IsRectEmpty(Windows.TRect(aRect));
+End;
+
+
+Function RectEqual(Const A, B : TRect) : Boolean;
+Begin
+  Result := Windows.EqualRect(Windows.TRect(A), Windows.TRect(B));
+End;
+
+
+Function RectOffset(Const aRect : TRect; iX, iY : Integer) : TRect;
+Begin
+  Result := aRect;
+  OffsetRect(Windows.TRect(Result), iX, iY);
+End;
+
+
+Function RectIntersect(Const A, B : TRect) : TRect;
+Begin
+  Windows.IntersectRect(Windows.TRect(Result), Windows.TRect(A), Windows.TRect(B));
+End;
+
+
+Function RectSubtract(Const A, B : TRect) : TRect;
+Begin
+  Windows.SubtractRect(Windows.TRect(Result), Windows.TRect(A), Windows.TRect(B));
+End;
+
+Function RectUnion(Const A, B : TRect) : TRect;
+Begin
+  Windows.UnionRect(Windows.TRect(Result), Windows.TRect(A), Windows.TRect(B));
+End;
+
+
+
+Function RectHasIntersection(Const A, B : TRect) : Boolean;
+Var
+  aTemp : Windows.TRect;
+Begin
+  Result := Windows.IntersectRect(aTemp, Windows.TRect(A), Windows.TRect(B));
+End;
+
+
+Function RectInflate(Const aRect : TRect; iValue : Integer) : TRect;
+Begin
+  Result := RectInflate(aRect, iValue, iValue);
+End;
+
+
+Function RectInflate(Const aRect : TRect; iX, iY : Integer) : TRect;
+Begin
+  Result := aRect;
+  Windows.InflateRect(Windows.TRect(Result), iX, iY);
+End;
+
+
+Function RectWidth(Const aRect : TRect) : Integer;
+Begin
+  Result := aRect.Right - aRect.Left;
+End;
+
+
+Function RectHeight(Const aRect : TRect) : Integer;
+Begin
+  Result := aRect.Bottom - aRect.Top;
+End;
+
+
+Function RectHit(Const aRect : TRect; Const aPoint : TPoint) : Boolean;
+Begin
+  Result := Windows.PtInRect(Windows.TRect(aRect), Windows.TPoint(aPoint));
+End;
+
+
+Function RectBound(Const aRect, aBoundary : TRect) : TRect;
+Begin
+  Result.Left := IntegerMax(aRect.Left, aBoundary.Left);
+  Result.Top := IntegerMax(aRect.Top, aBoundary.Top);
+  Result.Right := IntegerMin(aRect.Right, aBoundary.Right);
+  Result.Bottom := IntegerMin(aRect.Bottom, aBoundary.Bottom);
+End;
+
+
+
+Type
+  TFslIcon = Class(TIcon)
+    Private
+      FMaximumHeight : Integer;
+      FMaximumWidth : Integer;
+
+    Protected
+      Function GetHeight : Integer; Override;
+      Procedure SetHeight(Value : Integer); Override;
+
+      Function GetWidth : Integer; Override;
+      Procedure SetWidth(Value : Integer); Override;
+  End;
+
+
+Function TFslIcon.GetHeight : Integer;
+Begin
+  Result := FMaximumHeight;
+
+  If Result = 0 Then
+    Result := Inherited GetHeight;
+End;
+
+
+Procedure TFslIcon.SetHeight(Value : Integer);
+Begin
+  FMaximumHeight := Value;
+
+  Inherited;
+End;
+
+
+Function TFslIcon.GetWidth : Integer;
+Begin
+  Result := FMaximumWidth;
+
+  If Result = 0 Then
+    Result := Inherited GetWidth;
+End;
+
+
+Procedure TFslIcon.SetWidth(Value : Integer);
+Begin
+  FMaximumWidth := Value;
+
+  Inherited;
+End;
+
+
+Function TFslIconGraphic.HandleClass : TGraphicClass;
+Begin
+  Result := TFslIcon;
+End;
+
+
+Function TFslIconGraphic.Link : TFslIconGraphic;
+Begin
+  Result := TFslIconGraphic(Inherited Link);
+End;
+
+
+Procedure TFslIconGraphic.SetMaximumDimensions(Const iWidth, iHeight : Integer);
+Begin
+  // Cannot set width and height with an active icon loaded.
+  Icon.Handle := 0;
+
+  Icon.Width := iWidth;
+  Icon.Height := iHeight;
+End;
+
+
+Procedure TFslIconGraphic.LoadFromResource(Const sResourceName : String);
+Begin
+  Icon.Handle := LoadImage(HInstance, PChar(sResourceName), IMAGE_ICON, Icon.Width, Icon.Height, LR_MONOCHROME);
+End;
+
+
+Function TFslIconGraphic.GetIcon : TIcon;
+Begin
+  Result := TIcon(Inherited Handle);
+End;
+
+
+Procedure TFslIconGraphic.SetIcon(Const Value : TIcon);
+Begin
+  Inherited Handle := Value;
 End;
 
 
