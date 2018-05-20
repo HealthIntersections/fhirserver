@@ -174,7 +174,7 @@ begin
   bnd := FServer.search(resType, true, params);
   try
     for be in bnd.entryList do
-      if be.search.mode = SearchEntryModeMatch then
+      if (be.search <> nil) and (be.search.mode = SearchEntryModeMatch) then
         combo.Items.Add(be.resource.id+': '+be.resource.textSummary);
   finally
     bnd.Free;
