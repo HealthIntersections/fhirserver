@@ -91,12 +91,13 @@
         <DCC_TYPEINFO_IMPLICITLY_ADDED>false</DCC_TYPEINFO_IMPLICITLY_ADDED>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_UnitSearchPath>C:\temp\v2\Library\Bought\Addict\Unicode;C:\work\Components\synedit\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <Icon_MainIcon>CDE.ico</Icon_MainIcon>
         <DCC_Define>CDE;$(DCC_Define)</DCC_Define>
         <Debugger_RunParams>;C:\HL7Connect\v2\cde\samples\abaki.cda</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d432\</DCC_DcuOutput>
+        <Icon_MainIcon>ClinicalDocumentEditor_Icon.ico</Icon_MainIcon>
+        <DCC_ExeOutput>C:\work\fhirserver\Exec\32</DCC_ExeOutput>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
