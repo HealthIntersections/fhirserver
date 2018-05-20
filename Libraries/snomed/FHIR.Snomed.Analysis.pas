@@ -492,7 +492,7 @@ begin
     result := TFslNameBuffer.Create;
     result.Name := 'text/html';
     result.Encoding := TEncoding.UTF8;
-    result.AsUnicode := b.AsString;
+    result.AsText := b.AsString;
   finally
     b.Free;
   end;
@@ -888,7 +888,7 @@ begin
       parts.Add(part);
       part.Name := json['name']+'.txt';
       part.Encoding := TEncoding.UTF8;
-      part.AsUnicode := tbl.AsString;
+      part.AsText := tbl.AsString;
       for det in FColumns do
         cleanUpColumn(det);
 
@@ -1100,7 +1100,7 @@ begin
     parts.Add(part);
     part.Name := json['name']+'.txt';
     part.Encoding := TEncoding.UTF8;
-    part.AsUnicode := tbl.AsString;
+    part.AsText := tbl.AsString;
   finally
     tbl.Free;
   end;

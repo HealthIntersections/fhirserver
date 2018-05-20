@@ -35,7 +35,6 @@ Uses
   FHIR.Support.Decimal,
   FHIR.Support.Objects,
   
-  FHIR.Support.Filers,
   FHIR.Support.Collections;
 
 Const Ucum_CACHE_VERSION = 3;
@@ -50,7 +49,6 @@ type
     Constructor Create; Override;
     Destructor Destroy; Override;
     function Link : TUcumProperty; Overload;
-    Procedure Define(oFiler : TFslFiler); Override;
 
     Property CommonUnits : TFslStringlist read FCommonUnits;
   end;
@@ -64,7 +62,7 @@ type
     Property UcumProperty[iIndex : integer] : TUcumProperty read GetUcumProperty; default;
   End;
 
-  TUcumConcept = class (TFslPersistent)
+  TUcumConcept = class (TFslObject)
   private
     Fkind : TConceptKind;
     Fcode : String;
@@ -78,7 +76,6 @@ type
     Constructor Create; Override;
     Destructor Destroy; Override;
     function Link : TUcumConcept; Overload;
-    Procedure Define(oFiler : TFslFiler); Override;
 
     Property kind : TConceptKind read Getkind;
     Property code : String read Fcode write FCode;    // case sensitive code for this concept
@@ -88,7 +85,7 @@ type
     Property Text : String read FText write FText;
   End;
 
-  TUcumConceptList = class (TFslPersistentList)
+  TUcumConceptList = class (TFslObjectList)
   Private
     function GetUcumItem(iIndex : integer): TUcumConcept;
   Protected
@@ -105,13 +102,12 @@ type
   public
 
     function Link : TUcumPrefix; Overload;
-    Procedure Define(oFiler : TFslFiler); Override;
     Property value : TSmartDecimal read Fvalue write FValue;  //value for the prefix - 1^-24 through to 1^24
 
     procedure SetPrecision(i : integer);
   End;
 
-  TUcumPrefixList = class (TFslPersistentList)
+  TUcumPrefixList = class (TFslObjectList)
   Private
     function GetUcumItem(iIndex : integer): TUcumPrefix;
   Protected
@@ -125,7 +121,6 @@ type
     FProperty : Integer;
   Public
     function Link : TUcumUnit; Overload;
-    Procedure Define(oFiler : TFslFiler); Override;
     Property PropertyType : Integer read FProperty write FProperty; // the kind of thing this represents
   End;
 
@@ -136,11 +131,10 @@ type
     Function GetKind : TConceptKind; Override;
   public
     function Link : TUcumBaseUnit; Overload;
-    Procedure Define(oFiler : TFslFiler); Override;
     Property dim : Char read FDim write FDim;
   End;
 
-  TUcumBaseUnitList = class (TFslPersistentList)
+  TUcumBaseUnitList = class (TFslObjectList)
   Private
     function GetUcumItem(iIndex : integer): TUcumBaseUnit;
   Protected
@@ -152,7 +146,7 @@ type
     Property UcumItem[iIndex : integer] : TUcumBaseUnit read GetUcumItem; default;
   End;
 
-  TUcumValue = class (TFslPersistent)
+  TUcumValue = class (TFslObject)
   private
     Funit : String;
     FunitUC : String;
@@ -160,7 +154,6 @@ type
     Ftext : String;
   public
     function Link : TUcumValue; Overload;
-    Procedure Define(oFiler : TFslFiler); Override;
     Property unit_ : String read Funit write FUnit;
     Property unitUC : String read FunitUC write FUnitUC;
     Property value : TSmartDecimal read FValue write FValue;
@@ -181,14 +174,13 @@ type
     Constructor Create; Override;
     Destructor Destroy; Override;
     function Link : TUcumDefinedUnit; Overload;
-    Procedure Define(oFiler : TFslFiler); Override;
     Property metric : boolean read Fmetric write FMetric; // whether this is a metric unit or not
     Property isSpecial : boolean read FisSpecial write FIsSpecial; // special means?
     Property class_ : String read Fclass_ write FClass_; // The class of this unit
     Property value : TUcumValue read Fvalue; // Value details
   End;
 
-  TUcumDefinedUnitList = class (TFslPersistentList)
+  TUcumDefinedUnitList = class (TFslObjectList)
   Private
     function GetUcumItem(iIndex : integer): TUcumDefinedUnit;
   Protected
@@ -201,7 +193,7 @@ type
   End;
 
 
-  TUcumModel = class (TFslPersistent)
+  TUcumModel = class (TFslObject)
   private
     FProperties : TUcumPropertyList;
     Fprefixes : TUcumPrefixList;
@@ -214,7 +206,6 @@ type
     Destructor Destroy; Override;
 
     function Link : TUcumModel; Overload;
-    Procedure Define(oFiler : TFslFiler); Override;
 
     Procedure clear;
 
@@ -241,17 +232,6 @@ begin
   Fnames := TFslStringList.Create;
 end;
 
-procedure TUcumConcept.Define(oFiler: TFslFiler);
-begin
-  inherited;
-  oFiler['kind'].DefineEnumerated(FKind, CODES_CONCEPT_KIND);
-  oFiler['code'].DefineString(Fcode);
-  oFiler['codeUC'].DefineString(FcodeUC);
-  oFiler['printSymbol'].DefineString(FprintSymbol);
-  oFiler['names'].DefineObject(FNames);
-  oFiler['Text'].DefineString(FText);
-end;
-
 destructor TUcumConcept.Destroy;
 begin
   FNames.Free;
@@ -271,12 +251,6 @@ end;
 
 { TUcumPrefix }
 
-procedure TUcumPrefix.Define(oFiler: TFslFiler);
-begin
-  inherited;
-  oFiler['value'].DefineObject(FValue);
-end;
-
 function TUcumPrefix.GetKind: TConceptKind;
 begin
   result := UcumPREFIX;
@@ -295,25 +269,12 @@ end;
 
 { TUcumUnit }
 
-procedure TUcumUnit.Define(oFiler: TFslFiler);
-begin
-  inherited;
-  oFiler['Property'].DefineInteger(FProperty);
-end;
-
 function TUcumUnit.Link: TUcumUnit;
 begin
   result := TUcumUnit(Inherited Link);
 end;
 
 { TUcumBaseUnit }
-
-procedure TUcumBaseUnit.Define(oFiler: TFslFiler);
-begin
-  inherited;
-  oFiler['dim'].DefineChar(Fdim);
-
-end;
 
 function TUcumBaseUnit.GetKind: TConceptKind;
 begin
@@ -327,16 +288,6 @@ begin
 end;
 
 { TUcumValue }
-
-procedure TUcumValue.Define(oFiler: TFslFiler);
-begin
-  inherited;
-  oFiler['unit'].DefineString(Funit);
-  oFiler['unitUC'].DefineString(FunitUC);
-  oFiler['text'].DefineString(Ftext);
-  oFiler['value'].DefineObject(Fvalue);
-end;
-
 
 function TUcumValue.Link: TUcumValue;
 begin
@@ -355,16 +306,6 @@ constructor TUcumDefinedUnit.Create;
 begin
   inherited;
   Fvalue := TUcumValue.Create;
-end;
-
-procedure TUcumDefinedUnit.Define(oFiler: TFslFiler);
-begin
-  inherited;
-  oFiler['metric'].Defineboolean(Fmetric);
-  oFiler['isSpecial'].Defineboolean(FisSpecial);
-  oFiler['class'].DefineString(Fclass_);
-  oFiler['value'].DefineObject(Fvalue);
-
 end;
 
 destructor TUcumDefinedUnit.Destroy;
@@ -476,24 +417,6 @@ begin
   FProperties := TUcumPropertyList.Create;
 end;
 
-procedure TUcumModel.Define(oFiler: TFslFiler);
-var
-  i : integer;
-begin
-  inherited;
-  i := Ucum_CACHE_VERSION;
-  oFiler['streamVersion'].DefineInteger(i);
-  if i <> Ucum_CACHE_VERSION Then
-    raise exception.create('the UCUM cache must be rebuilt using the ''Import UCUM'' operation in the manager application.');
-
-  oFiler['Version'].DefineString(FVersion);
-  oFiler['RevisionDate'].DefineString(FRevisionDate);
-  oFiler['prefixes'].DefineObject(Fprefixes);
-  oFiler['baseUnits'].DefineObject(FbaseUnits);
-  oFiler['definedUnits'].DefineObject(FdefinedUnits);
-  oFiler['properties'].DefineObject(FProperties);
-end;
-
 destructor TUcumModel.Destroy;
 begin
   Fprefixes.Free;
@@ -545,12 +468,6 @@ constructor TUcumProperty.Create;
 begin
   inherited;
   FCommonUnits := TFslStringList.Create;
-end;
-
-procedure TUcumProperty.Define(oFiler: TFslFiler);
-begin
-  inherited;
-  oFiler['CommonUnits'].DefineObject(FCommonUnits);
 end;
 
 destructor TUcumProperty.Destroy;

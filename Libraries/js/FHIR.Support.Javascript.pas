@@ -1,7 +1,7 @@
 unit FHIR.Support.Javascript;
 
 {
-  Subclasses the Javascript library so it knows about Adv library reference counting
+  Subclasses the Javascript library so it knows about FHIR.Support.Objects library reference counting
 }
 
 interface
