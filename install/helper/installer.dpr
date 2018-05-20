@@ -48,7 +48,6 @@ uses
   FHIR.Support.System in '..\..\reference-platform\Support\FHIR.Support.System.pas',
   AdvControllers in '..\..\reference-platform\Support\AdvControllers.pas',
   AdvPersistents in '..\..\reference-platform\Support\AdvPersistents.pas',
-  FHIR.Support.Filers in '..\..\reference-platform\Support\FHIR.Support.Filers.pas',
   ColourSupport in '..\..\reference-platform\Support\ColourSupport.pas',
   AdvPersistentLists in '..\..\reference-platform\Support\AdvPersistentLists.pas',
   AdvObjectLists in '..\..\reference-platform\Support\AdvObjectLists.pas',
