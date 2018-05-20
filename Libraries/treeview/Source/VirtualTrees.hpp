@@ -1,8 +1,8 @@
 ﻿// CodeGear C++Builder
-// Copyright (c) 1995, 2015 by Embarcadero Technologies, Inc.
+// Copyright (c) 1995, 2017 by Embarcadero Technologies, Inc.
 // All rights reserved
 
-// (DO NOT EDIT: machine generated header) 'VirtualTrees.pas' rev: 29.00 (Windows)
+// (DO NOT EDIT: machine generated header) 'VirtualTrees.pas' rev: 32.00 (Windows)
 
 #ifndef VirtualtreesHPP
 #define VirtualtreesHPP
@@ -95,17 +95,17 @@ class PASCALIMPLEMENTATION EVirtualTreeError : public System::Sysutils::Exceptio
 	
 public:
 	/* Exception.Create */ inline __fastcall EVirtualTreeError(const System::UnicodeString Msg) : System::Sysutils::Exception(Msg) { }
-	/* Exception.CreateFmt */ inline __fastcall EVirtualTreeError(const System::UnicodeString Msg, System::TVarRec const *Args, const int Args_High) : System::Sysutils::Exception(Msg, Args, Args_High) { }
+	/* Exception.CreateFmt */ inline __fastcall EVirtualTreeError(const System::UnicodeString Msg, const System::TVarRec *Args, const int Args_High) : System::Sysutils::Exception(Msg, Args, Args_High) { }
 	/* Exception.CreateRes */ inline __fastcall EVirtualTreeError(NativeUInt Ident)/* overload */ : System::Sysutils::Exception(Ident) { }
 	/* Exception.CreateRes */ inline __fastcall EVirtualTreeError(System::PResStringRec ResStringRec)/* overload */ : System::Sysutils::Exception(ResStringRec) { }
-	/* Exception.CreateResFmt */ inline __fastcall EVirtualTreeError(NativeUInt Ident, System::TVarRec const *Args, const int Args_High)/* overload */ : System::Sysutils::Exception(Ident, Args, Args_High) { }
-	/* Exception.CreateResFmt */ inline __fastcall EVirtualTreeError(System::PResStringRec ResStringRec, System::TVarRec const *Args, const int Args_High)/* overload */ : System::Sysutils::Exception(ResStringRec, Args, Args_High) { }
+	/* Exception.CreateResFmt */ inline __fastcall EVirtualTreeError(NativeUInt Ident, const System::TVarRec *Args, const int Args_High)/* overload */ : System::Sysutils::Exception(Ident, Args, Args_High) { }
+	/* Exception.CreateResFmt */ inline __fastcall EVirtualTreeError(System::PResStringRec ResStringRec, const System::TVarRec *Args, const int Args_High)/* overload */ : System::Sysutils::Exception(ResStringRec, Args, Args_High) { }
 	/* Exception.CreateHelp */ inline __fastcall EVirtualTreeError(const System::UnicodeString Msg, int AHelpContext) : System::Sysutils::Exception(Msg, AHelpContext) { }
-	/* Exception.CreateFmtHelp */ inline __fastcall EVirtualTreeError(const System::UnicodeString Msg, System::TVarRec const *Args, const int Args_High, int AHelpContext) : System::Sysutils::Exception(Msg, Args, Args_High, AHelpContext) { }
+	/* Exception.CreateFmtHelp */ inline __fastcall EVirtualTreeError(const System::UnicodeString Msg, const System::TVarRec *Args, const int Args_High, int AHelpContext) : System::Sysutils::Exception(Msg, Args, Args_High, AHelpContext) { }
 	/* Exception.CreateResHelp */ inline __fastcall EVirtualTreeError(NativeUInt Ident, int AHelpContext)/* overload */ : System::Sysutils::Exception(Ident, AHelpContext) { }
 	/* Exception.CreateResHelp */ inline __fastcall EVirtualTreeError(System::PResStringRec ResStringRec, int AHelpContext)/* overload */ : System::Sysutils::Exception(ResStringRec, AHelpContext) { }
-	/* Exception.CreateResFmtHelp */ inline __fastcall EVirtualTreeError(System::PResStringRec ResStringRec, System::TVarRec const *Args, const int Args_High, int AHelpContext)/* overload */ : System::Sysutils::Exception(ResStringRec, Args, Args_High, AHelpContext) { }
-	/* Exception.CreateResFmtHelp */ inline __fastcall EVirtualTreeError(NativeUInt Ident, System::TVarRec const *Args, const int Args_High, int AHelpContext)/* overload */ : System::Sysutils::Exception(Ident, Args, Args_High, AHelpContext) { }
+	/* Exception.CreateResFmtHelp */ inline __fastcall EVirtualTreeError(System::PResStringRec ResStringRec, const System::TVarRec *Args, const int Args_High, int AHelpContext)/* overload */ : System::Sysutils::Exception(ResStringRec, Args, Args_High, AHelpContext) { }
+	/* Exception.CreateResFmtHelp */ inline __fastcall EVirtualTreeError(NativeUInt Ident, const System::TVarRec *Args, const int Args_High, int AHelpContext)/* overload */ : System::Sysutils::Exception(Ident, Args, Args_High, AHelpContext) { }
 	/* Exception.Destroy */ inline __fastcall virtual ~EVirtualTreeError(void) { }
 	
 };
@@ -305,6 +305,7 @@ public:
 	TVirtualNode *NextSibling;
 	TVirtualNode *FirstChild;
 	TVirtualNode *LastChild;
+	System::TObject* Item;
 	
 private:
 	_TVirtualNode__1 Data;
@@ -792,7 +793,7 @@ class PASCALIMPLEMENTATION TVirtualTreeColumns : public System::Classes::TCollec
 	typedef System::Classes::TCollection inherited;
 	
 public:
-	TVirtualTreeColumn* operator[](TColumnIndex Index) { return Items[Index]; }
+	TVirtualTreeColumn* operator[](TColumnIndex Index) { return this->Items[Index]; }
 	
 private:
 	TVTHeader* FHeader;
@@ -1364,7 +1365,7 @@ typedef void __fastcall (__closure *TVTHeaderPaintEvent)(TVTHeader* Sender, Vcl:
 
 typedef void __fastcall (__closure *TVTHeaderPaintQueryElementsEvent)(TVTHeader* Sender, THeaderPaintInfo &PaintInfo, THeaderPaintElements &Elements);
 
-typedef void __fastcall (__closure *TVTAdvancedHeaderPaintEvent)(TVTHeader* Sender, THeaderPaintInfo &PaintInfo, const THeaderPaintElements Elements);
+typedef void __fastcall (__closure *TVTFslancedHeaderPaintEvent)(TVTHeader* Sender, THeaderPaintInfo &PaintInfo, const THeaderPaintElements Elements);
 
 typedef void __fastcall (__closure *TVTBeforeAutoFitColumnsEvent)(TVTHeader* Sender, TSmartAutoFitType &SmartAutoFitType);
 
@@ -1744,7 +1745,7 @@ private:
 	TVTHeaderPaintEvent FOnHeaderDraw;
 	TVTPrepareButtonImagesEvent FOnPrepareButtonImages;
 	TVTHeaderPaintQueryElementsEvent FOnHeaderDrawQueryElements;
-	TVTAdvancedHeaderPaintEvent FOnAdvancedHeaderDraw;
+	TVTFslancedHeaderPaintEvent FOnAdvancedHeaderDraw;
 	TVTGetLineStyleEvent FOnGetLineStyle;
 	TVTBackgroundPaintEvent FOnPaintBackground;
 	TVTMeasureItemEvent FOnMeasureItem;
@@ -1964,7 +1965,7 @@ protected:
 	bool __fastcall CanSplitterResizeNode(const System::Types::TPoint &P, PVirtualNode Node, TColumnIndex Column);
 	virtual void __fastcall Change(PVirtualNode Node);
 	void __fastcall ChangeTreeStatesAsync(TChangeStates EnterStates, TChangeStates LeaveStates);
-	DYNAMIC void __fastcall ChangeScale(int M, int D);
+	DYNAMIC void __fastcall ChangeScale(int M, int D)/* overload */;
 	virtual bool __fastcall CheckParentCheckState(PVirtualNode Node, TCheckState NewCheckState);
 	virtual void __fastcall ClearTempCache(void);
 	virtual bool __fastcall ColumnIsEmpty(PVirtualNode Node, TColumnIndex Column);
@@ -2250,7 +2251,7 @@ protected:
 	__property TCustomVirtualTreeOptions* TreeOptions = {read=FOptions, write=SetOptions};
 	__property bool WantTabs = {read=FWantTabs, write=FWantTabs, default=0};
 	__property TVTAddToSelectionEvent OnAddToSelection = {read=FOnAddToSelection, write=FOnAddToSelection};
-	__property TVTAdvancedHeaderPaintEvent OnAdvancedHeaderDraw = {read=FOnAdvancedHeaderDraw, write=FOnAdvancedHeaderDraw};
+	__property TVTFslancedHeaderPaintEvent OnAdvancedHeaderDraw = {read=FOnAdvancedHeaderDraw, write=FOnAdvancedHeaderDraw};
 	__property TVTAfterAutoFitColumnEvent OnAfterAutoFitColumn = {read=FOnAfterAutoFitColumn, write=FOnAfterAutoFitColumn};
 	__property TVTAfterAutoFitColumnsEvent OnAfterAutoFitColumns = {read=FOnAfterAutoFitColumns, write=FOnAfterAutoFitColumns};
 	__property TVTAfterCellPaintEvent OnAfterCellPaint = {read=FOnAfterCellPaint, write=FOnAfterCellPaint};
@@ -2588,6 +2589,11 @@ public:
 	__property bool DoubleBuffered = {read=GetDoubleBuffered, write=SetDoubleBuffered, default=1};
 public:
 	/* TWinControl.CreateParented */ inline __fastcall TBaseVirtualTree(HWND ParentWindow) : Vcl::Controls::TCustomControl(ParentWindow) { }
+	
+	/* Hoisted overloads: */
+	
+protected:
+	DYNAMIC inline void __fastcall  ChangeScale(int M, int D, bool isDpiChange){ Vcl::Controls::TWinControl::ChangeScale(M, D, isDpiChange); }
 	
 };
 
@@ -3457,9 +3463,9 @@ extern DELPHI_PACKAGE System::Word CF_CSV;
 extern DELPHI_PACKAGE bool MMXAvailable;
 extern DELPHI_PACKAGE bool IsWinVistaOrAbove;
 #define DefaultPaintOptions (System::Set<TVTPaintOption, TVTPaintOption::toHideFocusRect, TVTPaintOption::toShowFilteredNodes>() << TVTPaintOption::toShowButtons << TVTPaintOption::toShowDropmark << TVTPaintOption::toShowRoot << TVTPaintOption::toShowTreeLines << TVTPaintOption::toThemeAware << TVTPaintOption::toUseBlendedImages )
-#define DefaultAnimationOptions EMPTYSET
+#define DefaultAnimationOptions System::Set<System::Byte>()
 #define DefaultAutoOptions (System::Set<TVTAutoOption, TVTAutoOption::toAutoDropExpand, TVTAutoOption::toAutoBidiColumnOrdering>() << TVTAutoOption::toAutoDropExpand << TVTAutoOption::toAutoScrollOnExpand << TVTAutoOption::toAutoSort << TVTAutoOption::toAutoTristateTracking << TVTAutoOption::toAutoDeleteMovedNodes << TVTAutoOption::toAutoChangeScale )
-#define DefaultSelectionOptions EMPTYSET
+#define DefaultSelectionOptions System::Set<System::Byte>()
 #define DefaultMiscOptions (System::Set<TVTMiscOption, TVTMiscOption::toAcceptOLEDrop, TVTMiscOption::toReverseFullExpandHotKey>() << TVTMiscOption::toAcceptOLEDrop << TVTMiscOption::toFullRepaintOnResize << TVTMiscOption::toInitOnSave << TVTMiscOption::toToggleOnDblClick << TVTMiscOption::toWheelPanning << TVTMiscOption::toEditOnClick )
 #define DefaultColumnOptions (System::Set<TVTColumnOption, TVTColumnOption::coAllowClick, TVTColumnOption::coEditable>() << TVTColumnOption::coAllowClick << TVTColumnOption::coDraggable << TVTColumnOption::coEnabled << TVTColumnOption::coParentBidiMode << TVTColumnOption::coParentColor << TVTColumnOption::coResizable << TVTColumnOption::coShowDropMark << TVTColumnOption::coVisible << TVTColumnOption::coAllowFocus << TVTColumnOption::coEditable )
 #define DefaultStringOptions (System::Set<TVTStringOption, TVTStringOption::toSaveCaptions, TVTStringOption::toAutoAcceptEditChange>() << TVTStringOption::toSaveCaptions << TVTStringOption::toAutoAcceptEditChange )

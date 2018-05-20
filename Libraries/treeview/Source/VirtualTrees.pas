@@ -608,6 +608,7 @@ type
     NextSibling,             // link to the node's next sibling or nil if it is the last node
     FirstChild,              // link to the node's first child...
     LastChild: PVirtualNode; // link to the node's last child...
+    Item : TObject;          // [added in this version]
   private
     Data: record end;        // this is a placeholder, each node gets extra data determined by NodeDataSize
   public
