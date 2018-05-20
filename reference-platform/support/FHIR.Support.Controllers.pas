@@ -34,7 +34,7 @@ Interface
 Uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.System, FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.Filers, FHIR.Support.DateTime,
+  FHIR.Support.System, FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Collections;
 
 Type
@@ -68,6 +68,7 @@ Type
       Procedure Stop; Virtual;
 
       Procedure Wait;
+      Function WaitTimeout(iTimeout : Cardinal) : Boolean;
 
       Procedure Kill;
 
@@ -204,20 +205,20 @@ Type
 
 Type
   TFslMethod = Procedure Of Object;
-  PAdvMethod = ^TFslMethod;
+  PFslMethod = ^TFslMethod;
 
   TFslMethodItem = Record
     Code, Data : Pointer;
   End;
 
-  PAdvMethodItem = ^TFslMethodItem;
+  PFslMethodItem = ^TFslMethodItem;
 
   TFslMethodItemArray = Array[0..(MaxInt Div SizeOf(TFslMethodItem)) - 1] Of TFslMethodItem;
-  PAdvMethodItemArray = ^TFslMethodItemArray;
+  PFslMethodItemArray = ^TFslMethodItemArray;
 
   TFslMethodList = Class(TFslItemList)
     Private
-      FMethodArray : PAdvMethodItemArray;
+      FMethodArray : PFslMethodItemArray;
 
       Function GetMethodItem(iIndex : Integer): TFslMethod;
       Procedure SetMethodItem(iIndex : Integer; Const aValue : TFslMethod);
@@ -304,7 +305,7 @@ Type
       Function Call(oSender : TFslObject; oDispatched : TFslDispatched) : Boolean; Virtual;
   End;
 
-  EAdvDispatcher = Class(EAdvException);
+  EFslDispatcher = Class(EFslException);
 
   TFslStringEvent = Procedure (oSender : TFslObject; Const sValue : String) Of Object;
 
@@ -347,9 +348,9 @@ Type
       Function Call(oSender : TFslObject; oDispatched : TFslDispatched) : Boolean; Overload; Override;
   End;
 
-  TFslController = Class(TFslPersistent)
+  TFslController = Class(TFslObject)
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
     Public
       Function Link : TFslController;
@@ -358,9 +359,9 @@ Type
       Procedure Close; Virtual;
   End;
 
-  EAdvController = Class(EAdvException);
+  EFslController = Class(EFslException);
 
-  TFslControllerList = Class(TFslPersistentList)
+  TFslControllerList = Class(TFslObjectList)
     Private
       Function GetControllerByIndex(Const iIndex : Integer) : TFslController;
 
@@ -505,6 +506,11 @@ Begin
   FInternal.WaitFor;
 End;
 
+
+function TFslThread.WaitTimeout(iTimeout: Cardinal): Boolean;
+begin
+  FInternal.WaitFor;// todo
+end;
 
 Procedure TFslThread.ExecuteYield(Const iTimeout: Cardinal);
 Begin
@@ -915,10 +921,10 @@ End;
 
 Function TFslMethodList.CompareItem(pA, pB : Pointer) : Integer;
 Begin
-  Result := IntegerCompare(Integer(PAdvMethodItem(pA)^.Code), Integer(PAdvMethodItem(pB)^.Code));
+  Result := IntegerCompare(Integer(PFslMethodItem(pA)^.Code), Integer(PFslMethodItem(pB)^.Code));
 
   If Result = 0 Then
-    Result := IntegerCompare(Integer(PAdvMethodItem(pA)^.Data), Integer(PAdvMethodItem(pB)^.Data));
+    Result := IntegerCompare(Integer(PFslMethodItem(pA)^.Data), Integer(PFslMethodItem(pB)^.Data));
 End;
 
 
@@ -1032,7 +1038,7 @@ Procedure TFslMethodList.SetItem(iIndex : Integer; Value: Pointer);
 Begin
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMethodArray^[iIndex] := PAdvMethodItem(Value)^;
+  FMethodArray^[iIndex] := PFslMethodItem(Value)^;
 End;
 
 
@@ -1323,9 +1329,9 @@ Begin
 End;
 
 
-Function TFslController.ErrorClass: EAdvExceptionClass;
+Function TFslController.ErrorClass: EFslExceptionClass;
 Begin
-  Result := EAdvController;
+  Result := EFslController;
 End;
 
 
@@ -1464,4 +1470,5 @@ End;
 
 
 
-End. // AdvExclusiveCriticalSections //
+End.
+

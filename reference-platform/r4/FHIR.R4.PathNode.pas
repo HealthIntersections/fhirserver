@@ -241,7 +241,7 @@ var
   n : TFHIRPathExpressionNode;
 begin
   msg := '';
-  if refCount <> AdvObjectReferenceCount then
+  if refCount <> FslObjectReferenceCount then
     msg := 'Reference Count mistmatch'
   else
     case kind of

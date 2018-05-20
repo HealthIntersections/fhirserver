@@ -93,7 +93,7 @@ Type
       Function ErrorMessage(Const sDetail: String; iError: Cardinal) : String;
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
     Public
       Constructor Create; Override;
@@ -135,7 +135,7 @@ Type
       function getResponseHeader(name : string) : String;
   End;
 
-  EAdvWinInetClient = Class(EAdvException);
+  EFslWinInetClient = Class(EFslException);
 
 
 Implementation
@@ -395,9 +395,9 @@ Begin
 End;
 
 
-Function TFslWinInetClient.ErrorClass: EAdvExceptionClass;
+Function TFslWinInetClient.ErrorClass: EFslExceptionClass;
 Begin
-  Result := EAdvWinInetClient;
+  Result := EFslWinInetClient;
 End;
 
 

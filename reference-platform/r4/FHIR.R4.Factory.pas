@@ -133,7 +133,7 @@ end;
 
 function TFHIRFactoryR4.makeParameters: TFHIRParametersW;
 begin
-
+  result := TFHIRParameters4.Create(TFHIRParameters.Create);
 end;
 
 function TFHIRFactoryR4.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; lang: String): TFHIRParser;

@@ -29,10 +29,6 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-
-{! 44 !}
-
-
 Interface
 
 
@@ -69,7 +65,6 @@ Function ExecuteAsAdmin(hWnd: HWND; sFile, sParameters: String) : Boolean;
 // Current process ID.
 Function ProcessID : Cardinal; Overload;
 Function ProcessHandle : THandle;
-Function ProcessName : String; Overload;
 Function ProcessCommandLineParameters: String; Overload;
 Function ProcessCommandLineParameters(Const iProcessID : Cardinal): String; Overload;
 
@@ -736,5 +731,5 @@ Begin
 End;
 
 
+End.
 
-End. // FHIR.Support.Shell //

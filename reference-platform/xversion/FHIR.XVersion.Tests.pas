@@ -32,7 +32,6 @@ type
     [TestCase] Procedure TestBundle_34;
     [TestCase] Procedure TestCapabilityStatement_34;
     [TestCase] Procedure TestCareTeam_34;
-    [TestCase] Procedure TestChargeItem_34;
     [TestCase] Procedure TestClaim_34;
     [TestCase] Procedure TestClinicalImpression_34;
     [TestCase] Procedure TestCodeSystem_34;
@@ -182,11 +181,6 @@ end;
 procedure TVersionConversionTests.TestCareTeam_34;
 begin
   test4to3to4(FileToBytes('c:\work\org.hl7.fhir\build\publish\careteam-example.json'));
-end;
-
-procedure TVersionConversionTests.TestChargeItem_34;
-begin
-  test4to3to4(FileToBytes('c:\work\org.hl7.fhir\build\publish\chargeitem-example.json'));
 end;
 
 procedure TVersionConversionTests.TestClaim_34;

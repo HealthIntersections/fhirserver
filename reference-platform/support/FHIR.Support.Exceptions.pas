@@ -49,7 +49,7 @@ Type
 {$ENDIF}
   ExceptionClass = Class Of Exception;
 
-  EAdvException = Class(Exception)
+  EFslException = Class(Exception)
     Private
       FSender : String;
       FMethod : String;
@@ -68,13 +68,13 @@ Type
       Property StackTrace : String Read FStackTrace Write FStackTrace;
   End; 
 
-  EAdvExceptionClass = Class Of EAdvException;
+  EFslExceptionClass = Class Of EFslException;
 
-  EAdvAbstract = Class(EAdvException);
+  EFslAbstract = Class(EFslException);
 
-  EAdvAssertion = Class(EAdvException);
+  EFslAssertion = Class(EFslException);
 
-  EAdvApproximateException = Class(EAdvException)
+  EFslApproximateException = Class(EFslException)
     Private
       FInnerExceptionClass : TClass;
       FInnerExceptionName : String;
@@ -152,7 +152,7 @@ Begin
 End;
 
 
-Constructor EAdvException.Create(Const sSender, sMethod, sReason : String);
+Constructor EFslException.Create(Const sSender, sMethod, sReason : String);
 Begin
   FSender := sSender;
   FMethod := sMethod;
@@ -162,7 +162,7 @@ Begin
 End;
 
 
-Constructor EAdvException.Create(oSender : TObject; Const sMethod, sReason : String);
+Constructor EFslException.Create(oSender : TObject; Const sMethod, sReason : String);
 Var
   sSender : String;
 Begin
@@ -179,7 +179,7 @@ Begin
 End;
 
 
-Function EAdvException.Description : String;
+Function EFslException.Description : String;
 Begin
   If (FSender <> '') Or (FMethod <> '') Then
     Result := StringFormat('(%s.%s): %s', [FSender, FMethod, FReason])
@@ -206,22 +206,22 @@ Begin
   Inc(pAddress, 2);
 
   If Assigned(oObject) Then
-    Raise EAdvAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $%x in class ''%s''.', [pAddress^, oObject.ClassName]))
+    Raise EFslAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $%x in class ''%s''.', [pAddress^, oObject.ClassName]))
   Else
-    Raise EAdvAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $%x in object $%x.', [pAddress^, Integer(oObject)]));
+    Raise EFslAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $%x in object $%x.', [pAddress^, Integer(oObject)]));
   {$ELSE}
-  Raise EAdvAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $?? in object $%x.', [Integer(oObject)]));
+  Raise EFslAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $?? in object $%x.', [Integer(oObject)]));
   {$ENDIF}
 End;
 
 
 //Procedure AssertionHandler(Const sMessage, sFilename : AnsiString; iLineNumber : Integer);
 //Begin
-//  Raise EAdvAssertion.Create('FHIR.Support.Exceptions', 'AssertionHandler', StringFormat('%s (%s:%d)', [sMessage, sFilename, iLineNumber]));
+//  Raise EFslAssertion.Create('FHIR.Support.Exceptions', 'AssertionHandler', StringFormat('%s (%s:%d)', [sMessage, sFilename, iLineNumber]));
 //End;  
 
 
-Constructor EAdvApproximateException.Create(Const aInnerExceptionClass: TClass; Const sSender, sMethod, sReason : String);
+Constructor EFslApproximateException.Create(Const aInnerExceptionClass: TClass; Const sSender, sMethod, sReason : String);
 Begin
   InnerExceptionClass := aInnerExceptionClass;
 
@@ -229,7 +229,7 @@ Begin
 End;
 
 
-Constructor EAdvApproximateException.Create(Const sInnerExceptionName, sSender, sMethod, sReason : String);
+Constructor EFslApproximateException.Create(Const sInnerExceptionName, sSender, sMethod, sReason : String);
 Begin
   FInnerExceptionName := sInnerExceptionName;
 
@@ -237,13 +237,13 @@ Begin
 End;
 
 
-Function EAdvApproximateException.GetHasInnerExceptionClass: Boolean;
+Function EFslApproximateException.GetHasInnerExceptionClass: Boolean;
 Begin
   Result := Assigned(FInnerExceptionClass);
 End;
 
 
-Function EAdvApproximateException.GetHasInnerExceptionName : Boolean;
+Function EFslApproximateException.GetHasInnerExceptionName : Boolean;
 Begin
   Result := FInnerExceptionName <> '';
 End;
@@ -269,5 +269,5 @@ end;
 Initialization
   System.AbstractErrorProc := @AbstractHandler;
 //System.AssertErrorProc := @AssertionHandler;
-End. // FHIR.Support.Exceptions //
+End.
 

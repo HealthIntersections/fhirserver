@@ -4,22 +4,22 @@ Unit FHIR.Support.Text;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
 INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  SysUtils, RTLConsts, Classes,
+  SysUtils, RTLConsts, Classes, EncdDecd, System.NetEncoding,
   FHIR.Support.Strings,
   FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Exceptions;
 
@@ -130,7 +130,7 @@ Type
 
   TFslFormatter = Class(TFslStreamAdapter)
     Protected
-      Function ErrorClass : EAdvExceptionClass; Overload; Override;
+      Function ErrorClass : EFslExceptionClass; Overload; Override;
 
       Procedure SetStream(oStream : TFslStream); Override;
 
@@ -141,13 +141,13 @@ Type
       Procedure Produce(Const sText: String); Overload; Virtual;
   End;
 
-  EAdvFormatter = Class(EAdvStream);
+  EFslFormatter = Class(EFslStream);
 
-  EAdvExtractor = Class(EAdvException);
+  EFslExtractor = Class(EFslException);
   TFslExtractor = Class(TFslStreamAdapter)
     Protected
 
-      Function ErrorClass : EAdvExceptionClass; Overload; Override;
+      Function ErrorClass : EFslExceptionClass; Overload; Override;
 
       Procedure SetStream(oStream : TFslStream); Override;
 
@@ -206,7 +206,7 @@ Type
       FBuilder : TFslStringBuilder;
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
       Procedure CacheAdd(Const sValue : String); Virtual;
       Procedure CacheRemove(Const sValue : String); Virtual;
@@ -251,7 +251,7 @@ Type
       Property Line : Integer Read FLine Write FLine;
   End;
 
-  EAdvTextExtractor = Class(EAdvExtractor);
+  EFslTextExtractor = Class(EFslExtractor);
 
 
   TFslCSVExtractor = Class(TFslTextExtractor)
@@ -338,6 +338,14 @@ procedure BytesToFile(bytes : TBytes; filename : String);
 function FileToBytes(filename : String; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : TBytes;
 
 procedure StreamToFile(stream : TStream; filename : String);
+Function EncodeXML(Const sValue : String; bEoln : Boolean = True) : String; Overload;
+Function DecodeXML(Const sValue : String) : String; Overload;
+Function EncodePercent(Const sValue : String) : String; Overload;
+Function DecodePercent(Const sValue : String) : String; Overload;
+
+function EncodeBase64(const value : TBytes) : AnsiString; overload;
+Function DecodeBase64(Const value : AnsiString) : TBytes; Overload;
+Function DecodeBase64(Const value : String) : TBytes; Overload;
 
 
 type
@@ -361,6 +369,87 @@ function isNullLoc(src : TSourceLocation) : boolean;
 function locLessOrEqual(src1, src2 : TSourceLocation) : boolean;
 function locGreatorOrEqual(src1, src2 : TSourceLocation) : boolean;
 
+//
+// Mask Format:
+//
+//  C = Any character
+//  9 = Numbers (0..9);
+//  A = Alpha numeric (0..9, a-z)
+//  L = Alphabet letter (a-z)
+//  N = Non-alphanumeric
+//
+//  Use MinLength to indicate the required and optional parts of the mask.
+//  Characters beyond the mask and before MaxLength are considered to have the format
+//  of C = any character.
+//
+//  All other characters are considered literal.  Backslash '\' can be used to
+//  escape the mask characters.  It is good practice to backslash your literal
+//  characters to allow future expandability.
+//
+//  eg #1: Post Code = 9999
+//     #2: 8.3 filename = AAAAAAAA\.AAA
+//     #3: XML Date Time Format = 9999\/99\/99\T99\:99\:99
+//
+
+Type
+  TFslCodeMaskAllow = TCharSet;
+  TFslCodeMaskAllowArray = Array Of TFslCodeMaskAllow;
+
+  TFslCodeMaskFormat = String;
+
+  TFslCodeMask = Class(TFslObject)
+    Private
+      FMinLength : Integer;
+      FMaxLength : Integer;
+
+      FFixedLength : Integer;
+      FFixedFormat : TFslCodeMaskFormat;
+
+      FFormat : TFslCodeMaskFormat;
+      FAllowed : TFslCodeMaskAllowArray;
+
+      FCapitals : Boolean;
+      FCaseSensitive : Boolean;
+
+      Procedure SetFormat(Const Value : TFslCodeMaskFormat);
+
+      Function GetFixedFormat : TFslCodeMaskFormat;
+      Function GetFixedLength : Integer;
+
+      Function GetFixedCount: Integer;
+
+    Protected
+      Function Translate(Const cSymbol : Char) : TFslCodeMaskAllow;
+
+    Public
+      Function Link : TFslCodeMask;
+
+      // Querying aspects of the mask.
+      Function Allowed(iIndex : Integer) : TFslCodeMaskAllow;
+      Function Fixed(iIndex : Integer) : Boolean;
+      Function Count : Integer;
+      Function LeadingFixedLength : Integer;
+      Function LeadingFixedText : String;
+      Function TrailingFixedLength(Const iPosition : Integer) : Integer;
+      Function AllowedAsText(iIndex : Integer) : String;
+      Function FormatFromText(Const sText : String) : TFslCodeMaskFormat;
+      Function Conforms(Const sValue : String) : Boolean;
+
+      // Rendering strings using Format.
+      Function Formatted(Const sText : String) : String;
+      Function Unformatted(Const sText : String) : String;
+
+      Property Format : TFslCodeMaskFormat Read FFormat Write SetFormat;
+      Property FixedFormat : TFslCodeMaskFormat Read GetFixedFormat;
+      Property FixedLength : Integer Read GetFixedLength;
+      Property FixedCount : Integer Read GetFixedCount;
+      Property MinLength : Integer Read FMinLength Write FMinLength;
+      Property MaxLength : Integer Read FMaxLength Write FMaxLength;
+      Property Capitals : Boolean Read FCapitals Write FCapitals;
+      Property CaseSensitive : Boolean Read FCaseSensitive Write FCaseSensitive;
+  End;
+
+
 Implementation
 
 uses
@@ -379,7 +468,7 @@ End;
 Procedure TFslCSVExtractor.ConsumeEntries(oEntries : TFslStringList);
 Var
   sEntry : String;
-Begin 
+Begin
   If Assigned(oEntries) Then
     oEntries.Clear;
 
@@ -437,7 +526,7 @@ Begin
         Begin
           Result := Result + ConsumeCharacter;
         End;
-      End;  
+      End;
 
       If More Then
         ConsumeCharacter(FQuote);
@@ -545,7 +634,7 @@ End;
 
 
 Procedure TFslCSVFormatter.ProduceSeparator;
-Begin 
+Begin
   Produce(FSeparator);
 End;
 
@@ -679,9 +768,9 @@ Begin
 End;
 
 
-Function TFslTextExtractor.ErrorClass: EAdvExceptionClass;
+Function TFslTextExtractor.ErrorClass: EFslExceptionClass;
 Begin
-  Result := EAdvTextExtractor;
+  Result := EFslTextExtractor;
 End;
 
 
@@ -895,9 +984,9 @@ Begin
   Result := Not Inherited EndOfStream Or (Length(FCache) > 0);
 End;
 
-Function TFslExtractor.ErrorClass : EAdvExceptionClass;
+Function TFslExtractor.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EAdvExtractor;
+  Result := EFslExtractor;
 End;
 
 
@@ -921,9 +1010,9 @@ End;
 
 
 
-Function TFslFormatter.ErrorClass : EAdvExceptionClass;
+Function TFslFormatter.ErrorClass : EFslExceptionClass;
 Begin 
-  Result := EAdvFormatter;
+  Result := EFslFormatter;
 End;
 
 
@@ -2060,4 +2149,548 @@ end;
 
 
 
-End. // AdvCSVExtractors //
+Function EncodeXML(Const sValue : String; bEoln : Boolean = True) : String;
+Var
+  iLoop : Integer;
+  cValue : Char;
+Begin
+  Result := sValue;
+  iLoop := 1;
+  While iLoop <= Length(Result) Do
+  Begin
+    cValue := Result[iLoop];
+
+    Case cValue Of
+      #10, #13:
+      If bEoln Then
+        Begin
+          Delete(Result, iLoop, 1);
+          Insert('&#x' + EncodeHexadecimal(Ord(cValue)) + ';', Result, iLoop);
+          Inc(iLoop, 5);
+        End
+      Else
+        Inc(iLoop);
+
+      #0..#9, #11..#12, #14..#31, #127..#255 :
+      Begin
+        Delete(Result, iLoop, 1);
+        Insert('&#x' + EncodeHexadecimal(Ord(cValue)) + ';', Result, iLoop);
+        Inc(iLoop, 5);
+      End;
+
+      '<':
+      Begin
+        Delete(Result, iLoop, 1);
+        Insert('&lt;', Result, iLoop);
+        Inc(iLoop, 4);
+      End;
+
+      '>':
+      Begin
+        Delete(Result, iLoop, 1);
+        Insert('&gt;', Result, iLoop);
+        Inc(iLoop, 4);
+      End;
+
+      '&':
+      Begin
+        // Preceding '&' already exists in string.
+        Insert('amp;', Result, iLoop + 1);
+        Inc(iLoop, 4);
+      End;
+
+      // Only need to encode &quot; and &apos; in XML attributes...
+    Else
+      Inc(iLoop);
+    End;
+  End;
+End;
+
+
+Function DecodeXML(Const sValue : String) : String;
+Var
+  iLoop : Integer;
+  pValue : PChar;
+  {$IFDEF VER130}
+  iValue : Byte;
+  {$ELSE}
+  iValue : Word;
+  {$ENDIF}
+  sPrefixedEncodedDec : String;
+  sRemainder : String;
+  sEncodedDec : String;
+  iEncodedDec : Integer;
+Begin
+  Result := sValue;
+  iLoop := 1;
+  While iLoop <= Length(Result) Do
+  Begin
+    pValue := @Result[iLoop];
+
+    If pValue^ = '&' Then
+    Begin
+      If StringEquals(pValue, '&lt;', 4) Then
+      Begin
+        Delete(Result, iLoop, 4);
+        Insert('<', Result, iLoop);
+      End
+      Else If StringEquals(pValue, '&gt;', 4) Then
+      Begin
+        Delete(Result, iLoop, 4);
+        Insert('>', Result, iLoop);
+      End
+      Else If StringEquals(pValue, '&amp;', 5) Then
+      Begin
+        Delete(Result, iLoop, 5);
+        Insert('&', Result, iLoop);
+      End
+      Else If StringEquals(pValue, '&quot;', 6) Then
+      Begin
+        Delete(Result, iLoop, 6);
+        Insert('"', Result, iLoop);
+      End
+      Else If StringEquals(pValue, '&apos;', 6) Then
+      Begin
+        Delete(Result, iLoop, 6);
+        Insert('''', Result, iLoop);
+      End
+      Else If StringEquals(pValue, '&#x', 3) Then
+      Begin
+        StringSplit(pValue, ';', sPrefixedEncodedDec, sRemainder);
+        sEncodedDec := '0x'+copy(sPrefixedEncodedDec, 4, length(sPrefixedEncodedDec));
+        iEncodedDec := StringToInteger32(sEncodedDec);
+        if iEncodedDec > {$IFDEF VER130} 255 {$ELSE} 65535 {$ENDIF} then
+          iValue := Ord('?')
+        else
+          iValue := iEncodedDec;
+        Delete(Result, iLoop, Length(sPrefixedEncodedDec) + 1);
+
+        Insert(Char(iValue), Result, iLoop);
+      End
+      Else If StringEquals(pValue, '&#', 2) Then
+      Begin
+        StringSplit(pValue, ';', sPrefixedEncodedDec, sRemainder);
+        sEncodedDec := StringTruncateStart(sPrefixedEncodedDec, 2);
+
+        iEncodedDec := StringToInteger32(sEncodedDec);
+
+        If (iEncodedDec >= 0) And (iEncodedDec <= 255) Then
+        Begin
+        if iEncodedDec > {$IFDEF VER130} 255 {$ELSE} 65535 {$ENDIF} then
+          iValue := Ord('?')
+        else
+          iValue := iEncodedDec;
+
+          Delete(Result, iLoop, Length(sPrefixedEncodedDec) + 1); // eg. '&#13;' or '&#220;'
+          Insert(Char(iValue), Result, iLoop);
+        End;
+      End;
+    End;
+
+    Inc(iLoop);
+  End;
+End;
+
+Const
+  setUriUnreserved : Set Of AnsiChar = ['a'..'z', 'A'..'Z', '0'..'9', '-', '.', '_', '~'];
+
+
+Function EncodePercent(Const aBuffer; iSize : Integer) : AnsiString; overload;
+Var
+  iSource, iDest : Integer;
+  pSource : PAnsiChar;
+Begin
+  SetLength(Result, iSize);
+
+  pSource := PAnsiChar(@aBuffer);
+  iSource := 0;
+  iDest := 1;
+
+  While iSource < iSize Do
+  Begin
+    If CharInSet(pSource^, setUriUnreserved) Then
+    Begin
+      Result[iDest] := pSource^;
+      Inc(iDest);
+    End
+    Else
+    Begin
+      Result[iDest] := '%';
+      Inc(iDest);
+
+      System.Insert(EncodeHexadecimal(Byte(pSource^)), Result, iDest);
+      Inc(iDest, 2);
+    End;
+
+    Inc(pSource);
+    Inc(iSource);
+  End;
+End;
+
+
+Function DecodePercent(Const sValue : AnsiString; Const aBuffer; iSize : Integer) : Integer; Overload;
+Var
+  iSourceSize : Integer;
+  pDest : PAnsiChar;
+  iSource, iDest : Integer;
+  cHi, cLo : AnsiChar;
+Begin
+  iSourceSize := Length(sValue);
+  pDest := PAnsiChar(@aBuffer);
+  iSource := 1;
+  iDest := 0;
+
+  While (iSource <= iSourceSize) And (iDest < iSize) Do
+  Begin
+    If sValue[iSource] = '%' Then
+    Begin
+      cHi := #0;
+      cLo := #0;
+
+      Inc(iSource);
+
+      If iSource <= iSourceSize Then
+      Begin
+        cHi := sValue[iSource];
+        Inc(iSource);
+      End;
+
+      If iSource <= iSourceSize Then
+      Begin
+        cLo := sValue[iSource];
+        Inc(iSource);
+      End;
+
+      If (cHi <> #0) And (cLo <> #0) Then
+      Begin
+        pDest^ := AnsiChar(DecodeHexadecimal(cHi, cLo));
+        Inc(pDest);
+        Inc(iDest);
+      End;
+    End
+    Else
+    Begin
+      pDest^ := sValue[iSource];
+      Inc(iSource);
+      Inc(pDest);
+      Inc(iDest);
+    End;
+  End;
+
+  Result := iDest;
+End;
+
+Function EncodePercent(Const sValue : String) : String; overload;
+Begin
+  If Length(sValue) > 0 Then
+    Result := EncodePercent(sValue[1], Length(sValue))
+  Else
+    Result := '';
+End;
+
+
+Function DecodePercent(Const sValue : String) : String; overload;
+Var
+  iSize : Integer;
+Begin
+  Result := '';
+
+  If Length(sValue) > 0 Then
+  Begin
+    SetLength(Result, Length(sValue));
+    iSize := DecodePercent(sValue, Result[1], Length(Result));
+    SetLength(Result, iSize);
+  End;
+End;
+
+Function TFslCodeMask.Link: TFslCodeMask;
+Begin
+  Result := TFslCodeMask(Inherited Link);
+End;
+
+
+Procedure TFslCodeMask.SetFormat(Const Value: TFslCodeMaskFormat);
+Var
+  aSet : TFslCodeMaskAllow;
+  iFormat : Integer;
+  iMasks : Integer;
+  cMask : Char;
+Begin
+  FFormat := Value;
+
+  // Set the arrays to the maximum possible length.
+  SetLength(FAllowed, Length(FFormat));
+  SetLength(FFixedFormat, Length(FFormat));
+
+  iMasks := 0;
+  iFormat := 1;
+  FFixedLength := 0;
+
+  While (iFormat <= Length(FFormat)) Do
+  Begin
+    aSet := [];
+
+    cMask := FFormat[iFormat];
+
+    Case charUpper(cMask) Of
+      '0', '9' : aSet := setNumbers;
+      'A'      : aSet := setAlphanumeric;
+      'C'      : aSet := setUniversal;
+      'L'      : aSet := setAlphabet;
+      'N'      : aSet := setUniversal - setAlphanumeric;
+    Else
+      If cMask = '\' Then
+      Begin
+        Inc(iFormat);
+
+        If (iFormat <= Length(FFormat)) Then
+          cMask := FFormat[iFormat];
+      End;
+
+      aSet := Translate(cMask);
+    End;
+
+    If FCapitals Then
+      aSet := aSet - setLowerCase;
+
+    FAllowed[iMasks] := aSet;
+
+    If aSet = Translate(cMask) Then
+    Begin
+      FFixedFormat[iMasks + 1] := cMask;
+
+      If FFixedLength = iMasks Then
+        Inc(FFixedLength);
+    End
+    Else
+    Begin
+      FFixedFormat[iMasks + 1] := ' ';
+    End;
+
+    Inc(iMasks);
+    Inc(iFormat);
+  End;
+
+  // Set the arrays to the actual length.
+  SetLength(FAllowed, iMasks);
+  SetLength(FFixedFormat, iMasks);
+End;
+
+
+Function TFslCodeMask.Allowed(iIndex: Integer): TFslCodeMaskAllow;
+Begin
+  If (iIndex >= 1) And (iIndex <= Length(FAllowed)) Then
+    Result := FAllowed[iIndex - 1]
+  Else
+    Result := setUniversal;
+End;
+
+
+Function TFslCodeMask.AllowedAsText(iIndex: Integer): String;
+Var
+  aAllow : TFslCodeMaskAllow;
+Begin
+  aAllow := Allowed(iIndex);
+
+  If aAllow = setUniversal Then
+    Result := 'Any'
+  Else If aAllow = [FixedFormat[iIndex]] Then
+    Result := FixedFormat[iIndex]
+  Else
+  Begin
+    Result := '';
+
+    If setLowerCase * aAllow = setLowerCase Then
+      StringAppend(Result, 'a-z', ', ');
+
+    If setUpperCase * aAllow = setUpperCase Then
+      StringAppend(Result, 'A-Z', ', ');
+
+    If setNumbers * aAllow = setNumbers Then
+      StringAppend(Result, '0-9', ', ');
+
+    If setSpecials * aAllow = setSpecials Then
+      StringAppend(Result, 'Symbols', ', ');
+
+    If setWhitespace * aAllow = setWhitespace Then
+      StringAppend(Result, 'Whitespace', ', ');
+  End;
+End;
+
+
+Function TFslCodeMask.Fixed(iIndex: Integer): Boolean;
+Begin
+  // If there is only one available choice, then it is fixed.
+
+  Result := (iIndex >= 1) And (iIndex <= Length(FAllowed)) And (iIndex <= Length(FFixedFormat)) And (FAllowed[iIndex - 1] = Translate(FFixedFormat[iIndex]));
+End;
+
+
+Function TFslCodeMask.LeadingFixedLength: Integer;
+Begin
+  Result := 0;
+  While (Result < FixedLength) And Fixed(Result + 1) Do
+    Inc(Result);
+End;
+
+
+Function TFslCodeMask.TrailingFixedLength(Const iPosition : Integer) : Integer;
+Var
+  iIndex : Integer;
+Begin
+  Result := 0;
+  iIndex := iPosition + 1;
+
+  While (iIndex < FixedLength) And Fixed(iIndex) Do
+  Begin
+    Inc(Result);
+    Inc(iIndex);
+  End;
+End;
+
+
+Function TFslCodeMask.LeadingFixedText : String;
+Var
+  iIndex : Integer;
+Begin
+  Result := '';
+
+  iIndex := 1;
+  While (iIndex <= FixedLength) And Fixed(iIndex) Do
+  Begin
+    Result := Result + FixedFormat[iIndex];
+    Inc(iIndex);
+  End;
+End;
+
+
+Function TFslCodeMask.Count: Integer;
+Begin
+  Result := FixedLength;
+End;
+
+
+Function TFslCodeMask.GetFixedFormat: TFslCodeMaskFormat;
+Begin
+  Result := FFixedFormat;
+
+  If (FMaxLength > 0) And (Length(Result) < FMaxLength) Then
+    Result := Result + StringMultiply(' ', MaxLength - Length(Result));
+End;
+
+
+Function TFslCodeMask.GetFixedCount: Integer;
+Begin
+  Result := Length(FFixedFormat); // NOTE: private field.
+End;
+
+
+Function TFslCodeMask.GetFixedLength: Integer;
+Begin
+  Result := Length(FixedFormat); // NOTE: public property.
+End;
+
+
+Function TFslCodeMask.FormatFromText(Const sText: String) : TFslCodeMaskFormat;
+Var
+  iLoop : Integer;
+Begin
+  Result := sText;
+  For iLoop := Length(Result) DownTo 1 Do
+    System.Insert('\', Result, iLoop);
+End;
+
+
+Function TFslCodeMask.Formatted(Const sText: String): String;
+Var
+  iText : Integer;
+  iFormat : Integer;
+Begin
+  Result := '';
+  iText := 1;
+
+  For iFormat := 1 To Length(FFormat) Do
+  Begin
+    If iText <= Length(sText) Then
+    Begin
+      If Fixed(iFormat) Then
+      Begin
+        Result := Result + FixedFormat[iFormat];
+      End
+      Else
+      Begin
+        Result := Result + sText[iText];
+
+        Inc(iText);
+      End;
+    End;
+  End;
+
+  Result := Result + Copy(sText, iText, MaxInt);
+End;
+
+
+Function TFslCodeMask.Unformatted(Const sText: String): String;
+Var
+  iText : Integer;
+  iFormat : Integer;
+Begin
+  Result := '';
+  iText := 1;
+
+  For iFormat := 1 To Length(FFormat) Do
+  Begin
+    If (iText <= Length(sText)) Then
+    Begin
+      If Not Fixed(iFormat) Then
+        Result := Result + sText[iText];
+
+      Inc(iText);
+    End;
+  End;
+
+  Result := Result + Copy(sText, iText, MaxInt);
+End;
+
+
+Function TFslCodeMask.Conforms(Const sValue: String): Boolean;
+Var
+  iLoop : Integer;
+Begin
+  Result := True;
+  iLoop := 1;
+
+  While (iLoop <= Length(sValue)) And Result Do
+  Begin
+    Result := CharInSet(sValue[iLoop], Allowed(iLoop));
+    Inc(iLoop);
+  End;
+End;
+
+
+Function TFslCodeMask.Translate(Const cSymbol: Char): TFslCodeMaskAllow;
+Begin
+  If FCaseSensitive Then
+    Result := [cSymbol]
+  Else
+    Result := [charLower(cSymbol), charUpper(cSymbol)];
+End;
+
+
+function EncodeBase64(const value : TBytes): AnsiString;
+begin
+  result := EncdDecd.EncodeBase64(@value[0], length(value));
+end;
+
+Function DecodeBase64(Const value : AnsiString) : TBytes; Overload;
+begin
+  result := EncdDecd.DecodeBase64(value);
+end;
+
+Function DecodeBase64(Const value : String) : TBytes; Overload;
+begin
+  result := EncdDecd.DecodeBase64(AnsiString(value));
+end;
+
+End.
+

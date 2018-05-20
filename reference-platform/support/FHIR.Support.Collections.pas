@@ -33,14 +33,14 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Filers;
+  FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime,
+  FHIR.Support.Exceptions, FHIR.Support.Objects;
 
 
 Type
-  TFslIterator = Class(TFslPersistent)
+  TFslIterator = Class(TFslObject)
     Protected
-      Function ErrorClass : EAdvExceptionClass; Overload; Override;
+      Function ErrorClass : EFslExceptionClass; Overload; Override;
 
     Public
       Procedure First; Virtual;
@@ -54,9 +54,9 @@ Type
 
   TFslIteratorClass = Class Of TFslIterator;
 
-  TFslCollection = Class(TFslPersistent)
+  TFslCollection = Class(TFslObject)
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
       Procedure InternalClear; Virtual;
 
@@ -68,10 +68,10 @@ Type
       Function Iterator : TFslIterator; Overload; Virtual;
   End;
 
-  EAdvCollection = Class(EAdvException);
+  EFslCollection = Class(EFslException);
 
   TFslItemListCompare = Function (pA, pB : Pointer) : Integer Of Object;
-  PAdvItemsCompare = ^TFslItemListCompare;
+  PFslItemsCompare = ^TFslItemListCompare;
 
   TFslItemListDuplicates = (dupAccept, dupIgnore, dupException);
 
@@ -87,7 +87,7 @@ Type
       FDirection : TFslItemListDirection;
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Overload; Override;
+      Function ErrorClass : EFslExceptionClass; Overload; Override;
 
       Function ValidateIndex(Const sMethod : String; iIndex : Integer) : Boolean; Virtual;
 
@@ -97,8 +97,6 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Virtual; Abstract;
       Procedure SetItem(iIndex : Integer; pValue : Pointer); Virtual; Abstract;
 
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Virtual;
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Virtual;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Virtual;
 
       Function CompareItem(pA, pB : Pointer) : Integer; Virtual;
@@ -144,10 +142,6 @@ Type
 
       Procedure Assign(oSource : TFslObject); Override;
 
-      Procedure Load(oFiler : TFslFiler); Override;
-      Procedure Save(oFiler : TFslFiler); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
-
       Procedure DeleteByIndex(iIndex : Integer); Virtual;
       Procedure DeleteRange(iFromIndex, iToIndex: Integer);
       Function ExistsByIndex(Const iIndex : Integer) : Boolean;
@@ -192,7 +186,7 @@ Type
       Property Capacity : Integer Read FCapacity Write SetCapacity;
   End;
 
-  EAdvItemList = Class(EAdvCollection);
+  EFslItemList = Class(EFslCollection);
 
 
 Type
@@ -204,14 +198,14 @@ Type
     Value : TFslLargeIntegerMatchValue;
   End; 
 
-  PAdvLargeIntegerMatchItem = ^TFslLargeIntegerMatchItem;
+  PFslLargeIntegerMatchItem = ^TFslLargeIntegerMatchItem;
 
   TFslLargeIntegerMatchItems = Array[0..(MaxInt Div SizeOf(TFslLargeIntegerMatchItem)) - 1] Of TFslLargeIntegerMatchItem;
-  PAdvLargeIntegerMatchItems = ^TFslLargeIntegerMatchItems;
+  PFslLargeIntegerMatchItems = ^TFslLargeIntegerMatchItems;
 
   TFslLargeIntegerMatch = Class(TFslItemList)
     Private
-      FMatches : PAdvLargeIntegerMatchItems;
+      FMatches : PFslLargeIntegerMatchItems;
       FDefault : TFslLargeIntegerMatchValue;
       FForced  : Boolean;
 
@@ -231,8 +225,6 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iValue : Integer); Override;
@@ -342,7 +334,7 @@ Type
       Function Current : TCurrency; Virtual;
   End;
 
-  EAdvIterator = Class(EAdvException);
+  EFslIterator = Class(EFslException);
 
 
 
@@ -356,14 +348,14 @@ Type
     Value : TFslIntegerObjectMatchValue;
   End;
 
-  PAdvIntegerObjectMatchItem = ^TFslIntegerObjectMatchItem;
+  PFslIntegerObjectMatchItem = ^TFslIntegerObjectMatchItem;
 
   TFslIntegerObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslIntegerObjectMatchItem)) - 1] Of TFslIntegerObjectMatchItem;
-  PAdvIntegerObjectMatchItemArray = ^TFslIntegerObjectMatchItemArray;
+  PFslIntegerObjectMatchItemArray = ^TFslIntegerObjectMatchItemArray;
 
   TFslIntegerObjectMatch = Class(TFslItemList)
     Private
-      FItemArray : PAdvIntegerObjectMatchItemArray;
+      FItemArray : PFslIntegerObjectMatchItemArray;
       FDefaultKey : TFslIntegerObjectMatchKey;
       FDefaultValue : TFslIntegerObjectMatchValue;
       FNominatedValueClass : TFslObjectClass;
@@ -380,8 +372,6 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
@@ -452,14 +442,14 @@ Type
     Value : TFslIntegerMatchValue;
   End;
 
-  PAdvInteger32MatchItem = ^TFslIntegerMatchItem;
+  PFslInteger32MatchItem = ^TFslIntegerMatchItem;
 
   TFslIntegerMatchItems = Array[0..(MaxInt Div SizeOf(TFslIntegerMatchItem)) - 1] Of TFslIntegerMatchItem;
-  PAdvInteger32MatchItems = ^TFslIntegerMatchItems;
+  PFslInteger32MatchItems = ^TFslIntegerMatchItems;
 
   TFslIntegerMatch = Class(TFslItemList)
     Private
-      FMatches : PAdvInteger32MatchItems;
+      FMatches : PFslInteger32MatchItems;
       FDefault : TFslIntegerMatchValue;
       FForced  : Boolean;
 
@@ -479,8 +469,6 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iValue : Integer); Override;
@@ -531,13 +519,13 @@ Type
   End;
 
   TFslIntegerListItem = Integer;
-  PAdvIntegerListItem = ^TFslIntegerListItem;
+  PFslIntegerListItem = ^TFslIntegerListItem;
   TFslIntegerListItemArray = Array[0..(MaxInt Div SizeOf(TFslIntegerListItem)) - 1] Of TFslIntegerListItem;
-  PAdvIntegerListItemArray = ^TFslIntegerListItemArray;
+  PFslIntegerListItemArray = ^TFslIntegerListItemArray;
 
   TFslIntegerList = Class(TFslItemList)
     Private
-      FIntegerArray : PAdvIntegerListItemArray;
+      FIntegerArray : PFslIntegerListItemArray;
 
       Function GetIntegerByIndex(iIndex : Integer) : TFslIntegerListItem;
       Procedure SetIntegerByIndex(iIndex : Integer; Const aValue : TFslIntegerListItem);
@@ -551,8 +539,6 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue : Pointer); Override;
 
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iCapacity : Integer); Override;
@@ -619,14 +605,14 @@ Type
     Value : TFslInt64MatchValue;
   End; 
 
-  PAdvInteger64MatchItem = ^TFslInt64MatchItem;
+  PFslInteger64MatchItem = ^TFslInt64MatchItem;
 
   TFslInt64MatchItems = Array[0..(MaxInt Div SizeOf(TFslInt64MatchItem)) - 1] Of TFslInt64MatchItem;
-  PAdvInteger64MatchItems = ^TFslInt64MatchItems;
+  PFslInteger64MatchItems = ^TFslInt64MatchItems;
 
   TFslInt64Match = Class(TFslItemList)
     Private
-      FMatches : PAdvInteger64MatchItems;
+      FMatches : PFslInteger64MatchItems;
       FDefault : TFslInt64MatchValue;
       FForced  : Boolean;
 
@@ -646,8 +632,6 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalResize(iValue : Integer); Override;
@@ -807,7 +791,7 @@ Type
 
   TFslHashEntryCode = Integer;
 
-  TFslHashEntry = Class(TFslPersistent)
+  TFslHashEntry = Class(TFslObject)
     Private
       FCode : TFslHashEntryCode;
       FNextHashEntry : TFslHashEntry;
@@ -819,21 +803,20 @@ Type
 
     Public
       Procedure Assign(oSource : TFslObject); Override;
-      Procedure Load(oFiler : TFslFiler); Override;
 
       Function Link : TFslHashEntry;
       Function Clone : TFslHashEntry;
   End;
 
-  PAdvHashEntry = ^TFslHashEntry;
+  PFslHashEntry = ^TFslHashEntry;
   TFslHashEntryClass = Class Of TFslHashEntry;
 
   TFslHashEntryArray = Array [0..MaxInt Div SizeOf(TFslHashEntry) - 1] Of TFslHashEntry;
-  PAdvHashEntryArray = ^TFslHashEntryArray;
+  PFslHashEntryArray = ^TFslHashEntryArray;
 
   TFslHashTable = Class(TFslCollection)
     Private
-      FTable : PAdvHashEntryArray;
+      FTable : PFslHashEntryArray;
       FCount : Integer;
       FCapacity : Integer;
       FThreshold : Integer;
@@ -844,7 +827,7 @@ Type
       Procedure SetBalance(Const Value : Real);
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
       Function Resolve(oHashEntry : TFslHashEntry) : Cardinal;
       Function Duplicate(oHashEntry : TFslHashEntry) : TFslHashEntry;
@@ -869,10 +852,7 @@ Type
       Function Clone : TFslHashTable;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
-      Procedure Load(oFiler : TFslFiler); Override;
-      Procedure Save(oFiler : TFslFiler); Override;
-
+      
       Procedure PreventRehash;
       Procedure AllowRehash;
 
@@ -897,9 +877,9 @@ Type
       Property Count : Integer Read FCount;
   End;
 
-  PAdvObject = ^TFslObject;
+  PFslObject = ^TFslObject;
   TFslObjectArray = array[0..(MaxInt div SizeOf(TFslObject)) - 1] of TFslObject;
-  PAdvObjectArray = ^TFslObjectArray;
+  PFslObjectArray = ^TFslObjectArray;
 
   TFslObjectListClass = class of TFslObjectList;
   TFslObjectListIterator = class;
@@ -907,7 +887,7 @@ Type
 
   TFslObjectList = class(TFslItemList)
   private
-    FObjectArray: PAdvObjectArray;
+    FObjectArray: PFslObjectArray;
 
     FItemClass: TFslObjectClass;
 
@@ -921,14 +901,12 @@ Type
     procedure SetItemClass(const Value: TFslObjectClass);
 
   protected
-    function ErrorClass: EAdvExceptionClass; override;
+    function ErrorClass: EFslExceptionClass; override;
 
     function GetItem(iIndex: integer): Pointer; override;
     procedure SetItem(iIndex: integer; pValue: Pointer); override;
-    function AddressOfItem(iIndex: integer): PAdvObject;
+    function AddressOfItem(iIndex: integer): PFslObject;
 
-    procedure LoadItem(oFiler: TFslFiler; iIndex: integer); override;
-    procedure SaveItem(oFiler: TFslFiler; iIndex: integer); override;
     procedure AssignItem(oItems: TFslItemList; iIndex: integer); override;
 
     procedure InternalTruncate(iValue: integer); override;
@@ -1038,7 +1016,7 @@ Type
     property NominatedClass: TFslObjectClass read GetItemClass write SetItemClass;
   end;
 
-  EAdvObjectList = class(EAdvItemList);
+  EFslObjectList = class(EFslItemList);
 
   TFslObjectListIterator = class(TFslObjectIterator)
   private
@@ -1074,24 +1052,7 @@ Type
   TFslObject = FHIR.Support.Objects.TFslObject;
   TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
 
-  TFslPersistentList = Class(TFslObjectList)
-    Private
-      Function GetPersistentByIndex(Const iIndex : Integer) : TFslPersistent;
-      Procedure SetPersistentByIndex(Const iIndex : Integer; Const oValue : TFslPersistent);
-
-    Protected
-      Function ItemClass : TFslObjectClass; Override;
-
-    Public
-      Property PersistentByIndex[Const iIndex : Integer] : TFslPersistent Read GetPersistentByIndex Write SetPersistentByIndex; Default;
-  End;
-
-  TFslPersistentListIterator = Class(TFslObjectListIterator)
-  End;
-
-  TFslPersistentListClass = Class Of TFslPersistentList;
-
-  TFslHashTableList = Class(TFslPersistentList)
+  TFslHashTableList = Class(TFslObjectList)
     Private
       Function GetHash(iIndex: Integer): TFslHashTable;
 
@@ -1126,7 +1087,7 @@ Type
       Property HashTable : TFslHashTable Read GetHashTable Write SetHashTable;
   End;
 
-  EAdvHashTable = Class(EAdvCollection);
+  EFslHashTable = Class(EFslCollection);
 
 
 
@@ -1138,16 +1099,16 @@ Type
     Value : TFslStringObjectMatchValue;
   End;
 
-  PAdvStringObjectMatchItem = ^TFslStringObjectMatchItem;
+  PFslStringObjectMatchItem = ^TFslStringObjectMatchItem;
 
   TFslStringObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslStringObjectMatchItem)) - 1] Of TFslStringObjectMatchItem;
-  PAdvStringObjectMatchItemArray = ^TFslStringObjectMatchItemArray;
+  PFslStringObjectMatchItemArray = ^TFslStringObjectMatchItemArray;
 
   TFslStringCompareCallback = Function (Const sA, sB : String) : Integer;
 
   TFslStringObjectMatch = Class(TFslItemList)
     Private
-      FMatchArray : PAdvStringObjectMatchItemArray;
+      FMatchArray : PFslStringObjectMatchItemArray;
       FDefaultKey : TFslStringObjectMatchKey;
       FDefaultValue : TFslStringObjectMatchValue;
       FCompareKey : TFslStringCompareCallback;
@@ -1176,8 +1137,6 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Function ValidateIndex(Const sMethod: String; iIndex: Integer): Boolean; Override;
@@ -1258,14 +1217,14 @@ Type
     Value : TFslStringMatchValue;
   End;
 
-  PAdvStringMatchItem = ^TFslStringMatchItem;
+  PFslStringMatchItem = ^TFslStringMatchItem;
 
   TFslStringMatchItems = Array[0..(MaxInt Div SizeOf(TFslStringMatchItem)) - 1] Of TFslStringMatchItem;
-  PAdvStringMatchItems = ^TFslStringMatchItems;
+  PFslStringMatchItems = ^TFslStringMatchItems;
 
   TFslStringMatch = Class(TFslItemList)
     Private
-      FMatchArray : PAdvStringMatchItems;
+      FMatchArray : PFslStringMatchItems;
       FDefaultValue : TFslStringMatchValue;
       FSymbol : String;
       FSeparator : String;
@@ -1286,13 +1245,11 @@ Type
     Protected
       Function CapacityLimit : Integer; Override;
 
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; pValue: Pointer); Override;
 
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
@@ -1362,11 +1319,11 @@ Type
       Property AsText : String Read GetAsText Write SetAsText;
   End;
 
-  EAdvStringMatch = Class(EAdvItemList);
+  EFslStringMatch = Class(EFslItemList);
 
   TFslStringListItem = String;
   TFslStringListItemArray = Array[0..(MaxInt Div SizeOf(TFslStringListItem)) - 1] Of TFslStringListItem;
-  PAdvStringListItemArray = ^TFslStringListItemArray;
+  PFslStringListItemArray = ^TFslStringListItemArray;
 
   TFslStringHashEntry = Class(TFslHashEntry)
     Private
@@ -1379,8 +1336,7 @@ Type
 
     Public
       Procedure Assign(oSource : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
-
+      
       Property Name : String Read FName Write SetName;
   End;
 
@@ -1448,7 +1404,7 @@ Type
 
   TFslStringList = Class(TFslItemList)
     Private
-      FStringArray : PAdvStringListItemArray;
+      FStringArray : PFslStringListItemArray;
       FSymbol : String;
 
       Function GetStringByIndex(iIndex : Integer) : TFslStringListItem;
@@ -1467,8 +1423,6 @@ Type
       Function GetAsText : String; Virtual;
       Procedure SetAsText(Const sValue : String); Virtual;
 
-      Procedure LoadItem(Filer : TFslFiler; iIndex : Integer); Override;
-      Procedure SaveItem(Filer : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(Items : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
@@ -1560,14 +1514,14 @@ Type
     Value : TFslStringLargeIntegerMatchValue;
   End;
 
-  PAdvStringLargeIntegerMatchItem = ^TFslStringLargeIntegerMatchItem;
+  PFslStringLargeIntegerMatchItem = ^TFslStringLargeIntegerMatchItem;
 
   TFslStringLargeIntegerMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslStringLargeIntegerMatchItem)) - 1] Of TFslStringLargeIntegerMatchItem;
-  PAdvStringLargeIntegerMatchItemArray = ^TFslStringLargeIntegerMatchItemArray;
+  PFslStringLargeIntegerMatchItemArray = ^TFslStringLargeIntegerMatchItemArray;
 
   TFslStringLargeIntegerMatch = Class(TFslItemList)
     Private
-      FMatchArray : PAdvStringLargeIntegerMatchItemArray;
+      FMatchArray : PFslStringLargeIntegerMatchItemArray;
       FDefault : Integer;
       FForced : Boolean;
       FCompareKey : TFslStringCompareCallback;
@@ -1589,13 +1543,11 @@ Type
       Procedure SetSensitive(Const Value: Boolean);
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;      
@@ -1650,7 +1602,7 @@ Type
       Property Sensitive : Boolean Read GetSensitive Write SetSensitive;
   End;
 
-  EAdvStringLargeIntegerMatch = Class(EAdvException);
+  EFslStringLargeIntegerMatch = Class(EFslException);
 
   TFslStringIntegerMatchKey = String;
   TFslStringIntegerMatchValue = Integer;
@@ -1660,14 +1612,14 @@ Type
     Value : TFslStringIntegerMatchValue;
   End;
 
-  PAdvStringIntegerMatchItem = ^TFslStringIntegerMatchItem;
+  PFslStringIntegerMatchItem = ^TFslStringIntegerMatchItem;
 
   TFslStringIntegerMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslStringIntegerMatchItem)) - 1] Of TFslStringIntegerMatchItem;
-  PAdvStringIntegerMatchItemArray = ^TFslStringIntegerMatchItemArray;
+  PFslStringIntegerMatchItemArray = ^TFslStringIntegerMatchItemArray;
 
   TFslStringIntegerMatch = Class(TFslItemList)
     Private
-      FMatchArray : PAdvStringIntegerMatchItemArray;
+      FMatchArray : PFslStringIntegerMatchItemArray;
       FDefaultKey : TFslStringIntegerMatchKey;
       FDefaultValue : TFslStringIntegerMatchValue;
       FForced : Boolean;
@@ -1690,13 +1642,11 @@ Type
       Procedure SetSensitive(Const Value: Boolean);
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex: Integer; pValue: Pointer); Override;
 
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
@@ -1754,19 +1704,19 @@ Type
       Property Sensitive : Boolean Read GetSensitive Write SetSensitive;
   End;
 
-  EAdvStringIntegerMatch = Class(EAdvException);
+  EFslStringIntegerMatch = Class(EFslException);
 
 
 
   TFslOrdinalSetPart = Integer;
-  PAdvOrdinalSetPart = ^TFslOrdinalSetPart;
+  PFslOrdinalSetPart = ^TFslOrdinalSetPart;
   TFslOrdinalSetPartArray = Array[0..7] Of TFslOrdinalSetPart;
-  PAdvOrdinalSetPartArray = ^TFslOrdinalSetPartArray;
+  PFslOrdinalSetPartArray = ^TFslOrdinalSetPartArray;
 
   TFslOrdinalSet = Class(TFslCollection)
     Private
       FOwns : Boolean;
-      FPartArray : PAdvOrdinalSetPartArray; // pointer to the block of memory associated with the set.
+      FPartArray : PFslOrdinalSetPartArray; // pointer to the block of memory associated with the set.
       FCount : Integer;             // number of used bits in the Parts data.
       FSize : Integer;
 
@@ -1790,8 +1740,7 @@ Type
       Destructor Destroy; Override;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
-
+      
       Function Iterator : TFslIterator; Override;
 
       Procedure New(Const iCount : Integer);
@@ -1812,7 +1761,7 @@ Type
       Function AllChecked : Boolean;
       Function NoneChecked : Boolean;
 
-      Property Parts : PAdvOrdinalSetPartArray Read FPartArray Write FPartArray;
+      Property Parts : PFslOrdinalSetPartArray Read FPartArray Write FPartArray;
       Property Owns : Boolean Read FOwns Write FOwns;
       Property Count : Integer Read FCount Write SetCount;
       Property Size : Integer Read FSize Write SetSize;
@@ -1822,7 +1771,7 @@ Type
   TFslOrdinalSetIterator = Class(TFslIterator)
     Private
       FOrdinalSet : TFslOrdinalSet;
-      FValue : PAdvOrdinalSetPart;
+      FValue : PFslOrdinalSetPart;
       FPart : Integer;
       FLoop : Integer;
       FIndex : Integer;
@@ -1853,14 +1802,14 @@ Type
     Value : TFslObjectMatchValue;
   End;
 
-  PAdvObjectMatchItem = ^TFslObjectMatchItem;
+  PFslObjectMatchItem = ^TFslObjectMatchItem;
 
   TFslObjectMatchItemArray = Array[0..(MaxInt Div SizeOf(TFslObjectMatchItem)) - 1] Of TFslObjectMatchItem;
-  PAdvObjectMatchItemArray = ^TFslObjectMatchItemArray;
+  PFslObjectMatchItemArray = ^TFslObjectMatchItemArray;
 
   TFslObjectMatch = Class(TFslItemList)
     Private
-      FMatchArray : PAdvObjectMatchItemArray;
+      FMatchArray : PFslObjectMatchItemArray;
       FDefaultKey : TFslObjectMatchKey;
       FDefaultValue : TFslObjectMatchValue;
       FForced : Boolean;
@@ -1884,8 +1833,6 @@ Type
       Function GetItem(iIndex : Integer) : Pointer; Override;
       Procedure SetItem(iIndex : Integer; aValue: Pointer); Override;
 
-      Procedure LoadItem(oFiler : TFslFiler; iIndex : Integer); Override;
-      Procedure SaveItem(oFiler : TFslFiler; iIndex : Integer); Override;
       Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
 
       Procedure InternalTruncate(iValue : Integer); Override;
@@ -1954,7 +1901,7 @@ Type
       Property AsText : String Read GetAsText;
   End;
 
-  TFslName = Class(TFslPersistent)
+  TFslName = Class(TFslObject)
     Private
       FName : String;
 
@@ -1967,14 +1914,13 @@ Type
       Function Clone : TFslName;
 
       Procedure Assign(oSource : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
-
+      
       Property Name : String Read GetName Write SetName;
   End;
 
   TFslNameClass = Class Of TFslName;
 
-  TFslNameList = Class(TFslPersistentList)
+  TFslNameList = Class(TFslObjectList)
     Private
       FSymbol : String;
 
@@ -2019,6 +1965,122 @@ Type
       Property Symbol : String Read FSymbol Write FSymbol;
   End;
 
+  TFslCharacter = Class(TFslObject)
+    Private
+      FValue : Char;
+
+    Public
+      Procedure Assign(oObject : TFslObject); Override;
+      
+      Property Value : Char Read FValue Write FValue;
+  End;
+
+  TFslCharacterList = Class(TFslObjectList)
+    Private
+      Function GetCharacterByIndex(Const iIndex : Integer) : TFslCharacter;
+
+    Protected
+      Function ItemClass : TFslObjectClass; Override;
+
+      Function CompareByValue(pA, pB : Pointer) : Integer;
+
+    Public
+      Procedure AddCharacter(Const cValue : Char);
+      Procedure AddCharacterSet(Const aValueSet : TCharSet);
+
+      Procedure SortByValue;
+
+      Function ExistsByValue(Const cValue : Char) : Boolean;
+
+      Property CharacterByIndex[Const iIndex : Integer] : TFslCharacter Read GetCharacterByIndex; Default;
+  End;
+
+  TFslObjectChoice = Class(TFslObject)
+    Private
+      FObject : TFslObject;
+
+    Public
+      Constructor Create; Override;
+      Destructor Destroy; Override;
+
+      Function RetrieveObject(Const aObjectClass: TFslObjectClass): TFslObject;
+      Procedure StoreObject(Const oObject : TFslObject; Const aObjectClass : TFslObjectClass);
+
+      Function RetrieveIsObjectClass(Const aObjectClass: TFslObjectClass) : Boolean;
+      Procedure StoreIsObjectClass(Const aObjectClass: TFslObjectClass; Const bStored : Boolean);
+
+      Function RetrieveIsNull : Boolean;
+      Procedure StoreIsNull;
+  End;
+
+
+Type
+  TFslBooleanItem = Boolean;
+  TFslBooleanItemArray = Array[0..(MaxInt Div SizeOf(TFslBooleanItem)) - 1] Of TFslBooleanItem;
+  PFslBooleanItemArray = ^TFslBooleanItemArray;
+
+  TFslBooleanList = Class(TFslItemList)
+    Private
+      FBooleanArray : PFslBooleanItemArray;
+
+      Function GetBooleanByIndex(iIndex : Integer) : TFslBooleanItem;
+      Procedure SetBooleanByIndex(iIndex : Integer; Const iValue : TFslBooleanItem);
+
+    Protected
+      Function GetItem(iIndex : Integer) : Pointer; Override;
+      Procedure SetItem(iIndex : Integer; pValue : Pointer); Override;
+
+      Procedure AssignItem(oItems : TFslItemList; iIndex : Integer); Override;
+
+      // CompareItem implemented by TFslItems integer comparison of the return of GetItem.
+
+      Procedure InternalResize(iValue : Integer); Override;
+      Procedure InternalCopy(iSource, iTarget, iCount : Integer); Override;
+      Procedure InternalEmpty(iIndex, iLength : Integer); Override;
+      Procedure InternalExchange(iA, iB : Integer); Overload; Override;
+
+      Function CapacityLimit : Integer; Override;
+
+    Public
+      Function Iterator : TFslIterator; Override;
+
+      Function IndexByValue(aValue : TFslBooleanItem) : Integer;
+      Function ExistsByValue(aValue : TFslBooleanItem) : Boolean;
+      Function Add(aValue : TFslBooleanItem) : Integer; Overload;
+      Procedure Insert(iIndex : Integer; aValue : TFslBooleanItem);
+      Procedure DeleteByValue(aValue : TFslBooleanItem);
+
+      Procedure Add(oBooleans: TFslBooleanList); Overload;
+
+      Procedure Select(bValue : Boolean);
+      Procedure Invert;
+      Function CountOf(bValue : Boolean) : Integer;
+
+      Property BooleanByIndex[iIndex : Integer] : TFslBooleanItem Read GetBooleanByIndex Write SetBooleanByIndex; Default;
+  End;
+
+  TFslBooleanListIterator = Class(TFslBooleanIterator)
+    Private
+      FBooleanList : TFslBooleanList;
+      FIndex    : Integer;
+
+      Function GetBooleanList : TFslBooleanList;
+      Procedure SetBooleanList(Const Value : TFslBooleanList);
+
+    Public
+      Constructor Create; Override;
+      Destructor Destroy; Override;
+
+      Procedure First; Override;
+      Procedure Last; Override;
+      Procedure Next; Override;
+      Procedure Back; Override;
+
+      Function More : Boolean; Override;
+      Function Current : Boolean; Override;
+
+      Property BooleanList : TFslBooleanList Read GetBooleanList Write SetBooleanList;
+  End;
 
 
 Implementation
@@ -2046,9 +2108,9 @@ Begin
 End;  
 
 
-Function TFslCollection.ErrorClass : EAdvExceptionClass;
+Function TFslCollection.ErrorClass : EFslExceptionClass;
 Begin 
-  Result := EAdvCollection;
+  Result := EFslCollection;
 End;  
 
 
@@ -2068,13 +2130,13 @@ End;
 
 Function TFslLargeIntegerMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(PAdvLargeIntegerMatchItem(pA)^.Key, PAdvLargeIntegerMatchItem(pB)^.Key);
+  Result := IntegerCompare(PFslLargeIntegerMatchItem(pA)^.Key, PFslLargeIntegerMatchItem(pB)^.Key);
 End;
 
 
 Function TFslLargeIntegerMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(PAdvLargeIntegerMatchItem(pA)^.Value, PAdvLargeIntegerMatchItem(pB)^.Value);
+  Result := IntegerCompare(PFslLargeIntegerMatchItem(pA)^.Value, PFslLargeIntegerMatchItem(pB)^.Value);
 End;  
 
 
@@ -2092,32 +2154,6 @@ Begin
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
 End;  
 
-
-Procedure TFslLargeIntegerMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  iKey : TFslLargeIntegerMatchKey;
-  iValue : TFslLargeIntegerMatchValue;
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineInteger(iKey);
-  oFiler['Value'].DefineInteger(iValue);
-
-  oFiler['Match'].DefineEnd;
-
-  Add(iKey, iValue);
-End;  
-
-
-Procedure TFslLargeIntegerMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineInteger(FMatches^[iIndex].Key);
-  oFiler['Value'].DefineInteger(FMatches^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
-End;  
 
 
 Procedure TFslLargeIntegerMatch.AssignItem(oItems: TFslItemList; iIndex: Integer);
@@ -2145,9 +2181,9 @@ End;
 
 
 Procedure TFslLargeIntegerMatch.InternalCopy(iSource, iTarget, iCount: Integer);
-Begin 
+Begin
   MemoryMove(@FMatches^[iSource], @FMatches^[iTarget], iCount * SizeOf(TFslLargeIntegerMatchItem));
-End;  
+End;
 
 
 Function TFslLargeIntegerMatch.IndexByKey(aKey : TFslLargeIntegerMatchKey): Integer;
@@ -2226,10 +2262,10 @@ Begin
   pA := @FMatches^[iA];
   pB := @FMatches^[iB];
 
-  aTemp := PAdvLargeIntegerMatchItem(pA)^;
-  PAdvLargeIntegerMatchItem(pA)^ := PAdvLargeIntegerMatchItem(pB)^;
-  PAdvLargeIntegerMatchItem(pB)^ := aTemp;
-End;  
+  aTemp := PFslLargeIntegerMatchItem(pA)^;
+  PFslLargeIntegerMatchItem(pA)^ := PFslLargeIntegerMatchItem(pB)^;
+  PFslLargeIntegerMatchItem(pB)^ := aTemp;
+End;
 
 
 Function TFslLargeIntegerMatch.GetItem(iIndex: Integer): Pointer;
@@ -2244,7 +2280,7 @@ Procedure TFslLargeIntegerMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMatches^[iIndex] := PAdvLargeIntegerMatchItem(pValue)^;
+  FMatches^[iIndex] := PFslLargeIntegerMatchItem(pValue)^;
 End;  
 
 
@@ -2273,7 +2309,7 @@ End;
 
 
 Procedure TFslLargeIntegerMatch.SetValue(iIndex: Integer; Const iValue: TFslLargeIntegerMatchValue);
-Begin 
+Begin
   Assert(ValidateIndex('SetValue', iIndex));
 
   FMatches^[iIndex].Value := iValue;
@@ -2429,46 +2465,14 @@ End;
 
 Function TFslIntegerObjectMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(PAdvIntegerObjectMatchItem(pA)^.Key, PAdvIntegerObjectMatchItem(pB)^.Key);
+  Result := IntegerCompare(PFslIntegerObjectMatchItem(pA)^.Key, PFslIntegerObjectMatchItem(pB)^.Key);
 End;
 
 
 Function TFslIntegerObjectMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(Integer(PAdvIntegerObjectMatchItem(pA)^.Value), Integer(PAdvIntegerObjectMatchItem(pB)^.Value));
+  Result := IntegerCompare(Integer(PFslIntegerObjectMatchItem(pA)^.Value), Integer(PFslIntegerObjectMatchItem(pB)^.Value));
 End;  
-
-
-Procedure TFslIntegerObjectMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineInteger(FItemArray^[iIndex].Key);
-  oFiler['Value'].DefineObject(FItemArray^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
-End;  
-
-
-Procedure TFslIntegerObjectMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  iKey : TFslIntegerObjectMatchKey;
-  oValue : TFslIntegerObjectMatchValue;
-Begin 
-  oValue := Nil;
-  Try
-    oFiler['Match'].DefineBegin;
-
-    oFiler['Key'].DefineInteger(iKey);
-    oFiler['Value'].DefineObject(oValue);
-
-    oFiler['Match'].DefineEnd;
-
-    Add(iKey, oValue.Link);
-  Finally
-    oValue.Free;
-  End;  
-End;
 
 
 Procedure TFslIntegerObjectMatch.AssignItem(oItems : TFslItemList; iIndex: Integer);
@@ -2614,8 +2618,8 @@ End;
 Procedure TFslIntegerObjectMatch.InternalExchange(iA, iB: Integer);
 Var
   aTemp : TFslIntegerObjectMatchItem;
-  pA    : PAdvIntegerObjectMatchItem;
-  pB    : PAdvIntegerObjectMatchItem;
+  pA    : PFslIntegerObjectMatchItem;
+  pB    : PFslIntegerObjectMatchItem;
 Begin 
   pA := @FItemArray^[iA];
   pB := @FItemArray^[iB];
@@ -2638,7 +2642,7 @@ Procedure TFslIntegerObjectMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FItemArray^[iIndex] := PAdvIntegerObjectMatchItem(pValue)^;
+  FItemArray^[iIndex] := PFslIntegerObjectMatchItem(pValue)^;
 End;  
 
 
@@ -2829,13 +2833,13 @@ End;
 
 Function TFslIntegerMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin 
-  Result := IntegerCompare(PAdvInteger32MatchItem(pA)^.Key, PAdvInteger32MatchItem(pB)^.Key);
+  Result := IntegerCompare(PFslInteger32MatchItem(pA)^.Key, PFslInteger32MatchItem(pB)^.Key);
 End;
 
 
 Function TFslIntegerMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(PAdvInteger32MatchItem(pA)^.Value, PAdvInteger32MatchItem(pB)^.Value);
+  Result := IntegerCompare(PFslInteger32MatchItem(pA)^.Value, PFslInteger32MatchItem(pB)^.Value);
 End;  
 
 
@@ -2851,33 +2855,6 @@ End;
 Procedure TFslIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
-End;  
-
-
-Procedure TFslIntegerMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  iKey : TFslIntegerMatchKey;
-  iValue : TFslIntegerMatchValue;
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineInteger(iKey);
-  oFiler['Value'].DefineInteger(iValue);
-
-  oFiler['Match'].DefineEnd;
-
-  Add(iKey, iValue);
-End;  
-
-
-Procedure TFslIntegerMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineInteger(FMatches^[iIndex].Key);
-  oFiler['Value'].DefineInteger(FMatches^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
 End;  
 
 
@@ -2987,9 +2964,9 @@ Begin
   pA := @FMatches^[iA];
   pB := @FMatches^[iB];
 
-  aTemp := PAdvInteger32MatchItem(pA)^;
-  PAdvInteger32MatchItem(pA)^ := PAdvInteger32MatchItem(pB)^;
-  PAdvInteger32MatchItem(pB)^ := aTemp;
+  aTemp := PFslInteger32MatchItem(pA)^;
+  PFslInteger32MatchItem(pA)^ := PFslInteger32MatchItem(pB)^;
+  PFslInteger32MatchItem(pB)^ := aTemp;
 End;  
 
 
@@ -3005,7 +2982,7 @@ Procedure TFslIntegerMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMatches^[iIndex] := PAdvInteger32MatchItem(pValue)^;
+  FMatches^[iIndex] := PFslInteger32MatchItem(pValue)^;
 End;  
 
 
@@ -3165,22 +3142,6 @@ Begin
     Inc(iIndex);
   End;
 End;
-
-
-Procedure TFslIntegerList.SaveItem(oFiler : TFslFiler; iIndex : Integer);
-Begin 
-  oFiler['Integer'].DefineInteger(FIntegerArray^[iIndex]);
-End;  
-
-
-Procedure TFslIntegerList.LoadItem(oFiler : TFslFiler; iIndex : Integer);
-Var
-  iValue : TFslIntegerListItem;
-Begin
-  oFiler['Integer'].DefineInteger(iValue);
-
-  Add(iValue);
-End;  
 
 
 Procedure TFslIntegerList.AssignItem(oItems : TFslItemList; iIndex : Integer);
@@ -3529,13 +3490,13 @@ End;
 
 Function TFslInt64Match.CompareByKey(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(PAdvInteger32MatchItem(pA)^.Key, PAdvInteger32MatchItem(pB)^.Key);
+  Result := IntegerCompare(PFslInteger32MatchItem(pA)^.Key, PFslInteger32MatchItem(pB)^.Key);
 End;
 
 
 Function TFslInt64Match.CompareByValue(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(PAdvInteger32MatchItem(pA)^.Value, PAdvInteger32MatchItem(pB)^.Value);
+  Result := IntegerCompare(PFslInteger32MatchItem(pA)^.Value, PFslInteger32MatchItem(pB)^.Value);
 End;  
 
 
@@ -3551,33 +3512,6 @@ End;
 Procedure TFslInt64Match.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
   aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
-End;  
-
-
-Procedure TFslInt64Match.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  iKey : TFslInt64MatchKey;
-  iValue : TFslInt64MatchValue;
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineInteger(iKey);
-  oFiler['Value'].DefineInteger(iValue);
-
-  oFiler['Match'].DefineEnd;
-
-  Add(iKey, iValue);
-End;  
-
-
-Procedure TFslInt64Match.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineInteger(FMatches^[iIndex].Key);
-  oFiler['Value'].DefineInteger(FMatches^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
 End;  
 
 
@@ -3615,7 +3549,7 @@ Function TFslInt64Match.IndexByKey(aKey : TFslInt64MatchKey): Integer;
 Begin 
   If Not FindByKey(aKey, Result, {$IFDEF FPC}@{$ENDIF}CompareByKey) Then
     Result := -1;
-End;  
+End;
 
 
 Function TFslInt64Match.IndexByKeyValue(Const aKey : TFslInt64MatchKey; Const aValue : TFslInt64MatchValue) : Integer;
@@ -3657,7 +3591,7 @@ Begin
 
     Insert(Result, aKey, aValue);
   End;  
-End;  
+End;
 
 
 Procedure TFslInt64Match.Insert(iIndex: Integer; iKey : TFslInt64MatchKey; iValue : TFslInt64MatchValue);
@@ -3687,9 +3621,9 @@ Begin
   pA := @FMatches^[iA];
   pB := @FMatches^[iB];
 
-  aTemp := PAdvInteger64MatchItem(pA)^;
-  PAdvInteger64MatchItem(pA)^ := PAdvInteger64MatchItem(pB)^;
-  PAdvInteger64MatchItem(pB)^ := aTemp;
+  aTemp := PFslInteger64MatchItem(pA)^;
+  PFslInteger64MatchItem(pA)^ := PFslInteger64MatchItem(pB)^;
+  PFslInteger64MatchItem(pB)^ := aTemp;
 End;  
 
 
@@ -3705,7 +3639,7 @@ Procedure TFslInt64Match.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMatches^[iIndex] := PAdvInteger64MatchItem(pValue)^;
+  FMatches^[iIndex] := PFslInteger64MatchItem(pValue)^;
 End;  
 
 
@@ -4035,7 +3969,7 @@ End;
 
 
 Function TFslObjectClassHashTable.Iterator : TFslIterator;
-Begin 
+Begin
   Result := TFslObjectClassHashTableIterator.Create;
   TFslObjectClassHashTableIterator(Result).HashTable := TFslObjectClassHashTable(Self.Link);
 End;  
@@ -4118,37 +4052,6 @@ Begin
 End;
 
 
-Procedure TFslStringObjectMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineString(FMatchArray^[iIndex].Key);
-  oFiler['Value'].DefineObject(FMatchArray^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
-End;
-
-
-Procedure TFslStringObjectMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  sKey   : TFslStringObjectMatchKey;
-  oValue : TFslStringObjectMatchValue;
-Begin 
-  oValue := Nil;
-  Try
-    oFiler['Match'].DefineBegin;
-
-    oFiler['Key'].DefineString(sKey);
-    oFiler['Value'].DefineObject(oValue);
-
-    oFiler['Match'].DefineEnd;
-
-    Add(sKey, oValue.Link);
-  Finally
-    oValue.Free;
-  End;  
-End;  
-
 
 Procedure TFslStringObjectMatch.InternalEmpty(iIndex, iLength : Integer);
 Begin 
@@ -4194,13 +4097,13 @@ End;
 
 Function TFslStringObjectMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin
-  Result := FCompareKey(PAdvStringObjectMatchItem(pA)^.Key, PAdvStringObjectMatchItem(pB)^.Key);
+  Result := FCompareKey(PFslStringObjectMatchItem(pA)^.Key, PFslStringObjectMatchItem(pB)^.Key);
 End;
 
 
 Function TFslStringObjectMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(Integer(PAdvStringObjectMatchItem(pA)^.Value), Integer(PAdvStringObjectMatchItem(pB)^.Value));
+  Result := IntegerCompare(Integer(PFslStringObjectMatchItem(pA)^.Value), Integer(PFslStringObjectMatchItem(pB)^.Value));
 End;
 
 
@@ -4287,7 +4190,7 @@ End;
 
 
 Procedure TFslStringObjectMatch.InternalDelete(iIndex : Integer);
-Begin 
+Begin
   Inherited;
 
   Finalize(FMatchArray^[iIndex].Key);
@@ -4299,8 +4202,8 @@ End;
 Procedure TFslStringObjectMatch.InternalExchange(iA, iB: Integer);
 Var
   aTemp : TFslStringObjectMatchItem;
-  pA    : PAdvStringObjectMatchItem;
-  pB    : PAdvStringObjectMatchItem;
+  pA    : PFslStringObjectMatchItem;
+  pB    : PFslStringObjectMatchItem;
 Begin 
   pA := @FMatchArray^[iA];
   pB := @FMatchArray^[iB];
@@ -4323,7 +4226,7 @@ Procedure TFslStringObjectMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMatchArray^[iIndex] := PAdvStringObjectMatchItem(pValue)^;
+  FMatchArray^[iIndex] := PFslStringObjectMatchItem(pValue)^;
 End;  
 
 
@@ -4665,7 +4568,7 @@ End;
 Function TFslStringMatch.Link : TFslStringMatch;
 Begin 
   Result := TFslStringMatch(Inherited Link);
-End;  
+End;
 
 
 Function TFslStringMatch.Clone : TFslStringMatch;
@@ -4682,55 +4585,28 @@ End;
 
 Function TFslStringMatch.CompareMatch(pA, pB: Pointer): Integer;
 Begin 
-  Result := StringCompare(PAdvStringMatchItem(pA)^.Key, PAdvStringMatchItem(pB)^.Key);
+  Result := StringCompare(PFslStringMatchItem(pA)^.Key, PFslStringMatchItem(pB)^.Key);
 
   If Result = 0 Then
-    Result := StringCompare(PAdvStringMatchItem(pA)^.Value, PAdvStringMatchItem(pB)^.Value);
+    Result := StringCompare(PFslStringMatchItem(pA)^.Value, PFslStringMatchItem(pB)^.Value);
 End;  
 
 
 Function TFslStringMatch.CompareByKey(pA, pB: Pointer): Integer;
 Begin 
-  Result := StringCompareInsensitive(PAdvStringMatchItem(pA)^.Key, PAdvStringMatchItem(pB)^.Key);
+  Result := StringCompareInsensitive(PFslStringMatchItem(pA)^.Key, PFslStringMatchItem(pB)^.Key);
 End;
 
 
 Function TFslStringMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
-  Result := StringCompareInsensitive(PAdvStringMatchItem(pA)^.Value, PAdvStringMatchItem(pB)^.Value);
+  Result := StringCompareInsensitive(PFslStringMatchItem(pA)^.Value, PFslStringMatchItem(pB)^.Value);
 End;
 
 
 Function TFslStringMatch.CompareByCaseSensitiveKey(pA, pB: Pointer): Integer;
 Begin
-  Result := StringCompareSensitive(PAdvStringMatchItem(pA)^.Key, PAdvStringMatchItem(pB)^.Key);
-End;
-
-
-Procedure TFslStringMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  sKey : TFslStringMatchKey;
-  sValue : TFslStringMatchValue;
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineString(sKey);
-  oFiler['Value'].DefineString(sValue);
-
-  oFiler['Match'].DefineEnd;
-
-  Add(sKey, sValue);
-End;  
-
-
-Procedure TFslStringMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineString(FMatchArray^[iIndex].Key);
-  oFiler['Value'].DefineString(FMatchArray^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
+  Result := StringCompareSensitive(PFslStringMatchItem(pA)^.Key, PFslStringMatchItem(pB)^.Key);
 End;
 
 
@@ -4875,7 +4751,7 @@ End;
 
 
 Procedure TFslStringMatch.InternalDelete(iIndex : Integer);
-Begin 
+Begin
   Inherited;
 
   Finalize(FMatchArray^[iIndex]);  
@@ -4885,8 +4761,8 @@ End;
 Procedure TFslStringMatch.InternalExchange(iA, iB: Integer);
 Var
   aTemp : TFslStringMatchItem;
-  pA    : PAdvStringMatchItem;
-  pB    : PAdvStringMatchItem;
+  pA    : PFslStringMatchItem;
+  pB    : PFslStringMatchItem;
 Begin 
   pA := @FMatchArray^[iA];
   pB := @FMatchArray^[iB];
@@ -4909,7 +4785,7 @@ Procedure TFslStringMatch.SetItem(iIndex: Integer; pValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMatchArray^[iIndex] := PAdvStringMatchItem(pValue)^;
+  FMatchArray^[iIndex] := PFslStringMatchItem(pValue)^;
 End;  
 
 
@@ -5107,19 +4983,19 @@ End;
 
 Function TFslStringMatch.GetMatchByIndex(Const iIndex : Integer) : TFslStringMatchItem;
 Begin
-  Result := PAdvStringMatchItem(Inherited ItemByIndex[iIndex])^;
+  Result := PFslStringMatchItem(Inherited ItemByIndex[iIndex])^;
 End;
 
 
 Procedure TFslStringMatch.SetMatchByIndex(Const iIndex : Integer; Const Value : TFslStringMatchItem);
 Begin
-  PAdvStringMatchItem(Inherited ItemByIndex[iIndex])^ := Value;
+  PFslStringMatchItem(Inherited ItemByIndex[iIndex])^ := Value;
 End;
 
 
-Function TFslStringMatch.ErrorClass: EAdvExceptionClass;
+Function TFslStringMatch.ErrorClass: EFslExceptionClass;
 Begin
-  Result := EAdvStringMatch;
+  Result := EFslStringMatch;
 End;
 
 
@@ -5189,21 +5065,6 @@ Begin
   Result := TFslStringList(Inherited Link);
 End;
 
-
-Procedure TFslStringList.SaveItem(Filer: TFslFiler; iIndex: Integer);
-Begin
-  Filer['String'].DefineString(FStringArray^[iIndex]);
-End;
-
-
-Procedure TFslStringList.LoadItem(Filer: TFslFiler; iIndex: Integer);
-Var
-  sValue : TFslStringListItem;
-Begin
-  Filer['String'].DefineString(sValue);
-
-  Add(sValue);
-End;
 
 
 Procedure TFslStringList.AssignItem(Items: TFslItemList; iIndex: Integer);
@@ -5463,7 +5324,7 @@ Begin
     Reset(aFile);
 
     While Not EOF(aFile) Do
-    Begin 
+    Begin
       ReadLn(aFile, sTemp);
       Add(sTemp);
     End;
@@ -5730,9 +5591,9 @@ Begin
 End;
 
 
-Function TFslStringLargeIntegerMatch.ErrorClass: EAdvExceptionClass;
+Function TFslStringLargeIntegerMatch.ErrorClass: EFslExceptionClass;
 Begin
-  Result := EAdvStringLargeIntegerMatch;
+  Result := EFslStringLargeIntegerMatch;
 End;
 
 
@@ -5753,32 +5614,6 @@ Begin
   FMatchArray^[iIndex] := TFslStringLargeIntegerMatch(oItems).FMatchArray^[iIndex];
 End;
 
-
-Procedure TFslStringLargeIntegerMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineString(FMatchArray^[iIndex].Key);
-  oFiler['Value'].DefineInteger(FMatchArray^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
-End;  
-
-
-Procedure TFslStringLargeIntegerMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  sKey : TFslStringLargeIntegerMatchKey;
-  iValue : TFslStringLargeIntegerMatchValue;
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineString(sKey);
-  oFiler['Value'].DefineInteger(iValue);
-
-  oFiler['Match'].DefineEnd;
-
-  Add(sKey, iValue);  
-End;  
 
 
 Procedure TFslStringLargeIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
@@ -5815,13 +5650,13 @@ End;
 
 Function TFslStringLargeIntegerMatch.CompareKey(pA, pB: Pointer): Integer;
 Begin 
-  Result := FCompareKey(PAdvStringLargeIntegerMatchItem(pA)^.Key, PAdvStringLargeIntegerMatchItem(pB)^.Key);
+  Result := FCompareKey(PFslStringLargeIntegerMatchItem(pA)^.Key, PFslStringLargeIntegerMatchItem(pB)^.Key);
 End;
 
 
 Function TFslStringLargeIntegerMatch.CompareValue(pA, pB: Pointer): Integer;
 Begin 
-  Result := IntegerCompare(PAdvStringLargeIntegerMatchItem(pA)^.Value, PAdvStringLargeIntegerMatchItem(pB)^.Value);
+  Result := IntegerCompare(PFslStringLargeIntegerMatchItem(pA)^.Value, PFslStringLargeIntegerMatchItem(pB)^.Value);
 End;  
 
 
@@ -5925,9 +5760,9 @@ Begin
   pA := @FMatchArray^[iA];
   pB := @FMatchArray^[iB];
 
-  aTemp := PAdvStringLargeIntegerMatchItem(pA)^;
-  PAdvStringLargeIntegerMatchItem(pA)^ := PAdvStringLargeIntegerMatchItem(pB)^;
-  PAdvStringLargeIntegerMatchItem(pB)^ := aTemp;
+  aTemp := PFslStringLargeIntegerMatchItem(pA)^;
+  PFslStringLargeIntegerMatchItem(pA)^ := PFslStringLargeIntegerMatchItem(pB)^;
+  PFslStringLargeIntegerMatchItem(pB)^ := aTemp;
 End;
 
 
@@ -5954,7 +5789,7 @@ Procedure TFslStringLargeIntegerMatch.SetItem(iIndex : Integer; pValue : Pointer
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMatchArray^[iIndex] := PAdvStringLargeIntegerMatchItem(pValue)^;
+  FMatchArray^[iIndex] := PFslStringLargeIntegerMatchItem(pValue)^;
 End;  
 
 
@@ -5967,7 +5802,7 @@ End;
 
 
 Procedure TFslStringLargeIntegerMatch.SetKey(iIndex : Integer; Const aKey : TFslStringLargeIntegerMatchKey);
-Begin 
+Begin
   Assert(ValidateIndex('SetKey', iIndex));
 
   FMatchArray^[iIndex].Key := aKey;
@@ -6132,9 +5967,9 @@ Begin
 End;
 
 
-Function TFslStringIntegerMatch.ErrorClass: EAdvExceptionClass;
+Function TFslStringIntegerMatch.ErrorClass: EFslExceptionClass;
 Begin
-  Result := EAdvStringIntegerMatch;
+  Result := EFslStringIntegerMatch;
 End;
 
 
@@ -6155,32 +5990,6 @@ Begin
   FMatchArray^[iIndex] := TFslStringIntegerMatch(oItems).FMatchArray^[iIndex];
 End;
 
-
-Procedure TFslStringIntegerMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineString(FMatchArray^[iIndex].Key);
-  oFiler['Value'].DefineInteger(FMatchArray^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
-End;  
-
-
-Procedure TFslStringIntegerMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  sKey : TFslStringIntegerMatchKey;
-  iValue : TFslStringIntegerMatchValue;
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineString(sKey);
-  oFiler['Value'].DefineInteger(iValue);
-
-  oFiler['Match'].DefineEnd;
-
-  Add(sKey, iValue);  
-End;  
 
 
 Procedure TFslStringIntegerMatch.InternalEmpty(iIndex, iLength: Integer);
@@ -6217,13 +6026,13 @@ End;
 
 Function TFslStringIntegerMatch.CompareKey(pA, pB: Pointer): Integer;
 Begin 
-  Result := FCompareKey(PAdvStringIntegerMatchItem(pA)^.Key, PAdvStringIntegerMatchItem(pB)^.Key);
+  Result := FCompareKey(PFslStringIntegerMatchItem(pA)^.Key, PFslStringIntegerMatchItem(pB)^.Key);
 End;  
 
 
 Function TFslStringIntegerMatch.CompareValue(pA, pB: Pointer): Integer;
 Begin 
-  Result := IntegerCompare(PAdvStringIntegerMatchItem(pA)^.Value, PAdvStringIntegerMatchItem(pB)^.Value);
+  Result := IntegerCompare(PFslStringIntegerMatchItem(pA)^.Value, PFslStringIntegerMatchItem(pB)^.Value);
 End;  
 
 
@@ -6327,9 +6136,9 @@ Begin
   pA := @FMatchArray^[iA];
   pB := @FMatchArray^[iB];
 
-  aTemp := PAdvStringIntegerMatchItem(pA)^;
-  PAdvStringIntegerMatchItem(pA)^ := PAdvStringIntegerMatchItem(pB)^;
-  PAdvStringIntegerMatchItem(pB)^ := aTemp;
+  aTemp := PFslStringIntegerMatchItem(pA)^;
+  PFslStringIntegerMatchItem(pA)^ := PFslStringIntegerMatchItem(pB)^;
+  PFslStringIntegerMatchItem(pB)^ := aTemp;
 End;
 
 
@@ -6345,7 +6154,7 @@ End;
 
 
 Function TFslStringIntegerMatch.GetItem(iIndex : Integer) : Pointer;
-Begin 
+Begin
   Assert(ValidateIndex('GetItem', iIndex));
 
   Result := @FMatchArray^[iIndex];
@@ -6356,7 +6165,7 @@ Procedure TFslStringIntegerMatch.SetItem(iIndex : Integer; pValue : Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMatchArray^[iIndex] := PAdvStringIntegerMatchItem(pValue)^;
+  FMatchArray^[iIndex] := PFslStringIntegerMatchItem(pValue)^;
 End;  
 
 
@@ -6555,13 +6364,6 @@ Begin
 End;
 
 
-Procedure TFslStringHashEntry.Define(oFiler : TFslFiler);
-Begin 
-  Inherited;
-
-  oFiler['Name'].DefineString(FName);
-End;  
-
 
 Function TFslStringHashTable.Equal(oA, oB: TFslHashEntry): Integer;
 Begin
@@ -6597,23 +6399,10 @@ Begin
 End;
 
 
-Function TFslPersistentList.ItemClass : TFslObjectClass;
+Function TFslObjectList.ItemClass : TFslObjectClass;
 Begin
-  Result := TFslPersistent;
+  Result := TFslObject;
 End;
-
-
-Function TFslPersistentList.GetPersistentByIndex(Const iIndex : Integer) : TFslPersistent;
-Begin
-  Result := TFslPersistent(ObjectByIndex[iIndex]);
-End;
-
-
-Procedure TFslPersistentList.SetPersistentByIndex(Const iIndex : Integer; Const oValue : TFslPersistent);
-Begin
-  ObjectByIndex[iIndex] := oValue;
-End;
-
 
 Destructor TFslOrdinalSet.Destroy;
 Begin
@@ -6676,11 +6465,6 @@ Begin
 End;
 
 
-Procedure TFslOrdinalSet.Define(oFiler: TFslFiler);
-Begin
-  Inherited;
-End;
-
 
 Function TFslOrdinalSet.ValidateIndex(Const sMethod : String; Const iIndex : Integer) : Boolean;
 Begin
@@ -6732,7 +6516,7 @@ End;
 
 Procedure TFslOrdinalSet.Hook(Const aValue; iCount : Integer);
 Begin
-  FPartArray := PAdvOrdinalSetPartArray(@aValue);
+  FPartArray := PFslOrdinalSetPartArray(@aValue);
   FCount := iCount;
   FSize := RealCeiling(iCount / 8);
   FOwns := False;
@@ -6749,7 +6533,7 @@ End;
 
 Procedure TFslOrdinalSet.Check(iIndex: Integer);
 Var
-  pPart : PAdvOrdinalSetPart;
+  pPart : PFslOrdinalSetPart;
 Begin
   Assert(ValidateIndex('Check', iIndex));
 
@@ -6779,7 +6563,7 @@ End;
 
 Procedure TFslOrdinalSet.Uncheck(iIndex: Integer);
 Var
-  pPart : PAdvOrdinalSetPart;
+  pPart : PFslOrdinalSetPart;
 Begin
   Assert(ValidateIndex('Uncheck', iIndex));
 
@@ -6791,7 +6575,7 @@ End;
 
 Procedure TFslOrdinalSet.Toggle(iIndex: Integer);
 Var
-  pPart : PAdvOrdinalSetPart;
+  pPart : PFslOrdinalSetPart;
   iFlag : Integer;
 Begin
   Assert(ValidateIndex('Toggle', iIndex));
@@ -7010,48 +6794,14 @@ End;
 
 Function TFslObjectMatch.CompareByKeyReference(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(Integer(PAdvObjectMatchItem(pA)^.Key), Integer(PAdvObjectMatchItem(pB)^.Key));
+  Result := IntegerCompare(Integer(PFslObjectMatchItem(pA)^.Key), Integer(PFslObjectMatchItem(pB)^.Key));
 End;  
 
 
 Function TFslObjectMatch.CompareByValueReference(pA, pB: Pointer): Integer;
 Begin 
-  Result := IntegerCompare(Integer(PAdvObjectMatchItem(pA)^.Value), Integer(PAdvObjectMatchItem(pB)^.Value));
-End;  
-
-
-Procedure TFslObjectMatch.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin 
-  oFiler['Match'].DefineBegin;
-
-  oFiler['Key'].DefineObject(FMatchArray^[iIndex].Key);
-  oFiler['Value'].DefineObject(FMatchArray^[iIndex].Value);
-
-  oFiler['Match'].DefineEnd;
+  Result := IntegerCompare(Integer(PFslObjectMatchItem(pA)^.Value), Integer(PFslObjectMatchItem(pB)^.Value));
 End;
-
-
-Procedure TFslObjectMatch.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Var
-  oKey : TFslObjectMatchKey;
-  oValue : TFslObjectMatchValue;
-Begin 
-  oKey := Nil;
-  oValue := Nil;
-  Try
-    oFiler['Match'].DefineBegin;
-
-    oFiler['Key'].DefineObject(oKey);
-    oFiler['Value'].DefineObject(oValue);
-
-    oFiler['Match'].DefineEnd;
-
-    Add(oKey.Link, oValue.Link);
-  Finally
-    oKey.Free;
-    oValue.Free;
-  End;  
-End;  
 
 
 Procedure TFslObjectMatch.AssignItem(oItems : TFslItemList; iIndex: Integer);
@@ -7059,7 +6809,7 @@ Begin
   Inherited;
 
   FMatchArray^[iIndex].Key := TFslObjectMatch(oItems).FMatchArray^[iIndex].Key.Clone;
-  FMatchArray^[iIndex].Value := TFslObjectMatch(oItems).FMatchArray^[iIndex].Value.Clone;  
+  FMatchArray^[iIndex].Value := TFslObjectMatch(oItems).FMatchArray^[iIndex].Value.Clone;
 End;  
 
 
@@ -7202,9 +6952,9 @@ Begin
   pA := @FMatchArray^[iA];
   pB := @FMatchArray^[iB];
 
-  aTemp := PAdvObjectMatchItem(pA)^;
-  PAdvObjectMatchItem(pA)^ := PAdvObjectMatchItem(pB)^;
-  PAdvObjectMatchItem(pB)^ := aTemp;
+  aTemp := PFslObjectMatchItem(pA)^;
+  PFslObjectMatchItem(pA)^ := PFslObjectMatchItem(pB)^;
+  PFslObjectMatchItem(pB)^ := aTemp;
 End;
 
 
@@ -7231,7 +6981,7 @@ Procedure TFslObjectMatch.SetItem(iIndex: Integer; aValue: Pointer);
 Begin 
   Assert(ValidateIndex('SetItem', iIndex));
 
-  FMatchArray^[iIndex] := PAdvObjectMatchItem(aValue)^;
+  FMatchArray^[iIndex] := PFslObjectMatchItem(aValue)^;
 End;  
 
 
@@ -7469,36 +7219,15 @@ begin
 end;
 
 
-function TFslObjectList.ErrorClass: EAdvExceptionClass;
+function TFslObjectList.ErrorClass: EFslExceptionClass;
 begin
-  Result := EAdvObjectList;
+  Result := EFslObjectList;
 end;
 
 
 procedure TFslObjectList.AssignItem(oItems: TFslItemList; iIndex: integer);
 begin
   FObjectArray^[iIndex] := TFslObjectList(oItems).FObjectArray^[iIndex].Clone;
-end;
-
-
-procedure TFslObjectList.SaveItem(oFiler: TFslFiler; iIndex: integer);
-begin
-  oFiler['Object'].DefineObject(FObjectArray^[iIndex]);
-end;
-
-
-procedure TFslObjectList.LoadItem(oFiler: TFslFiler; iIndex: integer);
-var
-  oObject: TFslObject;
-begin
-  oObject := nil;
-  try
-    oFiler['Object'].DefineObject(oObject);
-
-    Add(oObject.Link);
-  finally
-    oObject.Free;
-  end;
 end;
 
 
@@ -7586,12 +7315,6 @@ begin
 
   FObjectArray^[iIndex].Free;
   FObjectArray^[iIndex] := nil;
-end;
-
-
-function TFslObjectList.ItemClass: TFslObjectClass;
-begin
-  Result := TFslObject;
 end;
 
 
@@ -7946,7 +7669,7 @@ begin
 end;
 
 
-function TFslObjectList.AddressOfItem(iIndex: integer): PAdvObject;
+function TFslObjectList.AddressOfItem(iIndex: integer): PFslObject;
 begin
   Assert(ValidateIndex('AddressOfItem', iIndex));
 
@@ -8361,9 +8084,9 @@ Begin
 End;
 
 
-Function TFslItemList.ErrorClass : EAdvExceptionClass;
+Function TFslItemList.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EAdvItemList;
+  Result := EFslItemList;
 End;
 
 
@@ -8398,55 +8121,6 @@ Begin
   End;
 End;
 
-
-Procedure TFslItemList.Load(oFiler : TFslFiler);
-Begin
-  Assert(Invariants('Load', oFiler, TFslFiler, 'oFiler'));
-
-  Clear;
-
-  Define(oFiler);
-
-  oFiler['Items'].DefineBegin;
-
-  While oFiler.Peek <> atEnd Do
-    LoadItem(oFiler, Count);
-
-  oFiler['Items'].DefineEnd;
-End;
-
-
-Procedure TFslItemList.Save(oFiler : TFslFiler);
-Var
-  iLoop  : Integer;
-Begin
-  Assert(Invariants('Save', oFiler, TFslFiler, 'oFiler'));
-
-  Define(oFiler);
-
-  oFiler['Items'].DefineBegin;
-
-  For iLoop := 0 To Count - 1 Do
-    SaveItem(oFiler, iLoop);
-
-  oFiler['Items'].DefineEnd;
-End;
-
-
-Procedure TFslItemList.Define(oFiler: TFslFiler);
-Begin
-  Inherited;
-End;
-
-
-Procedure TFslItemList.LoadItem(oFiler: TFslFiler; iIndex: Integer);
-Begin
-End;
-
-
-Procedure TFslItemList.SaveItem(oFiler: TFslFiler; iIndex: Integer);
-Begin
-End;
 
 
 Procedure TFslItemList.AssignItem(oItems : TFslItemList; iIndex: Integer);
@@ -9278,13 +8952,6 @@ Begin
 End;
 
 
-Procedure TFslHashEntry.Load(oFiler: TFslFiler);
-Begin
-  Inherited;
-
-  Generate;
-End;
-
 
 Function TFslHashEntry.Link : TFslHashEntry;
 Begin
@@ -9319,9 +8986,9 @@ Begin
 End;
 
 
-Function TFslHashTable.ErrorClass : EAdvExceptionClass;
+Function TFslHashTable.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EAdvHashTable;
+  Result := EFslHashTable;
 End;
 
 
@@ -9362,63 +9029,6 @@ Begin
   Finally
     oIterator.Free;
   End;
-End;
-
-
-Procedure TFslHashTable.Define(oFiler: TFslFiler);
-Begin
-  Inherited;
-
-//oFiler['Balance'].DefineReal(FBalance);
-End;
-
-
-Procedure TFslHashTable.Load(oFiler: TFslFiler);
-Var
-  oHashEntry : TFslHashEntry;
-Begin
-  Define(oFiler);
-
-  oFiler['Items'].DefineBegin;
-
-  While (oFiler.Peek <> atEnd) Do
-  Begin
-    oHashEntry := Nil;
-    Try
-      oFiler['Item'].DefineObject(oHashEntry);
-
-      Add(oHashEntry.Link);
-    Finally
-      oHashEntry.Free;
-    End;
-  End;
-
-  oFiler['Items'].DefineEnd;
-End;
-
-
-Procedure TFslHashTable.Save(oFiler: TFslFiler);
-Var
-  oHashEntry : TFslHashEntry;
-  iLoop     : Integer;
-Begin
-  Define(oFiler);
-
-  oFiler['Items'].DefineBegin;
-
-  For iLoop := 0 To FCapacity - 1 Do
-  Begin
-    oHashEntry := FTable^[iLoop];
-
-    While Assigned(oHashEntry) Do
-    Begin
-      oFiler['Item'].DefineObject(oHashEntry);
-
-      oHashEntry := oHashEntry.FNextHashEntry;
-    End;
-  End;
-
-  oFiler['Items'].DefineEnd;
 End;
 
 
@@ -9491,7 +9101,7 @@ End;
 
 Procedure TFslHashTable.Rehash;
 Var
-  pTable : PAdvHashEntryArray;
+  pTable : PFslHashEntryArray;
   oHashEntry : TFslHashEntry;
   oNext : TFslHashEntry;
   iCapacity : Integer;
@@ -9560,7 +9170,7 @@ End;
 
 Procedure TFslHashTable.Insert(iIndex : Integer; oHashEntry : TFslHashEntry);
 Var
-  pFirst : PAdvHashEntry;
+  pFirst : PFslHashEntry;
 Begin
   Assert(Invariants('Insert', oHashEntry, TFslHashEntry, 'oHashEntry'));
   Assert(CheckCondition((iIndex >= 0) And (iIndex < FCapacity), 'Insert', 'Index must be within the hash table'));
@@ -9626,7 +9236,7 @@ Function TFslHashTable.Delete(oHashEntry: TFslHashEntry) : Boolean;
 Var
   oLast  : TFslHashEntry;
   oNext  : TFslHashEntry;
-  pFirst : PAdvHashEntry;
+  pFirst : PFslHashEntry;
 Begin
   Assert(Invariants('Delete', oHashEntry, ItemClass, 'oHashEntry'));
 
@@ -9857,9 +9467,9 @@ Begin
 End;
 
 
-Function TFslIterator.ErrorClass : EAdvExceptionClass;
+Function TFslIterator.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EAdvIterator;
+  Result := EFslIterator;
 End;
 
 
@@ -10011,13 +9621,6 @@ Begin
   FName := TFslName(oSource).Name;
 End;
 
-
-Procedure TFslName.Define(oFiler : TFslFiler);
-Begin
-  Inherited;
-
-  oFiler['Name'].DefineString(FName);
-End;
 
 
 Function TFslName.GetName: String;
@@ -10269,4 +9872,432 @@ Begin
 End;
 
 
-End. // FHIR.Support.Collections //
+Procedure TFslCharacter.Assign(oObject : TFslObject);
+Begin
+  Inherited;
+
+  FValue := TFslCharacter(oObject).Value;
+End;
+
+
+
+Function TFslCharacterList.ItemClass : TFslObjectClass;
+Begin
+  Result := TFslCharacter;
+End;
+
+
+Function TFslCharacterList.CompareByValue(pA, pB : Pointer) : Integer;
+Begin
+  Result := StringCompare(TFslCharacter(pA).Value, TFslCharacter(pB).Value);
+End;
+
+
+Procedure TFslCharacterList.SortByValue;
+Begin
+  SortedBy(CompareByValue);
+End;
+
+
+Function TFslCharacterList.ExistsByValue(Const cValue: Char): Boolean;
+Var
+  oCharacter : TFslCharacter;
+Begin
+  oCharacter := TFslCharacter(ItemNew);
+  Try
+    oCharacter.Value := cValue;
+
+    Result := ExistsBy(oCharacter, CompareByValue);
+  Finally
+    oCharacter.Free;
+  End;
+End;
+
+
+Procedure TFslCharacterList.AddCharacter(Const cValue : Char);
+Var
+  oCharacter : TFslCharacter;
+Begin
+  oCharacter := TFslCharacter(ItemNew);
+  Try
+    oCharacter.Value := cValue;
+
+    Add(oCharacter.Link);
+  Finally
+    oCharacter.Free;
+  End;
+End;
+
+
+Procedure TFslCharacterList.AddCharacterSet(Const aValueSet : TCharSet);
+Var
+  aSetValue : Char;
+Begin
+  For aSetValue := Low(Char) To High(Char) Do
+  Begin
+    If CharInSet(aSetValue, aValueSet) Then
+      AddCharacter(aSetValue);
+  End;
+End;
+
+
+Function TFslCharacterList.GetCharacterByIndex(Const iIndex : Integer) : TFslCharacter;
+Begin
+  Result := TFslCharacter(ObjectByIndex[iIndex]);
+End;
+
+
+Constructor TFslObjectChoice.Create;
+Begin
+  Inherited;
+
+  FObject := Nil;
+End;
+
+
+Destructor TFslObjectChoice.Destroy;
+Begin
+  FObject.Free;
+
+  Inherited;
+End;
+
+
+Function TFslObjectChoice.RetrieveIsObjectClass(Const aObjectClass: TFslObjectClass): Boolean;
+Begin
+  Assert(Invariants('RetrieveIsObjectClass', aObjectClass, TFslObject, 'aObjectClass'));
+
+  Result := Assigned(FObject);
+
+  If Result Then
+  Begin
+    Assert(Invariants('RetrieveIsObjectClass', FObject, TFslObject, 'FObject'));
+
+    Result := (FObject.ClassType = aObjectClass);
+  End;
+End;
+
+
+Procedure TFslObjectChoice.StoreIsObjectClass(Const aObjectClass: TFslObjectClass; Const bStored: Boolean);
+Begin
+  If bStored Then
+  Begin
+    If Not Assigned(FObject) Or (FObject.ClassType <> aObjectClass) Then
+    Begin
+      FObject.Free;
+      FObject := Nil;
+      FObject := aObjectClass.Create;
+    End;
+  End
+  Else
+  Begin
+  {$IFOPT C+}
+    If Not Assigned(FObject) Then
+      Invariant('StoreIsObjectClass', StringFormat('Cannot unstore ''%s'' as choice is null.', [aObjectClass.ClassName]));
+
+    If FObject.ClassType <> aObjectClass Then
+      Invariant('StoreIsObjectClass', StringFormat('Cannot unstore ''%s'' as choice is ''%s''.', [aObjectClass.ClassName, FObject.ClassName]));
+  {$ENDIF}
+
+    FObject.Free;
+    FObject := Nil;
+  End;
+End;
+
+
+Function TFslObjectChoice.RetrieveObject(Const aObjectClass: TFslObjectClass): TFslObject;
+Begin
+  Assert(Invariants('RetrieveObject', aObjectClass, TFslObject, 'aObjectClass'));
+  Assert(Invariants('RetrieveObject', FObject, aObjectClass, 'FObject'));
+
+  Result := FObject;
+End;
+
+
+Procedure TFslObjectChoice.StoreObject(Const oObject : TFslObject; Const aObjectClass : TFslObjectClass);
+Begin
+  Assert(Invariants('RetrieveObject', aObjectClass, TFslObject, 'aObjectClass'));
+  Assert(Not Assigned(oObject) Or Invariants('StoreObject', oObject, aObjectClass, 'oObject'));
+
+  FObject.Free;
+  FObject := oObject;
+End;
+
+
+Function TFslObjectChoice.RetrieveIsNull: Boolean;
+Begin
+  Result := Not Assigned(FObject);
+End;
+
+
+Procedure TFslObjectChoice.StoreIsNull;
+Begin
+  Assert(Not Assigned(FObject) Or Invariants('StoreIsNull', FObject, TFslObject, 'FObject'));
+
+  FObject.Free;
+  FObject := Nil;
+End;
+
+
+
+Procedure TFslBooleanList.AssignItem(oItems : TFslItemList; iIndex : Integer);
+Begin
+  Inherited;
+
+  FBooleanArray^[iIndex] := TFslBooleanList(oItems).FBooleanArray^[iIndex];
+End;
+
+
+Procedure TFslBooleanList.InternalEmpty(iIndex, iLength : Integer);
+Begin
+  Inherited;
+
+  MemoryZero(Pointer(NativeInt(FBooleanArray) + (iIndex * SizeOf(TFslBooleanItem))), (iLength * SizeOf(TFslBooleanItem)));
+End;
+
+
+Procedure TFslBooleanList.InternalResize(iValue : Integer);
+Begin
+  Inherited;
+
+  MemoryResize(FBooleanArray, Capacity * SizeOf(TFslBooleanItem), iValue * SizeOf(TFslBooleanItem));
+End;
+
+
+Procedure TFslBooleanList.InternalCopy(iSource, iTarget, iCount : Integer);
+Begin
+  Inherited;
+
+  MemoryMove(@FBooleanArray^[iSource], @FBooleanArray^[iTarget], iCount * SizeOf(TFslBooleanItem));
+End;
+
+
+Function TFslBooleanList.IndexByValue(aValue : TFslBooleanItem): Integer;
+Begin
+  If Not Find(Pointer(aValue), Result) Then
+    Result := -1;
+End;
+
+
+Function TFslBooleanList.ExistsByValue(aValue : TFslBooleanItem): Boolean;
+Begin
+  Result := IndexByValue(aValue) >= 0;
+End;
+
+
+Function TFslBooleanList.Add(aValue : TFslBooleanItem): Integer;
+Begin
+  Result := -1;
+
+  If Not IsAllowDuplicates And Find(Pointer(aValue), Result) Then
+  Begin
+    If IsPreventDuplicates Then
+      RaiseError('Add', StringFormat('Item already exists in list (%s)', [BooleanToString(aValue)]));
+  End
+  Else
+  Begin
+    If Not IsSorted Then
+      Result := Count
+    Else If (Result < 0) Then
+      Find(Pointer(aValue), Result);
+
+    Insert(Result, aValue);
+  End;
+End;
+
+
+Procedure TFslBooleanList.Insert(iIndex : Integer; aValue : TFslBooleanItem);
+Begin
+  InternalInsert(iIndex);
+
+  FBooleanArray^[iIndex] := aValue;
+End;
+
+
+Procedure TFslBooleanList.DeleteByValue(aValue : TFslBooleanItem);
+Var
+  iIndex : Integer;
+Begin
+  If Not Find(@aValue, iIndex) Then
+    RaiseError('DeleteByValue', StringFormat('''%s'' not found in list', [BooleanToString(aValue)]));
+
+  DeleteByIndex(iIndex);
+End;
+
+
+Procedure TFslBooleanList.InternalExchange(iA, iB : Integer);
+Var
+  iTemp : TFslBooleanItem;
+  pA    : Pointer;
+  pB    : Pointer;
+Begin
+  pA := @FBooleanArray^[iA];
+  pB := @FBooleanArray^[iB];
+
+  iTemp := TFslBooleanItem(pA^);
+  TFslBooleanItem(pA^) := TFslBooleanItem(pB^);
+  TFslBooleanItem(pB^) := iTemp;
+End;
+
+
+Procedure TFslBooleanList.Add(oBooleans: TFslBooleanList);
+Var
+  iLoop : Integer;
+Begin
+  For iLoop := 0 To oBooleans.Count - 1 Do
+    Add(oBooleans[iLoop]);
+End;
+
+
+Procedure TFslBooleanList.Invert;
+Var
+  iLoop : Integer;
+Begin
+  For iLoop := 0 To Count - 1 Do
+    FBooleanArray^[iLoop] := Not FBooleanArray^[iLoop];
+End;
+
+
+Procedure TFslBooleanList.Select(bValue: Boolean);
+Var
+  iLoop : Integer;
+Begin
+  For iLoop := 0 To Count - 1 Do
+    FBooleanArray^[iLoop] := bValue;
+End;
+
+
+Function TFslBooleanList.CountOf(bValue: Boolean): Integer;
+Var
+  iLoop : Integer;
+Begin
+  Result := 0;
+  For iLoop := 0 To Count - 1 Do
+  Begin
+    If FBooleanArray^[iLoop] = bValue Then
+      Inc(Result);
+  End;
+End;
+
+
+Function TFslBooleanList.GetItem(iIndex : Integer): Pointer;
+Begin
+  Assert(ValidateIndex('GetItem', iIndex));
+
+  Result := Pointer(FBooleanArray^[iIndex]);
+End;
+
+
+Procedure TFslBooleanList.SetItem(iIndex : Integer; pValue : Pointer);
+Begin
+  Assert(ValidateIndex('SetItem', iIndex));
+
+  FBooleanArray^[iIndex] := TFslBooleanItem(pValue);
+End;
+
+
+Function TFslBooleanList.GetBooleanByIndex(iIndex : Integer): TFslBooleanItem;
+Begin
+  Assert(ValidateIndex('GetBooleanByIndex', iIndex));
+
+  Result := FBooleanArray^[iIndex];
+End;
+
+
+Procedure TFslBooleanList.SetBooleanByIndex(iIndex : Integer; Const iValue : TFslBooleanItem);
+Begin
+  Assert(ValidateIndex('SetBooleanByIndex', iIndex));
+
+  FBooleanArray^[iIndex] := iValue;
+End;
+
+
+Function TFslBooleanList.CapacityLimit : Integer;
+Begin
+  Result := High(TFslBooleanItemArray);
+End;
+
+
+Function TFslBooleanList.Iterator : TFslIterator;
+Begin
+  Result := TFslBooleanListIterator.Create;
+  TFslBooleanListIterator(Result).BooleanList := TFslBooleanList(Self.Link);
+End;
+
+
+Constructor TFslBooleanListIterator.Create;
+Begin
+  Inherited;
+
+  FBooleanList := Nil;
+End;
+
+
+Destructor TFslBooleanListIterator.Destroy;
+Begin
+  FBooleanList.Free;
+
+  Inherited;
+End;
+
+
+Procedure TFslBooleanListIterator.First;
+Begin
+  Inherited;
+
+  FIndex := 0;
+End;
+
+
+Procedure TFslBooleanListIterator.Last;
+Begin
+  Inherited;
+
+  FIndex := FBooleanList.Count - 1;
+End;
+
+
+Procedure TFslBooleanListIterator.Next;
+Begin
+  Inherited;
+
+  Inc(FIndex);
+End;
+
+
+Procedure TFslBooleanListIterator.Back;
+Begin
+  Inherited;
+
+  Dec(FIndex);
+End;
+
+
+Function TFslBooleanListIterator.Current : Boolean;
+Begin
+  Result := FBooleanList[FIndex];
+End;
+
+
+Function TFslBooleanListIterator.More : Boolean;
+Begin
+  Result := FBooleanList.ExistsByIndex(FIndex);
+End;
+
+
+Function TFslBooleanListIterator.GetBooleanList: TFslBooleanList;
+Begin
+  Assert(Invariants('GetBooleans', FBooleanList, TFslBooleanList, 'FBooleanList'));
+
+  Result := FBooleanList;
+End;
+
+
+Procedure TFslBooleanListIterator.SetBooleanList(Const Value: TFslBooleanList);
+Begin
+  FBooleanList.Free;
+  FBooleanList := Value;
+End;
+
+
+End.

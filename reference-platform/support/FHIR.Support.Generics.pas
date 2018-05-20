@@ -212,7 +212,7 @@ Type
       end;
       TItemArray = array of TItem;
   private
-    FAdvObjectReferenceCount : TFslReferenceCount;
+    FFslObjectReferenceCount : TFslReferenceCount;
     FItems: TItemArray;
     FCount: Integer;
     FGrowThreshold: Integer;
@@ -346,7 +346,7 @@ Type
 
   TFslStringDictionary = class (TDictionary<String, String>)
   private
-    FAdvObjectReferenceCount : TFslReferenceCount;
+    FFslObjectReferenceCount : TFslReferenceCount;
   public
     // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
     Procedure Free; Overload;
@@ -1201,7 +1201,7 @@ begin
   Result := Self;
 
   If Assigned(Self) Then
-    InterlockedIncrement(FAdvObjectReferenceCount);
+    InterlockedIncrement(FFslObjectReferenceCount);
 end;
 
 procedure TFslMap<T>.ValueNotify(const Value: T; Action: TCollectionNotification);
@@ -1397,7 +1397,7 @@ end;
 
 procedure TFslMap<T>.Free;
 begin
-  If Assigned(Self) and (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
+  If Assigned(Self) and (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
     Destroy;
 end;
 
@@ -1648,7 +1648,7 @@ end;
 
 procedure TFslStringDictionary.Free;
 begin
-  If Assigned(Self) and (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
+  If Assigned(Self) and (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
     Destroy;
 end;
 
@@ -1656,7 +1656,7 @@ function TFslStringDictionary.Link: TFslStringDictionary;
 begin
   Result := Self;
   If Assigned(Self) Then
-    InterlockedIncrement(FAdvObjectReferenceCount);
+    InterlockedIncrement(FFslObjectReferenceCount);
 end;
 
 { TArrayMoveManager<T> }

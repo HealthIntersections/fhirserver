@@ -92,11 +92,10 @@ Type
 
   TFhirXHtmlNodeList = class;
 
-  {@Class TFhirXHtmlNode
+  {
     An xhtml node. Has a type - is either an element, with a name and children,
     or a different type of node with text (usually text or comment)
   }
-  {!.Net HL7Connect.Fhir.XhtmlNode}
   TFhirXHtmlNode = class (TFHIRObject)
   private
     FNodeType : TFHIRHtmlNodeType;
@@ -115,8 +114,7 @@ Type
     Constructor Create(nodeType : TFHIRHtmlNodeType) ; Overload;
     Constructor Create(name : String) ; Overload;
     Destructor Destroy; Override;
-    {!script hide}
-    function Link : TFhirXHtmlNode; Overload;
+      function Link : TFhirXHtmlNode; Overload;
     function Clone : TFhirXHtmlNode; Overload;
     procedure Assign(oSource : TFslObject); override;
     property Attributes : TFHIRAttributeList read GetAttributes;
@@ -125,9 +123,8 @@ Type
     function primitiveValue : string; override;
     function fhirType : String; override;
     function NsDecl : String; virtual;
-    {!script show}
-
-    {@member AsPlainText
+  
+    {
       plain text content of html
     }
     function AsPlainText : String;
@@ -137,66 +134,66 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
   published
-    {@member NodeType
+    {
       The type of the node - fhntElement, fhntText, fhntComment, fhntDocument
 
       Note that documents are not encountered in FHIR resources
     }
     property NodeType : TFHIRHtmlNodeType read FNodeType write SetNodeType;
 
-    {@member Name
+    {
       The name of the element, if the node is an element
 
       Note that namespaces are not supported in FHIR xhtml
     }
     property Name : String read FName write FName;
 
-    {@member Content
+    {
       The content of the element if it is a text or comment node
     }
     property Content : String read FContent write FContent;
 
-    {@member ChildNodes
+    {
       The children of the node, if it is an element
     }
     property ChildNodes : TFhirXHtmlNodeList read GetChildNodes;
 
-    {@member AddText
+    {
       Add a text node to the end of the list of nodes.
 
       If you want more control over the node children use @ChildNodes
     }
     function AddText(content : String) : TFhirXHtmlNode;
 
-    {@member AddComment
+    {
       Add a comment node to the end of the list of nodes.
 
       If you want more control over the node children use @ChildNodes
     }
     function AddComment(content : String) : TFhirXHtmlNode;
 
-    {@member AddChild
+    {
       Add a child element to the end of the list of nodes.
 
       If you want more control over the node children use @ChildNodes
     }
     function AddChild(name : String) : TFhirXHtmlNode;
 
-    {@member AddTag
+    {
       Add a child element to the end of the list of nodes.
 
       If you want more control over the node children use @ChildNodes
     }
     function AddTag(name : String) : TFhirXHtmlNode;
 
-    {@member GetAttribute
+    {
       Get an attribute by it's name
 
       Note that namespaces are not supported in FHIR xhtml
     }
     Function GetAttribute(name : String) : String;
 
-    {@member SetAttribute
+    {
       Set the value of an attribute. Create it if it doesn't exist
 
       Note that namespaces are not supported in FHIR xhtml
@@ -216,57 +213,54 @@ Type
     property Current : TFHIRXhtmlNode read GetCurrent;
   end;
 
-  {@Class TFHIRXHtmlNodeList
+  {
     A list of Xhtml Nodes
   }
-  {!.Net HL7Connect.Fhir.XHtmlNodeList}
   TFHIRXHtmlNodeList = class (TFHIRObjectList)
   private
     Function GetItemN(index : Integer) : TFHIRXHtmlNode;
     Procedure SetItemN(index : Integer; value : TFHIRXHtmlNode);
   public
-    {!script hide}
-    Function Link : TFHIRXHtmlNodeList; Overload;
+      Function Link : TFHIRXHtmlNodeList; Overload;
     Function Clone : TFHIRXHtmlNodeList; Overload;
     function GetEnumerator : TFHIRXhtmlNodeListEnumerator;
-    {!script show}
-    {@member Append
+      {
       Add an Xhtml Node to the end of the list.
     }
     Function Append : TFHIRXHtmlNode;
-    {@member AddItem
+    {
       Add an already existing Xhtml Node to the end of the list.
     }
     Procedure AddItem(value : TFHIRXHtmlNode);
-    {@member IndexOf
+    {
       See if an item is already in the list. returns -1 if not in the list
     }
     Function IndexOf(value : TFHIRXHtmlNode) : Integer;
-    {@member Insert
+    {
        Insert an Xhtml node before the designated index (0 = first item)
     }
     Function Insert(index : Integer) : TFHIRXHtmlNode;
-    {@member InsertItem
+    {
        Insert an existing Xhtml Node before the designated index (0 = first item)
     }
     Procedure InsertItem(index : Integer; value : TFHIRXHtmlNode);
-    {@member Item
+    {
        Get the indexth Xhtml Node. (0 = first item)
     }
     Function Item(index : Integer) : TFHIRXHtmlNode;
-    {@member SetItemByIndex
+    {
        Set the indexth Xhtml Node. (0 = first item)
     }
     Procedure SetItemByIndex(index : Integer; value : TFHIRXHtmlNode);
-    {@member Count
+    {
       The number of items in the collection
     }
     Function Count : Integer; Overload;
-    {@member remove
+    {
       Remove the indexth item. The first item is index 0.
     }
     Procedure Remove(index : Integer);
-    {@member ClearItems
+    {
       Remove All Items from the list
     }
     Procedure ClearItems;

@@ -201,7 +201,7 @@ end;
 procedure TDifferenceEngineTest.execCase(name: String; mode : String; input: TFhirResource; diff: TFhirParameters; output: TFhirResource);
 var
   engine : TDifferenceEngine;
-  delta : TFhirParameters;
+  delta : TFhirParametersW;
   outcome : TFhirResource;
   html : String;
   w : TFhirParametersW;
@@ -210,9 +210,9 @@ begin
   begin
     engine := TDifferenceEngine.Create(TTestingWorkerContext.Use, makeFactory);
     try
-      delta := engine.generateDifference(input, output, html).Resource as TFHIRParameters;
+      delta := engine.generateDifference(input, output, html);
       try
-        compareXml(name, 'Difference', diff, delta);
+        compareXml(name, 'Difference', diff, delta.Resource as TFHIRParameters);
       finally
         delta.Free;
       end;
@@ -240,7 +240,6 @@ begin
       engine.free;
     end;
   end;
-
 end;
 
 function TDifferenceEngineTest.parseResource(elem: TMXmlElement): TFhirResource;

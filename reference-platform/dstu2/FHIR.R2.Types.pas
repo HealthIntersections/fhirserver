@@ -37,7 +37,7 @@ interface
 
 uses
   Classes, SysUtils, EncdDecd, 
-  FHIR.Support.Signatures, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.DateTime, 
+  FHIR.Support.Signatures, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.DateTime,
   FHIR.Base.Objects, FHIR.Base.Xhtml, 
   FHIR.R2.Base;
 
@@ -26958,12 +26958,12 @@ begin
     result := obj as TFHIRBase64Binary
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRBase64Binary.create(unBase64(TFHIRMMElement(obj).value));
+    result := TFHIRBase64Binary.create(DecodeBase64(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRBase64Binary.create(unBase64(TFHIRObject(obj).primitiveValue));
+    result := TFHIRBase64Binary.create(DecodeBase64(TFHIRObject(obj).primitiveValue));
     obj.Free;
   end
   else

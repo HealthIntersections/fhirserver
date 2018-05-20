@@ -37,7 +37,7 @@ interface
 
 uses
   Classes, SysUtils, EncdDecd, 
-  FHIR.Support.Signatures, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.DateTime, 
+  FHIR.Support.Signatures, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.DateTime,
   FHIR.Base.Objects, FHIR.Base.Xhtml, 
   FHIR.R3.Base;
 
@@ -2399,8 +2399,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElement; overload;
     function Clone : TFhirElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2416,8 +2415,7 @@ Type
     function getId : String; override;
     function noExtensions : TFhirElement;
     property DisallowExtensions : boolean read FDisallowExtensions write FDisallowExtensions;
-    {!script show}
-  published
+    published
     // Typed access to unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
     property id : String read GetIdST write SetIdST;
     // unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
@@ -2452,12 +2450,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementList; Overload;
+      function Link : TFhirElementList; Overload;
     function Clone : TFhirElementList; Overload;
     function GetEnumerator : TFhirElementListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElement to the end of the list.
     function Append : TFhirElement;
@@ -2500,11 +2496,9 @@ Type
   //  A base FHIR type - (polymorphism support)
   TFhirType = class (TFhirElement)
   Public
-    {!script hide}
-    Function Link : TFhirType; Overload;
+      Function Link : TFhirType; Overload;
     Function Clone : TFhirType; Overload;
-    {!script show}
-  End;
+    End;
   TFHIRTypeClass = class of TFhirType;
   
   // A base FHIR type - (polymorphism support)
@@ -2514,15 +2508,13 @@ Type
     Procedure SetStringValue(value : String); virtual;
     Function AsStringValue : String; Virtual;
   Public
-    {!script hide}
-    Function Link : TFHIRPrimitiveType; Overload;
+      Function Link : TFHIRPrimitiveType; Overload;
     Function Clone : TFHIRPrimitiveType; Overload;
     Property StringValue : String read GetStringValue write SetStringValue;
     function isPrimitive : boolean; override;
     function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
-    {!script show}
-  End;
+    End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
   
 
@@ -2538,8 +2530,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirBackboneElement; overload;
     function Clone : TFhirBackboneElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -2552,8 +2543,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // May be used to represent additional information that is not part of the basic definition of the element, and that modifies the understanding of the element that contains it. Usually modifier elements provide negation or qualification. In order to make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer is allowed to define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
     property modifierExtensionList : TFhirExtensionList read GetModifierExtensionList;
     property hasModifierExtensionList : boolean read GetHasModifierExtensionList;
@@ -2583,12 +2573,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirBackboneElementList; Overload;
+      function Link : TFhirBackboneElementList; Overload;
     function Clone : TFhirBackboneElementList; Overload;
     function GetEnumerator : TFhirBackboneElementListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirBackboneElement to the end of the list.
     function Append : TFhirBackboneElement;
@@ -2644,8 +2632,7 @@ Type
     constructor Create(system : String; value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirEnum; Overload;
+      Function Link : TFhirEnum; Overload;
     Function Clone : TFhirEnum; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
@@ -2653,8 +2640,7 @@ Type
     function isEmpty : boolean; override;
     function isEnum : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the enum
     property value : String read FValue write SetValue;
     property system : String read FSystem write FSystem;
@@ -2689,12 +2675,10 @@ Type
 
     constructor Create(Systems, Codes : Array Of String);
 
-    {!script hide}
-    function Link : TFhirEnumList; Overload;
+      function Link : TFhirEnumList; Overload;
     function Clone : TFhirEnumList; Overload;
     function GetEnumerator : TFhirEnumListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirEnum to the end of the list.
     function Append : TFhirEnum;
@@ -2753,16 +2737,14 @@ Type
     constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirDate; Overload;
+      Function Link : TFhirDate; Overload;
     Function Clone : TFhirDate; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the date
     property value : TDateTimeEx read FValue write SetValue;
   End;    
@@ -2790,12 +2772,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDateList; Overload;
+      function Link : TFhirDateList; Overload;
     function Clone : TFhirDateList; Overload;
     function GetEnumerator : TFhirDateListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDate to the end of the list.
     function Append : TFhirDate;
@@ -2854,16 +2834,14 @@ Type
     constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirDateTime; Overload;
+      Function Link : TFhirDateTime; Overload;
     Function Clone : TFhirDateTime; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the dateTime
     property value : TDateTimeEx read FValue write SetValue;
   End;    
@@ -2891,12 +2869,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDateTimeList; Overload;
+      function Link : TFhirDateTimeList; Overload;
     function Clone : TFhirDateTimeList; Overload;
     function GetEnumerator : TFhirDateTimeListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDateTime to the end of the list.
     function Append : TFhirDateTime;
@@ -2955,16 +2931,14 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirString; Overload;
+      Function Link : TFhirString; Overload;
     Function Clone : TFhirString; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the string
     property value : String read FValue write SetValue;
   End;    
@@ -2992,12 +2966,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirStringList; Overload;
+      function Link : TFhirStringList; Overload;
     function Clone : TFhirStringList; Overload;
     function GetEnumerator : TFhirStringListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirString to the end of the list.
     function Append : TFhirString;
@@ -3056,16 +3028,14 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirInteger; Overload;
+      Function Link : TFhirInteger; Overload;
     Function Clone : TFhirInteger; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the integer
     property value : String read FValue write SetValue;
   End;    
@@ -3093,12 +3063,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirIntegerList; Overload;
+      function Link : TFhirIntegerList; Overload;
     function Clone : TFhirIntegerList; Overload;
     function GetEnumerator : TFhirIntegerListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirInteger to the end of the list.
     function Append : TFhirInteger;
@@ -3157,16 +3125,14 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirUri; Overload;
+      Function Link : TFhirUri; Overload;
     Function Clone : TFhirUri; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the uri
     property value : String read FValue write SetValue;
   End;    
@@ -3194,12 +3160,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirUriList; Overload;
+      function Link : TFhirUriList; Overload;
     function Clone : TFhirUriList; Overload;
     function GetEnumerator : TFhirUriListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirUri to the end of the list.
     function Append : TFhirUri;
@@ -3258,16 +3222,14 @@ Type
     constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirInstant; Overload;
+      Function Link : TFhirInstant; Overload;
     Function Clone : TFhirInstant; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the instant
     property value : TDateTimeEx read FValue write SetValue;
   End;    
@@ -3295,12 +3257,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirInstantList; Overload;
+      function Link : TFhirInstantList; Overload;
     function Clone : TFhirInstantList; Overload;
     function GetEnumerator : TFhirInstantListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirInstant to the end of the list.
     function Append : TFhirInstant;
@@ -3359,16 +3319,14 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirXhtml; Overload;
+      Function Link : TFhirXhtml; Overload;
     Function Clone : TFhirXhtml; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the xhtml
     property value : String read FValue write SetValue;
   End;    
@@ -3396,12 +3354,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirXhtmlList; Overload;
+      function Link : TFhirXhtmlList; Overload;
     function Clone : TFhirXhtmlList; Overload;
     function GetEnumerator : TFhirXhtmlListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirXhtml to the end of the list.
     function Append : TFhirXhtml;
@@ -3460,16 +3416,14 @@ Type
     constructor Create(value : Boolean); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirBoolean; Overload;
+      Function Link : TFhirBoolean; Overload;
     Function Clone : TFhirBoolean; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the boolean
     property value : Boolean read FValue write SetValue;
   End;    
@@ -3497,12 +3451,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirBooleanList; Overload;
+      function Link : TFhirBooleanList; Overload;
     function Clone : TFhirBooleanList; Overload;
     function GetEnumerator : TFhirBooleanListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirBoolean to the end of the list.
     function Append : TFhirBoolean;
@@ -3561,16 +3513,14 @@ Type
     constructor Create(value : TBytes); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirBase64Binary; Overload;
+      Function Link : TFhirBase64Binary; Overload;
     Function Clone : TFhirBase64Binary; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the base64Binary
     property value : TBytes read FValue write SetValue;
   End;    
@@ -3598,12 +3548,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirBase64BinaryList; Overload;
+      function Link : TFhirBase64BinaryList; Overload;
     function Clone : TFhirBase64BinaryList; Overload;
     function GetEnumerator : TFhirBase64BinaryListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirBase64Binary to the end of the list.
     function Append : TFhirBase64Binary;
@@ -3662,16 +3610,14 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirTime; Overload;
+      Function Link : TFhirTime; Overload;
     Function Clone : TFhirTime; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the time
     property value : String read FValue write SetValue;
   End;    
@@ -3699,12 +3645,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirTimeList; Overload;
+      function Link : TFhirTimeList; Overload;
     function Clone : TFhirTimeList; Overload;
     function GetEnumerator : TFhirTimeListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirTime to the end of the list.
     function Append : TFhirTime;
@@ -3763,16 +3707,14 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirDecimal; Overload;
+      Function Link : TFhirDecimal; Overload;
     Function Clone : TFhirDecimal; Overload;
     procedure Assign(oSource : TFslObject); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function fhirType : string; override;
-    {!script show}
-  Published
+    Published
     // The actual value of the decimal
     property value : String read FValue write SetValue;
   End;    
@@ -3800,12 +3742,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDecimalList; Overload;
+      function Link : TFhirDecimalList; Overload;
     function Clone : TFhirDecimalList; Overload;
     function GetEnumerator : TFhirDecimalListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDecimal to the end of the list.
     function Append : TFhirDecimal;
@@ -3857,12 +3797,10 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirCode; Overload;
+      Function Link : TFhirCode; Overload;
     Function Clone : TFhirCode; Overload;
     function fhirType : string; override;
-    {!script show}
-  End;    
+    End;    
 
 
   TFhirCodeListEnumerator = class (TFslObject)
@@ -3887,12 +3825,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirCodeList; Overload;
+      function Link : TFhirCodeList; Overload;
     function Clone : TFhirCodeList; Overload;
     function GetEnumerator : TFhirCodeListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirCode to the end of the list.
     function Append : TFhirCode;
@@ -3944,12 +3880,10 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirOid; Overload;
+      Function Link : TFhirOid; Overload;
     Function Clone : TFhirOid; Overload;
     function fhirType : string; override;
-    {!script show}
-  End;    
+    End;    
 
 
   TFhirOidListEnumerator = class (TFslObject)
@@ -3974,12 +3908,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirOidList; Overload;
+      function Link : TFhirOidList; Overload;
     function Clone : TFhirOidList; Overload;
     function GetEnumerator : TFhirOidListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirOid to the end of the list.
     function Append : TFhirOid;
@@ -4031,12 +3963,10 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirUuid; Overload;
+      Function Link : TFhirUuid; Overload;
     Function Clone : TFhirUuid; Overload;
     function fhirType : string; override;
-    {!script show}
-  End;    
+    End;    
 
 
   TFhirUuidListEnumerator = class (TFslObject)
@@ -4061,12 +3991,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirUuidList; Overload;
+      function Link : TFhirUuidList; Overload;
     function Clone : TFhirUuidList; Overload;
     function GetEnumerator : TFhirUuidListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirUuid to the end of the list.
     function Append : TFhirUuid;
@@ -4118,12 +4046,10 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirMarkdown; Overload;
+      Function Link : TFhirMarkdown; Overload;
     Function Clone : TFhirMarkdown; Overload;
     function fhirType : string; override;
-    {!script show}
-  End;    
+    End;    
 
 
   TFhirMarkdownListEnumerator = class (TFslObject)
@@ -4148,12 +4074,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirMarkdownList; Overload;
+      function Link : TFhirMarkdownList; Overload;
     function Clone : TFhirMarkdownList; Overload;
     function GetEnumerator : TFhirMarkdownListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirMarkdown to the end of the list.
     function Append : TFhirMarkdown;
@@ -4205,12 +4129,10 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirUnsignedInt; Overload;
+      Function Link : TFhirUnsignedInt; Overload;
     Function Clone : TFhirUnsignedInt; Overload;
     function fhirType : string; override;
-    {!script show}
-  End;    
+    End;    
 
 
   TFhirUnsignedIntListEnumerator = class (TFslObject)
@@ -4235,12 +4157,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirUnsignedIntList; Overload;
+      function Link : TFhirUnsignedIntList; Overload;
     function Clone : TFhirUnsignedIntList; Overload;
     function GetEnumerator : TFhirUnsignedIntListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirUnsignedInt to the end of the list.
     function Append : TFhirUnsignedInt;
@@ -4292,12 +4212,10 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirId; Overload;
+      Function Link : TFhirId; Overload;
     Function Clone : TFhirId; Overload;
     function fhirType : string; override;
-    {!script show}
-  End;    
+    End;    
 
 
   TFhirIdListEnumerator = class (TFslObject)
@@ -4322,12 +4240,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirIdList; Overload;
+      function Link : TFhirIdList; Overload;
     function Clone : TFhirIdList; Overload;
     function GetEnumerator : TFhirIdListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirId to the end of the list.
     function Append : TFhirId;
@@ -4379,12 +4295,10 @@ Type
     constructor Create(value : String); overload;
     Destructor Destroy; override;
     
-    {!script hide}
-    Function Link : TFhirPositiveInt; Overload;
+      Function Link : TFhirPositiveInt; Overload;
     Function Clone : TFhirPositiveInt; Overload;
     function fhirType : string; override;
-    {!script show}
-  End;    
+    End;    
 
 
   TFhirPositiveIntListEnumerator = class (TFslObject)
@@ -4409,12 +4323,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirPositiveIntList; Overload;
+      function Link : TFhirPositiveIntList; Overload;
     function Clone : TFhirPositiveIntList; Overload;
     function GetEnumerator : TFhirPositiveIntListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirPositiveInt to the end of the list.
     function Append : TFhirPositiveInt;
@@ -4473,8 +4385,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirExtension; overload;
     function Clone : TFhirExtension; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4487,8 +4398,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to Source of the definition for the extension code - a logical name or a URL.
     property url : String read GetUrlST write SetUrlST;
     // Source of the definition for the extension code - a logical name or a URL.
@@ -4524,12 +4434,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirExtensionList; Overload;
+      function Link : TFhirExtensionList; Overload;
     function Clone : TFhirExtensionList; Overload;
     function GetEnumerator : TFhirExtensionListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirExtension to the end of the list.
     function Append : TFhirExtension;
@@ -4584,8 +4492,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirNarrative; overload;
     function Clone : TFhirNarrative; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4598,8 +4505,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // The status of the narrative - whether it's entirely generated (from just the defined data or the extensions too), or whether a human authored it and it may contain additional data.
     property status : TFhirNarrativeStatusEnum read GetStatusST write SetStatusST;
     property statusElement : TFhirEnum read FStatus write SetStatus;
@@ -4634,12 +4540,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirNarrativeList; Overload;
+      function Link : TFhirNarrativeList; Overload;
     function Clone : TFhirNarrativeList; Overload;
     function GetEnumerator : TFhirNarrativeListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirNarrative to the end of the list.
     function Append : TFhirNarrative;
@@ -4699,8 +4603,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirContributor; overload;
     function Clone : TFhirContributor; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4713,8 +4616,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // The type of contributor.
     property type_ : TFhirContributorTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -4753,12 +4655,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirContributorList; Overload;
+      function Link : TFhirContributorList; Overload;
     function Clone : TFhirContributorList; Overload;
     function GetEnumerator : TFhirContributorListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirContributor to the end of the list.
     function Append : TFhirContributor;
@@ -4839,8 +4739,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAttachment; overload;
     function Clone : TFhirAttachment; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -4853,8 +4752,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to Identifies the type of the data in the attachment and allows a method to be chosen to interpret or render the data. Includes mime type parameters such as charset where appropriate.
     property contentType : String read GetContentTypeST write SetContentTypeST;
     // Identifies the type of the data in the attachment and allows a method to be chosen to interpret or render the data. Includes mime type parameters such as charset where appropriate.
@@ -4920,12 +4818,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirAttachmentList; Overload;
+      function Link : TFhirAttachmentList; Overload;
     function Clone : TFhirAttachmentList; Overload;
     function GetEnumerator : TFhirAttachmentListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirAttachment to the end of the list.
     function Append : TFhirAttachment;
@@ -4989,8 +4885,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDataRequirementCodeFilter; overload;
     function Clone : TFhirDataRequirementCodeFilter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5003,8 +4898,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The code-valued attribute of the filter. The specified path must be resolvable from the type of the required data. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements. Note that the index must be an integer constant. The path must resolve to an element of type code, Coding, or CodeableConcept.
     property path : String read GetPathST write SetPathST;
     // The code-valued attribute of the filter. The specified path must be resolvable from the type of the required data. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements. Note that the index must be an integer constant. The path must resolve to an element of type code, Coding, or CodeableConcept.
@@ -5052,12 +4946,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDataRequirementCodeFilterList; Overload;
+      function Link : TFhirDataRequirementCodeFilterList; Overload;
     function Clone : TFhirDataRequirementCodeFilterList; Overload;
     function GetEnumerator : TFhirDataRequirementCodeFilterListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDataRequirementCodeFilter to the end of the list.
     function Append : TFhirDataRequirementCodeFilter;
@@ -5112,8 +5004,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDataRequirementDateFilter; overload;
     function Clone : TFhirDataRequirementDateFilter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5126,8 +5017,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The date-valued attribute of the filter. The specified path must be resolvable from the type of the required data. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements. Note that the index must be an integer constant. The path must resolve to an element of type dateTime, Period, Schedule, or Timing.
     property path : String read GetPathST write SetPathST;
     // The date-valued attribute of the filter. The specified path must be resolvable from the type of the required data. The path is allowed to contain qualifiers (.) to traverse sub-elements, as well as indexers ([x]) to traverse multiple-cardinality sub-elements. Note that the index must be an integer constant. The path must resolve to an element of type dateTime, Period, Schedule, or Timing.
@@ -5163,12 +5053,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDataRequirementDateFilterList; Overload;
+      function Link : TFhirDataRequirementDateFilterList; Overload;
     function Clone : TFhirDataRequirementDateFilterList; Overload;
     function GetEnumerator : TFhirDataRequirementDateFilterListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDataRequirementDateFilter to the end of the list.
     function Append : TFhirDataRequirementDateFilter;
@@ -5233,8 +5121,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDataRequirement; overload;
     function Clone : TFhirDataRequirement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5247,8 +5134,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // The type of the required data, specified as the type name of a resource. For profiles, this value is set to the type of the base resource of the profile.
     property type_ : TFhirAllTypesEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -5294,12 +5180,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDataRequirementList; Overload;
+      function Link : TFhirDataRequirementList; Overload;
     function Clone : TFhirDataRequirementList; Overload;
     function GetEnumerator : TFhirDataRequirementListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDataRequirement to the end of the list.
     function Append : TFhirDataRequirement;
@@ -5383,8 +5267,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDosage; overload;
     function Clone : TFhirDosage; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5397,8 +5280,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to Indicates the order in which the dosage instructions should be applied or interpreted.
     property sequence : String read GetSequenceST write SetSequenceST;
     // Indicates the order in which the dosage instructions should be applied or interpreted.
@@ -5493,12 +5375,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDosageList; Overload;
+      function Link : TFhirDosageList; Overload;
     function Clone : TFhirDosageList; Overload;
     function GetEnumerator : TFhirDosageListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDosage to the end of the list.
     function Append : TFhirDosage;
@@ -5565,8 +5445,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirIdentifier; overload;
     function Clone : TFhirIdentifier; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5579,8 +5458,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // The purpose of this identifier.
     property use : TFhirIdentifierUseEnum read GetUseST write SetUseST;
     property useElement : TFhirEnum read FUse write SetUse;
@@ -5635,12 +5513,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirIdentifierList; Overload;
+      function Link : TFhirIdentifierList; Overload;
     function Clone : TFhirIdentifierList; Overload;
     function GetEnumerator : TFhirIdentifierListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirIdentifier to the end of the list.
     function Append : TFhirIdentifier;
@@ -5709,8 +5585,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCoding; overload;
     function Clone : TFhirCoding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5723,8 +5598,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The identification of the code system that defines the meaning of the symbol in the code.
     property system : String read GetSystemST write SetSystemST;
     // The identification of the code system that defines the meaning of the symbol in the code.
@@ -5775,12 +5649,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirCodingList; Overload;
+      function Link : TFhirCodingList; Overload;
     function Clone : TFhirCodingList; Overload;
     function GetEnumerator : TFhirCodingListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirCoding to the end of the list.
     function Append : TFhirCoding;
@@ -5855,8 +5727,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSampledData; overload;
     function Clone : TFhirSampledData; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -5869,8 +5740,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The base quantity that a measured value of zero represents. In addition, this provides the units of the entire measurement series. (defined for API consistency)
     property origin : TFhirQuantity read FOrigin write SetOrigin;
     // The base quantity that a measured value of zero represents. In addition, this provides the units of the entire measurement series.
@@ -5931,12 +5801,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirSampledDataList; Overload;
+      function Link : TFhirSampledDataList; Overload;
     function Clone : TFhirSampledDataList; Overload;
     function GetEnumerator : TFhirSampledDataListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirSampledData to the end of the list.
     function Append : TFhirSampledData;
@@ -5989,8 +5857,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirRatio; overload;
     function Clone : TFhirRatio; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6003,8 +5870,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The value of the numerator. (defined for API consistency)
     property numerator : TFhirQuantity read FNumerator write SetNumerator;
     // The value of the numerator.
@@ -6040,12 +5906,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirRatioList; Overload;
+      function Link : TFhirRatioList; Overload;
     function Clone : TFhirRatioList; Overload;
     function GetEnumerator : TFhirRatioListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirRatio to the end of the list.
     function Append : TFhirRatio;
@@ -6104,8 +5968,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirReference; overload;
     function Clone : TFhirReference; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6118,8 +5981,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to A reference to a location at which the other resource is found. The reference may be a relative reference, in which case it is relative to the service base URL, or an absolute URL that resolves to the location where the resource is found. The reference may be version specific or not. If the reference is not to a FHIR RESTful server, then it should be assumed to be version specific. Internal fragment references (start with '#') refer to contained resources.
     property reference : String read GetReferenceST write SetReferenceST;
     // A reference to a location at which the other resource is found. The reference may be a relative reference, in which case it is relative to the service base URL, or an absolute URL that resolves to the location where the resource is found. The reference may be version specific or not. If the reference is not to a FHIR RESTful server, then it should be assumed to be version specific. Internal fragment references (start with '#') refer to contained resources.
@@ -6160,12 +6022,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirReferenceList; Overload;
+      function Link : TFhirReferenceList; Overload;
     function Clone : TFhirReferenceList; Overload;
     function GetEnumerator : TFhirReferenceListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirReference to the end of the list.
     function Append : TFhirReference;
@@ -6226,8 +6086,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirTriggerDefinition; overload;
     function Clone : TFhirTriggerDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6240,8 +6099,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // The type of triggering event.
     property type_ : TFhirTriggerTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -6286,12 +6144,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirTriggerDefinitionList; Overload;
+      function Link : TFhirTriggerDefinitionList; Overload;
     function Clone : TFhirTriggerDefinitionList; Overload;
     function GetEnumerator : TFhirTriggerDefinitionListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirTriggerDefinition to the end of the list.
     function Append : TFhirTriggerDefinition;
@@ -6348,8 +6204,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPeriod; overload;
     function Clone : TFhirPeriod; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6362,8 +6217,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The start of the period. The boundary is inclusive.
     property start : TDateTimeEx read GetStartST write SetStartST;
     // The start of the period. The boundary is inclusive.
@@ -6399,12 +6253,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirPeriodList; Overload;
+      function Link : TFhirPeriodList; Overload;
     function Clone : TFhirPeriodList; Overload;
     function GetEnumerator : TFhirPeriodListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirPeriod to the end of the list.
     function Append : TFhirPeriod;
@@ -6473,8 +6325,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQuantity; overload;
     function Clone : TFhirQuantity; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6487,8 +6338,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The value of the measured amount. The value includes an implicit precision in the presentation of the value.
     property value : String read GetValueST write SetValueST;
     // The value of the measured amount. The value includes an implicit precision in the presentation of the value.
@@ -6538,12 +6388,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirQuantityList; Overload;
+      function Link : TFhirQuantityList; Overload;
     function Clone : TFhirQuantityList; Overload;
     function GetEnumerator : TFhirQuantityListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirQuantity to the end of the list.
     function Append : TFhirQuantity;
@@ -6596,8 +6444,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirRange; overload;
     function Clone : TFhirRange; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6610,8 +6457,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The low limit. The boundary is inclusive. (defined for API consistency)
     property low : TFhirQuantity read FLow write SetLow;
     // The low limit. The boundary is inclusive.
@@ -6647,12 +6493,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirRangeList; Overload;
+      function Link : TFhirRangeList; Overload;
     function Clone : TFhirRangeList; Overload;
     function GetEnumerator : TFhirRangeListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirRange to the end of the list.
     function Append : TFhirRange;
@@ -6721,8 +6565,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirRelatedArtifact; overload;
     function Clone : TFhirRelatedArtifact; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6735,8 +6578,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // The type of relationship to the related artifact.
     property type_ : TFhirRelatedArtifactTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -6791,12 +6633,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirRelatedArtifactList; Overload;
+      function Link : TFhirRelatedArtifactList; Overload;
     function Clone : TFhirRelatedArtifactList; Overload;
     function GetEnumerator : TFhirRelatedArtifactListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirRelatedArtifact to the end of the list.
     function Append : TFhirRelatedArtifact;
@@ -6855,8 +6695,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAnnotation; overload;
     function Clone : TFhirAnnotation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6869,8 +6708,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The individual responsible for making the annotation. (defined for API consistency)
     property author : TFhirType read FAuthor write SetAuthor;
     // The individual responsible for making the annotation.
@@ -6911,12 +6749,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirAnnotationList; Overload;
+      function Link : TFhirAnnotationList; Overload;
     function Clone : TFhirAnnotationList; Overload;
     function GetEnumerator : TFhirAnnotationListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirAnnotation to the end of the list.
     function Append : TFhirAnnotation;
@@ -6972,8 +6808,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirContactDetail; overload;
     function Clone : TFhirContactDetail; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -6986,8 +6821,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The name of an individual to contact.
     property name : String read GetNameST write SetNameST;
     // The name of an individual to contact.
@@ -7022,12 +6856,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirContactDetailList; Overload;
+      function Link : TFhirContactDetailList; Overload;
     function Clone : TFhirContactDetailList; Overload;
     function GetEnumerator : TFhirContactDetailListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirContactDetail to the end of the list.
     function Append : TFhirContactDetail;
@@ -7080,8 +6912,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirUsageContext; overload;
     function Clone : TFhirUsageContext; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7094,8 +6925,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to A code that identifies the type of context being specified by this usage context. (defined for API consistency)
     property code : TFhirCoding read FCode write SetCode;
     // A code that identifies the type of context being specified by this usage context.
@@ -7131,12 +6961,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirUsageContextList; Overload;
+      function Link : TFhirUsageContextList; Overload;
     function Clone : TFhirUsageContextList; Overload;
     function GetEnumerator : TFhirUsageContextListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirUsageContext to the end of the list.
     function Append : TFhirUsageContext;
@@ -7204,8 +7032,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSignature; overload;
     function Clone : TFhirSignature; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7218,8 +7045,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // An indication of the reason that the entity signed this document. This may be explicitly included as part of the signature information and can be used when determining accountability for various actions concerning the document.
     property type_List : TFhirCodingList read GetType_List;
     property hasType_List : boolean read GetHasType_List;
@@ -7274,12 +7100,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirSignatureList; Overload;
+      function Link : TFhirSignatureList; Overload;
     function Clone : TFhirSignatureList; Overload;
     function GetEnumerator : TFhirSignatureListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirSignature to the end of the list.
     function Append : TFhirSignature;
@@ -7335,8 +7159,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCodeableConcept; overload;
     function Clone : TFhirCodeableConcept; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7349,8 +7172,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // A reference to a code defined by a terminology system.
     property codingList : TFhirCodingList read GetCodingList;
     property hasCodingList : boolean read GetHasCodingList;
@@ -7385,12 +7207,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirCodeableConceptList; Overload;
+      function Link : TFhirCodeableConceptList; Overload;
     function Clone : TFhirCodeableConceptList; Overload;
     function GetEnumerator : TFhirCodeableConceptListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirCodeableConcept to the end of the list.
     function Append : TFhirCodeableConcept;
@@ -7465,8 +7285,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirParameterDefinition; overload;
     function Clone : TFhirParameterDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7479,8 +7298,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The name of the parameter used to allow access to the value of the parameter in evaluation contexts.
     property name : String read GetNameST write SetNameST;
     // The name of the parameter used to allow access to the value of the parameter in evaluation contexts.
@@ -7539,12 +7357,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirParameterDefinitionList; Overload;
+      function Link : TFhirParameterDefinitionList; Overload;
     function Clone : TFhirParameterDefinitionList; Overload;
     function GetEnumerator : TFhirParameterDefinitionListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirParameterDefinition to the end of the list.
     function Append : TFhirParameterDefinition;
@@ -7611,8 +7427,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirContactPoint; overload;
     function Clone : TFhirContactPoint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7625,8 +7440,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Telecommunications form for contact point - what communications system is required to make use of the contact.
     property system : TFhirContactPointSystemEnum read GetSystemST write SetSystemST;
     property systemElement : TFhirEnum read FSystem write SetSystem;
@@ -7675,12 +7489,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirContactPointList; Overload;
+      function Link : TFhirContactPointList; Overload;
     function Clone : TFhirContactPointList; Overload;
     function GetEnumerator : TFhirContactPointListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirContactPoint to the end of the list.
     function Append : TFhirContactPoint;
@@ -7752,8 +7564,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirHumanName; overload;
     function Clone : TFhirHumanName; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7766,8 +7577,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Identifies the purpose for this name.
     property use : TFhirNameUseEnum read GetUseST write SetUseST;
     property useElement : TFhirEnum read FUse write SetUse;
@@ -7824,12 +7634,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirHumanNameList; Overload;
+      function Link : TFhirHumanNameList; Overload;
     function Clone : TFhirHumanNameList; Overload;
     function GetEnumerator : TFhirHumanNameListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirHumanName to the end of the list.
     function Append : TFhirHumanName;
@@ -7895,8 +7703,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMeta; overload;
     function Clone : TFhirMeta; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -7909,8 +7716,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The version specific identifier, as it appears in the version portion of the URL. This values changes when the resource is created, updated, or deleted.
     property versionId : String read GetVersionIdST write SetVersionIdST;
     // The version specific identifier, as it appears in the version portion of the URL. This values changes when the resource is created, updated, or deleted.
@@ -7958,12 +7764,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirMetaList; Overload;
+      function Link : TFhirMetaList; Overload;
     function Clone : TFhirMetaList; Overload;
     function GetEnumerator : TFhirMetaListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirMeta to the end of the list.
     function Append : TFhirMeta;
@@ -8049,8 +7853,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAddress; overload;
     function Clone : TFhirAddress; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8063,8 +7866,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // The purpose of this address.
     property use : TFhirAddressUseEnum read GetUseST write SetUseST;
     property useElement : TFhirEnum read FUse write SetUse;
@@ -8137,12 +7939,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirAddressList; Overload;
+      function Link : TFhirAddressList; Overload;
     function Clone : TFhirAddressList; Overload;
     function GetEnumerator : TFhirAddressListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirAddress to the end of the list.
     function Append : TFhirAddress;
@@ -8206,8 +8006,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionSlicing; overload;
     function Clone : TFhirElementDefinitionSlicing; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8220,8 +8019,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Designates which child elements are used to discriminate between the slices when processing an instance. If one or more discriminators are provided, the value of the child elements in the instance data SHALL completely distinguish which slice the element in the resource matches based on the allowed values for those elements in each of the slices.
     property discriminatorList : TFhirElementDefinitionSlicingDiscriminatorList read GetDiscriminatorList;
     property hasDiscriminatorList : boolean read GetHasDiscriminatorList;
@@ -8265,12 +8063,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionSlicingList; Overload;
+      function Link : TFhirElementDefinitionSlicingList; Overload;
     function Clone : TFhirElementDefinitionSlicingList; Overload;
     function GetEnumerator : TFhirElementDefinitionSlicingListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinitionSlicing to the end of the list.
     function Append : TFhirElementDefinitionSlicing;
@@ -8327,8 +8123,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionSlicingDiscriminator; overload;
     function Clone : TFhirElementDefinitionSlicingDiscriminator; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8341,8 +8136,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // How the element value is interpreted when discrimination is evaluated.
     property type_ : TFhirDiscriminatorTypeEnum read GetType_ST write SetType_ST;
     property type_Element : TFhirEnum read FType_ write SetType_;
@@ -8377,12 +8171,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionSlicingDiscriminatorList; Overload;
+      function Link : TFhirElementDefinitionSlicingDiscriminatorList; Overload;
     function Clone : TFhirElementDefinitionSlicingDiscriminatorList; Overload;
     function GetEnumerator : TFhirElementDefinitionSlicingDiscriminatorListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinitionSlicingDiscriminator to the end of the list.
     function Append : TFhirElementDefinitionSlicingDiscriminator;
@@ -8443,8 +8235,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionBase; overload;
     function Clone : TFhirElementDefinitionBase; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8457,8 +8248,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The Path that identifies the base element - this matches the ElementDefinition.path for that element. Across FHIR, there is only one base definition of any element - that is, an element definition on a [StructureDefinition](structuredefinition.html#) without a StructureDefinition.base.
     property path : String read GetPathST write SetPathST;
     // The Path that identifies the base element - this matches the ElementDefinition.path for that element. Across FHIR, there is only one base definition of any element - that is, an element definition on a [StructureDefinition](structuredefinition.html#) without a StructureDefinition.base.
@@ -8499,12 +8289,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionBaseList; Overload;
+      function Link : TFhirElementDefinitionBaseList; Overload;
     function Clone : TFhirElementDefinitionBaseList; Overload;
     function GetEnumerator : TFhirElementDefinitionBaseListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinitionBase to the end of the list.
     function Append : TFhirElementDefinitionBase;
@@ -8574,8 +8362,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionType; overload;
     function Clone : TFhirElementDefinitionType; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8588,8 +8375,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to URL of Data type or Resource that is a(or the) type used for this element. References are URLs that are relative to http://hl7.org/fhir/StructureDefinition e.g. "string" is a reference to http://hl7.org/fhir/StructureDefinition/string. Absolute URLs are only allowed in logical models.
     property code : String read GetCodeST write SetCodeST;
     // URL of Data type or Resource that is a(or the) type used for this element. References are URLs that are relative to http://hl7.org/fhir/StructureDefinition e.g. "string" is a reference to http://hl7.org/fhir/StructureDefinition/string. Absolute URLs are only allowed in logical models.
@@ -8638,12 +8424,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionTypeList; Overload;
+      function Link : TFhirElementDefinitionTypeList; Overload;
     function Clone : TFhirElementDefinitionTypeList; Overload;
     function GetEnumerator : TFhirElementDefinitionTypeListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinitionType to the end of the list.
     function Append : TFhirElementDefinitionType;
@@ -8698,8 +8482,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionExample; overload;
     function Clone : TFhirElementDefinitionExample; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8712,8 +8495,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to Describes the purpose of this example amoung the set of examples.
     property label_ : String read GetLabel_ST write SetLabel_ST;
     // Describes the purpose of this example amoung the set of examples.
@@ -8749,12 +8531,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionExampleList; Overload;
+      function Link : TFhirElementDefinitionExampleList; Overload;
     function Clone : TFhirElementDefinitionExampleList; Overload;
     function GetEnumerator : TFhirElementDefinitionExampleListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinitionExample to the end of the list.
     function Append : TFhirElementDefinitionExample;
@@ -8831,8 +8611,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionConstraint; overload;
     function Clone : TFhirElementDefinitionConstraint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8845,8 +8624,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to Allows identification of which elements have their cardinalities impacted by the constraint.  Will not be referenced for constraints that do not affect cardinality.
     property key : String read GetKeyST write SetKeyST;
     // Allows identification of which elements have their cardinalities impacted by the constraint.  Will not be referenced for constraints that do not affect cardinality.
@@ -8906,12 +8684,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionConstraintList; Overload;
+      function Link : TFhirElementDefinitionConstraintList; Overload;
     function Clone : TFhirElementDefinitionConstraintList; Overload;
     function GetEnumerator : TFhirElementDefinitionConstraintListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinitionConstraint to the end of the list.
     function Append : TFhirElementDefinitionConstraint;
@@ -8970,8 +8746,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionBinding; overload;
     function Clone : TFhirElementDefinitionBinding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -8984,8 +8759,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Indicates the degree of conformance expectations associated with this binding - that is, the degree to which the provided value set must be adhered to in the instances.
     property strength : TFhirBindingStrengthEnum read GetStrengthST write SetStrengthST;
     property strengthElement : TFhirEnum read FStrength write SetStrength;
@@ -9025,12 +8799,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionBindingList; Overload;
+      function Link : TFhirElementDefinitionBindingList; Overload;
     function Clone : TFhirElementDefinitionBindingList; Overload;
     function GetEnumerator : TFhirElementDefinitionBindingListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinitionBinding to the end of the list.
     function Append : TFhirElementDefinitionBinding;
@@ -9095,8 +8867,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinitionMapping; overload;
     function Clone : TFhirElementDefinitionMapping; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9109,8 +8880,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to An internal reference to the definition of a mapping.
     property identity : String read GetIdentityST write SetIdentityST;
     // An internal reference to the definition of a mapping.
@@ -9156,12 +8926,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionMappingList; Overload;
+      function Link : TFhirElementDefinitionMappingList; Overload;
     function Clone : TFhirElementDefinitionMappingList; Overload;
     function GetEnumerator : TFhirElementDefinitionMappingListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinitionMapping to the end of the list.
     function Append : TFhirElementDefinitionMapping;
@@ -9316,8 +9084,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirElementDefinition; overload;
     function Clone : TFhirElementDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9330,8 +9097,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to The path identifies the element and is expressed as a "."-separated list of ancestor elements, beginning with the name of the resource or extension.
     property path : String read GetPathST write SetPathST;
     // The path identifies the element and is expressed as a "."-separated list of ancestor elements, beginning with the name of the resource or extension.
@@ -9509,12 +9275,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirElementDefinitionList; Overload;
+      function Link : TFhirElementDefinitionList; Overload;
     function Clone : TFhirElementDefinitionList; Overload;
     function GetEnumerator : TFhirElementDefinitionListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirElementDefinition to the end of the list.
     function Append : TFhirElementDefinition;
@@ -9622,8 +9386,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirTimingRepeat; overload;
     function Clone : TFhirTimingRepeat; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9636,8 +9399,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Typed access to Either a duration for the length of the timing schedule, a range of possible length, or outer bounds for start and/or end limits of the timing schedule. (defined for API consistency)
     property bounds : TFhirType read FBounds write SetBounds;
     // Either a duration for the length of the timing schedule, a range of possible length, or outer bounds for start and/or end limits of the timing schedule.
@@ -9733,12 +9495,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirTimingRepeatList; Overload;
+      function Link : TFhirTimingRepeatList; Overload;
     function Clone : TFhirTimingRepeatList; Overload;
     function GetEnumerator : TFhirTimingRepeatListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirTimingRepeat to the end of the list.
     function Append : TFhirTimingRepeat;
@@ -9794,8 +9554,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirTiming; overload;
     function Clone : TFhirTiming; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9808,8 +9567,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
     // Identifies specific times when the event occurs.
     property eventList : TFhirDateTimeList read GetEventList;
     property hasEventList : boolean read GetHasEventList;
@@ -9849,12 +9607,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirTimingList; Overload;
+      function Link : TFhirTimingList; Overload;
     function Clone : TFhirTimingList; Overload;
     function GetEnumerator : TFhirTimingListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirTiming to the end of the list.
     function Append : TFhirTiming;
@@ -9903,8 +9659,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCount; overload;
     function Clone : TFhirCount; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -9917,8 +9672,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
   end;
 
 
@@ -9944,12 +9698,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirCountList; Overload;
+      function Link : TFhirCountList; Overload;
     function Clone : TFhirCountList; Overload;
     function GetEnumerator : TFhirCountListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirCount to the end of the list.
     function Append : TFhirCount;
@@ -9998,8 +9750,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMoney; overload;
     function Clone : TFhirMoney; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10012,8 +9763,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
   end;
 
 
@@ -10039,12 +9789,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirMoneyList; Overload;
+      function Link : TFhirMoneyList; Overload;
     function Clone : TFhirMoneyList; Overload;
     function GetEnumerator : TFhirMoneyListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirMoney to the end of the list.
     function Append : TFhirMoney;
@@ -10093,8 +9841,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAge; overload;
     function Clone : TFhirAge; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10107,8 +9854,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
   end;
 
 
@@ -10134,12 +9880,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirAgeList; Overload;
+      function Link : TFhirAgeList; Overload;
     function Clone : TFhirAgeList; Overload;
     function GetEnumerator : TFhirAgeListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirAge to the end of the list.
     function Append : TFhirAge;
@@ -10188,8 +9932,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDistance; overload;
     function Clone : TFhirDistance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10202,8 +9945,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
   end;
 
 
@@ -10229,12 +9971,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDistanceList; Overload;
+      function Link : TFhirDistanceList; Overload;
     function Clone : TFhirDistanceList; Overload;
     function GetEnumerator : TFhirDistanceListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDistance to the end of the list.
     function Append : TFhirDistance;
@@ -10283,8 +10023,7 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDuration; overload;
     function Clone : TFhirDuration; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
@@ -10297,8 +10036,7 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    {!script show}
-  published
+    published
   end;
 
 
@@ -10324,12 +10062,10 @@ Type
     function ItemClass : TFslObjectClass; override;
   public
 
-    {!script hide}
-    function Link : TFhirDurationList; Overload;
+      function Link : TFhirDurationList; Overload;
     function Clone : TFhirDurationList; Overload;
     function GetEnumerator : TFhirDurationListEnumerator;
-    {!script show}
-    
+      
 
     //  Add a FhirDuration to the end of the list.
     function Append : TFhirDuration;
@@ -37739,12 +37475,12 @@ begin
     result := obj as TFHIRBase64Binary
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRBase64Binary.create(unBase64(TFHIRMMElement(obj).value));
+    result := TFHIRBase64Binary.create(DecodeBase64(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRBase64Binary.create(unBase64(TFHIRObject(obj).primitiveValue));
+    result := TFHIRBase64Binary.create(DecodeBase64(TFHIRObject(obj).primitiveValue));
     obj.Free;
   end
   else

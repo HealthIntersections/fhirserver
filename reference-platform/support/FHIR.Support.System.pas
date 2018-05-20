@@ -31,8 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, {$ELSE} Windows, ShellApi, ShlObj, {$ENDIF}
-  SysUtils, Classes, Generics.Collections,
+  {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, {$ELSE} Windows, ShellApi, ShlObj, UIConsts, {$ENDIF}
+  SysUtils, Classes, Generics.Collections, MMSystem, Winsock, Registry, MultiMon,
   FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime;
 
 
@@ -96,6 +96,7 @@ Const
   CURRENCY_MINIMUM = -922337203685477.58;
   CURRENCY_MAXIMUM = 922337203685477.58;
 
+  clTransparent = -1;
 
   HTML_COLOUR_VALUES : Array [THTMLColours] Of TColour = (
       $00FFF8F0, $00D7EBFA, $00FFFF00, $00D4FF7F, $00FFFFF0,
@@ -188,7 +189,12 @@ Const
       'Wheat', 'White', 'White Smoke', 'Yellow', 'Yellow Green');
 
 Type
-  TCurrency = Currency;
+ TColourRatio = Record
+    Blue  : Real;
+    Green : Real;
+    Red   : Real;
+    Alpha : Real;
+  End;
 
   TColourParts = Packed Record
     Red : Byte;
@@ -205,6 +211,15 @@ Function HTMLEncodedColourStringToColour(Const sColour : String) : TColour; Over
 Function HTMLEncodedColourStringToColour(Const sColour : String; Const aDefault : TColour) : TColour; Overload;
 Function ColourToHTMLColourString(Const iColour : TColour) : String; Overload;
 Function ColourToHTMLColourTitleString(Const iColour : TColour) : String; Overload;
+Function ColourToXMLColourString(Const iColour : TColour) : String; Overload;
+Function XMLColourStringToColour(Const sColour : String) : TColour; Overload;
+Function XMLColourStringToColourOrDefault(Const sColour : String; Const aDefault : TColour) : TColour; Overload;
+Function ColourMakeGrey(iColour : TColour) : TColour; Overload;
+Function ColourMultiply(iColour : TColour; Const aRatio : TColourRatio) : TColour; Overload;
+Function ColourMultiply(iColour : TColour; Const iRatio : Real) : TColour; Overload;
+Function ColourInverse(iColour : TColour) : TColour;
+Function ColourToString(iColour : TColour) : String; Overload;
+
 
 
 type
@@ -220,6 +235,7 @@ type
   End;
 
 Function FileGetModified(Const sFileName : String) : TDateTime; Overload;
+procedure FileSetModified(Const sFileName : String; time : TDateTime); Overload;
 
 Function FileExists(Const sFilename : String) : Boolean; Overload;
 Function FileDelete(Const sFilename : String) : Boolean; Overload;
@@ -277,6 +293,147 @@ Function ErrorAsString(iError : Integer) : String; Overload;
 Function ErrorAsMessage(iError : Integer) : String;
 Function ErrorAsNumber : Integer; Overload;
 
+Function RandomBoolean : Boolean; Overload;
+Function RandomDateTime(Const aLowest, aHighest : TDateTime) : TDateTime; Overload;
+Function RandomInteger64(Const iLowest, iHighest : Int64) : Int64; Overload;
+Function RandomInteger(Const iUpper : Integer) : Integer; Overload;
+Function RandomInteger(Const iLowest, iHighest : Integer) : Integer; Overload;
+Function RandomReal(Const iUpper : Real) : Real; Overload;
+Function RandomReal(Const iLowest, iHighest : Real) : Real; Overload;
+Function RandomAlphabeticString(Const iLength : Integer) : String; Overload;
+Function RandomAlphabeticCharacter : Char; Overload;
+
+
+Type
+  TMediaSoundBeepType = (MediaSoundBeepTypeAsterisk, MediaSoundBeepTypeExclamation, MediaSoundBeepTypeHand, MediaSoundBeepTypeQuestion, MediaSoundBeepTypeOk);
+
+
+Procedure SoundPlay(Const sFilename : String); Overload;
+Procedure SoundStop(Const sFilename : String); Overload;
+Procedure SoundBeepType(Const aSoundBeepType : TMediaSoundBeepType); Overload;
+Procedure SoundBeepAsterisk; Overload;
+Procedure SoundBeepExclamation; Overload;
+Procedure SoundBeepOK; Overload;
+Procedure SoundBeepRange(Const iFrequency, iDuration : Cardinal); Overload;
+
+
+Type
+  TCurrency = Currency;
+  TCurrencyCents = Int64;
+  TCurrencyDollars = Int64;
+{$IFDEF CPUx86}
+  TSystemMemory = Record   // Windows.MEMORYSTATUS
+    Length : Cardinal;
+    TotalLoad : Cardinal;
+    TotalPhysical : Cardinal;
+    AvailablePhysical : Cardinal;
+    TotalPageFile : Cardinal;
+    AvailablePageFile : Cardinal;
+    TotalVirtual : Cardinal;
+    AvailableVirtual : Cardinal;
+  End;
+{$ELSE}
+  {$IFDEF CPUx64}
+  TSystemMemoryEx = Record
+    Length : Cardinal;
+    MemoryLoad : Cardinal;
+    TotalPhysical : UInt64;
+    AvailablePhysical : UInt64;
+    TotalPageFile : UInt64;
+    AvailablePageFile : UInt64;
+    TotalVirtual : UInt64;
+    AvailableVirtual : UInt64;
+    AvailableExtendedVirtual : UInt64;
+  End;
+  {$ENDIF}
+  {$ENDIF}
+
+
+Function CurrencyCompare(Const rA, rB : TCurrency) : Integer; Overload;
+Function CurrencyCompare(Const rA, rB, rThreshold : TCurrency) : Integer; Overload;
+Function CurrencyEquals(Const rA, rB, rThreshold : TCurrency) : Boolean; Overload;
+Function CurrencyEquals(Const rA, rB : TCurrency) : Boolean; Overload;
+Function CurrencyEqualsZero(Const rAmount : TCurrency) : Boolean;
+
+Function CurrencyToString(Const rValue : TCurrency; iDigits : Integer = 2) : String;
+Function StringToCurrency(Const sValue : String; Const rDefault : TCurrency) : TCurrency; Overload;
+Function StringToCurrency(Const sValue : String) : TCurrency; Overload;
+
+Function CentsToCurrency(Const iCents : TCurrencyCents) : TCurrency;
+Function CurrencyToCents(Const iCurrency : TCurrency) : TCurrencyCents;
+
+Function CurrencyDifference(Const iAmount1, iAmount2 : TCurrency) : TCurrency;
+Function CurrencyRoundUp(Const iValue : TCurrency; Const iRoundCents : Integer) : TCurrency;
+Function CurrencyRoundDown(Const iValue : TCurrency; Const iRoundCents : Integer) : TCurrency;
+Function CurrencyRoundNearest(Const iValue : TCurrency; Const iRoundCents : Integer) : TCurrency;
+Function CurrencyRoundBankers(Const rValue : TCurrency; Const iRoundCents : Integer = 1) : TCurrency;
+
+Function StringToCents(Const sValue : String) : TCurrencyCents;
+Function CentsToString(Const iCents : TCurrencyCents) : String;
+
+Function StringIsCurrency(Const sValue : String) : Boolean;
+
+Function CurrencySymbol : String;
+
+Function CurrencyMin(Const rA, rB : TCurrency) : TCurrency;
+Function CurrencyMax(Const rA, rB : TCurrency) : TCurrency;
+
+Function CurrencyAdjusted(Const rAmount, rGap : TCurrency; Const rPercentage : Real) : TCurrency;
+Function CurrencyApplyPercentages(Const rAmount : TCurrency; Const rPercentageBefore, rPercentageAfter : Real) : TCurrency;
+Function CurrencyTruncateToCents(Const rAmount : TCurrency) : TCurrency;
+Function CurrencyTruncateToDollars(Const rAmount : TCurrency) : TCurrency;
+
+Function SystemIsWindowsNT : Boolean;
+Function SystemIsWindows2K : Boolean;
+Function SystemIsWindowsXP : Boolean;
+Function SystemIsWindowsVista : Boolean;
+Function SystemIsWindows7 : Boolean;
+
+Function SystemIsWin64 : Boolean;
+Function SystemName : String;
+Function SystemPlatform : String;
+Function SystemArchitecture : String;
+Function SystemResolution : String;
+Function SystemBootStatus : String;
+Function SystemInformation : String;
+Function SystemPath : String;
+Function SystemTimezone : String;
+Function SystemLanguage : String;
+Function SystemProcessors : Cardinal;
+Function SystemPageSize : Cardinal;
+{$IFDEF CPUx86}
+Function SystemMemory : TSystemMemory;
+{$ELSE}
+  {$IFDEF CPUx64}
+Function SystemMemory : TSystemMemoryEx;
+  {$ENDIF}
+{$ENDIF}
+Function SystemProcessorName : String;
+Function SystemProcessorIdentifier : String;
+Function SystemProcessorFrequencyMHz : Integer;
+Function SystemProcessorVendorIdentifier : String;
+Function ProcessName : String; Overload;
+
+Type
+  TInternetHost = Cardinal;
+  TInternetPort = Word;
+
+  TIP = TInternetHost;
+  TPort = TInternetPort;
+
+Function IPToString(Const iValue : TIP) : String; Overload;
+Function HostIP : TIP;
+Function HostName : String;
+Function LogonName : String;
+Function LocalComputerName : String;
+Function RemoteComputerName : String;
+Function IsRemoteSession : Boolean;
+Function DomainName : String;
+Function DomainLogonName : String;
+Function ProxyServer : String;
+
+Function MonitorInfoFromRect(aRect : TRect): TMonitorInfo;
+
 Implementation
 
 Uses
@@ -286,7 +443,9 @@ Uses
   ActiveX,
   ComObj,
   {$ENDIF}
-  IOUtils,
+  IOUtils, DateUtils,
+
+  FHIR.Support.Collections,
   FHIR.Support.Decimal;
 
 
@@ -341,6 +500,48 @@ begin
   else
     result := 0;
 end;
+
+{$IFDEF MSWINDOWS}
+function ConvertDateTimeToFileTime(const DateTime: TDateTime): TFileTime;
+var
+  LFileTime: TFileTime;
+  SysTime: TSystemTime;
+begin
+  Result.dwLowDateTime := 0;
+  Result.dwLowDateTime := 0;
+  DecodeDateTime(DateTime, SysTime.wYear, SysTime.wMonth, SysTime.wDay,
+    SysTime.wHour, SysTime.wMinute, SysTime.wSecond, SysTime.wMilliseconds);
+
+  if SystemTimeToFileTime(SysTime, LFileTime) then
+    LocalFileTimeToFileTime(LFileTime, Result)
+end;
+{$ENDIF}
+{$IFDEF POSIX}
+function ConvertDateTimeToFileTime(const DateTime: TDateTime;
+  const UseLocalTimeZone: Boolean): time_t;
+begin
+  { Use the time zone if necessary }
+  if not UseLocalTimeZone then
+    Result := DateTimeToFileDate(TTimeZone.Local.ToLocalTime(DateTime))
+  else
+    Result := DateTimeToFileDate(DateTime);
+end;
+{$ENDIF}
+
+procedure FileSetModified(Const sFileName : String; time : TDateTime);
+Var
+  aHandle : TFileHandle;
+  aTime : TFileTime;
+Begin
+  aTime := ConvertDateTimeToFileTime(time);
+  aHandle := FileHandleOpen(CreateFile(PChar(sFileName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL Or FILE_FLAG_BACKUP_SEMANTICS, 0));
+  Try
+    If FileHandleIsValid(aHandle) Then
+      SetFileTime(aHandle.Value, Nil, Nil, @aTime);
+  Finally
+    FileHandleClose(aHandle);
+  End;
+End;
 
 
 
@@ -643,6 +844,49 @@ Begin
   TColourParts(Result).Green := iGreen;
   TColourParts(Result).Blue := iBlue;
   TColourParts(Result).Alpha := iAlpha;
+End;
+
+Function ColourMultiply(iColour : TColour; Const iRatio : Real) : TColour;
+Begin
+  TColourParts(Result).Red := Trunc(RealMin(TColourParts(iColour).Red * iRatio, 255));
+  TColourParts(Result).Green := Trunc(RealMin(TColourParts(iColour).Green * iRatio, 255));
+  TColourParts(Result).Blue := Trunc(RealMin(TColourParts(iColour).Blue * iRatio, 255));
+  TColourParts(Result).Alpha := Trunc(RealMin(TColourParts(iColour).Alpha * iRatio, 255));
+End;
+
+
+Function ColourMultiply(iColour : TColour; Const aRatio : TColourRatio) : TColour;
+Begin
+  TColourParts(Result).Red := Trunc(RealMin(TColourParts(iColour).Red * aRatio.Red, 255));
+  TColourParts(Result).Green := Trunc(RealMin(TColourParts(iColour).Green * aRatio.Green, 255));
+  TColourParts(Result).Blue := Trunc(RealMin(TColourParts(iColour).Blue * aRatio.Blue, 255));
+  TColourParts(Result).Alpha := Trunc(RealMin(TColourParts(iColour).Alpha * aRatio.Alpha, 255));
+End;
+
+
+Function ColourInverse(iColour : TColour) : TColour;
+Begin
+  TColourParts(Result).Red := Abs(255 - TColourParts(iColour).Red);
+  TColourParts(Result).Green := Abs(255 - TColourParts(iColour).Green);
+  TColourParts(Result).Blue := Abs(255 - TColourParts(iColour).Blue);
+  TColourParts(Result).Alpha := TColourParts(iColour).Alpha;
+End;
+
+Function ColourToString(iColour : TColour) : String;
+Begin
+  Result := ColorToString(iColour);
+End;
+
+Function ColourMakeGrey(iColour : TColour) : TColour; Overload;
+var
+  c : Word;
+Begin
+  c := Trunc((TColourParts(iColour).Red + TColourParts(iColour).Green + TColourParts(iColour).Blue) / 3);
+
+  TColourParts(Result).Red := c;
+  TColourParts(Result).Green := c;
+  TColourParts(Result).Blue := c;
+  TColourParts(Result).Alpha := TColourParts(iColour).Alpha;
 End;
 
 Function HTMLColourStringToColour(Const sColour : String; Const aDefault : TColour) : TColour;
@@ -1063,7 +1307,975 @@ begin
   result := Path([SystemTemp, prefix+'-'+NewGuidId+'.tmp']);
 end;
 
+
+Function RandomBoolean : Boolean;
+Begin
+  Result := RandomInteger(2) = 1;
+End;
+
+
+Function RandomDateTime(Const aLowest, aHighest : TDateTime) : TDateTime;
+Begin
+  Result := aLowest + RandomReal(aHighest - aLowest);
+End;
+
+
+Function RandomInteger(Const iUpper : Integer) : Integer;
+Begin
+  Result := System.Random(iUpper);
+End;
+
+
+Function RandomInteger(Const iLowest, iHighest : Integer) : Integer;
+Begin
+  Result := System.Random(iHighest - iLowest + 1) + iLowest;
+End;
+
+
+Function RandomReal(Const iUpper : Real) : Real;
+Begin
+  Result := iUpper * System.Random;
+End;
+
+
+Function RandomReal(Const iLowest, iHighest : Real) : Real;
+Begin
+  Result := RandomReal(iHighest - iLowest) + iLowest;
+End;
+
+
+Function RandomInteger64(Const iLowest, iHighest : Int64) : Int64;
+Begin
+  Result := RealRoundToInteger((iHighest - iLowest) * System.Random) + iLowest;
+End;
+
+
+Function RandomAlphabeticString(Const iLength : Integer) : String;
+Var
+  iLoop : Integer;
+Begin
+  SetLength(Result, iLength);
+
+  For iLoop := 1 To iLength Do
+    Result[iLoop] := RandomAlphabeticCharacter;
+End;
+
+
+Function RandomAlphabeticCharacter : Char; Overload;
+Const
+  ALPHABET_STRING = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+Begin
+  Result := ALPHABET_STRING[RandomInteger(Length(ALPHABET_STRING)) + 1]
+End;
+
+
+Function ColourToXMLColourString(Const iColour : TColour) : String;
+Begin
+  If TColourParts(iColour).Alpha > 0 Then
+    Result := string(EncodeHexadecimal(TColourParts(iColour).Alpha))
+  Else
+    Result := '';
+
+  Result := '#' + string(EncodeHexadecimal(TColourParts(iColour).Red) + EncodeHexadecimal(TColourParts(iColour).Green) + EncodeHexadecimal(TColourParts(iColour).Blue)) + Result;
+End;
+
+
+Function XMLColourStringToColour(Const sColour : String) : TColour;
+Begin
+  If (Length(sColour) >= 7) And (sColour[1] = '#') And StringIsHexadecimal(Copy(sColour, 2, Length(sColour))) Then
+  Begin
+    TColourParts(Result).Red := DecodeHexadecimal(AnsiChar(sColour[2]), AnsiChar(sColour[3]));
+    TColourParts(Result).Green := DecodeHexadecimal(AnsiChar(sColour[4]), AnsiChar(sColour[5]));
+    TColourParts(Result).Blue := DecodeHexadecimal(AnsiChar(sColour[6]), AnsiChar(sColour[7]));
+
+    If (Length(sColour) >= 9) Then
+      TColourParts(Result).Alpha := DecodeHexadecimal(AnsiChar(sColour[8]), AnsiChar(sColour[9]))
+    Else
+      TColourParts(Result).Alpha := $00;
+  End
+  Else
+  Begin
+    Result := HTMLEncodedColourStringToColour(sColour);
+  End;
+End;
+
+
+Function XMLColourStringToColourOrDefault(Const sColour : String; Const aDefault : TColour) : TColour;
+Begin
+  If sColour = '' Then
+    Result := aDefault
+  Else
+    Result := XMLColourStringToColour(sColour);
+End;
+
+
+
+Procedure SoundPlay(Const sFilename : String);
+Begin
+  PlaySound(PChar(sFilename), 0, SND_FILENAME Or SND_ASYNC);
+End;
+
+
+Procedure SoundStop(Const sFilename : String);
+Begin
+  PlaySound(PChar(sFilename), 0, SND_FILENAME Or SND_PURGE);
+End;
+
+
+Procedure SoundBeepAsterisk;
+Begin
+  SoundBeepType(MediaSoundBeepTypeAsterisk);
+End;
+
+
+Procedure SoundBeepExclamation;
+Begin
+  SoundBeepType(MediaSoundBeepTypeExclamation);
+End;
+
+
+Procedure SoundBeepOK;
+Begin
+  SoundBeepType(MediaSoundBeepTypeOK);
+End;
+
+
+Procedure SoundBeepType(Const aSoundBeepType : TMediaSoundBeepType);
+Const
+  API_MESSAGE_BEEP : Array[TMediaSoundBeepType] Of Integer =
+    (MB_ICONASTERISK, MB_ICONEXCLAMATION, MB_ICONHAND, MB_ICONQUESTION, MB_OK);
+Begin
+  Windows.MessageBeep(API_MESSAGE_BEEP[aSoundBeepType]);
+End;
+
+
+Procedure SoundBeepRange(Const iFrequency, iDuration : Cardinal);
+Begin
+  Windows.Beep(iFrequency, iDuration);
+End;
+
+
+
+Function CurrencySymbol : String;
+Begin
+{$IFDEF VER130}
+  Result := SysUtils.CurrencyString;
+{$ELSE}
+  Result := FormatSettings.CurrencyString;
+{$ENDIF}
+End;
+
+
+Function CurrencyToString(Const rValue : TCurrency; iDigits : Integer = 2) : String;
+Begin
+  If (iDigits < 0) Or (iDigits > 4) Then
+    iDigits := 2;
+
+  Result := SysUtils.CurrToStrF(rValue, ffFixed, iDigits);
+End;
+
+
+Function StringToCurrency(Const sValue : String) : TCurrency;
+Begin
+  Result := StrToCurr(StringReplace(sValue, CurrencySymbol, ''));
+End;
+
+
+Function StringToCurrency(Const sValue : String; Const rDefault : TCurrency) : TCurrency;
+Begin
+  Try
+    Result := StringToCurrency(sValue);
+  Except
+    Result := rDefault;
+  End;
+End;
+
+
+Function StringIsCurrency(Const sValue : String) : Boolean;
+Var
+  rDummy : Currency;
+Begin
+  Result := TextToFloat(PChar(sValue), rDummy, fvCurrency);
+End;
+
+
+Function StringToCents(Const sValue : String) : TCurrencyCents;
+Var
+  sNormal : String;
+  iPoint : Integer;
+Begin
+  iPoint := Pos('.', sValue);
+  If iPoint = 0 Then
+    sNormal := sValue + '00'
+  Else If iPoint = Length(sValue) Then
+    sNormal := Copy(sValue, 1, Length(sValue) - 1) + '00'
+  Else If iPoint = Length(sValue) - 1 Then
+    sNormal := Copy(sValue, 1, Length(sValue) - 2) + sValue[Length(sValue)] + '0'
+  Else
+    sNormal := Copy(sValue, 1, iPoint - 1) + Copy(sValue, iPoint + 1, MaxInt);
+
+  Result := FHIR.Support.Math.Abs(StringToInteger32(sNormal));
+End;
+
+
+Function CentsToString(Const iCents : TCurrencyCents) : String;
+Begin
+  Result := IntegerToString(Abs(iCents));
+
+  While Length(Result) < 3 Do
+    Result := '0' + Result;
+
+  System.Insert('.', Result, Length(Result) - 1);
+
+  If iCents < 0 Then
+    Result := '(' + Result + ')';
+End;
+
+
+Function CurrencyRoundUp(Const iValue : TCurrency; Const iRoundCents : Integer) : TCurrency;
+Var
+  iIncrement : Currency;
+  iDollars : Currency;
+  iCents : Currency;
+Begin
+  iIncrement := iRoundCents / 100;
+  iDollars := Trunc(iValue);
+  iCents := iValue - iDollars;
+
+  Result :=  iDollars + (iIncrement * RealCeiling(iCents / iIncrement));
+End;
+
+
+Function CurrencyRoundDown(Const iValue : TCurrency; Const iRoundCents : Integer) : TCurrency;
+Var
+  iIncrement : Currency;
+  iDollars : Currency;
+  iCents : Currency;
+Begin
+  iIncrement := iRoundCents / 100;
+  iDollars := Trunc(iValue);
+  iCents := iValue - iDollars;
+
+  Result :=  iDollars + (iIncrement * RealFloor(iCents / iIncrement));
+End;
+
+
+Function CurrencyRoundNearest(Const iValue : TCurrency; Const iRoundCents : Integer) : TCurrency;
+Var
+  iIncrement : Currency;
+  iDollars : Currency;
+  iCents : Currency;
+Begin
+  iIncrement := iRoundCents / 100;
+  iDollars := Trunc(iValue);
+  iCents := iValue - iDollars;
+
+  Result :=  iDollars + (iIncrement * RealFloor((iCents + (iIncrement / 2)) / iIncrement));
+End;
+
+
+Function CurrencyRoundBankers(Const rValue : TCurrency; Const iRoundCents : Integer) : TCurrency;
+Var
+  iWhole : Int64;
+  rFraction : Extended;
+Begin
+  iWhole := Trunc(CurrencyToCents(rValue) / iRoundCents);
+  rFraction := (CurrencyToCents(rValue) - (iWhole * iRoundCents)) / iRoundCents;
+
+  If (rFraction > 0.5) Or ((rFraction = 0.5) And (SignedMod(iWhole, 2) = 1)) Then
+    Result := iWhole + 1
+  Else
+    Result := iWhole;
+
+  Result := (Result * iRoundCents) / 100;
+End;
+
+
+Function CurrencyToCents(Const iCurrency : TCurrency) : TCurrencyCents;
+Begin
+  Result := Trunc(iCurrency * 100);
+End;
+
+
+Function CentsToCurrency(Const iCents : TCurrencyCents) : TCurrency; Overload;
+Begin
+  Result := iCents;
+  Result := Result / 100;
+End;
+
+
+Function CurrencyMin(Const rA, rB : TCurrency) : TCurrency;
+Begin
+  If rA < rB Then
+    Result := rA
+  Else
+    Result := rB;
+End;
+
+
+Function CurrencyMax(Const rA, rB : TCurrency) : TCurrency;
+Begin
+  If rA > rB Then
+    Result := rA
+  Else
+    Result := rB;
+End;
+
+
+Function CurrencyCompare(Const rA, rB : TCurrency) : Integer;
+Begin
+  If rA < rB Then
+    Result := -1
+  Else If rA > rB Then
+    Result := 1
+  Else
+    Result := 0
+End;
+
+
+Function CurrencyDifference(Const iAmount1, iAmount2 : TCurrency) : TCurrency; Overload;
+Begin
+  If iAmount1 > iAmount2 Then
+    Result := iAmount1 - iAmount2
+  Else
+    Result := iAmount2 - iAmount1;
+End;
+
+
+Function CurrencyAdjusted(Const rAmount, rGap : TCurrency; Const rPercentage : Real) : TCurrency;
+Begin
+  Result := CurrencyRoundUp(rAmount * rPercentage / 100, 5);
+
+  If (Result <> 0) And (rPercentage < 100) And (rGap <> 0) And (Abs(rAmount - Result) > rGap) Then
+    Result := rAmount - rGap;
+End;
+
+
+Function CurrencyApplyPercentages(Const rAmount : TCurrency; Const rPercentageBefore, rPercentageAfter : Real):TCurrency;
+Begin
+  Result := rAmount;
+
+  If rPercentageBefore <> 100 Then
+    Result := CurrencyAdjusted(Result, 0, rPercentageBefore);
+
+  If rPercentageAfter <> 100 Then
+    Result := CurrencyRoundUp(Result * rPercentageAfter / 100, 5);
+End;
+
+
+Function CurrencyTruncateToCents(Const rAmount : TCurrency):TCurrency; Overload;
+Begin
+  Result := Trunc(rAmount * 100) / 100;
+End;
+
+
+Function CurrencyTruncateToDollars(Const rAmount : TCurrency): TCurrency; Overload;
+Begin
+  Result := Trunc(rAmount);
+End;
+
+
+Function CurrencyCompare(Const rA, rB, rThreshold : TCurrency) : Integer;
+Begin
+  If rA - rThreshold > rB Then
+    Result := 1
+  Else If rB - rThreshold > rA Then
+    Result := -1
+  Else
+    Result := 0;
+End;
+
+
+Function CurrencyEquals(Const rA, rB, rThreshold : TCurrency) : Boolean;
+Begin
+  Result := CurrencyCompare(rA, rB, rThreshold) = 0;
+End;
+
+
+Function CurrencyEqualsZero(Const rAmount : TCurrency) : Boolean;
+Begin
+  Result := CurrencyEquals(rAmount, 0, 0.001);
+End;
+
+
+Function CurrencyEquals(Const rA, rB : TCurrency) : Boolean;
+Begin
+  Result := rA = rB;
+End;
+
+
+Function SystemIsWindows2K : Boolean;
+Begin
+  Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 5){ And (gOSInfo.dwMinorVersion >= 0)};
+End;
+
+
+Function SystemIsWindowsXP : Boolean;
+Begin
+  Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 5) And (gOSInfo.dwMinorVersion >= 1);
+End;
+
+
+Function SystemIsWindowsVista : Boolean;
+Begin
+  Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 6){ And (gOSInfo.dwMinorVersion >= 0)};
+End;
+
+
+Function SystemIsWin64 : Boolean;
+Begin
+  Result := SystemIsWindowsNT And (gSystemInfo.dwAllocationGranularity = 65536);
+End;
+
+Function SystemArchitecture : String;
+Const
+  PROCESSOR_ARCHITECTURE_INTEL = 0;
+  PROCESSOR_ARCHITECTURE_MIPS = 1;
+  PROCESSOR_ARCHITECTURE_ALPHA = 2;
+  PROCESSOR_ARCHITECTURE_PPC = 3;
+  PROCESSOR_ARCHITECTURE_SHX = 4;
+  PROCESSOR_ARCHITECTURE_ARM = 5;
+  PROCESSOR_ARCHITECTURE_IA64 = 6;
+  PROCESSOR_ARCHITECTURE_ALPHA64 = 7;
+  PROCESSOR_ARCHITECTURE_MSIL = 8;
+  PROCESSOR_ARCHITECTURE_AMD64 = 9;
+  PROCESSOR_ARCHITECTURE_IA32_ON_WIN64 = 10;
+Begin
+  Case gSystemInfo.wProcessorArchitecture Of
+    PROCESSOR_ARCHITECTURE_INTEL :
+    Begin
+      Case gSystemInfo.wProcessorLevel Of
+        3 : Result := 'Intel 80386';
+        4 : Result := 'Intel 80486';
+        5 : Result := 'Intel Pentium';
+        6 : Result := 'Intel Pentium II/III'; // ??
+       15 : Result := 'Intel Pentium IV';
+      Else
+        Result := StringFormat('Intel Unknown (%d)', [gSystemInfo.wProcessorLevel]);
+      End;
+    End;
+
+    PROCESSOR_ARCHITECTURE_MIPS :
+    Begin
+      Case gSystemInfo.wProcessorLevel Of
+        4 : Result := 'MIPS R4000';
+      Else
+        Result := StringFormat('MIPS Unknown (%d)', [gSystemInfo.wProcessorLevel]);
+      End;
+    End;
+
+    PROCESSOR_ARCHITECTURE_ALPHA :
+    Begin
+      Case gSystemInfo.wProcessorLevel Of
+        21064 : Result := 'Alpha 21064';
+        21066 : Result := 'Alpha 21066';
+        21164 : Result := 'Alpha 21164';
+      Else
+        Result := StringFormat('Alpha Unknown (%d)', [gSystemInfo.wProcessorLevel]);
+      End;
+    End;
+
+    PROCESSOR_ARCHITECTURE_PPC :
+    Begin
+      Case gSystemInfo.wProcessorLevel Of
+        1  : Result := 'PPC 601';
+        3  : Result := 'PPC 603';
+        4  : Result := 'PPC 604';
+        6  : Result := 'PPC 603+';
+        9  : Result := 'PPC 604+';
+        20 : Result := 'PPC 620';
+      Else
+        Result := StringFormat('PPC Unknown (%d)', [gSystemInfo.wProcessorLevel]);
+      End;
+    End;
+  Else
+    Result := 'Unknown'; // PROCESSOR_ARCHITECTURE_UNKNOWN
+  End;
+End;
+
+Function SystemPlatform: String;
+Begin
+  Case gOSInfo.dwPlatformId Of
+    VER_PLATFORM_WIN32s :
+    Begin
+      Result := StringFormat('Windows %d.%d', [gOSInfo.dwMajorVersion, gOSInfo.dwMinorVersion]);
+    End;
+
+    VER_PLATFORM_WIN32_WINDOWS :
+    Begin
+      Case gOSInfo.dwMinorVersion Of
+        0  : Result := 'Windows 95';
+        10 : Result := 'Windows 98';
+      Else
+        Result := 'Windows ME';
+      End;
+    End;
+
+    VER_PLATFORM_WIN32_NT :
+    Begin
+      Case gOSInfo.dwMajorVersion Of
+        5 :
+        Begin
+          Case gOSInfo.dwMinorVersion Of
+            0 : Result := 'Windows 2000';
+            1 : Result := 'Windows XP';
+          Else
+            Result := 'Windows NT';
+          End;
+        End;
+      Else
+        Result := 'Windows NT ' + IntegerToString(gOSInfo.dwMajorVersion);
+      End;
+    End;
+  Else
+    Result := 'Windows';
+  End;
+
+  If Not SystemIsWindowsNT Then
+    gOSInfo.dwBuildNumber := gOSInfo.dwBuildNumber And $FFFF;
+
+  Result := Result + StringFormat(' [%d.%d.%d]', [gOSInfo.dwMajorVersion, gOSInfo.dwMinorVersion, gOSInfo.dwBuildNumber]);
+End;
+
+Function SystemTimezone : String;
+Begin
+  Result := NAMES_TIMEZONES[Timezone];
+End;
+
+
+Function SystemLanguage : String;
+Begin
+  Result := Languages.NameFromLocaleID[GetUserDefaultLCID];
+End;
+
+
+Function SystemProcessors : Cardinal;
+Begin
+  Result := gSystemInfo.dwNumberOfProcessors;
+End;
+
+
+Function SystemPageSize : Cardinal;
+Begin
+  Result := gSystemInfo.dwPageSize;
+End;
+
+
+{$IFDEF CPUx86}
+Function SystemMemory : TSystemMemory;
+Begin
+  FillChar(Result, SizeOf(Result), 0);
+  Result.Length := SizeOf(Result);
+
+  GlobalMemoryStatus(TMemoryStatus(Result));
+End;
+{$ELSE}
+  {$IFDEF CPUx64}
+Function SystemMemory : TSystemMemoryEx;
+Begin
+  FillChar(Result, SizeOf(Result), 0);
+  Result.Length := SizeOf(Result);
+
+  GlobalMemoryStatusEx(TMemoryStatusEx(Result));
+End;
+  {$ENDIF}
+{$ENDIF}
+
+
+Function SystemName : String;
+Var
+  aBuffer : Array[0..255] Of Char;
+  iLength : Cardinal;
+Begin
+  iLength := 255;
+
+  GetComputerName(aBuffer, iLength);
+
+  Result := aBuffer;
+End;
+
+
+Function SystemBootStatus: String;
+Begin
+  Case GetSystemMetrics(SM_CLEANBOOT) Of
+    0 : Result := 'Normal boot';
+    1 : Result := 'Fail-safe boot';
+    2 : Result := 'Fail-safe boot with network boot';
+  Else
+    Result := 'Unknown boot';
+  End;
+End;
+
+Const
+  HKEY_CLASSES_ROOT = Cardinal($80000000);
+  HKEY_CURRENT_USER = Cardinal($80000001);
+  HKEY_LOCAL_MACHINE = Cardinal($80000002);
+  HKEY_USERS = Cardinal($80000003);
+  HKEY_PERFORMANCE_DATA = Cardinal($80000004);
+  HKEY_CURRENT_CONFIG = Cardinal($80000005);
+  HKEY_DYN_DATA = Cardinal($80000006);
+
+
+Type
+  TRegistryKey = Type Cardinal;
+  TRegistryMode = (rmRead, rmWrite);
+
+  TFslRegistryRootKeyType = (FslRegistryRootKeyClassesRoot, FslRegistryRootKeyCurrentUser, FslRegistryRootKeyLocalMachine,
+    FslRegistryRootKeyUsers, FslRegistryRootKeyPerformanceData, FslRegistryRootKeyCurrentConfig, FslRegistryRootKeyDynData);
+
+Const
+  FslRegistryRootKeyNameArray : Array [TFslRegistryRootKeyType] Of String =
+    ('HKEY_CLASSES_ROOT', 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE', 'HKEY_USERS',
+     'HKEY_PERFORMANCE_DATA', 'HKEY_CURRENT_CONFIG', 'HKEY_DYN_DATA');
+
+  FslRegistryRootKeyValueArray : Array [TFslRegistryRootKeyType] Of TRegistryKey =
+    (HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, HKEY_USERS,
+     HKEY_PERFORMANCE_DATA, HKEY_CURRENT_CONFIG, HKEY_DYN_DATA);
+
+Const
+  MODE_ACCESS : Array[TRegistryMode] Of Cardinal = (KEY_READ, KEY_ALL_ACCESS);
+
+
+
+Function SystemCentralProcessorStringRegistryValue(Const Value : String) : String;
+Const
+  CENTRAL_PROCESSOR_KEY = 'HARDWARE\DESCRIPTION\System\CentralProcessor\0';
+//Var
+//  oRegistry : TFslRegistry;
+Begin
+//  Result := '';
+//
+//  oRegistry := TFslRegistry.Create;
+//  Try
+//    oRegistry.ReadMode;
+//    oRegistry.UseLocalMachineAsRootKey;
+//
+//    If oRegistry.KeyExists(CENTRAL_PROCESSOR_KEY) Then
+//    Begin
+//      oRegistry.Key := CENTRAL_PROCESSOR_KEY;
+//
+//      If oRegistry.ValueExists(Value) Then
+//      Begin
+//        oRegistry[Value];
+//        oRegistry.DefineString(Result);
+//      End;
+//    End;
+//  Finally
+//    oRegistry.Free;
+//  End;
+End;
+
+
+Function SystemProcessorIdentifier : String;
+Begin
+  Result := SystemCentralProcessorStringRegistryValue('Identifier');
+End;
+
+
+Function SystemProcessorVendorIdentifier : String;
+Begin
+  Result := SystemCentralProcessorStringRegistryValue('VendorIdentifier');
+End;
+
+Function SystemResolution : String;
+Begin
+  Result := StringFormat('%dx%d', [GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)]);
+End;
+
+Function SystemInformation: String;
+Begin
+  Result := gOSInfo.szCSDVersion;
+End;
+
+Function SystemPath : String;
+Var
+  iLength : Integer;
+Begin
+  SetLength(Result, MAX_PATH + 1);
+
+  iLength := GetSystemDirectory(PChar(Result), MAX_PATH);
+
+  If Not IsPathDelimiter(Result, iLength) Then
+  Begin
+    Inc(iLength);
+    Result[iLength] := '\';
+  End;
+
+  SetLength(Result, iLength);
+End;
+
+Function SystemProcessorName : String;
+Begin
+  Result := SystemCentralProcessorStringRegistryValue('ProcessorNameString');
+End;
+
+Function SystemProcessorFrequencyMHz : Integer;
+Const
+  CENTRAL_PROCESSOR_KEY = 'HARDWARE\DESCRIPTION\System\CentralProcessor\0';
+  MHZ_VALUE = '~MHz';
+//Var
+//  oRegistry : TFslRegistry;
+Begin
+//  Result := 0;
+//
+//  oRegistry := TFslRegistry.Create;
+//  Try
+//    oRegistry.ReadMode;
+//    oRegistry.UseLocalMachineAsRootKey;
+//
+//    If oRegistry.KeyExists(CENTRAL_PROCESSOR_KEY) Then
+//    Begin
+//      oRegistry.Key := CENTRAL_PROCESSOR_KEY;
+//
+//      If oRegistry.ValueExists(MHZ_VALUE) Then
+//      Begin
+//        oRegistry[MHZ_VALUE];
+//        oRegistry.DefineInteger(Result);
+//      End;
+//    End;
+//  Finally
+//    oRegistry.Free;
+//  End;
+End;
+
+Function ProcessName : String;
+Var
+  aBuffer : Array[0..260] Of Char;
+Begin
+  Result := Copy(aBuffer, 1, GetModuleFileName(HInstance, aBuffer, SizeOf(aBuffer)));
+End;
+
+Function IPToString(Const iValue : TIP) : String;
+Begin
+  Result := StringFormat('%d.%d.%d.%d', [(iValue And $FF000000) Shr 24, (iValue And $FF0000) Shr 16, (iValue And $FF00) Shr 8, iValue And $FF]);
+End;
+
+Function HostIP : TIP;
+Const
+  SIZE_BUFFER = 255;
+Var
+  aBuffer : Array[0..SIZE_BUFFER] Of AnsiChar;
+  pHost : PHostEnt;
+Begin
+  WinSock.gethostname(PAnsiChar(@aBuffer), SIZE_BUFFER);
+
+  pHost := WinSock.GetHostByName(PAnsiChar(@aBuffer));
+
+  If Not Assigned(pHost) Then
+    Result := WinSock.htonl($07000001)  // 127.0.0.1
+  Else
+    Result := TIP(Pointer(pHost^.h_addr_list^)^);
+End;
+
+Function HostName : String;
+Const
+  SIZE_BUFFER = 255;
+Var
+  aBuffer : Array[0..SIZE_BUFFER] Of AnsiChar;
+Begin
+  aBuffer[0] := #0;
+
+  WinSock.gethostname(PAnsiChar(@aBuffer), SIZE_BUFFER);
+
+  If aBuffer = '' Then
+    Result := 'localhost'
+  Else
+    Result := String(aBuffer);
+End;
+
+Function LogonName : String;
+Var
+  aBuffer : Array[0..255] Of Char;
+  iSize   : Cardinal;
+Begin
+  iSize := 255;
+
+  If GetUserName(aBuffer, iSize) Then
+    Result := aBuffer
+  Else
+    Result := '';
+End;
+
+
+Function DomainLogonName : String;
+Begin
+  Result := DomainName;
+
+  If Result <> '' Then
+    Result := Result + '\';
+
+  Result := Result + LogonName;
+End;
+
+
+Function LocalComputerName : String;
+Const
+  MAX_COMPUTERNAME_LENGTH = 256;
+Var
+  aBuffer : Array[0..MAX_COMPUTERNAME_LENGTH] Of Char;
+  iSize   : Cardinal;
+Begin
+  iSize := MAX_COMPUTERNAME_LENGTH;
+
+  If GetComputerName(aBuffer, iSize) Then
+    Result := aBuffer
+  Else
+    Result := '';
+End;
+
+
+Function IsRemoteSession : Boolean;
+Const
+  SM_REMOTESESSION = $1000;
+Begin
+  Result := GetSystemMetrics(SM_REMOTESESSION) <> 0;
+End;
+
+
+Type
+
+  TComputerNameFormat = (
+    ComputerNameNetBIOS,
+    ComputerNameDnsHostname,
+    ComputerNameDnsDomain,
+    ComputerNameDnsFullyQualified,
+    ComputerNamePhysicalNetBIOS,
+    ComputerNamePhysicalDnsHostname,
+    ComputerNamePhysicalDnsDomain,
+    ComputerNamePhysicalDnsFullyQualified,
+    ComputerNameMax
+  );
+
+Function WTSQuerySessionInformationA(hServer : THandle; SessionId : Cardinal; WTSInfoClass : Integer; Var ppBuffer : Pointer; Var pBytesReturned : Cardinal) : Boolean; Stdcall; external 'wtsapi32.dll';
+Procedure WTSFreeMemory(pMemory : Pointer); Stdcall; external 'wtsapi32.dll';
+
+
+Function RemoteComputerName : String;
+Const
+  WTS_CURRENT_SERVER_HANDLE : THandle = 0;
+  WTS_CURRENT_SESSION : Cardinal = $FFFFFFFF;
+Type
+  TWtsInfoClass = (WtsInfoClassInitialProgram, WtsInfoClassApplicationName, WtsInfoClassWorkingDirectory,
+    WtsInfoClassOemId, WtsInfoClassSessionId, WtsInfoClassUserName, WtsInfoClassWinStationName,
+    WtsInfoClassDomainName, WtsInfoClassConnectState, WtsInfoClassClientBuildNumber,
+    WtsInfoClassClientName, WtsInfoClassClientDirectory, WtsInfoClassClientProductId,
+    WtsInfoClassClientHardwareId, WtsInfoClassClientAddress, WtsInfoClassClientDisplay,
+    WtsInfoClassClientProtocolType, WtsInfoClassIdleTime, WtsInfoClassLogonTime,
+    WtsInfoClassIncomingBytes, WtsInfoClassOutgoingBytes, WtsInfoClassIncomingFrames, WtsInfoClassOutgoingFrames);
+Var
+  pData : Pointer;
+  iLength : Cardinal;
+Begin
+  If WTSQuerySessionInformationA(WTS_CURRENT_SERVER_HANDLE, WTS_CURRENT_SESSION, Integer(WtsInfoClassClientName), pData, iLength) Then
+  Begin
+    Result := PChar(pData);
+    WTSFreeMemory(pData);
+  End
+  Else
+    Result := '';
+End;
+
+Function DomainName : String;
+Type
+  PSID = Pointer;
+
+  SID_AND_ATTRIBUTES = Record
+    Sid : PSID;
+    Attributes : DWORD;
+  End;
+
+  PTOKEN_USER = ^TOKEN_USER;
+  TOKEN_USER = Record
+    User : SID_AND_ATTRIBUTES;
+  End;
+Var
+  hProcess, hAccessToken : THandle;
+  InfoBuffer : Array[0..999] Of Char;
+  szAccountName, szDomainName: Array[0..199] Of Char;
+  dwInfoBufferSize : Cardinal;
+  dwAccountSize : Cardinal;
+  dwDomainSize: Cardinal;
+  pTokenUser : PTOKEN_USER;
+  snu : SID_NAME_USE;
+  oRegistry : TRegIniFile;
+Begin
+  Result := '';
+
+  If SystemIsWindowsNT Then
+  Begin
+    pTokenUser := PTOKEN_USER(@InfoBuffer);
+
+    dwAccountSize := 200;
+    dwDomainSize := 200;
+
+    hProcess := GetCurrentProcess;
+
+    OpenProcessToken(hProcess, TOKEN_READ, hAccessToken);
+
+    GetTokenInformation(hAccessToken, TokenUser, @InfoBuffer, 1000, dwInfoBufferSize);
+
+    LookupAccountSid(Nil, pTokenUser.User.Sid, szAccountName, dwAccountSize, szDomainName, dwDomainSize, snu);
+
+    CloseHandle(hAccessToken);
+
+    Result := szDomainName;
+  End
+  Else
+  Begin
+    oRegistry := TRegINIFile.Create('');
+    Try
+      oRegistry.RootKey := HKEY_LOCAL_MACHINE;
+
+      If oRegistry.OpenKey('System\CurrentControlSet\Services\MSNP32', False) Then
+        Result := oRegistry.ReadString('NetWorkProvider', 'AuthenticatingAgent', '')
+      Else If oRegistry.OpenKey('SYSTEM\CurrentControlSet\Services\VxD', False) Then
+        Result := oRegistry.ReadString('VNetSup', 'WorkGroup', '');
+
+      oRegistry.CloseKey;
+    Finally
+      oRegistry.Free;
+    End;
+  End;
+End;
+
+
+Function ProxyServer : String;
+Var
+  oRegistry: TRegistry;
+Begin
+  oRegistry := TRegistry.Create;
+  Try
+    oRegistry.RootKey := HKEY_CURRENT_USER;
+
+    If oRegistry.OpenKeyReadOnly('Software\Microsoft\Windows\CurrentVersion\Internet Settings') And oRegistry.ValueExists('ProxyEnable') And (oRegistry.ReadInteger('ProxyEnable') = 1) And oRegistry.ValueExists('ProxyServer') Then
+      Result := oRegistry.ReadString('ProxyServer')
+    Else
+      Result := '';
+  Finally
+   oRegistry.Free;
+  End;
+End;
+
+
+Function MonitorInfoFromRect(aRect : TRect): TMonitorInfo;
+Var
+  pMonitorInformation : PMonitorInfo;
+Begin
+  MemoryCreate(pMonitorInformation, SizeOf(TMonitorInfo));
+  Try
+    pMonitorInformation^.cbSize := SizeOf(TMonitorInfo);
+
+    GetMonitorInfo(MonitorFromRect(@aRect, MONITOR_DEFAULTTONEAREST), pMonitorInformation);
+
+    Result := pMonitorInformation^;
+  Finally
+    MemoryDestroy(pMonitorInformation, SizeOf(TMonitorInfo));
+  End;
+End;
+
+
 Initialization
+  Randomize;
   InitializeCriticalSection(gCriticalSection);
   {$IFOPT C+}
   gActiveMemoryTracking := True;
@@ -1103,4 +2315,5 @@ Finalization
 
   {$ENDIF}
   DeleteCriticalSection(gCriticalSection);
-End. // FHIR.Support.System //
+End.
+

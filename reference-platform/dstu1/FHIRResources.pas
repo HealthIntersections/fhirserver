@@ -904,12 +904,10 @@ Type
   public
     constructor Create; override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirResource; overload;
     function Clone : TFhirResource; overload;
-    {!script show}
-  published
+    published
     Property ResourceType : TFhirResourceType read GetResourceType;
 
     Property HasASummary : Boolean read GetHasASummary;
@@ -978,12 +976,10 @@ Type
     function GetItemN(index : Integer) : TFhirResource;
     procedure SetItemN(index : Integer; value : TFhirResource);
   public
-    {!script hide}
-    function Link : TFhirResourceList; Overload;
+      function Link : TFhirResourceList; Overload;
     function Clone : TFhirResourceList; Overload;
     function GetEnumerator : TFhirResourceListEnumerator;
-    {!script show}
-    
+      
 
     
     {@member AddItem
@@ -1068,14 +1064,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAdverseReaction; overload;
     function Clone : TFhirAdverseReaction; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       This records identifiers associated with this reaction that are defined by business processed and/ or used to refer to it when a direct URL reference to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
     }
@@ -1153,14 +1147,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAlert; overload;
     function Clone : TFhirAlert; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifier assigned to the alert for external use (outside the FHIR environment).
     }
@@ -1241,14 +1233,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAllergyIntolerance; overload;
     function Clone : TFhirAllergyIntolerance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       This records identifiers associated with this allergy/intolerance concern that are defined by business processed and/ or used to refer to it when a direct URL reference to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
     }
@@ -1347,14 +1337,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCarePlan; overload;
     function Clone : TFhirCarePlan; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       This records identifiers associated with this care plan that are defined by business processed and/ or used to refer to it when a direct URL reference to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
     }
@@ -1464,14 +1452,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirComposition; overload;
     function Clone : TFhirComposition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Logical Identifier for the composition, assigned when created. This identifier stays constant as the composition is changed over time.
     }
@@ -1618,14 +1604,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConceptMap; overload;
     function Clone : TFhirConceptMap; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       The identifier that is used to identify this concept map when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }
@@ -1779,14 +1763,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCondition; overload;
     function Clone : TFhirCondition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       This records identifiers associated with this condition that are defined by business processed and/ or used to refer to it when a direct URL reference to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
     }
@@ -1958,14 +1940,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformance; overload;
     function Clone : TFhirConformance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       The identifier that is used to identify this conformance statement when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }
@@ -2150,14 +2130,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDevice; overload;
     function Clone : TFhirDevice; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifiers assigned to this device by various organizations. The most likely organizations to assign identifiers are the manufacturer and the owner, though regulatory agencies may also assign an identifier. The identifiers identify the particular device, not the kind of device.
     }
@@ -2283,14 +2261,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDeviceObservationReport; overload;
     function Clone : TFhirDeviceObservationReport; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member instant
       The point in time that the values are reported.
     }
@@ -2362,14 +2338,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDiagnosticOrder; overload;
     function Clone : TFhirDiagnosticOrder; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member subject
       Who or what the investigation is to be performed on. This is usually a human patient, but diagnostic tests can also be requested on animals, groups of humans or animals, devices such as dialysis machines, or even locations (typically for environmental scans).
     }
@@ -2477,14 +2451,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDiagnosticReport; overload;
     function Clone : TFhirDiagnosticReport; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       A code or name that describes this diagnostic report.
     }
@@ -2626,14 +2598,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDocumentManifest; overload;
     function Clone : TFhirDocumentManifest; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member masterIdentifier
       A single identifier that uniquely identifies this manifest. Principally used to refer to the manifest in non-FHIR contexts.
     }
@@ -2796,14 +2766,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDocumentReference; overload;
     function Clone : TFhirDocumentReference; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member masterIdentifier
       Document identifier as assigned by the source of the document. This identifier is specific to this version of the document. This unique identifier may be used elsewhere to identify this version of the document.
     }
@@ -3017,14 +2985,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirEncounter; overload;
     function Clone : TFhirEncounter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifier(s) by which this encounter is known.
     }
@@ -3136,14 +3102,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirFamilyHistory; overload;
     function Clone : TFhirFamilyHistory; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       This records identifiers associated with this family history record that are defined by business processes and/ or used to refer to it when a direct URL reference to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
     }
@@ -3208,14 +3172,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirGroup; overload;
     function Clone : TFhirGroup; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       A unique business identifier for this group.
     }
@@ -3333,14 +3295,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImagingStudy; overload;
     function Clone : TFhirImagingStudy; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member dateTime
       Date and Time the study took place.
     }
@@ -3515,14 +3475,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunization; overload;
     function Clone : TFhirImmunization; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       A unique identifier assigned to this adverse reaction record.
     }
@@ -3664,14 +3622,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunizationRecommendation; overload;
     function Clone : TFhirImmunizationRecommendation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       A unique identifier assigned to this particular recommendation record.
     }
@@ -3727,14 +3683,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirList; overload;
     function Clone : TFhirList; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifier for the List assigned for business purposes outside the context of FHIR.
     }
@@ -3841,14 +3795,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirLocation; overload;
     function Clone : TFhirLocation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Unique code or number identifying the location to its users.
     }
@@ -3982,14 +3934,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedia; overload;
     function Clone : TFhirMedia; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       Whether the media is a photo (still image), an audio recording, or a video recording.
     }
@@ -4122,14 +4072,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedication; overload;
     function Clone : TFhirMedication; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       The common/commercial name of the medication absent information such as strength, form, etc.  E.g. Acetaminophen, Tylenol 3, etc.  The fully coordinated name is communicated as the display of Medication.code.
     }
@@ -4221,14 +4169,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationAdministration; overload;
     function Clone : TFhirMedicationAdministration; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       External identifier - FHIR will generate its own internal IDs (probably URLs) which do not need to be explicitly managed by the resource.  The identifier here is one that would be used by another non-FHIR system - for example an automated medication pump would provide a record each time it operated; an administration while the patient was off the ward might be made with a different system and entered after the event.  Particularly important if these records have to be updated.
     }
@@ -4331,14 +4277,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationDispense; overload;
     function Clone : TFhirMedicationDispense; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Identifier assigned by the dispensing facility - this is an identifier assigned outside FHIR.
     }
@@ -4420,14 +4364,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationPrescription; overload;
     function Clone : TFhirMedicationPrescription; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       External identifier - one that would be used by another non-FHIR system - for example a re-imbursement system might issue its own id for each prescription that is created.  This is particularly important where FHIR only provides part of an erntire workflow process where records have to be tracked through an entire system.
     }
@@ -4526,14 +4468,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationStatement; overload;
     function Clone : TFhirMedicationStatement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       External identifier - FHIR will generate its own internal IDs (probably URLs) which do not need to be explicitly managed by the resource.  The identifier here is one that would be used by another non-FHIR system - for example an automated medication pump would provide a record each time it operated; an administration while the patient was off the ward might be made with a different system and entered after the event.  Particularly important if these records have to be updated.
     }
@@ -4624,14 +4564,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMessageHeader; overload;
     function Clone : TFhirMessageHeader; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       The identifier of this message.
     }
@@ -4762,14 +4700,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirObservation; overload;
     function Clone : TFhirObservation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       Describes what was observed. Sometimes this is called the observation "code".
     }
@@ -4887,14 +4823,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOperationOutcome; overload;
     function Clone : TFhirOperationOutcome; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member issueList
       An error, warning or information message that results from a system action.
     }
@@ -4935,14 +4869,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOrder; overload;
     function Clone : TFhirOrder; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifiers assigned to this order by the orderer or by the receiver.
     }
@@ -5035,14 +4967,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOrderResponse; overload;
     function Clone : TFhirOrderResponse; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifiers assigned to this order. The identifiers are usually assigned by the system responding to the order, but they may be provided or added to by other systems.
     }
@@ -5129,14 +5059,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOrganization; overload;
     function Clone : TFhirOrganization; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifier for the organization that is used to identify the organization across multiple disparate systems.
     }
@@ -5220,14 +5148,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOther; overload;
     function Clone : TFhirOther; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifier assigned to the resource for business purposes, outside the context of FHIR.
     }
@@ -5306,14 +5232,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPatient; overload;
     function Clone : TFhirPatient; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       An identifier that applies to this person as a patient.
     }
@@ -5452,14 +5376,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPractitioner; overload;
     function Clone : TFhirPractitioner; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       An identifier that applies to this person in this role.
     }
@@ -5583,14 +5505,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProcedure; overload;
     function Clone : TFhirProcedure; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       This records identifiers associated with this procedure that are defined by business processed and/ or used to refer to it when a direct URL reference to the resource itself is not appropriate (e.g. in CDA documents, or in written / printed documentation).
     }
@@ -5740,14 +5660,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfile; overload;
     function Clone : TFhirProfile; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       The identifier that is used to identify this profile when it is referenced in a specification, model, design or an instance  (should be globally unique OID, UUID, or URI).
     }
@@ -5900,14 +5818,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProvenance; overload;
     function Clone : TFhirProvenance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member targetList
       The resource(s) that were generated by  the activity described in this resource. A provenance can point to more than one target if multiple resources were created/updated by the same activity.
     }
@@ -5988,14 +5904,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQuery; overload;
     function Clone : TFhirQuery; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Links query and its response(s).
     }
@@ -6054,14 +5968,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQuestionnaire; overload;
     function Clone : TFhirQuestionnaire; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member status
       The lifecycle status of the questionnaire as a whole.
     }
@@ -6148,14 +6060,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirRelatedPerson; overload;
     function Clone : TFhirRelatedPerson; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Identifier for a person within a particular scope.
     }
@@ -6224,14 +6134,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSecurityEvent; overload;
     function Clone : TFhirSecurityEvent; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member event
       Identifies the name, action type, time, and disposition of the audited event.
     }
@@ -6287,14 +6195,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSpecimen; overload;
     function Clone : TFhirSpecimen; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Id for specimen.
     }
@@ -6374,14 +6280,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSubstance; overload;
     function Clone : TFhirSubstance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       A code (or set of codes) that identify this substance.
     }
@@ -6438,14 +6342,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSupply; overload;
     function Clone : TFhirSupply; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member kind
       Category of supply, e.g.  central, non-stock, etc. This is used to support work flows associated with the supply process.
     }
@@ -6545,14 +6447,12 @@ Related resources tie this event to the authorizing prescription, and the specif
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSet; overload;
     function Clone : TFhirValueSet; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       The identifier that is used to identify this value set when it is referenced in a specification, model, design or an instance (should be globally unique OID, UUID, or URI).
     }

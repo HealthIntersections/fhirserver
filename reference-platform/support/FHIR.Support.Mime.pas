@@ -68,6 +68,8 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function Link : TMimePart; overload;
+
     property Content : TFslBuffer read FContent write SetContent;
     property Id : String read FId write SetId;
     property MediaType : String read GetMediaType write SetMediaType;
@@ -108,6 +110,7 @@ type
     function GetContentTypeHeader : String;
     procedure WriteToStream(AStream : TStream; AHeaders : boolean);
   end;
+
 
 implementation
 
@@ -374,6 +377,11 @@ function TMimePart.GetTransferEncoding: String;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TMimePart.GetTransferEncoding';
 begin
   result := FHeaders.Values[MIME_TRANSFERENCODING];
+end;
+
+function TMimePart.Link: TMimePart;
+begin
+  result := TMimePart(inherited Link);
 end;
 
 Function StringSplit(Const sValue, sDelimiter : String; Var sLeft, sRight: String) : Boolean;

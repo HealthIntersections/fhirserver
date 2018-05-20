@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Soap.EncdDecd,
+  SysUtils, Classes,
   Math,
   FHIR.Support.Strings,
   FHIR.Support.Objects,
@@ -102,8 +102,13 @@ Function BytesSplit(Const sValue, sDelimiter : TBytes; Var sLeft, sRight: TBytes
 function StreamToBytes(AStream: TStream): TBytes;
 function FileToBytes(filename : string) : TBytes;
 procedure BytesToFile(bytes : TBytes; filename : string);
+Function BytePos(find : Byte; source : TBytes ) : integer; Overload;
+Function BytePos(find : TBytes; source : TBytes ) : integer; Overload;
 
 Implementation
+
+uses
+  FHIR.Support.Math, FHIR.Support.Text;
 
 {$IFNDEF UT}
 
@@ -181,9 +186,6 @@ Begin
 End;
 
 {$ELSE}
-
-Uses
-   FHIR.Support.Math;
 
 Const
   BUFFER_INCREMENT_SIZE = 1024;
@@ -668,7 +670,7 @@ end;
 
 procedure TFslBytesBuilder.addBase64(val: TBytes);
 begin
-  AddAnsiString(EncodeBase64(@val[0], System.length(val)));
+  AddAnsiString(EncodeBase64(val));
 end;
 
 procedure TFslBytesBuilder.AddCardinal(val: cardinal);
@@ -833,5 +835,32 @@ begin
     f.Free;
   end;
 end;
+
+Function BytePos(find : Byte; source : TBytes ) : integer;
+var
+  i : integer;
+begin
+  result := -1;
+  for i := 0 to length(source)-1 do
+    if source[i] = find then
+    begin
+      result := i;
+      exit;
+    end;
+end;
+
+Function BytePos(find : TBytes; source : TBytes ) : integer; Overload;
+var
+  i : integer;
+begin
+  result := -1;
+  for i := 0 to length(source)-1 do
+    if SameBytes(copy(source, i, length(find)), find) then
+    begin
+      result := i;
+      exit;
+    end;
+end;
+
 
 End.

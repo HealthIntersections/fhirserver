@@ -34,7 +34,7 @@ Uses
   SysUtils, Classes,
   Xml.xmlintf,
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Math,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Filers, FHIR.Support.Exceptions, FHIR.Support.Generics,
+  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Support.MXml;
 
   
@@ -122,7 +122,7 @@ Type
   End;
 
 Type
-  EAdvXMLObject = Class(EAdvException);
+  EFslXMLObject = Class(EFslException);
 
   TFslXMLParserNamespaces = Class (TFslStringMatch)
     Private
@@ -138,7 +138,7 @@ Type
       Property DefaultNamespace : String Read FDefaultNamespace Write FDefaultNamespace;
   End;
 
-  TFslXMLAttribute = Class(TFslPersistent)
+  TFslXMLAttribute = Class(TFslObject)
     Private
       FNamespace : String;
       FName : String;
@@ -146,14 +146,13 @@ Type
       FSortKey : String;
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
     Public
       Function Link : TFslXMLAttribute;
       Function Clone : TFslXMLAttribute;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
 
       Property Namespace : String Read FNamespace Write FNamespace;
       Property Name : String Read FName Write FName;
@@ -161,15 +160,17 @@ Type
       Property SortKey : String read FSortKey write FSortKey;
   End;
 
-  TFslXMLElementType = (AdvXMLElementTypeUnknown, AdvXMLElementTypeNode, AdvXMLElementTypeText, AdvXMLElementTypeComment);
+  TFslXMLElementType = (FslXMLElementTypeUnknown, FslXMLElementTypeNode, FslXMLElementTypeText, FslXMLElementTypeComment);
 
   TFslXMLElementIterator = Class;
   TFslXMLElementList = Class;
 
-  TFslXMLAttributeList = Class(TFslPersistentList)
+  TFslXMLAttributeList = Class(TFslObjectList)
     Private
       Function GetElementByIndex(Const iIndex : Integer) : TFslXMLAttribute;
       Procedure SetElementByIndex(Const iIndex : Integer; Const oValue : TFslXMLAttribute);
+    function GetPropName(name: String): String;
+    procedure SetPropName(name: String; const Value: String);
 
     Protected
       Function ItemClass : TFslObjectClass; Override;
@@ -215,7 +216,10 @@ Type
       Function IsSortedByValue : Boolean;
       Function IsSortedBySortKey : Boolean;
 
+      procedure add(name, value : String); overload;
+
       Property ElementByIndex[Const iIndex : Integer] : TFslXMLAttribute Read GetElementByIndex Write SetElementByIndex; Default;
+      Property Match[name : String] : String read GetPropName write SetPropName;
   End;
 
   TFslXMLAttributeMatch = Class(TFslStringMatch)
@@ -229,7 +233,7 @@ Type
       Property Attribute[Const sKey : String] : String Read GetAttribute Write SetAttribute; Default;
   End;
 
-  TFslXMLElement = Class(TFslPersistent)
+  TFslXMLElement = Class(TFslObject)
     Private
       FElementType : TFslXMLElementType;
 
@@ -259,7 +263,7 @@ Type
       Procedure SetContent(Const Value : String);
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Overload; Override;
+      Function ErrorClass : EFslExceptionClass; Overload; Override;
 
     Public
       Constructor Create; Override;
@@ -269,7 +273,6 @@ Type
       Function Clone : TFslXMLElement;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
 
       Function Iterator(Const sNamespace, sName : String) : TFslXMLElementIterator; Overload;
       Function Iterator(Const sName : String) : TFslXMLElementIterator; Overload;
@@ -295,7 +298,7 @@ Type
       Property Content : String Read GetContent Write SetContent;
   End;
 
-  TFslXMLElementList = Class(TFslPersistentList)
+  TFslXMLElementList = Class(TFslObjectList)
     Private
       Function GetElement(Const iIndex : Integer) : TFslXMLElement;
       Procedure SetElement(Const iIndex : Integer; Const oValue : TFslXMLElement);
@@ -325,7 +328,7 @@ Type
       Property Elements[Const iIndex : Integer] : TFslXMLElement Read GetElement Write SetElement; Default;
   End;
 
-  TFslXMLElementIterator = Class(TFslPersistentListIterator)
+  TFslXMLElementIterator = Class(TFslObjectListIterator)
     Private
       FElementType : TFslXMLElementType;
       FNamespace : String;
@@ -338,7 +341,7 @@ Type
       Function Current : TFslXMLElement; Reintroduce;
   End;
 
-  TFslXMLDocument = Class(TFslPersistent)
+  TFslXMLDocument = Class(TFslObject)
     Private
       FRootElement : TFslXMLElement;
 
@@ -346,7 +349,7 @@ Type
       Procedure SetRootElement(Const Value : TFslXMLElement);
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
     Public
       Constructor Create; Override;
@@ -356,7 +359,6 @@ Type
       Function Clone : TFslXMLDocument;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
 
       Procedure Clear;
 
@@ -364,7 +366,7 @@ Type
       Property RootElement : TFslXMLElement Read GetRootElement Write SetRootElement;
   End;
 
-  TFslXMLDocumentList = Class(TFslPersistentList)
+  TFslXMLDocumentList = Class(TFslObjectList)
     Private
       Function GetElementByIndex(Const iIndex : Integer) : TFslXMLDocument;
       Procedure SetElementByIndex(Const iIndex : Integer; Const oValue : TFslXMLDocument);
@@ -448,7 +450,7 @@ Type
       FLevelList : TFslXMLNamespaceLevelList;
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
     Public
       Constructor Create; Override;
@@ -579,7 +581,7 @@ Type
     class procedure execute(doc : TMXmlDocument; target : TMXmlElement; patch : TMXmlElement);
   end;
 
-  EAdvXMLNamespaceManager = Class(EAdvException)
+  EFslXMLNamespaceManager = Class(EFslException)
   End;
 
 
@@ -622,6 +624,95 @@ Type
     procedure DocType(sText : String); override;
 
     procedure inject(const bytes : TBytes); override;
+  End;
+
+Type
+  TFslXMLKnownType = (TFslXMLKnownHeaderType, TFslXMLKnownCommentType, TFslXMLKnownElementType, TFslXMLKnownTextType);
+  TFslXMLKnownTypes = Set Of TFslXMLKnownType;
+
+
+Const
+  ALL_XML_KNOWN_TYPE = [TFslXMLKnownHeaderType..TFslXMLKnownTextType];
+
+
+Type
+  TFslXMLExtractor = Class(TFslTextExtractor)
+    Private
+      FElement : String;
+      FAttributes : TFslXMLAttributeMatch;
+      FNamespaceManager : TFslXMLNamespaceManager;
+      FNodeName : String;
+
+    Protected
+      Procedure Expected(Const sMethod, sExpected : String);
+
+      Function SameLocalAndNamespace(Const sTag, sNamespace, sLocal: String): Boolean;
+
+    Public
+      Constructor Create; Override;
+      Destructor Destroy; Override;
+
+      Function Link : TFslXMLExtractor;
+
+      Procedure ConsumeAttributes(Const setTerminal : TCharSet);
+
+      Function ConsumeIdentifier(Const sValue : String; Const setTerminal : TCharSet) : String; Overload;
+      Function ConsumeIdentifier(Const setTerminal : TCharSet) : String; Overload;
+
+      Function ConsumeWhitespace : String;
+
+      Function ConsumeComment : String; Overload;
+      Procedure ConsumeComment(Const sComment : String); Overload;
+
+      Function ConsumeHeader : String; Overload;
+      Procedure ConsumeHeader(Const sHeader : String); Overload;
+
+      Procedure ConsumeDocumentType;
+
+      Procedure ConsumeOpen(Const sTag : String); Overload;
+      Procedure ConsumeOpen(Const sTag, sNamespace : String); Overload;
+      Function ConsumeOpen : String; Overload;
+
+      Function ConsumeBody : String;
+      Function ConsumeTextBody : String; Overload;
+
+      Procedure ConsumeClose(Const sTag : String); Overload;
+      Procedure ConsumeClose(Const sTag, sNamespace : String); Overload;
+      Function ConsumeClose : String; Overload;
+
+      Function ConsumeText(Const sTag : String) : String; Overload;
+      Function ConsumeText(Const sTag, sNamespace : String) : String; Overload;
+
+      Function ConsumeElement : String;
+
+      Function PeekString : String;
+      Function PeekXml : String;
+      Function PeekIsOpenTag(Const sElement : String) : Boolean;
+      Function PeekIsOpen : Boolean;
+      Function PeekIsClose : Boolean;
+      Function PeekIsHeader : Boolean;
+      Function PeekIsComment : Boolean;
+      Function PeekIsText: Boolean;
+      Function PeekIsEmptyNode: Boolean;
+
+      Procedure SkipNext; Overload;
+      Procedure Skip(oSkipTypes: TFslXMLKnownTypes); Overload;
+
+      Property Attributes : TFslXMLAttributeMatch Read FAttributes;
+
+      // Namespaces
+      Function NodeLocalName: String;
+      Function NodeNamespace: String;
+      Function IsNode(Const sNamespace, sLocalName: String): Boolean;
+
+      Function GetAttribute(Const sNamespace, sLocalName: String): String; Overload;
+      Function GetAttribute(Const sNamespace, sLocalName, sDefault: String): String; Overload;
+
+      Function DefaultNamespace: String;
+      Function PrefixOf(Const sNodeName: String): String;
+      Function NamespaceOf(Const sNodeName: String): String; Overload;
+
+      Procedure ListPrefixes(Const oPrefixNamespaces: TFslStringMatch);
   End;
 
 implementation
@@ -713,7 +804,7 @@ end;
 
 Function TFslXmlBuilder.Build : String;
 begin
-  result := buf.AsUnicode;
+  result := buf.AsText;
 end;
 
 procedure TFslXmlBuilder.SetCanonicalEntities(const Value: boolean);
@@ -1873,20 +1964,9 @@ Begin
 End;
 
 
-Procedure TFslXMLAttribute.Define(oFiler : TFslFiler);
+Function TFslXMLAttribute.ErrorClass : EFslExceptionClass;
 Begin
-  Inherited;
-
-  oFiler['Namespace'].DefineString(FNamespace);
-  oFiler['Name'].DefineString(FName);
-  oFiler['Value'].DefineString(FValue);
-  oFiler['SortKey'].DefineString(FSortKey);
-End;
-
-
-Function TFslXMLAttribute.ErrorClass : EAdvExceptionClass;
-Begin
-  Result := EAdvXMLObject;
+  Result := EFslXMLObject;
 End;
 
 
@@ -1895,6 +1975,21 @@ Begin
   Result := TFslXMLAttributeList(Inherited Link);
 End;
 
+
+procedure TFslXMLAttributeList.add(name, value: String);
+var
+  attr : TFslXMLAttribute;
+begin
+  attr := TFslXMLAttribute.Create;
+  try
+    attr.Namespace := '';
+    attr.Name := name;
+    attr.Value := value;
+    add(attr.link);
+  finally
+    attr.Free;
+  end;
+end;
 
 Function TFslXMLAttributeList.Clone : TFslXMLAttributeList;
 Begin
@@ -1920,11 +2015,36 @@ Begin
 End;
 
 
+function TFslXMLAttributeList.GetPropName(name: String): String;
+var
+  a : TFslXMLAttribute;
+begin
+  a := GetByName(name);
+  if a = nil then
+    result := ''
+  else
+    result := a.Value;
+end;
+
 Procedure TFslXMLAttributeList.SetElementByIndex(Const iIndex : Integer; Const oValue : TFslXMLAttribute);
 Begin
   Inherited ObjectByIndex[iIndex] := oValue;
 End;
 
+
+procedure TFslXMLAttributeList.SetPropName(name: String; const Value: String);
+var
+  a : TFslXMLAttribute;
+begin
+  a := GetByName(name);
+  if a = nil then
+  begin
+    a := TFslXMLAttribute.Create;
+    add(a);
+    a.Name := name;
+  end;
+  a.Value := value;
+end;
 
 Function TFslXMLAttributeList.CompareByNamespacedName(pA, pB : Pointer) : Integer;
 Begin
@@ -2218,19 +2338,6 @@ Begin
 End;
 
 
-Procedure TFslXMLElement.Define(oFiler : TFslFiler);
-Begin
-  Inherited;
-
-  oFiler['ElementType'].DefineEnumerated(FElementType, NAMES_ADVXMLELEMENTTYPE);
-  oFiler['Namespace'].DefineString(FNamespace);
-  oFiler['Name'].DefineString(FName);
-  oFiler['Id'].DefineString(FId);
-  oFiler['Children'].DefineObject(FChildrenElementList, TFslXMLElementList);
-  oFiler['Attributes'].DefineObject(FAttributeList, TFslXMLAttributeList);
-  oFiler['Content'].DefineString(FContent);
-End;
-
 
 Procedure TFslXMLElement.Clear;
 Begin
@@ -2272,7 +2379,7 @@ Procedure TFslXMLElement.SetElementType(Const Value : TFslXMLElementType);
 Begin
   If Value <> FElementType Then
   Begin
-    Assert(CheckCondition(Value <> AdvXMLElementTypeUnknown, 'SetElementType', 'ElementType must not be unknown'));
+    Assert(CheckCondition(Value <> FslXMLElementTypeUnknown, 'SetElementType', 'ElementType must not be unknown'));
     FElementType := Value;
     Clear;
   End;
@@ -2281,55 +2388,55 @@ End;
 
 Function TFslXMLElement.HasComment: Boolean;
 Begin
-  Result := FElementType = AdvXMLElementTypeComment;
+  Result := FElementType = FslXMLElementTypeComment;
 End;
 
 
 Function TFslXMLElement.HasText: Boolean;
 Begin
-  Result := FElementType = AdvXMLElementTypeText;
+  Result := FElementType = FslXMLElementTypeText;
 End;
 
 
 Function TFslXMLElement.HasNamespace : Boolean;
 Begin
-  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
-  Result := FElementType = AdvXMLElementTypeNode;
+  Assert(CheckCondition(FElementType <> FslXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Result := FElementType = FslXMLElementTypeNode;
 End;
 
 
 Function TFslXMLElement.HasName : Boolean;
 Begin
-  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
-  Result := FElementType = AdvXMLElementTypeNode;
+  Assert(CheckCondition(FElementType <> FslXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Result := FElementType = FslXMLElementTypeNode;
 End;
 
 
 Function TFslXMLElement.HasId : Boolean;
 Begin
-  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
-  Result := FElementType = AdvXMLElementTypeNode;
+  Assert(CheckCondition(FElementType <> FslXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Result := FElementType = FslXMLElementTypeNode;
 End;
 
 
 Function TFslXMLElement.HasChildren : Boolean;
 Begin
-  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
-  Result := FElementType = AdvXMLElementTypeNode;
+  Assert(CheckCondition(FElementType <> FslXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Result := FElementType = FslXMLElementTypeNode;
 End;
 
 
 Function TFslXMLElement.HasAttributes : Boolean;
 Begin
-  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
-  Result := FElementType = AdvXMLElementTypeNode;
+  Assert(CheckCondition(FElementType <> FslXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Result := FElementType = FslXMLElementTypeNode;
 End;
 
 
 Function TFslXMLElement.HasContent : Boolean;
 Begin
-  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
-  Result := FElementType In [AdvXMLElementTypeText, AdvXMLElementTypeComment];
+  Assert(CheckCondition(FElementType <> FslXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Result := FElementType In [FslXMLElementTypeText, FslXMLElementTypeComment];
 End;
 
 
@@ -2430,9 +2537,9 @@ Begin
 End;
 
 
-Function TFslXMLElement.ErrorClass : EAdvExceptionClass;
+Function TFslXMLElement.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EAdvXMLObject;
+  Result := EFslXMLObject;
 End;
 
 
@@ -2445,7 +2552,7 @@ End;
 
 Function TFslXMLElement.Iterator(Const sName : String) : TFslXMLElementIterator;
 Begin
-  Result := Iterator(AdvXMLElementTypeNode);
+  Result := Iterator(FslXMLElementTypeNode);
   Result.FName := sName;
 End;
 
@@ -2468,7 +2575,7 @@ End;
 Function TFslXMLElementIterator.Skip : Boolean;
 Begin
   Result := False;
-  If FElementType <> AdvXMLElementTypeUnknown Then
+  If FElementType <> FslXMLElementTypeUnknown Then
     Result := Current.ElementType <> FElementType;
   If FNamespace <> '' Then
     Result := Result Or (Current.Namespace <> FNamespace);
@@ -2568,7 +2675,7 @@ Var
 Begin
   oElement := New;
   Try
-    oElement.ElementType := AdvXMLElementTypeNode;
+    oElement.ElementType := FslXMLElementTypeNode;
     oElement.Name := aValue;
 
     If Not Find(oElement, Result, CompareByName) Then
@@ -2650,17 +2757,10 @@ Begin
 End;
 
 
-Procedure TFslXMLDocument.Define(oFiler : TFslFiler);
+
+Function TFslXMLDocument.ErrorClass : EFslExceptionClass;
 Begin
-  Inherited;
-
-  oFiler['RootElement'].DefineObject(FRootElement, TFslXMLElement);
-End;
-
-
-Function TFslXMLDocument.ErrorClass : EAdvExceptionClass;
-Begin
-  Result := EAdvXMLObject;
+  Result := EFslXMLObject;
 End;
 
 
@@ -2855,9 +2955,9 @@ Begin
 End;
 
 
-Function TFslXMLNamespaceManager.ErrorClass: EAdvExceptionClass;
+Function TFslXMLNamespaceManager.ErrorClass: EFslExceptionClass;
 Begin
-  Result := EAdvXMLNamespaceManager;
+  Result := EFslXMLNamespaceManager;
 End;
 
 
@@ -3280,6 +3380,541 @@ begin
   Start(nil);
 end;
 
+
+Constructor TFslXMLExtractor.Create;
+Begin
+  Inherited;
+
+  FElement := '';
+  FAttributes := TFslXMLAttributeMatch.Create;
+  FNamespaceManager := TFslXMLNamespaceManager.Create;
+End;
+
+
+Destructor TFslXMLExtractor.Destroy;
+Begin
+  FNamespaceManager.Free;
+  FAttributes.Free;
+
+  Inherited;
+End;
+
+
+Function TFslXMLExtractor.Link: TFslXMLExtractor;
+Begin
+  Result := TFslXMLExtractor(Inherited Link);
+End;
+
+
+Procedure TFslXMLExtractor.Expected(Const sMethod, sExpected : String);
+Begin
+  RaiseError(sMethod, StringFormat('Expected %s but found ''%s''', [sExpected, FElement]));
+End;
+
+
+Function TFslXMLExtractor.ConsumeIdentifier(Const sValue: String; Const setTerminal : TCharSet) : String;
+Begin
+  Result := ConsumeIdentifier(setTerminal);
+
+  If Not StringEquals(sValue, Result) Then
+    RaiseError('ConsumeIdentifier', StringFormat('Expected ''%s'' but found ''%s''', [sValue, Result]));
+End;
+
+
+Function TFslXMLExtractor.ConsumeIdentifier(Const setTerminal : TCharSet) : String;
+Begin
+  Result := ConsumeUntilCharacterSet(setTerminal);
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeAttributes(Const setTerminal : TCharSet);
+Var
+  sKey   : String;
+  sValue : String;
+  cQuote : Char;
+Begin
+  FAttributes.Clear;
+
+  While Not CharInSet(NextCharacter, setTerminal) Do
+  Begin
+    sKey := ConsumeIdentifier(['=', '>'] + setWhitespace);
+
+    ConsumeWhitespace;
+
+    ConsumeCharacter('=');
+
+    ConsumeWhitespace;
+
+    If NextCharacter = '''' Then
+      cQuote := ''''
+    Else
+      cQuote := '"';
+
+    ConsumeCharacter(cQuote);
+
+    sValue := ConsumeIdentifier([cQuote]);
+
+    ConsumeCharacter(cQuote);
+
+    If cQuote = '''' Then
+      sValue := StringReplace(sValue, '&apos;', '''')
+    Else
+      sValue := StringReplace(sValue, '&quot;', '"');
+
+    FAttributes.Add(sKey, sValue);
+
+    ConsumeWhitespace;
+  End;
+End;
+
+
+Function TFslXMLExtractor.PeekXML : String;
+Const
+  setTag = ['<', '>'] + setWhitespace;
+Begin
+  // Assume valid xml
+  // All elements must have names. Element names are case-sensitive and must start with
+  // a letter or underscore.
+  // An element name can contain letters, digits, hyphens, underscores, and periods.
+
+  FNodeName := '';
+
+  If FElement = '' Then
+  Begin
+    ConsumeWhitespace;
+
+    If Not More Then
+    Begin
+      //Nothing left to read
+      FElement := '';
+    End
+    Else
+    Begin
+      ConsumeCharacter('<');
+
+      If NextCharacter = '!' Then
+      Begin
+        // Comment
+        ConsumeString('!--');
+
+        If More Then
+          FElement := '!' + ConsumeUntilString('-->')
+        Else
+          FElement := '!';
+
+        If More Then
+          ConsumeString('--');
+
+        FAttributes.Clear;
+      End
+      Else If NextCharacter = '/' Then
+      Begin
+        // Close tag
+
+        FElement := ConsumeIdentifier(setTag);
+        ConsumeWhitespace;
+        FAttributes.Clear;
+        FNamespaceManager.Pop;
+      End
+      Else
+      Begin
+        // Open tag or header
+
+        FElement := ConsumeIdentifier(setTag);
+        FNodeName := FElement;
+
+        ConsumeWhitespace;
+
+        ConsumeAttributes(['/', '>', '?']);
+
+        FNamespaceManager.Push(Attributes);
+
+        If NextCharacter <> '>' Then
+          FElement := FElement + ConsumeCharacter;
+      End;
+
+      ConsumeCharacter('>');
+    End;
+  End
+  Else
+    FNodeName := FElement;
+
+  Result := FElement;
+End;
+
+
+Function TFslXMLExtractor.PeekIsClose : Boolean;
+Begin
+  PeekXML;
+
+  Result := StringGet(FElement, 1) = '/';
+End;
+
+
+Function TFslXMLExtractor.PeekIsOpen : Boolean;
+Begin
+  PeekXML;
+
+  Result := (FElement <> '') And Not CharInSet(StringGet(FElement, 1), ['/', '?', '!']);
+End;
+
+
+Function TFslXMLExtractor.PeekIsEmptyNode: Boolean;
+Begin
+  Result := PeekIsOpen And (StringGet(FElement, Length(FElement)) = '/');
+End;
+
+
+Function TFslXMLExtractor.PeekIsHeader : Boolean;
+Begin
+  PeekXML;
+
+  Result := StringGet(FElement, 1) = '?';
+End;
+
+
+Function TFslXMLExtractor.PeekIsComment : Boolean;
+Begin
+  PeekXML;
+
+  Result := StringGet(FElement, 1) = '!';
+End;
+
+
+Function TFslXMLExtractor.PeekIsText: Boolean;
+Begin
+  Result := NextCharacter <> '<';
+  If Not Result Then
+    PeekXML;
+End;
+
+
+Function TFslXMLExtractor.ConsumeOpen : String;
+Begin
+  Result := PeekXML;
+
+  If StringEquals(Result, '/', 1) Then
+    Expected('ConsumeComment', 'open');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeOpen(Const sTag: String);
+Begin
+  PeekXML;
+
+  if StringEquals(sTag+'/', FElement) then
+  begin
+    FElement := '/'+sTag;
+  end
+  else
+  begin
+  If (sTag <> '') And Not StringEquals(sTag, FElement) Then
+    Expected('ConsumeOpen', '''' + sTag + '''');
+
+  FElement := '';
+End;
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeOpen(Const sTag, sNamespace : String);
+Begin
+  PeekXML;
+
+  If (sTag <> '') And Not SameLocalAndNamespace(FElement, sNamespace, sTag) Then
+    Expected('ConsumeOpen', '''' + sTag + ''' in namespace '''+sNamespace+'''');
+
+  FElement := '';
+End;
+
+
+Function TFslXMLExtractor.ConsumeClose : String;
+Begin
+  Result := PeekXML;
+
+  If Not StringEquals(FElement, '/', 1) Then
+    Expected('ConsumeComment', 'close (/)');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeClose(Const sTag: String);
+Begin
+  PeekXML;
+
+  If (sTag <> '') And Not StringEquals('/' + sTag, FElement) Then
+    Expected('ConsumeClose', '''/' + sTag + '''');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeClose(Const sTag, sNamespace: String);
+Begin
+  PeekXML;
+
+  If (sTag <> '') And (sTag[1] = '/') And
+    Not SameLocalAndNamespace(Copy(FElement, 2, MaxInt), sNamespace, sTag) Then
+    Expected('ConsumeClose', '''/' + sTag + ''' in namespace '''+sNamespace+'''');
+
+  FElement := '';
+End;
+
+
+Function TFslXMLExtractor.ConsumeBody : String;
+Begin
+  Result := DecodeXML(ConsumeUntilCharacterSet(['<', '>']));
+End;
+
+
+Function TFslXMLExtractor.ConsumeTextBody : String;
+Begin
+  Result := DecodeXML(ConsumeUntilCharacterSet(['<']));
+End;
+
+
+Function TFslXMLExtractor.ConsumeText(Const sTag: String): String;
+Begin
+  ConsumeOpen(sTag);
+
+  Result := ConsumeTextBody;
+
+  ConsumeClose(sTag);
+End;
+
+
+Function TFslXMLExtractor.ConsumeText(Const sTag, sNamespace: String): String;
+Begin
+  ConsumeOpen(sTag, sNamespace);
+
+  Result := ConsumeTextBody;
+
+  ConsumeClose(sTag, sNamespace);
+End;
+
+
+Function TFslXMLExtractor.ConsumeComment : String;
+Begin
+  Result := StringTrimSet(PeekXML, ['!']);
+
+  If Not StringEquals(FElement, '!', 1) Then
+    Expected('ConsumeComment', 'comment (!)');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeComment(Const sComment: String);
+Begin
+  PeekXML;
+
+  If Not StringEquals(sComment, StringTrimSet(FElement, ['!'])) Then
+    Expected('ConsumeComment', sComment);
+
+  FElement := '';
+End;
+
+
+Function TFslXMLExtractor.ConsumeHeader : String;
+Begin
+  Result := StringTrimSet(PeekXML, ['?']);
+
+  If Not StringEquals(FElement, '?', 1) Then
+    Expected('ConsumeHeader', 'header (?)');
+
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeHeader(Const sHeader: String);
+Begin
+  PeekXML;
+
+  If Not StringEquals(sHeader, StringTrimSet(FElement, ['?'])) Then
+    Expected('ConsumeHeader', sHeader);
+
+  FElement := '';
+End;
+
+
+Function TFslXMLExtractor.ConsumeWhitespace : String;
+Begin
+  Result := ConsumeWhileCharacterSet(setWhitespace);
+End;
+
+
+Function TFslXMLExtractor.ConsumeElement : String;
+Begin
+  Result := PeekXML;
+  FElement := '';
+End;
+
+
+Procedure TFslXMLExtractor.ConsumeDocumentType;
+Var
+  sName : String;
+Begin
+  PeekXML;
+
+  If StringGet(FElement, 1) <> '!' Then
+    RaiseError('ConsumeDocumentType', 'Document Type not found.');
+
+  sName := ConsumeOpen;
+
+  ConsumeBody;
+
+  ConsumeClose(sName);
+End;
+
+
+Function TFslXMLExtractor.NamespaceOf(Const sNodeName: String): String;
+Begin
+  Result := FNamespaceManager.NamespaceOf(sNodeName);
+End;
+
+
+Function TFslXMLExtractor.PrefixOf(Const sNodeName: String): String;
+Begin
+  Result := FNamespaceManager.PrefixOf(sNodeName);
+End;
+
+
+Function TFslXMLExtractor.DefaultNamespace: String;
+Begin
+  Result := FNamespaceManager.DefaultNamespace;
+End;
+
+
+Function TFslXMLExtractor.NodeNamespace: String;
+Begin
+  Result := FNamespaceManager.NamespaceOf(FNodeName);
+End;
+
+
+Function TFslXMLExtractor.NodeLocalName: String;
+Begin
+  Result := FNamespaceManager.LocalNameOf(FNodeName);
+End;
+
+
+Function TFslXMLExtractor.SameLocalAndNamespace(Const sTag, sNamespace, sLocal: String): Boolean;
+Var
+  sPrefix : String;
+Begin
+  // Result := (FNamespaceManager.NamespaceOf(sTag) = sNamespace) And (FNamespaceManager.LocalNameOf(sTag) = sLocal);
+  // We want a more finer check, as prefix may not exist (cause error in namespace manager)
+  // However, when a prefix is missing, default namespace should be tested instead
+  sPrefix := FNamespaceManager.PrefixOf(sTag);
+  If sPrefix = '' Then
+    Result := (FNamespaceManager.DefaultNamespace = sNamespace) And (sTag = sLocal)
+  Else
+    Result := (FNamespaceManager.NamespaceOfPrefix(sPrefix) = sNamespace) And (FNamespaceManager.LocalNameOf(sTag) = sLocal);
+End;
+
+
+Procedure TFslXMLExtractor.ListPrefixes(Const oPrefixNamespaces: TFslStringMatch);
+Begin
+  FNamespaceManager.ListPrefixes(oPrefixNamespaces);
+End;
+
+
+Function TFslXMLExtractor.IsNode(Const sNamespace, sLocalName: String): Boolean;
+Begin
+  Result  := SameLocalAndNamespace(FNodeName, sNamespace, sLocalName);
+End;
+
+
+Function TFslXMLExtractor.GetAttribute(Const sNamespace, sLocalName: String): String;
+Begin
+  Result := GetAttribute(sNamespace, sLocalName, '');
+End;
+
+
+Function TFslXMLExtractor.GetAttribute(Const sNamespace, sLocalName, sDefault: String): String;
+Var
+  iCount : Integer;
+  sAttrName : String;
+Begin
+  // default result
+  Result := sDefault;
+
+  For iCount := 0 To FAttributes.Count - 1 Do
+  Begin
+    sAttrName := FAttributes.KeyByIndex[iCount];
+    If SameLocalAndNamespace(sAttrName, sNamespace, sLocalName) Then
+    Begin
+      Result := FAttributes.ValueByIndex[iCount];
+      Break;
+    End;
+  End;
+End;
+
+
+Function TFslXMLExtractor.PeekIsOpenTag(Const sElement: String): Boolean;
+Begin
+  Result := PeekIsOpen And StringEquals(PeekXML, sElement);
+End;
+
+
+Procedure TFslXMLExtractor.Skip(oSkipTypes: TFslXMLKnownTypes);
+Var
+  bContinue: Boolean;
+Begin
+  // we assume well-formed XML node
+  bContinue := True;
+  While bContinue Do
+  Begin
+    If Self.PeekIsText And (TFslXMLKnownTextType In oSkipTypes) Then
+      Self.ConsumeBody
+    Else If Self.PeekIsHeader And (TFslXMLKnownHeaderType In oSkipTypes) Then
+      Self.ConsumeHeader
+    Else If Self.PeekIsComment And (TFslXMLKnownCommentType In oSkipTypes) Then
+      Self.ConsumeComment
+    Else If Self.PeekIsOpen And (TFslXMLKnownElementType In oSkipTypes) Then
+    Begin
+      If FElement[Length(FElement)] = '/' Then
+        Self.ConsumeElement     // element with no body
+      Else
+      Begin
+        Self.ConsumeOpen;
+        Skip(ALL_XML_KNOWN_TYPE);
+        Self.ConsumeClose;
+      End;
+    End
+    Else
+      bContinue := False;    // Reach non-skip node, or end of element's body
+  End;
+End;
+
+
+Procedure TFslXMLExtractor.SkipNext;
+Begin
+  // Simply skip the next 'consumable'
+  If Self.PeekIsHeader Then
+    Self.ConsumeHeader
+  Else If Self.PeekIsComment Then
+    Self.ConsumeComment
+  Else If Self.PeekIsOpen Then
+  Begin
+    If FElement[Length(FElement)] = '/' Then
+      Self.ConsumeElement     // element with no body
+    Else
+    Begin
+      Self.ConsumeOpen;
+      Skip(ALL_XML_KNOWN_TYPE);
+      Self.ConsumeClose;
+    End;
+  End
+  Else If Self.PeekIsClose Then
+    Self.ConsumeClose
+End;
+
+function TFslXMLExtractor.PeekString: String;
+begin
+  result := PeekXml;
+end;
 
 
 end.

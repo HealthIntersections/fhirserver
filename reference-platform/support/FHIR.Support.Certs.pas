@@ -31,9 +31,9 @@ interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  System.SysUtils, Classes, {$IFNDEF VER260} System.NetEncoding, {$ENDIF} EncdDecd,
+  System.SysUtils, Classes,
   IdGlobal, IdSSLOpenSSL, IdSSLOpenSSLHeaders, IdHMAC, IdHash, IdHMACSHA1,
-  FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.System,
+  FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.DateTime, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Support.Json;
 
@@ -444,8 +444,8 @@ class function THMACUtils.HMAC_Base64(alg : TIdHMACClass; aKey, aMessage: TBytes
 var
   _HMAC: TBytes;
 begin
-  _HMAC:= HMAC(alg, aKey, aMessage);
-  Result:= EncodeBase64(_HMAC, Length(_HMAC));
+  _HMAC := HMAC(alg, aKey, aMessage);
+  Result := EncodeBase64(_HMAC);
 end;
 
 
@@ -459,7 +459,7 @@ function JWTBase64URL(b : TBytes) : TBytes; overload;
 var
   b64 : String;
 begin
-  b64 := String(EncodeBase64(@b[0], length(b)));
+  b64 := String(EncodeBase64(b));
   b64 := StringReplace(b64, #13#10, '').TrimRight(['=']);
   b64 := StringReplace(b64, '+', '-', [rfReplaceAll]);
   b64 := StringReplace(b64, '/', '_', [rfReplaceAll]);
@@ -470,7 +470,7 @@ function JWTBase64URLStr(b : TBytes) : String; overload;
 var
   b64 : String;
 begin
-  b64 := String(EncodeBase64(@b[0], length(b)));
+  b64 := String(EncodeBase64(b));
   b64 := StringReplace(b64, #13#10, '').TrimRight(['=']);
   b64 := StringReplace(b64, '+', '-', [rfReplaceAll]);
   b64 := StringReplace(b64, '/', '_', [rfReplaceAll]);

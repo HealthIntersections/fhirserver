@@ -51,7 +51,6 @@ uses
   AdvPersistents in '..\support\AdvPersistents.pas',
   FHIR.Support.Objects in '..\support\FHIR.Support.Objects.pas',
   FHIR.Support.Exceptions in '..\support\FHIR.Support.Exceptions.pas',
-  FHIR.Support.Filers in '..\support\FHIR.Support.Filers.pas',
   ColourSupport in '..\support\ColourSupport.pas',
   CurrencySupport in '..\support\CurrencySupport.pas',
   AdvPersistentLists in '..\support\AdvPersistentLists.pas',

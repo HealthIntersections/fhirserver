@@ -124,11 +124,11 @@ var
 begin
   obj := TFslObject.Create;
   try
-    Assert.IsTrue(obj.AdvObjectReferenceCount = 0);
+    Assert.IsTrue(obj.FslObjectReferenceCount = 0);
     obj.Link;
-    Assert.IsTrue(obj.AdvObjectReferenceCount = 1);
+    Assert.IsTrue(obj.FslObjectReferenceCount = 1);
     obj.Free;
-    Assert.IsTrue(obj.AdvObjectReferenceCount = 0);
+    Assert.IsTrue(obj.FslObjectReferenceCount = 0);
   finally
     obj.Free;
   end;

@@ -61,13 +61,11 @@ type
     FURL : String;
     FRel : String;
   public
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomLink; overload;
     function Clone : TFHIRAtomLink; overload;
     procedure AsHeader(b : TFslStringBuilder);
-    {!script show}
-
+  
   published
     {@member URL
       The link
@@ -92,13 +90,11 @@ type
     Procedure InsertByIndex(index : Integer; value : TFHIRAtomLink);
 
   public
-    {!script hide}
-    Function Link : TFHIRAtomLinkList; Overload;
+      Function Link : TFHIRAtomLinkList; Overload;
     Function Clone : TFHIRAtomLinkList; Overload;
     Function GetItemN(index : Integer) : TFHIRAtomLink;
     Function AsHeader : String;
-    {!script show}
-    {@member GetRel
+      {@member GetRel
       Get the url for a given rel type (or blank)
     }
     Function GetRel(relType : String) : String;
@@ -165,13 +161,11 @@ type
     FLabel : String;
     FTagKey: integer;
   public
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomCategory; overload;
     function Clone : TFHIRAtomCategory; overload;
     Property TagKey : integer read FTagKey write FTagKey;
-    {!script show}
-
+  
   published
     {@member scheme
       What kind of category this is. http://hl7.org/fhir/tag = tag.
@@ -202,8 +196,7 @@ type
     Procedure InsertByIndex(index : Integer; value : TFHIRAtomCategory);
 
   public
-    {!script hide}
-    Function Link : TFHIRAtomCategoryList; Overload;
+      Function Link : TFHIRAtomCategoryList; Overload;
     Function Clone : TFHIRAtomCategoryList; Overload;
     Function GetItemN(index : Integer) : TFHIRAtomCategory;
     Property ItemN[index : Integer] : TFHIRAtomCategory read GetItemN write SetItemN; default;
@@ -215,8 +208,7 @@ type
     function GetTag(schemeUri, tagUri : string):TFHIRAtomCategory;
     Function AsHeader : String;
 
-    {!script show}
-    {@member Append
+      {@member Append
       Add an AtomCategory to the end of the list.
     }
     Function Append : TFHIRAtomCategory;
@@ -289,13 +281,11 @@ type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomBase; overload;
     function Clone : TFHIRAtomBase; overload;
     Function HasTag(schemeUri, tag : string) : boolean;
-    {!script show}
-  published
+    published
     {@member title
       text summary of resource
     }
@@ -353,12 +343,10 @@ type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomEntry; overload;
     function Clone : TFHIRAtomEntry; overload;
-    {!script show}
-
+  
   published
 
     {@member originalId
@@ -396,11 +384,9 @@ type
     Procedure InsertByIndex(index : Integer; value : TFHIRAtomEntry);
 
   public
-    {!script hide}
-    Function Link : TFHIRAtomEntryList; Overload;
+      Function Link : TFHIRAtomEntryList; Overload;
     Function Clone : TFHIRAtomEntryList; Overload;
-    {!script show}
-    {@member Append
+      {@member Append
       Add an AtomEntry to the end of the list.
     }
     Function Append : TFHIRAtomEntry;
@@ -461,8 +447,7 @@ type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFHIRAtomFeed; overload;
     function Clone : TFHIRAtomFeed; overload;
     Property isSearch : Boolean read FisSearch write FisSearch;
@@ -472,8 +457,7 @@ type
     Property sql : String read FSQL write FSQL;
     Property fhirBaseUrl : String read GetFHIRBaseUrl write SetFhirBaseUrl;
 
-    {!script show}
-
+  
     {@member addEntry
       add a resource to a feed with the given title / author / id. link is optional
       both id and link (if present) must be full URIs.

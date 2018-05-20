@@ -74,7 +74,7 @@ certificate you nominate
 uses
   SysUtils, Classes, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdHashSHA, IdGlobal,
-  FHIR.Support.Binary, FHIR.Support.Strings, EncdDecd,
+  FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Support.MXml, FHIR.Support.Xml,
   IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Web.Fetcher;
@@ -178,20 +178,7 @@ Type
     function verifySignature(xml : TBytes) : boolean;
   end;
 
-function base64(bytes : TBytes): String;
-function unbase64(value : String): TBytes;
-
 implementation
-
-function base64(bytes : TBytes): String;
-begin
-  result := String(EncodeBase64(@bytes[0], length(bytes))).replace(#13#10, '');
-end;
-
-function unbase64(value : String): TBytes;
-begin
-  result := decodeBase64(AnsiString(value));
-end;
 
 procedure check(test: boolean; failmsg: string);
 begin
@@ -383,7 +370,7 @@ begin
     bytes := digestSHA256(bytes)
   else
     raise Exception.Create('Unknown Digest method '+ref.elementNS(NS_DS, 'DigestMethod').attribute['Algorithm']);
-  digest := unbase64(ref.elementNS(NS_DS, 'DigestValue').Text);
+  digest := decodeBase64(ref.elementNS(NS_DS, 'DigestValue').Text);
 
   //Compare the generated digest value against DigestValue in the SignedInfo Reference; if there is any mismatch, validation fails.
   if not SameBytes(bytes, digest) then
@@ -440,7 +427,7 @@ begin
     key := LoadKeyInfo(sig);
     try
       // 4. Obtain the canonical form of the SignatureMethod using the CanonicalizationMethod and use the result (and previously obtained KeyInfo) to confirm the SignatureValue over the SignedInfo element.
-      v := unbase64(sig.element('SignatureValue').text);
+      v := decodeBase64(sig.element('SignatureValue').text);
       result := key.checkSignature(can, v, signatureMethod(si.elementNS(NS_DS, 'SignatureMethod').attribute['Algorithm']));
     finally
       key.Free;
@@ -733,10 +720,10 @@ begin
     trns.addElementNS(NS_DS, 'Transform').attribute['Algorithm'] := 'http://www.w3.org/2000/09/xmldsig#enveloped-signature';
     ref.addElementNS(NS_DS, 'DigestMethod').attribute['Algorithm'] := digestAlgorithmForMethod(method);
     dig := digest(can, method); // the method doesn't actually apply to this, but we figure that if the method specifies sha256, then it should be used here
-    ref.addElementNS(NS_DS, 'DigestValue').addText(String(EncodeBase64(@dig[0], length(dig))));
+    ref.addElementNS(NS_DS, 'DigestValue').addText(String(EncodeBase64(dig)));
     can := canonicaliseXml([xcmCanonicalise],si);
     dig := sign(can, method);
-    s := base64(dig);
+    s := EncodeBase64(dig);
     sig.addElementNS(NS_DS, 'SignatureValue').addText(s);
 
     if keyinfo then
@@ -784,10 +771,10 @@ begin
     trns.addElementNS(NS_DS, 'Transform').attribute['Algorithm'] := 'http://www.w3.org/2000/09/xmldsig#enveloped-signature';
     ref.addElementNS(NS_DS, 'DigestMethod').attribute['Algorithm'] := digestAlgorithmForMethod(method);
     dig := digest(can, method); // the method doesn't actually apply to this, but we figure that if the method specifies sha256, then it should be used here
-    ref.addElementNS(NS_DS, 'DigestValue').addText(String(EncodeBase64(@dig[0], length(dig))));
+    ref.addElementNS(NS_DS, 'DigestValue').addText(String(EncodeBase64(dig)));
     can := canonicaliseXml([xcmCanonicalise],si);
     dig := sign(can, method);
-    s := base64(dig);
+    s := EncodeBase64(dig);
     sig.addElementNS(NS_DS, 'SignatureValue').addText(s);
 
     if keyinfo then
@@ -805,7 +792,7 @@ var
 begin
   setlength(b,  BN_num_bytes(p));
   BN_bn2bin(p, @b[0]);
-  result := String(base64(b));
+  result := String(EncodeBase64(b));
 end;
 
 procedure TDigitalSigner.AddKeyInfo(sig : TMXmlElement; method : TSignatureMethod);
@@ -868,11 +855,11 @@ begin
     end;
     ref.AddElement('DigestMethod').attribute['Algorithm'] := digestAlgorithmForMethod(method);
     dig := digest(reference.content, method);
-    ref.AddElement('DigestValue').Text := String(EncodeBase64(@dig[0], length(dig)));
+    ref.AddElement('DigestValue').Text := String(EncodeBase64(dig));
   end;
   can := canonicaliseXml([xcmCanonicalise],si);
   dig := sign(can, method);
-  s := base64(dig);
+  s := EncodeBase64(dig);
   sig.AddElement('SignatureValue').Text := s;
   if keyinfo then
     AddKeyInfo(sig, method);
@@ -897,9 +884,9 @@ begin
     if kd <> nil then
     begin
       result.rsa := RSA_new;
-      v := unbase64(kd.elementNS(NS_DS, 'Modulus').Text);
+      v := DecodeBase64(kd.elementNS(NS_DS, 'Modulus').Text);
       result.rsa.n := BN_bin2bn(@v[0], length(v), nil);
-      v := unbase64(kd.elementNS(NS_DS, 'Exponent').Text);
+      v := DecodeBase64(kd.elementNS(NS_DS, 'Exponent').Text);
       result.rsa.e := BN_bin2bn(@v[0], length(v), nil);
     end
     else
@@ -908,18 +895,18 @@ begin
       if kd <> nil then
       begin
         result.dsa := DSA_new;
-        v := unbase64(kd.elementNS(NS_DS, 'P').Text);
+        v := DecodeBase64(kd.elementNS(NS_DS, 'P').Text);
         result.dsa.p := BN_bin2bn(@v[0], length(v), nil);
-        v := unbase64(kd.elementNS(NS_DS, 'Q').Text);
+        v := DecodeBase64(kd.elementNS(NS_DS, 'Q').Text);
         result.dsa.q := BN_bin2bn(@v[0], length(v), nil);
-        v := unbase64(kd.elementNS(NS_DS, 'G').Text);
+        v := DecodeBase64(kd.elementNS(NS_DS, 'G').Text);
         result.dsa.g := BN_bin2bn(@v[0], length(v), nil);
-        v := unbase64(kd.elementNS(NS_DS, 'Y').Text);
+        v := DecodeBase64(kd.elementNS(NS_DS, 'Y').Text);
         result.dsa.pub_key := BN_bin2bn(@v[0], length(v), nil);
 
 //        if elementNS(kd, 'X', NS_DS) <> nil then
 //        begin
-//          v := unbase64(elementNS(kd, 'X', NS_DS).Text);
+//          v := DecodeBase64(elementNS(kd, 'X', NS_DS).Text);
 //          result.dsa.priv_key := BN_bin2bn(@v[0], length(v), nil);
 //        end;
       end

@@ -28,11 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
-{!ignore TFHIRObject}
-{!ignore TFHIRObjectList}
-{!Wrapper uses Classes,MSSEWrap}
-
 Interface
 
 Uses
@@ -78,7 +73,7 @@ Const
   FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
 
 Type
-  {@Enum TFHIRCommandType
+  {
     Possible command types supported by HL7Connect FHIR interfaces
   }
   TFHIRCommandType = (
@@ -111,7 +106,7 @@ Type
 
   TFHIRCommandTypeSet = set of TFHIRCommandType;
 
-  {@Enum TFHIRFormat
+  {
     Format support.
   }
   TFHIRFormat = (
@@ -124,7 +119,7 @@ Type
     ffXhtml); { XHTML - only for retrieval from the server }
   TFHIROutputStyle = (OutputStyleNormal, OutputStylePretty, OutputStyleCanonical);
 
-  {@Enum TFHIRHtmlNodeType
+  {
     Enumeration of html node types
   }
   TFHIRHtmlNodeType = (
@@ -362,7 +357,7 @@ type
     function equalsDeep(other : TFHIRObject) : boolean; virtual;
     function equalsShallow(other : TFHIRObject) : boolean; virtual;
   public
-    {@member comments
+    {
       comments from the XML stream. No support for comments in JSON
     }
     Property xml_commentsStart : TFslStringList read GetCommentsStart;

@@ -43,7 +43,7 @@ type
     [SetUp] procedure Setup;
 
     [TestCase] Procedure TestZipPartCreation;
-    [TestCase] Procedure TestZipGeneration;
+    Procedure TestZipGeneration;
     [TestCase] Procedure TestReferenceAnalysis;
     [TestCase] Procedure TestBundleSigningXml;
     [TestCase] Procedure TestBundleSigningJson;

@@ -306,14 +306,12 @@ type
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
-    {!script hide}
-    function Link : TFhirXHtmlNode; Overload;
+      function Link : TFhirXHtmlNode; Overload;
     function Clone : TFhirXHtmlNode; Overload;
     procedure Assign(oSource : TFslObject); override;
     property Attributes : TFHIRAttributeList read FAttributes;
     function allChildrenAreText : boolean;
-    {!script show}
-
+  
     {@member AsPlainText
       plain text content of html
     }
@@ -408,12 +406,10 @@ type
     Function GetItemN(index : Integer) : TFHIRXHtmlNode;
     Procedure SetItemN(index : Integer; value : TFHIRXHtmlNode);
   public
-    {!script hide}
-    Function Link : TFHIRXHtmlNodeList; Overload;
+      Function Link : TFHIRXHtmlNodeList; Overload;
     Function Clone : TFHIRXHtmlNodeList; Overload;
     function GetEnumerator : TFHIRXhtmlNodeListEnumerator;
-    {!script show}
-    {@member Append
+      {@member Append
       Add an Xhtml Node to the end of the list.
     }
     Function Append : TFHIRXHtmlNode;
@@ -471,12 +467,10 @@ type
 //   Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
   public
     Destructor Destroy; override;
-    {!script hide}
-    Function Link : TFHIRBase; Overload;
+      Function Link : TFHIRBase; Overload;
     Function Clone : TFHIRBase; Overload;
     procedure Assign(oSource : TFslObject); override;
-    {!script show}
-    function HasXmlCommentsStart : Boolean;
+      function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
     function FhirType : String; virtual;

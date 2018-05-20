@@ -63,6 +63,7 @@ Type
     class function makeHTTP(worker : TFHIRWorkerContext; url : String; json : boolean) : TFhirClient; overload;
     class function makeHTTP(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : cardinal) : TFhirClient; overload;
     class function makeHTTP(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : cardinal; proxy : String) : TFhirClient; overload;
+    class function makeHTTP(worker : TFHIRWorkerContext; url : String; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClient; overload;
     class function makeHTTP(worker : TFHIRWorkerContext; url : String; mimeType : String) : TFhirClient; overload;
     class function makeIndy(worker : TFHIRWorkerContext; url : String; json : boolean) : TFhirClient; overload;
     class function makeIndy(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : cardinal) : TFhirClient; overload;
@@ -82,26 +83,11 @@ begin
 end;
 
 class function TFhirClients.makeHTTP(worker: TFHIRWorkerContext; url: String; json: boolean; timeout : cardinal; proxy : String): TFhirClient;
-var
-  http : TFHIRHTTPCommunicator;
 begin
-  http := TFHIRHTTPCommunicator.Create(url);
-  try
-    http.timeout := timeout;
-    http.proxy := proxy;
-    result := TFhirClient.create(worker, 'en', http.link);
-    try
-      if json then
-        result.format := ffJson
-      else
-        result.format := ffXml;
-      result.link;
-    finally
-      result.Free;
-    end;
-  finally
-    http.free;
-  end;
+  if json then
+    result := makeHTTP(worker, url, ffJson, timeout, proxy)
+  else
+    result := makeHTTP(worker, url, ffXml, timeout, proxy);
 end;
 
 class function TFhirClients.makeHTTP(worker: TFHIRWorkerContext; url: String; json: boolean): TFhirClient;
@@ -112,6 +98,27 @@ end;
 class function TFhirClients.makeHTTP(worker: TFHIRWorkerContext; url, mimeType: String): TFhirClient;
 begin
   result := makeHTTP(worker, url, mimeType.contains('json'));
+end;
+
+class function TFhirClients.makeHTTP(worker: TFHIRWorkerContext; url: String;
+  fmt: TFHIRFormat; timeout: cardinal; proxy: String): TFhirClient;
+var
+  http : TFHIRHTTPCommunicator;
+begin
+  http := TFHIRHTTPCommunicator.Create(url);
+  try
+    http.timeout := timeout;
+    http.proxy := proxy;
+    result := TFhirClient.create(worker, 'en', http.link);
+    try
+      result.format := fmt;
+      result.link;
+    finally
+      result.Free;
+    end;
+  finally
+    http.free;
+  end;
 end;
 
 class function TFhirClients.makeIndy(worker: TFHIRWorkerContext; url: String; json: boolean; timeout: cardinal): TFhirClient;

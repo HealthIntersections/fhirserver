@@ -1262,7 +1262,7 @@ end;
 
 function TFHIRComposer.asString(value: TBytes): String;
 begin
-  result := String(EncodeBase64(@value[0], length(value))).replace(#13#10, '');
+  result := String(EncodeBase64(value)).replace(#13#10, '');
 end;
 
 procedure TFHIRXmlParserBase.checkOtherAttributes(value: TMXmlElement; path : String);

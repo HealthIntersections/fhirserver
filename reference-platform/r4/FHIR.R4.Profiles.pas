@@ -107,6 +107,7 @@ Type
     FProfiles : TProfileManager;
     FCustomResources : TFslMap<TFHIRCustomResourceInformation>;
     FNonSecureNames : TArray<String>;
+    FFactory : TFHIRFactory;
 
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
@@ -136,6 +137,8 @@ Type
     function hasCustomResource(name : String) : boolean; override;
     function allResourceNames : TArray<String>; override;
     function nonSecureResourceNames : TArray<String>; override;
+
+    Property factory : TFHIRFactory read FFactory;
 
   end;
 
@@ -1504,10 +1507,12 @@ begin
   FLock := TCriticalSection.Create('worker-context');
   FProfiles := TProfileManager.Create;
   FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create;
+  FFactory := factory;
 end;
 
 destructor TBaseWorkerContext.Destroy;
 begin
+  FFactory.Free;
   FCustomResources.Free;
   FProfiles.free;
   FLock.Free;

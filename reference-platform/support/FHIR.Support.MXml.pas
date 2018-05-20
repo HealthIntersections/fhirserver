@@ -308,6 +308,8 @@ Type
 
     property docElement : TMXmlElement read GetDocElement;
     function ToXml(pretty : boolean = false; xmlHeader : boolean = false) : String; overload;
+    procedure ToXml(stream : TStream; pretty : boolean = false; xmlHeader : boolean = false); overload;
+    procedure ToXml(stream : TFslStream; pretty : boolean = false; xmlHeader : boolean = false); overload;
     function select(xpath : String; focus : TMXmlElement) : TFslList<TMXmlNode>; overload;
     function selectElements(xpath : String; focus : TMXmlElement) : TFslList<TMXmlElement>; overload;
     function select(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TFslList<TMXmlNode>; overload;
@@ -1824,9 +1826,6 @@ var
 begin
   b := TStringBuilder.create;
   try
-//    b.Append('$');
-//    b.Append(inttostr(AdvObjectReferenceCount));
-//    b.Append('_');
     if (FAxis <> axisChild) and (FNodeType <> xentGroup) then
     begin
       b.Append(AXIS_NAMES[FAxis]);
@@ -3045,6 +3044,26 @@ begin
   finally
     result.free;
   end;
+end;
+
+procedure TMXmlDocument.ToXml(stream: TFslStream; pretty, xmlHeader: boolean);
+var
+  s : String;
+  b : TBytes;
+begin
+  s := ToXml(pretty, xmlheader);
+  b := TEncoding.UTF8.GetBytes(s);
+  stream.Write(b, length(b));
+end;
+
+procedure TMXmlDocument.ToXml(stream: TStream; pretty, xmlHeader: boolean);
+var
+  s : String;
+  b : TBytes;
+begin
+  s := ToXml(pretty, xmlheader);
+  b := TEncoding.UTF8.GetBytes(s);
+  stream.Write(b, length(b));
 end;
 
 function TMXmlDocument.ToXml(pretty, xmlHeader: boolean): String;

@@ -35,7 +35,7 @@ Uses
   SysUtils, Classes,
   ZLib,
   FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Filers, FHIR.Support.Exceptions, FHIR.Support.Stream;
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Exceptions, FHIR.Support.Stream;
 
 Const
   SIG_LOCAL_FILE_HEADER = $04034B50;
@@ -114,7 +114,6 @@ type
       Function Clone : TFslZipPart;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
 
       Property Timestamp : TDateTime Read FTimestamp Write FTimestamp;
       Property Comment : String Read FComment Write FComment;
@@ -134,6 +133,8 @@ type
       Function GetByName(Const sName : String) : TFslZipPart;
 
       Property Part[iIndex : Integer] : TFslZipPart Read GetPart; Default;
+
+      procedure add(name : String; bytes : TBytes); overload;
   End;
 
 
@@ -277,13 +278,6 @@ Begin
 End;
 
 
-Procedure TFslZipPart.Define(oFiler : TFslFiler);
-Begin
-  Inherited;
-  oFiler['Timestamp'].DefineDateTime(FTimestamp);
-  oFiler['Comment'].DefineString(FComment);
-End;
-
 
 Function TFslZipPart.Link : TFslZipPart;
 Begin
@@ -296,6 +290,20 @@ Begin
   Result := TFslZipPart(Inherited Clone);
 End;
 
+
+procedure TFslZipPartList.add(name: String; bytes: TBytes);
+var
+  part : TFslZipPart;
+begin
+  part := TFslZipPart.Create;
+  try
+    part.Name := name;
+    part.AsBytes := bytes;
+    add(part.Link);
+  finally
+    part.Free;
+  end;
+end;
 
 Function TFslZipPartList.Clone : TFslZipPartList;
 Begin
@@ -515,7 +523,7 @@ End;
 
 Function TPointerMemoryStream.Write(Const Buffer; Count: Integer): LongInt;
 Begin
-  Raise EAdvException.Create('Should never be called');
+  Raise EFslException.Create('Should never be called');
 End;
 
 

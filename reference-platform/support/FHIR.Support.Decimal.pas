@@ -63,6 +63,7 @@ Type
     is not.
 }
   TSmartDecimal = record
+    notNull : boolean;
     Precision : integer;
     Scientific : Boolean;
     Negative : Boolean;
@@ -92,6 +93,12 @@ Type
     class Function ValueOf(value : String) : TSmartDecimal; Overload; static; inline;
     class Function ValueOf(value : Integer) : TSmartDecimal; Overload; static; inline;
     class Function ValueOf(value : int64) : TSmartDecimal; Overload; static; inline;
+    class Function Create(value : String) : TSmartDecimal; Overload; static; inline;
+    class Function Create(value : Integer) : TSmartDecimal; Overload; static; inline;
+    class Function Create(value : int64) : TSmartDecimal; Overload; static; inline;
+
+    function Link : TSmartDecimal;
+    function Clone : TSmartDecimal;
 
     // utility functions
     class Function Equals(oOne, oTwo : TSmartDecimal) : Boolean; overload; static; inline;
@@ -101,6 +108,7 @@ Type
     class function CheckValue(sValue : String) : boolean; static; inline;
     class function CheckValueDecimal(sValue : String) : boolean; static; inline;
     class function CheckValueScientific(sValue : String) : boolean; static; inline;
+    class function makeNull : TSmartDecimal; static; inline;
 
     // accessors
     property value : String read GetValue write SetValue;
@@ -117,6 +125,7 @@ Type
     Function IsNegative : boolean;
     Function IsOne : Boolean;
     Function IsWholeNumber : Boolean;
+    function IsNull : boolean;
     Function upperBound : TSmartDecimal; // the upper bound given the imprecision. for example, if the value is 1,0, then the upper bound is 1.05.
     Function lowerBound : TSmartDecimal; // the lower bound given the imprecision. for example, if the value is 1,0, then the lower bound is 0.95.
     Function immediateUpperBound : TSmartDecimal; // the upper bound given the face value. for example, if the value is 1.0, then the upper bound is 1.000000000000000000000000001.
@@ -128,7 +137,7 @@ Type
     Function Multiply(iOther : Integer) : TSmartDecimal; Overload;
     Function Divide(oOther : TSmartDecimal) : TSmartDecimal; Overload;
     Function Divide(iOther : Integer) : TSmartDecimal; Overload;
-    {@member DivInt
+    {
       return the number of times other will "fit into" this number. This is usually called
       Integer Division, but in this implementation, neither this nor other needs to be
       a whole number; however the result of this operation will always be a whole number
@@ -262,8 +271,19 @@ begin
   result := true;
 end;
 
+function TSmartDecimalHelper.Clone: TSmartDecimal;
+begin
+  result.notNull := notNull;
+  result.Precision := Precision;
+  result.Scientific := Scientific;
+  result.Negative := Negative;
+  result.Digits := Digits;
+  result.Decimal := Decimal;
+end;
+
 Procedure TSmartDecimalHelper.SetValue(sValue : String);
 Begin
+  notNull := true;
   if (sValue= '') or (sValue = '-') then
     raise Exception('"'+sValue+'" is not a valid decimal');
   sValue := lowercase(sValue);
@@ -375,7 +395,9 @@ end;
 
 Function TSmartDecimalHelper.Add(oOther : TSmartDecimal) : TSmartDecimal;
 Begin
-  if (Negative = oOther.Negative) then
+  if isNull or oOther.isNull then
+    result := makeNull
+  else if (Negative = oOther.Negative) then
   Begin
     result := DoAdd(oOther);
     result.Negative := Negative;
@@ -535,7 +557,9 @@ var
   iDec : Integer;
   iPrec : Integer;
 Begin
-  if (self.isZero) or (oOther.IsZero) then
+  if isNull or oOther.isNull then
+    result := MakeNull
+  else if (self.isZero) or (oOther.IsZero) then
     result := Zero
   else if oOther.isOne then
     result := self
@@ -695,7 +719,9 @@ var
     result := bhandled and ((l > m) or ((vi > length(v)) And ((w = '') or AllZeros(w, 1))));
   end;
 Begin
-  if IsZero Then
+  if isNull or oOther.isNull then
+    result := MakeNull
+  else if IsZero Then
     result := Zero
   else if oOther.IsZero then
     raise Exception.create('Attempt to divide '+asString+' by zero')
@@ -846,7 +872,9 @@ end;
 
 Function TSmartDecimalHelper.Subtract(oOther : TSmartDecimal) : TSmartDecimal;
 Begin
-  if (Negative and not oOther.Negative) then
+  if isNull or oOther.isNull then
+    result := MakeNull
+  else if (Negative and not oOther.Negative) then
   Begin
     result := DoAdd(oOther);
     result.Negative := true;
@@ -904,7 +932,9 @@ end;
 
 Function TSmartDecimalHelper.GetValue: String;
 begin
-  if Scientific then
+  if isNull then
+    result := ''
+  else if Scientific then
     result := GetValueScientific
   Else
     result := GetValueDecimal;
@@ -1033,9 +1063,24 @@ begin
   result := AllZeros(Digits, 1);
 end;
 
+function TSmartDecimalHelper.Link: TSmartDecimal;
+begin
+  result.notNull := notNull;
+  result.Precision := Precision;
+  result.Scientific := Scientific;
+  result.Negative := Negative;
+  result.Digits := Digits;
+  result.Decimal := Decimal;
+end;
+
 function TSmartDecimalHelper.IsNegative: boolean;
 begin
   result := Negative;
+end;
+
+function TSmartDecimalHelper.IsNull: boolean;
+begin
+  result := not notnull;
 end;
 
 Function TSmartDecimalHelper.IsOne: Boolean;
@@ -1051,6 +1096,21 @@ Begin
   result := Compares(self, oOther);
 end;
 
+class function TSmartDecimalHelper.Create(value: String): TSmartDecimal;
+begin
+  result.SetValue(value);
+end;
+
+class function TSmartDecimalHelper.Create(value: Integer): TSmartDecimal;
+begin
+  result.SetValue(inttostr(value));
+end;
+
+class function TSmartDecimalHelper.Create(value: int64): TSmartDecimal;
+begin
+  result.SetValue(inttostr(value));
+end;
+
 Function TSmartDecimalHelper.isWholeNumber: Boolean;
 begin
   result := pos('.', GetValueDecimal) = 0;
@@ -1063,7 +1123,9 @@ end;
 
 Function TSmartDecimalHelper.Trunc: TSmartDecimal;
 begin
-  if Decimal < 1 then
+  if isNull then
+    result := MakeNull
+  else if Decimal < 1 then
     result := Zero
   Else
   begin
@@ -1167,7 +1229,10 @@ end;
 
 class Function TSmartDecimalHelper.Equals(oOne, oTwo : TSmartDecimal) : Boolean;
 Begin
-  result := Compares(oOne, oTwo) = 0;
+  if oOne.isNull or oTwo.isNull then
+    result := false
+  else
+    result := Compares(oOne, oTwo) = 0;
 end;
 
 class Function TSmartDecimalHelper.One: TSmartDecimal;
@@ -1260,6 +1325,11 @@ begin
   end;
 end;
 
+
+class function TSmartDecimalHelper.makeNull: TSmartDecimal;
+begin
+  result.notNull := false;
+end;
 
 Function GUIDAsOIDWrong(Const aGUID : TGUID) : String;
 var

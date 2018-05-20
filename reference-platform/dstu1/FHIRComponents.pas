@@ -300,14 +300,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAdverseReactionSymptom; overload;
     function Clone : TFhirAdverseReactionSymptom; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Indicates the specific sign or symptom that was observed.
     }
@@ -345,12 +343,10 @@ Type
     function GetItemN(index : Integer) : TFhirAdverseReactionSymptom;
     procedure SetItemN(index : Integer; value : TFhirAdverseReactionSymptom);
   public
-    {!script hide}
-    function Link : TFhirAdverseReactionSymptomList; Overload;
+      function Link : TFhirAdverseReactionSymptomList; Overload;
     function Clone : TFhirAdverseReactionSymptomList; Overload;
     function GetEnumerator : TFhirAdverseReactionSymptomListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirAdverseReactionSymptom to the end of the list.
@@ -443,14 +439,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirAdverseReactionExposure; overload;
     function Clone : TFhirAdverseReactionExposure; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member date
       Identifies the initial date of the exposure that is suspected to be related to the reaction.
     }
@@ -503,12 +497,10 @@ Type
     function GetItemN(index : Integer) : TFhirAdverseReactionExposure;
     procedure SetItemN(index : Integer; value : TFhirAdverseReactionExposure);
   public
-    {!script hide}
-    function Link : TFhirAdverseReactionExposureList; Overload;
+      function Link : TFhirAdverseReactionExposureList; Overload;
     function Clone : TFhirAdverseReactionExposureList; Overload;
     function GetEnumerator : TFhirAdverseReactionExposureListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirAdverseReactionExposure to the end of the list.
@@ -591,14 +583,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCarePlanParticipant; overload;
     function Clone : TFhirCarePlanParticipant; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member role
       Indicates specific responsibility of an individual within the care plan.  E.g. "Primary physician", "Team coordinator", "Caregiver", etc.
     }
@@ -636,12 +626,10 @@ Type
     function GetItemN(index : Integer) : TFhirCarePlanParticipant;
     procedure SetItemN(index : Integer; value : TFhirCarePlanParticipant);
   public
-    {!script hide}
-    function Link : TFhirCarePlanParticipantList; Overload;
+      function Link : TFhirCarePlanParticipantList; Overload;
     function Clone : TFhirCarePlanParticipantList; Overload;
     function GetEnumerator : TFhirCarePlanParticipantListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirCarePlanParticipant to the end of the list.
@@ -733,14 +721,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCarePlanGoal; overload;
     function Clone : TFhirCarePlanGoal; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member description
       Human-readable description of a specific desired objective of the care plan.
     }
@@ -795,12 +781,10 @@ Type
     function GetItemN(index : Integer) : TFhirCarePlanGoal;
     procedure SetItemN(index : Integer; value : TFhirCarePlanGoal);
   public
-    {!script hide}
-    function Link : TFhirCarePlanGoalList; Overload;
+      function Link : TFhirCarePlanGoalList; Overload;
     function Clone : TFhirCarePlanGoalList; Overload;
     function GetEnumerator : TFhirCarePlanGoalListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirCarePlanGoal to the end of the list.
@@ -897,14 +881,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCarePlanActivity; overload;
     function Clone : TFhirCarePlanActivity; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member goalList
       Internal reference that identifies the goals that this activity is intended to contribute towards meeting.
     }
@@ -976,12 +958,10 @@ Type
     function GetItemN(index : Integer) : TFhirCarePlanActivity;
     procedure SetItemN(index : Integer; value : TFhirCarePlanActivity);
   public
-    {!script hide}
-    function Link : TFhirCarePlanActivityList; Overload;
+      function Link : TFhirCarePlanActivityList; Overload;
     function Clone : TFhirCarePlanActivityList; Overload;
     function GetEnumerator : TFhirCarePlanActivityListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirCarePlanActivity to the end of the list.
@@ -1081,14 +1061,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCarePlanActivitySimple; overload;
     function Clone : TFhirCarePlanActivitySimple; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member category
       High-level categorization of the type of activity in a care plan.
     }
@@ -1170,12 +1148,10 @@ Type
     function GetItemN(index : Integer) : TFhirCarePlanActivitySimple;
     procedure SetItemN(index : Integer; value : TFhirCarePlanActivitySimple);
   public
-    {!script hide}
-    function Link : TFhirCarePlanActivitySimpleList; Overload;
+      function Link : TFhirCarePlanActivitySimpleList; Overload;
     function Clone : TFhirCarePlanActivitySimpleList; Overload;
     function GetEnumerator : TFhirCarePlanActivitySimpleListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirCarePlanActivitySimple to the end of the list.
@@ -1263,14 +1239,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCompositionAttester; overload;
     function Clone : TFhirCompositionAttester; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member mode
       The type of attestation the authenticator offers.
     }
@@ -1316,12 +1290,10 @@ Type
     function GetItemN(index : Integer) : TFhirCompositionAttester;
     procedure SetItemN(index : Integer; value : TFhirCompositionAttester);
   public
-    {!script hide}
-    function Link : TFhirCompositionAttesterList; Overload;
+      function Link : TFhirCompositionAttesterList; Overload;
     function Clone : TFhirCompositionAttesterList; Overload;
     function GetEnumerator : TFhirCompositionAttesterListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirCompositionAttester to the end of the list.
@@ -1404,14 +1376,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCompositionEvent; overload;
     function Clone : TFhirCompositionEvent; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member codeList
       This list of codes represents the main clinical acts, such as a colonoscopy or an appendectomy, being documented. In some cases, the event is inherent in the typeCode, such as a "History and Physical Report" in which the procedure being documented is necessarily a "History and Physical" act.
     }
@@ -1453,12 +1423,10 @@ Type
     function GetItemN(index : Integer) : TFhirCompositionEvent;
     procedure SetItemN(index : Integer; value : TFhirCompositionEvent);
   public
-    {!script hide}
-    function Link : TFhirCompositionEventList; Overload;
+      function Link : TFhirCompositionEventList; Overload;
     function Clone : TFhirCompositionEventList; Overload;
     function GetEnumerator : TFhirCompositionEventListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirCompositionEvent to the end of the list.
@@ -1548,14 +1516,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirCompositionSection; overload;
     function Clone : TFhirCompositionSection; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member title
       The heading for this particular section.  This will be part of the rendered content for the document.
     }
@@ -1613,12 +1579,10 @@ Type
     function GetItemN(index : Integer) : TFhirCompositionSection;
     procedure SetItemN(index : Integer; value : TFhirCompositionSection);
   public
-    {!script hide}
-    function Link : TFhirCompositionSectionList; Overload;
+      function Link : TFhirCompositionSectionList; Overload;
     function Clone : TFhirCompositionSectionList; Overload;
     function GetEnumerator : TFhirCompositionSectionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirCompositionSection to the end of the list.
@@ -1707,14 +1671,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConceptMapConcept; overload;
     function Clone : TFhirConceptMapConcept; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member system
       System that defines the concept being mapped.
     }
@@ -1768,12 +1730,10 @@ Type
     function GetItemN(index : Integer) : TFhirConceptMapConcept;
     procedure SetItemN(index : Integer; value : TFhirConceptMapConcept);
   public
-    {!script hide}
-    function Link : TFhirConceptMapConceptList; Overload;
+      function Link : TFhirConceptMapConceptList; Overload;
     function Clone : TFhirConceptMapConceptList; Overload;
     function GetEnumerator : TFhirConceptMapConceptListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConceptMapConcept to the end of the list.
@@ -1864,14 +1824,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConceptMapConceptDependsOn; overload;
     function Clone : TFhirConceptMapConceptDependsOn; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member concept
       A reference to a specific concept that holds a coded value. This can be an element in a FHIR resource, or a specific reference to a data element in a different specification (e.g. v2) or a general reference to a kind of data field, or a reference to a value set with an appropriately narrow definition.
     }
@@ -1924,12 +1882,10 @@ Type
     function GetItemN(index : Integer) : TFhirConceptMapConceptDependsOn;
     procedure SetItemN(index : Integer; value : TFhirConceptMapConceptDependsOn);
   public
-    {!script hide}
-    function Link : TFhirConceptMapConceptDependsOnList; Overload;
+      function Link : TFhirConceptMapConceptDependsOnList; Overload;
     function Clone : TFhirConceptMapConceptDependsOnList; Overload;
     function GetEnumerator : TFhirConceptMapConceptDependsOnListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConceptMapConceptDependsOn to the end of the list.
@@ -2025,14 +1981,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConceptMapConceptMap; overload;
     function Clone : TFhirConceptMapConceptMap; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member system
       System of the target.
     }
@@ -2096,12 +2050,10 @@ Type
     function GetItemN(index : Integer) : TFhirConceptMapConceptMap;
     procedure SetItemN(index : Integer; value : TFhirConceptMapConceptMap);
   public
-    {!script hide}
-    function Link : TFhirConceptMapConceptMapList; Overload;
+      function Link : TFhirConceptMapConceptMapList; Overload;
     function Clone : TFhirConceptMapConceptMapList; Overload;
     function GetEnumerator : TFhirConceptMapConceptMapListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConceptMapConceptMap to the end of the list.
@@ -2183,14 +2135,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConditionStage; overload;
     function Clone : TFhirConditionStage; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member summary
       A simple summary of the stage such as "Stage 3". The determination of the stage is disease-specific.
     }
@@ -2227,12 +2177,10 @@ Type
     function GetItemN(index : Integer) : TFhirConditionStage;
     procedure SetItemN(index : Integer; value : TFhirConditionStage);
   public
-    {!script hide}
-    function Link : TFhirConditionStageList; Overload;
+      function Link : TFhirConditionStageList; Overload;
     function Clone : TFhirConditionStageList; Overload;
     function GetEnumerator : TFhirConditionStageListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConditionStage to the end of the list.
@@ -2314,14 +2262,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConditionEvidence; overload;
     function Clone : TFhirConditionEvidence; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       A manifestation or symptom that led to the recording of this condition.
     }
@@ -2358,12 +2304,10 @@ Type
     function GetItemN(index : Integer) : TFhirConditionEvidence;
     procedure SetItemN(index : Integer; value : TFhirConditionEvidence);
   public
-    {!script hide}
-    function Link : TFhirConditionEvidenceList; Overload;
+      function Link : TFhirConditionEvidenceList; Overload;
     function Clone : TFhirConditionEvidenceList; Overload;
     function GetEnumerator : TFhirConditionEvidenceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConditionEvidence to the end of the list.
@@ -2448,14 +2392,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConditionLocation; overload;
     function Clone : TFhirConditionLocation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Code that identifies the structural location.
     }
@@ -2496,12 +2438,10 @@ Type
     function GetItemN(index : Integer) : TFhirConditionLocation;
     procedure SetItemN(index : Integer; value : TFhirConditionLocation);
   public
-    {!script hide}
-    function Link : TFhirConditionLocationList; Overload;
+      function Link : TFhirConditionLocationList; Overload;
     function Clone : TFhirConditionLocationList; Overload;
     function GetEnumerator : TFhirConditionLocationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConditionLocation to the end of the list.
@@ -2588,14 +2528,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConditionRelatedItem; overload;
     function Clone : TFhirConditionRelatedItem; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       The type of relationship that this condition has to the related item.
     }
@@ -2639,12 +2577,10 @@ Type
     function GetItemN(index : Integer) : TFhirConditionRelatedItem;
     procedure SetItemN(index : Integer; value : TFhirConditionRelatedItem);
   public
-    {!script hide}
-    function Link : TFhirConditionRelatedItemList; Overload;
+      function Link : TFhirConditionRelatedItemList; Overload;
     function Clone : TFhirConditionRelatedItemList; Overload;
     function GetEnumerator : TFhirConditionRelatedItemListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConditionRelatedItem to the end of the list.
@@ -2735,14 +2671,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceSoftware; overload;
     function Clone : TFhirConformanceSoftware; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       Name software is known by.
     }
@@ -2795,12 +2729,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceSoftware;
     procedure SetItemN(index : Integer; value : TFhirConformanceSoftware);
   public
-    {!script hide}
-    function Link : TFhirConformanceSoftwareList; Overload;
+      function Link : TFhirConformanceSoftwareList; Overload;
     function Clone : TFhirConformanceSoftwareList; Overload;
     function GetEnumerator : TFhirConformanceSoftwareListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceSoftware to the end of the list.
@@ -2887,14 +2819,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceImplementation; overload;
     function Clone : TFhirConformanceImplementation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member description
       Information about the specific installation that this conformance statement relates to.
     }
@@ -2938,12 +2868,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceImplementation;
     procedure SetItemN(index : Integer; value : TFhirConformanceImplementation);
   public
-    {!script hide}
-    function Link : TFhirConformanceImplementationList; Overload;
+      function Link : TFhirConformanceImplementationList; Overload;
     function Clone : TFhirConformanceImplementationList; Overload;
     function GetEnumerator : TFhirConformanceImplementationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceImplementation to the end of the list.
@@ -3036,14 +2964,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceRest; overload;
     function Clone : TFhirConformanceRest; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member mode
       Identifies whether this portion of the statement is describing ability to initiate or receive restful operations.
     }
@@ -3110,12 +3036,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceRest;
     procedure SetItemN(index : Integer; value : TFhirConformanceRest);
   public
-    {!script hide}
-    function Link : TFhirConformanceRestList; Overload;
+      function Link : TFhirConformanceRestList; Overload;
     function Clone : TFhirConformanceRestList; Overload;
     function GetEnumerator : TFhirConformanceRestListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceRest to the end of the list.
@@ -3204,14 +3128,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceRestSecurity; overload;
     function Clone : TFhirConformanceRestSecurity; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member cors
       Server adds CORS headers when responding to requests - this enables javascript applications to yuse the server.
     }
@@ -3265,12 +3187,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceRestSecurity;
     procedure SetItemN(index : Integer; value : TFhirConformanceRestSecurity);
   public
-    {!script hide}
-    function Link : TFhirConformanceRestSecurityList; Overload;
+      function Link : TFhirConformanceRestSecurityList; Overload;
     function Clone : TFhirConformanceRestSecurityList; Overload;
     function GetEnumerator : TFhirConformanceRestSecurityListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceRestSecurity to the end of the list.
@@ -3357,14 +3277,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceRestSecurityCertificate; overload;
     function Clone : TFhirConformanceRestSecurityCertificate; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       Mime type for certificate.
     }
@@ -3408,12 +3326,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceRestSecurityCertificate;
     procedure SetItemN(index : Integer; value : TFhirConformanceRestSecurityCertificate);
   public
-    {!script hide}
-    function Link : TFhirConformanceRestSecurityCertificateList; Overload;
+      function Link : TFhirConformanceRestSecurityCertificateList; Overload;
     function Clone : TFhirConformanceRestSecurityCertificateList; Overload;
     function GetEnumerator : TFhirConformanceRestSecurityCertificateListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceRestSecurityCertificate to the end of the list.
@@ -3509,14 +3425,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceRestResource; overload;
     function Clone : TFhirConformanceRestResource; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       A type of resource exposed via the restful interface.
     }
@@ -3590,12 +3504,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceRestResource;
     procedure SetItemN(index : Integer; value : TFhirConformanceRestResource);
   public
-    {!script hide}
-    function Link : TFhirConformanceRestResourceList; Overload;
+      function Link : TFhirConformanceRestResourceList; Overload;
     function Clone : TFhirConformanceRestResourceList; Overload;
     function GetEnumerator : TFhirConformanceRestResourceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceRestResource to the end of the list.
@@ -3682,14 +3594,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceRestResourceOperation; overload;
     function Clone : TFhirConformanceRestResourceOperation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Coded identifier of the operation, supported by the system resource.
     }
@@ -3730,12 +3640,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceRestResourceOperation;
     procedure SetItemN(index : Integer; value : TFhirConformanceRestResourceOperation);
   public
-    {!script hide}
-    function Link : TFhirConformanceRestResourceOperationList; Overload;
+      function Link : TFhirConformanceRestResourceOperationList; Overload;
     function Clone : TFhirConformanceRestResourceOperationList; Overload;
     function GetEnumerator : TFhirConformanceRestResourceOperationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceRestResourceOperation to the end of the list.
@@ -3832,14 +3740,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceRestResourceSearchParam; overload;
     function Clone : TFhirConformanceRestResourceSearchParam; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       The name of the search parameter used in the interface.
     }
@@ -3908,12 +3814,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceRestResourceSearchParam;
     procedure SetItemN(index : Integer; value : TFhirConformanceRestResourceSearchParam);
   public
-    {!script hide}
-    function Link : TFhirConformanceRestResourceSearchParamList; Overload;
+      function Link : TFhirConformanceRestResourceSearchParamList; Overload;
     function Clone : TFhirConformanceRestResourceSearchParamList; Overload;
     function GetEnumerator : TFhirConformanceRestResourceSearchParamListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceRestResourceSearchParam to the end of the list.
@@ -4000,14 +3904,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceRestOperation; overload;
     function Clone : TFhirConformanceRestOperation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       A coded identifier of the operation, supported by the system.
     }
@@ -4048,12 +3950,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceRestOperation;
     procedure SetItemN(index : Integer; value : TFhirConformanceRestOperation);
   public
-    {!script hide}
-    function Link : TFhirConformanceRestOperationList; Overload;
+      function Link : TFhirConformanceRestOperationList; Overload;
     function Clone : TFhirConformanceRestOperationList; Overload;
     function GetEnumerator : TFhirConformanceRestOperationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceRestOperation to the end of the list.
@@ -4145,14 +4045,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceRestQuery; overload;
     function Clone : TFhirConformanceRestQuery; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       The name of a query, which is used in the _query parameter when the query is called.
     }
@@ -4210,12 +4108,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceRestQuery;
     procedure SetItemN(index : Integer; value : TFhirConformanceRestQuery);
   public
-    {!script hide}
-    function Link : TFhirConformanceRestQueryList; Overload;
+      function Link : TFhirConformanceRestQueryList; Overload;
     function Clone : TFhirConformanceRestQueryList; Overload;
     function GetEnumerator : TFhirConformanceRestQueryListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceRestQuery to the end of the list.
@@ -4307,14 +4203,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceMessaging; overload;
     function Clone : TFhirConformanceMessaging; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member endpoint
       An address to which messages and/or replies are to be sent.
     }
@@ -4372,12 +4266,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceMessaging;
     procedure SetItemN(index : Integer; value : TFhirConformanceMessaging);
   public
-    {!script hide}
-    function Link : TFhirConformanceMessagingList; Overload;
+      function Link : TFhirConformanceMessagingList; Overload;
     function Clone : TFhirConformanceMessagingList; Overload;
     function GetEnumerator : TFhirConformanceMessagingListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceMessaging to the end of the list.
@@ -4479,14 +4371,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceMessagingEvent; overload;
     function Clone : TFhirConformanceMessagingEvent; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       A coded identifier of a supported messaging event.
     }
@@ -4565,12 +4455,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceMessagingEvent;
     procedure SetItemN(index : Integer; value : TFhirConformanceMessagingEvent);
   public
-    {!script hide}
-    function Link : TFhirConformanceMessagingEventList; Overload;
+      function Link : TFhirConformanceMessagingEventList; Overload;
     function Clone : TFhirConformanceMessagingEventList; Overload;
     function GetEnumerator : TFhirConformanceMessagingEventListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceMessagingEvent to the end of the list.
@@ -4659,14 +4547,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirConformanceDocument; overload;
     function Clone : TFhirConformanceDocument; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member mode
       Mode of this document declaration - whether application is producer or consumer.
     }
@@ -4713,12 +4599,10 @@ Type
     function GetItemN(index : Integer) : TFhirConformanceDocument;
     procedure SetItemN(index : Integer; value : TFhirConformanceDocument);
   public
-    {!script hide}
-    function Link : TFhirConformanceDocumentList; Overload;
+      function Link : TFhirConformanceDocumentList; Overload;
     function Clone : TFhirConformanceDocumentList; Overload;
     function GetEnumerator : TFhirConformanceDocumentListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirConformanceDocument to the end of the list.
@@ -4800,14 +4684,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDeviceObservationReportVirtualDevice; overload;
     function Clone : TFhirDeviceObservationReportVirtualDevice; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Describes the compartment.
     }
@@ -4844,12 +4726,10 @@ Type
     function GetItemN(index : Integer) : TFhirDeviceObservationReportVirtualDevice;
     procedure SetItemN(index : Integer; value : TFhirDeviceObservationReportVirtualDevice);
   public
-    {!script hide}
-    function Link : TFhirDeviceObservationReportVirtualDeviceList; Overload;
+      function Link : TFhirDeviceObservationReportVirtualDeviceList; Overload;
     function Clone : TFhirDeviceObservationReportVirtualDeviceList; Overload;
     function GetEnumerator : TFhirDeviceObservationReportVirtualDeviceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDeviceObservationReportVirtualDevice to the end of the list.
@@ -4931,14 +4811,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDeviceObservationReportVirtualDeviceChannel; overload;
     function Clone : TFhirDeviceObservationReportVirtualDeviceChannel; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Describes the channel.
     }
@@ -4975,12 +4853,10 @@ Type
     function GetItemN(index : Integer) : TFhirDeviceObservationReportVirtualDeviceChannel;
     procedure SetItemN(index : Integer; value : TFhirDeviceObservationReportVirtualDeviceChannel);
   public
-    {!script hide}
-    function Link : TFhirDeviceObservationReportVirtualDeviceChannelList; Overload;
+      function Link : TFhirDeviceObservationReportVirtualDeviceChannelList; Overload;
     function Clone : TFhirDeviceObservationReportVirtualDeviceChannelList; Overload;
     function GetEnumerator : TFhirDeviceObservationReportVirtualDeviceChannelListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDeviceObservationReportVirtualDeviceChannel to the end of the list.
@@ -5061,14 +4937,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDeviceObservationReportVirtualDeviceChannelMetric; overload;
     function Clone : TFhirDeviceObservationReportVirtualDeviceChannelMetric; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member observation
       The data for the metric.
     }
@@ -5100,12 +4974,10 @@ Type
     function GetItemN(index : Integer) : TFhirDeviceObservationReportVirtualDeviceChannelMetric;
     procedure SetItemN(index : Integer; value : TFhirDeviceObservationReportVirtualDeviceChannelMetric);
   public
-    {!script hide}
-    function Link : TFhirDeviceObservationReportVirtualDeviceChannelMetricList; Overload;
+      function Link : TFhirDeviceObservationReportVirtualDeviceChannelMetricList; Overload;
     function Clone : TFhirDeviceObservationReportVirtualDeviceChannelMetricList; Overload;
     function GetEnumerator : TFhirDeviceObservationReportVirtualDeviceChannelMetricListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDeviceObservationReportVirtualDeviceChannelMetric to the end of the list.
@@ -5196,14 +5068,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDiagnosticOrderEvent; overload;
     function Clone : TFhirDiagnosticOrderEvent; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member status
       The status for the event.
     }
@@ -5256,12 +5126,10 @@ Type
     function GetItemN(index : Integer) : TFhirDiagnosticOrderEvent;
     procedure SetItemN(index : Integer; value : TFhirDiagnosticOrderEvent);
   public
-    {!script hide}
-    function Link : TFhirDiagnosticOrderEventList; Overload;
+      function Link : TFhirDiagnosticOrderEventList; Overload;
     function Clone : TFhirDiagnosticOrderEventList; Overload;
     function GetEnumerator : TFhirDiagnosticOrderEventListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDiagnosticOrderEvent to the end of the list.
@@ -5350,14 +5218,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDiagnosticOrderItem; overload;
     function Clone : TFhirDiagnosticOrderItem; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       A code that identifies a particular diagnostic investigation, or panel of investigations, that have been requested.
     }
@@ -5411,12 +5277,10 @@ Type
     function GetItemN(index : Integer) : TFhirDiagnosticOrderItem;
     procedure SetItemN(index : Integer; value : TFhirDiagnosticOrderItem);
   public
-    {!script hide}
-    function Link : TFhirDiagnosticOrderItemList; Overload;
+      function Link : TFhirDiagnosticOrderItemList; Overload;
     function Clone : TFhirDiagnosticOrderItemList; Overload;
     function GetEnumerator : TFhirDiagnosticOrderItemListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDiagnosticOrderItem to the end of the list.
@@ -5501,14 +5365,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDiagnosticReportImage; overload;
     function Clone : TFhirDiagnosticReportImage; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member comment
       A comment about the image. Typically, this is used to provide an explanation for why the image is included, or to draw the viewer's attention to important features.
     }
@@ -5549,12 +5411,10 @@ Type
     function GetItemN(index : Integer) : TFhirDiagnosticReportImage;
     procedure SetItemN(index : Integer; value : TFhirDiagnosticReportImage);
   public
-    {!script hide}
-    function Link : TFhirDiagnosticReportImageList; Overload;
+      function Link : TFhirDiagnosticReportImageList; Overload;
     function Clone : TFhirDiagnosticReportImageList; Overload;
     function GetEnumerator : TFhirDiagnosticReportImageListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDiagnosticReportImage to the end of the list.
@@ -5639,14 +5499,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDocumentReferenceRelatesTo; overload;
     function Clone : TFhirDocumentReferenceRelatesTo; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       The type of relationship that this document has with anther document.
     }
@@ -5684,12 +5542,10 @@ Type
     function GetItemN(index : Integer) : TFhirDocumentReferenceRelatesTo;
     procedure SetItemN(index : Integer; value : TFhirDocumentReferenceRelatesTo);
   public
-    {!script hide}
-    function Link : TFhirDocumentReferenceRelatesToList; Overload;
+      function Link : TFhirDocumentReferenceRelatesToList; Overload;
     function Clone : TFhirDocumentReferenceRelatesToList; Overload;
     function GetEnumerator : TFhirDocumentReferenceRelatesToListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDocumentReferenceRelatesTo to the end of the list.
@@ -5775,14 +5631,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDocumentReferenceService; overload;
     function Clone : TFhirDocumentReferenceService; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       The type of the service that can be used to access the documents.
     }
@@ -5828,12 +5682,10 @@ Type
     function GetItemN(index : Integer) : TFhirDocumentReferenceService;
     procedure SetItemN(index : Integer; value : TFhirDocumentReferenceService);
   public
-    {!script hide}
-    function Link : TFhirDocumentReferenceServiceList; Overload;
+      function Link : TFhirDocumentReferenceServiceList; Overload;
     function Clone : TFhirDocumentReferenceServiceList; Overload;
     function GetEnumerator : TFhirDocumentReferenceServiceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDocumentReferenceService to the end of the list.
@@ -5920,14 +5772,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDocumentReferenceServiceParameter; overload;
     function Clone : TFhirDocumentReferenceServiceParameter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       The name of a parameter.
     }
@@ -5971,12 +5821,10 @@ Type
     function GetItemN(index : Integer) : TFhirDocumentReferenceServiceParameter;
     procedure SetItemN(index : Integer; value : TFhirDocumentReferenceServiceParameter);
   public
-    {!script hide}
-    function Link : TFhirDocumentReferenceServiceParameterList; Overload;
+      function Link : TFhirDocumentReferenceServiceParameterList; Overload;
     function Clone : TFhirDocumentReferenceServiceParameterList; Overload;
     function GetEnumerator : TFhirDocumentReferenceServiceParameterListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDocumentReferenceServiceParameter to the end of the list.
@@ -6060,14 +5908,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirDocumentReferenceContext; overload;
     function Clone : TFhirDocumentReferenceContext; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member eventList
       This list of codes represents the main clinical acts, such as a colonoscopy or an appendectomy, being documented. In some cases, the event is inherent in the typeCode, such as a "History and Physical Report" in which the procedure being documented is necessarily a "History and Physical" act.
     }
@@ -6110,12 +5956,10 @@ Type
     function GetItemN(index : Integer) : TFhirDocumentReferenceContext;
     procedure SetItemN(index : Integer; value : TFhirDocumentReferenceContext);
   public
-    {!script hide}
-    function Link : TFhirDocumentReferenceContextList; Overload;
+      function Link : TFhirDocumentReferenceContextList; Overload;
     function Clone : TFhirDocumentReferenceContextList; Overload;
     function GetEnumerator : TFhirDocumentReferenceContextListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirDocumentReferenceContext to the end of the list.
@@ -6197,14 +6041,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirEncounterParticipant; overload;
     function Clone : TFhirEncounterParticipant; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_List
       Role of participant in encounter.
     }
@@ -6241,12 +6083,10 @@ Type
     function GetItemN(index : Integer) : TFhirEncounterParticipant;
     procedure SetItemN(index : Integer; value : TFhirEncounterParticipant);
   public
-    {!script hide}
-    function Link : TFhirEncounterParticipantList; Overload;
+      function Link : TFhirEncounterParticipantList; Overload;
     function Clone : TFhirEncounterParticipantList; Overload;
     function GetEnumerator : TFhirEncounterParticipantListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirEncounterParticipant to the end of the list.
@@ -6348,14 +6188,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirEncounterHospitalization; overload;
     function Clone : TFhirEncounterHospitalization; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member preAdmissionIdentifier
       Pre-admission identifier.
     }
@@ -6453,12 +6291,10 @@ Type
     function GetItemN(index : Integer) : TFhirEncounterHospitalization;
     procedure SetItemN(index : Integer; value : TFhirEncounterHospitalization);
   public
-    {!script hide}
-    function Link : TFhirEncounterHospitalizationList; Overload;
+      function Link : TFhirEncounterHospitalizationList; Overload;
     function Clone : TFhirEncounterHospitalizationList; Overload;
     function GetEnumerator : TFhirEncounterHospitalizationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirEncounterHospitalization to the end of the list.
@@ -6541,14 +6377,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirEncounterHospitalizationAccomodation; overload;
     function Clone : TFhirEncounterHospitalizationAccomodation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member bed
       The bed that is assigned to the patient.
     }
@@ -6586,12 +6420,10 @@ Type
     function GetItemN(index : Integer) : TFhirEncounterHospitalizationAccomodation;
     procedure SetItemN(index : Integer; value : TFhirEncounterHospitalizationAccomodation);
   public
-    {!script hide}
-    function Link : TFhirEncounterHospitalizationAccomodationList; Overload;
+      function Link : TFhirEncounterHospitalizationAccomodationList; Overload;
     function Clone : TFhirEncounterHospitalizationAccomodationList; Overload;
     function GetEnumerator : TFhirEncounterHospitalizationAccomodationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirEncounterHospitalizationAccomodation to the end of the list.
@@ -6674,14 +6506,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirEncounterLocation; overload;
     function Clone : TFhirEncounterLocation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member location
       The location where the encounter takes place.
     }
@@ -6719,12 +6549,10 @@ Type
     function GetItemN(index : Integer) : TFhirEncounterLocation;
     procedure SetItemN(index : Integer; value : TFhirEncounterLocation);
   public
-    {!script hide}
-    function Link : TFhirEncounterLocationList; Overload;
+      function Link : TFhirEncounterLocationList; Overload;
     function Clone : TFhirEncounterLocationList; Overload;
     function GetEnumerator : TFhirEncounterLocationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirEncounterLocation to the end of the list.
@@ -6818,14 +6646,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirFamilyHistoryRelation; overload;
     function Clone : TFhirFamilyHistoryRelation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       This will either be a name or a description.  E.g. "Aunt Susan", "my cousin with the red hair".
     }
@@ -6892,12 +6718,10 @@ Type
     function GetItemN(index : Integer) : TFhirFamilyHistoryRelation;
     procedure SetItemN(index : Integer; value : TFhirFamilyHistoryRelation);
   public
-    {!script hide}
-    function Link : TFhirFamilyHistoryRelationList; Overload;
+      function Link : TFhirFamilyHistoryRelationList; Overload;
     function Clone : TFhirFamilyHistoryRelationList; Overload;
     function GetEnumerator : TFhirFamilyHistoryRelationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirFamilyHistoryRelation to the end of the list.
@@ -6986,14 +6810,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirFamilyHistoryRelationCondition; overload;
     function Clone : TFhirFamilyHistoryRelationCondition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       The actual condition specified. Could be a coded condition (like MI or Diabetes) or a less specific string like 'cancer' depending on how much is known about the condition and the capabilities of the creating system.
     }
@@ -7046,12 +6868,10 @@ Type
     function GetItemN(index : Integer) : TFhirFamilyHistoryRelationCondition;
     procedure SetItemN(index : Integer; value : TFhirFamilyHistoryRelationCondition);
   public
-    {!script hide}
-    function Link : TFhirFamilyHistoryRelationConditionList; Overload;
+      function Link : TFhirFamilyHistoryRelationConditionList; Overload;
     function Clone : TFhirFamilyHistoryRelationConditionList; Overload;
     function GetEnumerator : TFhirFamilyHistoryRelationConditionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirFamilyHistoryRelationCondition to the end of the list.
@@ -7138,14 +6958,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirGroupCharacteristic; overload;
     function Clone : TFhirGroupCharacteristic; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       A code that identifies the kind of trait being asserted.
     }
@@ -7192,12 +7010,10 @@ Type
     function GetItemN(index : Integer) : TFhirGroupCharacteristic;
     procedure SetItemN(index : Integer; value : TFhirGroupCharacteristic);
   public
-    {!script hide}
-    function Link : TFhirGroupCharacteristicList; Overload;
+      function Link : TFhirGroupCharacteristicList; Overload;
     function Clone : TFhirGroupCharacteristicList; Overload;
     function GetEnumerator : TFhirGroupCharacteristicListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirGroupCharacteristic to the end of the list.
@@ -7311,14 +7127,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImagingStudySeries; overload;
     function Clone : TFhirImagingStudySeries; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member number
       The number of this series in the overall sequence.
     }
@@ -7421,12 +7235,10 @@ Type
     function GetItemN(index : Integer) : TFhirImagingStudySeries;
     procedure SetItemN(index : Integer; value : TFhirImagingStudySeries);
   public
-    {!script hide}
-    function Link : TFhirImagingStudySeriesList; Overload;
+      function Link : TFhirImagingStudySeriesList; Overload;
     function Clone : TFhirImagingStudySeriesList; Overload;
     function GetEnumerator : TFhirImagingStudySeriesListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirImagingStudySeries to the end of the list.
@@ -7531,14 +7343,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImagingStudySeriesInstance; overload;
     function Clone : TFhirImagingStudySeriesInstance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member number
       The number of this image in the series.
     }
@@ -7624,12 +7434,10 @@ Type
     function GetItemN(index : Integer) : TFhirImagingStudySeriesInstance;
     procedure SetItemN(index : Integer; value : TFhirImagingStudySeriesInstance);
   public
-    {!script hide}
-    function Link : TFhirImagingStudySeriesInstanceList; Overload;
+      function Link : TFhirImagingStudySeriesInstanceList; Overload;
     function Clone : TFhirImagingStudySeriesInstanceList; Overload;
     function GetEnumerator : TFhirImagingStudySeriesInstanceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirImagingStudySeriesInstance to the end of the list.
@@ -7710,14 +7518,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunizationExplanation; overload;
     function Clone : TFhirImmunizationExplanation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member reasonList
       Reasons why a vaccine was administered.
     }
@@ -7753,12 +7559,10 @@ Type
     function GetItemN(index : Integer) : TFhirImmunizationExplanation;
     procedure SetItemN(index : Integer; value : TFhirImmunizationExplanation);
   public
-    {!script hide}
-    function Link : TFhirImmunizationExplanationList; Overload;
+      function Link : TFhirImmunizationExplanationList; Overload;
     function Clone : TFhirImmunizationExplanationList; Overload;
     function GetEnumerator : TFhirImmunizationExplanationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirImmunizationExplanation to the end of the list.
@@ -7847,14 +7651,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunizationReaction; overload;
     function Clone : TFhirImmunizationReaction; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member date
       Date of reaction to the immunization.
     }
@@ -7904,12 +7706,10 @@ Type
     function GetItemN(index : Integer) : TFhirImmunizationReaction;
     procedure SetItemN(index : Integer; value : TFhirImmunizationReaction);
   public
-    {!script hide}
-    function Link : TFhirImmunizationReactionList; Overload;
+      function Link : TFhirImmunizationReactionList; Overload;
     function Clone : TFhirImmunizationReactionList; Overload;
     function GetEnumerator : TFhirImmunizationReactionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirImmunizationReaction to the end of the list.
@@ -8012,14 +7812,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunizationVaccinationProtocol; overload;
     function Clone : TFhirImmunizationVaccinationProtocol; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member doseSequence
       Nominal position in a series.
     }
@@ -8105,12 +7903,10 @@ Type
     function GetItemN(index : Integer) : TFhirImmunizationVaccinationProtocol;
     procedure SetItemN(index : Integer; value : TFhirImmunizationVaccinationProtocol);
   public
-    {!script hide}
-    function Link : TFhirImmunizationVaccinationProtocolList; Overload;
+      function Link : TFhirImmunizationVaccinationProtocolList; Overload;
     function Clone : TFhirImmunizationVaccinationProtocolList; Overload;
     function GetEnumerator : TFhirImmunizationVaccinationProtocolListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirImmunizationVaccinationProtocol to the end of the list.
@@ -8206,14 +8002,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunizationRecommendationRecommendation; overload;
     function Clone : TFhirImmunizationRecommendationRecommendation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member date
       The date the immunization recommendation was created.
     }
@@ -8290,12 +8084,10 @@ Type
     function GetItemN(index : Integer) : TFhirImmunizationRecommendationRecommendation;
     procedure SetItemN(index : Integer; value : TFhirImmunizationRecommendationRecommendation);
   public
-    {!script hide}
-    function Link : TFhirImmunizationRecommendationRecommendationList; Overload;
+      function Link : TFhirImmunizationRecommendationRecommendationList; Overload;
     function Clone : TFhirImmunizationRecommendationRecommendationList; Overload;
     function GetEnumerator : TFhirImmunizationRecommendationRecommendationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirImmunizationRecommendationRecommendation to the end of the list.
@@ -8380,14 +8172,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunizationRecommendationRecommendationDateCriterion; overload;
     function Clone : TFhirImmunizationRecommendationRecommendationDateCriterion; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Date classification of recommendation - e.g. earliest date to give, latest date to give, etc.
     }
@@ -8428,12 +8218,10 @@ Type
     function GetItemN(index : Integer) : TFhirImmunizationRecommendationRecommendationDateCriterion;
     procedure SetItemN(index : Integer; value : TFhirImmunizationRecommendationRecommendationDateCriterion);
   public
-    {!script hide}
-    function Link : TFhirImmunizationRecommendationRecommendationDateCriterionList; Overload;
+      function Link : TFhirImmunizationRecommendationRecommendationDateCriterionList; Overload;
     function Clone : TFhirImmunizationRecommendationRecommendationDateCriterionList; Overload;
     function GetEnumerator : TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirImmunizationRecommendationRecommendationDateCriterion to the end of the list.
@@ -8526,14 +8314,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirImmunizationRecommendationRecommendationProtocol; overload;
     function Clone : TFhirImmunizationRecommendationRecommendationProtocol; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member doseSequence
       Indicates the nominal position in a series of the next dose.  This is the recommended dose number as per a specified protocol.
     }
@@ -8592,12 +8378,10 @@ Type
     function GetItemN(index : Integer) : TFhirImmunizationRecommendationRecommendationProtocol;
     procedure SetItemN(index : Integer; value : TFhirImmunizationRecommendationRecommendationProtocol);
   public
-    {!script hide}
-    function Link : TFhirImmunizationRecommendationRecommendationProtocolList; Overload;
+      function Link : TFhirImmunizationRecommendationRecommendationProtocolList; Overload;
     function Clone : TFhirImmunizationRecommendationRecommendationProtocolList; Overload;
     function GetEnumerator : TFhirImmunizationRecommendationRecommendationProtocolListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirImmunizationRecommendationRecommendationProtocol to the end of the list.
@@ -8687,14 +8471,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirListEntry; overload;
     function Clone : TFhirListEntry; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member flagList
       The flag allows the system constructing the list to make one or more statements about the role and significance of the item in the list.
     }
@@ -8749,12 +8531,10 @@ Type
     function GetItemN(index : Integer) : TFhirListEntry;
     procedure SetItemN(index : Integer; value : TFhirListEntry);
   public
-    {!script hide}
-    function Link : TFhirListEntryList; Overload;
+      function Link : TFhirListEntryList; Overload;
     function Clone : TFhirListEntryList; Overload;
     function GetEnumerator : TFhirListEntryListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirListEntry to the end of the list.
@@ -8845,14 +8625,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirLocationPosition; overload;
     function Clone : TFhirLocationPosition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member longitude
       Longitude. The value domain and the interpretation are the same as for the text of the longitude element in KML (see notes below).
     }
@@ -8905,12 +8683,10 @@ Type
     function GetItemN(index : Integer) : TFhirLocationPosition;
     procedure SetItemN(index : Integer; value : TFhirLocationPosition);
   public
-    {!script hide}
-    function Link : TFhirLocationPositionList; Overload;
+      function Link : TFhirLocationPositionList; Overload;
     function Clone : TFhirLocationPositionList; Overload;
     function GetEnumerator : TFhirLocationPositionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirLocationPosition to the end of the list.
@@ -8992,14 +8768,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationProduct; overload;
     function Clone : TFhirMedicationProduct; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member form
       Describes the form of the item.  Powder; tables; carton.
     }
@@ -9036,12 +8810,10 @@ Type
     function GetItemN(index : Integer) : TFhirMedicationProduct;
     procedure SetItemN(index : Integer; value : TFhirMedicationProduct);
   public
-    {!script hide}
-    function Link : TFhirMedicationProductList; Overload;
+      function Link : TFhirMedicationProductList; Overload;
     function Clone : TFhirMedicationProductList; Overload;
     function GetEnumerator : TFhirMedicationProductListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationProduct to the end of the list.
@@ -9124,14 +8896,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationProductIngredient; overload;
     function Clone : TFhirMedicationProductIngredient; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member item
       The actual ingredient - either a substance (simple ingredient) or another medication.
     }
@@ -9169,12 +8939,10 @@ Type
     function GetItemN(index : Integer) : TFhirMedicationProductIngredient;
     procedure SetItemN(index : Integer; value : TFhirMedicationProductIngredient);
   public
-    {!script hide}
-    function Link : TFhirMedicationProductIngredientList; Overload;
+      function Link : TFhirMedicationProductIngredientList; Overload;
     function Clone : TFhirMedicationProductIngredientList; Overload;
     function GetEnumerator : TFhirMedicationProductIngredientListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationProductIngredient to the end of the list.
@@ -9256,14 +9024,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationPackage; overload;
     function Clone : TFhirMedicationPackage; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member container
       The kind of container that this package comes as.
     }
@@ -9300,12 +9066,10 @@ Type
     function GetItemN(index : Integer) : TFhirMedicationPackage;
     procedure SetItemN(index : Integer; value : TFhirMedicationPackage);
   public
-    {!script hide}
-    function Link : TFhirMedicationPackageList; Overload;
+      function Link : TFhirMedicationPackageList; Overload;
     function Clone : TFhirMedicationPackageList; Overload;
     function GetEnumerator : TFhirMedicationPackageListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationPackage to the end of the list.
@@ -9388,14 +9152,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationPackageContent; overload;
     function Clone : TFhirMedicationPackageContent; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member item
       Identifies one of the items in the package.
     }
@@ -9433,12 +9195,10 @@ Type
     function GetItemN(index : Integer) : TFhirMedicationPackageContent;
     procedure SetItemN(index : Integer; value : TFhirMedicationPackageContent);
   public
-    {!script hide}
-    function Link : TFhirMedicationPackageContentList; Overload;
+      function Link : TFhirMedicationPackageContentList; Overload;
     function Clone : TFhirMedicationPackageContentList; Overload;
     function GetEnumerator : TFhirMedicationPackageContentListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationPackageContent to the end of the list.
@@ -9533,14 +9293,12 @@ Type
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationAdministrationDosage; overload;
     function Clone : TFhirMedicationAdministrationDosage; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member timing
       The timing schedule for giving the medication to the patient.  This may be a single time point (using dateTime) or it may be a start and end dateTime (Period).
     }
@@ -9616,12 +9374,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMedicationAdministrationDosage;
     procedure SetItemN(index : Integer; value : TFhirMedicationAdministrationDosage);
   public
-    {!script hide}
-    function Link : TFhirMedicationAdministrationDosageList; Overload;
+      function Link : TFhirMedicationAdministrationDosageList; Overload;
     function Clone : TFhirMedicationAdministrationDosageList; Overload;
     function GetEnumerator : TFhirMedicationAdministrationDosageListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationAdministrationDosage to the end of the list.
@@ -9724,14 +9480,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationDispenseDispense; overload;
     function Clone : TFhirMedicationDispenseDispense; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Identifier assigned by the dispensing facility.   This is an identifier assigned outside FHIR.
     }
@@ -9821,12 +9575,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMedicationDispenseDispense;
     procedure SetItemN(index : Integer; value : TFhirMedicationDispenseDispense);
   public
-    {!script hide}
-    function Link : TFhirMedicationDispenseDispenseList; Overload;
+      function Link : TFhirMedicationDispenseDispenseList; Overload;
     function Clone : TFhirMedicationDispenseDispenseList; Overload;
     function GetEnumerator : TFhirMedicationDispenseDispenseListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationDispenseDispense to the end of the list.
@@ -9923,14 +9675,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationDispenseDispenseDosage; overload;
     function Clone : TFhirMedicationDispenseDispenseDosage; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member additionalInstructions
       Additional instructions such as "Swallow with plenty of water" which may or may not be coded.
     }
@@ -10012,12 +9762,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMedicationDispenseDispenseDosage;
     procedure SetItemN(index : Integer; value : TFhirMedicationDispenseDispenseDosage);
   public
-    {!script hide}
-    function Link : TFhirMedicationDispenseDispenseDosageList; Overload;
+      function Link : TFhirMedicationDispenseDispenseDosageList; Overload;
     function Clone : TFhirMedicationDispenseDispenseDosageList; Overload;
     function GetEnumerator : TFhirMedicationDispenseDispenseDosageListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationDispenseDispenseDosage to the end of the list.
@@ -10100,14 +9848,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationDispenseSubstitution; overload;
     function Clone : TFhirMedicationDispenseSubstitution; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       A code signifying whether a different drug was dispensed from what was prescribed.
     }
@@ -10149,12 +9895,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMedicationDispenseSubstitution;
     procedure SetItemN(index : Integer; value : TFhirMedicationDispenseSubstitution);
   public
-    {!script hide}
-    function Link : TFhirMedicationDispenseSubstitutionList; Overload;
+      function Link : TFhirMedicationDispenseSubstitutionList; Overload;
     function Clone : TFhirMedicationDispenseSubstitutionList; Overload;
     function GetEnumerator : TFhirMedicationDispenseSubstitutionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationDispenseSubstitution to the end of the list.
@@ -10255,14 +9999,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationPrescriptionDosageInstruction; overload;
     function Clone : TFhirMedicationPrescriptionDosageInstruction; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member text
       Free text dosage instructions for cases where the instructions are too complex to code.
     }
@@ -10353,12 +10095,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMedicationPrescriptionDosageInstruction;
     procedure SetItemN(index : Integer; value : TFhirMedicationPrescriptionDosageInstruction);
   public
-    {!script hide}
-    function Link : TFhirMedicationPrescriptionDosageInstructionList; Overload;
+      function Link : TFhirMedicationPrescriptionDosageInstructionList; Overload;
     function Clone : TFhirMedicationPrescriptionDosageInstructionList; Overload;
     function GetEnumerator : TFhirMedicationPrescriptionDosageInstructionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationPrescriptionDosageInstruction to the end of the list.
@@ -10449,14 +10189,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationPrescriptionDispense; overload;
     function Clone : TFhirMedicationPrescriptionDispense; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member medication
       Identifies the medication that is to be dispensed.  This may be a more specifically defined than the medicationPrescription.medication . This is either a link to a resource representing the details of the medication or a simple attribute carrying a code that identifies the medication from a known list of medications.
     }
@@ -10520,12 +10258,10 @@ In some situations, this attribute may be used instead of quantity to identify t
     function GetItemN(index : Integer) : TFhirMedicationPrescriptionDispense;
     procedure SetItemN(index : Integer; value : TFhirMedicationPrescriptionDispense);
   public
-    {!script hide}
-    function Link : TFhirMedicationPrescriptionDispenseList; Overload;
+      function Link : TFhirMedicationPrescriptionDispenseList; Overload;
     function Clone : TFhirMedicationPrescriptionDispenseList; Overload;
     function GetEnumerator : TFhirMedicationPrescriptionDispenseListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationPrescriptionDispense to the end of the list.
@@ -10608,14 +10344,12 @@ In some situations, this attribute may be used instead of quantity to identify t
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationPrescriptionSubstitution; overload;
     function Clone : TFhirMedicationPrescriptionSubstitution; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       A code signifying whether a different drug should be dispensed from what was prescribed.
     }
@@ -10653,12 +10387,10 @@ In some situations, this attribute may be used instead of quantity to identify t
     function GetItemN(index : Integer) : TFhirMedicationPrescriptionSubstitution;
     procedure SetItemN(index : Integer; value : TFhirMedicationPrescriptionSubstitution);
   public
-    {!script hide}
-    function Link : TFhirMedicationPrescriptionSubstitutionList; Overload;
+      function Link : TFhirMedicationPrescriptionSubstitutionList; Overload;
     function Clone : TFhirMedicationPrescriptionSubstitutionList; Overload;
     function GetEnumerator : TFhirMedicationPrescriptionSubstitutionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationPrescriptionSubstitution to the end of the list.
@@ -10753,14 +10485,12 @@ In some situations, this attribute may be used instead of quantity to identify t
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMedicationStatementDosage; overload;
     function Clone : TFhirMedicationStatementDosage; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member timing
       The timing schedule for giving the medication to the patient.  The Schedule data type allows many different expressions, for example.  "Every  8 hours"; "Three times a day"; "1/2 an hour before breakfast for 10 days from 23-Dec 2011:";  "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
     }
@@ -10836,12 +10566,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMedicationStatementDosage;
     procedure SetItemN(index : Integer; value : TFhirMedicationStatementDosage);
   public
-    {!script hide}
-    function Link : TFhirMedicationStatementDosageList; Overload;
+      function Link : TFhirMedicationStatementDosageList; Overload;
     function Clone : TFhirMedicationStatementDosageList; Overload;
     function GetEnumerator : TFhirMedicationStatementDosageListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMedicationStatementDosage to the end of the list.
@@ -10930,14 +10658,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMessageHeaderResponse; overload;
     function Clone : TFhirMessageHeaderResponse; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       The id of the message that this message is a response to.
     }
@@ -10984,12 +10710,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMessageHeaderResponse;
     procedure SetItemN(index : Integer; value : TFhirMessageHeaderResponse);
   public
-    {!script hide}
-    function Link : TFhirMessageHeaderResponseList; Overload;
+      function Link : TFhirMessageHeaderResponseList; Overload;
     function Clone : TFhirMessageHeaderResponseList; Overload;
     function GetEnumerator : TFhirMessageHeaderResponseListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMessageHeaderResponse to the end of the list.
@@ -11086,14 +10810,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMessageHeaderSource; overload;
     function Clone : TFhirMessageHeaderSource; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       Human-readable name for the target system.
     }
@@ -11161,12 +10883,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMessageHeaderSource;
     procedure SetItemN(index : Integer; value : TFhirMessageHeaderSource);
   public
-    {!script hide}
-    function Link : TFhirMessageHeaderSourceList; Overload;
+      function Link : TFhirMessageHeaderSourceList; Overload;
     function Clone : TFhirMessageHeaderSourceList; Overload;
     function GetEnumerator : TFhirMessageHeaderSourceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMessageHeaderSource to the end of the list.
@@ -11255,14 +10975,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirMessageHeaderDestination; overload;
     function Clone : TFhirMessageHeaderDestination; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       Human-readable name for the source system.
     }
@@ -11312,12 +11030,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirMessageHeaderDestination;
     procedure SetItemN(index : Integer; value : TFhirMessageHeaderDestination);
   public
-    {!script hide}
-    function Link : TFhirMessageHeaderDestinationList; Overload;
+      function Link : TFhirMessageHeaderDestinationList; Overload;
     function Clone : TFhirMessageHeaderDestinationList; Overload;
     function GetEnumerator : TFhirMessageHeaderDestinationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirMessageHeaderDestination to the end of the list.
@@ -11404,14 +11120,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirObservationReferenceRange; overload;
     function Clone : TFhirObservationReferenceRange; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member low
       The value of the low bound of the reference range. If this is omitted, the low bound of the reference range is assumed to be meaningless. E.g. <2.3.
     }
@@ -11461,12 +11175,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirObservationReferenceRange;
     procedure SetItemN(index : Integer; value : TFhirObservationReferenceRange);
   public
-    {!script hide}
-    function Link : TFhirObservationReferenceRangeList; Overload;
+      function Link : TFhirObservationReferenceRangeList; Overload;
     function Clone : TFhirObservationReferenceRangeList; Overload;
     function GetEnumerator : TFhirObservationReferenceRangeListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirObservationReferenceRange to the end of the list.
@@ -11551,14 +11263,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirObservationRelated; overload;
     function Clone : TFhirObservationRelated; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       A code specifying the kind of relationship that exists with the target observation.
     }
@@ -11596,12 +11306,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirObservationRelated;
     procedure SetItemN(index : Integer; value : TFhirObservationRelated);
   public
-    {!script hide}
-    function Link : TFhirObservationRelatedList; Overload;
+      function Link : TFhirObservationRelatedList; Overload;
     function Clone : TFhirObservationRelatedList; Overload;
     function GetEnumerator : TFhirObservationRelatedListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirObservationRelated to the end of the list.
@@ -11691,14 +11399,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOperationOutcomeIssue; overload;
     function Clone : TFhirOperationOutcomeIssue; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member severity
       Indicates whether the issue indicates a variation from successful processing.
     }
@@ -11750,12 +11456,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirOperationOutcomeIssue;
     procedure SetItemN(index : Integer; value : TFhirOperationOutcomeIssue);
   public
-    {!script hide}
-    function Link : TFhirOperationOutcomeIssueList; Overload;
+      function Link : TFhirOperationOutcomeIssueList; Overload;
     function Clone : TFhirOperationOutcomeIssueList; Overload;
     function GetEnumerator : TFhirOperationOutcomeIssueListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirOperationOutcomeIssue to the end of the list.
@@ -11838,14 +11542,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOrderWhen; overload;
     function Clone : TFhirOrderWhen; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Code specifies when request should be done. The code may simply be a priority code.
     }
@@ -11883,12 +11585,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirOrderWhen;
     procedure SetItemN(index : Integer; value : TFhirOrderWhen);
   public
-    {!script hide}
-    function Link : TFhirOrderWhenList; Overload;
+      function Link : TFhirOrderWhenList; Overload;
     function Clone : TFhirOrderWhenList; Overload;
     function GetEnumerator : TFhirOrderWhenListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirOrderWhen to the end of the list.
@@ -11976,14 +11676,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirOrganizationContact; overload;
     function Clone : TFhirOrganizationContact; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member purpose
       Indicates a purpose for which the contact can be reached.
     }
@@ -12038,12 +11736,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirOrganizationContact;
     procedure SetItemN(index : Integer; value : TFhirOrganizationContact);
   public
-    {!script hide}
-    function Link : TFhirOrganizationContactList; Overload;
+      function Link : TFhirOrganizationContactList; Overload;
     function Clone : TFhirOrganizationContactList; Overload;
     function GetEnumerator : TFhirOrganizationContactListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirOrganizationContact to the end of the list.
@@ -12132,14 +11828,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPatientContact; overload;
     function Clone : TFhirPatientContact; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member relationshipList
       The nature of the relationship between the patient and the contact person.
     }
@@ -12199,12 +11893,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirPatientContact;
     procedure SetItemN(index : Integer; value : TFhirPatientContact);
   public
-    {!script hide}
-    function Link : TFhirPatientContactList; Overload;
+      function Link : TFhirPatientContactList; Overload;
     function Clone : TFhirPatientContactList; Overload;
     function GetEnumerator : TFhirPatientContactListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirPatientContact to the end of the list.
@@ -12289,14 +11981,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPatientAnimal; overload;
     function Clone : TFhirPatientAnimal; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member species
       Identifies the high level categorization of the kind of animal.
     }
@@ -12340,12 +12030,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirPatientAnimal;
     procedure SetItemN(index : Integer; value : TFhirPatientAnimal);
   public
-    {!script hide}
-    function Link : TFhirPatientAnimalList; Overload;
+      function Link : TFhirPatientAnimalList; Overload;
     function Clone : TFhirPatientAnimalList; Overload;
     function GetEnumerator : TFhirPatientAnimalListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirPatientAnimal to the end of the list.
@@ -12430,14 +12118,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPatientLink; overload;
     function Clone : TFhirPatientLink; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member other
       The other patient resource that the link refers to.
     }
@@ -12475,12 +12161,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirPatientLink;
     procedure SetItemN(index : Integer; value : TFhirPatientLink);
   public
-    {!script hide}
-    function Link : TFhirPatientLinkList; Overload;
+      function Link : TFhirPatientLinkList; Overload;
     function Clone : TFhirPatientLinkList; Overload;
     function GetEnumerator : TFhirPatientLinkListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirPatientLink to the end of the list.
@@ -12565,14 +12249,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirPractitionerQualification; overload;
     function Clone : TFhirPractitionerQualification; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Coded representation of the qualification.
     }
@@ -12616,12 +12298,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirPractitionerQualification;
     procedure SetItemN(index : Integer; value : TFhirPractitionerQualification);
   public
-    {!script hide}
-    function Link : TFhirPractitionerQualificationList; Overload;
+      function Link : TFhirPractitionerQualificationList; Overload;
     function Clone : TFhirPractitionerQualificationList; Overload;
     function GetEnumerator : TFhirPractitionerQualificationListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirPractitionerQualification to the end of the list.
@@ -12704,14 +12384,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProcedurePerformer; overload;
     function Clone : TFhirProcedurePerformer; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member person
       The practitioner who was involved in the procedure.
     }
@@ -12749,12 +12427,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProcedurePerformer;
     procedure SetItemN(index : Integer; value : TFhirProcedurePerformer);
   public
-    {!script hide}
-    function Link : TFhirProcedurePerformerList; Overload;
+      function Link : TFhirProcedurePerformerList; Overload;
     function Clone : TFhirProcedurePerformerList; Overload;
     function GetEnumerator : TFhirProcedurePerformerListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProcedurePerformer to the end of the list.
@@ -12839,14 +12515,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProcedureRelatedItem; overload;
     function Clone : TFhirProcedureRelatedItem; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       The nature of the relationship.
     }
@@ -12884,12 +12558,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProcedureRelatedItem;
     procedure SetItemN(index : Integer; value : TFhirProcedureRelatedItem);
   public
-    {!script hide}
-    function Link : TFhirProcedureRelatedItemList; Overload;
+      function Link : TFhirProcedureRelatedItemList; Overload;
     function Clone : TFhirProcedureRelatedItemList; Overload;
     function GetEnumerator : TFhirProcedureRelatedItemListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProcedureRelatedItem to the end of the list.
@@ -12984,14 +12656,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileMapping; overload;
     function Clone : TFhirProfileMapping; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identity
       An Internal id that is used to identify this mapping set when specific mappings are made.
     }
@@ -13053,12 +12723,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileMapping;
     procedure SetItemN(index : Integer; value : TFhirProfileMapping);
   public
-    {!script hide}
-    function Link : TFhirProfileMappingList; Overload;
+      function Link : TFhirProfileMappingList; Overload;
     function Clone : TFhirProfileMappingList; Overload;
     function GetEnumerator : TFhirProfileMappingListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileMapping to the end of the list.
@@ -13155,14 +12823,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructure; overload;
     function Clone : TFhirProfileStructure; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       The Resource or Data type being described.
     }
@@ -13234,12 +12900,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructure;
     procedure SetItemN(index : Integer; value : TFhirProfileStructure);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureList; Overload;
+      function Link : TFhirProfileStructureList; Overload;
     function Clone : TFhirProfileStructureList; Overload;
     function GetEnumerator : TFhirProfileStructureListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructure to the end of the list.
@@ -13333,14 +12997,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructureElement; overload;
     function Clone : TFhirProfileStructureElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member path
       The path identifies the element and is expressed as a "."-separated list of ancestor elements, beginning with the name of the resource.
     }
@@ -13401,12 +13063,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructureElement;
     procedure SetItemN(index : Integer; value : TFhirProfileStructureElement);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureElementList; Overload;
+      function Link : TFhirProfileStructureElementList; Overload;
     function Clone : TFhirProfileStructureElementList; Overload;
     function GetEnumerator : TFhirProfileStructureElementListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructureElement to the end of the list.
@@ -13497,14 +13157,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructureElementSlicing; overload;
     function Clone : TFhirProfileStructureElementSlicing; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member discriminator
       Designates which child element is used to discriminate between the slices when processing an instance. The value of the child element in the instance SHALL completely distinguish which slice the element in the resource matches based on the allowed values for that element in each of the slices.
     }
@@ -13554,12 +13212,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructureElementSlicing;
     procedure SetItemN(index : Integer; value : TFhirProfileStructureElementSlicing);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureElementSlicingList; Overload;
+      function Link : TFhirProfileStructureElementSlicingList; Overload;
     function Clone : TFhirProfileStructureElementSlicingList; Overload;
     function GetEnumerator : TFhirProfileStructureElementSlicingListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructureElementSlicing to the end of the list.
@@ -13689,14 +13345,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructureElementDefinition; overload;
     function Clone : TFhirProfileStructureElementDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member short
       A concise definition that  is shown in the generated XML format that summarizes profiles (used throughout the specification).
     }
@@ -13855,12 +13509,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructureElementDefinition;
     procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinition);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionList; Overload;
+      function Link : TFhirProfileStructureElementDefinitionList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionList; Overload;
     function GetEnumerator : TFhirProfileStructureElementDefinitionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructureElementDefinition to the end of the list.
@@ -13950,14 +13602,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructureElementDefinitionType; overload;
     function Clone : TFhirProfileStructureElementDefinitionType; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Name of Data type or Resource.
     }
@@ -14006,12 +13656,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructureElementDefinitionType;
     procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinitionType);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionTypeList; Overload;
+      function Link : TFhirProfileStructureElementDefinitionTypeList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionTypeList; Overload;
     function GetEnumerator : TFhirProfileStructureElementDefinitionTypeListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructureElementDefinitionType to the end of the list.
@@ -14110,14 +13758,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructureElementDefinitionConstraint; overload;
     function Clone : TFhirProfileStructureElementDefinitionConstraint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member key
       Allows identification of which elements have their cardinalities impacted by the constraint.  Will not be referenced for constraints that do not affect cardinality.
     }
@@ -14185,12 +13831,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructureElementDefinitionConstraint;
     procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinitionConstraint);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionConstraintList; Overload;
+      function Link : TFhirProfileStructureElementDefinitionConstraintList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionConstraintList; Overload;
     function GetEnumerator : TFhirProfileStructureElementDefinitionConstraintListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructureElementDefinitionConstraint to the end of the list.
@@ -14287,14 +13931,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructureElementDefinitionBinding; overload;
     function Clone : TFhirProfileStructureElementDefinitionBinding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       A descriptive name for this - can be useful for generating implementation artifacts.
     }
@@ -14359,12 +14001,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructureElementDefinitionBinding;
     procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinitionBinding);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionBindingList; Overload;
+      function Link : TFhirProfileStructureElementDefinitionBindingList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionBindingList; Overload;
     function GetEnumerator : TFhirProfileStructureElementDefinitionBindingListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructureElementDefinitionBinding to the end of the list.
@@ -14451,14 +14091,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructureElementDefinitionMapping; overload;
     function Clone : TFhirProfileStructureElementDefinitionMapping; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identity
       An internal reference to the definition of a mapping.
     }
@@ -14502,12 +14140,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructureElementDefinitionMapping;
     procedure SetItemN(index : Integer; value : TFhirProfileStructureElementDefinitionMapping);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureElementDefinitionMappingList; Overload;
+      function Link : TFhirProfileStructureElementDefinitionMappingList; Overload;
     function Clone : TFhirProfileStructureElementDefinitionMappingList; Overload;
     function GetEnumerator : TFhirProfileStructureElementDefinitionMappingListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructureElementDefinitionMapping to the end of the list.
@@ -14603,14 +14239,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileStructureSearchParam; overload;
     function Clone : TFhirProfileStructureSearchParam; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       The name of the standard or custom search parameter.
     }
@@ -14674,12 +14308,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileStructureSearchParam;
     procedure SetItemN(index : Integer; value : TFhirProfileStructureSearchParam);
   public
-    {!script hide}
-    function Link : TFhirProfileStructureSearchParamList; Overload;
+      function Link : TFhirProfileStructureSearchParamList; Overload;
     function Clone : TFhirProfileStructureSearchParamList; Overload;
     function GetEnumerator : TFhirProfileStructureSearchParamListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileStructureSearchParam to the end of the list.
@@ -14773,14 +14405,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileExtensionDefn; overload;
     function Clone : TFhirProfileExtensionDefn; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       A unique code (within the profile) used to identify the extension.
     }
@@ -14841,12 +14471,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileExtensionDefn;
     procedure SetItemN(index : Integer; value : TFhirProfileExtensionDefn);
   public
-    {!script hide}
-    function Link : TFhirProfileExtensionDefnList; Overload;
+      function Link : TFhirProfileExtensionDefnList; Overload;
     function Clone : TFhirProfileExtensionDefnList; Overload;
     function GetEnumerator : TFhirProfileExtensionDefnListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileExtensionDefn to the end of the list.
@@ -14934,14 +14562,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProfileQuery; overload;
     function Clone : TFhirProfileQuery; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       The name of a query, which is used in the URI from Conformance statements declaring use of the query.  Typically this will also be the name for the _query parameter when the query is called, though in some cases it may be aliased by a server to avoid collisions.
     }
@@ -14990,12 +14616,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProfileQuery;
     procedure SetItemN(index : Integer; value : TFhirProfileQuery);
   public
-    {!script hide}
-    function Link : TFhirProfileQueryList; Overload;
+      function Link : TFhirProfileQueryList; Overload;
     function Clone : TFhirProfileQueryList; Overload;
     function GetEnumerator : TFhirProfileQueryListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProfileQuery to the end of the list.
@@ -15086,14 +14710,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProvenanceAgent; overload;
     function Clone : TFhirProvenanceAgent; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member role
       The role that the participant played.
     }
@@ -15149,12 +14771,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProvenanceAgent;
     procedure SetItemN(index : Integer; value : TFhirProvenanceAgent);
   public
-    {!script hide}
-    function Link : TFhirProvenanceAgentList; Overload;
+      function Link : TFhirProvenanceAgentList; Overload;
     function Clone : TFhirProvenanceAgentList; Overload;
     function GetEnumerator : TFhirProvenanceAgentListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProvenanceAgent to the end of the list.
@@ -15249,14 +14869,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirProvenanceEntity; overload;
     function Clone : TFhirProvenanceEntity; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member role
       How the entity was used during the activity.
     }
@@ -15318,12 +14936,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirProvenanceEntity;
     procedure SetItemN(index : Integer; value : TFhirProvenanceEntity);
   public
-    {!script hide}
-    function Link : TFhirProvenanceEntityList; Overload;
+      function Link : TFhirProvenanceEntityList; Overload;
     function Clone : TFhirProvenanceEntityList; Overload;
     function GetEnumerator : TFhirProvenanceEntityListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirProvenanceEntity to the end of the list.
@@ -15420,14 +15036,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQueryResponse; overload;
     function Clone : TFhirQueryResponse; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Links response to source query.
     }
@@ -15507,12 +15121,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirQueryResponse;
     procedure SetItemN(index : Integer; value : TFhirQueryResponse);
   public
-    {!script hide}
-    function Link : TFhirQueryResponseList; Overload;
+      function Link : TFhirQueryResponseList; Overload;
     function Clone : TFhirQueryResponseList; Overload;
     function GetEnumerator : TFhirQueryResponseListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirQueryResponse to the end of the list.
@@ -15605,14 +15217,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQuestionnaireGroup; overload;
     function Clone : TFhirQuestionnaireGroup; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       Structured name for a section of a predefined list of questions this questionnaire is responding to.
     }
@@ -15678,12 +15288,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirQuestionnaireGroup;
     procedure SetItemN(index : Integer; value : TFhirQuestionnaireGroup);
   public
-    {!script hide}
-    function Link : TFhirQuestionnaireGroupList; Overload;
+      function Link : TFhirQuestionnaireGroupList; Overload;
     function Clone : TFhirQuestionnaireGroupList; Overload;
     function GetEnumerator : TFhirQuestionnaireGroupListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirQuestionnaireGroup to the end of the list.
@@ -15780,14 +15388,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirQuestionnaireGroupQuestion; overload;
     function Clone : TFhirQuestionnaireGroupQuestion; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member name
       Structured name for the question that identifies this question within the Questionnaire or Group.
     }
@@ -15865,12 +15471,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirQuestionnaireGroupQuestion;
     procedure SetItemN(index : Integer; value : TFhirQuestionnaireGroupQuestion);
   public
-    {!script hide}
-    function Link : TFhirQuestionnaireGroupQuestionList; Overload;
+      function Link : TFhirQuestionnaireGroupQuestionList; Overload;
     function Clone : TFhirQuestionnaireGroupQuestionList; Overload;
     function GetEnumerator : TFhirQuestionnaireGroupQuestionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirQuestionnaireGroupQuestion to the end of the list.
@@ -15968,14 +15572,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSecurityEventEvent; overload;
     function Clone : TFhirSecurityEventEvent; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       Identifier for a family of the event.
     }
@@ -16042,12 +15644,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSecurityEventEvent;
     procedure SetItemN(index : Integer; value : TFhirSecurityEventEvent);
   public
-    {!script hide}
-    function Link : TFhirSecurityEventEventList; Overload;
+      function Link : TFhirSecurityEventEventList; Overload;
     function Clone : TFhirSecurityEventEventList; Overload;
     function GetEnumerator : TFhirSecurityEventEventListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSecurityEventEvent to the end of the list.
@@ -16149,14 +15749,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSecurityEventParticipant; overload;
     function Clone : TFhirSecurityEventParticipant; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member roleList
       Specification of the role(s) the user plays when performing the event. Usually the codes used in this element are local codes defined by the role-based access control security system used in the local context.
     }
@@ -16241,12 +15839,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSecurityEventParticipant;
     procedure SetItemN(index : Integer; value : TFhirSecurityEventParticipant);
   public
-    {!script hide}
-    function Link : TFhirSecurityEventParticipantList; Overload;
+      function Link : TFhirSecurityEventParticipantList; Overload;
     function Clone : TFhirSecurityEventParticipantList; Overload;
     function GetEnumerator : TFhirSecurityEventParticipantListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSecurityEventParticipant to the end of the list.
@@ -16333,14 +15929,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSecurityEventParticipantNetwork; overload;
     function Clone : TFhirSecurityEventParticipantNetwork; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       An identifier for the network access point of the user device for the audit event.
     }
@@ -16381,12 +15975,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSecurityEventParticipantNetwork;
     procedure SetItemN(index : Integer; value : TFhirSecurityEventParticipantNetwork);
   public
-    {!script hide}
-    function Link : TFhirSecurityEventParticipantNetworkList; Overload;
+      function Link : TFhirSecurityEventParticipantNetworkList; Overload;
     function Clone : TFhirSecurityEventParticipantNetworkList; Overload;
     function GetEnumerator : TFhirSecurityEventParticipantNetworkListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSecurityEventParticipantNetwork to the end of the list.
@@ -16474,14 +16066,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSecurityEventSource; overload;
     function Clone : TFhirSecurityEventSource; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member site
       Logical source location within the healthcare enterprise network.
     }
@@ -16530,12 +16120,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSecurityEventSource;
     procedure SetItemN(index : Integer; value : TFhirSecurityEventSource);
   public
-    {!script hide}
-    function Link : TFhirSecurityEventSourceList; Overload;
+      function Link : TFhirSecurityEventSourceList; Overload;
     function Clone : TFhirSecurityEventSourceList; Overload;
     function GetEnumerator : TFhirSecurityEventSourceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSecurityEventSource to the end of the list.
@@ -16645,14 +16233,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSecurityEventObject; overload;
     function Clone : TFhirSecurityEventObject; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Identifies a specific instance of the participant object. The reference should always be version specific.
     }
@@ -16746,12 +16332,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSecurityEventObject;
     procedure SetItemN(index : Integer; value : TFhirSecurityEventObject);
   public
-    {!script hide}
-    function Link : TFhirSecurityEventObjectList; Overload;
+      function Link : TFhirSecurityEventObjectList; Overload;
     function Clone : TFhirSecurityEventObjectList; Overload;
     function GetEnumerator : TFhirSecurityEventObjectListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSecurityEventObject to the end of the list.
@@ -16838,14 +16422,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSecurityEventObjectDetail; overload;
     function Clone : TFhirSecurityEventObjectDetail; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member type_
       Name of the property.
     }
@@ -16889,12 +16471,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSecurityEventObjectDetail;
     procedure SetItemN(index : Integer; value : TFhirSecurityEventObjectDetail);
   public
-    {!script hide}
-    function Link : TFhirSecurityEventObjectDetailList; Overload;
+      function Link : TFhirSecurityEventObjectDetailList; Overload;
     function Clone : TFhirSecurityEventObjectDetailList; Overload;
     function GetEnumerator : TFhirSecurityEventObjectDetailListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSecurityEventObjectDetail to the end of the list.
@@ -16978,14 +16558,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSpecimenSource; overload;
     function Clone : TFhirSpecimenSource; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member relationship
       Whether this relationship is to a parent or to a child.
     }
@@ -17022,12 +16600,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSpecimenSource;
     procedure SetItemN(index : Integer; value : TFhirSpecimenSource);
   public
-    {!script hide}
-    function Link : TFhirSpecimenSourceList; Overload;
+      function Link : TFhirSpecimenSourceList; Overload;
     function Clone : TFhirSpecimenSourceList; Overload;
     function GetEnumerator : TFhirSpecimenSourceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSpecimenSource to the end of the list.
@@ -17117,14 +16693,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSpecimenCollection; overload;
     function Clone : TFhirSpecimenCollection; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member collector
       Person who collected the specimen.
     }
@@ -17185,12 +16759,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSpecimenCollection;
     procedure SetItemN(index : Integer; value : TFhirSpecimenCollection);
   public
-    {!script hide}
-    function Link : TFhirSpecimenCollectionList; Overload;
+      function Link : TFhirSpecimenCollectionList; Overload;
     function Clone : TFhirSpecimenCollectionList; Overload;
     function GetEnumerator : TFhirSpecimenCollectionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSpecimenCollection to the end of the list.
@@ -17276,14 +16848,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSpecimenTreatment; overload;
     function Clone : TFhirSpecimenTreatment; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member description
       Textual description of procedure.
     }
@@ -17329,12 +16899,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSpecimenTreatment;
     procedure SetItemN(index : Integer; value : TFhirSpecimenTreatment);
   public
-    {!script hide}
-    function Link : TFhirSpecimenTreatmentList; Overload;
+      function Link : TFhirSpecimenTreatmentList; Overload;
     function Clone : TFhirSpecimenTreatmentList; Overload;
     function GetEnumerator : TFhirSpecimenTreatmentListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSpecimenTreatment to the end of the list.
@@ -17426,14 +16994,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSpecimenContainer; overload;
     function Clone : TFhirSpecimenContainer; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifierList
       Id for container. There may be multiple; a manufacturer's bar code, lab assigned identifier, etc. The container ID may differ from the specimen id in some circumstances.
     }
@@ -17497,12 +17063,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSpecimenContainer;
     procedure SetItemN(index : Integer; value : TFhirSpecimenContainer);
   public
-    {!script hide}
-    function Link : TFhirSpecimenContainerList; Overload;
+      function Link : TFhirSpecimenContainerList; Overload;
     function Clone : TFhirSpecimenContainerList; Overload;
     function GetEnumerator : TFhirSpecimenContainerListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSpecimenContainer to the end of the list.
@@ -17589,14 +17153,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSubstanceInstance; overload;
     function Clone : TFhirSubstanceInstance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Identifier associated with the package/container (usually a label affixed directly).
     }
@@ -17643,12 +17205,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSubstanceInstance;
     procedure SetItemN(index : Integer; value : TFhirSubstanceInstance);
   public
-    {!script hide}
-    function Link : TFhirSubstanceInstanceList; Overload;
+      function Link : TFhirSubstanceInstanceList; Overload;
     function Clone : TFhirSubstanceInstanceList; Overload;
     function GetEnumerator : TFhirSubstanceInstanceListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSubstanceInstance to the end of the list.
@@ -17731,14 +17291,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSubstanceIngredient; overload;
     function Clone : TFhirSubstanceIngredient; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member quantity
       The amount of the ingredient in the substance - a concentration ratio.
     }
@@ -17776,12 +17334,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSubstanceIngredient;
     procedure SetItemN(index : Integer; value : TFhirSubstanceIngredient);
   public
-    {!script hide}
-    function Link : TFhirSubstanceIngredientList; Overload;
+      function Link : TFhirSubstanceIngredientList; Overload;
     function Clone : TFhirSubstanceIngredientList; Overload;
     function GetEnumerator : TFhirSubstanceIngredientListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSubstanceIngredient to the end of the list.
@@ -17881,14 +17437,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirSupplyDispense; overload;
     function Clone : TFhirSupplyDispense; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       Identifier assigned by the dispensing facility when the dispense occurs.
     }
@@ -17973,12 +17527,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirSupplyDispense;
     procedure SetItemN(index : Integer; value : TFhirSupplyDispense);
   public
-    {!script hide}
-    function Link : TFhirSupplyDispenseList; Overload;
+      function Link : TFhirSupplyDispenseList; Overload;
     function Clone : TFhirSupplyDispenseList; Overload;
     function GetEnumerator : TFhirSupplyDispenseListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirSupplyDispense to the end of the list.
@@ -18070,14 +17622,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSetDefine; overload;
     function Clone : TFhirValueSetDefine; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member system
       URI to identify the code system.
     }
@@ -18135,12 +17685,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirValueSetDefine;
     procedure SetItemN(index : Integer; value : TFhirValueSetDefine);
   public
-    {!script hide}
-    function Link : TFhirValueSetDefineList; Overload;
+      function Link : TFhirValueSetDefineList; Overload;
     function Clone : TFhirValueSetDefineList; Overload;
     function GetEnumerator : TFhirValueSetDefineListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirValueSetDefine to the end of the list.
@@ -18236,14 +17784,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSetDefineConcept; overload;
     function Clone : TFhirValueSetDefineConcept; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member code
       Code that identifies concept.
     }
@@ -18310,12 +17856,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirValueSetDefineConcept;
     procedure SetItemN(index : Integer; value : TFhirValueSetDefineConcept);
   public
-    {!script hide}
-    function Link : TFhirValueSetDefineConceptList; Overload;
+      function Link : TFhirValueSetDefineConceptList; Overload;
     function Clone : TFhirValueSetDefineConceptList; Overload;
     function GetEnumerator : TFhirValueSetDefineConceptListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirValueSetDefineConcept to the end of the list.
@@ -18397,14 +17941,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSetCompose; overload;
     function Clone : TFhirValueSetCompose; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member importList
       Includes the contents of the referenced value set as a part of the contents of this value set.
     }
@@ -18445,12 +17987,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirValueSetCompose;
     procedure SetItemN(index : Integer; value : TFhirValueSetCompose);
   public
-    {!script hide}
-    function Link : TFhirValueSetComposeList; Overload;
+      function Link : TFhirValueSetComposeList; Overload;
     function Clone : TFhirValueSetComposeList; Overload;
     function GetEnumerator : TFhirValueSetComposeListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirValueSetCompose to the end of the list.
@@ -18539,14 +18079,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSetComposeInclude; overload;
     function Clone : TFhirValueSetComposeInclude; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member system
       The code system from which the selected codes come from.
     }
@@ -18600,12 +18138,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirValueSetComposeInclude;
     procedure SetItemN(index : Integer; value : TFhirValueSetComposeInclude);
   public
-    {!script hide}
-    function Link : TFhirValueSetComposeIncludeList; Overload;
+      function Link : TFhirValueSetComposeIncludeList; Overload;
     function Clone : TFhirValueSetComposeIncludeList; Overload;
     function GetEnumerator : TFhirValueSetComposeIncludeListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirValueSetComposeInclude to the end of the list.
@@ -18696,14 +18232,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSetComposeIncludeFilter; overload;
     function Clone : TFhirValueSetComposeIncludeFilter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member property_
       A code that identifies a property defined in the code system.
     }
@@ -18753,12 +18287,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirValueSetComposeIncludeFilter;
     procedure SetItemN(index : Integer; value : TFhirValueSetComposeIncludeFilter);
   public
-    {!script hide}
-    function Link : TFhirValueSetComposeIncludeFilterList; Overload;
+      function Link : TFhirValueSetComposeIncludeFilterList; Overload;
     function Clone : TFhirValueSetComposeIncludeFilterList; Overload;
     function GetEnumerator : TFhirValueSetComposeIncludeFilterListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirValueSetComposeIncludeFilter to the end of the list.
@@ -18844,14 +18376,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSetExpansion; overload;
     function Clone : TFhirValueSetExpansion; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member identifier
       An identifier that uniquely identifies this expansion of the valueset. Systems may re-use the same identifier as long as the expansion and the definition remain the same, but are not required to do so.
     }
@@ -18897,12 +18427,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirValueSetExpansion;
     procedure SetItemN(index : Integer; value : TFhirValueSetExpansion);
   public
-    {!script hide}
-    function Link : TFhirValueSetExpansionList; Overload;
+      function Link : TFhirValueSetExpansionList; Overload;
     function Clone : TFhirValueSetExpansionList; Overload;
     function GetEnumerator : TFhirValueSetExpansionListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirValueSetExpansion to the end of the list.
@@ -18994,14 +18522,12 @@ Terminologies used often pre-coordinate this term with the route and or form of 
   public
     constructor Create; Override;
     destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TFslObject); override;
+      procedure Assign(oSource : TFslObject); override;
     function Link : TFhirValueSetExpansionContains; overload;
     function Clone : TFhirValueSetExpansionContains; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function FhirType : string; override;
-    {!script show}
-  published
+    published
     {@member system
       System value for the code.
     }
@@ -19059,12 +18585,10 @@ Terminologies used often pre-coordinate this term with the route and or form of 
     function GetItemN(index : Integer) : TFhirValueSetExpansionContains;
     procedure SetItemN(index : Integer; value : TFhirValueSetExpansionContains);
   public
-    {!script hide}
-    function Link : TFhirValueSetExpansionContainsList; Overload;
+      function Link : TFhirValueSetExpansionContainsList; Overload;
     function Clone : TFhirValueSetExpansionContainsList; Overload;
     function GetEnumerator : TFhirValueSetExpansionContainsListEnumerator;
-    {!script show}
-    
+      
 
     {@member Append
       Add a FhirValueSetExpansionContains to the end of the list.

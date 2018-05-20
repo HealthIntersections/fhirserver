@@ -4,27 +4,27 @@ Unit FHIR.Support.Factory;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -53,7 +53,7 @@ Type
       FFolder : String;                           // Filename location of leak profile report.
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
     Public
       Constructor Create; Override;
@@ -71,16 +71,6 @@ Type
       Procedure Lock;
       Procedure Unlock;
       Function Nested : Boolean;
-
-      // Register Classes
-      Procedure RegisterClass(Const aClass : TClass);
-      Procedure RegisterClassArray(Const aClassArray : Array Of TClass);
-      Procedure RegisterClasses(Const aClassArray : Array Of TClass);
-      Procedure RegisterClassAlias(Const aClass : TClass; Const sName : String);
-      Function IsEquivalentClass(Const aClass : TClass; Const sName : String) : Boolean;
-      Function IsRegisteredClass(Const aClass : TClass) : Boolean;
-
-      Procedure UnregisterClass(Const aClass : TClass);
 
       Function Get(Const sName : String) : TClass;
       Function Make(Const sName : String) : TObject; Overload;
@@ -110,7 +100,7 @@ Type
       Property Folder : String Read FFolder Write FFolder;
   End;
 
-  EAdvFactory = Class(EAdvException);
+  EFslFactory = Class(EFslException);
 
   TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
 
@@ -191,48 +181,6 @@ Begin
   Assert(Construct(FLookupClassHashEntry));
   Assert(Construct(FCritical));
   Assert(Construct(FClassHashTable));
-
-  // moved from FHIR.Support.Exceptions as it was causing problems.
-  RegisterClass(EAdvFactory);
-  RegisterClass(EAdvInvariant);  
-  RegisterClass(EAdvException);
-  RegisterClass(EAdvAbstract);
-  RegisterClass(EAdvAssertion);
-  RegisterClass(EAdvController);
-
-  RegisterClass(EAbstractError);
-  RegisterClass(EAccessViolation);
-  RegisterClass(EAssertionFailed);
-  RegisterClass(EControlC);
-  RegisterClass(EDivByZero);
-  RegisterClass(EExternal);
-  RegisterClass(EExternalException);
-  RegisterClass(ERangeError);
-  RegisterClass(EIntError);
-  RegisterClass(EIntOverflow);
-  RegisterClass(EInvalidCast);
-  RegisterClass(EIntfCastError);
-  RegisterClass(EInvalidPointer);
-  RegisterClass(EMathError);
-  RegisterClass(EOverflow);
-  RegisterClass(EOutOfMemory);
-  RegisterClass(EPrivilege);
-  RegisterClass(ESafeCallException);
-  RegisterClass(EUnderflow);
-  RegisterClass(EVariantError);
-  RegisterClass(EZeroDivide);
-{$IFDEF VER130}
-  RegisterClass(EStackOverflow);
-  RegisterClass(EWin32Error);
-{$ENDIF}
-  RegisterClass(TFslStringList);
-  RegisterClass(TFslIntegerMatch);
-  RegisterClass(TFslLargeIntegerMatch);
-  RegisterClass(TFslStringIntegerMatch);
-  RegisterClass(TFslStringLargeIntegerMatch);
-  RegisterClassArray([TFslBuffer, TFslBufferList]);
-
-  RegisterClassAlias(TFslStringList, 'TFslStrings');
 End;
 
 
@@ -251,52 +199,9 @@ Begin
 End;
 
 
-Function TFslFactory.ErrorClass : EAdvExceptionClass;
+Function TFslFactory.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EAdvFactory;
-End;
-
-
-Procedure TFslFactory.RegisterClassAlias(Const aClass: TClass; Const sName: String);
-Begin
-  // Pass a value for sName to alias a class as a different name.  This is
-  // useful for backwards compatiblity programming.
-
-  FLookupClassHashEntry.Name := sName;
-  FLookupClassHashEntry.Data := aClass;
-
-  FClassHashTable.Force(FLookupClassHashEntry);
-End;
-
-
-Procedure TFslFactory.RegisterClass(Const aClass: TClass);
-Begin
-  RegisterClassAlias(aClass, aClass.ClassName);
-End;
-
-
-Procedure TFslFactory.RegisterClassArray(Const aClassArray : Array Of TClass);
-Var
-  iClassIndex : Integer;
-Begin
-  For iClassIndex := Low(aClassArray) To High(aClassArray) Do
-    RegisterClass(aClassArray[iClassIndex]);
-End;
-
-
-Procedure TFslFactory.UnregisterClass(Const aClass : TClass);
-Var
-  oLookup : TFslObjectClassHashEntry;
-Begin
-  oLookup := TFslObjectClassHashEntry.Create;
-  Try
-    oLookup.Name := aClass.ClassName;
-    oLookup.Data := aClass;
-    
-    FClassHashTable.Delete(oLookup);
-  Finally
-    oLookup.Free;
-  End;
+  Result := EFslFactory;
 End;
 
 
@@ -341,42 +246,6 @@ Begin
   Else
     Result := aClass.Create;
 End;
-
-
-Function TFslFactory.IsEquivalentClass(Const aClass : TClass; Const sName : String): Boolean;
-Begin
-  Result := Assigned(aClass) And (StringEquals(aClass.ClassName, sName) Or (aClass = Get(sName)));
-End;
-
-
-Function TFslFactory.IsRegisteredClass(Const aClass : TClass): Boolean;
-Var
-  oIterator : TFslObjectClassHashTableIterator;
-Begin
-  Assert(CheckCondition(Assigned(aClass), 'IsRegisteredClass', 'Class to be validated must be assigned.'));
-
-  Result := ActiveClassTracking;
-
-  If Result Then
-  Begin
-    // TODO: more optimal implementation for finding if a TClass is registered.
-
-    oIterator := TFslObjectClassHashTableIterator(FClassHashTable.Iterator);
-    Try
-      oIterator.First;
-
-      While oIterator.More And Not Result Do
-      Begin
-        Result := aClass = oIterator.Current;
-
-        oIterator.Next;
-      End;
-    Finally
-      oIterator.Free;
-    End;
-  End;
-End;
-
 
 
 Procedure TFslFactory.Lock;
@@ -519,17 +388,9 @@ Begin
 End;
 
 
-procedure TFslFactory.RegisterClasses(const aClassArray: array of TClass);
-Var
-  iClassIndex : Integer;
-Begin
-  For iClassIndex := Low(aClassArray) To High(aClassArray) Do
-    RegisterClass(aClassArray[iClassIndex]);
-end;
-
 Initialization
   Initialise;
 Finalization
   Finalise;
-End. // FHIR.Support.Factory //
+End.
 

@@ -59,7 +59,7 @@ begin
     try
       fetch.URL := 'https://graph.facebook.com/oauth/access_token?client_id='+id+'&redirect_uri='+url+'&client_secret='+secret+'&code='+code;
       fetch.Fetch;
-      json := TJSONParser.Parse(fetch.Buffer.AsUnicode);
+      json := TJSONParser.Parse(fetch.Buffer.AsText);
       try
         token := json.str['access_token'];
         expires := json.str['expires_in'];

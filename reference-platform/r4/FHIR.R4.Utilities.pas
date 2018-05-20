@@ -906,7 +906,7 @@ function DetectFormat(oContent : TFslBuffer) : TFHIRParserClass; overload;
 var
   s : String;
 begin
-  s := oContent.AsUnicode;
+  s := oContent.AsText;
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
     result := TFHIRXmlParser
   else

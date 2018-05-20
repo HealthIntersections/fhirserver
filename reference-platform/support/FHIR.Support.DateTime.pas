@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows, SysUtils, SysConst, DateUtils, Math, System.TimeSpan,
+  Windows, SysUtils, SysConst, DateUtils, Math, System.TimeSpan, Registry,
   FHIR.Support.Strings, FHIR.Support.Math;
 
 Const
@@ -54,10 +54,14 @@ type
     (MonthOfYearNone, MonthOfYearJanuary, MonthOfYearFebruary, MonthOfYearMarch, MonthOfYearApril, MonthOfYearMay, MonthOfYearJune,
      MonthOfYearJuly, MonthOfYearAugust, MonthOfYearSeptember, MonthOfYearOctober, MonthOfYearNovember, MonthOfYearDecember);
   TMonthDays = Array [TMonthOfYear] Of Word;
+  PMonthDays = ^TMonthDays;
   TDateTimeExPrecision = (dtpYear, dtpMonth, dtpDay, dtpHour, dtpMin, dtpSec, dtpNanoSeconds);
   TDateTimeExTimezone = (dttzUnknown, dttzUTC, dttzLocal, dttzSpecified);
 
 Const
+  DELTA_DATE = 693594; // Days between 1/1/0001 and 12/31/1899
+
+  DATETIME_FORMAT_XML = 'yyyy-mm-dd"T"hh:nn:ss';
   codes_TDateTimeExPrecision : Array [TDateTimeExPrecision] of String = ('Year', 'Month', 'Day', 'Hour', 'Min', 'Sec', 'NanoSeconds');
   codes_TDateTimeExTimezone : Array [TDateTimeExTimezone] of String = ('Unknown', 'UTC', 'Local', 'Specified');
   MONTHOFYEAR_LONG : Array[TMonthOfYear] Of String =
@@ -68,8 +72,9 @@ Const
     ((0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31),
      (0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31));
 
-
 type
+  TYear = Word;
+
   EDateFormatError = class(Exception);
 
   TTimeStamp = record
@@ -92,12 +97,12 @@ type
     minute: Word;
     second: Word;
     fraction: Cardinal;
-    {@member Precision
+    {
       The precision to which the date and time is specified
     }
     FPrecision : TDateTimeExPrecision;
     FractionPrecision : integer;
-    {@member TimezoneType
+    {
       The type of timezone
     }
 
@@ -167,7 +172,7 @@ type
     function between(min, max : TDateTimeEx; inclusive : boolean):boolean;
     function compare(other : TDateTimeEx) : integer;
 
-    {@
+    {
     Valid formatting strings are
 
     yyyy    4 digit year
@@ -196,6 +201,332 @@ type
     function link : TDateTimeEx;
   end;
 
+type
+  TTimeZoneCode = (TimeZoneUnknown,
+      // proven supported, fixed where windows is wrong.
+      TimeZoneNZ, TimeZoneAustraliaVicNSW, TimeZoneAustraliaQLD, TimeZoneAustraliaTas, TimeZoneAustraliaSA, TimeZoneAustraliaNT, TimeZoneAustraliaWA,
+
+      // accepted windows at face value
+      TimeZoneAfghanistan,
+      TimeZoneUSAlaska,
+      TimeZoneArab_Riyadh,
+      TimeZoneArab_AbuDhabi,
+      TimeZoneArab_Baghdad,
+      TimeZoneArgentina,
+      TimeZoneArmenia,
+      TimeZoneCanadaAtlantic,
+      TimeZoneAzerbaijan,
+      TimeZoneAzores,
+      TimeZoneCanadaCentral,
+      TimeZoneCapeVerde,
+      TimeZoneCaucasus,
+      TimeZoneCentralAmerica,
+      TimeZoneCentralAsia,
+      TimeZoneBrazilCentral,
+      TimeZoneEuropeCentral_Budapest,
+      TimeZoneEuropeCentral_Warsaw,
+      TimeZonePacificCentral,
+      TimeZoneUSACentral,
+      TimeZoneMexicoCentral,
+      TimeZoneChina,
+      TimeZoneAfricaEastern,
+      TimeZoneEuropeEastern, //_Minsk
+      TimeZoneSouthAmericaEastern_Brasilia,
+      TimeZoneUSEastern,
+      TimeZoneEgypt,
+      TimeZoneEkaterinburg,
+      TimeZoneFiji,
+      TimeZoneFLE,
+      TimeZoneGeorgia,
+      TimeZoneGMT,
+      TimeZoneGreenland,
+      TimeZoneGreenwich,
+      TimeZoneGTB,
+      TimeZoneUSHawaii,
+      TimeZoneIndia,
+      TimeZoneIran,
+      TimeZoneIsrael,
+      TimeZoneJordan,
+      TimeZoneKamchatka,
+      TimeZoneKorea,
+      TimeZoneMauritius,
+      TimeZoneMexico1,
+      TimeZoneMexico2,
+      TimeZoneMidAtlantic,
+      TimeZoneMiddleEast,
+      TimeZoneMontevideo,
+      TimeZoneMorocco,
+      TimeZoneUSArizona,
+      TimeZoneMexicoMountain,
+      TimeZoneMyanmar,
+      TimeZoneAsiaNorthCentral,
+      TimeZoneNamibia,
+      TimeZoneNepal,
+      TimeZoneNewfoundland,
+      TimeZoneAsiaNorthEast,
+      TimeZoneAsiaNorth,
+      TimeZonePacificChile,
+      TimeZonePacific,
+      TimeZoneMexicoPacific,
+      TimeZonePakistan,
+      TimeZoneParaguay,
+      TimeZoneRomance,
+      TimeZoneRussian,
+      TimeZoneSouthAmericaEastern_Cayenne,
+      TimeZoneSouthAmericaPacific,
+      TimeZoneSouthAmericaWestern,
+      TimeZoneSamoa,
+      TimeZoneAsiaSouthEast,
+      TimeZoneSingapore,
+      TimeZoneSouthAfrica,
+      TimeZoneSriLanka,
+      TimeZoneTaipei,
+      TimeZoneTokyo,
+      TimeZoneTonga,
+      TimeZoneUSIndiana,
+      TimeZoneUSMountain,
+      TimeZoneUTC,
+      TimeZoneVenezuela,
+      TimeZoneVladivostok,
+      TimeZoneAfricaWestCentral,
+      TimeZoneEuropeWestern,
+      TimeZoneAsiaWest,
+      TimeZonePacificWest,
+      TimeZoneYakutsk
+      );
+  TTimeZoneNameArray = Array[TTimeZoneCode] Of String;
+  TTimeZoneYearInfo = Class
+  public
+    Year : TYear;
+    HasDaylightSaving : Boolean;
+    StandardStart : TSystemTime;
+    StandardBias : Double; // number of minutes
+    DaylightStart : TSystemTime;
+    DaylightBias : Double; // number of minutes
+  End;
+  TTimeZoneInformation = Class
+  public
+    Identity : TTimeZoneCode;
+    Name : String;
+    WindowsName : String;
+    StandardName : String;
+    DaylightName : String;
+    Display : String;
+    BaseRules : TTimeZoneYearInfo;
+    YearRules : Array Of TTimeZoneYearInfo;
+  End;
+
+  TDateTimeOffset = Record
+    Value : TDateTime;
+    Offset : Integer; // TODO: could be smallint - what are the consequences of changing it now?
+  End;
+  PDateTimeOffset = ^TDateTimeOffset;
+  TDateToken = (dttDay, dttMonth, dttYear);
+  TDateIndex = Integer;
+  TDateIndices = Array [TDateToken] Of TDateIndex;
+  TDateFormat = String;          // eg. DD/MM/YYYY
+  TTimeFormat = String;          // eg. HH:NN:SS
+
+const
+  DATEFORMAT_INDICES_SHORT : Array[TDateToken] Of Char = ('D', 'M', 'Y');
+  NAMES_TIMEZONES : TTimeZoneNameArray =
+    ('Unknown', 'NewZealand', 'Australia-VIC/NSW/ACT', 'Australia-QLD', 'Australia-TAS', 'Australia-SA', 'Australia-NT', 'Australia-WA',
+     'Afghan',
+     'US-Alaska',
+     'Arab(Riyadh)',
+     'Arab(AbuDhabi)',
+     'Arab(Baghdad)',
+     'Argentina',
+     'Armenia',
+     'CA-Atlantic',
+     'Azerbaijan',
+     'Azores',
+     'CA-Central',
+     'CapeVerde',
+     'Caucasus',
+     'America-Central',
+     'Asia-Central',
+     'Brazil-Central',
+     'Europe(Budapest)',
+     'Europe(Warsaw)',
+     'Pacific-Central',
+     'US-Central',
+     'Mex-Central',
+     'China',
+     'Africa-East',
+     'Europe-East',
+     'SA-East(Brasilia)',
+     'US-East',
+     'Egypt',
+     'Ekaterinburg',
+     'Fiji',
+     'FLE',
+     'Georgia',
+     'Greenich Mean Time (GMT)',
+     'Greenland',
+     'Greenwich',
+     'GTB',
+     'US-Hawaii',
+     'India',
+     'Iran',
+     'Israel',
+     'Jordan',
+     'Kamchatka',
+     'Korea',
+     'Mauritius',
+     'Mexico1',
+     'Mexico2',
+     'MidAtlantic',
+     'MiddleEast',
+     'Montevideo',
+     'Morocco',
+     'US-Arizona',
+     'Mex-Mountain',
+     'Myanmar',
+     'Asia-NC',
+     'Namibia',
+     'Nepal',
+     'Newfoundland',
+     'Asia-NE',
+     'Asia-N',
+     'Chile',
+     'Pacific',
+     'Mex-Pacific',
+     'Pakistan',
+     'Paraguay',
+     'Romance',
+     'Russian',
+     'SA-East(Cayenne)',
+     'SA-Pacific',
+     'SA-Western',
+     'Samoa',
+     'Asia-SE',
+     'Singapore',
+     'SouthAfrica',
+     'SriLanka',
+     'Taipei',
+     'Tokyo',
+     'Tonga',
+     'US-Indiana',
+     'US-Mountain',
+     'UTC',
+     'Venezuela',
+     'Vladivostok',
+     'Africa-WC',
+     'Europe-W',
+     'Asia-W',
+     'Pacific-W',
+     'Yakutsk'
+    );
+  WINDOWS_NAMES_TIMEZONES : Array[TTimeZoneCode] Of String =
+    ('',
+     'New Zealand Standard Time',
+     'AUS Eastern Standard Time',
+     'E. Australia Standard Time',
+     'Tasmania Standard Time',
+     'Cen. Australia Standard Time',
+     'AUS Central Standard Time',
+     'W. Australia Standard Time',
+     'Afghanistan Standard Time',
+     'Alaskan Standard Time',
+     'Arab Standard Time',
+     'Arabian Standard Time',
+     'Arabic Standard Time',
+     'Argentina Standard Time',
+     'Armenian Standard Time',
+     'Atlantic Standard Time',
+     'Azerbaijan Standard Time',
+     'Azores Standard Time',
+     'Canada Central Standard Time',
+     'Cape Verde Standard Time',
+     'Caucasus Standard Time',
+     'Central America Standard Time',
+     'Central Asia Standard Time',
+     'Central Brazilian Standard Time',
+     'Central Europe Standard Time',
+     'Central European Standard Time',
+     'Central Pacific Standard Time',
+     'Central Standard Time',
+     'Central Standard Time (Mexico)',
+     'China Standard Time',
+     'E. Africa Standard Time',
+     'E. Europe Standard Time',
+     'E. South America Standard Time',
+     'Eastern Standard Time',
+     'Egypt Standard Time',
+     'Ekaterinburg Standard Time',
+     'Fiji Standard Time',
+     'FLE Standard Time',
+     'Georgian Standard Time',
+     'GMT Standard Time',
+     'Greenland Standard Time',
+     'Greenwich Standard Time',
+     'GTB Standard Time',
+     'Hawaiian Standard Time',
+     'India Standard Time',
+     'Iran Standard Time',
+     'Israel Standard Time',
+     'Jordan Standard Time',
+     'Kamchatka Standard Time',
+     'Korea Standard Time',
+     'Mauritius Standard Time',
+     'Mexico Standard Time',
+     'Mexico Standard Time 2',
+     'Mid-Atlantic Standard Time',
+     'Middle East Standard Time',
+     'Montevideo Standard Time',
+     'Morocco Standard Time',
+     'Mountain Standard Time',
+     'Mountain Standard Time (Mexico)',
+     'Myanmar Standard Time',
+     'N. Central Asia Standard Time',
+     'Namibia Standard Time',
+     'Nepal Standard Time',
+     'Newfoundland Standard Time',
+     'North Asia East Standard Time',
+     'North Asia Standard Time',
+     'Pacific SA Standard Time',
+     'Pacific Standard Time',
+     'Pacific Standard Time (Mexico)',
+     'Pakistan Standard Time',
+     'Paraguay Standard Time',
+     'Romance Standard Time',
+     'Russian Standard Time',
+     'SA Eastern Standard Time',
+     'SA Pacific Standard Time',
+     'SA Western Standard Time',
+     'Samoa Standard Time',
+     'SE Asia Standard Time',
+     'Singapore Standard Time',
+     'South Africa Standard Time',
+     'Sri Lanka Standard Time',
+     'Taipei Standard Time',
+     'Tokyo Standard Time',
+     'Tonga Standard Time',
+     'US Eastern Standard Time',
+     'US Mountain Standard Time',
+     'UTC',
+     'Venezuela Standard Time',
+     'Vladivostok Standard Time',
+     'W. Central Africa Standard Time',
+     'W. Europe Standard Time',
+     'West Asia Standard Time',
+     'West Pacific Standard Time',
+     'Yakutsk Standard Time'
+     );
+
+
+
+Function UniversalDate : TDateTime; Overload;
+Function UniversalTime : TDateTime; Overload;
+Function UniversalDateTime : TDateTime; Overload;
+Function UniversalDateTimeOffset : TDateTimeOffset; Overload;
+Function UniversalDateTimeToDateTimeOffset(Const aDateTime : TDateTime) : TDateTimeOffset;
+
+Function LocalDate : TDateTime; Overload;
+Function LocalTime : TDateTime; Overload;
+Function LocalDateTime : TDateTime; Overload;
+Function LocalDateTimeOffset : TDateTimeOffset; Overload;
 
 Function TimeZoneBias : TDateTime; Overload;
 Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
@@ -210,6 +541,70 @@ function DescribePeriod(Period: TDateTime): String;
 Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDateTime) : String;
 Function CheckDateFormat(Const sFormat, sContent : String; Var sError : String) : Boolean;
 function FileTimeToDateTime(Time: TFileTime; bTz : boolean): TDateTime;
+Function TimeSeparators : TCharSet; Overload;
+Function DateSeparators : TCharSet; Overload;
+Function TimeSeparator : Char; Overload;
+Function DateSeparator : Char; Overload;
+Function DecimalSeparator : Char; Overload;
+Function IsDateTime(Const sValue, sFormat : String) : Boolean; Overload;
+Function ToDateTime(Const sValue, sFormat : String) : TDateTime; Overload;
+Function ToDateTime(Const sValue, sFormat : String; Out aDateTime : TDateTime) : Boolean; Overload;
+Function ToDateTime(Const sValue : String) : TDateTime; Overload;
+Function ToDateTime(Const sValue : String; rDefault : TDateTime) : TDateTime; Overload;
+Function ToDateFormat(Const aIndices : TDateIndices) : TDateFormat; Overload;
+Function ToDateFormat(Const sValue : String) : TDateFormat; Overload;
+Function ToDateIndices(Const sFormat : String; Out aIndices : TDateIndices) : Boolean; Overload;
+Function ToDateIndices(Const sFormat : String) : TDateIndices; Overload;
+Function ShortDateFormat : TDateFormat; Overload;
+Function ShortTimeFormat : TTimeFormat; Overload;
+Function LongDateFormat : TDateFormat; Overload;
+Function LongTimeFormat : TTimeFormat; Overload;
+Function StringToTime(Const sValue : String) : TTime; Overload;
+Function StringToTime(Const sValue : String; Out aTime : TTime) : Boolean; Overload;
+Function StringIsTime(Const sValue : String) : Boolean; Overload;
+Function StringIsDate(Const sValue, sFormat : String) : Boolean; Overload;
+Function StringIsDate(Const sValue : String) : Boolean; Overload;
+Function StringToDate(Const sValue : String) : TDate; Overload;
+Function TryEncodeDate(iYear, iMonth, iDay : Word; Out aDate : TDateTime) : Boolean; Overload;
+Function TryEncodeDate(iYear, iMonth, iDay : Word; Out aDateTimeOffset : TDateTimeOffset) : Boolean; Overload;
+
+Function TimeZoneOffset : Integer; Overload;
+Function TimeZoneOffset(Const aDateTime : TDateTime; Const aTimeZoneInformation : TTimeZoneInformation) : Integer; Overload;
+Function TimeZone : TTimeZoneCode; Overload;
+Function CreateTimeZoneInformation(Const aTimeZone : TTimeZoneCode) : TTimeZoneInformation;
+Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInformation);
+Function IsLeapYearByYear(Const iYear : TYear) : Boolean; Overload;
+Function IsLeapYearByDateTime(Const Value : TDateTime) : Boolean; Overload;
+Function ToYear(Const Value : TDateTime) : TYear; Overload;
+Function AsDate(Const aValue : TDateTime) : TDate; Overload;
+Function AsDate(Const aValue : TDateTimeOffset) : TDate; Overload;
+Function AsTime(Const aValue : TDateTime) : TTime; Overload;
+Function AsTime(Const aValue : TDateTimeOffset) : TTime; Overload;
+Function ToDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset; Overload;
+Function ToDateTimeOffset(Const sValue, sFormat : String; Out aDateTime : TDateTimeOffset) : Boolean; Overload;
+
+Function FirstOfMonth(Const Value : TDateTime) : TDateTime; Overload;
+Function LastOfMonth(Const Value : TDateTime) : TDateTime; Overload;
+Function StringToDuration(Const sValue : String) : TDuration; Overload;
+Function StringToDuration(Const sValue : String; Out aValue : TDuration) : Boolean; Overload;
+Function StringIsDuration(Const sValue : String) : Boolean; Overload;
+
+Function DateTimeEquals(Const aA, aB : TDateTime) : Boolean; Overload;
+Function DateTimeEquals(Const aA, aB : TDateTime; Const aThreshold : TDateTime) : Boolean; Overload;
+Function DateTimeEquals(Const aA, aB : TDateTimeOffset) : Boolean; Overload; // obsolete.
+Function DateTimeOffsetEquals(Const aA, aB : TDateTimeOffset) : Boolean; Overload; // Compared by converting to UTC
+Function DateTimeOffsetEquals(Const aA, aB : TDateTimeOffset; Const aThreshold : TDateTime) : Boolean; Overload; // Compared by converting to UTC
+Function ToUniversalDateTime(Const aValue : TDateTimeOffset) : TDateTime;
+Function DateTimeFormat(Const aDateTime : TDateTime; Const sFormat : String) : String; Overload;
+Function DateTimeFormat(Const aDateTimeOffset : TDateTimeOffset; Const sFormat : String) : String; Overload;
+Function DateTimeOffsetZero : TDateTimeOffset;
+
+Function DurationToDaysString(Const aValue : TDuration) : String; Overload;
+Function DurationToHoursString(Const aValue : TDuration) : String; Overload;
+Function DurationToMinutesString(Const aValue : TDuration) : String; Overload;
+Function DurationToSecondsString(Const aValue : TDuration) : String; Overload;
+Function DurationToShortSecondsString(Const aValue : TDuration) : String; Overload;
+Function DurationToMillisecondsString(Const aValue : TDuration) : String; Overload;
 
 Implementation
 
@@ -1403,9 +1798,6 @@ begin
   result := after(min, inclusive) and before(max, inclusive);
 end;
 
-const
-  DATETIME_FORMAT_XML = 'yyyy-mm-dd"T"hh:nn:ss';
-
 Function DateTimeFormat(Const aDateTime : TDateTime; Const sFormat : String) : String;
 Begin
   Result := SysUtils.FormatDateTime(sFormat, aDateTime);
@@ -1856,6 +2248,1472 @@ begin
 end;
 {$ENDIF POSIX}
 
-End. // DateSupport //
+Function DateSeparators : TCharSet;
+Begin
+  Result := [' ', ',', '-', '.', '/', '\', DateSeparator, TimeSeparator];
+End;
+
+
+Function TimeSeparators : TCharSet;
+Begin
+  Result := ['.', ':', TimeSeparator];
+End;
+
+
+Function TimeSeparator : Char;
+Begin
+{$IFDEF VER130}
+  Result := SysUtils.TimeSeparator;
+{$ELSE}
+  Result := FormatSettings.TimeSeparator;
+{$ENDIF}
+End;
+
+
+Function DateSeparator : Char;
+Begin
+{$IFDEF VER130}
+  Result := SysUtils.DateSeparator;
+{$ELSE}
+  Result := FormatSettings.DateSeparator;
+{$ENDIF}
+End;
+
+
+Function DecimalSeparator : Char;
+Begin
+{$IFDEF VER130}
+  Result := SysUtils.DecimalSeparator;
+{$ELSE}
+  Result := FormatSettings.DecimalSeparator;
+{$ENDIF}
+End;
+
+Function IsDateTime(Const sValue, sFormat : String) : Boolean;
+Var
+  aTemp : TDateTime;
+Begin
+  Result := ToDateTime(sValue, sFormat, aTemp);
+End;
+
+Function ToDateTime(Const sValue : String) : TDateTime;
+Begin
+  Result := ToDateTime(sValue, ToDateFormat(sValue));
+End;
+
+Function ToDateTime(Const sValue, sFormat: String): TDateTime;
+Begin
+  If Not ToDateTime(sValue, sFormat, Result) Then
+    Raise Exception.create(StringFormat('Unable to convert ''%s'' as ''%s''', [sValue, sFormat]));
+End;
+
+Function PCharToTime(Var pValue : PChar; Out aTime : TTime) : Boolean;
+Const
+  ORD0 = Ord('0');
+Var
+  aSeps  : TCharSet;
+  iHour, iMinute, iSecond, iMillisecond : Word;
+Begin
+  aSeps := TimeSeparators;
+  iHour := 0;
+  iMinute := 0;
+  iSecond := 0;
+  iMillisecond := 0;
+
+  Result := Assigned(pValue);
+
+  If Result Then
+  Begin
+    // Ignore Whitespace
+    While CharInSet(pValue^, setWhitespace) Do
+      Inc(pValue);
+
+    // Hour
+    While CharInSet(pValue^, ['0'..'9']) Do
+    Begin
+      iHour := (iHour * 10) + (Ord(pValue^) - ORD0);
+      Inc(pValue);
+    End;
+
+    Result := (iHour < 24) And CharInSet(pValue^, aSeps);
+
+    If Result Then
+    Begin
+      // Minute
+      Inc(pValue);
+      While CharInSet(pValue^, ['0'..'9']) Do
+      Begin
+        iMinute := (iMinute * 10) + (Ord(pValue^) - ORD0);
+        Inc(pValue);
+      End;
+
+      Result := (iMinute < 60);
+
+      If Result And CharInSet(pValue^, aSeps) Then
+      Begin
+        // Second
+        Inc(pValue);
+
+        If CharInSet(pValue^, ['0'..'9']) Then
+        Begin
+          // First digit
+          iSecond := (Ord(pValue^) - ORD0);
+          Inc(pValue);
+
+          If CharInSet(pValue^, ['0'..'9']) Then
+          Begin
+            // second digit
+            iSecond := (iSecond * 10) + (Ord(pValue^) - ORD0);
+            Inc(pValue);
+
+            // Ignore trailing numbers after a two digit seconds.
+            While CharInSet(pValue^, ['0'..'9']) Do
+              Inc(pValue);
+          End;
+
+          Result := (iSecond < 60);
+
+          // Optional milliseconds
+          If CharInSet(pValue^, aSeps) Then
+          Begin
+            // Millisecond
+            Inc(pValue);
+            While CharInSet(pValue^, ['0'..'9']) Do
+            Begin
+              iMillisecond := (iMillisecond * 10) + (Ord(pValue^) - ORD0);
+              Inc(pValue);
+            End;
+
+            Result := (iMillisecond < 1000);
+          End;
+        End;
+      End;
+
+      // Optional 12 hour display of AM or PM.
+      If pValue^ <> #0 Then
+      Begin
+        // Ignore whitespace
+        While (pValue^ = ' ') Do
+          Inc(pValue);
+
+        If CharInSet(pValue^, ['A', 'a']) Then
+        Begin
+          Result := (iHour <= 12);
+
+          If iHour = 12 Then
+            iHour := 0;
+        End
+        Else If CharInSet(pValue^, ['P', 'p']) Then
+        Begin
+          Result := (iHour <= 12);
+
+          If iHour < 12 Then
+            Inc(iHour, 12);
+        End;
+      End;
+    End;
+  End;
+
+  aTime := ((iHour * 3600000) + (iMinute * 60000) + (iSecond * 1000) + iMillisecond) / DATETIME_DAY_MILLISECONDS;
+End;
+
+
+type
+  TDateNumber = Word;
+  PDateNumber = ^TDateNumber;
+  TDateNumbers = Array[0..Integer(High(TDateToken))] Of TDateNumber;
+  TDateNumberLengths = Array[0..Integer(High(TDateToken))] Of Integer;
+
+Function ToDateTimeElement(Var pData : PChar) : TDateNumber;
+Const
+  ORD_0 = Ord('0');
+Var
+  pStart : PChar;
+  iLength : Integer;
+Begin
+  If CharInSet(pData^, setNumbers) Then
+  Begin
+    Result := 0;
+    While CharInSet(pData^, setNumbers) And (Result <= 1000) Do // Less than year 10,000 in the next call.
+    Begin
+      Result := (Result * 10) + (Ord(pData^) - ORD_0);
+      Inc(pData);
+    End;
+  End
+  Else
+  Begin
+    pStart := pData;
+    iLength := 0;
+    While StringIsAlphabetic(pData^) Do
+    Begin
+      Inc(pData);
+      Inc(iLength);
+    End;
+
+    If iLength = 3 Then
+      Result := StringArrayIndexOf({$IFNDEF VER130}FormatSettings.{$ENDIF}ShortMonthNames, Copy(pStart, 1, iLength)) + 1
+    Else
+      Result := StringArrayIndexOf({$IFNDEF VER130}FormatSettings.{$ENDIF}LongMonthNames, Copy(pStart, 1, iLength)) + 1;
+  End;
+End;
+
+Function ToDateTime(Const sValue, sFormat : String; Out aDateTime : TDateTime) : Boolean; Overload;
+Var
+  pStart : PChar;
+  pValue : PChar;
+  iLoop  : Integer;
+  aLoop : TDateToken;
+  aSeparators : TCharSet;
+  aTime  : TTime;
+  iYear  : TDateNumber;
+  aNumbers : TDateNumbers;
+  aLengths : TDateNumberLengths;
+  aIndices : TDateIndices;
+  iIndices : Integer;
+  bLeadingTime : Boolean;
+Begin
+  // TODO: this routine doesn't suppose continuous date formats - eg. 'yyyymmdd'.
+  //       date formats must have separation characters.
+
+  aIndices := ToDateIndices(sFormat);
+  iIndices := IntegerArrayMax(aIndices);
+  pValue := PChar(sValue);
+
+  bLeadingTime := CharInSet(charUpper(StringGet(sFormat, 1)), ['H', 'N', 'S', 'Z']);
+
+  If bLeadingTime Then
+    Result := PCharToTime(pValue, aTime)
+  Else
+    Result := iIndices > 0;
+
+  If Result Then
+  Begin
+    If iIndices < High(aNumbers) Then
+    Begin
+      For aLoop := Low(aIndices) To High(aIndices) Do
+      Begin
+        If aIndices[aLoop] < 0 Then
+          aIndices[aLoop] := iIndices + 1;
+      End;
+    End;
+
+    // Whitespace
+    While CharInSet(pValue^, setWhitespace) Do
+      Inc(pValue);
+
+    // Date
+    aSeparators := DateSeparators;
+    iLoop := Low(aNumbers);
+    While (pValue^ <> #0) And (iLoop <= High(aNumbers)) Do
+    Begin
+      pStart := pValue;
+
+      aNumbers[iLoop] := ToDateTimeElement(pValue);
+      aLengths[iLoop] := Integer(pValue) - Integer(pStart);
+
+      While CharInSet(pValue^, aSeparators) Do
+        Inc(pValue);
+
+      Inc(iLoop);
+    End;
+
+    Result := iLoop >= iIndices;
+
+    If Result Then
+    Begin
+      While (iLoop <= High(aNumbers)) Do
+      Begin
+        aNumbers[iLoop] := 1;
+        Inc(iLoop);
+      End;
+
+      iYear := aNumbers[aIndices[dttYear]];
+
+      If (iYear < 100) And (aLengths[aIndices[dttYear]] <= 2) Then
+      Begin
+        If iYear > {$IFNDEF VER130}FormatSettings.{$ENDIF}TwoDigitYearCenturyWindow Then
+          Inc(iYear, 1900)
+        Else
+          Inc(iYear, 2000);
+      End;
+
+      // Return
+      Result := TryEncodeDate(iYear, aNumbers[aIndices[dttMonth]], aNumbers[aIndices[dttDay]], aDateTime);
+    End;
+  End;
+
+  If Result And Not bLeadingTime Then
+  Begin
+    While Not CharInSet(pValue^, [#0, '0'..'9']) Do
+      Inc(pValue);
+
+    If (pValue^ <> #0) Then
+      Result := PCharToTime(pValue, aTime)
+    Else
+      aTime := 0;
+  End;
+
+  If Result Then
+    aDateTime := Trunc(aDateTime) + Frac(aTime);
+End;
+
+
+Function ToDateTime(Const sValue : String; rDefault : TDateTime) : TDateTime;
+Begin
+  Try
+    Result := StrToDateTime(sValue);
+  Except
+    Result := rDefault;
+  End;
+End;
+
+Function ToDateFormatDateIndicesArrayIndexOf(Const aArray : Array Of TDateIndices; Const aIndices : TDateIndices) : Integer;
+Begin
+  Result := High(aArray);
+  While (Result >= Low(aArray)) And (MemoryCompare(@aArray[Result], @aIndices, SizeOf(aIndices)) <> 0) Do
+    Dec(Result);
+End;
+
+
+Function ToDateFormatMatchNumber(iA, iB : TDateIndex) : Boolean;
+Begin
+  Result := ((iA < 0) Or (iB < 0) Or (iA = iB));
+End;
+
+
+Function ToDateFormatMatchArray(Const aA, aB : TDateIndices) : Boolean;
+Begin
+  Result := ToDateFormatMatchNumber(aB[dttYear], aA[dttYear]) And ToDateFormatMatchNumber(aB[dttMonth], aA[dttMonth]) And ToDateFormatMatchNumber(aB[dttDay], aA[dttDay]);
+End;
+
+
+Function ToDateFormatVerify(Const aNumbers : TDateNumbers; Const aIndices : TDateIndices) : Boolean;
+Var
+  aDate : TDateTime;
+  iYear : TDateNumber;
+Begin
+  iYear := aNumbers[aIndices[dttYear]];
+
+  If iYear < 100 Then
+  Begin
+    If iYear > {$IFNDEF VER130}FormatSettings.{$ENDIF}TwoDigitYearCenturyWindow Then
+      Inc(iYear, 1900)
+    Else
+      Inc(iYear, 2000);
+  End;
+
+  Result := TryEncodeDate(iYear, aNumbers[aIndices[dttMonth]], aNumbers[aIndices[dttDay]], aDate);
+End;
+
+
+Function ToDateFormatChoose(Const aNumbers : TDateNumbers; Var aGuess, aCurrent : TDateIndices) : Boolean;
+Const
+  TOKEN_INDICES : Array[0..5] Of TDateIndices =
+    ((1, 0, 2), (0, 1, 2), (2, 1, 0), (2, 0, 1), (1, 2, 0), (0, 2, 1));
+Var
+  iIndex : Integer;
+  iLoop  : Integer;
+  iLast  : Integer;
+Begin
+  Result := ToDateFormatMatchArray(aCurrent, aGuess) And ToDateFormatVerify(aNumbers, aCurrent);
+
+  If Not Result Then
+  Begin
+    iLast := Length(TOKEN_INDICES);
+    iIndex := IntegerMax(ToDateFormatDateIndicesArrayIndexOf(TOKEN_INDICES, aCurrent), 0);
+    iLoop := 0;
+
+    While (iLoop < Length(TOKEN_INDICES)) Do
+    Begin
+      While (iLoop < Length(TOKEN_INDICES)) And Not ToDateFormatMatchArray(TOKEN_INDICES[iIndex], aGuess) Do
+      Begin
+        iIndex := SignedMod(iIndex + 1, Length(TOKEN_INDICES));
+        Inc(iLoop);
+      End;
+
+      If (iLoop < Length(TOKEN_INDICES)) And ToDateFormatVerify(aNumbers, TOKEN_INDICES[iIndex]) And (iIndex < iLast) Then
+        iLast := iIndex;
+
+      iIndex := SignedMod(iIndex + 1, Length(TOKEN_INDICES));
+      Inc(iLoop);
+    End;
+
+    Result := iLast < Length(TOKEN_INDICES);
+
+    If Result Then
+      aCurrent := TOKEN_INDICES[iLast];
+  End;
+End;
+
+
+Function ToDateFormat(Const sValue : String) : TDateFormat;
+Var
+  pValue : PChar;
+  iLoop  : Integer;
+  aGuess : TDateIndices;
+  aCurrent : TDateIndices;
+  aNumbers : TDateNumbers;
+  iNumber : TDateNumber;
+  aSeparators : TCharSet;
+  bAlpha : Boolean;
+Begin
+  aSeparators := DateSeparators;
+  pValue := PChar(sValue);
+
+  // Whitespace
+  While CharInSet(pValue^, setWhitespace) Do
+    Inc(pValue);
+
+  // Date
+  FillChar(aGuess, SizeOf(aGuess), -1);
+
+  iLoop := Low(aNumbers);
+  While (pValue^ <> #0) And (iLoop <= High(aNumbers)) Do
+  Begin
+    bAlpha := StringIsAlphabetic(pValue^);
+
+    iNumber := ToDateTimeElement(pValue);
+
+    If (iNumber = 0) Or (iNumber > 31) Then
+      aGuess[dttYear] := iLoop
+    Else If (iNumber > 12) Then
+      aGuess[dttDay] := iLoop
+    Else If bAlpha Then
+      aGuess[dttMonth] := iLoop;
+
+    aNumbers[iLoop] := iNumber;
+
+    While CharInSet(pValue^, aSeparators) Do
+      Inc(pValue);
+
+    Inc(iLoop);
+  End;
+
+  aCurrent := ToDateIndices(ShortDateFormat);
+
+  If (iLoop > High(aNumbers)) And ToDateFormatChoose(aNumbers, aGuess, aCurrent) Then
+    Result := ToDateFormat(aCurrent)
+  Else
+    Result := '';
+End;
+
+
+Function ToDateIndices(Const sFormat : String) : TDateIndices;
+Begin
+  If Not ToDateIndices(sFormat, Result) Then
+    raise Exception.create(StringFormat('Unable to determine the meaning of the date format ''%s''', [sFormat]));
+End;
+
+
+Function ToDateFormat(Const aIndices : TDateIndices) : TDateFormat;
+Var
+  aLoop : TDateToken;
+Begin
+  SetLength(Result, Length(aIndices) + 2);
+
+  For aLoop := Low(aIndices) To High(aIndices) Do
+    Result[(aIndices[aLoop] * 2) + 1] := DATEFORMAT_INDICES_SHORT[aLoop];
+
+  Result[2] := DateSeparator;
+  Result[4] := DateSeparator;
+End;
+
+
+Function ToDateIndices(Const sFormat : String; Out aIndices : TDateIndices) : Boolean;
+Const
+  SET_FORMAT = ['d', 'D', 'm', 'M', 'y', 'Y'];
+Var
+  iLoop  : Integer;
+  aSeparators : TCharSet;
+  iFormat : Integer;
+  iLength : Integer;
+  cFound : Char;
+Begin
+  FillChar(aIndices, SizeOf(aIndices), -1);
+
+  aSeparators := DateSeparators;
+  iLoop := 0;
+  iFormat := 1;
+  iLength := Length(sFormat);
+
+  While (iFormat <= iLength) Do
+  Begin
+    While (iFormat <= iLength) And Not CharInSet(sFormat[iFormat], SET_FORMAT) Do
+      Inc(iFormat);
+
+    If (iFormat <= iLength) Then
+    Begin
+      cFound := sFormat[iFormat];
+      Inc(iFormat);
+
+      Case cFound Of
+        'd', 'D' : aIndices[dttDay] := iLoop;
+        'm', 'M' : aIndices[dttMonth] := iLoop;
+        'y', 'Y' : aIndices[dttYear] := iLoop;
+      End;
+
+      // Skip format character pairs eg. 'dd/mm/yyyy'
+      While (iFormat <= iLength) And (sFormat[iFormat] = cFound) Do
+        Inc(iFormat);
+    End;
+
+    Inc(iLoop);
+  End;
+
+  Result := False;
+  iLoop := Integer(Low(aIndices));
+  While (iLoop <= Integer(High(aIndices))) And Not Result Do
+  Begin
+    Result := aIndices[TDateToken(iLoop)] >= 0;
+    Inc(iLoop);
+  End;
+End;
+
+Function ShortDateFormat : TDateFormat;
+Begin
+{$IFDEF VER130}
+  Result := SysUtils.ShortDateFormat;
+{$ELSE}
+  Result := FormatSettings.ShortDateFormat;
+{$ENDIF}
+End;
+
+
+Function ShortTimeFormat : TTimeFormat;
+Begin
+{$IFDEF VER130}
+  Result := SysUtils.ShortTimeFormat;
+{$ELSE}
+  Result := FormatSettings.ShortTimeFormat;
+{$ENDIF}
+End;
+
+
+Function LongDateFormat : TDateFormat;
+Begin
+{$IFDEF VER130}
+  Result := SysUtils.LongDateFormat;
+{$ELSE}
+  Result := FormatSettings.LongDateFormat;
+{$ENDIF}
+End;
+
+
+Function LongTimeFormat : TTimeFormat;
+Begin
+{$IFDEF VER130}
+  Result := SysUtils.LongTimeFormat;
+{$ELSE}
+  Result := FormatSettings.LongTimeFormat;
+{$ENDIF}
+End;
+
+
+Function StringIsTime(Const sValue : String) : Boolean;
+Var
+  aTemp : TTime;
+Begin
+  Result := StringToTime(sValue, aTemp);
+End;
+
+
+
+Function StringToTime(Const sValue : String) : TTime;
+Begin
+  If Not StringToTime(sValue, Result) Then
+    raise Exception.Create(StringFormat('''%s'' is not a valid time', [sValue]));
+End;
+
+Function StringToTime(Const sValue : String; Out aTime : TTime) : Boolean;
+Var
+  pValue : PChar;
+Begin
+  pValue := PChar(sValue);
+
+  Result := PCharToTime(pValue, aTime);
+End;
+
+
+Function LocalDateTimeOffset : TDateTimeOffset;
+Begin
+  Result.Value := SysUtils.Now;
+  Result.Offset := TimezoneOffset;
+End;
+
+Function TimezoneOffset : Integer;
+Var
+  aTimeZoneInformation : TTimeZoneInformation;
+Begin
+  aTimeZoneInformation := CreateTimeZoneInformation(TimeZone);
+  Try
+    Result := TimezoneOffset(LocalDateTime, aTimeZoneInformation);
+  Finally
+    DestroyTimeZoneInformation(aTimeZoneInformation);
+  End;
+End;
+
+Function GetTargetDay(Const iYear, iMonth, iWeek, iDayOfWeek : Integer) : Integer;
+Var
+  iLoop : Integer;
+Begin
+  If (iWeek < 1) Or (iWeek > 4) Then
+  Begin
+    iLoop := MONTHS_DAYS[IsLeapYearByYear(iYear)][TMonthOfYear(iMonth-1)];
+    While DayOfWeek(EncodeDate(iYear, iMonth, iLoop)) - 1 <> iDayOfWeek Do
+      Dec(iLoop);
+  End
+  Else
+  Begin
+    iLoop := 7 * (iWeek - 1) + 1;
+    While DayOfWeek(EncodeDate(iYear, iMonth, iLoop)) - 1 <> iDayOfWeek Do
+      Inc(iLoop);
+  End;
+  Result := iLoop;
+End;
+
+Function IsAfterDaylightTime(Const aInstant : TDateTime; Const aTime : TSystemTime) : Boolean;
+Var
+  iYear, iMonth, iDay, iMin, iHour, iSec, iMSec : Word;
+  iTarget : Integer;
+Begin
+  // we have in aTime
+  //   month - the month it starts
+  //   day of week - day that it clicks in (0 = Sunday)
+  //   day - which week in the month it clicks in. 1 = 1st, 2 = 2nd, 3 = 3rd, 4 = 4th, else "last"
+  //   min/sec
+  DecodeDate(aInstant, iYear, iMonth, iDay);
+  DecodeTime(aInstant, iHour, iMin, iSec, iMSec);
+  Result := False;
+  If (iMonth > aTime.wMonth) Then
+  Begin
+    Result := True;
+  End
+  Else If (iMonth = aTime.wMonth) Then
+  Begin
+    iTarget := getTargetDay(iYear, iMonth, aTime.wDay, aTime.wDayOfWeek);
+    If (iDay > iTarget) Then
+    Begin
+      Result := True;
+    End
+    Else If (iDay = iTarget) Then
+    Begin
+      If (iHour > aTime.wHour) Then
+        Result := True
+      Else If (iHour = aTime.wHour) Then
+        Result := (iMin >= aTime.wMinute);
+    End;
+  End;
+End;
+
+
+Function isDayLightSaving(Const aRules : TTimeZoneYearInfo; Const aInstant: TDateTime; Const bInstantIsUTC : Boolean) : Boolean;
+Begin
+  If Not aRules.HasDaylightSaving Then
+  Begin
+    Result := False;
+  End
+  Else If (aRules.StandardStart.wMonth < aRules.DaylightStart.wMonth) Or (aRules.DaylightStart.wMonth = 0) Then
+  Begin
+    // we start the year in daylight saving
+    If bInstantIsUTC Then
+    Begin
+      If (aRules.DaylightStart.wMonth <> 0) And IsAfterDaylightTime(aInstant - (aRules.StandardBias / 1440), aRules.DaylightStart) Then
+        Result := True
+      Else
+        Result := (aRules.StandardStart.wMonth <> 0) And Not IsAfterDaylightTime(aInstant - (aRules.DaylightBias / 1440), aRules.StandardStart);
+    End
+    Else
+    Begin
+      // we ignore the vexed question of whether aInstant is standard or daylight saving
+      If (aRules.DaylightStart.wMonth <> 0) And IsAfterDaylightTime(aInstant, aRules.DaylightStart) Then
+        Result := True
+      Else
+        Result := (aRules.StandardStart.wMonth <> 0) And Not IsAfterDaylightTime(aInstant, aRules.StandardStart);
+    End;
+  End
+  Else
+  Begin
+    // we start the year in standard time
+
+    If bInstantIsUTC Then
+    Begin
+      If IsAfterDaylightTime(aInstant - (aRules.DaylightBias / 1440), aRules.StandardStart) Then
+        Result := False
+      Else
+        Result := IsAfterDaylightTime(aInstant - (aRules.StandardBias / 1440), aRules.DaylightStart);
+    End
+    Else
+    Begin
+      If IsAfterDaylightTime(aInstant, aRules.StandardStart) Then
+        Result := False
+      Else
+        Result := IsAfterDaylightTime(aInstant, aRules.DaylightStart);
+    End;
+  End;
+End;
+
+
+Function isDayLightSavings(Const aTimeZone : TTimeZoneInformation; Const aInstant : TDateTime; Const bInstantIsUTC : Boolean) : Boolean; Overload;
+Var
+  bFound : Boolean;
+  iLoop : Integer;
+  iYear, iMonth, iDay : Word;
+Begin
+  // aInstant is in UTC. Get the year for the instant in local time
+  // strictly, we should recalculate the year for each year
+  // if there's ever a timezone where the timezone changes at the click of the new year, and it does so
+  // for a particular year, this will be wrong
+  If Not bInstantIsUTC Then
+    DecodeDate(aInstant, iYear, iMonth, iDay)
+  Else If (aTimeZone.BaseRules.StandardStart.wMonth < aTimeZone.BaseRules.DaylightStart.wMonth) And (aTimeZone.BaseRules.DaylightStart.wMonth <> 0) Then
+    // because on the turn of the year, we're in daylight saving time
+    DecodeDate(aInstant - (aTimeZone.BaseRules.DaylightBias / 1440), iYear, iMonth, iDay)
+  Else
+    DecodeDate(aInstant - (aTimeZone.BaseRules.StandardBias / 1440), iYear, iMonth, iDay);
+
+  // First of all, which information applies?
+  bFound := False;
+  Result := False;
+
+  For iLoop := Low(aTimeZone.YearRules) To High(aTimeZone.YearRules) Do
+  Begin
+    If iYear = aTimeZone.YearRules[iLoop].Year Then
+    Begin
+      Result := isDayLightSaving(aTimeZone.YearRules[iLoop], aInstant, bInstantIsUTC);
+      bFound := True;
+
+      Break;
+    End;
+  End;
+
+  If Not bFound Then
+    Result := isDayLightSaving(aTimeZone.BaseRules, aInstant, bInstantIsUTC)
+End;
+
+
+
+Function IsLeapYearByYear(Const iYear : TYear) : Boolean;
+Begin
+  Result := SysUtils.IsLeapYear(iYear);
+End;
+
+
+Function IsLeapYearByDateTime(Const Value : TDateTime) : Boolean;
+Begin
+  Result := IsLeapYearByYear(ToYear(Value));
+End;
+
+
+
+Function TimeZoneOffset(Const aDateTime : TDateTime; Const aTimeZoneInformation : TTimeZoneInformation) : Integer;
+Begin
+  If isDayLightSavings(aTimeZoneInformation, aDateTime, False) Then
+    Result := Trunc(-aTimeZoneInformation.BaseRules.DaylightBias)
+  Else
+    Result := Trunc(-aTimeZoneInformation.BaseRules.StandardBias);
+End;
+
+Const
+  KEY_ROOT = 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\';
+Function CloneTimeZoneYearInfo(Const aTimeZoneYearInfo : TTimeZoneYearInfo) : TTimeZoneYearInfo;
+Begin
+  Result := TTimeZoneYearInfo.Create;
+  Result.Year := aTimeZoneYearInfo.Year;
+  Result.HasDaylightSaving := aTimeZoneYearInfo.HasDaylightSaving;
+  Result.StandardStart := aTimeZoneYearInfo.StandardStart;
+  Result.StandardBias := aTimeZoneYearInfo.StandardBias;
+  Result.DaylightStart := aTimeZoneYearInfo.DaylightStart;
+  Result.DaylightBias := aTimeZoneYearInfo.DaylightBias;
+End;
+
+
+Function CreateTimeZoneInformation(Const aTimeZone : TTimeZoneCode) : TTimeZoneInformation;
+Type
+  REG_TZI_FORMAT = Packed Record
+    Bias: LongInt; { Current Bias of the Time Zone. }
+    StandardBias: LongInt; { Standard Time Bias, normally 0, for the Time Zone. }
+    DaylightBias: LongInt; { Daylight Savings Bias of the Time Zone. }
+    StandardDate: TSystemTime; { Date Standard Time takes over if Daylight Savings Time is used in the Time Zone. }
+    DaylightDate: TSystemTime; { Date Daylight Savings Time takes over if Daylight Savings Time used in the Time Zone. }
+  End;
+Var
+  oReg : TRegistry;
+  aInfo : TIME_ZONE_INFORMATION;
+  aRegInfo : REG_TZI_FORMAT;
+  iStart : Integer;
+  iLast : Integer;
+  iLoop : Integer;
+  oTimeZoneYearInfo : TTimeZoneYearInfo;
+Begin
+  // Get the information used interanally which is extracted from the registry - cache it up for quicker usage.
+
+  Result := TTimeZoneInformation.Create;
+  Try
+    Result.Identity := aTimeZone;
+    Result.Name := NAMES_TIMEZONES[aTimeZone];
+    Result.BaseRules := TTimeZoneYearInfo.Create;
+
+    oReg := TRegistry.Create;
+    Try
+      If aTimeZone = TimeZoneUnknown Then
+      Begin
+        If GetTimeZoneInformation(aInfo) = $FFFFFFFF Then
+          raise Exception.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
+        Result.WindowsName := aInfo.StandardName;
+        Result.Display := '(unknown timezone)';
+        Result.BaseRules.Year := 0;
+        Result.BaseRules.StandardStart := aInfo.StandardDate;
+        Result.BaseRules.StandardBias := aInfo.Bias + aInfo.StandardBias;
+        Result.BaseRules.DaylightStart := aInfo.DaylightDate;
+        Result.BaseRules.DaylightBias := aInfo.Bias + aInfo.DaylightBias;
+      End
+      Else
+      Begin
+        Result.WindowsName := WINDOWS_NAMES_TIMEZONES[aTimeZone];
+        oReg.RootKey := HKEY_LOCAL_MACHINE;
+        If Not oReg.OpenKeyReadOnly(KEY_ROOT + Result.WindowsName) Then
+          Raise Exception.create(StringFormat('Unable to load time zone information [%s]', [ErrorAsString]));
+        Result.Display := oReg.ReadString('Display');
+        If oReg.ReadBinaryData('TZI', aRegInfo, SizeOf(aRegInfo)) <> SizeOf(aRegInfo) Then
+          Raise Exception.create(StringFormat('Unable to load time zone binary information [%s]', [ErrorAsString]));
+        Result.BaseRules.Year := 0;
+        Result.BaseRules.StandardStart := aRegInfo.StandardDate;
+        Result.BaseRules.StandardBias := aRegInfo.Bias + aRegInfo.StandardBias;
+        Result.BaseRules.DaylightStart := aRegInfo.DaylightDate;
+        Result.BaseRules.DaylightBias := aRegInfo.Bias + aRegInfo.DaylightBias;
+        Result.StandardName := oReg.ReadString('Std');
+        Result.DaylightName := oReg.ReadString('Dlt')
+      End;
+      Result.BaseRules.HasDaylightSaving := Result.BaseRules.DayLightStart.wMonth <> 0;
+      oReg.CloseKey;
+      If oReg.OpenKeyReadOnly(KEY_ROOT + Result.WindowsName+'\Dynamic DST') Then
+      Begin
+        iStart := oReg.ReadInteger('FirstEntry');
+        iLast := oReg.ReadInteger('LastEntry');
+        SetLength(Result.YearRules, iLast - iStart + 1);
+        For iLoop := iStart To iLast Do
+        Begin
+          oTimeZoneYearInfo := TTimeZoneYearInfo.Create;
+          Result.YearRules[iLoop - iStart] := oTimeZoneYearInfo;
+
+          oTimeZoneYearInfo.Year := iLoop;
+          If oReg.ReadBinaryData(IntegerToString(iLoop), aRegInfo, SizeOf(aRegInfo)) <> SizeOf(aRegInfo) Then
+            Raise Exception.create(StringFormat('Unable to load time zone binary information [%s] for [%s]', [ErrorAsString, IntegerToString(iLoop)]));
+          oTimeZoneYearInfo.StandardStart := aRegInfo.StandardDate;
+          oTimeZoneYearInfo.StandardBias := aRegInfo.Bias + aRegInfo.StandardBias;
+          oTimeZoneYearInfo.DaylightStart := aRegInfo.DaylightDate;
+          oTimeZoneYearInfo.DaylightBias := aRegInfo.Bias + aRegInfo.DaylightBias;
+          oTimeZoneYearInfo.HasDaylightSaving := oTimeZoneYearInfo.DayLightStart.wMonth <> 0;
+        End;
+      End;
+    Finally
+      oReg.Free;
+    End;
+    // This is a temporary workaround for erroneous information in
+    // some windows registries. Fix is http://support.microsoft.com/hotfix/KBHotfix.aspx?kbnum=974176&kbln=en-us
+    // but it is not widely applied
+    If (aTimeZone = TimeZoneAustraliaWA) And (Result.BaseRules.DaylightStart.wMonth <> 0) Then
+    Begin
+      SetLength(Result.YearRules, Length(Result.YearRules) + 2);
+      // first year, 2005, just repeats no daylight
+      // second year, 2006, claims daylight savings has already started
+      Result.YearRules[1].StandardStart.wMonth := 0;
+      Result.YearRules[High(Result.YearRules) - 1] := CloneTimeZoneYearInfo(Result.BaseRules);
+      Result.YearRules[High(Result.YearRules) - 1].Year := 2008;
+      Result.BaseRules.DaylightStart.wMonth := 0; // Daylight saving ended in March 2009
+      Result.YearRules[High(Result.YearRules)] := CloneTimeZoneYearInfo(Result.BaseRules);
+      Result.YearRules[High(Result.YearRules)].Year := 2009;
+      Result.BaseRules.StandardStart.wMonth := 0; // no more daylight saving
+      Result.BaseRules.HasDaylightSaving := False;
+    End;
+  Except
+    DestroyTimeZoneInformation(Result);
+
+    Raise;
+  End;
+End;
+
+
+Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInformation);
+Var
+  iYearRuleIndex : Integer;
+Begin
+  If Assigned(aTimeZoneInformation) Then
+  Begin
+    FreeAndNil(aTimeZoneInformation.BaseRules);
+
+    For iYearRuleIndex := Low(aTimeZoneInformation.YearRules) To High(aTimeZoneInformation.YearRules) Do
+      FreeAndNil(aTimeZoneInformation.YearRules[iYearRuleIndex]);
+
+    aTimeZoneInformation.Free;
+    aTimeZoneInformation := Nil;
+  End;
+End;
+
+Function TimeZone : TTimeZoneCode;
+Var
+  iRet : DWord;
+  aInfo : TIME_ZONE_INFORMATION;
+  aLoop : TTimeZoneCode;
+Begin
+  // this is the current TimeZone.
+
+  Result := TimeZoneUnknown;
+
+  iRet := GetTimeZoneInformation(aInfo);
+
+  If iRet = $FFFFFFFF Then
+    Raise Exception.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
+
+  For aLoop := Low(TTimeZoneCode) To High(TTimeZoneCode) Do
+  Begin
+    If aInfo.StandardName = WINDOWS_NAMES_TIMEZONES[aLoop] Then
+      Result := aLoop;
+  End;
+
+  If Result = TimeZoneUnknown Then
+  Begin
+    If (StringStartsWith(aInfo.StandardName, 'Tasmania')) Then
+    Begin
+      Result := TimeZoneAustraliaTas;
+    End
+    Else If (StringStartsWith(aInfo.StandardName, 'New Zealand')) Then
+    Begin
+      Result := TimeZoneNZ;
+    End
+    Else If aInfo.Bias = -600 Then
+    Begin
+      If (iRet = 0) Then
+        Result := TimeZoneAustraliaQLD
+      Else
+        Result := TimeZoneAustraliaVicNSW;
+    End
+    Else If aInfo.Bias = -570 Then
+    Begin
+      If (iRet = 0) Then
+        Result := TimeZoneAustraliaNT
+      Else
+        Result := TimeZoneAustraliaSA;
+    End
+    Else If aInfo.Bias = -480 Then
+      Result := TimeZoneAustraliaWA
+    Else
+      Result := TimeZoneUnknown;
+  End;
+End;
+
+Function UniversalDate : TDateTime;
+Begin
+  Result := AsDate(UniversalDateTime);
+End;
+
+
+Function UniversalTime : TDateTime;
+Begin
+ Result := AsTime(UniversalDateTime);
+End;
+
+
+Function UniversalDateTime : TDateTime;
+Var
+  LrSystemTime : TSystemTime;
+Begin
+  GetSystemTime(LrSystemTime);
+
+  Result := SystemTimeToDateTime(LrSystemTime);
+End;
+
+
+Function UniversalDateTimeOffset : TDateTimeOffset;
+Begin
+  Result.Value := UniversalDateTime;
+  Result.Offset := 0;
+End;
+
+
+Function UniversalDateTimeToDateTimeOffset(Const aDateTime : TDateTime) : TDateTimeOffset;
+Begin
+  Result.Value := aDateTime;
+  Result.Offset := 0;
+End;
+
+
+Function LocalDate : TDateTime;
+Begin
+  Result := AsDate(LocalDateTime);
+End;
+
+
+Function LocalTime : TDateTime;
+Begin
+  Result := AsTime(LocalDateTime);
+End;
+
+
+Function LocalDateTime : TDateTime;
+Begin
+  Result := SysUtils.Now;
+End;
+
+
+Function AsDate(Const aValue : TDateTime) : TDate;
+Begin
+  Result := Trunc(aValue);
+End;
+
+
+Function AsTime(Const aValue : TDateTime) : TTime;
+Begin
+  Result := Frac(aValue);
+End;
+
+
+Function AsDate(Const aValue : TDateTimeOffset) : TDate;
+Begin
+  Result := AsDate(aValue.Value);
+End;
+
+
+Function AsTime(Const aValue : TDateTimeOffset) : TTime;
+Begin
+  Result := Frac(aValue.Value);
+End;
+
+Function ToYear(Const Value : TDateTime) : Word;
+Var
+  iTemp : Word;
+Begin
+  DecodeDate(Value, Result, iTemp, iTemp);
+End;
+
+
+Function FirstOfMonth(Const Value : TDateTime) : TDateTime;
+Var
+  Y, M, D : Word;
+Begin
+  DecodeDate(Value, Y, M, D);
+
+  Result := EncodeDate(Y, M, 1);
+End;
+
+
+
+
+Function LastOfMonth(Const Value : TDateTime) : TDateTime;
+Var
+  Y, M, D : Word;
+Begin
+  DecodeDate(Value, Y, M, D);
+
+  Result := EncodeDate(Y, M, MonthDays[IsLeapYearByYear(Y), M]);
+End;
+
+
+Function ToFactors(Const sDuration : String; aSeparators : TCharSet; Const aMultipliers : Array Of Real; Const aLimits : Array Of Integer; Out aValue : Real) : Boolean;
+Var
+  iLast : Integer;
+  iNext : Integer;
+  iLoop : Integer;
+  iValue : Integer;
+  iUpper : Integer;
+Begin
+  Result := True;
+  aValue := 0;
+  iLast := 1;
+  iNext := StringFind(sDuration, aSeparators, iLast);
+
+  iLoop := Low(aMultipliers);
+  iUpper := IntegerMin(Integer(High(aMultipliers)), Integer(High(aLimits)));
+  While (iNext > 0) And (iLoop <= iUpper) And Result Do
+  Begin
+    iValue := StrToIntDef(Copy(sDuration, iLast, iNext - iLast), -1);
+    Result := (iValue >= 0) And (iValue <= aLimits[iLoop]);
+
+    aValue := aValue + iValue * aMultipliers[iLoop];
+    iLast := iNext + 1;
+    iNext := StringFind(sDuration, aSeparators, iLast);
+
+    Inc(iLoop);
+  End;
+
+  If Result And (iLast <= Length(sDuration)) And (iLoop <= iUpper) Then
+  Begin
+    iValue := StrToIntDef(Copy(sDuration, iLast, MaxInt), -1);
+    Result := (iValue >= 0) And (iValue <= aLimits[iLoop]);
+
+    aValue := aValue + (iValue * aMultipliers[iLoop]);
+  End;
+End;
+
+
+
+
+Function StringToDuration(Const sValue : String; Out aValue : TDuration) : Boolean;
+Const
+  DURATION_MULTIPLIERS : Array[0..3] Of Real = (3600000, 60000, 1000, 1);
+  DURATION_LIMITS : Array[0..3] Of Integer = (MaxInt, 59, 59, 999);
+Var
+  rDuration : Real;
+  sDuration : String;
+  iFactor   : Integer;
+Begin
+  Result := (Length(sValue) > 0);
+
+  If Result Then
+  Begin
+    If sValue[1] = '-' Then
+    Begin
+      sDuration := Copy(sValue, 2, MaxInt);
+      iFactor := -1;
+    End
+    Else If sValue[1] = '+' Then
+    Begin
+      sDuration := Copy(sValue, 2, MaxInt);
+      iFactor := 1;
+    End
+    Else
+    Begin
+      sDuration := sValue;
+      iFactor := 1;
+    End;
+
+    Result := ToFactors(sDuration, TimeSeparators, DURATION_MULTIPLIERS, DURATION_LIMITS, rDuration);
+
+    If Result Then
+      aValue := Trunc(rDuration) * iFactor
+    Else
+      aValue := 0;
+  End;
+End;
+
+Function StringIsDuration(Const sValue : String) : Boolean;
+Var
+  aDuration : TDuration;
+Begin
+  Result := StringToDuration(sValue, aDuration);
+End;
+
+Function StringToDuration(Const sValue : String) : TDuration;
+Begin
+  If Not StringToDuration(sValue, Result) Then
+    Raise Exception.create(sValue + ' is not a valid duration.');
+End;
+
+
+Function DateTimeEquals(Const aA, aB : TDateTime) : Boolean;
+Begin
+  Result := DateTimeCompare(aA, aB) = 0;
+End;
+
+
+Function DateTimeOffsetCompare(Const aA, aB : TDateTimeOffset) : Integer; overload;
+Begin
+  Result := FHIR.Support.Math.RealCompare(ToUniversalDatetime(aA), ToUniversalDateTime(aB));
+
+  If Result = 0 Then
+    Result := FHIR.Support.Math.IntegerCompare(aA.Offset, aB.Offset);
+End;
+
+
+Function DateTimeOffsetCompare(Const aA, aB : TDateTimeOffset; Const aThreshold : TDateTime) : Integer; overload;
+Begin
+  Result := FHIR.Support.Math.RealCompare(ToUniversalDatetime(aA), ToUniversalDateTime(aB), aThreshold);
+
+  If Result = 0 Then
+    Result := FHIR.Support.Math.IntegerCompare(aA.Offset, aB.Offset);
+End;
+
+
+Function DateTimeOffsetEquals(Const aA, aB : TDateTimeOffset) : Boolean;
+Begin
+  Result := DateTimeOffsetCompare(aA, aB) = 0;
+End;
+
+
+Function DateTimeOffsetEquals(Const aA, aB : TDateTimeOffset; Const aThreshold : TDateTime) : Boolean;
+Begin
+  Result := DateTimeOffsetCompare(aA, aB, aThreshold) = 0;
+End;
+
+
+Function DateTimeEquals(Const aA, aB : TDateTimeOffset) : Boolean; // obsolete.
+Begin
+  Result := DateTimeOffsetEquals(aA, aB);
+End;
+
+
+Function DateTimeEquals(Const aA, aB : TDateTime; Const aThreshold : TDateTime) : Boolean;
+Begin
+  Result := DateTimeCompare(aA, aB, aThreshold) = 0;
+End;
+
+Function ToUniversalDateTime(Const aValue : TDateTimeOffset) : TDateTime;
+Begin
+  //Result := aValue.Value + (aValue.Offset * DATETIME_MINUTE_ONE);
+  Result := aValue.Value - (aValue.Offset * DATETIME_MINUTE_ONE);
+End;
+
+Function DateTimeOffsetZero : TDateTimeOffset;
+Begin
+  Result.Value := 0;
+  Result.Offset := 0;
+End;
+
+Function LocalDateTimeFormat(Const aDateTimeOffset : TDateTimeOffset; Const sFormat : String) : String;
+Begin
+  Result := SysUtils.FormatDateTime(sFormat, aDateTimeOffset.Value);
+End;
+
+Function DateTimeFormat(Const aDateTimeOffset : TDateTimeOffset; Const sFormat : String) : String;
+Begin
+  Result := LocalDateTimeFormat(aDateTimeOffset, sFormat);
+End;
+
+Function DurationToDaysString(Const aValue : TDuration) : String;
+Begin
+  Result := StringFormat('%0.2f', [aValue / DATETIME_DAY_MILLISECONDS]);
+End;
+
+Function FormatDuration(Const sFormat : String; Const aValue : TDuration) : String;
+Var
+  iMilliseconds : Integer;
+  iSeconds : Integer;
+  iMinutes : Integer;
+  iHours : Int64;
+  iDays : Int64;
+
+  bUsingDays : Boolean;
+Begin
+  // Return negative durations as a '-' + ToDurationMS(-Value)
+  iDays := Abs(aValue);
+
+  bUsingDays := StringExists(sFormat, '%1:');
+
+  iMilliseconds := Abs(SignedMod(iDays, 1000));
+  iDays := iDays Div 1000;
+
+  iSeconds := Abs(SignedMod(iDays, 60));
+  iDays := iDays Div 60;
+
+  iMinutes := Abs(SignedMod(iDays, 60));
+  iDays := iDays Div 60;
+
+  If bUsingDays Then
+  Begin
+    iHours := Abs(SignedMod(iDays, 24));
+    iDays := iDays Div 24;
+  End
+  Else
+  Begin
+    iHours := iDays;
+  End;
+
+  Result := StringFormat(sFormat, [TimeSeparator, iDays, iHours, iMinutes, iSeconds, DecimalSeparator, iMilliseconds]);
+
+  If aValue < 0 Then
+    Result := '-' + Result;
+End;
+
+
+Function DurationToHoursString(Const aValue : TDuration) : String;
+Begin
+  Result := FormatDuration('%2:.2d', aValue);
+End;
+
+
+Function DurationToMinutesString(Const aValue : TDuration) : String;
+Begin
+  Result := FormatDuration('%2:.2d%0:s%3:.2d', aValue);
+End;
+
+
+Function DurationToSecondsString(Const aValue : TDuration) : String;
+Begin
+  Result := FormatDuration('%2:.2d%0:s%3:.2d%0:s%4:.2d', aValue);
+End;
+
+
+Function DurationToShortSecondsString(Const aValue : TDuration) : String;
+Begin
+  Result := FormatDuration('%3:.2d%0:s%4:.2d', aValue);
+End;
+
+
+Function DurationToMillisecondsString(Const aValue : TDuration) : String;
+Begin
+  Result := FormatDuration('%2:.2d%0:s%3:.2d%0:s%4:.2d%5:s%6:.3d', aValue);
+End;
+
+Function StringIsDate(Const sValue, sFormat : String) : Boolean;
+Begin
+  Result := IsDateTime(sValue, sFormat);
+End;
+
+
+Function StringIsDate(Const sValue : String) : Boolean;
+Begin
+  Result := IsDateTime(sValue, ShortDateFormat);
+End;
+
+Function StringToDate(Const sValue : String) : TDate;
+Begin
+  Result := StrToDate(sValue);
+End;
+
+Function ToUniversalDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset;
+Begin
+  Result.Value := ToDateTime(sValue, sFormat);
+  Result.Offset := 0;
+End;
+
+
+Function ToLocalDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset;
+Begin
+  Result.Value := ToDateTime(sValue, sFormat);
+  Result.Offset := LocalDateTimeOffset.Offset;
+End;
+
+
+
+
+Function ToDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset;
+Begin
+  Result := ToLocalDateTimeOffset(sValue, sFormat);
+End;
+
+
+Function ToDateTimeOffset(Const sValue, sFormat : String; Out aDateTime : TDateTimeOffset) : Boolean;
+Var
+  pStart : PChar;
+  pValue : PChar;
+  iLoop  : Integer;
+  aLoop : TDateToken;
+  aSeparators : TCharSet;
+  aTime  : TTime;
+  iYear  : TDateNumber;
+  aNumbers : TDateNumbers;
+  aLengths : TDateNumberLengths;
+  aIndices : TDateIndices;
+  iIndices : Integer;
+  bLeadingTime : Boolean;
+Begin
+  // TODO: this routine doesn't suppose continuous date formats - eg. 'yyyymmdd'.
+  //       date formats must have separation characters.
+
+  aIndices := ToDateIndices(sFormat);
+  iIndices := IntegerArrayMax(aIndices);
+  pValue := PChar(sValue);
+
+  bLeadingTime := CharInSet(charUpper(StringGet(sFormat, 1)), ['H', 'N', 'S', 'Z']);
+
+  If bLeadingTime Then
+    Result := PCharToTime(pValue, aTime)
+  Else
+    Result := iIndices > 0;
+
+  If Result Then
+  Begin
+    If iIndices < High(aNumbers) Then
+    Begin
+      For aLoop := Low(aIndices) To High(aIndices) Do
+      Begin
+        If aIndices[aLoop] < 0 Then
+          aIndices[aLoop] := iIndices + 1;
+      End;
+    End;
+
+    // Whitespace
+    While CharInSet(pValue^, setWhitespace) Do
+      Inc(pValue);
+
+    // Date
+    aSeparators := DateSeparators;
+    iLoop := Low(aNumbers);
+    While (pValue^ <> #0) And (iLoop <= High(aNumbers)) Do
+    Begin
+      pStart := pValue;
+
+      aNumbers[iLoop] := ToDateTimeElement(pValue);
+      aLengths[iLoop] := Integer(pValue) - Integer(pStart);
+
+      While CharInSet(pValue^, aSeparators) Do
+        Inc(pValue);
+
+      Inc(iLoop);
+    End;
+
+    Result := iLoop >= iIndices;
+
+    If Result Then
+    Begin
+      While (iLoop <= High(aNumbers)) Do
+      Begin
+        aNumbers[iLoop] := 1;
+        Inc(iLoop);
+      End;
+
+      iYear := aNumbers[aIndices[dttYear]];
+
+      If (iYear < 100) And (aLengths[aIndices[dttYear]] <= 2) Then
+      Begin
+        If iYear > {$IFNDEF VER130}FormatSettings.{$ENDIF}TwoDigitYearCenturyWindow Then
+          Inc(iYear, 1900)
+        Else
+          Inc(iYear, 2000);
+      End;
+
+      // Return
+      Result := TryEncodeDate(iYear, aNumbers[aIndices[dttMonth]], aNumbers[aIndices[dttDay]], aDateTime);
+    End;
+  End;
+
+  If Result And Not bLeadingTime Then
+  Begin
+    While Not CharInSet(pValue^, [#0, '0'..'9']) Do
+      Inc(pValue);
+
+    If (pValue^ <> #0) Then
+      Result := PCharToTime(pValue, aTime)
+    Else
+      aTime := 0;
+  End;
+
+  If Result Then
+  Begin
+    aDateTime.Value := Trunc(aDateTime.Value) + Frac(aTime);
+    aDateTime.Offset := LocalDateTimeOffset.Offset;
+  End;
+End;
+
+
+Function TryEncodeDate(iYear, iMonth, iDay : Word; Out aDate : TDateTime) : Boolean;
+Var
+  iTemp  : Integer;
+  pTable : PMonthDays;
+Begin
+  aDate := 0;
+
+  pTable := @MONTHS_DAYS[IsLeapYearByYear(iYear)];
+
+  Result := (iYear >= 1) And (iYear <= 9999) And (iMonth >= 1) And (iMonth <= 12) And (iDay >= 1) And (iDay <= pTable^[TMonthOfYear(iMonth - 1)]);
+
+  If Result Then
+  Begin
+    For iTemp := 0 To iMonth - 2 Do
+      Inc(iDay, pTable^[TMonthOfYear(iTemp)]);
+
+    iTemp := iYear - 1;
+
+    aDate := (iTemp * 365) + (iTemp Div 4) - (iTemp Div 100) + (iTemp Div 400) + iDay - DELTA_DATE;
+  End;
+End;
+
+
+Function TryEncodeDate(iYear, iMonth, iDay : Word; Out aDateTimeOffset : TDateTimeOffset) : Boolean;
+Begin
+  Result := TryEncodeDate(iYear, iMonth, iDay, aDateTimeOffset.Value);
+End;
+
+End.
 
 

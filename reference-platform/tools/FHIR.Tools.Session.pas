@@ -28,11 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
-
-
-{!Wrapper uses Classes,FHIR.Base.Objects,FHIR.Tools.Resources,FHIRResources_Wrapper, FHIRTypes_Wrapper, FHIR.Tools.Types}
-
 interface
 
 uses
@@ -121,7 +116,7 @@ Type
   end;
 
 
-  {@Class TFhirSession
+  {
     User session associated with a FHIR request.                                                         9
     There is always a session, but it may only have ip address
 
@@ -130,7 +125,6 @@ Type
     may differ if the OAuth provided information differs from that in the resource (the
     resource is not updated by the OAuth information)
   }
-  {!.Net HL7Connect.Fhir.Request}
   TFhirSession = class (TFslObject)
   private
     Fworker : TFHIRWorkerContext;
@@ -174,101 +168,101 @@ Type
     procedure describe(b : TStringBuilder);
     Property scopes : String read GetScopes write SetScopes;
 
-    {@member Key
+    {
       Primary database key for this session. Don't change!
     }
     Property Key : Integer read FKey write FKey;
 
-    {@member Provider
+    {
       Which Authorization provider scopes the login (blank = direct login)
     }
     Property ProviderCode : TFHIRAuthProvider read FProviderCode write FProviderCode;
     Property ProviderName : String read FProviderName write FProviderName;
 
-   {@member InnerToken
+   {
       the OAuth authorization token (Don't change!)
       This is the OAuth token for the identity server
     }
     Property InnerToken : String read FInnerToken write FInnerToken;
 
-    {@member OuterToken
+    {
       the OAuth authorization token (Don't change!)
       This is the OAuth token for this server
     }
 
-    Property OuterToken : String read FOuterToken write FOuterToken;    {@member Id
+    Property OuterToken : String read FOuterToken write FOuterToken;    {
       OAuth provided user id
     }
     Property Id : String read FId write FId;
 
-    {@member UserKey
+    {
       OAuth provider internal key
     }
     property UserKey : integer read FUserKey write FUserKey;
 
-    {@member Name
+    {
       Name that describes the user associated with this session
     }
     property UserName : String read FUserName write FUserName;
 
-    {@member UserEvidence
+    {
       Basis of the evidence for the user identification
     }
     Property UserEvidence : TFHIRUseridEvidence read FUserEvidence write FUserEvidence;
 
-    {@member SystemName
+    {
       Name that describes the user associated with this session
     }
     property SystemName : String read FSystemName write FSystemName;
 
-    {@member SystemEvidence
+    {
       Basis of the evidence for the system identification
     }
     Property SystemEvidence : TFHIRSystemIdEvidence read FSystemEvidence write FSystemEvidence;
 
-    {@member SessionName
+    {
       Summary name for the session
     }
     Property SessionName : String read FSessionName write FSessionName;
 
-    {@member Email
+    {
       OAuth provided Users email address
     }
     Property Email : String read FEmail write FEmail;
 
-    {@member Cookie
+    {
       the shared secret between client and server that identifies this session (i.e. cookie value). (Don't change!)
     }
     Property Cookie : String read FCookie write FCookie;
 
-    {@member Expires
+    {
       When this session expires
     }
     Property Expires : TDateTime read FExpires write FExpires;
 
     Property FirstCreated : TDateTime read FFirstCreated;
 
-    {@member NextTokenCheck
+    {
       When the token is next going to be checked with the OAuth server
     }
     Property NextTokenCheck : TDateTime read FNextTokenCheck write FNextTokenCheck;
 
-    {@member OriginalUrl
+    {
       The url that the session started with (used through the login process)
     }
     Property OriginalUrl : String read FOriginal write FOriginal;
 
-    {@member User
+    {
       User resource associated with this session (if a matching one exists)
     }
     Property User : TSCIMUser read FUser write SetUser;
 
-    {@member JWT
+    {
       The JWT token (Open ID Connect token) associated with this session
     }
     Property JWT : TJWT read FJwt write SetJwt;
 
-    {@member JWTPacked
+    {
       The JWT packed and signed using RSA
     }
     Property JWTPacked : string read FJWTPacked write FJWTPacked;
@@ -289,7 +283,7 @@ Type
     function isAnonymous : boolean;
   end;
 
-  {@Class TFHIRRequest
+  {
     A FHIR request.
 
     The request may have been received over a FHIR RESTful interface, or by receiving
@@ -299,7 +293,6 @@ Type
     properties: url, baseURL, resourceType, and format. These properties should be treated as read-only,
     but the other properties can be changed as desired
   }
-  {!.Net HL7Connect.Fhir.Request}
   TFHIRRequest = class (TFslObject)
   Private
     Fworker: TFHIRWorkerContext;
@@ -366,8 +359,7 @@ Type
     Destructor Destroy; Override;
     Function Link : TFHIRRequest; Overload;
 
-    {!Script Hide}
-    function clone() : TFHIRRequest;
+      function clone() : TFHIRRequest;
     Function Compose : String;
     procedure LoadParams(s : String); overload;
     procedure LoadParams(form : TMimeMessage); overload;
@@ -394,33 +386,32 @@ Type
 
     Property DefaultSearch : boolean read FDefaultSearch write FDefaultSearch;
 
-    {@member Parameters
+    {
       any parameters associated with the request (part after the ? in the url). Use
       for search/update
     }
     property Parameters : TParseMap read FParams write SetParams;
 
     function hasTestingTag : boolean;
-    {!Script Show}
-
+  
   published
-    {@member url
+    {
       The full URL of the original request, if the request was made on a RESTful interface (else empty)
     }
     property url : String read FUrl write FUrl;
 
-    {@member secure
+    {
       Whether the request was made on an SSL interface or not (SSL = Smart App Launch as well)
     }
     property secure : Boolean read FSecure write FSecure;
 
-    {@member baseUrl
+    {
       The baseURL (see the FHIR specification under "HTTP REST interface) of the interface,
       if the request was made on a RESTful interface (else empty)
     }
     property baseUrl : String read FBaseUrl write FBaseUrl;
 
-    {@member ResourceType
+    {
       The type of the resource. Cannot be changed
 
       frtNull if this is a bundle
@@ -428,7 +419,7 @@ Type
     Property ResourceName : String Read FResourceName write SetResourceName;
     Property ResourceEnum : TFHIRResourceType Read FResourceEnum;
 
-    {@member CommandType
+    {
       The command (http transaction). This can be changed, though it is unusual to
       change the command (consequences can be unexpected and dramatic)
 
@@ -436,28 +427,28 @@ Type
     }
     Property CommandType : TFHIRCommandType Read FCommandType Write FCommandType;
 
-    {@member Id
+    {
       The resource id associated with the request, if one is identified as part of the request
     }
     Property Id : String Read FId write FId;
 
-    {@member SubId
+    {
       A secondary id associated with the request (only used for the version id in a version specific request)
     }
     Property SubId : String Read FSubId write FSubId;
 
-    {@member OperationName
+    {
       The name of an operation, if an operation was invoked
     }
     Property OperationName : String read FOperationName write FOperationName;
 
-    {@member PostFormat
+    {
       The format of the request, if known and identified (xml, json, or xhtml). Derived
       from the content-type and/or extension in the url, or configuration
     }
     Property PostFormat : TFHIRFormat read FFormat write FFormat;
 
-    {@member Resource
+    {
       the actual resource, if a resource was submitted as part of the request.
 
       Note that actual kind of the resource will be one of the ones defined as
@@ -471,19 +462,19 @@ Type
 
     property Version : TFHIRVersion read FVersion write FVersion;
 
-    {@member Tags
+    {
       Tags on the request - if it's a resource directly
     }
     property Tags : TFHIRTagList read FTags;
 
     property Elements : TStringList read FElements;
 
-    {@member originalId
+    {
       The specified originalId of the resource in the request (if present) (i.e. in a transaction)
     }
     Property originalId : String read ForiginalId write ForiginalId;
 
-    {@member compartments
+    {
       If the user is limited to a set of compartments, this is the list (comma separated, with quotes)
     }
     Property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
@@ -491,27 +482,27 @@ Type
     function SessionCompartments : TFslList<TFHIRCompartmentId>;
 
 
-    {@member contentLocation
+    {
       Quoted Content location on request. Used for version aware updates. Only on RESTful interface
     }
 //    Property contentLocation : String read FcontentLocation write FcontentLocation;
 
-//    {@member versionId
+//    {
 //      The ETag of the resource identified in the request (if present)
 //    }
 //    Property e_versionId : String read FversionId write FversionId;
 
-    {@member lastModifiedDate
+    {
       The last modified date of the resource identified in the request (if present)
     }
     Property lastModifiedDate : TDateTime read FlastModifiedDate write FlastModifiedDate;
 
-    {@member Lang
+    {
       Preferred language of the requester (used for error messages)
     }
     Property Lang : String read FLang write FLang;
 
-    {@member Summary
+    {
       What kind of summary is requested
     }
     Property Summary : TFHIRSummaryOption read FSummary write FSummary;
@@ -553,7 +544,7 @@ Type
 
   TCreateBundleBuilderEvent = procedure (request : TFHIRRequest; context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder) of object;
 
-  {@Class TFHIRResponse
+  {
     A FHIR response.
 
     This is a response for a RESTful interface, or some other kind of response. The
@@ -569,7 +560,6 @@ Type
     A script may modify any of the values of the response, though changing the
     type of the resource may have unexpected catastrophic outcomes.
   }
-  {!.Net HL7Connect.Fhir.Response}
   TFHIRResponse = class (TFslObject)
   private
     FHTTPCode: Integer;
@@ -603,11 +593,9 @@ Type
     Constructor Create; Override;
     Destructor Destroy; Override;
 
-    {!Script Hide}
-    Function Link : TFHIRResponse; Overload;
-    {!Script Show}
-
-    {@member HTTPCode
+      Function Link : TFHIRResponse; Overload;
+  
+    {
       The logical outcome of the request. Usual values are
         * 0 - the outcome of the transaction is not yet known
         * 200 - the operation completed successfully
@@ -623,20 +611,20 @@ Type
     }
     Property HTTPCode : Integer read FHTTPCode write FHTTPCode;
 
-    {@member Message
+    {
       a specific message to go in the HTTP response line. If left blank,
       HL7Connect will fill this out from the http specification
     }
     Property Message : String read FMessage write FMessage;
 
-    {@member Body
+    {
       a series of characters that constitute the body of the response. Usually this is
       plain text, but other content (xhtml, schema) could be placed in here.
       If using other than plain text, set the @contentType
     }
     Property Body : String read FBody write FBody;
 
-    {@member Resource
+    {
       the actual resource that is the result of the transaction.
 
       Note that actual kind of the resource will be one of the ones defined as
@@ -648,69 +636,69 @@ Type
     Property outcome : TFHIROperationOutcome read FOutcome write SetOutcome;
     Property Stream : TFslStream read FStream write SetStream;
 
-    {@member Format
+    {
       The format for the response, if known and identified (xml, or json). Derived
       from the requested content-type and/or extension in the url, or configuration
     }
     Property Format : TFHIRFormat read FFormat write FFormat;
 
-    {@member ContentType
+    {
       The content type of the response. if left blank, this will be determined
       automatically (text/plain for body, and type as specifed in the FHIR
       specification for resources and bundles.
     }
     Property ContentType : String read FContentType write FContentType;
 
-    {@member originalId
+    {
       The originalId of the resource - if known
     }
     Property originalId : String read ForiginalId write ForiginalId;
 
-    {@member Id
+    {
       The underlying id, if there is one. Only used internally - not represented on the wire
     }
     Property Id : String read FId write FId;
 
-    {@member versionId
+    {
       The ETag to go in the response
     }
     Property versionId : String read FversionId write FversionId;
 
-    {@member lastModifiedDate
+    {
       The Last Modified Date to go in the response
     }
     Property lastModifiedDate : TDateTime read FlastModifiedDate write FlastModifiedDate;
 
-    {@member ContentLocation
+    {
       Content-Location in HTTP response
     }
     Property ContentLocation : String read FContentLocation write FContentLocation;
 
-    {@member Location
+    {
       Location in HTTP response (only used for Create operation)
     }
     Property Location : String read FLocation write FLocation;
 
-    {@member Tags
+    {
       Tags for the response
     }
     property Tags : TFHIRTagList read FTags;
 
     property Version : TFHIRVersion read FVersion write FVersion;
 
-    {@member link_list
+    {
       link_list for the response
     }
     property link_list : TFhirBundleLinkList read Flink_list;
 
-    {@member Origin
+    {
       HTTP Origin header - see http://en.wikipedia.org/wiki/Cross-origin_resource_sharing
 
       If this has a value when the response is returned, then it will be returned in the Access-Control-Allow-Origin header
     }
     Property Origin : String read FOrigin write FOrigin;
 
-    {@member CacheControl
+    {
       The degree of caching to use on the response
     }
     Property CacheControl : TFHIRCacheControl read FCacheControl write FCacheControl;
@@ -1215,7 +1203,7 @@ begin
     if (p.MediaType = '') then
     begin
       n := p.ParamName;
-      s := p.Content.AsUnicode.trimRight([#13, #10]);
+      s := p.Content.AsText.trimRight([#13, #10]);
       if (n <> '') and (not s.Contains(#10)) then
         FParams.addItem(n, s);
     end;

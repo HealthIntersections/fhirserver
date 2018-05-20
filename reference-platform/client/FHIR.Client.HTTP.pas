@@ -496,7 +496,7 @@ var
     cnt : string;
     p : TFHIRParser;
   begin
-    cnt := http.Response.AsUnicode;
+    cnt := http.Response.AsText;
     if StringFind(cnt, 'OperationOutcome') > 0 then
     begin
       removeBom(cnt);

@@ -137,7 +137,12 @@ Function StringUpper(Const sValue : String) : String; Overload;
 Function StringMultiply(cChar : Char; iCount : Integer) : String; Overload;
 
 Function StringFind(Const sValue, sFind : String) : Integer; Overload;
+Function StringFindSensitive(Const sValue, sFind : String) : Integer; Overload;
+Function StringFindInsensitive(Const sValue, sFind : String) : Integer; Overload;
 Function StringFind(Const sValue : String; aFind : TCharSet) : Integer; Overload;
+Function StringFind(Const sValue, sFind : String; iStart : Integer) : Integer; Overload;
+Function StringFind(Const sValue : String; aFind : TCharSet; iStart : Integer) : Integer; overload;
+
 Function StringKeep(Const sValue : String; Const aFind : TCharSet) : String; Overload;
 Function StringReplace(Const sValue, sFind, sReplace : String) : String; Overload;
 Function StringReplace(Const sValue : String; Const aFind : TCharSet; cReplace : Char) : String; Overload;
@@ -147,6 +152,7 @@ Function StringReplaceAfter(Const sValue, sFind, sReplace : String) : String; Ov
 Function StringReplaceAll(Const sValue, sFind, sReplace : String; Const iStartPos : Integer = 1; Const iEndPos : Integer = 0) : String; Overload;
 Function StringPadLeft(Const sValue : String; cPad : Char; iLength : Integer) : String; Overload;
 Function StringPadRight(Const sValue : String; cPad : Char; iLength : Integer) : String; Overload;
+Function StringSlice(Const sValue : String; iBegin, iEnd : Integer) : String; Overload;
 
 Function StringTrimWhitespace(Const sValue : String) : String; Overload;
 Function StringTrimWhitespaceRight(Const sValue : String) : String; Overload;
@@ -157,6 +163,7 @@ Function StringTrimSet(Const sValue : String; aChars : TCharSet) : String; Overl
 
 Function StringToBoolean(Const sValue : String) : Boolean; Overload;
 Function StringToReal(Const sValue : String) : Real; Overload;
+Function StringIsReal(Const sValue : String) : Boolean; Overload;
 
 Function IntegerToString(Value : Integer) : String; Overload;
 
@@ -187,6 +194,23 @@ function RemoveQuotes(AStr: String; AUpperCaseString: Boolean = false): String;
 function IsNumericString(st: String): Boolean;
 function RemoveAccents(const aStr: String): String;
 
+function charLower(ch : char) : char; overload;
+function charLower(s : String) : char; overload;
+function charUpper(ch : char) : char; overload;
+function charUpper(s : String) : char; overload;
+Function StringTitleCase(Const sValue: String): String; Overload;
+Function StringTitleCase(Const sValue: String; Const sExceptions : Array of String): String; Overload;
+Function StringToggleCase(Const sValue: String): String; Overload;
+Function StringSentence(Const sValue : String) : String; Overload;
+
+Function StringIsAlphanumeric(Const cValue : Char) : Boolean; Overload;
+Function StringIsAlphanumeric(Const sValue : String) : Boolean; Overload;
+Function StringIsNumeric(Const cValue : Char) : Boolean; Overload;
+Function StringIsNumeric(Const sValue : String) : Boolean; Overload;
+Function StringSingular(Const sValue : String) : String; Overload;
+Function StringPlural(Const sValue : String; iValue : Integer = 0) : String; Overload;
+Function StringCamel(Const sValue : String) : String; Overload;
+Function StringReverseCamel(Const sValue : String) : String; Overload;
 
 {$IFDEF FPC}
 Function CharInSet(C: Char; Const CharSet: TCharSet): Boolean;
@@ -219,6 +243,10 @@ Function StringExcludeBefore(Const sText, sSymbol : String) : String; Overload;
 Function StringExcludeAfter(Const sText : String; cSymbol : Char) : String; Overload;
 Function StringExcludeAfter(Const sText, sSymbol : String) : String; Overload;
 
+Function CharArrayIndexOfInsensitive(Const aNames : Array Of Char; Const cName: Char): Integer; Overload;
+Function CharArrayIndexOfSensitive(Const aNames : Array Of Char; Const cName: Char): Integer; Overload;
+Function CharArrayIndexOf(Const aNames : Array Of Char; Const cName : Char): Integer; Overload;
+Function CharArrayValid(Const aNames : Array Of Char; Const iIndex : Integer) : Boolean; Overload;
 
 function capitalise(s : String) : String;
 function jsonEscape(s : String; isString : boolean) : String;
@@ -397,7 +425,7 @@ type
     list : TStringList;
     FIgnoreDuplicates: Boolean;
   public
-    Constructor Create;
+    Constructor Create; override;
     Destructor Destroy; override;
 
     procedure add(s : String);
@@ -414,8 +442,6 @@ type
 
 Function EncodeNYSIIS(Const sValue : String) : String;
 {
-Function EncodeBase64(Const sValue : TBytes) : AnsiString; Overload;
-Function DecodeBase64(Const sValue : AnsiString) : TBytes; Overload;
 }
 
 //Function EncodeXML(Const sValue : String; mode : TXmlEncodingMode; eoln : TEolnOption = eolnIgnore) : String; Overload;
@@ -426,6 +452,7 @@ Function DecodeMIME(Const sValue : String) : String; Overload;
 Function DecodeMIMEURL(Const sValue : String) : String;  overload;
 Function SizeOfDecodeHexadecimal(Const aBuffer; iSize : Cardinal) : Cardinal; Overload;
 Function DecodeHexadecimal(Const cHigh, cLow : AnsiChar) : Byte; Overload;
+Function DecodeHexadecimal(Const sValue : String) : TBytes; Overload;
 Procedure DecodeHexadecimal(Const sValue : AnsiString; Var aBuffer; iCount : Integer); Overload;
 Function StringIsHexadecimal(Const sValue : String) : Boolean;
 
@@ -1022,6 +1049,13 @@ Begin
   Result := StrToFloat(sValue);
 End;
 
+Function StringIsReal(Const sValue : String) : Boolean;
+Var
+  rDummy : Extended;
+Begin
+  Result := TextToFloat(PChar(sValue), rDummy, fvExtended);
+End;
+
 Function StringToBooleanCheck(Const sValue : String; Out bValue : Boolean) : Boolean;
 Begin
   Result := True;
@@ -1105,6 +1139,11 @@ End;
 Function StringTrimWhitespaceLeft(Const sValue : String) : String;
 Begin
   Result := SysUtils.TrimLeft(sValue);
+End;
+
+Function StringSlice(Const sValue : String; iBegin, iEnd : Integer) : String;
+Begin
+  Result := Copy(sValue, iBegin, iEnd - iBegin + 1);
 End;
 
 
@@ -1508,6 +1547,122 @@ function isAbsoluteUrl(s: String): boolean;
 begin
   result := s.StartsWith('urn:') or s.StartsWith('http:') or s.StartsWith('https:') or s.StartsWith('ftp:');
 end;
+
+function charLower(ch : char) : char;
+begin
+  result := lowercase(ch)[1];
+end;
+
+function charLower(s : string) : char;
+begin
+  if s = '' then
+    result := #0
+  else
+    result := lowercase(s)[1];
+end;
+
+function charUpper(ch : char) : char;
+begin
+  result := uppercase(ch)[1];
+end;
+
+function charUpper(s : string) : char;
+begin
+  if s = '' then
+    result := #0
+  else
+    result := uppercase(s)[1];
+end;
+
+Function StringTitleCase(Const sValue: String; Const sExceptions : Array of String): String; Overload;
+var
+  i, j : integer;
+  iSkip: Integer;
+  bOk : Boolean;
+  bStartWord : Boolean;
+Begin
+  result := sValue;
+  i := 1;
+  iSkip := 0;
+  bStartWord := true;
+  While (i <= length(result)) do
+  Begin
+    If (Result[i] = ' ') Or (Result[i] = '/') Then
+      bStartWord := True
+    else if CharInSet(result[i], ['a'..'z', 'A'..'Z']) Then
+    Begin
+      bOk := true;
+      If bStartWord then
+        For j := 0 to High(sExceptions) Do
+          If lowercase(copy(result, i, length(sExceptions[j]))) = lowercase(sExceptions[j]) Then
+          Begin
+            bOk := false;
+            iSkip := length(sExceptions[j]) - 1;
+          End;
+      If bOk Then
+      Begin
+        If bStartWord Then
+          Result[i] := UpCase(Result[i])
+        Else
+          Result[i] := LowerCase(Result[i])[1];
+      End
+      Else
+        i := i + iSkip;
+      bStartWord := false;
+    End;
+
+    inc(i);
+  End;
+End;
+
+Function StringDelimiterCase(Const sValue : String; Const aDelimiters : TCharSet) : String;
+Var
+  iLoop: Integer;
+  bStartWord: Boolean;
+Begin
+  Result := SysUtils.LowerCase(sValue);
+
+  bStartWord := True;
+  For iLoop := 1 To Length(Result) Do
+  Begin
+    If CharInSet(Result[iLoop], aDelimiters) Then
+      bStartWord := True
+    Else If bStartWord Then
+    Begin
+      bStartWord := False;
+      Result[iLoop] := UpCase(Result[iLoop]);
+    End;
+  End;
+End;
+
+
+Function StringTitleCase(Const sValue: String): String;
+Begin
+  Result := StringDelimiterCase(sValue, [' ']);
+End;
+
+Function StringToggleCase(Const sValue: String): String;
+Var
+  iLoop: Integer;
+Begin
+  Result := SysUtils.LowerCase(sValue);
+
+  For iLoop := 1 To Length(Result) Do
+  Begin
+    If Result[iLoop] = sValue[iLoop] Then
+      Result[iLoop] := UpCase(Result[iLoop]);
+  End;
+End;
+
+
+Function StringSentence(Const sValue : String) : String;
+Begin
+  Result := Lowercase(sValue);
+
+  If Length(Result) > 1 Then
+    Result[1] := charUpper(Result[1]);
+End;
+
 
 
 // http://stackoverflow.com/questions/1891196/convert-hi-ansi-chars-to-ascii-equivalent-e-e-in-delphi2007/1892432#1892432
@@ -2691,234 +2846,6 @@ Type
 Const
   setMIME = setAlphanumeric + ['/', '?', ':', ';', '.', '+'];
 
-  ENCODE_BASE64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-  DECODE_BASE64 : Array[AnsiChar] Of Byte =
-    (
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 062, 255, 255, 255, 063,
-    052, 053, 054, 055, 056, 057, 058, 059, 060, 061, 255, 255, 255, 255, 255, 255,
-    255, 000, 001, 002, 003, 004, 005, 006, 007, 008, 009, 010, 011, 012, 013, 014,
-    015, 016, 017, 018, 019, 020, 021, 022, 023, 024, 025, 255, 255, 255, 255, 255,
-    255, 026, 027, 028, 029, 030, 031, 032, 033, 034, 035, 036, 037, 038, 039, 040,
-    041, 042, 043, 044, 045, 046, 047, 048, 049, 050, 051, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
-    );
-
-Function SizeOfEncodeBase64(Const aBuffer; iSize : Cardinal) : Cardinal; Overload;
-Begin
-  Result := (RealCeiling(iSize / 3)) * 4;
-End;
-
-Function SizeOfDecodeBase64(Const aBuffer; iSize : Cardinal) : Cardinal; Overload;
-Begin
-  Result := (RealCeiling(iSize / 4)) * 3;
-End;
-
-Function SizeOfDecodeBase64(Const sValue : AnsiString) : Cardinal; Overload;
-Begin
-  Result := SizeOfDecodeBase64(Pointer(sValue)^, Length(sValue));
-End;
-
-Function DecodeBase64(Const cValue : AnsiChar) : Byte; Overload;
-Begin
-  Result := DECODE_BASE64[cValue];
-End;
-
-
-Function DecodeBase64(Const aSource : AnsiString; Var aTarget; iCount : Cardinal) : Cardinal; Overload;
-Var
-  pSource  : PAnsiChar;
-  iSource  : Cardinal;
-
-  Function Decode : Byte;
-  Begin
-    Result := 255;
-
-    While (Cardinal(pSource) < iSource) And (Result = 255) Do
-    Begin
-      Result := DecodeBase64(pSource^);
-      Inc(pSource);
-    End;
-  End;
-
-Var
-  pTarget  : PByte;
-  iTarget  : Cardinal;
-  iData    : Integer;
-Begin
-  pSource := @aSource;
-  pTarget := @aTarget;
-
-  If iCount > 0 Then
-  Begin
-    iSource := Cardinal(@aSource) + iCount;
-    iTarget := Cardinal(@aSource) + ((RealCeiling(iCount / 4) - 1) * 4);
-
-    // Process all complete 4 byte elements.
-    While (Cardinal(pSource) < iTarget) Do
-    Begin
-      iData := (Decode Shl 18) Or (Decode Shl 12) Or (Decode Shl 6) Or Decode;
-
-      pTarget^ := Byte(iData Shr 16);
-      Inc(pTarget);
-
-      pTarget^ := Byte(iData Shr 8);
-      Inc(pTarget);
-
-      pTarget^ := Byte(iData);
-      Inc(pTarget);
-    End;
-
-    If Cardinal(pSource) < iSource Then
-    Begin
-      // Read first byte and start of second byte.
-      iData := (Decode Shl 18);
-      iData := iData Or (Decode Shl 12);
-
-      // Write first byte.
-      pTarget^ := Byte(iData Shr 16);
-      Inc(pTarget);
-
-      If (Cardinal(pSource) < iSource) And (pSource^ <> '=') Then
-      Begin
-        // Read end of second and start of third byte.
-        iData := iData Or (Decode Shl 6);
-
-        // Write second byte.
-        pTarget^ := Byte(iData Shr 8);
-        Inc(pTarget);
-
-        If (Cardinal(pSource) < iSource) And (pSource^ <> '=') Then
-        Begin
-          // Read end of third byte.
-          iData := iData Or Decode;
-
-          // Write third byte.
-          pTarget^ := Byte(iData);
-          Inc(pTarget);
-        End;
-      End;
-    End;
-  End;
-
-  Result := Cardinal(pTarget) - Cardinal(@aTarget);
-End;
-
-Function DecodeBase64(Const sValue : AnsiString) : TBytes; Overload;
-Begin
-  SetLength(Result, SizeOfDecodeBase64(sValue));
-
-  SetLength(Result, DecodeBase64(sValue, Pointer(Result)^, Length(sValue)));
-End;
-
-Function EncodeBase64(Const iValue : Byte) : AnsiChar; Overload;
-Begin
-  Result := AnsiChar(ENCODE_BASE64[iValue + 1]); // Array is 1-based.
-End;
-
-
-Function EncodeBase64(Const aSource; Var aTarget; iCount : Cardinal) : Cardinal; Overload;
-
-  Function Flip(iValue : Integer) : Integer;
-  Var
-    pSource : PByte;
-    pTarget : PByte;
-  Begin
-    pSource := PByte(@iValue);
-    pTarget := PByte(Integer(@Result) + SizeOf(Result) - 1);
-
-    pTarget^ := pSource^;
-    Inc(pSource);
-    Dec(pTarget);
-
-    pTarget^ := pSource^;
-    Inc(pSource);
-    Dec(pTarget);
-
-    pTarget^ := pSource^;
-    Inc(pSource);
-    Dec(pTarget);
-
-    pTarget^ := pSource^;
-  End;
-
-Var
-  pSource : ^Integer;
-  pTarget : PAnsiChar;
-  iSource : Integer;
-  iLoop   : Integer;
-  iTarget : Integer;
-  iData   : Cardinal;
-Begin
-  pSource := @aSource;
-  pTarget := @aTarget;
-
-  iSource := (iCount Div 3);
-
-  For iLoop := 0 To iSource - 1 Do
-  Begin
-    iData := Cardinal(Flip(pSource^));
-
-    pTarget^ := EncodeBase64((iData Shr 26) And $3F);
-    Inc(pTarget);
-
-    pTarget^ := EncodeBase64((iData Shr 20) And $3F);
-    Inc(pTarget);
-
-    pTarget^ := EncodeBase64((iData Shr 14) And $3F);
-    Inc(pTarget);
-
-    pTarget^ := EncodeBase64((iData Shr 8) And $3F);
-    Inc(pTarget);
-
-    pSource := Pointer(NativeUInt(pSource) + 3);
-  End;
-
-  iTarget := SignedMod(iCount, 3);
-
-  If iTarget >= 1 Then
-  Begin
-    iData := Cardinal(Flip(pSource^));
-
-    If iTarget = 1 Then
-      iData := iData And $FF000000
-    Else If iTarget = 2 Then
-      iData := iData And $FFFF0000;
-
-    pTarget^ := EncodeBase64((iData Shr 26) And $3F);
-    Inc(pTarget);
-
-    pTarget^ := EncodeBase64((iData Shr 20) And $3F);
-    Inc(pTarget);
-
-    If iTarget >= 2 Then
-      pTarget^ := EncodeBase64((iData Shr 14) And $3F)
-    Else
-      pTarget^ := '=';
-    Inc(pTarget);
-
-    pTarget^ := '=';
-    Inc(pTarget);
-  End;
-
-  Result := Cardinal(pTarget) - Cardinal(@aTarget);
-End;
-
-Function EncodeBase64(Const sValue : TBytes) : AnsiString; Overload;
-Begin
-  SetLength(Result, SizeOfEncodeBase64(Pointer(sValue)^, Length(sValue)));
-
-  SetLength(Result, EncodeBase64(Pointer(sValue)^, Pointer(Result)^, Length(sValue)));
-End;
-
 Function SizeOfDecodeHexadecimal(Const aBuffer; iSize : Cardinal) : Cardinal;
 Begin
   Result := RealCeiling(iSize / 2);
@@ -2979,6 +2906,20 @@ Begin
     Inc(pTarget);
   End;
 End;
+
+Function SizeOfDecodeHexadecimal(Const sValue : AnsiString) : Cardinal; overload;
+Begin
+  Result := SizeOfDecodeHexadecimal(Pointer(sValue)^, Length(sValue));
+End;
+
+
+Function DecodeHexadecimal(Const sValue : String) : TBytes;
+Begin
+  SetLength(Result, SizeOfDecodeHexadecimal(sValue));
+
+  DecodeHexadecimal(sValue, Pointer(Result)^, Length(Result));
+End;
+
 
 Function SizeOfEncodeHexadecimal(Const aBuffer; iSize : Cardinal) : Cardinal;
 Begin
@@ -3438,6 +3379,260 @@ end;
 {$R+}
 {$Q+}
 
+Function StringIsAlphanumeric(Const cValue : Char) : Boolean;
+Begin
+  Result := CharInSet(cValue, setAlphanumeric);
+End;
+
+
+Function StringIsAlphanumeric(Const sValue : String) : Boolean;
+Begin
+  Result := StringContainsOnly(sValue, setAlphanumeric);
+End;
+
+
+Function StringIsNumeric(Const cValue : Char) : Boolean;
+Begin
+{$IFDEF VER130}
+  Result := CharInSet(cValue, setNumbers);
+{$ELSE}
+  Result := cValue.IsNumber;
+{$ENDIF}
+End;
+
+
+Function StringIsNumeric(Const sValue : String) : Boolean;
+Begin
+  Result := (sValue <> '') And (StringContainsOnly(sValue, setNumbers));
+End;
+
+Function StringSingular(Const sValue : String) : String;
+Var
+  bException : Boolean;
+  iCount : Integer;
+  iLength : Integer;
+  iLoop : Integer;
+Begin
+  iLength := Length(sValue);
+
+  If (iLength <= 0) Or (iLength = 1) Or (sValue[iLength] <> 's') Then
+    Result := sValue
+  Else
+  Begin
+    bException := False;
+
+    iLoop := 0;
+    iCount := Length(PLURAL_EXCEPTIONS);
+
+    While Not bException And (iLoop < iCount) Do
+    Begin
+      bException := StringEndsWith(sValue, PLURAL_EXCEPTIONS[iLoop]);
+
+      Inc(iLoop);
+    End;
+
+    If bException Then
+      Result := sValue
+    Else
+    Begin
+      Case sValue[iLength - 1] Of
+       'e' :
+        Begin
+          If (iLength > 2) And (sValue[iLength - 2] = 'i') Then
+          Begin
+            If iLength > 3 Then
+              Result := Copy(sValue, 1, iLength - 3) + 'y'
+            Else
+              Result := Copy(sValue, 1, iLength - 1);
+          End
+          Else If (iLength > 3) And
+            ((CharInSet(sValue[iLength - 2], ['j', 'x', 'o'])) Or
+            ((sValue[iLength - 3] = 'z') And (sValue[iLength - 2] = 'z')) Or
+            ((sValue[iLength - 3] = 's') And (CharInSet(sValue[iLength - 2], ['s', 'h'])))) Then
+
+            Result := Copy(sValue, 1, iLength - 2)
+          Else
+            Result := Copy(sValue, 1, iLength - 1);
+        End;
+      Else
+        Result := Copy(sValue, 1, iLength - 1);
+      End;
+    End;
+  End;
+End;
+
+
+Function StringPlural(Const sValue : String; iValue : Integer) : String;
+Var
+  bException : Boolean;
+  iCount : Integer;
+  iLength : Integer;
+  iLoop : Integer;
+  cLastCharacter : Char;
+  cSecondLastCharacter : Char;
+  sPluralisation : String;
+Begin
+  Result := sValue;
+
+  iLength := Length(sValue);
+
+  If (iLength > 0) And (iValue <> 1) Then
+  Begin
+    bException := False;
+
+    iLoop := 0;
+    iCount := Length(PLURAL_EXCEPTIONS);
+
+    While Not bException And (iLoop < iCount) Do
+    Begin
+      bException := StringEndsWith(sValue, PLURAL_EXCEPTIONS[iLoop]);
+
+      Inc(iLoop);
+    End;
+
+    If Not bException Then
+    Begin
+      cLastCharacter := sValue[iLength];
+
+      Case charUpper(cLastCharacter) Of
+        'H' :
+        Begin
+          cSecondLastCharacter := charUpper(sValue[iLength - 1]);
+          If (iLength > 1) And ((cSecondLastCharacter = 'T') Or (cSecondLastCharacter = 'G')) Then
+            sPluralisation := 's'
+          Else
+            sPluralisation := 'es';
+        End;
+        'S', 'X', 'J', 'Z' :
+        Begin
+            sPluralisation := 'es';
+        End;
+        'Y' :
+        Begin
+          If (iLength > 2) And CharInSet(sValue[iLength - 1], setConsonants) Then
+          Begin
+            Result := Copy(sValue, 1, iLength - 1);
+            sPluralisation := 'ies';
+          End
+          Else
+          Begin
+            sPluralisation := 's';
+          End;
+        End;
+      Else
+        sPluralisation := 's';
+      End;
+
+      If TCharacter.IsUpper(cLastCharacter) Then
+        sPluralisation := StringUpper(sPluralisation);
+
+      Result := Result + sPluralisation;
+    End;
+  End;
+End;
+
+
+Function StringCamel(Const sValue : String) : String;
+Var
+  cCurrent : Char;
+  iLoop : Integer;
+Begin
+  Result := sValue;
+
+  If Result <> '' Then
+    Result[1] := charUpper(Result[1]);
+
+  For iLoop := 1 To Length(Result) - 1 Do
+  Begin
+    cCurrent := Result[iLoop];
+
+    If CharInSet(cCurrent, [' ', '_']) Then
+      Result[iLoop + 1] := charUpper(Result[iLoop + 1]);
+  End;
+End;
+
+
+Function StringReverseCamel(Const sValue : String) : String;
+Var
+  bNumeric : Boolean;
+  bUpper : Boolean;
+  iLoop : Integer;
+  cCurrent : Char;
+  cLast : Char;
+Begin
+  Result := sValue;
+
+  cLast := ' ';
+
+  For iLoop := Length(Result) DownTo 2 Do
+  Begin
+    cCurrent := Result[iLoop];
+
+    If (cCurrent <> '') And (cLast <> '') Then
+    Begin
+      bUpper := TCharacter.isUpper(cCurrent) And Not TCharacter.isUpper(cLast);
+      bNumeric := StringIsNumeric(cCurrent) And Not StringIsNumeric(cLast);
+
+      If bUpper Or bNumeric Then
+        Insert(' ', Result, iLoop);
+    End;
+
+    cLast := cCurrent;
+  End;
+End;
+
+Function StringFind(Const sValue, sFind : String; iStart : Integer) : Integer;
+Begin
+  If iStart > Length(sValue) Then
+    Result := 0
+  Else
+  Begin
+    Result := StringFind(Copy(sValue, iStart, MaxInt), sFind);
+
+    If Result > 0 Then
+      Inc(Result, iStart - 1);
+  End;
+End;
+
+Function StringFind(Const sValue : String; aFind : TCharSet; iStart : Integer) : Integer;
+Begin
+  If iStart > Length(sValue) Then
+    Result := 0
+  Else
+  Begin
+    Result := StringFind(Copy(sValue, iStart, MaxInt), aFind);
+
+    If Result > 0 Then
+      Inc(Result, iStart - 1);
+  End;
+End;
+
+Function CharArrayIndexOfInsensitive(Const aNames : Array Of Char; Const cName: Char): Integer;
+Begin
+  Result := High(aNames);
+  While (Result >= Low(aNames)) And (StringCompareInsensitive(cName, aNames[Result]) <> 0) Do
+    Dec(Result);
+End;
+
+
+Function CharArrayIndexOfSensitive(Const aNames : Array Of Char; Const cName: Char): Integer;
+Begin
+  Result := High(aNames);
+  While (Result >= Low(aNames)) And (StringCompareSensitive(cName, aNames[Result]) <> 0) Do
+    Dec(Result);
+End;
+
+
+Function CharArrayIndexOf(Const aNames : Array Of Char; Const cName : Char): Integer;
+Begin
+  Result := CharArrayIndexOfInsensitive(aNames, cName);
+End;
+
+Function CharArrayValid(Const aNames : Array Of Char; Const iIndex : Integer) : Boolean;
+Begin
+  Result := IntegerBetweenInclusive(Low(aNames), iIndex, High(aNames));
+End;
+
 
 Initialization
 
@@ -3473,4 +3668,5 @@ Initialization
 {$IFOPT C+}
   CharArrayVerify(UnicodeWhitespaceArray, 'UnicodeWhitespaceArray');
 {$ENDIF}
-End. // FHIR.Support.Strings //
+End.
+

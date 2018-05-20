@@ -125,7 +125,6 @@ type
 implementation
 
 uses
-  FHIR.R3.Constants,
   FHIR.Tools.Utilities;
 
 { TFHIRClientAsyncTask }
@@ -369,7 +368,6 @@ begin
     asyncDownloading: result := 'Downloading ('+inttostr(waitingCount)+' files to go)';
   end;
 end;
-
 
 function TFHIRClientAsyncTask.Summary: String;
 var

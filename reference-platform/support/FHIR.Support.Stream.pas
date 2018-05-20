@@ -34,7 +34,7 @@ Interface
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, ActiveX, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Exceptions, FHIR.Support.Filers, FHIR.Support.System;
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Exceptions, FHIR.Support.System;
 
 
 
@@ -42,7 +42,7 @@ type
 
   TFslStream = Class(TFslObject)
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
     Public
       Function Link : TFslStream;
@@ -142,9 +142,9 @@ type
       Property Stream : TFslAccessStream Read GetStream Write SetStream;
   End; 
 
-  EAdvStream = Class(EAdvException);
+  EFslStream = Class(EFslException);
 
-  EAdvExceptionClass = FHIR.Support.Exceptions.EAdvExceptionClass;
+  EFslExceptionClass = FHIR.Support.Exceptions.EFslExceptionClass;
 
   TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
 
@@ -186,9 +186,9 @@ type
     Function GetSize : Int64; Override;
     Procedure SetSize(Const iValue : Int64); Override;
 
-    Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Override;
+    Procedure RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String); Overload; Override;
 
-    Function ErrorClass : EAdvExceptionClass; Override;
+    Function ErrorClass : EFslExceptionClass; Override;
 
   Public
     constructor Create(const AFileName: string; Mode: Word); overload;
@@ -204,20 +204,20 @@ type
     property Handle: THandle read GetHandle;
   End;
 
-  EAdvFile = Class(EAdvStream);
+  EFslFile = Class(EFslStream);
 
-    {@class TFslBuffer
+    {
     A list of bytes
   }
-  {!.Net HL7Connect.Util.Buffer}
 
-  TFslBuffer = Class(TFslPersistent)
+  TFslBuffer = Class(TFslObject)
     Private
       FData : Pointer;
       FCapacity : Integer;
       FOwned : Boolean;
       {$IFNDEF VER130}
       FEncoding: TEncoding;
+    FFormat: String;
       function GetAsUnicode: String;
       procedure SetAsUnicode(const Value: String);
       Function ExtractUnicode(Const iLength : Integer) : String;
@@ -234,8 +234,8 @@ type
       Function ExtractAscii(Const iLength : Integer) : AnsiString;
       function GetAsBytes: TBytes;
       procedure SetAsBytes(const Value: TBytes);
+    function GetHasFormat: boolean;
     Public
-      {!script hide}
       Constructor Create; Override;
 {$IFNDEF UT}
       Constructor Create(sText : String); Overload;
@@ -245,31 +245,26 @@ type
       Function Link : TFslBuffer;
       Function Clone : TFslBuffer;
 
-      Procedure Define(oFiler : TFslFiler); Override;
-      Procedure Load(oFiler : TFslFiler); Override;
-      Procedure Save(oFiler : TFslFiler); Override;
       Procedure Assign(oObject : TFslObject); Override;
 
-      {!script show}
 
-      {@member Clear
+      {
         Make the buffer empty.
 
         note that valid buffers must have content
       }
       Procedure Clear;
 
-      {@member LoadFromFileName
+      {
         Fill the buffer with contents from the named file
       }
       Procedure LoadFromFileName(Const sFilename : String);
 
-      {@member SaveToFileName
+      {
         Save the buffer contents to the named file
       }
       Procedure SaveToFileName(Const sFilename : String);
 
-      {!script hide}
       Function Equal(oBuffer : TFslBuffer) : Boolean;
       Procedure Copy(oBuffer : TFslBuffer);
       Procedure CopyRange(oBuffer : TFslBuffer; Const iIndex, iLength : Integer);
@@ -290,28 +285,13 @@ type
       Property Data : Pointer Read FData Write SetData;
       Property Capacity : Integer Read FCapacity Write SetCapacity;
       Property Owned : Boolean Read FOwned Write SetOwned;
-{$IFNDEF UT}
-      Property AsText : AnsiString Read GetAsText Write SetAsText;
-{$ENDIF}
-      {$IFNDEF VER130}
-      Property AsUnicode : String Read GetAsUnicode Write SetAsUnicode;
+      Property AsText : String Read GetAsUnicode Write SetAsUnicode;
       Property Encoding : TEncoding read FEncoding write FEncoding;
-      {$ENDIF}
       Property AsBytes : TBytes read GetAsBytes write SetAsBytes;
-      {!script show}
-  Published
-
-      {@member Size
-        The number of bytes in the buffer
-      }
-      Property Size : Integer Read FCapacity Write SetCapacity;
-
-      {@member AsAscii
-        The contents of the buffer as a string, one byte per character.
-        The content may include the ascii characters with value < 32,
-        including character 0.
-      }
       Property AsAscii : AnsiString Read GetAsText Write SetAsText;
+      Property Size : Integer Read FCapacity Write SetCapacity;
+      Property Format : String read FFormat write FFormat;
+      property HasFormat : boolean read GetHasFormat;
 
   End;
 
@@ -340,7 +320,7 @@ type
       Procedure SetAsText(Const Value: String);
 
     Protected
-      Function ErrorClass : EAdvExceptionClass; Override;
+      Function ErrorClass : EFslExceptionClass; Override;
 
       Function GetSize : Int64; Override;
       Procedure SetSize(Const Value : Int64); Override;
@@ -360,7 +340,6 @@ type
       Function Link : TFslMemoryStream;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler);
 
       Procedure Read(Var aBuffer; iSize : Cardinal); Override;
       Procedure Write(Const aBuffer; iSize : Cardinal); Override;
@@ -383,7 +362,7 @@ type
       Property AsText : String Read GetAsText Write SetAsText;
   End;
 
-  EAdvMemoryStream = Class(EAdvStream);
+  EFslMemoryStream = Class(EFslStream);
 
   TFslVCLStream = Class(TFslStream)
     Private
@@ -511,9 +490,9 @@ Type
 
       Procedure Clear;
 
-      Procedure Bind(oKey, oValue : TFslPersistent); 
-      Function Get(oKey : TFslPersistent) : TFslPersistent; 
-      Function Exists(oKey : TFslPersistent) : Boolean; 
+      Procedure Bind(oKey, oValue : TFslObject); 
+      Function Get(oKey : TFslObject) : TFslObject; 
+      Function Exists(oKey : TFslObject) : Boolean; 
 
       Property HashTable : TFslStreamFilerReferenceHashTable Read FHashTable;
   End;
@@ -528,145 +507,7 @@ Type
       Function ResolveID(Const oObject : TFslObject) : String; Virtual;
   End;
 
-  TFslStreamFiler = Class(TFslFiler)
-    Private
-      FStream : TFslStream;
-      FReferenceManager : TFslStreamFilerReferenceManager;
-      FResourceManager : TFslStreamFilerResourceManager;
-      FReferential : Boolean;
-      FPermitExternalStreamManipulation : Boolean;
-
-    {$IFOPT C+}
-      Function GetResourceManager: TFslStreamFilerResourceManager;
-    {$ENDIF}
-      Procedure SetResourceManager(Const Value: TFslStreamFilerResourceManager);
-
-    {$IFOPT C+}
-      Function GetReferenceManager: TFslStreamFilerReferenceManager;
-    {$ENDIF}
-      Procedure SetReferenceManager(Const Value: TFslStreamFilerReferenceManager);
-
-    {$IFOPT C+}
-      Function GetStream: TFslStream;
-    {$ENDIF}
-      Procedure SetStream(oStream : TFslStream);
-
-    Protected
-      Procedure ApplyStream; Virtual;
-
-    Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
-
-      Function Link : TFslStreamFiler;
-
-      Procedure Clear; Virtual; 
-
-      Function HasResourceManager : Boolean;
-      Function HasReferenceManager : Boolean;
-      Function HasStream : Boolean;
-
-      Property Stream : TFslStream Read {$IFOPT C+}GetStream{$ELSE}FStream{$ENDIF} Write SetStream;
-      Property ResourceManager : TFslStreamFilerResourceManager Read {$IFOPT C+}GetResourceManager{$ELSE}FResourceManager{$ENDIF} Write SetResourceManager;
-      Property ReferenceManager : TFslStreamFilerReferenceManager Read {$IFOPT C+}GetReferenceManager{$ELSE}FReferenceManager{$ENDIF} Write SetReferenceManager;
-      Property Referential : Boolean Read FReferential Write FReferential;
-      Property PermitExternalStreamManipulation : Boolean Read FPermitExternalStreamManipulation Write FPermitExternalStreamManipulation;
-  End;
-
-  TFslStreamFilerClass = Class Of TFslStreamFiler;
-
-  TFslObject = FHIR.Support.Objects.TFslObject;
-
-
-Type
-  TFslBinaryFiler = Class(TFslStreamFiler)
-    Private
-//    FReducedClassNames : Boolean;
-//    FReducedClassList : TFslClassList;
-
-    Protected
-      Procedure DefineBlock(Var Value; Count : Integer); Virtual;
-
-    Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
-
-      Function Link : TFslBinaryFiler;
-
-      Procedure Clear; Override;
-
-      Procedure DefineInteger(Var Value : Integer); Override;
-      Procedure DefineInteger(Var Value : Int64); Override;
-      Procedure DefineInteger(Var Value : Cardinal); Override;
-      Procedure DefineInteger(Var Value : Word); Override;
-      Procedure DefineInteger(Var Value : Byte); Override;
-
-      Procedure DefineReal(Var Value : Real); Override;
-      Procedure DefineReal(Var Value : Extended); Override;
-
-      Procedure DefineBoolean(Var Value : Boolean); Override;
-
-      Procedure DefineString(Var Value : TShortString); Overload; Override;
-      Procedure DefineString(Var Value : TLongString); Overload; Override;
-
-      Procedure DefineBinary(Var Buffer; iCount : Integer); Override;
-
-      Procedure DefineEnumerated(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = ''); Override;
-      Procedure DefineSet(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = ''); Override;
-
-      Procedure DefineDateTime(Var Value : TDateTime); Override;
-      Procedure DefineDuration(Var Value : TDuration); Override;
-      Procedure DefineCurrency(Var Value : TCurrency); Override;
-      Procedure DefineColour(Var Value : TColour); Override;
-
-//    Property ReducedClassNames : Boolean Read FReducedClassNames Write FReducedClassNames;
-  End;
-
-  TFslBinaryWriter = Class(TFslBinaryFiler)
-    Private
-      Procedure WriteString(Const sValue : String);
-      Procedure WriteClass(Const sValue : String);
-
-    Protected
-      Procedure DefineBlock(Var Value; Count : Integer); Override;
-
-    Public
-      Procedure DefineValue(Value : TFslTag); Override;
-
-      Procedure DefineClass(Var Value; aClass : TFslObjectClass = Nil); Override;
-      Procedure DefineReference(Var Value; aClass : TFslObjectClass = Nil); Override;
-      Procedure DefineObject(Var Value; aClass : TFslObjectClass = Nil); Override;
-      Procedure DefineResource(Var Value; aClass : TFslObjectClass = Nil); Override;
-      Procedure DefineChar(Var Value : Char); Override;
-      Procedure DefineString(Var Value : TLongString); Override;
-  End;
-
-  TFslBinaryReader = Class(TFslBinaryFiler)
-    Private
-      FCache : TFslTag;
-
-      Function ReadString: String;
-      Function ReadClass: String;
-
-    Protected
-      Procedure DefineBlock(Var Value; Count : Integer); Override;
-
-    Public
-      Procedure Clear; Override;
-
-      Function Peek : TFslTag; Override;
-
-      Procedure DefineValue(Value : TFslTag); Override;
-
-      Procedure DefineClass(Var Value; aClass : TFslObjectClass = Nil); Override;
-      Procedure DefineReference(Var Value; aClass : TFslObjectClass = Nil); Override;
-      Procedure DefineObject(Var Value; aClass : TFslObjectClass = Nil); Override;
-      Procedure DefineResource(Var Value; aClass : TFslObjectClass = Nil); Override;
-      Procedure DefineChar(Var Value : Char); Override;
-      Procedure DefineString(Var Value : TLongString); Override;
-  End;
-
-  TFslBufferList = Class(TFslPersistentList)
+  TFslBufferList = Class(TFslObjectList)
     Private
       Function GetBuffer(iIndex: Integer): TFslBuffer;
 
@@ -687,7 +528,6 @@ Type
       Function Clone : TFslNameBuffer;
 
       Procedure Assign(oObject : TFslObject); Override;
-      Procedure Define(oFiler : TFslFiler); Override;
 
       Property Name : String Read FName Write FName;
   End;
@@ -731,7 +571,7 @@ Type
   TAfsList = Class;
   TAfsEntity = Class;
 
-  EAfs = Class(EAdvException);
+  EAfs = Class(EFslException);
 
   TAfsObject = Class(TFslStringHashEntry)
   Protected
@@ -904,7 +744,7 @@ Type
 
 
 Type
-  TAfsStreamManager = Class(TFslPersistent)
+  TAfsStreamManager = Class(TFslObject)
   Private
     FVolume  : TAfsVolume;
     FMode    : TAfsMode;
@@ -976,9 +816,9 @@ Begin
 End;
 
 
-Function TFslStream.ErrorClass : EAdvExceptionClass;
+Function TFslStream.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EAdvStream;
+  Result := EFslStream;
 End;
 
 
@@ -1359,7 +1199,7 @@ Var
   oAccess : TFslAccessStream;
 Begin
   If Not (Stream Is TFslAccessStream) Then
-    Raise EAdvStream.Create(Self, 'Seek', 'Unable to seek in a non-access stream'); // Error is not available.
+    Raise EFslStream.Create(Self, 'Seek', 'Unable to seek in a non-access stream'); // Error is not available.
 
   oAccess := TFslAccessStream(Stream);
 
@@ -1380,7 +1220,7 @@ Var
   oAccess : TFslAccessStream;
 Begin
   If Not (Stream Is TFslAccessStream) Then
-    Raise EAdvStream.Create(Self, 'SetSize', 'Unable to set the size of a non-access stream'); // Error is not available.
+    Raise EFslStream.Create(Self, 'SetSize', 'Unable to set the size of a non-access stream'); // Error is not available.
 
   oAccess := TFslAccessStream(Stream);
 
@@ -1733,7 +1573,7 @@ Begin
 End;
 
 
-Procedure TFslStreamFilerReferenceManager.Bind(oKey, oValue: TFslPersistent);
+Procedure TFslStreamFilerReferenceManager.Bind(oKey, oValue: TFslObject);
 Var
   oHashEntry : TFslStreamFilerReferenceHashEntry;
 Begin
@@ -1747,7 +1587,7 @@ Begin
 End;
 
 
-Function TFslStreamFilerReferenceManager.Get(oKey : TFslPersistent): TFslPersistent;
+Function TFslStreamFilerReferenceManager.Get(oKey : TFslObject): TFslObject;
 Var
   oHashEntry : TFslStreamFilerReferenceHashEntry;
 Begin
@@ -1756,13 +1596,13 @@ Begin
   oHashEntry := TFslStreamFilerReferenceHashEntry(FHashTable.Get(FLookupHashEntry));
 
   If Assigned(oHashEntry) Then
-    Result := TFslPersistent(oHashEntry.Value)
+    Result := TFslObject(oHashEntry.Value)
   Else
     Result := Nil;
 End;
 
 
-Function TFslStreamFilerReferenceManager.Exists(oKey: TFslPersistent): Boolean;
+Function TFslStreamFilerReferenceManager.Exists(oKey: TFslObject): Boolean;
 Begin
   FLookupHashEntry.Key := Pointer(oKey);
 
@@ -1795,819 +1635,6 @@ Function TFslStreamFilerResourceManager.Link : TFslStreamFilerResourceManager;
 Begin
   Result := TFslStreamFilerResourceManager(Inherited Link);
 End;
-
-
-Constructor TFslStreamFiler.Create;
-Begin
-  Inherited;
-
-  FReferenceManager := TFslStreamFilerReferenceManager.Create;
-  FResourceManager := Nil;
-  FStream := Nil;
-
-  FReferential := True;
-End;
-
-
-Destructor TFslStreamFiler.Destroy;
-Begin
-  FStream.Free;
-  FReferenceManager.Free;
-  FResourceManager.Free;
-
-  Inherited;
-End;
-
-
-Function TFslStreamFiler.Link : TFslStreamFiler;
-Begin
-  Result := TFslStreamFiler(Inherited Link);
-End;
-
-
-{$IFOPT C+}
-Function TFslStreamFiler.GetStream: TFslStream;
-Begin
-  Assert(Invariants('GetStream', FStream, TFslStream, 'FStream'));
-
-  Result := FStream;
-End;
-{$ENDIF}
-
-
-Procedure TFslStreamFiler.SetStream(oStream : TFslStream);
-Begin
-  Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TFslStream, 'oStream'));
-
-  FStream.Free;
-  FStream := oStream;
-
-  ApplyStream;
-  Clear;
-End;
-
-
-Function TFslStreamFiler.HasStream: Boolean;
-Begin
-  Result := Assigned(FStream);
-End;
-
-
-{$IFOPT C+}
-Function TFslStreamFiler.GetResourceManager : TFslStreamFilerResourceManager;
-Begin
-  Assert(Invariants('GetResourceManager', FResourceManager, TFslStreamFilerResourceManager, 'FResourceManager'));
-
-  Result := FResourceManager;
-End;
-{$ENDIF}
-
-
-Procedure TFslStreamFiler.SetResourceManager(Const Value: TFslStreamFilerResourceManager);
-Begin
-  Assert((Not Assigned(Value)) Or Invariants('SetResourceManager', Value, TFslStreamFilerResourceManager, 'Value'));
-
-  FResourceManager.Free;
-  FResourceManager := Value;
-End;
-
-
-Function TFslStreamFiler.HasResourceManager : Boolean;
-Begin
-  Result := Assigned(FResourceManager);
-End;
-
-
-{$IFOPT C+}
-Function TFslStreamFiler.GetReferenceManager : TFslStreamFilerReferenceManager;
-Begin
-  Assert(Invariants('GetReferenceManager', FReferenceManager, TFslStreamFilerReferenceManager, 'FReferenceManager'));
-
-  Result := FReferenceManager;
-End;
-{$ENDIF}
-
-
-Procedure TFslStreamFiler.SetReferenceManager(Const Value: TFslStreamFilerReferenceManager);
-Begin
-  Assert((Not Assigned(Value)) Or Invariants('SetReferenceManager', Value, TFslStreamFilerReferenceManager, 'Value'));
-
-  FReferenceManager.Free;
-  FReferenceManager := Value;
-End;
-
-
-Function TFslStreamFiler.HasReferenceManager : Boolean;
-Begin
-  Result := Assigned(FReferenceManager);
-End;
-
-
-Procedure TFslStreamFiler.ApplyStream;
-Begin
-End;
-
-
-Procedure TFslStreamFiler.Clear;
-Begin
-  If HasReferenceManager Then
-    ReferenceManager.Clear;
-
-  If HasResourceManager Then
-    ResourceManager.Clear;
-End;
-
-
-
-
-Constructor TFslBinaryFiler.Create;
-Begin
-  Inherited;
-
-//FReducedClassList := TFslClassList.Create;
-//FReducedClassList.Sorted;
-End;
-
-
-Destructor TFslBinaryFiler.Destroy;
-Begin
-//FReducedClassList.Free;
-
-  Inherited;
-End;
-
-
-Function TFslBinaryFiler.Link : TFslBinaryFiler;
-Begin
-  Result := TFslBinaryFiler(Inherited Link);
-End;
-
-
-Procedure TFslBinaryFiler.Clear;
-Begin
-  Inherited;
-
-//FReducedClassList.Clear;
-End;
-
-
-Procedure TFslBinaryFiler.DefineBlock(Var Value; Count: Integer);
-Begin
-End;
-
-
-Procedure TFslBinaryFiler.DefineBinary(Var Buffer; iCount : Integer);
-Begin 
-  Inherited;
-
-  DefineBlock(iCount, SizeOf(iCount));
-
-  DefineBlock(Buffer, iCount);
-End;  
-
-
-Procedure TFslBinaryFiler.DefineBoolean(Var Value: Boolean);
-Begin 
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineInteger(Var Value: Integer);
-Begin 
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineInteger(Var Value: Int64);
-Begin 
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineInteger(Var Value: Cardinal);
-Begin
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineInteger(Var Value: Word);
-Begin 
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineInteger(Var Value: Byte);
-Begin 
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End; 
-
-
-Procedure TFslBinaryFiler.DefineReal(Var Value: Real);
-Begin
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineReal(Var Value: Extended);
-Begin 
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineString(Var Value: TShortString);
-Begin 
-  Inherited;
-
-  DefineBlock(Value[0], 1);
-  DefineBlock(Value[1], Ord(Value[0]));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineString(Var Value: TLongString);
-Begin
-  Inherited;
-End;
-
-
-Procedure TFslBinaryFiler.DefineEnumerated(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
-Begin
-  // TODO: remove (Peek = atEnumerated8) as it only required for legacy streams
-
-  If (Length(aNames) <= 256) Or (Peek = atEnumerated8) Then
-  Begin
-    DefineValue(atEnumerated8);
-    DefineBlock(Value, 1);
-
-    Assert(CheckCondition((Byte(Value) <= High(aNames)), 'DefineEnumerated', 'Enumeration defined out of range.'));
-  End
-  Else
-  Begin
-    DefineValue(atEnumerated16);
-    DefineBlock(Value, 2);
-
-    Assert(CheckCondition((Word(Value) <= High(aNames)), 'DefineEnumerated', 'Enumeration defined out of range.'));
-  End;
-End;
-
-
-Procedure TFslBinaryFiler.DefineSet(Var Value; Const aNames : Array Of String; Const sEnumerationName : String = '');
-Begin 
-  Inherited;
-
-  DefineBlock(Value, RealCeiling(Length(aNames) / 8));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineDateTime(Var Value: TDateTime);
-Begin
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineCurrency(Var Value: TCurrency);
-Begin 
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineDuration(Var Value: TDuration);
-Begin 
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;  
-
-
-Procedure TFslBinaryFiler.DefineColour(Var Value: TColour);
-Begin
-  Inherited;
-
-  DefineBlock(Value, SizeOf(Value));
-End;
-
-
-Procedure TFslBinaryWriter.DefineBlock(Var Value; Count: Integer);
-Begin
-  Stream.Write(Value, Count);
-End;
-
-
-Procedure TFslBinaryWriter.DefineValue(Value: TFslTag);
-Begin
-  DefineBlock(Value, SizeOf(Value));
-End;
-
-
-Procedure TFslBinaryWriter.WriteString(const sValue: String);
-Var
-  iLength : Integer;
-{$IFNDEF VER130}
-  Bytes : TBytes;
-{$ENDIF}
-Begin
-  iLength := Length(sValue);
-  DefineBlock(iLength, SizeOf(iLength));
-
-{$IFDEF VER130}
-  DefineBlock(Pointer(sValue)^, iLength);
-{$ELSE}
-  Bytes := SysUtils.TEncoding.ASCII.GetBytes(sValue);
-  DefineBlock(Bytes[0], Length(Bytes));
-{$ENDIF}
-end;
-
-
-Procedure TFslBinaryWriter.WriteClass(const sValue: String);
-Var
-  iLength : Byte;
-{$IFNDEF VER130}
-  Bytes : TBytes;
-{$ENDIF}
-Begin
-  Assert(CheckCondition(Length(sValue) <= 256, 'WriteClass', 'Class must be less than 256 characters.'));
-
-  iLength := Length(sValue);
-  DefineBlock(iLength, SizeOf(iLength));
-
-{$IFDEF VER130}
-  DefineBlock(Pointer(sValue)^, iLength);
-{$ELSE}
-  Bytes := SysUtils.TEncoding.ASCII.GetBytes(sValue);
-  DefineBlock(Bytes[0], Length(Bytes));
-{$ENDIF}
-end;
-
-
-Procedure TFslBinaryWriter.DefineString(Var Value: TLongString);
-Begin
-  Inherited;
-
-  WriteString(Value);
-End;
-
-
-Procedure TFslBinaryWriter.DefineChar(Var Value : Char);
-{$IFNDEF VER130}
-Var
-  Bytes : TBytes;
-{$ENDIF}
-Begin
-  Inherited;
-
-{$IFDEF VER130}
-  DefineBlock(Value, SizeOf(Value));
-{$ELSE}
-  Bytes := SysUtils.TEncoding.ASCII.GetBytes(Value);
-  DefineBlock(Bytes[0], Length(Bytes));
-{$ENDIF}
-End;
-
-
-Procedure TFslBinaryWriter.DefineClass(Var Value; aClass : TFslObjectClass);
-Begin
-  If Assigned(TClass(Value)) Then
-  Begin
-    Assert(Not Assigned(aClass) Or Invariants('DefineClass', TClass(Value), aClass, 'Value'));
-
-    DefineValue(atClass);
-
-    WriteClass(TClass(Value).ClassName);
-  End
-  Else
-  Begin 
-    DefineValue(atNil);
-  End;  
-End;  
-
-
-Procedure TFslBinaryWriter.DefineReference(Var Value; aClass : TFslObjectClass);
-Var
-  oValue : TObject;
-Begin 
-  oValue := TObject(Value);
-
-  If Assigned(oValue) Then
-  Begin 
-    Assert(Assigned(aClass) Or Invariants('DefineReference', oValue, TObject, 'oValue'));
-    Assert(Not Assigned(aClass) Or Invariants('DefineReference', oValue, aClass, 'oValue'));
-
-    DefineValue(atReference);
-    DefineBlock(Value, SizeOf(TObject));
-  End   
-  Else
-  Begin 
-    DefineValue(atNil);
-  End;  
-End;  
-
-
-Procedure TFslBinaryWriter.DefineObject(Var Value; aClass : TFslObjectClass);
-Var
-  oObject : TFslPersistent;
-//aClassType : TClass;
-//iClassTypeIndex : Integer;
-Begin
-  oObject := TFslPersistent(Value);
-
-  If Not Assigned(oObject) Then
-  Begin
-    DefineValue(atNil);
-  End
-  Else If Referential And ReferenceManager.Exists(oObject) Then
-  Begin
-    DefineReference(oObject, aClass);
-  End
-  Else
-  Begin
-    Assert(Assigned(aClass) Or Invariants('DefineObject', oObject, TFslPersistent, 'oObject'));
-    Assert(Not Assigned(aClass) Or Invariants('DefineObject', oObject, aClass, 'oObject'));
-
-    // Write the object tag.
-    DefineValue(atObject);
-
-    // Write the classname
-(*
-    aClassType := oObject.ClassType;
-
-    If FReducedClassNames And FReducedClassList.Find(aClassType, iClassTypeIndex) Then
-    Begin
-      iLength := 0;
-      DefineBlock(iLength, SizeOf(iLength));
-      DefineBlock(aClassType, SizeOf(aClassType));
-    End
-    Else
-    Begin
-*)
-      WriteClass(oObject.ClassName);
-
-(*
-      If FReducedClassNames Then
-        FReducedClassList.Insert(iClassTypeIndex, aClassType);
-    End;
-*)
-    // Write the object reference identifier.
-    DefineBlock(oObject, SizeOf(oObject));
-
-    // Remember that this instance has been filed once.
-    If Referential Then
-      ReferenceManager.Bind(oObject, Nil);
-
-    // DefineBlock the persistent object
-    DefineBegin;
-
-    oObject.Save(Self);
-
-    DefineEnd;
-  End;
-End;
-
-
-Procedure TFslBinaryWriter.DefineResource(Var Value; aClass: TFslObjectClass);
-Var
-  oObject : TFslObject;
-  sResource : String;
-Begin
-  oObject := TFslObject(Value);
-
-  If Not Assigned(oObject) Then
-    DefineValue(atNil)
-  Else
-  Begin
-    Assert(Assigned(aClass) Or Invariants('DefineResource', oObject, TFslObject, 'oObject'));
-    Assert(Not Assigned(aClass) Or Invariants('DefineResource', oObject, aClass, 'oObject'));
-
-    // Write the resource tag.
-    DefineValue(atResource);
-
-    sResource := ResourceManager.ResolveID(oObject);
-
-    Assert(CheckCondition(sResource <> '', 'DefineResource', 'Resource string must be specified.'));
-
-    WriteString(sResource);
-  End;
-End;  
-
-
-Procedure TFslBinaryReader.Clear;
-Begin
-  Inherited;
-
-  FCache := atUnknown;
-End;
-
-
-Procedure TFslBinaryReader.DefineBlock(Var Value; Count: Integer);
-Begin
-  Stream.Read(Value, Count);
-End;
-
-
-Function TFslBinaryReader.Peek : TFslTag;
-Begin 
-  If FCache = atUnknown Then
-    DefineBlock(FCache, SizeOf(FCache)); // Read the tag off the stream
-
-  Result := FCache;
-End;
-
-
-Procedure TFslBinaryReader.DefineValue(Value: TFslTag);
-Begin 
-  If FCache = atUnknown Then
-    DefineBlock(FCache, SizeOf(TFslTag));
-
-  // If read tag doesn't match the supplied type then an exception has occurred
-  If FCache <> Value Then
-    RaiseError('DefineValue', StringFormat('Expected ''%s'' but found ''%s''', [TagToString(Value), TagToString(FCache)]));
-
-  // Cache will be remember for the next call if the above exception is raised.
-  FCache := atUnknown;
-End;  
-
-
-Procedure TFslBinaryReader.DefineClass(Var Value; aClass : TFslObjectClass);
-Var
-  sClass : String;
-Begin
-  Case Peek Of
-    atNil :
-    Begin
-      DefineValue(atNil);
-      TClass(Value) := Nil;
-    End;  
-
-    atClass :
-    Begin
-      DefineValue(atClass);
-
-      sClass := ReadClass;
-
-      TClass(Value) := Factory.Get(sClass);
-
-      Assert(CheckCondition(Assigned(TClass(Value)), 'DefineClass', 'Class not registered ' + sClass));
-
-      Assert(Not Assigned(aClass) Or Invariants('DefineClass', TClass(Value), aClass, 'Value'));
-    End;  
-  Else
-    RaiseError('DefineClass', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atClass), TagToString(atNil), TagToString(Peek)]));
-  End;
-End;  
-
-
-Procedure TFslBinaryReader.DefineReference(Var Value; aClass : TFslObjectClass);
-Var
-  pObject : ^TObject;
-  oReference : TFslPersistent;
-  oObject : TFslPersistent;
-Begin 
-  pObject := @TObject(Value);
-
-  Case Peek Of
-    atNil :
-    Begin
-      DefineValue(atNil);
-
-      pObject^.Free;
-      pObject^ := Nil;
-    End;  
-
-    atReference :
-    Begin
-      DefineValue(atReference);
-      DefineBlock(oReference, SizeOf(oReference));
-
-      oObject := ReferenceManager.Get(oReference);
-      If Not Assigned(oObject) Then
-        RaiseError('DefineReference', 'Reference does not have an associated object.');
-
-      pObject^.Free;
-      pObject^ := oObject;
-    End;   
-  Else
-    RaiseError('DefineReference', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atReference), TagToString(atNil), TagToString(Peek)]));
-  End;  
-End;  
-
-
-Procedure TFslBinaryReader.DefineObject(Var Value; aClass : TFslObjectClass);
-Var
-  sClass  : String;
-  pObject : ^TFslPersistent;
-  oReference : TFslPersistent;
-{$IFOPT C+}
-  aRequiredClass : TFslObjectClass;
-{$ENDIF}
-Begin
-{$IFOPT C+}
-  If aClass = Nil Then
-    aRequiredClass := TFslPersistent
-  Else
-    aRequiredClass := aClass;
-{$ENDIF}
-
-  // Pointer to the variable parameter, this is done so we can change its value.
-  pObject := @TFslPersistent(Value);
-
-  // Read the type off the stream
-  Case Peek Of
-    atNil :
-    Begin
-      DefineValue(atNil);
-
-      pObject^.Free;
-      pObject^ := Nil;
-    End;
-
-    atObject :
-    Begin
-      DefineValue(atObject);
-
-      // Read the class name.
-      sClass := ReadClass;
-
-      If Not Assigned(pObject^) Then
-      Begin
-        pObject^ := TFslPersistent(Factory.Make(sClass));
-      End
-      Else
-      Begin
-      {$IFOPT C+}
-        Assert(Invariants('DefineObject', pObject^, aRequiredClass, 'pObject^'));
-      {$ENDIF}
-
-        If Not Factory.IsEquivalentClass(pObject^.ClassType, sClass) Then
-          RaiseError('DefineObject', StringFormat('Expected object ''%s'' but found object ''%s''', [pObject^.ClassName, sClass]));
-      End;
-
-      // Read the objects old reference and match to the new reference.
-      DefineBlock(oReference, SizeOf(oReference));
-
-      If Referential Then
-      Begin
-        ReferenceManager.Bind(oReference, pObject^);
-      {$IFOPT C+}
-        Assert(Invariants('DefineObject', pObject^, aRequiredClass, 'pObject^'));
-      {$ENDIF}
-      End;
-
-      // Load the object's properties
-      DefineBegin;
-
-      pObject^.Load(Self);
-
-      DefineEnd;
-    End;
-
-    atReference :
-    Begin
-      If Not Referential Then
-        RaiseError('DefineObject', 'Can only load from references if the filer is in referential mode.');
-
-      DefineValue(atReference);
-      DefineBlock(oReference, SizeOf(oReference));
-
-      pObject^.Free;
-      pObject^ := TFslPersistent(TFslObject(ReferenceManager.Get(oReference)).Link);
-    End; 
-  Else
-    RaiseError('DefineObject', StringFormat('Expected ''%s'', ''%s'' or ''%s'' but found ''%s''', [TagToString(atObject), TagToString(atReference), TagToString(atNil), TagToString(Peek)]));
-  End; 
-End;
-
-
-Procedure TFslBinaryReader.DefineResource(Var Value; aClass: TFslObjectClass);
-Var
-  sResource : String;
-  oObject : TFslObject;
-  pObject : ^TFslObject;
-Begin
-  // Pointer to the variable parameter, this is done so we can change its value.
-  pObject := @TFslObject(Value);
-
-  Case Peek Of
-    atNil :
-    Begin
-      DefineValue(atNil);
-
-      pObject^.Free;
-      pObject^ := Nil;
-    End;
-
-    atResource :
-    Begin
-      DefineValue(atResource);
-
-      sResource := ReadString;
-
-      oObject := ResourceManager.ResolveObject(sResource, aClass);
-
-    {$IFOPT C+}
-      If Assigned(oObject) Then
-      Begin
-        If Assigned(aClass) Then
-          Invariants('DefineResource', oObject, aClass, 'oObject')
-        Else
-          Invariants('DefineResource', oObject, TFslObject, 'oObject');
-      End;
-    {$ENDIF}
-
-      pObject^.Free;
-      pObject^ := oObject.Link;
-    End;
-  Else
-    RaiseError('DefineResource', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atResource), TagToString(atNil), TagToString(Peek)]));
-  End;
-End;
-
-
-Function TFslBinaryReader.ReadClass : String;
-Var
-  iLength : Byte;
-{$IFNDEF VER130}
-  aBuffer : TBytes;
-{$ENDIF}
-Begin
-  DefineBlock(iLength, SizeOf(iLength));
-
-{$IFDEF VER130}
-  SetLength(Result, iLength);
-  DefineBlock(Pointer(Result)^, iLength);
-{$ELSE}
-  SetLength(aBuffer, iLength);
-  DefineBlock(aBuffer[0], iLength);
-
-  Result := SysUtils.TEncoding.ASCII.GetString(aBuffer);
-{$ENDIF}
-End;
-
-
-Function TFslBinaryReader.ReadString : String;
-Var
-  iLength : Integer;
-{$IFNDEF VER130}
-  aBuffer : TBytes;
-{$ENDIF}
-Begin
-  DefineBlock(iLength, SizeOf(iLength));
-
-{$IFDEF VER130}
-  SetLength(Result, iLength);
-  DefineBlock(Pointer(Result)^, iLength);
-{$ELSE}
-  SetLength(aBuffer, iLength);
-  DefineBlock(aBuffer[0], iLength);
-
-  Result := SysUtils.TEncoding.ASCII.GetString(aBuffer);
-{$ENDIF}
-End;
-
-
-Procedure TFslBinaryReader.DefineString(Var Value: TLongString);
-Begin
-  Inherited;
-
-  Value := ReadString;
-End;
-
-
-Procedure TFslBinaryReader.DefineChar(Var Value : Char);
-{$IFNDEF VER130}
-Var
-  aBuffer : TBytes;
-{$ENDIF}
-Begin
-  Inherited;
-
-{$IFDEF VER130}
-  DefineBlock(Value, SizeOf(Value));
-{$ELSE}
-  SetLength(aBuffer, 1);
-  DefineBlock(aBuffer[0], Length(aBuffer));
-  Value := SysUtils.TEncoding.ASCII.GetString(aBuffer)[1];
-{$ENDIF}
-End;
-
-
 
 Constructor TFslBuffer.Create;
 Begin 
@@ -2648,40 +1675,6 @@ Begin
 End;
 
 
-Procedure TFslBuffer.Define(oFiler : TFslFiler);
-Begin 
-  Inherited;
-End;
-
-
-Procedure TFslBuffer.Load(oFiler: TFslFiler);
-Var
-  iCapacity : Integer;
-Begin
-
-  Define(oFiler);
-
-  oFiler['Size'].DefineInteger(iCapacity);
-
-  If Not FOwned Then
-  Begin
-    FData := Nil;
-    FOwned := True;
-  End;
-
-  SetCapacity(iCapacity);
-
-  oFiler['Data'].DefineBinary(FData^, iCapacity);
-End;
-
-
-Procedure TFslBuffer.Save(oFiler: TFslFiler);
-Begin
-  Define(oFiler);
-
-  oFiler['Size'].DefineInteger(FCapacity);
-  oFiler['Data'].DefineBinary(FData^, FCapacity);
-End;
 
 
 Procedure TFslBuffer.LoadFromStream(oStream: TFslStream);
@@ -2841,6 +1834,11 @@ begin
   SetString(Result, PChar(chars), Length(chars));
 end;
 
+function TFslBuffer.GetHasFormat: boolean;
+begin
+  result := FFormat <> '';
+end;
+
 procedure TFslBuffer.SetAsUnicode(const Value: String);
 begin
   AsBytes := FEncoding.GetBytes(Value);
@@ -2928,7 +1926,7 @@ End;
 constructor TFslBuffer.Create(sText: String);
 begin
   Create;
-  AsUnicode := stext;
+  AsText := stext;
 end;
 {$ENDIF}
 
@@ -2951,14 +1949,6 @@ Begin
   Inherited;
 
   FName := TFslNameBuffer(oObject).FName;
-End;
-
-
-Procedure TFslNameBuffer.Define(oFiler : TFslFiler);
-Begin
-  Inherited;
-
-  oFiler['Name'].DefineString(FName);
 End;
 
 
@@ -3086,19 +2076,6 @@ Begin
 
   UpdateCurrentPointer;
 End;  
-
-
-Procedure TFslMemoryStream.Define(oFiler: TFslFiler);
-Begin 
-  // Introduced to circumvent the inability of a TFslStream descendent to be persistent.
-
-  oFiler['Buffer'].DefineObject(FBuffer);
-  oFiler['Size'].DefineInteger(FSize);
-  oFiler['Position'].DefineInteger(FPosition);
-
-  UpdateCurrentPointer;
-End;  
-
 
 Procedure TFslMemoryStream.UpdateCurrentPointer;
 Begin 
@@ -3280,9 +2257,9 @@ Begin
 End;  
 
 
-Function TFslMemoryStream.ErrorClass : EAdvExceptionClass;
+Function TFslMemoryStream.ErrorClass : EFslExceptionClass;
 Begin 
-  Result := EAdvMemoryStream;
+  Result := EFslMemoryStream;
 End;  
 
 
@@ -3335,9 +2312,9 @@ begin
   inherited;
 end;
 
-function TFslFile.ErrorClass: EAdvExceptionClass;
+function TFslFile.ErrorClass: EFslExceptionClass;
 begin
-  Result := EAdvFile;
+  Result := EFslFile;
 end;
 
 function TFslFile.GetHandle: THandle;
@@ -3360,7 +2337,7 @@ begin
   result := TFslFile(Inherited Link);
 end;
 
-procedure TFslFile.RaiseError(aException: EAdvExceptionClass; const sMethod, sMessage: String);
+procedure TFslFile.RaiseError(aException: EFslExceptionClass; const sMethod, sMessage: String);
 begin
   Inherited RaiseError(aException, sMethod, StringFormat('%s: ''%s''', [sMessage, FStream.FileName]));
 end;
@@ -4235,4 +3212,5 @@ Begin { Constructor TAfsResourceManager.Create }
 End;  { Constructor TAfsResourceManager.Create }
 
 
-End. // FHIR.Support.Stream //
+End.
+

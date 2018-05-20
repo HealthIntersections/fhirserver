@@ -45,7 +45,7 @@ Type
   TFslObject = Class(TObject)
     Private
       // Reference counted using Interlocked* Windows API functions.
-      FAdvObjectReferenceCount : TFslReferenceCount;
+      FFslObjectReferenceCount : TFslReferenceCount;
 
     Protected
       // Declared here for ease of implementing interfaces.
@@ -65,18 +65,18 @@ Type
       Function Invariants(Const sLocation : String; oObject : TFslObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
       Function Invariants(Const sLocation : String; aReference, aClass : TClass; Const sReference : String) : Boolean; Overload;
 
-      Function CheckCondition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
+      Function CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
       Function CheckCondition(bCorrect : Boolean; Const sMethod, sMessage : String) : Boolean; Overload;
 
       // Override to introduce additional or alternate behaviour.
       Function Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean; Overload; Virtual;
       Function Alterable(Const sMethod : String) : Boolean; Overload; Virtual;
-      Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
+      Procedure RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
       Procedure RaiseError(Const sMethod, sMessage : String); Overload; Virtual;
 
       Class Procedure ClassError(Const sMethod, sMessage : String); Overload;
 
-      Function ErrorClass : EAdvExceptionClass; Overload; Virtual;
+      Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
     Public
       Constructor Create; Overload; Virtual;
@@ -100,18 +100,18 @@ Type
       // Determine if self is a valid reference of the specified class.
       Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
 
-      Property AdvObjectReferenceCount : TFslReferenceCount Read FAdvObjectReferenceCount;
+      Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
   End;
 
-  PAdvObject = ^TFslObject;
+  PFslObject = ^TFslObject;
 
-  EAdvInvariant = Class(EAdvException)
+  EFslInvariant = Class(EFslException)
     Public
       Constructor Create(Const sSender, sMethod, sReason : String); Overload; Override;
   End;
 
-  EAdvExceptionClass = FHIR.Support.Exceptions.EAdvExceptionClass;
-  EAdvException = FHIR.Support.Exceptions.EAdvException;
+  EFslExceptionClass = FHIR.Support.Exceptions.EFslExceptionClass;
+  EFslException = FHIR.Support.Exceptions.EFslException;
 
 
 Implementation
@@ -139,7 +139,7 @@ End;
 Procedure TFslObject.BeforeDestruction;
 Begin 
   // TODO: really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
-  Assert(CheckCondition(FAdvObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
+  Assert(CheckCondition(FFslObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
 
   Inherited;
 End;  
@@ -161,7 +161,7 @@ End;
 
 Procedure TFslObject.FreeReference;
 Begin
-  If (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
+  If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
     Destroy;
 End;
 
@@ -191,7 +191,7 @@ Begin
   Begin 
     Assert(Invariants('Unlink', TFslObject));
 
-    If (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
+    If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
     Begin 
       Destroy;
       Result := Nil;
@@ -208,7 +208,7 @@ Begin
   Begin 
     Assert(Invariants('Link', TFslObject));
 
-    InterlockedIncrement(FAdvObjectReferenceCount);
+    InterlockedIncrement(FFslObjectReferenceCount);
   End;  
 End;  
 
@@ -243,7 +243,7 @@ Begin
   Begin 
     Assert(Invariants('_AddRef', TFslObject));
 
-    Result := InterlockedIncrement(FAdvObjectReferenceCount);
+    Result := InterlockedIncrement(FFslObjectReferenceCount);
   End   
   Else
   Begin 
@@ -258,7 +258,7 @@ Begin
   Begin
     Assert(Invariants('_Release', TFslObject));
 
-    Result := InterlockedDecrement(FAdvObjectReferenceCount);
+    Result := InterlockedDecrement(FFslObjectReferenceCount);
 
     If Result < 0 Then
       Destroy;
@@ -289,13 +289,13 @@ Begin
 End;  
 
 
-Function TFslObject.ErrorClass : EAdvExceptionClass;
+Function TFslObject.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EAdvException;
+  Result := EFslException;
 End;  
 
 
-Procedure TFslObject.RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String);
+Procedure TFslObject.RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String);
 Begin
   Raise aException.Create(Self, sMethod, sMessage);
 End;
@@ -381,7 +381,7 @@ Begin
 End;
 
 
-Function TFslObject.CheckCondition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean;
+Function TFslObject.CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean;
 Begin 
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
@@ -397,7 +397,7 @@ Begin
   // Call this method as you would the Error method to raise an exception.
   // Use this when you are not sure if self is valid as it is a non-virtual method.
 
-  Raise EAdvInvariant.Create(Self, sMethod, sMessage); // Can't use Error method here as it is virtual.
+  Raise EFslInvariant.Create(Self, sMethod, sMessage); // Can't use Error method here as it is virtual.
 
   Result := True;
 End;  
@@ -410,11 +410,11 @@ End;
 
 Class Procedure TFslObject.ClassError(Const sMethod, sMessage: String);
 Begin
-  Raise EAdvException.Create(Nil, sMethod, sMessage);
+  Raise EFslException.Create(Nil, sMethod, sMessage);
 End;
 
 
-Constructor EAdvInvariant.Create(Const sSender, sMethod, sReason : String);
+Constructor EFslInvariant.Create(Const sSender, sMethod, sReason : String);
 Begin
   Inherited;
 
@@ -422,4 +422,5 @@ Begin
 End;  
 
 
-End. // FHIR.Support.Objects //
+End.
+

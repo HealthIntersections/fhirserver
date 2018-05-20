@@ -242,8 +242,7 @@ Type
     Destructor Destroy; Override;
     Function Link : TFHIRRequest; Overload;
 
-    {!Script Hide}
-    Function Compose : String;
+      Function Compose : String;
     procedure LoadParams(s : String); overload;
     procedure LoadParams(form : TIdSoapMimeMessage); overload;
     Function LogSummary : String;
@@ -263,8 +262,7 @@ Type
     property Parameters : TParseMap read FParams;
 
     Property Content : TFslBuffer read FContent;
-    {!Script Show}
-
+  
   published
     {@member url
       The full URL of the original request, if the request was made on a RESTful interface (else empty)
@@ -408,10 +406,8 @@ Type
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
-    {!Script Hide}
-    Function Link : TFHIRResponse; Overload;
-    {!Script Show}
-
+      Function Link : TFHIRResponse; Overload;
+  
     {@member HTTPCode
       The logical outcome of the request. Usual values are
         * 0 - the outcome of the transaction is not yet known
@@ -515,7 +511,7 @@ Type
     Property Origin : String read FOrigin write FOrigin;
   end;
 
-  ERestfulException = class (EAdvException)
+  ERestfulException = class (EFslException)
   Private
     FStatus : word;
   Public
