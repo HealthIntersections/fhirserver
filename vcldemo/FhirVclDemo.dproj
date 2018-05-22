@@ -152,7 +152,6 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Exceptions.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Generics.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Filers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Objects.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Binary.pas"/>
@@ -217,6 +216,7 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Common.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
+        <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

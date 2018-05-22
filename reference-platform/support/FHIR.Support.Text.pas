@@ -100,7 +100,7 @@ Type
     FEncoding: TEncoding;
     FCheckEncoding : boolean;
     FClosed : boolean;
-    function DetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
+    function DoDetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
     function SkipPreamble(Encoding: TEncoding; Buffer: TBytes): Integer;
     procedure FillBuffer(var Encoding: TEncoding);
     function GetEndOfStream: Boolean;
@@ -307,9 +307,11 @@ Type
     procedure line;
   end;
 
+{$IFNDEF FPC}
   TGetCsvValues = reference to Procedure (csv : TCSVWriter);
 
 procedure produceCsv(filename : String; headers : Array of String; values : TGetCsvValues);
+{$ENDIF}
 
 
 type
@@ -344,7 +346,9 @@ Function EncodePercent(Const sValue : String) : String; Overload;
 Function DecodePercent(Const sValue : String) : String; Overload;
 
 function EncodeBase64(const value : TBytes) : AnsiString; overload;
+{$IFNDEF FPC}
 Function DecodeBase64(Const value : AnsiString) : TBytes; Overload;
+{$ENDIF}
 Function DecodeBase64(Const value : String) : TBytes; Overload;
 
 
@@ -1138,7 +1142,7 @@ begin
   end;
 end;
 
-function TFslStreamReader.DetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
+function TFslStreamReader.doDetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
 var
   LEncoding: TEncoding;
 begin
@@ -1178,7 +1182,7 @@ begin
 
   // Check for byte order mark and calc start index for character data
   if FDetectBOM then
-    StartIndex := DetectBOM(Encoding, LBuffer)
+    StartIndex := doDetectBOM(Encoding, LBuffer)
   else if FSkipPreamble then
     StartIndex := SkipPreamble(Encoding, LBuffer)
   else
@@ -1533,6 +1537,7 @@ Begin
   End;
 End;
 
+{$IFNDEF FPC}
 procedure produceCsv(filename : String; headers : Array of String; values : TGetCsvValues);
 var
   csv : TCSVWriter;
@@ -1550,6 +1555,7 @@ begin
     csv.Free;
   end;
 end;
+{$ENDIF}
 
 { TCSVWriter }
 
@@ -1583,12 +1589,12 @@ function FormatTextToHTML(AStr: String): String;
 var
   LIsNewLine: Boolean;
   I: Integer;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   Result := '';
   if Length(AStr) <= 0 then
     exit;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     LIsNewLine := True;
     i := 1;
@@ -1672,9 +1678,9 @@ end;
 function FormatTextToXML(AStr: String; mode : TXmlEncodingMode): String;
 var
   i: Integer;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     i := 1;
     while i <= Length(AStr) do
@@ -1787,7 +1793,7 @@ var
   LInAmp : Boolean;
   LInTag : boolean;
   LInAttr : Boolean;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   LInAmp := false;
   LInTag := false;
@@ -1795,7 +1801,7 @@ begin
   Result := '';
   if Length(AStr) <= 0 then
     exit;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     LIsNewLine := True;
     i := 1;
@@ -1878,12 +1884,12 @@ function FormatXMLToHTMLPLain(AStr : String):String;
 var
   LIsNewLine: Boolean;
   I: Integer;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   Result := '';
   if Length(AStr) <= 0 then
     exit;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     LIsNewLine := True;
     i := 1;
@@ -2676,20 +2682,27 @@ Begin
     Result := [charLower(cSymbol), charUpper(cSymbol)];
 End;
 
-
 function EncodeBase64(const value : TBytes): AnsiString;
 begin
+  {$IFDEF FPC}
+  {$ELSE}
   result := EncdDecd.EncodeBase64(@value[0], length(value));
+  {$ENDIF}
 end;
 
+{$IFNDEF FPC}
 Function DecodeBase64(Const value : AnsiString) : TBytes; Overload;
 begin
   result := EncdDecd.DecodeBase64(value);
 end;
+{$ENDIF}
 
 Function DecodeBase64(Const value : String) : TBytes; Overload;
 begin
+  {$IFDEF FPC}
+  {$ELSE}
   result := EncdDecd.DecodeBase64(AnsiString(value));
+  {$ENDIF}
 end;
 
 End.

@@ -1,5 +1,7 @@
 Unit FHIR.Support.System;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
@@ -33,8 +35,15 @@ Interface
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, {$ELSE} Windows, ShellApi, ShlObj, UIConsts, {$ENDIF}
   SysUtils, Classes, Generics.Collections, MMSystem, Winsock, Registry, MultiMon,
-  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime;
+  FHIR.Support.Fpc, FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime;
 
+
+type
+  {$IFDEF FPC}
+  TUCharArray = SysUtils.TUnicodeCharArray;
+  {$ELSE}
+  TUCharArray = SysUtils.TCharArray;
+  {$ENDIF}
 
 Function SystemTemp : String;
 Function SystemManualTemp : String;
@@ -321,6 +330,9 @@ Type
   TCurrency = Currency;
   TCurrencyCents = Int64;
   TCurrencyDollars = Int64;
+ {$IFDEF FPC}
+ TSystemMemory = Windows.MEMORYSTATUS;
+ {$ELSE}
 {$IFDEF CPUx86}
   TSystemMemory = Record   // Windows.MEMORYSTATUS
     Length : Cardinal;
@@ -334,7 +346,7 @@ Type
   End;
 {$ELSE}
   {$IFDEF CPUx64}
-  TSystemMemoryEx = Record
+  TSystemMemory = Record
     Length : Cardinal;
     MemoryLoad : Cardinal;
     TotalPhysical : UInt64;
@@ -345,6 +357,7 @@ Type
     AvailableVirtual : UInt64;
     AvailableExtendedVirtual : UInt64;
   End;
+  {$ENDIF}
   {$ENDIF}
   {$ENDIF}
 
@@ -405,7 +418,7 @@ Function SystemPageSize : Cardinal;
 Function SystemMemory : TSystemMemory;
 {$ELSE}
   {$IFDEF CPUx64}
-Function SystemMemory : TSystemMemoryEx;
+Function SystemMemory : TSystemMemory;
   {$ENDIF}
 {$ENDIF}
 Function SystemProcessorName : String;
@@ -492,13 +505,8 @@ Begin
 End;
 
 Function FileGetModified(Const sFileName : String) : TDateTime;
-var
-  info : TDateTimeInfoRec;
 begin
-  if FileGetDateTimeInfo(sFilename, info) then
-    result := info.TimeStamp
-  else
-    result := 0;
+  FileAge(sFilename, result, true);
 end;
 
 {$IFDEF MSWINDOWS}
@@ -647,7 +655,7 @@ End;
 
 Function FolderExists(Const sFolder : String) : Boolean;
 Begin
-  result := SysUtils.DirectoryExists(sFolder, false);
+  result := SysUtils.DirectoryExists(sFolder);
 End;
 
 
@@ -674,6 +682,12 @@ begin
 end;
 
 Function FolderDelete(Const sFolder : String) : Boolean;
+{$IFDEF FPC}
+begin
+  Result := DeleteDirectory(sFolder,True);
+  if Result then
+    Result := RemoveDir(sFolder);
+{$ELSE}
 var
   s : string;
 begin
@@ -685,6 +699,7 @@ begin
     if not DeleteFile(s) then
       exit(false);
   SysUtils.RemoveDir(sFolder);
+{$ENDIF}
 end;
 
 Function FileHandleInvalid : TFileHandle;
@@ -1597,7 +1612,7 @@ Begin
 End;
 
 
-Function CentsToCurrency(Const iCents : TCurrencyCents) : TCurrency; Overload;
+Function CentsToCurrency(Const iCents : TCurrencyCents) : TCurrency;
 Begin
   Result := iCents;
   Result := Result / 100;
@@ -1633,7 +1648,7 @@ Begin
 End;
 
 
-Function CurrencyDifference(Const iAmount1, iAmount2 : TCurrency) : TCurrency; Overload;
+Function CurrencyDifference(Const iAmount1, iAmount2 : TCurrency) : TCurrency;
 Begin
   If iAmount1 > iAmount2 Then
     Result := iAmount1 - iAmount2
@@ -1663,13 +1678,13 @@ Begin
 End;
 
 
-Function CurrencyTruncateToCents(Const rAmount : TCurrency):TCurrency; Overload;
+Function CurrencyTruncateToCents(Const rAmount : TCurrency):TCurrency;
 Begin
   Result := Trunc(rAmount * 100) / 100;
 End;
 
 
-Function CurrencyTruncateToDollars(Const rAmount : TCurrency): TCurrency; Overload;
+Function CurrencyTruncateToDollars(Const rAmount : TCurrency): TCurrency;
 Begin
   Result := Trunc(rAmount);
 End;
@@ -1843,9 +1858,28 @@ Begin
 End;
 
 
+function GetLocaleInformation(Flag: integer): string;
+var
+  pcLCA: array[0..20] of char;
+begin
+  if (GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, Flag, pcLCA, 19) <= 0) then
+  begin
+    pcLCA[0] := #0;
+  end;
+  Result := pcLCA;
+end;
+
 Function SystemLanguage : String;
 Begin
+  {$IFDEF FPC}
+  {$IFDEF MSWINDOWS}
+   Result := GetLocaleInformation(LOCALE_SENGLANGUAGE);
+  {$ELSE}
+   Result := SysUtils.GetEnvironmentVariable('LANG');
+  {$ENDIF}
+  {$ELSE}
   Result := Languages.NameFromLocaleID[GetUserDefaultLCID];
+  {$ENDIF}
 End;
 
 
@@ -1861,6 +1895,7 @@ Begin
 End;
 
 
+
 {$IFDEF CPUx86}
 Function SystemMemory : TSystemMemory;
 Begin
@@ -1871,12 +1906,14 @@ Begin
 End;
 {$ELSE}
   {$IFDEF CPUx64}
-Function SystemMemory : TSystemMemoryEx;
+Function SystemMemory : TSystemMemory;
 Begin
   FillChar(Result, SizeOf(Result), 0);
-  Result.Length := SizeOf(Result);
-
+  {$IFDEF FPC}
+  GlobalMemoryStatus(Result);
+  {$ELSE}
   GlobalMemoryStatusEx(TMemoryStatusEx(Result));
+  {$ENDIF}
 End;
   {$ENDIF}
 {$ENDIF}

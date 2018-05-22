@@ -99,7 +99,8 @@ uses
   FHIR.Client.Base in '..\client\FHIR.Client.Base.pas',
   FHIR.Client.SmartUtilities in '..\client\FHIR.Client.SmartUtilities.pas',
   FHIR.Client.Threaded in '..\client\FHIR.Client.Threaded.pas',
-  FHIR.Client.HTTP in '..\client\FHIR.Client.HTTP.pas';
+  FHIR.Client.HTTP in '..\client\FHIR.Client.HTTP.pas',
+  fhir.support.fpc in '..\support\fhir.support.fpc.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

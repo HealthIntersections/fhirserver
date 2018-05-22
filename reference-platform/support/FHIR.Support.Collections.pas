@@ -1,5 +1,7 @@
 Unit FHIR.Support.Collections;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
@@ -2151,7 +2153,7 @@ End;
 
 Procedure TFslLargeIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
-  aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
+  aCompare := CompareByKey;
 End;  
 
 
@@ -2188,14 +2190,14 @@ End;
 
 Function TFslLargeIntegerMatch.IndexByKey(aKey : TFslLargeIntegerMatchKey): Integer;
 Begin 
-  If Not FindByKey(aKey, Result, {$IFDEF FPC}@{$ENDIF}CompareByKey) Then
+  If Not FindByKey(aKey, Result, CompareByKey) Then
     Result := -1;
 End;  
 
 
 Function TFslLargeIntegerMatch.IndexByKeyValue(Const aKey : TFslLargeIntegerMatchKey; Const aValue : TFslLargeIntegerMatchValue) : Integer;
 Begin
-  If Not Find(aKey, aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareByKeyValue) Then
+  If Not Find(aKey, aValue, Result, CompareByKeyValue) Then
     Result := -1;
 End;
 
@@ -2389,19 +2391,19 @@ End;
 
 Procedure TFslLargeIntegerMatch.SortedByKey;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKey);
+  SortedBy(CompareByKey);
 End;
 
 
 Procedure TFslLargeIntegerMatch.SortedByValue;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByValue);
+  SortedBy(CompareByValue);
 End;
 
 
 Procedure TFslLargeIntegerMatch.SortedByKeyValue;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKeyValue);
+  SortedBy(CompareByKeyValue);
 End;
 
 
@@ -2471,7 +2473,7 @@ End;
 
 Function TFslIntegerObjectMatch.CompareByValue(pA, pB: Pointer): Integer;
 Begin
-  Result := IntegerCompare(Integer(PFslIntegerObjectMatchItem(pA)^.Value), Integer(PFslIntegerObjectMatchItem(pB)^.Value));
+  Result := IntegerCompare(Integer(pointer(PFslIntegerObjectMatchItem(pA)^.Value)), Integer(pointer(PFslIntegerObjectMatchItem(pB)^.Value)));
 End;  
 
 
@@ -2854,7 +2856,7 @@ End;
 
 Procedure TFslIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
-  aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
+  aCompare := CompareByKey;
 End;  
 
 
@@ -2890,14 +2892,14 @@ End;
 
 Function TFslIntegerMatch.IndexByKey(aKey : TFslIntegerMatchKey): Integer;
 Begin
-  If Not FindByKey(aKey, Result, {$IFDEF FPC}@{$ENDIF}CompareByKey) Then
+  If Not FindByKey(aKey, Result, CompareByKey) Then
     Result := -1;
 End;  
 
 
 Function TFslIntegerMatch.IndexByKeyValue(Const aKey : TFslIntegerMatchKey; Const aValue : TFslIntegerMatchValue) : Integer;
 Begin
-  If Not Find(aKey, aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareByKeyValue) Then
+  If Not Find(aKey, aValue, Result, CompareByKeyValue) Then
     Result := -1;
 End;
 
@@ -3091,19 +3093,19 @@ End;
 
 Procedure TFslIntegerMatch.SortedByKey;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKey);
+  SortedBy(CompareByKey);
 End;
 
 
 Procedure TFslIntegerMatch.SortedByValue;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByValue);
+  SortedBy(CompareByValue);
 End;
 
 
 Procedure TFslIntegerMatch.SortedByKeyValue;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKeyValue);
+  SortedBy(CompareByKeyValue);
 End;
 
 
@@ -3511,7 +3513,7 @@ End;
 
 Procedure TFslInt64Match.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
-  aCompare := {$IFDEF FPC}@{$ENDIF}CompareByKey;
+  aCompare := CompareByKey;
 End;  
 
 
@@ -3547,14 +3549,14 @@ End;
 
 Function TFslInt64Match.IndexByKey(aKey : TFslInt64MatchKey): Integer;
 Begin 
-  If Not FindByKey(aKey, Result, {$IFDEF FPC}@{$ENDIF}CompareByKey) Then
+  If Not FindByKey(aKey, Result, CompareByKey) Then
     Result := -1;
 End;
 
 
 Function TFslInt64Match.IndexByKeyValue(Const aKey : TFslInt64MatchKey; Const aValue : TFslInt64MatchValue) : Integer;
 Begin
-  If Not Find(aKey, aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareByKeyValue) Then
+  If Not Find(aKey, aValue, Result, CompareByKeyValue) Then
     Result := -1;
 End;
 
@@ -3748,19 +3750,19 @@ End;
 
 Procedure TFslInt64Match.SortedByKey;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKey);
+  SortedBy(CompareByKey);
 End;
 
 
 Procedure TFslInt64Match.SortedByValue;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByValue);
+  SortedBy(CompareByValue);
 End;
 
 
 Procedure TFslInt64Match.SortedByKeyValue;
 Begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByKeyValue);
+  SortedBy(CompareByKeyValue);
 End;
 
 
@@ -5468,7 +5470,7 @@ Function TFslStringList.GetAsCSV : String;
 Var
   oStream : TFslStringStream;
   oFormatter : TFslCSVFormatter;
-  chars: SysUtils.TCharArray;
+  chars: TUCharArray;
 Begin
   oStream := TFslStringStream.Create;
   Try
@@ -5662,8 +5664,8 @@ End;
 
 Procedure TFslStringLargeIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin 
-  aCompare := {$IFDEF FPC}@{$ENDIF}CompareKey;
-  FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareInsensitive;
+  aCompare := CompareKey;
+  FCompareKey := StringCompareInsensitive;
 End;  
 
 
@@ -5680,7 +5682,7 @@ End;
 
 Function TFslStringLargeIntegerMatch.IndexByKey(Const aKey : TFslStringLargeIntegerMatchKey) : Integer;
 Begin 
-  If Not Find(aKey, 0, Result, {$IFDEF FPC}@{$ENDIF}CompareKey) Then
+  If Not Find(aKey, 0, Result, CompareKey) Then
     Result := -1;
 End;  
 
@@ -5693,7 +5695,7 @@ End;
 
 Function TFslStringLargeIntegerMatch.IndexByValue(Const aValue : TFslStringLargeIntegerMatchValue) : Integer;
 Begin 
-  If Not Find('', aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareValue) Then
+  If Not Find('', aValue, Result, CompareValue) Then
     Result := -1;
 End;
 
@@ -5770,7 +5772,7 @@ Function TFslStringLargeIntegerMatch.Force(Const aKey: TFslStringLargeIntegerMat
 Var
   iIndex : Integer;
 Begin
-  If Not Find(aKey, 0, iIndex, {$IFDEF FPC}@{$ENDIF}CompareKey) Then
+  If Not Find(aKey, 0, iIndex, CompareKey) Then
     Insert(iIndex, aKey, Default);
 
   Result := ValueByIndex[iIndex]
@@ -5888,7 +5890,7 @@ Function TFslStringLargeIntegerMatch.GetSensitive : Boolean;
 Var
   aCompare : TFslStringCompareCallback;
 Begin
-  aCompare := {$IFDEF FPC}@{$ENDIF}StringCompareSensitive;
+  aCompare := StringCompareSensitive;
 
   Result := @FCompareKey = @aCompare;
 End;
@@ -5897,9 +5899,9 @@ End;
 Procedure TFslStringLargeIntegerMatch.SetSensitive(Const Value: Boolean);
 Begin
   If Value Then
-    FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareSensitive
+    FCompareKey := StringCompareSensitive
   Else
-    FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareInsensitive;
+    FCompareKey := StringCompareInsensitive;
 End;  
 
 
@@ -5931,25 +5933,25 @@ End;
 
 Function TFslStringLargeIntegerMatch.IsSortedByKey : Boolean;
 Begin
-  Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareKey);
+  Result := IsSortedBy(CompareKey);
 End;  
 
 
 Procedure TFslStringLargeIntegerMatch.SortedByKey;
 Begin 
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareKey);
+  SortedBy(CompareKey);
 End;  
 
 
 Function TFslStringLargeIntegerMatch.IsSortedByValue : Boolean;
 Begin 
-  Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareValue);
+  Result := IsSortedBy(CompareValue);
 End;  
 
 
 Procedure TFslStringLargeIntegerMatch.SortedByValue;
 Begin 
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareValue);
+  SortedBy(CompareValue);
 End;
 
 
@@ -6038,8 +6040,8 @@ End;
 
 Procedure TFslStringIntegerMatch.DefaultCompare(Out aCompare: TFslItemListCompare);
 Begin
-  aCompare := {$IFDEF FPC}@{$ENDIF}CompareKey;
-  FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareInsensitive;
+  aCompare := CompareKey;
+  FCompareKey := StringCompareInsensitive;
 End;  
 
 
@@ -6056,7 +6058,7 @@ End;
 
 Function TFslStringIntegerMatch.IndexByKey(Const aKey : TFslStringIntegerMatchKey) : Integer;
 Begin 
-  If Not Find(aKey, 0, Result, {$IFDEF FPC}@{$ENDIF}CompareKey) Then
+  If Not Find(aKey, 0, Result, CompareKey) Then
     Result := -1;
 End;  
 
@@ -6069,7 +6071,7 @@ End;
 
 Function TFslStringIntegerMatch.IndexByValue(Const aValue : TFslStringIntegerMatchValue) : Integer;
 Begin 
-  If Not Find('', aValue, Result, {$IFDEF FPC}@{$ENDIF}CompareValue) Then
+  If Not Find('', aValue, Result, CompareValue) Then
     Result := -1;
 End;  
 
@@ -6146,7 +6148,7 @@ Function TFslStringIntegerMatch.ForceByKey(Const aKey: TFslStringIntegerMatchKey
 Var
   iIndex : Integer;
 Begin
-  If Not Find(aKey, 0, iIndex, {$IFDEF FPC}@{$ENDIF}CompareKey) Then
+  If Not Find(aKey, 0, iIndex, CompareKey) Then
     Insert(iIndex, aKey, DefaultValue);
 
   Result := ValueByIndex[iIndex]
@@ -6264,7 +6266,7 @@ Function TFslStringIntegerMatch.GetSensitive : Boolean;
 Var
   aCompare : TFslStringCompareCallback;
 Begin 
-  aCompare := {$IFDEF FPC}@{$ENDIF}StringCompareSensitive;
+  aCompare := StringCompareSensitive;
 
   Result := @FCompareKey = @aCompare;
 End;
@@ -6273,9 +6275,9 @@ End;
 Procedure TFslStringIntegerMatch.SetSensitive(Const Value: Boolean);
 Begin
   If Value Then
-    FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareSensitive
+    FCompareKey := StringCompareSensitive
   Else
-    FCompareKey := {$IFDEF FPC}@{$ENDIF}StringCompareInsensitive;
+    FCompareKey := StringCompareInsensitive;
 End;  
 
 
@@ -6307,25 +6309,25 @@ End;
 
 Function TFslStringIntegerMatch.IsSortedByKey : Boolean;
 Begin 
-  Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareKey);
+  Result := IsSortedBy(CompareKey);
 End;  
 
 
 Procedure TFslStringIntegerMatch.SortedByKey;
 Begin 
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareKey);
+  SortedBy(CompareKey);
 End;  
 
 
 Function TFslStringIntegerMatch.IsSortedByValue : Boolean;
 Begin 
-  Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareValue);
+  Result := IsSortedBy(CompareValue);
 End;  
 
 
 Procedure TFslStringIntegerMatch.SortedByValue;
 Begin 
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareValue);
+  SortedBy(CompareValue);
 End;  
 
 
@@ -7460,11 +7462,7 @@ function TFslObjectList.IndexByClass(oValue: TFslObject): integer;
 begin
   Assert(ValidateItem('IndexByClass', oValue, 'oValue'));
 
-  Result := IndexBy(oValue,
-{$IFDEF FPC}
-    @
-{$ENDIF}
-    CompareByClass);
+  Result := IndexBy(oValue, CompareByClass);
 end;
 
 
@@ -7484,11 +7482,7 @@ function TFslObjectList.IndexByReference(oValue: TFslObject): integer;
 begin
   Assert(ValidateItem('IndexByReference', oValue, 'oValue'));
 
-  Result := IndexBy(oValue,
-{$IFDEF FPC}
-    @
-{$ENDIF}
-    CompareByReference);
+  Result := IndexBy(oValue,CompareByReference);
 end;
 
 
@@ -7554,11 +7548,7 @@ end;
 
 procedure TFslObjectList.DeleteByReference(oValue: TFslObject);
 begin
-  DeleteBy(oValue,
-{$IFDEF FPC}
-    @
-{$ENDIF}
-    CompareByReference);
+  DeleteBy(oValue, CompareByReference);
 end;
 
 
@@ -7760,49 +7750,49 @@ end;
 
 procedure TFslObjectList.SortedByClass;
 begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByClass);
+  SortedBy(CompareByClass);
 end;
 
 
 procedure TFslObjectList.OrderedByClass;
 begin
-  OrderedBy({$IFDEF FPC}@{$ENDIF}CompareByClass);
+  OrderedBy(CompareByClass);
 end;
 
 
 function TFslObjectList.IsSortedByClass: boolean;
 begin
-  Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareByClass);
+  Result := IsSortedBy(CompareByClass);
 end;
 
 
 function TFslObjectList.IsOrderedByClass: boolean;
 begin
-  Result := IsOrderedBy({$IFDEF FPC}@{$ENDIF}CompareByClass);
+  Result := IsOrderedBy(CompareByClass);
 end;
 
 
 procedure TFslObjectList.SortedByReference;
 begin
-  SortedBy({$IFDEF FPC}@{$ENDIF}CompareByReference);
+  SortedBy(CompareByReference);
 end;
 
 
 procedure TFslObjectList.OrderedByReference;
 begin
-  OrderedBy({$IFDEF FPC}@{$ENDIF}CompareByReference);
+  OrderedBy(CompareByReference);
 end;
 
 
 function TFslObjectList.IsSortedByReference: boolean;
 begin
-  Result := IsSortedBy({$IFDEF FPC}@{$ENDIF}CompareByReference);
+  Result := IsSortedBy(CompareByReference);
 end;
 
 
 function TFslObjectList.IsOrderedByReference: boolean;
 begin
-  Result := IsOrderedBy({$IFDEF FPC}@{$ENDIF}CompareByReference);
+  Result := IsOrderedBy(CompareByReference);
 end;
 
 
@@ -8316,7 +8306,7 @@ End;
 
 Procedure TFslItemList.DefaultCompare(Out aCompare : TFslItemListCompare);
 Begin
-  aCompare := {$IFDEF FPC}@{$ENDIF}CompareItem;
+  aCompare := CompareItem;
 End;
 
 

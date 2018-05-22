@@ -164,7 +164,8 @@ uses
   PackageManagerFrame in 'PackageManagerFrame.pas' {PackageManagerFrame: TFrame},
   FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
   FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas',
-  PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm};
+  PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm},
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
 
 {$R *.res}
 

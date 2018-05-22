@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
 
 interface
 
@@ -78,7 +79,9 @@ Type
     function GetEmpty: boolean;
   type
     arrayofT = array of T;
+    {$IFNDEF FPC}
     TFslListRemoveFunction =  reference to function(item : T):boolean;
+    {$ENDIF}
   var
     FItems: arrayofT;
     FCount: Integer;
@@ -102,9 +105,11 @@ Type
     procedure Notify(const Item: T; Action: TCollectionNotification); virtual;
   public
   type
+    {$IFNDEF FPC}
     TDirection = System.Types.TDirection;
     TEmptyFunc = reference to function (const L, R: T): Boolean;
     TListCompareFunc = reference to function (const L, R: T): Integer;
+    {$ENDIF}
 
     constructor Create; Overload; Override;
     constructor Create(const AComparer: IComparer<T>); overload;
@@ -136,7 +141,9 @@ Type
 
     function Remove(const Value: T): Integer;
     procedure RemoveAll(list : TFslList<T>); overload;
+    {$IFNDEF FPC}
     procedure RemoveAll(filter : TFslListRemoveFunction); overload;
+    {$ENDIF}
     function RemoveItem(const Value: T; Direction: TDirection): Integer;
     procedure Delete(Index: Integer);
     procedure DeleteRange(AIndex, ACount: Integer);

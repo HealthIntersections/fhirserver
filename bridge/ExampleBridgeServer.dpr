@@ -193,7 +193,8 @@ uses
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
-  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
 
 var
   gsrv : TExampleFhirServer;

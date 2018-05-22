@@ -42,11 +42,7 @@ procedure recordStack(e : Exception);
 function ExceptionStack(e : Exception) : String;
 
 Type
-{$IFDEF CLR}
-  Exception = System.Exception;
-{$ELSE}
   Exception = SysUtils.Exception;
-{$ENDIF}
   ExceptionClass = Class Of Exception;
 
   EFslException = Class(Exception)
@@ -138,8 +134,8 @@ uses
 
 Function ExceptObject : Exception;
 Begin
-{$IFDEF VER130}
-  Result := Exception(SysUtils.ExceptObject);
+{$IFDEF FPC}
+  Result := Exception(sysutils.ExceptObject);
 {$ELSE}
   Result := Exception(System.ExceptObject);
 {$ENDIF}
@@ -210,7 +206,11 @@ Begin
   Else
     Raise EFslAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $%x in object $%x.', [pAddress^, Integer(oObject)]));
   {$ELSE}
+  {$IFDEF FPC}
+  Raise EFslAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $?? in object $%x.', [Pointer(oObject)]));
+  {$ELSE}
   Raise EFslAbstract.Create('FHIR.Support.Exceptions', 'AbstractHandler', StringFormat('Attempted call onto an abstract method $?? in object $%x.', [Integer(oObject)]));
+  {$ENDIF}
   {$ENDIF}
 End;
 
@@ -252,7 +252,9 @@ procedure recordStack(e : Exception);
 begin
   if (e <> gException) then
   begin
+    {$IFNDEF FPC}
     gExceptionStack := e.StackTrace;
+    {$ENDIF}
     gException := e;
   end;
 end;
@@ -262,12 +264,18 @@ begin
   if (e = gException) then
     result := gExceptionStack
   else
+  begin
+    {$IFNDEF FPC}
     result := e.StackTrace;
+    {$ENDIF}
+  end;
   gException := nil;
 end;
 
 Initialization
+{$IFNDEF FPC}
   System.AbstractErrorProc := @AbstractHandler;
+{$ENDIF}
 //System.AssertErrorProc := @AssertionHandler;
 End.
 

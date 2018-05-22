@@ -133,7 +133,6 @@
         <DCCReference Include="..\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Exceptions.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\support\FHIR.Support.Filers.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Text.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Generics.pas"/>
@@ -175,6 +174,7 @@
         <DCCReference Include="..\client\FHIR.Client.SmartUtilities.pas"/>
         <DCCReference Include="..\client\FHIR.Client.Threaded.pas"/>
         <DCCReference Include="..\client\FHIR.Client.HTTP.pas"/>
+        <DCCReference Include="..\support\fhir.support.fpc.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <None Include="..\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Debug">

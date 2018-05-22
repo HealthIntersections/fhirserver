@@ -1,5 +1,7 @@
 Unit FHIR.Support.Stream;
 
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
@@ -32,7 +34,7 @@ Interface
 
 
 Uses
-  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, ActiveX, {$ENDIF}
+  {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, ActiveX, FHIR.Support.Fpc, {$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Exceptions, FHIR.Support.System;
 
@@ -404,11 +406,11 @@ type
   End;
 
   // dealing with changes to the Stream Interface:
-  {$IFDEF VER260}
-  TStreamDWord = longint;
-  TStreamFixedUInt = longint;
-  PStreamFixedUInt = plongint;
-  TStreamLargeUInt = largeint;
+  {$IFDEF FPC} // VER260 ?
+  TStreamDWord = Longint;
+  TStreamFixedUInt = LongWord;
+  PStreamFixedUInt = PDWord;
+  TStreamLargeUInt = QWord;
   {$ELSE}
   TStreamDWord = DWord; // or longint
   TStreamFixedUInt = FixedUInt;  // or longint
@@ -419,7 +421,7 @@ type
   {$IFDEF MSWINDOWS}
   TFslStreamAdapterI = Class(TStreamAdapter)
     Public
-      Function Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; Override; Stdcall;
+      Function Stat(Out statstg: TStatStg; grfStatFlag: {$IFDEF FPC}longint{$ELSE}TStreamDWord{$ENDIF}): HResult; Override; Stdcall;
   End;
 
   TFslIStreamAdapter = Class(TFslObject, IStream)
@@ -433,7 +435,7 @@ type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      function Seek(dlibMove: Largeint; dwOrigin: TStreamDWord; out libNewPosition: TStreamLargeUInt): HResult; stdcall;
+      function Seek(dlibMove: {$IFDEF FPC}TStreamLargeUInt{$ELSE}Largeint{$ENDIF}; dwOrigin: TStreamDWord; out libNewPosition: TStreamLargeUInt): HResult; stdcall;
       function SetSize(libNewSize: TStreamLargeUInt): HResult; stdcall;
       function CopyTo(stm: IStream; cb: TStreamLargeUInt; out cbRead: TStreamLargeUInt; out cbWritten: TStreamLargeUInt): HResult; stdcall;
       function Commit(grfCommitFlags: TStreamDWord): HResult; stdcall;
@@ -1248,7 +1250,7 @@ Begin
 End;
 
 {$IFDEF MSWINDOWS}
-Function TFslStreamAdapterI.Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult;
+Function TFslStreamAdapterI.Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; stdcall;
 Begin
   // TStreamAdapter.stat does not clear the STATSTG structure.
   // http://qc.embarcadero.com/wc/qcmain.aspx?d=45528
@@ -1273,7 +1275,7 @@ Begin
 End;
 
 
-Function TFslIStreamAdapter.Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult;
+Function TFslIStreamAdapter.Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult; stdcall;
 
 Var
   iReadable : TStreamFixedUInt;
@@ -1300,7 +1302,7 @@ Begin
   End;
 End;
 
-Function TFslIStreamAdapter.Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult;
+Function TFslIStreamAdapter.Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult; stdcall;
 Begin
   Try
     If pv = Nil Then
@@ -1321,7 +1323,7 @@ Begin
 End;
 
 
-Function TFslIStreamAdapter.Seek(dlibMove: Largeint; dwOrigin: TStreamDWORD; out libNewPosition: TStreamLargeUInt): HResult;
+Function TFslIStreamAdapter.Seek(dlibMove: {$IFDEF FPC}TStreamLargeUInt{$ELSE}Largeint{$ENDIF}; dwOrigin: TStreamDWORD; out libNewPosition: TStreamLargeUInt): HResult; stdcall;
 Var
   iNewPos: Integer;
 Begin
@@ -1352,13 +1354,13 @@ Begin
 End;
 
 
-Function TFslIStreamAdapter.Revert: HResult;
+Function TFslIStreamAdapter.Revert: HResult; stdcall;
 Begin
   Result := STG_E_REVERTED;
 End;
 
 
-Function TFslIStreamAdapter.SetSize(libNewSize: TStreamLargeUInt): HResult;
+Function TFslIStreamAdapter.SetSize(libNewSize: TStreamLargeUInt): HResult; stdcall;
 Begin
   Try
     Stream.Size := LongInt(libNewSize);
@@ -1373,7 +1375,7 @@ Begin
 End;
 
 
-Function TFslIStreamAdapter.Stat(out statstg: TStatStg; grfStatFlag: TStreamDWORD): HResult;
+Function TFslIStreamAdapter.Stat(out statstg: TStatStg; grfStatFlag: TStreamDWORD): HResult; stdcall;
 Begin
   Result := S_OK;
   Try
@@ -1391,25 +1393,25 @@ Begin
 End;
 
 
-Function TFslIStreamAdapter.UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult;
+Function TFslIStreamAdapter.UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult; stdcall;
 Begin
   Result := STG_E_INVALIDFUNCTION;
 End;
 
 
-Function TFslIStreamAdapter.Clone(Out stm: IStream): HResult;
+Function TFslIStreamAdapter.Clone(Out stm: IStream): HResult; stdcall;
 Begin
   Result := E_NOTIMPL;
 End;
 
 
-Function TFslIStreamAdapter.Commit(grfCommitFlags: TStreamDWORD): HResult;
+Function TFslIStreamAdapter.Commit(grfCommitFlags: TStreamDWORD): HResult; stdcall;
 Begin
   Result := S_OK;
 End;
 
 
-Function TFslIStreamAdapter.CopyTo(stm: IStream; cb: TStreamLargeUInt; out cbRead: TStreamLargeUInt; out cbWritten: TStreamLargeUInt): HResult;
+Function TFslIStreamAdapter.CopyTo(stm: IStream; cb: TStreamLargeUInt; out cbRead: TStreamLargeUInt; out cbWritten: TStreamLargeUInt): HResult; stdcall;
 Const
   MaxBufSize = 1024 * 1024;  // 1mb
 Var
@@ -1477,7 +1479,7 @@ Begin
 End;
 
 
-Function TFslIStreamAdapter.LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult;
+Function TFslIStreamAdapter.LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult; stdcall;
 Begin
   Result := STG_E_INVALIDFUNCTION;
 End;
@@ -1828,7 +1830,7 @@ End;
 
 function TFslBuffer.GetAsUnicode: String;
 var
-  chars: SysUtils.TCharArray;
+  chars: TUCharArray;
 begin
   chars := FEncoding.GetChars(AsBytes);
   SetString(Result, PChar(chars), Length(chars));

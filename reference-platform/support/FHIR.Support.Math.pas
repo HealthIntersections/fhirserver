@@ -43,8 +43,10 @@ Function IntegerCompare(Const iA, iB : Int64) : Integer; Overload;
 Function IntegerCompare(Const iA, iB, iThreshold : Int64) : Integer; Overload;
 Function BooleanCompare(Const bA, bB : Boolean) : Integer; Overload;
 Function RealCompare(Const rA, rB : Extended) : Integer; Overload;
+{$IFNDEF FPC}
 Function RealCompare(Const rA, rB : Real) : Integer; Overload;
 Function RealCompare(Const rA, rB, rThreshold : Real) : Integer; Overload;
+{$ENDIF}
 
 Function IntegerEquals(Const iA, iB : Byte) : Boolean; Overload;
 Function IntegerEquals(Const iA, iB : Word) : Boolean; Overload;

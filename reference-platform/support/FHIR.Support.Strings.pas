@@ -1,5 +1,7 @@
 Unit FHIR.Support.Strings;
 
+{$IFDEF FPC}{$mode Delphi}{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
@@ -32,7 +34,7 @@ Interface
 
 
 Uses
-  SysUtils, Classes, Character, SysConst, TypInfo, RegularExpressions,
+  SysUtils, Classes, Character, SysConst, TypInfo, FHIR.Support.Fpc, RegularExpressions,
   FHIR.Support.Math,
   FHIR.Support.Objects;
 
@@ -47,9 +49,7 @@ Type
   TShortString = String[255];
   PShortString = ^TShortString;
 
-{$IFDEF VER130}
-  TBytes = Array Of Byte;
-{$ENDIF}
+
   
 
 Const
@@ -333,8 +333,8 @@ Type
       FLength : Integer;
       FBufferSize : integer;
 
-      Procedure Append(Const oStream : TFslStream; iBytes : Integer); Overload;
-      Procedure Insert(Const oStream : TFslStream; iBytes : Integer; iIndex : Integer); Overload;
+      Procedure Append(Const bytes : TBytes); Overload;
+      Procedure Insert(Const bytes : TBytes; iBytes : Integer; iIndex : Integer); Overload;
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
@@ -1452,12 +1452,12 @@ end;
 function SQLWrapStrings(const AStr: String): String;
 var
   sl : TArray<String>;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
   first : boolean;
 begin
   sl := aStr.Split([',']);
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for s in sl do
@@ -1550,7 +1550,7 @@ end;
 
 function charLower(ch : char) : char;
 begin
-  result := lowercase(ch)[1];
+  result := lowercase(ch){$IFNDEF FPC}[1]{$ENDIF};
 end;
 
 function charLower(s : string) : char;
@@ -1604,7 +1604,7 @@ Begin
         If bStartWord Then
           Result[i] := UpCase(Result[i])
         Else
-          Result[i] := LowerCase(Result[i])[1];
+          Result[i] := LowerCase(Result[i]){$IFNDEF FPC}[1]{$ENDIF};
       End
       Else
         i := i + iSkip;
@@ -1916,12 +1916,12 @@ end;
 
 function jsonEscape(s : String; isString : boolean) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   c : char;
 begin
   if s = '' then
     exit('');
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for c in s do
     begin
@@ -1977,8 +1977,10 @@ Begin
     result := false
   else
   begin
+    {$IFNDEF FPC}
     regex := TRegEx.Create(OID_REGEX, [roCompiled]);
     result := regex.IsMatch(oid);
+    {$ENDIF}
   end;
 End;
 
@@ -2348,9 +2350,6 @@ end;
 
 {$IFDEF NO_BUILDER}
 
-Const
-  BUFFER_INCREMENT_SIZE = 1024;
-
 
 Constructor TFslStringBuilder.Create;
 Begin
@@ -2535,9 +2534,10 @@ Begin
 End;
 
 
-Procedure TFslStringBuilder.Append(Const oStream : TFslStream; iBytes : Integer);
+Procedure TFslStringBuilder.Append(Const bytes : TBytes);
 Begin
-  If (iBytes > 0) Then
+{$IFNDEF FPC}
+If (System.length(bytes) > 0) Then
   Begin
     If FLength + iBytes > System.Length(FContent) Then
       SetLength(FContent, System.Length(FContent) + Integermax(FBufferSize, iBytes));
@@ -2546,11 +2546,13 @@ Begin
 
     Inc(FLength, iBytes);
   End;
+{$ENDIF}
 End;
 
 
-Procedure TFslStringBuilder.Insert(Const oStream : TFslStream; iBytes : Integer; iIndex : Integer);
+Procedure TFslStringBuilder.Insert(Const bytes : TBytes; iBytes : Integer; iIndex : Integer);
 Begin
+  {$IFNDEF FPC}
   If (iBytes > 0) Then
   Begin
     If FLength + iBytes > System.Length(FContent) Then
@@ -2563,6 +2565,7 @@ Begin
 
     Inc(FLength, iBytes);
   End;
+  {$ENDIF}
 End;
 
 
@@ -2634,9 +2637,9 @@ end;
 procedure TFslStringBuilder.Overwrite(index: integer; content: String);
 begin
   if index < 1 Then
-    Error('Overwrite', 'index < 1');
+    RaiseError('Overwrite', 'index < 1');
   if index + System.length(Content) > FLength Then
-    Error('Overwrite', 'index > length');
+    RaiseError('Overwrite', 'index > length');
   if content <> '' Then
     Move(Content[1], FContent[index], System.length(Content));
 end;
@@ -2644,9 +2647,9 @@ end;
 procedure TFslStringBuilder.Read(index: integer; var buffer; ilength: integer);
 begin
   if index < 1 Then
-    Error('Read', 'index < 1');
+    RaiseError('Read', 'index < 1');
   if index + length > FLength Then
-    Error('Read', 'index > length');
+    RaiseError('Read', 'index > length');
   Move(FContent[index], buffer, length);
 end;
 

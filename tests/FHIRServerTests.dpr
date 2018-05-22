@@ -283,7 +283,8 @@ uses
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
   FHIR.Java.Wrapper in '..\Libraries\java\FHIR.Java.Wrapper.pas',
   FHIR.Java.Strings in '..\Libraries\java\FHIR.Java.Strings.pas',
-  FHIR.Java.JNI in '..\Libraries\java\FHIR.Java.JNI.pas';
+  FHIR.Java.JNI in '..\Libraries\java\FHIR.Java.JNI.pas',
+  FHIR.Support.Fpc in '..\reference-platform\support\FHIR.Support.Fpc.pas';
 
 var
   runner : ITestRunner;

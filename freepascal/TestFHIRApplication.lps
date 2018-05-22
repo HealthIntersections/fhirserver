@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="10"/>
+    <BuildModes Active="Default"/>
+    <Units Count="36">
+      <Unit0>
+        <Filename Value="TestFHIRApplication.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="63" Y="10"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Objects.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="250"/>
+        <CursorPos X="76" Y="273"/>
+        <UsageCount Value="24"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\reference-platform\support\fhir.support.fpc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FHIR.Support.Fpc"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="12"/>
+        <CursorPos X="24" Y="28"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="system.timespan.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System.TimeSpan"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="22"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="uiconsts.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UIConsts"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="25" Y="6"/>
+        <UsageCount Value="22"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="generics.collections.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Generics.Collections"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="535"/>
+        <CursorPos X="43" Y="557"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="ioutils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="IOUtils"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="22"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="regularexpressions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="RegularExpressions"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="29" Y="8"/>
+        <UsageCount Value="22"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="encddecd.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="EncdDecd"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="22"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="system.netencoding.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System.NetEncoding"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="68" Y="13"/>
+        <UsageCount Value="22"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\reference-platform\base\FHIR.Base.Objects.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="6"/>
+        <CursorPos X="6"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Strings.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="14"/>
+        <CursorPos X="74" Y="37"/>
+        <UsageCount Value="12"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\reference-platform\support\FHIR.Support.System.pas"/>
+        <CursorPos X="85" Y="10"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\reference-platform\support\FHIR.Support.DateTime.pas"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\rtl\inc\systemh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1100"/>
+        <CursorPos X="11" Y="1123"/>
+        <UsageCount Value="12"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\packages\regexpr\src\regex.pp"/>
+        <UnitName Value="Regex"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="211"/>
+        <CursorPos X="17" Y="239"/>
+        <UsageCount Value="11"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\packages\regexpr\src\regexpr.pas"/>
+        <UnitName Value="RegExpr"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="521"/>
+        <CursorPos X="40" Y="207"/>
+        <UsageCount Value="11"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Exceptions.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="47"/>
+        <CursorPos X="87" Y="68"/>
+        <UsageCount Value="11"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysutilh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="87"/>
+        <CursorPos X="38" Y="109"/>
+        <UsageCount Value="11"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Stream.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="121" Y="29"/>
+        <UsageCount Value="11"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\rtl\objpas\classes\classesh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1033"/>
+        <CursorPos Y="1074"/>
+        <UsageCount Value="11"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Collections.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="3"/>
+        <UsageCount Value="11"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Text.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2663"/>
+        <CursorPos Y="2709"/>
+        <UsageCount Value="11"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Decimal.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="31"/>
+        <UsageCount Value="10"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\filutilh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="128"/>
+        <CursorPos X="46" Y="151"/>
+        <UsageCount Value="10"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="C:\tools\lazarus\components\lazutils\fileutil.pas"/>
+        <UnitName Value="FileUtil"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="49"/>
+        <CursorPos X="23" Y="88"/>
+        <UsageCount Value="10"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="C:\tools\lazarus\lcl\graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1920"/>
+        <CursorPos Y="1960"/>
+        <UsageCount Value="10"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="inc\generics.dictionariesh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="609"/>
+        <CursorPos X="3" Y="648"/>
+        <UsageCount Value="10"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\rtl\win\wininc\redef.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="626"/>
+        <CursorPos X="11" Y="649"/>
+        <UsageCount Value="10"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\rtl\win\wininc\struct.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="4656"/>
+        <CursorPos X="18" Y="4679"/>
+        <UsageCount Value="10"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\rtl\win\sysosh.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="61" Y="17"/>
+        <UsageCount Value="10"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\packages\rtl-objpas\src\inc\dateutils.pp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="C:\tools\lazarus\fpc\3.0.4\source\packages\rtl-objpas\src\inc\dateutil.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="88" Y="5"/>
+        <UsageCount Value="10"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Math.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="19"/>
+        <CursorPos X="9" Y="49"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="883"/>
+        <CursorPos X="64" Y="892"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="192"/>
+        <CursorPos X="86" Y="212"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit35>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="..\reference-platform\support\FHIR.Support.DateTime.pas"/>
+        <Caret Line="1851" Column="42" TopLine="1828"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\reference-platform\support\FHIR.Support.DateTime.pas"/>
+        <Caret Line="1841" Column="26" TopLine="1828"/>
+      </Position2>
+      <Position3>
+        <Filename Value="..\reference-platform\support\FHIR.Support.DateTime.pas"/>
+      </Position3>
+      <Position4>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Math.pas"/>
+        <Caret Line="49" Column="9" TopLine="19"/>
+      </Position4>
+      <Position5>
+        <Filename Value="TestFHIRApplication.lpr"/>
+        <Caret Line="10" Column="90"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
+        <Caret Line="930" TopLine="900"/>
+      </Position6>
+      <Position7>
+        <Filename Value="TestFHIRApplication.lpr"/>
+        <Caret Line="10" Column="90"/>
+      </Position7>
+      <Position8>
+        <Filename Value="..\reference-platform\base\FHIR.Base.Objects.pas"/>
+        <Caret Line="475" Column="58" TopLine="472"/>
+      </Position8>
+      <Position9>
+        <Filename Value="TestFHIRApplication.lpr"/>
+        <Caret Line="10" Column="63"/>
+      </Position9>
+      <Position10>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="38" Column="17" TopLine="16"/>
+      </Position10>
+      <Position11>
+        <Filename Value="..\reference-platform\support\FHIR.Support.System.pas"/>
+        <Caret Line="1897" Column="19" TopLine="1841"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\reference-platform\support\FHIR.Support.System.pas"/>
+        <Caret Line="10" Column="85"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="36" Column="58" TopLine="16"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="32"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="83" TopLine="59"/>
+      </Position15>
+      <Position16>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="112" Column="13" TopLine="86"/>
+      </Position16>
+      <Position17>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="146" Column="13" TopLine="122"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="211" Column="55" TopLine="190"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="207" Column="44" TopLine="183"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="212" Column="41" TopLine="189"/>
+      </Position20>
+      <Position21>
+        <Filename Value="generics.collections.pas"/>
+        <Caret Line="148" Column="3" TopLine="125"/>
+      </Position21>
+      <Position22>
+        <Filename Value="generics.collections.pas"/>
+        <Caret Line="137" Column="74" TopLine="125"/>
+      </Position22>
+      <Position23>
+        <Filename Value="generics.collections.pas"/>
+      </Position23>
+      <Position24>
+        <Filename Value="generics.collections.pas"/>
+        <Caret Line="551" Column="30" TopLine="522"/>
+      </Position24>
+      <Position25>
+        <Filename Value="generics.collections.pas"/>
+        <Caret Line="558" Column="42" TopLine="522"/>
+      </Position25>
+      <Position26>
+        <Filename Value="generics.collections.pas"/>
+        <Caret Line="2481" Column="24" TopLine="2478"/>
+      </Position26>
+      <Position27>
+        <Filename Value="generics.collections.pas"/>
+        <Caret Line="2486" Column="14" TopLine="2478"/>
+      </Position27>
+      <Position28>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="211" Column="36" TopLine="189"/>
+      </Position28>
+      <Position29>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="212" Column="55" TopLine="189"/>
+      </Position29>
+      <Position30>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <Caret Line="36" Column="141" TopLine="6"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>

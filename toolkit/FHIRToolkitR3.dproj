@@ -407,6 +407,7 @@
             <Form>PackageFinderForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

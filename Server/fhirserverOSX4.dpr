@@ -179,7 +179,8 @@ uses
   FHIR.R4.PathEngine in '..\reference-platform\r4\FHIR.R4.PathEngine.pas',
   FHIR.Web.Fetcher in '..\reference-platform\support\FHIR.Web.Fetcher.pas',
   FHIR.Tools.Indexing in '..\reference-platform\tools\FHIR.Tools.Indexing.pas',
-  FHIR.Support.Signatures in '..\reference-platform\support\FHIR.Support.Signatures.pas';
+  FHIR.Support.Signatures in '..\reference-platform\support\FHIR.Support.Signatures.pas',
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
 
 var
   runner : ITestRunner;

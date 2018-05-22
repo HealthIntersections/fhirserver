@@ -198,7 +198,8 @@ uses
   FHIR.Base.PathEngine in '..\..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\..\reference-platform\r4\FHIR.R4.Common.pas',
   FHIR.R4.Narrative in '..\..\reference-platform\r4\FHIR.R4.Narrative.pas',
-  FHIR.Base.Utilities in '..\..\reference-platform\base\FHIR.Base.Utilities.pas';
+  FHIR.Base.Utilities in '..\..\reference-platform\base\FHIR.Base.Utilities.pas',
+  fhir.support.fpc in '..\..\reference-platform\support\fhir.support.fpc.pas';
 
 {$R *.res}
 

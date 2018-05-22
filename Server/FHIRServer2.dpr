@@ -212,7 +212,8 @@ uses
   FHIR.R2.Common in '..\reference-platform\dstu2\FHIR.R2.Common.pas',
   FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
-  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

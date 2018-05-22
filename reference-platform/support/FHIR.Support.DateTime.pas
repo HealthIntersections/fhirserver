@@ -28,11 +28,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$IFDEF FPC}
+{$MODESWITCH ADVANCEDRECORDS}
+{$MODESWITCH TYPEHELPERS}
+{$ENDIF}
+
 Interface
 
 Uses
   Windows, SysUtils, SysConst, DateUtils, Math, System.TimeSpan, Registry,
-  FHIR.Support.Strings, FHIR.Support.Math;
+  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Fpc;
 
 Const
   DATETIME_MIN = -693593; // '1/01/0001'
@@ -87,8 +92,8 @@ type
     fraction: Cardinal;
   end;
 
-  TDateTimeEx = record
-  private
+  TDateTimeEx = record {$IFNDEF FPC}
+  private {$ENDIF}
     Source : String; // for debugging convenience, and also used to mark whether the record has any content
     year: Smallint;
     month: Word;
@@ -109,13 +114,12 @@ type
     TimezoneType : TDateTimeExTimezone;
     TimeZoneHours : Integer;
     TimezoneMins : Integer;
-  private
-    procedure clear;
+    procedure clear();
     procedure check;
     function checkNoException : boolean;
     procedure RollUp;
-    function privToString: String;
-  public
+    function privToString: String;{$IFNDEF FPC}
+  public {$ENDIF}
     class function makeNull : TDateTimeEx; static;
     class function makeUTC : TDateTimeEx; overload; static;
     class function makeUTC(value : TDateTime) : TDateTimeEx; overload; static;
@@ -149,13 +153,13 @@ type
     function DateTime : TDateTime;
     function TimeStamp : TTimeStamp;
 
-    function fixPrecision(FPrecision : TDateTimeExPrecision) : TDateTimeEx;
+    function fixPrecision(Precision : TDateTimeExPrecision) : TDateTimeEx;
 
     function Local : TDateTimeEx;
     function UTC : TDateTimeEx;
     function Min : TDateTimeEx;
     function Max : TDateTimeEx;
-    function AsTz(hr, min : Integer):TDateTimeEx; // this date and time in the specified timezone.
+    function AsTz(ihr, imin : Integer):TDateTimeEx; // this date and time in the specified timezone.
 
     function IncrementMonth: TDateTimeEx;
     function IncrementYear: TDateTimeEx;
@@ -169,7 +173,7 @@ type
     function sameTime(other : TDateTimeEx) : Boolean; // returns true if the specified instant is the same allowing for specified FPrecision - corrects for timezone
     function after(other : TDateTimeEx; inclusive : boolean):boolean;
     function before(other : TDateTimeEx; inclusive : boolean):boolean;
-    function between(min, max : TDateTimeEx; inclusive : boolean):boolean;
+    function between(imin, imax : TDateTimeEx; inclusive : boolean):boolean;
     function compare(other : TDateTimeEx) : integer;
 
     {
@@ -1532,16 +1536,16 @@ begin
   end;
 end;
 
-function TDateTimeEx.AsTz(hr, min: Integer): TDateTimeEx;
+function TDateTimeEx.AsTz(ihr, imin: Integer): TDateTimeEx;
 var
   bias : TDateTime;
   nbias : TDateTime;
 begin
   result := self;
-  if hr < 0 then
-    nbias := - (-Hr * DATETIME_HOUR_ONE) + (min * DATETIME_MINUTE_ONE)
+  if ihr < 0 then
+    nbias := - (-iHr * DATETIME_HOUR_ONE) + (imin * DATETIME_MINUTE_ONE)
   else
-    nbias := (Hr * DATETIME_HOUR_ONE) + (min * DATETIME_MINUTE_ONE);
+    nbias := (iHr * DATETIME_HOUR_ONE) + (imin * DATETIME_MINUTE_ONE);
 
   bias := timezoneBias;
   result.TimezoneType := dttzLocal;
@@ -1563,8 +1567,8 @@ begin
   result.FPrecision := FPrecision;
   result.FractionPrecision := FractionPrecision;
   result.TimezoneType := dttzSpecified;
-  result.TimezoneHours := hr;
-  result.TimezoneMins := min;
+  result.TimezoneHours := ihr;
+  result.TimezoneMins := imin;
 end;
 
 function TDateTimeEx.UTC: TDateTimeEx;
@@ -1655,7 +1659,7 @@ begin
 end;
 
 
-function TDateTimeEx.fixPrecision(FPrecision: TDateTimeExPrecision): TDateTimeEx;
+function TDateTimeEx.fixPrecision(Precision: TDateTimeExPrecision): TDateTimeEx;
 begin
   result := Self;
   result.FPrecision := FPrecision;
@@ -1793,9 +1797,9 @@ begin
   result := afterInstant(uOther, uSelf);
 end;
 
-function TDateTimeEx.between(min, max : TDateTimeEx; inclusive : boolean):boolean;
+function TDateTimeEx.between(imin, imax : TDateTimeEx; inclusive : boolean):boolean;
 begin
-  result := after(min, inclusive) and before(max, inclusive);
+  result := after(imin, inclusive) and before(imax, inclusive);
 end;
 
 Function DateTimeFormat(Const aDateTime : TDateTime; Const sFormat : String) : String;

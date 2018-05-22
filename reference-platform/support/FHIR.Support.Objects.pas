@@ -51,7 +51,7 @@ Type
       // Declared here for ease of implementing interfaces.
       Function _AddRef : Integer; Stdcall;
       Function _Release : Integer; Stdcall;
-      Function QueryInterface(Const IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
+      Function QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
 
       Procedure FreezeChildren; Overload; Virtual;
       Procedure AllowDestructionChildren; Overload; Virtual;
@@ -237,7 +237,7 @@ Begin
 End;  
 
 
-Function TFslObject._AddRef : Integer;
+Function TFslObject._AddRef : Integer; stdcall;
 Begin 
   If Assigned(Self) Then
   Begin 
@@ -252,7 +252,7 @@ Begin
 End;
 
 
-Function TFslObject._Release: Integer;
+Function TFslObject._Release: Integer; stdcall;
 Begin
   If Assigned(Self) Then
   Begin
@@ -270,7 +270,7 @@ Begin
 End;  
 
 
-Function TFslObject.QueryInterface(Const IID: TGUID; Out Obj): HResult;
+Function TFslObject.QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID: TGUID; Out Obj): HResult; stdcall;
 //Const
 //  // Extra typecast to longint prevents a warning about subrange bounds
 //  SUPPORT_INTERFACE : Array[Boolean] Of HResult = (Longint($80004002), 0);

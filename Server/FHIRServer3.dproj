@@ -349,6 +349,7 @@
         <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

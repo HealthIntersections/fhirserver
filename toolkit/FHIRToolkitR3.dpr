@@ -167,7 +167,8 @@ uses
   FHIR.Java.Runtime in '..\Libraries\java\FHIR.Java.Runtime.pas',
   FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
   TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame},
-  PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm};
+  PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm},
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
 
 {$R *.res}
 
