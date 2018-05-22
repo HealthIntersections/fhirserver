@@ -55,6 +55,7 @@ type
     FSize: integer;
     FProfiles: TDictionary<String, String>;
     FCanonicals : TDictionary<String, String>;
+    FFolder: String;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -71,6 +72,7 @@ type
     property dependencies : TFslList<TFHIRPackageDependencyInfo> read FDependencies;
     property profiles : TDictionary<String, String> read FProfiles;
     property canonicals : TDictionary<String, String> read FCanonicals;
+    property folder : String read FFolder write FFolder;
   end;
 
   TFHIRPackageInfo = class (TFHIRPackageObject)
@@ -270,7 +272,7 @@ begin
         for p in pl.Keys do
           ini.WriteString('Profiles', p, pl[p]);
         for p in cl.Keys do
-          ini.WriteString('Canonicals', p, pl[p]);
+          ini.WriteString('Canonicals', p, cl[p]);
         ini.writeinteger('Packages', 'analysis', ANALYSIS_VERSION);
       finally
         pl.Free;
@@ -407,6 +409,7 @@ begin
                 pck.Canonical := getUrl(pck.id);
               v := TFHIRPackageVersionInfo.Create;
               try
+                v.folder := s;
                 v.StatedVersion := s.Substring(s.LastIndexOf('-')+1);
                 v.ActualVersion := npm.str['version'];
                 v.url := npm.str['homepage'];

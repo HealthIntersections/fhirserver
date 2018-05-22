@@ -166,12 +166,14 @@ uses
   FHIR.Java.Utilities in '..\Libraries\java\FHIR.Java.Utilities.pas',
   FHIR.Java.Runtime in '..\Libraries\java\FHIR.Java.Runtime.pas',
   FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
-  TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame};
+  TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame},
+  PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
   Application.Run;
 end.

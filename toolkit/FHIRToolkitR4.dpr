@@ -163,7 +163,8 @@ uses
   ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TFrame},
   PackageManagerFrame in 'PackageManagerFrame.pas' {PackageManagerFrame: TFrame},
   FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
-  FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas';
+  FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas',
+  PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm};
 
 {$R *.res}
 
@@ -175,5 +176,6 @@ begin
   Application.CreateForm(TBulkDataDialog, BulkDataDialog);
   Application.CreateForm(TUsageContextDialog, UsageContextDialog);
   Application.CreateForm(TUsageContextDialog, UsageContextDialog);
+  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
   Application.Run;
 end.

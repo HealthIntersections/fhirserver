@@ -70,6 +70,10 @@ type
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem2: TMenuItem;
+    pmPackage: TPopupMenu;
+    mnuOpen: TMenuItem;
+    mnuDelete: TMenuItem;
+    btnFind: TButton;
     procedure rbUserChange(Sender: TObject);
     procedure rbSystemChange(Sender: TObject);
     procedure tvPackagesClick(Sender: TObject);
@@ -83,6 +87,9 @@ type
     procedure MenuItem2Click(Sender: TObject);
     procedure btnDeletePackageClick(Sender: TObject);
     procedure lblFolderClick(Sender: TObject);
+    procedure pmPackagePopup(Sender: TObject);
+    procedure mnuOpenClick(Sender: TObject);
+    procedure btnFindClick(Sender: TObject);
   private
     FLoading : boolean;
     FStop : boolean;
@@ -91,7 +98,7 @@ type
     procedure changePackageManagerMode(mode : boolean);
     procedure reloadPackages;
     procedure fetchProgress(sender : TObject; progress : integer);
-    procedure importUrl(url : String);
+    procedure importUrl(sender : TObject; url : String);
   public
     Destructor Destroy; override;
 
@@ -101,6 +108,8 @@ type
 implementation
 
 {$R *.fmx}
+
+uses PackageBrowser;
 
 { TPackageManagerFrame }
 
@@ -142,6 +151,17 @@ begin
   end;
 end;
 
+procedure TPackageManagerFrame.btnFindClick(Sender: TObject);
+begin
+  PackageFinderForm := TPackageFinderForm.create(self);
+  try
+    PackageFinderForm.OnLoadUrl := importUrl;
+    PackageFinderForm.ShowModal;
+  finally
+    PackageFinderForm.Free;
+  end;
+end;
+
 procedure TPackageManagerFrame.btnImportPackageFileClick(Sender: TObject);
 begin
   if dlgOpenPackage.Execute then
@@ -166,7 +186,7 @@ var
 begin
   url := 'https://';
   if InputQuery('Fetch Package from Web', 'Enter URL:', url) then
-    importUrl(url);
+    importUrl(nil, url);
 end;
 
 procedure TPackageManagerFrame.Button5Click(Sender: TObject);
@@ -205,7 +225,7 @@ begin
     abort;
 end;
 
-procedure TPackageManagerFrame.importUrl(url: String);
+procedure TPackageManagerFrame.importUrl(sender : TObject; url: String);
 var
   fetch : TInternetFetcher;
   ok : boolean;
@@ -296,29 +316,43 @@ end;
 
 procedure TPackageManagerFrame.MenuItem1Click(Sender: TObject);
 begin
-  importUrl('http://build.fhir.org/validator.tgz');
+  importUrl(nil, 'http://build.fhir.org/validator.tgz');
 end;
 
 procedure TPackageManagerFrame.MenuItem2Click(Sender: TObject);
 begin
-  importUrl('http://hl7.org/fhir/us/core');
+  importUrl(nil, 'http://hl7.org/fhir/us/core');
 end;
 
 procedure TPackageManagerFrame.MenuItem3Click(Sender: TObject);
 begin
-  importUrl('http://hl7.org/fhir/DSTU2');
+  importUrl(nil, 'http://hl7.org/fhir/DSTU2');
 end;
 
 procedure TPackageManagerFrame.MenuItem4Click(Sender: TObject);
 begin
-  importUrl('http://hl7.org/fhir/STU3');
+  importUrl(nil, 'http://hl7.org/fhir/STU3');
 end;
 
 procedure TPackageManagerFrame.MenuItem5Click(Sender: TObject);
 begin
-  importUrl('http://build.fhir.org/');
+  importUrl(nil, 'http://build.fhir.org/');
 end;
 
+
+procedure TPackageManagerFrame.mnuOpenClick(Sender: TObject);
+var
+  vi : TFHIRPackageVersionInfo;
+begin
+  vi := (tvPackages.Selected.TagObject as TFHIRPackageVersionInfo);
+  ExecuteFolder(vi.folder);
+end;
+
+procedure TPackageManagerFrame.pmPackagePopup(Sender: TObject);
+begin
+  mnuDelete.Enabled := (tvPackages.Selected <> nil) and (tvPackages.Selected.TagObject <> nil);
+  mnuOpen.Enabled := mnuDelete.Enabled and (tvPackages.Selected.TagObject is TFHIRPackageVersionInfo);
+end;
 
 procedure TPackageManagerFrame.rbSystemChange(Sender: TObject);
 begin

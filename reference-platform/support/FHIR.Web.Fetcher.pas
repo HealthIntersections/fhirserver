@@ -33,8 +33,7 @@ Interface
 Uses
   SysUtils, Classes,
   IdComponent,
-  FHIR.Support.Stream,
-  FHIR.Support.Objects;
+  FHIR.Support.Stream, FHIR.Support.Objects, FHIR.Support.Json;
 
 Type
   TInternetFetcherMethod = (imfGet, imfPost);
@@ -77,13 +76,13 @@ Type
     Property ContentType : String read FContentType;
     property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
 
+    class function fetchJsonArr(url : String) : TJsonArray;
   End;
 
 Implementation
 
 Uses
   FHIR.Support.Strings,
-
 
   IdURi,
   IdFTP,
@@ -218,6 +217,21 @@ begin
       oUri.Free;
     End;
   End;
+end;
+
+class function TInternetFetcher.fetchJsonArr(url: String): TJsonArray;
+var
+  this : TInternetFetcher;
+begin
+  this := TInternetFetcher.Create;
+  try
+    this.Buffer := TFslBuffer.Create;
+    this.URL := url;
+    this.Fetch;
+    result := TJSONParser.ParseNode(this.Buffer.AsBytes) as TJsonArray;
+  finally
+    this.Free;
+  end;
 end;
 
 procedure TInternetFetcher.HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);

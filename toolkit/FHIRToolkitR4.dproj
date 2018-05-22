@@ -405,6 +405,10 @@
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Shell.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas"/>
+        <DCCReference Include="PackageBrowser.pas">
+            <Form>PackageFinderForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
