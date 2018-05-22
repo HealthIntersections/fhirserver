@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "SDC support"
+        as.returnvalue = "Validation and transformation support"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -118,8 +118,9 @@ begin
       begin
         deletehidden = false
         deletereadonly = true
+        enabled = false
         failifnofile = false
-        filespec = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\FHIRToolkit.exe
+        filespec = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\FHIRToolkit*.exe
         id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
       end
       action.delphi.build
@@ -138,6 +139,7 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit R4 (win64)"
+        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -236,7 +238,7 @@ begin
           stackframes = false
           stringchecks = true
           typedpointers = false
-          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIRAuthMap\=FHIRAuthMap4;FHIRConstants\=FHIRConstants4;FHIRContext\=FHIRContext4;FHIRIndexInformation\=FHIRIndexInformation4;FHIRJavascriptReg\=FHIRJavascriptReg4;FHIRMetaModel\=FHIRMetaModel4;FHIRNarrativeGenerator\=FHIRNarrativeGenerator4;FHIROperations\=FHIROperations4;FHIRParserJson\=FHIRParserJson4;FHIRParserTurtle\=FHIRParserTurtle4;FHIRParserXml\=FHIRParserXml4;FHIRPathNode\=FHIRPathNode4;FHIRProfileUtilities\=FHIRProfileUtilities4;FHIRResources\=FHIRResources4;FHIRStructureMapUtilities\=FHIRStructureMapUtilities4;FHIRTags\=FHIRTags4;FHIRTestWorker\=FHIRTestWorker4;FHIRTypes\=FHIRTypes4;FHIRUtilities\=FHIRUtilities4;FHIRValidator\=FHIRValidator4;FhirOpBase\=FhirOpBase4;FhirPath\=FhirPath4;NarrativeGenerator\=NarrativeGenerator4;QuestionnaireBuilder\=QuestionnaireBuilder4;FHIRBaseX\=FHIRBase4;QuestionnaireRenderer\=QuestionnaireRenderer4
+          unitaliases = FHIR.Tools.AuthMap\=FHIR.R4.AuthMap;FHIR.Tools.Constants\=FHIR.R4.Constants;FHIR.Tools.Context\=FHIR.R4.Context;FHIR.Tools.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Tools.Javascript\=FHIR.R4.Javascript;FHIR.Tools.ElementModel\=FHIR.R4.ElementModel;FHIR.Tools.Narrative\=FHIR.R4.Narrative;FHIR.Tools.Operations\=FHIR.R4.Operations;FHIR.Tools.Json\=FHIR.R4.Json;FHIR.Tools.Turtle\=FHIR.R4.Turtle;FHIR.Tools.Xml\=FHIR.R4.Xml;FHIR.Tools.PathNode\=FHIR.R4.PathNode;FHIR.Tools.Profiles\=FHIR.R4.Profiles;FHIR.Tools.Resources\=FHIR.R4.Resources;FHIR.Tools.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Tools.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Tools.Types\=FHIR.R4.Types;FHIR.Tools.Utilities\=FHIR.R4.Utilities;FHIR.Tools.Validator\=FHIR.R4.Validator;FHIR.Tools.OpBase\=FHIR.R4.OpBase;FHIR.Tools.PathEngine\=FHIR.R4.PathEngine;FHIR.Tools.Narrative2\=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R4.Questionnaire;FHIR.Tools.Questionnaire2\=FHIR.R4.Questionnaire2
           unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units
           usedebugdcu = false
           usepackages = false
@@ -259,6 +261,7 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit R3 (win64)"
+        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -357,7 +360,7 @@ begin
           stackframes = false
           stringchecks = true
           typedpointers = false
-          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIRAuthMap\=FHIRAuthMap3;FHIRConstants\=FHIRConstants3;FHIRContext\=FHIRContext3;FHIRIndexInformation\=FHIRIndexInformation3;FHIRJavascriptReg\=FHIRJavascriptReg3;FHIRMetaModel\=FHIRMetaModel3;FHIRNarrativeGenerator\=FHIRNarrativeGenerator3;FHIROperations\=FHIROperations3;FHIRParserJson\=FHIRParserJson3;FHIRParserTurtle\=FHIRParserTurtle3;FHIRParserXml\=FHIRParserXml3;FHIRPathNode\=FHIRPathNode3;FHIRProfileUtilities\=FHIRProfileUtilities3;FHIRResources\=FHIRResources3;FHIRStructureMapUtilities\=FHIRStructureMapUtilities3;FHIRTags\=FHIRTags3;FHIRTestWorker\=FHIRTestWorker3;FHIRTypes\=FHIRTypes3;FHIRUtilities\=FHIRUtilities3;FHIRValidator\=FHIRValidator3;FhirOpBase\=FhirOpBase3;FhirPath\=FhirPath3;NarrativeGenerator\=NarrativeGenerator3;QuestionnaireBuilder\=QuestionnaireBuilder3;FHIRBaseX\=FHIRBase3;QuestionnaireRenderer\=QuestionnaireRenderer3
+          unitaliases = FHIR.Tools.AuthMap\=FHIR.R3.AuthMap;FHIR.Tools.Constants\=FHIR.R3.Constants;FHIR.Tools.Context\=FHIR.R3.Context;FHIR.Tools.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Tools.Javascript\=FHIR.R3.Javascript;FHIR.Tools.ElementModel\=FHIR.R3.ElementModel;FHIR.Tools.Narrative\=FHIR.R3.Narrative;FHIR.Tools.Operations\=FHIR.R3.Operations;FHIR.Tools.Json\=FHIR.R3.Json;FHIR.Tools.Turtle\=FHIR.R3.Turtle;FHIR.Tools.Xml\=FHIR.R3.Xml;FHIR.Tools.PathNode\=FHIR.R3.PathNode;FHIR.Tools.Profiles\=FHIR.R3.Profiles;FHIR.Tools.Resources\=FHIR.R3.Resources;FHIR.Tools.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Tools.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorker3;FHIR.Tools.Types\=FHIR.R3.Types;FHIR.Tools.Utilities\=FHIR.R3.Utilities;FHIR.Tools.Validator\=FHIR.R3.Validator;FHIR.Tools.OpBase\=FHIR.R3.OpBase;FHIR.Tools.PathEngine\=FHIR.R3.PathEngine;FHIR.Tools.Narrative2\=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire\=FHIR.R3.Questionnaire;FHIR.Tools.Questionnaire2\=FHIR.R3.Questionnaire2
           unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units
           usedebugdcu = false
           usepackages = false
@@ -367,7 +370,7 @@ begin
       action.process.execute
       begin
         captureoutput = true
-        description = "Sign the Server"
+        description = "Sign the Program"
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -378,7 +381,32 @@ begin
         impersonateuser = false
         logoutput = true
         logprocessparameters = true
-        params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Toolkit\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\toolkit\\install\\FHIRToolkit.exe\""
+        params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Toolkit\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\toolkit\\install\\FHIRToolkitR3.exe\""
+        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        startindir = "C:\\Program Files (x86)\\kSign"
+        terminateontimeout = false
+        timeoutlength = 1
+        useerrordialogmonitor = false
+        waitforcompletion = true
+      end
+      action.process.execute
+      begin
+        captureoutput = true
+        description = "Sign the Program"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {01DBFED8-1E7E-44A7-B262-A6FB519B7408}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Toolkit\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\toolkit\\install\\FHIRToolkitR4.exe\""
         programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
         redirectstderr = true
         returncodecomparator = rcEqualTo
