@@ -3,14 +3,21 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIR Toolkit release 0.0.40 2018-01-06</title>
+		<item><title>FHIR Toolkit release 0.0.42 2018-05-22</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.42.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.42.zip</mlink>
+			<description>2018-05-22 (v0.0.42): Validation and transformation support</description>
+			<ptitle>0.0.42, 2018-05-22</ptitle>
+			<comment>Validation and transformation support</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.40 2018-01-06</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.40.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.40.zip</mlink>
 			<description>2018-01-06 (v0.0.40): add Document signing</description>
 			<ptitle>0.0.40, 2018-01-06</ptitle>
 			<comment>add Document signing</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.39 2017-12-11</title>
+		<item><title>FHIR Toolkit release 0.0.39 2017-12-11</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.39.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.39.zip</mlink>
 			<description>2017-12-11 (v0.0.39): fix SSL problem</description>
