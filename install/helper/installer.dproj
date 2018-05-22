@@ -7,7 +7,7 @@
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Library</AppType>
         <FrameworkType>None</FrameworkType>
-        <ProjectVersion>18.2</ProjectVersion>
+        <ProjectVersion>18.4</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -95,7 +95,6 @@
         <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.System.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvControllers.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvPersistents.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Filers.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\ColourSupport.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvPersistentLists.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvObjectLists.pas"/>
