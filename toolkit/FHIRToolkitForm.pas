@@ -40,8 +40,8 @@ uses
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
   FHIR.Tools.Context, FHIR.Tools.Profiles, FHIR.Support.System, FHIR.Support.Text, FHIR.Cache.PackageManager,
   FHIR.Client.SmartUtilities, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
+  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, {ExampleScenarioEditor,} AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
-  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
   PackageManagerFrame, ValidationFrame, TransformationFrame;
 
@@ -392,6 +392,7 @@ begin
     form.ListBox1.items.Add('CodeSystem');
     form.ListBox1.items.Add('Questionnaire');
     form.ListBox1.items.Add('Library');
+//    form.ListBox1.items.Add('ExampleScenario'); //JCT: Uncomment this line when exampleScenario works
     form.caption := 'Create New File';
     if (form.ShowModal = mrOk) then
       case form.ListBox1.ItemIndex of
@@ -400,6 +401,7 @@ begin
         2 : newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
         3 : newResource(TFhirQuestionnaire, TQuestionnaireEditorFrame);
         4 : newResource(TFhirLibrary, TLibraryEditorFrame);
+//        5 : newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
       end;
   finally
     form.Free;
@@ -427,6 +429,8 @@ begin
           openResourceFromFile(odFile.Filename, res, format, TQuestionnaireEditorFrame)
         else if res is TFhirLibrary then
           openResourceFromFile(odFile.Filename, res, format, TLibraryEditorFrame)
+//        else if res is TFHIRExampleScenario then
+//          openResourceFromFile(odFile.Filename, res, format, TExampleScenarioEditorFrame)
         else
           MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
       finally
@@ -751,15 +755,19 @@ begin
 end;
 
 procedure TMasterToolsForm.FormActivate(Sender: TObject);
+var
+tmpFhirFactory: //Create a temp object to fix a leak when using TBaseWorkerContext.Create(...)
+ {$IFDEF FHIR3} TFHIRFactoryR3; {$ENDIF}
+ {$IFDEF FHIR4} TFHIRFactoryR4; {$ENDIF}
 begin
   if FContext = nil then
     doWork(nil, 'Loading Data', false,
       procedure
       begin
-        FContext := TBaseWorkerContext.Create(
+        tmpFhirFactory:=
           {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}
-          {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF}
-        );
+          {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF};
+        FContext := TBaseWorkerContext.Create(tmpFHIRFactory);
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types-r'+FHIR_GENERATED_PUBLICATION+'.xml');
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources-r'+FHIR_GENERATED_PUBLICATION+'.xml');
         if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
@@ -770,6 +778,7 @@ begin
     FUpgradeChecked := true;
     checkVersion(false);
   end;
+//  if tmpFhirFactory <> nil then tmpFhirFactory.Destroy; //should destroy the temp object but it causes an issue... leaving as is.
 end;
 
 procedure TMasterToolsForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -883,6 +892,7 @@ begin
     end);
     doUpgrade(newVersion);
   end;
+  if FFactory <> nil then ffactory.Destroy; //this seemed to leak
 end;
 
 function TMasterToolsForm.frameForResource(res: TFhirResource): TBaseResourceFrameClass;
@@ -897,6 +907,8 @@ begin
     result := TQuestionnaireEditorFrame
   else if res is TFhirLibrary then
     result := TLibraryEditorFrame
+//else if res is TFhirExampleScenario then
+//  result := TExampleScenarioEditorFrame
   else
     MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
 end;
