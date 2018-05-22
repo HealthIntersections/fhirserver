@@ -61,7 +61,8 @@ type
 
     function default(purpose : String) : TRegisteredFHIRServer; // must be freed
     function defaultAddress(purpose : String) : String; // must be freed
-    procedure ListServers(purpose : String; items : TFslList<TRegisteredFHIRServer>);
+    procedure ListServers(purpose : String; items : TFslList<TRegisteredFHIRServer>); overload;
+    procedure ListServers(purpose : String; items : TStrings); overload;
     procedure registerServer(purpose : String; server : TRegisteredFHIRServer);
     procedure updateServerInfo(purpose : String; server : TRegisteredFHIRServer);
     function ServerCount(purpose : String) : integer;
@@ -182,6 +183,21 @@ begin
   RegisterKnownServers;
 end;
 
+
+procedure TFHIRClientRegistry.ListServers(purpose: String; items: TStrings);
+var
+  servers : TFslList<TRegisteredFHIRServer>;
+  server : TRegisteredFHIRServer;
+begin
+  servers := TFslList<TRegisteredFHIRServer>.create();
+  try
+    ListServers(purpose, servers);
+    for server in servers do
+      items.Add(server.fhirEndpoint);
+  finally
+    servers.Free;
+  end;
+end;
 
 procedure TFHIRClientRegistry.updateServerInfo(purpose : String; server: TRegisteredFHIRServer);
 var

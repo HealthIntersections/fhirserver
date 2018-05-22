@@ -267,7 +267,6 @@ uses
   FHIR.Client.Threaded in '..\reference-platform\client\FHIR.Client.Threaded.pas',
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
-  FHIR.Support.Factory in '..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Service in '..\reference-platform\support\FHIR.Support.Service.pas',

@@ -219,7 +219,7 @@ begin
   if FPackages = nil then
     FPackages := TFslList<TFHIRPackageInfo>.Create;
   FPackages.Clear;
-  FCache.ListPackages(FPackages);
+  FCache.ListPackages(All_Package_Kinds, FPackages);
   vtPackages.RootNodeCount := 0;
   vtPackages.RootNodeCount := FPackages.Count;
   vtPackages.Invalidate;

@@ -125,7 +125,6 @@
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Objects.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Exceptions.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.System.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Filers.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Parsers.pas"/>
@@ -165,7 +164,6 @@
         <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="..\server\FHIRValueSetChecker.pas"/>
         <DCCReference Include="..\server\TerminologyWebServer.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Factory.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Text.pas"/>
         <DCCReference Include="..\server\FHIRServerConstants.pas"/>
         <DCCReference Include="..\server\FHIRServerUtilities.pas"/>
@@ -338,11 +336,8 @@
         <DCCReference Include="..\reference-platform\client\FHIR.Client.HTTP.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Threaded.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Client.pas"/>
-        <DCCReference Include="..\Libraries\java\FHIR.Java.JNI.pas"/>
         <DCCReference Include="..\Libraries\java\FHIR.Java.Runtime.pas"/>
-        <DCCReference Include="..\Libraries\java\FHIR.Java.Strings.pas"/>
         <DCCReference Include="..\Libraries\java\FHIR.Java.Utilities.pas"/>
-        <DCCReference Include="..\Libraries\java\FHIR.Java.Wrapper.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
@@ -359,6 +354,9 @@
         <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
+        <DCCReference Include="..\Libraries\java\FHIR.Java.Wrapper.pas"/>
+        <DCCReference Include="..\Libraries\java\FHIR.Java.Strings.pas"/>
+        <DCCReference Include="..\Libraries\java\FHIR.Java.JNI.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

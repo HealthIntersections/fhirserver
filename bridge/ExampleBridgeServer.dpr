@@ -37,7 +37,6 @@ uses
   ExampleBridge in 'ExampleBridge.pas',
   FHIR.Support.Collections in '..\reference-platform\support\FHIR.Support.Collections.pas',
   FHIR.Support.Exceptions in '..\reference-platform\support\FHIR.Support.Exceptions.pas',
-  FHIR.Support.Factory in '..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Generics in '..\reference-platform\support\FHIR.Support.Generics.pas',
   FHIR.Support.Json in '..\reference-platform\support\FHIR.Support.Json.pas',
   FHIR.Support.Objects in '..\reference-platform\support\FHIR.Support.Objects.pas',

@@ -58,7 +58,6 @@ uses
   FHIR.Support.Signatures in '..\support\FHIR.Support.Signatures.pas',
   FHIR.Support.Exceptions in '..\support\FHIR.Support.Exceptions.pas',
   FHIR.Support.Collections in '..\support\FHIR.Support.Collections.pas',
-  FHIR.Support.Factory in '..\support\FHIR.Support.Factory.pas',
   FHIR.Support.Controllers in '..\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Text in '..\support\FHIR.Support.Text.pas',
   FHIR.Support.Generics in '..\support\FHIR.Support.Generics.pas',

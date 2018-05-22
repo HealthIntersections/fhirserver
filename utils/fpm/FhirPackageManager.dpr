@@ -25,7 +25,6 @@ uses
   FHIR.Support.Binary in '..\..\reference-platform\support\FHIR.Support.Binary.pas',
   FHIR.Support.Stream in '..\..\reference-platform\support\FHIR.Support.Stream.pas',
   FHIR.Support.Collections in '..\..\reference-platform\support\FHIR.Support.Collections.pas',
-  FHIR.Support.Factory in '..\..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Controllers in '..\..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Text in '..\..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Tarball in '..\..\reference-platform\support\FHIR.Support.Tarball.pas',

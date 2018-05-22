@@ -50,7 +50,6 @@ uses
   FHIR.Support.Math in '..\reference-platform\Support\FHIR.Support.Math.pas',
   FHIR.Support.Objects in '..\reference-platform\Support\FHIR.Support.Objects.pas',
   FHIR.Support.Exceptions in '..\reference-platform\Support\FHIR.Support.Exceptions.pas',
-  FHIR.Support.Factory in '..\reference-platform\Support\FHIR.Support.Factory.pas',
   FHIR.Support.System in '..\reference-platform\Support\FHIR.Support.System.pas',
   FHIR.Support.DateTime in '..\reference-platform\Support\FHIR.Support.DateTime.pas',
   FHIR.Support.Collections in '..\reference-platform\Support\FHIR.Support.Collections.pas',

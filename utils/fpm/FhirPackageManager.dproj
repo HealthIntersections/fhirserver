@@ -155,7 +155,6 @@
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Filers.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Factory.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Text.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Tarball.pas"/>

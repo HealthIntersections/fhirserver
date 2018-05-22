@@ -39,7 +39,6 @@ uses
   FHIR.Support.Math in '..\support\FHIR.Support.Math.pas',
   FHIR.Support.Decimal in '..\support\FHIR.Support.Decimal.pas',
   GUIDSupport in '..\support\GUIDSupport.pas',
-  FHIR.Support.Factory in '..\support\FHIR.Support.Factory.pas',
   FHIR.Support.System in '..\support\FHIR.Support.System.pas',
   MemorySupport in '..\support\MemorySupport.pas',
   FHIR.Support.DateTime in '..\support\FHIR.Support.DateTime.pas',

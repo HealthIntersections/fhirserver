@@ -808,7 +808,7 @@ Type
 Implementation
 
 uses
-  FHIR.Support.Binary, FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.Factory;
+  FHIR.Support.Binary, FHIR.Support.Math, FHIR.Support.Strings;
 
 Function TFslStream.Link : TFslStream;
 Begin

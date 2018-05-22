@@ -1492,11 +1492,11 @@ Begin
     0..1000:
       Result := IntToStr(i) + ' bytes';
     1001..1000000:
-      Result := floattostrF(i / 1024, ffFixed, 18, 2) + ' KB';
+      Result := floattostrF(i / 1024, ffFixed, 18, 1) + ' KB';
     1000001..1000000000:
-      Result := floattostrF(i / 1048576, ffFixed, 18, 2) + ' MB';
+      Result := floattostrF(i / 1048576, ffFixed, 18, 1) + ' MB';
   Else
-    Result := floattostrF(i / 1073741824, ffFixed, 18, 2) + ' GB';
+    Result := floattostrF(i / 1073741824, ffFixed, 18, 1) + ' GB';
   End;
 End;
 

@@ -62,7 +62,6 @@ uses
   FHIR.Client.HTTP in '..\reference-platform\client\FHIR.Client.HTTP.pas',
   FHIR.Client.Threaded in '..\reference-platform\client\FHIR.Client.Threaded.pas',
   FHIR.R2.Client in '..\reference-platform\dstu2\FHIR.R2.Client.pas',
-  FHIR.Support.Factory in '..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',

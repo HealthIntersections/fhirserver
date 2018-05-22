@@ -4,7 +4,7 @@ Unit FHIR.Web.Fetcher;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
  * Redistributions of source code must retain the above copyright notice, this
@@ -31,11 +31,15 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
+  SysUtils, Classes,
+  IdComponent,
   FHIR.Support.Stream,
   FHIR.Support.Objects;
 
 Type
   TInternetFetcherMethod = (imfGet, imfPost);
+
+  TProgressEvent = procedure(sender : TObject; progess : integer) of Object;
 
   TInternetFetcher = Class (TFslObject)
   Private
@@ -45,9 +49,17 @@ Type
     FPassword: String;
     FMethod: TInternetFetcherMethod;
     FContentType: String;
+    FProgress: Integer;
+    FBytesToTransfer: Int64;
+    FOnProgress: TProgressEvent;
+
     procedure SetBuffer(const Value: TFslBuffer);
     procedure SetPassword(const Value: String);
     procedure SetUsername(const Value: String);
+    procedure HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+    procedure HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+    procedure HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
+
   Public
     Constructor Create; Override;
 
@@ -57,12 +69,14 @@ Type
     Property Buffer : TFslBuffer read FBuffer write SetBuffer;
 
     Function CanFetch : Boolean;
-    Procedure Fetch;
+    Procedure Fetch; overload;
 
     Property Username : String read FUsername write SetUsername;
     Property Password : String read FPassword write SetPassword;
     Property Method : TInternetFetcherMethod read FMethod write FMethod;
     Property ContentType : String read FContentType;
+    property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
+
   End;
 
 Implementation
@@ -70,8 +84,6 @@ Implementation
 Uses
   FHIR.Support.Strings,
 
-  SysUtils,
-  Classes,
 
   IdURi,
   IdFTP,
@@ -121,6 +133,9 @@ begin
         Try
           oHTTP.HandleRedirects := true;
           oHTTP.URL.URI := url;
+          oHTTP.OnWork := HTTPWork;
+          oHTTP.OnWorkBegin := HTTPWorkBegin;
+          oHTTP.OnWorkEnd := HTTPWorkEnd;
           oMem := TMemoryStream.Create;
           try
             if FMethod = imfPost then
@@ -145,6 +160,9 @@ begin
           oSSL := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
           Try
             oHTTP.IOHandler := oSSL;
+            oHTTP.OnWork := HTTPWork;
+            oHTTP.OnWorkBegin := HTTPWorkBegin;
+            oHTTP.OnWorkEnd := HTTPWorkEnd;
             oSSL.SSLOptions.Mode := sslmClient;
             oSSL.SSLOptions.Method := sslvTLSv1_2;
             oHTTP.URL.URI := url;
@@ -200,6 +218,27 @@ begin
       oUri.Free;
     End;
   End;
+end;
+
+procedure TInternetFetcher.HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  if FBytesToTransfer = 0 then // No Update File
+    Exit;
+
+  if Assigned(FOnProgress) then
+    FOnProgress(self, Round((AWorkCount / FBytesToTransfer) * 100));
+end;
+
+procedure TInternetFetcher.HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+begin
+  FBytesToTransfer := AWorkCountMax;
+end;
+
+procedure TInternetFetcher.HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
+begin
+  FBytesToTransfer := 0;
+  if Assigned(FOnProgress) then
+    FOnProgress(self, 100);
 end;
 
 procedure TInternetFetcher.SetBuffer(const Value: TFslBuffer);

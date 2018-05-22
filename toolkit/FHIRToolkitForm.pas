@@ -38,11 +38,12 @@ uses
   FHIR.Debug.Logging,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
-  FHIR.Tools.Context, FHIR.Tools.Profiles, FHIR.Support.System, FHIR.Support.Text,
+  FHIR.Tools.Context, FHIR.Tools.Profiles, FHIR.Support.System, FHIR.Support.Text, FHIR.Cache.PackageManager,
   FHIR.Client.SmartUtilities, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
-  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog;
+  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
+  PackageManagerFrame, ValidationFrame, TransformationFrame;
 
 type
   TToolkitLogger = class (TFHIRClientLogger)
@@ -116,6 +117,21 @@ type
     Button1: TButton;
     MenuItem3: TMenuItem;
     mnuResourceLanguage: TMenuItem;
+    mnuPackageManager: TMenuItem;
+    MenuItem8: TMenuItem;
+    Button2: TButton;
+    Panel3: TPanel;
+    Button3: TButton;
+    mnuValidation: TMenuItem;
+    Button4: TButton;
+    Button5: TButton;
+    Button6: TButton;
+    Button7: TButton;
+    Button8: TButton;
+    mnuTransformation: TMenuItem;
+    Button9: TButton;
+    mnuSource: TMenuItem;
+    MenuItem9: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -144,6 +160,9 @@ type
     procedure mnuCheckVersionClick(Sender: TObject);
     procedure mnuRegistryClick(Sender: TObject);
     procedure mnuResourceLanguageClick(Sender: TObject);
+    procedure mnuPackageManagerClick(Sender: TObject);
+    procedure mnuValidationClick(Sender: TObject);
+    procedure mnuTransformationClick(Sender: TObject);
   private
     { Private declarations }
     FSettings : TFHIRToolkitSettings;
@@ -155,6 +174,9 @@ type
     UpgradeOnClose : boolean;
     FUpgradeChecked : boolean;
     FRegistryTab : TTabItem;
+    FPackageMgrTab : TTabItem;
+    FValidationTab : TTabItem;
+    FTransformationTab : TTabItem;
     ToolkitLogger : TToolkitLogger;
     FServers : TFslList<TRegisteredFHIRServer>;
     FFactory : TFHIRFactory;
@@ -213,7 +235,7 @@ begin
   try
     form.SoftwareId := 'FHIR Toolkit';
     form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
-    form.Versions := TFHIRVersionFactories.Create;
+    form.Versions := FSettings.Versions;
     {$IFDEF FHIR3} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR3.Create; {$ENDIF}
     {$IFDEF FHIR4} form.Versions[CURRENT_FHIR_VERSION] := TFHIRFactoryR4.Create; {$ENDIF}
     form.Server := TRegisteredFHIRServer.Create;
@@ -466,12 +488,17 @@ end;
 
 procedure TMasterToolsForm.btnSettingsClick(Sender: TObject);
 var
+  frame : TBaseFrame;
   form : TSettingsForm;
+  i : integer;
 begin
   form := TSettingsForm.create(self);
   try
     form.Settings := FSettings.link;
-    form.showmodal;
+    if form.showmodal = mrOk then
+      for i := 0 to tbMain.TabCount - 1 do
+        if tbMain.Tabs[i].TagObject is TBaseFrame then
+          TBaseFrame(tbMain.Tabs[i].TagObject).SettingsChanged;
   finally
     form.free;
   end;
@@ -527,6 +554,12 @@ var
     i := tbMain.TabIndex;
     if tbMain.ActiveTab = FRegistryTab then
       FRegistryTab := nil;
+    if tbMain.ActiveTab = FValidationTab then
+      FValidationTab := nil;
+    if tbMain.ActiveTab = FPackageMgrTab then
+      FPackageMgrTab := nil;
+    if tbMain.ActiveTab = FTransformationTab then
+      FTransformationTab := nil;
     tbMain.ActiveTab.Free;
     if i > 0 then
       tbMain.TabIndex := i - 1
@@ -793,6 +826,13 @@ begin
      [fhirVersionRelease4]
     {$ENDIF}
     );
+  FSettings.CacheManager := TFHIRPackageManager.Create(true);
+  FSettings.Versions := TFHIRVersionFactories.Create;
+    {$IFDEF FHIR3}
+  FSettings.Versions.version[fhirVersionRelease3] := TFHIRFactoryR3.Create;
+    {$ELSE}
+  FSettings.Versions.version[fhirVersionRelease4] := TFHIRFactoryR4.Create;
+    {$ENDIF}
   loadServers;
   lbServers.ItemIndex := 0;
   lbServersClick(self);
@@ -911,6 +951,56 @@ begin
   end;
 end;
 
+procedure TMasterToolsForm.mnuTransformationClick(Sender: TObject);
+var
+  frame : TFrame;
+begin
+  if FTransformationTab <> nil then
+    tbMain.ActiveTab := FTransformationTab
+  else
+  begin
+    FTransformationTab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := FTransformationTab;
+    FTransformationTab.Text := 'General Transformation';
+    frame := TTransformationEngineFrame.create(FTransformationTab);
+    frame.Form := self;
+    FTransformationTab.TagObject := frame;
+    frame.TagObject := FTransformationTab;
+    frame.Parent := FTransformationTab;
+    frame.tabs := tbMain;
+    frame.OnWork := dowork;
+    frame.Settings := FSettings.link;
+    frame.Tab := FTransformationTab;
+    frame.Align := TAlignLayout.Client;
+    frame.load;
+  end;
+end;
+
+procedure TMasterToolsForm.mnuValidationClick(Sender: TObject);
+var
+  frame : TFrame;
+begin
+  if FValidationTab <> nil then
+    tbMain.ActiveTab := FValidationTab
+  else
+  begin
+    FValidationTab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := FValidationTab;
+    FValidationTab.Text := 'General Validation';
+    frame := TValidationEngineFrame.create(FValidationTab);
+    frame.Form := self;
+    FValidationTab.TagObject := frame;
+    frame.TagObject := FValidationTab;
+    frame.Parent := FValidationTab;
+    frame.tabs := tbMain;
+    frame.OnWork := dowork;
+    frame.Settings := FSettings.link;
+    frame.Tab := FValidationTab;
+    frame.Align := TAlignLayout.Client;
+    frame.load;
+  end;
+end;
+
 procedure TMasterToolsForm.mnuCheckVersionClick(Sender: TObject);
 begin
   checkVersion(true);
@@ -958,6 +1048,31 @@ begin
     form.ShowModal;
   finally
     form.Free;
+  end;
+end;
+
+procedure TMasterToolsForm.mnuPackageManagerClick(Sender: TObject);
+var
+  frame : TFrame;
+begin
+  if FPackageMgrTab <> nil then
+    tbMain.ActiveTab := FPackageMgrTab
+  else
+  begin
+    FPackageMgrTab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := FPackageMgrTab;
+    FPackageMgrTab.Text := 'Package Manager';
+    frame := TPackageManagerFrame.create(FPackageMgrTab);
+    frame.Form := self;
+    FPackageMgrTab.TagObject := frame;
+    frame.TagObject := FPackageMgrTab;
+    frame.Parent := FPackageMgrTab;
+    frame.tabs := tbMain;
+    frame.OnWork := dowork;
+    frame.Settings := FSettings.link;
+    frame.Tab := FPackageMgrTab;
+    frame.Align := TAlignLayout.Client;
+    frame.load;
   end;
 end;
 

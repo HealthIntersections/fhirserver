@@ -28,7 +28,6 @@ uses
   FHIR.Support.DateTime in '..\..\reference-platform\support\FHIR.Support.DateTime.pas',
   FHIR.Support.Decimal in '..\..\reference-platform\support\FHIR.Support.Decimal.pas',
   FHIR.Support.Exceptions in '..\..\reference-platform\support\FHIR.Support.Exceptions.pas',
-  FHIR.Support.Factory in '..\..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Generics in '..\..\reference-platform\support\FHIR.Support.Generics.pas',
   FHIR.Support.Graphics in '..\..\Libraries\ui\FHIR.Support.Graphics.pas',
   FHIR.Support.Html in '..\..\reference-platform\support\FHIR.Support.Html.pas',

@@ -87,7 +87,6 @@
         <DCCReference Include="ExampleBridge.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Exceptions.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Factory.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Filers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Generics.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Json.pas"/>

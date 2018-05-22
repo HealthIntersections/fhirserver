@@ -139,7 +139,6 @@ uses
   FHIR.Client.Threaded in '..\reference-platform\client\FHIR.Client.Threaded.pas',
   FHIR.R3.Client in '..\reference-platform\dstu3\FHIR.R3.Client.pas',
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
-  FHIR.Support.Factory in '..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
   FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
@@ -155,7 +154,19 @@ uses
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
   FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas',
-  FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas';
+  FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas',
+  FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
+  PackageManagerFrame in 'PackageManagerFrame.pas' {PackageManagerFrame: TFrame},
+  ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TFrame},
+  FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas',
+  FHIR.Java.Wrapper in '..\Libraries\java\FHIR.Java.Wrapper.pas',
+  FHIR.Java.JNI in '..\Libraries\java\FHIR.Java.JNI.pas',
+  FHIR.Java.Strings in '..\Libraries\java\FHIR.Java.Strings.pas',
+  FHIR.Java.Utilities in '..\Libraries\java\FHIR.Java.Utilities.pas',
+  FHIR.Java.Runtime in '..\Libraries\java\FHIR.Java.Runtime.pas',
+  FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
+  TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame};
 
 {$R *.res}
 

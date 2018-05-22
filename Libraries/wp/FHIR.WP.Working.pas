@@ -1886,7 +1886,7 @@ type
 Implementation
 
 Uses
-  FHIR.Support.Strings, FHIR.Support.Factory;
+  FHIR.Support.Strings;
 
 procedure prop(var result : String; name, value : string);overload;
 begin

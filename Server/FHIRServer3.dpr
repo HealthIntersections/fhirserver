@@ -254,7 +254,6 @@ uses
   FHIR.Client.Threaded in '..\reference-platform\client\FHIR.Client.Threaded.pas',
   FHIR.R3.Client in '..\reference-platform\dstu3\FHIR.R3.Client.pas',
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
-  FHIR.Support.Factory in '..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',

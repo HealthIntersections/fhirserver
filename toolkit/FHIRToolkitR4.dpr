@@ -139,7 +139,6 @@ uses
   FHIR.Client.Threaded in '..\reference-platform\client\FHIR.Client.Threaded.pas',
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
-  FHIR.Support.Factory in '..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
   FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
@@ -157,7 +156,14 @@ uses
   FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas',
   FHIR.R4.Narrative in '..\reference-platform\r4\FHIR.R4.Narrative.pas',
   FHIR.R4.Validator in '..\reference-platform\r4\FHIR.R4.Validator.pas',
-  FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas';
+  FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas',
+  FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
+  TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame},
+  ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TFrame},
+  PackageManagerFrame in 'PackageManagerFrame.pas' {PackageManagerFrame: TFrame},
+  FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
+  FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas';
 
 {$R *.res}
 

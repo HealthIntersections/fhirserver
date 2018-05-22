@@ -125,7 +125,6 @@
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Objects.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Exceptions.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Factory.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.System.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.DateTime.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Filers.pas"/>

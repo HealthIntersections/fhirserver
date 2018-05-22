@@ -1,0 +1,411 @@
+object TransformationEngineFrame: TTransformationEngineFrame
+  Size.Width = 884.000000000000000000
+  Size.Height = 614.000000000000000000
+  Size.PlatformDefault = False
+  object Panel1: TPanel
+    Align = Left
+    Size.Width = 193.000000000000000000
+    Size.Height = 614.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Panel2: TPanel
+      Align = Bottom
+      Position.Y = 576.000000000000000000
+      Size.Width = 193.000000000000000000
+      Size.Height = 38.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label7: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Text = 'TX:'
+        TabOrder = 0
+      end
+      object cbxTxServer: TComboBox
+        Anchors = [akLeft, akTop, akRight]
+        Position.X = 32.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 153.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        OnChange = cbxTxServerChange
+      end
+    end
+    object Panel3: TPanel
+      Align = Top
+      Size.Width = 193.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object Label1: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 241.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Transformation Configuration'
+        TabOrder = 0
+      end
+    end
+    object Panel5: TPanel
+      Align = Top
+      Position.Y = 33.000000000000000000
+      Size.Width = 193.000000000000000000
+      Size.Height = 231.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      object Label3: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Text = 'Packages:'
+        TabOrder = 1
+      end
+      object lbPackages: TListBox
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        Position.X = 8.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 177.000000000000000000
+        Size.Height = 193.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        ShowCheckboxes = True
+        OnChangeCheck = lbPackagesChangeCheck
+        Viewport.Width = 173.000000000000000000
+        Viewport.Height = 189.000000000000000000
+        object pmAddAsset: TPopupMenu
+          Left = 32
+          Top = 114
+          object mnuAssetFile: TMenuItem
+            Text = 'File'
+            OnClick = mnuAddAssetFileClick
+          end
+          object mnuAssetFolder: TMenuItem
+            Text = 'Folder'
+            OnClick = MenuItem2Click
+          end
+          object mnuAssetUrl: TMenuItem
+            Text = 'URL'
+            OnClick = MenuItem3Click
+          end
+        end
+      end
+    end
+    object Panel6: TPanel
+      Align = Client
+      Size.Width = 193.000000000000000000
+      Size.Height = 304.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      object Label4: TLabel
+        Position.X = 9.000000000000000000
+        Position.Y = 8.000000000000000000
+        Text = 'Other Profile Sources:'
+        TabOrder = 1
+      end
+      object lbOther: TListBox
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        Position.X = 8.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 177.000000000000000000
+        Size.Height = 234.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        OnClick = lbOtherClick
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        ShowCheckboxes = True
+        OnChangeCheck = lbOtherChangeCheck
+        Viewport.Width = 173.000000000000000000
+        Viewport.Height = 230.000000000000000000
+      end
+      object btnAdd: TButton
+        Anchors = [akLeft, akBottom]
+        Position.X = 8.000000000000000000
+        Position.Y = 273.000000000000000000
+        Size.Width = 65.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        Text = 'Add'
+        OnClick = btnAddClick
+      end
+      object btnDelete: TButton
+        Anchors = [akLeft, akBottom]
+        Position.X = 80.000000000000000000
+        Position.Y = 273.000000000000000000
+        Size.Width = 65.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Text = 'Delete'
+        OnClick = btnDeleteClick
+      end
+    end
+    object Splitter1: TSplitter
+      Align = Top
+      Cursor = crVSplit
+      MinSize = 20.000000000000000000
+      Position.Y = 264.000000000000000000
+      Size.Width = 193.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+  object Panel7: TPanel
+    Align = Client
+    Size.Width = 683.000000000000000000
+    Size.Height = 614.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Panel8: TPanel
+      Align = MostTop
+      Size.Width = 683.000000000000000000
+      Size.Height = 97.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label5: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        Text = 'Source:'
+        TabOrder = 3
+      end
+      object cbeSource: TComboEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 4
+        ItemHeight = 19.000000000000000000
+        ItemIndex = -1
+        Position.X = 56.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 528.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        OnChange = cbeSourceChange
+        OnChangeTracking = cbeSourceChangeTracking
+      end
+      object btnSource: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 591.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 81.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+        Text = '...'
+        OnClick = btnSourceClick
+      end
+      object btnTransform: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 591.000000000000000000
+        Position.Y = 68.000000000000000000
+        TabOrder = 6
+        Text = 'Transform'
+        OnClick = btnTransformClick
+      end
+      object Label8: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 68.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 21.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Structure Map:'
+        TabOrder = 7
+      end
+      object cbeMap: TComboEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 8
+        ItemHeight = 19.000000000000000000
+        ItemIndex = -1
+        Position.X = 104.000000000000000000
+        Position.Y = 68.000000000000000000
+        Size.Width = 481.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        OnChange = cbeMapChange
+        OnChangeTracking = cbeMapChangeTracking
+      end
+      object Label9: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 8.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Destination:'
+        TabOrder = 0
+      end
+      object cbeDest: TComboEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 1
+        ItemHeight = 19.000000000000000000
+        ItemIndex = -1
+        Position.X = 80.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 504.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        OnChange = cbeDestChange
+        OnChangeTracking = cbeDestChangeTracking
+      end
+      object Button1: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 591.000000000000000000
+        Position.Y = 34.000000000000000000
+        Size.Width = 81.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Text = '...'
+        OnClick = Button1Click
+      end
+    end
+    object Panel9: TPanel
+      Align = Bottom
+      Position.Y = 540.000000000000000000
+      Size.Width = 683.000000000000000000
+      Size.Height = 74.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object Panel10: TPanel
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        Padding.Left = 4.000000000000000000
+        Padding.Top = 4.000000000000000000
+        Padding.Right = 4.000000000000000000
+        Padding.Bottom = 4.000000000000000000
+        Position.X = 72.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 470.000000000000000000
+        Size.Height = 57.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object lblCommand: TLabel
+          Align = Client
+          Size.Width = 462.000000000000000000
+          Size.Height = 49.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.VertAlign = Leading
+          Text = 'lblCommand'
+          TabOrder = 0
+        end
+      end
+      object Label6: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Command:'
+        TabOrder = 1
+      end
+      object btnCopyCommand: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 40.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Text = 'Copy'
+        OnClick = btnCopyCommandClick
+      end
+      object Button5: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 557.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        Text = 'Copy Outcome'
+        OnClick = Button5Click
+      end
+      object Button6: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 557.000000000000000000
+        Position.Y = 40.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        Text = 'Save Outcome'
+        OnClick = Button6Click
+      end
+    end
+    object Panel11: TPanel
+      Align = Client
+      Padding.Left = 10.000000000000000000
+      Padding.Top = 10.000000000000000000
+      Padding.Right = 10.000000000000000000
+      Padding.Bottom = 10.000000000000000000
+      Size.Width = 683.000000000000000000
+      Size.Height = 443.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      object mOutput: TMemo
+        Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+        DataDetectorTypes = []
+        Align = Client
+        Size.Width = 663.000000000000000000
+        Size.Height = 423.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Viewport.Width = 659.000000000000000000
+        Viewport.Height = 419.000000000000000000
+      end
+      object dlgOpenFile: TOpenDialog
+        Filter = 
+          'Known Files|*.json; *.xml; *.zip; *.tgz|Json Files|*.json|Xml Fi' +
+          'les|*.xml|Zip Files|*.zip|Packages|*.tgz|All Files|*.*'
+        Options = [ofFileMustExist, ofEnableSizing]
+        Title = 'Choose File'
+        Left = 99
+        Top = 115
+      end
+    end
+  end
+  object Splitter2: TSplitter
+    Align = Left
+    Cursor = crHSplit
+    MinSize = 20.000000000000000000
+    Position.X = 193.000000000000000000
+    Size.Width = 8.000000000000000000
+    Size.Height = 614.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object pmSource: TPopupMenu
+    Left = 40
+    Top = 170
+    object mnuSourceFile: TMenuItem
+      Text = 'File'
+      OnClick = mnuSourceFileClick
+    end
+    object mnuSourceUrl: TMenuItem
+      Text = 'URL'
+      OnClick = mnuSourceUrlClick
+    end
+  end
+  object sdFile: TSaveDialog
+    DefaultExt = '.txt'
+    Filter = 'Text Files|*.txt|All Files|*.*'
+    Title = 'Save Transformation Log'
+    Left = 64
+    Top = 218
+  end
+  object sdDest: TSaveDialog
+    DefaultExt = '.xml'
+    Filter = 'Xml Files|*.xml|Json Files|*.json|All Files|*.*'
+    Title = 'Choose Transformation Destination'
+    Left = 112
+    Top = 178
+  end
+end

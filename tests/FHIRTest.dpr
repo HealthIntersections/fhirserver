@@ -40,7 +40,6 @@ uses
   FHIR.Support.Math in '..\reference-platform\support\FHIR.Support.Math.pas',
   FHIR.Support.Decimal in '..\reference-platform\support\FHIR.Support.Decimal.pas',
   GUIDSupport in '..\reference-platform\support\GUIDSupport.pas',
-  FHIR.Support.Factory in '..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.System in '..\reference-platform\support\FHIR.Support.System.pas',
   MemorySupport in '..\reference-platform\support\MemorySupport.pas',
   FHIR.Support.DateTime in '..\reference-platform\support\FHIR.Support.DateTime.pas',

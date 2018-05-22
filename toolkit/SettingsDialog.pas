@@ -100,6 +100,7 @@ begin
   form := TEditRegisteredServerForm.create(self);
   try
     form.Server := TRegisteredFHIRServer.Create;
+    form.Versions := Settings.Versions.link;
     if form.ShowModal = mrOk then
     begin
       FSettings.registerServer('Terminology', form.Server);

@@ -85,7 +85,6 @@ uses
   FHIR.Tx.Service in '..\Libraries\FHIR.Tx.Service.pas',
   FHIRValueSetChecker in '..\server\FHIRValueSetChecker.pas',
   TerminologyWebServer in '..\server\TerminologyWebServer.pas',
-  FHIR.Support.Factory in '..\reference-platform\support\FHIR.Support.Factory.pas',
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIRServerConstants in '..\server\FHIRServerConstants.pas',
   FHIRServerUtilities in '..\server\FHIRServerUtilities.pas',
@@ -264,11 +263,8 @@ uses
   FHIR.Client.HTTP in '..\reference-platform\client\FHIR.Client.HTTP.pas',
   FHIR.Client.Threaded in '..\reference-platform\client\FHIR.Client.Threaded.pas',
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
-  FHIR.Java.JNI in '..\Libraries\java\FHIR.Java.JNI.pas',
   FHIR.Java.Runtime in '..\Libraries\java\FHIR.Java.Runtime.pas',
-  FHIR.Java.Strings in '..\Libraries\java\FHIR.Java.Strings.pas',
   FHIR.Java.Utilities in '..\Libraries\java\FHIR.Java.Utilities.pas',
-  FHIR.Java.Wrapper in '..\Libraries\java\FHIR.Java.Wrapper.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
@@ -284,7 +280,10 @@ uses
   FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas',
   FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
-  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
+  FHIR.Java.Wrapper in '..\Libraries\java\FHIR.Java.Wrapper.pas',
+  FHIR.Java.Strings in '..\Libraries\java\FHIR.Java.Strings.pas',
+  FHIR.Java.JNI in '..\Libraries\java\FHIR.Java.JNI.pas';
 
 var
   runner : ITestRunner;

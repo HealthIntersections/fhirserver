@@ -111,7 +111,6 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Decimal.pas"/>
         <DCCReference Include="..\reference-platform\support\GUIDSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Factory.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.System.pas"/>
         <DCCReference Include="..\reference-platform\support\MemorySupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.DateTime.pas"/>

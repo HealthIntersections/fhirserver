@@ -69,7 +69,7 @@ Const
 
   CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
   CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4');
-  CURRENT_FHIR_VERSION = {$IFDEF FHIR1} fhirVersionRelease1 {$ENDIF} {$IFDEF FHIR2} fhirVersionRelease2 {$ENDIF}{$IFDEF FHIR3} fhirVersionRelease3 {$ENDIF} {$IFDEF FHIR4}  fhirVersionRelease4{$ENDIF} ;
+  CURRENT_FHIR_VERSION = {$IFDEF FHIR1} fhirVersionRelease1 {$ENDIF} {$IFDEF FHIR2} fhirVersionRelease2 {$ENDIF}{$IFDEF FHIR3} fhirVersionRelease3 {$ENDIF} {$IFDEF FHIR4}  fhirVersionRelease4{$ENDIF};
   FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
 
 Type

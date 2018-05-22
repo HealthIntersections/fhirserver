@@ -133,7 +133,6 @@
         <DCCReference Include="..\support\FHIR.Support.Exceptions.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Filers.pas"/>
-        <DCCReference Include="..\support\FHIR.Support.Factory.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Text.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Generics.pas"/>

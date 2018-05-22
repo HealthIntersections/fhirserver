@@ -2,8 +2,8 @@ object MasterToolsForm: TMasterToolsForm
   Left = 0
   Top = 0
   Caption = 'FHIR ToolKit'
-  ClientHeight = 480
-  ClientWidth = 674
+  ClientHeight = 534
+  ClientWidth = 681
   StyleBook = StyleBook1
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -12,25 +12,25 @@ object MasterToolsForm: TMasterToolsForm
   OnCreate = FormCreate
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
-  DesignerMasterStyle = 1
+  DesignerMasterStyle = 0
   object tbMain: TTabControl
     Align = Client
-    Size.Width = 492.000000000000000000
-    Size.Height = 454.000000000000000000
+    Size.Width = 499.000000000000000000
+    Size.Height = 508.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'tbMainStyle1'
     TabIndex = 0
     TabOrder = 0
     TabPosition = PlatformDefault
     Sizes = (
-      492s
-      428s)
+      499s
+      482s)
     object TabItem1: TTabItem
       CustomIcon = <
         item
         end>
       IsSelected = True
-      Size.Width = 63.000000000000000000
+      Size.Width = 59.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = 'TabItem1Style1'
@@ -40,7 +40,7 @@ object MasterToolsForm: TMasterToolsForm
       ExplicitSize.cy = 26.000000000000000000
       object Panel1: TPanel
         Align = Top
-        Size.Width = 492.000000000000000000
+        Size.Width = 499.000000000000000000
         Size.Height = 145.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
@@ -59,7 +59,7 @@ object MasterToolsForm: TMasterToolsForm
           HelpType = htKeyword
           Position.X = 8.000000000000000000
           Position.Y = 32.000000000000000000
-          Size.Width = 397.000000000000000000
+          Size.Width = 404.000000000000000000
           Size.Height = 105.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
@@ -69,13 +69,13 @@ object MasterToolsForm: TMasterToolsForm
           DefaultItemStyles.ItemStyle = ''
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
-          Viewport.Width = 393.000000000000000000
-          Viewport.Height = 101.000000000000000000
+          Viewport.Width = 404.000000000000000000
+          Viewport.Height = 105.000000000000000000
         end
         object btnConnect: TButton
           Anchors = [akTop, akRight]
           Enabled = False
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 32.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -86,7 +86,7 @@ object MasterToolsForm: TMasterToolsForm
         end
         object btnAddServer: TButton
           Anchors = [akTop, akRight]
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 68.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -98,7 +98,7 @@ object MasterToolsForm: TMasterToolsForm
         object btnRemoveServer: TButton
           Anchors = [akTop, akRight]
           Enabled = False
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 116.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -110,7 +110,7 @@ object MasterToolsForm: TMasterToolsForm
         object btnEditServer: TButton
           Anchors = [akTop, akRight]
           Enabled = False
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 92.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -126,14 +126,14 @@ object MasterToolsForm: TMasterToolsForm
         MinSize = 20.000000000000000000
         Position.Y = 145.000000000000000000
         ShowGrip = False
-        Size.Width = 492.000000000000000000
+        Size.Width = 499.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
       end
       object Panel2: TPanel
         Align = Client
-        Size.Width = 492.000000000000000000
-        Size.Height = 275.000000000000000000
+        Size.Width = 499.000000000000000000
+        Size.Height = 291.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
         object Label1: TLabel
@@ -147,8 +147,8 @@ object MasterToolsForm: TMasterToolsForm
           HelpContext = 2
           Position.X = 8.000000000000000000
           Position.Y = 32.000000000000000000
-          Size.Width = 397.000000000000000000
-          Size.Height = 234.000000000000000000
+          Size.Width = 404.000000000000000000
+          Size.Height = 250.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 6
           OnClick = lbFilesClick
@@ -157,13 +157,13 @@ object MasterToolsForm: TMasterToolsForm
           DefaultItemStyles.ItemStyle = ''
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
-          Viewport.Width = 393.000000000000000000
-          Viewport.Height = 230.000000000000000000
+          Viewport.Width = 404.000000000000000000
+          Viewport.Height = 250.000000000000000000
         end
         object btnReopen: TButton
           Anchors = [akTop, akRight]
           Enabled = False
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 32.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -175,7 +175,7 @@ object MasterToolsForm: TMasterToolsForm
         object btnRemoveFile: TButton
           Anchors = [akTop, akRight]
           Enabled = False
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 60.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -186,7 +186,7 @@ object MasterToolsForm: TMasterToolsForm
         end
         object btnOpen: TButton
           Anchors = [akTop, akRight]
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 136.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -197,7 +197,7 @@ object MasterToolsForm: TMasterToolsForm
         end
         object btnNew: TButton
           Anchors = [akTop, akRight]
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 164.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -209,7 +209,7 @@ object MasterToolsForm: TMasterToolsForm
         object btnCopy: TButton
           Anchors = [akTop, akRight]
           Enabled = False
-          Position.X = 412.000000000000000000
+          Position.X = 419.000000000000000000
           Position.Y = 88.000000000000000000
           Size.Width = 72.000000000000000000
           Size.Height = 22.000000000000000000
@@ -219,17 +219,73 @@ object MasterToolsForm: TMasterToolsForm
           OnClick = btnCopyClick
         end
       end
+      object Panel3: TPanel
+        Align = Bottom
+        Position.Y = 444.000000000000000000
+        Size.Width = 499.000000000000000000
+        Size.Height = 38.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        object Button3: TButton
+          Images = ToolbarImages
+          ImageIndex = 11
+          Position.X = 8.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 137.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Text = 'Package Manager'
+          OnClick = mnuPackageManagerClick
+        end
+        object Button5: TButton
+          Images = ToolbarImages
+          ImageIndex = 12
+          Position.X = 152.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 89.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = 'Validation'
+          OnClick = mnuValidationClick
+        end
+        object Button6: TButton
+          Images = ToolbarImages
+          ImageIndex = 13
+          Position.X = 248.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 121.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          Text = 'Transformation'
+          OnClick = mnuTransformationClick
+        end
+        object Button7: TButton
+          Images = ToolbarImages
+          ImageIndex = 10
+          Position.X = 376.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 113.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Text = 'registry.fhir.org'
+          OnClick = mnuRegistryClick
+        end
+      end
     end
   end
   object pnlToolbar: TPanel
     Align = Top
-    Size.Width = 674.000000000000000000
+    Size.Width = 681.000000000000000000
     Size.Height = 26.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
     object ToolBar1: TToolBar
       Align = Client
-      Size.Width = 674.000000000000000000
+      Size.Width = 681.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
@@ -295,7 +351,7 @@ object MasterToolsForm: TMasterToolsForm
         Size.Width = 22.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 6
+        TabOrder = 10
         ParentShowHint = False
         ShowHint = True
         OnClick = tbnSaveAsClick
@@ -304,12 +360,12 @@ object MasterToolsForm: TMasterToolsForm
         Anchors = [akTop, akRight]
         Images = ToolbarImages
         ImageIndex = 5
-        Position.X = 650.000000000000000000
+        Position.X = 657.000000000000000000
         Position.Y = 2.000000000000000000
         Size.Width = 22.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 7
+        TabOrder = 11
         OnClick = tbnCloseClick
       end
       object tbnSource: TButton
@@ -321,7 +377,7 @@ object MasterToolsForm: TMasterToolsForm
         Size.Width = 22.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 5
+        TabOrder = 9
         ParentShowHint = False
         ShowHint = True
         OnClick = tbnSourceClick
@@ -330,12 +386,12 @@ object MasterToolsForm: TMasterToolsForm
         Hint = 'Show the Help Panel'
         Images = ToolbarImages
         ImageIndex = 7
-        Position.X = 300.000000000000000000
+        Position.X = 372.000000000000000000
         Position.Y = 2.000000000000000000
         Size.Width = 22.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 4
+        TabOrder = 7
         ParentShowHint = False
         ShowHint = True
         OnClick = tbnHelpContextClick
@@ -344,12 +400,12 @@ object MasterToolsForm: TMasterToolsForm
         Hint = 'Settings'
         Images = ToolbarImages
         ImageIndex = 8
-        Position.X = 268.000000000000000000
+        Position.X = 340.000000000000000000
         Position.Y = 2.000000000000000000
         Size.Width = 22.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
+        TabOrder = 6
         ParentShowHint = False
         ShowHint = True
         OnClick = btnSettingsClick
@@ -358,7 +414,49 @@ object MasterToolsForm: TMasterToolsForm
         Hint = 'registry.fhir.org'
         Images = ToolbarImages
         ImageIndex = 10
+        Position.X = 316.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = mnuRegistryClick
+      end
+      object Button2: TButton
+        Hint = 'Package Manager'
+        Images = ToolbarImages
+        ImageIndex = 11
         Position.X = 244.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = mnuPackageManagerClick
+      end
+      object Button4: TButton
+        Hint = 'Package Manager'
+        Images = ToolbarImages
+        ImageIndex = 12
+        Position.X = 268.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = mnuValidationClick
+      end
+      object Button8: TButton
+        Hint = 'Package Manager'
+        Images = ToolbarImages
+        ImageIndex = 13
+        Position.X = 292.000000000000000000
         Position.Y = 2.000000000000000000
         Size.Width = 22.000000000000000000
         Size.Height = 22.000000000000000000
@@ -366,7 +464,20 @@ object MasterToolsForm: TMasterToolsForm
         TabOrder = 2
         ParentShowHint = False
         ShowHint = True
-        OnClick = mnuRegistryClick
+        OnClick = mnuTransformationClick
+      end
+      object Button9: TButton
+        Hint = 'Validate this Resource'
+        Images = ToolbarImages
+        ImageIndex = 14
+        Position.X = 150.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 8
+        ParentShowHint = False
+        ShowHint = True
       end
     end
   end
@@ -468,17 +579,52 @@ object MasterToolsForm: TMasterToolsForm
         Text = '&Language'
         OnClick = mnuResourceLanguageClick
       end
+      object mnuSource: TMenuItem
+        Locked = True
+        Text = '&Source (And Diff)'
+        ImageIndex = 6
+        OnClick = tbnSourceClick
+      end
+      object MenuItem9: TMenuItem
+        Locked = True
+        Text = '&Validate'
+        ImageIndex = 14
+      end
     end
     object MenuItem2: TMenuItem
       Text = '&Tools'
+      object mnuPackageManager: TMenuItem
+        Locked = True
+        Text = '&Package Manager'
+        ImageIndex = 11
+        OnClick = mnuPackageManagerClick
+      end
+      object mnuValidation: TMenuItem
+        Locked = True
+        Text = '&Validation'
+        ImageIndex = 12
+        OnClick = mnuValidationClick
+      end
+      object mnuTransformation: TMenuItem
+        Locked = True
+        Text = 'Transformation'
+        ImageIndex = 13
+        OnClick = mnuTransformationClick
+      end
       object mnuRegistry: TMenuItem
         Locked = True
         Text = 'registry.fhir.org'
+        ImageIndex = 10
         OnClick = mnuRegistryClick
+      end
+      object MenuItem8: TMenuItem
+        Locked = True
+        Text = '-'
       end
       object MenuItem4: TMenuItem
         Locked = True
         Text = '&Settings'
+        ImageIndex = 8
         OnClick = btnSettingsClick
       end
     end
@@ -487,6 +633,7 @@ object MasterToolsForm: TMasterToolsForm
       object mnuHelpContext: TMenuItem
         Locked = True
         Text = '&Context'
+        ImageIndex = 7
         OnClick = tbnHelpContextClick
       end
       object mnuCheckVersion: TMenuItem
@@ -507,17 +654,17 @@ object MasterToolsForm: TMasterToolsForm
   end
   object pnlHelp: TPanel
     Align = Right
-    Position.X = 498.000000000000000000
+    Position.X = 505.000000000000000000
     Position.Y = 26.000000000000000000
     Size.Width = 176.000000000000000000
-    Size.Height = 454.000000000000000000
+    Size.Height = 508.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'Panel3Style1'
     TabOrder = 8
     object webHelp: TWebBrowser
       Align = Client
       Size.Width = 164.000000000000000000
-      Size.Height = 442.000000000000000000
+      Size.Height = 496.000000000000000000
       Size.PlatformDefault = False
       Margins.Left = 6.000000000000000000
       Margins.Top = 6.000000000000000000
@@ -529,11 +676,11 @@ object MasterToolsForm: TMasterToolsForm
     Align = Right
     Cursor = crHSplit
     MinSize = 20.000000000000000000
-    Position.X = 492.000000000000000000
+    Position.X = 499.000000000000000000
     Position.Y = 26.000000000000000000
     ShowGrip = False
     Size.Width = 6.000000000000000000
-    Size.Height = 454.000000000000000000
+    Size.Height = 508.000000000000000000
     Size.PlatformDefault = False
   end
   object ToolbarImages: TImageList
@@ -810,30 +957,30 @@ object MasterToolsForm: TMasterToolsForm
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              02DA49444154384F8593CD4F136918C07F9D29CC50DB526AAD8804C47511FCA4
-              9AE226C6F871F32324BB17F560D4DDD5FF406324D1E8C118E3C5B367DDC3C668
-              8890C8C2AE17B3AB92F89168F4506829D5025B60FA35339D4EC7691DB107139F
-              CB33C9FBFC7EEFFB3ECF3B2EEA626868C8723EBF1B030303357659904AA57A5C
-              2ED7B8AEEBE178222EF66DEB73897981C9B9492C3774FFD88D2CCBE89ACEF0C8
-              30B7EF8C32FAE0B6CB5EFA1CC160F09824496DB684759DEB6AEA8B4B97492412
-              1CCDFFCC747C9A687F1441100887C30E058293B12C4BAFC285420125A3902FE6
-              513FAAFCB4A29FC9E424D3C904131313188681DFDFEC50758282AA9AD52C8A22
-              F787EF934AA6B8DE7995DF222751DD2A8AA2D4E4E9741AB75DF325BE0A72B95A
-              AEDE33140A313E3EC63FAFFFE6F28D4B34354A1CD8BF9740B3979C92A154D26A
-              B5D55816C8A26540054D53D9B5E7209B7A37929C7AC70FEB3BD8B92382C7E3B1
-              8FDE8256B2372BEA0E05CB4D8CCD9BDE57E91C1B3B247CEA4B8A522FFE6D512C
-              D3E0556691C55816BDE4C674B51269FF86606A29E0FB73EC0DBB038F39B7EF39
-              7FDC6AE299DA475852C8E64A2CAA167EA9C4F6FEC3F4AEF93A85654159CF9BFD
-              5BDAC8CC6CE6E6A8405B742BBF78D7A2EB1A6D4137A1C62CEFD32E14A19DF487
-              B70E55279025370BB331C6FE7AC4ACA2235831BC6E83FFE73E72E1440FA7065B
-              183C7E9771F302A70F7538549DA062143068A4ABBB8F4DF62436878B4CCFE648
-              6807F92F35C395F331E22B7F6783BF1B6561C6A1EAA6A09504B2791B4A2F303F
-              B7C0E0518D3391B7A4937166B216B79E067991D2EDA6EA14D56F343139A73689
-              F22A36F44429D9EFFDD76BFFDAAFB39DD56B3BED5D0C229E80DD8F22C5B2CCFC
-              62C1A1EA4E509E7F322C2EDD331B8C8C7DF72209214252DA454B4B00D9B71A6F
-              A80B7FEB569A448D4CE2A543D5FD8DD5387BE48827692EB5FB646FB3D8E059D5
-              2835ACB44B02E58AE5338CB2C730F152A9840DBD107F38327A11E013753D2E06
-              F57B276E0000000049454E44AE426082}
+              02DE49444154384F8593CB6F135714873F8F9DCCC4B51DC71803210AE2214878
+              BBC801A9AA0A5D20D1A2A8B00116085A08FF412B442450BB4008B1610B7BBA88
+              1052542A95266D37158F464A402A6A17C6B11D0727C176C68F79783CBE9D5853
+              6224247E9B7317E7FB9D73CFB9D7439BC6C7C7857BFCA0868787DF61C9E57203
+              F3F3F3B9542A65DDB97BA7592A964439A38A99A969313D332D6AB59AB06D5B68
+              354D8C8D8D89A35F8DB48AF95AB4A34824725A96E55E8FC7C3C8851170FCAF2C
+              5F239D4E73AA7A82CC6C86C45002499288C5622E05921B1142982BB05309B5A0
+              52D5AAE8AF750E7D34C4ABEC2B32D93453535358964528D4ED526D06355DB757
+              A2D7EBE5C1C307E4B2396E6CFA810BF173E83E1D55555BE6F97C1E9F93F3BF56
+              0D2A95565414856834CAE4E404BFBFF88D6B37AFD2D529F3F991CF087707A8A8
+              05EA75A395BBA2B7068A5758D0C430740E7E7A8C9D833BC8A6FE61EB967E0E7C
+              1CC7EFF73BADF760D49D629AE9526D434C2ED981E7F90A3BFA6582FA0C9A3C48
+              686F02615B3C2F942825CB98751FB6673DF1BEF718A496C3C1B189BFF924FC07
+              DF1EFE8B1F6F77F14CDF4F4C562957EA94744148AEB36FE84B0637AC6EE1AD41
+              C3ACDA43BB7B29CCEDE2D62389DEC41E4E0636629A06BD111FD1CE32FFE63DA8
+              521FF9F9972ED566A0C83E8A0B49267EFD8505D5441249023E8B378BAFB97C76
+              80F3A33D8C9EB9C7A47D99AFBFE877A93683A655C3A293CDDBF7B3D3D9C4AE98
+              4666A142DA38C693DC1CDF7F976476CD45B685B6A316E75CAA6D0B465DA25C75
+              A07C91A5C522A3A70C46E22FC96767992B0B6E3F8D309D339DA19A68FA7B8698
+              5DD4BBBCCA5AB60D24A81B26DF5C7FECBCCE3ED66DDCE454B188FBC3CE3C34B4
+              86C252A9E6526D1D3496FE7CE85DBE6F775805E7EE1A69294E563E484F4F1825
+              B88E407433A1F57BE8F21A14D2332ED5FA32ABBA74FCB83F6B2FF7059540B7B7
+              C3BFB653EE58E3A4841B4D11B4AC86DFB209D06CC62CB336FBD3CF8FAE00FC07
+              7EFA42BA84AE24260000000049454E44AE426082}
             FileName = 'C:\data\Images\collection\16\Settings.png'
           end>
         Name = 'Settings'
@@ -902,6 +1049,155 @@ object MasterToolsForm: TMasterToolsForm
             FileName = 'C:\data\Images\collection\16\list_security.gif'
           end>
         Name = 'registry'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap.TransparentColor = 536870912
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              02E549444154384F7593CD6F135714C57F33138F27895D63A7E41BA72D24240D
+              09D04D90906051CA022A75411BB1AB04DDF087745F6083E8924D5B29EDA2452C
+              DA4A1102D1AA8008880481430C26983826A3F8633C9EAFD76BA3161070A53B4F
+              F3F4CEB9E79E779FC63BC2ADE455F9DE0542CFA177F2049DE9D1B79E7D63D377
+              6D65E77FC57EF81BE991C3848D3276E12AE90F8FD233760CB36BEB6B98FF7FA2
+              D0579BAB7FB2919BC34A4FD137F1257A14522B5E27163728E5E6A9DB4FD83A3E
+              4B66C7E71831AB8D6D7F6AEB37D5C6839F8830E91B3F2604A3A03C02FB012BF3
+              DFB2EDE3FDE85D2334EBEBACE56E100AAC6FFA6BD21F1CD0B4E2EDD3AA52F883
+              F7771CC7CA4CE156CB6CAE2F49EF35FC7A91B8D6A43FBB534CB1311259742B49
+              A578BF4D64F58CA3DDBBF8851AFBF40CBE006BC5AB445E05AFBA8E5329F2BCB0
+              CA27C7CF12EBEC867A1E55CFA1398F21354DE0AE70F3D2CFE89A66A2449269C5
+              4966B29886CE96F41606473E62785B5A2A0BA0B60C0D591B059C677F535A3887
+              D34CA0EB71741545A8A8E586492C35CA7BC333E8B12E686E123364DB11707511
+              AF30C7467E9EAA6EA1CC0CCA0F04170941D842B72214E39AD0D18DD5BB173333
+              8195EC227AF63B9B8F7EA1AA29C27892C8F1245D695508C2F08582762821887C
+              49A74DD4911822D93F8613032F6E11340342D72314B0EF34E592FC170A22BF21
+              92E594D12960575254B4D6B001D620816AF185EDCA41AD895F73A5D5C976CDD0
+              73E57A7B76F1F0F277346C31490018D27FE0094AD48839CA8FDA95032130CC2C
+              A99D5FC9D075B27CFD1A898129B430F0D4C6F225D6162E90E89D6078FA084687
+              28727228B7CCDAFD3911D341F7C067040D97D5C5053CBFC4E0CC49FAF7CEBE1C
+              65CF79AE4A777EA074FB4719E3430CEE39D27A18540AD750D24771F12E76F116
+              7DBB67199A3981951A7839CAAF8653CEA9A7FF7C4F79E922DB0F9EA451CAF374
+              6981547692E1FDA7480EEC7A0DF306C17F61AF5C514FFE3A2F1E780CEDFB465E
+              E2A1B79C857F01022369B4D3F2E5E20000000049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\package.bmp'
+          end>
+        Name = 'package'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap.TransparentColor = 536870912
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              027F49444154384FAD535D489361147EF66D6EBA39B6CF6C9A638CE985859216
+              25054241A1EEBE2E22D1BB6EC42E04EF44F3372C11B40BBD31E8C2B09B026F42
+              9041370AA5888530125D6188CEE59CCEF9C3E6E9F93E6D31BAAC07CECEBBF39E
+              E739E7BC3BC37FC78740401EF8FD72ABB0502A7272A4C26A95EA8202B95F5323
+              D3535372969686E1CCEB78D2DA2A6F47465066B3E1BCD1085F7E3E2499C48F58
+              0C5BA91416E371DCADAFC7E0E8689A973EF47574C8E4F0306E3A9DC83B3A42A9
+              DF8FE2A62680025FDADB115D5C44CC62C17B8ADD6E68C0B3A1219DAB681FC160
+              505E0E0CE08AAAA2282B0B3F0F0F91E3F5E2C0EDC6494909909787C8FE3E2E9A
+              CDB8C3F3BBB131CCCFCDE9E3E802CF3B3B71C96E878FE4E8F1312C22486E6EC2
+              CAB695DD5D18682A478AF1EE06FD358ED6D9D6A6514F053ECFCEC2C5F68C2464
+              33C1A628BA88DDE180D96482E5E4040E7A9539AAC100173B5C9A9FFF23B0158D
+              EA022992B39970C4760F565761B65AA1F0BB716F0FB97C0B33FDCEDA1ADC1B1B
+              7A4E5A4058398BED9BA81C61C20E7D2A12413EEF72F90E8995158045647D1DB6
+              4402361652681A74810B1E0F42E130F6484EF21728602CB1BC8CAFFDFD08B6B4
+              00BC7333768E564AFBCE71CC7C4C0DBA40756D2D96B6B771C859F5AA5A506B91
+              5D58B7C2F0B07D95212FCD440B71B48AAA2A2DEB149148447C4EA7DC531479C5
+              890669D36565E9AD9BB6DB658331066494670F3773616121732BDF4C4C888F6B
+              FBC864924926CE51EC5B63A3CCD4D5A5C9015595CB4545D2D5D39349FE8DD7E3
+              E372DDEB9587147A71263443FBC8AA7D2E975C2D2E96AEEEEE0C72C67F41433C
+              1E97A7BDBDF81408201C0AC1C49D70702B4B2A2BF1B8B919E5E5E57F71FE01C0
+              2FF1270D6D0BCA40FA0000000049454E44AE426082}
+            FileName = 
+              'C:\data\Images\programming images\glyphs\software\PNG\Regular\16' +
+              'x16\Symbol Error.bmp'
+          end>
+        Name = 'validate'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              02DE49444154384F5D93CD8FD35614C57FCF8E9378E28C13122733090C152A55
+              8B604054EAA2624359B4824A5DB005B1ADBA6043C51FD265172055158B765BF1
+              213E36886A2A21A6EAA23012C37498A603841138B19D38B1E35E3B6D4AB9D6F3
+              7DBAF639F7BCF3DE53274F7F7ABBD6743ED1759D3743FD93FF0B35ABA5398A27
+              BC7CFEF28E3AFBD599E4D23797519A229A8CA77F6491021279A6B060EC65B524
+              D14826693DE6EB8B17C8A59D6322D4F80AFECD55AAB703BA179728952DD6D67E
+              E6A1FF2D7F755DCAE5799EEFB8E839839E3FE4DCC90423A7A365F412AEBB83FB
+              419E9EE7115CFF1DCFDB96E1A1C255C2419F41D06734F018C888863E4A4D04A5
+              10E1D3B06D07CBAA31777E99EACD087BAE4E63B1C5FED63A8BB50AEDA64DCBB1
+              596AC8BC610B418A12820C2D13D775A5639FD78D985E3562F0E36310A392E02E
+              E35054F57DC901A1741F49562AC990B325D876235350B11730BF3C40F58146CD
+              58C4A93B2C393B33057B24B7454516A24208A68B180E437C2FC0EDB9F44B31AF
+              DE93DA774F48E221DAE82A4359FB28F419FA1E93917890A1DEF0C0342B58F335
+              51B240D97230CE1CC1DCCC61C67B69D53A346B030EB47E6379E906875B97D0B5
+              49463223E8BBBE78108A029FFB9D675C59DFE0DEBB31EEE5353AF22D37FA89B0
+              F73D66B04D796507E58B0F82D3523BD3C97C65018A157E0D22FE1819542A0ECF
+              4EEC6577AECAA0DBA262F5686F16316F3DE2693E2631F259E35CFA4A92845FB6
+              3658ED3C1223CBE2C750D488A23064E57D8D433FACE33DD8A45335D83EBA8F9E
+              A1D8932F6404D91282C8A71B8F29E42D4AA64DB150C22A5ABCB3E5B2FBCF0E79
+              430C3D7888AD63CBE8BBEA940A56DA754A903AA9944699792C55A6109BCC298B
+              E6C317B43A03363E5E66F58BC3EC5B79CD5CA491C7C8463C96E32F04B9288A89
+              E398F6AE23B46BFF6EAA90EE97741CEAD32387FA68C287FA18BD98971D90FB33
+              911B2438F5F9E953D79C66FD33DD48EDF8FF957D3B663599A48DBBDBDDEB7F03
+              CA95248509E003440000000049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\map.png'
+          end>
+        Name = 'map'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              02DE49444154384FAD93DF4B536118C7BF3B67E79CFD70C79DE9749A6EAECCFC
+              51172E8D5091F022A8B4280DFC0B8A50C28B20486F2C280A52410A8AA0EE8222
+              C288BA0B31224CB494744E2DC4E6AFB9B9CD6D673FCED959EF9C514277F5BD79
+              78799FCFF779DEF7795FFCAB543BF14FD55AAA2C3D26B3B95E5F68CC492A0A82
+              EEB5CD8037F4C937EBB945F647326919ED32E07298DEFD7555DDA6B2225A226B
+              29269104056A96464214E175AD29EBCEA5C1D87AAC2B4300F44E042BB0570FB5
+              D4DED05B2CD4AACF03510A23998A43A124245431484A1C825950A978E6687C33
+              CAC8A2F42ECDFD32B095D4950E659714532B815568356A68181A1CA9CC30C0D6
+              96176DC7CFA0ABBD134EF71C3682BE46D11D7A4638EFB6817E8F7EC05A5FEEF0
+              878250AB53D01090E3546059028B5E1C3BD2803B2D3761CDB7438E8731BAF419
+              6228619383F1A754DA40283035A5B3131041530A284686C99805510EA0AEBA06
+              FDAD03A4133D26C6C6F176FA05040B079D41D3405076DB80C935582391304E37
+              35E3C9B507D092BEDF8F0FA3B8308FC083D0E9784C2F3AD1FDF212E683939092
+              3E3082C648D0C4B681180AA752A4FEF9BA16D4961C469BE31C2ACA4AD1D17819
+              06DA04D7B779743C3A8BA5E80C7833A0D390932B6972678CFC01A353A829288F
+              2921F4B7DFC629FB49F81140619E152B5B6E5C7878021E6A11367B1E688D8CE5
+              693D665EFBBDA1598F79FB12155A559C64958600B9ED8FEB23A8A970C051590B
+              8F6F03171F9F8487FE8EF24A0B7813856450C1C21483F5AFDE37884ACF330611
+              79145A55279F6BE262A900A6C2A3A05212FA867AE0969CA8385800219F028738
+              5C63D958F8E097133FFC6D04F5FD7E893ABA99DB6778956DCD52E9CC641A5C14
+              B9360D699B872EFD1A936ACC4DEAF1653888ADC9E52B482877D3D8EEBFC0A295
+              B11BEFE9F3B97C612F0733AF858EA311818C8D05059EB9485074AD5E27CBBE1D
+              E2AFA22030BD94DD30C15717258D0E5B8AB39B6790CDDE277BB64CCA7F13F013
+              F7D30F2EC9B8D6A80000000049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\Symbol Check.png'
+          end>
+        Name = 'val'
       end>
     Destination = <
       item
@@ -969,8 +1265,32 @@ object MasterToolsForm: TMasterToolsForm
           item
             Name = 'registry'
           end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'package'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'validate'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'map'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'val'
+          end>
       end>
-    Left = 24
+    Left = 48
     Top = 428
   end
 end

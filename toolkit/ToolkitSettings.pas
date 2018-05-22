@@ -32,8 +32,9 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Json, FHIR.Support.Strings,
-  FHIR.Client.SmartUtilities,
-  FHIR.Client.Registry;
+  FHIR.Base.Factory,
+  FHIR.Client.SmartUtilities, FHIR.Client.Registry,
+  FHIR.Cache.PackageManager;
 
 const
   DEF_TIMEOUT = 10;
@@ -43,6 +44,8 @@ const
 type
   TFHIRToolkitSettings = class (TFHIRClientRegistry)
   private
+    FCacheManager: TFHIRPackageManager;
+    FVersions: TFHIRVersionFactories;
     function GetTimeout: integer;
     procedure SetTimeout(const Value: integer);
     procedure SetProxy(const Value: String);
@@ -55,9 +58,12 @@ type
     function GetRegistryUsername: String;
     procedure SetRegistryPassword(const Value: String);
     procedure SetRegistryUsername(const Value: String);
+    procedure SetCacheManager(const Value: TFHIRPackageManager);
+    procedure SetVersions(const Value: TFHIRVersionFactories);
   protected
     procedure initSettings; virtual;
   public
+    Destructor Destroy; override;
     function link : TFHIRToolkitSettings; overload;
 
     property timeout: integer read GetTimeout write SetTimeout;
@@ -76,11 +82,21 @@ type
     function getValue(section, name, default : String) : String; overload;
     function getValue(section, name : String; default : integer) : integer; overload;
     function getValue(section, name : String; default : boolean) : boolean; overload;
+
+    Property CacheManager : TFHIRPackageManager read FCacheManager write SetCacheManager;
+    Property Versions : TFHIRVersionFactories read FVersions write SetVersions;
   end;
 
 implementation
 
 { TFHIRToolkitSettings }
+
+destructor TFHIRToolkitSettings.Destroy;
+begin
+  FVersions.Free;
+  FCacheManager.free;
+  inherited;
+end;
 
 function TFHIRToolkitSettings.GetCheckForUpgradesOnStart: boolean;
 begin
@@ -184,6 +200,12 @@ begin
   result := TFHIRToolkitSettings(inherited Link);
 end;
 
+procedure TFHIRToolkitSettings.SetCacheManager(const Value: TFHIRPackageManager);
+begin
+  FCacheManager.Free;
+  FCacheManager := Value;
+end;
+
 procedure TFHIRToolkitSettings.SetCheckForUpgradesOnStart(const Value: boolean);
 begin
   if value <> GetCheckForUpgradesOnStart then
@@ -234,6 +256,12 @@ begin
     o.vStr['Timeout'] := inttostr(value);
     Save;
   end;
+end;
+
+procedure TFHIRToolkitSettings.SetVersions(const Value: TFHIRVersionFactories);
+begin
+  FVersions.Free;
+  FVersions := Value;
 end;
 
 procedure TFHIRToolkitSettings.StoreValue(section, name: String; value: boolean);

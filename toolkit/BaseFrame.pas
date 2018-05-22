@@ -52,10 +52,12 @@ type
     FOnOpenResource : TOnOpenResourceEvent;
     FOnWork : TWorkEvent;
     FOnStopped: TIsStoppedEvent;
+    FForm : TForm;
     procedure SetSettings(const Value: TFHIRToolkitSettings);
   public
     destructor Destroy; override;
 
+    property Form : TForm read FForm write FForm;
     property Tabs : TTabControl read FTabs write FTabs;
     property Tab : TTabItem read FTab write FTab;
     property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
@@ -76,6 +78,7 @@ type
     function currentResource : TFHIRResource; virtual;
     function originalResource : TFHIRResource; virtual;
     procedure reload; virtual;
+    procedure SettingsChanged; virtual;
 
     procedure ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure work(opName : String; canCancel : boolean; proc : TWorkProc);
@@ -169,6 +172,11 @@ procedure TBaseFrame.SetSettings(const Value: TFHIRToolkitSettings);
 begin
   FSettings.Free;
   FSettings := Value;
+end;
+
+procedure TBaseFrame.SettingsChanged;
+begin
+  // nothing
 end;
 
 procedure TBaseFrame.work(opName : String; canCancel : boolean; proc: TWorkProc);

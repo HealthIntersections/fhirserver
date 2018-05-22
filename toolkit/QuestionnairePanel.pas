@@ -81,7 +81,6 @@ Type
     property OnWork : TWorkEvent read FOnWork write FOnWork;
   end;
 
-
 implementation
 
 uses

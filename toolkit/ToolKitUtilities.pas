@@ -76,19 +76,33 @@ implementation
 function checkUpgrade : String;
 var
   http : TIdHTTP;
+  ssl : TIdSSLIOHandlerSocketOpenSSL;
   inc : String;
 begin
   http := TIdHTTP.Create(nil);
   try
-    // init openSSL
-    try
-      http.Get('https://hl7.org/fhir/version.info');
-    except
-    end;
-    inc := http.Get('http://www.healthintersections.com.au/FhirServer/toolkit.inc');
-    inc := inc.substring(inc.indexof('<td>v')+5);
-    inc := inc.substring(0, inc.indexof('</td>'));
-    result := inc;
+    ssl := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
+    Try
+      http.IOHandler := ssl;
+      ssl.SSLOptions.Mode := sslmClient;
+      ssl.SSLOptions.Method := sslvTLSv1_2;
+      http.Request.host := 'www.healthintersections.com.au';
+      http.Request.CacheControl := 'max-age=0';
+      http.Request.UserAgent := 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
+      http.Request.Accept := 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8';
+      http.Request.AcceptLanguage := 'en-US,en;q=0.9';
+      inc := http.Get('http://www.healthintersections.com.au/FhirServer/toolkit.txt');
+      inc := inc.substring(inc.indexof('<td>v')+5);
+      inc := inc.substring(0, inc.indexof('</td>'));
+      result := inc;
+      // init openSSL
+      try
+        http.Get('https://hl7.org/fhir/version.info');
+      except
+      end;
+    Finally
+      ssl.Free;
+    End;
   finally
     http.free;
   end;
