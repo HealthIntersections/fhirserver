@@ -12,9 +12,6 @@
         <Projects Include="vcldemo\FhirVclDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="utils\fpm\FhirPackageManager.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="utils\cde\ClinicalDocumentEditor.dproj">
             <Dependencies/>
         </Projects>
@@ -59,15 +56,6 @@
     <Target Name="FhirVclDemo:Make">
         <MSBuild Projects="vcldemo\FhirVclDemo.dproj" Targets="Make"/>
     </Target>
-    <Target Name="FhirPackageManager">
-        <MSBuild Projects="utils\fpm\FhirPackageManager.dproj"/>
-    </Target>
-    <Target Name="FhirPackageManager:Clean">
-        <MSBuild Projects="utils\fpm\FhirPackageManager.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FhirPackageManager:Make">
-        <MSBuild Projects="utils\fpm\FhirPackageManager.dproj" Targets="Make"/>
-    </Target>
     <Target Name="ClinicalDocumentEditor">
         <MSBuild Projects="utils\cde\ClinicalDocumentEditor.dproj"/>
     </Target>
@@ -96,13 +84,13 @@
         <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;FhirVclDemo;FhirPackageManager;ClinicalDocumentEditor;fhirnpp;FHIRServerTests"/>
+        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;FhirVclDemo;ClinicalDocumentEditor;fhirnpp;FHIRServerTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FhirVclDemo:Clean;FhirPackageManager:Clean;ClinicalDocumentEditor:Clean;fhirnpp:Clean;FHIRServerTests:Clean"/>
+        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;FhirVclDemo:Clean;ClinicalDocumentEditor:Clean;fhirnpp:Clean;FHIRServerTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;FhirVclDemo:Make;FhirPackageManager:Make;ClinicalDocumentEditor:Make;fhirnpp:Make;FHIRServerTests:Make"/>
+        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;FhirVclDemo:Make;ClinicalDocumentEditor:Make;fhirnpp:Make;FHIRServerTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

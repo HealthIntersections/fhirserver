@@ -163,3 +163,4 @@ System
 /Server/*.rsb
 /utils/cde/samples
 /freepascal/lib/x86_64-win64
+/Exec/32/*.adu

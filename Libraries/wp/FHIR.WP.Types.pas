@@ -802,8 +802,8 @@ Type
 
       Function Get(Const aValue : Integer) : TWPTrackable; Reintroduce; Overload; Virtual;
 
-      Procedure InternalAfterInclude(iIndex : Integer; oObject : TFslObject); Reintroduce; Overload; Virtual;
-      Procedure InternalBeforeExclude(iIndex : Integer; oObject : TFslObject); Reintroduce; Overload; Virtual;
+      Procedure InternalAfterInclude(iIndex : Integer; oObject : TFslObject); Override;
+      Procedure InternalBeforeExclude(iIndex : Integer; oObject : TFslObject); Override;
 
     Public
       Constructor Create; Overload; Override;
@@ -3432,7 +3432,7 @@ Procedure TWPTrackableList.InternalAfterInclude(iIndex : Integer; oObject : TFsl
 Var
   oTrackable : TWPTrackable;
 Begin
-  Inherited InternalAfterInclude(iIndex);
+  Inherited InternalAfterInclude(iIndex, oObject);
   If Hooking Then
   Begin
     oTrackable := TWPTrackable(oObject);
@@ -3454,7 +3454,7 @@ Begin
     Change(ctListContents, oTrackable);
     oTrackable.UnHook(Change);
   End;
-  Inherited InternalBeforeExclude(iIndex);
+  Inherited InternalBeforeExclude(iIndex, oObject);
 End;
 
 

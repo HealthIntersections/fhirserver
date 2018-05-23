@@ -111,7 +111,8 @@ uses
   OidFetcher in 'OidFetcher.pas' {OidFetcherForm},
   cdaHeaderForm in 'cdaHeaderForm.pas',
   IIEditor in 'IIEditor.pas' {IIEditForm},
-  OIDCache in 'OIDCache.pas';
+  OIDCache in 'OIDCache.pas',
+  FHIR.Support.Fpc in '..\..\reference-platform\support\FHIR.Support.Fpc.pas';
 
 {$R *.RES}
 {$R WindowsXP.RES}

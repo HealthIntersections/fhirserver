@@ -2964,7 +2964,7 @@ Begin
   While Assigned(oTemp) And (oTemp.pieceType <> ptPara) Do
     oTemp := oTemp.Next;
 
-  Result := TWPWorkingDocumentParaPiece(oTemp);
+  Result := oTemp as TWPWorkingDocumentParaPiece;
 End;
 
 

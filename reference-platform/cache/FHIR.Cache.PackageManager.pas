@@ -11,14 +11,6 @@ type
   TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool);
   TFHIRPackageKindSet = set of TFHIRPackageKind;
 
-const
-  All_Package_Kinds = [fpkCore..fpkTool];
-  CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool');
-  NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools');
-
-  ANALYSIS_VERSION = 2;
-  CACHE_VERSION = 1;
-
 type
   TFHIRPackageObject = {abstract} class (TFslObject)
   public
@@ -56,6 +48,8 @@ type
     FProfiles: TDictionary<String, String>;
     FCanonicals : TDictionary<String, String>;
     FFolder: String;
+    function listDependencies : String;
+    procedure report (b : TStringBuilder);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -81,6 +75,7 @@ type
     FCanonical : String;
     FVersions : TFslList<TFHIRPackageVersionInfo>;
     FKind: TFHIRPackageKind;
+    procedure report (b : TStringBuilder);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -134,7 +129,18 @@ type
 
     function getId(url : String) : String;
     function getUrl(id : String) : String;
+
+    function report : String;
   end;
+
+const
+  All_Package_Kinds = [fpkCore..fpkTool];
+  CODES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core', 'IG', 'IG-Template', 'Tool');
+  NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools');
+  NAMES_TFHIRPackageDependencyStatus : Array [TFHIRPackageDependencyStatus] of String = ('?', 'ok', 'ver?', 'bad');
+  ANALYSIS_VERSION = 2;
+  CACHE_VERSION = 1;
+
 
 implementation
 
@@ -677,6 +683,44 @@ begin
   end;
 end;
 
+function TFHIRPackageManager.report: String;
+var
+  b : TStringBuilder;
+  list : TFslList<TFHIRPackageInfo>;
+  p : TFHIRPackageInfo;
+  ts : TStringList;
+  s : String;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.AppendLine('Packages in '+Folder);
+    b.AppendLine;
+
+    list := TFslList<TFHIRPackageInfo>.create;
+    try
+      ListPackages(All_Package_Kinds, list);
+      for p in list do
+        p.report(b);
+    finally
+      list.Free;
+    end;
+
+    b.AppendLine;
+    b.AppendLine('URL Map:');
+    ts := TStringList.Create;
+    try
+      FIni.ReadSection('urls', ts);
+      for s in ts do
+        b.AppendLine('  '+s+'='+FIni.ReadString('urls', s, ''));
+    finally
+      ts.Free;
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
 function TFHIRPackageManager.resolve(list: TFslList<TFHIRPackageInfo>; dep: TFHIRPackageDependencyInfo): TFHIRPackageDependencyStatus;
 var
   t : TFHIRPackageInfo;
@@ -719,6 +763,15 @@ begin
   result := TFHIRPackageInfo(inherited Link);
 end;
 
+procedure TFHIRPackageInfo.report(b: TStringBuilder);
+var
+  v : TFHIRPackageVersionInfo;
+begin
+  b.AppendLine(id+' : '+CODES_TFHIRPackageKind[kind]+' = '+Canonical);
+  for v in FVersions do
+    v.report(b);
+end;
+
 function TFHIRPackageInfo.summary: String;
 begin
   if FCanonical <> '' then
@@ -755,6 +808,28 @@ end;
 function TFHIRPackageVersionInfo.Link: TFHIRPackageVersionInfo;
 begin
   result := TFHIRPackageVersionInfo(inherited link);
+end;
+
+function TFHIRPackageVersionInfo.listDependencies: String;
+var
+  d : TFHIRPackageDependencyInfo;
+begin
+  result := '';
+  for d in dependencies do
+    result := result + ', '+d.id+'-'+d.version+' ('+NAMES_TFHIRPackageDependencyStatus[d.status]+')';
+  if result <> '' then
+    result := result.Substring(2);
+end;
+
+procedure TFHIRPackageVersionInfo.report(b: TStringBuilder);
+begin
+  b.AppendLine('  '+statedVersion+'/'+actualVersion+' on '+FhirVersion+' from '+url+' in '+folder);
+  b.AppendLine('    dependencies: '+listDependencies);
+  if installed = 0 then
+    b.AppendLine('    install: '+DescribeBytes(size)+' on (n/a)')
+  else
+    b.AppendLine('    install: '+DescribeBytes(size)+' on '+TDateTimeEx.make(installed, dttzLocal).toXML);
+  b.AppendLine('    analysis: '+IntToStr(profiles.count)+' '+StringPlural('profile', profiles.Count)+', '+IntToStr(canonicals.count)+' '+StringPlural('canonical', canonicals.Count));
 end;
 
 function TFHIRPackageVersionInfo.summary: String;

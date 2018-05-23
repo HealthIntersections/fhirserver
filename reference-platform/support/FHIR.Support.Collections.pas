@@ -949,8 +949,8 @@ Type
       overload; override;
     function Extendable(const sMethod: string; iCount: integer): boolean; override;
 
-    procedure InternalAfterInclude(iIndex: integer); virtual;
-    procedure InternalBeforeExclude(iIndex: integer); virtual;
+    procedure InternalAfterInclude(iIndex: integer; oObject : TFslObject); virtual;
+    procedure InternalBeforeExclude(iIndex: integer; oObject : TFslObject); virtual;
 
     // Attribute
     function AllowUnassigned: boolean; virtual;
@@ -7263,7 +7263,7 @@ begin
   begin
     oValue := FObjectArray^[iLoop];
 
-    InternalBeforeExclude(iLoop);
+    InternalBeforeExclude(iLoop, oValue);
 
     FObjectArray^[iLoop] := nil;
 
@@ -7310,10 +7310,14 @@ end;
 
 
 procedure TFslObjectList.InternalDelete(iIndex: integer);
+Var
+  oValue : TFslObject;
 begin
   inherited;
 
-  InternalBeforeExclude(iIndex);
+  oValue := FObjectArray^[iIndex];
+
+  InternalBeforeExclude(iIndex, oValue);
 
   FObjectArray^[iIndex].Free;
   FObjectArray^[iIndex] := nil;
@@ -7542,7 +7546,7 @@ begin
 
   FObjectArray^[iIndex] := oValue;
 
-  InternalAfterInclude(iIndex);
+  InternalAfterInclude(iIndex, oValue);
 end;
 
 
@@ -7707,17 +7711,21 @@ end;
 
 
 procedure TFslObjectList.SetObject(iIndex: integer; const oValue: TFslObject);
+Var
+  oExclude : TFslObject;
 begin
   Assert(ValidateIndex('SetObject', iIndex));
   Assert(Replaceable('SetObject', iIndex));
   Assert(Replaceable('SetObject', FObjectArray^[iIndex], oValue));
 
-  InternalBeforeExclude(iIndex);
+  oExclude := FObjectArray^[iIndex];
+
+  InternalBeforeExclude(iIndex, oExclude);
 
   FObjectArray^[iIndex].Free;
   FObjectArray^[iIndex] := oValue;
 
-  InternalAfterInclude(iIndex);
+  InternalAfterInclude(iIndex, oValue);
 end;
 
 
@@ -7847,12 +7855,12 @@ begin
 end;
 
 
-procedure TFslObjectList.InternalAfterInclude(iIndex: integer);
+procedure TFslObjectList.InternalAfterInclude(iIndex: integer; oObject : TFslObject);
 begin
 end;
 
 
-procedure TFslObjectList.InternalBeforeExclude(iIndex: integer);
+procedure TFslObjectList.InternalBeforeExclude(iIndex: integer; oObject : TFslObject);
 begin
 end;
 

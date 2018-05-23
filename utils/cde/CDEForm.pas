@@ -1150,7 +1150,7 @@ Begin
   End;
 
   wrdEditor.Speller := TWPAddictSpeller.Create
-    (TWPAddictDictionary.Create('C:\Development\Compile',
+    (TWPAddictDictionary.Create('C:\Temp',
     wrdEditor.Settings.SpellCheckUppercaseWords));
   wrdEditor.Printer := getDefaultPrinter;
   wrdEditor.PageLayoutController := BuildPageLayoutController;
@@ -3245,7 +3245,7 @@ Begin
 //  Finally
 //    oController.free;
 //  End;
-  Abort;
+  result := nil;
 End;
 
 Procedure TWordProcessorForm.clpSelect(Sender: TObject);

@@ -44,6 +44,7 @@ contains
   FHIR.Uix.Dialogs in 'FHIR.Uix.Dialogs.pas',
   FHIR.Uix.Images in 'FHIR.Uix.Images.pas',
   FHIR.Uix.Controls in 'FHIR.Uix.Controls.pas',
-  FHIR.Uix.Forms in 'FHIR.Uix.Forms.pas' {UixForm};
+  FHIR.Uix.Forms in 'FHIR.Uix.Forms.pas' {UixForm},
+  ColorSpeedButton in 'ColorSpeedButton.pas';
 
 end.

@@ -251,7 +251,7 @@ Type
     Function GetBase(iIndex : Integer) : Tv3Base;
     procedure SetBases(iIndex: Integer; const Value: Tv3Base);
   protected
-    Procedure InternalAfterInclude(iIndex : Integer); Override;
+    Procedure InternalAfterInclude(iIndex : Integer; oObject : TFslObject); Override;
   public
     Constructor Create(Parent : Tv3Base);
 
@@ -1158,7 +1158,7 @@ begin
   Inherited Insert(iIndex, value);
 end;
 
-procedure Tv3BaseList.InternalAfterInclude(iIndex: Integer);
+procedure Tv3BaseList.InternalAfterInclude(iIndex: Integer; oObject : TFslObject);
 begin
   inherited;
   if Parent <> nil then
