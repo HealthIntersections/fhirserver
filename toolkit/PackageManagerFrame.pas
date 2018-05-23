@@ -74,6 +74,7 @@ type
     mnuOpen: TMenuItem;
     mnuDelete: TMenuItem;
     btnFind: TButton;
+    btnDebug: TButton;
     procedure rbUserChange(Sender: TObject);
     procedure rbSystemChange(Sender: TObject);
     procedure tvPackagesClick(Sender: TObject);
@@ -90,6 +91,7 @@ type
     procedure pmPackagePopup(Sender: TObject);
     procedure mnuOpenClick(Sender: TObject);
     procedure btnFindClick(Sender: TObject);
+    procedure btnDebugClick(Sender: TObject);
   private
     FLoading : boolean;
     FStop : boolean;
@@ -112,6 +114,16 @@ implementation
 uses PackageBrowser;
 
 { TPackageManagerFrame }
+
+procedure TPackageManagerFrame.btnDebugClick(Sender: TObject);
+var  Svc: IFMXClipboardService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXClipboardService, Svc) then
+  begin
+    Svc.SetClipboard(FPcm.Report);
+    ShowMessage('Report posted to clipboard');
+  end;
+end;
 
 procedure TPackageManagerFrame.btnDeletePackageClick(Sender: TObject);
 var
