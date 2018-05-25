@@ -35,6 +35,7 @@ uses
   SysUtils, Classes, FHIR.Support.Lock, Generics.Defaults, Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Exceptions,
   FHIR.Database.Manager,
+  FHIR.Base.Lang,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Operations, FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, RxNormServices, UniiServices, ACIRServices, UriServices, ICD10Services,
   AreaCodeServices, IETFLanguageCodeServices, FHIR.Debug.Logging,

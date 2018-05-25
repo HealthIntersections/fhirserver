@@ -68,7 +68,7 @@ Type
     procedure progress(i : integer);
   end;
 
-  TFhirOperation = {abstract} class (TFslObject)
+  TFhirOperation = class abstract (TFslObject)
   protected
     function resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref : String) : integer;
     function CreateBaseDefinition(base : String) : TFHIROperationDefinition;

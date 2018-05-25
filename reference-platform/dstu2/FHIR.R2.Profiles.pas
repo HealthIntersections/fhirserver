@@ -100,7 +100,7 @@ Type
   end;
 
 
-  TBaseWorkerContext = class abstract (TFHIRWorkerContext)
+  TBaseWorkerContextR2 = class abstract (TFHIRWorkerContext)
   protected
     FLock : TCriticalSection;
     FProfiles : TProfileManager;
@@ -112,7 +112,7 @@ Type
   public
     Constructor Create(factory : TFHIRFactory); Override;
     Destructor Destroy; Override;
-    function link : TBaseWorkerContext; overload;
+    function link : TBaseWorkerContextR2; overload;
 
     property Profiles : TProfileManager read FProfiles;
     procedure SeeResource(r : TFhirResource); overload; virtual;
@@ -129,7 +129,7 @@ Type
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
     function getStructure(url : String) : TFHIRStructureDefinition; override;
-    function allStructures : TFslMap<TFHIRStructureDefinition>.TValueCollection; override;
+    procedure listStructures(list : TFslList<TFHIRStructureDefinition>); override;
     function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; override;
     function getCustomResource(name : String) : TFHIRCustomResourceInformation; override;
     function hasCustomResource(name : String) : boolean; override;
@@ -137,6 +137,7 @@ Type
     function nonSecureResourceNames : TArray<String>; override;
 
   end;
+  TBaseWorkerContext = TBaseWorkerContextR2;
 
   TProfileUtilities = class (TFslObject)
   private
@@ -1466,9 +1467,9 @@ end;
 //  inherited;
 //end;
 
-{ TBaseWorkerContext }
+{ TBaseWorkerContextR2 }
 
-function TBaseWorkerContext.allResourceNames: TArray<String>;
+function TBaseWorkerContextR2.allResourceNames: TArray<String>;
 var
   a : TFHIRResourceType;
   i : integer;
@@ -1491,12 +1492,16 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.allStructures: TFslMap<TFHIRStructureDefinition>.TValueCollection;
+
+procedure TBaseWorkerContextR2.listStructures(list : TFslList<TFHIRStructureDefinition>);
+var
+  sd : TFHIRStructureDefinition;
 begin
-  result := FProfiles.ProfilesByURL.Values;
+  for sd in FProfiles.ProfilesByURL.Values do
+    list.add(sd.link);
 end;
 
-constructor TBaseWorkerContext.Create;
+constructor TBaseWorkerContextR2.Create;
 begin
   inherited;
   FLock := TCriticalSection.Create('worker-context');
@@ -1504,7 +1509,7 @@ begin
   FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create;
 end;
 
-destructor TBaseWorkerContext.Destroy;
+destructor TBaseWorkerContextR2.Destroy;
 begin
   FCustomResources.Free;
   FProfiles.free;
@@ -1512,7 +1517,7 @@ begin
   inherited;
 end;
 
-function TBaseWorkerContext.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TBaseWorkerContextR2.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
 begin
   case t of
     frtStructureDefinition : result := FProfiles.ProfileByURL[url];
@@ -1521,12 +1526,12 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
+function TBaseWorkerContextR2.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
   result := FHIR.R2.Utilities.getChildMap(profile, element.name, element.path, element.contentReference);
 end;
 
-function TBaseWorkerContext.getCustomResource(name: String): TFHIRCustomResourceInformation;
+function TBaseWorkerContextR2.getCustomResource(name: String): TFHIRCustomResourceInformation;
 begin
   FLock.Lock;
   try
@@ -1536,7 +1541,7 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.getResourceNames: TFslStringSet;
+function TBaseWorkerContextR2.getResourceNames: TFslStringSet;
 var
   a : TFhirResourceType;
 begin
@@ -1551,24 +1556,31 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.getStructure(ns, name: String): TFHIRStructureDefinition;
+function TBaseWorkerContextR2.getStructure(ns, name: String): TFHIRStructureDefinition;
 var
+  list : TFslList<TFhirStructureDefinition>;
   sd : TFhirStructureDefinition;
   sns : String;
 begin
-  result := nil;
-  for sd in allStructures do
-    if (name = sd.Id) then
-    begin
-      if ((ns = '') or (ns = FHIR_NS)) and not sd.hasExtension('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace') then
-        exit(sd);
-      sns := sd.getExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace');
-      if (ns = sns) then
-        exit(sd);
-    end;
+  list := TFslList<TFhirStructureDefinition>.create;
+  try
+    listStructures(list);
+    result := nil;
+    for sd in list do
+      if (name = sd.Id) then
+      begin
+        if ((ns = '') or (ns = FHIR_NS)) and not sd.hasExtension('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace') then
+          exit(sd);
+        sns := sd.getExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace');
+        if (ns = sns) then
+          exit(sd);
+      end;
+  finally
+    list.Free;
+  end;
 end;
 
-function TBaseWorkerContext.hasCustomResource(name: String): boolean;
+function TBaseWorkerContextR2.hasCustomResource(name: String): boolean;
 begin
   FLock.Lock;
   try
@@ -1578,7 +1590,7 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.hasCustomResourceDefinition(sd: TFHIRStructureDefinition): boolean;
+function TBaseWorkerContextR2.hasCustomResourceDefinition(sd: TFHIRStructureDefinition): boolean;
 var
   cr : TFHIRCustomResourceInformation;
 begin
@@ -1593,17 +1605,17 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.getStructure(url: String): TFHIRStructureDefinition;
+function TBaseWorkerContextR2.getStructure(url: String): TFHIRStructureDefinition;
 begin
   result := fetchResource(frtStructureDefinition, url) as TFhirStructureDefinition
 end;
 
-function TBaseWorkerContext.link: TBaseWorkerContext;
+function TBaseWorkerContextR2.link: TBaseWorkerContextR2;
 begin
-  result := TBaseWorkerContext(inherited Link);
+  result := TBaseWorkerContextR2(inherited Link);
 end;
 
-procedure TBaseWorkerContext.LoadFromDefinitions(filename: string);
+procedure TBaseWorkerContextR2.LoadFromDefinitions(filename: string);
 var
   b : TFslBuffer;
   m : TFslMemoryStream;
@@ -1666,7 +1678,7 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContext.LoadFromFile(filename: string; parser : TFHIRParser);
+procedure TBaseWorkerContextR2.LoadFromFile(filename: string; parser : TFHIRParser);
 var
   fn : TFileStream;
   be : TFhirBundleEntry;
@@ -1691,7 +1703,7 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContext.LoadFromFile(filename: string);
+procedure TBaseWorkerContextR2.LoadFromFile(filename: string);
 begin
   filename := LowerCase(filename);
   if ExtractFileExt(filename) = '.zip' then
@@ -1702,7 +1714,7 @@ begin
     LoadFromFile(filename, TFHIRXmlParser.create(self.Link, 'en'))
 end;
 
-procedure TBaseWorkerContext.LoadFromFolder(folder: string);
+procedure TBaseWorkerContextR2.LoadFromFolder(folder: string);
 var
   list : TStringList;
   sr : TSearchRec;
@@ -1725,7 +1737,7 @@ begin
   end;
 end;
 
-function TBaseWorkerContext.nonSecureResourceNames: TArray<String>;
+function TBaseWorkerContextR2.nonSecureResourceNames: TArray<String>;
 begin
   if length(FNonSecureNames) = 0 then
     result := allResourceNames
@@ -1733,7 +1745,7 @@ begin
     result := FNonSecureNames;
 end;
 
-procedure TBaseWorkerContext.registerCustomResource(cr: TFHIRCustomResourceInformation);
+procedure TBaseWorkerContextR2.registerCustomResource(cr: TFHIRCustomResourceInformation);
 begin
   FLock.Lock;
   try
@@ -1743,12 +1755,12 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContext.SeeResource(res: TFHIRResourceV);
+procedure TBaseWorkerContextR2.SeeResource(res: TFHIRResourceV);
 begin
   SeeResource(res as TFHIRResource);
 end;
 
-procedure TBaseWorkerContext.Load(feed: TFHIRBundle);
+procedure TBaseWorkerContextR2.Load(feed: TFHIRBundle);
 var
   i : integer;
   r : TFhirResource;
@@ -1761,7 +1773,7 @@ begin
 end;
 
 
-procedure TBaseWorkerContext.SeeResource(r: TFhirResource);
+procedure TBaseWorkerContextR2.SeeResource(r: TFhirResource);
 var
   p : TFhirStructureDefinition;
   pu : TProfileUtilities;
@@ -1797,7 +1809,7 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContext.setNonSecureTypes(names: array of String);
+procedure TBaseWorkerContextR2.setNonSecureTypes(names: array of String);
 var
   i : integer;
 begin
@@ -1811,7 +1823,7 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContext.SetProfiles(const Value: TProfileManager);
+procedure TBaseWorkerContextR2.SetProfiles(const Value: TProfileManager);
 begin
   FProfiles.Free;
   FProfiles := Value;

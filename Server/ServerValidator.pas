@@ -35,8 +35,8 @@ Uses
   SysUtils, Classes,
   FHIR.Support.Strings, FHIR.Support.Lock,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Zip,
-  FHIR.Base.Factory,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Context, FHIR.Tools.Utilities, FHIR.Tools.Session, FHIR.Tools.Profiles, FHIR.Tools.Constants,
+  FHIR.Base.Objects, FHIR.Base.Factory,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Context, FHIR.Tools.Utilities, FHIR.Tools.Session, FHIR.Tools.Profiles, FHIR.Tools.Constants, FHIR.Tools.Common,
   TerminologyServer;
 
 Type
@@ -144,7 +144,7 @@ begin
       try
         if not p.bool['result'] then
         begin
-          result.Severity := IssueSeverityError;
+          result.Severity := isError;
           result.Message := p.str['message'];
         end;
         result.Link;
@@ -212,10 +212,10 @@ begin
     result := TValidationResult.Create;
     try
       if FTerminologyServer.checkCode(op, 'en', '', code, system, version, display) then
-        result.Severity := IssueSeverityNull
+        result.Severity := isNull
       else if op.issueList.Count = 1 then
       begin
-        result.Severity := op.issueList[0].severity;
+        result.Severity := ISSUE_SEVERITY_MAP[op.issueList[0].severity];
         if op.issueList[0].details = nil then
           result.Message := op.issueList[0].diagnostics
         else
@@ -223,7 +223,7 @@ begin
       end
       else
       begin
-        result.Severity := IssueSeverityError;
+        result.Severity := isError;
         result.Message := '??';
       end;
       result.Link;
@@ -246,9 +246,9 @@ begin
     try
       result.Message := p.str['result'];
       if p.bool['result'] then
-        result.Severity := IssueSeverityInformation
+        result.Severity := isInformation
       else
-        result.Severity := IssueSeverityError;
+        result.Severity := isError;
     finally
       p.Free;
     end;
@@ -269,9 +269,9 @@ begin
     try
       result.Message := p.str['message'];
       if p.bool['result'] then
-        result.Severity := IssueSeverityInformation
+        result.Severity := isInformation
       else
-        result.Severity := IssueSeverityError;
+        result.Severity := isError;
     finally
       p.Free;
     end;

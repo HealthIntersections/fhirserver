@@ -35,7 +35,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Zip, FHIR.Support.Stream, FHIR.Support.Generics;
 
 type
-  TFHIRWebServerSourceProvider = {abstract} class (TFslObject)
+  TFHIRWebServerSourceProvider = class abstract (TFslObject)
   public
     function AltFile(path, base: String): String;
     function getSource(filename : String) : String; virtual;

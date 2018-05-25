@@ -32,42 +32,45 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
   nppforms,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Types, FHIRPluginValidator, FHIR.Tools.Profiles, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Tools.Context;
+  FHIR.Support.Generics,
+  FHIR.Cache.PackageManager,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.XVersion.Resources,
+  FHIR.Npp.Context;
 
 type
   TResourceNewForm = class(TNppForm)
-    PageControl1: TPageControl;
     Panel1: TPanel;
-    tbResources: TTabSheet;
-    tbProfiles: TTabSheet;
-    lbResources: TListBox;
-    lbProfiles: TListBox;
     Label1: TLabel;
     edtFilter: TEdit;
     btnCreate: TButton;
     Button2: TButton;
     Panel2: TPanel;
-    Label2: TLabel;
-    rbJson: TRadioButton;
     rbXml: TRadioButton;
-    procedure FormShow(Sender: TObject);
-    procedure edtFilterChange(Sender: TObject);
-    procedure lbResourcesClick(Sender: TObject);
+    rbJson: TRadioButton;
+    lbProfiles: TListBox;
+    Label2: TLabel;
+    cbxVersion: TComboBox;
+    Label3: TLabel;
+    cbxPackage: TComboBox;
+    Label4: TLabel;
     procedure btnCreateClick(Sender: TObject);
     procedure lbProfilesClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure cbxVersionChange(Sender: TObject);
+    procedure cbxPackageChange(Sender: TObject);
   private
-    { Private declarations }
-    FContext : TFHIRWorkerContext;
-    procedure loadLists;
-    procedure SetContext(const Value: TFHIRWorkerContext);
+    FContext : TFHIRNppContext;
+    FList : TFslList<TFhirStructureDefinitionW>;
+    procedure populateVersions;
+    procedure SetContext(const Value: TFHIRNppContext);
+    procedure loadItem(rType, id : String; stream : TStream);
   public
-    { Public declarations }
     destructor Destroy; override;
 
-    property Context : TFHIRWorkerContext read FContext write SetContext;
+    property Context : TFHIRNppContext read FContext write SetContext;
   end;
 
 var
@@ -82,40 +85,30 @@ Uses
 
 procedure TResourceNewForm.btnCreateClick(Sender: TObject);
 var
-  sd : TFhirStructureDefinition;
-  pu : TProfileUtilities;
-  res : TFhirResource;
-  comp : TFHIRComposer;
-  s : TStringStream;
+  v : TFHIRVersion;
+  fmt : TFHIRFormat;
+  f : TFHIRNppVersionFactory;
+  sd : TFhirStructureDefinitionW;
+  r : TFHIRResourceV;
+  c : TFHIRComposer;
 begin
-  if PageControl1.ActivePageIndex = 0 then
-    sd := lbResources.items.objects[lbResources.ItemIndex] as TFhirStructureDefinition
+  v := TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex]);
+  if rbXml.Checked then
+    fmt := ffXml
   else
-    sd := lbProfiles.items.objects[lbProfiles.ItemIndex] as TFhirStructureDefinition;
-  pu := TProfileUtilities.create(FContext.Link, nil);
+    fmt := ffJson;
+  f := FContext.Version[v];
+  sd := lbProfiles.Items.Objects[lbProfiles.ItemIndex] as TFhirStructureDefinitionW;
+  r := f.Factory.createFromProfile(f.Worker, sd);
   try
-    res := pu.populateByProfile(sd);
+    c := f.Factory.makeComposer(f.Worker.link, fmt, 'en', OutputStylePretty);
     try
-      if rbJson.Checked then
-        comp := TFHIRJsonComposer.Create(FContext.link, OutputStylePretty, 'en')
-      else
-        comp := TFHIRXmlComposer.Create(FContext.link, OutputStylePretty, 'en');
-      try
-        s := TStringStream.Create;
-        try
-          comp.Compose(s, res);
-          Npp.NewFile(s.DataString);
-        finally
-          s.Free;
-        end;
-      finally
-        comp.Free;
-      end;
+      FNpp.newResource(c.Compose(r), v, fmt, '');
     finally
-      res.Free;
+      c.Free;
     end;
   finally
-    pu.Free;
+    r.Free;
   end;
   ModalResult := mrOK;
 end;
@@ -123,23 +116,19 @@ end;
 destructor TResourceNewForm.Destroy;
 begin
   FContext.Free;
+  FList.Free;
   inherited;
-end;
-
-procedure TResourceNewForm.SetContext(const Value: TFHIRWorkerContext);
-begin
-  FContext.Free;
-  FContext := Value;
-end;
-
-procedure TResourceNewForm.edtFilterChange(Sender: TObject);
-begin
-  loadLists;
 end;
 
 procedure TResourceNewForm.FormShow(Sender: TObject);
 begin
-  LoadLists;
+  populateVersions;
+end;
+
+procedure TResourceNewForm.SetContext(const Value: TFHIRNppContext);
+begin
+  FContext.Free;
+  FContext := Value;
 end;
 
 procedure TResourceNewForm.lbProfilesClick(Sender: TObject);
@@ -147,26 +136,74 @@ begin
   btnCreate.Enabled := lbProfiles.ItemIndex > -1;
 end;
 
-procedure TResourceNewForm.lbResourcesClick(Sender: TObject);
+procedure TResourceNewForm.loadItem(rType, id: String; stream: TStream);
+var
+  f : TFHIRNppVersionFactory;
+  p : TFHIRParser;
+  r : TFHIRResourceV;
 begin
-  btnCreate.Enabled := lbResources.ItemIndex > -1;
+  f := FContext.Version[TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex])];
+  p := f.makeParser(ffJson);
+  try
+    r := p.parseResource(stream);
+    try
+      Flist.add(f.Factory.wrapStructureDefinition(r.link));
+    finally
+      r.Free;
+    end;
+  finally
+    p.Free;
+  end;
 end;
 
-procedure TResourceNewForm.loadLists;
+procedure TResourceNewForm.populateVersions;
 var
-  sd : TFhirStructureDefinition;
-  s : String;
+  a : TFHIRVersion;
 begin
-  lbResources.Clear;
-  lbProfiles.Clear;
-  s := edtFilter.Text;
-  s := s.toLower;
-  for sd in TFHIRPluginValidatorContext(FContext).Profiles.ProfilesByURL.Values do
-    if (sd.kind = StructureDefinitionKindResource) and ((edtFilter.Text = '') or sd.name.ToLower.Contains(s)) then
-      if sd.derivation = TypeDerivationRuleSpecialization then
-        lbResources.Items.AddObject(sd.name, sd)
-      else
-        lbProfiles.Items.AddObject(sd.name, sd)
+  cbxVersion.Items.clear;
+  for a in SUPPORTED_VERSIONS do
+    if (FContext.VersionLoading[a] = vlsLoaded) then
+      cbxVersion.Items.addObject(CODES_TFHIRVersion[a], TObject(a));
+  cbxVersion.ItemIndex := cbxVersion.Items.Count - 1;
+  cbxVersionChange(nil);
 end;
+
+procedure TResourceNewForm.cbxVersionChange(Sender: TObject);
+begin
+  if cbxVersion.ItemIndex = -1 then
+  begin
+    cbxPackage.Items.Clear;
+    cbxPackage.ItemIndex := -1;
+  end
+  else
+  begin
+    FContext.Cache.ListPackagesForFhirVersion([fpkCore, fpkIG], true, FHIR_VERSIONS[TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex])], cbxPackage.Items);
+    cbxPackage.ItemIndex := 0;
+  end;
+  cbxPackageChange(nil);
+end;
+
+procedure TResourceNewForm.cbxPackageChange(Sender: TObject);
+var
+  sd : TFhirStructureDefinitionW;
+begin
+  if FList = nil then
+    FList := TFslList<TFhirStructureDefinitionW>.create;
+  FList.Clear;
+  lbProfiles.Items.Clear;
+  lbProfiles.ItemIndex := -1;
+  if cbxPackage.ItemIndex > -1 then
+  begin
+    if cbxPackage.Items[cbxPackage.ItemIndex].startsWith('hl7.fhir.core-') then
+      Context.Version[TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex])].Worker.listStructures(FList)
+    else
+      FContext.Cache.loadPackage(cbxPackage.Items[cbxPackage.ItemIndex], ['StructureDefinition'], loadItem);
+    for sd in FList do
+      if sd.kind = sdkResource then
+        lbProfiles.Items.AddObject(sd.name+' ('+sd.url+')', sd);
+  end;
+  lbProfilesClick(nil);
+end;
+
 
 end.

@@ -69,8 +69,11 @@ Const
 
   CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
   CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4');
+  PF_CONST : array [TFHIRVersion] of string = ('', '0.0', '1.0', '3.0', '3.4');
   CURRENT_FHIR_VERSION = {$IFDEF FHIR1} fhirVersionRelease1 {$ENDIF} {$IFDEF FHIR2} fhirVersionRelease2 {$ENDIF}{$IFDEF FHIR3} fhirVersionRelease3 {$ENDIF} {$IFDEF FHIR4}  fhirVersionRelease4{$ENDIF};
   FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
+  FHIR_VERSIONS : Array [TFHIRVersion] of String = ('', '0.0.82', '1.0.2', '3.0.1', '3.4.0');
+  SUPPORTED_VERSIONS = [fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
 
 Type
   {
@@ -413,8 +416,12 @@ type
   end;
 
   TFHIRResourceV = class (TFHIRObject)
+  protected
+    function GetProfileVersion: TFHIRVersion; virtual;
+    procedure SetProfileVersion(Value: TFHIRVersion); virtual;
   public
     function link : TFHIRResourceV; overload;
+    property profileVersion : TFHIRVersion read GetProfileVersion write SetProfileVersion;
   end;
 
   TFHIRWorkerContextV = class (TFslObject)
@@ -425,6 +432,8 @@ type
 
     procedure loadResourceJson(rtype, id : String; json : TStream); virtual;
     Property version : TFHIRVersion read GetVersion;
+    function versionString : String;
+
   end;
 
   TFHIRObjectText = class (TFHIRObject)
@@ -476,6 +485,20 @@ type
     class function compareDeep(e1, e2 : TFHIRSelectionList; allowNull : boolean) : boolean;
   end;
 
+  TValidationResult = class (TFslObject)
+  private
+    FSeverity : TIssueSeverity;
+    FMessage  : String;
+    FDisplay: String;
+  public
+    constructor Create; overload; override;
+    constructor Create(Severity : TIssueSeverity; Message : String); overload; virtual;
+    constructor Create(display : String); overload; virtual;
+    Property Severity : TIssueSeverity read FSeverity write FSeverity;
+    Property Message : String read FMessage write FMessage;
+    Property Display : String read FDisplay write FDisplay;
+    function isOk : boolean;
+  end;
 
 function noList(e : TFHIRObjectList) : boolean; overload;
 function compareDeep(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
@@ -1388,12 +1411,53 @@ begin
   raise Exception.Create('Must override...');
 end;
 
+function TFHIRWorkerContextV.versionString: String;
+begin
+  result := CODES_TFHIRVersion[version];
+end;
+
 { TFHIRResourceV }
+
+function TFHIRResourceV.GetProfileVersion: TFHIRVersion;
+begin
+  result := fhirVersionUnknown;
+end;
 
 function TFHIRResourceV.link: TFHIRResourceV;
 begin
   result := TFHIRResourceV(inherited Link);
 end;
+
+procedure TFHIRResourceV.SetProfileVersion(Value: TFHIRVersion);
+begin
+  // nothing
+end;
+
+{ TValidationResult }
+
+constructor TValidationResult.Create(Severity: TIssueSeverity; Message: String);
+begin
+  inherited create;
+  FSeverity := Severity;
+  FMessage := Message;
+end;
+
+constructor TValidationResult.Create;
+begin
+  Inherited Create;
+end;
+
+constructor TValidationResult.Create(display: String);
+begin
+  inherited Create;
+  FDisplay := display;
+end;
+
+function TValidationResult.isOk: boolean;
+begin
+  result := not (Severity in [isError, isFatal]);
+end;
+
 
 End.
 

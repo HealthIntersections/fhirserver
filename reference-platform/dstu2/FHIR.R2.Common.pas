@@ -72,6 +72,13 @@ type
     function hasFormat(fmt : String) : boolean; override;
   end;
 
+  TFHIRStructureDefinition2 = class (TFhirStructureDefinitionW)
+  public
+    function kind : TStructureDefinitionKind; override;
+    function name : String; override;
+    function url : String; override;
+  end;
+
   TFhirParametersParameter2 = class (TFhirParametersParameterW)
   private
     function parameter : TFhirParametersParameter;
@@ -101,6 +108,7 @@ type
 implementation
 
 uses
+  FHIR.Support.Strings,
   FHIR.R2.Utilities;
 
 { TFhirOperationOutcome2 }
@@ -336,6 +344,33 @@ begin
   inherited;
   for t in parameter.parameterList do
     Flist.Add(TFhirParametersParameter2.Create(t.Link));
+end;
+
+{ TFHIRStructureDefinition2 }
+
+function TFHIRStructureDefinition2.kind: TStructureDefinitionKind;
+begin
+  case TFHIRStructureDefinition(resource).kind of
+    StructureDefinitionKindDatatype :
+      if TFHIRStructureDefinition(resource).type_ = 'Extension' then
+        result := sdkExtension
+      else if StringArrayExistsSensitive(['boolean', 'integer', 'string', 'decimal', 'uri', 'base64Binary', 'instant', 'date', 'dateTime', 'time'], TFHIRStructureDefinition(resource).type_) then
+        result := sdkPrimitive
+      else
+        result := sdkDataType;
+    StructureDefinitionKindResource : result := sdkResource;
+    StructureDefinitionKindLogical : result := sdkResource;
+  end;
+end;
+
+function TFHIRStructureDefinition2.name: String;
+begin
+  result := TFHIRStructureDefinition(resource).name;
+end;
+
+function TFHIRStructureDefinition2.url: String;
+begin
+  result := TFHIRStructureDefinition(resource).url;
 end;
 
 end.

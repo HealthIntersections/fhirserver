@@ -50,7 +50,8 @@ uses
   FHIR.Support.Objects,  FHIR.Support.Xml, FHIR.Support.Generics,
   FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Lock,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Tools.Indexing, FHIR.Tools.Context, FHIR.Tools.Session, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Tags, FHIR.Tools.Utilities, FHIR.Tools.Parser, FHIR.Tools.PathEngine, FHIR.Tools.Profiles, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
+  FHIR.Tools.Indexing, FHIR.Tools.Context, FHIR.Tools.Session, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Tags, FHIR.Tools.Utilities, FHIR.Tools.Parser, FHIR.Tools.PathEngine, FHIR.Tools.Profiles, FHIR.Base.Xhtml,
   TerminologyServer, ServerUtilities,
   FHIR.Ucum.Services, FHIR.Ucum.IFace;
 

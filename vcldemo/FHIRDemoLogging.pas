@@ -18,7 +18,7 @@ uses
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Client, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities;
 
 type
-  TLoggingService = {abstract} class
+  TLoggingService = class abstract
   private
     FOpenIdToken: TJWT; // will be nil in case of a system login
     FServer: TRegisteredFHIRServer;

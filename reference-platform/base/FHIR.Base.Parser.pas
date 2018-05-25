@@ -200,7 +200,7 @@ Type
     procedure Parse; Overload; Override;
   End;
 
-  TFHIRComposer = {abstract} class (TFslObject)
+  TFHIRComposer = class abstract (TFslObject)
   private
     FLang: String;
     FSummaryOption: TFHIRSummaryOption;

@@ -65,7 +65,7 @@ Type
     Property new : TStringList read FNew;
   end;
 
-  TXmlBuilder = {abstract} class (TFslObject)
+  TXmlBuilder = class abstract (TFslObject)
   private
     function GetCurrentNamespaces: TXmlBuilderNamespaceList;
     function getNSAbbrev(iElement: TMXMLElement): String;

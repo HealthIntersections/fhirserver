@@ -8,7 +8,8 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls,
   FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Decimal,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Utilities,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities,
   ToolkitSettings, FMX.Edit;
 
 type

@@ -887,7 +887,7 @@ Type
     Base Resource Definition - extensions, narrative, contained resources
   }
   {!.Net HL7Connect.Fhir.Resource}
-  TFhirResource = {abstract} class (TFhirBackboneElement)
+  TFhirResource = class abstract (TFhirBackboneElement)
   private
     FText : TFhirNarrative;
     FLanguage : TFhirCode;

@@ -186,7 +186,9 @@ uses
   FHIR.R4.Narrative in '..\reference-platform\r4\FHIR.R4.Narrative.pas',
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
   FHIR.R4.Turtle in '..\reference-platform\r4\FHIR.R4.Turtle.pas',
-  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
+  ColorSpeedButton in '..\Libraries\ui\ColorSpeedButton.pas',
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
 
 {$R *.res}
 

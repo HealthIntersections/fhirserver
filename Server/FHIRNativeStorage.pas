@@ -37,6 +37,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Controllers,
   FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
   FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Misc.GraphQL, FHIR.Support.Certs,
+  FHIR.Base.Utilities,
   FHIR.Tools.Resources, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.Constants, FHIR.Tools.Context, FHIR.Tools.Operations, FHIR.Base.Xhtml,
   FHIR.Tools.Tags, FHIRValueSetExpander, FHIRIndexManagers, FHIR.Tools.Session, FHIR.Tools.DiffEngine, FHIR.Tools.ElementModel, FHIR.Tools.PathNode,
   FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles,
@@ -117,7 +118,7 @@ type
 
   TFHIRNativeOperationEngine = class;
 
-  TFhirNativeOperation = {abstract} class (TFhirOperation)
+  TFhirNativeOperation = class abstract (TFhirOperation)
   private
     function native(engine : TFHIROperationEngine) : TFHIRNativeOperationEngine;
   protected

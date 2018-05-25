@@ -140,7 +140,7 @@ unshift()	Adds new elements to the beginning of an array, and returns the new le
 valueOf()	Returns the primitive value of an array
 
   }
-  TJavascriptArrayManager = {abstract} class
+  TJavascriptArrayManager = class abstract
   protected
     FJavascript : TJavascript;
   public

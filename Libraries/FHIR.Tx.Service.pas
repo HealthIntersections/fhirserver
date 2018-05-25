@@ -82,7 +82,7 @@ Type
     property stems : TStringList read FStems;
   end;
 
-  TCodeSystemProvider = {abstract} class (TFslObject)
+  TCodeSystemProvider = class abstract (TFslObject)
   private
     FUseCount : cardinal;
   public

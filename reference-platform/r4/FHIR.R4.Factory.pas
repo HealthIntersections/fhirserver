@@ -51,6 +51,7 @@ type
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
+    function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
     function makeClientHTTP(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
 
@@ -63,6 +64,7 @@ type
     function makeBase64Binary(s : string) : TFHIRObject; override;
     function makeParameters : TFHIRParametersW; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
+    function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
   end;
 
 implementation
@@ -70,10 +72,22 @@ implementation
 uses
   Soap.EncdDecd,
   FHIR.Client.HTTP,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Context, FHIR.R4.Validator,
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Context, FHIR.R4.Validator, FHIR.R4.Profiles,
   FHIR.R4.Narrative, FHIR.R4.PathEngine, FHIR.R4.Constants, FHIR.R4.Client, FHIR.R4.Common;
 
 { TFHIRFactoryR4 }
+
+function TFHIRFactoryR4.createFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;
+var
+  pu : TProfileUtilities;
+begin
+  pu := TProfileUtilities.create(worker.Link as TFHIRWorkerContext, nil);
+  try
+    result := pu.populateByProfile(profile.Resource as TFhirStructureDefinition);
+  finally
+    pu.Free;
+  end;
+end;
 
 function TFHIRFactoryR4.description: String;
 begin
@@ -169,6 +183,11 @@ end;
 function TFHIRFactoryR4.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;
 begin
   result := TFHIRCapabilityStatement4.create(r);
+end;
+
+function TFHIRFactoryR4.wrapStructureDefinition(r: TFHIRResourceV): TFhirStructureDefinitionW;
+begin
+  result := TFHIRStructureDefinition4.create(r);
 end;
 
 function TFHIRFactoryR4.makeBase64Binary(s: string): TFHIRObject;

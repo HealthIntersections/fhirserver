@@ -12,7 +12,7 @@ type
   TFHIRPackageKindSet = set of TFHIRPackageKind;
 
 type
-  TFHIRPackageObject = {abstract} class (TFslObject)
+  TFHIRPackageObject = class abstract (TFslObject)
   public
     function summary : string; virtual;
     function childCount : integer; virtual;
@@ -116,10 +116,11 @@ type
     procedure ListPackages(kinds : TFHIRPackageKindSet; list : TFslList<TFHIRPackageInfo>); overload;
     procedure ListPackageIds(list : TStrings);
     procedure ListPackageVersions(id : String; list : TStrings);
-    procedure ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; version : String; list : TStrings);
+    procedure ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; core : boolean; version : String; list : TStrings);
 
     function packageExists(id, ver : String) : boolean;
     procedure loadPackage(id, ver : String; resources : Array of String; loadEvent : TPackageLoadingEvent); overload;
+    procedure loadPackage(idver : String; resources : Array of String; loadEvent : TPackageLoadingEvent); overload;
     procedure loadPackage(id, ver : String; resources : TFslStringSet; loadEvent : TPackageLoadingEvent); overload;
 
     procedure import(content : TBytes; callback : TCheckFunction); overload;
@@ -492,7 +493,7 @@ begin
   end;
 end;
 
-procedure TFHIRPackageManager.ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; version: String; list: TStrings);
+procedure TFHIRPackageManager.ListPackagesForFhirVersion(kinds : TFHIRPackageKindSet; core : boolean; version: String; list: TStrings);
 var
   l : TFslList<TFHIRPackageInfo>;
   p : TFHIRPackageInfo;
@@ -503,7 +504,7 @@ begin
   try
     ListPackages(kinds, l);
     for p in l do
-      if p.id <> 'hl7.fhir.core' then
+      if core or (p.id <> 'hl7.fhir.core') then
         for v in p.versions do
           if v.fhirVersion = version then
             list.Add(p.id+'-'+v.statedVersion);
@@ -600,6 +601,9 @@ var
   s, t, i : String;
   f : TFileStream;
 begin
+  if (id = 'hl7.fhir.core') and (ver = '3.4.0') and packageExists(id, 'current') then
+    ver := 'current';
+
   if not packageExists(id, ver) then
     raise Exception.Create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
   for s in TDirectory.GetFiles(Path([FFolder, id+'-'+ver, 'package'])) do
@@ -618,6 +622,14 @@ begin
         end;
       end;
     end;
+end;
+
+procedure TFHIRPackageManager.loadPackage(idver: String; resources: array of String; loadEvent: TPackageLoadingEvent);
+var
+  id, ver : String;
+begin
+  StringSplit(idver, '-', id, ver);
+  loadPackage(id, ver, resources, loadEvent);
 end;
 
 procedure TFHIRPackageManager.analysePackage(dir: String; v : String; profiles, canonicals: TDictionary<String, String>);

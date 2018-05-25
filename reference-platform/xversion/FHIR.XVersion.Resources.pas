@@ -111,6 +111,17 @@ Type
     function appendParameter(name : String) : TFhirParametersParameterW; virtual;
   end;
 
+  TFhirValueSetW =  class (TFHIRXVersionResourceWrapper);
+
+  TStructureDefinitionKind = (sdkPrimitive, sdkDataType, sdkExtension, sdkResource);
+
+  TFhirStructureDefinitionW =  class (TFHIRXVersionResourceWrapper)
+  public
+    function kind : TStructureDefinitionKind; virtual;
+    function name : String; virtual;
+    function url : String; virtual;
+  end;
+
 implementation
 
 { TFHIRXVersionResourceWrapper }
@@ -338,6 +349,23 @@ begin
   if FList = nil then
     FList := TFslList<TFhirParametersParameterW>.create;
   FList.Clear;
+end;
+
+{ TFhirStructureDefinitionW }
+
+function TFhirStructureDefinitionW.kind: TStructureDefinitionKind;
+begin
+  raise Exception.Create('Must override kind in '+className);
+end;
+
+function TFhirStructureDefinitionW.name: String;
+begin
+  raise Exception.Create('Must override name in '+className);
+end;
+
+function TFhirStructureDefinitionW.url: String;
+begin
+  raise Exception.Create('Must override url in '+className);
 end;
 
 end.

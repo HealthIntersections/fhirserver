@@ -219,7 +219,8 @@ uses
   FHIR.R4.Factory in '..\reference-platform\r4\FHIR.R4.Factory.pas',
   FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
-  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
 
 {$R *.res}
 

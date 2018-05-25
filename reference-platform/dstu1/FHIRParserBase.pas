@@ -65,7 +65,7 @@ const
     '<script type="text/javascript" src="/js/fhir-gw.js"></script>'+#13#10;
 
 Type
-  TFHIRParser = {abstract} class (TFHIRObject)
+  TFHIRParser = class abstract (TFHIRObject)
   private
     FAllowUnknownContent: Boolean;
     Ffeed: TFHIRAtomFeed;
@@ -176,7 +176,7 @@ Type
     class function ParseFragment(fragment, type_, lang : String) : TFHIRElement; overload;
   End;
 
-  TFHIRComposer = {abstract} class (TFHIRObject)
+  TFHIRComposer = class abstract (TFHIRObject)
   private
     FLang: String;
     FSummaryOnly: Boolean;

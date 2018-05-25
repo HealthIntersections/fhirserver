@@ -93,19 +93,25 @@ const
 type
   TFHIRPlugin = class;
 
-  TFHIRVersionStatus = (vsUnknown, vsGuessed, vsSpecified);
+  TFHIRPluginFileStatus = (pfsUnknown, pfsNonFHIR, pfsResource);
 
   TFHIRPluginFileInformation = class (TFslObject)
   private
-    FVersion : TFHIRVersion;
-    FVersionStatus : TFHIRVersionStatus;
+    FVersions : TFHIRVersionStatuses;
     FFormat: TFHIRFormat;
+    FStatus: TFHIRPluginFileStatus;
+    FUrl: String;
   public
     function link : TFHIRPluginFileInformation; overload;
 
-    property Format : TFHIRFormat read FFormat write FFormat;
-    property Version : TFHIRVersion read FVersion write FVersion;
-    property VersionStatus : TFHIRVersionStatus read FVersionStatus write FVersionStatus;
+    procedure init(preset : TFHIRPluginFileInformation);
+
+    function workingVersion : TFHIRVersion;
+
+    property status : TFHIRPluginFileStatus read FStatus write FStatus;
+    property format : TFHIRFormat read FFormat write FFormat;
+    property versions : TFHIRVersionStatuses read FVersions write FVersions;
+    property url : String read FUrl write FUrl;
 
     function summary : String;
   end;
@@ -136,7 +142,7 @@ type
     FContext : TFHIRNppContext;
     FFileInfo : TFslMap<TFHIRPluginFileInformation>;
     FCurrentFileInfo : TFHIRPluginFileInformation;
-    FCache : TFHIRPackageManager;
+    FPreset : TFHIRPluginFileInformation;
 
     tipShowing : boolean;
     tipText : AnsiString;
@@ -151,6 +157,9 @@ type
     FUpgradeReference : String;
     FUpgradeNotes : String;
     FCurrentServer : TRegisteredFHIRServer;
+    FWantUpdate : boolean;
+
+
 
     // this procedure handles validation.
     // it is called whene the text of the scintilla buffer changes
@@ -188,6 +197,7 @@ type
     procedure CheckUpgrade;
 
     procedure AnalyseFile;
+    function checkSource(src : String; v : TFHIRVersion; fmt : TFHIRFormat) : TFHIRVersionStatus;
 
     // background validation
     procedure validate(r : TFHIRResource);
@@ -207,7 +217,7 @@ type
     procedure FuncSettings(servers : boolean);
     procedure FuncPackageManager;
     procedure FuncAbout;
-    procedure FuncFormat;
+    procedure FuncFormat(fmt : TFHIRFormat);
     procedure FuncDebugPath;
     procedure FuncJumpToPath;
     procedure FuncExtractPath;
@@ -236,7 +246,15 @@ type
     procedure DoNppnShutdown; override;
     procedure DoStateChanged; override;
     procedure DoNppnFileOpened; override;
+    procedure DoNppnFilebeforeClose; override;
     procedure DoNppnFileClosed; override;
+
+    // from other places in the plugin
+    procedure checkTrigger;
+    procedure Trigger;
+    procedure TreatAsVersion(v : TFHIRVersion);
+    procedure MarkAsVersion(v : TFHIRVersion);
+    procedure newResource(src : String; version : TFHIRVersion; fmt : TFHIRFormat; url : String);
   end;
 
 procedure _FuncValidate; cdecl;
@@ -294,7 +312,6 @@ begin
   inherited;
   FContext := TFHIRNppContext.Create;
   FFileInfo := TFslMap<TFHIRPluginFileInformation>.create;
-  FCache := TFHIRPackageManager.Create(true);
 
   errors := TFslList<TFHIRAnnotation>.create;
   errorSorter := TFHIRAnnotationComparer.create;
@@ -348,9 +365,9 @@ begin
   s := TStringStream.Create;
   try
     if fmt = ffXml then
-      comp := FContext.Version[FCurrentFileInfo.Version].makeComposer(ffXml)
+      comp := FContext.Version[FCurrentFileInfo.workingVersion].makeComposer(ffXml)
     else
-      comp := FContext.Version[FCurrentFileInfo.Version].makeComposer(ffJson);
+      comp := FContext.Version[FCurrentFileInfo.workingVersion].makeComposer(ffJson);
     try
       comp.Compose(s, cnt);
       result := s.DataString;
@@ -419,7 +436,7 @@ end;
 
 procedure _FuncFormat; cdecl;
 begin
-  FNpp.FuncFormat;
+  FNpp.FuncFormat(ffUnspecified);
 end;
 
 procedure _FuncServers; cdecl;
@@ -535,7 +552,7 @@ var
   val : TFHIRValidatorV;
 begin
   FuncValidateClear;
-  if not waitForValidator(FCurrentFileInfo.Version, true) then
+  if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
     exit;
 
   if (FCurrentFileInfo.Format <> ffUnspecified) then
@@ -549,7 +566,7 @@ begin
         try
           ctxt.ResourceIdRule := risOptional;
           ctxt.OperationDescription := 'validate';
-          val := FContext.Version[FCurrentFileInfo.Version].makeValidator;
+          val := FContext.Version[FCurrentFileInfo.workingVersion].makeValidator;
           try
             try
               val.validate(ctxt, buffer, FCurrentFileInfo.Format);
@@ -668,6 +685,11 @@ begin
     begin
       if src.Contains('"resourceType"') then
         result := ffJson;
+    end
+    else if src[1] = '@' then
+    begin
+      if src.Contains('@prefix') and src.Contains('fhir:') then
+        result := ffTurtle;
     end;
   end;
 end;
@@ -687,6 +709,55 @@ begin
   loc.col := sp - SendMessage(NppData.ScintillaMainHandle, SCI_POSITIONFROMLINE, loc.line-1, 0)+1;
   path := findPath(CODES_TFHIRResourceType[res.ResourceType], loc, [], res, focus);
   result := path <> '';
+end;
+
+procedure TFHIRPlugin.MarkAsVersion(v: TFHIRVersion);
+var
+  fmt : TFHIRFormat;
+  s : TStringStream;
+  res : TFHIRResourceV;
+  comp : TFHIRComposer;
+begin
+  if not init then
+    exit;
+  TreatAsVersion(v);
+  if (parse(0, fmt, res)) then
+  try
+    FuncValidateClear;
+    FuncMatchesClear;
+    res.profileVersion := v;
+
+    comp := FContext.Version[COMPILED_FHIR_VERSION].makeComposer(fmt);
+    try
+      s := TStringStream.Create('');
+      try
+        comp.Compose(s, res);
+        CurrentText := s.DataString;
+      finally
+        s.Free;
+      end;
+    finally
+      comp.Free;
+    end;
+  finally
+    res.Free;
+  end
+  else
+    ShowMessage('This does not appear to be valid FHIR content');
+end;
+
+procedure TFHIRPlugin.newResource(src: String; version: TFHIRVersion; fmt: TFHIRFormat; url : String);
+begin
+  FPreset := TFHIRPluginFileInformation.Create;
+  try
+    FPreset.url := url;
+    FPreset.format := fmt;
+    FPreset.FVersions[version] := vsSpecified;
+    NewFile(src);
+  finally
+    FPreset.Free;
+    FPreset := nil;
+  end;
 end;
 
 procedure TFHIRPlugin.FuncServers;
@@ -713,7 +784,7 @@ var
 begin
   if not init then
     exit;
-  if not waitForValidator(FCurrentFileInfo.Version, true) then
+  if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
     exit;
 
   if (parse(0, fmt, res)) then
@@ -721,7 +792,7 @@ begin
     CodeGeneratorForm := TCodeGeneratorForm.create(self);
     try
       CodeGeneratorForm.Resource := res.Link;
-      CodeGeneratorForm.Context := FContext.Version[FCurrentFileInfo.Version].Worker.Link as TFHIRWorkerContext;
+      CodeGeneratorForm.Context := FContext.Version[FCurrentFileInfo.workingVersion].Worker.Link as TFHIRWorkerContext;
       CodeGeneratorForm.showModal;
     finally
       CodeGeneratorForm.free;
@@ -781,7 +852,7 @@ var
   ok : boolean;
 begin
   index := 0;
-  server := TRegisteredFHIRServer(FHIRToolbox.cbxServers.Items.Objects[FHIRToolbox.cbxServers.ItemIndex]).link;
+  server := nil; // TRegisteredFHIRServer(FHIRToolbox.cbxServers.Items.Objects[FHIRToolbox.cbxServers.ItemIndex]).link;
   try
     try
       try
@@ -910,30 +981,35 @@ begin
   end;
 end;
 
-procedure TFHIRPlugin.FuncFormat;
+procedure TFHIRPlugin.FuncFormat(fmt : TFHIRFormat);
 var
-  fmt : TFHIRFormat;
+  afmt : TFHIRFormat;
   s : TStringStream;
   res : TFHIRResourceV;
   comp : TFHIRComposer;
 begin
   if not init then
     exit;
-  if (parse(0, fmt, res)) then
+  if (parse(0, afmt, res)) then
   try
     FuncValidateClear;
     FuncMatchesClear;
-    if fmt = ffJson then
-      comp := FContext.Version[COMPILED_FHIR_VERSION].makeComposer(ffXml)
-    else
-      comp := FContext.Version[COMPILED_FHIR_VERSION].makeComposer(ffJson);
-    s := TStringStream.Create('');
+    if fmt = ffUnspecified then
+      if afmt = ffXml then
+        fmt := ffJson
+      else
+        fmt := ffXml;
+    comp := FContext.Version[COMPILED_FHIR_VERSION].makeComposer(fmt);
     try
-      comp.Compose(s, res);
-      CurrentText := s.DataString;
-      FCurrentFileInfo.Format := comp.Format;
+      s := TStringStream.Create('');
+      try
+        comp.Compose(s, res);
+        CurrentText := s.DataString;
+        FCurrentFileInfo.Format := comp.Format;
+      finally
+        s.Free;
+      end;
     finally
-      s.Free;
       comp.Free;
     end;
   finally
@@ -954,11 +1030,11 @@ var
 begin
   if assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath) then
   begin
-    if not waitForValidator(FCurrentFileInfo.Version, true) then
+    if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
       exit;
     if parse(0, fmt, res) then
     try
-      engine := FContext.Version[FCurrentFileInfo.Version].makePathEngine;
+      engine := FContext.Version[FCurrentFileInfo.workingVersion].makePathEngine;
       try
         expr := engine.parseV(FHIRToolbox.mPath.Text);
         try
@@ -999,7 +1075,7 @@ var
   d : TFhirDomainResource;
   narr : TFHIRNarrativeGeneratorBase;
 begin
-  if not waitForValidator(FCurrentFileInfo.Version, true) then
+  if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
     exit;
   if (parse(0, fmt, res)) then
   try
@@ -1009,7 +1085,7 @@ begin
     begin
       d := res as TFhirDomainResource;
       d.text := nil;
-      narr := FContext.Version[FCurrentFileInfo.Version].makeNarrative;
+      narr := FContext.Version[FCurrentFileInfo.workingVersion].makeNarrative;
       try
         narr.generate(d);
       finally
@@ -1017,7 +1093,7 @@ begin
       end;
     end;
 
-    comp := FContext.Version[FCurrentFileInfo.Version].makeComposer(fmt);
+    comp := FContext.Version[FCurrentFileInfo.workingVersion].makeComposer(fmt);
     try
       s := TStringStream.Create('');
       try
@@ -1038,11 +1114,11 @@ end;
 
 procedure TFHIRPlugin.FuncNewResource;
 begin
-  if not waitForValidator(FCurrentFileInfo.Version, true) then
+  if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
     exit;
   ResourceNewForm := TResourceNewForm.Create(self);
   try
-    ResourceNewForm.Context := FContext.Version[FCurrentFileInfo.Version].Worker.Link as TFHIRWorkerContext;
+    ResourceNewForm.Context := FContext.Link;
     ResourceNewForm.ShowModal;
   finally
     FreeAndNil(ResourceNewForm);
@@ -1060,21 +1136,21 @@ begin
     MessageDlg('You must connect to a server first', mtInformation, [mbok], 0);
     exit;
   end;
-  if not waitForValidator(FCurrentFileInfo.Version, true) then
+  if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
     exit;
   if not assigned(FetchResourceFrm) then
     FetchResourceFrm := TFetchResourceFrm.create(self);
   FetchResourceFrm.Conformance := FCapabilityStatement.link;
   FetchResourceFrm.Client := FClient.link;
-  FetchResourceFrm.Profiles := TFHIRPluginValidatorContext(FContext.Version[FCurrentFileInfo.Version].Worker).Profiles.Link;
+  FetchResourceFrm.Profiles := TFHIRPluginValidatorContextR3(FContext.Version[FCurrentFileInfo.workingVersion].Worker).Profiles.Link;
   if FetchResourceFrm.ShowModal = mrOk then
   begin
     res := FClient.readResource(FetchResourceFrm.SelectedType, FetchResourceFrm.SelectedId);
     try
       if FetchResourceFrm.rbJson.Checked then
-        comp := FContext.Version[FCurrentFileInfo.Version].makeComposer(ffJson)
+        comp := FContext.Version[FCurrentFileInfo.workingVersion].makeComposer(ffJson)
       else
-        comp := FContext.Version[FCurrentFileInfo.Version].makeComposer(ffXml);
+        comp := FContext.Version[FCurrentFileInfo.workingVersion].makeComposer(ffXml);
       try
         s := TStringStream.Create;
         try
@@ -1113,13 +1189,13 @@ var
   ok : boolean;
 begin
   FuncMatchesClear;
-  if not waitForValidator(FCurrentFileInfo.Version, true) then
+  if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
     exit;
 
   if (parse(0, fmt, res)) then
   try
     FuncMatchesClear;
-    ok := RunPathDebugger(self, FContext.Version[FCurrentFileInfo.Version].Worker, FContext.Version[FCurrentFileInfo.Version].Factory, res, res, FHIRToolbox.mPath.Text, fmt, types, items);
+    ok := RunPathDebugger(self, FContext.Version[FCurrentFileInfo.workingVersion].Worker, FContext.Version[FCurrentFileInfo.workingVersion].Factory, res, res, FHIRToolbox.mPath.Text, fmt, types, items);
     try
       if ok then
       begin
@@ -1160,7 +1236,7 @@ var
   html : String;
 begin
   try
-    if not waitForValidator(FCurrentFileInfo.Version, true) then
+    if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
       exit;
 
     current := CurrentText;
@@ -1176,7 +1252,7 @@ begin
     try
       ro := parse(original, fmto);
       try
-        diff := TDifferenceEngine.Create(FContext.Version[FCurrentFileInfo.Version].Worker.link as TFHIRWorkerContext, FContext.Version[FCurrentFileInfo.Version].Factory.link);
+        diff := TDifferenceEngine.Create(FContext.Version[FCurrentFileInfo.workingVersion].Worker.link as TFHIRWorkerContext, FContext.Version[FCurrentFileInfo.workingVersion].Factory.link);
         try
           op := diff.generateDifference(ro, rc, html);
           try
@@ -1220,9 +1296,9 @@ begin
     FClient.createResource(res, id).Free;
     res.id := id;
     if fmt = ffXml then
-      comp := FContext.Version[FCurrentFileInfo.Version].makeComposer(ffXml)
+      comp := FContext.Version[FCurrentFileInfo.workingVersion].makeComposer(ffXml)
     else
-      comp := FContext.Version[FCurrentFileInfo.Version].makeComposer(ffJson);
+      comp := FContext.Version[FCurrentFileInfo.workingVersion].makeComposer(ffJson);
     try
       s := TStringStream.Create('');
       try
@@ -1276,7 +1352,10 @@ end;
 procedure TFHIRPlugin.FuncToolbox;
 begin
   if (not Assigned(FHIRToolbox)) then
+  begin
     FHIRToolbox := TFHIRToolbox.Create(self, 1);
+    FHIRToolbox.Context := FContext.Link;
+  end;
   FHIRToolbox.Show;
 end;
 
@@ -1348,7 +1427,7 @@ begin
   src := CurrentText;
   s := TStringStream.Create(src);
   try
-    prsr := FContext.Version[FCurrentFileInfo.Version].makeParser(fmt);
+    prsr := FContext.Version[FCurrentFileInfo.workingVersion].makeParser(fmt);
     try
       prsr.timeLimit := timeLimit;
       prsr.KeepLineNumbers := true;
@@ -1378,7 +1457,7 @@ var
 begin
   s := TStringStream.Create(cnt, TEncoding.UTF8);
   try
-    prsr := FContext.Version[FCurrentFileInfo.Version].makeParser(FCurrentFileInfo.Format);
+    prsr := FContext.Version[FCurrentFileInfo.workingVersion].makeParser(FCurrentFileInfo.Format);
     try
       prsr.KeepLineNumbers := false;
       prsr.source := s;
@@ -1406,7 +1485,7 @@ begin
   begin
     s := TStringStream.Create(src);
     try
-      prsr := FContext.Version[FCurrentFileInfo.Version].makeParser(FCurrentFileInfo.Format);
+      prsr := FContext.Version[FCurrentFileInfo.workingVersion].makeParser(FCurrentFileInfo.Format);
       try
         prsr.timeLimit := timeLimit;
         prsr.KeepLineNumbers := true;
@@ -1464,7 +1543,7 @@ function TFHIRPlugin.showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; ex
 var
   comp : TFHIRExpressionNodeComposer;
 begin
-  comp := TFHIRExpressionNodeComposer.create(FContext.Version[FCurrentFileInfo.Version].Worker.link, OutputStylePretty, 'en');
+  comp := TFHIRExpressionNodeComposer.create(FContext.Version[FCurrentFileInfo.workingVersion].Worker.link, OutputStylePretty, 'en');
   try
     result := comp.Compose(expr, fmt, items, types);
   finally
@@ -1479,6 +1558,61 @@ begin
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETTEXT, line, LPARAM(PAnsiChar(message))));
 end;
 
+
+procedure TFHIRPlugin.TreatAsVersion(v: TFHIRVersion);
+var
+  a : TFHIRVersion;
+begin
+  for a in FHIR_ALL_VERSIONS do
+    if FCurrentFileInfo.FVersions[a] = vsSpecified then
+      FCurrentFileInfo.FVersions[a] := vsValid;
+  FCurrentFileInfo.FVersions[v] := vsSpecified;
+  DoNppnBufferChange;
+end;
+
+procedure TFHIRPlugin.Trigger;
+begin
+  FWantUpdate := true;
+end;
+
+function TFHIRPlugin.checkSource(src: String; v: TFHIRVersion; fmt: TFHIRFormat): TFHIRVersionStatus;
+var
+  p : TFHIRParser;
+  r : TFHIRResourceV;
+begin
+  if FContext.VersionLoading[v] <> vlsLoaded then
+    exit(vsInvalid);
+
+  try
+    p := FContext.Version[v].makeParser(fmt);
+    try
+      r := p.parseResource(src);
+      try
+        if r.profileVersion = v then
+          result := vsSpecified
+        else
+          result := vsValid;
+      finally
+        r.Free;
+      end;
+    finally
+      p.Free;
+    end;
+  except
+    result := vsInvalid;
+  end;
+end;
+
+procedure TFHIRPlugin.checkTrigger;
+begin
+  if FWantUpdate then
+  begin
+    FWantUpdate := false;
+    FCurrentFileInfo := nil;
+    FFileInfo.Clear;
+    DoNppnBufferChange;
+  end;
+end;
 
 procedure TFHIRPlugin.validate(r: TFHIRResource);
 begin
@@ -1509,18 +1643,35 @@ procedure TFHIRPlugin.AnalyseFile;
 var
   info : TFHIRPluginFileInformation;
   src : String;
+  a : TFHIRVersion;
 begin
-  info := TFHIRPluginFileInformation.Create;
-  try
-    src := CurrentText;
-    info.Format := determineFormat(src);
-    info.Version := fhirVersionUnknown;
-    info.VersionStatus := vsUnknown;
+  if not FFileInfo.TryGetValue(currentFileName, info) then
+  begin
+    info := TFHIRPluginFileInformation.Create;
     FFileInfo.AddOrSetValue(currentFileName, info.Link);
-    FCurrentFileInfo := info;
-  finally
-    info.free;
+    info.Init(fPreset);
   end;
+  FCurrentFileInfo := info;
+  if (info.status = pfsUnknown) or ((info.status = pfsResource) and (info.format = ffUnspecified)) then
+  begin
+    src := CurrentText;
+    if (src <> '') then
+    begin
+      if info.format = ffUnspecified then
+        info.Format := determineFormat(src);
+      if info.format <> ffUnspecified then
+        info.status := pfsResource
+      else if src.length > 1024 then // if it's too long, we give up on it for efficiency reasons, otherwise we keep trying in case it turns into a valid resource
+        info.status := pfsNonFHIR;
+
+      if info.Format <> ffUnspecified then
+        for a := fhirVersionRelease2 to fhirVersionRelease4 do
+          if info.FVersions[a] = vsInvalid then
+            info.FVersions[a] := checkSource(src, a, info.Format);
+    end;
+  end;
+  if FHIRToolbox <> nil then
+    FHIRToolbox.updateStatus(info.Format, info.Versions, info.url);
 end;
 
 procedure TFHIRPlugin.CheckUpgrade;
@@ -1543,7 +1694,6 @@ end;
 
 destructor TFHIRPlugin.Destroy;
 begin
-  FCache.Free;
   FCurrentServer.Free;
   FLastRes.free;
   FFileInfo.Free;
@@ -1563,15 +1713,15 @@ begin
   if Settings.loadR4 then
     FContext.VersionLoading[fhirVersionRelease4] := vlsLoading;
   reset;
-  if Settings.loadR2 and FCache.packageExists('hl7.fhir.core', '1.0.2') then
+  if Settings.loadR2 and FContext.Cache.packageExists('hl7.fhir.core', '1.0.2') then
     TContextLoadingThread.create(self, TFHIRFactoryR2.create)
   else
     FContext.VersionLoading[fhirVersionRelease2] := vlsNotLoaded;
-  if Settings.loadR3 and FCache.packageExists('hl7.fhir.core', '3.0.1') then
+  if Settings.loadR3 and FContext.Cache.packageExists('hl7.fhir.core', '3.0.1') then
     TContextLoadingThread.create(self, TFHIRFactoryR3.create)
   else
     FContext.VersionLoading[fhirVersionRelease3] := vlsNotLoaded;
-  if Settings.loadR4 and FCache.packageExists('hl7.fhir.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION) then
+  if Settings.loadR4 and (FContext.Cache.packageExists('hl7.fhir.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION) or FContext.Cache.packageExists('hl7.fhir.core', 'current')) then
     TContextLoadingThread.create(self, TFHIRFactoryR4.create)
   else
     FContext.VersionLoading[fhirVersionRelease4] := vlsNotLoaded;
@@ -1583,6 +1733,9 @@ begin
     FuncVisualiser;
   if Settings.ToolboxVisible then
     FuncToolbox;
+  if (FHIRToolbox <> nil) and (FCurrentFileInfo <> nil) then
+    FHIRToolbox.updateStatus(FCurrentFileInfo.Format, FCurrentFileInfo.Versions, FCurrentFileInfo.url);
+
   DoNppnBufferChange;
   init := true;
 end;
@@ -1609,9 +1762,7 @@ end;
 
 procedure TFHIRPlugin.DoNppnBufferChange;
 begin
-  if not FFileInfo.TryGetValue(currentFileName, FCurrentFileInfo) then
-    AnalyseFile;
-  OpMessage(FCurrentFileInfo.summary, '');
+  AnalyseFile;
 
   FuncValidateClear;
   FuncMatchesClear;
@@ -1671,8 +1822,15 @@ begin
   end;
 end;
 
+procedure TFHIRPlugin.DoNppnFilebeforeClose;
+begin
+  FFileInfo.Remove(currentFileName);
+  FCurrentFileInfo := nil;
+end;
+
 procedure TFHIRPlugin.DoNppnFileClosed;
 begin
+  DoNppnBufferChange;
 end;
 
 procedure TFHIRPlugin.DoNppnFileOpened;
@@ -1683,9 +1841,9 @@ procedure TFHIRPlugin.evaluatePath(r : TFHIRResource; out items : TFHIRSelection
 var
   engine : TFHIRPathEngineV;
 begin
-  if not waitForValidator(FCurrentFileInfo.Version, true) then
+  if not waitForValidator(FCurrentFileInfo.workingVersion, true) then
     exit;
-  engine := FContext.Version[FCurrentFileInfo.Version].makePathEngine;
+  engine := FContext.Version[FCurrentFileInfo.workingVersion].makePathEngine;
   try
     expr := engine.parseV(FHIRToolbox.mPath.Text);
     try
@@ -1747,9 +1905,12 @@ begin
     exit;
 
   if FCurrentFileInfo.Format = ffUnspecified then
+    AnalyseFile;
+
+  if FCurrentFileInfo.Format = ffUnspecified then
     exit;
 
-  if not waitForValidator(FCurrentFileInfo.Version, false) then
+  if not waitForValidator(FCurrentFileInfo.workingVersion, false) then
     exit;
 
   src := CurrentText;
@@ -1981,6 +2142,20 @@ end;
 
 { TFHIRPluginFileInformation }
 
+procedure TFHIRPluginFileInformation.init(preset : TFHIRPluginFileInformation);
+var
+  v : TFHIRVersion;
+begin
+  for v in FHIR_ALL_VERSIONS do
+    FVersions[v] := vsInvalid;
+  if preset <> nil then
+  begin
+    Format := preset.format;
+    for v in FHIR_ALL_VERSIONS do
+      FVersions[v] := preset.versions[v];
+  end
+end;
+
 function TFHIRPluginFileInformation.link: TFHIRPluginFileInformation;
 begin
   result := TFHIRPluginFileInformation(inherited link);
@@ -1989,14 +2164,19 @@ end;
 function TFHIRPluginFileInformation.summary: String;
 begin
   if Format = ffUnspecified then
-    exit('Not a FHIR resource');
+    exit('Not a FHIR Resource');
 
   result := CODES_TFHIRFormat[Format];
-  case FVersionStatus of
-    vsUnknown: result := result+ ', version unknown';
-    vsGuessed: result := result+ ', version might be '+CODES_TFHIRVersion[Version];
-    vsSpecified: result := result+ ', version = R'+CODES_TFHIRVersion[Version];
-  end;
+//  case FVersionStatus of
+//    vsUnknown: result := result+ ', version unknown';
+//    vsGuessed: result := result+ ', version might be '+CODES_TFHIRVersion[Version];
+//    vsSpecified: result := result+ ', version = R'+CODES_TFHIRVersion[Version];
+//  end;
+end;
+
+function TFHIRPluginFileInformation.workingVersion: TFHIRVersion;
+begin
+  result := fhirVersionRelease3;
 end;
 
 { TContextLoadingThread }
@@ -2018,19 +2198,19 @@ end;
 procedure TContextLoadingThread.Execute;
 var
   vf : TFHIRNppVersionFactory;
-  ctxt : TFHIRPluginValidatorContext;
+  ctxt : TFHIRWorkerContextWithFactory;
   rset : TFslStringSet;
 begin
   vf := TFHIRNppVersionFactory.Create(FFactory.link);
   try
     try
-      FPlugin.FContext.Version[COMPILED_FHIR_VERSION] := vf.Link;
-      ctxt := TFHIRPluginValidatorContext.Create(FFactory.link, Settings.TerminologyServer);
+      FPlugin.FContext.Version[FFactory.version] := vf.Link;
+      ctxt := TFHIRPluginValidatorContext.create(FFactory.link, Settings.TerminologyServer);
       try
         // limit the amount of resource types loaded for convenience...
         rset := TFslStringSet.Create(['StructureDefinition', 'CodeSystem', 'ValueSet']);
         try
-          FPlugin.FCache.loadPackage('hl7.fhir.core', FFactory.versionString, rset, ctxt.loadResourceJson);
+          FPlugin.Context.Cache.loadPackage('hl7.fhir.core', FFactory.versionString, rset, ctxt.loadResourceJson);
         finally
           rset.Free;
         end;
@@ -2039,6 +2219,7 @@ begin
         ctxt.Free;
       end;
       FPlugin.FContext.VersionLoading[FFactory.version] := vlsLoaded;
+      FPlugin.Trigger;
     except
       on e : Exception do
       begin

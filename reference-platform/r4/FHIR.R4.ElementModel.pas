@@ -1185,6 +1185,7 @@ end;
 
 function TFHIRMMParserBase.getDefinition(line, col: integer; name: String): TFHIRStructureDefinition;
 var
+  list : TFslList<TFHIRStructureDefinition>;
   sd : TFHIRStructureDefinition;
 begin
   result := nil;
@@ -1193,9 +1194,15 @@ begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no name)', IssueSeverityFATAL);
     exit(nil);
   end;
-	for sd in Fcontext.allStructures do
-    if (name = sd.Id) then
-      exit(sd.Link);
+  list := TFslList<TFHIRStructureDefinition>.create;
+  try
+    FContext.listStructures(list);
+    for sd in list do
+      if (name = sd.Id) then
+        exit(sd.Link);
+  finally
+    list.Free;
+  end;
   logError(line, col, name, IssueTypeSTRUCTURE, 'This does not appear to be a FHIR resource (unknown name "'+name+'")', IssueSeverityFATAL);
   result := nil;
 end;

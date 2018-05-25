@@ -75,6 +75,7 @@ type
     mnuDelete: TMenuItem;
     btnFind: TButton;
     btnDebug: TButton;
+    btnRefresh: TButton;
     procedure rbUserChange(Sender: TObject);
     procedure rbSystemChange(Sender: TObject);
     procedure tvPackagesClick(Sender: TObject);
@@ -92,6 +93,7 @@ type
     procedure mnuOpenClick(Sender: TObject);
     procedure btnFindClick(Sender: TObject);
     procedure btnDebugClick(Sender: TObject);
+    procedure btnRefreshClick(Sender: TObject);
   private
     FLoading : boolean;
     FStop : boolean;
@@ -111,7 +113,8 @@ implementation
 
 {$R *.fmx}
 
-uses PackageBrowser;
+uses
+  PackageBrowser;
 
 { TPackageManagerFrame }
 
@@ -199,6 +202,11 @@ begin
   url := 'https://';
   if InputQuery('Fetch Package from Web', 'Enter URL:', url) then
     importUrl(nil, url);
+end;
+
+procedure TPackageManagerFrame.btnRefreshClick(Sender: TObject);
+begin
+  reloadPackages;
 end;
 
 procedure TPackageManagerFrame.Button5Click(Sender: TObject);

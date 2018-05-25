@@ -66,7 +66,7 @@ type
     property Issues : TFslList<TFhirOperationOutcomeIssueW> read FIssues write SetIssues;
   end;
 
-  TFHIRValidatorV = {abstract} class(TFslObject)
+  TFHIRValidatorV = class abstract(TFslObject)
   private
   public
     Constructor Create(context: TFHIRWorkerContextV); virtual;

@@ -1,5 +1,22 @@
+{$MODE delphi}
 program TestFHIRApplication;
 
+uses
+  Generics.Collections;
+
+type
+  TFslObject = class(TObject)
+  end;
+
+  TFslPair<T: TFslObject> = record
+  end;
+
+  TFslMap<T: TFslObject> = class(TEnumerable<TFslPair<T>>)
+  end;
+
+begin
+end.
+(*
 {$mode objfpc}{$H+}
 
 uses
@@ -74,4 +91,4 @@ begin
   Application.Run;
   Application.Free;
 end.
-
+*)

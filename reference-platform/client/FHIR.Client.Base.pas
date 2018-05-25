@@ -113,7 +113,7 @@ Type
 
   TFhirHTTPClientStatusEvent = procedure (client : TObject; details : String) of Object;
 
-  TFhirClientV = {abstract} class (TFslObject)
+  TFhirClientV = class abstract (TFslObject)
   private
     FCommunicator : TFHIRClientCommunicator;
     FWorker : TFHIRWorkerContextV;

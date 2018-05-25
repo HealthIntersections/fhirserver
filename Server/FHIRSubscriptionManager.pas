@@ -49,7 +49,8 @@ uses
   FHIR.Support.Lock, FHIR.Database.Manager, FHIR.Database.Dialects,  FHIR.Web.Parsers,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPop3, IdMessageParts,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.PathNode,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
+  FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.PathNode,
   FHIR.Tools.Session, FHIRIndexManagers, FHIRServerUtilities, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.PathEngine, FHIR.Tools.Context, FHIR.Debug.Logging, ServerUtilities;
 
 const

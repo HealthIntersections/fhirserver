@@ -40,9 +40,8 @@
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\reference-platform\support\fhir.support.fpc.pas"/>
+        <Filename Value="..\reference-platform\support\FHIR.Support.Fpc.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="FHIR.Support.Fpc"/>
       </Unit2>
       <Unit3>
         <Filename Value="system.timespan.pas"/>

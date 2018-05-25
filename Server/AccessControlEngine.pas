@@ -36,7 +36,7 @@ uses
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Security;
 
 Type
-  TAccessControlEngine = {abstract} class (TFslObject)
+  TAccessControlEngine = class abstract (TFslObject)
   public
 
   end;

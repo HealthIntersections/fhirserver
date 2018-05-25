@@ -54,7 +54,7 @@ type
   TRDFGenerator = class;
   TRDFPredicate = class;
 
-  TRDFTriple = {abstract} class (TFslObject)
+  TRDFTriple = class abstract (TFslObject)
   private
     uri : String;
   public

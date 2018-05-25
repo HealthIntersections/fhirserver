@@ -74,14 +74,25 @@ object PackageManagerFrame: TPackageManagerFrame
     end
     object btnDebug: TButton
       Anchors = [akLeft, akBottom]
-      Position.X = 16.000000000000000000
-      Position.Y = 320.000000000000000000
-      Size.Width = 65.000000000000000000
-      Size.Height = 41.000000000000000000
+      Position.X = 8.000000000000000000
+      Position.Y = 336.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 25.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 5
+      TabOrder = 6
       Text = 'Debug'
       OnClick = btnDebugClick
+    end
+    object btnRefresh: TButton
+      Anchors = [akLeft, akBottom]
+      Position.X = 7.000000000000000000
+      Position.Y = 304.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 5
+      Text = 'Reload'
+      OnClick = btnRefreshClick
     end
   end
   object Panel1: TPanel

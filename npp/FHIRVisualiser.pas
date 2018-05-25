@@ -550,13 +550,13 @@ begin
       if FFocusPath <> '' then
       begin
         FCards.Add(generateBasicCard(path, FFocusObjects.Last));
-        for i := FFocusObjects.Count - 1 downto 0 do
-        begin
-          if i = 0  then
-            generateTypeCard(FFocusObjects[i], nil)
-          else
-            generateTypeCard(FFocusObjects[i], FFocusObjects[i-1]);
-        end;
+//        for i := FFocusObjects.Count - 1 downto 0 do
+//        begin
+//          if i = 0  then
+//            generateTypeCard(FFocusObjects[i], nil)
+//          else
+//            generateTypeCard(FFocusObjects[i], FFocusObjects[i-1]);
+//        end;
       end;
     finally
       FLock.Unlock;

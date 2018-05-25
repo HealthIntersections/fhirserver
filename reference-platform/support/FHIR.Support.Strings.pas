@@ -374,6 +374,7 @@ Type
       Property Length : Integer Read FLength;
       Procedure Read(index : integer; var buffer; ilength : integer);
       Procedure Overwrite(index : integer; content : String);
+      function toString: String; override;
   End;
 
 
@@ -416,6 +417,7 @@ Type
       Procedure WriteToStream(aStream : TStream; encoding : TEncoding = nil); overload;
 
       Property Length : Integer Read GetLength;
+      function toString : String; override;
   End;
   {$ENDIF}
 
@@ -2719,6 +2721,11 @@ Procedure TFslStringBuilder.Insert(Const oBuilder : TFslStringBuilder; iIndex : 
 Begin
   Insert(oBuilder.AsString, iIndex);
 End;
+
+function TFslStringBuilder.toString: String;
+begin
+  result := AsString;
+end;
 
 procedure TFslStringBuilder.WriteToStream(aStream: TStream; encoding : TEncoding);
 var

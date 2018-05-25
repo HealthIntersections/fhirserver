@@ -40,6 +40,7 @@ const
     IssueTypeConflict, IssueTypeIncomplete, IssueTypeTransient, IssueTypeLockError, IssueTypeNoStore, IssueTypeException, IssueTypeTimeout, IssueTypeThrottled, IssueTypeInformational);
 
   ISSUE_SEVERITY_MAP : array [TFhirIssueSeverityEnum] of TIssueSeverity = (isNull, isFatal, isError, isWarning, isInformation);
+  ISSUE_SEVERITY_MAP2 : array [TIssueSeverity] of TFhirIssueSeverityEnum = (IssueSeverityNull, IssueSeverityFatal, IssueSeverityError, IssueSeverityWarning, IssueSeverityInformation);
 
 type
   TFhirOperationOutcome3 = class (TFhirOperationOutcomeW)
@@ -71,6 +72,13 @@ type
 
     procedure readSmartExtension(var authorize, token, register: String); override;
     function hasFormat(fmt : String) : boolean; override;
+  end;
+
+  TFHIRStructureDefinition3 = class (TFhirStructureDefinitionW)
+  public
+    function kind : TStructureDefinitionKind; override;
+    function name : String; override;
+    function url : String; override;
   end;
 
   TFhirParametersParameter3 = class (TFhirParametersParameterW)
@@ -185,7 +193,7 @@ end;
 
 function TFHIROperationOutcomeIssue3.issue: TFHIROperationOutcomeIssue;
 begin
-  result := issue as TFHIROperationOutcomeIssue;
+  result := Element as TFHIROperationOutcomeIssue;
 end;
 
 function TFHIROperationOutcomeIssue3.severity: TIssueSeverity;
@@ -339,6 +347,32 @@ begin
   inherited;
   for t in parameter.parameterList do
     ParameterList.Add(TFhirParametersParameter3.Create(t.Link));
+end;
+
+{ TFHIRStructureDefinition3 }
+
+function TFHIRStructureDefinition3.kind: TStructureDefinitionKind;
+begin
+  case TFHIRStructureDefinition(resource).kind of
+    StructureDefinitionKindPrimitiveType : result := sdkPrimitive;
+    StructureDefinitionKindComplexType :
+      if TFHIRStructureDefinition(resource).type_ = 'Extension' then
+          result := sdkExtension
+        else
+          result := sdkDataType;
+    StructureDefinitionKindResource :result := sdkResource;
+    StructureDefinitionKindLogical : result := sdkResource;
+  end;
+end;
+
+function TFHIRStructureDefinition3.name: String;
+begin
+  result := TFHIRStructureDefinition(resource).name;
+end;
+
+function TFHIRStructureDefinition3.url: String;
+begin
+  result := TFHIRStructureDefinition(resource).url;
 end;
 
 end.

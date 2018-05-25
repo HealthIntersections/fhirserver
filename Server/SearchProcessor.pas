@@ -36,7 +36,8 @@ uses
   FHIR.Web.Parsers,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.DateTime, FHIR.Support.Decimal, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Base.Lang, FHIR.Tools.Constants, FHIR.Tools.Types,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
+  FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Types,
   FHIR.Database.Manager, FHIR.Database.Dialects,
   FHIR.Tools.Indexing, FHIRIndexManagers, FHIR.Tools.Utilities, FHIRSearchSyntax, FHIR.Tools.Session, ServerUtilities, FHIRServerContext, FHIR.Tools.Client,
   FHIR.Ucum.Services;

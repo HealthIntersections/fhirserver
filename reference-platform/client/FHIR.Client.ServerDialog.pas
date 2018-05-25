@@ -421,7 +421,7 @@ var
   v : TFHIRVersion;
 begin
   cbxVersion.Items.Clear;
-  for v := Low(TFHIRVersion) to High(TFHIRVersion) do
+  for v in SUPPORTED_VERSIONS do
     if FVersions.hasVersion[v] then
      cbxVersion.Items.AddObject(FVersions[v].description, TObject(FVersions[v].version));
 

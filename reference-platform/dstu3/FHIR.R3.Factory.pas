@@ -50,6 +50,8 @@ type
     function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; override;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
+    function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
+
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
     function makeClientHTTP(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
@@ -63,6 +65,7 @@ type
     function makeBase64Binary(s : string) : TFHIRObject; override;
     function makeParameters : TFHIRParametersW; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
+    function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
   end;
 
 implementation
@@ -70,10 +73,22 @@ implementation
 uses
   Soap.EncdDecd,
   FHIR.Client.HTTP,
-  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R3.Context, FHIR.R3.Validator,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R3.Context, FHIR.R3.Validator, FHIR.R3.Profiles,
   FHIR.R3.Narrative, FHIR.R3.PathEngine, FHIR.R3.Constants, FHIR.R3.Client, FHIR.R3.Common;
 
 { TFHIRFactoryR3 }
+
+function TFHIRFactoryR3.createFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;
+var
+  pu : TProfileUtilities;
+begin
+  pu := TProfileUtilities.create(worker.Link as TFHIRWorkerContext, nil);
+  try
+    result := pu.populateByProfile(profile.Resource as TFhirStructureDefinition);
+  finally
+    pu.Free;
+  end;
+end;
 
 function TFHIRFactoryR3.description: String;
 begin
@@ -169,6 +184,11 @@ end;
 function TFHIRFactoryR3.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;
 begin
   result := TFHIRCapabilityStatement3.create(r);
+end;
+
+function TFHIRFactoryR3.wrapStructureDefinition(r: TFHIRResourceV): TFhirStructureDefinitionW;
+begin
+  result := TFHIRStructureDefinition3.create(r);
 end;
 
 function TFHIRFactoryR3.makeBase64Binary(s: string): TFHIRObject;

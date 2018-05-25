@@ -49,27 +49,6 @@ uses
   FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types, FHIR.R4.Context, FHIR.R4.Tags;
   {$ENDIF}
 
-Const
-   HTTP_OK_200 = 200;
-   HTTP_OK_220 = 220;
-   HTTP_CREATED = 201;
-   HTTP_ACCEPTED = 202;
-   HTTP_NO_CONTENT = 204;
-   HTTP_REDIR_MULTIPLE_CHOICE = 300;
-   HTTP_REDIR_MOVED_PERMANENT = 301;
-   HTTP_REDIR_MOVED_TEMPORARY = 302;
-   HTTP_REDIR_AFTER_POST = 303;
-   HTTP_REDIR_NOT_MODIFIED = 304;
-   HTTP_ERR_BAD_REQUEST = 400;
-   HTTP_ERR_UNAUTHORIZED = 401;
-   HTTP_ERR_FORBIDDEN = 403;
-   HTTP_ERR_NOTFOUND = 404;
-   HTTP_ERR_METHOD_ILLEGAL = 405;
-   HTTP_ERR_CONFLICT = 409;
-   HTTP_ERR_DELETED = 410;
-   HTTP_ERR_PRECONDITION_FAILED = 412;
-   HTTP_ERR_BUSINESS_RULES_FAILED = 422;
-   HTTP_ERR_INTERNAL = 500;
 
 Type
   TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload);
@@ -102,7 +81,7 @@ Type
   TFHIRRequest = class;
   TFHIRResponse = class;
 
-  TFHIRFormatAdaptor = {abstract} class (TFslObject)
+  TFHIRFormatAdaptor = class abstract (TFslObject)
   public
     Function Link : TFHIRFormatAdaptor; Overload;
 

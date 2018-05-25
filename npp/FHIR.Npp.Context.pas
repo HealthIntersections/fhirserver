@@ -34,6 +34,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative,
   FHIR.Base.Factory, FHIR.Base.PathEngine;
 
@@ -45,17 +46,17 @@ type
   TFHIRNppVersionFactory = class (TFslObject)
   private
     FContext : TFHIRNppContext; // no link
-    FWorker : TFHIRWorkerContextV;
+    FWorker : TFHIRWorkerContextWithFactory;
     FFactory : TFHIRFactory;
     FSource: string;
     FError: String;
-    procedure SetWorker(const Value: TFHIRWorkerContextV);
+    procedure SetWorker(const Value: TFHIRWorkerContextWithFactory);
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
     function link : TFHIRNppVersionFactory; overload;
 
-    property Worker : TFHIRWorkerContextV read FWorker write SetWorker;
+    property Worker : TFHIRWorkerContextWithFactory read FWorker write SetWorker;
     property Factory : TFHIRFactory read FFactory;
 
     property source : string read FSource write FSource;
@@ -73,6 +74,7 @@ type
     FVersionList : Array[TFHIRVersion] of TFHIRNppVersionFactory;
     FVersionStatus : Array[TFHIRVersion] of TFHIRVersionLoadingStatus;
     FVersions: TFHIRVersionFactories;
+    FCache : TFHIRPackageManager;
 
     function GetVersion(a: TFHIRVersion): TFHIRNppVersionFactory;
     procedure SetVersion(a: TFHIRVersion; const Value: TFHIRNppVersionFactory);
@@ -88,6 +90,8 @@ type
 
     property versions : TFHIRVersionFactories read FVersions;
     function versionInfo : String;
+
+    property Cache : TFHIRPackageManager read FCache;
   end;
 
 const
@@ -109,12 +113,14 @@ begin
     FVersionList[v] := nil;
     VersionLoading[v] := vlsNotSupported;
   end;
+  FCache := TFHIRPackageManager.Create(true);
 end;
 
 destructor TFHIRNppContext.Destroy;
 var
   v : TFHIRVersion;
 begin
+  FCache.Free;
   for v := low(TFHIRVersion) to High(TFHIRVersion) do
     FVersionList[v].Free;
   FVersions.Free;
@@ -216,7 +222,7 @@ begin
   result := FFactory.makePathEngine(FWorker.link, nil);
 end;
 
-procedure TFHIRNppVersionFactory.SetWorker(const Value: TFHIRWorkerContextV);
+procedure TFHIRNppVersionFactory.SetWorker(const Value: TFHIRWorkerContextWithFactory);
 begin
   FWorker.Free;
   FWorker := Value;

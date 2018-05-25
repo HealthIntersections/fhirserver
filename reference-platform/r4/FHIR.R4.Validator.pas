@@ -2841,9 +2841,9 @@ begin
     try
       if (s = nil) or (s.isOk()) then
         result := true
-      else if (s.severity = IssueSeverityInformation) then
+      else if (s.severity = isInformation) then
         hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, s = nil, s.message)
-      else if (s.severity = IssueSeverityWarning) then
+      else if (s.severity = isWarning) then
         warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, s = nil, s.message)
       else
         result := rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, s = nil, s.message);

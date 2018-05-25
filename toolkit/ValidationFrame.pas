@@ -194,7 +194,7 @@ begin
 
   s := cbxVersion.Items[cbxVersion.ItemIndex];
   s := s.Substring(0, s.IndexOf(' '));
-  Settings.CacheManager.ListPackagesForFhirVersion([fpkIG], s, lbPackages.Items);
+  Settings.CacheManager.ListPackagesForFhirVersion([fpkIG], true, s, lbPackages.Items);
   for i := 0 to lbPackages.Items.Count - 1 do
     lbPackages.ListItems[i].IsChecked := Settings.getValue('Packages', lbPackages.Items[i], false);
   FDirty := true;

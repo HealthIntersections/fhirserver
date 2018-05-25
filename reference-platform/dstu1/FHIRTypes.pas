@@ -1147,7 +1147,7 @@ Type
     Base Element Definition - extensions, ids
   }
   {!.Net HL7Connect.Fhir.Element}
-  TFhirElement = {abstract} class (TFHIRBase)
+  TFhirElement = class abstract (TFHIRBase)
   private
     FXmlId: String;
     FExtensionList : TFhirExtensionList;
@@ -1200,7 +1200,7 @@ Type
     Base Element Definition - extensions, ids
   }
   {!.Net HL7Connect.Fhir.BackboneElement}
-  TFHIRBackboneElement = {abstract} class (TFhirElement)
+  TFHIRBackboneElement = class abstract (TFhirElement)
   private
     FModifierExtensionList : TFhirExtensionList;
     function GetModifierExtensionList: TFhirExtensionList;

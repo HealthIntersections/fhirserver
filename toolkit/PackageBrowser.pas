@@ -67,6 +67,7 @@ type
     procedure loadServer;
     procedure applyFilter;
     function matchesFilter(pck : TPackageDefinition) : boolean;
+    procedure AddStandardPackages;
   public
     property OnLoadUrl : TOnLoadUrlEvent read FOnLoad write FOnLoad;
   end;
@@ -144,6 +145,53 @@ begin
   end;
 end;
 
+procedure TPackageFinderForm.AddStandardPackages;
+var
+  p : TPackageDefinition;
+begin
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'hl7.fhir.core';
+    p.Version := '3.4.0';
+    p.Canonical := 'http://hl7.org/fhir';
+    p.Date := Now;
+    p.Description := 'FHIR Current Build';
+    p.FHIRVersion := '3.4.0';
+    p.Url := 'https://build.fhir.org/';
+    FList.Add(p.Link);
+  finally
+    p.Free;
+  end;
+
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'hl7.fhir.core';
+    p.Version := '3.0.1';
+    p.Canonical := 'http://hl7.org/fhir';
+    p.Date := EncodeDate(2017, 4, 19);
+    p.Description := 'FHIR R3';
+    p.FHIRVersion := '3.0.1';
+    p.Url := 'https://hl7.org/fhir';
+    FList.Add(p.Link);
+  finally
+    p.Free;
+  end;
+
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'hl7.fhir.core';
+    p.Version := '1.0.2';
+    p.Canonical := 'http://hl7.org/fhir';
+    p.Date := EncodeDate(2016, 5, 15);
+    p.Description := 'FHIR R2';
+    p.FHIRVersion := '1.0.2';
+    p.Url := 'https://hl7.org/fhir';
+    FList.Add(p.Link);
+  finally
+    p.Free;
+  end;
+end;
+
 procedure TPackageFinderForm.loadServer;
 var
   j : TJsonObject;
@@ -152,6 +200,7 @@ var
   p : TPackageDefinition;
 begin
   FList.clear;
+  AddStandardPackages;
   a := TInternetFetcher.fetchJsonArr('https://build.fhir.org/ig/qas.json');
   try
     for i in a do

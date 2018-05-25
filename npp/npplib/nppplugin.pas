@@ -760,6 +760,7 @@ type
     procedure DoNppnReady; virtual;
     procedure DoNppnFileOpened; virtual;
     procedure DoNppnFileClosed; virtual;
+    procedure DoNppnFilebeforeClose; virtual;
     procedure DoNppnBufferChange; virtual;
     procedure DoNppnToolbarModification; virtual;
     procedure DoNppnShutdown; virtual;
@@ -928,6 +929,10 @@ begin
   begin
     self.DoNppnFileOpened;
   end
+  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILEBEFORECLOSE) then
+  begin
+    self.DoNppnFilebeforeClose;
+  end
   else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILECLOSED) then
   begin
     self.DoNppnFileClosed;
@@ -1053,6 +1058,11 @@ begin
 end;
 
 procedure TNppPlugin.DoNppnDwellStart(offset: integer);
+begin
+  // override these
+end;
+
+procedure TNppPlugin.DoNppnFilebeforeClose;
 begin
   // override these
 end;

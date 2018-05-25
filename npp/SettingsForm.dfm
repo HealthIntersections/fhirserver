@@ -375,6 +375,10 @@ inherited SettingForm: TSettingForm
     object TabSheet2: TTabSheet
       Caption = 'Servers'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -454,7 +458,7 @@ inherited SettingForm: TSettingForm
           end
           item
             Position = 1
-            Width = 237
+            Width = 241
             WideText = 'URL'
           end
           item

@@ -87,22 +87,15 @@ function isResourceName(name : String; canbeLower : boolean = false) : boolean;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
-Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeComposer(style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
-Function FhirGUIDToString(aGuid : TGuid):String;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
-function IsId(s : String) : boolean;
 function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String; overload;
 function fullResourceUri(base: String; url : String) : String; overload;
 function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
-function isHistoryURL(url : String) : boolean;
-procedure splitHistoryUrl(var url : String; var history : String);
-procedure RemoveBOM(var s : String);
 function isAbsoluteUrl(s: String): boolean;
-function languageMatches(spec, possible : String) : boolean;
 
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
@@ -164,9 +157,7 @@ procedure BuildNarrative(cs : TFhirCodeSystem); overload;
 function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String; overload;
 
 function getConformanceResourceUrl(res : TFHIRResource) : string;
-Function removeCaseAndAccents(s : String) : String;
 
-function CustomResourceNameIsOk(name : String) : boolean;
 function fileToResource(name : String) : TFhirResource; overload;
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource; overload;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
@@ -787,14 +778,6 @@ type
     function isEmail : boolean;
   end;
 
-function Path(const parts : array of String) : String;
-function UrlPath(const parts : array of String) : String;
-
-
-function ZCompressBytes(const s: TBytes): TBytes;
-function ZDecompressBytes(const s: TBytes): TBytes;
-function TryZDecompressBytes(const s: TBytes): TBytes;
-
 function summarise(coding : TFHIRCoding):String; overload;
 function summarise(code : TFhirCodeableConcept):String; overload;
 
@@ -979,12 +962,6 @@ begin
     raise Exception.Create('Format '+mimetype+' not recognised');
 end;
 
-Function FhirGUIDToString(aGuid : TGuid):String;
-begin
-  result := Copy(GUIDToString(aGuid), 2, 34).ToLower;
-end;
-
-
 function ResourceTypeByName(name : String) : TFhirResourceType;
 var
   index : Integer;
@@ -1025,32 +1002,9 @@ Begin
     aType := TFhirResourceType(iIndex);
 End;
 
-Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
-Begin
-  if (sName = '.xml') or (sName = 'xml') or (sName = '.xsd') or (sName = 'xsd') Then
-    result := ffXml
-  else if (sName = '.json') or (sName = 'json') then
-    result := ffJson
-  else if sName = '' then
-    result := ffUnspecified
-  else
-    raise ERestfulException.create('FHIR.Tools.Utilities.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, etStructure, 'Unknown format '+sName, lang);
-End;
-
-
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 begin
   result := resource.text.div_.Content;
-end;
-
-function IsId(s : String) : boolean;
-var
-  i : integer;
-begin
-  result := length(s) in [1..ID_LENGTH];
-  if result then
-    for i := 1 to length(s) do
-      result := result and CharInset(s[i], ['0'..'9', 'a'..'z', 'A'..'Z', '-', '.', '_']);
 end;
 
 procedure iterateReferences(path : String; node : TFHIRObject; list : TFhirReferenceList);
@@ -1916,41 +1870,6 @@ begin
   end;
 end;
 
-function CustomResourceNameIsOk(name : String) : boolean;
-var
-  fetcher : TInternetFetcher;
-  json : TJsonObject;
-  stream : TFileStream;
-  n : TJsonNode;
-begin
-  result := false;
-  fetcher := TInternetFetcher.create;
-  try
-    fetcher.URL := 'http://www.healthintersections.com.au/resource-policy.json';
-    fetcher.Fetch;
-//    fetcher.Buffer.SaveToFileName('c:\temp\test.json');
-    stream := TFileStream.Create('c:\temp\test.json', fmOpenRead + fmShareDenyWrite);
-    try
-//      fetcher.Buffer.SaveToStream(stream);
-//      stream.Position := 0;
-      json := TJSONParser.Parse(stream);
-      try
-        for n in json.arr['prefixes'] do
-          if name.StartsWith(TJsonString(n).value) then
-            exit(true);
-        for n in json.arr['names'] do
-          if name = TJsonString(n).value then
-            exit(true);
-      finally
-        json.Free;
-      end;
-    finally
-      stream.Free;
-    end;
-  finally
-    fetcher.Free;
-  end;
-end;
 
 (*
 
@@ -2093,10 +2012,6 @@ end;
 
 *)
 
-Function removeCaseAndAccents(s : String) : String;
-begin
-  result := lowercase(s);
-end;
 
 function getConformanceResourceUrl(res : TFHIRResource) : string;
 begin
@@ -2744,41 +2659,6 @@ begin
       result := Item(i).value;
 end;
 
-
-function ZCompressBytes(const s: TBytes): TBytes;
-begin
-  ZCompress(s, result);
-end;
-
-function TryZDecompressBytes(const s: TBytes): TBytes;
-begin
-  try
-    result := ZDecompressBytes(s);
-  except
-    result := s;
-  end;
-end;
-
-function ZDecompressBytes(const s: TBytes): TBytes;
-  {$IFNDEF WIN64}
-var
-  buffer: Pointer;
-  size  : Integer;
-  {$ENDIF}
-begin
-  {$IFDEF WIN64}
-  ZDecompress(s, result);
-  {$ELSE}
-  ZDecompress(@s[0],Length(s),buffer,size);
-
-  SetLength(result,size);
-  Move(buffer^,result[0],size);
-
-  FreeMem(buffer);
-  {$ENDIF}
-end;
-
-
 { TFhirConceptMapHelper }
 
 //function TFhirConceptMapHelper.conceptList: TFhirConceptMapElementList;
@@ -3348,17 +3228,6 @@ begin
     result := AppendForwardSlash(base)+url;
 end;
 
-function isHistoryURL(url : String) : boolean;
-begin
-  result := url.Contains('/_history/') and IsId(url.Substring(url.IndexOf('/_history/')+10));
-end;
-
-procedure splitHistoryUrl(var url : String; var history : String);
-begin
-  history := url.Substring(url.IndexOf('/_history/')+10);
-  url := url.Substring(0, url.IndexOf('/_history/'));
-end;
-
 { TFhirParametersHelper }
 
 procedure TFhirParametersHelper.AddParameter(name: String; value: TFhirType);
@@ -3694,12 +3563,6 @@ begin
       end;
 end;
 
-procedure RemoveBOM(var s : String);
-begin
-  if s.startsWith(#$FEFF) then
-    s := s.substring(1);
-end;
-
 
 { TFhirResourceMetaHelper }
 
@@ -3783,18 +3646,6 @@ begin
   end;
 end;
 
-function Path(const parts : array of String) : String;
-var
-  i : integer;
-begin
-  if length(parts) = 0 then
-    result := ''
-  else
-    result := parts[0];
-  for i := 1 to high(parts) do
-    result := IncludeTrailingPathDelimiter(result) + parts[i];
-end;
-
 function IsSlash(const S: string; Index: Integer): Boolean;
 begin
   Result := (Index >= Low(string)) and (Index <= High(S)) and (S[Index] = '/') and (ByteType(S, Index) = mbSingleByte);
@@ -3813,19 +3664,6 @@ begin
   if not IsSlash(Result, High(Result)) then
     Result := Result + '/';
 end;
-
-function UrlPath(const parts : array of String) : String;
-var
-  i : integer;
-begin
-  if length(parts) = 0 then
-    result := ''
-  else
-    result := parts[0];
-  for i := 1 to high(parts) do
-    result := IncludeTrailingURLSlash(result) + parts[i];
-end;
-
 
 function TFHIRElementHelper.getExtensionString(url: String; index: integer): String;
 var
@@ -5292,11 +5130,6 @@ begin
   p := parameterList.Append;
   p.name := name;
   p.value := TFhirBoolean.Create(value);
-end;
-
-function languageMatches(spec, possible : String) : boolean;
-begin
-  result := spec = possible; // todo: make this better
 end;
 
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;

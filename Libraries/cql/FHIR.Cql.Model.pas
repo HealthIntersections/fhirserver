@@ -81,7 +81,7 @@ const
 type
   { Foundation Stuff }
 
-  TCqlElement = {abstract} class (TFslObject)
+  TCqlElement = class abstract (TFslObject)
   private
     FStartPosition : TSourceLocation;
     FEndPosition : TSourceLocation;
@@ -214,7 +214,7 @@ type
 
   { Definition Stuff }
 
-  TCqlNamed = {abstract} class (TCqlElement)
+  TCqlNamed = class abstract (TCqlElement)
   private
     FName : String;
     FAccessLevel: TCqlAccessLevel;
@@ -223,7 +223,7 @@ type
     property Name : String read FName write FName;
   end;
 
-  TCqlStatement = {abstract} class (TCqlNamed)
+  TCqlStatement = class abstract (TCqlNamed)
   private
     FContext : TCqlContextType;
   public
@@ -234,7 +234,7 @@ type
     property Context : TCqlContextType read FContext write FContext;
   end;
 
-  TCqlVersioned = {abstract} class (TCqlNamed)
+  TCqlVersioned = class abstract (TCqlNamed)
   private
     FVersion : String;
   public

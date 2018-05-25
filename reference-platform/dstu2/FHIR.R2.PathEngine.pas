@@ -392,6 +392,7 @@ end;
 constructor TFHIRPathEngine.create(context: TFHIRWorkerContext; ucum : TUcumServiceInterface);
 var
   sd : TFhirStructureDefinition;
+  list : TFslList<TFHIRStructureDefinition>;
 begin
   inherited Create;
   worker := context;
@@ -399,14 +400,22 @@ begin
   allTypes := TStringList.Create;
   primitiveTypes := TStringList.Create;
   if (worker <> nil) then
-    for sd in worker.allStructures do
-      if (sd.kind <> StructureDefinitionKindLogical) then
-      begin
-        if (sd.constrainedType = '') then
-          allTypes.add(sd.id);
-        if (sd.constrainedType = '') and isPrimitiveType(sd.id) then
-          primitiveTypes.add(sd.id);
+  begin
+    list := TFslList<TFHIRStructureDefinition>.create;
+    try
+      worker.listStructures(list);
+      for sd in list do
+        if (sd.kind <> StructureDefinitionKindLogical) then
+        begin
+          if (sd.constrainedType = '') then
+            allTypes.add(sd.id);
+          if (sd.constrainedType = '') and isPrimitiveType(sd.id) then
+            primitiveTypes.add(sd.id);
+      end;
+    finally
+      list.free;
     end;
+  end;
 end;
 
 procedure TFHIRPathEngine.debug(context : TFHIRPathExecutionContext; exp: TFHIRPathExpressionNode; op : boolean; input1, input2, outcome: TFHIRSelectionList);

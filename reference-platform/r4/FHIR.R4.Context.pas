@@ -32,11 +32,13 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  SysUtils,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Factory,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.XVersion.Resources,
   FHIR.R4.Types, FHIR.R4.Resources;
 
 type
+{
   TValidationResult = class (TFslObject)
   private
     FSeverity : TFhirIssueSeverityEnum;
@@ -51,6 +53,7 @@ type
     Property Display : String read FDisplay write FDisplay;
     function isOk : boolean;
   end;
+}
 
   TFHIRCustomResourceInformation = class (TFslObject)
   private
@@ -73,12 +76,9 @@ type
   public
     function link : TFHIRWorkerContext; overload;
 
-    function allStructures : TFslMap<TFHIRStructureDefinition>.TValueCollection; virtual; abstract;
-    function getResourceNames : TFslStringSet; virtual; abstract;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; virtual; abstract;
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; virtual; abstract;
-    function supportsSystem(system, version : string) : boolean; virtual; abstract;
-    function validateCode(system, version, code, display : String) : TValidationResult; overload; virtual; abstract;
+    procedure listStructures(list : TFslList<TFHIRStructureDefinition>); overload; virtual; abstract;
+    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
+    function expand(vs : TFhirValueSet) : TFHIRValueSet; overload; virtual; abstract;
     function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
@@ -87,36 +87,18 @@ type
     function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; virtual; abstract;
     function getCustomResource(name : String) : TFHIRCustomResourceInformation; virtual; abstract;
     function hasCustomResource(name : String) : boolean; virtual; abstract;
-    function allResourceNames : TArray<String>; virtual; abstract;
-    function nonSecureResourceNames : TArray<String>; virtual; abstract;
+
+    // override version independent variants:
+    function fetchResource(rType : String; url : String) : TFhirResourceV; overload; override;
+    function expand(vs : TFhirValueSetW) : TFHIRValueSetW; overload; override;
+    function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
+    procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
   end;
 
 implementation
 
-{ TValidationResult }
-
-constructor TValidationResult.Create(Severity: TFhirIssueSeverityEnum; Message: String);
-begin
-  inherited create;
-  FSeverity := Severity;
-  FMessage := Message;
-end;
-
-constructor TValidationResult.Create;
-begin
-  Inherited Create;
-end;
-
-constructor TValidationResult.Create(display: String);
-begin
-  inherited Create;
-  FDisplay := display;
-end;
-
-function TValidationResult.isOk: boolean;
-begin
-  result := not (Severity in [IssueSeverityError, IssueSeverityFatal]);
-end;
+uses
+  FHIR.R4.Utilities;
 
 { TFHIRWorkerContext }
 
@@ -129,6 +111,42 @@ function TFHIRWorkerContext.link: TFHIRWorkerContext;
 begin
   result := TFHIRWorkerContext(inherited link);
 end;
+
+function TFHIRWorkerContext.expand(vs: TFhirValueSetW): TFHIRValueSetW;
+begin
+  result := TFhirValueSetW.Create(expand(vs.Resource as TFhirValueSet));
+end;
+
+function TFHIRWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSetW): TValidationResult;
+begin
+  result := validateCode(system, version, code, vs.Resource as TFHIRValueSet);
+end;
+
+function TFHIRWorkerContext.fetchResource(rType, url: String): TFhirResourceV;
+var
+  t : TFhirResourceType;
+begin
+  if RecogniseFHIRResourceName(rType, t) then
+    result := fetchResource(t, url)
+  else
+    raise Exception.Create('Unknown type '+rType+' in '+versionString);
+end;
+
+procedure TFHIRWorkerContext.listStructures(list: TFslList<TFhirStructureDefinitionW>);
+var
+  l : TFslList<TFHIRStructureDefinition>;
+  sd : TFHIRStructureDefinition;
+begin
+  l := TFslList<TFHIRStructureDefinition>.create;
+  try
+    listStructures(l);
+    for sd in l do
+      list.add(factory.wrapStructureDefinition(sd.link));
+  finally
+    l.Free;
+  end;
+end;
+
 
 { TFHIRCustomResourceInformation }
 

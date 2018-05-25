@@ -36,41 +36,63 @@ uses
   Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
   FHIR.Support.Generics,
-  FHIR.Base.Factory, FHIR.Client.SmartUtilities,
-  FHIRPathDocumentation;
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.SmartUtilities,
+  FHIRPathDocumentation, Vcl.Menus, Vcl.Buttons, ColorSpeedButton, FHIR.Npp.Context;
+
+type
+  TFHIRVersionStatus = (vsInvalid, vsValid, vsSpecified);
+  TFHIRVersionStatuses = array [TFHIRVersion] of TFHIRVersionStatus;
+
+const
+  DISPLAY_TFHIRVersionStatus : array [TFHIRVersionStatus] of String = ('Not a valid resource for ', 'Valid resource for ', 'The resource known to be ');
 
 type
   TFHIRToolbox = class(TNppDockingForm)
     mPath: TMemo;
     ImageList1: TImageList;
     ToolBar1: TToolBar;
-    tbConnect: TToolButton;
+    btnServers: TToolButton;
     ToolButton3: TToolButton;
-    tbOpen: TToolButton;
-    tbPut: TToolButton;
-    tbTransaction: TToolButton;
-    tbServerValidate: TToolButton;
+    btnOpen: TToolButton;
+    btnSave: TToolButton;
+    btnSpecial: TToolButton;
+    btnServerValidate: TToolButton;
     ToolButton8: TToolButton;
-    ToolButton9: TToolButton;
-    ToolButton10: TToolButton;
-    ToolButton11: TToolButton;
+    btnNew: TToolButton;
+    btnFormat: TToolButton;
+    btnValidate: TToolButton;
     ToolButton12: TToolButton;
-    tbPost: TToolButton;
-    ToolButton14: TToolButton;
-    ToolButton15: TToolButton;
-    cbxServers: TComboBox;
+    btnCommitAs: TToolButton;
+    btnValidationClear: TToolButton;
+    btnPathGo: TToolButton;
     Panel1: TPanel;
-    ToolButton16: TToolButton;
-    ToolButton18: TToolButton;
+    btnSettings: TToolButton;
+    btnAbout: TToolButton;
     ToolButton19: TToolButton;
     ToolButton20: TToolButton;
-    ToolButton21: TToolButton;
+    btnNarrative: TToolButton;
     pnlMessage: TPanel;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
+    btnPathDebug: TToolButton;
+    btnPathGet: TToolButton;
+    btnPatch: TToolButton;
+    btnCodeGeneration: TToolButton;
+    btnPackages: TToolButton;
+    pmFormat: TPopupMenu;
+    XML1: TMenuItem;
+    Json1: TMenuItem;
+    Turtle1: TMenuItem;
+    btnR4: TColorSpeedButton;
+    btnR3: TColorSpeedButton;
+    btnR2: TColorSpeedButton;
+    pmNonFormat: TPopupMenu;
+    NotaResource1: TMenuItem;
+    Timer1: TTimer;
+    ImageList24: TImageList;
+    ImageList16: TImageList;
+    pmVersion: TPopupMenu;
+    mnuTreatAsVersion: TMenuItem;
+    mnuMarkAsVersion: TMenuItem;
+    mnuConvertVersion: TMenuItem;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -79,43 +101,60 @@ type
     procedure FormFloat(Sender: TObject);
     procedure FormDock(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure ToolButton11Click(Sender: TObject);
-    procedure ToolButton14Click(Sender: TObject);
-    procedure ToolButton18Click(Sender: TObject);
-    procedure ToolButton10Click(Sender: TObject);
-    procedure ToolButton15Click(Sender: TObject);
-    procedure ToolButton1Click(Sender: TObject);
-    procedure tbConnectClick(Sender: TObject);
-    procedure ToolButton9Click(Sender: TObject);
-    procedure tbOpenClick(Sender: TObject);
-    procedure tbPutClick(Sender: TObject);
-    procedure tbPostClick(Sender: TObject);
-    procedure tbTransactionClick(Sender: TObject);
-    procedure tbServerValidateClick(Sender: TObject);
-    procedure ToolButton16Click(Sender: TObject);
+    procedure btnValidateClick(Sender: TObject);
+    procedure btnValidationClearClick(Sender: TObject);
+    procedure btnAboutClick(Sender: TObject);
+    procedure btnFormatClick(Sender: TObject);
+    procedure btnPathGoClick(Sender: TObject);
+    procedure btnPathDebugClick(Sender: TObject);
+    procedure btnServersClick(Sender: TObject);
+    procedure btnNewClick(Sender: TObject);
+    procedure btnOpenClick(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
+    procedure btnCommitAsClick(Sender: TObject);
+    procedure btnSpecialClick(Sender: TObject);
+    procedure btnServerValidateClick(Sender: TObject);
+    procedure btnSettingsClick(Sender: TObject);
     procedure ToolButton17Click(Sender: TObject);
-    procedure ToolButton21Click(Sender: TObject);
+    procedure btnNarrativeClick(Sender: TObject);
     procedure cbxServersChange(Sender: TObject);
     procedure mPathKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure mPathEnter(Sender: TObject);
     procedure mPathChange(Sender: TObject);
-    procedure ToolButton2Click(Sender: TObject);
-    procedure ToolButton4Click(Sender: TObject);
-    procedure ToolButton5Click(Sender: TObject);
+    procedure btnPathGetClick(Sender: TObject);
+    procedure btnPatchClick(Sender: TObject);
+    procedure btnCodeGenerationClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure ToolButton6Click(Sender: TObject);
+    procedure btnPackagesClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure XML1Click(Sender: TObject);
+    procedure Json1Click(Sender: TObject);
+    procedure Turtle1Click(Sender: TObject);
+    procedure btnR2Click(Sender: TObject);
+    procedure btnR3Click(Sender: TObject);
+    procedure btnR4Click(Sender: TObject);
+    procedure mnuTreatAsVersionClick(Sender: TObject);
+    procedure mnuMarkAsVersionClick(Sender: TObject);
   private
-    { Private declarations }
     FMessageShort, FMessageLong : String;
     FFirstPathEdit : boolean;
     FHasValidPath : boolean;
     FServers : TFslList<TRegisteredFHIRServer>;
+    FFormat : TFHIRFormat;
+    FStatuses : TFHIRVersionStatuses;
+    FContext : TFHIRNppContext;
+    FUrl : String;
+    procedure updateButton(btn : TColorSpeedButton; version: TFHIRVersion);
+    procedure SetContext(const Value: TFHIRNppContext);
+    procedure updateButtons;
+    procedure showVersionMenu(button : TSpeedButton; version : TFHIRVersion; convVersions : TFHIRVersionSet);
   public
-    { Public declarations }
     procedure connected(name, url, user, scopes : String);
     procedure disconnected;
     procedure loadServers;
+    procedure updateStatus(format : TFHIRFormat; versions : TFHIRVersionStatuses; url : String);
     property HasValidPath : boolean read FHasValidPath;
+    property Context : TFHIRNppContext read FContext write SetContext;
   end;
 
 var
@@ -163,6 +202,8 @@ begin
   else
     mPath.Text := Settings.Path;
   inherited;
+  if Screen.PixelsPerInch >= 140 then
+    ToolBar1.Images := ImageList24;
 end;
 
 procedure TFHIRToolbox.Button1Click(Sender: TObject);
@@ -181,47 +222,48 @@ procedure TFHIRToolbox.cbxServersChange(Sender: TObject);
 begin
   inherited;
   _FuncDisconnect;
-  if cbxServers.ItemIndex = cbxServers.Items.Count - 1 then
-  begin
-    FNpp.FuncSettings(true);
-  end;
+//  if cbxServers.ItemIndex = cbxServers.Items.Count - 1 then
+//  begin
+//    FNpp.FuncSettings(true);
+//  end;
 end;
 
 procedure TFHIRToolbox.connected(name, url, user, scopes : String);
 begin
-  tbConnect.ImageIndex := 15;
-  tbConnect.Hint := 'Disconnect from '+name;
-  if (scopes = '') then
-  begin
-    FMessageShort := 'Connected';
-    FMessageLong := 'Connected to '+name+' ('+url+', no security)'
-  end
-  else
-  begin
-    FMessageShort := 'Connected as '+user;
-    FMessageLong := 'Connected to '+name+' ('+url+', user = '+user+', scopes = "'+scopes+'")';
-  end;
-  OpMessage('', '');
-  tbOpen.Enabled := true;
-  tbPut.Enabled := true;
-  tbPost.Enabled := true;
-  tbTransaction.Enabled := true;
-  tbServerValidate.Enabled := true;
+//  tbConnect.ImageIndex := 15;
+//  tbConnect.Hint := 'Disconnect from '+name;
+//  if (scopes = '') then
+//  begin
+//    FMessageShort := 'Connected';
+//    FMessageLong := 'Connected to '+name+' ('+url+', no security)'
+//  end
+//  else
+//  begin
+//    FMessageShort := 'Connected as '+user;
+//    FMessageLong := 'Connected to '+name+' ('+url+', user = '+user+', scopes = "'+scopes+'")';
+//  end;
+//  OpMessage('', '');
+//  tbOpen.Enabled := true;
+//  tbPut.Enabled := true;
+//  tbPost.Enabled := true;
+//  tbTransaction.Enabled := true;
+//  tbServerValidate.Enabled := true;
 end;
 
 procedure TFHIRToolbox.disconnected;
 begin
-  tbConnect.ImageIndex := 0;
-  ToolBar1.Color := clBtnFace;
-  FMessageShort := '';
-  FMessageLong := '';
-  OpMessage('', '');
-  tbOpen.Enabled := false;
-  tbPut.Enabled := false;
-  tbPost.Enabled := false;
-  tbTransaction.Enabled := false;
-  tbServerValidate.Enabled := false;
+//  tbConnect.ImageIndex := 0;
+//  ToolBar1.Color := clBtnFace;
+//  FMessageShort := '';
+//  FMessageLong := '';
+//  OpMessage('', '');
+//  tbOpen.Enabled := false;
+//  tbPut.Enabled := false;
+//  tbPost.Enabled := false;
+//  tbTransaction.Enabled := false;
+//  tbServerValidate.Enabled := false;
 end;
+
 
 // special hack for input forms
 // This is the best possible hack I could came up for
@@ -245,6 +287,7 @@ end;
 
 procedure TFHIRToolbox.FormDestroy(Sender: TObject);
 begin
+  FContext.Free;
   FServers.Free;
   inherited;
 end;
@@ -267,23 +310,38 @@ begin
   loadServers;
 end;
 
+procedure TFHIRToolbox.Json1Click(Sender: TObject);
+begin
+  FNpp.FuncFormat(ffJson);
+end;
+
 procedure TFHIRToolbox.loadServers;
 var
   i : integer;
 begin
-  if FServers = nil then
-    FServers := TFslList<TRegisteredFHIRServer>.create
-  else
-    FServers.Clear;
-  cbxServers.Items.Clear;
-  Settings.ListServers('', FServers);
-  for i := 0 to FServers.Count - 1 do
-  begin
-    cbxServers.Items.addObject(FServers[i].name + ': '+FServers[i].fhirEndpoint, FServers[i]);
-  end;
-  cbxServers.Items.Add('Manager...');
-  cbxServers.ItemIndex := 0;
-  SendMessage(cbxServers.Handle, CB_SETDROPPEDWIDTH, 300, 0);
+//  if FServers = nil then
+//    FServers := TFslList<TRegisteredFHIRServer>.create
+//  else
+//    FServers.Clear;
+//  cbxServers.Items.Clear;
+//  Settings.ListServers('', FServers);
+//  for i := 0 to FServers.Count - 1 do
+//  begin
+//    cbxServers.Items.addObject(FServers[i].name + ': '+FServers[i].fhirEndpoint, FServers[i]);
+//  end;
+//  cbxServers.Items.Add('Manager...');
+//  cbxServers.ItemIndex := 0;
+//  SendMessage(cbxServers.Handle, CB_SETDROPPEDWIDTH, 300, 0);
+end;
+
+procedure TFHIRToolbox.mnuMarkAsVersionClick(Sender: TObject);
+begin
+  Fnpp.MarkAsVersion(TFHIRVersion(mnuTreatAsVersion.tag));
+end;
+
+procedure TFHIRToolbox.mnuTreatAsVersionClick(Sender: TObject);
+begin
+  Fnpp.TreatAsVersion(TFHIRVersion(mnuTreatAsVersion.tag));
 end;
 
 procedure TFHIRToolbox.mPathChange(Sender: TObject);
@@ -343,32 +401,124 @@ begin
   end;
 end;
 
-procedure TFHIRToolbox.ToolButton10Click(Sender: TObject);
+procedure TFHIRToolbox.SetContext(const Value: TFHIRNppContext);
 begin
-  _FuncFormat;
+  FContext.Free;
+  FContext := Value;
 end;
 
-procedure TFHIRToolbox.ToolButton11Click(Sender: TObject);
+procedure TFHIRToolbox.showVersionMenu(button: TSpeedButton; version: TFHIRVersion; convVersions: TFHIRVersionSet);
+var
+  pt : TPoint;
+  v : TFHIRVersion;
+  ok : boolean;
+begin
+  mnuTreatAsVersion.Caption := 'Treat as '+CODES_TFHIRVersion[version].ToUpper;
+  mnuTreatAsVersion.Enabled := FStatuses[version] = vsValid;
+  mnuTreatAsVersion.Tag := ord(version);
+  mnuMarkAsVersion.Caption := 'Mark as '+CODES_TFHIRVersion[version].ToUpper;
+  mnuMarkAsVersion.Enabled := FStatuses[version] <> vsInvalid;
+  mnuMarkAsVersion.Tag := ord(version);
+  mnuConvertVersion.Caption := 'Convert to '+CODES_TFHIRVersion[version].ToUpper;
+  ok := false;
+  for v in SUPPORTED_VERSIONS do
+    ok := ok or (FStatuses[version] <> vsInvalid);
+  mnuConvertVersion.Enabled := ok and (FStatuses[version] <> vsSpecified) ;
+  mnuConvertVersion.Tag := ord(version);
+
+  pt.X := button.left;
+  pt.y := button.top + btnFormat.Height;
+  pt := ClientToScreen(pt);
+  pmVersion.Popup(pt.X, pt.Y);
+end;
+
+procedure TFHIRToolbox.Timer1Timer(Sender: TObject);
+begin
+  FNpp.checkTrigger;
+  updateButtons;
+end;
+
+procedure TFHIRToolbox.btnFormatClick(Sender: TObject);
+var
+  pm : TPopupMenu;
+  pt : TPoint;
+begin
+  pm := pmFormat;
+  case FFormat of
+    ffXml:
+      begin
+        XML1.Caption := 'This is Xml';
+        XML1.Enabled := false;
+        Json1.Caption := 'To &Json';
+        Json1.Enabled := true;
+        Turtle1.Caption := 'To &Turtle';
+        Turtle1.Enabled := true;
+      end;
+    ffJson:
+      begin
+        XML1.Caption := 'To &Xml';
+        XML1.Enabled := true;
+        Json1.Caption := 'This is &Json';
+        Json1.Enabled := false;
+        Turtle1.Caption := 'To &Turtle';
+        Turtle1.Enabled := true;
+      end;
+    ffTurtle:
+      begin
+        XML1.Caption := 'To &Xml';
+        XML1.Enabled := true;
+        Json1.Caption := 'To &Json';
+        Json1.Enabled := true;
+        Turtle1.Caption := 'This is Turtle';
+        Turtle1.Enabled := false;
+      end;
+    else // ffUnspecified :
+    begin
+      pm := pmNonFormat;
+    end;
+  end;
+  pt.X := btnFormat.left;
+  pt.y := btnFormat.top + btnFormat.Height;
+  pt := ClientToScreen(pt);
+  pm.Popup(pt.X, pt.Y);
+end;
+
+procedure TFHIRToolbox.btnValidateClick(Sender: TObject);
 begin
   _FuncValidate;
 end;
 
-procedure TFHIRToolbox.tbPostClick(Sender: TObject);
+procedure TFHIRToolbox.btnCommitAsClick(Sender: TObject);
 begin
   _FuncPOST;
 end;
 
-procedure TFHIRToolbox.ToolButton14Click(Sender: TObject);
+procedure TFHIRToolbox.btnValidationClearClick(Sender: TObject);
 begin
   _FuncValidateClear;
 end;
 
-procedure TFHIRToolbox.ToolButton15Click(Sender: TObject);
+procedure TFHIRToolbox.btnPathGoClick(Sender: TObject);
 begin
   FNpp.FuncJumpToPath;
 end;
 
-procedure TFHIRToolbox.ToolButton16Click(Sender: TObject);
+procedure TFHIRToolbox.btnR2Click(Sender: TObject);
+begin
+  showVersionMenu(btnR2, fhirVersionRelease2, []);
+end;
+
+procedure TFHIRToolbox.btnR3Click(Sender: TObject);
+begin
+  showVersionMenu(btnR3, fhirVersionRelease3, [fhirVersionRelease4]);
+end;
+
+procedure TFHIRToolbox.btnR4Click(Sender: TObject);
+begin
+  showVersionMenu(btnR4, fhirVersionRelease4, [fhirVersionRelease3]);
+end;
+
+procedure TFHIRToolbox.btnSettingsClick(Sender: TObject);
 begin
   _FuncSettings;
 end;
@@ -378,42 +528,47 @@ begin
   _FuncToolbox;
 end;
 
-procedure TFHIRToolbox.ToolButton18Click(Sender: TObject);
+procedure TFHIRToolbox.Turtle1Click(Sender: TObject);
+begin
+  FNpp.FuncFormat(ffTurtle);
+end;
+
+procedure TFHIRToolbox.btnAboutClick(Sender: TObject);
 begin
   _FuncAbout;
 end;
 
-procedure TFHIRToolbox.ToolButton1Click(Sender: TObject);
+procedure TFHIRToolbox.btnPathDebugClick(Sender: TObject);
 begin
   FNpp.FuncDebugPath;
 end;
 
-procedure TFHIRToolbox.ToolButton21Click(Sender: TObject);
+procedure TFHIRToolbox.btnNarrativeClick(Sender: TObject);
 begin
   _FuncNarrative;
 end;
 
-procedure TFHIRToolbox.ToolButton2Click(Sender: TObject);
+procedure TFHIRToolbox.btnPathGetClick(Sender: TObject);
 begin
   FNpp.FuncExtractPath;
 end;
 
-procedure TFHIRToolbox.ToolButton4Click(Sender: TObject);
+procedure TFHIRToolbox.btnPatchClick(Sender: TObject);
 begin
   _FuncDifference;
 end;
 
-procedure TFHIRToolbox.ToolButton5Click(Sender: TObject);
+procedure TFHIRToolbox.btnCodeGenerationClick(Sender: TObject);
 begin
   _FuncGenerateCode;
 end;
 
-procedure TFHIRToolbox.ToolButton6Click(Sender: TObject);
+procedure TFHIRToolbox.btnPackagesClick(Sender: TObject);
 begin
   _FuncPackageManager;
 end;
 
-procedure TFHIRToolbox.tbConnectClick(Sender: TObject);
+procedure TFHIRToolbox.btnServersClick(Sender: TObject);
 begin
   if FNpp.connected then
     _FuncDisconnect
@@ -421,30 +576,107 @@ begin
     _FuncConnect;
 end;
 
-procedure TFHIRToolbox.tbOpenClick(Sender: TObject);
+procedure TFHIRToolbox.btnOpenClick(Sender: TObject);
 begin
   _FuncOpen;
 end;
 
-procedure TFHIRToolbox.tbPutClick(Sender: TObject);
+procedure TFHIRToolbox.btnSaveClick(Sender: TObject);
 begin
   _FuncPUT;
 end;
 
-procedure TFHIRToolbox.tbTransactionClick(Sender: TObject);
+procedure TFHIRToolbox.btnSpecialClick(Sender: TObject);
 begin
   _FuncTransaction;
 end;
 
-procedure TFHIRToolbox.tbServerValidateClick(Sender: TObject);
+procedure TFHIRToolbox.btnServerValidateClick(Sender: TObject);
 begin
   _FuncServerValidate;
 end;
 
-procedure TFHIRToolbox.ToolButton9Click(Sender: TObject);
+procedure TFHIRToolbox.btnNewClick(Sender: TObject);
 begin
   _FuncNewResource;
 end;
 
+procedure TFHIRToolbox.updateButton(btn : TColorSpeedButton; version: TFHIRVersion);
+begin
+  if FContext.VersionLoading[version] <> vlsLoaded then
+  begin
+    btn.Enabled := false;
+    btn.Font.Style := [];
+    btn.Font.Color := clMaroon;
+    btn.Color := clSilver;
+    btn.Hint := CODES_TFHIRVersionLoadingStatus[FContext.VersionLoading[version]];
+  end
+  else if FFormat = ffUnspecified then
+  begin
+    btn.Enabled := true;
+    btn.Font.Style := [fsBold];
+    btn.Color := clSilver;
+    btn.Hint := 'Not a FHIR Resource';
+  end
+  else
+  begin
+    btn.Enabled := true;
+    btn.Font.Style := [fsBold];
+    btn.Font.Color := clBlack;
+    case FStatuses[version] of
+      vsInvalid: btn.Color := clRed;
+      vsValid: btn.Color := clYellow;
+      vsSpecified:
+        begin
+        btn.Color := clLime;
+        btn.Font.Color := clOlive;
+        end;
+    end;
+    btn.Hint := DISPLAY_TFHIRVersionStatus[FStatuses[version]] + UpperCase(CODES_TFHIRVersion[version]);
+  end;
+end;
+
+procedure TFHIRToolbox.updateStatus(format: TFHIRFormat; versions: TFHIRVersionStatuses; url : String);
+begin
+  FFormat := format;
+  FStatuses := versions;
+  FUrl := url;
+  UpdateButtons;
+end;
+
+procedure TFHIRToolbox.XML1Click(Sender: TObject);
+begin
+  FNpp.FuncFormat(ffXml);
+end;
+
+procedure TFHIRToolbox.updateButtons;
+begin
+  btnFormat.Enabled := FFormat <> ffUnspecified;
+  updateButton(btnR2, fhirVersionRelease2);
+  updateButton(btnR3, fhirVersionRelease3);
+  updateButton(btnR4, fhirVersionRelease4);
+
+  btnNarrative.Enabled := FFormat <> ffUnspecified;
+  btnValidate.Enabled := FFormat <> ffUnspecified;
+  btnValidationClear.Enabled := FFormat <> ffUnspecified;
+  btnPatch.Enabled := FFormat <> ffUnspecified;
+  btnCodeGeneration.Enabled := FFormat <> ffUnspecified;
+
+  btnPathGo.Enabled := FFormat <> ffUnspecified;
+  btnPathDebug.Enabled := FFormat <> ffUnspecified;
+  btnPathGet.Enabled := FFormat <> ffUnspecified;
+
+  btnNew.Enabled := true;
+  btnOpen.Enabled := true;
+  btnSave.Enabled := (FFormat <> ffUnspecified) and (FUrl <> '');
+  btnCommitAs.Enabled := FFormat <> ffUnspecified;
+  btnSpecial.Enabled := FFormat <> ffUnspecified;
+  btnServerValidate.Enabled := FFormat <> ffUnspecified;
+
+  btnServers.Enabled := true;
+  btnPackages.Enabled := true;
+  btnSettings.Enabled := true;
+  btnAbout.Enabled := true;
+end;
 
 end.
