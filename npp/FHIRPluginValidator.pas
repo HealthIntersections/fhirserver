@@ -35,7 +35,7 @@ Uses
   SysUtils, Classes, ActiveX, ComObj,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Factory,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base,
 
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Context, FHIR.R2.Profiles, FHIR.R2.Client,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Client,
@@ -143,7 +143,7 @@ begin
   begin
     if FServer <> nil then
       FServer.Free;
-    FServer := Factory.makeClientHTTP(self.link, FUrl, true, 5000) as FHIR.R2.Client.TFhirClient2;
+    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R2.Client.TFhirClient2;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR.R2.Constants.FHIR_GENERATED_VERSION then
       raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R2.Constants.FHIR_GENERATED_VERSION+')');
@@ -365,7 +365,7 @@ begin
   begin
     if FServer <> nil then
       FServer.Free;
-    FServer := Factory.makeClientHTTP(self.link, FUrl, true, 5000) as FHIR.R3.Client.TFhirClient3;
+    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R3.Client.TFhirClient3;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR.R3.Constants.FHIR_GENERATED_VERSION then
       raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R3.Constants.FHIR_GENERATED_VERSION+')');
@@ -587,7 +587,7 @@ begin
   begin
     if FServer <> nil then
       FServer.Free;
-    FServer := Factory.makeClientHTTP(self.link, FUrl, true, 5000) as FHIR.R4.Client.TFhirClient4;
+    FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R4.Client.TFhirClient4;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR.R4.Constants.FHIR_GENERATED_VERSION then
       raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R4.Constants.FHIR_GENERATED_VERSION+')');

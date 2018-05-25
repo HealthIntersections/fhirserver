@@ -14,7 +14,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.DateTime, FHIR.Support.Strings,
-  FHIR.Support.Certs, FHIR.Client.SmartUtilities,
+  FHIR.Support.Json, FHIR.Smart.Utilities,
   FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Client, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities;
 
 type

@@ -36,7 +36,7 @@ uses
   IdHttp, IdSSLOpenSSL,
   FHIR.Support.Json,
   FHIR.Support.Certs,
-  FHIR.Client.SmartUtilities, FMX.Objects, FMX.ListBox;
+  FHIR.Smart.Utilities, FMX.Objects, FMX.ListBox;
 
 type
   TRegisterClientForm = class(TForm)

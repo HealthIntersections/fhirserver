@@ -89,7 +89,7 @@ uses
   MarkdownProcessor in '..\..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
-  FHIR.Client.SmartUtilities in '..\..\reference-platform\client\FHIR.Client.SmartUtilities.pas',
+  FHIR.Smart.Utilities in '..\..\reference-platform\client\FHIR.Smart.Utilities.pas',
   FHIR.Tools.Client in '..\..\reference-platform\client\FHIR.Tools.Client.pas',
   FHIR.R4.Operations in '..\..\reference-platform\r4\FHIR.R4.Operations.pas',
   FHIR.R4.OpBase in '..\..\reference-platform\r4\FHIR.R4.OpBase.pas',

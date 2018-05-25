@@ -114,7 +114,6 @@ uses
   FHIR.R4.Narrative2 in '..\reference-platform\r4\FHIR.R4.Narrative2.pas',
   FHIR.Tools.Security in '..\reference-platform\tools\FHIR.Tools.Security.pas',
   FHIR.R4.Narrative in '..\reference-platform\r4\FHIR.R4.Narrative.pas',
-  FHIR.Client.SmartUtilities in '..\reference-platform\client\FHIR.Client.SmartUtilities.pas',
   FHIR.R4.PathEngine in '..\reference-platform\r4\FHIR.R4.PathEngine.pas',
   FHIR.R4.Tags in '..\reference-platform\r4\FHIR.R4.Tags.pas',
   FHIR.R4.Profiles in '..\reference-platform\r4\FHIR.R4.Profiles.pas',
@@ -284,7 +283,14 @@ uses
   FHIR.Java.Wrapper in '..\Libraries\java\FHIR.Java.Wrapper.pas',
   FHIR.Java.Strings in '..\Libraries\java\FHIR.Java.Strings.pas',
   FHIR.Java.JNI in '..\Libraries\java\FHIR.Java.JNI.pas',
-  FHIR.Support.Fpc in '..\reference-platform\support\FHIR.Support.Fpc.pas';
+  FHIR.Support.Fpc in '..\reference-platform\support\FHIR.Support.Fpc.pas',
+  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
+  FHIR.R3.Factory in '..\reference-platform\dstu3\FHIR.R3.Factory.pas',
+  FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas',
+  FHIR.R3.PathEngine in '..\reference-platform\dstu3\FHIR.R3.PathEngine.pas',
+  FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
+  FHIR.R3.Client in '..\reference-platform\dstu3\FHIR.R3.Client.pas',
+  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas';
 
 var
   runner : ITestRunner;

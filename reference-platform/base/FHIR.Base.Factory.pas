@@ -35,7 +35,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.XVersion.Resources,
-  FHIR.Client.Base, FHIR.Client.Threaded, FHIR.Client.HTTP;
+  FHIR.Client.Base{, FHIR.Client.Threaded{, FHIR.Client.HTTP};
 
 type
   TFHIRFactory = class (TFslObject)
@@ -52,13 +52,10 @@ type
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; virtual;
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; virtual;
 
-    function makeClientHTTP(worker : TFHIRWorkerContextV; url : String; json : boolean) : TFhirClientV; overload;
-    function makeClientHTTP(worker : TFHIRWorkerContextV; url : String; json : boolean; timeout : cardinal) : TFhirClientV; overload;
-    function makeClientHTTP(worker : TFHIRWorkerContextV; url : String; mimeType : String) : TFhirClientV; overload;
-    function makeClientIndy(worker : TFHIRWorkerContextV; url : String; json : boolean) : TFhirClientV; overload;
-    function makeClientIndy(worker : TFHIRWorkerContextV; url : String; json : boolean; timeout : cardinal) : TFhirClientV; overload;
-    function makeClientHTTP(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; virtual;
-
+    function makeClient(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat) : TFhirClientV; overload;
+    function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat) : TFhirClientV; overload;
+    function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal) : TFhirClientV; overload;
+    function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; virtual; // because using indy is necessary if you're writing a server, or unixready code
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; virtual;
 
     function makeByName(const name : String) : TFHIRObject; virtual;
@@ -133,25 +130,24 @@ begin
   result := TFHIRFactory(inherited link);
 end;
 
-function TFHIRFactory.makeClientHTTP(worker: TFHIRWorkerContextV; url: String; json: boolean): TFhirClientV;
+function TFHIRFactory.makeClient(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat) : TFhirClientV;
 begin
-  if json then
-    result := makeClientHTTP(worker, url, ffJson, 0, '')
-  else
-    result := makeClientHTTP(worker, url, ffXml, 0, '')
+  result := makeClient(worker, url, fctCrossPlatform, fmt, 0, '');
 end;
 
-function TFHIRFactory.makeClientHTTP(worker: TFHIRWorkerContextV; url: String; json: boolean; timeout: cardinal): TFhirClientV;
+function TFHIRFactory.makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat) : TFhirClientV;
 begin
-  if json then
-    result := makeClientHTTP(worker, url, ffJson, timeout, '')
-  else
-    result := makeClientHTTP(worker, url, ffXml, timeout, '');
+  result := makeClient(worker, url, kind, fmt, 0, '');
 end;
 
-function TFHIRFactory.makeClientHTTP(worker: TFHIRWorkerContextV; url, mimeType: String): TFhirClientV;
+function TFHIRFactory.makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal) : TFhirClientV;
 begin
-  result := makeClientHTTP(worker, url, mimeType.contains('json'));
+  result := makeClient(worker, url, kind, fmt, timeout, '');
+end;
+
+function TFHIRFactory.makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV;
+begin
+  raise Exception.Create('The implementation of TFHIRFactory.makeClient should never be called');
 end;
 
 function TFHIRFactory.makeBase64Binary(s: string): TFHIRObject;
@@ -166,29 +162,12 @@ end;
 
 function TFHIRFactory.makeByName(const name: String): TFHIRObject;
 begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeCode should never be called');
-end;
-
-function TFHIRFactory.makeClientHTTP(worker: TFHIRWorkerContextV; url: String; fmt : TFHIRFormat; timeout: cardinal; proxy: String): TFhirClientV;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeComposer should never be called');
-end;
-
-function TFHIRFactory.makeClientIndy(worker: TFHIRWorkerContextV; url: String; json: boolean; timeout: cardinal): TFhirClientV;
-begin
-  result := makeClientHTTP(worker, url, json, timeout);
-  TFHIRHTTPCommunicator(result.Communicator).UseIndy := true;
-end;
-
-function TFHIRFactory.makeClientIndy(worker: TFHIRWorkerContextV; url: String; json: boolean): TFhirClientV;
-begin
-  result := makeClientHTTP(worker, url, json, 0);
-  TFHIRHTTPCommunicator(result.Communicator).UseIndy := true;
+  raise Exception.Create('The implementation of TFHIRFactory.makeByName should never be called');
 end;
 
 function TFHIRFactory.makeClientThreaded(worker: TFHIRWorkerContextV; internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
 begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeComposer should never be called');
+  raise Exception.Create('The implementation of TFHIRFactory.makeClientThreaded should never be called');
 end;
 
 function TFHIRFactory.makeCode(s: string): TFHIRObject;

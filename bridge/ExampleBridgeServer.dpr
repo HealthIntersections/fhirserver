@@ -90,7 +90,7 @@ uses
   FHIR.R3.Narrative2 in '..\reference-platform\dstu3\FHIR.R3.Narrative2.pas',
   FHIR.R3.Questionnaire in '..\reference-platform\dstu3\FHIR.R3.Questionnaire.pas',
   FHIR.Base.Scim in '..\reference-platform\base\FHIR.Base.Scim.pas',
-  FHIR.Client.SmartUtilities in '..\reference-platform\client\FHIR.Client.SmartUtilities.pas',
+  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
   FHIR.Tx.Service in '..\Libraries\FHIR.Tx.Service.pas',
   FHIR.Database.Logging in '..\Libraries\db\FHIR.Database.Logging.pas',
   FHIR.Database.Manager in '..\Libraries\db\FHIR.Database.Manager.pas',

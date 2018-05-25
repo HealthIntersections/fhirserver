@@ -71,7 +71,6 @@ uses
   FHIR.R3.Profiles in '..\reference-platform\dstu3\FHIR.R3.Profiles.pas',
   FHIR.Support.Lock in '..\reference-platform\support\FHIR.Support.Lock.pas',
   FHIR.R3.PathEngine in '..\reference-platform\dstu3\FHIR.R3.PathEngine.pas',
-  FHIR.Client.SmartUtilities in '..\reference-platform\client\FHIR.Client.SmartUtilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
@@ -121,7 +120,7 @@ uses
   ResourceLanguageDialog in 'ResourceLanguageDialog.pas' {ResourceLanguageForm},
   AddRestOperationDialog in 'AddRestOperationDialog.pas' {AddRestOperationForm},
   RegistryForm in 'RegistryForm.pas' {RegistryFrame: TFrame},
-  FHIR.Ui.ComboFMX in '..\reference-platform\client\FHIR.Ui.ComboFMX.pas',
+  FHIR.Ui.ComboFMX in '..\libraries\ui\FHIR.Ui.ComboFMX.pas',
   PatientHomeForm in 'PatientHomeForm.pas' {PatientHomeFrame: TFrame},
   FHIR.Support.Signatures in '..\reference-platform\support\FHIR.Support.Signatures.pas',
   DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm},
@@ -169,7 +168,9 @@ uses
   TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame},
   PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm},
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
-  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
+  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
+  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas';
 
 {$R *.res}
 

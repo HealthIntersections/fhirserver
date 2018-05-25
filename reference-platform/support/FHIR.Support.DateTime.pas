@@ -610,6 +610,10 @@ Function DurationToSecondsString(Const aValue : TDuration) : String; Overload;
 Function DurationToShortSecondsString(Const aValue : TDuration) : String; Overload;
 Function DurationToMillisecondsString(Const aValue : TDuration) : String; Overload;
 
+function DateTimeToUnix(ConvDate: TDateTime): Longint;
+function UnixToDateTime(USec: Longint): TDateTime;
+
+
 Implementation
 
 uses
@@ -3717,6 +3721,21 @@ Function TryEncodeDate(iYear, iMonth, iDay : Word; Out aDateTimeOffset : TDateTi
 Begin
   Result := TryEncodeDate(iYear, iMonth, iDay, aDateTimeOffset.Value);
 End;
+
+
+const
+  // Sets UnixStartDate to TDateTime of 01/01/1970
+  UnixStartDate: TDateTime = 25569.0;
+
+function DateTimeToUnix(ConvDate: TDateTime): Longint;
+begin
+  Result := Round((ConvDate - UnixStartDate) * 86400);
+end;
+
+function UnixToDateTime(USec: Longint): TDateTime;
+begin
+  Result := (Usec / 86400) + UnixStartDate;
+end;
 
 End.
 

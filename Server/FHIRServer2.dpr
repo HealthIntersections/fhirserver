@@ -117,7 +117,7 @@ uses
   FHIR.R2.Narrative2 in '..\reference-platform\dstu2\FHIR.R2.Narrative2.pas',
   FHIR.Tools.Security in '..\reference-platform\tools\FHIR.Tools.Security.pas',
   FHIR.R2.Narrative in '..\reference-platform\dstu2\FHIR.R2.Narrative.pas',
-  FHIR.Client.SmartUtilities in '..\reference-platform\client\FHIR.Client.SmartUtilities.pas',
+  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
   FHIR.R2.PathEngine in '..\reference-platform\dstu2\FHIR.R2.PathEngine.pas',
   FHIR.R2.Tags in '..\reference-platform\dstu2\FHIR.R2.Tags.pas',
   FHIR.R2.Profiles in '..\reference-platform\dstu2\FHIR.R2.Profiles.pas',

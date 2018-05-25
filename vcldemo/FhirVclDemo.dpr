@@ -45,13 +45,11 @@ uses
   FHIR.R2.PathEngine in '..\reference-platform\dstu2\FHIR.R2.PathEngine.pas',
   FHIR.Tools.Client in '..\reference-platform\client\FHIR.Tools.Client.pas',
   FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
-  FHIR.Client.SmartUtilities in '..\reference-platform\client\FHIR.Client.SmartUtilities.pas',
   FHIR.CdsHooks.Utilities in '..\reference-platform\support\FHIR.CdsHooks.Utilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
-  FHIR.Client.SmartLogin in '..\reference-platform\client\FHIR.Client.SmartLogin.pas' {SmartOnFhirLoginForm},
   FHIR.Ucum.IFace in '..\reference-platform\support\FHIR.Ucum.IFace.pas',
   FHIR.R2.PathNode in '..\reference-platform\dstu2\FHIR.R2.PathNode.pas',
   FHIR.R2.Base in '..\reference-platform\dstu2\FHIR.R2.Base.pas',
@@ -76,7 +74,10 @@ uses
   FHIR.R2.Common in '..\reference-platform\dstu2\FHIR.R2.Common.pas',
   FHIR.Support.Signatures in '..\reference-platform\support\FHIR.Support.Signatures.pas',
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
-  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
+  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
+  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
+  FHIR.Smart.LoginVCL in '..\reference-platform\client\FHIR.Smart.LoginVCL.pas' {SmartOnFhirLoginForm};
 
 {$R *.res}
 
@@ -84,6 +85,8 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainWindowForm, MainWindowForm);
+  Application.CreateForm(TSmartOnFhirLoginForm, SmartOnFhirLoginForm);
+  Application.CreateForm(TSmartOnFhirLoginForm, SmartOnFhirLoginForm);
   Application.CreateForm(TSmartOnFhirLoginForm, SmartOnFhirLoginForm);
   Application.Run;
 end.

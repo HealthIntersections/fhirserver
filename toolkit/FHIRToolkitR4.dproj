@@ -208,7 +208,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Profiles.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathEngine.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.SmartUtilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
@@ -335,7 +334,7 @@
             <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\client\FHIR.Ui.ComboFMX.pas"/>
+        <DCCReference Include="..\libraries\ui\FHIR.Ui.ComboFMX.pas"/>
         <DCCReference Include="PatientHomeForm.pas">
             <Form>PatientHomeFrame</Form>
             <FormType>fmx</FormType>
@@ -411,6 +410,8 @@
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Login.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

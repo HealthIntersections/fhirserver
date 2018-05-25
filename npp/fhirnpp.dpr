@@ -82,7 +82,6 @@ uses
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
   FHIR.Client.ServerDialog in '..\reference-platform\client\FHIR.Client.ServerDialog.pas' {EditRegisteredServerForm},
   FHIR.Web.Parsers in '..\reference-platform\Support\FHIR.Web.Parsers.pas',
-  FHIR.Client.SmartUtilities in '..\reference-platform\client\FHIR.Client.SmartUtilities.pas',
   FetchResourceForm in 'FetchResourceForm.pas' {FetchResourceFrm},
   VirtualTrees in '..\..\Components\treeview\Source\VirtualTrees.pas',
   FHIR.R3.PathEngine in '..\reference-platform\dstu3\FHIR.R3.PathEngine.pas',
@@ -114,7 +113,6 @@ uses
   CodeGenerationForm in 'CodeGenerationForm.pas' {CodeGeneratorForm},
   FHIR.Tools.CodeGen in '..\reference-platform\tools\FHIR.Tools.CodeGen.pas',
   FHIR.Support.Turtle in '..\reference-platform\support\FHIR.Support.Turtle.pas',
-  FHIR.Client.SmartLogin in '..\reference-platform\client\FHIR.Client.SmartLogin.pas' {SmartOnFhirLoginForm},
   FHIR.CdsHooks.Client in '..\reference-platform\support\FHIR.CdsHooks.Client.pas',
   FHIR.Client.Registry in '..\reference-platform\client\FHIR.Client.Registry.pas',
   FHIR.Tools.Indexing in '..\reference-platform\tools\FHIR.Tools.Indexing.pas',
@@ -187,8 +185,11 @@ uses
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
   FHIR.R4.Turtle in '..\reference-platform\r4\FHIR.R4.Turtle.pas',
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
-  ColorSpeedButton in '..\Libraries\ui\ColorSpeedButton.pas',
-  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas';
+  FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
+  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
+  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
+  FHIR.Smart.LoginVCL in '..\reference-platform\client\FHIR.Smart.LoginVCL.pas' {SmartOnFhirLoginForm},
+  FHIR.Ui.ColorSB in '..\Libraries\ui\FHIR.Ui.ColorSB.pas';
 
 {$R *.res}
 

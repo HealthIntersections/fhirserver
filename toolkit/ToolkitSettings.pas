@@ -33,7 +33,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Json, FHIR.Support.Strings,
   FHIR.Base.Factory,
-  FHIR.Client.SmartUtilities, FHIR.Client.Registry,
+  FHIR.Smart.Utilities, FHIR.Client.Registry,
   FHIR.Cache.PackageManager;
 
 const

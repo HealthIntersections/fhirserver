@@ -35,8 +35,8 @@ uses
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Tools.Constants, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Utilities,
-  FHIR.Tools.Client, FHIR.Base.Scim,
-  FHIR.Client.SmartUtilities, SmartOnFhirTestingLogin,
+  FHIR.Client.Base, FHIR.Tools.Client, FHIR.Base.Scim,
+  FHIR.Smart.Utilities, SmartOnFhirTestingLogin,
   FHIRServerConstants, ServerUtilities, FHIRServerContext, FHIRStorageService, FHIRUserProvider,
   FHIRRestServer, WebSourceProvider;
 
@@ -778,7 +778,7 @@ begin
   FServer.Start(true);
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
-  FClientSSL.smartToken := TSmartOnFhirAccessToken.create;
+  FClientSSL.smartToken := TClientAccessToken.create;
   FClientSSL.smartToken.accessToken := JWT;
   FClientSSL.smartToken.expires := now + 20 * DATETIME_MINUTE_ONE;
 
@@ -805,7 +805,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
   FServer.Start(true);
-  FClientSSL.smartToken := TSmartOnFhirAccessToken.create;
+  FClientSSL.smartToken := TClientAccessToken.create;
   FClientSSL.smartToken.accessToken := JWT;
   FClientSSL.smartToken.expires := now + 20 * DATETIME_MINUTE_ONE;
 

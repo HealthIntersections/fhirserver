@@ -38,7 +38,7 @@ uses
   IdHTTP, IdSSLOpenSSL, IdComponent,
   {$IFNDEF OSX}FHIR.Support.WInInet, {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.XVersion.Resources, FHIR.Client.Base,
-  FHIR.Client.SmartUtilities;
+  FHIR.Smart.Utilities;
 
 type
   TFhirHTTPClientHTTPVerb = (httpGet, httpPost, httpPut, httpDelete, httpOptions, httpPatch);
@@ -934,7 +934,7 @@ begin
   else
     token := authoriseByOWinHttp(server, username, password);
   try
-    FClient.smartToken := TSmartOnFhirAccessToken.Create;
+    FClient.smartToken := TClientAccessToken.Create;
     FClient.smartToken.accessToken := token.str['access_token'];
     FClient.smartToken.expires := now + (StrToInt(token.num['expires_in']) * DATETIME_SECOND_ONE);
   finally

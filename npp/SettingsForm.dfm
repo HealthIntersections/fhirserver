@@ -37,6 +37,10 @@ inherited SettingForm: TSettingForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'General'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -291,6 +295,10 @@ inherited SettingForm: TSettingForm
     object TabSheet3: TTabSheet
       Caption = 'Misc'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0

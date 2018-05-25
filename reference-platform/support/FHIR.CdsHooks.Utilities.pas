@@ -36,7 +36,7 @@ uses
   FHIR.Support.Text, MarkDownProcessor, FHIR.Support.Lock, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Parser,
-  FHIR.Client.SmartUtilities;
+  FHIR.Smart.Utilities;
   {, FHIR.Tools.Parser
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities}
 

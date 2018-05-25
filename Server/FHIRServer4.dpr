@@ -165,7 +165,6 @@ uses
   FHIR.R4.Narrative2 in '..\reference-platform\r4\FHIR.R4.Narrative2.pas',
   FHIR.Tools.Security in '..\reference-platform\tools\FHIR.Tools.Security.pas',
   FHIR.R4.Narrative in '..\reference-platform\r4\FHIR.R4.Narrative.pas',
-  FHIR.Client.SmartUtilities in '..\reference-platform\client\FHIR.Client.SmartUtilities.pas',
   FHIR.R4.PathEngine in '..\reference-platform\r4\FHIR.R4.PathEngine.pas',
   FHIR.R4.Tags in '..\reference-platform\r4\FHIR.R4.Tags.pas',
   FHIR.R4.Profiles in '..\reference-platform\r4\FHIR.R4.Profiles.pas',
@@ -287,7 +286,13 @@ uses
   FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
-  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
+  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
+  FHIR.R3.Factory in '..\reference-platform\dstu3\FHIR.R3.Factory.pas',
+  FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas',
+  FHIR.R3.PathEngine in '..\reference-platform\dstu3\FHIR.R3.PathEngine.pas',
+  FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
+  FHIR.R3.Client in '..\reference-platform\dstu3\FHIR.R3.Client.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

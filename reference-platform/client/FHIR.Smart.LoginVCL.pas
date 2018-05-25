@@ -1,4 +1,4 @@
-unit FHIR.Client.SmartLogin;
+unit FHIR.Smart.LoginVcl;
 
 
 {
@@ -39,8 +39,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} NppForms,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
-  ActiveX, ole2, SHDocVw, IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, FHIR.Web.Parsers, FHIR.Client.SmartUtilities,
-  FHIR.Support.System;
+  ActiveX, ole2, SHDocVw,
+  IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle,
+  FHIR.Web.Parsers, FHIR.Support.System,
+  FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Smart.Login;
 
 const
   UMSG = WM_USER + 1;
@@ -87,7 +89,7 @@ type
     FLogoPath: String;
     FScopes: String;
     FErrorMessage: String;
-    FToken: TSmartOnFhirAccessToken;
+    FToken: TClientAccessToken;
 
     FInitialState : string;
     FFinalState : string;
@@ -96,7 +98,7 @@ type
     FHandleError: boolean;
     procedure DoDone(var Msg: TMessage); message UMSG;
     procedure DoCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
-    procedure SetToken(const Value: TSmartOnFhirAccessToken);
+    procedure SetToken(const Value: TClientAccessToken);
     procedure SetServer(const Value: TRegisteredFHIRServer);
   public
     { Public declarations }
@@ -109,7 +111,7 @@ type
     // out
     // if modalResult = mrok, you'll get a token. otherwise, you'll get an error message
     property ErrorMessage : String read FErrorMessage write FErrorMessage;
-    Property Token : TSmartOnFhirAccessToken read FToken write SetToken;
+    Property Token : TClientAccessToken read FToken write SetToken;
   end;
 
 var
@@ -190,7 +192,7 @@ begin
   FServer := Value;
 end;
 
-procedure TSmartOnFhirLoginForm.SetToken(const Value: TSmartOnFhirAccessToken);
+procedure TSmartOnFhirLoginForm.SetToken(const Value: TClientAccessToken);
 begin
   FToken.Free;
   FToken := Value;

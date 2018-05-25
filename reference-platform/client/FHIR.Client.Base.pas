@@ -34,9 +34,8 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.XVersion.Resources,
-  FHIR.Client.SmartUtilities;
+  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.XVersion.Resources;
 
 Type
   EFHIRClientException = class (Exception)
@@ -60,6 +59,37 @@ Type
     function asString : string;
   end;
 
+  TFHIRClientType = (fctCrossPlatform {indy}, fctWinInet);
+
+  TClientAccessToken = class (TFslObject)
+  private
+    FidToken: TJWT;
+    Fscopes: String;
+    FaccessToken: String;
+    Fexpires: TDateTime;
+    procedure SetidToken(const Value: TJWT);
+  public
+    Destructor Destroy; override;
+
+    function link : TClientAccessToken; overload;
+
+    // the bearer access token to add to the HTTP calls. If you assign the
+    // access token to a TFhirHTTPClient, it will do this
+    property accessToken : String read FaccessToken write FaccessToken;
+
+    // when this token expires (or 0 if expiry is unknown) (in local time)
+    property expires : TDateTime read Fexpires write Fexpires;
+
+    // the scopes that were actualyl granted (may be more or less than originally asked for)
+    property scopes : String read Fscopes write Fscopes;
+
+    // if an openID token was returned, the details in it (note: unverified)
+    property idToken : TJWT read FidToken write SetidToken;
+
+    // convenient username for the user, if any appropriate information is available
+    function username : String;
+  end;
+
   TFHIRClientLogger = class (TFslObject)
   public
     function Link : TFHIRClientLogger; overload;
@@ -77,6 +107,7 @@ Type
   //
   // when constructing, the client takes a parameter for the actual communicator that does all the work
   TFhirClientV = class;
+  TThreadManagementEvent = procedure (sender : TFhirClientV; var stop : boolean) of object;
 
   // never use this directly - always use a TFHIRClientV descendent
   TFHIRClientCommunicator = class (TFslObject)
@@ -125,10 +156,10 @@ Type
     FVersionSpecific: boolean;
     FFormat : TFHIRFormat;
     FLang : string;
-    FSmartToken: TSmartOnFhirAccessToken;
+    FSmartToken: TClientAccessToken;
     FLastStatusMsg: String;
     procedure SetProvenance(const Value: TFHIRResourceV);
-    procedure SetSmartToken(const Value: TSmartOnFhirAccessToken);
+    procedure SetSmartToken(const Value: TClientAccessToken);
     function encodeParams(params: TStringList): String;
     function GetHeaders: THTTPHeaders;
   protected
@@ -159,7 +190,7 @@ Type
     property LastStatusMsg : String read FLastStatusMsg write FLastStatusMsg;
     property Logger : TFHIRClientLogger read FLogger write SetLogger;
     property provenance : TFHIRResourceV read FProvenance write SetProvenance;
-    property smartToken : TSmartOnFhirAccessToken read FSmartToken write SetSmartToken;
+    property smartToken : TClientAccessToken read FSmartToken write SetSmartToken;
 
     // version independent API
     function conformanceV(summary : boolean) : TFHIRResourceV;
@@ -532,7 +563,7 @@ begin
   FCommunicator.terminate;
 end;
 
-procedure TFhirClientV.SetSmartToken(const Value: TSmartOnFhirAccessToken);
+procedure TFhirClientV.SetSmartToken(const Value: TClientAccessToken);
 begin
   FSmartToken.Free;
   FSmartToken := Value;
@@ -550,6 +581,34 @@ begin
     s := params.Names[i];
     result := result + s+'='+EncodeMIME(params.ValueFromIndex[i])+'&';
   end;
+end;
+
+
+{ TClientAccessToken }
+
+destructor TClientAccessToken.Destroy;
+begin
+  FidToken.Free;
+  inherited;
+end;
+
+function TClientAccessToken.link: TClientAccessToken;
+begin
+  result := TClientAccessToken(inherited Link);
+end;
+
+procedure TClientAccessToken.SetidToken(const Value: TJWT);
+begin
+  FidToken.Free;
+  FidToken := Value;
+end;
+
+function TClientAccessToken.username: String;
+begin
+  if FidToken = nil then
+    result := '??'
+  else
+    result := idtoken.name
 end;
 
 end.

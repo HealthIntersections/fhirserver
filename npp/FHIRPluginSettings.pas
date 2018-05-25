@@ -35,7 +35,7 @@ uses
   Windows, SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Json,
   FHIR.Tools.Types,
-  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities, FHIR.Client.Registry;
+  FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.Client.Registry;
 
 const
   DEF_ActivePage = 0;

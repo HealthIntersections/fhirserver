@@ -53,7 +53,7 @@ type
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
 
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
-    function makeClientHTTP(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
+    function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
 
     function makeByName(const name : String) : TFHIRObject; override;
@@ -95,12 +95,15 @@ begin
   result := 'R3 ('+FHIR_GENERATED_VERSION+')';
 end;
 
-function TFHIRFactoryR3.makeClientHTTP(worker: TFHIRWorkerContextV; url: String; fmt : TFHIRFormat; timeout: cardinal; proxy: String): TFhirClientV;
+function TFHIRFactoryR3.makeClient(worker: TFHIRWorkerContextV; url: String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout: cardinal; proxy: String): TFhirClientV;
 var
   http : TFHIRHTTPCommunicator;
 begin
   http := TFHIRHTTPCommunicator.Create(url);
   try
+    if kind = fctCrossPlatform then
+      http.UseIndy := true;
+
     http.timeout := timeout;
     http.proxy := proxy;
     result := TFhirClient3.create(worker, 'en', http.link);

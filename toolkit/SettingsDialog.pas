@@ -37,7 +37,7 @@ uses
   IniFiles, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Layouts, FMX.ListBox,
   ToolkitSettings,
   FHIR.Support.Generics,
-  FHIR.Client.ServerDialogFMX, FHIR.Client.SmartUtilities;
+  FHIR.Client.ServerDialogFMX, FHIR.Smart.Utilities;
 
 type
   TSettingsForm = class(TForm)

@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-   FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Text,
   FHIR.Support.DateTime, EncdDecd, FHIR.Support.Decimal;
 
 Const
@@ -70,7 +70,14 @@ Const
   CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
   CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4');
   PF_CONST : array [TFHIRVersion] of string = ('', '0.0', '1.0', '3.0', '3.4');
-  CURRENT_FHIR_VERSION = {$IFDEF FHIR1} fhirVersionRelease1 {$ENDIF} {$IFDEF FHIR2} fhirVersionRelease2 {$ENDIF}{$IFDEF FHIR3} fhirVersionRelease3 {$ENDIF} {$IFDEF FHIR4}  fhirVersionRelease4{$ENDIF};
+  CURRENT_FHIR_VERSION =
+    {$IFDEF FHIR1} fhirVersionRelease1 {$ELSE}
+    {$IFDEF FHIR2} fhirVersionRelease2 {$ELSE}
+    {$IFDEF FHIR3} fhirVersionRelease3 {$ELSE}
+    {$IFDEF FHIR4} fhirVersionRelease4 {$ELSE}
+    fhirVersionUnknown
+    {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF};
+
   FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
   FHIR_VERSIONS : Array [TFHIRVersion] of String = ('', '0.0.82', '1.0.2', '3.0.1', '3.4.0');
   SUPPORTED_VERSIONS = [fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];

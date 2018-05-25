@@ -36,8 +36,8 @@ uses
   Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
   FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.SmartUtilities,
-  FHIRPathDocumentation, Vcl.Menus, Vcl.Buttons, ColorSpeedButton, FHIR.Npp.Context;
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Smart.Utilities,
+  FHIRPathDocumentation, Vcl.Menus, Vcl.Buttons, FHIR.Ui.ColorSB, FHIR.Npp.Context;
 
 type
   TFHIRVersionStatus = (vsInvalid, vsValid, vsSpecified);

@@ -1,4 +1,4 @@
-Unit FHIR.Support.JSON;
+﻿Unit FHIR.Support.JSON;
 
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -32,7 +32,7 @@ Interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Binary, FHIR.Support.Strings,
+  FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Collections;
 
 Function JSONString(const value : String) : String;
@@ -462,6 +462,134 @@ Const
 function JsonBoolToString(b : boolean) : String;
 function JsonStringToBool(s : String; def : boolean = false) : boolean;
 
+type
+ TJWT = class (TFslObject)
+  private
+    FHeader : TJsonObject;
+    FPayLoad : TJsonObject;
+    FOriginalSource: String;
+
+    procedure setHeader(const Value: TJsonObject);
+    procedure setPayload(const Value: TJsonObject);
+
+    function GetaddressCountry: string;
+    function GetaddressFormatted: string;
+    function GetaddressLocality: string;
+    function GetaddressPostCode: string;
+    function GetaddressRegion: string;
+    function GetaddressStreet: string;
+    function Getaudience: string;
+    function Getbirthdate: string;
+    function Getemail: string;
+    function GetemailVerified: boolean;
+    function Getexpires: TDateTime;
+    function GetfamilyName: string;
+    function Getgender: string;
+    function GetgivenName: string;
+    function Getid: string;
+    function GetissuedAt: TDateTime;
+    function Getissuer: string;
+    function Getlocale: string;
+    function GetmiddleName: string;
+    function Getname: string;
+    function GetnickName: string;
+    function GetnotBefore: TDateTime;
+    function Getphone: string;
+    function Getphone_verified: boolean;
+    function Getpicture: string;
+    function GetpreferredName: string;
+    function Getprofile: string;
+    function Getsubject: string;
+    function GettimeZone: string;
+    function GetupdatedAt: TDateTime;
+    function Getwebsite: string;
+    procedure SetaddressCountry(Value: string);
+    procedure SetaddressFormatted(Value: string);
+    procedure SetaddressLocality(Value: string);
+    procedure SetaddressPostCode(Value: string);
+    procedure SetaddressRegion(Value: string);
+    procedure SetaddressStreet(Value: string);
+    procedure Setaudience(Value: string);
+    procedure Setbirthdate(Value: string);
+    procedure Setemail(Value: string);
+    procedure SetemailVerified(Value: boolean);
+    procedure Setexpires(Value: TDateTime);
+    procedure SetfamilyName(Value: string);
+    procedure Setgender(Value: string);
+    procedure SetgivenName(Value: string);
+    procedure Setid(Value: string);
+    procedure SetissuedAt(Value: TDateTime);
+    procedure Setissuer(Value: string);
+    procedure Setlocale(Value: string);
+    procedure SetmiddleName(Value: string);
+    procedure Setname(Value: string);
+    procedure SetnickName(Value: string);
+    procedure SetnotBefore(Value: TDateTime);
+    procedure Setphone(Value: string);
+    procedure Setphone_verified(Value: boolean);
+    procedure Setpicture(Value: string);
+    procedure SetpreferredName(Value: string);
+    procedure Setprofile(Value: string);
+    procedure Setsubject(Value: string);
+    procedure SettimeZone(Value: string);
+    procedure SetupdatedAt(Value: TDateTime);
+    procedure Setwebsite(Value: string);
+  public
+    constructor Create; override;
+    constructor Create(header, payload : TJsonObject); overload;
+
+    function Link : TJWT; overload;
+
+    destructor Destroy; override;
+
+    property originalSource : String read FOriginalSource write FOriginalSource;
+
+    // the header is provided to get/set extra properties beyond those used in packing/unpacking.
+    // you don't need to do anything with it if you don't use extra properties
+    Property header : TJsonObject read FHeader write setHeader;
+    Property payload : TJsonObject read FPayload write setPayload;
+
+    // information in the JWT
+    // from JWT itself
+    property issuer : string read Getissuer write Setissuer; // 'iss'
+    property subject : string read Getsubject write Setsubject;  // 'sub' Identifier for the End-User at the Issuer.
+    property audience : string read Getaudience write Setaudience; // 'aud'
+    property expires : TDateTime read Getexpires write Setexpires; // 'exp'
+    property notBefore : TDateTime read GetnotBefore write SetnotBefore; // 'nbf'
+    property issuedAt : TDateTime read GetissuedAt write SetissuedAt; // 'ist'
+    property id : string read Getid write Setid; // 'jti'
+
+    function desc : String;
+
+    // from openid:
+    property name : string  read Getname write Setname; // 'name' End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
+    property givenName : string read GetgivenName write SetgivenName; // 'given_name' Given name(s) or first name(s) of the End-User. Note that in some cultures, people can have multiple given names; all can be present, with the names being separated by space characters.
+    property familyName : string read GetfamilyName  write SetfamilyName; // 'family_name' Surname(s) or last name(s) of the End-User. Note that in some cultures, people can have multiple family names or no family name; all can be present, with the names being separated by space characters.
+    property middleName : string read GetmiddleName  write SetmiddleName; // 'middle_name' Middle name(s) of the End-User. Note that in some cultures, people can have multiple middle names; all can be present, with the names being separated by space characters. Also note that in some cultures, middle names are not used.
+    property nickName : string read GetnickName  write SetnickName;	// 'nickname' Casual name of the End-User that may or may not be the same as the given_name. For instance, a nickname value of Mike might be returned alongside a given_name value of Michael.
+    property preferredName : string read GetpreferredName write SetpreferredName;	// 'preferred_username' Shorthand name by which the End-User wishes to be referred to at the RP, such as janedoe or j.doe. This value MAY be any valid JSON string including special characters such as @, /, or whitespace. The RP MUST NOT rely upon this value being unique, as discussed in Section 5.7.
+    property profile : string read Getprofile write Setprofile; // 'profile' URL of the End-User's profile page. The contents of this Web page SHOULD be about the End-User.
+    property picture : string read Getpicture write Setpicture; // 'picture' URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG, JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD specifically reference a profile photo of the End-User suitable for displaying when describing the End-User, rather than an arbitrary photo taken by the End-User.
+    property website : string read Getwebsite write Setwebsite; // 'website' URL of the End-User's Web page or blog. This Web page SHOULD contain information published by the End-User or an organization that the End-User is affiliated with.
+    property email : string read Getemail write Setemail; // 'email' End-User's preferred e-mail address. Its value MUST conform to the RFC 5322 [RFC5322] addr-spec syntax. The RP MUST NOT rely upon this value being unique, as discussed in Section 5.7.
+    property emailVerified : boolean  read GetemailVerified write SetemailVerified; // 'email_verified' True if the End-User's e-mail address has been verified; otherwise false. When this Claim Value is true, this means that the OP took affirmative steps to ensure that this e-mail address was controlled by the End-User at the time the verification was performed. The means by which an e-mail address is verified is context-specific, and dependent upon the trust framework or contractual agreements within which the parties are operating.
+    property gender : string read Getgender  write Setgender; // 'gender' End-User's gender. Values defined by this specification are female and male. Other values MAY be used when neither of the defined values are applicable.
+    property birthdate : string read Getbirthdate write Setbirthdate; // 'birthdate' End-User's birthday, represented as an ISO 8601:2004 [ISO8601‑2004] YYYY-MM-DD format. The year MAY be 0000, indicating that it is omitted. To represent only the year, YYYY format is allowed. Note that depending on the underlying platform's date related function, providing just year can result in varying month and day, so the implementers need to take this factor into account to correctly process the dates.
+    property timeZone : string read GettimeZone  write SettimeZone;	// 'zoneinfo' String from zoneinfo [zoneinfo] time zone database representing the End-User's time zone. For example, Europe/Paris or America/Los_Angeles.
+    property locale : string read Getlocale  write Setlocale;	// 'locale' End-User's locale, represented as a BCP47 [RFC5646] language tag. This is typically an ISO 639-1 Alpha-2 [ISO639‑1] language code in lowercase and an ISO 3166-1 Alpha-2 [ISO3166‑1] country code in uppercase, separated by a dash. For example, en-US or fr-CA. As a compatibility note, some implementations have used an underscore as the separator rather than a dash, for example, en_US; Relying Parties MAY choose to accept this locale syntax as well.
+    property phone : string read Getphone write Setphone; // 'phone_number' End-User's preferred telephone number. E.164 [E.164] is RECOMMENDED as the format of this Claim, for example, +1 (425) 555-1212 or +56 (2) 687 2400. If the phone number contains an extension, it is RECOMMENDED that the extension be represented using the RFC 3966 [RFC3966] extension syntax, for example, +1 (604) 555-1234;ext=5678.
+    property phone_verified : boolean  read Getphone_verified  write Setphone_verified; // 'phone_number_verified' True if the End-User's phone number has been verified; otherwise false. When this Claim Value is true, this means that the OP took affirmative steps to ensure that this phone number was controlled by the End-User at the time the verification was performed. The means by which a phone number is verified is context-specific, and dependent upon the trust framework or contractual agreements within which the parties are operating. When true, the phone_number Claim MUST be in E.164 format and any extensions MUST be represented in RFC 3966 format.
+    property updatedAt : TDateTime read GetupdatedAt  write SetupdatedAt; // 'updated_at' Time the End-User's information was last updated. Its value is a JSON number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time.' +                                  '
+    // 'address' object	 End-User's preferred postal address. The value of the address member is a JSON [RFC4627] structure containing some or all of the members defined in Section 5.1.1.
+    property addressFormatted : string read GetaddressFormatted write SetaddressFormatted; // 'address.formatted'  Full mailing address, formatted for display or use on a mailing label. This field MAY contain multiple lines, separated by newlines. Newlines can be represented either as a carriage return/line feed pair ("\r\n") or as a single line feed character ("\n").
+    property addressStreet : string read GetaddressStreet write SetaddressStreet; // 'address.street_address'  Full street address component, which MAY include house number, street name, Post Office Box, and multi-line extended street address information. This field MAY contain multiple lines, separated by newlines. Newlines can be represented either as a carriage return/line feed pair ("\r\n") or as a single line feed character ("\n").
+    property addressLocality : string read GetaddressLocality write SetaddressLocality; // 'address.locality'  City or locality component.
+    property addressRegion : string read GetaddressRegion write SetaddressRegion; // 'address.region'  State, province, prefecture, or region component.
+    property addressPostCode : string read GetaddressPostCode write SetaddressPostCode; // 'address.postal_code'  Zip code or postal code component.
+    property addressCountry : string read GetaddressCountry write SetaddressCountry; // 'address.country'  Country name component.
+
+    function userName : String;
+  end;
 
 Implementation
 
@@ -2792,6 +2920,384 @@ end;
 function TCanonicalJsonNode.link: TCanonicalJsonNode;
 begin
   result := TCanonicalJsonNode(inherited Link);
+end;
+
+
+{ TJWT }
+
+constructor TJWT.create(header, payload: TJsonObject);
+begin
+  Create;
+  self.Header := header;
+  self.Payload := payload;
+end;
+
+function TJWT.desc: String;
+begin
+  if preferredName <> '' then
+    result := preferredName
+  else if name <> '' then
+    result := name
+  else if id <> '' then
+    result := id
+  else
+    result := '??';
+end;
+
+constructor TJWT.create;
+begin
+  inherited create;
+  FHeader := TJsonObject.Create('header');
+  FPayload := TJsonObject.Create('payload');
+end;
+
+destructor TJWT.Destroy;
+begin
+  FHeader.free;
+  FPayload.Free;
+  inherited;
+end;
+
+procedure TJWT.setHeader(const Value: TJsonObject);
+begin
+  assert(value <> nil);
+  FHeader.Free;
+  FHeader := value;
+end;
+
+procedure TJWT.setPayload(const Value: TJsonObject);
+begin
+  assert(value <> nil);
+  FPayload.Free;
+  FPayload := value;
+end;
+
+function TJWT.Getissuer : String;
+begin
+  result := payload['iss'];
+end;
+
+procedure TJWT.Setissuer(value : String);
+begin
+  payload['iss'] := value;
+end;
+
+function TJWT.Getsubject : String;
+begin
+  result := payload['sub'];
+end;
+
+procedure TJWT.Setsubject(value : String);
+begin
+  payload['sub'] := value;
+end;
+
+function TJWT.Getaudience : String;
+begin
+  result := payload['aud'];
+end;
+
+procedure TJWT.Setaudience(value : String);
+begin
+  payload['aud'] := value;
+end;
+
+function TJWT.Getexpires : TDateTime;
+begin
+  result := UnixToDateTime(trunc(StrToFloat(payload.num['exp'])));
+end;
+
+procedure TJWT.Setexpires(value : TDateTime);
+begin
+  payload.num['exp'] := IntToStr(DateTimeToUnix(value));
+end;
+
+function TJWT.GetnotBefore : TDateTime;
+begin
+  result := UnixToDateTime(StrToIntDef(payload['nbf'], 0));
+end;
+
+procedure TJWT.SetnotBefore(value : TDateTime);
+begin
+  payload['nbf'] := IntToStr(DateTimeToUnix(value));
+end;
+
+function TJWT.GetissuedAt : TDateTime;
+begin
+  result := UnixToDateTime(StrToIntDef(payload['iat'], 0));
+end;
+
+procedure TJWT.SetissuedAt(value : TDateTime);
+begin
+  payload['iat'] := IntToStr(DateTimeToUnix(value));
+end;
+
+function TJWT.Getid : String;
+begin
+  result := payload['jti'];
+end;
+
+procedure TJWT.Setid(value : String);
+begin
+  if payload = nil then
+    payload := TJsonObject.Create('payload');
+  payload['jti'] := value;
+end;
+
+
+function TJWT.Getname : string;
+begin
+  result := payload['name'];
+end;
+
+procedure TJWT.Setname(value : string);
+begin
+  payload['name'] := value;
+end;
+
+function TJWT.GetgivenName : string;
+begin
+  result := payload['given_name'];
+end;
+
+procedure TJWT.SetgivenName(value : string);
+begin
+  payload['given_name'] := value;
+end;
+
+function TJWT.GetfamilyName : string;
+begin
+  result := payload['family_name'];
+end;
+
+procedure TJWT.SetfamilyName(value : string);
+begin
+  payload['family_name'] := value;
+end;
+
+function TJWT.GetmiddleName : string;
+begin
+  result := payload['middle_name'];
+end;
+
+procedure TJWT.SetmiddleName(value : string);
+begin
+  payload['middle_name'] := value;
+end;
+
+function TJWT.GetnickName : string;
+begin
+  result := payload['nickname'];
+end;
+
+procedure TJWT.SetnickName(value : string);
+begin
+  payload['nickname'] := value;
+end;
+
+function TJWT.GetpreferredName : string;
+begin
+  result := payload['preferred_username'];
+end;
+
+procedure TJWT.SetpreferredName(value : string);
+begin
+	  payload['preferred_username'] := value;
+  end;
+
+function TJWT.Getprofile : string;
+begin
+  result := payload['profile'];
+end;
+
+procedure TJWT.Setprofile(value : string);
+begin
+  payload['profile'] := value;
+end;
+
+function TJWT.Getpicture : string;
+begin
+  result := payload['picture'];
+end;
+
+procedure TJWT.Setpicture(value : string);
+begin
+  payload['picture'] := value;
+end;
+
+function TJWT.Getwebsite : string;
+begin
+  result := payload['website'];
+end;
+
+function TJWT.Link: TJWT;
+begin
+  result := TJWT(inherited Link);
+end;
+
+procedure TJWT.Setwebsite(value : string);
+begin
+  payload['website'] := value;
+end;
+
+function TJWT.userName: String;
+begin
+  if name <> '' then
+    result := name
+  else if email <> '' then
+    result := email
+  else
+    result := subject;
+end;
+
+function TJWT.Getemail : string;
+begin
+  result := payload['email'];
+end;
+
+procedure TJWT.Setemail(value : string);
+begin
+  payload['email'] := value;
+end;
+
+function TJWT.GetemailVerified : boolean ;
+begin
+  result := payload.bool['email_verified'];
+end;
+
+procedure TJWT.SetemailVerified(value : boolean );
+begin
+  payload.bool['email_verified'] := value;
+end;
+
+function TJWT.Getgender : string;
+begin
+  result := payload['gender'];
+end;
+
+procedure TJWT.Setgender(value : string);
+begin
+  payload['gender'] := value;
+end;
+
+function TJWT.Getbirthdate : string;
+begin
+  result := payload['birthdate'];
+end;
+
+procedure TJWT.Setbirthdate(value : string);
+begin
+  payload['birthdate'] := value;
+end;
+
+function TJWT.GettimeZone : string;
+begin
+  result := payload['zoneinfo'];
+end;
+
+procedure TJWT.SettimeZone(value : string);
+begin
+  payload['zoneinfo'] := value;
+end;
+
+function TJWT.Getlocale : string;
+begin
+  result := payload['locale'];
+end;
+
+procedure TJWT.Setlocale(value : string);
+begin
+  payload['locale'] := value;
+end;
+
+function TJWT.Getphone : string;
+begin
+  result := payload['phone_number'];
+end;
+
+procedure TJWT.Setphone(value : string);
+begin
+  payload['phone_number'] := value;
+end;
+
+function TJWT.Getphone_verified : boolean ;
+begin
+  result := payload.bool['phone_number_verified'];
+end;
+
+procedure TJWT.Setphone_verified(value : boolean );
+begin
+  payload.bool['phone_number_verified'] := value;
+end;
+
+function TJWT.GetupdatedAt : TDateTime;
+begin
+  result := UnixToDateTime(StrToIntDef(payload['updated_at'], 0));
+end;
+
+procedure TJWT.SetupdatedAt(value : TDateTime);
+begin
+  payload['updated_at'] := IntToStr(DateTimeToUnix(value));
+end;
+
+function TJWT.GetaddressFormatted : string;
+begin
+  result := payload.forceObj['address']['formatted'];
+end;
+
+procedure TJWT.SetaddressFormatted(value : string);
+begin
+  payload.forceObj['address']['formatted'] := value;
+end;
+
+function TJWT.GetaddressStreet : string;
+begin
+  result := payload.forceObj['address']['street_address'];
+end;
+
+procedure TJWT.SetaddressStreet(value : string);
+begin
+  payload.forceObj['address']['street_address'] := value;
+end;
+
+function TJWT.GetaddressLocality : string;
+begin
+  result := payload.forceObj['address']['locality'];
+end;
+
+procedure TJWT.SetaddressLocality(value : string);
+begin
+  payload.forceObj['address']['locality'] := value;
+end;
+
+function TJWT.GetaddressRegion : string;
+begin
+  result := payload.forceObj['address']['region'];
+end;
+
+procedure TJWT.SetaddressRegion(value : string);
+begin
+  payload.forceObj['address']['region'] := value;
+end;
+
+function TJWT.GetaddressPostCode : string;
+begin
+  result := payload.forceObj['address']['postal_code'];
+end;
+
+procedure TJWT.SetaddressPostCode(value : string);
+begin
+  payload.forceObj['address']['postal_code'] := value;
+end;
+
+function TJWT.GetaddressCountry : string;
+begin
+  result := payload.forceObj['address']['country'];
+end;
+
+procedure TJWT.SetaddressCountry(value : string);
+begin
+  payload.forceObj['address']['country'] := value;
 end;
 
 End.

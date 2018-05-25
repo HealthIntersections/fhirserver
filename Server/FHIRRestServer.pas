@@ -96,7 +96,7 @@ Uses
   FHIR.Support.MXml, FHIR.Misc.GraphQL, {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF}
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Constants,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Tags, FHIR.Tools.Session, FHIR.Base.Lang, FHIRStorageService,
-  FHIR.Tools.Utilities, FHIR.Tools.Security, FHIR.Client.SmartUtilities, FHIR.Tools.XhtmlComp,
+  FHIR.Tools.Utilities, FHIR.Tools.Security, FHIR.Smart.Utilities, FHIR.Tools.XhtmlComp,
   FHIR.Tools.Questionnaire, FHIR.Tools.Client, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIR.Support.Service, FHIR.Tools.Common,
   FHIR.Base.Xhtml, FHIR.Tools.GraphQL, FHIR.Base.Utilities,

@@ -39,7 +39,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
   FHIR.Tools.Context, FHIR.Tools.Profiles, FHIR.Support.System, FHIR.Support.Text, FHIR.Cache.PackageManager,
-  FHIR.Client.SmartUtilities, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
+  FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, {ExampleScenarioEditor,} AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,

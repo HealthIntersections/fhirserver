@@ -34,7 +34,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Buttons,
   Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
-  VirtualTrees, Vcl.ComCtrls, FHIR.Client.SmartUtilities, FHIR.Client.ServerDialog,
+  VirtualTrees, Vcl.ComCtrls, FHIR.Smart.Utilities, FHIR.Client.ServerDialog,
   FHIR.Support.Generics, FHIR.Base.Objects, FHIR.Base.Factory,
   FHIR.Cache.PackageManager,
   FHIR.Npp.Context;

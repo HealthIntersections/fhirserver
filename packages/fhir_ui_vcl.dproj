@@ -1,16 +1,21 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{CC1D5CFC-EFEC-4BFE-818B-425DBCFA9603}</ProjectGuid>
-        <MainSource>fhirnpp.dpr</MainSource>
+        <ProjectGuid>{F08FD51E-6A84-4518-B245-EB3FB626B199}</ProjectGuid>
+        <MainSource>fhir_ui_vcl.dpk</MainSource>
+        <ProjectVersion>18.4</ProjectVersion>
+        <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <TargetedPlatforms>1</TargetedPlatforms>
-        <AppType>Library</AppType>
-        <FrameworkType>VCL</FrameworkType>
-        <ProjectVersion>18.4</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>1</TargetedPlatforms>
+        <AppType>Package</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='OSX32' and '$(Base)'=='true') or '$(Base_OSX32)'!=''">
+        <Base_OSX32>true</Base_OSX32>
+        <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
@@ -23,310 +28,112 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
         <Cfg_1>true</Cfg_1>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
-        <Cfg_2_Win32>true</Cfg_2_Win32>
-        <CfgParent>Cfg_2</CfgParent>
-        <Cfg_2>true</Cfg_2>
-        <Base>true</Base>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_E>false</DCC_E>
-        <DCC_ExeOutput>C:\Program Files\Notepad++\plugins</DCC_ExeOutput>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_DebugInformation>1</DCC_DebugInformation>
-        <DCC_S>false</DCC_S>
-        <DCC_ImageBase>00400000</DCC_ImageBase>
-        <DCC_Define>NPPUNICODE;$(DCC_Define)</DCC_Define>
-        <DCC_F>false</DCC_F>
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_K>false</DCC_K>
-        <DCC_UnitSearchPath>$(DELPHI)\Lib\Debug;C:\PROGRA~1\Jedi\jcl\lib\d6\debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <VerInfo_Build>1</VerInfo_Build>
-        <SanitizedProjectName>fhirnpp</SanitizedProjectName>
-        <DCC_UsePackage>vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;VclSmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dclOffice2k;dOCI6;CoolTrayIcon_D6plus;curlpkg;ThemeManagerD6;VirtualTreesD6;Jcl;JclVcl;JvCoreD6R;JvSystemD6R;JvStdCtrlsD6R;JvAppFrmD6R;JvBandsD6R;JvDBD6R;JvDlgsD6R;JvBDED6R;JvCmpD6R;JvCryptD6R;JvCtrlsD6R;JvCustomD6R;JvDockingD6R;JvDotNetCtrlsD6R;JvEDID6R;JvGlobusD6R;JvHMID6R;JvInterpreterD6R;JvJansD6R;JvManagedThreadsD6R;JvMMD6R;JvNetD6R;JvPageCompsD6R;JvPluginD6R;JvPrintPreviewD6R;JvRuntimeDesignD6R;JvTimeFrameworkD6R;JvUIBD6R;JvValidatorsD6R;JvWizardD6R;JvXPCtrlsD6R;$(DCC_UsePackage)</DCC_UsePackage>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.1;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <DCC_N>true</DCC_N>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <GenDll>true</GenDll>
-        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <GenPackage>true</GenPackage>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
+        <SanitizedProjectName>fhir_ui_vcl</SanitizedProjectName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_OSX32)'!=''">
+        <DCC_UsePackage>rtl;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <Icon_MainIcon>fhirnpp_Icon.ico</Icon_MainIcon>
-        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(ModuleName);FileDescription=$(ModuleName);ProductName=$(ModuleName)</VerInfo_Keys>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_UsePackage>vclimg;rtl;VirtualTreesR;SynEdit_R;fhir_core_library;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <Icon_MainIcon>fhirnpp_Icon.ico</Icon_MainIcon>
+        <DCC_UsePackage>vclimg;rtl;VirtualTreesR;SynEdit_R;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
-        <DCC_DebugInformation>0</DCC_DebugInformation>
-        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
-        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
-        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_Optimize>false</DCC_Optimize>
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <DCC_DebugInformation>2</DCC_DebugInformation>
-        <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
-        <DCC_UnitSearchPath>C:\work\Components\treeview\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <DCC_DebugDCUs>true</DCC_DebugDCUs>
-        <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d332\</DCC_DcuOutput>
-        <Debugger_HostApplication>C:\Program Files (x86)\Notepad++\notepad++.exe</Debugger_HostApplication>
-        <DCC_ExeOutput>C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins</DCC_ExeOutput>
-        <Manifest_File>None</Manifest_File>
-        <DCC_MapFile>3</DCC_MapFile>
-        <VerInfo_Build>0</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R3.AuthMap;FHIR.Tools.Constants=FHIR.R3.Constants;FHIR.Tools.Context=FHIR.R3.Context;FHIR.Tools.IndexInfo=FHIR.R3.IndexInfo;FHIR.Tools.Javascript=FHIR.R3.Javascript;FHIR.Tools.ElementModel=FHIR.R3.ElementModel;FHIR.Tools.Narrative=FHIR.R3.Narrative;FHIR.Tools.Operations=FHIR.R3.Operations;FHIR.Tools.Json=FHIR.R3.Json;FHIR.Tools.Turtle=FHIR.R3.Turtle;FHIR.Tools.Xml=FHIR.R3.Xml;FHIR.Tools.PathNode=FHIR.R3.PathNode;FHIR.Tools.Profiles=FHIR.R3.Profiles;FHIR.Tools.Resources=FHIR.R3.Resources;FHIR.Tools.MapUtilities=FHIR.R3.MapUtilities;FHIR.Tools.Tags=FHIR.R3.Tags;FHIRTestWorker=FHIRTestWorker3;FHIR.Tools.Types=FHIR.R3.Types;FHIR.Tools.Utilities=FHIR.R3.Utilities;FHIR.Tools.Validator=FHIR.R3.Validator;FHIR.Tools.OpBase=FHIR.R3.OpBase;FHIR.Tools.PathEngine=FHIR.R3.PathEngine;FHIR.Tools.Narrative2=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire=FHIR.R3.Questionnaire;$(DCC_UnitAlias)</DCC_UnitAlias>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <RcCompile Include="helloworldres.rc">
-            <Form>helloworldres.res</Form>
-        </RcCompile>
-        <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
-        <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
-        <DCCReference Include="npplib\nppplugin.pas"/>
-        <DCCReference Include="npplib\SciSupport.pas"/>
-        <DCCReference Include="npplib\NppForms.pas">
-            <Form>NppForm</Form>
-        </DCCReference>
-        <DCCReference Include="npplib\NppDockingForms.pas">
-            <Form>NppDockingForm</Form>
-        </DCCReference>
-        <DCCReference Include="FHIRPlugin.pas"/>
-        <DCCReference Include="SettingsForm.pas">
-            <Form>SettingForm</Form>
-        </DCCReference>
-        <DCCReference Include="FHIRToolboxForm.pas">
-            <Form>FHIRToolbox</Form>
-        </DCCReference>
-        <DCCReference Include="FHIRPluginSettings.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Strings.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Math.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Objects.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Exceptions.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.System.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.DateTime.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Binary.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Generics.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Objects.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Decimal.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Session.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Types.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Constants.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Security.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Tags.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Xml.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Json.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Turtle.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.WInInet.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Profiles.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Lock.pas"/>
-        <DCCReference Include="FHIRPluginValidator.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Tools.Client.pas"/>
-        <DCCReference Include="NewResourceForm.pas">
-            <Form>ResourceNewForm</Form>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.ServerDialog.pas">
-            <Form>EditRegisteredServerForm</Form>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Web.Parsers.pas"/>
-        <DCCReference Include="FetchResourceForm.pas">
-            <Form>FetchResourceFrm</Form>
-        </DCCReference>
-        <DCCReference Include="..\..\Components\treeview\Source\VirtualTrees.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathEngine.pas"/>
-        <DCCReference Include="FHIRPathDocumentation.pas">
-            <Form>FHIRPathDocumentationForm</Form>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Mime.pas"/>
-        <DCCReference Include="PathDialogForms.pas">
-            <Form>PathDialogForm</Form>
-        </DCCReference>
-        <DCCReference Include="ValidationOutcomes.pas">
-            <Form>ValidationOutcomeForm</Form>
-        </DCCReference>
-        <DCCReference Include="FHIRVisualiser.pas">
-            <Form>FHIRVisualizer</Form>
-        </DCCReference>
-        <DCCReference Include="FHIR.Npp.PathDebugger.pas">
-            <Form>FHIRPathDebuggerForm</Form>
-        </DCCReference>
-        <DCCReference Include="WelcomeScreen.pas">
-            <Form>WelcomeScreenForm</Form>
-        </DCCReference>
-        <DCCReference Include="nppbuildcount.pas"/>
-        <DCCReference Include="UpgradePrompt.pas">
-            <Form>UpgradePromptForm</Form>
-        </DCCReference>
-        <DCCReference Include="PluginUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Utilities.pas"/>
-        <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
-        <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Shell.pas"/>
-        <DCCReference Include="CDSBrowserForm.pas">
-            <Form>CDSBrowser</Form>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.Rdf.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.ElementModel.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.Fetcher.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Context.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.MapUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.DiffEngine.pas"/>
-        <DCCReference Include="ResDisplayForm.pas">
-            <Form>ResourceDisplayForm</Form>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>
-        <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="CodeGenerationForm.pas">
-            <Form>CodeGeneratorForm</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.CodeGen.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Client.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Registry.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathNode.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.ParserBase.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Base.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ExpressionComposer.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Base.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Client.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.HTTP.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Threaded.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Text.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Zip.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.MsXml.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Factory.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Constants.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Types.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Base.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.ElementModel.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathNode.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Profiles.pas"/>
-        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
-        <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManagerDialog.pas">
-            <Form>PackageCacheForm</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Factory.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Types.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Base.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Constants.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Context.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.ElementModel.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Common.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Profiles.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Xml.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.ParserBase.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Json.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Validator.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.PathNode.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.PathEngine.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Narrative.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Client.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Factory.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Xml.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.ParserBase.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Json.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Validator.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathEngine.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Narrative.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Client.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Turtle.pas"/>
-        <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Login.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Smart.LoginVCL.pas">
-            <Form>SmartOnFhirLoginForm</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
+        <DCCReference Include="rtl.dcp"/>
+        <DCCReference Include="fhir_core_library.dcp"/>
+        <DCCReference Include="SynEdit_R.dcp"/>
+        <DCCReference Include="vclimg.dcp"/>
+        <DCCReference Include="VirtualTreesR.dcp"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Uix.Advanced.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Ui.Lookahead.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Uix.Controls.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Uix.Dialogs.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Uix.Forms.pas"/>
         <DCCReference Include="..\Libraries\ui\FHIR.Ui.ColorSB.pas"/>
-        <BuildConfiguration Include="Debug">
+        <DCCReference Include="..\Libraries\ui\FHIR.Uix.Base.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Support.Graphics.pas"/>
+        <DCCReference Include="..\Libraries\ui\GraphicEx.pas"/>
+        <DCCReference Include="..\Libraries\ui\GraphicColor.pas"/>
+        <DCCReference Include="..\Libraries\ui\GraphicCompression.pas"/>
+        <DCCReference Include="..\Libraries\ui\GraphicStrings.pas"/>
+        <DCCReference Include="..\Libraries\ui\JPG.pas"/>
+        <DCCReference Include="..\Libraries\ui\MZLib.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Graphics.GdiPlus.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Uix.Images.pas"/>
+        <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
-        <BuildConfiguration Include="Release">
+        <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
-        <Borland.ProjectType/>
+        <Borland.ProjectType>Package</Borland.ProjectType>
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">fhirnpp.dpr</Source>
+                    <Source Name="MainSource">fhir_ui_vcl.dpk</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Platforms>
-                <Platform value="Win32">True</Platform>
-                <Platform value="Win64">False</Platform>
-            </Platforms>
             <Deployment Version="3">
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
@@ -343,9 +150,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins\fhirnpp.dll" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\fhir_ui_vcl.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>fhirnpp.dll</RemoteName>
+                        <RemoteName>fhir_ui_vcl.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -382,7 +194,6 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="AndroidLibnativeX86File"/>
                 <DeployClass Name="AndroidServiceOutput">
                     <Platform Name="Android">
                         <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
@@ -702,13 +513,17 @@
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
             </Deployment>
-            <ModelSupport>False</ModelSupport>
+            <Platforms>
+                <Platform value="OSX32">False</Platform>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>

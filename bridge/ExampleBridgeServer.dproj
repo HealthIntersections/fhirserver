@@ -140,7 +140,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative2.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Questionnaire.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.SmartUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Utilities.pas"/>
         <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Logging.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Manager.pas"/>

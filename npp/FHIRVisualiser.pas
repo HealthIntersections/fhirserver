@@ -44,7 +44,7 @@ uses
 
   FHIR.Base.Objects, FHIR.Base.PathEngine,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
-  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
+  FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIRPathDocumentation, PluginUtilities, CDSBrowserForm;
 
 const

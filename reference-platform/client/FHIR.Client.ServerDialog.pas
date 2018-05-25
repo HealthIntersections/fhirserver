@@ -37,7 +37,7 @@ uses
   NppForms,
   FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Objects,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.XVersion.Resources,
-  FHIR.CdsHooks.Utilities, FHIR.Client.SmartUtilities;
+  FHIR.CdsHooks.Utilities, FHIR.Smart.Utilities;
 
 type
   TEditRegisteredServerForm = class(TNppForm)
@@ -182,7 +182,7 @@ begin
   try
     try
       clHooks.items.Clear;
-      client := FVersions[readServerVersion].makeClientHTTP(nil, edtServer.text, true, 5000);
+      client := FVersions[readServerVersion].makeClient(nil, edtServer.text, fctWinInet, ffJson, 5000);
       try
         FCapabilityStatement := FVersions[readServerVersion].wrapCapabilityStatement(client.conformanceV(false));
       finally
@@ -190,7 +190,7 @@ begin
       end;
       loadHooks;
     except
-      client := FVersions[readServerVersion].makeClientHTTP(nil, edtServer.text, false, 5000);
+      client := FVersions[readServerVersion].makeClient(nil, edtServer.text, fctWinInet, ffXml, 5000);
       try
         FCapabilityStatement := FVersions[readServerVersion].wrapCapabilityStatement(client.conformanceV(false));
       finally

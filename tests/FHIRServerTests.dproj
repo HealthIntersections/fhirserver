@@ -193,7 +193,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Narrative2.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Security.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Narrative.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.SmartUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Tags.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Profiles.pas"/>
@@ -358,6 +357,13 @@
         <DCCReference Include="..\Libraries\java\FHIR.Java.Strings.pas"/>
         <DCCReference Include="..\Libraries\java\FHIR.Java.JNI.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Fpc.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Client.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Login.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

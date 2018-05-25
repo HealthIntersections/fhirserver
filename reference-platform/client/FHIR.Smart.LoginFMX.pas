@@ -48,10 +48,10 @@ type
     FClient: TFHIRHTTPClient;
     FScopes: TArray<String>;
     FHandleError: boolean;
-    FToken: TSmartOnFhirAccessToken;
+    FToken: TClientAccessToken;
     FErrorMessage: String;
     procedure SetClient(const Value: TFHIRHTTPClient);
-    procedure SetToken(const Value: TSmartOnFhirAccessToken);
+    procedure SetToken(const Value: TClientAccessToken);
   public
     destructor Destroy; override;
     property logoPath : String read FLogoPath write FLogoPath;
@@ -61,7 +61,7 @@ type
 
     // if modalResult = mrok, you'll get a token. otherwise, you'll get an error message
     property ErrorMessage : String read FErrorMessage write FErrorMessage;
-    Property Token : TSmartOnFhirAccessToken read FToken write SetToken;
+    Property Token : TClientAccessToken read FToken write SetToken;
   end;
 
 var
@@ -112,7 +112,7 @@ begin
   FClient := Value;
 end;
 
-procedure TSmartOnFhirLoginForm.SetToken(const Value: TSmartOnFhirAccessToken);
+procedure TSmartOnFhirLoginForm.SetToken(const Value: TClientAccessToken);
 begin
   FToken.free;
   FToken := Value;

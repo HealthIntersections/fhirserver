@@ -77,7 +77,7 @@ uses
   FHIR.Tools.PathNode, FHIR.Tools.Validator, FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.Constants,
   FHIR.Npp.Context,
   FHIRPluginSettings, FHIRPluginValidator, FHIR.Tools.Narrative, FHIR.Tools.PathEngine, FHIR.Base.Xhtml, FHIR.Tools.Context, FHIR.Tools.ExpressionComposer,
-  FHIR.Client.SmartUtilities, FHIR.Client.SmartLogin, nppBuildcount, PluginUtilities,
+  FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes, CodeGenerationForm,
   FHIR.Cache.PackageManagerDialog, FHIR.Cache.PackageManager,
   FHIRVisualiser, FHIR.Npp.PathDebugger, WelcomeScreen, UpgradePrompt, FHIR.Tools.DiffEngine, ResDisplayForm;

@@ -33,7 +33,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics,
   FHIR.Base.Objects,
-  FHIR.Client.SmartUtilities, FHIR.CdsHooks.Utilities;
+  FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities;
 
 type
   TFHIRClientRegistry = class (TFslObject)

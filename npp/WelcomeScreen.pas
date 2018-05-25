@@ -76,7 +76,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings, FHIR.Tools.Client, FHIR.Tools.Resources, FHIR.Client.SmartUtilities, SettingsForm;
+  FHIRPluginSettings, FHIR.Tools.Client, FHIR.Tools.Resources, SettingsForm;
 
 procedure ShowWelcomeScreen(owner : TNppPlugin);
 begin

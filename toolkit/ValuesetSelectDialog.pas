@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls, FMX.ListBox,
   FMX.Edit, FMX.Controls.Presentation, FHIR.Support.System,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Client.SmartUtilities,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Smart.Utilities,
   FHIR.Support.Generics,
   SettingsDialog, FMX.ComboEdit,
   ToolkitSettings;

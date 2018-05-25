@@ -34,13 +34,13 @@ uses
   IdHttp, IdSSLOpenSSL,
   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Text, FHIR.Support.Binary,
   FHIR.Support.Objects,
-  FHIR.Client.SmartUtilities;
+  FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Smart.Login;
 
 type
   TSmartOnFhirTestingLogin = class (TFslObject)
   private
     FScopes: String;
-    FToken: TSmartOnFhirAccessToken;
+    FToken: TClientAccessToken;
     FServer: TRegisteredFHIRServer;
     FInitialState : String;
     FClient : TIdHttp;
@@ -60,7 +60,7 @@ type
 
     property server : TRegisteredFHIRServer read FServer write SetServer;
     property scopes : String read FScopes write FScopes;
-    property token : TSmartOnFhirAccessToken read FToken;
+    property token : TClientAccessToken read FToken;
     property username : String read FUserName write FUserName;
     property password : String read FPassword write FPassword;
 

@@ -37,7 +37,6 @@ uses
   FHIR.Base.Objects, FHIR.Client.Base;
 
 type
-  TThreadManagementEvent = procedure (sender : TFhirClientV; var stop : boolean) of object;
 
   TFhirThreadedClientPackage = class (TFslObject)
   private

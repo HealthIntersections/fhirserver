@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{7E72AE34-BDAF-4D39-AB52-A499DEF18FBA}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="fhir_core_library.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="fhir_ui_vcl.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="fhir_ui_fmx.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="fhir_core_library">
+        <MSBuild Projects="fhir_core_library.dproj"/>
+    </Target>
+    <Target Name="fhir_core_library:Clean">
+        <MSBuild Projects="fhir_core_library.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhir_core_library:Make">
+        <MSBuild Projects="fhir_core_library.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="fhir_ui_vcl">
+        <MSBuild Projects="fhir_ui_vcl.dproj"/>
+    </Target>
+    <Target Name="fhir_ui_vcl:Clean">
+        <MSBuild Projects="fhir_ui_vcl.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhir_ui_vcl:Make">
+        <MSBuild Projects="fhir_ui_vcl.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="fhir_ui_fmx">
+        <MSBuild Projects="fhir_ui_fmx.dproj"/>
+    </Target>
+    <Target Name="fhir_ui_fmx:Clean">
+        <MSBuild Projects="fhir_ui_fmx.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhir_ui_fmx:Make">
+        <MSBuild Projects="fhir_ui_fmx.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="fhir_core_library;fhir_ui_vcl;fhir_ui_fmx"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="fhir_core_library:Clean;fhir_ui_vcl:Clean;fhir_ui_fmx:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="fhir_core_library:Make;fhir_ui_vcl:Make;fhir_ui_fmx:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

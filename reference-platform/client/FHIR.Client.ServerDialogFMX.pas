@@ -36,7 +36,7 @@ uses
   FMX.Controls.Presentation,
   FHIR.Support.Strings,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.XVersion.Resources,
-  FHIR.Client.Base, FHIR.Client.SmartUtilities, FHIR.Client.ClientDialogFMX;
+  FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Client.ClientDialogFMX;
 
 type
   TEditRegisteredServerForm = class(TForm)
@@ -346,14 +346,14 @@ begin
     raise Exception.Create('Plase supply a valid URL for the server');
 
   try
-    client := FVersions[readVersion].makeClientHTTP(nil, edtUrl.text, true, 5000);
+    client := FVersions[readVersion].makeClient(nil, edtUrl.text, fctCrossPlatform, ffJson, 5000);
     try
       FCapabilityStatement := FVersions[readVersion].wrapCapabilityStatement(client.conformanceV(false));
     finally
       client.Free;
     end;
   except
-    client := FVersions[readVersion].makeClientHTTP(nil, edtUrl.text, false, 5000);
+    client := FVersions[readVersion].makeClient(nil, edtUrl.text, fctCrossPlatform, ffXml, 5000);
     try
       FCapabilityStatement := FVersions[readVersion].wrapCapabilityStatement(client.conformanceV(false));
     finally

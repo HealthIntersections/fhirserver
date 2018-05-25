@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Text, MarkDownProcessor, FHIR.Support.Lock, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Controllers, FHIR.Support.Json, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Client.SmartUtilities, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Smart.Utilities, FHIR.Tools.Parser,
   FHIR.Client.base, FHIR.Client.HTTP,
   FHIR.CdsHooks.Utilities;
 
@@ -54,16 +54,16 @@ type
   private
     FinUse: boolean;
     Finfo: TRegisteredFHIRServer;
-    FToken: TSmartOnFhirAccessToken;
+    FToken: TClientAccessToken;
     procedure Setinfo(const Value: TRegisteredFHIRServer);
-    procedure SetToken(const Value: TSmartOnFhirAccessToken);
+    procedure SetToken(const Value: TClientAccessToken);
   public
     destructor Destroy; override;
     function Link : TCDSHooksManagerServerInfo; overload;
 
     function okToUse : boolean;
     property info : TRegisteredFHIRServer read Finfo write Setinfo;
-    property token : TSmartOnFhirAccessToken read FToken write SetToken;
+    property token : TClientAccessToken read FToken write SetToken;
     property inUse : boolean read FinUse write FinUse;
   end;
 
@@ -86,14 +86,14 @@ type
     Fcontext: TObject;
     Fevent: TOnCDSHookResponse;
     Fserver: TRegisteredFHIRServer;
-    FToken: TSmartOnFhirAccessToken;
+    FToken: TClientAccessToken;
     FHash : String;
     FAlive : boolean;
     FID: String;
     FHeaders : THTTPHeaders;
     procedure Setrequest(const Value: TCDSHookRequest);
     procedure Setserver(const Value: TRegisteredFHIRServer);
-    procedure SetToken(const Value: TSmartOnFhirAccessToken);
+    procedure SetToken(const Value: TClientAccessToken);
 
     function makeBody : TFslBuffer;
     function readBody(body : TFslBuffer) : TCDSHookResponse;
@@ -109,7 +109,7 @@ type
     property id : String read FID write FID;
     property request : TCDSHookRequest read Frequest write Setrequest;
     property server : TRegisteredFHIRServer read Fserver write Setserver;
-    property token : TSmartOnFhirAccessToken read FToken write SetToken;
+    property token : TClientAccessToken read FToken write SetToken;
     property event : TOnCDSHookResponse read Fevent write Fevent;
     property context : TObject read Fcontext write Fcontext;
     property hash : String read FHash write FHash;
@@ -143,7 +143,7 @@ type
     procedure clearServers;
 
     // the application has acquired valid SMART credentials
-    procedure connectToServer(details : TRegisteredFHIRServer; token : TSmartOnFhirAccessToken);
+    procedure connectToServer(details : TRegisteredFHIRServer; token : TClientAccessToken);
     // the application has lost valid Smart credentials from the server
     procedure disconnectFromServer(details : TRegisteredFHIRServer);
 
@@ -501,7 +501,7 @@ begin
   end;
 end;
 
-procedure TCDSHooksManager.connectToServer(details: TRegisteredFHIRServer; token : TSmartOnFhirAccessToken);
+procedure TCDSHooksManager.connectToServer(details: TRegisteredFHIRServer; token : TClientAccessToken);
 var
   entry : TCDSHooksManagerServerInfo;
 begin
@@ -651,7 +651,7 @@ begin
   Finfo := Value;
 end;
 
-procedure TCDSHooksManagerServerInfo.SetToken(const Value: TSmartOnFhirAccessToken);
+procedure TCDSHooksManagerServerInfo.SetToken(const Value: TClientAccessToken);
 begin
   FToken.Free;
   FToken := Value;
@@ -788,7 +788,7 @@ begin
   Fserver := Value;
 end;
 
-procedure TCDSHooksManagerWorkThread.SetToken(const Value: TSmartOnFhirAccessToken);
+procedure TCDSHooksManagerWorkThread.SetToken(const Value: TClientAccessToken);
 begin
   FToken.Free;
   FToken := Value;
