@@ -51,6 +51,7 @@ type
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; virtual;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; virtual;
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; virtual;
+    function createPropertyList(name : String; bPrimitiveValues : Boolean) : TFHIRPropertyList; Virtual;
 
     function makeClient(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat) : TFhirClientV; overload;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat) : TFhirClientV; overload;
@@ -128,6 +129,18 @@ end;
 function TFHIRFactory.link: TFHIRFactory;
 begin
   result := TFHIRFactory(inherited link);
+end;
+
+function TFHIRFactory.createPropertyList(name : String; bPrimitiveValues : Boolean) : TFHIRPropertyList;
+var
+  o : TFHIRObject;
+begin
+  o := makeByName(name);
+  try
+    result := o.createPropertyList(bPrimitiveValues);
+  finally
+    o.Free;
+  end;
 end;
 
 function TFHIRFactory.makeClient(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat) : TFhirClientV;
