@@ -558,6 +558,7 @@ Type
   End;
 
 
+{$IFDEF MSWINDOWS}
 Type
 
   TAfsMode = (amRead, amWrite, amCreate);
@@ -806,6 +807,7 @@ Type
       Constructor Create; Overload; Override;
   End; { TAfsResourceManager }
 
+{$ENDIF}
 
 Implementation
 
@@ -2376,6 +2378,7 @@ begin
   result := 0; // ?
 end;
 
+{$IFDEF MSWINDOWS}
 
 Procedure TAfsObject.RaiseError(Const sMethod, sException : String);
 
@@ -3213,6 +3216,7 @@ Begin { Constructor TAfsResourceManager.Create }
   Volume.Name := sName;
 End;  { Constructor TAfsResourceManager.Create }
 
+{$ENDIF}
 
 End.
 

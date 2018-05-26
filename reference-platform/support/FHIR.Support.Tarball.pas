@@ -40,7 +40,8 @@ http://www.destructor.de/donateware.htm
 interface
 
 uses
-   Windows, SysUtils, Classes,
+   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+   SysUtils, Classes,
    FHIR.Support.Objects;
 
 type

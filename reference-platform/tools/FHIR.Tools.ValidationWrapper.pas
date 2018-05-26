@@ -3,7 +3,7 @@ unit FHIR.Tools.ValidationWrapper;
 interface
 
 uses
-  Windows,
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.System,
   FHIR.Cache.PackageManager;
@@ -96,6 +96,7 @@ begin
     end);
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TFHIRValidationWrapper.executeCommand(cmd : String; CallBack: TArg<PAnsiChar>);
 const
   CReadBuffer = 2400;
@@ -147,6 +148,13 @@ begin
       CloseHandle(hWrite);
     end;
 end;
+{$ELSE}
+procedure TFHIRValidationWrapper.executeCommand(cmd : String; CallBack: TArg<PAnsiChar>);
+begin
+  raise Exception.Create('not done yet');
+end;
+{$ENDIF}
+
 
 function TFHIRValidationWrapper.link: TFHIRValidationWrapper;
 begin

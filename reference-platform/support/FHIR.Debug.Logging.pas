@@ -463,8 +463,11 @@ var
   sb: TSmallBlockTypeState;
   v : UInt64;
   hProcess: THandle;
+  {$IFDEF MSWINDOWS}
   pmc: PROCESS_MEMORY_COUNTERS;
+  {$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   GetMemoryManagerState(st);
   v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
   for sb in st.SmallBlockTypeStates do
@@ -482,6 +485,9 @@ begin
   finally
     CloseHandle(hProcess);
   end;
+  {$ELSE}
+  result := '';
+  {$ENDIF}
 end;
 
 

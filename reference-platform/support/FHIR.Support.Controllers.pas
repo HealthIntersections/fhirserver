@@ -34,7 +34,7 @@ Interface
 Uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.System, FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Support.System, FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Osx,
   FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Collections;
 
 Type
@@ -131,7 +131,7 @@ Type
       Function IsLockedToCurrentThread : Boolean;
   End;
 
-
+{
 Type
   TFslSignalHandle = THandle;
 
@@ -202,7 +202,7 @@ Type
       Function WaitTimeoutForAny(Const iTimeout : Cardinal) : Boolean;
   End;
 
-
+ }
 Type
   TFslMethod = Procedure Of Object;
   PFslMethod = ^TFslMethod;
@@ -674,7 +674,7 @@ Begin
 End;
 
 
-Constructor TFslSignal.Create;
+{Constructor TFslSignal.Create;
 Begin
   Inherited;
 
@@ -912,6 +912,7 @@ Function TFslSignalManager.WaitTimeoutForAny(Const iTimeout: Cardinal): Boolean;
 Begin
   Result := WaitTimeout(iTimeout, False);
 End;
+ }
 
 Procedure TFslMethodList.AssignItem(oItems : TFslItemList; iIndex : Integer);
 Begin

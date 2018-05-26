@@ -402,7 +402,6 @@
             <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Shell.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas"/>
         <DCCReference Include="PackageBrowser.pas">
             <Form>PackageFinderForm</Form>

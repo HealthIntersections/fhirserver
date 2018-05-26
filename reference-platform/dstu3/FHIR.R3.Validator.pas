@@ -31,7 +31,7 @@ interface
 
 
 Uses
-  SysUtils, Classes, System.Character, RegularExpressions, ActiveX, ComObj,
+  SysUtils, Classes, System.Character, RegularExpressions,
 
   FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Stream,

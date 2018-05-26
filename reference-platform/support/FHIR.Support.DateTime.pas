@@ -36,7 +36,8 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows, SysUtils, SysConst, DateUtils, Math, System.TimeSpan, Registry,
+  {$IFDEF OSX} Posix.SysTypes,  {$ELSE} Windows, Registry, {$ENDIF}
+  SysUtils, SysConst, DateUtils, Math, System.TimeSpan,
   FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Fpc;
 
 Const
@@ -205,6 +206,7 @@ type
     function link : TDateTimeEx;
   end;
 
+{$IFDEF MSWINDOWS}
 type
   TTimeZoneCode = (TimeZoneUnknown,
       // proven supported, fixed where windows is wrong.
@@ -319,6 +321,7 @@ type
     BaseRules : TTimeZoneYearInfo;
     YearRules : Array Of TTimeZoneYearInfo;
   End;
+  {$ENDIF}
 
   TDateTimeOffset = Record
     Value : TDateTime;
@@ -333,6 +336,7 @@ type
 
 const
   DATEFORMAT_INDICES_SHORT : Array[TDateToken] Of Char = ('D', 'M', 'Y');
+{$IFDEF MSWINDOWS}
   NAMES_TIMEZONES : TTimeZoneNameArray =
     ('Unknown', 'NewZealand', 'Australia-VIC/NSW/ACT', 'Australia-QLD', 'Australia-TAS', 'Australia-SA', 'Australia-NT', 'Australia-WA',
      'Afghan',
@@ -518,39 +522,27 @@ const
      'West Pacific Standard Time',
      'Yakutsk Standard Time'
      );
+{$ENDIF}
 
 
-
+{$IFDEF MSWINDOWS}
 Function UniversalDate : TDateTime; Overload;
 Function UniversalTime : TDateTime; Overload;
 Function UniversalDateTime : TDateTime; Overload;
 Function UniversalDateTimeOffset : TDateTimeOffset; Overload;
 Function UniversalDateTimeToDateTimeOffset(Const aDateTime : TDateTime) : TDateTimeOffset;
+{$ENDIF}
 
 Function LocalDate : TDateTime; Overload;
 Function LocalTime : TDateTime; Overload;
 Function LocalDateTime : TDateTime; Overload;
-Function LocalDateTimeOffset : TDateTimeOffset; Overload;
 
 Function TimeZoneBias : TDateTime; Overload;
-Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
-function TSToDateTime(TS: TTimeStamp): TDateTime;
-function DateTimeToTS(Value : TDateTime): TTimeStamp;
-function SameInstant(t1, t2 : TDateTime) : boolean;
-Function DateTimeMax(Const aA, aB : TDateTime) : TDateTime; Overload;
-Function DateTimeMin(Const aA, aB : TDateTime) : TDateTime; Overload;
-Function DateTimeCompare(Const aA, aB : TDateTime) : Integer; Overload;
-Function DateTimeCompare(Const aA, aB, aThreshold : TDateTime) : Integer; Overload;
-function DescribePeriod(Period: TDateTime): String;
-Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDateTime) : String;
 Function CheckDateFormat(Const sFormat, sContent : String; Var sError : String) : Boolean;
-function FileTimeToDateTime(Time: TFileTime; bTz : boolean): TDateTime;
-Function TimeSeparators : TCharSet; Overload;
-Function DateSeparators : TCharSet; Overload;
+function SameInstant(t1, t2 : TDateTime) : boolean;
 Function TimeSeparator : Char; Overload;
 Function DateSeparator : Char; Overload;
 Function DecimalSeparator : Char; Overload;
-Function IsDateTime(Const sValue, sFormat : String) : Boolean; Overload;
 Function ToDateTime(Const sValue, sFormat : String) : TDateTime; Overload;
 Function ToDateTime(Const sValue, sFormat : String; Out aDateTime : TDateTime) : Boolean; Overload;
 Function ToDateTime(Const sValue : String) : TDateTime; Overload;
@@ -563,6 +555,9 @@ Function ShortDateFormat : TDateFormat; Overload;
 Function ShortTimeFormat : TTimeFormat; Overload;
 Function LongDateFormat : TDateFormat; Overload;
 Function LongTimeFormat : TTimeFormat; Overload;
+Function TimeSeparators : TCharSet; Overload;
+Function DateSeparators : TCharSet; Overload;
+Function IsDateTime(Const sValue, sFormat : String) : Boolean; Overload;
 Function StringToTime(Const sValue : String) : TTime; Overload;
 Function StringToTime(Const sValue : String; Out aTime : TTime) : Boolean; Overload;
 Function StringIsTime(Const sValue : String) : Boolean; Overload;
@@ -571,21 +566,29 @@ Function StringIsDate(Const sValue : String) : Boolean; Overload;
 Function StringToDate(Const sValue : String) : TDate; Overload;
 Function TryEncodeDate(iYear, iMonth, iDay : Word; Out aDate : TDateTime) : Boolean; Overload;
 Function TryEncodeDate(iYear, iMonth, iDay : Word; Out aDateTimeOffset : TDateTimeOffset) : Boolean; Overload;
-
-Function TimeZoneOffset : Integer; Overload;
-Function TimeZoneOffset(Const aDateTime : TDateTime; Const aTimeZoneInformation : TTimeZoneInformation) : Integer; Overload;
-Function TimeZone : TTimeZoneCode; Overload;
-Function CreateTimeZoneInformation(Const aTimeZone : TTimeZoneCode) : TTimeZoneInformation;
-Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInformation);
-Function IsLeapYearByYear(Const iYear : TYear) : Boolean; Overload;
-Function IsLeapYearByDateTime(Const Value : TDateTime) : Boolean; Overload;
-Function ToYear(Const Value : TDateTime) : TYear; Overload;
 Function AsDate(Const aValue : TDateTime) : TDate; Overload;
 Function AsDate(Const aValue : TDateTimeOffset) : TDate; Overload;
 Function AsTime(Const aValue : TDateTime) : TTime; Overload;
 Function AsTime(Const aValue : TDateTimeOffset) : TTime; Overload;
+Function IsLeapYearByYear(Const iYear : TYear) : Boolean; Overload;
+Function IsLeapYearByDateTime(Const Value : TDateTime) : Boolean; Overload;
+Function ToYear(Const Value : TDateTime) : TYear; Overload;
+Function DateTimeMax(Const aA, aB : TDateTime) : TDateTime; Overload;
+Function DateTimeMin(Const aA, aB : TDateTime) : TDateTime; Overload;
+function DescribePeriod(Period: TDateTime): String;
+
+{$IFDEF MSWINDOWS}
 Function ToDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset; Overload;
 Function ToDateTimeOffset(Const sValue, sFormat : String; Out aDateTime : TDateTimeOffset) : Boolean; Overload;
+
+Function LocalDateTimeOffset : TDateTimeOffset; Overload;
+Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
+function TSToDateTime(TS: TTimeStamp): TDateTime;
+function DateTimeToTS(Value : TDateTime): TTimeStamp;
+Function DateTimeCompare(Const aA, aB : TDateTime) : Integer; Overload;
+Function DateTimeCompare(Const aA, aB, aThreshold : TDateTime) : Integer; Overload;
+Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDateTime) : String;
+
 
 Function FirstOfMonth(Const Value : TDateTime) : TDateTime; Overload;
 Function LastOfMonth(Const Value : TDateTime) : TDateTime; Overload;
@@ -610,9 +613,16 @@ Function DurationToSecondsString(Const aValue : TDuration) : String; Overload;
 Function DurationToShortSecondsString(Const aValue : TDuration) : String; Overload;
 Function DurationToMillisecondsString(Const aValue : TDuration) : String; Overload;
 
+
+function FileTimeToDateTime(Time: TFileTime; bTz : boolean): TDateTime;
+Function TimeZoneOffset : Integer; Overload;
+Function TimeZoneOffset(Const aDateTime : TDateTime; Const aTimeZoneInformation : TTimeZoneInformation) : Integer; Overload;
+Function TimeZone : TTimeZoneCode; Overload;
+Function CreateTimeZoneInformation(Const aTimeZone : TTimeZoneCode) : TTimeZoneInformation;
+Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInformation);
+{$ENDIF}
 function DateTimeToUnix(ConvDate: TDateTime): Longint;
 function UnixToDateTime(USec: Longint): TDateTime;
-
 
 Implementation
 
@@ -1806,7 +1816,7 @@ begin
   result := after(imin, inclusive) and before(imax, inclusive);
 end;
 
-Function DateTimeFormat(Const aDateTime : TDateTime; Const sFormat : String) : String;
+Function DateTimeFormat(Const aDateTime : TDateTime; Const sFormat : String) : String; overload;
 Begin
   Result := SysUtils.FormatDateTime(sFormat, aDateTime);
 End;
@@ -1844,19 +1854,19 @@ begin
   result := TTimeZone.Local.GetUtcOffset(now).TotalDays;
 end;
 
-Function TimeZoneBias(when : TDateTime) : TDateTime;
+Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
 begin
   result := TTimeZone.Local.GetUtcOffset(when).TotalDays;
 end;
 
 
-Function DateTimeCompare(Const aA, aB : TDateTime) : Integer;
+Function DateTimeCompare(Const aA, aB : TDateTime) : Integer; overload;
 Begin
   Result := FHIR.Support.Math.RealCompare(aA, aB);
 End;
 
 
-Function DateTimeCompare(Const aA, aB, aThreshold : TDateTime) : Integer;
+Function DateTimeCompare(Const aA, aB, aThreshold : TDateTime) : Integer; Overload;
 Begin
   Result := FHIR.Support.Math.RealCompare(aA, aB, aThreshold);
 End;
@@ -2245,14 +2255,14 @@ begin
 end;
 {$ENDIF MSWINDOWS}
 {$IFDEF POSIX}
-var
-  LDecTime: tm;
+//var
+//  LDecTime: tm;
 begin
-  Result := 0;
-
-  if localtime_r(Time, LDecTime) <> nil then
-    Result := InternalEncodeDateTime(LDecTime.tm_year + 1900, LDecTime.tm_mon + 1,
-      LDecTime.tm_mday, LDecTime.tm_hour, LDecTime.tm_min, LDecTime.tm_sec, 0);
+//  Result := 0;
+//
+//  if localtime_r(Time, LDecTime) <> nil then
+//    Result := InternalEncodeDateTime(LDecTime.tm_year + 1900, LDecTime.tm_mon + 1,
+//      LDecTime.tm_mday, LDecTime.tm_hour, LDecTime.tm_min, LDecTime.tm_sec, 0);
 end;
 {$ENDIF POSIX}
 
@@ -2841,6 +2851,19 @@ Begin
   Result := PCharToTime(pValue, aTime);
 End;
 
+Function IsLeapYearByYear(Const iYear : TYear) : Boolean;
+Begin
+  Result := SysUtils.IsLeapYear(iYear);
+End;
+
+
+Function IsLeapYearByDateTime(Const Value : TDateTime) : Boolean;
+Begin
+  Result := IsLeapYearByYear(ToYear(Value));
+End;
+
+
+{$IFDEF MSWINDOWS}
 
 Function LocalDateTimeOffset : TDateTimeOffset;
 Begin
@@ -2999,17 +3022,6 @@ Begin
 End;
 
 
-
-Function IsLeapYearByYear(Const iYear : TYear) : Boolean;
-Begin
-  Result := SysUtils.IsLeapYear(iYear);
-End;
-
-
-Function IsLeapYearByDateTime(Const Value : TDateTime) : Boolean;
-Begin
-  Result := IsLeapYearByYear(ToYear(Value));
-End;
 
 
 
@@ -3209,7 +3221,9 @@ Begin
       Result := TimeZoneUnknown;
   End;
 End;
+{$ENDIF}
 
+{$IFDEF MSWINDOWS}
 Function UniversalDate : TDateTime;
 Begin
   Result := AsDate(UniversalDateTime);
@@ -3231,7 +3245,6 @@ Begin
   Result := SystemTimeToDateTime(LrSystemTime);
 End;
 
-
 Function UniversalDateTimeOffset : TDateTimeOffset;
 Begin
   Result.Value := UniversalDateTime;
@@ -3244,6 +3257,7 @@ Begin
   Result.Value := aDateTime;
   Result.Offset := 0;
 End;
+{$ENDIF}
 
 
 Function LocalDate : TDateTime;
@@ -3356,7 +3370,7 @@ End;
 
 
 
-Function StringToDuration(Const sValue : String; Out aValue : TDuration) : Boolean;
+Function StringToDuration(Const sValue : String; Out aValue : TDuration) : Boolean; overload;
 Const
   DURATION_MULTIPLIERS : Array[0..3] Of Real = (3600000, 60000, 1000, 1);
   DURATION_LIMITS : Array[0..3] Of Integer = (MaxInt, 59, 59, 999);
@@ -3401,7 +3415,7 @@ Begin
   Result := StringToDuration(sValue, aDuration);
 End;
 
-Function StringToDuration(Const sValue : String) : TDuration;
+Function StringToDuration(Const sValue : String) : TDuration; overload;
 Begin
   If Not StringToDuration(sValue, Result) Then
     Raise Exception.create(sValue + ' is not a valid duration.');
@@ -3413,7 +3427,7 @@ Begin
   Result := DateTimeCompare(aA, aB) = 0;
 End;
 
-
+{$IFDEF MSWINDOWS}
 Function DateTimeOffsetCompare(Const aA, aB : TDateTimeOffset) : Integer; overload;
 Begin
   Result := FHIR.Support.Math.RealCompare(ToUniversalDatetime(aA), ToUniversalDateTime(aB));
@@ -3454,6 +3468,7 @@ Function DateTimeEquals(Const aA, aB : TDateTime; Const aThreshold : TDateTime) 
 Begin
   Result := DateTimeCompare(aA, aB, aThreshold) = 0;
 End;
+{$ENDIF}
 
 Function ToUniversalDateTime(Const aValue : TDateTimeOffset) : TDateTime;
 Begin
@@ -3472,7 +3487,7 @@ Begin
   Result := SysUtils.FormatDateTime(sFormat, aDateTimeOffset.Value);
 End;
 
-Function DateTimeFormat(Const aDateTimeOffset : TDateTimeOffset; Const sFormat : String) : String;
+Function DateTimeFormat(Const aDateTimeOffset : TDateTimeOffset; Const sFormat : String) : String; overload;
 Begin
   Result := LocalDateTimeFormat(aDateTimeOffset, sFormat);
 End;
@@ -3574,7 +3589,7 @@ Begin
   Result.Offset := 0;
 End;
 
-
+{$IFDEF MSWINDOWS}
 Function ToLocalDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset;
 Begin
   Result.Value := ToDateTime(sValue, sFormat);
@@ -3692,6 +3707,7 @@ Begin
     aDateTime.Offset := LocalDateTimeOffset.Offset;
   End;
 End;
+{$ENDIF}
 
 
 Function TryEncodeDate(iYear, iMonth, iDay : Word; Out aDate : TDateTime) : Boolean;

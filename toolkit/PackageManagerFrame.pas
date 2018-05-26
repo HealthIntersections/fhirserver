@@ -37,7 +37,7 @@ uses
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   FMX.Memo, FMX.TreeView,
   BaseFrame,
-  FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Support.Text, FHIR.Web.Fetcher,
+  FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Web.Fetcher, FHIR.Support.Osx,
   FHIR.Cache.PackageManager;
 
 const
@@ -314,7 +314,7 @@ end;
 
 procedure TPackageManagerFrame.lblFolderClick(Sender: TObject);
 begin
-  ExecuteOpen(FPcm.Folder);
+  TFileLauncher.Open(FPcm.Folder);
 end;
 
 procedure TPackageManagerFrame.load;
@@ -365,7 +365,7 @@ var
   vi : TFHIRPackageVersionInfo;
 begin
   vi := (tvPackages.Selected.TagObject as TFHIRPackageVersionInfo);
-  ExecuteFolder(vi.folder);
+  TFileLauncher.Open(vi.folder);
 end;
 
 procedure TPackageManagerFrame.pmPackagePopup(Sender: TObject);

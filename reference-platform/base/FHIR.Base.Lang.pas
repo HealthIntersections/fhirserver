@@ -117,7 +117,7 @@ var
 Function LoadSource : TBytes;
 {$IFDEF MACOS}
 begin
-  result := TextUtilities.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
+  result := FHIR.Support.Text.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
 end;
 {$ELSE}
 var

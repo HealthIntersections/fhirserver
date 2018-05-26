@@ -33,8 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, {$ELSE} Windows, ShellApi, ShlObj, UIConsts, {$ENDIF}
-  SysUtils, Classes, Generics.Collections, MMSystem, Winsock, Registry, MultiMon,
+  {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, Posix.SysTypes, Posix.Stdlib, {$ELSE} Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ENDIF}
+  SysUtils, Classes, Generics.Collections, UIConsts,
   FHIR.Support.Fpc, FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime;
 
 
@@ -244,7 +244,9 @@ type
   End;
 
 Function FileGetModified(Const sFileName : String) : TDateTime; Overload;
+  {$IFDEF MSWINDOWS}
 procedure FileSetModified(Const sFileName : String; time : TDateTime); Overload;
+{$ENDIF}
 
 Function FileExists(Const sFilename : String) : Boolean; Overload;
 Function FileDelete(Const sFilename : String) : Boolean; Overload;
@@ -316,6 +318,7 @@ Function RandomAlphabeticCharacter : Char; Overload;
 Type
   TMediaSoundBeepType = (MediaSoundBeepTypeAsterisk, MediaSoundBeepTypeExclamation, MediaSoundBeepTypeHand, MediaSoundBeepTypeQuestion, MediaSoundBeepTypeOk);
 
+  {$IFDEF MSWINDOWS}
 
 Procedure SoundPlay(Const sFilename : String); Overload;
 Procedure SoundStop(Const sFilename : String); Overload;
@@ -324,6 +327,7 @@ Procedure SoundBeepAsterisk; Overload;
 Procedure SoundBeepExclamation; Overload;
 Procedure SoundBeepOK; Overload;
 Procedure SoundBeepRange(Const iFrequency, iDuration : Cardinal); Overload;
+{$ENDIF}
 
 
 Type
@@ -396,6 +400,8 @@ Function CurrencyApplyPercentages(Const rAmount : TCurrency; Const rPercentageBe
 Function CurrencyTruncateToCents(Const rAmount : TCurrency) : TCurrency;
 Function CurrencyTruncateToDollars(Const rAmount : TCurrency) : TCurrency;
 
+  {$IFDEF MSWINDOWS}
+
 Function SystemIsWindowsNT : Boolean;
 Function SystemIsWindows2K : Boolean;
 Function SystemIsWindowsXP : Boolean;
@@ -446,15 +452,20 @@ Function DomainLogonName : String;
 Function ProxyServer : String;
 
 Function MonitorInfoFromRect(aRect : TRect): TMonitorInfo;
+{$ENDIF}
+
+type
+TFileLauncher = class
+  class procedure Open(const FilePath: string);
+end;
 
 Implementation
 
 Uses
   {$IFDEF MACOS}
-  FHIR.Support.Osx,
+  FMX.Graphics,
   {$ELSE}
-  ActiveX,
-  ComObj,
+  ActiveX, ComObj,
   {$ENDIF}
   IOUtils, DateUtils,
 
@@ -536,6 +547,7 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF MSWINDOWS}
 procedure FileSetModified(Const sFileName : String; time : TDateTime);
 Var
   aHandle : TFileHandle;
@@ -550,6 +562,7 @@ Begin
     FileHandleClose(aHandle);
   End;
 End;
+{$ENDIF}
 
 
 
@@ -1071,7 +1084,11 @@ End;
 
 Function UserFolder : String;
 Begin
+  {$IFDEF MSWINDOWS}
   Result := ShellFolder(CSIDL_PROFILE);
+  {$ELSE}
+  result := IOUtils.TPath.GetHomePath;
+  {$ENDIF}
 End;
 
 
@@ -1424,7 +1441,7 @@ Begin
 End;
 
 
-
+{$IFDEF MSWINDOWS}
 Procedure SoundPlay(Const sFilename : String);
 Begin
   PlaySound(PChar(sFilename), 0, SND_FILENAME Or SND_ASYNC);
@@ -1469,6 +1486,7 @@ Begin
   Windows.Beep(iFrequency, iDuration);
 End;
 
+{$ENDIF}
 
 
 Function CurrencySymbol : String;
@@ -1721,27 +1739,44 @@ End;
 
 Function SystemIsWindows2K : Boolean;
 Begin
+  {$IFDEF MSWINDOWS}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 5){ And (gOSInfo.dwMinorVersion >= 0)};
+  {$ELSE}
+  result := false;
+  {$ENDIF}
 End;
 
 
 Function SystemIsWindowsXP : Boolean;
 Begin
+  {$IFDEF MSWINDOWS}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 5) And (gOSInfo.dwMinorVersion >= 1);
+  {$ELSE}
+  result := false;
+  {$ENDIF}
 End;
 
 
 Function SystemIsWindowsVista : Boolean;
 Begin
+  {$IFDEF MSWINDOWS}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 6){ And (gOSInfo.dwMinorVersion >= 0)};
+  {$ELSE}
+  result := false;
+  {$ENDIF}
 End;
 
 
 Function SystemIsWin64 : Boolean;
 Begin
+  {$IFDEF MSWINDOWS}
   Result := SystemIsWindowsNT And (gSystemInfo.dwAllocationGranularity = 65536);
+  {$ELSE}
+  result := false;
+  {$ENDIF}
 End;
 
+  {$IFDEF MSWINDOWS}
 Function SystemArchitecture : String;
 Const
   PROCESSOR_ARCHITECTURE_INTEL = 0;
@@ -1807,9 +1842,11 @@ Begin
     Result := 'Unknown'; // PROCESSOR_ARCHITECTURE_UNKNOWN
   End;
 End;
+{$ENDIF}
 
 Function SystemPlatform: String;
 Begin
+  {$IFDEF MSWINDOWS}
   Case gOSInfo.dwPlatformId Of
     VER_PLATFORM_WIN32s :
     Begin
@@ -1850,8 +1887,12 @@ Begin
     gOSInfo.dwBuildNumber := gOSInfo.dwBuildNumber And $FFFF;
 
   Result := Result + StringFormat(' [%d.%d.%d]', [gOSInfo.dwMajorVersion, gOSInfo.dwMinorVersion, gOSInfo.dwBuildNumber]);
+  {$ELSE}
+  Result := 'OSX';
+  {$ENDIF}
 End;
 
+  {$IFDEF MSWINDOWS}
 Function SystemTimezone : String;
 Begin
   Result := NAMES_TIMEZONES[Timezone];
@@ -1868,9 +1909,13 @@ begin
   end;
   Result := pcLCA;
 end;
+  {$ENDIF}
 
 Function SystemLanguage : String;
 Begin
+  {$IFDEF OSX}
+  result := 'en';
+  {$ELSE}
   {$IFDEF FPC}
   {$IFDEF MSWINDOWS}
    Result := GetLocaleInformation(LOCALE_SENGLANGUAGE);
@@ -1880,8 +1925,10 @@ Begin
   {$ELSE}
   Result := Languages.NameFromLocaleID[GetUserDefaultLCID];
   {$ENDIF}
+  {$ENDIF}
 End;
 
+  {$IFDEF MSWINDOWS}
 
 Function SystemProcessors : Cardinal;
 Begin
@@ -1893,9 +1940,9 @@ Function SystemPageSize : Cardinal;
 Begin
   Result := gSystemInfo.dwPageSize;
 End;
+{$ENDIF}
 
-
-
+{$IFDEF MSWINDOWS}
 {$IFDEF CPUx86}
 Function SystemMemory : TSystemMemory;
 Begin
@@ -1917,7 +1964,9 @@ Begin
 End;
   {$ENDIF}
 {$ENDIF}
+{$ENDIF}
 
+  {$IFDEF MSWINDOWS}
 
 Function SystemName : String;
 Var
@@ -2310,6 +2359,18 @@ Begin
   End;
 End;
 
+{$ENDIF}
+
+class procedure TFileLauncher.Open(const FilePath: string);
+begin
+{$IFDEF MSWINDOWS}
+ShellExecute(0, 'OPEN', PChar(FilePath), '', '', SW_SHOWNORMAL);
+{$ENDIF MSWINDOWS}
+
+{$IFDEF MACOS}
+_system(PAnsiChar('open '+'"'+AnsiString(FilePath)+'"'));
+{$ENDIF MACOS}
+end;
 
 Initialization
   Randomize;

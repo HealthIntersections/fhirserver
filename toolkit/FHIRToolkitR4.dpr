@@ -140,7 +140,9 @@ uses
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
+  {$IFDEF MSWINDOWS}
   FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
+  {$ENDIF}
   FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
@@ -161,7 +163,6 @@ uses
   TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame},
   ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TFrame},
   PackageManagerFrame in 'PackageManagerFrame.pas' {PackageManagerFrame: TFrame},
-  FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
   FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas',
   PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm},
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
