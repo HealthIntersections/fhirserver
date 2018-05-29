@@ -95,7 +95,7 @@ uses
   ValuesetExpansion in 'ValuesetExpansion.pas' {ValuesetExpansionForm},
   HelpContexts in 'HelpContexts.pas',
   ProcessForm in 'ProcessForm.pas' {ProcessingForm},
-  SettingsDialog in 'SettingsDialog.pas' {SettingsForm},
+  SettingsDialog in 'SettingsDialog.pas' {FHIR.Npp.Settings},
   AboutDialog in 'AboutDialog.pas' {AboutForm},
   FHIR.Ui.OSX in '..\Libraries\ui\FHIR.Ui.OSX.pas',
   ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm},
@@ -131,7 +131,6 @@ uses
   FHIR.R4.Questionnaire2 in '..\reference-platform\r4\FHIR.R4.Questionnaire2.pas',
   FHIR.R4.Base in '..\reference-platform\r4\FHIR.R4.Base.pas',
   FHIR.R4.ParserBase in '..\reference-platform\r4\FHIR.R4.ParserBase.pas',
-  FHIR.Tools.XhtmlComp in '..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas',
   FHIR.R4.Parser in '..\reference-platform\r4\FHIR.R4.Parser.pas',
   FHIR.Client.Base in '..\reference-platform\client\FHIR.Client.Base.pas',
   FHIR.Client.HTTP in '..\reference-platform\client\FHIR.Client.HTTP.pas',
@@ -140,9 +139,7 @@ uses
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
-  {$IFDEF MSWINDOWS}
-  FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
-  {$ENDIF}
+  FHIR.Support.WinInet in '..\reference-platform\support\FHIR.Support.WinInet.pas',
   FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
@@ -150,7 +147,7 @@ uses
   UsageContextForm in 'UsageContextForm.pas' {UsageContextDialog},
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
@@ -168,7 +165,9 @@ uses
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
   FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
-  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas';
+  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
+  FHIR.R4.Operations in '..\reference-platform\r4\FHIR.R4.Operations.pas',
+  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas';
 
 {$R *.res}
 

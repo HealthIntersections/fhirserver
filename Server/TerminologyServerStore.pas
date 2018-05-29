@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, FHIR.Support.Lock, Generics.Defaults, Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Exceptions,
   FHIR.Database.Manager,
-  FHIR.Base.Lang,
+  FHIR.Base.Lang, FHIR.Base.Common,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Operations, FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, RxNormServices, UniiServices, ACIRServices, UriServices, ICD10Services,
   AreaCodeServices, IETFLanguageCodeServices, FHIR.Debug.Logging,
@@ -176,7 +176,7 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function hasSupplement(url : String) : boolean; override;
-    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
@@ -187,7 +187,7 @@ Type
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
   end;
 
@@ -385,7 +385,7 @@ Type
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); overload; override;
     procedure Displays(code : String; list : TStringList; lang : String); overload; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -585,7 +585,7 @@ begin
   end;
 end;
 
-function TAllCodeSystemsProvider.filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TAllCodeSystemsProvider.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
   raise Exception.Create('Not Created Yet');
 end;
@@ -2296,7 +2296,7 @@ begin
     result := TFhirCodeSystemProviderContext.Create(c.Link);
 end;
 
-procedure TFhirCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponse);
+procedure TFhirCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponseW);
 {$IFNDEF FHIR2}
 var
   concepts : TFslList<TFhirCodeSystemConcept>;
@@ -2305,8 +2305,8 @@ var
   ccd : TFhirCodeSystemConceptDesignation;
   cp : TFhirCodeSystemConceptProperty;
   pp : TFhirCodeSystemProperty;
-  d : TFHIRLookupOpRespDesignation;
-  p : TFHIRLookupOpRespProperty_;
+  d : TFHIRLookupOpRespDesignationW;
+  p : TFHIRLookupOpRespPropertyW;
   css : TFHIRCodeSystem;
   {$ENDIF}
 begin
@@ -2331,9 +2331,7 @@ begin
       parent := getParent(context);
       if (parent <> nil) then
       begin
-        p := TFHIRLookupOpRespProperty_.create;
-        resp.property_List.Add(p);
-        p.code := 'parent';
+        p := resp.addProp('parent');
         p.value := TFhirCode.Create(parent.code);
         p.description := parent.display;
       end;
@@ -2343,9 +2341,7 @@ begin
     begin
       for child in context.conceptList do
       begin
-        p := TFHIRLookupOpRespProperty_.create;
-        resp.property_List.Add(p);
-        p.code := 'child';
+        p := resp.addProp('child');
         p.value := TFhirCode.Create(child.code);
         p.description := child.display;
       end;
@@ -2356,19 +2352,13 @@ begin
       begin
         if (cc.display <> '') and (cc.display <> context.display) and (cc.displayElement.Tags['lang'] <> '') then
         Begin
-          d := TFHIRLookupOpRespDesignation.create;
-          resp.designationList.Add(d);
-          d.value := cc.display;
-          d.language := cc.displayElement.Tags['lang']
+          resp.addDesignation(cc.displayElement.Tags['lang'], cc.display)
         End;
 
         for ccd in cc.designationList do
         Begin
-          d := TFHIRLookupOpRespDesignation.create;
-          resp.designationList.Add(d);
-          d.value := ccd.value;
+          d := resp.addDesignation(ccd.language, ccd.value);
           d.use := ccd.use.link;
-          d.language := ccd.language
         End;
       end;
 
@@ -2379,9 +2369,7 @@ begin
         pp := getProperty(cp.code);
         if (pp <> nil) and hasProp(props, cp.code, true) then
         begin
-          p := TFHIRLookupOpRespProperty_.create;
-          resp.property_List.Add(p);
-          p.code := cp.code;
+          p := resp.addprop(cp.code);
           p.value := cp.value.link; // todo: should we check this?
         end;
       end;
@@ -2536,7 +2524,7 @@ begin
 end;
 {$ENDIF}
 
-function TFhirCodeSystemProvider.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TFhirCodeSystemProvider.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   code : TFhirCodeSystemProviderContext;
   ts : TStringList;
@@ -2545,7 +2533,7 @@ var
   pp : TFhirCodeSystemProperty;
 {$ENDIF}
 begin
-  if (op = FilterOperatorIsA) and (prop = 'concept') then
+  if (op = foIsA) and (prop = 'concept') then
   begin
     code := doLocate(value);
     try
@@ -2565,7 +2553,7 @@ begin
       Close(code)
     end;
   end
-  else if (op = FilterOperatorIn) and (prop = 'concept') then
+  else if (op = foIn) and (prop = 'concept') then
   begin
     result := TFhirCodeSystemProviderFilterContext.Create;
     try
@@ -2596,7 +2584,7 @@ begin
   begin
 {$IFNDEF FHIR2}
     pp := getProperty(prop);
-    if (pp <> nil) and (op = FilterOperatorEqual)  then
+    if (pp <> nil) and (op = foEqual)  then
     begin
       result := TFhirCodeSystemProviderFilterContext.create;
       try

@@ -31,10 +31,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IOUtils,
   FHIR.Support.Strings, FHIR.Support.Lock,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Zip,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Base.Factory,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory,
   FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Utilities, FHIR.R2.Constants, FHIR.R2.Context;
 
 Const
@@ -193,6 +193,9 @@ function uncapitalize(s : String) : string;
 function capitalize(s : String) : string;
 
 implementation
+
+uses
+  FHIR.R2.Parser;
 
 { TProfileUtilities }
 
@@ -719,8 +722,9 @@ var
   value : TFhirElement;
   coding : TFhirCoding;
 begin
+  result := nil;
   if stack.Contains(definition) then
-    exit; // prevent recursion
+    exit(); // prevent recursion
   stack.Add(definition.Link);
   try
     props := item.createPropertyList(true);
@@ -1501,7 +1505,7 @@ begin
     list.add(sd.link);
 end;
 
-constructor TBaseWorkerContextR2.Create;
+constructor TBaseWorkerContextR2.Create(factory : TFHIRFactory);
 begin
   inherited;
   FLock := TCriticalSection.Create('worker-context');
@@ -1623,7 +1627,7 @@ var
   i : integer;
   mem : TFslMemoryStream;
   vcl : TVclStream;
-  xml : TFHIRXmlParser;
+  xml : TFHIRParser;
 begin
   // read the zip, loading the resources we need
   b := TFslBuffer.create;
@@ -1648,7 +1652,7 @@ begin
               vcl := TVCLStream.create;
               try
                 vcl.Stream := mem.link;
-                xml := TFHIRXmlParser.create(self.link, 'en');
+                xml := TFHIRParsers2.parser(self.link, ffXml, 'en');
                 try
                   xml.source := vcl;
                   xml.Parse;
@@ -1709,32 +1713,17 @@ begin
   if ExtractFileExt(filename) = '.zip' then
     LoadFromDefinitions(filename)
   else if ExtractFileExt(filename) = '.json' then
-    LoadFromFile(filename, TFHIRJsonParser.create(self.Link, 'en'))
+    LoadFromFile(filename, TFHIRParsers2.parser(self.Link, ffJson, 'en'))
   else if ExtractFileExt(filename) = '.xml' then
-    LoadFromFile(filename, TFHIRXmlParser.create(self.Link, 'en'))
+    LoadFromFile(filename, TFHIRParsers2.parser(self.Link, ffXml, 'en'))
 end;
 
 procedure TBaseWorkerContextR2.LoadFromFolder(folder: string);
 var
-  list : TStringList;
-  sr : TSearchRec;
-  fn : String;
+  s : String;
 begin
-  list := TStringList.Create;
-  try
-    if FindFirst(IncludeTrailingPathDelimiter(folder) + '*.*', faArchive, sr) = 0 then
-    begin
-      repeat
-        list.Add(sr.Name); //Fill the list
-      until FindNext(sr) <> 0;
-      FindClose(sr);
-    end;
-
-    for fn in list do
-      loadFromFile(IncludeTrailingPathDelimiter(folder)+fn);
-  finally
-    list.Free;
-  end;
+  for s in TDirectory.GetFiles(folder) do
+    loadFromFile(s);
 end;
 
 function TBaseWorkerContextR2.nonSecureResourceNames: TArray<String>;

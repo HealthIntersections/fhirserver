@@ -36,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Stream,
+  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Xml,
   FHIR.Base.Objects, FHIR.Base.Parser,
 
   {$IFDEF FHIR2}
@@ -80,15 +80,15 @@ Type
   {$ENDIF}
 
   TFHIRNDJsonComposer = class (TFHIRComposer)
+  protected
+    function GetFormat: TFHIRFormat; override;
   public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
+    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload; override;
   end;
 
 
 implementation
-
-uses
-  FHIR.Tools.XhtmlComp;
 
 { TFHIRNDJsonComposer }
 
@@ -136,6 +136,16 @@ begin
       json.Free;
     end;
   end;
+end;
+
+procedure TFHIRNDJsonComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFHIRNDJsonComposer.GetFormat: TFHIRFormat;
+begin
+  result := ffNDJson;
 end;
 
 end.

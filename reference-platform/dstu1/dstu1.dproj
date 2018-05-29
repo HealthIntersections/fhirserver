@@ -170,7 +170,7 @@
         <DCCReference Include="..\support\MsXmlParser.pas"/>
         <DCCReference Include="..\support\AdvMemories.pas"/>
         <DCCReference Include="..\support\FHIR.Xml.Builder.pas"/>
-        <DCCReference Include="..\support\FHIR.Support.WInInet.pas"/>
+        <DCCReference Include="..\support\FHIR.Support.WinInet.pas"/>
         <DCCReference Include="..\support\MXmlBuilder.pas"/>
         <DCCReference Include="..\support\TextUtilities.pas"/>
         <DCCReference Include="..\support\AdvVCLStreams.pas"/>

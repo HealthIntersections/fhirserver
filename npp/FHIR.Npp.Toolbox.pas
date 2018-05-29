@@ -1,4 +1,4 @@
-unit FHIRToolboxForm;
+unit FHIR.Npp.Toolbox;
 
 
 {
@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin,
+  Vcl.Dialogs, FHIR.Npp.DockingForm, Vcl.StdCtrls, FHIR.Npp.Base, Vcl.ToolWin,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
   FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Smart.Utilities,
@@ -48,7 +48,6 @@ const
 
 type
   TFHIRToolbox = class(TNppDockingForm)
-    mPath: TMemo;
     ImageList1: TImageList;
     ToolBar1: TToolBar;
     btnServers: TToolButton;
@@ -65,13 +64,11 @@ type
     btnCommitAs: TToolButton;
     btnValidationClear: TToolButton;
     btnPathGo: TToolButton;
-    Panel1: TPanel;
     btnSettings: TToolButton;
     btnAbout: TToolButton;
     ToolButton19: TToolButton;
     ToolButton20: TToolButton;
     btnNarrative: TToolButton;
-    pnlMessage: TPanel;
     btnPathDebug: TToolButton;
     btnPathGet: TToolButton;
     btnPatch: TToolButton;
@@ -93,6 +90,10 @@ type
     mnuTreatAsVersion: TMenuItem;
     mnuMarkAsVersion: TMenuItem;
     mnuConvertVersion: TMenuItem;
+    pnlEdit: TPanel;
+    edtPath: TEdit;
+    Panel1: TPanel;
+    mnuValidate: TMenuItem;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -117,7 +118,6 @@ type
     procedure btnSettingsClick(Sender: TObject);
     procedure ToolButton17Click(Sender: TObject);
     procedure btnNarrativeClick(Sender: TObject);
-    procedure cbxServersChange(Sender: TObject);
     procedure mPathKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure mPathEnter(Sender: TObject);
     procedure mPathChange(Sender: TObject);
@@ -135,6 +135,8 @@ type
     procedure btnR4Click(Sender: TObject);
     procedure mnuTreatAsVersionClick(Sender: TObject);
     procedure mnuMarkAsVersionClick(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure mnuValidateClick(Sender: TObject);
   private
     FMessageShort, FMessageLong : String;
     FFirstPathEdit : boolean;
@@ -142,17 +144,16 @@ type
     FServers : TFslList<TRegisteredFHIRServer>;
     FFormat : TFHIRFormat;
     FStatuses : TFHIRVersionStatuses;
+    FLoaded : boolean;
     FContext : TFHIRNppContext;
     FUrl : String;
+    editleft : integer;
     procedure updateButton(btn : TColorSpeedButton; version: TFHIRVersion);
     procedure SetContext(const Value: TFHIRNppContext);
     procedure updateButtons;
     procedure showVersionMenu(button : TSpeedButton; version : TFHIRVersion; convVersions : TFHIRVersionSet);
   public
-    procedure connected(name, url, user, scopes : String);
-    procedure disconnected;
-    procedure loadServers;
-    procedure updateStatus(format : TFHIRFormat; versions : TFHIRVersionStatuses; url : String);
+    procedure updateStatus(format : TFHIRFormat; versions : TFHIRVersionStatuses; loaded : Boolean; url : String);
     property HasValidPath : boolean read FHasValidPath;
     property Context : TFHIRNppContext read FContext write SetContext;
   end;
@@ -160,31 +161,14 @@ type
 var
   FHIRToolbox: TFHIRToolbox;
 
-procedure OpMessage(msgShort, msgLong : String);
-
 implementation
 
 {$R *.dfm}
 
 Uses
-  FHIRPluginSettings,
+  FHIR.R4.PathEngine,
   FHIR.Client.ServerDialog,
-  FHIRPlugin,
-  FHIR.Tools.PathEngine;
-
-procedure OpMessage(msgShort, msgLong : String);
-begin
-  if (assigned(FHIRToolbox)) then
-  begin
-    if msgShort = '' then
-      msgShort := FHIRToolbox.FMessageShort;
-    if msgLong = '' then
-      msgLong := FHIRToolbox.FMessageLong;
-    FHIRToolbox.pnlMessage.Caption := '  '+msgShort;
-    FHIRToolbox.pnlMessage.Hint := msgLong;
-    FHIRToolbox.Update;
-  end;
-end;
+  FHIR.Npp.Settings, FHIR.Npp.Plugin;
 
 procedure TFHIRToolbox.FormCreate(Sender: TObject);
 begin
@@ -192,18 +176,19 @@ begin
   self.KeyPreview := true; // special hack for input forms
   self.OnFloat := self.FormFloat;
   self.OnDock := self.FormDock;
-  mPath.font.Name := Settings.FontName;
-  mPath.font.Size := Settings.FontSize;
-  if mPath.Text = Settings.Path then
+  edtPath.font.Name := Settings.FontName;
+  edtPath.font.Size := Settings.FontSize;
+  if edtPath.Text = Settings.Path then
   begin
-    mPath.Text := 'Path...';
+    edtPath.Text := 'Path...';
     FFirstPathEdit := true;
   end
   else
-    mPath.Text := Settings.Path;
+    edtPath.Text := Settings.Path;
   inherited;
   if Screen.PixelsPerInch >= 140 then
     ToolBar1.Images := ImageList24;
+  editleft := 550 * Screen.PixelsPerInch div 96;
 end;
 
 procedure TFHIRToolbox.Button1Click(Sender: TObject);
@@ -218,53 +203,6 @@ begin
   self.Hide;
 end;
 
-procedure TFHIRToolbox.cbxServersChange(Sender: TObject);
-begin
-  inherited;
-  _FuncDisconnect;
-//  if cbxServers.ItemIndex = cbxServers.Items.Count - 1 then
-//  begin
-//    FNpp.FuncSettings(true);
-//  end;
-end;
-
-procedure TFHIRToolbox.connected(name, url, user, scopes : String);
-begin
-//  tbConnect.ImageIndex := 15;
-//  tbConnect.Hint := 'Disconnect from '+name;
-//  if (scopes = '') then
-//  begin
-//    FMessageShort := 'Connected';
-//    FMessageLong := 'Connected to '+name+' ('+url+', no security)'
-//  end
-//  else
-//  begin
-//    FMessageShort := 'Connected as '+user;
-//    FMessageLong := 'Connected to '+name+' ('+url+', user = '+user+', scopes = "'+scopes+'")';
-//  end;
-//  OpMessage('', '');
-//  tbOpen.Enabled := true;
-//  tbPut.Enabled := true;
-//  tbPost.Enabled := true;
-//  tbTransaction.Enabled := true;
-//  tbServerValidate.Enabled := true;
-end;
-
-procedure TFHIRToolbox.disconnected;
-begin
-//  tbConnect.ImageIndex := 0;
-//  ToolBar1.Color := clBtnFace;
-//  FMessageShort := '';
-//  FMessageLong := '';
-//  OpMessage('', '');
-//  tbOpen.Enabled := false;
-//  tbPut.Enabled := false;
-//  tbPost.Enabled := false;
-//  tbTransaction.Enabled := false;
-//  tbServerValidate.Enabled := false;
-end;
-
-
 // special hack for input forms
 // This is the best possible hack I could came up for
 // memo boxes that don't process enter keys for reasons
@@ -274,7 +212,14 @@ procedure TFHIRToolbox.FormKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
-  if (Key = #13) and (self.mPath.Focused) then self.mPath.Perform(WM_CHAR, 10, 0);
+  if (Key = #13) and (self.edtPath.Focused) then self.edtPath.Perform(WM_CHAR, 10, 0);
+end;
+
+procedure TFHIRToolbox.FormResize(Sender: TObject);
+begin
+  ToolBar1.Width := editleft;
+  pnlEdit.Left := editleft;
+  pnlEdit.Width := ClientWidth - pnlEdit.Left;
 end;
 
 // Docking code calls this when the form is hidden by either "x" or self.Hide
@@ -307,31 +252,11 @@ begin
   inherited;
   SendMessage(self.Npp.NppData.NppHandle, NPPM_SETMENUITEMCHECK, self.CmdID, 1);
   Settings.ToolboxVisible := true;
-  loadServers;
 end;
 
 procedure TFHIRToolbox.Json1Click(Sender: TObject);
 begin
   FNpp.FuncFormat(ffJson);
-end;
-
-procedure TFHIRToolbox.loadServers;
-var
-  i : integer;
-begin
-//  if FServers = nil then
-//    FServers := TFslList<TRegisteredFHIRServer>.create
-//  else
-//    FServers.Clear;
-//  cbxServers.Items.Clear;
-//  Settings.ListServers('', FServers);
-//  for i := 0 to FServers.Count - 1 do
-//  begin
-//    cbxServers.Items.addObject(FServers[i].name + ': '+FServers[i].fhirEndpoint, FServers[i]);
-//  end;
-//  cbxServers.Items.Add('Manager...');
-//  cbxServers.ItemIndex := 0;
-//  SendMessage(cbxServers.Handle, CB_SETDROPPEDWIDTH, 300, 0);
 end;
 
 procedure TFHIRToolbox.mnuMarkAsVersionClick(Sender: TObject);
@@ -344,12 +269,17 @@ begin
   Fnpp.TreatAsVersion(TFHIRVersion(mnuTreatAsVersion.tag));
 end;
 
+procedure TFHIRToolbox.mnuValidateClick(Sender: TObject);
+begin
+  FNpp.FuncValidate(TFHIRVersion((sender as TMenuItem).tag));
+end;
+
 procedure TFHIRToolbox.mPathChange(Sender: TObject);
 var
   qry : TFHIRPathEngine;
 begin
-  Settings.Path := mPath.Text;
-  if mPath.text = '' then
+  Settings.Path := edtPath.Text;
+  if edtPath.text = '' then
   begin
     FHasValidPath := false;
     FNpp.DoNppnTextModified;
@@ -359,9 +289,9 @@ begin
     try
       qry := TFHIRPathEngine.create(nil, nil);
       try
-        qry.parse(mPath.Text).free;
-        mPath.Color := clWindow;
-        mPath.Hint := 'FHIR Path Statement';
+        qry.parse(edtPath.Text).free;
+        edtPath.Color := clWindow;
+        edtPath.Hint := 'FHIR Path Statement';
       finally
         qry.Free;
       end;
@@ -371,8 +301,8 @@ begin
     except
       on e: exception do
       begin
-        mPath.Color := $edebfa;
-        mPath.Hint := e.Message;
+        edtPath.Color := $edebfa;
+        edtPath.Hint := e.Message;
         FHasValidPath := false;
       end;
     end;
@@ -383,7 +313,7 @@ procedure TFHIRToolbox.mPathEnter(Sender: TObject);
 begin
   inherited;
   if FFirstPathEdit then
-    mPath.Clear;
+    edtPath.Clear;
   FFirstPathEdit := false;
 end;
 
@@ -414,8 +344,11 @@ var
   ok : boolean;
 begin
   mnuTreatAsVersion.Caption := 'Treat as '+CODES_TFHIRVersion[version].ToUpper;
-  mnuTreatAsVersion.Enabled := FStatuses[version] = vsValid;
+  mnuTreatAsVersion.Enabled := true; // FStatuses[version] = vsValid;
   mnuTreatAsVersion.Tag := ord(version);
+  mnuValidate.Caption := 'Validate as '+CODES_TFHIRVersion[version].ToUpper;
+  mnuValidate.Enabled := true;
+  mnuValidate.Tag := ord(version);
   mnuMarkAsVersion.Caption := 'Mark as '+CODES_TFHIRVersion[version].ToUpper;
   mnuMarkAsVersion.Enabled := FStatuses[version] <> vsInvalid;
   mnuMarkAsVersion.Tag := ord(version);
@@ -443,6 +376,9 @@ var
   pm : TPopupMenu;
   pt : TPoint;
 begin
+  if FFormat = ffUnspecified then
+    FNpp.refreshStatus;
+
   pm := pmFormat;
   case FFormat of
     ffXml:
@@ -570,10 +506,7 @@ end;
 
 procedure TFHIRToolbox.btnServersClick(Sender: TObject);
 begin
-  if FNpp.connected then
-    _FuncDisconnect
-  else
-    _FuncConnect;
+   FNpp.FuncSettings(true);
 end;
 
 procedure TFHIRToolbox.btnOpenClick(Sender: TObject);
@@ -614,7 +547,7 @@ begin
   else if FFormat = ffUnspecified then
   begin
     btn.Enabled := true;
-    btn.Font.Style := [fsBold];
+    btn.Font.Style := [];
     btn.Color := clSilver;
     btn.Hint := 'Not a FHIR Resource';
   end
@@ -636,11 +569,12 @@ begin
   end;
 end;
 
-procedure TFHIRToolbox.updateStatus(format: TFHIRFormat; versions: TFHIRVersionStatuses; url : String);
+procedure TFHIRToolbox.updateStatus(format: TFHIRFormat; versions: TFHIRVersionStatuses; loaded : Boolean; url : String);
 begin
   FFormat := format;
   FStatuses := versions;
   FUrl := url;
+  FLoaded := loaded;
   UpdateButtons;
 end;
 
@@ -651,29 +585,29 @@ end;
 
 procedure TFHIRToolbox.updateButtons;
 begin
-  btnFormat.Enabled := FFormat <> ffUnspecified;
+  btnFormat.Enabled := FLoaded;
   updateButton(btnR2, fhirVersionRelease2);
   updateButton(btnR3, fhirVersionRelease3);
   updateButton(btnR4, fhirVersionRelease4);
 
-  btnNarrative.Enabled := FFormat <> ffUnspecified;
-  btnValidate.Enabled := FFormat <> ffUnspecified;
-  btnValidationClear.Enabled := FFormat <> ffUnspecified;
-  btnPatch.Enabled := FFormat <> ffUnspecified;
-  btnCodeGeneration.Enabled := FFormat <> ffUnspecified;
+  btnNarrative.Enabled := FLoaded and (FFormat <> ffUnspecified);
+  btnValidate.Enabled := FLoaded and (FFormat <> ffUnspecified);
+  btnValidationClear.Enabled := FLoaded and (FFormat <> ffUnspecified);
+  btnPatch.Enabled := FLoaded and (FFormat <> ffUnspecified);
+  btnCodeGeneration.Enabled := FLoaded and (FFormat <> ffUnspecified);
 
-  btnPathGo.Enabled := FFormat <> ffUnspecified;
-  btnPathDebug.Enabled := FFormat <> ffUnspecified;
-  btnPathGet.Enabled := FFormat <> ffUnspecified;
+  btnPathGo.Enabled := FLoaded and (FFormat <> ffUnspecified);
+  btnPathDebug.Enabled := FLoaded and (FFormat <> ffUnspecified);
+  btnPathGet.Enabled := FLoaded and (FFormat <> ffUnspecified);
 
-  btnNew.Enabled := true;
-  btnOpen.Enabled := true;
-  btnSave.Enabled := (FFormat <> ffUnspecified) and (FUrl <> '');
-  btnCommitAs.Enabled := FFormat <> ffUnspecified;
-  btnSpecial.Enabled := FFormat <> ffUnspecified;
-  btnServerValidate.Enabled := FFormat <> ffUnspecified;
+  btnNew.Enabled := FLoaded;
+  btnOpen.Enabled := FLoaded;
+  btnSave.Enabled := FLoaded and (FFormat <> ffUnspecified) and (FUrl <> '');
+  btnCommitAs.Enabled := FLoaded and (FFormat <> ffUnspecified);
+  btnSpecial.Enabled := FLoaded and (FFormat <> ffUnspecified);
+  btnServerValidate.Enabled := FLoaded and (FFormat <> ffUnspecified);
 
-  btnServers.Enabled := true;
+  btnServers.Enabled := FLoaded;
   btnPackages.Enabled := true;
   btnSettings.Enabled := true;
   btnAbout.Enabled := true;

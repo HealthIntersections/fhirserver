@@ -35,7 +35,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Decimal, FHIR.Support.DateTime,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine,
   FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities, FHIR.R3.Context, FHIR.R3.Constants;
 
 const
@@ -302,7 +302,7 @@ type
     function evaluateToString(appInfo : TFslObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : string; overload;
 
     // worker routine for converting a set of objects to a string representation
-    function convertToString(items : TFHIRSelectionList) : String; overload;
+    function convertToString(items : TFHIRSelectionList) : String; overload; override;
     function convertToString(item : TFHIRObject) : String; overload;
 
     // worker routine for converting a set of objects to a boolean representation
@@ -3655,7 +3655,7 @@ end;
 
 constructor EFHIRPath.create(path: String; offset: integer; problem: String);
 begin
-  inherited create('FHIR.Tools.PathEngine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
+  inherited create('FHIR.R3.PathEngine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
 end;
 
 constructor EFHIRPath.create(problem: String);
@@ -4195,7 +4195,7 @@ begin
   case exp.FunctionId of
     pfEmpty: checkParamCount(lexer, location, exp, 0);
     pfNot: checkParamCount(lexer, location, exp, 0);
-    pfExists: checkParamCount(lexer, location, exp, 0, 1); // 1 is allowed in cql, and should be allowed in FHIR.Tools.PathEngine as well
+    pfExists: checkParamCount(lexer, location, exp, 0, 1); // 1 is allowed in cql, and should be allowed in FHIR.R3.PathEngine as well
     pfSubsetOf: checkParamCount(lexer, location, exp, 1);
     pfSupersetOf: checkParamCount(lexer, location, exp, 1);
     pfIsDistinct: checkParamCount(lexer, location, exp, 0);

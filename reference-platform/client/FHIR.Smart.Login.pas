@@ -35,7 +35,7 @@ uses
   IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP, IdSSLOpenSSL,
   FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Certs, FHIR.Web.Parsers, FHIR.Support.System, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.XVersion.Resources, FHIR.Client.Base, FHIR.Smart.Utilities;
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Smart.Utilities;
 
 type
  // called by a client to login via Smart App Launch
@@ -92,7 +92,7 @@ implementation
 
 function doSmartAppLaunchLogin(server : TRegisteredFHIRServer; authorizeURL, tokenURL : String; idle : TIdleEvent; token : TClientAccessToken) : boolean;
 begin
-
+  result := false;
 end;
 
 { TSmartAppLaunchLogin }
@@ -314,6 +314,8 @@ begin
     salmNone: raise Exception.Create('Smart App Launch is not configured for this server');
     salmOAuthClient: result := loginOAuthClient;
     salmBackendClient: result := loginBackendClient;
+  else
+    result := false;
   end;
 end;
 

@@ -14,6 +14,7 @@ type
     Function ParseResourceV(element : TMXmlElement; path : String) : TFhirResourceV; override;
 
     function ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRTypeClass) : TFHIRType; virtual;
+    function ParseDataTypeV(element : TMXmlElement; name : String; type_ : TClass) : TFHIRObject; override;
 
     Function ParseInnerResource(element : TMXmlElement; path : String) : TFhirResource;
   end;
@@ -45,6 +46,11 @@ type
 implementation
 
 { TFHIRXmlParserBase2 }
+
+function TFHIRXmlParserBase2.ParseDataTypeV(element: TMXmlElement; name: String; type_: TClass): TFHIRObject;
+begin
+  result := ParseDataType(element, name, TFHIRTypeClass(type_));
+end;
 
 function TFHIRXmlParserBase2.ParseInnerResource(element: TMXmlElement; path: String): TFhirResource;
 var

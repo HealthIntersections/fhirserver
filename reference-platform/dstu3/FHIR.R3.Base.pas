@@ -10,7 +10,7 @@ type
   protected
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
-    function GetVersion: TFHIRVersion; override;
+    function GetFhirObjectVersion: TFHIRVersion; override;
   end;
 
   TFHIRObjectX = TFHIRObject3;
@@ -19,7 +19,7 @@ type
   protected
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
-    function GetVersion: TFHIRVersion; override;
+    function GetFhirObjectVersion: TFHIRVersion; override;
   end;
 
   TFHIRResourceX = TFHIRResource3;
@@ -32,7 +32,7 @@ uses
 
 { TFHIRObject3 }
 
-function TFHIRObject3.GetVersion: TFHIRVersion;
+function TFHIRObject3.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionRelease3;
 end;
@@ -49,7 +49,7 @@ end;
 
 { TFHIRResource3 }
 
-function TFHIRResource3.GetVersion: TFHIRVersion;
+function TFHIRResource3.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionRelease3;
 end;

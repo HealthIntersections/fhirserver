@@ -182,7 +182,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Tools.Client.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.WInInet.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.WinInet.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Utilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
@@ -192,7 +192,6 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.PathNode.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Base.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.ParserBase.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Base.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.HTTP.pas"/>
@@ -206,7 +205,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
-        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Common.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Common.pas"/>
@@ -219,6 +218,9 @@
             <Form>SmartOnFhirLoginForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Operations.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.OpBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -5,6 +5,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Common,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
@@ -64,12 +65,12 @@ type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); overload; override;
     procedure Displays(code : String; list : TStringList; lang : String); overload; override;
-    function doesFilter(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; override;
+    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; override;
@@ -77,7 +78,7 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
 
     function SpecialEnumeration : String; override;
@@ -225,33 +226,29 @@ begin
     list.add(TICD10Node(context).FDisplay)
 end;
 
-function TICD10Provider.doesFilter(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
+function TICD10Provider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
 begin
   result := false;
 end;
 
-procedure TICD10Provider.extendLookup(ctxt: TCodeSystemProviderContext; lang: String; props: TList<String>; resp: TFHIRLookupOpResponse);
+procedure TICD10Provider.extendLookup(ctxt: TCodeSystemProviderContext; lang: String; props: TList<String>; resp: TFHIRLookupOpResponseW);
 {$IFNDEF FHIR2}
 var
-  p : TFHIRLookupOpRespProperty_;
+  p : TFHIRLookupOpRespPropertyW;
 {$ENDIF}
 begin
 {$IFNDEF FHIR2}
   resp.version := FVersion;
   if TICD10Node(ctxt).FDisplay <> '' then
   begin
-    resp.designationList.Add(TFHIRLookupOpRespDesignation.Create);
-    resp.designationList[0].language := 'en';
-    resp.designationList[0].value := TICD10Node(ctxt).FDisplay;
+    resp.addDesignation('en', TICD10Node(ctxt).FDisplay);
   end;
-  p := TFHIRLookupOpRespProperty_.Create;
-  resp.property_List.Add(p);
-  p.code := 'descendents';
+  p := resp.addProp('descendents');
   p.value := TFHIRInteger.Create(inttostr(TICD10Node(ctxt).FDescendentCount));
 {$ENDIF}
 end;
 
-function TICD10Provider.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TICD10Provider.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   raise Exception.Create('Not implemented');
 end;

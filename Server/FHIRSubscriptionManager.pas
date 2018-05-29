@@ -1551,6 +1551,7 @@ var
   evd : TFHIREventDefinition;
 {$ENDIF}
 begin
+
   if subscription.criteria = '*' then
     result := true
   else
@@ -1578,6 +1579,8 @@ var
   new : TFhirResource;
   oldId, newId : string;
 begin
+  result := false;
+
   new := LoadResourceFromDBByVer(conn, ResourceVersionKey, newId);
   try
     old := nil;

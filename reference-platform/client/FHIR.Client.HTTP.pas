@@ -36,8 +36,8 @@ uses
   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime,
   FHIR.Support.Stream, FHIR.Support.Mime, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdComponent,
-  {$IFNDEF OSX}FHIR.Support.WInInet, {$ENDIF}
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.XVersion.Resources, FHIR.Client.Base,
+  {$IFNDEF OSX}FHIR.Support.WinInet, {$ENDIF}
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Client.Base,
   FHIR.Smart.Utilities;
 
 type
@@ -756,10 +756,10 @@ function TFHIRHTTPCommunicator.searchV(atype: TFhirResourceTypeV; allRecords: bo
 var
   s : String;
   bnd : TFHIRResourceV;
-  bh : TBundleHandler;
+  bh : TFHIRBundleW;
   headers : THTTPHeaders;
 begin
-  bh := FBundleHandler.Create(fetchResource(makeUrl(aType)+'?'+params, httpGet, nil, headers));
+  bh := FClient.BundleFactory.Create(fetchResource(makeUrl(aType)+'?'+params, httpGet, nil, headers));
   try
     if bh.resource.fhirType <> 'Bundle' then
       raise Exception.Create('Found a resource of type '+bh.resource.fhirType+' expecting a Bundle');
@@ -853,11 +853,11 @@ var
   feed : TFHIRResourceV;
   i : integer;
   headers : THTTPHeaders;
-  bh : TBundleHandler;
+  bh : TFHIRBundleW;
 begin
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
   notify('Fetch History for '+aType);
-  bh := FBundleHandler.Create(fetchResource(makeUrl(aType)+'/_history?'+params, httpGet, nil, headers) as TFHIRResourceV);
+  bh := FClient.BundleFactory.Create(fetchResource(makeUrl(aType)+'/_history?'+params, httpGet, nil, headers) as TFHIRResourceV);
   try
     s := bh.next;
     i := 1;

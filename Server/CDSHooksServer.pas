@@ -276,6 +276,8 @@ var
   t : TCDSHooksProcessorClass;
   p : TCDSHooksProcessor;
 begin
+  result := false;
+
   if FEngines.Count = 0 then
     exit(false);
   client := server.Storage.createClient('en', server, server.ValidatorContext, session);

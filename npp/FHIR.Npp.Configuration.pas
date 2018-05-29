@@ -1,4 +1,4 @@
-unit SettingsForm;
+unit FHIR.Npp.Configuration;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -33,11 +33,11 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Buttons,
-  Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
+  Vcl.Dialogs, FHIR.Npp.Base, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
   VirtualTrees, Vcl.ComCtrls, FHIR.Smart.Utilities, FHIR.Client.ServerDialog,
   FHIR.Support.Generics, FHIR.Base.Objects, FHIR.Base.Factory,
   FHIR.Cache.PackageManager,
-  FHIR.Npp.Context;
+  FHIR.Npp.Context, FHIR.Npp.Form;
 
 type
   TSettingForm = class(TNppForm)
@@ -51,7 +51,7 @@ type
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
-    edtServer: TEdit;
+    edtServerR2: TEdit;
     GroupBox2: TGroupBox;
     TabSheet2: TTabSheet;
     btnEditAsText: TButton;
@@ -80,6 +80,12 @@ type
     lblR2Status: TLabel;
     lblR3Status: TLabel;
     lblR4Status: TLabel;
+    GroupBox5: TGroupBox;
+    chkWelcome: TCheckBox;
+    edtServerR3: TEdit;
+    Label6: TLabel;
+    edtServerR4: TEdit;
+    Label7: TLabel;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnEditAsTextClick(Sender: TObject);
@@ -116,11 +122,11 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings,
+  FHIR.Npp.Settings,
   FHIR.R4.Constants,
-  FHIRPlugin,
-  FHIRVisualiser,
-  FHIRToolboxForm, FHIR.Cache.PackageManagerDialog;
+  FHIR.Npp.Plugin,
+  FHIR.Npp.Visualiser,
+  FHIR.Npp.Toolbox, FHIR.Cache.PackageManagerDialog;
 
 procedure TSettingForm.btnEditAsTextClick(Sender: TObject);
 begin
@@ -132,18 +138,18 @@ procedure TSettingForm.Button1Click(Sender: TObject);
 var
   b, s : String;
 begin
-  Settings.TerminologyServer := edtServer.Text;
+  Settings.TerminologyServerR2 := edtServerR2.Text;
+  Settings.TerminologyServerR3 := edtServerR3.Text;
+  Settings.TerminologyServerR4 := edtServerR4.Text;
   Settings.loadR2 := cbR2.Checked;
   Settings.loadR3 := cbR3.Checked;
   Settings.loadR4 := cbR4.Checked;
 
   Settings.NoPathSummary := not cbPathSummary.checked;
   Settings.NoValidationSummary := not cbValidationSummary.checked;
+  Settings.NoWelcomeForm := not chkWelcome.Checked;
   Settings.CommitChanges;
-  _FuncDisconnect;
 
-  if FHIRToolbox <> nil then
-    FHIRToolbox.loadServers;
   if FHIRVisualizer <> nil then
     FHIRVisualizer.reregisterAllCDSServers;
 end;
@@ -266,8 +272,11 @@ procedure TSettingForm.btnAddClick(Sender: TObject);
 begin
   EditRegisteredServerForm := TEditRegisteredServerForm.create(npp);
   try
+    EditRegisteredServerForm.versions := FVersions.link;
+    EditRegisteredServerForm.load;
     if EditRegisteredServerForm.ShowModal = mrOk then
     begin
+      loadServers;
       vtServers.RootNodeCount := Settings.ServerCount('');
       vtServers.Invalidate;
     end;
@@ -287,7 +296,9 @@ procedure TSettingForm.FormShow(Sender: TObject);
 var
   s : String;
 begin
-  edtServer.Text := Settings.TerminologyServer;
+  edtServerR2.Text := Settings.TerminologyServerR2;
+  edtServerR3.Text := Settings.TerminologyServerR3;
+  edtServerR4.Text := Settings.TerminologyServerR4;
   if FCache.packageExists('hl7.fhir.core', '1.0.2') then
     cbR2.Checked := Settings.loadR2
   else
@@ -306,6 +317,7 @@ begin
   vtServers.RootNodeCount := Settings.ServerCount('');
   cbPathSummary.checked := not Settings.NoPathSummary;
   cbValidationSummary.checked := not Settings.NoValidationSummary;
+  chkWelcome.Checked := not Settings.NoWelcomeForm;
 end;
 
 procedure TSettingForm.LoadServers;

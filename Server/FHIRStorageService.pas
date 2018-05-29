@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Text, FHIR.Web.Parsers,
-  FHIR.Support.Objects, FHIR.Support.Generics,  FHIR.Support.Exceptions, FHIR.Support.Collections,
+  FHIR.Support.Objects, FHIR.Support.Generics,  FHIR.Support.Exceptions, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.Database.Dialects, FHIR.Support.DateTime, FHIR.Misc.GraphQL,
 
   FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Base.Lang,
@@ -238,6 +238,9 @@ Type
     function operationV(atype : TFHIRResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+    procedure terminate; override;
   end;
 
   TFHIRStorageService = class (TFslObject)
@@ -1317,6 +1320,16 @@ begin
   end;
 end;
 
+function TFHIRInternalCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFHIRInternalCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslBuffer): TFslBuffer;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
 procedure TFHIRInternalCommunicator.deleteResourceV(atype: TFhirResourceTypeV; id: String);
 begin
   raise Exception.Create('Not done yet');
@@ -1451,6 +1464,12 @@ procedure TFHIRInternalCommunicator.SetSession(const Value: TFHIRSession);
 begin
   FSession.Free;
   FSession := Value;
+end;
+
+procedure TFHIRInternalCommunicator.terminate;
+begin
+  inherited;
+
 end;
 
 function TFHIRInternalCommunicator.transactionV(bundle: TFhirResourceV): TFhirResourceV;

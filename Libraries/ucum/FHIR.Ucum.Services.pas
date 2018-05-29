@@ -37,6 +37,7 @@ Uses
   FHIR.Support.Collections, FHIR.Support.Objects,
   FHIR.Support.Decimal, FHIR.Support.Text, FHIR.Support.MXml,
   FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, FHIR.Ucum.IFace,
+  FHIR.Base.Common,
   FHIR.Tools.Parser,
   FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities,
   FHIR.CdsHooks.Utilities,
@@ -228,7 +229,7 @@ Type
     function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
     procedure Displays(code : String; list : TStringList; lang : String); override;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
-    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
@@ -908,9 +909,9 @@ begin
   ctxt.Free;
 end;
 
-function TUcumServices.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TUcumServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  if (prop = 'canonical') and (op in [FilterOperatorEqual]) then
+  if (prop = 'canonical') and (op in [foEqual]) then
     result := TUcumFilterContext.create(value)
   else
     result := nil;

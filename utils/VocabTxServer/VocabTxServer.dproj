@@ -163,7 +163,7 @@
             <Form>TxServerForm</Form>
         </DCCReference>
         <DCCReference Include="..\..\Libraries\ui\FHIR.Ui.OSX.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.WInInet.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.WinInet.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.CdsHooks.Client.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Osx.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Strings.pas"/>
@@ -303,7 +303,7 @@
         <DCCReference Include="..\..\Server\GoogleAnalyticsProvider.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.Base.pas"/>
-        <DCCReference Include="..\..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas"/>
+        <DCCReference Include="..\..\Server\FHIR.Tools.XhtmlComp.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.ParserBase.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.Parser.pas"/>
         <DCCReference Include="..\..\reference-platform\client\FHIR.Client.Base.pas"/>
@@ -321,7 +321,7 @@
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Service.pas"/>
         <DCCReference Include="..\..\reference-platform\base\FHIR.Base.Factory.pas"/>
         <DCCReference Include="..\..\reference-platform\base\FHIR.Base.Validator.pas"/>
-        <DCCReference Include="..\..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\..\reference-platform\base\FHIR.Base.Common.pas"/>
         <DCCReference Include="..\..\reference-platform\base\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.Common.pas"/>
@@ -399,6 +399,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>VocabTxServer.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
@@ -407,13 +414,6 @@
                 <DeployFile LocalName="Win64\Debug\VocabTxServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>VocabTxServer.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>VocabTxServer.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

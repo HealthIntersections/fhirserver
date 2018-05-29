@@ -220,7 +220,7 @@ valueOf()	Returns the primitive value of an array
   protected
     procedure freeObject(obj : TObject); virtual;
   public
-    constructor Create(chakraPath : String); virtual;
+    constructor Create(chakraPath : String); overload; virtual;
     destructor Destroy; override;
 
     property InstanceId : cardinal read FInstanceId;

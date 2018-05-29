@@ -36,8 +36,8 @@ interface
 
 uses
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine,
-  FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Xhtml,
+  FHIR.Base.Common,
   FHIR.Client.Base, FHIR.Client.Threaded;
 
 type
@@ -56,6 +56,12 @@ type
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
 
+    function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
+    function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
+
+    procedure checkNoImplicitRules(res : TFHIRObject; method, param : string); override;
+    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); override;
+
     function makeByName(const name : String) : TFHIRObject; override;
     function makeBoolean(b : boolean): TFHIRObject; override;
     function makeCode(s : string) : TFHIRObject; override;
@@ -66,6 +72,11 @@ type
     function makeParameters : TFHIRParametersW; override;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
+    function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; override;
+    function wrapCodeSystem(r : TFHIRResourceV) : TFhirCodeSystemW; override;
+    function wrapExtension(o : TFHIRObject) : TFhirExtensionW; override;
+    function wrapCoding(o : TFHIRObject) : TFhirCodingW; override;
+    function wrapOperationOutcome(r : TFHIRResourceV) : TFhirOperationOutcomeW; override;
   end;
 
 implementation
@@ -74,9 +85,23 @@ uses
   Soap.EncdDecd,
   FHIR.Client.HTTP,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Parser, FHIR.R3.Context, FHIR.R3.Validator, FHIR.R3.Profiles,
-  FHIR.R3.Narrative, FHIR.R3.PathEngine, FHIR.R3.Constants, FHIR.R3.Client, FHIR.R3.Common;
+  FHIR.R3.Narrative, FHIR.R3.PathEngine, FHIR.R3.Constants, FHIR.R3.Client, FHIR.R3.Common, FHIR.R3.Utilities;
 
 { TFHIRFactoryR3 }
+
+procedure TFHIRFactoryR3.checkNoImplicitRules(res: TFHIRObject; method, param: string);
+begin
+  if res is TFHIRResource then
+    (res as TFHIRResource).checkNoImplicitRules(method, param);
+end;
+
+procedure TFHIRFactoryR3.checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []);
+begin
+  if res is TFHIRDomainResource then
+    TFHIRDomainResource(res).checkNoModifiers(method, param, allowed)
+  else if res is TFHIRBackboneElement then
+    TFHIRBackboneElement(res).checkNoModifiers(method, param, allowed)
+end;
 
 function TFHIRFactoryR3.createFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;
 var
@@ -93,6 +118,21 @@ end;
 function TFHIRFactoryR3.description: String;
 begin
   result := 'R3 ('+FHIR_GENERATED_VERSION+')';
+end;
+
+function TFHIRFactoryR3.getXhtml(res : TFHIRResourceV): TFHIRXhtmlNode;
+var
+  r : TFHIRDomainResource;
+begin
+  if res = nil then
+    exit(nil);
+  if not (res is TFHIRDomainResource) then
+    exit(nil);
+  r := res as TFHIRDomainResource;
+  if (r.text = nil) then
+    result := nil
+  else
+    result := r.text.div_;
 end;
 
 function TFHIRFactoryR3.makeClient(worker: TFHIRWorkerContextV; url: String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout: cardinal; proxy: String): TFhirClientV;
@@ -118,10 +158,22 @@ begin
   end;
 end;
 
-function TFHIRFactoryR3.makeClientThreaded(worker: TFHIRWorkerContextV;
-  internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
+function TFHIRFactoryR3.makeClientThreaded(worker: TFHIRWorkerContextV; internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
+var
+  c : TFhirThreadedCommunicator;
 begin
-
+  c := TFhirThreadedCommunicator.Create(internal, event);
+  try
+    result := TFhirClient3.create(worker, 'en', c.link);
+    try
+      result.format := internal.format;
+      result.link;
+    finally
+      result.Free;
+    end;
+  finally
+    c.free;
+  end;
 end;
 
 function TFHIRFactoryR3.makeCode(s: string): TFHIRObject;
@@ -151,7 +203,7 @@ end;
 
 function TFHIRFactoryR3.makeParameters: TFHIRParametersW;
 begin
-
+  result := TFHIRParameters3.Create(TFHIRParameters.Create);
 end;
 
 function TFHIRFactoryR3.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; lang: String): TFHIRParser;
@@ -174,6 +226,21 @@ begin
   result := TFHIRValidator3.Create(worker as TFHIRWorkerContext);
 end;
 
+function TFHIRFactoryR3.resetXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;
+var
+  r : TFHIRDomainResource;
+begin
+  if res = nil then
+    exit(nil);
+  if not (res is TFHIRDomainResource) then
+    exit(nil);
+  r := res as TFHIRDomainResource;
+  r.text := TFHIRNarrative.Create;
+  r.text.status := NarrativeStatusGenerated;
+  r.text.div_ := TFhirXHtmlNode.Create('div');
+  result := r.text.div_;
+end;
+
 function TFHIRFactoryR3.version: TFHIRVersion;
 begin
   result := fhirVersionRelease3;
@@ -186,12 +253,52 @@ end;
 
 function TFHIRFactoryR3.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;
 begin
-  result := TFHIRCapabilityStatement3.create(r);
+  if r = nil then
+    result := nil
+  else
+    result := TFHIRCapabilityStatement3.create(r);
+end;
+
+function TFHIRFactoryR3.wrapCodeSystem(r: TFHIRResourceV): TFhirCodeSystemW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFHIRCodeSystem3.create(r);
+end;
+
+function TFHIRFactoryR3.wrapCoding(o: TFHIRObject): TFhirCodingW;
+begin
+  result := TFhirCoding3.create(o);
+end;
+
+function TFHIRFactoryR3.wrapExtension(o: TFHIRObject): TFhirExtensionW;
+begin
+  result := TFhirExtension3.create(o);
+end;
+
+function TFHIRFactoryR3.wrapOperationOutcome(r: TFHIRResourceV): TFhirOperationOutcomeW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirOperationOutcome3.Create(r);
 end;
 
 function TFHIRFactoryR3.wrapStructureDefinition(r: TFHIRResourceV): TFhirStructureDefinitionW;
 begin
-  result := TFHIRStructureDefinition3.create(r);
+  if r = nil then
+    result := nil
+  else
+    result := TFHIRStructureDefinition3.create(r);
+end;
+
+function TFHIRFactoryR3.wrapValueSet(r: TFHIRResourceV): TFhirValueSetW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFHIRValueSet3.create(r);
 end;
 
 function TFHIRFactoryR3.makeBase64Binary(s: string): TFHIRObject;

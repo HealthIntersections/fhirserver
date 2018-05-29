@@ -37,7 +37,7 @@ interface
 uses
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine,
-  FHIR.XVersion.Resources,
+  FHIR.Base.Common,
   FHIR.Client.Base, FHIR.Client.Threaded;
 
 type

@@ -151,7 +151,7 @@
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Decimal.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.WInInet.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.WinInet.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Json.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Services.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Handlers.pas"/>
@@ -299,7 +299,7 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathNode.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.ParserBase.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas"/>
+        <DCCReference Include="..\Server\FHIR.Tools.XhtmlComp.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Base.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Parser.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Client.pas"/>
@@ -314,7 +314,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
-        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Common.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
@@ -324,6 +324,7 @@
         <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Smart.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

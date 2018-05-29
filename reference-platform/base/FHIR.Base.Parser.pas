@@ -68,7 +68,7 @@ const
   FHIR_TTL_URI_BASE = 'http://hl7.org/fhir/';
 
 Type
-  TFHIRParser = class abstract (TFHIRObject)
+  TFHIRParser = class abstract (TFslObject)
   private
     FAllowUnknownContent: Boolean;
     Fresource: TFhirResourceV;
@@ -139,8 +139,8 @@ Type
     Procedure XmlError(const sPath, sMessage : String);
 
     Function ParseDomainResourceV(element: TMXmlElement; path : String) : TFhirResourceV;
-    Function ParseResourceV(element : TMXmlElement; path : String) : TFhirResourceV; Virtual;
-    function ParseDataTypeV(element : TMXmlElement; name : String; type_ : TClass) : TFHIRObject; virtual;
+    Function ParseResourceV(element : TMXmlElement; path : String) : TFhirResourceV; Virtual; abstract;
+    function ParseDataTypeV(element : TMXmlElement; name : String; type_ : TClass) : TFHIRObject; virtual; abstract;
 
     Procedure checkOtherAttributes(value : TMXmlElement; path : String);
     function GetFormat: TFHIRFormat; override;
@@ -154,21 +154,22 @@ Type
 
 
   TJsonObjectHandler = procedure (jsn : TJsonObject; ctxt : TFHIRObjectList) of object;
-  TJsonObjectPrimitiveHandler = procedure (value : String; jsn : TJsonObject; ctxt : TFHIRObjectList) of object;
-  TJsonObjectEnumHandler = procedure (path, value : String; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aSystems, aNames : Array Of String) of object;
+  TJsonObjectPrimitiveHandler = procedure (value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList) of object;
+  TJsonObjectEnumHandler = procedure (path : String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aSystems, aNames : Array Of String) of object;
 
   TFHIRJsonParserBase = class (TFHIRParser)
   Protected
-    Function ParseXHtmlNode(path, value : String) : TFhirXHtmlNode;
+    Function ParseXHtmlNode(path : String; value : TJsonNode) : TFhirXHtmlNode;
 
-    Function ParseResourceV(jsn : TJsonObject) : TFhirResourceV; Virtual;
-    function ParseDataTypeV(jsn : TJsonObject; name : String; type_ : TClass) : TFHIRObject; virtual;
+    Function ParseResourceV(jsn : TJsonObject) : TFhirResourceV; Virtual; abstract;
+    function ParseDataTypeV(jsn : TJsonObject; name : String; type_ : TClass) : TFHIRObject; virtual; abstract;
     procedure ParseComments(base : TFHIRObject; jsn : TJsonObject);
 
     procedure iterateArray(arr : TJsonArray; ctxt : TFHIRObjectList; handler : TJsonObjectHandler);
     procedure iteratePrimitiveArray(arr1, arr2 : TJsonArray; ctxt : TFHIRObjectList; handler : TJsonObjectPrimitiveHandler);
     procedure iterateEnumArray(arr1, arr2 : TJsonArray; path : String; ctxt : TFHIRObjectList; handler : TJsonObjectEnumHandler; Const aSystems, aNames : Array Of String);
 
+    function JsonToString(node : TJsonNode) : String;
     // handlers
     procedure parseDomainResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
     function GetFormat: TFHIRFormat; override;
@@ -185,7 +186,7 @@ Type
 
     function GetFormat: TFHIRFormat; override;
     function rdfsType(obj : TTurtleComplex) : string;
-    function ParseResourceV(obj : TTurtleComplex) : TFHIRResourceV; virtual;
+    function ParseResourceV(obj : TTurtleComplex) : TFHIRResourceV; virtual; abstract;
     function ParseXHtmlNode(literal : String) : TFhirXHtmlNode;
   public
     procedure Parse; Overload; Override;
@@ -198,6 +199,7 @@ Type
     function GetFormat: TFHIRFormat; override;
   Public
     procedure Parse; Overload; Override;
+    function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; override;
   End;
 
   TFHIRComposer = class abstract (TFslObject)
@@ -215,7 +217,7 @@ Type
     function isCanonical : boolean;
     function doCompose(name : String) : boolean;
 
-    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload; virtual;
+    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload; virtual; abstract;
     procedure ComposeXHtmlNode(xml : TXmlBuilder; name : String; node: TFhirXHtmlNode); overload;
 
     function ResourceMediaType: String; virtual;
@@ -230,9 +232,10 @@ Type
   public
     Constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; lang : String); Virtual;
     Destructor Destroy; override;
-    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Overload; Virtual;
+    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
 
     function Compose(oResource : TFhirResourceV) : String; Overload;
+    function ComposeBytes(oResource : TFhirResourceV) : TBytes; Overload;
     function Compose(name : String; items : TFHIRObjectList): String; Overload;
     function Compose(name : String; item : TFHIRObject): String; Overload;
 
@@ -286,7 +289,7 @@ Type
     procedure ComposeDomainResource(json : TJSONWriter; name : String; oResource : TFhirResourceV); overload; virtual;
     procedure ComposeInnerResource(json : TJSONWriter; name : String; holder : TFHIRObject; oResource : TFhirResourceV); overload; virtual;
     procedure ComposeInnerResource(json : TJSONWriter; name : String; holder : TFhirResourceV; oResource : TFhirResourceV); overload; virtual;
-    Procedure ComposeResourceV(json : TJSONWriter; oResource : TFhirResourceV); overload; virtual;
+    Procedure ComposeResourceV(json : TJSONWriter; oResource : TFhirResourceV); overload; virtual; abstract;
 //    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
@@ -314,7 +317,7 @@ Type
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
 
-    Procedure ComposeResourceV(parent :  TTurtleComplex; oResource : TFhirResourceV); overload; virtual;
+    Procedure ComposeResourceV(parent :  TTurtleComplex; oResource : TFhirResourceV); overload; virtual; abstract;
     Procedure ComposeInnerResource(this : TTurtleComplex; parentType, name : String; elem : TFhirResourceV; useType : boolean; index : integer); overload;
     function GetFormat: TFHIRFormat; override;
   public
@@ -331,6 +334,7 @@ Type
     function ResourceMediaType: String; override;
     function GetFormat: TFHIRFormat; override;
   public
+    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload; override;
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Function MimeType : String; Override;
@@ -379,12 +383,6 @@ begin
   end;
 end;
 
-function TFHIRXmlParserBase.ParseResourceV(element: TMXmlElement; path : String): TFhirResourceV;
-begin
-  raise exception.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
-end;
-
-
 { TFHIRJsonParserBase }
 
 
@@ -415,11 +413,6 @@ begin
   end;
 end;
 
-function TFHIRJsonParserBase.ParseResourceV(jsn : TJsonObject): TFhirResourceV;
-begin
-  raise exception.create('don''t use TFHIRJsonParserBase directly - use TFHIRJsonParser');
-end;
-
 function TFHIRXmlParserBase.PathForElement(element: TMXmlElement): String;
 begin
   result := '';
@@ -439,19 +432,20 @@ end;
 
 procedure TFHIRXmlParserBase.XmlError(const sPath, sMessage: String);
 begin
-
   Raise Exception.Create(StringFormat(GetFhirMessage('MSG_ERROR_PARSING', lang), [sMessage+' @ '+sPath]));
 end;
 
-function TFHIRJsonParserBase.ParseXHtmlNode(path, value : String): TFhirXHtmlNode;
+function TFHIRJsonParserBase.ParseXHtmlNode(path : String; value : TJsonNode): TFhirXHtmlNode;
 begin
   if FIgnoreHtml then
     result := nil
   else
-    result := TFHIRXhtmlParser.parse(lang, FParserPolicy, [], value);
+  begin
+    result := TFHIRXhtmlParser.parse(lang, FParserPolicy, [], JsonToString(value));
+    result.LocationStart := value.LocationStart;
+    result.LocationEnd := value.LocationEnd;
+  end;
 end;
-
-
 
 function TFHIRXmlParserBase.ParseXHtmlNode(element: TMXmlElement; path : String): TFhirXHtmlNode;
 begin
@@ -460,7 +454,11 @@ begin
   if FIgnoreHtml then
     result := nil
   else
+  begin
     result := TFHIRXhtmlParser.Parse(lang, FParserPolicy, [], element, path, FHIR_NS);
+    result.LocationStart := element.Start;
+    result.LocationEnd := element.Stop;
+  end;
 end;
 
 procedure TFHIRJsonParserBase.Parse(obj: TJsonObject);
@@ -472,11 +470,6 @@ end;
 procedure TFHIRJsonParserBase.ParseComments(base: TFHIRObject; jsn : TJsonObject);
 begin
   checkTimeOut;
-end;
-
-function TFHIRJsonParserBase.ParseDataTypeV(jsn: TJsonObject; name: String; type_: TClass): TFHIRObject;
-begin
-  raise exception.create('don''t use TFHIRJsonParserBase directly - use TFHIRJsonParser');
 end;
 
 procedure TFHIRJsonParserBase.parseDomainResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -499,6 +492,12 @@ begin
       if (arr.Obj[i] <> nil) then
         handler(arr.Obj[i], ctxt);
   end;
+  // now, count the start and end of the array into the entry locations
+  if ctxt.Count > 0 then
+  begin
+    ctxt[0].LocationStart := arr.LocationStart;
+    ctxt[ctxt.Count - 1 ].LocationEnd := arr.LocationEnd;
+  end;
 end;
 
 procedure TFHIRJsonParserBase.iteratePrimitiveArray(arr1, arr2 : TJsonArray; ctxt : TFHIRObjectList; handler : TJsonObjectPrimitiveHandler);
@@ -508,8 +507,37 @@ begin
   if (arr1 <> nil) or (arr2 <> nil) then
   begin
     for i := 0 to max(arr1.Count, arr2.Count) - 1 do
-      handler(arr1.Value[i], arr2.Obj[i], ctxt);
+      handler(arr1.Item[i], arr2.Obj[i], ctxt);
   end;
+  // now, count the start and end of the array into the entry locations
+  if ctxt.Count > 0 then
+  begin
+    if (arr1 <> nil) then
+    begin
+      ctxt[0].LocationStart := arr1.LocationStart;
+      ctxt[ctxt.Count - 1 ].LocationEnd := arr1.LocationEnd;
+    end
+    else if (arr2 <> nil) then
+    begin
+      ctxt[0].LocationStart := arr2.LocationStart;
+      ctxt[ctxt.Count - 1 ].LocationEnd := arr2.LocationEnd;
+    end;
+  end;
+end;
+
+function TFHIRJsonParserBase.JsonToString(node: TJsonNode): String;
+begin
+  if node = nil then
+    result := ''
+  else
+    case node.kind of
+      jnkNull : result := 'null';
+      jnkBoolean : result := BoolToStr(TJsonBoolean(node).value);
+      jnkString : result := TJsonString(node).value;
+      jnkNumber : result := TJsonNumber(node).value;
+      jnkObject : result := '{}';
+      jnkArray : result := '[]';
+    end;
 end;
 
 procedure TFHIRJsonParserBase.iterateEnumArray(arr1, arr2 : TJsonArray; path : String; ctxt : TFHIRObjectList; handler : TJsonObjectEnumHandler; Const aSystems, aNames : Array Of String);
@@ -519,7 +547,21 @@ begin
   if (arr1 <> nil) or (arr2 <> nil) then
   begin
     for i := 0 to max(arr1.Count, arr2.Count) - 1 do
-      handler(path+'['+inttostr(i+1)+']', arr1.Value[i], arr2.Obj[i], ctxt, aSystems, aNames);
+      handler(path+'['+inttostr(i+1)+']', arr1.item[i], arr2.Obj[i], ctxt, aSystems, aNames);
+  end;
+  // now, count the start and end of the array into the entry locations
+  if ctxt.Count > 0 then
+  begin
+    if (arr1 <> nil) then
+    begin
+      ctxt[0].LocationStart := arr1.LocationStart;
+      ctxt[ctxt.Count - 1 ].LocationEnd := arr1.LocationEnd;
+    end
+    else if (arr2 <> nil) then
+    begin
+      ctxt[0].LocationStart := arr2.LocationStart;
+      ctxt[ctxt.Count - 1 ].LocationEnd := arr2.LocationEnd;
+    end;
   end;
 end;
 
@@ -740,11 +782,6 @@ begin
   json.ValueObject(name);
   json.Value('test', 'value');
   json.FinishObject;
-end;
-
-procedure TFHIRJsonComposerBase.ComposeResourceV(json : TJSONWriter; oResource: TFhirResourceV);
-begin
-  raise exception.create('don''t use TFHIRJsonComposerBase directly - use TFHIRJsonComposer');
 end;
 
 {Procedure TFHIRJsonComposerBase.ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV);
@@ -1000,14 +1037,6 @@ begin
   FElement := Value;
 end;
 
-{atom }
-
-procedure TFHIRComposer.Compose(stream: TStream; oResource: TFhirResourceV);
-begin
-  raise Exception.Create('Error: call to TFHIRComposer.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList)');
-end;
-
-
 function TFHIRComposer.Compose(name : String; items : TFHIRObjectList): String;
 var
   stream : TBytesStream;
@@ -1048,6 +1077,19 @@ begin
 end;
 
 
+function TFHIRComposer.ComposeBytes(oResource: TFhirResourceV): TBytes;
+var
+  stream : TBytesStream;
+begin
+  stream := TBytesStream.create;
+  try
+    compose(stream, oResource);
+    result := stream.Bytes;
+  finally
+    stream.Free;
+  end;
+end;
+
 procedure TFHIRComposer.ComposeItem(stream: TStream; name: String; item: TFHIRObject);
 begin
   raise Exception.Create('ComposeExpression is Not supported for '+className);
@@ -1056,11 +1098,6 @@ end;
 procedure TFHIRComposer.ComposeItems(stream: TStream; name: String; items: TFHIRObjectList);
 begin
   raise Exception.Create('ComposeExpression is Not supported for '+className);
-end;
-
-procedure TFHIRComposer.ComposeResourceV(xml : TXmlBuilder; oResource: TFhirResourceV);
-begin
-  raise exception.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRComposer.ComposeXHtmlNode(xml: TXmlBuilder; name: String; node: TFhirXHtmlNode);
@@ -1294,11 +1331,6 @@ begin
   inherited;
 end;
 
-function TFHIRXmlParserBase.ParseDataTypeV(element: TMXmlElement; name: String; type_: TClass): TFHIRObject;
-begin
-  raise exception.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
-end;
-
 function TFHIRXmlParserBase.ParseDomainResourceV(element: TMXmlElement; path : String): TFhirResourceV;
 var
   child : TMXmlElement;
@@ -1495,11 +1527,6 @@ begin
   raise Exception.Create('not implemented yet');
 end;
 
-procedure TFHIRTurtleComposerBase.ComposeResourceV(parent :  TTurtleComplex; oResource: TFhirResourceV);
-begin
-  raise Exception.Create('do not instantiate TFHIRTurtleComposerBase directly');
-end;
-
 procedure TFHIRTurtleComposerBase.ComposeXHtmlNode(parent: TTurtleComplex; parentType, name: String; value: TFhirXHtmlNode; useType : boolean; index: integer);
 begin
   if (value = nil) then
@@ -1555,6 +1582,11 @@ begin
 end;
 
 
+function TFHIRTextParser.ParseDT(rootName: String; type_: TClass): TFHIRObject;
+begin
+  raise Exception.Create('The method TFHIRTextParser.ParseDT should never be called');
+end;
+
 { TFHIRTextComposer }
 
 procedure TFHIRTextComposer.Compose(stream: TStream; oResource: TFhirResourceV);
@@ -1565,6 +1597,11 @@ end;
 procedure TFHIRTextComposer.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
   raise Exception.Create('Not Done Yet');
+end;
+
+procedure TFHIRTextComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 function TFHIRTextComposer.Extension: String;
@@ -1627,11 +1664,6 @@ end;
 function TFHIRTurtleParserBase.ParseDT(rootName: String; type_: TClass): TFHIRObject;
 begin
   raise Exception.Create('not supported');
-end;
-
-function TFHIRTurtleParserBase.ParseResourceV(obj: TTurtleComplex): TFHIRResourceV;
-begin
-  raise Exception.Create('Need to override ParseResourceV() in '+className);
 end;
 
 function TFHIRTurtleParserBase.ParseXHtmlNode(literal: String): TFhirXHtmlNode;

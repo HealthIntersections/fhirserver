@@ -38,7 +38,7 @@ Uses
 
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Common,
   FHIR.R3.PathNode, FHIR.R3.Context, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.PathEngine, FHIR.R3.ElementModel;
 
 
@@ -244,9 +244,7 @@ implementation
 
 uses
   FHIR.Base.Parser,
-  FHIR.R3.Common,
-  FHIR.R3.Utilities, 
-  FHIR.R3.Profiles;
+  FHIR.R3.Common, FHIR.R3.Utilities, FHIR.R3.Profiles, FHIR.R3.Narrative;
 
 function nameMatches(name, tail: String): boolean;
 begin
@@ -3466,12 +3464,19 @@ end;
 function TFHIRValidator3.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
 var
   o : TFhirOperationOutcomeIssueW;
+  gen : TFHIRNarrativeGenerator;
 begin
   result := TFhirOperationOutcome.create;
   try
     for o in ctxt.Issues do
       result.issueList.add(o.Element.Link);
-    BuildNarrative(result, ctxt.OperationDescription);
+    gen := TFHIRNarrativeGenerator.create(Context.Link);
+    try
+      gen.description := ctxt.OperationDescription;
+      gen.generate(result);
+    finally
+      gen.Free;
+    end;
     result.Link;
   finally
     result.free;

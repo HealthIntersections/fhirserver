@@ -576,6 +576,8 @@ Function ToYear(Const Value : TDateTime) : TYear; Overload;
 Function DateTimeMax(Const aA, aB : TDateTime) : TDateTime; Overload;
 Function DateTimeMin(Const aA, aB : TDateTime) : TDateTime; Overload;
 function DescribePeriod(Period: TDateTime): String;
+function TSToDateTime(TS: TTimeStamp): TDateTime;
+function DateTimeToTS(Value : TDateTime): TTimeStamp;
 
 {$IFDEF MSWINDOWS}
 Function ToDateTimeOffset(Const sValue, sFormat : String) : TDateTimeOffset; Overload;
@@ -583,8 +585,6 @@ Function ToDateTimeOffset(Const sValue, sFormat : String; Out aDateTime : TDateT
 
 Function LocalDateTimeOffset : TDateTimeOffset; Overload;
 Function TimeZoneBias(when : TDateTime) : TDateTime; Overload;
-function TSToDateTime(TS: TTimeStamp): TDateTime;
-function DateTimeToTS(Value : TDateTime): TTimeStamp;
 Function DateTimeCompare(Const aA, aB : TDateTime) : Integer; Overload;
 Function DateTimeCompare(Const aA, aB, aThreshold : TDateTime) : Integer; Overload;
 Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDateTime) : String;

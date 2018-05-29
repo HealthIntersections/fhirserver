@@ -46,13 +46,13 @@ Type
   protected
 		FStart : TSourceLocation;
 		FStop : TSourceLocation;
-    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual;
+    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual; abstract;
   public
     Constructor Create(start : TSourceLocation); overload;
     function Link : TTurtleObject; overload;
-    function hasValue(value : String) : boolean; virtual;
-    function isSimple : boolean; virtual;
-    function singleLiteral : String; virtual;
+    function hasValue(value : String) : boolean; virtual; abstract;
+    function isSimple : boolean; virtual; abstract;
+    function singleLiteral : String; virtual; abstract;
     property start : TSourceLocation read FStart;
     property stop : TSourceLocation read FStop;
   end;
@@ -263,29 +263,9 @@ begin
   FStart := start;
 end;
 
-function TTurtleObject.hasValue(value: String): boolean;
-begin
-  raise Exception.Create('Must override hasValue in '+ClassName);
-end;
-
-function TTurtleObject.isSimple: boolean;
-begin
-  raise Exception.Create('Must override isSimple in '+className);
-end;
-
 function TTurtleObject.Link: TTurtleObject;
 begin
   result := TTurtleObject(inherited Link);
-end;
-
-function TTurtleObject.singleLiteral: String;
-begin
-  raise Exception.Create('Must override singleLiteral in '+className);
-end;
-
-function TTurtleObject.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
-begin
-  raise Exception.Create('Must override write in '+className);
 end;
 
 { TTurtleLiteral }

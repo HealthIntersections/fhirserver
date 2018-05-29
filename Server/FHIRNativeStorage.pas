@@ -42,7 +42,7 @@ uses
   FHIR.Tools.Tags, FHIRValueSetExpander, FHIRIndexManagers, FHIR.Tools.Session, FHIR.Tools.DiffEngine, FHIR.Tools.ElementModel, FHIR.Tools.PathNode,
   FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles,
   FHIR.Tools.PathEngine, FHIR.Tools.GraphQL, FHIR.Tools.Client,
-  FHIR.Base.Validator, FHIR.XVersion.Resources, FHIR.Base.Factory,
+  FHIR.Base.Validator, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Cache.PackageManager,
   FHIR.Tools.Narrative, FHIR.Tools.Narrative2, FHIR.Tools.Questionnaire,
   FHIR.CdsHooks.Utilities, {$IFNDEF FHIR2}FHIR.Tools.MapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
@@ -223,7 +223,7 @@ type
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
 
-    procedure AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String; first : boolean = false); overload;
+    function AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String; first : boolean = false) : TFhirBundleEntry; overload;
     procedure DefineConformanceResources(base : String); // called after database is created
 
     // called when kernel actually wants to process against the store
@@ -912,12 +912,11 @@ begin
   inherited;
 end;
 
-procedure TFHIRNativeOperationEngine.AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String; first : boolean = false);
+function TFHIRNativeOperationEngine.AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String; first : boolean = false) : TFhirBundleEntry;
 var
   parser : TFhirParser;
   mem : TBytesStream;
   sId, sAud : String;
-  entry : TFHIRBundleEntry;
   op : TFhirOperationOutcome;
   procedure addRequest(entry : TFHIRBundleEntry);
   begin
@@ -952,59 +951,60 @@ var
     end;
   end;
 begin
+  result := nil;
   sId := FConnection.ColStringByName['Id'];
   type_ := FConnection.colStringByName['ResourceName'];
   if (FConnection.ColIntegerByName['Status'] = 2) then
   begin
-    entry := TFHIRBundleEntry.Create;
+    result := TFHIRBundleEntry.Create;
     try
-      addRequest(entry);
-      entry.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
-      bundle.addEntry(entry.Link, first);
+      addRequest(result);
+      result.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
+      bundle.addEntry(result.Link, first);
     finally
-      entry.Free;
+      result.Free;
     end;
   end
   else if not isSecure and (FConnection.ColIntegerByName['Secure'] = 1) then
   begin
     if bundle.hasSecureOp then
       exit;
-    entry := TFHIRBundleEntry.Create;
+    result := TFHIRBundleEntry.Create;
     try
-      entry.resource := BuildOperationOutcome('en', 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed);
-      entry.resource.Tags[OP_MASK_TAG] := 'secure';
-      addRequest(entry);
-      bundle.addEntry(entry.link, first);
+      result.resource := BuildOperationOutcome('en', 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed);
+      result.resource.Tags[OP_MASK_TAG] := 'secure';
+      addRequest(result);
+      bundle.addEntry(result.link, first);
       bundle.hasSecureOp := true;
     finally
-      entry.Free;
+      result.Free;
     end;
   end
   else
   begin
     if comp = nil then
     begin
-      entry := TFHIRBundleEntry.Create;
+      result := TFHIRBundleEntry.Create;
       try
-        entry.Tag := TFslBuffer.create;
-        entry.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
-        TFslBuffer(entry.Tag).AsBytes := FConnection.ColBlobByName[field];
-        entry.Tags['type'] := type_;
+        result.Tag := TFslBuffer.create;
+        result.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
+        TFslBuffer(result.Tag).AsBytes := FConnection.ColBlobByName[field];
+        result.Tags['type'] := type_;
         if (purpose <> SearchEntryModeNull) then
         begin
-          entry.search := TFhirBundleEntrySearch.Create;
-          entry.search.mode := purpose;
+          result.search := TFhirBundleEntrySearch.Create;
+          result.search.mode := purpose;
           if (purpose = SearchEntryModeMatch) and not FConnection.ColNullByName['Score1'] then
           begin
-            entry.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
+            result.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
             if FConnection.ColIntegerByName['Score2'] > 0 then
-              entry.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
+              result.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
           end;
         end;
-        addRequest(entry);
-        bundle.addEntry(entry.link, first);
+        addRequest(result);
+        bundle.addEntry(result.link, first);
       finally
-        entry.Free;
+        result.Free;
       end;
     end
     else
@@ -1016,25 +1016,25 @@ begin
           parser.source := mem;
           parser.ParserPolicy := xppDrop;
           parser.Parse;
-          entry := TFHIRBundleEntry.Create;
+          result := TFHIRBundleEntry.Create;
           try
-            entry.resource := parser.resource.Link as TFHIRResource;
-            entry.fullUrl := AppendForwardSlash(base)+parser.resource.fhirType+'/'+parser.resource.id;
+            result.resource := parser.resource.Link as TFHIRResource;
+            result.fullUrl := AppendForwardSlash(base)+parser.resource.fhirType+'/'+parser.resource.id;
             if (purpose <> SearchEntryModeNull) then
             begin
-              entry.search := TFhirBundleEntrySearch.Create;
-              entry.search.mode := purpose;
+              result.search := TFhirBundleEntrySearch.Create;
+              result.search.mode := purpose;
               if (purpose = SearchEntryModeMatch) and not FConnection.ColNullByName['Score1'] then
               begin
-                entry.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
+                result.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
                 if FConnection.ColIntegerByName['Score2'] > 0 then
-                  entry.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
+                  result.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
               end;
             end;
-            addRequest(entry);
-            bundle.addEntry(entry.Link, first);
+            addRequest(result);
+            bundle.addEntry(result.Link, first);
           finally
-            entry.Free;
+            result.Free;
           end;
         finally
           parser.free;
@@ -3144,8 +3144,8 @@ var
   sp : TFhirSearchParameter;
 {$ENDIF}
 begin
-{$IFDEF FHIR3}
   result := false;
+{$IFDEF FHIR3}
   crs := TFslList<TFHIRCustomResourceInformation>.create;
   try
     ig := GetResourceByKey(key, needsSecure) as TFHIRImplementationGuide;
@@ -3251,6 +3251,7 @@ var
   sp : TFhirSearchParameter;
 {$ENDIF}
 begin
+  result := false;
 {$IFDEF FHIR3}
   crs := TFslList<TFHIRCustomResourceInformation>.create;
   try
@@ -4068,94 +4069,96 @@ begin
       ok := false;
 
     if ok then
-    bundle := request.Resource as TFhirBundle;
-    if bundle.type_ = BundleTypeBatch then
-      executeBatch(context, request, response)
-    else
     begin
-      request.Source := nil; // ignore that now
-      resp := TFHIRBundle.create(BundleTypeTransactionResponse);
-      ids := TFHIRTransactionEntryList.create;
-      try
-        ids.FDropDuplicates := bundle.Tags['duplicates'] = 'ignore';
-//        resp.base := baseUrl;
-        ids.SortedByName;
-        resp.id := FhirGUIDToString(CreateGuid);
-
-
-        // first pass: scan ids
-        for i := 0 to bundle.entryList.count - 1 do
-        begin
-          bundle.entryList[i].Tag := scanId(request, bundle.entryList[i], ids, i).Link;
-          context.progress(0+trunc(100 * (i / (bundle.entryList.count * 10))));
-        end;
-
-        // third pass: reassign references
-        for i := 0 to bundle.entryList.count - 1 do
-        begin
-          context.progress(10+trunc(100 * (i / (bundle.entryList.count * 10))));
-          entry := bundle.entryList[i].Tag as TFHIRTransactionEntry;
-
-          if not entry.ignore and not entry.deleted then
-            adjustReferences(request, response, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.baseUrl, bundle.entryList[i], ids);
-        end;
-
-        // four pass: commit resources
-        bundle := bundle.Link;
+      bundle := request.Resource as TFhirBundle;
+      if bundle.type_ = BundleTypeBatch then
+        executeBatch(context, request, response)
+      else
+      begin
+        request.Source := nil; // ignore that now
+        resp := TFHIRBundle.create(BundleTypeTransactionResponse);
+        ids := TFHIRTransactionEntryList.create;
         try
+          ids.FDropDuplicates := bundle.Tags['duplicates'] = 'ignore';
+  //        resp.base := baseUrl;
+          ids.SortedByName;
+          resp.id := FhirGUIDToString(CreateGuid);
+
+
+          // first pass: scan ids
           for i := 0 to bundle.entryList.count - 1 do
           begin
-            context.progress(20+trunc(100 * (i / (bundle.entryList.count * 10))));
-             ne := resp.entryList.Append;
-//             ne.request := bundle.entryList[i].request.Link;
-            (bundle.entryList[i].Tag as TFHIRTransactionEntry).entry := ne;
+            bundle.entryList[i].Tag := scanId(request, bundle.entryList[i], ids, i).Link;
+            context.progress(0+trunc(100 * (i / (bundle.entryList.count * 10))));
           end;
 
+          // third pass: reassign references
           for i := 0 to bundle.entryList.count - 1 do
           begin
-            context.progress(30+trunc(100 * (i / (bundle.entryList.count * 10))));
-            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
-              ignoreEntry(bundle.entryList[i], resp.entryList[i]);
+            context.progress(10+trunc(100 * (i / (bundle.entryList.count * 10))));
+            entry := bundle.entryList[i].Tag as TFHIRTransactionEntry;
+
+            if not entry.ignore and not entry.deleted then
+              adjustReferences(request, response, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.baseUrl, bundle.entryList[i], ids);
           end;
 
-          for i := 0 to bundle.entryList.count - 1 do
-          begin
-            context.progress(40+trunc(100 * (i / (bundle.entryList.count * 5))));
-            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
-              if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
-                Abort;
-          end;
-          for i := 0 to bundle.entryList.count - 1 do
-          begin
-            context.progress(60+trunc(100 * (i / (bundle.entryList.count * 5))));
-            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesUpdate then
-              if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
-                Abort;
-          end;
-          for i := 0 to bundle.entryList.count - 1 do
-          begin
-            context.progress(80+trunc(100 * (i / (bundle.entryList.count * 10))));
-            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesDelete then
-              if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
-                Abort;
-          end;
-          for i := 0 to bundle.entryList.count - 1 do
-          begin
-            context.progress(90+trunc(100 * (i / (bundle.entryList.count * 10))));
-            if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesRead then
-              if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
-                Abort;
-          end;
+          // four pass: commit resources
+          bundle := bundle.Link;
+          try
+            for i := 0 to bundle.entryList.count - 1 do
+            begin
+              context.progress(20+trunc(100 * (i / (bundle.entryList.count * 10))));
+               ne := resp.entryList.Append;
+  //             ne.request := bundle.entryList[i].request.Link;
+              (bundle.entryList[i].Tag as TFHIRTransactionEntry).entry := ne;
+            end;
 
+            for i := 0 to bundle.entryList.count - 1 do
+            begin
+              context.progress(30+trunc(100 * (i / (bundle.entryList.count * 10))));
+              if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
+                ignoreEntry(bundle.entryList[i], resp.entryList[i]);
+            end;
+
+            for i := 0 to bundle.entryList.count - 1 do
+            begin
+              context.progress(40+trunc(100 * (i / (bundle.entryList.count * 5))));
+              if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
+                if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+                  Abort;
+            end;
+            for i := 0 to bundle.entryList.count - 1 do
+            begin
+              context.progress(60+trunc(100 * (i / (bundle.entryList.count * 5))));
+              if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesUpdate then
+                if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+                  Abort;
+            end;
+            for i := 0 to bundle.entryList.count - 1 do
+            begin
+              context.progress(80+trunc(100 * (i / (bundle.entryList.count * 10))));
+              if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesDelete then
+                if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+                  Abort;
+            end;
+            for i := 0 to bundle.entryList.count - 1 do
+            begin
+              context.progress(90+trunc(100 * (i / (bundle.entryList.count * 10))));
+              if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesRead then
+                if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+                  Abort;
+            end;
+
+          finally
+            bundle.free;
+          end;
+          response.HTTPCode := 200;
+          response.Message := 'OK';
+          response.bundle := resp.Link;
         finally
-          bundle.free;
+          ids.free;
+          resp.free;
         end;
-        response.HTTPCode := 200;
-        response.Message := 'OK';
-        response.bundle := resp.Link;
-      finally
-        ids.free;
-        resp.free;
       end;
     end;
     if request.Resource <> nil then // batch
@@ -7091,7 +7094,7 @@ begin
             type_ := conn.colStringByName['ResourceName'];
             first := isPrimaryResource(request, type_, sId);
 
-            native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_, first);
+            entry := native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_, first);
             keys.Add(TKeyPair.create(type_, native(manager).FConnection.ColStringByName['ResourceKey']));
 
             if request.Parameters.VarExists('_include') then
@@ -10726,11 +10729,14 @@ begin
       upS := TUcumPair.Create(val, value.code);
       try
         upC := ServerContext.TerminologyServer.Ucum.getCanonicalForm(upS);
-        cval := upC.Value;
-        cu := resolveConcept(conn, 'http://unitsofmeasure.org', upC.UnitCode);
+        try
+          cval := upC.Value;
+          cu := resolveConcept(conn, 'http://unitsofmeasure.org', upC.UnitCode);
+        finally
+          upC.Free;
+        end;
       finally
         upS.Free;
-        upC.Free;
       end;
     end
     else

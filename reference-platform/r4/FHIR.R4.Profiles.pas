@@ -31,12 +31,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IOUtils,
   FHIR.Support.Strings, FHIR.Support.Lock, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
   FHIR.Support.Stream, FHIR.Support.Zip,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Base.Factory,
-  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.Constants;
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory,
+  FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Types, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.Constants;
 
 Const
   DERIVATION_EQUALS = 'derivation.equals';
@@ -1503,7 +1503,7 @@ begin
     list.add(sd.link);
 end;
 
-constructor TBaseWorkerContextR4.Create;
+constructor TBaseWorkerContextR4.Create(factory : TFHIRFactory);
 begin
   inherited;
   FLock := TCriticalSection.Create('worker-context');
@@ -1656,9 +1656,9 @@ begin
               try
                 vcl.Stream := mem.link;
                 if ExtractFileExt(r.Parts[i].Name) = '.json' then
-                  fp := TFHIRJsonParser.create(self.link, 'en')
+                  fp := TFHIRParsers4.parser(self.link, ffJson, 'en')
                 else
-                  fp := TFHIRXmlParser.create(self.link, 'en');
+                  fp := TFHIRParsers4.parser(self.link, ffXml, 'en');
                 try
                   fp.IgnoreHtml := true;
                   fp.source := vcl;
@@ -1720,32 +1720,17 @@ begin
   if ExtractFileExt(filename) = '.zip' then
     LoadFromDefinitions(filename)
   else if ExtractFileExt(filename) = '.json' then
-    LoadFromFile(filename, TFHIRJsonParser.create(self.Link, 'en'))
+    LoadFromFile(filename, TFHIRParsers4.parser(self.link, ffJson, 'en'))
   else if ExtractFileExt(filename) = '.xml' then
-    LoadFromFile(filename, TFHIRXmlParser.create(self.Link, 'en'))
+    LoadFromFile(filename, TFHIRParsers4.parser(self.link, ffXml, 'en'))
 end;
 
 procedure TBaseWorkerContextR4.LoadFromFolder(folder: string);
 var
-  list : TStringList;
-  sr : TSearchRec;
-  fn : String;
+  s : String;
 begin
-  list := TStringList.Create;
-  try
-    if FindFirst(IncludeTrailingPathDelimiter(folder) + '*.*', faArchive, sr) = 0 then
-    begin
-      repeat
-        list.Add(sr.Name); //Fill the list
-      until FindNext(sr) <> 0;
-      FindClose(sr);
-    end;
-
-    for fn in list do
-      loadFromFile(IncludeTrailingPathDelimiter(folder)+fn);
-  finally
-    list.Free;
-  end;
+  for s in TDirectory.GetFiles(folder) do
+    loadFromFile(s);
 end;
 
 function TBaseWorkerContextR4.nonSecureResourceNames: TArray<String>;

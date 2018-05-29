@@ -686,7 +686,7 @@ begin
     session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
     session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(UserKey);
     session.UserEvidence := userEvidence;
-    session.UserKey := key;
+    session.UserKey := UserKey;
     session.UserName := name;
     if session.UserName = '' then
       session.UserName := session.User.userName;

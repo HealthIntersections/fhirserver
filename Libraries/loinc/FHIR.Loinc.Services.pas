@@ -35,6 +35,7 @@ Uses
   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Stream,
   RegularExpressions, YuStemmer,
+  FHIR.Base.Common,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Operations,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service, FHIR.Support.DateTime;
@@ -347,9 +348,9 @@ Type
     FVersion: String;
     FKey: integer;
     function FindStem(s: String; var index: Integer): Boolean;
-    function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperatorEnum; value: String): TCodeSystemProviderFilterContext;
-    function FilterBySubset(op: TFhirFilterOperatorEnum; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
-    function FilterByHeirarchy(op: TFhirFilterOperatorEnum; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
+    function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
+    function FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
+    function FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
     function GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
     function useLang(lang : byte; langs : TLangArray; incLast : boolean) : boolean;
   public
@@ -404,7 +405,7 @@ Type
     function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
     procedure Displays(code : String; list : TStringList; lang : String); override;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
-    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
@@ -418,7 +419,7 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
   End;
@@ -1904,7 +1905,7 @@ begin
   GetDisplaysByName(Code(context), langsForLang(lang), list);
 end;
 
-procedure TLOINCServices.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponse);
+procedure TLOINCServices.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponseW);
 var
   index : integer;
   iDescription, iStems, iOtherNames : Cardinal;
@@ -1917,8 +1918,8 @@ var
   {$IFNDEF FHIR2}
   iRefs : TCardinalArray;
   i : integer;
-  p : TFHIRLookupOpRespProperty_;
-  d : TFHIRLookupOpRespDesignation;
+  p : TFHIRLookupOpRespPropertyW;
+  d : TFHIRLookupOpRespDesignationW;
   {$ENDIF}
 begin
   langs := langsForLang(lang);
@@ -1929,59 +1930,22 @@ begin
 
   {$IFNDEF FHIR2}
     if hasProp(props, 'COMPONENT', true) and (iComponent <> 0) Then
-    Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'COMPONENT';
-      p.description := GetConceptDesc(iComponent, langs);
-    End;
+      resp.AddProp('COMPONENT').description := GetConceptDesc(iComponent, langs);
     if hasProp(props, 'PROPERTY', true) and (iProperty <> 0) Then
-    Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'PROPERTY';
-      p.description := GetConceptDesc(iProperty, langs);
-    End;
+      resp.AddProp('PROPERTY').description := GetConceptDesc(iProperty, langs);
     if hasProp(props, 'TIME_ASPCT', true) and (iTimeAspect <> 0) Then
-    Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'TIME_ASPCT';
-      p.description := GetConceptDesc(iTimeAspect, langs);
-    End;
+      resp.AddProp('TIME_ASPCT').description := GetConceptDesc(iTimeAspect, langs);
     if hasProp(props, 'SYSTEM', true) and (iSystem <> 0) Then
-    Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'SYSTEM';
-      p.description := GetConceptDesc(iSystem, langs);
-    End;
+      resp.AddProp('SYSTEM').description := GetConceptDesc(iSystem, langs);
     if hasProp(props, 'SCALE_TYP', true) and (iScale <> 0) Then
-    Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'SCALE_TYP';
-      p.description := GetConceptDesc(iScale, langs);
-    End;
+      resp.AddProp('SCALE_TYP').description := GetConceptDesc(iScale, langs);
     if hasProp(props, 'METHOD_TYP', true) and (iMethod <> 0) Then
-    Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'METHOD_TYP';
-      p.description := GetConceptDesc(iMethod, langs);
-    End;
+      resp.AddProp('METHOD_TYP').description := GetConceptDesc(iMethod, langs);
     if hasProp(props, 'CLASS', true) and (iClass <> 0) Then
-    Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'CLASS';
-      p.description := GetConceptDesc(iClass, langs);
-    End;
+      resp.AddProp('CLASS').description := GetConceptDesc(iClass, langs);
     if hasProp(props, 'CLASSTYPE', true) Then
     Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'CLASSTYPE';
+      p := resp.AddProp('CLASSTYPE');
       if iFlags and FLAGS_CLIN > 0 Then
         p.description := 'Clinical'
       Else if iFlags and FLAGS_ATT > 0 Then
@@ -1994,9 +1958,7 @@ begin
 
     if hasProp(props, 'STATUS', true) Then
     Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'STATUS';
+      p := resp.AddProp('STATUS');
       if iFlags and FLAGS_HOLD > 0 Then
         p.description := 'Not yet final'
       Else
@@ -2007,10 +1969,7 @@ begin
     Begin
       if iFlags and FLAGS_ROOT > 0 Then
       Begin
-        p := TFHIRLookupOpRespProperty_.create;
-        resp.property_List.Add(p);
-        p.code := 'Root';
-        p.description := 'This is a root of a set';
+        resp.AddProp('Root').description := 'This is a root of a set';
       End;
     end;
 
@@ -2018,18 +1977,13 @@ begin
     Begin
       if iFlags and FLAGS_UNITS > 0 Then
       Begin
-        p := TFHIRLookupOpRespProperty_.create;
-        resp.property_List.Add(p);
-        p.code := 'UNITSREQUIRED';
-        p.description := 'Units are required';
+        resp.AddProp('UNITSREQUIRED').description := 'Units are required';
       End;
     end;
 
     if hasProp(props, 'ORDER_OBS', true) Then
     Begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'ORDER_OBS';
+      p := resp.AddProp('ORDER_OBS');
       if (iFlags and FLAGS_ORDER> 0 ) and (iFlags and FLAGS_OBS> 0 ) Then
         p.description := 'Both'
       Else if iFlags and FLAGS_ORDER > 0 Then
@@ -2048,15 +2002,7 @@ begin
         begin
           s := Desc.GetEntry(iRefs[i], ll);
           if useLang(ll, langs, false) then
-          begin
-            d := TFHIRLookupOpRespDesignation.create;
-            resp.designationList.Add(d);
-            d.value := s;
-            d.use := TFHIRCoding.Create;
-            d.use.system := 'http://snomed.info/sct';
-            d.use.code := '446211000124102';
-            d.use.display := 'Alias name';
-          End;
+            resp.addDesignation('http://snomed.info/sct', '446211000124102', 'Alias name', s);
         end;
     End;
     {$ENDIF}
@@ -2146,7 +2092,7 @@ begin
   THolder(ctxt).free;
 end;
 
-function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperatorEnum; value: String): TCodeSystemProviderFilterContext;
+function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
   function getProp(i : integer) : String;
   var
     langs : TLangArray;
@@ -2178,10 +2124,10 @@ var
   regex : TRegEx;
   i, t : integer;
 begin
-  if not (op in [FilterOperatorEqual, FilterOperatorIn, FilterOperatorRegex]) then
-    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
+  if not (op in [foEqual, foIn, foRegex]) then
+    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
 
-  if op = FilterOperatorRegex then
+  if op = foRegex then
   begin
     SetLength(aMatches, CodeList.Count);
     t := 0;
@@ -2201,7 +2147,7 @@ begin
   end
   else
   begin
-    if op = FilterOperatorEqual then
+    if op = foEqual then
       p := value.Split([#1])
     else
       p := value.Split([',']);
@@ -2232,10 +2178,10 @@ begin
 end;
 
 // this is a rare operation. But even so, is it worth pre-calculating this one on import?
-function TLoincServices.FilterBySubset(op: TFhirFilterOperatorEnum; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
+function TLoincServices.FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
 begin
-  if op <> FilterOperatorEqual then
-    raise ETerminologyError.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
+  if op <> foEqual then
+    raise ETerminologyError.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
 
   result := THolder.create;
   THolder(result).Children := FRefs.GetCardinals(FSubsets[subset]);
@@ -2293,7 +2239,7 @@ begin
     result := lsiNull;
 end;
 
-function TLoincServices.FilterByHeirarchy(op: TFhirFilterOperatorEnum; value: String; transitive : boolean): TCodeSystemProviderFilterContext;
+function TLoincServices.FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive : boolean): TCodeSystemProviderFilterContext;
 var
   index : Cardinal;
   aChildren, c : FHIR.Loinc.Services.TCardinalArray;
@@ -2302,10 +2248,10 @@ var
 begin
   result := THolder.create;
   try
-    if (op = FilterOperatorEqual) and (value.Contains(',')) then
+    if (op = foEqual) and (value.Contains(',')) then
       raise Exception.Create('Value is illegal - no commas');
-    if (not (op in [FilterOperatorEqual, FilterOperatorIn])) then
-      raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
+    if (not (op in [foEqual, foIn])) then
+      raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
 
     while (value <> '') do
     begin
@@ -2332,7 +2278,7 @@ begin
   end;
 end;
 
-function TLoincServices.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   if prop = 'SCALE_TYP' then
     result := FilterByPropertyId(lptScales, op, value)

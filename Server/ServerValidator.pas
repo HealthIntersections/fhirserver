@@ -82,7 +82,7 @@ begin
   TFhirDomainResource(r).checkNoModifiers('Repository.SeeResource', 'Resource');
 end;
 
-constructor TFHIRServerWorkerContext.Create;
+constructor TFHIRServerWorkerContext.Create(factory : TFHIRFactory);
 begin
   inherited;
   FLock := TCriticalSection.Create('Validation.questionnaire');

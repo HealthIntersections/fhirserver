@@ -88,6 +88,7 @@ Type
     FComparer: IComparer<T>;
     FOnNotify: TCollectionNotifyEvent<T>;
     FArrayManager: TArrayManager<T>;
+    FEnumFree : boolean;
 
     function GetCapacity: Integer;
     procedure SetCapacity(Value: Integer);
@@ -112,11 +113,13 @@ Type
     {$ENDIF}
 
     constructor Create; Overload; Override;
+    constructor Create(capacity : integer); Overload;
     constructor Create(const AComparer: IComparer<T>); overload;
     constructor Create(const Collection: TEnumerable<T>); overload;
     destructor Destroy; override;
 
     function link : TFslList<t>; overload;
+    function forEnum : TFslList<t>; // auto frees a collection once an enumerator is finished with it - a commmon pattern
 
     class procedure Error(const Msg: string; Data: NativeInt); overload; virtual;
 {$IFNDEF NEXTGEN}
@@ -172,6 +175,7 @@ Type
     procedure Sort(const AComparer: IComparer<T>); overload;
     function BinarySearch(const Item: T; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: T; out Index: Integer; const AComparer: IComparer<T>): Boolean; overload;
+    function matches(other : TFslList<T>; ordered : boolean; criteria : IComparer<T>) : boolean;
 
     procedure TrimExcess;
 
@@ -196,6 +200,7 @@ Type
         function DoMoveNext: Boolean; override;
       public
         constructor Create(const AList: TFslList<T>);
+        destructor Destroy; override;
         property Current: T read GetCurrent;
         function MoveNext: Boolean;
       end;
@@ -398,6 +403,20 @@ Type
     function GetEnumerator: TFslStringSetEnumerator;
   end;
 
+  TFslStringMap = class (TFslObject)
+  private
+    FDict : TDictionary<String, String>;
+    function GetItem(const Key: String): String;
+    procedure SetItem(const Key, Value: String);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    function link : TFslStringMap;
+    property Items[const Key: String]: String read GetItem write SetItem; default;
+
+  end;
+
 implementation
 
 { TFslEnumerable<T> }
@@ -582,6 +601,12 @@ begin
   InsertRange(0, Collection);
 end;
 
+constructor TFslList<T>.Create(capacity: integer);
+begin
+  Create(TComparer<T>.Default);
+  self.Capacity := capacity;
+end;
+
 destructor TFslList<T>.Destroy;
 begin
 // Clear method only sets lenght to 0, does not destroy any objects, does it?
@@ -741,6 +766,12 @@ end;
 function TFslList<T>.First: T;
 begin
   Result := Items[0];
+end;
+
+function TFslList<T>.forEnum: TFslList<t>;
+begin
+  FEnumFree := true;
+  result := self;
 end;
 
 function TFslList<T>.Remove(const Value: T): Integer;
@@ -910,6 +941,39 @@ begin
   result := TFslList<T>(inherited Link);
 end;
 
+function TFslList<T>.matches(other: TFslList<T>; ordered: boolean; criteria: IComparer<T>): boolean;
+var
+  i, j : integer;
+  ok : boolean;
+begin
+  if other = nil then
+    exit(false);
+  if count <> other.Count then
+    exit(false);
+  result := true;
+  if ordered then
+  begin
+    for i := 0 to Count - 1 do
+      if criteria.Compare(Items[i], other[i]) <> 0 then
+        exit(false);
+  end
+  else
+  begin
+    for i := 0 to Count - 1 do
+    begin
+      ok := false;
+      for j := 0 to Count - 1 do
+        if criteria.Compare(Items[i], other[j]) = 0 then
+        begin
+          ok := true;
+          break;
+        end;
+      if not ok then
+        exit(false);
+    end;
+  end;
+end;
+
 procedure TFslList<T>.Move(CurIndex, NewIndex: Integer);
 var
   temp: T;
@@ -1044,6 +1108,13 @@ begin
   inherited Create;
   FList := AList;
   FIndex := -1;
+end;
+
+destructor TFslList<T>.TFslEnumerator.Destroy;
+begin
+  if FList.FEnumFree then
+    FList.Free;
+  inherited;
 end;
 
 function TFslList<T>.TFslEnumerator.DoGetCurrent: T;
@@ -1887,6 +1958,35 @@ begin
     Exit(False);
   Inc(FIndex);
   Result := FIndex < Length(FSet.FItems);
+end;
+
+{ TFslStringMap }
+
+constructor TFslStringMap.Create;
+begin
+  inherited;
+  FDict := TDictionary<String, String>.create;
+end;
+
+destructor TFslStringMap.Destroy;
+begin
+  FDict.Free;
+  inherited;
+end;
+
+function TFslStringMap.GetItem(const Key: String): String;
+begin
+  result := FDict[key];
+end;
+
+function TFslStringMap.link: TFslStringMap;
+begin
+  result := TFslStringMap(inherited Link);
+end;
+
+procedure TFslStringMap.SetItem(const Key, Value: String);
+begin
+  FDict[key] := value;
 end;
 
 end.

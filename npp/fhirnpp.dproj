@@ -83,7 +83,6 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <DCC_DebugInformation>2</DCC_DebugInformation>
-        <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>C:\work\Components\treeview\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d332\</DCC_DcuOutput>
@@ -93,33 +92,40 @@
         <DCC_MapFile>3</DCC_MapFile>
         <VerInfo_Build>0</VerInfo_Build>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R3.AuthMap;FHIR.Tools.Constants=FHIR.R3.Constants;FHIR.Tools.Context=FHIR.R3.Context;FHIR.Tools.IndexInfo=FHIR.R3.IndexInfo;FHIR.Tools.Javascript=FHIR.R3.Javascript;FHIR.Tools.ElementModel=FHIR.R3.ElementModel;FHIR.Tools.Narrative=FHIR.R3.Narrative;FHIR.Tools.Operations=FHIR.R3.Operations;FHIR.Tools.Json=FHIR.R3.Json;FHIR.Tools.Turtle=FHIR.R3.Turtle;FHIR.Tools.Xml=FHIR.R3.Xml;FHIR.Tools.PathNode=FHIR.R3.PathNode;FHIR.Tools.Profiles=FHIR.R3.Profiles;FHIR.Tools.Resources=FHIR.R3.Resources;FHIR.Tools.MapUtilities=FHIR.R3.MapUtilities;FHIR.Tools.Tags=FHIR.R3.Tags;FHIRTestWorker=FHIRTestWorker3;FHIR.Tools.Types=FHIR.R3.Types;FHIR.Tools.Utilities=FHIR.R3.Utilities;FHIR.Tools.Validator=FHIR.R3.Validator;FHIR.Tools.OpBase=FHIR.R3.OpBase;FHIR.Tools.PathEngine=FHIR.R3.PathEngine;FHIR.Tools.Narrative2=FHIR.R3.Narrative2;FHIR.Tools.Questionnaire=FHIR.R3.Questionnaire;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_Hints>false</DCC_Hints>
+        <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
+        <DCC_COMBINING_SIGNED_UNSIGNED>false</DCC_COMBINING_SIGNED_UNSIGNED>
+        <DCC_COMPARING_SIGNED_UNSIGNED>false</DCC_COMPARING_SIGNED_UNSIGNED>
+        <DCC_HIDDEN_VIRTUAL>error</DCC_HIDDEN_VIRTUAL>
+        <DCC_NO_RETVAL>error</DCC_NO_RETVAL>
+        <DCC_TYPEINFO_IMPLICITLY_ADDED>false</DCC_TYPEINFO_IMPLICITLY_ADDED>
+        <DCC_USE_BEFORE_DEF>error</DCC_USE_BEFORE_DEF>
+        <DCC_SYMBOL_PLATFORM>error</DCC_SYMBOL_PLATFORM>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <RcCompile Include="helloworldres.rc">
-            <Form>helloworldres.res</Form>
-        </RcCompile>
         <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
         <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
-        <DCCReference Include="npplib\nppplugin.pas"/>
-        <DCCReference Include="npplib\SciSupport.pas"/>
-        <DCCReference Include="npplib\NppForms.pas">
+        <DCCReference Include="npplib\FHIR.Npp.Base.pas"/>
+        <DCCReference Include="npplib\FHIR.Npp.Scintilla.pas"/>
+        <DCCReference Include="npplib\FHIR.Npp.Form.pas">
             <Form>NppForm</Form>
         </DCCReference>
-        <DCCReference Include="npplib\NppDockingForms.pas">
+        <DCCReference Include="npplib\FHIR.Npp.DockingForm.pas">
             <Form>NppDockingForm</Form>
         </DCCReference>
-        <DCCReference Include="FHIRPlugin.pas"/>
-        <DCCReference Include="SettingsForm.pas">
+        <DCCReference Include="FHIR.Npp.Plugin.pas"/>
+        <DCCReference Include="FHIR.Npp.Configuration.pas">
             <Form>SettingForm</Form>
         </DCCReference>
-        <DCCReference Include="FHIRToolboxForm.pas">
+        <DCCReference Include="FHIR.Npp.Toolbox.pas">
             <Form>FHIRToolbox</Form>
         </DCCReference>
-        <DCCReference Include="FHIRPluginSettings.pas"/>
+        <DCCReference Include="FHIR.Npp.Settings.pas">
+            <Form>SettingForm</Form>
+        </DCCReference>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Strings.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Math.pas"/>
@@ -135,7 +141,6 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Objects.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Decimal.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Session.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Resources.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Types.pas"/>
@@ -143,17 +148,15 @@
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Security.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Tags.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Parser.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Xml.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Json.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.WInInet.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.WinInet.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Profiles.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Lock.pas"/>
-        <DCCReference Include="FHIRPluginValidator.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Tools.Client.pas"/>
-        <DCCReference Include="NewResourceForm.pas">
+        <DCCReference Include="FHIR.Npp.Validator.pas"/>
+        <DCCReference Include="FHIR.Npp.Make.pas">
             <Form>ResourceNewForm</Form>
         </DCCReference>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
@@ -161,7 +164,7 @@
             <Form>EditRegisteredServerForm</Form>
         </DCCReference>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Parsers.pas"/>
-        <DCCReference Include="FetchResourceForm.pas">
+        <DCCReference Include="FHIR.Npp.Fetch.pas">
             <Form>FetchResourceFrm</Form>
         </DCCReference>
         <DCCReference Include="..\..\Components\treeview\Source\VirtualTrees.pas"/>
@@ -176,20 +179,20 @@
         <DCCReference Include="ValidationOutcomes.pas">
             <Form>ValidationOutcomeForm</Form>
         </DCCReference>
-        <DCCReference Include="FHIRVisualiser.pas">
+        <DCCReference Include="FHIR.Npp.Visualiser.pas">
             <Form>FHIRVisualizer</Form>
         </DCCReference>
         <DCCReference Include="FHIR.Npp.PathDebugger.pas">
             <Form>FHIRPathDebuggerForm</Form>
         </DCCReference>
-        <DCCReference Include="WelcomeScreen.pas">
-            <Form>WelcomeScreenForm</Form>
+        <DCCReference Include="FHIR.Npp.Welcome.pas">
+            <Form>FHIR.Npp.WelcomeForm</Form>
         </DCCReference>
-        <DCCReference Include="nppbuildcount.pas"/>
+        <DCCReference Include="FHIR.Npp.Version.pas"/>
         <DCCReference Include="UpgradePrompt.pas">
             <Form>UpgradePromptForm</Form>
         </DCCReference>
-        <DCCReference Include="PluginUtilities.pas"/>
+        <DCCReference Include="FHIR.Npp.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Utilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
@@ -209,22 +212,18 @@
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="CodeGenerationForm.pas">
+        <DCCReference Include="FHIR.Npp.CodeGen.pas">
             <Form>CodeGeneratorForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.CodeGen.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Client.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Registry.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathNode.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.ParserBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Base.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ExpressionComposer.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Parser.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Base.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Client.pas"/>
@@ -251,12 +250,11 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathNode.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Profiles.pas"/>
-        <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Common.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
         <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManagerDialog.pas">
             <Form>PackageCacheForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
@@ -295,9 +293,30 @@
         <DCCReference Include="..\reference-platform\client\FHIR.Smart.Login.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Smart.LoginVCL.pas">
             <Form>SmartOnFhirLoginForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\Libraries\ui\FHIR.Ui.ColorSB.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
+        <DCCReference Include="FHIR.Npp.SaveAs.pas">
+            <Form>SaveOnServerDialog</Form>
+        </DCCReference>
+        <DCCReference Include="FHIR.Npp.Context.pas"/>
+        <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageBrowser.pas">
+            <Form>PackageFinderForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
+        <DCCReference Include="..\Libraries\stem\YuStemmer.pas"/>
+        <DCCReference Include="..\Libraries\stem\DISystemCompat.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Operations.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.OpBase.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.Operations.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.OpBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Operations.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.OpBase.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ValueSets.pas"/>
+        <RcCompile Include="helloworldres.rc">
+            <Form>helloworldres.res</Form>
+        </RcCompile>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

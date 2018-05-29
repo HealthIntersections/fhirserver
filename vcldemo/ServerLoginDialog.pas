@@ -107,7 +107,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, IniFiles,
   FHIR.Support.Strings, FHIR.Support.Shell,
-  FHIR.Base.Utilities, FHIR.XVersion.Resources,
+  FHIR.Base.Utilities, FHIR.Base.Common,
   FHIR.R2.Common,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Base.Objects, FHIR.Tools.Client, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
   ProgressDialog, FHIRDemoLogging;

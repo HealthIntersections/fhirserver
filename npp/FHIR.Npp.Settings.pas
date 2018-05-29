@@ -1,4 +1,4 @@
-unit FHIRPluginSettings;
+unit FHIR.Npp.Settings;
 
 
 {
@@ -34,7 +34,6 @@ interface
 uses
   Windows, SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Json,
-  FHIR.Tools.Types,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.Client.Registry;
 
 const
@@ -51,7 +50,9 @@ type
   private
     function GetToolboxVisible: boolean;
     function GetVisualiserVisible: boolean;
-    function GetTerminologyServer: string;
+    function GetTerminologyServerR2: string;
+    function GetTerminologyServerR3: string;
+    function GetTerminologyServerR4: string;
     function GetPath: String;
     function GetNoPathSummary: boolean;
     function GetNoValidationSummary: boolean;
@@ -62,10 +63,13 @@ type
     function GetDebuggerWidth: integer;
     function GetDebuggerBreaks: String;
     function GetBackgroundValidation: boolean;
-    function GetNoWelcomeScreen: boolean;
+    function GetNoWelcomeForm: boolean;
     function GetBuildPrompt: String;
+    function GetUpdateResourceOnSend: boolean;
 
-    procedure SetTerminologyServer(const Value: string);
+    procedure SetTerminologyServerR2(const Value: string);
+    procedure SetTerminologyServerR3(const Value: string);
+    procedure SetTerminologyServerR4(const Value: string);
     procedure SetPath(const Value: String);
     procedure SetToolboxVisible(const Value: boolean);
     procedure SetVisualiserVisible(const Value: boolean);
@@ -78,8 +82,10 @@ type
     procedure SetDebuggerWidth(const Value: integer);
     procedure SetDebuggerBreaks(const Value: String);
     procedure SetBackgroundValidation(const Value: boolean);
-    procedure SetNoWelcomeScreen(const Value: boolean);
+    procedure SetNoWelcomeForm(const Value: boolean);
     procedure SetBuildPrompt(const Value: String);
+    procedure SetUpdateResourceOnSend(const Value: boolean);
+
     function GetLoadR2: boolean;
     function GetLoadR3: boolean;
     function GetLoadR4: boolean;
@@ -87,7 +93,7 @@ type
     procedure SetLoadR3(const Value: boolean);
     procedure SetLoadR4(const Value: boolean);
   protected
-    procedure initSettings; virtual;
+    procedure initSettings; override;
   public
     function FontName : String;
     Function FontSize : integer;
@@ -97,11 +103,13 @@ type
     property loadR2 : boolean read GetLoadR2 write SetLoadR2;
     property loadR3 : boolean read GetLoadR3 write SetLoadR3;
     property loadR4 : boolean read GetLoadR4 write SetLoadR4;
-    property TerminologyServer : string read GetTerminologyServer write SetTerminologyServer;
+    property TerminologyServerR2 : string read GetTerminologyServerR2 write SetTerminologyServerR2;
+    property TerminologyServerR3 : string read GetTerminologyServerR3 write SetTerminologyServerR3;
+    property TerminologyServerR4 : string read GetTerminologyServerR4 write SetTerminologyServerR4;
     property Path : String read GetPath write SetPath;
     property NoPathSummary : boolean read GetNoPathSummary write SetNoPathSummary;
     property NoValidationSummary : boolean read GetNoValidationSummary write SetNoValidationSummary;
-    property NoWelcomeScreen : boolean read GetNoWelcomeScreen write SetNoWelcomeScreen;
+    property NoWelcomeForm : boolean read GetNoWelcomeForm write SetNoWelcomeForm;
     property BackgroundValidation : boolean read GetBackgroundValidation write SetBackgroundValidation;
     property BuildPrompt : String read GetBuildPrompt write SetBuildPrompt;
 
@@ -111,6 +119,8 @@ type
     property DebuggerBreaksWidth : integer read GetDebuggerBreaksWidth write SetDebuggerBreaksWidth;
     property DebuggerActivePage : integer read GetDebuggerActivePage write SetDebuggerActivePage;
     property DebuggerBreaks : String read GetDebuggerBreaks write SetDebuggerBreaks;
+
+    property updateResourceOnSend : boolean read GetUpdateResourceOnSend write SetUpdateResourceOnSend;
   end;
 
 var
@@ -240,9 +250,9 @@ begin
   result := json.bool['NoValidationSummary'];
 end;
 
-function TFHIRPluginSettings.GetNoWelcomeScreen: boolean;
+function TFHIRPluginSettings.GetNoWelcomeForm: boolean;
 begin
-  result := json.bool['NoWelcomeScreen'];
+  result := json.bool['NoWelcomeForm'];
 end;
 
 function TFHIRPluginSettings.GetPath: String;
@@ -250,14 +260,29 @@ begin
   result := json.vStr['Path'];
 end;
 
-function TFHIRPluginSettings.GetTerminologyServer: string;
+function TFHIRPluginSettings.GetTerminologyServerR2: string;
 begin
-  result := json.vStr['TerminologyServer'];
+  result := json.vStr['TerminologyServerR2'];
+end;
+
+function TFHIRPluginSettings.GetTerminologyServerR3: string;
+begin
+  result := json.vStr['TerminologyServerR3'];
+end;
+
+function TFHIRPluginSettings.GetTerminologyServerR4: string;
+begin
+  result := json.vStr['TerminologyServerR4'];
 end;
 
 function TFHIRPluginSettings.GetToolboxVisible: boolean;
 begin
   result := json.bool['Toolbox'];
+end;
+
+function TFHIRPluginSettings.GetUpdateResourceOnSend: boolean;
+begin
+  result := json.bool['UpdateResourceOnSend'];
 end;
 
 function TFHIRPluginSettings.GetVisualiserVisible: boolean;
@@ -374,10 +399,10 @@ begin
   Save;
 end;
 
-procedure TFHIRPluginSettings.SetNoWelcomeScreen(const Value: boolean);
+procedure TFHIRPluginSettings.SetNoWelcomeForm(const Value: boolean);
 begin
   if FShuttingDown then exit;
-  json.bool['NoWelcomeScreen'] := Value;
+  json.bool['NoWelcomeForm'] := Value;
   Save;
 end;
 
@@ -388,10 +413,24 @@ begin
   Save;
 end;
 
-procedure TFHIRPluginSettings.SetTerminologyServer(const Value: string);
+procedure TFHIRPluginSettings.SetTerminologyServerR2(const Value: string);
 begin
   if FShuttingDown then exit;
-  json.vStr['TerminologyServer'] := Value;
+  json.vStr['TerminologyServerR2'] := Value;
+  Save;
+end;
+
+procedure TFHIRPluginSettings.SetTerminologyServerR3(const Value: string);
+begin
+  if FShuttingDown then exit;
+  json.vStr['TerminologyServerR3'] := Value;
+  Save;
+end;
+
+procedure TFHIRPluginSettings.SetTerminologyServerR4(const Value: string);
+begin
+  if FShuttingDown then exit;
+  json.vStr['TerminologyServerR4'] := Value;
   Save;
 end;
 
@@ -399,6 +438,13 @@ procedure TFHIRPluginSettings.SetToolboxVisible(const Value: boolean);
 begin
   if FShuttingDown then exit;
   json.bool['Toolbox'] := Value;
+  Save;
+end;
+
+procedure TFHIRPluginSettings.SetUpdateResourceOnSend(const Value: boolean);
+begin
+  if FShuttingDown then exit;
+  json.bool['UpdateResourceOnSend'] := Value;
   Save;
 end;
 

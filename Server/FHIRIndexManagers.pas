@@ -136,7 +136,7 @@ Type
     FSpaces : TStringList;
     FLast : integer;
   public
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
     procedure RecordSpace(space : String; key:integer);
     function ResolveSpace(space : String; var key :integer) : boolean;
@@ -880,6 +880,8 @@ var
   keys : string;
   comps: TFslList<TFHIRCompartmentId>;
 begin
+  result := nil;
+
   checkTags(resource, tags);
   FforTesting := tags.hasTestingTag;
   FEntries.clear;
@@ -983,7 +985,6 @@ begin
     except
       on e:exception do
         raise Exception.Create('Exception storing values "'+entry.FValue1+'" and "'+entry.FValue2+'": '+e.message);
-
     end;
   end;
   FConnection.terminate;

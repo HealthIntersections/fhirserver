@@ -123,6 +123,10 @@ type
 
     property Bundle : TFhirBundle read FBundle write SetBundle;
     function fhirType : String; override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
 
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
@@ -137,6 +141,11 @@ type
 
     property Entry : TFhirBundleEntry read FEntry write SetEntry;
     function fhirType : String; override;
+
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
 
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
@@ -398,6 +407,7 @@ begin
           node := FPathEngine.parse(fp.ToString.Substring(5));
           try
             i := 0;
+            t := 0;
             for v in values do
             begin
               if (i >= offset) and passesExtensionMode(v) and FPathEngine.evaluateToBoolean(nil, context, v, node) then
@@ -1001,6 +1011,11 @@ begin
   FParseMap := TParseMap.create(s.Substring(s.IndexOf('?')+1));
 end;
 
+function TFHIRGraphQLSearchWrapper.createPropertyValue(propName: string): TFHIRObject;
+begin
+  result := nil;
+end;
+
 destructor TFHIRGraphQLSearchWrapper.Destroy;
 begin
   FParseMap.free;
@@ -1047,6 +1062,11 @@ end;
 
   // http://test.fhir.org/r3/Patient?_format=text/xhtml&search-id=77c97e03-8a6c-415f-a63d-11c80cf73f&&active=true&_sort=_id&search-offset=50&_count=50
 
+function TFHIRGraphQLSearchWrapper.getId: String;
+begin
+  result := '';
+end;
+
 function TFHIRGraphQLSearchWrapper.getPropertyValue(propName: string): TFHIRProperty;
 var
   list : TFslList<TFHIRGraphQLSearchEdge>;
@@ -1087,12 +1107,25 @@ begin
   FBundle := Value;
 end;
 
+procedure TFHIRGraphQLSearchWrapper.setIdValue(id: String);
+begin
+end;
+
+procedure TFHIRGraphQLSearchWrapper.setProperty(propName: string; propValue: TFHIRObject);
+begin
+end;
+
 { TFHIRGraphQLSearchEdge }
 
 constructor TFHIRGraphQLSearchEdge.Create(entry: TFhirBundleEntry);
 begin
   inherited Create;
   FEntry := entry;
+end;
+
+function TFHIRGraphQLSearchEdge.createPropertyValue(propName: string): TFHIRObject;
+begin
+  result := nil;
 end;
 
 destructor TFHIRGraphQLSearchEdge.Destroy;
@@ -1104,6 +1137,11 @@ end;
 function TFHIRGraphQLSearchEdge.fhirType: String;
 begin
   result := '*Edge';
+end;
+
+function TFHIRGraphQLSearchEdge.getId: String;
+begin
+
 end;
 
 function TFHIRGraphQLSearchEdge.getPropertyValue(propName: string): TFHIRProperty;
@@ -1132,6 +1170,14 @@ procedure TFHIRGraphQLSearchEdge.SetEntry(const Value: TFhirBundleEntry);
 begin
   FEntry.Free;
   FEntry := value;
+end;
+
+procedure TFHIRGraphQLSearchEdge.setIdValue(id: String);
+begin
+end;
+
+procedure TFHIRGraphQLSearchEdge.setProperty(propName: string; propValue: TFHIRObject);
+begin
 end;
 
 function TFHIRGraphQLEngine.getSingleValue(arg: TGraphQLArgument): string;

@@ -35,8 +35,9 @@ uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
-  YuStemmer, 
+  YuStemmer,
   FHIR.Database.Manager,
+  FHIR.Base.Common,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
 
@@ -102,14 +103,14 @@ type
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
@@ -437,12 +438,12 @@ begin
   list.AddStrings(TUMLSConcept(context).FOthers);
 end;
 
-procedure TUMLSServices.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponse);
+procedure TUMLSServices.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponseW);
 var
   qry : TKDBConnection;
   b : boolean;
-  {$IFDEF FHIR3}
-  p : TFHIRLookupOpRespProperty_;
+  {$IFNDEF FHIR2}
+  p : TFHIRLookupOpRespPropertyW;
   {$ENDIF}
 begin
   if hasProp(props, 'inactive', true) then
@@ -466,10 +467,8 @@ begin
       end;
     end;
 
-    {$IFDEF FHIR3}
-    p := TFHIRLookupOpRespProperty_.create;
-    resp.property_List.Add(p);
-    p.code := 'inactive';
+    {$IFNDEF FHIR2}
+    p := resp.addProp('inactive');
     p.value := TFHIRBoolean.create(b);
     {$ELSE}
     resp.addExtension('inactive', b);
@@ -589,7 +588,7 @@ begin
   end;
 end;
 
-function TUMLSServices.filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TUMLSServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   res : TUMLSFilter;
   ok : boolean;
@@ -599,9 +598,9 @@ begin
   res := TUMLSFilter.Create;
   try
     ok := true;
-    if (op = FilterOperatorIn) and (prop = 'TTY') then
+    if (op = foIn) and (prop = 'TTY') then
       res.sql := 'and TTY in ('+SQLWrapStrings(value)+')'
-    else if (op <> FilterOperatorEqual) then
+    else if (op <> foEqual) then
       ok := false
     else if prop = 'STY' then
       res.sql := 'and RXCUI in (select RXCUI from rxnsty where TUI = '''+SQLWrapString(value)+''')'

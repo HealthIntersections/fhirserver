@@ -44,7 +44,7 @@ uses
   SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.System,
   FHIR.Support.DateTime,
   FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Common, FHIR.Tools.Utilities, FHIR.Base.Xhtml,
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services,
   TerminologyServer, TerminologyServerStore;
 
@@ -664,7 +664,7 @@ begin
                 begin
                   fc := cset.filterList[i];
                   fc.checkNoModifiers('ValueSetExpander.processCodes', 'filter');
-                  filters[i+offset] := cs.filter(fc.property_, fc.Op, fc.value, prep);
+                  filters[i+offset] := cs.filter(fc.property_, MAP_TFilterOperator[fc.Op], fc.value, prep);
                   if filters[i+offset] = nil then
                     raise ETerminologyError.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperatorEnum[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
                   if cs.isNotClosed(filter, filters[i+offset]) then

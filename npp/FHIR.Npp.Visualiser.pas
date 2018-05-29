@@ -1,4 +1,4 @@
-unit FHIRVisualiser;
+unit FHIR.Npp.Visualiser;
 
 
 {
@@ -38,14 +38,13 @@ uses
   IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer,
   VirtualTrees,
 
-  NppPlugin, NppDockingForms,
+  FHIR.Npp.Base, FHIR.Npp.DockingForm,
 
   FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Generics, FHIR.Support.Lock, FHIR.Support.Shell,
 
-  FHIR.Base.Objects, FHIR.Base.PathEngine,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
+  FHIR.Base.Objects, FHIR.Base.PathEngine, FHIR.Base.Common,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
-  FHIRPathDocumentation, PluginUtilities, CDSBrowserForm;
+  FHIRPathDocumentation, FHIR.Npp.Utilities, CDSBrowserForm;
 
 const
   UMSG = WM_USER + 1;
@@ -124,8 +123,8 @@ type
     function generateBasicCard(path: String; focus: TFHIRObject): TCDSHookCard;
     procedure generateTypeCard(focus, next: TFHIRObject);
     function differentObjects(focus: array of TFHIRObject): boolean;
-    procedure queryCDS(hook : string; context : TFhirResource);
-    procedure queryCDSPatient(hook : string; patient : TFhirPatient);
+    procedure queryCDS(hook : string; context : TFhirResourceV);
+    procedure queryCDSPatient(hook : string; patient : TFhirPatientW);
 
     procedure DoCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     function postToWeb(contentType : String; bytes : TBytes) : String; overload;
@@ -154,9 +153,9 @@ implementation
 {$R *.dfm}
 
 Uses
-  FHIRPluginSettings,
-  FHIRToolboxForm,
-  FHIRPlugin;
+  FHIR.Npp.Settings,
+  FHIR.Npp.Toolbox,
+  FHIR.Npp.Plugin;
 
 {
 Card Visualisers for data types:
@@ -404,11 +403,11 @@ begin
   end;
 end;
 
-procedure TFHIRVisualizer.queryCDS(hook : string; context: TFhirResource);
+procedure TFHIRVisualizer.queryCDS(hook : string; context: TFhirResourceV);
 var
   req : TCDSHookRequest;
 begin
-  req := TCDSHookRequest.Create;
+(*  req := TCDSHookRequest.Create;
   try
     req.hook := hook;
     req.hookInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
@@ -419,27 +418,27 @@ begin
     FCDSManager.makeRequest(req, OnCDSResponse, nil);
   finally
     req.Free;
-  end;
+  end;*)
 end;
 
-procedure TFHIRVisualizer.queryCDSPatient(hook : string; patient: TFhirPatient);
-var
-  req : TCDSHookRequest;
-  entry : TFHIRBundleEntry;
+procedure TFHIRVisualizer.queryCDSPatient(hook : string; patient: TFhirPatientW);
+//var
+//  req : TCDSHookRequest;
+//  entry : TFHIRBundleEntry;
 begin
-  req := TCDSHookRequest.Create;
-  try
-    req.hook := hook;
-    req.hookInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
-    req.redirect := 'http://localhost:45654/redirect';
-    req.patient := patient.id;
-    entry := TFhirBundleEntry.Create;
-    req.preFetch.add('patient', entry);
-    entry.resource := patient.Link;
-    FCDSManager.makeRequest(req, OnCDSResponse, nil);
-  finally
-    req.Free;
-  end;
+//  req := TCDSHookRequest.Create;
+//  try
+//    req.hook := hook;
+//    req.hookInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
+//    req.redirect := 'http://localhost:45654/redirect';
+//    req.patient := patient.id;
+//    entry := TFhirBundleEntry.Create;
+//    req.preFetch.add('patient', entry);
+//    entry.resource := patient.Link;
+//    FCDSManager.makeRequest(req, OnCDSResponse, nil);
+//  finally
+//    req.Free;
+//  end;
 end;
 
 function TFHIRVisualizer.generateBasicCard(path: String; focus: TFHIRObject) : TCDSHookCard;
@@ -456,60 +455,60 @@ begin
 end;
 
 procedure TFHIRVisualizer.generateTypeCard(focus, next: TFHIRObject);
-var
-  att : TFhirAttachment;
-  md : TFhirMarkdown;
-  p : TFhirParameters;
-  card : TCDSHookCard;
+//var
+//  att : TFhirAttachment;
+//  md : TFhirMarkdown;
+//  p : TFhirParameters;
+//  card : TCDSHookCard;
 begin
-  if (focus.FhirType = 'Attachment') then
-  begin
-    att := TFhirAttachment(focus);
-    if att.contentType.StartsWith('image/') then
-    begin
-      // ok we're going to return a card that displays the image
-      if length(att.data) > 0 then
-        FCards.Add(TCDSHookCard.Create('Image Preview', '![Preview](http://localhost:45654/'+postToWeb(att.contentType, att.data)+')', 'Element Visualizer'))
-      else if isAbsoluteUrl(att.url) then
-        FCards.Add(TCDSHookCard.Create('Image Preview', '![Preview]('+att.url+')', 'Element Visualizer'));
-    end;
-  end;
-
-  if (focus.FhirType = 'CodeableConcept') or ((focus.FhirType = 'Coding') and (next.FhirType <> 'CodeableConcept')) then
-  begin
-    p := TFhirParameters.Create;
-    try
-       p.AddParameter('code', focus.Link as TFHIRType);
-       queryCDS(TCDSHooks.codeView, p);
-    finally
-      p.Free;
-    end;
-  end;
-
-  if (focus.FhirType = 'Identifier') then
-  begin
-    p := TFhirParameters.Create;
-    try
-       p.AddParameter('identifier', focus.Link as TFHIRType);
-       queryCDS(TCDSHooks.identifierView, p);
-    finally
-      p.Free;
-    end;
-  end;
-
-  if (focus.FhirType = 'Patient') then
-  begin
-    queryCDSPatient(TCDSHooks.patientView, focus as TFHIRPatient);
-  end;
-
-  {
-  if (base.FhirType = 'markdown') then
-  begin
-    md := TFhirMarkdown(base);
-    // ok we're going to return a card that displays the image
-  end;
-
-}
+//  if (focus.FhirType = 'Attachment') then
+//  begin
+//    att := TFhirAttachment(focus);
+//    if att.contentType.StartsWith('image/') then
+//    begin
+//      // ok we're going to return a card that displays the image
+//      if length(att.data) > 0 then
+//        FCards.Add(TCDSHookCard.Create('Image Preview', '![Preview](http://localhost:45654/'+postToWeb(att.contentType, att.data)+')', 'Element Visualizer'))
+//      else if isAbsoluteUrl(att.url) then
+//        FCards.Add(TCDSHookCard.Create('Image Preview', '![Preview]('+att.url+')', 'Element Visualizer'));
+//    end;
+//  end;
+//
+//  if (focus.FhirType = 'CodeableConcept') or ((focus.FhirType = 'Coding') and (next.FhirType <> 'CodeableConcept')) then
+//  begin
+//    p := TFhirParameters.Create;
+//    try
+//       p.AddParameter('code', focus.Link as TFHIRType);
+//       queryCDS(TCDSHooks.codeView, p);
+//    finally
+//      p.Free;
+//    end;
+//  end;
+//
+//  if (focus.FhirType = 'Identifier') then
+//  begin
+//    p := TFhirParameters.Create;
+//    try
+//       p.AddParameter('identifier', focus.Link as TFHIRType);
+//       queryCDS(TCDSHooks.identifierView, p);
+//    finally
+//      p.Free;
+//    end;
+//  end;
+//
+//  if (focus.FhirType = 'Patient') then
+//  begin
+//    queryCDSPatient(TCDSHooks.patientView, focus as TFHIRPatient);
+//  end;
+//
+//  {
+//  if (base.FhirType = 'markdown') then
+//  begin
+//    md := TFhirMarkdown(base);
+//    // ok we're going to return a card that displays the image
+//  end;
+//
+//}
 end;
 
 procedure TFHIRVisualizer.Button1Click(Sender: TObject);
@@ -581,7 +580,16 @@ procedure TFHIRVisualizer.setPathOutcomes(matches : TFslList<TFHIRAnnotation>; e
 var
   a : TFHIRAnnotation;
   li : TListItem;
+  comp : TFHIRAnnotationComparer;
 begin
+  comp := TFHIRAnnotationComparer.Create;
+  try
+    if matches.matches(FMatchList, true, comp) then
+      exit;
+  finally
+    comp.Free;
+  end;
+
   FMatchList.free;
   FMatchList := matches.link;
   lstMatches.Items.Clear;
@@ -600,7 +608,10 @@ begin
   FExpression := expression.Link;
   vtExpressions.RootNodeCount := 0;
   if (assigned(FExpression)) then
+  begin
     vtExpressions.RootNodeCount := 1;
+    vtExpressions.Expanded[vtExpressions.RootNode] := true;
+  end;
 end;
 
 procedure TFHIRVisualizer.setValidationOutcomes(errors: TFslList<TFHIRAnnotation>);
@@ -689,7 +700,7 @@ begin
   if p.expr.tag = 1 then
     node.CheckState := csCheckedNormal;
   if not p.isOp and (p.expr.nodeChildCount > 0) then
-     InitialStates := [ivsHasChildren];
+     InitialStates := [ivsHasChildren, ivsExpanded];
 end;
 
 procedure TFHIRVisualizer.webFocusBeforeNavigate2(ASender: TObject; const pDisp: IDispatch; const URL, Flags, TargetFrameName, PostData, Headers: OleVariant; var Cancel: WordBool);

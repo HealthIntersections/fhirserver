@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, nppplugin, FHIR.Support.Generics,
+  Vcl.Dialogs, FHIR.Npp.Form, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, FHIR.Npp.Base, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.PathEngine;
 
 type
@@ -62,7 +62,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings;
+  FHIR.Npp.Settings;
 
 function summary(types : TArray<String>) : String;
 var

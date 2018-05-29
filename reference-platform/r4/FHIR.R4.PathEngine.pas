@@ -35,7 +35,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Decimal, FHIR.Support.DateTime,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine,
   FHIR.R4.PathNode, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.Context, FHIR.R4.Constants;
 
 const
@@ -53,9 +53,16 @@ type
   TFHIRConstant = class (TFHIRObject)
   private
     FValue : String;
+  protected
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
   public
     constructor create(value : String);
     function fhirType : string; override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
   end;
 
   TFHIRClassTypeInfo = class (TFHIRObject)
@@ -63,10 +70,16 @@ type
     FInstance : TFHIRObject;
   protected
     procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
   public
     constructor create(instance : TFHIRObject);
     destructor destroy; override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function fhirType : string; override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
     function getName : String;
     function getNamespace : String;
   end;
@@ -355,7 +368,7 @@ type
     function evaluateToString(appInfo : TFslObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : string; overload;
 
     // worker routine for converting a set of objects to a string representation
-    function convertToString(items : TFHIRSelectionList) : String; overload;
+    function convertToString(items : TFHIRSelectionList) : String; overload; override;
     function convertToString(item : TFHIRObject) : String; overload;
 
     // worker routine for converting a set of objects to a boolean representation
@@ -376,9 +389,39 @@ begin
   FValue := value;
 end;
 
+function TFHIRConstant.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
 function TFHIRConstant.fhirType: string;
 begin
   result := '%constant';
+end;
+
+function TFHIRConstant.getId: String;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFHIRConstant.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := TFhirCode.Create(v);
+end;
+
+function TFHIRConstant.makeStringValue(v: String): TFHIRObject;
+begin
+  result := TFhirString.Create(v);
+end;
+
+procedure TFHIRConstant.setIdValue(id: String);
+begin
+  raise Exception.Create('not done yet');
+end;
+
+procedure TFHIRConstant.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 { TFHIRClassTypeInfo }
@@ -387,6 +430,11 @@ constructor TFHIRClassTypeInfo.create(instance: TFHIRObject);
 begin
   inherited create;
   FInstance := instance;
+end;
+
+function TFHIRClassTypeInfo.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 destructor TFHIRClassTypeInfo.destroy;
@@ -418,6 +466,31 @@ begin
     result := 'System'
   else
     result := 'FHIR';
+end;
+
+function TFHIRClassTypeInfo.getId: String;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFHIRClassTypeInfo.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := TFhirCode.Create(v);
+end;
+
+function TFHIRClassTypeInfo.makeStringValue(v: String): TFHIRObject;
+begin
+  result := TFhirString.Create(v);
+end;
+
+procedure TFHIRClassTypeInfo.setIdValue(id: String);
+begin
+  raise Exception.Create('not Done Yet');
+end;
+
+procedure TFHIRClassTypeInfo.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 function TFHIRClassTypeInfo.getName: String;
@@ -490,7 +563,7 @@ begin
   case exp.FunctionId of
     pfEmpty: checkParamCount(lexer, location, exp, 0);
     pfNot: checkParamCount(lexer, location, exp, 0);
-    pfExists: checkParamCount(lexer, location, exp, 0, 1); // 1 is allowed in cql, and should be allowed in FHIR.Tools.PathEngine as well
+    pfExists: checkParamCount(lexer, location, exp, 0, 1); // 1 is allowed in cql, and should be allowed in FHIR.R4.PathEngine as well
     pfSubsetOf: checkParamCount(lexer, location, exp, 1);
     pfSupersetOf: checkParamCount(lexer, location, exp, 1);
     pfIsDistinct: checkParamCount(lexer, location, exp, 0);
@@ -4272,11 +4345,9 @@ begin
   raise EFHIRPath.create('Unknown Function '+exp.name);
 end;
 
-function TFHIRPathEngine.check(appInfo: TFslObject; resourceType, context,
-  path: String; expr: TFHIRPathExpressionNodeV;
-  xPathStartsWithValueRef: boolean): TFHIRTypeDetailsV;
+function TFHIRPathEngine.check(appInfo: TFslObject; resourceType, context, path: String; expr: TFHIRPathExpressionNodeV; xPathStartsWithValueRef: boolean): TFHIRTypeDetailsV;
 begin
-
+  result := nil;
 end;
 
 procedure TFHIRPathEngine.checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TFslList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
@@ -4933,7 +5004,7 @@ begin
           sdl.add(dt);
         end
         else
-          for t in ed.type_List do
+          for t in m.type_List do
           begin
             dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t.Code) as TFhirStructureDefinition;
             if (dt = nil) then
@@ -5158,7 +5229,7 @@ end;
 
 constructor EFHIRPath.create(path: String; offset: integer; problem: String);
 begin
-  inherited create('FHIR.Tools.PathEngine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
+  inherited create('FHIR.R4.PathEngine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
 end;
 
 constructor EFHIRPath.create(problem: String);

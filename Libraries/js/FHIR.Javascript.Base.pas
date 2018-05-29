@@ -52,7 +52,7 @@ type
     FDefinedElements : TFslMap<TFHIRJavascriptDefinedElement>;
     FFactory : TFhirFactory;
   public
-    constructor Create(chakraPath : String; factory : TFHIRFactory);
+    constructor Create(chakraPath : String; factory : TFHIRFactory); overload;
     destructor Destroy; override;
 
     procedure registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter : TJsGetterFunction; setter : TJsSetterProcedure);

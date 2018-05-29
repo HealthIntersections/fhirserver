@@ -94,6 +94,7 @@ type
     procedure btnFindClick(Sender: TObject);
     procedure btnDebugClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
   private
     FLoading : boolean;
     FStop : boolean;
@@ -117,6 +118,11 @@ uses
   PackageBrowser;
 
 { TPackageManagerFrame }
+
+procedure TPackageManagerFrame.btnCancelClick(Sender: TObject);
+begin
+  FStop := true;
+end;
 
 procedure TPackageManagerFrame.btnDebugClick(Sender: TObject);
 var  Svc: IFMXClipboardService;

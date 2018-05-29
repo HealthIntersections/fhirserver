@@ -33,7 +33,7 @@ interface
 uses
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream,
   FHIR.Support.Json, FHIR.Support.MXml,
-  FHIR.Base.Objects, FHIR.XVersion.Resources;
+  FHIR.Base.Objects, FHIR.Base.Common;
 
 type
   TBestPracticeWarningLevel = (bpwlIgnore, bpwlHint, bpwlWarning, bpwlError);

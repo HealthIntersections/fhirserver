@@ -35,14 +35,18 @@ uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Collections,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations,
+  FHIR.Base.Common,
+  FHIR.CdsHooks.Utilities,
   YuStemmer;
+
+const
+  ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
 
 Type
   ETerminologySetup = class (Exception);
   ETerminologyError = class (Exception);
 
-  TFhirFilterOperatorEnum = FHIR.Tools.Types.TFhirFilterOperatorEnum;
+  TFhirFilterOperator = FHIR.Base.Common.TFilterOperator;
 
   TCodeSystemProviderContext = class (TFslObject)
   public
@@ -106,13 +110,13 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); overload; virtual; abstract;
     procedure Displays(code : String; list : TStringList; lang : String); overload; virtual; abstract;
-    function doesFilter(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; virtual;
+    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
 
     function hasSupplement(url : String) : boolean; virtual;
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
     function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual;
-    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; virtual;
@@ -120,7 +124,7 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); virtual;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); virtual;
     function subsumesTest(codeA, codeB : String) : String; virtual;
 
     function SpecialEnumeration : String; virtual;
@@ -149,7 +153,7 @@ begin
   result := true;
 end;
 
-function TCodeSystemProvider.doesFilter(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;
+function TCodeSystemProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
 var
   ctxt : TCodeSystemProviderFilterContext;
 begin
@@ -161,7 +165,7 @@ end;
 
 
 
-procedure TCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse);
+procedure TCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW);
 begin
   // nothing here
 end;

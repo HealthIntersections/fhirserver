@@ -1679,7 +1679,7 @@ end;
 // http://stackoverflow.com/questions/6077258/theres-a-uinttostr-in-delphi-to-let-you-display-uint64-values-but-where-is-strt
 function TryStrToUINT64(StrValue:String; var uValue:UInt64 ):Boolean;
 var
-  Start,Base,Digit:Integer;
+  Start,Base,Digit:Cardinal;
   n:Integer;
   Nextvalue:UInt64;
 begin
@@ -3533,7 +3533,7 @@ Begin
         sPluralisation := 's';
       End;
 
-      If TCharacter.IsUpper(cLastCharacter) Then
+      If cLastCharacter.IsUpper Then
         sPluralisation := StringUpper(sPluralisation);
 
       Result := Result + sPluralisation;
@@ -3580,7 +3580,7 @@ Begin
 
     If (cCurrent <> '') And (cLast <> '') Then
     Begin
-      bUpper := TCharacter.isUpper(cCurrent) And Not TCharacter.isUpper(cLast);
+      bUpper := cCurrent.isUpper And Not cLast.isUpper;
       bNumeric := StringIsNumeric(cCurrent) And Not StringIsNumeric(cLast);
 
       If bUpper Or bNumeric Then

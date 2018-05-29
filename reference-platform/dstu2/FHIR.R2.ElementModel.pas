@@ -34,7 +34,7 @@ uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream,
   FHIR.Support.Text, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.DateTime,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common,
   FHIR.R2.Base, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Utilities, FHIR.R2.Context, FHIR.R2.Common;
 
 
@@ -101,6 +101,8 @@ type
     Destructor Destroy; override;
     function link : TFHIRMMElement; overload;
     procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement);
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -133,6 +135,8 @@ type
     function isPrimitive : boolean; override;
     function hasPrimitiveValue : boolean; override;
     function fhirType : String; override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
     function primitiveValue : String; override;
     procedure getProperty(name : String; checkValid : boolean; list : TFslList<TFHIRObject>); override;
   end;
@@ -157,7 +161,7 @@ type
     function parse(stream : TStream) : TFHIRMMElement; overload; virtual; abstract;
     function parse(stream : TFslStream) : TFHIRMMElement; overload; virtual;
     function parse(buffer : TFslBuffer) : TFHIRMMElement; overload; virtual;
-    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);  virtual; abstract;
+    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload; virtual; abstract;
   end;
 
   TFHIRMMManager = class (TFslObject)
@@ -236,7 +240,7 @@ type
   public
     function parse(r : TFHIRResource) : TFHIRMMElement; overload;
     function parse(r : TFHIRObject) : TFHIRMMElement; overload;
-    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload;
+    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); override;
   end;
 
   TFHIRCustomResource = class (TFHIRResource)
@@ -261,6 +265,7 @@ type
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function createPropertyValue(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
+    function getId : string; override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     procedure getProperty(name : String; checkValid : boolean; list : TFslList<TFHIRObject>); override;
@@ -505,6 +510,11 @@ begin
   FIndex := -1;
 end;
 
+function TFHIRMMElement.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
 destructor TFHIRMMElement.Destroy;
 begin
   FComments.Free;
@@ -673,11 +683,26 @@ begin
 				exit(c.primitiveValue());
 end;
 
+procedure TFHIRMMElement.setIdValue(id: String);
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+procedure TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
 function TFHIRMMElement.markLocation(start, end_: TSourceLocation): TFHIRMMElement;
   begin
   FLocStart := start;
   FLocEnd := end_;
   result := self;
+end;
+
+function TFHIRMMElement.getId: String;
+begin
+  raise Exception.Create('Not Done Yet');
 end;
 
 function TFHIRMMElement.getNamedChild(name: String): TFHIRMMElement;
@@ -2131,6 +2156,11 @@ end;
 procedure TFHIRCustomResource.GetChildrenByName(child_name: string; list: TFHIRSelectionList);
 begin
   FRoot.GetChildrenByName(child_name, list);
+end;
+
+function TFHIRCustomResource.getId: string;
+begin
+  raise Exception.Create('Not done yet: TFHIRCustomResource.getId');
 end;
 
 procedure TFHIRCustomResource.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);

@@ -505,8 +505,8 @@ Type
 
       Procedure Clear; Virtual;
 
-      Function ResolveObject(Const sResource : String; Const aClass : TFslObjectClass) : TFslObject; Virtual;
-      Function ResolveID(Const oObject : TFslObject) : String; Virtual;
+      Function ResolveObject(Const sResource : String; Const aClass : TFslObjectClass) : TFslObject; Virtual; abstract;
+      Function ResolveID(Const oObject : TFslObject) : String; Virtual; abstract;
   End;
 
   TFslBufferList = Class(TFslObjectList)
@@ -1617,22 +1617,6 @@ End;
 Procedure TFslStreamFilerResourceManager.Clear;
 Begin
 End;
-
-
-Function TFslStreamFilerResourceManager.ResolveObject(Const sResource: String; Const aClass : TFslObjectClass): TFslObject;
-Begin
-  RaiseError('ResolveObject', 'ResolveObject must be overriden.');
-
-  Result := Nil;
-End;  
-
-
-Function TFslStreamFilerResourceManager.ResolveID(Const oObject: TFslObject): String;
-Begin 
-  RaiseError('ResolveID', 'ResolveObject must be overriden.');
-
-  Result := '';
-End;  
 
 
 Function TFslStreamFilerResourceManager.Link : TFslStreamFilerResourceManager;

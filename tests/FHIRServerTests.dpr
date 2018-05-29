@@ -51,7 +51,7 @@ uses
   FHIR.Web.Parsers in '..\reference-platform\Support\FHIR.Web.Parsers.pas',
   FHIR.Support.Zip in '..\reference-platform\Support\FHIR.Support.Zip.pas',
   FHIR.Support.Decimal in '..\reference-platform\Support\FHIR.Support.Decimal.pas',
-  FHIR.Support.WInInet in '..\reference-platform\Support\FHIR.Support.WInInet.pas',
+  FHIR.Support.WinInet in '..\reference-platform\Support\FHIR.Support.WinInet.pas',
   FHIR.Support.JSON in '..\reference-platform\Support\FHIR.Support.JSON.pas',
   FHIRIndexManagers in '..\server\FHIRIndexManagers.pas',
   FHIR.Ucum.Services in '..\Libraries\Ucum\FHIR.Ucum.Services.pas',
@@ -238,7 +238,7 @@ uses
   FHIR.R4.PathNode in '..\reference-platform\r4\FHIR.R4.PathNode.pas',
   FHIR.Ucum.IFace in '..\reference-platform\support\FHIR.Ucum.IFace.pas',
   FHIR.R4.Base in '..\reference-platform\r4\FHIR.R4.Base.pas',
-  FHIR.Tools.XhtmlComp in '..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas',
+  FHIR.Tools.XhtmlComp in '..\Server\FHIR.Tools.XhtmlComp.pas',
   FHIR.R4.ParserBase in '..\reference-platform\r4\FHIR.R4.ParserBase.pas',
   FHIR.XVersion.Conv_30_40 in '..\reference-platform\xversion\FHIR.XVersion.Conv_30_40.pas',
   FHIR.R3.Resources in '..\reference-platform\dstu3\FHIR.R3.Resources.pas',
@@ -270,7 +270,7 @@ uses
   FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
@@ -290,7 +290,9 @@ uses
   FHIR.R3.PathEngine in '..\reference-platform\dstu3\FHIR.R3.PathEngine.pas',
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
   FHIR.R3.Client in '..\reference-platform\dstu3\FHIR.R3.Client.pas',
-  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas';
+  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
+  FHIR.R3.Operations in '..\reference-platform\dstu3\FHIR.R3.Operations.pas',
+  FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas';
 
 var
   runner : ITestRunner;

@@ -25,6 +25,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
 program FHIRToolkitR3;
 
 uses
@@ -95,7 +96,7 @@ uses
   ValuesetExpansion in 'ValuesetExpansion.pas' {ValuesetExpansionForm},
   HelpContexts in 'HelpContexts.pas',
   ProcessForm in 'ProcessForm.pas' {ProcessingForm},
-  SettingsDialog in 'SettingsDialog.pas' {SettingsForm},
+  SettingsDialog in 'SettingsDialog.pas' {FHIR.Npp.Settings},
   AboutDialog in 'AboutDialog.pas' {AboutForm},
   FHIR.Ui.OSX in '..\Libraries\ui\FHIR.Ui.OSX.pas',
   ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm},
@@ -131,7 +132,6 @@ uses
   FHIR.R3.Questionnaire2 in '..\reference-platform\dstu3\FHIR.R3.Questionnaire2.pas',
   FHIR.R3.Base in '..\reference-platform\dstu3\FHIR.R3.Base.pas',
   FHIR.R3.ParserBase in '..\reference-platform\dstu3\FHIR.R3.ParserBase.pas',
-  FHIR.Tools.XhtmlComp in '..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas',
   FHIR.R3.Parser in '..\reference-platform\dstu3\FHIR.R3.Parser.pas',
   FHIR.Client.Base in '..\reference-platform\client\FHIR.Client.Base.pas',
   FHIR.Client.HTTP in '..\reference-platform\client\FHIR.Client.HTTP.pas',
@@ -145,7 +145,7 @@ uses
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
   FHIR.R3.Factory in '..\reference-platform\dstu3\FHIR.R3.Factory.pas',
@@ -153,13 +153,11 @@ uses
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
   FHIR.R3.Validator in '..\reference-platform\dstu3\FHIR.R3.Validator.pas',
   FHIR.Client.Async in '..\reference-platform\client\FHIR.Client.Async.pas',
-  {$IFDEF MSWINDOWS}
-  FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
-  {$ENDIF}
+  FHIR.Support.WinInet in '..\reference-platform\support\FHIR.Support.WinInet.pas',
   FHIR.Cache.PackageManager in '..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
   PackageManagerFrame in 'PackageManagerFrame.pas' {PackageManagerFrame: TFrame},
-  ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TpFrame},
+  ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TFrame},
   FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas',
   FHIR.Java.JNI in '..\Libraries\java\FHIR.Java.JNI.pas',
   FHIR.Java.Strings in '..\Libraries\java\FHIR.Java.Strings.pas',
@@ -168,7 +166,9 @@ uses
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
   FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
-  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas';
+  FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
+  FHIR.R3.Operations in '..\reference-platform\dstu3\FHIR.R3.Operations.pas',
+  FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas';
 
 {$R *.res}
 

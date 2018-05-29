@@ -41,9 +41,12 @@ Type
   TJsonObject = class;
   TJsonArray = class;
 
-  TJsonNode = class (TFslObject)
+  TJsonNodeKind = (jnkNull, jnkBoolean, jnkString, jnkNumber, jnkObject, jnkArray);
+
+  TJsonNode = class abstract (TFslObject)
   private
     FPath: String;
+    function setStart(loc : TSourceLocation) : TJsonNode;
   protected
     function nodeType : String; virtual;
     function compare(other : TJsonNode) : boolean; overload; virtual; abstract;
@@ -56,6 +59,7 @@ Type
     constructor create(path : String); overload;
     constructor create(path : String; locStart, locEnd : TSourceLocation); overload;
     Function Link : TJsonNode; Overload;
+    function kind : TJsonNodeKind; virtual; abstract;
     property path : String read FPath write FPath;
 
     class function compare(n1, n2 : TJsonNode) : boolean; overload;
@@ -90,6 +94,7 @@ Type
     constructor Create; override;
     destructor Destroy; override;
     Function Link : TJsonArray; Overload;
+    function kind : TJsonNodeKind; override;
 
     Property Count : integer read GetCount;
     Property Item[i : integer] : TJsonNode read GetItem write SetItem;
@@ -110,6 +115,7 @@ Type
   TJsonNull = class (TJsonNode)
   protected
     function nodeType : String; override;
+    function kind : TJsonNodeKind; override;
     function compare(other : TJsonNode) : boolean; override;
   end;
 
@@ -123,6 +129,7 @@ Type
     Constructor Create(path : String; value : boolean); overload;
     Constructor Create(path : String; locStart, locEnd : TSourceLocation; value : boolean); overload;
     Function Link : TJsonBoolean; Overload;
+    function kind : TJsonNodeKind; override;
     property value : boolean read FValue write FValue;
   end;
 
@@ -136,6 +143,7 @@ Type
     Constructor Create(path : String; value : string); overload;
     Constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
     Function Link : TJsonString; Overload;
+    function kind : TJsonNodeKind; override;
     property value : String read FValue write FValue;
   end;
 
@@ -149,6 +157,7 @@ Type
     Constructor Create(path : String; value : string); overload;
     Constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
     Function Link : TJsonNumber; Overload;
+    function kind : TJsonNodeKind; override;
     property value : String read FValue write FValue;
   end;
 
@@ -178,6 +187,7 @@ Type
     constructor Create; override;
     destructor Destroy; override;
     Function Link : TJsonObject; Overload;
+    function kind : TJsonNodeKind; override;
 
     Function has(name : String) : Boolean;
     Function isNull(name : String) : Boolean;
@@ -1504,7 +1514,7 @@ procedure TJSONParser.ParseProperty;
 Begin
   If FLex.FStates.Objects[0] = nil Then
   Begin
-    FNameStart := FLex.FLocation;
+    FNameStart := FLex.FLastLocationAWS;
     FItemName := FLex.Consume(jltString);
     FNameEnd := FLex.FLocation;
     FItemValue := '';
@@ -1645,11 +1655,13 @@ procedure TJSONParser.readObject(obj: TJsonObject; root : boolean);
 var
   child : TJsonObject;
   arr : TJsonArray;
+  ns : TSourceLocation;
 begin
   obj.LocationInner := FLex.FLocation;
 
   while not ((ItemType = jpitEnd) or (root and (ItemType = jpitEof))) do
   begin
+    ns := FNameStart; // we rule that the value 'starts' in a location sense where the name starts, not where the value starts
     if obj.FProperties.ContainsKey(itemName) then
       raise Exception.Create('DuplicateKey: '+itemName+' at '+obj.path);
 
@@ -1658,23 +1670,23 @@ begin
         begin
           child := TJsonObject.Create(obj.path+'.'+ItemName);
           obj.FProperties.Add(ItemName, child);
-          child.LocationStart := FLex.FLocation;
+          child.LocationStart := FNameStart;
           Next;
           readObject(child, false);
         end;
       jpitBoolean :
-        obj.FProperties.Add(ItemName, TJsonBoolean.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd, StrToBool(ItemValue)));
+        obj.FProperties.Add(ItemName, TJsonBoolean.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd, StrToBool(ItemValue)).setStart(ns));
       jpitString:
-        obj.FProperties.Add(ItemName, TJsonString.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd, ItemValue));
+        obj.FProperties.Add(ItemName, TJsonString.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd, ItemValue).setStart(ns));
       jpitNumber:
-        obj.FProperties.Add(ItemName, TJsonNumber.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd, ItemValue));
+        obj.FProperties.Add(ItemName, TJsonNumber.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd, ItemValue).setStart(ns));
       jpitNull:
-        obj.FProperties.Add(ItemName, TJsonNull.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd));
+        obj.FProperties.Add(ItemName, TJsonNull.Create(obj.path+'.'+ItemName, FValueStart, FValueEnd).setStart(ns));
       jpitArray:
         begin
         arr := TJsonArray.Create(obj.path+'.'+ItemName);
         obj.FProperties.Add(ItemName, arr);
-        arr.LocationStart := FLex.FLocation;
+        arr.LocationStart := ns;
         Next;
         readArray(arr, false);
         end;
@@ -1770,6 +1782,12 @@ begin
   result := copy(className, 6, $FF);
 end;
 
+
+function TJsonNode.setStart(loc: TSourceLocation): TJsonNode;
+begin
+  LocationStart := loc;
+  result := self;
+end;
 
 { TJsonArray }
 
@@ -1884,6 +1902,11 @@ begin
     raise Exception.Create('Found a '+nodeType+' expecting a string property at '+path);
 end;
 
+function TJsonArray.kind: TJsonNodeKind;
+begin
+  result := jnkArray;
+end;
+
 function TJsonArray.Link: TJsonArray;
 begin
   result := TJsonArray(Inherited Link);
@@ -1943,6 +1966,11 @@ begin
   LocationEnd := locEnd;
 end;
 
+function TJsonString.kind: TJsonNodeKind;
+begin
+  result := jnkString;
+end;
+
 function TJsonString.Link: TJsonString;
 begin
   result := TJsonString(Inherited Link);
@@ -1975,6 +2003,11 @@ begin
   self.value := value;
   LocationStart := locStart;
   LocationEnd := locEnd;
+end;
+
+function TJsonNumber.kind: TJsonNodeKind;
+begin
+  result := jnkNumber;
 end;
 
 function TJsonNumber.Link: TJsonNumber;
@@ -2182,6 +2215,11 @@ begin
   result := has(name) and (FProperties[name] is TJsonNull);
 end;
 
+function TJsonObject.kind: TJsonNodeKind;
+begin
+  result := jnkObject;
+end;
+
 function TJsonObject.Link: TJsonObject;
 begin
   result := TJsonObject(Inherited Link);
@@ -2265,6 +2303,11 @@ begin
   FValue := value;
   LocationStart := locStart;
   LocationEnd := locEnd;
+end;
+
+function TJsonBoolean.kind: TJsonNodeKind;
+begin
+  result := jnkBoolean;
 end;
 
 function TJsonBoolean.Link: TJsonBoolean;
@@ -2629,6 +2672,11 @@ end;
 function TJsonNull.compare(other: TJsonNode): boolean;
 begin
   result := other is TJsonNull;
+end;
+
+function TJsonNull.kind: TJsonNodeKind;
+begin
+  result := jnkNull;
 end;
 
 function TJsonNull.nodeType: String;

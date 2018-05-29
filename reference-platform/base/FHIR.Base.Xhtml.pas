@@ -47,16 +47,24 @@ Type
     FValue : String;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
   public
     Constructor Create(Name : String; Value : String); Overload;
 
     function Link : TFHIRAttribute; Overload;
     function Clone : TFHIRAttribute; Overload;
     procedure Assign(oSource : TFslObject); override;
+
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function fhirType : String; override;
+
     property Name : String read FName write FName;
     property Value : String read FValue write FValue;
     function isEmpty : boolean; override;
     function getId : String; override;
+    procedure setIdValue(id : String); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
   end;
@@ -109,27 +117,35 @@ Type
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
   public
     Constructor Create; Override;
     Constructor Create(nodeType : TFHIRHtmlNodeType) ; Overload;
     Constructor Create(name : String) ; Overload;
     Destructor Destroy; Override;
-      function Link : TFhirXHtmlNode; Overload;
+    function Link : TFhirXHtmlNode; Overload;
     function Clone : TFhirXHtmlNode; Overload;
     procedure Assign(oSource : TFslObject); override;
+
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+
     property Attributes : TFHIRAttributeList read GetAttributes;
     function allChildrenAreText : boolean;
     function isPrimitive : boolean; override;
     function primitiveValue : string; override;
     function fhirType : String; override;
     function NsDecl : String; virtual;
-  
+
     {
       plain text content of html
     }
     function AsPlainText : String;
+    function AsHtmlPage : String;
     function isEmpty : boolean; override;
     function getId : String; override;
+    procedure setIdValue(id : String); override;
 
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
@@ -385,6 +401,11 @@ begin
   FValue := Value;
 end;
 
+function TFHIRAttribute.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
 function TFHIRAttribute.equalsDeep(other: TFHIRObject): boolean;
 begin
   result := inherited equalsDeep(other) and (FName = TFHIRAttribute(other).FName) and (FValue = TFHIRAttribute(other).FValue);
@@ -393,6 +414,11 @@ end;
 function TFHIRAttribute.equalsShallow(other: TFHIRObject): boolean;
 begin
   result := equalsDeep(other);
+end;
+
+function TFHIRAttribute.fhirType: String;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.getId: String;
@@ -416,6 +442,25 @@ begin
     inherited;
   oList.add(TFHIRProperty.create(self, 'name', 'string', false, nil, FName));
   oList.add(TFHIRProperty.create(self, 'value', 'string', false, nil, FValue));
+end;
+
+function TFHIRAttribute.makeCodeValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+function TFHIRAttribute.makeStringValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+procedure TFHIRAttribute.setIdValue(id: String);
+begin
+end;
+
+procedure TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 { TFhirAttributeListEnumerator }
@@ -597,6 +642,14 @@ begin
     result := result and (FChildNodes[i].FNodeType = fhntText);
 end;
 
+function TFhirXHtmlNode.AsHtmlPage: String;
+begin
+  if (self = nil) then
+    result := '<html><body>No Narrative</body></html>'
+  else
+    result := '<html><body>'+TFHIRXhtmlParser.Compose(self)+'</body></html>'
+end;
+
 function TFhirXHtmlNode.AsPlainText: String;
 var
   s : String;
@@ -646,6 +699,11 @@ begin
   Create;
   NodeType := fhntElement;
   FName := name;
+end;
+
+function TFhirXHtmlNode.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 constructor TFhirXHtmlNode.Create;
@@ -787,6 +845,16 @@ begin
   end;
 end;
 
+function TFhirXHtmlNode.makeCodeValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+function TFhirXHtmlNode.makeStringValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
 function TFhirXHtmlNode.NsDecl: String;
 var
   attr : TFHIRAttribute;
@@ -817,6 +885,10 @@ begin
   FAttributes.add(TFHIRAttribute.create(name, value));
 end;
 
+procedure TFhirXHtmlNode.setIdValue(id: String);
+begin
+end;
+
 procedure TFhirXHtmlNode.SetNodeType(const Value: TFHIRHtmlNodeType);
 begin
   FNodeType := Value;
@@ -825,6 +897,11 @@ begin
     FChildNodes := TFhirXHtmlNodeList.create;
     FAttributes := TFHIRAttributeList.create;
   end;
+end;
+
+procedure TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 { TFhirXhtmlNodeListEnumerator }

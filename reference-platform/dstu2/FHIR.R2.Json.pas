@@ -50,42 +50,42 @@ Type
     function ParseBackboneElement(jsn : TJsonObject) : TFhirBackboneElement; overload;
     procedure ParseBackboneElement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 
-    procedure ParseEnum(path, value : string; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String); overload;
-    function ParseEnum(path, value : string; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;
-    procedure ParseDateTime(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseDateTime(value : string; jsn : TJsonObject) : TFHIRDateTime; overload;
-    procedure ParseDate(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseDate(value : string; jsn : TJsonObject) : TFHIRDate; overload;
-    procedure ParseString(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseString(value : string; jsn : TJsonObject) : TFHIRString; overload;
-    procedure ParseInteger(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseInteger(value : string; jsn : TJsonObject) : TFHIRInteger; overload;
-    procedure ParseUri(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseUri(value : string; jsn : TJsonObject) : TFHIRUri; overload;
-    procedure ParseInstant(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseInstant(value : string; jsn : TJsonObject) : TFHIRInstant; overload;
-    procedure ParseBoolean(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseBoolean(value : string; jsn : TJsonObject) : TFHIRBoolean; overload;
-    procedure ParseBase64Binary(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseBase64Binary(value : string; jsn : TJsonObject) : TFHIRBase64Binary; overload;
-    procedure ParseTime(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseTime(value : string; jsn : TJsonObject) : TFHIRTime; overload;
-    procedure ParseDecimal(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseDecimal(value : string; jsn : TJsonObject) : TFHIRDecimal; overload;
-    procedure ParseCode(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseCode(value : string; jsn : TJsonObject) : TFHIRCode; overload;
-    procedure ParseOid(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseOid(value : string; jsn : TJsonObject) : TFHIROid; overload;
-    procedure ParseUuid(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseUuid(value : string; jsn : TJsonObject) : TFHIRUuid; overload;
-    procedure ParseMarkdown(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseMarkdown(value : string; jsn : TJsonObject) : TFHIRMarkdown; overload;
-    procedure ParseUnsignedInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseUnsignedInt(value : string; jsn : TJsonObject) : TFHIRUnsignedInt; overload;
-    procedure ParseId(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseId(value : string; jsn : TJsonObject) : TFHIRId; overload;
-    procedure ParsePositiveInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParsePositiveInt(value : string; jsn : TJsonObject) : TFHIRPositiveInt; overload;
+    procedure ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String); overload;
+    function ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;
+    procedure ParseDateTime(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseDateTime(value : TJsonNode; jsn : TJsonObject) : TFHIRDateTime; overload;
+    procedure ParseDate(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseDate(value : TJsonNode; jsn : TJsonObject) : TFHIRDate; overload;
+    procedure ParseString(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseString(value : TJsonNode; jsn : TJsonObject) : TFHIRString; overload;
+    procedure ParseInteger(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseInteger(value : TJsonNode; jsn : TJsonObject) : TFHIRInteger; overload;
+    procedure ParseUri(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseUri(value : TJsonNode; jsn : TJsonObject) : TFHIRUri; overload;
+    procedure ParseInstant(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseInstant(value : TJsonNode; jsn : TJsonObject) : TFHIRInstant; overload;
+    procedure ParseBoolean(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseBoolean(value : TJsonNode; jsn : TJsonObject) : TFHIRBoolean; overload;
+    procedure ParseBase64Binary(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseBase64Binary(value : TJsonNode; jsn : TJsonObject) : TFHIRBase64Binary; overload;
+    procedure ParseTime(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseTime(value : TJsonNode; jsn : TJsonObject) : TFHIRTime; overload;
+    procedure ParseDecimal(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseDecimal(value : TJsonNode; jsn : TJsonObject) : TFHIRDecimal; overload;
+    procedure ParseCode(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseCode(value : TJsonNode; jsn : TJsonObject) : TFHIRCode; overload;
+    procedure ParseOid(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseOid(value : TJsonNode; jsn : TJsonObject) : TFHIROid; overload;
+    procedure ParseUuid(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseUuid(value : TJsonNode; jsn : TJsonObject) : TFHIRUuid; overload;
+    procedure ParseMarkdown(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseMarkdown(value : TJsonNode; jsn : TJsonObject) : TFHIRMarkdown; overload;
+    procedure ParseUnsignedInt(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseUnsignedInt(value : TJsonNode; jsn : TJsonObject) : TFHIRUnsignedInt; overload;
+    procedure ParseId(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseId(value : TJsonNode; jsn : TJsonObject) : TFHIRId; overload;
+    procedure ParsePositiveInt(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParsePositiveInt(value : TJsonNode; jsn : TJsonObject) : TFHIRPositiveInt; overload;
 
     procedure ParseResourceProperties(jsn : TJsonObject; resource : TFhirResource);
 {$IFDEF FHIR_PARAMETERS}
@@ -2005,21 +2005,26 @@ begin
   if not noObj then json.finishObject;
 end;
 
-procedure TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String);
+procedure TFHIRJsonParser.ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String);
 begin
   ctxt.add(ParseEnum(path, value, jsn, aNames, aSystems));
 end;
 
-function TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum;
+function TFHIRJsonParser.ParseEnum(path : String; value : TJsonNode; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum;
 var
   i : integer;
 begin
-  i := StringArrayIndexOfSensitive(aNames, value);
-  if (value <> '') and (i < 0) then
-    raise Exception.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
+  i := StringArrayIndexOfSensitive(aNames, JsonToString(value));
+  if (value <> nil) and (i < 0) then
+    raise Exception.create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
   result := TFHIREnum.create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     result.system := aSystems[i];
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
@@ -2060,16 +2065,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDateTime(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDateTime(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDateTime(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseDateTime(value : string; jsn : TJsonObject) : TFHIRDateTime;
+function TFHIRJsonParser.ParseDateTime(value : TJsonNode; jsn : TJsonObject) : TFHIRDateTime;
 begin
   result := TFhirDateTime.Create;
   try
-     result.value := toTDateTimeEx(value);
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+     result.value := toTDateTimeEx(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2109,16 +2119,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDate(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDate(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDate(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseDate(value : string; jsn : TJsonObject) : TFHIRDate;
+function TFHIRJsonParser.ParseDate(value : TJsonNode; jsn : TJsonObject) : TFHIRDate;
 begin
   result := TFhirDate.Create;
   try
-     result.value := toTDateTimeEx(value);
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+     result.value := toTDateTimeEx(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2158,16 +2173,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseString(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseString(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseString(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseString(value : string; jsn : TJsonObject) : TFHIRString;
+function TFHIRJsonParser.ParseString(value : TJsonNode; jsn : TJsonObject) : TFHIRString;
 begin
   result := TFhirString.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2207,16 +2227,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseInteger(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseInteger(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseInteger(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseInteger(value : string; jsn : TJsonObject) : TFHIRInteger;
+function TFHIRJsonParser.ParseInteger(value : TJsonNode; jsn : TJsonObject) : TFHIRInteger;
 begin
   result := TFhirInteger.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2256,16 +2281,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseUri(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseUri(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseUri(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseUri(value : string; jsn : TJsonObject) : TFHIRUri;
+function TFHIRJsonParser.ParseUri(value : TJsonNode; jsn : TJsonObject) : TFHIRUri;
 begin
   result := TFhirUri.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2305,16 +2335,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseInstant(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseInstant(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseInstant(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseInstant(value : string; jsn : TJsonObject) : TFHIRInstant;
+function TFHIRJsonParser.ParseInstant(value : TJsonNode; jsn : TJsonObject) : TFHIRInstant;
 begin
   result := TFhirInstant.Create;
   try
-     result.value := toTDateTimeEx(value);
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+     result.value := toTDateTimeEx(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2354,16 +2389,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseBoolean(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseBoolean(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBoolean(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseBoolean(value : string; jsn : TJsonObject) : TFHIRBoolean;
+function TFHIRJsonParser.ParseBoolean(value : TJsonNode; jsn : TJsonObject) : TFHIRBoolean;
 begin
   result := TFhirBoolean.Create;
   try
-    result.value := StringToBoolean(value);
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := StringToBoolean(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2403,16 +2443,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseBase64Binary(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseBase64Binary(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBase64Binary(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseBase64Binary(value : string; jsn : TJsonObject) : TFHIRBase64Binary;
+function TFHIRJsonParser.ParseBase64Binary(value : TJsonNode; jsn : TJsonObject) : TFHIRBase64Binary;
 begin
   result := TFhirBase64Binary.Create;
   try
-     result.value := toTBytes(value);
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+     result.value := toTBytes(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2452,16 +2497,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseTime(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseTime(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseTime(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseTime(value : string; jsn : TJsonObject) : TFHIRTime;
+function TFHIRJsonParser.ParseTime(value : TJsonNode; jsn : TJsonObject) : TFHIRTime;
 begin
   result := TFhirTime.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2501,16 +2551,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDecimal(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDecimal(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDecimal(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseDecimal(value : string; jsn : TJsonObject) : TFHIRDecimal;
+function TFHIRJsonParser.ParseDecimal(value : TJsonNode; jsn : TJsonObject) : TFHIRDecimal;
 begin
   result := TFhirDecimal.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2550,16 +2605,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseCode(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseCode(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCode(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseCode(value : string; jsn : TJsonObject) : TFHIRCode;
+function TFHIRJsonParser.ParseCode(value : TJsonNode; jsn : TJsonObject) : TFHIRCode;
 begin
   result := TFhirCode.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2599,16 +2659,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseOid(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseOid(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOid(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseOid(value : string; jsn : TJsonObject) : TFHIROid;
+function TFHIRJsonParser.ParseOid(value : TJsonNode; jsn : TJsonObject) : TFHIROid;
 begin
   result := TFhirOid.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2648,16 +2713,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseUuid(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseUuid(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseUuid(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseUuid(value : string; jsn : TJsonObject) : TFHIRUuid;
+function TFHIRJsonParser.ParseUuid(value : TJsonNode; jsn : TJsonObject) : TFHIRUuid;
 begin
   result := TFhirUuid.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2697,16 +2767,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseMarkdown(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseMarkdown(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMarkdown(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseMarkdown(value : string; jsn : TJsonObject) : TFHIRMarkdown;
+function TFHIRJsonParser.ParseMarkdown(value : TJsonNode; jsn : TJsonObject) : TFHIRMarkdown;
 begin
   result := TFhirMarkdown.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2746,16 +2821,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseUnsignedInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseUnsignedInt(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseUnsignedInt(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseUnsignedInt(value : string; jsn : TJsonObject) : TFHIRUnsignedInt;
+function TFHIRJsonParser.ParseUnsignedInt(value : TJsonNode; jsn : TJsonObject) : TFHIRUnsignedInt;
 begin
   result := TFhirUnsignedInt.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2795,16 +2875,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParseId(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseId(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseId(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParseId(value : string; jsn : TJsonObject) : TFHIRId;
+function TFHIRJsonParser.ParseId(value : TJsonNode; jsn : TJsonObject) : TFHIRId;
 begin
   result := TFhirId.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2844,16 +2929,21 @@ begin
   end;
 end;
 
-procedure TFHIRJsonParser.ParsePositiveInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParsePositiveInt(value : TJsonNode; jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePositiveInt(value, jsn)) {1};
 end;
 
-function TFHIRJsonParser.ParsePositiveInt(value : string; jsn : TJsonObject) : TFHIRPositiveInt;
+function TFHIRJsonParser.ParsePositiveInt(value : TJsonNode; jsn : TJsonObject) : TFHIRPositiveInt;
 begin
   result := TFhirPositiveInt.Create;
   try
-    result.value := value;
+    if (value <> nil) then
+    begin
+      result.LocationStart := value.LocationStart;
+      result.LocationEnd := value.LocationEnd;
+    end;
+    result.value := JsonToString(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -2898,13 +2988,13 @@ begin
   resource.LocationStart := jsn.LocationStart;
   resource.LocationEnd := jsn.LocationEnd;
   if jsn.has('id') or jsn.has('_id') then
-    resource.idElement := ParseId(jsn['id'], jsn.vObj['_id']);{q}
+    resource.idElement := ParseId(jsn.node['id'], jsn.vObj['_id']);{q}
   if jsn.has('meta') then
     resource.meta := ParseMeta(jsn.vObj['meta']);{q3}
   if jsn.has('implicitRules') or jsn.has('_implicitRules') then
-    resource.implicitRulesElement := ParseUri(jsn['implicitRules'], jsn.vObj['_implicitRules']);{q}
+    resource.implicitRulesElement := ParseUri(jsn.node['implicitRules'], jsn.vObj['_implicitRules']);{q}
   if jsn.has('language') or jsn.has('_language') then
-    resource.languageElement := ParseCode(jsn['language'], jsn.vObj['_language']);{q}
+    resource.languageElement := ParseCode(jsn.node['language'], jsn.vObj['_language']);{q}
 end;
 
 Procedure TFHIRJsonComposer.ComposeResourceProperties(json : TJSONWriter; elem : TFhirResource);
@@ -2946,41 +3036,41 @@ procedure TFHIRJsonParser.ParseParametersParameterProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('valueCode') or jsn.has('_valueCode') then
-        result.value := ParseCode(jsn['valueCode'], jsn.vObj['_valueCode']);
+        result.value := ParseCode(jsn.node['valueCode'], jsn.vObj['_valueCode']);
     if jsn.has('valueOid') or jsn.has('_valueOid') then
-        result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
+        result.value := ParseOid(jsn.node['valueOid'], jsn.vObj['_valueOid']);
     if jsn.has('valueUuid') or jsn.has('_valueUuid') then
-        result.value := ParseUuid(jsn['valueUuid'], jsn.vObj['_valueUuid']);
+        result.value := ParseUuid(jsn.node['valueUuid'], jsn.vObj['_valueUuid']);
     if jsn.has('valueMarkdown') or jsn.has('_valueMarkdown') then
-        result.value := ParseMarkdown(jsn['valueMarkdown'], jsn.vObj['_valueMarkdown']);
+        result.value := ParseMarkdown(jsn.node['valueMarkdown'], jsn.vObj['_valueMarkdown']);
     if jsn.has('valueUnsignedInt') or jsn.has('_valueUnsignedInt') then
-        result.value := ParseUnsignedInt(jsn['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
+        result.value := ParseUnsignedInt(jsn.node['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
     if jsn.has('valueId') or jsn.has('_valueId') then
-        result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
+        result.value := ParseId(jsn.node['valueId'], jsn.vObj['_valueId']);
     if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
-        result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
+        result.value := ParsePositiveInt(jsn.node['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
-        result.value := ParseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+        result.value := ParseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
     if jsn.has('valueDate') or jsn.has('_valueDate') then
-        result.value := ParseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
+        result.value := ParseDate(jsn.node['valueDate'], jsn.vObj['_valueDate']);
     if jsn.has('valueString') or jsn.has('_valueString') then
-        result.value := ParseString(jsn['valueString'], jsn.vObj['_valueString']);
+        result.value := ParseString(jsn.node['valueString'], jsn.vObj['_valueString']);
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
-        result.value := ParseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
+        result.value := ParseInteger(jsn.node['valueInteger'], jsn.vObj['_valueInteger']);
     if jsn.has('valueUri') or jsn.has('_valueUri') then
-        result.value := ParseUri(jsn['valueUri'], jsn.vObj['_valueUri']);
+        result.value := ParseUri(jsn.node['valueUri'], jsn.vObj['_valueUri']);
     if jsn.has('valueInstant') or jsn.has('_valueInstant') then
-        result.value := ParseInstant(jsn['valueInstant'], jsn.vObj['_valueInstant']);
+        result.value := ParseInstant(jsn.node['valueInstant'], jsn.vObj['_valueInstant']);
     if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-        result.value := ParseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
+        result.value := ParseBoolean(jsn.node['valueBoolean'], jsn.vObj['_valueBoolean']);
     if jsn.has('valueBase64Binary') or jsn.has('_valueBase64Binary') then
-        result.value := ParseBase64Binary(jsn['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
+        result.value := ParseBase64Binary(jsn.node['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
     if jsn.has('valueTime') or jsn.has('_valueTime') then
-        result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
+        result.value := ParseTime(jsn.node['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
-        result.value := ParseDecimal(jsn['valueDecimal'], jsn.vObj['_valueDecimal']);
+        result.value := ParseDecimal(jsn.node['valueDecimal'], jsn.vObj['_valueDecimal']);
     if jsn.has('valueIdentifier') {a7} then
         result.value := ParseIdentifier(jsn.vObj['valueIdentifier']);
     if jsn.has('valueCoding') {a7} then
@@ -3269,41 +3359,41 @@ procedure TFHIRJsonParser.ParseExtensionProperties(jsn : TJsonObject; result : T
 begin
     parseElementProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('valueCode') or jsn.has('_valueCode') then
-        result.value := ParseCode(jsn['valueCode'], jsn.vObj['_valueCode']);
+        result.value := ParseCode(jsn.node['valueCode'], jsn.vObj['_valueCode']);
     if jsn.has('valueOid') or jsn.has('_valueOid') then
-        result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
+        result.value := ParseOid(jsn.node['valueOid'], jsn.vObj['_valueOid']);
     if jsn.has('valueUuid') or jsn.has('_valueUuid') then
-        result.value := ParseUuid(jsn['valueUuid'], jsn.vObj['_valueUuid']);
+        result.value := ParseUuid(jsn.node['valueUuid'], jsn.vObj['_valueUuid']);
     if jsn.has('valueMarkdown') or jsn.has('_valueMarkdown') then
-        result.value := ParseMarkdown(jsn['valueMarkdown'], jsn.vObj['_valueMarkdown']);
+        result.value := ParseMarkdown(jsn.node['valueMarkdown'], jsn.vObj['_valueMarkdown']);
     if jsn.has('valueUnsignedInt') or jsn.has('_valueUnsignedInt') then
-        result.value := ParseUnsignedInt(jsn['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
+        result.value := ParseUnsignedInt(jsn.node['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
     if jsn.has('valueId') or jsn.has('_valueId') then
-        result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
+        result.value := ParseId(jsn.node['valueId'], jsn.vObj['_valueId']);
     if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
-        result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
+        result.value := ParsePositiveInt(jsn.node['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
-        result.value := ParseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+        result.value := ParseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
     if jsn.has('valueDate') or jsn.has('_valueDate') then
-        result.value := ParseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
+        result.value := ParseDate(jsn.node['valueDate'], jsn.vObj['_valueDate']);
     if jsn.has('valueString') or jsn.has('_valueString') then
-        result.value := ParseString(jsn['valueString'], jsn.vObj['_valueString']);
+        result.value := ParseString(jsn.node['valueString'], jsn.vObj['_valueString']);
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
-        result.value := ParseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
+        result.value := ParseInteger(jsn.node['valueInteger'], jsn.vObj['_valueInteger']);
     if jsn.has('valueUri') or jsn.has('_valueUri') then
-        result.value := ParseUri(jsn['valueUri'], jsn.vObj['_valueUri']);
+        result.value := ParseUri(jsn.node['valueUri'], jsn.vObj['_valueUri']);
     if jsn.has('valueInstant') or jsn.has('_valueInstant') then
-        result.value := ParseInstant(jsn['valueInstant'], jsn.vObj['_valueInstant']);
+        result.value := ParseInstant(jsn.node['valueInstant'], jsn.vObj['_valueInstant']);
     if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-        result.value := ParseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
+        result.value := ParseBoolean(jsn.node['valueBoolean'], jsn.vObj['_valueBoolean']);
     if jsn.has('valueBase64Binary') or jsn.has('_valueBase64Binary') then
-        result.value := ParseBase64Binary(jsn['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
+        result.value := ParseBase64Binary(jsn.node['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
     if jsn.has('valueTime') or jsn.has('_valueTime') then
-        result.value := ParseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
+        result.value := ParseTime(jsn.node['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
-        result.value := ParseDecimal(jsn['valueDecimal'], jsn.vObj['_valueDecimal']);
+        result.value := ParseDecimal(jsn.node['valueDecimal'], jsn.vObj['_valueDecimal']);
     if jsn.has('valueIdentifier') {a7} then
         result.value := ParseIdentifier(jsn.vObj['valueIdentifier']);
     if jsn.has('valueCoding') {a7} then
@@ -3494,9 +3584,9 @@ procedure TFHIRJsonParser.ParseNarrativeProperties(jsn : TJsonObject; result : T
 begin
     parseElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatusEnum, SYSTEMS_TFhirNarrativeStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatusEnum, SYSTEMS_TFhirNarrativeStatusEnum);
     if jsn.has('div') then
-        result.div_ := ParseXHtmlNode(jsn.path+'.div', jsn['div']);{q2}
+        result.div_ := ParseXHtmlNode(jsn.path+'.div', jsn.node['div']);{q2}
 end;
 
 procedure TFHIRJsonComposer.ComposeNarrative(json : TJSONWriter; name : string; elem : TFhirNarrative; noObj : boolean = false);
@@ -3531,13 +3621,13 @@ procedure TFHIRJsonParser.ParseIdentifierProperties(jsn : TJsonObject; result : 
 begin
     parseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirIdentifierUseEnum, SYSTEMS_TFhirIdentifierUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirIdentifierUseEnum, SYSTEMS_TFhirIdentifierUseEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('system') or jsn.has('_system') then
-        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn.node['system'], jsn.vObj['_system']);{q}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn.node['value'], jsn.vObj['_value']);{q}
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('assigner') then
@@ -3591,15 +3681,15 @@ procedure TFHIRJsonParser.ParseCodingProperties(jsn : TJsonObject; result : TFhi
 begin
     parseElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn.node['system'], jsn.vObj['_system']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn.node['display'], jsn.vObj['_display']);{q}
     if jsn.has('userSelected') or jsn.has('_userSelected') then
-        result.userSelectedElement := ParseBoolean(jsn['userSelected'], jsn.vObj['_userSelected']);{q}
+        result.userSelectedElement := ParseBoolean(jsn.node['userSelected'], jsn.vObj['_userSelected']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeCoding(json : TJSONWriter; name : string; elem : TFhirCoding; noObj : boolean = false);
@@ -3651,9 +3741,9 @@ procedure TFHIRJsonParser.ParseReferenceProperties(jsn : TJsonObject; result : T
 begin
     parseElementProperties(jsn, result);
     if jsn.has('reference') or jsn.has('_reference') then
-        result.referenceElement := ParseString(jsn['reference'], jsn.vObj['_reference']);{q}
+        result.referenceElement := ParseString(jsn.node['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn.node['display'], jsn.vObj['_display']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeReference(json : TJSONWriter; name : string; elem : TFhirReference; noObj : boolean = false);
@@ -3695,15 +3785,15 @@ begin
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCoding);
     if jsn.has('when') or jsn.has('_when') then
-        result.whenElement := ParseInstant(jsn['when'], jsn.vObj['_when']);{q}
+        result.whenElement := ParseInstant(jsn.node['when'], jsn.vObj['_when']);{q}
     if jsn.has('whoReference') {a3} then
       result.who := ParseReference(jsn.vObj['whoReference']);
     if jsn.has('whoUri') or jsn.has('_whoUri') then
-      result.who := parseUri(jsn['whoUri'], jsn.vObj['_whoUri']);
+      result.who := ParseUri(jsn.node['whoUri'], jsn.vObj['_whoUri']);
     if jsn.has('contentType') or jsn.has('_contentType') then
-        result.contentTypeElement := ParseCode(jsn['contentType'], jsn.vObj['_contentType']);{q}
+        result.contentTypeElement := ParseCode(jsn.node['contentType'], jsn.vObj['_contentType']);{q}
     if jsn.has('blob') or jsn.has('_blob') then
-        result.blobElement := ParseBase64Binary(jsn['blob'], jsn.vObj['_blob']);{q}
+        result.blobElement := ParseBase64Binary(jsn.node['blob'], jsn.vObj['_blob']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeSignature(json : TJSONWriter; name : string; elem : TFhirSignature; noObj : boolean = false);
@@ -3759,17 +3849,17 @@ begin
     if jsn.has('origin') then
         result.origin := ParseQuantity(jsn.vObj['origin']);{q3}
     if jsn.has('period') or jsn.has('_period') then
-        result.periodElement := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
+        result.periodElement := ParseDecimal(jsn.node['period'], jsn.vObj['_period']);{q}
     if jsn.has('factor') or jsn.has('_factor') then
-        result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
+        result.factorElement := ParseDecimal(jsn.node['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('lowerLimit') or jsn.has('_lowerLimit') then
-        result.lowerLimitElement := ParseDecimal(jsn['lowerLimit'], jsn.vObj['_lowerLimit']);{q}
+        result.lowerLimitElement := ParseDecimal(jsn.node['lowerLimit'], jsn.vObj['_lowerLimit']);{q}
     if jsn.has('upperLimit') or jsn.has('_upperLimit') then
-        result.upperLimitElement := ParseDecimal(jsn['upperLimit'], jsn.vObj['_upperLimit']);{q}
+        result.upperLimitElement := ParseDecimal(jsn.node['upperLimit'], jsn.vObj['_upperLimit']);{q}
     if jsn.has('dimensions') or jsn.has('_dimensions') then
-        result.dimensionsElement := ParsePositiveInt(jsn['dimensions'], jsn.vObj['_dimensions']);{q}
+        result.dimensionsElement := ParsePositiveInt(jsn.node['dimensions'], jsn.vObj['_dimensions']);{q}
     if jsn.has('data') or jsn.has('_data') then
-        result.dataElement := ParseString(jsn['data'], jsn.vObj['_data']);{q}
+        result.dataElement := ParseString(jsn.node['data'], jsn.vObj['_data']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeSampledData(json : TJSONWriter; name : string; elem : TFhirSampledData; noObj : boolean = false);
@@ -3820,9 +3910,9 @@ procedure TFHIRJsonParser.ParsePeriodProperties(jsn : TJsonObject; result : TFhi
 begin
     parseElementProperties(jsn, result);
     if jsn.has('start') or jsn.has('_start') then
-        result.startElement := ParseDateTime(jsn['start'], jsn.vObj['_start']);{q}
+        result.startElement := ParseDateTime(jsn.node['start'], jsn.vObj['_start']);{q}
     if jsn.has('end') or jsn.has('_end') then
-        result.end_Element := ParseDateTime(jsn['end'], jsn.vObj['_end']);{q}
+        result.end_Element := ParseDateTime(jsn.node['end'], jsn.vObj['_end']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposePeriod(json : TJSONWriter; name : string; elem : TFhirPeriod; noObj : boolean = false);
@@ -3862,15 +3952,15 @@ procedure TFHIRJsonParser.ParseQuantityProperties(jsn : TJsonObject; result : TF
 begin
     parseElementProperties(jsn, result);
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDecimal(jsn.node['value'], jsn.vObj['_value']);{q}
     if jsn.has('comparator') or jsn.has('_comparator')  then
-      result.comparatorElement := parseEnum(jsn.path+'/comparator', jsn['comparator'], jsn.vObj['_comparator'], CODES_TFhirQuantityComparatorEnum, SYSTEMS_TFhirQuantityComparatorEnum);
+      result.comparatorElement := parseEnum(jsn.path+'/comparator', jsn.node['comparator'], jsn.vObj['_comparator'], CODES_TFhirQuantityComparatorEnum, SYSTEMS_TFhirQuantityComparatorEnum);
     if jsn.has('unit') or jsn.has('_unit') then
-        result.unit_Element := ParseString(jsn['unit'], jsn.vObj['_unit']);{q}
+        result.unit_Element := ParseString(jsn.node['unit'], jsn.vObj['_unit']);{q}
     if jsn.has('system') or jsn.has('_system') then
-        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn.node['system'], jsn.vObj['_system']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeQuantity(json : TJSONWriter; name : string; elem : TFhirQuantity; noObj : boolean = false);
@@ -3922,21 +4012,21 @@ procedure TFHIRJsonParser.ParseAttachmentProperties(jsn : TJsonObject; result : 
 begin
     parseElementProperties(jsn, result);
     if jsn.has('contentType') or jsn.has('_contentType') then
-        result.contentTypeElement := ParseCode(jsn['contentType'], jsn.vObj['_contentType']);{q}
+        result.contentTypeElement := ParseCode(jsn.node['contentType'], jsn.vObj['_contentType']);{q}
     if jsn.has('language') or jsn.has('_language') then
-        result.languageElement := ParseCode(jsn['language'], jsn.vObj['_language']);{q}
+        result.languageElement := ParseCode(jsn.node['language'], jsn.vObj['_language']);{q}
     if jsn.has('data') or jsn.has('_data') then
-        result.dataElement := ParseBase64Binary(jsn['data'], jsn.vObj['_data']);{q}
+        result.dataElement := ParseBase64Binary(jsn.node['data'], jsn.vObj['_data']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('size') or jsn.has('_size') then
-        result.sizeElement := ParseUnsignedInt(jsn['size'], jsn.vObj['_size']);{q}
+        result.sizeElement := ParseUnsignedInt(jsn.node['size'], jsn.vObj['_size']);{q}
     if jsn.has('hash') or jsn.has('_hash') then
-        result.hashElement := ParseBase64Binary(jsn['hash'], jsn.vObj['_hash']);{q}
+        result.hashElement := ParseBase64Binary(jsn.node['hash'], jsn.vObj['_hash']);{q}
     if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn.node['title'], jsn.vObj['_title']);{q}
     if jsn.has('creation') or jsn.has('_creation') then
-        result.creationElement := ParseDateTime(jsn['creation'], jsn.vObj['_creation']);{q}
+        result.creationElement := ParseDateTime(jsn.node['creation'], jsn.vObj['_creation']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeAttachment(json : TJSONWriter; name : string; elem : TFhirAttachment; noObj : boolean = false);
@@ -4078,11 +4168,11 @@ begin
     if jsn.has('authorReference') {a3} then
       result.author := ParseReference(jsn.vObj['authorReference']);
     if jsn.has('authorString') or jsn.has('_authorString') then
-      result.author := parseString(jsn['authorString'], jsn.vObj['_authorString']);
+      result.author := ParseString(jsn.node['authorString'], jsn.vObj['_authorString']);
     if jsn.has('time') or jsn.has('_time') then
-        result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
+        result.timeElement := ParseDateTime(jsn.node['time'], jsn.vObj['_time']);{q}
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeAnnotation(json : TJSONWriter; name : string; elem : TFhirAnnotation; noObj : boolean = false);
@@ -4129,7 +4219,7 @@ begin
     if jsn.has('coding') then
       iterateArray(jsn.vArr['coding'], result.codingList, parseCoding);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeCodeableConcept(json : TJSONWriter; name : string; elem : TFhirCodeableConcept; noObj : boolean = false);
@@ -4174,9 +4264,9 @@ procedure TFHIRJsonParser.ParseHumanNameProperties(jsn : TJsonObject; result : T
 begin
     parseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirNameUseEnum, SYSTEMS_TFhirNameUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirNameUseEnum, SYSTEMS_TFhirNameUseEnum);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
       if jsn.has('family') or jsn.has('_family') then
       iteratePrimitiveArray(jsn.vArr['family'], jsn.vArr['_family'], result.familyList, parseString);
       if jsn.has('given') or jsn.has('_given') then
@@ -4328,9 +4418,9 @@ procedure TFHIRJsonParser.ParseMetaProperties(jsn : TJsonObject; result : TFhirM
 begin
     ParseElementProperties(jsn, result);
     if jsn.has('versionId') or jsn.has('_versionId') then
-        result.versionIdElement := ParseId(jsn['versionId'], jsn.vObj['_versionId']);{q}
+        result.versionIdElement := ParseId(jsn.node['versionId'], jsn.vObj['_versionId']);{q}
     if jsn.has('lastUpdated') or jsn.has('_lastUpdated') then
-        result.lastUpdatedElement := ParseInstant(jsn['lastUpdated'], jsn.vObj['_lastUpdated']);{q}
+        result.lastUpdatedElement := ParseInstant(jsn.node['lastUpdated'], jsn.vObj['_lastUpdated']);{q}
       if jsn.has('profile') or jsn.has('_profile') then
       iteratePrimitiveArray(jsn.vArr['profile'], jsn.vArr['_profile'], result.profileList, parseUri);
     if jsn.has('security') then
@@ -4418,13 +4508,13 @@ procedure TFHIRJsonParser.ParseContactPointProperties(jsn : TJsonObject; result 
 begin
     parseElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system')  then
-      result.systemElement := parseEnum(jsn.path+'/system', jsn['system'], jsn.vObj['_system'], CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum);
+      result.systemElement := parseEnum(jsn.path+'/system', jsn.node['system'], jsn.vObj['_system'], CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum);
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn.node['value'], jsn.vObj['_value']);{q}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum);
     if jsn.has('rank') or jsn.has('_rank') then
-        result.rankElement := ParsePositiveInt(jsn['rank'], jsn.vObj['_rank']);{q}
+        result.rankElement := ParsePositiveInt(jsn.node['rank'], jsn.vObj['_rank']);{q}
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
@@ -4476,23 +4566,23 @@ procedure TFHIRJsonParser.ParseAddressProperties(jsn : TJsonObject; result : TFh
 begin
     parseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirAddressUseEnum, SYSTEMS_TFhirAddressUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirAddressUseEnum, SYSTEMS_TFhirAddressUseEnum);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAddressTypeEnum, SYSTEMS_TFhirAddressTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirAddressTypeEnum, SYSTEMS_TFhirAddressTypeEnum);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
       if jsn.has('line') or jsn.has('_line') then
       iteratePrimitiveArray(jsn.vArr['line'], jsn.vArr['_line'], result.lineList, parseString);
     if jsn.has('city') or jsn.has('_city') then
-        result.cityElement := ParseString(jsn['city'], jsn.vObj['_city']);{q}
+        result.cityElement := ParseString(jsn.node['city'], jsn.vObj['_city']);{q}
     if jsn.has('district') or jsn.has('_district') then
-        result.districtElement := ParseString(jsn['district'], jsn.vObj['_district']);{q}
+        result.districtElement := ParseString(jsn.node['district'], jsn.vObj['_district']);{q}
     if jsn.has('state') or jsn.has('_state') then
-        result.stateElement := ParseString(jsn['state'], jsn.vObj['_state']);{q}
+        result.stateElement := ParseString(jsn.node['state'], jsn.vObj['_state']);{q}
     if jsn.has('postalCode') or jsn.has('_postalCode') then
-        result.postalCodeElement := ParseString(jsn['postalCode'], jsn.vObj['_postalCode']);{q}
+        result.postalCodeElement := ParseString(jsn.node['postalCode'], jsn.vObj['_postalCode']);{q}
     if jsn.has('country') or jsn.has('_country') then
-        result.countryElement := ParseString(jsn['country'], jsn.vObj['_country']);{q}
+        result.countryElement := ParseString(jsn.node['country'], jsn.vObj['_country']);{q}
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
@@ -4590,11 +4680,11 @@ begin
       if jsn.has('discriminator') or jsn.has('_discriminator') then
       iteratePrimitiveArray(jsn.vArr['discriminator'], jsn.vArr['_discriminator'], result.discriminatorList, parseString);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('ordered') or jsn.has('_ordered') then
-        result.orderedElement := ParseBoolean(jsn['ordered'], jsn.vObj['_ordered']);{q}
+        result.orderedElement := ParseBoolean(jsn.node['ordered'], jsn.vObj['_ordered']);{q}
     if jsn.has('rules') or jsn.has('_rules')  then
-      result.rulesElement := parseEnum(jsn.path+'/rules', jsn['rules'], jsn.vObj['_rules'], CODES_TFhirResourceSlicingRulesEnum, SYSTEMS_TFhirResourceSlicingRulesEnum);
+      result.rulesElement := parseEnum(jsn.path+'/rules', jsn.node['rules'], jsn.vObj['_rules'], CODES_TFhirResourceSlicingRulesEnum, SYSTEMS_TFhirResourceSlicingRulesEnum);
 end;
 
 procedure TFHIRJsonComposer.ComposeElementDefinitionSlicing(json : TJSONWriter; name : string; elem : TFhirElementDefinitionSlicing; noObj : boolean = false);
@@ -4664,11 +4754,11 @@ procedure TFHIRJsonParser.ParseElementDefinitionBaseProperties(jsn : TJsonObject
 begin
     ParseElementProperties(jsn, result);
     if jsn.has('path') or jsn.has('_path') then
-        result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
+        result.pathElement := ParseString(jsn.node['path'], jsn.vObj['_path']);{q}
     if jsn.has('min') or jsn.has('_min') then
-        result.minElement := ParseInteger(jsn['min'], jsn.vObj['_min']);{q}
+        result.minElement := ParseInteger(jsn.node['min'], jsn.vObj['_min']);{q}
     if jsn.has('max') or jsn.has('_max') then
-        result.maxElement := ParseString(jsn['max'], jsn.vObj['_max']);{q}
+        result.maxElement := ParseString(jsn.node['max'], jsn.vObj['_max']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeElementDefinitionBase(json : TJSONWriter; name : string; elem : TFhirElementDefinitionBase; noObj : boolean = false);
@@ -4706,7 +4796,7 @@ procedure TFHIRJsonParser.ParseElementDefinitionTypeProperties(jsn : TJsonObject
 begin
     ParseElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
       if jsn.has('profile') or jsn.has('_profile') then
       iteratePrimitiveArray(jsn.vArr['profile'], jsn.vArr['_profile'], result.profileList, parseUri);
     if jsn.has('aggregation') or jsn.has('_aggregation') then
@@ -4796,15 +4886,15 @@ procedure TFHIRJsonParser.ParseElementDefinitionConstraintProperties(jsn : TJson
 begin
     ParseElementProperties(jsn, result);
     if jsn.has('key') or jsn.has('_key') then
-        result.keyElement := ParseId(jsn['key'], jsn.vObj['_key']);{q}
+        result.keyElement := ParseId(jsn.node['key'], jsn.vObj['_key']);{q}
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirConstraintSeverityEnum, SYSTEMS_TFhirConstraintSeverityEnum);
+      result.severityElement := parseEnum(jsn.path+'/severity', jsn.node['severity'], jsn.vObj['_severity'], CODES_TFhirConstraintSeverityEnum, SYSTEMS_TFhirConstraintSeverityEnum);
     if jsn.has('human') or jsn.has('_human') then
-        result.humanElement := ParseString(jsn['human'], jsn.vObj['_human']);{q}
+        result.humanElement := ParseString(jsn.node['human'], jsn.vObj['_human']);{q}
     if jsn.has('xpath') or jsn.has('_xpath') then
-        result.xpathElement := ParseString(jsn['xpath'], jsn.vObj['_xpath']);{q}
+        result.xpathElement := ParseString(jsn.node['xpath'], jsn.vObj['_xpath']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeElementDefinitionConstraint(json : TJSONWriter; name : string; elem : TFhirElementDefinitionConstraint; noObj : boolean = false);
@@ -4848,13 +4938,13 @@ procedure TFHIRJsonParser.ParseElementDefinitionBindingProperties(jsn : TJsonObj
 begin
     ParseElementProperties(jsn, result);
     if jsn.has('strength') or jsn.has('_strength')  then
-      result.strengthElement := parseEnum(jsn.path+'/strength', jsn['strength'], jsn.vObj['_strength'], CODES_TFhirBindingStrengthEnum, SYSTEMS_TFhirBindingStrengthEnum);
+      result.strengthElement := parseEnum(jsn.path+'/strength', jsn.node['strength'], jsn.vObj['_strength'], CODES_TFhirBindingStrengthEnum, SYSTEMS_TFhirBindingStrengthEnum);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('valueSetReference') {a3} then
       result.valueSet := ParseReference(jsn.vObj['valueSetReference']);
     if jsn.has('valueSetUri') or jsn.has('_valueSetUri') then
-      result.valueSet := parseUri(jsn['valueSetUri'], jsn.vObj['_valueSetUri']);
+      result.valueSet := ParseUri(jsn.node['valueSetUri'], jsn.vObj['_valueSetUri']);
 end;
 
 procedure TFHIRJsonComposer.ComposeElementDefinitionBinding(json : TJSONWriter; name : string; elem : TFhirElementDefinitionBinding; noObj : boolean = false);
@@ -4899,11 +4989,11 @@ procedure TFHIRJsonParser.ParseElementDefinitionMappingProperties(jsn : TJsonObj
 begin
     ParseElementProperties(jsn, result);
     if jsn.has('identity') or jsn.has('_identity') then
-        result.identityElement := ParseId(jsn['identity'], jsn.vObj['_identity']);{q}
+        result.identityElement := ParseId(jsn.node['identity'], jsn.vObj['_identity']);{q}
     if jsn.has('language') or jsn.has('_language') then
-        result.languageElement := ParseCode(jsn['language'], jsn.vObj['_language']);{q}
+        result.languageElement := ParseCode(jsn.node['language'], jsn.vObj['_language']);{q}
     if jsn.has('map') or jsn.has('_map') then
-        result.mapElement := ParseString(jsn['map'], jsn.vObj['_map']);{q}
+        result.mapElement := ParseString(jsn.node['map'], jsn.vObj['_map']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeElementDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirElementDefinitionMapping; noObj : boolean = false);
@@ -4943,71 +5033,71 @@ procedure TFHIRJsonParser.ParseElementDefinitionProperties(jsn : TJsonObject; re
 begin
     parseElementProperties(jsn, result);
     if jsn.has('path') or jsn.has('_path') then
-        result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
+        result.pathElement := ParseString(jsn.node['path'], jsn.vObj['_path']);{q}
     if jsn.has('representation') or jsn.has('_representation') then
       iterateEnumArray(jsn.vArr['representation'], jsn.vArr['_representation'], jsn.path+'/representation', result.representationList, parseEnum, CODES_TFhirPropertyRepresentationEnum, SYSTEMS_TFhirPropertyRepresentationEnum);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('label') or jsn.has('_label') then
-        result.label_Element := ParseString(jsn['label'], jsn.vObj['_label']);{q}
+        result.label_Element := ParseString(jsn.node['label'], jsn.vObj['_label']);{q}
     if jsn.has('code') then
       iterateArray(jsn.vArr['code'], result.codeList, parseCoding);
     if jsn.has('slicing') then
         result.slicing := ParseElementDefinitionSlicing(jsn.vObj['slicing']);{q3}
     if jsn.has('short') or jsn.has('_short') then
-        result.shortElement := ParseString(jsn['short'], jsn.vObj['_short']);{q}
+        result.shortElement := ParseString(jsn.node['short'], jsn.vObj['_short']);{q}
     if jsn.has('definition') or jsn.has('_definition') then
-        result.definitionElement := ParseMarkdown(jsn['definition'], jsn.vObj['_definition']);{q}
+        result.definitionElement := ParseMarkdown(jsn.node['definition'], jsn.vObj['_definition']);{q}
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsElement := ParseMarkdown(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseMarkdown(jsn.node['comments'], jsn.vObj['_comments']);{q}
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseMarkdown(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseMarkdown(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
       if jsn.has('alias') or jsn.has('_alias') then
       iteratePrimitiveArray(jsn.vArr['alias'], jsn.vArr['_alias'], result.aliasList, parseString);
     if jsn.has('min') or jsn.has('_min') then
-        result.minElement := ParseInteger(jsn['min'], jsn.vObj['_min']);{q}
+        result.minElement := ParseInteger(jsn.node['min'], jsn.vObj['_min']);{q}
     if jsn.has('max') or jsn.has('_max') then
-        result.maxElement := ParseString(jsn['max'], jsn.vObj['_max']);{q}
+        result.maxElement := ParseString(jsn.node['max'], jsn.vObj['_max']);{q}
     if jsn.has('base') then
         result.base := ParseElementDefinitionBase(jsn.vObj['base']);{q3}
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseElementDefinitionType);
     if jsn.has('nameReference') or jsn.has('_nameReference') then
-        result.nameReferenceElement := ParseString(jsn['nameReference'], jsn.vObj['_nameReference']);{q}
+        result.nameReferenceElement := ParseString(jsn.node['nameReference'], jsn.vObj['_nameReference']);{q}
     if jsn.has('defaultValueCode') or jsn.has('_defaultValueCode') then
-        result.defaultValue := ParseCode(jsn['defaultValueCode'], jsn.vObj['_defaultValueCode']);
+        result.defaultValue := ParseCode(jsn.node['defaultValueCode'], jsn.vObj['_defaultValueCode']);
     if jsn.has('defaultValueOid') or jsn.has('_defaultValueOid') then
-        result.defaultValue := ParseOid(jsn['defaultValueOid'], jsn.vObj['_defaultValueOid']);
+        result.defaultValue := ParseOid(jsn.node['defaultValueOid'], jsn.vObj['_defaultValueOid']);
     if jsn.has('defaultValueUuid') or jsn.has('_defaultValueUuid') then
-        result.defaultValue := ParseUuid(jsn['defaultValueUuid'], jsn.vObj['_defaultValueUuid']);
+        result.defaultValue := ParseUuid(jsn.node['defaultValueUuid'], jsn.vObj['_defaultValueUuid']);
     if jsn.has('defaultValueMarkdown') or jsn.has('_defaultValueMarkdown') then
-        result.defaultValue := ParseMarkdown(jsn['defaultValueMarkdown'], jsn.vObj['_defaultValueMarkdown']);
+        result.defaultValue := ParseMarkdown(jsn.node['defaultValueMarkdown'], jsn.vObj['_defaultValueMarkdown']);
     if jsn.has('defaultValueUnsignedInt') or jsn.has('_defaultValueUnsignedInt') then
-        result.defaultValue := ParseUnsignedInt(jsn['defaultValueUnsignedInt'], jsn.vObj['_defaultValueUnsignedInt']);
+        result.defaultValue := ParseUnsignedInt(jsn.node['defaultValueUnsignedInt'], jsn.vObj['_defaultValueUnsignedInt']);
     if jsn.has('defaultValueId') or jsn.has('_defaultValueId') then
-        result.defaultValue := ParseId(jsn['defaultValueId'], jsn.vObj['_defaultValueId']);
+        result.defaultValue := ParseId(jsn.node['defaultValueId'], jsn.vObj['_defaultValueId']);
     if jsn.has('defaultValuePositiveInt') or jsn.has('_defaultValuePositiveInt') then
-        result.defaultValue := ParsePositiveInt(jsn['defaultValuePositiveInt'], jsn.vObj['_defaultValuePositiveInt']);
+        result.defaultValue := ParsePositiveInt(jsn.node['defaultValuePositiveInt'], jsn.vObj['_defaultValuePositiveInt']);
     if jsn.has('defaultValueDateTime') or jsn.has('_defaultValueDateTime') then
-        result.defaultValue := ParseDateTime(jsn['defaultValueDateTime'], jsn.vObj['_defaultValueDateTime']);
+        result.defaultValue := ParseDateTime(jsn.node['defaultValueDateTime'], jsn.vObj['_defaultValueDateTime']);
     if jsn.has('defaultValueDate') or jsn.has('_defaultValueDate') then
-        result.defaultValue := ParseDate(jsn['defaultValueDate'], jsn.vObj['_defaultValueDate']);
+        result.defaultValue := ParseDate(jsn.node['defaultValueDate'], jsn.vObj['_defaultValueDate']);
     if jsn.has('defaultValueString') or jsn.has('_defaultValueString') then
-        result.defaultValue := ParseString(jsn['defaultValueString'], jsn.vObj['_defaultValueString']);
+        result.defaultValue := ParseString(jsn.node['defaultValueString'], jsn.vObj['_defaultValueString']);
     if jsn.has('defaultValueInteger') or jsn.has('_defaultValueInteger') then
-        result.defaultValue := ParseInteger(jsn['defaultValueInteger'], jsn.vObj['_defaultValueInteger']);
+        result.defaultValue := ParseInteger(jsn.node['defaultValueInteger'], jsn.vObj['_defaultValueInteger']);
     if jsn.has('defaultValueUri') or jsn.has('_defaultValueUri') then
-        result.defaultValue := ParseUri(jsn['defaultValueUri'], jsn.vObj['_defaultValueUri']);
+        result.defaultValue := ParseUri(jsn.node['defaultValueUri'], jsn.vObj['_defaultValueUri']);
     if jsn.has('defaultValueInstant') or jsn.has('_defaultValueInstant') then
-        result.defaultValue := ParseInstant(jsn['defaultValueInstant'], jsn.vObj['_defaultValueInstant']);
+        result.defaultValue := ParseInstant(jsn.node['defaultValueInstant'], jsn.vObj['_defaultValueInstant']);
     if jsn.has('defaultValueBoolean') or jsn.has('_defaultValueBoolean') then
-        result.defaultValue := ParseBoolean(jsn['defaultValueBoolean'], jsn.vObj['_defaultValueBoolean']);
+        result.defaultValue := ParseBoolean(jsn.node['defaultValueBoolean'], jsn.vObj['_defaultValueBoolean']);
     if jsn.has('defaultValueBase64Binary') or jsn.has('_defaultValueBase64Binary') then
-        result.defaultValue := ParseBase64Binary(jsn['defaultValueBase64Binary'], jsn.vObj['_defaultValueBase64Binary']);
+        result.defaultValue := ParseBase64Binary(jsn.node['defaultValueBase64Binary'], jsn.vObj['_defaultValueBase64Binary']);
     if jsn.has('defaultValueTime') or jsn.has('_defaultValueTime') then
-        result.defaultValue := ParseTime(jsn['defaultValueTime'], jsn.vObj['_defaultValueTime']);
+        result.defaultValue := ParseTime(jsn.node['defaultValueTime'], jsn.vObj['_defaultValueTime']);
     if jsn.has('defaultValueDecimal') or jsn.has('_defaultValueDecimal') then
-        result.defaultValue := ParseDecimal(jsn['defaultValueDecimal'], jsn.vObj['_defaultValueDecimal']);
+        result.defaultValue := ParseDecimal(jsn.node['defaultValueDecimal'], jsn.vObj['_defaultValueDecimal']);
     if jsn.has('defaultValueIdentifier') {a7} then
         result.defaultValue := ParseIdentifier(jsn.vObj['defaultValueIdentifier']);
     if jsn.has('defaultValueCoding') {a7} then
@@ -5045,41 +5135,41 @@ begin
     if jsn.has('defaultValueTiming') {a9} then
         result.defaultValue := ParseTiming(jsn.vObj['defaultValueTiming']);
     if jsn.has('meaningWhenMissing') or jsn.has('_meaningWhenMissing') then
-        result.meaningWhenMissingElement := ParseMarkdown(jsn['meaningWhenMissing'], jsn.vObj['_meaningWhenMissing']);{q}
+        result.meaningWhenMissingElement := ParseMarkdown(jsn.node['meaningWhenMissing'], jsn.vObj['_meaningWhenMissing']);{q}
     if jsn.has('fixedCode') or jsn.has('_fixedCode') then
-        result.fixed := ParseCode(jsn['fixedCode'], jsn.vObj['_fixedCode']);
+        result.fixed := ParseCode(jsn.node['fixedCode'], jsn.vObj['_fixedCode']);
     if jsn.has('fixedOid') or jsn.has('_fixedOid') then
-        result.fixed := ParseOid(jsn['fixedOid'], jsn.vObj['_fixedOid']);
+        result.fixed := ParseOid(jsn.node['fixedOid'], jsn.vObj['_fixedOid']);
     if jsn.has('fixedUuid') or jsn.has('_fixedUuid') then
-        result.fixed := ParseUuid(jsn['fixedUuid'], jsn.vObj['_fixedUuid']);
+        result.fixed := ParseUuid(jsn.node['fixedUuid'], jsn.vObj['_fixedUuid']);
     if jsn.has('fixedMarkdown') or jsn.has('_fixedMarkdown') then
-        result.fixed := ParseMarkdown(jsn['fixedMarkdown'], jsn.vObj['_fixedMarkdown']);
+        result.fixed := ParseMarkdown(jsn.node['fixedMarkdown'], jsn.vObj['_fixedMarkdown']);
     if jsn.has('fixedUnsignedInt') or jsn.has('_fixedUnsignedInt') then
-        result.fixed := ParseUnsignedInt(jsn['fixedUnsignedInt'], jsn.vObj['_fixedUnsignedInt']);
+        result.fixed := ParseUnsignedInt(jsn.node['fixedUnsignedInt'], jsn.vObj['_fixedUnsignedInt']);
     if jsn.has('fixedId') or jsn.has('_fixedId') then
-        result.fixed := ParseId(jsn['fixedId'], jsn.vObj['_fixedId']);
+        result.fixed := ParseId(jsn.node['fixedId'], jsn.vObj['_fixedId']);
     if jsn.has('fixedPositiveInt') or jsn.has('_fixedPositiveInt') then
-        result.fixed := ParsePositiveInt(jsn['fixedPositiveInt'], jsn.vObj['_fixedPositiveInt']);
+        result.fixed := ParsePositiveInt(jsn.node['fixedPositiveInt'], jsn.vObj['_fixedPositiveInt']);
     if jsn.has('fixedDateTime') or jsn.has('_fixedDateTime') then
-        result.fixed := ParseDateTime(jsn['fixedDateTime'], jsn.vObj['_fixedDateTime']);
+        result.fixed := ParseDateTime(jsn.node['fixedDateTime'], jsn.vObj['_fixedDateTime']);
     if jsn.has('fixedDate') or jsn.has('_fixedDate') then
-        result.fixed := ParseDate(jsn['fixedDate'], jsn.vObj['_fixedDate']);
+        result.fixed := ParseDate(jsn.node['fixedDate'], jsn.vObj['_fixedDate']);
     if jsn.has('fixedString') or jsn.has('_fixedString') then
-        result.fixed := ParseString(jsn['fixedString'], jsn.vObj['_fixedString']);
+        result.fixed := ParseString(jsn.node['fixedString'], jsn.vObj['_fixedString']);
     if jsn.has('fixedInteger') or jsn.has('_fixedInteger') then
-        result.fixed := ParseInteger(jsn['fixedInteger'], jsn.vObj['_fixedInteger']);
+        result.fixed := ParseInteger(jsn.node['fixedInteger'], jsn.vObj['_fixedInteger']);
     if jsn.has('fixedUri') or jsn.has('_fixedUri') then
-        result.fixed := ParseUri(jsn['fixedUri'], jsn.vObj['_fixedUri']);
+        result.fixed := ParseUri(jsn.node['fixedUri'], jsn.vObj['_fixedUri']);
     if jsn.has('fixedInstant') or jsn.has('_fixedInstant') then
-        result.fixed := ParseInstant(jsn['fixedInstant'], jsn.vObj['_fixedInstant']);
+        result.fixed := ParseInstant(jsn.node['fixedInstant'], jsn.vObj['_fixedInstant']);
     if jsn.has('fixedBoolean') or jsn.has('_fixedBoolean') then
-        result.fixed := ParseBoolean(jsn['fixedBoolean'], jsn.vObj['_fixedBoolean']);
+        result.fixed := ParseBoolean(jsn.node['fixedBoolean'], jsn.vObj['_fixedBoolean']);
     if jsn.has('fixedBase64Binary') or jsn.has('_fixedBase64Binary') then
-        result.fixed := ParseBase64Binary(jsn['fixedBase64Binary'], jsn.vObj['_fixedBase64Binary']);
+        result.fixed := ParseBase64Binary(jsn.node['fixedBase64Binary'], jsn.vObj['_fixedBase64Binary']);
     if jsn.has('fixedTime') or jsn.has('_fixedTime') then
-        result.fixed := ParseTime(jsn['fixedTime'], jsn.vObj['_fixedTime']);
+        result.fixed := ParseTime(jsn.node['fixedTime'], jsn.vObj['_fixedTime']);
     if jsn.has('fixedDecimal') or jsn.has('_fixedDecimal') then
-        result.fixed := ParseDecimal(jsn['fixedDecimal'], jsn.vObj['_fixedDecimal']);
+        result.fixed := ParseDecimal(jsn.node['fixedDecimal'], jsn.vObj['_fixedDecimal']);
     if jsn.has('fixedIdentifier') {a7} then
         result.fixed := ParseIdentifier(jsn.vObj['fixedIdentifier']);
     if jsn.has('fixedCoding') {a7} then
@@ -5117,39 +5207,39 @@ begin
     if jsn.has('fixedTiming') {a9} then
         result.fixed := ParseTiming(jsn.vObj['fixedTiming']);
     if jsn.has('patternCode') or jsn.has('_patternCode') then
-        result.pattern := ParseCode(jsn['patternCode'], jsn.vObj['_patternCode']);
+        result.pattern := ParseCode(jsn.node['patternCode'], jsn.vObj['_patternCode']);
     if jsn.has('patternOid') or jsn.has('_patternOid') then
-        result.pattern := ParseOid(jsn['patternOid'], jsn.vObj['_patternOid']);
+        result.pattern := ParseOid(jsn.node['patternOid'], jsn.vObj['_patternOid']);
     if jsn.has('patternUuid') or jsn.has('_patternUuid') then
-        result.pattern := ParseUuid(jsn['patternUuid'], jsn.vObj['_patternUuid']);
+        result.pattern := ParseUuid(jsn.node['patternUuid'], jsn.vObj['_patternUuid']);
     if jsn.has('patternMarkdown') or jsn.has('_patternMarkdown') then
-        result.pattern := ParseMarkdown(jsn['patternMarkdown'], jsn.vObj['_patternMarkdown']);
+        result.pattern := ParseMarkdown(jsn.node['patternMarkdown'], jsn.vObj['_patternMarkdown']);
     if jsn.has('patternUnsignedInt') or jsn.has('_patternUnsignedInt') then
-        result.pattern := ParseUnsignedInt(jsn['patternUnsignedInt'], jsn.vObj['_patternUnsignedInt']);
+        result.pattern := ParseUnsignedInt(jsn.node['patternUnsignedInt'], jsn.vObj['_patternUnsignedInt']);
     if jsn.has('patternId') or jsn.has('_patternId') then
-        result.pattern := ParseId(jsn['patternId'], jsn.vObj['_patternId']);
+        result.pattern := ParseId(jsn.node['patternId'], jsn.vObj['_patternId']);
     if jsn.has('patternPositiveInt') or jsn.has('_patternPositiveInt') then
-        result.pattern := ParsePositiveInt(jsn['patternPositiveInt'], jsn.vObj['_patternPositiveInt']);
+        result.pattern := ParsePositiveInt(jsn.node['patternPositiveInt'], jsn.vObj['_patternPositiveInt']);
     if jsn.has('patternDateTime') or jsn.has('_patternDateTime') then
-        result.pattern := ParseDateTime(jsn['patternDateTime'], jsn.vObj['_patternDateTime']);
+        result.pattern := ParseDateTime(jsn.node['patternDateTime'], jsn.vObj['_patternDateTime']);
     if jsn.has('patternDate') or jsn.has('_patternDate') then
-        result.pattern := ParseDate(jsn['patternDate'], jsn.vObj['_patternDate']);
+        result.pattern := ParseDate(jsn.node['patternDate'], jsn.vObj['_patternDate']);
     if jsn.has('patternString') or jsn.has('_patternString') then
-        result.pattern := ParseString(jsn['patternString'], jsn.vObj['_patternString']);
+        result.pattern := ParseString(jsn.node['patternString'], jsn.vObj['_patternString']);
     if jsn.has('patternInteger') or jsn.has('_patternInteger') then
-        result.pattern := ParseInteger(jsn['patternInteger'], jsn.vObj['_patternInteger']);
+        result.pattern := ParseInteger(jsn.node['patternInteger'], jsn.vObj['_patternInteger']);
     if jsn.has('patternUri') or jsn.has('_patternUri') then
-        result.pattern := ParseUri(jsn['patternUri'], jsn.vObj['_patternUri']);
+        result.pattern := ParseUri(jsn.node['patternUri'], jsn.vObj['_patternUri']);
     if jsn.has('patternInstant') or jsn.has('_patternInstant') then
-        result.pattern := ParseInstant(jsn['patternInstant'], jsn.vObj['_patternInstant']);
+        result.pattern := ParseInstant(jsn.node['patternInstant'], jsn.vObj['_patternInstant']);
     if jsn.has('patternBoolean') or jsn.has('_patternBoolean') then
-        result.pattern := ParseBoolean(jsn['patternBoolean'], jsn.vObj['_patternBoolean']);
+        result.pattern := ParseBoolean(jsn.node['patternBoolean'], jsn.vObj['_patternBoolean']);
     if jsn.has('patternBase64Binary') or jsn.has('_patternBase64Binary') then
-        result.pattern := ParseBase64Binary(jsn['patternBase64Binary'], jsn.vObj['_patternBase64Binary']);
+        result.pattern := ParseBase64Binary(jsn.node['patternBase64Binary'], jsn.vObj['_patternBase64Binary']);
     if jsn.has('patternTime') or jsn.has('_patternTime') then
-        result.pattern := ParseTime(jsn['patternTime'], jsn.vObj['_patternTime']);
+        result.pattern := ParseTime(jsn.node['patternTime'], jsn.vObj['_patternTime']);
     if jsn.has('patternDecimal') or jsn.has('_patternDecimal') then
-        result.pattern := ParseDecimal(jsn['patternDecimal'], jsn.vObj['_patternDecimal']);
+        result.pattern := ParseDecimal(jsn.node['patternDecimal'], jsn.vObj['_patternDecimal']);
     if jsn.has('patternIdentifier') {a7} then
         result.pattern := ParseIdentifier(jsn.vObj['patternIdentifier']);
     if jsn.has('patternCoding') {a7} then
@@ -5187,39 +5277,39 @@ begin
     if jsn.has('patternTiming') {a9} then
         result.pattern := ParseTiming(jsn.vObj['patternTiming']);
     if jsn.has('exampleCode') or jsn.has('_exampleCode') then
-        result.example := ParseCode(jsn['exampleCode'], jsn.vObj['_exampleCode']);
+        result.example := ParseCode(jsn.node['exampleCode'], jsn.vObj['_exampleCode']);
     if jsn.has('exampleOid') or jsn.has('_exampleOid') then
-        result.example := ParseOid(jsn['exampleOid'], jsn.vObj['_exampleOid']);
+        result.example := ParseOid(jsn.node['exampleOid'], jsn.vObj['_exampleOid']);
     if jsn.has('exampleUuid') or jsn.has('_exampleUuid') then
-        result.example := ParseUuid(jsn['exampleUuid'], jsn.vObj['_exampleUuid']);
+        result.example := ParseUuid(jsn.node['exampleUuid'], jsn.vObj['_exampleUuid']);
     if jsn.has('exampleMarkdown') or jsn.has('_exampleMarkdown') then
-        result.example := ParseMarkdown(jsn['exampleMarkdown'], jsn.vObj['_exampleMarkdown']);
+        result.example := ParseMarkdown(jsn.node['exampleMarkdown'], jsn.vObj['_exampleMarkdown']);
     if jsn.has('exampleUnsignedInt') or jsn.has('_exampleUnsignedInt') then
-        result.example := ParseUnsignedInt(jsn['exampleUnsignedInt'], jsn.vObj['_exampleUnsignedInt']);
+        result.example := ParseUnsignedInt(jsn.node['exampleUnsignedInt'], jsn.vObj['_exampleUnsignedInt']);
     if jsn.has('exampleId') or jsn.has('_exampleId') then
-        result.example := ParseId(jsn['exampleId'], jsn.vObj['_exampleId']);
+        result.example := ParseId(jsn.node['exampleId'], jsn.vObj['_exampleId']);
     if jsn.has('examplePositiveInt') or jsn.has('_examplePositiveInt') then
-        result.example := ParsePositiveInt(jsn['examplePositiveInt'], jsn.vObj['_examplePositiveInt']);
+        result.example := ParsePositiveInt(jsn.node['examplePositiveInt'], jsn.vObj['_examplePositiveInt']);
     if jsn.has('exampleDateTime') or jsn.has('_exampleDateTime') then
-        result.example := ParseDateTime(jsn['exampleDateTime'], jsn.vObj['_exampleDateTime']);
+        result.example := ParseDateTime(jsn.node['exampleDateTime'], jsn.vObj['_exampleDateTime']);
     if jsn.has('exampleDate') or jsn.has('_exampleDate') then
-        result.example := ParseDate(jsn['exampleDate'], jsn.vObj['_exampleDate']);
+        result.example := ParseDate(jsn.node['exampleDate'], jsn.vObj['_exampleDate']);
     if jsn.has('exampleString') or jsn.has('_exampleString') then
-        result.example := ParseString(jsn['exampleString'], jsn.vObj['_exampleString']);
+        result.example := ParseString(jsn.node['exampleString'], jsn.vObj['_exampleString']);
     if jsn.has('exampleInteger') or jsn.has('_exampleInteger') then
-        result.example := ParseInteger(jsn['exampleInteger'], jsn.vObj['_exampleInteger']);
+        result.example := ParseInteger(jsn.node['exampleInteger'], jsn.vObj['_exampleInteger']);
     if jsn.has('exampleUri') or jsn.has('_exampleUri') then
-        result.example := ParseUri(jsn['exampleUri'], jsn.vObj['_exampleUri']);
+        result.example := ParseUri(jsn.node['exampleUri'], jsn.vObj['_exampleUri']);
     if jsn.has('exampleInstant') or jsn.has('_exampleInstant') then
-        result.example := ParseInstant(jsn['exampleInstant'], jsn.vObj['_exampleInstant']);
+        result.example := ParseInstant(jsn.node['exampleInstant'], jsn.vObj['_exampleInstant']);
     if jsn.has('exampleBoolean') or jsn.has('_exampleBoolean') then
-        result.example := ParseBoolean(jsn['exampleBoolean'], jsn.vObj['_exampleBoolean']);
+        result.example := ParseBoolean(jsn.node['exampleBoolean'], jsn.vObj['_exampleBoolean']);
     if jsn.has('exampleBase64Binary') or jsn.has('_exampleBase64Binary') then
-        result.example := ParseBase64Binary(jsn['exampleBase64Binary'], jsn.vObj['_exampleBase64Binary']);
+        result.example := ParseBase64Binary(jsn.node['exampleBase64Binary'], jsn.vObj['_exampleBase64Binary']);
     if jsn.has('exampleTime') or jsn.has('_exampleTime') then
-        result.example := ParseTime(jsn['exampleTime'], jsn.vObj['_exampleTime']);
+        result.example := ParseTime(jsn.node['exampleTime'], jsn.vObj['_exampleTime']);
     if jsn.has('exampleDecimal') or jsn.has('_exampleDecimal') then
-        result.example := ParseDecimal(jsn['exampleDecimal'], jsn.vObj['_exampleDecimal']);
+        result.example := ParseDecimal(jsn.node['exampleDecimal'], jsn.vObj['_exampleDecimal']);
     if jsn.has('exampleIdentifier') {a7} then
         result.example := ParseIdentifier(jsn.vObj['exampleIdentifier']);
     if jsn.has('exampleCoding') {a7} then
@@ -5257,39 +5347,39 @@ begin
     if jsn.has('exampleTiming') {a9} then
         result.example := ParseTiming(jsn.vObj['exampleTiming']);
     if jsn.has('minValueCode') or jsn.has('_minValueCode') then
-        result.minValue := ParseCode(jsn['minValueCode'], jsn.vObj['_minValueCode']);
+        result.minValue := ParseCode(jsn.node['minValueCode'], jsn.vObj['_minValueCode']);
     if jsn.has('minValueOid') or jsn.has('_minValueOid') then
-        result.minValue := ParseOid(jsn['minValueOid'], jsn.vObj['_minValueOid']);
+        result.minValue := ParseOid(jsn.node['minValueOid'], jsn.vObj['_minValueOid']);
     if jsn.has('minValueUuid') or jsn.has('_minValueUuid') then
-        result.minValue := ParseUuid(jsn['minValueUuid'], jsn.vObj['_minValueUuid']);
+        result.minValue := ParseUuid(jsn.node['minValueUuid'], jsn.vObj['_minValueUuid']);
     if jsn.has('minValueMarkdown') or jsn.has('_minValueMarkdown') then
-        result.minValue := ParseMarkdown(jsn['minValueMarkdown'], jsn.vObj['_minValueMarkdown']);
+        result.minValue := ParseMarkdown(jsn.node['minValueMarkdown'], jsn.vObj['_minValueMarkdown']);
     if jsn.has('minValueUnsignedInt') or jsn.has('_minValueUnsignedInt') then
-        result.minValue := ParseUnsignedInt(jsn['minValueUnsignedInt'], jsn.vObj['_minValueUnsignedInt']);
+        result.minValue := ParseUnsignedInt(jsn.node['minValueUnsignedInt'], jsn.vObj['_minValueUnsignedInt']);
     if jsn.has('minValueId') or jsn.has('_minValueId') then
-        result.minValue := ParseId(jsn['minValueId'], jsn.vObj['_minValueId']);
+        result.minValue := ParseId(jsn.node['minValueId'], jsn.vObj['_minValueId']);
     if jsn.has('minValuePositiveInt') or jsn.has('_minValuePositiveInt') then
-        result.minValue := ParsePositiveInt(jsn['minValuePositiveInt'], jsn.vObj['_minValuePositiveInt']);
+        result.minValue := ParsePositiveInt(jsn.node['minValuePositiveInt'], jsn.vObj['_minValuePositiveInt']);
     if jsn.has('minValueDateTime') or jsn.has('_minValueDateTime') then
-        result.minValue := ParseDateTime(jsn['minValueDateTime'], jsn.vObj['_minValueDateTime']);
+        result.minValue := ParseDateTime(jsn.node['minValueDateTime'], jsn.vObj['_minValueDateTime']);
     if jsn.has('minValueDate') or jsn.has('_minValueDate') then
-        result.minValue := ParseDate(jsn['minValueDate'], jsn.vObj['_minValueDate']);
+        result.minValue := ParseDate(jsn.node['minValueDate'], jsn.vObj['_minValueDate']);
     if jsn.has('minValueString') or jsn.has('_minValueString') then
-        result.minValue := ParseString(jsn['minValueString'], jsn.vObj['_minValueString']);
+        result.minValue := ParseString(jsn.node['minValueString'], jsn.vObj['_minValueString']);
     if jsn.has('minValueInteger') or jsn.has('_minValueInteger') then
-        result.minValue := ParseInteger(jsn['minValueInteger'], jsn.vObj['_minValueInteger']);
+        result.minValue := ParseInteger(jsn.node['minValueInteger'], jsn.vObj['_minValueInteger']);
     if jsn.has('minValueUri') or jsn.has('_minValueUri') then
-        result.minValue := ParseUri(jsn['minValueUri'], jsn.vObj['_minValueUri']);
+        result.minValue := ParseUri(jsn.node['minValueUri'], jsn.vObj['_minValueUri']);
     if jsn.has('minValueInstant') or jsn.has('_minValueInstant') then
-        result.minValue := ParseInstant(jsn['minValueInstant'], jsn.vObj['_minValueInstant']);
+        result.minValue := ParseInstant(jsn.node['minValueInstant'], jsn.vObj['_minValueInstant']);
     if jsn.has('minValueBoolean') or jsn.has('_minValueBoolean') then
-        result.minValue := ParseBoolean(jsn['minValueBoolean'], jsn.vObj['_minValueBoolean']);
+        result.minValue := ParseBoolean(jsn.node['minValueBoolean'], jsn.vObj['_minValueBoolean']);
     if jsn.has('minValueBase64Binary') or jsn.has('_minValueBase64Binary') then
-        result.minValue := ParseBase64Binary(jsn['minValueBase64Binary'], jsn.vObj['_minValueBase64Binary']);
+        result.minValue := ParseBase64Binary(jsn.node['minValueBase64Binary'], jsn.vObj['_minValueBase64Binary']);
     if jsn.has('minValueTime') or jsn.has('_minValueTime') then
-        result.minValue := ParseTime(jsn['minValueTime'], jsn.vObj['_minValueTime']);
+        result.minValue := ParseTime(jsn.node['minValueTime'], jsn.vObj['_minValueTime']);
     if jsn.has('minValueDecimal') or jsn.has('_minValueDecimal') then
-        result.minValue := ParseDecimal(jsn['minValueDecimal'], jsn.vObj['_minValueDecimal']);
+        result.minValue := ParseDecimal(jsn.node['minValueDecimal'], jsn.vObj['_minValueDecimal']);
     if jsn.has('minValueIdentifier') {a7} then
         result.minValue := ParseIdentifier(jsn.vObj['minValueIdentifier']);
     if jsn.has('minValueCoding') {a7} then
@@ -5327,39 +5417,39 @@ begin
     if jsn.has('minValueTiming') {a9} then
         result.minValue := ParseTiming(jsn.vObj['minValueTiming']);
     if jsn.has('maxValueCode') or jsn.has('_maxValueCode') then
-        result.maxValue := ParseCode(jsn['maxValueCode'], jsn.vObj['_maxValueCode']);
+        result.maxValue := ParseCode(jsn.node['maxValueCode'], jsn.vObj['_maxValueCode']);
     if jsn.has('maxValueOid') or jsn.has('_maxValueOid') then
-        result.maxValue := ParseOid(jsn['maxValueOid'], jsn.vObj['_maxValueOid']);
+        result.maxValue := ParseOid(jsn.node['maxValueOid'], jsn.vObj['_maxValueOid']);
     if jsn.has('maxValueUuid') or jsn.has('_maxValueUuid') then
-        result.maxValue := ParseUuid(jsn['maxValueUuid'], jsn.vObj['_maxValueUuid']);
+        result.maxValue := ParseUuid(jsn.node['maxValueUuid'], jsn.vObj['_maxValueUuid']);
     if jsn.has('maxValueMarkdown') or jsn.has('_maxValueMarkdown') then
-        result.maxValue := ParseMarkdown(jsn['maxValueMarkdown'], jsn.vObj['_maxValueMarkdown']);
+        result.maxValue := ParseMarkdown(jsn.node['maxValueMarkdown'], jsn.vObj['_maxValueMarkdown']);
     if jsn.has('maxValueUnsignedInt') or jsn.has('_maxValueUnsignedInt') then
-        result.maxValue := ParseUnsignedInt(jsn['maxValueUnsignedInt'], jsn.vObj['_maxValueUnsignedInt']);
+        result.maxValue := ParseUnsignedInt(jsn.node['maxValueUnsignedInt'], jsn.vObj['_maxValueUnsignedInt']);
     if jsn.has('maxValueId') or jsn.has('_maxValueId') then
-        result.maxValue := ParseId(jsn['maxValueId'], jsn.vObj['_maxValueId']);
+        result.maxValue := ParseId(jsn.node['maxValueId'], jsn.vObj['_maxValueId']);
     if jsn.has('maxValuePositiveInt') or jsn.has('_maxValuePositiveInt') then
-        result.maxValue := ParsePositiveInt(jsn['maxValuePositiveInt'], jsn.vObj['_maxValuePositiveInt']);
+        result.maxValue := ParsePositiveInt(jsn.node['maxValuePositiveInt'], jsn.vObj['_maxValuePositiveInt']);
     if jsn.has('maxValueDateTime') or jsn.has('_maxValueDateTime') then
-        result.maxValue := ParseDateTime(jsn['maxValueDateTime'], jsn.vObj['_maxValueDateTime']);
+        result.maxValue := ParseDateTime(jsn.node['maxValueDateTime'], jsn.vObj['_maxValueDateTime']);
     if jsn.has('maxValueDate') or jsn.has('_maxValueDate') then
-        result.maxValue := ParseDate(jsn['maxValueDate'], jsn.vObj['_maxValueDate']);
+        result.maxValue := ParseDate(jsn.node['maxValueDate'], jsn.vObj['_maxValueDate']);
     if jsn.has('maxValueString') or jsn.has('_maxValueString') then
-        result.maxValue := ParseString(jsn['maxValueString'], jsn.vObj['_maxValueString']);
+        result.maxValue := ParseString(jsn.node['maxValueString'], jsn.vObj['_maxValueString']);
     if jsn.has('maxValueInteger') or jsn.has('_maxValueInteger') then
-        result.maxValue := ParseInteger(jsn['maxValueInteger'], jsn.vObj['_maxValueInteger']);
+        result.maxValue := ParseInteger(jsn.node['maxValueInteger'], jsn.vObj['_maxValueInteger']);
     if jsn.has('maxValueUri') or jsn.has('_maxValueUri') then
-        result.maxValue := ParseUri(jsn['maxValueUri'], jsn.vObj['_maxValueUri']);
+        result.maxValue := ParseUri(jsn.node['maxValueUri'], jsn.vObj['_maxValueUri']);
     if jsn.has('maxValueInstant') or jsn.has('_maxValueInstant') then
-        result.maxValue := ParseInstant(jsn['maxValueInstant'], jsn.vObj['_maxValueInstant']);
+        result.maxValue := ParseInstant(jsn.node['maxValueInstant'], jsn.vObj['_maxValueInstant']);
     if jsn.has('maxValueBoolean') or jsn.has('_maxValueBoolean') then
-        result.maxValue := ParseBoolean(jsn['maxValueBoolean'], jsn.vObj['_maxValueBoolean']);
+        result.maxValue := ParseBoolean(jsn.node['maxValueBoolean'], jsn.vObj['_maxValueBoolean']);
     if jsn.has('maxValueBase64Binary') or jsn.has('_maxValueBase64Binary') then
-        result.maxValue := ParseBase64Binary(jsn['maxValueBase64Binary'], jsn.vObj['_maxValueBase64Binary']);
+        result.maxValue := ParseBase64Binary(jsn.node['maxValueBase64Binary'], jsn.vObj['_maxValueBase64Binary']);
     if jsn.has('maxValueTime') or jsn.has('_maxValueTime') then
-        result.maxValue := ParseTime(jsn['maxValueTime'], jsn.vObj['_maxValueTime']);
+        result.maxValue := ParseTime(jsn.node['maxValueTime'], jsn.vObj['_maxValueTime']);
     if jsn.has('maxValueDecimal') or jsn.has('_maxValueDecimal') then
-        result.maxValue := ParseDecimal(jsn['maxValueDecimal'], jsn.vObj['_maxValueDecimal']);
+        result.maxValue := ParseDecimal(jsn.node['maxValueDecimal'], jsn.vObj['_maxValueDecimal']);
     if jsn.has('maxValueIdentifier') {a7} then
         result.maxValue := ParseIdentifier(jsn.vObj['maxValueIdentifier']);
     if jsn.has('maxValueCoding') {a7} then
@@ -5397,17 +5487,17 @@ begin
     if jsn.has('maxValueTiming') {a9} then
         result.maxValue := ParseTiming(jsn.vObj['maxValueTiming']);
     if jsn.has('maxLength') or jsn.has('_maxLength') then
-        result.maxLengthElement := ParseInteger(jsn['maxLength'], jsn.vObj['_maxLength']);{q}
+        result.maxLengthElement := ParseInteger(jsn.node['maxLength'], jsn.vObj['_maxLength']);{q}
       if jsn.has('condition') or jsn.has('_condition') then
       iteratePrimitiveArray(jsn.vArr['condition'], jsn.vArr['_condition'], result.conditionList, parseId);
     if jsn.has('constraint') then
       iterateArray(jsn.vArr['constraint'], result.constraintList, parseElementDefinitionConstraint);
     if jsn.has('mustSupport') or jsn.has('_mustSupport') then
-        result.mustSupportElement := ParseBoolean(jsn['mustSupport'], jsn.vObj['_mustSupport']);{q}
+        result.mustSupportElement := ParseBoolean(jsn.node['mustSupport'], jsn.vObj['_mustSupport']);{q}
     if jsn.has('isModifier') or jsn.has('_isModifier') then
-        result.isModifierElement := ParseBoolean(jsn['isModifier'], jsn.vObj['_isModifier']);{q}
+        result.isModifierElement := ParseBoolean(jsn.node['isModifier'], jsn.vObj['_isModifier']);{q}
     if jsn.has('isSummary') or jsn.has('_isSummary') then
-        result.isSummaryElement := ParseBoolean(jsn['isSummary'], jsn.vObj['_isSummary']);{q}
+        result.isSummaryElement := ParseBoolean(jsn.node['isSummary'], jsn.vObj['_isSummary']);{q}
     if jsn.has('binding') then
         result.binding := ParseElementDefinitionBinding(jsn.vObj['binding']);{q3}
     if jsn.has('mapping') then
@@ -6343,25 +6433,25 @@ begin
     if jsn.has('boundsPeriod') {a4} then
       result.bounds := ParsePeriod(jsn.vObj['boundsPeriod']);
     if jsn.has('count') or jsn.has('_count') then
-        result.countElement := ParseInteger(jsn['count'], jsn.vObj['_count']);{q}
+        result.countElement := ParseInteger(jsn.node['count'], jsn.vObj['_count']);{q}
     if jsn.has('duration') or jsn.has('_duration') then
-        result.durationElement := ParseDecimal(jsn['duration'], jsn.vObj['_duration']);{q}
+        result.durationElement := ParseDecimal(jsn.node['duration'], jsn.vObj['_duration']);{q}
     if jsn.has('durationMax') or jsn.has('_durationMax') then
-        result.durationMaxElement := ParseDecimal(jsn['durationMax'], jsn.vObj['_durationMax']);{q}
+        result.durationMaxElement := ParseDecimal(jsn.node['durationMax'], jsn.vObj['_durationMax']);{q}
     if jsn.has('durationUnits') or jsn.has('_durationUnits')  then
-      result.durationUnitsElement := parseEnum(jsn.path+'/durationUnits', jsn['durationUnits'], jsn.vObj['_durationUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
+      result.durationUnitsElement := parseEnum(jsn.path+'/durationUnits', jsn.node['durationUnits'], jsn.vObj['_durationUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
     if jsn.has('frequency') or jsn.has('_frequency') then
-        result.frequencyElement := ParseInteger(jsn['frequency'], jsn.vObj['_frequency']);{q}
+        result.frequencyElement := ParseInteger(jsn.node['frequency'], jsn.vObj['_frequency']);{q}
     if jsn.has('frequencyMax') or jsn.has('_frequencyMax') then
-        result.frequencyMaxElement := ParseInteger(jsn['frequencyMax'], jsn.vObj['_frequencyMax']);{q}
+        result.frequencyMaxElement := ParseInteger(jsn.node['frequencyMax'], jsn.vObj['_frequencyMax']);{q}
     if jsn.has('period') or jsn.has('_period') then
-        result.periodElement := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
+        result.periodElement := ParseDecimal(jsn.node['period'], jsn.vObj['_period']);{q}
     if jsn.has('periodMax') or jsn.has('_periodMax') then
-        result.periodMaxElement := ParseDecimal(jsn['periodMax'], jsn.vObj['_periodMax']);{q}
+        result.periodMaxElement := ParseDecimal(jsn.node['periodMax'], jsn.vObj['_periodMax']);{q}
     if jsn.has('periodUnits') or jsn.has('_periodUnits')  then
-      result.periodUnitsElement := parseEnum(jsn.path+'/periodUnits', jsn['periodUnits'], jsn.vObj['_periodUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
+      result.periodUnitsElement := parseEnum(jsn.path+'/periodUnits', jsn.node['periodUnits'], jsn.vObj['_periodUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
     if jsn.has('when') or jsn.has('_when')  then
-      result.whenElement := parseEnum(jsn.path+'/when', jsn['when'], jsn.vObj['_when'], CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum);
+      result.whenElement := parseEnum(jsn.path+'/when', jsn.node['when'], jsn.vObj['_when'], CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum);
 end;
 
 procedure TFHIRJsonComposer.ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
@@ -6510,11 +6600,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('status') or jsn.has('_status') then
-        result.statusElement := ParseCode(jsn['status'], jsn.vObj['_status']);{q}
+        result.statusElement := ParseCode(jsn.node['status'], jsn.vObj['_status']);{q}
     if jsn.has('activePeriod') then
         result.activePeriod := ParsePeriod(jsn.vObj['activePeriod']);{q3}
     if jsn.has('currency') then
@@ -6528,7 +6618,7 @@ begin
     if jsn.has('owner') then
         result.owner := ParseReference{TFhirOrganization}(jsn.vObj['owner']);{q3}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeAccount(json : TJSONWriter; name : string; elem : TFhirAccount; noObj : boolean = false);
@@ -6597,15 +6687,15 @@ begin
     if jsn.has('substance') then
         result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q3}
     if jsn.has('certainty') or jsn.has('_certainty')  then
-      result.certaintyElement := parseEnum(jsn.path+'/certainty', jsn['certainty'], jsn.vObj['_certainty'], CODES_TFhirReactionEventCertaintyEnum, SYSTEMS_TFhirReactionEventCertaintyEnum);
+      result.certaintyElement := parseEnum(jsn.path+'/certainty', jsn.node['certainty'], jsn.vObj['_certainty'], CODES_TFhirReactionEventCertaintyEnum, SYSTEMS_TFhirReactionEventCertaintyEnum);
     if jsn.has('manifestation') then
       iterateArray(jsn.vArr['manifestation'], result.manifestationList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('onset') or jsn.has('_onset') then
-        result.onsetElement := ParseDateTime(jsn['onset'], jsn.vObj['_onset']);{q}
+        result.onsetElement := ParseDateTime(jsn.node['onset'], jsn.vObj['_onset']);{q}
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirReactionEventSeverityEnum, SYSTEMS_TFhirReactionEventSeverityEnum);
+      result.severityElement := parseEnum(jsn.path+'/severity', jsn.node['severity'], jsn.vObj['_severity'], CODES_TFhirReactionEventSeverityEnum, SYSTEMS_TFhirReactionEventSeverityEnum);
     if jsn.has('exposureRoute') then
         result.exposureRoute := ParseCodeableConcept(jsn.vObj['exposureRoute']);{q3}
     if jsn.has('note') then
@@ -6674,9 +6764,9 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('onset') or jsn.has('_onset') then
-        result.onsetElement := ParseDateTime(jsn['onset'], jsn.vObj['_onset']);{q}
+        result.onsetElement := ParseDateTime(jsn.node['onset'], jsn.vObj['_onset']);{q}
     if jsn.has('recordedDate') or jsn.has('_recordedDate') then
-        result.recordedDateElement := ParseDateTime(jsn['recordedDate'], jsn.vObj['_recordedDate']);{q}
+        result.recordedDateElement := ParseDateTime(jsn.node['recordedDate'], jsn.vObj['_recordedDate']);{q}
     if jsn.has('recorder') then
         result.recorder := ParseReference{Resource}(jsn.vObj['recorder']);{q3}
     if jsn.has('patient') then
@@ -6686,15 +6776,15 @@ begin
     if jsn.has('substance') then
         result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAllergyIntoleranceStatusEnum, SYSTEMS_TFhirAllergyIntoleranceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirAllergyIntoleranceStatusEnum, SYSTEMS_TFhirAllergyIntoleranceStatusEnum);
     if jsn.has('criticality') or jsn.has('_criticality')  then
-      result.criticalityElement := parseEnum(jsn.path+'/criticality', jsn['criticality'], jsn.vObj['_criticality'], CODES_TFhirAllergyIntoleranceCriticalityEnum, SYSTEMS_TFhirAllergyIntoleranceCriticalityEnum);
+      result.criticalityElement := parseEnum(jsn.path+'/criticality', jsn.node['criticality'], jsn.vObj['_criticality'], CODES_TFhirAllergyIntoleranceCriticalityEnum, SYSTEMS_TFhirAllergyIntoleranceCriticalityEnum);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAllergyIntoleranceTypeEnum, SYSTEMS_TFhirAllergyIntoleranceTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirAllergyIntoleranceTypeEnum, SYSTEMS_TFhirAllergyIntoleranceTypeEnum);
     if jsn.has('category') or jsn.has('_category')  then
-      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirAllergyIntoleranceCategoryEnum, SYSTEMS_TFhirAllergyIntoleranceCategoryEnum);
+      result.categoryElement := parseEnum(jsn.path+'/category', jsn.node['category'], jsn.vObj['_category'], CODES_TFhirAllergyIntoleranceCategoryEnum, SYSTEMS_TFhirAllergyIntoleranceCategoryEnum);
     if jsn.has('lastOccurence') or jsn.has('_lastOccurence') then
-        result.lastOccurenceElement := ParseDateTime(jsn['lastOccurence'], jsn.vObj['_lastOccurence']);{q}
+        result.lastOccurenceElement := ParseDateTime(jsn.node['lastOccurence'], jsn.vObj['_lastOccurence']);{q}
     if jsn.has('note') then
         result.note := ParseAnnotation(jsn.vObj['note']);{q3}
     if jsn.has('reaction') then
@@ -6786,9 +6876,9 @@ begin
     if jsn.has('actor') then
         result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
     if jsn.has('required') or jsn.has('_required')  then
-      result.requiredElement := parseEnum(jsn.path+'/required', jsn['required'], jsn.vObj['_required'], CODES_TFhirParticipantrequiredEnum, SYSTEMS_TFhirParticipantrequiredEnum);
+      result.requiredElement := parseEnum(jsn.path+'/required', jsn.node['required'], jsn.vObj['_required'], CODES_TFhirParticipantrequiredEnum, SYSTEMS_TFhirParticipantrequiredEnum);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirParticipationstatusEnum, SYSTEMS_TFhirParticipationstatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirParticipationstatusEnum, SYSTEMS_TFhirParticipationstatusEnum);
 end;
 
 procedure TFHIRJsonComposer.ComposeAppointmentParticipant(json : TJSONWriter; name : string; elem : TFhirAppointmentParticipant; noObj : boolean = false);
@@ -6839,25 +6929,25 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAppointmentstatusEnum, SYSTEMS_TFhirAppointmentstatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirAppointmentstatusEnum, SYSTEMS_TFhirAppointmentstatusEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('reason') then
         result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q3}
     if jsn.has('priority') or jsn.has('_priority') then
-        result.priorityElement := ParseUnsignedInt(jsn['priority'], jsn.vObj['_priority']);{q}
+        result.priorityElement := ParseUnsignedInt(jsn.node['priority'], jsn.vObj['_priority']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('start') or jsn.has('_start') then
-        result.startElement := ParseInstant(jsn['start'], jsn.vObj['_start']);{q}
+        result.startElement := ParseInstant(jsn.node['start'], jsn.vObj['_start']);{q}
     if jsn.has('end') or jsn.has('_end') then
-        result.end_Element := ParseInstant(jsn['end'], jsn.vObj['_end']);{q}
+        result.end_Element := ParseInstant(jsn.node['end'], jsn.vObj['_end']);{q}
     if jsn.has('minutesDuration') or jsn.has('_minutesDuration') then
-        result.minutesDurationElement := ParsePositiveInt(jsn['minutesDuration'], jsn.vObj['_minutesDuration']);{q}
+        result.minutesDurationElement := ParsePositiveInt(jsn.node['minutesDuration'], jsn.vObj['_minutesDuration']);{q}
     if jsn.has('slot') then
       iterateArray(jsn.vArr['slot'], result.slotList, parseReference{TFhirSlot});
     if jsn.has('comment') or jsn.has('_comment') then
-        result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
+        result.commentElement := ParseString(jsn.node['comment'], jsn.vObj['_comment']);{q}
     if jsn.has('participant') then
       iterateArray(jsn.vArr['participant'], result.participantList, parseAppointmentParticipant);
 end;
@@ -6948,17 +7038,17 @@ begin
     if jsn.has('appointment') then
         result.appointment := ParseReference{TFhirAppointment}(jsn.vObj['appointment']);{q3}
     if jsn.has('start') or jsn.has('_start') then
-        result.startElement := ParseInstant(jsn['start'], jsn.vObj['_start']);{q}
+        result.startElement := ParseInstant(jsn.node['start'], jsn.vObj['_start']);{q}
     if jsn.has('end') or jsn.has('_end') then
-        result.end_Element := ParseInstant(jsn['end'], jsn.vObj['_end']);{q}
+        result.end_Element := ParseInstant(jsn.node['end'], jsn.vObj['_end']);{q}
     if jsn.has('participantType') then
       iterateArray(jsn.vArr['participantType'], result.participantTypeList, parseCodeableConcept);
     if jsn.has('actor') then
         result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
     if jsn.has('participantStatus') or jsn.has('_participantStatus')  then
-      result.participantStatusElement := parseEnum(jsn.path+'/participantStatus', jsn['participantStatus'], jsn.vObj['_participantStatus'], CODES_TFhirParticipantstatusEnum, SYSTEMS_TFhirParticipantstatusEnum);
+      result.participantStatusElement := parseEnum(jsn.path+'/participantStatus', jsn.node['participantStatus'], jsn.vObj['_participantStatus'], CODES_TFhirParticipantstatusEnum, SYSTEMS_TFhirParticipantstatusEnum);
     if jsn.has('comment') or jsn.has('_comment') then
-        result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
+        result.commentElement := ParseString(jsn.node['comment'], jsn.vObj['_comment']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeAppointmentResponse(json : TJSONWriter; name : string; elem : TFhirAppointmentResponse; noObj : boolean = false);
@@ -7027,13 +7117,13 @@ begin
     if jsn.has('subtype') then
       iterateArray(jsn.vArr['subtype'], result.subtypeList, parseCoding);
     if jsn.has('action') or jsn.has('_action')  then
-      result.actionElement := parseEnum(jsn.path+'/action', jsn['action'], jsn.vObj['_action'], CODES_TFhirAuditEventActionEnum, SYSTEMS_TFhirAuditEventActionEnum);
+      result.actionElement := parseEnum(jsn.path+'/action', jsn.node['action'], jsn.vObj['_action'], CODES_TFhirAuditEventActionEnum, SYSTEMS_TFhirAuditEventActionEnum);
     if jsn.has('dateTime') or jsn.has('_dateTime') then
-        result.dateTimeElement := ParseInstant(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
+        result.dateTimeElement := ParseInstant(jsn.node['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirAuditEventOutcomeEnum, SYSTEMS_TFhirAuditEventOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirAuditEventOutcomeEnum, SYSTEMS_TFhirAuditEventOutcomeEnum);
     if jsn.has('outcomeDesc') or jsn.has('_outcomeDesc') then
-        result.outcomeDescElement := ParseString(jsn['outcomeDesc'], jsn.vObj['_outcomeDesc']);{q}
+        result.outcomeDescElement := ParseString(jsn.node['outcomeDesc'], jsn.vObj['_outcomeDesc']);{q}
     if jsn.has('purposeOfEvent') then
       iterateArray(jsn.vArr['purposeOfEvent'], result.purposeOfEventList, parseCoding);
 end;
@@ -7104,11 +7194,11 @@ begin
     if jsn.has('userId') then
         result.userId := ParseIdentifier(jsn.vObj['userId']);{q3}
     if jsn.has('altId') or jsn.has('_altId') then
-        result.altIdElement := ParseString(jsn['altId'], jsn.vObj['_altId']);{q}
+        result.altIdElement := ParseString(jsn.node['altId'], jsn.vObj['_altId']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('requestor') or jsn.has('_requestor') then
-        result.requestorElement := ParseBoolean(jsn['requestor'], jsn.vObj['_requestor']);{q}
+        result.requestorElement := ParseBoolean(jsn.node['requestor'], jsn.vObj['_requestor']);{q}
     if jsn.has('location') then
         result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
       if jsn.has('policy') or jsn.has('_policy') then
@@ -7212,9 +7302,9 @@ procedure TFHIRJsonParser.ParseAuditEventParticipantNetworkProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('address') or jsn.has('_address') then
-        result.addressElement := ParseString(jsn['address'], jsn.vObj['_address']);{q}
+        result.addressElement := ParseString(jsn.node['address'], jsn.vObj['_address']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirNetworkTypeEnum, SYSTEMS_TFhirNetworkTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirNetworkTypeEnum, SYSTEMS_TFhirNetworkTypeEnum);
 end;
 
 procedure TFHIRJsonComposer.ComposeAuditEventParticipantNetwork(json : TJSONWriter; name : string; elem : TFhirAuditEventParticipantNetwork; noObj : boolean = false);
@@ -7254,7 +7344,7 @@ procedure TFHIRJsonParser.ParseAuditEventSourceProperties(jsn : TJsonObject; res
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('site') or jsn.has('_site') then
-        result.siteElement := ParseString(jsn['site'], jsn.vObj['_site']);{q}
+        result.siteElement := ParseString(jsn.node['site'], jsn.vObj['_site']);{q}
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('type') then
@@ -7316,11 +7406,11 @@ begin
     if jsn.has('securityLabel') then
       iterateArray(jsn.vArr['securityLabel'], result.securityLabelList, parseCoding);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('query') or jsn.has('_query') then
-        result.queryElement := ParseBase64Binary(jsn['query'], jsn.vObj['_query']);{q}
+        result.queryElement := ParseBase64Binary(jsn.node['query'], jsn.vObj['_query']);{q}
     if jsn.has('detail') then
       iterateArray(jsn.vArr['detail'], result.detailList, parseAuditEventObjectDetail);
 end;
@@ -7392,9 +7482,9 @@ procedure TFHIRJsonParser.ParseAuditEventObjectDetailProperties(jsn : TJsonObjec
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Element := ParseString(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseString(jsn.node['type'], jsn.vObj['_type']);{q}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseBase64Binary(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseBase64Binary(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeAuditEventObjectDetail(json : TJSONWriter; name : string; elem : TFhirAuditEventObjectDetail; noObj : boolean = false);
@@ -7494,7 +7584,7 @@ begin
     if jsn.has('author') then
         result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDate(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDate(jsn.node['created'], jsn.vObj['_created']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeBasic(json : TJSONWriter; name : string; elem : TFhirBasic; noObj : boolean = false);
@@ -7544,9 +7634,9 @@ procedure TFHIRJsonParser.ParseBinaryProperties(jsn : TJsonObject; result : TFhi
 begin
     ParseResourceProperties(jsn, result);
     if jsn.has('contentType') or jsn.has('_contentType') then
-        result.contentTypeElement := ParseCode(jsn['contentType'], jsn.vObj['_contentType']);{q}
+        result.contentTypeElement := ParseCode(jsn.node['contentType'], jsn.vObj['_contentType']);{q}
     if jsn.has('content') or jsn.has('_content') then
-        result.contentElement := ParseBase64Binary(jsn['content'], jsn.vObj['_content']);{q}
+        result.contentElement := ParseBase64Binary(jsn.node['content'], jsn.vObj['_content']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeBinary(json : TJSONWriter; name : string; elem : TFhirBinary; noObj : boolean = false);
@@ -7590,7 +7680,7 @@ begin
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('image') then
       iterateArray(jsn.vArr['image'], result.imageList, parseAttachment);
 end;
@@ -7654,9 +7744,9 @@ procedure TFHIRJsonParser.ParseBundleLinkProperties(jsn : TJsonObject; result : 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('relation') or jsn.has('_relation') then
-        result.relationElement := ParseString(jsn['relation'], jsn.vObj['_relation']);{q}
+        result.relationElement := ParseString(jsn.node['relation'], jsn.vObj['_relation']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeBundleLink(json : TJSONWriter; name : string; elem : TFhirBundleLink; noObj : boolean = false);
@@ -7694,7 +7784,7 @@ begin
     if jsn.has('link') then
       iterateArray(jsn.vArr['link'], result.link_List, parseBundleLink);
     if jsn.has('fullUrl') or jsn.has('_fullUrl') then
-        result.fullUrlElement := ParseUri(jsn['fullUrl'], jsn.vObj['_fullUrl']);{q}
+        result.fullUrlElement := ParseUri(jsn.node['fullUrl'], jsn.vObj['_fullUrl']);{q}
     if jsn.has('resource') then
         result.resource := ParseInnerResource(jsn.vObj['resource']);{q3}
     if jsn.has('search') then
@@ -7755,9 +7845,9 @@ procedure TFHIRJsonParser.ParseBundleEntrySearchProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirSearchEntryModeEnum, SYSTEMS_TFhirSearchEntryModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn.node['mode'], jsn.vObj['_mode'], CODES_TFhirSearchEntryModeEnum, SYSTEMS_TFhirSearchEntryModeEnum);
     if jsn.has('score') or jsn.has('_score') then
-        result.scoreElement := ParseDecimal(jsn['score'], jsn.vObj['_score']);{q}
+        result.scoreElement := ParseDecimal(jsn.node['score'], jsn.vObj['_score']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeBundleEntrySearch(json : TJSONWriter; name : string; elem : TFhirBundleEntrySearch; noObj : boolean = false);
@@ -7797,17 +7887,17 @@ procedure TFHIRJsonParser.ParseBundleEntryRequestProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('method') or jsn.has('_method')  then
-      result.methodElement := parseEnum(jsn.path+'/method', jsn['method'], jsn.vObj['_method'], CODES_TFhirHttpVerbEnum, SYSTEMS_TFhirHttpVerbEnum);
+      result.methodElement := parseEnum(jsn.path+'/method', jsn.node['method'], jsn.vObj['_method'], CODES_TFhirHttpVerbEnum, SYSTEMS_TFhirHttpVerbEnum);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('ifNoneMatch') or jsn.has('_ifNoneMatch') then
-        result.ifNoneMatchElement := ParseString(jsn['ifNoneMatch'], jsn.vObj['_ifNoneMatch']);{q}
+        result.ifNoneMatchElement := ParseString(jsn.node['ifNoneMatch'], jsn.vObj['_ifNoneMatch']);{q}
     if jsn.has('ifModifiedSince') or jsn.has('_ifModifiedSince') then
-        result.ifModifiedSinceElement := ParseInstant(jsn['ifModifiedSince'], jsn.vObj['_ifModifiedSince']);{q}
+        result.ifModifiedSinceElement := ParseInstant(jsn.node['ifModifiedSince'], jsn.vObj['_ifModifiedSince']);{q}
     if jsn.has('ifMatch') or jsn.has('_ifMatch') then
-        result.ifMatchElement := ParseString(jsn['ifMatch'], jsn.vObj['_ifMatch']);{q}
+        result.ifMatchElement := ParseString(jsn.node['ifMatch'], jsn.vObj['_ifMatch']);{q}
     if jsn.has('ifNoneExist') or jsn.has('_ifNoneExist') then
-        result.ifNoneExistElement := ParseString(jsn['ifNoneExist'], jsn.vObj['_ifNoneExist']);{q}
+        result.ifNoneExistElement := ParseString(jsn.node['ifNoneExist'], jsn.vObj['_ifNoneExist']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeBundleEntryRequest(json : TJSONWriter; name : string; elem : TFhirBundleEntryRequest; noObj : boolean = false);
@@ -7859,13 +7949,13 @@ procedure TFHIRJsonParser.ParseBundleEntryResponseProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status') then
-        result.statusElement := ParseString(jsn['status'], jsn.vObj['_status']);{q}
+        result.statusElement := ParseString(jsn.node['status'], jsn.vObj['_status']);{q}
     if jsn.has('location') or jsn.has('_location') then
-        result.locationElement := ParseUri(jsn['location'], jsn.vObj['_location']);{q}
+        result.locationElement := ParseUri(jsn.node['location'], jsn.vObj['_location']);{q}
     if jsn.has('etag') or jsn.has('_etag') then
-        result.etagElement := ParseString(jsn['etag'], jsn.vObj['_etag']);{q}
+        result.etagElement := ParseString(jsn.node['etag'], jsn.vObj['_etag']);{q}
     if jsn.has('lastModified') or jsn.has('_lastModified') then
-        result.lastModifiedElement := ParseInstant(jsn['lastModified'], jsn.vObj['_lastModified']);{q}
+        result.lastModifiedElement := ParseInstant(jsn.node['lastModified'], jsn.vObj['_lastModified']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeBundleEntryResponse(json : TJSONWriter; name : string; elem : TFhirBundleEntryResponse; noObj : boolean = false);
@@ -7911,9 +8001,9 @@ procedure TFHIRJsonParser.ParseBundleProperties(jsn : TJsonObject; result : TFhi
 begin
     ParseResourceProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirBundleTypeEnum, SYSTEMS_TFhirBundleTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirBundleTypeEnum, SYSTEMS_TFhirBundleTypeEnum);
     if jsn.has('total') or jsn.has('_total') then
-        result.totalElement := ParseUnsignedInt(jsn['total'], jsn.vObj['_total']);{q}
+        result.totalElement := ParseUnsignedInt(jsn.node['total'], jsn.vObj['_total']);{q}
     if jsn.has('link') then
       iterateArray(jsn.vArr['link'], result.link_List, parseBundleLink);
     if jsn.has('entry') then
@@ -7975,7 +8065,7 @@ procedure TFHIRJsonParser.ParseCarePlanRelatedPlanProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirCarePlanRelationshipEnum, SYSTEMS_TFhirCarePlanRelationshipEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirCarePlanRelationshipEnum, SYSTEMS_TFhirCarePlanRelationshipEnum);
     if jsn.has('plan') then
         result.plan := ParseReference{TFhirCarePlan}(jsn.vObj['plan']);{q3}
 end;
@@ -8120,17 +8210,17 @@ begin
     if jsn.has('goal') then
       iterateArray(jsn.vArr['goal'], result.goalList, parseReference{TFhirGoal});
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanActivityStatusEnum, SYSTEMS_TFhirCarePlanActivityStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirCarePlanActivityStatusEnum, SYSTEMS_TFhirCarePlanActivityStatusEnum);
     if jsn.has('statusReason') then
         result.statusReason := ParseCodeableConcept(jsn.vObj['statusReason']);{q3}
     if jsn.has('prohibited') or jsn.has('_prohibited') then
-        result.prohibitedElement := ParseBoolean(jsn['prohibited'], jsn.vObj['_prohibited']);{q}
+        result.prohibitedElement := ParseBoolean(jsn.node['prohibited'], jsn.vObj['_prohibited']);{q}
     if jsn.has('scheduledTiming') {a4} then
       result.scheduled := ParseTiming(jsn.vObj['scheduledTiming']);
     if jsn.has('scheduledPeriod') {a4} then
       result.scheduled := ParsePeriod(jsn.vObj['scheduledPeriod']);
     if jsn.has('scheduledString') or jsn.has('_scheduledString') then
-      result.scheduled := parseString(jsn['scheduledString'], jsn.vObj['_scheduledString']);
+      result.scheduled := ParseString(jsn.node['scheduledString'], jsn.vObj['_scheduledString']);
     if jsn.has('location') then
         result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('performer') then
@@ -8144,7 +8234,7 @@ begin
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeCarePlanActivityDetail(json : TJSONWriter; name : string; elem : TFhirCarePlanActivityDetail; noObj : boolean = false);
@@ -8245,7 +8335,7 @@ begin
     if jsn.has('subject') then
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanStatusEnum, SYSTEMS_TFhirCarePlanStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirCarePlanStatusEnum, SYSTEMS_TFhirCarePlanStatusEnum);
     if jsn.has('context') then
         result.context := ParseReference{Resource}(jsn.vObj['context']);{q3}
     if jsn.has('period') then
@@ -8253,11 +8343,11 @@ begin
     if jsn.has('author') then
       iterateArray(jsn.vArr['author'], result.authorList, parseReference{Resource});
     if jsn.has('modified') or jsn.has('_modified') then
-        result.modifiedElement := ParseDateTime(jsn['modified'], jsn.vObj['_modified']);{q}
+        result.modifiedElement := ParseDateTime(jsn.node['modified'], jsn.vObj['_modified']);{q}
     if jsn.has('category') then
       iterateArray(jsn.vArr['category'], result.categoryList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('addresses') then
       iterateArray(jsn.vArr['addresses'], result.addressesList, parseReference{TFhirCondition});
     if jsn.has('support') then
@@ -8432,7 +8522,7 @@ procedure TFHIRJsonParser.ParseClaimDiagnosisProperties(jsn : TJsonObject; resul
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequence') or jsn.has('_sequence') then
-        result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
+        result.sequenceElement := ParsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('diagnosis') then
         result.diagnosis := ParseCoding(jsn.vObj['diagnosis']);{q3}
 end;
@@ -8469,13 +8559,13 @@ procedure TFHIRJsonParser.ParseClaimCoverageProperties(jsn : TJsonObject; result
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequence') or jsn.has('_sequence') then
-        result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
+        result.sequenceElement := ParsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('focal') or jsn.has('_focal') then
-        result.focalElement := ParseBoolean(jsn['focal'], jsn.vObj['_focal']);{q}
+        result.focalElement := ParseBoolean(jsn.node['focal'], jsn.vObj['_focal']);{q}
     if jsn.has('coverage') then
         result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
     if jsn.has('businessArrangement') or jsn.has('_businessArrangement') then
-        result.businessArrangementElement := ParseString(jsn['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
+        result.businessArrangementElement := ParseString(jsn.node['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
     if jsn.has('relationship') then
         result.relationship := ParseCoding(jsn.vObj['relationship']);{q3}
       if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
@@ -8557,7 +8647,7 @@ procedure TFHIRJsonParser.ParseClaimItemProperties(jsn : TJsonObject; result : T
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequence') or jsn.has('_sequence') then
-        result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
+        result.sequenceElement := ParsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('provider') then
@@ -8567,15 +8657,15 @@ begin
     if jsn.has('service') then
         result.service := ParseCoding(jsn.vObj['service']);{q3}
     if jsn.has('serviceDate') or jsn.has('_serviceDate') then
-        result.serviceDateElement := ParseDate(jsn['serviceDate'], jsn.vObj['_serviceDate']);{q}
+        result.serviceDateElement := ParseDate(jsn.node['serviceDate'], jsn.vObj['_serviceDate']);{q}
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
         result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
-        result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
+        result.factorElement := ParseDecimal(jsn.node['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
-        result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
+        result.pointsElement := ParseDecimal(jsn.node['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
         result.net := ParseQuantity(jsn.vObj['net']);{q3}
     if jsn.has('udi') then
@@ -8700,7 +8790,7 @@ procedure TFHIRJsonParser.ParseClaimItemDetailProperties(jsn : TJsonObject; resu
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequence') or jsn.has('_sequence') then
-        result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
+        result.sequenceElement := ParsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('service') then
@@ -8710,9 +8800,9 @@ begin
     if jsn.has('unitPrice') then
         result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
-        result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
+        result.factorElement := ParseDecimal(jsn.node['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
-        result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
+        result.pointsElement := ParseDecimal(jsn.node['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
         result.net := ParseQuantity(jsn.vObj['net']);{q3}
     if jsn.has('udi') then
@@ -8779,7 +8869,7 @@ procedure TFHIRJsonParser.ParseClaimItemDetailSubDetailProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequence') or jsn.has('_sequence') then
-        result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
+        result.sequenceElement := ParsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('service') then
@@ -8789,9 +8879,9 @@ begin
     if jsn.has('unitPrice') then
         result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
-        result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
+        result.factorElement := ParseDecimal(jsn.node['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
-        result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
+        result.pointsElement := ParseDecimal(jsn.node['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
         result.net := ParseQuantity(jsn.vObj['net']);{q3}
     if jsn.has('udi') then
@@ -8847,9 +8937,9 @@ procedure TFHIRJsonParser.ParseClaimItemProsthesisProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('initial') or jsn.has('_initial') then
-        result.initialElement := ParseBoolean(jsn['initial'], jsn.vObj['_initial']);{q}
+        result.initialElement := ParseBoolean(jsn.node['initial'], jsn.vObj['_initial']);{q}
     if jsn.has('priorDate') or jsn.has('_priorDate') then
-        result.priorDateElement := ParseDate(jsn['priorDate'], jsn.vObj['_priorDate']);{q}
+        result.priorDateElement := ParseDate(jsn.node['priorDate'], jsn.vObj['_priorDate']);{q}
     if jsn.has('priorMaterial') then
         result.priorMaterial := ParseCoding(jsn.vObj['priorMaterial']);{q3}
 end;
@@ -8897,7 +8987,7 @@ begin
     if jsn.has('reason') then
         result.reason := ParseCoding(jsn.vObj['reason']);{q3}
     if jsn.has('extractionDate') or jsn.has('_extractionDate') then
-        result.extractionDateElement := ParseDate(jsn['extractionDate'], jsn.vObj['_extractionDate']);{q}
+        result.extractionDateElement := ParseDate(jsn.node['extractionDate'], jsn.vObj['_extractionDate']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimMissingTeeth(json : TJSONWriter; name : string; elem : TFhirClaimMissingTeeth; noObj : boolean = false);
@@ -8936,7 +9026,7 @@ procedure TFHIRJsonParser.ParseClaimProperties(jsn : TJsonObject; result : TFhir
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirClaimTypeLinkEnum, SYSTEMS_TFhirClaimTypeLinkEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirClaimTypeLinkEnum, SYSTEMS_TFhirClaimTypeLinkEnum);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
@@ -8944,7 +9034,7 @@ begin
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
         result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
@@ -8952,7 +9042,7 @@ begin
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirClaimUseLinkEnum, SYSTEMS_TFhirClaimUseLinkEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirClaimUseLinkEnum, SYSTEMS_TFhirClaimUseLinkEnum);
     if jsn.has('priority') then
         result.priority := ParseCoding(jsn.vObj['priority']);{q3}
     if jsn.has('fundsReserve') then
@@ -8980,9 +9070,9 @@ begin
     if jsn.has('exception') then
       iterateArray(jsn.vArr['exception'], result.exceptionList, parseCoding);
     if jsn.has('school') or jsn.has('_school') then
-        result.schoolElement := ParseString(jsn['school'], jsn.vObj['_school']);{q}
+        result.schoolElement := ParseString(jsn.node['school'], jsn.vObj['_school']);{q}
     if jsn.has('accident') or jsn.has('_accident') then
-        result.accidentElement := ParseDate(jsn['accident'], jsn.vObj['_accident']);{q}
+        result.accidentElement := ParseDate(jsn.node['accident'], jsn.vObj['_accident']);{q}
     if jsn.has('accidentType') then
         result.accidentType := ParseCoding(jsn.vObj['accidentType']);{q3}
     if jsn.has('interventionException') then
@@ -9136,7 +9226,7 @@ procedure TFHIRJsonParser.ParseClaimResponseItemProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequenceLinkId') or jsn.has('_sequenceLinkId') then
-        result.sequenceLinkIdElement := ParsePositiveInt(jsn['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
+        result.sequenceLinkIdElement := ParsePositiveInt(jsn.node['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
       if jsn.has('noteNumber') or jsn.has('_noteNumber') then
       iteratePrimitiveArray(jsn.vArr['noteNumber'], jsn.vArr['_noteNumber'], result.noteNumberList, parsePositiveInt);
     if jsn.has('adjudication') then
@@ -9222,7 +9312,7 @@ begin
     if jsn.has('amount') then
         result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDecimal(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseItemAdjudication(json : TJSONWriter; name : string; elem : TFhirClaimResponseItemAdjudication; noObj : boolean = false);
@@ -9261,7 +9351,7 @@ procedure TFHIRJsonParser.ParseClaimResponseItemDetailProperties(jsn : TJsonObje
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequenceLinkId') or jsn.has('_sequenceLinkId') then
-        result.sequenceLinkIdElement := ParsePositiveInt(jsn['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
+        result.sequenceLinkIdElement := ParsePositiveInt(jsn.node['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
     if jsn.has('adjudication') then
       iterateArray(jsn.vArr['adjudication'], result.adjudicationList, parseClaimResponseItemDetailAdjudication);
     if jsn.has('subDetail') then
@@ -9319,7 +9409,7 @@ begin
     if jsn.has('amount') then
         result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDecimal(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseItemDetailAdjudication(json : TJSONWriter; name : string; elem : TFhirClaimResponseItemDetailAdjudication; noObj : boolean = false);
@@ -9358,7 +9448,7 @@ procedure TFHIRJsonParser.ParseClaimResponseItemDetailSubDetailProperties(jsn : 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequenceLinkId') or jsn.has('_sequenceLinkId') then
-        result.sequenceLinkIdElement := ParsePositiveInt(jsn['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
+        result.sequenceLinkIdElement := ParsePositiveInt(jsn.node['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
     if jsn.has('adjudication') then
       iterateArray(jsn.vArr['adjudication'], result.adjudicationList, parseClaimResponseItemDetailSubDetailAdjudication);
 end;
@@ -9407,7 +9497,7 @@ begin
     if jsn.has('amount') then
         result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDecimal(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseItemDetailSubDetailAdjudication(json : TJSONWriter; name : string; elem : TFhirClaimResponseItemDetailSubDetailAdjudication; noObj : boolean = false);
@@ -9561,7 +9651,7 @@ begin
     if jsn.has('amount') then
         result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDecimal(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseAddItemAdjudication(json : TJSONWriter; name : string; elem : TFhirClaimResponseAddItemAdjudication; noObj : boolean = false);
@@ -9652,7 +9742,7 @@ begin
     if jsn.has('amount') then
         result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDecimal(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseAddItemDetailAdjudication(json : TJSONWriter; name : string; elem : TFhirClaimResponseAddItemDetailAdjudication; noObj : boolean = false);
@@ -9691,11 +9781,11 @@ procedure TFHIRJsonParser.ParseClaimResponseErrorProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequenceLinkId') or jsn.has('_sequenceLinkId') then
-        result.sequenceLinkIdElement := ParsePositiveInt(jsn['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
+        result.sequenceLinkIdElement := ParsePositiveInt(jsn.node['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
     if jsn.has('detailSequenceLinkId') or jsn.has('_detailSequenceLinkId') then
-        result.detailSequenceLinkIdElement := ParsePositiveInt(jsn['detailSequenceLinkId'], jsn.vObj['_detailSequenceLinkId']);{q}
+        result.detailSequenceLinkIdElement := ParsePositiveInt(jsn.node['detailSequenceLinkId'], jsn.vObj['_detailSequenceLinkId']);{q}
     if jsn.has('subdetailSequenceLinkId') or jsn.has('_subdetailSequenceLinkId') then
-        result.subdetailSequenceLinkIdElement := ParsePositiveInt(jsn['subdetailSequenceLinkId'], jsn.vObj['_subdetailSequenceLinkId']);{q}
+        result.subdetailSequenceLinkIdElement := ParsePositiveInt(jsn.node['subdetailSequenceLinkId'], jsn.vObj['_subdetailSequenceLinkId']);{q}
     if jsn.has('code') then
         result.code := ParseCoding(jsn.vObj['code']);{q3}
 end;
@@ -9742,11 +9832,11 @@ procedure TFHIRJsonParser.ParseClaimResponseNoteProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('number') or jsn.has('_number') then
-        result.numberElement := ParsePositiveInt(jsn['number'], jsn.vObj['_number']);{q}
+        result.numberElement := ParsePositiveInt(jsn.node['number'], jsn.vObj['_number']);{q}
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseNote(json : TJSONWriter; name : string; elem : TFhirClaimResponseNote; noObj : boolean = false);
@@ -9788,13 +9878,13 @@ procedure TFHIRJsonParser.ParseClaimResponseCoverageProperties(jsn : TJsonObject
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequence') or jsn.has('_sequence') then
-        result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
+        result.sequenceElement := ParsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('focal') or jsn.has('_focal') then
-        result.focalElement := ParseBoolean(jsn['focal'], jsn.vObj['_focal']);{q}
+        result.focalElement := ParseBoolean(jsn.node['focal'], jsn.vObj['_focal']);{q}
     if jsn.has('coverage') then
         result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
     if jsn.has('businessArrangement') or jsn.has('_businessArrangement') then
-        result.businessArrangementElement := ParseString(jsn['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
+        result.businessArrangementElement := ParseString(jsn.node['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
     if jsn.has('relationship') then
         result.relationship := ParseCoding(jsn.vObj['relationship']);{q3}
       if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
@@ -9884,7 +9974,7 @@ begin
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
@@ -9892,9 +9982,9 @@ begin
     if jsn.has('requestOrganization') then
         result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
-        result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
+        result.dispositionElement := ParseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('payeeType') then
         result.payeeType := ParseCoding(jsn.vObj['payeeType']);{q3}
     if jsn.has('item') then
@@ -9914,7 +10004,7 @@ begin
     if jsn.has('paymentAdjustmentReason') then
         result.paymentAdjustmentReason := ParseCoding(jsn.vObj['paymentAdjustmentReason']);{q3}
     if jsn.has('paymentDate') or jsn.has('_paymentDate') then
-        result.paymentDateElement := ParseDate(jsn['paymentDate'], jsn.vObj['_paymentDate']);{q}
+        result.paymentDateElement := ParseDate(jsn.node['paymentDate'], jsn.vObj['_paymentDate']);{q}
     if jsn.has('paymentAmount') then
         result.paymentAmount := ParseQuantity(jsn.vObj['paymentAmount']);{q3}
     if jsn.has('paymentRef') then
@@ -10096,7 +10186,7 @@ begin
     if jsn.has('item') then
         result.item := ParseCodeableConcept(jsn.vObj['item']);{q3}
     if jsn.has('cause') or jsn.has('_cause') then
-        result.causeElement := ParseString(jsn['cause'], jsn.vObj['_cause']);{q}
+        result.causeElement := ParseString(jsn.node['cause'], jsn.vObj['_cause']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClinicalImpressionFinding(json : TJSONWriter; name : string; elem : TFhirClinicalImpressionFinding; noObj : boolean = false);
@@ -10135,7 +10225,7 @@ begin
     if jsn.has('item') then
         result.item := ParseCodeableConcept(jsn.vObj['item']);{q3}
     if jsn.has('reason') or jsn.has('_reason') then
-        result.reasonElement := ParseString(jsn['reason'], jsn.vObj['_reason']);{q}
+        result.reasonElement := ParseString(jsn.node['reason'], jsn.vObj['_reason']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeClinicalImpressionRuledOut(json : TJSONWriter; name : string; elem : TFhirClinicalImpressionRuledOut; noObj : boolean = false);
@@ -10176,11 +10266,11 @@ begin
     if jsn.has('assessor') then
         result.assessor := ParseReference{TFhirPractitioner}(jsn.vObj['assessor']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirClinicalImpressionStatusEnum, SYSTEMS_TFhirClinicalImpressionStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirClinicalImpressionStatusEnum, SYSTEMS_TFhirClinicalImpressionStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('previous') then
         result.previous := ParseReference{TFhirClinicalImpression}(jsn.vObj['previous']);{q3}
     if jsn.has('problem') then
@@ -10192,9 +10282,9 @@ begin
     if jsn.has('investigations') then
       iterateArray(jsn.vArr['investigations'], result.investigationsList, parseClinicalImpressionInvestigations);
     if jsn.has('protocol') or jsn.has('_protocol') then
-        result.protocolElement := ParseUri(jsn['protocol'], jsn.vObj['_protocol']);{q}
+        result.protocolElement := ParseUri(jsn.node['protocol'], jsn.vObj['_protocol']);{q}
     if jsn.has('summary') or jsn.has('_summary') then
-        result.summaryElement := ParseString(jsn['summary'], jsn.vObj['_summary']);{q}
+        result.summaryElement := ParseString(jsn.node['summary'], jsn.vObj['_summary']);{q}
     if jsn.has('finding') then
       iterateArray(jsn.vArr['finding'], result.findingList, parseClinicalImpressionFinding);
     if jsn.has('resolved') then
@@ -10202,7 +10292,7 @@ begin
     if jsn.has('ruledOut') then
       iterateArray(jsn.vArr['ruledOut'], result.ruledOutList, parseClinicalImpressionRuledOut);
     if jsn.has('prognosis') or jsn.has('_prognosis') then
-        result.prognosisElement := ParseString(jsn['prognosis'], jsn.vObj['_prognosis']);{q}
+        result.prognosisElement := ParseString(jsn.node['prognosis'], jsn.vObj['_prognosis']);{q}
     if jsn.has('plan') then
       iterateArray(jsn.vArr['plan'], result.planList, parseReference{Resource});
     if jsn.has('action') then
@@ -10324,7 +10414,7 @@ begin
     if jsn.has('contentReference') {a3} then
       result.content := ParseReference(jsn.vObj['contentReference']);
     if jsn.has('contentString') or jsn.has('_contentString') then
-      result.content := parseString(jsn['contentString'], jsn.vObj['_contentString']);
+      result.content := ParseString(jsn.node['contentString'], jsn.vObj['_contentString']);
 end;
 
 procedure TFHIRJsonComposer.ComposeCommunicationPayload(json : TJSONWriter; name : string; elem : TFhirCommunicationPayload; noObj : boolean = false);
@@ -10377,13 +10467,13 @@ begin
     if jsn.has('medium') then
       iterateArray(jsn.vArr['medium'], result.mediumList, parseCodeableConcept);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCommunicationStatusEnum, SYSTEMS_TFhirCommunicationStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirCommunicationStatusEnum, SYSTEMS_TFhirCommunicationStatusEnum);
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('sent') or jsn.has('_sent') then
-        result.sentElement := ParseDateTime(jsn['sent'], jsn.vObj['_sent']);{q}
+        result.sentElement := ParseDateTime(jsn.node['sent'], jsn.vObj['_sent']);{q}
     if jsn.has('received') or jsn.has('_received') then
-        result.receivedElement := ParseDateTime(jsn['received'], jsn.vObj['_received']);{q}
+        result.receivedElement := ParseDateTime(jsn.node['received'], jsn.vObj['_received']);{q}
     if jsn.has('reason') then
       iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('subject') then
@@ -10484,7 +10574,7 @@ begin
     if jsn.has('contentReference') {a3} then
       result.content := ParseReference(jsn.vObj['contentReference']);
     if jsn.has('contentString') or jsn.has('_contentString') then
-      result.content := parseString(jsn['contentString'], jsn.vObj['_contentString']);
+      result.content := ParseString(jsn.node['contentString'], jsn.vObj['_contentString']);
 end;
 
 procedure TFHIRJsonComposer.ComposeCommunicationRequestPayload(json : TJSONWriter; name : string; elem : TFhirCommunicationRequestPayload; noObj : boolean = false);
@@ -10539,17 +10629,17 @@ begin
     if jsn.has('requester') then
         result.requester := ParseReference{Resource}(jsn.vObj['requester']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCommunicationRequestStatusEnum, SYSTEMS_TFhirCommunicationRequestStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirCommunicationRequestStatusEnum, SYSTEMS_TFhirCommunicationRequestStatusEnum);
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('scheduledPeriod') {a4} then
       result.scheduled := ParsePeriod(jsn.vObj['scheduledPeriod']);
     if jsn.has('scheduledDateTime') or jsn.has('_scheduledDateTime') then
-      result.scheduled := parseDateTime(jsn['scheduledDateTime'], jsn.vObj['_scheduledDateTime']);
+      result.scheduled := ParseDateTime(jsn.node['scheduledDateTime'], jsn.vObj['_scheduledDateTime']);
     if jsn.has('reason') then
       iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('requestedOn') or jsn.has('_requestedOn') then
-        result.requestedOnElement := ParseDateTime(jsn['requestedOn'], jsn.vObj['_requestedOn']);{q}
+        result.requestedOnElement := ParseDateTime(jsn.node['requestedOn'], jsn.vObj['_requestedOn']);{q}
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('priority') then
@@ -10651,7 +10741,7 @@ begin
     if jsn.has('mode') or jsn.has('_mode') then
       iterateEnumArray(jsn.vArr['mode'], jsn.vArr['_mode'], jsn.path+'/mode', result.modeList, parseEnum, CODES_TFhirCompositionAttestationModeEnum, SYSTEMS_TFhirCompositionAttestationModeEnum);
     if jsn.has('time') or jsn.has('_time') then
-        result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
+        result.timeElement := ParseDateTime(jsn.node['time'], jsn.vObj['_time']);{q}
     if jsn.has('party') then
         result.party := ParseReference{Resource}(jsn.vObj['party']);{q3}
 end;
@@ -10773,13 +10863,13 @@ procedure TFHIRJsonParser.ParseCompositionSectionProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn.node['title'], jsn.vObj['_title']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('text') then
         result.text := ParseNarrative(jsn.vObj['text']);{q3}
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn.node['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum);
     if jsn.has('orderedBy') then
         result.orderedBy := ParseCodeableConcept(jsn.vObj['orderedBy']);{q3}
     if jsn.has('entry') then
@@ -10853,17 +10943,17 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('class') then
         result.class_ := ParseCodeableConcept(jsn.vObj['class']);{q3}
     if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn.node['title'], jsn.vObj['_title']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum);
     if jsn.has('confidentiality') or jsn.has('_confidentiality')  then
-      result.confidentialityElement := parseEnum(jsn.path+'/confidentiality', jsn['confidentiality'], jsn.vObj['_confidentiality'], CODES_TFhirV3ConfidentialityEnum, SYSTEMS_TFhirV3ConfidentialityEnum);
+      result.confidentialityElement := parseEnum(jsn.path+'/confidentiality', jsn.node['confidentiality'], jsn.vObj['_confidentiality'], CODES_TFhirV3ConfidentialityEnum, SYSTEMS_TFhirV3ConfidentialityEnum);
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('author') then
@@ -10959,7 +11049,7 @@ procedure TFHIRJsonParser.ParseConceptMapContactProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -11006,9 +11096,9 @@ procedure TFHIRJsonParser.ParseConceptMapElementProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('codeSystem') or jsn.has('_codeSystem') then
-        result.codeSystemElement := ParseUri(jsn['codeSystem'], jsn.vObj['_codeSystem']);{q}
+        result.codeSystemElement := ParseUri(jsn.node['codeSystem'], jsn.vObj['_codeSystem']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
     if jsn.has('target') then
       iterateArray(jsn.vArr['target'], result.targetList, parseConceptMapElementTarget);
 end;
@@ -11059,13 +11149,13 @@ procedure TFHIRJsonParser.ParseConceptMapElementTargetProperties(jsn : TJsonObje
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('codeSystem') or jsn.has('_codeSystem') then
-        result.codeSystemElement := ParseUri(jsn['codeSystem'], jsn.vObj['_codeSystem']);{q}
+        result.codeSystemElement := ParseUri(jsn.node['codeSystem'], jsn.vObj['_codeSystem']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
     if jsn.has('equivalence') or jsn.has('_equivalence')  then
-      result.equivalenceElement := parseEnum(jsn.path+'/equivalence', jsn['equivalence'], jsn.vObj['_equivalence'], CODES_TFhirConceptMapEquivalenceEnum, SYSTEMS_TFhirConceptMapEquivalenceEnum);
+      result.equivalenceElement := parseEnum(jsn.path+'/equivalence', jsn.node['equivalence'], jsn.vObj['_equivalence'], CODES_TFhirConceptMapEquivalenceEnum, SYSTEMS_TFhirConceptMapEquivalenceEnum);
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseString(jsn.node['comments'], jsn.vObj['_comments']);{q}
     if jsn.has('dependsOn') then
       iterateArray(jsn.vArr['dependsOn'], result.dependsOnList, parseConceptMapElementTargetDependsOn);
     if jsn.has('product') then
@@ -11131,11 +11221,11 @@ procedure TFHIRJsonParser.ParseConceptMapElementTargetDependsOnProperties(jsn : 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('element') or jsn.has('_element') then
-        result.elementElement := ParseUri(jsn['element'], jsn.vObj['_element']);{q}
+        result.elementElement := ParseUri(jsn.node['element'], jsn.vObj['_element']);{q}
     if jsn.has('codeSystem') or jsn.has('_codeSystem') then
-        result.codeSystemElement := ParseUri(jsn['codeSystem'], jsn.vObj['_codeSystem']);{q}
+        result.codeSystemElement := ParseUri(jsn.node['codeSystem'], jsn.vObj['_codeSystem']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseString(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseString(jsn.node['code'], jsn.vObj['_code']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeConceptMapElementTargetDependsOn(json : TJSONWriter; name : string; elem : TFhirConceptMapElementTargetDependsOn; noObj : boolean = false);
@@ -11173,39 +11263,39 @@ procedure TFHIRJsonParser.ParseConceptMapProperties(jsn : TJsonObject; result : 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseConceptMapContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('useContext') then
       iterateArray(jsn.vArr['useContext'], result.useContextList, parseCodeableConcept);
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('sourceReference') {a3} then
       result.source := ParseReference(jsn.vObj['sourceReference']);
     if jsn.has('sourceUri') or jsn.has('_sourceUri') then
-      result.source := parseUri(jsn['sourceUri'], jsn.vObj['_sourceUri']);
+      result.source := ParseUri(jsn.node['sourceUri'], jsn.vObj['_sourceUri']);
     if jsn.has('targetReference') {a3} then
       result.target := ParseReference(jsn.vObj['targetReference']);
     if jsn.has('targetUri') or jsn.has('_targetUri') then
-      result.target := parseUri(jsn['targetUri'], jsn.vObj['_targetUri']);
+      result.target := ParseUri(jsn.node['targetUri'], jsn.vObj['_targetUri']);
     if jsn.has('element') then
       iterateArray(jsn.vArr['element'], result.elementList, parseConceptMapElement);
 end;
@@ -11414,15 +11504,15 @@ begin
     if jsn.has('asserter') then
         result.asserter := ParseReference{Resource}(jsn.vObj['asserter']);{q3}
     if jsn.has('dateRecorded') or jsn.has('_dateRecorded') then
-        result.dateRecordedElement := ParseDate(jsn['dateRecorded'], jsn.vObj['_dateRecorded']);{q}
+        result.dateRecordedElement := ParseDate(jsn.node['dateRecorded'], jsn.vObj['_dateRecorded']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('clinicalStatus') or jsn.has('_clinicalStatus') then
-        result.clinicalStatusElement := ParseCode(jsn['clinicalStatus'], jsn.vObj['_clinicalStatus']);{q}
+        result.clinicalStatusElement := ParseCode(jsn.node['clinicalStatus'], jsn.vObj['_clinicalStatus']);{q}
     if jsn.has('verificationStatus') or jsn.has('_verificationStatus')  then
-      result.verificationStatusElement := parseEnum(jsn.path+'/verificationStatus', jsn['verificationStatus'], jsn.vObj['_verificationStatus'], CODES_TFhirConditionVerStatusEnum, SYSTEMS_TFhirConditionVerStatusEnum);
+      result.verificationStatusElement := parseEnum(jsn.path+'/verificationStatus', jsn.node['verificationStatus'], jsn.vObj['_verificationStatus'], CODES_TFhirConditionVerStatusEnum, SYSTEMS_TFhirConditionVerStatusEnum);
     if jsn.has('severity') then
         result.severity := ParseCodeableConcept(jsn.vObj['severity']);{q3}
     if jsn.has('onsetQuantity') {a4} then
@@ -11432,9 +11522,9 @@ begin
     if jsn.has('onsetRange') {a4} then
       result.onset := ParseRange(jsn.vObj['onsetRange']);
     if jsn.has('onsetDateTime') or jsn.has('_onsetDateTime') then
-      result.onset := parseDateTime(jsn['onsetDateTime'], jsn.vObj['_onsetDateTime']);
+      result.onset := ParseDateTime(jsn.node['onsetDateTime'], jsn.vObj['_onsetDateTime']);
     if jsn.has('onsetString') or jsn.has('_onsetString') then
-      result.onset := parseString(jsn['onsetString'], jsn.vObj['_onsetString']);
+      result.onset := ParseString(jsn.node['onsetString'], jsn.vObj['_onsetString']);
     if jsn.has('abatementQuantity') {a4} then
       result.abatement := ParseQuantity(jsn.vObj['abatementQuantity']);
     if jsn.has('abatementPeriod') {a4} then
@@ -11442,11 +11532,11 @@ begin
     if jsn.has('abatementRange') {a4} then
       result.abatement := ParseRange(jsn.vObj['abatementRange']);
     if jsn.has('abatementDateTime') or jsn.has('_abatementDateTime') then
-      result.abatement := parseDateTime(jsn['abatementDateTime'], jsn.vObj['_abatementDateTime']);
+      result.abatement := ParseDateTime(jsn.node['abatementDateTime'], jsn.vObj['_abatementDateTime']);
     if jsn.has('abatementBoolean') or jsn.has('_abatementBoolean') then
-      result.abatement := parseBoolean(jsn['abatementBoolean'], jsn.vObj['_abatementBoolean']);
+      result.abatement := ParseBoolean(jsn.node['abatementBoolean'], jsn.vObj['_abatementBoolean']);
     if jsn.has('abatementString') or jsn.has('_abatementString') then
-      result.abatement := parseString(jsn['abatementString'], jsn.vObj['_abatementString']);
+      result.abatement := ParseString(jsn.node['abatementString'], jsn.vObj['_abatementString']);
     if jsn.has('stage') then
         result.stage := ParseConditionStage(jsn.vObj['stage']);{q3}
     if jsn.has('evidence') then
@@ -11454,7 +11544,7 @@ begin
     if jsn.has('bodySite') then
       iterateArray(jsn.vArr['bodySite'], result.bodySiteList, parseCodeableConcept);
     if jsn.has('notes') or jsn.has('_notes') then
-        result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+        result.notesElement := ParseString(jsn.node['notes'], jsn.vObj['_notes']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeCondition(json : TJSONWriter; name : string; elem : TFhirCondition; noObj : boolean = false);
@@ -11572,7 +11662,7 @@ procedure TFHIRJsonParser.ParseConformanceContactProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -11619,11 +11709,11 @@ procedure TFHIRJsonParser.ParseConformanceSoftwareProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('releaseDate') or jsn.has('_releaseDate') then
-        result.releaseDateElement := ParseDateTime(jsn['releaseDate'], jsn.vObj['_releaseDate']);{q}
+        result.releaseDateElement := ParseDateTime(jsn.node['releaseDate'], jsn.vObj['_releaseDate']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceSoftware(json : TJSONWriter; name : string; elem : TFhirConformanceSoftware; noObj : boolean = false);
@@ -11665,9 +11755,9 @@ procedure TFHIRJsonParser.ParseConformanceImplementationProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceImplementation(json : TJSONWriter; name : string; elem : TFhirConformanceImplementation; noObj : boolean = false);
@@ -11705,9 +11795,9 @@ procedure TFHIRJsonParser.ParseConformanceRestProperties(jsn : TJsonObject; resu
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirRestfulConformanceModeEnum, SYSTEMS_TFhirRestfulConformanceModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn.node['mode'], jsn.vObj['_mode'], CODES_TFhirRestfulConformanceModeEnum, SYSTEMS_TFhirRestfulConformanceModeEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn.node['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('security') then
         result.security := ParseConformanceRestSecurity(jsn.vObj['security']);{q3}
     if jsn.has('resource') then
@@ -11715,7 +11805,7 @@ begin
     if jsn.has('interaction') then
       iterateArray(jsn.vArr['interaction'], result.interactionList, parseConformanceRestInteraction);
     if jsn.has('transactionMode') or jsn.has('_transactionMode')  then
-      result.transactionModeElement := parseEnum(jsn.path+'/transactionMode', jsn['transactionMode'], jsn.vObj['_transactionMode'], CODES_TFhirTransactionModeEnum, SYSTEMS_TFhirTransactionModeEnum);
+      result.transactionModeElement := parseEnum(jsn.path+'/transactionMode', jsn.node['transactionMode'], jsn.vObj['_transactionMode'], CODES_TFhirTransactionModeEnum, SYSTEMS_TFhirTransactionModeEnum);
     if jsn.has('searchParam') then
       iterateArray(jsn.vArr['searchParam'], result.searchParamList, parseConformanceRestResourceSearchParam);
     if jsn.has('operation') then
@@ -11821,11 +11911,11 @@ procedure TFHIRJsonParser.ParseConformanceRestSecurityProperties(jsn : TJsonObje
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('cors') or jsn.has('_cors') then
-        result.corsElement := ParseBoolean(jsn['cors'], jsn.vObj['_cors']);{q}
+        result.corsElement := ParseBoolean(jsn.node['cors'], jsn.vObj['_cors']);{q}
     if jsn.has('service') then
       iterateArray(jsn.vArr['service'], result.serviceList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('certificate') then
       iterateArray(jsn.vArr['certificate'], result.certificateList, parseConformanceRestSecurityCertificate);
 end;
@@ -11883,9 +11973,9 @@ procedure TFHIRJsonParser.ParseConformanceRestSecurityCertificateProperties(jsn 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseCode(jsn.node['type'], jsn.vObj['_type']);{q}
     if jsn.has('blob') or jsn.has('_blob') then
-        result.blobElement := ParseBase64Binary(jsn['blob'], jsn.vObj['_blob']);{q}
+        result.blobElement := ParseBase64Binary(jsn.node['blob'], jsn.vObj['_blob']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceRestSecurityCertificate(json : TJSONWriter; name : string; elem : TFhirConformanceRestSecurityCertificate; noObj : boolean = false);
@@ -11925,23 +12015,23 @@ procedure TFHIRJsonParser.ParseConformanceRestResourceProperties(jsn : TJsonObje
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
     if jsn.has('interaction') then
       iterateArray(jsn.vArr['interaction'], result.interactionList, parseConformanceRestResourceInteraction);
     if jsn.has('versioning') or jsn.has('_versioning')  then
-      result.versioningElement := parseEnum(jsn.path+'/versioning', jsn['versioning'], jsn.vObj['_versioning'], CODES_TFhirVersioningPolicyEnum, SYSTEMS_TFhirVersioningPolicyEnum);
+      result.versioningElement := parseEnum(jsn.path+'/versioning', jsn.node['versioning'], jsn.vObj['_versioning'], CODES_TFhirVersioningPolicyEnum, SYSTEMS_TFhirVersioningPolicyEnum);
     if jsn.has('readHistory') or jsn.has('_readHistory') then
-        result.readHistoryElement := ParseBoolean(jsn['readHistory'], jsn.vObj['_readHistory']);{q}
+        result.readHistoryElement := ParseBoolean(jsn.node['readHistory'], jsn.vObj['_readHistory']);{q}
     if jsn.has('updateCreate') or jsn.has('_updateCreate') then
-        result.updateCreateElement := ParseBoolean(jsn['updateCreate'], jsn.vObj['_updateCreate']);{q}
+        result.updateCreateElement := ParseBoolean(jsn.node['updateCreate'], jsn.vObj['_updateCreate']);{q}
     if jsn.has('conditionalCreate') or jsn.has('_conditionalCreate') then
-        result.conditionalCreateElement := ParseBoolean(jsn['conditionalCreate'], jsn.vObj['_conditionalCreate']);{q}
+        result.conditionalCreateElement := ParseBoolean(jsn.node['conditionalCreate'], jsn.vObj['_conditionalCreate']);{q}
     if jsn.has('conditionalUpdate') or jsn.has('_conditionalUpdate') then
-        result.conditionalUpdateElement := ParseBoolean(jsn['conditionalUpdate'], jsn.vObj['_conditionalUpdate']);{q}
+        result.conditionalUpdateElement := ParseBoolean(jsn.node['conditionalUpdate'], jsn.vObj['_conditionalUpdate']);{q}
     if jsn.has('conditionalDelete') or jsn.has('_conditionalDelete')  then
-      result.conditionalDeleteElement := parseEnum(jsn.path+'/conditionalDelete', jsn['conditionalDelete'], jsn.vObj['_conditionalDelete'], CODES_TFhirConditionalDeleteStatusEnum, SYSTEMS_TFhirConditionalDeleteStatusEnum);
+      result.conditionalDeleteElement := parseEnum(jsn.path+'/conditionalDelete', jsn.node['conditionalDelete'], jsn.vObj['_conditionalDelete'], CODES_TFhirConditionalDeleteStatusEnum, SYSTEMS_TFhirConditionalDeleteStatusEnum);
       if jsn.has('searchInclude') or jsn.has('_searchInclude') then
       iteratePrimitiveArray(jsn.vArr['searchInclude'], jsn.vArr['_searchInclude'], result.searchIncludeList, parseString);
       if jsn.has('searchRevInclude') or jsn.has('_searchRevInclude') then
@@ -12073,9 +12163,9 @@ procedure TFHIRJsonParser.ParseConformanceRestResourceInteractionProperties(jsn 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirTypeRestfulInteractionEnum, SYSTEMS_TFhirTypeRestfulInteractionEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirTypeRestfulInteractionEnum, SYSTEMS_TFhirTypeRestfulInteractionEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn.node['documentation'], jsn.vObj['_documentation']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceRestResourceInteraction(json : TJSONWriter; name : string; elem : TFhirConformanceRestResourceInteraction; noObj : boolean = false);
@@ -12113,13 +12203,13 @@ procedure TFHIRJsonParser.ParseConformanceRestResourceSearchParamProperties(jsn 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('definition') or jsn.has('_definition') then
-        result.definitionElement := ParseUri(jsn['definition'], jsn.vObj['_definition']);{q}
+        result.definitionElement := ParseUri(jsn.node['definition'], jsn.vObj['_definition']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn.node['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('target') or jsn.has('_target') then
       iterateEnumArray(jsn.vArr['target'], jsn.vArr['_target'], jsn.path+'/target', result.target, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('modifier') or jsn.has('_modifier') then
@@ -12245,9 +12335,9 @@ procedure TFHIRJsonParser.ParseConformanceRestInteractionProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirSystemRestfulInteractionEnum, SYSTEMS_TFhirSystemRestfulInteractionEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirSystemRestfulInteractionEnum, SYSTEMS_TFhirSystemRestfulInteractionEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn.node['documentation'], jsn.vObj['_documentation']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceRestInteraction(json : TJSONWriter; name : string; elem : TFhirConformanceRestInteraction; noObj : boolean = false);
@@ -12285,7 +12375,7 @@ procedure TFHIRJsonParser.ParseConformanceRestOperationProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('definition') then
         result.definition := ParseReference{TFhirOperationDefinition}(jsn.vObj['definition']);{q3}
 end;
@@ -12324,9 +12414,9 @@ begin
     if jsn.has('endpoint') then
       iterateArray(jsn.vArr['endpoint'], result.endpointList, parseConformanceMessagingEndpoint);
     if jsn.has('reliableCache') or jsn.has('_reliableCache') then
-        result.reliableCacheElement := ParseUnsignedInt(jsn['reliableCache'], jsn.vObj['_reliableCache']);{q}
+        result.reliableCacheElement := ParseUnsignedInt(jsn.node['reliableCache'], jsn.vObj['_reliableCache']);{q}
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn.node['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseConformanceMessagingEvent);
 end;
@@ -12386,7 +12476,7 @@ begin
     if jsn.has('protocol') then
         result.protocol := ParseCoding(jsn.vObj['protocol']);{q3}
     if jsn.has('address') or jsn.has('_address') then
-        result.addressElement := ParseUri(jsn['address'], jsn.vObj['_address']);{q}
+        result.addressElement := ParseUri(jsn.node['address'], jsn.vObj['_address']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceMessagingEndpoint(json : TJSONWriter; name : string; elem : TFhirConformanceMessagingEndpoint; noObj : boolean = false);
@@ -12423,17 +12513,17 @@ begin
     if jsn.has('code') then
         result.code := ParseCoding(jsn.vObj['code']);{q3}
     if jsn.has('category') or jsn.has('_category')  then
-      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMessageSignificanceCategoryEnum, SYSTEMS_TFhirMessageSignificanceCategoryEnum);
+      result.categoryElement := parseEnum(jsn.path+'/category', jsn.node['category'], jsn.vObj['_category'], CODES_TFhirMessageSignificanceCategoryEnum, SYSTEMS_TFhirMessageSignificanceCategoryEnum);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirMessageConformanceEventModeEnum, SYSTEMS_TFhirMessageConformanceEventModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn.node['mode'], jsn.vObj['_mode'], CODES_TFhirMessageConformanceEventModeEnum, SYSTEMS_TFhirMessageConformanceEventModeEnum);
     if jsn.has('focus') or jsn.has('_focus')  then
-      result.focusElement := parseEnum(jsn.path+'/focus', jsn['focus'], jsn.vObj['_focus'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
+      result.focusElement := parseEnum(jsn.path+'/focus', jsn.node['focus'], jsn.vObj['_focus'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('request') then
         result.request := ParseReference{TFhirStructureDefinition}(jsn.vObj['request']);{q3}
     if jsn.has('response') then
         result.response := ParseReference{TFhirStructureDefinition}(jsn.vObj['response']);{q3}
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn.node['documentation'], jsn.vObj['_documentation']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceMessagingEvent(json : TJSONWriter; name : string; elem : TFhirConformanceMessagingEvent; noObj : boolean = false);
@@ -12480,9 +12570,9 @@ procedure TFHIRJsonParser.ParseConformanceDocumentProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirDocumentModeEnum, SYSTEMS_TFhirDocumentModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn.node['mode'], jsn.vObj['_mode'], CODES_TFhirDocumentModeEnum, SYSTEMS_TFhirDocumentModeEnum);
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn.node['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
 end;
@@ -12523,37 +12613,37 @@ procedure TFHIRJsonParser.ParseConformanceProperties(jsn : TJsonObject; result :
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseConformanceContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirConformanceStatementKindEnum, SYSTEMS_TFhirConformanceStatementKindEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn.node['kind'], jsn.vObj['_kind'], CODES_TFhirConformanceStatementKindEnum, SYSTEMS_TFhirConformanceStatementKindEnum);
     if jsn.has('software') then
         result.software := ParseConformanceSoftware(jsn.vObj['software']);{q3}
     if jsn.has('implementation') then
         result.implementation_ := ParseConformanceImplementation(jsn.vObj['implementation']);{q3}
     if jsn.has('fhirVersion') or jsn.has('_fhirVersion') then
-        result.fhirVersionElement := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
+        result.fhirVersionElement := ParseId(jsn.node['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
     if jsn.has('acceptUnknown') or jsn.has('_acceptUnknown')  then
-      result.acceptUnknownElement := parseEnum(jsn.path+'/acceptUnknown', jsn['acceptUnknown'], jsn.vObj['_acceptUnknown'], CODES_TFhirUnknownContentCodeEnum, SYSTEMS_TFhirUnknownContentCodeEnum);
+      result.acceptUnknownElement := parseEnum(jsn.path+'/acceptUnknown', jsn.node['acceptUnknown'], jsn.vObj['_acceptUnknown'], CODES_TFhirUnknownContentCodeEnum, SYSTEMS_TFhirUnknownContentCodeEnum);
       if jsn.has('format') or jsn.has('_format') then
       iteratePrimitiveArray(jsn.vArr['format'], jsn.vArr['_format'], result.formatList, parseCode);
     if jsn.has('profile') then
@@ -12756,15 +12846,15 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('effectiveTime') or jsn.has('_effectiveTime') then
-        result.effectiveTimeElement := ParseDateTime(jsn['effectiveTime'], jsn.vObj['_effectiveTime']);{q}
+        result.effectiveTimeElement := ParseDateTime(jsn.node['effectiveTime'], jsn.vObj['_effectiveTime']);{q}
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
         result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
-        result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
+        result.factorElement := ParseDecimal(jsn.node['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
-        result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
+        result.pointsElement := ParseDecimal(jsn.node['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
         result.net := ParseQuantity(jsn.vObj['net']);{q3}
 end;
@@ -12826,7 +12916,7 @@ begin
     if jsn.has('party') then
         result.party := ParseReference{Resource}(jsn.vObj['party']);{q3}
     if jsn.has('signature') or jsn.has('_signature') then
-        result.signatureElement := ParseString(jsn['signature'], jsn.vObj['_signature']);{q}
+        result.signatureElement := ParseString(jsn.node['signature'], jsn.vObj['_signature']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeContractSigner(json : TJSONWriter; name : string; elem : TFhirContractSigner; noObj : boolean = false);
@@ -12864,7 +12954,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('issued') or jsn.has('_issued') then
-        result.issuedElement := ParseDateTime(jsn['issued'], jsn.vObj['_issued']);{q}
+        result.issuedElement := ParseDateTime(jsn.node['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('applies') then
         result.applies := ParsePeriod(jsn.vObj['applies']);{q3}
     if jsn.has('type') then
@@ -12880,7 +12970,7 @@ begin
     if jsn.has('actor') then
       iterateArray(jsn.vArr['actor'], result.actorList, parseContractTermActor);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('valuedItem') then
       iterateArray(jsn.vArr['valuedItem'], result.valuedItemList, parseContractTermValuedItem);
     if jsn.has('group') then
@@ -13021,15 +13111,15 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('effectiveTime') or jsn.has('_effectiveTime') then
-        result.effectiveTimeElement := ParseDateTime(jsn['effectiveTime'], jsn.vObj['_effectiveTime']);{q}
+        result.effectiveTimeElement := ParseDateTime(jsn.node['effectiveTime'], jsn.vObj['_effectiveTime']);{q}
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
         result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
-        result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
+        result.factorElement := ParseDecimal(jsn.node['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
-        result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
+        result.pointsElement := ParseDecimal(jsn.node['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
         result.net := ParseQuantity(jsn.vObj['net']);{q3}
 end;
@@ -13203,7 +13293,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('issued') or jsn.has('_issued') then
-        result.issuedElement := ParseDateTime(jsn['issued'], jsn.vObj['_issued']);{q}
+        result.issuedElement := ParseDateTime(jsn.node['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('applies') then
         result.applies := ParsePeriod(jsn.vObj['applies']);{q3}
     if jsn.has('subject') then
@@ -13388,15 +13478,15 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('group') or jsn.has('_group') then
-        result.groupElement := ParseString(jsn['group'], jsn.vObj['_group']);{q}
+        result.groupElement := ParseString(jsn.node['group'], jsn.vObj['_group']);{q}
     if jsn.has('plan') or jsn.has('_plan') then
-        result.planElement := ParseString(jsn['plan'], jsn.vObj['_plan']);{q}
+        result.planElement := ParseString(jsn.node['plan'], jsn.vObj['_plan']);{q}
     if jsn.has('subPlan') or jsn.has('_subPlan') then
-        result.subPlanElement := ParseString(jsn['subPlan'], jsn.vObj['_subPlan']);{q}
+        result.subPlanElement := ParseString(jsn.node['subPlan'], jsn.vObj['_subPlan']);{q}
     if jsn.has('dependent') or jsn.has('_dependent') then
-        result.dependentElement := ParsePositiveInt(jsn['dependent'], jsn.vObj['_dependent']);{q}
+        result.dependentElement := ParsePositiveInt(jsn.node['dependent'], jsn.vObj['_dependent']);{q}
     if jsn.has('sequence') or jsn.has('_sequence') then
-        result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
+        result.sequenceElement := ParsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('subscriber') then
         result.subscriber := ParseReference{TFhirPatient}(jsn.vObj['subscriber']);{q3}
     if jsn.has('network') then
@@ -13484,7 +13574,7 @@ procedure TFHIRJsonParser.ParseDataElementContactProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -13531,13 +13621,13 @@ procedure TFHIRJsonParser.ParseDataElementMappingProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identity') or jsn.has('_identity') then
-        result.identityElement := ParseId(jsn['identity'], jsn.vObj['_identity']);{q}
+        result.identityElement := ParseId(jsn.node['identity'], jsn.vObj['_identity']);{q}
     if jsn.has('uri') or jsn.has('_uri') then
-        result.uriElement := ParseUri(jsn['uri'], jsn.vObj['_uri']);{q}
+        result.uriElement := ParseUri(jsn.node['uri'], jsn.vObj['_uri']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseString(jsn.node['comments'], jsn.vObj['_comments']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeDataElementMapping(json : TJSONWriter; name : string; elem : TFhirDataElementMapping; noObj : boolean = false);
@@ -13583,29 +13673,29 @@ procedure TFHIRJsonParser.ParseDataElementProperties(jsn : TJsonObject; result :
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseDataElementContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('useContext') then
       iterateArray(jsn.vArr['useContext'], result.useContextList, parseCodeableConcept);
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('stringency') or jsn.has('_stringency')  then
-      result.stringencyElement := parseEnum(jsn.path+'/stringency', jsn['stringency'], jsn.vObj['_stringency'], CODES_TFhirDataelementStringencyEnum, SYSTEMS_TFhirDataelementStringencyEnum);
+      result.stringencyElement := parseEnum(jsn.path+'/stringency', jsn.node['stringency'], jsn.vObj['_stringency'], CODES_TFhirDataelementStringencyEnum, SYSTEMS_TFhirDataelementStringencyEnum);
     if jsn.has('mapping') then
       iterateArray(jsn.vArr['mapping'], result.mappingList, parseDataElementMapping);
     if jsn.has('element') then
@@ -13714,7 +13804,7 @@ begin
     if jsn.has('action') then
         result.action := ParseCodeableConcept(jsn.vObj['action']);{q3}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('author') then
         result.author := ParseReference{TFhirPractitioner}(jsn.vObj['author']);{q3}
 end;
@@ -13759,19 +13849,19 @@ begin
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirDetectedissueSeverityEnum, SYSTEMS_TFhirDetectedissueSeverityEnum);
+      result.severityElement := parseEnum(jsn.path+'/severity', jsn.node['severity'], jsn.vObj['_severity'], CODES_TFhirDetectedissueSeverityEnum, SYSTEMS_TFhirDetectedissueSeverityEnum);
     if jsn.has('implicated') then
       iterateArray(jsn.vArr['implicated'], result.implicatedList, parseReference{TFhirReference});
     if jsn.has('detail') or jsn.has('_detail') then
-        result.detailElement := ParseString(jsn['detail'], jsn.vObj['_detail']);{q}
+        result.detailElement := ParseString(jsn.node['detail'], jsn.vObj['_detail']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('author') then
         result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('reference') or jsn.has('_reference') then
-        result.referenceElement := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
+        result.referenceElement := ParseUri(jsn.node['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('mitigation') then
       iterateArray(jsn.vArr['mitigation'], result.mitigationList, parseDetectedIssueMitigation);
 end;
@@ -13851,21 +13941,21 @@ begin
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDevicestatusEnum, SYSTEMS_TFhirDevicestatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDevicestatusEnum, SYSTEMS_TFhirDevicestatusEnum);
     if jsn.has('manufacturer') or jsn.has('_manufacturer') then
-        result.manufacturerElement := ParseString(jsn['manufacturer'], jsn.vObj['_manufacturer']);{q}
+        result.manufacturerElement := ParseString(jsn.node['manufacturer'], jsn.vObj['_manufacturer']);{q}
     if jsn.has('model') or jsn.has('_model') then
-        result.modelElement := ParseString(jsn['model'], jsn.vObj['_model']);{q}
+        result.modelElement := ParseString(jsn.node['model'], jsn.vObj['_model']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('manufactureDate') or jsn.has('_manufactureDate') then
-        result.manufactureDateElement := ParseDateTime(jsn['manufactureDate'], jsn.vObj['_manufactureDate']);{q}
+        result.manufactureDateElement := ParseDateTime(jsn.node['manufactureDate'], jsn.vObj['_manufactureDate']);{q}
     if jsn.has('expiry') or jsn.has('_expiry') then
-        result.expiryElement := ParseDateTime(jsn['expiry'], jsn.vObj['_expiry']);{q}
+        result.expiryElement := ParseDateTime(jsn.node['expiry'], jsn.vObj['_expiry']);{q}
     if jsn.has('udi') or jsn.has('_udi') then
-        result.udiElement := ParseString(jsn['udi'], jsn.vObj['_udi']);{q}
+        result.udiElement := ParseString(jsn.node['udi'], jsn.vObj['_udi']);{q}
     if jsn.has('lotNumber') or jsn.has('_lotNumber') then
-        result.lotNumberElement := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
+        result.lotNumberElement := ParseString(jsn.node['lotNumber'], jsn.vObj['_lotNumber']);{q}
     if jsn.has('owner') then
         result.owner := ParseReference{TFhirOrganization}(jsn.vObj['owner']);{q3}
     if jsn.has('location') then
@@ -13875,7 +13965,7 @@ begin
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseContactPoint);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeDevice(json : TJSONWriter; name : string; elem : TFhirDevice; noObj : boolean = false);
@@ -13977,7 +14067,7 @@ begin
     if jsn.has('componentId') then
         result.componentId := ParseIdentifier(jsn.vObj['componentId']);{q3}
     if jsn.has('productionSpec') or jsn.has('_productionSpec') then
-        result.productionSpecElement := ParseString(jsn['productionSpec'], jsn.vObj['_productionSpec']);{q}
+        result.productionSpecElement := ParseString(jsn.node['productionSpec'], jsn.vObj['_productionSpec']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeDeviceComponentProductionSpecification(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProductionSpecification; noObj : boolean = false);
@@ -14021,7 +14111,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('lastSystemChange') or jsn.has('_lastSystemChange') then
-        result.lastSystemChangeElement := ParseInstant(jsn['lastSystemChange'], jsn.vObj['_lastSystemChange']);{q}
+        result.lastSystemChangeElement := ParseInstant(jsn.node['lastSystemChange'], jsn.vObj['_lastSystemChange']);{q}
     if jsn.has('source') then
         result.source := ParseReference{TFhirDevice}(jsn.vObj['source']);{q3}
     if jsn.has('parent') then
@@ -14031,7 +14121,7 @@ begin
     if jsn.has('parameterGroup') then
         result.parameterGroup := ParseCodeableConcept(jsn.vObj['parameterGroup']);{q3}
     if jsn.has('measurementPrinciple') or jsn.has('_measurementPrinciple')  then
-      result.measurementPrincipleElement := parseEnum(jsn.path+'/measurementPrinciple', jsn['measurementPrinciple'], jsn.vObj['_measurementPrinciple'], CODES_TFhirMeasurementPrincipleEnum, SYSTEMS_TFhirMeasurementPrincipleEnum);
+      result.measurementPrincipleElement := parseEnum(jsn.path+'/measurementPrinciple', jsn.node['measurementPrinciple'], jsn.vObj['_measurementPrinciple'], CODES_TFhirMeasurementPrincipleEnum, SYSTEMS_TFhirMeasurementPrincipleEnum);
     if jsn.has('productionSpecification') then
       iterateArray(jsn.vArr['productionSpecification'], result.productionSpecificationList, parseDeviceComponentProductionSpecification);
     if jsn.has('languageCode') then
@@ -14099,11 +14189,11 @@ procedure TFHIRJsonParser.ParseDeviceMetricCalibrationProperties(jsn : TJsonObje
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirMetricCalibrationTypeEnum, SYSTEMS_TFhirMetricCalibrationTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirMetricCalibrationTypeEnum, SYSTEMS_TFhirMetricCalibrationTypeEnum);
     if jsn.has('state') or jsn.has('_state')  then
-      result.stateElement := parseEnum(jsn.path+'/state', jsn['state'], jsn.vObj['_state'], CODES_TFhirMetricCalibrationStateEnum, SYSTEMS_TFhirMetricCalibrationStateEnum);
+      result.stateElement := parseEnum(jsn.path+'/state', jsn.node['state'], jsn.vObj['_state'], CODES_TFhirMetricCalibrationStateEnum, SYSTEMS_TFhirMetricCalibrationStateEnum);
     if jsn.has('time') or jsn.has('_time') then
-        result.timeElement := ParseInstant(jsn['time'], jsn.vObj['_time']);{q}
+        result.timeElement := ParseInstant(jsn.node['time'], jsn.vObj['_time']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeDeviceMetricCalibration(json : TJSONWriter; name : string; elem : TFhirDeviceMetricCalibration; noObj : boolean = false);
@@ -14157,11 +14247,11 @@ begin
     if jsn.has('parent') then
         result.parent := ParseReference{TFhirDeviceComponent}(jsn.vObj['parent']);{q3}
     if jsn.has('operationalStatus') or jsn.has('_operationalStatus')  then
-      result.operationalStatusElement := parseEnum(jsn.path+'/operationalStatus', jsn['operationalStatus'], jsn.vObj['_operationalStatus'], CODES_TFhirMetricOperationalStatusEnum, SYSTEMS_TFhirMetricOperationalStatusEnum);
+      result.operationalStatusElement := parseEnum(jsn.path+'/operationalStatus', jsn.node['operationalStatus'], jsn.vObj['_operationalStatus'], CODES_TFhirMetricOperationalStatusEnum, SYSTEMS_TFhirMetricOperationalStatusEnum);
     if jsn.has('color') or jsn.has('_color')  then
-      result.colorElement := parseEnum(jsn.path+'/color', jsn['color'], jsn.vObj['_color'], CODES_TFhirMetricColorEnum, SYSTEMS_TFhirMetricColorEnum);
+      result.colorElement := parseEnum(jsn.path+'/color', jsn.node['color'], jsn.vObj['_color'], CODES_TFhirMetricColorEnum, SYSTEMS_TFhirMetricColorEnum);
     if jsn.has('category') or jsn.has('_category')  then
-      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMetricCategoryEnum, SYSTEMS_TFhirMetricCategoryEnum);
+      result.categoryElement := parseEnum(jsn.path+'/category', jsn.node['category'], jsn.vObj['_category'], CODES_TFhirMetricCategoryEnum, SYSTEMS_TFhirMetricCategoryEnum);
     if jsn.has('measurementPeriod') then
         result.measurementPeriod := ParseTiming(jsn.vObj['measurementPeriod']);{q3}
     if jsn.has('calibration') then
@@ -14230,7 +14320,7 @@ begin
     if jsn.has('bodySiteReference') {a3} then
       result.bodySite := ParseReference(jsn.vObj['bodySiteReference']);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDeviceUseRequestStatusEnum, SYSTEMS_TFhirDeviceUseRequestStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDeviceUseRequestStatusEnum, SYSTEMS_TFhirDeviceUseRequestStatusEnum);
     if jsn.has('device') then
         result.device := ParseReference{TFhirDevice}(jsn.vObj['device']);{q3}
     if jsn.has('encounter') then
@@ -14244,9 +14334,9 @@ begin
     if jsn.has('prnReason') then
       iterateArray(jsn.vArr['prnReason'], result.prnReasonList, parseCodeableConcept);
     if jsn.has('orderedOn') or jsn.has('_orderedOn') then
-        result.orderedOnElement := ParseDateTime(jsn['orderedOn'], jsn.vObj['_orderedOn']);{q}
+        result.orderedOnElement := ParseDateTime(jsn.node['orderedOn'], jsn.vObj['_orderedOn']);{q}
     if jsn.has('recordedOn') or jsn.has('_recordedOn') then
-        result.recordedOnElement := ParseDateTime(jsn['recordedOn'], jsn.vObj['_recordedOn']);{q}
+        result.recordedOnElement := ParseDateTime(jsn.node['recordedOn'], jsn.vObj['_recordedOn']);{q}
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('timingTiming') {a4} then
@@ -14254,9 +14344,9 @@ begin
     if jsn.has('timingPeriod') {a4} then
       result.timing := ParsePeriod(jsn.vObj['timingPeriod']);
     if jsn.has('timingDateTime') or jsn.has('_timingDateTime') then
-      result.timing := parseDateTime(jsn['timingDateTime'], jsn.vObj['_timingDateTime']);
+      result.timing := ParseDateTime(jsn.node['timingDateTime'], jsn.vObj['_timingDateTime']);
     if jsn.has('priority') or jsn.has('_priority')  then
-      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum);
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn.node['priority'], jsn.vObj['_priority'], CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum);
 end;
 
 procedure TFHIRJsonComposer.ComposeDeviceUseRequest(json : TJSONWriter; name : string; elem : TFhirDeviceUseRequest; noObj : boolean = false);
@@ -14384,7 +14474,7 @@ begin
       if jsn.has('notes') or jsn.has('_notes') then
       iteratePrimitiveArray(jsn.vArr['notes'], jsn.vArr['_notes'], result.notesList, parseString);
     if jsn.has('recordedOn') or jsn.has('_recordedOn') then
-        result.recordedOnElement := ParseDateTime(jsn['recordedOn'], jsn.vObj['_recordedOn']);{q}
+        result.recordedOnElement := ParseDateTime(jsn.node['recordedOn'], jsn.vObj['_recordedOn']);{q}
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('timingTiming') {a4} then
@@ -14392,7 +14482,7 @@ begin
     if jsn.has('timingPeriod') {a4} then
       result.timing := ParsePeriod(jsn.vObj['timingPeriod']);
     if jsn.has('timingDateTime') or jsn.has('_timingDateTime') then
-      result.timing := parseDateTime(jsn['timingDateTime'], jsn.vObj['_timingDateTime']);
+      result.timing := ParseDateTime(jsn.node['timingDateTime'], jsn.vObj['_timingDateTime']);
 end;
 
 procedure TFHIRJsonComposer.ComposeDeviceUseStatement(json : TJSONWriter; name : string; elem : TFhirDeviceUseStatement; noObj : boolean = false);
@@ -14487,11 +14577,11 @@ procedure TFHIRJsonParser.ParseDiagnosticOrderEventProperties(jsn : TJsonObject;
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
     if jsn.has('description') then
         result.description := ParseCodeableConcept(jsn.vObj['description']);{q3}
     if jsn.has('dateTime') or jsn.has('_dateTime') then
-        result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
+        result.dateTimeElement := ParseDateTime(jsn.node['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('actor') then
         result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
 end;
@@ -14539,7 +14629,7 @@ begin
     if jsn.has('bodySite') then
         result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseDiagnosticOrderEvent);
 end;
@@ -14610,9 +14700,9 @@ begin
     if jsn.has('specimen') then
       iterateArray(jsn.vArr['specimen'], result.specimenList, parseReference{TFhirSpecimen});
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
     if jsn.has('priority') or jsn.has('_priority')  then
-      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDiagnosticOrderPriorityEnum, SYSTEMS_TFhirDiagnosticOrderPriorityEnum);
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn.node['priority'], jsn.vObj['_priority'], CODES_TFhirDiagnosticOrderPriorityEnum, SYSTEMS_TFhirDiagnosticOrderPriorityEnum);
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseDiagnosticOrderEvent);
     if jsn.has('item') then
@@ -14714,7 +14804,7 @@ procedure TFHIRJsonParser.ParseDiagnosticReportImageProperties(jsn : TJsonObject
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('comment') or jsn.has('_comment') then
-        result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
+        result.commentElement := ParseString(jsn.node['comment'], jsn.vObj['_comment']);{q}
     if jsn.has('link') then
         result.link_ := ParseReference{TFhirMedia}(jsn.vObj['link']);{q3}
 end;
@@ -14755,7 +14845,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticReportStatusEnum, SYSTEMS_TFhirDiagnosticReportStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticReportStatusEnum, SYSTEMS_TFhirDiagnosticReportStatusEnum);
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('code') then
@@ -14767,9 +14857,9 @@ begin
     if jsn.has('effectivePeriod') {a4} then
       result.effective := ParsePeriod(jsn.vObj['effectivePeriod']);
     if jsn.has('effectiveDateTime') or jsn.has('_effectiveDateTime') then
-      result.effective := parseDateTime(jsn['effectiveDateTime'], jsn.vObj['_effectiveDateTime']);
+      result.effective := ParseDateTime(jsn.node['effectiveDateTime'], jsn.vObj['_effectiveDateTime']);
     if jsn.has('issued') or jsn.has('_issued') then
-        result.issuedElement := ParseInstant(jsn['issued'], jsn.vObj['_issued']);{q}
+        result.issuedElement := ParseInstant(jsn.node['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('performer') then
         result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q3}
     if jsn.has('request') then
@@ -14783,7 +14873,7 @@ begin
     if jsn.has('image') then
       iterateArray(jsn.vArr['image'], result.imageList, parseDiagnosticReportImage);
     if jsn.has('conclusion') or jsn.has('_conclusion') then
-        result.conclusionElement := ParseString(jsn['conclusion'], jsn.vObj['_conclusion']);{q}
+        result.conclusionElement := ParseString(jsn.node['conclusion'], jsn.vObj['_conclusion']);{q}
     if jsn.has('codedDiagnosis') then
       iterateArray(jsn.vArr['codedDiagnosis'], result.codedDiagnosisList, parseCodeableConcept);
     if jsn.has('presentedForm') then
@@ -14987,13 +15077,13 @@ begin
     if jsn.has('author') then
       iterateArray(jsn.vArr['author'], result.authorList, parseReference{Resource});
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('source') or jsn.has('_source') then
-        result.sourceElement := ParseUri(jsn['source'], jsn.vObj['_source']);{q}
+        result.sourceElement := ParseUri(jsn.node['source'], jsn.vObj['_source']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('content') then
       iterateArray(jsn.vArr['content'], result.contentList, parseDocumentManifestContent);
     if jsn.has('related') then
@@ -15086,7 +15176,7 @@ procedure TFHIRJsonParser.ParseDocumentReferenceRelatesToProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirDocumentRelationshipTypeEnum, SYSTEMS_TFhirDocumentRelationshipTypeEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirDocumentRelationshipTypeEnum, SYSTEMS_TFhirDocumentRelationshipTypeEnum);
     if jsn.has('target') then
         result.target := ParseReference{TFhirDocumentReference}(jsn.vObj['target']);{q3}
 end;
@@ -15291,17 +15381,17 @@ begin
     if jsn.has('authenticator') then
         result.authenticator := ParseReference{Resource}(jsn.vObj['authenticator']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('indexed') or jsn.has('_indexed') then
-        result.indexedElement := ParseInstant(jsn['indexed'], jsn.vObj['_indexed']);{q}
+        result.indexedElement := ParseInstant(jsn.node['indexed'], jsn.vObj['_indexed']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum);
     if jsn.has('docStatus') then
         result.docStatus := ParseCodeableConcept(jsn.vObj['docStatus']);{q3}
     if jsn.has('relatesTo') then
       iterateArray(jsn.vArr['relatesTo'], result.relatesToList, parseDocumentReferenceRelatesTo);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('securityLabel') then
       iterateArray(jsn.vArr['securityLabel'], result.securityLabelList, parseCodeableConcept);
     if jsn.has('content') then
@@ -15409,7 +15499,7 @@ begin
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
         result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
@@ -15474,15 +15564,15 @@ begin
     if jsn.has('request') then
         result.request := ParseReference{TFhirEligibilityRequest}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
-        result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
+        result.dispositionElement := ParseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
         result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
@@ -15553,7 +15643,7 @@ procedure TFHIRJsonParser.ParseEncounterStatusHistoryProperties(jsn : TJsonObjec
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum, SYSTEMS_TFhirEncounterStateEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum, SYSTEMS_TFhirEncounterStateEnum);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
@@ -15742,7 +15832,7 @@ begin
     if jsn.has('location') then
         result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterLocationStatusEnum, SYSTEMS_TFhirEncounterLocationStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirEncounterLocationStatusEnum, SYSTEMS_TFhirEncounterLocationStatusEnum);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
@@ -15785,11 +15875,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum, SYSTEMS_TFhirEncounterStateEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum, SYSTEMS_TFhirEncounterStateEnum);
     if jsn.has('statusHistory') then
       iterateArray(jsn.vArr['statusHistory'], result.statusHistoryList, parseEncounterStatusHistory);
     if jsn.has('class') or jsn.has('_class')  then
-      result.class_Element := parseEnum(jsn.path+'/class', jsn['class'], jsn.vObj['_class'], CODES_TFhirEncounterClassEnum, SYSTEMS_TFhirEncounterClassEnum);
+      result.class_Element := parseEnum(jsn.path+'/class', jsn.node['class'], jsn.vObj['_class'], CODES_TFhirEncounterClassEnum, SYSTEMS_TFhirEncounterClassEnum);
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('priority') then
@@ -15944,7 +16034,7 @@ begin
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
         result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
@@ -16018,15 +16108,15 @@ begin
     if jsn.has('request') then
         result.request := ParseReference{TFhirEnrollmentRequest}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
-        result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
+        result.dispositionElement := ParseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
         result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
@@ -16097,7 +16187,7 @@ procedure TFHIRJsonParser.ParseEpisodeOfCareStatusHistoryProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum, SYSTEMS_TFhirEpisodeOfCareStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum, SYSTEMS_TFhirEpisodeOfCareStatusEnum);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
@@ -16185,7 +16275,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum, SYSTEMS_TFhirEpisodeOfCareStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum, SYSTEMS_TFhirEpisodeOfCareStatusEnum);
     if jsn.has('statusHistory') then
       iterateArray(jsn.vArr['statusHistory'], result.statusHistoryList, parseEpisodeOfCareStatusHistory);
     if jsn.has('type') then
@@ -16292,15 +16382,15 @@ begin
     if jsn.has('request') then
         result.request := ParseReference{TFhirClaim}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
-        result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
+        result.dispositionElement := ParseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
         result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
@@ -16381,7 +16471,7 @@ begin
     if jsn.has('onsetPeriod') {a4} then
       result.onset := ParsePeriod(jsn.vObj['onsetPeriod']);
     if jsn.has('onsetString') or jsn.has('_onsetString') then
-      result.onset := parseString(jsn['onsetString'], jsn.vObj['_onsetString']);
+      result.onset := ParseString(jsn.node['onsetString'], jsn.vObj['_onsetString']);
     if jsn.has('note') then
         result.note := ParseAnnotation(jsn.vObj['note']);{q3}
 end;
@@ -16435,37 +16525,37 @@ begin
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirHistoryStatusEnum, SYSTEMS_TFhirHistoryStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirHistoryStatusEnum, SYSTEMS_TFhirHistoryStatusEnum);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('relationship') then
         result.relationship := ParseCodeableConcept(jsn.vObj['relationship']);{q3}
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn.node['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('bornPeriod') {a4} then
       result.born := ParsePeriod(jsn.vObj['bornPeriod']);
     if jsn.has('bornDate') or jsn.has('_bornDate') then
-      result.born := parseDate(jsn['bornDate'], jsn.vObj['_bornDate']);
+      result.born := ParseDate(jsn.node['bornDate'], jsn.vObj['_bornDate']);
     if jsn.has('bornString') or jsn.has('_bornString') then
-      result.born := parseString(jsn['bornString'], jsn.vObj['_bornString']);
+      result.born := ParseString(jsn.node['bornString'], jsn.vObj['_bornString']);
     if jsn.has('ageQuantity') {a4} then
       result.age := ParseQuantity(jsn.vObj['ageQuantity']);
     if jsn.has('ageRange') {a4} then
       result.age := ParseRange(jsn.vObj['ageRange']);
     if jsn.has('ageString') or jsn.has('_ageString') then
-      result.age := parseString(jsn['ageString'], jsn.vObj['_ageString']);
+      result.age := ParseString(jsn.node['ageString'], jsn.vObj['_ageString']);
     if jsn.has('deceasedQuantity') {a4} then
       result.deceased := ParseQuantity(jsn.vObj['deceasedQuantity']);
     if jsn.has('deceasedRange') {a4} then
       result.deceased := ParseRange(jsn.vObj['deceasedRange']);
     if jsn.has('deceasedBoolean') or jsn.has('_deceasedBoolean') then
-      result.deceased := parseBoolean(jsn['deceasedBoolean'], jsn.vObj['_deceasedBoolean']);
+      result.deceased := ParseBoolean(jsn.node['deceasedBoolean'], jsn.vObj['_deceasedBoolean']);
     if jsn.has('deceasedDate') or jsn.has('_deceasedDate') then
-      result.deceased := parseDate(jsn['deceasedDate'], jsn.vObj['_deceasedDate']);
+      result.deceased := ParseDate(jsn.node['deceasedDate'], jsn.vObj['_deceasedDate']);
     if jsn.has('deceasedString') or jsn.has('_deceasedString') then
-      result.deceased := parseString(jsn['deceasedString'], jsn.vObj['_deceasedString']);
+      result.deceased := ParseString(jsn.node['deceasedString'], jsn.vObj['_deceasedString']);
     if jsn.has('note') then
         result.note := ParseAnnotation(jsn.vObj['note']);{q3}
     if jsn.has('condition') then
@@ -16579,7 +16669,7 @@ begin
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirFlagStatusEnum, SYSTEMS_TFhirFlagStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirFlagStatusEnum, SYSTEMS_TFhirFlagStatusEnum);
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('subject') then
@@ -16686,19 +16776,19 @@ begin
     if jsn.has('startCodeableConcept') {a4} then
       result.start := ParseCodeableConcept(jsn.vObj['startCodeableConcept']);
     if jsn.has('startDate') or jsn.has('_startDate') then
-      result.start := parseDate(jsn['startDate'], jsn.vObj['_startDate']);
+      result.start := ParseDate(jsn.node['startDate'], jsn.vObj['_startDate']);
     if jsn.has('targetQuantity') {a4} then
       result.target := ParseQuantity(jsn.vObj['targetQuantity']);
     if jsn.has('targetDate') or jsn.has('_targetDate') then
-      result.target := parseDate(jsn['targetDate'], jsn.vObj['_targetDate']);
+      result.target := ParseDate(jsn.node['targetDate'], jsn.vObj['_targetDate']);
     if jsn.has('category') then
       iterateArray(jsn.vArr['category'], result.categoryList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirGoalStatusEnum, SYSTEMS_TFhirGoalStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirGoalStatusEnum, SYSTEMS_TFhirGoalStatusEnum);
     if jsn.has('statusDate') or jsn.has('_statusDate') then
-        result.statusDateElement := ParseDate(jsn['statusDate'], jsn.vObj['_statusDate']);{q}
+        result.statusDateElement := ParseDate(jsn.node['statusDate'], jsn.vObj['_statusDate']);{q}
     if jsn.has('statusReason') then
         result.statusReason := ParseCodeableConcept(jsn.vObj['statusReason']);{q3}
     if jsn.has('author') then
@@ -16817,9 +16907,9 @@ begin
     if jsn.has('valueRange') {a4} then
       result.value := ParseRange(jsn.vObj['valueRange']);
     if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-      result.value := parseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
+      result.value := ParseBoolean(jsn.node['valueBoolean'], jsn.vObj['_valueBoolean']);
     if jsn.has('exclude') or jsn.has('_exclude') then
-        result.excludeElement := ParseBoolean(jsn['exclude'], jsn.vObj['_exclude']);{q}
+        result.excludeElement := ParseBoolean(jsn.node['exclude'], jsn.vObj['_exclude']);{q}
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
@@ -16873,7 +16963,7 @@ begin
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('inactive') or jsn.has('_inactive') then
-        result.inactiveElement := ParseBoolean(jsn['inactive'], jsn.vObj['_inactive']);{q}
+        result.inactiveElement := ParseBoolean(jsn.node['inactive'], jsn.vObj['_inactive']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeGroupMember(json : TJSONWriter; name : string; elem : TFhirGroupMember; noObj : boolean = false);
@@ -16914,15 +17004,15 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGroupTypeEnum, SYSTEMS_TFhirGroupTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirGroupTypeEnum, SYSTEMS_TFhirGroupTypeEnum);
     if jsn.has('actual') or jsn.has('_actual') then
-        result.actualElement := ParseBoolean(jsn['actual'], jsn.vObj['_actual']);{q}
+        result.actualElement := ParseBoolean(jsn.node['actual'], jsn.vObj['_actual']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('quantity') or jsn.has('_quantity') then
-        result.quantityElement := ParseUnsignedInt(jsn['quantity'], jsn.vObj['_quantity']);{q}
+        result.quantityElement := ParseUnsignedInt(jsn.node['quantity'], jsn.vObj['_quantity']);{q}
     if jsn.has('characteristic') then
       iterateArray(jsn.vArr['characteristic'], result.characteristicList, parseGroupCharacteristic);
     if jsn.has('member') then
@@ -17041,11 +17131,11 @@ begin
     if jsn.has('daysOfWeek') or jsn.has('_daysOfWeek') then
       iterateEnumArray(jsn.vArr['daysOfWeek'], jsn.vArr['_daysOfWeek'], jsn.path+'/daysOfWeek', result.daysOfWeekList, parseEnum, CODES_TFhirDaysOfWeekEnum, SYSTEMS_TFhirDaysOfWeekEnum);
     if jsn.has('allDay') or jsn.has('_allDay') then
-        result.allDayElement := ParseBoolean(jsn['allDay'], jsn.vObj['_allDay']);{q}
+        result.allDayElement := ParseBoolean(jsn.node['allDay'], jsn.vObj['_allDay']);{q}
     if jsn.has('availableStartTime') or jsn.has('_availableStartTime') then
-        result.availableStartTimeElement := ParseTime(jsn['availableStartTime'], jsn.vObj['_availableStartTime']);{q}
+        result.availableStartTimeElement := ParseTime(jsn.node['availableStartTime'], jsn.vObj['_availableStartTime']);{q}
     if jsn.has('availableEndTime') or jsn.has('_availableEndTime') then
-        result.availableEndTimeElement := ParseTime(jsn['availableEndTime'], jsn.vObj['_availableEndTime']);{q}
+        result.availableEndTimeElement := ParseTime(jsn.node['availableEndTime'], jsn.vObj['_availableEndTime']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeHealthcareServiceAvailableTime(json : TJSONWriter; name : string; elem : TFhirHealthcareServiceAvailableTime; noObj : boolean = false);
@@ -17117,7 +17207,7 @@ procedure TFHIRJsonParser.ParseHealthcareServiceNotAvailableProperties(jsn : TJs
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('during') then
         result.during := ParsePeriod(jsn.vObj['during']);{q3}
 end;
@@ -17165,11 +17255,11 @@ begin
     if jsn.has('location') then
         result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('serviceName') or jsn.has('_serviceName') then
-        result.serviceNameElement := ParseString(jsn['serviceName'], jsn.vObj['_serviceName']);{q}
+        result.serviceNameElement := ParseString(jsn.node['serviceName'], jsn.vObj['_serviceName']);{q}
     if jsn.has('comment') or jsn.has('_comment') then
-        result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
+        result.commentElement := ParseString(jsn.node['comment'], jsn.vObj['_comment']);{q}
     if jsn.has('extraDetails') or jsn.has('_extraDetails') then
-        result.extraDetailsElement := ParseString(jsn['extraDetails'], jsn.vObj['_extraDetails']);{q}
+        result.extraDetailsElement := ParseString(jsn.node['extraDetails'], jsn.vObj['_extraDetails']);{q}
     if jsn.has('photo') then
         result.photo := ParseAttachment(jsn.vObj['photo']);{q3}
     if jsn.has('telecom') then
@@ -17181,7 +17271,7 @@ begin
     if jsn.has('eligibility') then
         result.eligibility := ParseCodeableConcept(jsn.vObj['eligibility']);{q3}
     if jsn.has('eligibilityNote') or jsn.has('_eligibilityNote') then
-        result.eligibilityNoteElement := ParseString(jsn['eligibilityNote'], jsn.vObj['_eligibilityNote']);{q}
+        result.eligibilityNoteElement := ParseString(jsn.node['eligibilityNote'], jsn.vObj['_eligibilityNote']);{q}
       if jsn.has('programName') or jsn.has('_programName') then
       iteratePrimitiveArray(jsn.vArr['programName'], jsn.vArr['_programName'], result.programNameList, parseString);
     if jsn.has('characteristic') then
@@ -17189,15 +17279,15 @@ begin
     if jsn.has('referralMethod') then
       iterateArray(jsn.vArr['referralMethod'], result.referralMethodList, parseCodeableConcept);
     if jsn.has('publicKey') or jsn.has('_publicKey') then
-        result.publicKeyElement := ParseString(jsn['publicKey'], jsn.vObj['_publicKey']);{q}
+        result.publicKeyElement := ParseString(jsn.node['publicKey'], jsn.vObj['_publicKey']);{q}
     if jsn.has('appointmentRequired') or jsn.has('_appointmentRequired') then
-        result.appointmentRequiredElement := ParseBoolean(jsn['appointmentRequired'], jsn.vObj['_appointmentRequired']);{q}
+        result.appointmentRequiredElement := ParseBoolean(jsn.node['appointmentRequired'], jsn.vObj['_appointmentRequired']);{q}
     if jsn.has('availableTime') then
       iterateArray(jsn.vArr['availableTime'], result.availableTimeList, parseHealthcareServiceAvailableTime);
     if jsn.has('notAvailable') then
       iterateArray(jsn.vArr['notAvailable'], result.notAvailableList, parseHealthcareServiceNotAvailable);
     if jsn.has('availabilityExceptions') or jsn.has('_availabilityExceptions') then
-        result.availabilityExceptionsElement := ParseString(jsn['availabilityExceptions'], jsn.vObj['_availabilityExceptions']);{q}
+        result.availabilityExceptionsElement := ParseString(jsn.node['availabilityExceptions'], jsn.vObj['_availabilityExceptions']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeHealthcareService(json : TJSONWriter; name : string; elem : TFhirHealthcareService; noObj : boolean = false);
@@ -17357,9 +17447,9 @@ procedure TFHIRJsonParser.ParseImagingObjectSelectionStudyProperties(jsn : TJson
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn.node['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('imagingStudy') then
         result.imagingStudy := ParseReference{TFhirImagingStudy}(jsn.vObj['imagingStudy']);{q3}
     if jsn.has('series') then
@@ -17412,9 +17502,9 @@ procedure TFHIRJsonParser.ParseImagingObjectSelectionStudySeriesProperties(jsn :
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn.node['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('instance') then
       iterateArray(jsn.vArr['instance'], result.instanceList, parseImagingObjectSelectionStudySeriesInstance);
 end;
@@ -17465,11 +17555,11 @@ procedure TFHIRJsonParser.ParseImagingObjectSelectionStudySeriesInstanceProperti
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sopClass') or jsn.has('_sopClass') then
-        result.sopClassElement := ParseOid(jsn['sopClass'], jsn.vObj['_sopClass']);{q}
+        result.sopClassElement := ParseOid(jsn.node['sopClass'], jsn.vObj['_sopClass']);{q}
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn.node['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('frames') then
       iterateArray(jsn.vArr['frames'], result.framesList, parseImagingObjectSelectionStudySeriesInstanceFrames);
 end;
@@ -17520,7 +17610,7 @@ begin
       if jsn.has('frameNumbers') or jsn.has('_frameNumbers') then
       iteratePrimitiveArray(jsn.vArr['frameNumbers'], jsn.vArr['_frameNumbers'], result.frameNumbersList, parseUnsignedInt);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeImagingObjectSelectionStudySeriesInstanceFrames(json : TJSONWriter; name : string; elem : TFhirImagingObjectSelectionStudySeriesInstanceFrames; noObj : boolean = false);
@@ -17582,17 +17672,17 @@ procedure TFHIRJsonParser.ParseImagingObjectSelectionProperties(jsn : TJsonObjec
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn.node['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('title') then
         result.title := ParseCodeableConcept(jsn.vObj['title']);{q3}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('author') then
         result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('authoringTime') or jsn.has('_authoringTime') then
-        result.authoringTimeElement := ParseDateTime(jsn['authoringTime'], jsn.vObj['_authoringTime']);{q}
+        result.authoringTimeElement := ParseDateTime(jsn.node['authoringTime'], jsn.vObj['_authoringTime']);{q}
     if jsn.has('study') then
       iterateArray(jsn.vArr['study'], result.studyList, parseImagingObjectSelectionStudy);
 end;
@@ -17649,25 +17739,25 @@ procedure TFHIRJsonParser.ParseImagingStudySeriesProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('number') or jsn.has('_number') then
-        result.numberElement := ParseUnsignedInt(jsn['number'], jsn.vObj['_number']);{q}
+        result.numberElement := ParseUnsignedInt(jsn.node['number'], jsn.vObj['_number']);{q}
     if jsn.has('modality') then
         result.modality := ParseCoding(jsn.vObj['modality']);{q3}
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn.node['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('numberOfInstances') or jsn.has('_numberOfInstances') then
-        result.numberOfInstancesElement := ParseUnsignedInt(jsn['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
+        result.numberOfInstancesElement := ParseUnsignedInt(jsn.node['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
     if jsn.has('availability') or jsn.has('_availability')  then
-      result.availabilityElement := parseEnum(jsn.path+'/availability', jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum, SYSTEMS_TFhirInstanceAvailabilityEnum);
+      result.availabilityElement := parseEnum(jsn.path+'/availability', jsn.node['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum, SYSTEMS_TFhirInstanceAvailabilityEnum);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('bodySite') then
         result.bodySite := ParseCoding(jsn.vObj['bodySite']);{q3}
     if jsn.has('laterality') then
         result.laterality := ParseCoding(jsn.vObj['laterality']);{q3}
     if jsn.has('started') or jsn.has('_started') then
-        result.startedElement := ParseDateTime(jsn['started'], jsn.vObj['_started']);{q}
+        result.startedElement := ParseDateTime(jsn.node['started'], jsn.vObj['_started']);{q}
     if jsn.has('instance') then
       iterateArray(jsn.vArr['instance'], result.instanceList, parseImagingStudySeriesInstance);
 end;
@@ -17739,15 +17829,15 @@ procedure TFHIRJsonParser.ParseImagingStudySeriesInstanceProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('number') or jsn.has('_number') then
-        result.numberElement := ParseUnsignedInt(jsn['number'], jsn.vObj['_number']);{q}
+        result.numberElement := ParseUnsignedInt(jsn.node['number'], jsn.vObj['_number']);{q}
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn.node['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('sopClass') or jsn.has('_sopClass') then
-        result.sopClassElement := ParseOid(jsn['sopClass'], jsn.vObj['_sopClass']);{q}
+        result.sopClassElement := ParseOid(jsn.node['sopClass'], jsn.vObj['_sopClass']);{q}
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Element := ParseString(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseString(jsn.node['type'], jsn.vObj['_type']);{q}
     if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn.node['title'], jsn.vObj['_title']);{q}
     if jsn.has('content') then
       iterateArray(jsn.vArr['content'], result.contentList, parseAttachment);
 end;
@@ -17806,11 +17896,11 @@ procedure TFHIRJsonParser.ParseImagingStudyProperties(jsn : TJsonObject; result 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('started') or jsn.has('_started') then
-        result.startedElement := ParseDateTime(jsn['started'], jsn.vObj['_started']);{q}
+        result.startedElement := ParseDateTime(jsn.node['started'], jsn.vObj['_started']);{q}
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('uid') or jsn.has('_uid') then
-        result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
+        result.uidElement := ParseOid(jsn.node['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('accession') then
         result.accession := ParseIdentifier(jsn.vObj['accession']);{q3}
     if jsn.has('identifier') then
@@ -17822,19 +17912,19 @@ begin
     if jsn.has('referrer') then
         result.referrer := ParseReference{TFhirPractitioner}(jsn.vObj['referrer']);{q3}
     if jsn.has('availability') or jsn.has('_availability')  then
-      result.availabilityElement := parseEnum(jsn.path+'/availability', jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum, SYSTEMS_TFhirInstanceAvailabilityEnum);
+      result.availabilityElement := parseEnum(jsn.path+'/availability', jsn.node['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum, SYSTEMS_TFhirInstanceAvailabilityEnum);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('numberOfSeries') or jsn.has('_numberOfSeries') then
-        result.numberOfSeriesElement := ParseUnsignedInt(jsn['numberOfSeries'], jsn.vObj['_numberOfSeries']);{q}
+        result.numberOfSeriesElement := ParseUnsignedInt(jsn.node['numberOfSeries'], jsn.vObj['_numberOfSeries']);{q}
     if jsn.has('numberOfInstances') or jsn.has('_numberOfInstances') then
-        result.numberOfInstancesElement := ParseUnsignedInt(jsn['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
+        result.numberOfInstancesElement := ParseUnsignedInt(jsn.node['numberOfInstances'], jsn.vObj['_numberOfInstances']);{q}
     if jsn.has('procedure') then
       iterateArray(jsn.vArr['procedure'], result.procedure_List, parseReference{TFhirProcedure});
     if jsn.has('interpreter') then
         result.interpreter := ParseReference{TFhirPractitioner}(jsn.vObj['interpreter']);{q3}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('series') then
       iterateArray(jsn.vArr['series'], result.seriesList, parseImagingStudySeries);
 end;
@@ -17984,11 +18074,11 @@ procedure TFHIRJsonParser.ParseImmunizationReactionProperties(jsn : TJsonObject;
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('detail') then
         result.detail := ParseReference{TFhirObservation}(jsn.vObj['detail']);{q3}
     if jsn.has('reported') or jsn.has('_reported') then
-        result.reportedElement := ParseBoolean(jsn['reported'], jsn.vObj['_reported']);{q}
+        result.reportedElement := ParseBoolean(jsn.node['reported'], jsn.vObj['_reported']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeImmunizationReaction(json : TJSONWriter; name : string; elem : TFhirImmunizationReaction; noObj : boolean = false);
@@ -18030,15 +18120,15 @@ procedure TFHIRJsonParser.ParseImmunizationVaccinationProtocolProperties(jsn : T
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('doseSequence') or jsn.has('_doseSequence') then
-        result.doseSequenceElement := ParsePositiveInt(jsn['doseSequence'], jsn.vObj['_doseSequence']);{q}
+        result.doseSequenceElement := ParsePositiveInt(jsn.node['doseSequence'], jsn.vObj['_doseSequence']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('authority') then
         result.authority := ParseReference{TFhirOrganization}(jsn.vObj['authority']);{q3}
     if jsn.has('series') or jsn.has('_series') then
-        result.seriesElement := ParseString(jsn['series'], jsn.vObj['_series']);{q}
+        result.seriesElement := ParseString(jsn.node['series'], jsn.vObj['_series']);{q}
     if jsn.has('seriesDoses') or jsn.has('_seriesDoses') then
-        result.seriesDosesElement := ParsePositiveInt(jsn['seriesDoses'], jsn.vObj['_seriesDoses']);{q}
+        result.seriesDosesElement := ParsePositiveInt(jsn.node['seriesDoses'], jsn.vObj['_seriesDoses']);{q}
     if jsn.has('targetDisease') then
       iterateArray(jsn.vArr['targetDisease'], result.targetDiseaseList, parseCodeableConcept);
     if jsn.has('doseStatus') then
@@ -18106,17 +18196,17 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum, SYSTEMS_TFhirMedicationAdminStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum, SYSTEMS_TFhirMedicationAdminStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('vaccineCode') then
         result.vaccineCode := ParseCodeableConcept(jsn.vObj['vaccineCode']);{q3}
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('wasNotGiven') or jsn.has('_wasNotGiven') then
-        result.wasNotGivenElement := ParseBoolean(jsn['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
+        result.wasNotGivenElement := ParseBoolean(jsn.node['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
     if jsn.has('reported') or jsn.has('_reported') then
-        result.reportedElement := ParseBoolean(jsn['reported'], jsn.vObj['_reported']);{q}
+        result.reportedElement := ParseBoolean(jsn.node['reported'], jsn.vObj['_reported']);{q}
     if jsn.has('performer') then
         result.performer := ParseReference{TFhirPractitioner}(jsn.vObj['performer']);{q3}
     if jsn.has('requester') then
@@ -18128,9 +18218,9 @@ begin
     if jsn.has('location') then
         result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('lotNumber') or jsn.has('_lotNumber') then
-        result.lotNumberElement := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
+        result.lotNumberElement := ParseString(jsn.node['lotNumber'], jsn.vObj['_lotNumber']);{q}
     if jsn.has('expirationDate') or jsn.has('_expirationDate') then
-        result.expirationDateElement := ParseDate(jsn['expirationDate'], jsn.vObj['_expirationDate']);{q}
+        result.expirationDateElement := ParseDate(jsn.node['expirationDate'], jsn.vObj['_expirationDate']);{q}
     if jsn.has('site') then
         result.site := ParseCodeableConcept(jsn.vObj['site']);{q3}
     if jsn.has('route') then
@@ -18244,11 +18334,11 @@ procedure TFHIRJsonParser.ParseImmunizationRecommendationRecommendationPropertie
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('vaccineCode') then
         result.vaccineCode := ParseCodeableConcept(jsn.vObj['vaccineCode']);{q3}
     if jsn.has('doseNumber') or jsn.has('_doseNumber') then
-        result.doseNumberElement := ParsePositiveInt(jsn['doseNumber'], jsn.vObj['_doseNumber']);{q}
+        result.doseNumberElement := ParsePositiveInt(jsn.node['doseNumber'], jsn.vObj['_doseNumber']);{q}
     if jsn.has('forecastStatus') then
         result.forecastStatus := ParseCodeableConcept(jsn.vObj['forecastStatus']);{q3}
     if jsn.has('dateCriterion') then
@@ -18325,7 +18415,7 @@ begin
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseDateTime(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseDateTime(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeImmunizationRecommendationRecommendationDateCriterion(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendationRecommendationDateCriterion; noObj : boolean = false);
@@ -18360,13 +18450,13 @@ procedure TFHIRJsonParser.ParseImmunizationRecommendationRecommendationProtocolP
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('doseSequence') or jsn.has('_doseSequence') then
-        result.doseSequenceElement := ParseInteger(jsn['doseSequence'], jsn.vObj['_doseSequence']);{q}
+        result.doseSequenceElement := ParseInteger(jsn.node['doseSequence'], jsn.vObj['_doseSequence']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('authority') then
         result.authority := ParseReference{TFhirOrganization}(jsn.vObj['authority']);{q3}
     if jsn.has('series') or jsn.has('_series') then
-        result.seriesElement := ParseString(jsn['series'], jsn.vObj['_series']);{q}
+        result.seriesElement := ParseString(jsn.node['series'], jsn.vObj['_series']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeImmunizationRecommendationRecommendationProtocol(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendationRecommendationProtocol; noObj : boolean = false);
@@ -18465,7 +18555,7 @@ procedure TFHIRJsonParser.ParseImplementationGuideContactProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -18512,9 +18602,9 @@ procedure TFHIRJsonParser.ParseImplementationGuideDependencyProperties(jsn : TJs
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGuideDependencyTypeEnum, SYSTEMS_TFhirGuideDependencyTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirGuideDependencyTypeEnum, SYSTEMS_TFhirGuideDependencyTypeEnum);
     if jsn.has('uri') or jsn.has('_uri') then
-        result.uriElement := ParseUri(jsn['uri'], jsn.vObj['_uri']);{q}
+        result.uriElement := ParseUri(jsn.node['uri'], jsn.vObj['_uri']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeImplementationGuideDependency(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDependency; noObj : boolean = false);
@@ -18550,9 +18640,9 @@ procedure TFHIRJsonParser.ParseImplementationGuidePackageProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('resource') then
       iterateArray(jsn.vArr['resource'], result.resourceList, parseImplementationGuidePackageResource);
 end;
@@ -18601,17 +18691,17 @@ procedure TFHIRJsonParser.ParseImplementationGuidePackageResourceProperties(jsn 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('purpose') or jsn.has('_purpose')  then
-      result.purposeElement := parseEnum(jsn.path+'/purpose', jsn['purpose'], jsn.vObj['_purpose'], CODES_TFhirGuideResourcePurposeEnum, SYSTEMS_TFhirGuideResourcePurposeEnum);
+      result.purposeElement := parseEnum(jsn.path+'/purpose', jsn.node['purpose'], jsn.vObj['_purpose'], CODES_TFhirGuideResourcePurposeEnum, SYSTEMS_TFhirGuideResourcePurposeEnum);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('acronym') or jsn.has('_acronym') then
-        result.acronymElement := ParseString(jsn['acronym'], jsn.vObj['_acronym']);{q}
+        result.acronymElement := ParseString(jsn.node['acronym'], jsn.vObj['_acronym']);{q}
     if jsn.has('sourceReference') {a3} then
       result.source := ParseReference(jsn.vObj['sourceReference']);
     if jsn.has('sourceUri') or jsn.has('_sourceUri') then
-      result.source := parseUri(jsn['sourceUri'], jsn.vObj['_sourceUri']);
+      result.source := ParseUri(jsn.node['sourceUri'], jsn.vObj['_sourceUri']);
     if jsn.has('exampleFor') then
         result.exampleFor := ParseReference{TFhirStructureDefinition}(jsn.vObj['exampleFor']);{q3}
 end;
@@ -18668,7 +18758,7 @@ procedure TFHIRJsonParser.ParseImplementationGuideGlobalProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
 end;
@@ -18705,17 +18795,17 @@ procedure TFHIRJsonParser.ParseImplementationGuidePageProperties(jsn : TJsonObje
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('source') or jsn.has('_source') then
-        result.sourceElement := ParseUri(jsn['source'], jsn.vObj['_source']);{q}
+        result.sourceElement := ParseUri(jsn.node['source'], jsn.vObj['_source']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirGuidePageKindEnum, SYSTEMS_TFhirGuidePageKindEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn.node['kind'], jsn.vObj['_kind'], CODES_TFhirGuidePageKindEnum, SYSTEMS_TFhirGuidePageKindEnum);
     if jsn.has('type') or jsn.has('_type') then
       iterateEnumArray(jsn.vArr['type'], jsn.vArr['_type'], jsn.path+'/type', result.type_, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
       if jsn.has('package') or jsn.has('_package') then
       iteratePrimitiveArray(jsn.vArr['package'], jsn.vArr['_package'], result.packageList, parseString);
     if jsn.has('format') or jsn.has('_format') then
-        result.formatElement := ParseCode(jsn['format'], jsn.vObj['_format']);{q}
+        result.formatElement := ParseCode(jsn.node['format'], jsn.vObj['_format']);{q}
     if jsn.has('page') then
       iterateArray(jsn.vArr['page'], result.pageList, parseImplementationGuidePage);
 end;
@@ -18818,29 +18908,29 @@ procedure TFHIRJsonParser.ParseImplementationGuideProperties(jsn : TJsonObject; 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseImplementationGuideContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('useContext') then
       iterateArray(jsn.vArr['useContext'], result.useContextList, parseCodeableConcept);
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('fhirVersion') or jsn.has('_fhirVersion') then
-        result.fhirVersionElement := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
+        result.fhirVersionElement := ParseId(jsn.node['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
     if jsn.has('dependency') then
       iterateArray(jsn.vArr['dependency'], result.dependencyList, parseImplementationGuideDependency);
     if jsn.has('package') then
@@ -18982,9 +19072,9 @@ begin
     if jsn.has('flag') then
         result.flag := ParseCodeableConcept(jsn.vObj['flag']);{q3}
     if jsn.has('deleted') or jsn.has('_deleted') then
-        result.deletedElement := ParseBoolean(jsn['deleted'], jsn.vObj['_deleted']);{q}
+        result.deletedElement := ParseBoolean(jsn.node['deleted'], jsn.vObj['_deleted']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('item') then
         result.item := ParseReference{TFhirReference}(jsn.vObj['item']);{q3}
 end;
@@ -19031,7 +19121,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn.node['title'], jsn.vObj['_title']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('subject') then
@@ -19041,15 +19131,15 @@ begin
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirListStatusEnum, SYSTEMS_TFhirListStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirListStatusEnum, SYSTEMS_TFhirListStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('orderedBy') then
         result.orderedBy := ParseCodeableConcept(jsn.vObj['orderedBy']);{q3}
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn.node['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum);
     if jsn.has('note') or jsn.has('_note') then
-        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn.node['note'], jsn.vObj['_note']);{q}
     if jsn.has('entry') then
       iterateArray(jsn.vArr['entry'], result.entryList, parseListEntry);
     if jsn.has('emptyReason') then
@@ -19129,11 +19219,11 @@ procedure TFHIRJsonParser.ParseLocationPositionProperties(jsn : TJsonObject; res
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('longitude') or jsn.has('_longitude') then
-        result.longitudeElement := ParseDecimal(jsn['longitude'], jsn.vObj['_longitude']);{q}
+        result.longitudeElement := ParseDecimal(jsn.node['longitude'], jsn.vObj['_longitude']);{q}
     if jsn.has('latitude') or jsn.has('_latitude') then
-        result.latitudeElement := ParseDecimal(jsn['latitude'], jsn.vObj['_latitude']);{q}
+        result.latitudeElement := ParseDecimal(jsn.node['latitude'], jsn.vObj['_latitude']);{q}
     if jsn.has('altitude') or jsn.has('_altitude') then
-        result.altitudeElement := ParseDecimal(jsn['altitude'], jsn.vObj['_altitude']);{q}
+        result.altitudeElement := ParseDecimal(jsn.node['altitude'], jsn.vObj['_altitude']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeLocationPosition(json : TJSONWriter; name : string; elem : TFhirLocationPosition; noObj : boolean = false);
@@ -19175,13 +19265,13 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirLocationStatusEnum, SYSTEMS_TFhirLocationStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirLocationStatusEnum, SYSTEMS_TFhirLocationStatusEnum);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('mode') or jsn.has('_mode')  then
-      result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirLocationModeEnum, SYSTEMS_TFhirLocationModeEnum);
+      result.modeElement := parseEnum(jsn.path+'/mode', jsn.node['mode'], jsn.vObj['_mode'], CODES_TFhirLocationModeEnum, SYSTEMS_TFhirLocationModeEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('telecom') then
@@ -19271,7 +19361,7 @@ procedure TFHIRJsonParser.ParseMediaProperties(jsn : TJsonObject; result : TFhir
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirDigitalMediaTypeEnum, SYSTEMS_TFhirDigitalMediaTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirDigitalMediaTypeEnum, SYSTEMS_TFhirDigitalMediaTypeEnum);
     if jsn.has('subtype') then
         result.subtype := ParseCodeableConcept(jsn.vObj['subtype']);{q3}
     if jsn.has('identifier') then
@@ -19283,15 +19373,15 @@ begin
     if jsn.has('view') then
         result.view := ParseCodeableConcept(jsn.vObj['view']);{q3}
     if jsn.has('deviceName') or jsn.has('_deviceName') then
-        result.deviceNameElement := ParseString(jsn['deviceName'], jsn.vObj['_deviceName']);{q}
+        result.deviceNameElement := ParseString(jsn.node['deviceName'], jsn.vObj['_deviceName']);{q}
     if jsn.has('height') or jsn.has('_height') then
-        result.heightElement := ParsePositiveInt(jsn['height'], jsn.vObj['_height']);{q}
+        result.heightElement := ParsePositiveInt(jsn.node['height'], jsn.vObj['_height']);{q}
     if jsn.has('width') or jsn.has('_width') then
-        result.widthElement := ParsePositiveInt(jsn['width'], jsn.vObj['_width']);{q}
+        result.widthElement := ParsePositiveInt(jsn.node['width'], jsn.vObj['_width']);{q}
     if jsn.has('frames') or jsn.has('_frames') then
-        result.framesElement := ParsePositiveInt(jsn['frames'], jsn.vObj['_frames']);{q}
+        result.framesElement := ParsePositiveInt(jsn.node['frames'], jsn.vObj['_frames']);{q}
     if jsn.has('duration') or jsn.has('_duration') then
-        result.durationElement := ParseUnsignedInt(jsn['duration'], jsn.vObj['_duration']);{q}
+        result.durationElement := ParseUnsignedInt(jsn.node['duration'], jsn.vObj['_duration']);{q}
     if jsn.has('content') then
         result.content := ParseAttachment(jsn.vObj['content']);{q3}
 end;
@@ -19456,9 +19546,9 @@ procedure TFHIRJsonParser.ParseMedicationProductBatchProperties(jsn : TJsonObjec
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('lotNumber') or jsn.has('_lotNumber') then
-        result.lotNumberElement := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
+        result.lotNumberElement := ParseString(jsn.node['lotNumber'], jsn.vObj['_lotNumber']);{q}
     if jsn.has('expirationDate') or jsn.has('_expirationDate') then
-        result.expirationDateElement := ParseDateTime(jsn['expirationDate'], jsn.vObj['_expirationDate']);{q}
+        result.expirationDateElement := ParseDateTime(jsn.node['expirationDate'], jsn.vObj['_expirationDate']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationProductBatch(json : TJSONWriter; name : string; elem : TFhirMedicationProductBatch; noObj : boolean = false);
@@ -19582,7 +19672,7 @@ begin
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('isBrand') or jsn.has('_isBrand') then
-        result.isBrandElement := ParseBoolean(jsn['isBrand'], jsn.vObj['_isBrand']);{q}
+        result.isBrandElement := ParseBoolean(jsn.node['isBrand'], jsn.vObj['_isBrand']);{q}
     if jsn.has('manufacturer') then
         result.manufacturer := ParseReference{TFhirOrganization}(jsn.vObj['manufacturer']);{q3}
     if jsn.has('product') then
@@ -19632,7 +19722,7 @@ procedure TFHIRJsonParser.ParseMedicationAdministrationDosageProperties(jsn : TJ
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('siteCodeableConcept') {a4} then
       result.site := ParseCodeableConcept(jsn.vObj['siteCodeableConcept']);
     if jsn.has('siteReference') {a3} then
@@ -19698,7 +19788,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum, SYSTEMS_TFhirMedicationAdminStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum, SYSTEMS_TFhirMedicationAdminStatusEnum);
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('practitioner') then
@@ -19708,7 +19798,7 @@ begin
     if jsn.has('prescription') then
         result.prescription := ParseReference{TFhirMedicationOrder}(jsn.vObj['prescription']);{q3}
     if jsn.has('wasNotGiven') or jsn.has('_wasNotGiven') then
-        result.wasNotGivenElement := ParseBoolean(jsn['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
+        result.wasNotGivenElement := ParseBoolean(jsn.node['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
     if jsn.has('reasonNotGiven') then
       iterateArray(jsn.vArr['reasonNotGiven'], result.reasonNotGivenList, parseCodeableConcept);
     if jsn.has('reasonGiven') then
@@ -19716,7 +19806,7 @@ begin
     if jsn.has('effectiveTimePeriod') {a4} then
       result.effectiveTime := ParsePeriod(jsn.vObj['effectiveTimePeriod']);
     if jsn.has('effectiveTimeDateTime') or jsn.has('_effectiveTimeDateTime') then
-      result.effectiveTime := parseDateTime(jsn['effectiveTimeDateTime'], jsn.vObj['_effectiveTimeDateTime']);
+      result.effectiveTime := ParseDateTime(jsn.node['effectiveTimeDateTime'], jsn.vObj['_effectiveTimeDateTime']);
     if jsn.has('medicationCodeableConcept') {a4} then
       result.medication := ParseCodeableConcept(jsn.vObj['medicationCodeableConcept']);
     if jsn.has('medicationReference') {a3} then
@@ -19724,7 +19814,7 @@ begin
     if jsn.has('device') then
       iterateArray(jsn.vArr['device'], result.deviceList, parseReference{TFhirDevice});
     if jsn.has('note') or jsn.has('_note') then
-        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn.node['note'], jsn.vObj['_note']);{q}
     if jsn.has('dosage') then
         result.dosage := ParseMedicationAdministrationDosage(jsn.vObj['dosage']);{q3}
 end;
@@ -19818,7 +19908,7 @@ procedure TFHIRJsonParser.ParseMedicationDispenseDosageInstructionProperties(jsn
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('additionalInstructions') then
         result.additionalInstructions := ParseCodeableConcept(jsn.vObj['additionalInstructions']);{q3}
     if jsn.has('timing') then
@@ -19826,7 +19916,7 @@ begin
     if jsn.has('asNeededCodeableConcept') {a4} then
       result.asNeeded := ParseCodeableConcept(jsn.vObj['asNeededCodeableConcept']);
     if jsn.has('asNeededBoolean') or jsn.has('_asNeededBoolean') then
-      result.asNeeded := parseBoolean(jsn['asNeededBoolean'], jsn.vObj['_asNeededBoolean']);
+      result.asNeeded := ParseBoolean(jsn.node['asNeededBoolean'], jsn.vObj['_asNeededBoolean']);
     if jsn.has('siteCodeableConcept') {a4} then
       result.site := ParseCodeableConcept(jsn.vObj['siteCodeableConcept']);
     if jsn.has('siteReference') {a3} then
@@ -19964,7 +20054,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatusEnum, SYSTEMS_TFhirMedicationDispenseStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatusEnum, SYSTEMS_TFhirMedicationDispenseStatusEnum);
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('dispenser') then
@@ -19982,15 +20072,15 @@ begin
     if jsn.has('medicationReference') {a3} then
       result.medication := ParseReference(jsn.vObj['medicationReference']);
     if jsn.has('whenPrepared') or jsn.has('_whenPrepared') then
-        result.whenPreparedElement := ParseDateTime(jsn['whenPrepared'], jsn.vObj['_whenPrepared']);{q}
+        result.whenPreparedElement := ParseDateTime(jsn.node['whenPrepared'], jsn.vObj['_whenPrepared']);{q}
     if jsn.has('whenHandedOver') or jsn.has('_whenHandedOver') then
-        result.whenHandedOverElement := ParseDateTime(jsn['whenHandedOver'], jsn.vObj['_whenHandedOver']);{q}
+        result.whenHandedOverElement := ParseDateTime(jsn.node['whenHandedOver'], jsn.vObj['_whenHandedOver']);{q}
     if jsn.has('destination') then
         result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q3}
     if jsn.has('receiver') then
       iterateArray(jsn.vArr['receiver'], result.receiverList, parseReference{Resource});
     if jsn.has('note') or jsn.has('_note') then
-        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn.node['note'], jsn.vObj['_note']);{q}
     if jsn.has('dosageInstruction') then
       iterateArray(jsn.vArr['dosageInstruction'], result.dosageInstructionList, parseMedicationDispenseDosageInstruction);
     if jsn.has('substitution') then
@@ -20085,7 +20175,7 @@ procedure TFHIRJsonParser.ParseMedicationOrderDosageInstructionProperties(jsn : 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('additionalInstructions') then
         result.additionalInstructions := ParseCodeableConcept(jsn.vObj['additionalInstructions']);{q3}
     if jsn.has('timing') then
@@ -20093,7 +20183,7 @@ begin
     if jsn.has('asNeededCodeableConcept') {a4} then
       result.asNeeded := ParseCodeableConcept(jsn.vObj['asNeededCodeableConcept']);
     if jsn.has('asNeededBoolean') or jsn.has('_asNeededBoolean') then
-      result.asNeeded := parseBoolean(jsn['asNeededBoolean'], jsn.vObj['_asNeededBoolean']);
+      result.asNeeded := ParseBoolean(jsn.node['asNeededBoolean'], jsn.vObj['_asNeededBoolean']);
     if jsn.has('siteCodeableConcept') {a4} then
       result.site := ParseCodeableConcept(jsn.vObj['siteCodeableConcept']);
     if jsn.has('siteReference') {a3} then
@@ -20182,7 +20272,7 @@ begin
     if jsn.has('validityPeriod') then
         result.validityPeriod := ParsePeriod(jsn.vObj['validityPeriod']);{q3}
     if jsn.has('numberOfRepeatsAllowed') or jsn.has('_numberOfRepeatsAllowed') then
-        result.numberOfRepeatsAllowedElement := ParsePositiveInt(jsn['numberOfRepeatsAllowed'], jsn.vObj['_numberOfRepeatsAllowed']);{q}
+        result.numberOfRepeatsAllowedElement := ParsePositiveInt(jsn.node['numberOfRepeatsAllowed'], jsn.vObj['_numberOfRepeatsAllowed']);{q}
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('expectedSupplyDuration') then
@@ -20271,11 +20361,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('dateWritten') or jsn.has('_dateWritten') then
-        result.dateWrittenElement := ParseDateTime(jsn['dateWritten'], jsn.vObj['_dateWritten']);{q}
+        result.dateWrittenElement := ParseDateTime(jsn.node['dateWritten'], jsn.vObj['_dateWritten']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationOrderStatusEnum, SYSTEMS_TFhirMedicationOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirMedicationOrderStatusEnum, SYSTEMS_TFhirMedicationOrderStatusEnum);
     if jsn.has('dateEnded') or jsn.has('_dateEnded') then
-        result.dateEndedElement := ParseDateTime(jsn['dateEnded'], jsn.vObj['_dateEnded']);{q}
+        result.dateEndedElement := ParseDateTime(jsn.node['dateEnded'], jsn.vObj['_dateEnded']);{q}
     if jsn.has('reasonEnded') then
         result.reasonEnded := ParseCodeableConcept(jsn.vObj['reasonEnded']);{q3}
     if jsn.has('patient') then
@@ -20289,7 +20379,7 @@ begin
     if jsn.has('reasonReference') {a3} then
       result.reason := ParseReference(jsn.vObj['reasonReference']);
     if jsn.has('note') or jsn.has('_note') then
-        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn.node['note'], jsn.vObj['_note']);{q}
     if jsn.has('medicationCodeableConcept') {a4} then
       result.medication := ParseCodeableConcept(jsn.vObj['medicationCodeableConcept']);
     if jsn.has('medicationReference') {a3} then
@@ -20387,13 +20477,13 @@ procedure TFHIRJsonParser.ParseMedicationStatementDosageProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('timing') then
         result.timing := ParseTiming(jsn.vObj['timing']);{q3}
     if jsn.has('asNeededCodeableConcept') {a4} then
       result.asNeeded := ParseCodeableConcept(jsn.vObj['asNeededCodeableConcept']);
     if jsn.has('asNeededBoolean') or jsn.has('_asNeededBoolean') then
-      result.asNeeded := parseBoolean(jsn['asNeededBoolean'], jsn.vObj['_asNeededBoolean']);
+      result.asNeeded := ParseBoolean(jsn.node['asNeededBoolean'], jsn.vObj['_asNeededBoolean']);
     if jsn.has('siteCodeableConcept') {a4} then
       result.site := ParseCodeableConcept(jsn.vObj['siteCodeableConcept']);
     if jsn.has('siteReference') {a3} then
@@ -20480,11 +20570,11 @@ begin
     if jsn.has('informationSource') then
         result.informationSource := ParseReference{Resource}(jsn.vObj['informationSource']);{q3}
     if jsn.has('dateAsserted') or jsn.has('_dateAsserted') then
-        result.dateAssertedElement := ParseDateTime(jsn['dateAsserted'], jsn.vObj['_dateAsserted']);{q}
+        result.dateAssertedElement := ParseDateTime(jsn.node['dateAsserted'], jsn.vObj['_dateAsserted']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationStatementStatusEnum, SYSTEMS_TFhirMedicationStatementStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirMedicationStatementStatusEnum, SYSTEMS_TFhirMedicationStatementStatusEnum);
     if jsn.has('wasNotTaken') or jsn.has('_wasNotTaken') then
-        result.wasNotTakenElement := ParseBoolean(jsn['wasNotTaken'], jsn.vObj['_wasNotTaken']);{q}
+        result.wasNotTakenElement := ParseBoolean(jsn.node['wasNotTaken'], jsn.vObj['_wasNotTaken']);{q}
     if jsn.has('reasonNotTaken') then
       iterateArray(jsn.vArr['reasonNotTaken'], result.reasonNotTakenList, parseCodeableConcept);
     if jsn.has('reasonForUseCodeableConcept') {a4} then
@@ -20494,9 +20584,9 @@ begin
     if jsn.has('effectivePeriod') {a4} then
       result.effective := ParsePeriod(jsn.vObj['effectivePeriod']);
     if jsn.has('effectiveDateTime') or jsn.has('_effectiveDateTime') then
-      result.effective := parseDateTime(jsn['effectiveDateTime'], jsn.vObj['_effectiveDateTime']);
+      result.effective := ParseDateTime(jsn.node['effectiveDateTime'], jsn.vObj['_effectiveDateTime']);
     if jsn.has('note') or jsn.has('_note') then
-        result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
+        result.noteElement := ParseString(jsn.node['note'], jsn.vObj['_note']);{q}
     if jsn.has('supportingInformation') then
       iterateArray(jsn.vArr['supportingInformation'], result.supportingInformationList, parseReference{TFhirReference});
     if jsn.has('medicationCodeableConcept') {a4} then
@@ -20598,9 +20688,9 @@ procedure TFHIRJsonParser.ParseMessageHeaderResponseProperties(jsn : TJsonObject
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierElement := ParseId(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseId(jsn.node['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirResponseCodeEnum, SYSTEMS_TFhirResponseCodeEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirResponseCodeEnum, SYSTEMS_TFhirResponseCodeEnum);
     if jsn.has('details') then
         result.details := ParseReference{TFhirOperationOutcome}(jsn.vObj['details']);{q3}
 end;
@@ -20640,15 +20730,15 @@ procedure TFHIRJsonParser.ParseMessageHeaderSourceProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('software') or jsn.has('_software') then
-        result.softwareElement := ParseString(jsn['software'], jsn.vObj['_software']);{q}
+        result.softwareElement := ParseString(jsn.node['software'], jsn.vObj['_software']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('contact') then
         result.contact := ParseContactPoint(jsn.vObj['contact']);{q3}
     if jsn.has('endpoint') or jsn.has('_endpoint') then
-        result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
+        result.endpointElement := ParseUri(jsn.node['endpoint'], jsn.vObj['_endpoint']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeMessageHeaderSource(json : TJSONWriter; name : string; elem : TFhirMessageHeaderSource; noObj : boolean = false);
@@ -20696,11 +20786,11 @@ procedure TFHIRJsonParser.ParseMessageHeaderDestinationProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('target') then
         result.target := ParseReference{TFhirDevice}(jsn.vObj['target']);{q3}
     if jsn.has('endpoint') or jsn.has('_endpoint') then
-        result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
+        result.endpointElement := ParseUri(jsn.node['endpoint'], jsn.vObj['_endpoint']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeMessageHeaderDestination(json : TJSONWriter; name : string; elem : TFhirMessageHeaderDestination; noObj : boolean = false);
@@ -20740,7 +20830,7 @@ procedure TFHIRJsonParser.ParseMessageHeaderProperties(jsn : TJsonObject; result
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('timestamp') or jsn.has('_timestamp') then
-        result.timestampElement := ParseInstant(jsn['timestamp'], jsn.vObj['_timestamp']);{q}
+        result.timestampElement := ParseInstant(jsn.node['timestamp'], jsn.vObj['_timestamp']);{q}
     if jsn.has('event') then
         result.event := ParseCoding(jsn.vObj['event']);{q3}
     if jsn.has('response') then
@@ -20824,7 +20914,7 @@ procedure TFHIRJsonParser.ParseNamingSystemContactProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -20871,11 +20961,11 @@ procedure TFHIRJsonParser.ParseNamingSystemUniqueIdProperties(jsn : TJsonObject;
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirNamingsystemIdentifierTypeEnum, SYSTEMS_TFhirNamingsystemIdentifierTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirNamingsystemIdentifierTypeEnum, SYSTEMS_TFhirNamingsystemIdentifierTypeEnum);
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn.node['value'], jsn.vObj['_value']);{q}
     if jsn.has('preferred') or jsn.has('_preferred') then
-        result.preferredElement := ParseBoolean(jsn['preferred'], jsn.vObj['_preferred']);{q}
+        result.preferredElement := ParseBoolean(jsn.node['preferred'], jsn.vObj['_preferred']);{q}
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
@@ -20919,27 +21009,27 @@ procedure TFHIRJsonParser.ParseNamingSystemProperties(jsn : TJsonObject; result 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirNamingsystemTypeEnum, SYSTEMS_TFhirNamingsystemTypeEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn.node['kind'], jsn.vObj['_kind'], CODES_TFhirNamingsystemTypeEnum, SYSTEMS_TFhirNamingsystemTypeEnum);
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseNamingSystemContact);
     if jsn.has('responsible') or jsn.has('_responsible') then
-        result.responsibleElement := ParseString(jsn['responsible'], jsn.vObj['_responsible']);{q}
+        result.responsibleElement := ParseString(jsn.node['responsible'], jsn.vObj['_responsible']);{q}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('useContext') then
       iterateArray(jsn.vArr['useContext'], result.useContextList, parseCodeableConcept);
     if jsn.has('usage') or jsn.has('_usage') then
-        result.usageElement := ParseString(jsn['usage'], jsn.vObj['_usage']);{q}
+        result.usageElement := ParseString(jsn.node['usage'], jsn.vObj['_usage']);{q}
     if jsn.has('uniqueId') then
       iterateArray(jsn.vArr['uniqueId'], result.uniqueIdList, parseNamingSystemUniqueId);
     if jsn.has('replacedBy') then
@@ -21036,7 +21126,7 @@ begin
     if jsn.has('fluidConsistencyType') then
       iterateArray(jsn.vArr['fluidConsistencyType'], result.fluidConsistencyTypeList, parseCodeableConcept);
     if jsn.has('instruction') or jsn.has('_instruction') then
-        result.instructionElement := ParseString(jsn['instruction'], jsn.vObj['_instruction']);{q}
+        result.instructionElement := ParseString(jsn.node['instruction'], jsn.vObj['_instruction']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeNutritionOrderOralDiet(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDiet; noObj : boolean = false);
@@ -21187,13 +21277,13 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('productName') or jsn.has('_productName') then
-        result.productNameElement := ParseString(jsn['productName'], jsn.vObj['_productName']);{q}
+        result.productNameElement := ParseString(jsn.node['productName'], jsn.vObj['_productName']);{q}
     if jsn.has('schedule') then
       iterateArray(jsn.vArr['schedule'], result.scheduleList, parseTiming);
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('instruction') or jsn.has('_instruction') then
-        result.instructionElement := ParseString(jsn['instruction'], jsn.vObj['_instruction']);{q}
+        result.instructionElement := ParseString(jsn.node['instruction'], jsn.vObj['_instruction']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeNutritionOrderSupplement(json : TJSONWriter; name : string; elem : TFhirNutritionOrderSupplement; noObj : boolean = false);
@@ -21248,11 +21338,11 @@ begin
     if jsn.has('baseFormulaType') then
         result.baseFormulaType := ParseCodeableConcept(jsn.vObj['baseFormulaType']);{q3}
     if jsn.has('baseFormulaProductName') or jsn.has('_baseFormulaProductName') then
-        result.baseFormulaProductNameElement := ParseString(jsn['baseFormulaProductName'], jsn.vObj['_baseFormulaProductName']);{q}
+        result.baseFormulaProductNameElement := ParseString(jsn.node['baseFormulaProductName'], jsn.vObj['_baseFormulaProductName']);{q}
     if jsn.has('additiveType') then
         result.additiveType := ParseCodeableConcept(jsn.vObj['additiveType']);{q3}
     if jsn.has('additiveProductName') or jsn.has('_additiveProductName') then
-        result.additiveProductNameElement := ParseString(jsn['additiveProductName'], jsn.vObj['_additiveProductName']);{q}
+        result.additiveProductNameElement := ParseString(jsn.node['additiveProductName'], jsn.vObj['_additiveProductName']);{q}
     if jsn.has('caloricDensity') then
         result.caloricDensity := ParseQuantity(jsn.vObj['caloricDensity']);{q3}
     if jsn.has('routeofAdministration') then
@@ -21262,7 +21352,7 @@ begin
     if jsn.has('maxVolumeToDeliver') then
         result.maxVolumeToDeliver := ParseQuantity(jsn.vObj['maxVolumeToDeliver']);{q3}
     if jsn.has('administrationInstruction') or jsn.has('_administrationInstruction') then
-        result.administrationInstructionElement := ParseString(jsn['administrationInstruction'], jsn.vObj['_administrationInstruction']);{q}
+        result.administrationInstructionElement := ParseString(jsn.node['administrationInstruction'], jsn.vObj['_administrationInstruction']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeNutritionOrderEnteralFormula(json : TJSONWriter; name : string; elem : TFhirNutritionOrderEnteralFormula; noObj : boolean = false);
@@ -21379,9 +21469,9 @@ begin
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('dateTime') or jsn.has('_dateTime') then
-        result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
+        result.dateTimeElement := ParseDateTime(jsn.node['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirNutritionOrderStatusEnum, SYSTEMS_TFhirNutritionOrderStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirNutritionOrderStatusEnum, SYSTEMS_TFhirNutritionOrderStatusEnum);
     if jsn.has('allergyIntolerance') then
       iterateArray(jsn.vArr['allergyIntolerance'], result.allergyIntoleranceList, parseReference{TFhirAllergyIntolerance});
     if jsn.has('foodPreferenceModifier') then
@@ -21485,7 +21575,7 @@ begin
     if jsn.has('age') then
         result.age := ParseRange(jsn.vObj['age']);{q3}
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeObservationReferenceRange(json : TJSONWriter; name : string; elem : TFhirObservationReferenceRange; noObj : boolean = false);
@@ -21529,7 +21619,7 @@ procedure TFHIRJsonParser.ParseObservationRelatedProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirObservationRelationshiptypesEnum, SYSTEMS_TFhirObservationRelationshiptypesEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirObservationRelationshiptypesEnum, SYSTEMS_TFhirObservationRelationshiptypesEnum);
     if jsn.has('target') then
         result.target := ParseReference{Resource}(jsn.vObj['target']);{q3}
 end;
@@ -21584,11 +21674,11 @@ begin
     if jsn.has('valuePeriod') {a4} then
       result.value := ParsePeriod(jsn.vObj['valuePeriod']);
     if jsn.has('valueString') or jsn.has('_valueString') then
-      result.value := parseString(jsn['valueString'], jsn.vObj['_valueString']);
+      result.value := ParseString(jsn.node['valueString'], jsn.vObj['_valueString']);
     if jsn.has('valueTime') or jsn.has('_valueTime') then
-      result.value := parseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
+      result.value := ParseTime(jsn.node['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
-      result.value := parseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+      result.value := ParseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
     if jsn.has('dataAbsentReason') then
         result.dataAbsentReason := ParseCodeableConcept(jsn.vObj['dataAbsentReason']);{q3}
     if jsn.has('referenceRange') then
@@ -21667,7 +21757,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirObservationStatusEnum, SYSTEMS_TFhirObservationStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirObservationStatusEnum, SYSTEMS_TFhirObservationStatusEnum);
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('code') then
@@ -21679,9 +21769,9 @@ begin
     if jsn.has('effectivePeriod') {a4} then
       result.effective := ParsePeriod(jsn.vObj['effectivePeriod']);
     if jsn.has('effectiveDateTime') or jsn.has('_effectiveDateTime') then
-      result.effective := parseDateTime(jsn['effectiveDateTime'], jsn.vObj['_effectiveDateTime']);
+      result.effective := ParseDateTime(jsn.node['effectiveDateTime'], jsn.vObj['_effectiveDateTime']);
     if jsn.has('issued') or jsn.has('_issued') then
-        result.issuedElement := ParseInstant(jsn['issued'], jsn.vObj['_issued']);{q}
+        result.issuedElement := ParseInstant(jsn.node['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('performer') then
       iterateArray(jsn.vArr['performer'], result.performerList, parseReference{Resource});
     if jsn.has('valueQuantity') {a4} then
@@ -21699,17 +21789,17 @@ begin
     if jsn.has('valuePeriod') {a4} then
       result.value := ParsePeriod(jsn.vObj['valuePeriod']);
     if jsn.has('valueString') or jsn.has('_valueString') then
-      result.value := parseString(jsn['valueString'], jsn.vObj['_valueString']);
+      result.value := ParseString(jsn.node['valueString'], jsn.vObj['_valueString']);
     if jsn.has('valueTime') or jsn.has('_valueTime') then
-      result.value := parseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
+      result.value := ParseTime(jsn.node['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
-      result.value := parseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+      result.value := ParseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
     if jsn.has('dataAbsentReason') then
         result.dataAbsentReason := ParseCodeableConcept(jsn.vObj['dataAbsentReason']);{q3}
     if jsn.has('interpretation') then
         result.interpretation := ParseCodeableConcept(jsn.vObj['interpretation']);{q3}
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseString(jsn.node['comments'], jsn.vObj['_comments']);{q}
     if jsn.has('bodySite') then
         result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q3}
     if jsn.has('method') then
@@ -21857,7 +21947,7 @@ procedure TFHIRJsonParser.ParseOperationDefinitionContactProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -21904,17 +21994,17 @@ procedure TFHIRJsonParser.ParseOperationDefinitionParameterProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseCode(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseCode(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUseEnum, SYSTEMS_TFhirOperationParameterUseEnum);
+      result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirOperationParameterUseEnum, SYSTEMS_TFhirOperationParameterUseEnum);
     if jsn.has('min') or jsn.has('_min') then
-        result.minElement := ParseInteger(jsn['min'], jsn.vObj['_min']);{q}
+        result.minElement := ParseInteger(jsn.node['min'], jsn.vObj['_min']);{q}
     if jsn.has('max') or jsn.has('_max') then
-        result.maxElement := ParseString(jsn['max'], jsn.vObj['_max']);{q}
+        result.maxElement := ParseString(jsn.node['max'], jsn.vObj['_max']);{q}
     if jsn.has('documentation') or jsn.has('_documentation') then
-        result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
+        result.documentationElement := ParseString(jsn.node['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum, SYSTEMS_TFhirOperationParameterTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum, SYSTEMS_TFhirOperationParameterTypeEnum);
     if jsn.has('profile') then
         result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
     if jsn.has('binding') then
@@ -21981,11 +22071,11 @@ procedure TFHIRJsonParser.ParseOperationDefinitionParameterBindingProperties(jsn
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('strength') or jsn.has('_strength')  then
-      result.strengthElement := parseEnum(jsn.path+'/strength', jsn['strength'], jsn.vObj['_strength'], CODES_TFhirBindingStrengthEnum, SYSTEMS_TFhirBindingStrengthEnum);
+      result.strengthElement := parseEnum(jsn.path+'/strength', jsn.node['strength'], jsn.vObj['_strength'], CODES_TFhirBindingStrengthEnum, SYSTEMS_TFhirBindingStrengthEnum);
     if jsn.has('valueSetReference') {a3} then
       result.valueSet := ParseReference(jsn.vObj['valueSetReference']);
     if jsn.has('valueSetUri') or jsn.has('_valueSetUri') then
-      result.valueSet := parseUri(jsn['valueSetUri'], jsn.vObj['_valueSetUri']);
+      result.valueSet := ParseUri(jsn.node['valueSetUri'], jsn.vObj['_valueSetUri']);
 end;
 
 procedure TFHIRJsonComposer.ComposeOperationDefinitionParameterBinding(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameterBinding; noObj : boolean = false);
@@ -22026,41 +22116,41 @@ procedure TFHIRJsonParser.ParseOperationDefinitionProperties(jsn : TJsonObject; 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirOperationKindEnum, SYSTEMS_TFhirOperationKindEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn.node['kind'], jsn.vObj['_kind'], CODES_TFhirOperationKindEnum, SYSTEMS_TFhirOperationKindEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseOperationDefinitionContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('idempotent') or jsn.has('_idempotent') then
-        result.idempotentElement := ParseBoolean(jsn['idempotent'], jsn.vObj['_idempotent']);{q}
+        result.idempotentElement := ParseBoolean(jsn.node['idempotent'], jsn.vObj['_idempotent']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
     if jsn.has('notes') or jsn.has('_notes') then
-        result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+        result.notesElement := ParseString(jsn.node['notes'], jsn.vObj['_notes']);{q}
     if jsn.has('base') then
         result.base := ParseReference{TFhirOperationDefinition}(jsn.vObj['base']);{q3}
     if jsn.has('system') or jsn.has('_system') then
-        result.systemElement := ParseBoolean(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseBoolean(jsn.node['system'], jsn.vObj['_system']);{q}
     if jsn.has('type') or jsn.has('_type') then
       iterateEnumArray(jsn.vArr['type'], jsn.vArr['_type'], jsn.path+'/type', result.type_, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('instance') or jsn.has('_instance') then
-        result.instanceElement := ParseBoolean(jsn['instance'], jsn.vObj['_instance']);{q}
+        result.instanceElement := ParseBoolean(jsn.node['instance'], jsn.vObj['_instance']);{q}
     if jsn.has('parameter') then
       iterateArray(jsn.vArr['parameter'], result.parameterList, parseOperationDefinitionParameter);
 end;
@@ -22186,13 +22276,13 @@ procedure TFHIRJsonParser.ParseOperationOutcomeIssueProperties(jsn : TJsonObject
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('severity') or jsn.has('_severity')  then
-      result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirIssueSeverityEnum, SYSTEMS_TFhirIssueSeverityEnum);
+      result.severityElement := parseEnum(jsn.path+'/severity', jsn.node['severity'], jsn.vObj['_severity'], CODES_TFhirIssueSeverityEnum, SYSTEMS_TFhirIssueSeverityEnum);
     if jsn.has('code') or jsn.has('_code')  then
-      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirIssueTypeEnum, SYSTEMS_TFhirIssueTypeEnum);
+      result.codeElement := parseEnum(jsn.path+'/code', jsn.node['code'], jsn.vObj['_code'], CODES_TFhirIssueTypeEnum, SYSTEMS_TFhirIssueTypeEnum);
     if jsn.has('details') then
         result.details := ParseCodeableConcept(jsn.vObj['details']);{q3}
     if jsn.has('diagnostics') or jsn.has('_diagnostics') then
-        result.diagnosticsElement := ParseString(jsn['diagnostics'], jsn.vObj['_diagnostics']);{q}
+        result.diagnosticsElement := ParseString(jsn.node['diagnostics'], jsn.vObj['_diagnostics']);{q}
       if jsn.has('location') or jsn.has('_location') then
       iteratePrimitiveArray(jsn.vArr['location'], jsn.vArr['_location'], result.locationList, parseString);
 end;
@@ -22345,7 +22435,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('subject') then
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('source') then
@@ -22427,13 +22517,13 @@ begin
     if jsn.has('request') then
         result.request := ParseReference{TFhirOrder}(jsn.vObj['request']);{q3}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('who') then
         result.who := ParseReference{Resource}(jsn.vObj['who']);{q3}
     if jsn.has('orderStatus') or jsn.has('_orderStatus')  then
-      result.orderStatusElement := parseEnum(jsn.path+'/orderStatus', jsn['orderStatus'], jsn.vObj['_orderStatus'], CODES_TFhirOrderStatusEnum, SYSTEMS_TFhirOrderStatusEnum);
+      result.orderStatusElement := parseEnum(jsn.path+'/orderStatus', jsn.node['orderStatus'], jsn.vObj['_orderStatus'], CODES_TFhirOrderStatusEnum, SYSTEMS_TFhirOrderStatusEnum);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('fulfillment') then
       iterateArray(jsn.vArr['fulfillment'], result.fulfillmentList, parseReference{TFhirReference});
 end;
@@ -22551,11 +22641,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('active') or jsn.has('_active') then
-        result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
+        result.activeElement := ParseBoolean(jsn.node['active'], jsn.vObj['_active']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('address') then
@@ -22645,7 +22735,7 @@ begin
     if jsn.has('address') then
         result.address := ParseAddress(jsn.vObj['address']);{q3}
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn.node['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('period') then
@@ -22752,7 +22842,7 @@ begin
     if jsn.has('language') then
         result.language := ParseCodeableConcept(jsn.vObj['language']);{q3}
     if jsn.has('preferred') or jsn.has('_preferred') then
-        result.preferredElement := ParseBoolean(jsn['preferred'], jsn.vObj['_preferred']);{q}
+        result.preferredElement := ParseBoolean(jsn.node['preferred'], jsn.vObj['_preferred']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposePatientCommunication(json : TJSONWriter; name : string; elem : TFhirPatientCommunication; noObj : boolean = false);
@@ -22791,7 +22881,7 @@ begin
     if jsn.has('other') then
         result.other := ParseReference{TFhirPatient}(jsn.vObj['other']);{q3}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirLinkTypeEnum, SYSTEMS_TFhirLinkTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirLinkTypeEnum, SYSTEMS_TFhirLinkTypeEnum);
 end;
 
 procedure TFHIRJsonComposer.ComposePatientLink(json : TJSONWriter; name : string; elem : TFhirPatientLink; noObj : boolean = false);
@@ -22828,27 +22918,27 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('active') or jsn.has('_active') then
-        result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
+        result.activeElement := ParseBoolean(jsn.node['active'], jsn.vObj['_active']);{q}
     if jsn.has('name') then
       iterateArray(jsn.vArr['name'], result.nameList, parseHumanName);
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn.node['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
-        result.birthDateElement := ParseDate(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
+        result.birthDateElement := ParseDate(jsn.node['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('deceasedBoolean') or jsn.has('_deceasedBoolean') then
-      result.deceased := parseBoolean(jsn['deceasedBoolean'], jsn.vObj['_deceasedBoolean']);
+      result.deceased := ParseBoolean(jsn.node['deceasedBoolean'], jsn.vObj['_deceasedBoolean']);
     if jsn.has('deceasedDateTime') or jsn.has('_deceasedDateTime') then
-      result.deceased := parseDateTime(jsn['deceasedDateTime'], jsn.vObj['_deceasedDateTime']);
+      result.deceased := ParseDateTime(jsn.node['deceasedDateTime'], jsn.vObj['_deceasedDateTime']);
     if jsn.has('address') then
       iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
     if jsn.has('maritalStatus') then
         result.maritalStatus := ParseCodeableConcept(jsn.vObj['maritalStatus']);{q3}
     if jsn.has('multipleBirthBoolean') or jsn.has('_multipleBirthBoolean') then
-      result.multipleBirth := parseBoolean(jsn['multipleBirthBoolean'], jsn.vObj['_multipleBirthBoolean']);
+      result.multipleBirth := ParseBoolean(jsn.node['multipleBirthBoolean'], jsn.vObj['_multipleBirthBoolean']);
     if jsn.has('multipleBirthInteger') or jsn.has('_multipleBirthInteger') then
-      result.multipleBirth := parseInteger(jsn['multipleBirthInteger'], jsn.vObj['_multipleBirthInteger']);
+      result.multipleBirth := ParseInteger(jsn.node['multipleBirthInteger'], jsn.vObj['_multipleBirthInteger']);
     if jsn.has('photo') then
       iterateArray(jsn.vArr['photo'], result.photoList, parseAttachment);
     if jsn.has('contact') then
@@ -23003,7 +23093,7 @@ begin
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
         result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
@@ -23085,7 +23175,7 @@ begin
     if jsn.has('payee') then
         result.payee := ParseReference{TFhirOrganization}(jsn.vObj['payee']);{q3}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDate(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDate(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('amount') then
         result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
 end;
@@ -23136,7 +23226,7 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposePaymentReconciliationNote(json : TJSONWriter; name : string; elem : TFhirPaymentReconciliationNote; noObj : boolean = false);
@@ -23178,15 +23268,15 @@ begin
     if jsn.has('request') then
         result.request := ParseReference{TFhirProcessRequest}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
-        result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
+        result.dispositionElement := ParseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
         result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('organization') then
@@ -23288,7 +23378,7 @@ begin
     if jsn.has('target') then
         result.target := ParseReference{Resource}(jsn.vObj['target']);{q3}
     if jsn.has('assurance') or jsn.has('_assurance')  then
-      result.assuranceElement := parseEnum(jsn.path+'/assurance', jsn['assurance'], jsn.vObj['_assurance'], CODES_TFhirIdentityAssuranceLevelEnum, SYSTEMS_TFhirIdentityAssuranceLevelEnum);
+      result.assuranceElement := parseEnum(jsn.path+'/assurance', jsn.node['assurance'], jsn.vObj['_assurance'], CODES_TFhirIdentityAssuranceLevelEnum, SYSTEMS_TFhirIdentityAssuranceLevelEnum);
 end;
 
 procedure TFHIRJsonComposer.ComposePersonLink(json : TJSONWriter; name : string; elem : TFhirPersonLink; noObj : boolean = false);
@@ -23331,9 +23421,9 @@ begin
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn.node['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
-        result.birthDateElement := ParseDate(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
+        result.birthDateElement := ParseDate(jsn.node['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('address') then
       iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
     if jsn.has('photo') then
@@ -23341,7 +23431,7 @@ begin
     if jsn.has('managingOrganization') then
         result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q3}
     if jsn.has('active') or jsn.has('_active') then
-        result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
+        result.activeElement := ParseBoolean(jsn.node['active'], jsn.vObj['_active']);{q}
     if jsn.has('link') then
       iterateArray(jsn.vArr['link'], result.link_List, parsePersonLink);
 end;
@@ -23553,7 +23643,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('active') or jsn.has('_active') then
-        result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
+        result.activeElement := ParseBoolean(jsn.node['active'], jsn.vObj['_active']);{q}
     if jsn.has('name') then
         result.name := ParseHumanName(jsn.vObj['name']);{q3}
     if jsn.has('telecom') then
@@ -23561,9 +23651,9 @@ begin
     if jsn.has('address') then
       iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn.node['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
-        result.birthDateElement := ParseDate(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
+        result.birthDateElement := ParseDate(jsn.node['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('photo') then
       iterateArray(jsn.vArr['photo'], result.photoList, parseAttachment);
     if jsn.has('practitionerRole') then
@@ -23747,13 +23837,13 @@ begin
     if jsn.has('subject') then
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirProcedureStatusEnum, SYSTEMS_TFhirProcedureStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirProcedureStatusEnum, SYSTEMS_TFhirProcedureStatusEnum);
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('notPerformed') or jsn.has('_notPerformed') then
-        result.notPerformedElement := ParseBoolean(jsn['notPerformed'], jsn.vObj['_notPerformed']);{q}
+        result.notPerformedElement := ParseBoolean(jsn.node['notPerformed'], jsn.vObj['_notPerformed']);{q}
     if jsn.has('reasonNotPerformed') then
       iterateArray(jsn.vArr['reasonNotPerformed'], result.reasonNotPerformedList, parseCodeableConcept);
     if jsn.has('bodySite') then
@@ -23767,7 +23857,7 @@ begin
     if jsn.has('performedPeriod') {a4} then
       result.performed := ParsePeriod(jsn.vObj['performedPeriod']);
     if jsn.has('performedDateTime') or jsn.has('_performedDateTime') then
-      result.performed := parseDateTime(jsn['performedDateTime'], jsn.vObj['_performedDateTime']);
+      result.performed := ParseDateTime(jsn.node['performedDateTime'], jsn.vObj['_performedDateTime']);
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('location') then
@@ -23936,25 +24026,25 @@ begin
     if jsn.has('scheduledTiming') {a4} then
       result.scheduled := ParseTiming(jsn.vObj['scheduledTiming']);
     if jsn.has('scheduledDateTime') or jsn.has('_scheduledDateTime') then
-      result.scheduled := parseDateTime(jsn['scheduledDateTime'], jsn.vObj['_scheduledDateTime']);
+      result.scheduled := ParseDateTime(jsn.node['scheduledDateTime'], jsn.vObj['_scheduledDateTime']);
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('performer') then
         result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirProcedureRequestStatusEnum, SYSTEMS_TFhirProcedureRequestStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirProcedureRequestStatusEnum, SYSTEMS_TFhirProcedureRequestStatusEnum);
     if jsn.has('notes') then
       iterateArray(jsn.vArr['notes'], result.notesList, parseAnnotation);
     if jsn.has('asNeededCodeableConcept') {a4} then
       result.asNeeded := ParseCodeableConcept(jsn.vObj['asNeededCodeableConcept']);
     if jsn.has('asNeededBoolean') or jsn.has('_asNeededBoolean') then
-      result.asNeeded := parseBoolean(jsn['asNeededBoolean'], jsn.vObj['_asNeededBoolean']);
+      result.asNeeded := ParseBoolean(jsn.node['asNeededBoolean'], jsn.vObj['_asNeededBoolean']);
     if jsn.has('orderedOn') or jsn.has('_orderedOn') then
-        result.orderedOnElement := ParseDateTime(jsn['orderedOn'], jsn.vObj['_orderedOn']);{q}
+        result.orderedOnElement := ParseDateTime(jsn.node['orderedOn'], jsn.vObj['_orderedOn']);{q}
     if jsn.has('orderer') then
         result.orderer := ParseReference{Resource}(jsn.vObj['orderer']);{q3}
     if jsn.has('priority') or jsn.has('_priority')  then
-      result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirProcedureRequestPriorityEnum, SYSTEMS_TFhirProcedureRequestPriorityEnum);
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn.node['priority'], jsn.vObj['_priority'], CODES_TFhirProcedureRequestPriorityEnum, SYSTEMS_TFhirProcedureRequestPriorityEnum);
 end;
 
 procedure TFHIRJsonComposer.ComposeProcedureRequest(json : TJSONWriter; name : string; elem : TFhirProcedureRequest; noObj : boolean = false);
@@ -24049,7 +24139,7 @@ procedure TFHIRJsonParser.ParseProcessRequestItemProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequenceLinkId') or jsn.has('_sequenceLinkId') then
-        result.sequenceLinkIdElement := ParseInteger(jsn['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
+        result.sequenceLinkIdElement := ParseInteger(jsn.node['sequenceLinkId'], jsn.vObj['_sequenceLinkId']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeProcessRequestItem(json : TJSONWriter; name : string; elem : TFhirProcessRequestItem; noObj : boolean = false);
@@ -24083,7 +24173,7 @@ procedure TFHIRJsonParser.ParseProcessRequestProperties(jsn : TJsonObject; resul
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('action') or jsn.has('_action')  then
-      result.actionElement := parseEnum(jsn.path+'/action', jsn['action'], jsn.vObj['_action'], CODES_TFhirActionlistEnum, SYSTEMS_TFhirActionlistEnum);
+      result.actionElement := parseEnum(jsn.path+'/action', jsn.node['action'], jsn.vObj['_action'], CODES_TFhirActionlistEnum, SYSTEMS_TFhirActionlistEnum);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
@@ -24091,7 +24181,7 @@ begin
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
         result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
@@ -24103,9 +24193,9 @@ begin
     if jsn.has('response') then
         result.response := ParseReference{TFhirReference}(jsn.vObj['response']);{q3}
     if jsn.has('nullify') or jsn.has('_nullify') then
-        result.nullifyElement := ParseBoolean(jsn['nullify'], jsn.vObj['_nullify']);{q}
+        result.nullifyElement := ParseBoolean(jsn.node['nullify'], jsn.vObj['_nullify']);{q}
     if jsn.has('reference') or jsn.has('_reference') then
-        result.referenceElement := ParseString(jsn['reference'], jsn.vObj['_reference']);{q}
+        result.referenceElement := ParseString(jsn.node['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('item') then
       iterateArray(jsn.vArr['item'], result.itemList, parseProcessRequestItem);
       if jsn.has('include') or jsn.has('_include') then
@@ -24243,7 +24333,7 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeProcessResponseNotes(json : TJSONWriter; name : string; elem : TFhirProcessResponseNotes; noObj : boolean = false);
@@ -24287,13 +24377,13 @@ begin
     if jsn.has('outcome') then
         result.outcome := ParseCoding(jsn.vObj['outcome']);{q3}
     if jsn.has('disposition') or jsn.has('_disposition') then
-        result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
+        result.dispositionElement := ParseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
         result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
         result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
+        result.createdElement := ParseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
         result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
@@ -24438,7 +24528,7 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('target') or jsn.has('_target') then
-        result.targetElement := ParseUri(jsn['target'], jsn.vObj['_target']);{q}
+        result.targetElement := ParseUri(jsn.node['target'], jsn.vObj['_target']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeProvenanceAgentRelatedAgent(json : TJSONWriter; name : string; elem : TFhirProvenanceAgentRelatedAgent; noObj : boolean = false);
@@ -24473,13 +24563,13 @@ procedure TFHIRJsonParser.ParseProvenanceEntityProperties(jsn : TJsonObject; res
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('role') or jsn.has('_role')  then
-      result.roleElement := parseEnum(jsn.path+'/role', jsn['role'], jsn.vObj['_role'], CODES_TFhirProvenanceEntityRoleEnum, SYSTEMS_TFhirProvenanceEntityRoleEnum);
+      result.roleElement := parseEnum(jsn.path+'/role', jsn.node['role'], jsn.vObj['_role'], CODES_TFhirProvenanceEntityRoleEnum, SYSTEMS_TFhirProvenanceEntityRoleEnum);
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('reference') or jsn.has('_reference') then
-        result.referenceElement := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
+        result.referenceElement := ParseUri(jsn.node['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn.node['display'], jsn.vObj['_display']);{q}
     if jsn.has('agent') then
         result.agent := ParseProvenanceAgent(jsn.vObj['agent']);{q3}
 end;
@@ -24528,7 +24618,7 @@ begin
     if jsn.has('period') then
         result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('recorded') or jsn.has('_recorded') then
-        result.recordedElement := ParseInstant(jsn['recorded'], jsn.vObj['_recorded']);{q}
+        result.recordedElement := ParseInstant(jsn.node['recorded'], jsn.vObj['_recorded']);{q}
     if jsn.has('reason') then
       iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('activity') then
@@ -24645,17 +24735,17 @@ procedure TFHIRJsonParser.ParseQuestionnaireGroupProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('linkId') or jsn.has('_linkId') then
-        result.linkIdElement := ParseString(jsn['linkId'], jsn.vObj['_linkId']);{q}
+        result.linkIdElement := ParseString(jsn.node['linkId'], jsn.vObj['_linkId']);{q}
     if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn.node['title'], jsn.vObj['_title']);{q}
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseCoding);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('required') or jsn.has('_required') then
-        result.requiredElement := ParseBoolean(jsn['required'], jsn.vObj['_required']);{q}
+        result.requiredElement := ParseBoolean(jsn.node['required'], jsn.vObj['_required']);{q}
     if jsn.has('repeats') or jsn.has('_repeats') then
-        result.repeatsElement := ParseBoolean(jsn['repeats'], jsn.vObj['_repeats']);{q}
+        result.repeatsElement := ParseBoolean(jsn.node['repeats'], jsn.vObj['_repeats']);{q}
     if jsn.has('group') then
       iterateArray(jsn.vArr['group'], result.groupList, parseQuestionnaireGroup);
     if jsn.has('question') then
@@ -24734,17 +24824,17 @@ procedure TFHIRJsonParser.ParseQuestionnaireGroupQuestionProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('linkId') or jsn.has('_linkId') then
-        result.linkIdElement := ParseString(jsn['linkId'], jsn.vObj['_linkId']);{q}
+        result.linkIdElement := ParseString(jsn.node['linkId'], jsn.vObj['_linkId']);{q}
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseCoding);
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAnswerFormatEnum, SYSTEMS_TFhirAnswerFormatEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirAnswerFormatEnum, SYSTEMS_TFhirAnswerFormatEnum);
     if jsn.has('required') or jsn.has('_required') then
-        result.requiredElement := ParseBoolean(jsn['required'], jsn.vObj['_required']);{q}
+        result.requiredElement := ParseBoolean(jsn.node['required'], jsn.vObj['_required']);{q}
     if jsn.has('repeats') or jsn.has('_repeats') then
-        result.repeatsElement := ParseBoolean(jsn['repeats'], jsn.vObj['_repeats']);{q}
+        result.repeatsElement := ParseBoolean(jsn.node['repeats'], jsn.vObj['_repeats']);{q}
     if jsn.has('options') then
         result.options := ParseReference{TFhirValueSet}(jsn.vObj['options']);{q3}
     if jsn.has('option') then
@@ -24829,13 +24919,13 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireStatusEnum, SYSTEMS_TFhirQuestionnaireStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireStatusEnum, SYSTEMS_TFhirQuestionnaireStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('subjectType') or jsn.has('_subjectType') then
@@ -24930,11 +25020,11 @@ procedure TFHIRJsonParser.ParseQuestionnaireResponseGroupProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('linkId') or jsn.has('_linkId') then
-        result.linkIdElement := ParseString(jsn['linkId'], jsn.vObj['_linkId']);{q}
+        result.linkIdElement := ParseString(jsn.node['linkId'], jsn.vObj['_linkId']);{q}
     if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+        result.titleElement := ParseString(jsn.node['title'], jsn.vObj['_title']);{q}
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('group') then
@@ -25002,9 +25092,9 @@ procedure TFHIRJsonParser.ParseQuestionnaireResponseGroupQuestionProperties(jsn 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('linkId') or jsn.has('_linkId') then
-        result.linkIdElement := ParseString(jsn['linkId'], jsn.vObj['_linkId']);{q}
+        result.linkIdElement := ParseString(jsn.node['linkId'], jsn.vObj['_linkId']);{q}
     if jsn.has('text') or jsn.has('_text') then
-        result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
+        result.textElement := ParseString(jsn.node['text'], jsn.vObj['_text']);{q}
     if jsn.has('answer') then
       iterateArray(jsn.vArr['answer'], result.answerList, parseQuestionnaireResponseGroupQuestionAnswer);
 end;
@@ -25063,23 +25153,23 @@ begin
     if jsn.has('valueReference') {a3} then
       result.value := ParseReference(jsn.vObj['valueReference']);
     if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-      result.value := parseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
+      result.value := ParseBoolean(jsn.node['valueBoolean'], jsn.vObj['_valueBoolean']);
     if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
-      result.value := parseDecimal(jsn['valueDecimal'], jsn.vObj['_valueDecimal']);
+      result.value := ParseDecimal(jsn.node['valueDecimal'], jsn.vObj['_valueDecimal']);
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
-      result.value := parseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
+      result.value := ParseInteger(jsn.node['valueInteger'], jsn.vObj['_valueInteger']);
     if jsn.has('valueDate') or jsn.has('_valueDate') then
-      result.value := parseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
+      result.value := ParseDate(jsn.node['valueDate'], jsn.vObj['_valueDate']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
-      result.value := parseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+      result.value := ParseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
     if jsn.has('valueInstant') or jsn.has('_valueInstant') then
-      result.value := parseInstant(jsn['valueInstant'], jsn.vObj['_valueInstant']);
+      result.value := ParseInstant(jsn.node['valueInstant'], jsn.vObj['_valueInstant']);
     if jsn.has('valueTime') or jsn.has('_valueTime') then
-      result.value := parseTime(jsn['valueTime'], jsn.vObj['_valueTime']);
+      result.value := ParseTime(jsn.node['valueTime'], jsn.vObj['_valueTime']);
     if jsn.has('valueString') or jsn.has('_valueString') then
-      result.value := parseString(jsn['valueString'], jsn.vObj['_valueString']);
+      result.value := ParseString(jsn.node['valueString'], jsn.vObj['_valueString']);
     if jsn.has('valueUri') or jsn.has('_valueUri') then
-      result.value := parseUri(jsn['valueUri'], jsn.vObj['_valueUri']);
+      result.value := ParseUri(jsn.node['valueUri'], jsn.vObj['_valueUri']);
     if jsn.has('group') then
       iterateArray(jsn.vArr['group'], result.groupList, parseQuestionnaireResponseGroup);
 end;
@@ -25179,13 +25269,13 @@ begin
     if jsn.has('questionnaire') then
         result.questionnaire := ParseReference{TFhirQuestionnaire}(jsn.vObj['questionnaire']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireAnswersStatusEnum, SYSTEMS_TFhirQuestionnaireAnswersStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireAnswersStatusEnum, SYSTEMS_TFhirQuestionnaireAnswersStatusEnum);
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('author') then
         result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('authored') or jsn.has('_authored') then
-        result.authoredElement := ParseDateTime(jsn['authored'], jsn.vObj['_authored']);{q}
+        result.authoredElement := ParseDateTime(jsn.node['authored'], jsn.vObj['_authored']);{q}
     if jsn.has('source') then
         result.source := ParseReference{Resource}(jsn.vObj['source']);{q3}
     if jsn.has('encounter') then
@@ -25243,11 +25333,11 @@ procedure TFHIRJsonParser.ParseReferralRequestProperties(jsn : TJsonObject; resu
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirReferralstatusEnum, SYSTEMS_TFhirReferralstatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirReferralstatusEnum, SYSTEMS_TFhirReferralstatusEnum);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('specialty') then
@@ -25263,11 +25353,11 @@ begin
     if jsn.has('encounter') then
         result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('dateSent') or jsn.has('_dateSent') then
-        result.dateSentElement := ParseDateTime(jsn['dateSent'], jsn.vObj['_dateSent']);{q}
+        result.dateSentElement := ParseDateTime(jsn.node['dateSent'], jsn.vObj['_dateSent']);{q}
     if jsn.has('reason') then
         result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q3}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('serviceRequested') then
       iterateArray(jsn.vArr['serviceRequested'], result.serviceRequestedList, parseCodeableConcept);
     if jsn.has('supportingInformation') then
@@ -25375,9 +25465,9 @@ begin
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
+      result.genderElement := parseEnum(jsn.path+'/gender', jsn.node['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('birthDate') or jsn.has('_birthDate') then
-        result.birthDateElement := ParseDate(jsn['birthDate'], jsn.vObj['_birthDate']);{q}
+        result.birthDateElement := ParseDate(jsn.node['birthDate'], jsn.vObj['_birthDate']);{q}
     if jsn.has('address') then
       iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
     if jsn.has('photo') then
@@ -25466,15 +25556,15 @@ begin
     if jsn.has('probabilityCodeableConcept') {a4} then
       result.probability := ParseCodeableConcept(jsn.vObj['probabilityCodeableConcept']);
     if jsn.has('probabilityDecimal') or jsn.has('_probabilityDecimal') then
-      result.probability := parseDecimal(jsn['probabilityDecimal'], jsn.vObj['_probabilityDecimal']);
+      result.probability := ParseDecimal(jsn.node['probabilityDecimal'], jsn.vObj['_probabilityDecimal']);
     if jsn.has('relativeRisk') or jsn.has('_relativeRisk') then
-        result.relativeRiskElement := ParseDecimal(jsn['relativeRisk'], jsn.vObj['_relativeRisk']);{q}
+        result.relativeRiskElement := ParseDecimal(jsn.node['relativeRisk'], jsn.vObj['_relativeRisk']);{q}
     if jsn.has('whenPeriod') {a4} then
       result.when := ParsePeriod(jsn.vObj['whenPeriod']);
     if jsn.has('whenRange') {a4} then
       result.when := ParseRange(jsn.vObj['whenRange']);
     if jsn.has('rationale') or jsn.has('_rationale') then
-        result.rationaleElement := ParseString(jsn['rationale'], jsn.vObj['_rationale']);{q}
+        result.rationaleElement := ParseString(jsn.node['rationale'], jsn.vObj['_rationale']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeRiskAssessmentPrediction(json : TJSONWriter; name : string; elem : TFhirRiskAssessmentPrediction; noObj : boolean = false);
@@ -25530,7 +25620,7 @@ begin
     if jsn.has('subject') then
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('condition') then
         result.condition := ParseReference{TFhirCondition}(jsn.vObj['condition']);{q3}
     if jsn.has('encounter') then
@@ -25546,7 +25636,7 @@ begin
     if jsn.has('prediction') then
       iterateArray(jsn.vArr['prediction'], result.predictionList, parseRiskAssessmentPrediction);
     if jsn.has('mitigation') or jsn.has('_mitigation') then
-        result.mitigationElement := ParseString(jsn['mitigation'], jsn.vObj['_mitigation']);{q}
+        result.mitigationElement := ParseString(jsn.node['mitigation'], jsn.vObj['_mitigation']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeRiskAssessment(json : TJSONWriter; name : string; elem : TFhirRiskAssessment; noObj : boolean = false);
@@ -25622,7 +25712,7 @@ begin
     if jsn.has('planningHorizon') then
         result.planningHorizon := ParsePeriod(jsn.vObj['planningHorizon']);{q3}
     if jsn.has('comment') or jsn.has('_comment') then
-        result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
+        result.commentElement := ParseString(jsn.node['comment'], jsn.vObj['_comment']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeSchedule(json : TJSONWriter; name : string; elem : TFhirSchedule; noObj : boolean = false);
@@ -25677,7 +25767,7 @@ procedure TFHIRJsonParser.ParseSearchParameterContactProperties(jsn : TJsonObjec
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -25724,33 +25814,33 @@ procedure TFHIRJsonParser.ParseSearchParameterProperties(jsn : TJsonObject; resu
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseSearchParameterContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
     if jsn.has('base') or jsn.has('_base')  then
-      result.baseElement := parseEnum(jsn.path+'/base', jsn['base'], jsn.vObj['_base'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
+      result.baseElement := parseEnum(jsn.path+'/base', jsn.node['base'], jsn.vObj['_base'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('xpath') or jsn.has('_xpath') then
-        result.xpathElement := ParseString(jsn['xpath'], jsn.vObj['_xpath']);{q}
+        result.xpathElement := ParseString(jsn.node['xpath'], jsn.vObj['_xpath']);{q}
     if jsn.has('xpathUsage') or jsn.has('_xpathUsage')  then
-      result.xpathUsageElement := parseEnum(jsn.path+'/xpathUsage', jsn['xpathUsage'], jsn.vObj['_xpathUsage'], CODES_TFhirSearchXpathUsageEnum, SYSTEMS_TFhirSearchXpathUsageEnum);
+      result.xpathUsageElement := parseEnum(jsn.path+'/xpathUsage', jsn.node['xpathUsage'], jsn.vObj['_xpathUsage'], CODES_TFhirSearchXpathUsageEnum, SYSTEMS_TFhirSearchXpathUsageEnum);
     if jsn.has('target') or jsn.has('_target') then
       iterateEnumArray(jsn.vArr['target'], jsn.vArr['_target'], jsn.path+'/target', result.target, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
 end;
@@ -25865,15 +25955,15 @@ begin
     if jsn.has('schedule') then
         result.schedule := ParseReference{TFhirSchedule}(jsn.vObj['schedule']);{q3}
     if jsn.has('freeBusyType') or jsn.has('_freeBusyType')  then
-      result.freeBusyTypeElement := parseEnum(jsn.path+'/freeBusyType', jsn['freeBusyType'], jsn.vObj['_freeBusyType'], CODES_TFhirSlotstatusEnum, SYSTEMS_TFhirSlotstatusEnum);
+      result.freeBusyTypeElement := parseEnum(jsn.path+'/freeBusyType', jsn.node['freeBusyType'], jsn.vObj['_freeBusyType'], CODES_TFhirSlotstatusEnum, SYSTEMS_TFhirSlotstatusEnum);
     if jsn.has('start') or jsn.has('_start') then
-        result.startElement := ParseInstant(jsn['start'], jsn.vObj['_start']);{q}
+        result.startElement := ParseInstant(jsn.node['start'], jsn.vObj['_start']);{q}
     if jsn.has('end') or jsn.has('_end') then
-        result.end_Element := ParseInstant(jsn['end'], jsn.vObj['_end']);{q}
+        result.end_Element := ParseInstant(jsn.node['end'], jsn.vObj['_end']);{q}
     if jsn.has('overbooked') or jsn.has('_overbooked') then
-        result.overbookedElement := ParseBoolean(jsn['overbooked'], jsn.vObj['_overbooked']);{q}
+        result.overbookedElement := ParseBoolean(jsn.node['overbooked'], jsn.vObj['_overbooked']);{q}
     if jsn.has('comment') or jsn.has('_comment') then
-        result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
+        result.commentElement := ParseString(jsn.node['comment'], jsn.vObj['_comment']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeSlot(json : TJSONWriter; name : string; elem : TFhirSlot; noObj : boolean = false);
@@ -25937,7 +26027,7 @@ begin
     if jsn.has('collectedPeriod') {a4} then
       result.collected := ParsePeriod(jsn.vObj['collectedPeriod']);
     if jsn.has('collectedDateTime') or jsn.has('_collectedDateTime') then
-      result.collected := parseDateTime(jsn['collectedDateTime'], jsn.vObj['_collectedDateTime']);
+      result.collected := ParseDateTime(jsn.node['collectedDateTime'], jsn.vObj['_collectedDateTime']);
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('method') then
@@ -26018,7 +26108,7 @@ procedure TFHIRJsonParser.ParseSpecimenTreatmentProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('procedure') then
         result.procedure_ := ParseCodeableConcept(jsn.vObj['procedure']);{q3}
     if jsn.has('additive') then
@@ -26071,7 +26161,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('capacity') then
@@ -26138,7 +26228,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSpecimenStatusEnum, SYSTEMS_TFhirSpecimenStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirSpecimenStatusEnum, SYSTEMS_TFhirSpecimenStatusEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('parent') then
@@ -26148,7 +26238,7 @@ begin
     if jsn.has('accessionIdentifier') then
         result.accessionIdentifier := ParseIdentifier(jsn.vObj['accessionIdentifier']);{q3}
     if jsn.has('receivedTime') or jsn.has('_receivedTime') then
-        result.receivedTimeElement := ParseDateTime(jsn['receivedTime'], jsn.vObj['_receivedTime']);{q}
+        result.receivedTimeElement := ParseDateTime(jsn.node['receivedTime'], jsn.vObj['_receivedTime']);{q}
     if jsn.has('collection') then
         result.collection := ParseSpecimenCollection(jsn.vObj['collection']);{q3}
     if jsn.has('treatment') then
@@ -26231,7 +26321,7 @@ procedure TFHIRJsonParser.ParseStructureDefinitionContactProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -26278,13 +26368,13 @@ procedure TFHIRJsonParser.ParseStructureDefinitionMappingProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identity') or jsn.has('_identity') then
-        result.identityElement := ParseId(jsn['identity'], jsn.vObj['_identity']);{q}
+        result.identityElement := ParseId(jsn.node['identity'], jsn.vObj['_identity']);{q}
     if jsn.has('uri') or jsn.has('_uri') then
-        result.uriElement := ParseUri(jsn['uri'], jsn.vObj['_uri']);{q}
+        result.uriElement := ParseUri(jsn.node['uri'], jsn.vObj['_uri']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('comments') or jsn.has('_comments') then
-        result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
+        result.commentsElement := ParseString(jsn.node['comments'], jsn.vObj['_comments']);{q}
 end;
 
 procedure TFHIRJsonComposer.composeStructureDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionMapping; noObj : boolean = false);
@@ -26412,51 +26502,51 @@ procedure TFHIRJsonParser.ParseStructureDefinitionProperties(jsn : TJsonObject; 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn.node['display'], jsn.vObj['_display']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseStructureDefinitionContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('useContext') then
       iterateArray(jsn.vArr['useContext'], result.useContextList, parseCodeableConcept);
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('code') then
       iterateArray(jsn.vArr['code'], result.codeList, parseCoding);
     if jsn.has('fhirVersion') or jsn.has('_fhirVersion') then
-        result.fhirVersionElement := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
+        result.fhirVersionElement := ParseId(jsn.node['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
     if jsn.has('mapping') then
       iterateArray(jsn.vArr['mapping'], result.mappingList, parseStructureDefinitionMapping);
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirStructureDefinitionKindEnum, SYSTEMS_TFhirStructureDefinitionKindEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn.node['kind'], jsn.vObj['_kind'], CODES_TFhirStructureDefinitionKindEnum, SYSTEMS_TFhirStructureDefinitionKindEnum);
     if jsn.has('constrainedType') or jsn.has('_constrainedType') then
-        result.constrainedTypeElement := ParseCode(jsn['constrainedType'], jsn.vObj['_constrainedType']);{q}
+        result.constrainedTypeElement := ParseCode(jsn.node['constrainedType'], jsn.vObj['_constrainedType']);{q}
     if jsn.has('abstract') or jsn.has('_abstract') then
-        result.abstractElement := ParseBoolean(jsn['abstract'], jsn.vObj['_abstract']);{q}
+        result.abstractElement := ParseBoolean(jsn.node['abstract'], jsn.vObj['_abstract']);{q}
     if jsn.has('contextType') or jsn.has('_contextType')  then
-      result.contextTypeElement := parseEnum(jsn.path+'/contextType', jsn['contextType'], jsn.vObj['_contextType'], CODES_TFhirExtensionContextEnum, SYSTEMS_TFhirExtensionContextEnum);
+      result.contextTypeElement := parseEnum(jsn.path+'/contextType', jsn.node['contextType'], jsn.vObj['_contextType'], CODES_TFhirExtensionContextEnum, SYSTEMS_TFhirExtensionContextEnum);
       if jsn.has('context') or jsn.has('_context') then
       iteratePrimitiveArray(jsn.vArr['context'], jsn.vArr['_context'], result.contextList, parseString);
     if jsn.has('base') or jsn.has('_base') then
-        result.baseElement := ParseUri(jsn['base'], jsn.vObj['_base']);{q}
+        result.baseElement := ParseUri(jsn.node['base'], jsn.vObj['_base']);{q}
     if jsn.has('snapshot') then
         result.snapshot := ParseStructureDefinitionSnapshot(jsn.vObj['snapshot']);{q3}
     if jsn.has('differential') then
@@ -26617,13 +26707,13 @@ procedure TFHIRJsonParser.ParseSubscriptionChannelProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirSubscriptionChannelTypeEnum, SYSTEMS_TFhirSubscriptionChannelTypeEnum);
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirSubscriptionChannelTypeEnum, SYSTEMS_TFhirSubscriptionChannelTypeEnum);
     if jsn.has('endpoint') or jsn.has('_endpoint') then
-        result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
+        result.endpointElement := ParseUri(jsn.node['endpoint'], jsn.vObj['_endpoint']);{q}
     if jsn.has('payload') or jsn.has('_payload') then
-        result.payloadElement := ParseString(jsn['payload'], jsn.vObj['_payload']);{q}
+        result.payloadElement := ParseString(jsn.node['payload'], jsn.vObj['_payload']);{q}
     if jsn.has('header') or jsn.has('_header') then
-        result.headerElement := ParseString(jsn['header'], jsn.vObj['_header']);{q}
+        result.headerElement := ParseString(jsn.node['header'], jsn.vObj['_header']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeSubscriptionChannel(json : TJSONWriter; name : string; elem : TFhirSubscriptionChannel; noObj : boolean = false);
@@ -26667,19 +26757,19 @@ procedure TFHIRJsonParser.ParseSubscriptionProperties(jsn : TJsonObject; result 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('criteria') or jsn.has('_criteria') then
-        result.criteriaElement := ParseString(jsn['criteria'], jsn.vObj['_criteria']);{q}
+        result.criteriaElement := ParseString(jsn.node['criteria'], jsn.vObj['_criteria']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseContactPoint);
     if jsn.has('reason') or jsn.has('_reason') then
-        result.reasonElement := ParseString(jsn['reason'], jsn.vObj['_reason']);{q}
+        result.reasonElement := ParseString(jsn.node['reason'], jsn.vObj['_reason']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSubscriptionStatusEnum, SYSTEMS_TFhirSubscriptionStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirSubscriptionStatusEnum, SYSTEMS_TFhirSubscriptionStatusEnum);
     if jsn.has('error') or jsn.has('_error') then
-        result.errorElement := ParseString(jsn['error'], jsn.vObj['_error']);{q}
+        result.errorElement := ParseString(jsn.node['error'], jsn.vObj['_error']);{q}
     if jsn.has('channel') then
         result.channel := ParseSubscriptionChannel(jsn.vObj['channel']);{q3}
     if jsn.has('end') or jsn.has('_end') then
-        result.end_Element := ParseInstant(jsn['end'], jsn.vObj['_end']);{q}
+        result.end_Element := ParseInstant(jsn.node['end'], jsn.vObj['_end']);{q}
     if jsn.has('tag') then
       iterateArray(jsn.vArr['tag'], result.tagList, parseCoding);
 end;
@@ -26746,7 +26836,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('expiry') or jsn.has('_expiry') then
-        result.expiryElement := ParseDateTime(jsn['expiry'], jsn.vObj['_expiry']);{q}
+        result.expiryElement := ParseDateTime(jsn.node['expiry'], jsn.vObj['_expiry']);{q}
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
 end;
@@ -26831,7 +26921,7 @@ begin
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('instance') then
       iterateArray(jsn.vArr['instance'], result.instanceList, parseSubstanceInstance);
     if jsn.has('ingredient') then
@@ -26904,7 +26994,7 @@ begin
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSupplydeliveryStatusEnum, SYSTEMS_TFhirSupplydeliveryStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirSupplydeliveryStatusEnum, SYSTEMS_TFhirSupplydeliveryStatusEnum);
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('type') then
@@ -26918,7 +27008,7 @@ begin
     if jsn.has('whenPrepared') then
         result.whenPrepared := ParsePeriod(jsn.vObj['whenPrepared']);{q3}
     if jsn.has('time') or jsn.has('_time') then
-        result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
+        result.timeElement := ParseDateTime(jsn.node['time'], jsn.vObj['_time']);{q}
     if jsn.has('destination') then
         result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q3}
     if jsn.has('receiver') then
@@ -27029,11 +27119,11 @@ begin
     if jsn.has('source') then
         result.source := ParseReference{Resource}(jsn.vObj['source']);{q3}
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSupplyrequestStatusEnum, SYSTEMS_TFhirSupplyrequestStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirSupplyrequestStatusEnum, SYSTEMS_TFhirSupplyrequestStatusEnum);
     if jsn.has('kind') then
         result.kind := ParseCodeableConcept(jsn.vObj['kind']);{q3}
     if jsn.has('orderedItem') then
@@ -27110,7 +27200,7 @@ procedure TFHIRJsonParser.ParseTestScriptContactProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -27207,9 +27297,9 @@ procedure TFHIRJsonParser.ParseTestScriptMetadataLinkProperties(jsn : TJsonObjec
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptMetadataLink(json : TJSONWriter; name : string; elem : TFhirTestScriptMetadataLink; noObj : boolean = false);
@@ -27247,13 +27337,13 @@ procedure TFHIRJsonParser.ParseTestScriptMetadataCapabilityProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('required') or jsn.has('_required') then
-        result.requiredElement := ParseBoolean(jsn['required'], jsn.vObj['_required']);{q}
+        result.requiredElement := ParseBoolean(jsn.node['required'], jsn.vObj['_required']);{q}
     if jsn.has('validated') or jsn.has('_validated') then
-        result.validatedElement := ParseBoolean(jsn['validated'], jsn.vObj['_validated']);{q}
+        result.validatedElement := ParseBoolean(jsn.node['validated'], jsn.vObj['_validated']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('destination') or jsn.has('_destination') then
-        result.destinationElement := ParseInteger(jsn['destination'], jsn.vObj['_destination']);{q}
+        result.destinationElement := ParseInteger(jsn.node['destination'], jsn.vObj['_destination']);{q}
       if jsn.has('link') or jsn.has('_link') then
       iteratePrimitiveArray(jsn.vArr['link'], jsn.vArr['_link'], result.link_List, parseUri);
     if jsn.has('conformance') then
@@ -27334,9 +27424,9 @@ procedure TFHIRJsonParser.ParseTestScriptFixtureProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('autocreate') or jsn.has('_autocreate') then
-        result.autocreateElement := ParseBoolean(jsn['autocreate'], jsn.vObj['_autocreate']);{q}
+        result.autocreateElement := ParseBoolean(jsn.node['autocreate'], jsn.vObj['_autocreate']);{q}
     if jsn.has('autodelete') or jsn.has('_autodelete') then
-        result.autodeleteElement := ParseBoolean(jsn['autodelete'], jsn.vObj['_autodelete']);{q}
+        result.autodeleteElement := ParseBoolean(jsn.node['autodelete'], jsn.vObj['_autodelete']);{q}
     if jsn.has('resource') then
         result.resource := ParseReference{TFhirReference}(jsn.vObj['resource']);{q3}
 end;
@@ -27380,13 +27470,13 @@ procedure TFHIRJsonParser.ParseTestScriptVariableProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('headerField') or jsn.has('_headerField') then
-        result.headerFieldElement := ParseString(jsn['headerField'], jsn.vObj['_headerField']);{q}
+        result.headerFieldElement := ParseString(jsn.node['headerField'], jsn.vObj['_headerField']);{q}
     if jsn.has('path') or jsn.has('_path') then
-        result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
+        result.pathElement := ParseString(jsn.node['path'], jsn.vObj['_path']);{q}
     if jsn.has('sourceId') or jsn.has('_sourceId') then
-        result.sourceIdElement := ParseId(jsn['sourceId'], jsn.vObj['_sourceId']);{q}
+        result.sourceIdElement := ParseId(jsn.node['sourceId'], jsn.vObj['_sourceId']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptVariable(json : TJSONWriter; name : string; elem : TFhirTestScriptVariable; noObj : boolean = false);
@@ -27517,31 +27607,31 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('resource') or jsn.has('_resource') then
-        result.resourceElement := ParseCode(jsn['resource'], jsn.vObj['_resource']);{q}
+        result.resourceElement := ParseCode(jsn.node['resource'], jsn.vObj['_resource']);{q}
     if jsn.has('label') or jsn.has('_label') then
-        result.label_Element := ParseString(jsn['label'], jsn.vObj['_label']);{q}
+        result.label_Element := ParseString(jsn.node['label'], jsn.vObj['_label']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('accept') or jsn.has('_accept')  then
-      result.acceptElement := parseEnum(jsn.path+'/accept', jsn['accept'], jsn.vObj['_accept'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
+      result.acceptElement := parseEnum(jsn.path+'/accept', jsn.node['accept'], jsn.vObj['_accept'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
     if jsn.has('contentType') or jsn.has('_contentType')  then
-      result.contentTypeElement := parseEnum(jsn.path+'/contentType', jsn['contentType'], jsn.vObj['_contentType'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
+      result.contentTypeElement := parseEnum(jsn.path+'/contentType', jsn.node['contentType'], jsn.vObj['_contentType'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
     if jsn.has('destination') or jsn.has('_destination') then
-        result.destinationElement := ParseInteger(jsn['destination'], jsn.vObj['_destination']);{q}
+        result.destinationElement := ParseInteger(jsn.node['destination'], jsn.vObj['_destination']);{q}
     if jsn.has('encodeRequestUrl') or jsn.has('_encodeRequestUrl') then
-        result.encodeRequestUrlElement := ParseBoolean(jsn['encodeRequestUrl'], jsn.vObj['_encodeRequestUrl']);{q}
+        result.encodeRequestUrlElement := ParseBoolean(jsn.node['encodeRequestUrl'], jsn.vObj['_encodeRequestUrl']);{q}
     if jsn.has('params') or jsn.has('_params') then
-        result.paramsElement := ParseString(jsn['params'], jsn.vObj['_params']);{q}
+        result.paramsElement := ParseString(jsn.node['params'], jsn.vObj['_params']);{q}
     if jsn.has('requestHeader') then
       iterateArray(jsn.vArr['requestHeader'], result.requestHeaderList, parseTestScriptSetupActionOperationRequestHeader);
     if jsn.has('responseId') or jsn.has('_responseId') then
-        result.responseIdElement := ParseId(jsn['responseId'], jsn.vObj['_responseId']);{q}
+        result.responseIdElement := ParseId(jsn.node['responseId'], jsn.vObj['_responseId']);{q}
     if jsn.has('sourceId') or jsn.has('_sourceId') then
-        result.sourceIdElement := ParseId(jsn['sourceId'], jsn.vObj['_sourceId']);{q}
+        result.sourceIdElement := ParseId(jsn.node['sourceId'], jsn.vObj['_sourceId']);{q}
     if jsn.has('targetId') or jsn.has('_targetId') then
-        result.targetIdElement := ParseId(jsn['targetId'], jsn.vObj['_targetId']);{q}
+        result.targetIdElement := ParseId(jsn.node['targetId'], jsn.vObj['_targetId']);{q}
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseString(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseString(jsn.node['url'], jsn.vObj['_url']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptSetupActionOperation(json : TJSONWriter; name : string; elem : TFhirTestScriptSetupActionOperation; noObj : boolean = false);
@@ -27632,9 +27722,9 @@ procedure TFHIRJsonParser.ParseTestScriptSetupActionOperationRequestHeaderProper
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('field') or jsn.has('_field') then
-        result.fieldElement := ParseString(jsn['field'], jsn.vObj['_field']);{q}
+        result.fieldElement := ParseString(jsn.node['field'], jsn.vObj['_field']);{q}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptSetupActionOperationRequestHeader(json : TJSONWriter; name : string; elem : TFhirTestScriptSetupActionOperationRequestHeader; noObj : boolean = false);
@@ -27670,41 +27760,41 @@ procedure TFHIRJsonParser.ParseTestScriptSetupActionAssertProperties(jsn : TJson
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('label') or jsn.has('_label') then
-        result.label_Element := ParseString(jsn['label'], jsn.vObj['_label']);{q}
+        result.label_Element := ParseString(jsn.node['label'], jsn.vObj['_label']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('direction') or jsn.has('_direction')  then
-      result.directionElement := parseEnum(jsn.path+'/direction', jsn['direction'], jsn.vObj['_direction'], CODES_TFhirAssertDirectionCodesEnum, SYSTEMS_TFhirAssertDirectionCodesEnum);
+      result.directionElement := parseEnum(jsn.path+'/direction', jsn.node['direction'], jsn.vObj['_direction'], CODES_TFhirAssertDirectionCodesEnum, SYSTEMS_TFhirAssertDirectionCodesEnum);
     if jsn.has('compareToSourceId') or jsn.has('_compareToSourceId') then
-        result.compareToSourceIdElement := ParseString(jsn['compareToSourceId'], jsn.vObj['_compareToSourceId']);{q}
+        result.compareToSourceIdElement := ParseString(jsn.node['compareToSourceId'], jsn.vObj['_compareToSourceId']);{q}
     if jsn.has('compareToSourcePath') or jsn.has('_compareToSourcePath') then
-        result.compareToSourcePathElement := ParseString(jsn['compareToSourcePath'], jsn.vObj['_compareToSourcePath']);{q}
+        result.compareToSourcePathElement := ParseString(jsn.node['compareToSourcePath'], jsn.vObj['_compareToSourcePath']);{q}
     if jsn.has('contentType') or jsn.has('_contentType')  then
-      result.contentTypeElement := parseEnum(jsn.path+'/contentType', jsn['contentType'], jsn.vObj['_contentType'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
+      result.contentTypeElement := parseEnum(jsn.path+'/contentType', jsn.node['contentType'], jsn.vObj['_contentType'], CODES_TFhirContentTypeEnum, SYSTEMS_TFhirContentTypeEnum);
     if jsn.has('headerField') or jsn.has('_headerField') then
-        result.headerFieldElement := ParseString(jsn['headerField'], jsn.vObj['_headerField']);{q}
+        result.headerFieldElement := ParseString(jsn.node['headerField'], jsn.vObj['_headerField']);{q}
     if jsn.has('minimumId') or jsn.has('_minimumId') then
-        result.minimumIdElement := ParseString(jsn['minimumId'], jsn.vObj['_minimumId']);{q}
+        result.minimumIdElement := ParseString(jsn.node['minimumId'], jsn.vObj['_minimumId']);{q}
     if jsn.has('navigationLinks') or jsn.has('_navigationLinks') then
-        result.navigationLinksElement := ParseBoolean(jsn['navigationLinks'], jsn.vObj['_navigationLinks']);{q}
+        result.navigationLinksElement := ParseBoolean(jsn.node['navigationLinks'], jsn.vObj['_navigationLinks']);{q}
     if jsn.has('operator') or jsn.has('_operator')  then
-      result.operatorElement := parseEnum(jsn.path+'/operator', jsn['operator'], jsn.vObj['_operator'], CODES_TFhirAssertOperatorCodesEnum, SYSTEMS_TFhirAssertOperatorCodesEnum);
+      result.operatorElement := parseEnum(jsn.path+'/operator', jsn.node['operator'], jsn.vObj['_operator'], CODES_TFhirAssertOperatorCodesEnum, SYSTEMS_TFhirAssertOperatorCodesEnum);
     if jsn.has('path') or jsn.has('_path') then
-        result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
+        result.pathElement := ParseString(jsn.node['path'], jsn.vObj['_path']);{q}
     if jsn.has('resource') or jsn.has('_resource') then
-        result.resourceElement := ParseCode(jsn['resource'], jsn.vObj['_resource']);{q}
+        result.resourceElement := ParseCode(jsn.node['resource'], jsn.vObj['_resource']);{q}
     if jsn.has('response') or jsn.has('_response')  then
-      result.responseElement := parseEnum(jsn.path+'/response', jsn['response'], jsn.vObj['_response'], CODES_TFhirAssertResponseCodeTypesEnum, SYSTEMS_TFhirAssertResponseCodeTypesEnum);
+      result.responseElement := parseEnum(jsn.path+'/response', jsn.node['response'], jsn.vObj['_response'], CODES_TFhirAssertResponseCodeTypesEnum, SYSTEMS_TFhirAssertResponseCodeTypesEnum);
     if jsn.has('responseCode') or jsn.has('_responseCode') then
-        result.responseCodeElement := ParseString(jsn['responseCode'], jsn.vObj['_responseCode']);{q}
+        result.responseCodeElement := ParseString(jsn.node['responseCode'], jsn.vObj['_responseCode']);{q}
     if jsn.has('sourceId') or jsn.has('_sourceId') then
-        result.sourceIdElement := ParseId(jsn['sourceId'], jsn.vObj['_sourceId']);{q}
+        result.sourceIdElement := ParseId(jsn.node['sourceId'], jsn.vObj['_sourceId']);{q}
     if jsn.has('validateProfileId') or jsn.has('_validateProfileId') then
-        result.validateProfileIdElement := ParseId(jsn['validateProfileId'], jsn.vObj['_validateProfileId']);{q}
+        result.validateProfileIdElement := ParseId(jsn.node['validateProfileId'], jsn.vObj['_validateProfileId']);{q}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn.node['value'], jsn.vObj['_value']);{q}
     if jsn.has('warningOnly') or jsn.has('_warningOnly') then
-        result.warningOnlyElement := ParseBoolean(jsn['warningOnly'], jsn.vObj['_warningOnly']);{q}
+        result.warningOnlyElement := ParseBoolean(jsn.node['warningOnly'], jsn.vObj['_warningOnly']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptSetupActionAssert(json : TJSONWriter; name : string; elem : TFhirTestScriptSetupActionAssert; noObj : boolean = false);
@@ -27808,9 +27898,9 @@ procedure TFHIRJsonParser.ParseTestScriptTestProperties(jsn : TJsonObject; resul
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('metadata') then
         result.metadata := ParseTestScriptMetadata(jsn.vObj['metadata']);{q3}
     if jsn.has('action') then
@@ -27978,35 +28068,35 @@ procedure TFHIRJsonParser.ParseTestScriptProperties(jsn : TJsonObject; result : 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseTestScriptContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('useContext') then
       iterateArray(jsn.vArr['useContext'], result.useContextList, parseCodeableConcept);
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('metadata') then
         result.metadata := ParseTestScriptMetadata(jsn.vObj['metadata']);{q3}
     if jsn.has('multiserver') or jsn.has('_multiserver') then
-        result.multiserverElement := ParseBoolean(jsn['multiserver'], jsn.vObj['_multiserver']);{q}
+        result.multiserverElement := ParseBoolean(jsn.node['multiserver'], jsn.vObj['_multiserver']);{q}
     if jsn.has('fixture') then
       iterateArray(jsn.vArr['fixture'], result.fixtureList, parseTestScriptFixture);
     if jsn.has('profile') then
@@ -28140,7 +28230,7 @@ procedure TFHIRJsonParser.ParseValueSetContactProperties(jsn : TJsonObject; resu
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
 end;
@@ -28187,11 +28277,11 @@ procedure TFHIRJsonParser.ParseValueSetCodeSystemProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn.node['system'], jsn.vObj['_system']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('caseSensitive') or jsn.has('_caseSensitive') then
-        result.caseSensitiveElement := ParseBoolean(jsn['caseSensitive'], jsn.vObj['_caseSensitive']);{q}
+        result.caseSensitiveElement := ParseBoolean(jsn.node['caseSensitive'], jsn.vObj['_caseSensitive']);{q}
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseValueSetCodeSystemConcept);
 end;
@@ -28244,13 +28334,13 @@ procedure TFHIRJsonParser.ParseValueSetCodeSystemConceptProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
     if jsn.has('abstract') or jsn.has('_abstract') then
-        result.abstractElement := ParseBoolean(jsn['abstract'], jsn.vObj['_abstract']);{q}
+        result.abstractElement := ParseBoolean(jsn.node['abstract'], jsn.vObj['_abstract']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn.node['display'], jsn.vObj['_display']);{q}
     if jsn.has('definition') or jsn.has('_definition') then
-        result.definitionElement := ParseString(jsn['definition'], jsn.vObj['_definition']);{q}
+        result.definitionElement := ParseString(jsn.node['definition'], jsn.vObj['_definition']);{q}
     if jsn.has('designation') then
       iterateArray(jsn.vArr['designation'], result.designationList, parseValueSetCodeSystemConceptDesignation);
     if jsn.has('concept') then
@@ -28316,11 +28406,11 @@ procedure TFHIRJsonParser.ParseValueSetCodeSystemConceptDesignationProperties(js
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('language') or jsn.has('_language') then
-        result.languageElement := ParseCode(jsn['language'], jsn.vObj['_language']);{q}
+        result.languageElement := ParseCode(jsn.node['language'], jsn.vObj['_language']);{q}
     if jsn.has('use') then
         result.use := ParseCoding(jsn.vObj['use']);{q3}
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseString(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeValueSetCodeSystemConceptDesignation(json : TJSONWriter; name : string; elem : TFhirValueSetCodeSystemConceptDesignation; noObj : boolean = false);
@@ -28438,9 +28528,9 @@ procedure TFHIRJsonParser.ParseValueSetComposeIncludeProperties(jsn : TJsonObjec
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn.node['system'], jsn.vObj['_system']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseValueSetComposeIncludeConcept);
     if jsn.has('filter') then
@@ -28498,9 +28588,9 @@ procedure TFHIRJsonParser.ParseValueSetComposeIncludeConceptProperties(jsn : TJs
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn.node['display'], jsn.vObj['_display']);{q}
     if jsn.has('designation') then
       iterateArray(jsn.vArr['designation'], result.designationList, parseValueSetCodeSystemConceptDesignation);
 end;
@@ -28549,11 +28639,11 @@ procedure TFHIRJsonParser.ParseValueSetComposeIncludeFilterProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('property') or jsn.has('_property') then
-        result.property_Element := ParseCode(jsn['property'], jsn.vObj['_property']);{q}
+        result.property_Element := ParseCode(jsn.node['property'], jsn.vObj['_property']);{q}
     if jsn.has('op') or jsn.has('_op')  then
-      result.opElement := parseEnum(jsn.path+'/op', jsn['op'], jsn.vObj['_op'], CODES_TFhirFilterOperatorEnum, SYSTEMS_TFhirFilterOperatorEnum);
+      result.opElement := parseEnum(jsn.path+'/op', jsn.node['op'], jsn.vObj['_op'], CODES_TFhirFilterOperatorEnum, SYSTEMS_TFhirFilterOperatorEnum);
     if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseCode(jsn['value'], jsn.vObj['_value']);{q}
+        result.valueElement := ParseCode(jsn.node['value'], jsn.vObj['_value']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeValueSetComposeIncludeFilter(json : TJSONWriter; name : string; elem : TFhirValueSetComposeIncludeFilter; noObj : boolean = false);
@@ -28591,13 +28681,13 @@ procedure TFHIRJsonParser.ParseValueSetExpansionProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') or jsn.has('_identifier') then
-        result.identifierElement := ParseUri(jsn['identifier'], jsn.vObj['_identifier']);{q}
+        result.identifierElement := ParseUri(jsn.node['identifier'], jsn.vObj['_identifier']);{q}
     if jsn.has('timestamp') or jsn.has('_timestamp') then
-        result.timestampElement := ParseDateTime(jsn['timestamp'], jsn.vObj['_timestamp']);{q}
+        result.timestampElement := ParseDateTime(jsn.node['timestamp'], jsn.vObj['_timestamp']);{q}
     if jsn.has('total') or jsn.has('_total') then
-        result.totalElement := ParseInteger(jsn['total'], jsn.vObj['_total']);{q}
+        result.totalElement := ParseInteger(jsn.node['total'], jsn.vObj['_total']);{q}
     if jsn.has('offset') or jsn.has('_offset') then
-        result.offsetElement := ParseInteger(jsn['offset'], jsn.vObj['_offset']);{q}
+        result.offsetElement := ParseInteger(jsn.node['offset'], jsn.vObj['_offset']);{q}
     if jsn.has('parameter') then
       iterateArray(jsn.vArr['parameter'], result.parameterList, parseValueSetExpansionParameter);
     if jsn.has('contains') then
@@ -28661,19 +28751,19 @@ procedure TFHIRJsonParser.ParseValueSetExpansionParameterProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('valueCode') or jsn.has('_valueCode') then
-      result.value := parseCode(jsn['valueCode'], jsn.vObj['_valueCode']);
+      result.value := ParseCode(jsn.node['valueCode'], jsn.vObj['_valueCode']);
     if jsn.has('valueString') or jsn.has('_valueString') then
-      result.value := parseString(jsn['valueString'], jsn.vObj['_valueString']);
+      result.value := ParseString(jsn.node['valueString'], jsn.vObj['_valueString']);
     if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
-      result.value := parseBoolean(jsn['valueBoolean'], jsn.vObj['_valueBoolean']);
+      result.value := ParseBoolean(jsn.node['valueBoolean'], jsn.vObj['_valueBoolean']);
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
-      result.value := parseInteger(jsn['valueInteger'], jsn.vObj['_valueInteger']);
+      result.value := ParseInteger(jsn.node['valueInteger'], jsn.vObj['_valueInteger']);
     if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
-      result.value := parseDecimal(jsn['valueDecimal'], jsn.vObj['_valueDecimal']);
+      result.value := ParseDecimal(jsn.node['valueDecimal'], jsn.vObj['_valueDecimal']);
     if jsn.has('valueUri') or jsn.has('_valueUri') then
-      result.value := parseUri(jsn['valueUri'], jsn.vObj['_valueUri']);
+      result.value := ParseUri(jsn.node['valueUri'], jsn.vObj['_valueUri']);
 end;
 
 procedure TFHIRJsonComposer.ComposeValueSetExpansionParameter(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionParameter; noObj : boolean = false);
@@ -28737,15 +28827,15 @@ procedure TFHIRJsonParser.ParseValueSetExpansionContainsProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
-        result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
+        result.systemElement := ParseUri(jsn.node['system'], jsn.vObj['_system']);{q}
     if jsn.has('abstract') or jsn.has('_abstract') then
-        result.abstractElement := ParseBoolean(jsn['abstract'], jsn.vObj['_abstract']);{q}
+        result.abstractElement := ParseBoolean(jsn.node['abstract'], jsn.vObj['_abstract']);{q}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('code') or jsn.has('_code') then
-        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+        result.codeElement := ParseCode(jsn.node['code'], jsn.vObj['_code']);{q}
     if jsn.has('display') or jsn.has('_display') then
-        result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
+        result.displayElement := ParseString(jsn.node['display'], jsn.vObj['_display']);{q}
     if jsn.has('contains') then
       iterateArray(jsn.vArr['contains'], result.containsList, parseValueSetExpansionContains);
 end;
@@ -28808,37 +28898,37 @@ procedure TFHIRJsonParser.ParseValueSetProperties(jsn : TJsonObject; result : TF
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+        result.urlElement := ParseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('identifier') then
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+        result.versionElement := ParseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+        result.nameElement := ParseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+        result.experimentalElement := ParseBoolean(jsn.node['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+        result.publisherElement := ParseString(jsn.node['publisher'], jsn.vObj['_publisher']);{q}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseValueSetContact);
     if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+        result.dateElement := ParseDateTime(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('lockedDate') or jsn.has('_lockedDate') then
-        result.lockedDateElement := ParseDate(jsn['lockedDate'], jsn.vObj['_lockedDate']);{q}
+        result.lockedDateElement := ParseDate(jsn.node['lockedDate'], jsn.vObj['_lockedDate']);{q}
     if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+        result.descriptionElement := ParseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('useContext') then
       iterateArray(jsn.vArr['useContext'], result.useContextList, parseCodeableConcept);
     if jsn.has('immutable') or jsn.has('_immutable') then
-        result.immutableElement := ParseBoolean(jsn['immutable'], jsn.vObj['_immutable']);{q}
+        result.immutableElement := ParseBoolean(jsn.node['immutable'], jsn.vObj['_immutable']);{q}
     if jsn.has('requirements') or jsn.has('_requirements') then
-        result.requirementsElement := ParseString(jsn['requirements'], jsn.vObj['_requirements']);{q}
+        result.requirementsElement := ParseString(jsn.node['requirements'], jsn.vObj['_requirements']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
+        result.copyrightElement := ParseString(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('extensible') or jsn.has('_extensible') then
-        result.extensibleElement := ParseBoolean(jsn['extensible'], jsn.vObj['_extensible']);{q}
+        result.extensibleElement := ParseBoolean(jsn.node['extensible'], jsn.vObj['_extensible']);{q}
     if jsn.has('codeSystem') then
         result.codeSystem := ParseValueSetCodeSystem(jsn.vObj['codeSystem']);{q3}
     if jsn.has('compose') then
@@ -28952,33 +29042,33 @@ begin
     if jsn.has('product') then
         result.product := ParseCoding(jsn.vObj['product']);{q3}
     if jsn.has('eye') or jsn.has('_eye')  then
-      result.eyeElement := parseEnum(jsn.path+'/eye', jsn['eye'], jsn.vObj['_eye'], CODES_TFhirVisionEyeCodesEnum, SYSTEMS_TFhirVisionEyeCodesEnum);
+      result.eyeElement := parseEnum(jsn.path+'/eye', jsn.node['eye'], jsn.vObj['_eye'], CODES_TFhirVisionEyeCodesEnum, SYSTEMS_TFhirVisionEyeCodesEnum);
     if jsn.has('sphere') or jsn.has('_sphere') then
-        result.sphereElement := ParseDecimal(jsn['sphere'], jsn.vObj['_sphere']);{q}
+        result.sphereElement := ParseDecimal(jsn.node['sphere'], jsn.vObj['_sphere']);{q}
     if jsn.has('cylinder') or jsn.has('_cylinder') then
-        result.cylinderElement := ParseDecimal(jsn['cylinder'], jsn.vObj['_cylinder']);{q}
+        result.cylinderElement := ParseDecimal(jsn.node['cylinder'], jsn.vObj['_cylinder']);{q}
     if jsn.has('axis') or jsn.has('_axis') then
-        result.axisElement := ParseInteger(jsn['axis'], jsn.vObj['_axis']);{q}
+        result.axisElement := ParseInteger(jsn.node['axis'], jsn.vObj['_axis']);{q}
     if jsn.has('prism') or jsn.has('_prism') then
-        result.prismElement := ParseDecimal(jsn['prism'], jsn.vObj['_prism']);{q}
+        result.prismElement := ParseDecimal(jsn.node['prism'], jsn.vObj['_prism']);{q}
     if jsn.has('base') or jsn.has('_base')  then
-      result.baseElement := parseEnum(jsn.path+'/base', jsn['base'], jsn.vObj['_base'], CODES_TFhirVisionBaseCodesEnum, SYSTEMS_TFhirVisionBaseCodesEnum);
+      result.baseElement := parseEnum(jsn.path+'/base', jsn.node['base'], jsn.vObj['_base'], CODES_TFhirVisionBaseCodesEnum, SYSTEMS_TFhirVisionBaseCodesEnum);
     if jsn.has('add') or jsn.has('_add') then
-        result.addElement := ParseDecimal(jsn['add'], jsn.vObj['_add']);{q}
+        result.addElement := ParseDecimal(jsn.node['add'], jsn.vObj['_add']);{q}
     if jsn.has('power') or jsn.has('_power') then
-        result.powerElement := ParseDecimal(jsn['power'], jsn.vObj['_power']);{q}
+        result.powerElement := ParseDecimal(jsn.node['power'], jsn.vObj['_power']);{q}
     if jsn.has('backCurve') or jsn.has('_backCurve') then
-        result.backCurveElement := ParseDecimal(jsn['backCurve'], jsn.vObj['_backCurve']);{q}
+        result.backCurveElement := ParseDecimal(jsn.node['backCurve'], jsn.vObj['_backCurve']);{q}
     if jsn.has('diameter') or jsn.has('_diameter') then
-        result.diameterElement := ParseDecimal(jsn['diameter'], jsn.vObj['_diameter']);{q}
+        result.diameterElement := ParseDecimal(jsn.node['diameter'], jsn.vObj['_diameter']);{q}
     if jsn.has('duration') then
         result.duration := ParseQuantity(jsn.vObj['duration']);{q3}
     if jsn.has('color') or jsn.has('_color') then
-        result.colorElement := ParseString(jsn['color'], jsn.vObj['_color']);{q}
+        result.colorElement := ParseString(jsn.node['color'], jsn.vObj['_color']);{q}
     if jsn.has('brand') or jsn.has('_brand') then
-        result.brandElement := ParseString(jsn['brand'], jsn.vObj['_brand']);{q}
+        result.brandElement := ParseString(jsn.node['brand'], jsn.vObj['_brand']);{q}
     if jsn.has('notes') or jsn.has('_notes') then
-        result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
+        result.notesElement := ParseString(jsn.node['notes'], jsn.vObj['_notes']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeVisionPrescriptionDispense(json : TJSONWriter; name : string; elem : TFhirVisionPrescriptionDispense; noObj : boolean = false);
@@ -29067,7 +29157,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('dateWritten') or jsn.has('_dateWritten') then
-        result.dateWrittenElement := ParseDateTime(jsn['dateWritten'], jsn.vObj['_dateWritten']);{q}
+        result.dateWrittenElement := ParseDateTime(jsn.node['dateWritten'], jsn.vObj['_dateWritten']);{q}
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('prescriber') then

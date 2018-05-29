@@ -42,7 +42,8 @@ uses
   FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
   FHIR.Database.Manager,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations, FHIR.Tools.Session,
+  FHIR.Base.Common,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations, FHIR.Tools.Session, FHIR.Tools.Common,
   FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
   IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, FHIR.Snomed.Expressions;
@@ -264,6 +265,7 @@ var
   provider : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   s : String;
+  rw : TFHIRLookupOpResponseW;
   {$IFNDEF FHIR2}
   p : TFHIRLookupOpRespProperty_;
   {$ENDIF}
@@ -299,7 +301,20 @@ begin
       end;
       if (hasProp('display', true)) then
         resp.display := provider.Display(ctxt, lang);
-      provider.extendLookup(ctxt, lang, props, resp);
+      {$IFDEF FHIR3}
+      rw := TFHIRLookupOpResponse3.create(resp.Link);
+      {$ELSE}
+        {$IFDEF FHIR4}
+        rw := TFHIRLookupOpResponse4.create(resp.Link);
+        {$ELSE}
+        rw := TFHIRLookupOpResponse2.create(resp.Link);
+        {$ENDIF}
+      {$ENDIF}
+      try
+        provider.extendLookup(ctxt, lang, props, rw);
+      finally
+        rw.Free;
+      end;
     finally
       provider.Close(ctxt);
     end;

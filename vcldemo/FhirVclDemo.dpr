@@ -44,7 +44,7 @@ uses
   FHIR.Support.Lock in '..\reference-platform\support\FHIR.Support.Lock.pas',
   FHIR.R2.PathEngine in '..\reference-platform\dstu2\FHIR.R2.PathEngine.pas',
   FHIR.Tools.Client in '..\reference-platform\client\FHIR.Tools.Client.pas',
-  FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
+  FHIR.Support.WinInet in '..\reference-platform\support\FHIR.Support.WinInet.pas',
   FHIR.CdsHooks.Utilities in '..\reference-platform\support\FHIR.CdsHooks.Utilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
@@ -54,7 +54,6 @@ uses
   FHIR.R2.PathNode in '..\reference-platform\dstu2\FHIR.R2.PathNode.pas',
   FHIR.R2.Base in '..\reference-platform\dstu2\FHIR.R2.Base.pas',
   FHIR.R2.Parser in '..\reference-platform\dstu2\FHIR.R2.Parser.pas',
-  FHIR.Tools.XhtmlComp in '..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas',
   FHIR.R2.ParserBase in '..\reference-platform\dstu2\FHIR.R2.ParserBase.pas',
   FHIR.Client.Base in '..\reference-platform\client\FHIR.Client.Base.pas',
   FHIR.Client.HTTP in '..\reference-platform\client\FHIR.Client.HTTP.pas',
@@ -68,7 +67,7 @@ uses
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R2.Common in '..\reference-platform\dstu2\FHIR.R2.Common.pas',
@@ -77,7 +76,10 @@ uses
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
   FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
   FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
-  FHIR.Smart.LoginVCL in '..\reference-platform\client\FHIR.Smart.LoginVCL.pas' {SmartOnFhirLoginForm};
+  FHIR.Smart.LoginVCL in '..\reference-platform\client\FHIR.Smart.LoginVCL.pas' {SmartOnFhirLoginForm},
+  FHIR.R2.Operations in '..\reference-platform\dstu2\FHIR.R2.Operations.pas',
+  FHIR.R2.OpBase in '..\reference-platform\dstu2\FHIR.R2.OpBase.pas',
+  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas';
 
 {$R *.res}
 

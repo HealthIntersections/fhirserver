@@ -37,8 +37,6 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Parser,
   FHIR.Smart.Utilities;
-  {, FHIR.Tools.Parser
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities}
 
 type
   TCDSHooks = class
@@ -217,9 +215,6 @@ type
 function presentAsHtml(cards : TFslList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 
 implementation
-
-uses
-  FHIR.Tools.Client;
 
 const
   CARDS_HTML_HEAD =

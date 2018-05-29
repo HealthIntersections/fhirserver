@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Text, MarkDownProcessor, FHIR.Support.Lock, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Controllers, FHIR.Support.Json, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Smart.Utilities, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Smart.Utilities,
   FHIR.Client.base, FHIR.Client.HTTP,
   FHIR.CdsHooks.Utilities;
 
@@ -171,9 +171,6 @@ type
 function presentAsHtml(cards : TFslList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 
 implementation
-
-uses
-  FHIR.Tools.Client;
 
 const
   CARDS_HTML_HEAD =
@@ -686,9 +683,9 @@ procedure TCDSHooksManagerWorkThread.Execute;
 var
   body, rep : TFslBuffer;
   resp : TCDSHookResponse;
-  client : TFhirClient;
+//  client : TFhirClient;
 begin
-  SetThreadName('CDSHooks manager');
+(*  SetThreadName('CDSHooks manager');
   {$IFDEF MSWINDOWS}
   CoInitialize(nil); // though there's no reason internal reason to initialize
   {$ENDIF}
@@ -745,7 +742,7 @@ begin
     CoUninitialize;
     {$ENDIF}
   end;
-  SetThreadName('');
+  SetThreadName('');\*)
 end;
 
 function TCDSHooksManagerWorkThread.Link: TCDSHooksManagerWorkThread;
@@ -814,38 +811,5 @@ begin
 end;
 
 end.
-
-
-
-
-{function TFHIRHTTPCommunicator.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
-var
-  b : TBytes;
-  req, resp : TStream;
-  json : TJsonObject;
-  headers : THTTPHeaders;
-begin
-  headers.contentType := 'application/json';
-  b := TEncoding.UTF8.GetBytes(request.AsJson);
-  req := TMemoryStream.Create;
-  try
-    req.Write(b[0], length(b));
-    req.Position := 0;
-    resp := exchange(UrlPath([FURL, 'cds-services', id]), httpPost, req, headers);
-    try
-      json := TJSONParser.Parse(resp);
-      try
-        result := TCDSHookResponse.Create(json);
-      finally
-        json.Free;
-      end;
-    finally
-      resp.free;
-    end;
-  finally
-    req.Free;
-  end;
-end;
-}
 
 

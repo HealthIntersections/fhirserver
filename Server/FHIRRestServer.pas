@@ -3932,6 +3932,8 @@ var
   b : TStringBuilder;
   s : String;
 begin
+  bundle := nil;
+
   b := TStringBuilder.create;
   try
     for s in t.trim.Split(['|']) do
@@ -4720,6 +4722,107 @@ begin
   SetThreadName('');
 end;
 
+type
+  TFHIRBundleBuilderNDJson = class (TFHIRBundleBuilder)
+  private
+    FFileBase : String;
+    FFiles : TFslMap<TFslFile>;
+    function fileForType(rType : String) : TFslFile;
+    procedure writeResource(res : TFHIRResource); overload;
+    procedure writeResource(rType : String; cnt : TFslBuffer); overload;
+  public
+    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TFslMap<TFslFile>);
+    destructor Destroy; override;
+
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
+    function getBundle : TFHIRBundle; override;
+  end;
+
+{ TFHIRBundleBuilderNDJson }
+
+constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TFslMap<TFslFile>);
+begin
+  inherited Create(bundle);
+  FFileBase := fileBase;
+  FFiles := files;
+end;
+
+destructor TFHIRBundleBuilderNDJson.Destroy;
+begin
+  writeResource(FBundle);
+  Ffiles.Free;
+  inherited;
+end;
+
+function TFHIRBundleBuilderNDJson.fileForType(rType: String): TFslFile;
+begin
+  if not FFiles.TryGetValue(rType, result) then
+  begin
+    result := TFslFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
+    FFiles.Add(rType, result);
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.addEntry(entry: TFhirBundleEntry; first : boolean);
+begin
+  if (entry.Tag <> nil) and (entry.Tag is TFslBuffer) then
+    writeResource(entry.Tags['type'], entry.Tag as TFslBuffer)
+  else if entry.resource <> nil then
+    writeResource(entry.resource);
+  entry.Tag := nil;
+  entry.resource := nil;
+  if first then
+    FBundle.entryList.InsertItem(0, entry)
+  else
+    FBundle.entryList.AddItem(entry);
+end;
+
+function TFHIRBundleBuilderNDJson.getBundle: TFHIRBundle;
+begin
+  result := nil; // although we have bundle internally, we don't return it directly (only use ND-JSON is asymc mode, and return a list of files)
+end;
+
+function TFHIRBundleBuilderNDJson.moveToFirst(  res: TFhirResource): TFhirBundleEntry;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+
+procedure TFHIRBundleBuilderNDJson.writeResource(res: TFHIRResource);
+var
+  f : TFslFile;
+  json : TFHIRJsonComposer;
+  b : ansichar;
+begin
+  f := fileForType(res.fhirType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  json := TFHIRJsonComposer.Create(nil, OutputStyleNormal, 'en');
+  try
+    json.Compose(f, res);
+  finally
+    json.Free;
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TFslBuffer);
+var
+  f : TFslFile;
+  b : ansiChar;
+begin
+  f := fileForType(rType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  cnt.SaveToStream(f);
+end;
+
 { TAsyncTaskThread }
 
 procedure TAsyncTaskThread.callback(IntParam: Integer; StrParam: String);
@@ -4767,6 +4870,8 @@ var
   us, cs: String;
   ctxt : TOperationContext;
 begin
+  t := 0;
+
   SetThreadName('Server Async Thread');
   GJsHost := TJsHost.Create(FServer.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.Factory);
   try

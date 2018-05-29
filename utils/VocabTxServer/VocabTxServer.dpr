@@ -33,9 +33,7 @@ uses
   FMX.Forms,
   TxServerFormUnit in 'TxServerFormUnit.pas' {TxServerForm},
   FHIR.Ui.OSX in '..\..\Libraries\ui\FHIR.Ui.OSX.pas',
-  {$IFDEF MSWINDOWS}
-  FHIR.Support.WInInet in '..\..\reference-platform\support\FHIR.Support.WInInet.pas',
-  {$ENDIF }
+  FHIR.Support.WinInet in '..\..\reference-platform\support\FHIR.Support.WinInet.pas',
   FHIR.CdsHooks.Client in '..\..\reference-platform\support\FHIR.CdsHooks.Client.pas',
   FHIR.Support.Osx in '..\..\reference-platform\support\FHIR.Support.Osx.pas',
   FHIR.Support.Strings in '..\..\reference-platform\support\FHIR.Support.Strings.pas',
@@ -175,7 +173,7 @@ uses
   GoogleAnalyticsProvider in '..\..\Server\GoogleAnalyticsProvider.pas',
   FHIR.Ucum.IFace in '..\..\reference-platform\support\FHIR.Ucum.IFace.pas',
   FHIR.R4.Base in '..\..\reference-platform\r4\FHIR.R4.Base.pas',
-  FHIR.Tools.XhtmlComp in '..\..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas',
+  FHIR.Tools.XhtmlComp in '..\..\Server\FHIR.Tools.XhtmlComp.pas',
   FHIR.R4.ParserBase in '..\..\reference-platform\r4\FHIR.R4.ParserBase.pas',
   FHIR.R4.Parser in '..\..\reference-platform\r4\FHIR.R4.Parser.pas',
   FHIR.Client.Base in '..\..\reference-platform\client\FHIR.Client.Base.pas',
@@ -193,7 +191,7 @@ uses
   FHIR.Support.Service in '..\..\reference-platform\support\FHIR.Support.Service.pas',
   FHIR.Base.Factory in '..\..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Common in '..\..\reference-platform\base\FHIR.Base.Common.pas',
   FHIR.Base.Narrative in '..\..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\..\reference-platform\r4\FHIR.R4.Common.pas',

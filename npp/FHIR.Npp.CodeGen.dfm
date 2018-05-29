@@ -110,6 +110,7 @@ object CodeGeneratorForm: TCodeGeneratorForm
       Align = alClient
       Lines.Strings = (
         'Memo1')
+      ScrollBars = ssBoth
       TabOrder = 0
     end
   end

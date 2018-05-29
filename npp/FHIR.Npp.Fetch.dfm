@@ -12,48 +12,85 @@ object FetchResourceFrm: TFetchResourceFrm
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Scaled = False
+  OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 331
+    Top = 357
     Width = 724
     Height = 3
     Cursor = crVSplit
     Align = alTop
+    ExplicitTop = 331
     ExplicitWidth = 327
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 724
-    Height = 39
+    Height = 65
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
       724
-      39)
+      65)
     object Label1: TLabel
-      Left = 12
-      Top = 13
-      Width = 112
+      Left = 4
+      Top = 34
+      Width = 49
       Height = 13
-      Caption = 'Search Resource Type:'
+      Caption = 'Resource:'
+    end
+    object Label4: TLabel
+      Left = 16
+      Top = 8
+      Width = 36
+      Height = 13
+      Caption = 'Server:'
     end
     object cbxType: TComboBox
-      Left = 134
-      Top = 10
+      Left = 59
+      Top = 33
       Width = 576
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       OnChange = cbxTypeChange
+    end
+    object cbxServers: TComboBox
+      Left = 58
+      Top = 6
+      Width = 577
+      Height = 21
+      Style = csDropDownList
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 1
+      OnChange = cbxServersChange
+    end
+    object btnSerevrs: TButton
+      Left = 641
+      Top = 4
+      Width = 75
+      Height = 21
+      Anchors = [akTop, akRight]
+      Caption = 'Manage'
+      TabOrder = 2
+      OnClick = btnSerevrsClick
+    end
+    object edtFilter: TEdit
+      Left = 641
+      Top = 31
+      Width = 75
+      Height = 21
+      Hint = 'Filter'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
     end
   end
   object Panel2: TPanel
@@ -90,6 +127,7 @@ object FetchResourceFrm: TFetchResourceFrm
       Enabled = False
       ModalResult = 1
       TabOrder = 1
+      OnClick = btnOpenClick
     end
     object btnFirst: TButton
       Left = 10
@@ -128,7 +166,7 @@ object FetchResourceFrm: TFetchResourceFrm
       TabOrder = 5
     end
     object rbXml: TRadioButton
-      Left = 437
+      Left = 349
       Top = 14
       Width = 45
       Height = 17
@@ -137,7 +175,7 @@ object FetchResourceFrm: TFetchResourceFrm
       TabOrder = 6
     end
     object rbJson: TRadioButton
-      Left = 488
+      Left = 400
       Top = 14
       Width = 55
       Height = 17
@@ -147,10 +185,19 @@ object FetchResourceFrm: TFetchResourceFrm
       TabOrder = 7
       TabStop = True
     end
+    object RadioButton1: TRadioButton
+      Left = 453
+      Top = 14
+      Width = 96
+      Height = 17
+      Anchors = [akTop, akRight]
+      Caption = 'Server Format'
+      TabOrder = 8
+    end
   end
   object pnlCriteria: TPanel
     Left = 0
-    Top = 39
+    Top = 65
     Width = 724
     Height = 292
     Align = alTop
@@ -272,9 +319,9 @@ object FetchResourceFrm: TFetchResourceFrm
   end
   object Panel4: TPanel
     Left = 0
-    Top = 334
+    Top = 360
     Width = 724
-    Height = 320
+    Height = 294
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 8
@@ -283,7 +330,7 @@ object FetchResourceFrm: TFetchResourceFrm
       Left = 8
       Top = 8
       Width = 708
-      Height = 304
+      Height = 278
       Align = alClient
       Header.AutoSizeIndex = 0
       Header.Font.Charset = DEFAULT_CHARSET

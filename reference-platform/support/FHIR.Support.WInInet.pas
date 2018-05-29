@@ -1,4 +1,4 @@
-Unit FHIR.Support.WInInet;
+Unit FHIR.Support.WinInet;
 
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
@@ -30,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 Interface
 
+{$IFDEF MSWINDOWS}
 
 Uses
   Windows, SysUtils, Generics.Collections,
@@ -137,9 +138,11 @@ Type
 
   EFslWinInetClient = Class(EFslException);
 
+{$ENDIF}
 
 Implementation
 
+{$IFDEF MSWINDOWS}
 
 Const
   DLL_WININET = 'wininet.dll';
@@ -769,5 +772,6 @@ Initialization
   LoadDLL;
 Finalization
   UnloadDLL;
+{$ENDIF}
 End.
 

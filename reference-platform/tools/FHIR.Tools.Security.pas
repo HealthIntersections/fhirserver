@@ -34,16 +34,7 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  {$IFDEF FHIR2}
-  FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Context,
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Context,
-  {$ENDIF}
-  {$IFDEF FHIR4}
-  FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context,
-  {$ENDIF}
-  FHIR.Base.Scim;
+  FHIR.Base.Factory, FHIR.Base.Scim;
 
 Const
 //  SECURITY_BASE_URI = 'http://www.healthintersections.com.au/scim/entitlement/';
@@ -64,15 +55,15 @@ type
     FReadAll : boolean;
     FReadAllowed : TFslStringSet;
     FWriteAllowed : TFslStringSet;
-    FWorker : TFHIRWorkerContext;
+    FWorker : TFHIRWorkerContextWithFactory;
 
     function isNonSecure(name : String) : boolean;
-    procedure init(worker : TFHIRWorkerContext);
+    procedure init(worker : TFHIRWorkerContextWithFactory);
     procedure processScopes(scopes: TStringList; base : TFHIRSecurityRights; secure : boolean);
   public
-    constructor create(worker : TFHIRWorkerContext; user : TSCIMUser; secure : boolean); overload;
-    constructor create(worker : TFHIRWorkerContext; base : TSCIMUser; choice : String; secure : boolean); overload;
-    constructor create(worker : TFHIRWorkerContext; base : TSCIMUser; choice : TStringList; secure : boolean); overload;
+    constructor create(worker : TFHIRWorkerContextWithFactory; user : TSCIMUser; secure : boolean); overload;
+    constructor create(worker : TFHIRWorkerContextWithFactory; base : TSCIMUser; choice : String; secure : boolean); overload;
+    constructor create(worker : TFHIRWorkerContextWithFactory; base : TSCIMUser; choice : TStringList; secure : boolean); overload;
     destructor Destroy; override;
 
     property canGetUserInfo : boolean read FUserInfo;
@@ -106,7 +97,7 @@ end;
 
 { TFHIRSecurityRights }
 
-constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContext; user: TSCIMUser; secure : boolean);
+constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContextWithFactory; user: TSCIMUser; secure : boolean);
 var
   list : TStringList;
   i : integer;
@@ -128,7 +119,7 @@ begin
   end;
 end;
 
-constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContext; base: TSCIMUser; choice: String; secure : boolean);
+constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContextWithFactory; base: TSCIMUser; choice: String; secure : boolean);
 var
   user : TFHIRSecurityRights;
   list : TStringList;
@@ -149,7 +140,7 @@ begin
   end;
 end;
 
-constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContext; base: TSCIMUser; choice: TStringList; secure : boolean);
+constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContextWithFactory; base: TSCIMUser; choice: TStringList; secure : boolean);
 var
   user : TFHIRSecurityRights;
 begin
@@ -171,7 +162,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRSecurityRights.init(worker : TFHIRWorkerContext);
+procedure TFHIRSecurityRights.init(worker : TFHIRWorkerContextWithFactory);
 begin
   inc(gid);
   id := gid;

@@ -1,5 +1,32 @@
 unit FHIR.Cache.PackageManager;
 
+{
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
 interface
 
 uses
@@ -12,6 +39,27 @@ type
   TFHIRPackageKindSet = set of TFHIRPackageKind;
 
 type
+  TPackageDefinition = class (TFslObject)
+  private
+    FId : String;
+    FVersion : String;
+    FCanonical : String;
+    FDate : TDateTime;
+    FDescription : String;
+    FFHIRVersion : String;
+    FUrl: String;
+  public
+    function link : TPackageDefinition; overload;
+
+    property Id : String read FId write FId;
+    property Version : String read FVersion write FVersion;
+    property Canonical : String read FCanonical write FCanonical;
+    property Date : TDateTime read FDate write FDate;
+    property Description : String read FDescription write FDescription;
+    property FHIRVersion : String read FFHIRVersion write FFHIRVersion;
+    property Url : String read FUrl write FUrl;
+  end;
+
   TFHIRPackageObject = class abstract (TFslObject)
   public
     function summary : string; virtual;
@@ -141,6 +189,8 @@ const
   NAMES_TFHIRPackageDependencyStatus : Array [TFHIRPackageDependencyStatus] of String = ('?', 'ok', 'ver?', 'bad');
   ANALYSIS_VERSION = 2;
   CACHE_VERSION = 1;
+
+procedure addStandardPackages(list : TFslList<TPackageDefinition>);
 
 
 implementation
@@ -884,6 +934,60 @@ end;
 function TFHIRPackageObject.summary: string;
 begin
   result := '?';
+end;
+
+{ TPackageDefinition }
+
+function TPackageDefinition.link: TPackageDefinition;
+begin
+  result := TPackageDefinition(inherited link);
+end;
+
+procedure AddStandardPackages;
+var
+  p : TPackageDefinition;
+begin
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'hl7.fhir.core';
+    p.Version := '3.4.0';
+    p.Canonical := 'http://hl7.org/fhir';
+    p.Date := Now;
+    p.Description := 'FHIR Current Build';
+    p.FHIRVersion := '3.4.0';
+    p.Url := 'https://build.fhir.org/';
+    list.Add(p.Link);
+  finally
+    p.Free;
+  end;
+
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'hl7.fhir.core';
+    p.Version := '3.0.1';
+    p.Canonical := 'http://hl7.org/fhir';
+    p.Date := EncodeDate(2017, 4, 19);
+    p.Description := 'FHIR R3';
+    p.FHIRVersion := '3.0.1';
+    p.Url := 'https://hl7.org/fhir';
+    list.Add(p.Link);
+  finally
+    p.Free;
+  end;
+
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'hl7.fhir.core';
+    p.Version := '1.0.2';
+    p.Canonical := 'http://hl7.org/fhir';
+    p.Date := EncodeDate(2016, 5, 15);
+    p.Description := 'FHIR R2';
+    p.FHIRVersion := '1.0.2';
+    p.Url := 'https://hl7.org/fhir';
+    list.Add(p.Link);
+  finally
+    p.Free;
+  end;
 end;
 
 end.

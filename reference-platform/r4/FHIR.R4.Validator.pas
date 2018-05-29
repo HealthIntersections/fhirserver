@@ -38,7 +38,7 @@ Uses
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Common,
   FHIR.R4.PathNode, FHIR.R4.Context, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.PathEngine, FHIR.R4.ElementModel;
 
 
@@ -244,9 +244,7 @@ implementation
 
 uses
   FHIR.Base.Parser,
-  FHIR.R4.Common,
-  FHIR.R4.Utilities,
-  FHIR.R4.Profiles;
+  FHIR.R4.Common, FHIR.R4.Utilities, FHIR.R4.Profiles, FHIR.R4.Narrative;
 
 function nameMatches(name, tail: String): boolean;
 begin
@@ -3467,12 +3465,19 @@ end;
 function TFHIRValidator.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
 var
   o : TFhirOperationOutcomeIssueW;
+  gen : TFHIRNarrativeGenerator;
 begin
   result := TFhirOperationOutcome.create;
   try
     for o in ctxt.Issues do
-      result.issueList.Add(o.element.Link);
-    BuildNarrative(result, ctxt.OperationDescription);
+      result.issueList.add(o.Element.Link);
+    gen := TFHIRNarrativeGenerator.create(Context.Link);
+    try
+      gen.description := ctxt.OperationDescription;
+      gen.generate(result);
+    finally
+      gen.Free;
+    end;
     result.Link;
   finally
     result.free;

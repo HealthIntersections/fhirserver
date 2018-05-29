@@ -97,7 +97,7 @@ uses
   MsXmlParser in '..\reference-platform\support\MsXmlParser.pas',
   AdvMemories in '..\reference-platform\support\AdvMemories.pas',
   FHIR.Xml.Builder in '..\reference-platform\support\FHIR.Xml.Builder.pas',
-  FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
+  FHIR.Support.WinInet in '..\reference-platform\support\FHIR.Support.WinInet.pas',
   MsXmlBuilder in '..\reference-platform\support\MsXmlBuilder.pas',
   TextUtilities in '..\reference-platform\support\TextUtilities.pas',
   AdvVCLStreams in '..\reference-platform\support\AdvVCLStreams.pas',

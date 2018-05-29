@@ -34,14 +34,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} NppForms,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} FHIR.Npp.Form,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Buttons, Vcl.ComCtrls, System.ImageList, Vcl.ImgList,
   VirtualTrees,
   FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine,
+  FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine,
 //  FHIR.R3.Resources,  FHIR.R3.Types,  FHIR.R3.PathEngine, FHIR.R3.Profiles, FHIR.R3.PathNode, FHIR.R3.Context,
   FHIR.CdsHooks.Client,
-  pluginutilities, nppplugin;
+  FHIR.Npp.Utilities, FHIR.Npp.Base;
 
 const
   UMSG = WM_USER + 1;
@@ -100,10 +100,10 @@ type
     procedure btnNextClick(Sender: TObject);
     procedure btnSkipClick(Sender: TObject);
     procedure btnRunToMarkClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure vtExpressionsGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: TImageIndex);
-    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+      var Ghosted: Boolean; var ImageIndex: Integer);
   private
     { Private declarations }
     FResource : TFHIRResourceV;
@@ -124,6 +124,7 @@ type
     FStartLast : Int64;
     FTypes : TFHIRTypeDetailsV;
     FOutcome : TFHIRSelectionList;
+    FWorkerContext: TFHIRWorkerContextWithFactory;
 
     procedure ResetNode(Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 
@@ -140,9 +141,10 @@ type
     procedure Init(var Msg: TMessage); message UMSG;
     function WantStop(package : TFHIRPathDebugPackage) : boolean;
     procedure DoDebug(source : TFHIRPathEngineV; package : TFHIRPathDebugPackage);
+    procedure SetWorkerContext(const Value: TFHIRWorkerContextWithFactory);
 
   public
-    { Public declarations }
+    property WorkerContext : TFHIRWorkerContextWithFactory read FWorkerContext write SetWorkerContext;
   end;
 
 var
@@ -160,7 +162,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings, FHIR.Support.Text;
+  FHIR.Npp.Settings, FHIR.Support.Text;
 
 
 function getId(expr : TFHIRPathExpressionNodeV; op : boolean) : String;
@@ -228,6 +230,7 @@ begin
   FFactory.Free;
   FSkip.Free;
   FDone.Free;
+  FWorkerContext.Free;
   inherited;
 end;
 
@@ -305,6 +308,12 @@ procedure TFHIRPathDebuggerForm.PageControl1Change(Sender: TObject);
 begin
   if not FLayoutInProgress then
     Settings.DebuggerActivePage := PageControl1.ActivePageIndex;
+end;
+
+procedure TFHIRPathDebuggerForm.SetWorkerContext(const Value: TFHIRWorkerContextWithFactory);
+begin
+  FWorkerContext.Free;
+  FWorkerContext := Value;
 end;
 
 procedure TFHIRPathDebuggerForm.SetUp;
@@ -461,10 +470,7 @@ begin
     memo.text := def
   else
   begin
-    if (FFormat = ffJson) then
-      comp := TFHIRJsonComposer.Create(FServices.link, OutputStylePretty, 'en')
-    else
-      comp := TFHIRXmlComposer.Create(FServices.link, OutputStylePretty, 'en');
+    comp := FWorkerContext.Factory.makeComposer(FServices.link, FFormat, 'en', OutputStylePretty);
     try
       memo.Text := comp.Compose(name, obj)
     finally
@@ -548,7 +554,7 @@ begin
   SaveMarks;
 end;
 
-procedure TFHIRPathDebuggerForm.vtExpressionsGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: TImageIndex);
+procedure TFHIRPathDebuggerForm.vtExpressionsGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
 var
   p : PTreeDataPointer;
 begin
@@ -627,10 +633,25 @@ begin
     emBreak : result := package.Expression.tag = 1;
     emAbort : result := true; // though this should not happen
     emFinish : result := false;
+  else
+    result := false;
   end;
 end;
 
 end.
 
 
+{
+var
+  p : PTreeDataPointer;
+begin
+  p := vtExpressions.GetNodeData(node);
+  if (p.expr = FCurrent) and (p.isOp = FCurrentIsOp) then
+    ImageIndex := 2
+  else if FDone.indexof(getid(p.expr, p.isOp)) > -1 then
+    ImageIndex := 1
+  else
+    ImageIndex := 0;
+
+}
 

@@ -44,7 +44,7 @@ uses
   FHIR.Support.Strings in '..\..\reference-platform\support\FHIR.Support.Strings.pas',
   FHIR.Support.System in '..\..\reference-platform\support\FHIR.Support.System.pas',
   FHIR.Support.Text in '..\..\reference-platform\support\FHIR.Support.Text.pas',
-  FHIR.Support.WInInet in '..\..\reference-platform\support\FHIR.Support.WInInet.pas',
+  FHIR.Support.WinInet in '..\..\reference-platform\support\FHIR.Support.WinInet.pas',
   FHIR.Support.Xml in '..\..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\..\reference-platform\support\FHIR.Support.Zip.pas',
   FHIR.Ucum.IFace in '..\..\reference-platform\support\FHIR.Ucum.IFace.pas',
@@ -112,7 +112,8 @@ uses
   cdaHeaderForm in 'cdaHeaderForm.pas',
   IIEditor in 'IIEditor.pas' {IIEditForm},
   OIDCache in 'OIDCache.pas',
-  FHIR.Support.Fpc in '..\..\reference-platform\support\FHIR.Support.Fpc.pas';
+  FHIR.Support.Fpc in '..\..\reference-platform\support\FHIR.Support.Fpc.pas',
+  FHIR.Support.Osx in '..\..\reference-platform\support\FHIR.Support.Osx.pas';
 
 {$R *.RES}
 {$R WindowsXP.RES}

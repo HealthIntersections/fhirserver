@@ -509,7 +509,7 @@ End;
 
 function TFslThread.WaitTimeout(iTimeout: Cardinal): Boolean;
 begin
-  FInternal.WaitFor;// todo
+  result := FInternal.WaitFor > 0;// todo
 end;
 
 Procedure TFslThread.ExecuteYield(Const iTimeout: Cardinal);

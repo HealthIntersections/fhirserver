@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, NppPlugin;
+  Vcl.Dialogs, FHIR.Npp.Base;
 
 type
   TNppForm = class(TForm)
@@ -37,8 +37,8 @@ type
     { Public declarations }
     Npp: TNppPlugin;
     DefaultCloseAction: TCloseAction;
-    constructor Create(NppParent: TNppPlugin); overload;
-    constructor Create(AOwner: TNppForm); overload;
+    constructor Create(NppParent: TNppPlugin); reintroduce; overload;
+    constructor Create(AOwner: TNppForm); reintroduce; overload;
     destructor Destroy; override;
 //    procedure Show;
     function WantChildKey(Child: TControl; var Message: TMessage): Boolean; override;

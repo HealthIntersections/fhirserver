@@ -1,4 +1,5 @@
-unit WelcomeScreen;
+unit FHIR.Npp.About;
+
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -28,38 +29,36 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.ExtCtrls, FHIR.Support.Strings,
-  Vcl.ComCtrls, Vcl.CheckLst, Vcl.Imaging.pngimage, nppplugin;
+  Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
+  Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.PNGImage, Vcl.ExtCtrls, ShellApi,
+  FHIR.Npp.Form;
 
 type
-  TWelcomeScreenForm = class(TNppForm)
+  TAboutForm = class(TNppForm)
+    Button1: TButton;
     Panel1: TPanel;
-    btnOk: TButton;
-    chkWelcomeScreen: TCheckBox;
+    Image1: TImage;
     Panel2: TPanel;
-    Panel3: TPanel;
     Label1: TLabel;
     Label2: TLabel;
-    Image1: TImage;
-    Image2: TImage;
-    Label4: TLabel;
-    Label5: TLabel;
-    chkToolbox: TCheckBox;
-    Label6: TLabel;
-    Label7: TLabel;
-    chkVisualizer: TCheckBox;
-    Image3: TImage;
     Label3: TLabel;
-    Label8: TLabel;
-    chkValidation: TCheckBox;
-    Button1: TButton;
-    procedure btnOkClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    lblVersion: TLabel;
+    Label5: TLabel;
+    GroupBox1: TGroupBox;
+    lnkDoco: TLabel;
+    lnkIssue: TLabel;
+    lnkSpec: TLabel;
+    lnkUpdates: TLabel;
+    Label4: TLabel;
+    Memo1: TMemo;
+    procedure FormShow(Sender: TObject);
+    procedure lnkDocoClick(Sender: TObject);
+    procedure lnkIssueClick(Sender: TObject);
+    procedure lnkSpecClick(Sender: TObject);
+    procedure lnkUpdatesClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -67,43 +66,41 @@ type
   end;
 
 var
-  WelcomeScreenForm: TWelcomeScreenForm;
-
-procedure ShowWelcomeScreen(owner : TNppPlugin);
+  AboutForm: TAboutForm;
 
 implementation
 
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings, FHIR.Tools.Client, FHIR.Tools.Resources, SettingsForm;
+  FHIR.Npp.Plugin,
+  FHIR.Npp.Version;
 
-procedure ShowWelcomeScreen(owner : TNppPlugin);
+procedure TAboutForm.FormShow(Sender: TObject);
 begin
-  WelcomeScreenForm := TWelcomeScreenForm.Create(owner);
-  try
-    WelcomeScreenForm.ShowModal;
-  finally
-    FreeAndNil(WelcomeScreenForm);
-  end;
+  inherited;
+  lblVersion.Caption := 'Plugin Version 1.0.'+inttostr(buildcount);
 end;
 
-procedure TWelcomeScreenForm.btnOkClick(Sender: TObject);
+procedure TAboutForm.lnkDocoClick(Sender: TObject);
 begin
-  Settings.ToolboxVisible := chkToolbox.Checked;
-  Settings.NoWelcomeScreen := chkWelcomeScreen.Checked;
-  Settings.VisualiserVisible := chkVisualizer.Checked;
-  Settings.BackgroundValidation := chkValidation.Checked;
+  ShellExecute(0, 'OPEN', 'http://wiki.hl7.org/index.php?title=FHIR_Notepad%2B%2B_Plugin_Documentation', '', '', SW_SHOWNORMAL);
 end;
 
-procedure TWelcomeScreenForm.Button1Click(Sender: TObject);
+procedure TAboutForm.lnkIssueClick(Sender: TObject);
 begin
-  SettingForm := TSettingForm.Create(self);
-  try
-    SettingForm.ShowModal;
-  finally
-    FreeAndNil(SettingForm);
-  end;
+  ShellExecute(0, 'OPEN', 'https://github.com/grahamegrieve/fhirserver/issues', '', '', SW_SHOWNORMAL);
 end;
+
+procedure TAboutForm.lnkSpecClick(Sender: TObject);
+begin
+  ShellExecute(0, 'OPEN', 'http://hl7.org/fhir/index.html', '', '', SW_SHOWNORMAL);
+end;
+
+procedure TAboutForm.lnkUpdatesClick(Sender: TObject);
+begin
+  ShellExecute(0, 'OPEN', 'http://www.healthintersections.com.au/FhirServer/fhirnpp.htm', '', '', SW_SHOWNORMAL);
+end;
+
 
 end.

@@ -36,7 +36,6 @@ uses
   FHIR.R2.Types, FHIR.R2.Resources;
 
 type
-
   TFHIROpExtension = class (TFslObject)
   private
     FName : String;
@@ -72,42 +71,29 @@ type
   public
     constructor Create(); overload; override;
     constructor Create(params : TFhirParametersParameter); overload; virtual;
-    function asParams(name : String) : TFHIRParametersParameter; virtual;
+    function asParams(name : String) : TFHIRParametersParameter; virtual; abstract;
   end;
 
   TFHIROperationRequest = class (TFHIROperationBaseObject)
   public
     constructor Create(); overload; override;
-    procedure load(params : TFHIRParameters); overload; virtual;
-    procedure load(params : TParseMap); overload; virtual;
-    function asParams : TFHIRParameters; virtual;
+    procedure load(params : TFHIRParameters); overload; virtual; abstract;
+    procedure load(params : TParseMap); overload; virtual; abstract;
+    function asParams : TFHIRParameters; virtual; abstract;
   end;
 
   TFHIROperationResponse = class (TFHIROperationBaseObject)
   public
     constructor Create(); overload; override;
-    procedure load(params : TFHIRParameters); overload; virtual;
-    procedure load(params : TParseMap); overload; virtual;
-    function asParams : TFHIRParameters; virtual;
+    procedure load(params : TFHIRParameters); overload; virtual; abstract;
+    procedure load(params : TParseMap); overload; virtual; abstract;
+    function asParams : TFHIRParameters; virtual; abstract;
   end;
 
 
 implementation
 
 { TFHIROperationRequest }
-
-function TFHIROperationRequest.asParams: TFHIRParameters;
-begin
-  raise Exception.Create('Must be overriden');
-end;
-
-procedure TFHIROperationRequest.load(params: TFHIRParameters);
-begin
-end;
-
-procedure TFHIROperationRequest.load(params: TParseMap);
-begin
-end;
 
 constructor TFHIROperationRequest.create;
 begin
@@ -117,19 +103,6 @@ end;
 
 { TFHIROperationResponse }
 
-function TFHIROperationResponse.asParams: TFHIRParameters;
-begin
-  raise Exception.Create('Must be overriden');
-end;
-
-procedure TFHIROperationResponse.load(params: TFHIRParameters);
-begin
-end;
-
-procedure TFHIROperationResponse.load(params: TParseMap);
-begin
-end;
-
 constructor TFHIROperationResponse.create;
 begin
   inherited Create;
@@ -137,10 +110,6 @@ end;
 
 
 { TFHIROperationObject }
-
-function TFHIROperationObject.asParams(name : String): TFHIRParametersParameter;
-begin
-end;
 
 constructor TFHIROperationObject.create;
 begin

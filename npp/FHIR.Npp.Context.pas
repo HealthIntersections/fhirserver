@@ -36,7 +36,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative,
-  FHIR.Base.Factory, FHIR.Base.PathEngine;
+  FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Client.Base, FHIR.Base.Common;
 
 type
   TFHIRNppContext = class;
@@ -50,6 +50,7 @@ type
     FFactory : TFHIRFactory;
     FSource: string;
     FError: String;
+    FEngine: TFHIRPathEngineV;
     procedure SetWorker(const Value: TFHIRWorkerContextWithFactory);
   public
     constructor Create(factory : TFHIRFactory);
@@ -58,6 +59,7 @@ type
 
     property Worker : TFHIRWorkerContextWithFactory read FWorker write SetWorker;
     property Factory : TFHIRFactory read FFactory;
+    property Engine : TFHIRPathEngineV read FEngine;
 
     property source : string read FSource write FSource;
     property error : String read FError write FError;
@@ -69,12 +71,27 @@ type
     function makePathEngine : TFHIRPathEngineV;
   end;
 
+  TFHIRNppServerConnection = class (TFslObject)
+  private
+    FClient: TFhirClientV;
+    FStatement: TFHIRCapabilityStatementW;
+    procedure SetClient(const Value: TFhirClientV);
+    procedure SetStatement(const Value: TFHIRCapabilityStatementW);
+  public
+    destructor Destroy; override;
+    function link : TFHIRNppServerConnection; overload;
+
+    property client : TFhirClientV read FClient write SetClient;
+    property statement : TFHIRCapabilityStatementW read FStatement write SetStatement;
+  end;
+
   TFHIRNppContext = class (TFslObject)
   private
     FVersionList : Array[TFHIRVersion] of TFHIRNppVersionFactory;
     FVersionStatus : Array[TFHIRVersion] of TFHIRVersionLoadingStatus;
     FVersions: TFHIRVersionFactories;
     FCache : TFHIRPackageManager;
+    FConnections: TFslMap<TFHIRNppServerConnection>;
 
     function GetVersion(a: TFHIRVersion): TFHIRNppVersionFactory;
     procedure SetVersion(a: TFHIRVersion; const Value: TFHIRNppVersionFactory);
@@ -91,6 +108,8 @@ type
     property versions : TFHIRVersionFactories read FVersions;
     function versionInfo : String;
 
+    property connections : TFslMap<TFHIRNppServerConnection> read FConnections;
+
     property Cache : TFHIRPackageManager read FCache;
   end;
 
@@ -106,6 +125,7 @@ var
   v : TFHIRVersion;
 begin
   inherited;
+  FConnections := TFslMap<TFHIRNppServerConnection>.create;
   FVersions := TFHIRVersionFactories.Create;
 
   for v := low(TFHIRVersion) to High(TFHIRVersion) do
@@ -124,14 +144,12 @@ begin
   for v := low(TFHIRVersion) to High(TFHIRVersion) do
     FVersionList[v].Free;
   FVersions.Free;
+  FConnections.Free;
   inherited;
 end;
 
 function TFHIRNppContext.GetVersion(a: TFHIRVersion): TFHIRNppVersionFactory;
 begin
-  if (a = fhirVersionUnknown) then
-    a := COMPILED_FHIR_VERSION;
-
   if VersionLoading[a] <> vlsLoaded then
     raise Exception.Create('Version not loaded (yet?)');
   result := FVersionList[a];
@@ -139,9 +157,6 @@ end;
 
 function TFHIRNppContext.GetVersionLoading(a: TFHIRVersion): TFHIRVersionLoadingStatus;
 begin
-  if (a = fhirVersionUnknown) then
-    a := COMPILED_FHIR_VERSION;
-
  result := FVersionStatus[a];
 end;
 
@@ -174,7 +189,9 @@ begin
   result := '';
   for v := fhirVersionRelease2 to fhirVersionRelease4 do
     case VersionLoading[v] of
-      vlsNotSupported, vlsNotLoaded : ; // nothing
+      vlsNotSupported: ; // nothing
+      vlsNotLoaded :
+        result := result + 'R'+CODES_TFHIRVersion[v]+': Turned off'+#13#10;
       vlsLoading :
         result := result + 'R'+CODES_TFHIRVersion[v]+': Loading'+#13#10;
       vlsLoadingFailed : result := result + 'R'+CODES_TFHIRVersion[v]+': Loading from '+Version[v].source+' failed: '+Version[v].error+#13#10;
@@ -202,6 +219,7 @@ end;
 
 destructor TFHIRNppVersionFactory.Destroy;
 begin
+  FEngine.Free;
   FFactory.Free;
   FWorker.Free;
   inherited;
@@ -226,11 +244,39 @@ procedure TFHIRNppVersionFactory.SetWorker(const Value: TFHIRWorkerContextWithFa
 begin
   FWorker.Free;
   FWorker := Value;
+  FEngine.Free;
+  FEngine := Factory.makePathEngine(FWorker.link, nil);
 end;
 
 function TFHIRNppVersionFactory.makeValidator: TFHIRValidatorV;
 begin
   result := FFactory.makeValidator(FWorker.link);
+end;
+
+{ TFHIRNppServerConnection }
+
+destructor TFHIRNppServerConnection.Destroy;
+begin
+  FClient.Free;
+  FStatement.Free;
+  inherited;
+end;
+
+function TFHIRNppServerConnection.link: TFHIRNppServerConnection;
+begin
+  result := TFHIRNppServerConnection(inherited link);
+end;
+
+procedure TFHIRNppServerConnection.SetClient(const Value: TFhirClientV);
+begin
+  FClient.Free;
+  FClient := Value;
+end;
+
+procedure TFHIRNppServerConnection.SetStatement(const Value: TFHIRCapabilityStatementW);
+begin
+  FStatement.Free;
+  FStatement := Value;
 end;
 
 end.

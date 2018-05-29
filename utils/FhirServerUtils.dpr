@@ -48,7 +48,7 @@ uses
   FHIR.Support.Stream in '..\reference-platform\Support\FHIR.Support.Stream.pas',
   FHIR.Web.Parsers in '..\reference-platform\Support\FHIR.Web.Parsers.pas',
   FHIR.Support.Decimal in '..\reference-platform\Support\FHIR.Support.Decimal.pas',
-  FHIR.Support.WInInet in '..\reference-platform\Support\FHIR.Support.WInInet.pas',
+  FHIR.Support.WinInet in '..\reference-platform\Support\FHIR.Support.WinInet.pas',
   FHIR.Support.Json in '..\reference-platform\Support\FHIR.Support.Json.pas',
   FHIR.Ucum.Services in '..\Libraries\Ucum\FHIR.Ucum.Services.pas',
   FHIR.Ucum.Handlers in '..\Libraries\Ucum\FHIR.Ucum.Handlers.pas',
@@ -196,7 +196,7 @@ uses
   FHIR.R4.PathNode in '..\reference-platform\r4\FHIR.R4.PathNode.pas',
   FHIR.Ucum.IFace in '..\reference-platform\support\FHIR.Ucum.IFace.pas',
   FHIR.R4.ParserBase in '..\reference-platform\r4\FHIR.R4.ParserBase.pas',
-  FHIR.Tools.XhtmlComp in '..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas',
+  FHIR.Tools.XhtmlComp in '..\Server\FHIR.Tools.XhtmlComp.pas',
   FHIR.R4.Base in '..\reference-platform\r4\FHIR.R4.Base.pas',
   FHIR.R4.Parser in '..\reference-platform\r4\FHIR.R4.Parser.pas',
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
@@ -211,7 +211,7 @@ uses
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R4.Common in '..\reference-platform\r4\FHIR.R4.Common.pas',
@@ -220,7 +220,8 @@ uses
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
-  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas';
+  FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
+  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas';
 
 {$R *.res}
 

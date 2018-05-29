@@ -34,7 +34,7 @@ interface
 uses
   SysUtils,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.R4.Types, FHIR.R4.Resources;
 
 type
@@ -114,7 +114,7 @@ end;
 
 function TFHIRWorkerContext.expand(vs: TFhirValueSetW): TFHIRValueSetW;
 begin
-  result := TFhirValueSetW.Create(expand(vs.Resource as TFhirValueSet));
+  result := Factory.wrapValueSet(expand(vs.Resource as TFhirValueSet));
 end;
 
 function TFHIRWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSetW): TValidationResult;

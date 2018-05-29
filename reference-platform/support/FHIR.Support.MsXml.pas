@@ -7717,7 +7717,7 @@ Var
 implementation
 
 uses
-  FHIR.Support.WInInet,
+  FHIR.Support.WinInet,
   FHIR.Support.Strings;
 
 class function CoDOMDocument.Create: IXMLDOMDocument2;

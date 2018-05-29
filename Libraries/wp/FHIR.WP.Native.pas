@@ -4266,7 +4266,6 @@ Begin
   Attributes.Match['system-language'] := SystemLanguage;
   Attributes.Match['system-processors'] := IntegerToString(SystemProcessors);
   Attributes.Match['system-pageSize'] := IntegerToString(SystemPageSize);
-  Attributes.Match['system-CPU'] := RealToString(SystemProcessorFrequencyMHz / 1000);
   Attributes.Match['process-name'] := ProcessName;
 
   Attributes.Match['memory-length'] := IntegerToString(SystemMemory.Length);

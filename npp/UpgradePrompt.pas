@@ -33,8 +33,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.ExtCtrls, FHIR.Support.Strings,
-  Vcl.ComCtrls, Vcl.CheckLst, Vcl.Imaging.pngimage, nppplugin, shellapi;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FHIR.Npp.Form, Vcl.StdCtrls, Vcl.ExtCtrls, FHIR.Support.Strings,
+  Vcl.ComCtrls, Vcl.CheckLst, Vcl.Imaging.pngimage, FHIR.Npp.Base, shellapi;
 
 type
   TUpgradePromptForm = class(TNppForm)
@@ -64,7 +64,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings, FHIR.Tools.Client, FHIR.Tools.Resources, SettingsForm;
+  FHIR.Npp.Settings, FHIR.Npp.Configuration;
 
 procedure ShowUpgradePrompt(owner : TNppPlugin; link, notes : String);
 begin

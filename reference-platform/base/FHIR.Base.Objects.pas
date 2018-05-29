@@ -147,6 +147,7 @@ Type
 
   TExceptionType = (etNull, etInvalid, etStructure, etRequired, etValue, etInvariant, etSecurity, etLogin, etUnknown, etExpired, etForbidden, etSuppressed, etProcessing, etNotSupported, etDuplicate, etNotFound, etTooLong, etCodeInvalid, etExtension, etTooCostly, etBusinessRule, etConflict, etIncomplete, etTransient, etLockError, etNoStore, etException, etTimeout, etThrottled, etInformational);
   TIssueSeverity = (isNull, isFatal, isError, isWarning, isInformation);
+  TFhirIssueType = (itNull, itInvalid, itStructure, itRequired, itValue, itInvariant, itSecurity, itLogin, itUnknown, itExpired, itForbidden, itSuppressed, itProcessing, itNotSupported, itDuplicate, itNotFound, itTooLong, itCodeInvalid, itExtension, itTooCostly, itBusinessRule, itConflict, itIncomplete, itTransient, itLockError, itNoStore, itException, itTimeout, itThrottled, itInformational);
 
 
 //  TFhirTag = class (TFslName)
@@ -297,16 +298,22 @@ type
     procedure deletePropertyValue(name : String; list : TFHIRObjectList; value : TFHIRObject);
     procedure replacePropertyValue(name : String; list : TFHIRObjectList; existing, new : TFHIRObject);
 
-    // version delegation
-    function makeStringValue(v : String) : TFHIRObject; virtual;
-    function makeCodeValue(v : String) : TFHIRObject; virtual;
-    function GetVersion: TFHIRVersion; virtual;
+    function GetFhirObjectVersion: TFHIRVersion; virtual;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     function Link : TFHIRObject;
     function Clone : TFHIRObject; Overload;
     procedure Assign(oSource : TFslObject); override;
+
+    // version delegation. these are public for internal reasons, but there's never any reason to use these outside the library
+    function makeStringValue(v : String) : TFHIRObject; virtual; abstract;
+    function makeCodeValue(v : String) : TFHIRObject; virtual; abstract;
+    function hasExtension(url : String) : boolean; virtual;
+    function getExtensionString(url : String) : String; virtual;
+    function extensionCount(url : String) : integer; virtual;
+    function extensions(url : String) : TFslList<TFHIRObject>; virtual;
+    procedure addExtension(url : String; value : TFHIRObject); virtual;
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
 
@@ -316,11 +323,11 @@ type
     function createIterator(bInheritedProperties, bPrimitiveValues : Boolean) : TFHIRPropertyIterator;
 
     // create a class that is the correct type for the named property
-    function createPropertyValue(propName : string): TFHIRObject; virtual;
+    function createPropertyValue(propName : string): TFHIRObject; virtual; abstract;
     function getPropertyValue(propName : string): TFHIRProperty; virtual;
 
     // set the value of the property. For properties with cardinality > 1, append to the list, or use insertProperty
-    procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
+    procedure setProperty(propName : string; propValue : TFHIRObject); virtual; abstract;
     procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); virtual;
 
     // delete the value. propValue is used where cardinality > 1, to pick the correct item to delete
@@ -348,9 +355,11 @@ type
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
-    function fhirType : String; virtual;
-    function getId : String; virtual;
+    function fhirType : String; virtual; abstract;
+    function getId : String; virtual; abstract;
+    procedure setIdValue(id : String); virtual; abstract;
     function isPrimitive : boolean; virtual;
+    function isResource : boolean; virtual;
     function isEnum : boolean; virtual;
     function isType : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
@@ -377,8 +386,8 @@ type
 
     property noCompose : boolean read FNoCompose write FNoCompose; // used by various filtering techniques to ensure that an element is not rendered
 
-    Property version : TFHIRVersion read GetVersion;
-    Property id : String read Getid;
+    Property fhirObjectVersion : TFHIRVersion read GetFhirObjectVersion;
+    Property id : String read Getid write SetIdValue;
   end;
 
   TFHIRObjectClass = class of TFHIRObject;
@@ -428,6 +437,9 @@ type
     procedure SetProfileVersion(Value: TFHIRVersion); virtual;
   public
     function link : TFHIRResourceV; overload;
+    function isResource : boolean; override;
+    function isDomainResource : boolean; virtual;
+
     property profileVersion : TFHIRVersion read GetProfileVersion write SetProfileVersion;
   end;
 
@@ -448,14 +460,22 @@ type
     FValue : String;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
   public
     constructor create(value : String); Overload;
     constructor create(value : TDateTimeEx); Overload;
     constructor create(value : boolean); Overload;
     constructor create(value : TBytes); Overload;
+
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function fhirType : String; override;
+
     property value : string read FValue write FValue;
     function isEmpty : boolean; override;
     function getId : String; override;
+    procedure setIdValue(id : String); override;
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
   end;
@@ -570,6 +590,11 @@ begin
   result := TFHIRObject(Inherited Clone);
 end;
 
+procedure TFHIRObject.addExtension(url: String; value: TFHIRObject);
+begin
+  raise Exception.Create('Extensions are not supported on this object');
+end;
+
 procedure TFHIRObject.Assign(oSource: TFslObject);
 begin
   inherited;
@@ -620,7 +645,7 @@ begin
     result := '';
 end;
 
-function TFHIRObject.GetVersion: TFHIRVersion;
+function TFHIRObject.GetFhirObjectVersion: TFHIRVersion;
 begin
   result := fhirVersionUnknown;
 end;
@@ -641,25 +666,6 @@ begin
   // nothing to add here
 end;
 
-function TFHIRObject.makeCodeValue(v: String): TFHIRObject;
-begin
-  raise Exception.Create('Must override makeCodeValue in '+className);
-end;
-
-function TFHIRObject.makeStringValue(v: String): TFHIRObject;
-begin
-  raise Exception.Create('Must override makeCodeValue in '+className);
-end;
-
-function TFHIRObject.createPropertyValue(propName: string): TFHIRObject;
-begin
-  raise Exception.Create('The property "'+propName+' is unknown, or cannot be made directly"');
-end;
-
-procedure TFHIRObject.setProperty(propName : string; propValue: TFHIRObject);
-begin
-  raise Exception.Create('The property "'+propName+'" is unknown (setting value)"');
-end;
 
 procedure TFHIRObject.SetTag(const Value: TFslObject);
 begin
@@ -706,9 +712,14 @@ begin
   result := other <> nil;
 end;
 
-function TFHIRObject.fhirType: String;
+function TFHIRObject.extensionCount(url: String): integer;
 begin
-  raise Exception.Create('"fhirType" is not overridden in '+className);
+  result := 0;
+end;
+
+function TFHIRObject.extensions(url: String): TFslList<TFHIRObject>;
+begin
+  result := TFslList<TFHIRObject>.create;
 end;
 
 function TFHIRObject.GetCommentsStart: TFslStringList;
@@ -718,9 +729,9 @@ begin
   result := FCommentsStart;
 end;
 
-function TFHIRObject.getId: String;
+function TFHIRObject.getExtensionString(url: String): String;
 begin
-  raise Exception.Create('"getId" is not overridden in '+className);
+  result := '';
 end;
 
 procedure TFHIRObject.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
@@ -777,6 +788,11 @@ begin
   result := false;
 end;
 
+function TFHIRObject.isResource: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRObject.isType: boolean;
 begin
   result := false;
@@ -797,6 +813,11 @@ end;
 function TFHIRObject.hasType(t: String): boolean;
 begin
   result := t = fhirType;
+end;
+
+function TFHIRObject.hasExtension(url: String): boolean;
+begin
+  result := false;
 end;
 
 function TFHIRObject.hasPrimitiveValue: boolean;
@@ -845,6 +866,11 @@ begin
   self.value := String(EncodeBase64(@value[0], length(value)));
 end;
 
+function TFHIRObjectText.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+end;
+
 function TFHIRObjectText.equalsDeep(other: TFHIRObject): boolean;
 begin
   result := inherited equalsDeep(other) and (FValue <> TFHIRObjectText(other).FValue);
@@ -853,6 +879,11 @@ end;
 function TFHIRObjectText.equalsShallow(other: TFHIRObject): boolean;
 begin
   result := equalsDeep(other);
+end;
+
+function TFHIRObjectText.fhirType: String;
+begin
+  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.getId: String;
@@ -870,6 +901,25 @@ begin
   if (bInheritedProperties) Then
     inherited;
   oList.add(TFHIRProperty.create(self, 'value', 'string', false, nil, FValue));
+end;
+
+function TFHIRObjectText.makeCodeValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+end;
+
+function TFHIRObjectText.makeStringValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+end;
+
+procedure TFHIRObjectText.setIdValue(id: String);
+begin
+end;
+
+procedure TFHIRObjectText.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 { TFHIRObjectList }
@@ -1430,6 +1480,16 @@ begin
   result := fhirVersionUnknown;
 end;
 
+function TFHIRResourceV.isDomainResource: boolean;
+begin
+  result := false;
+end;
+
+function TFHIRResourceV.isResource: boolean;
+begin
+  result := true;
+end;
+
 function TFHIRResourceV.link: TFHIRResourceV;
 begin
   result := TFHIRResourceV(inherited Link);
@@ -1467,5 +1527,6 @@ end;
 
 
 End.
+
 
 

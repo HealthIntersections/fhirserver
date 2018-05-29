@@ -34,7 +34,7 @@ uses
   SysUtils, Classes, Variants, Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream,
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.DateTime, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common,
   FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.Common;
 
 
@@ -146,6 +146,8 @@ type
 
     function link : TFHIRMMElement; overload;
     procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement; elementProp : TFHIRMMProperty);
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -181,9 +183,11 @@ type
     function markLocation(start, end_ : TSourceLocation) : TFHIRMMElement;
 
     function isPrimitive : boolean; override;
-    function isResource : boolean;
+    function isResource : boolean; override;
     function hasPrimitiveValue : boolean; override;
     function fhirType : String; override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
     function primitiveValue : String; override;
     procedure getProperty(name : String; checkValid : boolean; list : TFslList<TFHIRObject>); override;
    	procedure listChildren(list : TFslList<TFHIRMMProperty>);
@@ -771,6 +775,11 @@ begin
   FIndex := -1;
 end;
 
+function TFHIRMMElement.createPropertyValue(propName: string): TFHIRObject;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
 destructor TFHIRMMElement.Destroy;
 begin
   FComments.Free;
@@ -970,6 +979,11 @@ begin
   result := self;
 end;
 
+function TFHIRMMElement.getId: String;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
 function TFHIRMMElement.getNamedChild(name: String): TFHIRMMElement;
 var
   c : TFHIRMMElement;
@@ -1086,6 +1100,16 @@ begin
       child.Value := value;
     end;
   raise DefinitionException.create('not done yet');
+end;
+
+procedure TFHIRMMElement.setIdValue(id: String);
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+procedure TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  raise Exception.Create('Not Done Yet');
 end;
 
 procedure TFHIRMMElement.SetXhtml(const Value: TFhirXHtmlNode);

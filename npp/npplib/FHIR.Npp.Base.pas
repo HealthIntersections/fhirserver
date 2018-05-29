@@ -17,13 +17,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 }
 
-unit nppplugin;
+unit FHIR.Npp.Base;
 
 interface
 
 uses
-  Windows,Messages,SciSupport,SysUtils,
-  Vcl.Dialogs,Classes,Vcl.Forms;
+  Windows, Messages, FHIR.Npp.Scintilla, SysUtils,
+  Vcl.Dialogs, Classes, Vcl.Forms;
 
 const
   FuncItemNameLen=64;
@@ -733,8 +733,8 @@ type
   TNppPlugin = class(TObject)
   private
     FuncArray: array of _TFuncItem;
-    function GetCurrentText: string;
-    procedure SetCurrentText(value : String);
+    function GetCurrentBytes: TBytes;
+    procedure SetCurrentBytes(value : TBytes);
     function GetCurrentName: String;
   protected
     PluginName: nppString;
@@ -770,9 +770,9 @@ type
     procedure DoStateChanged; virtual;
 
     // df
-    property CurrentText : String read GetCurrentText write SetCurrentText;
+    property CurrentBytes : TBytes read GetCurrentBytes write SetCurrentBytes;
     property currentFileName : String read GetCurrentName;
-    Procedure NewFile(content : String);
+    Procedure NewFile(content : TBytes);
     procedure SaveFileAs(filename : String);
 
     function DoOpen(filename: String): boolean; overload;
@@ -859,19 +859,17 @@ begin
   setLength(result, Pos(#0, result)-1);
 end;
 
-function TNppPlugin.GetCurrentText: string;
+function TNppPlugin.GetCurrentBytes: TBytes;
 var
   l : integer;
-  s: ansistring;
 begin
+  setLength(result, 0);
   l := SendMessage(self.NppData.ScintillaMainHandle, SCI_GETTEXTLENGTH, 0, 0)+1;
   if l > 102400 then
-    exit('');
+    exit();
 
-  SetLength(s, l);
-  SendMessage(self.NppData.ScintillaMainHandle, SCI_GETTEXT, l, LPARAM(PChar(s)));
-  Result := s;
-  setLength(result, length(result)-1);
+  SetLength(result, l);
+  SendMessage(self.NppData.ScintillaMainHandle, SCI_GETTEXT, l, LPARAM(Pointer(result)));
 end;
 
 procedure TNppPlugin.GetFileLine(var filename: String; var Line: Integer);
@@ -885,8 +883,8 @@ begin
   SetLength(s, StrLen(PChar(s)));
   filename := s;
 
-  r := SendMessage(self.NppData.ScintillaMainHandle, SciSupport.SCI_GETCURRENTPOS, 0, 0);
-  Line := SendMessage(self.NppData.ScintillaMainHandle, SciSupport.SCI_LINEFROMPOSITION, r, 0);
+  r := SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.Scintilla.SCI_GETCURRENTPOS, 0, 0);
+  Line := SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.Scintilla.SCI_LINEFROMPOSITION, r, 0);
 end;
 
 function TNppPlugin.GetFuncsArray(var FuncsCount: Integer): Pointer;
@@ -977,10 +975,10 @@ begin
 end;
 
 
-procedure TNppPlugin.NewFile(content: String);
+procedure TNppPlugin.NewFile(content: TBytes);
 begin
   SendMessage(self.NppData.NppHandle, NPPM_MENUCOMMAND, 0, IDM_FILE_NEW);
-  CurrentText := content;
+  CurrentBytes := content;
 end;
 
 // todo: why must this be an ansi string?
@@ -989,14 +987,11 @@ begin
   SendMessage(self.NppData.NppHandle, NPPM_SAVECURRENTFILEAS, 0, LPARAM(PChar(filename)));
 end;
 
-procedure TNppPlugin.SetCurrentText(value: String);
-var
-  v : AnsiString;
-  p : PAnsiChar;
+procedure TNppPlugin.SetCurrentBytes(value: TBytes);
 begin
-  v := value + #0;
-  p := PAnsiChar(v);
-  SendMessage(self.NppData.ScintillaMainHandle, SCI_SETTEXT, length(value)-1, LPARAM(p));
+  SetLength(value, length(Value)+1);
+  value[length(Value)-1] := 0;
+  SendMessage(self.NppData.ScintillaMainHandle, SCI_SETTEXT, length(value)-1, LPARAM(@value[0]));
 end;
 
 procedure TNppPlugin.SetInfo(NppData: TNppData);
@@ -1037,7 +1032,7 @@ var
 begin
   r := self.DoOpen(filename);
   if (r) then
-    SendMessage(self.NppData.ScintillaMainHandle, SciSupport.SCI_GOTOLINE, Line,0);
+    SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.Scintilla.SCI_GOTOLINE, Line,0);
   Result := r;
 end;
 

@@ -1,5 +1,4 @@
-unit FHIRPluginErrors;
-
+unit FHIR.Tools.VSChecker;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -29,13 +28,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+
 interface
 
 uses
-  ;
+  SysUtils, Classes,
+  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Tx.Service, FHIR.Base.Factory, FHIR.Tools.CodeSystemProvider;
 
-
-
+Type
+  TGetValueSetEvent = function (sender : TObject; url : String) : TFHIRValueSetW of object;
+  TGetProviderEvent = function (sender : TObject; url, version : String; params : TFslStringMap) : TCodeSystemProvider of object;
 
 implementation
 

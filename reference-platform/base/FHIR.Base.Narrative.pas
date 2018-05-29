@@ -1,6 +1,5 @@
 unit FHIR.Base.Narrative;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -29,7 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-
 interface
 
 uses
@@ -39,9 +37,13 @@ uses
 
 type
   TFHIRNarrativeGeneratorBase = class (TFslObject)
+  private
+    FDescription: String;
   public
     constructor create(context : TFHIRWorkerContextV); virtual;
-    procedure generate(res : TFHIRResourceV); virtual;
+    procedure generate(res : TFHIRResourceV); overload; virtual; abstract;
+
+    property description : String read FDescription write FDescription;
   end;
 
 implementation
@@ -51,11 +53,6 @@ implementation
 constructor TFHIRNarrativeGeneratorBase.create(context: TFHIRWorkerContextV);
 begin
   inherited Create;
-end;
-
-procedure TFHIRNarrativeGeneratorBase.generate(res: TFHIRResourceV);
-begin
-  raise Exception.Create('The method TFHIRNarrativeGeneratorBase.generate should never be called');
 end;
 
 end.

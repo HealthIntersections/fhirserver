@@ -4,11 +4,12 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, Vcl.ExtCtrls, UITypes,
-  {$IFDEF NPPUNICODE}NppForms, {$ENDIF}
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, Vcl.ExtCtrls, UITypes, Clipbrd,
+  {$IFDEF NPPUNICODE}FHIR.Npp.Form, {$ENDIF}
   FHIR.Support.Generics, FHIR.Web.Fetcher, FHIR.Support.Stream, FHIR.Support.System, FHIR.Support.Text,
   FHIR.Support.Shell,
-  FHIR.Cache.PackageManager, System.ImageList, Vcl.ImgList;
+  FHIR.Cache.PackageManager, System.ImageList, Vcl.ImgList, Vcl.Menus,
+  Vcl.ComCtrls;
 
 type
   TTreeDataPointer = record
@@ -31,6 +32,19 @@ type
     Label1: TLabel;
     RadioButton1: TRadioButton;
     RadioButton2: TRadioButton;
+    Button4: TButton;
+    Button5: TButton;
+    Button6: TButton;
+    Button7: TButton;
+    pmImport: TPopupMenu;
+    CurrentValidator1: TMenuItem;
+    FHIRR21: TMenuItem;
+    FHIRR31: TMenuItem;
+    FHIRR41: TMenuItem;
+    USCoreCurrentStable1: TMenuItem;
+    pbDownload: TProgressBar;
+    btnCancel: TButton;
+    lblDownload: TLabel;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -53,16 +67,33 @@ type
     procedure Button3Click(Sender: TObject);
     procedure lblFolderClick(Sender: TObject);
     procedure RadioButton2Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+    procedure Panel1Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure CurrentValidator1Click(Sender: TObject);
+    procedure FHIRR21Click(Sender: TObject);
+    procedure FHIRR31Click(Sender: TObject);
+    procedure FHIRR41Click(Sender: TObject);
+    procedure USCoreCurrentStable1Click(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     FCache : TFHIRPackageManager;
     FPackages : TFslList<TFHIRPackageInfo>;
     FUserMode: boolean;
     FLoading : boolean;
+    FStop : boolean;
+    FGoUrl: String;
     procedure LoadPackages;
     procedure selChanged;
     procedure changeMode;
+    procedure importUrl(sender : TObject; url: String);
+    procedure fetchProgress(sender : TObject; progress : integer);
   public
     property UserMode : boolean read FUserMode write FUserMode;
+    property GoUrl : String read FGoUrl write FGoUrl;
   end;
 
 var
@@ -71,6 +102,13 @@ var
 implementation
 
 {$R *.dfm}
+
+uses FHIR.Cache.PackageBrowser;
+
+procedure TPackageCacheForm.btnCancelClick(Sender: TObject);
+begin
+  FStop := true;
+end;
 
 procedure TPackageCacheForm.btnDeleteClick(Sender: TObject);
 var
@@ -127,56 +165,159 @@ begin
   end;
 end;
 
-procedure TPackageCacheForm.Button3Click(Sender: TObject);
+procedure TPackageCacheForm.importUrl(sender : TObject; url : String);
 var
-  url : String;
   fetch : TInternetFetcher;
   ok : boolean;
+  aborted : boolean;
+  s : String;
 begin
-  if InputQuery('Fetch Package from Web', 'Enter URL:', url) then
-  begin
-    Cursor := crHourGlass;
+  FStop := false;
+  pbDownload.Visible := true;
+  pbDownload.Position := 0;
+  lblDownload.Visible := true;
+  lblDownload.Caption := 'Installing '+url;
+  lblFolder.visible := false;
+  btnCancel.Visible := true;
+  try
+    Application.ProcessMessages;
+    fetch := TInternetFetcher.Create;
     try
-      fetch := TInternetFetcher.Create;
+      fetch.onProgress := fetchProgress;
+      fetch.Buffer := TFslBuffer.create;
+      aborted := false;
+      s := '';
+      ok := false;
       try
-        fetch.Buffer := TFslBuffer.create;
-        ok := false;
-        try
-          fetch.URL := URLPath([url, 'package.tgz']);
-          fetch.Fetch;
-          ok := fetch.ContentType = 'application/x-compressed';
-        except
-        end;
-        if not ok then
+        fetch.URL := URLPath([url, 'package.tgz']);
+        fetch.Fetch;
+        ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
+      except
+        on e : exception do
         begin
-          try
-            fetch.URL := url;
-            fetch.Fetch;
-            ok := fetch.ContentType = 'application/x-compressed';
-          except
+          s := e.Message;
+          aborted := e is EAbort;
+        end;
+      end;
+      if not ok then
+      begin
+        try
+          fetch.URL := url;
+          fetch.Fetch;
+          ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
+        except
+          on e : exception do
+          begin
+            s := e.Message;
+            aborted := e is EAbort;
           end;
         end;
-        if not ok then
-          raise Exception.Create('Unable to find package for '+url);
+      end;
+      if not ok  and not aborted then
+        raise Exception.Create('Unable to find package for '+url+': '+s);
+      if ok then
+      begin
         FCache.Import(fetch.Buffer.AsBytes,
           function (msg : String) : boolean
           begin
             result := MessageDlg(msg, mtConfirmation, mbYesNo, 0) = mrYes;
           end);
         LoadPackages;
-      finally
-        fetch.Free;
       end;
     finally
-      Cursor := crDefault;
+      fetch.Free;
     end;
+  finally
+    pbDownload.Visible := false;
+    btnCancel.Visible := false;
+    lblDownload.Visible := false;
+    lblFolder.visible := true;
   end;
+end;
+
+procedure TPackageCacheForm.Button3Click(Sender: TObject);
+var
+  url : String;
+begin
+  if InputQuery('Fetch Package from Web', 'Enter URL:', url) then
+    importUrl(nil, url);
+end;
+
+procedure TPackageCacheForm.Button4Click(Sender: TObject);
+begin
+  PackageFinderForm := TPackageFinderForm.create(self);
+  try
+    PackageFinderForm.OnLoadUrl := importUrl;
+    PackageFinderForm.ShowModal;
+  finally
+    PackageFinderForm.Free;
+  end;
+end;
+
+procedure TPackageCacheForm.Button5Click(Sender: TObject);
+var
+  pt : TPoint;
+begin
+  pt.X := Panel3.Left + Button5.left;
+  pt.y := Panel3.Top + Button5.top + Button5.Height;
+  pt := ClientToScreen(pt);
+  pmImport.Popup(pt.X, pt.Y);
+end;
+
+procedure TPackageCacheForm.Button6Click(Sender: TObject);
+begin
+  LoadPackages;
+end;
+
+procedure TPackageCacheForm.Button7Click(Sender: TObject);
+begin
+  Clipboard.Open;
+  Clipboard.AsText := FCache.Report;
+  Clipboard.Close;
 end;
 
 procedure TPackageCacheForm.changeMode;
 begin
   FUserMode := not FUserMode;
   FormShow(nil);
+end;
+
+procedure TPackageCacheForm.CurrentValidator1Click(Sender: TObject);
+begin
+  importUrl(nil, 'http://build.fhir.org/validator.tgz');
+end;
+
+procedure TPackageCacheForm.fetchProgress(sender: TObject; progress: integer);
+begin
+  pbDownload.Position := progress;
+  pbDownload.Invalidate;
+  Application.ProcessMessages;
+  if FStop then
+    abort;
+end;
+
+procedure TPackageCacheForm.FHIRR21Click(Sender: TObject);
+begin
+  importUrl(nil, 'http://hl7.org/fhir/DSTU2');
+end;
+
+procedure TPackageCacheForm.FHIRR31Click(Sender: TObject);
+begin
+  importUrl(nil, 'http://hl7.org/fhir/STU3');
+end;
+
+procedure TPackageCacheForm.FHIRR41Click(Sender: TObject);
+begin
+  importUrl(nil, 'http://build.fhir.org/');
+end;
+
+procedure TPackageCacheForm.FormActivate(Sender: TObject);
+begin
+  if GoUrl <> '' then
+  begin
+    importUrl(nil, GoURL);
+    ModalResult := mrClose;
+  end;
 end;
 
 procedure TPackageCacheForm.FormCreate(Sender: TObject);
@@ -225,6 +366,11 @@ begin
   vtPackages.Invalidate;
 end;
 
+procedure TPackageCacheForm.Panel1Click(Sender: TObject);
+begin
+  TFileLauncher.Open(FCache.Folder);
+end;
+
 procedure TPackageCacheForm.RadioButton2Click(Sender: TObject);
 begin
   if not FLoading then
@@ -245,6 +391,11 @@ begin
       ok := true;
   end;
   btnDelete.Enabled := ok;
+end;
+
+procedure TPackageCacheForm.USCoreCurrentStable1Click(Sender: TObject);
+begin
+  importUrl(nil, 'http://hl7.org/fhir/us/core');
 end;
 
 procedure TPackageCacheForm.vtPackagesAddToSelection(Sender: TBaseVirtualTree;

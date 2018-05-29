@@ -34,8 +34,8 @@ uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.XVersion.Resources,
-  FHIR.Client.Base{, FHIR.Client.Threaded{, FHIR.Client.HTTP};
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml,
+  FHIR.Client.Base;
 
 type
   TFHIRFactory = class (TFslObject)
@@ -45,31 +45,42 @@ type
     function versionString : String; virtual;
     function description : String; virtual;
 
-    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; virtual;
-    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; virtual;
-    function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; virtual;
-    function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; virtual;
-    function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; virtual;
-    function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; virtual;
+    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; virtual; abstract;
+    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
+    function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; virtual; abstract;
+    function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; virtual; abstract;
+    function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; virtual; abstract;
+    function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; virtual; abstract;
     function createPropertyList(name : String; bPrimitiveValues : Boolean) : TFHIRPropertyList; Virtual;
 
     function makeClient(worker : TFHIRWorkerContextV; url : String; fmt : TFHIRFormat) : TFhirClientV; overload;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat) : TFhirClientV; overload;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal) : TFhirClientV; overload;
-    function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; virtual; // because using indy is necessary if you're writing a server, or unixready code
-    function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; virtual;
+    function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; virtual;  abstract;// because using indy is necessary if you're writing a server, or unixready code
+    function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; virtual; abstract;
 
-    function makeByName(const name : String) : TFHIRObject; virtual;
-    function makeBoolean(b : boolean): TFHIRObject; virtual;
-    function makeCode(s : string) : TFHIRObject; virtual;
-    function makeString(s : string) : TFHIRObject; virtual;
-    function makeInteger(s : string) : TFHIRObject; virtual;
-    function makeDecimal(s : string) : TFHIRObject; virtual;
-    function makeBase64Binary(s : string) : TFHIRObject; virtual; // must DecodeBase64
-    function makeParameters : TFHIRParametersW; virtual;
+    function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
+    function resetXhtml(r : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
 
-    function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual;
-    function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; virtual;
+    procedure checkNoImplicitRules(res : TFHIRObject; method, param : string); virtual; abstract;
+    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); virtual; abstract;
+
+    function makeByName(const name : String) : TFHIRObject; virtual; abstract;
+    function makeBoolean(b : boolean): TFHIRObject; virtual; abstract;
+    function makeCode(s : string) : TFHIRObject; virtual; abstract;
+    function makeString(s : string) : TFHIRObject; virtual; abstract;
+    function makeInteger(s : string) : TFHIRObject; virtual; abstract;
+    function makeDecimal(s : string) : TFHIRObject; virtual; abstract;
+    function makeBase64Binary(s : string) : TFHIRObject; virtual;  abstract;// must DecodeBase64
+    function makeParameters : TFHIRParametersW; virtual; abstract;
+
+    function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;
+    function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; virtual; abstract;
+    function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; virtual; abstract;
+    function wrapCodeSystem(r : TFHIRResourceV) : TFhirCodeSystemW; virtual; abstract;
+    function wrapExtension(o : TFHIRObject) : TFhirExtensionW; virtual; abstract;
+    function wrapCoding(o : TFHIRObject) : TFhirCodingW; virtual; abstract;
+    function wrapOperationOutcome(r : TFHIRResourceV) : TFhirOperationOutcomeW; virtual; abstract;
   end;
 
   TFHIRVersionFactories = class (TFslObject)
@@ -91,7 +102,7 @@ type
   private
     FFactory : TFHIRFactory;
   public
-    constructor Create(factory : TFHIRFactory); virtual;
+    constructor Create(factory : TFHIRFactory); overload; virtual;
     destructor Destroy; override;
 
     function link : TFHIRWorkerContextWithFactory;
@@ -99,27 +110,22 @@ type
     property Factory : TFHIRFactory read FFactory;
 
     procedure loadResourceJson(rType, id : String; json : TStream); override;
-    procedure seeResource(res : TFHIRResourceV); virtual;
+    procedure seeResource(res : TFHIRResourceV); overload; virtual;
 
     function getResourceNames : TFslStringSet; virtual; abstract;
-    function fetchResource(rType : String; url : String) : TFhirResourceV; virtual; abstract;
-    function expand(vs : TFhirValueSetW) : TFHIRValueSetW; virtual; abstract;
-    function supportsSystem(system, version : string) : boolean; virtual; abstract;
+    function fetchResource(rType : String; url : String) : TFhirResourceV; overload; virtual; abstract;
+    function expand(vs : TFhirValueSetW) : TFHIRValueSetW; overload; virtual; abstract;
+    function supportsSystem(system, version : string) : boolean; overload; virtual; abstract;
     function validateCode(system, version, code, display : String) : TValidationResult; overload; virtual; abstract;
     function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; virtual; abstract;
-    function allResourceNames : TArray<String>; virtual; abstract;
-    function nonSecureResourceNames : TArray<String>; virtual; abstract;
+    function allResourceNames : TArray<String>; overload; virtual; abstract;
+    function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
   end;
 
 implementation
 
 { TFHIRFactory }
-
-function TFHIRFactory.createFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makePathEngine should never be called');
-end;
 
 function TFHIRFactory.description: String;
 begin
@@ -158,100 +164,14 @@ begin
   result := makeClient(worker, url, kind, fmt, timeout, '');
 end;
 
-function TFHIRFactory.makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeClient should never be called');
-end;
-
-function TFHIRFactory.makeBase64Binary(s: string): TFHIRObject;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeBase64Binary should never be called');
-end;
-
-function TFHIRFactory.makeBoolean(b: boolean): TFHIRObject;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeBoolean should never be called');
-end;
-
-function TFHIRFactory.makeByName(const name: String): TFHIRObject;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeByName should never be called');
-end;
-
-function TFHIRFactory.makeClientThreaded(worker: TFHIRWorkerContextV; internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeClientThreaded should never be called');
-end;
-
-function TFHIRFactory.makeCode(s: string): TFHIRObject;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeCode should never be called');
-end;
-
-function TFHIRFactory.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; lang: String; style: TFHIROutputStyle): TFHIRComposer;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeComposer should never be called');
-end;
-
-function TFHIRFactory.makeDecimal(s: string): TFHIRObject;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeDecimal should never be called');
-end;
-
-function TFHIRFactory.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeGenerator should never be called');
-end;
-
-function TFHIRFactory.makeInteger(s: string): TFHIRObject;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeInteger should never be called');
-end;
-
-function TFHIRFactory.makeParameters: TFHIRParametersW;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeParameters should never be called');
-end;
-
-function TFHIRFactory.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; lang: String): TFHIRParser;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeComposer should never be called');
-end;
-
-function TFHIRFactory.makePathEngine(worker: TFHIRWorkerContextV; ucum : TUcumServiceInterface): TFHIRPathEngineV;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makePathEngine should never be called');
-end;
-
-function TFHIRFactory.makeString(s: string): TFHIRObject;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeString should never be called');
-end;
-
-function TFHIRFactory.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.makeComposer should never be called');
-end;
-
 function TFHIRFactory.version: TFHIRVersion;
 begin
   result := fhirVersionUnknown;
 end;
 
-
 function TFHIRFactory.versionString: String;
 begin
   result := '??';
-end;
-
-function TFHIRFactory.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.wrapCapabilityStatement should never be called');
-end;
-
-function TFHIRFactory.wrapStructureDefinition(r: TFHIRResourceV): TFhirStructureDefinitionW;
-begin
-  raise Exception.Create('The implementation of TFHIRFactory.wrapCapabilityStatement should never be called');
 end;
 
 { TFHIRVersionFactories }

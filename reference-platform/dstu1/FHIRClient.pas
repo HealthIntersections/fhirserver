@@ -38,7 +38,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings, GuidSupport,
   IdHTTP, IdSSLOpenSSL, IdSoapMime,
-  FHIR.Support.Objects, AdvBuffers, FHIR.Support.WInInet, AdvStringMatches,
+  FHIR.Support.Objects, AdvBuffers, FHIR.Support.WinInet, AdvStringMatches,
   FHIRAtomFeed, FHIR.Tools.Parser, FHIR.Tools.Resources, FHIR.Tools.Utilities,
   FHIR.Tools.Constants, FHIR.Tools.Session, FHIR.Base.Parser, FHIR.Base.Objects;
 

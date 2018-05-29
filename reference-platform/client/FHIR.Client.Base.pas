@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.XVersion.Resources;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Common;
 
 Type
   EFHIRClientException = class (Exception)
@@ -93,7 +93,7 @@ Type
   TFHIRClientLogger = class (TFslObject)
   public
     function Link : TFHIRClientLogger; overload;
-    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);  virtual;
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);  virtual; abstract;
   end;
 
   TNullLogger = class (TFHIRClientLogger)
@@ -113,9 +113,8 @@ Type
   TFHIRClientCommunicator = class (TFslObject)
   protected
     FClient : TFHIRClientV; // not linked
-    FBundleHandler : TBundleHandlerClass;
     FHeaders : THTTPHeaders;
-    function address : String; virtual; // result from the communicator
+    function address : String; virtual;  abstract; // result from the communicator
     function getResourceVersionId(res : TFHIRResourceV) : string;
     procedure notify(msg : String);
     function ProvenanceString : string;
@@ -123,23 +122,23 @@ Type
   public
 
     // version independent API
-    function conformanceV(summary : boolean) : TFHIRResourceV; virtual;
-    function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; virtual;
-    function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; virtual;
-    function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; virtual;
-    function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; virtual;
-    procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String); virtual;
-    function searchV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; overload; virtual;
-    function searchPostV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList; resource : TFHIRResourceV) : TFHIRResourceV; virtual;
-    function searchAgainV(link : String) : TFHIRResourceV; overload; virtual;
-    function operationV(atype : TFHIRResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual;
-    function operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual;
-    function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; virtual;
+    function conformanceV(summary : boolean) : TFHIRResourceV; virtual; abstract;
+    function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
+    function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; virtual; abstract;
+    function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; virtual; abstract;
+    function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; virtual; abstract;
+    procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String); virtual; abstract;
+    function searchV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; overload; virtual; abstract;
+    function searchPostV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList; resource : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
+    function searchAgainV(link : String) : TFHIRResourceV; overload; virtual; abstract;
+    function operationV(atype : TFHIRResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual; abstract;
+    function operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual; abstract;
+    function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; virtual; abstract;
 
     // special case that gives direct access to the communicator...
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; virtual;
-    procedure terminate; virtual; // only works for some communicators
+    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual; abstract;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; virtual; abstract;
+    procedure terminate; virtual;  abstract; // only works for some communicators
   end;
 
   TFhirHTTPClientStatusEvent = procedure (client : TObject; details : String) of Object;
@@ -158,29 +157,31 @@ Type
     FLang : string;
     FSmartToken: TClientAccessToken;
     FLastStatusMsg: String;
+    FBundleFactory : TFHIRBundleWClass;
     procedure SetProvenance(const Value: TFHIRResourceV);
     procedure SetSmartToken(const Value: TClientAccessToken);
     function encodeParams(params: TStringList): String;
     function GetHeaders: THTTPHeaders;
   protected
     procedure SetLogger(const Value: TFHIRClientLogger); virtual;
-    function opWrapper : TFhirOperationOutcomeWClass; virtual;
+    function opWrapper : TFhirOperationOutcomeWClass; virtual; abstract;
     procedure SetFormat(fmt : TFhirFormat); virtual;
     function getResourceVersionId(res : TFHIRResourceV) : string; virtual;
-    function getBundleHandler : TBundleHandlerClass; virtual;
+    function getBundleClass : TFHIRBundleWClass; virtual; abstract;
   public
     constructor create(worker : TFHIRWorkerContextV; lang : String; communicator : TFHIRClientCommunicator);
     destructor Destroy; override;
     function link : TFhirClientV; overload;
 
-    function makeParser(fmt : TFHIRFormat) : TFHIRParser; virtual;
-    function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; virtual;
+    function makeParser(fmt : TFHIRFormat) : TFHIRParser; virtual; abstract;
+    function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
 
     property lang : string read FLang;
     property Worker : TFHIRWorkerContextV read FWorker;
-    function version : TFHIRVersion; virtual;
+    function version : TFHIRVersion; virtual; abstract;
     function address : String; // result from the communicator
     property Communicator : TFHIRClientCommunicator read FCommunicator;
+    property BundleFactory : TFHIRBundleWClass read FBundleFactory;
 
     property format : TFHIRFormat read FFormat write SetFormat;
     property versionSpecific : boolean read FVersionSpecific write FVersionSpecific;
@@ -257,12 +258,6 @@ begin
   result := TFHIRClientLogger(inherited Link);
 end;
 
-procedure TFHIRClientLogger.logExchange(verb, url, status, requestHeaders,
-  responseHeaders: String; request, response: TStream);
-begin
-  raise Exception.Create('Must override logExchange in '+className);
-end;
-
 { TNullLogger }
 
 procedure TNullLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TStream);
@@ -271,61 +266,6 @@ begin
 end;
 
 { TFHIRClientCommunicator }
-
-function TFHIRClientCommunicator.address: String;
-begin
-  raise Exception.Create('Must override address in '+className);
-end;
-
-function TFHIRClientCommunicator.conformanceV(summary: boolean): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override conformanceV in '+className);
-end;
-
-function TFHIRClientCommunicator.createResourceV(resource: TFHIRResourceV; var id: String): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override createResourceV in '+className);
-end;
-
-function TFHIRClientCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
-begin
-  raise Exception.Create('Must override customGet in '+className);
-end;
-
-function TFHIRClientCommunicator.customPost(path: String; headers: THTTPHeaders; body : TFslBuffer): TFslBuffer;
-begin
-  raise Exception.Create('Must override customPost in '+className);
-end;
-
-procedure TFHIRClientCommunicator.deleteResourceV(atype: TFHIRResourceTypeV; id: String);
-begin
-  raise Exception.Create('Must override deleteResourceV in '+className);
-end;
-
-function TFHIRClientCommunicator.getResourceVersionId(res : TFHIRResourceV) : string;
-begin
-  result := FClient.getResourceVersionId(res);
-end;
-
-function TFHIRClientCommunicator.historyTypeV(atype: TFHIRResourceTypeV; allRecords: boolean; params: string): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override historyTypeV in '+className);
-end;
-
-procedure TFHIRClientCommunicator.notify(msg: String);
-begin
- // nothing
-end;
-
-function TFHIRClientCommunicator.operationV(atype: TFHIRResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override operationV in '+className);
-end;
-
-function TFHIRClientCommunicator.operationV(atype: TFHIRResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override operationV in '+className);
-end;
 
 function TFHIRClientCommunicator.opWrapper: TFhirOperationOutcomeWClass;
 begin
@@ -337,39 +277,14 @@ begin
   result := FClient.FProvenanceString;
 end;
 
-function TFHIRClientCommunicator.readResourceV(atype: TFhirResourceTypeV; id: String): TFHIRResourceV;
+procedure TFHIRClientCommunicator.notify(msg: String);
 begin
-  raise Exception.Create('Must override readResourceV in '+className);
+ // nothing
 end;
 
-function TFHIRClientCommunicator.searchAgainV(link: String): TFHIRResourceV;
+function TFHIRClientCommunicator.getResourceVersionId(res : TFHIRResourceV) : string;
 begin
-  raise Exception.Create('Must override searchAgainV in '+className);
-end;
-
-function TFHIRClientCommunicator.searchPostV(atype: TFHIRResourceTypeV; allRecords: boolean; params: TStringList; resource: TFHIRResourceV): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override searchPostV in '+className);
-end;
-
-function TFHIRClientCommunicator.searchV(atype: TFHIRResourceTypeV; allRecords: boolean; params: string): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override searchV in '+className);
-end;
-
-procedure TFHIRClientCommunicator.terminate;
-begin
-  raise Exception.Create('Must override terminate in '+className);
-end;
-
-function TFHIRClientCommunicator.transactionV(bundle: TFHIRResourceV): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override transactionV in '+className);
-end;
-
-function TFHIRClientCommunicator.updateResourceV(resource: TFHIRResourceV): TFHIRResourceV;
-begin
-  raise Exception.Create('Must override updateResourceV in '+className);
+  result := FClient.getResourceVersionId(res);
 end;
 
 { TFhirClientV }
@@ -381,8 +296,8 @@ begin
   FLang := lang;
   FCommunicator := communicator;
   communicator.FClient := self;
-  communicator.FBundleHandler := getBundleHandler;
   FLogger := TNullLogger.Create;
+  FBundleFactory := getBundleClass;
 end;
 
 destructor TFhirClientV.Destroy;
@@ -393,11 +308,6 @@ begin
   FLogger.Free;
   FProvenance.Free;
   inherited;
-end;
-
-function TFhirClientV.getBundleHandler: TBundleHandlerClass;
-begin
-  raise Exception.Create('Must override getBundleHandler in '+className);
 end;
 
 function TFhirClientV.GetHeaders: THTTPHeaders;
@@ -438,26 +348,6 @@ begin
   end
   else
     FProvenanceString := '';
-end;
-
-function TFhirClientV.makeParser(fmt : TFHIRFormat) : TFHIRParser;
-begin
-  raise Exception.Create('Must override makeParser in '+className);
-end;
-
-function TFhirClientV.makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer;
-begin
-  raise Exception.Create('Must override makeComposer in '+className);
-end;
-
-function TFhirClientV.opWrapper : TFhirOperationOutcomeWClass;
-begin
-  raise Exception.Create('Must override opWrapper in '+className);
-end;
-
-function TFhirClientV.version : TFHIRVersion;
-begin
-  raise Exception.Create('Must override version in '+className);
 end;
 
 procedure TFhirClientV.SetFormat(fmt : TFhirFormat);
@@ -582,7 +472,6 @@ begin
     result := result + s+'='+EncodeMIME(params.ValueFromIndex[i])+'&';
   end;
 end;
-
 
 { TClientAccessToken }
 

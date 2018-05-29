@@ -101,7 +101,7 @@ uses
   MsXmlParser in '..\support\MsXmlParser.pas',
   AdvMemories in '..\support\AdvMemories.pas',
   FHIR.Xml.Builder in '..\support\FHIR.Xml.Builder.pas',
-  FHIR.Support.WInInet in '..\support\FHIR.Support.WInInet.pas',
+  FHIR.Support.WinInet in '..\support\FHIR.Support.WinInet.pas',
   MXmlBuilder in '..\support\MXmlBuilder.pas',
   TextUtilities in '..\support\TextUtilities.pas',
   AdvVCLStreams in '..\support\AdvVCLStreams.pas',

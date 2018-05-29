@@ -1,4 +1,4 @@
-unit NewResourceForm;
+unit FHIR.Npp.Make;
 
 
 {
@@ -34,10 +34,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
-  nppforms,
+  FHIR.Npp.Form,
   FHIR.Support.Generics,
   FHIR.Cache.PackageManager,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common,
   FHIR.Npp.Context;
 
 type
@@ -81,7 +81,7 @@ implementation
 {$R *.dfm}
 
 Uses
-  FhirPlugin;
+  FHIR.Npp.Plugin;
 
 procedure TResourceNewForm.btnCreateClick(Sender: TObject);
 var

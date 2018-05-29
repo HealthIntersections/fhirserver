@@ -13,7 +13,7 @@ type
   protected
     procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
   public
-    Constructor Create(owner : TComponent);
+    Constructor Create(owner : TComponent); override;
   published
     property Color : TColor read FColor write SetColor;
   end;

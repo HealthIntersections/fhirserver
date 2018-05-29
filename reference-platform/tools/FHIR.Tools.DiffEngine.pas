@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.PathEngine, FHIR.Base.Factory,
-  FHIR.XVersion.Resources;
+  FHIR.Base.Common;
 
 
 type
@@ -770,7 +770,7 @@ begin
   begin
     // an anonymous type. So what we do here is create the value, but the value
     // part has no actual value. instead, it contains parts for the properties
-    pl := value.createPropertyList(true);
+    pl := value.createPropertyList(false);
     try
       for p in pl do
       begin

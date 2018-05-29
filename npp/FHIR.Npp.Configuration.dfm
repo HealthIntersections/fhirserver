@@ -1,11 +1,10 @@
 inherited SettingForm: TSettingForm
-  ActiveControl = edtServer
+  ActiveControl = edtServerR2
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'FHIR notepad++ Plugin Settings'
   ClientHeight = 414
   ClientWidth = 699
-  Scaled = False
   OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 705
@@ -37,10 +36,6 @@ inherited SettingForm: TSettingForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -55,9 +50,9 @@ inherited SettingForm: TSettingForm
           Left = 0
           Top = 133
           Width = 691
-          Height = 49
+          Height = 132
           Align = alTop
-          Caption = ' Terminology Server '
+          Caption = ' Terminology Servers'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -67,13 +62,13 @@ inherited SettingForm: TSettingForm
           TabOrder = 0
           DesignSize = (
             691
-            49)
+            132)
           object Label1: TLabel
             Left = 12
             Top = 24
-            Width = 25
+            Width = 17
             Height = 13
-            Caption = 'URL:'
+            Caption = 'R2:'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -83,15 +78,14 @@ inherited SettingForm: TSettingForm
           end
           object Label2: TLabel
             Left = 12
-            Top = 50
+            Top = 106
             Width = 662
             Height = 23
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
             Caption = 
-              'The server must be a FHIR terminology server running the same ve' +
-              'rsion of FHIR as this client, and must not require authenticatio' +
-              'n'
+              'Each server must be a FHIR terminology server running the versio' +
+              'n specified, and must not require authentication'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -99,9 +93,34 @@ inherited SettingForm: TSettingForm
             Font.Style = []
             ParentFont = False
             WordWrap = True
-            ExplicitWidth = 659
           end
-          object edtServer: TEdit
+          object Label6: TLabel
+            Left = 12
+            Top = 51
+            Width = 17
+            Height = 13
+            Caption = 'R3:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label7: TLabel
+            Left = 12
+            Top = 78
+            Width = 17
+            Height = 13
+            Caption = 'R4:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object edtServerR2: TEdit
             Left = 50
             Top = 21
             Width = 624
@@ -114,7 +133,34 @@ inherited SettingForm: TSettingForm
             Font.Style = []
             ParentFont = False
             TabOrder = 0
-            Text = 'edtServer'
+          end
+          object edtServerR3: TEdit
+            Left = 50
+            Top = 48
+            Width = 624
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 1
+          end
+          object edtServerR4: TEdit
+            Left = 50
+            Top = 75
+            Width = 624
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 2
           end
         end
         object GroupBox2: TGroupBox
@@ -210,7 +256,7 @@ inherited SettingForm: TSettingForm
           end
           object cbR2: TCheckBox
             Left = 24
-            Top = 21
+            Top = 19
             Width = 73
             Height = 17
             Caption = 'R2 (1.0.2)'
@@ -295,10 +341,6 @@ inherited SettingForm: TSettingForm
     object TabSheet3: TTabSheet
       Caption = 'Misc'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -347,7 +389,7 @@ inherited SettingForm: TSettingForm
         end
         object GroupBox4: TGroupBox
           Left = 0
-          Top = 88
+          Top = 81
           Width = 688
           Height = 67
           Anchors = [akLeft, akTop, akRight]
@@ -378,15 +420,44 @@ inherited SettingForm: TSettingForm
             TabOrder = 0
           end
         end
+        object GroupBox5: TGroupBox
+          Left = 0
+          Top = 169
+          Width = 688
+          Height = 67
+          Anchors = [akLeft, akTop, akRight]
+          Caption = '  Welcome Screen'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 2
+          DesignSize = (
+            688
+            67)
+          object chkWelcome: TCheckBox
+            Left = 12
+            Top = 27
+            Width = 658
+            Height = 17
+            Anchors = [akLeft, akTop, akRight]
+            Caption = 'Show the welcome screen'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Servers'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -466,7 +537,7 @@ inherited SettingForm: TSettingForm
           end
           item
             Position = 1
-            Width = 241
+            Width = 237
             WideText = 'URL'
           end
           item

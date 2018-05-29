@@ -22,7 +22,8 @@ unit NppDockingForms;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Vcl.Forms, NppPlugin, Vcl.Dialogs, Vcl.Controls, NppForms;
+  Windows, Messages, SysUtils, Classes, Vcl.Forms, Vcl.Dialogs, Vcl.Controls,
+  FHIR.Npp.Base, FHIR.Npp.Form, NppForms;
 
 type
   TNppDockingForm = class(TNppForm) {TCustomForm}

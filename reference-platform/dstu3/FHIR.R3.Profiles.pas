@@ -32,12 +32,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IOUtils,
   FHIR.Support.Strings, FHIR.Support.Lock, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
   FHIR.Support.Stream,
   FHIR.Support.Zip,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Base.Factory,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory,
   FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.Constants, FHIR.R3.Factory;
 
 Const
@@ -198,6 +198,9 @@ function uncapitalize(s : String) : string;
 function capitalize(s : String) : string;
 
 implementation
+
+uses
+  FHIR.R3.Parser;
 
 { TProfileUtilities }
 
@@ -1507,7 +1510,7 @@ begin
     list.add(sd.link);
 end;
 
-constructor TBaseWorkerContextR3.Create;
+constructor TBaseWorkerContextR3.Create(factory : TFHIRFactory);
 begin
   inherited;
   FLock := TCriticalSection.Create('worker-context');
@@ -1658,9 +1661,9 @@ begin
               try
                 vcl.Stream := mem.link;
                 if ExtractFileExt(r.Parts[i].Name) = '.json' then
-                  fp := TFHIRJsonParser.create(self.link, 'en')
+                  fp := TFHIRParsers3.parser(self.link, ffJson, 'en')
                 else
-                  fp := TFHIRXmlParser.create(self.link, 'en');
+                  fp := TFHIRParsers3.parser(self.link, ffXml, 'en');
                 try
                   fp.IgnoreHtml := true;
                   fp.source := vcl;
@@ -1722,32 +1725,17 @@ begin
   if ExtractFileExt(filename) = '.zip' then
     LoadFromDefinitions(filename)
   else if ExtractFileExt(filename) = '.json' then
-    LoadFromFile(filename, TFHIRJsonParser.create(self.Link, 'en'))
+    LoadFromFile(filename, TFHIRParsers3.parser(self.link, ffJson, 'en'))
   else if ExtractFileExt(filename) = '.xml' then
-    LoadFromFile(filename, TFHIRXmlParser.create(self.Link, 'en'))
+    LoadFromFile(filename, TFHIRParsers3.parser(self.link, ffXml, 'en'))
 end;
 
 procedure TBaseWorkerContextR3.LoadFromFolder(folder: string);
 var
-  list : TStringList;
-  sr : TSearchRec;
-  fn : String;
+  s : String;
 begin
-  list := TStringList.Create;
-  try
-    if FindFirst(IncludeTrailingPathDelimiter(folder) + '*.*', faArchive, sr) = 0 then
-    begin
-      repeat
-        list.Add(sr.Name); //Fill the list
-      until FindNext(sr) <> 0;
-      FindClose(sr);
-    end;
-
-    for fn in list do
-      loadFromFile(IncludeTrailingPathDelimiter(folder)+fn);
-  finally
-    list.Free;
-  end;
+  for s in TDirectory.GetFiles(folder) do
+    loadFromFile(s);
 end;
 
 function TBaseWorkerContextR3.nonSecureResourceNames: TArray<String>;

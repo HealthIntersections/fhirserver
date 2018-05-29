@@ -1,4 +1,4 @@
-unit CodeGenerationForm;
+unit FHIR.Npp.CodeGen;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -32,8 +32,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ClipBrd,
-  nppforms,
-  FHIR.Tools.Resources, FHIR.Tools.CodeGen, FHIR.Tools.Context;
+  FHIR.Npp.Form,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Tools.CodeGen;
 
 type
   TCodeGeneratorForm = class(TNppForm)
@@ -51,15 +51,15 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure Button2Click(Sender: TObject);
   private
-    FResource : TFHIRResource;
-    FContext: TFHIRWorkerContext;
-    procedure SetResource(const Value: TFHIRResource);
-    procedure SetContext(const Value: TFHIRWorkerContext);
+    FResource : TFHIRResourceV;
+    FContext: TFHIRWorkerContextWithFactory;
+    procedure SetResource(const Value: TFHIRResourceV);
+    procedure SetContext(const Value: TFHIRWorkerContextWithFactory);
     { Private declarations }
   public
     { Public declarations }
-    property Context : TFHIRWorkerContext read FContext write SetContext;
-    property Resource : TFHIRResource read FResource write SetResource;
+    property Context : TFHIRWorkerContextWithFactory read FContext write SetContext;
+    property Resource : TFHIRResourceV read FResource write SetResource;
   end;
 
 var
@@ -93,6 +93,8 @@ begin
     1: codegen := TFHIRCodeGeneratorJavaHapi.create;
     2: codegen := TFHIRCodeGeneratorPascal.create;
     3: codegen := TFHIRCodeGeneratorDotNet.create;
+  else
+    raise Exception.Create('Unknown language');
   end;
   try
     codegen.Resource := Resource.Link;
@@ -115,13 +117,13 @@ begin
   cbxLanguageChange(nil);
 end;
 
-procedure TCodeGeneratorForm.SetContext(const Value: TFHIRWorkerContext);
+procedure TCodeGeneratorForm.SetContext(const Value: TFHIRWorkerContextWithFactory);
 begin
   FContext.Free;
   FContext := Value;
 end;
 
-procedure TCodeGeneratorForm.SetResource(const Value: TFHIRResource);
+procedure TCodeGeneratorForm.SetResource(const Value: TFHIRResourceV);
 begin
   FResource.Free;
   FResource := Value;

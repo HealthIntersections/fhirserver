@@ -66,11 +66,11 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRToolboxForm;
+  FHIR.Npp.Toolbox;
 
 procedure TFHIRPathDocumentationForm.Button2Click(Sender: TObject);
 begin
-  FHIRToolbox.mPath.Text := Memo1.SelText;
+  FHIRToolbox.edtPath.Text := Memo1.SelText;
 end;
 
 procedure TFHIRPathDocumentationForm.Memo1Click(Sender: TObject);

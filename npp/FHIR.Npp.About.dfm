@@ -1,28 +1,26 @@
 inherited AboutForm: TAboutForm
   BorderStyle = bsDialog
-  Caption = 'FHIR NPP Plugin'
-  ClientHeight = 290
-  ClientWidth = 555
-  Scaled = False
+  Caption = 'FHIR Notepad++ Plugin'
+  ClientHeight = 365
+  ClientWidth = 562
+  Position = poOwnerFormCenter
   OnShow = FormShow
-  ExplicitWidth = 561
-  ExplicitHeight = 319
+  ExplicitWidth = 568
+  ExplicitHeight = 394
   PixelsPerInch = 96
   TextHeight = 13
-  object lblDefinitions: TLabel
-    Left = 8
-    Top = 155
-    Width = 539
-    Height = 49
-    AutoSize = False
-    Caption = 'Defintions Source:'
-    WordWrap = True
+  object Label4: TLabel
+    Left = 16
+    Top = 232
+    Width = 71
+    Height = 13
+    Caption = 'Version Status:'
   end
   object Button1: TButton
-    Left = 472
-    Top = 212
-    Width = 75
-    Height = 70
+    Left = 400
+    Top = 331
+    Width = 147
+    Height = 26
     Caption = 'Ok'
     ModalResult = 1
     TabOrder = 0
@@ -36,10 +34,11 @@ inherited AboutForm: TAboutForm
     Caption = 'Panel1'
     TabOrder = 1
     object Image1: TImage
-      Left = 6
-      Top = 5
+      Left = 1
+      Top = 1
       Width = 128
       Height = 128
+      Align = alClient
       AutoSize = True
       Picture.Data = {
         0954506E67496D61676589504E470D0A1A0A0000000D49484452000000800000
@@ -344,6 +343,9 @@ inherited AboutForm: TAboutForm
         A441DE0C146D20A127D099D57300F795E0AA22400AEB14E0CE8AA173649640E9
         804E064A0FF2E64067C5BB649786AB960071B58B2B533B5731FE1F21275DF1E8
         3705FB0000000049454E44AE426082}
+      Stretch = True
+      ExplicitWidth = 136
+      ExplicitHeight = 135
     end
   end
   object Panel2: TPanel
@@ -425,8 +427,8 @@ inherited AboutForm: TAboutForm
   end
   object GroupBox1: TGroupBox
     Left = 8
-    Top = 212
-    Width = 449
+    Top = 151
+    Width = 539
     Height = 70
     Caption = 'Links'
     TabOrder = 3
@@ -490,5 +492,16 @@ inherited AboutForm: TAboutForm
       ParentFont = False
       OnClick = lnkUpdatesClick
     end
+  end
+  object Memo1: TMemo
+    Left = 16
+    Top = 251
+    Width = 532
+    Height = 62
+    Color = clBtnFace
+    Lines.Strings = (
+      'Memo1')
+    ReadOnly = True
+    TabOrder = 4
   end
 end

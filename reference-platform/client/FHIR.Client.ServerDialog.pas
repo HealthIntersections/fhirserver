@@ -34,9 +34,9 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.CheckLst,
-  NppForms,
+  FHIR.Npp.Form,
   FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Objects,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.CdsHooks.Utilities, FHIR.Smart.Utilities;
 
 type
@@ -104,11 +104,11 @@ type
     procedure Button3Click(Sender: TObject);
     procedure cbxSmartModeChange(Sender: TObject);
   private
-    { Private declarations }
     FIndex : integer;
     FCapabilityStatement : TFhirCapabilityStatementW;
     FServer: TRegisteredFHIRServer;
     FVersions: TFHIRVersionFactories;
+    FAdding : boolean;
     procedure loadCapabilityStatement;
     function readServerVersion : TFHIRVersion;
 //    function hookIndex(c : TFslObject) : integer;
@@ -119,9 +119,9 @@ type
 //    procedure readExtension(ext: TFHIRExtension; preFetch: TStringList;
 //      var name, c: String);
     procedure SetVersions(const Value: TFHIRVersionFactories);
-    procedure Load;
   public
-    { Public declarations }
+    procedure Load;
+
     property versions : TFHIRVersionFactories read FVersions write SetVersions;
     property server : TRegisteredFHIRServer read FServer write SetServer;
 
@@ -135,7 +135,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIRPluginSettings, FHIR.Client.Base;
+  FHIR.Npp.Settings, FHIR.Client.Base;
 
 procedure TEditRegisteredServerForm.btnFetchClick(Sender: TObject);
 var
@@ -226,7 +226,10 @@ begin
     server.privatekey := edtPrivateKey.Text;
     server.passphrase := edtPassphrase.Text;
     listHooks(server.cdshooks);
-    Settings.updateServerInfo('', server);
+    if FAdding then
+      Settings.registerServer('', server)
+    else
+      Settings.updateServerInfo('', server);
   finally
     server.Free;
   end;
@@ -425,47 +428,51 @@ begin
     if FVersions.hasVersion[v] then
      cbxVersion.Items.AddObject(FVersions[v].description, TObject(FVersions[v].version));
 
-  Caption := 'Edit Server';
-  edtName.Text := server.name;
-  edtServer.Text := server.fhirEndpoint;
-  cbxFormat.ItemIndex := ord(server.format);
-  b := false;
-  for ndx := 0 to cbxVersion.Items.Count - 1 do
-    if TFHIRVersion(cbxVersion.Items.Objects[ndx]) = server.version then
-    begin
-      b := true;
-      cbxVersion.ItemIndex := ndx;
-    end;
-  if not b then
+  FAdding := server = nil;
+  if server <> nil then
   begin
-    // the server has a stated version that isn't compatible in this context?
-    // we're going to... guess... at the latest version?
-    cbxVersion.ItemIndex := cbxVersion.Items.Count - 1 ;
-  end;
-
-  for i := 0 to clHooks.Items.Count - 1 do
-    clHooks.checked[i] := false;
-  for c in server.cdshooks do
-    for i := 0 to clHooks.Items.Count - 1 do
-    begin
-      if clHooks.Items.Objects[i] <> nil then
+    Caption := 'Edit Server';
+    edtName.Text := server.name;
+    edtServer.Text := server.fhirEndpoint;
+    cbxFormat.ItemIndex := ord(server.format);
+    b := false;
+    for ndx := 0 to cbxVersion.Items.Count - 1 do
+      if TFHIRVersion(cbxVersion.Items.Objects[ndx]) = server.version then
       begin
-//          readExtension(clHooks.Items.Objects[i] as TFHIRExtension, nil, name, a);
-        if (a <> '') and (c.hook = a) then
-          clHooks.checked[i] := true;
+        b := true;
+        cbxVersion.ItemIndex := ndx;
       end;
+    if not b then
+    begin
+      // the server has a stated version that isn't compatible in this context?
+      // we're going to... guess... at the latest version?
+      cbxVersion.ItemIndex := cbxVersion.Items.Count - 1 ;
     end;
 
-  edtToken.Text := server.tokenEndpoint;
-  edtAuthorize.Text := server.authorizeEndpoint;
-  edtClientId.Text := server.clientid;
-  edtClientId1.Text := server.clientid;
-  edtClientSecret.Text := server.clientsecret;
-  edtRedirect.Text := IntToStr(server.redirectport);
-  edtIssuerURL.Text := server.issuerUrl;
-  edtPrivateKey.Text := server.privatekey;
-  edtPassphrase.Text := server.passphrase;
-  cbxSmartMode.ItemIndex := ord(server.SmartAppLaunchMode);
+    for i := 0 to clHooks.Items.Count - 1 do
+      clHooks.checked[i] := false;
+    for c in server.cdshooks do
+      for i := 0 to clHooks.Items.Count - 1 do
+      begin
+        if clHooks.Items.Objects[i] <> nil then
+        begin
+  //          readExtension(clHooks.Items.Objects[i] as TFHIRExtension, nil, name, a);
+          if (a <> '') and (c.hook = a) then
+            clHooks.checked[i] := true;
+        end;
+      end;
+
+    edtToken.Text := server.tokenEndpoint;
+    edtAuthorize.Text := server.authorizeEndpoint;
+    edtClientId.Text := server.clientid;
+    edtClientId1.Text := server.clientid;
+    edtClientSecret.Text := server.clientsecret;
+    edtRedirect.Text := IntToStr(server.redirectport);
+    edtIssuerURL.Text := server.issuerUrl;
+    edtPrivateKey.Text := server.privatekey;
+    edtPassphrase.Text := server.passphrase;
+    cbxSmartMode.ItemIndex := ord(server.SmartAppLaunchMode);
+  end;
 end;
 
 end.

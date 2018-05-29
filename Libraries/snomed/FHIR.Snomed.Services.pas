@@ -57,6 +57,7 @@ Uses
   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Math,
   FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Generics,
   YuStemmer, FHIR.Support.DateTime,
+  FHIR.Base.Common,
   FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations,
   FHIR.Snomed.Expressions, FHIR.Tx.Service;
 
@@ -614,7 +615,7 @@ operations
     function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
     procedure Displays(code : String; list : TStringList; lang : String); override;
     procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
-    function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
@@ -625,7 +626,7 @@ operations
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; slang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; slang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; overload; override;
     procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
@@ -3244,7 +3245,7 @@ begin
   Displays(Code(context), list, lang);
 end;
 
-procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; slang : String; props : TList<String>; resp : TFHIRLookupOpResponse);
+procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; slang : String; props : TList<String>; resp : TFHIRLookupOpResponseW);
 var
   Identity : UInt64;
   Flags, lang : Byte;
@@ -3258,9 +3259,9 @@ var
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   d : TFHIRLookupOpRespDesignation;
-  p : TFHIRLookupOpRespProperty_;
+  p : TFHIRLookupOpRespPropertyW;
   {$ENDIF}
   did : UInt64;
   exp : TSnomedExpression;
@@ -3271,21 +3272,16 @@ begin
     Concept.GetConcept(TSnomedExpressionContext(ctxt).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
     Inbounds := Refs.GetReferences(InboundIndex);
 
-    {$IFDEF FHIR3}
-    p := TFHIRLookupOpRespProperty_.create;
-    resp.property_List.Add(p);
-    p.code := 'copyright';
+    {$IFNDEF FHIR2}
+    p := resp.addProp('copyright');
     p.value := TFHIRString.create('This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
     {$ELSE}
     resp.addExtension('copyright', 'This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), '+'and distributed by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
     {$ENDIF}
     if hasProp(props, 'inactive', true) then
     begin
-      {$IFDEF FHIR3}
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'inactive';
-      p.value := TFHIRBoolean.create(not IsActive(TSnomedExpressionContext(ctxt).reference));
+      {$IFNDEF FHIR2}
+      resp.addProp('inactive').value := TFHIRBoolean.create(not IsActive(TSnomedExpressionContext(ctxt).reference));
       {$ELSE}
       resp.addExtension('inactive', BooleanToString(IsActive(TSnomedExpressionContext(ctxt).reference)));
       {$ENDIF}
@@ -3295,10 +3291,8 @@ begin
 
     if hasProp(props, 'moduleId', true) then
     begin
-      {$IFDEF FHIR3}
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'moduleId';
+      {$IFNDEF FHIR2}
+      p := resp.addProp('moduleId');
       p.value := TFhirCode.Create(getConceptId(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
       {$ELSE}
       resp.addExtension('moduleId', inttostr(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
@@ -3309,14 +3303,10 @@ begin
     begin
       exp := createNormalForm(TSnomedExpressionContext(ctxt).reference);
       try
-        {$IFDEF FHIR3}
-        p := TFHIRLookupOpRespProperty_.create;
-        resp.property_List.Add(p);
-        p.code := 'normalForm';
+        {$IFNDEF FHIR2}
+        p := resp.addProp('normalForm');
         p.value := TFHIRString.Create(renderExpression(exp, sroFillMissing));
-        p := TFHIRLookupOpRespProperty_.create;
-        resp.property_List.Add(p);
-        p.code := 'normalFormTerse';
+        p := resp.addProp('normalFormTerse');
         p.value := TFHIRString.Create(renderExpression(exp, sroMinimal));
         {$ELSE}
         resp.addExtension('normalForm', renderExpression(exp, sroFillMissing));
@@ -3339,12 +3329,7 @@ begin
         if Active and (kind <> 0) Then
         Begin
           d := TFHIRLookupOpRespDesignation.create;
-          resp.designationList.Add(d);
-          d.value := Strings.GetEntry(iWork);
-          d.use := TFHIRCoding.Create;
-          d.use.system := 'http://snomed.info/sct';
-          d.use.code := GetConceptId(kind);
-          d.use.display := GetPNForConcept(kind);
+          resp.addDesignation('http://snomed.info/sct', GetConceptId(kind), GetPNForConcept(kind), Strings.GetEntry(iWork));
         End;
         {$ENDIF}
       End;
@@ -3360,10 +3345,8 @@ begin
         begin
           Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
           Descriptions := Refs.GetReferences(DescriptionIndex);
-          {$IFDEF FHIR3}
-          p := TFHIRLookupOpRespProperty_.create;
-          resp.property_List.Add(p);
-          p.code := 'parent';
+          {$IFNDEF FHIR2}
+          p := resp.addProp('parent');
           p.value := TFHIRCode.Create(IntToStr(Identity));
           p.description := GetPN(Descriptions);
           {$ELSE}
@@ -3383,10 +3366,8 @@ begin
         begin
           Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
           Descriptions := Refs.GetReferences(DescriptionIndex);
-          {$IFDEF FHIR3}
-          p := TFHIRLookupOpRespProperty_.create;
-          resp.property_List.Add(p);
-          p.code := 'child';
+          {$IFNDEF FHIR2}
+          p := resp.addProp('child');
           p.value := TFHIRCode.create(IntToStr(Identity));
           p.description := GetPN(Descriptions);
           {$ELSE}
@@ -3400,14 +3381,10 @@ begin
   begin
     exp := normaliseExpression(TSnomedExpressionContext(ctxt).Expression);
     try
-      {$IFDEF FHIR3}
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'normalForm';
+      {$IFNDEF FHIR2}
+      p := resp.addProp('normalForm');
       p.value := TFHIRString.create(renderExpression(exp, sroFillMissing));
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'normalFormTerse';
+      p := resp.addProp('normalFormTerse');
       p.value := TFHIRString.create(renderExpression(exp, sroMinimal));
       {$ELSE}
       resp.addExtension('normalForm', renderExpression(exp, sroFillMissing));
@@ -3569,15 +3546,15 @@ begin
   end;
 end;
 
-function TSnomedServices.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TSnomedServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   id : UInt64;
 begin
   result := nil;
   if (prop = 'concept') and StringIsId(value, id) then
-    if op = FilterOperatorIsA then
+    if op = foIsA then
       result := filterIsA(id)
-    else if op = FilterOperatorIn then
+    else if op = foIn then
       result := filterIn(id);
 end;
 

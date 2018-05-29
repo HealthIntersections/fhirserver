@@ -42,7 +42,7 @@ uses
 
   FHIR.Support.Mime, FHIR.Support.Text, FHIR.Web.Fetcher, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Signatures, FHIR.Support.Certs,
 
-  FHIR.Tools.Session, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml,
+  FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml,
   FHIR.R3.Context, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants;
 
 
@@ -50,7 +50,6 @@ const
 
   MIN_DATE = DATETIME_MIN;
   MAX_DATE = DATETIME_MAX;
-  ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
   CANONICAL_URL_RESOURCE_TYPES = [
     {$IFDEF FHIR_ACTIVITYDEFINITION}frtActivityDefinition, {$ENDIF}
     {$IFDEF FHIR_CAPABILITYSTATEMENT}frtCapabilityStatement, {$ENDIF}
@@ -153,7 +152,6 @@ function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum
 function HasExtension(element : TFhirElement; url : string):Boolean;
 function GetExtension(element : TFhirElement; url : string) : TFhirExtension;
 
-procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String); overload;
 procedure BuildNarrative(vs : TFhirValueSet); overload;
 procedure BuildNarrative(cs : TFhirCodeSystem); overload;
 function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String; overload;
@@ -173,31 +171,6 @@ function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHI
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 type
-  {$IFDEF FHIR3}
-  TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
-  public
-    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
-    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
-    function getBundle : TFHIRBundle; override;
-  end;
-
-  TFHIRBundleBuilderNDJson = class (TFHIRBundleBuilder)
-  private
-    FFileBase : String;
-    FFiles : TFslMap<TFslFile>;
-    function fileForType(rType : String) : TFslFile;
-    procedure writeResource(res : TFHIRResource); overload;
-    procedure writeResource(rType : String; cnt : TFslBuffer); overload;
-  public
-    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TFslMap<TFslFile>);
-    destructor Destroy; override;
-
-    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
-    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
-    function getBundle : TFHIRBundle; override;
-  end;
-  {$ENDIF}
-
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
   TFHIRProfileStructureElement = TFhirElementDefinition;
   TFhirProfileStructureElementList = TFhirElementDefinitionList;
@@ -317,7 +290,7 @@ type
   TFHIRBackboneElementHelper = class helper for TFHIRBackboneElement
   public
     procedure checkNoModifiers(place, role : String); overload;
-    procedure checkNoModifiers(place, role : String; exempt : Array of String); overload;
+    procedure checkNoModifiers(place, role : String; exempt : TArray<String>); overload;
   end;
 
   TFhirElementDefinitionHelper = class helper for TFhirElementDefinition
@@ -373,8 +346,7 @@ type
     function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
-    function narrativeAsWebPage : String;
-    procedure checkNoModifiers(place, role : String);
+    procedure checkNoModifiers(place, role : String; allowed : TArray<String> = []);
   end;
 
   TFhirCodeListHelper = class helper for TFhirCodeList
@@ -779,8 +751,7 @@ uses
   {$IFDEF MSWINDOWS}
   Registry,
   {$ENDIF}
-  FHIR.Tools.XhtmlComp,
-  FHIR.R3.ElementModel;
+  FHIR.R3.ElementModel, FHIR.R3.Parser;
 
 {$IFDEF STACK_DUMPS}
 function dumpStack : String;
@@ -809,7 +780,7 @@ end;
 {$ENDIF}
 
 
-function DetectFormat(oContent : TStream) : TFHIRParserClass; overload;
+function DetectFormat(oContent : TStream) : TFHIRFormat; overload;
 var
   i : integer;
   s : AnsiString;
@@ -819,16 +790,16 @@ begin
   ocontent.Read(s[1], length(s));
   oContent.Position := i;
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := TFHIRXmlParser
+    result := ffXml
   else if (pos('{', s) > 0) and ((pos('{', s) < 10)) then
-    result := TFHIRJsonParser
+    result := ffJson
   else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
-    result := TFHIRTurtleParser
+    result := ffTurtle
   else
-    result := nil;
+    result := ffUnspecified;
 end;
 
-function DetectFormat(bytes : TBytes) : TFHIRParserClass; overload;
+function DetectFormat(bytes : TBytes) : TFHIRFormat; overload;
 var
   sa : AnsiString;
   s : String;
@@ -837,21 +808,21 @@ begin
   move(bytes[0], sa[1], length(sa));
   s := String(sa);
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := TFHIRXmlParser
+    result := ffXml
   else
-    result := TFHIRJsonParser;
+    result := ffJson;
 end;
 
 
-function DetectFormat(oContent : TFslBuffer) : TFHIRParserClass; overload;
+function DetectFormat(oContent : TFslBuffer) : TFHIRFormat; overload;
 var
   s : String;
 begin
   s := oContent.AsText;
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := TFHIRXmlParser
+    result := ffXml
   else
-    result := TFHIRJsonParser;
+    result := ffJson;
 
 end;
 
@@ -870,13 +841,13 @@ end;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 begin
   if mimeType.Contains('application/json') or mimeType.Contains('application/fhir+json') Then
-    result := TFHIRJsonParser.Create(oWorker.Link, lang)
+    result := TFHIRParsers3.parser(oWorker.Link, ffJson, lang)
   else if mimeType.Contains('text/plain') then
-    result := TFHIRTextParser.create(oWorker.Link, lang)
+    result := TFHIRParsers3.parser(oWorker.Link, ffText, lang)
   else if mimeType.Contains('application/xml') or mimeType.Contains('application/fhir+xml') or mimeType.Contains('text/xml')  then
-    result := TFHIRXmlParser.Create(oWorker.Link, lang)
+    result := TFHIRParsers3.parser(oWorker.Link, ffXml, lang)
   else
-    result := DetectFormat(content).create(oWorker.Link, lang);
+    result := TFHIRParsers3.parser(oWorker.Link, DetectFormat(content), lang);
   try
     result.ParserPolicy := policy;
     result.Link;
@@ -886,18 +857,10 @@ begin
 end;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
-  if aFormat = ffUnspecified then
-    result := DetectFormat(oContent).Create(oWorker.Link, lang)
-  else if aFormat = ffJSON Then
-    result := TFHIRJsonParser.Create(oWorker.Link, lang)
-  else if aFormat = ffXhtml then
-    result := DetectFormat(oContent).create(oWorker.Link, lang)
-  else if aFormat = ffText then
-    result := TFHIRTextParser.create(oWorker.Link, lang)
-  else if aFormat = ffTurtle then
-    result := TFHIRTurtleParser.create(oWorker.Link, lang)
+  if aFormat in [ffUnspecified, ffXhtml] then
+    result := TFHIRParsers3.parser(oWorker.Link, DetectFormat(oContent), lang)
   else
-    result := TFHIRXmlParser.Create(oWorker.Link, lang);
+    result := TFHIRParsers3.parser(oWorker.Link, aFormat, lang);
   try
     result.source := oContent;
     result.ParserPolicy := policy;
@@ -908,14 +871,14 @@ begin
   end;
 end;
 
-function MakeComposer(style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeComposer(Style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 begin
   if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
-    result := TFHIRXmlComposer.Create(worker.link, style, lang)
+    result := TFHIRParsers3.composer(worker.link, ffXml, lang, Style)
   else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'json') then
-    result := TFHIRJsonComposer.Create(worker.link, style, lang)
-  else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
-    result := TFHIRXhtmlComposer.Create(worker.link, style, lang)
+    result := TFHIRParsers3.composer(worker.link, ffJson, lang, Style)
+//  else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
+//    result := TFHIRXhtmlComposer.Create(worker.link, Style, lang)
   else
     raise Exception.Create('Format '+mimetype+' not recognised');
 end;
@@ -959,7 +922,6 @@ Begin
   if result then
     aType := TFhirResourceType(iIndex);
 End;
-
 
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 begin
@@ -1465,77 +1427,6 @@ begin
     raise Exception.create('Unhandled type '+extension.Value.ClassName);
 end;
 
-procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String);
-var
-  x, tbl, tr, td : TFhirXHtmlNode;
-  hasSource, success, d : boolean;
-  i, j : integer;
-  issue : TFhirOperationOutcomeIssue;
-  s : TFhirString;
-begin
-  x := TFhirXHtmlNode.create;
-  try
-    x.NodeType := fhntElement;
-    x.Name := 'div';
-    x.AddTag('p').addTag('b').addText('Operation Outcome for :'+opDesc);
-
-    hasSource := false;
-    success := true;
-    for i := 0 to op.issueList.count - 1 do
-    begin
-      issue := op.issueList[i];
-      success := success and (issue.Severity = IssueSeverityInformation);
-      hasSource := hasSource or (hasExtension(issue, 'http://hl7.org/fhir/tools#issue-source'));
-    end;
-    if (success) then
-      x.AddChild('p').addText('All OK');
-    if op.issueList.count > 0 then
-    begin
-      tbl := x.addTag('table');
-      tbl.setAttribute('class', 'grid'); // on the basis that we'll most likely be rendered using the standard fhir css, but it doesn't really matter
-      tr := tbl.addTag('tr');
-      tr.addTag('td').addTag('b').addText('Severity');
-      tr.addTag('td').addTag('b').addText('Location');
-      tr.addTag('td').addTag('b').addText('Details');
-      tr.addTag('td').addTag('b').addText('Diagnostics');
-        tr.addTag('td').addTag('b').addText('Type');
-      if (hasSource) then
-        tr.addTag('td').addTag('b').addText('Source');
-      for i := 0 to op.issueList.count - 1 do
-      begin
-        issue := op.issueList[i];
-        tr := tbl.addTag('tr');
-        tr.addTag('td').addText(CODES_TFhirIssueSeverityEnum[issue.severity]);
-        td := tr.addTag('td');
-        d := false;
-        for j := 0 to issue.locationList.count -1 do
-        begin
-           s := issue.locationList[j];
-           if (d) then
-             td.addText(', ')
-           else
-             d := true;
-           td.addText(s.Value);
-        end;
-        tr.addTag('td').addText(gen(issue.details));
-        tr.addTag('td').addText(issue.diagnostics);
-        tr.addTag('td').addText(CODES_TFhirIssueTypeEnum[issue.code]);
-        if (hasSource) then
-          tr.addTag('td').addText(gen(getExtension(issue, 'http://hl7.org/fhir/tools#issue-source')));
-      end;
-    end;
-    if (op.Text = nil) then
-      op.Text := TFhirNarrative.create;
-    op.Text.div_ := x.link;
-    if hasSource then
-      op.Text.status := NarrativeStatusExtensions
-    else
-      op.Text.status := NarrativeStatusGenerated;
-  finally
-    x.free;
-  end;
-end;
-
 procedure addTableHeaderRowStandard(t : TFhirXHtmlNode);
 var
   tr, td, b : TFhirXHtmlNode;
@@ -1741,13 +1632,13 @@ begin
     if ct <> '' then
     begin
       if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
-        parser := TFHIRJsonParser.Create(worker.link, lang)
+        parser := TFHIRParsers3.parser(worker.link, ffJson, lang)
       else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
           StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
-        parser := TFHIRXMLParser.Create(worker.link, lang);
+        parser := TFHIRParsers3.parser(worker.link, ffXml, lang);
     end;
     if parser = nil then
-      parser := DetectFormat(part.content).Create(worker.link, lang);
+      parser := TFHIRParsers3.parser(worker.link, DetectFormat(part.content), lang);
     mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
@@ -1755,7 +1646,7 @@ begin
       try
         s.Stream := mem.Link;
         parser.source := s;
-        result := parser.ParseDT(name, type_) as TFHIRType;
+        result := parser.ParseDT(name, type_) as TFhirType;
       finally
         s.Free;
       end;
@@ -1773,7 +1664,7 @@ var
   parser : TFHIRParser;
   mem : TStringStream;
 begin
-  parser := TFHIRJsonParser.Create(worker.link, lang);
+  parser := TFHIRParsers3.parser(worker.link, ffJson, lang);
   try
     // first, figure out the format
     mem := TStringStream.Create(value, TEncoding.UTF8);
@@ -1802,13 +1693,13 @@ begin
     if ct <> '' then
     begin
       if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
-        parser := TFHIRJsonParser.Create(worker.link, lang)
+        parser := TFHIRParsers3.parser(worker.link, ffJson, lang)
       else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
           StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
-        parser := TFHIRXMLParser.Create(worker.link, lang);
+        parser := TFHIRParsers3.parser(worker.link, ffXml, lang);
     end;
     if parser = nil then
-      parser := DetectFormat(part.content).Create(worker.link, Lang);
+      parser := TFHIRParsers3.parser(worker.link, DetectFormat(part.content), Lang);
     mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
@@ -1828,6 +1719,7 @@ begin
     parser.Free;
   end;
 end;
+
 
 (*
 
@@ -2433,14 +2325,6 @@ begin
   result := getExtension(url) > -1;
 end;
 
-function TFHIRDomainResourceHelper.narrativeAsWebPage: String;
-begin
-  if (text = nil) or (text.div_ = nil) then
-    result := '<html><body>No Narrative</body></html>'
-  else
-    result := '<html><body>'+TFHIRXhtmlParser.Compose(text.div_)+'</body></html>'
-end;
-
 procedure TFHIRDomainResourceHelper.removeExtension(url: String);
 var
   ndx : integer;
@@ -2635,7 +2519,7 @@ begin
   result.url := url;
 end;
 
-procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String);
+procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String; allowed : TArray<String> = []);
 begin
   if modifierExtensionList.Count > 0 then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
@@ -4517,9 +4401,9 @@ end;
 
 function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String;
 var
-  comp : TFHIRJsonComposer;
+  comp : TFHIRComposer;
 begin
-  comp := TFHIRJsonComposer.Create(worker.link, OutputStyleNormal, 'en');
+  comp := TFHIRParsers3.composer(worker.link, ffJson, 'en', OutputStyleNormal);
   try
     result := comp.Compose(r);
   finally
@@ -4574,7 +4458,7 @@ end;
 
 { TFHIRBackboneElementHelper }
 
-procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String; exempt : Array of String);
+procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String; exempt : TArray<String>);
 var
   ext : TFHIRExtension;
 begin
@@ -5573,21 +5457,9 @@ var
   p :  TFHIRParser;
   pc : TFHIRParserClass;
 begin
-  case format of
-    ffXml : p := TFHIRXmlParser.Create(nil, 'en');
-    ffJson : p := TFHIRJsonParser.Create(nil, 'en');
-    ffTurtle : p := TFHIRTurtleParser.Create(nil, 'en');
-    ffUnspecified :
-    begin
-      pc := DetectFormat(stream);
-      if pc = nil then
-        raise Exception.Create('Format Not identified');
-      p := pc.Create(nil, 'en');
-      format := p.Format;
-    end
-  else
-    raise Exception.Create('Format Not supported');
-  end;
+  if format = ffUnspecified then
+    format := DetectFormat(stream);
+  p := TFHIRParsers3.parser(nil, format, 'en');
   try
     p.source := stream;
     p.Parse;
@@ -5641,13 +5513,9 @@ procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIR
 var
   c : TFHIRComposer;
 begin
-  case format of
-    ffXml, ffxhtml : c := TFHIRXmlComposer.Create(nil, style, 'en');
-    ffJson : c := TFHIRJsonComposer.Create(nil, style, 'en');
-    ffTurtle : c := TFHIRTurtleComposer.Create(nil, style, 'en');
-  else
-    raise Exception.Create('Format Not supported');
-  end;
+  if format = ffXhtml then
+    format := ffXml;
+  c := TFHIRParsers3.composer(nil, format, 'en', style);
   try
     c.Compose(stream, res);
   finally
@@ -5842,127 +5710,6 @@ begin
   for c in itemList do
     inc(result, c.countDescendents);
 end;
-
-{ TFHIRBundleBuilderSimple }
-
-{$IFDEF FHIR3}
-procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry; first : boolean);
-begin
-  if first then
-    FBundle.entryList.InsertItem(0, entry)
-  else
-    FBundle.entryList.AddItem(entry);
-end;
-
-
-function TFHIRBundleBuilderSimple.getBundle: TFHIRBundle;
-begin
-  result := FBundle.Link;
-end;
-
-function TFHIRBundleBuilderSimple.moveToFirst(res: TFhirResource): TFhirBundleEntry;
-var
-  fu : String;
-  i : integer;
-begin
-  for i := Fbundle.entryList.Count -1 downto 0 do
-    if Fbundle.entryList[i].resource = res then
-    begin
-      fu := Fbundle.entryList[i].fullurl;
-      Fbundle.entrylist.DeleteByIndex(i);
-    end;
-  Fbundle.entryList.Insert(0).resource := res.Link;
-  Fbundle.entryList[0].fullurl := fu;
-  result := Fbundle.entryList[0];
-end;
-
-{ TFHIRBundleBuilderNDJson }
-
-constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TFslMap<TFslFile>);
-begin
-  inherited Create(bundle);
-  FFileBase := fileBase;
-  FFiles := files;
-end;
-
-destructor TFHIRBundleBuilderNDJson.Destroy;
-begin
-  // omitted - disucssion with Dan - we don't need hte bundle: writeResource(FBundle);
-  Ffiles.Free;
-  inherited;
-end;
-
-function TFHIRBundleBuilderNDJson.fileForType(rType: String): TFslFile;
-begin
-  if rType = 'Bundle' then
-    writeln('Bundle');
-  if not FFiles.TryGetValue(rType, result) then
-  begin
-    result := TFslFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
-    FFiles.Add(rType, result);
-  end;
-end;
-
-procedure TFHIRBundleBuilderNDJson.addEntry(entry: TFhirBundleEntry; first : boolean);
-begin
-  if (entry.Tag <> nil) and (entry.Tag is TFslBuffer) then
-    writeResource(entry.Tags['type'], entry.Tag as TFslBuffer)
-  else if entry.resource <> nil then
-    writeResource(entry.resource);
-  entry.Tag := nil;
-  entry.resource := nil;
-  if first then
-    FBundle.entryList.InsertItem(0, entry)
-  else
-    FBundle.entryList.AddItem(entry);
-end;
-
-function TFHIRBundleBuilderNDJson.getBundle: TFHIRBundle;
-begin
-  result := nil; // although we have bundle internally, we don't return it directly (only use ND-JSON is asymc mode, and return a list of files)
-end;
-
-function TFHIRBundleBuilderNDJson.moveToFirst(  res: TFhirResource): TFhirBundleEntry;
-begin
-  raise Exception.Create('Not done yet');
-end;
-
-
-procedure TFHIRBundleBuilderNDJson.writeResource(res: TFHIRResource);
-var
-  f : TFslFile;
-  json : TFHIRJsonComposer;
-  b : ansichar;
-begin
-  f := fileForType(res.fhirType);
-  if f.Size > 0 then
-  begin
-    b := #10;
-    f.Write(b, 1);
-  end;
-  json := TFHIRJsonComposer.Create(nil, OutputStyleNormal, 'en');
-  try
-    json.Compose(f, res);
-  finally
-    json.Free;
-  end;
-end;
-
-procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TFslBuffer);
-var
-  f : TFslFile;
-  b : ansiChar;
-begin
-  f := fileForType(rType);
-  if f.Size > 0 then
-  begin
-    b := #10;
-    f.Write(b, 1);
-  end;
-  cnt.SaveToStream(f);
-end;
-
-{$ENDIF}
 
 { TFhirExtensionListHelper }
 

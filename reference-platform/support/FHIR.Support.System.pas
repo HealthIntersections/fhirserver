@@ -429,7 +429,6 @@ Function SystemMemory : TSystemMemory;
 {$ENDIF}
 Function SystemProcessorName : String;
 Function SystemProcessorIdentifier : String;
-Function SystemProcessorFrequencyMHz : Integer;
 Function SystemProcessorVendorIdentifier : String;
 Function ProcessName : String; Overload;
 
@@ -455,9 +454,9 @@ Function MonitorInfoFromRect(aRect : TRect): TMonitorInfo;
 {$ENDIF}
 
 type
-TFileLauncher = class
-  class procedure Open(const FilePath: string);
-end;
+  TFileLauncher = class
+    class procedure Open(const FilePath: string);
+  end;
 
 Implementation
 
@@ -2093,35 +2092,6 @@ End;
 Function SystemProcessorName : String;
 Begin
   Result := SystemCentralProcessorStringRegistryValue('ProcessorNameString');
-End;
-
-Function SystemProcessorFrequencyMHz : Integer;
-Const
-  CENTRAL_PROCESSOR_KEY = 'HARDWARE\DESCRIPTION\System\CentralProcessor\0';
-  MHZ_VALUE = '~MHz';
-//Var
-//  oRegistry : TFslRegistry;
-Begin
-//  Result := 0;
-//
-//  oRegistry := TFslRegistry.Create;
-//  Try
-//    oRegistry.ReadMode;
-//    oRegistry.UseLocalMachineAsRootKey;
-//
-//    If oRegistry.KeyExists(CENTRAL_PROCESSOR_KEY) Then
-//    Begin
-//      oRegistry.Key := CENTRAL_PROCESSOR_KEY;
-//
-//      If oRegistry.ValueExists(MHZ_VALUE) Then
-//      Begin
-//        oRegistry[MHZ_VALUE];
-//        oRegistry.DefineInteger(Result);
-//      End;
-//    End;
-//  Finally
-//    oRegistry.Free;
-//  End;
 End;
 
 Function ProcessName : String;

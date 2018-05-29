@@ -11,7 +11,6 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Scaled = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow

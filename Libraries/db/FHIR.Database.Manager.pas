@@ -860,7 +860,7 @@ end;
 Function TKDBConnection.ExecSQL(ASql: String) : integer;
 begin
   if asql = '' then
-    exit;
+    exit(0);
 
   FSQL := ASql;
   Prepare;

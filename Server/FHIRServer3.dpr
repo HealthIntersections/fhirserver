@@ -1,10 +1,6 @@
 // JCL_DEBUG_EXPERT_INSERTJDBG ON
 program FHIRServer3;
 
-{$IFDEF FPC}
-  {$MODE Delphi}
-{$ENDIF}
-
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -104,7 +100,7 @@ uses
   FHIR.Support.Stream in '..\reference-platform\Support\FHIR.Support.Stream.pas',
   FHIR.Web.Parsers in '..\reference-platform\Support\FHIR.Web.Parsers.pas',
   FHIR.Support.Decimal in '..\reference-platform\Support\FHIR.Support.Decimal.pas',
-  FHIR.Support.WInInet in '..\reference-platform\Support\FHIR.Support.WInInet.pas',
+  FHIR.Support.WinInet in '..\reference-platform\Support\FHIR.Support.WinInet.pas',
   FHIR.Support.Json in '..\reference-platform\Support\FHIR.Support.Json.pas',
   FHIRIndexManagers in 'FHIRIndexManagers.pas',
   FHIR.Ucum.Services in '..\Libraries\Ucum\FHIR.Ucum.Services.pas',
@@ -246,7 +242,7 @@ uses
   FHIR.Ucum.IFace in '..\reference-platform\support\FHIR.Ucum.IFace.pas',
   FHIR.R3.Base in '..\reference-platform\dstu3\FHIR.R3.Base.pas',
   FHIR.R3.ParserBase in '..\reference-platform\dstu3\FHIR.R3.ParserBase.pas',
-  FHIR.Tools.XhtmlComp in '..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas',
+  FHIR.Tools.XhtmlComp in 'FHIR.Tools.XhtmlComp.pas',
   FHIR.R3.Parser in '..\reference-platform\dstu3\FHIR.R3.Parser.pas',
   FHIR.Client.Base in '..\reference-platform\client\FHIR.Client.Base.pas',
   FHIR.Client.HTTP in '..\reference-platform\client\FHIR.Client.HTTP.pas',
@@ -278,7 +274,7 @@ uses
   FHIR.XVersion.Conv_30_40 in '..\reference-platform\xversion\FHIR.XVersion.Conv_30_40.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
@@ -292,7 +288,10 @@ uses
   FHIR.R4.Validator in '..\reference-platform\r4\FHIR.R4.Validator.pas',
   FHIR.R4.PathEngine in '..\reference-platform\r4\FHIR.R4.PathEngine.pas',
   FHIR.R4.Narrative in '..\reference-platform\r4\FHIR.R4.Narrative.pas',
-  FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas';
+  FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
+  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
+  FHIR.R4.Operations in '..\reference-platform\r4\FHIR.R4.Operations.pas',
+  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

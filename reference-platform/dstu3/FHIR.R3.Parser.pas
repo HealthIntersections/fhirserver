@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Tools.XhtmlComp,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Xml, FHIR.R3.Json, FHIR.R3.Turtle, FHIR.R3.Context;
 
 type
@@ -18,9 +18,6 @@ type
 
 implementation
 
-uses
-  FHIR.Tools.Parser;
-
 { TFHIRParsers3 }
 
 class function TFHIRParsers3.composer(worker: TFHIRWorkerContext; format: TFHIRFormat; lang: String; style: TFHIROutputStyle): TFHIRComposer;
@@ -30,8 +27,8 @@ begin
     ffJson : result := FHIR.R3.Json.TFHIRJsonComposer.Create(worker, style, lang);
     ffTurtle : result := FHIR.R3.Turtle.TFHIRTurtleComposer.Create(worker, style, lang);
     ffText : result := TFHIRTextComposer.Create(worker, style, lang);
-    ffNDJson : result := TFHIRNDJsonComposer.Create(worker, style, lang);
-    ffXhtml  : result := TFHIRXhtmlComposer.Create(worker, style, lang);
+//    ffNDJson : result := TFHIRNDJsonComposer.Create(worker, style, lang);
+//    ffXhtml  : result := TFHIRXhtmlComposer.Create(worker, style, lang);
   else
     raise Exception.Create('Unspecified/unsupported format');
   end;

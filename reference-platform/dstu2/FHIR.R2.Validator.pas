@@ -39,7 +39,7 @@ Uses
 
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Common,
   FHIR.R2.PathNode, FHIR.R2.Context, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.PathEngine, FHIR.R2.ElementModel;
 
 
@@ -240,9 +240,7 @@ implementation
 
 uses
   FHIR.Base.Parser,
-  FHIR.R2.Common,
-  FHIR.R2.Utilities, 
-  FHIR.R2.Profiles;
+  FHIR.R2.Common, FHIR.R2.Utilities, FHIR.R2.Profiles, FHIR.R2.Narrative;
 
 function nameMatches(name, tail: String): boolean;
 begin
@@ -2700,12 +2698,12 @@ begin
                   res.free;
                 end;
               end;
-            except
-              on e: Exception do
-                warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Error ' + e.message + ' validating CodeableConcept');
+            finally
+              cc.free;
             end;
-          finally
-            cc.free;
+          except
+            on e: Exception do
+              warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Error ' + e.message + ' validating CodeableConcept');
           end;
         end;
       end
@@ -3167,6 +3165,7 @@ begin
         expr := FPathEngine.parse(inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression'));
         inv.Tag := expr;
       end;
+      ok := false;
       try
         ok := FPathEngine.evaluateToBoolean(nil, resource, element, expr);
       except
@@ -3359,13 +3358,20 @@ end;
 
 function TFHIRValidator.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
 var
-  o : TFHIROperationOutcomeIssueW;
+  o : TFhirOperationOutcomeIssueW;
+  gen : TFHIRNarrativeGenerator;
 begin
   result := TFhirOperationOutcome.create;
   try
     for o in ctxt.Issues do
-      result.issueList.add(o.element.Link);
-    BuildNarrative(result, ctxt.OperationDescription);
+      result.issueList.add(o.Element.Link);
+    gen := TFHIRNarrativeGenerator.create(Context.Link);
+    try
+      gen.description := ctxt.OperationDescription;
+      gen.generate(result);
+    finally
+      gen.Free;
+    end;
     result.Link;
   finally
     result.free;

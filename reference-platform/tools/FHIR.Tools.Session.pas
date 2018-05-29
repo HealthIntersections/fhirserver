@@ -516,12 +516,20 @@ Type
     procedure setTotal(t : integer);
     procedure tag(n, v : String);
     procedure addLink(rt, url : String);
-    procedure addEntry(entry : TFhirBundleEntry; first : boolean); virtual;
-    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; virtual;
-    function getBundle : TFHIRBundle; virtual;
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); virtual; abstract;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; virtual; abstract;
+    function getBundle : TFHIRBundle; virtual; abstract;
   end;
 
   TCreateBundleBuilderEvent = procedure (request : TFHIRRequest; context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder) of object;
+
+  TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
+  public
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
+    function getBundle : TFHIRBundle; override;
+  end;
+
 
   {
     A FHIR response.
@@ -1607,11 +1615,6 @@ end;
 
 { TFHIRBundleBuilder }
 
-procedure TFHIRBundleBuilder.addEntry(entry: TFhirBundleEntry; first : boolean);
-begin
-  raise Exception.Create('Must override '+ClassName+'.addEntry');
-end;
-
 procedure TFHIRBundleBuilder.addLink(rt, url: String);
 begin
   FBundle.Link_List.AddRelRef(rt, url);
@@ -1627,16 +1630,6 @@ destructor TFHIRBundleBuilder.Destroy;
 begin
   FBundle.Free;
   inherited;
-end;
-
-function TFHIRBundleBuilder.getBundle: TFHIRBundle;
-begin
-  raise Exception.Create('Must override '+ClassName+'.getBundle');
-end;
-
-function TFHIRBundleBuilder.moveToFirst(res: TFhirResource): TFhirBundleEntry;
-begin
-  raise Exception.Create('Must override '+ClassName+'.moveToFirst');
 end;
 
 procedure TFHIRBundleBuilder.setId(id: string);
@@ -1700,4 +1693,40 @@ begin
     result := '';
 end;
 
+{ TFHIRBundleBuilderSimple }
+
+procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry; first : boolean);
+begin
+  if first then
+    FBundle.entryList.InsertItem(0, entry)
+  else
+    FBundle.entryList.AddItem(entry);
+end;
+
+
+function TFHIRBundleBuilderSimple.getBundle: TFHIRBundle;
+begin
+  result := FBundle.Link;
+end;
+
+function TFHIRBundleBuilderSimple.moveToFirst(res: TFhirResource): TFhirBundleEntry;
+var
+  fu : String;
+  i : integer;
+begin
+  for i := Fbundle.entryList.Count -1 downto 0 do
+    if Fbundle.entryList[i].resource = res then
+    begin
+      fu := Fbundle.entryList[i].fullurl;
+      Fbundle.entrylist.DeleteByIndex(i);
+    end;
+  Fbundle.entryList.Insert(0).resource := res.Link;
+  Fbundle.entryList[0].fullurl := fu;
+  result := Fbundle.entryList[0];
+end;
+
+
 end.
+
+
+

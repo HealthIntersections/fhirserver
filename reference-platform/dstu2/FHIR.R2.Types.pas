@@ -37,7 +37,7 @@ interface
 
 uses
   Classes, SysUtils, EncdDecd, 
-  FHIR.Support.Signatures, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.DateTime,
+  FHIR.Support.Signatures, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.DateTime, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Xhtml, 
   FHIR.R2.Base;
 
@@ -1792,7 +1792,13 @@ Type
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
     function getId : String; override;
+    procedure setIdValue(id : String); override;
     function noExtensions : TFhirElement;
+    function hasExtension(url : string) : boolean; override;
+    function getExtensionString(url : String) : String; override;
+    function extensionCount(url : String) : integer; override;
+    function extensions(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtension(url : String; value : TFHIRObject); override;
     property DisallowExtensions : boolean read FDisallowExtensions write FDisallowExtensions;
   published
     // Typed access to unique id for the element within a resource (for internal references).
@@ -7933,6 +7939,15 @@ begin
   result := self;
 end;
 
+procedure TFhirElement.addExtension(url: String; value: TFHIRObject);
+var
+  ex : TFhirExtension;
+begin
+  ex := FextensionList.Append;
+  ex.url := url;
+  ex.value := value as TFhirType;
+end;
+
 procedure TFhirElement.Assign(oSource : TFslObject);
 begin
   inherited;
@@ -7964,6 +7979,11 @@ begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'id', 'id', false, TFhirId, FId.Link));{2}
   oList.add(TFHIRProperty.create(self, 'extension', 'Extension', true, TFhirExtension, FExtensionList.Link)){3};
+end;
+
+procedure TFhirElement.setIdValue(id: String);
+begin
+  SetIdSt(id);
 end;
 
 procedure TFhirElement.setProperty(propName: string; propValue: TFHIRObject);
@@ -8048,6 +8068,31 @@ begin
   end;
 end;
 
+function TFhirElement.extensionCount(url: String): integer;
+var
+  ex : TFhirExtension;
+begin
+  result := 0;
+  for ex in ExtensionList do
+    if ex.url = url then
+      inc(result);
+end;
+
+function TFhirElement.extensions(url: String): TFslList<TFHIRObject>;
+var
+  ex : TFhirExtension;
+begin
+  result := TFslList<TFHIRObject>.create;
+  try
+    for ex in ExtensionList do
+      if ex.url = url then
+        result.Add(ex.Link);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
 function TFhirElement.Link : TFhirElement;
 begin
   result := TFhirElement(inherited Link);
@@ -8074,6 +8119,16 @@ begin
     result := FId.value;
 end;
 
+function TFhirElement.hasExtension(url: string): boolean;
+var
+  ex : TFhirExtension;
+begin
+  result := false;
+  for ex in ExtensionList do
+    if ex.url = url then
+      exit(true);
+end;
+
 Procedure TFhirElement.SetIdST(value : String);
 begin
   if value <> '' then
@@ -8091,6 +8146,25 @@ begin
   if FExtensionList = nil then
     FExtensionList := TFhirExtensionList.Create;
   result := FExtensionList;
+end;
+
+function TFhirElement.getExtensionString(url: String): String;
+var
+  ex : TFhirExtension;
+begin
+  result := '';
+  for ex in ExtensionList do
+  begin
+    if ex.url = url then
+    begin
+      if not ex.value.isPrimitive then
+        raise Exception.Create('Complex extension '+url)
+      else if result <> '' then
+        raise Exception.Create('Duplicate extension '+url)
+      else
+        result := ex.value.primitiveValue;
+    end;
+  end;
 end;
 
 Function TFhirElement.GetHasExtensionList : boolean;

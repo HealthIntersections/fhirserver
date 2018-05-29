@@ -41,7 +41,7 @@ uses
   FHIR.Support.Json in '..\reference-platform\support\FHIR.Support.Json.pas',
   FHIR.Support.Objects in '..\reference-platform\support\FHIR.Support.Objects.pas',
   FHIR.Support.Stream in '..\reference-platform\support\FHIR.Support.Stream.pas',
-  FHIR.Support.WInInet in '..\reference-platform\support\FHIR.Support.WInInet.pas',
+  FHIR.Support.WinInet in '..\reference-platform\support\FHIR.Support.WinInet.pas',
   FHIR.Support.Binary in '..\reference-platform\support\FHIR.Support.Binary.pas',
   FHIR.Support.DateTime in '..\reference-platform\support\FHIR.Support.DateTime.pas',
   FHIR.Support.Decimal in '..\reference-platform\support\FHIR.Support.Decimal.pas',
@@ -171,7 +171,7 @@ uses
   FHIR.R3.PathNode in '..\reference-platform\dstu3\FHIR.R3.PathNode.pas',
   GoogleAnalyticsProvider in '..\Server\GoogleAnalyticsProvider.pas',
   FHIR.Ucum.IFace in '..\reference-platform\support\FHIR.Ucum.IFace.pas',
-  FHIR.Tools.XhtmlComp in '..\reference-platform\tools\FHIR.Tools.XhtmlComp.pas',
+  FHIR.Tools.XhtmlComp in '..\Server\FHIR.Tools.XhtmlComp.pas',
   FHIR.R3.ParserBase in '..\reference-platform\dstu3\FHIR.R3.ParserBase.pas',
   FHIR.R3.Base in '..\reference-platform\dstu3\FHIR.R3.Base.pas',
   FHIR.R3.Parser in '..\reference-platform\dstu3\FHIR.R3.Parser.pas',
@@ -188,13 +188,14 @@ uses
   FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.R3.Common in '..\reference-platform\dstu3\FHIR.R3.Common.pas',
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
-  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas';
+  fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
+  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas';
 
 var
   gsrv : TExampleFhirServer;

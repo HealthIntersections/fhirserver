@@ -138,7 +138,7 @@
         <DCCReference Include="FHIRStringEdit.pas"/>
         <DCCReference Include="..\..\base\FHIR.Base.Xhtml.pas"/>
         <DCCReference Include="..\..\base\FHIR.Base.Lang.pas"/>
-        <DCCReference Include="..\..\xversion\FHIR.XVersion.Resources.pas"/>
+        <DCCReference Include="..\..\base\FHIR.Base.Common.pas"/>
         <DCCReference Include="..\..\tools\FHIR.Tools.Session.pas"/>
         <DCCReference Include="..\..\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\..\tools\FHIR.Tools.Indexing.pas"/>

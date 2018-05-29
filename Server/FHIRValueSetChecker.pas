@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Collections,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Base.Objects,
+  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Base.Objects, FHIR.Tools.Common,
   FHIR.Tx.Service, TerminologyServerStore;
 
 Type
@@ -179,7 +179,7 @@ begin
   begin
     ccf.checkNoModifiers('ValueSetChecker.prepare', desc + '.filter', []);
     if not (('concept' = ccf.property_) and (ccf.Op = FilterOperatorIsA)) then
-      if not cs.doesFilter(ccf.property_, ccf.Op, ccf.value) then
+      if not cs.doesFilter(ccf.property_, MAP_TFilterOperator[ccf.Op], ccf.value) then
         raise ETerminologyError.create('The filter "' + ccf.property_ + ' ' + CODES_TFhirFilterOperatorEnum[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.system(nil));
   end;
 end;
@@ -564,7 +564,7 @@ begin
       begin
         fc := cset.filterList[i];
         // gg - why? if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
-        filters[i] := cs.filter(fc.property_, fc.Op, fc.value, prep);
+        filters[i] := cs.filter(fc.property_, MAP_TFilterOperator[fc.Op], fc.value, prep);
       end;
       if cs.prepare(prep) then // all are together, just query the first filter
       begin

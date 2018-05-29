@@ -35,7 +35,7 @@ uses
   SysUtils, Generics.Collections, EncdDecd,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Base.Xhtml, FHIR.Base.Narrative,
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Narrative,
   FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Constants, FHIR.R3.Context, FHIR.R3.Utilities;
 
 Const
@@ -196,7 +196,7 @@ Type
 
     procedure generate(cm: TFHIRConceptMap); overload;
     procedure generate(vs: TFHIRValueSet; b: boolean); overload;
-    procedure generate(oo: TFHIROperationOutcome); overload;
+    procedure generate(op: TFHIROperationOutcome); overload;
     procedure generate(conf: TFhirCapabilityStatement); overload;
     procedure generate(od: TFHIROperationDefinition); overload;
 
@@ -214,7 +214,7 @@ Type
     Constructor Create(cc: TFHIRWorkerContextV); override;
     Destructor Destroy; override;
     procedure generate(res : TFHIRResourceV); overload; override;
-    procedure generate(r: TFHIRDomainResource); overload;
+    procedure generateDR(r: TFHIRDomainResource); overload;
 
     property Prefix: String read FPrefix write FPrefix; // for links
     property BasePath: String read FBasePath write FBasePath;
@@ -399,7 +399,7 @@ begin
     end;
     result := list.Link;
   finally
-    result.Free;
+    list.Free;
   end;
 end;
 
@@ -440,7 +440,7 @@ begin
         list.add(TPropertyWrapperDirect.create(p.link));
       result := list.Link;
     finally
-      result.Free;
+      list.Free;
     end;
   finally
     pList.Free;
@@ -448,7 +448,7 @@ begin
 end;
 
 { TFHIRNarrativeGenerator }
-procedure TFHIRNarrativeGenerator.generate(r: TFHIRDomainResource);
+procedure TFHIRNarrativeGenerator.generateDR(r: TFHIRDomainResource);
 var
   p: TFHIRStructureDefinition;
   pu: TFHIRUri;
@@ -483,9 +483,75 @@ begin
   end;
 end;
 
-procedure TFHIRNarrativeGenerator.generate(oo: TFHIROperationOutcome);
+procedure TFHIRNarrativeGenerator.generate(op: TFHIROperationOutcome);
+var
+  x, tbl, tr, td : TFhirXHtmlNode;
+  hasSource, success, d : boolean;
+  i, j : integer;
+  issue : TFhirOperationOutcomeIssue;
+  s : TFhirString;
 begin
-  raise Exception.create('Not done yet');
+  x := TFhirXHtmlNode.create;
+  try
+    x.NodeType := fhntElement;
+    x.Name := 'div';
+    x.AddTag('p').addTag('b').addText('Operation Outcome for :'+description);
+
+    hasSource := false;
+    success := true;
+    for i := 0 to op.issueList.count - 1 do
+    begin
+      issue := op.issueList[i];
+      success := success and (issue.Severity = IssueSeverityInformation);
+      hasSource := hasSource or (hasExtension(issue, 'http://hl7.org/fhir/tools#issue-source'));
+    end;
+    if (success) then
+      x.AddChild('p').addText('All OK');
+    if op.issueList.count > 0 then
+    begin
+      tbl := x.addTag('table');
+      tbl.setAttribute('class', 'grid'); // on the basis that we'll most likely be rendered using the standard fhir css, but it doesn't really matter
+      tr := tbl.addTag('tr');
+      tr.addTag('td').addTag('b').addText('Severity');
+      tr.addTag('td').addTag('b').addText('Location');
+      tr.addTag('td').addTag('b').addText('Details');
+      tr.addTag('td').addTag('b').addText('Diagnostics');
+        tr.addTag('td').addTag('b').addText('Type');
+      if (hasSource) then
+        tr.addTag('td').addTag('b').addText('Source');
+      for i := 0 to op.issueList.count - 1 do
+      begin
+        issue := op.issueList[i];
+        tr := tbl.addTag('tr');
+        tr.addTag('td').addText(CODES_TFhirIssueSeverityEnum[issue.severity]);
+        td := tr.addTag('td');
+        d := false;
+        for j := 0 to issue.locationList.count -1 do
+        begin
+           s := issue.locationList[j];
+           if (d) then
+             td.addText(', ')
+           else
+             d := true;
+           td.addText(s.Value);
+        end;
+        tr.addTag('td').addText(gen(issue.details));
+        tr.addTag('td').addText(issue.diagnostics);
+        tr.addTag('td').addText(CODES_TFhirIssueTypeEnum[issue.code]);
+        if (hasSource) then
+          tr.addTag('td').addText(gen(getExtension(issue, 'http://hl7.org/fhir/tools#issue-source')));
+      end;
+    end;
+    if (op.Text = nil) then
+      op.Text := TFhirNarrative.create;
+    op.Text.div_ := x.link;
+    if hasSource then
+      op.Text.status := NarrativeStatusExtensions
+    else
+      op.Text.status := NarrativeStatusGenerated;
+  finally
+    x.free;
+  end;
 end;
 
 procedure TFHIRNarrativeGenerator.generate(vs: TFHIRValueSet; b: boolean);
@@ -510,7 +576,7 @@ end;
 
 procedure TFHIRNarrativeGenerator.generate(res: TFHIRResourceV);
 begin
-  generate(res as TFHIRDomainResource);
+  generateDR(res as TFHIRDomainResource);
 end;
 
 procedure TFHIRNarrativeGenerator.generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean);
@@ -3338,7 +3404,7 @@ end;
   public TFslList<PropertyWrapper> children() begin
   if (list = nil) then begin
   children := ProfileUtilities.getChildList(structure, definition);
-  list := TFslList<FHIR.Tools.Narrative2.PropertyWrapper>();
+  list := TFslList<FHIR.R3.Narrative2.PropertyWrapper>();
   for (child : TFHIRElementDefinition : children) begin
   TFslList<Element> elements := TFslList<Element>();
   XMLUtil.getNamedChildrenWithWildcard(element, tail(child.getPath()), elements);
@@ -3384,7 +3450,7 @@ end;
   @Override
   public TFslList<BaseWrapper> getValues() begin
   if (list = nil) then begin
-  list := TFslList<FHIR.Tools.Narrative2.BaseWrapper>();
+  list := TFslList<FHIR.R3.Narrative2.BaseWrapper>();
   for (Element e : values)
   list.add(new BaseWrapperElement(e, determineType(e), structure, definition));
   end;
@@ -3458,7 +3524,7 @@ end;
   if (list = nil) then begin
   TFslList<Element> children := TFslList<Element>();
   XMLUtil.getNamedChildren(wrapped, 'contained', children);
-  list := TFslList<FHIR.Tools.Narrative2.ResourceWrapper>();
+  list := TFslList<FHIR.R3.Narrative2.ResourceWrapper>();
   for (Element e : children) begin
   Element c := XMLUtil.getFirstChild(e);
   list.add(new ResurceWrapperElement(c, context.fetchResource(StructureDefinition.class, 'http://hl7.org/fhir/StructureDefinition/'+c.getNodeName())));
@@ -3492,7 +3558,7 @@ end;
   public TFslList<PropertyWrapper> children() begin
   if (list2 = nil) then begin
   TFslList<TFHIRElementDefinition> children := ProfileUtilities.getChildList(definition, definition.snapshot.ElementList[0]);
-  list2 := TFslList<FHIR.Tools.Narrative2.PropertyWrapper>();
+  list2 := TFslList<FHIR.R3.Narrative2.PropertyWrapper>();
   for (child : TFHIRElementDefinition : children) begin
   TFslList<Element> elements := TFslList<Element>();
   XMLUtil.getNamedChildrenWithWildcard(wrapped, tail(child.getPath()), elements);

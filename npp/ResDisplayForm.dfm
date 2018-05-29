@@ -65,8 +65,8 @@ object ResourceDisplayForm: TResourceDisplayForm
       Caption = 'Presentation'
       ExplicitLeft = 0
       ExplicitTop = 0
-      ExplicitWidth = 281
-      ExplicitHeight = 165
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object WebBrowser1: TWebBrowser
         Left = 0
         Top = 0
@@ -91,8 +91,8 @@ object ResourceDisplayForm: TResourceDisplayForm
       ImageIndex = 1
       ExplicitLeft = 0
       ExplicitTop = 0
-      ExplicitWidth = 281
-      ExplicitHeight = 165
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -101,11 +101,8 @@ object ResourceDisplayForm: TResourceDisplayForm
         Align = alClient
         Lines.Strings = (
           'Memo1')
+        ScrollBars = ssBoth
         TabOrder = 0
-        ExplicitLeft = 17
-        ExplicitTop = 37
-        ExplicitWidth = 264
-        ExplicitHeight = 128
       end
     end
   end

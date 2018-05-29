@@ -27,6 +27,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
 interface
 
 uses
@@ -268,13 +269,13 @@ begin
   // Timezone Wrangling
   d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
   d2 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
-  Assert.IsTrue(sameInstant(d1.DateTime - TimezoneBias(d1.DateTime), d2.DateTime));
+  Assert.IsTrue(sameInstant(d1.DateTime - TimezoneBias, d2.DateTime));
   Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
   Assert.IsTrue(not d1.equal(d2));
   Assert.IsTrue(d1.sameTime(d2));
   d1 := TDateTimeEx.make(EncodeDate(2011, 7, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // not during daylight savings (+10)
   d2 := TDateTimeEx.make(EncodeDate(2011, 7, 2)+ EncodeTime(4, 0, 0, 0), dttzUTC); // UTC Time
-  dt1 := d1.DateTime - TimezoneBias(d1.DateTime);
+  dt1 := d1.DateTime - TimezoneBias;
   dt2 := d2.DateTime;
   Assert.IsTrue(sameInstant(dt1, dt2));
   Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));

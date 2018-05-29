@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Javascript,
-  FHIR.Base.Factory, FHIR.XVersion.Resources,
+  FHIR.Base.Factory, FHIR.Base.Common,
   {$IFDEF FHIR2}
   FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Factory, FHIR.R2.Common, FHIR.R2.Utilities,
   {$ENDIF}

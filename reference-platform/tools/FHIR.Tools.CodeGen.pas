@@ -31,15 +31,14 @@ interface
 
 uses
   SysUtils, Classes, Character,
-  FHIR.Support.Strings, FHIR.Support.DateTime,
-  FHIR.Support.Objects,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Context, FHIR.Base.Xhtml, FHIR.Tools.Utilities;
+  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory;
 
 type
   TFHIRCodeGenerator = class (TFslObject)
   private
-    FResource: TFHIRResource;
-    FContext: TFHIRWorkerContext;
+    FResource: TFHIRResourceV;
+    FContext: TFHIRWorkerContextWithFactory;
     FVersion: TFHIRVersion;
 
     lines : TStringList;
@@ -48,16 +47,16 @@ type
     procedure line(indent : integer; s : String);
     function addVar(inScope : TArray<String>; varName : String) : TArray<String>;
 
-    procedure SetResource(const Value: TFHIRResource);
-    procedure SetContext(const Value: TFHIRWorkerContext);
+    procedure SetResource(const Value: TFHIRResourceV);
+    procedure SetContext(const Value: TFHIRWorkerContextWithFactory);
   protected
-    function getElementDefinition(sd : TFhirStructureDefinition; path : String) : TFhirElementDefinition;
+    function getElementDefinition(sd : TFhirStructureDefinitionW; path : String) : TFhirElementDefinitionW;
     function enumify(code : String) : String;
   public
     Constructor Create; Override;
     destructor Destroy; override;
-    property Resource : TFHIRResource read FResource write SetResource;
-    property Context : TFHIRWorkerContext read FContext write SetContext;
+    property Resource : TFHIRResourceV read FResource write SetResource;
+    property Context : TFHIRWorkerContextWithFactory read FContext write SetContext;
     property Version : TFHIRVersion read FVersion write FVersion;
 
     function generate : String; virtual;
@@ -68,10 +67,10 @@ type
   private
     imports : TStringList;
     function verPack : String;
-    function varName(fhirType: String; sd : TFhirStructureDefinition; defn : TFhirElementDefinition; inScope: TArray<String>; var vt : String; var def : String): string;
+    function varName(fhirType: String; sd : TFhirStructureDefinitionW; defn : TFhirElementDefinitionW; inScope: TArray<String>; var vt : String; var def : String): string;
     procedure processXhtml(indent : integer; variableName: String; value : TFHIRObject);
-    procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
-    procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
+    procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinitionW; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinitionW);
+    procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
   public
     Constructor Create; Override;
@@ -89,10 +88,10 @@ type
   private
     units : TStringList;
 
-    function varName(fhirType: String; defn : TFhirElementDefinition; inScope: TArray<String>): string;
+    function varName(fhirType: String; defn : TFhirElementDefinitionW; inScope: TArray<String>): string;
     procedure processXhtml(indent : integer; variableName: String; value : TFHIRObject);
-    procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
-    procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
+    procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinitionW; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinitionW);
+    procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
   public
     Constructor Create; Override;
@@ -135,9 +134,9 @@ begin
     result := Uppercase(s[1]) + s.Substring(1);
 end;
 
-function isXhtml(defn : TFhirElementDefinition) : boolean;
+function isXhtml(defn : TFhirElementDefinitionW) : boolean;
 begin
-  result := (defn.type_List.Count = 1) and (defn.type_List[0].code = 'xhtml');
+  result := defn.types = 'xhtml';
 end;
 
 function delphiIse(s : String) : String;
@@ -246,14 +245,20 @@ begin
   result := 'Code Generation for '+languageName+' not done yet';
 end;
 
-function TFHIRCodeGenerator.getElementDefinition(sd: TFhirStructureDefinition; path: String): TFhirElementDefinition;
+function TFHIRCodeGenerator.getElementDefinition(sd: TFhirStructureDefinitionW; path: String): TFhirElementDefinitionW;
 var
-  t : TFhirElementDefinition;
+  l : TFslList<TFhirElementDefinitionW>;
+  t : TFhirElementDefinitionW;
 begin
   result := nil;
-  for t in sd.snapshot.elementList do
-    if t.path = path then
-      exit(t);
+  l := sd.elements;
+  try
+    for t in l do
+      if t.path = path then
+        exit(t.link);
+  finally
+    l.free;
+  end;
 end;
 
 function TFHIRCodeGenerator.languageName: String;
@@ -261,13 +266,13 @@ begin
   result := 'Unknown';
 end;
 
-procedure TFHIRCodeGenerator.SetContext(const Value: TFHIRWorkerContext);
+procedure TFHIRCodeGenerator.SetContext(const Value: TFHIRWorkerContextWithFactory);
 begin
   FContext.Free;
   FContext := Value;
 end;
 
-procedure TFHIRCodeGenerator.SetResource(const Value: TFHIRResource);
+procedure TFHIRCodeGenerator.SetResource(const Value: TFHIRResourceV);
 begin
   FResource.free;
   FResource := Value;
@@ -330,14 +335,14 @@ end;
 
 procedure TFHIRCodeGeneratorJavaRI.processResource;
 var
-  sd : TFHIRStructureDefinition;
+  sd : TFhirStructureDefinitionW;
 begin
   imports.Add('org.hl7.fhir.'+verPack+'.model.Enumerations.*');
   imports.Add('org.hl7.fhir.'+verPack+'.model.'+resource.fhirType);
   imports.Add('org.hl7.fhir.'+verPack+'.model.'+resource.fhirType+'.*');
   vars.Values['res'] := resource.fhirType;
   line(4, resource.fhirType + ' res = new '+resource.fhirType+'();');
-  sd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType) as TFhirStructureDefinition;
+  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType));
   try
     processObject(4, 'res', resource.fhirType, sd, resource, addVar([], ' res'));
   finally
@@ -345,13 +350,13 @@ begin
   end;
 end;
 
-procedure TFHIRCodeGeneratorJavaRI.processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
+procedure TFHIRCodeGeneratorJavaRI.processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
 var
   props : TFHIRPropertyList;
   prop : TFHIRProperty;
   value : TFHIRObject;
   vn, vt, vdef : String;
-  defn : TFhirElementDefinition;
+  defn : TFhirElementDefinitionW;
   first : boolean;
 begin
   props := obj.createPropertyList(true);
@@ -360,38 +365,42 @@ begin
       if prop.hasValue then
       begin
         defn := getElementDefinition(sd, path+'.'+prop.Name);
-        if prop.IsList then
-        begin
-          if (defn <> nil) and (defn.type_List.IsEmpty) then
-            vn := varName(path+'.'+prop.Name, sd, defn, inScope, vt, vdef)
-          else
-            vn := varName(prop.Values[0].fhirType, sd, defn, inScope, vt, vdef);
-          first := true;
-          for value in prop.Values do
+        try
+          if prop.IsList then
           begin
-            if first then
-              line(indent, vdef+vn +' = '+name+'.add'+capitalize(prop.Name)+'();')
+            if (defn <> nil) and (length(defn.typeList) = 0) then
+              vn := varName(path+'.'+prop.Name, sd, defn, inScope, vt, vdef)
             else
-              line(indent, vn +' = '+name+'.add'+capitalize(prop.Name)+'();');
-            first := false;
-            processAssignment(indent, vn, true, sd, path, prop, value, addVar(inScope, vn), defn);
-          end;
-        end
-        else if isXhtml(defn) then
-          processXhtml(indent, name, prop.values[0])
-        else
-          processAssignment(indent, name, false, sd, path, prop, prop.Values[0], inScope, defn);
+              vn := varName(prop.Values[0].fhirType, sd, defn, inScope, vt, vdef);
+            first := true;
+            for value in prop.Values do
+            begin
+              if first then
+                line(indent, vdef+vn +' = '+name+'.add'+capitalize(prop.Name)+'();')
+              else
+                line(indent, vn +' = '+name+'.add'+capitalize(prop.Name)+'();');
+              first := false;
+              processAssignment(indent, vn, true, sd, path, prop, value, addVar(inScope, vn), defn);
+            end;
+          end
+          else if isXhtml(defn) then
+            processXhtml(indent, name, prop.values[0])
+          else
+            processAssignment(indent, name, false, sd, path, prop, prop.Values[0], inScope, defn);
+        finally
+          defn.free;
+        end;
       end;
   finally
     props.Free;
   end;
 end;
 
-procedure TFHIRCodeGeneratorJavaRI.processAssignment(indent: integer; variableName : String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop: TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
+procedure TFHIRCodeGeneratorJavaRI.processAssignment(indent: integer; variableName : String; varIsSelf : boolean; sd : TFhirStructureDefinitionW; path : String; prop: TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinitionW);
 var
   t : String;
-  vs : TFhirValueSet;
-  tsd : TFhirStructureDefinition;
+  vs : TFhirValueSetW;
+  tsd : TFhirStructureDefinitionW;
   vn, an, vt, vdef : string;
 begin
   t := value.fhirType; // prop.Type_;
@@ -405,11 +414,8 @@ begin
   else if t = 'code' then
   begin
     vs := nil;
-    if (defn <> nil) and (defn.binding <> nil) and (defn.binding.strength = BindingStrengthRequired) and (defn.binding.ValueSet <> nil) then
-      if (defn.binding.valueSet is TFhirUri) then
-        vs := FContext.fetchResource(frtValueSet, (defn.binding.valueSet as TFhirUri).value) as TFHIRValueSet
-      else
-        vs := FContext.fetchResource(frtValueSet, (defn.binding.valueSet as TFhirReference).reference) as TFHIRValueSet;
+    if (defn <> nil) and (defn.binding = edbRequired) and (defn.valueSet <> '') then
+      vs := FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet));
     try
       if (vs <> nil) then
         line(indent, an+'('+vs.name+'.'+enumify(value.primitiveValue).ToUpper+');')
@@ -432,7 +438,7 @@ begin
   // we assume this is an object
   else
   begin
-    tsd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType) as TFhirStructureDefinition;
+    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType));
     if (tsd <> nil) then
     begin
       try
@@ -471,7 +477,7 @@ begin
   line(indent, variableName+'.setDiv(new XhtmlParser().parse('+s+', "div"));');
 end;
 
-function TFHIRCodeGeneratorJavaRI.varName(fhirType: String; sd : TFhirStructureDefinition; defn : TFhirElementDefinition; inScope: TArray<String>; var vt : String; var def : String): string;
+function TFHIRCodeGeneratorJavaRI.varName(fhirType: String; sd : TFhirStructureDefinitionW; defn : TFhirElementDefinitionW; inScope: TArray<String>; var vt : String; var def : String): string;
   function isOkTouse(name : string) : boolean;
   begin
     if StringArrayIndexOfSensitive(inScope, name) > -1 then
@@ -486,14 +492,16 @@ var
   i : integer;
   last : boolean;
   pfx : String;
+  et : String;
 begin
   // figure out the type
   pfx := '';
-  if (defn.type_List.IsEmpty) or ((defn.type_List.count = 1) and isAbstractType(defn.type_List[0].code)) then
+  if (length(defn.typeList) = 0) or ((length(defn.typeList) = 1) and isAbstractType(defn.typeList[0])) then
   begin
     pfx := sd.type_+'.';
-    if (defn.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-explicit-type-name')) then
-      vt := defn.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-explicit-type-name')
+    et := defn.explicitTypeName;
+    if (et <> '') then
+      vt := et
     else
       vt := capitalize(defn.path.Substring(defn.path.LastIndexOf('.')+1));
     vt := vt+'Component';
@@ -621,11 +629,11 @@ begin
   result := 'Pascal';
 end;
 
-procedure TFHIRCodeGeneratorPascal.processAssignment(indent: integer; variableName : String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop: TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
+procedure TFHIRCodeGeneratorPascal.processAssignment(indent: integer; variableName : String; varIsSelf : boolean; sd : TFhirStructureDefinitionW; path : String; prop: TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinitionW);
 var
   t : String;
-  vs : TFhirValueSet;
-  tsd : TFhirStructureDefinition;
+  vs : TFhirValueSetW;
+  tsd : TFhirStructureDefinitionW;
   vn, an : string;
 begin
   t := prop.Type_;
@@ -639,11 +647,8 @@ begin
   else if t = 'code' then
   begin
     vs := nil;
-    if (defn <> nil) and (defn.binding <> nil) and (defn.binding.strength = BindingStrengthRequired) and (defn.binding.ValueSet <> nil) then
-      if (defn.binding.valueSet is TFhirUri) then
-        vs := FContext.fetchResource(frtValueSet, (defn.binding.valueSet as TFhirUri).value) as TFHIRValueSet
-      else
-        vs := FContext.fetchResource(frtValueSet, (defn.binding.valueSet as TFhirReference).reference) as TFHIRValueSet;
+    if (defn <> nil) and (defn.binding = edbRequired) and (defn.valueSet <> '') then
+      vs :=  FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet));
     try
       if (vs <> nil) then
         line(indent, an+' := '+vs.name+capitalize(enumify(value.primitiveValue))+';')
@@ -663,7 +668,7 @@ begin
   // we assume this is an object
   else
   begin
-    tsd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType) as TFhirStructureDefinition;
+    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType));
     if (tsd <> nil) then
     begin
       try
@@ -700,13 +705,13 @@ begin
   end;
 end;
 
-procedure TFHIRCodeGeneratorPascal.processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
+procedure TFHIRCodeGeneratorPascal.processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
 var
   props : TFHIRPropertyList;
   prop : TFHIRProperty;
   value : TFHIRObject;
   vn : String;
-  defn : TFhirElementDefinition;
+  defn : TFhirElementDefinitionW;
 begin
   props := obj.createPropertyList(true);
   try
@@ -714,22 +719,26 @@ begin
       if prop.hasValue then
       begin
         defn := getElementDefinition(sd, path+'.'+prop.Name);
-        if prop.IsList then
-        begin
-          for value in prop.Values do
+        try
+          if prop.IsList then
           begin
-            if (defn <> nil) and (defn.type_List.IsEmpty) then
-              vn := varName(path+'.'+prop.Name, defn, inScope)
-            else
-              vn := varName(value.fhirType, defn, inScope);
-            line(indent, vn +' := '+name+'.'+prop.Name+'List.append;');
-            processAssignment(indent, vn, true, sd, path, prop, value, addVar(inScope, vn), defn);
-          end;
-        end
-        else if isXhtml(defn) then
-          processXhtml(indent, name, prop.values[0])
-        else
-          processAssignment(indent, name, false, sd, path, prop, prop.Values[0], inScope, defn);
+            for value in prop.Values do
+            begin
+              if (defn <> nil) and (length(defn.typeList) = 0) then
+                vn := varName(path+'.'+prop.Name, defn, inScope)
+              else
+                vn := varName(value.fhirType, defn, inScope);
+              line(indent, vn +' := '+name+'.'+prop.Name+'List.append;');
+              processAssignment(indent, vn, true, sd, path, prop, value, addVar(inScope, vn), defn);
+            end;
+          end
+          else if isXhtml(defn) then
+            processXhtml(indent, name, prop.values[0])
+          else
+            processAssignment(indent, name, false, sd, path, prop, prop.Values[0], inScope, defn);
+        finally
+          defn.free;
+        end;
       end;
   finally
     props.Free;
@@ -738,7 +747,7 @@ end;
 
 procedure TFHIRCodeGeneratorPascal.processResource;
 var
-  sd : TFHIRStructureDefinition;
+  sd : TFhirStructureDefinitionW;
 begin
   units.Add('FHIR.Tools.Types');
   units.Add('FHIR.Tools.Resources');
@@ -746,7 +755,7 @@ begin
   vars.Values['res'] := 'TFHIR'+resource.fhirType;
   line(2, 'res := TFHIR'+resource.fhirType+'.create;');
   line(2, 'try');
-  sd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType) as TFhirStructureDefinition;
+  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType));
   try
     processObject(4, 'res', resource.fhirType, sd, resource, addVar([], 'res'));
   finally
@@ -777,7 +786,7 @@ begin
   line(indent, variableName+'.div_ := TFHIRXhtmlParser.parse(''en'', xppReject, [], '+delphiStringWrap(indent, TFHIRXhtmlParser.compose(value as TFhirXHtmlNode))+'); // (lang, policy, options, html)');
 end;
 
-function TFHIRCodeGeneratorPascal.varName(fhirType: String; defn : TFhirElementDefinition; inScope: TArray<String>): string;
+function TFHIRCodeGeneratorPascal.varName(fhirType: String; defn : TFhirElementDefinitionW; inScope: TArray<String>): string;
 var
   ch : Char;
   i : integer;
@@ -806,7 +815,7 @@ begin
     result := result + inttostr(i);
   end;
   if vars.Values[result] = '' then
-    if (defn.type_List.IsEmpty) or ((defn.type_List.count = 1) and isAbstractType(defn.type_List[0].code)) then
+    if (length(defn.typeList) = 0) or ((length(defn.typeList) = 1) and isAbstractType(defn.typeList[0])) then
     begin
       s := defn.path;
       for i := 2 to length(s) do

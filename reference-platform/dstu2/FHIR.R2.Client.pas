@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Client.Base, FHIR.XVersion.Resources,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Client.Base, FHIR.Base.Common,
   FHIR.R2.Parser, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Utilities, FHIR.R2.Context, FHIR.R2.Common;
 
 Type
@@ -41,7 +41,7 @@ Type
   protected
     function opWrapper : TFhirOperationOutcomeWClass; override;
     function getResourceVersionId(res : TFHIRResourceV) : string; override;
-    function getBundleHandler : TBundleHandlerClass; override;
+    function getBundleClass : TFHIRBundleWClass; override;
   public
     function link : TFhirClient2; overload;
     function version : TFHIRVersion; override;
@@ -118,9 +118,9 @@ begin
   deleteResourceV(CODES_TFHIRResourceType[aType], id);
 end;
 
-function TFhirClient2.getBundleHandler: TBundleHandlerClass;
+function TFhirClient2.getBundleClass: TFHIRBundleWClass;
 begin
-  result := TBundleHandler2;
+  result := TFHIRBundle2;
 end;
 
 function TFhirClient2.getResourceVersionId(res: TFHIRResourceV): string;
