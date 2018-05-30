@@ -59,6 +59,9 @@ var
   NO_SELECT : boolean = false; // use this to turn actual selection on and off (mainly for debugging memory leaks, since the tests require selection in order to execute)
 
 Type
+  EXmlException = class (Exception);
+  EMXPathEngine = class (EXmlException);
+
   TMXmlElement = class;
 
   TMXmlNode = class (TFslObject)
@@ -321,9 +324,6 @@ Type
   TMXmlParserOption = (xpResolveNamespaces, xpDropWhitespace, xpDropComments);
   TMXmlParserOptions = set of TMXmlParserOption;
 
-  EMXmlDocument = class (Exception);
-  EMXPathEngine = class (Exception);
-
   TMXmlParser = class (TFslObject)
   private
     reader : TFslTextReader;
@@ -475,7 +475,7 @@ begin
       if result = nil then
         result := t
       else
-        raise EMXmlDocument.create('Multiple matches found for '+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+        raise EXmlException.create('Multiple matches found for '+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
 end;
 
 function TMXmlElement.elementNS(ns, name: String): TMXmlElement;
@@ -488,7 +488,7 @@ begin
       if result = nil then
         result := t
       else
-        raise EMXmlDocument.create('Multiple matches found for '+ns+'::'+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+        raise EXmlException.create('Multiple matches found for '+ns+'::'+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
 end;
 
 function TMXmlElement.equal(other: TMXmlNode): boolean;
@@ -768,7 +768,7 @@ begin
   if NodeType in [ntText, ntComment] then
     FText := Value
   else
-    raise EMXmlDocument.create('Unable to set text at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+    raise EXmlException.create('Unable to set text at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
 end;
 
 function TMXmlElement.ToString: String;
@@ -818,7 +818,7 @@ begin
             Name := s+':'+LocalName
         end
         else
-          raise EMXmlDocument.create('no Name or QName provided');
+          raise EXmlException.create('no Name or QName provided');
       end;
       b.Append('<');
       b.Append(Name);
@@ -1480,7 +1480,7 @@ end;
 procedure TMXmlParser.rule(test: boolean; message: String);
 begin
   if not test then
-    raise EMXmlDocument.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col));
+    raise EXmlException.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col));
 end;
 
 function describeTokens(tokens : Array of String) : String;
@@ -1522,7 +1522,7 @@ begin
     if StringArrayExistsSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))) then
       node.axis := TMXPathExpressionAxis(StringArrayIndexOfSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))))
     else
-      raise EMXmlDocument.Create('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')));
+      raise EXmlException.Create('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')));
     s := s.Substring(s.IndexOf('::')+2);
   end
   else
@@ -1565,7 +1565,7 @@ begin
   begin
     // starting at the root...
     if not readNext then
-      raise EMXmlDocument.Create('Syntax error..');
+      raise EXmlException.Create('Syntax error..');
     readNext := false;
     node.NodeType := xentRoot; // no value in this case
   end
@@ -1707,7 +1707,7 @@ begin
   if element.Parent <> nil then
     result := resolveNamespace(element.Parent, abbrev)
   else
-    raise EMXmlDocument.create('Unable to resolve namespace abbreviation "'+abbrev+'"');
+    raise EXmlException.create('Unable to resolve namespace abbreviation "'+abbrev+'"');
 end;
 
 procedure TMXmlParser.resolveNamespaces(element: TMXmlElement; defNs : String);

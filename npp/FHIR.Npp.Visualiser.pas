@@ -86,6 +86,8 @@ type
     webFocus: TWebBrowser;
     Panel5: TPanel;
     Button1: TButton;
+    Panel6: TPanel;
+    edtPath: TEdit;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormFloat(Sender: TObject);
     procedure FormDock(Sender: TObject);
@@ -111,6 +113,7 @@ type
     FMatchList : TFslList<TFHIRAnnotation>;
     FExpression : TFHIRPathExpressionNodeV;
     FFocusPath : String;
+    FLastPath : String;
     FFocusObjects : TFslList<TFHIRObject>;
     FCDSManager : TCDSHooksManager;
 
@@ -134,10 +137,9 @@ type
     procedure DoUpdateCards(var Msg: TMessage); message UMSG;
     procedure UpdateCards;
   public
-    { Public declarations }
     procedure setNarrative(s : String);
     procedure setValidationOutcomes(errors : TFslList<TFHIRAnnotation>);
-    procedure setPathOutcomes(matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNodeV);
+    procedure setPathOutcomes(path : String; matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNodeV);
     procedure setFocusInfo(path : String; focus : Array of TFHIRObject);
 
     property CDSManager : TCDSHooksManager read FCDSManager;
@@ -576,20 +578,25 @@ begin
   end;
 end;
 
-procedure TFHIRVisualizer.setPathOutcomes(matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNodeV);
+procedure TFHIRVisualizer.setPathOutcomes(path : String; matches : TFslList<TFHIRAnnotation>; expression : TFHIRPathExpressionNodeV);
 var
   a : TFHIRAnnotation;
   li : TListItem;
   comp : TFHIRAnnotationComparer;
 begin
-  comp := TFHIRAnnotationComparer.Create;
-  try
-    if matches.matches(FMatchList, true, comp) then
-      exit;
-  finally
-    comp.Free;
+  if path = FLastPath then
+  begin
+    comp := TFHIRAnnotationComparer.Create;
+    try
+      if matches.matches(FMatchList, true, comp) then
+        exit;
+    finally
+      comp.Free;
+    end;
   end;
 
+  FLastPath := path;
+  edtPath.Text := path;
   FMatchList.free;
   FMatchList := matches.link;
   lstMatches.Items.Clear;

@@ -76,7 +76,6 @@ uses
   FHIR.Tools.Session in '..\tools\FHIR.Tools.Session.pas',
   FHIR.Tools.Security in '..\tools\FHIR.Tools.Security.pas',
   FHIR.Tools.Indexing in '..\tools\FHIR.Tools.Indexing.pas',
-  FHIR.Tools.XhtmlComp in '..\tools\FHIR.Tools.XhtmlComp.pas',
   FHIR.Tools.DiffEngine in '..\tools\FHIR.Tools.DiffEngine.pas',
   FHIR.R3.Constants,
   FHIR.R3.PathEngine in 'FHIR.R3.PathEngine.pas',
@@ -98,10 +97,14 @@ uses
   FHIR.Base.Validator in '..\base\FHIR.Base.Validator.pas',
   FHIR.Base.PathEngine in '..\base\FHIR.Base.PathEngine.pas',
   FHIR.Client.Base in '..\client\FHIR.Client.Base.pas',
-  FHIR.Client.SmartUtilities in '..\client\FHIR.Client.SmartUtilities.pas',
   FHIR.Client.Threaded in '..\client\FHIR.Client.Threaded.pas',
   FHIR.Client.HTTP in '..\client\FHIR.Client.HTTP.pas',
-  fhir.support.fpc in '..\support\fhir.support.fpc.pas';
+  fhir.support.fpc in '..\support\fhir.support.fpc.pas',
+  FHIR.Support.Osx in '..\support\FHIR.Support.Osx.pas',
+  FHIR.Base.Utilities in '..\base\FHIR.Base.Utilities.pas',
+  FHIR.Cache.PackageManager in '..\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Support.Tarball in '..\support\FHIR.Support.Tarball.pas',
+  FHIR.Smart.Utilities in '..\client\FHIR.Smart.Utilities.pas';
 
 var
   s: String;

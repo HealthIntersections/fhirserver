@@ -225,7 +225,15 @@ begin
   begin
     engine := TDifferenceEngine.Create(TTestingWorkerContext.Use, makeFactory);
     try
+      {$IFDEF FHIR2}
+      w := TFhirParameters2.create(diff.link);
+      {$ELSE}
+      {$IFDEF FHIR3}
+      w := TFhirParameters3.create(diff.link);
+      {$ELSE}
       w := TFhirParameters4.create(diff.link);
+      {$ENDIF}
+      {$ENDIF}
       try
         outcome := engine.applyDifference(input, w) as TFhirResource;
         try

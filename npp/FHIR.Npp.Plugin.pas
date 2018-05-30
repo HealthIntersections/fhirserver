@@ -1851,7 +1851,7 @@ begin
       if (FHIRVisualizer <> nil) then
         case VisualiserMode of
           vmNarrative: FHIRVisualizer.setNarrative(prepNarrativeHtml(''));
-          vmPath: FHIRVisualizer.setPathOutcomes(nil, nil);
+          vmPath: FHIRVisualizer.setPathOutcomes('', nil, nil);
           vmFocus: FHIRVisualizer.setFocusInfo('', []);
         end;
       FCurrentFileInfo.Format := ffUnspecified;
@@ -1862,7 +1862,7 @@ begin
       if res = nil then
         case VisualiserMode of
           vmNarrative: FHIRVisualizer.setNarrative(prepNarrativeHtml(''));
-          vmPath: FHIRVisualizer.setPathOutcomes(nil, nil);
+          vmPath: FHIRVisualizer.setPathOutcomes('', nil, nil);
           vmFocus: FHIRVisualizer.setFocusInfo('', []);
         end
       else
@@ -1882,6 +1882,7 @@ begin
         begin
           if assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath) and (VisualiserMode = vmPath) then
           begin
+            matches.clear;
             evaluatePath(res, items, expr, types);
             try
               for item in items do
@@ -1893,7 +1894,7 @@ begin
                 matches.Add(TFHIRAnnotation.create(alMatch, item.value.LocationStart.line - 1, sp, ep, 'This element is a match to path "'+FHIRToolbox.edtPath.Text+'"', item.value.describe));
               end;
               if VisualiserMode = vmPath then
-                FHIRVisualizer.setPathOutcomes(matches, expr);
+                FHIRVisualizer.setPathOutcomes(FHIRToolbox.edtPath.Text, matches, expr);
               setUpSquiggles;
               for annot in matches do
                 squiggle(LEVEL_INDICATORS[annot.level], annot.line, annot.start, annot.stop - annot.start, annot.message);
@@ -1904,7 +1905,7 @@ begin
             end;
           end
           else
-            FHIRVisualizer.setPathOutcomes(nil, nil);
+            FHIRVisualizer.setPathOutcomes('', nil, nil);
         end;
       end;
     finally

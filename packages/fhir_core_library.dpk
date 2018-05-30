@@ -39,7 +39,6 @@ contains
   FHIR.Base.Lang in '..\reference-platform\base\FHIR.Base.Lang.pas',
   FHIR.Base.Xhtml in '..\reference-platform\base\FHIR.Base.Xhtml.pas',
   FHIR.Base.Validator in '..\reference-platform\base\FHIR.Base.Validator.pas',
-  FHIR.XVersion.Resources in '..\reference-platform\xversion\FHIR.XVersion.Resources.pas',
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.Client.Base in '..\reference-platform\client\FHIR.Client.Base.pas',
@@ -61,6 +60,7 @@ contains
   FHIR.Support.Turtle in '..\reference-platform\support\FHIR.Support.Turtle.pas',
   FHIR.Support.Json in '..\reference-platform\support\FHIR.Support.Json.pas',
   FHIR.Ucum.IFace in '..\reference-platform\support\FHIR.Ucum.IFace.pas',
-  FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas';
+  FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas';
 
 end.

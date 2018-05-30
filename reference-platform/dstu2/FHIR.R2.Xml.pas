@@ -1980,7 +1980,7 @@ begin
     result.value := GetAttribute(element, 'value');
     i := StringArrayIndexOfSensitive(aNames, result.value);
     if i < 0 then
-      raise Exception.create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
+      raise EXmlException.Create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
     result.system := aSystems[i];
     child := FirstChild(element);
     while (child <> nil) do
@@ -29033,7 +29033,7 @@ end;
 function TFHIRXmlParser.ParseResource(element : TMXmlElement; path : String) : TFhirResource;
 begin
   if (element = nil) Then
-    Raise Exception.Create('error - element is nil')
+    Raise EXmlException.Create('error - element is nil')
 {$IFDEF FHIR_PARAMETERS}
   else if element.localName = 'Parameters' Then
     result := ParseParameters(element, path+'/Parameters')
@@ -29597,13 +29597,13 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('Error: the element '+element.localName+' is not recognised as a valid resource name');
+    raise EXmlException.Create('Error: the element '+element.localName+' is not recognised as a valid resource name');
 end;
 
 procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; resource: TFhirResource);
 begin
   if (resource = nil) Then
-    Raise Exception.Create('error - resource is nil');
+    Raise EXmlException.Create('error - resource is nil');
   Case resource.ResourceType of
 {$IFDEF FHIR_PARAMETERS}
     frtParameters: ComposeParameters(xml, 'Parameters', TFhirParameters(resource));
@@ -30074,7 +30074,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise EXmlException.Create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 
@@ -30501,13 +30501,13 @@ begin
     result := parseVisionPrescription(element, element.Name)
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('error: the element '+element.Name+' is not a valid fragment name');
+    raise EXmlException.Create('error: the element '+element.Name+' is not a valid fragment name');
 end;
 
 function TFHIRXmlParser.ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRTypeClass) : TFhirType;
 begin
     if (name <> '') and (name <> element.localName) then
-    raise Exception.Create('Expected Name mismatch : expected "'+name+'"+, but found "'+element.localName+'"');
+    raise EXmlException.Create('Expected Name mismatch : expected "'+name+'"+, but found "'+element.localName+'"');
  if (type_ = TFhirExtension) then
     result := parseExtension(element, name)
   else if (type_ = TFhirNarrative) then
@@ -30549,7 +30549,7 @@ begin
   else if (type_ = TFhirTiming) then
     result := parseTiming(element, name)
   else
-    raise Exception.create('Unknown Type');
+    raise EXmlException.Create('Unknown Type');
 end;
 
 procedure TFHIRXmlComposer.ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject);
@@ -31453,7 +31453,7 @@ begin
     composeVisionPrescription(xml, name,  TFhirVisionPrescription(base))
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('Unknown Type '+base.className);
+    inherited ComposeBase(xml, name, base);
 end;
 
 

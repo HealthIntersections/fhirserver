@@ -38,6 +38,8 @@ uses
 Function JSONString(const value : String) : String;
 
 Type
+  EJsonException = class (Exception);
+
   TJsonObject = class;
   TJsonArray = class;
 
@@ -624,22 +626,22 @@ End;
 
 procedure TJSONWriter.doValue(name, value: String);
 begin
-  raise Exception.Create('Need to override '+className+'.doValue');
+  raise EJsonException.Create('Need to override '+className+'.doValue');
 end;
 
 procedure TJSONWriter.Finish;
 begin
-  raise Exception.Create('Need to override '+className+'.Finish');
+  raise EJsonException.Create('Need to override '+className+'.Finish');
 end;
 
 procedure TJSONWriter.FinishArray;
 begin
-  raise Exception.Create('Need to override '+className+'.FinishArray');
+  raise EJsonException.Create('Need to override '+className+'.FinishArray');
 end;
 
 procedure TJSONWriter.FinishObject;
 begin
-  raise Exception.Create('Need to override '+className+'.FinishObject');
+  raise EJsonException.Create('Need to override '+className+'.FinishObject');
 end;
 
 function TJSONWriter.toString: String;
@@ -737,7 +739,7 @@ end;
 
 procedure TJSONWriter.ValueArray(const name: String);
 begin
-  raise Exception.Create('Need to override '+className+'.ValueArray');
+  raise EJsonException.Create('Need to override '+className+'.ValueArray');
 end;
 
 procedure TJSONWriter.Value(const name : String; avalue: Integer);
@@ -815,7 +817,7 @@ begin
       else if v is  TJsonObject then
         WriteObject(n, v as TJsonObject)
       else
-        raise Exception.Create('Unexpected object type '+v.nodeType);
+        raise EJsonException.Create('Unexpected object type '+v.nodeType);
     end;
   finally
     names.free;
@@ -836,12 +838,12 @@ end;
 
 procedure TJSONWriter.ValueObject;
 begin
-  raise Exception.Create('Need to override '+className+'.ValueObject');
+  raise EJsonException.Create('Need to override '+className+'.ValueObject');
 end;
 
 procedure TJSONWriter.ValueObject(const name: String);
 begin
-  raise Exception.Create('Need to override '+className+'.ValueObject');
+  raise EJsonException.Create('Need to override '+className+'.ValueObject');
 end;
 
 procedure TJSONWriter.ValueInArray(value: Boolean);
@@ -854,7 +856,7 @@ end;
 
 procedure TJSONWriter.ValueNullInArray;
 begin
-  raise Exception.Create('Need to override '+className+'.ValueNullInArray');
+  raise EJsonException.Create('Need to override '+className+'.ValueNullInArray');
 end;
 
 procedure TJSONWriter.ValueNumber(const name, avalue: String);
@@ -946,7 +948,7 @@ end;
 
 procedure TJSONWriter.Start;
 begin
-  raise Exception.Create('Need to override '+className+'.start');
+  raise EJsonException.Create('Need to override '+className+'.start');
 end;
 
 procedure TJSONWriter.ValueDateInArray(aValue: TDateTime);
@@ -959,7 +961,7 @@ end;
 
 procedure TJSONWriter.ValueInArray(const value: String);
 begin
-  raise Exception.Create('Need to override '+className+'.ValueInArray');
+  raise EJsonException.Create('Need to override '+className+'.ValueInArray');
 end;
 
 { TJsonWriterDirect }
@@ -1042,7 +1044,7 @@ end;
 procedure TJsonWriterDirect.ValueBytes(const name: String; bytes: TBytes);
 begin
   if name = '' then
-    raise Exception.Create('Injecting bytes not supported in an array');
+    raise EJsonException.Create('Injecting bytes not supported in an array');
   DoName(Name);
   produce(UseName);
   ProduceBytes(bytes);
@@ -1268,7 +1270,7 @@ end;
 
 procedure TJSONLexer.JsonError(sMsg: String);
 begin
-  Raise Exception.Create('Error parsing JSON source: '+sMsg+' at Line '+inttostr(Line)+' (path=['+Path+'])');
+  Raise EJsonException.Create('Error parsing JSON source: '+sMsg+' at Line '+inttostr(Line)+' (path=['+Path+'])');
 end;
 
 function TJSONLexer.Path: String;
@@ -1605,7 +1607,7 @@ begin
         Next;
         readArray(child, false);
         end;
-      jpitEof : raise Exception.Create('Unexpected End of File');
+      jpitEof : raise EJsonException.Create('Unexpected End of File');
     end;
     arr.LocationEnd := FLex.FLocation;
     Next;
@@ -1629,8 +1631,8 @@ begin
           result.Free;
         end;
       end;
-    jltString : raise Exception.Create('Not implemented yet');
-    jltNumber : raise Exception.Create('Not implemented yet');
+    jltString : raise EJsonException.Create('Not implemented yet');
+    jltNumber : raise EJsonException.Create('Not implemented yet');
     jltOpenArray :
       begin
         FLex.Next;
@@ -1644,10 +1646,10 @@ begin
           result.Free;
         end;
       end;
-    jltNull : raise Exception.Create('Not implemented yet');
-    jltBoolean : raise Exception.Create('Not implemented yet');
+    jltNull : raise EJsonException.Create('Not implemented yet');
+    jltBoolean : raise EJsonException.Create('Not implemented yet');
   else
-    raise Exception.Create('Unexpected Token '+Codes_TJSONLexType[FLex.LexType]+' at start of Json Stream');
+    raise EJsonException.Create('Unexpected Token '+Codes_TJSONLexType[FLex.LexType]+' at start of Json Stream');
   end;
 end;
 
@@ -1663,7 +1665,7 @@ begin
   begin
     ns := FNameStart; // we rule that the value 'starts' in a location sense where the name starts, not where the value starts
     if obj.FProperties.ContainsKey(itemName) then
-      raise Exception.Create('DuplicateKey: '+itemName+' at '+obj.path);
+      raise EJsonException.Create('DuplicateKey: '+itemName+' at '+obj.path);
 
     case ItemType of
       jpitObject:
@@ -1690,7 +1692,7 @@ begin
         Next;
         readArray(arr, false);
         end;
-      jpitEof : raise Exception.Create('Unexpected End of File');
+      jpitEof : raise EJsonException.Create('Unexpected End of File');
     end;
     obj.LocationEnd := FLex.FLocation;
     next;
@@ -1885,7 +1887,7 @@ begin
   else if FItems[i] is TJsonNull then
     result := nil
   else
-    raise Exception.Create('Found a property of type '+TJsonNode(FItems[i]).nodeType+' looking for an object at '+path+'['+inttostr(i)+']');
+    raise EJsonException.Create('Found a property of type '+TJsonNode(FItems[i]).nodeType+' looking for an object at '+path+'['+inttostr(i)+']');
 end;
 
 function TJsonArray.GetValue(i: integer): String;
@@ -1899,7 +1901,7 @@ begin
   else if FItems[i] is TJsonNull then
     result := ''
   else
-    raise Exception.Create('Found a '+nodeType+' expecting a string property at '+path);
+    raise EJsonException.Create('Found a '+nodeType+' expecting a string property at '+path);
 end;
 
 function TJsonArray.kind: TJsonNodeKind;
@@ -2081,7 +2083,7 @@ begin
     else if node is TJsonNull then
       result := nil
     else
-      raise Exception.Create('Found a property of '+node.nodeType+' looking for an array at '+path+'.'+name);
+      raise EJsonException.Create('Found a property of '+node.nodeType+' looking for an array at '+path+'.'+name);
   end
   else
     result := nil;
@@ -2099,7 +2101,7 @@ begin
     else if node is TJsonBoolean then
       result := (node as TJsonBoolean).FValue
     else
-      raise Exception.Create('Found a property of type '+node.nodeType+' looking for a boolean at '+path+'.'+name);
+      raise EJsonException.Create('Found a property of type '+node.nodeType+' looking for a boolean at '+path+'.'+name);
   end
   else
     result := false;
@@ -2150,7 +2152,7 @@ begin
         else
           result := '0'
       else
-        raise Exception.Create('Found a property of type '+node.nodeType+' looking for a string at '+FPath+'.'+name);
+        raise EJsonException.Create('Found a property of type '+node.nodeType+' looking for a string at '+FPath+'.'+name);
     end
     else
       result := '';
@@ -2169,7 +2171,7 @@ begin
     else if node is TJsonNull then
       result := nil
     else
-      raise Exception.Create('Found a property of type '+node.nodeType+' looking for an object at '+FPath+'.'+name);
+      raise EJsonException.Create('Found a property of type '+node.nodeType+' looking for an object at '+FPath+'.'+name);
   end
   else
     result := nil;
@@ -2198,7 +2200,7 @@ begin
         else
           result := 'false'
       else
-        raise Exception.Create('Found a property of type '+node.nodeType+' looking for a string at '+FPath+'.'+name);
+        raise EJsonException.Create('Found a property of type '+node.nodeType+' looking for a string at '+FPath+'.'+name);
     end
     else
       result := '';
@@ -2423,14 +2425,14 @@ begin
     except
     end;
     if not ok then
-      raise Exception.Create('Test failed: '+cmt);
+      raise EJsonException.Create('Test failed: '+cmt);
   end
   else
   begin
     outcome := applyPatch(test.obj['doc'], test.arr['patch']);
     try
       if not TJsonNode.compare(outcome, test.obj['expected']) then
-        raise Exception.Create('Test failed: '+cmt);
+        raise EJsonException.Create('Test failed: '+cmt);
     finally
       outcome.Free;
     end;
@@ -2461,7 +2463,7 @@ begin
     if op is TJsonObject then
       applyPatchOperation(op as TJsonObject)
     else
-      raise Exception.Create('Unexpected JSON node type looking for operation: '+op.nodeType);
+      raise EJsonException.Create('Unexpected JSON node type looking for operation: '+op.nodeType);
 end;
 
 procedure TJsonPatchEngine.applyPatchOperation(patchOp: TJsonObject);
@@ -2471,10 +2473,10 @@ begin
   op := patchOp['op'];
   path := patchOp['path'];
   if path = '' then
-    raise Exception.Create('No patch path parameter found');
+    raise EJsonException.Create('No patch path parameter found');
 
   if op = '' then
-    raise Exception.Create('No patch op parameter found')
+    raise EJsonException.Create('No patch op parameter found')
   else if op = 'add' then
     applyAdd(patchOp, path)
   else if op = 'remove' then
@@ -2488,7 +2490,7 @@ begin
   else if op = 'test' then
     applyTest(patchOp, path)
   else
-    raise Exception.Create('Unknown patch operation "'+op+'"');
+    raise EJsonException.Create('Unknown patch operation "'+op+'"');
 end;
 
 procedure TJsonPatchEngine.applyAdd(patchOp: TJsonObject; path : String);
@@ -2497,7 +2499,7 @@ var
 begin
   value := patchOp.properties['value'];
   if value = nil then
-    raise Exception.Create('No patch value parameter found in add');
+    raise EJsonException.Create('No patch value parameter found in add');
   applyAddInner(path, value);
 end;
 
@@ -2513,7 +2515,7 @@ begin
         if (query.secondLast is TJsonObject) then
           (query.secondLast as TJsonObject).properties.add(query.lastName, value.Link)
         else
-          raise Exception.Create('Unexpected target type '+query.last.nodeType);
+          raise EJsonException.Create('Unexpected target type '+query.last.nodeType);
       tsFound :
         begin
         if (query.secondLast is TJsonArray) and StringIsInteger32(query.lastName) then
@@ -2521,14 +2523,14 @@ begin
         else if query.secondlast is TJsonObject then
           (query.secondlast as TJsonObject).FProperties.AddOrSetValue(query.lastName, value.link)
         else
-          raise Exception.Create('Unexpected target type '+query.last.nodeType);
+          raise EJsonException.Create('Unexpected target type '+query.last.nodeType);
         end;
       tsAtEnd :
         begin
         if (query.secondlast is TJsonArray) then
           (query.secondlast as TJsonArray).add(value.Link)
         else
-          raise Exception.Create('Attempt to append content to a non-array ('+query.last.nodeType+')');
+          raise EJsonException.Create('Attempt to append content to a non-array ('+query.last.nodeType+')');
         end;
     end;
   finally
@@ -2548,7 +2550,7 @@ begin
     else if query.secondLast is TJsonObject then
       (query.secondLast as TJsonObject).FProperties.Remove(query.lastName)
     else
-      raise Exception.Create('Unexpected target type '+query.last.nodeType);
+      raise EJsonException.Create('Unexpected target type '+query.last.nodeType);
   finally
     query.free;
   end;
@@ -2561,7 +2563,7 @@ var
 begin
   value := patchOp.properties['value'];
   if value = nil then
-    raise Exception.Create('No patch value parameter found in add');
+    raise EJsonException.Create('No patch value parameter found in add');
   query := TJsonPointerQuery.create;
   try
     query.execute(target, path, false);
@@ -2570,7 +2572,7 @@ begin
     else if query.secondLast is TJsonObject then
       (query.secondLast as TJsonObject).FProperties[query.lastName] := value.link
     else
-      raise Exception.Create('Unexpected target type '+query.last.nodeType);
+      raise EJsonException.Create('Unexpected target type '+query.last.nodeType);
   finally
     query.free;
   end;
@@ -2583,13 +2585,13 @@ var
 begin
   value := patchOp.properties['value'];
   if value = nil then
-    raise Exception.Create('No patch value parameter found in add');
+    raise EJsonException.Create('No patch value parameter found in add');
 
   query := TJsonPointerQuery.create;
   try
     query.execute(target, path, false);
     if not TJsonNode.compare(query.last, value) then
-      raise Exception.Create('Test Failed because nodes are not equal');
+      raise EJsonException.Create('Test Failed because nodes are not equal');
   finally
     query.free;
   end;
@@ -2602,7 +2604,7 @@ var
 begin
   from := patchOp['from'];
   if from = '' then
-    raise Exception.Create('No patch from parameter found');
+    raise EJsonException.Create('No patch from parameter found');
 
   qFrom := TJsonPointerQuery.create;
   try
@@ -2621,7 +2623,7 @@ var
 begin
   from := patchOp['from'];
   if from = '' then
-    raise Exception.Create('No patch from parameter found');
+    raise EJsonException.Create('No patch from parameter found');
 
   qFrom := TJsonPointerQuery.create;
   try
@@ -2633,7 +2635,7 @@ begin
       else if qFrom.secondLast is TJsonObject then
         (qFrom.secondLast as TJsonObject).FProperties.Remove(qFrom.lastName)
       else
-        raise Exception.Create('Unexpected target type '+qFrom.last.nodeType);
+        raise EJsonException.Create('Unexpected target type '+qFrom.last.nodeType);
 
       applyAddInner(path, focus);
     finally
@@ -2705,7 +2707,7 @@ var
   p : String;
 begin
   if (path.Trim = '') then
-    raise Exception.Create('Path cannot be blank');
+    raise EJsonException.Create('Path cannot be blank');
 
   FMatches.Add(TJsonPointerMatch.Create('$', focus.Link));
   FTerminalState := tsFound;
@@ -2740,7 +2742,7 @@ begin
     begin
       focus := focus.evaluatePointer(p);
       if focus = nil then
-        raise Exception.Create('Pointer could not be resolved: "'+p+'"')
+        raise EJsonException.Create('Pointer could not be resolved: "'+p+'"')
       else
         FMatches.Add(TJsonPointerMatch.Create(p, focus.Link));
     end;

@@ -37,11 +37,12 @@ Uses
   FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Support.MXml;
 
-  
+
 function getChildNode(node : IXMLNode; name, ns : String) : IXMLNode; overload;
 function getChildNode(node : IXMLNode; name : String) : IXMLNode; overload;
-  
+
 Type
+
   TXmlCanonicalisationMethod = (xcmCanonicalise, xcmComments, xcmTrimWhitespace, {xcmPrefixRewrite, } xcmQNameAware);
   TXmlCanonicalisationMethodSet = set of TXmlCanonicalisationMethod;
 
@@ -749,7 +750,7 @@ end;
 
 Procedure TFslXmlBuilder.StartFragment;
 begin
-  raise Exception.Create('Not Supported yet');
+  raise EXmlException.Create('Not Supported yet');
 end;
 
 Procedure TFslXmlBuilder.Finish;
@@ -767,7 +768,7 @@ begin
   else if CurrentNamespaces.ExistsByKey(uri) then
     result := CurrentNamespaces.Matches[uri]+':'+name
   else
-    raise Exception.Create('Unregistered namespace '+uri);
+    raise EXmlException.Create('Unregistered namespace '+uri);
 end;
 
 procedure TFslXmlBuilder.inject(const bytes: TBytes);
@@ -870,7 +871,7 @@ end;
 procedure TFslXmlBuilder.DocType(sText: String);
 begin
   if not (xcmCanonicalise in FCanonicalise) then
-    raise Exception.Create('Not supported');
+    raise EXmlException.Create('Not supported');
 end;
 
 Procedure TFslXmlBuilder.AddAttribute(Const sName, sValue : String);
@@ -878,7 +879,7 @@ begin
   if (sName = 'xmlns') and CurrentNamespaces.DefaultSet then
   begin
     if sValue <> CurrentNamespaces.DefaultNS then
-      raise Exception.Create('Namespace mismatch');
+      raise EXmlException.Create('Namespace mismatch');
     CurrentNamespaces.DefaultSet := false;
   end;
 
@@ -920,7 +921,7 @@ begin
     if not xml.Attributes.ExistsByName('xmlns') then
       xml.AddNamespace('', CurrentNamespaces.DefaultNS)
     else if xml.Attributes.GetByName('xmlns').Value <> CurrentNamespaces.DefaultNS then
-       raise Exception.Create('XML default namespce misalignment');
+       raise EXmlException.Create('XML default namespce misalignment');
     CurrentNamespaces.DefaultSet := false;
   end;
   xml.ProduceOpen(sName);
@@ -986,7 +987,7 @@ end;
 
 function TFslXmlBuilder.Entity(Const sValue : String) : TSourceLocation;
 begin
-  raise Exception.Create('entities not supported');
+  raise EXmlException.Create('entities not supported');
 end;
 
 function TFslXmlBuilder.TagText(Const sName, sValue : String) : TSourceLocation;
@@ -1032,7 +1033,7 @@ begin
     xb.Free;
   end;
   if s <> target then
-    raise Exception.Create('Mismatch');
+    raise EXmlException.Create('Mismatch');
     *)
 end;
 
@@ -1276,7 +1277,7 @@ begin
       ntDocType : DocType(n.text);
       ntProcessingInstr : ProcessingInstruction(n.nodeName, n.text);
     else
-      raise Exception.Create('Unhandled node type on document: '+inttostr(ord(n.nodeType)));
+      raise EXmlException.Create('Unhandled node type on document: '+inttostr(ord(n.nodeType)));
     end;
   end;
 end;
@@ -1301,7 +1302,7 @@ begin
       ntProcessingInstr : ProcessingInstruction(n.nodeName, n.Text);
       ntCData : CData(n.text);
     else
-      raise Exception.Create('Unhandled node type on document: '+inttostr(ord(n.nodeType)));
+      raise EXmlException.Create('Unhandled node type on document: '+inttostr(ord(n.nodeType)));
     end;
   end;
 end;
@@ -1433,11 +1434,11 @@ begin
       ntElement: WriteXml(c);
       ntText: Text(c.Text);
       ntComment: Comment(c.Text);
-      ntDocument: raise Exception.Create('Illegal XML - document inside element');
-      ntAttribute: raise Exception.Create('Illegal XML - attribute in element chilren');
+      ntDocument: raise EXmlException.Create('Illegal XML - document inside element');
+      ntAttribute: raise EXmlException.Create('Illegal XML - attribute in element chilren');
       ntProcessingInstruction: ProcessingInstruction(c.Name, c.Text);
-      ntDocumentDeclaration: raise Exception.Create('Illegal DTD not supported');
-      ntCData: raise Exception.Create('Illegal CDATA not supported');
+      ntDocumentDeclaration: raise EXmlException.Create('Illegal DTD not supported');
+      ntCData: raise EXmlException.Create('Illegal CDATA not supported');
     end;
   Close(n);
 end;
@@ -1481,14 +1482,14 @@ end;
 class procedure TXmlPatchEngine.execute(doc : TMXmlDocument; target : TMXmlElement; patch: TMXmlElement);
 begin
   if doc = nil then
-    raise Exception.Create('No Target Document Root Found');
+    raise EXmlException.Create('No Target Document Root Found');
   if target = nil then
-    raise Exception.Create('No Target Element Found');
+    raise EXmlException.Create('No Target Element Found');
   if patch = nil then
-    raise Exception.Create('No Patch Operations Found');
+    raise EXmlException.Create('No Patch Operations Found');
   patch := patch.firstElement;
   if patch = nil then
-    raise Exception.Create('No Patch Operations Found');
+    raise EXmlException.Create('No Patch Operations Found');
 
   doc.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
   doc.NamespaceAbbreviations.AddOrSetValue('h', 'http://www.w3.org/1999/xhtml');
@@ -1502,7 +1503,7 @@ begin
     else if (patch.localName = 'replace') then
       replace(doc, patch, target)
     else
-      raise Exception.Create('Unknown Patch Operation "'+patch.localName+'"');
+      raise EXmlException.Create('Unknown Patch Operation "'+patch.localName+'"');
     patch := patch.nextElement;
   end;
 end;
@@ -1534,9 +1535,9 @@ begin
   matches := doc.select(sel, target);
   try
     if matches.count = 0 then
-      raise Exception.Create('No match found for '+sel+' performing addition');
+      raise EXmlException.Create('No match found for '+sel+' performing addition');
     if matches.count > 1 then
-      raise Exception.Create('The xpath '+sel+' matched multiple nodes performing addition');
+      raise EXmlException.Create('The xpath '+sel+' matched multiple nodes performing addition');
 
     if typ = '' then
       addChildNodes(doc, op, matches[0] as TMXmlElement, pos)
@@ -1551,7 +1552,7 @@ begin
       elem.attribute['xmlns:'+typ.Substring(11)] := op.text;
     end
     else
-      raise Exception.Create('Unknown value for type: '+typ);
+      raise EXmlException.Create('Unknown value for type: '+typ);
   finally
     matches.Free;
   end;
@@ -1568,9 +1569,9 @@ begin
   matches := doc.select(sel, target);
   try
     if matches.count = 0 then
-      raise Exception.Create('No match found for '+sel+' performing replace');
+      raise EXmlException.Create('No match found for '+sel+' performing replace');
     if matches.count > 1 then
-      raise Exception.Create('The xpath '+sel+' matched multiple nodes performing replace');
+      raise EXmlException.Create('The xpath '+sel+' matched multiple nodes performing replace');
 
     case TMXmlNamedNode(matches[0]).nodeType of
       ntElement :
@@ -1590,7 +1591,7 @@ begin
       ntComment : TMXmlElement(matches[0]).text := op.text;
       ntAttribute : TMXmlAttribute(matches[0]).value := op.text;
     else
-      raise Exception.Create('Unsupported Node Type for replace');
+      raise EXmlException.Create('Unsupported Node Type for replace');
     end;
   finally
     matches.Free;
@@ -1608,9 +1609,9 @@ begin
   matches := doc.select(sel, target);
   try
     if matches.count = 0 then
-      raise Exception.Create('Nothing to delete found for xpath '+sel);
+      raise EXmlException.Create('Nothing to delete found for xpath '+sel);
     if matches.count > 1 then
-      raise Exception.Create('The xpath '+sel+' matched multiple nodes');
+      raise EXmlException.Create('The xpath '+sel+' matched multiple nodes');
 
     if attrName <> '' then
     begin
@@ -1650,7 +1651,7 @@ begin
       ntComment :
         c := TMXmlElement.createComment(n.text);
     else
-      raise Exception.Create('Node type not supported '+inttostr(ord(n.nodeType)));
+      raise EXmlException.Create('Node type not supported '+inttostr(ord(n.nodeType)));
     end;
     if pos = '' then
     begin
@@ -1663,7 +1664,7 @@ begin
       c.Parent := target.Parent;
     end
     else
-      raise Exception.Create('Pos "'+pos+'" not supported');
+      raise EXmlException.Create('Pos "'+pos+'" not supported');
     n := n.next;
   end;
 end;
@@ -3157,7 +3158,7 @@ End;
 
 procedure TMXmlBuilder.inject(const bytes: TBytes);
 begin
-  raise Exception.Create('Inject is not supported on the FHIR.Support.MXml Builder');
+  raise EXmlException.Create('Inject is not supported on the FHIR.Support.MXml Builder');
 end;
 
 procedure TMXmlBuilder.Build(oStream: TStream);
@@ -3280,7 +3281,7 @@ end;
 
 procedure TMXmlBuilder.ProcessingInstruction(sName, sText: String);
 begin
-  raise Exception.Create('Not supported yet');
+  raise EXmlException.Create('Not supported yet');
 end;
 
 function TMXmlBuilder.ReadTextLength(s: string): String;
@@ -3352,7 +3353,7 @@ end;
 
 procedure TMXmlBuilder.DocType(sText: String);
 begin
-  raise Exception.Create('Not supported yet');
+  raise EXmlException.Create('Not supported yet');
 end;
 
 procedure TMXmlBuilder.AddAttributeNS(const sNamespace, sName, sValue: String);

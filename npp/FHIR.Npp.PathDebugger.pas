@@ -111,7 +111,7 @@ type
     FFormat : TFHIRFormat;
     FExpression : TFHIRPathExpressionNodeV;
     FEngine : TFHIRPathEngineV;
-    FServices : TFHIRWorkerContextV;
+    FServices : TFHIRWorkerContextWithFactory;
     FFactory : TFHIRFactory;
     FLog : String;
     FLayoutInProgress : boolean;
@@ -124,7 +124,6 @@ type
     FStartLast : Int64;
     FTypes : TFHIRTypeDetailsV;
     FOutcome : TFHIRSelectionList;
-    FWorkerContext: TFHIRWorkerContextWithFactory;
 
     procedure ResetNode(Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 
@@ -141,10 +140,6 @@ type
     procedure Init(var Msg: TMessage); message UMSG;
     function WantStop(package : TFHIRPathDebugPackage) : boolean;
     procedure DoDebug(source : TFHIRPathEngineV; package : TFHIRPathDebugPackage);
-    procedure SetWorkerContext(const Value: TFHIRWorkerContextWithFactory);
-
-  public
-    property WorkerContext : TFHIRWorkerContextWithFactory read FWorkerContext write SetWorkerContext;
   end;
 
 var
@@ -152,7 +147,7 @@ var
 
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
-    services : TFHIRWorkerContextV;
+    services : TFHIRWorkerContextWithFactory;
     factory : TFHIRFactory;
     resource : TFHIRResourceV; context : TFHIRObject; path : String; fmt : TFHIRFormat;
     out types : TFHIRTypeDetailsV; out items : TFHIRSelectionList) : boolean;
@@ -197,7 +192,7 @@ begin
 end;
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
-    services : TFHIRWorkerContextV;
+    services : TFHIRWorkerContextWithFactory;
     factory : TFHIRFactory;
     resource : TFHIRResourceV; context : TFHIRObject; path : String; fmt : TFHIRFormat;
     out types : TFHIRTypeDetailsV; out items : TFHIRSelectionList) : boolean;
@@ -230,7 +225,6 @@ begin
   FFactory.Free;
   FSkip.Free;
   FDone.Free;
-  FWorkerContext.Free;
   inherited;
 end;
 
@@ -308,12 +302,6 @@ procedure TFHIRPathDebuggerForm.PageControl1Change(Sender: TObject);
 begin
   if not FLayoutInProgress then
     Settings.DebuggerActivePage := PageControl1.ActivePageIndex;
-end;
-
-procedure TFHIRPathDebuggerForm.SetWorkerContext(const Value: TFHIRWorkerContextWithFactory);
-begin
-  FWorkerContext.Free;
-  FWorkerContext := Value;
 end;
 
 procedure TFHIRPathDebuggerForm.SetUp;
@@ -426,11 +414,16 @@ procedure TFHIRPathDebuggerForm.Compose(memo: TMemo; obj: TFHIRSelectionList; na
 var
   ol : TFHIRObjectList;
 begin
-  ol := obj.asValues;
-  try
-    compose(memo, ol, name, def);
-  finally
-    ol.Free;
+  if obj = nil then
+    memo.text := ''
+  else
+  begin
+    ol := obj.asValues;
+    try
+      compose(memo, ol, name, def);
+    finally
+      ol.Free;
+    end;
   end;
 end;
 
@@ -470,7 +463,7 @@ begin
     memo.text := def
   else
   begin
-    comp := FWorkerContext.Factory.makeComposer(FServices.link, FFormat, 'en', OutputStylePretty);
+    comp := FServices.Factory.makeComposer(FServices.link, FFormat, 'en', OutputStylePretty);
     try
       memo.Text := comp.Compose(name, obj)
     finally
@@ -499,6 +492,7 @@ var
   id : string;
   tc : Int64;
   l : integer;
+  s, e : integer;
 begin
   QueryPerformanceCounter(tc);
   if WantStop(package) then
@@ -509,8 +503,12 @@ begin
     else
       Compose(mInput2, package.input2, 'Input2', 'n/a');
     Compose(mOutcome, package.outcome, 'Outcome', 'error?');
-    mSource.SelStart := SendMessage(mSource.Handle, EM_LINEINDEX, package.SourceStart.line-1, 0) + package.SourceStart.col-1;
-    mSource.SelLength := (SendMessage(mSource.Handle, EM_LINEINDEX, package.SourceEnd.line-1, 0) + package.SourceEnd.col-1) - mSource.SelStart;
+    s := SendMessage(mSource.Handle, EM_LINEINDEX, package.SourceStart.line-1, 0);
+    s := s + package.SourceStart.col-1;
+    e := SendMessage(mSource.Handle, EM_LINEINDEX, package.SourceEnd.line-1, 0);
+    e := e + package.SourceEnd.col-1;
+    mSource.SelStart := s;
+    mSource.SelLength := e - mSource.SelStart;
     FCurrent := package.Expression;
     FCurrentIsOp := package.IsOperation;
     id := getId(package.Expression, FCurrentIsOp);
@@ -639,19 +637,4 @@ begin
 end;
 
 end.
-
-
-{
-var
-  p : PTreeDataPointer;
-begin
-  p := vtExpressions.GetNodeData(node);
-  if (p.expr = FCurrent) and (p.isOp = FCurrentIsOp) then
-    ImageIndex := 2
-  else if FDone.indexof(getid(p.expr, p.isOp)) > -1 then
-    ImageIndex := 1
-  else
-    ImageIndex := 0;
-
-}
 

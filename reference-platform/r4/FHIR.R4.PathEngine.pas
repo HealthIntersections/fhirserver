@@ -5453,7 +5453,6 @@ begin
     else // if CharInSet(ch, ['.', ',', '(', ')', '=']) then
       Grab(1);
   end;
-  inc(FCurrentLocation.col, FCursor - FCurrentStart);
 end;
 
 

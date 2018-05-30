@@ -2016,7 +2016,7 @@ var
 begin
   i := StringArrayIndexOfSensitive(aNames, JsonToString(value));
   if (value <> nil) and (i < 0) then
-    raise Exception.create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
+    raise EJsonException.Create('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
   result := TFHIREnum.create;
   try
     if (value <> nil) then
@@ -29778,7 +29778,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('error: the element '+s+' is not a valid resource name');
+    raise EJsonException.Create('error: the element '+s+' is not a valid resource name');
 end;
 
 function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;
@@ -30204,7 +30204,7 @@ begin
     result := parseVisionPrescription(jsn)
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('error: the element '+type_+' is not a valid fragment name');
+    raise EJsonException.Create('error: the element '+type_+' is not a valid fragment name');
 end;
 
 function TFHIRJsonParser.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType;
@@ -30250,7 +30250,7 @@ begin
   else if (type_ = TFhirTiming) then
     result := parseTiming(jsn)
   else
-    raise Exception.create('Unknown Type');
+    raise EJsonException.Create('Unknown Type');
 end;
 
 procedure TFHIRJsonComposer.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);
@@ -31154,13 +31154,13 @@ begin
     composeVisionPrescription(json, name, TFhirVisionPrescription(base), false)
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('Unknown Type '+base.className);
+    inherited ComposeBase(json, name, base);
 end;
 
 procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; resource: TFhirResource);
 begin
   if (resource = nil) Then
-    Raise Exception.Create('error - resource is nil');
+    Raise EJsonException.Create('error - resource is nil');
   json.value('resourceType', CODES_TFhirResourceType[resource.ResourceType]);
   Case resource.ResourceType of
 {$IFDEF FHIR_PARAMETERS}
@@ -31632,7 +31632,7 @@ begin
    {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise EJsonException.Create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 

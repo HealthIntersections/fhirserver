@@ -150,7 +150,6 @@
         <DCCReference Include="..\tools\FHIR.Tools.Session.pas"/>
         <DCCReference Include="..\tools\FHIR.Tools.Security.pas"/>
         <DCCReference Include="..\tools\FHIR.Tools.Indexing.pas"/>
-        <DCCReference Include="..\tools\FHIR.Tools.XhtmlComp.pas"/>
         <DCCReference Include="..\tools\FHIR.Tools.DiffEngine.pas"/>
         <DCCReference Include="FHIR.R4.PathEngine.pas"/>
         <DCCReference Include="FHIR.R4.Resources.pas"/>
@@ -171,10 +170,14 @@
         <DCCReference Include="..\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\client\FHIR.Client.Base.pas"/>
-        <DCCReference Include="..\client\FHIR.Client.SmartUtilities.pas"/>
         <DCCReference Include="..\client\FHIR.Client.Threaded.pas"/>
         <DCCReference Include="..\client\FHIR.Client.HTTP.pas"/>
         <DCCReference Include="..\support\fhir.support.fpc.pas"/>
+        <DCCReference Include="..\support\FHIR.Support.Osx.pas"/>
+        <DCCReference Include="..\base\FHIR.Base.Utilities.pas"/>
+        <DCCReference Include="..\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\support\FHIR.Support.Tarball.pas"/>
+        <DCCReference Include="..\client\FHIR.Smart.Utilities.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

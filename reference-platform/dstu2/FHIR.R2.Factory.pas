@@ -261,7 +261,7 @@ begin
   if r = nil then
     result := nil
   else
-    result := TFHIRCodeSystem2.create(r);
+    result := FHIR.R2.Common.TFHIRCodeSystem2.create(r);
 end;
 
 function TFHIRFactoryR2.wrapCoding(o: TFHIRObject): TFhirCodingW;

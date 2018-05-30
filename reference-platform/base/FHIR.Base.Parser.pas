@@ -646,7 +646,7 @@ end;
 
 procedure TFHIRXmlComposerBase.ComposeBase(xml: TXmlBuilder; name: String; base: TFHIRObject);
 begin
-
+  raise Exception.Create('Unknown type '+base.fhirType);
 end;
 
 procedure TFHIRXmlComposerBase.Text(xml : TXmlBuilder; name, value: String);
@@ -778,10 +778,13 @@ begin
 end;
 
 procedure TFHIRJsonComposerBase.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);
+var
+  s : String;
 begin
-  json.ValueObject(name);
-  json.Value('test', 'value');
-  json.FinishObject;
+  if base is TFHIRSelection then
+    composeBase(json, name, TFHIRSelection(base).value)
+  else
+    raise Exception.Create('Unknown type '+base.className);
 end;
 
 {Procedure TFHIRJsonComposerBase.ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV);

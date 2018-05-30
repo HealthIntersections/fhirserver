@@ -460,8 +460,6 @@ type
     FValue : String;
   protected
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
-    function makeStringValue(v : String) : TFHIRObject; override;
-    function makeCodeValue(v : String) : TFHIRObject; override;
   public
     constructor create(value : String); Overload;
     constructor create(value : TDateTimeEx); Overload;
@@ -471,6 +469,8 @@ type
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function fhirType : String; override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
 
     property value : string read FValue write FValue;
     function isEmpty : boolean; override;
@@ -480,7 +480,7 @@ type
     function equalsShallow(other : TFHIRObject) : boolean; override;
   end;
 
-  TFHIRSelection = class (TFslObject)
+  TFHIRSelection = class (TFhirObject)
   private
     FParent : TFHIRObject;
     FName : String;
@@ -493,6 +493,14 @@ type
     property parent : TFHIRObject read FParent;
     property name : String read FName;
     property value : TFHIRObject read FValue;
+
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function fhirType : String; override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
   end;
 
   TFHIRSelectionList = class (TFslList<TFHIRSelection>)
@@ -1324,6 +1332,11 @@ begin
   FValue := focus;
 end;
 
+function TFHIRSelection.createPropertyValue(propName: string): TFHIRObject;
+begin
+  result := value.createPropertyValue(propName);
+end;
+
 destructor TFHIRSelection.Destroy;
 begin
   FParent.Free;
@@ -1331,9 +1344,39 @@ begin
   inherited;
 end;
 
+function TFHIRSelection.fhirType: String;
+begin
+  result := value.fhirType;
+end;
+
+function TFHIRSelection.getId: String;
+begin
+  result := value.getId;
+end;
+
 function TFHIRSelection.Link: TFHIRSelection;
 begin
   result := TFHIRSelection(inherited link);
+end;
+
+function TFHIRSelection.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := value.makeCodeValue(v);
+end;
+
+function TFHIRSelection.makeStringValue(v: String): TFHIRObject;
+begin
+  result := value.makeStringValue(v);
+end;
+
+procedure TFHIRSelection.setIdValue(id: String);
+begin
+  value.setIdValue(id);
+end;
+
+procedure TFHIRSelection.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  value.setProperty(propName, propValue);
 end;
 
 { TFHIRSelectionList }
