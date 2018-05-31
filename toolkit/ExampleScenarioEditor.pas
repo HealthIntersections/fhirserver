@@ -37,7 +37,7 @@ uses
   FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList, FHIR.Support.Collections,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal,
   FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Filers,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Tools.Session,
+  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Server.Session,
   BaseResourceFrame, ToolKitUtilities,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
   FMX.Platform, System.ImageList, TranslationsEditorDialog, FHIR.FMX.Ctrls;

@@ -38,7 +38,7 @@ Interface
 uses
   SysUtils, Classes, ActiveX, FHIR.Support.MsXml, FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Types, Math,
   FHIR.Support.Binary, FHIR.Version.Constants, EncdDecd,
-  FHIR.Tools.Session,
+  FHIR.Server.Session,
   MsXmlParser, AdvBuffers, AdvStringLists, FHIR.Support.Strings, FHIR.Support.Decimal, 
   FHIR.Xml.Builder, AdvXmlBuilders, TextUtilities, FHIR.Version.Tags,
   FHIR.Support.DateTime, MXmlBuilder, FHIR.Support.Json, AdvVCLStreams, FHIRAtomFeed, AdvStringStreams, AdvStringBuilders, FHIR.Base.Lang;

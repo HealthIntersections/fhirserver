@@ -54,7 +54,7 @@ type
     destructor Destroy; override;
 
     property questionnaire : TFHIRQuestionnaire read FQuestionnaire write SetQuestionnaire;
-    property terminologyServer : TFHIRClient read FTerminologyServer write SetTerminologyServer;
+    property TerminologyServer : TFHIRClient read FTerminologyServer write SetTerminologyServer;
 
     function render : String;
   end;

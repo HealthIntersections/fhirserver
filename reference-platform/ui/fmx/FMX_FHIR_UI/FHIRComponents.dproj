@@ -142,7 +142,7 @@
   FHIR.Base.Lang in &apos;..\..\..\base\FHIR.Base.Lang.pas&apos;,
   FHIR.XVersion.Resources in &apos;..\..\..\xversion\FHIR.XVersion.Resources.pas&apos;,
   FHIR.Base.Utilities in &apos;..\..\..\base\FHIR.Base.Utilities.pas&apos;,
-  FHIR.Tools.Session in &apos;..\..\..\tools\FHIR.Tools.Session.pas&apos;,
+  FHIR.Server.Session in &apos;..\..\..\tools\FHIR.Server.Session.pas&apos;,
   FHIR.Base.scim in &apos;..\..\..\base\FHIR.Base.scim.pas&apos;,
   FHIR.Tools.Indexing in &apos;..\..\..\tools\FHIR.Tools.Indexing.pas&apos;,
   FHIR.Base.Factory in &apos;..\..\..\base\FHIR.Base.Factory.pas&apos;,
@@ -151,14 +151,14 @@
   FHIR.Base.Narrative in &apos;..\..\..\base\FHIR.Base.Narrative.pas&apos;,
   FHIR.Base.PathEngine in &apos;..\..\..\base\FHIR.Base.PathEngine.pas&apos;,
   FHIR.Tools.Parser in &apos;..\..\..\tools\FHIR.Tools.Parser.pas&apos;,
-  FHIR.Tools.Security in &apos;..\..\..\tools\FHIR.Tools.Security.pas&apos;,
-  FHIR.Tools.XhtmlComp in &apos;..\..\..\tools\FHIR.Tools.XhtmlComp.pas&apos;</Form>
+  FHIR.Server.Security in &apos;..\..\..\tools\FHIR.Server.Security.pas&apos;,
+  FHIR.Server.XhtmlComp in &apos;..\..\..\tools\FHIR.Server.XhtmlComp.pas&apos;</Form>
             <DesignClass>HL7\server\fhirserver\reference-platform\base\FHIR.Base.Objects.pas&apos;,
   FHIR.Base.Xhtml in &apos;C:\HL7\server\fhirserver\reference-platform\base\FHIR.Base.Xhtml.pas&apos;,
   FHIR.Base.Lang in &apos;C:\HL7\server\fhirserver\reference-platform\base\FHIR.Base.Lang.pas&apos;,
   FHIR.XVersion.Resources in &apos;C:\HL7\server\fhirserver\reference-platform\xversion\FHIR.XVersion.Resources.pas&apos;,
   FHIR.Base.Utilities in &apos;C:\HL7\server\fhirserver\reference-platform\base\FHIR.Base.Utilities.pas&apos;,
-  FHIR.Tools.Session in &apos;C:\HL7\server\fhirserver\reference-platform\tools\FHIR.Tools.Session.pas&apos;,
+  FHIR.Server.Session in &apos;C:\HL7\server\fhirserver\reference-platform\tools\FHIR.Server.Session.pas&apos;,
   FHIR.Base.scim in &apos;C:\HL7\server\fhirserver\reference-platform\base\FHIR.Base.scim.pas&apos;,
   FHIR.Tools.Indexing in &apos;C:\HL7\server\fhirserver\reference-platform\tools\FHIR.Tools.Indexing.pas&apos;,
   FHIR.Base.Factory in &apos;C:\HL7\server\fhirserver\reference-platform\base\FHIR.Base.Factory.pas&apos;,
@@ -167,8 +167,8 @@
   FHIR.Base.Narrative in &apos;C:\HL7\server\fhirserver\reference-platform\base\FHIR.Base.Narrative.pas&apos;,
   FHIR.Base.PathEngine in &apos;C:\HL7\server\fhirserver\reference-platform\base\FHIR.Base.PathEngine.pas&apos;,
   FHIR.Tools.Parser in &apos;C:\HL7\server\fhirserver\reference-platform\tools\FHIR.Tools.Parser.pas&apos;,
-  FHIR.Tools.Security in &apos;C:\HL7\server\fhirserver\reference-platform\tools\FHIR.Tools.Security.pas&apos;,
-  FHIR.Tools.XhtmlComp in &apos;C:\HL7\server\fhirserver\reference-platform\tools\FHIR.Tools.XhtmlComp.pas&apos;</DesignClass>
+  FHIR.Server.Security in &apos;C:\HL7\server\fhirserver\reference-platform\tools\FHIR.Server.Security.pas&apos;,
+  FHIR.Server.XhtmlComp in &apos;C:\HL7\server\fhirserver\reference-platform\tools\FHIR.Server.XhtmlComp.pas&apos;</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

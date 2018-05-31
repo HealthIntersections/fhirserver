@@ -34,7 +34,7 @@ interface
 uses
   Windows, Sysutils, DUnitX.TestFramework,
   FHIR.Support.Text,
-  IETFLanguageCodeServices;
+  FHIR.Tx.Lang;
 
 
 type

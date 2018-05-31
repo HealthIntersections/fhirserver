@@ -117,7 +117,7 @@
         </DelphiCompile>
         <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
         <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
-        <DCCReference Include="..\server\FHIRRestServer.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Web.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Strings.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.DateTime.pas"/>
@@ -132,14 +132,14 @@
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Decimal.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.WinInet.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.JSON.pas"/>
-        <DCCReference Include="..\server\FHIRIndexManagers.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Indexing.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Services.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Handlers.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Base.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Validators.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Expressions.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Search.pas"/>
-        <DCCReference Include="..\server\FHIRValueSetExpander.pas"/>
+        <DCCReference Include="..\server\FHIR.Tx.Expander.pas"/>
         <DCCReference Include="..\Libraries\Stem\YuStemmer.pas"/>
         <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Services.pas"/>
         <DCCReference Include="..\Libraries\Stem\DISystemCompat.pas"/>
@@ -147,51 +147,49 @@
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Fetcher.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Misc.Facebook.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Service.pas"/>
-        <DCCReference Include="..\server\DBInstaller.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.DBInstaller.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Database.Dialects.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Logging.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Manager.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Utilities.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Settings.pas"/>
-        <DCCReference Include="..\Server\FHIRNativeStorage.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Database.pas"/>
         <DCCReference Include="..\Libraries\snomed\FHIR.Snomed.Importer.pas"/>
         <DCCReference Include="..\Libraries\snomed\FHIR.Snomed.Publisher.pas"/>
         <DCCReference Include="..\Libraries\snomed\FHIR.Snomed.Expressions.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.HtmlGen.pas"/>
         <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Importer.pas"/>
         <DCCReference Include="..\Libraries\loinc\FHIR.Loinc.Publisher.pas"/>
-        <DCCReference Include="..\server\TerminologyServerStore.pas"/>
+        <DCCReference Include="..\server\FHIR.Tx.Manager.pas"/>
         <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
-        <DCCReference Include="..\server\FHIRValueSetChecker.pas"/>
-        <DCCReference Include="..\server\TerminologyWebServer.pas"/>
+        <DCCReference Include="..\server\FHIR.Tx.Validator.pas"/>
+        <DCCReference Include="..\server\FHIR.Tx.Web.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Text.pas"/>
-        <DCCReference Include="..\server\FHIRServerConstants.pas"/>
-        <DCCReference Include="..\server\FHIRServerUtilities.pas"/>
-        <DCCReference Include="..\server\SearchProcessor.pas"/>
-        <DCCReference Include="..\server\AuthServer.pas"/>
-        <DCCReference Include="..\server\SCIMServer.pas"/>
-        <DCCReference Include="..\server\SCIMSearch.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Constants.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Utilities.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Search.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.AuthMgr.pas"/>
+        <DCCReference Include="..\server\FHIR.Scim.Server.pas"/>
+        <DCCReference Include="..\server\FHIR.Scim.Search.pas"/>
         <DCCReference Include="..\Libraries\security\FHIR.Misc.Twilio.pas"/>
-        <DCCReference Include="..\server\FHIRSearchSyntax.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.SearchSyntax.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Shell.pas"/>
-        <DCCReference Include="..\server\RectSupport.pas"/>
-        <DCCReference Include="..\server\CoordinateSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Generics.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Signatures.pas"/>
-        <DCCReference Include="..\server\UriServices.pas"/>
-        <DCCReference Include="..\server\UniiServices.pas"/>
-        <DCCReference Include="..\server\RxNormServices.pas"/>
+        <DCCReference Include="..\server\FHIR.Tx.Uri.pas"/>
+        <DCCReference Include="..\server\FHIR.Tx.Unii.pas"/>
+        <DCCReference Include="..\server\FHIR.Tx.RxNorm.pas"/>
         <DCCReference Include="..\Libraries\snomed\FHIR.Snomed.Analysis.pas"/>
-        <DCCReference Include="..\server\AreaCodeServices.pas"/>
-        <DCCReference Include="..\server\FHIRSubscriptionManager.pas"/>
-        <DCCReference Include="..\server\ServerValidator.pas"/>
+        <DCCReference Include="..\server\FHIR.Tx.AreaCode.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Subscriptions.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Validator.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Socket.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Mime.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Questionnaire.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Narrative2.pas"/>
-        <DCCReference Include="..\server\FHIR.Tools.Security.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Security.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Tags.pas"/>
@@ -202,17 +200,17 @@
         <DCCReference Include="..\reference-platform\version\FHIR.Version.Parser.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Constants.pas"/>
-        <DCCReference Include="..\server\FHIR.Tools.Session.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.Session.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\version\FHIR.Version.Client.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Validator.pas"/>
-        <DCCReference Include="..\server\ClosureManager.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.ClosureMgr.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Utilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
-        <DCCReference Include="..\server\AccessControlEngine.pas"/>
-        <DCCReference Include="..\server\MPISearch.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.AccessControl.pas"/>
+        <DCCReference Include="..\server\FHIR.Server.MpiSearch.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Rdf.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Operations.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.OpBase.pas"/>
@@ -223,19 +221,18 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Debug.Logging.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.AuthMap.pas"/>
-        <DCCReference Include="..\Server\ServerUtilities.pas"/>
-        <DCCReference Include="..\Server\ServerAdaptations.pas"/>
-        <DCCReference Include="..\Server\ObservationStatsEvaluator.pas"/>
-        <DCCReference Include="..\Server\OpenMHealthServer.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Adaptations.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.ObsStats.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.OpenMHealth.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.DiffEngine.pas"/>
-        <DCCReference Include="..\Server\ACIRServices.pas"/>
-        <DCCReference Include="..\Server\IETFLanguageCodeServices.pas"/>
-        <DCCReference Include="..\Server\ReverseClient.pas"/>
-        <DCCReference Include="..\Server\FHIRUserProvider.pas"/>
-        <DCCReference Include="..\Server\FHIRServerContext.pas"/>
-        <DCCReference Include="..\Server\FHIRTagManager.pas"/>
-        <DCCReference Include="..\Server\FHIRSessionManager.pas"/>
-        <DCCReference Include="..\Server\FHIRStorageService.pas"/>
+        <DCCReference Include="..\Server\FHIR.Tx.ACIR.pas"/>
+        <DCCReference Include="..\Server\FHIR.Tx.Lang.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.ReverseClient.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.UserMgr.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Context.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.TagMgr.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.SessionMgr.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Storage.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\support\Tests\JsonTests.pas"/>
         <DCCReference Include="..\reference-platform\support\Tests\XmlTests.pas"/>
@@ -256,8 +253,8 @@
         <DCCReference Include="..\reference-platform\support\Tests\OSXTests.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.CodeGen.pas"/>
-        <DCCReference Include="..\Server\CDSHooksServices.pas"/>
-        <DCCReference Include="..\Server\CDSHooksServer.pas"/>
+        <DCCReference Include="..\Server\FHIR.CdsHooks.Service.pas"/>
+        <DCCReference Include="..\Server\FHIR.CdsHooks.Server.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\support\Tests\TurtleTests.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Xml.pas"/>
@@ -269,17 +266,17 @@
         <DCCReference Include="RestFulServerTests.pas"/>
         <DCCReference Include="SmartOnFhirTestingLogin.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
-        <DCCReference Include="..\Server\GraphDefinitionEngine.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.GraphDefinition.pas"/>
         <DCCReference Include="GraphDefinitionTests.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Tests.pas"/>
         <DCCReference Include="..\Libraries\security\FHIR.Misc.ApplicationVerifier.pas"/>
-        <DCCReference Include="..\Server\JWTService.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Jwt.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Client.pas"/>
-        <DCCReference Include="..\Server\Modules\HackingHealthLogic.pas"/>
+        <DCCReference Include="..\Server\Modules\FHIR.Server.HackingHealth.pas"/>
         <DCCReference Include="..\Libraries\security\FHIR.Utilities.SCrypt.pas"/>
-        <DCCReference Include="..\Server\ApplicationCache.pas"/>
-        <DCCReference Include="..\Server\TerminologyOperations.pas"/>
-        <DCCReference Include="..\Server\WebSourceProvider.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.AppCache.pas"/>
+        <DCCReference Include="..\Server\FHIR.Tx.Operations.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.WebSource.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Tests.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.ODBC.pas"/>
@@ -289,9 +286,9 @@
         <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Utilities.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite3.Wrapper.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.SQLite.pas"/>
-        <DCCReference Include="..\Server\ServerPostHandlers.pas"/>
-        <DCCReference Include="..\Server\TerminologyServer.pas"/>
-        <DCCReference Include="..\Server\ICD10Services.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.PostHandlers.pas"/>
+        <DCCReference Include="..\Server\FHIR.Tx.Server.pas"/>
+        <DCCReference Include="..\Server\FHIR.Tx.ICD10.pas"/>
         <DCCReference Include="..\Libraries\js\FHIR.Javascript.Tests.pas"/>
         <DCCReference Include="..\Libraries\js\FHIR.Javascript.Chakra.pas"/>
         <DCCReference Include="..\Libraries\js\FHIR.Javascript.pas"/>
@@ -301,17 +298,17 @@
         <DCCReference Include="..\Libraries\js\FHIR.Javascript.Base.pas"/>
         <DCCReference Include="..\Libraries\js\FHIR.Javascript.ObjectsTests.pas"/>
         <DCCReference Include="..\Libraries\js\FHIR.Client.Javascript.pas"/>
-        <DCCReference Include="..\Server\ServerEventJs.pas"/>
-        <DCCReference Include="..\Server\ServerJavascriptHost.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.EventJs.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Javascript.pas"/>
         <DCCReference Include="IdUriParserTests.pas"/>
         <DCCReference Include="..\Libraries\cql\FHIR.Cql.Engine.pas"/>
-        <DCCReference Include="..\Server\CountryCodeServices.pas"/>
-        <DCCReference Include="..\Server\USStatesServices.pas"/>
-        <DCCReference Include="..\Server\GoogleAnalyticsProvider.pas"/>
+        <DCCReference Include="..\Server\FHIR.Tx.CountryCode.pas"/>
+        <DCCReference Include="..\Server\FHIR.Tx.UsState.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Analytics.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathNode.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Base.pas"/>
-        <DCCReference Include="..\Server\FHIR.Tools.XhtmlComp.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.XhtmlComp.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.ParserBase.pas"/>
         <DCCReference Include="..\reference-platform\xversion\FHIR.XVersion.Conv_30_40.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Resources.pas"/>
@@ -403,6 +400,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Win64\Debug\FHIR.Server.Tests.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIR.Server.Tests.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win64\Debug\FHIRServerTests.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>FHIRServerTests.rsm</RemoteName>
@@ -427,6 +430,18 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\FHIR.Server.Tests.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>FHIR.Server.Tests.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\FHIR.Server.Tests.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIR.Server.Tests.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

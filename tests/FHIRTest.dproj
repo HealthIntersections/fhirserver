@@ -197,7 +197,7 @@
         <DCCReference Include="..\reference-platform\gen21\FHIR.Version.Types.pas"/>
         <DCCReference Include="..\reference-platform\gen21\FHIR.Version.Resources.pas"/>
         <DCCReference Include="..\reference-platform\gen21\FHIR.Version.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\FHIR.Tools.Session.pas"/>
+        <DCCReference Include="..\reference-platform\FHIR.Server.Session.pas"/>
         <DCCReference Include="..\reference-platform\FHIR.Version.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\FHIR.Tools.Signatures.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvNames.pas"/>
@@ -214,7 +214,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvGenericsTests.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Generics.pas"/>
-        <DCCReference Include="..\reference-platform\FHIR.Tools.Security.pas"/>
+        <DCCReference Include="..\reference-platform\FHIR.Server.Security.pas"/>
         <DCCReference Include="..\reference-platform\FHIR.Version.Tags.pas"/>
         <DCCReference Include="..\reference-platform\FHIR.Version.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\FHIR.Version.Profiles.pas"/>

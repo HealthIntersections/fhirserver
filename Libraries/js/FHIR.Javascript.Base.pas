@@ -81,7 +81,7 @@ implementation
 uses
   FHIR.Version.Javascript,
   FHIR.Client.Javascript,
-  ServerEventJs;
+  FHIR.Server.EventJs;
 
 { TFHIRJavascript }
 

@@ -34,9 +34,9 @@ uses
   FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Generics, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Common,
-  FHIR.Tools.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Base.Scim, FHIR.Tools.Security, FHIR.Version.Utilities, FHIR.Tools.Search, FHIR.Version.PathEngine, FHIR.Base.Lang,
-  FHIRStorageService, FHIRUserProvider, TerminologyServer, FHIRServerContext,
-  FHIR.Ucum.Services, TerminologyOperations;
+  FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Base.Scim, FHIR.Server.Security, FHIR.Version.Utilities, FHIR.Tools.Search, FHIR.Version.PathEngine, FHIR.Base.Lang,
+  FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Tx.Server, FHIR.Server.Context,
+  FHIR.Ucum.Services, FHIR.Tx.Operations;
 
 const
   TX_SEARCH_PAGE_DEFAULT = 10;

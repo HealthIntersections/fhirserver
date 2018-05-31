@@ -34,11 +34,11 @@ uses
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Version.Constants, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tools.Session, FHIR.Version.Utilities,
+  FHIR.Version.Constants, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Utilities,
   FHIR.Client.Base, FHIR.Version.Client, FHIR.Base.Scim,
   FHIR.Smart.Utilities, SmartOnFhirTestingLogin,
-  FHIRServerConstants, ServerUtilities, FHIRServerContext, FHIRStorageService, FHIRUserProvider,
-  FHIRRestServer, WebSourceProvider;
+  FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.UserMgr,
+  FHIR.Server.Web, FHIR.Server.WebSource;
 
 Const
   TEST_USER_NAME = 'DunitX-test-user';
@@ -412,7 +412,7 @@ begin
   FContext := TFHIRServerContext.Create(FStore.Link);
   FContext.ownername := 'Test-Server';
   FServer := TFhirWebServer.Create(FIni.Link, 'Test-Server', nil, FContext.Link);
-//      ctxt.TerminologyServer := FterminologyServer.Link;
+//      ctxt.FHIR.Tx.Server := FterminologyServer.Link;
   FContext.UserProvider := TTestingFHIRUserProvider.Create;
   FContext.userProvider.OnProcessFile := FServer.ReturnProcessedFile;
   FServer.AuthServer.UserProvider := FContext.userProvider.Link;

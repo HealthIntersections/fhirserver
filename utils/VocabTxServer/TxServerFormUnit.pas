@@ -36,9 +36,9 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Edit, IOUtils,
   FHIR.Ui.OSX,
   FHIR.Support.System, FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.DateTime,
-  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.Security,
-  FHIRServerContext, FHIRUserProvider, FHIRStorageService, FHIRRestServer, ServerUtilities, FHIR.Debug.Logging,
-  VocabPocServerCore, TerminologyServer, WebSourceProvider;
+  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Server.Security,
+  FHIR.Server.Context, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Debug.Logging,
+  VocabPocServerCore, FHIR.Tx.Server, FHIR.Server.WebSource;
 
 const
   MIN_WIDTH = 400;

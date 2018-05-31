@@ -37,7 +37,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
-  FHIR.Misc.GraphQL, FHIR.Tools.GraphQL, GraphDefinitionEngine,
+  FHIR.Misc.GraphQL, FHIR.Tools.GraphQL, FHIR.Server.GraphDefinition,
   FHIR.R4.Tests.Worker, JsonTests;
 
 type

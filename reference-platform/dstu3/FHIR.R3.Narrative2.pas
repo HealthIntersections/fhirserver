@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Strings,
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Server.Session, FHIR.Base.Xhtml,
   FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Profiles, FHIR.R3.Questionnaire;
 
 type

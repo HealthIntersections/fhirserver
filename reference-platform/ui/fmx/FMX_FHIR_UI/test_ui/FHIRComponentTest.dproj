@@ -323,11 +323,11 @@
         </DelphiCompile>
         <DCCReference Include="..\..\..\..\base\FHIR.Base.Objects.pas"/>
         <DCCReference Include="..\..\..\..\R4\FHIR.R4.Resources.pas"/>
-        <DCCReference Include="..\..\..\..\tools\FHIR.Tools.Session.pas"/>
+        <DCCReference Include="..\..\..\..\tools\FHIR.Server.Session.pas"/>
         <DCCReference Include="..\..\..\..\tools\FHIR.Tools.Indexing.pas"/>
-        <DCCReference Include="..\..\..\..\tools\FHIR.Tools.Security.pas"/>
+        <DCCReference Include="..\..\..\..\tools\FHIR.Server.Security.pas"/>
         <DCCReference Include="..\..\..\..\tools\FHIR.Tools.Parser.pas"/>
-        <DCCReference Include="..\..\..\..\tools\FHIR.Tools.XhtmlComp.pas"/>
+        <DCCReference Include="..\..\..\..\tools\FHIR.Server.XhtmlComp.pas"/>
         <DCCReference Include="Unit1.pas">
             <Form>Form1</Form>
         </DCCReference>

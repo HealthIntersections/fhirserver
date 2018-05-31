@@ -164,7 +164,7 @@
         <DCCReference Include="..\support\AdvStringMatches.pas"/>
         <DCCReference Include="FHIR.Version.Resources.pas"/>
         <DCCReference Include="FHIR.Base.Parser.pas"/>
-        <DCCReference Include="FHIR.Tools.Session.pas"/>
+        <DCCReference Include="FHIR.Server.Session.pas"/>
         <DCCReference Include="..\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="FHIRAtomFeed.pas"/>
         <DCCReference Include="..\support\MsXmlParser.pas"/>

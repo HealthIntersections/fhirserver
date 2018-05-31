@@ -121,7 +121,7 @@ type
     FFactory : TFHIRFactory;
     FTerminologyServer : String;
   public
-    constructor Create(plugin : TFHIRPlugin; factory : TFHIRFactory; terminologyServer : string);
+    constructor Create(plugin : TFHIRPlugin; factory : TFHIRFactory; TerminologyServer : string);
     Destructor Destroy; override;
     procedure Execute(); override;
   end;
@@ -2126,12 +2126,12 @@ end;
 
 { TContextLoadingThread }
 
-constructor TContextLoadingThread.Create(plugin : TFHIRPlugin; factory : TFHIRFactory; terminologyServer : string);
+constructor TContextLoadingThread.Create(plugin : TFHIRPlugin; factory : TFHIRFactory; TerminologyServer : string);
 begin
   FPlugin := plugin;
   FFactory := factory;
   FreeOnTerminate := true;
-  FTerminologyServer := terminologyServer;
+  FTerminologyServer := TerminologyServer;
   inherited Create;
 end;
 

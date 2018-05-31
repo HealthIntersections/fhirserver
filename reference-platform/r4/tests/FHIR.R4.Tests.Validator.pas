@@ -34,7 +34,7 @@ interface
 
 uses
   FHIR.Support.System, FHIR.Support.Objects, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Version.Parser, FHIR.Base.Validator, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Server.Session, FHIR.Version.Parser, FHIR.Base.Validator, FHIR.Base.Common,
   FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.Validator,
   DUnitX.TestFramework;
 

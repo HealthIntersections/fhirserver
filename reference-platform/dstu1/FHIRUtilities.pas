@@ -41,7 +41,7 @@ uses
 
   IdSoapMime, TextUtilities, ZLib,
 
-  FHIR.Tools.Session, FHIR.Base.Parser, FHIR.Version.Parser, FHIR.Base.Objects, FHIR.Version.Types, FHIRAtomFeed, FHIRComponents, FHIR.Version.Resources, FHIR.Version.Constants;
+  FHIR.Server.Session, FHIR.Base.Parser, FHIR.Version.Parser, FHIR.Base.Objects, FHIR.Version.Types, FHIRAtomFeed, FHIRComponents, FHIR.Version.Resources, FHIR.Version.Constants;
 
 Type
   ETooCostly = class (Exception);

@@ -7,7 +7,7 @@ Uses
   Windows, SysUtils, Classes, Graphics, Controls, StdCtrls, Contnrs, ExtCtrls, Messages, Forms, Dialogs, Character,
   System.UITypes, UxTheme, ToolWin, ComCtrls, Menus, ImgList, Mask, CommCtrl, VirtualTrees, ActiveX,
   Winapi.GdipApi, WinApi.GdipObj,
-//  SynEdit, SynEditKeyCmds, SynEditHighlighter, SynEditTypes,
+  SynEdit, SynEditKeyCmds, SynEditHighlighter, SynEditTypes,
   FHIR.Support.System, FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Math, FHIR.Support.Graphics,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Collections,
   FHIR.Graphics.GdiPlus, FHIR.Uix.Base, FHIR.Uix.Images;
@@ -60,7 +60,7 @@ Type
       FRightBorderWidth : Integer;
       FTopBorderWidth : Integer;
       FBottomBorderWidth : Integer;
-      
+
       FAdjustBoundsOnResize : Boolean;
 
       Function GetBolded : Boolean;
@@ -526,9 +526,9 @@ Type
       Function Link : TUixCodeMask; Overload;
   End;
 
-//  TUixCodeHighlighterAttributes = TSynHighlighterAttributes;
+  TUixCodeHighlighterAttributes = TSynHighlighterAttributes;
 
-//  TUixCodeHighlighterCustomEvent = Procedure (oSender : TObject; Const iTextIndex : Integer; Var sValue : String; oAttributes : TUixCodeHighlighterAttributes) Of Object;
+  TUixCodeHighlighterCustomEvent = Procedure (oSender : TObject; Const iTextIndex : Integer; Var sValue : String; oAttributes : TUixCodeHighlighterAttributes) Of Object;
 
 {$IFDEF VER130}
   TUixCodeHighlighter = Class(TSynCustomHighlighter)
@@ -595,6 +595,64 @@ Type
       Property OnCustom : TUixCodeHighlighterCustomEvent Read FOnCustom Write FOnCustom;
   End;
 {$ELSE}
+  TUixUnicodeCodeHighlighter = Class(TSynCustomHighlighter)
+    Private
+      FUnicodeMask : TUixCodeMask;
+      FValue : String;
+      FToken : TUixCodeToken;
+
+      FMaskAttributes : TSynHighlighterAttributes;
+      FTextAttributes : TSynHighlighterAttributes;
+      FBeyondAttributes : TSynHighlighterAttributes;
+      FInvalidAttributes : TSynHighlighterAttributes;
+      FRemainderAttributes : TSynHighlighterAttributes;
+      FRequiredAttributes : TSynHighlighterAttributes;
+      FCustomAttributes : TSynHighlighterAttributes;
+
+      FOnCustom : TUixCodeHighlighterCustomEvent;
+
+      Function GetText: String;
+      procedure SetText(const Value: String);
+
+      Function GetIndex: Integer;
+      Procedure SetIndex(Const Value: Integer);
+
+      Function GetMask: TUixCodeMask;
+      Procedure SetMask(const Value: TUixCodeMask);
+
+    Protected
+      Function RealLineLength : Integer;
+      Function CurrentToken : TUixCodeToken;
+
+      Property Index : Integer Read GetIndex Write SetIndex; // Provides access to the underlying Run private member
+      Property Text : String Read GetText Write SetText; // Provides access to the underlying fLine private member
+
+    Public
+      Constructor Create(oOwner : TComponent); Override;
+      Destructor Destroy; Override;
+
+      Procedure Next; Override;
+      Function GetEol: Boolean; Override;
+      Function GetToken : String; Override;
+      Function GetTokenAttribute : TSynHighlighterAttributes; Override;
+      Function GetTokenKind : Integer; Override;
+      function GetRange: Pointer; Override;
+      procedure SetRange(Value: Pointer); Override;
+      procedure ResetRange; Override;
+      Function GetDefaultAttribute(Index: Integer): TSynHighlighterAttributes; Override;
+
+      Property Mask : TUixCodeMask Read GetMask Write SetMask;
+
+    Published
+      Property MaskAttributes : TSynHighlighterAttributes Read FMaskAttributes;
+      Property TextAttributes : TSynHighlighterAttributes Read FTextAttributes;
+      Property InvalidAttributes : TSynHighlighterAttributes Read FInvalidAttributes;
+      Property RemainderAttributes : TSynHighlighterAttributes Read FRemainderAttributes;
+      Property RequiredAttributes : TSynHighlighterAttributes Read FRequiredAttributes;
+      Property BeyondAttributes : TSynHighlighterAttributes Read FBeyondAttributes;
+      Property CustomAttributes : TSynHighlighterAttributes Read FCustomAttributes;
+      Property OnCustom : TUixCodeHighlighterCustomEvent Read FOnCustom Write FOnCustom;
+  End;
 {$ENDIF}
 
   TUixCodeEditValidationMode = (UixCodeEditValidationModeString, UixCodeEditValidationModeDateTime, UixCodeEditValidationModeDuration,
@@ -610,7 +668,473 @@ Type
   TUixCodeEditStandardKeyPressDelegate = Procedure (oSender : TObject; Const cChar : Char) Of Object;
   TUixCodeEditValidateContentDelegate = Function : Boolean Of Object;
 
+  TUixCodeEdit = Class(TSynEdit)
+    Private
+      FBalloon : TUixBalloon;
+      FBalloonAudible : Boolean;
 
+      // Internals.
+      FMask : TUixCodeMask;
+      FTitle : String;
+      FLastError : String;
+      FAutoSelect : Boolean;
+      FIgnoreOverwrite : Boolean;
+
+      // Colours.
+      FReadBackgroundColour : TColour;
+      FWriteBackgroundColour : TColour;
+      FInvalidBackgroundColour : TColour;
+      FHasInvalidBackgroundColour : Boolean;
+      FDefaultBackgroundColour : TColour;
+      FHasDefaultBackgroundColour : Boolean;
+
+      // Events.
+      FChangeDelegate : TUixCodeEditChangeDelegate;
+      FLoseFocusDelegate : TUixCodeEditLoseFocusDelegate;
+      FRepositionDelegate : TUixCodeEditRepositionDelegate;
+      FStandardKeyPressDelegate : TUixCodeEditStandardKeyPressDelegate;
+      FValidateContentDelegate : TUixCodeEditValidateContentDelegate;
+
+      // Validation/Options.
+      FMandatory : Boolean;
+      FValidationMode : TUixCodeEditValidationMode;
+
+      FAllowedCharacterList : TFslCharacterList;
+      FDisallowedCharacterList : TFslCharacterList;
+
+      FAllowLeadingWhitespace : Boolean;
+      FEnforceNumeric : Boolean;
+      FEnforceAlphabetic : Boolean;
+      FDefaultStringValue : String;
+
+      FMinIntegerValue : Int64;
+      FMaxIntegerValue : Int64;
+      FDefaultIntegerValue : Int64;
+      FHasDefaultIntegerValue : Boolean;
+
+      FMinExtendedValue : Extended;
+      FMaxExtendedValue : Extended;
+      FExtendedDecimalPlaces : Integer;
+
+      FMinCurrencyValue : TCurrency;
+      FMaxCurrencyValue : TCurrency;
+      FDenominationCurrencyValue : TCurrency;
+
+      FMinDurationValue : TDuration;
+      FMaxDurationValue : TDuration;
+      FIncludeHours : Boolean;
+      FIncludeMinutes : Boolean;
+      FIncludeSeconds : Boolean;
+      FIncludeMilliSeconds : Boolean;
+      FExtendedHours : Boolean;
+
+      FMinDateTimeValue : TDateTime;
+      FMaxDateTimeValue : TDateTime;
+      FIncludeDate : Boolean;
+      FIncludeTime : Boolean;
+      FIncludeDays : Boolean;
+      FIncludeMonths : Boolean;
+      FIncludeYears : Boolean;
+      FAllowsFuture : Boolean;
+      FAllowsPast : Boolean;
+      FAssumedNow : TDateTime;
+      FTimeOptional : Boolean;
+
+{$IFDEF VER130}
+      Function GetHighlighter : TUixCodeHighlighter;
+{$ELSE}
+      Function GetHighlighter : TUixUnicodeCodeHighlighter;
+{$ENDIF}
+
+      Function GetFixedLength: Integer;
+
+      Function GetMandatory : Boolean;
+      Procedure SetMandatory(Const Value : Boolean);
+
+      Function GetText : String;
+      Procedure SetText(Const Value : String);
+
+      Function GetIsDefaultStringValue : Boolean;
+      Procedure SetIsDefaultStringValue(Const Value : Boolean);
+
+      Function GetDefaultStringValue : String;
+      Procedure SetDefaultStringValue(Const Value : String);
+
+      Function GetMask : String;
+      Procedure SetMask(Const Value : String);
+
+      Function GetMaxLength : Integer;
+      Procedure SetMaxLength(Const Value : Integer);
+
+      Function GetMinLength : Integer;
+      Procedure SetMinLength(Const Value : Integer);
+
+      Function GetEnforceCapitals : Boolean;
+      Procedure SetEnforceCapitals(Const Value : Boolean);
+
+      Function GetColor : TColor;
+      Procedure SetColor(Const Value : TColor);
+
+      Function GetParentColor : Boolean;
+      Procedure SetParentColor(Const Value : Boolean);
+
+      Function GetAnchoredBottom : Boolean;
+      Procedure SetAnchoredBottom(Const Value : Boolean);
+
+      Function GetAnchoredLeft : Boolean;
+      Procedure SetAnchoredLeft(Const Value : Boolean);
+
+      Function GetAnchoredRight : Boolean;
+      Procedure SetAnchoredRight(Const Value : Boolean);
+
+      Function GetAnchoredTop : Boolean;
+      Procedure SetAnchoredTop(Const Value : Boolean);
+
+      Function GetBolded : Boolean;
+      Procedure SetBolded(Const Value : Boolean);
+
+      Function GetIncludeTime : Boolean;
+      Procedure SetIncludeTime(Const Value : Boolean);
+
+      Function GetIncludeDate : Boolean;
+      Procedure SetIncludeDate(Const Value : Boolean);
+
+      Function GetIncludeDays : Boolean;
+      Procedure SetIncludeDays(Const Value : Boolean);
+
+      Function GetIncludeMonths : Boolean;
+      Procedure SetIncludeMonths(Const Value : Boolean);
+
+      Function GetIncludeYears : Boolean;
+      Procedure SetIncludeYears(Const Value : Boolean);
+
+      Function GetHasTime : Boolean;
+      Procedure SetHasTime(Const bValue : Boolean);
+
+      Function GetIncludeMilliseconds : Boolean;
+      Procedure SetIncludeMilliSeconds(Const Value: Boolean);
+
+      Function GetIncludeSeconds : Boolean;
+      Procedure SetIncludeSeconds(Const Value: Boolean);
+
+      Function GetIncludeMinutes : Boolean;
+      Procedure SetIncludeMinutes(Const Value : Boolean);
+
+      Function GetIncludeHours : Boolean;
+      Procedure SetIncludeHours(Const Value : Boolean);
+
+      Function GetExtendedHours : Boolean;
+      Procedure SetExtendedHours(Const Value : Boolean);
+
+      Function GetAllowsFuture : Boolean;
+      Procedure SetAllowsFuture(Const Value : Boolean);
+
+      Function GetAllowsPast : Boolean;
+      Procedure SetAllowsPast(Const Value : Boolean);
+
+      Function GetTimeOptional : Boolean;
+      Procedure SetTimeOptional(Const Value : Boolean);
+
+      Function GetMinDateTimeValue : TDateTime;
+      Procedure SetMinDateTimeValue(Const Value : TDateTime);
+
+      Function GetMaxDateTimeValue : TDateTime;
+      Procedure SetMaxDateTimeValue(Const Value : TDateTime);
+
+      Function GetMinDurationValue : TDuration;
+      Procedure SetMinDurationValue(Const Value : TDuration);
+
+      Function GetMaxDurationValue : TDuration;
+      Procedure SetMaxDurationValue(Const Value : TDuration);
+
+      Function GetMinCurrencyValue : TCurrency;
+      Procedure SetMinCurrencyValue(Const Value : TCurrency);
+
+      Function GetMaxCurrencyValue : TCurrency;
+      Procedure SetMaxCurrencyValue(Const Value : TCurrency);
+
+      Function GetDenominationCurrencyValue : TCurrency;
+      Procedure SetDenominationCurrencyValue(Const Value : TCurrency);
+
+      Function GetMaxIntegerValue : Int64;
+      Procedure SetMaxIntegerValue(Const Value : Int64);
+
+      Function GetMinIntegerValue : Int64;
+      Procedure SetMinIntegerValue(Const Value : Int64);
+
+      Function GetDefaultIntegerValue : Int64;
+      Procedure SetDefaultIntegerValue(Const Value : Int64);
+
+      Function GetHasDefaultIntegerValue : Boolean;
+      Procedure SetHasDefaultIntegerValue(Const Value : Boolean);
+
+      Function GetExtendedDecimalPlaces : Integer;
+      Procedure SetExtendedDecimalPlaces(Const Value : Integer);
+
+      Function GetMaxExtendedValue : Extended;
+      Procedure SetMaxExtendedValue(Const Value : Extended);
+
+      Function GetMinExtendedValue : Extended;
+      Procedure SetMinExtendedValue(Const Value : Extended);
+
+      Function GetValueAsDateTimeOffset : TDateTimeOffset;
+      Procedure SetValueAsDateTimeOffset(Const Value : TDateTimeOffset);
+
+      Function GetValueAsDateTime : TDateTime;
+      Procedure SetValueAsDateTime(Const Value : TDateTime);
+
+      Function GetValueAsDuration : TDuration;
+      Procedure SetValueAsDuration(Const Value : TDuration);
+
+      Function GetValueAsString : String;
+      Procedure SetValueAsString(Const Value : String);
+
+      Function GetValueAsInteger64 : Int64;
+      Procedure SetValueAsInteger64(Const Value : Int64);
+
+      Function GetValueAsInteger32 : LongInt;
+      Procedure SetValueAsInteger32(Const Value : LongInt);
+
+      Function GetValueAsCardinal : Cardinal;
+      Procedure SetValueAsCardinal(Const Value : Cardinal);
+
+      Function GetValueAsCurrency : TCurrency;
+      Procedure SetValueAsCurrency(Const Value : TCurrency);
+
+      Function GetValueAsExtended : Extended;
+      Procedure SetValueAsExtended(Const Value : Extended);
+
+      Procedure SetReadBackgroundColour(Const Value: TColour);
+      Procedure SetWriteBackgroundColour(Const Value: TColour);
+
+      Procedure InternalChangeDelegate(oSender : TObject);
+      Procedure InternalExitDelegate(oSender : TObject);
+
+      Procedure RefreshColor;
+
+    Protected
+      Procedure Complete;
+      Procedure Change;
+
+      Procedure Prepare;
+      Procedure PrepareMask;
+      Procedure PrepareDateTimeMask;
+      Procedure PrepareDurationMask;
+      Procedure PrepareIntegerMask;
+      Procedure PrepareExtendedMask;
+
+      Procedure Error(Const sMethod, sMessage : String);
+
+      Procedure EnforceValidationModeString;
+      Procedure EnforceValidationModeDateTime;
+      Procedure EnforceValidationModeDuration;
+      Procedure EnforceValidationModeCurrency;
+      Procedure EnforceValidationModeInteger;
+      Procedure EnforceValidationModeExtended;
+
+      Function DisplayDateTime(Const aValue : TDateTime) : String; Overload;
+      Function DisplayDateTime(Const aValue : TDateTimeOffset) : String; Overload;
+      Function DisplayDuration(Const aValue : TDuration) : String;
+      Function DisplayExtended(Const aValue : Extended) : String;
+
+      Function IsValidContent : Boolean;
+      Function IsValidLength : Boolean;
+
+      Function ValidateContent : Boolean;
+      Function ValidateLength : Boolean;
+
+      Procedure SetCaretXYEx(bCallEnsureCursorPos: Boolean; aValue: TBufferCoord); Override;
+      Procedure SetReadOnly(Value : Boolean); Override;
+
+      Function GetEditPart : Cardinal;
+      Function GetEditState : Cardinal;
+      Procedure AdjustContentRect(Var aRect : TRect);
+      Procedure CreateParams(Var Params: TCreateParams); Override;
+      Procedure WMNCCalcSize(Var Message: TWMNCCalcSize); Message WM_NCCALCSIZE;
+      Procedure WMNCPaint(Var Message: TMessage); Message WM_NCPAINT;
+      Procedure Resize; Override;
+
+      Procedure CMEnter(Var Message: TCMGotFocus); Message CM_ENTER;
+      Procedure DoExit; Override;
+
+      Function CanInsertCharacter : Boolean;
+      Function CanPaste : Boolean;
+
+      Procedure AdjustSelectionStart;
+      Procedure AdjustSelectionEnd;
+
+      Function AllowInsertCharacter(Const cChar : Char) : Boolean;
+
+      Function ValidateCharacter(Const cChar : Char) : Boolean;
+      Function ValidateInsertCharacter(Const cChar : Char) : Boolean;
+
+      Function NormaliseDuration : String;
+
+      Property OnChange;
+      Property OnExit;
+
+    Public
+      Constructor Create(oOwner : TComponent); Override;
+      Destructor Destroy; Override;
+
+      Procedure AlignLeft;
+      Procedure AlignRight;
+      Procedure AlignTop;
+      Procedure AlignBottom;
+      Procedure AlignClient;
+
+      Procedure ShowBalloon;
+      Procedure HideBalloon;
+
+      Procedure ExecuteCommand(Command: TSynEditorCommand; cChar: Char; Data: Pointer); Override;
+
+      Function Empty : Boolean;
+      Function Full : Boolean;
+      Function Valid : Boolean;
+
+      Procedure ValidationModeString;
+      Procedure ValidationModeDateTime;
+      Procedure ValidationModeDuration;
+      Procedure ValidationModeCurrency;
+      Procedure ValidationModeInteger;
+      Procedure ValidationModeExtended;
+
+      Function IsValidationModeString : Boolean;
+      Function IsValidationModeDateTime : Boolean;
+      Function IsValidationModeDuration : Boolean;
+      Function IsValidationModeCurrency : Boolean;
+      Function IsValidationModeInteger : Boolean;
+      Function IsValidationModeExtended : Boolean;
+
+      Function HasDate : Boolean;
+      Function HasPartialDate : Boolean;
+      Function HasCompleteDate : Boolean;
+      Function HasDateTime : Boolean;
+
+      Function DateFormat : String;
+      Function TimeFormat : String;
+      Function DateTimeFormat : String;
+
+      Function DurationFormat : String;
+
+      Procedure CursorStart;
+      Procedure CursorEnd;
+      Procedure Select(Const iFrom, iTo : Integer);
+
+      Procedure ApplyMask(Const sText : String);
+
+      Function LeadingFixedText : String;
+
+      Function Conforms(Const sText : String): Boolean;
+
+      Property BalloonAudible : Boolean Read FBalloonAudible Write FBalloonAudible;
+      Property LastError : String Read FLastError Write FLastError;
+      Property AnchoredRight : Boolean Read GetAnchoredRight Write SetAnchoredRight;
+      Property AnchoredLeft : Boolean Read GetAnchoredLeft Write SetAnchoredLeft;
+      Property AnchoredTop : Boolean Read GetAnchoredTop Write SetAnchoredTop;
+      Property AnchoredBottom : Boolean Read GetAnchoredBottom Write SetAnchoredBottom;
+      Property Bolded : Boolean Read GetBolded Write SetBolded;
+      Property IgnoreOverwrite : Boolean Read FIgnoreOverwrite Write FIgnoreOverwrite;
+      Property Mandatory : Boolean Read GetMandatory Write SetMandatory;
+      Property AllowedCharacterList : TFslCharacterList Read FAllowedCharacterList;
+      Property DisallowedCharacterList : TFslCharacterList Read FDisallowedCharacterList;
+
+      Property Mask : String Read GetMask Write SetMask;
+      Property Text : String Read GetText Write SetText;
+      Property Title : String Read FTitle Write FTitle;
+
+      Property AutoSelect : Boolean Read FAutoSelect Write FAutoSelect;
+
+{$IFDEF VER130}
+      Property Highlighter : TUixCodeHighlighter Read GetHighlighter;
+{$ELSE}
+      Property Highlighter : TUixUnicodeCodeHighlighter Read GetHighlighter;
+{$ENDIF}
+
+      Property MinLength : Integer Read GetMinLength Write SetMinLength;
+      Property MaxLength : Integer Read GetMaxLength Write SetMaxLength;
+      Property FixedLength : Integer Read GetFixedLength;
+
+      Property AllowLeadingWhitespace : Boolean Read FAllowLeadingWhitespace Write FAllowLeadingWhitespace;
+      Property EnforceNumeric : Boolean Read FEnforceNumeric Write FEnforceNumeric;
+      Property EnforceAlphabetic : Boolean Read FEnforceAlphabetic Write FEnforceAlphabetic;
+      Property EnforceCapitals : Boolean Read GetEnforceCapitals Write SetEnforceCapitals;
+      Property DefaultStringValue : String Read GetDefaultStringValue Write SetDefaultStringValue;
+      Property IsDefaultStringValue : Boolean Read GetIsDefaultStringValue Write SetIsDefaultStringValue;
+
+      Property MinExtendedValue : Extended Read GetMinExtendedValue Write SetMinExtendedValue;
+      Property MaxExtendedValue : Extended Read GetMaxExtendedValue Write SetMaxExtendedValue;
+      Property ExtendedDecimalPlaces : Integer Read GetExtendedDecimalPlaces Write SetExtendedDecimalPlaces;
+
+      Property MinDateTimeValue : TDateTime Read GetMinDateTimeValue Write SetMinDateTimeValue;
+      Property MaxDateTimeValue : TDateTime Read GetMaxDateTimeValue Write SetMaxDateTimeValue;
+      Property IncludeDate : Boolean Read GetIncludeDate Write SetIncludeDate;
+      Property IncludeTime : Boolean Read GetIncludeTime Write SetIncludeTime;
+      Property IncludeDays : Boolean Read GetIncludeDays Write SetIncludeDays;
+      Property IncludeMonths : Boolean Read GetIncludeMonths Write SetIncludeMonths;
+      Property IncludeYears : Boolean Read GetIncludeYears Write SetIncludeYears;
+      Property AllowsPast : Boolean Read GetAllowsPast Write SetAllowsPast;
+      Property AllowsFuture : Boolean Read GetAllowsFuture Write SetAllowsFuture;
+      Property HasTime : Boolean Read GetHasTime Write SetHasTime;
+      Property AssumedNow : TDateTime Read FAssumedNow Write FAssumedNow;
+      Property TimeOptional : Boolean Read GetTimeOptional Write SetTimeOptional;
+
+      Property MinDurationValue : TDuration Read GetMinDurationValue Write SetMinDurationValue;
+      Property MaxDurationValue : TDuration Read GetMaxDurationValue Write SetMaxDurationValue;
+      Property IncludeHours : Boolean Read GetIncludeHours Write SetIncludeHours;
+      Property IncludeMinutes : Boolean Read GetIncludeMinutes Write SetIncludeMinutes;
+      Property IncludeSeconds : Boolean Read GetIncludeSeconds Write SetIncludeSeconds;
+      Property IncludeMilliSeconds : Boolean Read GetIncludeMilliSeconds Write SetIncludeMilliSeconds;
+      Property ExtendedHours : Boolean Read GetExtendedHours Write SetExtendedHours;
+
+      Property MaxCurrencyValue : TCurrency Read GetMaxCurrencyValue Write SetMaxCurrencyValue;
+      Property MinCurrencyValue : TCurrency Read GetMinCurrencyValue Write SetMinCurrencyValue;
+      Property DenominationCurrencyValue : TCurrency Read GetDenominationCurrencyValue Write SetDenominationCurrencyValue;
+
+      Property MinIntegerValue : Int64 Read GetMinIntegerValue Write SetMinIntegerValue;
+      Property MaxIntegerValue : Int64 Read GetMaxIntegerValue Write SetMaxIntegerValue;
+      Property DefaultIntegerValue : Int64 Read GetDefaultIntegerValue Write SetDefaultIntegerValue;
+      Property HasDefaultIntegerValue : Boolean Read GetHasDefaultIntegerValue Write SetHasDefaultIntegerValue;
+
+      Property ValueAsString : String Read GetValueAsString Write SetValueAsString;
+      Property ValueAsDateTimeOffset : TDateTimeOffset Read GetValueAsDateTimeOffset Write SetValueAsDateTimeOffset;
+      Property ValueAsDateTime : TDateTime Read GetValueAsDateTime Write SetValueAsDateTime;
+      Property ValueAsDuration : TDuration Read GetValueAsDuration Write SetValueAsDuration;
+      Property ValueAsCurrency : TCurrency Read GetValueAsCurrency Write SetValueAsCurrency;
+      Property ValueAsInteger64 : Int64 Read GetValueAsInteger64 Write SetValueAsInteger64;
+      Property ValueAsInteger32 : LongInt Read GetValueAsInteger32 Write SetValueAsInteger32;
+      Property ValueAsCardinal : Cardinal Read GetValueAsCardinal Write SetValueAsCardinal;
+      Property ValueAsExtended : Extended Read GetValueAsExtended Write SetValueAsExtended;
+
+      Property Color : TColor Read GetColor Write SetColor Default clWindow;
+      Property ParentColor : Boolean Read GetParentColor Write SetParentColor Default False;
+      Property ReadBackgroundColour : TColour Read FReadBackgroundColour Write SetReadBackgroundColour;
+      Property WriteBackgroundColour : TColour Read FWriteBackgroundColour Write SetWriteBackgroundColour;
+      Property InvalidBackgroundColour : TColour Read FInvalidBackgroundColour Write FInvalidBackgroundColour;
+      Property HasInvalidBackgroundColour : Boolean Read FHasInvalidBackgroundColour Write FHasInvalidBackgroundColour;
+      Property DefaultBackgroundColour : TColour Read FDefaultBackgroundColour Write FDefaultBackgroundColour;
+      Property HasDefaultBackgroundColour : Boolean Read FHasDefaultBackgroundColour Write FHasDefaultBackgroundColour;
+
+      // SynEdit doesn't expose any functionality to capture the change event within a subclass, while still
+      // maintaining an OnChange property that can be set externally. So we hide the event and redeclare as ChangeDelegate.
+
+      Property ChangeDelegate : TUixCodeEditChangeDelegate Read FChangeDelegate Write FChangeDelegate;
+      Property LoseFocusDelegate : TUixCodeEditLoseFocusDelegate Read FLoseFocusDelegate Write FLoseFocusDelegate;
+      Property RepositionDelegate : TUixCodeEditRepositionDelegate Read FRepositionDelegate Write FRepositionDelegate;
+      Property StandardKeyPressDelegate : TUixCodeEditStandardKeyPressDelegate Read FStandardKeyPressDelegate Write FStandardKeyPressDelegate;
+      Property ValidateContentDelegate : TUixCodeEditValidateContentDelegate Read FValidateContentDelegate Write FValidateContentDelegate;
+  End;
+
+  TUixCodeEditClass = Class Of TUixCodeEdit;
+
+  TUixCodeEditList = Class(TComponentList)
+    Private
+      Function GetEditByIndex(Const iIndex : Integer):  TUixCodeEdit;
+      Procedure SetEditByIndex(Const iIndex : Integer; Const Value : TUixCodeEdit);
+
+    Public
+      Property EditByIndex[Const iIndex : Integer] : TUixCodeEdit Read GetEditByIndex Write SetEditByIndex; Default;
+  End;
 
   TUixComboBox = Class(TComboBox)
     Private
@@ -2222,8 +2746,8 @@ Type
       Procedure DoSelectionChange; Overload;
       Function DoFocusChanging(pOldNode, pNewNode: PVirtualNode; iOldColumn, iNewColumn: TColumnIndex): Boolean; Override;
       Procedure DoFocusNode(pNode : PVirtualNode; bAsk : Boolean); Override;
-//      Function DoGetImageIndex(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var Index: Integer): TCustomImageList; Override;
-//      Procedure DoGetText(pNode: PVirtualNode; iColumn: TColumnIndex; aTextType: TVSTTextType; Var sText: String); Override;
+      Function DoGetImageIndex(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var Index: Integer): TCustomImageList; Override;
+      Procedure DoGetText(pNode: PVirtualNode; iColumn: TColumnIndex; aTextType: TVSTTextType; Var sText: String); Override;
       Procedure DoHeaderClick(const HitInfo: TVTHeaderHitInfo); Override;
       function DoInitChildren(pNode: PVirtualNode; Var iChildCount: Cardinal) : boolean; Override;
       Procedure DoInitNode(pParent, pNode : PVirtualNode; Var aInitStates : TVirtualNodeInitStates); Override;
@@ -2483,7 +3007,7 @@ Begin
   RegisterComponents('Uix', [TUixPanel]);
   RegisterComponents('Uix', [TUixButton]);
   RegisterComponents('Uix', [TUixTimer]);
-//  RegisterComponents('Uix', [TUixCodeEdit]);
+  RegisterComponents('Uix', [TUixCodeEdit]);
   RegisterComponents('Uix', [TUixComboBox]);
   RegisterComponents('Uix', [TUixToolBar, TUixToolButton]);
   RegisterComponents('Uix', [TUixPopupMenu, TUixMenuItem]);
@@ -4562,9 +5086,2692 @@ End;
 {$ENDIF}
 
 
+Constructor TUixCodeEdit.Create(oOwner: TComponent);
+Begin
+  Inherited;
 
+  FReadBackgroundColour := clBtnFace;
+  FWriteBackgroundColour := clWindow;
+  FInvalidBackgroundColour := clWindow;
+
+  FAllowedCharacterList := TFslCharacterList.Create;
+  FAllowedCharacterList.SortByValue;
+  FAllowedCharacterList.IgnoreDuplicates;
+
+  FDisallowedCharacterList := TFslCharacterList.Create;
+  FDisallowedCharacterList.SortByValue;
+  FDisallowedCharacterList.IgnoreDuplicates;
+
+  FMask := TUixCodeMask.Create;
+
+{$IFDEF VER130}
+  Inherited Highlighter := TUixCodeHighlighter.Create(Self);
+{$ELSE}
+  Inherited Highlighter := TUixUnicodeCodeHighlighter.Create(Self);
+{$ENDIF}
+
+  Highlighter.Mask := FMask.Link;
+
+  If oOwner Is TWinControl Then
+    Parent := TWinControl(oOwner);
+
+  OnChange := InternalChangeDelegate;
+  OnExit := InternalExitDelegate;
+
+  FAutoSelect := True;
+  FBalloonAudible := False;
+
+  Height := 21;
+
+  Options := Options - [eoScrollPastEOL, eoTrimTrailingSpaces] + [eoRightMouseMovesCursor];
+  WantReturns := False;
+  ScrollBars := ssNone;
+  HideSelection := True;
+  RightEdge := 0;
+
+  Font.Name := 'Courier New'; // TODO: Consolas is better but only available in Vista/Office2007.
+  Font.Size := 8;
+
+  Gutter.Visible := False;
+
+  Lines.Add('');
+
+  Prepare;
+End;
+
+
+Destructor TUixCodeEdit.Destroy;
+Begin
+  FDisallowedCharacterList.Free;
+  FAllowedCharacterList.Free;
+  FMask.Free;
+
+  Inherited;
+End;
+
+
+Procedure TUixCodeEdit.Error(Const sMethod, sMessage : String);
+Begin
+  Raise EFslException.Create(Self, sMethod, sMessage);
+End;
+
+
+Procedure TUixCodeEdit.AlignBottom;
+Begin
+  Align := alBottom;
+End;
+
+
+Procedure TUixCodeEdit.AlignClient;
+Begin
+  Align := alClient;
+End;
+
+
+Procedure TUixCodeEdit.AlignLeft;
+Begin
+  Align := alLeft;
+End;
+
+
+Procedure TUixCodeEdit.AlignRight;
+Begin
+  Align := alRight;
+End;
+
+
+Procedure TUixCodeEdit.AlignTop;
+Begin
+  Align := alTop;
+End;
+
+
+Procedure TUixCodeEdit.EnforceValidationModeDateTime;
+Begin
+  If Not IsValidationModeDateTime Then
+    Error('EnforceValidationModeDateTime', 'Edit control is not in date time mode.');
+End;
+
+
+Procedure TUixCodeEdit.EnforceValidationModeString;
+Begin
+  If Not IsValidationModeString Then
+    Error('EnforceValidationModeString', 'Edit control is not in string mode.');
+End;
+
+
+Procedure TUixCodeEdit.EnforceValidationModeDuration;
+Begin
+  If Not IsValidationModeDuration Then
+    Error('EnforceValidationModeDuration', 'Edit control is not in duration mode.');
+End;
+
+
+Procedure TUixCodeEdit.EnforceValidationModeExtended;
+Begin
+  If Not IsValidationModeExtended Then
+    Error('EnforceValidationModeExtended', 'Edit control is not in extended mode.');
+End;
+
+
+Procedure TUixCodeEdit.EnforceValidationModeCurrency;
+Begin
+  If Not IsValidationModeCurrency Then
+    Error('EnforceValidationModeCurrency', 'Edit control is not in currency mode.');
+End;
+
+
+Procedure TUixCodeEdit.EnforceValidationModeInteger;
+Begin
+  If Not IsValidationModeInteger Then
+    Error('EnforceValidationModeInteger', 'Edit control is not in integer mode.');
+End;
+
+
+Function TUixCodeEdit.IsValidationModeString : Boolean;
+Begin
+  Result := FValidationMode = UixCodeEditValidationModeString;
+End;
+
+
+Function TUixCodeEdit.IsValidationModeDateTime : Boolean;
+Begin
+  Result := FValidationMode = UixCodeEditValidationModeDateTime;
+End;
+
+
+Function TUixCodeEdit.IsValidationModeDuration : Boolean;
+Begin
+  Result := FValidationMode = UixCodeEditValidationModeDuration;
+End;
+
+
+Function TUixCodeEdit.IsValidationModeInteger : Boolean;
+Begin
+  Result := FValidationMode = UixCodeEditValidationModeInteger;
+End;
+
+
+Function TUixCodeEdit.IsValidationModeExtended : Boolean;
+Begin
+  Result := FValidationMode = UixCodeEditValidationModeExtended;
+End;
+
+
+Function TUixCodeEdit.IsValidationModeCurrency : Boolean;
+Begin
+  Result := FValidationMode = UixCodeEditValidationModeCurrency;
+End;
+
+
+Procedure TUixCodeEdit.ValidationModeDateTime;
+Begin
+  FValidationMode := UixCodeEditValidationModeDateTime;
+
+  FIncludeDate := True;
+  FIncludeDays := True;
+  FIncludeMonths := True;
+  FIncludeYears := True;
+  FAllowsPast := True;
+  FAllowsFuture := True;
+  FMinDateTimeValue := DATETIME_MIN;
+  FMaxDateTimeValue := DATETIME_MAX;
+
+  PrepareDateTimeMask;
+End;
+
+
+Procedure TUixCodeEdit.ValidationModeDuration;
+Begin
+  FValidationMode := UixCodeEditValidationModeDuration;
+
+  FIncludeHours := True;
+  FIncludeMinutes := True;
+  FIncludeSeconds := True;
+  FIncludeMilliSeconds := True;
+  FMinDurationValue := 0;
+  FMaxDurationValue := High(FMaxDurationValue);
+
+  PrepareDurationMask;
+End;
+
+
+Procedure TUixCodeEdit.ValidationModeCurrency;
+Begin
+  FValidationMode := UixCodeEditValidationModeCurrency;
+
+  FMinCurrencyValue := 0.0;
+  FMinCurrencyValue := FMinCurrencyValue - 922337203685477.58;
+  FMaxCurrencyValue := 922337203685477.58;
+  FDenominationCurrencyValue := 0.01;
+End;
+
+
+Procedure TUixCodeEdit.ValidationModeInteger;
+Begin
+  FValidationMode := UixCodeEditValidationModeInteger;
+
+  MinIntegerValue := 0;
+  MaxIntegerValue := High(Int64);
+
+  FHasDefaultIntegerValue := False;
+  FDefaultIntegerValue := 0;
+
+  Prepare;
+End;
+
+
+Procedure TUixCodeEdit.ValidationModeExtended;
+Begin
+  FValidationMode := UixCodeEditValidationModeExtended;
+
+  MaxExtendedValue := 10000000000;
+End;
+
+
+Procedure TUixCodeEdit.ValidationModeString;
+Begin
+  FValidationMode := UixCodeEditValidationModeString;
+End;
+
+
+Procedure TUixCodeEdit.ExecuteCommand(Command: TSynEditorCommand; cChar: Char; Data: Pointer);
+Var
+  iPosition : Integer;
+  iTrailingFixedLength : Integer;
+Begin
+  If (Command <> ecLineBreak) And (Command <> ecInsertLine) Then
+  Begin
+    Case Command Of
+      ecChar :
+      Begin
+        HideBalloon;
+
+        If Not ReadOnly And CanInsertCharacter Then
+        Begin
+          If AllowInsertCharacter(cChar) Then
+          Begin
+            If Not ValidateCharacter(cChar) Or Not ValidateInsertCharacter(cChar) Then
+            Begin
+              ShowBalloon;
+            End
+            Else If (cChar >= ' ') And (cChar <= #127) Then
+            Begin
+              If SelAvail Then
+                AdjustSelectionEnd;
+
+              Inherited;
+
+              If Assigned(FStandardKeyPressDelegate) Then
+                FStandardKeyPressDelegate(Self, cChar);
+
+              Complete;
+            End;
+          End;
+        End;
+      End;
+
+      ecCut,
+      ecDeleteChar :
+      Begin
+        HideBalloon;
+
+        If SelAvail Then
+        Begin
+          AdjustSelectionEnd;
+
+          Inherited;
+
+          Complete;
+        End
+        Else
+        Begin
+          iPosition := CaretX - 1;
+          iTrailingFixedLength := FMask.TrailingFixedLength(CaretX);
+
+          If (iPosition >= FMask.LeadingFixedLength) Then
+          Begin
+            Inherited;
+
+            If (iTrailingFixedLength > 0) And ((iPosition + iTrailingFixedLength) = Length(Text)) Then
+            Begin
+              While (iTrailingFixedLength > 0) Do
+              Begin
+                Inherited;
+
+                Dec(iTrailingFixedLength);
+              End;
+            End;
+          End;
+        End;
+      End;
+
+      ecDeleteLastChar,
+      ecDeleteLastWord,
+      ecDeleteLine,
+      ecDeleteEOL,
+      ecDeleteBOL :
+      Begin
+        HideBalloon;
+
+        If SelAvail Then
+        Begin
+          AdjustSelectionStart;
+          AdjustSelectionEnd;
+
+          If SelAvail Then
+          Begin
+            Inherited;
+
+            Complete;
+          End;
+        End
+        Else
+        Begin
+          iPosition := CaretX - 1;
+          iTrailingFixedLength := FMask.TrailingFixedLength(iPosition);
+
+          If (iTrailingFixedLength > 0) And ((iPosition + iTrailingFixedLength) = Length(Text)) Then
+          Begin
+            CaretX := CaretX + iTrailingFixedLength;
+            iPosition := iPosition + iTrailingFixedLength;
+          End;
+
+          If (iPosition > FMask.LeadingFixedLength) Then
+          Begin
+            Inherited;
+
+            While (iPosition > 0) And FMask.Fixed(iPosition) Do
+            Begin
+              Inherited;
+
+              Dec(iPosition);
+            End;
+          End;
+        End;
+      End;
+
+      ecInsertMode, ecOverwriteMode, ecToggleMode :
+      Begin
+        HideBalloon;
+
+        If Not FIgnoreOverwrite Then
+          Inherited;
+      End;
+
+      ecPaste :
+      Begin
+        HideBalloon;
+
+        If CanPaste Then
+          Inherited;
+      End;
+    Else
+      Inherited;
+    End;
+  End;
+End;
+
+
+Procedure TUixCodeEdit.CursorEnd;
+Begin
+  CaretX := 1;
+End;
+
+
+Procedure TUixCodeEdit.CursorStart;
+Begin
+  CaretX := Length(Text);
+End;
+
+
+Procedure TUixCodeEdit.Complete;
+Var
+  iPosition : Integer;
+  sText : String;
+Begin
+  iPosition := CaretX;
+
+  sText := Text;
+
+  While (iPosition >= Length(Text)) And FMask.Fixed(iPosition) Do
+  Begin
+    If sText[iPosition] <> FMask.FixedFormat[iPosition] Then
+      sText := sText + FMask.FixedFormat[iPosition];
+
+    Inc(iPosition);
+  End;
+
+  CaretX := iPosition;
+
+  If Text <> sText Then
+    Text := sText;
+
+  Prepare;
+End;
+
+
+Procedure TUixCodeEdit.HideBalloon;
+Begin
+  If Assigned(FBalloon) Then
+  Begin
+    FBalloon.Release;
+    FBalloon := Nil;
+  End;
+End;
+
+
+Procedure TUixCodeEdit.ShowBalloon;
+Begin
+  HideBalloon;
+
+  FBalloon := TUixBalloon.CreateNew(Self);
+  FBalloon.Parent := Self;
+  FBalloon.Title := Title;
+  FBalloon.Message := LastError;
+  FBalloon.TimeoutDuration := 4000;
+  FBalloon.BalloonTypeError;
+  FBalloon.AnchorPositionTopLeft;
+  FBalloon.UseAudibleNotification := FBalloonAudible;
+  FBalloon.Control := Self;
+  FBalloon.ControlRelativeHorizontalPositionCenter;
+  FBalloon.ControlRelativeVerticalPositionBottom;
+  FBalloon.ShowBalloon;
+End;
+
+
+Procedure TUixCodeEdit.SetText(Const Value: String);
+Begin
+  Inherited Text := Value;
+
+  If Lines.Count = 0 Then
+    Lines.Add('');
+
+  CaretX := Length(Value) + 1;
+
+  Complete;
+  Prepare;
+End;
+
+
+Function TUixCodeEdit.Empty: Boolean;
+Begin
+  If IsValidationModeDuration Then
+    Result := (StringReplace(Text, [TimeSeparator, ' '], '') = '')
+  Else
+    Result := Text = '';
+End;
+
+
+Function TUixCodeEdit.Full : Boolean;
+Begin
+  Result := (FMask.MaxLength > 0) And (Length(Text) = FMask.MaxLength);
+End;
+
+
+Function TUixCodeEdit.ValidateCharacter(Const cChar : Char) : Boolean;
+Var
+  iAllowedIndex : Integer;
+  sAllowedCharacters : String;
+  sCharacterDesription : String;
+Begin
+  Result := Not DisallowedCharacterList.ExistsByValue(cChar);
+
+  If Result And Not AllowedCharacterList.ExistsByValue(cChar) Then
+  Begin
+    If EnforceAlphabetic And EnforceNumeric Then
+      Result := StringIsAlphanumeric(cChar)
+    Else If EnforceAlphabetic Then
+      Result := StringIsAlphabetic(cChar)
+    Else If EnforceNumeric Then
+      Result := StringIsNumeric(cChar);
+  End;
+
+  If Not Result Then
+  Begin
+    sAllowedCharacters := '';
+
+    If EnforceAlphabetic Then
+    Begin
+      StringAppend(sAllowedCharacters, 'A-Z', ', ');
+
+      If Not EnforceCapitals Then
+      Begin
+        StringAppend(sAllowedCharacters, 'a-z', ', ');
+      End;
+    End;
+
+    If EnforceNumeric Then
+    Begin
+      StringAppend(sAllowedCharacters, '0-9', ', ');
+    End;
+
+    For iAllowedIndex := 0 To AllowedCharacterList.Count - 1 Do
+      sAllowedCharacters := sAllowedCharacters + ', ' + AllowedCharacterList[iAllowedIndex].Value;
+
+    sCharacterDesription := '';
+
+    If cChar = cEnter Then
+      sCharacterDesription := 'Carriage Return'
+    Else If cChar = cFeed Then
+      sCharacterDesription := 'Line Feed'
+    Else If CharInSet(cChar, [cTab, cVerticalTab]) Then
+      sCharacterDesription := 'Tab';
+
+    If sCharacterDesription = '' Then
+      LastError := StringFormat('%s does not allow character (%s) as it can only contain characters (%s)', [Title, cChar, sAllowedCharacters])
+    Else
+      LastError := StringFormat('%s does not allow character (%s) as it can only contain characters (%s)', [Title, sCharacterDesription, sAllowedCharacters]);
+  End;
+
+  If Result And IsValidationModeCurrency Then
+  Begin
+    Result := StringIsNumeric(cChar) Or CharInSet(cChar, (setSigns + ['.']));
+
+    If Not Result Then
+      LastError := Title + ' can only contain number characters (0-9), decimal point and minus sign.';
+  End;
+
+  If Result And IsValidationModeInteger Then
+  Begin
+    Result := StringIsNumeric(cChar) Or CharInSet(cChar, setSigns);
+
+    If Not Result Then
+    Begin
+      LastError := Title + ' can only contain number characters (0-9) and minus sign.';
+    End
+    Else
+    Begin
+      Result := (MinIntegerValue < 0) Or (cChar <> '-');
+
+      If Not Result Then
+        LastError := 'You can only type a positive number here.';
+    End;
+  End;
+
+  If Result And IsValidationModeExtended Then
+  Begin
+    Result := StringIsNumeric(cChar) Or CharInSet(cChar, (setSigns + ['.']));
+
+    If Not Result Then
+    Begin
+      LastError := Title + ' can only contain number characters (0-9), decimal point and minus sign.';
+    End
+    Else
+    Begin
+      Result := (MinExtendedValue < 0) Or (cChar <> '-');
+
+      If Not Result Then
+      Begin
+        LastError := 'You can only type a positive number here.';
+      End;
+    End;
+  End;
+End;
+
+
+Function TUixCodeEdit.ValidateInsertCharacter(Const cChar : Char) : Boolean;
+Var
+  bIsCRKey : Boolean;
+  iDecimalPos : Integer;
+  iPosition : Integer;
+Begin
+  Result := SelAvail;
+
+  If Not Result Then
+  Begin
+    iPosition := CaretX;
+
+    bIsCRKey := cChar = cEnter;
+
+    Result := (FMask.MaxLength <= 0) Or (Length(Text) < FMask.MaxLength) Or bIsCRKey;
+
+    If Not bIsCRKey Then
+    Begin
+      If Not Result Then
+      Begin
+        LastError := StringFormat('%s cannot exceed %d %s.', [Title, FMask.MaxLength, StringPlural('character', FMask.MaxLength)]);
+      End
+      Else
+      Begin
+        Result := CharInSet(cChar, FMask.Allowed(iPosition));
+
+        If Not Result Then
+          LastError := StringFormat('%s only allows characters (%s) in this position.', [Title, FMask.AllowedAsText(iPosition)]);
+      End;
+    End;
+  End;
+
+  If Result And IsValidationModeCurrency Then
+  Begin
+    Case cChar Of
+      '.' :
+      Begin
+        Result := Pos('.', Text) = 0;
+
+        If Not Result Then
+          LastError := Title + ' already contains a decimal point.';
+      End;
+
+      '-' :
+      Begin
+        Result := FMinCurrencyValue < 0.0;
+
+        If Result Then
+        Begin
+          Result := Pos('-', Text) = 0;
+
+          If Not Result Then
+            LastError := Title + ' already contains a minus sign.';
+
+          If Result Then
+          Begin
+            Result := CaretX = 1;
+
+            If Not Result Then
+              LastError := 'Minus sign must be the first character of ' + Title + '.';
+          End;
+        End
+        Else
+        Begin
+          LastError := 'Negative amounts are not allowed.';
+        End;
+      End;
+    Else
+      iDecimalPos := Pos('.', Text);
+
+      If (iDecimalPos > 0) And (CaretX > iDecimalPos) Then
+      Begin
+        Result := iDecimalPos >= (Length(Text) - 1);
+
+        If Not Result Then
+          LastError := Title + ' only allows two decimal places.';
+      End;
+    End;
+  End;
+End;
+
+
+Function TUixCodeEdit.Valid : Boolean;
+Begin
+  LastError := '';
+
+  Result := ReadOnly Or Not Enabled Or (ValidateLength And ValidateContent);
+End;
+
+
+Function TUixCodeEdit.ValidateLength : Boolean;
+Begin
+  Result := Not (Empty And Mandatory);
+
+  If Not Result Then
+  Begin
+    LastError := Title + ' is a mandatory field and must be entered.';
+  End
+  Else
+  Begin
+    Result := (Empty And Not Mandatory);
+
+    If Not Result Then
+    Begin
+      Result := (Length(Text) >= FMask.MinLength);
+
+      If Not Result Then
+      Begin
+        LastError := StringFormat('%s must be at least %d %s in length.', [Title, FMask.MinLength, StringPlural('character', FMask.MinLength)])
+      End
+      Else
+      Begin
+        Result := (FMask.MaxLength <= 0) Or (Length(Text) <= FMask.MaxLength);
+
+        If Not Result Then
+        Begin
+          LastError := StringFormat('%s can be no more than %d %s in length.', [Title, FMask.MaxLength, StringPlural('character', FMask.MaxLength)]);
+        End;
+      End;
+    End;
+  End;
+End;
+
+
+Function TUixCodeEdit.ValidateContent : Boolean;
+Var
+  aCurrencyValue : TCurrency;
+  aDateTimeNow : TDateTime;
+  aDateTimeValue : TDateTime;
+  aDurationValue : TDuration;
+  iLoop : Integer;
+  iIntegerValue : Int64;
+  rValue : Extended;
+  sText : String;
+  sValue : String;
+Begin
+  Result := Conforms(Text);
+
+  If Not Result Then
+  Begin
+    LastError := StringFormat('%s does not match the input mask.', [Title]);
+  End
+  Else
+  Begin
+    iLoop := 1;
+
+    sText := Text;
+
+    While Result And (iLoop <= Length(sText)) Do
+    Begin
+      Result := ValidateCharacter(sText[iLoop]);
+
+      Inc(iLoop);
+    End;
+  End;
+
+  If Result And IsValidationModeDateTime Then
+  Begin
+    sValue := Text;
+
+    Result := Empty;
+
+    If Not Result Then
+    Begin
+      If FIncludeDate Then
+        Result := IsDateTime(sValue, DateTimeFormat)
+      Else If FIncludeTime Then
+        Result := StringIsTime(sValue)
+      Else
+        Result := True;
+
+      If Not Result Then
+        LastError := Title + ' is an invalid date/time format.'
+      Else
+      Begin
+        aDateTimeValue := ValueAsDateTime;
+
+        Result := (aDateTimeValue >= FMinDateTimeValue);
+
+        If Not Result Then
+          LastError := StringFormat('%s has a value of ''%s'', it must be later than ''%s''.', [Title, DisplayDateTime(aDateTimeValue), DisplayDateTime(FMinDateTimeValue)])
+        Else
+        Begin
+          Result := (aDateTimeValue <= FMaxDateTimeValue);
+
+          If Not Result Then
+            LastError := StringFormat('%s has a value of ''%s'', it must be earlier than ''%s''.', [Title, DisplayDateTime(aDateTimeValue), DisplayDateTime(FMaxDateTimeValue)]);
+        End;
+
+        If Result Then
+        Begin
+          If FAssumedNow = 0 Then
+            aDateTimeNow := LocalDateTime
+          Else
+            aDateTimeNow := FAssumedNow;
+
+          If IncludeDate And Not IncludeTime Then
+          Begin
+            aDateTimeNow := AsDate(aDateTimeNow);
+
+            If Not IncludeDays Then
+              aDateTimeNow := FirstOfMonth(aDateTimeNow);
+          End
+          Else If IncludeTime And Not IncludeDate Then
+          Begin
+            aDateTimeNow := AsTime(aDateTimeNow);
+          End;
+
+          Result := FAllowsPast Or (aDateTimeValue >= aDateTimeNow);
+
+          If Not Result Then
+          Begin
+            LastError := StringFormat('%s cannot be in the past.', [Title]);
+          End
+          Else
+          Begin
+            Result := FAllowsFuture Or (aDateTimeValue <= aDateTimeNow);
+
+            If Not Result Then
+              LastError := StringFormat('%s cannot be in the future.', [Title]);
+          End;
+        End;
+      End;
+    End;
+  End;
+
+  If Result And IsValidationModeDuration Then
+  Begin
+    Result := Empty;
+
+    If Not Result Then
+    Begin
+      Result := StringIsDuration(NormaliseDuration);
+
+      If Not Result Then
+        LastError := Text + ' is an invalid duration.'
+      Else
+      Begin
+        aDurationValue := ValueAsDuration;
+
+        Result := (aDurationValue >= FMinDurationValue);
+
+        If Not Result Then
+          LastError := StringFormat('%s has a value of ''%s'', it must be greater or equal to ''%s''.', [Title, DisplayDuration(aDurationValue), DisplayDuration(FMinDurationValue)])
+        Else
+        Begin
+          Result := (aDurationValue <= FMaxDurationValue);
+
+          If Not Result Then
+            LastError := StringFormat('%s has a value of ''%s'', it must be less than or equal to ''%s''.', [Title, DisplayDuration(aDurationValue), DisplayDuration(FMaxDurationValue)]);
+        End;
+      End;
+    End;
+  End;
+
+  If Result And IsValidationModeCurrency And (Text <> '') Then
+  Begin
+    aCurrencyValue := StringToCurrency(Text);
+
+    Result := (aCurrencyValue >= FMinCurrencyValue) And (aCurrencyValue <= FMaxCurrencyValue);
+
+    If Not Result Then
+      LastError := StringFormat('%s has a value of ''%s'', which is out of valid range (%s..%s).', [Title, Text, CurrencyToString(FMinCurrencyValue), CurrencyToString(FMaxCurrencyValue)])
+    Else
+    Begin
+      Result := Trunc(aCurrencyValue * 100) Mod Trunc(FDenominationCurrencyValue * 100) = 0;
+
+      If Not Result Then
+        LastError := StringFormat('%s has a value of ''%s'' which is required to be a multiple of ''%s''.', [Title, Text, CurrencyToString(FDenominationCurrencyValue)]);
+    End;
+  End;
+
+  If Result And IsValidationModeInteger And (Text <> '') Then
+  Begin
+    Result := StringIsInteger64(Text);
+
+    If Not Result Then
+    Begin
+      LastError := Title + ' has an invalid integer value of ''' + Text + '''';
+    End
+    Else
+    Begin
+      iIntegerValue := StringToInteger64(Text);
+
+      Result := (iIntegerValue >= FMinIntegerValue) And (iIntegerValue <= FMaxIntegerValue);
+
+      If Not Result Then
+        LastError := StringFormat('%s has a value of ''%d'', which is not within the valid range (%d..%d)', [Title, iIntegerValue, FMinIntegerValue, FMaxIntegerValue]);
+    End;
+  End;
+
+  If Result And IsValidationModeExtended And (Text <> '') Then
+  Begin
+    Result := StringIsReal(Text);
+
+    If Not Result Then
+    Begin
+      LastError := Title + ' has an invalid real value of ''' + Text + '''';
+    End
+    Else
+    Begin
+      rValue := StringToReal(Text);
+
+      Result := (rValue >= FMinExtendedValue) And (rValue <= FMaxExtendedValue);
+
+      If Not Result Then
+        LastError := StringFormat('%s has a value of ''%s'', which is out of valid range (%s..%s)', [Title, Text, DisplayExtended(FMinExtendedValue), DisplayExtended(FMaxExtendedValue)]);
+    End;
+  End;
+
+  If Result Then
+  Begin
+    Result := FAllowLeadingWhitespace Or (Text = '');
+
+    If Not Result Then
+    Begin
+      Result := StringGet(Text, 1) <> ' ';
+
+      If Not Result Then
+        LastError := Title + ' cannot have leading whitespace.'
+    End;
+  End;
+
+  If Result And Assigned(FValidateContentDelegate) Then
+    Result := FValidateContentDelegate;
+End;
+
+
+Procedure TUixCodeEdit.Change;
+Begin
+  Prepare;
+End;
+
+
+Procedure TUixCodeEdit.Prepare;
+Begin
+  If ReadOnly Then
+    Color := FReadBackgroundColour
+  Else If Not IsValidLength And HasInvalidBackgroundColour Then
+    Color := InvalidBackgroundColour
+  Else If IsDefaultStringValue And HasDefaultBackgroundColour Then
+    Color := DefaultBackgroundColour
+  Else
+    Color := FWriteBackgroundColour;
+End;
+
+
+Procedure TUixCodeEdit.PrepareMask;
+Begin
+  If IsValidationModeDateTime Then
+    PrepareDateTimeMask
+  Else If IsValidationModeDuration Then
+    PrepareDurationMask;
+End;
+
+
+Procedure TUixCodeEdit.PrepareDurationMask;
+Var
+  sFormat : String;
+Begin
+  EnforceValidationModeDuration;
+
+  sFormat := DurationFormat;
+
+  If FExtendedHours Then
+    FMaxDurationValue := StringToDuration(StringMultiply('9', Length('hhh')) + TimeSeparator + '59' + TimeSeparator + '59' + DecimalSeparator + '999')
+  Else
+    FMaxDurationValue := StringToDuration('99' + TimeSeparator + '59' + TimeSeparator + '59' + DecimalSeparator + '999');
+
+  MaxLength := Length(sFormat);
+
+  If FMandatory Then
+    MinLength := MaxLength
+  Else
+    MinLength := 0;
+
+  Mask := StringReplace(sFormat, setUniversal - [TimeSeparator, DecimalSeparator], '9');
+End;
+
+
+Procedure TUixCodeEdit.PrepareDateTimeMask;
+Var
+  sFormat : String;
+Begin
+  EnforceValidationModeDateTime;
+
+  sFormat := DateTimeFormat;
+
+  MaxLength := Length(sFormat);
+  sFormat := StringReplace(sFormat, ['d', 'm', 'y', 'h', 'n', 's'], '9');
+  sFormat := StringReplace(sFormat, ['/'], FHIR.Support.DateTime.DateSeparator);
+  sFormat := StringReplace(sFormat, [':'], FHIR.Support.DateTime.TimeSeparator);
+  Mask := sFormat;
+
+  If TimeOptional Then
+    MinLength := Length(DateFormat)
+  Else
+    MinLength := MaxLength;
+End;
+
+
+Procedure TUixCodeEdit.PrepareIntegerMask;
+Begin
+  EnforceValidationModeInteger;
+
+  MaxLength := IntegerMax(Length(IntegerToString(FMinIntegerValue)), Length(IntegerToString(FMaxIntegerValue)));
+End;
+
+
+Procedure TUixCodeEdit.PrepareExtendedMask;
+Begin
+  EnforceValidationModeExtended;
+
+  MaxLength := IntegerMax(Length(DisplayExtended(FMinExtendedValue)), Length(DisplayExtended(FMaxExtendedValue))) + FExtendedDecimalPlaces + 1;
+End;
+
+
+Function TUixCodeEdit.DisplayDateTime(Const aValue : TDateTime) : String;
+Begin
+  If DateTimeEquals(aValue, 0, DATETIME_MILLISECOND_ONE) Then
+    Result := ''
+  Else If FIncludeDate Then
+    Result := FHIR.Support.DateTime.DateTimeFormat(aValue, DateTimeFormat)
+  Else If FIncludeTime Then
+    Result := FHIR.Support.DateTime.DateTimeFormat(aValue, TimeFormat)
+  Else
+    Result := '';
+End;
+
+
+Function TUixCodeEdit.DisplayDateTime(Const aValue : TDateTimeOffset) : String;
+Begin
+  If DateTimeOffsetEquals(aValue, DateTimeOffsetZero, DATETIME_MILLISECOND_ONE) Then
+    Result := ''
+  Else If FIncludeDate Then
+    Result := FHIR.Support.DateTime.DateTimeFormat(aValue, DateTimeFormat)
+  Else If FIncludeTime Then
+    Result := FHIR.Support.DateTime.DateTimeFormat(aValue, TimeFormat)
+  Else
+    Result := '';
+End;
+
+
+Function TUixCodeEdit.DisplayDuration(Const aValue : TDuration) : String;
+Var
+  iSeparator : Integer;
+  iCount : Integer;
+Begin
+  If IncludeMilliSeconds Then
+    Result := DurationToMilliSecondsString(aValue)
+  Else If IncludeSeconds Then
+    Result := DurationToSecondsString(aValue)
+  Else If IncludeMinutes Then
+    Result := DurationToMinutesString(aValue)
+  Else
+    Result := DurationToHoursString(aValue);
+
+  If Not IncludeHours Then
+    Result := Copy(Result, 4, MaxInt);
+  If Not IncludeMinutes And Not IncludeHours Then
+    Result := Copy(Result, 4, MaxInt);
+  If Not IncludeSeconds And Not IncludeMinutes Then
+    Result := Copy(Result, 4, MaxInt);
+
+  If ExtendedHours And IncludeHours Then
+  Begin
+    iSeparator := Pos(TimeSeparator, Result);
+
+    If iSeparator < 1 Then
+      iSeparator := MaxInt;
+
+    iCount := Length('hhh') - Length(Copy(Result, 1, iSeparator - 1));
+
+    If iCount > 0 Then
+      Result := StringMultiply('0', iCount) + Result;
+  End;
+End;
+
+
+Function TUixCodeEdit.DisplayExtended(Const aValue : Extended) : String;
+Begin
+  Result := StringFormat('%.' + IntegerToString(FExtendedDecimalPlaces) + 'f', [aValue]);
+End;
+
+
+Function TUixCodeEdit.NormaliseDuration : String;
+Var
+  sPrefix : String;
+Begin
+  sPrefix := '';
+
+  If Not IncludeHours Then
+  Begin
+    If FExtendedHours Then
+      sPrefix := '000'
+    Else
+      sPrefix := '00';
+
+    If IncludeMinutes Then
+      sPrefix := sPrefix + TimeSeparator
+    Else
+    Begin
+      If IncludeSeconds Then
+        sPrefix := sPrefix + TimeSeparator + '00' + TimeSeparator
+      Else
+      Begin
+        If IncludeMilliSeconds Then
+          sPrefix := sPrefix + TimeSeparator + '00' + TimeSeparator + '00' + DecimalSeparator
+      End;
+    End;
+  End;
+
+  Result := sPrefix + Text;
+End;
+
+
+Procedure TUixCodeEdit.Select(Const iFrom, iTo: Integer);
+Begin
+  SelStart := iFrom;
+  SelEnd := iTo;
+End;
+
+
+Function TUixCodeEdit.Conforms(Const sText : String): Boolean;
+Begin
+  Result := FMask.Conforms(sText);
+End;
+
+
+Function TUixCodeEdit.DateFormat : String;
+Begin
+  Result := '';
+
+  If FIncludeDate Then
+  Begin
+    If FIncludeDays Then
+      StringAppend(Result, 'dd', '/');
+
+    If FIncludeMonths Then
+      StringAppend(Result, 'mm', '/');
+
+    If FIncludeYears Then
+      StringAppend(Result, 'yyyy', '/');
+  End;
+End;
+
+
+Function TUixCodeEdit.TimeFormat: String;
+Begin
+  If FIncludeTime Then
+    Result := 'hh:nn'
+  Else
+    Result := '';
+End;
+
+
+Function TUixCodeEdit.DateTimeFormat : String;
+Begin
+  Result := DateFormat;
+
+  If FIncludeTime Then
+    StringAppend(Result, TimeFormat, ' ');
+End;
+
+
+Function TUixCodeEdit.DurationFormat : String;
+Begin
+  Result := '';
+
+  If FIncludeHours Then
+  Begin
+    If FExtendedHours Then
+      StringAppend(Result, 'hhh', '')
+    Else
+      StringAppend(Result, 'hh', '');
+  End;
+
+  If FIncludeMinutes Then
+    StringAppend(Result, 'mm', TimeSeparator);
+
+  If FIncludeSeconds Then
+    StringAppend(Result, 'ss', TimeSeparator);
+
+  If FIncludeMilliSeconds Then
+    StringAppend(Result, 'zzz', DecimalSeparator);
+End;
+
+
+Function TUixCodeEdit.HasDate : Boolean;
+Begin
+  Result := IncludeDate And StringIsDate(Copy(Text, 1, Length(DateFormat)), DateFormat)
+End;
+
+
+Function TUixCodeEdit.HasCompleteDate : Boolean;
+Var
+  sDateFormat : String;
+Begin
+  sDateFormat := DateFormat;
+
+  Result := IncludeDate And
+            (Length(Text) = Length(sDateFormat)) And
+            StringIsDate(Copy(Text, 1, Length(sDateFormat)), sDateFormat);
+End;
+
+
+Function TUixCodeEdit.HasPartialDate : Boolean;
+Var
+  sDateFormat : String;
+Begin
+  sDateFormat := DateFormat;
+
+  Result := IncludeDate And StringIsDate(Copy(Text, 1, Length(sDateFormat)), sDateFormat)
+End;
+
+
+Function TUixCodeEdit.HasDateTime : Boolean;
+Begin
+  Result := HasDate And HasTime;
+End;
+
+
+Procedure TUixCodeEdit.InternalChangeDelegate(oSender: TObject);
+Begin
+  Change;
+
+  If Assigned(FChangeDelegate) Then
+    FChangeDelegate(Self);
+End;
+
+
+Procedure TUixCodeEdit.InternalExitDelegate(oSender : TObject);
+Begin
+  If IsValidationModeCurrency And (Text <> '') Then
+    Text := CurrencyToString(StringToCurrency(StringStrip(Text, ',')));
+
+  If Assigned(FLoseFocusDelegate) Then
+    FLoseFocusDelegate(Self);
+End;
+
+
+Function TUixCodeEdit.GetEditPart : Cardinal;
+Begin
+  If SystemIsWindowsVista Then
+    Result := EP_EDITBORDER_NOSCROLL
+  Else
+    Result := EP_EDITTEXT;
+End;
+
+
+Function TUixCodeEdit.GetEditState : Cardinal;
+Begin
+  If SystemIsWindowsVista Then
+  Begin
+    If Focused Then
+      Result := EPSN_FOCUSED
+    Else
+      Result := EPSN_NORMAL
+  End
+  Else
+  Begin
+    If Focused Then
+      Result := ETS_FOCUSED
+    Else
+      Result := ETS_NORMAL;
+  End;
+End;
+
+
+Procedure TUixCodeEdit.AdjustContentRect(Var aRect : TRect);
+Begin
+  If SystemIsWindowsVista Then
+    InflateRect(aRect, -2, -2)
+  Else
+    InflateRect(aRect, -1, -1);
+End;
+
+
+Procedure TUixCodeEdit.CreateParams(Var Params: TCreateParams);
+Begin
+  Inherited;
+
+  If UseThemes Then
+  Begin
+    Params.Style := Params.Style And Not WS_BORDER;
+    Params.ExStyle := Params.ExStyle And Not WS_EX_CLIENTEDGE;
+  End;
+End;
+
+
+Procedure TUixCodeEdit.WMNCCalcSize(Var Message: TWMNCCalcSize);
+Var
+  hT : HTHEME;
+  hD : HDC;
+  aRect : TRect;
+Begin
+  Inherited;
+
+  If UseThemes Then
+  Begin
+    hT := OpenThemeData(Handle, 'Edit');
+    hD := GetWindowDC(Handle);
+    Try
+      aRect := Message.CalcSize_Params^.rgrc[0];
+      GetThemeBackgroundContentRect(hT, hD, GetEditPart, GetEditState, aRect, @aRect);
+      AdjustContentRect(aRect);
+      Message.CalcSize_Params^.rgrc[0] := aRect;
+    Finally
+      CloseThemeData(hT);
+      ReleaseDC(Handle, hD);
+    End;
+  End;
+End;
+
+
+Procedure TUixCodeEdit.WMNCPaint(Var Message: TMessage);
+Var
+  hT : HTHEME;
+  hD : HDC;
+  aRect : TRect;
+Begin
+  Inherited;
+
+  If UseThemes Then
+  Begin
+    hT := OpenThemeData(Handle, 'Edit');
+    hD := GetWindowDC(Handle);
+    Try
+      aRect := FHIR.Support.Graphics.Rect(0, 0, Width, Height);
+      DrawThemeBackground(hT, hD, GetEditPart, GetEditState, aRect, Nil);
+      Invalidate;
+    Finally
+      CloseThemeData(hT);
+      ReleaseDC(Handle, hD);
+    End;
+  End;
+End;
+
+
+Procedure TUixCodeEdit.Resize;
+Begin
+  Inherited;
+  Invalidate;
+End;
+
+
+Procedure TUixCodeEdit.CMEnter(Var Message: TCMGotFocus);
+Begin
+  If FAutoSelect And (Not (csLButtonDown In ControlState)) And (SelStart = SelEnd) Then
+  Begin
+    SelStart := Highlighter.Mask.LeadingFixedLength;
+    SelEnd := Length(Text);
+  End;
+
+  Inherited;
+
+  AdjustSelectionStart;
+
+  Perform(WM_NCPAINT, 0, 0);
+  Invalidate;
+End;
+
+
+Procedure TUixCodeEdit.DoExit;
+Begin
+  Inherited;
+
+  HideBalloon;
+
+  Perform(WM_NCPAINT, 0, 0);
+  Invalidate;
+End;
+
+
+Function TUixCodeEdit.GetText: String;
+Begin
+  Result := StringTrimSet(Inherited Text, setVertical);
+End;
+
+
+{$IFDEF VER130}
+Function TUixCodeEdit.GetHighlighter: TUixCodeHighlighter;
+Begin
+  Result := TUixCodeHighlighter(Inherited Highlighter);
+End;
+{$ELSE}
+Function TUixCodeEdit.GetHighlighter: TUixUnicodeCodeHighlighter;
+Begin
+  Result := TUixUnicodeCodeHighlighter(Inherited Highlighter);
+End;
+{$ENDIF}
+
+
+Procedure TUixCodeEdit.SetMask(Const Value: String);
+Var
+  sText : String;
+Begin
+  If FMask.Format <> Value Then
+  Begin
+    sText := FMask.Unformatted(Text);
+    FMask.Format := Value;
+    Text := FMask.Formatted(sText);
+
+    Complete;
+    Prepare;
+  End;
+End;
+
+
+Function TUixCodeEdit.GetMinLength: Integer;
+Begin
+  Result := FMask.MinLength;
+End;
+
+
+Procedure TUixCodeEdit.SetMinLength(Const Value: Integer);
+Begin
+  FMask.MinLength := Value;
+  Prepare;
+End;
+
+
+Procedure TUixCodeEdit.SetMaxLength(Const Value: Integer);
+Begin
+  FMask.MaxLength := Value;
+  Prepare;
+End;
+
+
+Function TUixCodeEdit.GetMaxLength: Integer;
+Begin
+  Result := FMask.MaxLength;
+End;
+
+
+Function TUixCodeEdit.GetFixedLength: Integer;
+Begin
+  Result := FMask.FixedCount;
+End;
+
+
+Function TUixCodeEdit.GetEnforceCapitals : Boolean;
+Begin
+  Result := FMask.Capitals;
+End;
+
+
+Procedure TUixCodeEdit.SetEnforceCapitals(Const Value : Boolean);
+Begin
+  FMask.Capitals := Value;
+
+  Prepare;
+End;
+
+
+Procedure TUixCodeEdit.SetCaretXYEx(bCallEnsureCursorPos: Boolean; aValue: TBufferCoord);
+Begin
+  If ((aValue.Char <> CaretX) Or (aValue.Line <> CaretY)) Then
+  Begin
+    Inherited;
+
+    If Assigned(FRepositionDelegate) Then
+      FRepositionDelegate(Self);
+  End
+  Else
+  Begin
+    Inherited;
+  End;
+End;
+
+
+Procedure TUixCodeEdit.SetReadOnly(Value : Boolean);
+Begin
+  Inherited;
+
+  Prepare;
+End;
+
+
+Function TUixCodeEdit.GetColor: TColor;
+Begin
+  Result := Inherited Color;
+End;
+
+
+Procedure TUixCodeEdit.SetColor(Const Value: TColor);
+Begin
+  Inherited Color := Value;
+
+  RefreshColor;
+End;
+
+
+Function TUixCodeEdit.GetParentColor: Boolean;
+Begin
+  Result := Inherited ParentColor;
+End;
+
+
+Procedure TUixCodeEdit.SetParentColor(Const Value: Boolean);
+Begin
+  Inherited ParentColor := Value;
+
+  RefreshColor;
+End;
+
+
+Procedure TUixCodeEdit.RefreshColor;
+Begin
+  Highlighter.TextAttributes.Background := Color;
+  Highlighter.MaskAttributes.Background := Color;
+  Highlighter.RemainderAttributes.Background := Color;
+  Highlighter.RequiredAttributes.Background := Color;
+  Highlighter.CustomAttributes.Background := Color;
+  Highlighter.BeyondAttributes.Background := Color;
+  Invalidate;
+End;
+
+
+Function TUixCodeEdit.GetAnchoredBottom : Boolean;
+Begin
+  Result := akBottom In Anchors;
+End;
+
+
+Function TUixCodeEdit.GetAnchoredLeft : Boolean;
+Begin
+  Result := akLeft In Anchors;
+End;
+
+
+Function TUixCodeEdit.GetAnchoredRight : Boolean;
+Begin
+  Result := akRight In Anchors;
+End;
+
+
+Function TUixCodeEdit.GetAnchoredTop : Boolean;
+Begin
+  Result := akTop In Anchors;
+End;
+
+
+Procedure TUixCodeEdit.SetAnchoredBottom(Const Value : Boolean);
+Begin
+  If Value Then
+    Anchors := Anchors + [akBottom]
+  Else
+    Anchors := Anchors - [akBottom];
+End;
+
+
+Procedure TUixCodeEdit.SetAnchoredLeft(Const Value : Boolean);
+Begin
+  If Value Then
+    Anchors := Anchors + [akLeft]
+  Else
+    Anchors := Anchors - [akLeft];
+End;
+
+
+Procedure TUixCodeEdit.SetAnchoredRight(Const Value : Boolean);
+Begin
+  If Value Then
+    Anchors := Anchors + [akRight]
+  Else
+    Anchors := Anchors - [akRight];
+End;
+
+
+Procedure TUixCodeEdit.SetAnchoredTop(Const Value : Boolean);
+Begin
+  If Value Then
+    Anchors := Anchors + [akTop]
+  Else
+    Anchors := Anchors - [akTop];
+End;
+
+
+Function TUixCodeEdit.GetBolded: Boolean;
+Begin
+  Result := fsBold In Font.Style;
+End;
+
+
+Procedure TUixCodeEdit.SetBolded(Const Value: Boolean);
+Begin
+  If Value Then
+    Font.Style := Font.Style + [fsBold]
+  Else
+    Font.Style := Font.Style - [fsBold];
+End;
+
+
+Procedure TUixCodeEdit.ApplyMask(Const sText: String);
+Var
+  aCaretXY : TBufferCoord;
+Begin
+  Mask := FMask.FormatFromText(sText);
+  aCaretXY := CaretXY;
+  Text := Copy(FMask.FixedFormat, 1, FMask.LeadingFixedLength);
+  CaretXY := aCaretXY;
+End;
+
+
+Function TUixCodeEdit.GetMask: String;
+Begin
+  Result := FMask.Format;
+End;
+
+
+Function TUixCodeEdit.CanInsertCharacter : Boolean;
+Begin
+  Result := SelStart >= Highlighter.Mask.LeadingFixedLength;
+End;
+
+
+Function TUixCodeEdit.CanPaste : Boolean;
+Begin
+  Result := CanInsertCharacter;
+End;
+
+
+Procedure TUixCodeEdit.AdjustSelectionStart;
+Var
+  iSelStart : Integer;
+Begin
+  iSelStart := IntegerMax(SelStart, Highlighter.Mask.LeadingFixedLength);
+
+  If SelStart <> iSelStart Then
+    SelStart := iSelStart;
+End;
+
+
+Procedure TUixCodeEdit.AdjustSelectionEnd;
+Var
+  iPosition : Integer;
+  iTrailingFixedLength : Integer;
+Begin
+  iPosition := CaretX - 1;
+  iTrailingFixedLength := FMask.TrailingFixedLength(iPosition);
+
+  If (iTrailingFixedLength > 0) And ((iPosition + iTrailingFixedLength) = Length(Text)) Then
+    SelEnd := SelEnd + iTrailingFixedLength;
+End;
+
+
+Function TUixCodeEdit.LeadingFixedText: String;
+Begin
+  Result := FMask.LeadingFixedText;
+End;
+
+
+Function TUixCodeEdit.AllowInsertCharacter(Const cChar : Char) : Boolean;
+Begin
+  Result := Not CharInSet(cChar, setVertical + [cNull, cBackspace]);
+End;
+
+Function TUixCodeEdit.IsValidContent : Boolean;
+Var
+  sLastError : String;
+Begin
+  sLastError := LastError;
+  Try
+    Result := ValidateContent;
+  Finally
+    LastError := sLastError;
+  End;
+End;
+
+
+Function TUixCodeEdit.IsValidLength : Boolean;
+Var
+  sLastError : String;
+Begin
+  sLastError := LastError;
+  Try
+    Result := ValidateLength;
+  Finally
+    LastError := sLastError;
+  End;
+End;
+
+
+Function TUixCodeEdit.GetIsDefaultStringValue : Boolean;
+Begin
+  Result := (FDefaultStringValue <> '') And (FDefaultStringValue = Text);
+End;
+
+
+Procedure TUixCodeEdit.SetIsDefaultStringValue(Const Value : Boolean);
+Begin
+  If Value Then
+    DefaultStringValue := Text
+  Else
+    DefaultStringValue := '';
+End;
+
+
+Function TUixCodeEdit.GetDefaultStringValue : String;
+Begin
+  Result := FDefaultStringValue;
+End;
+
+
+Procedure TUixCodeEdit.SetDefaultStringValue(Const Value : String);
+Begin
+  FDefaultStringValue := Value;
+
+  Prepare;
+End;
+
+
+Function TUixCodeEdit.GetMandatory : Boolean;
+Begin
+  Result := FMandatory;
+End;
+
+
+Procedure TUixCodeEdit.SetMandatory(Const Value: Boolean);
+Begin
+  FMandatory := Value;
+
+  Prepare;
+
+  PrepareMask;
+End;
+
+
+Function TUixCodeEdit.GetAllowsFuture : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FAllowsFuture;
+End;
+
+
+Procedure TUixCodeEdit.SetAllowsFuture(Const Value : Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  FAllowsFuture := Value;
+End;
+
+
+Function TUixCodeEdit.GetTimeOptional : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FTimeOptional;
+End;
+
+
+Procedure TUixCodeEdit.SetTimeOptional(Const Value : Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  FTimeOptional := Value;
+
+  PrepareMask;
+End;
+
+
+Function TUixCodeEdit.GetAllowsPast : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FAllowsPast;
+End;
+
+
+Procedure TUixCodeEdit.SetAllowsPast(Const Value : Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  FAllowsPast := Value;
+End;
+
+
+Function TUixCodeEdit.GetIncludeTime : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FIncludeTime;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeTime(Const Value: Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  FIncludeTime := Value;
+
+  PrepareDateTimeMask;
+End;
+
+
+Function TUixCodeEdit.GetIncludeDate : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FIncludeDate;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeDate(Const Value: Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  FIncludeDate := Value;
+
+  PrepareDateTimeMask;
+End;
+
+
+Function TUixCodeEdit.GetIncludeDays : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FIncludeDays;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeDays(Const Value: Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  FIncludeDays := Value;
+
+  PrepareDateTimeMask;
+End;
+
+
+Function TUixCodeEdit.GetIncludeMonths : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FIncludeMonths;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeMonths(Const Value: Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  FIncludeMonths := Value;
+
+  PrepareDateTimeMask;
+End;
+
+
+Function TUixCodeEdit.GetIncludeYears : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FIncludeYears;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeYears(Const Value: Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  FIncludeYears := Value;
+
+  PrepareDateTimeMask;
+End;
+
+
+Function TUixCodeEdit.GetIncludeMilliSeconds : Boolean;
+Begin
+  EnforceValidationModeDuration;
+
+  Result := FIncludeMilliSeconds;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeMilliSeconds(Const Value : Boolean);
+Begin
+  EnforceValidationModeDuration;
+
+  FIncludeMilliSeconds := Value;
+
+  If IncludeMilliSeconds And IncludeMinutes Then
+    IncludeSeconds := True;
+
+  PrepareDurationMask;
+End;
+
+
+Function TUixCodeEdit.GetIncludeSeconds : Boolean;
+Begin
+  EnforceValidationModeDuration;
+
+  Result := FIncludeSeconds;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeSeconds(Const Value : Boolean);
+Begin
+  EnforceValidationModeDuration;
+
+  FIncludeSeconds := Value;
+
+  If IncludeSeconds Then
+  Begin
+    If IncludeHours Then
+      IncludeMinutes := True;
+  End
+  Else
+  Begin
+    If IncludeMinutes Then
+      IncludeMilliSeconds := False;
+  End;
+
+  PrepareDurationMask;
+End;
+
+
+Function TUixCodeEdit.GetIncludeMinutes : Boolean;
+Begin
+  EnforceValidationModeDuration;
+
+  Result := FIncludeMinutes;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeMinutes(Const Value : Boolean);
+Begin
+  EnforceValidationModeDuration;
+
+  FIncludeMinutes := Value;
+
+  If Not IncludeMinutes Then
+  Begin
+    If IncludeHours Then
+      IncludeSeconds := False;
+  End;
+
+  PrepareDurationMask;
+End;
+
+
+Function TUixCodeEdit.GetIncludeHours : Boolean;
+Begin
+  EnforceValidationModeDuration;
+
+  Result := FIncludeHours;
+End;
+
+
+Procedure TUixCodeEdit.SetIncludeHours(Const Value : Boolean);
+Begin
+  EnforceValidationModeDuration;
+
+  FIncludeHours := Value;
+
+  If IncludeHours And Not IncludeMinutes Then
+  Begin
+    IncludeSeconds := False;
+    IncludeMilliSeconds := False;
+  End;
+
+  PrepareDurationMask;
+End;
+
+
+Function TUixCodeEdit.GetHasTime : Boolean;
+Var
+  sTime : String;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := IncludeTime;
+
+  If Result Then
+  Begin
+    If IncludeDate Then
+      sTime := Copy(Text, Length(DateFormat) + 2, MaxInt)
+    Else
+      sTime := Text;
+
+    Result := Not (StringTrimWhitespace(StringStrip(sTime, ':')) = '') And StringIsTime(sTime);
+  End;
+End;
+
+
+Procedure TUixCodeEdit.SetHasTime(Const bValue : Boolean);
+Begin
+  EnforceValidationModeDateTime;
+
+  If Not bValue And (DisplayDateTime(ValueAsDateTime) <> '') Then
+    Text := FHIR.Support.DateTime.DateTimeFormat(ValueAsDateTime, DateFormat);
+End;
+
+
+Function TUixCodeEdit.GetExtendedHours : Boolean;
+Begin
+  EnforceValidationModeDuration;
+
+  Result := FExtendedHours;
+End;
+
+
+Procedure TUixCodeEdit.SetExtendedHours(Const Value: Boolean);
+Begin
+  EnforceValidationModeDuration;
+
+  FExtendedHours := Value;
+
+  PrepareDurationMask;
+End;
+
+
+Function TUixCodeEdit.GetMinDateTimeValue : TDateTime;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FMinDateTimeValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMinDateTimeValue(Const Value : TDateTime);
+Begin
+  EnforceValidationModeDateTime;
+
+  FMinDateTimeValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetMaxDateTimeValue : TDateTime;
+Begin
+  EnforceValidationModeDateTime;
+
+  Result := FMaxDateTimeValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMaxDateTimeValue(Const Value : TDateTime);
+Begin
+  EnforceValidationModeDateTime;
+
+  FMaxDateTimeValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetMinDurationValue : TDuration;
+Begin
+  EnforceValidationModeDuration;
+
+  Result := FMinDurationValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMinDurationValue(Const Value : TDuration);
+Begin
+  EnforceValidationModeDuration;
+
+  FMinDurationValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetMaxDurationValue : TDuration;
+Begin
+  EnforceValidationModeDuration;
+
+  Result := FMaxDurationValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMaxDurationValue(Const Value : TDuration);
+Begin
+  EnforceValidationModeDuration;
+
+  FMaxDurationValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetMinCurrencyValue : TCurrency;
+Begin
+  EnforceValidationModeCurrency;
+
+  Result := FMinCurrencyValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMinCurrencyValue(Const Value : TCurrency);
+Begin
+  EnforceValidationModeCurrency;
+
+  FMinCurrencyValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetMaxCurrencyValue : TCurrency;
+Begin
+  EnforceValidationModeCurrency;
+
+  Result := FMaxCurrencyValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMaxCurrencyValue(Const Value : TCurrency);
+Begin
+  EnforceValidationModeCurrency;
+
+  FMaxCurrencyValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetDenominationCurrencyValue : TCurrency;
+Begin
+  EnforceValidationModeCurrency;
+
+  Result := FDenominationCurrencyValue;
+End;
+
+
+Procedure TUixCodeEdit.SetDenominationCurrencyValue(Const Value : TCurrency);
+Begin
+  EnforceValidationModeCurrency;
+
+  FDenominationCurrencyValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetMinIntegerValue : Int64;
+Begin
+  EnforceValidationModeInteger;
+
+  Result := FMinIntegerValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMinIntegerValue(Const Value : Int64);
+Begin
+  EnforceValidationModeInteger;
+
+  FMinIntegerValue := Value;
+
+  PrepareIntegerMask;
+End;
+
+
+Function TUixCodeEdit.GetMaxIntegerValue : Int64;
+Begin
+  EnforceValidationModeInteger;
+
+  Result := FMaxIntegerValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMaxIntegerValue(Const Value : Int64);
+Begin
+  EnforceValidationModeInteger;
+
+  FMaxIntegerValue := Value;
+
+  PrepareIntegerMask;
+End;
+
+
+Function TUixCodeEdit.GetDefaultIntegerValue : Int64;
+Begin
+  EnforceValidationModeInteger;
+
+  Result := FDefaultIntegerValue;
+End;
+
+
+Procedure TUixCodeEdit.SetDefaultIntegerValue(Const Value : Int64);
+Begin
+  EnforceValidationModeInteger;
+
+  FDefaultIntegerValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetHasDefaultIntegerValue : Boolean;
+Begin
+  EnforceValidationModeInteger;
+
+  Result := FHasDefaultIntegerValue;
+End;
+
+
+Procedure TUixCodeEdit.SetHasDefaultIntegerValue(Const Value : Boolean);
+Begin
+  EnforceValidationModeInteger;
+
+  FHasDefaultIntegerValue := Value;
+End;
+
+
+Function TUixCodeEdit.GetExtendedDecimalPlaces : Integer;
+Begin
+  EnforceValidationModeExtended;
+
+  Result := FExtendedDecimalPlaces;
+End;
+
+
+Procedure TUixCodeEdit.SetExtendedDecimalPlaces(Const Value : Integer);
+Begin
+  EnforceValidationModeExtended;
+
+  FExtendedDecimalPlaces := Value;
+
+  PrepareExtendedMask;
+End;
+
+
+Function TUixCodeEdit.GetMaxExtendedValue : Extended;
+Begin
+  EnforceValidationModeExtended;
+
+  Result := FMaxExtendedValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMaxExtendedValue(Const Value : Extended);
+Begin
+  EnforceValidationModeExtended;
+
+  FMaxExtendedValue := Value;
+
+  PrepareExtendedMask;
+End;
+
+
+Function TUixCodeEdit.GetMinExtendedValue : Extended;
+Begin
+  EnforceValidationModeExtended;
+
+  Result := FMinExtendedValue;
+End;
+
+
+Procedure TUixCodeEdit.SetMinExtendedValue(Const Value : Extended);
+Begin
+  EnforceValidationModeExtended;
+
+  FMinExtendedValue := Value;
+
+  PrepareExtendedMask;
+End;
+
+
+Function TUixCodeEdit.GetValueAsDateTimeOffset : TDateTimeOffset;
+Var
+  bValid : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  If Empty Then
+    bValid := False
+  Else If HasDate Then
+    bValid := ToDateTimeOffset(Text, DateTimeFormat, Result)
+  Else
+    bValid := False;
+
+  If Not bValid Then
+    Result := DateTimeOffsetZero;
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsDateTimeOffset(Const Value : TDateTimeOffset);
+Begin
+  EnforceValidationModeDateTime;
+
+  Text := DisplayDateTime(Value);
+End;
+
+
+Function TUixCodeEdit.GetValueAsDateTime : TDateTime;
+Var
+  bValid : Boolean;
+Begin
+  EnforceValidationModeDateTime;
+
+  If Empty Then
+    bValid := False
+  Else If HasDate Then
+    bValid := ToDateTime(Text, DateTimeFormat, Result)
+  Else
+    bValid := False;
+
+  If Not bValid Then
+    Result := 0;
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsDateTime(Const Value : TDateTime);
+Begin
+  EnforceValidationModeDateTime;
+
+  Text := DisplayDateTime(Value);
+End;
+
+
+Function TUixCodeEdit.GetValueAsDuration : TDuration;
+Var
+  sText : String;
+Begin
+  EnforceValidationModeDuration;
+
+  sText := NormaliseDuration;
+
+  If StringIsDuration(sText) Then
+    Result := StringToDuration(sText)
+  Else
+    Result := 0;
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsDuration(Const Value : TDuration);
+Begin
+  EnforceValidationModeDuration;
+
+  Text := DisplayDuration(Value);
+End;
+
+
+Function TUixCodeEdit.GetValueAsString: String;
+Begin
+  EnforceValidationModeString;
+
+  Result := Text;
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsString(Const Value: String);
+Begin
+  EnforceValidationModeString;
+
+  Text := Value;
+End;
+
+
+Function TUixCodeEdit.GetValueAsCurrency : TCurrency;
+Begin
+  EnforceValidationModeCurrency;
+
+  If Text = '' Then
+    Result := 0.0
+  Else
+    Result := StringToCurrency(StringStrip(Text, ','));
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsCurrency(Const Value : TCurrency);
+Begin
+  EnforceValidationModeCurrency;
+
+  Text := CurrencyToString(Value);
+End;
+
+
+Function TUixCodeEdit.GetValueAsInteger64 : Int64;
+Begin
+  Result := StrToInt64Def(Text, FDefaultIntegerValue);
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsInteger64(Const Value : Int64);
+Begin
+  If Not FHasDefaultIntegerValue Or (Value <> DefaultIntegerValue) Then
+    Text := IntegerToString(Value);
+End;
+
+
+Function TUixCodeEdit.GetValueAsInteger32 : LongInt;
+Var
+  iInt64Value : Int64;
+Begin
+  iInt64Value := ValueAsInteger64;
+
+  If Not IntegerBetween(Low(LongInt), iInt64Value, High(LongInt)) Then
+    Error('GetValueAsInteger32', 'LongInt value out of bounds.');
+
+  Result := iInt64Value;
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsInteger32(Const Value : Integer);
+Begin
+  ValueAsInteger64 := Value;
+End;
+
+
+Function TUixCodeEdit.GetValueAsCardinal : Cardinal;
+Var
+  iInt64Value : Int64;
+Begin
+  iInt64Value := ValueAsInteger64;
+
+  If Not IntegerBetween(Low(Cardinal), iInt64Value, High(Cardinal)) Then
+    Error('GetValueAsCardinal', 'Cardinal value out of bounds.');
+
+  Result := iInt64Value;
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsCardinal(Const Value : Cardinal);
+Begin
+  ValueAsInteger64 := Value;
+End;
+
+
+Function TUixCodeEdit.GetValueAsExtended : Extended;
+Begin
+  EnforceValidationModeExtended;
+
+  If Text = '' Then
+    Result := 0.0
+  Else
+    Result := StrToFloatDef(Text, 0);
+End;
+
+
+Procedure TUixCodeEdit.SetValueAsExtended(Const Value : Extended);
+Begin
+  EnforceValidationModeExtended;
+
+  Text := DisplayExtended(Value);
+End;
+
+
+Procedure TUixCodeEdit.SetReadBackgroundColour(Const Value: TColour);
+Begin
+  FReadBackgroundColour := Value;
+  Prepare;
+End;
+
+
+Procedure TUixCodeEdit.SetWriteBackgroundColour(Const Value: TColour);
+Begin
+  FWriteBackgroundColour := Value;
+  Prepare;
+End;
+
+
+Function TUixCodeEditList.GetEditByIndex(Const iIndex : Integer): TUixCodeEdit;
+Begin
+  Result := TUixCodeEdit(Items[iIndex]);
+End;
+
+
+Procedure TUixCodeEditList.SetEditByIndex(Const iIndex : Integer; Const Value : TUixCodeEdit);
+Begin
+  Items[iIndex] := Value;
+End;
+
+
+{$IFNDEF VER130}
 { TUixUnicodeCodeHighlighter }
 
+constructor TUixUnicodeCodeHighlighter.Create(oOwner: TComponent);
+begin
+  inherited;
+
+  FTextAttributes := TSynHighLighterAttributes.Create('Text');
+  AddAttribute(FTextAttributes);
+
+  FBeyondAttributes := TSynHighLighterAttributes.Create('Beyond');
+  FBeyondAttributes.Foreground := clBtnText;
+  AddAttribute(FBeyondAttributes);
+
+  FInvalidAttributes := TSynHighLighterAttributes.Create('Invalid');
+  FInvalidAttributes.Style := [];
+  FInvalidAttributes.Background := clRed;
+  FInvalidAttributes.Foreground := clWhite;
+  AddAttribute(FInvalidAttributes);
+
+  FMaskAttributes := TSynHighLighterAttributes.Create('Fixed');
+  FMaskAttributes.Style := [];
+  AddAttribute(FMaskAttributes);
+
+  FRemainderAttributes := TSynHighLighterAttributes.Create('Remainder');
+  FRemainderAttributes.Style := [];
+  FRemainderAttributes.Foreground := clGrayText;
+  AddAttribute(FRemainderAttributes);
+
+  FRequiredAttributes := TSynHighLighterAttributes.Create('Required');
+  FRequiredAttributes.Style := [fsUnderline];
+  AddAttribute(FRequiredAttributes);
+
+  FCustomAttributes := TSynHighlighterAttributes.Create('Custom');
+  AddAttribute(FCustomAttributes);
+end;
+
+
+Destructor TUixUnicodeCodeHighlighter.Destroy;
+Begin
+  FUnicodeMask.Free;
+
+  Inherited;
+End;
+
+
+Function TUixUnicodeCodeHighlighter.CurrentToken: TUixCodeToken;
+Begin
+  If Index < 1 Then
+    Result := UixCodeTokenText
+  Else If FUnicodeMask.Fixed(Index) And (Text[Index] = FUnicodeMask.FixedFormat[Index]) Then
+    Result := UixCodeTokenFixed
+  Else If CharInSet(Text[Index], FUnicodeMask.Allowed(Index)) Then
+    Result := UixCodeTokenText
+  Else
+    Result := UixCodeTokenInvalid;
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetDefaultAttribute(Index: Integer): TSynHighlighterAttributes;
+Begin
+  Case Index Of
+    SYN_ATTR_IDENTIFIER : Result := FTextAttributes;
+    SYN_ATTR_KEYWORD    : Result := FMaskAttributes;
+    SYN_ATTR_WHITESPACE :
+    Begin
+      If (FUnicodeMask.MaxLength > 0) And TUixCodeEdit(Owner).Focused Then
+        Result := FBeyondAttributes
+      Else
+        Result := FTextAttributes;
+    End;
+  Else
+    Result := Nil;
+  End;
+End;
+
+
+Function TUixUnicodeCodeHighlighter.RealLineLength : Integer;
+Var
+  iFixedFormatLength : Integer;
+Begin
+  iFixedFormatLength := Length(FUnicodeMask.FixedFormat);
+  If iFixedFormatLength > 0 Then
+    Result := iFixedFormatLength
+  Else
+    Result := Length(Text);
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetEol: Boolean;
+Begin
+  Result := FValue = '';
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetIndex: Integer;
+Begin
+//  Result := Run;
+End;
+
+
+Procedure TUixUnicodeCodeHighlighter.SetIndex(Const Value: Integer);
+Begin
+//  Run := Value;
+End;
+
+
+Procedure TUixUnicodeCodeHighlighter.SetMask(const Value: TUixCodeMask);
+Begin
+  FUnicodeMask.Free;
+  FUnicodeMask := Value;
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetMask: TUixCodeMask;
+Begin
+  Result := FUnicodeMask;
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetRange: Pointer;
+Begin
+  Result := Pointer(FToken);
+End;
+
+
+Procedure TUixUnicodeCodeHighlighter.SetRange(Value: Pointer);
+Begin
+  FToken := TUixCodeToken(Value);
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetText: String;
+Begin
+//  Result := fLine;
+End;
+
+
+Procedure TUixUnicodeCodeHighlighter.SetText(const Value: String);
+Begin
+//  fLineStr := Value;
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetToken: String;
+Begin
+  Result := FValue;
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetTokenAttribute: TSynHighlighterAttributes;
+Begin
+  Case FToken Of
+    UixCodeTokenFixed     : Result := FMaskAttributes;
+    UixCodeTokenText      : Result := FTextAttributes;
+    UixCodeTokenBeyond    : Result := FBeyondAttributes;
+    UixCodeTokenInvalid   : Result := FInvalidAttributes;
+    UixCodeTokenRemainder : Result := FRemainderAttributes;
+    UixCodeTokenRequired  : Result := FRequiredAttributes;
+    UixCodeTokenCustom    : Result := FCustomAttributes;
+  Else
+    Result := Nil;
+  End;
+End;
+
+
+Function TUixUnicodeCodeHighlighter.GetTokenKind: Integer;
+Begin
+  Result := Integer(FToken);
+End;
+
+
+Procedure TUixUnicodeCodeHighlighter.Next;
+Var
+  iStart : Integer;
+  aAttributes : TSynHighlighterAttributes;
+Begin
+  //FTokenPos := Index;
+  If Index >= Length(Text) Then
+  Begin
+    If Index <= FUnicodeMask.MinLength Then
+    Begin
+      FValue := Copy(FUnicodeMask.FixedFormat, Index, FUnicodeMask.MinLength - Index + 1);
+      Index := FUnicodeMask.MinLength + 1;
+      FToken := UixCodeTokenRequired;
+    End
+    Else
+    Begin
+      FValue := Copy(FUnicodeMask.FixedFormat, Index, MaxInt);
+      Index := FUnicodeMask.FixedLength + 1;
+      FToken := UixCodeTokenRemainder;
+    End;
+  End
+  Else If (Index > FUnicodeMask.MaxLength) And (FUnicodeMask.MaxLength > 0) Then
+  Begin
+    FValue := Copy(Text, Index, MaxInt);
+    Index := Length(Text) + 1;
+    FToken := UixCodeTokenInvalid;
+  End
+  Else
+  Begin
+    iStart := Index;
+
+    If (Index > FUnicodeMask.Count) Then
+    Begin
+      FValue := Copy(Text, Index, MaxInt);
+      Index := Length(Text) + 1;
+      FToken := UixCodeTokenText;
+    End
+    Else
+    Begin
+      FToken := CurrentToken;
+
+      Index := Index + 1;
+      While (Index < Length(Text)) And (Index <= FUnicodeMask.Count) And (FToken = CurrentToken) Do
+        Index := Index + 1;
+
+      FValue := Copy(Text, iStart, Index - iStart);
+    End;
+
+    If Assigned(FOnCustom) Then
+    Begin
+      aAttributes := GetTokenAttribute;
+
+      If Assigned(aAttributes) Then
+      Begin
+        FCustomAttributes.Assign(GetTokenAttribute);
+
+        FOnCustom(Self, iStart, FValue, FCustomAttributes);
+
+        // FValue may be reduced and transformed here to break the whole text into
+        // different coloured sections.
+
+        Index := iStart + Length(FValue);
+        FToken := UixCodeTokenCustom;
+      End;
+    End;
+  End;
+
+  Inherited;
+End;
+
+
+Procedure TUixUnicodeCodeHighlighter.ResetRange;
+Begin
+  FToken := UixCodeTokenText;
+End;
+{$ENDIF}
 
 
 
@@ -9445,7 +12652,7 @@ Begin
 
   AutoTriStateTracking := False;
   CentreScrollIntoView := False;
-//  CheckImageKind := ckXP;
+  CheckImageKind := ckXP;
   CheckSupport := True;
   ExtendedFocus := True;
   SelectFullRow := True;
@@ -9611,7 +12818,7 @@ Begin
 
   pNode := oNode.Node;
 
-//  Assert(pNode.Item = oNode, 'TUixTreeView.RefreshState : Virtual node mismatch.');
+  Assert(pNode.Item = oNode, 'TUixTreeView.RefreshState : Virtual node mismatch.');
 
   If pNode <> RootNode Then
     InitNode(pNode);
@@ -9642,7 +12849,7 @@ Begin
     oChild.Parent := oNode;
     oChild.Index := pChild.Index;
     oChild.Node := pChild;
-//    pChild.Item := oChild;
+    pChild.Item := oChild;
 
     RefreshState(oChild);
 
@@ -9701,7 +12908,7 @@ Begin
   Count := FRoot.Children.Count;
 
   FRoot.Node := RootNode;
-//  FRoot.Node.Item := FRoot;
+  FRoot.Node.Item := FRoot;
 
   FReselectIdentifierList.Clear;
 
@@ -9918,6 +13125,30 @@ Begin
 End;
 
 
+Procedure TUixTreeView.DoGetText(pNode: PVirtualNode; iColumn: TColumnIndex; aTextType: TVSTTextType; Var sText: String);
+Var
+  oNode : TUixTreeViewNode;
+Begin
+  oNode := Render(pNode);
+
+  If Assigned(oNode) Then
+  Begin
+    Assert(FRoot.Invariants('DoGetText', oNode, TUixTreeViewNode, 'oNode'));
+
+    If oNode.Captions.ExistsByIndex(iColumn) Then
+    Begin
+      If (Not oNode.CaptionVisibilities.ExistsByIndex(iColumn)) Or oNode.CaptionVisibilities[iColumn] Then
+        sText := oNode.Captions[iColumn]
+      Else
+        sText := '';
+    End
+    Else
+      sText := '';
+  End;
+
+  Inherited;
+End;
+
 
 Procedure TUixTreeView.Render(oNode : TUixTreeViewNode);
 Begin
@@ -9956,9 +13187,9 @@ Var
 Begin
   Assert(Assigned(pNode), 'Node must be assigned.');
 
-///  If Assigned(pNode.Parent) And Assigned(pNode.Parent.Item) Then
-//    oParent := TUixTreeViewNode(pNode.Parent.Item)
-//  Else
+  If Assigned(pNode.Parent) And Assigned(pNode.Parent.Item) Then
+    oParent := TUixTreeViewNode(pNode.Parent.Item)
+  Else
     oParent := FRoot;
 
   Assert(FRoot.Invariants('Prepare', oParent, TUixTreeViewNode, 'oParent'));
@@ -9971,7 +13202,7 @@ Begin
   Assert(FRoot.Invariants('Prepare', Result, TUixTreeViewNode, 'Result'));
 
   Result.Node := pNode;
-//  pNode.Item := Result;
+  pNode.Item := Result;
 
   Result.Expanded := IsExpanded(Result);
   Result.Selected := IsSelected(Result);
@@ -10429,7 +13660,7 @@ Var
 Begin
   Inherited;
 
-//  oNode := TUixTreeViewNode(Node.Item);
+  oNode := TUixTreeViewNode(Node.Item);
 
   Colors.FocusedSelectionColor := CellBackgroundByNode(oNode);//oNode.Foreground;
   Colors.FocusedSelectionBorderColor := Colors.FocusedSelectionColor;//oNode.Foreground;
@@ -10599,12 +13830,36 @@ Begin
 End;
 
 
+Function TUixTreeView.DoGetImageIndex(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean; var Index: Integer): TCustomImageList;
+Var
+  oNode : TUixTreeViewNode;
+Begin
+  If Column = 0 Then
+  Begin
+    oNode := TUixTreeViewNode(Node.Item);
+
+    If Assigned(oNode) Then
+    Begin
+      If Kind = ikState Then
+        Index := oNode.State
+      Else If Kind = ikOverlay Then
+        Index := -1
+      Else If Kind In [ikSelected, ikNormal] Then
+        Index := oNode.Image;
+
+      Ghosted := Not oNode.EnabledCheck;
+    End;
+  End;
+
+  Result := Inherited DoGetImageIndex(Node, Kind, column, ghosted, index);
+End;
+
 
 Procedure TUixTreeView.DoPaintText(pNode: PVirtualNode; Const aCanvas: TCanvas; iColumn: TColumnIndex; aTextType: TVSTTextType);
 Var
   oNode : TUixTreeViewNode;
 Begin
-//  oNode := TUixTreeViewNode(pNode.Item);
+  oNode := TUixTreeViewNode(pNode.Item);
 
   If Assigned(oNode) Then
   Begin
@@ -10861,7 +14116,7 @@ End;
 Function TUixTreeView.Get(pNode: PVirtualNode): TUixTreeViewNode;
 Begin
   If Assigned(pNode) Then
-//    Result := TUixTreeViewNode(pNode.Item)
+    Result := TUixTreeViewNode(pNode.Item)
   Else
     Result := Nil;
 
@@ -11822,3 +15077,4 @@ End;
 
 
 End.
+

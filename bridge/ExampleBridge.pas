@@ -72,8 +72,8 @@ Uses
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Text, FHIR.Support.Stream,
 
   FHIR.Base.Objects,
-  FHIR.Version.Types, FHIR.Base.Lang, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Tools.Session, FHIR.Version.Utilities, FHIR.Base.Scim,
-  FHIRUserProvider, FHIRServerContext, FHIRStorageService, FHIRRestServer, ServerUtilities, WebSourceProvider;
+  FHIR.Version.Types, FHIR.Base.Lang, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Server.Session, FHIR.Version.Utilities, FHIR.Base.Scim,
+  FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Server.WebSource;
 
 Const
   SYSTEM_ID = 'http://example.org/mrn-id';
@@ -345,7 +345,7 @@ begin
   try
     ctxt := TFHIRServerContext.Create(store.Link);
     try
-//      ctxt.TerminologyServer := FterminologyServer.Link;
+//      ctxt.FHIR.Tx.Server := FterminologyServer.Link;
       ctxt.ownername := FSystemName;
       FWebServer := TFhirWebServer.create(FIni.Link, FSystemname, nil {FTerminologyServer}, ctxt.link);
       FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', '')));

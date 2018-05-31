@@ -40,7 +40,7 @@ uses
   IdHTTP, IdSSLOpenSSL, IdSoapMime,
   FHIR.Support.Objects, AdvBuffers, FHIR.Support.WinInet, AdvStringMatches,
   FHIRAtomFeed, FHIR.Version.Parser, FHIR.Version.Resources, FHIR.Version.Utilities,
-  FHIR.Version.Constants, FHIR.Tools.Session, FHIR.Base.Parser, FHIR.Base.Objects;
+  FHIR.Version.Constants, FHIR.Server.Session, FHIR.Base.Parser, FHIR.Base.Objects;
 
 Type
   EFHIRClientException = class (Exception)

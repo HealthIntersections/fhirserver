@@ -142,10 +142,10 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Types.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Session.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Server.Session.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Constants.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Security.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Server.Security.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Tags.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>

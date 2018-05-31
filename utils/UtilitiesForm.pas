@@ -203,7 +203,7 @@ Uses
   FHIR.Support.DateTime, FHIR.Support.Strings,
   FHIR.Database.Manager, FHIR.Database.ODBC,
   FHIR.Snomed.Importer, SnomedCombiner, FHIR.Snomed.Services,
-  FHIR.Loinc.Importer, RxNormServices;
+  FHIR.Loinc.Importer, FHIR.Tx.RxNorm;
 
 procedure TForm4.FormCreate(Sender: TObject);
 var

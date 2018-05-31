@@ -47,7 +47,7 @@ uses
   FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Tx.Service;
-  //, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services, TerminologyServer, TerminologyServerStore;}
+  //, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services, FHIR.Tx.Server, FHIR.Tx.Manager;}
 
 const
   UPPER_LIMIT_NO_TEXT = 10000;

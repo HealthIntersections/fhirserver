@@ -54,7 +54,7 @@ Type
   protected
     procedure SeeResource(r : FHIR.R2.Resources.TFhirResource); override;
   public
-    Constructor Create(factory : TFHIRFactory; terminologyServer : String); virtual;
+    Constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
     Destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR2; overload;
@@ -81,7 +81,7 @@ Type
   protected
     procedure SeeResource(r : FHIR.R3.Resources.TFhirResource); override;
   public
-    Constructor Create(factory : TFHIRFactory; terminologyServer : String); virtual;
+    Constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
     Destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR3; overload;
@@ -108,7 +108,7 @@ Type
   protected
     procedure SeeResource(r : FHIR.R4.Resources.TFhirResource); override;
   public
-    Constructor Create(factory : TFHIRFactory; terminologyServer : String); virtual;
+    Constructor Create(factory : TFHIRFactory; TerminologyServer : String); virtual;
     Destructor Destroy; Override;
 
     Function Link : TFHIRPluginValidatorContextR4; overload;
@@ -125,7 +125,7 @@ Type
 
   TFHIRPluginValidatorContext = class
   public
-    class function create(factory : TFHIRFactory; terminologyServer : String) : TFHIRWorkerContextWithFactory;
+    class function create(factory : TFHIRFactory; TerminologyServer : String) : TFHIRWorkerContextWithFactory;
   end;
 
 implementation
@@ -150,12 +150,12 @@ begin
   end;
 end;
 
-constructor TFHIRPluginValidatorContextR2.Create(factory : TFHIRFactory; terminologyServer : String);
+constructor TFHIRPluginValidatorContextR2.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
   FValueSets := TFslMap<FHIR.R2.Resources.TFHIRValueSet>.create;
   FCodeSystems := TFslMap<FHIR.R2.Resources.TFHIRValueSet>.create;
-  FUrl := terminologyServer;
+  FUrl := TerminologyServer;
 end;
 
 destructor TFHIRPluginValidatorContextR2.Destroy;
@@ -372,12 +372,12 @@ begin
   end;
 end;
 
-constructor TFHIRPluginValidatorContextR3.Create(factory : TFHIRFactory; terminologyServer : String);
+constructor TFHIRPluginValidatorContextR3.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
   FValueSets := TFslMap<FHIR.R3.Resources.TFHIRValueSet>.create;
   FCodeSystems := TFslMap<FHIR.R3.Resources.TFHIRCodeSystem>.create;
-  FUrl := terminologyServer;
+  FUrl := TerminologyServer;
 end;
 
 destructor TFHIRPluginValidatorContextR3.Destroy;
@@ -594,12 +594,12 @@ begin
   end;
 end;
 
-constructor TFHIRPluginValidatorContextR4.Create(factory : TFHIRFactory; terminologyServer : String);
+constructor TFHIRPluginValidatorContextR4.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
   FValueSets := TFslMap<FHIR.R4.Resources.TFHIRValueSet>.create;
   FCodeSystems := TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>.create;
-  FUrl := terminologyServer;
+  FUrl := TerminologyServer;
 end;
 
 destructor TFHIRPluginValidatorContextR4.Destroy;
@@ -803,12 +803,12 @@ end;
 
 { TFHIRPluginValidatorContext }
 
-class function TFHIRPluginValidatorContext.create(factory: TFHIRFactory; terminologyServer: String): TFHIRWorkerContextWithFactory;
+class function TFHIRPluginValidatorContext.create(factory: TFHIRFactory; TerminologyServer: String): TFHIRWorkerContextWithFactory;
 begin
   case factory.version of
-    fhirVersionRelease2 : result := TFHIRPluginValidatorContextR2.Create(factory, terminologyServer);
-    fhirVersionRelease3 : result := TFHIRPluginValidatorContextR3.Create(factory, terminologyServer);
-    fhirVersionRelease4 : result := TFHIRPluginValidatorContextR4.Create(factory, terminologyServer);
+    fhirVersionRelease2 : result := TFHIRPluginValidatorContextR2.Create(factory, TerminologyServer);
+    fhirVersionRelease3 : result := TFHIRPluginValidatorContextR3.Create(factory, TerminologyServer);
+    fhirVersionRelease4 : result := TFHIRPluginValidatorContextR4.Create(factory, TerminologyServer);
   else
     raise Exception.Create('Unexpected version');
   end;

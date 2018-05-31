@@ -135,7 +135,7 @@ procedure TFHIRPluginSettings.initSettings;
 begin
   inherited;
   json.vStr['DefinitionsVersion'] := 'r3';
-  json.vStr['TerminologyServer'] := 'http://tx.fhir.org/r3';
+  json.vStr['FHIR.Tx.Server'] := 'http://tx.fhir.org/r3';
   json.bool['BackgroundValidation'] := true;
 end;
 

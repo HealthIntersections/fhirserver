@@ -95,7 +95,7 @@ uses
   AdvStringMatches in '..\support\AdvStringMatches.pas',
   FHIR.Version.Resources in 'FHIR.Version.Resources.pas',
   FHIR.Base.Parser in 'FHIR.Base.Parser.pas',
-  FHIR.Tools.Session in 'FHIR.Tools.Session.pas',
+  FHIR.Server.Session in 'FHIR.Server.Session.pas',
   FHIR.Web.Parsers in '..\support\FHIR.Web.Parsers.pas',
   FHIRAtomFeed in 'FHIRAtomFeed.pas',
   MsXmlParser in '..\support\MsXmlParser.pas',

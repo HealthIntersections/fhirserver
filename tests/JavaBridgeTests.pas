@@ -7,7 +7,7 @@ uses
   TextUtilities,
   FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIRJavascript, FHIR.Version.Parser,
-  JavaBridge,
+  FHIR.Server.Java,
   DUnitX.TestFramework;
 
 
