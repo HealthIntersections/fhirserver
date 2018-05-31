@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Collections,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Base.Objects, FHIR.Tools.Common,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Base.Objects, FHIR.Version.Common,
   FHIR.Tx.Service, TerminologyServerStore;
 
 Type

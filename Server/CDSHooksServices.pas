@@ -33,7 +33,7 @@ uses
   SysUtils, Classes,
   IdContext,
   FHIR.Support.Generics, FHIR.Support.Json,
-  FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
+  FHIR.Tools.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   FHIR.CdsHooks.Utilities,
   CDSHooksServer, FHIRServerContext, FHIRStorageService;
 

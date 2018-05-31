@@ -34,7 +34,7 @@ uses
   FHIR.Support.DateTime,
   FHIR.Support.Objects,
   FHIR.Web.HtmlGen,
-  FHIR.Base.Objects, FHIR.Tools.Client,
+  FHIR.Base.Objects, FHIR.Version.Client,
   FHIR.R3.Types, FHIR.R3.Resources;
 
 type

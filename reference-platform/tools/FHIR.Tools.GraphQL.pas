@@ -36,13 +36,14 @@ uses
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Web.Parsers, FHIR.Misc.GraphQL,
-  FHIR.Base.Objects, FHIRBaseX, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Parser, FHIR.Tools.Utilities, FHIR.Tools.PathNode, FHIR.Tools.PathEngine;
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory;
+  {FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Parser, FHIR.Version.Utilities, FHIR.Version.PathNode, FHIR.Version.PathEngine;}
 
 type
-  TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TFslObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
-  TFHIRGraphQLEngineLookupEvent = function (appInfo : TFslObject; requestType, id : String; var res : TFHIRResource) : boolean of Object;
-  TFHIRGraphQLEngineListResourcesEvent = procedure (appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResource>) of Object;
-  TFHIRGraphQLEngineSearchEvent = function (appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>) : TFHIRBundle of Object;
+  TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TFslObject; context : TFHIRResourceV; reference : TFHIRObject; out targetContext, target : TFHIRResourceV) : boolean of Object;
+  TFHIRGraphQLEngineLookupEvent = function (appInfo : TFslObject; requestType, id : String; var res : TFHIRResourceV) : boolean of Object;
+  TFHIRGraphQLEngineListResourcesEvent = procedure (appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResourceV>) of Object;
+  TFHIRGraphQLEngineSearchEvent = function (appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>) : TFHIRBundleW of Object;
 
   TFHIRGraphQLEngine = class (TFslObject)
   private
@@ -51,16 +52,17 @@ type
     FOnListResources : TFHIRGraphQLEngineListResourcesEvent;
     FOnLookup : TFHIRGraphQLEngineLookupEvent;
 
-    FFocus : TFHIRResource;
+    FFactory : TFHIRFactory;
+    FFocus : TFHIRResourceV;
     FOutput : TGraphQLObjectValue;
     FGraphQL : TGraphQLPackage;
     FAppinfo : TFslObject;
     FWorkingVariables: TFslMap<TGraphQLArgument>;
-    FPathEngine : TFHIRPathEngine;
-    FMagicExpression : TFHIRPathExpressionNode;
+    FPathEngine : TFHIRPathEngineV;
+    FMagicExpression : TFHIRPathExpressionNodeV;
 
     procedure SetGraphQL(const Value: TGraphQLPackage);
-    procedure SetFocus(const Value: TFHIRResource);
+    procedure SetFocus(const Value: TFHIRResourceV);
 
     function listStatus(field: TGraphQLField; isList: boolean): TGraphQLArgumentListStatus;
 
@@ -71,30 +73,31 @@ type
     function checkDirectives(directives : TFslList<TGraphQLDirective>) : boolean;
     procedure checkNoDirectives(directives : TFslList<TGraphQLDirective>);
     function hasArgument(arguments : TFslList<TGraphQLArgument>; name, value : String) : boolean;
-    function targetTypeOk(arguments : TFslList<TGraphQLArgument>; dest : TFHIRResource) : boolean;
+    function targetTypeOk(arguments : TFslList<TGraphQLArgument>; dest : TFHIRResourceV) : boolean;
 
-    function filter(context : TFhirResource; prop:TFHIRProperty; arguments : TFslList<TGraphQLArgument>; values : TFHIRObjectList; extensionMode : boolean)  : TFslList<TFHIRObject>;
-    function filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundle)  : TFslList<TFHIRResource>; overload;
-    function filterResources(FHIRPathEngine : TGraphQLArgument; list : TFslList<TFHIRResource>)  : TFslList<TFHIRResource>; overload;
-    procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
+    function filter(context : TFHIRResourceV; prop:TFHIRProperty; arguments : TFslList<TGraphQLArgument>; values : TFHIRObjectList; extensionMode : boolean)  : TFslList<TFHIRObject>;
+    function filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundleW)  : TFslList<TFHIRResourceV>; overload;
+    function filterResources(FHIRPathEngine : TGraphQLArgument; list : TFslList<TFHIRResourceV>)  : TFslList<TFHIRResourceV>; overload;
+    procedure processObject(context : TFHIRResourceV; source : TFHIRObject; target : TGraphQLObjectValue; selection : TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
-    procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
-    procedure processReverseReferenceList(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
-    procedure processReverseReferenceSearch(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
-    procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TFslList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
+    procedure processReference(context : TFHIRResourceV; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+    procedure processReverseReferenceList(source : TFHIRResourceV; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+    procedure processReverseReferenceSearch(source : TFHIRResourceV; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+    procedure processValues(context : TFHIRResourceV; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TFslList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
     procedure processSearch(target : TGraphQLObjectValue; selection : TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
     procedure processSearchSingle(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
     procedure processSearchSimple(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
     procedure processSearchFull(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
     procedure SetAppInfo(const Value: TFslObject);
     procedure processVariables(op : TGraphQLOperation);
+    function isResourceName(name, suffix: string): boolean;
   public
-    Constructor Create; override;
+    Constructor Create(factory : TFHIRFactory);
     Destructor Destroy; override;
     property appInfo : TFslObject read FAppinfo write SetAppInfo;
 
     // the focus resource - if there is one. If there isn't, then the focus is a collection
-    property focus : TFHIRResource read FFocus write SetFocus;
+    property focus : TFHIRResourceV read FFocus write SetFocus;
 
     // the graphql document to execute
     property GraphQL : TGraphQLPackage read FGraphQL write SetGraphQL;
@@ -110,42 +113,48 @@ type
     procedure execute;
   end;
 
-  TFHIRGraphQLSearchWrapper = class (TFHIRObjectX)
+  TFHIRGraphQLSearchWrapper = class (TFHIRObject)
   private
-    FBundle: TFhirBundle;
+    FBundle: TFHIRBundleW;
     FParseMap : TParseMap;
-    procedure SetBundle(const Value: TFhirBundle);
-    function extractLink(name : String) : TFhirString;
+    procedure SetBundle(const Value: TFHIRBundleW);
+    function extractLink(name : String) : TFhirObject;
     function extractParam(name : String; int : boolean) : TFhirObject;
   public
-    Constructor Create(bundle : TFhirBundle);
+    Constructor Create(bundle : TFHIRBundleW);
     Destructor Destroy; override;
 
-    property Bundle : TFhirBundle read FBundle write SetBundle;
+    property Bundle : TFHIRBundleW read FBundle write SetBundle;
     function fhirType : String; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
 
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
 
-  TFHIRGraphQLSearchEdge = class (TFHIRObjectX)
+  TFHIRGraphQLSearchEdge = class (TFHIRObject)
   private
-    FEntry: TFhirBundleEntry;
-    procedure SetEntry(const Value: TFhirBundleEntry);
+    FEntry: TFHIRBundleEntryW;
+    procedure SetEntry(const Value: TFHIRBundleEntryW);
   public
-    Constructor Create(entry : TFhirBundleEntry);
+    Constructor Create(entry : TFHIRBundleEntryW);
     Destructor Destroy; override;
 
-    property Entry : TFhirBundleEntry read FEntry write SetEntry;
+    property Entry : TFHIRBundleEntryW read FEntry write SetEntry;
     function fhirType : String; override;
 
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function getId : String; override;
     procedure setIdValue(id : String); override;
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
 
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
@@ -213,10 +222,11 @@ end;
 
 constructor TFHIRGraphQLEngine.Create;
 begin
-  inherited;
+  inherited Create;
+  FFactory := Factory.link;
   FWorkingVariables := TFslMap<TGraphQLArgument>.create;
-  FPathEngine := TFHIRPathEngine.Create(nil, nil);
-  FMagicExpression := TFHIRPathExpressionNode.Create(0);
+  FPathEngine := factory.makePathEngine(nil, nil);
+  FMagicExpression := FPathEngine.parseV('0');
 end;
 
 destructor TFHIRGraphQLEngine.Destroy;
@@ -228,6 +238,7 @@ begin
   FOutput.Free;
   FGraphQL.Free;
   FWorkingVariables.Free;
+  FFactory.Free;
   inherited;
 end;
 
@@ -243,7 +254,7 @@ begin
   FGraphQL := Value;
 end;
 
-procedure TFHIRGraphQLEngine.SetFocus(const Value: TFHIRResource);
+procedure TFHIRGraphQLEngine.SetFocus(const Value: TFHIRResourceV);
 begin
   FFocus.Free;
   FFocus := Value;
@@ -259,7 +270,7 @@ begin
     result := listStatusNotSpecified;
 end;
 
-function TFHIRGraphQLEngine.targetTypeOk(arguments: TFslList<TGraphQLArgument>; dest: TFHIRResource): boolean;
+function TFHIRGraphQLEngine.targetTypeOk(arguments: TFslList<TGraphQLArgument>; dest: TFHIRResourceV): boolean;
 var
   list : TStringList;
   arg : TGraphQLArgument;
@@ -321,24 +332,13 @@ begin
     processObject(FFocus, FFocus, FOutput, op.SelectionSet, false, '');
 end;
 
-function TFHIRGraphQLEngine.filter(context : TFhirResource; prop:TFHIRProperty; arguments: TFslList<TGraphQLArgument>; values: TFHIRObjectList; extensionMode : boolean): TFslList<TFHIRObject>;
-  function hasExtensions(obj : TFHIRObject) : boolean;
-  begin
-    if obj is TFhirBackboneElement then
-      result := (TFhirBackboneElement(obj).extensionList.Count > 0) or (TFhirBackboneElement(obj).modifierExtensionList.Count > 0)
-    else if obj is TFhirDomainResource then
-      result := (TFhirDomainResource(obj).extensionList.Count > 0) or (TFhirDomainResource(obj).modifierExtensionList.Count > 0)
-    else if obj is TFhirElement then
-      result := (TFhirElement(obj).extensionList.Count > 0)
-    else
-      result := false;
-  end;
+function TFHIRGraphQLEngine.filter(context : TFHIRResourceV; prop:TFHIRProperty; arguments: TFslList<TGraphQLArgument>; values: TFHIRObjectList; extensionMode : boolean): TFslList<TFHIRObject>;
   function passesExtensionMode(obj : TFHIRObject) : boolean;
   begin
     if not obj.isPrimitive then
       result := not extensionMode
     else if extensionMode then
-      result := (obj.getId <> '') or hasExtensions(obj)
+      result := (obj.getId <> '') or (obj.extensionCount('') > 0)
     else
       result := obj.primitiveValue <> '';
   end;
@@ -347,7 +347,7 @@ var
   arg : TGraphQLArgument;
   p : TFHIRProperty;
   v : TFHIRObject;
-  node: TFHIRPathExpressionNode;
+  node: TFHIRPathExpressionNodeV;
   vl : TFslList<TGraphQLValue>;
   i, t, offset, count : integer;
 begin
@@ -404,7 +404,7 @@ begin
         end
         else
         begin
-          node := FPathEngine.parse(fp.ToString.Substring(5));
+          node := FPathEngine.parseV(fp.ToString.Substring(5));
           try
             i := 0;
             t := 0;
@@ -433,35 +433,35 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundle): TFslList<TFHIRResource>;
+function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; bnd : TFHIRBundleW): TFslList<TFHIRResourceV>;
 var
-  be : TFhirBundleEntry;
-  fpe : TFHIRPathEngine;
-  node : TFHIRPathExpressionNode;
+  be : TFHIRBundleEntryW;
+  node : TFHIRPathExpressionNodeV;
+  bel : TFslList<TFHIRBundleEntryW>;
 begin
-  result := TFslList<TFHIRResource>.create;
+  result := TFslList<TFHIRResourceV>.create;
   try
-    if bnd.entryList.Count > 0 then
-    begin
-      if (FHIRPathEngine = nil) then
-        for be in bnd.entryList do
-          result.Add(be.resource.Link)
-      else
+    bel := bnd.entries;
+    try
+      if bel.Count > 0 then
       begin
-        fpe := TFHIRPathEngine.Create(nil, nil);
-        try
-          node := fpe.parse(getSingleValue(FHIRPathEngine));
+        if (FHIRPathEngine = nil) then
+          for be in bel do
+            result.Add(be.resource.Link)
+        else
+        begin
+          node := FPathEngine.parseV(getSingleValue(FHIRPathEngine));
           try
-            for be in bnd.entryList do
-              if fpe.evaluateToBoolean(nil, be.resource, be.resource, node) then
+            for be in bel do
+              if FPathEngine.evaluateToBoolean(nil, be.resource, be.resource, node) then
                 result.Add(be.resource.Link)
           finally
             node.Free;
           end;
-        finally
-          fpe.Free;
         end;
       end;
+    finally
+      bel.Free;
     end;
     result.link;
   finally
@@ -469,13 +469,12 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; list : TFslList<TFhirResource>): TFslList<TFHIRResource>;
+function TFHIRGraphQLEngine.filterResources(FHIRPathEngine : TGraphQLArgument; list : TFslList<TFHIRResourceV>): TFslList<TFHIRResourceV>;
 var
-  v : TFHIRResource;
-  fpe : TFHIRPathEngine;
-  node : TFHIRPathExpressionNode;
+  v : TFHIRResourceV;
+  node : TFHIRPathExpressionNodeV;
 begin
-  result := TFslList<TFHIRResource>.create;
+  result := TFslList<TFHIRResourceV>.create;
   try
     if list.Count > 0 then
     begin
@@ -484,18 +483,13 @@ begin
           result.Add(v.Link)
       else
       begin
-        fpe := TFHIRPathEngine.Create(nil, nil);
+        node := FPathEngine.parseV(getSingleValue(FHIRPathEngine));
         try
-          node := fpe.parse(getSingleValue(FHIRPathEngine));
-          try
-            for v in list do
-              if fpe.evaluateToBoolean(nil, v, v, node) then
-                result.Add(v.Link)
-          finally
-            node.Free;
-          end;
+          for v in list do
+            if FPathEngine.evaluateToBoolean(nil, v, v, node) then
+              result.Add(v.Link)
         finally
-          fpe.Free;
+          node.Free;
         end;
       end;
     end;
@@ -517,13 +511,13 @@ begin
   result := false;
 end;
 
-procedure TFHIRGraphQLEngine.processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TFslList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
+procedure TFHIRGraphQLEngine.processValues(context : TFHIRResourceV; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TFslList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
 var
   arg: TGraphQLArgument;
   value: TFHIRObject;
   new: TGraphQLObjectValue;
   il : boolean;
-  expression : TFHIRPathExpressionNode;
+  expression : TFHIRPathExpressionNodeV;
   dir : TGraphQLDirective;
   s, ss : String;
   index : integer;
@@ -538,7 +532,7 @@ begin
     if (s = '$index') then
       expression := FMagicExpression.Link
     else
-      expression := FPathEngine.parse(s);
+      expression := FPathEngine.parseV(s);
   end;
   try
     if sel.field.hasDirective('flatten') then // special: instruction to drop this node...
@@ -621,18 +615,18 @@ begin
   result := StringArrayExistsSensitive(['boolean', 'integer', 'string', 'decimal', 'uri', 'base64Binary', 'instant', 'date', 'dateTime', 'time', 'code', 'oid', 'id', 'markdown', 'unsignedInt', 'positiveInt'], typename);
 end;
 
-function isResourceName(name : String; suffix : string) : boolean;
+function TFHIRGraphQLEngine.isResourceName(name : String; suffix : string) : boolean;
 var
   s : String;
 begin
   result := false;
-  for s in CODES_TFhirResourceType do
+  for s in FFactory.ResourceNames do
     if s + suffix = name then
       exit(true);
 end;
 
 
-procedure TFHIRGraphQLEngine.processObject(context : TFHIRResource; source: TFHIRObject; target: TGraphQLObjectValue; selection: TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
+procedure TFHIRGraphQLEngine.processObject(context : TFHIRResourceV; source: TFHIRObject; target: TGraphQLObjectValue; selection: TFslList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
 var
   sel : TGraphQLSelection;
   prop : TFHIRProperty;
@@ -650,14 +644,14 @@ begin
           prop := source.getPropertyValue(sel.field.Name.substring(1));
         if prop = nil then
         begin
-          if (sel.field.Name = 'resourceType') and (source is TFHIRResource) then
+          if (sel.field.Name = 'resourceType') and (source is TFHIRResourceV) then
             target.addField('resourceType', listStatusSingleton).addValue(TGraphQLStringValue.Create(source.fhirType))
           else if (sel.field.Name = 'resource') and (source.fhirType = 'Reference') then
             processReference(context, source, sel.field, target, inheritedList, suffix)
-          else if isResourceName(sel.field.Name, 'List') and (source is TFhirResource) then
-            processReverseReferenceList(source as TFhirResource, sel.field, target, inheritedList, suffix)
-          else if isResourceName(sel.field.Name, 'Connection') and (source is TFhirResource) then
-            processReverseReferenceSearch(source as TFhirResource, sel.field, target, inheritedList, suffix)
+          else if isResourceName(sel.field.Name, 'List') and (source is TFHIRResourceV) then
+            processReverseReferenceList(source as TFHIRResourceV, sel.field, target, inheritedList, suffix)
+          else if isResourceName(sel.field.Name, 'Connection') and (source is TFHIRResourceV) then
+            processReverseReferenceSearch(source as TFHIRResourceV, sel.field, target, inheritedList, suffix)
           else
             raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
         end
@@ -718,22 +712,22 @@ begin
 end;
 
 
-procedure TFHIRGraphQLEngine.processReference(context : TFHIRResource; source: TFHIRObject; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+procedure TFHIRGraphQLEngine.processReference(context : TFHIRResourceV; source: TFHIRObject; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
 var
-  ref : TFhirReference;
   ok : boolean;
-  ctxt, dest : TFhirResource;
+  ctxt, dest : TFHIRResourceV;
   arg: TGraphQLArgument;
   new : TGraphQLObjectValue;
+  prop : TFHIRProperty;
 begin
-  if not (source is TFhirReference) then
+  if not (source.fhirType = 'Reference') then
     raise EGraphQLException.Create('Not done yet');
   if not assigned(FOnFollowReference) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
 
-  ref := TFhirReference(source).Link;
+  prop := source.getPropertyValue('reference');
   try
-    ok := FOnFollowReference(appInfo, context, ref, ctxt, dest);
+    ok := FOnFollowReference(appInfo, context, source, ctxt, dest);
     if ok then
       try
         if targetTypeOk(field.Arguments, dest) then
@@ -752,23 +746,23 @@ begin
         dest.Free;
       end
     else if not hasArgument(field.Arguments, 'optional', 'true') then
-      raise EGraphQLException.Create('Unable to resolve reference to '+ref.reference);
+      raise EGraphQLException.Create('Unable to resolve reference to '+prop.Values[0].primitiveValue);
   finally
-    ref.Free;
+    prop.Free;
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processReverseReferenceList(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+procedure TFHIRGraphQLEngine.processReverseReferenceList(source: TFHIRResourceV; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
 var
-  list, vl : TFslList<TFHIRResource>;
-  v : TFhirResource;
+  list, vl : TFslList<TFHIRResourceV>;
+  v : TFHIRResourceV;
   params : TFslList<TGraphQLArgument>;
   a, arg, parg : TGraphQLArgument;
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnListResources) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
-  list := TFslList<TFhirResource>.create;
+  list := TFslList<TFHIRResourceV>.create;
   try
     params := TFslList<TGraphQLArgument>.create;
     try
@@ -817,9 +811,9 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processReverseReferenceSearch(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+procedure TFHIRGraphQLEngine.processReverseReferenceSearch(source: TFHIRResourceV; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
 var
-  bnd : TFHIRBundle;
+  bnd : TFHIRBundleW;
   bndWrapper : TFHIRGraphQLSearchWrapper;
   params : TFslList<TGraphQLArgument>;
   a, arg, parg : TGraphQLArgument;
@@ -885,7 +879,7 @@ procedure TFHIRGraphQLEngine.processSearchSingle(target: TGraphQLObjectValue; fi
 var
   id : String;
   arg : TGraphQLArgument;
-  res : TFhirResource;
+  res : TFHIRResourceV;
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnLookup) then
@@ -916,14 +910,14 @@ end;
 
 procedure TFHIRGraphQLEngine.processSearchSimple(target: TGraphQLObjectValue; field: TGraphQLField; inheritedList : boolean; suffix : string);
 var
-  list, vl : TFslList<TFHIRResource>;
-  v : TFhirResource;
+  list, vl : TFslList<TFHIRResourceV>;
+  v : TFHIRResourceV;
   arg : TGraphQLArgument;
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnListResources) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
-  list := TFslList<TFhirResource>.create;
+  list := TFslList<TFHIRResourceV>.create;
   try
     FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), field.Arguments, list);
     arg := nil;
@@ -955,7 +949,7 @@ end;
 
 procedure TFHIRGraphQLEngine.processSearchFull(target: TGraphQLObjectValue; field: TGraphQLField; inheritedList : boolean; suffix : string);
 var
-  bnd : TFHIRBundle;
+  bnd : TFHIRBundleW;
   bndWrapper : TFHIRGraphQLSearchWrapper;
   arg, carg : TGraphQLArgument;
   new : TGraphQLObjectValue;
@@ -1001,13 +995,13 @@ end;
 
 { TFHIRGraphQLSearchWrapper }
 
-constructor TFHIRGraphQLSearchWrapper.Create(bundle : TFhirBundle);
+constructor TFHIRGraphQLSearchWrapper.Create(bundle : TFHIRBundleW);
 var
   s : String;
 begin
   inherited Create;
   FBundle := bundle;
-  s := bundle.link_List.Matches['self'];
+  s := bundle.links['self'];
   FParseMap := TParseMap.create(s.Substring(s.IndexOf('?')+1));
 end;
 
@@ -1023,19 +1017,19 @@ begin
   inherited;
 end;
 
-function TFHIRGraphQLSearchWrapper.extractLink(name: String): TFhirString;
+function TFHIRGraphQLSearchWrapper.extractLink(name: String): TFHIRObject;
 var
   s : String;
   pm : TParseMap;
 begin
-  s := FBundle.link_List.Matches[name];
+  s := FBundle.links[name];
   if s = '' then
     result := nil
   else
   begin
     pm := TParseMap.create(s.Substring(s.IndexOf('?')+1));
     try
-      result := TFhirString.Create(pm.GetVar('search-id')+':'+pm.GetVar('search-offset'));
+      result := FBundle.makeStringValue(pm.GetVar('search-id')+':'+pm.GetVar('search-offset'));
     finally
       pm.Free;
     end;
@@ -1050,9 +1044,9 @@ begin
   if s = '' then
     result := nil
   else if int then
-    result := TFhirInteger.Create(s)
+    result := FBundle.makeIntValue(s)
   else
-    result := TFhirString.Create(s);
+    result := FBundle.makeStringValue(s);
 end;
 
 function TFHIRGraphQLSearchWrapper.fhirType: String;
@@ -1070,29 +1064,35 @@ end;
 function TFHIRGraphQLSearchWrapper.getPropertyValue(propName: string): TFHIRProperty;
 var
   list : TFslList<TFHIRGraphQLSearchEdge>;
-  be : TFHIRBundleEntry;
+  be : TFHIRBundleEntryW;
+  bel : TFslList<TFHIRBundleEntryW>;
 begin
   if propName = 'first' then
-    result := TFHIRProperty.Create(self, propname, 'string', false, TFhirString, extractLink('first'))
+    result := TFHIRProperty.Create(self, propname, 'string', false, nil, extractLink('first'))
   else if propName = 'previous' then
-    result := TFHIRProperty.Create(self, propname, 'string', false, TFhirString, extractLink('previous'))
+    result := TFHIRProperty.Create(self, propname, 'string', false, nil, extractLink('previous'))
   else if propName = 'next' then
-    result := TFHIRProperty.Create(self, propname, 'string', false, TFhirString, extractLink('next'))
+    result := TFHIRProperty.Create(self, propname, 'string', false, nil, extractLink('next'))
   else if propName = 'last' then
-    result := TFHIRProperty.Create(self, propname, 'string', false, TFhirString, extractLink('last'))
+    result := TFHIRProperty.Create(self, propname, 'string', false, nil, extractLink('last'))
   else if propName = 'count' then
-    result := TFHIRProperty.Create(self, propname, 'integer', false, TFhirString, FBundle.totalElement.link)
+    result := TFHIRProperty.Create(self, propname, 'integer', false, nil, FBundle.total.link)
   else if propName = 'offset' then
-    result := TFHIRProperty.Create(self, propname, 'integer', false, TFhirInteger, extractParam('search-offset', true))
+    result := TFHIRProperty.Create(self, propname, 'integer', false, nil, extractParam('search-offset', true))
   else if propName = 'pagesize' then
-    result := TFHIRProperty.Create(self, propname, 'integer', false, TFhirInteger, extractParam('_count', true))
+    result := TFHIRProperty.Create(self, propname, 'integer', false, nil, extractParam('_count', true))
   else if propName = 'edges' then
   begin
     list := TFslList<TFHIRGraphQLSearchEdge>.create;
     try
-      for be in FBundle.entryList do
-        list.Add(TFHIRGraphQLSearchEdge.create(be.Link));
-      result := TFHIRProperty.Create(self, propname, 'edge', true, TFhirInteger, TFslList<TFHIRObject>(list));
+      bel := FBundle.entries;
+      try
+        for be in bel do
+          list.Add(TFHIRGraphQLSearchEdge.create(be.Link));
+        result := TFHIRProperty.Create(self, propname, 'edge', true, nil, TFslList<TFHIRObject>(list));
+      finally
+        bel.Free;
+      end;
     finally
       list.Free;
     end;
@@ -1101,7 +1101,22 @@ begin
     result := nil;
 end;
 
-procedure TFHIRGraphQLSearchWrapper.SetBundle(const Value: TFhirBundle);
+function TFHIRGraphQLSearchWrapper.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := FBundle.makeCodeValue(v);
+end;
+
+function TFHIRGraphQLSearchWrapper.makeIntValue(v: String): TFHIRObject;
+begin
+  result := FBundle.makeIntValue(v);
+end;
+
+function TFHIRGraphQLSearchWrapper.makeStringValue(v: String): TFHIRObject;
+begin
+  result := FBundle.makeStringValue(v);
+end;
+
+procedure TFHIRGraphQLSearchWrapper.SetBundle(const Value: TFHIRBundleW);
 begin
   FBundle.Free;
   FBundle := Value;
@@ -1117,7 +1132,7 @@ end;
 
 { TFHIRGraphQLSearchEdge }
 
-constructor TFHIRGraphQLSearchEdge.Create(entry: TFhirBundleEntry);
+constructor TFHIRGraphQLSearchEdge.Create(entry: TFHIRBundleEntryW);
 begin
   inherited Create;
   FEntry := entry;
@@ -1148,25 +1163,40 @@ function TFHIRGraphQLSearchEdge.getPropertyValue(propName: string): TFHIRPropert
 begin
   if propName = 'mode' then
   begin
-    if FEntry.search <> nil then
-      result := TFHIRProperty.Create(self, propname, 'code', false, TFhirEnum, FEntry.search.modeElement.Link)
+    if FEntry.searchModeE <> nil then
+      result := TFHIRProperty.Create(self, propname, 'code', false, nil, FEntry.searchModeE.Link)
     else
-      result := TFHIRProperty.Create(self, propname, 'code', false, TFhirEnum, TFHIRObject(nil));
+      result := TFHIRProperty.Create(self, propname, 'code', false, nil, TFHIRObject(nil));
   end
   else if propName = 'score' then
   begin
-    if FEntry.search <> nil then
-      result := TFHIRProperty.Create(self, propname, 'decimal', false, TFhirDecimal, FEntry.search.scoreElement.Link)
+    if FEntry.searchScoreE <> nil then
+      result := TFHIRProperty.Create(self, propname, 'decimal', false, nil, FEntry.searchScoreE.Link)
     else
-      result := TFHIRProperty.Create(self, propname, 'decimal', false, TFhirDecimal, TFHIRObject(nil));
+      result := TFHIRProperty.Create(self, propname, 'decimal', false, nil, TFHIRObject(nil));
   end
   else if propName = 'resource' then
-    result := TFHIRProperty.Create(self, propname, 'resource', false, TFhirResource, FEntry.resource.Link)
+    result := TFHIRProperty.Create(self, propname, 'resource', false, TFHIRResourceV, FEntry.resource.Link)
   else
     result := nil;
 end;
 
-procedure TFHIRGraphQLSearchEdge.SetEntry(const Value: TFhirBundleEntry);
+function TFHIRGraphQLSearchEdge.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := FEntry.makeCodeValue(v);
+end;
+
+function TFHIRGraphQLSearchEdge.makeIntValue(v: String): TFHIRObject;
+begin
+  result := FEntry.makeIntValue(v);
+end;
+
+function TFHIRGraphQLSearchEdge.makeStringValue(v: String): TFHIRObject;
+begin
+  result := FEntry.makeStringValue(v);
+end;
+
+procedure TFHIRGraphQLSearchEdge.SetEntry(const Value: TFHIRBundleEntryW);
 begin
   FEntry.Free;
   FEntry := value;

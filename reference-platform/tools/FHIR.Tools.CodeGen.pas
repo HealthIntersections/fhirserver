@@ -39,7 +39,6 @@ type
   private
     FResource: TFHIRResourceV;
     FContext: TFHIRWorkerContextWithFactory;
-    FVersion: TFHIRVersion;
 
     lines : TStringList;
     vars : TStringList;
@@ -57,7 +56,6 @@ type
     destructor Destroy; override;
     property Resource : TFHIRResourceV read FResource write SetResource;
     property Context : TFHIRWorkerContextWithFactory read FContext write SetContext;
-    property Version : TFHIRVersion read FVersion write FVersion;
 
     function generate : String; virtual;
     function languageName : String; virtual;
@@ -171,15 +169,6 @@ begin
   lines := TStringList.create;
   vars := TStringList.Create;
   vars.NameValueSeparator := ':';
-  {$IFDEF FHIR4}
-  FVersion := fhirVersionRelease1;
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  FVersion := fhirVersionRelease3;
-  {$ENDIF}
-  {$IFDEF FHIR2}
-  FVersion := fhirVersionRelease2;
-  {$ENDIF}
 end;
 
 destructor TFHIRCodeGenerator.Destroy;
@@ -546,7 +535,7 @@ end;
 
 function TFHIRCodeGeneratorJavaRI.verPack: String;
 begin
-  case FVersion of
+  case FContext.Factory.version of
     fhirVersionRelease1: result := 'dstu1';
     fhirVersionRelease2: result := 'dstu2';
     fhirVersionRelease3: result := 'dstu3';
@@ -749,9 +738,9 @@ procedure TFHIRCodeGeneratorPascal.processResource;
 var
   sd : TFhirStructureDefinitionW;
 begin
-  units.Add('FHIR.Tools.Types');
-  units.Add('FHIR.Tools.Resources');
-  units.Add('FHIR.Tools.Utilities');
+  units.Add('FHIR.Version.Types');
+  units.Add('FHIR.Version.Resources');
+  units.Add('FHIR.Version.Utilities');
   vars.Values['res'] := 'TFHIR'+resource.fhirType;
   line(2, 'res := TFHIR'+resource.fhirType+'.create;');
   line(2, 'try');

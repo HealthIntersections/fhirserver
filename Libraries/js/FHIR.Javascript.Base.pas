@@ -37,7 +37,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Javascript, FHIR.Support.Javascript,
   FHIR.Base.Objects, FHIR.Base.Factory;{,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client}
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client}
 
 type
   TFHIRJavascriptDefinedElement = class (TFslObject)
@@ -79,7 +79,7 @@ type
 implementation
 
 uses
-  FHIR.Tools.Javascript,
+  FHIR.Version.Javascript,
   FHIR.Client.Javascript,
   ServerEventJs;
 

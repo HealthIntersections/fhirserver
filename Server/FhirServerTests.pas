@@ -34,8 +34,8 @@ interface
 uses
   SysUtils, Classes, FHIR.Support.Shell, IniFiles,
   FHIR.Support.Objects, GuidSupport, AdvXmlBuilders,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser,
-  TerminologyServer, FHIRDataStore, FHIR.Tools.Client, FHIR.Tools.PathEngine;
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
+  TerminologyServer, FHIRDataStore, FHIR.Version.Client, FHIR.Version.PathEngine;
 
 procedure ExecuteFhirServerTests(all: boolean);
 //Type
@@ -72,7 +72,7 @@ implementation
 
 uses
   FHIR.Snomed.Services, FHIR.Snomed.Expressions, SCIMSearch, FHIRSearchSyntax,
-  FHIR.Ucum.Tests, TwilioClient, FHIR.Support.Signatures, FHIR.Tools.Questionnaire,
+  FHIR.Ucum.Tests, TwilioClient, FHIR.Support.Signatures, FHIR.Version.Questionnaire,
   MarkdownDaringFireballTests, FHIR.Support.Json;
 
 const

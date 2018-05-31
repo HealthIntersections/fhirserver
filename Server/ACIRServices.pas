@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
 
 type
   TACIRConcept = class (TCodeSystemProviderContext)

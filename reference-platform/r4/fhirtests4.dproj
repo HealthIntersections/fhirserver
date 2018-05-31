@@ -146,9 +146,7 @@
         <DCCReference Include="..\base\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\tools\FHIR.Tools.Parser.pas"/>
-        <DCCReference Include="..\tools\FHIR.Tools.Session.pas"/>
-        <DCCReference Include="..\tools\FHIR.Tools.Security.pas"/>
+        <DCCReference Include="..\version\FHIR.Version.Parser.pas"/>
         <DCCReference Include="..\tools\FHIR.Tools.Indexing.pas"/>
         <DCCReference Include="..\tools\FHIR.Tools.DiffEngine.pas"/>
         <DCCReference Include="FHIR.R4.PathEngine.pas"/>

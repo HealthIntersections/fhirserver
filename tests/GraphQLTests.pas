@@ -36,7 +36,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Support.MXml,
-  FHIR.Misc.GraphQL, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.GraphQL,
+  FHIR.Misc.GraphQL, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, FHIR.Version.Factory,
   FHIR.R4.Tests.Worker, JsonTests;
 
 type
@@ -61,11 +61,11 @@ type
   [TextFixture]
   TFHIRGraphQLTests = class (TObject)
   private
-    function ResolveReference(appInfo : TFslObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
+    function ResolveReference(appInfo : TFslObject; context : TFHIRResourceV; reference : TFHIRObject; out targetContext, target : TFHIRResourceV) : boolean;
 //    procedure ResolveReverseReference(appInfo : TFslObject; focusType, focusId, requestType, requestParam : String; params : TFslList<TGraphQLArgument>; start, limit : integer; list : TFslList<TFhirResource>);
-    function LookupResource(appInfo : TFslObject; requestType, id : String; var res : TFHIRResource) : boolean;
-    procedure ListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResource>);
-    function Search(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>) : TFHIRBundle;
+    function LookupResource(appInfo : TFslObject; requestType, id : String; var res : TFHIRResourceV) : boolean;
+    procedure ListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResourceV>);
+    function Search(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>) : TFHIRBundleW;
   public
     [GraphQLTestCase]
     procedure TestCase(source,output,context,resource,opName: String);
@@ -163,7 +163,7 @@ end;
 
 { TFHIRGraphQLTests }
 
-procedure TFHIRGraphQLTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResource>);
+procedure TFHIRGraphQLTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 begin
   if requestType = 'Condition' then
     list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\condition-example.xml'))
@@ -174,7 +174,7 @@ begin
   end;
 end;
 
-function TFHIRGraphQLTests.LookupResource(appInfo: TFslObject; requestType, id: String; var res: TFHIRResource): boolean;
+function TFHIRGraphQLTests.LookupResource(appInfo: TFslObject; requestType, id: String; var res: TFHIRResourceV): boolean;
 var
   filename : String;
 begin
@@ -184,7 +184,7 @@ begin
     res := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
 end;
 
-function TFHIRGraphQLTests.ResolveReference(appInfo : TFslObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
+function TFHIRGraphQLTests.ResolveReference(appInfo : TFslObject; context: TFHIRResourceV; reference: TFHIRObject; out targetContext, target: TFHIRResourceV): boolean;
 var
   parts : TArray<String>;
   res : TFHIRResource;
@@ -192,12 +192,12 @@ var
 begin
   targetContext := nil;
   target := nil;
-  if reference.reference.startsWith('#') then
+  if (reference as TFHIRReference).reference.startsWith('#') then
   begin
     if not (context is TFhirDomainResource) then
       exit(false);
     for res in TFhirDomainResource(context).containedList do
-      if '#'+res.id = reference.reference then
+      if '#'+res.id = (reference as TFHIRReference).reference then
       begin
         targetContext := context.Link;
         target := res.Link;
@@ -207,7 +207,7 @@ begin
   end
   else
   begin
-    parts := reference.reference.Split(['/']);
+    parts := (reference as TFHIRReference).reference.Split(['/']);
     filename := 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml';
     result := FileExists(filename);
     if result then
@@ -215,26 +215,29 @@ begin
   end;
 end;
 
-function TFHIRGraphQLTests.Search(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>): TFHIRBundle;
+function TFHIRGraphQLTests.Search(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>): TFHIRBundleW;
+var
+  bnd : TFhirBundle;
+  f : TFHIRFactoryX;
 begin
-  result := TFhirBundle.Create;
+  bnd := TFhirBundle.Create;
   try
-    with result.link_List.Append do
+    with bnd.link_List.Append do
     begin
       relation := 'next';
       url := 'http://test.fhir.org/r3/Patient?_format=text/xhtml&search-id=77c97e03-8a6c-415f-a63d-11c80cf73f&&active=true&_sort=_id&search-offset=50&_count=50';
     end;
-    with result.link_List.Append do
+    with bnd.link_List.Append do
     begin
       relation := 'self';
       url := 'http://test.fhir.org/r3/Patient?_format=text/xhtml&search-id=77c97e03-8a6c-415f-a63d-11c80cf73f&&active=true&_sort=_id&search-offset=0&_count=50';
     end;
-    with result.entryList.Append do
+    with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
       resource := TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\patient-example.xml');
     end;
-    with result.entryList.Append do
+    with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
       resource := TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\patient-example-xds.xml');
@@ -242,10 +245,15 @@ begin
       search.score := '0.5';
       search.mode := SearchEntryModeMatch;
     end;
-    result.total := inttostr(50);
-    result.Link;
+    bnd.total := inttostr(50);
+    f := TFHIRFactoryX.Create;
+    try
+      result := f.wrapBundle(bnd.Link);
+    finally
+      f.Free;
+    end;
   finally
-    result.Free;
+    bnd.Free;
   end;
 end;
 
@@ -270,7 +278,7 @@ begin
       filename := 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml';
   end;
 
-  gql := TFHIRGraphQLEngine.Create;
+  gql := TFHIRGraphQLEngine.Create(TFHIRFactoryX.create);
   try
     gql.OnFollowReference := ResolveReference;
     gql.OnLookup := LookupResource;

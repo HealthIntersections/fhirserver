@@ -36,10 +36,10 @@ uses
   FHIR.Web.Parsers,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.DateTime, FHIR.Support.Decimal, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Types,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common,
+  FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Types,
   FHIR.Database.Manager, FHIR.Database.Dialects,
-  FHIR.Tools.Indexing, FHIRIndexManagers, FHIR.Tools.Utilities, FHIRSearchSyntax, FHIR.Tools.Session, ServerUtilities, FHIRServerContext, FHIR.Tools.Client,
+  FHIR.Tools.Indexing, FHIRIndexManagers, FHIR.Version.Utilities, FHIRSearchSyntax, FHIR.Tools.Session, ServerUtilities, FHIRServerContext, FHIR.Version.Client,
   FHIR.Ucum.Services;
 
 type
@@ -951,7 +951,7 @@ var
   pfx, sfx, n : String;
   date : TDateTimeEx;
   a : String;
-  type_ : TFhirSearchParamTypeEnum;
+  type_ : TFhirSearchParamType;
   group : TFHIRGroup;
   each: TObject;
   characteristic : TFhirGroupCharacteristic;
@@ -1104,17 +1104,17 @@ begin
                 result := result + op;
               bHandled := true;
               case type_ of
-                SearchParamTypeDate: ProcessDateParam(date, Result, name, modifier, value, key, types);
-                SearchParamTypeString: ProcessStringParam(Result, name, modifier, value, key, pfx, sfx, types);
-                SearchParamTypeUri: ProcessUriParam(Result, name, modifier, value, key, types);
-                SearchParamTypeToken: ProcessTokenParam(Result, name, modifier, value, key, types);
-                SearchParamTypeReference : ProcessReferenceParam(Result, name, modifier, value, key, types);
-                SearchParamTypeQuantity : ProcessQuantityParam(Result, name, modifier, value, key, types);
-                SearchParamTypeNumber : ProcessNumberParam(Result, name, modifier, value, key, types);
-                SearchParamTypeNull : if (name = '_id') then
+                sptDate: ProcessDateParam(date, Result, name, modifier, value, key, types);
+                sptString: ProcessStringParam(Result, name, modifier, value, key, pfx, sfx, types);
+                sptUri: ProcessUriParam(Result, name, modifier, value, key, types);
+                sptToken: ProcessTokenParam(Result, name, modifier, value, key, types);
+                sptReference : ProcessReferenceParam(Result, name, modifier, value, key, types);
+                sptQuantity : ProcessQuantityParam(Result, name, modifier, value, key, types);
+                sptNumber : ProcessNumberParam(Result, name, modifier, value, key, types);
+                sptNull : if (name = '_id') then
                   ProcessTokenParam(Result, name, modifier, value, key, types);
-              else if type_ <> SearchParamTypeNull then
-                raise exception.create('not done yet: type = '+CODES_TFhirSearchParamTypeEnum[type_]);
+              else if type_ <> sptNull then
+                raise exception.create('not done yet: type = '+CODES_TFhirSearchParamType[type_]);
               end;
             end;
           if ts.count > 1 then
@@ -1305,7 +1305,7 @@ var
   index : integer;
   n : char;
   j : string;
-  stype : TFhirSearchParamTypeEnum;
+  stype : TFhirSearchParamType;
   comp : TFhirComposite;
 begin
   n := issuer.next;
@@ -1354,15 +1354,14 @@ begin
         result := 'not (ResourceKey in (select ResourceKey from IndexEntries as '+n+' where Flag <> 2 and '+n+'.IndexKey = '+inttostr(index)+j+'))';
     end
     else case stype of
-      SearchParamTypeNull:
-        raise Exception.Create('The search type could not be determined for '+path.Name);
-      SearchParamTypeNumber:    result := BuildParameterNumber(index, n, j, path.Name, filter.Operation, filter.Value);
-      SearchParamTypeString :   result := BuildParameterString(index, n, j, path.Name, filter.Operation, filter.Value);
-      SearchParamTypeDate:      result := buildParameterDate(index, n, j, path.Name, filter.Operation, filter.Value);
-      SearchParamTypeToken:     result := buildParameterToken(index, n, j, path.Name, filter.Operation, filter.Value);
-      SearchParamTypeReference: result := buildParameterReference(index, n, j, path.Name, filter.Operation, filter.Value);
-      SearchParamTypeComposite: raise Exception.Create('Composite indexes cannot the direct target of an operation criteria (except for operation "pr")');
-      SearchParamTypeQuantity:  raise Exception.Create('Quantity searching is not handled yet');
+      sptNull: raise Exception.Create('The search type could not be determined for '+path.Name);
+      sptNumber:    result := BuildParameterNumber(index, n, j, path.Name, filter.Operation, filter.Value);
+      sptString :   result := BuildParameterString(index, n, j, path.Name, filter.Operation, filter.Value);
+      sptDate:      result := buildParameterDate(index, n, j, path.Name, filter.Operation, filter.Value);
+      sptToken:     result := buildParameterToken(index, n, j, path.Name, filter.Operation, filter.Value);
+      sptReference: result := buildParameterReference(index, n, j, path.Name, filter.Operation, filter.Value);
+      sptComposite: raise Exception.Create('Composite indexes cannot the direct target of an operation criteria (except for operation "pr")');
+      sptQuantity:  raise Exception.Create('Quantity searching is not handled yet');
     end;
   end;
 end;

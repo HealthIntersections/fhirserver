@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, FHIR.Support.Lock,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Tools.Tags;
+  FHIR.Version.Tags;
 
 type
   TFHIRTagManager = class (TFslObject)

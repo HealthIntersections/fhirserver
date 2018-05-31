@@ -7,7 +7,7 @@ uses
   FHIR.Support.DateTime, FHIR.Support.Strings,
   FHIR.Javascript,
   FHIR.Support.Objects,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Session;
+  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Session;
 
 type
   TFHIRServerJSHelper = class (TFslObject)

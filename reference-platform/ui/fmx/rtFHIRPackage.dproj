@@ -112,7 +112,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Description>FHIR UI Components - Runtime package</DCC_Description>
-        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R4.AuthMap;FHIR.Tools.Constants=FHIR.R4.Constants;FHIR.Tools.Context=FHIR.R4.Context;FHIR.Tools.IndexInfo=FHIR.R4.IndexInfo;FHIR.Tools.Javascript=FHIR.R4.Javascript;FHIR.Tools.ElementModel=FHIR.R4.ElementModel;FHIR.Tools.Narrative=FHIR.R4.Narrative;FHIR.Tools.Operations=FHIR.R4.Operations;FHIR.Tools.Json=FHIR.R4.Json;FHIR.Tools.Turtle=FHIR.R4.Turtle;FHIR.Tools.Xml=FHIR.R4.Xml;FHIR.Tools.PathNode=FHIR.R4.PathNode;FHIR.Tools.Profiles=FHIR.R4.Profiles;FHIR.Tools.Resources=FHIR.R4.Resources;FHIR.Tools.MapUtilities=FHIR.R4.MapUtilities;FHIR.Tools.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Tools.Types=FHIR.R4.Types;FHIR.Tools.Utilities=FHIR.R4.Utilities;FHIR.Tools.Validator=FHIR.R4.Validator;FHIR.Tools.OpBase=FHIR.R4.OpBase;FHIR.Tools.PathEngine=FHIR.R4.PathEngine;FHIR.Tools.Narrative2=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire=FHIR.R4.Questionnaire;FHIR.Tools.Questionnaire2=FHIR.R4.Questionnaire2;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;$(DCC_UnitAlias)</DCC_UnitAlias>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -148,7 +148,7 @@
         <DCCReference Include="..\..\base\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\..\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\..\tools\FHIR.Tools.Security.pas"/>
-        <DCCReference Include="..\..\tools\FHIR.Tools.Parser.pas"/>
+        <DCCReference Include="..\..\version\FHIR.Version.Parser.pas"/>
         <DCCReference Include="..\..\tools\FHIR.Tools.XhtmlComp.pas"/>
         <DCCReference Include="..\..\base\FHIR.Base.Objects.pas"/>
         <BuildConfiguration Include="Release">

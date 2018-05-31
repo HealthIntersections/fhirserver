@@ -33,7 +33,7 @@ uses
   SysUtils,
   FHIR.Support.Lock,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Tools.Resources, FHIR.Tools.Utilities;
+  FHIR.Version.Resources, FHIR.Version.Utilities;
 
 type
   TEndorsement = class (TFslObject)

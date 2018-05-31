@@ -1,6 +1,6 @@
 unit FHIRAtomFeed;
 
-{!Wrapper uses FHIR.Tools.Resources,FHIR.Tools.Types,MSSEWrap}
+{!Wrapper uses FHIR.Version.Resources,FHIR.Version.Types,MSSEWrap}
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -43,8 +43,8 @@ uses
   FHIR.Support.Strings, FHIR.Support.Binary,
   FHIR.Support.Json,
   FHIR.Base.Objects,
-  FHIR.Tools.Types,
-  FHIR.Tools.Resources,
+  FHIR.Version.Types,
+  FHIR.Version.Resources,
   
   AdvMemories,
   AdvStringBuilders,

@@ -60,12 +60,9 @@ const
     '<script type="text/javascript" src="/js/fhir-gw.js"></script>'+#13#10;
   MAP_ATTR_NAME = 'B88BF977DA9543B8A5915C84A70F03F7';
 
-  {$IFDEF FHIR3}
-  FHIR_SPEC_URL = 'http://hl7-fhir.github.io/';
-  {$ELSE}
   FHIR_SPEC_URL = 'http://hl7.org/fhir';
-  {$ENDIF}
   FHIR_TTL_URI_BASE = 'http://hl7.org/fhir/';
+
 
 Type
   TFHIRParser = class abstract (TFslObject)

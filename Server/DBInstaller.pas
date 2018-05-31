@@ -38,7 +38,8 @@ uses
   SysUtils, Classes, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Exceptions,
   FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRIndexManagers, FHIR.Tools.Utilities,
+  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Factory,
+  FHIRIndexManagers, FHIR.Version.Utilities,
   SCIMServer;
 
 const
@@ -901,7 +902,7 @@ begin
 //  inc(k);
 //  FConn.terminate;
 
-  m := TFHIRIndexInformation.create();
+  m := TFHIRIndexInformation.create(TFHIRFactoryX.create);
   names := TStringList.Create;
   try
     for i := 0 to m.Indexes.count - 1 do

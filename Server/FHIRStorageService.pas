@@ -37,9 +37,9 @@ uses
   FHIR.Support.Objects, FHIR.Support.Generics,  FHIR.Support.Exceptions, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.Database.Dialects, FHIR.Support.DateTime, FHIR.Misc.GraphQL,
 
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Base.Lang,
-  FHIR.Client.Base, FHIR.Tools.Common,
-  FHIR.Tools.Client, FHIR.Tools.Context, FHIR.Base.Xhtml, FHIR.Tools.IndexInfo, FHIR.Base.Parser, FHIR.Tools.Indexing, FHIR.Tools.GraphQL, FHIR.Tools.XhtmlComp,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Utilities, FHIR.Base.Lang, FHIR.Base.Common,
+  FHIR.Client.Base, FHIR.Version.Common,
+  FHIR.Version.Client, FHIR.Version.Context, FHIR.Base.Xhtml, FHIR.Version.IndexInfo, FHIR.Base.Parser, FHIR.Tools.Indexing, FHIR.Tools.GraphQL, FHIR.Tools.XhtmlComp,
   FHIR.CdsHooks.Utilities,
   ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;
 
@@ -845,7 +845,7 @@ begin
               for i := 0 to ServerContext.Indexes.Indexes.count - 1 do
                 if (ServerContext.Indexes.Indexes[i].ResourceType = a) then
                   if ServerContext.Indexes.Indexes[i].Name <> '_query' then
-                    addParam(res.searchParamList, html, ServerContext.Indexes.Indexes[i].Name, ServerContext.Indexes.Indexes[i].uri, ServerContext.Indexes.Indexes[i].Description, ServerContext.Indexes.Indexes[i].SearchType, ServerContext.Indexes.Indexes[i].TargetTypes);
+                    addParam(res.searchParamList, html, ServerContext.Indexes.Indexes[i].Name, ServerContext.Indexes.Indexes[i].uri, ServerContext.Indexes.Indexes[i].Description, MAP_TFHIRSearchParamType2[ServerContext.Indexes.Indexes[i].SearchType], ServerContext.Indexes.Indexes[i].TargetTypes);
 
 //              addParam(res.searchParamList, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
               addParam(res.searchParamList, html, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', SearchParamTypeString, []);
@@ -980,7 +980,7 @@ s := s +
       if (ix.ResourceType = request.ResourceName) and (length(ix.TargetTypes) = 0) then
       begin
         desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix.name, lang, ix.Description));
-        if ix.SearchType = SearchParamTypeDate then
+        if ix.SearchType = sptDate then
         begin
           s := s + '<tr><td align="left">'+ix.Name+' </td><td><input type="text" name="'+ix.Name+'"></td><td> '+desc+' on given date (yyyy-mm-dd)</td>'+
           '<td><select title="Missing?" size="1" name="'+ix.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10;
@@ -1012,7 +1012,7 @@ s := s +
             if (ok) and (m.IndexOf(ix2.Name) = -1) then
             begin
               desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix2.name, lang, ix2.Description));
-              if (ix2.searchType = SearchParamTypeDate) then
+              if (ix2.searchType = sptDate) then
               begin
                 s := s + '<tr>&nbsp;&nbsp;<td align="left">'+ix2.Name+' (exact)</td><td><input type="text" name="'+pfx+'.'+ix2.Name+'"></td><td> '+desc+'</td>'+
           '<td><select title="Missing?" size="1" name="'+pfx+'.'+ix2.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10;

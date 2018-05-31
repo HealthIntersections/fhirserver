@@ -38,7 +38,7 @@ uses
   YuStemmer,
   FHIR.Database.Manager,
   FHIR.Base.Common,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations, FHIR.Version.Utilities, FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
 
 type

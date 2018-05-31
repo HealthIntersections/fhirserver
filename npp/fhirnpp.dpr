@@ -62,7 +62,6 @@ uses
   FHIR.R3.Resources in '..\reference-platform\dstu3\FHIR.R3.Resources.pas',
   FHIR.R3.Types in '..\reference-platform\dstu3\FHIR.R3.Types.pas',
   FHIR.R3.Constants in '..\reference-platform\dstu3\FHIR.R3.Constants.pas',
-  FHIR.Tools.Security in '..\reference-platform\tools\FHIR.Tools.Security.pas',
   FHIR.R3.Tags in '..\reference-platform\dstu3\FHIR.R3.Tags.pas',
   FHIR.Base.Lang in '..\reference-platform\base\FHIR.Base.Lang.pas',
   FHIR.R3.Xml in '..\reference-platform\dstu3\FHIR.R3.Xml.pas',

@@ -1,4 +1,4 @@
-{!Wrapper uses FHIR.Base.Objects, FHIRBase_Wrapper, FHIR.Tools.Types, FHIRTypes_Wrapper}
+{!Wrapper uses FHIR.Base.Objects, FHIRBase_Wrapper, FHIR.Version.Types, FHIRTypes_Wrapper}
 
 unit FHIRComponents;
 
@@ -40,7 +40,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, AdvBuffers,  FHIR.Base.Objects, FHIR.Tools.Types;
+  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, AdvBuffers,  FHIR.Base.Objects, FHIR.Version.Types;
 
 Type
   TFhirAdverseReactionSymptom = class;

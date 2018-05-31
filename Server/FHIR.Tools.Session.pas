@@ -701,7 +701,7 @@ Function IdHead(s : String):String;
 implementation
 
 uses
-  FHIR.Tools.Parser,
+  FHIR.Version.Parser,
   FHIR.Base.Parser,
   {$IFDEF FHIR2}
   FHIR.R2.Utilities;
@@ -985,7 +985,7 @@ begin
       end
       else if sId = '*' then // all types
       begin
-        if not FCompartmentInformation.hasCompartment(ResourceEnum) then
+        if not FCompartmentInformation.hasCompartment(ResourceName) then
           raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etNotSupported, 'MSG_UNKNOWN_COMPARTMENT', lang, [soURL, 'GET, POST or DELETE']);
 
         compartment := TFHIRCompartmentId.Create(ResourceEnum, Id);
@@ -995,9 +995,9 @@ begin
       end
       else if StringArrayExistsInSensitive(CODES_TFhirResourceType, sId) or FWorker.hasCustomResource(sId) then
       begin
-        if FCompartmentInformation.existsInCompartment(ResourceEnum, sId) then
+        if FCompartmentInformation.existsInCompartment(ResourceName, sId) then
         begin
-          if not FCompartmentInformation.hasCompartment(ResourceEnum) then
+          if not FCompartmentInformation.hasCompartment(ResourceName) then
             raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etNotSupported, 'MSG_UNKNOWN_COMPARTMENT', lang, [soURL, 'GET, POST or DELETE']);
 
           compartment := TFHIRCompartmentId.Create(ResourceEnum, Id);

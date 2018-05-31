@@ -94,11 +94,11 @@ Uses
   FHIR.Support.JSON, FHIR.Web.Rdf,
 
   FHIR.Support.MXml, FHIR.Misc.GraphQL, {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF}
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Constants,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Tools.Tags, FHIR.Tools.Session, FHIR.Base.Lang, FHIRStorageService,
-  FHIR.Tools.Utilities, FHIR.Tools.Security, FHIR.Smart.Utilities, FHIR.Tools.XhtmlComp,
-  FHIR.Tools.Questionnaire, FHIR.Tools.Client, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
-  FHIR.Support.Service, FHIR.Tools.Common,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Constants,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Version.Tags, FHIR.Tools.Session, FHIR.Base.Lang, FHIRStorageService,
+  FHIR.Version.Utilities, FHIR.Tools.Security, FHIR.Smart.Utilities, FHIR.Tools.XhtmlComp,
+  FHIR.Version.Questionnaire, FHIR.Version.Client, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
+  FHIR.Support.Service, FHIR.Version.Common,
   FHIR.Base.Xhtml, FHIR.Tools.GraphQL, FHIR.Base.Utilities,
   {$IFNDEF NO_CONVERSION}
   FHIR.XVersion.Convertors,
@@ -3415,7 +3415,7 @@ begin
     for a in FServerContext.ValidatorContext.allResourceNames do
     begin
       ix := counts.Add(a);
-      if (compList.Empty) or FServerContext.Indexes.Compartments.existsInCompartment(frtPatient, a) then
+      if (compList.Empty) or FServerContext.Indexes.Compartments.existsInCompartment('Patient', a) then
         counts.Objects[ix] := TObject(0)
       else
         counts.Objects[ix] := TObject(-1);

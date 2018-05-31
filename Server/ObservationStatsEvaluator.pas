@@ -41,7 +41,7 @@ uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings,
   FHIR.Database.Manager, FHIR.Support.DateTime,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Operations;
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations;
 
 type
   TObservationStatsParameter = (

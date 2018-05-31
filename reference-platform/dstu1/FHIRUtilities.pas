@@ -1,4 +1,4 @@
-unit FHIR.Tools.Utilities;
+unit FHIR.Version.Utilities;
 
 {
 Copyright (c) 2011+, HL7, Inc and Health Intersections Pty Ltd
@@ -41,7 +41,7 @@ uses
 
   IdSoapMime, TextUtilities, ZLib,
 
-  FHIR.Tools.Session, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Objects, FHIR.Tools.Types, FHIRAtomFeed, FHIRComponents, FHIR.Tools.Resources, FHIR.Tools.Constants;
+  FHIR.Tools.Session, FHIR.Base.Parser, FHIR.Version.Parser, FHIR.Base.Objects, FHIR.Version.Types, FHIRAtomFeed, FHIRComponents, FHIR.Version.Resources, FHIR.Version.Constants;
 
 Type
   ETooCostly = class (Exception);

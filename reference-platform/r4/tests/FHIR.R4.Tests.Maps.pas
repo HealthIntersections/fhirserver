@@ -36,7 +36,7 @@ uses
   DUnitX.TestFramework,
   FHIR.Support.System, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.ElementModel, FHIR.R4.Context, FHIR.R4.Tests.Worker, FHIR.R4.MapUtilities, FHIR.R4.Profiles;
 
 type

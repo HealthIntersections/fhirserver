@@ -36,11 +36,11 @@ This is the dstu1 version of the FHIR code
 Interface
 
 uses
-  SysUtils, Classes, ActiveX, FHIR.Support.MsXml, FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Types, Math,
-  FHIR.Support.Binary, FHIR.Tools.Constants, EncdDecd,
+  SysUtils, Classes, ActiveX, FHIR.Support.MsXml, FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Types, Math,
+  FHIR.Support.Binary, FHIR.Version.Constants, EncdDecd,
   FHIR.Tools.Session,
   MsXmlParser, AdvBuffers, AdvStringLists, FHIR.Support.Strings, FHIR.Support.Decimal, 
-  FHIR.Xml.Builder, AdvXmlBuilders, TextUtilities, FHIR.Tools.Tags,
+  FHIR.Xml.Builder, AdvXmlBuilders, TextUtilities, FHIR.Version.Tags,
   FHIR.Support.DateTime, MXmlBuilder, FHIR.Support.Json, AdvVCLStreams, FHIRAtomFeed, AdvStringStreams, AdvStringBuilders, FHIR.Base.Lang;
 
 const
@@ -294,8 +294,8 @@ Implementation
 
 uses
   RegExpr,
-  FHIR.Tools.Parser,
-  FHIR.Tools.Utilities;
+  FHIR.Version.Parser,
+  FHIR.Version.Utilities;
 
 Function TFHIRXmlParserBase.LoadXml(stream : TStream) : IXmlDomDocument2;
 Var

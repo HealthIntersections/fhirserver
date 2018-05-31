@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.ScrollBox, FMX.Memo, FMX.TabControl, FMX.StdCtrls, FMX.Controls.Presentation,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
-  FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.DiffEngine;
+  FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.DiffEngine;
 
 type
   TSourceViewerForm = class(TForm)

@@ -36,9 +36,9 @@ uses
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Generics,
   FHIR.Debug.Logging,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session, FHIR.Tools.Constants,
-  FHIR.Tools.Context, FHIR.Tools.Profiles, FHIR.Support.System, FHIR.Support.Text, FHIR.Cache.PackageManager,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
+  FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.System, FHIR.Support.Text, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, {ExampleScenarioEditor,} AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
@@ -1255,7 +1255,7 @@ var
 begin
   if FIndexes = nil then
   begin
-    FIndexes := TFhirIndexList.Create;
+    FIndexes := TFhirIndexList.Create(TFHIRFactoryX.Create);
     comps := TFHIRCompartmentList.Create;
     builder := TFHIRIndexBuilder.Create;
     try
@@ -1269,7 +1269,7 @@ begin
   parts := s.Split(['.']);
   index := FIndexes.getByName(parts[0], parts[1]);
   if index <> nil then
-    result := '<p>'+FormatTextToHTML(index.Description)+'</p>'+'<p>'+index.Name+' : '+CODES_TFhirSearchParamTypeEnum[index.SearchType]+'</p>';
+    result := '<p>'+FormatTextToHTML(index.Description)+'</p>'+'<p>'+index.Name+' : '+CODES_TFhirSearchParamType[index.SearchType]+'</p>';
 end;
 
 procedure TMasterToolsForm.Timer1Timer(Sender: TObject);

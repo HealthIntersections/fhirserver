@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.WebBrowser,
   FMX.StdCtrls, FMX.Controls.Presentation,
   FHIR.Support.System,
-  FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Client.SmartUtilities;
+  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Client.SmartUtilities;
 
 type
   TCheckScopesProc = reference to procedure (scopes : TArray<String>; var ok : boolean; var msg : String);

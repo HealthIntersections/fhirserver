@@ -491,9 +491,9 @@ Implementation
 
 Uses
   FHIR.Support.Strings,
-  FHIR.Tools.Utilities,
-  FHIR.Tools.Types,
-  FHIR.Tools.Resources;
+  FHIR.Version.Utilities,
+  FHIR.Version.Types,
+  FHIR.Version.Resources;
 
 type
   TFHIRQueryProcessor = class (TFslObject)

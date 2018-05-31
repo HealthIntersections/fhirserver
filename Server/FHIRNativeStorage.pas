@@ -38,16 +38,16 @@ uses
   FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
   FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Misc.GraphQL, FHIR.Support.Certs,
   FHIR.Base.Utilities,
-  FHIR.Tools.Resources, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.Constants, FHIR.Tools.Context, FHIR.Tools.Operations, FHIR.Base.Xhtml,
-  FHIR.Tools.Tags, FHIRValueSetExpander, FHIRIndexManagers, FHIR.Tools.Session, FHIR.Tools.DiffEngine, FHIR.Tools.ElementModel, FHIR.Tools.PathNode,
-  FHIR.Tools.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Tools.Profiles,
-  FHIR.Tools.PathEngine, FHIR.Tools.GraphQL, FHIR.Tools.Client,
+  FHIR.Version.Resources, FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Parser, FHIR.Base.Parser, FHIR.Version.Constants, FHIR.Version.Context, FHIR.Version.Operations, FHIR.Base.Xhtml,
+  FHIR.Version.Tags, FHIRValueSetExpander, FHIRIndexManagers, FHIR.Tools.Session, FHIR.Tools.DiffEngine, FHIR.Version.ElementModel, FHIR.Version.PathNode,
+  FHIR.Version.Utilities, FHIRSubscriptionManager, FHIR.Tools.Security, FHIR.Base.Lang, FHIR.Version.Profiles,
+  FHIR.Version.PathEngine, FHIR.Tools.GraphQL, FHIR.Version.Client,
   FHIR.Base.Validator, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Cache.PackageManager,
-  FHIR.Tools.Narrative, FHIR.Tools.Narrative2, FHIR.Tools.Questionnaire,
-  FHIR.CdsHooks.Utilities, {$IFNDEF FHIR2}FHIR.Tools.MapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
+  FHIR.Version.Narrative, FHIR.Version.Narrative2, FHIR.Version.Questionnaire,
+  FHIR.CdsHooks.Utilities, {$IFNDEF FHIR2}FHIR.Version.MapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
   ServerUtilities, ServerValidator, FHIR.Tx.Service, TerminologyServer, FHIR.Base.Scim, SCIMServer, DBInstaller, FHIR.Ucum.Services, MPISearch,
-  FHIR.Tools.Validator, FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIR.Tools.CodeGen, ServerJavascriptHost;
+  FHIR.Version.Validator, FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIR.Tools.CodeGen, ServerJavascriptHost;
 
 const
   MAXSQLDATE = 365 * 3000;
@@ -187,10 +187,10 @@ type
     procedure ExecuteGraphQLInstance(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); override;
 
-    function GraphLookup(appInfo : TFslObject; requestType, id : String; var res : TFHIRResource) : boolean;
-    function GraphFollowReference(appInfo : TFslObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
-    function GraphSearch(appInfo : TFslObject; requestType : String; params : TFslList<TGraphQLArgument>) : TFHIRBundle;
-    procedure GraphListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResource>);
+    function GraphLookup(appInfo : TFslObject; requestType, id : String; var res : TFHIRResourceV) : boolean;
+    function GraphFollowReference(appInfo : TFslObject; context : TFHIRResourceV; reference : TFHIRObject; out targetContext, target : TFHIRResourceV) : boolean;
+    function GraphSearch(appInfo : TFslObject; requestType : String; params : TFslList<TGraphQLArgument>) : TFHIRBundleW;
+    procedure GraphListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResourceV>);
     function GetServerContext: TFHIRServerContext;
 
     function processCanonicalSearch(request : TFHIRRequest; bundle : TFHIRBundleBuilder) : boolean;
@@ -1423,7 +1423,7 @@ var
   str : TStringBuilder;
 begin
   try
-    gql := TFHIRGraphQLEngine.Create;
+    gql := TFHIRGraphQLEngine.Create((FServerContext as TFHIRServerContext).ValidatorContext.factory.link);
     try
       gql.appInfo := request.Link;
       gql.OnFollowReference := GraphFollowReference;
@@ -1477,7 +1477,7 @@ begin
   try
     if ExecuteRead(request, response, true) then
     begin
-      gql := TFHIRGraphQLEngine.Create;
+      gql := TFHIRGraphQLEngine.Create((FServerContext as TFHIRServerContext).ValidatorContext.factory.link);
       try
         gql.appInfo := request.Link;
         gql.OnFollowReference := GraphFollowReference;
@@ -2094,7 +2094,7 @@ var
   str : TStringBuilder;
 begin
   try
-    gql := TFHIRGraphQLEngine.Create;
+    gql := TFHIRGraphQLEngine.Create((FServerContext as TFHIRServerContext).ValidatorContext.factory.link);
     try
       gql.appInfo := request.Link;
       gql.OnFollowReference := GraphFollowReference;
@@ -3162,7 +3162,7 @@ begin
         for cr in crs do
         begin
           for sp in cr.SearchParameters do
-            ServerContext.Indexes.Indexes.add(cr.Name, sp);
+            ServerContext.Indexes.Indexes.add(cr.Name, nil); // sp);
           ServerContext.ValidatorContext.registerCustomResource(cr);
         end;
     finally
@@ -3270,7 +3270,7 @@ begin
         for cr in crs do
         begin
           for sp in cr.SearchParameters do
-            ServerContext.Indexes.Indexes.add(cr.Name, sp);
+            ServerContext.Indexes.Indexes.add(cr.Name, nil); // sp);
           ServerContext.ValidatorContext.registerCustomResource(cr);
         end;
     finally
@@ -4820,13 +4820,13 @@ begin
   result := TFHIRServerContext(FServerContext);
 end;
 
-function TFHIRNativeOperationEngine.GraphFollowReference(appInfo : TFslObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
+function TFHIRNativeOperationEngine.GraphFollowReference(appInfo : TFslObject; context: TFHIRResourceV; reference: TFHIRObject; out targetContext, target: TFHIRResourceV): boolean;
 var
   req : TFHIRRequest;
   secure : boolean;
 begin
   req := TFHIRRequest(appInfo);
-  target := getResourceByReference(context, reference.reference, req, true, secure);
+  target := getResourceByReference(context as TFHIRResource, (reference as TFHIRReference).reference, req, true, secure);
   result := (target <> nil) and (not secure or req.secure);
   if result then
     targetContext := target.Link
@@ -4834,7 +4834,7 @@ begin
     target.Free;
 end;
 
-procedure TFHIRNativeOperationEngine.GraphListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResource>);
+procedure TFHIRNativeOperationEngine.GraphListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 var
   sql : String;
   rk : integer;
@@ -4909,7 +4909,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.GraphLookup(appInfo: TFslObject; requestType, id: String; var res: TFHIRResource): boolean;
+function TFHIRNativeOperationEngine.GraphLookup(appInfo: TFslObject; requestType, id: String; var res: TFHIRResourceV): boolean;
 var
   req : TFHIRRequest;
   secure : boolean;
@@ -4925,7 +4925,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.GraphSearch(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>) : TFHIRBundle;
+function TFHIRNativeOperationEngine.GraphSearch(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>) : TFHIRBundleW;
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
@@ -4955,7 +4955,7 @@ begin
     end;
     if response.resource is TFHIROperationOutcome then
       raise EGraphQLException.Create(TFHIROperationOutcome(response.resource).asExceptionMessage);
-    result := response.Bundle.Link;
+    result := (FServerContext as TFHIRServerContext).ValidatorContext.factory.wrapBundle(response.Bundle.Link);
   finally
     response.Free;
   end;

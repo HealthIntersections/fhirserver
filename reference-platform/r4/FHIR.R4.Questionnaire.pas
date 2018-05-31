@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Objects, FHIR.Support.Strings, FHIR.Support.Collections, FHIR.Support.Exceptions,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Tools.Parser, FHIR.Base.Factory, FHIR.Tx.Service,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Version.Parser, FHIR.Base.Factory, FHIR.Tx.Service,
   FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.R4.Utilities, FHIR.R4.Profiles,
   FHIR.Tools.Session;
 
@@ -191,7 +191,7 @@ var
   item : TFHIRQuestionnaireItem;
 begin
   if profile = nil then
-    raise Exception.Create('FHIR.Tools.Questionnaire.build: No Profile provided');
+    raise Exception.Create('FHIR.Version.Questionnaire.build: No Profile provided');
 
   if resource <> nil then
     if profile.snapshot.elementList[0].path <> CODES_TFhirResourceType[resource.ResourceType] then
@@ -547,11 +547,7 @@ begin
       if cc.system = 'http://hl7.org/fhir/resource-types' then
       begin
         result.code := 'Reference';
-        {$IFDEF FHIR4}
         result.profileList.add(TFhirCanonical.Create('http://hl7.org/fhir/Profile/'+cc.code));
-        {$ELSE}
-        result.profile := 'http://hl7.org/fhir/Profile/'+cc.code;
-        {$ENDIF}
       end
       else // cc.system = 'http://hl7.org/fhir/data-types'
       begin
@@ -1242,9 +1238,6 @@ begin
             vse.xmlId := nextId('vs');
             vsCache.Add(vse.url, vse.xmlId);
             vse.text := nil;
-            {$IFDEF FHIR2}
-            vse.codeSystemElement := nil;
-            {$ENDIF}
             vse.composeElement := nil;
             vse.contactList.Clear;
             vse.publisherElement := nil;

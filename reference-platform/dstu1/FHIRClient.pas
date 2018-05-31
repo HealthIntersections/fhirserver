@@ -1,4 +1,4 @@
-unit FHIR.Tools.Client;
+unit FHIR.Version.Client;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -39,8 +39,8 @@ uses
   FHIR.Support.Strings, GuidSupport,
   IdHTTP, IdSSLOpenSSL, IdSoapMime,
   FHIR.Support.Objects, AdvBuffers, FHIR.Support.WinInet, AdvStringMatches,
-  FHIRAtomFeed, FHIR.Tools.Parser, FHIR.Tools.Resources, FHIR.Tools.Utilities,
-  FHIR.Tools.Constants, FHIR.Tools.Session, FHIR.Base.Parser, FHIR.Base.Objects;
+  FHIRAtomFeed, FHIR.Version.Parser, FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.Version.Constants, FHIR.Tools.Session, FHIR.Base.Parser, FHIR.Base.Objects;
 
 Type
   EFHIRClientException = class (Exception)

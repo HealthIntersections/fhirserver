@@ -57,26 +57,30 @@ Type
   TFHIRVersionSet = set of TFHIRVersion;
 
 Const
-  {$IFDEF FHIR2}
+  {$IFDEF FHIR1} 
+  CURRENT_FHIR_VERSION = fhirVersionRelease1;
+  COMPILED_FHIR_VERSION = fhirVersionRelease1;
+  {$ELSE}
+  {$IFDEF FHIR2} 
+  CURRENT_FHIR_VERSION = fhirVersionRelease2;
   COMPILED_FHIR_VERSION = fhirVersionRelease2;
-  {$ENDIF}
-  {$IFDEF FHIR3}
+  {$ELSE}
+  {$IFDEF FHIR3} 
+  CURRENT_FHIR_VERSION = fhirVersionRelease3;
   COMPILED_FHIR_VERSION = fhirVersionRelease3;
-  {$ENDIF}
-  {$IFDEF FHIR4}
+  {$ELSE}
+  {$IFDEF FHIR4} 
+  CURRENT_FHIR_VERSION = fhirVersionRelease4;
   COMPILED_FHIR_VERSION = fhirVersionRelease4;
-  {$ENDIF}
+  {$ELSE}
+  CURRENT_FHIR_VERSION = fhirVersionUnknown;
+  // not defined, so that compiles fail if $define is not defined anywhere. COMPILED_FHIR_VERSION = fhirVersionUnknown;
+  {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
 
   CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
   CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4');
   PF_CONST : array [TFHIRVersion] of string = ('', '0.0', '1.0', '3.0', '3.4');
-  CURRENT_FHIR_VERSION =
-    {$IFDEF FHIR1} fhirVersionRelease1 {$ELSE}
-    {$IFDEF FHIR2} fhirVersionRelease2 {$ELSE}
-    {$IFDEF FHIR3} fhirVersionRelease3 {$ELSE}
-    {$IFDEF FHIR4} fhirVersionRelease4 {$ELSE}
-    fhirVersionUnknown
-    {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF};
+  
 
   FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
   FHIR_VERSIONS : Array [TFHIRVersion] of String = ('', '0.0.82', '1.0.2', '3.0.1', '3.4.0');
@@ -306,9 +310,10 @@ type
     function Clone : TFHIRObject; Overload;
     procedure Assign(oSource : TFslObject); override;
 
-    // version delegation. these are public for internal reasons, but there's never any reason to use these outside the library
+    // version delegation. these 3 make* are public for internal reasons, but there's never any reason to use these outside the library
     function makeStringValue(v : String) : TFHIRObject; virtual; abstract;
     function makeCodeValue(v : String) : TFHIRObject; virtual; abstract;
+    function makeIntValue(v : String) : TFHIRObject; virtual; abstract;
     function hasExtension(url : String) : boolean; virtual;
     function getExtensionString(url : String) : String; virtual;
     function extensionCount(url : String) : integer; virtual;
@@ -471,6 +476,7 @@ type
     function fhirType : String; override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
 
     property value : string read FValue write FValue;
     function isEmpty : boolean; override;
@@ -501,6 +507,7 @@ type
     procedure setIdValue(id : String); override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
   end;
 
   TFHIRSelectionList = class (TFslList<TFHIRSelection>)
@@ -912,6 +919,11 @@ begin
 end;
 
 function TFHIRObjectText.makeCodeValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+end;
+
+function TFHIRObjectText.makeIntValue(v: String): TFHIRObject;
 begin
   raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
@@ -1362,6 +1374,11 @@ end;
 function TFHIRSelection.makeCodeValue(v: String): TFHIRObject;
 begin
   result := value.makeCodeValue(v);
+end;
+
+function TFHIRSelection.makeIntValue(v: String): TFHIRObject;
+begin
+  result := value.makeIntValue(v);
 end;
 
 function TFHIRSelection.makeStringValue(v: String): TFHIRObject;

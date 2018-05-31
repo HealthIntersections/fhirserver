@@ -497,8 +497,9 @@ type
   TFHIRBundleHelper = class helper (TFhirResourceHelper) for TFHIRBundle
   private
     function GetLinks(s: string): String;
+    procedure SetLinks(s: string; const Value: String);
   public
-    property Links[s : string] : String read GetLinks;
+    property Links[s : string] : String read GetLinks write SetLinks;
     procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleTypeEnum) : TFhirBundle; overload;
     class function wrap(aType : TFhirBundleTypeEnum; resource : TFhirResource) : TFhirBundle; overload;
@@ -2779,6 +2780,23 @@ begin
       result := link_List[i].url;
       exit;
     end;
+end;
+
+procedure TFHIRBundleHelper.SetLinks(s: string; const Value: String);
+var
+  i : integer;
+begin
+  for i := 0 to link_List.count -  1 do
+    if link_List[i].relation = s then
+    begin
+      link_List[i].url := value;
+      exit;
+    end;
+  with link_List.Append do
+  begin
+    relation := s;
+    url := value;
+  end;
 end;
 
 procedure TFHIRBundleHelper.signRef(code: TSignatureType; whoRef: String; format: TFHIRFormat; cert : String);

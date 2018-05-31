@@ -36,7 +36,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Support.MXml,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
   FHIR.Misc.GraphQL, FHIR.Tools.GraphQL, GraphDefinitionEngine,
   FHIR.R4.Tests.Worker, JsonTests;
 
@@ -51,8 +51,8 @@ type
   private
     function findTest(name : String) : TMXmlElement;
     function loadContext(context : String) : TFhirResource;
-    function ResolveReference(appInfo : TFslObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
-    procedure ListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResource>);
+    function ResolveReference(appInfo : TFslObject; context : TFHIRResourceV; reference : TFHIRObject; out targetContext, target : TFHIRResourceV) : boolean;
+    procedure ListResources(appInfo : TFslObject; requestType: String; params : TFslList<TGraphQLArgument>; list : TFslList<TFHIRResourceV>);
   public
     [GraphDefinitionTestCase]  procedure TestCase(name : String);
   end;
@@ -95,7 +95,7 @@ end;
 
 { TFHIRGraphDefinitionTests }
 
-procedure TFHIRGraphDefinitionTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResource>);
+procedure TFHIRGraphDefinitionTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 begin
   if requestType = 'Condition' then
     list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\condition-example.xml'))
@@ -130,7 +130,7 @@ begin
   end;
 end;
 
-function TFHIRGraphDefinitionTests.ResolveReference(appInfo : TFslObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
+function TFHIRGraphDefinitionTests.ResolveReference(appInfo : TFslObject; context: TFHIRResourceV; reference: TFHIRObject; out targetContext, target: TFHIRResourceV): boolean;
 var
   parts : TArray<String>;
   res : TFHIRResource;
@@ -138,12 +138,12 @@ var
 begin
   targetContext := nil;
   target := nil;
-  if reference.reference.startsWith('#') then
+  if (reference as TFHIRReference).reference.startsWith('#') then
   begin
     if not (context is TFhirDomainResource) then
       exit(false);
     for res in TFhirDomainResource(context).containedList do
-      if '#'+res.id = reference.reference then
+      if '#'+res.id = (reference as TFHIRReference).reference then
       begin
         targetContext := context.Link;
         target := res.Link;
@@ -153,7 +153,7 @@ begin
   end
   else
   begin
-    parts := reference.reference.Split(['/']);
+    parts := (reference as TFHIRReference).reference.Split(['/']);
     filename := 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml';
     result := FileExists(filename);
     if result then

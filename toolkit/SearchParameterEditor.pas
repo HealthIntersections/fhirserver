@@ -32,7 +32,7 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FMX.ScrollBox, FMX.Memo, FMX.ListBox, FMX.Edit,
+  FHIR.Version.Types, FHIR.Version.Resources, FMX.ScrollBox, FMX.Memo, FMX.ListBox, FMX.Edit,
   FMX.StdCtrls, FMX.Controls.Presentation;
 
 type

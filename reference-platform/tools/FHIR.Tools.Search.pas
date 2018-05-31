@@ -33,7 +33,9 @@ uses
   SysUtils,
   FHIR.Support.Strings, FHIR.Web.Parsers, FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Tools.Types, FHIR.Base.Objects, FHIR.Tools.PathEngine, FHIR.Tools.Indexing, FHIRIndexManagers, FHIR.Tools.Utilities;
+  FHIR.Base.Common,
+  FHIR.Tools.Indexing, FHIRIndexManagers;{,
+  FHIR.Version.Types, FHIR.Base.Objects, FHIR.Version.PathEngine, , , FHIR.Version.Utilities}
 
 Type
   TFHIRSearchParamModifier = (spmNull, spmMissing, spmExact, spmContains, spmText, spmIn, spmBelow, spmAbove, spmNotIn, spmType);
@@ -177,29 +179,29 @@ end;
 procedure TSearchParameter.processPrefix;
 begin
   case index.SearchType of
-    SearchParamTypeNull : raise Exception.Create('Unknown parameter type for '+Index.Name);
-    SearchParamTypeNumber :
+    sptNull : raise Exception.Create('Unknown parameter type for '+Index.Name);
+    sptNumber :
       begin
       checkOrderingPrefix;
       if not StringIsInteger32(value) then
         raise Exception.Create('Numerical Parameter value "value" is not an integer');
       end;
-    SearchParamTypeDate :
+    sptDate :
       begin
       checkOrderingPrefix;
       if not TDateTimeEx.isValidXmlDate(value) then
         raise Exception.Create('Numerical Parameter value "value" is not a date');
       end;
-    SearchParamTypeString : ; // nothing
-    SearchParamTypeToken :
+    sptString : ; // nothing
+    sptToken :
       begin
         if value.Contains('|') then
           StringSplit(value, '|', FNamespace, FValue);
       end;
-    SearchParamTypeReference : ; // nothing
-    SearchParamTypeComposite : raise Exception.Create('composite parameters not done yet');
-    SearchParamTypeQuantity : raise Exception.Create('quantity parameters not done yet');
-    SearchParamTypeUri : ; // nothing
+    sptReference : ; // nothing
+    sptComposite : raise Exception.Create('composite parameters not done yet');
+    sptQuantity : raise Exception.Create('quantity parameters not done yet');
+    sptUri : ; // nothing
   end;
 end;
 
@@ -287,7 +289,7 @@ begin
 
     if (r <> '') then
     begin
-      if index.SearchType <> SearchParamTypeReference then
+      if index.SearchType <> sptReference then
         raise Exception.Create('chained, but not a reference: '+name);
       if length(index.TargetTypes) <> 1 then
         raise Exception.Create('not handled yet');
@@ -315,7 +317,7 @@ begin
         result.modifier := spmNotIn
       else if (m = '') then
         result.modifier := spmNull
-      else if isResourceName(m) then
+      else if indexes.factory.isResourceName(m) then
       begin
         result.modifier := spmType;
         result.modifierType := m;

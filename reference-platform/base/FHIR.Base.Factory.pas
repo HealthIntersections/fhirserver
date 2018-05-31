@@ -44,6 +44,8 @@ type
     function version : TFHIRVersion; virtual;
     function versionString : String; virtual;
     function description : String; virtual;
+    function ResourceNames : TArray<String>; virtual; abstract;
+    function isResourceName(name : String) : boolean; virtual;
 
     function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; virtual; abstract;
     function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
@@ -81,6 +83,7 @@ type
     function wrapExtension(o : TFHIRObject) : TFhirExtensionW; virtual; abstract;
     function wrapCoding(o : TFHIRObject) : TFhirCodingW; virtual; abstract;
     function wrapOperationOutcome(r : TFHIRResourceV) : TFhirOperationOutcomeW; virtual; abstract;
+    function wrapBundle(r : TFHIRResourceV) : TFhirBundleW; virtual; abstract;
   end;
 
   TFHIRVersionFactories = class (TFslObject)
@@ -130,6 +133,16 @@ implementation
 function TFHIRFactory.description: String;
 begin
   result := 'Unknown version';
+end;
+
+function TFHIRFactory.isResourceName(name: String): boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in ResourceNames do
+    if s = name then
+      exit(true);
 end;
 
 function TFHIRFactory.link: TFHIRFactory;

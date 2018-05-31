@@ -35,7 +35,7 @@ uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.Generics,
   FHIR.R2.Tests.Worker,
-  FHIR.Base.Objects, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R2.PathNode, FHIR.R2.Resources, FHIR.R2.PathEngine, FHIR.R2.Types,
   FHIR.Support.MsXml, DUnitX.TestFramework;
 

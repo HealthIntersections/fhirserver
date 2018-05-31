@@ -33,8 +33,8 @@ uses
   SysUtils, Classes,
   FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Generics, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Utilities,
-  FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Base.Scim, FHIR.Tools.Security, FHIR.Tools.Utilities, FHIR.Tools.Search, FHIR.Tools.PathEngine, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Common,
+  FHIR.Tools.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Base.Scim, FHIR.Tools.Security, FHIR.Version.Utilities, FHIR.Tools.Search, FHIR.Version.PathEngine, FHIR.Base.Lang,
   FHIRStorageService, FHIRUserProvider, TerminologyServer, FHIRServerContext,
   FHIR.Ucum.Services, TerminologyOperations;
 
@@ -759,13 +759,13 @@ end;
 function TTerminologyServerOperationEngine.matchesObject(obj: TFhirObject; sp: TSearchParameter): boolean;
 begin
   case sp.index.SearchType of
-    SearchParamTypeNull: raise Exception.Create('param.type = null');
-    SearchParamTypeNumber: raise Exception.Create('not done yet');
+    sptNull: raise Exception.Create('param.type = null');
+    sptNumber: raise Exception.Create('not done yet');
 //      if obj.isPrimitive then
 //        result := compareNumber(obj.primitiveValue, sp.value, sp.prefix)
 //      else
 //        result := false;
-    SearchParamTypeDate:
+    sptDate:
       if obj is TFHIRDate then
         result := compareDate(TFHIRDate(obj).value, TFHIRDate(obj).value.Min, TFHIRDate(obj).value.Max, sp.value, sp.prefix)
       else if obj is TFHIRDateTime then
@@ -774,7 +774,7 @@ begin
         result := compareDate(TFHIRInstant(obj).value, TFHIRInstant(obj).value.Min, TFHIRInstant(obj).value.Max, sp.value, sp.prefix)
       else
         result := false;
-    SearchParamTypeString:
+    sptString:
       if not obj.isPrimitive then
         result := false
       else if sp.modifier = spmNull then
@@ -785,11 +785,11 @@ begin
         result := obj.primitiveValue = sp.value
       else if sp.modifier = spmExact then
         raise Exception.Create('Modifier is not supported');
-    SearchParamTypeToken: raise Exception.Create('not done yet');
-    SearchParamTypeReference: raise Exception.Create('not done yet');
-    SearchParamTypeComposite: raise Exception.Create('not done yet');
-    SearchParamTypeQuantity: raise Exception.Create('not done yet');
-    SearchParamTypeUri:
+    sptToken: raise Exception.Create('not done yet');
+    sptReference: raise Exception.Create('not done yet');
+    sptComposite: raise Exception.Create('not done yet');
+    sptQuantity: raise Exception.Create('not done yet');
+    sptUri:
       if not obj.isPrimitive then
         result := false
       else if sp.modifier = spmNull then

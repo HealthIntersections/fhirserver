@@ -36,10 +36,10 @@ uses
   SysUtils, Classes,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser, FHIR.Base.Utilities,
-  {$IFDEF FHIR2} FHIR.R2.Client, {$ENDIF}
+(*  {$IFDEF FHIR2} FHIR.R2.Client, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Client, {$ENDIF}
-  {$IFDEF FHIR4} FHIR.R4.Client, {$ENDIF}
-  FHIR.Tools.Context, FHIR.Tools.Constants, FHIR.Tools.Resources;
+  {$IFDEF FHIR4} FHIR.R4.Client, {$ENDIF}*)
+  FHIR.Version.Context, FHIR.Version.Constants, FHIR.Version.Resources;
 
 const
   WAIT_CYCLE_LENGTH = 10;
@@ -125,7 +125,7 @@ type
 implementation
 
 uses
-  FHIR.Tools.Utilities;
+  FHIR.Version.Utilities;
 
 { TFHIRClientAsyncTask }
 

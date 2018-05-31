@@ -70,9 +70,9 @@ begin
 
   ts := TStringList.Create;
   try
-    FCache.ListPackageVersions('hl7.fhir.tools.validator', ts);
+    FCache.ListPackageVersions('hl7.FHIR.Version.Validator', ts);
     if ts.Count > 0 then
-      FJarPath := path([FCache.Folder, 'hl7.fhir.tools.validator-'+ts[ts.Count-1], 'bin', 'org.hl7.fhir.validator.jar']);
+      FJarPath := path([FCache.Folder, 'hl7.FHIR.Version.Validator-'+ts[ts.Count-1], 'bin', 'org.hl7.fhir.validator.jar']);
   finally
     ts.Free;
   end;

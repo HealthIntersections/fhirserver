@@ -8,7 +8,7 @@ uses
   FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,
   FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities,
+  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
   BaseFrame, DocumentGenerationForm;
 
 type

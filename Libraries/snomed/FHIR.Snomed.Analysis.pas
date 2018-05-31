@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, Math,
   FHIR.Support.Strings, FHIR.Web.Parsers, FHIR.Support.Text,
   FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Zip, FHIR.Support.Stream,
-  FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Constants, FHIR.Tools.Parser,
+  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Constants, FHIR.Version.Parser,
   FHIR.Snomed.Services, FHIR.Base.Parser,
   FHIR.Support.Objects;
 

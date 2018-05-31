@@ -80,7 +80,7 @@ uses
   FHIR.R4.Tags in '..\reference-platform\r4\FHIR.R4.Tags.pas',
   FHIR.Base.Lang in '..\reference-platform\base\FHIR.Base.Lang.pas',
   FHIR.Base.Xhtml in '..\reference-platform\base\FHIR.Base.Xhtml.pas',
-  FHIR.Tools.Parser in '..\reference-platform\tools\FHIR.Tools.Parser.pas',
+  FHIR.Version.Parser in '..\reference-platform\version\FHIR.Version.Parser.pas',
   FHIR.Base.Parser in '..\reference-platform\base\FHIR.Base.Parser.pas',
   FHIR.R4.Xml in '..\reference-platform\r4\FHIR.R4.Xml.pas',
   FHIR.R4.Json in '..\reference-platform\r4\FHIR.R4.Json.pas',

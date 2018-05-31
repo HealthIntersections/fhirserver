@@ -49,6 +49,8 @@ const
   MAP_SEARCH_MODE : array [TFhirSearchEntryModeEnum] of TFHIRBundleEntrySearchMode = (smUnknown, smMatch, smInclude, smOutcome);
   MAP_ELEMENT_DEFINITION_BINDING : array [TFhirBindingStrengthEnum] of TElementDefinitionBinding = (edbNone, edbRequired, edbExtensible, edbPreferred, edpExample);
   MAP_TFilterOperator : array [TFhirFilterOperatorEnum] of TFilterOperator = (foNull, foEqual, foIsA, foIsNotA, foRegex, foIn, foNotIn);
+  MAP_TFHIRSearchParamType1 : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptNull, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri);
+  MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri);
 
 type
   TFHIRExtension2 = class (TFHIRExtensionW)
@@ -78,6 +80,8 @@ type
     function entry : TFhirBundleEntry;
   public
     function searchMode : TFHIRBundleEntrySearchMode; override;
+    function searchModeE : TFHIRObject; override;
+    function searchScoreE : TFHIRObject; override;
     function resource : TFHIRResourceV; override;
   end;
 
@@ -91,6 +95,9 @@ type
     procedure clearLinks; override;
     function entries : TFslList<TFhirBundleEntryW>; override;
     procedure listLinks(links : TDictionary<String, String>); override;
+    function GetLink(rel: String): String; override;
+    procedure SetLink(rel: String; const Value: String); override;
+    function total : TFHIRObject; override;
   end;
 
   TFHIROperationOutcomeIssue2 = class (TFHIROperationOutcomeIssueW)
@@ -408,6 +415,11 @@ begin
   end;
 end;
 
+function TFHIRBundle2.GetLink(rel: String): String;
+begin
+  result := bundle.Links[rel];
+end;
+
 procedure TFHIRBundle2.listLinks(links: TDictionary<String, String>);
 var
   bl : TFhirBundleLink;
@@ -423,6 +435,16 @@ var
 begin
   b := bnd as TFHIRBundle;
   result := b.Links['next'];
+end;
+
+procedure TFHIRBundle2.SetLink(rel: String; const Value: String);
+begin
+  bundle.Links[rel] := value;
+end;
+
+function TFHIRBundle2.total: TFHIRObject;
+begin
+  result := bundle.totalElement;
 end;
 
 { TFHIROperationOutcomeIssue2 }
@@ -898,6 +920,22 @@ begin
     result := MAP_SEARCH_MODE[entry.search.mode];
 end;
 
+
+function TFHIRBundleEntry2.searchModeE: TFHIRObject;
+begin
+  if entry.search = nil then
+    result := nil
+  else
+    result := entry.search.modeElement;
+end;
+
+function TFHIRBundleEntry2.searchScoreE: TFHIRObject;
+begin
+  if entry.search = nil then
+    result := nil
+  else
+    result := entry.search.scoreElement;
+end;
 
 { TFHIRValueSet2 }
 

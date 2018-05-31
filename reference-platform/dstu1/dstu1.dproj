@@ -162,7 +162,7 @@
         <DCCReference Include="..\support\HL7V2DateSupport.pas"/>
         <DCCReference Include="FHIR.Base.Objects.pas"/>
         <DCCReference Include="..\support\AdvStringMatches.pas"/>
-        <DCCReference Include="FHIR.Tools.Resources.pas"/>
+        <DCCReference Include="FHIR.Version.Resources.pas"/>
         <DCCReference Include="FHIR.Base.Parser.pas"/>
         <DCCReference Include="FHIR.Tools.Session.pas"/>
         <DCCReference Include="..\support\FHIR.Web.Parsers.pas"/>
@@ -185,7 +185,7 @@
         <DCCReference Include="..\support\AfsStreamManagers.pas"/>
         <DCCReference Include="..\support\AdvObjectMatches.pas"/>
         <DCCReference Include="..\support\RegExpr.pas"/>
-        <DCCReference Include="FHIR.Tools.Utilities.pas"/>
+        <DCCReference Include="FHIR.Version.Utilities.pas"/>
         <DCCReference Include="..\support\AdvStringObjectMatches.pas"/>
         <DCCReference Include="..\support\JWT.pas"/>
         <DCCReference Include="..\support\HMAC.pas"/>

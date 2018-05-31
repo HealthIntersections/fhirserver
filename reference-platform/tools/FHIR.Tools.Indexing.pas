@@ -33,33 +33,26 @@ uses
   SysUtils,
   System.Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
-  FHIR.Base.Objects,
-  {$IFDEF FHIR2}
-  FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants, FHIR.R2.PathNode;
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Constants, FHIR.R3.PathNode;
-  {$ENDIF}
-  {$IFDEF FHIR4}
-  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.R4.PathNode;
-  {$ENDIF}
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory;
 
 type
   TFhirIndex = class (TFslObject)
   private
+    FFactory : TFHIRFactory;
     FResourceType : String;
     FKey: Integer;
     FName: String;
     FDescription : String;
-    FSearchType: TFhirSearchParamTypeEnum;
+    FSearchType: TFHIRSearchParamType;
     FTargetTypes : TArray<String>;
     FURI: String;
     FPath : String;
-    FUsage : TFhirSearchXpathUsageEnum;
+    FUsage : TFhirSearchXpathUsage;
     FMapping : String;
-    FExpression: TFHIRPathExpressionNode;
-    procedure SetExpression(const Value: TFHIRPathExpressionNode);
+    FExpression: TFHIRPathExpressionNodeV;
+    procedure SetExpression(const Value: TFHIRPathExpressionNodeV);
   public
+    constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
     function Link : TFhirIndex; Overload;
     function Clone : TFhirIndex; Overload;
@@ -69,13 +62,13 @@ type
     property Name : String read FName write FName;
     Property Description : String read FDescription write FDescription;
     Property Key : Integer read FKey write FKey;
-    Property SearchType : TFhirSearchParamTypeEnum read FSearchType write FSearchType;
+    Property SearchType : TFHIRSearchParamType read FSearchType write FSearchType;
     Property TargetTypes : TArray<String> read FTargetTypes write FTargetTypes;
     Property URI : String read FURI write FURI;
     Property Path : String read FPath;
-    Property Usage : TFhirSearchXpathUsageEnum read FUsage;
+    Property Usage : TFhirSearchXpathUsage read FUsage;
     Property Mapping : String read FMapping write FMapping;
-    property expression : TFHIRPathExpressionNode read FExpression write SetExpression;
+    property expression : TFHIRPathExpressionNodeV read FExpression write SetExpression;
 
     function specifiedTarget : String;
 
@@ -84,18 +77,22 @@ type
 
   TFhirIndexList = class (TFslObjectList)
   private
+    FFactory : TFHIRFactory;
     function GetItemN(iIndex: integer): TFhirIndex;
   protected
     function ItemClass : TFslObjectClass; override;
   public
+    constructor Create(factory : TFHIRFactory);
+    destructor Destroy; override;
     function Link : TFhirIndexList; Overload;
 
     function getByName(atype : String; name : String): TFhirIndex;
-    function add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum): TFhirIndex; overload;
-    function add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum; url : String): TFhirIndex; overload;
-    function add(resourceType : String; sp : TFhirSearchParameter): TFhirIndex; overload;
+    function add(aResourceType : String; name, description : String; aType : TFHIRSearchParamType; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsage): TFhirIndex; overload;
+    function add(aResourceType : String; name, description : String; aType : TFHIRSearchParamType; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsage; url : String): TFhirIndex; overload;
+    function add(resourceType : String; sp : TFhirSearchParameterW): TFhirIndex; overload;
     Property Item[iIndex : integer] : TFhirIndex read GetItemN; default;
     function listByType(aType : String) : TFslList<TFhirIndex>;
+    property Factory : TFHIRFactory read FFactory;
   end;
 
   TFhirComposite = class (TFslObject)
@@ -143,10 +140,10 @@ type
     Constructor Create; override;
     Destructor Destroy; override;
     Function Link : TFHIRCompartmentList; overload;
-    function existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
-    function getIndexNames(comp: TFHIRResourceType; resource : String) : TFslStringSet;
-    function hasCompartment(comp: TFHIRResourceType) : boolean;
-    procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String); overload;
+    function existsInCompartment(comp: string; resource : String) : boolean;
+    function getIndexNames(comp: string; resource : String) : TFslStringSet;
+    function hasCompartment(comp: string) : boolean;
+    procedure register(comp: string; resource : String; indexes : array of String); overload;
 //    procedure register(comp: TFHIRResourceType; resource : String; list : String); overload;
   end;
 
@@ -170,8 +167,15 @@ begin
   result := TFhirIndex(Inherited Clone);
 end;
 
+constructor TFhirIndex.Create(factory : TFHIRFactory);
+begin
+  inherited create;
+  FFactory := factory;
+end;
+
 destructor TFhirIndex.Destroy;
 begin
+  FFactory.Free;
   FExpression.Free;
   inherited;
 end;
@@ -181,7 +185,7 @@ begin
   result := TFhirIndex(Inherited Link);
 end;
 
-procedure TFhirIndex.SetExpression(const Value: TFHIRPathExpressionNode);
+procedure TFhirIndex.SetExpression(const Value: TFHIRPathExpressionNodeV);
 begin
   FExpression.Free;
   FExpression := Value;
@@ -193,7 +197,7 @@ var
   s : String;
 begin
   result := '';
-  for a in ALL_RESOURCE_TYPE_NAMES do
+  for a in FFactory.ResourceNames do
     for s in FTargetTypes do
       if s = a then
         if result = '' then
@@ -204,23 +208,23 @@ end;
 
 function TFhirIndex.summary: String;
 begin
-  result := name+' : '+CODES_TFhirSearchParamTypeEnum[SearchType];
+  result := name+' : '+CODES_TFHIRSearchParamType[SearchType];
 end;
 
 { TFhirIndexList }
 
-function TFhirIndexList.add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum) : TFHIRIndex;
+function TFhirIndexList.add(aResourceType : String; name, description : String; aType : TFHIRSearchParamType; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsage) : TFHIRIndex;
 begin
   result := add(aResourceType, name, description, aType, aTargetTypes, path, usage, 'http://hl7.org/fhir/SearchParameter/'+aResourceType+'-'+name.Replace('[', '').Replace(']', ''));
 end;
 
 
-function TFhirIndexList.add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum; url: String) : TFHIRIndex;
+function TFhirIndexList.add(aResourceType : String; name, description : String; aType : TFHIRSearchParamType; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsage; url: String) : TFHIRIndex;
 var
   ndx : TFhirIndex;
   i : integer;
 begin
-  ndx := TFhirIndex.Create;
+  ndx := TFhirIndex.Create(FFactory);
   try
     ndx.ResourceType := aResourceType;
     ndx.name := name;
@@ -239,16 +243,21 @@ begin
   end;
 end;
 
-function TFhirIndexList.add(resourceType : String; sp: TFhirSearchParameter) : TFhirIndex;
-var
-  targets : TArray<String>;
-  i : integer;
+function TFhirIndexList.add(resourceType : String; sp: TFhirSearchParameterW) : TFhirIndex;
 begin
-  SetLength(targets, sp.targetList.Count);
-  for i := 0 to sp.targetList.Count - 1 do
-    targets[i] := sp.targetList[i].value;
+  result := add(resourceType, sp.name, sp.description, sp.type_, sp.targets, '', sp.xpathUsage);
+end;
 
-  result := add(resourceType, sp.name, sp.description, sp.type_, targets, '', sp.xpathUsage);
+constructor TFhirIndexList.Create(factory: TFHIRFactory);
+begin
+  inherited Create;
+  FFactory := factory;
+end;
+
+destructor TFhirIndexList.Destroy;
+begin
+  FFactory.Free;
+  inherited;
 end;
 
 function TFhirIndexList.getByName(atype, name: String): TFhirIndex;
@@ -409,43 +418,37 @@ begin
   inherited;
 end;
 
-function TFHIRCompartmentList.existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
+function TFHIRCompartmentList.existsInCompartment(comp: string; resource : String) : boolean;
 begin
-  case comp of
-    frtPatient : result := FPatientCompartment.containsKey(resource);
-    frtPractitioner : result := FPractitionerCompartment.ContainsKey(resource);
-    frtEncounter : result := FEncounterCompartment.containsKey(resource);
-    frtRelatedPerson : result := FRelatedPersonCompartment.containsKey(resource);
-    frtDevice : result := FDeviceCompartment.containsKey(resource);
+  if comp = 'Patient' then result := FPatientCompartment.containsKey(resource)
+  else if comp = 'Practitioner' then result := FPractitionerCompartment.ContainsKey(resource)
+  else if comp = 'Encounter' then result := FEncounterCompartment.containsKey(resource)
+  else if comp = 'RelatedPerson' then result := FRelatedPersonCompartment.containsKey(resource)
+  else if comp = 'Device' then result := FDeviceCompartment.containsKey(resource)
   else
     result := false
-  end;
 end;
 
-function TFHIRCompartmentList.getIndexNames(comp: TFHIRResourceType; resource : String) : TFslStringSet;
+function TFHIRCompartmentList.getIndexNames(comp: String; resource : String) : TFslStringSet;
 begin
-  case comp of
-    frtPatient : result := FPatientCompartment[resource];
-    frtPractitioner : result := FPractitionerCompartment[resource];
-    frtEncounter : result := FEncounterCompartment[resource];
-    frtRelatedPerson : result := FRelatedPersonCompartment[resource];
-    frtDevice : result := FDeviceCompartment[resource];
+  if comp = 'Patient' then result := FPatientCompartment[resource]
+  else if comp = 'Practitioner' then result := FPractitionerCompartment[resource]
+  else if comp = 'Encounter' then result := FEncounterCompartment[resource]
+  else if comp = 'RelatedPerson' then result := FRelatedPersonCompartment[resource]
+  else if comp = 'Device' then result := FDeviceCompartment[resource]
   else
     result := nil
-  end;
 end;
 
-function TFHIRCompartmentList.hasCompartment(comp: TFHIRResourceType): boolean;
+function TFHIRCompartmentList.hasCompartment(comp: String): boolean;
 begin
-  case comp of
-    frtPatient : result := true;
-    frtPractitioner : result := true;
-    frtEncounter : result := true;
-    frtRelatedPerson : result := true;
-    frtDevice : result := true;
+  if comp = 'Patient' then result := true
+  else if comp = 'Practitioner' then result := true
+  else if comp = 'Encounter' then result := true
+  else if comp = 'RelatedPerson' then result := true
+  else if comp = 'Device' then result := true
   else
     result := false
-  end;
 end;
 
 function TFHIRCompartmentList.Link: TFHIRCompartmentList;
@@ -458,17 +461,15 @@ end;
 //  raise Exception.Create('not done yet');
 //end;
 //
-procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource : String; indexes : array of String);
+procedure TFHIRCompartmentList.register(comp: String; resource : String; indexes : array of String);
 begin
-  case comp of
-    frtPatient : FPatientCompartment.add(resource, TFslStringSet.create(indexes));
-    frtPractitioner : FPractitionerCompartment.Add(resource, TFslStringSet.create(indexes));
-    frtEncounter : FEncounterCompartment.add(resource, TFslStringSet.create(indexes));
-    frtRelatedPerson : FRelatedPersonCompartment.add(resource, TFslStringSet.create(indexes));
-    frtDevice : FDeviceCompartment.add(resource, TFslStringSet.create(indexes));
+  if comp = 'Patient' then FPatientCompartment.add(resource, TFslStringSet.create(indexes))
+  else if comp = 'Practitioner' then FPractitionerCompartment.Add(resource, TFslStringSet.create(indexes))
+  else if comp = 'Encounter' then FEncounterCompartment.add(resource, TFslStringSet.create(indexes))
+  else if comp = 'RelatedPerson' then FRelatedPersonCompartment.add(resource, TFslStringSet.create(indexes))
+  else if comp = 'Device' then FDeviceCompartment.add(resource, TFslStringSet.create(indexes))
   else
     raise Exception.Create('Unknown compartment');
-  end;
 end;
 
 

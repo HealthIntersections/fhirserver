@@ -145,7 +145,6 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Resources.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Types.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Constants.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Security.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Tags.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Xml.pas"/>

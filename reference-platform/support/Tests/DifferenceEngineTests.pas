@@ -35,7 +35,7 @@ uses
   Windows, SysUtils, classes,
   FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Text,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Common,
-  FHIR.Tools.Parser,
+  FHIR.Version.Parser,
   {$IFDEF FHIR2}
   FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Factory, FHIR.R2.Common,
   {$ENDIF}

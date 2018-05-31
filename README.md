@@ -52,13 +52,13 @@ This is pascal code that (in principle) compiles under Delphi XE3+ (any edition,
 Note that in practice, various subtle but breaking changes have been introduced to the runtime
 library (Streams, Indy) that mean that some fiddling with IFDEFs may be necessary.
 
-Support for Free Pascal(/Lazarus) would be good, but requires substantial work to deal with the 
-difference between delphi and FPC implementations of pascal. Contributions are welcome
+Support for Free Pascal(/Lazarus) would be good, and is in progress, but depends on bug
+fixes in free pascal. Contributions are welcome
 
 The FhirServer depends on the following other GitHub repositories:
 * https://github.com/grahamegrieve/delphi-markdown
 * https://github.com/VSoftTechnologies/DUnitX
-* + TreeView
+* + TreeView + SynEdit for the GUI programs
 
 You need to get a copy of these and fix the paths for the markdown processor units in the .dprs.
 You also need to get a copy of the latest version of the Indy components, since the server
@@ -68,9 +68,18 @@ your system path. (Tools...Options)
 And also you need to install https://bitbucket.org/sglienke/testinsight/wiki/Home (all delphi 
 users should have this installed!)
 
-After that, compiling should be simple: open the file fhirprojects.groupproj in your version of delphi, and compile all projects
+After that, compiling should be simple: open one of the .groupproj in the root 
+folder in your version of delphi, and compile
 
-Note that the FHIRServer is a *big* compile. You may have problems compiling in resource constrained environments.
+Design Time support
+-------------------
+
+For design time support for the GUI applications, you need to install treeview and 
+synedit, then open and compile the packages in /packages, and install the 2 design
+time packages.
+
+Note that the FHIRServer is a *big* compile. You may have problems compiling in 
+resource constrained environments.
 
 Building Release
 ----------------
@@ -79,7 +88,9 @@ Bulding an actual release has a long list of dependencies, including
 several versions of the FHIR specification, and the following tools
 * Innosetup + InnoSetup download plug-in
 * FinalBuilder
- 
+
+All the dependencies are free, though assmebly is a pain. 
+
 Running
 -------
 

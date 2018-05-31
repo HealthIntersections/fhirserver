@@ -33,7 +33,7 @@ This is the dstu1 version of the FHIR code
 {$ENDIF}
 
 
-{!Wrapper uses Classes,FHIR.Base.Objects,FHIR.Tools.Resources,FHIRResources_Wrapper, FHIRTypes_Wrapper, FHIR.Tools.Types, FHIRAtomFeed}
+{!Wrapper uses Classes,FHIR.Base.Objects,FHIR.Version.Resources,FHIRResources_Wrapper, FHIRTypes_Wrapper, FHIR.Version.Types, FHIRAtomFeed}
 
 interface
 
@@ -45,7 +45,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Decimal, GuidSupport,
   FHIR.Support.Objects, AdvBuffers, AdvStringLists,
    JWT, FHIR.Base.Scim,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRComponents, FHIR.Tools.Types, FHIRAtomFeed;
+  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Constants, FHIRComponents, FHIR.Version.Types, FHIRAtomFeed;
 
 Const
    HTTP_OK_200 = 200;
@@ -710,7 +710,7 @@ Function IdHead(s : String):String;
 implementation
 
 uses
-  FHIR.Tools.Parser,
+  FHIR.Version.Parser,
   FHIR.Base.Parser;
 
 { ERestfulException }

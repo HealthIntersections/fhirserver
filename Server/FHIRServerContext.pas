@@ -36,8 +36,8 @@ uses
   FHIR.Support.Lock, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
   FHIR.Base.Factory,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIRIndexManagers, FHIR.Tools.Utilities,
-  FHIR.Tools.Validator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIRIndexManagers, FHIR.Version.Utilities,
+  FHIR.Version.Validator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
   FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, FHIR.Misc.ApplicationVerifier,
   ApplicationCache, ServerJavascriptHost;
 
@@ -327,7 +327,6 @@ var
 begin
   Inherited Create;
   FLock := TCriticalSection.Create('ServerContext');
-  FIndexes := TFHIRIndexInformation.create;
   FStorage := storage;
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FBases := TStringList.Create;
@@ -346,6 +345,7 @@ begin
     {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}
     {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF} );
   FValidator := TFHIRValidator.Create(FValidatorContext.link);
+  FIndexes := TFHIRIndexInformation.create(FValidatorContext.factory.link);
   FSessionManager := TFHIRSessionManager.Create(self);
   FTagManager := TFHIRTagManager.create;
   FNamingSystems := TFslMap<TFHIRNamingSystem>.create;

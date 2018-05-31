@@ -34,8 +34,8 @@ uses
   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Math, FHIR.Web.Parsers,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json,
   FHIR.Misc.GraphQL,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
-  FHIR.Tools.Context, FHIR.Tools.PathEngine, FHIR.Tools.PathNode,
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.Version.Context, FHIR.Version.PathEngine, FHIR.Version.PathNode,
   FHIR.Tools.GraphQL;
 
 type
@@ -254,7 +254,8 @@ var
   matches : TFHIRSelectionList;
   sel : TFHIRSelection;
   tl : TFhirGraphDefinitionLinkTarget;
-  res, tgtCtxt : TFhirResource;
+  res : TFhirResourceV;
+  tgtCtxt : TFHIRResourceV;
   l : TFhirGraphDefinitionLink;
 begin
   check(link.path <> '', 'Path is needed at '+path);
@@ -282,11 +283,11 @@ begin
             begin
               if CODES_TFhirResourceTypesEnum[tl.type_] = res.fhirType then
               begin
-                if not isInBundle(res) then
+                if not isInBundle(res as TFhirResource) then
                 begin
-                  addToBundle(res);
+                  addToBundle(res as TFhirResource);
                   for l in definition.link_List do
-                    processLink(Start.fhirType, res, l, depth+1);
+                    processLink(Start.fhirType, res as TFhirResource, l, depth+1);
                 end;
               end;
             end;
@@ -307,9 +308,9 @@ end;
 procedure TFHIRGraphDefinitionEngine.processLinkTarget(focusPath : String; focus: TFHIRResource; link: TFhirGraphDefinitionLink; depth: integer);
 var
   path : String;
-  list : TFslList<TFHIRResource>;
+  list : TFslList<TFHIRResourceV>;
   params : TFslList<TGraphQLArgument>;
-  res : TFhirResource;
+  res : TFhirResourceV;
   l : TFhirGraphDefinitionLink;
 begin
   check(link.targetList.Count = 1, 'If there is no path, there must be one and only one target at '+focusPath);
@@ -317,7 +318,7 @@ begin
   check(link.targetList[0].params.Contains('{ref}'), 'If there is no path, the target must have parameters that include a parameter using {ref} at '+focusPath);
   path := focusPath+' -> '+CODES_TFhirResourceTypesEnum[link.targetList[0].type_]+'?'+link.targetList[0].params;
 
-  list := TFslList<TFHIRResource>.create;
+  list := TFslList<TFHIRResourceV>.create;
   try
     params := TFslList<TGraphQLArgument>.create;
     try
@@ -330,9 +331,9 @@ begin
     check(not validating or (list.Count <= StrToIntDef(link.max, MAXINT)), 'Link at path '+path+' requires at most '+link.max+' matches, but found '+inttostr(list.Count));
     for res in list do
     begin
-      if not isInBundle(res) then
+      if not isInBundle(res as TFhirResource) then
       begin
-        addToBundle(res);
+        addToBundle(res as TFhirResource);
         for l in definition.link_List do
           processLink(Start.fhirType, FStart, l, depth+1);
       end;

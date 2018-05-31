@@ -8,8 +8,8 @@ uses
   FMX.Memo, FMX.StdCtrls, FMX.Edit, FMX.ListBox, FMX.Controls.Presentation,
   FMX.Ani,
   FHIR.Support.System, FHIR.Support.Lock,
-  FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
-  FHIR.Tools.Client, FHIR.Client.Async,
+  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.Version.Client, FHIR.Client.Async,
   BaseDialog, ToolkitSettings;
 
 type

@@ -32,7 +32,7 @@ uses
   FastMM4 in '..\Libraries\FMM\FastMM4.pas',
   System.StartUpCopy,
   FMX.Forms,
-  FHIR.Tools.Client in '..\reference-platform\client\FHIR.Tools.Client.pas',
+  FHIR.Version.Client in '..\reference-platform\version\FHIR.Version.Client.pas',
   FHIR.Support.Strings in '..\reference-platform\support\FHIR.Support.Strings.pas',
   FHIR.Support.Math in '..\reference-platform\support\FHIR.Support.Math.pas',
   FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
@@ -47,7 +47,7 @@ uses
   FHIR.Support.Binary in '..\reference-platform\support\FHIR.Support.Binary.pas',
   FHIR.Support.System in '..\reference-platform\support\FHIR.Support.System.pas',
   FHIR.Support.Json in '..\reference-platform\support\FHIR.Support.Json.pas',
-  FHIR.Tools.Parser in '..\reference-platform\tools\FHIR.Tools.Parser.pas',
+  FHIR.Version.Parser in '..\reference-platform\version\FHIR.Version.Parser.pas',
   FHIR.R3.Xml in '..\reference-platform\dstu3\FHIR.R3.Xml.pas',
   FHIR.Base.Parser in '..\reference-platform\base\FHIR.Base.Parser.pas',
   FHIR.Support.MXml in '..\reference-platform\support\FHIR.Support.MXml.pas',
@@ -59,10 +59,8 @@ uses
   FHIR.R3.Context in '..\reference-platform\dstu3\FHIR.R3.Context.pas',
   FHIR.R3.Types in '..\reference-platform\dstu3\FHIR.R3.Types.pas',
   FHIR.R3.Resources in '..\reference-platform\dstu3\FHIR.R3.Resources.pas',
-  FHIR.Tools.Session in '..\reference-platform\tools\FHIR.Tools.Session.pas',
   FHIR.Base.Scim in '..\reference-platform\base\FHIR.Base.Scim.pas',
   FHIR.R3.Constants in '..\reference-platform\dstu3\FHIR.R3.Constants.pas',
-  FHIR.Tools.Security in '..\reference-platform\tools\FHIR.Tools.Security.pas',
   FHIR.R3.Tags in '..\reference-platform\dstu3\FHIR.R3.Tags.pas',
   FHIR.Base.Lang in '..\reference-platform\base\FHIR.Base.Lang.pas',
   FHIR.Base.Xhtml in '..\reference-platform\base\FHIR.Base.Xhtml.pas',
@@ -158,9 +156,6 @@ uses
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
   PackageManagerFrame in 'PackageManagerFrame.pas' {PackageManagerFrame: TFrame},
   ValidationFrame in 'ValidationFrame.pas' {ValidationEngineFrame: TFrame},
-  FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas',
-  FHIR.Java.JNI in '..\Libraries\java\FHIR.Java.JNI.pas',
-  FHIR.Java.Strings in '..\Libraries\java\FHIR.Java.Strings.pas',
   TransformationFrame in 'TransformationFrame.pas' {TransformationEngineFrame: TFrame},
   PackageBrowser in 'PackageBrowser.pas' {PackageFinderForm},
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
@@ -168,7 +163,8 @@ uses
   FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
   FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
   FHIR.R3.Operations in '..\reference-platform\dstu3\FHIR.R3.Operations.pas',
-  FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas';
+  FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas',
+  FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas';
 
 {$R *.res}
 

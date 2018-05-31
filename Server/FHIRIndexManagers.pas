@@ -50,8 +50,8 @@ uses
   FHIR.Support.Objects,  FHIR.Support.Xml, FHIR.Support.Generics,
   FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Lock,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.Tools.Indexing, FHIR.Tools.Context, FHIR.Tools.Session, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Tags, FHIR.Tools.Utilities, FHIR.Tools.Parser, FHIR.Tools.PathEngine, FHIR.Tools.Profiles, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
+  FHIR.Tools.Indexing, FHIR.Version.Context, FHIR.Tools.Session, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Tags, FHIR.Version.Utilities, FHIR.Version.Parser, FHIR.Version.PathEngine, FHIR.Version.Profiles, FHIR.Base.Xhtml,
   TerminologyServer, ServerUtilities,
   FHIR.Ucum.Services, FHIR.Ucum.IFace;
 
@@ -76,7 +76,7 @@ Type
     FRefType: integer;
     FTarget: integer;
     FConcept : integer;
-    FType: TFhirSearchParamTypeEnum;
+    FType: TFhirSearchParamType;
     FParent: Integer;
     FFlag: boolean;
     FName : String;
@@ -93,7 +93,7 @@ Type
     property RefType : integer read FRefType write FRefType;
     Property target : integer read FTarget write FTarget;
     Property concept : integer read FConcept write FConcept;
-    Property type_ : TFhirSearchParamTypeEnum read FType write FType;
+    Property type_ : TFhirSearchParamType read FType write FType;
     Property flag : boolean read FFlag write FFlag;
     Property TargetType : TFhirResourceType read FTargetType write FTargetType;
   end;
@@ -103,7 +103,7 @@ Type
     FKeyEvent : TFHIRGetNextKey;
     procedure filter(indexes : TFhirIndexList; name : String; list : TFslList<TFhirIndexEntry>);
   public
-    function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : TFHIRResourceType; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer; overload;
+    function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : TFHIRResourceType; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer; overload;
     function add(key, parent : integer; index : TFhirComposite) : integer; overload;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
   end;
@@ -152,14 +152,15 @@ Type
     FGroupMemberIndex: integer;
     procedure buildIndexes;
   public
-    constructor Create; Override;
+    constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
     function Link : TFHIRIndexInformation; overload;
+    function factory : TFHIRFactory;
     procedure ReconcileIndexes(connection : TKDBConnection);
 
     Function GetTargetsByName(types : TArray<String>; name : String) : TArray<String>;
     Function GetKeyByName(name : String) : integer;
-    Function GetTypeByName(types : TArray<String>; name : String) : TFhirSearchParamTypeEnum;
+    Function GetTypeByName(types : TArray<String>; name : String) : TFhirSearchParamType;
     Function GetComposite(types : TArray<String>; name : String; var otypes : TArray<String>) : TFhirComposite;
 
     property Indexes : TFhirIndexList read FIndexes;
@@ -364,7 +365,7 @@ function normaliseDecimal(v : String): String;
 implementation
 
 uses
-  FHIR.Tools.IndexInfo;
+  FHIR.Version.IndexInfo;
 
 Function EncodeNYSIISValue(value : TFhirString) : String; overload;
 begin
@@ -399,7 +400,7 @@ end;
 
 { TFhirIndexEntryList }
 
-function TFhirIndexEntryList.add(key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; ttype : TFHIRResourceType; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer;
+function TFhirIndexEntryList.add(key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; ttype : TFHIRResourceType; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer;
 var
   entry : TFhirIndexEntry;
   dummy : string;
@@ -411,25 +412,25 @@ begin
     raise Exception.create('unknown index '+index.Name);
 
   case type_ of
-    SearchParamTypeNumber, SearchParamTypeQuantity :
+    sptNumber, sptQuantity :
       begin
         value1 := normaliseDecimal(value1);
         value2 := normaliseDecimal(value2);
       end;
-    SearchParamTypeString :
+    sptString :
       begin
         value1 := removeCaseAndAccents(value1);
         value2 := removeCaseAndAccents(value2);
       end;
-    SearchParamTypeDate : ; // nothing
+    sptDate : ; // nothing
 
-    SearchParamTypeUri : ; // nothing
+    sptUri : ; // nothing
 
-    SearchParamTypeToken :
+    sptToken :
       begin
       value2 := removeCaseAndAccents(value2);
       end;
-    SearchParamTypeReference : ; // nothing
+    sptReference : ; // nothing
   else
     // null, Composite
     raise exception.create('Unhandled type generating index');
@@ -583,7 +584,7 @@ end;
 procedure TFhirIndexManager.index(aType : String; key, parent : integer; value, name: String);
 var
   ndx : TFhirIndex;
-  types : TFhirSearchParamTypeEnumList;
+  types : TFhirSearchParamTypeList;
 
 begin
   if (value = '') then
@@ -593,12 +594,12 @@ begin
     raise Exception.create('Unknown index '+name+' on type '+aType);
 
   if StringIsInteger32(value) then
-    types := [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference, SearchParamTypeNumber, SearchParamTypeUri]
+    types := [sptString, sptToken, sptDate, sptReference, sptNumber, sptUri]
   else
-    types := [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference, SearchParamTypeUri];
+    types := [sptString, sptToken, sptDate, sptReference, sptUri];
   if not (ndx.SearchType in types) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
-//  if ndx.SearchType = SearchParamTypeString then
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
+//  if ndx.SearchType = sptString then
     value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
 //  else if (length(value) > INDEX_ENTRY_LENGTH) then
 //     raise exception.create('string too long for indexing: '+value+ ' ('+inttostr(length(value))+' chars)');
@@ -614,10 +615,10 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+aType);
-  if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeReference]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
+  if not (ndx.SearchType in [sptToken, sptReference]) then //todo: fix up text
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
   value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
-  FEntries.add(key, parent, ndx, 0, '', value, 0, frtNull, SearchParamTypeString);
+  FEntries.add(key, parent, ndx, 0, '', value, 0, frtNull, sptString);
 end;
 
 function TFhirIndexManager.Link: TFHIRIndexManager;
@@ -634,15 +635,15 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+aType);
-  if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
+  if not (ndx.SearchType in [sptString, sptToken, sptDate]) then //todo: fix up text
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing string');
 
-  if ndx.SearchType = SearchParamTypeString then
+  if ndx.SearchType = sptString then
     value1 := lowercase(RemoveAccents(copy(value1, 1, INDEX_ENTRY_LENGTH)))
   else  if (length(value1) > INDEX_ENTRY_LENGTH) then
     raise exception.create('string too long for indexing: '+value1+ ' ('+inttostr(length(value1))+' chars)');
 
-  if ndx.SearchType = SearchParamTypeString then
+  if ndx.SearchType = sptString then
     value2 := lowercase(RemoveAccents(copy(value2, 1, INDEX_ENTRY_LENGTH)))
   else if (length(value2) > INDEX_ENTRY_LENGTH) then
     raise exception.create('string too long for indexing: '+value2+ ' ('+inttostr(length(value2))+' chars)');
@@ -659,8 +660,8 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+aType);
-  if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeString]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+aType);
+  if not (ndx.SearchType in [sptToken, sptString]) then //todo: fix up text
+    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing enumeration on '+aType);
   concept := TerminologyServer.enterIntoClosure(FConnection, aType+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
   assert(concept <> 0);
   FEntries.add(key, parent, ndx, 0, BooleanToString(value), '', 0, frtNull, ndx.SearchType, false, concept);
@@ -682,8 +683,8 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+aType);
-  if not (ndx.SearchType in [SearchParamTypeToken]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+aType);
+  if not (ndx.SearchType in [sptToken]) then //todo: fix up text
+    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing enumeration on '+aType);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
      raise exception.create('string too long for indexing: '+value.value+ ' ('+inttostr(length(value.value))+' chars)');
   if value.system <> '' then
@@ -754,11 +755,11 @@ begin
             else
               work := transform(match.value, ndx.mapping);
             try
-              if ndx.SearchType = SearchParamTypeComposite then
+              if ndx.SearchType = sptComposite then
                 // ignore for now
               else case ndx.Usage of
-                SearchXpathUsageNull: raise Exception.create('Path is not defined properly');
-                SearchXpathUsageNormal:
+                sxpNull: raise Exception.create('Path is not defined properly');
+                sxpNormal:
                   begin
                   if work is TFhirString then
                     index(resource.fhirType, key, 0, TFhirString(work), ndx.Name)
@@ -813,7 +814,7 @@ begin
                   else if not (work is TFHIRAttachment) and not (work is TFHIRBase64Binary) then
                     raise Exception.Create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
                   end;
-                SearchXpathUsagePhonetic:
+                sxpPhonetic:
                   begin
                   if work is TFhirString then
                     index(resource.fhirType, key, 0, EncodeNYSIIS(TFhirString(work).value), ndx.Name)
@@ -822,15 +823,15 @@ begin
                   else
                     raise Exception.Create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.Name+' for the expression '+ndx.Path);
                   end;
-                SearchXpathUsageNearby:
+                sxpNearby:
                   begin
                     // todo when a chance arises
                   end;
-                SearchXpathUsageDistance:
+                sxpDistance:
                   begin
                     // todo when a chance arises
                   end;
-                SearchXpathUsageOther:
+                sxpOther:
                   begin
                     // todo when a chance arises
                   end;
@@ -854,8 +855,8 @@ begin
     // a resource is automatically in it's own compartment
     if (a = resource.ResourceType) then
       FCompartments.add(key, FResConfig[CODES_TFHIRResourceType[a]].key, key, resource.ResourceType, resource.id);
-    if FInfo.Compartments.existsInCompartment(a, resource.fhirType) then
-      for s in FInfo.Compartments.getIndexNames(a, resource.fhirType) do
+    if FInfo.Compartments.existsInCompartment(CODES_TFHIRResourceType[a], resource.fhirType) then
+      for s in FInfo.Compartments.getIndexNames(CODES_TFHIRResourceType[a], resource.fhirType) do
       begin
         if (s <> '{def}') and not s.Contains('.') then // we already did this one above, so we just ignore this here and compartments with '.' in them are in error
         begin
@@ -1029,8 +1030,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
-  if ndx.SearchType <> SearchParamTypeToken then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Coding');
+  if ndx.SearchType <> sptToken then
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Coding');
   if (value.system <> '') then
   begin
     if not FSpaces.ResolveSpace(value.system, ref) then
@@ -1113,8 +1114,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join: "'+name+'"');
-  if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber, SearchParamTypeQuantity]) then
-    raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing range');
+  if not (ndx.SearchType in [sptToken, sptNumber, sptQuantity]) then
+    raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing range');
 
   GetBoundaries(value.low.value, QuantityComparatorNull, v1, crap);
   GetBoundaries(value.high.value, QuantityComparatorNull, crap, v2);
@@ -1176,8 +1177,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join: "'+name+'"');
-  if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber, SearchParamTypeQuantity]) then
-    raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing quantity');
+  if not (ndx.SearchType in [sptToken, sptNumber, sptQuantity]) then
+    raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing quantity');
 
   GetBoundaries(value.value, value.comparator, v1, v2);
 
@@ -1248,8 +1249,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
-  if not (ndx.SearchType = SearchParamTypeDate) then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing date');
+  if not (ndx.SearchType = sptDate) then
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing date');
   FEntries.add(key, parent, ndx, 0, TDateTimeEx.make(min, dttzUnknown).toHL7, TDateTimeEx.make(max, dttzUnknown).toHL7, 0, frtNull, ndx.SearchType);
 end;
 
@@ -1265,8 +1266,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index an identifier in an index that is a resource join, index name '+name);
-  if not (ndx.SearchType in [SearchParamTypeToken]) then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Identifier');
+  if not (ndx.SearchType in [sptToken]) then
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Identifier');
   ref := 0;
   if (value.system <> '') then
     if not FSpaces.ResolveSpace(value.system, ref) then
@@ -1308,8 +1309,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
-  if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeString]) then
-    raise Exception.create('Unsuitable index '+name+':'+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Contact on '+aType);
+  if not (ndx.SearchType in [sptToken, sptString]) then
+    raise Exception.create('Unsuitable index '+name+':'+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing Contact on '+aType);
   ref := 0;
   if (value.systemElement <> nil) and (value.systemElement.value <> '') then
     if not FSpaces.ResolveSpace(value.systemElement.value, ref) then
@@ -1416,8 +1417,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
-  if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeToken]) then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing decimal');
+  if not (ndx.SearchType in [sptString, sptToken]) then
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing decimal');
   FEntries.add(key, ndx, 0, value.value, '', 0, ndx.SearchType);
 end;
 }
@@ -1481,8 +1482,8 @@ begin
 // ggtodo - until target types are sorted out....
 //  if (ndx.TargetTypes = []) then
 //    raise Exception.create('Attempt to index a resource join in an index ('+aType+'/'+name+') that is a not a join (has no target types)');
-  if ndx.SearchType <> SearchParamTypeReference then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing reference on a '+aType);
+  if ndx.SearchType <> sptReference then
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing reference on a '+aType);
 
   if (length(value.reference) > INDEX_ENTRY_LENGTH) then
     raise exception.create('resource url too long for indexing: '+value.reference);
@@ -1577,8 +1578,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
-  if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeNumber, SearchParamTypeToken]) then
-    raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing integer');
+  if not (ndx.SearchType in [sptString, sptNumber, sptToken]) then
+    raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing integer');
   FEntries.add(key, parent, ndx, 0, value.value, '', 0, frtNull, ndx.SearchType);
 end;
 
@@ -1705,8 +1706,8 @@ begin
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
-  if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeNumber, SearchParamTypeToken]) then
-    raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing integer');
+  if not (ndx.SearchType in [sptString, sptNumber, sptToken]) then
+    raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing integer');
   FEntries.add(key, parent, ndx, 0, value.value, '', 0, frtNull, ndx.SearchType);
 end;
 
@@ -1829,23 +1830,23 @@ begin
   composites.add('Patient', 'name', ['given', 'given', 'family', 'family']);
 
   // DAF
-  indexes.add('Condition', 'identifier', 'identifier', SearchParamTypeToken, [], '', SearchXpathUsageNull);
-  indexes.add('Patient', 'mothersMaidenName', 'Search based on Patient mother''s Maiden Name', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
-  indexes.add('Patient', 'birthOrderBoolean', 'Search based on Patient''s birth order (boolean or integer)', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
-  indexes.add('Patient', 'age', 'Search based on Patient''s age', SearchParamTypeNumber, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-age');
-  indexes.add('FamilyMemberHistory', 'familymemberhistorycondition', 'Search for a history of a particular condition within a patient''s family', SearchParamTypeToken, [], '', SearchXpathUsageNull);
+  indexes.add('Condition', 'identifier', 'identifier', sptToken, [], '', sxpNull);
+  indexes.add('Patient', 'mothersMaidenName', 'Search based on Patient mother''s Maiden Name', sptString, [], '', sxpNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
+  indexes.add('Patient', 'birthOrderBoolean', 'Search based on Patient''s birth order (boolean or integer)', sptString, [], '', sxpNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
+  indexes.add('Patient', 'age', 'Search based on Patient''s age', sptNumber, [], '', sxpNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-age');
+  indexes.add('FamilyMemberHistory', 'familymemberhistorycondition', 'Search for a history of a particular condition within a patient''s family', sptToken, [], '', sxpNull);
   {$IFDEF FHIR2}
-  indexes.add('List', 'identifier', 'identifier', SearchParamTypeToken, [], '', SearchXpathUsageNull);
+  indexes.add('List', 'identifier', 'identifier', sptToken, [], '', sxpNull);
 
   // custom
-  indexes.add('ClaimResponse', 'request', 'request claim link', SearchParamTypeReference, ['Claim'], '', SearchXpathUsageNull);
+  indexes.add('ClaimResponse', 'request', 'request claim link', sptReference, ['Claim'], '', sxpNull);
   {$ENDIF}
 end;
 
-constructor TFHIRIndexInformation.Create;
+constructor TFHIRIndexInformation.Create(factory : TFHIRFactory);
 begin
   inherited Create;
-  FIndexes := TFhirIndexList.create;
+  FIndexes := TFhirIndexList.create(factory);
   FComposites := TFhirCompositeList.create;
   FCompartments := TFHIRCompartmentList.Create;
   buildIndexes;
@@ -1857,6 +1858,11 @@ begin
   FComposites.Free;
   FCompartments.Free;
   inherited;
+end;
+
+function TFHIRIndexInformation.factory: TFHIRFactory;
+begin
+  result := FIndexes.factory;
 end;
 
 function TFHIRIndexInformation.Link: TFHIRIndexInformation;
@@ -1931,13 +1937,13 @@ begin
     end;
 end;
 
-function TFhirIndexInformation.GetTypeByName(types: TArray<String>; name: String): TFhirSearchParamTypeEnum;
+function TFhirIndexInformation.GetTypeByName(types: TArray<String>; name: String): TFHIRSearchParamType;
 var
   i : integer;
   s : String;
   ok : boolean;
 begin
-  result := SearchParamTypeNull;
+  result := sptNull;
   for i := 0 to FIndexes.Count - 1 Do
     if SameText(FIndexes[i].Name, name) then
     begin
@@ -1945,7 +1951,7 @@ begin
       for s in types do
         ok := ok or (s = FIndexes[i].ResourceType);
       if ok then
-        if (result <> SearchParamTypeNull) and (result <> FIndexes[i].SearchType) And ((FIndexes[i].SearchType in [SearchParamTypeDate, SearchParamTypeToken]) or (result in [SearchParamTypeDate, SearchParamTypeToken])) then
+        if (result <> sptNull) and (result <> FIndexes[i].SearchType) And ((FIndexes[i].SearchType in [sptDate, sptToken]) or (result in [sptDate, sptToken])) then
           raise Exception.create('Chained Parameters cross resource joins that create disparate index handling requirements')
         else
           result := FIndexes[i].SearchType;
@@ -2503,8 +2509,8 @@ begin
       raise Exception.create('Unknown index Bundle.'+name);
     if (length(ndx.TargetTypes) = 0) then
       raise Exception.create('Attempt to index a resource join in an index (Bundle.'+name+') that is a not a join (has no target types)');
-    if ndx.SearchType <> SearchParamTypeReference then
-      raise Exception.create('Unsuitable index Bundle.'+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing inner');
+    if ndx.SearchType <> sptReference then
+      raise Exception.create('Unsuitable index Bundle.'+name+' '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing inner');
 
     if not FSpaces.ResolveSpace(CODES_TFHIRResourceType[inner.ResourceType], ref) then
       recordSpace(CODES_TFHIRResourceType[inner.ResourceType], ref);
@@ -4250,7 +4256,7 @@ begin
 end;
 
 initialization
-  TFHIRIndexInformation.Create.free;
+  TFHIRIndexInformation.Create(nil).free;
 end.
 
 

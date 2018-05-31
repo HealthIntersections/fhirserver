@@ -37,7 +37,7 @@ uses
   IdComponent,
   FHIR.Support.DateTime, FHIR.Support.Strings,
   FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities, FHIR.Base.Xhtml, FHIR.Ui.ComboFMX,
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Base.Xhtml, FHIR.Ui.ComboFMX,
   BaseFrame, AppEndorserFrame, CapabilityStatementEditor, FMX.WebBrowser,
   FMX.Memo;
 

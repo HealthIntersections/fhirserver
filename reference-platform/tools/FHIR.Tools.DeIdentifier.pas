@@ -34,7 +34,7 @@ uses
   FHIR.Support.DateTime, FHIR.Support.Lock, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, AdvCSVExtractors, AdvStringLists, AdvFiles,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources;
+  FHIR.Base.Objects{, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources};
 
 // fake name generator
 
@@ -106,6 +106,7 @@ type
     property practitioners : boolean read FPractitioners write FPractitioners;
     property makeFakeData : boolean read FMakeFakeData write FMakeFakeData;
   end;
+
 implementation
 
 { TFHIRDeIdentifier }

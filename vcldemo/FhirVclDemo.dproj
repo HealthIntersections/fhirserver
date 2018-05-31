@@ -113,7 +113,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <DCC_MapFile>3</DCC_MapFile>
-        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R2.AuthMap;FHIR.Tools.Constants=FHIR.R2.Constants;FHIR.Tools.Context=FHIR.R2.Context;FHIR.Tools.IndexInfo=FHIR.R2.IndexInfo;FHIR.Tools.Javascript=FHIR.R2.Javascript;FHIR.Tools.ElementModel=FHIR.R2.ElementModel;FHIR.Tools.Narrative=FHIR.R2.Narrative;FHIR.Tools.Operations=FHIR.R2.Operations;FHIR.Tools.Json=FHIR.R2.Json;FHIR.Tools.Turtle=FHIRParserTurtle2;FHIR.Tools.Xml=FHIR.R2.Xml;FHIR.Tools.PathNode=FHIR.R2.PathNode;FHIR.Tools.Profiles=FHIR.R2.Profiles;FHIR.Tools.Resources=FHIR.R2.Resources;FHIR.Tools.MapUtilities=FHIRStructureMapUtilities2;FHIR.Tools.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Tools.Types=FHIR.R2.Types;FHIR.Tools.Utilities=FHIR.R2.Utilities;FHIR.Tools.Validator=FHIR.R2.Validator;FHIR.Tools.OpBase=FHIR.R2.OpBase;FHIR.Tools.PathEngine=FHIR.R2.PathEngine;FHIR.Tools.Narrative2=FHIR.R2.Narrative2;FHIR.Tools.Questionnaire=FHIR.R2.Questionnaire;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R2.AuthMap;FHIR.Version.Constants=FHIR.R2.Constants;FHIR.Version.Context=FHIR.R2.Context;FHIR.Version.IndexInfo=FHIR.R2.IndexInfo;FHIR.Version.Javascript=FHIR.R2.Javascript;FHIR.Version.ElementModel=FHIR.R2.ElementModel;FHIR.Version.Narrative=FHIR.R2.Narrative;FHIR.Version.Operations=FHIR.R2.Operations;FHIR.Version.Json=FHIR.R2.Json;FHIR.Version.Turtle=FHIRParserTurtle2;FHIR.Version.Xml=FHIR.R2.Xml;FHIR.Version.PathNode=FHIR.R2.PathNode;FHIR.Version.Profiles=FHIR.R2.Profiles;FHIR.Version.Resources=FHIR.R2.Resources;FHIR.Version.MapUtilities=FHIRStructureMapUtilities2;FHIR.Version.Tags=FHIR.R2.Tags;FHIRTestWorker=FHIRTestWorker2;FHIR.Version.Types=FHIR.R2.Types;FHIR.Version.Utilities=FHIR.R2.Utilities;FHIR.Version.Validator=FHIR.R2.Validator;FHIR.Version.OpBase=FHIR.R2.OpBase;FHIR.Version.PathEngine=FHIR.R2.PathEngine;FHIR.Version.Narrative2=FHIR.R2.Narrative2;FHIR.Version.Questionnaire=FHIR.R2.Questionnaire;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d264</DCC_DcuOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -163,16 +163,14 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Context.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Types.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Session.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Constants.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Security.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Tags.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\version\FHIR.Version.Parser.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Xml.pas"/>
@@ -181,7 +179,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Profiles.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.PathEngine.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Tools.Client.pas"/>
+        <DCCReference Include="..\reference-platform\version\FHIR.Version.Client.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.WinInet.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Utilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>

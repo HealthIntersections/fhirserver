@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, FHIR.Support.Lock,
   FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Certs,
-  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Security,
+  FHIR.Base.Objects, FHIR.Tools.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Security,
   SCIMServer,
   FHIRUserProvider, ServerUtilities, FHIRStorageService, ServerValidator;
 

@@ -146,7 +146,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <BT_BuildType>Debug</BT_BuildType>
-        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R4.AuthMap;FHIR.Tools.Constants=FHIR.R4.Constants;FHIR.Tools.Context=FHIR.R4.Context;FHIR.Tools.IndexInfo=FHIR.R4.IndexInfo;FHIR.Tools.Javascript=FHIR.R4.Javascript;FHIR.Tools.ElementModel=FHIR.R4.ElementModel;FHIR.Tools.Narrative=FHIR.R4.Narrative;FHIR.Tools.Operations=FHIR.R4.Operations;FHIR.Tools.Json=FHIR.R4.Json;FHIR.Tools.Turtle=FHIR.R4.Turtle;FHIR.Tools.Xml=FHIR.R4.Xml;FHIR.Tools.PathNode=FHIR.R4.PathNode;FHIR.Tools.Profiles=FHIR.R4.Profiles;FHIR.Tools.Resources=FHIR.R4.Resources;FHIR.Tools.MapUtilities=FHIR.R4.MapUtilities;FHIR.Tools.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Tools.Types=FHIR.R4.Types;FHIR.Tools.Utilities=FHIR.R4.Utilities;FHIR.Tools.Validator=FHIR.R4.Validator;FHIR.Tools.OpBase=FHIR.R4.OpBase;FHIR.Tools.PathEngine=FHIR.R4.PathEngine;FHIR.Tools.Narrative2=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire=FHIR.R4.Questionnaire;FHIR.Tools.Questionnaire2=FHIR.R4.Questionnaire2;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2=FHIR.R4.Questionnaire2;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Factory=FHIR.R4.Factory;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d464</DCC_DcuOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -168,7 +168,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Tools.Client.pas"/>
+        <DCCReference Include="..\reference-platform\version\FHIR.Version.Client.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Strings.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
@@ -183,7 +183,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Binary.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.System.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\version\FHIR.Version.Parser.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Xml.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>
@@ -195,10 +195,8 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Types.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Session.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Constants.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Security.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Tags.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>

@@ -38,7 +38,7 @@ uses
   BaseResourceFrame,
   FHIR.Support.DateTime, FHIR.Support.Strings,
   FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.Constants, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Indexing, FHIR.Tools.IndexInfo, FHIR.Tools.Session,
+  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog, TranslationsEditorDialog, MemoEditorDialog;
 
 type
@@ -389,7 +389,7 @@ begin
           if form.cbStandardSearch.isChecked then
           begin
             compartments := TFHIRCompartmentList.create;
-            indexes := TFhirIndexList.Create;
+            indexes := TFhirIndexList.Create(TFHIRFactoryX.create);
             try
               builder := TFHIRIndexBuilder.Create;
               try
@@ -404,7 +404,7 @@ begin
                   p := TFhirCapabilityStatementRestResourceSearchParam.Create;
                   try
                     p.name := index.Name;
-                    p.type_ := index.SearchType;
+                    p.type_ := MAP_TFHIRSearchParamType2[index.SearchType];
                     p.definition := index.URI;
                     p.documentation := index.Description;
                     res.searchParamList.Add(p.Link);
@@ -556,7 +556,7 @@ begin
   try
     form.Caption := 'Choose Standard Parameters';
     compartments := TFHIRCompartmentList.create;
-    indexes := TFhirIndexList.Create;
+    indexes := TFhirIndexList.Create(TFHIRFactoryX.Create);
     try
       builder := TFHIRIndexBuilder.Create;
       try
@@ -586,7 +586,7 @@ begin
               p := TFhirCapabilityStatementRestResourceSearchParam.Create;
               try
                 p.name := index.Name;
-                p.type_ := index.SearchType;
+                p.type_ := MAP_TFHIRSearchParamType2[index.SearchType];
                 p.definition := index.URI;
                 p.documentation := index.Description;
                 res.searchParamList.Add(p.Link);

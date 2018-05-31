@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS}Windows, WinAPI.ShellAPI, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd,
   FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Base.Objects, FHIR.Tools.Parser, FHIR.Tools.Session,
+  FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.PathEngine,
   FHIR.Cache.PackageManager,
   FHIR.Support.Json, DUnitX.TestFramework;

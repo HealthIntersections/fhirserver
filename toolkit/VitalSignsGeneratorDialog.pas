@@ -9,7 +9,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Decimal,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Utilities,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
   ToolkitSettings, FMX.Edit;
 
 type

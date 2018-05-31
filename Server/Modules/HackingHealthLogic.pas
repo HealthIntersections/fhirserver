@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Tools.Resources,
-  FHIR.Tools.Utilities,
+  FHIR.Version.Resources,
+  FHIR.Version.Utilities,
   CDSHooksServer;
 
 type

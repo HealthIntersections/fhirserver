@@ -8,7 +8,7 @@ uses
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Factory,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Client,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tools.Session, FHIR.Version.Client,
   FHIR.Javascript.Base;
 
 {$IFDEF FHIR2}
@@ -110,7 +110,7 @@ begin
       s := FEngine.wrap(session.Link, 'Session', true);
       b := FEngine.wrap(before.Link, rn, true);
       a := FEngine.wrap(after.Link, rn, true);
-      c := FEngine.wrap(client.link, 'FHIR.Tools.Client', true);
+      c := FEngine.wrap(client.link, 'FHIR.Version.Client', true);
       FEngine.addGlobal('fhir', c);
       for script in scripts do
         FEngine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b, a]);
@@ -244,7 +244,7 @@ begin
 
   if tag then
   begin
-    if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Tools.PathEngine'{, 'text/cql'}], event.trigger.condition.language) then
+    if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.trigger.condition.language) then
       raise Exception.Create('Unknown script language');
     if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
       raise Exception.Create('Unsupported Trigger type');
@@ -265,7 +265,7 @@ begin
 
   if tag then
   begin
-    if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Tools.PathEngine'{, 'text/cql'}], event.trigger.condition.language) then
+    if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.trigger.condition.language) then
       raise Exception.Create('Unknown script language');
     if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
       raise Exception.Create('Unsupported Trigger type');
@@ -282,7 +282,7 @@ begin
         ev.FId := event.id;
         ev.FScript := event.trigger.condition.expression;
         ev.FCommand := event.trigger.type_;
-        case StringArrayIndexOfSensitive(['application/javascript', 'text/FHIR.Tools.PathEngine'{, 'text/cql'}], event.trigger.condition.language)  of
+        case StringArrayIndexOfSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.trigger.condition.language)  of
           0: ev.FLang := langJavascript;
           1: ev.FLang := langFHIRPath;
 //          2: ev.FLang := langCQL;

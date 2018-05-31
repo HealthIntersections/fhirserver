@@ -39,7 +39,7 @@ uses
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Misc.Facebook, SCIMServer, FHIR.Base.Scim, FHIR.Support.Certs, FHIR.Smart.Utilities,
-  FHIR.Tools.Session, FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Security, FHIR.Tools.Utilities,
+  FHIR.Tools.Session, FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Tools.Security, FHIR.Version.Utilities,
   FHIRUserProvider, ServerUtilities, FHIRServerContext, FHIRStorageService, FHIR.Misc.ApplicationVerifier,
   JWTService, ApplicationCache;
 
@@ -155,7 +155,7 @@ type
 implementation
 
 uses
-  FHIR.Debug.Logging, FHIR.Tools.AuthMap;
+  FHIR.Debug.Logging, FHIR.Version.AuthMap;
 
 
 { TAuth2Server }

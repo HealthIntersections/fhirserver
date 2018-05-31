@@ -1,6 +1,6 @@
 {!Wrapper uses FHIR.Base.Objects, FHIRBase_Wrapper}
 
-unit FHIR.Tools.Types;
+unit FHIR.Version.Types;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

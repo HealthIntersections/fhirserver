@@ -33,7 +33,7 @@ interface
 
 uses
   FHIR.Support.Objects,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Security;
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tools.Session, FHIR.Tools.Security;
 
 Type
   TAccessControlEngine = class abstract (TFslObject)

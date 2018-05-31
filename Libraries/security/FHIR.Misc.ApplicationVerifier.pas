@@ -35,7 +35,7 @@ uses
   FHIR.Support.Text,
   FHIR.Support.Objects,
   FHIR.Support.Json, FHIR.Support.Certs,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities;
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
 
 type
   TClientApplicationVerifier = class (TFslObject)

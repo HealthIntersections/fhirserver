@@ -31,7 +31,7 @@ interface
 
 uses
   FHIR.Support.Objects,
-  FHIR.Tools.Client,
+  FHIR.Version.Client,
   FHIR.CdsHooks.Utilities;
 
 implementation

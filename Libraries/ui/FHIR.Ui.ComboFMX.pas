@@ -5,7 +5,7 @@ interface
 uses
   Classes,
   FHIR.Support.Strings,
-  FHIR.Tools.Resources,
+  FHIR.Version.Resources,
   FMX.ListBox;
 
 type

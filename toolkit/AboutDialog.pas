@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.StdCtrls, FMX.Objects, FMX.Controls.Presentation,
   FHIR.Ui.OSX,
-  FHIR.Tools.Constants,
+  FHIR.Version.Constants,
   toolkitversion;
 
 type

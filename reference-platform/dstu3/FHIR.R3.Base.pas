@@ -10,6 +10,7 @@ type
   protected
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
   end;
 
@@ -19,6 +20,7 @@ type
   protected
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
   end;
 
@@ -42,6 +44,11 @@ begin
   result := TFhirCode.Create(v);
 end;
 
+function TFHIRObject3.makeIntValue(v: String): TFHIRObject;
+begin
+  result := TFHIRInteger.Create(v);
+end;
+
 function TFHIRObject3.makeStringValue(v: String): TFHIRObject;
 begin
   result := TFhirString.Create(v);
@@ -57,6 +64,11 @@ end;
 function TFHIRResource3.makeCodeValue(v: String): TFHIRObject;
 begin
   result := TFhirCode.Create(v);
+end;
+
+function TFHIRResource3.makeIntValue(v: String): TFHIRObject;
+begin
+  result := TFHIRInteger.Create(v);
 end;
 
 function TFHIRResource3.makeStringValue(v: String): TFHIRObject;

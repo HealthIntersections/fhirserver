@@ -7,7 +7,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects,
   FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Session, FHIR.Tools.Client, FHIR.Tools.Utilities,
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tools.Session, FHIR.Version.Client, FHIR.Version.Utilities,
   FHIRServerContext;
 
 Type

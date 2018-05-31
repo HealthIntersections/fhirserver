@@ -36,7 +36,7 @@ Uses
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Stream,
   RegularExpressions, YuStemmer,
   FHIR.Base.Common,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.Tools.Operations,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Operations,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service, FHIR.Support.DateTime;
 

@@ -1,4 +1,4 @@
-unit FHIR.Tools.Client;
+unit FHIR.Version.Client;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -39,7 +39,7 @@ uses
   {$IFDEF FHIR2} FHIR.R2.Client, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Client, {$ENDIF}
   {$IFDEF FHIR4} FHIR.R4.Client, {$ENDIF}
-  FHIR.Tools.Context, FHIR.Tools.Constants, FHIR.Tools.Resources;
+  FHIR.Version.Context, FHIR.Version.Constants, FHIR.Version.Resources;
 
 
 Type

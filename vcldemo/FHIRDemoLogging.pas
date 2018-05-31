@@ -15,7 +15,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.DateTime, FHIR.Support.Strings,
   FHIR.Support.Json, FHIR.Smart.Utilities,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Client, FHIR.Tools.Resources, FHIR.Tools.Constants, FHIR.Tools.Utilities;
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Client, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Utilities;
 
 type
   TLoggingService = class abstract

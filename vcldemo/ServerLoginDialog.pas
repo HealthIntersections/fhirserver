@@ -109,7 +109,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Shell,
   FHIR.Base.Utilities, FHIR.Base.Common,
   FHIR.R2.Common,
-  FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Base.Objects, FHIR.Tools.Client, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
+  FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Base.Objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ProgressDialog, FHIRDemoLogging;
 
 type

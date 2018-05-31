@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Tools.Resources, FHIRComponents;
+  FHIR.Version.Resources, FHIRComponents;
 
 type
   {$IFDEF FHIR_DSTU}

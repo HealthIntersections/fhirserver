@@ -36,7 +36,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Edit, IOUtils,
   FHIR.Ui.OSX,
   FHIR.Support.System, FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.DateTime,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Security,
+  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.Security,
   FHIRServerContext, FHIRUserProvider, FHIRStorageService, FHIRRestServer, ServerUtilities, FHIR.Debug.Logging,
   VocabPocServerCore, TerminologyServer, WebSourceProvider;
 

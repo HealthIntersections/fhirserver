@@ -49,6 +49,7 @@ Type
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
   public
     Constructor Create(Name : String; Value : String); Overload;
 
@@ -119,6 +120,7 @@ Type
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
   public
     Constructor Create; Override;
     Constructor Create(nodeType : TFHIRHtmlNodeType) ; Overload;
@@ -445,6 +447,11 @@ begin
 end;
 
 function TFHIRAttribute.makeCodeValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+function TFHIRAttribute.makeIntValue(v: String): TFHIRObject;
 begin
   raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
@@ -846,6 +853,11 @@ begin
 end;
 
 function TFhirXHtmlNode.makeCodeValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+end;
+
+function TFhirXHtmlNode.makeIntValue(v: String): TFHIRObject;
 begin
   raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;

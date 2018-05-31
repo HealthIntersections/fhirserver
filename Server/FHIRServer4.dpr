@@ -62,7 +62,7 @@ STU3 draft:
  - test flag support
  - check document operation
  - check handling binary parameter
- - update FHIR.Tools.PathEngine
+ - update FHIR.Version.PathEngine
  - string validation rules
  - Both _include and _revInclude use the wild card "*" for the search parameter name, indicating that any search parameter of type=reference be included.
 
@@ -167,13 +167,13 @@ uses
   FHIR.Base.Objects in '..\reference-platform\base\FHIR.Base.Objects.pas',
   FHIR.R4.Types in '..\reference-platform\r4\FHIR.R4.Types.pas',
   FHIR.R4.Resources in '..\reference-platform\r4\FHIR.R4.Resources.pas',
-  FHIR.Tools.Parser in '..\reference-platform\tools\FHIR.Tools.Parser.pas',
+  FHIR.Version.Parser in '..\reference-platform\version\FHIR.Version.Parser.pas',
   FHIR.Base.Parser in '..\reference-platform\base\FHIR.Base.Parser.pas',
   FHIR.R4.Constants in '..\reference-platform\r4\FHIR.R4.Constants.pas',
   FHIR.Tools.Session in '..\reference-platform\tools\FHIR.Tools.Session.pas',
   FHIR.Base.Lang in '..\reference-platform\base\FHIR.Base.Lang.pas',
   FHIR.R4.Utilities in '..\reference-platform\r4\FHIR.R4.Utilities.pas',
-  FHIR.Tools.Client in '..\reference-platform\client\FHIR.Tools.Client.pas',
+  FHIR.Version.Client in '..\reference-platform\version\FHIR.Version.Client.pas',
   ClosureManager in 'ClosureManager.pas',
   FHIR.CdsHooks.Utilities in '..\reference-platform\support\FHIR.CdsHooks.Utilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',

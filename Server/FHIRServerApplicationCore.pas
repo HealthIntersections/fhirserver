@@ -75,10 +75,10 @@ Uses
   {$IFDEF FHIR2} FHIR.R2.Factory, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Factory, {$ENDIF}
   {$IFDEF FHIR4} FHIR.R4.Factory, {$ENDIF}
-  FHIR.Tools.Resources,
+  FHIR.Version.Resources,
   TerminologyServer,
   FHIRStorageService,
-  FHIRRestServer, DBInstaller, FHIR.Tools.Constants, FHIRNativeStorage, FHIR.Base.Objects, FHIR.Tools.PathEngine,
+  FHIRRestServer, DBInstaller, FHIR.Version.Constants, FHIRNativeStorage, FHIR.Base.Objects, FHIR.Version.PathEngine,
   FHIRServerConstants, FHIRServerContext, ServerUtilities, WebSourceProvider,
   SCIMServer, CDSHooksServices, ServerJavascriptHost;
 

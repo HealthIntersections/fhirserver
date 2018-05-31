@@ -36,7 +36,7 @@ Uses
   IdGlobalProtocols,
   FHIR.Support.Text, FHIR.Support.Shell,
   FHIR.Support.Turtle, FHIR.Web.Rdf,
-  FHIR.Tools.Resources, FHIR.Base.Parser, FHIR.Tools.Parser, FHIR.Base.Objects,
+  FHIR.Version.Resources, FHIR.Base.Parser, FHIR.Version.Parser, FHIR.Base.Objects,
   DUnitX.TestFramework;
 
 Type

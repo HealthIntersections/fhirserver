@@ -53,6 +53,7 @@ type
 
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function fhirType : String; override;
@@ -79,6 +80,7 @@ type
 
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
     function createPropertyValue(propName : string): TFHIRObject; override;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function fhirType : String; override;
@@ -150,22 +152,54 @@ type
 
   TFhirBundleEntryW = class (TFHIRXVersionElementWrapper)
   public
+    function Link : TFhirBundleEntryW; overload;
     function searchMode : TFHIRBundleEntrySearchMode; virtual; abstract;
+    function searchModeE : TFHIRObject; virtual; abstract;
+    function searchScoreE : TFHIRObject; virtual; abstract;
     function resource : TFHIRResourceV; virtual; abstract;
   end;
 
   TFHIRBundleW = class (TFHIRXVersionResourceWrapper)
   public
+    function link : TFHIRBundleW;
     function next : String; overload;
     function next(bnd : TFHIRResourceV) : String; overload; virtual; abstract;
     procedure addEntries(bnd : TFHIRResourceV); virtual; abstract;
     procedure clearLinks; virtual; abstract;
     function entries : TFslList<TFhirBundleEntryW>; virtual; abstract;
     procedure listLinks(links : TDictionary<String, String>); virtual; abstract;
+    function GetLink(rel: String): String; virtual; abstract;
+    procedure SetLink(rel: String; const Value: String); virtual; abstract;
+    property links[rel : String] : String read GetLink write SetLink;
+    function total : TFHIRObject; virtual; abstract;
   end;
   TFHIRBundleWClass = class of TFHIRBundleW;
 
-  TFHIRSearchParamType = (sptString, sptToken, sptComposite, sptUri, sptReference, sptNumber, sptDate, sptQuantity);
+  TFHIRSearchParamType = (sptNull, sptString, sptToken, sptComposite, sptUri, sptReference, sptNumber, sptDate, sptQuantity);
+  TFhirSearchParamTypeList = set of TFhirSearchParamType;
+  TFhirSearchXpathUsage = (sxpNull,  sxpNormal, sxpPhonetic, sxpNearby, sxpDistance, sxpOther);
+
+const
+  CODES_TFhirSearchParamType : Array[TFhirSearchParamType] of String = ('', 'string', 'token', 'composite', 'uri', 'reference', 'number', 'date', 'quantity');
+
+type
+  TFhirSearchParameterW = class (TFHIRXVersionResourceWrapper)
+  public
+    function link : TFhirSearchParameterW;
+    function name : String;  virtual; abstract;
+    function description : String;  virtual; abstract;
+    function type_ : TFHIRSearchParamType;  virtual; abstract;
+    function xpathUsage : TFhirSearchXpathUsage;  virtual; abstract;
+    function targets : String; virtual; abstract;{var
+  targets : TArray<String>;
+  i : integer;
+  SetLength(targets, sp.targetList.Count);
+  for i := 0 to sp.targetList.Count - 1 do
+    targets[i] := sp.targetList[i].value;
+
+}
+  end;
+
   TFHIRSearchParamDefinitionW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFHIRSearchParamDefinitionW; overload;
@@ -508,6 +542,11 @@ begin
   result := FRes.makeCodeValue(v);
 end;
 
+function TFHIRXVersionResourceWrapper.makeIntValue(v: String): TFHIRObject;
+begin
+  result := FRes.makeIntValue(v);
+end;
+
 function TFHIRXVersionResourceWrapper.makeStringValue(v: String): TFHIRObject;
 begin
   result := FRes.makeStringValue(v);
@@ -549,6 +588,11 @@ end;
 function TFHIRBundleW.next: String;
 begin
   result := next(resource);
+end;
+
+function TFHIRBundleW.link: TFHIRBundleW;
+begin
+  result := TFHIRBundleW(inherited link);
 end;
 
 { TFhirParametersParameterW }
@@ -643,6 +687,11 @@ end;
 function TFHIRXVersionElementWrapper.makeCodeValue(v: String): TFHIRObject;
 begin
   result := FElement.makeCodeValue(v);
+end;
+
+function TFHIRXVersionElementWrapper.makeIntValue(v: String): TFHIRObject;
+begin
+  result := FElement.makeIntValue(v);
 end;
 
 function TFHIRXVersionElementWrapper.makeStringValue(v: String): TFHIRObject;
@@ -871,6 +920,20 @@ end;
 function TFhirPatientW.Link: TFhirPatientW;
 begin
   result := TFhirPatientW(inherited Link);
+end;
+
+{ TFhirBundleEntryW }
+
+function TFhirBundleEntryW.Link: TFhirBundleEntryW;
+begin
+  result := TFhirBundleEntryW(inherited link);
+end;
+
+{ TFhirSearchParameterW }
+
+function TFhirSearchParameterW.link: TFhirSearchParameterW;
+begin
+  result := TFhirSearchParameterW(inherited link);
 end;
 
 end.

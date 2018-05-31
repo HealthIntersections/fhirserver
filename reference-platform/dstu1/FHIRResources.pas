@@ -1,9 +1,9 @@
   {@Class TFhirResourceFactory : TFHIRBaseFactory
      FHIR factory: class constructors and general useful builders
   }
-{!Wrapper uses FHIR.Base.Objects, FHIRBase_Wrapper, FHIR.Tools.Types, FHIRTypes_Wrapper, FHIRComponents, FHIRComponents_Wrapper,  DateAndTime_Wrapper}
+{!Wrapper uses FHIR.Base.Objects, FHIRBase_Wrapper, FHIR.Version.Types, FHIRTypes_Wrapper, FHIRComponents, FHIRComponents_Wrapper,  DateAndTime_Wrapper}
 
-unit FHIR.Tools.Resources;
+unit FHIR.Version.Resources;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -43,7 +43,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, AdvBuffers,  FHIR.Base.Objects, FHIR.Tools.Types, FHIRComponents;
+  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, AdvBuffers,  FHIR.Base.Objects, FHIR.Version.Types, FHIRComponents;
 
 Type
   {@Enum TFhirResourceType
@@ -1031,7 +1031,7 @@ Type
     }
     procedure ClearItems;
     
-    Property FHIR.Tools.Resources[index : Integer] : TFhirResource read GetItemN write SetItemN; default;
+    Property FHIR.Version.Resources[index : Integer] : TFhirResource read GetItemN write SetItemN; default;
   End;
 
 
@@ -7808,7 +7808,7 @@ end;
 procedure TFhirResourceList.SetItemByIndex(index: Integer; value: TFhirResource);
 begin
   assert(value is TFhirResource);
-  FHIR.Tools.Resources[index] := value;
+  FHIR.Version.Resources[index] := value;
 end;
 
 procedure TFhirResourceList.SetItemN(index: Integer; value: TFhirResource);

@@ -45,6 +45,7 @@ type
     function version : TFHIRVersion; override;
     function versionString : String; override;
     function description : String; override;
+    function resourceNames : TArray<String>; override;
     function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; override;
     function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; override;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
@@ -75,7 +76,9 @@ type
     function wrapExtension(o : TFHIRObject) : TFhirExtensionW; override;
     function wrapCoding(o : TFHIRObject) : TFhirCodingW; override;
     function wrapOperationOutcome(r : TFHIRResourceV) : TFhirOperationOutcomeW; override;
+    function wrapBundle(r : TFHIRResourceV) : TFhirBundleW; override;
   end;
+  TFHIRFactoryX = TFHIRFactoryR4;
 
 implementation
 
@@ -238,6 +241,16 @@ begin
   result := r.text.div_;
 end;
 
+function TFHIRFactoryR4.resourceNames: TArray<String>;
+var
+  a : TFhirResourceType;
+begin
+  SetLength(result, length(CODES_TFhirResourceType)-2);
+  for a in ALL_RESOURCE_TYPES do
+    if not (a in [frtNull, frtCustom]) then
+      result[ord(a)-1] := CODES_TFhirResourceType[a];
+end;
+
 function TFHIRFactoryR4.version: TFHIRVersion;
 begin
   result := fhirVersionRelease4;
@@ -246,6 +259,14 @@ end;
 function TFHIRFactoryR4.versionString: String;
 begin
   result := FHIR_GENERATED_VERSION;
+end;
+
+function TFHIRFactoryR4.wrapBundle(r: TFHIRResourceV): TFhirBundleW;
+begin
+  if r = nil then
+    result := nil
+  else
+    result := TFhirBundle4.Create(r);
 end;
 
 function TFHIRFactoryR4.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;

@@ -50,8 +50,8 @@ uses
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPop3, IdMessageParts,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Constants, FHIR.Tools.Utilities, FHIR.Tools.Client, FHIR.Tools.PathNode,
-  FHIR.Tools.Session, FHIRIndexManagers, FHIRServerUtilities, FHIR.Tools.Parser, FHIR.Base.Parser, FHIR.Tools.PathEngine, FHIR.Tools.Context, FHIR.Debug.Logging, ServerUtilities;
+  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Constants, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.PathNode,
+  FHIR.Tools.Session, FHIRIndexManagers, FHIRServerUtilities, FHIR.Version.Parser, FHIR.Base.Parser, FHIR.Version.PathEngine, FHIR.Version.Context, FHIR.Debug.Logging, ServerUtilities;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
@@ -394,8 +394,8 @@ begin
             rule(evd.trigger.data.profileList.IsEmpty, 'DataRequirement profile must be absent');
             if evd.trigger.condition <> nil then
             begin
-              rule(evd.trigger.condition.language = 'text\FHIR.Tools.PathEngine', 'Condition language must be FHIR.Tools.PathEngine');
-              rule(evd.trigger.condition.expression <> '', 'Condition FHIR.Tools.PathEngine must not be blank');
+              rule(evd.trigger.condition.language = 'text\FHIR.Version.PathEngine', 'Condition language must be FHIR.Version.PathEngine');
+              rule(evd.trigger.condition.expression <> '', 'Condition FHIR.Version.PathEngine must not be blank');
               try
                 expr := fpp.parse(evd.trigger.condition.expression);
                 evd.trigger.condition.expressionElement.Tag := expr;

@@ -36,7 +36,7 @@ uses
   FHIR.Support.Strings, FHIR.Support.Objects, AdvObjectLists,
   YuStemmer,
   FHIR.Database.Manager,
-  FHIR.Tools.Types, FHIRComponents, FHIR.Tools.Resources, FHIR.Tx.Service, DateAndTime;
+  FHIR.Version.Types, FHIRComponents, FHIR.Version.Resources, FHIR.Tx.Service, DateAndTime;
 
 type
   TNciMetaConcept = class (TCodeSystemProviderContext)

@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   TextUtilities,
   FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIRJavascript, FHIR.Tools.Parser,
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIRJavascript, FHIR.Version.Parser,
   JavaBridge,
   DUnitX.TestFramework;
 

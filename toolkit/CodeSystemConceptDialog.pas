@@ -35,7 +35,7 @@ uses
   FMX.Controls.Presentation, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox,
   FMX.Memo, FMX.Edit, FMX.DateTimeCtrls, System.ImageList, FMX.ImgList,
   FHIR.Support.DateTime,
-  ResourceEditingSupport, FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities,
+  ResourceEditingSupport, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog;
 
 type

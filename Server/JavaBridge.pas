@@ -6,7 +6,7 @@ uses
   SysUtils, Classes,
   JNI, JNIWrapper, JavaRuntime,
   FHIR.Support.Objects, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Tools.Resources, FHIR.Tools.Parser, FHIR.Tools.Utilities;
+  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Utilities;
 
 
 type

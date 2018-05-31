@@ -110,7 +110,7 @@ uses
   FHIR.R4.Utilities,
   {$ENDIF}
 
-  FHIR.Tools.Parser;
+  FHIR.Version.Parser;
 
 { TFHIRXhtmlComposer }
 

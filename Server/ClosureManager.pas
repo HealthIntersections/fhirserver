@@ -36,7 +36,7 @@ Uses
   FHIR.Support.Strings, FHIR.Support.Lock,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Database.Manager,
-  FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities,
+  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities,
   TerminologyServerStore;
 
 Type

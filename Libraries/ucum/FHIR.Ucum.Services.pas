@@ -38,8 +38,8 @@ Uses
   FHIR.Support.Decimal, FHIR.Support.Text, FHIR.Support.MXml,
   FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, FHIR.Ucum.IFace,
   FHIR.Base.Common,
-  FHIR.Tools.Parser,
-  FHIR.Tools.Resources, FHIR.Tools.Types, FHIR.Tools.Utilities,
+  FHIR.Version.Parser,
+  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
 

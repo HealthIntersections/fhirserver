@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Common,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tx.Service;
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
 
 type
   TIETFLanguageCodeConcept = class (TCodeSystemProviderContext)

@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Strings,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.Tools.Resources, FHIR.Tools.Types;
+  FHIR.Version.Resources, FHIR.Version.Types;
 
 function LoadBinaryResource(lang : String; b: TBytes): TFhirBinary;
 

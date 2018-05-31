@@ -37,7 +37,7 @@ uses
   FHIR.Support.Text,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.Base.Parser,
-  FHIR.Tools.Constants; // todo: really need to sort out how XHTML template is done
+  FHIR.Version.Constants; // todo: really need to sort out how XHTML template is done
 
 Type
 

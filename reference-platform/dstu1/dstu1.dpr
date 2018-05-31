@@ -30,8 +30,8 @@ program dstu1;
 {$APPTYPE CONSOLE}
 
 uses
-  FHIR.Tools.Constants,
-  FHIR.Tools.Parser,
+  FHIR.Version.Constants,
+  FHIR.Version.Parser,
   SysUtils,
   Classes,
   ActiveX,
@@ -93,7 +93,7 @@ uses
   HL7V2DateSupport in '..\support\HL7V2DateSupport.pas',
   FHIR.Base.Objects in 'FHIR.Base.Objects.pas',
   AdvStringMatches in '..\support\AdvStringMatches.pas',
-  FHIR.Tools.Resources in 'FHIR.Tools.Resources.pas',
+  FHIR.Version.Resources in 'FHIR.Version.Resources.pas',
   FHIR.Base.Parser in 'FHIR.Base.Parser.pas',
   FHIR.Tools.Session in 'FHIR.Tools.Session.pas',
   FHIR.Web.Parsers in '..\support\FHIR.Web.Parsers.pas',
@@ -115,7 +115,7 @@ uses
   AfsVolumes in '..\support\AfsVolumes.pas',
   AfsStreamManagers in '..\support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\support\AdvObjectMatches.pas',
-  FHIR.Tools.Utilities in 'FHIR.Tools.Utilities.pas',
+  FHIR.Version.Utilities in 'FHIR.Version.Utilities.pas',
   AdvStringObjectMatches in '..\support\AdvStringObjectMatches.pas',
   JWT in '..\support\JWT.pas',
   HMAC in '..\support\HMAC.pas',

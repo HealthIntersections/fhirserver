@@ -6,7 +6,7 @@ uses
   SysUtils, Classes,
   FHIR.Javascript,
   FHIR.Support.Objects,
-  FHIR.Tools.Resources, FHIR.Tools.Client, FHIR.Tools.Utilities;
+  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities;
 
 type
   TFHIRClientJSHelper = class (TFslObject)
@@ -238,7 +238,7 @@ var
 begin
   this := TFHIRClientJSHelper.Create;
   js.ownObject(this);
-  def := js.defineClass('FHIR.Tools.Client', nil, 'FHIR.Tools.Client', this.CreateFHIRClientJs);
+  def := js.defineClass('FHIR.Version.Client', nil, 'FHIR.Version.Client', this.CreateFHIRClientJs);
   def.defineRoutine('address', nil, this.FHIRClientAddressJs);
   def.defineRoutine('capabilities', nil, this.FHIRClientCapabilitiesJs);
   def.defineRoutine('transaction', nil, this.FHIRClientTransactionJs);

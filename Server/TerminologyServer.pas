@@ -43,7 +43,7 @@ uses
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
   FHIR.Database.Manager,
   FHIR.Base.Common,
-  FHIR.Tools.Types, FHIR.Tools.Resources, FHIR.Tools.Utilities, FHIR.CdsHooks.Utilities, FHIR.Tools.Operations, FHIR.Tools.Session, FHIR.Tools.Common,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.CdsHooks.Utilities, FHIR.Version.Operations, FHIR.Tools.Session, FHIR.Version.Common,
   FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
   IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, FHIR.Snomed.Expressions;
@@ -128,7 +128,7 @@ implementation
 
 uses
   FHIR.Debug.Logging,
-  FHIR.Tools.Constants,
+  FHIR.Version.Constants,
   FHIRValueSetExpander;
 
 

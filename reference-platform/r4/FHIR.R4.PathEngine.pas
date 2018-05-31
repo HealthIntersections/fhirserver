@@ -56,6 +56,7 @@ type
   protected
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
   public
     constructor create(value : String);
     function fhirType : string; override;
@@ -72,6 +73,7 @@ type
     procedure GetChildrenByName(name : string; list : TFHIRSelectionList); override;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
   public
     constructor create(instance : TFHIRObject);
     destructor destroy; override;
@@ -360,12 +362,12 @@ type
     function evaluate(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNodeV) : TFHIRSelectionList; overload; override;
 
     // evaluate a path and return true or false
-    function evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; path : String) : boolean; overload;
-    function evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : boolean; overload;
+    function evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; path : String) : boolean; overload; override;
+    function evaluateToBoolean(appInfo : TFslObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNodeV) : boolean; overload; override;
 
     // evaluate a path and return a string describing the outcome
-    function evaluateToString(appInfo : TFslObject; base : TFHIRObject; path : String) : string; overload;
-    function evaluateToString(appInfo : TFslObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : string; overload;
+    function evaluateToString(appInfo : TFslObject; base : TFHIRObject; path : String) : string; overload; override;
+    function evaluateToString(appInfo : TFslObject; base : TFHIRObject; expr : TFHIRPathExpressionNodeV) : string; overload; override;
 
     // worker routine for converting a set of objects to a string representation
     function convertToString(items : TFHIRSelectionList) : String; overload; override;
@@ -407,6 +409,11 @@ end;
 function TFHIRConstant.makeCodeValue(v: String): TFHIRObject;
 begin
   result := TFhirCode.Create(v);
+end;
+
+function TFHIRConstant.makeIntValue(v: String): TFHIRObject;
+begin
+  result := TFhirInteger.Create(v);
 end;
 
 function TFHIRConstant.makeStringValue(v: String): TFHIRObject;
@@ -476,6 +483,11 @@ end;
 function TFHIRClassTypeInfo.makeCodeValue(v: String): TFHIRObject;
 begin
   result := TFhirCode.Create(v);
+end;
+
+function TFHIRClassTypeInfo.makeIntValue(v: String): TFHIRObject;
+begin
+  result := TFhirInteger.Create(v);
 end;
 
 function TFHIRClassTypeInfo.makeStringValue(v: String): TFHIRObject;
@@ -1261,7 +1273,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluateToBoolean(appInfo: TFslObject; resource, base: TFHIRObject; expr: TFHIRPathExpressionNode): boolean;
+function TFHIRPathEngine.evaluateToBoolean(appInfo: TFslObject; resource, base: TFHIRObject; expr: TFHIRPathExpressionNodeV): boolean;
 var
   res : TFHIRSelectionList;
 begin
@@ -1273,7 +1285,7 @@ begin
   end;
 end;
 
-function TFHIRPathEngine.evaluateToString(appInfo: TFslObject; base: TFHIRObject; expr: TFHIRPathExpressionNode): string;
+function TFHIRPathEngine.evaluateToString(appInfo: TFslObject; base: TFHIRObject; expr: TFHIRPathExpressionNodeV): string;
 var
   res : TFHIRSelectionList;
 begin

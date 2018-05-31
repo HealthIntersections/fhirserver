@@ -33,7 +33,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Tools.PathNode;
+  FHIR.Base.Objects, FHIR.Version.PathNode;
 
 type
   TCqlContextType = (CqlContextPatient, CqlContextPopulation);

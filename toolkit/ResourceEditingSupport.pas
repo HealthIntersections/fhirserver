@@ -32,7 +32,7 @@ interface
 uses
   SysUtils,
   FHIR.Support.DateTime,
-  FHIR.Tools.Types, FHIR.Tools.Resources,
+  FHIR.Version.Types, FHIR.Version.Resources,
   FMX.DateTimeCtrls;
 
 function displayLang(lang : String) : string;
