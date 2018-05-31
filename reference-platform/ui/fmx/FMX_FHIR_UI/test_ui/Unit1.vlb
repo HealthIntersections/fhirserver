@@ -1,0 +1,15 @@
+﻿[FHIRStringEdit1]
+Coordinates=130,10,93,51
+ExplicitSubNodes=Multiple
+
+[StyleBook1]
+Coordinates=205,56,70,33
+
+[]
+Coordinates=163,87,82,33
+ExplicitSubNodes=Multiple
+Visible=True
+
+[Button1]
+Coordinates=0,0,53,51
+
