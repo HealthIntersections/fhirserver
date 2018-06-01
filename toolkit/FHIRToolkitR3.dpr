@@ -171,5 +171,6 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
   Application.Run;
 end.

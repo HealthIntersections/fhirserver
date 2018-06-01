@@ -85,7 +85,7 @@
         <DCC_DebugInformation>2</DCC_DebugInformation>
         <DCC_UnitSearchPath>C:\work\Components\treeview\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
-        <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d332\</DCC_DcuOutput>
+        <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_npp\</DCC_DcuOutput>
         <Debugger_HostApplication>C:\Program Files (x86)\Notepad++\notepad++.exe</Debugger_HostApplication>
         <DCC_ExeOutput>C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins</DCC_ExeOutput>
         <Manifest_File>None</Manifest_File>

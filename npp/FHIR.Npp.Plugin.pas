@@ -611,6 +611,8 @@ begin
   if tipShowing then
     mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_CALLTIPCANCEL, 0, 0));
   tipText := '';
+  if FHIRVisualizer <> nil then
+    FHIRVisualizer.setValidationOutcomes(nil);
 end;
 
 procedure TFHIRPlugin.FuncVisualiser;
@@ -650,7 +652,11 @@ var
   s : String;
 begin
   result := ffUnspecified; // null
-  s := TEncoding.UTF8.GetString(src);
+  try
+    s := TEncoding.UTF8.GetString(src);
+  except
+    result := ffUnspecified;
+  end;
   s := s.Trim;
   if (s <> '') then
     begin
@@ -1445,10 +1451,10 @@ begin
 
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_SETMOUSEDWELLTIME, 200, 0));
 
-{  squiggle(INDIC_INFORMATION, 0, 3);
+{  squiggle(INDIC_INFORMATION, 0, 3, );
   squiggle(INDIC_WARNING, 4, 3);
   squiggle(INDIC_ERROR, 8, 3);
-  squiggle(INDIC_MATCH, 11, 3); }
+  squiggle(INDIC_MATCH, 11, 3);}
 end;
 
 {function TFHIRPlugin.showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TFslStringSet): string;
@@ -1465,10 +1471,13 @@ end;
 }
 
 procedure TFHIRPlugin.squiggle(level, line, start, length: integer; message : String);
+var
+  b : TBytes;
 begin
+  b := TEncoding.UTF8.GetBytes(message);
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_SETINDICATORCURRENT, level, 0));
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_INDICATORFILLRANGE, start, length));
-  mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETTEXT, line, LPARAM(PChar(message))));
+  mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETTEXT, 0, LPARAM(@b[0])));
 end;
 
 
@@ -1682,11 +1691,14 @@ end;
 
 procedure TFHIRPlugin.DoNppnBufferChange;
 begin
-  AnalyseFile(false);
+  try
+    AnalyseFile(false);
 
-  FuncValidateClear;
-  FuncMatchesClear;
-  DoNppnTextModified;
+    FuncValidateClear;
+    FuncMatchesClear;
+    DoNppnTextModified;
+  except
+  end;
 end;
 
 procedure TFHIRPlugin.DoNppnDwellEnd;
@@ -1816,36 +1828,36 @@ var
   annot : TFHIRAnnotation;
   i : integer;
 begin
-  CheckUpgrade;
-  if not init then
-    exit;
-
-  if (FCurrentFileInfo = nil) or (FCurrentFileInfo.Format = ffUnspecified) then
-    AnalyseFile(false);
-
-  if FCurrentFileInfo.Format = ffUnspecified then
-    exit;
-
-  if not checkContext(FCurrentFileInfo.workingVersion) then
-    exit;
-
-  src := CurrentBytes;
-  if SameBytes(src, FLastSrc) then
-    exit;
-  if (length(src) = 1) and (src[0] = 0) then
-    exit;
-
-  FLastSrc := src;
-  FLastRes.free;
-  FLastRes := nil;
-//    // we need to parse if:
-//    //  - we are doing background validation
-//    //  - there's a path defined
-//    //  - we're viewing narrative
-//  else if (Settings.BackgroundValidation or
-//          (assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath)) or
-//          (VisualiserMode in [vmNarrative, vmFocus])) then
   try
+    CheckUpgrade;
+    if not init then
+      exit;
+
+    if (FCurrentFileInfo = nil) or (FCurrentFileInfo.Format = ffUnspecified) then
+      AnalyseFile(false);
+
+    if FCurrentFileInfo.Format = ffUnspecified then
+      exit;
+
+    if not checkContext(FCurrentFileInfo.workingVersion) then
+      exit;
+
+    src := CurrentBytes;
+    if SameBytes(src, FLastSrc) then
+      exit;
+    if (length(src) = 1) and (src[0] = 0) then
+      exit;
+
+    FLastSrc := src;
+    FLastRes.free;
+    FLastRes := nil;
+  //    // we need to parse if:
+  //    //  - we are doing background validation
+  //    //  - there's a path defined
+  //    //  - we're viewing narrative
+  //  else if (Settings.BackgroundValidation or
+  //          (assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath)) or
+  //          (VisualiserMode in [vmNarrative, vmFocus])) then
     if not (parse(500, fmt, res)) then
     begin
       if (FHIRVisualizer <> nil) then

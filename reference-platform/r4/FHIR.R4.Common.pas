@@ -186,6 +186,8 @@ type
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
     procedure addParamCode(name : String; value : string); override;
+    function bool(name : String) : boolean; override;
+    function str(name : String) : String; override;
     function appendParameter(name : String) : TFhirParametersParameterW; override;
   end;
 
@@ -744,6 +746,11 @@ begin
   ParameterList.Add(result);
 end;
 
+function TFHIRParameters4.bool(name: String): boolean;
+begin
+  result := parameter.bool[name];
+end;
+
 function TFHIRParameters4.parameter: TFhirParameters;
 begin
   result := Resource as TFhirParameters;
@@ -756,6 +763,11 @@ begin
   inherited;
   for t in parameter.parameterList do
     FList.Add(TFhirParametersParameter4.Create(t.Link));
+end;
+
+function TFHIRParameters4.str(name: String): String;
+begin
+  result := parameter.str[name];
 end;
 
 { TFHIRStructureDefinition4 }

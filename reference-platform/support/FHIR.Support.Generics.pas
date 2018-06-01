@@ -1976,7 +1976,8 @@ end;
 
 function TFslStringMap.GetItem(const Key: String): String;
 begin
-  result := FDict[key];
+  if not FDict.TryGetValue(Key, result) then
+    result := '';
 end;
 
 function TFslStringMap.link: TFslStringMap;

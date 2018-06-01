@@ -35,7 +35,7 @@ Uses
   SysUtils, Classes, ActiveX, ComObj,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Tx.Service,
 
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Context, FHIR.R2.Profiles, FHIR.R2.Client,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Client,
@@ -51,6 +51,9 @@ Type
     FCodeSystems : TFslMap<FHIR.R2.Resources.TFHIRValueSet>;
     procedure checkClient;
     function  findCode(list : FHIR.R2.Resources.TFhirValueSetCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R2.Resources.TFhirValueSetCodeSystemConcept;
+    function validateInternally(system, version, code: String; vs: FHIR.R2.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
+    function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
+    function doGetCs(sender : TObject; url, version : String; params : TFslStringMap) : TCodeSystemProvider;
   protected
     procedure SeeResource(r : FHIR.R2.Resources.TFhirResource); override;
   public
@@ -78,6 +81,9 @@ Type
     FCodeSystems : TFslMap<FHIR.R3.Resources.TFHIRCodeSystem>;
     procedure checkClient;
     function  findCode(list : FHIR.R3.Resources.TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R3.Resources.TFhirCodeSystemConcept;
+    function validateInternally(system, version, code: String; vs: FHIR.R3.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
+    function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
+    function doGetCs(sender : TObject; url, version : String; params : TFslStringMap) : TCodeSystemProvider;
   protected
     procedure SeeResource(r : FHIR.R3.Resources.TFhirResource); override;
   public
@@ -105,6 +111,9 @@ Type
     FCodeSystems : TFslMap<FHIR.R4.Resources.TFHIRCodeSystem>;
     procedure checkClient;
     function  findCode(list : FHIR.R4.Resources.TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R4.Resources.TFhirCodeSystemConcept;
+    function validateInternally(system, version, code: String; vs: FHIR.R4.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
+    function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
+    function doGetCs(sender : TObject; url, version : String; params : TFslStringMap) : TCodeSystemProvider;
   protected
     procedure SeeResource(r : FHIR.R4.Resources.TFhirResource); override;
   public
@@ -131,6 +140,7 @@ Type
 implementation
 
 uses
+  FHIR.Tools.ValueSets, FHIR.Tools.CodeSystemProvider,
   FHIR.R2.Constants, FHIR.R2.Utilities,
   FHIR.R3.Constants, FHIR.R3.Utilities,
   FHIR.R4.Constants, FHIR.R4.Utilities;
@@ -165,6 +175,26 @@ begin
   FCapabilityStatement.Free;
   FCodeSystems.Free;
   inherited;
+end;
+
+function TFHIRPluginValidatorContextR2.doGetCs(sender: TObject; url, version: String; params: TFslStringMap): TCodeSystemProvider;
+var
+  cs : FHIR.R2.Resources.TFHIRValueSet;
+begin
+  cs := FCodeSystems[url];
+  if cs = nil then
+    raise Exception.Create('Unable to resolve code system '+url);
+  result := TFhirCodeSystemProvider.create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
+end;
+
+function TFHIRPluginValidatorContextR2.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
+var
+  vs : FHIR.R2.Resources.TFhirValueSet;
+begin
+  vs := FValueSets[url];
+  if vs = nil then
+    raise Exception.Create('Unable to resolve value set '+url);
+  result := Factory.wrapValueSet(vs.link);
 end;
 
 function TFHIRPluginValidatorContextR2.expand(vs: FHIR.R2.Resources.TFhirValueSet): FHIR.R2.Resources.TFHIRValueSet;
@@ -288,8 +318,10 @@ end;
 function TFHIRPluginValidatorContextR2.validateCode(system, version, code: String; vs: FHIR.R2.Resources.TFHIRValueSet): TValidationResult;
 var
   pIn, pOut : FHIR.R2.Resources.TFhirParameters;
-  def : TFhirCodeSystemConcept;
 begin
+  if validateInternally(system, version, code, vs, result) then
+    exit;
+
   checkClient;
   pIn := FHIR.R2.Resources.TFhirParameters.Create;
   try
@@ -331,6 +363,49 @@ begin
     end;
   finally
     pIn.Free;
+  end;
+end;
+
+function TFHIRPluginValidatorContextR2.validateInternally(system, version, code: String; vs: FHIR.R2.Resources.TFHIRValueSet; var res: TValidationResult): boolean;
+var
+  vsw : TFhirValueSetW;
+  validator : TValueSetChecker;
+  p : TFHIRParametersW;
+  params : TFslStringMap;
+begin
+  try
+    vsw := Factory.wrapValueSet(vs.Link);
+    try
+      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, '');
+      try
+        params := TFslStringMap.Create;
+        try
+          validator.prepare(vsw, params);
+          p := validator.check(system, version, code);
+          try
+            res := TValidationResult.create;
+            if p.bool('result') then
+              res.Severity := isInformation
+            else
+            begin
+              res.Severity := isError;
+              res.Message := p.str('message');
+            end;
+          finally
+            p.Free;
+          end;
+        finally
+          params.Free;
+        end;
+      finally
+        validator.Free;
+      end;
+    finally
+      vsw.Free;
+    end;
+    result := true;
+  except
+    result := false;
   end;
 end;
 
@@ -387,6 +462,26 @@ begin
   FCapabilityStatement.Free;
   FCodeSystems.Free;
   inherited;
+end;
+
+function TFHIRPluginValidatorContextR3.doGetCs(sender: TObject; url, version: String; params: TFslStringMap): TCodeSystemProvider;
+var
+  cs : FHIR.R3.Resources.TFHIRCodeSystem;
+begin
+  cs := FCodeSystems[url];
+  if cs = nil then
+    raise Exception.Create('Unable to resolve code system '+url);
+  result := TFhirCodeSystemProvider.create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
+end;
+
+function TFHIRPluginValidatorContextR3.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
+var
+  vs : FHIR.R3.Resources.TFhirValueSet;
+begin
+  vs := FValueSets[url];
+  if vs = nil then
+    raise Exception.Create('Unable to resolve value set '+url);
+  result := Factory.wrapValueSet(vs.link);
 end;
 
 function TFHIRPluginValidatorContextR3.expand(vs: FHIR.R3.Resources.TFhirValueSet): FHIR.R3.Resources.TFHIRValueSet;
@@ -512,6 +607,9 @@ var
   pIn, pOut : FHIR.R3.Resources.TFhirParameters;
   def : TFhirCodeSystemConcept;
 begin
+  if validateInternally(system, version, code, vs, result) then
+    exit;
+
   checkClient;
   pIn := FHIR.R3.Resources.TFhirParameters.Create;
   try
@@ -556,6 +654,49 @@ begin
   end;
 end;
 
+function TFHIRPluginValidatorContextR3.validateInternally(system, version, code: String; vs: FHIR.R3.Resources.TFHIRValueSet; var res: TValidationResult): boolean;
+var
+  vsw : TFhirValueSetW;
+  validator : TValueSetChecker;
+  p : TFHIRParametersW;
+  params : TFslStringMap;
+begin
+  try
+    vsw := Factory.wrapValueSet(vs.Link);
+    try
+      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, '');
+      try
+        params := TFslStringMap.Create;
+        try
+          validator.prepare(vsw, params);
+          p := validator.check(system, version, code);
+          try
+            res := TValidationResult.create;
+            if p.bool('result') then
+              res.Severity := isInformation
+            else
+            begin
+              res.Severity := isError;
+              res.Message := p.str('message');
+            end;
+          finally
+            p.Free;
+          end;
+        finally
+          params.Free;
+        end;
+      finally
+        validator.Free;
+      end;
+    finally
+      vsw.Free;
+    end;
+    result := true;
+  except
+    result := false;
+  end;
+end;
+
 function TFHIRPluginValidatorContextR3.validateCode(code: FHIR.R3.Types.TFHIRCoding; vs: FHIR.R3.Resources.TFhirValueSet): TValidationResult;
 var
   pIn, pOut : FHIR.R3.Resources.TFhirParameters;
@@ -589,7 +730,7 @@ begin
       FServer.Free;
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R4.Client.TFhirClient4;
     FCapabilityStatement := FServer.conformance(true);
-    if FCapabilityStatement.fhirVersion <> CODES_TFHIRVersion[factory.version] then
+    if FCapabilityStatement.fhirVersion <> FHIR_VERSIONS[factory.version] then
       raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+CODES_TFHIRVersion[factory.version]+')');
   end;
 end;
@@ -609,6 +750,26 @@ begin
   FCapabilityStatement.Free;
   FCodeSystems.Free;
   inherited;
+end;
+
+function TFHIRPluginValidatorContextR4.doGetCs(sender: TObject; url, version: String; params: TFslStringMap): TCodeSystemProvider;
+var
+  cs : FHIR.R4.Resources.TFHIRCodeSystem;
+begin
+  cs := FCodeSystems[url];
+  if cs = nil then
+    raise Exception.Create('Unable to resolve code system '+url);
+  result := TFhirCodeSystemProvider.create(FFactory.link, TFHIRCodeSystemEntry.Create(FFactory.wrapCodeSystem(cs.link)));
+end;
+
+function TFHIRPluginValidatorContextR4.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
+var
+  vs : FHIR.R4.Resources.TFhirValueSet;
+begin
+  vs := FValueSets[url];
+  if vs = nil then
+    raise Exception.Create('Unable to resolve value set '+url);
+  result := FFactory.wrapValueSet(vs.link);
 end;
 
 function TFHIRPluginValidatorContextR4.expand(vs: FHIR.R4.Resources.TFhirValueSet): FHIR.R4.Resources.TFHIRValueSet;
@@ -734,6 +895,9 @@ var
   pIn, pOut : FHIR.R4.Resources.TFhirParameters;
   def : TFhirCodeSystemConcept;
 begin
+  if validateInternally(system, version, code, vs, result) then
+    exit;
+
   checkClient;
   pIn := FHIR.R4.Resources.TFhirParameters.Create;
   try
@@ -775,6 +939,49 @@ begin
     end;
   finally
     pIn.Free;
+  end;
+end;
+
+function TFHIRPluginValidatorContextR4.validateInternally(system, version, code: String; vs: FHIR.R4.Resources.TFHIRValueSet; var res: TValidationResult): boolean;
+var
+  vsw : TFhirValueSetW;
+  validator : TValueSetChecker;
+  p : TFHIRParametersW;
+  params : TFslStringMap;
+begin
+  try
+    vsw := FFactory.wrapValueSet(vs.Link);
+    try
+      validator := TValueSetChecker.Create(FFactory.link, doGetVs, doGetCs, '');
+      try
+        params := TFslStringMap.Create;
+        try
+          validator.prepare(vsw, params);
+          p := validator.check(system, version, code);
+          try
+            res := TValidationResult.create;
+            if p.bool('result') then
+              res.Severity := isInformation
+            else
+            begin
+              res.Severity := isError;
+              res.Message := p.str('message');
+            end;
+          finally
+            p.Free;
+          end;
+        finally
+          params.Free;
+        end;
+      finally
+        validator.Free;
+      end;
+    finally
+      vsw.Free;
+    end;
+    result := true;
+  except
+    result := false;
   end;
 end;
 

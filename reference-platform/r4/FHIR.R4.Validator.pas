@@ -2587,7 +2587,8 @@ begin
 
   // firstly, resolve the value set
   Binding := context.Binding;
-  if (Binding.ValueSet <> nil) and (Binding.ValueSet is TFHIRReference) then
+
+  if (Binding.ValueSet <> nil) and ((Binding.ValueSet is TFHIRReference) or Binding.valueSet.isPrimitive) then
   begin
     vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
     if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
@@ -2720,8 +2721,8 @@ var
   s : String;
   c : TFHIRResource;
 begin
-  if (reference is TFHIRUri) then
-    result := TFHIRValueSet(FContext.fetchResource(frtValueSet, TFHIRUri(reference).value))
+  if (reference.isPrimitive) then
+    result := TFHIRValueSet(FContext.fetchResource(frtValueSet, reference.primitiveValue))
   else if (reference is TFHIRReference) then
   begin
     s := TFHIRReference(reference).reference;
@@ -2774,7 +2775,7 @@ begin
     Binding := context.Binding;
     if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, Binding <> nil, 'Binding for ' + path + ' missing (cc)')) then
     begin
-      if (Binding.ValueSet <> nil) and (Binding.ValueSet is TFHIRReference) then
+      if (Binding.ValueSet <> nil) and ((Binding.ValueSet is TFHIRReference) or Binding.ValueSet.isPrimitive) then
       begin
         vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
         if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then

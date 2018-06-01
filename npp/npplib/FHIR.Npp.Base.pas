@@ -865,7 +865,7 @@ var
 begin
   setLength(result, 0);
   l := SendMessage(self.NppData.ScintillaMainHandle, SCI_GETTEXTLENGTH, 0, 0)+1;
-  if l > 102400 then
+  if l > 1024 * 1024 then
     exit();
 
   SetLength(result, l);

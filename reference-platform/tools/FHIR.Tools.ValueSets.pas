@@ -103,6 +103,7 @@ Type
     procedure prepare(vs : TFHIRValueSetW; params : TFslStringMap);
 
     function check(system, version, code : String; abstractOk : boolean) : boolean; overload;
+    function check(system, version, code : String) : TFhirParametersW; overload;
     function check(coding : TFhirCodingW; abstractOk : boolean): TFhirParametersW; overload;
     function check(code: TFhirCodeableConceptW; abstractOk : boolean) : TFhirParametersW; overload;
 
@@ -630,6 +631,40 @@ begin
   finally
     result.free;
   end;
+end;
+
+function TValueSetChecker.check(system, version, code: String): TFhirParametersW;
+var
+  list : TStringList;
+  message : String;
+begin
+  result := FFactory.makeParameters;
+  try
+    list := TStringList.Create;
+    try
+      list.Duplicates := Classes.dupIgnore;
+      list.CaseSensitive := false;
+      if check(system, version, code, true, list, message) then
+      begin
+        result.AddParamBool('result', true);
+        if list.Count > 0 then
+          result.AddParamStr('display', list[0]);
+      end
+      else
+      begin
+        result.AddParamBool('result', false);
+        result.AddParamStr('message', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
+        if (message <> '') then
+          result.AddParamStr('message', message);
+      end;
+    finally
+      list.Free;
+    end;
+    result.Link;
+  finally
+    result.free;
+  end;
+
 end;
 
 Function FreeAsBoolean(cs : TCodeSystemProvider; ctxt : TCodeSystemProviderContext) : boolean; overload;

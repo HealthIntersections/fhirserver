@@ -263,6 +263,9 @@ type
     destructor Destroy; override;
     function link : TFHIRParametersW; overload;
 
+    function bool(name : String) : boolean; virtual; abstract;
+    function str(name : String) : String; virtual; abstract;
+
     procedure addParamBool(name : String; value : boolean); virtual; abstract;
     procedure addParamStr(name : String; value : string); virtual; abstract;
     procedure addParamCode(name : String; value : string); virtual; abstract;
