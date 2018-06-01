@@ -1,12 +1,16 @@
 unit FHIR.FMX.Ctrls;
 
+{$DEFINE USEFHIROBJ}
+
+
 interface
 
 uses
   System.SysUtils, System.Classes, System.types, System.RTLConsts, System.Generics.Collections,
   FMX.Types, FMX.Controls, FMX.TreeView, FMX.Controls.Presentation, FMX.Edit , FMX.Layouts, FMX.StdCtrls
-//, FHIR.R4.Types
-
+{$IFDEF USEFHIROBJ}
+, FHIR.R4.Types
+{$ENDIF}
   ;
 
   type
@@ -19,8 +23,11 @@ uses
     pContent: TScrollBox;
     edt: TEdit;
     pBtn: TScrollBox;
-//    fFHIRString:String; ///TO RENAME AFTER GETTING FHIR CLASSES       //////////////////////////////////////
-    fFHIRStringList:TStringList; ///TO RENAME AFTER GETTING FHIR CLASSES       //////////////////////////////////////
+{$IFDEF USEFHIROBJ}
+    fFHIRString:TFHIRString;
+{$ELSE}
+    fFHIRStringList:TStringList;
+{$ENDIF}
     btn: TButton;
     fmultiple:boolean;
     fOnChange : TNotifyEvent;
@@ -31,8 +38,13 @@ uses
     procedure onBtnClick(Sender: TObject);
   protected
 
+{$IFDEF USEFHIROBJ}
+    function GeTFHIRString: TFHIRString;
+    procedure SeTFHIRString(AValue: TFHIRString);
+{$ELSE}
     function GeTFHIRString: TStringList;
     procedure SeTFHIRString(AValue: TstringList);
+{$ENDIF}
 
     procedure setPropertyName(propName:string);
     procedure setMultiple(mult:boolean);
@@ -40,15 +52,18 @@ uses
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
     procedure load;
-{
-    property FHIRPropertyValue: String read GeTFHIRStringValue write seTFHIRStringValue; ///TO RESTORE AFTER GETTING FHIR CLASSES
+{$IFDEF USEFHIROBJ}
     property FHIRProperty: TFHIRString read GeTFHIRString write seTFHIRString;
-    procedure useObject(var AValue: TFHIRstring);
-}
+    function associate(AValue: TFHIRString): TFHIRString;
+{$ELSE}
+    property FHIRProperty: TStringList read GeTFHIRString write seTFHIRString;
     function associate(AValue: TstringList): TStringList;
+{$ENDIF}
+{$IFNDEF USEFHIROBJ}
+    property FHIRStringList: TStringList read fFHIRStringList write fFHIRStringList;
+{$ENDIF}
 
   published
-    property FHIRStringList: TStringList read fFHIRStringList write fFHIRStringList;
     property OnChange: TNotifyEvent read fOnChange write fOnChange;
     property OnClick: TNotifyEvent read fOnClick write fOnClick;
     property FHIRPropertyName: String read fPropertyName write setPropertyName;
@@ -61,7 +76,6 @@ procedure Register;
 
 implementation
 
-{$R FHIR.FMX.Ctrls.res}
 
 procedure Register;
 begin
@@ -138,8 +152,10 @@ begin
   edt.Stored:=false;
   edt.Align := tAlignLayout.Client;
   edt.OnChange := onEditChange;
+{$IFNDEF USEFHIROBJ}
   FFHIRStringList:=TStringList.Create;
   FFHIRStringList.add('');
+{$ENDIF}
 
 end;
 
@@ -147,7 +163,9 @@ end;
 
 destructor TFHIRStringEdit.Destroy;
 begin
+{$IFNDEF USEFHIROBJ}
   FFHIRStringList.Destroy;
+{$ENDIF}
   edt.Destroy;
   Btn.Destroy;
   pBtn.Destroy;
@@ -161,12 +179,14 @@ end;
 
 procedure TFHIRStringEdit.OnEditChange(Sender : TObject);
 begin
-//  fFHIRString := edt.text;
+{$IFDEF USEFHIROBJ}
+  if fFHIRString <> nil then
+    fFHIRstring.value:=edt.text;
+{$ELSE}
   fFHIRStringList[0]:=edt.Text;
-
+{$ENDIF}
   if(Assigned(FOnChange))then FOnChange(Self);
-//  if fFHIRString <> nil then                ///TO RESTORE AFTER GETTING FHIR CLASSES
-//    fFHIRstring.value:=edt.text;
+
 end;
 
 procedure TFHIRStringEdit.OnBtnClick(Sender : TObject);
@@ -198,40 +218,50 @@ end;
 
 procedure TFHIRStringEdit.load;
 begin
-  if fFHIRStringList<>nil then                                                          ///TO RESTORE AFTER GETTING FHIR CLASSES
+{$IFDEF USEFHIROBJ}
+  if fFHIRString <>nil then
+  edt.text:= fFHIRString.value;
+{$ELSE}
+  if fFHIRStringList<>nil then
   edt.text:=fFHIRStringList[0];
+{$ENDIF}
+
 end;
 
-{
-function TFHIRStringEdit.GeTFHIRStringValue: string;                     ///TO RESTORE AFTER GETTING FHIR CLASSES
+{$IFDEF USEFHIROBJ}
+function TFHIRStringEdit.GetFHIRString: TFHIRString;
 begin
+  result := fFHIRString;
   if fFHIRString <> nil then
-  begin
-    result := fFHIRString.Value;
-  end
-  else
-  begin
-    result := 'No external object attached';
-  end;
+  edt.text:=fFHIRString.value;
 end;
+{$ELSE}
 
-procedure TFHIRStringEdit.SeTFHIRStringValue(AValue: String);
-begin
-  if fFHIRString = nil then
-  begin
-    fFHIRString := TFHIRString.Create;
-  end;
-  fFHIRString.Value := AValue;
-end;
-
-}
 function TFHIRStringEdit.GetFHIRString: TStringList;
 begin
   result := fFHIRStringList;
   if fFHIRStringList <> nil then
-    edt.text:=fFHIRStringList[0];
+  edt.text:=fFHIRStringList[0];
+end;
+{$ENDIF}
+
+
+{$IFDEF USEFHIROBJ}
+procedure TFHIRStringEdit.SetFHIRString(AValue: TFHIRString);
+begin
+  if fFHIRString = nil then
+  begin
+    fFHIRString := TFHIRString.Create;
+    edt.text:='';
+  end
+  else begin
+    fFHIRString := AValue;
+    edt.text:=fFHIRString.value;
+  end;
 end;
 
+
+{$ELSE}
 procedure TFHIRStringEdit.SetFHIRString(AValue: TStringList);
 begin
   if fFHIRStringList = nil then
@@ -243,12 +273,32 @@ begin
     fFHIRStringList := AValue;
     edt.text:=fFHIRStringList[0];
   end;
+end;
+{$ENDIF}
 
+
+{$IFDEF USEFHIROBJ}
+function TFHIRStringEdit.associate(AValue: TFHIRString): TFHIRString;
+begin
+  if aValue = nil then
+  begin
+    fFHIRString.CREATE;//     := TFHIRString.Create;
+    edt.text:='';
+  end
+  else begin
+    fFHIRString := AValue;                  // THIS IS NOT REALLY WORKING WELL. mUST CHECK AND REDO
+    fFHIRstring.value:=AValue.value;
+    edt.text:=fFHIRString.value;
+    edt.Repaint;
+    fFHIRString := AValue;                  // THIS IS NOT REALLY WORKING WELL. mUST CHECK AND REDO
+  end;
+  result:=fFhirString;
 end;
 
+{$ELSE}
 function TFHIRStringEdit.associate(AValue: TStringList): TStringList;
 begin
-  if fFHIRStringList = nil then
+  if aValue = nil then
   begin
     fFHIRStringList := TStringList.Create;
     edt.text:='';
@@ -260,6 +310,8 @@ begin
   result:=fFhirStringList;
 end;
 
+
+{$ENDIF}
 
 {
 procedure TFHIRStringEdit.useObject(var AValue: TFHIRString);
@@ -284,4 +336,5 @@ end;
 
 
 end.
+
 

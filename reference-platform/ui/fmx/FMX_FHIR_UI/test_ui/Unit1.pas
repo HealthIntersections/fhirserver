@@ -14,7 +14,6 @@ type
     FHIRStringEdit1: TFHIRStringEdit;
     Button1: TButton;
     Button2: TButton;
-    procedure FHIRStringEdit1Change(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -26,7 +25,7 @@ type
 
 var
   Form1: TForm1;
-  pat:TFHIRPatient;
+  res:TFHIRExampleScenario;
   ident:TFHIRIdentifier;
 
 implementation
@@ -35,35 +34,21 @@ implementation
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-resourcetoFile(pat,'c:\temp\sss.xml',ffXML,OutputStylePretty);
+resourcetoFile(res,'c:\temp\sss.xml',ffXML,OutputStylePretty);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
- pat:=TFHIRPatient(FiletoResource('c:\temp\sss.xml'));
+ res:=TFHIRExampleScenario(FiletoResource('c:\temp\sss.xml'));
+
+res.nameElement:=FHIRStringEdit1.associate(res.nameElement);
 
 end;
 
-procedure TForm1.FHIRStringEdit1Change(Sender: TObject);
-var i:integer;
-tempIdent:TFHIRIdentifier;
-begin
-pat.identifierList.Clear;
-//tempIdent:=;
-for i := 0 to FHIRStringEdit1.FHIRStringList.Count-1 do
-begin
-//ident.value:=FHIRStringEdit1.FHIRStringList[0];
-pat.identifierList.AddItem(TFHIRIdentifier.Create('',FHIRStringEdit1.FHIRStringList[0]));
-
-end;
-
-
-end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-ident.Destroy;
-pat.Destroy;
+//pat.Destroy;
 end;
 
 end.
