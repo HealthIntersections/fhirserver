@@ -323,7 +323,8 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\..\..\..\client\FHIR.Tools.Client.pas"/>
+        <DCCReference Include="..\..\..\..\version\FHIR.Version.Client.pas"/>
+        <DCCReference Include="..\..\..\..\version\FHIR.Version.Context.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.Strings.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.Osx.pas"/>
@@ -338,7 +339,7 @@
         <DCCReference Include="..\..\..\..\support\FHIR.Support.Binary.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.System.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\..\..\..\tools\FHIR.Tools.Parser.pas"/>
+        <DCCReference Include="..\..\..\..\version\FHIR.Version.Parser.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Xml.pas"/>
         <DCCReference Include="..\..\..\..\base\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.MXml.pas"/>
@@ -352,10 +353,8 @@
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Context.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Types.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Resources.pas"/>
-        <DCCReference Include="..\..\..\..\tools\FHIR.Server.Session.pas"/>
         <DCCReference Include="..\..\..\..\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Constants.pas"/>
-        <DCCReference Include="..\..\..\..\tools\FHIR.Server.Security.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Tags.pas"/>
         <DCCReference Include="..\..\..\..\base\FHIR.Base.Lang.pas"/>
         <DCCReference Include="..\..\..\..\base\FHIR.Base.Xhtml.pas"/>
@@ -385,7 +384,7 @@
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Questionnaire2.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Base.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.ParserBase.pas"/>
-        <DCCReference Include="..\..\..\..\tools\FHIR.Server.XhtmlComp.pas"/>
+        <DCCReference Include="..\..\..\..\tools\FHIR.Tools.XhtmlComp.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Parser.pas"/>
         <DCCReference Include="..\..\..\..\client\FHIR.Client.Base.pas"/>
         <DCCReference Include="..\..\..\..\client\FHIR.Client.HTTP.pas"/>

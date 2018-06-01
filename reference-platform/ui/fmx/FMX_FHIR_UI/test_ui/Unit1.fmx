@@ -9,7 +9,6 @@ object Form1: TForm1
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   Left = 1368
   Top = 296
@@ -52475,9 +52474,6 @@ object Form1: TForm1
     Top = 201
   end
   object FHIRStringEdit1: TFHIRStringEdit
-    FHIRStringList.Strings = (
-      '')
-    OnChange = FHIRStringEdit1Change
     Multiple = True
   end
   object Button1: TButton
@@ -52486,5 +52482,12 @@ object Form1: TForm1
     TabOrder = 4
     Text = 'Save'
     OnClick = Button1Click
+  end
+  object Button2: TButton
+    Position.X = 96.000000000000000000
+    Position.Y = 104.000000000000000000
+    TabOrder = 6
+    Text = 'Load'
+    OnClick = Button2Click
   end
 end

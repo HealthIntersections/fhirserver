@@ -8,7 +8,8 @@ uses
   FHIR.Server.Session in '..\..\..\..\tools\FHIR.Server.Session.pas',
   FHIR.Tools.Indexing in '..\..\..\..\tools\FHIR.Tools.Indexing.pas',
   FHIR.Server.Security in '..\..\..\..\tools\FHIR.Server.Security.pas',
-  FHIR.Tools.Parser in '..\..\..\..\tools\FHIR.Tools.Parser.pas',
+  FHIR.Version.Parser in '..\..\..\..\version\FHIR.Version.Parser.pas',
+  FHIR.FMX.Ctrls in '..\..\..\..\ui\fmx\FMX_FHIR_UI\FHIR.FMX.Ctrls.pas',
   FHIR.Server.XhtmlComp in '..\..\..\..\tools\FHIR.Server.XhtmlComp.pas',
   Unit1 in 'Unit1.pas' {Form1};
 

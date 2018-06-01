@@ -17,8 +17,8 @@ object Form1: TForm1
     Size.PlatformDefault = False
     TabOrder = 1
     Visible = False
-    Viewport.Width = 213.000000000000000000
-    Viewport.Height = 437.000000000000000000
+    Viewport.Width = 217.000000000000000000
+    Viewport.Height = 441.000000000000000000
     object ExampleScenario: TTreeViewItem
       IsChecked = False
       IsExpanded = True
@@ -199,8 +199,8 @@ object Form1: TForm1
         Size.Height = 423.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
-        Viewport.Width = 797.000000000000000000
-        Viewport.Height = 419.000000000000000000
+        Viewport.Width = 801.000000000000000000
+        Viewport.Height = 423.000000000000000000
       end
     end
   end
@@ -52705,8 +52705,8 @@ object Form1: TForm1
     Size.Height = 480.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    Viewport.Width = 229.000000000000000000
-    Viewport.Height = 476.000000000000000000
+    Viewport.Width = 233.000000000000000000
+    Viewport.Height = 480.000000000000000000
     object ResourceTV: TTreeView
       Align = Client
       Margins.Left = 8.000000000000000000
@@ -52718,8 +52718,8 @@ object Form1: TForm1
       Size.PlatformDefault = False
       TabOrder = 0
       Sorted = True
-      Viewport.Width = 209.000000000000000000
-      Viewport.Height = 456.000000000000000000
+      Viewport.Width = 213.000000000000000000
+      Viewport.Height = 460.000000000000000000
     end
   end
   object Button3: TButton
