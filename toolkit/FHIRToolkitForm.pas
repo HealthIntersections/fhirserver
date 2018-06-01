@@ -756,27 +756,38 @@ end;
 
 procedure TMasterToolsForm.FormActivate(Sender: TObject);
 var
-tmpFhirFactory: //Create a temp object to fix a leak when using TBaseWorkerContext.Create(...)
- {$IFDEF FHIR3} TFHIRFactoryR3; {$ENDIF}
- {$IFDEF FHIR4} TFHIRFactoryR4; {$ENDIF}
+  factory : TFHIRFactory;
+  cache : TFHIRPackageManager;
 begin
   if FContext = nil then
     doWork(nil, 'Loading Data', false,
       procedure
       begin
-        tmpFhirFactory:=
-          {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}
-          {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF};
-        FContext := TBaseWorkerContext.Create(tmpFHIRFactory);
-        FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types-r'+FHIR_GENERATED_PUBLICATION+'.xml');
-        FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources-r'+FHIR_GENERATED_PUBLICATION+'.xml');
+        cache := TFHIRPackageManager.create(true);
+        try
+          factory:=
+            {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}
+            {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF};
+          FContext := TBaseWorkerContext.Create(factory);
+          if not cache.packageExists('hl7.fhir.core', factory.versionString) then
+            ShowMessage('The base FHIR package '+factory.versionString+' is not installed; you will need to install it using the package manager and restart')
+          else
+            cache.loadPackage('hl7.fhir.core', factory.versionString, ['CodeSystem', 'ValueSet', 'StructureDefinition'], FContext.loadResourceJson);
+        finally
+          cache.free;
+        end;
         if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
-          raise Exception.Create('Unable to load openSSL - SSL/Crypto functions will fail');
+          ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail');
       end);
-  if not FUpgradeChecked and FSettings.CheckForUpgradesOnStart then
+  if false and not FUpgradeChecked and FSettings.CheckForUpgradesOnStart then
   begin
     FUpgradeChecked := true;
-    checkVersion(false);
+    try
+      checkVersion(false);
+    except
+      on e : Exception do
+        ShowMessage('Error checking for upgrades: '+e.message);
+    end;
   end;
 //  if tmpFhirFactory <> nil then tmpFhirFactory.Destroy; //should destroy the temp object but it causes an issue... leaving as is.
 end;
