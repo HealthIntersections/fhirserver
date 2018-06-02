@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, zlib, Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Json, FHIR.Support.Strings, FHIR.Support.DateTime,
-  FHIR.Support.Text, FHIR.Support.Tarball;
+  FHIR.Support.Text, FHIR.Support.Tarball, FHIR.Web.Fetcher;
 
 type
   TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool);
@@ -58,6 +58,9 @@ type
     property Description : String read FDescription write FDescription;
     property FHIRVersion : String read FFHIRVersion write FFHIRVersion;
     property Url : String read FUrl write FUrl;
+
+    class procedure addStandardPackages(list : TFslList<TPackageDefinition>);
+    class procedure addPackagesFromBuild(list : TFslList<TPackageDefinition>);
   end;
 
   TFHIRPackageObject = class abstract (TFslObject)
@@ -190,7 +193,6 @@ const
   ANALYSIS_VERSION = 2;
   CACHE_VERSION = 1;
 
-procedure addStandardPackages(list : TFslList<TPackageDefinition>);
 
 
 implementation
@@ -943,7 +945,41 @@ begin
   result := TPackageDefinition(inherited link);
 end;
 
-procedure AddStandardPackages;
+class procedure TPackageDefinition.addPackagesFromBuild(list: TFslList<TPackageDefinition>);
+var
+  j : TJsonObject;
+  a : TJsonArray;
+  i : TJsonNode;
+  p : TPackageDefinition;
+begin
+  a := TInternetFetcher.fetchJsonArr('https://build.fhir.org/ig/qas.json');
+  try
+    for i in a do
+    begin
+      j := i as TJsonObject;
+      if (j.str['package-id'].Contains('.')) then
+      begin
+        p := TPackageDefinition.Create;
+        try
+          p.Id := j.str['package-id'];
+          p.Version := j.str['ig-ver'];
+          p.Canonical := j.str['url'];
+          p.Date := TDateTimeEx.fromFormat('DDD, dd mmm, yyyy hh:nn:ss Z', j.str['date']).DateTime;
+          p.Description := j.str['name'];
+          p.FHIRVersion := j.str['version'];
+          p.Url := 'https://build.fhir.org/ig/'+j.str['repo'];
+          list.Add(p.Link);
+        finally
+          p.Free;
+        end;
+      end;
+    end;
+  finally
+    a.Free;
+  end;
+end;
+
+class procedure TPackageDefinition.AddStandardPackages;
 var
   p : TPackageDefinition;
 begin

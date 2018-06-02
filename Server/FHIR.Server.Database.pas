@@ -1207,8 +1207,6 @@ begin
             src := EncodeResource(request.Resource, true, soFull);
             FConnection.BindBlob('xc', src);
             FConnection.BindBlob('jc', EncodeResource(request.Resource, false, soFull));
-            if key = 187 then
-              BytesToFile(EncodeResource(request.Resource, false, soFull), 'c:\temp\json\fr-i-'+inttostr(key)+'.json');
             markSubsetted(request.Resource.meta);
             FConnection.BindBlob('xs', EncodeResource(request.Resource, true, soSummary));
             FConnection.BindBlob('js', EncodeResource(request.Resource, false, soSummary));
@@ -3969,7 +3967,7 @@ begin
       end;
     end;
 
-  if (TFhirDomainResource(entry.resource).text <> nil) then
+  if entry.resource.isDomainResource and (TFhirDomainResource(entry.resource).text <> nil) then
     FixXhtmlUrls(lang, base, ids, TFhirDomainResource(entry.resource).text.div_);
 end;
 
@@ -4088,15 +4086,17 @@ begin
           // first pass: scan ids
           for i := 0 to bundle.entryList.count - 1 do
           begin
-            bundle.entryList[i].Tag := scanId(request, bundle.entryList[i], ids, i).Link;
+            Context.messageDetail := bundle.entryList[i].resource.fhirType+'/'+bundle.entryList[i].resource.id;
             context.progress(0+trunc(100 * (i / (bundle.entryList.count * 10))));
+            bundle.entryList[i].Tag := scanId(request, bundle.entryList[i], ids, i).Link;
           end;
 
           // third pass: reassign references
           for i := 0 to bundle.entryList.count - 1 do
           begin
-            context.progress(10+trunc(100 * (i / (bundle.entryList.count * 10))));
             entry := bundle.entryList[i].Tag as TFHIRTransactionEntry;
+            Context.messageDetail := bundle.entryList[i].resource.fhirType+'/'+bundle.entryList[i].resource.id;
+            context.progress(10+trunc(100 * (i / (bundle.entryList.count * 10))));
 
             if not entry.ignore and not entry.deleted then
               adjustReferences(request, response, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.baseUrl, bundle.entryList[i], ids);
@@ -4107,6 +4107,7 @@ begin
           try
             for i := 0 to bundle.entryList.count - 1 do
             begin
+            Context.messageDetail := bundle.entryList[i].resource.fhirType+'/'+bundle.entryList[i].resource.id;
               context.progress(20+trunc(100 * (i / (bundle.entryList.count * 10))));
                ne := resp.entryList.Append;
   //             ne.request := bundle.entryList[i].request.Link;
@@ -4115,6 +4116,7 @@ begin
 
             for i := 0 to bundle.entryList.count - 1 do
             begin
+              Context.messageDetail := bundle.entryList[i].resource.fhirType+'/'+bundle.entryList[i].resource.id;
               context.progress(30+trunc(100 * (i / (bundle.entryList.count * 10))));
               if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
                 ignoreEntry(bundle.entryList[i], resp.entryList[i]);
@@ -4122,6 +4124,7 @@ begin
 
             for i := 0 to bundle.entryList.count - 1 do
             begin
+              Context.messageDetail := bundle.entryList[i].resource.fhirType+'/'+bundle.entryList[i].resource.id;
               context.progress(40+trunc(100 * (i / (bundle.entryList.count * 5))));
               if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
                 if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
@@ -4129,6 +4132,7 @@ begin
             end;
             for i := 0 to bundle.entryList.count - 1 do
             begin
+              Context.messageDetail := bundle.entryList[i].resource.fhirType+'/'+bundle.entryList[i].resource.id;
               context.progress(60+trunc(100 * (i / (bundle.entryList.count * 5))));
               if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesUpdate then
                 if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
@@ -4136,6 +4140,7 @@ begin
             end;
             for i := 0 to bundle.entryList.count - 1 do
             begin
+              Context.messageDetail := bundle.entryList[i].resource.fhirType+'/'+bundle.entryList[i].resource.id;
               context.progress(80+trunc(100 * (i / (bundle.entryList.count * 10))));
               if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesDelete then
                 if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
@@ -4143,6 +4148,7 @@ begin
             end;
             for i := 0 to bundle.entryList.count - 1 do
             begin
+              Context.messageDetail := bundle.entryList[i].resource.fhirType+'/'+bundle.entryList[i].resource.id;
               context.progress(90+trunc(100 * (i / (bundle.entryList.count * 10))));
               if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesRead then
                 if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then

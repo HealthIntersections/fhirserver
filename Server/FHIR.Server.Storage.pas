@@ -57,6 +57,7 @@ Type
     FUpload : boolean;
     FCallback : TInstallerCallback;
     FMessage : String;
+    FMessageDetail: String;
   public
     constructor Create; overload; override;
     constructor Create(upload : boolean; callback : TInstallerCallback; message : String); overload;
@@ -64,6 +65,7 @@ Type
     property upload : boolean read FUpload write FUpload;
     property callback : TInstallerCallback read FCallback write FCallback;
     property message : String read FMessage write FMessage;
+    property MessageDetail : String read FMessageDetail write FMessageDetail;
 
     procedure progress(i : integer);
   end;
@@ -540,7 +542,10 @@ end;
 procedure TOperationContext.progress(i: integer);
 begin
   if assigned(FCallback) then
-    FCallback(i, FMessage);
+    if MessageDetail <> '' then
+      FCallback(i, FMessage+' '+MessageDetail)
+    else
+      FCallback(i, FMessage)
 end;
 
 

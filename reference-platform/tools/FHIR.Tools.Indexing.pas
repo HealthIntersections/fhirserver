@@ -224,7 +224,7 @@ var
   ndx : TFhirIndex;
   i : integer;
 begin
-  ndx := TFhirIndex.Create(FFactory);
+  ndx := TFhirIndex.Create(FFactory.link);
   try
     ndx.ResourceType := aResourceType;
     ndx.name := name;

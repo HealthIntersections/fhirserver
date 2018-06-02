@@ -32,80 +32,32 @@ uses
   WIndows,
   SysUtils,
   RegularExpressions,
-  IdSoapResourceStrings in '..\..\Libraries\indysoap\IdSoapResourceStrings.pas',
-  EncodeSupport in '..\..\reference-platform\Support\EncodeSupport.pas',
+  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
   FHIR.Support.Strings in '..\..\reference-platform\Support\FHIR.Support.Strings.pas',
   FHIR.Support.Math in '..\..\reference-platform\Support\FHIR.Support.Math.pas',
-  SystemSupport in '..\..\reference-platform\Support\SystemSupport.pas',
   FHIR.Support.DateTime in '..\..\reference-platform\Support\FHIR.Support.DateTime.pas',
-  MemorySupport in '..\..\reference-platform\Support\MemorySupport.pas',
-  ErrorSupport in '..\..\reference-platform\Support\ErrorSupport.pas',
-  ThreadSupport in '..\..\reference-platform\Support\ThreadSupport.pas',
   FHIR.Support.Binary in '..\..\reference-platform\Support\FHIR.Support.Binary.pas',
-  AdvStringBuilders in '..\..\reference-platform\Support\AdvStringBuilders.pas',
   FHIR.Support.Objects in '..\..\reference-platform\Support\FHIR.Support.Objects.pas',
   FHIR.Support.Exceptions in '..\..\reference-platform\Support\FHIR.Support.Exceptions.pas',
   FHIR.Support.System in '..\..\reference-platform\Support\FHIR.Support.System.pas',
-  AdvControllers in '..\..\reference-platform\Support\AdvControllers.pas',
-  AdvPersistents in '..\..\reference-platform\Support\AdvPersistents.pas',
-  ColourSupport in '..\..\reference-platform\Support\ColourSupport.pas',
-  AdvPersistentLists in '..\..\reference-platform\Support\AdvPersistentLists.pas',
-  AdvObjectLists in '..\..\reference-platform\Support\AdvObjectLists.pas',
-  AdvItems in '..\..\reference-platform\Support\AdvItems.pas',
   FHIR.Support.Collections in '..\..\reference-platform\Support\FHIR.Support.Collections.pas',
-  AdvIterators in '..\..\reference-platform\Support\AdvIterators.pas',
-  AdvClassHashes in '..\..\reference-platform\Support\AdvClassHashes.pas',
-  AdvHashes in '..\..\reference-platform\Support\AdvHashes.pas',
-  HashSupport in '..\..\reference-platform\Support\HashSupport.pas',
-  AdvStringHashes in '..\..\reference-platform\Support\AdvStringHashes.pas',
-  AdvStringIntegerMatches in '..\..\reference-platform\Support\AdvStringIntegerMatches.pas',
   FHIR.Support.Stream in '..\..\reference-platform\Support\FHIR.Support.Stream.pas',
-  AdvParameters in '..\..\reference-platform\Support\AdvParameters.pas',
-  AdvFiles in '..\..\reference-platform\Support\AdvFiles.pas',
-  AdvMemories in '..\..\reference-platform\Support\AdvMemories.pas',
-  AdvBuffers in '..\..\reference-platform\Support\AdvBuffers.pas',
-  AdvStreamFilers in '..\..\reference-platform\Support\AdvStreamFilers.pas',
-  AdvExclusiveCriticalSections in '..\..\reference-platform\Support\AdvExclusiveCriticalSections.pas',
-  AdvThreads in '..\..\reference-platform\Support\AdvThreads.pas',
-  AdvSignals in '..\..\reference-platform\Support\AdvSignals.pas',
-  AdvInt64Matches in '..\..\reference-platform\Support\AdvInt64Matches.pas',
-  AdvLargeIntegerMatches in '..\..\reference-platform\Support\AdvLargeIntegerMatches.pas',
-  AdvStringLargeIntegerMatches in '..\..\reference-platform\Support\AdvStringLargeIntegerMatches.pas',
-  AdvStringLists in '..\..\reference-platform\Support\AdvStringLists.pas',
-  AdvCSVFormatters in '..\..\reference-platform\Support\AdvCSVFormatters.pas',
-  AdvTextFormatters in '..\..\reference-platform\Support\AdvTextFormatters.pas',
-  AdvFormatters in '..\..\reference-platform\Support\AdvFormatters.pas',
-  AdvCSVExtractors in '..\..\reference-platform\Support\AdvCSVExtractors.pas',
-  AdvTextExtractors in '..\..\reference-platform\Support\AdvTextExtractors.pas',
-  AdvExtractors in '..\..\reference-platform\Support\AdvExtractors.pas',
-  AdvCharacterSets in '..\..\reference-platform\Support\AdvCharacterSets.pas',
-  AdvOrdinalSets in '..\..\reference-platform\Support\AdvOrdinalSets.pas',
-  AdvStreamReaders in '..\..\reference-platform\Support\AdvStreamReaders.pas',
-  AdvStringStreams in '..\..\reference-platform\Support\AdvStringStreams.pas',
-  AdvStringMatches in '..\..\reference-platform\Support\AdvStringMatches.pas',
-  AdvXMLEntities in '..\..\reference-platform\Support\AdvXMLEntities.pas',
-  AdvXMLFormatters in '..\..\reference-platform\Support\AdvXMLFormatters.pas',
-  AdvDispatchers in '..\..\reference-platform\support\AdvDispatchers.pas',
-  CurrencySupport in '..\..\reference-platform\support\CurrencySupport.pas',
-  AdvProfilers in '..\..\reference-platform\support\AdvProfilers.pas',
-  AdvIntegerMatches in '..\..\reference-platform\support\AdvIntegerMatches.pas',
-  AdvEvents in '..\..\reference-platform\support\AdvEvents.pas',
-  AdvMethods in '..\..\reference-platform\support\AdvMethods.pas',
-  AdvIntegerLists in '..\..\reference-platform\support\AdvIntegerLists.pas',
   FHIR.Database.Manager in '..\..\Libraries\db\FHIR.Database.Manager.pas',
   FHIR.Support.Lock in '..\..\reference-platform\support\FHIR.Support.Lock.pas',
   FHIR.Database.Settings in '..\..\Libraries\db\FHIR.Database.Settings.pas',
   FHIR.Database.Logging in '..\..\Libraries\db\FHIR.Database.Logging.pas',
   FHIR.Database.Dialects in '..\..\reference-platform\support\FHIR.Database.Dialects.pas',
   FHIR.Support.Decimal in '..\..\reference-platform\support\FHIR.Support.Decimal.pas',
-  GUIDSupport in '..\..\reference-platform\support\GUIDSupport.pas',
-  HL7V2DateSupport in '..\..\reference-platform\support\HL7V2DateSupport.pas',
   FHIR.Support.Generics in '..\..\reference-platform\support\FHIR.Support.Generics.pas',
-  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
   FHIR.Database.ODBC.Objects in '..\..\Libraries\db\FHIR.Database.ODBC.Objects.pas',
   FHIR.Database.ODBC in '..\..\Libraries\db\FHIR.Database.ODBC.pas',
   FHIR.Database.ODBC.Headers in '..\..\Libraries\db\FHIR.Database.ODBC.Headers.pas',
-  TextUtilities in '..\..\reference-platform\support\TextUtilities.pas';
+  fhir.support.fpc in '..\..\reference-platform\support\fhir.support.fpc.pas',
+  FHIR.Support.Text in '..\..\reference-platform\support\FHIR.Support.Text.pas',
+  FHIR.Cache.PackageManager in '..\..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
+  FHIR.Support.Json in '..\..\reference-platform\support\FHIR.Support.Json.pas',
+  FHIR.Support.Tarball in '..\..\reference-platform\support\FHIR.Support.Tarball.pas',
+  FHIR.Web.Fetcher in '..\..\reference-platform\support\FHIR.Web.Fetcher.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin
@@ -365,6 +317,167 @@ begin
   end;
 end;
 
+Function MyDllListPackages(Version : PAnsiChar) : PAnsiChar; stdcall;
+var
+  pcm : TFHIRPackageManager;
+  packages : TFslList<TPackageDefinition>;
+  p : TPackageDefinition;
+  b : TFslStringBuilder;
+begin
+  try
+    b := TFslStringBuilder.create;
+    try
+      pcm := TFHIRPackageManager.Create(false);
+      try
+        packages := TFslList<TPackageDefinition>.create;
+        try
+          TPackageDefinition.addStandardPackages(packages);
+          TPackageDefinition.addPackagesFromBuild(packages);
+          for p in packages do
+          begin
+            if p.FHIRVersion = version then
+            begin
+              if b.Length > 0 then
+                b.Append(#13#10);
+              if pcm.packageExists(p.Id, p.Version) then
+                b.Append(p.Url+'|1|'+p.Id+'-'+p.Version+'|'+p.Description)
+              else
+                b.Append(p.Url+'|0|'+p.Id+'-'+p.Version+'|'+p.Description);
+            end;
+          end;
+        finally
+          packages.Free;
+        end;
+      finally
+        pcm.Free;
+      end;
+      result := StrToPchar(b.AsString);
+    finally
+      b.Free;
+    end;
+  except
+    on e : exception do
+      result := StrToPchar(e.Message);
+  end;
+end;
+
+type
+  TPackageFetcher = class (TFslObject)
+  private
+    FCallback : TInstallerCallback;
+    FUrls : TArray<String>;
+    FIndex : integer;
+    FCurrent : String;
+    function pct(p : integer) : integer;
+    procedure fetchProgress(sender : TObject; progress : integer);
+    procedure exec;
+  end;
+
+procedure TPackageFetcher.exec;
+var
+  pcm : TFHIRPackageManager;
+  fetch : TInternetFetcher;
+  ok : boolean;
+  aborted : boolean;
+  s : String;
+  i : integer;
+  pi, pv, url : String;
+begin
+  pcm := TFHIRPackageManager.Create(false);
+  try
+    for i := 0 to length(FUrls) - 1 do // first will be empty
+    begin
+      FIndex := i;
+      StringSplit(FUrls[i], ':', pi, url);
+      FCurrent := pi;
+      StringSplit(pi, '-', pi, pv);
+      if not pcm.packageExists(pi, pv) then
+      begin
+        fetch := TInternetFetcher.Create;
+        try
+          fetch.onProgress := fetchProgress;
+          fetch.Buffer := TFslBuffer.create;
+          s := '';
+          ok := false;
+          try
+            fetch.URL := URLPath([url, 'package.tgz']);
+            fetch.Fetch;
+            ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
+          except
+            on e : exception do
+            begin
+              s := e.Message;
+            end;
+          end;
+          if not ok then
+          begin
+            try
+              fetch.URL := url;
+              fetch.Fetch;
+              ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
+            except
+              on e : exception do
+              begin
+                s := e.Message;
+              end;
+            end;
+          end;
+          if not ok then
+            raise Exception.Create('Unable to find package for '+pi+'-'+pv+'at '+url+': '+s);
+          if ok then
+          begin
+            FCallback(pct(100), 'Installing '+FCurrent);
+            pcm.Import(fetch.Buffer.AsBytes, function (msg : String) : boolean begin result := true; end);
+          end;
+        finally
+          fetch.Free;
+        end;
+      end;
+      FCallback(pct(100), 'Installed '+FCurrent);
+    end;
+    FCallback(100, 'Done...');
+  finally
+    pcm.Free;
+  end;
+end;
+
+procedure TPackageFetcher.fetchProgress(sender: TObject; progress: integer);
+begin
+  FCallback(pct(progress), 'Downloading '+FCurrent);
+end;
+
+
+function TPackageFetcher.pct(p: integer): integer;
+var
+  d : double;
+begin
+  d := p / (100 * length(FUrls)) + FIndex / length(FUrls);
+  result := trunc(d * 100);
+end;
+
+Function MyDllDownloadPackages(urls : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
+var
+  fetcher : TPackageFetcher;
+  s : String;
+begin
+  try
+    fetcher := TPackageFetcher.Create;
+    try
+      fetcher.FCallback := Callback;
+      s := urls;
+      s := s.Substring(1);
+      fetcher.FUrls := s.Split(['|']);
+      fetcher.exec;
+    finally
+      fetcher.free;
+    end;
+    result := nil;
+  except
+    on e : exception do
+      result := StrToPchar(e.Message);
+  end;
+end;
+
 Function MyDllInstallSnomed(ExeName, Source, Dest, Version : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
 var
   cmd : TCommandCapturer;
@@ -384,18 +497,27 @@ begin
   end;
 end;
 
-Function MyDllInstallDatabase(ExeName, IniFile, Password : PAnsiChar; load : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
+Function MyDllInstallDatabase(ExeName, IniFile, Password : PAnsiChar; load, packages : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
 var
   cmd : TCommandCapturer;
+  s : String;
 begin
   try
     cmd := TCommandCapturer.Create;
     try
       cmd.callback := Callback;
       if (load = nil) then
-        cmd.Execute('"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'+', ExtractFilePath(exeName))
+      begin
+        s := '"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'"';
+        windows.MessageBox(0, pchar(s), 'install', MB_SYSTEMMODAL);
+        cmd.Execute('"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'+"', ExtractFilePath(exeName))
+      end
       else
-        cmd.Execute('"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'" -load "'+load+'"', ExtractFilePath(exeName));
+      begin
+        s := '"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'" -packages '+packages+' -load "'+load+'"';
+        windows.MessageBox(0, pchar(s), 'install', MB_SYSTEMMODAL);
+        cmd.Execute('"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'" -packages '+packages+' -load "'+load+'"', ExtractFilePath(exeName));
+      end;
     finally
       cmd.Free;
     end;
@@ -410,6 +532,8 @@ exports MyDllGetString;
 exports MyDllCheckDatabase;
 exports MyDllInstallSnomed;
 exports MyDllInstallDatabase;
+exports MyDllListPackages;
+exports MyDllDownloadPackages;
 
 End.
 

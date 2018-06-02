@@ -391,7 +391,8 @@ Type
 
     Procedure Start(active: boolean);
     Procedure Stop;
-    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
+    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback); overload;
+    Procedure Transaction(bundle : TFHIRBundle; init : boolean; name, base: String; callback: TInstallerCallback); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
@@ -1084,6 +1085,46 @@ Begin
     FreeAndNil(FPlainServer);
   end;
 End;
+
+procedure TFhirWebServer.Transaction(bundle: TFHIRBundle; init: boolean; name, base: String; callback: TInstallerCallback);
+var
+  req: TFHIRRequest;
+  resp: TFHIRResponse;
+  // op : TFHIRNativeOperationEngine;
+  cursor: integer;
+  Context: TOperationContext;
+begin
+  // if init then
+  // op := FServerContext.Storage.createOperationContext('en');
+  Context := TOperationContext.Create(true, callback, 'Load from ' + name);
+  try
+    req := TFHIRRequest.Create(FServerContext.ValidatorContext.link, roUpload, FServerContext.Indexes.Compartments.link);
+    try
+      req.CommandType := fcmdTransaction;
+      req.resource := bundle.link;
+      req.resource.tags['duplicates'] := 'ignore';
+      req.Session := FServerContext.SessionManager.CreateImplicitSession('n/a', ServerContext.OwnerName, 'Service Manager', systemInternal, true, false);
+      req.Session.allowAll;
+      req.LoadParams('');
+      req.baseUrl := FServerContext.Bases[0];
+      Context.message := 'Process ' + name;
+      GJSHost.registry := ServerContext.EventScriptRegistry.link;
+      resp := TFHIRResponse.Create;
+      try
+        resp.OnCreateBuilder := doGetBundleBuilder;
+        checkRequestByJs(context, req);
+        ProcessRequest(Context, req, resp);
+      finally
+        resp.Free;
+      end;
+    finally
+      req.Free;
+    end;
+  finally
+    Context.Free;
+  end;
+
+end;
 
 procedure TFhirWebServer.Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
 var

@@ -934,7 +934,7 @@ var
   iter : TFHIRPropertyIterator;
   i : integer;
 begin
-  iter := node.createIterator(true, true);
+  iter := node.createIterator(true, false);
   try
     while iter.More do
     begin
@@ -972,7 +972,7 @@ var
   iter : TFHIRPropertyIterator;
   i : integer;
 begin
-  iter := node.createIterator(true, true);
+  iter := node.createIterator(true, false);
   try
     while iter.More do
     begin

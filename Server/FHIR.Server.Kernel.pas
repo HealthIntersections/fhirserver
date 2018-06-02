@@ -66,16 +66,16 @@ interface
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
   FHIR.Support.Exceptions,
-  FHIR.Support.Service, FHIR.Support.System, FHIR.Support.Strings,
+  FHIR.Support.Service, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Objects,
   FHIR.Web.Fetcher,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory,
+  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser,
   {$IFDEF FHIR2} FHIR.R2.Factory, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Factory, {$ENDIF}
   {$IFDEF FHIR4} FHIR.R4.Factory, {$ENDIF}
-  FHIR.Version.Resources,
+  FHIR.Version.Resources, FHIR.Version.Parser,
   FHIR.Tx.Server,
   FHIR.Server.Storage,
   FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Version.Constants, FHIR.Server.Database, FHIR.Base.Objects, FHIR.Version.PathEngine,
@@ -528,16 +528,56 @@ begin
     raise Exception.Create('Unable to find file '+s);
 end;
 
+type
+  TPackageLoader = class (TFslObject)
+  private
+    bundle : TFHIRBundle;
+    procedure load(rType, id : String; stream : TStream);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+  end;
+
+constructor TPackageLoader.Create;
+begin
+  inherited;
+  bundle := TFHIRBundle.Create;
+end;
+
+destructor TPackageLoader.Destroy;
+begin
+  bundle.Free;
+  inherited;
+end;
+
+procedure TPackageLoader.load(rType, id : String; stream : TStream);
+var
+  p : TFHIRParser;
+  r : TFHIRResource;
+begin
+  Logt('  '+inttostr(bundle.entryList.count)+': '+rType+'/'+id);
+  p := TFHIRParsers.parser(nil, ffJson, 'en');
+  try
+    r := p.parseResource(stream) as TFhirResource;
+    bundle.entryList.Append.resource := r;
+  finally
+    p.Free;
+  end;
+end;
+
 procedure TFHIRService.Load(fn: String);
 var
   f : TFileStream;
   st : TStringList;
-  s, src : String;
+  s, src, plist, p, pi, pv : String;
   first : boolean;
   ini : TFHIRServerIniFile;
   i : integer;
   bytes : TBytes;
   bs : TBytesStream;
+  pl : TArray<String>;
+  ploader : TPackageLoader;
+  pcm : TFHIRPackageManager;
 begin
   FNotServing := true;
   cb(1, 'Load: Connect to database');
@@ -547,6 +587,32 @@ begin
   CanStart;
   logt('Load: register value sets');
   identifyValueSets;
+
+  // first we load any packages in the -packages parameter
+  if FindCmdLineSwitch('packages', plist, true, [clstValueNextParam]) then
+  begin
+    pcm := TFHIRPackageManager.Create(false);
+    try
+      pl := plist.substring(1).Split([',']);
+      for p in pl do
+      begin
+        StringSplit(p, '-', pi, pv);
+        if not pcm.packageExists(pi, pv) then
+          raise Exception.Create('Package '+p+' not found');
+        logt('Load Package '+pi+'-'+pv);
+        ploader := TPackageLoader.create;
+        try
+          pcm.loadPackage(pi, pv, ALL_RESOURCE_TYPE_NAMES, ploader.load);
+          FWebServer.Transaction(ploader.bundle, true, p, '', callback);
+        finally
+          ploader.Free;
+        end;
+      end;
+    finally
+      pcm.Free;
+    end;
+  end;
+
   cb(2, 'Load from '+fn);
   if fn.StartsWith('http://') or fn.StartsWith('https://') then
   begin

@@ -108,7 +108,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-noload -xremount -debug -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot; -xload &quot;C:\work\fhirserver\install\local-load.ini&quot; -password 1234g -no-text-index -xload C:\work\fhirserver\resources\dicom</Debugger_RunParams>
+        <Debugger_RunParams>-installer -remount -password &quot;gg&quot; -ini &quot;C:\Program Files\FHIRServer\fhirserver.ini&quot; -packages ,hl7.fhir.core-3.0.1,hl7.fhir.au.base-0.9.1,hl7.fhir.au.pd-0.9.0,hl7.fhir.us.core-1.1.0,hl7.fhir.cda-0.0.1 -load &quot;C:\Program Files\FHIRServer\load\load.ini&quot;</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d364</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Server\win64_3\Debug\</DCC_ExeOutput>
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
@@ -124,6 +124,7 @@
         <Manifest_File>None</Manifest_File>
         <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R3.AuthMap;FHIR.Version.Constants=FHIR.R3.Constants;FHIR.Version.Context=FHIR.R3.Context;FHIR.Version.IndexInfo=FHIR.R3.IndexInfo;FHIR.Version.Javascript=FHIR.R3.Javascript;FHIR.Version.ElementModel=FHIR.R3.ElementModel;FHIR.Version.Narrative=FHIR.R3.Narrative;FHIR.Version.Operations=FHIR.R3.Operations;FHIR.Version.Json=FHIR.R3.Json;FHIR.Version.Turtle=FHIR.R3.Turtle;FHIR.Version.Xml=FHIR.R3.Xml;FHIR.Version.PathNode=FHIR.R3.PathNode;FHIR.Version.Profiles=FHIR.R3.Profiles;FHIR.Version.Resources=FHIR.R3.Resources;FHIR.Version.MapUtilities=FHIR.R3.MapUtilities;FHIR.Version.Tags=FHIR.R3.Tags;FHIRTestWorker=FHIRTestWorker3;FHIR.Version.Types=FHIR.R3.Types;FHIR.Version.Utilities=FHIR.R3.Utilities;FHIR.Version.Validator=FHIR.R3.Validator;FHIR.Version.OpBase=FHIR.R3.OpBase;FHIR.Version.PathEngine=FHIR.R3.PathEngine;FHIR.Version.Narrative2=FHIR.R3.Narrative2;FHIR.Version.Questionnaire=FHIR.R3.Questionnaire;FHIRBaseX=FHIR.R3.Base;FHIR.Version.Common=FHIR.R3.Common;FHIR.Version.Factory=FHIR.R3.Factory;$(DCC_UnitAlias)</DCC_UnitAlias>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <Debugger_CWD>C:\Program Files\FHIRServer</Debugger_CWD>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>

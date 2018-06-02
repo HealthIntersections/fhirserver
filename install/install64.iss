@@ -128,9 +128,9 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "
 Source: "C:\work\fhirserver\Exec\64\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\64\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\64\FHIRServer4.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\64\FHIRServer2.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r2; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\64\FHIRServer3.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\64\FHIRServer4.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r4; Flags: ignoreversion
+;Source: "C:\work\fhirserver\Exec\64\FHIRServer2.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r2; Flags: ignoreversion
+;Source: "C:\work\fhirserver\Exec\64\FHIRServer3.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r3; Flags: ignoreversion
+;Source: "C:\work\fhirserver\Exec\64\FHIRServer4.debug.exe";  DestDir: "{app}";     DestName: "FHIRServer.debug.exe"; Components: r4; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\64\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
@@ -140,11 +140,8 @@ Source: "C:\work\fhirserver\Libraries\js\chakra\x64_release\ChakraCore.dll";    
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
 
-; Packages
-Source: "C:\ProgramData\.fhir\packages\packages.ini"; DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
-Source: "C:\ProgramData\.fhir\packages\hl7.fhir.core-1.0.2\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-1.0.2"; Components: r2; Flags: recursesubdirs onlyifdoesntexist
-Source: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.0.1\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.0.1"; Components: r3; Flags: recursesubdirs onlyifdoesntexist
-Source: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.4.0\*.*"; DestDir: "C:\ProgramData\.fhir\packages\hl7.fhir.core-3.4.0"; Components: r4; Flags: recursesubdirs onlyifdoesntexist
+; Package Management
+Source: "C:\Users\Grahame Grieve\.fhir\packages\packages.ini"; DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
 
 ; Examples
 Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";      DestDir: {app}\load;  DestName: fhir.json.zip; Components: r2;   Flags: ignoreversion
@@ -171,7 +168,7 @@ Source: "C:\work\fhirserver\resources\r4\tslc.xml";                       DestDi
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\loinc_263.cache";                  DestDir: "{commonappdata}\FHIRServer"
+;Source: "C:\ProgramData\FHIRServer\loinc_263.cache";                  DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
 Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
 
@@ -199,6 +196,10 @@ const
   MB_ICONINFORMATION = $40;
 
 var
+  PackagesPage : TInputOptionWizardPage;
+  packagesLoaded : String;
+  Packages : TStringList;
+
   DependenciesPage : TWizardPage;
   ServicePage : TInputQueryWizardPage;
   cbxStartup : TNewComboBox;
@@ -241,6 +242,7 @@ var
  regRoot: Integer;
 begin
   Result := true;
+  Packages := TStringList.create;
 end;
 
 // ------ Interfaces ---------------------------------------------------------------------------------
@@ -250,7 +252,9 @@ type
 Function MyDllGetString(name : pansichar) : pansichar; external 'MyDllGetString@files:installer.dll stdcall setuponly';
 Function MyDllCheckDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; external 'MyDllCheckDatabase@files:installer.dll stdcall setuponly';
 Function MyDllInstallSnomed(ExeName, Source, Dest, Version : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallSnomed@files:installer.dll stdcall setuponly';
-Function MyDllInstallDatabase(ExeName, IniName, Password : PAnsiChar; load : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallDatabase@files:installer.dll stdcall setuponly';
+Function MyDllInstallDatabase(ExeName, IniName, Password : PAnsiChar; load, packages : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallDatabase@files:installer.dll stdcall setuponly';
+Function MyDllListPackages(Version : PAnsiChar) : PAnsiChar; external 'MyDllListPackages@files:installer.dll stdcall setuponly';
+Function MyDllDownloadPackages(urls : PAnsiChar; callback: TMyCallback) : PAnsiChar; external 'MyDllDownloadPackages@files:installer.dll stdcall setuponly';
 
 type
   _SERVICE_STATUS = record
@@ -992,44 +996,76 @@ end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
 var
-  dbtypestr, s : String;
+  dbtypestr, s, t, pl, pi : String;
   p : integer;
+  i : integer;
   Dependencies_OK, ResultMsg:boolean;
   SQLSERVER_installed,VCREDIST_installed,MYSQLDB_installed,MYSQLODBC_installed:boolean;
   version:string;
   fver : String;
 begin
-
-
-
-
-// Check if Visual C++ Redist 2015 is installed - should support also 2017?
+    if IsComponentSelected('r3') then
+      fver := '3.0.1'
+    else if IsComponentSelected('r4') then
+      fver := '3.4.0'
+    else
+      fver := '1.0.2';
+  if (CurpageID = wpSelectTasks) Then
+  Begin
+    // Check if Visual C++ Redist 2015 is installed - should support also 2017?
     VCREDIST_installed := 
       (msiproductupgrade(GetString(vcredist2015_upgradecode, vcredist2015_upgradecode_x64, ''), '15')) 
     OR (msiproductupgrade(GetString(vcredist2017_upgradecode, vcredist2017_upgradecode_x64, ''), '15')); 
 
-// Check if SQL Express is installed - this should be improved - it will return false if the Full version is installed
+    // Check if SQL Express is installed - this should be improved - it will return false if the Full version is installed
     RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Microsoft SQL Server\SQLEXPRESS\MSSQLServer\CurrentVersion', 'CurrentVersion', version);
     SQLSERVER_installed := not (compareversion(version, '10.5') < 0);
 
-// Check if MYSQL ODBC is installed
+    // Check if MYSQL ODBC is installed
     MYSQLODBC_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL Connector/ODBC 5.3')
 
-// Check if MYSQL is installed - this should be fixed
+    // Check if MYSQL is installed - this should be fixed
     MYSQLDB_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL 5.5');
     MYSQLDB_installed := true;
 
+    if VCREDIST_installed then VCstatus.caption := 'INSTALLED' else VCstatus.caption := 'NOT DETECTED' ;
+    if MYSQLDB_installed then MYSQLstatus.caption := 'INSTALLED' else MYSQLstatus.caption := 'NOT DETECTED' ;
+    if MYSQLODBC_installed then ODBCstatus.caption := 'INSTALLED' else ODBCstatus.caption := 'NOT DETECTED'  ;
+    if SQLSERVER_installed  then MSSQLstatus.caption := 'INSTALLED' else MSSQLstatus.caption := 'NOT DETECTED' ; 
 
-if VCREDIST_installed then VCstatus.caption := 'INSTALLED' else VCstatus.caption := 'NOT DETECTED' ;
-if MYSQLDB_installed then MYSQLstatus.caption := 'INSTALLED' else MYSQLstatus.caption := 'NOT DETECTED' ;
-if MYSQLODBC_installed then ODBCstatus.caption := 'INSTALLED' else ODBCstatus.caption := 'NOT DETECTED'  ;
-if SQLSERVER_installed  then MSSQLstatus.caption := 'INSTALLED' else MSSQLstatus.caption := 'NOT DETECTED' ; 
-
-
-
-
-
-  if (CurpageID = ServicePage.Id) Then
+    if packagesLoaded <> fver then
+    begin
+      pl := MyDllListPackages(fver);
+      Packages.Text := pl;
+      for i := 0 to packages.count - 1 do 
+      begin
+        s := packages[i];
+        s := copy(s, pos('|', s)+1, length(s));
+        t := copy(s, 1, pos('|', s)-1);
+        s := copy(s, pos('|', s)+1, length(s));
+        pi := copy(s, 1, pos('|', s)-1);
+        s := copy(s, pos('|', s)+1, length(s));
+        if (t = '1') then
+          PackagesPage.add(pi+': '+s+' (Already installed)')
+        else
+          PackagesPage.add(pi+': '+s);
+      end;
+      PackagesPage.Values[0] := true;
+      packagesLoaded := fver;
+    end;
+    Result := True;
+  End
+  else if (CurpageID = PackagesPage.id) Then
+  Begin
+    if PackagesPage.Values[0] = false then
+    begin
+      MsgBox('You must select the Core Package', mbError, MB_OK);
+      Result := false;
+    end
+    else
+      Result := True;
+  End
+  else if (CurpageID = ServicePage.Id) Then
   Begin
     // check service page entries
     if (ServicePage.Values[0] <> '') or (ServicePage.Values[1] <> '') Then
@@ -1069,12 +1105,6 @@ if SQLSERVER_installed  then MSSQLstatus.caption := 'INSTALLED' else MSSQLstatus
   End
   Else if (ConnectionPage <> Nil) And (CurPageID = ConnectionPage.ID) then
   begin
-    if IsComponentSelected('r3') then
-      fver := '3.0.1'
-    else if IsComponentSelected('r4') then
-      fver := '3.2.0'
-    else
-      fver := '1.0.2';
     s := MyDllCheckDatabase(dbDriver.text, ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], fver);
     result := s = '';
     if not result then
@@ -1545,6 +1575,12 @@ if not ShellExec('', ExpandConstant('{tmp}\odbc.exe'), '' ,'', SW_SHOWNORMAL, ew
 end;
 
 
+Procedure CreatePackagesPage;
+begin
+  PackagesPage := CreateInputOptionPage(wpSelectTasks, 'Choose Packages', 'Choose the packages to load with the server', 'Packages will be downloaded as needed', false, false);
+  packagesLoaded := '';
+end;
+
 Procedure CreateDependenciesPage;
 var
 
@@ -1560,13 +1596,13 @@ regRoot: Integer;
 
 
 Begin
-  DependenciesPage := CreateCustomPage(wpSelectTasks, 'Install Dependencies', 'Choose the dependencies to install');
+  DependenciesPage := CreateCustomPage(PackagesPage.id, 'Install Dependencies', 'Choose the dependencies to install');
 
  
   VClbl := TLabel.Create(DependenciesPage);
   with VClbl do begin
   Caption := 'Visual C++ Redistributables (2015 or 2017)';
-  Top := ScaleX(60);
+  Top := ScaleX(0);
   Parent := DependenciesPage.Surface;
   end;
 
@@ -1574,7 +1610,7 @@ Begin
   with VCstatus do begin
   Caption := 'NOT INSTALLED';
   font.style:=[fsBold];
-  Top := ScaleX(60);
+  Top := ScaleX(0);
   Left := ScaleX(220);
   Parent := DependenciesPage.Surface;
   end;
@@ -1582,7 +1618,7 @@ Begin
   VCpath := TEdit.Create(DependenciesPage);
   with VCPath do begin
   Text := vcredist2017_url_x64;
-  Top := ScaleX(76);
+  Top := ScaleX(16);
   Left := ScaleX(70);
   Width:=Scalex(300);
   Parent := DependenciesPage.Surface;
@@ -1591,7 +1627,7 @@ Begin
   VCInstall := TButton.Create(DependenciesPage);
   with VCInstall do begin
   Caption := 'Install';
-  Top := ScaleX(76);
+  Top := ScaleX(16);
   Width := ScaleX(65);
   Height := VCpath.Height;
   Parent := DependenciesPage.Surface;
@@ -1602,14 +1638,14 @@ Begin
   MYSQLlbl := TLabel.Create(DependenciesPage);
   with MYSQLlbl do begin
   Caption := 'MySQL (needs ODBC Driver)';
-  Top := ScaleX(100);
+  Top := ScaleX(40);
   Parent := DependenciesPage.Surface;
   end;
 
   MYSQLstatus := TLabel.Create(DependenciesPage);
   with MYSQLstatus do begin
   Caption := '';
-  Left := ScaleX(140);
+  Left := ScaleX(80);
   font.style:=[fsBold];
   Top := ScaleX(100);
   Parent := DependenciesPage.Surface;
@@ -1618,7 +1654,7 @@ Begin
   MYSQLpath := TEdit.Create(DependenciesPage);
   with MYSQLpath do begin
   Text := 'https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi';
-  Top := ScaleX(116);
+  Top := ScaleX(56);
   Left := ScaleX(70);
   Width:=Scalex(300);
   Parent := DependenciesPage.Surface;
@@ -1627,7 +1663,7 @@ Begin
   MYSQLInstall := TButton.Create(DependenciesPage);
   with MYSQLInstall do begin
   Caption := 'Install';
-  Top := ScaleX(116);
+  Top := ScaleX(56);
   Width := ScaleX(65);
   Height := VCpath.Height;
   Parent := DependenciesPage.Surface;
@@ -1638,7 +1674,7 @@ Begin
   ODBClbl := TLabel.Create(DependenciesPage);
   with ODBClbl do begin
   Caption := 'MYSQL ODBC Driver (5.3+)';
-  Top := ScaleX(140);
+  Top := ScaleX(80);
   Parent := DependenciesPage.Surface;
   end;
 
@@ -1646,7 +1682,7 @@ Begin
   with ODBCstatus do begin
   Caption := '';
   font.style:=[fsBold];
-  Top := ScaleX(140);
+  Top := ScaleX(80);
   Left := ScaleX(140);
   Parent := DependenciesPage.Surface;
   end;
@@ -1654,7 +1690,7 @@ Begin
   ODBCpath := TEdit.Create(DependenciesPage);
   with ODBCpath do begin
   Text := mysqlodbc_url_x64;
-  Top := ScaleX(156);
+  Top := ScaleX(96);
   Left := ScaleX(70);
   Width:=Scalex(300);
   Parent := DependenciesPage.Surface;
@@ -1663,7 +1699,7 @@ Begin
   ODBCInstall := TButton.Create(DependenciesPage);
   with ODBCInstall do begin
   Caption := 'Install';
-  Top := ScaleX(156);
+  Top := ScaleX(96);
   Width := ScaleX(65);
   Height := VCpath.Height;
   Parent := DependenciesPage.Surface;
@@ -1675,7 +1711,7 @@ Begin
   MSSQLlbl := TLabel.Create(DependenciesPage);
   with MSSQLlbl do begin
   Caption := 'MS SQL Server';
-  Top := ScaleX(200);
+  Top := ScaleX(140);
   Parent := DependenciesPage.Surface;
   end;
 
@@ -1683,7 +1719,7 @@ Begin
   with MSSQLstatus do begin
   font.style:=[fsBold];
   Caption := '';
-  Top := ScaleX(200);
+  Top := ScaleX(140);
   Left := ScaleX(100);
   Parent := DependenciesPage.Surface;
   end;
@@ -1691,7 +1727,7 @@ Begin
   MSSQLpath := TEdit.Create(DependenciesPage);
   with MSSQLpath do begin
   Text := sql2008expressr2_url_x64;
-  Top := ScaleX(216);
+  Top := ScaleX(156);
   Left := ScaleX(70);
   Width:=Scalex(300);
   Parent := DependenciesPage.Surface;
@@ -1700,7 +1736,7 @@ Begin
   MSSQLInstall := TButton.Create(DependenciesPage);
   with MSSQLInstall do begin
   Caption := 'Install';
-  Top := ScaleX(216);
+  Top := ScaleX(156);
   Width := ScaleX(65);
   Height := VCpath.Height;
   Parent := DependenciesPage.Surface;
@@ -1719,8 +1755,8 @@ End;
 // ------ Installation Logic -------------------------------------------------------------------------
 
 procedure InitializeWizard();
-var ResultCode: integer;
 Begin
+  CreatePackagesPage;
   CreateDependenciesPage;
   CreateServiceUserPage;
   WebServerPage;
@@ -1870,18 +1906,42 @@ procedure InitialiseDatabase(load : boolean);
 var 
   pw, msg : String;
   done : boolean;
+  pl, pl2, s, p, u : String;
+  i : integer;
 begin
-  LoadInstallPage.SetText('Creating Database...', '');
+  LoadInstallPage.SetText('Installing Packages...', '');
   LoadInstallPage.SetProgress(0, 100);
+  pl := '';
+  pl2 := '';
+  for i := 0 to Packages.count - 1 do 
+    if PackagesPage.values[i] then
+    begin
+      s := Packages[i];
+      u := copy(s, 1, pos('|', s)-1);
+      s := copy(s, pos('|', s)+1, length(s));
+      s := copy(s, pos('|', s)+1, length(s));
+      p := copy(s, 1, pos('|', s)-1);
+      pl := pl + '|'+p+':'+u;
+      pl2 := pl2+','+p;
+    end;
   LoadInstallPage.Show;
   try
     repeat
       done := true;
+      msg := MyDllDownloadPackages(pl, @InitCallback);
+      if msg <> '' then
+        done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
+    until done;
+
+    LoadInstallPage.SetText('Creating Database...', '');
+    LoadInstallPage.SetProgress(0, 100);
+    repeat
+      done := true;
       pw := AdminPage.Values[2];
       if (load) then
-        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, ExpandConstant('{app}')+'\load\load.ini', @InitCallback)
+        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, ExpandConstant('{app}')+'\load\load.ini', pl2, @InitCallback)
       else
-        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\loader.dll', ExpandConstant('{app}')+'\fhirserver.ini', pw, '', @InitCallback);
+        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\loader.dll', ExpandConstant('{app}')+'\fhirserver.ini', pw, '', '', @InitCallback);
       if msg <> '' then
         done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
     until done;
@@ -1909,8 +1969,10 @@ Begin
 if IsTaskSelected('vcredist') Then
      MsgBox('Install VCREDIST', mbError, MB_YESNO);
 if IsTaskSelected('dbengine') Then
+begin
      MsgBox('Install DB', mbError, MB_YESNO) ;
-     ShellExec('', 'msiexec.exe', ExpandConstant('/i "{tmp}\mysql-installer-web-community-5.7.20.0.msi"'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode)
+     ShellExec('', 'msiexec.exe', ExpandConstant('/i "{tmp}\mysql-installer-web-community-5.7.20.0.msi"'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode);
+   end;
 if IsTaskSelected('odbc') Then
      MsgBox('Install ODBC', mbError, MB_YESNO);
 

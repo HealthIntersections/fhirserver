@@ -39,7 +39,7 @@ type
     FFiltered : TFslList<TPackageDefinition>;
     FOnLoad : TOnLoadUrlEvent;
     FIndex : integer;
-    procedure loadServer;
+    procedure loadPackages;
     procedure applyFilter;
     function matchesFilter(pck : TPackageDefinition) : boolean;
   public
@@ -70,7 +70,7 @@ end;
 procedure TPackageFinderForm.FormActivate(Sender: TObject);
 begin
   if not FLoaded then
-    loadServer;
+    loadPackages;
 end;
 
 procedure TPackageFinderForm.FormCreate(Sender: TObject);
@@ -111,7 +111,7 @@ begin
   btnInstall.Enabled := false;
 end;
 
-procedure TPackageFinderForm.loadServer;
+procedure TPackageFinderForm.loadPackages;
 var
   j : TJsonObject;
   a : TJsonArray;
@@ -119,32 +119,8 @@ var
   p : TPackageDefinition;
 begin
   FList.clear;
-  AddStandardPackages(FList);
-  a := TInternetFetcher.fetchJsonArr('https://build.fhir.org/ig/qas.json');
-  try
-    for i in a do
-    begin
-      j := i as TJsonObject;
-      if (j.str['package-id'].Contains('.')) then
-      begin
-        p := TPackageDefinition.Create;
-        try
-          p.Id := j.str['package-id'];
-          p.Version := j.str['ig-ver'];
-          p.Canonical := j.str['url'];
-          p.Date := TDateTimeEx.fromFormat('DDD, dd mmm, yyyy hh:nn:ss Z', j.str['date']).DateTime;
-          p.Description := j.str['name'];
-          p.FHIRVersion := j.str['version'];
-          p.Url := 'https://build.fhir.org/ig/'+j.str['repo'];
-          FList.Add(p.Link);
-        finally
-          p.Free;
-        end;
-      end;
-    end;
-  finally
-    a.Free;
-  end;
+  TPackageDefinition.AddStandardPackages(FList);
+  TPackageDefinition.addPackagesFromBuild(FList);
   FLoaded := true;
   applyFilter;
   grid.RootNodeCount := 0;
