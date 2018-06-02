@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.234 2018-05-16</title>
+		<item><title>FHIRServer release 1.0.235 2018-06-01</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.235.exe</link>
+			<description>2018-06-01 (v1.0.235): fix minor bugs</description>
+		</item>
+<item><title>FHIRServer release 1.0.234 2018-05-16</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.234.exe</link>
 			<description>2018-05-16 (v1.0.234): add support for context on $expand</description>
 		</item>
-<item><title>FHIRServer release 1.0.233 2018-05-13</title>
+		<item><title>FHIRServer release 1.0.233 2018-05-13</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.233.exe</link>
 			<description>2018-05-13 (v1.0.233): add support for $versions</description>
 		</item>
