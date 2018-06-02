@@ -282,14 +282,13 @@ function TFHIRStringEdit.associate(AValue: TFHIRString): TFHIRString;
 begin
   if aValue = nil then
   begin
-    fFHIRString.CREATE;//     := TFHIRString.Create;
-    edt.text:='';
+    fFHIRString:=TFHIRString.CREATE;//     := TFHIRString.Create;
+    fFHIRString.value:='';
   end
   else begin
     fFHIRString := AValue;                  // THIS IS NOT REALLY WORKING WELL. mUST CHECK AND REDO
     fFHIRstring.value:=AValue.value;
     edt.text:=fFHIRString.value;
-    edt.Repaint;
     fFHIRString := AValue;                  // THIS IS NOT REALLY WORKING WELL. mUST CHECK AND REDO
   end;
   result:=fFhirString;
