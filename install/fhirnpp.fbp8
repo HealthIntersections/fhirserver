@@ -17,10 +17,12 @@ begin
         inifile = C:\\work\\ftp.ini
         sectionname = npp-settings
         variables = "BuildCount" +
+                    "certpword" +
                     "ftppassword" +
                     "npp-purpose" +
                     ""
         variabletypes = "String" +
+                        "String" +
                         "String" +
                         "String" +
                         ""
@@ -61,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "test upgrade"
+        as.returnvalue = "test release"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -75,28 +77,12 @@ begin
         variables = "npp-purpose" +
                     ""
       end
-      action.variables.loadfromini
-      begin
-        createvarininiifnotexists = false
-        description = "Read FHIR Version"
-        failifvariablenotdefined = true
-        failifvariablenotininifile = true
-        id = {25828604-726F-4115-89FB-03799A67707B}
-        ignorefilenotfound = false
-        inifile = C:\\work\\org.hl7.fhir.old\\org.hl7.fhir.dstu2\\build\\publish\\version.info
-        sectionname = FHIR
-        variables = "FhirVersion" +
-                    ""
-        variabletypes = "String" +
-                        ""
-      end
       action.variables.logvalues
       begin
         failifnotdefined = true
         id = {090E89B2-F656-41EE-BFAA-DF4B4535A231}
         logallvariables = false
         variablestoragestring = "BuildCount" +
-                                "FhirVersion" +
                                 "npp-purpose" +
                                 ""
       end
@@ -105,7 +91,7 @@ begin
         description = "update BuildCount in source"
         erasesection = false
         id = {9950814C-E13D-49D7-A8CF-45CDE3D2AECF}
-        inifile = C:\\work\\fhirserver\\npp\\nppbuildcount.pas
+        inifile = C:\\work\\fhirserver\\npp\\FHIR.Npp.Version.pas
         saveall = false
         sectionname = npp-settings
         variables = "BuildCount" +
@@ -246,7 +232,7 @@ begin
         description = "Set AppVerName in Inno Script"
         id = {EC89A4F6-46B5-442D-A33A-944AFEE95993}
         inifile = C:\\work\\fhirserver\\install\\install-npp.iss
-        newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion%)"
+        newvalue = 1.0.%BuildCount%
         section = Setup
         valuename = AppVerName
         valuetype = vtString
@@ -288,7 +274,7 @@ begin
         impersonateuser = false
         logoutput = true
         logprocessparameters = true
-        params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\npp-install-1.0.%BuildCount%.exe\""
+        params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\"  \"C:\\work\\fhirserver\\install\\build\\npp-install-1.0.%BuildCount%.exe\""
         programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
         redirectstderr = true
         returncodecomparator = rcEqualTo
@@ -387,7 +373,6 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections
         detailedlogging = false
-        enabled = false
         enabletimeout = false
         filespec = fhirnpp.rss
         forcenextclockskewupdate = true
@@ -407,7 +392,6 @@ begin
       action.xml.document.transform
       begin
         allowdtds = false
-        enabled = false
         expanddocumentnodenamespace = false
         id = {CEAC67E1-1D9D-4AB0-9467-350EB67305ED}
         outputfile = C:\\work\\fhirserver\\install\\fhirnpp.htm
@@ -428,7 +412,6 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections
         detailedlogging = false
-        enabled = false
         enabletimeout = false
         filespec = fhirnpp.htm
         forcenextclockskewupdate = true
@@ -471,7 +454,7 @@ begin
   end
   variable
   begin
-    name = FhirVersion
+    name = certpword
     variablescope = vtProject
   end
   variable

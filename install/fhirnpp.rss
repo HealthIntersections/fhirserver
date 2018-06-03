@@ -3,11 +3,23 @@
 	<channel>
 		<title>FHIR Notepad++ Plug-in Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>Notepad++ Plugin release 1.0.30 6/3/2018 9:26:35 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.30.exe</link>
+			<description>6/3/2018 9:26:35 AM (v1.0.30): major upgrade: support for multiple versions of FHIR</description>
+		</item>
+<item><title>Notepad++ Plugin release 1.0.29 6/3/2018 7:54:00 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.29.exe</link>
+			<description>6/3/2018 7:54:00 AM (v1.0.29): test release</description>
+		</item>
+		<item><title>Notepad++ Plugin release 1.0.2 6/3/2018 7:51:14 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.2.exe</link>
+			<description>6/3/2018 7:51:14 AM (v1.0.2): Fix wrong version of definitions in installation program</description>
+		</item>
 		<item><title>Notepad++ Plugin release 1.0.28 11/08/2017 9:04:21 AM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.28.exe</link>
 			<description>11/08/2017 9:04:21 AM (v1.0.28): Fix wrong version of definitions in installation program</description>
 		</item>
-<item><title>Notepad++ Plugin release 1.0.27 11/08/2017 8:00:53 AM</title>
+		<item><title>Notepad++ Plugin release 1.0.27 11/08/2017 8:00:53 AM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.27.exe</link>
 			<description>11/08/2017 8:00:53 AM (v1.0.27): Add debugging around version loading problems</description>
 		</item>
