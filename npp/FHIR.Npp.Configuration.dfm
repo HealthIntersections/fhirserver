@@ -1,5 +1,5 @@
 inherited SettingForm: TSettingForm
-  ActiveControl = edtServerR2
+  ActiveControl = cbPathSummary
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'FHIR notepad++ Plugin Settings'
@@ -25,7 +25,7 @@ inherited SettingForm: TSettingForm
     Top = 0
     Width = 699
     Height = 373
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -35,7 +35,7 @@ inherited SettingForm: TSettingForm
     ParentFont = False
     TabOrder = 1
     object TabSheet1: TTabSheet
-      Caption = 'General'
+      Caption = 'Configuration'
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -339,7 +339,7 @@ inherited SettingForm: TSettingForm
       end
     end
     object TabSheet3: TTabSheet
-      Caption = 'Misc'
+      Caption = 'Settings'
       ImageIndex = 2
       object Panel4: TPanel
         Left = 0
@@ -351,15 +351,13 @@ inherited SettingForm: TSettingForm
         ParentBackground = False
         ParentColor = True
         TabOrder = 0
-        DesignSize = (
-          691
-          345)
+        ExplicitTop = -3
         object GroupBox3: TGroupBox
           Left = 0
-          Top = 8
-          Width = 688
+          Top = 115
+          Width = 691
           Height = 67
-          Anchors = [akLeft, akTop, akRight]
+          Align = alTop
           Caption = '  Path Summary Dialog  '
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -368,13 +366,15 @@ inherited SettingForm: TSettingForm
           Font.Style = [fsBold]
           ParentFont = False
           TabOrder = 0
+          ExplicitTop = 8
+          ExplicitWidth = 688
           DesignSize = (
-            688
+            691
             67)
           object cbPathSummary: TCheckBox
-            Left = 12
+            Left = 27
             Top = 27
-            Width = 658
+            Width = 661
             Height = 17
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Show Summary Dialog after evaluating a FHIR Path'
@@ -389,25 +389,26 @@ inherited SettingForm: TSettingForm
         end
         object GroupBox4: TGroupBox
           Left = 0
-          Top = 81
-          Width = 688
-          Height = 67
-          Anchors = [akLeft, akTop, akRight]
-          Caption = '  Validation Summary Dialog  '
+          Top = 0
+          Width = 691
+          Height = 111
+          Align = alTop
+          Caption = '  Validation'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
+          Padding.Bottom = 10
           ParentFont = False
           TabOrder = 1
           DesignSize = (
-            688
-            67)
+            691
+            111)
           object cbValidationSummary: TCheckBox
-            Left = 12
+            Left = 27
             Top = 27
-            Width = 658
+            Width = 661
             Height = 17
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Show Summary Dialog after performing validation'
@@ -419,13 +420,41 @@ inherited SettingForm: TSettingForm
             ParentFont = False
             TabOrder = 0
           end
+          object cbValidationAnnotations: TCheckBox
+            Left = 27
+            Top = 73
+            Width = 542
+            Height = 17
+            Caption = 'Show Validation Messages in the Text Directly'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 1
+          end
+          object cbBackgroundValidation: TCheckBox
+            Left = 27
+            Top = 50
+            Width = 377
+            Height = 17
+            Caption = 'Background Validation'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 2
+          end
         end
         object GroupBox5: TGroupBox
           Left = 0
-          Top = 169
-          Width = 688
+          Top = 186
+          Width = 691
           Height = 67
-          Anchors = [akLeft, akTop, akRight]
+          Align = alTop
           Caption = '  Welcome Screen'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -434,15 +463,14 @@ inherited SettingForm: TSettingForm
           Font.Style = [fsBold]
           ParentFont = False
           TabOrder = 2
-          DesignSize = (
-            688
-            67)
+          ExplicitLeft = -4
+          ExplicitTop = 140
+          ExplicitWidth = 688
           object chkWelcome: TCheckBox
-            Left = 12
+            Left = 30
             Top = 27
             Width = 658
             Height = 17
-            Anchors = [akLeft, akTop, akRight]
             Caption = 'Show the welcome screen'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -452,6 +480,26 @@ inherited SettingForm: TSettingForm
             ParentFont = False
             TabOrder = 0
           end
+        end
+        object Panel6: TPanel
+          Left = 0
+          Top = 111
+          Width = 691
+          Height = 4
+          Align = alTop
+          BevelOuter = bvNone
+          TabOrder = 3
+        end
+        object Panel7: TPanel
+          Left = 0
+          Top = 182
+          Width = 691
+          Height = 4
+          Align = alTop
+          BevelOuter = bvNone
+          TabOrder = 4
+          ExplicitLeft = -4
+          ExplicitTop = 172
         end
       end
     end

@@ -168,7 +168,7 @@ Source: "C:\work\fhirserver\resources\r4\tslc.xml";                       DestDi
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
-;Source: "C:\ProgramData\FHIRServer\loinc_263.cache";                  DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\loinc_263.cache";                  DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
 Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
 

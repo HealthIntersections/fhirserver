@@ -108,7 +108,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-installer -remount -password &quot;gg&quot; -ini &quot;C:\Program Files\FHIRServer\fhirserver.ini&quot; -packages ,hl7.fhir.core-3.0.1,hl7.fhir.au.base-0.9.1,hl7.fhir.au.pd-0.9.0,hl7.fhir.us.core-1.1.0,hl7.fhir.cda-0.0.1 -load &quot;C:\Program Files\FHIRServer\load\load.ini&quot;</Debugger_RunParams>
+        <Debugger_RunParams>-console -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot;</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d464</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Server\win64_4\Debug\</DCC_ExeOutput>
         <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>

@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.28
+OutputBaseFilename=npp-install-1.0.2
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.28 (FHIR Version 1.0.2.7475)
+AppVerName=1.0.2 (FHIR Version 1.0.2.7475)
 
 ; C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins\Config
 
@@ -41,9 +41,6 @@ Source: "C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins\fhirnpp.dll";
 ; supporting ssl files
 Source: "C:\work\fhirserver\install\ssl32\libeay32.dll";                         DestDir: "{app}\plugins\fhir";                                    Flags: ignoreversion
 Source: "C:\work\fhirserver\install\ssl32\ssleay32.dll";                         DestDir: "{app}\plugins\fhir";                                    Flags: ignoreversion
-; data files
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\igpack.zip";                         DestDir: "{app}\plugins\fhir"; DestName: "fhir3-definitions.zip"; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions-r2asr3.xml.zip";         DestDir: "{app}\plugins\fhir"; DestName: "fhir2-definitions.zip"; Flags: ignoreversion
 ; n++ config file
 Source: "C:\Program Files (x86)\Notepad++\allowAppDataPlugins.xml";              DestDir: "{app}";                                                 Flags: ignoreversion
 

@@ -1486,7 +1486,7 @@ var
   problematicPaths : TStringList;
 begin
   assert(profile.snapshot.elementList.ExistsByReference(definition));
-
+  doProgress(stack.literalPath);
   checkInvariants(ctxt, stack.literalPath, profile, definition, '', '', resource, element);
 
   // get the list of direct defined children, including slices
@@ -1831,7 +1831,7 @@ begin
       vm.code := t;
       vm.details := TFHIRCodeableConcept.Create;
       vm.details.text := msg;
-      ctxt.Issues.Add(TFhirOperationOutcomeIssue3.Create(vm));
+      ctxt.Issues.Add(TFhirOperationOutcomeIssue3.Create(vm.link));
     finally
       vm.Free;
     end;

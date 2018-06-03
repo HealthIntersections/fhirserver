@@ -1486,6 +1486,7 @@ var
   problematicPaths : TStringList;
 begin
   assert(profile.snapshot.elementList.ExistsByReference(definition));
+  doProgress(stack.literalPath);
 
   checkInvariants(ctxt, stack.literalPath, profile, definition, '', '', resource, element);
 

@@ -86,6 +86,10 @@ type
     Label6: TLabel;
     edtServerR4: TEdit;
     Label7: TLabel;
+    Panel6: TPanel;
+    Panel7: TPanel;
+    cbValidationAnnotations: TCheckBox;
+    cbBackgroundValidation: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnEditAsTextClick(Sender: TObject);
@@ -147,6 +151,8 @@ begin
 
   Settings.NoPathSummary := not cbPathSummary.checked;
   Settings.NoValidationSummary := not cbValidationSummary.checked;
+  Settings.BackgroundValidation := cbBackgroundValidation.checked;
+  Settings.ValidationAnnotations := cbValidationAnnotations.checked;
   Settings.NoWelcomeForm := not chkWelcome.Checked;
   Settings.CommitChanges;
 
@@ -317,6 +323,8 @@ begin
   vtServers.RootNodeCount := Settings.ServerCount('');
   cbPathSummary.checked := not Settings.NoPathSummary;
   cbValidationSummary.checked := not Settings.NoValidationSummary;
+  cbBackgroundValidation.checked := Settings.BackgroundValidation;
+  cbValidationAnnotations.checked := Settings.ValidationAnnotations;
   chkWelcome.Checked := not Settings.NoWelcomeForm;
 end;
 

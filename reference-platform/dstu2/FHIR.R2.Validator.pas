@@ -1437,6 +1437,7 @@ var
   last : integer;
 begin
   assert(profile.snapshot.elementList.ExistsByReference(definition));
+  doProgress(stack.literalPath);
 //  // for later re-use
 //  element.Definition := definition;
 //  element.Profile := profile;

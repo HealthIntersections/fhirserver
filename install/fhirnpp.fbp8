@@ -61,7 +61,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Add Code Generation Capability"
+        as.returnvalue = "test upgrade"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -133,12 +133,12 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Berlin
+        delphiversion = Delphi10Tokyo
         description = "Compile the Plugin"
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
-        iconfile = fhirnpp_Icon.ico
+        iconfile = C:\\work\\fhirserver\\npp\\mainicon.ico
         id = {217F3077-B26C-48A2-B7CF-5FE7B5106B4B}
         includecompiledate = false
         includemanifest = false
@@ -154,6 +154,7 @@ begin
         majorversion = 1
         minorversion = 0
         platform = Win32
+        platformsdktype = ProjectSDK
         projectfile = C:\\work\\fhirserver\\npp\\fhirnpp.dpr
         regenerateresource = true
         releaseversion = 0
@@ -166,6 +167,7 @@ begin
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
+        verboseoutput = false
         versioninfokeys = "CompanyName\=" +
                           "FileDescription\=" +
                           "FileVersion\=1.0.0.1" +
@@ -385,6 +387,7 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections
         detailedlogging = false
+        enabled = false
         enabletimeout = false
         filespec = fhirnpp.rss
         forcenextclockskewupdate = true
@@ -404,6 +407,7 @@ begin
       action.xml.document.transform
       begin
         allowdtds = false
+        enabled = false
         expanddocumentnodenamespace = false
         id = {CEAC67E1-1D9D-4AB0-9467-350EB67305ED}
         outputfile = C:\\work\\fhirserver\\install\\fhirnpp.htm
@@ -424,6 +428,7 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections
         detailedlogging = false
+        enabled = false
         enabletimeout = false
         filespec = fhirnpp.htm
         forcenextclockskewupdate = true

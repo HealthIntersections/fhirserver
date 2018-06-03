@@ -66,10 +66,17 @@ type
     property Issues : TFslList<TFhirOperationOutcomeIssueW> read FIssues write SetIssues;
   end;
 
+  TValidatorProgressEvent = procedure (sender : TObject; message : String) of object;
+
   TFHIRValidatorV = class abstract(TFslObject)
   private
+    FOnProgress : TValidatorProgressEvent;
+  protected
+    procedure doProgress(path : String);
   public
     Constructor Create(context: TFHIRWorkerContextV); virtual;
+
+    property OnProgress : TValidatorProgressEvent read FOnProgress write FOnProgress;
 
     procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject); overload; virtual; abstract;
     procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String); overload; virtual; abstract;
@@ -119,6 +126,12 @@ end;
 constructor TFHIRValidatorV.Create(context: TFHIRWorkerContextV);
 begin
   inherited create;
+end;
+
+procedure TFHIRValidatorV.doProgress(path: String);
+begin
+  if assigned(FOnProgress) then
+    FOnProgress(self, path);
 end;
 
 end.

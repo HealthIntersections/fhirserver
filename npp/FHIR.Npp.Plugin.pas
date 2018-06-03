@@ -68,12 +68,12 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX,
   FHIR.Npp.Base, FHIR.Npp.Scintilla,
-  FHIR.Support.System, FHIR.Support.Binary,
+  FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Lock,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.WinInet,
   FHIR.Support.Text, FHIR.Support.Zip, FHIR.Support.MsXml,
 
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Common,
-  FHIR.R4.Constants,
+  FHIR.R4.Constants, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Common,
   FHIR.Npp.Context,
   FHIR.Npp.Settings, FHIR.Npp.Validator, FHIR.Base.Xhtml,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Npp.Version, FHIR.Npp.Utilities,
@@ -115,6 +115,29 @@ type
     function summary : String;
   end;
 
+  TBackgroundValidatorThread = class(TThread)
+  private
+    FLock : TCriticalSection;
+    FVersion : TFHIRVersion;
+    FFmt : TFHIRFormat;
+    FWaiting : TFslBuffer;
+    FWantStop : boolean;
+    FWantBreak : boolean;
+    FIssues : TFslList<TFhirOperationOutcomeIssueW>;
+    procedure validate(r : TFslBuffer; fmt : TFHIRFormat; v : TFHIRVersion);
+    procedure validatorCheck(sender : TObject; message : String);
+  protected
+    procedure execute; override;
+  public
+    Constructor Create;
+    Destructor Destroy; override;
+
+    procedure queue(res : TFslBuffer; fmt : TFHIRFormat; v : TFHIRVersion);
+    procedure stop;
+    procedure break;
+    function grabIssues : TFslList<TFhirOperationOutcomeIssueW>;
+  end;
+
   TContextLoadingThread = class(TThread)
   private
     FPlugin : TFHIRPlugin; // no link
@@ -145,7 +168,6 @@ type
     FPreset : TFHIRPluginFileInformation;
 
     tipShowing : boolean;
-    tipText : String;
     errors : TFslList<TFHIRAnnotation>;
     matches : TFslList<TFHIRAnnotation>;
     errorSorter : TFHIRAnnotationComparer;
@@ -156,17 +178,13 @@ type
     FUpgradeNotes : String;
     FCurrentServer : TRegisteredFHIRServer;
     FWantUpdate : boolean;
+    FRedoMatches : boolean;
 
-    // this procedure handles validation.
-    // it is called whene the text of the scintilla buffer changes
-    // first task is to clear any existing error notifications - if there is a reset
-    // second task is to abort any existing validation process
-    // third task is to start valdiating
-    procedure NotifyContent(text : String; reset : boolean);
+    FBackgroundValidator : TBackgroundValidatorThread;
 
     // Scintilla control
     procedure setUpSquiggles;
-    procedure squiggle(level : integer; line, start, length : integer; message : String);
+    procedure squiggle(level : integer; line, start, length : integer; annotation : boolean; message : String);
     procedure clearSquiggle(level : integer; line, start, length : integer);
 
     // fhir stuff
@@ -195,8 +213,6 @@ type
     function checkSource(src : TBytes; v : TFHIRVersion; fmt : TFHIRFormat) : TFHIRVersionStatus;
     function checkContext(version: TFHIRVersion): boolean;
 
-    // background validation
-//    procedure validate(r : TFHIRResourceV);
   public
     constructor Create;
     destructor Destroy; override;
@@ -306,7 +322,7 @@ begin
   inherited;
   FContext := TFHIRNppContext.Create;
   FFileInfo := TFslMap<TFHIRPluginFileInformation>.create;
-
+  FBackgroundValidator := TBackgroundValidatorThread.Create;
   errors := TFslList<TFHIRAnnotation>.create;
   errorSorter := TFHIRAnnotationComparer.create;
   errors.Sort(errorSorter);
@@ -537,6 +553,8 @@ begin
   if not waitForContext(ver, true) then
     exit;
 
+  FBackgroundValidator.break;
+
   if (FCurrentFileInfo.Format <> ffUnspecified) then
   begin
     src := CurrentBytes;
@@ -555,7 +573,7 @@ begin
             except
               on e : exception do
               begin
-                errors.add(TFHIRAnnotation.create(alError, 0, 0, 0, 'Validation Processf Failed: '+e.Message, e.Message));
+                errors.add(TFHIRAnnotation.create(alError, 0, 0, 0, 'Validation Process Failed: '+e.Message, e.Message));
                 raise;
               end;
             end;
@@ -582,9 +600,10 @@ begin
   end
   else if not ValidationError(self, 'This does not appear to be valid FHIR content') then
     errors.Add(TFHIRAnnotation.create(alError, 0, 0, 4, 'This does not appear to be valid FHIR content', ''));
+
   setUpSquiggles;
   for error in errors do
-    squiggle(LEVEL_INDICATORS[error.level], error.line, error.start, error.stop - error.start, error.message);
+    squiggle(LEVEL_INDICATORS[error.level], error.line, error.start, error.stop - error.start, Settings.ValidationAnnotations, error.message);
   if FHIRVisualizer <> nil then
     FHIRVisualizer.setValidationOutcomes(errors);
 end;
@@ -598,7 +617,7 @@ begin
   matches.Clear;
   if tipShowing then
     mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_CALLTIPCANCEL, 0, 0));
-  tipText := '';
+  FRedoMatches := true;
 end;
 
 procedure TFHIRPlugin.FuncValidateClear;
@@ -610,7 +629,6 @@ begin
   errors.Clear;
   if tipShowing then
     mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_CALLTIPCANCEL, 0, 0));
-  tipText := '';
   if FHIRVisualizer <> nil then
     FHIRVisualizer.setValidationOutcomes(nil);
 end;
@@ -685,7 +703,7 @@ end;
 
 procedure TFHIRPlugin.launchUpgradeCheck;
 begin
-  // TUpgradeCheckThread.create(self);
+  TUpgradeCheckThread.create(self);
 end;
 
 function TFHIRPlugin.locate(res: TFHIRResourceV; var path: String; var focus : TArray<TFHIRObject>): boolean;
@@ -1324,10 +1342,6 @@ begin
     *)
 end;
 
-procedure TFHIRPlugin.NotifyContent(text: String; reset: boolean);
-begin
-  squiggle(INDIC_ERROR, 0, 2, 4, 'test');
-end;
 
 function TFHIRPlugin.parse(timeLimit: integer; var fmt: TFHIRFormat; var res: TFHIRResourceV): boolean;
 var
@@ -1450,6 +1464,7 @@ begin
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_INDICSETFORE, INDIC_MATCH, $007700));
 
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_SETMOUSEDWELLTIME, 200, 0));
+  mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETVISIBLE, 2, 0));
 
 {  squiggle(INDIC_INFORMATION, 0, 3, );
   squiggle(INDIC_WARNING, 4, 3);
@@ -1470,14 +1485,23 @@ begin
 end;
 }
 
-procedure TFHIRPlugin.squiggle(level, line, start, length: integer; message : String);
+procedure TFHIRPlugin.squiggle(level, line, start, length: integer; annotation : boolean; message : String);
 var
-  b : TBytes;
+  chars, styles : TBytes;
+  i : integer;
 begin
-  b := TEncoding.UTF8.GetBytes(message);
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_SETINDICATORCURRENT, level, 0));
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_INDICATORFILLRANGE, start, length));
-  mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETTEXT, 0, LPARAM(@b[0])));
+  if annotation then
+  begin
+    chars := TEncoding.UTF8.GetBytes(message);
+    SetLength(styles, System.length(chars));
+    for i := 0 to System.length(styles)-1 do
+      styles[i] := level;
+
+    mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETTEXT, line, LPARAM(@chars[0])));
+    mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETSTYLES, line, LPARAM(@styles[0])));
+  end;
 end;
 
 
@@ -1526,6 +1550,10 @@ begin
 end;
 
 procedure TFHIRPlugin.checkTrigger;
+var
+  issues : TFslList<TFhirOperationOutcomeIssueW>;
+  iss : TFhirOperationOutcomeIssueW;
+  error : TFHIRAnnotation;
 begin
   if FWantUpdate then
   begin
@@ -1533,6 +1561,23 @@ begin
     FCurrentFileInfo := nil;
     FFileInfo.Clear;
     DoNppnBufferChange;
+  end
+  else
+  begin
+    issues := FBackgroundValidator.grabIssues;
+    if issues <> nil then
+      try
+        FuncValidateClear;
+        for iss in Issues do
+          errors.add(convertIssue(iss));
+        setUpSquiggles;
+        for error in errors do
+          squiggle(LEVEL_INDICATORS[error.level], error.line, error.start, error.stop - error.start, Settings.ValidationAnnotations, error.message);
+        if FHIRVisualizer <> nil then
+          FHIRVisualizer.setValidationOutcomes(errors);
+      finally
+        issues.Free;
+      end;
   end;
 end;
 
@@ -1615,15 +1660,18 @@ procedure TFHIRPlugin.clearSquiggle(level, line, start, length: integer);
 begin
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_SETINDICATORCURRENT, level, 0));
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_INDICATORCLEARRANGE, start, length));
+  mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_ANNOTATIONSETTEXT, line, 0));
 end;
 
 destructor TFHIRPlugin.Destroy;
 begin
+  FBackgroundValidator.Stop;
   if FetchResourceFrm <> nil then
     FetchResourceFrm.Free;
   FCurrentServer.Free;
   FLastRes.free;
   FFileInfo.Free;
+  FBackgroundValidator.Free;
   inherited;
 end;
 
@@ -1705,7 +1753,6 @@ procedure TFHIRPlugin.DoNppnDwellEnd;
 begin
   if tipShowing then
     mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_CALLTIPCANCEL, 0, 0));
-  tipText := '';
 end;
 
 procedure TFHIRPlugin.DoNppnDwellStart(offset: integer);
@@ -1713,6 +1760,7 @@ var
   msg : TStringBuilder;
   annot : TFHIRAnnotation;
   first : boolean;
+  chars : TBytes;
 begin
   CheckUpgrade;
   first := true;
@@ -1746,8 +1794,8 @@ begin
     end;
     if not first then
     begin
-      tipText := msg.ToString;
-      mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_CALLTIPSHOW, offset, LPARAM(PChar(tipText))));
+      chars := TEncoding.UTF8.GetBytes(msg.ToString);
+      mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_CALLTIPSHOW, offset, LPARAM(chars)));
     end;
   finally
     msg.Free;
@@ -1827,6 +1875,7 @@ var
   sp, ep : integer;
   annot : TFHIRAnnotation;
   i : integer;
+  b : TFslBuffer;
 begin
   try
     CheckUpgrade;
@@ -1843,21 +1892,15 @@ begin
       exit;
 
     src := CurrentBytes;
-    if SameBytes(src, FLastSrc) then
+    if not FRedoMatches and SameBytes(src, FLastSrc) then
       exit;
     if (length(src) = 1) and (src[0] = 0) then
       exit;
 
+    FRedoMatches := false;
     FLastSrc := src;
     FLastRes.free;
     FLastRes := nil;
-  //    // we need to parse if:
-  //    //  - we are doing background validation
-  //    //  - there's a path defined
-  //    //  - we're viewing narrative
-  //  else if (Settings.BackgroundValidation or
-  //          (assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath)) or
-  //          (VisualiserMode in [vmNarrative, vmFocus])) then
     if not (parse(500, fmt, res)) then
     begin
       if (FHIRVisualizer <> nil) then
@@ -1870,6 +1913,16 @@ begin
     end
     else
     try
+      if (Settings.BackgroundValidation) then
+      begin
+        b := TFslBuffer.Create();
+        try
+          b.AsBytes := src;
+          FBackgroundValidator.queue(b, fmt, FCurrentFileInfo.workingVersion);
+        finally
+          b.Free;
+        end;
+      end;
       FLastRes := res.Link;
       if res = nil then
         case VisualiserMode of
@@ -1879,8 +1932,6 @@ begin
         end
       else
       begin
-//        if (Settings.BackgroundValidation) then
-//          validate(res);
         if (FHIRVisualizer <> nil) and (VisualiserMode = vmNarrative) then
           FHIRVisualizer.setNarrative(prepNarrative(res));
         if (FHIRVisualizer <> nil) and (VisualiserMode = vmFocus) then
@@ -1890,35 +1941,33 @@ begin
           else
             FHIRVisualizer.setFocusInfo('', []);
         end;
-        if (VisualiserMode = vmPath) then
+        if assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath)  then
         begin
-          if assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath) and (VisualiserMode = vmPath) then
-          begin
-            matches.clear;
-            evaluatePath(res, items, expr, types);
-            try
-              for item in items do
-              begin
-                sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.value.LocationStart.line - 1, item.value.LocationStart.col-1);
-                ep := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.value.LocationEnd.line - 1, item.value.LocationEnd.col-1);
-                if (ep = sp) then
-                  ep := sp + 1;
-                matches.Add(TFHIRAnnotation.create(alMatch, item.value.LocationStart.line - 1, sp, ep, 'This element is a match to path "'+FHIRToolbox.edtPath.Text+'"', item.value.describe));
-              end;
-              if VisualiserMode = vmPath then
-                FHIRVisualizer.setPathOutcomes(FHIRToolbox.edtPath.Text, matches, expr);
-              setUpSquiggles;
-              for annot in matches do
-                squiggle(LEVEL_INDICATORS[annot.level], annot.line, annot.start, annot.stop - annot.start, annot.message);
-            finally
-              items.Free;
-              expr.Free;
-              types.Free;
+          FuncMatchesClear;
+          evaluatePath(res, items, expr, types);
+          try
+            for item in items do
+            begin
+              sp := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.value.LocationStart.line - 1, item.value.LocationStart.col-1);
+              ep := SendMessage(NppData.ScintillaMainHandle, SCI_FINDCOLUMN, item.value.LocationEnd.line - 1, item.value.LocationEnd.col-1);
+              if (ep = sp) then
+                ep := sp + 1;
+              matches.Add(TFHIRAnnotation.create(alMatch, item.value.LocationStart.line - 1, sp, ep, 'This element is a match to path "'+FHIRToolbox.edtPath.Text+'"', item.value.describe));
             end;
-          end
-          else
-            FHIRVisualizer.setPathOutcomes('', nil, nil);
-        end;
+            if (FHIRVisualizer <> nil) and (VisualiserMode = vmPath) then
+              FHIRVisualizer.setPathOutcomes(FHIRToolbox.edtPath.Text, matches, expr);
+            setUpSquiggles;
+            for annot in matches do
+              squiggle(LEVEL_INDICATORS[annot.level], annot.line, annot.start, annot.stop - annot.start, false, '');
+            FRedoMatches := false;
+          finally
+            items.Free;
+            expr.Free;
+            types.Free;
+          end;
+        end
+        else if FHIRVisualizer <> nil then
+          FHIRVisualizer.setPathOutcomes('', nil, nil);
       end;
     finally
       res.Free;
@@ -2188,6 +2237,153 @@ begin
   finally
     vf.Free;
   end;
+end;
+
+{ TBackgroundValidatorThread }
+
+procedure TBackgroundValidatorThread.break;
+begin
+  FWantBreak := true;
+end;
+
+constructor TBackgroundValidatorThread.Create;
+begin
+  inherited;
+  FLock := TCriticalSection.Create('Background Validation Lock');
+end;
+
+destructor TBackgroundValidatorThread.Destroy;
+begin
+  FWaiting.Free;
+  FLock.Free;
+  inherited;
+end;
+
+procedure TBackgroundValidatorThread.execute;
+var
+  res : TFslBuffer;
+  v : TFHIRVersion;
+  fmt : TFHIRFormat;
+begin
+  try
+    while not FWantStop do
+    begin
+      res := nil;
+      v := fhirVersionUnknown;
+      fmt := ffUnspecified;
+      FLock.Lock;
+      try
+        if FWaiting <> nil then
+        begin
+          res := FWaiting;
+          v := FVersion;
+          fmt := FFmt;
+          FWaiting := nil;
+        end;
+      finally
+        FLock.Unlock;
+      end;
+      if (res <> nil) then
+      begin
+        try
+          validate(res, fmt, v);
+        finally
+          res.Free;
+        end;
+      end;
+      sleep(50);
+    end;
+  except
+  end;
+end;
+
+function TBackgroundValidatorThread.grabIssues: TFslList<TFhirOperationOutcomeIssueW>;
+begin
+  FLock.Lock;
+  try
+    result := FIssues;
+    FIssues := nil;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TBackgroundValidatorThread.queue(res: TFslBuffer; fmt : TFHIRFormat; v : TFHIRVersion);
+begin
+  FLock.Lock;
+  try
+    FWaiting.Free;
+    FWaiting := res.link;
+    FVersion := v;
+    FFmt := fmt;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TBackgroundValidatorThread.stop;
+begin
+  FWantStop := true;
+end;
+
+procedure TBackgroundValidatorThread.validate(r: TFslBuffer; fmt : TFHIRFormat; v : TFHIRVersion);
+var
+  ctxt: TFHIRValidatorContext;
+  val : TFHIRValidatorV;
+  op : FHIR.R4.Resources.TFhirOperationOutcomeIssue; // version doesn't matter
+begin
+  if not FNpp.waitForContext(v, false) then
+    exit;
+  FWantBreak := false;
+  try
+    ctxt := TFHIRValidatorContext.Create;
+    try
+      ctxt.ResourceIdRule := risOptional;
+      ctxt.OperationDescription := 'validate';
+      val := FNpp.FContext.Version[v].makeValidator;
+      try
+        val.OnProgress := validatorCheck;
+        try
+          val.validate(ctxt, r, fmt);
+        except
+          on e : exception do
+          begin
+            if not (e is EAbort) then
+            begin
+              op := TFhirOperationOutcomeIssue.Create;
+              try
+                op.severity := IssueSeverityFatal;
+                op.details := TFhirCodeableConcept.Create;
+                op.details.text := 'Validation Process Failed: '+e.Message;
+                ctxt.Issues.add(TFhirOperationOutcomeIssue4.create(op.Link));
+              finally
+                op.Free;
+              end;
+            end;
+          end;
+        end;
+      finally
+        val.free;
+      end;
+      FLock.Lock;
+      try
+        FIssues.Free;
+        FIssues := ctxt.Issues.link;
+      finally
+        FLock.Unlock;
+      end;
+    finally
+      ctxt.Free;
+    end;
+  except
+   // we do nothing
+  end;
+end;
+
+procedure TBackgroundValidatorThread.validatorCheck(sender: TObject; message: String);
+begin
+  if FWantStop or (FWaiting <> nil) or FWantBreak then
+    abort;
 end;
 
 initialization

@@ -66,6 +66,7 @@ type
     function GetNoWelcomeForm: boolean;
     function GetBuildPrompt: String;
     function GetUpdateResourceOnSend: boolean;
+    function GetValidationAnnotations: boolean;
 
     procedure SetTerminologyServerR2(const Value: string);
     procedure SetTerminologyServerR3(const Value: string);
@@ -85,6 +86,7 @@ type
     procedure SetNoWelcomeForm(const Value: boolean);
     procedure SetBuildPrompt(const Value: String);
     procedure SetUpdateResourceOnSend(const Value: boolean);
+    procedure SetValidationAnnotations(const Value: boolean);
 
     function GetLoadR2: boolean;
     function GetLoadR3: boolean;
@@ -111,6 +113,7 @@ type
     property NoValidationSummary : boolean read GetNoValidationSummary write SetNoValidationSummary;
     property NoWelcomeForm : boolean read GetNoWelcomeForm write SetNoWelcomeForm;
     property BackgroundValidation : boolean read GetBackgroundValidation write SetBackgroundValidation;
+    property ValidationAnnotations : boolean read GetValidationAnnotations write SetValidationAnnotations;
     property BuildPrompt : String read GetBuildPrompt write SetBuildPrompt;
 
     property DebuggerHeight : integer read GetDebuggerHeight write SetDebuggerHeight;
@@ -285,6 +288,11 @@ begin
   result := json.bool['UpdateResourceOnSend'];
 end;
 
+function TFHIRPluginSettings.GetValidationAnnotations: boolean;
+begin
+  result := json.bool['ValidationAnnotations'];
+end;
+
 function TFHIRPluginSettings.GetVisualiserVisible: boolean;
 begin
   result := json.bool['Visualiser'];
@@ -445,6 +453,13 @@ procedure TFHIRPluginSettings.SetUpdateResourceOnSend(const Value: boolean);
 begin
   if FShuttingDown then exit;
   json.bool['UpdateResourceOnSend'] := Value;
+  Save;
+end;
+
+procedure TFHIRPluginSettings.SetValidationAnnotations(const Value: boolean);
+begin
+  if FShuttingDown then exit;
+  json.bool['ValidationAnnotations'] := Value;
   Save;
 end;
 

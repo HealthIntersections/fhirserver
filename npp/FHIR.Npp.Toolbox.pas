@@ -279,10 +279,10 @@ var
   qry : TFHIRPathEngine;
 begin
   Settings.Path := edtPath.Text;
+  FNpp.FuncMatchesClear;
   if edtPath.text = '' then
   begin
     FHasValidPath := false;
-    FNpp.DoNppnTextModified;
   end
   else
   begin
