@@ -165,18 +165,13 @@ uses
   FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
   FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
   FHIR.R4.Operations in '..\reference-platform\r4\FHIR.R4.Operations.pas',
-  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas';
+  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas',
+  OsxPopupmenuWorkaround in 'OsxPopupmenuWorkaround.pas' {PopupMenuWorkaroundForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
-  Application.CreateForm(TBulkDataDialog, BulkDataDialog);
-  Application.CreateForm(TUsageContextDialog, UsageContextDialog);
-  Application.CreateForm(TBulkDataDialog, BulkDataDialog);
-  Application.CreateForm(TUsageContextDialog, UsageContextDialog);
-  Application.CreateForm(TUsageContextDialog, UsageContextDialog);
-  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
   Application.Run;
 end.

@@ -1,0 +1,29 @@
+object PopupMenuWorkaroundForm: TPopupMenuWorkaroundForm
+  Left = 0
+  Top = 0
+  ActiveControl = ListBox1
+  Caption = 'Form1'
+  ClientHeight = 269
+  ClientWidth = 282
+  SystemStatusBar.Visibility = Invisible
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object ListBox1: TListBox
+    Align = Client
+    Size.Width = 282.000000000000000000
+    Size.Height = 269.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    OnClick = ListBox1Click
+    DisableFocusEffect = True
+    DefaultItemStyles.ItemStyle = ''
+    DefaultItemStyles.GroupHeaderStyle = ''
+    DefaultItemStyles.GroupFooterStyle = ''
+    OnKeyDown = ListBox1KeyDown
+    Viewport.Width = 282.000000000000000000
+    Viewport.Height = 269.000000000000000000
+  end
+end

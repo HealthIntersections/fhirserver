@@ -395,7 +395,7 @@ procedure TLogger.WriteToLog(bytes: TBytes);
 begin
   If length(bytes) = 0 Then
     Exit;
-  raise Exception.Create('Not done yet');
+  // todo.... raise Exception.Create('Not done yet');
 end;
 {$ELSE}
 Var

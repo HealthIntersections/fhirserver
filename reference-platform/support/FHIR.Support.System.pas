@@ -573,19 +573,21 @@ Type
 
   PLargeInteger = ^TLargeInteger;
 
+const psc = {$IFDEF MSWINDOWS} '\' {$ELSE} '/' {$ENDIF};
+
 
 Function PathFolder(Const sFilename : String) : String;
 Var
   iIndex : Integer;
 Begin
-  iIndex := LastDelimiter('\:', sFilename);
+  iIndex := LastDelimiter(psc+':', sFilename);
 
-  If (iIndex > 1) And (sFilename[iIndex] = '\:') And
-     (Not CharInSet(sFilename[iIndex - 1], ['\', ':']) Or
+  If (iIndex > 1) And (sFilename[iIndex] = psc+':') And
+     (Not CharInSet(sFilename[iIndex - 1], [psc, ':']) Or
      (ByteType(sFilename, iIndex - 1) = mbTrailByte)) Then
     Dec(iIndex);
 
-  Result := StringIncludeAfter(Copy(sFilename, 1, iIndex), '\');
+  Result := StringIncludeAfter(Copy(sFilename, 1, iIndex), psc);
 End;
 
 Function FileExists(Const sFilename : String) : Boolean;
@@ -744,13 +746,21 @@ End;
 function Path(parts : array of String) : String;
 var
   part : String;
+  s : String;
 begin
   result := '';
   for part in parts do
+  begin
+    s := part.Replace('/', psc).Replace('\', psc);
     if result = '' then
-      result := part
+      result := s
+    else if not result.EndsWith(psc) and not s.startsWith(psc) then
+      result := result + psc + s
+    else if not result.EndsWith(psc) or not s.startsWith(psc) then
+      result := result + s
     else
-      result := IncludeTrailingPathDelimiter(result)+ part;
+      result := result + s.substring(1);
+  end;
 end;
 
 function URLPath(parts : array of String) : String;
@@ -762,11 +772,11 @@ begin
     if result = '' then
       result := part
     else if not result.EndsWith('/') and not part.startsWith('/') then
-      result := result+'/'+part
+      result := result +'/'+part
     else if not result.EndsWith('/') or not part.startsWith('/') then
-      result := result+ part
+      result := result + part
     else
-      result := result+ part.substring(1);
+      result := result + part.substring(1);
 end;
 
 Function CreateGUID : TGUID;
@@ -1027,7 +1037,7 @@ Begin
   If Not IsPathDelimiter(Result, iLength) Then
   Begin
     Inc(iLength);
-    Result[iLength] := '\';
+    Result[iLength] := psc;
   End;
 
   SetLength(Result, iLength);
@@ -1307,7 +1317,7 @@ End;
 {$RANGECHECKS ON}
 
 var
-  GThreadManager : TDictionary<integer,String>;
+  GThreadManager : TDictionary<cardinal,String>;
 
 procedure SetThreadName(name : String);
 begin
@@ -2083,7 +2093,7 @@ Begin
   If Not IsPathDelimiter(Result, iLength) Then
   Begin
     Inc(iLength);
-    Result[iLength] := '\';
+    Result[iLength] := psc;
   End;
 
   SetLength(Result, iLength);
@@ -2366,7 +2376,7 @@ Initialization
     SysUtils.GetFormatSettings;
   End;
   {$ENDIF}
-  GThreadManager := TDictionary<integer,String>.create;
+  GThreadManager := TDictionary<cardinal,String>.create;
 Finalization
   GThreadManager.Free;
   {$IFOPT C+}

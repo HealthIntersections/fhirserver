@@ -109,6 +109,9 @@ begin
   try
     http.timeout := timeout;
     http.proxy := proxy;
+    if fmt = ffUnspecified then
+      fmt := ffJson;
+
     result := TFhirClient.create(worker, 'en', http.link);
     try
       result.format := fmt;

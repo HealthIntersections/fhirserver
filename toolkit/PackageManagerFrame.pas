@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, fmx.Platform.Mac,
   System.Generics.Collections, System.ImageList, FMX.ImgList, FMX.Menus,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.TabControl, FMX.ListBox, FMX.Layouts, FMX.DateTimeCtrls,
@@ -115,6 +115,7 @@ implementation
 {$R *.fmx}
 
 uses
+  OsxPopupmenuWorkaround,
   PackageBrowser;
 
 { TPackageManagerFrame }
@@ -218,12 +219,19 @@ end;
 procedure TPackageManagerFrame.Button5Click(Sender: TObject);
 var
   pt : TPointF;
+  i : integer;
 begin
   pt.X := 0;
   pt.Y := Button5.Height;
   pt := Button5.LocalToAbsolute(pt);
   pt := form.ClientToScreen(pt);
+  {$IFDEF OSX}
+  i := runPopupAlternative(self, pmImport, trunc(pt.X), trunc(pt.Y));
+  if i > -1 then
+    pmImport.Items[i].OnClick(self);
+  {$ELSE}
   pmImport.Popup(pt.X, pt.Y);
+  {$ENDIF}
 end;
 
 procedure TPackageManagerFrame.changePackageManagerMode(mode: boolean);

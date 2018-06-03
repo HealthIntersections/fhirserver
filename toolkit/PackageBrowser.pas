@@ -113,14 +113,19 @@ procedure TPackageFinderForm.gridGetValue(Sender: TObject; const ACol, ARow: Int
 var
   pck : TPackageDefinition;
 begin
-  pck := FFiltered[ARow];
-  case aCol of
-    0: value := pck.Id;
-    1: value := pck.Version;
-    2: value := pck.Description;
-    3: value := pck.Canonical;
-    4: value := pck.FHIRVersion;
-    5: value := pck.Date;
+  if ARow >= FFiltered.count then
+    value := ''
+  else
+  begin
+    pck := FFiltered[ARow];
+    case aCol of
+      0: value := pck.Id;
+      1: value := pck.Version;
+      2: value := pck.Description;
+      3: value := pck.Canonical;
+      4: value := pck.FHIRVersion;
+      5: value := pck.Date;
+    end;
   end;
 end;
 
