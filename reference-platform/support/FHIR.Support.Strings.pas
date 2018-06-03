@@ -2925,9 +2925,9 @@ End;
 
 Function DecodeHexadecimal(Const sValue : String) : TBytes;
 Begin
-  SetLength(Result, SizeOfDecodeHexadecimal(sValue));
+  SetLength(Result, SizeOfDecodeHexadecimal(AnsiString(sValue)));
 
-  DecodeHexadecimal(sValue, Pointer(Result)^, Length(Result));
+  DecodeHexadecimal(AnsiString(sValue), Pointer(Result)^, Length(Result));
 End;
 
 

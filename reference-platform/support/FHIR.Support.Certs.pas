@@ -845,7 +845,7 @@ begin
   fn := Path([SystemTemp, TDateTimeEx.makeUTC.toString('yyyymmddhhnnss.zzz')+'.cer']);
   BytesToFile(contents, fn);
   try
-    result := loadRSAPublicKey(fn);
+    result := loadRSAPublicKey(AnsiString(fn));
   finally
     DeleteFile(fn)
   end;

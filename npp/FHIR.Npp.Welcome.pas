@@ -72,6 +72,8 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure chkR2Click(Sender: TObject);
+    procedure chkR3Click(Sender: TObject);
+    procedure chkR4Click(Sender: TObject);
   private
     FContext: TFHIRNppContext;
     FCache : TFHIRPackageManager;
@@ -140,6 +142,48 @@ begin
       Settings.CommitChanges;
     end;
     chkR2.Checked := FCache.packageExists('hl7.fhir.core', '1.0.2') and Settings.loadR2;
+  end;
+end;
+
+procedure TWelcomeScreenForm.chkR3Click(Sender: TObject);
+begin
+  if chkR3.Checked and not FCache.packageExists('hl7.fhir.core', '3.0.1') then
+  begin
+    PackageCacheForm := TPackageCacheForm.Create(self);
+    try
+      PackageCacheForm.UserMode := true;
+      PackageCacheForm.GoUrl := 'http://hl7.org/fhir';
+      PackageCacheForm.showModal;
+    finally
+      FreeAndNil(PackageCacheForm);
+    end;
+    if FCache.packageExists('hl7.fhir.core', '3.0.1') then
+    begin
+      Settings.loadR3 := true;
+      Settings.CommitChanges;
+    end;
+    chkR3.Checked := FCache.packageExists('hl7.fhir.core', '3.0.1') and Settings.loadR3;
+  end;
+end;
+
+procedure TWelcomeScreenForm.chkR4Click(Sender: TObject);
+begin
+ if chkR4.Checked and not FCache.packageExists('hl7.fhir.core', '3.4.0') then
+  begin
+    PackageCacheForm := TPackageCacheForm.Create(self);
+    try
+      PackageCacheForm.UserMode := true;
+      PackageCacheForm.GoUrl := 'http://build.fhir.org/';
+      PackageCacheForm.showModal;
+    finally
+      FreeAndNil(PackageCacheForm);
+    end;
+    if FCache.packageExists('hl7.fhir.core', '3.4.0') then
+    begin
+      Settings.loadR4 := true;
+      Settings.CommitChanges;
+    end;
+    chkR4.Checked := FCache.packageExists('hl7.fhir.core', '3.4.0') and Settings.loadR4;
   end;
 end;
 

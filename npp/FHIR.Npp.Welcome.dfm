@@ -5941,6 +5941,7 @@ object WelcomeScreenForm: TWelcomeScreenForm
         Height = 17
         Caption = 'Load R3'
         TabOrder = 4
+        OnClick = chkR3Click
       end
       object chkR4: TCheckBox
         Left = 268
@@ -5949,6 +5950,7 @@ object WelcomeScreenForm: TWelcomeScreenForm
         Height = 17
         Caption = 'Load R4'
         TabOrder = 5
+        OnClick = chkR4Click
       end
     end
   end

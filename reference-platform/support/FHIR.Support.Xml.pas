@@ -635,7 +635,6 @@ Type
 Const
   ALL_XML_KNOWN_TYPE = [TFslXMLKnownHeaderType..TFslXMLKnownTextType];
 
-
 Type
   TFslXMLExtractor = Class(TFslTextExtractor)
     Private

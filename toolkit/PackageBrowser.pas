@@ -132,7 +132,7 @@ var
   p : TPackageDefinition;
 begin
   FList.clear;
-  AddStandardPackages(Flist);
+  TPackageDefinition.AddStandardPackages(Flist);
   a := TInternetFetcher.fetchJsonArr('https://build.fhir.org/ig/qas.json');
   try
     for i in a do

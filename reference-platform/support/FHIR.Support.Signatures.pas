@@ -723,7 +723,7 @@ begin
     ref.addElementNS(NS_DS, 'DigestValue').addText(String(EncodeBase64(dig)));
     can := canonicaliseXml([xcmCanonicalise],si);
     dig := sign(can, method);
-    s := EncodeBase64(dig);
+    s := string(EncodeBase64(dig));
     sig.addElementNS(NS_DS, 'SignatureValue').addText(s);
 
     if keyinfo then
@@ -774,7 +774,7 @@ begin
     ref.addElementNS(NS_DS, 'DigestValue').addText(String(EncodeBase64(dig)));
     can := canonicaliseXml([xcmCanonicalise],si);
     dig := sign(can, method);
-    s := EncodeBase64(dig);
+    s := string(EncodeBase64(dig));
     sig.addElementNS(NS_DS, 'SignatureValue').addText(s);
 
     if keyinfo then

@@ -342,6 +342,7 @@ function FileToBytes(filename : String; AShareMode : Word = fmOpenRead + fmShare
 procedure StreamToFile(stream : TStream; filename : String);
 Function EncodeXML(Const sValue : String; bEoln : Boolean = True) : String; Overload;
 Function DecodeXML(Const sValue : String) : String; Overload;
+
 Function EncodePercent(Const sValue : String) : String; Overload;
 Function DecodePercent(Const sValue : String) : String; Overload;
 
@@ -1541,7 +1542,6 @@ End;
 procedure produceCsv(filename : String; headers : Array of String; values : TGetCsvValues);
 var
   csv : TCSVWriter;
-  arr : TArray<String>;
   s : String;
 begin
   csv := TCSVWriter.Create;
@@ -2153,8 +2153,6 @@ begin
     result := src1.col >= src2.col;
 end;
 
-
-
 Function EncodeXML(Const sValue : String; bEoln : Boolean = True) : String;
 Var
   iLoop : Integer;
@@ -2171,7 +2169,7 @@ Begin
       If bEoln Then
         Begin
           Delete(Result, iLoop, 1);
-          Insert('&#x' + EncodeHexadecimal(Ord(cValue)) + ';', Result, iLoop);
+          Insert('&#x' + string(EncodeHexadecimal(Ord(cValue))) + ';', Result, iLoop);
           Inc(iLoop, 5);
         End
       Else
@@ -2180,7 +2178,7 @@ Begin
       #0..#9, #11..#12, #14..#31, #127..#255 :
       Begin
         Delete(Result, iLoop, 1);
-        Insert('&#x' + EncodeHexadecimal(Ord(cValue)) + ';', Result, iLoop);
+        Insert('&#x' + string(EncodeHexadecimal(Ord(cValue))) + ';', Result, iLoop);
         Inc(iLoop, 5);
       End;
 
@@ -2212,16 +2210,11 @@ Begin
   End;
 End;
 
-
 Function DecodeXML(Const sValue : String) : String;
 Var
   iLoop : Integer;
   pValue : PChar;
-  {$IFDEF VER130}
-  iValue : Byte;
-  {$ELSE}
   iValue : Word;
-  {$ENDIF}
   sPrefixedEncodedDec : String;
   sRemainder : String;
   sEncodedDec : String;
@@ -2265,7 +2258,7 @@ Begin
         StringSplit(pValue, ';', sPrefixedEncodedDec, sRemainder);
         sEncodedDec := '0x'+copy(sPrefixedEncodedDec, 4, length(sPrefixedEncodedDec));
         iEncodedDec := StringToInteger32(sEncodedDec);
-        if iEncodedDec > {$IFDEF VER130} 255 {$ELSE} 65535 {$ENDIF} then
+        if iEncodedDec > 65535 then
           iValue := Ord('?')
         else
           iValue := iEncodedDec;
@@ -2282,7 +2275,7 @@ Begin
 
         If (iEncodedDec >= 0) And (iEncodedDec <= 255) Then
         Begin
-        if iEncodedDec > {$IFDEF VER130} 255 {$ELSE} 65535 {$ENDIF} then
+        if iEncodedDec > 65535 then
           iValue := Ord('?')
         else
           iValue := iEncodedDec;
@@ -2389,7 +2382,7 @@ End;
 Function EncodePercent(Const sValue : String) : String; overload;
 Begin
   If Length(sValue) > 0 Then
-    Result := EncodePercent(sValue[1], Length(sValue))
+    Result := string(EncodePercent(sValue[1], Length(sValue)))
   Else
     Result := '';
 End;
@@ -2404,7 +2397,7 @@ Begin
   If Length(sValue) > 0 Then
   Begin
     SetLength(Result, Length(sValue));
-    iSize := DecodePercent(sValue, Result[1], Length(Result));
+    iSize := DecodePercent(AnsiString(sValue), Result[1], Length(Result));
     SetLength(Result, iSize);
   End;
 End;
