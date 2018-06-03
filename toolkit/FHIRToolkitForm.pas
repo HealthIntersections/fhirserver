@@ -262,7 +262,7 @@ var
   ok : boolean;
 begin
   server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].data);
-  http := TFhirClients.makeHTTP(FContext, server.fhirEndpoint, server.format, FSettings.Timeout* 1000, FSettings.proxy);
+  http := TFhirClients.makeHTTP(FContext.link, server.fhirEndpoint, server.format, FSettings.Timeout* 1000, FSettings.proxy);
   try
     (http.Communicator as TFHIRHTTPCommunicator).username := server.username;
     (http.Communicator as TFHIRHTTPCommunicator).password := server.password;

@@ -324,6 +324,7 @@ begin
   request := TFHIRRequest.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, roSubscription, TFHIRServerContext(ServerContext).Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
+    request.internalRequestId := TFHIRServerContext(ServerContext).nextRequestId;
     request.Id := id;
     request.Session := OnGetSessionEvent(userkey);
     request.Resource := resource.Link;

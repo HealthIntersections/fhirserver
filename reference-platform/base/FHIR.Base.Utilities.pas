@@ -32,10 +32,11 @@ interface
 
 uses
   SysUtils, Classes, ZLib,
-  FHIR.Support.Strings, FHIR.Support.Json, FHIR.Web.Parsers, FHIR.Web.Fetcher,
+  FHIR.Support.Strings, FHIR.Support.Json, FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Lang;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
+function mimeTypeListToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function IsId(s : String) : boolean;
@@ -53,6 +54,44 @@ function TryZDecompressBytes(const s: TBytes): TBytes;
 
 
 implementation
+
+function mimeTypeListToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
+var
+  ctl : TFslList<TMimeContentType>;
+  ct : TMimeContentType;
+begin
+  result := ffUnspecified;
+  ctl := TMimeContentType.parseList(mt);
+  try
+    for ct in ctl do
+    begin
+      if      (ct.base = 'application/json') or (ct.base = 'application/fhir+json') or (ct.base = 'application/json+fhir') then result := ffJson
+      else if (ct.base = 'application/xml') or (ct.base = 'application/fhir+xml') or (ct.base = 'application/xml+fhir') then result := ffXml
+      else if (ct.base = 'application/x-ndjson') or (ct.base = 'application/fhir+ndjson') then result := ffNDJson
+      else if (ct.base = 'text/turtle') or (ct.base = 'application/fhir+turtle') then result := ffTurtle
+
+      else if (ct.base = 'text/json') then result := ffJson
+      else if (ct.base = 'text/html') then result := ffXhtml
+      else if (ct.base = 'text/xml') then result := ffXml
+      else if (ct.base = 'application/x-zip-compressed') or (ct.base = 'application/zip') then result := ffXhtml
+      else if (ct.base = 'text/plain') then result := ffText
+
+      else if StringExistsInsensitive(ct.base, 'json') then result := ffJson
+      else if StringExistsInsensitive(ct.base, 'xml') then result := ffXml
+      else if StringExistsInsensitive(ct.base, 'html') then result := ffXhtml
+      else if StringExistsInsensitive(ct.base, 'text') then result := ffText
+      else if StringExistsInsensitive(ct.base, 'rdf') then result := ffTurtle
+      else if StringExistsInsensitive(ct.base, 'turtle') then result := ffTurtle
+      else if StringExistsSensitive(ct.base, '*/*') Then result := ffXhtml;
+      if result <> ffUnspecified then
+        break;
+    end;
+  finally
+    ctl.Free;
+  end;
+  if result = ffUnspecified then
+    result := def;
+end;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 var

@@ -2586,7 +2586,7 @@ Begin
     oResponse.Version := readVersion(sContentAccept);
     if oRequest.Parameters.VarExists('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
       sContentAccept := oRequest.Parameters.GetVar('_format');
-    oResponse.format := mimeTypeToFormat(sContentAccept, oResponse.Format);
+    oResponse.format := mimeTypeListToFormat(sContentAccept, oResponse.Format);
     if oRequest.Parameters.VarExists('_pretty') and (oRequest.Parameters.GetVar('_pretty') = 'true') then
       style := OutputStylePretty
     else if sContentAccept.Contains('pretty=') and (extractProp(sContentAccept, 'pretty') = 'true') then
