@@ -1896,7 +1896,7 @@ Begin
   Inherited;
   If Not wrdEditor.Settings.ConsoleMode And Not wrdEditor.CheckOkForConsoleMode
     (sMsg) Then
-    Raise Exception.Create
+    raise EWPException.create
       ('You cannot enter console mode because the document contains:'#13#10 +
       sMsg);
   wrdEditor.Settings.ConsoleMode := Not wrdEditor.Settings.ConsoleMode;
@@ -3589,7 +3589,7 @@ Begin
     mnuKarismaConnect.Caption := '&Connect';
     End;
   }
-  Raise Exception.Create('commented out');
+  raise EWPException.create('commented out');
 End;
 
 {
@@ -3833,7 +3833,7 @@ Begin
     End;
   End
   Else
-    Raise Exception.Create('File "' + AFilename + '" not found');
+    raise EWPException.create('File "' + AFilename + '" not found');
 End;
 
 Procedure StringToFile(Const AStr, AFilename: String);
@@ -3999,7 +3999,7 @@ end;
 
 procedure TWordProcessorForm.mnuExportBitmapClick(Sender: TObject);
 begin
-  raise Exception.Create('not done yet');
+  raise EWPException.create('not done yet');
 end;
 
 Procedure TWordProcessorForm.mnuEmailClick(Sender: TObject);
@@ -4378,7 +4378,7 @@ begin
 //            gofax.open;
 //            gofax.AccessToken := dlg.eToken.text;
 //            if not gofax.Ready then
-//              raise Exception.Create('Unable to send a fax');
+//              raise EWPException.create('Unable to send a fax');
 //            gofax.Send(stripSpaces(dlg.eNumber.Text), stripSpaces(dlg.eSource.text), 'filename.pdf', pdf, sId);
 //            gofax.close;
 //            ShowMessage('send as '+sId);

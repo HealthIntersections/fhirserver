@@ -33,7 +33,7 @@ Interface
 Uses
   SysUtils, Classes,
   IdComponent,
-  FHIR.Support.Stream, FHIR.Support.Objects, FHIR.Support.Json;
+  FHIR.Support.Exceptions, FHIR.Support.Stream, FHIR.Support.Objects, FHIR.Support.Json;
 
 Type
   TInternetFetcherMethod = (imfGet, imfPost);
@@ -212,7 +212,7 @@ begin
         End;
       End
       Else
-        Raise Exception.Create('Protocol '+oUri.Protocol+' not supported');
+        raise EWebException.create('Protocol '+oUri.Protocol+' not supported');
     Finally
       oUri.Free;
     End;

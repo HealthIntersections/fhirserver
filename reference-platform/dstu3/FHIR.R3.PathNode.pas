@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream, FHIR.Support.Xml,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Lang,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Parser;
 
 type
@@ -691,7 +691,7 @@ begin
     ffXml : ComposeXml(stream, expr, items, types);
     ffJson: ComposeJson(stream, expr, items, types);
   else
-    raise Exception.Create('ComposeExpression is Not supported for '+CODES_TFHIRFormat[fmt]);
+    raise EFHIRException.create('ComposeExpression is Not supported for '+CODES_TFHIRFormat[fmt]);
   end;
 end;
 

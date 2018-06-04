@@ -33,9 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Support.Turtle;
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Turtle;
 
 const
 	GOOD_IRI_CHAR = 'a-zA-Z0-9\u00A0-\uFFFE';
@@ -509,7 +507,7 @@ end;
 function TRDFGenerator.section(sn: String): TRDFSection;
 begin
   if (hasSection(sn)) then
-    raise Exception.create('Duplicate section name '+sn);
+    raise ERdfException.create('Duplicate section name '+sn);
 
   result := TRDFSection.Create(self);
   FSections.add(result);
@@ -571,7 +569,7 @@ begin
   begin
     prefix := pname.substring(0, pname.indexOf(':'));
     if (not Fprefixes.containsKey(prefix) and (prefix <> 'http') and (prefix <> 'urn')) then
-      raise Exception.create('undefined prefix '+prefix);
+      raise ERdfException.create('undefined prefix '+prefix);
   end;
 end;
 
@@ -710,7 +708,7 @@ begin
       end;
     rdfXMl:
       begin
-      raise Exception.Create('Not supported yet');
+      raise ERdfException.create('Not supported yet');
       end;
     rdfNTriple:
       begin

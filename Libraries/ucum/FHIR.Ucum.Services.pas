@@ -33,7 +33,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.Math, FHIR.Support.System,
+  FHIR.Support.Exceptions, FHIR.Support.Math, FHIR.Support.System,
   FHIR.Support.Collections, FHIR.Support.Objects,
   FHIR.Support.Decimal, FHIR.Support.Text, FHIR.Support.MXml,
   FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, FHIR.Ucum.IFace,
@@ -329,7 +329,7 @@ begin
       s := TUcumExpressionComposer.compose(src.Unit_);
       d := TUcumExpressionComposer.compose(dst.Unit_);
       if s <> d then
-        raise EUCUMServices.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
+        raise ETerminologyError.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
       t := value.Multiply(src.Value);
       result := t.Divide(dst.Value);
     Finally
@@ -512,7 +512,7 @@ var
   oSearch : TUcumSearch;
 begin
   if text = '' Then
-    raise EUCUMServices.Create('A text to search for is required');
+    raise ETerminologyError.Create('A text to search for is required');
   oSearch := TUcumSearch.Create;
   Try
     result := oSearch.DoSearch(model, kind, text, isRegex);
@@ -524,7 +524,7 @@ end;
 function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 begin
   result := nil;
-  raise EUCUMServices.Create('to do');
+  raise ETerminologyError.Create('to do');
 end;
 
 procedure TUcumServices.SetCommonUnits(vs: TFHIRValueSet);
@@ -823,7 +823,7 @@ begin
   oXml := TMXmlParser.parseFile(sFilename, [xpDropWhitespace]);
   try
     if oXml.document.Name <> 'root' Then
-      raise EUCUMServices.create('Invalid ucum essence file');
+      raise ETerminologySetup.create('Invalid ucum essence file');
     FModel.Clear;
     FModel.Version := oXml.document.attribute['version'];
     FModel.RevisionDate := oXml.document.Attribute['revision-date'];
@@ -838,14 +838,14 @@ begin
      Else if oElem.Name = 'unit' Then
        FModel.definedUnits.Add(ParseUnit(oElem))
      else
-       raise EUCUMServices.create('unrecognised element '+oElem.Name);
+       raise ETerminologySetup.create('unrecognised element '+oElem.Name);
       oElem := oElem.nextElement;
     End;
     oErrors := TFslStringList.Create;
     Try
       Validate(oErrors);
       if oErrors.Count > 0 then
-        raise EUCUMServices.create(oErrors.asText);
+        raise ETerminologySetup.create(oErrors.asText);
     Finally
       oErrors.Free;
     End;
@@ -979,7 +979,7 @@ Begin
           result.Text := s;
       End
       else
-        raise EUCUMServices.Create('unknown element in prefix: '+oChild.Name);
+        raise ETerminologySetup.Create('unknown element in prefix: '+oChild.Name);
       oChild := oChild.nextElement;
     End;
     result.Link;
@@ -1010,7 +1010,7 @@ Begin
       else if oChild.Name = 'property' Then
         result.PropertyType := GetPropertyIndex(oChild.allText)
       else
-        raise EUCUMServices.Create('unknown element in base unit: '+oChild.Name);
+        raise ETerminologyError.Create('unknown element in base unit: '+oChild.Name);
       oChild := oChild.nextElement;
     End;
     result.Link;
@@ -1049,7 +1049,7 @@ Begin
         result.value.text := oChild.allText
       End
       else
-        raise EUCUMServices.Create('unknown element in unit: '+oChild.Name);
+        raise ETerminologySetup.Create('unknown element in unit: '+oChild.Name);
       oChild := oChild.nextElement;
     End;
     result.Link;

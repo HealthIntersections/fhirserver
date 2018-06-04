@@ -4,9 +4,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Lock, FHIR.Javascript,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Lock, FHIR.Javascript, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Factory,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Client,
   FHIR.Javascript.Base;
@@ -245,11 +243,11 @@ begin
   if tag then
   begin
     if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.trigger.condition.language) then
-      raise Exception.Create('Unknown script language');
+      raise EJavascriptSource.create('Unknown script language');
     if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
-      raise Exception.Create('Unsupported Trigger type');
+      raise EJavascriptSource.create('Unsupported Trigger type');
     if not event.trigger.condition.expression.Contains('function '+ROUTINE_NAMES[event.trigger.type_]+'(') then
-      raise Exception.Create('Unable to find function '+ROUTINE_NAMES[event.trigger.type_]);
+      raise EJavascriptSource.create('Unable to find function '+ROUTINE_NAMES[event.trigger.type_]);
   end;
 end;
 
@@ -266,11 +264,11 @@ begin
   if tag then
   begin
     if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.trigger.condition.language) then
-      raise Exception.Create('Unknown script language');
+      raise EJavascriptSource.create('Unknown script language');
     if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
-      raise Exception.Create('Unsupported Trigger type');
+      raise EJavascriptSource.create('Unsupported Trigger type');
     if not event.trigger.condition.expression.Contains('function '+ROUTINE_NAMES[event.trigger.type_]+'(') then
-      raise Exception.Create('Unable to find function '+ROUTINE_NAMES[event.trigger.type_]);
+      raise EJavascriptSource.create('Unable to find function '+ROUTINE_NAMES[event.trigger.type_]);
   end;
 
   FLock.Lock;

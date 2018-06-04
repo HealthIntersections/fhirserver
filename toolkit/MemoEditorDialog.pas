@@ -35,7 +35,8 @@ uses
   FMX.Memo, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts,
   FMX.ListBox,
   FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolkitUtilities, ListSelector;
 
 type
@@ -218,9 +219,9 @@ begin
     begin
       s := ext.getExtensionString('lang');
       if s = '' then
-        raise Exception.Create('Language missing on a translation');
+        raise EFHIRException.create('Language missing on a translation');
       if langs.IndexOf(s) > -1 then
-        raise Exception.Create('Duplicate translation for '+s);
+        raise EFHIRException.create('Duplicate translation for '+s);
       langs.Add(s);
       ext.url := 'http://hl7.org/fhir/StructureDefinition/translation';
     end;

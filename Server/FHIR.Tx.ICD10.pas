@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations,
   FHIR.CdsHooks.Utilities,
@@ -250,32 +250,32 @@ end;
 
 function TICD10Provider.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.filterLocate(ctxt: TCodeSystemProviderFilterContext;code: String): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 procedure TICD10Provider.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
@@ -307,7 +307,7 @@ end;
 
 function TICD10Provider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -322,7 +322,7 @@ end;
 
 function TICD10Provider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.locate(code: String; var message: String): TCodeSystemProviderContext;
@@ -367,7 +367,7 @@ end;
 
 function TICD10Provider.locateIsA(code,parent: String): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.name(context: TCodeSystemProviderContext): String;
@@ -377,7 +377,7 @@ end;
 
 function TICD10Provider.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 procedure TICD10Provider.readHeader(s: String);
@@ -386,7 +386,7 @@ var
 begin
   cells := s.Split([#9]);
   if cells[0] <> 'icd-10' then
-    raise Exception.Create('Invalid file - should start with icd-10');
+    raise ETerminologyError.create('Invalid file - should start with icd-10');
   FUrl := cells[1];
   FLanguage := cells[2];
   FTitle := 'ICD-10 '+cells[3];
@@ -422,7 +422,7 @@ end;
 
 function TICD10Provider.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.SpecialEnumeration: String;
@@ -432,12 +432,12 @@ end;
 
 function TICD10Provider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.system(context: TCodeSystemProviderContext): String;

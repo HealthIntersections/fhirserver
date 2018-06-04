@@ -7128,7 +7128,7 @@ end;
 procedure TcdaClinicalStatement.SetClassCode(const sValue: String);
 begin
   if ClassCodeIsFixed Then
-    raise exception.Create('classCode is fixed')
+    raise ECDAException.create('classCode is fixed')
   Else
     FclassCode := sValue;
 end;
@@ -7136,7 +7136,7 @@ end;
 procedure TcdaClinicalStatement.SetMoodCode(const sValue: String);
 begin
   if MoodCodeIsFixed Then
-    raise exception.Create('moodCode is fixed')
+    raise ECDAException.create('moodCode is fixed')
   Else
     FmoodCode := sValue;
 end;
@@ -8077,7 +8077,7 @@ end;
 procedure TcdaInformantChoice.SetClassCode(const sValue: String);
 begin
   if ClassCodeIsFixed Then
-    raise exception.Create('classCode is fixed')
+    raise ECDAException.create('classCode is fixed')
   Else
     FclassCode := sValue;
 end;
@@ -8591,16 +8591,16 @@ end;
 procedure TcdaAuthorChoice.SetPropertyValue(const aValue: TV3PropertyDefinition);
 begin
   if aValue.Name = 'classCode' Then
-    Raise Exception.Create('Cannot set read-only property')
+    raise ECDAException.create('Cannot set read-only property')
   else if aValue.Name = 'determinerCode' Then
-    Raise Exception.Create('Cannot set read-only property')
+    raise ECDAException.create('Cannot set read-only property')
   else
     inherited;
 end;
 
 function TcdaAuthorChoice.GetClassCode: String;
 begin
-  Raise Exception.Create('AuthorChoice is an abstract class and should never be create');
+  raise ECDAException.create('AuthorChoice is an abstract class and should never be create');
 end;
 
 { TcdaAuthoringDevice }
@@ -11455,7 +11455,7 @@ end;
 procedure TcdaExternalActChoice.SetClassCode(sValue: String);
 begin
   if ClassCodeIsFixed Then
-    raise exception.Create('classCode is fixed')
+    raise ECDAException.create('classCode is fixed')
   Else
     FclassCode := sValue;
 end;

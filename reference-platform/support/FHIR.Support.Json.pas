@@ -32,14 +32,12 @@ Interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Support.Exceptions, FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Collections;
 
 Function JSONString(const value : String) : String;
 
 Type
-  EJsonException = class (Exception);
-
   TJsonObject = class;
   TJsonArray = class;
 

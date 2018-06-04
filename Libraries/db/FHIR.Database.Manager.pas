@@ -67,7 +67,6 @@ const
   CONNECTION_FAIL = 2;
 
 type
-  EKDBException = class (Exception);
 
 
   // these are all the known providers. Just because the enumerations are defined doesn't
@@ -851,7 +850,7 @@ begin
     Execute;
     result := GetRowsAffected;
     if (result <> rows) then
-      raise Exception.Create('Error running sql - wrong row count (expected '+inttostr(rows)+', affected '+inttostr(result)+' for sql '+asql+')');
+      raise EDBException.create('Error running sql - wrong row count (expected '+inttostr(rows)+', affected '+inttostr(result)+' for sql '+asql+')');
   finally
     Terminate;
     end;
@@ -976,9 +975,9 @@ begin
     if FetchNext then
       begin
       case ColTypeByName[AValueField] of
-        ctUnknown: raise EKDBException.Create('Field type UNKNOWN not supported in a macro lookup');
-        ctBoolean: raise EKDBException.Create('Field type Boolean not supported in a macro lookup');
-        ctBlob: raise EKDBException.Create('Field type Blob not supported in a macro lookup');
+        ctUnknown: raise EDBException.Create('Field type UNKNOWN not supported in a macro lookup');
+        ctBoolean: raise EDBException.Create('Field type Boolean not supported in a macro lookup');
+        ctBlob: raise EDBException.Create('Field type Blob not supported in a macro lookup');
         ctInteger, ctInt64, ctNumeric:
           begin
           Result := IntToStr(ColIntegerByName[AValueField]);
@@ -1002,7 +1001,7 @@ begin
           end;
         else
           begin
-          raise EKDBException.Create('Field type unknown in a macro lookup');
+          raise EDBException.Create('Field type unknown in a macro lookup');
           end;
         end;
       end
@@ -1336,7 +1335,7 @@ begin
     end;
     try
       if FSemaphore.WaitFor(DEFAULT_CONNECTION_WAIT_LENGTH) = wrError then
-        raise EKDBException.Create('['+Name+'] FHIR.Database.Manager Wait Failed - ' + ErrorAsString(GetLastError));
+        raise EDBException.Create('['+Name+'] FHIR.Database.Manager Wait Failed - ' + ErrorAsString(GetLastError));
     finally
       FLock.Lock;
       try
@@ -1398,7 +1397,7 @@ begin
       end
     else
       begin
-      raise EKDBException.create('No Database Connections Available for "'+AUsage+'" (used: '+GetConnSummary+')');
+      raise EDBException.create('No Database Connections Available for "'+AUsage+'" (used: '+GetConnSummary+')');
       end;
     end;
   FLock.Enter; // lock this because of debugger
@@ -1490,7 +1489,7 @@ begin
         FSemaphore.Release;
     except
       on e : exception do
-        raise Exception.Create('Error (2) releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com (original error = "'+AException.Message+'"');
+        raise EDBException.create('Error (2) releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com (original error = "'+AException.Message+'"');
     end;
   finally
     FLock.Leave;

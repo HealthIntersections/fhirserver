@@ -35,7 +35,7 @@ uses
 
   DropBMPTarget, DropSource, DropTarget,
 
-  FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Graphics,
+  FHIR.Support.Exceptions, FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Graphics,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.Support.Printing, FHIR.Support.Math, FHIR.Support.Strings,
   FHIR.Support.Shell, FHIR.Web.Mapi,
@@ -142,7 +142,6 @@ Type
   TWPTemplateEvent = Function (oSender : TObject) : TFslBuffer Of Object; // must return a native format buffer if any content is to be inserted
   TWPNamedTemplateEvent = Function (oSender : TObject; Const iId : Integer; Const sName : String; Var aFormat : TWPFormat) : TFslBuffer Of Object; // must return a native format buffer if any content is to be inserted
   TWPFieldUpdateEvent = Procedure (oSender : TObject; aState : TFieldUpdateStatus; oDefinitionProvider : TWPFieldDefinitionProvider; oField : TWPDocumentField; sContent : String; bValid : boolean) of Object;
-  ENotInMacro = Class (Exception);
 
   TWordProcessCursorDetailsMode = (cdBlink, cdSelect, cdDrag);
   TWordProcessorSelectionHot = (shNeither, shStart, shEnd);
@@ -2158,7 +2157,7 @@ Begin
   FPageLayoutController.Free;
 
   Try
-    // NOTE: TWinControlProxy.DestroyWnd may raise Exception.create('Failed to Unregister '+ Parent.name);
+    // NOTE: TWinControlProxy.DestroyWnd may raise EWPException.create('Failed to Unregister '+ Parent.name);
     FDropBMP.UnregisterAll;
   Except
     // NOTE: suppressing is bad, but allowing an exception out of a destructor is worse [CH2011-11-28]
@@ -3344,7 +3343,7 @@ Begin
     If FMacro.Recording And bRecord And Result Then
       FMacro.Actions.Add(TWPMacroKeyAction.Create(iKey, aShift));
   Except
-    On e : ENotInMacro Do
+    On e : ELibraryException Do
     Begin
       SoundBeepAsterisk;
       FMacro.LastError := True;
@@ -4451,7 +4450,7 @@ begin
   while (iend < oDocument.Pieces.Count) and (oDocument.Pieces[iend].PieceType <> ptFieldStop) do
     inc(iend);
   if (iEnd = oDocument.Pieces.Count) then
-    raise Exception.Create('Unable to find end of field');
+    raise EWPException.create('Unable to find end of field');
   if (iEnd > cursor) then
     oDocument.Pieces.DeleteRange(cursor, iEnd-1);
   if (txt <> '') then
@@ -6076,7 +6075,7 @@ End;
 Procedure TWordProcessor.CheckNotInMacro;
 Begin
   If FMacro.Recording Then
-    Raise ENotInMacro.Create('Cannot perform this operation while a macro is being recorded');
+    Raise ELibraryException.Create('Cannot perform this operation while a macro is being recorded');
 End;
 
 Procedure TWordProcessor.Ring(aColour: TColour);
@@ -6121,7 +6120,7 @@ Begin
             Abort;
             End;
         Else
-          Raise Exception.Create('Unknown action type '+FMacro.Actions[i].ClassName);
+          raise EWPException.create('Unknown action type '+FMacro.Actions[i].ClassName);
         End;
       End;
     Except
@@ -6138,14 +6137,14 @@ Begin
 Procedure TWordProcessor.StartRecordingMacro;
 Begin
   If FMacro.State <> msIdle Then
-    Raise Exception.Create('Connect record a macro');
+    raise EWPException.create('Connect record a macro');
   ToggleMacro;
 End;
 
 Procedure TWordProcessor.StopRecordingMacro;
 Begin
   If FMacro.State <> msRecording Then
-    Raise Exception.Create('Not recording a macro');
+    raise EWPException.create('Not recording a macro');
   ToggleMacro;
 End;
 
@@ -6277,7 +6276,7 @@ Begin
   PrimaryRange.SelectTo(oAnnotation.OffsetEnd, true);
   oProvider := Settings.AnnotationDefinitions.GetByName(oAnnotation.Owner, nil);
   if oProvider = nil then
-    raise exception.create('Unknown Annotation Type')
+    raise EWPException.create('Unknown Annotation Type')
   else
   begin
     sText := oAnnotation.Text;
@@ -6332,7 +6331,7 @@ begin
   begin
     oPiece := FDocument.Pieces[iLoop];
     if (oPiece.PieceType = ptFieldStart) and (TWPWorkingDocumentFieldStartPiece(oPiece).Checkables.Count > 0) then
-      raise Exception.create('Unable to start dicatation as the content includes a field with buttons - this is not supported in voice mode');
+      raise EWPException.create('Unable to start dicatation as the content includes a field with buttons - this is not supported in voice mode');
   End;
 end;
 

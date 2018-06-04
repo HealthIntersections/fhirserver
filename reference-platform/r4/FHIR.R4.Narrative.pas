@@ -35,7 +35,7 @@ uses
   SysUtils, Generics.Collections, EncdDecd,
   FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Narrative,
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Narrative, FHIR.Base.Lang,
   FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.R4.Context, FHIR.R4.Utilities;
 
 Const
@@ -234,7 +234,7 @@ Constructor TPropertyWrapperDirect.create(wrapped: TFHIRProperty);
 begin
   inherited create;
   if (wrapped = nil) then
-    raise Exception.create('wrapped = nil');
+    raise EFHIRException.create('wrapped = nil');
   self.FWrapped := wrapped;
 end;
 
@@ -305,7 +305,7 @@ Constructor TBaseWrapperDirect.create(wrapped: TFHIRObject);
 begin
   inherited create;
   if (wrapped = nil) then
-    raise Exception.create('wrapped = nil');
+    raise EFHIRException.create('wrapped = nil');
   self.FWrapped := wrapped;
 end;
 
@@ -372,7 +372,7 @@ Constructor TResourceWrapperDirect.create(wrapped: TFHIRResource);
 begin
   inherited create;
   if (wrapped = nil) then
-    raise Exception.create('wrapped = nil');
+    raise EFHIRException.create('wrapped = nil');
   self.FWrapped := wrapped;
 end;
 
@@ -555,22 +555,22 @@ end;
 
 procedure TFHIRNarrativeGenerator.generateVS(vs: TFHIRValueSet; b: boolean);
 begin
-  raise Exception.create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRNarrativeGenerator.generateCM(cm: TFHIRConceptMap);
 begin
-  raise Exception.create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRNarrativeGenerator.generateOD(od: TFHIROperationDefinition);
 begin
-  raise Exception.create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRNarrativeGenerator.generateCS(conf: TFhirCapabilityStatement);
 begin
-  raise Exception.create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRNarrativeGenerator.generate(res: TFHIRResourceV);
@@ -815,14 +815,14 @@ begin
               ed := context.fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
               try
                 if (p.getName() = 'modifierExtension') and (ed = nil) then
-                  raise Exception.create('Unknown modifier extension ' + url);
+                  raise EFHIRException.create('Unknown modifier extension ' + url);
                 pe := map[p.getName() + '[' + url + ']'];
                 if (pe = nil) then
                 begin
                   if (ed = nil) then
                   begin
                     if (url.startsWith('http://hl7.org/fhir')) then
-                      raise Exception.create('unknown extension ' + url);
+                      raise EFHIRException.create('unknown extension ' + url);
                     // writeln('unknown extension '+url);
                     pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', p.getTypeCode(), true, TFHIRExtension,
                       { p.getDefinition(), p.getMinCardinality(), p.getMaxCardinality(), } ex));
@@ -1142,7 +1142,7 @@ begin
   else if (e is TFHIRElementDefinition) then
     x.addText('todo-bundle')
   else if (e <> nil) and not((e is TFHIRAttachment) or (e is TFHIRNarrative) or (e is TFHIRMeta)) then
-    raise Exception.create('type ' + e.ClassName + ' not handled yet');
+    raise EFHIRException.create('type ' + e.ClassName + ' not handled yet');
 end;
 
 function TFHIRNarrativeGenerator.displayLeaf(res: TResourceWrapper; ew: TBaseWrapper; defn: TFHIRElementDefinition; x: TFHIRXhtmlNode; name: String;
@@ -1257,7 +1257,7 @@ begin
     else if (e is TFHIRResource) then
       result := false
     else if (not(e is TFHIRAttachment)) then
-      raise Exception.create('type ' + e.ClassName + ' not handled yet');
+      raise EFHIRException.create('type ' + e.ClassName + ' not handled yet');
 
   finally
     displayHints.Free;
@@ -1280,7 +1280,7 @@ begin
       begin
         parts := item.split([':']);
         if (length(parts) <> 2) then
-          raise Exception.create('error reading display hint: "' + displayHint + '"');
+          raise EFHIRException.create('error reading display hint: "' + displayHint + '"');
         result.add(parts[0].trim(), parts[1].trim());
       end;
     end;
@@ -2045,7 +2045,7 @@ begin
           t := e1;
       end;
       if (t = nil) then
-        raise Exception.create('Unable to resolve name reference ' + name + ' trying to resolve ' + path);
+        raise EFHIRException.create('Unable to resolve name reference ' + name + ' trying to resolve ' + path);
       path := t.path;
       break;
     end;
@@ -2383,7 +2383,7 @@ end;
   //    if (!vs.hasCodeSystem()) and (!vs.hasCompose()) then
   //    generateExpansion(x, vs, src, header);
   //    else
-  //    raise Exception.create('Error: should not encounter value set expansion at this point');
+  //    raise EFHIRException.create('Error: should not encounter value set expansion at this point');
   end;
 
   boolean hasExtensions := false;
@@ -3161,7 +3161,7 @@ end;
   if (extension.value is TFHIRCoding) then
   return gen((TFHIRCoding) extension.value);
 
-  raise Exception.create('Unhandled type '+extension.value.getClass().getName());
+  raise EFHIRException.create('Unhandled type '+extension.value.getClass().getName());
   end;
 
   private String gen(TFHIRCodeableConcept code) begin
@@ -3256,7 +3256,7 @@ end;
   if (url = nil) then
   url := p.getUserString('filename');
   end; else
-  raise Exception.create('Unable to resolve markdown link '+link);
+  raise EFHIRException.create('Unable to resolve markdown link '+link);
 
   text := left+'['+link+']('+url+')'+right;
   end;
@@ -3480,23 +3480,23 @@ end;
 
   @Override
   public String getTypeCode() begin
-  raise Exception.create('todo');
+  raise EFHIRException.create('todo');
   end;
 
   @Override
   public String getDefinition() begin
-  raise Exception.create('todo');
+  raise EFHIRException.create('todo');
   end;
 
   @Override
   public Integer getMinCardinality() begin
-  raise Exception.create('todo');
+  raise EFHIRException.create('todo');
   //    return definition.getMin();
   end;
 
   @Override
   public Integer getMaxCardinality() begin
-  raise Exception.create('todo');
+  raise EFHIRException.create('todo');
   end;
 
   @Override

@@ -42,7 +42,7 @@ uses
 
   FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Generics, FHIR.Support.Lock, FHIR.Support.Shell,
 
-  FHIR.Base.Objects, FHIR.Base.PathEngine, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIRPathDocumentation, FHIR.Npp.Utilities, CDSBrowserForm;
 
@@ -701,7 +701,7 @@ begin
          end;
       1: p.expr := pe.nodeOpNext;
     else if node.index - offset > 0 then
-      raise Exception.Create('not done yet');
+      raise EFHIRException.create('not done yet');
     end;
   end;
   if p.expr.tag = 1 then

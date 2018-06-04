@@ -1152,9 +1152,9 @@ begin
   FConn.StartTransact;
   try
     if version > ServerDBVersion then
-      raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
+      raise EDBException.create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
     if (version < 12) then
-      raise Exception.Create('Database must be rebuilt');
+      raise EDBException.create('Database must be rebuilt');
     if (version < 13) then
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	IsComponent int NULL');

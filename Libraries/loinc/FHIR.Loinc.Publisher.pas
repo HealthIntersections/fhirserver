@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Math, FHIR.Support.Lock,
-  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Web.HtmlGen, FHIR.LOINC.Services;
 
 Const
@@ -213,7 +213,7 @@ var
 begin
   index := FLoinc.findMAConcept(sCode);
   if index = 0 then
-    raise Exception.Create('Unknown Malti-axial code '+sCode);
+    raise ETerminologyError.create('Unknown Malti-axial code '+sCode);
   FLoinc.Entries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
   stext := FLoinc.Desc.GetEntry(text, lang);
   arr := FLoinc.Refs.GetCardinals(children);

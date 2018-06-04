@@ -75,7 +75,7 @@ begin
       o.Free;
     end;
     Jvm.GetVM.clearException;
-    raise Exception.Create(s);
+    raise EFHIRException.create(s);
   end;
 end;
 
@@ -113,7 +113,7 @@ begin
   JLibraryClass := TJavaClass.Create('org.hl7.fhir.dstu3.validation.NativeHostServices');
   {$ENDIF}
   {$IFDEF FHIR2}
-  raise Exception.Create('There is no Java bridge for DSTU2');
+  raise EFHIRException.create('There is no Java bridge for DSTU2');
   {$ENDIF}
 
   JLibrary := JLibraryClass.Instantiate(nil);

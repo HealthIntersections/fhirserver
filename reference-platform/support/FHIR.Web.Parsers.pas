@@ -33,8 +33,7 @@ interface
 uses
 //  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   Classes, Generics.Collections,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics;
+  FHIR.Support.Strings, FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics;
 
 const
   HTTPUtilAnonymousItemName = 'ANONYMOUS';
@@ -576,7 +575,7 @@ begin
   if VarExists(Name) then
     Result := GetVar(Name)
   else if compulsory then
-    raise Exception.Create(errdesc + ' not found')
+    raise EWebException.create(errdesc + ' not found')
   else
     Result := '';
 end;
@@ -586,7 +585,7 @@ begin
   if VarExists(Name) then
     Result := StrToIntDef(GetVar(Name), 0)
   else if compulsory then
-    raise Exception.Create(errdesc + ' not found')
+    raise EWebException.create(errdesc + ' not found')
   else
     Result := 0;
 end;

@@ -36,7 +36,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.CheckLst,
   FHIR.Npp.Form,
   FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Objects,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.CdsHooks.Utilities, FHIR.Smart.Utilities;
 
 type
@@ -199,7 +199,7 @@ begin
     end;
   except
     on e : Exception do
-      raise Exception.Create('Error reading Server conformance statement: "'+'" - tried both xml and json for '+FVersions[readServerVersion].description);
+      raise EFHIRException.create('Error reading Server conformance statement: "'+'" - tried both xml and json for '+FVersions[readServerVersion].description);
   end;
 end;
 
@@ -240,7 +240,7 @@ procedure TEditRegisteredServerForm.Button1Click(Sender: TObject);
 //  ext : TFHIRExtension;
 //  i : integer;
 begin
-  raise Exception.Create('not done yet');
+  raise EFHIRException.create('not done yet');
 //  if FCapabilityStatement = nil then
 //    loadCapabilityStatement;
 //  for i := 0 to clHooks.Items.Count - 1 do
@@ -351,7 +351,7 @@ procedure TEditRegisteredServerForm.loadHooks;
   c : String;
   err : String; *)
 begin
- // raise Exception.Create('not done yet');
+ // raise EFHIRException.create('not done yet');
   (*
   clHooks.items.Clear;
 

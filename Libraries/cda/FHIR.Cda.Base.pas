@@ -32,10 +32,12 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Decimal, FHIR.Support.Objects, FHIR.Support.MXml, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Decimal, FHIR.Support.Objects, FHIR.Support.MXml, FHIR.Support.Text,
   FHIR.Support.Stream, FHIR.Support.Collections;
 
 Type
+  ECDAException = class (EXmlException);
+
   TRMPropertyDefinitionType = (
       rmpdtBoolean,
       rmpdtBinary,

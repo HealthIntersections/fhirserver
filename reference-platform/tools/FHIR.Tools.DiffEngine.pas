@@ -34,8 +34,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.MXml,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.PathEngine, FHIR.Base.Factory,
-  FHIR.Base.Common;
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.PathEngine, FHIR.Base.Factory, FHIR.Base.Lang, FHIR.Base.Common;
 
 
 type
@@ -260,9 +259,9 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise Exception.Create('No content found at '+path+' when adding');
+      raise EFHIRException.create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise Exception.Create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
 
     if value.hasValue then
       dest[0].value.setProperty(name, value.value.Link)
@@ -288,11 +287,11 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise Exception.Create('No content found at '+path+' when adding');
+      raise EFHIRException.create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise Exception.Create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
     if dest[0].parent = nil then
-      raise Exception.Create('Content returned from Path is not part of Resource');
+      raise EFHIRException.create('Content returned from Path is not part of Resource');
     dest[0].parent.deleteProperty(dest[0].name, dest[0].value);
   finally
     dest.Free;
@@ -449,7 +448,7 @@ begin
           end
           else if dm.FSourceIndex < cb then
           begin
-            raise Exception.Create('Not done yet (<)');
+            raise EFHIRException.create('Not done yet (<)');
             // actually, this can't happen; a move forwards will become a series of moves backwards?
           end
           else
@@ -488,7 +487,7 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise Exception.Create('No content found at '+path+' when inserting');
+      raise EFHIRException.create('No content found at '+path+' when inserting');
 
     if value.value <> nil then
       dest[0].parent.insertProperty(dest[0].name, value.value.Link, index)
@@ -514,11 +513,11 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise Exception.Create('No content found at '+path+' when moving');
+      raise EFHIRException.create('No content found at '+path+' when moving');
     if dest.Count < 2 then
-      raise Exception.Create('Only a single location found at '+path+' when moving');
+      raise EFHIRException.create('Only a single location found at '+path+' when moving');
     if dest[0].parent = nil then
-      raise Exception.Create('Content returned from Path is not part of Resource');
+      raise EFHIRException.create('Content returned from Path is not part of Resource');
     dest[0].parent.reorderProperty(dest[0].name, source, destination);
   finally
     dest.Free;
@@ -539,7 +538,7 @@ begin
     diffReplace : applyReplace(res, op.str['path'], op.param['value']);
     diffMove :    applyMove(res, op.str['path'], StrToInt(op.str['source']), StrToInt(op.str['destination']));
   else
-    raise Exception.Create('Unknown Operation '+t);
+    raise EFHIRException.create('Unknown Operation '+t);
   end;
   result := d = diffDelete;
 end;
@@ -552,11 +551,11 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise Exception.Create('No content found at '+path+' when adding');
+      raise EFHIRException.create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise Exception.Create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
     if dest[0].parent = nil then
-      raise Exception.Create('Content returned from Path is not part of Resource');
+      raise EFHIRException.create('Content returned from Path is not part of Resource');
     if value.value <> nil then
       dest[0].parent.replaceProperty(dest[0].name, dest[0].value, value.value.Link)
     else
@@ -848,7 +847,7 @@ var
   n : String;
 begin
   if base.fhirType <> modified.fhirType then
-    raise Exception.Create('Unable to generate difference for different types ('+base.fhirType+'/'+modified.fhirType+')');
+    raise EFHIRException.create('Unable to generate difference for different types ('+base.fhirType+'/'+modified.fhirType+')');
   bl := base.createPropertyList(true);
   ml := modified.createPropertyList(true);
   try

@@ -360,12 +360,12 @@ begin
   //  if (session <> nil) and (session.Name <> 'server') and (session.Name <> 'service') then // session is nil if we are reloading. Service is always allowed to create a subscription
   //  begin
   //    if session.Email = '' then
-  //      raise Exception.Create('This server does not accept subscription request unless an email address is the client login is associated with an email address');
+  //      raise EFHIRException.create('This server does not accept subscription request unless an email address is the client login is associated with an email address');
   //    ok := false;
   //    for i := 0 to subscription.contactList.Count - 1 do
   //      ok := ok or ((subscription.contactList[i].systemST = ContactSystemEmail) and (subscription.contactList[i].valueST = session.Email));
   //    if not ok then
-  //      raise Exception.Create('The subscription must explicitly list the logged in user email ('+session.Email+') as a contact');
+  //      raise EFHIRException.create('The subscription must explicitly list the logged in user email ('+session.Email+') as a contact');
   //  end;
 
     // basic setup stuff
@@ -414,7 +414,7 @@ begin
     end;
     {$ENDIF}
     if ts.Count > 0 then
-      raise Exception.Create(ts.Text);
+      raise EFHIRException.create(ts.Text);
   finally
     ts.Free;
   end;
@@ -605,9 +605,9 @@ var
   cnt : String;
 begin
   if (not IsId(id)) then
-    raise Exception.Create('invalid syntax');
+    raise EFHIRException.create('invalid syntax');
   if not wsConnect(id, true) then
-    raise Exception.Create('There is already a web socket bound to '+id);
+    raise EFHIRException.create('There is already a web socket bound to '+id);
   try
     connection.write('bound '+id);
     repeat
@@ -655,11 +655,11 @@ begin
     try
       cmd := connection.read(true);
       if cmd.op <> wsoText then
-        raise Exception.Create('No Bind Statement');
+        raise EFHIRException.create('No Bind Statement');
       if cmd.text.StartsWith('bind ') then
         handleWebSocketBind(cmd.text.Substring(5), connection)
       else if not cmd.text.Trim.StartsWith('{') then
-        raise Exception.Create('invalid syntax - expected bind :id, or a JSON object')
+        raise EFHIRException.create('invalid syntax - expected bind :id, or a JSON object')
       else
       begin
         json := TJSONParser.Parse(cmd.text);
@@ -669,7 +669,7 @@ begin
           else if (json.str['type'] = 'create-subscription') then
             handleWebSocketSubscribe(json.obj['subscription'], connection)
           else
-            raise Exception.Create('invalid syntax - expected type "bind-subscription" or "create-subscription"');
+            raise EFHIRException.create('invalid syntax - expected type "bind-subscription" or "create-subscription"');
         finally
           json.Free;
         end;
@@ -955,7 +955,7 @@ begin
   else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/fhir+json') or (subst.channel.payload = 'application/json') then
     comp := TFHIRJsonComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, OutputStyleNormal,'en')
   else if subst.channel.payload <> '' then
-    raise Exception.Create('unknown payload type '+subst.channel.payload);
+    raise EFHIRException.create('unknown payload type '+subst.channel.payload);
   try
     if comp <> nil then
       b := TEncoding.UTF8.GetBytes(comp.Compose(package))
@@ -1131,7 +1131,7 @@ end;
 
 procedure TSubscriptionManager.processByScript(conn: TKDBConnection; id: String; subst: TFhirSubscription; package: TFHIRResource);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytesStream);
@@ -1223,9 +1223,9 @@ begin
         s := TIdText(part).Body.Text;
       part := partByContentType(msg.MessageParts, 'application/octet-stream');
       if id = '' then
-        raise Exception.Create('No id found');
+        raise EFHIRException.create('No id found');
       if (part = nil) then
-        raise Exception.Create('Unable to find direct body');
+        raise EFHIRException.create('Unable to find direct body');
       bs := TBytesStream.Create;
       try
         TIdAttachment(part).SaveToStream(bs);
@@ -1374,7 +1374,7 @@ begin
             if o.value is TFHIRPrimitiveType then
               CommaAdd(value, TFHIRPrimitiveType(o.value).StringValue)
             else
-              raise Exception.Create('URL templates can only refer to primitive types (found '+o.ClassName+')');
+              raise EFHIRException.create('URL templates can only refer to primitive types (found '+o.ClassName+')');
           end;
           if (value = '') then
             value := '(nil)';
@@ -1482,7 +1482,7 @@ begin
   try
     conn.Execute;
     if not conn.FetchNext then
-      raise Exception.Create('Cannot find resource');
+      raise EFHIRException.create('Cannot find resource');
     id := conn.ColStringByName['Id'];
     if conn.ColStringByName['ResourceName'] = 'Binary' then
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
@@ -1512,7 +1512,7 @@ begin
   try
     conn.Execute;
     if not conn.FetchNext then
-      raise Exception.Create('Cannot find resource');
+      raise EFHIRException.create('Cannot find resource');
     userKey := conn.ColIntegerByName['UserKey'];
     if conn.ColStringByName['ResourceName'] = 'Binary' then
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
@@ -1934,7 +1934,7 @@ begin
   FLock.Lock;
   try
     if not FSemaphores.ContainsKey(id) then
-      raise Exception.Create('WS Queue not found: '+id);
+      raise EFHIRException.create('WS Queue not found: '+id);
     FSemaphores.Remove(id);
   finally
     FLock.Unlock;

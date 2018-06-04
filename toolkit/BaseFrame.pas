@@ -35,7 +35,8 @@ uses
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
   IdComponent,
-  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Client,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Resources, FHIR.Version.Client,
   ToolkitSettings;
 
 type
@@ -160,12 +161,12 @@ end;
 
 function TBaseFrame.save : boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise EFHIRException.create('Not implemented');
 end;
 
 function TBaseFrame.saveAs(filename: String; format: TFHIRFormat): boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise EFHIRException.create('Not implemented');
 end;
 
 procedure TBaseFrame.SetSettings(const Value: TFHIRToolkitSettings);

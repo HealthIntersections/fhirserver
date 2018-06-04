@@ -38,7 +38,7 @@ Interface
 Uses
   {$IFDEF OSX} Posix.SysTypes,  {$ELSE} Windows, Registry, {$ENDIF}
   SysUtils, SysConst, DateUtils, Math, System.TimeSpan,
-  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Fpc;
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Fpc;
 
 Const
   DATETIME_MIN = -693593; // '1/01/0001'
@@ -788,7 +788,7 @@ begin
   DecodeTime(value, result.Hour, result.Minute, result.Second, ms);
   result.Fraction := ms * 1000000;
   if result.second > 59 then
-    raise Exception.Create('Fail!');
+    raise ELibraryException.create('Fail!');
   DecodeDate(value, yr, result.Month, result.Day);
   result.Year := yr;
   result.FPrecision := dtpSec;
@@ -1018,7 +1018,7 @@ begin
     neg := Pos('-', copy(Value, pos('T', value)+1, $FF)) > 0;
     StringSplitRight(value, ['-', '+'], value, s);
     if length(s) <> 5 then
-      raise Exception.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
+      raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
     res.TimezoneHours := vsv(s, 1, 2, 0, 14, 'timezone hours');
     res.TimezoneMins := vsv(s, 4, 2, 0, 59, 'timezone minutes');
     res.TimezoneType := dttzSpecified;
@@ -1146,10 +1146,10 @@ var
 begin
   v := copy(value, start, len);
   if not StringIsInteger16(v) then
-    raise exception.create('Unable to parse date/time "'+value+'" at '+name);
+    raise ELibraryException.create('Unable to parse date/time "'+value+'" at '+name);
   result := StrToInt(v);
   if (result < min) or (result > max) then
-    raise exception.create('Value for '+name+' in date/time "'+value+'" is not allowed');
+    raise ELibraryException.create('Value for '+name+' in date/time "'+value+'" is not allowed');
 end;
 
 
@@ -1174,7 +1174,7 @@ begin
     neg := Pos('-', Value) > 0;
     StringSplit(value, ['-', '+'], value, s);
     if length(s) <> 4 then
-      raise Exception.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 4');
+      raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 4');
     result.TimezoneHours := vs(s, 1, 2, 0, 13, 'timezone hours');
     result.TimezoneMins := vs(s, 3, 2, 0, 59, 'timezone minutes');
     result.TimezoneType := dttzSpecified;
@@ -1249,7 +1249,7 @@ begin
     neg := Pos('-', copy(Value, pos('T', value)+1, $FF)) > 0;
     StringSplitRight(value, ['-', '+'], value, s);
     if length(s) <> 5 then
-      raise Exception.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
+      raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
     result.TimezoneHours := vs(s, 1, 2, 0, 14, 'timezone hours');
     result.TimezoneMins := vs(s, 4, 2, 0, 59, 'timezone minutes');
     result.TimezoneType := dttzSpecified;
@@ -2322,7 +2322,7 @@ End;
 Function ToDateTime(Const sValue, sFormat: String): TDateTime;
 Begin
   If Not ToDateTime(sValue, sFormat, Result) Then
-    Raise Exception.create(StringFormat('Unable to convert ''%s'' as ''%s''', [sValue, sFormat]));
+    raise ELibraryException.create(StringFormat('Unable to convert ''%s'' as ''%s''', [sValue, sFormat]));
 End;
 
 Function PCharToTime(Var pValue : PChar; Out aTime : TTime) : Boolean;
@@ -2719,7 +2719,7 @@ End;
 Function ToDateIndices(Const sFormat : String) : TDateIndices;
 Begin
   If Not ToDateIndices(sFormat, Result) Then
-    raise Exception.create(StringFormat('Unable to determine the meaning of the date format ''%s''', [sFormat]));
+    raise ELibraryException.create(StringFormat('Unable to determine the meaning of the date format ''%s''', [sFormat]));
 End;
 
 
@@ -2839,7 +2839,7 @@ End;
 Function StringToTime(Const sValue : String) : TTime;
 Begin
   If Not StringToTime(sValue, Result) Then
-    raise Exception.Create(StringFormat('''%s'' is not a valid time', [sValue]));
+    raise ELibraryException.create(StringFormat('''%s'' is not a valid time', [sValue]));
 End;
 
 Function StringToTime(Const sValue : String; Out aTime : TTime) : Boolean;
@@ -3078,7 +3078,7 @@ Begin
       If aTimeZone = TimeZoneUnknown Then
       Begin
         If GetTimeZoneInformation(aInfo) = $FFFFFFFF Then
-          raise Exception.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
+          raise ELibraryException.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
         Result.WindowsName := aInfo.StandardName;
         Result.Display := '(unknown timezone)';
         Result.BaseRules.Year := 0;
@@ -3092,10 +3092,10 @@ Begin
         Result.WindowsName := WINDOWS_NAMES_TIMEZONES[aTimeZone];
         oReg.RootKey := HKEY_LOCAL_MACHINE;
         If Not oReg.OpenKeyReadOnly(KEY_ROOT + Result.WindowsName) Then
-          Raise Exception.create(StringFormat('Unable to load time zone information [%s]', [ErrorAsString]));
+          raise ELibraryException.create(StringFormat('Unable to load time zone information [%s]', [ErrorAsString]));
         Result.Display := oReg.ReadString('Display');
         If oReg.ReadBinaryData('TZI', aRegInfo, SizeOf(aRegInfo)) <> SizeOf(aRegInfo) Then
-          Raise Exception.create(StringFormat('Unable to load time zone binary information [%s]', [ErrorAsString]));
+          raise ELibraryException.create(StringFormat('Unable to load time zone binary information [%s]', [ErrorAsString]));
         Result.BaseRules.Year := 0;
         Result.BaseRules.StandardStart := aRegInfo.StandardDate;
         Result.BaseRules.StandardBias := aRegInfo.Bias + aRegInfo.StandardBias;
@@ -3118,7 +3118,7 @@ Begin
 
           oTimeZoneYearInfo.Year := iLoop;
           If oReg.ReadBinaryData(IntegerToString(iLoop), aRegInfo, SizeOf(aRegInfo)) <> SizeOf(aRegInfo) Then
-            Raise Exception.create(StringFormat('Unable to load time zone binary information [%s] for [%s]', [ErrorAsString, IntegerToString(iLoop)]));
+            raise ELibraryException.create(StringFormat('Unable to load time zone binary information [%s] for [%s]', [ErrorAsString, IntegerToString(iLoop)]));
           oTimeZoneYearInfo.StandardStart := aRegInfo.StandardDate;
           oTimeZoneYearInfo.StandardBias := aRegInfo.Bias + aRegInfo.StandardBias;
           oTimeZoneYearInfo.DaylightStart := aRegInfo.DaylightDate;
@@ -3183,7 +3183,7 @@ Begin
   iRet := GetTimeZoneInformation(aInfo);
 
   If iRet = $FFFFFFFF Then
-    Raise Exception.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
+    raise ELibraryException.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
 
   For aLoop := Low(TTimeZoneCode) To High(TTimeZoneCode) Do
   Begin
@@ -3418,7 +3418,7 @@ End;
 Function StringToDuration(Const sValue : String) : TDuration; overload;
 Begin
   If Not StringToDuration(sValue, Result) Then
-    Raise Exception.create(sValue + ' is not a valid duration.');
+    raise ELibraryException.create(sValue + ' is not a valid duration.');
 End;
 
 

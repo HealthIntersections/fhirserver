@@ -32,6 +32,7 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
+  FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FMX.ScrollBox, FMX.Memo, FMX.ListBox, FMX.Edit,
   FMX.StdCtrls, FMX.Controls.Presentation;
 
@@ -74,9 +75,9 @@ begin
   param.definition := edtDefinition.Text;
   param.documentation := mDocumentation.Text;
   if not IsValidIdent(param.name) then
-    raise Exception.Create('The parameter name "'+param.name+'" is not valid');
+    raise EFHIRException.create('The parameter name "'+param.name+'" is not valid');
   if param.type_ = SearchParamTypeNull then
-    raise Exception.Create('Please choose a parameter type');
+    raise EFHIRException.create('Please choose a parameter type');
 end;
 
 destructor TSearchParameterEditorForm.Destroy;

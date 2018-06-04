@@ -6,8 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, Vcl.ExtCtrls, UITypes, Clipbrd,
   {$IFDEF NPPUNICODE}FHIR.Npp.Form, {$ENDIF}
-  FHIR.Support.Generics, FHIR.Web.Fetcher, FHIR.Support.Stream, FHIR.Support.System, FHIR.Support.Text,
-  FHIR.Support.Shell,
+  FHIR.Support.Exceptions, FHIR.Support.Generics, FHIR.Web.Fetcher, FHIR.Support.Stream, FHIR.Support.System, FHIR.Support.Text, FHIR.Support.Shell,
   FHIR.Cache.PackageManager, System.ImageList, Vcl.ImgList, Vcl.Menus,
   Vcl.ComCtrls;
 
@@ -214,7 +213,7 @@ begin
         end;
       end;
       if not ok  and not aborted then
-        raise Exception.Create('Unable to find package for '+url+': '+s);
+        raise EIOException.create('Unable to find package for '+url+': '+s);
       if ok then
       begin
         FCache.Import(fetch.Buffer.AsBytes,

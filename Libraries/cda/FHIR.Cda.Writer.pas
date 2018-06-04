@@ -5053,7 +5053,7 @@ begin
   Else if oPart.RimClassName = 'Supply' Then
     WriteSupply('Supply', oXml, 'Supply', oPart as TcdaSupply, false)
   Else
-    raise exception.Create('Unknown type '+oPart.ClassName);
+    raise ECDAException.create('Unknown type '+oPart.ClassName);
 
 end;
 

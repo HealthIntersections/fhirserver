@@ -37,7 +37,7 @@ uses
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   FMX.Memo, FMX.TreeView,
   BaseFrame,
-  FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Web.Fetcher, FHIR.Support.Osx,
+  FHIR.Support.Exceptions, FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Web.Fetcher, FHIR.Support.Osx,
   FHIR.Cache.PackageManager;
 
 const
@@ -305,7 +305,7 @@ begin
         end;
       end;
       if not ok  and not aborted then
-        raise Exception.Create('Unable to find package for '+url+': '+s);
+        raise EIOException.create('Unable to find package for '+url+': '+s);
       if ok then
       begin
         FPcm.Import(fetch.Buffer.AsBytes,

@@ -450,7 +450,7 @@ begin
           begin
             s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
             if not cs.hasSupplement(s) then
-              raise Exception.Create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+              raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
           end;
 
           result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
@@ -475,7 +475,7 @@ begin
             begin
               s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
               if not cs.hasSupplement(s) then
-                raise Exception.Create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+                raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
             end;
             excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
           end;
@@ -556,7 +556,7 @@ var
   c : TFhirCodingW;
 begin
   if FValueSet = nil then
-    raise Exception.Create('Error: cannot validate a CodeableConcept without a nominated valueset');
+    raise ETerminologyError.create('Error: cannot validate a CodeableConcept without a nominated valueset');
   result := FFactory.makeParameters;
   try
     list := TStringList.Create;
@@ -1151,7 +1151,7 @@ begin
     try
       dependencies.AddStrings(dep);
       if (result = nil) then
-        raise Exception.create('unable to find value set '+uri);
+        raise ETerminologyError.create('unable to find value set '+uri);
       if result.expansion.hasextension('http://hl7.org/fhir/params/questionnaire-extensions#closed') then
         notClosed := true;
       result.Link;
@@ -1226,7 +1226,7 @@ begin
           begin
             s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
             if not cs.hasSupplement(s) then
-              raise Exception.Create('Expansion depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+              raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
           end;
 
           if (not cset.hasConcepts) and (not cset.hasFilters) then

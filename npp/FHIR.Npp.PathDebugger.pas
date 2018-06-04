@@ -38,8 +38,7 @@ uses
   Vcl.Buttons, Vcl.ComCtrls, System.ImageList, Vcl.ImgList,
   VirtualTrees,
   FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine,
-//  FHIR.R3.Resources,  FHIR.R3.Types,  FHIR.R3.PathEngine, FHIR.R3.Profiles, FHIR.R3.PathNode, FHIR.R3.Context,
+  FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang,
   FHIR.CdsHooks.Client,
   FHIR.Npp.Utilities, FHIR.Npp.Base;
 
@@ -614,7 +613,7 @@ begin
          end;
       1: p.expr := pe.nodeOpNext;
     else if node.index - offset > 0 then
-      raise Exception.Create('not done yet');
+      raise EFHIRException.create('not done yet');
     end;
   end;
   if p.expr.tag = 1 then

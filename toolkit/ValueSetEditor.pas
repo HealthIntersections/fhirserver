@@ -37,7 +37,8 @@ uses
   FMX.Grid.Style, FMX.Grid, FMX.Menus,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal,
   FHIR.Support.Generics, FHIR.SUpport.Text,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
   ResourceEditingSupport, System.ImageList, FMX.ImgList;
@@ -759,7 +760,7 @@ begin
     end
     end
     else
-      raise Exception.Create('Unknown format');
+      raise EFHIRException.create('Unknown format');
   end;
 end;
 

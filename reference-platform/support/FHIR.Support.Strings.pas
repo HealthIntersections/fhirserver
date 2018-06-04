@@ -34,9 +34,8 @@ Interface
 
 
 Uses
-  SysUtils, Classes, Character, SysConst, TypInfo, FHIR.Support.Fpc, RegularExpressions,
-  FHIR.Support.Math,
-  FHIR.Support.Objects;
+  SysUtils, Classes, Character, SysConst, TypInfo, RegularExpressions,
+  FHIR.Support.Fpc, FHIR.Support.Math, FHIR.Support.Exceptions, FHIR.Support.Objects;
 
 
 Type
@@ -502,7 +501,7 @@ End;
 {$IFOPT C+}
 Procedure CharArrayError(Const sConstant, sMessage : String);
 Begin
-  Raise Exception.Create('(FHIR.Support.Strings.' + sConstant + '): ' + sMessage);
+  raise ELibraryException.create('(FHIR.Support.Strings.' + sConstant + '): ' + sMessage);
 End;
 
 
@@ -1762,7 +1761,7 @@ begin
     LTypeData := GetTypeData(ATypeInfo);
     if LTypeData^.MinValue <> 0 then
       begin
-      raise Exception.Create(Format(RS_ERR_ENGINE_BAD_ENUM_TYPE, [ATypeInfo^.Name]))
+      raise ELibraryException.create(Format(RS_ERR_ENGINE_BAD_ENUM_TYPE, [ATypeInfo^.Name]))
       end;
     LPChar := @LTypeData^.NameList[0];
     LCount := 0;
@@ -1775,7 +1774,7 @@ begin
     end
   else
     begin
-    raise Exception.Create(Format(RS_ERR_ENGINE_NOT_ENUM_TYPE, [ATypeInfo^.Name]))
+    raise ELibraryException.create(Format(RS_ERR_ENGINE_NOT_ENUM_TYPE, [ATypeInfo^.Name]))
     end;
 end;
 
@@ -1791,11 +1790,11 @@ begin
     LTypeData := GetTypeData(ATypeInfo);
     if LTypeData^.MinValue <> 0 then
       begin
-      raise Exception.Create(Format(RS_ERR_ENGINE_BAD_ENUM_TYPE, [ATypeInfo^.Name]))
+      raise ELibraryException.create(Format(RS_ERR_ENGINE_BAD_ENUM_TYPE, [ATypeInfo^.Name]))
       end;
     if AIndex > LTypeData^.MaxValue then
       begin
-      raise Exception.Create(Format(RS_ERR_ENGINE_ENUM_OUT_RANGE, [IntToStr(AIndex), ATypeInfo^.Name]))
+      raise ELibraryException.create(Format(RS_ERR_ENGINE_ENUM_OUT_RANGE, [IntToStr(AIndex), ATypeInfo^.Name]))
       end;
     LPChar := PAnsiChar(@LTypeData^.NameList[0]);
     for i := 1 to AIndex do
@@ -1805,7 +1804,7 @@ begin
     Result := String(ShortString(pointer(LPChar)^));
     end
   else
-    raise Exception.Create(Format(RS_ERR_ENGINE_NOT_ENUM_TYPE, [ATypeInfo^.Name]))
+    raise ELibraryException.create(Format(RS_ERR_ENGINE_NOT_ENUM_TYPE, [ATypeInfo^.Name]))
 end;
 
 function StringToEnum(ATypeInfo: PTypeInfo; const AStr: String): Integer;
@@ -1821,7 +1820,7 @@ begin
     LTypeData := GetTypeData(ATypeInfo);
     if LTypeData^.MinValue <> 0 then
       begin
-      raise Exception.Create(Format(RS_ERR_ENGINE_BAD_ENUM_TYPE, [ATypeInfo^.Name]))
+      raise ELibraryException.create(Format(RS_ERR_ENGINE_BAD_ENUM_TYPE, [ATypeInfo^.Name]))
       end;
     LPChar := @LTypeData^.NameList[0];
     Result := 0;
@@ -1832,12 +1831,12 @@ begin
       end;
     if Result > LTypeData^.MaxValue then
       begin
-      raise Exception.Create(Format(RS_ERR_ENGINE_ENUM_OUT_RANGE, [AStr, ATypeInfo^.Name]))
+      raise ELibraryException.create(Format(RS_ERR_ENGINE_ENUM_OUT_RANGE, [AStr, ATypeInfo^.Name]))
       end;
     end
   else
     begin
-    raise Exception.Create(Format(RS_ERR_ENGINE_NOT_ENUM_TYPE, [ATypeInfo^.Name]))
+    raise ELibraryException.create(Format(RS_ERR_ENGINE_NOT_ENUM_TYPE, [ATypeInfo^.Name]))
     end;
 end;
 

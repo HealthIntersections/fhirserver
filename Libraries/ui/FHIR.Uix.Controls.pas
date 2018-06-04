@@ -4841,7 +4841,7 @@ End;
 Procedure TUixTimer.Timer;
 Begin
   If ThreadID <> FThreadAffinity Then
-    Raise Exception.Create('Thread affinity was violated.');
+    raise ELibraryException.create('Thread affinity was violated.');
 
   Inherited;
 End;

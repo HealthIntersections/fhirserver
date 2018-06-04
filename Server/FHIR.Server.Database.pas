@@ -1433,7 +1433,7 @@ begin
       else if request.Parameters.VarExists('query') then
         gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
       else
-        raise EGraphQLException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.lang));
+        raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.lang));
       gql.focus := nil;
       gql.execute;
       response.Resource := nil;
@@ -1452,7 +1452,7 @@ begin
       gql.Free;
     end;
   except
-    on e : EGraphQLException do
+    on e : EJsonException do
     begin
       response.HTTPCode := 400;
       response.Message := GetFhirMessage('GRAPHQL_ERROR', request.Lang);
@@ -1487,7 +1487,7 @@ begin
         else if request.Parameters.VarExists('query') then
           gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
         else
-          raise EGraphQLException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.Lang));
+          raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.Lang));
         gql.focus := response.Resource.Link;
         gql.execute;
         response.Resource := nil;
@@ -1507,7 +1507,7 @@ begin
       end;
     end;
   except
-    on e : EGraphQLException do
+    on e : EJsonException do
     begin
       response.HTTPCode := 400;
       response.Message := 'Error in GraphQL';
@@ -1881,7 +1881,7 @@ begin
   else if (s.StartsWith('_')) then
     raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // system history
   else if not StringArrayExistsSensitive(CODES_TFhirResourceType, s) then
-    raise Exception.Create('Unknown path type "'+entry.url+'"')
+    raise EFHIRException.create('Unknown path type "'+entry.url+'"')
   else
   begin
     request.ResourceName := s;
@@ -2046,7 +2046,7 @@ var
   s : String;
 begin
   if (session = nil) then
-    raise Exception.create('no session?');
+    raise EFHIRException.create('no session?');
 
   s := inttostr(Session.Key);
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary, SessionKey) values ('+key+', '''+id+''', 0, 1, '+DBGetDate(FConnection.Owner.Platform)+', '+inttostr(ord(summaryStatus))+', '+s+')');
@@ -2118,7 +2118,7 @@ begin
       gql.Free;
     end;
   except
-    on e : EGraphQLException do
+    on e : EJsonException do
     begin
       response.HTTPCode := 400;
       response.Message := 'Error in GraphQL';
@@ -3225,7 +3225,7 @@ begin
       if allowNil then
         exit(nil)
       else
-        raise Exception.Create('Unable to find previous version of resource');
+        raise EFHIRException.create('Unable to find previous version of resource');
     s := FConnection.ColBlobByName['JsonContent'];
     parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
     try
@@ -4960,7 +4960,7 @@ begin
       b.free;
     end;
     if response.resource is TFHIROperationOutcome then
-      raise EGraphQLException.Create(TFHIROperationOutcome(response.resource).asExceptionMessage);
+      raise EJsonException.Create(TFHIROperationOutcome(response.resource).asExceptionMessage);
     result := (FServerContext as TFHIRServerContext).ValidatorContext.factory.wrapBundle(response.Bundle.Link);
   finally
     response.Free;
@@ -6323,7 +6323,7 @@ begin
           native(manager).ServerContext.Validator.validate(ctxt, response.Resource);
           op := native(manager).ServerContext.Validator.describe(ctxt);
           {$ELSE}
-          raise Exception.Create('Not done yet - need to use Java services');
+          raise EFHIRException.create('Not done yet - need to use Java services');
           {$ENDIF}
         finally
           ctxt.Free;
@@ -6869,7 +6869,7 @@ begin
           {$IFDEF FHIR2}
           native(manager).ServerContext.Validator.validate(ctxt, request.Source, request.PostFormat, profiles)
           {$ELSE}
-          raise Exception.Create('Not done yet- call Java');
+          raise EFHIRException.create('Not done yet- call Java');
           {$ENDIF}
         finally
           profiles.Free;
@@ -6884,7 +6884,7 @@ begin
           {$IFDEF FHIR2}
           native(manager).ServerContext.Validator.validate(ctxt, request.Resource, profiles);
           {$ELSE}
-          raise Exception.Create('Not done yet - call Java');
+          raise EFHIRException.create('Not done yet - call Java');
           {$ENDIF}
         finally
           profiles.Free;
@@ -6893,7 +6893,7 @@ begin
       {$IFDEF FHIR2}
       outcome := native(manager).ServerContext.Validator.describe(ctxt);
       {$ELSE}
-      raise Exception.Create('Not done yet - call Java');
+      raise EFHIRException.create('Not done yet - call Java');
       {$ENDIF}
     finally
       ctxt.Free;
@@ -7760,7 +7760,7 @@ begin
             {$IFDEF FHIR2}
             utils.generateSnapshot(sdBase, sdParam, sdParam.url, sdParam.name);
             {$ELSE}
-            raise Exception.Create('Not done yet - call Java');
+            raise EFHIRException.create('Not done yet - call Java');
             {$ENDIF}
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -9074,8 +9074,7 @@ begin
           logt('Load Package hl7.fhir.org-' + fact.versionString);
           pcm := TFHIRPackageManager.Create(false);
           try
-            res := TFslStringSet.Create(['CodeSystem', 'ValueSet', 'StructureDefinition', 'OperationDefinition',
-              'SearchParameter', 'ConceptMap']);
+            res := TFslStringSet.Create(['StructureDefinition']); // we only load structure definitions; everything else is left to the database
             try
               pcm.loadPackage('hl7.fhir.core', fact.versionString, res, ServerContext.ValidatorContext.loadResourceJson);
             finally
@@ -10066,7 +10065,7 @@ begin
       ServerContext.Validator.validate(ctxt, bufXml, ffXml);
       ServerContext.Validator.validate(ctxt, bufJson, ffJson);
       {$ELSE}
-      raise Exception.Create('Not done yet - call Java');
+      raise EFHIRException.create('Not done yet - call Java');
       {$ENDIF}
       if (ctxt.Issues.Count = 0) then
         logt(inttostr(i)+': '+rtype+'/'+id+': passed validation')

@@ -310,7 +310,7 @@ begin
     begin
       StringSplit(s.Substring(4), ' ', l, r);
       if SameText(l, 'Exception') then
-        raise Exception.Create(r)
+        raise ELibraryException.create(r)
       else
         CallBack(StrToIntDef(l, 0), r);
     end;
@@ -423,7 +423,7 @@ begin
             end;
           end;
           if not ok then
-            raise Exception.Create('Unable to find package for '+pi+'-'+pv+'at '+url+': '+s);
+            raise EIOException.create('Unable to find package for '+pi+'-'+pv+'at '+url+': '+s);
           if ok then
           begin
             FCallback(pct(100), 'Installing '+FCurrent);

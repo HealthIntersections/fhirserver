@@ -33,7 +33,7 @@ uses
   SysUtils,
   System.Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory;
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory, FHIR.Base.Lang;
 
 type
   TFhirIndex = class (TFslObject)
@@ -458,7 +458,7 @@ end;
 
 //procedure TFHIRCompartmentList.registerComp(comp: TFHIRResourceType; resource, list: String);
 //begin
-//  raise Exception.Create('not done yet');
+//  raise EFHIRException.create('not done yet');
 //end;
 //
 procedure TFHIRCompartmentList.register(comp: String; resource : String; indexes : array of String);
@@ -469,7 +469,7 @@ begin
   else if comp = 'RelatedPerson' then FRelatedPersonCompartment.add(resource, TFslStringSet.create(indexes))
   else if comp = 'Device' then FDeviceCompartment.add(resource, TFslStringSet.create(indexes))
   else
-    raise Exception.Create('Unknown compartment');
+    raise EFHIRException.create('Unknown compartment');
 end;
 
 

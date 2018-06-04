@@ -380,7 +380,7 @@ begin
   else if (getName() = 'contained') then
     result := fsecCONTAINED
   else
-    raise DefinitionException.create('Unknown resource containing a native resource: '+definition.Id);
+    raise EDefinitionException.create('Unknown resource containing a native resource: '+definition.Id);
 end;
 
 function TFHIRMMProperty.typeCode: String;
@@ -413,7 +413,7 @@ begin
     result := definition.type_List[0].Code;
     for i := 1 to definition.type_List.count - 1 do
       if (result <> definition.type_List[i].Code) then
-				raise Exception.create('logic error, gettype when types > 1');
+				raise EDefinitionException.create('logic error, gettype when types > 1');
   end
   else
     result := definition.type_List[0].Code;
@@ -432,7 +432,7 @@ begin
   if (definition.ContentReference <> '') then
   begin
     if (not definition.contentReference.startsWith('#')) then
-        raise Exception.create('not handled yet');
+        raise EDefinitionException.create('not handled yet');
     ed := nil;
     s := definition.ContentReference.substring(1);
     for d in structure.snapshot.elementList do
@@ -441,7 +441,7 @@ begin
         ed := d;
     end;
     if (ed = nil) then
-      raise Exception.create('Unable to resolve '+definition.contentReference+' at '+definition.path+' on '+structure.Url);
+      raise EDefinitionException.create('Unable to resolve '+definition.contentReference+' at '+definition.path+' on '+structure.Url);
   end;
   if (definition.type_List.count() = 0) then
     result := ''
@@ -468,7 +468,7 @@ begin
           result := name;
       end
       else
-        raise Exception.create('logic error, gettype when types > 1, name mismatch');
+        raise EDefinitionException.create('logic error, gettype when types > 1, name mismatch');
     end;
   end
   else
@@ -618,7 +618,7 @@ begin
       if (ed.Type_List.count = 1) then
         t := ed.type_list[0].Code
       else if (ed.type_list.count = 0) then
-        raise DefinitionException.create('types == 0, and no children found')
+        raise EDefinitionException.create('types == 0, and no children found')
       else
       begin
         t := ed.type_list[0].code;
@@ -644,7 +644,7 @@ begin
               if (tr.Code = t) then
                 ok := true;
              if (not ok) then
-               raise DefinitionException.create('Type "'+t+'" is not an acceptable type for "'+elementName+'" on property '+definition.path);
+               raise EDefinitionException.create('Type "'+t+'" is not an acceptable type for "'+elementName+'" on property '+definition.path);
           end
           else
           begin
@@ -659,7 +659,7 @@ begin
         sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
         try
           if (sd = nil) then
-              raise DefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+definition.path);
+              raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+definition.path);
           children.free;
           children := getChildMap(sd, sd.snapshot.elementList[0]);
         finally
@@ -696,7 +696,7 @@ begin
       if (ed.Type_List.count = 1) then
         t := ed.type_list[0].Code
       else if (ed.type_list.count = 0) then
-        raise DefinitionException.create('types == 0, and no children found')
+        raise EDefinitionException.create('types == 0, and no children found')
       else
       begin
         t := ed.type_list[0].code;
@@ -717,7 +717,7 @@ begin
     begin
       sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
       if (sd = nil) then
-          raise DefinitionException.create('Unable to find class "'+t+'" for name "'+ed.path+'" on property '+definition.path);
+          raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+ed.path+'" on property '+definition.path);
         children := getChildMap(sd, sd.snapshot.elementList[0]);
     end;
     result := TFslList<TFHIRMMProperty>.create;
@@ -777,7 +777,7 @@ end;
 
 function TFHIRMMElement.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.create('Not Done Yet');
 end;
 
 destructor TFHIRMMElement.Destroy;
@@ -914,7 +914,7 @@ begin
   if isPrimitive and (name = 'value') and (value <> '') then
   begin
     tn := getType();
-    raise DefinitionException.create('not done yet');
+    raise EDefinitionException.create('not done yet');
   end;
 
   if FChildren <> nil then
@@ -981,7 +981,7 @@ end;
 
 function TFHIRMMElement.getId: String;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRMMElement.getNamedChild(name: String): TFHIRMMElement;
@@ -996,7 +996,7 @@ begin
 	  		if (result = nil) then
 	  			result := c
 	  		else
-	  			raise Exception.create('Attempt to read a single element when there is more than one present ('+name+')');
+	  			raise EFHIRException.create('Attempt to read a single element when there is more than one present ('+name+')');
   end;
 end;
 
@@ -1096,20 +1096,20 @@ begin
     if (name = child.Name) then
     begin
       if (not child.isPrimitive()) then
-        raise DefinitionException('Cannot set a value of a non-primitive type ('+name+' on '+self.name+')');
+        raise EDefinitionException.create('Cannot set a value of a non-primitive type ('+name+' on '+self.name+')');
       child.Value := value;
     end;
-  raise DefinitionException.create('not done yet');
+  raise EDefinitionException.create('not done yet');
 end;
 
 procedure TFHIRMMElement.setIdValue(id: String);
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.create('Not Done Yet');
 end;
 
 procedure TFHIRMMElement.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.create('Not Done Yet');
 end;
 
 procedure TFHIRMMElement.SetXhtml(const Value: TFhirXHtmlNode);
@@ -1160,7 +1160,7 @@ begin
     end;
   end
 	else if (level = IssueSeverityFatal) or ((level = IssueSeverityERROR) and (Fpolicy = fvpQUICK)) then
-	 raise Exception.create(message+Stringformat(' at line %d col %d', [line, col]));
+	 raise EFHIRException.create(message+Stringformat(' at line %d col %d', [line, col]));
 end;
 
 function TFHIRMMParserBase.parse(stream: TFslStream): TFHIRMMElement;
@@ -1262,7 +1262,7 @@ begin
       if (ed.type_list.count() = 1) then
         t := ed.type_list[0].Code
       else if (ed.type_list.count() = 0) then
-        raise Exception.create('types = 0, and no children found')
+        raise EDefinitionException.create('types = 0, and no children found')
       else
       begin
         t := ed.type_list[0].Code;
@@ -1283,7 +1283,7 @@ begin
 		          if (tr.code = t) then
 		            ok := true;
             if (not ok) then
-		           raise Exception.create('Type "'+t+'" is not an acceptable type for "'+elementName+'" on property '+prop.Definition.Path);
+		           raise EDefinitionException.create('Type "'+t+'" is not an acceptable type for "'+elementName+'" on property '+prop.Definition.Path);
 				  end
           else
           begin
@@ -1298,7 +1298,7 @@ begin
         sd.Free;
         sd := FContext.getStructure('http://hl7.org/fhir/StructureDefinition/'+t);
         if (sd = nil) then
-          raise Exception.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+prop.Definition.Path);
+          raise EDefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+prop.Definition.Path);
         children.Free;
         children := FContext.getChildMap(sd, sd.snapshot.elementList[0]);
       end;
@@ -1704,7 +1704,7 @@ begin
   if ('v3' = fmt) then
     result := TDateTimeEx.fromHL7(av).ToXML
   else
-    raise Exception.create('Unknown Data format "'+fmt+'"');
+    raise EFHIRException.create('Unknown Data format "'+fmt+'"');
 end;
 
 procedure TFHIRMMXmlParser.parseResource(s : String; container : TMXmlElement; parent : TFHIRMMElement; elementProperty : TFHIRMMProperty);
@@ -1718,7 +1718,7 @@ begin
   sd := Fcontext.getStructure('http://hl7.org/fhir/StructureDefinition/'+name);
   try
     if (sd = nil) then
-      raise Exception.create('Contained resource does not appear to be a FHIR resource (unknown name "'+res.localName+'")');
+      raise EFHIRException.create('Contained resource does not appear to be a FHIR resource (unknown name "'+res.localName+'")');
     parent.updateProperty(TFHIRMMProperty.create(Fcontext.Link, sd.Snapshot.ElementList[0].Link, sd.Link), parent.prop.specialElementClass, elementProperty.Link);
     parent.Type_ := name;
     parseChildren(res.localName, res, parent);
@@ -2362,7 +2362,7 @@ begin
 
   sd := getDefinition(-1, -1, name);
   if (sd = nil) then
-    raise Exception.create('Unable to find definition for '+name);
+    raise EFHIRException.create('Unable to find definition for '+name);
   try
     result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
     try
@@ -2380,7 +2380,7 @@ end;
 
 procedure TFHIRMMResourceLoader.compose(e: TFHIRMMElement; stream: TStream; pretty: boolean; base: String);
 begin
-  raise Exception.create('not implemented');
+  raise EFHIRException.create('not implemented');
 end;
 
 function TFHIRMMResourceLoader.parse(r: TFHIRObject): TFHIRMMElement;
@@ -2394,7 +2394,7 @@ begin
   sd := getDefinition(-1, -1, name);
   try
     if (sd = nil) then
-      raise Exception.create('Unable to find definition for '+name);
+      raise EFHIRException.create('Unable to find definition for '+name);
 
     result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
     try
@@ -2507,22 +2507,22 @@ end;
 
 procedure TFHIRCustomResource.Assign(oSource: TFslObject);
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.Assign');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.Assign');
 end;
 
 function TFHIRCustomResource.Clone: TFHIRCustomResource;
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.Clone:');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.Clone:');
 end;
 
 function TFHIRCustomResource.equalsDeep(other: TFHIRObject): boolean;
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.equalsDeep');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.equalsDeep');
 end;
 
 function TFHIRCustomResource.equalsShallow(other: TFHIRObject): boolean;
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.equalsShallow');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.equalsShallow');
 end;
 
 function TFHIRCustomResource.FhirType: string;
@@ -2537,7 +2537,7 @@ end;
 
 procedure TFHIRCustomResource.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.getProperty');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.getProperty');
 end;
 
 function TFHIRCustomResource.GetResourceType: TFhirResourceType;
@@ -2547,22 +2547,22 @@ end;
 
 function TFHIRCustomResource.isMetaDataBased: boolean;
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.isMetaDataBased:');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.isMetaDataBased:');
 end;
 
 procedure TFHIRCustomResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.ListProperties');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.ListProperties');
 end;
 
 function TFHIRCustomResource.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.makeProperty');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.makeProperty');
 end;
 
 procedure TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.setProperty');
+  raise EFHIRException.create('Not done yet: TFHIRCustomResource.setProperty');
 end;
 
 

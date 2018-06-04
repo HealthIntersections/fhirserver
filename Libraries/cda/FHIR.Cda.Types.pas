@@ -2925,7 +2925,7 @@ begin
     result := TEncoding.UTF8.GetBytes(xml.text)
     {$ENDIF}
   else if reference <> nil Then
-    raise exception.create('Reference resolution is not yet handled');
+    raise ECDAException.create('Reference resolution is not yet handled');
 end;
 
 procedure Tv3ED.DoClear;

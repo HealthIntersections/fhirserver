@@ -35,21 +35,13 @@ uses
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Decimal, FHIR.Support.DateTime,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang,
   FHIR.R2.PathNode, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Utilities, FHIR.R2.Context, FHIR.R2.Constants;
 
 const
   FHIR_TYPES_STRING : Array[0..8] of String = ('string', 'uri', 'code', 'oid', 'id', 'uuid', 'sid', 'markdown', 'base64Binary');
 
 type
-  EFHIRPath = class (Exception)
-  public
-     constructor create(problem : String); overload;
-     constructor create(path : String; offset : integer; problem : String); overload;
-  end;
-
-  EFHIRPathDefinitionCheck = class (EFHIRPath);
-
   TFHIRPathExecutionTypeContext = class (TFslObject)
   private
     FAppInfo : TFslObject;
@@ -335,10 +327,10 @@ begin
     sd := worker.getStructure('http://hl7.org/fhir/StructureDefinition/'+context.Substring(0, context.IndexOf('.')));
     try
       if (sd = nil) then
-        raise EFHIRPathDefinitionCheck.Create('Unknown context '+context);
+        raise EFHIRPath.Create('Unknown context '+context);
       ed := getElementDefinition(sd, context, true, t);
       if (ed = nil) then
-        raise EFHIRPathDefinitionCheck.Create('Unknown context element '+context);
+        raise EFHIRPath.Create('Unknown context element '+context);
       if (t <> '') then
         types := TFHIRTypeDetails.Create(csSINGLETON, [t])
       else if (ed.type_List.Count = 0) or isAbstractType(ed.type_List) then
@@ -1771,7 +1763,7 @@ end;
 
 function TFHIRPathEngine.funcType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRPathEngine.funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -1799,12 +1791,12 @@ end;
 
 function TFHIRPathEngine.funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRPathEngine.funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRPathEngine.funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -1854,7 +1846,7 @@ end;
 
 function TFHIRPathEngine.funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 
@@ -3226,10 +3218,10 @@ begin
               inc(i,4);
             end
             else
-              raise Exception.create('Improper unicode escape in '+s);
+              raise EFHIRException.create('Improper unicode escape in '+s);
             end
         else
-          raise Exception.create('Unknown character escape \'+ch);
+          raise EFHIRException.create('Unknown character escape \'+ch);
         end;
         inc(i);
       end
@@ -3592,11 +3584,11 @@ begin
       // now we walk into the type.
 
       if (ed.type_list.count > 1) then // if there's more than one type, the test above would fail this
-        raise Exception.Create('Internal typing issue....');
+        raise EDefinitionException.create('Internal typing issue....');
       sd := worker.getStructure('http://hl7.org/fhir/StructureDefinition/'+ed.type_List[0].code);
       try
         if (sd = nil) then
-          raise Exception.Create('Unknown type '+ed.type_List[0].code);
+          raise EDefinitionException.create('Unknown type '+ed.type_List[0].code);
         result := getElementDefinition(sd, sd.id+path.Substring(ed.path.Length), true, specifiedType);
       finally
         sd.Free;
@@ -3623,18 +3615,6 @@ begin
     if (name.equals(ed.Name)) then
       exit(ed);
   result := nil;
-end;
-
-{ EFHIRPath }
-
-constructor EFHIRPath.create(path: String; offset: integer; problem: String);
-begin
-  inherited create('FHIR.R2.PathEngine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
-end;
-
-constructor EFHIRPath.create(problem: String);
-begin
-  inherited create(problem);
 end;
 
 { TFHIRPathLexer }

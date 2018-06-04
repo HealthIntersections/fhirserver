@@ -39,7 +39,7 @@ uses
   FHIR.Support.Strings,  FHIR.Server.Session,
   FHIR.Support.Objects, FHIR.Support.Exceptions,
   FHIR.Server.Utilities,
-  FHIR.Server.UserMgr, FHIR.Scim.Search, FHIR.Base.Scim;
+  FHIR.Server.UserMgr, FHIR.Scim.Search, FHIR.Base.Scim, FHIR.Base.Lang;
 
 Type
   TSCIMCharIssuer = class (TFslObject)
@@ -1448,7 +1448,7 @@ begin
     sitCriteria : result := BuildUserFilterCriteria(filter as TSCIMSearchFilterCriteria, prefix, parent, issuer);
     sitValuePath : result := BuildUserFilterValuePath(filter as TSCIMSearchFilterValuePath, prefix, parent, issuer);
   else
-    raise Exception.Create('Unknown type');
+    raise EFHIRException.create('Unknown type');
   end;
 end;
 

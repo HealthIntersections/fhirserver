@@ -6,6 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.TabControl,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts,
+  FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client,
   ToolkitUtilities, BaseDialog;
 
@@ -92,7 +93,7 @@ begin
         if (edtSystem.Text <> '') or (edtCode.Text <> '') then
           FUsageContext.code := TFHIRCoding.create(edtSystem.Text, edtCode.Text)
         else
-         raise Exception.Create('Error: must provide a system/code');
+         raise EFHIRException.create('Error: must provide a system/code');
       end;
   end;
 

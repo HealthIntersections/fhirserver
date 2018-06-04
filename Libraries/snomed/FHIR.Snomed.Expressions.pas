@@ -32,16 +32,14 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Objects, FHIR.Support.Generics, Generics.Defaults;
+  SysUtils, Classes, Generics.Defaults,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics;
 
 const
   MAX_TERM_LENGTH = 1024;
   NO_REFERENCE : cardinal = MAXINT;
 
 Type
-  ESnomedServices = class (Exception);
-  ESnomedParser = class (Exception);
-
   TSnomedRefinementGroup = class;
   TSnomedRefinement = class;
 
@@ -961,7 +959,7 @@ end;
 procedure TSnomedExpressionParser.rule(test : boolean; message : String);
 begin
   if not test then
-    raise ESnomedParser.Create(message+' at character '+inttostr(cursor));
+    raise ETerminologyError.Create(message+' at character '+inttostr(cursor));
 end;
 
 function TSnomedExpressionParser.stringConstant: String;

@@ -489,7 +489,7 @@ begin
     try
       dependencies.AddStrings(dep);
       if (result = nil) then
-        raise Exception.create('unable to find value set '+uri);
+        raise ETerminologyError.create('unable to find value set '+uri);
       if result.expansion.hasextension('http://hl7.org/fhir/Profile/questionnaire-extensions#closed') then
         notClosed := true;
       result.Link;
@@ -569,7 +569,7 @@ begin
           begin
             s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
             if not cs.hasSupplement(s) then
-              raise Exception.Create('Expansion depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+              raise ETerminologyError.create('Expansion depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
           end;
 
           if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then

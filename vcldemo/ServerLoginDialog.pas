@@ -107,7 +107,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, IniFiles,
   FHIR.Support.Strings, FHIR.Support.Shell,
-  FHIR.Base.Utilities, FHIR.Base.Common,
+  FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R2.Common,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Base.Objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ProgressDialog, FHIRDemoLogging;
@@ -206,11 +206,11 @@ var
   form : TSmartOnFhirLoginForm;
 begin
   if not isAbsoluteUrl(cbxServer.Text) then
-    raise Exception.Create('Invalid Server Address');
+    raise EFHIRException.create('Invalid Server Address');
   if not StringIsInteger16(edtRedirectPort.Text) then
-    raise Exception.Create('Invalid Port Number');
+    raise EFHIRException.create('Invalid Port Number');
   if not IsId(edtPatientId.Text) then
-    raise Exception.Create('Invalid Patient Id');
+    raise EFHIRException.create('Invalid Patient Id');
 
   ini.WriteString('Server', 'URL', cbxServer.Text);
   ini.WriteString('Server', 'ClientId', cbClientId.Text);
@@ -250,7 +250,7 @@ begin
           server.tokenEndpoint := t;
         end
         else
-          raise Exception.Create('This server does not support Smart on FHIR');
+          raise EFHIRException.create('This server does not support Smart on FHIR');
         if chkInProgress.Checked and (cbAuthScope.Text <> 'System') then
         begin
           form := TSmartOnFhirLoginForm.create(self);

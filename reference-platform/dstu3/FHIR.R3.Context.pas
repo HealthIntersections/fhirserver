@@ -33,7 +33,7 @@ interface
 uses
   SysUtils,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R3.Types, FHIR.R3.Resources;
 
 type
@@ -141,7 +141,7 @@ begin
   if RecogniseFHIRResourceName(rType, t) then
     result := fetchResource(t, url)
   else
-    raise Exception.Create('Unknown type '+rType+' in '+versionString);
+    raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
 end;
 
 { TFHIRCustomResourceInformation }

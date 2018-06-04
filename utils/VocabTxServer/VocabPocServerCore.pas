@@ -338,7 +338,7 @@ begin
     else if request.ResourceName = 'ValueSet' then
       list := FServer.GetValueSetList
     else
-      raise Exception.Create('Unsupported Resource Type');
+      raise EFHIRException.create('Unsupported Resource Type');
     try
       bundle.total := inttostr(list.count);
       if (offset > 0) or (Count < list.count) then
@@ -475,7 +475,7 @@ begin
 
         end
         else
-          raise Exception.Create('Unsupported Resource Type '+request.resourceName);
+          raise EFHIRException.create('Unsupported Resource Type '+request.resourceName);
 
         try
           filtered := TFslList<TFHIRMetadataResource>.create;
@@ -741,7 +741,7 @@ begin
       else if sp.value = 'false' then
         result := not selection.Empty
       else
-        raise Exception.Create('Error Processing search parameter (:missing, value = '+sp.value+')');
+        raise EFHIRException.create('Error Processing search parameter (:missing, value = '+sp.value+')');
     end
     else if selection.Empty then
       result := false
@@ -759,8 +759,8 @@ end;
 function TTerminologyServerOperationEngine.matchesObject(obj: TFhirObject; sp: TSearchParameter): boolean;
 begin
   case sp.index.SearchType of
-    sptNull: raise Exception.Create('param.type = null');
-    sptNumber: raise Exception.Create('not done yet');
+    sptNull: raise EFHIRException.create('param.type = null');
+    sptNumber: raise EFHIRException.create('not done yet');
 //      if obj.isPrimitive then
 //        result := compareNumber(obj.primitiveValue, sp.value, sp.prefix)
 //      else
@@ -784,11 +784,11 @@ begin
       else if sp.modifier = spmExact then
         result := obj.primitiveValue = sp.value
       else if sp.modifier = spmExact then
-        raise Exception.Create('Modifier is not supported');
-    sptToken: raise Exception.Create('not done yet');
-    sptReference: raise Exception.Create('not done yet');
-    sptComposite: raise Exception.Create('not done yet');
-    sptQuantity: raise Exception.Create('not done yet');
+        raise EFHIRException.create('Modifier is not supported');
+    sptToken: raise EFHIRException.create('not done yet');
+    sptReference: raise EFHIRException.create('not done yet');
+    sptComposite: raise EFHIRException.create('not done yet');
+    sptQuantity: raise EFHIRException.create('not done yet');
     sptUri:
       if not obj.isPrimitive then
         result := false
@@ -799,7 +799,7 @@ begin
       else if sp.modifier = spmBelow then
         result := obj.primitiveValue.StartsWith(sp.value)
       else if sp.modifier = spmExact then
-        raise Exception.Create('Modifier is not supported');
+        raise EFHIRException.create('Modifier is not supported');
   end;
 end;
 

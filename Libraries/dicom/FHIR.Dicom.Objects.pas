@@ -1730,7 +1730,7 @@ type
   }
   TDicomAbortReason = (abortNotSpecified, abortUnrecognisedPDU, abortUnexpectedPDU, abortUnrecognisedParameter, abortUnexpectedParameter, abortInvalidParameter);
 
-  EDicomAbort = class (Exception)
+  EDicomAbort = class (EDicomException)
   private
     FSource : TDicomAbortSource;// = (abortUser, abortProvider);
     FReason : TDicomAbortReason;// = (abortNotSpecified, abortUnrecognisedPDU, abortUnexpectedPDU, abortUnrecognisedParameter, abortUnexpectedParameter, abortInvalidParameter);
@@ -2613,7 +2613,7 @@ Begin
     work := copy(work, 1, i-1);
   End;
   if pos('[', work) > 0 Then
-    raise exception.Create('filters are not yet supported')
+    raise EDicomException.create('filters are not yet supported')
   Else
     tag := work;
   local := TDicomDataElementList.Create(Elements.Dictionary.Link);
@@ -2631,7 +2631,7 @@ Begin
         results.Add(local[i].Link);
     End
     Else
-      Raise Exception.Create('Tail not supported yet');
+      raise EDicomException.create('Tail not supported yet');
   Finally
     local.Free;
   End;
@@ -4245,11 +4245,11 @@ Begin
   if bExact Then
   Begin
     If length(FBytes) <> iOffset + ilength Then
-      Raise Exception.Create('Cannot read VR as '+sType+' as it is '+DICOM_VR_TYPE_NAMES[FKnownType]+' (length is wrong)');
+      raise EDicomException.create('Cannot read VR as '+sType+' as it is '+DICOM_VR_TYPE_NAMES[FKnownType]+' (length is wrong)');
   End
   Else
     if length(FBytes) < iOffset + ilength Then
-      Raise Exception.Create('Cannot read VR as '+sType);
+      raise EDicomException.create('Cannot read VR as '+sType);
   Move(FBytes[iOffset], Dest, iLength);
 End;
 
@@ -4364,7 +4364,7 @@ Begin
   else
   Begin
     if (length(FBytes) mod 4 <> 0) Then
-      raise exception.create('cannot read data type as OF');
+      raise EDicomException.create('cannot read data type as OF');
     SetLength(Result, length(FBytes) div 4);
     for i := 0 to Length(result) - 1 Do
       MoveCheck('OF', i*4, result[i], 4, false);
@@ -4380,7 +4380,7 @@ Begin
   else
   Begin
     if (length(FBytes) mod 2 <> 0) Then
-      raise exception.create('cannot read data type as OW');
+      raise EDicomException.create('cannot read data type as OW');
     SetLength(Result, length(FBytes) div 2);
     for i := 0 to Length(result) - 1 Do
       MoveCheck('OW', i*2, result[i], 2, false);
@@ -4725,7 +4725,7 @@ Begin
     dvtFD : AsFD := StrToFloat(s);
     dvtOB : AsUN := AnsiStringAsBytes(DecodePercent(s));
     dvtOW : SetAsWords(s);
-    dvtOF : raise Exception.Create('todo'); // AsOF := s;
+    dvtOF : raise EDicomException.create('todo'); // AsOF := s;
     dvtUN : AsUN := AnsiStringAsBytes(DecodePercent(s));
   End;
 End;

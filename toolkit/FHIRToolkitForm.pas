@@ -36,7 +36,7 @@ uses
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Generics,
   FHIR.Debug.Logging,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
   FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.System, FHIR.Support.Text, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
@@ -679,13 +679,13 @@ begin
             else if sdFile.FilterIndex = 3 then
               ok := frame.saveAs(fn, ffTurtle)
             else
-              raise Exception.Create('Unknown format');
+              raise EFHIRException.create('Unknown format');
             addFileToList(sdFile.FileName);
           end);
         result := ok;
       end
       else
-        raise Exception.create('Unable to save file');
+        raise EFHIRException.create('Unable to save file');
     end;
   end;
 end;

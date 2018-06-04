@@ -161,11 +161,11 @@ Type
   protected
     FServerContext : TFslObject;
     FOperations : TFslList<TFhirOperation>;
-    procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); virtual; abstract;
 
-    procedure StartTransaction; virtual;
-    procedure CommitTransaction; virtual;
-    procedure RollbackTransaction; virtual;
+    procedure StartTransaction; virtual; abstract;
+    procedure CommitTransaction; virtual; abstract;
+    procedure RollbackTransaction; virtual; abstract;
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; virtual;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
@@ -197,15 +197,15 @@ Type
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; virtual;
     function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TExceptionType) : Boolean; virtual;
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
-    function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
+    function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual; abstract;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TFslList<TFHIRResource>; virtual;
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; virtual;
-    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; virtual;
-    function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; virtual;
+    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; virtual; abstract;
+    function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; virtual; abstract;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; virtual;
     function ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; SessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; virtual;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; virtual;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual; abstract;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; virtual; abstract;
 
     function createClient(lang : String; session: TFHIRSession) : TFHIRClient; virtual;
   end;
@@ -247,7 +247,7 @@ Type
 
   TFHIRStorageService = class (TFslObject)
   protected
-    function GetTotalResourceCount: integer; virtual;
+    function GetTotalResourceCount: integer; virtual; abstract;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -264,33 +264,33 @@ Type
     function FetchAuthorization(hash : String; var PatientId : String; var ConsentKey, SessionKey : Integer; var Expiry : TDateTime; var jwt : String) : boolean; virtual;
 
     // server total counts:
-    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; virtual; // comps = comma delimited list of patient compartments
+    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; virtual;  abstract;// comps = comma delimited list of patient compartments
     Property TotalResourceCount: integer read GetTotalResourceCount;
 
 
-    procedure Sweep; virtual;
-    procedure RecordFhirSession(session: TFhirSession); virtual;
-    procedure CloseFhirSession(key: integer); virtual;
-    procedure QueueResource(r: TFhirResource); overload; virtual;
-    procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; virtual;
-    procedure RegisterAuditEvent(session: TFhirSession; ip: String); virtual;
-    function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; virtual;
+    procedure Sweep; virtual; abstract;
+    procedure RecordFhirSession(session: TFhirSession); virtual; abstract;
+    procedure CloseFhirSession(key: integer); virtual; abstract;
+    procedure QueueResource(r: TFhirResource); overload; virtual; abstract;
+    procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; virtual; abstract;
+    procedure RegisterAuditEvent(session: TFhirSession; ip: String); virtual; abstract;
+    function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; virtual; abstract;
 
-    function ProfilesAsOptionList : String; virtual;
+    function ProfilesAsOptionList : String; virtual; abstract;
 
-    procedure ProcessSubscriptions; virtual;
-    procedure ProcessEmails; virtual;
-    procedure ProcessObservations; virtual;
-    procedure RunValidation; virtual;
+    procedure ProcessSubscriptions; virtual; abstract;
+    procedure ProcessEmails; virtual; abstract;
+    procedure ProcessObservations; virtual; abstract;
+    procedure RunValidation; virtual; abstract;
 
 
-    function createOperationContext(lang : String) : TFHIROperationEngine; virtual;
-    Procedure Yield(op : TFHIROperationEngine; exception : Exception); overload; virtual;
+    function createOperationContext(lang : String) : TFHIROperationEngine; virtual; abstract;
+    Procedure Yield(op : TFHIROperationEngine; exception : Exception); overload; virtual; abstract;
     function createClient(lang : String; ServerContext : TFslObject; context: TFHIRWorkerContext; session: TFHIRSession) : TFHIRClient; virtual;
     Procedure Yield(client : TFHIRClient; exception : Exception); overload; virtual;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
-    function FetchResource(key : integer) : TFHIRResource; virtual;
+    function FetchResource(key : integer) : TFHIRResource; virtual; abstract;
 
     function createAsyncTask(url, id : string; format : TFHIRFormat; secure : boolean) : integer; virtual;
     procedure setAsyncTaskDetails(key : integer; transactionTime : TDateTimeEx; request : String); virtual;
@@ -301,10 +301,10 @@ Type
     procedure fetchExpiredTasks(tasks : TFslList<TAsyncTaskInformation>); virtual;
     procedure MarkTaskDeleted(key : integer); virtual;
 
-    function getClientInfo(id : String) : TRegisteredClientInformation; virtual;
-    function getClientName(id : String) : string; virtual;
-    function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; virtual;
-    procedure fetchClients(list : TFslList<TRegisteredClientInformation>); virtual;
+    function getClientInfo(id : String) : TRegisteredClientInformation; virtual; abstract;
+    function getClientName(id : String) : string; virtual; abstract;
+    function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; virtual; abstract;
+    procedure fetchClients(list : TFslList<TRegisteredClientInformation>); virtual; abstract;
   end;
 
 
@@ -315,19 +315,9 @@ uses
 
 { TFHIRStorageService }
 
-procedure TFHIRStorageService.CloseFhirSession(key: integer);
-begin
-  raise Exception.Create('The function "CloseFhirSession(key: integer)" must be overridden in '+className);
-end;
-
 constructor TFHIRStorageService.Create;
 begin
   inherited;
-end;
-
-function TFHIRStorageService.createOperationContext(lang: String): TFHIROperationEngine;
-begin
-  raise Exception.Create('The function "createOperationContext(lang: String): TFHIROperationEngine" must be overridden in '+className);
 end;
 
 destructor TFHIRStorageService.Destroy;
@@ -337,68 +327,38 @@ end;
 
 function TFHIRStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
 begin
-  raise Exception.Create('Expanding valuesets is not implemented in this server');
+  raise EFHIRException.create('Expanding valuesets is not implemented in this server');
 end;
 
 
 function TFHIRStorageService.FetchAuthorization(hash: string; var PatientId : string; var ConsentKey, SessionKey: Integer; var Expiry: TDateTime; var jwt: String): boolean;
 begin
-  raise Exception.Create('This server does not support OAuth');
-end;
-
-procedure TFHIRStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
-begin
-  raise Exception.Create('The function "fetchClients" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.fetchExpiredTasks(tasks: TFslList<TAsyncTaskInformation>);
 begin
-  raise Exception.Create('This server does not support Async tasks');
+  raise EFHIRException.create('This server does not support Async tasks');
 end;
 
 function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
 begin
-  raise Exception.Create('This server does not support OAuth');
-end;
-
-function TFHIRStorageService.FetchResource(key: integer): TFHIRResource;
-begin
-  raise Exception.Create('The function "FetchResource()" must be overridden in '+className);
-end;
-
-function TFHIRStorageService.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>): TStringList;
-begin
-  raise Exception.Create('The function "FetchResourceCounts(comps : String): TStringList" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, originalRequest: String; var transactionTime, expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
 begin
-  raise Exception.Create('This server does not support Async tasks');
-end;
-
-function TFHIRStorageService.getClientInfo(id: String): TRegisteredClientInformation;
-begin
-  raise Exception.Create('The function "getClientInfo" must be overridden in '+className);
-end;
-
-function TFHIRStorageService.getClientName(id: String): string;
-begin
-  raise Exception.Create('The function "getClientName" must be overridden in '+className);
-end;
-
-function TFHIRStorageService.GetTotalResourceCount: integer;
-begin
-  raise Exception.Create('The function "GetTotalResourceCount: integer" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support Async tasks');
 end;
 
 function TFHIRStorageService.hasOAuthSession(id: String; status : integer): boolean;
 begin
-  raise Exception.Create('This server does not support OAuth');
+  raise EFHIRException.create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.hasOAuthSessionByKey(key, status: integer): boolean;
 begin
-  raise Exception.Create('This server does not support OAuth');
+  raise EFHIRException.create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.Link: TFHIRStorageService;
@@ -408,117 +368,52 @@ end;
 
 function TFHIRStorageService.LookupCode(system, version, code: String): String;
 begin
-  raise Exception.Create('Looking up codes is not implemented in this server');
+  raise EFHIRException.create('Looking up codes is not implemented in this server');
 end;
 
 procedure TFHIRStorageService.MarkTaskDeleted(key: integer);
 begin
-  raise Exception.Create('This server does not support Async tasks');
+  raise EFHIRException.create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.MarkTaskForDownload(key: integer; names : TStringList);
 begin
-  raise Exception.Create('This server does not support Async tasks');
-end;
-
-procedure TFHIRStorageService.ProcessEmails;
-begin
-  raise Exception.Create('The function "ProcessEmails" must be overridden in '+className);
-end;
-
-procedure TFHIRStorageService.ProcessObservations;
-begin
-  raise Exception.Create('The function "ProcessObservations" must be overridden in '+className);
-end;
-
-procedure TFHIRStorageService.ProcessSubscriptions;
-begin
-  raise Exception.Create('The function "ProcessSubscriptions" must be overridden in '+className);
-end;
-
-function TFHIRStorageService.ProfilesAsOptionList: String;
-begin
-  raise Exception.Create('The function "ProfilesAsOptionList: String" must be overridden in '+className);
-end;
-
-procedure TFHIRStorageService.QueueResource(r: TFhirResource);
-begin
-  raise Exception.Create('The function "QueueResource(r: TFhirResource)" must be overridden in '+className);
-end;
-
-procedure TFHIRStorageService.QueueResource(r: TFhirResource; dateTime: TDateTimeEx);
-begin
-  raise Exception.Create('The function "QueueResource(r: TFhirResource; dateTime: TDateTimeEx)" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.recordDownload(key: integer; name: String);
 begin
-  raise Exception.Create('This server does not support Async tasks');
-end;
-
-procedure TFHIRStorageService.RecordFhirSession(session: TFhirSession);
-begin
-  raise Exception.Create('The function "RecordFhirSession(session: TFhirSession)" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.recordOAuthChoice(id, scopes, jwt, patient: String);
 begin
-  raise Exception.Create('This server does not support OAuth');
+  raise EFHIRException.create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state: String);
 begin
-  raise Exception.Create('This server does not support OAuth');
-end;
-
-procedure TFHIRStorageService.RegisterAuditEvent(session: TFhirSession; ip: String);
-begin
-  raise Exception.Create('The function "RegisterAuditEvent(session: TFhirSession; ip: String)" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.RegisterConsentRecord(session: TFhirSession);
 begin
-  raise Exception.Create('This server does not support OAuth');
-end;
-
-function TFHIRStorageService.RetrieveSession(key: integer; var UserKey, Provider: integer; var Id, Name, Email: String): boolean;
-begin
-  raise Exception.Create('The function "RegisterAuditEvent(session: TFhirSession; ip: String)" must be overridden in '+className);
-end;
-
-procedure TFHIRStorageService.RunValidation;
-begin
-  raise Exception.Create('The function "RunValidation" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.setAsyncTaskDetails(key: integer; transactionTime: TDateTimeEx; request: String);
 begin
-  raise Exception.Create('This server does not support Async tasks');
-end;
-
-function TFHIRStorageService.storeClient(client: TRegisteredClientInformation; sessionKey : integer): String;
-begin
-  raise Exception.Create('The function "storeClient" must be overridden in '+className);
-end;
-
-procedure TFHIRStorageService.Sweep;
-begin
-  raise Exception.Create('The function "Sweep" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
 begin
-  raise Exception.Create('This server does not support Async tasks');
+  raise EFHIRException.create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
 begin
-  raise Exception.Create('This server does not support OAuth');
-end;
-
-procedure TFHIRStorageService.Yield(op: TFHIROperationEngine; exception : Exception);
-begin
-  raise Exception.Create('The function "Yield(op: TFHIROperationEngine; exception : Exception)" must be overridden in '+className);
+  raise EFHIRException.create('This server does not support OAuth');
 end;
 
 { TFHIROperationEngine }
@@ -550,11 +445,6 @@ end;
 
 
 { TFHIROperationEngine }
-
-procedure TFHIROperationEngine.CommitTransaction;
-begin
-  raise Exception.Create('The function "CommitTransaction" must be overridden in '+className);
-end;
 
 constructor TFHIROperationEngine.create(ServerContext : TFslObject; lang: String);
 begin
@@ -605,11 +495,6 @@ end;
 function TFHIROperationEngine.opAllowed(resource: string; command: TFHIRCommandType): Boolean;
 begin
   result := true;
-end;
-
-procedure TFHIROperationEngine.processGraphQL(graphql: String; request: TFHIRRequest; response: TFHIRResponse);
-begin
-  raise Exception.Create('Must override '+className+'.processGraphQL');
 end;
 
 procedure TFHIROperationEngine.VersionNotFound(request: TFHIRRequest; response: TFHIRResponse);
@@ -665,7 +550,7 @@ begin
       fcmdPatch : ExecutePatch(request, response);
       fcmdValidate : ExecuteValidation(request, response, 'Validation')
     else
-      Raise Exception.Create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
+      raise EFHIRException.create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
     End;
 
     CommitTransaction;
@@ -680,7 +565,7 @@ end;
 
 procedure TFHIROperationEngine.ExecuteBatch(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implement the "Batch" function');
+  raise EFHIRException.create('This server does not implement the "Batch" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
@@ -1062,17 +947,17 @@ end;
 
 function TFHIROperationEngine.ExecuteCreate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState: TCreateIdState; iAssignedKey: Integer): String;
 begin
-  raise Exception.Create('This server does not implement the "Create" function');
+  raise EFHIRException.create('This server does not implement the "Create" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteDelete(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implement the "Delete" function');
+  raise EFHIRException.create('This server does not implement the "Delete" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteHistory(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implement the "History" function');
+  raise EFHIRException.create('This server does not implement the "History" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
@@ -1089,92 +974,67 @@ begin
       exit;
     end;
   end;
-  raise Exception.Create('Unsupported Operation '+request.OperationName+' on resource '+request.ResourceName);
+  raise EFHIRException.create('Unsupported Operation '+request.OperationName+' on resource '+request.ResourceName);
 end;
 
 function TFHIROperationEngine.ExecutePatch(request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
-  raise Exception.Create('This server does not implement the "Patch" function');
+  raise EFHIRException.create('This server does not implement the "Patch" function');
 end;
 
 function TFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders : boolean) : boolean;
 begin
-  raise Exception.Create('This server does not implement the "Read" function');
+  raise EFHIRException.create('This server does not implement the "Read" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implement the "Search" function');
+  raise EFHIRException.create('This server does not implement the "Search" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implement the "Transaction" function');
+  raise EFHIRException.create('This server does not implement the "Transaction" function');
 end;
 
 function TFHIROperationEngine.ExecuteUpdate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
-  raise Exception.Create('This server does not implement the "Update" function');
+  raise EFHIRException.create('This server does not implement the "Update" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteUpload(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implement the "Upload" function');
+  raise EFHIRException.create('This server does not implement the "Upload" function');
 end;
 
 function TFHIROperationEngine.ExecuteValidation(request: TFHIRRequest; response: TFHIRResponse; opDesc: String): boolean;
 begin
-  raise Exception.Create('This server does not implement the "Validation" function');
+  raise EFHIRException.create('This server does not implement the "Validation" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteVersionRead(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implement the "VersionRead" function');
+  raise EFHIRException.create('This server does not implement the "VersionRead" function');
 end;
 
 function TFHIROperationEngine.FindResource(aType, sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
 begin
-  raise Exception.Create('This server does not implement the "FindResource" function');
-end;
-
-function TFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResource;
-begin
-  raise Exception.Create('Must override "GetResourceById" function in '+className);
+  raise EFHIRException.create('This server does not implement the "FindResource" function');
 end;
 
 function TFHIROperationEngine.GetResourceByKey(key: integer; var needSecure: boolean): TFHIRResource;
 begin
-  raise Exception.Create('This server does not implement the "GetResourceByKey" function');
-end;
-
-function TFHIROperationEngine.getResourceByUrl(aType: TFhirResourceType; url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResource;
-begin
-  raise Exception.Create('Must override "getResourceByUrl" function in '+className);
+  raise EFHIRException.create('This server does not implement the "GetResourceByKey" function');
 end;
 
 function TFHIROperationEngine.getResourcesByParam(aType: TFhirResourceType; name, value: string; var needSecure: boolean): TFslList<TFHIRResource>;
 begin
-  raise Exception.Create('This server does not implement the "getResourcesByParam" function');
-end;
-
-function TFHIROperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
-begin
-  raise Exception.Create('The function "LookupReference(context: TFHIRRequest; id: String): TResourceWithReference" must be overridden in '+className);
+  raise EFHIRException.create('This server does not implement the "getResourcesByParam" function');
 end;
 
 function TFHIROperationEngine.ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
 begin
-  raise Exception.Create('This server does not implement the "GetResourceByKey" function');
-end;
-
-procedure TFHIROperationEngine.RollbackTransaction;
-begin
-  raise Exception.Create('The function "RollbackTransaction" must be overridden in '+className);
-end;
-
-procedure TFHIROperationEngine.StartTransaction;
-begin
-  raise Exception.Create('The function "StartTransaction" must be overridden in '+className);
+  raise EFHIRException.create('This server does not implement the "GetResourceByKey" function');
 end;
 
 procedure TFHIROperationEngine.AddCDSHooks(conf: TFhirCapabilityStatementRest);
@@ -1212,19 +1072,9 @@ begin
 //  html.append('<li>'+n+' : '+FormatTextToHTML(d)+'</li>');
 end;
 
-procedure TFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; httpCode: Integer; name, message: String);
-begin
-  raise Exception.Create('Musr override AuditRest in '+ClassName);
-end;
-
-procedure TFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; opName: String; httpCode: Integer; name, message: String);
-begin
-  raise Exception.Create('Musr override AuditRest in '+ClassName);
-end;
-
 function TFHIRStorageService.createAsyncTask(url, id: string; format : TFHIRFormat; secure : boolean): integer;
 begin
-  raise Exception.Create('Asynchronous Processing is not supported on this server');
+  raise EFHIRException.create('Asynchronous Processing is not supported on this server');
 end;
 
 function TFHIRStorageService.createClient(lang: String; ServerContext : TFslObject; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
@@ -1327,17 +1177,17 @@ end;
 
 function TFHIRInternalCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRInternalCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslBuffer): TFslBuffer;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRInternalCommunicator.deleteResourceV(atype: TFhirResourceTypeV; id: String);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 destructor TFHIRInternalCommunicator.Destroy;
@@ -1351,7 +1201,7 @@ end;
 
 function TFHIRInternalCommunicator.historyTypeV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRInternalCommunicator.link: TFHIRInternalCommunicator;
@@ -1361,12 +1211,12 @@ end;
 
 function TFHIRInternalCommunicator.operationV(atype: TFHIRResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRInternalCommunicator.operationV(atype: TFhirResourceTypeV; opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRInternalCommunicator.readResourceV(atype: TFhirResourceTypeV; id: String): TFHIRResourceV;
@@ -1451,12 +1301,12 @@ end;
 
 function TFHIRInternalCommunicator.searchAgainV(link: String): TFHIRResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRInternalCommunicator.searchPostV(atype: TFhirResourceTypeV; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFhirResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRInternalCommunicator.SetContext(const Value: TFHIRWorkerContext);
@@ -1479,12 +1329,12 @@ end;
 
 function TFHIRInternalCommunicator.transactionV(bundle: TFhirResourceV): TFhirResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRInternalCommunicator.updateResourceV(resource: TFhirResourceV): TFhirResourceV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 { TFhirOperation }
@@ -1503,14 +1353,14 @@ begin
   b := false;
   for t in Types do
     if b then
-      raise Exception.Create('Multiple types for operation')
+      raise EFHIRException.create('Multiple types for operation')
     else
     begin
       result := t;
       b := true;
     end;
   if (not b) then
-    raise Exception.Create('No types for operation');
+    raise EFHIRException.create('No types for operation');
 end;
 
 function TFhirOperation.resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref: String): integer;
@@ -1520,7 +1370,7 @@ var
 begin
   parts := ref.Split(['/']);
   if length(parts) <> 2 then
-    raise Exception.Create('Unable to understand the subject reference "'+ref+'"');
+    raise EFHIRException.create('Unable to understand the subject reference "'+ref+'"');
   if NOT manager.FindResource(parts[0], parts[1], [], result, versionKey, request, nil, nil) then
     result := 0;
 end;

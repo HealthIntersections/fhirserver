@@ -505,7 +505,7 @@ end;
 
 function TAreaCodeServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('locateIsA not supported by AreaCode'); // AreaCode doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by AreaCode'); // AreaCode doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -517,7 +517,7 @@ end;
 
 function TAreaCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TAreaCodeServices.subsumesTest(codeA, codeB: String): String;
@@ -543,12 +543,12 @@ begin
     end;
   end
   else
-    raise Exception.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+system(nil));
+    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+system(nil));
 end;
 
 function TAreaCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TAreaCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -564,7 +564,7 @@ end;
 
 function TAreaCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderContext);
@@ -579,7 +579,7 @@ end;
 
 procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 

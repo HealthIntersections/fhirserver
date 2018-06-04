@@ -151,7 +151,7 @@ end;
 {$ELSE}
 procedure TFHIRValidationWrapper.executeCommand(cmd : String; CallBack: TArg<PAnsiChar>);
 begin
-  raise Exception.Create('not done yet');
+  raise EFHIRException.create('not done yet');
 end;
 {$ENDIF}
 

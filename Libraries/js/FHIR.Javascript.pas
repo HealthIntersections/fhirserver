@@ -54,7 +54,7 @@ uses
   Windows,
   SysUtils, Classes, AnsiStrings,
   Generics.Collections,
-  FHIR.Javascript.Chakra;
+  FHIR.Support.Exceptions, FHIR.Javascript.Chakra;
 
 type
   // facade for ChakraCommon:
@@ -85,12 +85,6 @@ type
   TJavascript = class;
   TJavascriptClassDefinition = class;
   TJavascriptRegisteredProperty = class;
-
-  EJavascriptBase = class (Exception);
-  EJavascriptScript = class (EJavascriptBase); // error thrown by script
-  EJavascriptSource = class (EJavascriptBase); // error compiling
-  EJavascriptHost = class (EJavascriptBase);   // error from hosting infrastructure
-  EJavascriptApplication = class (EJavascriptBase);    // error running application functionality
 
   TJavascriptConsoleLogEvent = procedure (sender : TJavascript; message : String) of object;
   TJavascriptObjectFactoryProc<T : class> = function (sender : TJavascript; obj : JsValueRef) : T of object;
@@ -145,11 +139,11 @@ valueOf()	Returns the primitive value of an array
     FJavascript : TJavascript;
   public
     // populating the array in the first place
-    function count : integer; virtual;
-    function item(i : integer) : JsValueRef; virtual;
+    function count : integer; virtual; abstract;
+    function item(i : integer) : JsValueRef; virtual; abstract;
 
     // operations from the script
-    function push(this : TJsValue; params : TJsValues) : TJsValue; virtual;
+    function push(this : TJsValue; params : TJsValues) : TJsValue; virtual; abstract;
   end;
 
   TJavascriptRegisteredProperty = class
@@ -570,23 +564,6 @@ begin
   result := JS_INVALID_REFERENCE
 end;
 
-{ TJavascriptArrayManager }
-
-function TJavascriptArrayManager.count: integer;
-begin
-  raise Exception.Create('Need to override '+className+'.count');
-end;
-
-function TJavascriptArrayManager.item(i: integer): JsValueRef;
-begin
-  raise Exception.Create('Need to override '+className+'.item');
-end;
-
-function TJavascriptArrayManager.push(this : TJsValue; params : TJsValues) : TJsValue;
-begin
-  raise Exception.Create('Need to override '+className+'.push');
-end;
-
 { TJavascriptClassDefinition }
 
 constructor TJavascriptClassDefinition.create;
@@ -643,7 +620,7 @@ begin
   inherited create;
 
   if gjs <> nil then
-    raise Exception.Create('There is already a javascript runtime on this thread');
+    raise EJavascriptApplication.create('There is already a javascript runtime on this thread');
   gjs := self;
   if not loadChakra(chakraPath, msg) then
     raise EJavascriptScript.Create('Error Loading Chakra: '+msg);
@@ -837,7 +814,7 @@ var
   global, f : TJsValue;
 begin
   if hasDefinedClass(name) then
-    raise Exception.Create('Attempt to redefine '+name);
+    raise EJavascriptApplication.create('Attempt to redefine '+name);
 
   result := TJavascriptClassDefinition.create;
   FDefinedClasses.add(name, result);
@@ -857,7 +834,7 @@ end;
 function TJavascript.defineClass(name : String; context : Pointer) : TJavascriptClassDefinition;
 begin
   if hasDefinedClass(name) then
-    raise Exception.Create('Attempt to redefine '+name);
+    raise EJavascriptApplication.create('Attempt to redefine '+name);
 
   result := TJavascriptClassDefinition.create;
   FDefinedClasses.add(name, result);

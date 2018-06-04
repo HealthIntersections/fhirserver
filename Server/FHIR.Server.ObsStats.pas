@@ -40,6 +40,7 @@ interface
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings,
+  FHIR.Base.Lang,
   FHIR.Database.Manager, FHIR.Support.DateTime,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations;
 
@@ -616,7 +617,7 @@ begin
   else
   begin
     if FMode = osmInconsistent then
-      raise Exception.Create('The stat '+CODES_TObservationStatsParameter[p]+' cannot be generated when some of the canonical units differ');
+      raise EFHIRException.create('The stat '+CODES_TObservationStatsParameter[p]+' cannot be generated when some of the canonical units differ');
     case p of
       osp_average: d := genAverage();
       osp_maximum: d := genMaximum();

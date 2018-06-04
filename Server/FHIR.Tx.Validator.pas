@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Base.Objects, FHIR.Version.Common,
   FHIR.Tx.Service, FHIR.Tx.Manager;
 
@@ -311,7 +311,7 @@ begin
           begin
             s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
             if not cs.hasSupplement(s) then
-              raise Exception.Create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+              raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
           end;
 
           result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
@@ -338,7 +338,7 @@ begin
             begin
               s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
               if not cs.hasSupplement(s) then
-                raise Exception.Create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+                raise ETerminologyError.create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
             end;
             excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
           end;
@@ -420,7 +420,7 @@ var
   ctxt : TCodeSystemProviderContext;
 begin
   if FVs = nil then
-    raise Exception.Create('Error: cannot validate a CodeableConcept without a nominated valueset');
+    raise ETerminologyError.create('Error: cannot validate a CodeableConcept without a nominated valueset');
   result := TFhirParameters.Create;
   try
     list := TStringList.Create;

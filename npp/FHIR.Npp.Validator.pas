@@ -33,9 +33,9 @@ interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Tx.Service,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
+  FHIR.Tx.Service,
 
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Context, FHIR.R2.Profiles, FHIR.R2.Client,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Client,
@@ -156,7 +156,7 @@ begin
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R2.Client.TFhirClient2;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR.R2.Constants.FHIR_GENERATED_VERSION then
-      raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R2.Constants.FHIR_GENERATED_VERSION+')');
+      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R2.Constants.FHIR_GENERATED_VERSION+')');
   end;
 end;
 
@@ -183,7 +183,7 @@ var
 begin
   cs := FCodeSystems[url];
   if cs = nil then
-    raise Exception.Create('Unable to resolve code system '+url);
+    raise ETerminologyError.create('Unable to resolve code system '+url);
   result := TFhirCodeSystemProvider.create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
 end;
 
@@ -193,7 +193,7 @@ var
 begin
   vs := FValueSets[url];
   if vs = nil then
-    raise Exception.Create('Unable to resolve value set '+url);
+    raise ETerminologyError.create('Unable to resolve value set '+url);
   result := Factory.wrapValueSet(vs.link);
 end;
 
@@ -443,7 +443,7 @@ begin
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R3.Client.TFhirClient3;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR.R3.Constants.FHIR_GENERATED_VERSION then
-      raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R3.Constants.FHIR_GENERATED_VERSION+')');
+      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR.R3.Constants.FHIR_GENERATED_VERSION+')');
   end;
 end;
 
@@ -470,7 +470,7 @@ var
 begin
   cs := FCodeSystems[url];
   if cs = nil then
-    raise Exception.Create('Unable to resolve code system '+url);
+    raise ETerminologyError.create('Unable to resolve code system '+url);
   result := TFhirCodeSystemProvider.create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
 end;
 
@@ -480,7 +480,7 @@ var
 begin
   vs := FValueSets[url];
   if vs = nil then
-    raise Exception.Create('Unable to resolve value set '+url);
+    raise ETerminologyError.create('Unable to resolve value set '+url);
   result := Factory.wrapValueSet(vs.link);
 end;
 
@@ -731,7 +731,7 @@ begin
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as FHIR.R4.Client.TFhirClient4;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR_VERSIONS[factory.version] then
-      raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+CODES_TFHIRVersion[factory.version]+')');
+      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+CODES_TFHIRVersion[factory.version]+')');
   end;
 end;
 
@@ -758,7 +758,7 @@ var
 begin
   cs := FCodeSystems[url];
   if cs = nil then
-    raise Exception.Create('Unable to resolve code system '+url);
+    raise ETerminologyError.create('Unable to resolve code system '+url);
   result := TFhirCodeSystemProvider.create(FFactory.link, TFHIRCodeSystemEntry.Create(FFactory.wrapCodeSystem(cs.link)));
 end;
 
@@ -768,7 +768,7 @@ var
 begin
   vs := FValueSets[url];
   if vs = nil then
-    raise Exception.Create('Unable to resolve value set '+url);
+    raise ETerminologyError.create('Unable to resolve value set '+url);
   result := FFactory.wrapValueSet(vs.link);
 end;
 
@@ -1017,7 +1017,7 @@ begin
     fhirVersionRelease3 : result := TFHIRPluginValidatorContextR3.Create(factory, TerminologyServer);
     fhirVersionRelease4 : result := TFHIRPluginValidatorContextR4.Create(factory, TerminologyServer);
   else
-    raise Exception.Create('Unexpected version');
+    raise EFHIRException.create('Unexpected version');
   end;
 end;
 

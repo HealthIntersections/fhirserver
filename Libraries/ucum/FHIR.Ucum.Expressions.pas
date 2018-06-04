@@ -4,27 +4,27 @@ Unit FHIR.Ucum.Expressions;
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -32,15 +32,10 @@ Interface
 
 uses
   SysUtils,
-  FHIR.Support.Strings,
-  FHIR.Support.Decimal,
-  FHIR.Support.Objects,
-  FHIR.Ucum.Handlers,
-  FHIR.Ucum.Base;
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Objects,
+  FHIR.Ucum.Handlers, FHIR.Ucum.Base;
 
 Type
-  EUcumException = class (Exception);
-
   TUcumComponent = class (TFslObject)
   public
     Function Link : TUcumComponent; Overload;
@@ -498,7 +493,7 @@ Begin
         checkAnnotation(ch) or
         checkNumber(ch) or
         checkNumberOrSymbol(ch))) Then
-      raise Exception.Create('Error processing Unit_ "'+FSource+'": unexpected character "'+ch+'" at position '+IntToStr(FStart));
+      raise ETerminologyError.create('Error processing Unit_ "'+FSource+'": unexpected character "'+ch+'" at position '+IntToStr(FStart));
   End;
 End;
 
@@ -515,7 +510,7 @@ Begin
       ch := peekChar();
     End;
     if (Length(FToken) = 1) Then
-      raise Exception.Create('Error processing Unit_"'+FSource+'": unexpected character "'+ch+'" at position '+IntToStr(FStart)+': a + or - must be followed by at least one digit');
+      raise ETerminologyError.create('Error processing Unit_"'+FSource+'": unexpected character "'+ch+'" at position '+IntToStr(FStart)+': a + or - must be followed by at least one digit');
     Ftype := NUMBER;
     result := true;
   End
@@ -590,9 +585,9 @@ Begin
     Begin
       ch := nextChar();
       if ord(ch) > 255 then
-        raise Exception.Create('Error processing Unit_"'+FSource+'": annotation contains non-ascii characters');
+        raise ETerminologyError.create('Error processing Unit_"'+FSource+'": annotation contains non-ascii characters');
       if (ch = #0) Then
-        raise Exception.Create('Error processing Unit_"'+FSource+'": unterminated annotation');
+        raise ETerminologyError.create('Error processing Unit_"'+FSource+'": unterminated annotation');
       if (ch <> '}') then
         s := s + ch;
     End;
@@ -637,7 +632,7 @@ End;
 
 Procedure TUcumLexer.error(errMsg : String);
 Begin
-  raise EUcumException.Create('Error processing Unit: '''+FSource+''': '+ errMsg +' at character '+IntToStr(FStart));
+  raise ETerminologyError.Create('Error processing Unit: '''+FSource+''': '+ errMsg +' at character '+IntToStr(FStart));
 End;
 
 Function TUcumLexer.getTokenAsInt() : Integer;
@@ -782,7 +777,7 @@ begin
   End else if oComp is TUcumSymbol Then
     result := convertSymbol(oContext, TUcumSymbol(oComp))
   else
-    raise Exception.Create('unknown TUcumComponent type '+oComp.ClassName);
+    raise ETerminologyError.create('unknown TUcumComponent type '+oComp.ClassName);
 end;
 
 function TUcumConverter.convertSymbol(oContext: TUcumCanonical; oComp: TUcumSymbol): TUcumComponent;
@@ -820,7 +815,7 @@ begin
     if unit_.isSpecial Then
     Begin
       if not Fhandlers.ExistsByName(unit_.Code) Then
-        raise Exception.Create('Not handled yet (special unit: '+unit_.Code+')')
+        raise ETerminologyError.create('Not handled yet (special unit: '+unit_.Code+')')
       else
       Begin
         u := Fhandlers.HandlerByCode[unit_.code].Units;
@@ -849,7 +844,7 @@ begin
           else if result is TUcumTerm Then
             applyExponent(TUcumTerm(result), oComp.Exponent)
           else
-            raise Exception.Create('unknown TUcumComponent type '+oComp.ClassName);
+            raise ETerminologyError.create('unknown TUcumComponent type '+oComp.ClassName);
       End
       else
       Begin

@@ -580,7 +580,7 @@ Begin
     result := trunc(strToFloat(v)*1024*1024)
   else if sameText(u, 'GB') Then
     result := trunc(strToFloat(v)*1024*1024*1024)
-  else raise exception.create('unknown unit ' +u);
+  else raise EDBException.create('unknown unit ' +u);
 End;
 
 
@@ -618,7 +618,7 @@ Begin
   try
     Execute;
     if not FetchNext Then
-      raise exception.create('Table "'+sName+'" not found checking size');
+      raise EDBException.create('Table "'+sName+'" not found checking size');
     result := ReadBytes(ColStringByName['reserved']);
   Finally
     Terminate;
@@ -644,7 +644,7 @@ Begin
     kdbSQLServer  :
       result := DatabaseSizeMSSQL;
   else // kdbUnknown, kdbSybase11, kdbCtree, kdbAccess, kdbDBIsam, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
-    raise exception.create('This operation (database size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
+    raise EDBException.create('This operation (database size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
   End;
 End;
 
@@ -655,7 +655,7 @@ Begin
     kdbSQLServer  :
       result := TableSizeMSSQL(sName);
   else // kdbUnknown, kdbSybase11, kdbCtree, kdbAccess, kdbDBIsam, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
-    raise exception.create('This operation (table size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
+    raise EDBException.create('This operation (table size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
   End;
 End;
 

@@ -558,7 +558,7 @@ begin
       profile := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, profiles.FCanonical[0]));
       ctxt.Owned.add(profile);
       if (profile = nil) then
-        raise Exception.Create('StructureDefinition "' + profiles.FCanonical[0] + '" not found');
+        raise EFHIRException.create('StructureDefinition "' + profiles.FCanonical[0] + '" not found');
     end;
   validateResource(ctxt, element, element, profile, ctxt.resourceIdRule, nil);
 end;
@@ -1469,7 +1469,7 @@ begin
       if (ed.Slicing <> nil) then
       begin
         if (slice <> nil) and (slice.path = ed.path) then
-          raise Exception.Create('Slice encountered midway through path on ' + slice.path);
+          raise EDefinitionException.create('Slice encountered midway through path on ' + slice.path);
         slice := ed;
         process := false;
       end
@@ -1587,7 +1587,7 @@ begin
           localStack := stack.push(ei.element, ei.count, ei.definition, resolveType(ctxt, t));
         try
           if ei.path <> localStack.literalPath then
-            raise Exception.Create('paths differ: ' + ei.path + ' vs ' + localStack.literalPath);
+            raise EDefinitionException.create('paths differ: ' + ei.path + ' vs ' + localStack.literalPath);
 
           assert(ei.path = localStack.literalPath);
           thisIsCodeableConcept := false;
@@ -1793,7 +1793,7 @@ end;
 //  if isFree then
 //    result.resolveExternals := true;
 //  if not result.loadXML(TrimBof(buf.AsUnicode)) then
-//    raise Exception.create('unable to parse XML because '+result.parseError.reason);
+//    raise EDefinitionException.create('unable to parse XML because '+result.parseError.reason);
 //end;
 //
 function TFHIRValidator.getCriteriaForDiscriminator(ctxt : TFHIRValidatorContext; path: String; ed: TFHIRElementDefinition; discriminator: String; profile: TFHIRStructureDefinition)
@@ -1813,9 +1813,9 @@ begin
     begin
       // going to look at the type
       if (ed.Type_List.count = 0) then
-        raise Exception.Create('Error in profile for ' + path + ' no children, no type');
+        raise EDefinitionException.create('Error in profile for ' + path + ' no children, no type');
       if (ed.Type_List.count > 1) then
-        raise Exception.Create('Error in profile for ' + path + ' multiple types defined in slice discriminator');
+        raise EDefinitionException.create('Error in profile for ' + path + ' multiple types defined in slice discriminator');
       if (ed.Type_List[0].profileList.count > 0) then
       begin
         // need to do some special processing for reference here...
@@ -1848,7 +1848,7 @@ begin
       end;
       inc(index);
     end;
-    raise Exception.Create('Unable to find discriminator definition for ' + goal + ' in ' + discriminator + ' at ' + path);
+    raise EDefinitionException.create('Unable to find discriminator definition for ' + goal + ' in ' + discriminator + ' at ' + path);
   finally
     childDefinitions.Free;
   end;
@@ -2241,7 +2241,7 @@ begin
       'The extension ' + extUrl + ' is not allowed to be used on the logical path set ' + p + ' (allowed: resource:=' + b + ')');
   end
   else
-    raise Exception.Create('Unknown context type');
+    raise EDefinitionException.create('Unknown context type');
 end;
 
 //
@@ -2254,7 +2254,7 @@ end;
 // while (i < parts.length ) and ( !context.getProfiles().containsKey(parts[i].toLowerCase()))
 // i++;
 // if (i >= parts.length)
-// raise Exception.create('Unable to process part '+path);
+// raise EDefinitionException.create('Unable to process part '+path);
 // int j := parts.length - 1;
 // while (j > 0 ) and ( (parts[j] = 'extension') ) or ( parts[j] = 'modifierExtension')))
 // j--;

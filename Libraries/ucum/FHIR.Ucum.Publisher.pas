@@ -106,7 +106,7 @@ Begin
     else if sId = 'special' Then
       PublishSpecialUnits(sURL, oBuilder)
     else
-      raise exception.create('unable to find unit '+sId)
+      raise ETerminologyError.create('unable to find unit '+sId)
   Else
     PublishHome(sURL, oBuilder);
 End;

@@ -240,9 +240,9 @@ end;
 Procedure TDicomParserContext.Initialise;
 Begin
   if FInput = nil Then
-    Raise Exception.Create('no Input provided');
+    raise EDicomException.create('no Input provided');
   if FDictionary = nil Then
-    Raise Exception.Create('no Dictionary provided');
+    raise EDicomException.create('no Dictionary provided');
   FErrorMessage := '';
   FMapOffset := 0;
   if MakeMap then
@@ -320,7 +320,7 @@ var
   iLen : Cardinal;
 begin
   if not (FInput is TFslAccessStream) Then
-    raise Exception.Create('Cannot determine whether stream is PDU unless stream supports positioning');
+    raise EDicomException.create('Cannot determine whether stream is PDU unless stream supports positioning');
 
   result := False;
   iPos := TFslAccessStream(FInput).Position;
@@ -722,7 +722,7 @@ Begin
     aBytes[B_0+2] := b;
     End;
   Else
-    Raise Exception.Create('Unknown big endian correction for '+ DICOM_VR_TYPE_NAMES[aType]);
+    raise EDicomException.create('Unknown big endian correction for '+ DICOM_VR_TYPE_NAMES[aType]);
   End;
 End;
 
@@ -794,7 +794,7 @@ begin
       End;
       iLen := ReadCardinal(dburLength);
       if (iGr <> $FFFE) Or (iElem = $E0D) Or (iLen <> 0) Then
-        Raise Exception.Create('unexpected termination tag ('+sTag+')');
+        raise EDicomException.create('unexpected termination tag ('+sTag+')');
     End
     Else
     Begin
@@ -899,7 +899,7 @@ begin
         5 : result.ReleaseRequest := ParseReleaseRequest;
         6 : result.ReleaseResponse := ParseReleaseResponse;
         7 : result.Abort := ParseAbort;
-  ///      8 : raise exception.create('not known');
+  ///      8 : raise EDicomException.create('not known');
       Else
         raise MakeError(2, 'Unknown PDU Type '+inttostr(iType));
       End;
@@ -932,7 +932,7 @@ begin
       5 : result := ParseReleaseRequest;
       6 : result := ParseReleaseResponse;
       7 : result := ParseAbort;
-///      8 : raise exception.create('not known');
+///      8 : raise EDicomException.create('not known');
     Else
       raise MakeError(2, 'Unknown PDU Type '+inttostr(iType));
     End;

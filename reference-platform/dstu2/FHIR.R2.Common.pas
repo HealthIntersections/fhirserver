@@ -33,7 +33,8 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.System,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Operations;
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Lang,
+  FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Operations;
 
 const
   ExceptionTypeTranslations : array [TExceptionType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
@@ -778,7 +779,7 @@ begin
     StructureDefinitionKindResource : result := sdkResource;
     StructureDefinitionKindLogical : result := sdkResource;
   else
-    raise Exception.Create('Unknown value');
+    raise EFHIRException.create('Unknown value');
   end;
 end;
 
@@ -1262,7 +1263,7 @@ end;
 
 function TFHIRLookupOpResponse2.addProp(name: string): TFHIRLookupOpRespPropertyW;
 begin
-  raise Exception.Create('Properties are not supported in R2');
+  raise EFHIRException.create('Properties are not supported in R2');
 end;
 
 function TFHIRLookupOpResponse2.GetVersion: String;

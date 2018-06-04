@@ -267,7 +267,7 @@ begin
   reltypes := TStringList.create;
 
   if (TotalCount = 0) then
-    raise Exception.Create('Error Connecting to RxNorm');
+    raise EDBException.create('Error Connecting to RxNorm');
   load(rels, 'select distinct REL from RXNREL');
   load(reltypes, 'select distinct RELA from RXNREL');
 end;
@@ -493,7 +493,7 @@ end;
 
 function TUMLSServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 begin
-  raise Exception.Create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
+  raise ETerminologyError.create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
 procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
@@ -504,7 +504,7 @@ end;
 
 function TUMLSServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('getcontext not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
+  raise ETerminologyError.create('getcontext not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
 function TUMLSServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
@@ -630,7 +630,7 @@ begin
         TUMLSPrep(prep).filters.Add(res.Link);
     end
     else
-      raise Exception.Create('Unknown filter ');
+      raise ETerminologyError.create('Unknown filter ');
   finally
     res.Free;
   end;
@@ -706,7 +706,7 @@ end;
 
 function TUMLSServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('Error in internal logic - filter not prepped?');
+  raise ETerminologyError.create('Error in internal logic - filter not prepped?');
 end;
 
 procedure TUMLSServices.Close(ctxt: TCodeSystemProviderContext);

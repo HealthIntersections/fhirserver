@@ -33,7 +33,7 @@ interface
 uses
   FastMM4,
   Windows, WinSvc, PSApi, TlHelp32, SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.System;
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.System;
 
 type
   TSystemService = { Abstract } class (TFslObject)
@@ -773,7 +773,7 @@ procedure TSystemService.ContainedStart;
 begin
   FIsContained := true;
   if not CanStart then
-    Raise Exception.create('unable to start service '+FDisplayName);
+    raise ELibraryException.create('unable to start service '+FDisplayName);
 end;
 
 procedure TSystemService.ContainedStop;

@@ -381,6 +381,8 @@ Function IsWordBreak(Const sWord : String) : Boolean;
 
 
 Type
+  EWPException = class (EFslException);
+
   TWPMouseAction = (
    // Mouse button is up
      msFree,  // mouse is free - "exploring" the document.

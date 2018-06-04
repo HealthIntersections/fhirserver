@@ -33,7 +33,11 @@ interface
 
 
 uses
-  SysUtils, Classes, FHIR.Support.Objects, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
+  SysUtils, Classes,
+  FHIR.Support.Objects,
+  FHIR.Base.Lang,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities,
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
 
 Type
 
@@ -8577,7 +8581,7 @@ begin
     exit(convertElementDefinition(src as FHIR.R3.Types.TFhirElementDefinition));
   if (src is FHIR.R3.Types.TFhirDataRequirement) then
     exit(convertDataRequirement(src as FHIR.R3.Types.TFhirDataRequirement));
-  raise Exception.create('Unknown type_ ' + src.fhirType());
+  raise EFHIRException.create('Unknown type_ ' + src.fhirType());
 end;
 
 class function TVersionConvertor_30_40.convertType(src : FHIR.R4.Types.TFhirType) : FHIR.R3.Types.TFhirType;
@@ -8685,7 +8689,7 @@ begin
     exit(convertElementDefinition(src as FHIR.R4.Types.TFhirElementDefinition));
   if (src is FHIR.R4.Types.TFhirDataRequirement) then
     exit(convertDataRequirement(src as FHIR.R4.Types.TFhirDataRequirement));
-  raise Exception.create('Unknown type_ ' + src.fhirType()+' for '+src.className);
+  raise EFHIRException.create('Unknown type_ ' + src.fhirType()+' for '+src.className);
 end;
 
 class function TVersionConvertor_30_40.convertParameters(src : FHIR.R3.Resources.TFhirParameters) : FHIR.R4.Resources.TFhirParameters;
@@ -28958,7 +28962,7 @@ begin
     exit(convertSupplyDelivery(src as FHIR.R3.Resources.TFhirSupplyDelivery));
   if (src is FHIR.R3.Resources.TFhirValueSet) then
     exit(convertValueSet(src as FHIR.R3.Resources.TFhirValueSet));
-  raise Exception.create('Unknown resource converting 3 -> 4' + src.fhirType);
+  raise EFHIRException.create('Unknown resource converting 3 -> 4' + src.fhirType);
 end;
 
 class function TVersionConvertor_30_40.convertResource(src : FHIR.R4.Resources.TFhirResource) : FHIR.R3.Resources.TFhirResource;
@@ -29115,7 +29119,7 @@ begin
     exit(convertSupplyDelivery(src as FHIR.R4.Resources.TFhirSupplyDelivery));
   if (src is FHIR.R4.Resources.TFhirValueSet) then
     exit(convertValueSet(src as FHIR.R4.Resources.TFhirValueSet));
-  raise Exception.create('Unknown resource converting 4 -> 3' + src.fhirType);
+  raise EFHIRException.create('Unknown resource converting 4 -> 3' + src.fhirType);
 end;
 
 end.

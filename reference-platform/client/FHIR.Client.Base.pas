@@ -38,7 +38,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Common;
 
 Type
-  EFHIRClientException = class (Exception)
+  EFHIRClientException = class (EFHIRException)
   private
     FIssue : TFhirOperationOutcomeW;
   public
@@ -317,7 +317,7 @@ end;
 
 function TFhirClientV.getResourceVersionId(res : TFHIRResourceV) : string;
 begin
-  raise Exception.Create('Must override getResourceValue in '+className);
+  raise EFHIRException.create('Must override getResourceValue in '+className);
 end;
 
 function TFhirClientV.link: TFhirClientV;
@@ -353,7 +353,7 @@ end;
 procedure TFhirClientV.SetFormat(fmt : TFhirFormat);
 begin
   if not (fmt in [ffXml, ffJson, ffTurtle]) then
-    raise Exception.Create('Unsupported format in client: '+CODES_TFHIRFormat[fmt]);
+    raise EFHIRException.create('Unsupported format in client: '+CODES_TFHIRFormat[fmt]);
 
   FFormat := fmt;
 end;

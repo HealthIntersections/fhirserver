@@ -33,7 +33,7 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   System.SysUtils, Classes,
   IdGlobal, IdSSLOpenSSL, IdSSLOpenSSLHeaders, IdHMAC, IdHash, IdHMACSHA1,
-  FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.DateTime, FHIR.Support.System,
+  FHIR.Support.Exceptions, FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.DateTime, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Support.Json;
 
@@ -324,7 +324,7 @@ end;
 procedure check(test: boolean; failmsg: string);
 begin
   if not test then
-    raise Exception.Create(failmsg);
+    raise ELibraryException.create(failmsg);
 end;
 
 function JWTBase64URL(b : TBytes) : TBytes; overload;
@@ -743,7 +743,7 @@ begin
     jwt_hmac_sha256 : jwt.header['alg'] := 'HS256';
     jwt_hmac_rsa256 : jwt.header['alg'] := 'RS256';
   else
-    raise Exception.Create('Unsupported Message Encryption Format');
+    raise ELibraryException.create('Unsupported Message Encryption Format');
   end;
   if (key <> nil) and (method <> jwt_none) and (key.id <> '') then
     jwt.header['kid'] := key.id;
@@ -769,7 +769,7 @@ begin
     jwt_hmac_sha256 : jwt.header['alg'] := 'HS256';
     jwt_hmac_rsa256 : jwt.header['alg'] := 'RS256';
   else
-    raise Exception.Create('Unsupported Message Encryption Format');
+    raise ELibraryException.create('Unsupported Message Encryption Format');
   end;
   if (key <> nil) and (method <> jwt_none) and (key.id <> '') then
     jwt.header['kid'] := key.id;
@@ -835,7 +835,7 @@ begin
   pk := nil;
   result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
   if result = nil then
-    raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
+    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
 end;
 
 class function TJWTUtils.loadRSAPublicKey(contents: TBytes): PRSA;
@@ -864,7 +864,7 @@ end;
 //  pk := nil;
 //  result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
 //  if result = nil then
-//    raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
+//    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
 //end;
 //
 class function TJWTUtils.loadRSAPublicKey(pemfile: AnsiString) : PRSA;
@@ -880,7 +880,7 @@ begin
   xk := nil;
   xk := PEM_read_bio_X509(bp, @xk, nil, nil);
   if xk = nil then
-    raise Exception.Create('Public key failure.' + GetSSLErrorMessage);
+    raise ELibraryException.create('Public key failure.' + GetSSLErrorMessage);
   try
     pk := X509_get_pubkey(xk);
     try
@@ -906,7 +906,7 @@ begin
   pk := nil;
   result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
   if result = nil then
-    raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
+    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
 end;
 
 class function TJWTUtils.pack(header, payload: String; method: TJWTAlgorithm; key : TJWK): String;
@@ -925,7 +925,7 @@ begin
       check(key.keyType = 'RSA', 'An RSA Key must be provided for HMAC/SHA-256');
       end;
   else
-    raise Exception.Create('Unsupported Message Encryption Format');
+    raise ELibraryException.create('Unsupported Message Encryption Format');
   end;
 
   input := BytesAdd(JWTBase64URL(header),  Byte(Ord('.')));
@@ -945,7 +945,7 @@ begin
   case method of
     jwt_hmac_rsa256 : jwt.header['alg'] := 'RS256';
   else
-    raise Exception.Create('Unsupported Message Encryption Format for PEM based signature');
+    raise ELibraryException.create('Unsupported Message Encryption Format for PEM based signature');
   end;
 
   input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
@@ -986,7 +986,7 @@ begin
         else if (h['alg'] = 'none') then
           check(sig = '', 'There cannot be a sig when there is no algorithm')
         else
-          raise Exception.Create('Unknown Algorithm '+h['alg']);
+          raise ELibraryException.create('Unknown Algorithm '+h['alg']);
       end;
       result := TJWT.create(h.Link, p.Link);
       result.originalSource := token;
@@ -1187,7 +1187,7 @@ begin
   Result := {$IFDEF WINDOWS}Windows.{$ENDIF}GetProcAddress(GetCryptLibHandle, {$IFDEF WINCE}PWideChar{$ELSE}PChar{$ENDIF}(FceName));
   if (Result = nil) and ACritical then
   begin
-    raise Exception.Create('Count not load '+FceName+' from '+DllPath);
+    raise ELibraryException.create('Count not load '+FceName+' from '+DllPath);
   end;
 end;
 

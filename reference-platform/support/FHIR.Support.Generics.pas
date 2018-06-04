@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, Types, RTLConsts, {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Generics.Collections, Generics.Defaults,
-  FHIR.Support.Objects;
+  FHIR.Support.Exceptions, FHIR.Support.Objects;
 
 Type
   TFslEnumerable<T : class> = class (TFslObject)
@@ -811,7 +811,7 @@ var
 begin
   i := IndexOf(old);
   if i = -1 then
-    raise Exception.Create('Item not found to delete');
+    raise ELibraryException.create('Item not found to delete');
   Insert(i, new);
   Delete(i+1);
 end;
@@ -1422,7 +1422,7 @@ end;
 
 function TFslMap<T>.ToArray: TArray<TFslPair<T>>;
 begin
-  raise Exception.Create('unimplemented');
+  raise ELibraryException.create('unimplemented');
 //  result := ToArrayImpl(Count);
 end;
 
@@ -1688,7 +1688,7 @@ end;
 
 function TFslMap<T>.TValueCollection.ToArray: TArray<T>;
 begin
-  raise Exception.Create('unimplemented');
+  raise ELibraryException.create('unimplemented');
 //  Result := ToArrayImpl(FMap.Count);
 end;
 
@@ -1717,7 +1717,7 @@ end;
 
 function TFslMap<T>.TKeyCollection.ToArray: TArray<String>;
 begin
-  raise Exception.Create('unimplemented');
+  raise ELibraryException.create('unimplemented');
 //  Result := ToArrayImpl(FMap.Count);
 end;
 
@@ -1851,7 +1851,7 @@ end;
 procedure TFslStringSet.remove(s: String);
 begin
   if contains(s) then
-    raise Exception.Create('Not done yet');
+    raise ELibraryException.create('Not done yet');
 end;
 
 function TFslStringSet.ToString: String;

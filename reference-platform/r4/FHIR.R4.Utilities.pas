@@ -924,7 +924,7 @@ begin
 //  else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
 //    result := TFHIRXhtmlComposer.Create(worker.link, Style, lang)
   else
-    raise Exception.Create('Format '+mimetype+' not recognised');
+    raise EFHIRException.create('Format '+mimetype+' not recognised');
 end;
 
 function ResourceTypeByName(name : String) : TFhirResourceType;
@@ -933,7 +933,7 @@ var
 begin
   index := StringArrayIndexOfSensitive(CODES_TFhirResourceType, name);
   if index < 1 then
-    raise Exception.Create('Unknown resource name "'+name+'"');
+    raise EFHIRException.create('Unknown resource name "'+name+'"');
   result := TFhirResourceType(index);
 end;
 
@@ -1153,7 +1153,7 @@ begin
         UnitsOfTimeMo : duration := 30;
         UnitsOfTimeA : duration := 365 // todo - how to correct for leap years?;
       else
-        raise exception.create('unknown duration units "'+value.repeat_.periodunitElement.value+'"');
+        raise EFHIRException.create('unknown duration units "'+value.repeat_.periodunitElement.value+'"');
       end;
       result := result + (StrToInt(value.repeat_.count) * duration / StrToInt(value.repeat_.frequency));
     end;
@@ -1468,7 +1468,7 @@ begin
   else if (extension.value is TFHIRCoding) then
     result := gen(TFHIRCoding(extension.value))
   else
-    raise Exception.create('Unhandled type '+extension.Value.ClassName);
+    raise EFHIRException.create('Unhandled type '+extension.Value.ClassName);
 end;
 
 procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String);
@@ -1634,7 +1634,7 @@ end;
 
 procedure generateComposition(x : TFhirXHtmlNode; vs : TFhirValueSet);
 begin
-   raise Exception.create('todo');
+   raise EFHIRException.create('todo');
 end;
 
 procedure BuildNarrative(vs : TFhirValueSet);
@@ -2504,7 +2504,7 @@ begin
   res := res.Substring(0, res.LastIndexOf('.'));
   code := FHIR_GENERATED_VERSION.Substring(0, FHIR_GENERATED_VERSION.LastIndexOf('.'));
   if (code <> res) then
-    raise Exception.Create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+', but the server is version '+fhirVersion);
+    raise EFHIRException.create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+', but the server is version '+fhirVersion);
 end;
 
 function TFHIRCapabilityStatementHelper.hasFormat(fmt: TFHIRFormat): boolean;
@@ -2801,7 +2801,7 @@ var
   cmp : TFHIRComposition;
 begin
   if type_ <> BundleTypeDocument then
-    raise Exception.Create('Cannot create a reference for something that is not a document');
+    raise EFHIRException.create('Cannot create a reference for something that is not a document');
   cmp := entryList[0].resource as TFhirComposition;
   result := TFHIRDocumentReference.create;
   try
@@ -2975,7 +2975,7 @@ begin
       signature.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
       end
   else
-    raise Exception.Create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
+    raise EFHIRException.create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
   end;
 end;
 
@@ -3022,7 +3022,7 @@ begin
         sig.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
         end
     else
-      raise Exception.Create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
+      raise EFHIRException.create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
     end;
     // fill out other stuff on provenance
     result.occurred := TFhirPeriod.Create;
@@ -3067,7 +3067,7 @@ end;
 
 //function TFHIRCodingListHelper.AsHeader: String;
 //begin
-//  raise Exception.Create('todo');
+//  raise EFHIRException.create('todo');
 //end;
 //
 //procedure TFHIRCodingListHelper.CopyTags(meta: TFHIRMeta);
@@ -3079,17 +3079,17 @@ end;
 //
 //function TFHIRCodingListHelper.getCoding(system, code: String): TFHIRCoding;
 //begin
-//  raise Exception.Create('todo');
+//  raise EFHIRException.create('todo');
 //end;
 //
 //function TFHIRCodingListHelper.hasCoding(system, code: String): boolean;
 //begin
-//  raise Exception.Create('todo');
+//  raise EFHIRException.create('todo');
 //end;
 //
 //procedure TFHIRCodingListHelper.CopyCodings(tags: TFHIRCodingList);
 //begin
-//  raise Exception.Create('todo');
+//  raise EFHIRException.create('todo');
 //end;
 //
 //function TFHIRCodingListHelper.json: TBytes;
@@ -3099,7 +3099,7 @@ end;
 //
 //procedure TFHIRCodingListHelper.WriteTags(meta: TFHIRMeta);
 //begin
-//  raise Exception.Create('todo');
+//  raise EFHIRException.create('todo');
 //end;
 //
 procedure TFHIRCodingListHelper.RemoveCoding(system, code: String);
@@ -3150,7 +3150,7 @@ end;
 
 procedure TFhirBundleLinkListHelper.SetMatch(rel: String; const Value: string);
 begin
-  raise Exception.Create('todo');
+  raise EFHIRException.create('todo');
 end;
 
 function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String;
@@ -3160,17 +3160,17 @@ begin
     if isOid(id) then
       result := base+id
     else
-      raise Exception.Create('The resource id "'+'" has a base of "urn:oid:" but is not a valid OID');
+      raise EFHIRException.create('The resource id "'+'" has a base of "urn:oid:" but is not a valid OID');
   end
   else if (base = 'urn:uuid:') then
   begin
     if isGuid(id) then
       result := base+id
     else
-      raise Exception.Create('The resource id "'+id+'" has a base of "urn:uuid:" but is not a valid UUID');
+      raise EFHIRException.create('The resource id "'+id+'" has a base of "urn:uuid:" but is not a valid UUID');
   end
   else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
-    raise Exception.Create('The resource base of "'+base+'" is not understood')
+    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
   else
     result := AppendForwardSlash(base)+CODES_TFhirResourceType[aType]+'/'+id;
 end;
@@ -3185,7 +3185,7 @@ begin
   else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
     result := url
   else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
-    raise Exception.Create('The resource base of "'+base+'" is not understood')
+    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
   else
     result := AppendForwardSlash(base)+url;
 end;
@@ -3197,7 +3197,7 @@ begin
   else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
     result := url
   else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
-    raise Exception.Create('The resource base of "'+base+'" is not understood')
+    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
   else
     result := AppendForwardSlash(base)+url;
 end;
@@ -3256,7 +3256,7 @@ begin
   else if not (v is TFhirBoolean) then
   begin
     try
-      raise Exception.Create('Attempt to read "'+name+'" as a boolean, when it is a '+NamedParameter[name].FhirType);
+      raise EFHIRException.create('Attempt to read "'+name+'" as a boolean, when it is a '+NamedParameter[name].FhirType);
     finally
       v.free;
     end;
@@ -3320,7 +3320,7 @@ begin
   else if not (v is TFhirPrimitiveType) then
   begin
     try
-      raise Exception.Create('Attempt to read "'+name+'" as a string, when it is a '+NamedParameter[name].FhirType);
+      raise EFHIRException.create('Attempt to read "'+name+'" as a string, when it is a '+NamedParameter[name].FhirType);
     finally
       v.free;
     end;
@@ -3503,7 +3503,7 @@ begin
     end;
   end;
   if required and (result = '') then
-    raise Exception.Create('Unable to find code in '+system);
+    raise EFHIRException.create('Unable to find code in '+system);
 end;
 
 function TFHIRCodeableConceptHelper.fromSystem(Systems: TArray<String>; required: boolean): String;
@@ -3520,7 +3520,7 @@ begin
     end;
   end;
   if required and (result = '') then
-    raise Exception.Create('Unable to find code in '+StringArrayToString(systems));
+    raise EFHIRException.create('Unable to find code in '+StringArrayToString(systems));
 end;
 
 function TFHIRCodeableConceptHelper.hasCode(System, Code: String): boolean;
@@ -3791,7 +3791,7 @@ begin
     else
       result := 'false'
   else
-    raise Exception.Create('Type '+t.className+' not handled yet');
+    raise EFHIRException.create('Type '+t.className+' not handled yet');
 end;
 
 
@@ -3805,7 +3805,7 @@ begin
     for e in profile.snapshot.elementList do
       if (element.ContentReference = '#'+e.id) then
         exit(getChildMap(profile, e));
-      raise DefinitionException.create('Unable to resolve name reference '+element.contentReference+' at path '+element.path);
+      raise EDefinitionException.create('Unable to resolve name reference '+element.contentReference+' at path '+element.path);
   end
   else
   begin
@@ -3856,7 +3856,7 @@ begin
         end;
       end;
       if (not found) then
-        raise Exception.create('Unable to resolve name reference '+nameReference+' at path '+path);
+        raise EFHIRException.create('Unable to resolve name reference '+nameReference+' at path '+path);
     end;
 
     inScope := false;
@@ -3944,7 +3944,7 @@ end;
 
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 { TFHIRStringListHelper }
@@ -4004,7 +4004,7 @@ var
 begin
   i := StringArrayIndexOfSensitive(CODES_TFhirResourceType, name);
   if i = -1 then
-    raise Exception.Create('Unknown resource type '+name);
+    raise EFHIRException.create('Unknown resource type '+name);
   result := CLASSES_TFhirResourceType[TFhirResourceType(i)].Create;
 end;
 
@@ -4081,7 +4081,7 @@ begin
   else if name = 'xhtml' then
     result := nil
   else
-    raise Exception.Create('Unknown type: '+name);
+    raise EFHIRException.create('Unknown type: '+name);
 end;
 
 function CreateBasicChildren(element : TFhirElement; exCoding : TFHIRCoding) : TFhirElement;
@@ -4250,7 +4250,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
   end;
 end;
 
@@ -4271,7 +4271,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
   end;
 end;
 
@@ -4287,7 +4287,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
   end;
 end;
 
@@ -4313,7 +4313,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRString\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRString\"')
   end;
 end;
 
@@ -4329,7 +4329,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRId\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRId\"')
   end;
 end;
 
@@ -4350,7 +4350,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRUri\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRUri\"')
   end;
 end;
 
@@ -4366,7 +4366,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDateTime\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDateTime\"')
   end;
 end;
 
@@ -4382,7 +4382,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRUnsignedInt\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRUnsignedInt\"')
   end;
 end;
 
@@ -4398,7 +4398,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRPositiveInt\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRPositiveInt\"')
   end;
 end;
 
@@ -4414,7 +4414,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRInstant\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRInstant\"')
   end;
 end;
 
@@ -4430,7 +4430,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRBoolean\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRBoolean\"')
   end;
 end;
 
@@ -4446,7 +4446,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRBase64Binary\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRBase64Binary\"')
   end;
 end;
 
@@ -4462,7 +4462,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDate\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDate\"')
   end;
 end;
 
@@ -4478,7 +4478,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDecimal\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDecimal\"')
   end;
 end;
 
@@ -4494,7 +4494,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRTime\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRTime\"')
   end;
 end;
 
@@ -4510,7 +4510,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIROid\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIROid\"')
   end;
 end;
 
@@ -4526,7 +4526,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRInteger\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRInteger\"')
   end;
 end;
 
@@ -4537,7 +4537,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
   end;
 end;
 
@@ -4549,7 +4549,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
   end;
 end;
 
@@ -4571,7 +4571,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
+    raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
   end;
 end;
 
@@ -5078,7 +5078,7 @@ begin
       if result = '' then
         result := input.type_
       else
-        raise Exception.Create('Multiple input types not accepted');
+        raise EFHIRException.create('Multiple input types not accepted');
 end;
 
 { TFhirValueSetExpansionHelper }
@@ -5157,9 +5157,9 @@ var
   v : Double;
 begin
   if system <> 'http://unitsofmeasure.org' then
-    raise Exception.Create('Unknown units system "'+system+'" trying to process quantity as a duration');
+    raise EFHIRException.create('Unknown units system "'+system+'" trying to process quantity as a duration');
   if not IsNumericString(value) then
-    raise Exception.Create('invalid value "'+value+'" trying to process quantity as a duration');
+    raise EFHIRException.create('invalid value "'+value+'" trying to process quantity as a duration');
   v := TSmartDecimal.ValueOf(value).AsDouble;
   if (code = 'ps') then
     result := v * (DATETIME_MILLISECOND_ONE / 1000000000)
@@ -5184,7 +5184,7 @@ begin
   else if (code = 'a') then
     result := v * 365.25
   else
-    raise Exception.Create('invalid UCUM unit "'+code+'" trying to process quantity as a duration');
+    raise EFHIRException.create('invalid UCUM unit "'+code+'" trying to process quantity as a duration');
 end;
 
 class function TFhirQuantityHelper.fromDuration(v : TDateTime): TFhirQuantity;
@@ -5279,7 +5279,7 @@ begin
   begin
     i := StringFindEndOfNumber(vs, 1);
     if i = 1 then
-      raise Exception.Create('Unable to parse quantity '+vs);
+      raise EFHIRException.create('Unable to parse quantity '+vs);
     v := vs.Substring(0, i);
     vs := vs.Substring(i);
   end;
@@ -5434,7 +5434,7 @@ Const
 Function GetExtForMimeType(mimeType: String): String;
 {$IFDEF MACOS}
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 {$ELSE}
 Var
@@ -5484,7 +5484,7 @@ End;
 function TFHIRAttachmentHelper.asZipPart(i: integer): TFslZipPart;
 {$IFDEF MACOS}
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 {$ELSE}
 var
@@ -5701,7 +5701,7 @@ var
   b : TDateTime;
 begin
   if system <> 'http://unitsofmeasure.org' then
-    raise Exception.Create('Unknown system (must be UCUM)');
+    raise EFHIRException.create('Unknown system (must be UCUM)');
   if code = 'a' then
     b := 365.25
   else if (code = 'mo') then
@@ -5715,7 +5715,7 @@ begin
   else if (code = 'min') then
     b := DATETIME_DAY_MINUTES
   else
-    raise Exception.Create('Unknown UCUM unit for time: '+code);
+    raise EFHIRException.create('Unknown UCUM unit for time: '+code);
   result := b * TSmartDecimal.ValueOf(value).AsDouble;
 end;
 

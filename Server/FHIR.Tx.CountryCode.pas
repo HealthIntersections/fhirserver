@@ -991,7 +991,7 @@ end;
 
 function TCountryCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TCountryCodeServices.subsumesTest(codeA, codeB: String): String;
@@ -1019,12 +1019,12 @@ begin
     end;
   end
   else
-    raise Exception.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+system(nil));
+    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+system(nil));
 end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TCountryCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -1040,7 +1040,7 @@ end;
 
 function TCountryCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderContext);
@@ -1055,7 +1055,7 @@ end;
 
 procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 

@@ -36,8 +36,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, Character,
-  FHIR.Support.Strings, RegularExpressions, FHIR.Support.Decimal,
+  SysUtils, Classes, Generics.Collections, Character, RegularExpressions,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Decimal,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Text;
 
 const
@@ -59,9 +59,6 @@ var
   NO_SELECT : boolean = false; // use this to turn actual selection on and off (mainly for debugging memory leaks, since the tests require selection in order to execute)
 
 Type
-  EXmlException = class (Exception);
-  EMXPathEngine = class (EXmlException);
-
   TMXmlElement = class;
 
   TMXmlNode = class (TFslObject)
@@ -1951,9 +1948,9 @@ begin
           end;
         xentRoot : fwork.add(self.link);
         xentIterator : evaluateIterator(expr, atEntry, variables, position, focus, fwork);
-        xentVariable : raise EMXPathEngine.create('not done yet');
+        xentVariable : raise EXmlException.create('not done yet');
       else
-        raise EMXPathEngine.Create('Unsupported Expression Type');
+        raise EXmlException.Create('Unsupported Expression Type');
       end;
       if expr.hasFilters then
       begin
@@ -2069,7 +2066,7 @@ begin
     18: work.Add(funcNormalizeSpace(expr, atEntry, variables, position, item));
     19: work.Add(funcTranslate(expr, atEntry, variables, position, item));
   else
-    raise EMXPathEngine.create('The function "'+expr.FValue+'" is not supported');
+    raise EXmlException.create('The function "'+expr.FValue+'" is not supported');
   end;
 end;
 
@@ -2110,7 +2107,7 @@ var
   work : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
-    raise EMXPathEngine.Create('Wrong number of parameters for count: expected 1 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for count: expected 1 but found '+inttostr(expr.Params.Count));
   work := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     result := TMXmlNumber.create(work.Count);
@@ -2126,7 +2123,7 @@ var
   list : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
-    raise EMXPathEngine.Create('Wrong number of parameters for distinct-values: expected 1 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for distinct-values: expected 1 but found '+inttostr(expr.Params.Count));
   list := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     for i := 0 to list.Count - 1 do
@@ -2163,7 +2160,7 @@ var
   work : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
-    raise EMXPathEngine.Create('Wrong number of parameters for exists: expected 1 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for exists: expected 1 but found '+inttostr(expr.Params.Count));
   work := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     result := TMXmlBoolean.create(not work.Empty);
@@ -2186,7 +2183,7 @@ var
   reg : TRegEx;
 begin
   if expr.Params.Count <> 2 then
-    raise EMXPathEngine.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
   p1 := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     p2 := evaluate(expr.Params[1], atEntry, variables, position, focus);
@@ -2225,7 +2222,7 @@ var
   work: TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
-    raise EMXPathEngine.Create('Wrong number of parameters for normalize-space: expected at least 1 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for normalize-space: expected at least 1 but found '+inttostr(expr.Params.Count));
   b := TStringBuilder.Create;
   try
     work := evaluate(expr.Params[0], atEntry, variables, position, focus);
@@ -2264,7 +2261,7 @@ var
   work : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 1 then
-    raise EMXPathEngine.Create('Wrong number of parameters for not: expected 1 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for not: expected 1 but found '+inttostr(expr.Params.Count));
   work := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     result := TMXmlBoolean.create(not evaluateBoolean(work));
@@ -2281,7 +2278,7 @@ var
   n : TMXmlNode;
 begin
   if expr.Params.Count <> 1 then
-    raise EMXPathEngine.Create('Wrong number of parameters for number: expected 1 but found 0');
+    raise EXmlException.Create('Wrong number of parameters for number: expected 1 but found 0');
   b := TStringBuilder.Create;
   try
     work := evaluate(expr.Params[0], atEntry, variables, position, focus);
@@ -2292,7 +2289,7 @@ begin
       work.Free;
     end;
     if not StringIsInteger32(b.ToString) then
-      raise EMXPathEngine.Create('The string "'+b.toString+'" is not a valid number');
+      raise EXmlException.Create('The string "'+b.toString+'" is not a valid number');
     result := TMXmlNumber.Create(StringToInteger32(b.ToString));
   finally
     b.Free;
@@ -2310,7 +2307,7 @@ var
   p1, p2 : TFslList<TMXmlNode>;
 begin
   if expr.Params.Count <> 2 then
-    raise EMXPathEngine.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
   p1 := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     p2 := evaluate(expr.Params[1], atEntry, variables, position, focus);
@@ -2334,7 +2331,7 @@ var
   n : TMXmlNode;
 begin
   if expr.Params.Count <> 1 then
-    raise EMXPathEngine.Create('Wrong number of parameters for string: expected 1 but found 0');
+    raise EXmlException.Create('Wrong number of parameters for string: expected 1 but found 0');
   b := TStringBuilder.Create;
   try
     work := evaluate(expr.Params[0], atEntry, variables, position, focus);
@@ -2356,7 +2353,7 @@ var
   s1, s2 : String;
 begin
   if expr.Params.Count <> 2 then
-    raise EMXPathEngine.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
   p1 := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     p2 := evaluate(expr.Params[1], atEntry, variables, position, focus);
@@ -2398,7 +2395,7 @@ begin
   b := TStringBuilder.Create;
   try
     if (s3.Length > 1) then
-      raise EMXPathEngine.Create('3rd parameter to translate has more than a single character');
+      raise EXmlException.Create('3rd parameter to translate has more than a single character');
     for ch in s1 do
       if s2.Contains(ch) then
         b.Append(s3[1])
@@ -2416,7 +2413,7 @@ var
 begin
   result := nil;
   if expr.Params.Count <> 3 then
-    raise EMXPathEngine.Create('Wrong number of parameters for translate: expected 3 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for translate: expected 3 but found '+inttostr(expr.Params.Count));
   p1 := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     p2 := evaluate(expr.Params[1], atEntry, variables, position, focus);
@@ -2464,7 +2461,7 @@ var
   n : TMXmlNode;
 begin
   if expr.Params.Count = 0 then
-    raise EMXPathEngine.Create('Wrong number of parameters for concat: expected at least 1 but found 0');
+    raise EXmlException.Create('Wrong number of parameters for concat: expected at least 1 but found 0');
   b := TStringBuilder.Create;
   try
     for p in expr.Params do
@@ -2489,7 +2486,7 @@ var
   n : TMXmlNode;
 begin
   if expr.Params.Count <> 2 then
-    raise EMXPathEngine.Create('Wrong number of parameters for contains: expected 2 but found '+inttostr(expr.Params.Count));
+    raise EXmlException.Create('Wrong number of parameters for contains: expected 2 but found '+inttostr(expr.Params.Count));
   p1 := evaluate(expr.Params[0], atEntry, variables, position, focus);
   try
     p2 := evaluate(expr.Params[1], atEntry, variables, position, focus);
@@ -2592,9 +2589,9 @@ begin
     xeoUnion: result := opUnion(left, right);
     xeoLessThan: result := opLessThan(left, right);
     xeoLessEquals: result := opLessThanEqual(left, right);
-    xeoSequence: raise EMXPathEngine.create('Operation , not done yet');
+    xeoSequence: raise EXmlException.create('Operation , not done yet');
   else
-    raise EMXPathEngine.create('Unknown operation (internal error');
+    raise EXmlException.create('Unknown operation (internal error');
   end;
 end;
 
@@ -2831,7 +2828,7 @@ var
 begin
   count := 0;
   case axis of
-    axisSelf: raise EMXPathEngine.Create('not done yet');
+    axisSelf: raise EXmlException.Create('not done yet');
     axisChild:
       if node is TMXmlElement then
         iterateChildren(TMXmlElement(node).Children, false);
@@ -2851,16 +2848,16 @@ begin
           if event(context, a) then
             list.Add(a.Link);
 
-    axisNamespace: raise EMXPathEngine.Create('not done yet');
-    axisParent: raise EMXPathEngine.Create('not done yet');
-    axisAncestor: raise EMXPathEngine.Create('not done yet');
-    axisAncestorOrSelf: raise EMXPathEngine.Create('not done yet');
-    axisFollowing: raise EMXPathEngine.Create('not done yet');
-    axisFollowingSibling: raise EMXPathEngine.Create('not done yet');
-    axisPreceding: raise EMXPathEngine.Create('not done yet');
-    axisPrecedingSibling: raise EMXPathEngine.Create('not done yet');
+    axisNamespace: raise EXmlException.Create('not done yet');
+    axisParent: raise EXmlException.Create('not done yet');
+    axisAncestor: raise EXmlException.Create('not done yet');
+    axisAncestorOrSelf: raise EXmlException.Create('not done yet');
+    axisFollowing: raise EXmlException.Create('not done yet');
+    axisFollowingSibling: raise EXmlException.Create('not done yet');
+    axisPreceding: raise EXmlException.Create('not done yet');
+    axisPrecedingSibling: raise EXmlException.Create('not done yet');
   else
-    raise EMXPathEngine.Create('unknown xpath axis')
+    raise EXmlException.Create('unknown xpath axis')
   end;
 end;
 
@@ -2964,7 +2961,7 @@ end;
 //    end;
 //  end
 //  else
-//    raise EMXPathEngine.create('Not done yet');
+//    raise EXmlException.create('Not done yet');
 
 function TMXmlDocument.select(xpath: String; focus: TMXmlElement): TFslList<TMXmlNode>;
 var
@@ -2991,7 +2988,7 @@ begin
         if item is TMXmlElement then
           result.Add(TMXmlElement(item).Link)
         else
-          raise EMXPathEngine.create('Error Message');
+          raise EXmlException.create('Error Message');
     finally
       list.Free;
     end;
@@ -3036,7 +3033,7 @@ begin
         if item is TMXmlElement then
           result.Add(TMXmlElement(item).Link)
         else
-          raise EMXPathEngine.create('Error Message');
+          raise EXmlException.create('Error Message');
     finally
       list.Free;
     end;
@@ -3163,7 +3160,7 @@ end;
 function TXPathVariables.add(name: String; value: TMXmlNode): TXPathVariables;
 begin
   if FMap.ContainsKey(name) and not name.StartsWith('%') then
-    raise EMXPathEngine.create('Nested re-use of variable name '+name);
+    raise EXmlException.create('Nested re-use of variable name '+name);
   result := TXPathVariables.Create;
   try
     result.FMap.addAll(FMap);

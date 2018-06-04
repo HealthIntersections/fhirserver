@@ -983,7 +983,7 @@ Begin
 //          if oAttach.mimeType = 'application/pdf' then
 //            oImage.Image := TWPPDFGraphic.Create(oAttach.Link)
 //          else
-            raise Exception.Create('Unknown attachment type '+oAttach.MimeType);
+            raise EWPException.create('Unknown attachment type '+oAttach.MimeType);
         end
         else If Assigned(OnLoadImage) Then
           OnLoadImage(Self, Context, oImage.Name, oBuffer);
@@ -3300,7 +3300,7 @@ Begin
     oMemory.Expand := True;
 
     if not (oImg is TFslVCLGraphic) then
-      raise Exception.Create('Not done yet')
+      raise EWPException.create('Not done yet')
     else If TFslVCLGraphic(oImg).Handle Is TJPEGImage Then
     Begin
       oImg.SaveToStream(oMemory);

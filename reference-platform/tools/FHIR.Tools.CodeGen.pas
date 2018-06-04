@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes, Character,
   FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory;
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Lang;
 
 type
   TFHIRCodeGenerator = class (TFslObject)
@@ -117,7 +117,7 @@ begin
   else if (StringArrayExistsSensitive(['pascal', 'delphi'], lang)) then
     result := TFHIRCodeGeneratorPascal.Create
   else
-    raise Exception.Create('Unknown code generation language '+lang);
+    raise EFHIRException.create('Unknown code generation language '+lang);
 end;
 
 const

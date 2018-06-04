@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Factory, FHIR.Base.Scim;
+  FHIR.Base.Factory, FHIR.Base.Scim, FHIR.Base.Lang;
 
 Const
 //  SECURITY_BASE_URI = 'http://www.healthintersections.com.au/scim/entitlement/';
@@ -211,7 +211,7 @@ end;
 function TFHIRSecurityRights.canRead(resourceName : String): boolean;
 begin
   if (self = nil) or (FReadAllowed = nil) then
-    raise Exception.Create('Error Message');
+    raise EFHIRException.create('Error Message');
   result := FReadAllowed.contains(resourceName);
 end;
 

@@ -74,7 +74,7 @@ certificate you nominate
 uses
   SysUtils, Classes, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdHashSHA, IdGlobal,
-  FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Support.MXml, FHIR.Support.Xml,
   IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Web.Fetcher;
@@ -183,7 +183,7 @@ implementation
 procedure check(test: boolean; failmsg: string);
 begin
   if not test then
-    raise Exception.Create(failmsg);
+    raise ELibraryException.create(failmsg);
 end;
 
 function StripLeadingZeros(bytes : AnsiString) : AnsiString;
@@ -216,20 +216,20 @@ var
 begin
   sv := BytesAsAnsiString(asn1);
   if sv[1] <> #$30 then
-    raise Exception.Create('Error 1 reading asn1 DER signature');
+    raise ELibraryException.create('Error 1 reading asn1 DER signature');
   if ord(sv[2]) <> length(sv)-2 then
-    raise Exception.Create('Error 2 reading asn1 DER signature');
+    raise ELibraryException.create('Error 2 reading asn1 DER signature');
   delete(sv, 1, 2);
   if sv[1] <> #$02 then
-    raise Exception.Create('Error 3 reading asn1 DER signature');
+    raise ELibraryException.create('Error 3 reading asn1 DER signature');
   r := copy(sv, 3, ord(sv[2]));
   delete(sv, 1, length(r)+2);
   if sv[1] <> #$02 then
-    raise Exception.Create('Error 4 reading asn1 DER signature');
+    raise ELibraryException.create('Error 4 reading asn1 DER signature');
   s := copy(sv, 3, ord(sv[2]));
   delete(sv, 1, length(s)+2);
   if length(sv) <> 0 then
-    raise Exception.Create('Error 5 reading asn1 DER signature');
+    raise ELibraryException.create('Error 5 reading asn1 DER signature');
 
   if (r[2] >= #$80) and (r[1] = #0) then
     delete(r, 1, 1);
@@ -257,7 +257,7 @@ begin
   else if uri = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments' then
     result := [xcmCanonicalise, xcmComments]
   else
-    raise Exception.Create('Canonicalization Method '+uri+' is not supported');
+    raise ELibraryException.create('Canonicalization Method '+uri+' is not supported');
 end;
 
 function TDigitalSigner.canonicaliseXml(method: TXmlCanonicalisationMethodSet; source: TBytes): TBytes;
@@ -358,10 +358,10 @@ begin
         if transform.attribute['Algorithm'] = 'http://www.w3.org/2000/09/xmldsig#enveloped-signature' then
           bEnv := true
         else
-          raise Exception.Create('Transform '+transform.attribute['Algorithm']+' is not supported');
+          raise ELibraryException.create('Transform '+transform.attribute['Algorithm']+' is not supported');
     end;
   if (doc <> nil) and not bEnv then
-    raise Exception.Create('Reference Transform is not http://www.w3.org/2000/09/xmldsig#enveloped-signature');
+    raise ELibraryException.create('Reference Transform is not http://www.w3.org/2000/09/xmldsig#enveloped-signature');
 
   //Digest the resulting data object using the DigestMethod specified in its Reference specification.
   if ref.elementNS(NS_DS, 'DigestMethod').attribute['Algorithm'] = 'http://www.w3.org/2000/09/xmldsig#sha1' then
@@ -369,12 +369,12 @@ begin
   else if ref.elementNS(NS_DS, 'DigestMethod').attribute['Algorithm'] = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256' then
     bytes := digestSHA256(bytes)
   else
-    raise Exception.Create('Unknown Digest method '+ref.elementNS(NS_DS, 'DigestMethod').attribute['Algorithm']);
+    raise ELibraryException.create('Unknown Digest method '+ref.elementNS(NS_DS, 'DigestMethod').attribute['Algorithm']);
   digest := decodeBase64(ref.elementNS(NS_DS, 'DigestValue').Text);
 
   //Compare the generated digest value against DigestValue in the SignedInfo Reference; if there is any mismatch, validation fails.
   if not SameBytes(bytes, digest) then
-    raise Exception.Create('Digest mismatch on reference '+ref.attribute['URI']);
+    raise ELibraryException.create('Digest mismatch on reference '+ref.attribute['URI']);
 end;
 
 
@@ -401,10 +401,10 @@ begin
     else
       sig := doc.docElement.elementNS(NS_DS, 'Signature');
     if (sig = nil) then
-      raise Exception.Create('Signature not found');
+      raise ELibraryException.create('Signature not found');
     si := sig.elementNS(NS_DS, 'SignedInfo');
     if (si = nil) then
-      raise Exception.Create('SignedInfo not found');
+      raise ELibraryException.create('SignedInfo not found');
     if (sig <> doc) then
       doc.docElement.Children.Remove(sig)
     else
@@ -505,7 +505,7 @@ begin
           m := m + inttohex(e, 8)+' ('+String(err)+')'+#13#10;
           e := ERR_get_error;
         until e = 0;
-        raise Exception.Create('OpenSSL Error verifying signature: '+#13#10+m);
+        raise ELibraryException.create('OpenSSL Error verifying signature: '+#13#10+m);
       end
       else
         result := e = 1;
@@ -576,7 +576,7 @@ begin
   pk := nil;
   result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
   if result = nil then
-    raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
+    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
 end;
 
 
@@ -593,7 +593,7 @@ begin
   pk := nil;
   result := PEM_read_bio_DSAPrivateKey(bp, @pk, nil, pp);
   if result = nil then
-    raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
+    raise ELibraryException.create('Private key failure.' + GetSSLErrorMessage);
 end;
 
 
@@ -691,7 +691,7 @@ begin
     sdXmlDSASha256 : result := 'http://www.w3.org/2000/09/xmldsig#dsa-sha256';
     sdXmlRSASha256 : result := 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
   else
-    raise Exception.Create('unknown method');
+    raise ELibraryException.create('unknown method');
   end;
 end;
 
@@ -876,10 +876,10 @@ begin
   try
     ki := sig.elementNS(NS_DS, 'KeyInfo');
     if ki = nil then
-      raise Exception.Create('No KeyInfo found in digital signature');
+      raise ELibraryException.create('No KeyInfo found in digital signature');
     kv := ki.elementNS(NS_DS, 'KeyValue');
     if kv = nil then
-      raise Exception.Create('No KeyValue found in digital signature');
+      raise ELibraryException.create('No KeyValue found in digital signature');
     kd := kv.elementNS(NS_DS, 'RSAKeyValue');
     if kd <> nil then
     begin
@@ -911,7 +911,7 @@ begin
 //        end;
       end
       else
-        raise Exception.Create('No Key Info found');
+        raise ELibraryException.create('No Key Info found');
     end;
 
     result.Link;
@@ -950,7 +950,7 @@ begin
   else if uri = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256' then
     result := sdXmlRSASha256
   else
-    raise Exception.Create('Unsupported signature method '+uri);
+    raise ELibraryException.create('Unsupported signature method '+uri);
 end;
 
 { TDigitalSignatureReferenceList }

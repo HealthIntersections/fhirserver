@@ -297,7 +297,7 @@ end;
 
 procedure signProvenance(filename, certpath, certtype : String);
 begin
-  raise Exception.Create('Not Done Yet');
+  raise ETestCase.create('Not Done Yet');
 {  // ok, first we look at the filename, and see what it is.
   p := TFHIRXmlParser.Create('en');
   try
@@ -311,7 +311,7 @@ begin
       else if p.resource is TFhirProvenance then
         sigtype := 1
       else
-        raise Exception.Create('Do not know how to sign a '+CODES_TFhirResourceType[p.resource.ResourceType]);
+        raise ETestCase.create('Do not know how to sign a '+CODES_TFhirResourceType[p.resource.ResourceType]);
     finally
       f.Free;
     end;
@@ -336,7 +336,7 @@ end;
 
 procedure verify(filename, certificate, password : String);
 begin
-  raise Exception.Create('Not Done Yet');
+  raise ETestCase.create('Not Done Yet');
 end;
 
 procedure dotest(src, dst : String; names : TStringList);
@@ -348,7 +348,7 @@ begin
       roundtrip(src+s+'.xml', dst+s.Replace('\', '_')+'.pascal.xml');
     except
       on e : exception do
-        raise Exception.Create('Error Processing '+s+': '+e.message);
+        raise ETestCase.create('Error Processing '+s+': '+e.message);
     end;
 end;
 
@@ -369,15 +369,15 @@ begin
       if (paramstr(1) = '-signatom') then
       begin
         if not FindCmdLineSwitch('certpath', certpath) then
-          raise Exception.Create('No certificate provided');
+          raise ETestCase.create('No certificate provided');
         if not FindCmdLineSwitch('certtype', certtype) then
-          raise Exception.Create('No certificate provided');
+          raise ETestCase.create('No certificate provided');
 //        writeln('-signatom '+paramstr(2)+' -certpath '+certpath+' -certtype '+certtype);
         signAtom(paramstr(2), certpath, certtype);
       end
       else if (paramstr(1) = '-signprovenance') then
       begin
-        raise Exception.Create('Not Done Yet');
+        raise ETestCase.create('Not Done Yet');
       end
       else if (paramstr(1) = '-tests') then
       begin
@@ -423,7 +423,7 @@ begin
       else
       begin
         if (ParamStr(1) = '') or (ParamStr(2) = '') or not FileExists(paramstr(1)) then
-          raise Exception.Create('Provide input and output file names');
+          raise ETestCase.create('Provide input and output file names');
         roundTrip(paramStr(1), paramStr(2));
       end;
     except

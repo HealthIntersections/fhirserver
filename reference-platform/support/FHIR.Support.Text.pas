@@ -1287,7 +1287,7 @@ function TFslStreamReader.ReadLine: string;
   NewLineIndex: Integer;
   PostNewLineIndex: Integer;}
 begin
-  raise Exception.Create('This needs debugging for buffer changes');
+  raise ELibraryException.create('This needs debugging for buffer changes');
 {  Result := '';
   if FClosed then
     Exit;
@@ -1341,7 +1341,7 @@ end;
 
 function TFslStreamReader.ReadToEnd: string;
 begin
-  raise Exception.Create('This needs debugging for FBufferStart');
+  raise ELibraryException.create('This needs debugging for FBufferStart');
   Result := '';
   if (not FClosed) and (not EndOfStream) then
   begin
@@ -1428,22 +1428,22 @@ end;
 
 function TFslStringReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
-  raise Exception.Create('Not done yet');
+  raise ELibraryException.create('Not done yet');
 end;
 
 function TFslStringReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
-  raise Exception.Create('Not done yet');
+  raise ELibraryException.create('Not done yet');
 end;
 
 function TFslStringReader.ReadLine: string;
 begin
-  raise Exception.Create('Not done yet');
+  raise ELibraryException.create('Not done yet');
 end;
 
 function TFslStringReader.ReadToEnd: string;
 begin
-  raise Exception.Create('Not done yet');
+  raise ELibraryException.create('Not done yet');
 end;
 
 
@@ -2001,7 +2001,7 @@ begin
       result := encoding.GetString(bytes);
     end
   else
-    raise Exception.Create('File "' + filename + '" not found');
+    raise ELibraryException.create('File "' + filename + '" not found');
 end;
 
 function StreamToString(stream : TStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
@@ -2093,7 +2093,7 @@ begin
     end;
     end
   else
-    raise Exception.Create('File "' + filename + '" not found');
+    raise ELibraryException.create('File "' + filename + '" not found');
 end;
 
 

@@ -8,7 +8,8 @@ uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
   FHIR.Support.Lock,
-  FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Objects;
+  FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Objects,
+  FHIR.Base.Lang;
 
 type
   TGoogleAnalyaticsEventData = class (TFslObject)
@@ -90,7 +91,7 @@ begin
             http.Post('https://www.google-analytics.com/batch', post, resp);
           except
             on e : EIdHTTPProtocolException do
-              raise Exception.Create(e.message+' : '+e.ErrorMessage);
+              raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
             on e:Exception do
               raise;
           end;

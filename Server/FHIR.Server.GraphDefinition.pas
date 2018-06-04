@@ -31,16 +31,14 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Math, FHIR.Web.Parsers,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Math, FHIR.Web.Parsers, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json,
   FHIR.Misc.GraphQL,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   FHIR.Version.Context, FHIR.Version.PathEngine, FHIR.Version.PathNode,
   FHIR.Tools.GraphQL;
 
 type
-  EGraphDefinitionEngine = class (Exception);
-
   TFHIRGraphDefinitionParser = class (TFslObject)
   private
     FLexer : TFHIRPathLexer;
@@ -205,7 +203,7 @@ end;
 function TFHIRGraphDefinitionEngine.check(test: boolean; msg: String): boolean;
 begin
   if not test then
-    raise EGraphDefinitionEngine.Create(msg);
+    raise EFHIRException.Create(msg);
   result := test;
 end;
 
@@ -423,7 +421,7 @@ end;
 
 procedure TFHIRGraphDefinitionParser.readHeader(gd: TFhirGraphDefinition);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRGraphDefinitionParser.readLinkList(list: TFhirGraphDefinitionLinkList);

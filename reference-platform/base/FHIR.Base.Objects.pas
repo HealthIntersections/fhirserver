@@ -454,7 +454,7 @@ type
   public
     function link : TFHIRWorkerContextV; overload;
 
-    procedure loadResourceJson(rtype, id : String; json : TStream); virtual;
+    procedure loadResourceJson(rtype, id : String; json : TStream); virtual; abstract;
     Property version : TFHIRVersion read GetVersion;
     function versionString : String;
 
@@ -552,7 +552,8 @@ function isEmptyProp(v : TFHIRObjectList) : boolean; overload;
 Implementation
 
 Uses
-  FHIR.Support.Strings;
+  FHIR.Support.Strings,
+  FHIR.Base.Lang;
 
 { TFHIRObject }
 
@@ -607,7 +608,7 @@ end;
 
 procedure TFHIRObject.addExtension(url: String; value: TFHIRObject);
 begin
-  raise Exception.Create('Extensions are not supported on this object');
+  raise EFHIRException.create('Extensions are not supported on this object');
 end;
 
 procedure TFHIRObject.Assign(oSource: TFslObject);
@@ -697,7 +698,7 @@ end;
 
 procedure TFHIRObject.deleteProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise Exception.Create('The property "'+propName+'" is unknown deleting the property"');
+  raise EFHIRException.create('The property "'+propName+'" is unknown deleting the property"');
 end;
 
 procedure TFHIRObject.deletePropertyValue(name : String; list: TFHIRObjectList; value: TFHIRObject);
@@ -706,7 +707,7 @@ var
 begin
   i := list.IndexByReference(value);
   if (i = -1) then
-    raise Exception.Create('Unable to find object in '+name+' to remove it');
+    raise EFHIRException.create('Unable to find object in '+name+' to remove it');
   list.DeleteByIndex(i);
 end;
 
@@ -752,7 +753,7 @@ end;
 procedure TFHIRObject.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
 begin
   if checkValid then
-    raise Exception.Create('Property '+name+' is not valid');
+    raise EFHIRException.create('Property '+name+' is not valid');
 end;
 
 function TFHIRObject.getPropertyValue(propName: string): TFHIRProperty;
@@ -780,7 +781,7 @@ end;
 procedure TFHIRObject.insertProperty(propName: string; propValue: TFHIRObject;
   index: integer);
 begin
-  raise Exception.Create('The property "'+propName+'" is unknown or not a list property (inserting value)"');
+  raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (inserting value)"');
 end;
 
 function TFHIRObject.isEmpty: boolean;
@@ -883,7 +884,7 @@ end;
 
 function TFHIRObjectText.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.equalsDeep(other: TFHIRObject): boolean;
@@ -898,7 +899,7 @@ end;
 
 function TFHIRObjectText.fhirType: String;
 begin
-  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.getId: String;
@@ -920,17 +921,17 @@ end;
 
 function TFHIRObjectText.makeCodeValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.makeIntValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.makeStringValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 procedure TFHIRObjectText.setIdValue(id: String);
@@ -939,7 +940,7 @@ end;
 
 procedure TFHIRObjectText.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise Exception.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 { TFHIRObjectList }
@@ -1296,12 +1297,12 @@ end;
 
 procedure TFHIRObject.reorderProperty(propName: string; source, destination: integer);
 begin
-  raise Exception.Create('The property "'+propName+'" is unknown or not a list reordering the property"');
+  raise EFHIRException.create('The property "'+propName+'" is unknown or not a list reordering the property"');
 end;
 
 procedure TFHIRObject.replaceProperty(propName: string; existing, new: TFHIRObject);
 begin
-  raise Exception.Create('The property "'+propName+'" is unknown replacing the property"');
+  raise EFHIRException.create('The property "'+propName+'" is unknown replacing the property"');
 end;
 
 procedure TFHIRObject.replacePropertyValue(name: String; list: TFHIRObjectList; existing, new: TFHIRObject);
@@ -1310,7 +1311,7 @@ var
 begin
   i := list.IndexByReference(existing);
   if (i = -1) then
-    raise Exception.Create('Unable to find object in '+name+' to remove it');
+    raise EFHIRException.create('Unable to find object in '+name+' to remove it');
   list.SetItem(i, new);
 end;
 
@@ -1521,11 +1522,6 @@ end;
 function TFHIRWorkerContextV.link: TFHIRWorkerContextV;
 begin
   result := TFHIRWorkerContextV(inherited Link);
-end;
-
-procedure TFHIRWorkerContextV.loadResourceJson(rtype, id: String; json: TStream);
-begin
-  raise Exception.Create('Must override...');
 end;
 
 function TFHIRWorkerContextV.versionString: String;

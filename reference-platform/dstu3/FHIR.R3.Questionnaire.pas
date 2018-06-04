@@ -191,11 +191,11 @@ var
   item : TFHIRQuestionnaireItem;
 begin
   if profile = nil then
-    raise Exception.Create('FHIR.Version.Questionnaire.build: No Profile provided');
+    raise EFHIRException.create('FHIR.Version.Questionnaire.build: No Profile provided');
 
   if resource <> nil then
     if profile.snapshot.elementList[0].path <> CODES_TFhirResourceType[resource.ResourceType] then
-      raise Exception.Create('Wrong Type');
+      raise EFHIRException.create('Wrong Type');
 
   if FPrebuiltQuestionnaire <> nil then
     FQuestionnaire := FPrebuiltQuestionnaire.Link
@@ -467,10 +467,10 @@ var
   gen : TNarrativeGenerator;
 begin
   if Profile = nil then
-    raise Exception.Create('A Profile is required');
+    raise EFHIRException.create('A Profile is required');
 
   if Answers = nil then
-    raise Exception.Create('A set of answers is required');
+    raise EFHIRException.create('A set of answers is required');
 
 
   Resource := FFactory.makeByName(profile.snapshot.elementList[0].path) as TFhirDomainResource;
@@ -506,7 +506,7 @@ begin
   else if ((s = 'dateTime') and (t = 'date')) then
     result := TFhirDate.Create(TFhirDateTime(v).value)
   else
-    raise Exception.Create('Unable to convert from '+s+' to '+t+' at path = '+path);
+    raise EFHIRException.create('Unable to convert from '+s+' to '+t+' at path = '+path);
 end;
 
 function isPrimitive(t : TFhirElementDefinitionType) : Boolean; overload;
@@ -604,9 +604,9 @@ begin
           if (isPrimitive(t)) then
           begin
             if (g.itemList.Count <> 1) then
-              raise Exception.Create('Unexpected Condition: a group for a primitive type with more than one question @ '+g.linkId);
+              raise EFHIRException.create('Unexpected Condition: a group for a primitive type with more than one question @ '+g.linkId);
             if (g.itemList.Count > 0) then
-              raise Exception.Create('Unexpected Condition: a group for a primitive type with groups @ '+g.linkId);
+              raise EFHIRException.create('Unexpected Condition: a group for a primitive type with groups @ '+g.linkId);
             q := g.itemList[0];
             for a in q.answerList do
             begin
@@ -616,7 +616,7 @@ begin
                 result := true;
               end
               else
-                raise Exception.Create('Empty answer for '+g.linkId);
+                raise EFHIRException.create('Empty answer for '+g.linkId);
             end;
           end
           else
@@ -649,7 +649,7 @@ begin
     d := defn.getById(q.linkId);
     try
       if d.hasTypeChoice then
-        raise Exception.Create('not done yet - shouldn''t get here??');
+        raise EFHIRException.create('not done yet - shouldn''t get here??');
       for a in q.answerList do
       begin
         context.setProperty(d.name, convertType(a.value, d.statedType.code, q.linkId));
@@ -775,11 +775,11 @@ begin
                 if result = '' then
                   result := cc.system
                  else
-                  raise Exception.Create('Multiple matches in '+vs.url+' for code '+code+' at path = '+path);
+                  raise EFHIRException.create('Multiple matches in '+vs.url+' for code '+code+' at path = '+path);
           end;
         end;
     end;
-    raise Exception.Create('Logic error'+' at path = '+path);
+    raise EFHIRException.create('Logic error'+' at path = '+path);
   end;
   result := '';
   for cc in vs.expansion.containsList Do
@@ -788,10 +788,10 @@ begin
       if result = '' then
         result := cc.system
       else
-        raise Exception.Create('Multiple matches in '+vs.url+' for code '+code+' at path = '+path);
+        raise EFHIRException.create('Multiple matches in '+vs.url+' for code '+code+' at path = '+path);
   end;
   if result = '' then
-    raise Exception.Create('Unable to resolve code '+code+' at path = '+path);
+    raise EFHIRException.create('Unable to resolve code '+code+' at path = '+path);
 end;
 
 function TQuestionnaireBuilder.isExempt(element, child: TFhirElementDefinition) : boolean;
@@ -970,7 +970,7 @@ begin
   else if t.code = 'Quantity' then
     result := obj is TFHIRQuantity
   else
-    raise Exception.Create('Not Done Yet');
+    raise EFHIRException.create('Not Done Yet');
 end;
 
 procedure TQuestionnaireBuilder.selectTypes(profile : TFHirStructureDefinition; sub : TFHIRQuestionnaireItem; t : TFhirElementDefinitionType; source, dest : TFhirQuestionnaireResponseItemList);
@@ -1142,7 +1142,7 @@ begin
   else if (t.code = 'Extension') then
     addExtensionQuestions(profile, group, element, path, required, t.profile, answerGroups)
   else if (t.Code <> 'Meta') and (t.Code <> 'Narrative') and (t.Code <> 'Resource') then
-    raise Exception.create('Unhandled Data Type: '+t.Code+' on element '+element.Path);
+    raise EFHIRException.create('Unhandled Data Type: '+t.Code+' on element '+element.Path);
 end;
 
 function isPrimitive(obj : TFslObject) : boolean; overload;
@@ -1200,7 +1200,7 @@ begin
   end;
 
   if (result = nil) then
-    raise Exception.Create('Unable to convert from "'+value.className+'" for Answer Format '+CODES_TFHIRitemTypeEnum[af]+', path = '+path);
+    raise EFHIRException.create('Unable to convert from "'+value.className+'" for Answer Format '+CODES_TFHIRitemTypeEnum[af]+', path = '+path);
 end;
 
 
@@ -1532,7 +1532,7 @@ end;
 procedure TQuestionnaireBuilder.addAttachmentQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Attachment');
-//  raise Exception.Create('addAttachmentQuestions not Done Yet');
+//  raise EFHIRException.create('addAttachmentQuestions not Done Yet');
 end;
 
 procedure TQuestionnaireBuilder.addRangeQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1551,7 +1551,7 @@ end;
 procedure TQuestionnaireBuilder.addScheduleQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Schedule');
-//  raise Exception.Create('addScheduleQuestions not Done Yet');
+//  raise EFHIRException.create('addScheduleQuestions not Done Yet');
 end;
 
 // Special Types ---------------------------------------------------------------
@@ -1580,7 +1580,7 @@ end;
 
 procedure TQuestionnaireBuilder.addIdRefQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
-//  raise Exception.Create('not Done Yet');
+//  raise EFHIRException.create('not Done Yet');
 end;
 
 procedure TQuestionnaireBuilder.addExtensionQuestions(profile : TFHirStructureDefinition; group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; profileURL : String; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1591,11 +1591,11 @@ begin
   if (profileURL <> '') and profiles.getExtensionDefn(profile, profileURL, profile, extension) then
   begin
     if answerGroups.count > 0 then
-      raise Exception.Create('Debug this');
+      raise EFHIRException.create('Debug this');
     if extension.snapshot.elementList.Count = 1 then
       buildQuestion(group, profile, extension.snapshot.elementList[0], path+'.extension['+profileURL+']', answerGroups)
     else
-      raise Exception.Create('Not done yet');
+      raise EFHIRException.create('Not done yet');
   end;
 end;
 

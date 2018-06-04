@@ -151,7 +151,7 @@ begin
       if (o = l[c]) then
         inc(c);
     if c <> 3 then
-      raise Exception.Create('Wrong Count');
+      raise ETestCase.create('Wrong Count');
   finally
     l.Free;
   end;
@@ -167,9 +167,9 @@ begin
     map.Add('test2', TFslString.create('test2'));
     map.AddOrSetValue('test2', TFslString.create('test3'));
     if map['test1'].FString <> 'test1' then
-      raise Exception.Create('Mismatch');
+      raise ETestCase.create('Mismatch');
     if map['test2'].FString <> 'test3' then
-      raise Exception.Create('Mismatch');
+      raise ETestCase.create('Mismatch');
     map.Remove('1est1');
   finally
     map.Free;

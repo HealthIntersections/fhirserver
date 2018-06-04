@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes, System.Character, System.RegularExpressions, System.Generics.Collections,
   FHIR.Support.Decimal, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream;
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream;
 
 Const
 	GOOD_IRI_CHAR = 'a-zA-Z0-9'; // \u00A0-\uFFFE'; todo
@@ -367,7 +367,7 @@ end;
 procedure TTurtleURL.setUri(value: String);
 begin
   if (not TRegEx.Match(value, IRI_URL).Success) then
-    raise Exception.create('Illegal URI '+uri);
+    raise ERdfException.create('Illegal URI '+uri);
   FUri := value;
 end;
 
@@ -437,7 +437,7 @@ begin
   if Flist.Count = 0 then
     result := FList[0].singleLiteral
   else
-    raise Exception.Create('Error finding single value: '+inttostr(FList.count)+' not found');
+    raise EWebException.create('Error finding single value: '+inttostr(FList.count)+' not found');
 end;
 
 function TTurtleList.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
@@ -577,7 +577,7 @@ end;
 
 function TTurtleComplex.singleLiteral: String;
 begin
-  raise Exception.Create('Cannot convert a complex to a single value');
+  raise ERdfException.create('Cannot convert a complex to a single value');
 end;
 
 function TTurtleComplex.has(uri: String): boolean;
@@ -664,7 +664,7 @@ begin
   if not predicates.TryGetValue(uri, obj) then
     exit(nil);
   if not (obj is TTurtleComplex) then
-    raise Exception.Create('Wrong Type of Turtle object- looking for a complex for '+uri);
+    raise EWebException.create('Wrong Type of Turtle object- looking for a complex for '+uri);
   result := TTurtleComplex(obj);
 end;
 
@@ -847,7 +847,7 @@ begin
 					exit;
 				end
         else
-					raise Exception.create('unexpected lexer char '+ch);
+					raise EWebException.create('unexpected lexer char '+ch);
 			end;
   finally
     b.Free;
@@ -891,13 +891,13 @@ begin
             uc := StrToInt('$'+s.substring(i-1, l));
           end;
           if ((isUri and (uc < 33)) or (not isUri and (uc < 32))) or ((isUri) and ((uc = $3C) or (uc = $3E))) then
-            raise Exception.create('Illegal unicode character');
+            raise EWebException.create('Illegal unicode character');
           b.append(char(uc));
           i := i + l;
           break;
         end;
         else
-          raise Exception.create('Unknown character escape \\'+s[i]);
+          raise EWebException.create('Unknown character escape \\'+s[i]);
         end;
       end
       else
@@ -976,7 +976,7 @@ end;
 
 procedure TTurtleLexer.error(message : String);
 begin
-  raise Exception.create('Syntax Error parsing Turtle on line '+inttostr(pos.line)+' col '+inttostr(pos.col)+': '+message);
+  raise EWebException.create('Syntax Error parsing Turtle on line '+inttostr(pos.line)+' col '+inttostr(pos.col)+': '+message);
 end;
 
 { TTurtleParser }
@@ -1056,7 +1056,7 @@ begin
         if (p = 'base') then
           base := true
         else if (p <> 'prefix') then
-          raise Exception.create('Unexpected token '+p);
+          raise EWebException.create('Unexpected token '+p);
       end
       else
       begin
@@ -1065,7 +1065,7 @@ begin
         if (p = 'BASE') then
           base := true
         else if (p <> 'PREFIX') then
-          raise Exception.create('Unexpected token '+p);
+          raise EWebException.create('Unexpected token '+p);
       end;
       sprefix := '';
       if (not base) then
@@ -1082,7 +1082,7 @@ begin
       else if (doc.Fbase = '') then
         doc.Fbase := url
       else
-        raise Exception.create('Duplicate @base');
+        raise EWebException.create('Duplicate @base');
     end
     else if (lexer.peekType() = lttURI) then
     begin
@@ -1104,7 +1104,7 @@ begin
       try
         pfx := lexer.word();
         if (not doc.prefixes.containsKey(pfx)) then
-          raise Exception.create('Unknown prefix '+pfx);
+          raise EWebException.create('Unknown prefix '+pfx);
         lexer.token(':');
         uri.Uri := doc.prefixes[pfx]+lexer.word();
         complex := parseComplex(lexer, doc);
@@ -1121,7 +1121,7 @@ begin
       try
         lexer.token(':');
         if (not doc.prefixes.containsKey('')) then
-          raise Exception.create('Unknown prefix ''''');
+          raise EWebException.create('Unknown prefix ''''');
         uri.Uri := doc.prefixes['']+lexer.word();
         complex := parseComplex(lexer, doc);
         doc.Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));

@@ -397,7 +397,7 @@ begin
   case request.ResourceEnum of
     frtPatient: result := patientCreate(request, response);
   else
-    raise Exception.Create('The resource "'+request.ResourceName+'" is not supported by this server');
+    raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
   end;
 
 end;
@@ -407,7 +407,7 @@ begin
   case request.ResourceEnum of
     frtPatient: result := patientRead(request, response);
   else
-    raise Exception.Create('The resource "'+request.ResourceName+'" is not supported by this server');
+    raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
   end;
 end;
 
@@ -418,7 +418,7 @@ begin
   case request.ResourceEnum of
     frtPatient: patientUpdate(request, response);
   else
-    raise Exception.Create('The resource "'+request.ResourceName+'" is not supported by this server');
+    raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
   end;
 end;
 

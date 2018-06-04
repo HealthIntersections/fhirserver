@@ -7,7 +7,9 @@ uses
   FHIR.Support.DateTime, FHIR.Support.Strings,
   FHIR.Javascript,
   FHIR.Support.Objects,
-  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Server.Session;
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
+  FHIR.Server.Session;
 
 type
   TFHIRServerJSHelper = class (TFslObject)
@@ -221,7 +223,7 @@ var
 begin
   i := StringArrayIndexOfSensitive(CODES_TFHIRCommandType, js.asString(value));
   if i = -1 then
-    raise Exception.Create('Unknown code '+js.asString(value));
+    raise EFHIRException.create('Unknown code '+js.asString(value));
   TFHIRRequest(this).CommandType := TFHIRCommandType(i);
 end;
 
@@ -265,12 +267,12 @@ end;
 
 procedure TFHIRServerJsHelper.FHIRRequestSetResourceJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  raise Exception.Create('todo');
+  raise EFHIRException.create('todo');
 end;
 
 function TFHIRServerJsHelper.FHIRRequestGetTagsJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 begin
-  raise Exception.Create('todo');
+  raise EFHIRException.create('todo');
   // todo: make this a manager
 //  result := js.makeArray(TFHIRRequest(this).Tags.Count, function (i : integer) : JsValueRef
 //     begin
@@ -280,7 +282,7 @@ end;
 
 procedure TFHIRServerJsHelper.FHIRRequestSetTagsJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  raise Exception.Create('todo');
+  raise EFHIRException.create('todo');
 end;
 
 function TFHIRServerJsHelper.FHIRRequestGetElementsJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
@@ -290,18 +292,18 @@ end;
 
 procedure TFHIRServerJsHelper.FHIRRequestSetElementsJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  raise Exception.Create('todo');
+  raise EFHIRException.create('todo');
 end;
 
 function TFHIRServerJsHelper.FHIRRequestGetCompartmentJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 begin
-  raise Exception.Create('todo');
+  raise EFHIRException.create('todo');
   //  := js.makeManagedArray(TStringListManager.create(TFHIRRequest(this).SessionCompartments));
 end;
 
 procedure TFHIRServerJsHelper.FHIRRequestSetCompartmentJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  raise Exception.Create('todo');
+  raise EFHIRException.create('todo');
 end;
 
 function TFHIRServerJsHelper.FHIRRequestGetLastModifiedJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
@@ -335,7 +337,7 @@ var
 begin
   i := StringArrayIndexOfSensitive(CODES_TFHIRSummaryOption, js.asString(value));
   if i = -1 then
-    raise Exception.Create('Unknown code '+js.asString(value));
+    raise EFHIRException.create('Unknown code '+js.asString(value));
   TFHIRRequest(this).CommandType := TFHIRCommandType(i);
 end;
 
@@ -389,7 +391,7 @@ end;
 
 procedure TFHIRServerJsHelper.FHIRRequestSetProvenanceJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  raise Exception.Create('todo');
+  raise EFHIRException.create('todo');
 end;
 
 function TFHIRServerJsHelper.FHIRRequestGetExternalRequestIdJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;

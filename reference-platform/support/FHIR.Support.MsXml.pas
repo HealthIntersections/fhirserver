@@ -79,7 +79,7 @@ interface
 uses
   Windows, ActiveX, {$IFDEF UNICODE}Vcl.OLEServer{$ELSE} OLEServer{$ENDIF} {$IFNDEF VER130}, Variants {$ENDIF},
   SysUtils, Classes, ComObj, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Generics,
   FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.Text;
 
 // *********************************************************************//
@@ -15303,7 +15303,7 @@ End;
 Function LoadMsXMLDomV(isFree : boolean = false) : Variant;
 Begin
   if GMsXmlProgId_DOM = '' Then
-    Raise Exception.Create('Unable to load Microsoft XML Services');
+    raise EXmlException.create('Unable to load Microsoft XML Services');
   if isFree then
     Result := CreateOleObject(GMsXmlProgId_FTDOM)
   else
@@ -15333,7 +15333,7 @@ begin
       oWeb.Response := TFslBuffer.Create;
       oWeb.Execute;
       if oWeb.ResponseCode <> '200' Then
-        Raise Exception.Create('HTTP Error '+oWeb.ResponseCode);
+        raise EXmlException.create('HTTP Error '+oWeb.ResponseCode);
       result := Parse(oWeb.Response, locations);
     Finally
       oWeb.Free;
@@ -15380,7 +15380,7 @@ begin
       if iDom.parseError.url <> '' Then
         sError := sError + '. url="'+ iDom.parseError.url+'"';
       sError := sError + '. source = '+ iDom.parseError.srcText+'"';
-      raise Exception.Create(sError);
+      raise EXmlException.create(sError);
     End;
     Result := iDom;
   end
@@ -15526,7 +15526,7 @@ begin
   v := TStreamAdapter.Create(oSource) As IStream;
   sax.parse(v);
   if handler.ExceptionMessage <> '' then
-    raise Exception.create(handler.ExceptionMessage);
+    raise EXmlException.create(handler.ExceptionMessage);
 end;
 
 class procedure TMsXmlParser.ParseByHandler(const sFilename: String; handler: TMsXmlSaxHandler);
@@ -15544,7 +15544,7 @@ begin
       oWeb.Response := TFslBuffer.Create;
       oWeb.Execute;
       if oWeb.ResponseCode <> '200' Then
-        Raise Exception.Create('HTTP Error '+oWeb.ResponseCode);
+        raise EXmlException.create('HTTP Error '+oWeb.ResponseCode);
       ParseByHandler(oWeb.Response, handler);
     Finally
       oWeb.Free;
@@ -15740,7 +15740,7 @@ end;
 procedure TMsXmlSaxHandler.ignorableWarning(const oLocator: IVBSAXLocator;
   var strErrorMessage: WideString; nErrorCode: Integer);
 begin
-  raise Exception.Create('todo');
+  raise EXmlException.create('todo');
 end;
 
 procedure TMsXmlSaxHandler.ignorableWhitespace(var text: WideString);

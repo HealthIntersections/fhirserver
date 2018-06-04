@@ -59,10 +59,10 @@ begin
       RaiseLastOSError;
     @MyDllListPackages := GetProcAddress(dll, 'MyDllListPackages');
     if @MyDllListPackages = nil then
-      raise Exception.Create('package list not found: '+SysErrorMessage(GetLastError));
+      raise Exception.create('package list not found: '+SysErrorMessage(GetLastError));
     @MyDllDownloadPackages := GetProcAddress(dll, 'MyDllDownloadPackages');
     if @MyDllDownloadPackages = nil then
-      raise Exception.Create('package loader not found');
+      raise Exception.create('package loader not found');
   end;
 end;
 

@@ -35,6 +35,7 @@ uses
   SysUtils,
   FHIR.Support.Objects,
   IdContext, IdCustomHTTPServer,
+  FHIR.Base.Lang,
   FHIR.Server.Session, FHIR.Base.Scim,
   FHIR.Server.Utilities;
 
@@ -49,11 +50,11 @@ type
   public
     function Link :  TFHIRUserProvider; overload;
 
-    Function loadUser(key : integer) : TSCIMUser; overload; virtual;
-    Function loadUser(id : String; var key : integer) : TSCIMUser; overload; virtual;
-    function CheckLogin(username, password : String; var key : integer) : boolean; virtual;
-    function CheckId(id : String; var username, hash : String) : boolean; virtual;
-    function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; virtual;
+    Function loadUser(key : integer) : TSCIMUser; overload; virtual; abstract;
+    Function loadUser(id : String; var key : integer) : TSCIMUser; overload; virtual; abstract;
+    function CheckLogin(username, password : String; var key : integer) : boolean; virtual; abstract;
+    function CheckId(id : String; var username, hash : String) : boolean; virtual; abstract;
+    function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; virtual; abstract;
 
     Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession); virtual;
     property OnProcessFile : TProcessFileEvent read FOnProcessFile write FOnProcessFile;
@@ -75,34 +76,9 @@ begin
   result := false;
 end;
 
-function TFHIRUserProvider.CheckId(id: String; var username, hash: String): boolean;
-begin
-  raise Exception.Create('TFHIRUserProvider.CheckId must be override in '+className);
-end;
-
-function TFHIRUserProvider.CheckLogin(username, password: String; var key : integer): boolean;
-begin
-  raise Exception.Create('TFHIRUserProvider.CheckLogin must be override in '+className);
-end;
-
-function TFHIRUserProvider.loadUser(key: integer): TSCIMUser;
-begin
-  raise Exception.Create('TFHIRUserProvider.loadUser must be override in '+className);
-end;
-
-function TFHIRUserProvider.loadOrCreateUser(id, name, email: String; var key: integer): TSCIMUser;
-begin
-  raise Exception.Create('TFHIRUserProvider.loadOrCreateUser must be override in '+className);
-end;
-
-function TFHIRUserProvider.loadUser(id: String; var key: integer): TSCIMUser;
-begin
-  raise Exception.Create('TFHIRUserProvider.loadUser must be override in '+className);
-end;
-
 procedure TFHIRUserProvider.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFHIRSession);
 begin
-  raise Exception.Create('User Management is not supported on this server');
+  raise EFHIRException.create('User Management is not supported on this server');
 end;
 
 end.

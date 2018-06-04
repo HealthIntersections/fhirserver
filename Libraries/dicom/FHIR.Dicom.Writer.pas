@@ -507,7 +507,7 @@ end;
 procedure TDicomWriter.Execute(sPath : string; oInstance: TDicomInstance);
 begin
   case oInstance.InstanceType of
-    ditNull : raise exception.create('no content to encode');
+    ditNull : raise EDicomException.create('no content to encode');
     ditSimpleObject : Execute(sPath, oInstance.SimpleObject);
     ditFileObject : EncodeFile(sPath, oInstance.FileObject);
     ditMessage : EncodeMessage(sPath, oInstance.Message);
@@ -519,7 +519,7 @@ begin
     ditReleaseRequestPDU : EncodeReleaseRequest(sPath, oInstance.ReleaseRequest);
     ditReleaseResponsePDU : EncodeReleaseResponse(sPath, oInstance.ReleaseResponse);
   else
-    raise Exception.Create('not supported');
+    raise EDicomException.create('not supported');
   End;
 end;
 
@@ -839,7 +839,7 @@ begin
     pduReleaseRequest : EncodeReleaseRequest(sPath, TDicomReleaseRequestPDU(oPDU));
     pduReleaseResponse : EncodeReleaseResponse(sPath, TDicomReleaseResponsePDU(oPDU));
   else
-    raise Exception.Create('not supported');
+    raise EDicomException.create('not supported');
   End;
 end;
 

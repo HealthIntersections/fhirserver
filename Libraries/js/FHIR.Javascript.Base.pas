@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings, FHIR.Support.DateTime,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Javascript, FHIR.Support.Javascript,
   FHIR.Base.Objects, FHIR.Base.Factory;{,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client}
@@ -298,7 +297,7 @@ end;
 
 procedure TFHIRJavascript.setFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
-  raise Exception.Create('not implemented yet');
+  raise EJavascriptHost.create('not implemented yet');
 end;
 
 function TFHIRJavascript.getFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;

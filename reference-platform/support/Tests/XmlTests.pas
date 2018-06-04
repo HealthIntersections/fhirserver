@@ -35,7 +35,7 @@ interface
 
 Uses
   Windows, SysUtils, Classes, ShellApi, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF}
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Xml,
   FHIR.Support.MXml, FHIR.Support.MsXml, DUnitX.TestFramework;
 
@@ -767,7 +767,7 @@ begin
 
       end
       else
-        raise Exception.Create('Error Message');
+        raise ETestCase.create('Error Message');
     end;
   end;
   finally
@@ -802,19 +802,19 @@ begin
       outcome := outcomes[i];
       if outcome.attribute['type'] = 'string' then
       begin
-        raise Exception.create('not done yet');
+        raise ETestCase.create('not done yet');
   //      Assert.IsTrue(node is TMXmlString, 'MS: Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
   //      Assert.IsTrue(TMXmlString(node).value = outcome.attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
       end
       else if outcome.attribute['type'] = 'number' then
       begin
-        raise Exception.create('not done yet');
+        raise ETestCase.create('not done yet');
   //      Assert.IsTrue(node is TMXmlNumber, 'MS: Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
   //      Assert.IsTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
       end
       else if outcome.attribute['type'] = 'boolean' then
       begin
-        raise Exception.create('not done yet');
+        raise ETestCase.create('not done yet');
   //      Assert.IsTrue(node is TMXmlBoolean, 'MS: Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
   //      Assert.IsTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
       end
@@ -837,12 +837,12 @@ begin
       end
       else if outcome.attribute['type'] = 'comment' then
       begin
-        raise Exception.create('not done yet');
+        raise ETestCase.create('not done yet');
   //      Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
   //
       end
       else
-        raise Exception.Create('Error Message');
+        raise ETestCase.create('Error Message');
     end;
   end;
 end;

@@ -36,7 +36,10 @@ interface
 // FHIR v3.4.0 generated 2018-05-15T06:48:00+10:00
 
 uses
-  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Decimal, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.R4.ParserBase, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types, FHIR.Support.Collections, FHIR.Support.JSON;
+  SysUtils, Classes,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Decimal,
+  FHIR.Base.Parser, FHIR.Base.Objects, FHIR.R4.ParserBase,
+  FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types, FHIR.Support.Collections, FHIR.Support.JSON;
 
 Type
 

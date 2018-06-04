@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Objects;
+  FHIR.Support.Exceptions, FHIR.Support.Objects;
 
 Type
   TSCIMSearchItemType = (sitTest, sitCriteria, sitValuePath);
@@ -208,7 +208,7 @@ var
 begin
   filter := parse(expression);
   if filter = nil then
-    raise exception.Create('parsing failed - returned nil');
+    raise ELibraryException.create('parsing failed - returned nil');
   filter.Free;
 end;
 
@@ -232,7 +232,7 @@ procedure TSCIMSearchParser.parse;
 begin
   filter := parseOpen;
   if cursor <= length(original) then
-    raise Exception.Create('Expression did not terminate at '+inttostr(cursor));
+    raise ELibraryException.create('Expression did not terminate at '+inttostr(cursor));
 end;
 
 function TSCIMSearchParser.peek: TSCIMSearchLexType;
@@ -252,7 +252,7 @@ begin
      '[' : result := sltOpenSq;
      ']' : result := sltCloseSq;
    else
-     raise Exception.Create('Unknown Character at '+inttostr(cursor));
+     raise ELibraryException.create('Unknown Character at '+inttostr(cursor));
    end;
 end;
 
@@ -268,7 +268,7 @@ begin
     result := parseOpen;
     try
       if peek <> sltClose then
-        raise Exception.Create('Expected '')'' at '+inttostr(cursor));
+        raise ELibraryException.create('Expected '')'' at '+inttostr(cursor));
       inc(cursor);
       result.Link;
     finally
@@ -287,7 +287,7 @@ begin
       else
       begin
         if peek <> sltName then
-          raise Exception.Create('Unexpected Character at '+inttostr(cursor));
+          raise ELibraryException.create('Unexpected Character at '+inttostr(cursor));
 
         test := TSCIMSearchFilterTest.Create;
         try
@@ -304,7 +304,7 @@ begin
           else if s = 'le' then test.FOperation := sfoLe
           else if s = 'pr' then test.FOperation := sfoPr
           else
-            raise Exception.Create('Unknown operation '+s+' at '+inttostr(cursor));
+            raise ELibraryException.create('Unknown operation '+s+' at '+inttostr(cursor));
 
           if test.FOperation <> sfoPr then
           begin
@@ -313,12 +313,12 @@ begin
                 begin
                 test.FValue := ConsumeName;
                 if (test.Value <> 'null') and (test.Value <> 'true')  and (test.Value <> 'false')  then
-                  raise Exception.Create('Unexpected value '''+test.value+''' at '+inttostr(cursor));
+                  raise ELibraryException.create('Unexpected value '''+test.value+''' at '+inttostr(cursor));
                 end;
               sltNumber : test.FValue := ConsumeNumber;
               sltString: test.FValue := ConsumeString;
             else
-              raise Exception.Create('Unexpected Character at '+inttostr(cursor));
+              raise ELibraryException.create('Unexpected Character at '+inttostr(cursor));
             end;
           end;
 
@@ -326,7 +326,7 @@ begin
             sltName : result := parseLogical(test);
             sltEnded, sltClose, sltCloseSq : result := test.Link as TSCIMSearchFilterTest;
           else
-            raise Exception.Create('Unexpected Character at '+inttostr(cursor));
+            raise ELibraryException.create('Unexpected Character at '+inttostr(cursor));
           end;
         finally
           test.free;
@@ -347,13 +347,13 @@ begin
     inc(cursor);
     vp.FFilter := parseOpen;
     if peek <> sltCloseSq then
-      raise Exception.Create('Problem with filter termination at '+inttostr(cursor));
+      raise ELibraryException.create('Problem with filter termination at '+inttostr(cursor));
     inc(cursor);
     case peek of
       sltName : result := parseLogical(vp);
       sltEnded, sltClose, sltCloseSq : result := vp.Link as TSCIMSearchFilter;
     else
-      raise Exception.Create('Unexpected Character at '+inttostr(cursor));
+      raise ELibraryException.create('Unexpected Character at '+inttostr(cursor));
     end;
   finally
     vp.Free;
@@ -408,13 +408,13 @@ begin
       else if (original[cursor] = 'n') then
         result[l] := #10
       else
-        raise Exception.Create('Unknown escape sequence at '+inttostr(cursor));
+        raise ELibraryException.create('Unknown escape sequence at '+inttostr(cursor));
     end;
     inc(cursor);
   end;
   SetLength(result, l);
   if (cursor > length(original)) or (original[cursor] <> '"') then
-    raise Exception.Create('Problem with string termination at '+inttostr(cursor));
+    raise ELibraryException.create('Problem with string termination at '+inttostr(cursor));
   inc(cursor);
 end;
 
@@ -428,7 +428,7 @@ begin
   else
     s := ConsumeName;
   if (s <> 'or') and (s <> 'and') and (s <> 'not') then
-    raise Exception.Create('Unexpected Name at '+inttostr(cursor));
+    raise ELibraryException.create('Unexpected Name at '+inttostr(cursor));
   criteria:= TSCIMSearchFilterCriteria.Create;
   try
     criteria.FCriterion1 := test.Link as TSCIMSearchFilter;

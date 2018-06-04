@@ -8,7 +8,7 @@ uses
   BaseFrame, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.ComboEdit, FMX.Layouts,
   FMX.ListBox, FMX.Controls.Presentation, FMX.Platform,
   FHIR.Support.System, FHIR.Tools.ValidationWrapper,
-  FHIR.Cache.PackageManager, FMX.Menus;
+  FHIR.Cache.PackageManager, FMX.Menus, FHIR.Base.Lang;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -302,7 +302,7 @@ begin
     if Settings.CacheManager.packageExists('hl7.fhir.core', '3.4.0') then
       cbxVersion.Items.Add('3.4.0 (R4)');
     if cbxVersion.Items.Count = 0 then
-      raise Exception.Create('Invalid installation/system - no FHIR packages found');
+      raise EFHIRException.create('Invalid installation/system - no FHIR packages found');
 
     cbxVersion.ItemIndex := cbxVersion.Items.IndexOf(Settings.getValue('Validation', 'version', ''));
     if cbxVersion.ItemIndex = -1 then

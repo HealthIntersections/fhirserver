@@ -34,7 +34,7 @@ interface
 uses
   SysUtils,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources;
 
 type
@@ -129,7 +129,7 @@ begin
   if RecogniseFHIRResourceName(rType, t) then
     result := fetchResource(t, url)
   else
-    raise Exception.Create('Unknown type '+rType+' in '+versionString);
+    raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
 end;
 
 procedure TFHIRWorkerContext.listStructures(list: TFslList<TFhirStructureDefinitionW>);

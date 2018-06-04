@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, zlib, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Json, FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Json, FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Text, FHIR.Support.Tarball, FHIR.Web.Fetcher;
 
 type
@@ -301,7 +301,7 @@ begin
     dir := path([FFolder, id+'-'+ver]);
     if FolderExists(dir) then
       if not FolderDelete(dir) then
-        raise Exception.Create('Unable to delete existing package');
+        raise EIOException.create('Unable to delete existing package');
     ForceFolder(dir);
     size := 0;
     for s in files.Keys do
@@ -314,7 +314,7 @@ begin
         begin
           Sleep(100);
           if not DeleteFile(fn) then
-            raise Exception.Create('Unable to delete existing file '+fn);
+            raise EIOException.create('Unable to delete existing file '+fn);
         end;
       end;
       BytesToFile(files[s], fn);
@@ -354,7 +354,7 @@ end;
 
     archiveclass := GetArchiveFormats.FindDecompressFormat(FileName);
     if not Assigned(archiveclass) then
-      Raise exception.Create('Not supported by 7z.dll');
+      raise EFHIRException.create('Not supported by 7z.dll');
     Myarchive := archiveclass.Create(FileName);
     try
       if (Myarchive is TJclSevenZipDecompressArchive) then
@@ -410,7 +410,7 @@ begin
   else if kind = 'fhir.template' then
     result := fpkIGTemplate
   else if kind <> '' then
-    raise Exception.Create('Unknown Package Kind')
+    raise ELibraryException.create('Unknown Package Kind')
   else if id = 'hl7.fhir.core' then
     result := fpkCore
   else
@@ -460,7 +460,7 @@ begin
                   list.add(pck.link);
               end
               else if (pck.kind <> kind) then
-                raise Exception.Create('Package kind mismatch beteen versions for Package '+id+': '+CODES_TFHIRPackageKind[kind]+'/'+CODES_TFHIRPackageKind[pck.kind]);
+                raise ELibraryException.create('Package kind mismatch beteen versions for Package '+id+': '+CODES_TFHIRPackageKind[kind]+'/'+CODES_TFHIRPackageKind[pck.kind]);
 
               if pck.Canonical = '' then
                 pck.Canonical := npm.str['canonical'];
@@ -657,7 +657,7 @@ begin
     ver := 'current';
 
   if not packageExists(id, ver) then
-    raise Exception.Create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
+    raise EIOException.create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
   for s in TDirectory.GetFiles(Path([FFolder, id+'-'+ver, 'package'])) do
     if not s.endsWith('package.json') then
     begin
@@ -730,7 +730,7 @@ begin
     n := s.Substring(s.LastIndexOf('\')+1);
     if (n.StartsWith(id+'-')) then
       if not FolderDelete(s) then
-        raise Exception.Create('Unable to delete package '+n+'. Perhaps it is in use?');
+        raise EIOException.create('Unable to delete package '+n+'. Perhaps it is in use?');
   end;
 end;
 
@@ -743,7 +743,7 @@ begin
     n := s.Substring(s.LastIndexOf('\')+1);
     if (n = id+'-'+ver) then
       if not FolderDelete(s) then
-        raise Exception.Create('Unable to delete package '+n+'. Perhaps it is in use?');
+        raise EIOException.create('Unable to delete package '+n+'. Perhaps it is in use?');
   end;
 end;
 

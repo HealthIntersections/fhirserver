@@ -34,7 +34,8 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.R2.Types;
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.R2.Types;
 
 const
   TAG_FHIR_SYSTEM = 'http://healthintersections.com.au/fhir/tags';
@@ -164,7 +165,7 @@ end;
 
 function TFHIRTagList.asHeader: String;
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.create('Not Done Yet');
 end;
 
 function TFHIRTagList.GetCount: Integer;

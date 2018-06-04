@@ -33,7 +33,8 @@ interface
 
 Uses
   SysUtils, Classes,
-  IdGlobal, IdComponent, IdTCPConnection, IdContext, IdCustomHTTPServer, IdHashSHA, IdCoderMIME;
+  IdGlobal, IdComponent, IdTCPConnection, IdContext, IdCustomHTTPServer, IdHashSHA, IdCoderMIME,
+  FHIR.Support.Exceptions;
 
 Type
   TIdWebSocketOperation = (wsoNoOp, wsoText, wsoBinary, wsoClose);
@@ -77,7 +78,7 @@ var
 begin
   FRequest := request;
   if request.RawHeaders.Values['Upgrade'] <> 'websocket' then
-    raise Exception.Create('Only web sockets supported on this end-point');
+    raise EWebException.create('Only web sockets supported on this end-point');
 
   s := request.RawHeaders.Values['Sec-WebSocket-Key']+'258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 
@@ -130,7 +131,7 @@ begin
     h := FConnection.IOHandler.ReadByte;
     fin := (h and $80) > 1;
     if not fin then
-      raise Exception.Create('Multiple frames not done yet');
+      raise EWebException.create('Multiple frames not done yet');
     op := h and $0F;
     l := FConnection.IOHandler.ReadByte;
     msk := (l and $80) > 0;
@@ -155,7 +156,7 @@ begin
          result := read(wait);
          end;
     else
-      raise Exception.Create('Unknown OpCode '+inttostr(op));
+      raise EWebException.create('Unknown OpCode '+inttostr(op));
     end;
   end;
 end;

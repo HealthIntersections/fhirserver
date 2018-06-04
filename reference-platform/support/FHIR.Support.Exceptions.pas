@@ -62,32 +62,32 @@ Type
       Property Method : String Read FMethod;
       Property Reason : String Read FReason;
       Property StackTrace : String Read FStackTrace Write FStackTrace;
-  End; 
+  End;
 
   EFslExceptionClass = Class Of EFslException;
 
+  // particular subclasses
   EFslAbstract = Class(EFslException);
-
   EFslAssertion = Class(EFslException);
 
-  EFslApproximateException = Class(EFslException)
-    Private
-      FInnerExceptionClass : TClass;
-      FInnerExceptionName : String;
+  ELibraryException = Class(EFslException); // general library functionality
+  EIOException = Class(EFslException); // problems reading/writing files
+  EWebException = Class(EFslException); // error in web stack (client or server)
+  EJsonException = class (EFslException); // error reading or writing Json
+  EXmlException = class (EFslException); // error reading or writing Xml
+  ERdfException = Class(EFslException); // error reading or writing RDF
+  EDBException = Class(EFslException); // error accessing / working with database (including sql and dialect errors
+  ETerminologySetup = class (EFslException); // problem in the terminology configuration or loaded terminologies
+  ETerminologyError = class (EFslException); // problem in terminology operation
+  ETestCase = class (EFslException); // Failing test case
+  EJavascriptException = class (EFslException); // exception thrown in javscript library
+  EJavascriptScript = class (EJavascriptException); // error thrown by script
+  EJavascriptSource = class (EJavascriptException); // error compiling
+  EJavascriptHost = class (EJavascriptException);   // error from hosting infrastructure
+  EJavascriptApplication = class (EJavascriptException);    // error running application functionality
 
-      Function GetHasInnerExceptionName : Boolean;
-      Function GetHasInnerExceptionClass : Boolean;
 
-    Public
-      Constructor Create(Const aInnerExceptionClass : TClass; Const sSender, sMethod, sReason : String); Overload;
-      Constructor Create(Const sInnerExceptionName, sSender, sMethod, sReason : String); Overload;
-
-      Property InnerExceptionClass : TClass Read FInnerExceptionClass Write FInnerExceptionClass;
-      Property HasInnerExceptionClass : Boolean Read GetHasInnerExceptionClass;
-      Property InnerExceptionName : String Read FInnerExceptionName Write FInnerExceptionName;
-      Property HasInnerExceptionName : Boolean Read GetHasInnerExceptionName;
-  End;
-
+(*
   EAbstractError = SysUtils.EAbstractError;
   EAccessViolation = SysUtils.EAccessViolation;
   EOutOfMemory = SysUtils.EOutOfMemory;
@@ -120,7 +120,7 @@ Type
   EWin32Error = SysUtils.EWin32Error;
   EStackOverflow = SysUtils.EStackOverflow;
 {$ENDIF}
-
+*)
 
 Function ExceptObject : Exception;
 Function HasExceptObject : Boolean;
@@ -220,33 +220,6 @@ End;
 //  Raise EFslAssertion.Create('FHIR.Support.Exceptions', 'AssertionHandler', StringFormat('%s (%s:%d)', [sMessage, sFilename, iLineNumber]));
 //End;  
 
-
-Constructor EFslApproximateException.Create(Const aInnerExceptionClass: TClass; Const sSender, sMethod, sReason : String);
-Begin
-  InnerExceptionClass := aInnerExceptionClass;
-
-  Create(sSender, sMethod, sReason);
-End;
-
-
-Constructor EFslApproximateException.Create(Const sInnerExceptionName, sSender, sMethod, sReason : String);
-Begin
-  FInnerExceptionName := sInnerExceptionName;
-
-  Create(sSender, sMethod, sReason);
-End;
-
-
-Function EFslApproximateException.GetHasInnerExceptionClass: Boolean;
-Begin
-  Result := Assigned(FInnerExceptionClass);
-End;
-
-
-Function EFslApproximateException.GetHasInnerExceptionName : Boolean;
-Begin
-  Result := FInnerExceptionName <> '';
-End;
 
 procedure recordStack(e : Exception);
 begin

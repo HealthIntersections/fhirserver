@@ -206,7 +206,7 @@ end;
 
 function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise Exception.Create('Not done yet');
+  raise ETestCase.create('Not done yet');
 end;
 
 initialization

@@ -36,6 +36,7 @@ uses
   IdHttp, IdSSLOpenSSL,
   FHIR.Support.Json,
   FHIR.Support.Certs,
+  FHIR.Base.Lang,
   FHIR.Smart.Utilities, FMX.Objects, FMX.ListBox;
 
 type
@@ -139,7 +140,7 @@ begin
               end;
             except
               on e : EIdHTTPProtocolException do
-                raise Exception.Create(e.message+' : '+e.ErrorMessage);
+                raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
               on e:Exception do
                 raise;
             end;

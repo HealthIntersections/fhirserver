@@ -112,13 +112,13 @@ begin
             resp.position := 0;
             json := TJSONParser.Parse(resp);
             try
-              raise Exception.Create('Not done yet');
+              raise EFHIRException.create('Not done yet');
             finally
               json.free;
             end;
           except
             on e : EIdHTTPProtocolException do
-              raise Exception.Create(e.message+' : '+e.ErrorMessage);
+              raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
             on e:Exception do
               raise;
           end;
@@ -180,7 +180,7 @@ begin
       arr := json.forceArr['redirect_uris'];
       for s in memRedirects.Lines do
         arr.add(s);
-      raise Exception.Create('Not Done yet');
+      raise EFHIRException.create('Not Done yet');
     end
     else
     begin

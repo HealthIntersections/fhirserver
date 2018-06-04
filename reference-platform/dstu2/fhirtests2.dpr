@@ -206,7 +206,7 @@ begin
     else
     begin
       if (ParamStr(1) = '') or (ParamStr(2) = '') or not FileExists(paramstr(1)) then
-        raise Exception.Create('Provide input and output file names');
+        raise EFHIRException.create('Provide input and output file names');
       roundTrip(paramStr(1), paramStr(2));
     end;
   except

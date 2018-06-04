@@ -7,7 +7,8 @@ uses
   FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects,
   FHIR.Web.Parsers,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Client, FHIR.Version.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Client, FHIR.Version.Utilities,
   FHIR.Server.Context;
 
 Type
@@ -36,7 +37,7 @@ Type
     property context : TFHIRServerContext read FContext write SetContext;
     property session : TFHIRSession read FSession write SetSession;
 
-    function execute : TDictionary<String, String>; virtual;
+    function execute : TDictionary<String, String>; virtual; abstract;
   end;
 
   {$IFDEF FHIR3}
@@ -116,10 +117,6 @@ begin
   inherited;
 end;
 
-function TFHIRServerPostHandler.execute: TDictionary<String, String>;
-begin
- raise Exception.Create('Must override '+className+'.execute');
-end;
 
 procedure TFHIRServerPostHandler.processIdentifier(list: TFhirIdentifierList; systemParam, valueParam, typeParam: String);
 var
@@ -233,9 +230,9 @@ var
   end;
 begin
   if params.GetVar('provenance.name') = '' then
-    raise Exception.Create('Please provide a name');
+    raise EFHIRException.create('Please provide a name');
   if params.GetVar('provenance.country') = '' then
-    raise Exception.Create('Please provide a country');
+    raise EFHIRException.create('Please provide a country');
 
   prov := TFhirProvenance.Create;
   try

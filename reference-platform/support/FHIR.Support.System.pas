@@ -35,7 +35,7 @@ Interface
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, MacApi.Foundation, Posix.SysTypes, Posix.Stdlib, {$ELSE} Windows, ShellApi, ShlObj,  MMSystem, Winsock, Registry, MultiMon, {$ENDIF}
   SysUtils, Classes, Generics.Collections, UIConsts,
-  FHIR.Support.Fpc, FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime;
+  FHIR.Support.Fpc, FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime;
 
 
 type
@@ -1289,7 +1289,7 @@ Function HashStringToCode64(Const sValue : String) : Int64;
 Begin
   // TODO: implement.
 
-  Raise Exception.Create('HashStringToCode64 is not implemented.');
+  raise ELibraryException.create('HashStringToCode64 is not implemented.');
 
   Result := 0;
 End;

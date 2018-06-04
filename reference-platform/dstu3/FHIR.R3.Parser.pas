@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Xml, FHIR.R3.Json, FHIR.R3.Turtle, FHIR.R3.Context;
 
 type
@@ -30,7 +30,7 @@ begin
 //    ffNDJson : result := TFHIRNDJsonComposer.Create(worker, style, lang);
 //    ffXhtml  : result := TFHIRXhtmlComposer.Create(worker, style, lang);
   else
-    raise Exception.Create('Unspecified/unsupported format');
+    raise EFHIRException.create('Unspecified/unsupported format');
   end;
 end;
 
@@ -41,7 +41,7 @@ begin
     ffJson: result := FHIR.R3.Json.TFHIRJsonParser.Create(worker, lang);
     ffTurtle: result := FHIR.R3.Turtle.TFHIRTurtleParser.Create(worker, lang);
   else
-    raise Exception.Create('Unspecified/unsupported format');
+    raise EFHIRException.create('Unspecified/unsupported format');
   end;
 end;
 

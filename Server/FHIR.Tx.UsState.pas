@@ -282,7 +282,7 @@ end;
 
 function TUSStateServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('locateIsA not supported by USState'); // USState doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by USState'); // USState doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -294,7 +294,7 @@ end;
 
 function TUSStateServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUSStateServices.subsumesTest(codeA, codeB: String): String;
@@ -304,12 +304,12 @@ end;
 
 function TUSStateServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+system(nil));
+  raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+system(nil));
 end;
 
 function TUSStateServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUSStateServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -325,7 +325,7 @@ end;
 
 function TUSStateServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 procedure TUSStateServices.Close(ctxt: TCodeSystemProviderContext);
@@ -340,7 +340,7 @@ end;
 
 procedure TUSStateServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 

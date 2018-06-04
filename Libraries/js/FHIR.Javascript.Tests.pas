@@ -36,6 +36,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
+  FHIR.Support.Exceptions,
   FHIR.Javascript,
   DUnitX.TestFramework;
 
@@ -308,7 +309,7 @@ begin
   if FRaise then
   begin
     FRaise := false;
-    raise Exception.Create('Internal error');
+    raise ETestCase.create('Internal error');
   end;
 end;
 

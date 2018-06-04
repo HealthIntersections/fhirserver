@@ -293,13 +293,13 @@ begin
               id := id+'-'+params.str['operation'];
             vs := manager.GetResourceById(request, 'ValueSet', id, request.baseUrl, needSecure) as TFHIRValueSet;
             if vs = nil then
-              raise Exception.Create('The context '+id+' was not understood');
+              raise ETerminologyError.create('The context '+id+' was not understood');
             cacheId := vs.url;
             if vs.version <> '' then
               cacheId := cacheId + vs.version;
           end
           else
-            raise Exception.Create('Unable to find value set to expand (not provided by id, identifier, or directly)');
+            raise ETerminologyError.create('Unable to find value set to expand (not provided by id, identifier, or directly)');
 
           vs.checkNoImplicitRules('ExpandValueSet', 'ValueSet');
           vs.checkNoModifiers('ExpandValueSet', 'ValueSet');
@@ -424,7 +424,7 @@ begin
               vs := request.Resource.Link as TFhirValueSet
             else
               vs := nil;
-              // raise Exception.Create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
+              // raise ETerminologyError.create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
 
             coded := nil;
             try
@@ -468,14 +468,14 @@ begin
                     coding.display := TFHIRPrimitiveType(params['display']).StringValue;
                 end
                 else
-                  raise Exception.Create('Unable to find code to validate (params. coding | codeableConcept | code');
+                  raise ETerminologyError.create('Unable to find code to validate (params. coding | codeableConcept | code');
               end
               else
-                raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
+                raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code');
               abstractOk := params.hasParameter('abstract') and TFHIRBoolean(params['abstract']).Value;
 
               if (coded = nil) then
-                raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
+                raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code');
 
               if vs <> nil then
               begin
@@ -577,9 +577,9 @@ begin
 
           // first, we have to identify the Code System
           if request.Id <> '' then // and it must exist, because of the check above
-            raise Exception.Create('Specifying a code system is not supported (only snomed-ct is supported)');
+            raise ETerminologyError.create('Specifying a code system is not supported (only snomed-ct is supported)');
           if req.system <> 'http://snomed.info/sct' then
-            raise Exception.Create('Only snomed-ct is supported)');
+            raise ETerminologyError.create('Only snomed-ct is supported)');
           // ok, it's snomed
           resp := TFHIRComposeOpResponse.Create;
           try
@@ -679,7 +679,7 @@ begin
               if (request.Id = '') and (req.system <> '') and (req.codeA <> '') and (req.codeB <> '') then
               begin
                 if not FServer.isValidCode(req.system, req.codeA) or not FServer.isValidCode(req.system, req.codeB) then
-                  raise Exception.Create('Invalid code')
+                  raise ETerminologyError.create('Invalid code')
                 else if (req.codeA = req.codeB) then
                   resp.outcome := 'equivalent'
                 else if FServer.subsumes(req.system, req.codeA, req.system, req.codeB) then
@@ -697,7 +697,7 @@ begin
                 else if req.system <> '' then
                   cs := manager.GetResourceByUrl(frtCodeSystem, req.system, req.version, false, needSecure) as TFhirCodeSystem
                 else
-                  raise Exception.Create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
+                  raise ETerminologyError.create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
 
                 cacheId := cs.url;
                 if (req.codingA = nil) and (req.codeA <> '') then
@@ -705,9 +705,9 @@ begin
                 if (req.codingB = nil) and (req.codeB <> '') then
                   req.codingB := TFhirCoding.Create(cs.url, req.codeB);
                 if req.codingA = nil then
-                  raise Exception.Create('No codeA or codingA parameter found');
+                  raise ETerminologyError.create('No codeA or codingA parameter found');
                 if req.codingB = nil then
-                  raise Exception.Create('No codeB or codingB parameter found');
+                  raise ETerminologyError.create('No codeB or codingB parameter found');
 
                 resp.outcome := FServer.subsumes(cs, req.codingA, req.codingB);
               end;
@@ -803,7 +803,7 @@ begin
           else
             cm := FServer.getConceptMapBySrcTgt(params.str['valueset'], params.str['target']);
           if cm = nil then
-            raise Exception.Create('Unable to find concept map to use');
+            raise ETerminologyError.create('Unable to find concept map to use');
           try
             // ok, now we need to find the source code to validate
             coded := nil;
@@ -824,7 +824,7 @@ begin
               coding.display := params.str['display'];
             end
             else
-              raise Exception.Create('Unable to find code to translate (coding | codeableConcept | code');
+              raise ETerminologyError.create('Unable to find code to translate (coding | codeableConcept | code');
             try
               response.resource := FServer.translate(request.Lang, cm, coded.codingList[0]);
               response.HTTPCode := 200;
@@ -890,7 +890,7 @@ begin
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if (request.id <> '') then
-        raise Exception.Create('Lookup does not take an identified resource');
+        raise ETerminologyError.create('Lookup does not take an identified resource');
       req := TFHIRLookupOpRequest.create();
       try
         if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
@@ -906,7 +906,7 @@ begin
           req.coding.version := req.version;
         end;
         if req.coding = nil then
-          raise Exception.Create('Unable to find a code to lookup (need coding or system/code)');
+          raise ETerminologyError.create('Unable to find a code to lookup (need coding or system/code)');
         lang := request.lang;
         {$IFNDEF FHIR2}
         if req.displayLanguage <> '' then

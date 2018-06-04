@@ -35,9 +35,10 @@ uses
   SysUtils, Classes, FHIR.Support.Lock,
   FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Certs,
-  FHIR.Base.Objects, FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Server.Security,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   FHIR.Scim.Server,
-  FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Storage, FHIR.Server.Validator;
+  FHIR.Server.Session, FHIR.Server.Security, FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Storage, FHIR.Server.Validator;
 
 Const
   IMPL_COOKIE_PREFIX = 'implicit-';
@@ -671,7 +672,7 @@ var
   Id, Name, Email: String;
 begin
   if not TFHIRServerContext(serverContext).Storage.RetrieveSession(pastSessionKey, UserKey, Provider, Id, Name, Email) then
-    raise Exception.Create('Unable to retrieve past session '+inttostr(pastSessionKey));
+    raise EFHIRException.create('Unable to retrieve past session '+inttostr(pastSessionKey));
 
   session := TFhirSession.Create(TFHIRServerContext(serverContext).ValidatorContext.Link, true);
   try

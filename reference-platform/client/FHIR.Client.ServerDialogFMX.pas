@@ -35,7 +35,7 @@ uses
   FMX.Objects, FMX.ListBox, FMX.Edit, FMX.StdCtrls, FMX.TabControl,
   FMX.Controls.Presentation,
   FHIR.Support.Strings,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Client.ClientDialogFMX;
 
 type
@@ -210,25 +210,25 @@ begin
   begin
     server.clientid := edtClientId.Text;
     if server.clientid = '' then
-      raise Exception.Create('Client id is required');
+      raise EFHIRException.create('Client id is required');
     if not StringIsCardinal16(edtRedirectPort.Text) then
-      raise Exception.Create('Redirectport must be a valid port number');
+      raise EFHIRException.create('Redirectport must be a valid port number');
     if server.authorizeEndpoint = '' then
-      raise Exception.Create('Authorize end-point is required');
+      raise EFHIRException.create('Authorize end-point is required');
     if server.tokenEndpoint = '' then
-      raise Exception.Create('Token end-point is required');
+      raise EFHIRException.create('Token end-point is required');
   end
   else if server.SmartAppLaunchMode = salmBackendClient then
   begin
     server.clientid := edtClientId1.Text;
     if server.issuerUrl = '' then
-      raise Exception.Create('Issuer URL is required');
+      raise EFHIRException.create('Issuer URL is required');
     if not FileExists(server.privatekey) then
-      raise Exception.Create('Private Key is required (file not found)');
+      raise EFHIRException.create('Private Key is required (file not found)');
     if server.authorizeEndpoint = '' then
-      raise Exception.Create('Authorize end-point is required');
+      raise EFHIRException.create('Authorize end-point is required');
     if server.tokenEndpoint = '' then
-      raise Exception.Create('Token end-point is required');
+      raise EFHIRException.create('Token end-point is required');
   end;
   ModalResult := mrok;
 end;
@@ -343,7 +343,7 @@ var
   client : TFhirClientV;
 begin
   if not isAbsoluteUrl(edtUrl.Text) then
-    raise Exception.Create('Plase supply a valid URL for the server');
+    raise EFHIRException.create('Plase supply a valid URL for the server');
 
   try
     client := FVersions[readVersion].makeClient(nil, edtUrl.text, fctCrossPlatform, ffJson, 5000);

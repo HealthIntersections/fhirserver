@@ -36,8 +36,6 @@ uses
   FHIR.Support.Objects;
 
 Type
-  EUCUMServices = class (Exception);
-
   TUcumPair = class (TFslObject)
   private
     FUnitCode: String;

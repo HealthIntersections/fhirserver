@@ -33,10 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  FHIR.Support.System,
-  FHIR.Support.Strings,
-  FHIR.Support.Math,
-  SysUtils;
+  SysUtils,
+  FHIR.Support.Exceptions, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Math;
 
 Const
   INTEGER_PRECISION = 24;
@@ -357,7 +355,7 @@ Begin
     if (sValue[i] = '.') And (iDecimal = 0) then
       iDecimal := i
     else if not CharInSet(sValue[i], ['0'..'9']) then
-      raise Exception.Create('"'+sValue+'" is not a valid decimal');
+      raise ELibraryException.create('"'+sValue+'" is not a valid decimal');
 
   if iDecimal = 0 then
   Begin
@@ -366,7 +364,7 @@ Begin
     Digits := sValue;
   end
   else if iDecimal = length(sValue) then
-    raise Exception.Create('"'+sValue+'" is not a valid decimal')
+    raise ELibraryException.create('"'+sValue+'" is not a valid decimal')
   else
   begin
     Decimal := iDecimal;
@@ -449,11 +447,11 @@ Begin
   if iMax <> length(s3)+1 then
   Begin
     if iMax <= 0 then
-      raise exception.create('unhandled')
+      raise ELibraryException.create('unhandled')
     else if imax <= length(s3) then
       insert('.', s3, iMax)
     else
-      raise exception.create('unhandled')
+      raise ELibraryException.create('unhandled')
   end;
 
   result := valueOf(s3);
@@ -483,7 +481,7 @@ Begin
     Begin
       inc(t, 10);
       if i = 1 then
-        raise exception.create('internal logic error')
+        raise ELibraryException.create('internal logic error')
       else
         s1[i-1] := cdig(dig(s1[i-1])-1);
     end;
@@ -523,11 +521,11 @@ Begin
   if iMax <> length(s3)+1 then
   Begin
     if iMax <= 0 then
-      raise exception.create('unhandled')
+      raise ELibraryException.create('unhandled')
     else if imax <= length(s3) then
       insert('.', s3, iMax)
     else
-      raise exception.create('unhandled');
+      raise ELibraryException.create('unhandled');
   end;
 
   result := valueOf(s3);
@@ -726,7 +724,7 @@ Begin
   else if IsZero Then
     result := Zero
   else if oOther.IsZero then
-    raise Exception.create('Attempt to divide '+asString+' by zero')
+    raise ELibraryException.create('Attempt to divide '+asString+' by zero')
   else if oOther.isOne then
     result := self
   else
@@ -909,9 +907,9 @@ begin
   StringSplit(sValue, 'e', s, e);
 
   if (s= '') or (s = '-') or not StringIsDecimal(s) then
-    raise Exception.create('"'+sValue+'" is not a valid decimal (numeric)');
+    raise ELibraryException.create('"'+sValue+'" is not a valid decimal (numeric)');
   if (e= '') or (e = '-') or not StringIsDecimal(e) then
-    raise Exception.create('"'+sValue+'" is not a valid decimal (exponent)');
+    raise ELibraryException.create('"'+sValue+'" is not a valid decimal (exponent)');
 
   SetValueDecimal(s);
   Scientific := true;
@@ -925,7 +923,7 @@ begin
   while i <= length(e) Do
   begin
     if not CharInSet(e[i], ['0'..'9']) then
-      raise Exception.Create('"'+sValue+'" is not a valid decimal');
+      raise ELibraryException.create('"'+sValue+'" is not a valid decimal');
     inc(i);
   end;
   i := StrToInt(e);
@@ -1172,10 +1170,10 @@ var
 begin
   r := AsInt64;
   if r < 0 then
-    raise exception.create('Unable to represent '+AsString+' as an unsigned 4 byte number');
+    raise ELibraryException.create('Unable to represent '+AsString+' as an unsigned 4 byte number');
   m := High(Cardinal);
   if r > m then
-    raise exception.create('Unable to represent '+AsString+' as an unsigned 4 byte number');
+    raise ELibraryException.create('Unable to represent '+AsString+' as an unsigned 4 byte number');
   result := r;
 end;
 
@@ -1189,13 +1187,13 @@ var
   t : TSmartDecimal;
 begin
   if not isWholeNumber then
-    raise exception.create('Unable to represent '+AsString+' as an integer');
+    raise ELibraryException.create('Unable to represent '+AsString+' as an integer');
   t := valueOf(Low(Int64));
   if Compares(self, t) < 0 then
-    raise exception.create('Unable to represent '+AsString+' as a signed 8 byte integer');
+    raise ELibraryException.create('Unable to represent '+AsString+' as a signed 8 byte integer');
   t := valueOf(High(Int64));
   if Compares(self, t) > 0 then
-    raise exception.create('Unable to represent '+AsString+' as a signed 8 byte integer');
+    raise ELibraryException.create('Unable to represent '+AsString+' as a signed 8 byte integer');
   result := StrToInt64(AsDecimal);
 end;
 
@@ -1207,10 +1205,10 @@ begin
   r := AsInt64;
   m := Low(Integer);
   if r < m then
-    raise exception.create('Unable to represent '+AsString+' as a signed 4 byte number');
+    raise ELibraryException.create('Unable to represent '+AsString+' as a signed 4 byte number');
   m := high(Integer);
   if r > m then
-    raise exception.create('Unable to represent '+AsString+' as a signed 4 byte number');
+    raise ELibraryException.create('Unable to represent '+AsString+' as a signed 4 byte number');
   result := r;
 end;
 

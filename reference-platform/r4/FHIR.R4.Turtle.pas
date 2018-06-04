@@ -36,7 +36,10 @@ interface
 // FHIR v3.4.0 generated 2018-05-15T06:48:00+10:00
 
 uses
-  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Decimal, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.R4.ParserBase, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types, FHIR.Support.Collections, FHIR.Support.Turtle;
+  SysUtils, Classes,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Decimal, FHIR.Support.Collections, FHIR.Support.Turtle,
+  FHIR.Base.Parser, FHIR.Base.Objects,
+  FHIR.R4.ParserBase, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types;
 
 Type
 
@@ -2707,7 +2710,7 @@ begin
     value := obj.stringLiteral('http://hl7.org/fhir/value');
   i := StringArrayIndexOfSensitive(aNames, value);
   if (value <> '') and (i < 0) then
-    raise Exception.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames));
+    raise ERdfException.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames));
   result := TFHIREnum.create;
   try
     result.value := value;
@@ -44809,7 +44812,7 @@ begin
     result := parseVisionPrescription(obj)
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('error: the element '+type_+' is not a valid fragment name');
+    raise ERdfException.create('error: the element '+type_+' is not a valid fragment name');
 end;
 
 function TFHIRTurtleParser.ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType;
@@ -44891,7 +44894,7 @@ begin
   else if (type_ = TFhirDuration) then
     result := parseDuration(obj)
   else
-    raise Exception.create('Unknown Type');
+    raise ERdfException.create('Unknown Type');
 end;
 
 procedure TFHIRTurtleComposer.ComposeResource(parent : TTurtleComplex; resource : TFhirResource);
@@ -44899,7 +44902,7 @@ var
   this : TTurtleComplex;
 begin
   if (resource = nil) Then
-    Raise Exception.Create('error - resource is nil');
+    raise ERdfException.create('error - resource is nil');
   this := parent;
   Case resource.ResourceType of
 {$IFDEF FHIR_PARAMETERS}
@@ -45601,7 +45604,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise ERdfException.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 
@@ -46449,7 +46452,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise Exception.create('error: the element '+s+' is not a valid resource name');
+    raise ERdfException.create('error: the element '+s+' is not a valid resource name');
 end;
 
 

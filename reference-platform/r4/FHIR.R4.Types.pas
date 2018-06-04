@@ -38,7 +38,7 @@ interface
 uses
   Classes, SysUtils, EncdDecd, 
   FHIR.Support.Signatures, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.DateTime, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, 
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.R4.Base;
 
 Type
@@ -13260,9 +13260,9 @@ begin
     if ex.url = url then
     begin
       if not ex.value.isPrimitive then
-        raise Exception.Create('Complex extension '+url)
+        raise EFHIRException.create('Complex extension '+url)
       else if result <> '' then
-        raise Exception.Create('Duplicate extension '+url)
+        raise EFHIRException.create('Duplicate extension '+url)
       else
         result := ex.value.primitiveValue;
     end;
@@ -13439,12 +13439,12 @@ end;
 
 procedure TFHIRPrimitiveType.SetStringValue(value: String);
 begin
-  raise Exception.Create('Need to override '+ClassName+'.setStringValue');
+  raise EFHIRException.create('Need to override '+ClassName+'.setStringValue');
 end;
 
 function TFHIRPrimitiveType.AsStringValue : string;
 begin
-  raise Exception.create('need to override '+ClassName+'.AsStringValue');
+  raise EFHIRException.create('need to override '+ClassName+'.AsStringValue');
 end;
 
 function TFHIRPrimitiveType.isPrimitive: boolean;
@@ -43935,7 +43935,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
   end;
 end;
 function asDate(obj : TFHIRObject) : TFHIRDate;
@@ -43955,7 +43955,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDate"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDate"')
   end;
 end;
 function asDateTime(obj : TFHIRObject) : TFHIRDateTime;
@@ -43975,7 +43975,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDateTime"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDateTime"')
   end;
 end;
 function asString(obj : TFHIRObject) : TFHIRString;
@@ -43995,7 +43995,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRString"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRString"')
   end;
 end;
 function asInteger(obj : TFHIRObject) : TFHIRInteger;
@@ -44015,7 +44015,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInteger"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInteger"')
   end;
 end;
 function asUri(obj : TFHIRObject) : TFHIRUri;
@@ -44035,7 +44035,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUri"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUri"')
   end;
 end;
 function asInstant(obj : TFHIRObject) : TFHIRInstant;
@@ -44055,7 +44055,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInstant"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInstant"')
   end;
 end;
 function asXhtml(obj : TFHIRObject) : TFHIRXhtml;
@@ -44075,7 +44075,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRXhtml"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRXhtml"')
   end;
 end;
 function asBoolean(obj : TFHIRObject) : TFHIRBoolean;
@@ -44095,7 +44095,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBoolean"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBoolean"')
   end;
 end;
 function asBase64Binary(obj : TFHIRObject) : TFHIRBase64Binary;
@@ -44115,7 +44115,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBase64Binary"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBase64Binary"')
   end;
 end;
 function asTime(obj : TFHIRObject) : TFHIRTime;
@@ -44135,7 +44135,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRTime"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRTime"')
   end;
 end;
 function asDecimal(obj : TFHIRObject) : TFHIRDecimal;
@@ -44155,7 +44155,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDecimal"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDecimal"')
   end;
 end;
 function asCode(obj : TFHIRObject) : TFHIRCode;
@@ -44175,7 +44175,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
   end;
 end;
 function asCanonical(obj : TFHIRObject) : TFHIRCanonical;
@@ -44195,7 +44195,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCanonical"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCanonical"')
   end;
 end;
 function asOid(obj : TFHIRObject) : TFHIROid;
@@ -44215,7 +44215,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIROid"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIROid"')
   end;
 end;
 function asUuid(obj : TFHIRObject) : TFHIRUuid;
@@ -44235,7 +44235,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUuid"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUuid"')
   end;
 end;
 function asUrl(obj : TFHIRObject) : TFHIRUrl;
@@ -44255,7 +44255,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUrl"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUrl"')
   end;
 end;
 function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
@@ -44275,7 +44275,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRMarkdown"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRMarkdown"')
   end;
 end;
 function asUnsignedInt(obj : TFHIRObject) : TFHIRUnsignedInt;
@@ -44295,7 +44295,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUnsignedInt"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUnsignedInt"')
   end;
 end;
 function asId(obj : TFHIRObject) : TFHIRId;
@@ -44315,7 +44315,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRId"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRId"')
   end;
 end;
 function asPositiveInt(obj : TFHIRObject) : TFHIRPositiveInt;
@@ -44335,7 +44335,7 @@ begin
   else
   begin
     obj.Free;
-    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRPositiveInt"')
+    raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRPositiveInt"')
   end;
 end;
 

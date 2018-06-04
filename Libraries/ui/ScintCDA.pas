@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, Graphics,
   ScintEdit,
-  FHIR.Support.Objects, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Text,
   FHIR.Cda.Base, FHIR.CDA.Objects, FHIR.CDA.Documents;
 (*
   gwCDA, v3Infrastructure, XMLBuilder, ReferenceModelBase, CDATypes;
@@ -357,7 +357,7 @@ begin
     stInstruction: scanInstruction;
     stPCData: scanPCData;
   else
-    raise Exception.Create('Error Message');
+    raise ELibraryException.create('Error Message');
   end;
 end;
 

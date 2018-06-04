@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.System,
-  FHIR.Base.Objects, FHIR.Client.Base;
+  FHIR.Base.Objects, FHIR.Client.Base, FHIR.Base.Lang;
 
 type
 
@@ -220,7 +220,7 @@ begin
           else
             FPackage.FBuffer := FClient.customGet(FPackage.paramString, FPackage.FHeaders);
       else
-        raise Exception.Create('Not done yet');
+        raise EFHIRException.create('Not done yet');
       end;
     except
       on e : exception do
@@ -338,7 +338,7 @@ end;
 
 procedure TFhirThreadedCommunicator.deleteResourceV(atype: TFhirResourceTypeV; id: String);
 begin
- raise Exception.Create('Not Done Yet');
+ raise EFHIRException.create('Not Done Yet');
 end;
 
 destructor TFhirThreadedCommunicator.Destroy;
@@ -349,7 +349,7 @@ end;
 
 function TFhirThreadedCommunicator.historyTypeV(atype: TFhirResourceTypeV; allRecords: boolean; params : string): TFHIRResourceV;
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.create('Not Done Yet');
 end;
 
 function TFhirThreadedCommunicator.operationV(atype: TFhirResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
@@ -458,12 +458,12 @@ end;
 
 function TFhirThreadedCommunicator.searchPostV(atype: TFhirResourceTypeV; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFHIRResourceV;
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.create('Not Done Yet');
 end;
 
 procedure TFhirThreadedCommunicator.terminate;
 begin
-  raise Exception.Create('not done yet');
+  raise EFHIRException.create('not done yet');
 end;
 
 function TFhirThreadedCommunicator.transactionV(bundle: TFHIRResourceV): TFHIRResourceV;
@@ -522,7 +522,7 @@ begin
     end;
   until Package.Done;
   if Package.error <> '' then
-    raise Exception.Create(Package.error);
+    raise EFHIRException.create(Package.error);
 end;
 
 end.

@@ -385,7 +385,7 @@ begin
 
   FValidator.free;
 //  if FValidatorContext.FslObjectReferenceCount > 0 then
-//    raise Exception.Create('There are still '+inttostr(FValidatorContext.FslObjectReferenceCount)+' uses of the WorkerContext live');
+//    raise EFHIRException.create('There are still '+inttostr(FValidatorContext.FslObjectReferenceCount)+' uses of the WorkerContext live');
 
   FValidatorContext.Free;
   FResConfig.free;

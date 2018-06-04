@@ -34,7 +34,7 @@ interface
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, PSApi, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Lock, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Collections;
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Lock, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Collections;
 
 Type
   TLogEvent = procedure (msg : String) of object;
@@ -269,7 +269,7 @@ End;
 Procedure TLogger.CutFile(sName : String);
 {$IFDEF MACOS}
 begin
-  raise Exception.Create('Not done yet');
+  raise EIOException.create('Not done yet');
 end;
 {$ELSE}
 Var
@@ -291,7 +291,7 @@ Begin
           Begin
           If FPolicy.AllowExceptions Then
             Try
-              Raise Exception.Create('error chopping file');
+              raise EIOException.create('error chopping file');
             Except
               End;
           readbytes := 0;
@@ -379,12 +379,12 @@ begin
     s := copy(result, i + 1, $FF);
     j := pos(')', s);
     if j <= 3 Then
-      Raise Exception.Create('Syntax Error in File name '+FFilename+' (unterminated command)');
+      raise EIOException.create('Syntax Error in File name '+FFilename+' (unterminated command)');
     s := copy(s, 1, j-1);
     if (s[1] = 'd') or (s[1] = 'D') or (s[1] = 't') or (s[1] = 'T') Then
       result := copy(result, 1, i-1) + FormatDateTime(copy(s, 3, $FF), aNow)+ copy(result, i+j+1, $FF)
     Else
-      Raise Exception.Create('Syntax Error in File name '+FFilename+' (unknown command '+s[1]+')');
+      raise EIOException.create('Syntax Error in File name '+FFilename+' (unknown command '+s[1]+')');
     i := pos('$', result);
   End;
 end;
@@ -395,7 +395,7 @@ procedure TLogger.WriteToLog(bytes: TBytes);
 begin
   If length(bytes) = 0 Then
     Exit;
-  // todo.... raise Exception.Create('Not done yet');
+  // todo.... raise EIOException.create('Not done yet');
 end;
 {$ELSE}
 Var
@@ -413,7 +413,7 @@ Begin
     f := CreateFile(PChar(sName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_ALWAYS, 0, 0);
     If f = INVALID_HANDLE_VALUE Then
       If FPolicy.AllowExceptions Then
-        Raise Exception.Create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
+        raise EIOException.create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
       Else
         Exit;
     If FPolicy.MaximumSize > 0 Then
@@ -432,7 +432,7 @@ Begin
         f := CreateFile(PChar(sName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_ALWAYS, 0, 0);
         If f = INVALID_HANDLE_VALUE Then
           If FPolicy.AllowExceptions Then
-            Raise Exception.Create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
+            raise EIOException.create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
           Else
             Exit;
         End;
@@ -443,7 +443,7 @@ Begin
     CloseHandle(f);
     d := Done; // suppress warning
     If FPolicy.AllowExceptions And Not res Or (d <> Length(bytes)) Then
-      Raise Exception.Create('Unable to write to file "' + sName + '": ' + SysErrorMessage(GetLastError));
+      raise EIOException.create('Unable to write to file "' + sName + '": ' + SysErrorMessage(GetLastError));
   Finally
     FLock.UnLock;
   End;

@@ -8,6 +8,7 @@ uses
   System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Memo,
   FMX.ScrollBox, FMX.Edit, FMX.StdCtrls, FMX.Controls.Presentation,
   FHIR.Support.Generics,
+  FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolKitUtilities;
 
@@ -106,9 +107,9 @@ begin
     begin
       s := ext.getExtensionString('lang');
       if s = '' then
-        raise Exception.Create('Language missing on a translation');
+        raise EFHIRException.create('Language missing on a translation');
       if langs.IndexOf(s) > -1 then
-        raise Exception.Create('Duplicate translation for '+s);
+        raise EFHIRException.create('Duplicate translation for '+s);
       langs.Add(s);
       ext.url := 'http://hl7.org/fhir/StructureDefinition/translation';
     end;

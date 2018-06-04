@@ -32,6 +32,7 @@ interface
 
 uses
   SysUtils, classes, Generics.Collections,
+  FHIR.Support.Exceptions,
   FHIR.Base.Objects;
 
 function GetFhirMessage(id, lang : String):String; overload;
@@ -67,17 +68,17 @@ Const
    HTTP_ERR_INTERNAL = 500;
 
 Type
-  EFHIRException = class (Exception)
+  EFHIRException = class (EFslException)
   public
     constructor CreateLang(code, lang : String); overload;
     constructor CreateLang(code, lang : String; const Args: array of const); overload;
   end;
 
-  ETooCostly = class (Exception);
-  EUnsafeOperation = class (Exception);
-  DefinitionException = class (Exception);
+  ETooCostly = class (EFHIRException);
+  EUnsafeOperation = class (EFHIRException);
+  EDefinitionException = class (EFHIRException);
 
-  ERestfulException = class (Exception)
+  ERestfulException = class (EFHIRException)
   Private
     FContext : String;
     FStatus : word;
@@ -90,6 +91,14 @@ Type
     Property Code : TExceptionType read FCode write FCode;
   End;
 
+  EFHIRPath = class (EFHIRException)
+  public
+     constructor create(problem : String); overload;
+     constructor create(path : String; offset : integer; problem : String); overload;
+  end;
+
+  EFHIRPathDefinitionCheck = class (EFHIRPath);
+
 function languageMatches(spec, possible : String) : boolean;
 function removeCaseAndAccents(s : String) : String;
 
@@ -99,7 +108,7 @@ implementation
 
 uses
   FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Exceptions,
+  FHIR.Support.Objects, FHIR.Support.Generics,
   {$IFDEF MSWINDOWS}FHIR.Support.Stream,{$ENDIF}
   FHIR.Support.MXml;
 
@@ -280,6 +289,18 @@ end;
 function removeCaseAndAccents(s : String) : String;
 begin
   result := lowercase(s); // todo....
+end;
+
+{ EFHIRPath }
+
+constructor EFHIRPath.create(path: String; offset: integer; problem: String);
+begin
+  inherited create('FHIR.R2.PathEngine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
+end;
+
+constructor EFHIRPath.create(problem: String);
+begin
+  inherited create(problem);
 end;
 
 initialization

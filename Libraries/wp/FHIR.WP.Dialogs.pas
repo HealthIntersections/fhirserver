@@ -4548,7 +4548,7 @@ Begin
   If (sdExport.Execute) Then
   Begin
     // Saving to sdExport.FileName
-    raise Exception.Create('Not done yet');
+    raise EWPException.create('Not done yet');
   End
 End;
 
@@ -5157,7 +5157,7 @@ Begin
         FBitmap.Height := FImage.Image.Height;
         FBitmap.Width := FImage.Image.Width;
         if not (FImage.Image is TFslVCLGraphic) then
-          raise Exception.Create('Cannot Edit an image Map for this kind of Image');
+          raise EWPException.create('Cannot Edit an image Map for this kind of Image');
 
         FBitmap.Canvas.Draw(0, 0, TFslVCLGraphic(FImage.Image).Handle);
       Finally

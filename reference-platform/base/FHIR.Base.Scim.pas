@@ -40,7 +40,7 @@ uses
   FHIR.Support.Json, FHIR.Support.DateTime;
 
 Type
-  ESCIMException = class (Exception)
+  ESCIMException = class (EFslException)
   private
     FStatus : integer;
     FStatusText : String;
