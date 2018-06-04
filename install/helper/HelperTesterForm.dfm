@@ -90,4 +90,10 @@ object Form10: TForm10
     Height = 17
     TabOrder = 7
   end
+  object od: TOpenDialog
+    DefaultExt = '*.dll'
+    Filter = '*.dll|*.dll'
+    Left = 288
+    Top = 16
+  end
 end

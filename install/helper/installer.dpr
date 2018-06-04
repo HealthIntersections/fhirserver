@@ -357,7 +357,7 @@ begin
     end;
   except
     on e : exception do
-      result := StrToPchar(e.Message);
+      result := StrToPchar('Error: '+e.Message);
   end;
 end;
 

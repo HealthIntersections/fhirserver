@@ -3,8 +3,8 @@ object PackageCacheForm: TPackageCacheForm
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'FHIR Package Cache Manager'
-  ClientHeight = 498
-  ClientWidth = 688
+  ClientHeight = 333
+  ClientWidth = 714
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,15 +20,17 @@ object PackageCacheForm: TPackageCacheForm
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 457
-    Width = 688
+    Top = 292
+    Width = 714
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     OnClick = Panel1Click
+    ExplicitTop = 457
+    ExplicitWidth = 688
     DesignSize = (
-      688
+      714
       41)
     object lblFolder: TLabel
       Left = 16
@@ -51,9 +53,10 @@ object PackageCacheForm: TPackageCacheForm
       Width = 57
       Height = 13
       Caption = 'lblDownload'
+      Visible = False
     end
     object Button1: TButton
-      Left = 604
+      Left = 630
       Top = 8
       Width = 74
       Height = 25
@@ -63,6 +66,7 @@ object PackageCacheForm: TPackageCacheForm
       ModalResult = 8
       TabOrder = 0
       OnClick = Button1Click
+      ExplicitLeft = 604
     end
     object pbDownload: TProgressBar
       Left = 144
@@ -86,11 +90,12 @@ object PackageCacheForm: TPackageCacheForm
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 688
+    Width = 714
     Height = 41
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 688
     object Label1: TLabel
       Left = 16
       Top = 14
@@ -101,14 +106,14 @@ object PackageCacheForm: TPackageCacheForm
     object RadioButton1: TRadioButton
       Left = 72
       Top = 13
-      Width = 73
+      Width = 106
       Height = 17
       Caption = 'User Cache'
       TabOrder = 0
       OnClick = RadioButton2Click
     end
     object RadioButton2: TRadioButton
-      Left = 160
+      Left = 184
       Top = 13
       Width = 113
       Height = 17
@@ -118,17 +123,22 @@ object PackageCacheForm: TPackageCacheForm
     end
   end
   object Panel3: TPanel
-    Left = 597
+    Left = 602
     Top = 41
-    Width = 91
-    Height = 416
+    Width = 112
+    Height = 251
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitLeft = 576
+    ExplicitHeight = 416
+    DesignSize = (
+      112
+      251)
     object Button2: TButton
       Left = 6
       Top = 31
-      Width = 75
+      Width = 99
       Height = 25
       Caption = 'Import File'
       TabOrder = 0
@@ -137,7 +147,7 @@ object PackageCacheForm: TPackageCacheForm
     object Button3: TButton
       Left = 6
       Top = 62
-      Width = 75
+      Width = 99
       Height = 25
       Caption = 'Import URL'
       TabOrder = 1
@@ -146,7 +156,7 @@ object PackageCacheForm: TPackageCacheForm
     object btnDelete: TButton
       Left = 6
       Top = 136
-      Width = 75
+      Width = 99
       Height = 25
       Caption = 'Delete'
       Enabled = False
@@ -156,7 +166,7 @@ object PackageCacheForm: TPackageCacheForm
     object Button4: TButton
       Left = 6
       Top = 0
-      Width = 75
+      Width = 99
       Height = 25
       Caption = 'Find Packages'
       TabOrder = 3
@@ -165,7 +175,7 @@ object PackageCacheForm: TPackageCacheForm
     object Button5: TButton
       Left = 6
       Top = 93
-      Width = 75
+      Width = 99
       Height = 25
       Caption = 'Common'
       TabOrder = 4
@@ -173,30 +183,34 @@ object PackageCacheForm: TPackageCacheForm
     end
     object Button6: TButton
       Left = 6
-      Top = 344
-      Width = 75
-      Height = 25
+      Top = 194
+      Width = 99
+      Height = 26
+      Anchors = [akLeft, akBottom]
       Caption = 'Reload'
       Enabled = False
       TabOrder = 5
       OnClick = Button6Click
+      ExplicitTop = 360
     end
     object Button7: TButton
       Left = 6
-      Top = 375
-      Width = 75
-      Height = 25
+      Top = 225
+      Width = 99
+      Height = 26
+      Anchors = [akLeft, akBottom]
       Caption = 'Debug'
       Enabled = False
       TabOrder = 6
       OnClick = Button7Click
+      ExplicitTop = 391
     end
   end
   object vtPackages: TVirtualStringTree
     Left = 0
     Top = 41
-    Width = 597
-    Height = 416
+    Width = 602
+    Height = 251
     Align = alClient
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
@@ -217,13 +231,15 @@ object PackageCacheForm: TPackageCacheForm
     OnInitChildren = vtPackagesInitChildren
     OnInitNode = vtPackagesInitNode
     OnRemoveFromSelection = vtPackagesRemoveFromSelection
+    ExplicitWidth = 597
+    ExplicitHeight = 416
     Columns = <>
   end
   object ImageList1: TImageList
     Left = 120
     Top = 393
     Bitmap = {
-      494C01010800B800780010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010800B8007C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

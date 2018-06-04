@@ -17,6 +17,7 @@ type
     Button5: TButton;
     ProgressBar1: TProgressBar;
     Label1: TLabel;
+    od: TOpenDialog;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -50,15 +51,19 @@ var
 
 procedure TForm10.Button1Click(Sender: TObject);
 begin
-  dll := LoadLibrary('C:\work\fhirserver\install\installer.dll');
-  if dll < 32 then
-    RaiseLastOSError;
-  @MyDllListPackages := GetProcAddress(dll, 'MyDllListPackages');
-  if @MyDllListPackages = nil then
-    raise Exception.Create('package list not found');
-  @MyDllDownloadPackages := GetProcAddress(dll, 'MyDllDownloadPackages');
-  if @MyDllDownloadPackages = nil then
-    raise Exception.Create('package loader not found');
+  od.FileName := 'C:\work\fhirserver\install\installer.dll';
+  if od.Execute then
+  begin
+    dll := LoadLibrary(pchar(od.FileName));
+    if dll < 32 then
+      RaiseLastOSError;
+    @MyDllListPackages := GetProcAddress(dll, 'MyDllListPackages');
+    if @MyDllListPackages = nil then
+      raise Exception.Create('package list not found: '+SysErrorMessage(GetLastError));
+    @MyDllDownloadPackages := GetProcAddress(dll, 'MyDllDownloadPackages');
+    if @MyDllDownloadPackages = nil then
+      raise Exception.Create('package loader not found');
+  end;
 end;
 
 procedure TForm10.Button2Click(Sender: TObject);
@@ -72,20 +77,31 @@ var
   p : string;
   pl, tl : TArray<String>;
 begin
+  showmessage('a');
   v := edit1.Text;
+  showmessage('b');
   s := MyDllListPackages(PAnsiChar(v));
+  showmessage('c');
   p := s;
   p := p.replace(#13#10, '~');
   pl := p.Split(['~']);
+  showmessage('d');
   CheckListBox1.Items.Clear;
   urls.clear;
+  showmessage('e');
   for p in pl do
   begin
+    showmessage('p: '+p);
     tl := p.Trim.Split(['|']);
+    showmessage('tl-0: '+tl[0]);
+    showmessage('tl-1: '+tl[1]);
+    showmessage('tl-2: '+tl[2]);
+    showmessage('tl-3: '+tl[3]);
     CheckListBox1.Items.Add(tl[2] + ': '+tl[3]);
     CheckListBox1.Checked[CheckListBox1.Items.count- 1] := tl[1] = '1';
     urls.Add(tl[2]+':'+tl[0]);
   end;
+  showmessage('f');
 end;
 
 procedure TForm10.Button4Click(Sender: TObject);

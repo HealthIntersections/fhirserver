@@ -952,7 +952,7 @@ var
   i : TJsonNode;
   p : TPackageDefinition;
 begin
-  a := TInternetFetcher.fetchJsonArr('https://build.fhir.org/ig/qas.json');
+  a := TInternetFetcher.fetchJsonArr('http://build.fhir.org/ig/qas.json');
   try
     for i in a do
     begin
@@ -967,7 +967,7 @@ begin
           p.Date := TDateTimeEx.fromFormat('DDD, dd mmm, yyyy hh:nn:ss Z', j.str['date']).DateTime;
           p.Description := j.str['name'];
           p.FHIRVersion := j.str['version'];
-          p.Url := 'https://build.fhir.org/ig/'+j.str['repo'];
+          p.Url := 'http://build.fhir.org/ig/'+j.str['repo'];
           list.Add(p.Link);
         finally
           p.Free;
@@ -991,7 +991,7 @@ begin
     p.Date := Now;
     p.Description := 'FHIR Current Build';
     p.FHIRVersion := '3.4.0';
-    p.Url := 'https://build.fhir.org/';
+    p.Url := 'http://build.fhir.org/';
     list.Add(p.Link);
   finally
     p.Free;
@@ -1005,7 +1005,7 @@ begin
     p.Date := EncodeDate(2017, 4, 19);
     p.Description := 'FHIR R3';
     p.FHIRVersion := '3.0.1';
-    p.Url := 'https://hl7.org/fhir';
+    p.Url := 'http://hl7.org/fhir';
     list.Add(p.Link);
   finally
     p.Free;
@@ -1019,7 +1019,7 @@ begin
     p.Date := EncodeDate(2016, 5, 15);
     p.Description := 'FHIR R2';
     p.FHIRVersion := '1.0.2';
-    p.Url := 'https://hl7.org/fhir';
+    p.Url := 'http://hl7.org/fhir';
     list.Add(p.Link);
   finally
     p.Free;
