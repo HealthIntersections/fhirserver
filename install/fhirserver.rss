@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.238 2018-06-04</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.238.exe</link>
+			<description>2018-06-04 (v1.0.238): fix another SSL related bug</description>
+		</item>
+<item><title>FHIRServer release 1.0.237 2018-06-03</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.237.exe</link>
+			<description>2018-06-03 (v1.0.237): Fix installer SSL problem</description>
+		</item>
 		<item><title>FHIRServer release 1.0.236 2018-06-03</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.236.exe</link>
 			<description>2018-06-03 (v1.0.236): fix bug processing client mime types</description>
 		</item>
-<item><title>FHIRServer release 1.0.235 2018-06-01</title>
+		<item><title>FHIRServer release 1.0.235 2018-06-01</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.235.exe</link>
 			<description>2018-06-01 (v1.0.235): fix minor bugs</description>
 		</item>
