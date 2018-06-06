@@ -60,7 +60,6 @@ uses
   FHIR.R4.Questionnaire2 in '..\..\..\..\r4\FHIR.R4.Questionnaire2.pas',
   FHIR.R4.Base in '..\..\..\..\r4\FHIR.R4.Base.pas',
   FHIR.R4.ParserBase in '..\..\..\..\r4\FHIR.R4.ParserBase.pas',
-  FHIR.Tools.XhtmlComp in '..\..\..\..\tools\FHIR.Tools.XhtmlComp.pas',
   FHIR.R4.Parser in '..\..\..\..\r4\FHIR.R4.Parser.pas',
   FHIR.Client.Base in '..\..\..\..\client\FHIR.Client.Base.pas',
   FHIR.Client.HTTP in '..\..\..\..\client\FHIR.Client.HTTP.pas',

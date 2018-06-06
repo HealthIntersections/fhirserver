@@ -106,7 +106,7 @@
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <SanitizedProjectName>UI_Creator</SanitizedProjectName>
         <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>
-        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R4.AuthMap;FHIR.Tools.Constants=FHIR.R4.Constants;FHIR.Tools.Context=FHIR.R4.Context;FHIR.Tools.IndexInfo=FHIR.R4.IndexInfo;FHIR.Tools.Javascript=FHIR.R4.Javascript;FHIR.Tools.ElementModel=FHIR.R4.ElementModel;FHIR.Tools.Narrative=FHIR.R4.Narrative;FHIR.Tools.Operations=FHIR.R4.Operations;FHIR.Tools.Json=FHIR.R4.Json;FHIR.Tools.Turtle=FHIR.R4.Turtle;FHIR.Tools.Xml=FHIR.R4.Xml;FHIR.Tools.PathNode=FHIR.R4.PathNode;FHIR.Tools.Profiles=FHIR.R4.Profiles;FHIR.Tools.Resources=FHIR.R4.Resources;FHIR.Tools.MapUtilities=FHIR.R4.MapUtilities;FHIR.Tools.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Tools.Types=FHIR.R4.Types;FHIR.Tools.Utilities=FHIR.R4.Utilities;FHIR.Tools.Validator=FHIR.R4.Validator;FHIR.Tools.OpBase=FHIR.R4.OpBase;FHIR.Tools.PathEngine=FHIR.R4.PathEngine;FHIR.Tools.Narrative2=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire=FHIR.R4.Questionnaire;FHIR.Tools.Questionnaire2=FHIR.R4.Questionnaire2;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitAlias>FHIR.Tools.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Tools.IndexInfo=FHIR.R4.IndexInfo;FHIR.Tools.Javascript=FHIR.R4.Javascript;FHIR.Tools.ElementModel=FHIR.R4.ElementModel;FHIR.Tools.Narrative=FHIR.R4.Narrative;FHIR.Tools.Operations=FHIR.R4.Operations;FHIR.Tools.Json=FHIR.R4.Json;FHIR.Tools.Turtle=FHIR.R4.Turtle;FHIR.Tools.Xml=FHIR.R4.Xml;FHIR.Tools.PathNode=FHIR.R4.PathNode;FHIR.Tools.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Tools.MapUtilities=FHIR.R4.MapUtilities;FHIR.Tools.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Tools.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Tools.Validator=FHIR.R4.Validator;FHIR.Tools.OpBase=FHIR.R4.OpBase;FHIR.Tools.PathEngine=FHIR.R4.PathEngine;FHIR.Tools.Narrative2=FHIR.R4.Narrative2;FHIR.Tools.Questionnaire=FHIR.R4.Questionnaire;FHIR.Tools.Questionnaire2=FHIR.R4.Questionnaire2;$(DCC_UnitAlias)</DCC_UnitAlias>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;bindcompdbx;DBXInterBaseDriver;IndyIPServer;IndySystem;tethering;fmxFireDAC;bindcompfmx;ibmonitor;FMXTee;DbxCommonDriver;FmxTeeUI;ibxpress;fmx;xmlrtl;ibxbindings;rtl;DbxClientDriver;RadiantShapesFmx;CustomIPTransport;dbexpress;IndyCore;dcliot;bindcomp;dsnap;iot;IndyIPClient;BarcodeScanner;dbxcds;bindengine;dsnapxml;dbrtl;IndyProtocols;$(DCC_UsePackage)</DCC_UsePackage>
@@ -384,7 +384,6 @@
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Questionnaire2.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Base.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.ParserBase.pas"/>
-        <DCCReference Include="..\..\..\..\tools\FHIR.Tools.XhtmlComp.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Parser.pas"/>
         <DCCReference Include="..\..\..\..\client\FHIR.Client.Base.pas"/>
         <DCCReference Include="..\..\..\..\client\FHIR.Client.HTTP.pas"/>
