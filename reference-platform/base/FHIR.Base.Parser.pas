@@ -62,6 +62,7 @@ const
 
   FHIR_SPEC_URL = 'http://hl7.org/fhir';
   FHIR_TTL_URI_BASE = 'http://hl7.org/fhir/';
+  BOOLEAN_STRING_CODES : array [boolean] of String = ('false', 'true');
 
 
 Type
@@ -529,7 +530,7 @@ begin
   else
     case node.kind of
       jnkNull : result := 'null';
-      jnkBoolean : result := BoolToStr(TJsonBoolean(node).value);
+      jnkBoolean : result := BOOLEAN_STRING_CODES[TJsonBoolean(node).value];
       jnkString : result := TJsonString(node).value;
       jnkNumber : result := TJsonNumber(node).value;
       jnkObject : result := '{}';

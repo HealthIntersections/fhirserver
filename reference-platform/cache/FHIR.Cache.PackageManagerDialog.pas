@@ -33,7 +33,7 @@ type
     RadioButton2: TRadioButton;
     Button4: TButton;
     Button5: TButton;
-    Button6: TButton;
+    btnReload: TButton;
     Button7: TButton;
     pmImport: TPopupMenu;
     CurrentValidator1: TMenuItem;
@@ -67,7 +67,7 @@ type
     procedure lblFolderClick(Sender: TObject);
     procedure RadioButton2Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure Button6Click(Sender: TObject);
+    procedure btnReloadClick(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure CurrentValidator1Click(Sender: TObject);
@@ -263,7 +263,7 @@ begin
   pmImport.Popup(pt.X, pt.Y);
 end;
 
-procedure TPackageCacheForm.Button6Click(Sender: TObject);
+procedure TPackageCacheForm.btnReloadClick(Sender: TObject);
 begin
   LoadPackages;
 end;

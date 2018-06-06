@@ -269,7 +269,7 @@ begin
   // Timezone Wrangling
   d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
   d2 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(3, 0, 0, 0), dttzUTC); // UTC Time
-  Assert.IsTrue(sameInstant(d1.DateTime - TimezoneBias, d2.DateTime));
+  Assert.IsTrue(sameInstant(d1.DateTime - TimezoneBias(EncodeDate(2011, 2, 2)), d2.DateTime));
   Assert.IsTrue(sameInstant(d1.UTC.DateTime, d2.DateTime));
   Assert.IsTrue(not d1.equal(d2));
   Assert.IsTrue(d1.sameTime(d2));

@@ -439,7 +439,7 @@ begin
         Assert.WillRaiseWithMessage(
           procedure begin
             engine.execute(tests, target, patch);
-          end, Exception, error.text)
+          end, EXmlException, error.text)
       else
       begin
         engine.execute(tests, target, patch);

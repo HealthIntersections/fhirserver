@@ -1,5 +1,7 @@
 unit JsonTests;
 
+{$DEFINE DIFF}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -33,7 +35,7 @@ interface
 
 Uses
   SysUtils, Classes, Soap.EncdDecd, System.NetEncoding,
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary,
   FHIR.Support.Objects, FHIR.Support.Json,
   DUnitX.TestFramework;
 
@@ -158,7 +160,7 @@ begin
         Assert.WillRaise(
           procedure begin
             engine.applyPatch(test.obj['doc'], test.arr['patch']).Free;
-          end, Exception);
+          end, EJsonException);
       end
       else
       begin

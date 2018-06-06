@@ -170,7 +170,8 @@ type
     function subtract(length : TDateTime) : TDateTimeEx;
     function lessPrecision: TDateTimeEx;
 
-    function equal(other : TDateTimeEx) : Boolean;  // returns true if the timezone, FPrecision, and actual instant are the same
+    function equal(other : TDateTimeEx) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
+    function equal(other : TDateTimeEx; precision : TDateTimeExPrecision) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
     function sameTime(other : TDateTimeEx) : Boolean; // returns true if the specified instant is the same allowing for specified FPrecision - corrects for timezone
     function after(other : TDateTimeEx; inclusive : boolean):boolean;
     function before(other : TDateTimeEx; inclusive : boolean):boolean;
@@ -755,6 +756,20 @@ begin
   else
     Result := 0;
   end;
+end;
+
+function TDateTimeEx.equal(other: TDateTimeEx; precision: TDateTimeExPrecision): Boolean;
+begin
+  result :=
+    (FPrecision >= precision) and (other.Precision >= precision) and
+    (year = other.year) and
+    ((precision < dtpMonth) or (month = other.month)) and
+    ((precision < dtpDay) or (day = other.day)) and
+    ((precision < dtpHour) or (hour = other.hour)) and
+    ((precision < dtpMin) or (minute = other.minute)) and
+    ((precision < dtpSec) or (second = other.second)) and
+    ((precision < dtpNanoSeconds) or (fraction = other.fraction)) and (FractionPrecision = other.FractionPrecision) and
+    (TimezoneType = other.TimezoneType) and (TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins);
 end;
 
 procedure FindBlock(ch: Char; const s: String; var start, blength: Integer);
@@ -1658,18 +1673,15 @@ begin
 end;
 
 function TDateTimeEx.Equal(other: TDateTimeEx): Boolean;
-var
-  src : TDateTimeEx;
 begin
-  src := TDateTimeEx(other);
-  result := (year = src.year) and
-    ((FPrecision < dtpMonth) or (month = src.month)) and
-    ((FPrecision < dtpDay) or (day = src.day)) and
-    ((FPrecision < dtpHour) or (hour = src.hour)) and
-    ((FPrecision < dtpMin) or (minute = src.minute)) and
-    ((FPrecision < dtpSec) or (second = src.second)) and
-    ((FPrecision < dtpNanoSeconds) or (fraction = src.fraction)) and (FPrecision = src.FPrecision) and (FractionPrecision = src.FractionPrecision) and
-    (TimezoneType = src.TimezoneType) and (TimeZoneHours = src.TimeZoneHours) and (TimezoneMins = src.TimezoneMins);
+  result := (year = other.year) and
+    ((FPrecision < dtpMonth) or (month = other.month)) and
+    ((FPrecision < dtpDay) or (day = other.day)) and
+    ((FPrecision < dtpHour) or (hour = other.hour)) and
+    ((FPrecision < dtpMin) or (minute = other.minute)) and
+    ((FPrecision < dtpSec) or (second = other.second)) and
+    ((FPrecision < dtpNanoSeconds) or (fraction = other.fraction)) and (FPrecision = other.FPrecision) and (FractionPrecision = other.FractionPrecision) and
+    (TimezoneType = other.TimezoneType) and (TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins);
 end;
 
 

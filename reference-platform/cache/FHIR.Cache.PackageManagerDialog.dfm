@@ -27,8 +27,6 @@ object PackageCacheForm: TPackageCacheForm
     BevelOuter = bvNone
     TabOrder = 0
     OnClick = Panel1Click
-    ExplicitTop = 457
-    ExplicitWidth = 688
     DesignSize = (
       714
       41)
@@ -66,7 +64,6 @@ object PackageCacheForm: TPackageCacheForm
       ModalResult = 8
       TabOrder = 0
       OnClick = Button1Click
-      ExplicitLeft = 604
     end
     object pbDownload: TProgressBar
       Left = 144
@@ -95,7 +92,6 @@ object PackageCacheForm: TPackageCacheForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 688
     object Label1: TLabel
       Left = 16
       Top = 14
@@ -130,8 +126,6 @@ object PackageCacheForm: TPackageCacheForm
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 576
-    ExplicitHeight = 416
     DesignSize = (
       112
       251)
@@ -181,17 +175,15 @@ object PackageCacheForm: TPackageCacheForm
       TabOrder = 4
       OnClick = Button5Click
     end
-    object Button6: TButton
+    object btnReload: TButton
       Left = 6
       Top = 194
       Width = 99
       Height = 26
       Anchors = [akLeft, akBottom]
       Caption = 'Reload'
-      Enabled = False
       TabOrder = 5
-      OnClick = Button6Click
-      ExplicitTop = 360
+      OnClick = btnReloadClick
     end
     object Button7: TButton
       Left = 6
@@ -200,10 +192,8 @@ object PackageCacheForm: TPackageCacheForm
       Height = 26
       Anchors = [akLeft, akBottom]
       Caption = 'Debug'
-      Enabled = False
       TabOrder = 6
       OnClick = Button7Click
-      ExplicitTop = 391
     end
   end
   object vtPackages: TVirtualStringTree
@@ -231,15 +221,13 @@ object PackageCacheForm: TPackageCacheForm
     OnInitChildren = vtPackagesInitChildren
     OnInitNode = vtPackagesInitNode
     OnRemoveFromSelection = vtPackagesRemoveFromSelection
-    ExplicitWidth = 597
-    ExplicitHeight = 416
     Columns = <>
   end
   object ImageList1: TImageList
     Left = 120
     Top = 393
     Bitmap = {
-      494C01010800B8007C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010800B800840010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
