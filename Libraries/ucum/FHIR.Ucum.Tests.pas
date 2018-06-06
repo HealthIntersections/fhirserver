@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  FHIR.Support.Strings, FHIR.Support.Decimal,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Decimal,
   FHIR.Support.Objects,
   FHIR.Support.MXml,
   FHIR.Ucum.Services;
@@ -122,7 +122,7 @@ begin
         foundTest := test;
         exit;
       end;
-  raise Exception.Create('nout found id = '+id);
+  raise ELibraryException.Create('nout found id = '+id);
 end;
 
 procedure TUcumTests.Setup;
@@ -161,7 +161,7 @@ begin
   else if group.name = 'multiplication' then
     TestMultiplication(test)
   else
-    raise Exception.Create('unknown group '+group.Name);
+    raise ETerminologyError.Create('unknown group '+group.Name);
 end;
 
 procedure TUcumTests.TestValidation(test : TMXmlElement);

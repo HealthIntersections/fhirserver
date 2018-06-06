@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, DUnitX.TestFramework, Variants, IOUtils,
-  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
@@ -114,7 +114,7 @@ var
 begin
   p := context.Split(['/']);
   if p[length(p)-1] <> '$graph' then
-    raise Exception.Create('not understood');
+    raise ELibraryException.Create('not understood');
   f := TFileStream.Create(path(['C:\work\org.hl7.fhir\build\publish', p[0]+'-'+p[1]+'.xml']), fmOpenRead + fmShareDenyWrite);
   try
     x := TFHIRXmlParser.Create(nil, 'en');
