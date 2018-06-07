@@ -218,7 +218,7 @@ begin
     vs := TFslVCLStream.Create;
     try
       vs.Stream := s;
-      json := TJSONWriter.Create;
+      json := TJSONWriterDirect.Create;
       try
         json.Stream := vs.link;
         json.Start;

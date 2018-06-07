@@ -1700,6 +1700,8 @@ Begin
             // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
             if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
               response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+            if request.RawHeaders.Values[REVERSE_HOST_HEADER] <> '' then
+              sHost := request.RawHeaders.Values[REVERSE_HOST_HEADER];
             if request.RawHeaders.Values['X-Request-Id'] <> '' then
               response.CustomHeaders.Add('X-Request-Id: ' + request.RawHeaders.Values['X-Request-Id']);
             oRequest := nil;
