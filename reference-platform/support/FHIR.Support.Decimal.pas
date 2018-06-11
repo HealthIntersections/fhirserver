@@ -1,19 +1,19 @@
-Unit FHIR.Support.Decimal;
+﻿Unit FHIR.Support.Decimal;
 
 {
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -40,7 +40,7 @@ Const
   INTEGER_PRECISION = 24;
 
 Type
-{TSmartDecimal
+{TFslDecimal
     Precision aware Decimal implementation. Any size number with any number of significant digits is supported.
 
     Note that operations are precision aware operations. Note that whole numbers are assumed to have
@@ -62,16 +62,44 @@ Type
     Note that the string representation is precision limited, but the internal representation
     is not.
 }
-  TSmartDecimal = record
-    notNull : boolean;
-    Precision : integer;
-    Scientific : Boolean;
-    Negative : Boolean;
-    Digits : String;
-    Decimal : integer;
+  TFslDecimalStatus = (sdsUnknown, sdsUndefined, sdsNumber, sdsInfinite); // undefined is the mathematical concept - different to unknown
+
+  TFslDecimal = record
+  // data members - never use these - use the helper methods instead
+  private
+    FStatus : TFslDecimalStatus;
+    FNegative : Boolean;
+    FDigits : String;
+    FDecimal : integer;
+    FPrecision : integer;
+    FScientific : Boolean;  // remember the representation
+
+  // operator overloading
+  public
+    class operator Implicit(a : TFslDecimal) : String;
+    class operator Implicit(a : TFslDecimal) : Double;
+    class operator Implicit(a : TFslDecimal) : Integer;
+    class operator Explicit(a : String) : TFslDecimal;
+    class operator Explicit(a : Double) : TFslDecimal;
+    class operator Explicit(a : Integer) : TFslDecimal;
+    class operator Negative(a : TFslDecimal) : TFslDecimal;
+    class operator Positive(a : TFslDecimal) : TFslDecimal;
+    class operator Trunc(a : TFslDecimal) : TFslDecimal;
+    class operator Equal(a: TFslDecimal; b: TFslDecimal) : Boolean;
+    class operator NotEqual(a: TFslDecimal; b: TFslDecimal) : Boolean;
+    class operator GreaterThan(a: TFslDecimal; b: TFslDecimal) : Boolean;
+    class operator GreaterThanOrEqual(a: TFslDecimal; b: TFslDecimal) : Boolean;
+    class operator LessThan(a: TFslDecimal; b: TFslDecimal) : Boolean;
+    class operator LessThanOrEqual(a: TFslDecimal; b: TFslDecimal) : Boolean;
+    class operator Add(a: TFslDecimal; b: TFslDecimal) : TFslDecimal;
+    class operator Subtract(a: TFslDecimal; b: TFslDecimal) : TFslDecimal;
+    class operator Multiply(a: TFslDecimal; b: TFslDecimal) : TFslDecimal;
+    class operator Divide(a: TFslDecimal; b: TFslDecimal) : TFslDecimal;
+    class operator IntDivide(a: TFslDecimal; b: TFslDecimal) : TFslDecimal;
+    class operator Modulus(a: TFslDecimal; b: TFslDecimal) : TFslDecimal;
   end;
 
-  TSmartDecimalHelper = record helper for TSmartDecimal
+  TFslDecimalHelper = record helper for TFslDecimal
   private
     Procedure SetValue(sValue : String);
     Procedure SetValueDecimal(sValue : String);
@@ -80,38 +108,48 @@ Type
     Function GetValueDecimal : String;
     Function GetValueScientific : String;
 
-    Function DoAdd(oOther : TSmartDecimal) : TSmartDecimal;
-    Function DoSubtract(oOther : TSmartDecimal) : TSmartDecimal;
+    Function DoAdd(oOther : TFslDecimal) : TFslDecimal;
+    Function DoSubtract(oOther : TFslDecimal) : TFslDecimal;
 
     Function StringAddition(s1, s2 : String):String;
     Function StringSubtraction(s1, s2 : String):String;
 
     Function dig(c : Char) : integer;
     Function cdig(i : integer) : Char;
+    function GetPrecision: integer;
+    procedure SetPrecision(const Value: integer);
   public
     // constructors
-    class Function ValueOf(value : String) : TSmartDecimal; Overload; static; inline;
-    class Function ValueOf(value : Integer) : TSmartDecimal; Overload; static; inline;
-    class Function ValueOf(value : int64) : TSmartDecimal; Overload; static; inline;
-    class Function Create(value : String) : TSmartDecimal; Overload; static; inline;
-    class Function Create(value : Integer) : TSmartDecimal; Overload; static; inline;
-    class Function Create(value : int64) : TSmartDecimal; Overload; static; inline;
+    class Function ValueOf(value : String) : TFslDecimal; Overload; static; inline;
+    class Function ValueOf(value : Integer) : TFslDecimal; Overload; static; inline;
+    class Function ValueOf(value : int64) : TFslDecimal; Overload; static; inline;
+    class Function ValueOf(value : Double) : TFslDecimal; Overload; static; inline;
+    class Function Create(value : String) : TFslDecimal; Overload; static; inline;
+    class Function Create(value : Integer) : TFslDecimal; Overload; static; inline;
+    class Function Create(value : int64) : TFslDecimal; Overload; static; inline;
+    class Function Create(value : Double) : TFslDecimal; Overload; static; inline;
 
-    function Link : TSmartDecimal;
-    function Clone : TSmartDecimal;
+    function Link : TFslDecimal;
+    function Clone : TFslDecimal;
 
     // utility functions
-    class Function Equals(oOne, oTwo : TSmartDecimal) : Boolean; overload; static; inline;
-    class Function Compares(oOne, oTwo : TSmartDecimal) : Integer; overload; static;
-    class Function Zero : TSmartDecimal; overload; static; inline;
-    class Function One : TSmartDecimal; overload; static; inline;
+    class Function Equals(oOne, oTwo : TFslDecimal) : Boolean; overload; static; inline;
+    class Function Compares(oOne, oTwo : TFslDecimal) : Integer; overload; static;
+
+    class Function makeZero : TFslDecimal; overload; static; inline;
+    class Function makeOne : TFslDecimal; overload; static; inline;
+    class Function makeInfinity : TFslDecimal; overload; static; inline;
+    class Function makeUndefined : TFslDecimal; overload; static; inline;
+    class function makeNull : TFslDecimal; static; inline;
+
     class function CheckValue(sValue : String) : boolean; static; inline;
     class function CheckValueDecimal(sValue : String) : boolean; static; inline;
     class function CheckValueScientific(sValue : String) : boolean; static; inline;
-    class function makeNull : TSmartDecimal; static; inline;
 
     // accessors
     property value : String read GetValue write SetValue;
+    property precision : integer read GetPrecision write SetPrecision;
+
     Property AsString : String read GetValue;
     Function AsCardinal : Cardinal;
     Function AsInteger : Integer;
@@ -120,38 +158,48 @@ Type
     Property AsDecimal : String read GetValuedecimal;
     function AsDouble : Double;
 
+    {
+     This method exists to populate a database with relatively arucately searchable decimal values wher ethe search is by string semantics
+    }
+    function normaliseDecimal(digits, decimals : integer; defUp : boolean) : String;
+
     // properties
     Function IsZero : Boolean;
     Function IsNegative : boolean;
     Function IsOne : Boolean;
+    Function IsInfinite : Boolean;
     Function IsWholeNumber : Boolean;
     function IsNull : boolean;
-    Function upperBound : TSmartDecimal; // the upper bound given the imprecision. for example, if the value is 1,0, then the upper bound is 1.05.
-    Function lowerBound : TSmartDecimal; // the lower bound given the imprecision. for example, if the value is 1,0, then the lower bound is 0.95.
-    Function immediateUpperBound : TSmartDecimal; // the upper bound given the face value. for example, if the value is 1.0, then the upper bound is 1.000000000000000000000000001.
-    Function immediateLowerBound : TSmartDecimal;  // the immediate lower bound given the face value. for example, if the value is 1,0, then the upper bound is 0.99999999999999999999999999999999.
+    function IsUndefined : boolean;
+    function isANumber : boolean;
+    Function upperBound : TFslDecimal; // the upper bound given the imprecision. for example, if the value is 1,0, then the upper bound is 1.05.
+    Function lowerBound : TFslDecimal; // the lower bound given the imprecision. for example, if the value is 1,0, then the lower bound is 0.95.
+    Function immediateUpperBound : TFslDecimal; // the upper bound given the face value. for example, if the value is 1.0, then the upper bound is 1.000000000000000000000000001.
+    Function immediateLowerBound : TFslDecimal;  // the immediate lower bound given the face value. for example, if the value is 1,0, then the upper bound is 0.99999999999999999999999999999999.
 
     // operators
-    Function Trunc : TSmartDecimal;
-    Function Multiply(oOther : TSmartDecimal) : TSmartDecimal; Overload;
-    Function Multiply(iOther : Integer) : TSmartDecimal; Overload;
-    Function Divide(oOther : TSmartDecimal) : TSmartDecimal; Overload;
-    Function Divide(iOther : Integer) : TSmartDecimal; Overload;
+    Function Trunc : TFslDecimal;
+    Function Multiply(oOther : TFslDecimal) : TFslDecimal; Overload;
+    Function Multiply(iOther : Integer) : TFslDecimal; Overload;
+    Function Divide(oOther : TFslDecimal) : TFslDecimal; Overload;
+    Function Divide(iOther : Integer) : TFslDecimal; Overload;
     {
       return the number of times other will "fit into" this number. This is usually called
       Integer Division, but in this implementation, neither this nor other needs to be
       a whole number; however the result of this operation will always be a whole number
     }
-    Function DivInt(oOther : TSmartDecimal) : TSmartDecimal; Overload;
-    Function DivInt(iOther : Integer) : TSmartDecimal; Overload;
-    Function Modulo(oOther : TSmartDecimal) : TSmartDecimal; Overload;
-    Function Modulo(iOther : Integer) : TSmartDecimal; Overload;
-    Function Add(oOther : TSmartDecimal) : TSmartDecimal; Overload;
-    Function Add(iOther : Integer) : TSmartDecimal; Overload;
-    Function Subtract(iOther : Integer) : TSmartDecimal; Overload;
-    Function Subtract(oOther : TSmartDecimal) : TSmartDecimal; Overload;
-    Function Equals(oOther : TSmartDecimal) : Boolean; overload;
-    Function Compares(oOther : TSmartDecimal) : Integer; overload;
+    Function DivInt(oOther : TFslDecimal) : TFslDecimal; Overload;
+    Function DivInt(iOther : Integer) : TFslDecimal; Overload;
+    Function Modulo(oOther : TFslDecimal) : TFslDecimal; Overload;
+    Function Modulo(iOther : Integer) : TFslDecimal; Overload;
+    Function Add(oOther : TFslDecimal) : TFslDecimal; Overload;
+    Function Add(iOther : Integer) : TFslDecimal; Overload;
+    Function Subtract(iOther : Integer) : TFslDecimal; Overload;
+    Function Subtract(oOther : TFslDecimal) : TFslDecimal; Overload;
+    function Abs: TFslDecimal; overload;
+    function Negated: TFslDecimal; overload;
+    Function Equals(oOther : TFslDecimal) : Boolean; overload;
+    Function Compares(oOther : TFslDecimal) : Integer; overload;
 
 end;
 
@@ -206,7 +254,7 @@ begin
 end;
 
 
-class function TSmartDecimalHelper.CheckValue(sValue: String): boolean;
+class function TFslDecimalHelper.CheckValue(sValue: String): boolean;
 begin
   if (sValue= '') or (sValue = '-') then
     result := false
@@ -216,7 +264,7 @@ begin
     result := CheckValueDecimal(sValue);
 end;
 
-class function TSmartDecimalHelper.CheckValueDecimal(sValue: String): boolean;
+class function TFslDecimalHelper.CheckValueDecimal(sValue: String): boolean;
 var
   iDecimal : integer;
   i : integer;
@@ -239,7 +287,7 @@ Begin
     result := true
 end;
 
-class function TSmartDecimalHelper.CheckValueScientific(sValue: String): boolean;
+class function TFslDecimalHelper.CheckValueScientific(sValue: String): boolean;
 var
   i : integer;
   s, e : String;
@@ -271,26 +319,57 @@ begin
   result := true;
 end;
 
-function TSmartDecimalHelper.Clone: TSmartDecimal;
+function TFslDecimalHelper.Clone: TFslDecimal;
 begin
-  result.notNull := notNull;
-  result.Precision := Precision;
-  result.Scientific := Scientific;
-  result.Negative := Negative;
-  result.Digits := Digits;
-  result.Decimal := Decimal;
+  result.FStatus := FStatus;
+  result.FPrecision := FPrecision;
+  result.FScientific := FScientific;
+  result.FNegative := FNegative;
+  result.FDigits := FDigits;
+  result.FDecimal := FDecimal;
 end;
 
-Procedure TSmartDecimalHelper.SetValue(sValue : String);
+procedure TFslDecimalHelper.SetPrecision(const Value: integer);
+begin
+  FPrecision := value;
+end;
+
+Procedure TFslDecimalHelper.SetValue(sValue : String);
 Begin
-  notNull := true;
-  if (sValue= '') or (sValue = '-') then
-    raise Exception('"'+sValue+'" is not a valid decimal');
-  sValue := lowercase(sValue);
-  if pos('e', sValue) > 0 then
-    SetValueScientific(sValue)
-  Else
-    SetValueDecimal(sValue);
+  FStatus := sdsUnknown;
+  FPrecision := 0;
+  FScientific := false;
+  FNegative := false;
+  FDigits := '';
+  FDecimal := 0;
+
+  // special cases:
+  if (sValue = '-0') then
+    sValue := '0';
+  sValue := sValue.ToLower;
+
+  if (sValue = '') then
+    FStatus := sdsUnknown
+  else if (sValue = 'inf') or (sValue = '+inf') then
+    FStatus := sdsInfinite
+  else if (sValue = '-inf') then
+  begin
+    FStatus := sdsInfinite;
+    FNegative := true
+  end
+  else if (sValue = 'nan') or (sValue = '?') then
+    FStatus := sdsUndefined
+  else
+  begin
+    FStatus := sdsNumber;
+    if (sValue = '-') then
+      raise Exception('"'+sValue+'" is not a valid decimal');
+    sValue := lowercase(sValue);
+    if pos('e', sValue) > 0 then
+      SetValueScientific(sValue)
+    Else
+      SetValueDecimal(sValue);
+  end;
 end;
 
 
@@ -337,15 +416,16 @@ Begin
   result := length(sValue);
 end;
 
-Procedure TSmartDecimalHelper.SetValueDecimal(sValue : String);
+Procedure TFslDecimalHelper.SetValueDecimal(sValue : String);
 var
   iDecimal : integer;
   i : integer;
 Begin
-  Scientific := false;
+  FStatus := sdsNumber;
+  FScientific := false;
   iDecimal := 0;
-  Negative := (sValue[1] = '-');
-  if Negative then
+  FNegative := (sValue[1] = '-');
+  if FNegative then
     delete(sValue, 1, 1);
 
   while (sValue[1] = '0') And (length(sValue) > 1) Do
@@ -360,55 +440,73 @@ Begin
   if iDecimal = 0 then
   Begin
     Precision := Length(sValue);
-    Decimal := Length(sValue)+1;
-    Digits := sValue;
+    FDecimal := Length(sValue)+1;
+    FDigits := sValue;
   end
   else if iDecimal = length(sValue) then
-    raise ELibraryException.create('"'+sValue+'" is not a valid decimal')
+    raise ELibraryException.create('"'+sValue+'" is not a valid FDecimal')
   else
   begin
-    Decimal := iDecimal;
+    FDecimal := iDecimal;
     if AllZeros(sValue, 2) then
       Precision := length(sValue) - 1
     Else
       Precision := CountSignificants(sValue);
-    Digits := sValue;
-    Delete(Digits, Decimal, 1);
-    if AllZeros(Digits, 1) then
-      inc(Precision)
+    FDigits := sValue;
+    Delete(FDigits, FDecimal, 1);
+    if AllZeros(FDigits, 1) then
+      inc(FPrecision)
     else
-      while (Digits[1] = '0') Do
+      while (FDigits[1] = '0') Do
       begin
-        delete(Digits, 1, 1);
-        dec(Decimal);
+        delete(FDigits, 1, 1);
+        dec(FDecimal);
       end;
   end;
 end;
 
-Function TSmartDecimalHelper.Add(iOther : Integer) : TSmartDecimal;
+function TFslDecimalHelper.Abs: TFslDecimal;
+begin
+  result := self;
+  if result.FStatus in [sdsNumber, sdsInfinite] then
+    result.FNegative := false;
+end;
+
+Function TFslDecimalHelper.Add(iOther : Integer) : TFslDecimal;
 var
-  oTemp : TSmartDecimal;
+  oTemp : TFslDecimal;
 Begin
   oTemp := Valueof(iOther);
   result := Add(oTemp);
 end;
 
-Function TSmartDecimalHelper.Add(oOther : TSmartDecimal) : TSmartDecimal;
+Function TFslDecimalHelper.Add(oOther : TFslDecimal) : TFslDecimal;
 Begin
-  if isNull or oOther.isNull then
-    result := makeNull
-  else if (Negative = oOther.Negative) then
+  if isNull or oOther.IsNull then
+    exit(makeNull)
+  else if IsUndefined or oOther.IsUndefined then
+    exit(makeUndefined)
+  else if IsInfinite or oOther.IsInfinite then
+  begin
+    if IsNegative <> oOther.IsNegative then
+      exit(makeUndefined)
+    else if IsNegative then
+      exit(makeInfinity.Negated)
+    else
+      exit(makeInfinity);
+  end
+  else if (FNegative = oOther.FNegative) then
   Begin
     result := DoAdd(oOther);
-    result.Negative := Negative;
+    result.FNegative := FNegative;
   end
-  else if (Negative) then
+  else if (FNegative) then
     result := oOther.DoSubtract(self)
   else
     result := DoSubtract(oOther);
 end;
 
-Function TSmartDecimalHelper.StringAddition(s1, s2 : String):String;
+Function TFslDecimalHelper.StringAddition(s1, s2 : String):String;
 var
   i, t, c : Integer;
 Begin
@@ -424,14 +522,14 @@ Begin
   assert(c = 0);
 end;
 
-Function TSmartDecimalHelper.DoAdd(oOther : TSmartDecimal) : TSmartDecimal;
+Function TFslDecimalHelper.DoAdd(oOther : TFslDecimal) : TFslDecimal;
 var
   iMax : Integer;
   s1, s2, s3 : String;
 Begin
-  iMax := IntegerMax(Decimal, oOther.Decimal);
-  s1 := StringMultiply('0', iMax - Decimal+1) + Digits;
-  s2 := StringMultiply('0', iMax - oOther.Decimal+1) + oOther.Digits;
+  iMax := IntegerMax(FDecimal, oOther.FDecimal);
+  s1 := StringMultiply('0', iMax - FDecimal+1) + FDigits;
+  s2 := StringMultiply('0', iMax - oOther.FDecimal+1) + oOther.FDigits;
   if Length(s1) < length(s2) then
     s1 := s1 + StringMultiply('0', length(s2) - length(s1))
   else if Length(s2) < length(s1) then
@@ -455,18 +553,18 @@ Begin
   end;
 
   result := valueOf(s3);
-  result.Scientific := Scientific or oOther.Scientific;
-  // todo: the problem with this is you have to figure out the absolute precision and take the lower of the two, not the relative one
-  if Decimal < oOther.Decimal then
-    result.Precision := Precision
-  else if oOther.Decimal < Decimal then
-    result.Precision := oOther.Precision
+  result.FScientific := FScientific or oOther.FScientific;
+  // todo: the problem with this is you have to figure out the absolute FPrecision and take the lower of the two, not the relative one
+  if FDecimal < oOther.FDecimal then
+    result.FPrecision := FPrecision
+  else if oOther.FDecimal < FDecimal then
+    result.FPrecision := oOther.FPrecision
   else
-    result.Precision := IntegerMin(Precision, oOther.Precision);
+    result.FPrecision := IntegerMin(FPrecision, oOther.FPrecision);
 end;
 
 
-Function TSmartDecimalHelper.StringSubtraction(s1, s2 : String):String;
+Function TFslDecimalHelper.StringSubtraction(s1, s2 : String):String;
 var
   i, t, c : integer;
 Begin
@@ -490,15 +588,15 @@ Begin
   assert(c = 0);
 end;
 
-Function TSmartDecimalHelper.DoSubtract(oOther : TSmartDecimal) : TSmartDecimal;
+Function TFslDecimalHelper.DoSubtract(oOther : TFslDecimal) : TFslDecimal;
 var
   iMax : Integer;
   s1, s2, s3 : String;
   bNeg : Boolean;
 Begin
-  iMax := IntegerMax(Decimal, oOther.Decimal);
-  s1 := StringMultiply('0', iMax - Decimal+1) + Digits;
-  s2 := StringMultiply('0', iMax - oOther.Decimal+1) + oOther.Digits;
+  iMax := IntegerMax(FDecimal, oOther.FDecimal);
+  s1 := StringMultiply('0', iMax - FDecimal+1) + FDigits;
+  s2 := StringMultiply('0', iMax - oOther.FDecimal+1) + oOther.FDigits;
   if Length(s1) < length(s2) then
     s1 := s1 + StringMultiply('0', length(s2) - length(s1))
   else if Length(s2) < length(s1) then
@@ -529,25 +627,32 @@ Begin
   end;
 
   result := valueOf(s3);
-  result.Negative := bNeg;
-  result.Scientific := Scientific or oOther.Scientific;
-  if Decimal < oOther.Decimal then
-    Precision := Precision
-  else if oOther.Decimal < Decimal then
-    Precision := oOther.Precision
+  result.FNegative := bNeg;
+  result.FScientific := FScientific or oOther.FScientific;
+  if FDecimal < oOther.FDecimal then
+    FPrecision := FPrecision
+  else if oOther.FDecimal < FDecimal then
+    FPrecision := oOther.FPrecision
   else
-    Precision := IntegerMin(Precision, oOther.Precision);
+    FPrecision := IntegerMin(FPrecision, oOther.FPrecision);
 end;
 
-Function TSmartDecimalHelper.Multiply(iOther : Integer) : TSmartDecimal;
+Function TFslDecimalHelper.Multiply(iOther : Integer) : TFslDecimal;
 var
-  oTemp : TSmartDecimal;
+  oTemp : TFslDecimal;
 Begin
   oTemp := valueOf(iOther);
   result := Multiply(oTemp);
 end;
 
-Function TSmartDecimalHelper.Multiply(oOther : TSmartDecimal) : TSmartDecimal;
+function TFslDecimalHelper.Negated: TFslDecimal;
+begin
+  result := clone;
+  if FStatus in [sdsNumber, sdsInfinite] then
+    result.FNegative := not result.FNegative;
+end;
+
+Function TFslDecimalHelper.Multiply(oOther : TFslDecimal) : TFslDecimal;
 var
   iMax : Integer;
   s1, s2, s3 : String;
@@ -559,15 +664,27 @@ var
 Begin
   if isNull or oOther.isNull then
     result := MakeNull
+  else if IsUndefined or oOther.IsUndefined then
+    result := makeUndefined
+  else if ((self.isZero) and (oOther.isInfinite)) or ((oOther.IsZero) and (self.IsInfinite)) then
+    result := makeUndefined
+  else if ((self.isInfinite)) or (oOther.IsInfinite) then
+  begin
+    result := makeInfinity;
+    if self.IsNegative xor oOther.IsNegative then
+      result := result.Negated;
+  end
   else if (self.isZero) or (oOther.IsZero) then
-    result := Zero
+    result := makeZero
   else if oOther.isOne then
     result := self
+  else if self.isOne then
+    result := oOther
   else
   Begin
-    iMax := IntegerMax(Decimal, oOther.Decimal);
-    s1 := StringMultiply('0', iMax - Decimal+1) + Digits;
-    s2 := StringMultiply('0', iMax - oOther.Decimal+1) + oOther.Digits;
+    iMax := IntegerMax(FDecimal, oOther.FDecimal);
+    s1 := StringMultiply('0', iMax - FDecimal+1) + FDigits;
+    s2 := StringMultiply('0', iMax - oOther.FDecimal+1) + oOther.FDigits;
     if Length(s1) < length(s2) then
       s1 := s1 + StringMultiply('0', length(s2) - length(s1))
     else if Length(s2) < length(s1) then
@@ -632,26 +749,27 @@ Begin
     if IsWholeNumber and oOther.IsWholeNumber Then
       iPrec := INTEGER_PRECISION
     else if IsWholeNumber then
-      iPrec := oOther.Precision
+      iPrec := oOther.FPrecision
     else if oOther.IsWholeNumber then
-      iPrec := Precision
+      iPrec := FPrecision
     Else
-      iPrec := IntegerMin(Precision, oOther.Precision);
+      iPrec := IntegerMin(FPrecision, oOther.FPrecision);
     while (length(res) > iPrec) And (res[Length(res)] = '0') Do
       delete(res, Length(res), 1);
 
     result := valueOf(res);
-    result.Precision := iPrec;
-    result.Decimal := iDec;
-    result.Negative := Negative <> oOther.Negative;
-    result.Scientific := Scientific or oOther.Scientific;
+    result.FStatus := sdsNumber;
+    result.FPrecision := iPrec;
+    result.FDecimal := iDec;
+    result.FNegative := FNegative <> oOther.FNegative;
+    result.FScientific := FScientific or oOther.FScientific;
 //    writeln('  '+asdecimal+' x ' +oOther.AsDecimal+' = ' +result.AsDecimal);
   end;
 end;
 
-Function TSmartDecimalHelper.Divide(iOther : Integer) : TSmartDecimal;
+Function TFslDecimalHelper.Divide(iOther : Integer) : TFslDecimal;
 var
-  oTemp : TSmartDecimal;
+  oTemp : TFslDecimal;
 Begin
   oTemp := valueOf(iOther);
   result := Divide(oTemp);
@@ -691,7 +809,7 @@ Begin
   end;
 end;
 
-Function TSmartDecimalHelper.Divide(oOther : TSmartDecimal) : TSmartDecimal;
+Function TFslDecimalHelper.Divide(oOther : TFslDecimal) : TFslDecimal;
 var
   s : String;
   w, r, v : String;
@@ -721,43 +839,47 @@ var
 Begin
   if isNull or oOther.isNull then
     result := MakeNull
+  else if IsUndefined or oOther.IsUndefined then
+    result := makeUndefined
+  else if (oOther.isInfinite or self.IsInfinite) then
+    result := makeUndefined
   else if IsZero Then
-    result := Zero
+    result := makeZero
   else if oOther.IsZero then
-    raise ELibraryException.create('Attempt to divide '+asString+' by zero')
+    result := makeUndefined
   else if oOther.isOne then
     result := self
   else
   Begin
-    s := '0'+oOther.Digits;
-    m := IntegerMax(length(Digits), Length(oOther.Digits)) + 40; // max loops we'll do
+    s := '0'+oOther.FDigits;
+    m := IntegerMax(length(FDigits), Length(oOther.FDigits)) + 40; // max loops we'll do
     SetLength(tens, 10);
     tens[0] := StringAddition(StringMultiply('0', length(s)), s);
     for i := 1 to 9 do
       tens[i] := StringAddition(tens[i-1], s);
-    v := Digits;
+    v := FDigits;
     r := '';
     l := 0;
-    d := (length(Digits) - Decimal + 1) - (length(oOther.Digits) - oOther.Decimal + 1);
+    d := (length(FDigits) - FDecimal + 1) - (length(oOther.FDigits) - oOther.FDecimal + 1);
 
     while length(v) < length(tens[0]) do
     begin
       v := v+'0';
       inc(d);
     end;
-    if copy(v, 1, length(oOther.Digits)) < oOther.Digits then
+    if copy(v, 1, length(oOther.FDigits)) < oOther.FDigits then
     Begin
       if length(v) = length(tens[0]) then
       begin
         v := v + '0';
         inc(d);
       end;
-      w := copy(v, 1, length(oOther.Digits)+1);
+      w := copy(v, 1, length(oOther.FDigits)+1);
       vi := length(w)+1;
     end
     Else
     Begin
-      w := '0'+copy(v, 1, length(oOther.Digits));
+      w := '0'+copy(v, 1, length(oOther.FDigits));
       vi := length(w);
     end;
     while not finished Do
@@ -801,11 +923,11 @@ Begin
       if IsWholeNumber and oOther.IsWholeNumber Then
         iPrec := INTEGER_PRECISION
       else if IsWholeNumber then
-        iPrec := IntegerMax(oOther.Precision, length(r) - d)
+        iPrec := IntegerMax(oOther.FPrecision, length(r) - d)
       else if oOther.IsWholeNumber then
-        iPrec := IntegerMax(Precision, length(r) - d)
+        iPrec := IntegerMax(FPrecision, length(r) - d)
       Else
-        iPrec := IntegerMax(IntegerMin(Precision, oOther.Precision), length(r) - d);
+        iPrec := IntegerMax(IntegerMin(FPrecision, oOther.FPrecision), length(r) - d);
       while (length(r) > iPrec) Do
       begin
         bUp := (r[Length(r)] > '5');
@@ -816,90 +938,105 @@ Begin
       end;
     end;
     result := valueOf(r);
-    result.Decimal := length(r) - d + 1;
-    result.Negative := Negative <> oOther.Negative;
-    result.Precision := iPrec;
-    result.Scientific := Scientific or oOther.Scientific;
+    result.FStatus := sdsNumber;
+    result.FDecimal := length(r) - d + 1;
+    result.FNegative := FNegative <> oOther.FNegative;
+    result.FPrecision := iPrec;
+    result.FScientific := FScientific or oOther.FScientific;
 //    writeln('  '+asdecimal+' / ' +oOther.AsDecimal+' = ' +result.AsDecimal);
   end;
 end;
 
-Function TSmartDecimalHelper.DivInt(iOther : Integer) : TSmartDecimal;
+Function TFslDecimalHelper.DivInt(iOther : Integer) : TFslDecimal;
 var
-  oTemp : TSmartDecimal;
+  oTemp : TFslDecimal;
 Begin
   oTemp := valueOf(iOther);
   result := DivInt(oTemp);
 end;
 
 
-Function TSmartDecimalHelper.DivInt(oOther : TSmartDecimal) : TSmartDecimal;
-var
-  t : TSmartDecimal;
+Function TFslDecimalHelper.DivInt(oOther : TFslDecimal) : TFslDecimal;
 Begin
-  t := Divide(oOther);
-  result := t.Trunc;
+  result := Divide(oOther);
+  if (result.FStatus = sdsNumber) then
+    result := result.Trunc;
 end;
 
 
-Function TSmartDecimalHelper.Modulo(iOther : Integer) : TSmartDecimal;
+Function TFslDecimalHelper.Modulo(iOther : Integer) : TFslDecimal;
 var
-  oTemp : TSmartDecimal;
+  oTemp : TFslDecimal;
 Begin
   oTemp := valueOf(iOther);
   result := Modulo(oTemp);
 end;
 
 
-Function TSmartDecimalHelper.Modulo(oOther : TSmartDecimal) : TSmartDecimal;
+Function TFslDecimalHelper.Modulo(oOther : TFslDecimal) : TFslDecimal;
 var
-  t, t2 : TSmartDecimal;
+  t, t2 : TFslDecimal;
 Begin
   t := DivInt(oOther);
-  t2 := t.Multiply(oOther);
-  result := subtract(t2);
+  if (t.FStatus = sdsNumber) then
+  begin
+    t2 := t.Multiply(oOther);
+    result := subtract(t2);
+  end
+  else
+    result := t;
 end;
 
 
-
-Function TSmartDecimalHelper.Subtract(iOther : Integer) : TSmartDecimal;
+Function TFslDecimalHelper.Subtract(iOther : Integer) : TFslDecimal;
 var
-  oTemp : TSmartDecimal;
+  oTemp : TFslDecimal;
 Begin
   oTemp := valueOf(iOther);
   result := Subtract(oTemp);
 end;
 
-Function TSmartDecimalHelper.Subtract(oOther : TSmartDecimal) : TSmartDecimal;
+Function TFslDecimalHelper.Subtract(oOther : TFslDecimal) : TFslDecimal;
 Begin
-  if isNull or oOther.isNull then
-    result := MakeNull
-  else if (Negative and not oOther.Negative) then
+  if isNull or oOther.IsNull then
+    exit(makeNull)
+  else if IsUndefined or oOther.IsUndefined then
+    exit(makeUndefined)
+  else if IsInfinite or oOther.IsInfinite then
+  begin
+    if IsNegative = oOther.IsNegative then
+      exit(makeUndefined)
+    else if IsNegative then
+      exit(makeInfinity)
+    else
+      exit(makeInfinity.Negated);
+  end
+  else if (FNegative and not oOther.FNegative) then
   Begin
     result := DoAdd(oOther);
-    result.Negative := true;
+    result.FNegative := true;
   end
-  Else if (not Negative and oOther.Negative) then
+  Else if (not FNegative and oOther.FNegative) then
     result := DoAdd(oOther)
-  Else if (Negative and oOther.Negative) then
+  Else if (FNegative and oOther.FNegative) then
   begin
     result := DoSubtract(oOther);
-    result.Negative := not result.Negative;
+    result.FNegative := not result.FNegative;
   end
   Else
   begin
     result := oOther.DoSubtract(self);
-    result.Negative := not result.Negative;
+    result.FNegative := not result.FNegative;
   end;
 end;
 
-Function TSmartDecimalHelper.Equals(oOther : TSmartDecimal) : Boolean;
+Function TFslDecimalHelper.Equals(oOther : TFslDecimal) : Boolean;
 Begin
   result := Equals(self, oOther);
 end;
 
 
-Procedure TSmartDecimalHelper.SetValueScientific(sValue: String);
+Procedure TFslDecimalHelper.SetValueScientific(sValue: String);
 var
   i : integer;
   s, e : String;
@@ -907,12 +1044,12 @@ begin
   StringSplit(sValue, 'e', s, e);
 
   if (s= '') or (s = '-') or not StringIsDecimal(s) then
-    raise ELibraryException.create('"'+sValue+'" is not a valid decimal (numeric)');
+    raise ELibraryException.create('"'+sValue+'" is not a valid FDecimal (numeric)');
   if (e= '') or (e = '-') or not StringIsDecimal(e) then
-    raise ELibraryException.create('"'+sValue+'" is not a valid decimal (exponent)');
+    raise ELibraryException.create('"'+sValue+'" is not a valid FDecimal (exponent)');
 
   SetValueDecimal(s);
-  Scientific := true;
+  FScientific := true;
 
   // now adjust for exponent
 
@@ -922,198 +1059,277 @@ begin
     i := 1;
   while i <= length(e) Do
   begin
-    if not CharInSet(e[i], ['0'..'9']) then
-      raise ELibraryException.create('"'+sValue+'" is not a valid decimal');
+    if not CharInSet(e[i], ['0'..'9', '-', '+']) then
+      raise ELibraryException.create('"'+sValue+'" is not a valid FDecimal');
     inc(i);
   end;
   i := StrToInt(e);
-  Decimal := Decimal + i;
+  FDecimal := FDecimal + i;
 end;
 
-Function TSmartDecimalHelper.GetValue: String;
+function TFslDecimalHelper.GetPrecision: integer;
 begin
-  if isNull then
+  result := FPrecision;
+end;
+
+Function TFslDecimalHelper.GetValue: String;
+begin
+  if IsInfinite then
+  begin
+    if IsNegative then
+      result := '-∞'
+    else
+      result := '∞';
+  end
+  else if IsUndefined then
+    result := '?'
+  else if IsNull then
     result := ''
-  else if Scientific then
+  else if FScientific then
     result := GetValueScientific
   Else
     result := GetValueDecimal;
 end;
 {
-Function TSmartDecimal.GetValueByPrecision: String;
+Function TFslDecimal.GetValueByPrecision: String;
 begin
-  if Scientific then
+  if FScientific then
     result := GetValueScientificByPrecision
   Else
     result := GetValueDecimalByPrecision;
 end;
 }
 
-Function TSmartDecimalHelper.GetValueScientific: String;
+Function TFslDecimalHelper.GetValueScientific: String;
 var
   bZero : Boolean;
 begin
-  result := Digits;
-  bZero := AllZeros(result, 1);
-  if bZero then
+  if IsInfinite then
   begin
-    if Precision < 2 then
-      result := '0e0'
-    Else
-      result := '0.'+StringMultiply('0', Precision-1)+'e0';
+    if IsNegative then
+      result := '-∞'
+    else
+      result := '∞';
   end
-  Else
+  else if IsUndefined then
+    result := '?'
+  else if IsNull then
+    result := ''
+  else
   begin
-    if Length(Digits) > 1 then
-      insert('.', result, 2);
-    result := result + 'e'+inttostr(Decimal - 2);
+    result := FDigits;
+    bZero := AllZeros(result, 1);
+    if bZero then
+    begin
+      if FPrecision < 2 then
+        result := '0e0'
+      Else
+        result := '0.'+StringMultiply('0', FPrecision-1)+'e0';
+    end
+    Else
+    begin
+      if Length(FDigits) > 1 then
+        insert('.', result, 2);
+      result := result + 'e'+inttostr(FDecimal - 2);
+    end;
+    if FNegative and not bZero then
+      result := '-' + result;
   end;
-  if Negative and not bZero then
-    result := '-' + result;
 end;
 
 
-function TSmartDecimalHelper.immediateLowerBound: TSmartDecimal;
+function TFslDecimalHelper.immediateLowerBound: TFslDecimal;
 var
   i : integer;
 begin
-  if IsZero then
+  if IsNull or IsUndefined or IsInfinite then
+    exit(self)
+  else if IsZero then
   begin
     result := immediateUpperBound;
-    result.Negative := true;
+    result.FNegative := true;
   end
   else
   begin
     result := valueOf(AsDecimal);
-    inc(result.Precision);
-    if Negative then
-    result.Digits := result.Digits + StringMultiply('0', 25 - length(result.Digits) - result.Decimal)+'1'
+    inc(result.FPrecision);
+    if FNegative then
+    result.FDigits := result.FDigits + StringMultiply('0', 25 - length(result.FDigits) - result.FDecimal)+'1'
     else
     begin
-      i := length(result.Digits);
-      result.Digits[i] := char(ord(result.Digits[i]) - 1);
-      while (i > 0) and (result.Digits[i] < '0') do
+      i := length(result.FDigits);
+      result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+      while (i > 0) and (result.FDigits[i] < '0') do
       begin
-        result.Digits[i] := '9';
+        result.FDigits[i] := '9';
         dec(i);
-        result.Digits[i] := char(ord(result.Digits[i]) - 1)
+        result.FDigits[i] := char(ord(result.FDigits[i]) - 1)
       end;
       assert(i > 0);
-    result.Digits := result.Digits + StringMultiply('9', 24 - length(result.Digits))+'9'
+    result.FDigits := result.FDigits + StringMultiply('9', 24 - length(result.FDigits))+'9'
     end;
   end;
 end;
 
-function TSmartDecimalHelper.immediateUpperBound: TSmartDecimal;
+function TFslDecimalHelper.immediateUpperBound: TFslDecimal;
 var
   i : integer;
 begin
-  result := valueOf(AsDecimal);
-  inc(result.Precision);
-  if not Negative then
-    result.Digits := result.Digits + StringMultiply('0', 25 - length(result.Digits) - result.Decimal)+'1'
+  if IsNull or IsUndefined or IsInfinite then
+    exit(self)
   else
   begin
-    i := length(result.Digits);
-    result.Digits[i] := char(ord(result.Digits[i]) - 1);
-    while (i > 1) and (result.Digits[i] < '0') do
+    result := valueOf(AsDecimal);
+    inc(result.FPrecision);
+    if not FNegative then
+      result.FDigits := result.FDigits + StringMultiply('0', 25 - length(result.FDigits) - result.FDecimal)+'1'
+    else
     begin
-      result.Digits[i] := '0';
-      dec(i);
-      result.Digits[i] := char(ord(result.Digits[i]) - 1);
+      i := length(result.FDigits);
+      result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+      while (i > 1) and (result.FDigits[i] < '0') do
+      begin
+        result.FDigits[i] := '0';
+        dec(i);
+        result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+      end;
+      assert(i > 0);
+      result.FDigits := result.FDigits + StringMultiply('0', 24 - length(result.FDigits))+'9'
     end;
-    assert(i > 0);
-    result.Digits := result.Digits + StringMultiply('0', 24 - length(result.Digits))+'9'
   end;
 end;
 
-Function TSmartDecimalHelper.GetValueDecimal: String;
+Function TFslDecimalHelper.GetValueDecimal: String;
 begin
-  result := Digits;
-  if Decimal <> length(Digits) + 1 then
-    if Decimal < 1 then
-      result := '0.'+StringMultiply('0', 1-Decimal)+Digits
-    Else if Decimal <= length(result) then
-      if (Decimal = 1) then
-        result := '0.'+result
+  if IsInfinite then
+  begin
+    if IsNegative then
+      result := '-∞'
+    else
+      result := '∞';
+  end
+  else if IsUndefined then
+    result := '?'
+  else if IsNull then
+    result := ''
+  else
+  begin
+    result := FDigits;
+    if FDecimal <> length(FDigits) + 1 then
+      if FDecimal < 1 then
+        result := '0.'+StringMultiply('0', 1-FDecimal)+FDigits
+      Else if FDecimal <= length(result) then
+        if (FDecimal = 1) then
+          result := '0.'+result
+        Else
+          insert('.', result, FDecimal)
       Else
-        insert('.', result, Decimal)
-    Else
-      result := result + stringMultiply('0', Decimal - length(result)-1);
-  if (Precision = INTEGER_PRECISION) and result.Contains('.') and (AllZerosButLast(result, pos('.', result)+1)) then
-    result := copy(result, 1, pos('.', result)-1);
-  if Negative and not AllZeros(result, 1) then
-    result := '-' + result;
+        result := result + stringMultiply('0', FDecimal - length(result)-1);
+    if (FPrecision = INTEGER_PRECISION) and result.Contains('.') and (AllZerosButLast(result, pos('.', result)+1)) then
+      result := copy(result, 1, pos('.', result)-1);
+    if FNegative and not AllZeros(result, 1) then
+      result := '-' + result;
+  end;
 end;
 
-Function TSmartDecimalHelper.cdig(i: integer): Char;
+Function TFslDecimalHelper.cdig(i: integer): Char;
 begin
 //  assert((i >= 0) and (I <= 9));
   result := char(i + ord('0'));
 end;
 
-Function TSmartDecimalHelper.dig(c: Char): integer;
+Function TFslDecimalHelper.dig(c: Char): integer;
 begin
 //  assert(c in ['0'..'9']);
   result := ord(c) - ord('0');
 end;
 
-Function TSmartDecimalHelper.IsZero: Boolean;
+Function TFslDecimalHelper.IsZero: Boolean;
 begin
-  result := AllZeros(Digits, 1);
+  if FStatus = sdsNumber then
+    result := AllZeros(FDigits, 1)
+  else
+    result := false;
 end;
 
-function TSmartDecimalHelper.Link: TSmartDecimal;
+function TFslDecimalHelper.Link: TFslDecimal;
 begin
-  result.notNull := notNull;
-  result.Precision := Precision;
-  result.Scientific := Scientific;
-  result.Negative := Negative;
-  result.Digits := Digits;
-  result.Decimal := Decimal;
+  result.FStatus := FStatus;
+  result.FPrecision := FPrecision;
+  result.FScientific := FScientific;
+  result.FNegative := FNegative;
+  result.FDigits := FDigits;
+  result.FDecimal := FDecimal;
 end;
 
-function TSmartDecimalHelper.IsNegative: boolean;
+class function TFslDecimalHelper.makeInfinity: TFslDecimal;
 begin
-  result := Negative;
+  result := makeNull;
+  result.FStatus := sdsInfinite;
 end;
 
-function TSmartDecimalHelper.IsNull: boolean;
+function TFslDecimalHelper.IsInfinite: Boolean;
 begin
-  result := not notnull;
+  result := FStatus = sdsInfinite;
 end;
 
-Function TSmartDecimalHelper.IsOne: Boolean;
-var
-  oOne : TSmartDecimal;
+function TFslDecimalHelper.IsNegative: boolean;
 begin
-  oOne := One;
-  result := Compares(oOne) = 0;
+  if FStatus in [sdsNumber, sdsInfinite] then
+    result := FNegative
+  else
+    result := false;
 end;
 
-Function TSmartDecimalHelper.Compares(oOther: TSmartDecimal): Integer;
+function TFslDecimalHelper.isANumber: boolean;
+begin
+  result := FStatus = sdsNumber;
+end;
+
+function TFslDecimalHelper.IsNull: boolean;
+begin
+  result := FStatus = sdsUnknown;
+end;
+
+Function TFslDecimalHelper.IsOne: Boolean;
+begin
+  result := Compares(makeOne) = 0;
+end;
+
+function TFslDecimalHelper.IsUndefined: boolean;
+begin
+  result := FStatus = sdsUndefined;
+end;
+
+Function TFslDecimalHelper.Compares(oOther: TFslDecimal): Integer;
 Begin
   result := Compares(self, oOther);
 end;
 
-class function TSmartDecimalHelper.Create(value: String): TSmartDecimal;
+class function TFslDecimalHelper.Create(value: String): TFslDecimal;
 begin
+  result := makeNull;
   result.SetValue(value);
 end;
 
-class function TSmartDecimalHelper.Create(value: Integer): TSmartDecimal;
+class function TFslDecimalHelper.Create(value: Integer): TFslDecimal;
 begin
+  result := makeNull;
   result.SetValue(inttostr(value));
 end;
 
-class function TSmartDecimalHelper.Create(value: int64): TSmartDecimal;
+class function TFslDecimalHelper.Create(value: int64): TFslDecimal;
 begin
+  result := makeNull;
   result.SetValue(inttostr(value));
 end;
 
-Function TSmartDecimalHelper.isWholeNumber: Boolean;
+Function TFslDecimalHelper.isWholeNumber: Boolean;
 begin
-  result := pos('.', GetValueDecimal) = 0;
+  if FStatus = sdsNumber then
+    result := pos('.', GetValueDecimal) = 0
+  else
+    result := false;
 end;
 
 Function CardinalToint64(i : Cardinal):Int64;
@@ -1121,49 +1337,65 @@ Begin
   result := i;
 end;
 
-Function TSmartDecimalHelper.Trunc: TSmartDecimal;
+Function TFslDecimalHelper.Trunc: TFslDecimal;
 begin
-  if isNull then
-    result := MakeNull
-  else if Decimal < 1 then
-    result := Zero
+  if IsNull or IsUndefined or IsInfinite then
+    exit(self)
+  else if FDecimal < 1 then
+    result := makeZero
   Else
   begin
     result := self;
-    if Length(result.Digits) >= Decimal then
-      SetLength(result.Digits, Decimal-1);
-    if result.Digits = '' then
+    if Length(result.FDigits) >= FDecimal then
+      SetLength(result.FDigits, FDecimal-1);
+    if result.FDigits = '' then
     begin
-      result.Digits := '0';
-      result.Decimal := 2;
+      result.FDigits := '0';
+      result.FDecimal := 2;
     end;
   end;
 end;
 
-function TSmartDecimalHelper.upperBound: TSmartDecimal;
+class function TFslDecimalHelper.makeUndefined: TFslDecimal;
+begin
+  result.FStatus := sdsUndefined;
+end;
+
+function TFslDecimalHelper.upperBound: TFslDecimal;
 var
   i : integer;
 begin
-  result := valueOf(AsDecimal);
-  inc(result.Precision);
-  if not Negative then
-    result.Digits := result.Digits + '5'
+  if IsNull or IsUndefined or IsInfinite then
+    exit(self)
   else
   begin
-    i := length(result.Digits);
-    result.Digits[i] := char(ord(result.Digits[i]) - 1);
-    while (i > 1) and (result.Digits[i] < '0') do
+    result := valueOf(AsDecimal);
+    inc(result.FPrecision);
+    if not FNegative then
+      result.FDigits := result.FDigits + '5'
+    else
     begin
-      result.Digits[i] := '0';
-      dec(i);
-      result.Digits[i] := char(ord(result.Digits[i]) - 1);
+      i := length(result.FDigits);
+      result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+      while (i > 1) and (result.FDigits[i] < '0') do
+      begin
+        result.FDigits[i] := '0';
+        dec(i);
+        result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+      end;
+      assert(i > 0);
+      result.FDigits := result.FDigits + '5'
     end;
-    assert(i > 0);
-    result.Digits := result.Digits + '5'
   end;
 end;
 
-Function TSmartDecimalHelper.AsCardinal: Cardinal;
+class function TFslDecimalHelper.ValueOf(value: Double): TFslDecimal;
+begin
+  result := makeNull;
+  result.SetValue(FloatToStr(value));
+end;
+
+Function TFslDecimalHelper.AsCardinal: Cardinal;
 var
   r : Int64;
   m : Int64;
@@ -1177,14 +1409,91 @@ begin
   result := r;
 end;
 
-function TSmartDecimalHelper.AsDouble: Double;
+function TFslDecimalHelper.normaliseDecimal(digits, decimals : integer; defUp : boolean) : String;
+var
+  s, sd : String;
+  d, a : TFslDecimal;
+  i : integer;
+  function allChar(s : String; tch : char) : boolean;
+  var
+    ch : char;
+  begin
+    result := true;
+    for ch in s do
+      if ch <> tch then
+        exit(false);
+  end;
 begin
+  if IsNull or IsUndefined then
+    exit('?'+StringPadLeft('', '?', digits)+'.'+StringPadLeft('', '?', decimals));
+
+  d := ValueOf('1'+StringPadRight('', '0', digits));
+  if IsNegative then
+  begin
+    a := Abs;
+    if Compares(a, d) > 0 then // this number is smaller than we can cope with
+      if defUp then
+        exit('!'+StringPadLeft('', '0', digits)+'.'+StringPadLeft('', '0', decimals))
+      else
+        exit('!'+StringPadLeft('', '#', digits)+'.'+StringPadLeft('', '#', decimals));
+    s := d.Subtract(a).AsDecimal;
+  end
+  else
+  begin
+    if Compares(self, d) >= 0 then // this number is bigger than we can cope with
+      if defUp then
+        exit('0'+StringPadLeft('', 'X', digits)+'.'+StringPadLeft('', 'X', decimals))
+      else
+        exit('0'+StringPadLeft('', '9', digits)+'.'+StringPadLeft('', '9', decimals));
+    s := AsDecimal;
+  end;
+
+  i := s.IndexOf('.');
+  if i < 0 then
+    i := s.Length;
+  result := s.subString(0, i);
+  result := StringPadLeft(result, '0', digits);
+  sd := '';
+  if i < s.Length then
+    sd := s.Substring(i+1);
+  if (sd.Length > decimals) then
+  begin
+    sd := sd.Substring(0, decimals);
+    if IsNegative then
+    begin
+      if allChar(sd, '9') and allChar(result, '9') then
+        if defUp then
+          exit('0'+StringPadLeft('', '0', digits)+'.'+StringPadLeft('', '0', decimals))
+        else
+          exit('!'+StringPadLeft('', '9', digits)+'.'+StringPadLeft('', '9', decimals));
+    end
+    else if allChar(sd, '0') and allChar(result, '0') then
+    begin
+      if defUp then
+        exit('0'+StringPadLeft('', '0', digits)+'.'+StringPadLeft('', '0', decimals-1)+'1')
+      else
+        exit('0'+StringPadLeft('', '0', digits)+'.'+StringPadLeft('', '0', decimals));
+    end;
+  end
+  else
+    sd := StringPadRight(sd, '0', decimals);
+  result := result + '.' + sd;
+  if IsNegative then
+    result := '!'+result
+  else
+    result := '0'+result;
+end;
+
+function TFslDecimalHelper.AsDouble: Double;
+begin
+  if not isANumber then
+    raise ELibraryException.create('Unable to represent '+AsString+' as an double');
   result := StrToFloat(AsScientific);
 end;
 
-function TSmartDecimalHelper.AsInt64: Int64;
+function TFslDecimalHelper.AsInt64: Int64;
 var
-  t : TSmartDecimal;
+  t : TFslDecimal;
 begin
   if not isWholeNumber then
     raise ELibraryException.create('Unable to represent '+AsString+' as an integer');
@@ -1197,7 +1506,7 @@ begin
   result := StrToInt64(AsDecimal);
 end;
 
-function TSmartDecimalHelper.AsInteger: Integer;
+function TFslDecimalHelper.AsInteger: Integer;
 var
   r : Int64;
   m : Int64;
@@ -1212,35 +1521,42 @@ begin
   result := r;
 end;
 
-class Function TSmartDecimalHelper.valueOf(value : String) : TSmartDecimal;
+class Function TFslDecimalHelper.valueOf(value : String) : TFslDecimal;
 begin
+  result := makeNull;
   result.SetValue(value);
 end;
 
-class Function TSmartDecimalHelper.valueOf(value : Integer) : TSmartDecimal;
+class Function TFslDecimalHelper.valueOf(value : Integer) : TFslDecimal;
 begin
+  result := makeNull;
   result.SetValue(inttostr(value));
 end;
 
-class Function TSmartDecimalHelper.valueOf(value : int64) : TSmartDecimal;
+class Function TFslDecimalHelper.valueOf(value : int64) : TFslDecimal;
 begin
+  result := makeNull;
   result.SetValue(inttostr(value));
 end;
 
-class Function TSmartDecimalHelper.Equals(oOne, oTwo : TSmartDecimal) : Boolean;
+class Function TFslDecimalHelper.Equals(oOne, oTwo : TFslDecimal) : Boolean;
 Begin
-  if oOne.isNull or oTwo.isNull then
-    result := false
+  if (oOne.FStatus = sdsInfinite) and (oTwo.FStatus = sdsInfinite) then
+    result := oOne.IsNegative = oTwo.IsNegative
+  else if (oOne.FStatus = sdsUndefined) and (oTwo.FStatus = sdsUndefined) then
+    result := true
+  else if (oOne.FStatus = sdsNumber) and (oTwo.FStatus = sdsNumber) then
+    result := Compares(oOne, oTwo) = 0
   else
-    result := Compares(oOne, oTwo) = 0;
+    result := false;
 end;
 
-class Function TSmartDecimalHelper.One: TSmartDecimal;
+class Function TFslDecimalHelper.makeOne: TFslDecimal;
 begin
   result := ValueOf(1);
 end;
 
-class Function TSmartDecimalHelper.Zero: TSmartDecimal;
+class Function TFslDecimalHelper.makeZero: TFslDecimal;
 begin
   result := ValueOf(0);
 end;
@@ -1269,66 +1585,81 @@ begin
     result := prefix + result;
 end;
 
-class Function TSmartDecimalHelper.Compares(oOne, oTwo: TSmartDecimal): Integer;
+class Function TFslDecimalHelper.Compares(oOne, oTwo: TFslDecimal): Integer;
 var
   iMax : Integer;
   s1, s2 : String;
 Begin
-  if oOne.Negative and not oTwo.Negative then
+  if (oOne.FStatus in [sdsUnknown, sdsUndefined]) or (oTwo.FStatus in [sdsUnknown, sdsUndefined]) then
+    raise ELibraryException.Create('Unable to compare "'+oOne.AsString+'" and "'+oTwo.AsString+'"')
+  else if oOne.FNegative and not oTwo.FNegative then
     result := -1
-  else if not oOne.Negative and oTwo.Negative then
+  else if not oOne.FNegative and oTwo.FNegative then
     result := 1
+  else if oOne.IsInfinite and oTwo.IsInfinite then
+    result := 0
+  else if oOne.IsInfinite then
+    result := 1
+  else if oTwo.IsInfinite then
+    result := -1
   else
   begin
-    iMax := IntegerMax(oOne.Decimal, oTwo.Decimal);
-    s1 := round('0'+StringMultiply('0', iMax - oOne.Decimal+1), oOne.Digits, oOne.Precision);
-    s2 := round('0'+StringMultiply('0', iMax - oTwo.Decimal+1), oTwo.Digits, oTwo.Precision);
+    iMax := IntegerMax(oOne.FDecimal, oTwo.FDecimal);
+    s1 := round('0'+StringMultiply('0', iMax - oOne.FDecimal+1), oOne.FDigits, oOne.FPrecision);
+    s2 := round('0'+StringMultiply('0', iMax - oTwo.FDecimal+1), oTwo.FDigits, oTwo.FPrecision);
     if Length(s1) < length(s2) then
       s1 := s1 + StringMultiply('0', length(s2) - length(s1))
     else if Length(s2) < length(s1) then
       s2 := s2 + StringMultiply('0', length(s1) - length(s2));
     result := StringCompare(s1, s2);
-    if oOne.Negative then
+    if oOne.FNegative then
       result := -result;
   End;
 end;
 
 
-Function TSmartDecimalHelper.lowerBound: TSmartDecimal;
+Function TFslDecimalHelper.lowerBound: TFslDecimal;
 var
   i : integer;
 begin
-  if IsZero then
+  if IsNull or IsUndefined or IsInfinite then
+    exit(self)
+  else if IsZero then
   begin
     result := upperBound;
-    result.Negative := true;
+    result.FNegative := true;
   end
   else
   begin
     result := valueOf(AsDecimal);
-    inc(result.Precision);
-    if Negative then
-      result.Digits := result.Digits + '5'
+    inc(result.FPrecision);
+    if FNegative then
+      result.FDigits := result.FDigits + '5'
     else
     begin
-      i := length(result.Digits);
-      result.Digits[i] := char(ord(result.Digits[i]) - 1);
-      while (i > 0) and (result.Digits[i] < '0') do
+      i := length(result.FDigits);
+      result.FDigits[i] := char(ord(result.FDigits[i]) - 1);
+      while (i > 0) and (result.FDigits[i] < '0') do
       begin
-        result.Digits[i] := '9';
+        result.FDigits[i] := '9';
         dec(i);
-        result.Digits[i] := char(ord(result.Digits[i]) - 1)
+        result.FDigits[i] := char(ord(result.FDigits[i]) - 1)
       end;
       assert(i > 0);
-      result.Digits := result.Digits + '5';
+      result.FDigits := result.FDigits + '5';
     end;
   end;
 end;
 
 
-class function TSmartDecimalHelper.makeNull: TSmartDecimal;
+class function TFslDecimalHelper.makeNull: TFslDecimal;
 begin
-  result.notNull := false;
+  result.FStatus := sdsUnknown;
+  result.FNegative := false;
+  result.FDigits := '';
+  result.FDecimal := 0;
+  result.FPrecision := 0;
+  result.FScientific := false;
 end;
 
 Function GUIDAsOIDWrong(Const aGUID : TGUID) : String;
@@ -1336,7 +1667,7 @@ var
   sGuid, s : String;
   r1, r2, r3, r4 : int64;
   c : integer;
-  b1, b2, b3, b4, bs : TSmartDecimal;
+  b1, b2, b3, b4, bs : TFslDecimal;
 Begin
   sGuid := GUIDToString(aGuid);
   s := copy(sGuid, 30, 8);
@@ -1348,15 +1679,15 @@ Begin
   s := copy(sGuid, 2, 8);
   Val('$'+s, r4, c);
 
-  b1 := TSmartDecimal.valueOf(r1);
-  b2 := TSmartDecimal.valueOf(r2);
-  b3 := TSmartDecimal.valueOf(r3);
-  b4 := TSmartDecimal.valueOf(r4);
-  bs := TSmartDecimal.valueOf('4294967296');
+  b1 := TFslDecimal.valueOf(r1);
+  b2 := TFslDecimal.valueOf(r2);
+  b3 := TFslDecimal.valueOf(r3);
+  b4 := TFslDecimal.valueOf(r4);
+  bs := TFslDecimal.valueOf('4294967296');
   b2 := b2.Multiply(bs);
-  bs := TSmartDecimal.valueOf('18446744073709551616');
+  bs := TFslDecimal.valueOf('18446744073709551616');
   b3 := b3.Multiply(bs);
-  bs := TSmartDecimal.valueOf('79228162514264337593543950336');
+  bs := TFslDecimal.valueOf('79228162514264337593543950336');
   b4 := b4.Multiply(bs);
   b1 := b1.Add(b2);
   b1 := b1.Add(b3);
@@ -1370,7 +1701,7 @@ var
   sGuid, s : String;
   r1, r2, r3, r4 : int64;
   c : integer;
-  b1, b2, b3, b4, bs : TSmartDecimal;
+  b1, b2, b3, b4, bs : TFslDecimal;
 Begin
   sGuid := GUIDToString(aGuid);
   s := copy(sGuid, 30, 8);
@@ -1382,20 +1713,133 @@ Begin
   s := copy(sGuid, 2, 8);
   Val('$'+s, r4, c);
 
-  b1 := TSmartDecimal.valueOf(r1);
-  b2 := TSmartDecimal.valueOf(r2);
-  b3 := TSmartDecimal.valueOf(r3);
-  b4 := TSmartDecimal.valueOf(r4);
-  bs := TSmartDecimal.valueOf('4294967296');
+  b1 := TFslDecimal.valueOf(r1);
+  b2 := TFslDecimal.valueOf(r2);
+  b3 := TFslDecimal.valueOf(r3);
+  b4 := TFslDecimal.valueOf(r4);
+  bs := TFslDecimal.valueOf('4294967296');
   b2 := b2.Multiply(bs);
-  bs := TSmartDecimal.valueOf('18446744073709551616');
+  bs := TFslDecimal.valueOf('18446744073709551616');
   b3 := b3.Multiply(bs);
-  bs := TSmartDecimal.valueOf('79228162514264337593543950336');
+  bs := TFslDecimal.valueOf('79228162514264337593543950336');
   b4 := b4.Multiply(bs);
   b1 := b1.Add(b2);
   b1 := b1.Add(b3);
   b1 := b1.Add(b4);
   result := '2.25.'+b1.AsString;
+end;
+
+{ TFslDecimal }
+
+class operator TFslDecimal.Add(a, b: TFslDecimal): TFslDecimal;
+begin
+  result := a.Add(b);
+end;
+
+class operator TFslDecimal.Divide(a, b: TFslDecimal): TFslDecimal;
+begin
+  result := a.Divide(b);
+end;
+
+class operator TFslDecimal.Equal(a, b: TFslDecimal): Boolean;
+begin
+  result := Equals(a, b);
+end;
+
+class operator TFslDecimal.Explicit(a: String): TFslDecimal;
+begin
+  result := TFslDecimal.ValueOf(a);
+end;
+
+class operator TFslDecimal.Explicit(a: Double): TFslDecimal;
+begin
+  result := TFslDecimal.ValueOf(a);
+end;
+
+class operator TFslDecimal.Explicit(a: Integer): TFslDecimal;
+begin
+  result := TFslDecimal.ValueOf(a);
+end;
+
+class operator TFslDecimal.GreaterThan(a, b: TFslDecimal): Boolean;
+begin
+  result := TFslDecimal.Compares(a, b) > 0;
+end;
+
+class operator TFslDecimal.GreaterThanOrEqual(a, b: TFslDecimal): Boolean;
+begin
+  result := TFslDecimal.Compares(a, b) >= 0;
+end;
+
+class operator TFslDecimal.Implicit(a: TFslDecimal): Integer;
+begin
+  result := a.AsInteger;
+end;
+
+class operator TFslDecimal.Implicit(a: TFslDecimal): Double;
+begin
+  result := a.AsDouble;
+end;
+
+class operator TFslDecimal.Implicit(a: TFslDecimal): String;
+begin
+  result := a.AsString;
+end;
+
+class operator TFslDecimal.IntDivide(a, b: TFslDecimal): TFslDecimal;
+begin
+  result := a.DivInt(b);
+end;
+
+class operator TFslDecimal.LessThan(a, b: TFslDecimal): Boolean;
+begin
+  result := TFslDecimal.Compares(a, b) < 0;
+end;
+
+class operator TFslDecimal.LessThanOrEqual(a, b: TFslDecimal): Boolean;
+begin
+  result := TFslDecimal.Compares(a, b) <= 0;
+end;
+
+class operator TFslDecimal.Modulus(a, b: TFslDecimal): TFslDecimal;
+begin
+  result := a.Modulo(b);
+end;
+
+class operator TFslDecimal.Multiply(a, b: TFslDecimal): TFslDecimal;
+begin
+  result := a.Multiply(b);
+end;
+
+class operator TFslDecimal.Negative(a: TFslDecimal): TFslDecimal;
+begin
+  result := a.Negated;
+end;
+
+class operator TFslDecimal.NotEqual(a, b: TFslDecimal): Boolean;
+begin
+  result := not TFslDecimal.Equals(a, b);
+end;
+
+class operator TFslDecimal.Positive(a: TFslDecimal): TFslDecimal;
+begin
+  result := a;
+end;
+
+class operator TFslDecimal.Subtract(a, b: TFslDecimal): TFslDecimal;
+begin
+  result := a.Subtract(b);
+end;
+
+class operator TFslDecimal.Trunc(a: TFslDecimal): TFslDecimal;
+begin
+  result := a.Trunc;
+end;
+
+class function TFslDecimalHelper.Create(value: Double): TFslDecimal;
+begin
+  result := makeNull;
+  result.SetValue(FloatToStr(value));
 end;
 
 end.

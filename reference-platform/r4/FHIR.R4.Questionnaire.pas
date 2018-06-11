@@ -47,7 +47,7 @@ Const
 
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : TFhirReference; lang : String; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : String; lang : String; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
   TLookupCodeEvent = function(system, version, code : String) : String of object;
   TLookupReferenceEvent = function(Context : TFHIRRequest; uri : String) : TResourceWithReference of object;
 
@@ -305,7 +305,6 @@ end;
 
 function TQuestionnaireBuilder.resolveValueSet(url: String): TFHIRValueSet;
 var
-  ref : TFhirReference;
   dependencies : TStringList;
   s : String;
 begin
@@ -317,12 +316,10 @@ begin
     result := FQuestionnaire.contained[vsCache.GetValueByKey(url)].link as TFhirValueSet
   else
   begin
-    ref := TFhirReference.Create;
     dependencies := TStringList.create;
     try
-      ref.reference := url;
       try
-        result := OnExpand(nil, ref, FLang, MaxListboxCodings, 0, 0, false, dependencies);
+        result := OnExpand(nil, url, FLang, MaxListboxCodings, 0, 0, false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
@@ -331,7 +328,7 @@ begin
         begin
           result := TFhirValueSet.Create;
           try
-            result.url := ref.reference;
+            result.url := url;
             result.link;
           finally
             result.Free;
@@ -345,14 +342,12 @@ begin
       end;
     finally
       dependencies.Free;
-      ref.Free;
     end;
   end;
 end;
 
 function TQuestionnaireBuilder.resolveValueSet(profile: TFHirStructureDefinition; binding: TFhirElementDefinitionBinding): TFHIRValueSet;
 var
-  ref : TFhirReference;
   vs : TFHIRValueSet;
   dependencies : TStringList;
   s : String;
@@ -361,17 +356,16 @@ begin
   if PrebuiltQuestionnaire <> nil then
     exit; // we don't do anything with value sets in this case
 
-  if (binding = nil) or not (binding.Valueset is TFhirReference) then
+  if (binding = nil) or (binding.Valueset = '') then
     exit;
 
   dependencies := TStringList.create;
   try
-    ref := binding.valueset as TFhirReference;
-    if ref.reference.StartsWith('#') then
+    if binding.valueset.StartsWith('#') then
     begin
-      vs := TFhirValueSet(Fprofile.contained[ref.reference.Substring(1)]);
+      vs := TFhirValueSet(Fprofile.contained[binding.valueset.Substring(1)]);
       try
-        result := OnExpand(vs, nil, FLang, MaxListboxCodings, 0, 0, false, dependencies);
+        result := OnExpand(vs, '', FLang, MaxListboxCodings, 0, 0, false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
@@ -380,7 +374,7 @@ begin
         begin
           result := TFhirValueSet.Create;
           try
-            result.url := ref.reference;
+            result.url := binding.valueset;
             result.link;
           finally
             result.Free;
@@ -394,11 +388,11 @@ begin
       end;
 
     end
-    else if vsCache.ExistsByKey(ref.reference) then
-      result := FQuestionnaire.contained[vsCache.GetValueByKey(ref.reference)].link as TFhirValueSet
+    else if vsCache.ExistsByKey(binding.valueset) then
+      result := FQuestionnaire.contained[vsCache.GetValueByKey(binding.valueset)].link as TFhirValueSet
     else
       try
-        result := OnExpand(nil, ref, FLang, MaxListboxCodings, 0, 0,false, dependencies);
+        result := OnExpand(nil, binding.valueset, FLang, MaxListboxCodings, 0, 0,false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
@@ -407,7 +401,7 @@ begin
         begin
           result := TFhirValueSet.Create;
           try
-            result.url := ref.reference;
+            result.url := binding.valueset;
             result.link;
           finally
             result.Free;

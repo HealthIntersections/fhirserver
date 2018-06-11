@@ -54,6 +54,8 @@ type
   private
     FIsReadAllowed : boolean;
     FStorage : TTestStorageService;
+  protected
+    procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); override;
   public
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
 
@@ -63,6 +65,11 @@ type
     procedure ExecuteConformanceStmt(request: TFHIRRequest; response : TFHIRResponse); override;
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
+    function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
+    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; override;
+    function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; override;
 
     property IsReadAllowed : boolean read FIsReadAllowed write FIsReadAllowed;
   end;
@@ -71,6 +78,9 @@ type
   public
     Function loadUser(id : String; var key : integer) : TSCIMUser; override;
     function CheckLogin(username, password : String; var key : integer) : boolean; override;
+    Function loadUser(key : integer) : TSCIMUser; overload; override;
+    function CheckId(id : String; var username, hash : String) : boolean; override;
+    function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; override;
   end;
 
   TTestOAuthLogin = class (TFslObject)
@@ -110,6 +120,20 @@ type
     function getClientInfo(id : String) : TRegisteredClientInformation; override;
     function getClientName(id : String) : string; override;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
+
+    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; override;
+    procedure Sweep; override;
+    procedure CloseFhirSession(key: integer); override;
+    procedure QueueResource(r: TFhirResource); overload; override;
+    function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; override;
+    function ProfilesAsOptionList : String; override;
+    procedure ProcessSubscriptions; override;
+    procedure ProcessEmails; override;
+    procedure ProcessObservations; override;
+    procedure RunValidation; override;
+    function FetchResource(key : integer) : TFHIRResource; override;
+    procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
+
   end;
 
 
@@ -164,6 +188,11 @@ begin
   FOAuths.Free;
   FlastSession.Free;
   inherited;
+end;
+
+procedure TTestStorageService.CloseFhirSession(key: integer);
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 constructor TTestStorageService.Create;
@@ -230,6 +259,31 @@ begin
   result := FOAuths.ContainsKey(id);
 end;
 
+procedure TTestStorageService.ProcessEmails;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TTestStorageService.ProcessObservations;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TTestStorageService.ProcessSubscriptions;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TTestStorageService.ProfilesAsOptionList: String;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TTestStorageService.QueueResource(r: TFhirResource);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 procedure TTestStorageService.updateOAuthSession(id: String; state, key: integer; var client_id : String);
 var
   l : TTestOAuthLogin;
@@ -238,6 +292,11 @@ begin
   if not FOAuths.containsKey(inttostr(key)) then
     FOAuths.Add(inttostr(key), l.Link);
   client_id := FOAuths[inttostr(key)].client_id;
+end;
+
+procedure TTestStorageService.fetchClients(list: TFslList<TRegisteredClientInformation>);
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 function TTestStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
@@ -254,6 +313,16 @@ begin
     state := l.state;
     scope := l.scope;
   end;
+end;
+
+function TTestStorageService.FetchResource(key: integer): TFHIRResource;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TTestStorageService.FetchResourceCounts(compList: TFslList<TFHIRCompartmentId>): TStringList;
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 function TTestStorageService.getClientInfo(id: String): TRegisteredClientInformation;
@@ -288,13 +357,33 @@ begin
   FOAuths.Clear;
 end;
 
+function TTestStorageService.RetrieveSession(key: integer; var UserKey, Provider: integer; var Id, Name, Email: String): boolean;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TTestStorageService.RunValidation;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTestStorageService.storeClient(client: TRegisteredClientInformation;
   sessionKey: integer): String;
 begin
 
 end;
 
+procedure TTestStorageService.Sweep;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 { TTestingFHIRUserProvider }
+
+function TTestingFHIRUserProvider.CheckId(id: String; var username, hash: String): boolean;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
 
 function TTestingFHIRUserProvider.CheckLogin(username, password: String; var key: integer): boolean;
 begin
@@ -316,7 +405,27 @@ begin
   key := 1;
 end;
 
+function TTestingFHIRUserProvider.loadOrCreateUser(id, name, email: String; var key: integer): TSCIMUser;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TTestingFHIRUserProvider.loadUser(key: integer): TSCIMUser;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 { TTestFHIROperationEngine }
+
+procedure TTestFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; httpCode: Integer; name, message: String);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TTestFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; opName: String; httpCode: Integer; name, message: String);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
 
 procedure TTestFHIROperationEngine.CommitTransaction;
 begin
@@ -391,9 +500,29 @@ begin
   response.bundle := TFhirBundle.Create(BundleTypeSearchset);
 end;
 
+function TTestFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResource;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TTestFHIROperationEngine.getResourceByUrl(aType: TFhirResourceType; url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResource;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TTestFHIROperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTestFHIROperationEngine.opAllowed(resource: string; command: TFHIRCommandType): Boolean;
 begin
   result := true;
+end;
+
+procedure TTestFHIROperationEngine.processGraphQL(graphql: String; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTestFHIROperationEngine.RollbackTransaction;

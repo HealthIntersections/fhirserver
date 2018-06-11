@@ -2611,7 +2611,7 @@ begin
       if StringIsInteger32(sl) and StringIsInteger32(sr) then
         o := StringToInteger32(sl) > StringToInteger32(sr)
       else if StringIsDecimal(sl) and StringIsDecimal(sr) then
-        o := TSmartDecimal.ValueOf(sl).Compares(TSmartDecimal.ValueOf(sr)) > 0
+        o := TFslDecimal.ValueOf(sl).Compares(TFslDecimal.ValueOf(sr)) > 0
       else
         o := sl > sr;
       result.Add(TMXmlBoolean.Create(o));
@@ -2638,7 +2638,7 @@ begin
       if StringIsInteger32(sl) and StringIsInteger32(sr) then
         o := StringToInteger32(sl) >= StringToInteger32(sr)
       else if StringIsDecimal(sl) and StringIsDecimal(sr) then
-        o := TSmartDecimal.ValueOf(sl).Compares(TSmartDecimal.ValueOf(sr)) >= 0
+        o := TFslDecimal.ValueOf(sl).Compares(TFslDecimal.ValueOf(sr)) >= 0
       else
         o := sl >= sr;
       result.Add(TMXmlBoolean.Create(o));
@@ -2665,7 +2665,7 @@ begin
       if StringIsInteger32(sl) and StringIsInteger32(sr) then
         o := StringToInteger32(sl) < StringToInteger32(sr)
       else if StringIsDecimal(sl) and StringIsDecimal(sr) then
-        o := TSmartDecimal.ValueOf(sl).Compares(TSmartDecimal.ValueOf(sr)) < 0
+        o := TFslDecimal.ValueOf(sl).Compares(TFslDecimal.ValueOf(sr)) < 0
       else
         o := sl < sr;
       result.Add(TMXmlBoolean.Create(o));
@@ -2692,7 +2692,7 @@ begin
       if StringIsInteger32(sl) and StringIsInteger32(sr) then
         o := StringToInteger32(sl) <= StringToInteger32(sr)
       else if StringIsDecimal(sl) and StringIsDecimal(sr) then
-        o := TSmartDecimal.ValueOf(sl).Compares(TSmartDecimal.ValueOf(sr)) <= 0
+        o := TFslDecimal.ValueOf(sl).Compares(TFslDecimal.ValueOf(sr)) <= 0
       else
         o := sl <= sr;
       result.Add(TMXmlBoolean.Create(o));
@@ -2718,7 +2718,7 @@ begin
       if StringIsInteger32(sl) and StringIsInteger32(sr) then
         so := IntToStr(StringToInteger32(sl) - StringToInteger32(sr))
       else if StringIsDecimal(sl) and StringIsDecimal(sr) then
-        so := TSmartDecimal.ValueOf(sl).Subtract(TSmartDecimal.ValueOf(sr)).AsString
+        so := TFslDecimal.ValueOf(sl).Subtract(TFslDecimal.ValueOf(sr)).AsString
       else
         so := sl.Replace(sr, '');
     end;
@@ -2775,7 +2775,7 @@ begin
       if StringIsInteger32(sl) and StringIsInteger32(sr) then
         so := IntToStr(StringToInteger32(sl) + StringToInteger32(sr))
       else if StringIsDecimal(sl) and StringIsDecimal(sr) then
-        so := TSmartDecimal.ValueOf(sl).Add(TSmartDecimal.ValueOf(sr)).AsString
+        so := TFslDecimal.ValueOf(sl).Add(TFslDecimal.ValueOf(sr)).AsString
       else
         so := sl+sr;
     end;

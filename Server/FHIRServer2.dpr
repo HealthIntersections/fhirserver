@@ -212,7 +212,9 @@ uses
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
-  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas';
+  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
+  FHIR.Tx.MimeTypes in 'FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in 'FHIR.Tx.Iso4217.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

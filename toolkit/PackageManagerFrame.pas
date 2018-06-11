@@ -104,6 +104,7 @@ type
     procedure reloadPackages;
     procedure fetchProgress(sender : TObject; progress : integer);
     procedure importUrl(sender : TObject; url : String);
+    function CheckImp(sender : TObject; msg : String) : boolean;
   public
     Destructor Destroy; override;
 
@@ -184,17 +185,19 @@ begin
   end;
 end;
 
+function TPackageManagerFrame.CheckImp(sender : TObject; msg : String) : boolean;
+begin
+  result := MessageDlg(msg, TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes;
+end;
+
+
 procedure TPackageManagerFrame.btnImportPackageFileClick(Sender: TObject);
 begin
   if dlgOpenPackage.Execute then
   begin
     Cursor := crHourGlass;
     try
-      FPcm.Import(fileToBytes(dlgOpenPackage.FileName),
-        function (msg : String) : boolean
-        begin
-          result := MessageDlg(msg, TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes;
-        end);
+      FPcm.Import(fileToBytes(dlgOpenPackage.FileName));
       reloadPackages;
     finally
       Cursor := crDefault;
@@ -239,6 +242,7 @@ begin
   if (FPcm <> nil) then
     FPcm.Free;
   FPcm := TFHIRPackageManager.Create(mode);
+  FPcm.OnCheck := checkImp;
   lblFolder.Text := FPcm.Folder;
   reloadPackages;
 end;
@@ -308,11 +312,7 @@ begin
         raise EIOException.create('Unable to find package for '+url+': '+s);
       if ok then
       begin
-        FPcm.Import(fetch.Buffer.AsBytes,
-          function (msg : String) : boolean
-          begin
-            result := MessageDlg(msg, TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes;
-          end);
+        FPcm.Import(fetch.Buffer.AsBytes);
         reloadPackages;
       end;
     finally

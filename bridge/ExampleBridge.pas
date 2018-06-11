@@ -118,12 +118,20 @@ Type
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
+    procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); override;
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     function ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
     function ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
   public
     Constructor create(Data : TExampleServerData; lang : String);
+
+    function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
+    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; override;
+    function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; override;
+
   end;
 
   TExampleFhirServerStorage = class (TFHIRStorageService)
@@ -154,6 +162,15 @@ Type
 
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
+
+    procedure Sweep; override;
+    function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; override;
+    procedure ProcessEmails; override;
+    function FetchResource(key : integer) : TFHIRResource; override;
+    function getClientInfo(id : String) : TRegisteredClientInformation; override;
+    function getClientName(id : String) : string; override;
+    function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
+    procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
   end;
 
   TExampleFHIRUserProvider = class (TFHIRUserProvider)
@@ -387,6 +404,16 @@ begin
   FData.FLock.Unlock;
 end;
 
+procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; httpCode: Integer; name, message: String);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; opName: String; httpCode: Integer; name, message: String);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 procedure TExampleFHIROperationEngine.CommitTransaction;
 begin
   FData.FLock.Unlock;
@@ -420,6 +447,21 @@ begin
   else
     raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
   end;
+end;
+
+function TExampleFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResource;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TExampleFHIROperationEngine.getResourceByUrl(aType: TFhirResourceType; url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResource;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TExampleFHIROperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 function TExampleFHIROperationEngine.patientFromData(data: TFslStringList): TFHIRPatient;
@@ -548,6 +590,11 @@ begin
   end;
 end;
 
+procedure TExampleFHIROperationEngine.processGraphQL(graphql: String; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TExampleFHIROperationEngine.patientRead(request: TFHIRRequest; response: TFHIRResponse) : boolean;
 var
   data : TFslStringList;
@@ -587,6 +634,11 @@ begin
   inherited;
 end;
 
+procedure TExampleFhirServerStorage.fetchClients(list: TFslList<TRegisteredClientInformation>);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 procedure TExampleFhirServerStorage.RecordFhirSession(session: TFhirSession);
 begin
   // this server doesn't track sessions
@@ -603,6 +655,11 @@ begin
 end;
 
 
+function TExampleFhirServerStorage.FetchResource(key: integer): TFHIRResource;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TExampleFhirServerStorage.FetchResourceCounts(comps : TFslList<TFHIRCompartmentId>): TStringList;
 begin
   FData.FLock.Lock();
@@ -614,11 +671,26 @@ begin
   end;
 end;
 
+function TExampleFhirServerStorage.getClientInfo(id: String): TRegisteredClientInformation;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TExampleFhirServerStorage.getClientName(id: String): string;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TExampleFhirServerStorage.GetTotalResourceCount: integer;
 begin
   result := 1;
 end;
 
+
+procedure TExampleFhirServerStorage.ProcessEmails;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
 
 procedure TExampleFhirServerStorage.ProcessObservations;
 begin
@@ -650,9 +722,24 @@ begin
   // nothing in this server
 end;
 
+function TExampleFhirServerStorage.RetrieveSession(key: integer; var UserKey, Provider: integer; var Id, Name, Email: String): boolean;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 procedure TExampleFhirServerStorage.RunValidation;
 begin
   // nothing in this server
+end;
+
+function TExampleFhirServerStorage.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TExampleFhirServerStorage.Sweep;
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TExampleFhirServerStorage.Yield(op: TFHIROperationEngine; exception: Exception);

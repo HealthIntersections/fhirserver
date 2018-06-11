@@ -4691,7 +4691,7 @@ begin
     raise EFHIRException.create('Unknown units system "'+system+'" trying to process quantity as a duration');
   if not IsNumericString(value) then
     raise EFHIRException.create('invalid value "'+value+'" trying to process quantity as a duration');
-  v := TSmartDecimal.ValueOf(value).AsDouble;
+  v := TFslDecimal.ValueOf(value).AsDouble;
   if (code = 'ps') then
     result := v * (DATETIME_MILLISECOND_ONE / 1000000000)
   else if (code = 'ns') then

@@ -43,7 +43,7 @@ uses
   FHIR.Database.Manager,
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.CdsHooks.Utilities, FHIR.Version.Operations, FHIR.Server.Session, FHIR.Version.Common,
-  FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR, FHIR.Tx.ICD10, FHIR.Tx.AreaCode, FHIR.Tx.CountryCode, FHIR.Tx.UsState,
+  FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR, FHIR.Tx.ICD10, FHIR.Tx.AreaCode, FHIR.Tx.CountryCode, FHIR.Tx.UsState, FHIR.Tx.Iso4217, FHIR.Tx.MimeTypes,
   FHIR.Tx.Lang, FHIR.Tx.Validator, FHIR.Server.ClosureMgr, FHIR.Server.Adaptations, FHIR.Server.Utilities,
   FHIR.Tx.Manager, FHIR.Snomed.Expressions;
 
@@ -166,6 +166,10 @@ begin
   ProviderClasses.Add(p.system(nil), p);
   ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   p := TAreaCodeServices.Create;
+  ProviderClasses.Add(p.system(nil), p);
+  p := TIso4217Services.Create;
+  ProviderClasses.Add(p.system(nil), p);
+  p := TMimeTypeCodeServices.Create;
   ProviderClasses.Add(p.system(nil), p);
   p := TCountryCodeServices.Create;
   ProviderClasses.Add(p.system(nil), p);

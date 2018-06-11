@@ -73,7 +73,7 @@ Type
     Function ParseNullFlavor(Const sPath : String; Const sValue : WideString) : Tv3NullFlavor;
     Function ParseBoolean(Const sPath : String; Const sValue : WideString) : Boolean;
     Function ParseInteger(Const sPath : String; Const sValue : WideString) : Int64;
-    Function ParseDecimal(Const sPath : String; sValue : WideString) : TSmartDecimal;
+    Function ParseDecimal(Const sPath : String; sValue : WideString) : TFslDecimal;
     Function ParseEnum(Const sPath : String; Const sValue : WideString; Const aNames : Array of String) : Byte;
     Function ParseSet(Const sPath : String; Const sValue : String) : TStringArray; Overload;
     Procedure ParseSet(Const sPath : String; oTokens : TFslStringList; Const sValue : String); Overload;
@@ -666,16 +666,16 @@ Begin
     RaiseError('ParseInteger', 'Integer value "'+sValue+'" is not valid'+' @'+sPath);
 End;
 
-Function TCDAParser.ParseDecimal(Const sPath : String; sValue : WideString) : TSmartDecimal;
+Function TCDAParser.ParseDecimal(Const sPath : String; sValue : WideString) : TFslDecimal;
 Begin
   sValue := Trim(sValue, false);
   if sValue = '' Then
-    result := TSmartDecimal.makeNull
+    result := TFslDecimal.makeNull
   Else
   begin
     if (pos(',', sValue) > 0) then
       sValue := StringReplace(sValue, ',', '');
-    result := TSmartDecimal.Create(sValue);
+    result := TFslDecimal.Create(sValue);
   end;
 End;
 

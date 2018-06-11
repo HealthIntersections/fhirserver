@@ -194,16 +194,16 @@ end;
 procedure TUcumTests.TestConversion(test : TMXmlElement);
 var
   value, srcUnit, dstUnit, outcome : String;
-  d : TSmartDecimal;
+  d : TFslDecimal;
 begin
   value := test.attribute['value'];
   srcUnit := test.attribute['srcUnit'];
   dstUnit := test.attribute['dstUnit'];
   outcome := test.attribute['outcome'];
 
-  d := svc.convert(TSmartDecimal.ValueOf(value), srcUnit, dstUnit);
+  d := svc.convert(TFslDecimal.ValueOf(value), srcUnit, dstUnit);
 
-  Assert.IsTrue(d.Compares(TSmartDecimal.ValueOf(outcome)) = 0, 'Value does not match. expected '+outcome+' but got '+d.AsString);
+  Assert.IsTrue(d.Compares(TFslDecimal.ValueOf(outcome)) = 0, 'Value does not match. expected '+outcome+' but got '+d.AsString);
 end;
 
 procedure TUcumTests.TestMultiplication(test : TMXmlElement);
@@ -219,13 +219,13 @@ begin
   vRes := test.attribute['vRes'];
   uRes := test.attribute['uRes'];
 
-  o1 := TUcumPair.Create(TSmartDecimal.ValueOf(v1), u1);
+  o1 := TUcumPair.Create(TFslDecimal.ValueOf(v1), u1);
   try
-    o2 := TUcumPair.Create(TSmartDecimal.ValueOf(v2), u2);
+    o2 := TUcumPair.Create(TFslDecimal.ValueOf(v2), u2);
     try
 	    o3 := svc.multiply(o1, o2);
       try
-        Assert.IsTrue((o3.Value.compares(TSmartDecimal.valueOf(vRes)) = 0) and (o3.UnitCode = uRes));
+        Assert.IsTrue((o3.Value.compares(TFslDecimal.valueOf(vRes)) = 0) and (o3.UnitCode = uRes));
       finally
         o3.Free;
       end;

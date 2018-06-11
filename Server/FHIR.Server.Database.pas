@@ -731,7 +731,7 @@ type
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
-    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; override;
+    function ExpandVS(vs: TFHIRValueSet; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; override;
     function LookupCode(system, version, code: String): String; override;
     procedure QueueResource(r: TFhirResource); overload; override;
     procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; override;
@@ -9266,7 +9266,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSet;
+function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSet; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSet;
 var
   profile : TFhirExpansionProfile;
 begin
@@ -9277,17 +9277,17 @@ begin
       result := ServerContext.TerminologyServer.ExpandVS(vs, '', profile, '', dependencies, limit, count, offset)
     else
     begin
-      if ServerContext.TerminologyServer.isKnownValueSet(ref.reference, vs) then
-        result := ServerContext.TerminologyServer.ExpandVS(vs, ref.reference, profile, '', dependencies, limit, count, offset)
+      if ServerContext.TerminologyServer.isKnownValueSet(ref, vs) then
+        result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset)
       else
       begin
-        vs := ServerContext.TerminologyServer.getValueSetByUrl(ref.reference);
+        vs := ServerContext.TerminologyServer.getValueSetByUrl(ref);
         if vs = nil then
-          vs := ServerContext.TerminologyServer.getValueSetByid(ref.reference);
+          vs := ServerContext.TerminologyServer.getValueSetByid(ref);
         if vs = nil then
           result := nil
         else
-          result := ServerContext.TerminologyServer.ExpandVS(vs, ref.reference, profile, '', dependencies, limit, count, offset)
+          result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset)
       end;
     end;
   finally
@@ -10721,13 +10721,13 @@ end;
 
 procedure TFHIRNativeStorageService.ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantity);
 var
-  val, cval : TSmartDecimal;
+  val, cval : TFslDecimal;
   upS, upC : TUcumPair;
   vU, cU, ok : Integer;
 begin
   if (value.value <> '') and (value.code <> '') and (value.system <> '') then
   begin
-    val := TSmartDecimal.ValueOf(value.value);
+    val := TFslDecimal.ValueOf(value.value);
     vu := resolveConcept(conn, value.system, value.code);
     if (value.system = 'http://unitsofmeasure.org') then
     begin

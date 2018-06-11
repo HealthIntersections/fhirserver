@@ -165,7 +165,7 @@ uses
   XmlTests in '..\reference-platform\support\Tests\XmlTests.pas',
   GraphQLTests in 'GraphQLTests.pas',
   SnomedTests in 'SnomedTests.pas',
-  DecimalTests in '..\reference-platform\support\tests\DecimalTests.pas',
+  FHIR.Tests.Decimal in '..\reference-platform\support\tests\FHIR.Tests.Decimal.pas',
   IETFLangTests in 'IETFLangTests.pas',
   JWTTests in '..\reference-platform\support\Tests\JWTTests.pas',
   DifferenceEngineTests in '..\reference-platform\support\tests\DifferenceEngineTests.pas',
@@ -289,7 +289,11 @@ uses
   FHIR.R3.Client in '..\reference-platform\dstu3\FHIR.R3.Client.pas',
   FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
   FHIR.R3.Operations in '..\reference-platform\dstu3\FHIR.R3.Operations.pas',
-  FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas';
+  FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas',
+  FHIR.Tx.MimeTypes in '..\Server\FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas',
+  FHIR.XVersion.ConvBase in '..\reference-platform\xversion\FHIR.XVersion.ConvBase.pas',
+  FHIR.Tests.Generics in '..\reference-platform\support\Tests\FHIR.Tests.Generics.pas';
 
 var
   runner : ITestRunner;

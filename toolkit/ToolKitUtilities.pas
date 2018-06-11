@@ -35,7 +35,8 @@ uses
   FHIR.Ui.OSX,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls,
   FHIR.Support.Objects,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client;
+  FHIR.Base.Objects,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;
 
 function checkUpgrade : String;
 procedure doUpgrade(newVersion : String);
@@ -69,6 +70,25 @@ type
     property ValueSet : String read FValueSet write SetValueSet;
     procedure initialise(cc : TFHIRCodeableConcept);
     procedure populate(cc : TFHIRCodeableConcept);
+  end;
+
+  TToolkitWorkerContext = class (TBaseWorkerContext)
+  public
+    function expand(vs : TFhirValueSet) : TFHIRValueSet; overload; override;
+    function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; override;
+    function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; override;
+    function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; override;
+//    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
+//    function getStructure(url : String) : TFHIRStructureDefinition; overload; override;
+//    function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; override;
+//    function getCustomResource(name : String) : TFHIRCustomResourceInformation; override;
+//    function hasCustomResource(name : String) : boolean; override;
+    function supportsSystem(system, version : string) : boolean; overload; override;
+//    function validateCode(system, version, code, display : String) : TValidationResult; overload; virtual; abstract;
+//    function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; virtual; abstract;
+//    function allResourceNames : TArray<String>; overload; virtual; abstract;
+//    function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
+//    procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
   end;
 
 implementation
@@ -530,6 +550,33 @@ begin
   FValueSet := Value;
   if FEdit.Text <> '' then
     editChange(nil);
+end;
+
+{ TToolkitWorkerContext }
+
+function TToolkitWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.supportsSystem(system, version: string): boolean;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
 end;
 
 end.

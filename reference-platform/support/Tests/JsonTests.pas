@@ -44,11 +44,9 @@ Type
   TJsonTests = Class (TObject)
   Private
   Published
-    [TestCase]
-    procedure TestResource;
-
-    [TestCase]
-    procedure TestCustomDoc2;
+    [TestCase] procedure TestResource;
+    [TestCase] procedure TestCustomDoc2;
+    [TestCase] procedure TestCustomDecimal;
   End;
 
   JsonPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
@@ -77,6 +75,24 @@ uses
   IdGlobalProtocols, FHIR.Support.Text, FHIR.Support.Shell, XmlTests;
 
 { TJsonTests }
+
+procedure TJsonTests.TestCustomDecimal;
+var
+  json : TJsonObject;
+  f : TFileStream;
+begin
+  f := TFileStream.Create('C:\work\org.hl7.fhir\build\publish\observation-decimal.json', fmopenRead + fmShareDenyWrite);
+  try
+    json := TJSONParser.Parse(f);
+    try
+      assert.IsNotNull(json);
+    finally
+      json.Free;
+    end;
+  finally
+    f.Free;
+  end;
+end;
 
 procedure TJsonTests.TestCustomDoc2;
 var

@@ -48,8 +48,13 @@ type
   [TextFixture]
   TFHIRParserTests = class (TObject)
   public
-    [FHIRParserTestCase]
-    procedure RoundTripTest(Filename: String);
+    [FHIRParserTestCase] procedure RoundTripTest(Filename: String);
+  end;
+
+  [TextFixture]
+  TFHIRParserSpecialTests = class (TObject)
+  public
+    [TestCase] procedure DecimalTest;
   end;
 
 implementation
@@ -58,6 +63,32 @@ uses
   IdGlobalProtocols;
 
 { TFHIRParserTests }
+
+procedure TFHIRParserSpecialTests.DecimalTest;
+var
+  src, xml, json, json2 : String;
+  obs : TFhirObservation;
+begin
+  src := 'C:\temp\obs.xml';
+  xml := 'C:\temp\xml.xml';
+  json := 'C:\temp\json.json';
+  json2 := 'C:\temp\json2.json';
+  CopyFile('C:\work\org.hl7.fhir\build\publish\observation-decimal.xml', pchar(src), false);
+  obs := TFHIRParsers.ParseFile(nil, ffXml, 'en', src) as TFhirObservation;
+  try
+    TFHIRParsers.composeFile(nil, ffJson, obs, 'en', json, OutputStylePretty);
+  finally
+    obs.Free;
+  end;
+  obs := TFHIRParsers.ParseFile(nil, ffJson, 'en', json) as TFhirObservation;
+  try
+    TFHIRParsers.composeFile(nil, ffJson, obs, 'en', json2, OutputStylePretty);
+    TFHIRParsers.composeFile(nil, ffXml, obs, 'en', xml, OutputStylePretty);
+  finally
+    obs.Free;
+  end;
+  Assert.IsTrue(true);
+end;
 
 procedure TFHIRParserTests.RoundTripTest(filename: String);
 var
@@ -168,4 +199,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFHIRParserTests);
+  TDUnitX.RegisterTestFixture(TFHIRParserSpecialTests);
 end.

@@ -1,4 +1,4 @@
-unit AdvGenericsTests;
+unit FHIR.Tests.Generics;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics;
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics;
 
 Type
   TFslString = class (TFslObject)

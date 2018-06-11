@@ -118,6 +118,8 @@ type
     procedure changeMode;
     procedure importUrl(sender : TObject; url: String);
     procedure fetchProgress(sender : TObject; progress : integer);
+    function packageCheck(sender : TObject; msg : String) : boolean;
+    procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
   public
     property UserMode : boolean read FUserMode write FUserMode;
     property GoUrl : String read FGoUrl write FGoUrl;
@@ -180,11 +182,7 @@ begin
   begin
     Cursor := crHourGlass;
     try
-      FCache.Import(fileToBytes(dlgOpen.FileName),
-        function (msg : String) : boolean
-        begin
-          result := MessageDlg(msg, mtConfirmation, mbYesNo, 0) = mrYes;
-        end);
+      FCache.Import(fileToBytes(dlgOpen.FileName));
       LoadPackages;
     finally
       Cursor := crDefault;
@@ -244,11 +242,7 @@ begin
         raise EIOException.create('Unable to find package for '+url+': '+s);
       if ok then
       begin
-        FCache.Import(fetch.Buffer.AsBytes,
-          function (msg : String) : boolean
-          begin
-            result := MessageDlg(msg, mtConfirmation, mbYesNo, 0) = mrYes;
-          end);
+        FCache.Import(fetch.Buffer.AsBytes);
         LoadPackages;
       end;
     finally
@@ -365,6 +359,10 @@ begin
   if assigned(FCache) then
     FCache.Free;
   FCache := TFHIRPackageManager.Create(UserMode);
+  FCache.OnCheck := packageCheck;
+  FCache.OnWork := packageWork;
+  lblDownload.Visible := false;
+  lblFolder.visible := true;
   lblFolder.Caption := 'Cache: '+FCache.Folder;
   lblFolder.Refresh;
   Caption := 'FHIR Package Cache Manager - '+FCache.description;
@@ -391,6 +389,39 @@ begin
   vtPackages.RootNodeCount := 0;
   vtPackages.RootNodeCount := FPackages.Count;
   vtPackages.Invalidate;
+end;
+
+function TPackageCacheForm.packageCheck(sender : TObject; msg: String): boolean;
+begin
+  result := MessageDlg(msg, mtConfirmation, mbYesNo, 0) = mrYes;
+end;
+
+procedure TPackageCacheForm.packageWork(sender: TObject; pct: integer; done: boolean; msg: String);
+begin
+  if done then
+  begin
+    pbDownload.Visible := false;
+    btnCancel.Visible := false;
+    lblDownload.Visible := false;
+    lblFolder.visible := true;
+  end
+  else
+  begin
+    if not pbDownload.Visible then
+    begin
+      FStop := false;
+      pbDownload.Visible := true;
+      pbDownload.Position := 0;
+      lblDownload.Visible := true;
+      lblFolder.visible := false;
+      btnCancel.Visible := true;
+    end;
+    lblDownload.caption := msg;
+    pbDownload.Position := pct;
+    if FStop then
+      abort;
+  end;
+  Application.ProcessMessages;
 end;
 
 procedure TPackageCacheForm.Panel1Click(Sender: TObject);

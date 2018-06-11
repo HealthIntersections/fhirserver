@@ -41,6 +41,9 @@ BuildDate='2018-06-04';
   SERVER_VERSION = '1.0.'+buildCount;
   SERVER_RELEASE_DATE = BuildDate;
 
+  INDEX_DIGITS = 20;
+  INDEX_DECIMALS = 30;
+
 implementation
 
 end.

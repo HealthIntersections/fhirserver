@@ -231,7 +231,9 @@ uses
   VTAccessibility in '..\..\Components\treeview\Source\VTAccessibility.pas',
   VTAccessibilityFactory in '..\..\Components\treeview\Source\VTAccessibilityFactory.pas',
   VTHeaderPopup in '..\..\Components\treeview\Source\VTHeaderPopup.pas',
-  FHIR.Cache.PackageBrowser in '..\reference-platform\cache\FHIR.Cache.PackageBrowser.pas' {PackageFinderForm};
+  FHIR.Cache.PackageBrowser in '..\reference-platform\cache\FHIR.Cache.PackageBrowser.pas' {PackageFinderForm},
+  FHIR.Tx.MimeTypes in '..\Server\FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas';
 
 {$R *.res}
 

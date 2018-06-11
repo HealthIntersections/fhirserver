@@ -768,7 +768,7 @@ begin
           factory:=
             {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}
             {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF};
-          FContext := TBaseWorkerContext.Create(factory);
+          FContext := TToolkitWorkerContext.Create(factory);
           if not cache.packageExists('hl7.fhir.core', factory.versionString) then
             ShowMessage('The base FHIR package '+factory.versionString+' is not installed; you will need to install it using the package manager and restart')
           else

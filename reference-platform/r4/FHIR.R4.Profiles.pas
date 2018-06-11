@@ -694,11 +694,11 @@ function TProfileUtilities.getFirstCode(ed : TFHIRElementDefinition) : TFHIRCodi
 var
   vs, vs1 : TFHIRValueSet;
 begin
-  if (ed.binding = nil) or (ed.binding.valueSet = nil) or (ed.binding.valueSet is TFHIRUri) then
+  if (ed.binding = nil) or (ed.binding.valueSet = '') then
     result := nil
   else
   begin
-    vs := context.fetchResource(frtValueSet, (ed.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+    vs := context.fetchResource(frtValueSet, ed.binding.valueSet) as TFhirValueSet;
     try
       vs1 := context.expand(vs);
       try

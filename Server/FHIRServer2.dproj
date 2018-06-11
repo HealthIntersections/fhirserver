@@ -327,6 +327,8 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
+        <DCCReference Include="FHIR.Tx.MimeTypes.pas"/>
+        <DCCReference Include="FHIR.Tx.Iso4217.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

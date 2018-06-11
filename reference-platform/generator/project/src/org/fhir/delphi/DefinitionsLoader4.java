@@ -37,7 +37,8 @@ public class DefinitionsLoader4 {
     Bundle valuesets = (Bundle) new XmlParser().parse(new FileInputStream(Utilities.path(src, "expansions.xml")));
     Map<String, ValueSet> vsmap = new HashMap<String, ValueSet>();
     for (BundleEntryComponent entry : valuesets.getEntry()) {
-      vsmap.put(((ValueSet) entry.getResource()).getUrl(), (ValueSet) entry.getResource());
+      ValueSet vs = (ValueSet) entry.getResource();
+      vsmap.put(vs.getUrl(), vs);
     }
 
     Definitions def = new Definitions();

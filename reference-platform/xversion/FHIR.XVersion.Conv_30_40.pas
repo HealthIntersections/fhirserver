@@ -37,11 +37,12 @@ uses
   FHIR.Support.Objects,
   FHIR.Base.Lang,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities,
+  FHIR.XVersion.ConvBase;
 
 Type
 
-  TVersionConvertor_30_40 = class (TFslObject)
+  TVersionConvertor_30_40 = class (TVersionConvertorBase)
   private
     class procedure copyElement(src : FHIR.R3.Types.TFhirElement; tgt : FHIR.R4.Types.TFhirElement); overload;
     class procedure copyElement(src : FHIR.R4.Types.TFhirElement; tgt : FHIR.R3.Types.TFhirElement); overload;
@@ -4466,7 +4467,6 @@ begin
   case (src) of
     FHIR.R3.Types.ItemTypeGroup: exit(FHIR.R4.Types.ItemTypeGroup);
     FHIR.R3.Types.ItemTypeDisplay: exit(FHIR.R4.Types.ItemTypeDisplay);
-    FHIR.R3.Types.ItemTypeQuestion: exit(FHIR.R4.Types.ItemTypeQuestion);
     FHIR.R3.Types.ItemTypeBoolean: exit(FHIR.R4.Types.ItemTypeBoolean);
     FHIR.R3.Types.ItemTypeDecimal: exit(FHIR.R4.Types.ItemTypeDecimal);
     FHIR.R3.Types.ItemTypeInteger: exit(FHIR.R4.Types.ItemTypeInteger);
@@ -4490,7 +4490,6 @@ begin
   case (src) of
     FHIR.R4.Types.ItemTypeGroup: exit(FHIR.R3.Types.ItemTypeGroup);
     FHIR.R4.Types.ItemTypeDisplay: exit(FHIR.R3.Types.ItemTypeDisplay);
-    FHIR.R4.Types.ItemTypeQuestion: exit(FHIR.R3.Types.ItemTypeQuestion);
     FHIR.R4.Types.ItemTypeBoolean: exit(FHIR.R3.Types.ItemTypeBoolean);
     FHIR.R4.Types.ItemTypeDecimal: exit(FHIR.R3.Types.ItemTypeDecimal);
     FHIR.R4.Types.ItemTypeInteger: exit(FHIR.R3.Types.ItemTypeInteger);
@@ -6287,7 +6286,10 @@ begin
     exit(nil);
   tgt := FHIR.R4.Types.TFhirMoney.Create();
   try
-  copyQuantity(src, tgt);
+  if (src.value <> '') then
+    tgt.value := src.value;
+  if (src.value <> '') then
+    tgt.currency := src.code;
   exit(tgt.link);
   finally
     tgt.free;
@@ -6302,7 +6304,11 @@ begin
     exit(nil);
   tgt := FHIR.R3.Types.TFhirMoney.Create();
   try
-  copyQuantity(src, tgt);
+  if (src.value <> '') then
+    tgt.value := src.value;
+  if (src.value <> '') then
+    tgt.code := src.currency;
+  tgt.system := 'urn:iso:std:iso:4217';
   exit(tgt.link);
   finally
     tgt.free;
@@ -7613,6 +7619,7 @@ class function TVersionConvertor_30_40.convertElementDefinitionBindingComponent(
 var
   tgt : FHIR.R4.Types.TFhirElementDefinitionBinding;
   vs : FHIR.R4.Types.TFhirType;
+  vr : String;
 begin
   if (src = nil) then
     exit(nil);
@@ -7627,13 +7634,15 @@ begin
   if (src.valueSet <> nil) then
   begin
     vs := convertType(src.ValueSet);
-    if (vs is FHIR.R4.Types.TFhirReference) then
-    begin
-      tgt.ValueSet := FHIR.R4.Types.TFHIRCanonical.create(FHIR.R4.Types.TFhirReference(vs).Reference);
+    try
+      if (vs is FHIR.R4.Types.TFhirReference) then
+        tgt.ValueSet := FHIR.R4.Types.TFhirReference(vs).Reference
+      else
+        tgt.ValueSet := vs.primitiveValue;
+      tgt.ValueSet := refToVS(tgt.valueSet);
+    finally
       vs.Free;
-    end
-     else
-       tgt.ValueSet := vs;
+    end;
   end;
 
   exit(tgt.link);
@@ -7642,9 +7651,11 @@ begin
   end;
 end;
 
+
 class function TVersionConvertor_30_40.convertElementDefinitionBindingComponent(src : FHIR.R4.Types.TFhirElementDefinitionBinding) : FHIR.R3.Types.TFhirElementDefinitionBinding;
 var
   tgt : FHIR.R3.Types.TFhirElementDefinitionBinding;
+  s : String;
 begin
   if (src = nil) then
     exit(nil);
@@ -7656,12 +7667,13 @@ begin
   if (src.description <> '') then
     tgt.description := src.description;
 
-  if (src.valueSet <> nil) then
+  if (src.valueSet <> '') then
   begin
-    if src.valueSet is FHIR.R4.Types.TFHIRCanonical then
-      tgt.ValueSet := FHIR.R3.Types.TFHIRReference.create((src.ValueSet as FHIR.R4.Types.TFHIRCanonical).value)
+    s := vsToRef(src.valueSet);
+    if s <> '' then
+      tgt.ValueSet := FHIR.R3.Types.TFHIRUri.create(s)
     else
-      tgt.ValueSet := convertType(src.ValueSet);
+      tgt.ValueSet := FHIR.R3.Types.TFHIRReference.create(src.ValueSet);
   end;
 
   exit(tgt.link);
@@ -8365,7 +8377,7 @@ end;
 class function TVersionConvertor_30_40.convertDataRequirementCodeFilterComponent(src : FHIR.R3.Types.TFhirDataRequirementCodeFilter) : FHIR.R4.Types.TFhirDataRequirementCodeFilter;
 var
   tgt : FHIR.R4.Types.TFhirDataRequirementCodeFilter;
-  t1 : FHIR.R4.Types.TFhirType;
+  vs : FHIR.R4.Types.TFhirType;
   t2 : FHIR.R3.Types.TFhirCode;
   t3 : FHIR.R3.Types.TFhirCoding;
   t4 : FHIR.R3.Types.TFhirCodeableConcept;
@@ -8380,11 +8392,16 @@ begin
 
   if (src.valueSet <> nil) then
   begin
-    t1 := convertType(src.ValueSet);
-    if (t1 is FHIR.R4.Types.TFhirString) then
-      tgt.ValueSet := FHIR.R4.Types.TFhirUri.create(t1.primitiveValue);
-    if (t1 is FHIR.R4.Types.TFhirReference) then
-      tgt.ValueSet := FHIR.R4.Types.TFhirCanonical(FHIR.R4.Types.TFhirReference(t1).Reference);
+    vs := convertType(src.ValueSet);
+    try
+      if (vs is FHIR.R4.Types.TFhirReference) then
+        tgt.ValueSet := FHIR.R4.Types.TFhirReference(vs).Reference
+      else
+        tgt.ValueSet := vs.primitiveValue;
+      tgt.ValueSet := refToVS(tgt.valueSet);
+    finally
+      vs.Free;
+    end;
   end;
 
   for t2 in src.valueCodeList do
@@ -8409,6 +8426,7 @@ class function TVersionConvertor_30_40.convertDataRequirementCodeFilterComponent
 var
   tgt : FHIR.R3.Types.TFhirDataRequirementCodeFilter;
   t : FHIR.R4.Types.TFhirCoding;
+  s : String;
 begin
   if (src = nil) then
     exit(nil);
@@ -8418,11 +8436,14 @@ begin
   if (src.path <> '') then
     tgt.path := src.path;
 
-  if (src.valueSet <> nil) then
-    if (src.ValueSet is FHIR.R4.Types.TFhirUri) then
-      tgt.ValueSet := FHIR.R3.Types.TFHIRString.create((src.ValueSet as FHIR.R4.Types.TFHIRUri).value)
-    else if (src.ValueSet is FHIR.R4.Types.TFHIRCanonical) then
-      tgt.ValueSet := FHIR.R3.Types.TFhirReference.create((src.ValueSet as FHIR.R4.Types.TFHIRCanonical).value);
+  if (src.valueSet <> '') then
+  begin
+    s := vsToRef(src.valueSet);
+    if s <> '' then
+      tgt.ValueSet := FHIR.R3.Types.TFHIRUri.create(s)
+    else
+      tgt.ValueSet := FHIR.R3.Types.TFHIRReference.create(src.ValueSet);
+  end;
 
   for t in src.codeList do
   begin
@@ -22444,7 +22465,7 @@ end;
 class function TVersionConvertor_30_40.convertOperationDefinitionParameterBindingComponent(src : FHIR.R3.Resources.TFhirOperationDefinitionParameterBinding) : FHIR.R4.Resources.TFhirOperationDefinitionParameterBinding;
 var
   tgt : FHIR.R4.Resources.TFhirOperationDefinitionParameterBinding;
-  t : FHIR.R4.Types.TFhirType;
+  vs : FHIR.R4.Types.TFhirType;
 begin
   if (src = nil) then
     exit(nil);
@@ -22455,14 +22476,16 @@ begin
 
   if (src.valueSet <> nil) then
   begin
-    t := convertType(src.ValueSet);
-    if t is FHIR.R4.Types.TFhirReference then
-    begin
-      tgt.valueSet := FHIR.R4.Types.TFhirCanonical.create((t as FHIR.R4.Types.TFhirReference).Reference);
-      t.Free;
-    end
-    else
-      tgt.valueSet := t;
+    vs := convertType(src.ValueSet);
+    try
+      if (vs is FHIR.R4.Types.TFhirReference) then
+        tgt.ValueSet := FHIR.R4.Types.TFhirReference(vs).Reference
+      else
+        tgt.ValueSet := vs.primitiveValue;
+      tgt.ValueSet := refToVS(tgt.valueSet);
+    finally
+      vs.Free;
+    end;
   end;
 
   exit(tgt.link);
@@ -22474,6 +22497,7 @@ end;
 class function TVersionConvertor_30_40.convertOperationDefinitionParameterBindingComponent(src : FHIR.R4.Resources.TFhirOperationDefinitionParameterBinding) : FHIR.R3.Resources.TFhirOperationDefinitionParameterBinding;
 var
   tgt : FHIR.R3.Resources.TFhirOperationDefinitionParameterBinding;
+  s : String;
 begin
   if (src = nil) then
     exit(nil);
@@ -22482,8 +22506,14 @@ begin
   copyBackboneElement(src, tgt);
   tgt.strength := convertBindingStrength(src.strength);
 
-  if (src.valueSet <> nil) then
-    tgt.valueSet := convertType(src.valueSet);
+  if (src.valueSet <> '') then
+  begin
+    s := vsToRef(src.valueSet);
+    if s <> '' then
+      tgt.ValueSet := FHIR.R3.Types.TFHIRUri.create(s)
+    else
+      tgt.ValueSet := FHIR.R3.Types.TFHIRReference.create(src.ValueSet);
+  end;
 
   exit(tgt.link);
   finally

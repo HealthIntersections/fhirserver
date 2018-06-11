@@ -289,7 +289,10 @@ uses
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
   FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
   FHIR.R4.Operations in '..\reference-platform\r4\FHIR.R4.Operations.pas',
-  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas';
+  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas',
+  FHIR.Tx.MimeTypes in 'FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in 'FHIR.Tx.Iso4217.pas',
+  FHIR.XVersion.ConvBase in '..\reference-platform\xversion\FHIR.XVersion.ConvBase.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

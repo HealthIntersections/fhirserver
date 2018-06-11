@@ -2601,7 +2601,7 @@ public class DelphiGenerator {
     String tn = null;
     if (e.typeCode().equals("code") && e.hasBinding() && !e.getBinding().getName().equals("FHIRDefinedType")) {
       BindingSpecification cd = e.getBinding();
-      if (cd != null && (cd.getBinding() == BindingSpecification.BindingMethod.CodeList)) {
+      if (cd != null && !cd.isNoEnum() && (cd.getBinding() == BindingSpecification.BindingMethod.CodeList)) {
         tn = "TFhir"+enumName(getTitle(getCodeList(cd.getReference()).substring(1)))+"Enum"+rId;
         if (!enumNames.contains(tn)) {
           enumNames.add(tn);
@@ -2609,7 +2609,7 @@ public class DelphiGenerator {
         }
         typeNames.put(e,  tn);
       }
-      if (cd != null && (cd.getBinding() == BindingSpecification.BindingMethod.ValueSet) && !e.getBinding().getName().equals("FHIRDefinedType")) {
+      if (cd != null && !cd.isNoEnum() && (cd.getBinding() == BindingSpecification.BindingMethod.ValueSet) && !e.getBinding().getName().equals("FHIRDefinedType")) {
         tn = "TFhir"+enumName(getTitle(getCodeList(urlTail(cd.getReference()))))+"Enum"+rId;
         if (!enumNames.contains(tn)) {
           enumNames.add(tn);

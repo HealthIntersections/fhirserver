@@ -95,6 +95,7 @@ public class BindingSpecification {
 //  private List<DefinedCode> childCodes;
   private List<DefinedCode> allCodes;
 private String vsUrl;
+private boolean noEnum;
   
 
   
@@ -364,17 +365,24 @@ private String vsUrl;
     }
     
   }
+  
   public void loadFromExpansion(org.hl7.fhir.r4.model.ValueSet vs) {
     vsUrl = vs.getUrl();
-    allCodes = new ArrayList<DefinedCode>();
-    for (org.hl7.fhir.r4.model.ValueSet.ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {
-      DefinedCode cd = new DefinedCode();
-      cd.setCode(c.getCode());
-      cd.setSystem(c.getSystem());
-      cd.setDisplay(c.getDisplay());
-      allCodes.add(cd);
-    }
     
+    if (vs.getCompose().getInclude().size() == 1 && vs.getCompose().getIncludeFirstRep().hasSystem() && !vs.getCompose().getIncludeFirstRep().hasFilter() && !vs.getCompose().getIncludeFirstRep().hasConcept() && !vs.getCompose().getIncludeFirstRep().getSystem().startsWith("http://hl7.org/fhir"))
+      noEnum = true;
+    else if (vs.getExpansion().hasExtension("http://hl7.org/fhir/StructureDefinition/valueset-toocostly"))
+      noEnum = true;
+    else {
+      allCodes = new ArrayList<DefinedCode>();
+      for (org.hl7.fhir.r4.model.ValueSet.ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {
+        DefinedCode cd = new DefinedCode();
+        cd.setCode(c.getCode());
+        cd.setSystem(c.getSystem());
+        cd.setDisplay(c.getDisplay());
+        allCodes.add(cd);
+      }
+    }
   }
   public void loadFromExpansion(ValueSet vs) {
     vsUrl = vs.getUrl();
@@ -395,6 +403,10 @@ private String vsUrl;
 
   public String getVsUrl() {
     return vsUrl;
+  }
+
+  public boolean isNoEnum() {
+    return noEnum;
   }  
   
   

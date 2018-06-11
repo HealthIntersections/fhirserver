@@ -399,6 +399,8 @@ begin
     result := TFhirDosageDoseAndRate.create()
   else if name = 'Dosage' then
     result := TFhirDosage.create()
+  else if name = 'Money' then
+    result := TFhirMoney.create()
   else if name = 'MarketingStatus' then
     result := TFhirMarketingStatus.create()
   else if name = 'Identifier' then
@@ -477,8 +479,6 @@ begin
     result := TFhirTiming.create()
   else if name = 'Count' then
     result := TFhirCount.create()
-  else if name = 'Money' then
-    result := TFhirMoney.create()
   else if name = 'Age' then
     result := TFhirAge.create()
   else if name = 'Distance' then
@@ -1238,6 +1238,8 @@ begin
 {$IFDEF FHIR_MEDICATIONREQUEST}
   else if name = 'MedicationRequest.dispenseRequest' then
     result := TFhirMedicationRequestDispenseRequest.create()
+  else if name = 'MedicationRequest.dispenseRequest.initialFill' then
+    result := TFhirMedicationRequestDispenseRequestInitialFill.create()
   else if name = 'MedicationRequest.substitution' then
     result := TFhirMedicationRequestSubstitution.create()
   else if name = 'MedicationRequest' then

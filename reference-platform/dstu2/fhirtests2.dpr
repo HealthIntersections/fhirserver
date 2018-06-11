@@ -81,7 +81,7 @@ uses
   FHIR.R2.Utilities in 'FHIR.R2.Utilities.pas',
   FHIR.R2.Xml in 'FHIR.R2.Xml.pas',
   FHIR.R2.Json in 'FHIR.R2.Json.pas',
-  DecimalTests in '..\support\Tests\DecimalTests.pas',
+  FHIR.Tests.Decimal in '..\support\Tests\FHIR.Tests.Decimal.pas',
   DifferenceEngineTests in '..\support\Tests\DifferenceEngineTests.pas',
   FHIR.R2.Tests.PathEngine in 'tests\FHIR.R2.Tests.PathEngine.pas',
   FHIR.R2.Tests.Worker in 'tests\FHIR.R2.Tests.Worker.pas',

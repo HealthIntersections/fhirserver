@@ -195,7 +195,8 @@ uses
   FHIR.R2.Operations in '..\reference-platform\dstu2\FHIR.R2.Operations.pas',
   FHIR.R2.OpBase in '..\reference-platform\dstu2\FHIR.R2.OpBase.pas',
   FHIR.Tools.CodeSystemProvider in '..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas',
-  FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas';
+  FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas',
+  FHIR.Ui.Chart in '..\Libraries\ui\FHIR.Ui.Chart.pas';
 
 {$R *.res}
 

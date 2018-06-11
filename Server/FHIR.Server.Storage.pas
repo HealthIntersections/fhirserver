@@ -288,7 +288,7 @@ Type
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); overload; virtual; abstract;
     function createClient(lang : String; ServerContext : TFslObject; context: TFHIRWorkerContext; session: TFHIRSession) : TFHIRClient; virtual;
     Procedure Yield(client : TFHIRClient; exception : Exception); overload; virtual;
-    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
+    function ExpandVS(vs: TFHIRValueSet; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
     function FetchResource(key : integer) : TFHIRResource; virtual; abstract;
 
@@ -325,7 +325,7 @@ begin
   inherited;
 end;
 
-function TFHIRStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
+function TFHIRStorageService.ExpandVS(vs: TFHIRValueSet; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
 begin
   raise EFHIRException.create('Expanding valuesets is not implemented in this server');
 end;

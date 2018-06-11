@@ -76,7 +76,7 @@ Type
     FPath: String;
     FCommonUnits : TFhirValueSet;
 
-    Function ParseDecimal(S,s1 : String):TSmartDecimal;
+    Function ParseDecimal(S,s1 : String):TFslDecimal;
     Function ParsePrefix(oElem : TMXmlElement):TUcumPrefix;
     Function ParseBaseUnit(oElem : TMXmlElement):TUcumBaseUnit;
     Function ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
@@ -199,7 +199,7 @@ Type
      * @return the value if a conversion is possible
      * @throws OHFException
      *)
-    Function convert(value : TSmartDecimal;  sourceUnit, destUnit : String) : TSmartDecimal;
+    Function convert(value : TFslDecimal;  sourceUnit, destUnit : String) : TFslDecimal;
 
     (**
      * multiply two value/units pairs together and return the result in canonical units
@@ -299,14 +299,14 @@ begin
   End;
 end;
 
-function TUcumServices.convert(value: TSmartDecimal; sourceUnit, destUnit: String): TSmartDecimal;
+function TUcumServices.convert(value: TFslDecimal; sourceUnit, destUnit: String): TFslDecimal;
 var
   oConv : TUcumConverter;
   src : TUcumCanonical;
   dst : TUcumCanonical;
   term : TUcumTerm;
   s, d : String;
-  t : TSmartDecimal;
+  t : TFslDecimal;
 begin
   if sourceUnit = '' Then
     RaiseError('Convert', 'Source units are required');
@@ -492,7 +492,7 @@ function TUcumServices.multiply(o1, o2: TUcumPair): TUcumPair;
 var
   res : TUcumPair;
 begin
-  res := TUcumPair.Create(TSmartDecimal.One, '');
+  res := TUcumPair.Create(TFslDecimal.makeOne, '');
   Try
     res.value := o1.value.Multiply(o2.Value);
     res.UnitCode := o1.UnitCode +'.'+o2.UnitCode;
@@ -944,12 +944,12 @@ begin
   result := nil;
 end;
 
-function TUcumServices.ParseDecimal(s, s1: String): TSmartDecimal;
+function TUcumServices.ParseDecimal(s, s1: String): TFslDecimal;
 begin
   if s = '' then
-    result := TSmartDecimal.One
+    result := TFslDecimal.makeOne
   Else
-    result := TSmartDecimal.ValueOf(s);
+    result := TFslDecimal.ValueOf(s);
 end;
 
 Function TUcumServices.ParsePrefix(oElem : TMXmlElement):TUcumPrefix;

@@ -62,9 +62,9 @@ Type
     FStatus: Integer;
     FKey: Integer;
     FOldSource: String;
-    FContext : TSmartDecimalContext;
+    FContext : TFslDecimalContext;
 
-    Function ParseDecimal(S,s1 : String):TSmartDecimal;
+    Function ParseDecimal(S,s1 : String):TFslDecimal;
     Function ParsePrefix(oElem : IXMLDOMElement):TUcumPrefix;
     Function ParseBaseUnit(oElem : IXMLDOMElement):TUcumBaseUnit;
     Function ParseUnit(oElem : IXMLDOMElement):TUcumDefinedUnit;
@@ -118,7 +118,7 @@ var
   iStatus : integer;
 begin
   FDB := CreateConnectionPoolManager(nil, nil, 'import');
-  FContext := TSmartDecimalContext.create;
+  FContext := TFslDecimalContext.create;
   FConn := FDb.GetConnection('snomed');
   Try
     if Key <> 0 Then
@@ -350,7 +350,7 @@ Begin
 End;
 
 
-function TUcumImportAction.ParseDecimal(S,s1: String): TSmartDecimal;
+function TUcumImportAction.ParseDecimal(S,s1: String): TFslDecimal;
 begin
   if s = '' then
     result := FContext.One

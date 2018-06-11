@@ -135,7 +135,6 @@ Type
     function hasCustomResource(name : String) : boolean; override;
     function allResourceNames : TArray<String>; override;
     function nonSecureResourceNames : TArray<String>; override;
-
   end;
   TBaseWorkerContext = TBaseWorkerContextR3;
 

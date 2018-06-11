@@ -82,7 +82,7 @@ uses
   FHIR.R3.Xml in 'FHIR.R3.Xml.pas',
   FHIR.R3.Json in 'FHIR.R3.Json.pas',
   FHIR.R3.Turtle in 'FHIR.R3.Turtle.pas',
-  DecimalTests in '..\support\Tests\DecimalTests.pas',
+  FHIR.Tests.Decimal in '..\support\Tests\FHIR.Tests.Decimal.pas',
   DifferenceEngineTests in '..\support\Tests\DifferenceEngineTests.pas',
   FHIR.R3.Tests.PathEngine in 'tests\FHIR.R3.Tests.PathEngine.pas',
   FHIR.R3.Tests.Worker in 'tests\FHIR.R3.Tests.Worker.pas',

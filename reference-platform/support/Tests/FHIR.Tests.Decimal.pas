@@ -1,4 +1,4 @@
-Unit DecimalTests;
+Unit FHIR.Tests.Decimal;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -33,8 +33,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Support.Decimal,
-  FHIR.Support.Objects,
+  FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Objects,
   DUnitX.TestFramework;
 
 Type
@@ -55,19 +54,16 @@ Type
     procedure TestRoundTrip(n1, n2, n3, t : String);
     procedure TestBoundsCase(v, low, high, ilow, ihigh : String);
   Published
-    [TestCase]
-    Procedure TestIsDecimal;
+    [TestCase] Procedure TestIsDecimal;
 
-    [TestCase]
-    Procedure TestAsInteger;
-    [TestCase]
-    Procedure TestStringSupport;
-    [TestCase]
-    Procedure TestAddition;
-    [TestCase]
-    Procedure TestMultiplication;
-    [TestCase]
-    Procedure TestBounds;
+    [TestCase] Procedure TestAsInteger;
+    [TestCase] Procedure TestStringSupport;
+    [TestCase] Procedure TestAddition;
+    [TestCase] Procedure TestMultiplication;
+    [TestCase] Procedure TestBounds;
+    [TestCase] Procedure TestNormalisedDecimal;
+    [TestCase] Procedure TestInfinity;
+    [TestCase] Procedure TestOverloading;
   End;
 
 Implementation
@@ -77,15 +73,15 @@ Implementation
 
 procedure TDecimalTests.testString(s, st, std: String);
 var
-  dec : TSmartDecimal;
+  dec : TFslDecimal;
   s1, s2 : String;
 begin
-  dec := TSmartDecimal.valueOf(s);
+  dec := TFslDecimal.valueOf(s);
   s1 := dec.AsString;
   s2 := dec.AsScientific;
   Assert.IsTrue(s1 = st);
   Assert.IsTrue(s2 = std);
-  dec := TSmartDecimal.valueOf(std);
+  dec := TFslDecimal.valueOf(std);
   s1 := dec.AsDecimal;
   Assert.IsTrue(s1 = st);
 end;
@@ -225,20 +221,20 @@ end;
 
 procedure TDecimalTests.TestAdd(s1, s2, s3: String);
 var
-  o1, o2, o3: TSmartDecimal;
+  o1, o2, o3: TFslDecimal;
 begin
-    o1 := TSmartDecimal.valueOf(s1);
-    o2 := TSmartDecimal.valueOf(s2);
+    o1 := TFslDecimal.valueOf(s1);
+    o2 := TFslDecimal.valueOf(s2);
     o3 := o1.add(o2);
     Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestSubtract(s1, s2, s3: String);
 var
-  o1, o2, o3: TSmartDecimal;
+  o1, o2, o3: TFslDecimal;
 begin
-  o1 := TSmartDecimal.valueOf(s1);
-  o2 := TSmartDecimal.valueOf(s2);
+  o1 := TFslDecimal.valueOf(s1);
+  o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Subtract(o2);
   Assert.IsTrue(o3.AsDecimal = s3);
 end;
@@ -346,60 +342,60 @@ end;
 
 procedure TDecimalTests.TestMultiply(s1, s2, s3: String);
 var
-  o1, o2, o3: TSmartDecimal;
+  o1, o2, o3: TFslDecimal;
 begin
-  o1 := TSmartDecimal.valueOf(s1);
-  o2 := TSmartDecimal.valueOf(s2);
+  o1 := TFslDecimal.valueOf(s1);
+  o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Multiply(o2);
   Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestRoundTrip(n1, n2, n3, t: String);
 var
-  o1, o2, o3, o4: TSmartDecimal;
+  o1, o2, o3, o4: TFslDecimal;
 begin
-  o1 := TSmartDecimal.valueOf(n1);
-  o2 := TSmartDecimal.valueOf(n2);
+  o1 := TFslDecimal.valueOf(n1);
+  o2 := TFslDecimal.valueOf(n2);
   o3 := o1.Divide(o2);
-  o4 := o3.Multiply(TSmartDecimal.valueOf(n3));
+  o4 := o3.Multiply(TFslDecimal.valueOf(n3));
   Assert.IsTrue(o4.AsDecimal = t);
 end;
 
 procedure TDecimalTests.TestDivide(s1, s2, s3: String);
 var
-  o1, o2, o3: TSmartDecimal;
+  o1, o2, o3: TFslDecimal;
 begin
-  o1 := TSmartDecimal.valueOf(s1);
-  o2 := TSmartDecimal.valueOf(s2);
+  o1 := TFslDecimal.valueOf(s1);
+  o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Divide(o2);
   Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.testTrunc(s1, s2: String);
 var
-  o1, o2 : TSmartDecimal;
+  o1, o2 : TFslDecimal;
 begin
-  o1 := TSmartDecimal.valueOf(s1);
+  o1 := TFslDecimal.valueOf(s1);
   o2 := o1.Trunc;
   Assert.IsTrue(o2.AsDecimal = s2);
 end;
 
 procedure TDecimalTests.TestDivInt(s1, s2, s3: String);
 var
-  o1, o2, o3: TSmartDecimal;
+  o1, o2, o3: TFslDecimal;
 begin
-  o1 := TSmartDecimal.valueOf(s1);
-  o2 := TSmartDecimal.valueOf(s2);
+  o1 := TFslDecimal.valueOf(s1);
+  o2 := TFslDecimal.valueOf(s2);
   o3 := o1.DivInt(o2);
   Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestModulo(s1, s2, s3: String);
 var
-  o1, o2, o3: TSmartDecimal;
+  o1, o2, o3: TFslDecimal;
 begin
-  o1 := TSmartDecimal.valueOf(s1);
-  o2 := TSmartDecimal.valueOf(s2);
+  o1 := TFslDecimal.valueOf(s1);
+  o2 := TFslDecimal.valueOf(s2);
   o3 := o1.Modulo(o2);
   Assert.IsTrue(o3.AsDecimal = s3);
 end;
@@ -442,20 +438,82 @@ end;
 
 procedure TDecimalTests.TestBoundsCase(v, low, high, ilow, ihigh : String);
 var
-  o1: TSmartDecimal;
+  o1: TFslDecimal;
 begin
-  o1 := TSmartDecimal.valueOf(v);
+  o1 := TFslDecimal.valueOf(v);
   Assert.IsTrue(o1.upperBound.AsDecimal = high);
   Assert.IsTrue(o1.lowerBound.AsDecimal = low);
 //    check(o1.immediateUpperBound.AsDecimal = ihigh);
 //    check(o1.immediateLowerBound.AsDecimal = ilow);
 end;
 
+function n(s : String; defUp : boolean) : String;
+begin
+  result := TFslDecimal.valueOf(s).normaliseDecimal(5, 5, defUp);
+end;
+const up = true; dn = false;
+
+procedure TDecimalTests.TestNormalisedDecimal;
+begin
+  // simple numbers
+  assert.isTrue(n('0',         up) = '000000.00000');
+  assert.isTrue(n('0',         dn) = '000000.00000');
+  assert.isTrue(n('-0',        up) = '000000.00000');
+  assert.isTrue(n('-0',        dn) = '000000.00000');
+  assert.isTrue(n('1',         up) = '000001.00000');
+  assert.isTrue(n('1',         dn) = '000001.00000');
+  assert.isTrue(n('0.1',       up) = '000000.10000');
+  assert.isTrue(n('0.1',       dn) = '000000.10000');
+  assert.isTrue(n('-1',        up) = '!99999.00000');
+  assert.isTrue(n('-1',        dn) = '!99999.00000');
+  assert.isTrue(n('-0.1',      up) = '!99999.90000');
+  assert.isTrue(n('-0.1',      dn) = '!99999.90000');
+
+  // limits
+  assert.isTrue(n('99999',     up) = '099999.00000');
+  assert.isTrue(n('99999',     dn) = '099999.00000');
+  assert.isTrue(n('-99999',    up) = '!00001.00000');
+  assert.isTrue(n('-99999',    dn) = '!00001.00000');
+  assert.isTrue(n('0.00001',   up) = '000000.00001');
+  assert.isTrue(n('0.00001',   dn) = '000000.00001');
+  assert.isTrue(n('-0.00001',  up) = '!99999.99999');
+  assert.isTrue(n('-0.00001',  dn) = '!99999.99999');
+
+  // past the limit +large
+  assert.isTrue(n('100000',    up) = '0XXXXX.XXXXX');
+  assert.isTrue(n('100000',    dn) = '099999.99999');
+
+  // past the limit -large
+  assert.isTrue(n('-100001',   up) = '!00000.00000');
+  assert.isTrue(n('-100001',   dn) = '!#####.#####');
+
+  // past the limit +small
+  assert.isTrue(n('0.000001',  up) = '000000.00001');
+  assert.isTrue(n('0.000001',  dn) = '000000.00000');
+
+  // past the limit -small
+  assert.isTrue(n('-0.000001', up) = '000000.00000');
+  assert.isTrue(n('-0.000001', dn) = '!99999.99999');
+
+  // now, check order:
+  assert.isTrue(n('1000000', true) > n('1000', true));
+  assert.isTrue(n('10000', true) > n('1', true));
+  assert.isTrue(n('1', true) > n('0.1', true));
+  assert.isTrue(n('1', true) > n('-1', true));
+  assert.isTrue(n('-1', true) > n('-10000', true));
+  assert.isTrue(n('-10000', true) > n('-1000000', true));
+end;
+
+procedure TDecimalTests.TestOverloading;
+begin
+  Assert.IsTrue(TFslDecimal('1') + TFslDecimal(2) = TFslDecimal('3'));
+end;
+
 procedure TDecimalTests.TestInteger(i: integer);
 var
-  d : TSmartDecimal;
+  d : TFslDecimal;
 begin
-  d := TSmartDecimal.valueOf(i);
+  d := TFslDecimal.valueOf(i);
   Assert.IsTrue(d.AsInteger = i);
 end;
 
@@ -489,19 +547,45 @@ end;
 procedure TDecimalTests.TestCardinal(i: cardinal);
 var
   i64 : int64;
-  d : TSmartDecimal;
+  d : TFslDecimal;
 begin
   i64 := i;
-  d := TSmartDecimal.valueOf(i64);
+  d := TFslDecimal.valueOf(i64);
   Assert.IsTrue(d.AsCardinal = i);
   //check(d.AsInteger = i);
 end;
 
+procedure TDecimalTests.TestInfinity;
+begin
+  assert.isTrue(TFslDecimal.makeInfinity.IsInfinite);
+  assert.isTrue(TFslDecimal.makeInfinity.Negated.IsNegative);
+  assert.isFalse(TFslDecimal.makeUndefined.IsInfinite);
+  assert.isFalse(TFslDecimal.makeInfinity.IsUndefined);
+  assert.isFalse(TFslDecimal.makeNull.IsUndefined);
+  assert.isFalse(TFslDecimal.makeNull.IsInfinite);
+  assert.isFalse(TFslDecimal.makeNull.isANumber);
+  assert.isTrue(TFslDecimal.makeInfinity.Equals(TFslDecimal.makeInfinity));
+
+
+  assert.isTrue(TFslDecimal.ValueOf('Inf').IsInfinite);
+  assert.isTrue(TFslDecimal.ValueOf('-Inf').IsInfinite);
+  assert.isTrue(not TFslDecimal.ValueOf('Inf').IsNegative);
+  assert.isTrue(TFslDecimal.ValueOf('-Inf').IsNegative);
+
+  assert.isTrue(n('Inf',    up) = '0XXXXX.XXXXX');
+  assert.isTrue(n('Inf',    dn) = '099999.99999');
+  assert.isTrue(n('+Inf',    up) = '0XXXXX.XXXXX');
+
+  assert.isTrue(n('-Inf',   up) = '!00000.00000');
+  assert.isTrue(n('-Inf',   dn) = '!#####.#####');
+
+end;
+
 procedure TDecimalTests.TestInt64(i: int64);
 var
-  d : TSmartDecimal;
+  d : TFslDecimal;
 begin
-  d := TSmartDecimal.valueOf(i);
+  d := TFslDecimal.valueOf(i);
   Assert.IsTrue(d.AsInt64 = i);
 end;
 

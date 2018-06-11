@@ -2041,7 +2041,7 @@ end;
 function TFHIRPathEngine.opDiv(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1, d2, d3 : TSmartDecimal;
+  d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing div: left operand has no value');
@@ -2065,8 +2065,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strtoInt(l.primitiveValue()) div strtoInt(r.primitiveValue()))))
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.divInt(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2081,7 +2081,7 @@ end;
 function TFHIRPathEngine.opDivideBy(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1, d2, d3 : TSmartDecimal;
+  d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing /: left operand has no value');
@@ -2103,8 +2103,8 @@ begin
 
     if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.divide(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2409,7 +2409,7 @@ end;
 function TFHIRPathEngine.opMinus(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1,d2,d3 : TSmartDecimal;
+  d1,d2,d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing -: left operand has no value');
@@ -2434,8 +2434,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) - strToInt(r.primitiveValue()))))
     else if (l.hasType('decimal')) and (r.hasType('decimal')) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Subtract(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2450,7 +2450,7 @@ end;
 function TFHIRPathEngine.opMod(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1, d2, d3 : TSmartDecimal;
+  d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing mod: left operand has no value');
@@ -2474,8 +2474,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) mod strToInt(r.primitiveValue()))))
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Modulo(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2562,7 +2562,7 @@ end;
 function TFHIRPathEngine.opPlus(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1,d2,d3 : TSmartDecimal;
+  d1,d2,d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing +: left operand has no value');
@@ -2588,8 +2588,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) + strToInt(r.primitiveValue()))))
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Add(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2604,7 +2604,7 @@ end;
 function TFHIRPathEngine.opTimes(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1, d2, d3 : TSmartDecimal;
+  d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing *: left operand has no value');
@@ -2628,8 +2628,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) * strToInt(r.primitiveValue()))))
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Multiply(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end

@@ -368,7 +368,7 @@ end;
 
 function TFhirValueSetValidationOperation.Types: TFhirResourceTypeSet;
 begin
-  result := [frtValueSet];
+  result := [frtValueSet, frtCodeSystem];
 end;
 
 function TFhirValueSetValidationOperation.isWrite: boolean;

@@ -31,8 +31,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
-  FHIR.Support.Generics, FHIR.Support.Json,
+  FHIR.Support.Exceptions, FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Common,
   FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Base.Scim, FHIR.Server.Security, FHIR.Version.Utilities, FHIR.Tools.Search, FHIR.Version.PathEngine, FHIR.Base.Lang,
   FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Tx.Server, FHIR.Server.Context,
@@ -66,6 +65,7 @@ type
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
+    procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); override;
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); override;
@@ -78,6 +78,10 @@ type
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TFslList<TFHIRCompartmentId>): boolean; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; override;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; override;
+
+    function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; override;
   end;
 
   TTerminologyServerStorage = class (TFHIRStorageService)
@@ -112,6 +116,15 @@ type
 
     Property Server : TTerminologyServer read FServer;
     Property ServerContext : TFHIRServerContext read FServerContext write FServerContext; // no own
+
+    procedure Sweep; override;
+    function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; override;
+    procedure ProcessEmails; override;
+    function FetchResource(key : integer) : TFHIRResource; override;
+    function getClientInfo(id : String) : TRegisteredClientInformation; override;
+    function getClientName(id : String) : string; override;
+    function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
+    procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
   end;
 
 implementation
@@ -140,6 +153,16 @@ begin
   inherited;
 end;
 
+procedure TTerminologyServerStorage.fetchClients(list: TFslList<TRegisteredClientInformation>);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TTerminologyServerStorage.FetchResource(key: integer): TFHIRResource;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTerminologyServerStorage.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>): TStringList;
 begin
   result := TStringList.create;
@@ -147,9 +170,24 @@ begin
   result.AddObject('CodeSystem', TObject(FServer.CodeSystemCount));
 end;
 
+function TTerminologyServerStorage.getClientInfo(id: String): TRegisteredClientInformation;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+function TTerminologyServerStorage.getClientName(id: String): string;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTerminologyServerStorage.GetTotalResourceCount: integer;
 begin
   result := 0;
+end;
+
+procedure TTerminologyServerStorage.ProcessEmails;
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyServerStorage.ProcessObservations;
@@ -187,9 +225,24 @@ begin
   // nothing
 end;
 
+function TTerminologyServerStorage.RetrieveSession(key: integer; var UserKey, Provider: integer; var Id, Name, Email: String): boolean;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 procedure TTerminologyServerStorage.RunValidation;
 begin
   // nothing
+end;
+
+function TTerminologyServerStorage.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TTerminologyServerStorage.Sweep;
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyServerStorage.Yield(op: TFHIROperationEngine; exception: Exception);
@@ -244,6 +297,16 @@ begin
 end;
 
 { TTerminologyServerOperationEngine }
+
+procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; opName: String; httpCode: Integer; name, message: String);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
+procedure TTerminologyServerOperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; httpCode: Integer; name, message: String);
+begin
+  raise EFslException.Create('Not Implemented');
+end;
 
 procedure TTerminologyServerOperationEngine.CommitTransaction;
 begin
@@ -716,6 +779,11 @@ begin
     result := nil;
 end;
 
+function TTerminologyServerOperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
+begin
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTerminologyServerOperationEngine.matches(resource: TFhirResource; sp: TSearchParameter): boolean;
 var
   selection : TFHIRSelectionList;
@@ -801,6 +869,11 @@ begin
       else if sp.modifier = spmExact then
         raise EFHIRException.create('Modifier is not supported');
   end;
+end;
+
+procedure TTerminologyServerOperationEngine.processGraphQL(graphql: String; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyServerOperationEngine.RollbackTransaction;

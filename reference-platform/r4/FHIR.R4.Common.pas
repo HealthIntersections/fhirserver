@@ -925,12 +925,10 @@ var
   b : TFhirElementDefinitionBinding;
 begin
   b := edefn.binding;
-  result := '';
   if b <> nil then
-    if b.valueSet is TFhirUri then
-      result := TFhirUri(b.valueSet).value
-    else if b.valueSet is TFhirReference then
-      result := TFhirReference(b.valueSet).reference
+    result := b.valueSet
+  else
+    result := '';
 end;
 
 { TFHIRBundleEntry4 }

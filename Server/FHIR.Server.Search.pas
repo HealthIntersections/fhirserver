@@ -39,7 +39,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common,
   FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Types,
   FHIR.Database.Manager, FHIR.Database.Dialects,
-  FHIR.Tools.Indexing, FHIR.Server.Indexing, FHIR.Version.Utilities, FHIR.Server.SearchSyntax, FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Version.Client,
+  FHIR.Tools.Indexing, FHIR.Server.Indexing, FHIR.Version.Utilities, FHIR.Server.SearchSyntax, FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Version.Client,
   FHIR.Ucum.Services;
 
 type
@@ -88,7 +88,7 @@ type
     procedure replaceNames(paramPath : TFSFilterParameterPath; components : TDictionary<String, String>); overload;
     procedure replaceNames(filter : TFSFilter; components : TDictionary<String, String>); overload;
     procedure processQuantityValue(name, lang: String; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
-    procedure processNumberValue(value : TSmartDecimal; op : TQuantityOperation; var minv, maxv : String);
+    procedure processNumberValue(value : TFslDecimal; op : TQuantityOperation; var minv, maxv : String);
     procedure SetSession(const Value: TFhirSession);
     function filterTypes(types: TArray<String>): TArray<String>;
     procedure ProcessDateParam(date: TDateTimeEx; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
@@ -559,7 +559,7 @@ begin
   else if findPrefix(value, 'eb') then qop := qopEndsBefore
   else if findPrefix(value, 'ap') then qop := qopApproximate;
 
-  processNumberValue(TSmartDecimal.ValueOf(value), qop, v1, v2);
+  processNumberValue(TFslDecimal.ValueOf(value), qop, v1, v2);
 
   case qop of
     qopEqual:        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and flag = 0 and ' + gte('Value', v1) + ' and ' + lte('Value2', v2) + ')';
@@ -750,45 +750,43 @@ begin
   end;
 end;
 
-procedure TSearchProcessor.processNumberValue(value : TSmartDecimal; op : TQuantityOperation; var minv, maxv : String);
+procedure TSearchProcessor.processNumberValue(value : TFslDecimal; op : TQuantityOperation; var minv, maxv : String);
 begin
   // work out the numerical limits
   case op of
     qopEqual :
       begin
-      minv := normaliseDecimal(value.lowerBound.AsDecimal);
-      maxv := normaliseDecimal(value.upperBound.AsDecimal);
+      minv := value.lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+      maxv := value.upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
     qopLess :
-      maxv := normaliseDecimal(value.lowerBound.AsDecimal);
+      maxv := value.lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
     qopLessEqual :
-      maxv := normaliseDecimal(value.immediateLowerBound.AsDecimal);
+      maxv := value.immediateLowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
     qopGreater :
-      minv := normaliseDecimal(value.UpperBound.AsDecimal);
+      minv := value.UpperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
     qopGreaterEqual :
-      minv := normaliseDecimal(value.immediateUpperBound.AsDecimal);
+      minv := value.immediateUpperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
     qopApproximate :
       begin
       if value.IsNegative then
       begin
-        minv := normaliseDecimal(value.Multiply(TSmartDecimal.ValueOf('1.2')).lowerBound.AsDecimal);
-        maxv := normaliseDecimal(value.Multiply(TSmartDecimal.ValueOf('0.8')).upperBound.AsDecimal);
+        minv := value.Multiply(TFslDecimal.ValueOf('1.2')).lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+        maxv := value.Multiply(TFslDecimal.ValueOf('0.8')).upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end
       else
       begin
-        minv := normaliseDecimal(value.Multiply(TSmartDecimal.ValueOf('0.8')).lowerBound.AsDecimal);
-        maxv := normaliseDecimal(value.Multiply(TSmartDecimal.ValueOf('1.2')).upperBound.AsDecimal);
+        minv := value.Multiply(TFslDecimal.ValueOf('0.8')).lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+        maxv := value.Multiply(TFslDecimal.ValueOf('1.2')).upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
       end;
   end;
-
-
 end;
 
 
 procedure TSearchProcessor.processQuantityValue(name, lang : String; parts : TArray<string>; op : TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC : String);
 var
-  value : TSmartDecimal;
+  value : TFslDecimal;
   ns, s : String;
   specified, canonical : TUcumPair;
   v, u : String;
@@ -804,7 +802,7 @@ begin
   // [number]|[namespace]|[code]
   if Length(parts) = 0 then
     raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]));
-  if TSmartDecimal.CheckValue(parts[0]) then
+  if TFslDecimal.CheckValue(parts[0]) then
     v := parts[0]
   else
   begin
@@ -817,34 +815,34 @@ begin
     v := parts[0].Substring(0, i-1);
     u := parts[0].Substring(i-1);
   end;
-  value := TSmartDecimal.valueOf(v);
+  value := TFslDecimal.valueOf(v);
 
   // work out the numerical limits
   case op of
     qopEqual :
       begin
-      minv := normaliseDecimal(value.lowerBound.AsDecimal);
-      maxv := normaliseDecimal(value.upperBound.AsDecimal);
+      minv := value.lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+      maxv := value.upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
     qopLess :
-      maxv := normaliseDecimal(value.lowerBound.AsDecimal);
+      maxv := value.lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
     qopLessEqual :
-      maxv := normaliseDecimal(value.immediateLowerBound.AsDecimal);
+      maxv := value.immediateLowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
     qopGreater :
-      minv := normaliseDecimal(value.UpperBound.AsDecimal);
+      minv := value.UpperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
     qopGreaterEqual :
-      minv := normaliseDecimal(value.immediateUpperBound.AsDecimal);
+      minv := value.immediateUpperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
     qopApproximate :
       begin
       if value.IsNegative then
       begin
-        minv := normaliseDecimal(value.Multiply(TSmartDecimal.valueOf('1.2')).lowerBound.AsDecimal);
-        maxv := normaliseDecimal(value.Multiply(TSmartDecimal.valueOf('0.8')).upperBound.AsDecimal);
+        minv := value.Multiply(TFslDecimal.valueOf('1.2')).lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+        maxv := value.Multiply(TFslDecimal.valueOf('0.8')).upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end
       else
       begin
-        minv := normaliseDecimal(value.Multiply(TSmartDecimal.valueOf('0.8')).lowerBound.AsDecimal);
-        maxv := normaliseDecimal(value.Multiply(TSmartDecimal.valueOf('1.2')).upperBound.AsDecimal);
+        minv := value.Multiply(TFslDecimal.valueOf('0.8')).lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+        maxv := value.Multiply(TFslDecimal.valueOf('1.2')).upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
       end;
   end;
@@ -892,8 +890,8 @@ begin
       specified.UnitCode := space;
       canonical := TFHIRServerContext(ServerContext).TerminologyServer.Ucum.getCanonicalForm(specified);
       try
-        mincv := normaliseDecimal(canonical.Value.lowerBound.AsDecimal);
-        maxcv := normaliseDecimal(canonical.Value.upperBound.AsDecimal);
+        mincv := canonical.Value.lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+        maxcv := canonical.Value.upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
         spaceC := 'urn:ucum-canonical#'+canonical.UnitCode;
       finally
         canonical.free;

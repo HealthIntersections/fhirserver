@@ -371,7 +371,13 @@ type
     function pct(p : integer) : integer;
     procedure fetchProgress(sender : TObject; progress : integer);
     procedure exec;
+    function check(sender : TObject; msg : String) : boolean;
   end;
+
+function TPackageFetcher.check(sender: TObject; msg: String): boolean;
+begin
+  result := true;
+end;
 
 procedure TPackageFetcher.exec;
 var
@@ -385,6 +391,7 @@ var
 begin
   pcm := TFHIRPackageManager.Create(false);
   try
+    pcm.OnCheck := check;
     for i := 0 to length(FUrls) - 1 do // first will be empty
     begin
       FIndex := i;
@@ -427,7 +434,7 @@ begin
           if ok then
           begin
             FCallback(pct(100), 'Installing '+FCurrent);
-            pcm.Import(fetch.Buffer.AsBytes, function (msg : String) : boolean begin result := true; end);
+            pcm.Import(fetch.Buffer.AsBytes);
           end;
         finally
           fetch.Free;

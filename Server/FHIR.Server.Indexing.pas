@@ -52,7 +52,7 @@ uses
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Tools.Indexing, FHIR.Version.Context, FHIR.Server.Session, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Tags, FHIR.Version.Utilities, FHIR.Version.Parser, FHIR.Version.PathEngine, FHIR.Version.Profiles, FHIR.Base.Xhtml,
-  FHIR.Tx.Server, FHIR.Server.Utilities,
+  FHIR.Tx.Server, FHIR.Server.Utilities, FHIR.Server.Constants,
   FHIR.Ucum.Services, FHIR.Ucum.IFace;
 
 Const
@@ -224,6 +224,7 @@ Type
     // complexes
     procedure index(aType : String; key, parent : integer; value : TFhirRatio; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirQuantity; name : String; units : string = ''); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirMoney; name : String; units : string = ''); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirRange; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirSampledData; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirCoding; name : String); overload;
@@ -360,8 +361,6 @@ Type
     property Definitions : TFHIRIndexInformation read FInfo;
   end;
 
-function normaliseDecimal(v : String): String;
-
 implementation
 
 uses
@@ -383,21 +382,6 @@ begin
     value := value.Substring(subst.Length);
 end;
 
-function normaliseDecimal(v : String): String;
-var
-  neg : boolean;
-begin
-  neg := findPrefix(v, '-');
-  if not v.Contains('.') then
-    result := StringPadRight(StringPadLeft(v, '0', 40)+'.', '0', 91)
-  else if (v.IndexOf('.') > 40) or (v.IndexOf('.') < v.Length-50) then
-    raise EFHIRException.create('Cannot normalise '+v)
-  else
-    result := StringPadRight(StringPadLeft('', '0', 40-v.IndexOf('.'))+v, '0', 91);
-  if neg then
-    result := '-' + result;
-end;
-
 { TFhirIndexEntryList }
 
 function TFhirIndexEntryList.add(key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; ttype : TFHIRResourceType; type_ : TFhirSearchParamType; flag : boolean = false; concept : integer = 0) : integer;
@@ -414,8 +398,8 @@ begin
   case type_ of
     sptNumber, sptQuantity :
       begin
-        value1 := normaliseDecimal(value1);
-        value2 := normaliseDecimal(value2);
+        Assert(length(value1) > INDEX_DIGITS + INDEX_DECIMALS); // check they've been normalised
+        Assert(length(value2) > INDEX_DIGITS + INDEX_DECIMALS);
       end;
     sptString :
       begin
@@ -803,6 +787,8 @@ begin
                     index(resource.fhirType, key, 0, TFhirAddress(work), ndx.Name)
                   else if work is TFhirContactPoint  then
                     index(resource.fhirType, key, 0, TFhirContactPoint(work), ndx.Name)
+                  else if work is TFhirMoney then
+                    index(resource.fhirType, key, 0, TFhirMoney(work), ndx.Name)
                   else if work is TFhirReference then
                     index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
                   {$IFDEF FHIR4}
@@ -1066,34 +1052,34 @@ end;
 
 procedure TFhirIndexManager.GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 var
-  dec : TSmartDecimal;
+  dec : TFslDecimal;
 begin
-  dec := TSmartDecimal.ValueOf(value);
+  dec := TFslDecimal.ValueOf(value);
   case comparator of
     QuantityComparatorNull :
       begin
-      low := dec.lowerBound.AsDecimal;
-      high := dec.upperBound.AsDecimal;
+      low := dec.lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+      high := dec.upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
     QuantityComparatorLessThan :
       begin
-      low := '-9999999999999999999999999999999999999999';
-      high := dec.upperBound.AsDecimal;
+      low := TFslDecimal.makeInfinity.Negated.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
+      high := dec.upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
     QuantityComparatorLessOrEquals :
       begin
-      low := '-9999999999999999999999999999999999999999';
-      high := dec.immediateLowerBound.AsDecimal;
+      low := TFslDecimal.makeInfinity.Negated.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
+      high := dec.immediateLowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
     QuantityComparatorGreaterOrEquals :
       begin
-      low := dec.lowerBound.AsDecimal;
-      high := '9999999999999999999999999999999999999999';
+      low := dec.lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+      high := TFslDecimal.makeInfinity.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
     QuantityComparatorGreaterThan :
       begin
-      low := dec.immediateUpperBound.AsDecimal;
-      high := '9999999999999999999999999999999999999999';
+      low := dec.immediateUpperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
+      high := TFslDecimal.makeInfinity.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
       end;
   end;
 end;
@@ -1139,7 +1125,7 @@ begin
   begin
     specified := TUcumPair.create;
     try
-      specified.Value := TSmartDecimal.ValueOf(value.low.value);
+      specified.Value := TFslDecimal.ValueOf(value.low.value);
       specified.UnitCode := value.low.code;
       canonical := FTerminologyServer.Ucum.getCanonicalForm(specified);
       try
@@ -1201,7 +1187,7 @@ begin
   begin
     specified := TUcumPair.create;
     try
-      specified.Value := TSmartDecimal.ValueOf(value.value);
+      specified.Value := TFslDecimal.ValueOf(value.value);
       specified.UnitCode := value.code;
       canonical := FTerminologyServer.Ucum.getCanonicalForm(specified);
       try
@@ -1570,6 +1556,7 @@ end;
 procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirInteger; name: String);
 var
   ndx : TFhirIndex;
+  v1, v2 : String;
 begin
   if (value = nil) or (value.value = '') then
     exit;
@@ -1580,7 +1567,8 @@ begin
     raise EFHIRException.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [sptString, sptNumber, sptToken]) then
     raise EFHIRException.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing integer');
-  FEntries.add(key, parent, ndx, 0, value.value, '', 0, frtNull, ndx.SearchType);
+  GetBoundaries(value.value, QuantityComparatorNull, v1, v2);
+  FEntries.add(key, parent, ndx, 0, v1, v2, 0, frtNull, ndx.SearchType);
 end;
 
 
@@ -1677,6 +1665,37 @@ begin
   result := FEntries.add(key, parent, ndx);
 end;
 
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirMoney; name, units: string);
+var
+  ndx : TFhirIndex;
+  v1, v2 : String;
+  ref : integer;
+  specified, canonical : TUcumPair;
+begin
+  if value = nil then
+    exit;
+  if value.value = '' then
+    exit;
+
+  ndx := FInfo.FIndexes.getByName(aType, name);
+  if (ndx = nil) then
+    raise EFHIRException.create('Unknown index '+name);
+  if (length(ndx.TargetTypes) > 0) then
+    raise EFHIRException.create('Attempt to index a simple type in an index that is a resource join: "'+name+'"');
+  if not (ndx.SearchType in [sptToken, sptNumber, sptQuantity]) then
+    raise EFHIRException.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing quantity');
+
+  GetBoundaries(value.value, QuantityComparatorNull, v1, v2);
+
+  if (length(v1) > INDEX_ENTRY_LENGTH) then
+      raise EFHIRException.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
+  if (length(v2) > INDEX_ENTRY_LENGTH) then
+      raise EFHIRException.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
+  if not FSpaces.ResolveSpace('urn:iso:std:iso:4217#'+value.currency, ref) then
+    recordSpace('urn:iso:std:iso:4217#'+value.currency, ref);
+  FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
+end;
+
 {$IFDEF FHIR4}
 procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirStructureDefinitionContext; name: String);
 var
@@ -1698,6 +1717,7 @@ end;
 procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirDecimal; name: String);
 var
   ndx : TFhirIndex;
+  v1,v2 : String;
 begin
   if (value = nil) or (value.value = '') then
     exit;
@@ -1708,7 +1728,8 @@ begin
     raise EFHIRException.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [sptString, sptNumber, sptToken]) then
     raise EFHIRException.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamType[ndx.SearchType]+' indexing integer');
-  FEntries.add(key, parent, ndx, 0, value.value, '', 0, frtNull, ndx.SearchType);
+  GetBoundaries(value.value, QuantityComparatorNull, v1, v2);
+  FEntries.add(key, parent, ndx, 0, v1, v2, 0, frtNull, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index(context: TFhirResource; aType: String; key, parent: integer; value: TFhirReferenceList; name: String; specificType : String = '');

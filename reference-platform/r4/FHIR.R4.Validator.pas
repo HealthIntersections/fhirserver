@@ -144,7 +144,7 @@ Type
     // function getElementByPath(definition : TFHIRStructureDefinition; path : String) : TFHIRElementDefinition;
     function findElement(profile: TFHIRStructureDefinition; name: String): TFHIRElementDefinition;
     // function getDefinitionByTailNameChoice(children : TFHIRElementDefinitionList; name : String) : TFHIRElementDefinition;
-    function resolveBindingReference(ctxt : TFHIRValidatorContext; context : TFHIRDomainResource; reference: TFHIRType): TFHIRValueSet;
+    function resolveBindingReference(ctxt : TFHIRValidatorContext; context : TFHIRDomainResource; reference: string): TFHIRValueSet;
     function getExtensionByUrl(extensions: TFslList<TFHIRMMElement>; url: String): TFHIRMMElement;
 
     procedure checkQuantityValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRQuantity);
@@ -628,18 +628,6 @@ begin
   end;
 end;
 
-function describeReference(reference: TFHIRType): String;
-begin
-  if (reference = nil) then
-    result := 'nil'
-  else if (reference is TFHIRUri) then
-    result := TFHIRUri(reference).value
-  else if (reference is TFHIRReference) then
-    result := TFHIRReference(reference).reference
-  else
-    result := '??';
-end;
-
 function readAsCoding(item: TFHIRMMElement): TFHIRCoding;
 var
   c: TFHIRCoding;
@@ -696,7 +684,7 @@ begin
   rule(ctxt, IssueTypeStructure, value.locStart, value.locEnd, stack.literalPath, found, 'The code '+system+'::'+code+' is not a valid option');
 end;
 
-procedure TFHIRValidator.validateAnswerCode(ctxt : TFHIRValidatorContext; value: TFHIRMMElement; stack: TNodeStack; qSrc : TFhirQuestionnaire; vsRef: TFhirReference);
+procedure TFHIRValidator.validateAnswerCode(ctxt : TFHIRValidatorContext; value: TFHIRMMElement; stack: TNodeStack; qSrc : TFhirQuestionnaire; vsRef: String);
 var
   vs : TFhirValueSet;
   c : TFHIRCoding;
@@ -2587,10 +2575,10 @@ begin
   // firstly, resolve the value set
   Binding := context.Binding;
 
-  if (Binding.ValueSet <> nil) and ((Binding.ValueSet is TFHIRReference) or Binding.valueSet.isPrimitive) then
+  if (Binding.ValueSet <> '') then
   begin
     vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
-    if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
+    if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
     begin
       res := FContext.validateCode(SYSTEM_NOT_APPLICABLE, '', value, vs);
       try
@@ -2598,12 +2586,12 @@ begin
         begin
           if (Binding.Strength = BindingStrengthREQUIRED) then
             rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'The value provided ('+value+') is not in the value set ' +
-              describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is required from this value set')
+              Binding.ValueSet + ' (' + vs.url + ', and a code is required from this value set')
           else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
             warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'The value provided ('+value+') is not in the value set ' +
-              describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
+              Binding.ValueSet + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
           else if (Binding.Strength = BindingStrengthPREFERRED) then
-            hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'The value provided ('+value+') is not in the value set ' + describeReference(Binding.ValueSet)
+            hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'The value provided ('+value+') is not in the value set ' + Binding.ValueSet
               + ' (' + vs.url + ', and a code is recommended to come from this value set');
         end;
       finally
@@ -2674,10 +2662,10 @@ begin
         Binding := context.Binding;
         if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, Binding <> nil, 'Binding for ' + path + ' missing')) then
         begin
-          if (Binding.ValueSet <> nil) then
+          if (Binding.ValueSet <> '') then
           begin
             vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
-            if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
+            if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
             begin
               try
                 c := readAsCoding(element);
@@ -2687,13 +2675,13 @@ begin
                     if (not res.isOk()) then
                       if (Binding.Strength = BindingStrengthREQUIRED) then
                         warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
-                          describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is required from this value set')
+                          Binding.ValueSet + ' (' + vs.url + ', and a code is required from this value set')
                       else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
                         warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
-                          describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
+                          Binding.ValueSet + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
                       else if (Binding.Strength = BindingStrengthPREFERRED) then
                         hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'The value provided ('+c.system+'::'+c.code+') is not in the value set ' +
-                          describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is recommended to come from this value set');
+                          Binding.ValueSet + ' (' + vs.url + ', and a code is recommended to come from this value set');
                   finally
                     res.free;
                   end;
@@ -2705,38 +2693,27 @@ begin
                   warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Error ' + e.message + ' validating Coding');
               end;
             end
-            else if (Binding.ValueSet <> nil) then
-              hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Binding by URI TFHIRReference cannot be checked')
-            else if not inCodeableConcept then
-              hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Binding has no source, so can''t be checked');
+            else 
+              hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Binding has no value set, so can''t be checked');
           end;
         end;
       end;
   end;
 end;
 
-function TFHIRValidator.resolveBindingReference(ctxt : TFHIRValidatorContext; context : TFHIRDomainResource; reference: TFHIRType): TFHIRValueSet;
+function TFHIRValidator.resolveBindingReference(ctxt : TFHIRValidatorContext; context : TFHIRDomainResource; reference: string): TFHIRValueSet;
 var
-  s : String;
   c : TFHIRResource;
 begin
-  if (reference.isPrimitive) then
-    result := TFHIRValueSet(FContext.fetchResource(frtValueSet, reference.primitiveValue))
-  else if (reference is TFHIRReference) then
+  if reference.StartsWith('#') then
   begin
-    s := TFHIRReference(reference).reference;
-    if s.StartsWith('#') then
-    begin
-      for c in context.containedList do
-        if (c.id = s.Substring(1)) and (c is TFHIRValueSet) then
-          exit(TFHIRValueSet(c).link);
-      result := nil;
-    end
-    else
-      result := TFHIRValueSet(FContext.fetchResource(frtValueSet, s))
+    for c in context.containedList do
+      if (c.id = reference.Substring(1)) and (c is TFHIRValueSet) then
+        exit(TFHIRValueSet(c).link);
+    result := nil;
   end
   else
-    result := nil;
+    result := FContext.fetchResource(frtValueSet, reference) as TFHIRValueSet;
   if result <> nil then
     ctxt.Owned.add(result);
 end;
@@ -2774,10 +2751,10 @@ begin
     Binding := context.Binding;
     if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, Binding <> nil, 'Binding for ' + path + ' missing (cc)')) then
     begin
-      if (Binding.ValueSet <> nil) and ((Binding.ValueSet is TFHIRReference) or Binding.ValueSet.isPrimitive) then
+      if (Binding.ValueSet <> '') then
       begin
         vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
-        if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
+        if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + Binding.ValueSet + ' not found')) then
         begin
           cc := readAsCodeableConcept(element);
           try
@@ -2786,10 +2763,10 @@ begin
               begin
                 if (Binding.Strength = BindingStrengthREQUIRED) then
                   rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'No code provided, and a code is required from the value set ' +
-                    describeReference(Binding.ValueSet) + ' (' + vs.url)
+                    Binding.ValueSet + ' (' + vs.url)
                 else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
                   warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'No code provided, and a code should be provided from the value set ' +
-                    describeReference(Binding.ValueSet) + ' (' + vs.url);
+                    Binding.ValueSet + ' (' + vs.url);
               end
               else
               begin
@@ -2799,13 +2776,13 @@ begin
                   begin
                     if (Binding.Strength = BindingStrengthREQUIRED) then
                       rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'None of the codes provided are in the value set ' +
-                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code from this value set is required')
+                        Binding.ValueSet + ' (' + vs.url + ', and a code from this value set is required')
                     else if (Binding.Strength = BindingStrengthEXTENSIBLE) then
                       warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'None of the codes provided are in the value set ' +
-                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
+                        Binding.ValueSet + ' (' + vs.url + ', and a code should come from this value set unless it has no suitable code')
                     else if (Binding.Strength = BindingStrengthPREFERRED) then
                       hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'None of the codes provided are in the value set ' +
-                        describeReference(Binding.ValueSet) + ' (' + vs.url + ', and a code is recommended to come from this value set');
+                        Binding.ValueSet + ' (' + vs.url + ', and a code is recommended to come from this value set');
                   end;
                 finally
                   res.free;
@@ -2820,10 +2797,8 @@ begin
           end;
         end;
       end
-      else if (Binding.ValueSet <> nil) then
-        hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Binding by URI rReference cannot be checked')
       else
-        hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Binding has no source, so can''t be checked');
+        hint(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, false, 'Binding has no valueSet, so can''t be checked');
     end
   end;
 end;

@@ -160,18 +160,18 @@ Type
 
   TUcumCanonical = class (TFslObject)
   private
-    FValue : TSmartDecimal;
+    FValue : TFslDecimal;
     FUnit : TUcumTerm;
     Procedure SetUnit(Value : TUcumTerm);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
-    procedure multiplyValue(i : TSmartDecimal); overload;
+    procedure multiplyValue(i : TFslDecimal); overload;
     procedure multiplyValue(i : integer); overload;
-    procedure divideValue(i : TSmartDecimal); overload;
+    procedure divideValue(i : TFslDecimal); overload;
     procedure divideValue(i : integer); overload;
 
-    Property Value : TSmartDecimal read FValue write FValue;
+    Property Value : TFslDecimal read FValue write FValue;
     Property Unit_ : TUcumTerm read FUnit write SetUnit;
   End;
 
@@ -890,7 +890,7 @@ var
 begin
   result := TUcumCanonical.Create();
   Try
-    result.FValue := TSmartDecimal.valueOf(1);
+    result.FValue := TFslDecimal.valueOf(1);
     result.FValue.Precision := 24; // there's no question about that precision
     result.FUnit := TUcumTerm.Create;
     if (oTerm.Component <> nil) Then
@@ -1135,7 +1135,7 @@ begin
   Value := FValue.Divide(i);
 end;
 
-procedure TUcumCanonical.divideValue(i: TSmartDecimal);
+procedure TUcumCanonical.divideValue(i: TFslDecimal);
 begin
   Value := FValue.Divide(i);
 end;
@@ -1145,7 +1145,7 @@ begin
   Value := FValue.Multiply(i);
 end;
 
-procedure TUcumCanonical.multiplyValue(i: TSmartDecimal);
+procedure TUcumCanonical.multiplyValue(i: TFslDecimal);
 begin
   Value := FValue.Multiply(i);
 end;

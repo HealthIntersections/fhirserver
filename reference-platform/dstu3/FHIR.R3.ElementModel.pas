@@ -2188,7 +2188,7 @@ end;
 
 procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TFslStream; pretty : boolean; base : String);
 begin
-  json := TJSONWriter.Create;
+  json := TJSONWriterDirect.Create;
   try
     json.Stream := stream.Link;
     json.Start;

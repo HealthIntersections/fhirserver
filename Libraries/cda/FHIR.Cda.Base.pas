@@ -85,7 +85,7 @@ Type
     Constructor CreateBoolean(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; bHasValue, bValue : Boolean);
     Constructor CreateBinary(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oBuffer : TFslBuffer);
     Constructor CreateInteger(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; bHasValue : Boolean; iValue : int64);
-    Constructor CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TSmartDecimal);
+    Constructor CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TFslDecimal);
     Constructor CreateEnum(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; Const iValue : Integer; Const aPossibles : Array of String);
     Constructor CreateSet(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; var aSet; Const aPossibles : Array of String);
 
@@ -688,7 +688,7 @@ Begin
     FValueStrings.Assign(oList);
 End;
 
-Constructor Tv3PropertyDefinition.CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TSmartDecimal);
+Constructor Tv3PropertyDefinition.CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TFslDecimal);
 Begin
   Inherited Create;
   FName := sName;

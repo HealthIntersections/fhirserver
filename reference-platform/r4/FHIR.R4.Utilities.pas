@@ -5160,7 +5160,7 @@ begin
     raise EFHIRException.create('Unknown units system "'+system+'" trying to process quantity as a duration');
   if not IsNumericString(value) then
     raise EFHIRException.create('invalid value "'+value+'" trying to process quantity as a duration');
-  v := TSmartDecimal.ValueOf(value).AsDouble;
+  v := TFslDecimal.ValueOf(value).AsDouble;
   if (code = 'ps') then
     result := v * (DATETIME_MILLISECOND_ONE / 1000000000)
   else if (code = 'ns') then
@@ -5716,7 +5716,7 @@ begin
     b := DATETIME_DAY_MINUTES
   else
     raise EFHIRException.create('Unknown UCUM unit for time: '+code);
-  result := b * TSmartDecimal.ValueOf(value).AsDouble;
+  result := b * TFslDecimal.ValueOf(value).AsDouble;
 end;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;

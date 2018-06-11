@@ -3,7 +3,7 @@ object PackageCacheForm: TPackageCacheForm
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'FHIR Package Cache Manager'
-  ClientHeight = 333
+  ClientHeight = 370
   ClientWidth = 714
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,16 +20,16 @@ object PackageCacheForm: TPackageCacheForm
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 292
+    Top = 322
     Width = 714
-    Height = 41
+    Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     OnClick = Panel1Click
     DesignSize = (
       714
-      41)
+      48)
     object lblFolder: TLabel
       Left = 16
       Top = 14
@@ -47,15 +47,15 @@ object PackageCacheForm: TPackageCacheForm
     end
     object lblDownload: TLabel
       Left = 16
-      Top = 16
+      Top = 6
       Width = 57
       Height = 13
       Caption = 'lblDownload'
       Visible = False
     end
     object Button1: TButton
-      Left = 630
-      Top = 8
+      Left = 633
+      Top = 18
       Width = 74
       Height = 25
       Anchors = [akTop, akRight]
@@ -66,16 +66,16 @@ object PackageCacheForm: TPackageCacheForm
       OnClick = Button1Click
     end
     object pbDownload: TProgressBar
-      Left = 144
-      Top = 13
-      Width = 361
+      Left = 16
+      Top = 21
+      Width = 489
       Height = 17
       TabOrder = 1
       Visible = False
     end
     object btnCancel: TButton
-      Left = 523
-      Top = 8
+      Left = 527
+      Top = 18
       Width = 75
       Height = 25
       Caption = 'Cancel'
@@ -122,13 +122,14 @@ object PackageCacheForm: TPackageCacheForm
     Left = 602
     Top = 41
     Width = 112
-    Height = 251
+    Height = 281
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitHeight = 251
     DesignSize = (
       112
-      251)
+      281)
     object Button2: TButton
       Left = 6
       Top = 31
@@ -177,30 +178,32 @@ object PackageCacheForm: TPackageCacheForm
     end
     object btnReload: TButton
       Left = 6
-      Top = 194
+      Top = 224
       Width = 99
       Height = 26
       Anchors = [akLeft, akBottom]
       Caption = 'Reload'
       TabOrder = 5
       OnClick = btnReloadClick
+      ExplicitTop = 194
     end
     object Button7: TButton
       Left = 6
-      Top = 225
+      Top = 255
       Width = 99
       Height = 26
       Anchors = [akLeft, akBottom]
       Caption = 'Debug'
       TabOrder = 6
       OnClick = Button7Click
+      ExplicitTop = 225
     end
   end
   object vtPackages: TVirtualStringTree
     Left = 0
     Top = 41
     Width = 602
-    Height = 251
+    Height = 281
     Align = alClient
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
@@ -221,13 +224,14 @@ object PackageCacheForm: TPackageCacheForm
     OnInitChildren = vtPackagesInitChildren
     OnInitNode = vtPackagesInitNode
     OnRemoveFromSelection = vtPackagesRemoveFromSelection
+    ExplicitHeight = 251
     Columns = <>
   end
   object ImageList1: TImageList
     Left = 120
     Top = 393
     Bitmap = {
-      494C01010800B800840010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010800B8008C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -96,13 +96,13 @@ type
 
   TUcumPrefix = class (TUcumConcept)
   private
-    Fvalue : TSmartDecimal;
+    Fvalue : TFslDecimal;
   protected
     Function GetKind : TConceptKind; Override;
   public
 
     function Link : TUcumPrefix; Overload;
-    Property value : TSmartDecimal read Fvalue write FValue;  //value for the prefix - 1^-24 through to 1^24
+    Property value : TFslDecimal read Fvalue write FValue;  //value for the prefix - 1^-24 through to 1^24
 
     procedure SetPrecision(i : integer);
   End;
@@ -150,13 +150,13 @@ type
   private
     Funit : String;
     FunitUC : String;
-    Fvalue : TSmartDecimal;
+    Fvalue : TFslDecimal;
     Ftext : String;
   public
     function Link : TUcumValue; Overload;
     Property unit_ : String read Funit write FUnit;
     Property unitUC : String read FunitUC write FUnitUC;
-    Property value : TSmartDecimal read FValue write FValue;
+    Property value : TFslDecimal read FValue write FValue;
     Property text : String read Ftext write FText;
 
     procedure SetPrecision(i : integer);

@@ -1140,6 +1140,7 @@ begin
           ch := getNextChar;
           case ch of
             '"':FValue.append('"');
+            '''':FValue.append('''');
             '\':FValue.append('\');
             '/':FValue.append('/');
             'n':FValue.append(#10);
@@ -1177,7 +1178,7 @@ begin
       FLexType := jltNumber;
       FValue.Clear;
       exp := false;
-      while More and (CharInSet(ch, ['0'..'9', '.', '-']) or (not exp and (CharInSet(ch, ['0'..'9', '.', '-', 'e', 'E'])))) do
+      while More and (CharInSet(ch, ['0'..'9', '.', '+', '-']) or (not exp and (CharInSet(ch, ['0'..'9', '.', '-', 'e', 'E'])))) do
       Begin
         FValue.append(ch);
         if (ch = 'e') or (ch = 'E') then

@@ -59,6 +59,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <GenDll>true</GenDll>
         <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <Icon_MainIcon>fhirnpp_Icon.ico</Icon_MainIcon>
@@ -313,6 +314,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.OpBase.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ValueSets.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Ui.Chart.pas"/>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>
