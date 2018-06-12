@@ -37389,6 +37389,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
   end;
 end;
+
 function asDate(obj : TFHIRObject) : TFHIRDate;
 begin
   if obj is TFHIRDate then
@@ -37409,6 +37410,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDate"')
   end;
 end;
+
 function asDateTime(obj : TFHIRObject) : TFHIRDateTime;
 begin
   if obj is TFHIRDateTime then
@@ -37429,6 +37431,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDateTime"')
   end;
 end;
+
 function asString(obj : TFHIRObject) : TFHIRString;
 begin
   if obj is TFHIRString then
@@ -37449,6 +37452,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRString"')
   end;
 end;
+
 function asInteger(obj : TFHIRObject) : TFHIRInteger;
 begin
   if obj is TFHIRInteger then
@@ -37469,6 +37473,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInteger"')
   end;
 end;
+
 function asUri(obj : TFHIRObject) : TFHIRUri;
 begin
   if obj is TFHIRUri then
@@ -37489,6 +37494,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUri"')
   end;
 end;
+
 function asInstant(obj : TFHIRObject) : TFHIRInstant;
 begin
   if obj is TFHIRInstant then
@@ -37509,6 +37515,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInstant"')
   end;
 end;
+
 function asXhtml(obj : TFHIRObject) : TFHIRXhtml;
 begin
   if obj is TFHIRXhtml then
@@ -37529,6 +37536,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRXhtml"')
   end;
 end;
+
 function asBoolean(obj : TFHIRObject) : TFHIRBoolean;
 begin
   if obj is TFHIRBoolean then
@@ -37549,6 +37557,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBoolean"')
   end;
 end;
+
 function asBase64Binary(obj : TFHIRObject) : TFHIRBase64Binary;
 begin
   if obj is TFHIRBase64Binary then
@@ -37569,6 +37578,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBase64Binary"')
   end;
 end;
+
 function asTime(obj : TFHIRObject) : TFHIRTime;
 begin
   if obj is TFHIRTime then
@@ -37589,6 +37599,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRTime"')
   end;
 end;
+
 function asDecimal(obj : TFHIRObject) : TFHIRDecimal;
 begin
   if obj is TFHIRDecimal then
@@ -37609,6 +37620,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDecimal"')
   end;
 end;
+
 function asCode(obj : TFHIRObject) : TFHIRCode;
 begin
   if obj is TFHIRCode then
@@ -37629,6 +37641,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
   end;
 end;
+
 function asOid(obj : TFHIRObject) : TFHIROid;
 begin
   if obj is TFHIROid then
@@ -37649,6 +37662,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIROid"')
   end;
 end;
+
 function asUuid(obj : TFHIRObject) : TFHIRUuid;
 begin
   if obj is TFHIRUuid then
@@ -37669,6 +37683,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUuid"')
   end;
 end;
+
 function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
 begin
   if obj is TFHIRMarkdown then
@@ -37689,6 +37704,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRMarkdown"')
   end;
 end;
+
 function asUnsignedInt(obj : TFHIRObject) : TFHIRUnsignedInt;
 begin
   if obj is TFHIRUnsignedInt then
@@ -37709,6 +37725,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUnsignedInt"')
   end;
 end;
+
 function asId(obj : TFHIRObject) : TFHIRId;
 begin
   if obj is TFHIRId then
@@ -37729,6 +37746,7 @@ begin
     raise EFHIRException.create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRId"')
   end;
 end;
+
 function asPositiveInt(obj : TFHIRObject) : TFHIRPositiveInt;
 begin
   if obj is TFHIRPositiveInt then
@@ -37751,4 +37769,5 @@ begin
 end;
 
 end.
+
 

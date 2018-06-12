@@ -104,19 +104,30 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\..\tests\UITesterForm.pas">
+        <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
+        <DCCReference Include="UITesterForm.pas">
             <Form>Form10</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\..\Libraries\ui\FHIR.Ui.Graph.pas"/>
-        <DCCReference Include="FHIR.Support.System.pas"/>
-        <DCCReference Include="FHIR.Support.Strings.pas"/>
-        <DCCReference Include="FHIR.Support.Objects.pas"/>
-        <DCCReference Include="FHIR.Support.Generics.pas"/>
-        <DCCReference Include="FHIR.Support.Exceptions.pas"/>
-        <DCCReference Include="..\..\Libraries\ui\FHIR.Ui.GraphDesigner.pas">
+        <DCCReference Include="..\Libraries\ui\FHIR.Ui.Graph.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.System.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Strings.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Objects.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Exceptions.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Ui.GraphDesigner.pas">
             <Form>GraphDesignerForm</Form>
         </DCCReference>
+        <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Fpc.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Math.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.DateTime.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Collections.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Stream.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Binary.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Text.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Decimal.pas"/>
+        <DCCReference Include="GraphTester.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Tools.ObsGraph.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -22,10 +22,6 @@ object Form10: TForm10
     Align = alClient
     Caption = 'Panel1'
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = 8
-    ExplicitWidth = 619
-    ExplicitHeight = 273
   end
   object Panel2: TPanel
     Left = 0
@@ -35,9 +31,6 @@ object Form10: TForm10
     Align = alBottom
     Caption = 'Panel2'
     TabOrder = 1
-    ExplicitLeft = 304
-    ExplicitTop = 312
-    ExplicitWidth = 185
     object Button1: TButton
       Left = 16
       Top = 8
@@ -55,6 +48,24 @@ object Form10: TForm10
       Caption = 'Data'
       TabOrder = 1
       OnClick = Button2Click
+    end
+    object Button3: TButton
+      Left = 178
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'More'
+      TabOrder = 2
+      OnClick = Button3Click
+    end
+    object Button4: TButton
+      Left = 259
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'Function'
+      TabOrder = 3
+      OnClick = Button4Click
     end
   end
 end

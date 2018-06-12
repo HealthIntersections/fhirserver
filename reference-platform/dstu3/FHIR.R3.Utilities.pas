@@ -202,6 +202,7 @@ type
   public
     class function fromEdit(s : String) : TFhirPeriod;
     property editString : String read GetEditString write SetEditString;
+    function point : TDateTime;
   end;
 
 
@@ -5827,6 +5828,18 @@ begin
   else
     result := result + end_.toXML;
 
+end;
+
+function TFhirPeriodHelper.point: TDateTime;
+begin
+  if (startElement <> nil) and (end_Element <> nil) then
+    result := (start.DateTime + end_.DateTime) / 2
+  else if startElement <> nil then
+    result := start.DateTime
+  else if end_Element <> nil then
+    result := end_.DateTime
+  else
+    result := 0;
 end;
 
 procedure TFhirPeriodHelper.SetEditString(const Value: String);
