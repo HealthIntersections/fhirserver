@@ -1,10 +1,39 @@
 Unit FHIR.Ui.GraphDesigner;
 
+{
+Copyright (c) 1996+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+
 Interface
 
 Uses
   SysUtils, WinTypes, WinProcs, Messages, Classes, Graphics, Controls,
-  Forms, Dialogs, StdCtrls, ComCtrls, ExtCtrls,
+  Forms, Dialogs, StdCtrls, ComCtrls, ExtCtrls, ClipBrd,
   Spin, Buttons, TabNotBk, Tabs, FHIR.Ui.Graph;
 
 Type
@@ -14,9 +43,7 @@ Type
     fd: TFontDialog;
     cd: TColorDialog;
     BitBtn2: TBitBtn;
-    BitBtn3: TBitBtn;
-    Notebook1: TNotebook;
-    _MainPanel: TPanel;
+    pnlAxes: TPanel;
     Bevel10: TBevel;
     Bevel7: TBevel;
     Label34: TLabel;
@@ -54,7 +81,6 @@ Type
     ComboBox2: TComboBox;
     Edit2: TEdit;
     CheckBox8: TCheckBox;
-    TabbedNotebook1: TTabbedNotebook;
     Label3: TLabel;
     Label24: TLabel;
     Label14: TLabel;
@@ -128,7 +154,6 @@ Type
     Label21: TLabel;
     Label23: TLabel;
     Label13: TLabel;
-    Label11: TLabel;
     Label29: TLabel;
     Label48: TLabel;
     Label49: TLabel;
@@ -149,6 +174,17 @@ Type
     Button5: TButton;
     Bevel11: TBevel;
     Bevel12: TBevel;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    Panel3: TPanel;
+    TabSheet3: TTabSheet;
+    Panel4: TPanel;
+    TabSheet4: TTabSheet;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    ComboBox1: TComboBox;
+    Button4: TButton;
     Procedure Edit1Change(Sender: TObject);
     Procedure FormShow(Sender: TObject);
     Procedure closebutClick(Sender: TObject);
@@ -223,9 +259,8 @@ Type
     Procedure Button6Click(Sender: TObject);
     Procedure ListBox1Click(Sender: TObject);
     Procedure ComboBox8Change(Sender: TObject);
-    Procedure TabbedNotebook1Change(Sender: TObject; NewTab: Integer;
-      Var AllowChange: Boolean);
-    Procedure BitBtn3Click(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   Private
     { Private declarations }
     editing : Boolean;
@@ -391,7 +426,6 @@ End;
 
 Procedure TGraphDesignerForm.FormCreate(Sender: TObject);
 Begin
- _MainPanel.color := clBtnFace;
  editing := False;
 (* {$IFNDEF STATISTICS}
  hideshape := TPanel.create(self);
@@ -427,8 +461,13 @@ End;
 Procedure TGraphDesignerForm.Button3Click(Sender: TObject);
 Begin
   fd.font := FGraph.appearance.captionfont;
-  If fd.Execute Then FGraph.appearance.captionFont := fd.font;
+  If fd.Execute Then FGraph.appearance.captionFont.Assign(fd.font);
 End;
+
+procedure TGraphDesignerForm.Button4Click(Sender: TObject);
+begin
+  ClipBoard.AsText := FGraph.settingsText(true);
+end;
 
 Procedure TGraphDesignerForm.Button7Click(Sender: TObject);
 Begin
@@ -478,13 +517,13 @@ End;
 Procedure TGraphDesignerForm.Button1Click(Sender: TObject);
 Begin
   fd.font := FGraph.appearance.Titlefont;
-  If fd.Execute Then FGraph.appearance.Titlefont := fd.font;
+  If fd.Execute Then FGraph.appearance.Titlefont.assign(fd.font);
 End;
 
 Procedure TGraphDesignerForm.Button2Click(Sender: TObject);
 Begin
   fd.font := FGraph.appearance.labelfont;
-  If fd.Execute Then FGraph.appearance.labelfont := fd.font;
+  If fd.Execute Then FGraph.appearance.labelfont.assign(fd.font);
 End;
 
 Procedure TGraphDesignerForm.CheckBox5Click(Sender: TObject);
@@ -582,6 +621,16 @@ Begin
   Else
     FGraph.dimensions.YAxisLabelOffset := Spinedit13.value
 End;
+
+procedure TGraphDesignerForm.ComboBox1Change(Sender: TObject);
+begin
+  Case ComboBox1.ItemIndex Of
+    0:currentaxis := FGraph.XAxis;
+    1:currentaxis := FGraph.YAxis1;
+    2:currentaxis := FGraph.YAxis2;
+  End;
+  updateaxespage;
+end;
 
 Procedure TGraphDesignerForm.ComboBox2Change(Sender: TObject);
 Begin
@@ -774,7 +823,7 @@ Begin
     lsAcross:radiobutton4.checked := True;
     lsDown  :radiobutton5.checked := True;
   End;
-  checkbox16.checked := (FGraph.legend.Borderstyle = bsSingle);
+  checkbox16.checked := (FGraph.legend.Borderstyle = psSolid);
   combobox8.Enabled := FGraph.Series.Count > 0;
   for p in FGraph.Series do
     listbox1.items.addobject(p.data.Name, p);
@@ -844,15 +893,15 @@ Procedure TGraphDesignerForm.CheckBox16Click(Sender: TObject);
 Begin
  If editing Then
    If checkbox16.checked Then
-     FGraph.legend.Borderstyle := bsSingle
+     FGraph.legend.Borderstyle := psSolid
    Else
-     FGraph.legend.Borderstyle := bsNone;
+     FGraph.legend.Borderstyle := psClear;
 End;
 
 Procedure TGraphDesignerForm.Button15Click(Sender: TObject);
 Begin
   fd.font := FGraph.legend.font;
-  If fd.Execute Then FGraph.legend.font := fd.font;
+  If fd.Execute Then FGraph.legend.font.assign(fd.font);
 End;
 
 Procedure TGraphDesignerForm.Button6Click(Sender: TObject);
@@ -896,31 +945,6 @@ Begin
     GraphDesignerForm.showmodal;
   Finally
     GraphDesignerForm.Free;
-  End;
-End;
-
-Procedure TGraphDesignerForm.TabbedNotebook1Change(Sender: TObject; NewTab: Integer; Var AllowChange: Boolean);
-Begin
-  If newtab > 2 Then
-    Begin
-    _MainPanel.Visible := True;
-    Case newtab Of
-      3:currentaxis := FGraph.XAxis;
-      4:currentaxis := FGraph.YAxis1;
-      5:currentaxis := FGraph.YAxis2;
-    End;
-    updateaxespage;
-    End
-  Else
-    _MainPanel.Visible := False;
-End;
-
-Procedure TGraphDesignerForm.BitBtn3Click(Sender: TObject);
-Begin
-  notebook1.pageindex := (notebook1.pageindex + 1) Mod 2;
-  Case notebook1.pageindex Of
-   1:bitbtn3.caption := 'Edit';
-   0:bitbtn3.caption := 'Preview';
   End;
 End;
 
