@@ -56,6 +56,7 @@ type
     FCertPWord: String;
     FTerminated : boolean;
     FTimeout: cardinal;
+    FBytesToTransfer: Int64;
 
     indy : TIdHTTP;
     ssl : TIdSSLIOHandlerSocketOpenSSL;
@@ -86,6 +87,10 @@ type
 
     function authoriseByOWinIndy(server, username, password : String): TJsonObject;
     function authoriseByOWinHttp(server, username, password : String): TJsonObject;
+
+    procedure HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+    procedure HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+    procedure HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
   public
     constructor Create(url : String); overload;
     destructor Destroy; override;
@@ -291,16 +296,23 @@ function TFHIRHTTPCommunicator.exchange(url : String; verb : TFhirHTTPClientHTTP
 var
   h : THTTPHeaders;
 begin
+  if Assigned(FClient.OnProgress) then
+    FClient.OnProgress(FClient, 'Requesting', 0, false);
   FHeaders.accept := '';
   FHeaders.prefer := '';
   createClient;
   FClient.LastURL := url;
-  if FUseIndy then
-    result := exchangeIndy(url, verb, source, headers)
-  {$IFDEF MSWINDOWS}
-  else
-    result := exchangeHTTP(url, verb, source, headers)
-  {$ENDIF}
+  try
+    if FUseIndy then
+      result := exchangeIndy(url, verb, source, headers)
+    {$IFDEF MSWINDOWS}
+    else
+      result := exchangeHTTP(url, verb, source, headers)
+    {$ENDIF}
+  finally
+    if Assigned(FClient.OnProgress) then
+      FClient.OnProgress(FClient, 'Done', 100, true); // just make sure this fires with a done.
+  end;
 end;
 
 procedure TFHIRHTTPCommunicator.createClient;
@@ -310,6 +322,9 @@ begin
     if (indy = nil) then
     begin
       indy := TIdHTTP.create(nil);
+      indy.OnWork := HTTPWork;
+      indy.OnWorkBegin := HTTPWorkBegin;
+      indy.OnWorkEnd := HTTPWorkEnd;
       indy.HandleRedirects := true;
       if (proxy <> '') then
       begin
@@ -879,6 +894,31 @@ begin
   finally
     bh.Free;
   end;
+end;
+
+procedure TFHIRHTTPCommunicator.HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  if FBytesToTransfer = 0 then // No Update File
+    Exit;
+
+  if Assigned(FClient.OnProgress) then
+    FClient.OnProgress(FClient, 'Downloading', Round((AWorkCount / FBytesToTransfer) * 100), false);
+end;
+
+procedure TFHIRHTTPCommunicator.HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+begin
+  FBytesToTransfer := AWorkCountMax;
+
+  if Assigned(FClient.OnProgress) then
+    FClient.OnProgress(FClient, 'Download Starting', 0, false);
+end;
+
+procedure TFHIRHTTPCommunicator.HTTPWorkEnd(Sender: TObject;
+  AWorkMode: TWorkMode);
+begin
+  FBytesToTransfer := 0;
+  if Assigned(FClient.OnProgress) then
+    FClient.OnProgress(FClient, 'Downloaded', 100, true);
 end;
 
 function TFHIRHTTPCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;

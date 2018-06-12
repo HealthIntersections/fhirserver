@@ -141,7 +141,7 @@ Type
     procedure terminate; virtual;  abstract; // only works for some communicators
   end;
 
-  TFhirHTTPClientStatusEvent = procedure (client : TObject; details : String) of Object;
+  TFhirClientProgressEvent = procedure (client : TObject; details : String; pct : integer; done : boolean) of Object;
 
   TFhirClientV = class abstract (TFslObject)
   private
@@ -157,6 +157,7 @@ Type
     FLang : string;
     FSmartToken: TClientAccessToken;
     FLastStatusMsg: String;
+    FOnProgress : TFhirClientProgressEvent;
     FBundleFactory : TFHIRBundleWClass;
     procedure SetProvenance(const Value: TFHIRResourceV);
     procedure SetSmartToken(const Value: TClientAccessToken);
@@ -192,6 +193,7 @@ Type
     property Logger : TFHIRClientLogger read FLogger write SetLogger;
     property provenance : TFHIRResourceV read FProvenance write SetProvenance;
     property smartToken : TClientAccessToken read FSmartToken write SetSmartToken;
+    property OnProgress : TFhirClientProgressEvent read FOnProgress write FOnProgress;
 
     // version independent API
     function conformanceV(summary : boolean) : TFHIRResourceV;
