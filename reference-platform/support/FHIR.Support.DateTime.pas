@@ -153,6 +153,7 @@ type
 
     function DateTime : TDateTime;
     function TimeStamp : TTimeStamp;
+    function truncToDay : TDateTimeEx;
 
     function fixPrecision(Precision : TDateTimeExPrecision) : TDateTimeEx;
 
@@ -168,6 +169,7 @@ type
     function IncrementDay: TDateTimeEx;
     function add(length : TDateTime) : TDateTimeEx;
     function subtract(length : TDateTime) : TDateTimeEx;
+    function difference(other : TDateTimeEx) : TDateTime;
     function lessPrecision: TDateTimeEx;
 
     function equal(other : TDateTimeEx) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
@@ -205,6 +207,17 @@ type
 
     function clone : TDateTimeEx;
     function link : TDateTimeEx;
+
+    class operator Trunc(a : TDateTimeEx) : TDateTimeEx;
+    class operator Equal(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator NotEqual(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator GreaterThan(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator GreaterThanOrEqual(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator LessThan(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator LessThanOrEqual(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator Add(a: TDateTimeEx; b: TDateTime) : TDateTimeEx; // date time is duration here
+    class operator Subtract(a: TDateTimeEx; b: TDateTime) : TDateTimeEx; // date time is duration here
+    class operator Subtract(a: TDateTimeEx; b: TDateTimeEx) : TDateTime; // date time is duration here
   end;
 
 {$IFDEF MSWINDOWS}
@@ -758,6 +771,11 @@ begin
   end;
 end;
 
+function TDateTimeEx.difference(other : TDateTimeEx): TDateTime;
+begin
+  Result := self.UTC.DateTime - other.UTC.DateTime;
+end;
+
 function TDateTimeEx.equal(other: TDateTimeEx; precision: TDateTimeExPrecision): Boolean;
 begin
   result :=
@@ -1095,6 +1113,16 @@ begin
   result.RollUp;
 end;
 
+class operator TDateTimeEx.LessThan(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.before(b, false);
+end;
+
+class operator TDateTimeEx.LessThanOrEqual(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.before(b, true);
+end;
+
 function TDateTimeEx.link: TDateTimeEx;
 begin
   result := self;
@@ -1319,6 +1347,16 @@ begin
   result.source := value;
 end;
 
+class operator TDateTimeEx.GreaterThan(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.after(b, false);
+end;
+
+class operator TDateTimeEx.GreaterThanOrEqual(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.after(b, true);
+end;
+
 Function sv(i, w : integer):String;
 begin
   result := StringPadLeft(inttostr(abs(i)), '0', w);
@@ -1399,6 +1437,23 @@ begin
     {else
       dttzUnknown - do nothing }
     end;
+end;
+
+class operator TDateTimeEx.Trunc(a: TDateTimeEx): TDateTimeEx;
+begin
+  result := a.truncToDay;
+end;
+
+function TDateTimeEx.truncToDay: TDateTimeEx;
+begin
+  result := clone;
+  if result.FPrecision > dtpDay then
+    result.FPrecision := dtpDay;
+  result.hour := 0;
+  result.minute := 0;
+  result.second := 0;
+  result.fraction := 0;
+  result.TimezoneType := dttzUnknown;
 end;
 
 function TDateTimeEx.Local: TDateTimeEx;
@@ -1531,6 +1586,11 @@ begin
       end;
   end;
   result.FPrecision := dtpNanoSeconds;
+end;
+
+class operator TDateTimeEx.NotEqual(a, b: TDateTimeEx): Boolean;
+begin
+  result := not a.equal(b);
 end;
 
 function TDateTimeEx.notNull: boolean;
@@ -1699,6 +1759,16 @@ begin
     result := sameInstant(UTC.DateTime, other.UTC.DateTime);
 end;
 
+class operator TDateTimeEx.subtract(a, b: TDateTimeEx): TDateTime;
+begin
+  result := a.difference(b);
+end;
+
+class operator TDateTimeEx.subtract(a: TDateTimeEx; b: TDateTime): TDateTimeEx;
+begin
+  result := a.subtract(b);
+end;
+
 function TDateTimeEx.ToString: String;
 begin
   if null then
@@ -1799,6 +1869,11 @@ begin
     result := uSelf.second > uOther.second
   else
     result := (uSelf.fraction > uOther.fraction);
+end;
+
+class operator TDateTimeEx.add(a: TDateTimeEx; b: TDateTime): TDateTimeEx;
+begin
+  result := a.add(b);
 end;
 
 function TDateTimeEx.after(other : TDateTimeEx; inclusive : boolean) : boolean;
@@ -3763,6 +3838,11 @@ end;
 function UnixToDateTime(USec: Longint): TDateTime;
 begin
   Result := (Usec / 86400) + UnixStartDate;
+end;
+
+class operator TDateTimeEx.equal(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.equal(b);
 end;
 
 End.
