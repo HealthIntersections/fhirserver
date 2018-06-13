@@ -106,7 +106,7 @@ uses
   FHIR.Server.Validator in '..\server\FHIR.Server.Validator.pas',
   FHIR.Web.Socket in '..\reference-platform\Support\FHIR.Web.Socket.pas',
   FHIR.Support.Mime in '..\reference-platform\Support\FHIR.Support.Mime.pas',
-  FHIR.Support.Lock in '..\reference-platform\Support\FHIR.Support.Lock.pas',
+  FHIR.Support.Threads in '..\reference-platform\Support\FHIR.Support.Threads.pas',
   FHIR.R4.Questionnaire in '..\reference-platform\r4\FHIR.R4.Questionnaire.pas',
   FHIR.Base.Scim in '..\reference-platform\base\FHIR.Base.Scim.pas',
   FHIR.R4.Narrative2 in '..\reference-platform\r4\FHIR.R4.Narrative2.pas',
@@ -165,7 +165,7 @@ uses
   XmlTests in '..\reference-platform\support\Tests\XmlTests.pas',
   GraphQLTests in 'GraphQLTests.pas',
   SnomedTests in 'SnomedTests.pas',
-  DecimalTests in '..\reference-platform\support\tests\DecimalTests.pas',
+  FHIR.Tests.Decimal in '..\reference-platform\support\tests\FHIR.Tests.Decimal.pas',
   IETFLangTests in 'IETFLangTests.pas',
   JWTTests in '..\reference-platform\support\Tests\JWTTests.pas',
   DifferenceEngineTests in '..\reference-platform\support\tests\DifferenceEngineTests.pas',
@@ -262,7 +262,6 @@ uses
   FHIR.Java.Runtime in '..\Libraries\java\FHIR.Java.Runtime.pas',
   FHIR.Java.Utilities in '..\Libraries\java\FHIR.Java.Utilities.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
-  FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
@@ -289,7 +288,11 @@ uses
   FHIR.R3.Client in '..\reference-platform\dstu3\FHIR.R3.Client.pas',
   FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
   FHIR.R3.Operations in '..\reference-platform\dstu3\FHIR.R3.Operations.pas',
-  FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas';
+  FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas',
+  FHIR.Tx.MimeTypes in '..\Server\FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas',
+  FHIR.XVersion.ConvBase in '..\reference-platform\xversion\FHIR.XVersion.ConvBase.pas',
+  FHIR.Tests.Generics in '..\reference-platform\support\Tests\FHIR.Tests.Generics.pas';
 
 var
   runner : ITestRunner;

@@ -168,7 +168,7 @@ begin
       Assert.IsTrue(conn.ColIntegerByName['Number'] = 3, 'dbt.16');
       Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64, 'dbt.17');
       Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.4), 'dbt.18');
-      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].fixPrecision(dtpSec).equal(d), 'dbt.19');
+      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].equal(d, dtpSec), 'dbt.19');
       Assert.IsTrue(BlobIsSame(conn.ColBlobByName['Content'], b), 'dbt.20');
       conn.Terminate;
 

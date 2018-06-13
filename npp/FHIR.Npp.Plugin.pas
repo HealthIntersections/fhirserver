@@ -68,11 +68,11 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX,
   FHIR.Npp.Base, FHIR.Npp.Scintilla,
-  FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Lock,
+  FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Threads,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.WinInet,
   FHIR.Support.Text, FHIR.Support.Zip, FHIR.Support.MsXml,
 
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Constants, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Common,
   FHIR.Npp.Context,
   FHIR.Npp.Settings, FHIR.Npp.Validator, FHIR.Base.Xhtml,
@@ -117,7 +117,7 @@ type
 
   TBackgroundValidatorThread = class(TThread)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FVersion : TFHIRVersion;
     FFmt : TFHIRFormat;
     FWaiting : TFslBuffer;
@@ -1165,11 +1165,11 @@ begin
     current := CurrentBytes;
     fmtc := determineFormat(current);
     if (fmtc = ffUnspecified) then
-      raise Exception.Create('Unable to parse current content');
+      raise EFHIRException.create('Unable to parse current content');
     original := FileToBytes(CurrentFileName);
     fmto := determineFormat(current);
     if (fmto = ffUnspecified) then
-      raise Exception.Create('Unable to parse original file');
+      raise EFHIRException.create('Unable to parse original file');
 
     rc := parse(current, fmtc);
     try
@@ -1596,11 +1596,11 @@ begin
   while status <> vlsLoaded do
   begin
     if status = vlsLoadingFailed then
-      raise Exception.Create('Unable to load definitions for release '+CODES_TFHIRVersion[Version]);
+      raise EFHIRException.create('Unable to load definitions for release '+CODES_TFHIRVersion[Version]);
     if status = vlsNotSupported then
-      raise Exception.Create('Release '+CODES_TFHIRVersion[Version]+' is not supported (or Loaded)can be changed in plug-in settings');
+      raise EFHIRException.create('Release '+CODES_TFHIRVersion[Version]+' is not supported (or Loaded)can be changed in plug-in settings');
     if status = vlsNotLoaded then
-      raise Exception.Create('Release '+CODES_TFHIRVersion[Version]+' is not Loaded');
+      raise EFHIRException.create('Release '+CODES_TFHIRVersion[Version]+' is not Loaded');
     if manualop then
       sleep(1000)
     else
@@ -2249,7 +2249,7 @@ end;
 constructor TBackgroundValidatorThread.Create;
 begin
   inherited;
-  FLock := TCriticalSection.Create('Background Validation Lock');
+  FLock := TFslLock.Create('Background Validation Lock');
 end;
 
 destructor TBackgroundValidatorThread.Destroy;

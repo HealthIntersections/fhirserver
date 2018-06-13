@@ -33,7 +33,7 @@ uses
   SysUtils,
   FHIR.Support.Strings, FHIR.Web.Parsers, FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Base.Common,
+  FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Tools.Indexing, FHIR.Server.Indexing;{,
   FHIR.Version.Types, FHIR.Base.Objects, FHIR.Version.PathEngine, , , FHIR.Version.Utilities}
 
@@ -179,18 +179,18 @@ end;
 procedure TSearchParameter.processPrefix;
 begin
   case index.SearchType of
-    sptNull : raise Exception.Create('Unknown parameter type for '+Index.Name);
+    sptNull : raise EFHIRException.create('Unknown parameter type for '+Index.Name);
     sptNumber :
       begin
       checkOrderingPrefix;
       if not StringIsInteger32(value) then
-        raise Exception.Create('Numerical Parameter value "value" is not an integer');
+        raise EFHIRException.create('Numerical Parameter value "value" is not an integer');
       end;
     sptDate :
       begin
       checkOrderingPrefix;
       if not TDateTimeEx.isValidXmlDate(value) then
-        raise Exception.Create('Numerical Parameter value "value" is not a date');
+        raise EFHIRException.create('Numerical Parameter value "value" is not a date');
       end;
     sptString : ; // nothing
     sptToken :
@@ -199,8 +199,8 @@ begin
           StringSplit(value, '|', FNamespace, FValue);
       end;
     sptReference : ; // nothing
-    sptComposite : raise Exception.Create('composite parameters not done yet');
-    sptQuantity : raise Exception.Create('quantity parameters not done yet');
+    sptComposite : raise EFHIRException.create('composite parameters not done yet');
+    sptQuantity : raise EFHIRException.create('quantity parameters not done yet');
     sptUri : ; // nothing
   end;
 end;
@@ -290,9 +290,9 @@ begin
     if (r <> '') then
     begin
       if index.SearchType <> sptReference then
-        raise Exception.Create('chained, but not a reference: '+name);
+        raise EFHIRException.create('chained, but not a reference: '+name);
       if length(index.TargetTypes) <> 1 then
-        raise Exception.Create('not handled yet');
+        raise EFHIRException.create('not handled yet');
       result.next := processParam(indexes, index.TargetTypes[0], r, value);
     end
     else
@@ -323,7 +323,7 @@ begin
         result.modifierType := m;
       end
       else
-        raise Exception.Create('Unknown Modifier '+m);
+        raise EFHIRException.create('Unknown Modifier '+m);
     end;
 
     result.Link;

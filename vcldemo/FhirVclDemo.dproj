@@ -75,6 +75,7 @@
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <DCC_UnitSearchPath>C:\work\Components\treeview\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <SanitizedProjectName>FhirVclDemo</SanitizedProjectName>
+        <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;bindcompdbx;DBXInterBaseDriver;vcl;IndyIPServer;vclactnband;vclFireDAC;IndySystem;tethering;svnui;dsnapcon;FireDACADSDriver;FireDACMSAccDriver;fmxFireDAC;vclimg;vcltouch;vcldb;bindcompfmx;svn;FireDACPgDriver;inetdb;DbxCommonDriver;fmx;fmxdae;xmlrtl;fmxobj;vclwinx;rtl;DbxClientDriver;CustomIPTransport;vcldsnap;dbexpress;IndyCore;vclx;bindcomp;appanalytics;dsnap;IndyIPClient;bindcompvcl;VCLRESTComponents;dbxcds;VclSmp;adortl;vclie;bindengine;DBXMySQLDriver;dsnapxml;FireDACMySQLDriver;dbrtl;IndyProtocols;inetdbxpress;FireDACCommonODBC;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
@@ -177,7 +178,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Json.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.ElementModel.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.Profiles.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Lock.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\version\FHIR.Version.Client.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.WinInet.pas"/>
@@ -198,7 +199,6 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Text.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Zip.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>

@@ -33,12 +33,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Stream, FHIR.Support.Json;
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Stream, FHIR.Support.Json;
 
 Type
-  EGraphQLException = class (Exception);
-
   TGraphQLSelection = class;
   TGraphQLFragment = class;
   TGraphQLArgument = class;
@@ -399,7 +396,7 @@ begin
       valuesFromNode(v);
   end
   else
-    raise EGraphQLException.Create('Unexpected JSON type for "'+name+'": '+json.ClassName)
+    raise EJsonException.Create('Unexpected JSON type for "'+name+'": '+json.ClassName)
 end;
 
 
@@ -435,7 +432,7 @@ Begin
   else
   begin
     if Values.Count > 1 then
-      raise EGraphQLException.Create('Internal error: non list "'+Name+'" has '+inttostr(values.Count)+' values');
+      raise EJsonException.Create('Internal error: non list "'+Name+'" has '+inttostr(values.Count)+' values');
     if Values.Count = 0 then
       str.Append('null')
     else
@@ -752,7 +749,7 @@ end;
 function TGraphQLParser.consumeName: String;
 begin
   if FLexType <> gqlltName then
-    raise EGraphQLException.Create('Found "'+FToken.ToString+'" expecting a name');
+    raise EJsonException.Create('Found "'+FToken.ToString+'" expecting a name');
   result := FToken.ToString;
   next;
 end;
@@ -782,7 +779,7 @@ begin
       until ch <> '.';
       PushChar(ch);
       if (FToken.Length <> 3) then
-        raise EGraphQLException.Create('Found "'+FToken.ToString+'" expecting "..."');
+        raise EJsonException.Create('Found "'+FToken.ToString+'" expecting "..."');
     end
     else if charInSet(ch, ['A'..'Z', 'a'..'z', '_']) then
     begin
@@ -810,7 +807,7 @@ begin
         if (ch = '\') Then
         Begin
           if not More then
-            raise EGraphQLException.Create('premature termination of GraphQL during a string constant');
+            raise EJsonException.Create('premature termination of GraphQL during a string constant');
           ch := getNextChar;
           case ch of
             '"':FToken.Append('"');
@@ -829,7 +826,7 @@ begin
               FToken.Append(chr(StrToInt('$'+hex)));
               end
           Else
-            raise EGraphQLException.Create('not supported in GraphQL: \'+ch);
+            raise EJsonException.Create('not supported in GraphQL: \'+ch);
           End;
           ch := #0;
         End
@@ -837,10 +834,10 @@ begin
           FToken.Append(ch);
       until not More or (ch = '"');
       if ch <> '"' Then
-        EGraphQLException.Create('premature termination of GraphQL during a string constant');
+        EJsonException.Create('premature termination of GraphQL during a string constant');
     end
     else
-      raise EGraphQLException.Create('Unexpected character "'+ch+'"');
+      raise EJsonException.Create('Unexpected character "'+ch+'"');
   end;
 end;
 
@@ -966,7 +963,7 @@ begin
       else if (s = 'fragment') then
         doc.Fragments.Add(parseFragment)
       else
-        raise Exception.Create('Not done yet'); // doc.Operations.Add(parseOperation(s))?
+        raise ELibraryException.create('Not done yet'); // doc.Operations.Add(parseOperation(s))?
     end;
   end;
 end;
@@ -1180,7 +1177,7 @@ begin
   result := nil;
   try
     case FLexType of
-      gqlltNull: raise EGraphQLException.Create('Attempt to read a value after reading off the end of the GraphQL statement');
+      gqlltNull: raise EJsonException.Create('Attempt to read a value after reading off the end of the GraphQL statement');
       gqlltName: result := TGraphQLNameValue.Create(FToken.ToString);
       gqlltPunctuation:
         if hasPunctuation('$') then
@@ -1195,7 +1192,7 @@ begin
             TGraphQLObjectValue(result).Fields.Add(parseArgument);
         end
         else
-          raise EGraphQLException.Create('Attempt to read a value at "'+FToken.ToString+'"');
+          raise EJsonException.Create('Attempt to read a value at "'+FToken.ToString+'"');
       gqlltString: result := TGraphQLStringValue.Create(FToken.ToString);
       gqlltNumber: result := TGraphQLNumberValue.Create(FToken.ToString);
     end;
@@ -1229,18 +1226,18 @@ end;
 procedure TGraphQLParser.consumeName(name: String);
 begin
   if FLexType <> gqlltName then
-    raise EGraphQLException.Create('Found "'+FToken.ToString+'" expecting a name');
+    raise EJsonException.Create('Found "'+FToken.ToString+'" expecting a name');
   if FToken.ToString <> name then
-    raise EGraphQLException.Create('Found "'+FToken.ToString+'" expecting "'+name+'"');
+    raise EJsonException.Create('Found "'+FToken.ToString+'" expecting "'+name+'"');
   next;
 end;
 
 procedure TGraphQLParser.consumePunctuation(punc: String);
 begin
   if FLexType <> gqlltPunctuation then
-    raise EGraphQLException.Create('Found "'+FToken.ToString+'" expecting "'+punc+'"');
+    raise EJsonException.Create('Found "'+FToken.ToString+'" expecting "'+punc+'"');
   if FToken.ToString <> punc then
-    raise EGraphQLException.Create('Found "'+FToken.ToString+'" expecting "'+punc+'"');
+    raise EJsonException.Create('Found "'+FToken.ToString+'" expecting "'+punc+'"');
   next;
 end;
 
@@ -1295,7 +1292,7 @@ end;
 
 procedure TGraphQLValue.write(str : TStringBuilder; indent : integer);
 begin
-  raise Exception.Create('Need to override '+className+'.write');
+  raise ELibraryException.create('Need to override '+className+'.write');
 end;
 
 { TGraphQLNumberValue }
@@ -1346,7 +1343,7 @@ end;
 
 procedure TGraphQLVariableValue.write(str : TStringBuilder; indent : integer);
 begin
-  raise Exception.Create('Cannot write a variable to JSON');
+  raise ELibraryException.create('Cannot write a variable to JSON');
 end;
 
 { TGraphQLNameValue }
@@ -1442,7 +1439,7 @@ begin
     end;
   end
   else if result.listStatus = listStatusSingleton then
-    raise Exception.Create('Error: Attempt to make '+name+' into a repeating field when it is constrained by @singleton')
+    raise ELibraryException.create('Error: Attempt to make '+name+' into a repeating field when it is constrained by @singleton')
   else
     result.listStatus := listStatusRepeating;
 end;

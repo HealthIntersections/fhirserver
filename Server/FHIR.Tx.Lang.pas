@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
 
@@ -363,7 +363,7 @@ end;
 
 function TIETFLanguageCodeServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TIETFLanguageCodeServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
@@ -384,7 +384,7 @@ end;
 
 function TIETFLanguageCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TIETFLanguageCodeServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
@@ -436,17 +436,17 @@ end;
 
 function TIETFLanguageCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TIETFLanguageCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TIETFLanguageCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 procedure TIETFLanguageCodeServices.Close(ctxt: TCodeSystemProviderContext);
@@ -921,13 +921,13 @@ begin
         else if vars['Type'] = 'variant' then
           i := LoadVariant(vars, i)
         else if (vars['Type'] <> 'grandfathered') and (vars['Type'] <> 'redundant') then
-           raise Exception.Create('IETFLang: Unable to parse definitions expecting Type: found '+vars['Type']+' at line '+inttostr(i+1))
+           raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: found '+vars['Type']+' at line '+inttostr(i+1))
       end;
     finally
       vars.Free;
     end;
     if i < st.count then
-      raise Exception.Create('IETFLang: Unable to parse definitions - premature end at line '+inttostr(i+1))
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions - premature end at line '+inttostr(i+1))
   finally
     st.Free;
   end;
@@ -942,7 +942,7 @@ begin
     cc.code := vars['Subtag'];
     cc.display := vars['Description'];
     if FExtLanguages.ContainsKey(cc.code) then
-      raise Exception.Create('IETFLang: Unable to parse definitions expecting Type: duplicate extlang code '+cc.code+' at line '+inttostr(i+1));
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate extlang code '+cc.code+' at line '+inttostr(i+1));
     FExtLanguages.Add(cc.code, cc.Link);
     result := i;
   finally
@@ -963,7 +963,7 @@ begin
     if (vars.ContainsKey('Scope')) then
       cc.scope := vars['Scope'];
     if FLanguages.ContainsKey(cc.code) then
-      raise Exception.Create('IETFLang: Unable to parse definitions expecting Type: duplicate language code '+cc.code+' at line '+inttostr(i+1));
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate language code '+cc.code+' at line '+inttostr(i+1));
     FLanguages.Add(cc.code, cc.Link);
     result := i;
   finally
@@ -980,7 +980,7 @@ begin
     cc.code := vars['Subtag'];
     cc.display := vars['Description'];
     if FRegions.ContainsKey(cc.code) then
-      raise Exception.Create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
     FRegions.Add(cc.code, cc.Link);
     result := i;
   finally
@@ -997,7 +997,7 @@ begin
     cc.code := vars['Subtag'];
     cc.display := vars['Description'];
     if FScripts.ContainsKey(cc.code) then
-      raise Exception.Create('IETFLang: Unable to parse definitions expecting Type: duplicate script code '+cc.code+' at line '+inttostr(i+1));
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate script code '+cc.code+' at line '+inttostr(i+1));
     FScripts.Add(cc.code, cc.Link);
     result := i;
   finally
@@ -1014,7 +1014,7 @@ begin
     cc.code := vars['Subtag'];
     cc.display := vars['Description'];
     if FVariants.ContainsKey(cc.code) then
-      raise Exception.Create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
+      raise ETerminologyError.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
     FVariants.Add(cc.code, cc.Link);
     result := i;
   finally

@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.DateTime, FHIR.Support.Lock, FHIR.Support.Strings,
+  FHIR.Support.DateTime, FHIR.Support.Threads, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, AdvCSVExtractors, AdvStringLists, AdvFiles,
   FHIR.Database.Manager,
   FHIR.Base.Objects{, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources};
@@ -78,7 +78,7 @@ type
     FDatabase : TKDBManager;
     FMakeFakeData: boolean;
     FDataCache : TFslMap<TPseudoData>;
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     NextKey : integer;
 
     function loadPseudoData(conn : TKDBConnection; aType : TFhirResourceType; id : String) : TPseudoData;
@@ -115,7 +115,7 @@ constructor TFHIRDeIdentifier.Create;
 begin
   inherited;
   FDataCache := TFslMap<TPseudoData>.create;
-  FLock := TCriticalSection.create('DeIdentifier');
+  FLock := TFslLock.create('DeIdentifier');
 end;
 
 procedure TFHIRDeIdentifier.DeIdentify(res : TFHIRResource);

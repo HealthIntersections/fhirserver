@@ -504,13 +504,16 @@ type
 
 implementation
 
+uses
+  FHIR.Base.Lang;
+
 { TFHIRXVersionResourceWrapper }
 
 constructor TFHIRXVersionResourceWrapper.create(res: TFHIRResourceV);
 begin
   inherited create;
   if (res = nil) then
-    raise Exception.Create('A value must be provided');
+    raise EFHIRException.create('A value must be provided');
   FRes := res;
 end;
 
@@ -637,7 +640,7 @@ constructor TFHIRXVersionElementWrapper.Create(elem : TFHIRObject);
 begin
   inherited create;
   if (elem = nil) then
-    raise Exception.Create('A value must be provided');
+    raise EFHIRException.create('A value must be provided');
   FElement := elem;
 end;
 
@@ -837,7 +840,7 @@ constructor TFHIRXVersionOperationWrapper.Create(res: TFslObject);
 begin
   inherited create;
   if (res = nil) then
-    raise Exception.Create('A value must be provided');
+    raise EFHIRException.create('A value must be provided');
   FOp := res;
 end;
 

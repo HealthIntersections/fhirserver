@@ -34,7 +34,7 @@ Interface
 
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Support.System,
+  FHIR.Support.Exceptions, FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Support.System,
   FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Text,
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml;
@@ -62,6 +62,7 @@ const
 
   FHIR_SPEC_URL = 'http://hl7.org/fhir';
   FHIR_TTL_URI_BASE = 'http://hl7.org/fhir/';
+  BOOLEAN_STRING_CODES : array [boolean] of String = ('false', 'true');
 
 
 Type
@@ -429,7 +430,7 @@ end;
 
 procedure TFHIRXmlParserBase.XmlError(const sPath, sMessage: String);
 begin
-  Raise Exception.Create(StringFormat(GetFhirMessage('MSG_ERROR_PARSING', lang), [sMessage+' @ '+sPath]));
+  raise EXmlException.create(StringFormat(GetFhirMessage('MSG_ERROR_PARSING', lang), [sMessage+' @ '+sPath]));
 end;
 
 function TFHIRJsonParserBase.ParseXHtmlNode(path : String; value : TJsonNode): TFhirXHtmlNode;
@@ -529,7 +530,7 @@ begin
   else
     case node.kind of
       jnkNull : result := 'null';
-      jnkBoolean : result := BoolToStr(TJsonBoolean(node).value);
+      jnkBoolean : result := BOOLEAN_STRING_CODES[TJsonBoolean(node).value];
       jnkString : result := TJsonString(node).value;
       jnkNumber : result := TJsonNumber(node).value;
       jnkObject : result := '{}';
@@ -643,7 +644,7 @@ end;
 
 procedure TFHIRXmlComposerBase.ComposeBase(xml: TXmlBuilder; name: String; base: TFHIRObject);
 begin
-  raise Exception.Create('Unknown type '+base.fhirType);
+  raise EXmlException.create('Unknown type '+base.fhirType);
 end;
 
 procedure TFHIRXmlComposerBase.Text(xml : TXmlBuilder; name, value: String);
@@ -781,7 +782,7 @@ begin
   if base is TFHIRSelection then
     composeBase(json, name, TFHIRSelection(base).value)
   else
-    raise Exception.Create('Unknown type '+base.className);
+    raise EJsonException.create('Unknown type '+base.className);
 end;
 
 {Procedure TFHIRJsonComposerBase.ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV);
@@ -949,7 +950,7 @@ begin
       ok := true;
   end;
   if not ok then
-    raise exception.create('The Date value '+s+' is not in the correct format (Xml Date Format required)');
+    raise EFHIRException.create('The Date value '+s+' is not in the correct format (Xml Date Format required)');
 end;
 
 procedure TFHIRParser.checkTimeOut;
@@ -1092,12 +1093,12 @@ end;
 
 procedure TFHIRComposer.ComposeItem(stream: TStream; name: String; item: TFHIRObject);
 begin
-  raise Exception.Create('ComposeExpression is Not supported for '+className);
+  raise EFHIRException.create('ComposeExpression is Not supported for '+className);
 end;
 
 procedure TFHIRComposer.ComposeItems(stream: TStream; name: String; items: TFHIRObjectList);
 begin
-  raise Exception.Create('ComposeExpression is Not supported for '+className);
+  raise EFHIRException.create('ComposeExpression is Not supported for '+className);
 end;
 
 procedure TFHIRComposer.ComposeXHtmlNode(xml: TXmlBuilder; name: String; node: TFhirXHtmlNode);
@@ -1519,12 +1520,12 @@ end;
 
 procedure TFHIRTurtleComposerBase.ComposeItem(stream: TStream; name: String; item: TFHIRObject);
 begin
-  raise Exception.Create('not implemented yet');
+  raise EFHIRException.create('not implemented yet');
 end;
 
 procedure TFHIRTurtleComposerBase.ComposeItems(stream: TStream; name: String; items: TFHIRObjectList);
 begin
-  raise Exception.Create('not implemented yet');
+  raise EFHIRException.create('not implemented yet');
 end;
 
 procedure TFHIRTurtleComposerBase.ComposeXHtmlNode(parent: TTurtleComplex; parentType, name: String; value: TFhirXHtmlNode; useType : boolean; index: integer);
@@ -1557,7 +1558,7 @@ end;
 
 procedure TFHIRTurtleComposerBase.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise Exception.Create('not implemented yet');
+  raise EFHIRException.create('not implemented yet');
 end;
 
 function TFHIRTurtleComposerBase.MimeType: String;
@@ -1578,30 +1579,30 @@ var
   s : String;
 begin
   s := StreamToString(source, TEncoding.UTF8);
-    raise Exception.Create('Unable to process text content - unrecognised');
+    raise EFHIRException.create('Unable to process text content - unrecognised');
 end;
 
 
 function TFHIRTextParser.ParseDT(rootName: String; type_: TClass): TFHIRObject;
 begin
-  raise Exception.Create('The method TFHIRTextParser.ParseDT should never be called');
+  raise EFHIRException.create('The method TFHIRTextParser.ParseDT should never be called');
 end;
 
 { TFHIRTextComposer }
 
 procedure TFHIRTextComposer.Compose(stream: TStream; oResource: TFhirResourceV);
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.create('Not Done Yet');
 end;
 
 procedure TFHIRTextComposer.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.create('Not Done Yet');
 end;
 
 procedure TFHIRTextComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRTextComposer.Extension: String;
@@ -1649,10 +1650,10 @@ begin
           if p = nil then
             p := pred
           else
-            raise Exception.Create('Multiple tree node start points found');
+            raise ERdfException.create('Multiple tree node start points found');
         end;
     if (p = nil) then
-      raise Exception.Create('No tree node start point found in Turtle Format');
+      raise ERdfException.create('No tree node start point found in Turtle Format');
 
     resource := ParseResourceV(p.Value);
     resource.Tags['rdf-url'] := p.URL.uri;
@@ -1663,7 +1664,7 @@ end;
 
 function TFHIRTurtleParserBase.ParseDT(rootName: String; type_: TClass): TFHIRObject;
 begin
-  raise Exception.Create('not supported');
+  raise ERdfException.create('not supported');
 end;
 
 function TFHIRTurtleParserBase.ParseXHtmlNode(literal: String): TFhirXHtmlNode;
@@ -1680,9 +1681,9 @@ var
 begin
   t := obj.predicates['http://www.w3.org/2000/01/rdf-schema#type'];
   if t = nil then
-    raise Exception.Create('Unable to determine type: rdfs#type not found');
+    raise ERdfException.create('Unable to determine type: rdfs#type not found');
   if not (t is TTurtleURL) then
-    raise Exception.Create('Unable to determine type: rdfs#type not a URL');
+    raise ERdfException.create('Unable to determine type: rdfs#type not a URL');
   result := TTurtleURL(t).uri.Substring(20);
 end;
 {$ENDIF}

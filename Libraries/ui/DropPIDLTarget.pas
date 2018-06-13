@@ -143,7 +143,7 @@ begin
   with DropPIDLTarget do
   begin
     if (Index < 0) or (Index > fPIDLs.count-2) then
-      raise Exception.create('Filename index out of range');
+      raise ELibraryException.create('Filename index out of range');
     PidlStr := JoinPidlStrings(fPIDLs[0], fPIDLs[Index+1]);
     if SHGetPathFromIDList(PItemIDList(pChar(PidlStr)),buff) then
       result := buff else

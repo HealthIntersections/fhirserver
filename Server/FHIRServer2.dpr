@@ -109,7 +109,6 @@ uses
   FHIR.Web.Socket in '..\reference-platform\Support\FHIR.Web.Socket.pas',
   FHIR.Support.MsXml in '..\reference-platform\Support\FHIR.Support.MsXml.pas',
   FHIR.Support.Mime in '..\reference-platform\Support\FHIR.Support.Mime.pas',
-  FHIR.Support.Lock in '..\reference-platform\Support\FHIR.Support.Lock.pas',
   FHIR.R2.Questionnaire in '..\reference-platform\dstu2\FHIR.R2.Questionnaire.pas',
   FHIR.Base.Scim in '..\reference-platform\base\FHIR.Base.Scim.pas',
   FHIR.R2.Narrative2 in '..\reference-platform\dstu2\FHIR.R2.Narrative2.pas',
@@ -199,7 +198,7 @@ uses
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
-  FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
+  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
@@ -212,7 +211,9 @@ uses
   FHIR.Support.Tarball in '..\reference-platform\support\FHIR.Support.Tarball.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
-  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas';
+  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
+  FHIR.Tx.MimeTypes in 'FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in 'FHIR.Tx.Iso4217.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

@@ -36,7 +36,8 @@ interface
 uses
   SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
   FHIR.Support.Strings,
-  FHIR.Base.Objects, FHIR.Version.Parser,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Parser,
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Profiles, FHIR.R2.PathEngine, FHIR.R2.Context,
   FHIR.Support.MsXml, FHIR.Support.Json,
   DUnitX.TestFramework;

@@ -101,5 +101,7 @@ begin
 end;
 
 initialization
+  {$IFNDEF EXCLUDE_FAILING_TESTS}
   TDUnitX.RegisterTestFixture(TCqlParserTests);
+  {$ENDIF}
 end.

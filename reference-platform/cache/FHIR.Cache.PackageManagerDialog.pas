@@ -1,13 +1,40 @@
 unit FHIR.Cache.PackageManagerDialog;
 
+{
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, Vcl.ExtCtrls, UITypes, Clipbrd,
   {$IFDEF NPPUNICODE}FHIR.Npp.Form, {$ENDIF}
-  FHIR.Support.Generics, FHIR.Web.Fetcher, FHIR.Support.Stream, FHIR.Support.System, FHIR.Support.Text,
-  FHIR.Support.Shell,
+  FHIR.Support.Exceptions, FHIR.Support.Generics, FHIR.Web.Fetcher, FHIR.Support.Stream, FHIR.Support.System, FHIR.Support.Text, FHIR.Support.Shell,
   FHIR.Cache.PackageManager, System.ImageList, Vcl.ImgList, Vcl.Menus,
   Vcl.ComCtrls;
 
@@ -34,7 +61,7 @@ type
     RadioButton2: TRadioButton;
     Button4: TButton;
     Button5: TButton;
-    Button6: TButton;
+    btnReload: TButton;
     Button7: TButton;
     pmImport: TPopupMenu;
     CurrentValidator1: TMenuItem;
@@ -68,7 +95,7 @@ type
     procedure lblFolderClick(Sender: TObject);
     procedure RadioButton2Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure Button6Click(Sender: TObject);
+    procedure btnReloadClick(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure CurrentValidator1Click(Sender: TObject);
@@ -91,6 +118,8 @@ type
     procedure changeMode;
     procedure importUrl(sender : TObject; url: String);
     procedure fetchProgress(sender : TObject; progress : integer);
+    function packageCheck(sender : TObject; msg : String) : boolean;
+    procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
   public
     property UserMode : boolean read FUserMode write FUserMode;
     property GoUrl : String read FGoUrl write FGoUrl;
@@ -153,11 +182,7 @@ begin
   begin
     Cursor := crHourGlass;
     try
-      FCache.Import(fileToBytes(dlgOpen.FileName),
-        function (msg : String) : boolean
-        begin
-          result := MessageDlg(msg, mtConfirmation, mbYesNo, 0) = mrYes;
-        end);
+      FCache.Import(fileToBytes(dlgOpen.FileName));
       LoadPackages;
     finally
       Cursor := crDefault;
@@ -214,14 +239,10 @@ begin
         end;
       end;
       if not ok  and not aborted then
-        raise Exception.Create('Unable to find package for '+url+': '+s);
+        raise EIOException.create('Unable to find package for '+url+': '+s);
       if ok then
       begin
-        FCache.Import(fetch.Buffer.AsBytes,
-          function (msg : String) : boolean
-          begin
-            result := MessageDlg(msg, mtConfirmation, mbYesNo, 0) = mrYes;
-          end);
+        FCache.Import(fetch.Buffer.AsBytes);
         LoadPackages;
       end;
     finally
@@ -264,7 +285,7 @@ begin
   pmImport.Popup(pt.X, pt.Y);
 end;
 
-procedure TPackageCacheForm.Button6Click(Sender: TObject);
+procedure TPackageCacheForm.btnReloadClick(Sender: TObject);
 begin
   LoadPackages;
 end;
@@ -338,6 +359,10 @@ begin
   if assigned(FCache) then
     FCache.Free;
   FCache := TFHIRPackageManager.Create(UserMode);
+  FCache.OnCheck := packageCheck;
+  FCache.OnWork := packageWork;
+  lblDownload.Visible := false;
+  lblFolder.visible := true;
   lblFolder.Caption := 'Cache: '+FCache.Folder;
   lblFolder.Refresh;
   Caption := 'FHIR Package Cache Manager - '+FCache.description;
@@ -364,6 +389,39 @@ begin
   vtPackages.RootNodeCount := 0;
   vtPackages.RootNodeCount := FPackages.Count;
   vtPackages.Invalidate;
+end;
+
+function TPackageCacheForm.packageCheck(sender : TObject; msg: String): boolean;
+begin
+  result := MessageDlg(msg, mtConfirmation, mbYesNo, 0) = mrYes;
+end;
+
+procedure TPackageCacheForm.packageWork(sender: TObject; pct: integer; done: boolean; msg: String);
+begin
+  if done then
+  begin
+    pbDownload.Visible := false;
+    btnCancel.Visible := false;
+    lblDownload.Visible := false;
+    lblFolder.visible := true;
+  end
+  else
+  begin
+    if not pbDownload.Visible then
+    begin
+      FStop := false;
+      pbDownload.Visible := true;
+      pbDownload.Position := 0;
+      lblDownload.Visible := true;
+      lblFolder.visible := false;
+      btnCancel.Visible := true;
+    end;
+    lblDownload.caption := msg;
+    pbDownload.Position := pct;
+    if FStop then
+      abort;
+  end;
+  Application.ProcessMessages;
 end;
 
 procedure TPackageCacheForm.Panel1Click(Sender: TObject);

@@ -37,7 +37,8 @@ uses
   FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal,
   FHIR.Support.Generics, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame, ToolKitUtilities,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
   CodeSystemConceptDialog, FMX.Platform, System.ImageList, TranslationsEditorDialog;
@@ -736,7 +737,7 @@ begin
       )
     end
     else
-      raise Exception.Create('Unknown format');
+      raise EFHIRException.create('Unknown format');
   end;
 
 end;
@@ -808,7 +809,7 @@ begin
   if (edtConceptCount.Text = '') or StringIsInteger32(edtConceptCount.Text) then
     CodeSystem.count := edtConceptCount.Text
   else
-    raise Exception.Create('Integer required');
+    raise EFHIRException.create('Integer required');
   CodeSystem.caseSensitive := cbCaseSensitive.IsChecked;
   CodeSystem.compositional := cbCompositional.IsChecked;
   CodeSystem.versionNeeded := cbNeedsVersion.IsChecked;
@@ -1084,7 +1085,7 @@ begin
         if StringArrayExistsSensitive(CODES_TFhirFilterOperatorEnum, s) then
           e := e + [TFhirFilterOperatorEnum(StringArrayIndexOfSensitive(CODES_TFhirFilterOperatorEnum, s))]
         else
-          raise Exception.Create('Unknown Operator '+s);
+          raise EFHIRException.create('Unknown Operator '+s);
       f.&operator := e;
       end;
     2: f.value := value.AsString;

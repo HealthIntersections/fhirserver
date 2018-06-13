@@ -632,7 +632,7 @@ Begin
   oLine := NewLine;
 
   if iMaxWidth = 0 then
-    Raise Exception.Create('The text content contained a table that was too complex to layout given the number of columns available');
+    raise EWPException.create('The text content contained a table that was too complex to layout given the number of columns available');
 
   iLoop := 0;
   While iLoop < FFragments.Count Do

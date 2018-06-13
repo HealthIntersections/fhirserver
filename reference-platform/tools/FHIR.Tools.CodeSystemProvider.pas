@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
   FHIR.Base.Objects,
   FHIR.Tx.Service, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Lang, FHIR.Base.Factory;
 
@@ -532,7 +532,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise Exception.create('Unable to find '+code+' in '+system(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+system(nil))
     else
       result := Display(ctxt, lang);
   finally
@@ -751,10 +751,10 @@ var
 begin
   cA := LocateCode(codeA);
   if (cA = nil) then
-    raise Exception.Create('Unknown Code "'+codeA+'"');
+    raise ETerminologyError.create('Unknown Code "'+codeA+'"');
   cB := LocateCode(codeB);
   if (cB = nil) then
-    raise Exception.Create('Unknown Code "'+codeB+'"');
+    raise ETerminologyError.create('Unknown Code "'+codeB+'"');
 
   t := CB;
   while t <> nil do

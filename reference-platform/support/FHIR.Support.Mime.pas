@@ -33,8 +33,7 @@ interface
 uses
   SysUtils, Classes, Contnrs,
   IdHeaderList, idGlobal, IdGlobalProtocols,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream;
+  FHIR.Support.Strings, FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream;
 
 type
   TMimeBase = class (TFslObject)
@@ -261,7 +260,7 @@ begin
   // the indysoap team *with an example*, and this will be extended
   if AnsiSameText(LCnt, 'base64') then
     begin
-    raise Exception.Create('not done yet');
+    raise ELibraryException.create('not done yet');
 //    Content := Base64Decode(Content);
     end
   else
@@ -347,12 +346,12 @@ begin
   WriteHeaders(AStream);
   if FHeaders.Values[MIME_TRANSFERENCODING] = 'base64' then
     begin
-    raise Exception.Create('not done yet');
+    raise ELibraryException.create('not done yet');
 //    WriteString(AStream, Base64EncodeAnsi(FContent, true)+EOL_WINDOWS);
     end
   else
     begin
-    raise Exception.Create('not done yet');
+    raise ELibraryException.create('not done yet');
 
     //AStream.CopyFrom(FContent, (FContent.Size - FContent.Position)-2);
 //    if FContent.Size - FContent.Position >= 2 then

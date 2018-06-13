@@ -30,6 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
+uses
+  FHIR.Support.Exceptions;
+
 {------------------------------------------------------------------------------
    Cross Platform SQL Support
  ------------------------------------------------------------------------------}
@@ -320,7 +323,7 @@ begin
     kdbSybase12: Result := 'Sybase ASE ODBC Driver';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -345,7 +348,7 @@ begin
     kdbSybase12: Result := '^.*ase.*$';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -370,7 +373,7 @@ begin
     kdbSybase12: Result := 'sybase ase odbc driver';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -378,11 +381,11 @@ end;
 function PlatformAutoIncrementSQL(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'int IDENTITY(1,1) Not Null';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'numeric(12, 0) IDENTITY Not Null';
-    kdbCtree: raise Exception.Create('You are using Ctree!');
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbCtree: raise EDBException.create('You are using Ctree!');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := 'autoinc Not Null';
     kdbInterbase: Result := 'int Not null';
     kdbDB2: Result := 'INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)';
@@ -390,7 +393,7 @@ begin
     kdbMySQL: Result := 'int NOT NULL auto_increment';  //only works for a (primary) key field
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -398,11 +401,11 @@ end;
 function GetPlatformOtherAutoIncSQL(ADBPlatform: TKDBPlatform; ATableName, AFieldName: String; var ASQL1, ASQL2: String): Boolean;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := False;
     kdbSybase11, kdbASA, kdbSybase12: Result := False;
     kdbCtree: result := false;
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := False;
     kdbDB2: Result := False;
     kdbInterbase:
@@ -431,7 +434,7 @@ begin
     kdbMySQL: Result := False;
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -439,11 +442,11 @@ end;
 function PrimaryKeyType(ADbasePlatform: TKDBPlatform; AConstraintName: String; APrimaryKeyName: String): String;
 begin
   case ADbasePlatform of
-    kdbUnknown: raise Exception.Create('Unknown Database Platform!');
+    kdbUnknown: raise EDBException.create('Unknown Database Platform!');
     kdbSQLServer : Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY CLUSTERED (' + APrimaryKeyName + ')';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'PRIMARY KEY CLUSTERED (' + APrimaryKeyName + ')';
     kdbCtree: Result := 'PRIMARY KEY (' + APrimaryKeyName + ')';
-    kdbAccess: raise Exception.Create('You are using MSACESS!');
+    kdbAccess: raise EDBException.create('You are using MSACESS!');
     kdbDBIsam: Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY (' + APrimaryKeyName + ')';
     kdbInterbase: Result := 'PRIMARY KEY (' + APrimaryKeyName + ')';
     kdbDB2: Result := 'PRIMARY KEY (' + APrimaryKeyName + ')';
@@ -452,7 +455,7 @@ begin
     kdbSQLite: Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY (' + APrimaryKeyName + ')';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -465,22 +468,22 @@ end;
 function DBUnicodeType(ADBPlatform: TKDBPlatform; ASize : Integer): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'nchar('+inttostr(ASize)+')';
-    kdbSybase11: raise exception.create('Sybase field field for Unicode not yet resolved');
+    kdbSybase11: raise EDBException.create('Sybase field field for Unicode not yet resolved');
     kdbSybase12: Result := 'unichar('+inttostr(ASize)+')';
     kdbASA : result := 'char('+inttostr(ASize*2)+')';
     kdbCtree: result := 'char('+inttostr(ASize*2)+')';
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := 'char('+inttostr(ASize*2)+')';
     kdbInterbase: Result := 'char('+inttostr(ASize*2)+')';
     kdbDB2: result := 'char('+inttostr(ASize*2)+')';
-    kdbOracle8: raise exception.create('Oracle field field for Unicode not yet resolved');
+    kdbOracle8: raise EDBException.create('Oracle field field for Unicode not yet resolved');
     kdbMySQL: result := 'VARCHAR('+inttostr(ASize)+') CHARACTER SET utf8mb4';
     kdbSQLite: result := 'VARCHAR('+inttostr(ASize)+') CHARACTER SET utf8';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -488,21 +491,21 @@ end;
 function DBFloatType(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'float';
     kdbSybase11, kdbSybase12: Result := 'float';
     kdbASA : result := 'FLOAT';
     kdbCtree: result := 'FLOAT';
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: result := 'float';
     kdbInterbase: result := 'float';
     kdbDB2: result := 'float';
-    kdbOracle8: raise exception.create('Oracle field field for Float not yet resolved');
+    kdbOracle8: raise EDBException.create('Oracle field field for Float not yet resolved');
     kdbMySQL: result := 'DOUBLE';
     kdbSQLite: result := 'REAL';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -510,11 +513,11 @@ end;
 function DBKeyType(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'int';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'numeric(12, 0)';
     kdbCtree: Result := 'int';
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := 'int';
     kdbInterbase: Result := 'int';
     kdbDB2: Result := 'int';
@@ -523,7 +526,7 @@ begin
     kdbSQLite: Result := 'Integer';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -531,11 +534,11 @@ end;
 function DBBlobType(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'image';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'image';
     kdbCtree: result := 'LVARBINARY';
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := 'blob(1,1)';
     kdbInterbase: Result := 'blob';
     kdbDB2: Result := 'blob';
@@ -544,7 +547,7 @@ begin
     kdbSQLite: Result := 'BLOB';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -553,11 +556,11 @@ end;
 function DBTextBlobType(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'image';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'image';
     kdbCtree: result := 'LVARBINARY';
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := 'blob(1,1)';
     kdbInterbase: Result := 'blob';
     kdbDB2: Result := 'blob';
@@ -566,7 +569,7 @@ begin
     kdbSQLite: Result := 'BLOB';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -577,11 +580,11 @@ end;
 function DBBlobStorageType(ADBPlatform: TKDBPlatform; ADBColumnName: String): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := '';
     kdbSybase11, kdbASA, kdbSybase12: Result := '';
-    kdbCtree: raise Exception.Create('You are using Ctree!');
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbCtree: raise EDBException.create('You are using Ctree!');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := '';
     kdbInterbase: Result := '';
     kdbDB2: Result := '';
@@ -595,7 +598,7 @@ begin
     kdbSQLite: Result := '';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -603,11 +606,11 @@ end;
 function DBDateTimeType(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'datetime';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'datetime';
     kdbCtree: Result := 'timestamp';
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := 'timestamp';
     kdbInterbase: Result := 'timestamp';
     kdbDB2: Result := 'timestamp';
@@ -616,7 +619,7 @@ begin
     kdbSQLite: Result := 'datetext(24)';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -624,7 +627,7 @@ end;
 function DBGetDate(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'getdate()';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'getdate()';
     kdbCtree: result := 'CURDATE()';
@@ -637,7 +640,7 @@ begin
     kdbSQLite: Result := 'CURRENT_TIMESTAMP';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -646,7 +649,7 @@ end;
 function ColCanBeNull(ADBPlatform: TKDBPlatform; ABeNull: Boolean): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer:
       if ABeNull then
         begin
@@ -739,7 +742,7 @@ begin
         end;
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -747,7 +750,7 @@ end;
 function DBBooleanType(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'bit';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'bit';
     kdbCtree: Result := 'bit';
@@ -760,7 +763,7 @@ begin
     kdbSQLite: Result := 'Integer';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -768,7 +771,7 @@ end;
 function DBCharType(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer: Result := 'char';
     kdbSybase11, kdbASA, kdbSybase12: Result := 'char';
     kdbCtree: Result := 'char';
@@ -781,7 +784,7 @@ begin
     kdbSQLite: Result := 'text';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -789,13 +792,13 @@ end;
 function DBInt64Type(ADBPlatform: TKDBPlatform): String;
 begin
   case ADBPlatform of
-    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbUnknown: raise EDBException.create('Internal Error in Database Configuration, Database Platform not recognised');
     kdbSQLServer : Result := 'bigint';
     kdbASA : result := 'BIGINT';
-    kdbSybase11, kdbSybase12: raise Exception.Create('Sybase does not support Int64 values properly');
+    kdbSybase11, kdbSybase12: raise EDBException.create('Sybase does not support Int64 values properly');
     // Result := 'numeric(18, 0)'; If Sybase ever gets ther act together then we can use this....
     kdbCtree: Result := 'bigint';
-    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbAccess: raise EDBException.create('You cannot create tables for MSAccess using SQL');
     kdbDBIsam: Result := 'largeint';
     kdbInterbase: Result := 'bigint';
     kdbDB2: Result := 'bigint';
@@ -804,7 +807,7 @@ begin
     kdbSQLite: Result := 'Integer';
   else
     begin
-    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    raise EDBException.create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
@@ -862,7 +865,7 @@ begin
     kdbSQLServer : result := 'int';
     kdbMySQL : result := 'UNSIGNED';
     kdbSQLite : result := 'Integer';
-  else raise exception.create('not done yet: DBIntType');
+  else raise EDBException.create('not done yet: DBIntType');
   end;
 end;
 

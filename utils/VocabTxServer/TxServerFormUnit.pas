@@ -35,8 +35,9 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Menus, FMX.Platform,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Edit, IOUtils,
   FHIR.Ui.OSX,
-  FHIR.Support.System, FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.DateTime,
-  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Server.Security,
+  FHIR.Support.System, FHIR.Support.Threads, FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Server.Security,
   FHIR.Server.Context, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Debug.Logging,
   VocabPocServerCore, FHIR.Tx.Server, FHIR.Server.WebSource;
 
@@ -53,7 +54,7 @@ type
     FSource : String;
     FWantStart : boolean;
     FWantStop : boolean;
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FMsgs : TStringList;
     FIni : TFHIRServerIniFile;
     FWebServer : TFhirWebServer;
@@ -159,7 +160,7 @@ begin
   if btnStatus.Text = 'Start' then
   begin
     if not StringIsInteger16(edtPort.Text) then
-      raise Exception.Create('Port must be a Positive Integer between 0 and 65535');
+      raise EFHIRException.create('Port must be a Positive Integer between 0 and 65535');
 
     FServer.FSource := edtFolder.Text;
     FServer.FIni.WriteString('web', 'http', edtPort.Text);
@@ -375,7 +376,7 @@ end;
 constructor TServerControl.Create;
 begin
   inherited Create;
-  FLock := TCriticalSection.Create('Control Thread');
+  FLock := TFslLock.Create('Control Thread');
 end;
 
 destructor TServerControl.Destroy;

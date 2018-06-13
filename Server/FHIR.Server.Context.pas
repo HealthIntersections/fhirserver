@@ -33,7 +33,7 @@ interface
 
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Lock, FHIR.Support.System, FHIR.Support.Strings,
+  FHIR.Support.Threads, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
   FHIR.Base.Factory,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Server.Indexing, FHIR.Version.Utilities,
@@ -48,7 +48,7 @@ Const
 Type
   TQuestionnaireCache = class(TFslObject)
   private
-    FLock: TCriticalSection;
+    FLock: TFslLock;
     FQuestionnaires: TFslMap<TFhirQuestionnaire>;
     FForms: TFslStringMatch;
     FValueSetDependencies: TDictionary<String, TList<string>>;
@@ -69,7 +69,7 @@ Type
 
   TFHIRServerContext = class (TFslObject)
   private
-    FLock: TCriticalSection;
+    FLock: TFslLock;
     FStorage : TFHIRStorageService;
     FQuestionnaireCache: TQuestionnaireCache;
     FBases: TStringList;
@@ -178,7 +178,7 @@ uses
 constructor TQuestionnaireCache.Create;
 begin
   inherited;
-  FLock := TCriticalSection.Create('TQuestionnaireCache');
+  FLock := TFslLock.Create('TQuestionnaireCache');
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create;
   FForms := TFslStringMatch.Create;
   FForms.Forced := true;
@@ -326,7 +326,7 @@ var
   cfg : TFHIRResourceConfig;
 begin
   Inherited Create;
-  FLock := TCriticalSection.Create('ServerContext');
+  FLock := TFslLock.Create('ServerContext');
   FStorage := storage;
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FBases := TStringList.Create;
@@ -385,7 +385,7 @@ begin
 
   FValidator.free;
 //  if FValidatorContext.FslObjectReferenceCount > 0 then
-//    raise Exception.Create('There are still '+inttostr(FValidatorContext.FslObjectReferenceCount)+' uses of the WorkerContext live');
+//    raise EFHIRException.create('There are still '+inttostr(FValidatorContext.FslObjectReferenceCount)+' uses of the WorkerContext live');
 
   FValidatorContext.Free;
   FResConfig.free;

@@ -664,17 +664,13 @@ public class ElementDefn {
     bs.setBindingMethod(BindingMethod.CodeList);
     bs.setDefinition(b.getDescription());
     bs.setStrength(BindingStrength.REQUIRED);
-    if (b.hasValueSetCanonicalType()) {
-      org.hl7.fhir.r4.model.ValueSet vs = vsmap.get(b.getValueSetCanonicalType().getValue());
-      if (vs == null)
-        throw new Error("Unable to find value set "+b.getValueSetCanonicalType().getValue());
-      bs.loadFromExpansion(vs);
-      bs.setUri(vs.getUrl());
-      bs.setName(vs.getName().replace(" ", ""));
-      bs.setReference(urlTail(vs.getUrl()));
-    } else if (b.hasValueSetUriType()) {
-      return null;
-    }
+    org.hl7.fhir.r4.model.ValueSet vs = vsmap.get(b.getValueSet());
+    if (vs == null)
+      throw new Error("Unable to find value set "+b.getValueSet());
+    bs.loadFromExpansion(vs);
+    bs.setUri(vs.getUrl());
+    bs.setName(vs.getName().replace(" ", ""));
+    bs.setReference(urlTail(vs.getUrl()));
     return bs;
   }
 

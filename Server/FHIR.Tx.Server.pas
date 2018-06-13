@@ -39,12 +39,11 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
 
-  FHIR.Support.Strings, FHIR.Support.DateTime,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
   FHIR.Database.Manager,
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.CdsHooks.Utilities, FHIR.Version.Operations, FHIR.Server.Session, FHIR.Version.Common,
-  FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR, FHIR.Tx.ICD10, FHIR.Tx.AreaCode, FHIR.Tx.CountryCode, FHIR.Tx.UsState,
+  FHIR.Tx.Service, FHIR.Snomed.Services, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR, FHIR.Tx.ICD10, FHIR.Tx.AreaCode, FHIR.Tx.CountryCode, FHIR.Tx.UsState, FHIR.Tx.Iso4217, FHIR.Tx.MimeTypes,
   FHIR.Tx.Lang, FHIR.Tx.Validator, FHIR.Server.ClosureMgr, FHIR.Server.Adaptations, FHIR.Server.Utilities,
   FHIR.Tx.Manager, FHIR.Snomed.Expressions;
 
@@ -168,6 +167,10 @@ begin
   ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   p := TAreaCodeServices.Create;
   ProviderClasses.Add(p.system(nil), p);
+  p := TIso4217Services.Create;
+  ProviderClasses.Add(p.system(nil), p);
+  p := TMimeTypeCodeServices.Create;
+  ProviderClasses.Add(p.system(nil), p);
   p := TCountryCodeServices.Create;
   ProviderClasses.Add(p.system(nil), p);
   p := TUSStateServices.Create;
@@ -230,7 +233,7 @@ begin
   end;
   fn := ini.ReadString(voVersioningNotApplicable, 'ucum', 'source', '');
   if fn = '' then
-    raise Exception.Create('Unable to start because [ucum] source= is not specified in the ini file');
+    raise ETerminologySetup.create('Unable to start because [ucum] source= is not specified in the ini file');
   logt('Load Ucum from '+fn);
   Ucum := TUcumServices.Create;
   Ucum.Import(fn);
@@ -286,7 +289,7 @@ begin
     ctxt := provider.locate(coding.code);
     try
       if ctxt = nil then
-        raise Exception.Create('Unable to find code '+coding.code+' in '+coding.system+' version '+s);
+        raise ETerminologyError.create('Unable to find code '+coding.code+' in '+coding.system+' version '+s);
 
       if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
       begin
@@ -502,7 +505,7 @@ begin
   vs := getValueSetByUrl(uri);
   try
     if vs = nil then
-      raise Exception.Create('Unable to find value set "'+uri+'"');
+      raise ETerminologyError.create('Unable to find value set "'+uri+'"');
     result := expandVS(vs, uri, profile, textFilter, limit, count, offset);
   finally
     vs.Free;
@@ -733,12 +736,12 @@ begin
     begin
       if prop.code = 'focus' then
         if not isValidCode(prop.value) then
-          raise Exception.Create('invalid snomed value :'+prop.value)
+          raise ETerminologyError.create('invalid snomed value :'+prop.value)
         else
           s := prop.value;
     end;
     if s = '' then
-      raise Exception.Create('no focus found');
+      raise ETerminologyError.create('no focus found');
 
     first := true;
     for prop in req.property_List do
@@ -746,11 +749,11 @@ begin
       if prop.code <> 'focus' then
       begin
         if not isValidCode(prop.code) then
-          raise Exception.Create('invalid snomed code :'+prop.code);
+          raise ETerminologyError.create('invalid snomed code :'+prop.code);
         if not isValidCode(prop.value) then
-          raise Exception.Create('invalid snomed value :'+prop.value);
+          raise ETerminologyError.create('invalid snomed value :'+prop.value);
         if prop.subpropertyList.Count > 0 then
-          raise Exception.Create('invalid sub-property');
+          raise ETerminologyError.create('invalid sub-property');
         if first then
           s := s + ':'+ prop.code+'='+prop.value
         else
@@ -759,7 +762,7 @@ begin
       end;
     end;
     if not req.exact then
-      raise Exception.Create('Only ''exact=true'' is supported at present');
+      raise ETerminologyError.create('Only ''exact=true'' is supported at present');
     exp := TSnomedServices(cs).parseExpression(s);
     try
       list := TSnomedServices(cs).condenseExpression(exp);
@@ -781,7 +784,7 @@ begin
             end
             else
             begin
-              raise Exception.Create('not done yet');
+              raise ETerminologyError.create('not done yet');
             end;
           end;
         end;
@@ -1002,7 +1005,7 @@ begin
   try
     try
       if not checkCode(op, lang, '', coding.code, coding.system, coding.version, coding.display) then
-        raise Exception.Create('Code '+coding.code+' in system '+coding.system+' not recognized');
+        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.system+' not recognized');
 
       // check to see whether the coding is already in the target value set, and if so, just return it
       p := validate(target, coding, nil, false);
@@ -1030,7 +1033,7 @@ begin
           begin
             found := true;
             if em.targetList.Count = 0 then
-              raise Exception.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
+              raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
             map := em.targetList[0]; // todo: choose amongst dependencies
             if (map.equivalence in [ConceptMapEquivalenceEquivalent, ConceptMapEquivalenceEqual, ConceptMapEquivalenceWider, ConceptMapEquivalenceSubsumes, ConceptMapEquivalenceNarrower, ConceptMapEquivalenceSpecializes, ConceptMapEquivalenceInexact]) then
             begin
@@ -1082,7 +1085,7 @@ begin
   if coded.codingList.count = 1 then
     result := translate(lang, source, coded.codingList[0], target)
   else
-    raise Exception.Create('Not done yet');
+    raise ETerminologyError.create('Not done yet');
 end;
 
 function TTerminologyServer.UseClosure(name: String; out cm: TClosureManager): boolean;
@@ -1404,7 +1407,7 @@ begin
   try
     try
       if not checkCode(op, lang, '', coding.code, coding.system, coding.version, coding.display) then
-        raise Exception.Create('Code '+coding.code+' in system '+coding.system+' not recognized');
+        raise ETerminologyError.create('Code '+coding.code+' in system '+coding.system+' not recognized');
 
 //      // check to see whether the coding is already in the target value set, and if so, just return it
 //      p := validate(target, coding, false);
@@ -1427,7 +1430,7 @@ begin
       begin
       found := true;
       if em.targetList.Count = 0 then
-        raise Exception.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
+        raise ETerminologyError.create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
       map := em.targetList[0]; // todo: choose amongst dependencies
       if (map.equivalence in [ConceptMapEquivalenceNull, ConceptMapEquivalenceEquivalent, ConceptMapEquivalenceEqual, ConceptMapEquivalenceWider, ConceptMapEquivalenceSubsumes, ConceptMapEquivalenceNarrower, ConceptMapEquivalenceSpecializes, ConceptMapEquivalenceInexact]) then
       begin

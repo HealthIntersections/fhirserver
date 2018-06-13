@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Version.Resources,
-  FHIR.Version.Utilities,
+  FHIR.Base.Lang,
+  FHIR.Version.Resources, FHIR.Version.Utilities,
   FHIR.CdsHooks.Server;
 
 type
@@ -56,7 +56,7 @@ var
   req : TFhirProcedureRequest;
 begin
   result := false;
-  raise Exception.Create('to do');
+  raise EFHIRException.create('to do');
 (*  for res in request.context do
     if res is TFhirProcedureRequest then
     begin
@@ -70,7 +70,7 @@ function THackingHealthBNPLogic.clinicIsED: boolean;
 var
   enc : TFhirEncounter;
 begin
-  raise Exception.Create('to do');
+  raise EFHIRException.create('to do');
 (*  if not request.preFetch.ContainsKey('encounter') then
     result := false
   else
@@ -97,7 +97,7 @@ var
   bnd : TFhirBundle;
   be : TFhirBundleEntry;
 begin
-  raise Exception.Create('to do');
+  raise EFHIRException.create('to do');
 (*  bnd := request.preFetch['problems'].resource as TFhirBundle;
   result := false;
   for be in bnd.entryList do

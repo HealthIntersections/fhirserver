@@ -2584,7 +2584,7 @@ begin
   if oFocus.FPiece is TWPWorkingDocument Then
     result := TWPWorkingDocument(oFocus.FPiece).FAllAnnotations[iId-1]
   Else
-    Raise Exception.Create('root element doesn''t point to document');
+    raise EWPException.create('root element doesn''t point to document');
 end;
 
 { TWPMapObjects }
@@ -3315,7 +3315,7 @@ Begin
           begin
             i := FAttachments.IndexByReference(TWPPDFGraphic(oImage.Image).Attachment);
             if i = -1 then
-              raise Exception.create('Attachment mis-allocation')
+              raise EWPException.create('Attachment mis-allocation')
             else
               FAttachments[i].InUse := true;
           end;*)
@@ -4173,7 +4173,7 @@ begin
       begin
         att := FAttachments.GetById(TWPPDFGraphic(oImage.Image).Attachment.Id);
         if att = nil then
-          raise Exception.create('Attachment mis-allocation for id = '+TWPPDFGraphic(oImage.Image).Attachment.Id);
+          raise EWPException.create('Attachment mis-allocation for id = '+TWPPDFGraphic(oImage.Image).Attachment.Id);
         TWPPDFGraphic(oImage.Image).Attachment := att.Link;
       end;*)
     end;

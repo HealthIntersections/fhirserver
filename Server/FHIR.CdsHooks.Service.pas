@@ -33,6 +33,7 @@ uses
   SysUtils, Classes,
   IdContext,
   FHIR.Support.Generics, FHIR.Support.Json,
+  FHIR.Base.Lang,
   FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   FHIR.CdsHooks.Utilities,
   FHIR.CdsHooks.Server, FHIR.Server.Context, FHIR.Server.Storage;
@@ -209,7 +210,7 @@ begin
     check(issues, request.patient <> '', 'patient is required');
     check(issues, request.encounter <> '', 'encounter is required');
     check(issues, request.context.Count > 0, 'at least one resource is required in context');
-  raise Exception.Create('to do');
+  raise EFHIRException.create('to do');
 
 (*
 {$IFNDEF FHIR2}
@@ -493,7 +494,7 @@ var
   id : TFhirIdentifier;
   ok : boolean;
 begin
-  raise Exception.Create('to do');
+  raise EFHIRException.create('to do');
 
 (*  result := nil;
   // do we know that patient?

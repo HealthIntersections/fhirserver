@@ -533,7 +533,7 @@ end;
 
 procedure TFHIRXhtmlComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise Exception.Create('TFHIRXhtmlComposer.ComposeResourceV should never be called');
+  raise EFHIRException.create('TFHIRXhtmlComposer.ComposeResourceV should never be called');
 
 end;
 

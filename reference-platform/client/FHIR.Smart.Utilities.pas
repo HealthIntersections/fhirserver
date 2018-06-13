@@ -110,7 +110,7 @@ uses
   IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP, IdSSLOpenSSL,
   FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Certs, FHIR.Web.Parsers, FHIR.Support.System, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base;
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang;
 
 type
   TRegisteredCDSHook = class (TFslObject)
@@ -253,7 +253,7 @@ begin
   authorize := '';
   token := '';
   if conf.hasRest then
-    raise Exception.Create('Unable to find rest entry in conformance statement');
+    raise EFHIRException.create('Unable to find rest entry in conformance statement');
   if (conf.hasSecurity('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/restful-security-service', 'OAuth2') or
      // work around for some servers
       conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'OAuth2')) then
@@ -297,14 +297,14 @@ begin
               result := TClientAccessToken.Create;
               try
                 if json.vStr['token_type'] <> 'Bearer' then
-                  raise Exception.Create('token type is not "Bearer"');
+                  raise EFHIRException.create('token type is not "Bearer"');
                 result.accesstoken := json.vStr['access_token'];
                 result.scopes := json.vStr['scope'];
                 s := json.vStr['expires_in'];
                 if (s <> '') then
                 begin
                   if not StringIsInteger16(s) then
-                    raise Exception.Create('expires_in is not an integer');
+                    raise EFHIRException.create('expires_in is not an integer');
                   result.expires := now + StrToInt(s) * DATETIME_SECOND_ONE;
                 end;
                 if json.vStr['id_token'] <> '' then
@@ -318,7 +318,7 @@ begin
             end;
           except
             on e : EIdHTTPProtocolException do
-              raise Exception.Create(e.message+' : '+e.ErrorMessage);
+              raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
             on e:Exception do
               raise;
           end;

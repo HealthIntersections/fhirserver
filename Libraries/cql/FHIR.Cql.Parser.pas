@@ -31,8 +31,7 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Decimal,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Decimal, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Version.PathNode, FHIR.Version.PathEngine,
   FHIR.CQL.Model;
 
@@ -393,7 +392,7 @@ begin
         else if (token = 'concept') then
           result.Concepts.Add(parseConcept(lexer, access))
         else if access <> CqlAccessDefault then
-          raise Exception.Create('Unexpected token '+CODES_AccessLevel[access])
+          raise ELibraryException.create('Unexpected token '+CODES_AccessLevel[access])
         else if (token = 'define') then
           if lexer.hasToken('function') then
             result.Functions.add(parseFunction(lexer, context))

@@ -32,14 +32,14 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Lock,
+  SysUtils, Classes, FHIR.Support.Threads,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Version.Tags;
 
 type
   TFHIRTagManager = class (TFslObject)
   private
-    FLock: TCriticalSection;
+    FLock: TFslLock;
     FTags: TFHIRTagList;
     FTagsByKey: TFslMap<TFHIRTag>;
     FLastTagVersionKey: integer;
@@ -74,7 +74,7 @@ end;
 constructor TFHIRTagManager.Create;
 begin
   inherited create;
-  FLock := TCriticalSection.Create('session-manager');
+  FLock := TFslLock.Create('session-manager');
   FTags := TFHIRTagList.Create;
   FTagsByKey := TFslMap<TFHIRTag>.Create;
 end;

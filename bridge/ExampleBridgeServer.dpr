@@ -59,7 +59,7 @@ uses
   FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
   FHIR.Support.Strings in '..\reference-platform\support\FHIR.Support.Strings.pas',
   FHIR.Support.Service in '..\reference-platform\support\FHIR.Support.Service.pas',
-  FHIR.Support.Lock in '..\reference-platform\support\FHIR.Support.Lock.pas',
+  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   FHIR.CdsHooks.Utilities in '..\reference-platform\support\FHIR.CdsHooks.Utilities.pas',
@@ -181,7 +181,6 @@ uses
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
-  FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
@@ -194,7 +193,9 @@ uses
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
-  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas';
+  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
+  FHIR.Tx.MimeTypes in '..\Server\FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas';
 
 var
   gsrv : TExampleFhirServer;

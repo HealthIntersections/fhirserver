@@ -1,11 +1,40 @@
 unit FHIR.R2.ParserBase;
 
+{
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 interface
 
 uses
   SysUtils,
   FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Turtle,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.R2.Types, FHIR.R2.Resources;
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang,
+  FHIR.R2.Types, FHIR.R2.Resources;
 
 type
   TFHIRXmlParserBase2 = class (TFHIRXmlParserBase)
@@ -70,7 +99,7 @@ end;
 
 function TFHIRXmlParserBase2.ParseResource(element: TMXmlElement; path: String): TFhirResource;
 begin
-  raise exception.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 function TFHIRXmlParserBase2.ParseResourceV(element: TMXmlElement; path: String): TFhirResourceV;
@@ -80,7 +109,7 @@ end;
 
 function TFHIRXmlParserBase2.ParseDataType(element: TMXmlElement; name: String; type_: TFHIRTypeClass): TFHIRType;
 begin
-  raise exception.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
+  raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
 
@@ -91,7 +120,7 @@ end;
 
 procedure TFHIRXmlComposerBase2.ComposeResource(xml: TXmlBuilder; resource: TFhirResource);
 begin
-  raise exception.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRXmlComposerBase2.ComposeResourceV(xml: TXmlBuilder; resource: TFhirResourceV);
@@ -104,12 +133,12 @@ end;
 
 function TFHIRJsonParserBase2.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass): TFHIRType;
 begin
-  raise exception.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
+  raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
 function TFHIRJsonParserBase2.ParseResource(jsn: TJsonObject): TFhirResource;
 begin
-  raise exception.create('don''t use TFHIRJsonParserBase2 directly - use TFHIRXmlComposer');
+  raise EFHIRException.create('don''t use TFHIRJsonParserBase2 directly - use TFHIRXmlComposer');
 end;
 
 function TFHIRJsonParserBase2.ParseResourceV(jsn: TJsonObject): TFhirResourceV;
@@ -136,7 +165,7 @@ end;
 
 procedure TFHIRJsonComposerBase2.ComposeResource(json: TJSONWriter; resource: TFhirResource);
 begin
-  raise exception.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRJsonComposerBase2.ComposeResourceV(json: TJSONWriter; resource: TFhirResourceV);

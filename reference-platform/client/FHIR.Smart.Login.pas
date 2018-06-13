@@ -35,7 +35,7 @@ uses
   IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP, IdSSLOpenSSL,
   FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Certs, FHIR.Web.Parsers, FHIR.Support.System, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Smart.Utilities;
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang, FHIR.Smart.Utilities;
 
 type
  // called by a client to login via Smart App Launch
@@ -311,7 +311,7 @@ end;
 function TSmartAppLaunchLogin.login: boolean;
 begin
   case server.SmartAppLaunchMode of
-    salmNone: raise Exception.Create('Smart App Launch is not configured for this server');
+    salmNone: raise EFHIRException.create('Smart App Launch is not configured for this server');
     salmOAuthClient: result := loginOAuthClient;
     salmBackendClient: result := loginBackendClient;
   else
@@ -366,7 +366,7 @@ begin
         exit;
     end;
     if (FInitialState <> FFinalState) then
-      raise Exception.create('State parameter mismatch ('+FInitialState+'/'+FFinalState+')');
+      raise EFHIRException.create('State parameter mismatch ('+FInitialState+'/'+FFinalState+')');
     if FAuthcode <> '' then
       token := getSmartOnFhirAuthToken(server, FAuthcode);
     state := stComplete;

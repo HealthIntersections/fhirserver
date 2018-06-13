@@ -35,10 +35,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Generics,
-  FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser, FHIR.Base.Utilities,
-(*  {$IFDEF FHIR2} FHIR.R2.Client, {$ENDIF}
-  {$IFDEF FHIR3} FHIR.R3.Client, {$ENDIF}
-  {$IFDEF FHIR4} FHIR.R4.Client, {$ENDIF}*)
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser, FHIR.Base.Utilities,
   FHIR.Version.Context, FHIR.Version.Constants, FHIR.Version.Resources;
 
 const
@@ -250,13 +247,13 @@ begin
             end;
           except
           end;
-        raise Exception.Create(FError);
+        raise EFHIRException.create(FError);
       end
       else
       begin
         FStatus := asyncFailed;
         FError := 'Unexpected response : '+inttostr(FClient.LastStatus)+ ' '+FClient.LastStatusMsg;
-        raise Exception.Create(FError);
+        raise EFHIRException.create(FError);
       end;
     end;
   finally
@@ -329,7 +326,7 @@ begin
     begin
       FStatus := asyncFailed;
       FError := 'Unexpected response : '+inttostr(FClient.LastStatus)+ ' '+FClient.LastStatusMsg;
-      raise Exception.Create(FError);
+      raise EFHIRException.create(FError);
     end;
   finally
     buf.Free;
@@ -346,7 +343,7 @@ begin
     asyncPinging: ; // nothing
     asyncDownload : doDownload;
     asyncDownloading: ; // nothing
-    asyncFailed: raise Exception.Create('Error: '+FError);
+    asyncFailed: raise EFHIRException.create('Error: '+FError);
   end;
 end;
 

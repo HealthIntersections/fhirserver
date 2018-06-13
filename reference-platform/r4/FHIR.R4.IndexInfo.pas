@@ -33,7 +33,7 @@ unit FHIR.R4.IndexInfo;
 
 interface
 
-// FHIR v3.4.0 generated 2018-05-15T06:48:00+10:00
+// FHIR v3.4.0 generated 2018-06-10T06:42:03+10:00
 
 uses
   SysUtils, Classes,
@@ -2480,8 +2480,8 @@ begin
   indexes.add('Medication', 'code', 'Codes that identify this medication', sptTOKEN, [], 'Medication.code | MedicationRequest.medication.as(CodeableConcept) | MedicationAdministration.medication.as(CodeableConcept) | MedicationStatement.medication.as(CodeableConcept) | MedicationDispense.medication.as(CodeableConcept)', sxpNormal);
   indexes.add('Medication', 'expiration-date', 'When batch will expire', sptDATE, [], 'Medication.batch.expirationDate', sxpNormal);
   indexes.add('Medication', 'form', 'powder | tablets | capsule +', sptTOKEN, [], 'Medication.form', sxpNormal);
-  indexes.add('Medication', 'ingredient', 'The product contained', sptREFERENCE, ['Medication', 'Substance'], 'Medication.ingredient.item.as(Reference)', sxpNormal);
-  indexes.add('Medication', 'ingredient-code', 'The product contained', sptTOKEN, [], 'Medication.ingredient.item.as(CodeableConcept)', sxpNormal);
+  indexes.add('Medication', 'ingredient', 'The actual ingredient or content', sptREFERENCE, ['Medication', 'Substance'], 'Medication.ingredient.item.as(Reference)', sxpNormal);
+  indexes.add('Medication', 'ingredient-code', 'The actual ingredient or content', sptTOKEN, [], 'Medication.ingredient.item.as(CodeableConcept)', sxpNormal);
   indexes.add('Medication', 'lot-number', 'Identifier assigned to batch', sptTOKEN, [], 'Medication.batch.lotNumber', sxpNormal);
   indexes.add('Medication', 'manufacturer', 'Manufacturer of the item', sptREFERENCE, ['Organization'], 'Medication.manufacturer', sxpNormal);
   indexes.add('Medication', 'serial-number', 'Identifier assigned to a drug at the time of manufacture', sptTOKEN, [], 'Medication.batch.serialNumber', sxpNormal);
@@ -3052,18 +3052,18 @@ begin
   indexes.add('OrganizationRole', '_source', 'Identifies where the resource comes from', sptURI, [], 'Resource.meta.source', sxpNormal);
   indexes.add('OrganizationRole', '_tag', 'Tags applied to this resource', sptTOKEN, [], 'Resource.meta.tag', sxpNormal);
   indexes.add('OrganizationRole', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);
-  indexes.add('OrganizationRole', 'active', 'Whether this practitioner role record is in active use', sptTOKEN, [], 'OrganizationRole.active', sxpNormal);
-  indexes.add('OrganizationRole', 'date', 'The period during which the practitioner is authorized to perform in these role(s)', sptDATE, [], 'OrganizationRole.period', sxpNormal);
+  indexes.add('OrganizationRole', 'active', 'Whether this organization role record is in active use', sptTOKEN, [], 'OrganizationRole.active', sxpNormal);
+  indexes.add('OrganizationRole', 'date', 'The period during which the participatingOrganization praticipates in  these role(s)', sptDATE, [], 'OrganizationRole.period', sxpNormal);
   indexes.add('OrganizationRole', 'email', 'A value in an email contact', sptTOKEN, [], 'OrganizationRole.telecom.where(system=''email'')', sxpNormal);
-  indexes.add('OrganizationRole', 'endpoint', 'Technical endpoints providing access to services operated for the practitioner with this role', sptREFERENCE, ['Endpoint'], 'OrganizationRole.endpoint', sxpNormal);
+  indexes.add('OrganizationRole', 'endpoint', 'Technical endpoints providing access to services operated for this role', sptREFERENCE, ['Endpoint'], 'OrganizationRole.endpoint', sxpNormal);
   indexes.add('OrganizationRole', 'identifier', 'A practitioner''s Identifier', sptTOKEN, [], 'OrganizationRole.identifier', sxpNormal);
   indexes.add('OrganizationRole', 'location', 'One of the locations at which this practitioner provides care', sptREFERENCE, ['Location'], 'OrganizationRole.location', sxpNormal);
   indexes.add('OrganizationRole', 'network', 'One of the locations at which this practitioner provides care', sptREFERENCE, ['Organization'], 'OrganizationRole.network', sxpNormal);
-  indexes.add('OrganizationRole', 'participating-organization', 'Practitioner that is able to provide the defined services for the organization', sptREFERENCE, ['Organization'], 'OrganizationRole.participatingOrganization', sxpNormal);
+  indexes.add('OrganizationRole', 'participating-organization', 'Organization that is filling the role (e.g. providing services or is a member)', sptREFERENCE, ['Organization'], 'OrganizationRole.participatingOrganization', sxpNormal);
   indexes.add('OrganizationRole', 'phone', 'A value in a phone contact', sptTOKEN, [], 'OrganizationRole.telecom.where(system=''phone'')', sxpNormal);
   indexes.add('OrganizationRole', 'primary-organization', 'The identity of the organization the practitioner represents / acts on behalf of', sptREFERENCE, ['Organization'], 'OrganizationRole.organization', sxpNormal);
   indexes.add('OrganizationRole', 'role', 'The practitioner can perform this role at for the organization', sptTOKEN, [], 'OrganizationRole.code', sxpNormal);
-  indexes.add('OrganizationRole', 'service', 'The list of healthcare services that this worker provides for this role''s Organization/Location(s)', sptREFERENCE, ['HealthcareService'], 'OrganizationRole.healthcareService', sxpNormal);
+  indexes.add('OrganizationRole', 'service', 'Healthcare services provided through the role', sptREFERENCE, ['HealthcareService'], 'OrganizationRole.healthcareService', sxpNormal);
   indexes.add('OrganizationRole', 'specialty', 'The practitioner has this specialty at an organization', sptTOKEN, [], 'OrganizationRole.specialty', sxpNormal);
   indexes.add('OrganizationRole', 'telecom', 'The value in any kind of contact', sptTOKEN, [], 'OrganizationRole.telecom', sxpNormal);
 end;

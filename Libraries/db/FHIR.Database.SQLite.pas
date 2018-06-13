@@ -163,7 +163,7 @@ begin
   assert(sqlite3_threadsafe>0, 'SQLite library is not threadsafe');
   if not FAutoCreate then
     if not FileExists(FFIlename) then
-      raise Exception.Create('SQLite Database '+FFIlename+' not found');
+      raise EDBException.create('SQLite Database '+FFIlename+' not found');
 end;
 
 class function TKDBSQLiteManager.IsSupportAvailable(APlatform: TKDBPlatform; var VMsg: String): Boolean;
@@ -174,7 +174,7 @@ end;
 
 procedure TKDBSQLiteManager.SaveSettings(ASettings: TSettingsAdapter);
 begin
-  raise Exception.Create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 { TKDBSQLiteConnection }
@@ -245,7 +245,7 @@ end;
 
 procedure TKDBSQLiteConnection.ClearDatabaseV;
 begin
-  raise Exception.Create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 function TKDBSQLiteConnection.ColByNameV(AColName: String): Integer;
@@ -283,7 +283,7 @@ end;
 
 procedure TKDBSQLiteConnection.DropColumnV(ATableName, AColumnName: String);
 begin
-  raise Exception.Create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TKDBSQLiteConnection.DropTableV(ATableName: String);
@@ -430,7 +430,7 @@ end;
 
 function TKDBSQLiteConnection.GetColTypeV(ACol: Word): TKDBColumnType;
 begin
-  raise Exception.Create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 function TKDBSQLiteConnection.GetRowsAffectedV: Integer;
@@ -440,7 +440,7 @@ end;
 
 procedure TKDBSQLiteConnection.ListTablesV(AList: TStrings);
 begin
-  raise Exception.Create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TKDBSQLiteConnection.PrepareV;
@@ -450,12 +450,12 @@ end;
 
 procedure TKDBSQLiteConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
 begin
-  raise Exception.Create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TKDBSQLiteConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
-  raise Exception.Create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TKDBSQLiteConnection.RollbackV;
@@ -475,7 +475,7 @@ end;
 
 function TKDBSQLiteConnection.TableSizeV(sName: String): int64;
 begin
-  raise Exception.Create('Not done yet');
+  raise EDBException.create('Not done yet');
 end;
 
 procedure TKDBSQLiteConnection.TerminateV;

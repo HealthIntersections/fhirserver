@@ -8064,9 +8064,9 @@ Begin
     Document.RegenerateMetrics(False, False);
 
     If Not Document.GetPieceByPosition(Selection.Cursor, oPiece, iOffset, iIndex) Then
-      Raise Exception.Create('unable to find position');
+      raise EWPException.create('unable to find position');
     If iOffset <> 0 Then
-      Raise Exception.Create('internal logic problem');
+      raise EWPException.create('internal logic problem');
 
     CurrentTableCellStart.Span := CurrentTableCellStart.Span - 1;
     oStart := TWPWorkingDocumentTableCellStartPiece.Create;
@@ -11031,7 +11031,7 @@ begin
       if StringStartsWithInsensitive(s, 'Key') Then
         Actions.Add(TWPMacroKeyAction.Read(s))
       else
-        raise Exception.Create('Unknown macro line '+s);
+        raise EWPException.create('Unknown macro line '+s);
     End;
   Finally
     oText.Free;

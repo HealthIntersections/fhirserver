@@ -35,7 +35,8 @@ uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer,
   FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.DateTime,
-  FHIR.Base.Objects, FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
 
 type
   TOpenMHealthAdaptor = class (TFHIRFormatAdaptor)
@@ -80,13 +81,13 @@ begin
   json := TJsonObject.Create;
   try
     if response.Resource = nil then
-      raise Exception.Create('Cannot represent a resource of (nil) as an OpenMHealth data point')
+      raise EFHIRException.create('Cannot represent a resource of (nil) as an OpenMHealth data point')
     else if response.Resource is TFHIRObservation then
       writeObservation(response.Resource as TFHIRObservation, json)
     else if response.Resource is TFHIRBundle then
       writeBundle(response.Resource as TFHIRBundle, json)
     else
-      raise Exception.Create('Cannot represent a resource of type '+response.Resource.fhirType+' as an OpenMHealth data point');
+      raise EFHIRException.create('Cannot represent a resource of type '+response.Resource.fhirType+' as an OpenMHealth data point');
     TJSONWriter.writeObject(stream, json, true);
   finally
     json.Free;
@@ -158,9 +159,9 @@ var
   p : String;
 begin
   if req.Parameters.GetVar('schema_namespace') <> 'omh' then
-    raise Exception.Create('Unknown schema namespace');
+    raise EFHIRException.create('Unknown schema namespace');
   if req.Parameters.GetVar('schema_version') <> '1.0' then
-    raise Exception.Create('Unknown schema version for OMH 1.0');
+    raise EFHIRException.create('Unknown schema version for OMH 1.0');
   p := '_profile=http://www.openmhealth.org/schemas/fhir/'+req.Parameters.GetVar('schema_namespace')+'/'+req.Parameters.GetVar('schema_version')+'/'+req.Parameters.GetVar('schema_name');
   if req.Parameters.VarExists('created_on_or_after') then
     p := p + '&date=ge'+req.Parameters.getvar('created_on_or_after');
@@ -210,7 +211,7 @@ begin
     result.status := ObservationStatusFinal; // final is reasonable for most mobilde data
 
     if (not json.has('header')) then // it must, but check anyway
-      raise Exception.Create('Cannot process without header');
+      raise EFHIRException.create('Cannot process without header');
 
     schema := readHeader(json.obj['header'], result);
     if (schema = 'physical-activity') then
@@ -218,7 +219,7 @@ begin
     else if (schema = 'blood-glucose') then
       readBloodGlucose(json.obj['body'], result)
     else
-      raise Exception.Create('Unsupported schema type '+schema);
+      raise EFHIRException.create('Unsupported schema type '+schema);
     result.Link;
   finally
     result.Free;
@@ -480,7 +481,7 @@ begin
   else if (schema = 'blood-glucose') then
     writeBloodGlucose(obs, json.forceObj['body'])
   else
-    raise Exception.Create('Unsupported schema type '+schema);
+    raise EFHIRException.create('Unsupported schema type '+schema);
 end;
 
 function TOpenMHealthAdaptor.writePeriod(period: TFHIRPeriod): TJsonObject;
@@ -489,9 +490,9 @@ var
   qty : TFhirQuantity;
 begin
   if (period.start.null) then
-    raise Exception.Create('Can''t convert a period to OpenMHealth when periods are incomplete');
+    raise EFHIRException.create('Can''t convert a period to OpenMHealth when periods are incomplete');
   if (period.end_.null) then
-    raise Exception.Create('Can''t convert a period to OpenMHealth when periods are incomplete');
+    raise EFHIRException.create('Can''t convert a period to OpenMHealth when periods are incomplete');
 
   result := TJsonObject.Create;
   try
@@ -602,7 +603,7 @@ begin
     if u.value.StartsWith('http://www.openmhealth.org/schemas/fhir/') then
       s := u.value;
   if (s = '') then // todo: try doing it anyway
-    raise Exception.Create('Cannot represent an observation with no OpenMHealth profile as an OpenMHealth data point');
+    raise EFHIRException.create('Cannot represent an observation with no OpenMHealth profile as an OpenMHealth data point');
 
   p := s.Split(['/']);
   obj := hdr.forceObj['schema_id'];

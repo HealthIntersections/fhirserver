@@ -36,16 +36,14 @@ uses
   FHIR.Support.Objects;
 
 Type
-  EUCUMServices = class (Exception);
-
   TUcumPair = class (TFslObject)
   private
     FUnitCode: String;
-    FValue: TSmartDecimal;
+    FValue: TFslDecimal;
   Public
-    Constructor Create(oValue : TSmartDecimal; sUnitCode : String); Overload;
+    Constructor Create(oValue : TFslDecimal; sUnitCode : String); Overload;
 
-    Property Value : TSmartDecimal read FValue write FValue;
+    Property Value : TFslDecimal read FValue write FValue;
     Property UnitCode : String read FUnitCode write FUnitCode;
   End;
 
@@ -59,7 +57,7 @@ implementation
 
 { TUcumPair }
 
-constructor TUcumPair.Create(oValue: TSmartDecimal; sUnitCode: String);
+constructor TUcumPair.Create(oValue: TFslDecimal; sUnitCode: String);
 begin
   Create;
   Value := oValue;

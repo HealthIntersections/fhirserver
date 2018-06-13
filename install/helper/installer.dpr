@@ -43,7 +43,7 @@ uses
   FHIR.Support.Collections in '..\..\reference-platform\Support\FHIR.Support.Collections.pas',
   FHIR.Support.Stream in '..\..\reference-platform\Support\FHIR.Support.Stream.pas',
   FHIR.Database.Manager in '..\..\Libraries\db\FHIR.Database.Manager.pas',
-  FHIR.Support.Lock in '..\..\reference-platform\support\FHIR.Support.Lock.pas',
+  FHIR.Support.Threads in '..\..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Database.Settings in '..\..\Libraries\db\FHIR.Database.Settings.pas',
   FHIR.Database.Logging in '..\..\Libraries\db\FHIR.Database.Logging.pas',
   FHIR.Database.Dialects in '..\..\reference-platform\support\FHIR.Database.Dialects.pas',
@@ -310,7 +310,7 @@ begin
     begin
       StringSplit(s.Substring(4), ' ', l, r);
       if SameText(l, 'Exception') then
-        raise Exception.Create(r)
+        raise ELibraryException.create(r)
       else
         CallBack(StrToIntDef(l, 0), r);
     end;
@@ -357,7 +357,7 @@ begin
     end;
   except
     on e : exception do
-      result := StrToPchar(e.Message);
+      result := StrToPchar('Error: '+e.Message);
   end;
 end;
 
@@ -371,7 +371,13 @@ type
     function pct(p : integer) : integer;
     procedure fetchProgress(sender : TObject; progress : integer);
     procedure exec;
+    function check(sender : TObject; msg : String) : boolean;
   end;
+
+function TPackageFetcher.check(sender: TObject; msg: String): boolean;
+begin
+  result := true;
+end;
 
 procedure TPackageFetcher.exec;
 var
@@ -385,6 +391,7 @@ var
 begin
   pcm := TFHIRPackageManager.Create(false);
   try
+    pcm.OnCheck := check;
     for i := 0 to length(FUrls) - 1 do // first will be empty
     begin
       FIndex := i;
@@ -423,11 +430,11 @@ begin
             end;
           end;
           if not ok then
-            raise Exception.Create('Unable to find package for '+pi+'-'+pv+'at '+url+': '+s);
+            raise EIOException.create('Unable to find package for '+pi+'-'+pv+'at '+url+': '+s);
           if ok then
           begin
             FCallback(pct(100), 'Installing '+FCurrent);
-            pcm.Import(fetch.Buffer.AsBytes, function (msg : String) : boolean begin result := true; end);
+            pcm.Import(fetch.Buffer.AsBytes);
           end;
         finally
           fetch.Free;

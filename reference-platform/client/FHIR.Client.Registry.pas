@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics,
-  FHIR.Base.Objects,
+  FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities;
 
 type
@@ -118,7 +118,7 @@ begin
     if l.Count > 0 then
       result := l[0].Link
     else
-      raise Exception.Create('No default server exists');
+      raise EFHIRException.create('No default server exists');
   finally
     l.Free;
   end;
@@ -134,7 +134,7 @@ begin
     if l.Count > 0 then
       result := l[0].fhirEndpoint
     else
-      raise Exception.Create('No default server exists');
+      raise EFHIRException.create('No default server exists');
   finally
     l.Free;
   end;
@@ -210,7 +210,7 @@ begin
   for i := 0 to arr.Count - 1 do
     if i <> server.id then
       if (arr.Obj[i].str['Name'] = server.name) then
-        raise exception.Create('Duplicate Server Name '+server.name);
+        raise EFHIRException.create('Duplicate Server Name '+server.name);
 
   o := arr.Obj[server.id];
   server.writeToJson(o);
@@ -317,7 +317,7 @@ begin
   arr := json.forceArr[srvname(purpose)];
   for i := 0 to arr.Count - 1 do
     if (arr.Obj[i].str['Name'] = server.name) then
-      raise exception.Create('Duplicate Server Name '+server.name);
+      raise EFHIRException.create('Duplicate Server Name '+server.name);
   o := arr.addObject;
   server.writeToJson(o);
   Save;

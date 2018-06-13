@@ -203,7 +203,7 @@ end;
 
 procedure ProgressLimitError;
 begin
-  raise Exception.CreateFmt(SOutOfRange, [0, Limit16]);
+  raise ELibraryException.createFmt(SOutOfRange, [0, Limit16]);
 end;
 
 constructor TDProgressBar.Create(AOwner: TComponent);

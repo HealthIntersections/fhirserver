@@ -950,7 +950,7 @@ Begin
   Try
     oReader.Skip([TFslXMLKnownHeaderType, TFslXMLKnownCommentType]);
     If Not oReader.IsNode(OFFICE_NS, 'document-content') Then
-      Raise Exception.Create('Expect "document-content" in namespace ' + OFFICE_NS);
+      raise EWPException.create('Expect "document-content" in namespace ' + OFFICE_NS);
 
     If oReader.PeekIsOpen Then
     Begin

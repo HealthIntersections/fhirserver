@@ -80,6 +80,7 @@
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
+        <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_OSX32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
@@ -205,7 +206,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.ElementModel.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Profiles.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathEngine.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
@@ -364,7 +364,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Zip.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.WinInet.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
         <DCCReference Include="BulkDataForm.pas">

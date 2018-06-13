@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Stream,
   RegularExpressions, YuStemmer,
   FHIR.Base.Common,
@@ -74,8 +74,6 @@ Const
   CL_OFFSET_Entry = 41;
 
 Type
-  ELoincServices = class (Exception);
-
   TLangArray = array of byte;
   TLoincPropertyType = (lptComponents, lptProperties, lptTimeAspects, lptSystems, lptScales, lptMethods, lptClasses);
 
@@ -462,10 +460,10 @@ begin
   end;
 
   if (iIndex > FLength) then
-    Raise ELoincServices.Create('Wrong length index getting LOINC name');
+    Raise ETerminologyError.Create('Wrong length index getting LOINC name');
   SetLength(Result, Word(FMaster[iIndex]));
   if (iIndex + 3 + length(result) > FLength) then
-    Raise Exception.Create('Wrong length index getting LOINC name (2)');
+    raise ETerminologyError.create('Wrong length index getting LOINC name (2)');
   if Length(result) > 0 Then
   begin
     Move(FMaster[iIndex+2], lang, 1);
@@ -476,7 +474,7 @@ end;
 function TLoincStrings.AddEntry(lang : byte; const s: String): Cardinal;
 begin
   if Length(s) > 2000 Then
-    raise exception.Create('LOINC Description too long: '+s);
+    raise ETerminologyError.create('LOINC Description too long: '+s);
   result := FBuilder.Length;
   FBuilder.AddWord(Length(s));
   if (length(s) > 0) then
@@ -508,9 +506,9 @@ var
   lw : Cardinal;
 begin
   if (iIndex > FLength) then
-    Raise Exception.Create('Wrong length index getting LOINC list');
+    raise ETerminologyError.create('Wrong length index getting LOINC list');
   if Byte(FMaster[iIndex]) <> 0 Then
-    Raise exception.Create('not a word list');
+    raise ETerminologyError.create('not a word list');
   inc(iIndex);
   move(FMaster[iIndex], lw, 4);
   SetLength(Result, lw);
@@ -528,9 +526,9 @@ var
   lw : cardinal;
 begin
   if (iIndex > FLength) then
-    Raise Exception.Create('Wrong length index getting LOINC list');
+    raise ETerminologyError.create('Wrong length index getting LOINC list');
   if Byte(FMaster[iIndex]) <> 1 Then
-    Raise exception.Create('not a cardinal list');
+    raise ETerminologyError.create('not a cardinal list');
   inc(iIndex);
   move(FMaster[iIndex], lw, 4);
   SetLength(Result, lw);
@@ -547,7 +545,7 @@ var
   iLoop : Integer;
 Begin
   if Length(a) > 65535 Then
-    raise exception.Create('LOINC reference list too long ('+inttostr(length(a))+')');
+    raise ETerminologyError.create('LOINC reference list too long ('+inttostr(length(a))+')');
   result := FBuilder.Length;
   FBuilder.Append(Byte(0));// for words
   FBuilder.AddCardinal(length(a));
@@ -581,7 +579,7 @@ end;
 function TLOINCReferences.Getlength(iIndex: Cardinal): Cardinal;
 begin
   if (iIndex > FLength) then
-    Raise Exception.Create('Wrong length index getting LOINC list');
+    raise ETerminologyError.create('Wrong length index getting LOINC list');
   inc(iIndex); // skip type marker
   move(FMaster[iIndex], result, 4);
 end;
@@ -593,7 +591,7 @@ var
   b : byte;
 begin
   if (iIndex >= FLength) then
-    Raise Exception.Create('Wrong length index getting LOINC name');
+    raise ETerminologyError.create('Wrong length index getting LOINC name');
   Move(FMaster[iIndex*CONCEPT_LENGTH+0], iName, 4);
   Move(FMaster[iIndex*CONCEPT_LENGTH+4], b, 1);
   Move(FMaster[iIndex*CONCEPT_LENGTH+5], iChildren, 4);
@@ -788,7 +786,7 @@ end;
 Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; langs : TLangArray; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal; var iFlags : Byte);
 Begin
   if iIndex > FLength div FRecLength - 1 Then
-    Raise Exception.Create('Attempt to access invalid LOINC index at '+inttostr(iIndex*FRecLength));
+    raise ETerminologyError.create('Attempt to access invalid LOINC index at '+inttostr(iIndex*FRecLength));
   sCode := trim(asCopy(FMaster, iIndex*FRecLength, FCodeLength));
 {0}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Description], iDescription, 4);
 {4}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_OtherNames], iOtherNames, 4);
@@ -830,7 +828,7 @@ var
 begin
   offset := (iIndex*FRecLength)+FCodeLength+CL_OFFSET_Stems;
   if (offset + 4 > length(FMaster)) then
-    raise Exception.Create('Write off end');
+    raise ETerminologyError.create('Write off end');
   Move(iValue, FMaster[offset], 4);
 end;
 
@@ -1059,7 +1057,7 @@ begin
     oread := TReader.Create(oFile, 8192);
     try
       if oRead.ReadString <> LOINC_CACHE_VERSION Then
-        raise exception.create('the LOINC cache must be rebuilt using the ''Import LOINC'' operation in the manager application.');
+        raise ETerminologyError.create('the LOINC cache must be rebuilt using the ''Import LOINC'' operation in the manager application.');
       FCode.CodeLength := oRead.ReadInteger;
       FLang.FMaster := ReadBytes;
       FLang.FLength := Length(FLang.FMaster);
@@ -1416,7 +1414,7 @@ begin
   End;
 
   if Length(words) = 0 then
-    Raise Exception.Create('no usable search text found');
+    raise ETerminologyError.create('no usable search text found');
 
 
   iCount := 0;
@@ -1505,7 +1503,7 @@ end;
 function TLOINCServiceList.GetDefinition: TLOINCServices;
 begin
   if FDefinition = nil then
-    Raise Exception.Create('There is no default LOINC service');
+    raise ETerminologyError.create('There is no default LOINC service');
   result := FDefinition;
 end;
 
@@ -1573,7 +1571,7 @@ var
 begin
   l := (iIndex * 5);
   if l > FLength - 5 Then
-    raise Exception.create('invalid index');
+    raise ETerminologyError.create('invalid index');
   move(FMaster[l], index, 4);
   move(FMaster[l+4], flags, 1);
 end;
@@ -1615,7 +1613,7 @@ var
 begin
   l := (iIndex * 4);
   if l > FLength - 4 Then
-    raise Exception.create('invalid index');
+    raise ETerminologyError.create('invalid index');
   move(FMaster[l], index, 4);
 end;
 
@@ -1861,7 +1859,7 @@ begin
   if (context = nil) then
     result := TCodeSystemProviderContext(ndx+1) // offset from 0 to avoid ambiguity about nil contxt, and first entry
   else
-    raise exception.create('shouldn''t be here');
+    raise ETerminologyError.create('shouldn''t be here');
 end;
 
 function TLoincServices.Code(context: TCodeSystemProviderContext): string;
@@ -2024,7 +2022,7 @@ function TLoincServices.getDisplay(code: String; lang : String): String;
 begin
   result := GetDisplayByName(code, langsForLang(lang));
   if result = '' then
-    raise Exception.create('unable to find '+code+' in '+system(nil));
+    raise ETerminologyError.create('unable to find '+code+' in '+system(nil));
 end;
 
 function TLoincServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -2041,7 +2039,7 @@ begin
   else if AnswerLists.FindCode(code, i, FDesc) then
     result := TCodeSystemProviderContext(cardinal(CodeList.Count)+ i+1)
   else
-    result := nil;//raise Exception.create('unable to find '+code+' in '+system);
+    result := nil;//raise ETerminologyError.create('unable to find '+code+' in '+system);
 end;
 
 function TLoincServices.system(context : TCodeSystemProviderContext): String;
@@ -2125,7 +2123,7 @@ var
   i, t : integer;
 begin
   if not (op in [foEqual, foIn, foRegex]) then
-    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
+    raise ETerminologyError.create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
 
   if op = foRegex then
   begin
@@ -2249,9 +2247,9 @@ begin
   result := THolder.create;
   try
     if (op = foEqual) and (value.Contains(',')) then
-      raise Exception.Create('Value is illegal - no commas');
+      raise ETerminologyError.create('Value is illegal - no commas');
     if (not (op in [foEqual, foIn])) then
-      raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
+      raise ETerminologyError.create('Unsupported operator type '+CODES_TFhirFilterOperator[op]);
 
     while (value <> '') do
     begin
@@ -2432,7 +2430,7 @@ end;
 procedure TLOINCHeirarchyEntryList.GetEntry(iIndex: Cardinal; var code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal);
 begin
   if iIndex > (Length(FMaster) div 32) Then
-    Raise Exception.Create('Attempt to access invalid LOINC Entry index');
+    raise ETerminologyError.create('Attempt to access invalid LOINC Entry index');
   Move(FMaster[(iIndex*32)+0], code, 4);
   Move(FMaster[(iIndex*32)+4], text, 4);
   Move(FMaster[(iIndex*32)+8], children, 4);
@@ -2452,7 +2450,7 @@ begin
 
   SetLength(res, len);
   if (length(s) < start + len) then
-    raise Exception.Create('Read off end of file: '+inttostr(length(s))+' / '+inttostr(start)+':'+inttostr(len));
+    raise ETerminologyError.create('Read off end of file: '+inttostr(length(s))+' / '+inttostr(start)+':'+inttostr(len));
   move(s[start], res[1], len);
   result := String(res);
 end;
@@ -2523,7 +2521,7 @@ end;
 procedure TLOINCAnswersList.GetEntry(iIndex: Cardinal; var code, description, answers: Cardinal);
 begin
   if iIndex > (Length(FMaster) div 12) Then
-    Raise Exception.Create('Attempt to access invalid LOINC Entry index');
+    raise ETerminologyError.create('Attempt to access invalid LOINC Entry index');
   Move(FMaster[(iIndex*12)+0], code, 4);
   Move(FMaster[(iIndex*12)+4], description, 4);
   Move(FMaster[(iIndex*12)+8], answers, 4);
@@ -2556,9 +2554,9 @@ End;
 function TLoincLanguages.AddEntry(lang, country: String): byte;
 begin
   if Length(lang) <> 2 Then
-    raise exception.Create('LOINC Language code too long: '+lang);
+    raise ETerminologyError.create('LOINC Language code too long: '+lang);
   if Length(country) <> 2 Then
-    raise exception.Create('LOINC Language code too long: '+country);
+    raise ETerminologyError.create('LOINC Language code too long: '+country);
   assert(FBuilder.Length mod 10 = 0);
   result := FBuilder.Length div 10;
   FBuilder.AddString(lang+'-'+country);
@@ -2581,7 +2579,7 @@ var
   s : String;
 begin
   if ((iIndex +1) * 10 > FLength) then
-    Raise Exception.Create('Wrong length index getting LOINC language code');
+    raise ETerminologyError.create('Wrong length index getting LOINC language code');
   SetLength(s, 5);
   Move(FMaster[iIndex*10], s[1], 10);
   StringSplit(s, '-', lang, country);

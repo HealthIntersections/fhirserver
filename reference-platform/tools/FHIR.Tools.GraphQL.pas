@@ -33,10 +33,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Web.Parsers, FHIR.Misc.GraphQL,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory;
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory, FHIR.Base.Lang;
   {FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Parser, FHIR.Version.Utilities, FHIR.Version.PathNode, FHIR.Version.PathEngine;}
 
 type
@@ -168,9 +167,9 @@ var
   vl : TFslList<TGraphQLValue>;
 begin
   if dir.Arguments.Count <> 1 then
-    raise EGraphQLException.Create('Unable to process @'+dir.Name+': expected a single argument "if"');
+    raise EJsonException.Create('Unable to process @'+dir.Name+': expected a single argument "if"');
   if dir.Arguments[0].Name <> 'if' then
-    raise EGraphQLException.Create('Unable to process @'+dir.Name+': expected a single argument "if"');
+    raise EJsonException.Create('Unable to process @'+dir.Name+': expected a single argument "if"');
   vl := resolveValues(dir.Arguments[0], 1);
   try
     result := vl[0].ToString = 'true';
@@ -192,20 +191,20 @@ begin
       if (skip = nil) then
         skip := dir
       else
-        raise EGraphQLException.Create('Duplicate @skip directives');
+        raise EJsonException.Create('Duplicate @skip directives');
     end
     else if dir.Name = 'include' then
     begin
       if (include = nil) then
         include := dir
       else
-        raise EGraphQLException.Create('Duplicate @include directives');
+        raise EJsonException.Create('Duplicate @include directives');
     end
     else if not StringArrayExistsSensitive(['flatten', 'first', 'singleton', 'slice'], dir.Name) then
-      raise EGraphQLException.Create('Directive "'+dir.Name+'" is not recognised');
+      raise EJsonException.Create('Directive "'+dir.Name+'" is not recognised');
   end;
   if (skip <> nil) and (include <> nil) then
-    raise EGraphQLException.Create('Cannot mix @skip and @include directives');
+    raise EJsonException.Create('Cannot mix @skip and @include directives');
   if skip <> nil then
     result := not checkBooleanDirective(skip)
   else if include <> nil then
@@ -304,7 +303,7 @@ var
   op : TGraphQLOperation;
 begin
   if FGraphQL = nil then
-    raise Exception.Create('Unable to process graphql - graphql document missing');
+    raise EFHIRException.create('Unable to process graphql - graphql document missing');
 
   FOutput.Free;
   FOutput := TGraphQLObjectValue.Create;
@@ -314,15 +313,15 @@ begin
   begin
     op := GraphQL.Document.operation(GraphQL.OperationName);
     if op = nil then
-      raise EGraphQLException.Create('Unable to find operation "'+GraphQL.OperationName+'"');
+      raise EJsonException.Create('Unable to find operation "'+GraphQL.OperationName+'"');
   end
   else if (GraphQL.Document.Operations.Count = 1) then
     op := GraphQL.Document.Operations[0]
   else
-    raise EGraphQLException.Create('No operation name provided, so expected to find a single operation');
+    raise EJsonException.Create('No operation name provided, so expected to find a single operation');
 
   if op.operationType = qglotMutation then
-    raise EGraphQLException.Create('Mutation operations are not supported');
+    raise EJsonException.Create('Mutation operations are not supported');
 
   checkNoDirectives(op.Directives);
   processVariables(op);
@@ -365,9 +364,9 @@ begin
           vl := resolveValues(arg);
           try
             if (vl.Count <> 1) then
-              raise Exception.Create('Incorrect number of arguments');
+              raise EFHIRException.create('Incorrect number of arguments');
             if values[0].isPrimitive then
-              raise Exception.Create('Attempt to use a filter ('+arg.Name+') on a primtive type ('+prop.Type_+')');
+              raise EFHIRException.create('Attempt to use a filter ('+arg.Name+') on a primtive type ('+prop.Type_+')');
             if (arg.Name = 'FHIRPathEngine') then
               fp.Append(' and '+vl[0].ToString)
             else if (arg.Name = '_offset') then
@@ -378,7 +377,7 @@ begin
             begin
               p := values[0].getPropertyValue(arg.Name);
               if p = nil then
-                raise Exception.Create('Attempt to use an unknown filter ('+arg.Name+') on a type ('+prop.Type_+')');
+                raise EFHIRException.create('Attempt to use an unknown filter ('+arg.Name+') on a type ('+prop.Type_+')');
               p.Free;
               fp.Append(' and '+arg.Name+' = '''+vl[0].ToString+'''');
             end;
@@ -540,7 +539,7 @@ begin
     else if sel.field.hasDirective('first') {or sel.field.hasDirective('last')} then
     begin
       if expression <> nil then
-        raise Exception.Create('You cannot mix @slice and @first');
+        raise EFHIRException.create('You cannot mix @slice and @first');
       arg := target.addField(sel.field.Alias+suffix, listStatus(sel.field, inheritedList))
     end
     else if expression = nil then
@@ -561,13 +560,13 @@ begin
       if value.isPrimitive and not extensionMode then
       begin
         if not sel.field.SelectionSet.Empty then
-          raise EGraphQLException.Create('Encountered a selection set on a scalar field type');
+          raise EJsonException.Create('Encountered a selection set on a scalar field type');
         processPrimitive(arg, value)
       end
       else
       begin
         if sel.field.SelectionSet.Empty then
-          raise EGraphQLException.Create('No Fields selected on a complex object');
+          raise EJsonException.Create('No Fields selected on a complex object');
         if arg = nil then
           processObject(context, value, target, sel.field.SelectionSet, il, ss)
         else
@@ -606,7 +605,7 @@ begin
     else if varRef.DefaultValue <> nil then
       FWorkingVariables.Add(varRef.Name, TGraphQLArgument.Create(varRef.Name, varRef.DefaultValue.Link))
     else
-      raise EGraphQLException.Create('No value found for variable ');
+      raise EJsonException.Create('No value found for variable ');
   end;
 end;
 
@@ -653,13 +652,13 @@ begin
           else if isResourceName(sel.field.Name, 'Connection') and (source is TFHIRResourceV) then
             processReverseReferenceSearch(source as TFHIRResourceV, sel.field, target, inheritedList, suffix)
           else
-            raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
+            raise EJsonException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
         end
         else
         begin
           try
             if not IsPrimitive(prop.Type_) and sel.field.Name.startsWith('_') then
-              raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
+              raise EJsonException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
 
             vl := filter(context, prop, sel.field.Arguments, prop.Values, sel.field.Name.startsWith('_'));
             try
@@ -679,7 +678,7 @@ begin
       if (checkDirectives(sel.InlineFragment.Directives)) then
       begin
         if sel.InlineFragment.TypeCondition = '' then
-          raise EGraphQLException.Create('Not done yet - inline fragment with no type condition'); // cause why? why is it even valid?
+          raise EJsonException.Create('Not done yet - inline fragment with no type condition'); // cause why? why is it even valid?
         if source.fhirType = sel.InlineFragment.TypeCondition then
           processObject(context, source, target, sel.InlineFragment.SelectionSet, inheritedList, suffix);
       end;
@@ -688,10 +687,10 @@ begin
     begin
       fragment := FGraphQL.Document.fragment(sel.FragmentSpread.Name);
       if fragment = nil then
-        raise EGraphQLException.Create('Unable to resolve fragment '+sel.FragmentSpread.Name);
+        raise EJsonException.Create('Unable to resolve fragment '+sel.FragmentSpread.Name);
 
       if fragment.TypeCondition = '' then
-        raise EGraphQLException.Create('Not done yet - inline fragment with no type condition'); // cause why? why is it even valid?
+        raise EJsonException.Create('Not done yet - inline fragment with no type condition'); // cause why? why is it even valid?
       if source.fhirType = fragment.TypeCondition then
         processObject(context, source, target, fragment.SelectionSet, inheritedList, suffix);
     end;
@@ -721,9 +720,9 @@ var
   prop : TFHIRProperty;
 begin
   if not (source.fhirType = 'Reference') then
-    raise EGraphQLException.Create('Not done yet');
+    raise EJsonException.Create('Not done yet');
   if not assigned(FOnFollowReference) then
-    raise EGraphQLException.Create('Resource Referencing services not provided');
+    raise EJsonException.Create('Resource Referencing services not provided');
 
   prop := source.getPropertyValue('reference');
   try
@@ -746,7 +745,7 @@ begin
         dest.Free;
       end
     else if not hasArgument(field.Arguments, 'optional', 'true') then
-      raise EGraphQLException.Create('Unable to resolve reference to '+prop.Values[0].primitiveValue);
+      raise EJsonException.Create('Unable to resolve reference to '+prop.Values[0].primitiveValue);
   finally
     prop.Free;
   end;
@@ -761,7 +760,7 @@ var
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnListResources) then
-    raise EGraphQLException.Create('Resource Referencing services not provided');
+    raise EJsonException.Create('Resource Referencing services not provided');
   list := TFslList<TFHIRResourceV>.create;
   try
     params := TFslList<TGraphQLArgument>.create;
@@ -773,9 +772,9 @@ begin
         else if (parg = nil) then
           parg := a
         else
-          raise EGraphQLException.Create('Duplicate parameter _reference');
+          raise EJsonException.Create('Duplicate parameter _reference');
       if parg = nil then
-        raise EGraphQLException.Create('Missing parameter _reference');
+        raise EJsonException.Create('Missing parameter _reference');
       arg := TGraphQLArgument.Create;
       params.Add(arg);
       arg.Name := getSingleValue(parg);
@@ -820,7 +819,7 @@ var
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnSearch) then
-    raise EGraphQLException.Create('Resource Referencing services not provided');
+    raise EJsonException.Create('Resource Referencing services not provided');
   params := TFslList<TGraphQLArgument>.create;
   try
     parg := nil;
@@ -830,9 +829,9 @@ begin
       else if (parg = nil) then
         parg := a
       else
-        raise EGraphQLException.Create('Duplicate parameter _reference');
+        raise EJsonException.Create('Duplicate parameter _reference');
     if parg = nil then
-      raise EGraphQLException.Create('Missing parameter _reference');
+      raise EJsonException.Create('Missing parameter _reference');
     arg := TGraphQLArgument.Create;
     params.Add(arg);
     arg.Name := getSingleValue(parg);
@@ -863,7 +862,7 @@ begin
   for sel in selection do
   begin
     if (sel.Field = nil) then
-      raise EGraphQLException.Create('Only field selections are allowed in this context');
+      raise EJsonException.Create('Only field selections are allowed in this context');
     checkNoDirectives(sel.Field.Directives);
 
     if (isResourceName(sel.Field.Name, '')) then
@@ -883,17 +882,17 @@ var
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnLookup) then
-    raise EGraphQLException.Create('Resource Referencing services not provided');
+    raise EJsonException.Create('Resource Referencing services not provided');
   id := '';
   for arg in field.Arguments do
     if (arg.Name = 'id') then
       id := getSingleValue(arg)
     else
-      raise EGraphQLException.Create('Unknown/invalid parameter '+arg.Name);
+      raise EJsonException.Create('Unknown/invalid parameter '+arg.Name);
   if (id = '') then
-    raise EGraphQLException.Create('No id found');
+    raise EJsonException.Create('No id found');
   if not FOnLookup(FAppinfo, field.Name, id, res) then
-    raise EGraphQLException.Create('Resource '+field.Name+'/'+id+' not found');
+    raise EJsonException.Create('Resource '+field.Name+'/'+id+' not found');
   try
     arg := target.addField(field.Alias, listStatus(field, false));
     new := TGraphQLObjectValue.Create;
@@ -916,7 +915,7 @@ var
   new : TGraphQLObjectValue;
 begin
   if not assigned(FOnListResources) then
-    raise EGraphQLException.Create('Resource Referencing services not provided');
+    raise EJsonException.Create('Resource Referencing services not provided');
   list := TFslList<TFHIRResourceV>.create;
   try
     FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), field.Arguments, list);
@@ -957,7 +956,7 @@ var
   l,r: String;
 begin
   if not assigned(FOnSearch) then
-    raise EGraphQLException.Create('Resource Referencing services not provided');
+    raise EJsonException.Create('Resource Referencing services not provided');
   params := TFslList<TGraphQLArgument>.create;
   try
     carg := nil;
@@ -1238,7 +1237,7 @@ begin
       else
       begin
         if vars.Contains(':'+v.ToString+':') then
-          raise EGraphQLException.Create('Recursive reference to variable '+v.ToString);
+          raise EJsonException.Create('Recursive reference to variable '+v.ToString);
         if FWorkingVariables.TryGetValue(v.ToString, a) then
         begin
           vl := resolveValues(a, -1, vars+':'+v.ToString+':');
@@ -1249,10 +1248,10 @@ begin
           end;
         end
         else
-          raise EGraphQLException.Create('No value found for variable "'+v.ToString+'" in "'+arg.Name+'"');
+          raise EJsonException.Create('No value found for variable "'+v.ToString+'" in "'+arg.Name+'"');
       end;
     if (max <> -1) and (result.Count > max) then
-      raise EGraphQLException.Create('Only '+integer.ToString(max)+' values are allowed for "'+arg.Name+'", but '+inttostr(result.Count)+' enoucntered');
+      raise EJsonException.Create('Only '+integer.ToString(max)+' values are allowed for "'+arg.Name+'", but '+inttostr(result.Count)+' enoucntered');
     result.link;
   finally
     result.free;

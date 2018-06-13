@@ -37,7 +37,8 @@ uses
   FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Web.Parsers,
   FHIR.Support.Generics, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame, ToolKitUtilities,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
   CodeSystemConceptDialog, FMX.Platform, System.ImageList, TranslationsEditorDialog;
@@ -304,7 +305,7 @@ begin
     else if c.Params['charset'] = 'ascii' then
       result := TEncoding.ASCII
     else
-      raise Exception.Create('Unknown character set '+c.Params['charset']);
+      raise EFHIRException.create('Unknown character set '+c.Params['charset']);
   finally
     c.Free;
   end;

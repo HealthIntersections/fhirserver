@@ -295,7 +295,7 @@ var
 begin
   txtFile := ChangeFileExt(filename, '.txt');
   if not FileExists(txtFile) then
-    raise Exception.Create('Unable to find the file '+txtFile+' so the version can be determined');
+    raise ETerminologySetup.create('Unable to find the file '+txtFile+' so the version can be determined');
   f := TFileStream.Create(txtFile, fmOpenRead + fmShareDenyWrite);
   try
     setLength(txt, f.Size);
@@ -307,7 +307,7 @@ begin
   StringSplit(t, [#13], s, t);
   result := copy(s, length(s)-3, 4);
   if not (StringIsInteger16(copy(result, 1, 1)) and (result[2] = '.') and StringIsInteger16(copy(result, 3, 2))) then
-    raise Exception.Create('Unable to read the version from '+txtFile);
+    raise ETerminologySetup.create('Unable to read the version from '+txtFile);
 end;
 
 function importLoinc(folder, version, date, dest : String; callback : TInstallerCallback = nil) : String;
@@ -426,7 +426,7 @@ begin
     parent := NO_PARENT;
 
   if FEntries.AddEntry(AddDescription(0, entry.FCode), AddDescription(0, entry.FText), parent, children, descendants, concepts, descendentConcepts) <> entry.index then
-    raise Exception.Create('Out of order');
+    raise ETerminologySetup.create('Out of order');
 end;
 
 Const
@@ -612,7 +612,7 @@ begin
               oSubsets[lsiOrder].add(oCode.Link);
             end
             else if (items[FLD_ORDER_OBS] <> '') And (items[FLD_ORDER_OBS] <> 'Subset') Then
-              Raise exception.create('unknown order/obs '+items[FLD_ORDER_OBS])
+              raise ETerminologySetup.create('unknown order/obs '+items[FLD_ORDER_OBS])
             else
               oSubsets[lsiOrderSubset].add(oCode.Link);
 
@@ -627,7 +627,7 @@ begin
             if s = '' then
               s := '1';
             if not StringIsInteger32(s) then
-              raise Exception.Create('Error');
+              raise ETerminologySetup.create('Error');
 
             case StrToInt(s) of
              2: begin
@@ -646,7 +646,7 @@ begin
                 oSubsets[lsiTypeObservation].add(oCode.Link);
                 end;
             else
-              Raise exception.create('unexpected class type '+items[FLD_CLASSTYPE]);
+              raise ETerminologySetup.create('unexpected class type '+items[FLD_CLASSTYPE]);
             End;
             if SameText(items[FLD_STATUS], 'Active') then
               oSubsets[lsiActive].add(oCode.Link)
@@ -657,7 +657,7 @@ begin
             else if SameText(items[FLD_STATUS], 'Trial') then
               oSubsets[lsiTrial].add(oCode.Link)
             else
-              raise Exception.Create('Unknown LOINC Code status '+items[FLD_STATUS]);
+              raise ETerminologySetup.create('Unknown LOINC Code status '+items[FLD_STATUS]);
 
             SeeDesc(oCode.Display, oCode, FLAG_LONG_COMMON);
 
@@ -885,7 +885,7 @@ begin
           aCardinals[j] := answerlist.FAnswers[j].FIndex;
         j := FAnswers.AddEntry(AddDescription(0, answerlist.Code), AddDescription(0, answerlist.FDescription), FRefs.AddCardinals(aCardinals));
         if (j <> answerlist.FIndex) then
-          raise Exception.Create('Error Message');
+          raise ETerminologySetup.create('Error Message');
       end;
     finally
       st.Free;
@@ -1096,7 +1096,7 @@ begin
       FAnswers.GetEntry(i, code, desc, refs);
       s := FDesc.GetEntry(code, lang);
       if not((ls = '') or (AnsiCompareText(ls, s) < 0)) then
-        raise Exception.Create('out of order');
+        raise ETerminologySetup.create('out of order');
       ls := s;
     end;
 
@@ -1277,10 +1277,10 @@ begin
   begin
     oCode := oCodes.getByCode(CODE);
     if (oCode = nil) then
-      raise Exception.Create('Unable to find code '+CODE);
+      raise ETerminologySetup.create('Unable to find code '+CODE);
     oCode.entry := oHeirarchy.getByCode(IMMEDIATE_PARENT);
     if (oCode.entry = nil) then
-      raise Exception.Create('Unable to find ma code '+IMMEDIATE_PARENT);
+      raise ETerminologySetup.create('Unable to find ma code '+IMMEDIATE_PARENT);
     oCode.entry.FConcepts.Add(oCode.Link);
     parent := oCode.entry;
     while (parent <> nil) do

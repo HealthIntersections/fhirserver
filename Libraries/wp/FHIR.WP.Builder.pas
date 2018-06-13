@@ -378,7 +378,7 @@ End;
 
 Function TWPDocumentBuilderScope.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EWPDocument;
+  Result := EWPException;
 End;
 
 

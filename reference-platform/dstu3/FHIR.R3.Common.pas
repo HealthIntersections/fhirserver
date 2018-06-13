@@ -33,7 +33,8 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Generics, FHIR.Support.DateTime, FHIR.Support.System,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Operations;
+  FHIR.Base.Objects, FHIR.Base.Common,  FHIR.Base.Lang,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Operations;
 
 const
   ExceptionTypeTranslations : array [TExceptionType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
@@ -800,7 +801,7 @@ begin
     StructureDefinitionKindResource :result := sdkResource;
     StructureDefinitionKindLogical : result := sdkResource;
   else
-    raise Exception.Create('Unhandled value');
+    raise EFHIRException.create('Unhandled value');
   end;
 end;
 

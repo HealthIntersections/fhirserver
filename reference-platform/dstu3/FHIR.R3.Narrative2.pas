@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Strings,
-  FHIR.Base.Objects, FHIR.Server.Session, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Server.Session, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Profiles, FHIR.R3.Questionnaire;
 
 type
@@ -138,7 +138,7 @@ var
   x : TFHIRXhtmlNode;
 begin
   if (r.modifierExtensionList.Count > 0) then
-    raise Exception.create('Unable to generate narrative for resource of type '+CODES_TFHIRResourceType[r.ResourceType]+' because it has modifier extensions');
+    raise EFHIRException.create('Unable to generate narrative for resource of type '+CODES_TFHIRResourceType[r.ResourceType]+' because it has modifier extensions');
 
   x := TFHIRXhtmlNode.create;
   try
@@ -521,7 +521,7 @@ begin
     end;
   end
   else if (not (e is TFHIRAttachment)) then
-    raise Exception.create('type '+e.ClassName+' not handled yet');
+    raise EFHIRException.create('type '+e.ClassName+' not handled yet');
 end;
 
 function TNarrativeGenerator.displayLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; name : String; showCodeDetails : boolean) : boolean;
@@ -680,7 +680,7 @@ begin
       result := true;
     end
     else if (not (e is TFHIRAttachment)) then
-      raise Exception.create('type '+e.ClassName+' not handled yet');
+      raise EFHIRException.create('type '+e.ClassName+' not handled yet');
   finally
     displayHints.Free;
   end;
@@ -721,7 +721,7 @@ var
   dres :  TFhirDomainResource;
 begin
   if not (res is TFHIRDomainResource) then
-    raise Exception.create('Not handled yet');
+    raise EFHIRException.create('Not handled yet');
   dres := TFHIRDomainResource(res);
 
   if (not textAlready) then
@@ -1155,7 +1155,7 @@ begin
         if name = '#'+elements[j].id then
           t := elements[j];
       if (t <> nil) then
-        raise Exception.create('Unable to resolve name reference '+name+' trying to resolve '+path);
+        raise EFHIRException.create('Unable to resolve name reference '+name+' trying to resolve '+path);
       path := t.Path;
       break;
     end;

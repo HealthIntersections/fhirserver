@@ -98,7 +98,7 @@ uses
   FHIR.Server.Validator in '..\server\FHIR.Server.Validator.pas',
   FHIR.Web.Socket in '..\reference-platform\Support\FHIR.Web.Socket.pas',
   FHIR.Support.Mime in '..\reference-platform\Support\FHIR.Support.Mime.pas',
-  FHIR.Support.Lock in '..\reference-platform\Support\FHIR.Support.Lock.pas',
+  FHIR.Support.Threads in '..\reference-platform\Support\FHIR.Support.Threads.pas',
   FHIR.R4.Questionnaire in '..\reference-platform\r4\FHIR.R4.Questionnaire.pas',
   FHIR.Base.Scim in '..\reference-platform\base\FHIR.Base.Scim.pas',
   FHIR.R4.Narrative2 in '..\reference-platform\r4\FHIR.R4.Narrative2.pas',
@@ -203,7 +203,6 @@ uses
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
-  FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
@@ -218,7 +217,22 @@ uses
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
   FHIR.Base.Utilities in '..\reference-platform\base\FHIR.Base.Utilities.pas',
   FHIR.Smart.Utilities in '..\reference-platform\client\FHIR.Smart.Utilities.pas',
-  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas';
+  FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
+  FHIR.Cache.PackageManagerDialog in '..\reference-platform\cache\FHIR.Cache.PackageManagerDialog.pas' {PackageCacheForm},
+  VirtualTrees.Actions in '..\..\Components\treeview\Source\VirtualTrees.Actions.pas',
+  VirtualTrees.Classes in '..\..\Components\treeview\Source\VirtualTrees.Classes.pas',
+  VirtualTrees.ClipBoard in '..\..\Components\treeview\Source\VirtualTrees.ClipBoard.pas',
+  VirtualTrees.Export in '..\..\Components\treeview\Source\VirtualTrees.Export.pas',
+  VirtualTrees in '..\..\Components\treeview\Source\VirtualTrees.pas',
+  VirtualTrees.StyleHooks in '..\..\Components\treeview\Source\VirtualTrees.StyleHooks.pas',
+  VirtualTrees.Utils in '..\..\Components\treeview\Source\VirtualTrees.Utils.pas',
+  VirtualTrees.WorkerThread in '..\..\Components\treeview\Source\VirtualTrees.WorkerThread.pas',
+  VTAccessibility in '..\..\Components\treeview\Source\VTAccessibility.pas',
+  VTAccessibilityFactory in '..\..\Components\treeview\Source\VTAccessibilityFactory.pas',
+  VTHeaderPopup in '..\..\Components\treeview\Source\VTHeaderPopup.pas',
+  FHIR.Cache.PackageBrowser in '..\reference-platform\cache\FHIR.Cache.PackageBrowser.pas' {PackageFinderForm},
+  FHIR.Tx.MimeTypes in '..\Server\FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas';
 
 {$R *.res}
 
@@ -226,5 +240,8 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TForm4, Form4);
+  Application.CreateForm(TPackageCacheForm, PackageCacheForm);
+  Application.CreateForm(TPackageCacheForm, PackageCacheForm);
+  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
   Application.Run;
 end.

@@ -32,11 +32,9 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Lock, FHIR.Support.DateTime,   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Decimal, FHIR.Support.Binary,
-  FHIR.Web.Parsers, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Controllers,
-  FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
-  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Misc.GraphQL, FHIR.Support.Certs,
+  FHIR.Support.Threads, FHIR.Support.DateTime,  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Support.Text, FHIR.Support.Xml, FHIR.Support.MXml, 
+  FHIR.Support.Certs, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
+  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Web.Parsers, FHIR.Misc.GraphQL, 
   FHIR.Base.Utilities,
   FHIR.Version.Resources, FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Parser, FHIR.Base.Parser, FHIR.Version.Constants, FHIR.Version.Context, FHIR.Version.Operations, FHIR.Base.Xhtml,
   FHIR.Version.Tags, FHIR.Tx.Expander, FHIR.Server.Indexing, FHIR.Server.Session, FHIR.Tools.DiffEngine, FHIR.Version.ElementModel, FHIR.Version.PathNode,
@@ -640,7 +638,7 @@ type
 
   TFHIRNativeStorageService = class (TFHIRStorageService)
   private
-    FLock: TCriticalSection;
+    FLock: TFslLock;
     FDB: TKDBManager;
 
     FLastSearchKey: integer;
@@ -731,7 +729,7 @@ type
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
-    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; override;
+    function ExpandVS(vs: TFHIRValueSet; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; override;
     function LookupCode(system, version, code: String): String; override;
     procedure QueueResource(r: TFhirResource); overload; override;
     procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; override;
@@ -935,18 +933,21 @@ var
         entry.request.url := AppendForwardSlash(base)+type_+'/'+sId;
         entry.request.method := HttpVerbPUT;
         entry.Tags['opdesc'] := 'Updated by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+        entry.response.status := '200 OK';
       end
       else if FConnection.ColIntegerByName['Status'] = 2 then
       begin
         entry.request.url := AppendForwardSlash(base)+type_+'/'+sId;
         entry.request.method := HttpVerbDELETE;
         entry.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+        entry.response.status := '204 No Content';
       end
       else
       begin
         entry.request.method := HttpVerbPOST;
         entry.request.url := AppendForwardSlash(base)+type_;
         entry.Tags['opdesc'] := 'Created by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+        entry.response.status := '201 Created';
       end;
     end;
   end;
@@ -1433,7 +1434,7 @@ begin
       else if request.Parameters.VarExists('query') then
         gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
       else
-        raise EGraphQLException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.lang));
+        raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.lang));
       gql.focus := nil;
       gql.execute;
       response.Resource := nil;
@@ -1452,7 +1453,7 @@ begin
       gql.Free;
     end;
   except
-    on e : EGraphQLException do
+    on e : EJsonException do
     begin
       response.HTTPCode := 400;
       response.Message := GetFhirMessage('GRAPHQL_ERROR', request.Lang);
@@ -1487,7 +1488,7 @@ begin
         else if request.Parameters.VarExists('query') then
           gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
         else
-          raise EGraphQLException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.Lang));
+          raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.Lang));
         gql.focus := response.Resource.Link;
         gql.execute;
         response.Resource := nil;
@@ -1507,7 +1508,7 @@ begin
       end;
     end;
   except
-    on e : EGraphQLException do
+    on e : EJsonException do
     begin
       response.HTTPCode := 400;
       response.Message := 'Error in GraphQL';
@@ -1881,7 +1882,7 @@ begin
   else if (s.StartsWith('_')) then
     raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // system history
   else if not StringArrayExistsSensitive(CODES_TFhirResourceType, s) then
-    raise Exception.Create('Unknown path type "'+entry.url+'"')
+    raise EFHIRException.create('Unknown path type "'+entry.url+'"')
   else
   begin
     request.ResourceName := s;
@@ -2046,7 +2047,7 @@ var
   s : String;
 begin
   if (session = nil) then
-    raise Exception.create('no session?');
+    raise EFHIRException.create('no session?');
 
   s := inttostr(Session.Key);
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary, SessionKey) values ('+key+', '''+id+''', 0, 1, '+DBGetDate(FConnection.Owner.Platform)+', '+inttostr(ord(summaryStatus))+', '+s+')');
@@ -2118,7 +2119,7 @@ begin
       gql.Free;
     end;
   except
-    on e : EGraphQLException do
+    on e : EJsonException do
     begin
       response.HTTPCode := 400;
       response.Message := 'Error in GraphQL';
@@ -3225,7 +3226,7 @@ begin
       if allowNil then
         exit(nil)
       else
-        raise Exception.Create('Unable to find previous version of resource');
+        raise EFHIRException.create('Unable to find previous version of resource');
     s := FConnection.ColBlobByName['JsonContent'];
     parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
     try
@@ -4960,7 +4961,7 @@ begin
       b.free;
     end;
     if response.resource is TFHIROperationOutcome then
-      raise EGraphQLException.Create(TFHIROperationOutcome(response.resource).asExceptionMessage);
+      raise EJsonException.Create(TFHIROperationOutcome(response.resource).asExceptionMessage);
     result := (FServerContext as TFHIRServerContext).ValidatorContext.factory.wrapBundle(response.Bundle.Link);
   finally
     response.Free;
@@ -6323,7 +6324,7 @@ begin
           native(manager).ServerContext.Validator.validate(ctxt, response.Resource);
           op := native(manager).ServerContext.Validator.describe(ctxt);
           {$ELSE}
-          raise Exception.Create('Not done yet - need to use Java services');
+          raise EFHIRException.create('Not done yet - need to use Java services');
           {$ENDIF}
         finally
           ctxt.Free;
@@ -6869,7 +6870,7 @@ begin
           {$IFDEF FHIR2}
           native(manager).ServerContext.Validator.validate(ctxt, request.Source, request.PostFormat, profiles)
           {$ELSE}
-          raise Exception.Create('Not done yet- call Java');
+          raise EFHIRException.create('Not done yet- call Java');
           {$ENDIF}
         finally
           profiles.Free;
@@ -6884,7 +6885,7 @@ begin
           {$IFDEF FHIR2}
           native(manager).ServerContext.Validator.validate(ctxt, request.Resource, profiles);
           {$ELSE}
-          raise Exception.Create('Not done yet - call Java');
+          raise EFHIRException.create('Not done yet - call Java');
           {$ENDIF}
         finally
           profiles.Free;
@@ -6893,7 +6894,7 @@ begin
       {$IFDEF FHIR2}
       outcome := native(manager).ServerContext.Validator.describe(ctxt);
       {$ELSE}
-      raise Exception.Create('Not done yet - call Java');
+      raise EFHIRException.create('Not done yet - call Java');
       {$ENDIF}
     finally
       ctxt.Free;
@@ -7760,7 +7761,7 @@ begin
             {$IFDEF FHIR2}
             utils.generateSnapshot(sdBase, sdParam, sdParam.url, sdParam.name);
             {$ELSE}
-            raise Exception.Create('Not done yet - call Java');
+            raise EFHIRException.create('Not done yet - call Java');
             {$ENDIF}
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -8882,7 +8883,7 @@ begin
   LoadMessages; // load while thread safe
   FAppFolder := AppFolder;
   FDB := DB;
-  FLock := TCriticalSection.Create('fhir-store');
+  FLock := TFslLock.Create('fhir-store');
   FQueue := TFhirResourceList.Create;
   FSpaces := TFHIRIndexSpaces.create;
   FRegisteredValueSets := TDictionary<String,String>.create;
@@ -9074,8 +9075,7 @@ begin
           logt('Load Package hl7.fhir.org-' + fact.versionString);
           pcm := TFHIRPackageManager.Create(false);
           try
-            res := TFslStringSet.Create(['CodeSystem', 'ValueSet', 'StructureDefinition', 'OperationDefinition',
-              'SearchParameter', 'ConceptMap']);
+            res := TFslStringSet.Create(['StructureDefinition']); // we only load structure definitions; everything else is left to the database
             try
               pcm.loadPackage('hl7.fhir.core', fact.versionString, res, ServerContext.ValidatorContext.loadResourceJson);
             finally
@@ -9267,7 +9267,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSet;
+function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSet; ref: string; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSet;
 var
   profile : TFhirExpansionProfile;
 begin
@@ -9278,17 +9278,17 @@ begin
       result := ServerContext.TerminologyServer.ExpandVS(vs, '', profile, '', dependencies, limit, count, offset)
     else
     begin
-      if ServerContext.TerminologyServer.isKnownValueSet(ref.reference, vs) then
-        result := ServerContext.TerminologyServer.ExpandVS(vs, ref.reference, profile, '', dependencies, limit, count, offset)
+      if ServerContext.TerminologyServer.isKnownValueSet(ref, vs) then
+        result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset)
       else
       begin
-        vs := ServerContext.TerminologyServer.getValueSetByUrl(ref.reference);
+        vs := ServerContext.TerminologyServer.getValueSetByUrl(ref);
         if vs = nil then
-          vs := ServerContext.TerminologyServer.getValueSetByid(ref.reference);
+          vs := ServerContext.TerminologyServer.getValueSetByid(ref);
         if vs = nil then
           result := nil
         else
-          result := ServerContext.TerminologyServer.ExpandVS(vs, ref.reference, profile, '', dependencies, limit, count, offset)
+          result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset)
       end;
     end;
   finally
@@ -10066,7 +10066,7 @@ begin
       ServerContext.Validator.validate(ctxt, bufXml, ffXml);
       ServerContext.Validator.validate(ctxt, bufJson, ffJson);
       {$ELSE}
-      raise Exception.Create('Not done yet - call Java');
+      raise EFHIRException.create('Not done yet - call Java');
       {$ENDIF}
       if (ctxt.Issues.Count = 0) then
         logt(inttostr(i)+': '+rtype+'/'+id+': passed validation')
@@ -10722,13 +10722,13 @@ end;
 
 procedure TFHIRNativeStorageService.ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantity);
 var
-  val, cval : TSmartDecimal;
+  val, cval : TFslDecimal;
   upS, upC : TUcumPair;
   vU, cU, ok : Integer;
 begin
   if (value.value <> '') and (value.code <> '') and (value.system <> '') then
   begin
-    val := TSmartDecimal.ValueOf(value.value);
+    val := TFslDecimal.ValueOf(value.value);
     vu := resolveConcept(conn, value.system, value.code);
     if (value.system = 'http://unitsofmeasure.org') then
     begin

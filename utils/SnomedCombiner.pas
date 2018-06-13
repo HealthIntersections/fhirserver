@@ -33,8 +33,7 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  FHIR.Support.System, FHIR.Support.Strings,
-  FHIR.Support.Generics, FHIR.Support.Objects,
+  FHIR.Support.Exceptions, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Objects,
   FHIR.Snomed.Services;
 
 Type
@@ -639,7 +638,7 @@ begin
   svc.Desc.getDescription(i, iDesc, id, date, concept, module, kind, caps, refsets, valueses, active, lang);
   cid := svc.Concept.getConceptId(concept);
   if not FConcepts.TryGetValue(inttostr(cid), c) then
-    raise Exception.create('no find concept '+inttostr(cid))
+    raise ETerminologySetup.create('no find concept '+inttostr(cid))
   else
   begin
     d := nil;
@@ -797,7 +796,7 @@ begin
             4 {integer} : rm.FValues.add(inttostr(vl[j*2]));
             5 {string}  : rm.FValues.add(svc.Strings.GetEntry(vl[j*2]));
           else
-            raise exception.create('Unknown Cell Type '+inttostr(vl[j*2+1]));
+            raise ETerminologySetup.create('Unknown Cell Type '+inttostr(vl[j*2+1]));
           end;
       end;
     end
@@ -856,16 +855,16 @@ begin
 //  // these are handled differently (in reverse, so we can iterate the children)
 //  begin
 //    if group <> 0 then
-//      raise Exception.Create('is_a in a group - '+inttostr(identity));
+//      raise ETerminologySetup.create('is_a in a group - '+inttostr(identity));
 //    cid := svc.Concept.getConceptId(target);
 //    if not FConcepts.TryGetValue(inttostr(cid), c) then
-//      raise Exception.create('no find concept '+inttostr(cid));
+//      raise ETerminologySetup.create('no find concept '+inttostr(cid));
 //    cid := svc.Concept.getConceptId(source);
 //    if not FConcepts.TryGetValue(inttostr(cid), ct) then
-//      raise Exception.create('no find concept '+inttostr(cid));
+//      raise ETerminologySetup.create('no find concept '+inttostr(cid));
 //    cid := svc.Concept.getConceptId(reltype);
 //    if not FConcepts.TryGetValue(inttostr(cid), cr) then
-//      raise Exception.create('no find concept '+inttostr(cid));
+//      raise ETerminologySetup.create('no find concept '+inttostr(cid));
 //
 //    r := nil;
 //    for t in c.FNoGroup.FRelationships do
@@ -897,13 +896,13 @@ begin
 //  begin
     cid := svc.Concept.getConceptId(source);
     if not FConcepts.TryGetValue(inttostr(cid), c) then
-      raise Exception.create('no find concept '+inttostr(cid));
+      raise ETerminologySetup.create('no find concept '+inttostr(cid));
     cid := svc.Concept.getConceptId(target);
     if not FConcepts.TryGetValue(inttostr(cid), ct) then
-      raise Exception.create('no find concept '+inttostr(cid));
+      raise ETerminologySetup.create('no find concept '+inttostr(cid));
     cid := svc.Concept.getConceptId(RelType);
     if not FConcepts.TryGetValue(inttostr(cid), cr) then
-      raise Exception.create('no find concept '+inttostr(cid));
+      raise ETerminologySetup.create('no find concept '+inttostr(cid));
 
     if group = 0 then
       g := c.FNoGroup
@@ -1084,7 +1083,7 @@ begin
         s := inttostr(c.FID)
       else
         s := s+','+inttostr(c.FID);
-    raise Exception.Create('Circular Dependency found: SCT concept '+inttostr(focus.FId)+' has itself as a parent ('+s+')');
+    raise ETerminologySetup.create('Circular Dependency found: SCT concept '+inttostr(focus.FId)+' has itself as a parent ('+s+')');
   end;
   SetLength(np, length(parents)+1);
   for i := 0 to length(parents) - 1 do

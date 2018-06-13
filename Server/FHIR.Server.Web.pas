@@ -90,7 +90,7 @@ Uses
   FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Exceptions, FHIR.Support.Text,
   FHIR.Support.Generics,
 
-  FHIR.Support.Lock, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
+  FHIR.Support.Threads, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
   FHIR.Support.JSON, FHIR.Web.Rdf,
 
   FHIR.Support.MXml, FHIR.Misc.GraphQL, {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF}
@@ -222,7 +222,7 @@ Type
   TFhirWebServer = Class(TFslObject)
   Private
     FIni: TFHIRServerIniFile;
-    FLock: TCriticalSection;
+    FLock: TFslLock;
 
     // base web server configuration
     FActive: boolean;
@@ -559,7 +559,7 @@ begin
     FOwnerName := 'Health Intersections';
   FAdminEmail := FIni.ReadString(voVersioningNotApplicable, 'admin', 'email', '');
   if FAdminEmail = '' then
-    raise exception.Create('Ad admin email is required');
+    raise EFHIRException.create('Ad admin email is required');
 
   FHostSms := FIni.ReadString(voVersioningNotApplicable, 'sms', 'owner', '');
 end;
@@ -597,7 +597,7 @@ var
   fn : String;
 Begin
   Inherited Create;
-  FLock := TCriticalSection.Create('fhir-rest');
+  FLock := TFslLock.Create('fhir-rest');
   FThreads := TList<TAsyncTaskThread>.create;
   FCertificateIdList := TStringList.Create;
   FName := Name;
@@ -664,7 +664,7 @@ Begin
     FTerminologyWebServer := TTerminologyWebServer.Create(TerminologyServer.link, FServerContext.ValidatorContext.link, txu, FBasePath + '/', ReturnProcessedFile);
 
   if FIni.ReadString(voVersioningNotApplicable, 'web', 'clients', '') = '' then
-    raise exception.Create('No Authorization file found');
+    raise EIOException.create('No Authorization file found');
   FAuthServer := TAuth2Server.Create(FIni, FHost, inttostr(FStatedSSLPort));
   FAuthServer.ServerContext := FServerContext.link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
@@ -1027,11 +1027,11 @@ Begin
   if FActualSSLPort > 0 then
   begin
     If Not FileExists(FCertFile) Then
-      Raise exception.Create('SSL Certificate "' + FCertFile + ' could not be found');
+      raise EIOException.create('SSL Certificate "' + FCertFile + ' could not be found');
     If Not FileExists(ChangeFileExt(FCertFile, '.key')) Then
-      Raise exception.Create('SSL Certificate Private Key "' + ChangeFileExt(FCertFile, '.key') + ' could not be found');
+      raise EIOException.create('SSL Certificate Private Key "' + ChangeFileExt(FCertFile, '.key') + ' could not be found');
     If (FRootCertFile <> '') and (Not FileExists(FRootCertFile)) Then
-      Raise exception.Create('SSL Certificate "' + FRootCertFile + ' could not be found');
+      raise EIOException.create('SSL Certificate "' + FRootCertFile + ' could not be found');
     FSSLServer := TIdHTTPServer.Create(Nil);
     FSSLServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
     TIdSchedulerOfThreadPool(FSSLServer.Scheduler).PoolSize := 20;
@@ -1700,6 +1700,8 @@ Begin
             // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
             if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
               response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+            if request.RawHeaders.Values[REVERSE_HOST_HEADER] <> '' then
+              sHost := request.RawHeaders.Values[REVERSE_HOST_HEADER];
             if request.RawHeaders.Values['X-Request-Id'] <> '' then
               response.CustomHeaders.Add('X-Request-Id: ' + request.RawHeaders.Values['X-Request-Id']);
             oRequest := nil;
@@ -4153,7 +4155,7 @@ var
   b : TBytes;
 begin
   {$IfDEF NO_CONVERSION}
-  raise Exception.Create('Version Conversion Services are not made available on this server');
+  raise EFHIRException.create('Version Conversion Services are not made available on this server');
   {$ELSE}
   b := StreamToBytes(stream);
   b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, version, CURRENT_FHIR_VERSION);
@@ -4168,7 +4170,7 @@ var
   b : TBytes;
 begin
   {$IfDEF NO_CONVERSION}
-  raise Exception.Create('Version Conversion Services are not made available on this server');
+  raise EFHIRException.create('Version Conversion Services are not made available on this server');
   {$ELSE}
   b := StreamToBytes(stream);
   b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, CURRENT_FHIR_VERSION, version);
@@ -4192,7 +4194,7 @@ Procedure TFhirWebServer.ReadTags(header: String; request: TFHIRRequest);
 // s, s1, l, r, n, v : string;
 // cat : TFHIRAtomCategory;
 begin
-  // raise Exception.Create('todo');
+  // raise EFHIRException.create('todo');
 end;
 
 
@@ -4325,7 +4327,7 @@ begin
     if s = 'coverage' then
       handler := TFHIRServerCoveragePostHandler.Create
     else {$ENDIF}
-      raise Exception.Create('Unknown Handler');
+      raise EFHIRException.create('Unknown Handler');
     try
       handler.secure := secure;
       handler.params := params.Link;
@@ -4524,7 +4526,7 @@ begin
   src.validateOnParse := false;
   src.setProperty('AllowDocumentFunction', true);
   if not src.loadXML(FSourceProvider.getSource(xslt)) then
-    raise exception.Create('unable to parse XSLT: ' + src.parseError.reason);
+    raise EXmlException.create('unable to parse XSLT: ' + src.parseError.reason);
 
   v := CreateOLEObject('MSXML2.XSLTemplate.6.0');
   xform := IUnknown(TVarData(v).VDispatch) as IXSLTemplate;
@@ -4826,7 +4828,7 @@ end;
 
 function TFHIRBundleBuilderNDJson.moveToFirst(  res: TFhirResource): TFhirBundleEntry;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 

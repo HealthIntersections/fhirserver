@@ -32,9 +32,8 @@ interface
 uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
-  FHIR.Support.Text,
-  FHIR.Support.Objects,
-  FHIR.Support.Json, FHIR.Support.Certs,
+  FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Certs,
+  FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
 
 type
@@ -181,7 +180,7 @@ begin
       src.Position := 0;
       indy.Post(FServer, src, resp);
       if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then
-        raise exception.create('unexpected condition');
+        raise EFHIRException.create('unexpected condition');
       resp.Position := 0;
       result := TJSONParser.Parse(resp);
     Finally

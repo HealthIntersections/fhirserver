@@ -32,7 +32,7 @@ interface
 
 Uses
   SysUtils,
-  FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml,
   FHIR.Cda.Base, FHIR.Cda.Types, FHIR.Cda.Narrative, FHIR.Cda.Objects;
 
@@ -44,8 +44,6 @@ Type
   TStringArray = Array of WideString;
 
   TTextAction = (ttAsIs, ttTrim, ttTrimPad);
-
-  ECDAParser = class (EFslException);
 
   TCDAParser = class (TFslObject)
   private
@@ -75,7 +73,7 @@ Type
     Function ParseNullFlavor(Const sPath : String; Const sValue : WideString) : Tv3NullFlavor;
     Function ParseBoolean(Const sPath : String; Const sValue : WideString) : Boolean;
     Function ParseInteger(Const sPath : String; Const sValue : WideString) : Int64;
-    Function ParseDecimal(Const sPath : String; sValue : WideString) : TSmartDecimal;
+    Function ParseDecimal(Const sPath : String; sValue : WideString) : TFslDecimal;
     Function ParseEnum(Const sPath : String; Const sValue : WideString; Const aNames : Array of String) : Byte;
     Function ParseSet(Const sPath : String; Const sValue : String) : TStringArray; Overload;
     Procedure ParseSet(Const sPath : String; oTokens : TFslStringList; Const sValue : String); Overload;
@@ -270,7 +268,7 @@ End;
 function TCDAParser.ParsePiece(oDoc: TMXmlElement; const sClass : String): Tv3Base;
 begin
   if sClass = '' Then
-    raise exception.Create('Class name is required');
+    raise ECDAException.create('Class name is required');
 
   if sClass = 'ANY' Then
     result := ParseANY('ANY', oDoc)
@@ -533,7 +531,7 @@ begin
   Else if sClass = 'Supply' Then
     result := ParseSupply('Supply', oDoc)
   Else
-    raise exception.create('unknown piece type '+sClass);
+    raise ECDAException.create('unknown piece type '+sClass);
 end;
 
 
@@ -668,16 +666,16 @@ Begin
     RaiseError('ParseInteger', 'Integer value "'+sValue+'" is not valid'+' @'+sPath);
 End;
 
-Function TCDAParser.ParseDecimal(Const sPath : String; sValue : WideString) : TSmartDecimal;
+Function TCDAParser.ParseDecimal(Const sPath : String; sValue : WideString) : TFslDecimal;
 Begin
   sValue := Trim(sValue, false);
   if sValue = '' Then
-    result := TSmartDecimal.makeNull
+    result := TFslDecimal.makeNull
   Else
   begin
     if (pos(',', sValue) > 0) then
       sValue := StringReplace(sValue, ',', '');
-    result := TSmartDecimal.Create(sValue);
+    result := TFslDecimal.Create(sValue);
   end;
 End;
 
@@ -7165,7 +7163,7 @@ end;
 
 function TCDAParser.ErrorClass: EFslExceptionClass;
 begin
-  Result := ECDAParser;
+  Result := ECDAException;
 end;
 
 procedure TCDAParser.AddToMap(oElement: TMXmlElement; oObject: Tv3Base);

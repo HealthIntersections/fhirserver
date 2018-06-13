@@ -35,6 +35,7 @@ uses
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime,
+  FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Parser, FHIR.Base.Objects,
   BaseFrame, OrganizationChooser;
 
@@ -173,7 +174,7 @@ end;
 procedure TAppEndorsementFrame.btnSaveClick(Sender: TObject);
 begin
   if FActive = nil then
-    raise Exception.Create('Active is nil?')
+    raise EFHIRException.create('Active is nil?')
   else if FActive is TFhirOrganization then
     saveOrganization
   else if FActive is TFhirDevice then
@@ -690,9 +691,9 @@ var
   id : String;
 begin
   if edtAppName.Text = '' then
-    raise Exception.Create('An Application Name is required');
+    raise EFHIRException.create('An Application Name is required');
   if cbxAppStatus.ItemIndex < 0 then
-    raise Exception.Create('An Application status is required');
+    raise EFHIRException.create('An Application status is required');
 
   app := FActive as TFhirDevice;
   app.model := edtAppName.Text;
@@ -727,9 +728,9 @@ var
   id : String;
 begin
   if edtEndorsementText.Text = '' then
-    raise Exception.Create('Some text is required');
+    raise EFHIRException.create('Some text is required');
   if cbxEndorsementType.ItemIndex < 0 then
-    raise Exception.Create('An Endorsement Type is required');
+    raise EFHIRException.create('An Endorsement Type is required');
 
   obs := FActive as TFhirObservation;
   obs.comment := edtEndorsementText.Text;
@@ -770,7 +771,7 @@ var
   b : boolean;
 begin
   if edtOrgName.Text = '' then
-    raise Exception.Create('An Application Organization is required');
+    raise EFHIRException.create('An Application Organization is required');
 
   org := FActive as TFhirOrganization;
   org.name := edtOrgName.Text;

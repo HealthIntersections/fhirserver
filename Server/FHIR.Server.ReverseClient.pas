@@ -38,6 +38,7 @@ uses
 
 Const
   SECURE_TOKEN_HEADER = 'X-Proxy-SSL-Token';
+  REVERSE_HOST_HEADER = 'X-Proxy-Host';
 
 Type
   TReverseProxyInfo = class(TFslObject)
@@ -150,6 +151,7 @@ begin
       client.Request.CustomHeaders.Add(s);
     if SecureToken <> '' then
       client.Request.CustomHeaders.Add(SECURE_TOKEN_HEADER+': '+SecureToken);
+    client.Request.CustomHeaders.Add(REVERSE_HOST_HEADER+': '+request.host);
 
     s := request.RawHTTPCommand;
     s := s.Substring(s.IndexOf(' ')+1);

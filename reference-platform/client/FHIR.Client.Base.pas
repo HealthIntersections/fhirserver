@@ -38,7 +38,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Common;
 
 Type
-  EFHIRClientException = class (Exception)
+  EFHIRClientException = class (EFHIRException)
   private
     FIssue : TFhirOperationOutcomeW;
   public
@@ -141,7 +141,7 @@ Type
     procedure terminate; virtual;  abstract; // only works for some communicators
   end;
 
-  TFhirHTTPClientStatusEvent = procedure (client : TObject; details : String) of Object;
+  TFhirClientProgressEvent = procedure (client : TObject; details : String; pct : integer; done : boolean) of Object;
 
   TFhirClientV = class abstract (TFslObject)
   private
@@ -157,6 +157,7 @@ Type
     FLang : string;
     FSmartToken: TClientAccessToken;
     FLastStatusMsg: String;
+    FOnProgress : TFhirClientProgressEvent;
     FBundleFactory : TFHIRBundleWClass;
     procedure SetProvenance(const Value: TFHIRResourceV);
     procedure SetSmartToken(const Value: TClientAccessToken);
@@ -192,6 +193,7 @@ Type
     property Logger : TFHIRClientLogger read FLogger write SetLogger;
     property provenance : TFHIRResourceV read FProvenance write SetProvenance;
     property smartToken : TClientAccessToken read FSmartToken write SetSmartToken;
+    property OnProgress : TFhirClientProgressEvent read FOnProgress write FOnProgress;
 
     // version independent API
     function conformanceV(summary : boolean) : TFHIRResourceV;
@@ -317,7 +319,7 @@ end;
 
 function TFhirClientV.getResourceVersionId(res : TFHIRResourceV) : string;
 begin
-  raise Exception.Create('Must override getResourceValue in '+className);
+  raise EFHIRException.create('Must override getResourceValue in '+className);
 end;
 
 function TFhirClientV.link: TFhirClientV;
@@ -353,7 +355,7 @@ end;
 procedure TFhirClientV.SetFormat(fmt : TFhirFormat);
 begin
   if not (fmt in [ffXml, ffJson, ffTurtle]) then
-    raise Exception.Create('Unsupported format in client: '+CODES_TFHIRFormat[fmt]);
+    raise EFHIRException.create('Unsupported format in client: '+CODES_TFHIRFormat[fmt]);
 
   FFormat := fmt;
 end;

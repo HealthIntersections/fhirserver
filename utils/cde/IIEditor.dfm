@@ -70,8 +70,6 @@ object IIEditForm: TIIEditForm
     Height = 41
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 296
-    ExplicitWidth = 635
     DesignSize = (
       470
       41)
@@ -85,7 +83,6 @@ object IIEditForm: TIIEditForm
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 0
-      ExplicitLeft = 548
     end
     object Button2: TButton
       Left = 302
@@ -97,7 +94,6 @@ object IIEditForm: TIIEditForm
       Default = True
       TabOrder = 1
       OnClick = Button2Click
-      ExplicitLeft = 467
     end
   end
   object cbxOIDs: TComboBox

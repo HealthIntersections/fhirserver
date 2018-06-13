@@ -217,7 +217,7 @@ interface
 
 uses
 	SysUtils
-	{$IFDEF COMPILER_7_UP}, Types{$ENDIF};
+	{$IFDEF COMPILER_7_UP}, Types{$ENDIF}, FHIR.Support.Exceptions;
 
 {$IFNDEF UNICODE}
 type
@@ -1309,7 +1309,7 @@ begin
   {$ENDIF}
 
 	else
-		raise Exception.CreateFmt(SUnknownAlgorithm, [ObjectName]);
+		raise ELibraryException.createFmt(SUnknownAlgorithm, [ObjectName]);
 end;
 
 function TScrypt.GenerateSalt: TBytes;
@@ -2891,12 +2891,12 @@ var
 	le: DWORD;
 begin
 	if (FHash = 0) then
-		raise Exception.Create('TCspHash is not initialized');
+		raise ELibraryException.create('TCspHash is not initialized');
 
 	if not CryptHashData(FHash, PByte(@Data), DataLen, 0) then
 	begin
 		le := GetLastError;
-		raise Exception.CreateFmt('Error hashing data: %s (%d)', [SysErrorMessage(le), le]);
+		raise ELibraryException.createFmt('Error hashing data: %s (%d)', [SysErrorMessage(le), le]);
 	end;
 end;
 
@@ -2916,7 +2916,7 @@ begin
 	if not CryptGetHashParam(FHash, HP_HASHVAL, @Result[0], digestSize, 0) then
 	begin
 		le := GetLastError;
-		raise Exception.CreateFmt('Could not get Hash value from CSP: %s (%d)', [SysErrorMessage(le), le]);
+		raise ELibraryException.createFmt('Could not get Hash value from CSP: %s (%d)', [SysErrorMessage(le), le]);
 	end;
 end;
 
@@ -3162,7 +3162,7 @@ end;
 procedure TCngHash.RequireBCrypt;
 begin
 	if not TCngHash.InitializeBCrypt then
-		raise Exception.Create('BCrypt not available. Requires Windows Vista or greater');
+		raise ELibraryException.create('BCrypt not available. Requires Windows Vista or greater');
 end;
 
 {$ENDIF}
@@ -3300,7 +3300,7 @@ begin
 				http://tools.ietf.org/html/rfc6070
 	}
 //	if DerivedKeyLength > 2^32*hLen then
-//		raise Exception.Create('Derived key too long');
+//		raise ELibraryException.create('Derived key too long');
 
 	if FHMAC = nil then
 		raise EScryptException.Create('No HMAC algorithm supplied');

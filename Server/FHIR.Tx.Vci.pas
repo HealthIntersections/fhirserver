@@ -207,7 +207,7 @@ begin
 
   self.db := db;
   if (TotalCount = 0) then
-    raise Exception.Create('Error Connecting to NciMeta');
+    raise EDBException.create('Error Connecting to NciMeta');
 end;
 
 
@@ -370,12 +370,12 @@ end;
 
 function TNciMetaServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 begin
-  raise Exception.Create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and NciMeta is too big
+  raise ETerminologyError.create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and NciMeta is too big
 end;
 
 function TNciMetaServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('getcontext not supported by RXNorm'); // only used when iterating the entire code system. and NciMeta is too big
+  raise ETerminologyError.create('getcontext not supported by RXNorm'); // only used when iterating the entire code system. and NciMeta is too big
 end;
 
 function TNciMetaServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
@@ -508,7 +508,7 @@ begin
         TNciMetaPrep(prep).filters.Add(res.Link);
     end
     else
-      raise Exception.Create('Unknown ');
+      raise ETerminologyError.create('Unknown ');
   finally
     res.Free;
   end;
@@ -582,7 +582,7 @@ end;
 
 function TNciMetaServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('Error in internal logic - filter not prepped?');
+  raise ETerminologyError.create('Error in internal logic - filter not prepped?');
 end;
 
 procedure TNciMetaServices.Close(ctxt: TCodeSystemProviderContext);

@@ -63,6 +63,7 @@
         <DCC_Optimize>false</DCC_Optimize>
         <DCC_RangeChecking>true</DCC_RangeChecking>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -127,7 +128,7 @@
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Binary.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Controllers.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.DateTime.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Decimal.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Exceptions.pas"/>

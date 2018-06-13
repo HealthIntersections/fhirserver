@@ -36,7 +36,7 @@ uses
   ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
-//  FHIR.Ucum.Services,
+  FHIR.Ucum.Services,
   FHIR.Support.MXml, DUnitX.TestFramework;
 
 Type
@@ -56,6 +56,8 @@ Type
   private
     engine : TFHIRPathEngine;
     tests : TMXmlElement;
+    resources : TFslMap<TFHIRResource>;
+    ucum : TUcumServices;
     function findTest(path : String) : TMXmlElement;
   Published
     [SetupFixture] procedure setup;
@@ -174,19 +176,25 @@ begin
           engine.check(nil, '', '', '', node, false)
         else
         begin
-          p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
-          try
-            f := TFileStream.Create(Path([GBasePath, 'build' ,'publish', input]), fmOpenRead);
+          if not resources.TryGetValue(input, res) then
+          begin
+            p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
             try
-              p.source := f;
-              p.parse;
-              res := p.resource.Link as TFHIRResource;
+              f := TFileStream.Create(Path([GBasePath, 'build' ,'publish', input]), fmOpenRead);
+              try
+                p.source := f;
+                p.parse;
+                res := p.resource.Link as TFHIRResource;
+              finally
+                f.Free;
+              end;
             finally
-              f.Free;
+              p.Free;
             end;
-          finally
-            p.Free;
-          end;
+            resources.Add(input, res.link);
+          end
+          else
+            res.Link;
 
           engine.check(nil, res.fhirType, res.fhirType, res.fhirType, node, false).free;
         end;
@@ -241,19 +249,20 @@ begin
 end;
 
 procedure TFHIRPathTest.setup;
-//var
-//  ucum : TUcumServices;
 begin
+  resources := TFslMap<TFHIRResource>.create;
   tests := TMXmlParser.ParseFile('C:\work\fluentpath\tests\r4\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
-//  ucum := TUcumServices.Create;
-  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil {TUcumServiceImplementation.Create(ucum)});
-//  ucum.Import('C:\work\fhirserver\Exec\ucum-essence.xml');
+  ucum := TUcumServices.Create;
+  ucum.Import('C:\work\fhir.org\Ucum-java\src\main\resources\ucum-essence.xml');
+  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, TUcumServiceImplementation.Create(ucum.link));
 end;
 
 procedure TFHIRPathTest.teardown;
 begin
+  ucum.free;
   tests.Free;
   engine.Free;
+  resources.Free;
 end;
 
 initialization

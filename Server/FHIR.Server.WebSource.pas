@@ -31,16 +31,15 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.System, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Zip, FHIR.Support.Stream, FHIR.Support.Generics;
+  FHIR.Support.Exceptions, FHIR.Support.System, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Zip, FHIR.Support.Stream, FHIR.Support.Generics;
 
 type
   TFHIRWebServerSourceProvider = class abstract (TFslObject)
   public
     function AltFile(path, base: String): String;
-    function getSource(filename : String) : String; virtual;
-    function exists(filename : String) : boolean; virtual;
-    function asStream(filename : String) : TStream; virtual;
+    function getSource(filename : String) : String; virtual; abstract;
+    function exists(filename : String) : boolean; virtual; abstract;
+    function asStream(filename : String) : TStream; virtual; abstract;
   end;
 
   TFHIRWebServerSourceFolderProvider = class (TFHIRWebServerSourceProvider)
@@ -79,21 +78,6 @@ begin
     result := path.Substring(1).Replace('/', '\')
   else
     result := path;
-end;
-
-function TFHIRWebServerSourceProvider.asStream(filename: String): TStream;
-begin
-  raise Exception.Create('Must override "asStream" in '+className);
-end;
-
-function TFHIRWebServerSourceProvider.exists(filename: String): boolean;
-begin
-  raise Exception.Create('Must override "exists" in '+className);
-end;
-
-function TFHIRWebServerSourceProvider.getSource(filename: String): String;
-begin
-  raise Exception.Create('Must override "getSource" in '+className);
 end;
 
 { TFHIRWebServerSourceFolderProvider }
@@ -135,7 +119,7 @@ var
   src : TFslBuffer;
 begin
   if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
-    raise Exception.Create('Unable to find '+filename);
+    raise EIOException.create('Unable to find '+filename);
   result := TMemoryStream.Create;
   src.SaveToStream(result);
   result.Position := 0;
@@ -175,7 +159,7 @@ var
   src : TFslBuffer;
 begin
   if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
-    raise Exception.Create('Unable to find '+filename);
+    raise EIOException.create('Unable to find '+filename);
   result := src.AsText;
 end;
 

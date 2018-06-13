@@ -36,6 +36,8 @@ Uses
   FHIR.Support.Math, FHIR.Support.Stream, FHIR.Support.MXML, FHIR.Support.DateTime;
 
 Type
+  EDicomException = class (EFslException);
+
   {
   An abstract entry in a DICOM Dictionary
   }
@@ -1699,7 +1701,7 @@ var
 begin
   assert(invariants('Execute', FDictionary, TDicomDictionary, 'Dictionary'));
   if FSource = nil Then
-    raise exception.Create('A source must be provided loading Dicom Dictionary');
+    raise EDicomException.create('A source must be provided loading Dicom Dictionary');
 
   oParser := TMXmlParser.Create;
   Try
@@ -1707,14 +1709,14 @@ begin
       oDoc := oParser.Parse(FSource, [xpDropWhitespace, xpDropComments]);
     Except
       on E:exception do
-        raise Exception.Create('Error loading Dicom Dictionary: '+e.message);
+        raise EDicomException.create('Error loading Dicom Dictionary: '+e.message);
     End;
     try
       Try
         Parse(oDoc.docElement);
       Except
         on E:exception do
-          raise Exception.Create('Error parsing Dicom Dictionary: '+e.message);
+          raise EDicomException.create('Error parsing Dicom Dictionary: '+e.message);
       End;
     finally
       oDoc.Free;
@@ -1750,7 +1752,7 @@ Begin
       Else If oChild.name = 'SOP' Then
         ParseSOP(oChild)
       Else
-        Raise Exception.create('Unknown element name '+oChild.Name);
+        raise EDicomException.create('Unknown element name '+oChild.Name);
 
      oChild := oChild.nextElement;
     End;
@@ -1770,7 +1772,7 @@ Begin
         encapsulated="false" lossy="false" deflate="false" /> }
   sUID := ReadUID(oElement);
   If FDictionary.TransferSyntaxes.ExistsByUID(sUID) Then
-    Raise Exception.Create('The transfer syntax '+sUid+' is already defined');
+    raise EDicomException.create('The transfer syntax '+sUid+' is already defined');
   oTransferSyntax := TDicomDictionaryTransferSyntax.Create;
   Try
     oTransferSyntax.Name := oElement.Attribute['name'];
@@ -1860,7 +1862,7 @@ Begin
       If oChild.name = 'element' Then
         ParseDataElement(sGroup, oChild)
       Else
-        Raise Exception.create('Unknown element name ' + oChild.Name);
+        raise EDicomException.create('Unknown element name ' + oChild.Name);
 
      oChild := oChild.nextElement;
     End;
@@ -1870,7 +1872,7 @@ Function TDicomDictionaryParser.ReadUID(oElement: TMXmlElement): String;
 Begin
   result := oElement.attribute['uid'];
   If result = '' Then
-    Raise Exception.Create('No UID defined on element '+oElement.name);
+    raise EDicomException.create('No UID defined on element '+oElement.name);
 End;
 
 Function TDicomDictionaryParser.ReadBoolean(oElement: TMXmlElement; sName: String): Boolean;
@@ -1883,7 +1885,7 @@ Begin
   else if SameText(s, 'true') or (s = '1') then
     result := true
   Else
-    Raise Exception.Create('Invalid boolean value "'+s+'" on element '+oElement.name);
+    raise EDicomException.create('Invalid boolean value "'+s+'" on element '+oElement.name);
 End;
 
 
@@ -1925,7 +1927,7 @@ Begin
         oDimseMsg.Params.Add(ReadDimseParam(oChild));
       End
       Else
-        Raise Exception.create('Unknown element name '+oChild.name);
+        raise EDicomException.create('Unknown element name '+oChild.name);
 
       oChild := oChild.NextElement;
     End;
@@ -1964,7 +1966,7 @@ Begin
       If FCmdElementCache.ExistsByKey(oParam.ElementId) Then
         oParam.Element := TDicomDictionaryElement(FCmdElementCache.GetValueByKey(oParam.ElementId)).Link
       Else
-        Raise Exception.Create('Invalid DIMSE param: ' + oParam.Name + '. Parameter type not found for element ID ' + oParam.ElementId);
+        raise EDicomException.create('Invalid DIMSE param: ' + oParam.Name + '. Parameter type not found for element ID ' + oParam.ElementId);
     End;
 
     // based on fixed value & element id to determined param type
@@ -2007,7 +2009,7 @@ Begin
     oResult.Comment := oNode.Text;
 
     If (oResult.Key = '') Then
-      Raise Exception.Create('Invalid Macro, macro key not found')
+      raise EDicomException.create('Invalid Macro, macro key not found')
     Else
     Begin
       ReadDicomInfoEntries(oNode, oResult.Children);
@@ -2034,7 +2036,7 @@ Begin
     oResult.Name := StringTrimWhitespace(oResult.Name);
 
     If (oResult.Key = '') Then
-      Raise Exception.Create('Invalid Module, Module Key not found')
+      raise EDicomException.create('Invalid Module, Module Key not found')
     Else
     Begin
       ReadDicomInfoEntries(oNode, oResult.Children);
@@ -2058,7 +2060,7 @@ Begin
     Else If oChild.name = 'attribute' Then
       oEntry := ReadDicomInfoEntryAttr(oChild)
     Else
-      Raise Exception.Create('Unexpected entry: ' + oChild.name + '. Expected <reference> or <attribute> node.');
+      raise EDicomException.create('Unexpected entry: ' + oChild.name + '. Expected <reference> or <attribute> node.');
 
     Try
       If oEntry <> Nil Then
@@ -2085,7 +2087,7 @@ Begin
     oAttr.RequiredType := ParseInfoRequiredTypeValue(oNode.Attribute['type']);
 
     If oAttr.Tag = '' Then
-      Raise Exception.Create('Attribute entry without specified tag');
+      raise EDicomException.create('Attribute entry without specified tag');
 
     ReadDicomInfoEntries(oNode, oAttr.Children);
     Result := oAttr.Link;
@@ -2111,7 +2113,7 @@ Begin
     oRef.BaselineTemplateId := StringTrimWhitespace(oNode.Attribute['baselineTemplateID']);
 
     If oRef.RefId = '' Then
-      Raise Exception.Create('Reference entry without reference');
+      raise EDicomException.create('Reference entry without reference');
 
     ReadDicomInfoEntries(oNode, oRef.Children);
     Result := oRef.Link;
@@ -2131,7 +2133,7 @@ Begin
     oResult.Name := oNode.Attribute['name'];
 
     If (oResult.Key = '') Then
-      Raise Exception.Create('Invalid IOD, key not found')
+      raise EDicomException.create('Invalid IOD, key not found')
     Else
     Begin
       ReadIODModules(oNode, oResult.Modules);
@@ -2168,7 +2170,7 @@ Begin
   While (oChild <> Nil) Do
   Begin
     If oChild.name <> 'reference' Then
-      Raise Exception.Create('Unexpected entry: ' + oChild.name + '. Expected <reference> node.')
+      raise EDicomException.create('Unexpected entry: ' + oChild.name + '. Expected <reference> node.')
     Else
     Begin
       oRef := TDicomModuleReference.Create;
@@ -2223,7 +2225,7 @@ Begin
       If oChild.name = 'section' Then
         FDictionary.FSectionReferences.Add(oChild.Attribute['name'], oChild.Attribute['ref'])
       Else
-        Raise Exception.create('Unknown element name ' + oChild.name);
+        raise EDicomException.create('Unknown element name ' + oChild.name);
      oChild := oChild.NextElement;
     End;
 end;
@@ -2638,7 +2640,7 @@ Begin
   else if sCode = 'UN' Then
     result := dvtUN
   else
-    Raise Exception.Create('Unknown VR Type "'+sCode+'"');
+    raise EDicomException.create('Unknown VR Type "'+sCode+'"');
 End;
 
 Function Matches(sPattern, sInstance : String): Boolean;
@@ -4045,12 +4047,12 @@ var
   i : integer;
 Begin
   if length(sTag) <> 4 Then
-    raise exception.create('Error in '+sLocation+':'+ sValue+' is not valid tag');
+    raise EDicomException.create('Error in '+sLocation+':'+ sValue+' is not valid tag');
   for i := 1 to 4 do
     if bWantInteger and not CharInSet(sTag[i], ['0'..'9', 'A'..'F', 'a'..'f']) Then
-      raise exception.create('Error in '+sLocation+':'+ sValue+' is not valid tag')
+      raise EDicomException.create('Error in '+sLocation+':'+ sValue+' is not valid tag')
     Else if not CharInSet(sTag[i], ['0'..'9', 'A'..'F', 'a'..'f', 'x']) Then
-      raise exception.create('Error in '+sLocation+':'+ sValue+' is not valid tag');
+      raise EDicomException.create('Error in '+sLocation+':'+ sValue+' is not valid tag');
 End;
 
 

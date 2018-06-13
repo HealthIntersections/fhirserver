@@ -37,7 +37,7 @@ interface
 uses
   SysUtils, Classes,
   FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Xml,
-  FHIR.Base.Objects, FHIR.Base.Parser,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang,
 
   {$IFDEF FHIR2}
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Xml, FHIR.R2.Json, FHIR.R2.Context, FHIR.R2.Parser;
@@ -140,7 +140,7 @@ end;
 
 procedure TFHIRNDJsonComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRNDJsonComposer.GetFormat: TFHIRFormat;

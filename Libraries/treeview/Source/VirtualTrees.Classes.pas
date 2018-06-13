@@ -63,7 +63,7 @@ type
     property AsString: string read GetAsString;
   end;
 
-  TCriticalSection = class(TObject)
+  TFslLock = class(TObject)
   protected
     FSection: TRTLCriticalSection;
   public
@@ -219,9 +219,9 @@ begin
   Inc(FPosition);
 end;
 
-//----------------- TCriticalSection -----------------------------------------------------------------------------------
+//----------------- TFslLock -----------------------------------------------------------------------------------
 
-constructor TCriticalSection.Create;
+constructor TFslLock.Create;
 
 begin
   inherited Create;
@@ -230,7 +230,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-destructor TCriticalSection.Destroy;
+destructor TFslLock.Destroy;
 
 begin
   DeleteCriticalSection(FSection);
@@ -240,7 +240,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-procedure TCriticalSection.Enter;
+procedure TFslLock.Enter;
 
 begin
   EnterCriticalSection(FSection);
@@ -248,7 +248,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-procedure TCriticalSection.Leave;
+procedure TFslLock.Leave;
 
 begin
   LeaveCriticalSection(FSection);

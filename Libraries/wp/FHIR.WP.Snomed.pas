@@ -46,7 +46,7 @@ Interface
 
 Uses
   Windows, SysUtils, Messages, IniFiles, Classes, ComCtrls, Graphics, Controls, commctrl,
-  FHIR.Support.Controllers, FHIR.Support.System, FHIR.Support.Strings,
+  FHIR.Support.Threads, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.Uix.Images, FHIR.Uix.Forms, FHIR.Uix.Controls,
   FHIR.WP.Control;
@@ -59,7 +59,7 @@ Type
   TSnomedClient = class (TFslObject)
   private
     FIni : TIniFile;
-    FLock : TFslExclusiveCriticalSection;
+    FLock : TFslLock;
     FSnomedDescriptions : TFslStringMatch;
 
     FPassword: String;
@@ -205,7 +205,7 @@ Implementation
 constructor TSnomedClient.Create;
 begin
   inherited;
-  FLock := TFslExclusiveCriticalSection.Create;
+  FLock := TFslLock.Create;
   FSnomedDescriptions := TFslStringMatch.Create;
   FIni := TIniFile.Create('c:\temp\snomed.ini');
   FServiceURL := 'http://localhost:9556/soap';
@@ -287,7 +287,7 @@ end;
 constructor TSnomedSearcher.Create;
 begin
   inherited;
-  FLock := TFslExclusiveCriticalSection.Create;
+  FLock := TFslLock.Create;
 end;
 
 destructor TSnomedSearcher.Destroy;

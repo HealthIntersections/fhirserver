@@ -137,7 +137,7 @@ begin
     Clipboard.SetAsHandle(CF_DIB,data);
     result := true;
   except
-    raise Exception.create('Unable to copy BMP to clipboard.');
+    raise ELibraryException.create('Unable to copy BMP to clipboard.');
   end;
 end;
 // ----------------------------------------------------------------------------- 

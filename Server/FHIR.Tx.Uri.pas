@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Text,
   FHIR.Database.Manager,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
 
@@ -115,7 +114,7 @@ end;
 
 function TUriServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 procedure TUriServices.Displays(code : String; list : TStringList; lang : String);
@@ -169,12 +168,12 @@ end;
 
 function TUriServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUriServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('locateIsA not supported by Uri'); // Uri doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.create('locateIsA not supported by Uri'); // Uri doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -185,37 +184,37 @@ end;
 
 function TUriServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUriServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUriServices.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUriServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUriServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUriServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 function TUriServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 procedure TUriServices.Close(ctxt: TCodeSystemProviderContext);
@@ -230,7 +229,7 @@ end;
 
 procedure TUriServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologyError.create('not done yet');
 end;
 
 { TUriHolder }

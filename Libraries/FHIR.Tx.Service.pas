@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Base.Common,
   FHIR.CdsHooks.Utilities,
   YuStemmer;
@@ -43,8 +42,6 @@ const
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
 
 Type
-  ETerminologySetup = class (Exception);
-  ETerminologyError = class (Exception);
 
   TFhirFilterOperator = FHIR.Base.Common.TFilterOperator;
 
@@ -231,12 +228,12 @@ end;
 
 function TCodeSystemProvider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('Not implemented for '+ClassName);
+  raise ETerminologyError.create('Not implemented for '+ClassName);
 end;
 
 function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise Exception.Create('Subsumption Testing is not supported for system '+system(nil));
+  raise ETerminologyError.create('Subsumption Testing is not supported for system '+system(nil));
 end;
 
 function TCodeSystemProvider.version(context: TCodeSystemProviderContext): String;

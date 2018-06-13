@@ -38,7 +38,7 @@ Interface
 Uses
   {$IFDEF OSX} Posix.SysTypes,  {$ELSE} Windows, Registry, {$ENDIF}
   SysUtils, SysConst, DateUtils, Math, System.TimeSpan,
-  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Fpc;
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Fpc;
 
 Const
   DATETIME_MIN = -693593; // '1/01/0001'
@@ -153,6 +153,7 @@ type
 
     function DateTime : TDateTime;
     function TimeStamp : TTimeStamp;
+    function truncToDay : TDateTimeEx;
 
     function fixPrecision(Precision : TDateTimeExPrecision) : TDateTimeEx;
 
@@ -168,9 +169,11 @@ type
     function IncrementDay: TDateTimeEx;
     function add(length : TDateTime) : TDateTimeEx;
     function subtract(length : TDateTime) : TDateTimeEx;
+    function difference(other : TDateTimeEx) : TDateTime;
     function lessPrecision: TDateTimeEx;
 
-    function equal(other : TDateTimeEx) : Boolean;  // returns true if the timezone, FPrecision, and actual instant are the same
+    function equal(other : TDateTimeEx) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
+    function equal(other : TDateTimeEx; precision : TDateTimeExPrecision) : Boolean; overload; // returns true if the timezone, FPrecision, and actual instant are the same
     function sameTime(other : TDateTimeEx) : Boolean; // returns true if the specified instant is the same allowing for specified FPrecision - corrects for timezone
     function after(other : TDateTimeEx; inclusive : boolean):boolean;
     function before(other : TDateTimeEx; inclusive : boolean):boolean;
@@ -204,6 +207,17 @@ type
 
     function clone : TDateTimeEx;
     function link : TDateTimeEx;
+
+    class operator Trunc(a : TDateTimeEx) : TDateTimeEx;
+    class operator Equal(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator NotEqual(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator GreaterThan(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator GreaterThanOrEqual(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator LessThan(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator LessThanOrEqual(a: TDateTimeEx; b: TDateTimeEx) : Boolean;
+    class operator Add(a: TDateTimeEx; b: TDateTime) : TDateTimeEx; // date time is duration here
+    class operator Subtract(a: TDateTimeEx; b: TDateTime) : TDateTimeEx; // date time is duration here
+    class operator Subtract(a: TDateTimeEx; b: TDateTimeEx) : TDateTime; // date time is duration here
   end;
 
 {$IFDEF MSWINDOWS}
@@ -757,6 +771,25 @@ begin
   end;
 end;
 
+function TDateTimeEx.difference(other : TDateTimeEx): TDateTime;
+begin
+  Result := self.UTC.DateTime - other.UTC.DateTime;
+end;
+
+function TDateTimeEx.equal(other: TDateTimeEx; precision: TDateTimeExPrecision): Boolean;
+begin
+  result :=
+    (FPrecision >= precision) and (other.Precision >= precision) and
+    (year = other.year) and
+    ((precision < dtpMonth) or (month = other.month)) and
+    ((precision < dtpDay) or (day = other.day)) and
+    ((precision < dtpHour) or (hour = other.hour)) and
+    ((precision < dtpMin) or (minute = other.minute)) and
+    ((precision < dtpSec) or (second = other.second)) and
+    ((precision < dtpNanoSeconds) or (fraction = other.fraction)) and (FractionPrecision = other.FractionPrecision) and
+    (TimezoneType = other.TimezoneType) and (TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins);
+end;
+
 procedure FindBlock(ch: Char; const s: String; var start, blength: Integer);
 begin
   start := pos(ch, s);
@@ -788,11 +821,11 @@ begin
   DecodeTime(value, result.Hour, result.Minute, result.Second, ms);
   result.Fraction := ms * 1000000;
   if result.second > 59 then
-    raise Exception.Create('Fail!');
+    raise ELibraryException.create('Fail!');
   DecodeDate(value, yr, result.Month, result.Day);
   result.Year := yr;
-  result.FPrecision := dtpSec;
-  result.FractionPrecision := 0;
+  result.FPrecision := dtpNanoSeconds;
+  result.FractionPrecision := 3;
   result.TimezoneType := tz;
   result.Source := 'makeDT';
 end;
@@ -1018,7 +1051,7 @@ begin
     neg := Pos('-', copy(Value, pos('T', value)+1, $FF)) > 0;
     StringSplitRight(value, ['-', '+'], value, s);
     if length(s) <> 5 then
-      raise Exception.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
+      raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
     res.TimezoneHours := vsv(s, 1, 2, 0, 14, 'timezone hours');
     res.TimezoneMins := vsv(s, 4, 2, 0, 59, 'timezone minutes');
     res.TimezoneType := dttzSpecified;
@@ -1078,6 +1111,16 @@ begin
   if result.FPrecision > dtpYear then
     result.FPrecision := pred(result.FPrecision);
   result.RollUp;
+end;
+
+class operator TDateTimeEx.LessThan(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.before(b, false);
+end;
+
+class operator TDateTimeEx.LessThanOrEqual(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.before(b, true);
 end;
 
 function TDateTimeEx.link: TDateTimeEx;
@@ -1146,10 +1189,10 @@ var
 begin
   v := copy(value, start, len);
   if not StringIsInteger16(v) then
-    raise exception.create('Unable to parse date/time "'+value+'" at '+name);
+    raise ELibraryException.create('Unable to parse date/time "'+value+'" at '+name);
   result := StrToInt(v);
   if (result < min) or (result > max) then
-    raise exception.create('Value for '+name+' in date/time "'+value+'" is not allowed');
+    raise ELibraryException.create('Value for '+name+' in date/time "'+value+'" is not allowed');
 end;
 
 
@@ -1174,7 +1217,7 @@ begin
     neg := Pos('-', Value) > 0;
     StringSplit(value, ['-', '+'], value, s);
     if length(s) <> 4 then
-      raise Exception.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 4');
+      raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 4');
     result.TimezoneHours := vs(s, 1, 2, 0, 13, 'timezone hours');
     result.TimezoneMins := vs(s, 3, 2, 0, 59, 'timezone minutes');
     result.TimezoneType := dttzSpecified;
@@ -1249,7 +1292,7 @@ begin
     neg := Pos('-', copy(Value, pos('T', value)+1, $FF)) > 0;
     StringSplitRight(value, ['-', '+'], value, s);
     if length(s) <> 5 then
-      raise Exception.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
+      raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
     result.TimezoneHours := vs(s, 1, 2, 0, 14, 'timezone hours');
     result.TimezoneMins := vs(s, 4, 2, 0, 59, 'timezone minutes');
     result.TimezoneType := dttzSpecified;
@@ -1302,6 +1345,16 @@ begin
   end;
   result.check;
   result.source := value;
+end;
+
+class operator TDateTimeEx.GreaterThan(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.after(b, false);
+end;
+
+class operator TDateTimeEx.GreaterThanOrEqual(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.after(b, true);
 end;
 
 Function sv(i, w : integer):String;
@@ -1366,7 +1419,11 @@ begin
     dtpHour:  result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2); // note minutes anyway in this case
     dtpMin:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2);
     dtpSec:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2);
-    dtpNanoSeconds: result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, FractionPrecision);
+    dtpNanoSeconds:
+       if FractionPrecision = 0 then
+         result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)
+       else
+         result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, FractionPrecision);
   end;
   if (FPrecision > dtpDay) then
     case TimezoneType of
@@ -1384,6 +1441,23 @@ begin
     {else
       dttzUnknown - do nothing }
     end;
+end;
+
+class operator TDateTimeEx.Trunc(a: TDateTimeEx): TDateTimeEx;
+begin
+  result := a.truncToDay;
+end;
+
+function TDateTimeEx.truncToDay: TDateTimeEx;
+begin
+  result := clone;
+  if result.FPrecision > dtpDay then
+    result.FPrecision := dtpDay;
+  result.hour := 0;
+  result.minute := 0;
+  result.second := 0;
+  result.fraction := 0;
+  result.TimezoneType := dttzUnknown;
 end;
 
 function TDateTimeEx.Local: TDateTimeEx;
@@ -1516,6 +1590,11 @@ begin
       end;
   end;
   result.FPrecision := dtpNanoSeconds;
+end;
+
+class operator TDateTimeEx.NotEqual(a, b: TDateTimeEx): Boolean;
+begin
+  result := not a.equal(b);
 end;
 
 function TDateTimeEx.notNull: boolean;
@@ -1658,18 +1737,15 @@ begin
 end;
 
 function TDateTimeEx.Equal(other: TDateTimeEx): Boolean;
-var
-  src : TDateTimeEx;
 begin
-  src := TDateTimeEx(other);
-  result := (year = src.year) and
-    ((FPrecision < dtpMonth) or (month = src.month)) and
-    ((FPrecision < dtpDay) or (day = src.day)) and
-    ((FPrecision < dtpHour) or (hour = src.hour)) and
-    ((FPrecision < dtpMin) or (minute = src.minute)) and
-    ((FPrecision < dtpSec) or (second = src.second)) and
-    ((FPrecision < dtpNanoSeconds) or (fraction = src.fraction)) and (FPrecision = src.FPrecision) and (FractionPrecision = src.FractionPrecision) and
-    (TimezoneType = src.TimezoneType) and (TimeZoneHours = src.TimeZoneHours) and (TimezoneMins = src.TimezoneMins);
+  result := (year = other.year) and
+    ((FPrecision < dtpMonth) or (month = other.month)) and
+    ((FPrecision < dtpDay) or (day = other.day)) and
+    ((FPrecision < dtpHour) or (hour = other.hour)) and
+    ((FPrecision < dtpMin) or (minute = other.minute)) and
+    ((FPrecision < dtpSec) or (second = other.second)) and
+    ((FPrecision < dtpNanoSeconds) or (fraction = other.fraction)) and (FPrecision = other.FPrecision) and (FractionPrecision = other.FractionPrecision) and
+    (TimezoneType = other.TimezoneType) and (TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins);
 end;
 
 
@@ -1685,6 +1761,16 @@ begin
     result := false // unknown, really
   else
     result := sameInstant(UTC.DateTime, other.UTC.DateTime);
+end;
+
+class operator TDateTimeEx.subtract(a, b: TDateTimeEx): TDateTime;
+begin
+  result := a.difference(b);
+end;
+
+class operator TDateTimeEx.subtract(a: TDateTimeEx; b: TDateTime): TDateTimeEx;
+begin
+  result := a.subtract(b);
 end;
 
 function TDateTimeEx.ToString: String;
@@ -1787,6 +1873,11 @@ begin
     result := uSelf.second > uOther.second
   else
     result := (uSelf.fraction > uOther.fraction);
+end;
+
+class operator TDateTimeEx.add(a: TDateTimeEx; b: TDateTime): TDateTimeEx;
+begin
+  result := a.add(b);
 end;
 
 function TDateTimeEx.after(other : TDateTimeEx; inclusive : boolean) : boolean;
@@ -2322,7 +2413,7 @@ End;
 Function ToDateTime(Const sValue, sFormat: String): TDateTime;
 Begin
   If Not ToDateTime(sValue, sFormat, Result) Then
-    Raise Exception.create(StringFormat('Unable to convert ''%s'' as ''%s''', [sValue, sFormat]));
+    raise ELibraryException.create(StringFormat('Unable to convert ''%s'' as ''%s''', [sValue, sFormat]));
 End;
 
 Function PCharToTime(Var pValue : PChar; Out aTime : TTime) : Boolean;
@@ -2719,7 +2810,7 @@ End;
 Function ToDateIndices(Const sFormat : String) : TDateIndices;
 Begin
   If Not ToDateIndices(sFormat, Result) Then
-    raise Exception.create(StringFormat('Unable to determine the meaning of the date format ''%s''', [sFormat]));
+    raise ELibraryException.create(StringFormat('Unable to determine the meaning of the date format ''%s''', [sFormat]));
 End;
 
 
@@ -2839,7 +2930,7 @@ End;
 Function StringToTime(Const sValue : String) : TTime;
 Begin
   If Not StringToTime(sValue, Result) Then
-    raise Exception.Create(StringFormat('''%s'' is not a valid time', [sValue]));
+    raise ELibraryException.create(StringFormat('''%s'' is not a valid time', [sValue]));
 End;
 
 Function StringToTime(Const sValue : String; Out aTime : TTime) : Boolean;
@@ -3078,7 +3169,7 @@ Begin
       If aTimeZone = TimeZoneUnknown Then
       Begin
         If GetTimeZoneInformation(aInfo) = $FFFFFFFF Then
-          raise Exception.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
+          raise ELibraryException.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
         Result.WindowsName := aInfo.StandardName;
         Result.Display := '(unknown timezone)';
         Result.BaseRules.Year := 0;
@@ -3092,10 +3183,10 @@ Begin
         Result.WindowsName := WINDOWS_NAMES_TIMEZONES[aTimeZone];
         oReg.RootKey := HKEY_LOCAL_MACHINE;
         If Not oReg.OpenKeyReadOnly(KEY_ROOT + Result.WindowsName) Then
-          Raise Exception.create(StringFormat('Unable to load time zone information [%s]', [ErrorAsString]));
+          raise ELibraryException.create(StringFormat('Unable to load time zone information [%s]', [ErrorAsString]));
         Result.Display := oReg.ReadString('Display');
         If oReg.ReadBinaryData('TZI', aRegInfo, SizeOf(aRegInfo)) <> SizeOf(aRegInfo) Then
-          Raise Exception.create(StringFormat('Unable to load time zone binary information [%s]', [ErrorAsString]));
+          raise ELibraryException.create(StringFormat('Unable to load time zone binary information [%s]', [ErrorAsString]));
         Result.BaseRules.Year := 0;
         Result.BaseRules.StandardStart := aRegInfo.StandardDate;
         Result.BaseRules.StandardBias := aRegInfo.Bias + aRegInfo.StandardBias;
@@ -3118,7 +3209,7 @@ Begin
 
           oTimeZoneYearInfo.Year := iLoop;
           If oReg.ReadBinaryData(IntegerToString(iLoop), aRegInfo, SizeOf(aRegInfo)) <> SizeOf(aRegInfo) Then
-            Raise Exception.create(StringFormat('Unable to load time zone binary information [%s] for [%s]', [ErrorAsString, IntegerToString(iLoop)]));
+            raise ELibraryException.create(StringFormat('Unable to load time zone binary information [%s] for [%s]', [ErrorAsString, IntegerToString(iLoop)]));
           oTimeZoneYearInfo.StandardStart := aRegInfo.StandardDate;
           oTimeZoneYearInfo.StandardBias := aRegInfo.Bias + aRegInfo.StandardBias;
           oTimeZoneYearInfo.DaylightStart := aRegInfo.DaylightDate;
@@ -3183,7 +3274,7 @@ Begin
   iRet := GetTimeZoneInformation(aInfo);
 
   If iRet = $FFFFFFFF Then
-    Raise Exception.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
+    raise ELibraryException.create(StringFormat('Unable to get time zone information [%s]', [ErrorAsString]));
 
   For aLoop := Low(TTimeZoneCode) To High(TTimeZoneCode) Do
   Begin
@@ -3418,7 +3509,7 @@ End;
 Function StringToDuration(Const sValue : String) : TDuration; overload;
 Begin
   If Not StringToDuration(sValue, Result) Then
-    Raise Exception.create(sValue + ' is not a valid duration.');
+    raise ELibraryException.create(sValue + ' is not a valid duration.');
 End;
 
 
@@ -3751,6 +3842,11 @@ end;
 function UnixToDateTime(USec: Longint): TDateTime;
 begin
   Result := (Usec / 86400) + UnixStartDate;
+end;
+
+class operator TDateTimeEx.equal(a, b: TDateTimeEx): Boolean;
+begin
+  result := a.equal(b);
 end;
 
 End.

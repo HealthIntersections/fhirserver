@@ -33,7 +33,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ClipBrd,
   FHIR.Npp.Form,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Tools.CodeGen;
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Lang,
+  FHIR.Tools.CodeGen;
 
 type
   TCodeGeneratorForm = class(TNppForm)
@@ -94,7 +95,7 @@ begin
     2: codegen := TFHIRCodeGeneratorPascal.create;
     3: codegen := TFHIRCodeGeneratorDotNet.create;
   else
-    raise Exception.Create('Unknown language');
+    raise EFHIRException.create('Unknown language');
   end;
   try
     codegen.Resource := Resource.Link;

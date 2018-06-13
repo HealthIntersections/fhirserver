@@ -35,7 +35,8 @@ uses
   SysUtils, Generics.Collections,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Cache.PackageManager,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative,
   FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Client.Base, FHIR.Base.Common;
 
 type
@@ -151,7 +152,7 @@ end;
 function TFHIRNppContext.GetVersion(a: TFHIRVersion): TFHIRNppVersionFactory;
 begin
   if VersionLoading[a] <> vlsLoaded then
-    raise Exception.Create('Version not loaded (yet?)');
+    raise EFHIRException.create('Version not loaded (yet?)');
   result := FVersionList[a];
 end;
 
@@ -168,7 +169,7 @@ end;
 procedure TFHIRNppContext.SetVersion(a: TFHIRVersion; const Value: TFHIRNppVersionFactory);
 begin
   if (a = fhirVersionUnknown) then
-    raise Exception.Create('Illegal Version');
+    raise EFHIRException.create('Illegal Version');
   value.FContext := self;
   FVersionList[a] := value;
   FVersions[a] := value.FFactory.link;
@@ -178,7 +179,7 @@ end;
 procedure TFHIRNppContext.SetVersionLoading(a: TFHIRVersion; const Value: TFHIRVersionLoadingStatus);
 begin
   if (a = fhirVersionUnknown) and (value <> vlsNotSupported) then
-    raise Exception.Create('Illegal Version');
+    raise EFHIRException.create('Illegal Version');
   FVersionStatus[a] := value;
 end;
 

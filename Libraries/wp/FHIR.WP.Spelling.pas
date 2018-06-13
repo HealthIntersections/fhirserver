@@ -32,10 +32,10 @@ Interface
 
 Uses
   FHIR.Support.Exceptions, FHIR.Support.Collections,
-  FHIR.WP.Settings, FHIR.WP.Working;
+  FHIR.WP.Settings, FHIR.WP.Types, FHIR.WP.Working;
 
 Type
-  EWordIsBanned = Class (EFslException);
+  EWordIsBanned = Class (EWPException);
   TWordCheckType = (wcAccepted, wcExcluded, wcCorrected, wcDenied, wcRepeated);
   TWordCheckEvent = Procedure (Sender:TObject; Const Word:String; Var CheckType : TWordCheckType; Var Replacement:String) Of Object;
   TAllowWordEvent = Procedure (Sender:TObject; Const Word:String) Of Object;

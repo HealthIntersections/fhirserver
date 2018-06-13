@@ -1,6 +1,34 @@
 unit ServerLoginDialog;
 
 {
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+{
 Login Dialog.
 
 This dialog prompts the user for 6 pieces of information:
@@ -107,7 +135,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, IniFiles,
   FHIR.Support.Strings, FHIR.Support.Shell,
-  FHIR.Base.Utilities, FHIR.Base.Common,
+  FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R2.Common,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Smart.LoginVCL, FHIR.Base.Objects, FHIR.Version.Client, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ProgressDialog, FHIRDemoLogging;
@@ -206,11 +234,11 @@ var
   form : TSmartOnFhirLoginForm;
 begin
   if not isAbsoluteUrl(cbxServer.Text) then
-    raise Exception.Create('Invalid Server Address');
+    raise EFHIRException.create('Invalid Server Address');
   if not StringIsInteger16(edtRedirectPort.Text) then
-    raise Exception.Create('Invalid Port Number');
+    raise EFHIRException.create('Invalid Port Number');
   if not IsId(edtPatientId.Text) then
-    raise Exception.Create('Invalid Patient Id');
+    raise EFHIRException.create('Invalid Patient Id');
 
   ini.WriteString('Server', 'URL', cbxServer.Text);
   ini.WriteString('Server', 'ClientId', cbClientId.Text);
@@ -250,7 +278,7 @@ begin
           server.tokenEndpoint := t;
         end
         else
-          raise Exception.Create('This server does not support Smart on FHIR');
+          raise EFHIRException.create('This server does not support Smart on FHIR');
         if chkInProgress.Checked and (cbAuthScope.Text <> 'System') then
         begin
           form := TSmartOnFhirLoginForm.create(self);

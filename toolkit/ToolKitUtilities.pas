@@ -34,9 +34,12 @@ uses
   IdHTTP, IdSSLOpenSSL, IdComponent,
   FHIR.Ui.OSX,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls,
-  FHIR.Support.Objects,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client;
+  FHIR.Support.Objects, FHIR.Support.Threads, FHIR.Support.Generics,
+  FHIR.Cache.PackageManager,
+  FHIR.Base.Objects, FHIR.Base.Parser,
+  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;
 
+function checkSSL : boolean;
 function checkUpgrade : String;
 procedure doUpgrade(newVersion : String);
 function translationsImageIndex(element : TFHIRElement): integer;
@@ -71,7 +74,77 @@ type
     procedure populate(cc : TFHIRCodeableConcept);
   end;
 
+  TToolkitWorkerContext = class (TBaseWorkerContext)
+  public
+    function Link : TToolkitWorkerContext; overload;
+
+    function expand(vs : TFhirValueSet) : TFHIRValueSet; overload; override;
+    function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; override;
+    function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; override;
+    function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; override;
+//    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
+//    function getStructure(url : String) : TFHIRStructureDefinition; overload; override;
+//    function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; override;
+//    function getCustomResource(name : String) : TFHIRCustomResourceInformation; override;
+//    function hasCustomResource(name : String) : boolean; override;
+    function supportsSystem(system, version : string) : boolean; overload; override;
+//    function validateCode(system, version, code, display : String) : TValidationResult; overload; virtual; abstract;
+//    function validateCode(system, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; virtual; abstract;
+//    function allResourceNames : TArray<String>; overload; virtual; abstract;
+//    function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
+//    procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
+    procedure loadStructures(id : integer; structures : TFslObject);
+  end;
+
+  TBackgroundContextLoadingInformation = class (TFslObject)
+  private
+    Fversion: String;
+    FPackageManager: TFHIRPackageManager;
+    FContext: TToolkitWorkerContext;
+  public
+    constructor Create(packageMgr : TFHIRPackageManager; version : string; context : TToolkitWorkerContext);
+    destructor Destroy; override;
+    property packageMgr : TFHIRPackageManager read FPackageManager;
+    property version : String read Fversion;
+    property context : TToolkitWorkerContext read FContext;
+  end;
+
+  TBackgroundContextLoader = class (TBackgroundTaskEngine)
+  private
+    function details : TBackgroundContextLoadingInformation;
+    function collection : TFslList<TFHIRStructureDefinition>;
+    procedure loadResourceJson(rType, id : String; json : TStream);
+  public
+    function name : String; override;
+    procedure execute; override;
+  end;
+
 implementation
+
+function checkSSL : boolean;
+var
+  http : TIdHTTP;
+  ssl : TIdSSLIOHandlerSocketOpenSSL;
+begin
+  http := TIdHTTP.Create(nil);
+  try
+    ssl := TIdSSLIOHandlerSocketOpenSSL.Create(Nil);
+    Try
+      http.IOHandler := ssl;
+      ssl.SSLOptions.Mode := sslmClient;
+      ssl.SSLOptions.Method := sslvTLSv1_2;
+      try
+        http.Get('https://null.nowhere/something');
+        result := true;
+      except
+      end;
+    Finally
+      ssl.Free;
+    End;
+  finally
+    http.free;
+  end;
+end;
 
 function checkUpgrade : String;
 var
@@ -95,11 +168,6 @@ begin
       inc := inc.substring(inc.indexof('<td>v')+5);
       inc := inc.substring(0, inc.indexof('</td>'));
       result := inc;
-      // init openSSL
-      try
-        http.Get('https://hl7.org/fhir/version.info');
-      except
-      end;
     Finally
       ssl.Free;
     End;
@@ -530,6 +598,100 @@ begin
   FValueSet := Value;
   if FEdit.Text <> '' then
     editChange(nil);
+end;
+
+{ TToolkitWorkerContext }
+
+function TToolkitWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.Link: TToolkitWorkerContext;
+begin
+  result := TToolkitWorkerContext(inherited link);
+end;
+
+procedure TToolkitWorkerContext.loadStructures(id: integer; structures: TFslObject);
+var
+  sd : TFHIRStructureDefinition;
+begin
+  for sd in Structures as TFslList<TFHIRStructureDefinition> do
+    seeResource(sd);
+end;
+
+function TToolkitWorkerContext.supportsSystem(system, version: string): boolean;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+function TToolkitWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
+begin
+  raise EFslException.Create('Not implemented in the toolkit');
+end;
+
+{ TBackgroundContextLoadingInformation }
+
+constructor TBackgroundContextLoadingInformation.Create(packageMgr: TFHIRPackageManager; version: string; context : TToolkitWorkerContext);
+begin
+  inherited create;
+  FPackageManager := packageMgr;
+  Fversion := version;
+  FContext := context;
+end;
+
+destructor TBackgroundContextLoadingInformation.Destroy;
+begin
+  FPackageManager.Free;
+  FContext.Free;
+  inherited;
+end;
+
+{ TBackgroundContextLoader }
+
+function TBackgroundContextLoader.collection: TFslList<TFHIRStructureDefinition>;
+begin
+  result := Response as TFslList<TFHIRStructureDefinition>;
+end;
+
+function TBackgroundContextLoader.details: TBackgroundContextLoadingInformation;
+begin
+  result := request as TBackgroundContextLoadingInformation;
+end;
+
+procedure TBackgroundContextLoader.execute;
+begin
+  response := TFslList<TFHIRStructureDefinition>.create;
+  details.packageMgr.loadPackage('hl7.fhir.core',  details.version, ['StructureDefinition'], loadResourceJson);
+end;
+
+procedure TBackgroundContextLoader.loadResourceJson(rType, id: String; json: TStream);
+var
+  p : TFHIRParser;
+begin
+  p := details.Context.Factory.makeParser(details.context.link, ffJson, 'en');
+  try
+    p.source := json;
+    p.Parse;
+    collection.Add((p.resource as TFHIRStructureDefinition).Link);
+  finally
+    p.Free;
+  end;
+end;
+
+function TBackgroundContextLoader.name: String;
+begin
+  result := 'Core Package Loader';
 end;
 
 end.

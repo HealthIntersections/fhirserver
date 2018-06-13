@@ -34,7 +34,7 @@ Interface
 uses
   SysUtils, Classes, Inifiles, Generics.Collections,
 
-  FHIR.Support.Text, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Strings,
+  FHIR.Support.Exceptions, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Strings,
 
   FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   FHIR.Database.Manager, FHIR.Database.Dialects,
@@ -400,9 +400,9 @@ end;
 procedure TSnomedImporter.Go;
 begin
   if FVersionUri = '' then
-    raise Exception.Create('The full version URI must be provided');
+    raise ETerminologySetup.create('The full version URI must be provided');
   if FVersionDate = '' then
-    raise Exception.Create('The full version URI must be provided');
+    raise ETerminologySetup.create('The full version URI must be provided');
   ImportSnomed;
 end;
 
@@ -599,7 +599,7 @@ Begin
   begin
     oConcept := TConcept(FConcepts[iLoop]);
     if oConcept.Identity <= iLast then
-      Raise Exception.Create('out of order at '+inttostr(oConcept.Identity)+' (last was '+inttostr(ilast)+')'); // if you get this, change the value of TrackConceptDuplicates to true
+      raise ETerminologySetup.create('out of order at '+inttostr(oConcept.Identity)+' (last was '+inttostr(ilast)+')'); // if you get this, change the value of TrackConceptDuplicates to true
     iLast := oConcept.Identity;
     inc(OverallCount);
     oConcept.Index := FConcept.AddConcept(oConcept.Identity, oConcept.FDate, oConcept.Flag);
@@ -617,13 +617,13 @@ Begin
     if OverallCount mod UPDATE_FREQ = 0 then
       Progress(STEP_BUILD_CONCEPT_CACHE, (FConcepts.Count+iLoop) / (FConcepts.Count*2), '');
     if not FConcept.FindConcept(oConcept.Identity, iIndex) or (iIndex <> oConcept.index) Then
-      raise exception.create('unable to find a concept in the concept list it is in: '+inttostr(oConcept.Identity)+'['+inttostr(iLoop)+']');
+      raise ETerminologySetup.create('unable to find a concept in the concept list it is in: '+inttostr(oConcept.Identity)+'['+inttostr(iLoop)+']');
     // resolve moduleid and status id
     if not FConcept.FindConcept(oConcept.FModuleId, iTemp) then
-      raise exception.create('unable to resolve module id: '+inttostr(oConcept.FModuleId));
+      raise ETerminologySetup.create('unable to resolve module id: '+inttostr(oConcept.FModuleId));
     FConcept.SetModuleId(iIndex, iTemp);
     if not FConcept.FindConcept(oConcept.FStatus, iTemp) then
-      raise exception.create('unable to resolve status: '+inttostr(oConcept.FStatus));
+      raise ETerminologySetup.create('unable to resolve status: '+inttostr(oConcept.FStatus));
     FConcept.SetStatus(iIndex, iTemp);
   End;
 End;
@@ -745,15 +745,15 @@ begin
 
       oConcept := GetConcept(StrToUInt64(ascopy(s, iConceptStart+1, (iConcept - iConceptStart)-1)), iConceptIndex);
       if oConcept = nil then
-        raise exception.create('unable to find Concept in desc ('+ascopy(s, iStatus+1, (iConcept - iStatus)-1)+')');
+        raise ETerminologySetup.create('unable to find Concept in desc ('+ascopy(s, iStatus+1, (iConcept - iStatus)-1)+')');
 
       ascopy(s, iType+1, (iTerm - iType) - 1);
       if not FConcept.FindConcept(StrtoUInt64(ascopy(s, iStatus+1, (iModuleId - iStatus) - 1)), module) then
-        raise Exception.Create('Unable to find desc module '+ascopy(s, iStatus+1, (iModuleId - iStatus) - 1));
+        raise ETerminologySetup.create('Unable to find desc module '+ascopy(s, iStatus+1, (iModuleId - iStatus) - 1));
       lang := readLang(ascopy(s, iConcept+1, (iLang - iConcept) - 1));
       iKind := StrtoUInt64(ascopy(s, iLang+1, (iType - iLang) - 1));
       if not FConcept.FindConcept(iKind, kind) then
-        raise Exception.Create('Unable to find desc type '+ascopy(s, iLang+1, (iType - iLang) - 1));
+        raise ETerminologySetup.create('Unable to find desc type '+ascopy(s, iLang+1, (iType - iLang) - 1));
 
       date := ReadDate(ascopy(s, iId+1, (iDate - iId) - 1));
       iSt := strtoint(ascopy(s, iDate+1, (iStatus - iDate) -1)); // we'll have to go update it later based on caps and type
@@ -761,7 +761,7 @@ begin
 
       ucaps := StrtoUInt64(ascopy(s, iTerm+1, (iCaps - iTerm) - 1));
       if not FConcept.FindConcept(ucaps, caps) then
-        raise Exception.Create('Unable to find caps type '+ascopy(s, iLang+1, (iType - iLang) - 1));
+        raise ETerminologySetup.create('Unable to find caps type '+ascopy(s, iLang+1, (iType - iLang) - 1));
 
       sDesc := utfcopy(s, iTermStart+1, (iTerm - iTermStart) - 1);
       SeeDesc(sDesc, iConceptIndex, active, iKind = RF2_MAGIC_FSN);
@@ -892,12 +892,12 @@ var
     sId := ascopy(s, iStart+1, iEnd - iStart-1);
     result := GetConcept(StrToUInt64(sId), iDummy);
     if result = nil Then
-      Raise Exception.Create('Unable to resolve the term reference '+sId+' in the relationships file at position '+inttostr(iStart)+' on line '+inttostr(line));
+      raise ETerminologySetup.create('Unable to resolve the term reference '+sId+' in the relationships file at position '+inttostr(iStart)+' on line '+inttostr(line));
   End;
 Begin
   Progress(STEP_READ_REL, 0, 'Read Relationship File');
   if not FConcept.FindConcept(IS_A_MAGIC, Findex_is_a) Then
-    Raise exception.Create('is-a concept not found ('+inttostr(IS_A_MAGIC)+')');
+    raise ETerminologySetup.create('is-a concept not found ('+inttostr(IS_A_MAGIC)+')');
   for fi := 0 to RelationshipFiles.Count - 1 do
   begin
     s := LoadFile(RelationshipFiles[fi]);
@@ -934,7 +934,7 @@ Begin
       defining := (kind.Identity = RF2_MAGIC_RELN_DEFINING) or (kind.Identity = RF2_MAGIC_RELN_STATED) or (kind.Identity = RF2_MAGIC_RELN_INFERRED);
 
       if FRels.containsKey(iRel) then
-        raise Exception.Create('Duplicate relationship id '+inttostr(iRel)+' at line '+inttostr(line));
+        raise ETerminologySetup.create('Duplicate relationship id '+inttostr(iRel)+' at line '+inttostr(line));
       iIndex := FRel.AddRelationship(iRel, oSource.Index, oTarget.Index, oRelType.Index, module, kind.Index, modifier, date, active, defining, group);
       FRels.Add(iRel, iIndex);
       if (oRelType.Index = Findex_is_a) and (defining) Then
@@ -1073,9 +1073,9 @@ begin
     oConcept := TConcept(FConcepts[iLoop]);
 
     if not FConcept.FindConcept(oConcept.Identity, iIndex) then
-      raise exception.create('import error 1');
+      raise ETerminologySetup.create('import error 1');
     if not iIndex = oConcept.index then
-      raise exception.create('import error 2');
+      raise ETerminologySetup.create('import error 2');
 
     if (Length(oConcept.FActiveParents) <> 0) or (Length(oConcept.FInactiveParents) <> 0) Then
       FConcept.SetParents(oConcept.Index, FRefs.AddReferences(oConcept.FActiveParents), FRefs.AddReferences(oConcept.FInactiveParents))
@@ -1100,7 +1100,7 @@ begin
       Progress(STEP_CONCEPT_LINKS, iLoop / FConcepts.Count, '');
   End;
   if length(active) = 0 Then
-    Raise Exception.Create('no roots found');
+    raise ETerminologySetup.create('no roots found');
 end;
 
 procedure TSnomedImporter.BuildClosureTable;
@@ -1244,7 +1244,7 @@ begin
   SetLength(aChildren, 0);
   iDesc := FConcept.GetAllDesc(iConcept);
   if iDesc = MAGIC_IN_PROGRESS Then
-    raise Exception.Create('Circular relationship to '+inttostr(ic))
+    raise ETerminologySetup.create('Circular relationship to '+inttostr(ic))
   else if iDesc = MAGIC_NO_CHILDREN Then
     result := nil
   Else if iDesc <> 0 Then
@@ -1379,7 +1379,7 @@ end;
 procedure TSnomedImporter.SetVersion(s: String);
 begin
   if (s = '') then
-    raise Exception.Create('no snomed version provided');
+    raise ETerminologySetup.create('no snomed version provided');
   FVersionUri := s;
   FVersionDate := copy(s, length(s)-7, 8);
 end;
@@ -1396,7 +1396,7 @@ begin
   Begin
     FConcept.SetDepth(focus, iDepth);
     if iDepth = 255 Then
-      Raise exception.create('too deep');
+      raise ETerminologySetup.create('too deep');
     inc(iDepth);
     aChildren := ListChildren(focus);
     for i := 0 to length(aChildren) - 1 Do
@@ -1783,7 +1783,7 @@ begin
     for i := 0 to name.Length - 1 do
     begin
       if not CharInSet(name[i+1], ['c', 'i', 's']) then
-        raise Exception.Create('Unknown refset type '+name[i+1]);
+        raise ETerminologySetup.create('Unknown refset type '+name[i+1]);
       types[i] := ord(name[i+1]);
     end;
     ti := FRefs.AddReferences(types);
@@ -1842,7 +1842,7 @@ begin
 
 
       if not FConcept.FindConcept(StrToUInt64(sModule), iMod) then
-          raise Exception.Create('Module '+sModule+' not found');
+          raise ETerminologySetup.create('Module '+sModule+' not found');
       for I := 0 to length(types) - 1 do
       begin
         if (i = 0) then
@@ -1865,7 +1865,7 @@ begin
             Else if FRels.TryGetValue(iRef, iTermRef) then
               iType := 3
             else
-              raise Exception.Create('Unable to find concept '+sVals[i]);
+              raise ETerminologySetup.create('Unable to find concept '+sVals[i]);
             iVal := iTermRef;
             end;
           105 {i} :
@@ -1879,7 +1879,7 @@ begin
             iType := 5;
             end;
         else
-          raise Exception.Create('Internal error');
+          raise ETerminologySetup.create('Internal error');
         end;
         values[i*2] := iVal;
         values[i*2+1] := iType;
@@ -1890,7 +1890,7 @@ begin
       Begin
         refSet := Frefsets.GetRefset(sRefSetId);
         if (refset.fieldTypes <> 0) and (refset.fieldTypes <> ti) then
-          raise Exception.Create('field types mismatch');
+          raise ETerminologySetup.create('field types mismatch');
         refset.title := sname;
         refset.isLangRefset := isLangRefset;
         refset.filename := FStrings.AddString(sFile.Substring(pfxLen));
@@ -1901,7 +1901,7 @@ begin
         refset.fieldNames := FRefs.AddReferences(fnames);
         if refset.index = MAGIC_NO_CHILDREN then
           if not FConcept.FindConcept(StrToUInt64(sRefSetId), iRefsetRef) then
-             raise exception.create('unable to find term '+sRefSetId+' for reference set '+sFile)
+             raise ETerminologySetup.create('unable to find term '+sRefSetId+' for reference set '+sFile)
           else
             refset.index := iRefsetRef;
 

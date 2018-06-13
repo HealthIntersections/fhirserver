@@ -62,9 +62,9 @@ Type
     FStatus: Integer;
     FKey: Integer;
     FOldSource: String;
-    FContext : TSmartDecimalContext;
+    FContext : TFslDecimalContext;
 
-    Function ParseDecimal(S,s1 : String):TSmartDecimal;
+    Function ParseDecimal(S,s1 : String):TFslDecimal;
     Function ParsePrefix(oElem : IXMLDOMElement):TUcumPrefix;
     Function ParseBaseUnit(oElem : IXMLDOMElement):TUcumBaseUnit;
     Function ParseUnit(oElem : IXMLDOMElement):TUcumDefinedUnit;
@@ -118,7 +118,7 @@ var
   iStatus : integer;
 begin
   FDB := CreateConnectionPoolManager(nil, nil, 'import');
-  FContext := TSmartDecimalContext.create;
+  FContext := TFslDecimalContext.create;
   FConn := FDb.GetConnection('snomed');
   Try
     if Key <> 0 Then
@@ -150,7 +150,7 @@ begin
         oParser.Free;
       End;
       if oXml.documentElement.nodeName <> 'root' Then
-        raise exception.create('Invalid ucum essence file');
+        raise ETerminologySetup.create('Invalid ucum essence file');
       GUcum := TUcumServices.Create;
       try
 
@@ -174,14 +174,14 @@ begin
          Else if oElem.NodeName = 'unit' Then
            FUcum.definedUnits.Add(ParseUnit(oElem))
          else
-           raise exception.create('unrecognised element '+oElem.nodename);
+           raise ETerminologySetup.create('unrecognised element '+oElem.nodename);
           oElem := TMsXmlParser.NextSibling(oElem);
         End;
         oErrors := TFslStringList.Create;
         Try
           GUcum.Validate(oErrors);
           if oErrors.Count > 0 then
-            raise exception.create(oErrors.asText);
+            raise ETerminologySetup.create(oErrors.asText);
         Finally
           oErrors.Free;
         End;
@@ -272,7 +272,7 @@ Begin
           result.Text := s;
       End
       else
-        raise exception.Create('unknown element in prefix: '+oChild.NodeName);
+        raise ETerminologySetup.create('unknown element in prefix: '+oChild.NodeName);
       oChild := TMsXmlParser.NextSibling(oChild);
     End;
     result.Link;
@@ -303,7 +303,7 @@ Begin
       else if oChild.nodeName = 'property' Then
         result.PropertyType := GetPropertyIndex(TMsXmlParser.TextContent(oChild, ttAsIs))
       else
-        raise exception.Create('unknown element in base unit: '+oChild.NodeName);
+        raise ETerminologySetup.create('unknown element in base unit: '+oChild.NodeName);
       oChild := TMsXmlParser.NextSibling(oChild);
     End;
     result.Link;
@@ -340,7 +340,7 @@ Begin
         result.value.text := TMsXmlParser.TextContent(oChild, ttAsIs);
       End
       else
-        raise exception.Create('unknown element in unit: '+oChild.NodeName); 
+        raise ETerminologySetup.create('unknown element in unit: '+oChild.NodeName); 
       oChild := TMsXmlParser.NextSibling(oChild);
     End;
     result.Link;
@@ -350,7 +350,7 @@ Begin
 End;
 
 
-function TUcumImportAction.ParseDecimal(S,s1: String): TSmartDecimal;
+function TUcumImportAction.ParseDecimal(S,s1: String): TFslDecimal;
 begin
   if s = '' then
     result := FContext.One
@@ -378,7 +378,7 @@ Begin
         begin
           s := GUcum.Validate(oUnits[j]);
           if s <> '' Then
-            Raise Exception.Create('The unit '+oUnits[j]+' on the property '+oList[i]+' in the UCUM extensions is not valid: '+s);
+            raise ETerminologySetup.create('The unit '+oUnits[j]+' on the property '+oList[i]+' in the UCUM extensions is not valid: '+s);
         End;
         FUcum.Properties[GetPropertyIndex(oList[i])].CommonUnits.Assign(oUnits);
       End;

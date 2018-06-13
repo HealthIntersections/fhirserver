@@ -37,7 +37,8 @@ uses
   FMX.Grid.Style, FMX.Grid, FMX.Menus,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal,
   FHIR.Support.Generics, FHIR.SUpport.Text,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
+  FHIR.Base.Objects, FHIR.Base.Lang,
+  FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
   ResourceEditingSupport, System.ImageList, FMX.ImgList;
@@ -759,7 +760,7 @@ begin
     end
     end
     else
-      raise Exception.Create('Unknown format');
+      raise EFHIRException.create('Unknown format');
   end;
 end;
 
@@ -1119,7 +1120,7 @@ begin
          else if param.value is TFhirInteger then
            TFhirInteger(param.value).value := inttostr(StrToInt(value.AsString))
          else if param.value is TFhirDecimal then
-           TFhirDecimal(param.value).value := TSmartDecimal.ValueOf(value.AsString).AsString
+           TFhirDecimal(param.value).value := TFslDecimal.ValueOf(value.AsString).AsString
          else if param.value is TFhirUri then
            TFhirUri(param.value).value := value.AsString
          else if param.value is TFhirCode then
@@ -1140,7 +1141,7 @@ begin
              else if Value.AsString = 'integer' then
                param.value := TFhirInteger.Create(inttostr(StrToInt((s))))
              else if Value.AsString = 'decimal' then
-               param.value := TFhirDecimal.Create(TSmartDecimal.ValueOf(s).AsString)
+               param.value := TFhirDecimal.Create(TFslDecimal.ValueOf(s).AsString)
              else if Value.AsString = 'uri' then
                param.value := TFhirUri.Create(s)
              else if Value.AsString = 'code' then

@@ -33,6 +33,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json,
+  FHIR.Base.Lang,
   FHIR.Server.Session, FHIR.Version.Client,
   FHIR.CdsHooks.Utilities, FHIR.Server.Utilities, FHIR.Server.Context;
 
@@ -66,14 +67,14 @@ type
   protected
     FEngines : TList<TCDSHooksProcessorClass>;
     Procedure require(test : boolean; msg : String);
-    function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; overload; virtual;
+    function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; overload; virtual; abstract;
     function ProcessRequestEngines(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest; response : TCDSHookResponse) : boolean;
   public
     Constructor Create; override;
     Destructor Destroy; override;
-    function hook : string; virtual; // see the hook catalog (http://cds-hooks.org/#hook-catalog)
-    function name : String; virtual;
-    function description : String; virtual;
+    function hook : string; virtual; abstract; // see the hook catalog (http://cds-hooks.org/#hook-catalog)
+    function name : String; virtual; abstract;
+    function description : String; virtual; abstract;
     function id : String; virtual; // must be unique across this server
     procedure registerPreFetch(json : TJsonObject); virtual;
 
@@ -185,10 +186,6 @@ begin
   FEngines := TList<TCDSHooksProcessorClass>.create;
 end;
 
-function TCDSHooksService.description: String;
-begin
-  raise Exception.Create('Must override description() in '+className);
-end;
 
 procedure TCDSHooksService.HandleRequest(base : String; server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
@@ -250,24 +247,9 @@ begin
   inherited;
 end;
 
-function TCDSHooksService.HandleRequest(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest): TCDSHookResponse;
-begin
-  raise Exception.Create('Must override HandleRequest in '+className);
-end;
-
-function TCDSHooksService.hook: string;
-begin
-  raise Exception.Create('Must override hook() in '+className);
-end;
-
 function TCDSHooksService.id: String;
 begin
   result := hook;
-end;
-
-function TCDSHooksService.name: String;
-begin
-  raise Exception.Create('Must override name() in '+className);
 end;
 
 function TCDSHooksService.ProcessRequestEngines(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest; response: TCDSHookResponse): boolean;
@@ -313,7 +295,7 @@ end;
 Procedure TCDSHooksService.require(test: boolean; msg: String);
 begin
   if not test then
-    raise Exception.Create(msg);
+    raise EFHIRException.create(msg);
 end;
 
 

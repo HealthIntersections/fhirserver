@@ -32,14 +32,12 @@ Interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.DateTime,
+  FHIR.Support.Exceptions, FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Collections;
 
 Function JSONString(const value : String) : String;
 
 Type
-  EJsonException = class (Exception);
-
   TJsonObject = class;
   TJsonArray = class;
 
@@ -253,7 +251,7 @@ Type
   private
     FBuilder : TFslStringBuilder;
   protected
-    procedure doValue(name, value : String); virtual;
+    procedure doValue(name, value : String); virtual; abstract;
 
     Function JSONString(const value : String) : String;
   public
@@ -262,8 +260,8 @@ Type
     Function Link: TJSONWriter; overload;
     function canInject : boolean; virtual;
 
-    Procedure Start; virtual;
-    Procedure Finish; virtual;
+    Procedure Start; virtual; abstract;
+    Procedure Finish; virtual;  abstract;
 
     Procedure Value(Const name : String; Const avalue : String); overload;
     Procedure ValueNumber(Const name : String; Const avalue : String); overload;
@@ -278,12 +276,12 @@ Type
 
     Procedure ValueObject(Const name : String); Overload; virtual;
     Procedure ValueObject; Overload; virtual;
-    Procedure FinishObject; virtual;
+    Procedure FinishObject; virtual;  abstract;
 
     Procedure ValueArray(Const name : String); virtual;
-    Procedure FinishArray; virtual;
+    Procedure FinishArray; virtual;  abstract;
 
-    Procedure ValueInArray(Const value : String); overload; virtual;
+    Procedure ValueInArray(Const value : String); overload; virtual;  abstract;
     Procedure ValueNumberInArray(Const value : String); overload;
     Procedure ValueInArray(value : Boolean); overload;
     Procedure ValueInArray(value : Integer); overload;
@@ -624,26 +622,6 @@ Begin
   Inherited;
 End;
 
-procedure TJSONWriter.doValue(name, value: String);
-begin
-  raise EJsonException.Create('Need to override '+className+'.doValue');
-end;
-
-procedure TJSONWriter.Finish;
-begin
-  raise EJsonException.Create('Need to override '+className+'.Finish');
-end;
-
-procedure TJSONWriter.FinishArray;
-begin
-  raise EJsonException.Create('Need to override '+className+'.FinishArray');
-end;
-
-procedure TJSONWriter.FinishObject;
-begin
-  raise EJsonException.Create('Need to override '+className+'.FinishObject');
-end;
-
 function TJSONWriter.toString: String;
 begin
   if (Stream <> nil) and (Stream is TFslStringStream) then
@@ -946,22 +924,12 @@ begin
   result := TJSONWriter(Inherited Link);
 end;
 
-procedure TJSONWriter.Start;
-begin
-  raise EJsonException.Create('Need to override '+className+'.start');
-end;
-
 procedure TJSONWriter.ValueDateInArray(aValue: TDateTime);
 begin
   if aValue = 0 then
     ValueNullInArray
   Else
     ValueInArray(FormatDateTime('yyyymmddhhnnss.zzz', aValue));
-end;
-
-procedure TJSONWriter.ValueInArray(const value: String);
-begin
-  raise EJsonException.Create('Need to override '+className+'.ValueInArray');
 end;
 
 { TJsonWriterDirect }
@@ -991,7 +959,10 @@ end;
 procedure TJsonWriterDirect.DoName(const name : String);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',')
+  begin
+    ProduceLine(UseCache+',');
+    FProperty := false;
+  end
   else if FProperty then
   begin
     FProperty := false;
@@ -1031,7 +1002,10 @@ end;
 procedure TJsonWriterDirect.ValueObject;
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',')
+  begin
+    ProduceLine(UseCache+',');
+    FProperty := false;
+  end
   else if FProperty then
   begin
     FProperty := false;
@@ -1060,7 +1034,10 @@ end;
 procedure TJsonWriterDirect.ValueInArray(const value: String);
 begin
   if FCache <> '' Then
-    ProduceLine(UseCache+',')
+  begin
+    ProduceLine(UseCache+',');
+    FProperty := false;
+  end
   else if FProperty then
   begin
     FProperty := false;
@@ -1163,6 +1140,7 @@ begin
           ch := getNextChar;
           case ch of
             '"':FValue.append('"');
+            '''':FValue.append('''');
             '\':FValue.append('\');
             '/':FValue.append('/');
             'n':FValue.append(#10);
@@ -1200,7 +1178,7 @@ begin
       FLexType := jltNumber;
       FValue.Clear;
       exp := false;
-      while More and (CharInSet(ch, ['0'..'9', '.', '-']) or (not exp and (CharInSet(ch, ['0'..'9', '.', '-', 'e', 'E'])))) do
+      while More and (CharInSet(ch, ['0'..'9', '.', '+', '-']) or (not exp and (CharInSet(ch, ['0'..'9', '.', '-', 'e', 'E'])))) do
       Begin
         FValue.append(ch);
         if (ch = 'e') or (ch = 'E') then
@@ -2775,7 +2753,6 @@ end;
 procedure TJsonWriterCanonical.commitArray(node: TCanonicalJsonNode);
 var
   c : TCanonicalJsonNode;
-  s : String;
   first : boolean;
 begin
   Produce('[');
@@ -2800,7 +2777,7 @@ end;
 procedure TJsonWriterCanonical.commitObject(node: TCanonicalJsonNode);
 var
   ts : TStringList;
-  c, i : TCanonicalJsonNode;
+  c : TCanonicalJsonNode;
   s : String;
   first : boolean;
 begin

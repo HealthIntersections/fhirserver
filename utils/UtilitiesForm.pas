@@ -35,7 +35,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.strUtils, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ImgList, FHIR.Support.System, Inifiles, FHIR.Support.Shell,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FHIR.Tools.DiffEngine, Registry;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FHIR.Tools.DiffEngine, Registry, FHIR.Cache.PackageManagerDialog;
 
 type
   TForm4 = class(TForm)
@@ -133,7 +133,7 @@ type
     btnAddEdition: TSpeedButton;
     btnDeleteEdition: TSpeedButton;
     dlgOpenCache: TFileOpenDialog;
-    pnlProcessUMLS: TPanel;
+    pnlPackageManagerLink: TPanel;
     Image1: TImage;
     pnlLoincImport: TPanel;
     Image2: TImage;
@@ -153,6 +153,11 @@ type
     Label21: TLabel;
     Label22: TLabel;
     edtLoincDate: TEdit;
+    pnlProcessUMLS: TPanel;
+    Image5: TImage;
+    TabSheet5: TTabSheet;
+    pnlPackageManager: TPanel;
+    Panel26: TPanel;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -178,6 +183,7 @@ type
     procedure FormShow(Sender: TObject);
     function GetODBCDriversList: TStrings;
     procedure cbUMLSDriverChange(Sender: TObject);
+    procedure pnlPackageManagerLinkClick(Sender: TObject);
   private
     { Private declarations }
     ini : TIniFile;
@@ -237,8 +243,17 @@ begin
     PageControl1.Pages[page].TabVisible := false;
   pnlSnomedImport.Color := rgb(217, 240, 247);
   pnlLoincImport.color := clWhite;
+  pnlPackageManagerLink.color := clWhite;
   pnlCombineSnomed.color := clWhite;
   pnlProcessUMLS.color := clWhite;
+  PackageCacheForm := TPackageCacheForm.create(self);
+  PackageCacheForm.Parent := pnlPackageManager;
+  PackageCacheForm.Align := alClient;
+  PackageCacheForm.Visible := True;
+  PackageCacheForm.Caption := '';
+  PackageCacheForm.BorderStyle := bsNone;
+  PackageCacheForm.UserMode := false;
+
   PageControl1.ActivePageIndex := 0;
   lbEditionsClick(self);
 end;
@@ -265,10 +280,23 @@ begin
   if running then
     exit;
   pnlCombineSnomed.Color := rgb(217, 240, 247);
+  pnlPackageManagerLink.color := clWhite;
   pnlLoincImport.color := clWhite;
   pnlSnomedImport.color := clWhite;
   pnlProcessUMLS.color := clWhite;
   PageControl1.ActivePageIndex := 1;
+end;
+
+procedure TForm4.pnlPackageManagerLinkClick(Sender: TObject);
+begin
+  if running then
+    exit;
+  pnlPackageManagerLink.Color := rgb(217, 240, 247);
+  pnlLoincImport.color := clWhite;
+  pnlSnomedImport.color := clWhite;
+  pnlProcessUMLS.color := clWhite;
+  pnlCombineSnomed.color := clWhite;
+  PageControl1.ActivePageIndex := 4;
 end;
 
 procedure TForm4.pnlSnomedImportClick(Sender: TObject);
@@ -277,6 +305,7 @@ begin
     exit;
   pnlSnomedImport.Color := rgb(217, 240, 247);
   pnlLoincImport.color := clWhite;
+  pnlPackageManagerLink.color := clWhite;
   pnlCombineSnomed.color := clWhite;
   pnlProcessUMLS.color := clWhite;
   PageControl1.ActivePageIndex := 0;
@@ -288,6 +317,7 @@ begin
     exit;
   pnlProcessUMLS.Color := rgb(217, 240, 247);
   pnlLoincImport.color := clWhite;
+  pnlPackageManagerLink.color := clWhite;
   pnlCombineSnomed.color := clWhite;
   pnlSnomedImport.color := clWhite;
   PageControl1.ActivePageIndex := 3;
@@ -298,6 +328,7 @@ begin
   if running then
     exit;
   pnlLoincImport.Color := rgb(217, 240, 247);
+  pnlPackageManagerLink.color := clWhite;
   pnlSnomedImport.color := clWhite;
   pnlCombineSnomed.color := clWhite;
   pnlProcessUMLS.color := clWhite;

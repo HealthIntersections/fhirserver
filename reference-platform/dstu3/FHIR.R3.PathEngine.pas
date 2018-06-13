@@ -35,20 +35,13 @@ uses
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.Math,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Decimal, FHIR.Support.DateTime,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang,
   FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities, FHIR.R3.Context, FHIR.R3.Constants;
 
 const
   FHIR_TYPES_STRING : Array[0..8] of String = ('string', 'uri', 'code', 'oid', 'id', 'uuid', 'sid', 'markdown', 'base64Binary');
 
 type
-  EFHIRPath = class (Exception)
-  public
-     constructor create(problem : String); overload;
-     constructor create(path : String; offset : integer; problem : String); overload;
-  end;
-
-  EFHIRPathDefinitionCheck = class (EFHIRPath);
 
   TFHIRPathExecutionTypeContext = class (TFslObject)
   private
@@ -335,10 +328,10 @@ begin
     sd := worker.getStructure('http://hl7.org/fhir/StructureDefinition/'+context.Substring(0, context.IndexOf('.')));
     try
       if (sd = nil) then
-        raise EFHIRPathDefinitionCheck.Create('Unknown context '+context);
+        raise EFHIRPath.Create('Unknown context '+context);
       ed := getElementDefinition(sd, context, true, t);
       if (ed = nil) then
-        raise EFHIRPathDefinitionCheck.Create('Unknown context element '+context);
+        raise EFHIRPath.Create('Unknown context element '+context);
       if (t <> '') then
         types := TFHIRTypeDetails.Create(csSINGLETON, [t])
       else if (ed.type_List.Count = 0) or isAbstractType(ed.type_List) then
@@ -413,7 +406,7 @@ begin
           if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
             primitiveTypes.add(sd.id);
           {$ELSE}
-          raise Exception.Create('Debug this');
+          raise EFHIRException.create('Debug this');
           if (sd.constrainedType = DefinedTypesNull) then
             allTypes.add(sd.id);
           if (sd.constrainedType = DefinedTypesNull) and isPrimitive(sd) then
@@ -1779,7 +1772,7 @@ end;
 
 function TFHIRPathEngine.funcType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRPathEngine.funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -1807,12 +1800,12 @@ end;
 
 function TFHIRPathEngine.funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRPathEngine.funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRPathEngine.funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -1862,7 +1855,7 @@ end;
 
 function TFHIRPathEngine.funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 
@@ -2048,7 +2041,7 @@ end;
 function TFHIRPathEngine.opDiv(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1, d2, d3 : TSmartDecimal;
+  d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing div: left operand has no value');
@@ -2072,8 +2065,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strtoInt(l.primitiveValue()) div strtoInt(r.primitiveValue()))))
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.divInt(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2088,7 +2081,7 @@ end;
 function TFHIRPathEngine.opDivideBy(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1, d2, d3 : TSmartDecimal;
+  d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing /: left operand has no value');
@@ -2110,8 +2103,8 @@ begin
 
     if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.divide(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2416,7 +2409,7 @@ end;
 function TFHIRPathEngine.opMinus(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1,d2,d3 : TSmartDecimal;
+  d1,d2,d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing -: left operand has no value');
@@ -2441,8 +2434,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) - strToInt(r.primitiveValue()))))
     else if (l.hasType('decimal')) and (r.hasType('decimal')) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Subtract(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2457,7 +2450,7 @@ end;
 function TFHIRPathEngine.opMod(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1, d2, d3 : TSmartDecimal;
+  d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing mod: left operand has no value');
@@ -2481,8 +2474,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) mod strToInt(r.primitiveValue()))))
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Modulo(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2569,7 +2562,7 @@ end;
 function TFHIRPathEngine.opPlus(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1,d2,d3 : TSmartDecimal;
+  d1,d2,d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing +: left operand has no value');
@@ -2595,8 +2588,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) + strToInt(r.primitiveValue()))))
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Add(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -2611,7 +2604,7 @@ end;
 function TFHIRPathEngine.opTimes(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
-  d1, d2, d3 : TSmartDecimal;
+  d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
     raise EFHIRPath.create('Error performing *: left operand has no value');
@@ -2635,8 +2628,8 @@ begin
       result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) * strToInt(r.primitiveValue()))))
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
-      d1 := TSmartDecimal.valueOf(l.primitiveValue());
-      d2 := TSmartDecimal.valueOf(r.primitiveValue());
+      d1 := TFslDecimal.valueOf(l.primitiveValue());
+      d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Multiply(d2);
       result.add(TFHIRDecimal.create(d3.asDecimal));
     end
@@ -3248,10 +3241,10 @@ begin
               inc(i,4);
             end
             else
-              raise Exception.create('Improper unicode escape in '+s);
+              raise EFHIRException.create('Improper unicode escape in '+s);
             end
         else
-          raise Exception.create('Unknown character escape \'+ch);
+          raise EFHIRException.create('Unknown character escape \'+ch);
         end;
         inc(i);
       end
@@ -3614,11 +3607,11 @@ begin
       // now we walk into the type.
 
       if (ed.type_list.count > 1) then // if there's more than one type, the test above would fail this
-        raise Exception.Create('Internal typing issue....');
+        raise EDefinitionException.create('Internal typing issue....');
       sd := worker.getStructure('http://hl7.org/fhir/StructureDefinition/'+ed.type_List[0].code);
       try
         if (sd = nil) then
-          raise Exception.Create('Unknown type '+ed.type_List[0].code);
+          raise EDefinitionException.create('Unknown type '+ed.type_List[0].code);
         result := getElementDefinition(sd, sd.id+path.Substring(ed.path.Length), true, specifiedType);
       finally
         sd.Free;
@@ -3649,18 +3642,6 @@ begin
     {$ENDIF}
       exit(ed);
   result := nil;
-end;
-
-{ EFHIRPath }
-
-constructor EFHIRPath.create(path: String; offset: integer; problem: String);
-begin
-  inherited create('FHIR.R3.PathEngine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
-end;
-
-constructor EFHIRPath.create(problem: String);
-begin
-  inherited create(problem);
 end;
 
 { TFHIRPathLexer }

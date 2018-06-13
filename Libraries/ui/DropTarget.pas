@@ -17,7 +17,8 @@ interface
 
 uses
   DropSource,
-  Windows, ActiveX, Classes, Controls, CommCtrl, ExtCtrls;
+  Windows, ActiveX, Classes, Controls, CommCtrl, ExtCtrls,
+  FHIR.Support.Exceptions;
 
 {$include DragDrop.inc}
 
@@ -249,7 +250,7 @@ begin
   //inherited CreateWnd; //no need to consume windows resources here.
   if FCreateWndCalled then exit;
   if (RegisterDragDrop(Parent.Handle, TDropTarget(Owner)) <> S_OK) then
-    raise Exception.create('Failed to Register '+ Parent.name);
+    raise ELibraryException.create('Failed to Register '+ Parent.name);
   FCreateWndCalled := true;
 end;
 // -----------------------------------------------------------------------------
@@ -260,7 +261,7 @@ begin
   if not FCreateWndCalled then exit;
   if Parent.HandleAllocated then //this should always be the case!
     if RevokeDragDrop(Parent.Handle) <> S_OK then
-      raise Exception.create('Failed to Unregister '+ Parent.name);
+      raise ELibraryException.create('Failed to Unregister '+ Parent.name);
   FCreateWndCalled := false;
 end;
 

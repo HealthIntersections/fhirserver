@@ -32,13 +32,8 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Decimal,
-  FHIR.Ucum.Base,
-  FHIR.Ucum.Expressions,
-  FHIR.Ucum.Handlers,
-  FHIR.Support.Collections,
-  
-  FHIR.Support.Objects;
+  FHIR.Support.Exceptions, FHIR.Support.Decimal, FHIR.Support.Collections, FHIR.Support.Objects,
+  FHIR.Ucum.Base, FHIR.Ucum.Expressions, FHIR.Ucum.Handlers;
 
 Type
   TUcumValidator = class (TFslObject)
@@ -151,17 +146,17 @@ Begin
     begin
       if (code[i] = '[') Then
         if (inBrack) Then
-          raise Exception.create('nested [')
+          raise ETerminologyError.create('nested [')
 	else
           inBrack := true;
       if (code[i] = ']') Then
         if (not inBrack) Then
-          raise Exception.Create('] without [')
+          raise ETerminologyError.create('] without [')
         else
           inBrack := false;
       nonDigits := nonDigits or not ((code[i] >= '0') and (code[i] <= '9'));
       if ((code[i] >= '0') and (code[i] <= '9')) And not inBrack and nonDigits Then
-        raise Exception.Create('code '+code+' is ambiguous because  it has digits outside []');
+        raise ETerminologyError.create('code '+code+' is ambiguous because  it has digits outside []');
     End;
   except
     on e : exception do

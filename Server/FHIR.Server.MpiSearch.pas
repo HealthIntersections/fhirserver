@@ -35,6 +35,7 @@ uses
   SysUtils,
   FHIR.Web.Parsers, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Base.Lang,
   FHIR.Database.Manager,
   FHIR.Server.Session, FHIR.Tools.Indexing,
   FHIR.Server.Indexing;
@@ -139,7 +140,7 @@ begin
   FIdentifier := FParams.getVar('identifier').ToLower;
 
   if (FFirstName = '') or (FFamilyName = '') or (FGender = '') then
-    raise Exception.Create('You must provide at least given name, family name, and gender for an MPI search');
+    raise EFHIRException.create('You must provide at least given name, family name, and gender for an MPI search');
 
   Flink_ := '_query=mpi&family='+EncodeMIME(FFamilyName)+'&given='+EncodeMIME(FFirstName)+'&gender='+EncodeMIME(FGender)+'&birthdate='+EncodeMIME(FDateOfBirth)+'&identifier='+EncodeMIME(FIdentifier);
 

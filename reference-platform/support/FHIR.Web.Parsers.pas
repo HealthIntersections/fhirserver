@@ -33,8 +33,7 @@ interface
 uses
 //  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   Classes, Generics.Collections,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics;
+  FHIR.Support.Strings, FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics;
 
 const
   HTTPUtilAnonymousItemName = 'ANONYMOUS';
@@ -87,6 +86,7 @@ type
 
   TMimeContentType = class (TFslObject)
   private
+    FSource : String;
     FParams: TDictionary<String, String>;
     FBase: String;
     function GetMain: String;
@@ -97,12 +97,17 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
+    function link : TMimeContentType; overload;
+
     class function parseSingle(s : String) : TMimeContentType;
     class function parseList(s : String) : TFslList<TMimeContentType>;
 
+    property source : String read FSource;
     property base : String read FBase write FBase;
     property main : String read GetMain write SetMain;
     property sub : String read GetSub write SetSub;
+
+    function isValid : boolean;
 
     property Params : TDictionary<String, String> read FParams;
     function hasParam(name : String) : boolean;
@@ -576,7 +581,7 @@ begin
   if VarExists(Name) then
     Result := GetVar(Name)
   else if compulsory then
-    raise Exception.Create(errdesc + ' not found')
+    raise EWebException.create(errdesc + ' not found')
   else
     Result := '';
 end;
@@ -586,7 +591,7 @@ begin
   if VarExists(Name) then
     Result := StrToIntDef(GetVar(Name), 0)
   else if compulsory then
-    raise Exception.Create(errdesc + ' not found')
+    raise EWebException.create(errdesc + ' not found')
   else
     Result := 0;
 end;
@@ -636,6 +641,17 @@ begin
   result := FParams.ContainsKey(name);
 end;
 
+function TMimeContentType.isValid: boolean;
+begin
+  result := (StringArrayExistsSensitive(['application', 'audio', 'font', 'example', 'image', 'message', 'model', 'multipart', 'text', 'video'], main) or main.StartsWith('x-'))
+    and (sub <> '');
+end;
+
+function TMimeContentType.link: TMimeContentType;
+begin
+  result := TMimeContentType(inherited link);
+end;
+
 procedure TMimeContentType.SetMain(const Value: String);
 begin
   if FBase.Contains('/') then
@@ -672,10 +688,20 @@ var
 begin
   result := TMimeContentType.Create;
   try
+    result.FSource := s;
     for p in s.Split([';']) do
     begin
       if result.FBase = '' then
-        result.FBase := p
+      begin
+        if (p = 'xml') then
+          result.FBase := 'application/fhir+xml'
+        else if (p = 'json') then
+          result.FBase := 'application/fhir+json'
+        else if (p = 'ttl') then
+          result.FBase := 'application/fhir+ttl'
+        else
+          result.FBase := p;
+      end
       else
         result.FParams.Add(p.Substring(0, p.IndexOf('=')), p.Substring(p.IndexOf('=')+1));
     end;

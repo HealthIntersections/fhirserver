@@ -40,7 +40,7 @@ uses
   FHIR.Support.Math in '..\..\reference-platform\support\FHIR.Support.Math.pas',
   FHIR.Support.DateTime in '..\..\reference-platform\support\FHIR.Support.DateTime.pas',
   FHIR.Support.Decimal in '..\..\reference-platform\support\FHIR.Support.Decimal.pas',
-  FHIR.Support.Lock in '..\..\reference-platform\support\FHIR.Support.Lock.pas',
+  FHIR.Support.Threads in '..\..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Support.Objects in '..\..\reference-platform\support\FHIR.Support.Objects.pas',
   FHIR.Support.Exceptions in '..\..\reference-platform\support\FHIR.Support.Exceptions.pas',
   FHIR.R4.Resources in '..\..\reference-platform\r4\FHIR.R4.Resources.pas',
@@ -182,7 +182,6 @@ uses
   FHIR.Support.Text in '..\..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Xml in '..\..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\..\reference-platform\support\FHIR.Support.Zip.pas',
-  FHIR.Support.Controllers in '..\..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Support.MsXml in '..\..\reference-platform\support\FHIR.Support.MsXml.pas',
@@ -196,7 +195,9 @@ uses
   FHIR.R4.Common in '..\..\reference-platform\r4\FHIR.R4.Common.pas',
   FHIR.R4.Narrative in '..\..\reference-platform\r4\FHIR.R4.Narrative.pas',
   FHIR.Base.Utilities in '..\..\reference-platform\base\FHIR.Base.Utilities.pas',
-  fhir.support.fpc in '..\..\reference-platform\support\fhir.support.fpc.pas';
+  fhir.support.fpc in '..\..\reference-platform\support\fhir.support.fpc.pas',
+  FHIR.Tx.MimeTypes in '..\..\Server\FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in '..\..\Server\FHIR.Tx.Iso4217.pas';
 
 {$R *.res}
 

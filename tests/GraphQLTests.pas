@@ -33,9 +33,7 @@ interface
 
 uses
   SysUtils, Classes, DUnitX.TestFramework, Variants,
-  FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Support.MXml,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.MXml,
   FHIR.Misc.GraphQL, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, FHIR.Version.Factory,
   FHIR.R4.Tests.Worker, JsonTests;
 
@@ -271,7 +269,7 @@ begin
   begin
     parts := context.Split(['/']);
     if length(parts) <> 3 then
-      raise Exception.Create('not done yet '+source+' '+output+' '+context);
+      raise ETestCase.create('not done yet '+source+' '+output+' '+context);
     if resource <> '' then
       filename := 'C:\work\org.hl7.fhir\build\publish\'+resource+'.xml'
     else

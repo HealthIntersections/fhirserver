@@ -37,7 +37,6 @@ Uses
   FHIR.WP.Types;
 
 Type
-  EWPDocument = Class (EFslException);
 
 {$IFDEF FORDOCO}
   {
@@ -1952,7 +1951,7 @@ Type
       Property Problems : TWPDocumentValidationProblems Read FProblems;
   End;
 
-  EWPDocumentValidator = Class (EFslException)
+  EWPDocumentValidator = Class (EWPException)
     Private
       FProblems : TWPDocumentValidationProblems;
     Public
@@ -2371,7 +2370,7 @@ End;
 
 Function TWPDocumentObject.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EWPDocument;
+  Result := EWPException;
 End;
 
 
@@ -2425,7 +2424,7 @@ End;
 
 Function TWPDocumentObjects.ErrorClass : EFslExceptionClass;
 Begin
-  Result := EWPDocument;
+  Result := EWPException;
 End;
 
 
@@ -5029,22 +5028,22 @@ end;
 
 procedure TWPDocumentImage.LoadFromFile(sName: String);
 begin
-  raise exception.create('not done yet');
+  raise EWPException.create('not done yet');
 end;
 
 procedure TWPDocumentImage.LoadFromStream(oStream: TStream);
 begin
-  raise exception.create('not done yet');
+  raise EWPException.create('not done yet');
 end;
 
 procedure TWPDocumentImage.SaveToFile(sName: String);
 begin
-  raise exception.create('not done yet');
+  raise EWPException.create('not done yet');
 end;
 
 procedure TWPDocumentImage.SaveToStream(oStream: TStream);
 begin
-  raise exception.create('not done yet');
+  raise EWPException.create('not done yet');
 end;
 
 procedure TWPDocument.StripSections;

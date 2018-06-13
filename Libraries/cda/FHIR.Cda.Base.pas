@@ -32,10 +32,12 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Decimal, FHIR.Support.Objects, FHIR.Support.MXml, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Decimal, FHIR.Support.Objects, FHIR.Support.MXml, FHIR.Support.Text,
   FHIR.Support.Stream, FHIR.Support.Collections;
 
 Type
+  ECDAException = class (EXmlException);
+
   TRMPropertyDefinitionType = (
       rmpdtBoolean,
       rmpdtBinary,
@@ -83,7 +85,7 @@ Type
     Constructor CreateBoolean(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; bHasValue, bValue : Boolean);
     Constructor CreateBinary(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; oBuffer : TFslBuffer);
     Constructor CreateInteger(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; bHasValue : Boolean; iValue : int64);
-    Constructor CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TSmartDecimal);
+    Constructor CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TFslDecimal);
     Constructor CreateEnum(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; Const iValue : Integer; Const aPossibles : Array of String);
     Constructor CreateSet(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; var aSet; Const aPossibles : Array of String);
 
@@ -686,7 +688,7 @@ Begin
     FValueStrings.Assign(oList);
 End;
 
-Constructor Tv3PropertyDefinition.CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TSmartDecimal);
+Constructor Tv3PropertyDefinition.CreateDecimal(oOwner : Tv3Base; bIsStructural : Boolean; Const sName : String; aValue : TFslDecimal);
 Begin
   Inherited Create;
   FName := sName;

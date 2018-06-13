@@ -43,7 +43,7 @@ uses
   FHIR.Support.DateTime in '..\support\FHIR.Support.DateTime.pas',
   FHIR.Support.Decimal in '..\support\FHIR.Support.Decimal.pas',
   FHIR.Support.System in '..\support\FHIR.Support.System.pas',
-  FHIR.Support.Lock in '..\support\FHIR.Support.Lock.pas',
+  FHIR.Support.Threads in '..\support\FHIR.Support.Threads.pas',
   FHIR.Support.MXml in '..\support\FHIR.Support.MXml.pas',
   FHIR.Support.Math in '..\support\FHIR.Support.Math.pas',
   FHIR.Support.Mime in '..\support\FHIR.Support.Mime.pas',
@@ -58,7 +58,6 @@ uses
   FHIR.Support.Signatures in '..\support\FHIR.Support.Signatures.pas',
   FHIR.Support.Exceptions in '..\support\FHIR.Support.Exceptions.pas',
   FHIR.Support.Collections in '..\support\FHIR.Support.Collections.pas',
-  FHIR.Support.Controllers in '..\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Text in '..\support\FHIR.Support.Text.pas',
   FHIR.Support.Generics in '..\support\FHIR.Support.Generics.pas',
   FHIR.Support.Xml in '..\support\FHIR.Support.Xml.pas',
@@ -81,7 +80,7 @@ uses
   FHIR.R2.Utilities in 'FHIR.R2.Utilities.pas',
   FHIR.R2.Xml in 'FHIR.R2.Xml.pas',
   FHIR.R2.Json in 'FHIR.R2.Json.pas',
-  DecimalTests in '..\support\Tests\DecimalTests.pas',
+  FHIR.Tests.Decimal in '..\support\Tests\FHIR.Tests.Decimal.pas',
   DifferenceEngineTests in '..\support\Tests\DifferenceEngineTests.pas',
   FHIR.R2.Tests.PathEngine in 'tests\FHIR.R2.Tests.PathEngine.pas',
   FHIR.R2.Tests.Worker in 'tests\FHIR.R2.Tests.Worker.pas',
@@ -206,7 +205,7 @@ begin
     else
     begin
       if (ParamStr(1) = '') or (ParamStr(2) = '') or not FileExists(paramstr(1)) then
-        raise Exception.Create('Provide input and output file names');
+        raise EFHIRException.create('Provide input and output file names');
       roundTrip(paramStr(1), paramStr(2));
     end;
   except

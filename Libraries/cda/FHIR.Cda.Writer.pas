@@ -531,7 +531,7 @@ End;
 
 Procedure TCDAWriter.WritePQAttributes(Const sPath: string; oXml : TXmlBuilder; oDT : Tv3PQ);
 Begin
-  if oDt.value.notNull then
+  if not oDt.value.isNull then
     Attribute(sPath, oXml, 'value', oDT.value.Asstring, true)
   else if oDt.originalText <> nil then
     Attribute(sPath, oXml, 'value', oDT.originalText.dataAsString, true);
@@ -541,7 +541,7 @@ End;
 
 Procedure TCDAWriter.WriteMOAttributes(Const sPath: string; oXml : TXmlBuilder; oDT : Tv3MO);
 Begin
-  if oDt.value.notNull then
+  if not oDt.value.isNull then
     Attribute(sPath, oXml, 'value', oDT.value.asstring, true);
   Attribute(sPath, oXml, 'currency', oDT.currency, true);
 End;
@@ -5053,7 +5053,7 @@ begin
   Else if oPart.RimClassName = 'Supply' Then
     WriteSupply('Supply', oXml, 'Supply', oPart as TcdaSupply, false)
   Else
-    raise exception.Create('Unknown type '+oPart.ClassName);
+    raise ECDAException.create('Unknown type '+oPart.ClassName);
 
 end;
 

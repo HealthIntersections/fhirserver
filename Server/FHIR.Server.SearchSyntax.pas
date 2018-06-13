@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, RegularExpressions,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects;
+  FHIR.Support.Strings, FHIR.Support.Objects,
+  FHIR.Base.Lang;
 
 Type
   TFSCompareOperation = (fscoEQ, fscoNE, fscoCO, fscoSW, fscoEW, fscoGT, fscoLT, fscoGE, fscoLE, fscoPR, fscoPO, fscoSS, fscoSB, fscoIN, fscoRE);
@@ -221,7 +221,7 @@ var
 begin
   filter := parse(expression);
   if filter = nil then
-    raise exception.Create('parsing failed - returned nil');
+    raise EFHIRException.create('parsing failed - returned nil');
   filter.Free;
 end;
 
@@ -245,7 +245,7 @@ begin
   if cursor <= length(original) then
   begin
     result.Free;
-    raise Exception.Create('Expression did not terminate at '+inttostr(cursor));
+    raise EFHIRException.create('Expression did not terminate at '+inttostr(cursor));
   end;
 end;
 
@@ -259,7 +259,7 @@ begin
     result := parseOpen;
     try
       if peek <> fsltClose then
-        raise Exception.Create('Expected '')'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
+        raise EFHIRException.create('Expected '')'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
       inc(cursor);
       result.Link;
     finally
@@ -288,11 +288,11 @@ begin
     filter.ParamPath := parsePath(name);
 
     if peek <> fsltName then
-      raise Exception.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+      raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
     s := ConsumeName;
     i := StringArrayIndexOfSensitive(CODES_CompareOperation, s);
     if (i < 0) then
-      raise Exception.Create('Unknown operation "'+s+'" at '+inttostr(cursor));
+      raise EFHIRException.create('Unknown operation "'+s+'" at '+inttostr(cursor));
     filter.FOperation := TFSCompareOperation(i);
 
     case peek of
@@ -300,20 +300,20 @@ begin
       fsltNumber : filter.FValue := ConsumeNumberOrDate;
       fsltString : filter.FValue := ConsumeString;
     else
-      raise Exception.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+      raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
     end;
 
     // check operation / value type results
     case Filter.FOperation of
-      fscoPR: if (filter.FValue <> 'true') and (filter.FValue <> 'false') then raise Exception.Create('Value "'+filter.Value+'" not valid for Operation '+CODES_CompareOperation[filter.Operation]+' at '+inttostr(cursor));
-      fscoPO: if not IsDate(filter.FValue) then raise Exception.Create('Value "'+filter.Value+'" not valid for Operation '+CODES_CompareOperation[filter.Operation]+' at '+inttostr(cursor));
+      fscoPR: if (filter.FValue <> 'true') and (filter.FValue <> 'false') then raise EFHIRException.create('Value "'+filter.Value+'" not valid for Operation '+CODES_CompareOperation[filter.Operation]+' at '+inttostr(cursor));
+      fscoPO: if not IsDate(filter.FValue) then raise EFHIRException.create('Value "'+filter.Value+'" not valid for Operation '+CODES_CompareOperation[filter.Operation]+' at '+inttostr(cursor));
     end;
 
     case peek of
       fsltName : result := parseLogical(filter);
       fsltEnded, fsltClose, fsltCloseSq : result := filter.Link as TFSFilter;
     else
-      raise Exception.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+      raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
     end;
   finally
     filter.Free;
@@ -330,7 +330,7 @@ begin
   else
     s := ConsumeName;
   if (s <> 'or') and (s <> 'and') and (s <> 'not') then
-    raise Exception.Create('Unexpected Name "'+s+'" at '+inttostr(cursor));
+    raise EFHIRException.create('Unexpected Name "'+s+'" at '+inttostr(cursor));
 
   logical:= TFSFilterLogical.Create;
   try
@@ -359,18 +359,18 @@ begin
       inc(Cursor);
       result.FFilter := parseOpen;
       if peek <> fsltCloseSq then
-        raise Exception.Create('Expected '']'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
+        raise EFHIRException.create('Expected '']'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
       inc(cursor);
     end;
     if peek = fsltDot then
     begin
       inc(Cursor);
       if peek <> fsltName then
-        raise Exception.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+        raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
       result.FNext := parsePath(ConsumeName);
     end
     else if result.FFilter <> nil then
-      raise Exception.Create('Expected ''.'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
+      raise EFHIRException.create('Expected ''.'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
 
     result.Link;
   finally
@@ -397,7 +397,7 @@ begin
      '[' : result := fsltOpenSq;
      ']' : result := fsltCloseSq;
    else
-     raise Exception.Create('Unknown Character "'+PeekCh+'"  at '+inttostr(cursor));
+     raise EFHIRException.create('Unknown Character "'+PeekCh+'"  at '+inttostr(cursor));
    end;
 end;
 
@@ -457,15 +457,15 @@ begin
       else if (original[cursor] = 'n') then
         result[l] := #10
       else
-        raise Exception.Create('Unknown escape sequence at '+inttostr(cursor));
+        raise EFHIRException.create('Unknown escape sequence at '+inttostr(cursor));
     end;
     inc(cursor);
   end;
   SetLength(result, l);
   if (cursor > length(original)) or (original[cursor] <> '"') then
-    raise Exception.Create('Problem with string termination at '+inttostr(cursor));
+    raise EFHIRException.create('Problem with string termination at '+inttostr(cursor));
   if result = '' then
-    raise Exception.Create('Problem with string at '+inttostr(cursor)+': cannot be empty');
+    raise EFHIRException.create('Problem with string at '+inttostr(cursor)+': cannot be empty');
 
   inc(cursor);
 end;

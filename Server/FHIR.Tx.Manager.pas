@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Lock, Generics.Defaults, Generics.Collections,
+  SysUtils, Classes, FHIR.Support.Threads, Generics.Defaults, Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Exceptions,
   FHIR.Database.Manager,
   FHIR.Base.Lang, FHIR.Base.Common,
@@ -260,7 +260,7 @@ Type
     procedure AddCodeSystemToCache({$IFNDEF FHIR2} cs : TFhirCodeSystem; {$ELSE} cs : TFHIRValueSet; {$ENDIF} base : boolean);
     procedure RemoveCodeSystemFromCache(id : String);
   protected
-    FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
+    FLock : TFslLock;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TKDBManager;
     procedure invalidateVS(id : String); virtual;
     procedure getSummary(b : TStringBuilder);
@@ -412,12 +412,12 @@ begin
   if (context = nil) then
     result := TotalCount
   else
-    raise Exception.Create('Not Created Yet');
+    raise ETerminologyError.create('Not Created Yet');
 end;
 
 function TAllCodeSystemsProvider.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 
 function TAllCodeSystemsProvider.system(context : TCodeSystemProviderContext) : String;
@@ -442,7 +442,7 @@ end;
 
 function TAllCodeSystemsProvider.getDisplay(code : String; lang : String):String;
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 
 function TAllCodeSystemsProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -467,15 +467,15 @@ end;
 
 function TAllCodeSystemsProvider.getDefinition(code : String):String;
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 function TAllCodeSystemsProvider.locate(code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 function TAllCodeSystemsProvider.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 function TAllCodeSystemsProvider.IsAbstract(context : TCodeSystemProviderContext) : boolean;
 var
@@ -553,11 +553,11 @@ end;
 
 procedure TAllCodeSystemsProvider.Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String);
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 procedure TAllCodeSystemsProvider.Displays(code : String; list : TStringList; lang : String);
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 
 function TAllCodeSystemsProvider.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
@@ -587,7 +587,7 @@ end;
 
 function TAllCodeSystemsProvider.filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 function TAllCodeSystemsProvider.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 var
@@ -610,7 +610,7 @@ end;
 
 function TAllCodeSystemsProvider.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 
 function TAllCodeSystemsProvider.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -704,7 +704,7 @@ end;
 
 function TAllCodeSystemsProvider.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('Not Created Yet');
+  raise ETerminologyError.create('Not Created Yet');
 end;
 function TAllCodeSystemsProvider.isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean;
 begin
@@ -814,7 +814,7 @@ begin
     if cc.code <> '' then
     begin
       if codes.Find(cc.code, i) then
-        raise Exception.Create('Duplicate code: '+cc.code+' in value set '+url);
+        raise ETerminologyError.create('Duplicate code: '+cc.code+' in value set '+url);
       codes.Add(cc.code);
     end;
     checkForDuplicates(codes, cc.conceptList, url);
@@ -881,7 +881,7 @@ var
   p : TCodeSystemProvider;
 begin
   inherited Create;
-  FLock := TCriticalSection.Create('Terminology Server Store');
+  FLock := TFslLock.Create('Terminology Server Store');
   FProviderClasses := TFslMap<TCodeSystemProvider>.Create;
 
   FDB := db;
@@ -1099,9 +1099,9 @@ var
 begin
   // later, see if we can translate instead
   if (cs.url <> codeA.system) then
-    raise Exception.Create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeA.system+')');
+    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeA.system+')');
   if (cs.url <> codeB.system) then
-    raise Exception.Create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeB.system+')');
+    raise ETerminologyError.create('System uri / code uri mismatch - not supported at this time ('+cs.url+'/'+codeB.system+')');
   if (codeA.code = codeB.code) then
     exit('equivalent');
 
@@ -2188,7 +2188,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise Exception.create('Unable to find '+code+' in '+system(nil))
+      raise ETerminologyError.create('Unable to find '+code+' in '+system(nil))
     else
       result := Display(ctxt, lang);
   finally
@@ -2404,10 +2404,10 @@ var
 begin
   cA := LocateCode(codeA);
   if (cA = nil) then
-    raise Exception.Create('Unknown Code "'+codeA+'"');
+    raise ETerminologyError.create('Unknown Code "'+codeA+'"');
   cB := LocateCode(codeB);
   if (cB = nil) then
-    raise Exception.Create('Unknown Code "'+codeB+'"');
+    raise ETerminologyError.create('Unknown Code "'+codeB+'"');
 
   t := CB;
   while t <> nil do

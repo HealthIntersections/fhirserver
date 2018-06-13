@@ -33,7 +33,8 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Generics, FHIR.Support.DateTime, FHIR.Support.System,
-  FHIR.Base.Objects, FHIR.Base.Common, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Operations;
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Lang,
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Operations;
 
 const
   ExceptionTypeTranslations : array [TExceptionType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
@@ -798,7 +799,7 @@ begin
     StructureDefinitionKindResource : result := sdkResource;
     StructureDefinitionKindLogical : result := sdkResource;
   else
-    raise Exception.Create('unhandled value');
+    raise EFHIRException.create('unhandled value');
   end;
 end;
 
@@ -924,12 +925,10 @@ var
   b : TFhirElementDefinitionBinding;
 begin
   b := edefn.binding;
-  result := '';
   if b <> nil then
-    if b.valueSet is TFhirUri then
-      result := TFhirUri(b.valueSet).value
-    else if b.valueSet is TFhirReference then
-      result := TFhirReference(b.valueSet).reference
+    result := b.valueSet
+  else
+    result := '';
 end;
 
 { TFHIRBundleEntry4 }

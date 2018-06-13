@@ -34,8 +34,7 @@ Interface
 
 Uses
   Windows, SysUtils, Generics.Collections,
-  FHIR.Support.Strings,
-  FHIR.Support.Stream, FHIR.Support.Objects;
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.Objects;
 
 
 Type
@@ -612,7 +611,7 @@ begin
   else if name = 'Location' then
     result := GetHeader(FReqHandle, HTTP_QUERY_LOCATION)
   else
-    raise Exception.Create('unknown header');
+    raise EWebException.create('unknown header');
 end;
 
 Procedure TFslWinInetClient.Connect;

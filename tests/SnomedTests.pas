@@ -32,7 +32,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, Sysutils, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
+  Windows, Sysutils,
+  FHIR.Support.Exceptions,
+  FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   DUnitX.TestFramework;
 
 type
@@ -110,16 +112,16 @@ end;
 
 procedure TSnomedTests.ParseErrors;
 begin
-  Assert.WillRaise(procedure begin p('1166800031') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('1280450061:{363698007=56459004}') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004}') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('128045006:{363698007=564590041}') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004}') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('128045006:3636980071=56459004}') end, ESnomedParser);
-  Assert.WillRaise(procedure begin p('128045006:{3636980071,56459004}') end, ESnomedParser);
-  Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004') end, ESnomedParser);
-  Assert.WillRaise(procedure begin p('128045006:{363698007=56459004},') end, ESnomedParser);
-  Assert.WillRaise(procedure begin p('128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|hand structure|}') end, ESnomedServices);
+  Assert.WillRaise(procedure begin p('1166800031') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('1280450061:{363698007=56459004}') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004}') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('128045006:{363698007=564590041}') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004}') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('128045006:3636980071=56459004}') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('128045006:{3636980071,56459004}') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('128045006:{363698007=56459004},') end, ETerminologyError);
+  Assert.WillRaise(procedure begin p('128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|hand structure|}') end, ETerminologyError);
 end;
 
 procedure TSnomedTests.Subsumes;

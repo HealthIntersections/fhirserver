@@ -34,7 +34,7 @@ uses
   FHIR.Support.Objects,
   FHIR.Support.Strings, FHIR.Support.Text,
   FHIR.Support.MXml, FHIR.Support.Xml,
-  FHIR.Base.Objects;
+  FHIR.Base.Objects, FHIR.Base.Lang;
 
 const
   XHTML_NS = 'http://www.w3.org/1999/xhtml';
@@ -405,7 +405,7 @@ end;
 
 function TFHIRAttribute.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.equalsDeep(other: TFHIRObject): boolean;
@@ -420,7 +420,7 @@ end;
 
 function TFHIRAttribute.fhirType: String;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.getId: String;
@@ -448,17 +448,17 @@ end;
 
 function TFHIRAttribute.makeCodeValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.makeIntValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.makeStringValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 procedure TFHIRAttribute.setIdValue(id: String);
@@ -467,7 +467,7 @@ end;
 
 procedure TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 { TFhirAttributeListEnumerator }
@@ -710,7 +710,7 @@ end;
 
 function TFhirXHtmlNode.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 constructor TFhirXHtmlNode.Create;
@@ -854,17 +854,17 @@ end;
 
 function TFhirXHtmlNode.makeCodeValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.makeIntValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.makeStringValue(v: String): TFHIRObject;
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.NsDecl: String;
@@ -913,7 +913,7 @@ end;
 
 procedure TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise Exception.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 { TFhirXhtmlNodeListEnumerator }
@@ -993,7 +993,7 @@ begin
           result.ChildNodes.add(doParse(lang, policy, options, child as TMXmlElement, path, defaultNS));
       end
       else
-        raise Exception.create('Unhandled XHTML feature: '+inttostr(ord(child.NodeType))+path);
+        raise EFHIRException.create('Unhandled XHTML feature: '+inttostr(ord(child.NodeType))+path);
       child := child.Next;
     end;
     result.link;
@@ -1012,7 +1012,7 @@ begin
     'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'pre', 'table', 'caption', 'colgroup', 'col', 'thead', 'tr', 'tfoot', 'tbody', 'th', 'td',
     'code', 'samp', 'img', 'map', 'area'], name);
   if (not result) and (policy = xppReject) then
-  	raise Exception.create('Illegal HTML element '+name);
+  	raise EFHIRException.create('Illegal HTML element '+name);
 end;
 
 
@@ -1037,7 +1037,7 @@ begin
     result := (policy = xppAllow) or (StringStartsWith(value, '#') or StringStartsWith(value, 'data:') or StringStartsWith(value, 'http:') or StringStartsWith(value, 'https:'));
 
   if (not result) and (policy = xppReject) then
-  	raise Exception.create('Illegal Attribute name '+name+'.'+attr);
+  	raise EFHIRException.create('Illegal Attribute name '+name+'.'+attr);
 end;
 
 class Function TFHIRXhtmlParser.checkNS(options: TFHIRXhtmlParserOptions; focus : TFhirXHtmlNode; node : TMXmlElement; defaultNS : String)  : String;
@@ -1164,7 +1164,7 @@ begin
       for i := 0 to node.ChildNodes.count - 1 do
         compose(node.ChildNodes[i], s, canonicalise, indent, relativeReferenceAdjustment);
   else
-    raise exception.create('not supported');
+    raise EFHIRException.create('not supported');
   End;
 end;
 
@@ -1188,7 +1188,7 @@ begin
       for i := 0 to node.ChildNodes.count - 1 do
         docompose(node.ChildNodes[i], xml);
   else
-    raise exception.create('not supported');
+    raise EFHIRException.create('not supported');
   end;
 end;
 
@@ -1212,7 +1212,7 @@ begin
   else
   begin
 //    result := false; //div1.equalsDeep(div2);
-    raise Exception.Create('Not done yet');
+    raise EFHIRException.create('Not done yet');
   end;
 end;
 

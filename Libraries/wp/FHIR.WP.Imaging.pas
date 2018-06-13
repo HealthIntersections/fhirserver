@@ -173,7 +173,7 @@ begin
         imp.ScaleContrast := true;
         imp.Open(dicom);
         if imp.ImageCount > 1 then
-          raise Exception.Create('Multiple images not supported');
+          raise EWPException.create('Multiple images not supported');
         image := TGdiPlusBitmapImage.create;
         try
           imp.LoadImage(0, false, image);

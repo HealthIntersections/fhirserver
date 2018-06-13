@@ -112,7 +112,7 @@ begin
     ok := true;
   end;
   if not ok then
-    raise Exception.Create('test failed');
+    raise ETestCase.create('test failed');
 end;
 
 class procedure TFhirHTTPClientTests.tests(url: String);

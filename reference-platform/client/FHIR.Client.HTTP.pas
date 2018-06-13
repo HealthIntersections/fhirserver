@@ -37,7 +37,7 @@ uses
   FHIR.Support.Stream, FHIR.Support.Mime, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdComponent,
   {$IFNDEF OSX}FHIR.Support.WinInet, {$ENDIF}
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Client.Base,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang,
   FHIR.Smart.Utilities;
 
 type
@@ -56,6 +56,7 @@ type
     FCertPWord: String;
     FTerminated : boolean;
     FTimeout: cardinal;
+    FBytesToTransfer: Int64;
 
     indy : TIdHTTP;
     ssl : TIdSSLIOHandlerSocketOpenSSL;
@@ -86,6 +87,10 @@ type
 
     function authoriseByOWinIndy(server, username, password : String): TJsonObject;
     function authoriseByOWinHttp(server, username, password : String): TJsonObject;
+
+    procedure HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+    procedure HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+    procedure HTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
   public
     constructor Create(url : String); overload;
     destructor Destroy; override;
@@ -135,17 +140,17 @@ var
 begin
   a := location.split(['/']);
   if length(a) < 2 then
-    raise Exception.Create('Unable to process location header (too short)');
+    raise EFHIRException.create('Unable to process location header (too short)');
   if a[length(a)-2] = '_history' then
   begin
     if length(a) < 4 then
-      raise Exception.Create('Unable to process location header (too short for a version specific location). Location: '+location);
+      raise EFHIRException.create('Unable to process location header (too short for a version specific location). Location: '+location);
     if a[length(a)-4] <> resType  then
-      raise Exception.Create('Unable to process location header (version specific, but resource doesn''t match). Location: '+location);
+      raise EFHIRException.create('Unable to process location header (version specific, but resource doesn''t match). Location: '+location);
     result := a[length(a)-3]; // 1 for offset, 2 for _history and vers
   end
   else if a[length(a)-2] <> resType then
-    raise Exception.Create('Unable to process location header (resource doesn''t match). Location: '+location);
+    raise EFHIRException.create('Unable to process location header (resource doesn''t match). Location: '+location);
   result := a[length(a)-1];
 end;
 
@@ -291,16 +296,23 @@ function TFHIRHTTPCommunicator.exchange(url : String; verb : TFhirHTTPClientHTTP
 var
   h : THTTPHeaders;
 begin
+  if Assigned(FClient.OnProgress) then
+    FClient.OnProgress(FClient, 'Requesting', 0, false);
   FHeaders.accept := '';
   FHeaders.prefer := '';
   createClient;
   FClient.LastURL := url;
-  if FUseIndy then
-    result := exchangeIndy(url, verb, source, headers)
-  {$IFDEF MSWINDOWS}
-  else
-    result := exchangeHTTP(url, verb, source, headers)
-  {$ENDIF}
+  try
+    if FUseIndy then
+      result := exchangeIndy(url, verb, source, headers)
+    {$IFDEF MSWINDOWS}
+    else
+      result := exchangeHTTP(url, verb, source, headers)
+    {$ENDIF}
+  finally
+    if Assigned(FClient.OnProgress) then
+      FClient.OnProgress(FClient, 'Done', 100, true); // just make sure this fires with a done.
+  end;
 end;
 
 procedure TFHIRHTTPCommunicator.createClient;
@@ -310,6 +322,9 @@ begin
     if (indy = nil) then
     begin
       indy := TIdHTTP.create(nil);
+      indy.OnWork := HTTPWork;
+      indy.OnWorkBegin := HTTPWorkBegin;
+      indy.OnWorkEnd := HTTPWorkEnd;
       indy.HandleRedirects := true;
       if (proxy <> '') then
       begin
@@ -317,7 +332,7 @@ begin
           indy.ProxyParams.ProxyServer := proxy.Split([':'])[0];
           indy.ProxyParams.ProxyPort := StrToInt(proxy.Split([':'])[1]);
         except
-          raise Exception.Create('Unable to process proxy "'+proxy+'" - use address:port');
+          raise EFHIRException.create('Unable to process proxy "'+proxy+'" - use address:port');
         end;
       end;
       ssl := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
@@ -341,7 +356,7 @@ begin
   else if http = nil then
   begin
     if certFile <> '' then
-      raise Exception.Create('Certificates are not supported with winInet yet'); // have to figure out how to do that ...
+      raise EFHIRException.create('Certificates are not supported with winInet yet'); // have to figure out how to do that ...
     http := TFslWinInetClient.Create;
     http.UseWindowsProxySettings := true;
     http.UserAgent := 'FHIR Client';
@@ -416,12 +431,12 @@ begin
         httpPatch :  indy.Patch(url, source, result);
 {$ENDIF}
       else
-        raise Exception.Create('Unknown HTTP method '+inttostr(ord(verb)));
+        raise EFHIRException.create('Unknown HTTP method '+inttostr(ord(verb)));
       end;
 
       FClient.Logger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, source, result);
       if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then
-        raise exception.create('unexpected condition');
+        raise EFHIRException.create('unexpected condition');
       ok := true;
       if (result <> nil) then
          result.Position := 0;
@@ -461,20 +476,20 @@ begin
                 if (op.hasText) then
                   Raise EFHIRClientException.create(op.text, op.link)
                 else
-                  raise exception.Create(cnt)
+                  raise EFHIRException.create(cnt)
               finally
                 op.Free;
               end;
             end
             else
-              raise exception.Create(cnt)
+              raise EFHIRException.create(cnt)
           finally
             comp.source.free;
             comp.Free;
           end;
         end
         else
-          raise exception.Create(cnt)
+          raise EFHIRException.create(cnt)
       end;
       on e : exception do
         raise;
@@ -511,22 +526,22 @@ var
             if (op.hasText) then
               Raise EFHIRClientException.create(op.text, op.link)
             else
-              raise exception.Create(cnt)
+              raise EFHIRException.create(cnt)
           finally
             op.Free;
           end;
         end
         else
-          raise exception.Create(cnt)
+          raise EFHIRException.create(cnt)
       finally
         p.source.free;
         p.Free;
       end;
     end
     else if cnt = '' then
-      raise exception.Create(http.ResponseCode+' ' +http.ResponseText)
+      raise EFHIRException.create(http.ResponseCode+' ' +http.ResponseText)
     else
-      raise exception.Create(cnt)
+      raise EFHIRException.create(cnt)
   end;
 begin
   http.RequestType := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
@@ -586,7 +601,7 @@ begin
       FClient.LastStatus := code;
       FClient.LastStatusMsg := http.ResponseText;
       if (code < 200) or (code >= 600) Then
-        raise exception.create('unexpected condition');
+        raise EFHIRException.create('unexpected condition');
     if (code >= 300) and (code < 400) then
       url := http.getResponseHeader('Location');
   until (code < 300) or (code >= 400);
@@ -626,7 +641,7 @@ begin
         p.source := ret;
         p.parse;
         if (p.resource = nil) then
-          raise Exception.create('No response bundle');
+          raise EFHIRException.create('No response bundle');
         result := p.resource.link;
       finally
         p.free;
@@ -662,7 +677,7 @@ end;
 procedure TFHIRHTTPCommunicator.terminate;
 begin
   if not FUseIndy then
-    raise Exception.Create('Cancel not supported')
+    raise EFHIRException.create('Cancel not supported')
   else
   begin
     FTerminated := true;
@@ -762,7 +777,7 @@ begin
   bh := FClient.BundleFactory.Create(fetchResource(makeUrl(aType)+'?'+params, httpGet, nil, headers));
   try
     if bh.resource.fhirType <> 'Bundle' then
-      raise Exception.Create('Found a resource of type '+bh.resource.fhirType+' expecting a Bundle');
+      raise EFHIRException.create('Found a resource of type '+bh.resource.fhirType+' expecting a Bundle');
     s := bh.next;
     while AllRecords and (s <> '') do
     begin
@@ -881,6 +896,31 @@ begin
   end;
 end;
 
+procedure TFHIRHTTPCommunicator.HTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  if FBytesToTransfer = 0 then // No Update File
+    Exit;
+
+  if Assigned(FClient.OnProgress) then
+    FClient.OnProgress(FClient, 'Downloading', Round((AWorkCount / FBytesToTransfer) * 100), false);
+end;
+
+procedure TFHIRHTTPCommunicator.HTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+begin
+  FBytesToTransfer := AWorkCountMax;
+
+  if Assigned(FClient.OnProgress) then
+    FClient.OnProgress(FClient, 'Download Starting', 0, false);
+end;
+
+procedure TFHIRHTTPCommunicator.HTTPWorkEnd(Sender: TObject;
+  AWorkMode: TWorkMode);
+begin
+  FBytesToTransfer := 0;
+  if Assigned(FClient.OnProgress) then
+    FClient.OnProgress(FClient, 'Downloaded', 100, true);
+end;
+
 function TFHIRHTTPCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
 var
   ret : TStream;
@@ -944,7 +984,7 @@ end;
 
 function TFHIRHTTPCommunicator.authoriseByOWinHttp(server, username, password: String): TJsonObject;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.create('Not done yet');
 end;
 
 function TFHIRHTTPCommunicator.authoriseByOWinIndy(server, username, password: String): TJsonObject;
@@ -961,7 +1001,7 @@ begin
     Try
       indy.Post(server, ss, resp);
       if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then
-        raise exception.create('unexpected condition');
+        raise EFHIRException.create('unexpected condition');
       resp.Position := 0;
       result := TJSONParser.Parse(resp);
     finally

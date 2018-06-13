@@ -15,6 +15,12 @@
         <Projects Include="reference-platform\dstu2\fhirtests2.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="tests\UITester.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="tests\UITesterFMX.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -59,14 +65,32 @@
     <Target Name="fhirtests2:Make">
         <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Make"/>
     </Target>
+    <Target Name="UITester">
+        <MSBuild Projects="tests\UITester.dproj"/>
+    </Target>
+    <Target Name="UITester:Clean">
+        <MSBuild Projects="tests\UITester.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UITester:Make">
+        <MSBuild Projects="tests\UITester.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UITesterFMX">
+        <MSBuild Projects="tests\UITesterFMX.dproj"/>
+    </Target>
+    <Target Name="UITesterFMX:Clean">
+        <MSBuild Projects="tests\UITesterFMX.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UITesterFMX:Make">
+        <MSBuild Projects="tests\UITesterFMX.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRServerTests;fhirtests4;fhirtests3;fhirtests2"/>
+        <CallTarget Targets="FHIRServerTests;fhirtests4;fhirtests3;fhirtests2;UITester;UITesterFMX"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRServerTests:Clean;fhirtests4:Clean;fhirtests3:Clean;fhirtests2:Clean"/>
+        <CallTarget Targets="FHIRServerTests:Clean;fhirtests4:Clean;fhirtests3:Clean;fhirtests2:Clean;UITester:Clean;UITesterFMX:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRServerTests:Make;fhirtests4:Make;fhirtests3:Make;fhirtests2:Make"/>
+        <CallTarget Targets="FHIRServerTests:Make;fhirtests4:Make;fhirtests3:Make;fhirtests2:Make;UITester:Make;UITesterFMX:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -35,8 +35,7 @@ interface
 uses
   {$IFDEF MSWINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Text, MarkDownProcessor, FHIR.Support.Lock, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Controllers, FHIR.Support.Json, FHIR.Support.Stream,
+  FHIR.Support.Text, MarkDownProcessor, FHIR.Support.Threads, FHIR.Support.System, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Smart.Utilities,
   FHIR.Client.base, FHIR.Client.HTTP,
   FHIR.CdsHooks.Utilities;
@@ -120,7 +119,7 @@ type
   private
     FOnAuthToServer: TOnAuthToServer;
     FServers : TFslList<TCDSHooksManagerServerInfo>;
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FThreads : TFslList<TCDSHooksManagerWorkThread>;
     FCache : TFslMap<TCDSHooksManagerCachedResponse>;
 
@@ -402,7 +401,7 @@ constructor TCDSHooksManager.Create;
 begin
   inherited;
   FServers := TFslList<TCDSHooksManagerServerInfo>.create;
-  FLock := TCriticalSection.Create('TCDSHooksManager');
+  FLock := TFslLock.Create('TCDSHooksManager');
   FThreads := TFslList<TCDSHooksManagerWorkThread>.create;
   FCache := TFslMap<TCDSHooksManagerCachedResponse>.create;
 end;

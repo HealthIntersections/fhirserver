@@ -867,10 +867,10 @@ Type
 
   Tv3CO = class (Tv3QTY)
   private
-    Fvalue: TSmartDecimal;
+    Fvalue: TFslDecimal;
     Fcode: Tv3CD;
     procedure Setcode(const Value: Tv3CD);
-    procedure Setvalue(const Value: TSmartDecimal);
+    procedure Setvalue(const Value: TFslDecimal);
   Protected
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
@@ -886,14 +886,14 @@ Type
     Function RIMClassNameV: String; Override;
 
   published
-    Property value : TSmartDecimal read Fvalue write Setvalue;
+    Property value : TFslDecimal read Fvalue write Setvalue;
     Property code : Tv3CD read Fcode write Setcode;
   End;
 
   Tv3REAL = class (Tv3QTY)
   private
-    Fvalue: TSmartDecimal;
-    procedure Setvalue(const Value: TSmartDecimal);
+    Fvalue: TFslDecimal;
+    procedure Setvalue(const Value: TFslDecimal);
   Protected
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
@@ -910,7 +910,7 @@ Type
     Function RIMClassNameV: String; Override;
 
   published
-    Property value : TSmartDecimal read Fvalue write Setvalue;
+    Property value : TFslDecimal read Fvalue write Setvalue;
   End;
 
  Tv3RTO = class (Tv3QTY)
@@ -943,12 +943,12 @@ Type
 
   Tv3PQ = class (Tv3QTY)
   private
-    Fvalue: TSmartDecimal;
+    Fvalue: TFslDecimal;
     Funit: String;
     FcodingRationale: Tv3CodingRationale;
     Ftranslation: Tv3SetPQR;
     procedure Settranslation(const Value: Tv3SetPQR);
-    procedure Setvalue(const Value: TSmartDecimal);
+    procedure Setvalue(const Value: TFslDecimal);
   Protected
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
@@ -974,7 +974,7 @@ Type
     }
     Function comparable(other : TV3QTY) : Tv3BL;
   published
-    Property value : TSmartDecimal read Fvalue write Setvalue;
+    Property value : TFslDecimal read Fvalue write Setvalue;
     Property codingRationale : Tv3CodingRationale read FcodingRationale write FcodingRationale;
     Property unit_ : String read Funit write Funit;
     Property translation : Tv3SetPQR read Ftranslation write Settranslation;
@@ -982,8 +982,8 @@ Type
 
   Tv3PQR = class (Tv3CD)
   private
-    Fvalue: TSmartDecimal;
-    procedure Setvalue(const Value: TSmartDecimal);
+    Fvalue: TFslDecimal;
+    procedure Setvalue(const Value: TFslDecimal);
   Protected
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
@@ -998,14 +998,14 @@ Type
     Function RIMClassNameV: String; Override;
 
   published
-    Property value : TSmartDecimal read Fvalue write Setvalue;
+    Property value : TFslDecimal read Fvalue write Setvalue;
   End;
 
   Tv3MO = class (Tv3QTY)
   private
-    Fvalue: TSmartDecimal;
+    Fvalue: TFslDecimal;
     Fcurrency: String;
-    procedure Setvalue(const Value: TSmartDecimal);
+    procedure Setvalue(const Value: TFslDecimal);
   Protected
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
@@ -1022,7 +1022,7 @@ Type
     Function RIMClassNameV: String; Override;
 
   published
-    Property value : TSmartDecimal read Fvalue write Setvalue;
+    Property value : TFslDecimal read Fvalue write Setvalue;
     Property currency : String read Fcurrency write Fcurrency;
   End;
 
@@ -1345,10 +1345,10 @@ Type
 
   Tv3UVP = class (Tv3ANY)
   private
-    Fprobability: TSmartDecimal;
+    Fprobability: TFslDecimal;
     Fvalue: Tv3ANY;
     procedure Setvalue(const Value: Tv3ANY);
-    procedure Setprobability(const Value: TSmartDecimal);
+    procedure Setprobability(const Value: TFslDecimal);
   Protected
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
@@ -1362,7 +1362,7 @@ Type
     Function RIMClassNameV: String; Override;
 
   published
-    Property probability : TSmartDecimal read Fprobability write Setprobability;
+    Property probability : TFslDecimal read Fprobability write Setprobability;
     Property value : Tv3ANY read Fvalue write Setvalue;
   End;
 
@@ -2925,7 +2925,7 @@ begin
     result := TEncoding.UTF8.GetBytes(xml.text)
     {$ENDIF}
   else if reference <> nil Then
-    raise exception.create('Reference resolution is not yet handled');
+    raise ECDAException.create('Reference resolution is not yet handled');
 end;
 
 procedure Tv3ED.DoClear;
@@ -4358,7 +4358,7 @@ end;
 procedure Tv3CO.SetPropertyValue(Const aValue : Tv3PropertyDefinition);
 begin
   if aValue.Name = 'value' Then
-    Fvalue := TSmartDecimal.ValueOf(aValue.AsString)
+    Fvalue := TFslDecimal.ValueOf(aValue.AsString)
   else if aValue.Name = 'code' Then
     Fcode := Tv3CD(aValue.AsType(Tv3CD)).Link
   else
@@ -4370,7 +4370,7 @@ begin
   result := (oOther is Tv3CO) and IsNonNull and (Tv3CO(oOther).IsNonNull) and (code <> nil) and (Tv3CO(oOther).code.equals(code));
 end;
 
-procedure Tv3CO.Setvalue(const Value: TSmartDecimal);
+procedure Tv3CO.Setvalue(const Value: TFslDecimal);
 begin
   Fvalue := Value;
 end;
@@ -4378,7 +4378,7 @@ end;
 procedure Tv3CO.DoClear;
 begin
   inherited;
-  value := TSmartDecimal.ValueOf('0');
+  value := TFslDecimal.ValueOf('0');
   code := nil;
 end;
 
@@ -4421,14 +4421,14 @@ end;
 procedure Tv3REAL.SetPropertyValue(Const aValue : Tv3PropertyDefinition);
 begin
   if aValue.Name = 'value' Then
-    Fvalue := TSmartDecimal.ValueOF(aValue.AsString)
+    Fvalue := TFslDecimal.ValueOF(aValue.AsString)
   else
     Inherited SetPropertyValue(aValue);
 end;
 
 function Tv3REAL.EqualsV(oOther: Tv3Base): Boolean;
 begin
-  result := (oOther is Tv3REAL) and IsNonNull and (Tv3REAL(oOther).IsNonNull) and (TSmartDecimal.Equals(Tv3REAL(oOther).value, value));
+  result := (oOther is Tv3REAL) and IsNonNull and (Tv3REAL(oOther).IsNonNull) and (TFslDecimal.Equals(Tv3REAL(oOther).value, value));
 end;
 
 destructor Tv3REAL.Destroy;
@@ -4436,7 +4436,7 @@ begin
   inherited;
 end;
 
-procedure Tv3REAL.Setvalue(const Value: TSmartDecimal);
+procedure Tv3REAL.Setvalue(const Value: TFslDecimal);
 begin
   Fvalue := Value;
 end;
@@ -4452,7 +4452,7 @@ end;
 procedure Tv3REAL.DoClear;
 begin
   inherited;
-  value := TSmartDecimal.Zero;
+  value := TFslDecimal.makeZero;
 end;
 
 { Tv3RTO }
@@ -4604,7 +4604,7 @@ end;
 procedure Tv3PQ.SetPropertyValue(Const aValue : Tv3PropertyDefinition);
 begin
   if aValue.Name = 'value' Then
-    Fvalue := TSmartDecimal.ValueOf(aValue.AsString)
+    Fvalue := TFslDecimal.ValueOf(aValue.AsString)
   else if aValue.Name = 'unit' Then
     Funit := aValue.AsString
   else if aValue.Name = 'codingRationale' Then
@@ -4625,7 +4625,7 @@ begin
     Try
       o2 := canonical;
       Try
-        result := o1.isNonNull and o2.isNonNull and TSmartDecimal.Equals(o1.value, o2.value) and (o1.unit_ = o2.unit_);
+        result := o1.isNonNull and o2.isNonNull and TFslDecimal.Equals(o1.value, o2.value) and (o1.unit_ = o2.unit_);
       Finally
         o2.Free;
       End;
@@ -4637,7 +4637,7 @@ begin
     result := false;
 end;
 
-procedure Tv3PQ.Setvalue(const Value: TSmartDecimal);
+procedure Tv3PQ.Setvalue(const Value: TFslDecimal);
 begin
   Fvalue := Value;
 end;
@@ -4706,7 +4706,7 @@ end;
 procedure Tv3PQ.DoClear;
 begin
   inherited;
-  value := TSmartDecimal.makeNull;
+  value := TFslDecimal.makeNull;
   unit_ := '';
   codingRationale := crNull;
   translation.ClearItems;
@@ -4746,7 +4746,7 @@ end;
 procedure Tv3PQR.SetPropertyValue(Const aValue : Tv3PropertyDefinition);
 begin
   if aValue.Name = 'value' Then
-    Fvalue := TSmartDecimal.ValueOf(aValue.AsString)
+    Fvalue := TFslDecimal.ValueOf(aValue.AsString)
   else
     Inherited SetPropertyValue(aValue);
 end;
@@ -4761,7 +4761,7 @@ begin
   inherited;
 end;
 
-procedure Tv3PQR.Setvalue(const Value: TSmartDecimal);
+procedure Tv3PQR.Setvalue(const Value: TFslDecimal);
 begin
   Fvalue := Value;
 end;
@@ -4769,7 +4769,7 @@ end;
 procedure Tv3PQR.DoClear;
 begin
   inherited;
-  value := TSmartDecimal.makeNull;
+  value := TFslDecimal.makeNull;
 end;
 
 { Tv3MO }
@@ -4813,7 +4813,7 @@ end;
 procedure Tv3MO.SetPropertyValue(Const aValue : Tv3PropertyDefinition);
 begin
   if aValue.Name = 'value' Then
-    Fvalue := TSmartDecimal.Create(aValue.AsString)
+    Fvalue := TFslDecimal.Create(aValue.AsString)
   else if aValue.Name = 'currency' Then
     Fcurrency := aValue.AsString
   else
@@ -4822,7 +4822,7 @@ end;
 
 function Tv3MO.EqualsV(oOther: Tv3Base): Boolean;
 begin
-  result := (oOther is Tv3MO) and IsNonNull and (Tv3MO(oOther).IsNonNull) and TSmartDecimal.Equals(Tv3MO(oOther).value, value) and (Tv3MO(oOther).currency = currency);
+  result := (oOther is Tv3MO) and IsNonNull and (Tv3MO(oOther).IsNonNull) and TFslDecimal.Equals(Tv3MO(oOther).value, value) and (Tv3MO(oOther).currency = currency);
 end;
 
 destructor Tv3MO.Destroy;
@@ -4830,7 +4830,7 @@ begin
   inherited;
 end;
 
-procedure Tv3MO.Setvalue(const Value: TSmartDecimal);
+procedure Tv3MO.Setvalue(const Value: TFslDecimal);
 begin
   Fvalue := Value;
 end;
@@ -4846,7 +4846,7 @@ end;
 procedure Tv3MO.DoClear;
 begin
   inherited;
-  value := TSmartDecimal.makeNull;
+  value := TFslDecimal.makeNull;
   currency := '';
 end;
 
@@ -5900,14 +5900,14 @@ end;
 procedure Tv3UVP.SetPropertyValue(Const aValue : Tv3PropertyDefinition);
 begin
   if aValue.Name = 'probability' Then
-    Fprobability := TSmartDecimal.Create(aValue.AsString)
+    Fprobability := TFslDecimal.Create(aValue.AsString)
   else if aValue.Name = 'value' Then
     Fvalue := Tv3ANY(aValue.AsType(Tv3ANY)).Link
   else
     Inherited SetPropertyValue(aValue);
 end;
 
-procedure Tv3UVP.Setprobability(const Value: TSmartDecimal);
+procedure Tv3UVP.Setprobability(const Value: TFslDecimal);
 begin
   Fprobability := Value;
 end;
@@ -5915,7 +5915,7 @@ end;
 procedure Tv3UVP.DoClear;
 begin
   inherited;
-  probability := TSmartDecimal.makeNull;
+  probability := TFslDecimal.makeNull;
   value := nil;
 end;
 

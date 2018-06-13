@@ -1,10 +1,10 @@
 object PatientHomeFrame: TPatientHomeFrame
-  Size.Width = 842.000000000000000000
-  Size.Height = 332.000000000000000000
+  Size.Width = 950.000000000000000000
+  Size.Height = 676.000000000000000000
   Size.PlatformDefault = False
   object Panel1: TPanel
     Align = Top
-    Size.Width = 842.000000000000000000
+    Size.Width = 950.000000000000000000
     Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
@@ -30,68 +30,175 @@ object PatientHomeFrame: TPatientHomeFrame
       TabOrder = 2
     end
   end
-  object Panel2: TPanel
-    Padding.Left = 2.000000000000000000
-    Padding.Top = 2.000000000000000000
-    Padding.Right = 2.000000000000000000
-    Padding.Bottom = 2.000000000000000000
-    Margins.Left = 2.000000000000000000
-    Margins.Top = 2.000000000000000000
-    Margins.Right = 2.000000000000000000
-    Margins.Bottom = 2.000000000000000000
-    Position.X = 32.000000000000000000
-    Position.Y = 64.000000000000000000
-    Size.Width = 249.000000000000000000
-    Size.Height = 225.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 1
-    object Panel3: TPanel
-      Align = Top
-      Position.X = 2.000000000000000000
-      Position.Y = 2.000000000000000000
-      Size.Width = 245.000000000000000000
-      Size.Height = 33.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 0
-      object Label2: TLabel
-        StyledSettings = [Family, Size, FontColor]
-        Position.X = 8.000000000000000000
-        Position.Y = 8.000000000000000000
-        TextSettings.Font.StyleExt = {00070000000000000004000000}
-        Text = 'Compositions'
-        TabOrder = 0
-      end
-    end
-    object lbCompositions: TListBox
-      Align = Client
-      Size.Width = 245.000000000000000000
-      Size.Height = 188.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 1
-      OnDblClick = lbCompositionsDblClick
-      DisableFocusEffect = True
-      DefaultItemStyles.ItemStyle = ''
-      DefaultItemStyles.GroupHeaderStyle = ''
-      DefaultItemStyles.GroupFooterStyle = ''
-      Viewport.Width = 245.000000000000000000
-      Viewport.Height = 188.000000000000000000
-    end
-  end
   object Panel4: TPanel
     Align = Bottom
-    Position.Y = 304.000000000000000000
-    Size.Width = 842.000000000000000000
+    Position.Y = 648.000000000000000000
+    Size.Width = 950.000000000000000000
     Size.Height = 28.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 2
+    TabOrder = 1
     object lblOutcome: TLabel
       Anchors = [akLeft, akTop, akRight]
       Position.X = 8.000000000000000000
       Position.Y = 8.000000000000000000
-      Size.Width = 825.000000000000000000
+      Size.Width = 933.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
+    end
+  end
+  object TabControl1: TTabControl
+    Align = Client
+    Size.Width = 950.000000000000000000
+    Size.Height = 607.000000000000000000
+    Size.PlatformDefault = False
+    TabIndex = 1
+    TabOrder = 2
+    TabPosition = PlatformDefault
+    Sizes = (
+      950s
+      581s
+      950s
+      581s
+      950s
+      581s)
+    object TabItem1: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 82.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Home Page'
+    end
+    object TabItem2: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 75.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Vital Signs'
+      object pnlHR: TPanel
+        Align = Top
+        Padding.Left = 10.000000000000000000
+        Padding.Right = 10.000000000000000000
+        Padding.Bottom = 10.000000000000000000
+        Size.Width = 950.000000000000000000
+        Size.Height = 177.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        object Panel5: TPanel
+          Align = Top
+          Position.X = 10.000000000000000000
+          Size.Width = 930.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+        end
+      end
+      object pnlO2: TPanel
+        Align = Top
+        Padding.Left = 10.000000000000000000
+        Padding.Right = 10.000000000000000000
+        Padding.Bottom = 10.000000000000000000
+        Position.Y = 354.000000000000000000
+        Size.Width = 950.000000000000000000
+        Size.Height = 177.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        object Panel7: TPanel
+          Align = Top
+          Position.X = 10.000000000000000000
+          Size.Width = 930.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+        end
+      end
+      object pnlBP: TPanel
+        Align = Top
+        Padding.Left = 10.000000000000000000
+        Padding.Right = 10.000000000000000000
+        Padding.Bottom = 10.000000000000000000
+        Position.Y = 177.000000000000000000
+        Size.Width = 950.000000000000000000
+        Size.Height = 177.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object Panel6: TPanel
+          Align = Top
+          Position.X = 10.000000000000000000
+          Size.Width = 930.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+        end
+      end
+    end
+    object TabItem3: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 93.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Compositions'
+      object Panel2: TPanel
+        Align = Client
+        Padding.Left = 2.000000000000000000
+        Padding.Top = 2.000000000000000000
+        Padding.Right = 2.000000000000000000
+        Padding.Bottom = 2.000000000000000000
+        Margins.Left = 2.000000000000000000
+        Margins.Top = 2.000000000000000000
+        Margins.Right = 2.000000000000000000
+        Margins.Bottom = 2.000000000000000000
+        Size.Width = 946.000000000000000000
+        Size.Height = 577.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object Panel3: TPanel
+          Align = Top
+          Position.X = 2.000000000000000000
+          Position.Y = 2.000000000000000000
+          Size.Width = 942.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          object Label2: TLabel
+            StyledSettings = [Family, Size, FontColor]
+            Position.X = 8.000000000000000000
+            Position.Y = 8.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            Text = 'Compositions'
+            TabOrder = 0
+          end
+        end
+        object lbCompositions: TListBox
+          Align = Client
+          Size.Width = 942.000000000000000000
+          Size.Height = 540.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          OnDblClick = lbCompositionsDblClick
+          DisableFocusEffect = True
+          DefaultItemStyles.ItemStyle = ''
+          DefaultItemStyles.GroupHeaderStyle = ''
+          DefaultItemStyles.GroupFooterStyle = ''
+          Viewport.Width = 938.000000000000000000
+          Viewport.Height = 536.000000000000000000
+        end
+      end
     end
   end
 end

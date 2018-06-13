@@ -796,7 +796,7 @@ begin
         else if (s = 'batch') then
           CommandType := fcmdBatch
         else
-          raise Exception.create('Unknown Operation: '+s);
+          raise EFHIRException.create('Unknown Operation: '+s);
       end
       else
         CommandType := fcmdTransaction
@@ -1402,7 +1402,7 @@ end;
 function TFHIRResponse.GetBundle: TFhirBundle;
 begin
   if not (resource is TFHIRBundle) then
-    raise Exception.Create('Attempt to cast a '+resource.FhirType+' to a Bundle');
+    raise EFHIRException.create('Attempt to cast a '+resource.FhirType+' to a Bundle');
   result := FResource as TFhirBundle;
 end;
 

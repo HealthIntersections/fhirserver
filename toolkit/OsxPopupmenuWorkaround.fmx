@@ -23,7 +23,7 @@ object PopupMenuWorkaroundForm: TPopupMenuWorkaroundForm
     DefaultItemStyles.GroupHeaderStyle = ''
     DefaultItemStyles.GroupFooterStyle = ''
     OnKeyDown = ListBox1KeyDown
-    Viewport.Width = 282.000000000000000000
-    Viewport.Height = 269.000000000000000000
+    Viewport.Width = 278.000000000000000000
+    Viewport.Height = 265.000000000000000000
   end
 end

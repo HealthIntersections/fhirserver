@@ -71,7 +71,7 @@ Uses
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser,
+  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang,
   {$IFDEF FHIR2} FHIR.R2.Factory, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Factory, {$ENDIF}
   {$IFDEF FHIR4} FHIR.R4.Factory, {$ENDIF}
@@ -146,7 +146,7 @@ uses
 
 procedure CauseException;
 begin
-  raise Exception.Create('Test');
+  raise EFHIRException.create('Test');
 end;
 
 procedure ExecuteFhirServer;
@@ -456,7 +456,7 @@ begin
   else
   begin
     logt('Database not configured');
-    raise Exception.Create('Database Access not configured');
+    raise EDBException.create('Database Access not configured');
   end;
   if not noCheck then
   begin
@@ -525,7 +525,7 @@ begin
   if not FileExists(result) then
     result := IncludeTrailingPathDelimiter(ExtractFilePath(fn))+s;
   if not FileExists(result) then
-    raise Exception.Create('Unable to find file '+s);
+    raise EIOException.create('Unable to find file '+s);
 end;
 
 type
@@ -598,7 +598,7 @@ begin
       begin
         StringSplit(p, '-', pi, pv);
         if not pcm.packageExists(pi, pv) then
-          raise Exception.Create('Package '+p+' not found');
+          raise EFHIRException.create('Package '+p+' not found');
         logt('Load Package '+pi+'-'+pv);
         ploader := TPackageLoader.create;
         try
@@ -626,7 +626,7 @@ begin
       end;
     end
     else
-      raise Exception.Create('Unable to fetch from "'+fn+'"');
+      raise EIOException.create('Unable to fetch from "'+fn+'"');
   end
   else if {$IFDEF FHIR2} true {$ELSE} fn.EndsWith('.json') or fn.EndsWith('.xml') {$ENDIF} then
   begin
@@ -644,7 +644,7 @@ begin
       fn := IncludeTrailingPathDelimiter(fn)+'load.ini';
     logt('Load database from sources listed in '+fn);
     if not FileExists(fn) then
-      raise Exception.Create('Load Ini file '+fn+' not found');
+      raise EIOException.create('Load Ini file '+fn+' not found');
     ini := TFHIRServerIniFile.Create(fn);
     st := TStringList.Create;
     try
@@ -829,19 +829,19 @@ begin
   // check that user account details are provided
   salt := FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', '');
   if (salt = '') then
-    raise Exception.Create('You must define a scim salt in the ini file');
+    raise EFHIRException.create('You must define a scim salt in the ini file');
   dr := FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', '');
   if (dr = '') then
-    raise Exception.Create('You must define some default rights for SCIM users in the ini file');
+    raise EFHIRException.create('You must define some default rights for SCIM users in the ini file');
   un := FIni.ReadString(voVersioningNotApplicable, 'admin', 'username', '');
   if (un = '') then
-    raise Exception.Create('You must define an admin username in the ini file');
+    raise EFHIRException.create('You must define an admin username in the ini file');
   FindCmdLineSwitch('password', pw, true, [clstValueNextParam]);
   if (pw = '') then
-    raise Exception.Create('You must provide a admin password as a parameter to the command');
+    raise EFHIRException.create('You must provide a admin password as a parameter to the command');
   em := FIni.ReadString(voVersioningNotApplicable, 'admin', 'email', '');
   if (em = '') then
-    raise Exception.Create('You must define an admin email in the ini file');
+    raise EFHIRException.create('You must define an admin email in the ini file');
 
   sql := 'C:\work\fhirserver\sql';
   if not DirectoryExists(sql) then

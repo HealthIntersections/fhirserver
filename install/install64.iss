@@ -175,7 +175,7 @@ Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
 Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    DestDir: "{app}";      Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.exe";    DestDir: "{app}";      Flags: ignoreversion
 
 [INI]
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "web";  String: "{app}\web"

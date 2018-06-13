@@ -154,7 +154,6 @@ uses
   FHIR.Server.Validator in 'FHIR.Server.Validator.pas',
   FHIR.Web.Socket in '..\reference-platform\Support\FHIR.Web.Socket.pas',
   FHIR.Support.Mime in '..\reference-platform\Support\FHIR.Support.Mime.pas',
-  FHIR.Support.Lock in '..\reference-platform\Support\FHIR.Support.Lock.pas',
   FHIR.R3.Questionnaire in '..\reference-platform\dstu3\FHIR.R3.Questionnaire.pas',
   FHIR.Base.Scim in '..\reference-platform\base\FHIR.Base.Scim.pas',
   FHIR.R3.Narrative2 in '..\reference-platform\dstu3\FHIR.R3.Narrative2.pas',
@@ -264,7 +263,7 @@ uses
   FHIR.R4.ParserBase in '..\reference-platform\r4\FHIR.R4.ParserBase.pas',
   FHIR.R4.Json in '..\reference-platform\r4\FHIR.R4.Json.pas',
   FHIR.R4.Turtle in '..\reference-platform\r4\FHIR.R4.Turtle.pas',
-  FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
+  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
@@ -289,7 +288,10 @@ uses
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
   FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
   FHIR.R4.Operations in '..\reference-platform\r4\FHIR.R4.Operations.pas',
-  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas';
+  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas',
+  FHIR.Tx.MimeTypes in 'FHIR.Tx.MimeTypes.pas',
+  FHIR.Tx.Iso4217 in 'FHIR.Tx.Iso4217.pas',
+  FHIR.XVersion.ConvBase in '..\reference-platform\xversion\FHIR.XVersion.ConvBase.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

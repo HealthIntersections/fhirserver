@@ -30,7 +30,6 @@ object CDEOptionsForm: TCDEOptionsForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 223
     DesignSize = (
       358
       35)
@@ -44,7 +43,6 @@ object CDEOptionsForm: TCDEOptionsForm
       Default = True
       TabOrder = 0
       OnClick = Button1Click
-      ExplicitLeft = 243
     end
     object Button2: TButton
       Left = 274
@@ -56,7 +54,6 @@ object CDEOptionsForm: TCDEOptionsForm
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 324
     end
   end
   object Panel2: TPanel
@@ -75,10 +72,6 @@ object CDEOptionsForm: TCDEOptionsForm
     Caption = 'Panel2'
     ParentBackground = False
     TabOrder = 1
-    ExplicitLeft = 184
-    ExplicitTop = 96
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object Panel3: TPanel
       Left = 11
       Top = 11
@@ -89,10 +82,6 @@ object CDEOptionsForm: TCDEOptionsForm
       Color = clWhite
       ParentBackground = False
       TabOrder = 0
-      ExplicitLeft = 176
-      ExplicitTop = 80
-      ExplicitWidth = 185
-      ExplicitHeight = 41
       object Label13: TLabel
         Left = 48
         Top = 176

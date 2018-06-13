@@ -1,10 +1,38 @@
 unit FHIR.Tx.ICD10;
 
+{
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations,
   FHIR.CdsHooks.Utilities,
@@ -250,32 +278,32 @@ end;
 
 function TICD10Provider.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.filterLocate(ctxt: TCodeSystemProviderFilterContext;code: String): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 procedure TICD10Provider.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
@@ -307,7 +335,7 @@ end;
 
 function TICD10Provider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -322,7 +350,7 @@ end;
 
 function TICD10Provider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.locate(code: String; var message: String): TCodeSystemProviderContext;
@@ -367,7 +395,7 @@ end;
 
 function TICD10Provider.locateIsA(code,parent: String): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.name(context: TCodeSystemProviderContext): String;
@@ -377,7 +405,7 @@ end;
 
 function TICD10Provider.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 procedure TICD10Provider.readHeader(s: String);
@@ -386,7 +414,7 @@ var
 begin
   cells := s.Split([#9]);
   if cells[0] <> 'icd-10' then
-    raise Exception.Create('Invalid file - should start with icd-10');
+    raise ETerminologyError.create('Invalid file - should start with icd-10');
   FUrl := cells[1];
   FLanguage := cells[2];
   FTitle := 'ICD-10 '+cells[3];
@@ -422,7 +450,7 @@ end;
 
 function TICD10Provider.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.SpecialEnumeration: String;
@@ -432,12 +460,12 @@ end;
 
 function TICD10Provider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise Exception.Create('Not implemented');
+  raise ETerminologyError.create('Not implemented');
 end;
 
 function TICD10Provider.system(context: TCodeSystemProviderContext): String;

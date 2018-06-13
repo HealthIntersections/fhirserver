@@ -36,9 +36,10 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections, IniFiles,
   IdContext, IdCustomHTTPServer, IdCookie,
-  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Text,
+  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Threads, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Misc.Facebook, FHIR.Scim.Server, FHIR.Base.Scim, FHIR.Support.Certs, FHIR.Smart.Utilities,
+  FHIR.Base.Lang,
   FHIR.Server.Session, FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Server.Security, FHIR.Version.Utilities,
   FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Misc.ApplicationVerifier,
   FHIR.Server.Jwt, FHIR.Server.AppCache;
@@ -64,7 +65,7 @@ type
   // this is a server that lives at /oauth2 (or elsewhere, if configured)
   TAuth2Server = class (TFslObject)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FServerContext : TFHIRServerContext;
     FOnProcessFile : TProcessFileEvent;
     FSSLPort : String;
@@ -165,7 +166,7 @@ begin
   inherited create;
   FHost := host;
   FSSLPort := SSLPort;
-  FLock := TCriticalSection.Create('auth-server');
+  FLock := TFslLock.Create('auth-server');
   FLoginTokens := TFslMap<TFhirLoginToken>.create;
   FNonceList := TStringList.create;
   FNonceList.Sorted := true;
@@ -297,7 +298,7 @@ begin
       if (c.System = 'http://smarthealthit.org/fhir/scopes') then
         s := s +' '+c.code;
     {$ELSE}
-    raise Exception.Create('This operation is only supported in R3 for now');
+    raise EFHIRException.create('This operation is only supported in R3 for now');
     {$ENDIF}
     session.scopes := s.Trim;
   finally
@@ -309,7 +310,7 @@ end;
 function TAuth2Server.checkNotEmpty(v , n : String) : String;
 begin
   if (v = '') then
-    raise Exception.Create('Parameter "'+n+'" not found');
+    raise EFHIRException.create('Parameter "'+n+'" not found');
   result := v;
 end;
 
@@ -376,21 +377,21 @@ var
   client : TRegisteredClientInformation;
 begin
   if params.GetVar('response_type') <> 'code' then
-    raise Exception.Create('Only response_type allowed is ''code''');
+    raise EFHIRException.create('Only response_type allowed is ''code''');
   client_id := checkNotEmpty(params.GetVar('client_id'), 'client_id');
   client := ServerContext.Storage.getClientInfo(client_id);
   try
     if client = nil then
-      raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
+      raise EFHIRException.create('Unknown Client Identifier "'+client_id+'"');
     redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
     if not ((client_id = 'c.1') and (redirect_uri = ServerContext.FormalURLSecureClosed+'/internal')) then
       if not isAllowedRedirect(client, redirect_uri) then
-      raise Exception.Create('Unacceptable Redirect url "'+redirect_uri+'"');
+      raise EFHIRException.create('Unacceptable Redirect url "'+redirect_uri+'"');
     scope := checkNotEmpty(params.GetVar('scope'), 'scope');
     state := checkNotEmpty(params.GetVar('state'), 'state');
     aud := checkNotEmpty(params.GetVar('aud'), 'aud');
     if not isAllowedAud(client_id, aud) then
-      raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')');
+      raise EFHIRException.create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')');
 
     id := newguidid;
     ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state);
@@ -541,7 +542,7 @@ begin
   pbody := TParseMap.create(request.formParams);
   try
     if not pbody.VarExists('jwt') then
-      raise Exception.Create('Unable to understand post body - no jwt parameter found');
+      raise EFHIRException.create('Unable to understand post body - no jwt parameter found');
     jwk := ServerContext.JWTServices.jwkList;
     try
       json := TJsonObject.Create;
@@ -625,7 +626,7 @@ var
   redirect, state, scope : String;
 begin
   if session = nil then
-    raise Exception.Create('User Session not found');
+    raise EFHIRException.create('User Session not found');
 
   if FSSLPort = '443' then
     authurl := 'https://'+FHost+FPath
@@ -633,7 +634,7 @@ begin
     authurl := 'https://'+FHost+':'+FSSLPort+FPath;
 
   if not ServerContext.Storage.fetchOAuthDetails(session.key, 2, client_id, name, redirect, state, scope) then
-    raise Exception.Create('State Error - session "'+inttostr(session.key)+'" not ready for a choice');
+    raise EFHIRException.create('State Error - session "'+inttostr(session.key)+'" not ready for a choice');
 
   if params.getVar('form') = 'true' then
   begin
@@ -755,10 +756,10 @@ begin
     password := params.GetVar('password');
 
     if not FUserProvider.CheckLogin(username, password, key) then
-      raise Exception.Create('Login failed');
+      raise EFHIRException.create('Login failed');
 
     if not ServerContext.Storage.hasOAuthSession(id, 1) then
-      raise Exception.Create('State failed - no login session active');
+      raise EFHIRException.create('State failed - no login session active');
 
     session := ServerContext.SessionManager.RegisterSession(userLogin, apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
     try
@@ -775,7 +776,7 @@ begin
   begin
     // HL7
     if not CheckLoginToken(copy(request.document, 25, $FF), id, provider) then
-      raise Exception.Create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)');
+      raise EFHIRException.create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)');
     uid := params.GetVar('userid');
     name := params.GetVar('fullName');
     expires := inttostr(60 * 24 * 10); // 10 days
@@ -799,11 +800,11 @@ begin
 
     state := params.GetVar('state');
     if not StringStartsWith(state, OAUTH_LOGIN_PREFIX, false) then
-      raise Exception.Create('State Prefix mis-match');
+      raise EFHIRException.create('State Prefix mis-match');
     if not CheckLoginToken(state, id, provider) then
-      raise Exception.Create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)');
+      raise EFHIRException.create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)');
     if params.VarExists('error') then
-      raise Exception.Create('error_description');
+      raise EFHIRException.create('error_description');
 
     if provider = apGoogle then
     begin
@@ -818,7 +819,7 @@ begin
         ok := FacebookGetDetails(token, uid, name, email, msg);
     end;
     if not ok then
-      raise Exception.Create('Processing the login failed ('+msg+')');
+      raise EFHIRException.create('Processing the login failed ('+msg+')');
     session := ServerContext.SessionManager.RegisterSession(userExternalOAuth, provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
     try
       ServerContext.Storage.updateOAuthSession(id, 2, session.key, client_id);
@@ -831,7 +832,7 @@ begin
     end;
   end
   else
-    raise Exception.Create('Login attempt not understood');
+    raise EFHIRException.create('Login attempt not understood');
 end;
 
 //  "grant_types" : "client_credentials",
@@ -855,12 +856,12 @@ var
   begin
     result := json.str[name];
     if result = '' then
-      raise Exception.Create('A '+name+' field is required in the json token');
+      raise EFHIRException.create('A '+name+' field is required in the json token');
   end;
   procedure checkValue(name, value : String);
   begin
     if json.str[name] <> value then
-      raise Exception.Create('The '+name+' field must have the value "'+value+'" but has the value "'+json.str[name]+'"');
+      raise EFHIRException.create('The '+name+' field must have the value "'+value+'" but has the value "'+json.str[name]+'"');
   end;
 begin
   try
@@ -874,7 +875,7 @@ begin
 //          disabled after discussion with Luis Maas - pending further discussion
 //             - determine when this should be done
 //          if Session = nil then
-//            raise Exception.Create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
+//            raise EFHIRException.create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
           // check that it meets business rules
           client.name := checkPresent('client_name');
           client.url := json.str['client_uri'];
@@ -890,11 +891,11 @@ begin
             checkValue('grant_types', 'client_credentials');
             checkValue('response_types', 'token');
             if json.obj['jwks'] = nil then
-              raise Exception.Create('No jwks found');
+              raise EFHIRException.create('No jwks found');
             if json.obj['jwks'].arr['keys'] = nil then
-              raise Exception.Create('No keys found in jwks');
+              raise EFHIRException.create('No keys found in jwks');
             if json.obj['jwks'].arr['keys'].Count = 0 then
-              raise Exception.Create('No Keys found in jwks.keys');
+              raise EFHIRException.create('No Keys found in jwks.keys');
             client.publicKey := TJsonWriter.writeObjectStr(json.obj['jwks']);
             client.issuer := checkPresent('issuer');
           end
@@ -914,7 +915,7 @@ begin
             // no secret
           end
           else
-            raise Exception.Create('Unable to recognise client mode');
+            raise EFHIRException.create('Unable to recognise client mode');
           resp.str['client_id'] := ServerContext.Storage.storeClient(client, 0 {session.Key});
           resp.str['client_id_issued_at'] := IntToStr(DateTimeToUnix(now));
           client.patientContext := json.bool['fhir_patient_context'];
@@ -997,7 +998,7 @@ begin
         else if (request.Document = FPath+'/cavs') then
           HandleCAVS(AContext, request, session, params, response)
         else
-          raise Exception.Create('Invalid URL');
+          raise EFHIRException.create('Invalid URL');
       finally
         params.Free;
       end;
@@ -1029,7 +1030,7 @@ begin
     password := checkNotEmpty(params.GetVar('password'), 'password');
 
     if FPassword <> password then
-      raise Exception.Create('Admin Password fail');
+      raise EFHIRException.create('Admin Password fail');
 
     // update the login record
     // create a session
@@ -1046,10 +1047,10 @@ begin
   else if params.getVar('id') <> '' then
   begin
     if not ServerContext.SessionManager.GetSessionByToken(params.GetVar('id'), session) then
-      raise Exception.Create('State Error (1)');
+      raise EFHIRException.create('State Error (1)');
     try
       if not ServerContext.Storage.hasOAuthSessionByKey(session.Key, 2) then
-        raise Exception.Create('State Error (2)');
+        raise EFHIRException.create('State Error (2)');
       setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
       response.Redirect(FPath+'/auth_choice');
     finally
@@ -1135,21 +1136,21 @@ begin
   try
     errCode := 'invalid_request';
     if not (request.AuthUsername = INTERNAL_SECRET) then
-      raise Exception.Create('Can only call grant_type=client_credentials if the Authorization Header has a Bearer Token');
+      raise EFHIRException.create('Can only call grant_type=client_credentials if the Authorization Header has a Bearer Token');
     try
       jwt := TJWTUtils.unpack(request.AuthPassword, false, nil); // todo:
     except
       on e : exception do
-        raise Exception.Create('Error reading JWT: '+e.message);
+        raise EFHIRException.create('Error reading JWT: '+e.message);
     end;
     try
       uuid := params.getVar('scope');
       if not ServerContext.Storage.FetchAuthorization(uuid, PatientId, ConsentKey, SessionKey, Expiry, jwtStored) then
-        raise Exception.Create('Unrecognised Token');
+        raise EFHIRException.create('Unrecognised Token');
       if (jwtStored <> request.AuthPassword) then
-        raise Exception.Create('JWT mismatch');
+        raise EFHIRException.create('JWT mismatch');
       if (expiry < now) then
-        raise Exception.Create('The authorization has expired');
+        raise EFHIRException.create('The authorization has expired');
 
       session := ServerContext.SessionManager.RegisterSessionFromPastSession(userBearerJWT, sessionKey, expiry, AContext.Binding.PeerIP);
       try
@@ -1223,7 +1224,7 @@ begin
       jwt := TJWTUtils.unpack(params.GetVar('client_assertion'), false, nil); // todo:
     except
       on e : exception do
-        raise Exception.Create('Error reading JWT: '+e.message);
+        raise EFHIRException.create('Error reading JWT: '+e.message);
     end;
     try
       client := ServerContext.Storage.getClientInfo(jwt.subject);
@@ -1233,15 +1234,15 @@ begin
         // check that this is not a jti value seen before (prevention of replay attacks)
         // ensure that the client_id provided is valid etc
         if client = nil then
-          raise Exception.Create('Unknown client_id "'+jwt.subject+'"');
+          raise EFHIRException.create('Unknown client_id "'+jwt.subject+'"');
         if jwt.issuer <> client.issuer then
-          raise Exception.Create('Stated Issuer does not match registered issuer');
+          raise EFHIRException.create('Stated Issuer does not match registered issuer');
         if not nonceIsUnique(jwt.id) then
-          raise Exception.Create('Repeat Nonce Token - not allowed');
+          raise EFHIRException.create('Repeat Nonce Token - not allowed');
         if (jwt.expires > TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE)then
-          raise Exception.Create('JWT Expiry is too far in the future - ('+FormatDateTime('c', jwt.expires)+', must be < 5 minutes)');
+          raise EFHIRException.create('JWT Expiry is too far in the future - ('+FormatDateTime('c', jwt.expires)+', must be < 5 minutes)');
         if (jwt.expires < TDateTimeEx.makeUTC.DateTime) then
-          raise Exception.Create('JWT expiry ('+TDateTimeEx.make(jwt.expires, dttzUTC).toXML+') is too old');
+          raise EFHIRException.create('JWT expiry ('+TDateTimeEx.make(jwt.expires, dttzUTC).toXML+') is too old');
 
         jwk := TJWKList.create(client.publicKey);
         try
@@ -1314,10 +1315,10 @@ begin
       errCode := 'invalid_request';
       code := checkNotEmpty(params.getVar('code'), 'code');
       if not ServerContext.SessionManager.GetSessionByToken(code, session) then // todo: why is session passed in too?
-        raise Exception.Create('Authorization Code not recognized');
+        raise EFHIRException.create('Authorization Code not recognized');
       try
         if not ServerContext.Storage.fetchOAuthDetails(session.key, 3, pclientid, pname, predirect, pstate, pscope) then
-          raise Exception.Create('Authorization Code not recognized (2)');
+          raise EFHIRException.create('Authorization Code not recognized (2)');
         client := ServerContext.Storage.getClientInfo(pclientid);
         try
           // what happens now depends on whether there's a client secret or not
@@ -1327,7 +1328,7 @@ begin
             errCode := 'invalid_client';
             clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
             if clientId <> pclientid then
-              raise Exception.Create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
+              raise EFHIRException.create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
           end
           else
           begin
@@ -1335,23 +1336,23 @@ begin
             clientId := request.AuthUsername;
             clientSecret := request.AuthPassword;
             if clientId <> pclientid then
-              raise Exception.Create('Client Id is wrong ("'+clientId+'") in Authorization Header');
+              raise EFHIRException.create('Client Id is wrong ("'+clientId+'") in Authorization Header');
             if clientSecret <> client.secret then
-              raise Exception.Create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
+              raise EFHIRException.create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
           end;
 
           // now check the redirect URL
           uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri');
           errCode := 'invalid_request';
           if predirect <> uri then
-            raise Exception.Create('Mismatch between claimed and actual redirection URIs');
+            raise EFHIRException.create('Mismatch between claimed and actual redirection URIs');
 
           // ok, well, it's passed.
           scope := pscope;
           launch := readFromScope(scope, 'launch');
           ServerContext.Storage.updateOAuthSession(session.OuterToken, 4, session.Key, client_id);
           if (session.SystemName <> client_id) or (session.SystemName <> clientId) then
-            raise Exception.Create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
+            raise EFHIRException.create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
 
           json := TJsonWriterDirect.create;
           try
@@ -1410,10 +1411,10 @@ begin
   try
     try
       if request.AuthUsername <> 'Bearer' then
-        raise Exception.Create('OAuth2 Access Token is required in the HTTP Authorization Header (type Bearer)');
+        raise EFHIRException.create('OAuth2 Access Token is required in the HTTP Authorization Header (type Bearer)');
       token := checkNotEmpty(params.getVar('token'), 'token');
       if request.AuthPassword <> token then
-        raise Exception.Create('Access Token Required');
+        raise EFHIRException.create('Access Token Required');
 
       clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
       clientSecret := checkNotEmpty(params.getVar('client_secret'), 'client_secret');
@@ -1421,7 +1422,7 @@ begin
       client := ServerContext.Storage.getClientInfo(clientId);
       try
         if client.secret <> clientSecret then
-          raise Exception.Create('Client Id or secret is wrong ("'+clientId+'")');
+          raise EFHIRException.create('Client Id or secret is wrong ("'+clientId+'")');
 
         if not ServerContext.SessionManager.GetSession(token, session, check) then
         begin
@@ -1498,7 +1499,7 @@ begin
   begin
     if params.getVar('form') = 'true' then
     begin
-      raise Exception.Create('Not done yet');
+      raise EFHIRException.create('Not done yet');
     end
     else
     begin

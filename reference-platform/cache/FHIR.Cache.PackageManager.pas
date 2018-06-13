@@ -30,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, IniFiles, zlib, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Json, FHIR.Support.Strings, FHIR.Support.DateTime,
+  SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Json, FHIR.Support.Strings, FHIR.Support.DateTime,
   FHIR.Support.Text, FHIR.Support.Tarball, FHIR.Web.Fetcher;
 
 type
@@ -140,24 +140,32 @@ type
     property kind : TFHIRPackageKind read FKind write FKind;
   end;
 
-  TCheckFunction = reference to function(msg : String):boolean;
+  TCheckEvent = function(sender : TObject; msg : String):boolean of object;
   TPackageLoadingEvent = procedure (rType, id : String; stream : TStream) of object;
+  TWorkProgressEvent = procedure (sender : TObject; pct : integer; done : boolean; desc : String) of object;
 
   TFHIRPackageManager = class (TFslObject)
   private
     FUser : boolean;
     FFolder : String;
     FIni : TIniFile;
+    FOnWork : TWorkProgressEvent;
+    FOnCheck : TCheckEvent;
     function resolve(list : TFslList<TFHIRPackageInfo>; dep : TFHIRPackageDependencyInfo) : TFHIRPackageDependencyStatus;
     function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
     procedure clearCache;
     function readNpmKind(kind, id: String): TFHIRPackageKind;
     function checkPackageSize(dir : String) : integer;
     procedure analysePackage(dir : String; v : String; profiles, canonicals : TDictionary<String, String>);
+    procedure work(pct : integer; done : boolean; desc : String);
+    function check(desc : String) : boolean;
   public
     constructor Create(user : boolean);
     destructor Destroy; override;
     function Link : TFHIRPackageManager;
+
+    property OnWork : TWorkProgressEvent read FOnWork write FOnWork;
+    property OnCheck : TCheckEvent read FOnCheck write FOnCheck;
 
     property Folder : String read FFolder;
     property UserMode : boolean read FUser;
@@ -174,7 +182,7 @@ type
     procedure loadPackage(idver : String; resources : Array of String; loadEvent : TPackageLoadingEvent); overload;
     procedure loadPackage(id, ver : String; resources : TFslStringSet; loadEvent : TPackageLoadingEvent); overload;
 
-    procedure import(content : TBytes; callback : TCheckFunction); overload;
+    procedure import(content : TBytes); overload;
 
     procedure remove(id : String); overload;
     procedure remove(id, ver: String); overload;
@@ -201,6 +209,14 @@ uses
   IOUtils;
 
 { TFHIRPackageManager }
+
+function TFHIRPackageManager.check(desc: String): boolean;
+begin
+  if (assigned(FOnCheck)) then
+    result := FOnCheck(self, desc)
+  else
+    result := true;
+end;
 
 function TFHIRPackageManager.checkPackageSize(dir: String): integer;
 var
@@ -275,7 +291,7 @@ begin
 end;
 
 
-procedure TFHIRPackageManager.import(content : TBytes; callback : TCheckFunction);
+procedure TFHIRPackageManager.import(content : TBytes);
 var
   npm : TJsonObject;
   id, ver, dir, fn, fver : String;
@@ -296,12 +312,12 @@ begin
       npm.Free;
     end;
     if packageExists(id, ver) then
-      if not callback('Replace existing copy of '+id+' version '+ver+'?') then
+      if not check('Replace existing copy of '+id+' version '+ver+'?') then
         exit;
     dir := path([FFolder, id+'-'+ver]);
     if FolderExists(dir) then
       if not FolderDelete(dir) then
-        raise Exception.Create('Unable to delete existing package');
+        raise EIOException.create('Unable to delete existing package');
     ForceFolder(dir);
     size := 0;
     for s in files.Keys do
@@ -314,7 +330,7 @@ begin
         begin
           Sleep(100);
           if not DeleteFile(fn) then
-            raise Exception.Create('Unable to delete existing file '+fn);
+            raise EIOException.create('Unable to delete existing file '+fn);
         end;
       end;
       BytesToFile(files[s], fn);
@@ -354,7 +370,7 @@ end;
 
     archiveclass := GetArchiveFormats.FindDecompressFormat(FileName);
     if not Assigned(archiveclass) then
-      Raise exception.Create('Not supported by 7z.dll');
+      raise EFHIRException.create('Not supported by 7z.dll');
     Myarchive := archiveclass.Create(FileName);
     try
       if (Myarchive is TJclSevenZipDecompressArchive) then
@@ -410,7 +426,7 @@ begin
   else if kind = 'fhir.template' then
     result := fpkIGTemplate
   else if kind <> '' then
-    raise Exception.Create('Unknown Package Kind')
+    raise ELibraryException.create('Unknown Package Kind')
   else if id = 'hl7.fhir.core' then
     result := fpkCore
   else
@@ -460,7 +476,7 @@ begin
                   list.add(pck.link);
               end
               else if (pck.kind <> kind) then
-                raise Exception.Create('Package kind mismatch beteen versions for Package '+id+': '+CODES_TFHIRPackageKind[kind]+'/'+CODES_TFHIRPackageKind[pck.kind]);
+                raise ELibraryException.create('Package kind mismatch beteen versions for Package '+id+': '+CODES_TFHIRPackageKind[kind]+'/'+CODES_TFHIRPackageKind[pck.kind]);
 
               if pck.Canonical = '' then
                 pck.Canonical := npm.str['canonical'];
@@ -604,35 +620,41 @@ var
   fn : String;
   b : TBytes;
 begin
-  result := TDictionary<String, TBytes>.create;
-  bo := TBytesStream.Create(content);
+  work(0, false, 'Loading Package');
   try
-    z := TZDecompressionStream.Create(bo, 15+16);
+    result := TDictionary<String, TBytes>.create;
+    bo := TBytesStream.Create(content);
     try
-      tar := TTarArchive.Create(z);
+      z := TZDecompressionStream.Create(bo, 15+16);
       try
-        tar.Reset;
-        while tar.FindNext(DirRec) do
-        begin
-          fn := DirRec.Name;
-          fn := fn.replace('/', '\');
-          bi := TBytesStream.Create;
-          try
-            tar.ReadFile(bi);
-            b := bi.Bytes;
-            result.Add(fn, copy(b, 0, bi.Size));
-          finally
-            bi.free;
+        work(trunc(bo.Position / bo.Size * 100), false, 'Loading Package');
+        tar := TTarArchive.Create(z);
+        try
+          tar.Reset;
+          while tar.FindNext(DirRec) do
+          begin
+            fn := DirRec.Name;
+            fn := fn.replace('/', '\');
+            bi := TBytesStream.Create;
+            try
+              tar.ReadFile(bi);
+              b := bi.Bytes;
+              result.Add(fn, copy(b, 0, bi.Size));
+            finally
+              bi.free;
+            end;
           end;
+        finally
+          tar.Free;
         end;
       finally
-        tar.Free;
+        z.Free;
       end;
     finally
-      z.Free;
+      bo.free;
     end;
   finally
-    bo.free;
+    work(100, true, '');
   end;
 end;
 
@@ -657,7 +679,7 @@ begin
     ver := 'current';
 
   if not packageExists(id, ver) then
-    raise Exception.Create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
+    raise EIOException.create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
   for s in TDirectory.GetFiles(Path([FFolder, id+'-'+ver, 'package'])) do
     if not s.endsWith('package.json') then
     begin
@@ -687,31 +709,54 @@ end;
 procedure TFHIRPackageManager.analysePackage(dir: String; v : String; profiles, canonicals: TDictionary<String, String>);
 var
   s, bd : String;
+  l : TStringDynArray;
   j : TJsonObject;
+  i : integer;
 begin
-  for s in TDirectory.GetFiles(path([dir, 'package'])) do
-  begin
+  l := TDirectory.GetFiles(path([dir, 'package']));
+  try
+    work(0, false, 'Analysing '+dir);
     try
-      j := TJSONParser.ParseFile(s);
-      try
-        if (j.str['url'] <> '') and (j.str['resourceType'] <> '') then
-          canonicals.AddOrSetValue(j.str['url'], extractFileName(s));
-        if (j.str['resourceType'] = 'StructureDefinition') and (j.str['kind'] = 'resource') then
-        begin
-          if (v = '1.0.2') then
-            bd := j.str['constrainedType']
-          else
-            bd := j.str['type'];
-          if bd = '' then
-            bd := j.str['name'];
-          if bd <> 'Extension' then
-            profiles.AddOrSetValue(j.str['url'], bd);
+      i := 0;
+      for s in l do
+      begin
+        inc(i);
+        work(trunc(i / length(l) * 100), false, 'Analysing '+s);
+        try
+          j := TJSONParser.ParseFile(s);
+          try
+            if (j.str['url'] <> '') and (j.str['resourceType'] <> '') then
+              canonicals.AddOrSetValue(j.str['url'], extractFileName(s));
+            if (j.str['resourceType'] = 'StructureDefinition') and (j.str['kind'] = 'resource') then
+            begin
+              if (v = '1.0.2') then
+                bd := j.str['constrainedType']
+              else
+                bd := j.str['type'];
+              if bd = '' then
+                bd := j.str['name'];
+              if bd <> 'Extension' then
+                profiles.AddOrSetValue(j.str['url'], bd);
+            end;
+          finally
+            j.Free;
+          end;
+        except
+          // nothing
         end;
-      finally
-        j.Free;
       end;
-    except
-      // nothing
+    finally
+      work(100, true, 'Analysing '+dir);
+    end;
+  except
+    on e : EAbort do
+    begin
+      exit; // just swallow this
+    end;
+    on e : Exception do
+    begin
+      if not check('Exception analysing package '+dir+'. Continue?') then
+        raise;
     end;
   end;
 end;
@@ -730,7 +775,7 @@ begin
     n := s.Substring(s.LastIndexOf('\')+1);
     if (n.StartsWith(id+'-')) then
       if not FolderDelete(s) then
-        raise Exception.Create('Unable to delete package '+n+'. Perhaps it is in use?');
+        raise EIOException.create('Unable to delete package '+n+'. Perhaps it is in use?');
   end;
 end;
 
@@ -743,7 +788,7 @@ begin
     n := s.Substring(s.LastIndexOf('\')+1);
     if (n = id+'-'+ver) then
       if not FolderDelete(s) then
-        raise Exception.Create('Unable to delete package '+n+'. Perhaps it is in use?');
+        raise EIOException.create('Unable to delete package '+n+'. Perhaps it is in use?');
   end;
 end;
 
@@ -801,6 +846,12 @@ begin
         if v.actualVersion > dep.version then
           exit(stMoreRecentVersion);
     end;
+end;
+
+procedure TFHIRPackageManager.work(pct: integer; done: boolean; desc: String);
+begin
+  if assigned(FOnWork) then
+    FOnWork(self, pct, done, desc);
 end;
 
 { TFHIRPackageInfo }
@@ -952,7 +1003,7 @@ var
   i : TJsonNode;
   p : TPackageDefinition;
 begin
-  a := TInternetFetcher.fetchJsonArr('https://build.fhir.org/ig/qas.json');
+  a := TInternetFetcher.fetchJsonArr('http://build.fhir.org/ig/qas.json');
   try
     for i in a do
     begin
@@ -967,7 +1018,7 @@ begin
           p.Date := TDateTimeEx.fromFormat('DDD, dd mmm, yyyy hh:nn:ss Z', j.str['date']).DateTime;
           p.Description := j.str['name'];
           p.FHIRVersion := j.str['version'];
-          p.Url := 'https://build.fhir.org/ig/'+j.str['repo'];
+          p.Url := 'http://build.fhir.org/ig/'+j.str['repo'];
           list.Add(p.Link);
         finally
           p.Free;
@@ -991,7 +1042,7 @@ begin
     p.Date := Now;
     p.Description := 'FHIR Current Build';
     p.FHIRVersion := '3.4.0';
-    p.Url := 'https://build.fhir.org/';
+    p.Url := 'http://build.fhir.org/';
     list.Add(p.Link);
   finally
     p.Free;
@@ -1005,7 +1056,7 @@ begin
     p.Date := EncodeDate(2017, 4, 19);
     p.Description := 'FHIR R3';
     p.FHIRVersion := '3.0.1';
-    p.Url := 'https://hl7.org/fhir';
+    p.Url := 'http://hl7.org/fhir';
     list.Add(p.Link);
   finally
     p.Free;
@@ -1019,7 +1070,7 @@ begin
     p.Date := EncodeDate(2016, 5, 15);
     p.Description := 'FHIR R2';
     p.FHIRVersion := '1.0.2';
-    p.Url := 'https://hl7.org/fhir';
+    p.Url := 'http://hl7.org/fhir';
     list.Add(p.Link);
   finally
     p.Free;
