@@ -54,20 +54,6 @@ function tempFileName(prefix : String): String;
 
 Type
   TInstallerCallback = procedure(IntParam: Integer; StrParam: String) of object;
-  TThreadID = Cardinal;
-  TThreadHandle = THandle;
-
-
-Procedure ThreadSleep(iTime : Cardinal); Overload;
-Function ThreadID : TThreadID; Overload;
-{$IFDEF MSWINDOWS}
-Function ThreadHandle : TThreadHandle; Overload;
-{$ENDIF}
-Procedure ThreadYield; Overload;
-Procedure ThreadBreakpoint; Overload;
-
-procedure SetThreadName(name : String);
-function GetThreadName(id : integer) : String;
 
 type
   TColour = integer;
@@ -470,49 +456,6 @@ Uses
 
   FHIR.Support.Collections,
   FHIR.Support.Decimal;
-
-
-Procedure ThreadSleep(iTime : Cardinal);
-Begin
-  Sleep(iTime);
-End;
-
-Function ThreadID : TThreadID;
-Begin
-  Result := GetCurrentThreadID;
-End;
-
-
-{$IFDEF MSWINDOWS}
-Function ThreadHandle : TThreadHandle;
-Begin
-  Result := GetCurrentThread;
-End;
-{$ENDIF}
-
-
-
-Procedure ThreadYield;
-Begin
-  ThreadSleep(0);
-End;
-
-
-Procedure ThreadBreakpoint;
-Begin
-  {$IFDEF WIN32}
-  Try
-    ASM
-      int $03
-    End;
-  Except
-    // on some poorly configured Windows systems int $03 can cause unhandled
-    // exceptions with improperly installed Dr Watsons etc....
-  End;
-  {$ELSE}
-  // todo: how to do this?
-  {$ENDIF}
-End;
 
 Function FileGetModified(Const sFileName : String) : TDateTime;
 begin
@@ -1315,33 +1258,6 @@ Begin
 End;
 {$OVERFLOWCHECKS ON}
 {$RANGECHECKS ON}
-
-var
-  GThreadManager : TDictionary<cardinal,String>;
-
-procedure SetThreadName(name : String);
-begin
-  EnterCriticalSection(gCriticalSection);
-  try
-    if name = '' then
-      GThreadManager.Remove(GetCurrentThreadId)
-    else
-      GThreadManager.AddOrSetValue(GetCurrentThreadId, name);
-  finally
-    LeaveCriticalSection(gCriticalSection);
-  end;
-end;
-
-function GetThreadName(id : integer) : String;
-begin
-  EnterCriticalSection(gCriticalSection);
-  try
-    if not GThreadManager.TryGetValue(id, result) then
-      result := 'n/a';
-  finally
-    LeaveCriticalSection(gCriticalSection);
-  end;
-end;
 
 function tempFileName(prefix : String): String;
 begin
@@ -2376,9 +2292,7 @@ Initialization
     SysUtils.GetFormatSettings;
   End;
   {$ENDIF}
-  GThreadManager := TDictionary<cardinal,String>.create;
 Finalization
-  GThreadManager.Free;
   {$IFOPT C+}
   EnterCriticalSection(gCriticalSection);
   Try

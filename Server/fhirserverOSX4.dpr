@@ -50,7 +50,7 @@ uses
   FHIR.Web.Parsers in '..\reference-platform\support\FHIR.Web.Parsers.pas',
   FHIR.Web.Rdf in '..\reference-platform\support\FHIR.Web.Rdf.pas',
   FHIR.Support.System in '..\reference-platform\support\FHIR.Support.System.pas',
-  FHIR.Support.Lock in '..\reference-platform\support\FHIR.Support.Lock.pas',
+  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Support.Mime in '..\reference-platform\support\FHIR.Support.Mime.pas',
   OSXTests in '..\reference-platform\support\Tests\OSXTests.pas',
   FHIR.Support.MXml in '..\reference-platform\support\FHIR.Support.MXml.pas',

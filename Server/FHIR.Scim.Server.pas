@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
   FHIR.Utilities.SCrypt, FHIR.Web.Parsers, FHIR.Support.Text,
-  FHIR.Database.Manager, FHIR.Support.Json, FHIR.Support.Lock, FHIR.Support.DateTime,
+  FHIR.Database.Manager, FHIR.Support.Json, FHIR.Support.Threads, FHIR.Support.DateTime,
   FHIR.Support.Strings,  FHIR.Server.Session,
   FHIR.Support.Objects, FHIR.Support.Exceptions,
   FHIR.Server.Utilities,
@@ -53,7 +53,7 @@ Type
   TSCIMServer = class (TFHIRUserProvider)
   private
     db : TKDBManager;
-    lock : TCriticalSection;
+    lock : TFslLock;
     lastUserKey : integer;
     lastUserIndexKey : integer;
     salt : String;
@@ -194,7 +194,7 @@ begin
   FAnonymousRights := TStringList.Create;
   for s in defaultRights.split([',']) do
     FAnonymousRights.add(UriForScope(s));
-  lock := TCriticalSection.Create('scim');
+  lock := TFslLock.Create('scim');
 
   if not forInstall and (db <> nil) then
   begin

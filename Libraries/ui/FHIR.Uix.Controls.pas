@@ -37,7 +37,7 @@ Uses
   Winapi.GdipApi, WinApi.GdipObj,
   SynEdit, SynEditKeyCmds, SynEditHighlighter, SynEditTypes,
   FHIR.Support.System, FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Math, FHIR.Support.Graphics,
-  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Collections,
+  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Collections, FHIR.Support.Threads,
   FHIR.Graphics.GdiPlus, FHIR.Uix.Base, FHIR.Uix.Images;
 
   {$IFNDEF VER130}  {$ENDIF}

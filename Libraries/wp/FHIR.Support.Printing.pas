@@ -34,7 +34,7 @@ Uses
   Windows, WinSpool, SysUtils, Vcl.Graphics, Consts,
   Winapi.GdipObj, Winapi.GdipApi,
   FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.System, FHIR.Support.Collections,
-  FHIR.Support.Objects, FHIR.Support.Controllers, FHIR.Support.Graphics,
+  FHIR.Support.Objects, FHIR.Support.Threads, FHIR.Support.Graphics,
   FHIR.Graphics.GdiPlus;
 
 Type
@@ -122,7 +122,7 @@ Function FontTypesToString(aTypes : TFslFontTypeSet) : String; Overload;
 Type
   TFslSynchronisedPrinterAPI = Class(TFslObject)
     Protected
-      Class Function SynchroniseLock : TFslExclusiveCriticalSection;
+      Class Function SynchroniseLock : TFslLock;
 
     Public
       // From Windows.pas
@@ -4278,10 +4278,10 @@ end;
 
 
 Var
-  GSynchroniseLock : TFslExclusiveCriticalSection;
+  GSynchroniseLock : TFslLock;
 
 
-Class Function TFslSynchronisedPrinterAPI.SynchroniseLock: TFslExclusiveCriticalSection;
+Class Function TFslSynchronisedPrinterAPI.SynchroniseLock: TFslLock;
 Begin
   Result := GSynchroniseLock;
 End;
@@ -4825,7 +4825,7 @@ Begin
 End;
 
 Initialization
-  GSynchroniseLock := TFslExclusiveCriticalSection.Create;
+  GSynchroniseLock := TFslLock.Create;
 Finalization
   GSynchroniseLock.Free;
   GSynchroniseLock := Nil;

@@ -48,7 +48,7 @@ combinations to enable:
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Objects,  FHIR.Support.Xml, FHIR.Support.Generics,
-  FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Lock,
+  FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Threads,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Tools.Indexing, FHIR.Version.Context, FHIR.Server.Session, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Tags, FHIR.Version.Utilities, FHIR.Version.Parser, FHIR.Version.PathEngine, FHIR.Version.Profiles, FHIR.Base.Xhtml,
@@ -132,7 +132,7 @@ Type
 
   TFhirIndexSpaces = class (TFslObject)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FSpaces : TStringList;
     FLast : integer;
   public
@@ -224,7 +224,9 @@ Type
     // complexes
     procedure index(aType : String; key, parent : integer; value : TFhirRatio; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirQuantity; name : String; units : string = ''); overload;
+    {$IFDEF FHIR4}
     procedure index(aType : String; key, parent : integer; value : TFhirMoney; name : String; units : string = ''); overload;
+    {$ENDIF}
     procedure index(aType : String; key, parent : integer; value : TFhirRange; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirSampledData; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirCoding; name : String); overload;
@@ -787,11 +789,11 @@ begin
                     index(resource.fhirType, key, 0, TFhirAddress(work), ndx.Name)
                   else if work is TFhirContactPoint  then
                     index(resource.fhirType, key, 0, TFhirContactPoint(work), ndx.Name)
-                  else if work is TFhirMoney then
-                    index(resource.fhirType, key, 0, TFhirMoney(work), ndx.Name)
                   else if work is TFhirReference then
                     index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
                   {$IFDEF FHIR4}
+                  else if work is TFhirMoney then
+                    index(resource.fhirType, key, 0, TFhirMoney(work), ndx.Name)
                   else if work is TFhirStructureDefinitionContext then
                     index(resource.fhirType, key, 0, TFhirStructureDefinitionContext(work), ndx.Name)
                   {$ENDIF}
@@ -1665,6 +1667,7 @@ begin
   result := FEntries.add(key, parent, ndx);
 end;
 
+{$IFDEF FHIR4}
 procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirMoney; name, units: string);
 var
   ndx : TFhirIndex;
@@ -1696,7 +1699,6 @@ begin
   FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
 end;
 
-{$IFDEF FHIR4}
 procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirStructureDefinitionContext; name: String);
 var
   c : TFHIRCoding;
@@ -1750,7 +1752,7 @@ begin
   inherited create;
   FSpaces := TStringList.Create;
   FSpaces.Sorted := true;
-  FLock := TCriticalSection.Create('Spaces');
+  FLock := TFslLock.Create('Spaces');
 end;
 
 

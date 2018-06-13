@@ -431,127 +431,6 @@ begin
         configname = Release
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
-        description = "Compile the Toolkit R4 (osx)"
-        eurekalogverboselogging = false
-        frameworktype = VCL
-        hintsaserror = false
-        iconfile = C:\\work\\fhirserver\\toolkit\\mainicon.ico
-        id = {D500EE21-C7AA-4758-ACB7-2ECF7543E7F8}
-        includecompiledate = false
-        includemanifest = false
-        includeverinfo = true
-        isdebug = false
-        isdll = false
-        isprerelease = false
-        isprivate = false
-        isspecial = false
-        keepcfg = false
-        linkproductversiontofileversion = true
-        locale = 1033
-        majorversion = 1
-        minorversion = 0
-        platform = OSX32
-        platformsdktype = ProjectSDK
-        projectfile = C:\\work\\fhirserver\\toolkit\\FHIRToolkitR4.dpr
-        regenerateresource = true
-        releaseversion = 0
-        resourcecompilertype = rcBorland
-        startingdir = C:\\work\\fhirserver\\toolkit\\
-        updatedoffile = false
-        updatepackagesource = false
-        updateversioninfokeys = false
-        useeurekalogcompiler = false
-        useprojectsettings = []
-        usepropertyset = false
-        useversionfromdof = false
-        verboseoutput = false
-        versioninfokeys = "CompanyName\=" +
-                          "FileDescription\=" +
-                          "FileVersion\=1.0.0.1" +
-                          "InternalName\=" +
-                          "LegalCopyright\=" +
-                          "LegalTrademarks\=" +
-                          "OriginalFilename\=" +
-                          "ProductName\=" +
-                          "ProductVersion\=1.0.0.0" +
-                          "Comments\=" +
-                          ""
-        warningsaserror = false
-        workaroundd5bug = false
-        delphi.compileroptions
-        begin
-          alwaysuseconditionalsfromdof = false
-          alwaysusedelphilibrarypath = true
-          alwaysusedofsearchpath = false
-          assertions = true
-          assignableconst = false
-          booleval = false
-          compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                             "-w-UNSAFE_CODE\=0" +
-                             "-w-UNSAFE_CAST\=0" +
-                             ""
-          conditionals = RELEASE;FHIR4
-          consoleapp = false
-          debuginfo = false
-          definitionsonly = false
-          emitruntimetypeinformation = false
-          exportallsymbols = false
-          extendedsyntax = true
-          externaltd32 = false
-          frameworktype = FMX
-          generatedocumentation = false
-          generatehpp = false
-          hugestrings = true
-          imagebase = 4194304
-          includenamespaces = false
-          includeremotesymbols = false
-          includetd32 = false
-          inlining = inOn
-          iochecking = true
-          librarypath = $(BDSLIB)\\win32\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\win32;$(BDS)\\include;C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\vtree\\Source
-          linkeroutput = 0
-          localsymbols = false
-          mapfile = 0
-          maxstacksize = 1048576
-          minstacksize = 16384
-          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;System.Mac;Macapi;Posix;FMX;
-          openstrings = true
-          optimisation = true
-          outputdir = C:\\work\\fhirserver\\toolkit\\install\\osx\\FHIRToolkit.app\\Contents\\MacOS
-          overflowchecking = false
-          packages = vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;vclsmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dcloffice2k;doci6;cooltrayicon_d6plus;curlpkg;thememanagerd6;virtualtreesd6;jcl;jclvcl;jvcored6r;jvsystemd6r;jvstdctrlsd6r;jvappfrmd6r;jvbandsd6r;jvdbd6r;jvdlgsd6r;jvbded6r;jvcmpd6r;jvcryptd6r;jvctrlsd6r;jvcustomd6r;jvdockingd6r;jvdotnetctrlsd6r;jvedid6r;jvglobusd6r;jvhmid6r;jvinterpreterd6r;jvjansd6r;jvmanagedthreadsd6r;jvmmd6r;jvnetd6r;jvpagecompsd6r;jvplugind6r;jvprintpreviewd6r;jvruntimedesignd6r;jvtimeframeworkd6r;jvuibd6r;jvvalidatorsd6r;jvwizardd6r;jvxpctrlsd6r
-          rangechecking = false
-          recordfieldalign = fa8
-          referenceinfo = false
-          safedivide = false
-          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
-          showhints = true
-          showwarnings = true
-          stackframes = false
-          stringchecks = true
-          typedpointers = false
-          unitaliases = FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorker4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIR.Version.Questionnaire2\=FHIR.R4.Questionnaire2;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
-          unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units\\macos
-          usedebugdcu = false
-          usepackages = false
-          varstringchecks = true
-        end
-      end
-      action.delphi.build
-      begin
-        allowimplicitimport = true
-        alwaysuseconditionalsfromdof = false
-        autoincbuild = false
-        autoupdatefileversion = true
-        autoupdateproductversion = false
-        buildall = true
-        buildversion = 1
-        codepage = 1252
-        compileprojectresources = false
-        compileridl = true
-        configname = Release
-        debugversionnumbers = false
-        delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit R3 (osx)"
         eurekalogverboselogging = false
         frameworktype = VCL
@@ -657,6 +536,14 @@ begin
           usepackages = false
           varstringchecks = true
         end
+      end
+      action.directory.rename
+      begin
+        id = {A3FC9905-BD3F-4473-B836-BB0CF7A88358}
+        newdirname = FHIRToolkit
+        overwriteexisting = false
+        renamedir = false
+        sourcefile = C:\\work\\fhirserver\\toolkit\\install\\osx\\FHIRToolkit.app\\Contents\\MacOS\\FHIRToolkitR3
       end
       action.ini.write
       begin

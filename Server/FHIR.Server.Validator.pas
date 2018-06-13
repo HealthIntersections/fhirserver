@@ -33,7 +33,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.Strings, FHIR.Support.Lock,
+  FHIR.Support.Strings, FHIR.Support.Threads,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Zip,
   FHIR.Base.Objects, FHIR.Base.Factory,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Context, FHIR.Version.Utilities, FHIR.Server.Session, FHIR.Version.Profiles, FHIR.Version.Constants, FHIR.Version.Common,
@@ -45,7 +45,7 @@ Type
   private
     FTerminologyServer : TTerminologyServer;
     FProfile : TFhirExpansionProfile;
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FQuestionnaires : TFslMap<TFhirQuestionnaire>;
 
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -85,7 +85,7 @@ end;
 constructor TFHIRServerWorkerContext.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FLock := TCriticalSection.Create('Validation.questionnaire');
+  FLock := TFslLock.Create('Validation.questionnaire');
   FProfile := TFhirExpansionProfile.create;
   FProfile.includeDefinition := false;
   FProfile.limitedExpansion := false;

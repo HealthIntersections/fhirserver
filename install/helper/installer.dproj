@@ -91,7 +91,7 @@
         <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.Manager.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Lock.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.Settings.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.Logging.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Database.Dialects.pas"/>

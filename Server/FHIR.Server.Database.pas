@@ -32,11 +32,9 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Lock, FHIR.Support.DateTime,   FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Decimal, FHIR.Support.Binary,
-  FHIR.Web.Parsers, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Controllers,
-  FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
-  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Misc.GraphQL, FHIR.Support.Certs,
+  FHIR.Support.Threads, FHIR.Support.DateTime,  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Support.Text, FHIR.Support.Xml, FHIR.Support.MXml, 
+  FHIR.Support.Certs, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
+  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Web.Parsers, FHIR.Misc.GraphQL, 
   FHIR.Base.Utilities,
   FHIR.Version.Resources, FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Parser, FHIR.Base.Parser, FHIR.Version.Constants, FHIR.Version.Context, FHIR.Version.Operations, FHIR.Base.Xhtml,
   FHIR.Version.Tags, FHIR.Tx.Expander, FHIR.Server.Indexing, FHIR.Server.Session, FHIR.Tools.DiffEngine, FHIR.Version.ElementModel, FHIR.Version.PathNode,
@@ -640,7 +638,7 @@ type
 
   TFHIRNativeStorageService = class (TFHIRStorageService)
   private
-    FLock: TCriticalSection;
+    FLock: TFslLock;
     FDB: TKDBManager;
 
     FLastSearchKey: integer;
@@ -935,18 +933,21 @@ var
         entry.request.url := AppendForwardSlash(base)+type_+'/'+sId;
         entry.request.method := HttpVerbPUT;
         entry.Tags['opdesc'] := 'Updated by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+        entry.response.status := '200 OK';
       end
       else if FConnection.ColIntegerByName['Status'] = 2 then
       begin
         entry.request.url := AppendForwardSlash(base)+type_+'/'+sId;
         entry.request.method := HttpVerbDELETE;
         entry.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+        entry.response.status := '204 No Content';
       end
       else
       begin
         entry.request.method := HttpVerbPOST;
         entry.request.url := AppendForwardSlash(base)+type_;
         entry.Tags['opdesc'] := 'Created by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+        entry.response.status := '201 Created';
       end;
     end;
   end;
@@ -8882,7 +8883,7 @@ begin
   LoadMessages; // load while thread safe
   FAppFolder := AppFolder;
   FDB := DB;
-  FLock := TCriticalSection.Create('fhir-store');
+  FLock := TFslLock.Create('fhir-store');
   FQueue := TFhirResourceList.Create;
   FSpaces := TFHIRIndexSpaces.create;
   FRegisteredValueSets := TDictionary<String,String>.create;

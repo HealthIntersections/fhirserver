@@ -65,13 +65,13 @@ implementation
 uses
   SysUtils, Classes, SyncObjs,
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}
-  FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Lock,
+  FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Threads,
   FHIR.Support.Objects, FHIR.Support.Stream;
 
 var
   globalInt : cardinal;
   cs : TRTLCriticalSection;
-  kcs : TCriticalSection;
+  kcs : TFslLock;
   sem : TSemaphore;
 
 Const
@@ -152,7 +152,7 @@ end;
 
 procedure TOSXTests.TestKCriticalSectionSimple;
 begin
-  kcs := TCriticalSection.Create('test');
+  kcs := TFslLock.Create('test');
   try
     kcs.Enter;
     try
@@ -209,7 +209,7 @@ end;
 procedure TOSXTests.TestKCriticalSectionThreaded;
 begin
   globalInt := GetCurrentThreadId;
-  kcs := TCriticalSection.Create('none');
+  kcs := TFslLock.Create('none');
   try
     kcs.Enter;
     try

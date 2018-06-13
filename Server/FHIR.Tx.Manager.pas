@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Lock, Generics.Defaults, Generics.Collections,
+  SysUtils, Classes, FHIR.Support.Threads, Generics.Defaults, Generics.Collections,
   FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Exceptions,
   FHIR.Database.Manager,
   FHIR.Base.Lang, FHIR.Base.Common,
@@ -260,7 +260,7 @@ Type
     procedure AddCodeSystemToCache({$IFNDEF FHIR2} cs : TFhirCodeSystem; {$ELSE} cs : TFHIRValueSet; {$ENDIF} base : boolean);
     procedure RemoveCodeSystemFromCache(id : String);
   protected
-    FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
+    FLock : TFslLock;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TKDBManager;
     procedure invalidateVS(id : String); virtual;
     procedure getSummary(b : TStringBuilder);
@@ -881,7 +881,7 @@ var
   p : TCodeSystemProvider;
 begin
   inherited Create;
-  FLock := TCriticalSection.Create('Terminology Server Store');
+  FLock := TFslLock.Create('Terminology Server Store');
   FProviderClasses := TFslMap<TCodeSystemProvider>.Create;
 
   FDB := db;

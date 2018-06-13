@@ -225,7 +225,7 @@
         <DCCReference Include="FHIR.Server.Validator.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Socket.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Mime.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Lock.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Questionnaire.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative2.pas"/>
@@ -335,7 +335,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.ParserBase.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Json.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Turtle.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MsXml.pas"/>

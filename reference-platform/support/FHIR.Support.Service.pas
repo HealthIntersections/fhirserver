@@ -143,7 +143,7 @@ implementation
 uses
   FHIR.Support.DateTime,
   FHIR.Support.Strings,
-  FHIR.Support.Lock,
+  FHIR.Support.Threads,
   FHIR.Debug.Logging;
 
 const

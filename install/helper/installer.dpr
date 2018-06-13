@@ -43,7 +43,7 @@ uses
   FHIR.Support.Collections in '..\..\reference-platform\Support\FHIR.Support.Collections.pas',
   FHIR.Support.Stream in '..\..\reference-platform\Support\FHIR.Support.Stream.pas',
   FHIR.Database.Manager in '..\..\Libraries\db\FHIR.Database.Manager.pas',
-  FHIR.Support.Lock in '..\..\reference-platform\support\FHIR.Support.Lock.pas',
+  FHIR.Support.Threads in '..\..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Database.Settings in '..\..\Libraries\db\FHIR.Database.Settings.pas',
   FHIR.Database.Logging in '..\..\Libraries\db\FHIR.Database.Logging.pas',
   FHIR.Database.Dialects in '..\..\reference-platform\support\FHIR.Database.Dialects.pas',

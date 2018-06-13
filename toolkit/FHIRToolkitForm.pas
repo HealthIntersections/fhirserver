@@ -34,7 +34,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Platform,
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
-  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Generics,
+  IdSSLOpenSSLHeaders,
+  FHIR.Support.Certs, FHIR.Support.Generics, FHIR.Support.Threads, FHIR.Support.Objects,
   FHIR.Debug.Logging,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
@@ -55,6 +56,22 @@ type
     destructor Destroy; override;
 
     procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream); override;
+  end;
+
+  TVersionCheckerOutcome = class (TFslObject)
+  private
+    FVer: String;
+  public
+    constructor create(ver : String);
+
+    property ver : String read FVer write FVer;
+  end;
+
+  TVersionChecker = class (TBackgroundTaskEngine)
+  private
+  public
+    function name : String; override;
+    procedure execute; override;
   end;
 
   TMasterToolsForm = class(TForm)
@@ -169,7 +186,10 @@ type
     FShowHelp : boolean;
     FFocus : TStyledControl;
     FIndexes : TFhirIndexList;
-    FContext : TBaseWorkerContext;
+    FCache : TFHIRPackageManager;
+    FContext : TToolkitWorkerContext;
+    FLoadTaskId : integer;
+    FVerCheckTaskId : integer;
     FIsStopped : boolean;
     UpgradeOnClose : boolean;
     FUpgradeChecked : boolean;
@@ -197,7 +217,9 @@ type
     function GetStopped: boolean;
     procedure DoIdle(out stop : boolean);
     procedure DoOpenURL(url : String);
+    procedure CheckVersionUpgradeOutome(id : integer; outcome : TFslObject);
     procedure checkVersion(reportIfCurrent: boolean);
+    procedure processVersionOoutcome(ver : String; reportIfCurrent : boolean);
     procedure loadServers;
   public
     procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
@@ -597,6 +619,11 @@ begin
   updateHelpStatus;
 end;
 
+procedure TMasterToolsForm.CheckVersionUpgradeOutome(id: integer; outcome: TFslObject);
+begin
+  processVersionOoutcome((outcome as TVersionCheckerOutcome).ver, false);
+end;
+
 procedure TMasterToolsForm.CloseButtonClick(Sender: TObject);
 begin
   Close;
@@ -757,39 +784,28 @@ end;
 procedure TMasterToolsForm.FormActivate(Sender: TObject);
 var
   factory : TFHIRFactory;
-  cache : TFHIRPackageManager;
 begin
   if FContext = nil then
-    doWork(nil, 'Loading Data', false,
-      procedure
-      begin
-        cache := TFHIRPackageManager.create(true);
-        try
-          factory:=
-            {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}
-            {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF};
-          FContext := TToolkitWorkerContext.Create(factory);
-          if not cache.packageExists('hl7.fhir.core', factory.versionString) then
-            ShowMessage('The base FHIR package '+factory.versionString+' is not installed; you will need to install it using the package manager and restart')
-          else
-            cache.loadPackage('hl7.fhir.core', factory.versionString, ['CodeSystem', 'ValueSet', 'StructureDefinition'], FContext.loadResourceJson);
-        finally
-          cache.free;
-        end;
-        if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
-          ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail');
-      end);
-  if false and not FUpgradeChecked and FSettings.CheckForUpgradesOnStart then
   begin
-    FUpgradeChecked := true;
+    factory := {$IFDEF FHIR3} TFHIRFactoryR3.create {$ENDIF}  {$IFDEF FHIR4} TFHIRFactoryR4.create {$ENDIF};
     try
-      checkVersion(false);
-    except
-      on e : Exception do
-        ShowMessage('Error checking for upgrades: '+e.message);
-    end;
+      FCache := TFHIRPackageManager.create(true);
+      if not FCache.packageExists('hl7.fhir.core', factory.versionString) then
+        ShowMessage('The base FHIR package '+factory.versionString+' is not installed; you will need to install it using the package manager and restart');
+      FContext := TToolkitWorkerContext.Create(factory.link);
+      FLoadTaskId := GBackgroundTasks.registerTaskEngine(TBackgroundContextLoader.Create(FContext.loadStructures));
+      GBackgroundTasks.queueTask(FLoadTaskId, TBackgroundContextLoadingInformation.Create(FCache.Link, factory.versionString, FContext.link));
+      if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
+        ShowMessage('Unable to load openSSL - SSL/Crypto functions will fail');
+      checkSSL; // really, this is just to init internal structures in openSSL
+
+      FVerCheckTaskId := GBackgroundTasks.registerTaskEngine(TVersionChecker.Create(CheckVersionUpgradeOutome));
+      if FSettings.CheckForUpgradesOnStart then
+        GBackgroundTasks.queueTask(FVerCheckTaskId, TFslObject.create);
+    finally
+      factory.Free;
+    end
   end;
-//  if tmpFhirFactory <> nil then tmpFhirFactory.Destroy; //should destroy the temp object but it causes an issue... leaving as is.
 end;
 
 procedure TMasterToolsForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -893,6 +909,7 @@ begin
   FIndexes.Free;
   FContext.Free;
   FServers.Free;
+  FCache.Free;
   ToolkitLogger.Free;
   if UpgradeOnClose then
   begin
@@ -1032,25 +1049,31 @@ end;
 procedure TMasterToolsForm.checkVersion(reportIfCurrent : boolean);
 var
   newVersion : String;
-  upg : TUpgradeNeededForm;
 begin
   doWork(self, 'Checking Version', true,
     procedure
     begin
       newVersion := checkUpgrade;
     end);
-  if (newVersion <> '') and (newVersion <> '0.0.'+inttostr(buildCount)) then
+  processVersionOoutcome(newVersion, reportIfCurrent);
+end;
+
+procedure TMasterToolsForm.processVersionOoutcome(ver : String; reportIfCurrent : boolean);
+var
+  upg : TUpgradeNeededForm;
+begin
+  if (ver <> '') and (ver <> '0.0.'+inttostr(buildCount)) then
   begin
     upg := TUpgradeNeededForm.Create(self);
     try
       upg.Settings := FSettings.link;
-      upg.lblVersion.Text := 'The current version is '+newVersion+', you are running 0.0.'+inttostr(buildCount)+'. Upgrade?';
+      upg.lblVersion.Text := 'The current version is '+ver+', you are running 0.0.'+inttostr(buildCount)+'. Upgrade?';
       case upg.ShowModal of
         mrContinue : UpgradeOnClose := true;
         mrYes:
 
           begin
-          doUpgrade(newVersion);
+          doUpgrade(ver);
           close;
           end;
       end;
@@ -1303,6 +1326,7 @@ begin
     mnuResourceLanguage.Enabled := frame.hasResource;
   end;
   updateHelpText;
+  GBackgroundTasks.primaryThreadCheck;
 end;
 
 function template(fragment : String) : String;
@@ -1442,6 +1466,26 @@ begin
   s.Read(b[0], s.Size);
   s.Position := 0;
   result := TEncoding.ANSI.GetString(b);
+end;
+
+{ TVersionChecker }
+
+procedure TVersionChecker.execute;
+begin
+  Response  := TVersionCheckerOutcome.create(checkUpgrade);
+end;
+
+function TVersionChecker.name: String;
+begin
+  result := 'Auto Upgrade checker';
+end;
+
+{ TVersionCheckerOutcome }
+
+constructor TVersionCheckerOutcome.create(ver: String);
+begin
+  inherited Create;
+  FVer := ver;
 end;
 
 end.

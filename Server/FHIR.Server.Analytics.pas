@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
-  FHIR.Support.Lock,
+  FHIR.Support.Threads,
   FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Objects,
   FHIR.Base.Lang;
 
@@ -61,7 +61,7 @@ type
 
   TGoogleAnalyticsProvider = class (TFslObject)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FEvents : TFslList<TGoogleAnalyaticsEventData>;
     FServerId: String;
     FCycle : integer;
@@ -85,7 +85,7 @@ implementation
 constructor TGoogleAnalyticsProvider.Create;
 begin
   inherited;
-  FLock := TCriticalSection.Create('GoogleAnalytics');
+  FLock := TFslLock.Create('GoogleAnalytics');
   FEvents := TFslList<TGoogleAnalyaticsEventData>.create;
 end;
 

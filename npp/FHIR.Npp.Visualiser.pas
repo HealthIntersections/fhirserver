@@ -40,7 +40,7 @@ uses
 
   FHIR.Npp.Base, FHIR.Npp.DockingForm,
 
-  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Generics, FHIR.Support.Lock, FHIR.Support.Shell,
+  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Generics, FHIR.Support.Threads, FHIR.Support.Shell,
 
   FHIR.Base.Objects, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
@@ -117,7 +117,7 @@ type
     FFocusObjects : TFslList<TFHIRObject>;
     FCDSManager : TCDSHooksManager;
 
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FCards : TFslList<TCDSHookCard>;
     FCDSErrors : TStringList;
     FWebServer : TIdHTTPServer;
@@ -247,7 +247,7 @@ begin
   FCDSErrors := TStringList.Create;
   FFocusObjects := TFslList<TFHIRObject>.create;
 
-  FLock := TCriticalSection.Create('vis.web');
+  FLock := TFslLock.Create('vis.web');
   FWebCache := TFslMap<TWebBuffer>.create;
   FWebserver := TIdHTTPServer.Create(nil);
   SHandle := FWebserver.Bindings.Add;

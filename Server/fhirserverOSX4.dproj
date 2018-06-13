@@ -120,7 +120,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Rdf.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.System.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Lock.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Mime.pas"/>
         <DCCReference Include="..\reference-platform\support\Tests\OSXTests.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>

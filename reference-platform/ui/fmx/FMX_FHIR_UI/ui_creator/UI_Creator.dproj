@@ -362,7 +362,6 @@
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Turtle.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.ElementModel.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.Profiles.pas"/>
-        <DCCReference Include="..\..\..\..\support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="..\..\..\..\r4\FHIR.R4.PathEngine.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.CdsHooks.Utilities.pas"/>
         <DCCReference Include="..\..\..\..\..\Libraries\FMM\FastMM4Messages.pas"/>
@@ -394,7 +393,7 @@
         <DCCReference Include="..\..\..\..\support\FHIR.Support.Xml.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.Zip.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.WInInet.pas"/>
-        <DCCReference Include="..\..\..\..\support\FHIR.Support.Controllers.pas"/>
+        <DCCReference Include="..\..\..\..\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\..\..\..\support\FHIR.Misc.GraphQL.pas"/>
         <DCCReference Include="..\..\..\..\base\FHIR.Base.Factory.pas"/>

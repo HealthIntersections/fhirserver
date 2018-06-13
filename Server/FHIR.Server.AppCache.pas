@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Lock,
+  FHIR.Support.Threads,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Version.Resources, FHIR.Version.Utilities;
 
@@ -52,7 +52,7 @@ type
 
   TApplicationCache = class (TFslObject)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
 
     FById : TFslMap<TFHIRDevice>;
     FByJWT : TFslMap<TFHIRDevice>;
@@ -88,7 +88,7 @@ end;
 constructor TApplicationCache.Create;
 begin
   inherited;
-  FLock := TCriticalSection.create('app-cache');
+  FLock := TFslLock.create('app-cache');
   FById := TFslMap<TFHIRDevice>.create;
   FByJWT := TFslMap<TFHIRDevice>.create;
   FEndorsements := TFslMap<TFhirObservation>.create;

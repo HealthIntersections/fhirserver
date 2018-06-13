@@ -34,7 +34,7 @@ interface
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, PSApi, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Lock, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Collections;
+  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Threads, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Collections;
 
 Type
   TLogEvent = procedure (msg : String) of object;
@@ -95,7 +95,7 @@ Type
 
   TLogger = Class (TFslObject)
   Private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FFilename : String;
     FPolicy : TLoggerPolicy;
 
@@ -215,7 +215,7 @@ end;
 Constructor TLogger.Create(filename : String);
 Begin
   Inherited Create;
-  FLock := TCriticalSection.Create('Log '+filename);
+  FLock := TFslLock.Create('Log '+filename);
   FPolicy := TLoggerPolicy.Create;
   FFilename := filename;
 End;

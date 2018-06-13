@@ -46,7 +46,7 @@ interface
 uses
   SysUtils, Classes, SyncObjs,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary,
-  FHIR.Support.Lock, FHIR.Database.Manager, FHIR.Database.Dialects,  FHIR.Web.Parsers,
+  FHIR.Support.Threads, FHIR.Database.Manager, FHIR.Database.Dialects,  FHIR.Web.Parsers,
   FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPop3, IdMessageParts,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
@@ -145,7 +145,7 @@ Type
 
   TSubscriptionManager = class (TFHIRServerWorker)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FSubscriptions : TSubscriptionEntryList;
     {$IFDEF FHIR4}
     FEventDefinitions : TFslMap<TFHIREventDefinition>;
@@ -285,7 +285,7 @@ uses
 constructor TSubscriptionManager.Create(ServerContext : TFslObject);
 begin
   inherited Create(TFHIRServerContext(ServerContext));
-  FLock := TCriticalSection.Create('Subscriptions');
+  FLock := TFslLock.Create('Subscriptions');
   FSubscriptions := TSubscriptionEntryList.Create;
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
   FSemaphores := TFslMap<TWebSocketQueueInfo>.Create;

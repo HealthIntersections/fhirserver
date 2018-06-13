@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, FHIR.Support.Lock,
+  SysUtils, Classes, FHIR.Support.Threads,
   FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Certs,
   FHIR.Base.Objects, FHIR.Base.Lang,
@@ -46,7 +46,7 @@ Const
 Type
   TFHIRSessionManager = class (TFHIRServerWorker)
   private
-    FLock: TCriticalSection;
+    FLock: TFslLock;
     FSessions: TFslMap<TFHIRSession>;
     FLastSessionKey: integer;
   public
@@ -82,7 +82,7 @@ uses
 constructor TFHIRSessionManager.Create;
 begin
   inherited Create(ServerContext);
-  FLock := TCriticalSection.Create('session-manager');
+  FLock := TFslLock.Create('session-manager');
   FSessions := TFslMap<TFHIRSession>.Create;
 end;
 

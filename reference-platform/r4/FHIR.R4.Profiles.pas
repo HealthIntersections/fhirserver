@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IOUtils,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Lock, FHIR.Support.Text,
+  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Threads, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
   FHIR.Support.Stream, FHIR.Support.Zip,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang,
@@ -47,7 +47,7 @@ Const
 Type
   TProfileManager = class (TFslObject)
   private
-    lock : TCriticalSection;
+    lock : TFslLock;
     FProfilesById : TFslMap<TFHIRStructureDefinition>; // all current profiles by identifier (ValueSet.identifier)
     FProfilesByURL : TFslMap<TFHIRStructureDefinition>; // all current profiles by their URL
 //    FExtensions : TFslStringObjectMatch;
@@ -103,7 +103,7 @@ Type
 
   TBaseWorkerContextR4 = class abstract (TFHIRWorkerContext)
   protected
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FProfiles : TProfileManager;
     FCustomResources : TFslMap<TFHIRCustomResourceInformation>;
     FNonSecureNames : TArray<String>;
@@ -1506,7 +1506,7 @@ end;
 constructor TBaseWorkerContextR4.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FLock := TCriticalSection.Create('worker-context');
+  FLock := TFslLock.Create('worker-context');
   FProfiles := TProfileManager.Create;
   FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create;
   FFactory := factory;
@@ -1830,7 +1830,7 @@ end;
 constructor TProfileManager.Create;
 begin
   inherited;
-  lock := TCriticalSection.Create('profiles');
+  lock := TFslLock.Create('profiles');
   FProfilesById := TFslMap<TFhirStructureDefinition>.create;
   FProfilesByURL := TFslMap<TFhirStructureDefinition>.create;
 end;

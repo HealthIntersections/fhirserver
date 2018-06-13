@@ -128,7 +128,7 @@
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Binary.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Controllers.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.DateTime.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Decimal.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Exceptions.pas"/>

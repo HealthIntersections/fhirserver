@@ -90,7 +90,7 @@ Uses
   FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Exceptions, FHIR.Support.Text,
   FHIR.Support.Generics,
 
-  FHIR.Support.Lock, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
+  FHIR.Support.Threads, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
   FHIR.Support.JSON, FHIR.Web.Rdf,
 
   FHIR.Support.MXml, FHIR.Misc.GraphQL, {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF}
@@ -222,7 +222,7 @@ Type
   TFhirWebServer = Class(TFslObject)
   Private
     FIni: TFHIRServerIniFile;
-    FLock: TCriticalSection;
+    FLock: TFslLock;
 
     // base web server configuration
     FActive: boolean;
@@ -597,7 +597,7 @@ var
   fn : String;
 Begin
   Inherited Create;
-  FLock := TCriticalSection.Create('fhir-rest');
+  FLock := TFslLock.Create('fhir-rest');
   FThreads := TList<TAsyncTaskThread>.create;
   FCertificateIdList := TStringList.Create;
   FName := Name;

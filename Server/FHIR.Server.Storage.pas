@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Text, FHIR.Web.Parsers,
+  FHIR.Support.Threads, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Text, FHIR.Web.Parsers,
   FHIR.Support.Objects, FHIR.Support.Generics,  FHIR.Support.Exceptions, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.Database.Dialects, FHIR.Support.DateTime, FHIR.Misc.GraphQL,
 

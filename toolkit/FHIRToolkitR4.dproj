@@ -206,7 +206,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.ElementModel.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Profiles.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Lock.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.PathEngine.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
@@ -365,7 +364,7 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Zip.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.WinInet.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Controllers.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
         <DCCReference Include="BulkDataForm.pas">
@@ -455,17 +454,17 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>profiles-resources.xml</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="OSX32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>profiles-resources.xml</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

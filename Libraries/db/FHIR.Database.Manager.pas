@@ -53,7 +53,7 @@ interface
 
 uses
   SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
-  FHIR.Support.Lock, FHIR.Database.Settings,
+  FHIR.Support.Threads, FHIR.Database.Settings,
 
   FHIR.Support.Strings, FHIR.Support.System,
   FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics,
@@ -673,7 +673,7 @@ type
     procedure SetMaxConnCount(const Value: Integer);
     procedure CheckWait;
   Protected
-    FLock : TCriticalSection;
+    FLock : TFslLock;
 
     function ConnectionFactory: TKDBConnection; Virtual; Abstract;
     function GetDBPlatform: TKDBPlatform; Virtual; Abstract;
@@ -727,7 +727,7 @@ type
 
   TKDBManagerList = class (TFslObject)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FHooks : TFslList<TKDBHook>;
     FList : TList<TKDBManager>;
     procedure AddConnMan(AConnMan : TKDBManager);
@@ -1278,7 +1278,7 @@ begin
   FName := AName;
   FMaxConnCount := AMaxConnCount;
 
-  FLock := TCriticalSection.create;
+  FLock := TFslLock.create;
   FDBLogger := TKDBLogger.create;
   FSemaphore := TSemaphore.Create(nil, 0, 4{ $FFFF}, '');
   FWaitCreate := false;
@@ -1657,7 +1657,7 @@ end;
 constructor TKDBManagerList.create;
 begin
   inherited create;
-  FLock := TCriticalSection.create;
+  FLock := TFslLock.create;
   FHooks := TFslList<TKDBHook>.create;
   FList := TList<TKDBManager>.create;
 end;

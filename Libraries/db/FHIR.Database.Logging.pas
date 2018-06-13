@@ -34,7 +34,7 @@ interface
 uses
   Classes,
   FHIR.Support.Objects,
-  FHIR.Support.Lock,
+  FHIR.Support.Threads,
   SysUtils;
 
 type
@@ -66,7 +66,7 @@ type
   private
     FList : TStringList;
     FTotal : Integer;
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     function GetLogEntry(AUsage : String) : TKDBLogEntry;
   public
     Constructor Create; override;
@@ -99,7 +99,7 @@ const
 constructor TKDBLogger.create;
 begin
   inherited;
-  FLock := TCriticalSection.Create;
+  FLock := TFslLock.Create;
   FTotal := 0;
   FList := TStringList.create(true);
   FList.Sorted := true;

@@ -68,7 +68,7 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX,
   FHIR.Npp.Base, FHIR.Npp.Scintilla,
-  FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Lock,
+  FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Threads,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.WinInet,
   FHIR.Support.Text, FHIR.Support.Zip, FHIR.Support.MsXml,
 
@@ -117,7 +117,7 @@ type
 
   TBackgroundValidatorThread = class(TThread)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FVersion : TFHIRVersion;
     FFmt : TFHIRFormat;
     FWaiting : TFslBuffer;
@@ -2249,7 +2249,7 @@ end;
 constructor TBackgroundValidatorThread.Create;
 begin
   inherited;
-  FLock := TCriticalSection.Create('Background Validation Lock');
+  FLock := TFslLock.Create('Background Validation Lock');
 end;
 
 destructor TBackgroundValidatorThread.Destroy;

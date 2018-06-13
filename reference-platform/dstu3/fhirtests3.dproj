@@ -118,7 +118,7 @@
         <DCCReference Include="..\support\FHIR.Support.DateTime.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Decimal.pas"/>
         <DCCReference Include="..\support\FHIR.Support.System.pas"/>
-        <DCCReference Include="..\support\FHIR.Support.Lock.pas"/>
+        <DCCReference Include="..\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Mime.pas"/>
@@ -133,7 +133,6 @@
         <DCCReference Include="..\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Exceptions.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\support\FHIR.Support.Controllers.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Text.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Generics.pas"/>
         <DCCReference Include="..\support\FHIR.Support.Xml.pas"/>

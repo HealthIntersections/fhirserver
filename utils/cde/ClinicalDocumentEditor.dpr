@@ -24,7 +24,7 @@ uses
   FHIR.Support.Binary in '..\..\reference-platform\support\FHIR.Support.Binary.pas',
   FHIR.Support.Certs in '..\..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Support.Collections in '..\..\reference-platform\support\FHIR.Support.Collections.pas',
-  FHIR.Support.Controllers in '..\..\reference-platform\support\FHIR.Support.Controllers.pas',
+  FHIR.Support.Threads in '..\..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Support.DateTime in '..\..\reference-platform\support\FHIR.Support.DateTime.pas',
   FHIR.Support.Decimal in '..\..\reference-platform\support\FHIR.Support.Decimal.pas',
   FHIR.Support.Exceptions in '..\..\reference-platform\support\FHIR.Support.Exceptions.pas',

@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections, IniFiles,
   IdContext, IdCustomHTTPServer, IdCookie,
-  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Lock, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Text,
+  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Threads, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Text,
   FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Exceptions, FHIR.Support.Generics,
   FHIR.Misc.Facebook, FHIR.Scim.Server, FHIR.Base.Scim, FHIR.Support.Certs, FHIR.Smart.Utilities,
   FHIR.Base.Lang,
@@ -65,7 +65,7 @@ type
   // this is a server that lives at /oauth2 (or elsewhere, if configured)
   TAuth2Server = class (TFslObject)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FServerContext : TFHIRServerContext;
     FOnProcessFile : TProcessFileEvent;
     FSSLPort : String;
@@ -166,7 +166,7 @@ begin
   inherited create;
   FHost := host;
   FSSLPort := SSLPort;
-  FLock := TCriticalSection.Create('auth-server');
+  FLock := TFslLock.Create('auth-server');
   FLoginTokens := TFslMap<TFhirLoginToken>.create;
   FNonceList := TStringList.create;
   FNonceList.Sorted := true;

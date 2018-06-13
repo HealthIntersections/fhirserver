@@ -37,7 +37,7 @@ uses
   FHIR.Support.DateTime,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
-  BaseFrame, DocumentGenerationForm;
+  BaseFrame, DocumentGenerationForm, FMX.TabControl;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -53,6 +53,16 @@ type
     lbCompositions: TListBox;
     Panel4: TPanel;
     lblOutcome: TLabel;
+    TabControl1: TTabControl;
+    TabItem1: TTabItem;
+    TabItem2: TTabItem;
+    TabItem3: TTabItem;
+    pnlHR: TPanel;
+    pnlO2: TPanel;
+    pnlBP: TPanel;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Panel7: TPanel;
     procedure Button1Click(Sender: TObject);
     procedure lbCompositionsDblClick(Sender: TObject);
   private

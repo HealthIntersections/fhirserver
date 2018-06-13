@@ -70,7 +70,6 @@ uses
   FHIR.Base.Parser in '..\reference-platform\base\FHIR.Base.Parser.pas',
   FHIR.Support.WinInet in '..\reference-platform\Support\FHIR.Support.WinInet.pas',
   FHIR.R3.Profiles in '..\reference-platform\dstu3\FHIR.R3.Profiles.pas',
-  FHIR.Support.Lock in '..\reference-platform\Support\FHIR.Support.Lock.pas',
   FHIR.Npp.Validator in 'FHIR.Npp.Validator.pas',
   FHIR.Npp.Make in 'FHIR.Npp.Make.pas' {ResourceNewForm},
   FHIR.R3.Narrative in '..\reference-platform\dstu3\FHIR.R3.Narrative.pas',
@@ -122,7 +121,7 @@ uses
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
-  FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
+  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Support.MsXml in '..\reference-platform\support\FHIR.Support.MsXml.pas',
@@ -195,8 +194,7 @@ uses
   FHIR.R2.Operations in '..\reference-platform\dstu2\FHIR.R2.Operations.pas',
   FHIR.R2.OpBase in '..\reference-platform\dstu2\FHIR.R2.OpBase.pas',
   FHIR.Tools.CodeSystemProvider in '..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas',
-  FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas',
-  FHIR.Ui.Chart in '..\Libraries\ui\FHIR.Ui.Chart.pas';
+  FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas';
 
 {$R *.res}
 

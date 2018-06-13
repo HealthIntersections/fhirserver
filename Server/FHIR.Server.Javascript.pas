@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Lock, FHIR.Javascript, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Exceptions, FHIR.Support.Threads, FHIR.Javascript, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Base.Objects, FHIR.Base.Factory,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Client,
   FHIR.Javascript.Base;
@@ -69,7 +69,7 @@ Type
 
   TEventScriptRegistry = class (TFslObject)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FScripts : TFslMap<TEventScript>;
   public
     constructor Create; override;
@@ -200,7 +200,7 @@ end;
 constructor TEventScriptRegistry.Create;
 begin
   inherited;
-  FLock := TCriticalSection.create;
+  FLock := TFslLock.create;
   FScripts := TFslMap<TEventScript>.create;
 end;
 

@@ -68,7 +68,7 @@ interface
 Uses
   SysUtils, Classes, IniFiles,
 
-  FHIR.Support.Lock, FHIR.Support.DateTime, FHIR.Support.System,
+  FHIR.Support.Threads, FHIR.Support.DateTime, FHIR.Support.System,
   FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Text, FHIR.Support.Stream,
 
   FHIR.Base.Objects,
@@ -95,7 +95,7 @@ Type
 
   TExampleServerData = class (TObject)
   private
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FPath : String;
     FPatients : TCSVData;
     FObservations : TCSVData;
@@ -307,7 +307,7 @@ end;
 constructor TExampleServerData.Create(path: String);
 begin
   inherited Create;
-  FLock := TCriticalSection.Create;
+  FLock := TFslLock.Create;
   FPath := path;
   FPatients := TCSVData.Create;
   FObservations := TCSVData.Create;

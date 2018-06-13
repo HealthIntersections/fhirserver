@@ -33,7 +33,7 @@ interface
 
 Uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Strings, FHIR.Support.Lock,
+  FHIR.Support.Strings, FHIR.Support.Threads,
   FHIR.Support.Objects, FHIR.Support.Generics,
   FHIR.Database.Manager,
   FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities,
@@ -63,7 +63,7 @@ Type
     FStore : TTerminologyServerStore; // not linked, as this is the owner
     FName : String;
     FKey : integer;
-    FLock : TCriticalSection;
+    FLock : TFslLock;
     FVersion : integer;
     function GetConceptKey(conn : TKDBConnection; uri, code : String) : integer;
     procedure processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMap);
@@ -95,7 +95,7 @@ implementation
 constructor TClosureManager.Create(name: String; key, version : integer; store : TTerminologyServerStore);
 begin
   inherited Create;
-  FLock := TCriticalSection.Create('Closure Table '+name);
+  FLock := TFslLock.Create('Closure Table '+name);
   FName := name;
   FKey := key;
   FVersion := Version;

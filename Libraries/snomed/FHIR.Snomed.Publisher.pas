@@ -33,7 +33,7 @@ Interface
 
 Uses
   SysUtils, Classes, Math,
-  FHIR.Support.Math, FHIR.Support.Lock,
+  FHIR.Support.Math, FHIR.Support.Threads,
   FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Web.HtmlGen, FHIR.Snomed.Services;
 
@@ -49,7 +49,7 @@ Type
   TSnomedPublisher = class (TFslObject)
   Private
     FSnomed : TSnomedServices;
-    Lock : TCriticalSection;
+    Lock : TFslLock;
     FSearchCache : TStringList;
     FFHIRPath : String;
     Function GetPaths(iIndex : Cardinal) : TArrayofIdArray;
@@ -1465,7 +1465,7 @@ end;
 constructor TSnomedPublisher.Create;
 begin
   inherited Create;
-  Lock := TCriticalSection.Create;
+  Lock := TFslLock.Create;
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FSnomed := oSnomed.Link;

@@ -824,8 +824,8 @@ begin
     raise ELibraryException.create('Fail!');
   DecodeDate(value, yr, result.Month, result.Day);
   result.Year := yr;
-  result.FPrecision := dtpSec;
-  result.FractionPrecision := 0;
+  result.FPrecision := dtpNanoSeconds;
+  result.FractionPrecision := 3;
   result.TimezoneType := tz;
   result.Source := 'makeDT';
 end;
@@ -1419,7 +1419,11 @@ begin
     dtpHour:  result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2); // note minutes anyway in this case
     dtpMin:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2);
     dtpSec:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2);
-    dtpNanoSeconds: result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, FractionPrecision);
+    dtpNanoSeconds:
+       if FractionPrecision = 0 then
+         result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)
+       else
+         result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, FractionPrecision);
   end;
   if (FPrecision > dtpDay) then
     case TimezoneType of

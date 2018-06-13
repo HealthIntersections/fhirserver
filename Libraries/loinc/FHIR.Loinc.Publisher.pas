@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Math, FHIR.Support.Lock,
+  SysUtils, Classes, Math, FHIR.Support.Threads,
   FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Collections,
   FHIR.Web.HtmlGen, FHIR.LOINC.Services;
 
@@ -41,7 +41,7 @@ Const
 Type
   TloincPublisher = class (TFslObject)
   Private
-    Lock : TCriticalSection;
+    Lock : TFslLock;
     FSearchCache : TStringList;
     FLoinc : TLOINCServices;
     FFHIRPath : String;
@@ -827,7 +827,7 @@ end;
 constructor TloincPublisher.Create;
 begin
   inherited Create;
-  Lock := TCriticalSection.Create;
+  Lock := TFslLock.Create;
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FLoinc := oLoinc.Link;

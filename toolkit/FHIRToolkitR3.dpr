@@ -68,7 +68,6 @@ uses
   FHIR.R3.Turtle in '..\reference-platform\dstu3\FHIR.R3.Turtle.pas',
   FHIR.R3.ElementModel in '..\reference-platform\dstu3\FHIR.R3.ElementModel.pas',
   FHIR.R3.Profiles in '..\reference-platform\dstu3\FHIR.R3.Profiles.pas',
-  FHIR.Support.Lock in '..\reference-platform\support\FHIR.Support.Lock.pas',
   FHIR.R3.PathEngine in '..\reference-platform\dstu3\FHIR.R3.PathEngine.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
@@ -138,7 +137,6 @@ uses
   FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.Zip in '..\reference-platform\support\FHIR.Support.Zip.pas',
-  FHIR.Support.Controllers in '..\reference-platform\support\FHIR.Support.Controllers.pas',
   FHIR.Support.Certs in '..\reference-platform\support\FHIR.Support.Certs.pas',
   FHIR.Misc.GraphQL in '..\reference-platform\support\FHIR.Misc.GraphQL.pas',
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
@@ -164,13 +162,15 @@ uses
   FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
   FHIR.R3.Operations in '..\reference-platform\dstu3\FHIR.R3.Operations.pas',
   FHIR.R3.OpBase in '..\reference-platform\dstu3\FHIR.R3.OpBase.pas',
-  FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas';
+  FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas',
+  FHIR.Ui.Graph in '..\Libraries\ui\FHIR.Ui.Graph.pas',
+  FHIR.Tools.ObsGraph in '..\Libraries\ui\FHIR.Tools.ObsGraph.pas',
+  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
-  Application.CreateForm(TPackageFinderForm, PackageFinderForm);
   Application.Run;
 end.

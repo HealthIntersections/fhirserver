@@ -3988,7 +3988,7 @@ const
   WideLF = Char(#10);
 
 var
-  Watcher: TCriticalSection;
+  Watcher: TFslLock;
   LightCheckImages,                    // global light check images
   DarkCheckImages,                     // global heavy check images
   LightTickImages,                     // global light tick images
@@ -34314,7 +34314,7 @@ end;
 
 initialization
   // This watcher is used whenever a global structure could be modified by more than one thread.
-  Watcher := TCriticalSection.Create;
+  Watcher := TFslLock.Create;
 
   //Note - not using class constructors as they are not supported on C++ Builder.
   TCustomVirtualStringTree.FInternalDataOffset := TBaseVirtualTree.AllocateInternalDataArea(SizeOf(Cardinal));
