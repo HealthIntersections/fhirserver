@@ -14,7 +14,6 @@ type
     FHIRStringEdit1: TFHIRStringEdit;
     Button1: TButton;
     Button2: TButton;
-    procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
   private
@@ -38,17 +37,14 @@ resourcetoFile(res,'c:\temp\sss.xml',ffXML,OutputStylePretty);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
+var
+fstring:TFHIRString;
 begin
  res:=TFHIRExampleScenario(FiletoResource('c:\temp\sss.xml'));
+ res.nameElement:=FHIRStringEdit1.associate(res.nameElement);
 
-res.nameElement:=FHIRStringEdit1.associate(res.nameElement);
 
 end;
 
-
-procedure TForm1.FormDestroy(Sender: TObject);
-begin
-//pat.Destroy;
-end;
 
 end.

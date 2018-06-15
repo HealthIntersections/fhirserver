@@ -72,7 +72,7 @@ type
 //    Procedure createTab(element: TTreeViewItem; tab: TTabItem);
     Procedure createObjUIGroup(obj: TFHIRObject; objectTypeName:String; tab: TTabItem);
     Procedure createPropUIGroup(obj: TFHIRProperty; parentPrefix:string; tab: TTabItem);
-    procedure createEntry(labelpos: tAlignLayout; propname, labeltext, datatype: string; parentframe: TFramedScrollBox);
+    procedure createEntry(labelpos: tAlignLayout; FHIRProp: TFHIRProperty; propname, labeltext, datatype: string; parentframe: TFramedScrollBox);
     procedure Button2Click(Sender: TObject);
     procedure addButton(labelpos: tAlignLayout; labeltext: string; parentframe: TScrollBox; bNumber:integer);
     procedure Button1Click(Sender: TObject);
@@ -180,72 +180,6 @@ begin
   PL.Destroy
 end;
 
-{Procedure TForm1.createTab(element: TTreeViewItem; tab: TTabItem);
-var
-  btns,
-  j, i: integer;
-  curr_height: single;
-  T: TTabItem;
-  Fr: TFramedScrollBox;
-  frb: TScrollBox;
-  edt: TEdit;
-  lbl: TLabel;
-  mem: TMemo;
-  childElement: TTreeViewItem;
-  B: TButton;
-begin
-  T := TTabItem.Create(TabControl1);
-  T.text := element.Name;
-  T.Parent := TabControl1;
-
-  frb := TScrollBox.Create(T);
-  frb.Parent := T;
-  frb.Height := 23;
-  frb.Margins.Top := 5;
-  frb.Margins.bottom := 5;
-  frb.Align := tAlignLayout.Top;
-  frb.ShowScrollBars := False;
-
-
-
-  Fr := TFramedScrollBox.Create(T);
-  Fr.Align := tAlignLayout.Client;
-  Fr.Padding.Top := 7;
-  Fr.Padding.left := 4;
-  Fr.Padding.right := 4;
-  Fr.Padding.bottom := 7;
-  Fr.ShowScrollBars := true;
-  Fr.Parent := T;
-    btns:=0;
-
-  for i := 1 to element.Count do
-  begin
-    childElement := element.Items[i - 1];
-    if childElement.Stylesdata['type'].AsString = 'object' then
-    begin
-      inc(btns);
-      addButton(tAlignLayout.top, childElement.Name, Frb, btns);
-      createTab(childElement, T);
-    end;
-    if childElement.Stylesdata['type'].AsString = 'attribute' then
-    begin
-      if childElement.Stylesdata['datatype'].AsString = 'string' then
-      begin
-        createEntry(tAlignLayout.left, childElement.Name, 'string', Fr);
-       end;
-      if childElement.Stylesdata['datatype'].AsString = 'markdown' then
-      begin
-        createEntry(tAlignLayout.Top, childElement.Name, 'memo', Fr);
-      end;
-
-    end;
-
-
-  end;
-
-end;
-
-}
 Procedure TForm1.createObjUIGroup(obj: TFHIRObject; objectTypeName:String; tab: TTabItem);
 var
   btns,
@@ -292,12 +226,6 @@ begin
 
   PL:= ffactory.createPropertyList(st,true)     ;
 
-//exsc:=TFHIRExampleScenario.Create;
-//ffactory:=TfhirfactoryR4.Create;
-//ffactory.Assign(exsc);
-//PL:= ffactory.createPropertyList('ExampleScenario',true)
-
-
   for i := 0 to PL.Count-1 do
   begin
     childProperty := PL.Properties[i];
@@ -312,7 +240,12 @@ begin
     if PL.Properties[i].Type_ <>'' then
     begin
       if PL.Properties[i].Type_ = 'string' then
-      createEntry(tAlignLayout.left, PL.Properties[i].Name, PL.Properties[i].Name, 'string', Fr);
+      begin
+//        obj.createPropertyValue(PL.Properties[i].Name);
+obj.
+        childProperty:=TFHIRProperty(obj.createPropertyValue(PL.Properties[i].Name));
+        createEntry(tAlignLayout.left, childProperty , PL.Properties[i].Name, PL.Properties[i].Name, 'string', Fr);
+      end;
     end;
   end;
 end;
@@ -361,7 +294,6 @@ begin
   ffactory.Assign(obj);
 
   st:=parentPrefix+'.'+obj.Name;
-//  st:='ExampleScenario';
 
   PL:= ffactory.createPropertyList(st,true)     ;
 
@@ -372,32 +304,28 @@ begin
     begin
       inc(btns);
       addButton(tAlignLayout.top, PL.Properties[i].Name, Frb, btns);
-      //recurse
       createPropUIGroup(PL.Properties[i], st, T);
-
     end;
     if PL.Properties[i].Type_ <>'' then
     begin
       if PL.Properties[i].Type_ = 'string' then
-      createEntry(tAlignLayout.left, PL.Properties[i].Name, PL.Properties[i].Name, 'string', Fr);
+      createEntry(tAlignLayout.left, PL.Properties[i], PL.Properties[i].Name, PL.Properties[i].Name, 'string', Fr);
     end;
   end;
 end;
 
 
 
-procedure TForm1.createEntry(labelpos: tAlignLayout; propname, labeltext, datatype: string; parentframe: TFramedScrollBox);
+procedure TForm1.createEntry(labelpos: tAlignLayout; FHIRProp: TFHIRProperty; propname, labeltext, datatype: string; parentframe: TFramedScrollBox);
 var
   edt: TFHIRStringEdit;
   mem: TMemo;
-
 begin
-
-
   if datatype = 'string' then
   begin
     edt := TFHIRStringEdit.Create(parentframe);
     edt.Parent:=parentframe;
+    FHIRProp:= TFHIRProperty(edt.associate(TFHIRString(FHIRProp)));
     edt.FHIRPropertyName:=propname;
   end;
 

@@ -37,7 +37,9 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
+  {$IFNDEF SIMPLETEST}
   FHIR.Ucum.Services,
+  {$ENDIF}
   FHIR.Support.MXml, DUnitX.TestFramework;
 
 Type
@@ -58,7 +60,9 @@ Type
     engine : TFHIRPathEngine;
     tests : TMXmlElement;
     resources : TFslMap<TFHIRResource>;
+    {$IFNDEF SIMPLETEST}
     ucum : TUcumServices;
+    {$ENDIF}
     function findTest(path : String) : TMXmlElement;
   Published
     [SetupFixture] procedure setup;
@@ -253,14 +257,20 @@ procedure TFHIRPathTest.setup;
 begin
   resources := TFslMap<TFHIRResource>.create;
   tests := TMXmlParser.ParseFile('C:\work\fluentpath\tests\r4\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
+  {$IFNDEF SIMPLETEST}
   ucum := TUcumServices.Create;
   ucum.Import('C:\work\fhir.org\Ucum-java\src\main\resources\ucum-essence.xml');
   engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, TUcumServiceImplementation.Create(ucum.link));
+  {$ELSE}
+  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil);
+  {$ENDIF}
 end;
 
 procedure TFHIRPathTest.teardown;
 begin
+  {$IFNDEF SIMPLETEST}
   ucum.free;
+  {$ENDIF}
   tests.Free;
   engine.Free;
   resources.Free;

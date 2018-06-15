@@ -152,7 +152,9 @@ begin
   edt.Stored:=false;
   edt.Align := tAlignLayout.Client;
   edt.OnChange := onEditChange;
-{$IFNDEF USEFHIROBJ}
+{$IFDEF USEFHIROBJ}
+  fFHIRString:=TFHIRString.CREATE('');
+{$ELSE}
   FFHIRStringList:=TStringList.Create;
   FFHIRStringList.add('');
 {$ENDIF}
@@ -163,7 +165,9 @@ end;
 
 destructor TFHIRStringEdit.Destroy;
 begin
-{$IFNDEF USEFHIROBJ}
+{$IFDEF USEFHIROBJ}
+  fFHIRString.Destroy;
+{$ELSE}
   FFHIRStringList.Destroy;
 {$ENDIF}
   edt.Destroy;
@@ -211,8 +215,6 @@ begin
   fmultiple:=mult;
   if fmultiple then pBtn.Visible:=true else pBtn.Visible:=false;
   pBtn.Repaint;
-
-
 end;
 
 
@@ -231,17 +233,17 @@ end;
 {$IFDEF USEFHIROBJ}
 function TFHIRStringEdit.GetFHIRString: TFHIRString;
 begin
-  result := fFHIRString;
   if fFHIRString <> nil then
   edt.text:=fFHIRString.value;
+  result := fFHIRString;
 end;
 {$ELSE}
 
 function TFHIRStringEdit.GetFHIRString: TStringList;
 begin
-  result := fFHIRStringList;
   if fFHIRStringList <> nil then
   edt.text:=fFHIRStringList[0];
+  result := fFHIRStringList;
 end;
 {$ENDIF}
 
@@ -249,22 +251,21 @@ end;
 {$IFDEF USEFHIROBJ}
 procedure TFHIRStringEdit.SetFHIRString(AValue: TFHIRString);
 begin
-  if fFHIRString = nil then
-  begin
-    fFHIRString := TFHIRString.Create;
-    edt.text:='';
-  end
-  else begin
+    if AValue = nil then
+    begin
+      fFHIRString := TFHIRString.Create;
+      edt.text:='';
+    end;
+    fFHIRString.Assign(AValue);
     fFHIRString := AValue;
     edt.text:=fFHIRString.value;
-  end;
 end;
 
 
 {$ELSE}
 procedure TFHIRStringEdit.SetFHIRString(AValue: TStringList);
 begin
-  if fFHIRStringList = nil then
+  if aValue = nil then
   begin
     fFHIRStringList := TStringList.Create;
     edt.text:='';
@@ -276,63 +277,22 @@ begin
 end;
 {$ENDIF}
 
-
 {$IFDEF USEFHIROBJ}
 function TFHIRStringEdit.associate(AValue: TFHIRString): TFHIRString;
 begin
-  if aValue = nil then
-  begin
-    fFHIRString:=TFHIRString.CREATE;//     := TFHIRString.Create;
-    fFHIRString.value:='';
-  end
-  else begin
-    fFHIRString := AValue;                  // THIS IS NOT REALLY WORKING WELL. mUST CHECK AND REDO
-    fFHIRstring.value:=AValue.value;
-    edt.text:=fFHIRString.value;
-    fFHIRString := AValue;                  // THIS IS NOT REALLY WORKING WELL. mUST CHECK AND REDO
-  end;
-  result:=fFhirString;
+  if aValue <> nil then FHIRProperty.Assign(AValue);
+  edt.text:=fFHIRString.value;
+  result:=fFHIRString;
 end;
 
 {$ELSE}
 function TFHIRStringEdit.associate(AValue: TStringList): TStringList;
 begin
-  if aValue = nil then
-  begin
-    fFHIRStringList := TStringList.Create;
-    edt.text:='';
-  end
-  else begin
-    fFHIRStringList := AValue;
-    edt.text:=fFHIRStringList[0];
-  end;
+  if aValue <> nil then FHIRProperty.Assign(AValue);
+  edt.text:=fFHIRStringList[0];
   result:=fFhirStringList;
 end;
-
-
 {$ENDIF}
-
-{
-procedure TFHIRStringEdit.useObject(var AValue: TFHIRString);
-begin
-aValue:= associate(aValue);
-end;
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 end.
 
