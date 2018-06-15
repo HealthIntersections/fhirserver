@@ -36,23 +36,14 @@ uses
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList, FHIR.Support.Collections,
   FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal,
-  FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Filers,
+  FHIR.Support.Generics, FHIR.Support.Text,
   FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Server.Session,
   BaseResourceFrame, ToolKitUtilities,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
-  FMX.Platform, System.ImageList, TranslationsEditorDialog, FHIR.FMX.Ctrls;
+  FMX.Platform, System.ImageList, TranslationsEditorDialog;
 
 type
-{  TFHIRTreeViewItem = class(TTreeViewItem)
-  private
-    fFhirObject: tFHIRObject;
-  public
-    property FhirObject: tFHIRObject read fFhirObject write fFhirObject;
-  end;
-}
-
-
-  TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
+  TFrame = TBaseResourceFrame;
 
   TExampleScenarioEditorFrame = class(TFrame)
     Panel2: TPanel;
@@ -157,10 +148,10 @@ type
     Label16: TLabel;
     Label17: TLabel;
     DateEdit1: TDateEdit;
-    Edit6: TFHIRStringEdit;
-    Edit7: TFHIRStringEdit;
+    edtESid: TEdit;
+    Edit7: TEdit;
     Label18: TLabel;
-    Edit8: TFHIRStringEdit;
+    Edit8: TEdit;
     Label19: TLabel;
     Memo3: TMemo;
     Label20: TLabel;
@@ -168,9 +159,9 @@ type
     ActorTab: TTabItem;
     UpdateActor: TButton;
     Instance_tab: TTabItem;
-    Edit9: TFHIRStringEdit;
+    Edit9: TEdit;
     Label33: TLabel;
-    Edit10: TFHIRStringEdit;
+    Edit10: TEdit;
     Label34: TLabel;
     Label35: TLabel;
     Label36: TLabel;
@@ -179,7 +170,7 @@ type
     UpdateInstance: TButton;
     DeleteInstance: TButton;
     Process_tab: TTabItem;
-    Edit4: TFHIRStringEdit;
+    Edit4: TEdit;
     Label37: TLabel;
     ScrollBox3: TScrollBox;
     Label38: TLabel;
@@ -188,38 +179,29 @@ type
     Label39: TLabel;
     Label40: TLabel;
     Memo7: TMemo;
-    DeleteProcess: TButton;
     UpdateProcess: TButton;
     Step_tab: TTabItem;
-    btnOperation3: TCornerButton;
-    btnProcess22: TCornerButton;
     btnPause: TCornerButton;
-    DeleteStep: TButton;
-    btnAlternative3: TCornerButton;
     chkPause: TCheckBox;
     btnUpdateStep: TButton;
     Alternative_tab: TTabItem;
     Label41: TLabel;
-    Edit12: TFHIRStringEdit;
-    btnOption: TCornerButton;
+    Edit12: TEdit;
     UpdateAlternative: TButton;
-    DeleteAlternative: TButton;
     Option_tab: TTabItem;
     Memo5: TMemo;
     Label42: TLabel;
     Label43: TLabel;
-    Edit13: TFHIRStringEdit;
-    btnStep2: TCornerButton;
+    Edit13: TEdit;
     CheckBox2: TCheckBox;
     UpdateOption: TButton;
-    DeleteOption: TButton;
     Operation_tab: TTabItem;
     Label44: TLabel;
-    Edit14: TFHIRStringEdit;
-    Edit15: TFHIRStringEdit;
+    Edit14: TEdit;
+    Edit15: TEdit;
     Label45: TLabel;
     Label46: TLabel;
-    Edit16: TFHIRStringEdit;
+    Edit16: TEdit;
     ComboBox4: TComboBox;
     Label47: TLabel;
     ComboBox5: TComboBox;
@@ -233,13 +215,11 @@ type
     Memo8: TMemo;
     Label51: TLabel;
     UpdateOperation: TButton;
-    DeleteOperation: TButton;
     Button2: TButton;
     Memo9: TMemo;
-    Button3: TButton;
     Label21: TLabel;
     Label22: TLabel;
-    Edit1: TFHIRStringEdit;
+    edtESURL: TEdit;
     UpdateExampleScenario: TButton;
     Panel6: TPanel;
     btnActor: TCornerButton;
@@ -254,14 +234,6 @@ type
     InstanceDown: TCornerButton;
     ScrollBox4: TScrollBox;
     Button4: TButton;
-    ComboBox1: TComboBox;
-    Edit2: TFHIRStringEdit;
-    Edit3: TFHIRStringEdit;
-    Label23: TLabel;
-    Label24: TLabel;
-    Label31: TLabel;
-    Label32: TLabel;
-    Memo1: TMemo;
     Panel8: TPanel;
     CornerButton7: TCornerButton;
     ActorUp: TCornerButton;
@@ -276,15 +248,36 @@ type
     CornerButton9: TCornerButton;
     btnOperation: TCornerButton;
     btnAlternative: TCornerButton;
-    Edit5: TFHIRStringEdit;
+    edtESName: TEdit;
     Button5: TButton;
-    Label52: TLabel;
+    Panel7: TPanel;
+    CornerButton2: TCornerButton;
+    btnOption: TCornerButton;
+    Panel12: TPanel;
+    CornerButton1: TCornerButton;
+    ScrollBox5: TScrollBox;
+    Label31: TLabel;
+    Edit2: TEdit;
+    Label24: TLabel;
+    ComboBox1: TComboBox;
+    Label23: TLabel;
+    Edit3: TEdit;
+    Label32: TLabel;
+    Memo1: TMemo;
+    ScrollBox6: TScrollBox;
+    ScrollBox8: TScrollBox;
+    ScrollBox10: TScrollBox;
+    ScrollBox11: TScrollBox;
+    ScrollBox12: TScrollBox;
+    ScrollBox13: TScrollBox;
+    Panel13: TPanel;
+    CornerButton3: TCornerButton;
+    btnStep2: TCornerButton;
+    btnOptionDown: TCornerButton;
+    btnOptionUp: TCornerButton;
     function addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
     procedure btnActorClick(Sender: TObject);
-    procedure btnAlternative3Click(Sender: TObject);
-    procedure btnOperation3Click(Sender: TObject);
     procedure btnOptionClick(Sender: TObject);
-    procedure btnProcess22Click(Sender: TObject);
     procedure btnProcessClick(Sender: TObject);
     procedure btnResourceClick(Sender: TObject);
     procedure NewExampleScenarioClick(Sender: TObject);
@@ -298,8 +291,6 @@ type
     procedure DeleteItemClick(Sender: TObject);
     procedure MoveDownClick(Sender: TObject);
     procedure MoveUpClick(Sender: TObject);
-
-
     procedure chkPauseExit(Sender: TObject);
     procedure btnConceptUpClick(Sender: TObject);
     procedure Button4Click(Sender: TObject);
@@ -316,8 +307,15 @@ type
     procedure ProcessDownClick(Sender: TObject);
     procedure ProcessUpClick(Sender: TObject);
     procedure Button5Click(Sender: TObject);
-
-
+    procedure UpdateExampleScenarioClick(Sender: TObject);
+    procedure UpdateProcessClick(Sender: TObject);
+    procedure UpdateActorClick(Sender: TObject);
+    procedure UpdateInstanceClick(Sender: TObject);
+    procedure UpdateAlternativeClick(Sender: TObject);
+    procedure UpdateOptionClick(Sender: TObject);
+    procedure UpdateOperationClick(Sender: TObject);
+    procedure btnOptionUpClick(Sender: TObject);
+    procedure btnOptionDownClick(Sender: TObject);
 
   private
     selchanging : boolean;
@@ -347,140 +345,27 @@ end;
 
 { TExampleScenarioEditorFrame }
 
-procedure TExampleScenarioEditorFrame.btnOperationClick(Sender: TObject);
-var
-  operation: tfhirexamplescenarioProcessStepOperation;
-  Item: TTreeViewItem;
-begin
-  operation := tfhirexamplescenarioProcessStepOperation.Create;
-//Set properties for object
-  operation.name := 'Operation';
-//If only one
-  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).operation := operation;
-  ReloadTreeview(tvStructure.Selected);
-end;
-
-procedure TExampleScenarioEditorFrame.btnAlternativeClick(Sender: TObject);
-var
-  alternative: tfhirexamplescenarioProcessStepAlternative;
-begin
-  alternative := tfhirexamplescenarioProcessStepAlternative.Create;
-
-  alternative.name := 'Alternative';
-  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).alternative:= alternative;
-  ReloadTreeview(tvStructure.Selected);
-end;
-
-constructor TExampleScenarioEditorFrame.Create(owner: TComponent);
-begin
-  inherited;
-//  flatItems := TFslList<TFhirQuestionnaireItem>.create;
-
-//show;
-//  ReloadTreeview(tvStructure.Selected);
-end;
-
-destructor TExampleScenarioEditorFrame.Destroy;
-begin
-//  flatItems.Free;
-  inherited;
-end;
-
-
-
-procedure TExampleScenarioEditorFrame.InstanceDownClick(Sender: TObject);
-var
-  idx: integer;
-begin
-  idx := tfhirexamplescenario(resource).instanceList.IndexOf(tfhirexamplescenarioInstance(TVStructure.Selected.TagObject));
-  if idx < tfhirexamplescenario(resource).instanceList.Count - 1 then begin
-  tfhirexamplescenario(resource).instanceList.Exchange(idx, idx + 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
-  end;
-  ReloadTreeview(tvStructure.Selected);
-end;
-
-procedure TExampleScenarioEditorFrame.instanceUpClick(Sender: TObject);
-var
-  idx: integer;
-begin
-  idx := tfhirexamplescenario(resource).instanceList.IndexOf(tfhirexamplescenarioInstance(TVStructure.Selected.TagObject));
-  if idx > 0 then begin
-  tfhirexamplescenario(resource).instanceList.Exchange(idx, idx - 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
-  end;
-  ReloadTreeview(tvStructure.Selected);
-end;
-
-procedure TExampleScenarioEditorFrame.load;
-begin
-  tvStructure.Selected := tvMetadata;
-  tvStructure.ExpandAll;
-
-  addTVItem(tvStructure, nil, 'examplescenario', 'Example Scenario', resource);
-
-//  if sel_index <> -1 then tvStructure.Selected := tvStructure.ItemByGlobalIndex(sel_index);
-
-  application.ProcessMessages;
-  tvstructure.Selected:=tvstructure.ItemByGlobalIndex(0);
-  ReloadTreeview(tvStructure.Selected);
-//  showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
-
-end;
-
-
-procedure TExampleScenarioEditorFrame.cancel;
-begin
-end;
-
-procedure TExampleScenarioEditorFrame.chkPauseExit(Sender: TObject);
-begin
- btnUpdateStepClick(Self);
-end;
-
-procedure TExampleScenarioEditorFrame.commit;
-begin
-{  if tvStructure.Selected = tvMetadata then
-    CommitMetadata;
-  if tvStructure.Selected = tvSDC then
-    CommitSDC;
-  ResourceIsDirty := true;
-}
-end;
 
 
 
 
 
-procedure TExampleScenarioEditorFrame.ActorDownClick(Sender: TObject);
-var
-  idx: integer;
-begin
-  idx := tfhirexamplescenario(resource).actorList.IndexOf(tfhirexamplescenarioActor(TVStructure.Selected.TagObject));
-  if idx < tfhirexamplescenario(resource).actorList.Count - 1 then begin
-  tfhirexamplescenario(resource).actorList.Exchange(idx, idx + 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
-  end;
-  ReloadTreeview(tvStructure.Selected);
-end;
 
-procedure TExampleScenarioEditorFrame.ActorTabPainting(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
-begin
-CURRobjectlist:=tfhirexamplescenario(resource).actorList;
 
-end;
 
-procedure TExampleScenarioEditorFrame.ActorUpClick(Sender: TObject);
-var
-  idx: integer;
-begin
-  idx := tfhirexamplescenario(resource).actorList.IndexOf(tfhirexamplescenarioActor(TVStructure.Selected.TagObject));
-  if idx > 0 then begin
-  tfhirexamplescenario(resource).actorList.Exchange(idx, idx - 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
-  end;
-  ReloadTreeview(tvStructure.Selected);
-end;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function TExampleScenarioEditorFrame.addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
 var
@@ -595,6 +480,136 @@ end;
 
 
 
+procedure TExampleScenarioEditorFrame.btnAlternativeClick(Sender: TObject);
+var
+  alternative: tfhirexamplescenarioProcessStepAlternative;
+begin
+  alternative := tfhirexamplescenarioProcessStepAlternative.Create;
+  alternative.name := 'Alternative';
+  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).alternative:= alternative;
+  ResourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
+end;
+
+
+constructor TExampleScenarioEditorFrame.Create(owner: TComponent);
+begin
+  inherited;
+//  flatItems := TFslList<TFhirQuestionnaireItem>.create;
+
+//show;
+//  ReloadTreeview(tvStructure.Selected);
+end;
+
+destructor TExampleScenarioEditorFrame.Destroy;
+begin
+//  flatItems.Free;
+  inherited;
+end;
+
+
+
+procedure TExampleScenarioEditorFrame.InstanceDownClick(Sender: TObject);
+var
+  idx: integer;
+begin
+  idx := tfhirexamplescenario(resource).instanceList.IndexOf(tfhirexamplescenarioInstance(TVStructure.Selected.TagObject));
+  if idx < tfhirexamplescenario(resource).instanceList.Count - 1 then begin
+  tfhirexamplescenario(resource).instanceList.Exchange(idx, idx + 1);
+  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+  ResourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+end;
+
+procedure TExampleScenarioEditorFrame.instanceUpClick(Sender: TObject);
+var
+  idx: integer;
+begin
+  idx := tfhirexamplescenario(resource).instanceList.IndexOf(tfhirexamplescenarioInstance(TVStructure.Selected.TagObject));
+  if idx > 0 then begin
+  tfhirexamplescenario(resource).instanceList.Exchange(idx, idx - 1);
+  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+  ResourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+end;
+
+procedure TExampleScenarioEditorFrame.load;
+begin
+  tvStructure.Selected := tvMetadata;
+  tvStructure.ExpandAll;
+
+  addTVItem(tvStructure, nil, 'examplescenario', 'Example Scenario', resource);
+
+//  if sel_index <> -1 then tvStructure.Selected := tvStructure.ItemByGlobalIndex(sel_index);
+
+  application.ProcessMessages;
+  tvstructure.Selected:=tvstructure.ItemByGlobalIndex(0);
+  ReloadTreeview(tvStructure.Selected);
+//  showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
+
+end;
+
+
+procedure TExampleScenarioEditorFrame.cancel;
+begin
+end;
+
+procedure TExampleScenarioEditorFrame.chkPauseExit(Sender: TObject);
+begin
+ btnUpdateStepClick(Self);
+end;
+
+procedure TExampleScenarioEditorFrame.commit;
+begin
+{  if tvStructure.Selected = tvMetadata then
+    CommitMetadata;
+  if tvStructure.Selected = tvSDC then
+    CommitSDC;
+  ResourceIsDirty := true;
+}
+end;
+
+
+
+
+
+procedure TExampleScenarioEditorFrame.ActorDownClick(Sender: TObject);
+var
+  idx: integer;
+begin
+  idx := tfhirexamplescenario(resource).actorList.IndexOf(tfhirexamplescenarioActor(TVStructure.Selected.TagObject));
+  if idx < tfhirexamplescenario(resource).actorList.Count - 1 then begin
+  tfhirexamplescenario(resource).actorList.Exchange(idx, idx + 1);
+  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+  ResourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+end;
+
+procedure TExampleScenarioEditorFrame.ActorTabPainting(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
+begin
+CURRobjectlist:=tfhirexamplescenario(resource).actorList;
+
+end;
+
+procedure TExampleScenarioEditorFrame.ActorUpClick(Sender: TObject);
+var
+  idx: integer;
+begin
+  idx := tfhirexamplescenario(resource).actorList.IndexOf(tfhirexamplescenarioActor(TVStructure.Selected.TagObject));
+  if idx > 0 then begin
+  tfhirexamplescenario(resource).actorList.Exchange(idx, idx - 1);
+  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+  ResourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+end;
+
+
+
+
 
 procedure TExampleScenarioEditorFrame.bnStepClick(Sender: TObject);
 var
@@ -602,6 +617,7 @@ var
 begin
   Step := tfhirexamplescenarioProcessStep.Create;
   tfhirexamplescenarioProcess(TVStructure.Selected.TagObject).stepList.AddItem(Step);
+  ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 
 end;
@@ -624,22 +640,9 @@ begin
   Actor.type_ := ExamplescenarioActorTypePerson;
   Actor.name := 'Actor ' + inttostr(tfhirexamplescenario(TVStructure.Selected.tagObject).actorList.Count + 1);
   Actor.actorId := 'A' + inttostr(tfhirexamplescenario(TVStructure.Selected.TagObject).actorList.Count + 1);
-
   tfhirexamplescenario(TVStructure.Selected.TagObject).actorList.AddItem(Actor);
+  ResourceIsDirty := true;
   ReloadTreeview(TVStructure.Selected);
-
-end;
-
-
-procedure TExampleScenarioEditorFrame.btnAlternative3Click(Sender: TObject);
-var
-  alternative: tfhirexamplescenarioProcessStepAlternative;
-begin
-  alternative := tfhirexamplescenarioProcessStepAlternative.Create;
-
-  alternative.name := 'Alternative';
-  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).alternative:= alternative;
-  ReloadTreeview(tvStructure.Selected);
 
 end;
 
@@ -658,20 +661,6 @@ begin
 
 end;
 
-procedure TExampleScenarioEditorFrame.btnOperation3Click(Sender: TObject);
-var
-  operation: tfhirexamplescenarioProcessStepOperation;
-  Item: TTreeViewItem;
-
-begin
-  operation := tfhirexamplescenarioProcessStepOperation.Create;
-//Set properties for object
-  operation.name := 'Operation';
-//If only one
-  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).operation := operation;
-  ReloadTreeview(tvStructure.Selected);
-end;
-
 procedure TExampleScenarioEditorFrame.btnOptionClick(Sender: TObject);
 var
   Option: tfhirexamplescenarioProcessStepAlternativeOption;
@@ -681,25 +670,54 @@ begin
   Option.description := 'Option ' + inttostr(tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).optionList.Count + 1);
 
   tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).OptionList.AddItem(Option);
+  ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 
+end;
+
+procedure TExampleScenarioEditorFrame.btnOptionDownClick(Sender: TObject);
+var
+  idx: integer;
+begin
+  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.IndexOf(tfhirexamplescenarioProcessStepAlternativeOption(TVStructure.Selected.TagObject));
+  if idx < tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Count - 1 then begin
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Exchange(idx, idx + 1);
+  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+  ResourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+end;
+
+
+procedure TExampleScenarioEditorFrame.btnOptionUpClick(Sender: TObject);
+var
+  idx: integer;
+begin
+{
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.TagObject).alternative:= alternative;
+}
+  idx := tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.IndexOf(tfhirexamplescenarioProcessStepAlternativeOption(TVStructure.Selected.TagObject));
+  if idx > 0 then begin
+  tfhirexamplescenarioProcessStepAlternative(TVStructure.Selected.ParentItem.TagObject).optionList.Exchange(idx, idx - 1);
+  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+  ResourceIsDirty := true;
+  end;
+  ReloadTreeview(tvStructure.Selected);
+end;
+
+procedure TExampleScenarioEditorFrame.btnOperationClick(Sender: TObject);
+var
+  operation: tfhirexamplescenarioProcessStepOperation;
+  Item: TTreeViewItem;
+begin
+  operation := tfhirexamplescenarioProcessStepOperation.Create;
+  operation.name := 'Operation';
+  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).operation := operation;
+  ResourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
 end;
 
 //2.4 Sub-Process
-procedure TExampleScenarioEditorFrame.btnProcess22Click(Sender: TObject);
-var
-  Process: tfhirexamplescenarioProcess;
-
-begin
-  Process := tfhirexamplescenarioProcess.Create;
-
-  Process.title := 'Process';
-
-  tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).processList.AddItem(Process);
-  ReloadTreeview(tvStructure.Selected);
-
-end;
-
 procedure TExampleScenarioEditorFrame.btnProcess2Click(Sender: TObject);
 var
   Process: tfhirexamplescenarioProcess;
@@ -707,6 +725,7 @@ begin
   Process := tfhirexamplescenarioProcess.Create;
   Process.title := 'Process';
   tfhirexamplescenarioProcessStep(TVStructure.Selected.TagObject).processList.AddItem(Process);
+  ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 end;
 
@@ -718,6 +737,7 @@ begin
   Process := tfhirexamplescenarioProcess.Create;
   Process.title := 'Process';
   tfhirexamplescenario(TVStructure.Selected.TagObject).processList.AddItem(Process);
+  ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 
 end;
@@ -727,11 +747,10 @@ var
   Instance: tfhirexamplescenarioinstance;
 begin
   Instance := tFHIRExampleScenarioInstance.Create;
-
   Instance.resourceType := ResourceTypesNull;
   Instance.name := 'Resource ' + inttostr(tfhirexamplescenario(TVStructure.Selected.TagObject).instanceList.Count + 1);
   Instance.resourceId := 'R' + inttostr(tfhirexamplescenario(TVStructure.Selected.TagObject).instanceList.Count + 1);
-
+  ResourceIsDirty := true;
 //  exsc.instanceList.AddItem(Instance);
   tfhirexamplescenario(TVStructure.Selected.TagObject).instanceList.AddItem(Instance);
 
@@ -765,6 +784,7 @@ begin
   if idx < tfhirexamplescenario(resource).ProcessList.Count - 1 then begin
   tfhirexamplescenario(resource).ProcessList.Exchange(idx, idx + 1);
   tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+  ResourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
 end;
@@ -777,6 +797,7 @@ begin
   if idx > 0 then begin
   tfhirexamplescenario(resource).processList.Exchange(idx, idx - 1);
   tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+  ResourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
 end;
@@ -787,6 +808,7 @@ var
 begin
   Step := tfhirexamplescenarioProcessStep.Create;
   tfhirexamplescenarioProcess(TVStructure.Selected.TagObject).stepList.AddItem(Step);
+  ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 
 end;
@@ -840,8 +862,8 @@ begin
 //edit5.OnChange(edit5);
 
 
-button5.text:=
-edit5.FhirProperty.value;
+//button5.text:=
+//edit5.FhirProperty.value;
 
 button5.text:=
 TFHIRExampleScenario(resource).nameElement.value;
@@ -896,19 +918,14 @@ begin
 
     TabControl2.tabindex := 1;
     UpdateExampleScenario.enabled := true;
-     TFHIRExampleScenario(obj).nameElement:= edit5.associate(TFHIRExampleScenario(obj).nameElement);
-//     TFHIRExampleScenario(obj).urlElement:= edit1.associate(TFHIRExampleScenario(obj).urlElement);
-
-//    edit5.load;
-    //    Edit1.FhirProperty := TFHIRExampleScenario(obj).publisherElement;
-
-
+    edtESName.text := TFHIRExampleScenario(obj).name;
+    edtESURL.text := TFHIRExampleScenario(obj).title;
     ComboBox2.ItemIndex := integer(TFHIRExampleScenario(obj).status);
     if TFHIRExampleScenario(obj).experimental then
       CheckBox1.IsChecked := true
     else
       CheckBox1.IsChecked := false;
-    Edit6.text := TFHIRExampleScenario(obj).id;
+    edtESid.text := TFHIRExampleScenario(obj).id;
     DateEdit1.text := TFHIRExampleScenario(obj).date.toString;
     Edit8.text := TFHIRExampleScenario(obj).version;
     Edit7.text := TFHIRExampleScenario(obj).publisher;
@@ -919,11 +936,10 @@ begin
   begin
     TabControl2.tabindex := 2;
     UpdateActor.enabled := true;
-//    Edit3.text := tfhirexamplescenarioActor(obj).name;
+    Edit3.text := tfhirexamplescenarioActor(obj).name;
 //    Edit3.FhirProperty:=tfhirProperty(TFHIRExampleScenarioActor(obj).name);
-
-    edit3.FHIRProperty:= TFHIRExampleScenarioActor(obj).nameElement;
-    edit3.load;
+//    edit3.FHIRProperty:= TFHIRExampleScenarioActor(obj).nameElement;
+//    edit3.load;
 
     ComboBox1.ItemIndex := integer(tfhirexamplescenarioActor(obj).type_);
     Edit2.text := tfhirexamplescenarioActor(obj).actorId;
@@ -964,6 +980,7 @@ begin
   begin
     TabControl2.tabindex := 7;
     UpdateOption.enabled := true;
+//    Edit13.text := tfhirexamplescenarioProcessStepAlternativeOption(obj).name;
     Memo5.text := tfhirexamplescenarioProcessStepAlternativeOption(obj).description;
   end;
   if obj is tfhirexamplescenarioProcessStepOperation then
@@ -1029,6 +1046,7 @@ var
 begin
   version := tfhirexamplescenarioInstanceVersion.Create;
   tfhirexamplescenarioinstance(TVStructure.Selected.TagObject).versionList.AddItem(version);
+  ResourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
 end;
 
@@ -1038,6 +1056,7 @@ var
   obj: tFHIRObject;
 
 begin
+  ResourceIsDirty := true;
   prt := tvStructure.Selected.ParentItem;
   obj := TFHIRObject(TVStructure.Selected.TagObject);
 
@@ -1123,6 +1142,127 @@ end;
 
 
 
+procedure TExampleScenarioEditorFrame.UpdateExampleScenarioClick(Sender: TObject);
+var
+  obj: TFHIRExampleScenario;
+
+begin
+  obj := tfhirexamplescenario(TTreeViewItem(tvStructure.Selected).TagObject);
+  if obj = nil then
+    exit;
+  obj.name := edtESName.text;
+  (obj).title := edtESURL.text;
+  (obj).status := TfHIRPublicationStatusEnum(ComboBox2.ItemIndex);
+  obj.experimental := CheckBox1.IsChecked;
+  obj.id := edtESid.text;
+  obj.date := TDateTimeEx.makeLocal(DateEdit1.DateTime);
+  obj.version := Edit8.text;
+  obj.publisher := Edit7.text;
+  obj.purpose := Memo3.text;
+
+end;
+
+//6.2
+procedure TExampleScenarioEditorFrame.UpdateProcessClick(Sender: TObject);
+var
+  obj: tfhirexamplescenarioProcess;
+
+begin
+
+  obj := tfhirexamplescenarioProcess(TTreeViewItem(tvStructure.Selected).TagObject);
+  if obj = nil then
+    exit;
+  obj.title := Edit4.text;
+  obj.description := Memo2.text;
+  obj.preConditions := Memo6.text;
+  obj.postConditions := Memo7.text;
+
+end;
+
+//6.3
+procedure TExampleScenarioEditorFrame.UpdateActorClick(Sender: TObject);
+var
+  obj: tfhirexamplescenarioActor;
+
+begin
+  obj := tfhirexamplescenarioActor(TTreeViewItem(tvStructure.Selected).TagObject);
+  if obj = nil then
+    exit;
+  obj.name := Edit3.text;
+  obj.type_ := TfHIRExampleScenarioActorTypeEnum(ComboBox1.ItemIndex);
+  obj.actorId := Edit2.text;
+  obj.description := Memo1.text;
+end;
+
+//6.4
+procedure TExampleScenarioEditorFrame.UpdateInstanceClick(Sender: TObject);
+var
+  obj: tfhirexamplescenarioinstance;
+
+begin
+  obj := tfhirexamplescenarioinstance(TTreeViewItem(tvStructure.Selected).TagObject);
+  if obj = nil then
+    exit;
+  obj.resourceId := Edit10.text;
+  obj.resourceType := TFHIRResourceTypesEnum(ComboBox3.ItemIndex);
+  obj.name := Edit9.text;
+  obj.description := Memo4.text;
+
+end;
+
+//6.5
+procedure TExampleScenarioEditorFrame.UpdateAlternativeClick(Sender: TObject);
+var
+  obj: tfhirexamplescenarioProcessStepAlternative;
+
+begin
+  obj := tfhirexamplescenarioProcessStepAlternative(TTreeViewItem(tvStructure.Selected).TagObject);
+  if obj = nil then
+    exit;
+  obj.name := Edit12.text;
+end;
+
+//6.6
+procedure TExampleScenarioEditorFrame.UpdateOptionClick(Sender: TObject);
+var
+  obj: tfhirexamplescenarioProcessStepAlternativeOption;
+
+begin
+  obj := tfhirexamplescenarioProcessStepAlternativeOption(TTreeViewItem(tvStructure.Selected).TagObject);
+  if obj = nil then
+    exit;
+  (obj).description := Memo5.text;
+//  (obj).name := edit13.text;
+
+end;
+
+//6.7
+procedure TExampleScenarioEditorFrame.UpdateOperationClick(Sender: TObject);
+var
+  obj: tfhirexamplescenarioProcessStepOperation;
+
+begin
+
+    obj := tfhirexamplescenarioProcessStepOperation(TTreeViewItem(tvStructure.Selected).tagObject);
+    if obj = nil then Exit;
+
+    (obj).name := Edit14.text;
+    (obj).number := Edit15.text;
+    (obj).type_ := Edit16.text;
+    (obj).description := Memo8.text;
+
+    (obj).initiator := ComboBox4.Items[ComboBox4.ItemIndex];
+    (obj).receiver := ComboBox5.Items[ComboBox5.ItemIndex];
+
+    obj.request.Free;
+    if ComboBox6.ItemIndex <> 0 then
+    begin
+    if obj.request = nil then
+    obj.request := TFhirExampleScenarioInstanceContainedInstance.Create;
+    obj.request.resourceId := ComboBox6.Items[ComboBox6.ItemIndex];
+    end;
+
+end;
 
 
 

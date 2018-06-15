@@ -27,6 +27,9 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$UNDEF EXAMPLESCENARIO}
+
 interface
 
 uses
@@ -41,7 +44,7 @@ uses
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
   FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.System, FHIR.Support.Text, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
-  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, {ExampleScenarioEditor,} AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
+  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF} AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
   PackageManagerFrame, ValidationFrame, TransformationFrame;
@@ -414,7 +417,10 @@ begin
     form.ListBox1.items.Add('CodeSystem');
     form.ListBox1.items.Add('Questionnaire');
     form.ListBox1.items.Add('Library');
-//    form.ListBox1.items.Add('ExampleScenario'); //JCT: Uncomment this line when exampleScenario works
+{$IFDEF EXAMPLESCENARIO}
+    form.ListBox1.items.Add('ExampleScenario');
+{$ENDIF}
+
     form.caption := 'Create New File';
     if (form.ShowModal = mrOk) then
       case form.ListBox1.ItemIndex of
@@ -423,7 +429,9 @@ begin
         2 : newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
         3 : newResource(TFhirQuestionnaire, TQuestionnaireEditorFrame);
         4 : newResource(TFhirLibrary, TLibraryEditorFrame);
-//        5 : newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
+{$IFDEF EXAMPLESCENARIO}
+        5 : newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
+{$ENDIF}
       end;
   finally
     form.Free;
@@ -451,8 +459,10 @@ begin
           openResourceFromFile(odFile.Filename, res, format, TQuestionnaireEditorFrame)
         else if res is TFhirLibrary then
           openResourceFromFile(odFile.Filename, res, format, TLibraryEditorFrame)
-//        else if res is TFHIRExampleScenario then
-//          openResourceFromFile(odFile.Filename, res, format, TExampleScenarioEditorFrame)
+{$IFDEF EXAMPLESCENARIO}
+        else if res is TFHIRExampleScenario then
+          openResourceFromFile(odFile.Filename, res, format, TExampleScenarioEditorFrame)
+{$ENDIF}
         else
           MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
       finally
@@ -935,8 +945,10 @@ begin
     result := TQuestionnaireEditorFrame
   else if res is TFhirLibrary then
     result := TLibraryEditorFrame
-//else if res is TFhirExampleScenario then
-//  result := TExampleScenarioEditorFrame
+{$IFDEF EXAMPLESCENARIO}
+  else if res is TFhirExampleScenario then
+    result := TExampleScenarioEditorFrame
+{$ENDIF}
   else
     MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
 end;

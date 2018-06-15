@@ -415,6 +415,11 @@
             <Form>PopupMenuWorkaroundForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="ExampleScenarioEditor.pas">
+            <Form>exampleScenarioEditorFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -437,6 +442,7 @@
                     <Source Name="MainSource">FHIRToolkitR4.dpr</Source>
                 </Source>
                 <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclIntraweb_140_250.bpl">File c:\program files (x86)\embarcadero\studio\19.0\bin\dclIntraweb_140_250.bpl not found</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>

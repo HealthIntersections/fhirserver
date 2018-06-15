@@ -165,7 +165,8 @@ uses
   FHIR.Smart.Login in '..\reference-platform\client\FHIR.Smart.Login.pas',
   FHIR.R4.Operations in '..\reference-platform\r4\FHIR.R4.Operations.pas',
   FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas',
-  OsxPopupmenuWorkaround in 'OsxPopupmenuWorkaround.pas' {PopupMenuWorkaroundForm};
+  OsxPopupmenuWorkaround in 'OsxPopupmenuWorkaround.pas' {PopupMenuWorkaroundForm},
+  ExampleScenarioEditor in 'ExampleScenarioEditor.pas' {exampleScenarioEditorFrame: TFrame};
 
 {$R *.res}
 
