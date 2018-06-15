@@ -35,12 +35,10 @@ interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
+  SysUtils, Classes, Soap.EncdDecd, Generics.Collections, ZLib,
 
-  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Decimal, FHIR.Web.Parsers,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.System,
-  FHIR.Support.MXml,
-  FHIR.Support.Mime, FHIR.Support.Text, ZLib, FHIR.Web.Fetcher,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.MXml, 
+  FHIR.Web.Fetcher,
 
   FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml,
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Context;

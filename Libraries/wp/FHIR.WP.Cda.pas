@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Strings,
+  FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Utilities,
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.Format;
 
 Const

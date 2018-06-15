@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   YuStemmer,
   FHIR.Database.Manager,
   FHIR.Base.Common,

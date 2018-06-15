@@ -32,8 +32,7 @@ Interface
 
 Uses
   SysUtils, Windows,
-  FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.Binary, FHIR.Support.System, FHIR.Support.DateTime,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Text,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
   FHIR.Dicom.Dictionary;
 
 Type

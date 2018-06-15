@@ -36,11 +36,8 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
 
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Decimal, FHIR.Web.Parsers,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Json,
-  FHIR.Support.Zip,
-
-  FHIR.Support.Mime, FHIR.Support.Text, FHIR.Web.Fetcher, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Signatures, FHIR.Support.Certs,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Signatures, FHIR.Support.Certs,
+  FHIR.Web.Fetcher,
 
   FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml,
   FHIR.R3.Context, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants;

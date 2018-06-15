@@ -35,8 +35,7 @@ interface
 
 Uses
   SysUtils, Classes, Soap.EncdDecd, System.NetEncoding,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary,
-  FHIR.Support.Objects, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
   DUnitX.TestFramework;
 
 Type
@@ -72,7 +71,7 @@ function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : bool
 implementation
 
 uses
-  IdGlobalProtocols, FHIR.Support.Text, FHIR.Support.Shell, XmlTests;
+  IdGlobalProtocols, FHIR.Support.Stream, FHIR.Support.Shell, XmlTests;
 
 { TJsonTests }
 

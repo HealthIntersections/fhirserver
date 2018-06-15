@@ -33,8 +33,7 @@ Interface
 
 Uses
   Windows, SysUtils, Vcl.Graphics,
-  FHIR.Support.Printing, FHIR.Support.Threads, FHIR.Support.System,
-  FHIR.Support.Graphics, FHIR.Support.Strings, FHIR.Support.Math,
+  FHIR.Support.Printing, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Graphics,
   FHIR.WP.Engine, FHIR.WP.Working, FHIR.WP.Renderer, FHIR.WP.Types, FHIR.WP.Settings;
 
 Type

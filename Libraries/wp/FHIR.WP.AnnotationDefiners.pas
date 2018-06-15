@@ -31,7 +31,7 @@ Interface
 
 Uses
   Windows, Graphics,
-  FHIR.Support.System,
+  FHIR.Support.Utilities,
   FHIR.WP.Control, FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Definers, FHIR.WP.Snomed, FHIR.WP.Icons;
 
 Type

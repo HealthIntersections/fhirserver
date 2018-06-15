@@ -32,8 +32,7 @@ Interface
 
 Uses
   SysUtils, Contnrs, Classes,
-  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.DateTime, FHIR.Support.Generics, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Collections,  FHIR.Support.Text, FHIR.Support.Exceptions, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream,
   YuStemmer, FHIR.Loinc.Services;
 
 Const

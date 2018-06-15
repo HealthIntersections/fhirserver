@@ -34,9 +34,7 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Decimal,
-  FHIR.Support.Objects,
-  FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.MXml,
   FHIR.Ucum.Services;
 
 type

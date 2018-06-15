@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Web.Parsers, FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Web.Parsers, FHIR.Support.Utilities,
+  FHIR.Support.Base, 
   FHIR.Base.Lang,
   FHIR.Database.Manager,
   FHIR.Server.Session, FHIR.Tools.Indexing,

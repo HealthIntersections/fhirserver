@@ -216,8 +216,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-	SysUtils
-	{$IFDEF COMPILER_7_UP}, Types{$ENDIF}, FHIR.Support.Exceptions;
+	SysUtils, {$IFDEF COMPILER_7_UP} Types, {$ENDIF}
+  FHIR.Support.Base;
 
 {$IFNDEF UNICODE}
 type
@@ -334,7 +334,7 @@ implementation
 uses
 	{$IFDEF ScryptUnitTests}ScryptTests,{$ENDIF}
 	{$IFDEF MSWINDOWS}Windows, ComObj, ActiveX,{$ENDIF}
-	Math, FHIR.Support.System;
+	Math, FHIR.Support.Utilities;
 
 {$IFDEF COMPILER_7_DOWN}
 function MAKELANGID(p, s: WORD): WORD;

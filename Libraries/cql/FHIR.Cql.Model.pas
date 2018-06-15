@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Stream,
+  FHIR.Support.Base, 
   FHIR.Base.Objects, FHIR.Version.PathNode;
 
 type

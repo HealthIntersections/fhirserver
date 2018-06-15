@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils, Classes, FHIR.Support.Threads,
-  FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Certs,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Certs,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   FHIR.Scim.Server,

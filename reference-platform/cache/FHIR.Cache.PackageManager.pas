@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Json, FHIR.Support.Strings, FHIR.Support.DateTime,
-  FHIR.Support.Text, FHIR.Support.Tarball, FHIR.Web.Fetcher;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
+  FHIR.Support.Stream, FHIR.Web.Fetcher;
 
 type
   TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool);

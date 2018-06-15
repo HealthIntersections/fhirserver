@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Strings,
+  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities,
   FHIR.Cda.Base, FHIR.Cda.Types;
 
 Type

@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Objects,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Snomed.Services;
 
 Type

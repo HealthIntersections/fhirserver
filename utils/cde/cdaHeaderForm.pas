@@ -32,7 +32,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls, ComCtrls,
-  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.System,
+  FHIR.Support.Utilities,
   FHIR.Cda.Base, FHIR.Cda.Types, FHIR.CDA.Objects, FHIR.Cda.Documents,
   IIEditor, OIDCache;
 

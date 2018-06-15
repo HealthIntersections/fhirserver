@@ -35,7 +35,7 @@ Uses
   AdvStringLists,
   SystemConfigurations,
   SysUtils,
-  FHIR.Support.Decimal,
+  FHIR.Support.Utilities,
   IniFiles,
   KProcs,
   FHIR.Database.Manager,

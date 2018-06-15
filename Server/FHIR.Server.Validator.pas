@@ -33,8 +33,8 @@ Interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.Strings, FHIR.Support.Threads,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Zip,
+  FHIR.Support.Utilities, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Factory,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Context, FHIR.Version.Utilities, FHIR.Server.Session, FHIR.Version.Profiles, FHIR.Version.Constants, FHIR.Version.Common,
   FHIR.Tx.Server;

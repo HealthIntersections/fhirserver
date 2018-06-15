@@ -36,7 +36,7 @@ interface
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows,{$ENDIF}
   SysUtils, SyncObjs, Classes, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics;
+  FHIR.Support.Base, FHIR.Support.Utilities;
 
 const
   NO_THREAD = 0;
@@ -230,6 +230,8 @@ Type
     function registerTaskEngine(engine : TBackgroundTaskEngine) : integer;
     procedure queueTask(id : integer; package : TBackgroundTaskPackage); // where id was return value from registerTaskEngine
     procedure killTask(id : integer);
+
+    procedure stopAll; // shut down preparation
 
     procedure primaryThreadCheck;
   end;
@@ -785,11 +787,8 @@ begin
 end;
 
 destructor TBackgroundTaskManager.Destroy;
-var
-  e : TBackgroundTaskEngine;
 begin
-  for e in FEngines do
-    e.stop;
+  StopAll;
   sleep(200);
   FEngines.Free;
   FLock.Free;
@@ -810,6 +809,14 @@ begin
   engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
+procedure TBackgroundTaskManager.stopAll;
+var
+  e : TBackgroundTaskEngine;
+begin
+  for e in FEngines do
+    e.stop;
+end;
+
 procedure TBackgroundTaskManager.killTask(id: integer);
 begin
   log('kill '+FEngines[id].name);
@@ -818,6 +825,7 @@ end;
 
 procedure TBackgroundTaskManager.log(s : String);
 begin
+//  AllocConsole;
 //  writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
 end;
 
@@ -857,7 +865,7 @@ end;
 
 procedure TBackgroundTaskManager.queueTask(id: integer; package: TBackgroundTaskPackage);
 begin
-  log('queue task for  '+FEngines[id].name);
+  log('queue task for '+inttostr(id)+' ('+FEngines[id].name+')');
   FLock.Lock;
   try
     FEngines[id].FWaiting.Free;

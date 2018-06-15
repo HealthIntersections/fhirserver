@@ -33,8 +33,8 @@ Interface
 Uses
   SysUtils, JPeg,
   GDIPAPI, GDIPOBJ,
-  FHIR.Support.Strings, FHIR.Support.Binary, FHIR.Support.Stream, FHIR.Support.System, FHIR.Support.Objects,
-  FHIR.Support.Graphics, FHIR.Graphics.GdiPlus,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Graphics,
+  FHIR.Graphics.GdiPlus,
   FHIR.Dicom.Dictionary, FHIR.Dicom.Objects, FHIR.Dicom.JpegLs;
 
 Type

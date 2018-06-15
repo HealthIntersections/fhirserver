@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes, Graphics,
   ScintEdit,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Text,
+   FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Cda.Base, FHIR.CDA.Objects, FHIR.CDA.Documents;
 (*
   gwCDA, v3Infrastructure, XMLBuilder, ReferenceModelBase, CDATypes;

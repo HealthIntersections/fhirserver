@@ -45,13 +45,14 @@ interface
 
 uses
   SysUtils, Classes, SyncObjs,
-  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary,
-  FHIR.Support.Threads, FHIR.Database.Manager, FHIR.Database.Dialects,  FHIR.Web.Parsers,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,
+  FHIR.Web.Parsers,
+  FHIR.Database.Manager, FHIR.Database.Dialects,
+  FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPop3, IdMessageParts,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
   FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Constants, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.PathNode,
-  FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Utilities, FHIR.Version.Parser, FHIR.Base.Parser, FHIR.Version.PathEngine, FHIR.Version.Context, FHIR.Debug.Logging;
+  FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Utilities, FHIR.Version.Parser, FHIR.Base.Parser, FHIR.Version.PathEngine, FHIR.Version.Context, FHIR.Support.Logging;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';

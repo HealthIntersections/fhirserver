@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, Sysutils,
-  FHIR.Support.Exceptions,
+  FHIR.Support.Base,
   FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   DUnitX.TestFramework;
 

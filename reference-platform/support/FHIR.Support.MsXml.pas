@@ -79,8 +79,7 @@ interface
 uses
   Windows, ActiveX, {$IFDEF UNICODE}Vcl.OLEServer{$ELSE} OLEServer{$ENDIF} {$IFNDEF VER130}, Variants {$ENDIF},
   SysUtils, Classes, ComObj, Generics.Collections,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Generics,
-  FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.Text;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml;
 
 // *********************************************************************//
 // GUIDS declared in the TypeLibrary. Following prefixes are used:
@@ -7717,8 +7716,7 @@ Var
 implementation
 
 uses
-  FHIR.Support.WinInet,
-  FHIR.Support.Strings;
+  FHIR.Web.WinInet;
 
 class function CoDOMDocument.Create: IXMLDOMDocument2;
 begin

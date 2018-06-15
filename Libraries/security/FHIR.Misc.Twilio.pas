@@ -34,7 +34,7 @@ interface
 Uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL, IdAuthentication, IdMultipartFormData,
-  FHIR.Support.Objects;
+  FHIR.Support.Base;
 
 Type
   TTwilioClient = class (TFslObject)

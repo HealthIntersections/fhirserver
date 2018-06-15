@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Javascript, FHIR.Support.Javascript,
   FHIR.Base.Objects, FHIR.Base.Factory;{,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client}

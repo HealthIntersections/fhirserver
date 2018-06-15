@@ -36,8 +36,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Objects, FHIR.Support.Collections,
-  FHIR.Support.Json, FHIR.Support.DateTime;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json;
 
 Type
   ESCIMException = class (EFslException)

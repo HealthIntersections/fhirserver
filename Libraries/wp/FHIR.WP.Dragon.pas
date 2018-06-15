@@ -31,7 +31,7 @@ Interface
 
 
 Uses
-  FHIR.Support.Objects;
+  FHIR.Support.Base;
 
 
 Type

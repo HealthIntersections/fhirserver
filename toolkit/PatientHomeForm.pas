@@ -33,11 +33,12 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-  FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,
-  FHIR.Support.DateTime,
-  FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
-  BaseFrame, DocumentGenerationForm, FMX.TabControl;
+  FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox, FMX.TabControl,
+  FHIR.Ui.Graph,
+  FHIR.Support.Utilities,
+  FHIR.Support.Base, 
+  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.ObsGraph,
+  BaseFrame, DocumentGenerationForm;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -63,17 +64,24 @@ type
     Panel5: TPanel;
     Panel6: TPanel;
     Panel7: TPanel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure lbCompositionsDblClick(Sender: TObject);
   private
     FPatient: TFHIRPatient;
     FCapabilityStatement: TFhirCapabilityStatement;
     FClient: TFHIRClient;
+    FgrHR : TFGraph;
 
     FResources : TFslMap<TFHIRResource>;
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
     procedure SetClient(const Value: TFHIRClient);
     procedure SetPatient(const Value: TFHIRPatient);
+
+    procedure buildGraphs;
+    procedure configureGraph(graph: TFGraph);
   public
     destructor Destroy; override;
 
@@ -89,6 +97,132 @@ implementation
 {$R *.fmx}
 
 { TPatientHomeFrame }
+
+procedure TPatientHomeFrame.configureGraph(graph : TFGraph);
+begin
+  graph.Align := TAlignLayout.Client;
+  graph.Cursor := 0;
+  graph.Visible := True;
+  graph.Plotting := True;
+  graph.Dimensions.BottomMargin := 20;
+  graph.Dimensions.LeftMargin := 25;
+  graph.Dimensions.RightMargin := 10;
+  graph.Dimensions.TopMargin := 10;
+  graph.Dimensions.TickLength := 4;
+  graph.Dimensions.XAxisTitleOffset := 4;
+  graph.Dimensions.XAxisLabelOffset := 2;
+  graph.Dimensions.YAxisTitleOffset := 10;
+  graph.Dimensions.YAxisLabelOffset := 2;
+  graph.Dimensions.GraphTitleOffset := 7;
+  graph.Dimensions.PrintXOffsetPct := 5;
+  graph.Dimensions.PrintYOffsetPct := 20;
+  graph.Dimensions.PrintScalePct := 90;
+  graph.Appearance.AxesColor := clBlack;
+  graph.Appearance.BackgroundColor := clWhite;
+  graph.Appearance.MarginColor := clWhite;
+  graph.Appearance.PrintBkgndColor := False;
+  graph.Appearance.GridColor := clSilver;
+  graph.Appearance.GridStyle := psDot;
+  graph.Appearance.ShowGraphLabels := True;
+  graph.Appearance.PlotOffGraph := False;
+  graph.Appearance.ShowMarks := True;
+  graph.Appearance.ShowTicks := True;
+  graph.Appearance.GraphTitle := '';
+  graph.Appearance.MinSteps := 5;
+  graph.Appearance.MaxSteps := 50;
+  graph.Appearance.TitleFont.Family := 'Tahoma';
+  graph.Appearance.TitleFont.Size := 9;
+  graph.Appearance.TitleFont.Style := [TFontStyle.fsBold];
+  graph.Appearance.CaptionFont.Family := 'Tahoma';
+  graph.Appearance.CaptionFont.Size := 8;
+  graph.Appearance.CaptionFont.Style := [];
+  graph.Appearance.LabelFont.Family := 'Tahoma';
+  graph.Appearance.LabelFont.Size := 8;
+  graph.Appearance.LabelFont.Style := [];
+  graph.Appearance.CrossAtZero := False;
+  graph.Appearance.CrossColor := clRed;
+  graph.Appearance.Crosslength := 4;
+  graph.Appearance.PrintLineStyle := True;
+  graph.Appearance.MinPointClearance := 0;
+  graph.Appearance.CrossWire := False;
+  graph.Legend.visible := False;
+  graph.XAxis.Title := '';
+  graph.XAxis.LabelDecimals := 0;
+  graph.XAxis.AutoLabelDecimals := True;
+  graph.XAxis.LogCycleDivisions := 2;
+  graph.XAxis.LogScale := False;
+  graph.XAxis.Max := 0;
+  graph.XAxis.Min := -8;
+  graph.XAxis.StepSize := 4;
+  graph.XAxis.MinScaleLength := 0;
+  graph.XAxis.ShowAsTime := False;
+  graph.XAxis.DateTimeFormat := 'dd-mmm';
+  graph.XAxis.DateTickType := dt_minute;
+  graph.XAxis.ShowAxis := True;
+  graph.XAxis.Reversed := False;
+  graph.XAxis.OffsetType := ao_Minimum;
+  graph.XAxis.Offset := 0;
+  graph.XAxis.Gridlines := True;
+  graph.XAxis.AutoSizing := False;
+  graph.XAxis.AutoStepping := False;
+  graph.YAxis1.Title := '';
+  graph.YAxis1.LabelDecimals := 0;
+  graph.YAxis1.AutoLabelDecimals := False;
+  graph.YAxis1.LogCycleDivisions := 2;
+  graph.YAxis1.LogScale := False;
+  graph.YAxis1.Max := 170;
+  graph.YAxis1.Min := 50;
+  graph.YAxis1.StepSize := 25;
+  graph.YAxis1.MinScaleLength := 0;
+  graph.YAxis1.ShowAsTime := False;
+  graph.YAxis1.DateTimeFormat := 'dd-mmm';
+  graph.YAxis1.DateTickType := dt_minute;
+  graph.YAxis1.ShowAxis := True;
+  graph.YAxis1.Reversed := False;
+  graph.YAxis1.OffsetType := ao_Minimum;
+  graph.YAxis1.Offset := 0;
+  graph.YAxis1.Gridlines := True;
+  graph.YAxis1.AutoSizing := False;
+  graph.YAxis1.AutoStepping := False;
+  graph.YAxis2.ShowAxis := False;
+end;
+
+procedure TPatientHomeFrame.buildGraphs;
+var
+  dp : TObservationDataProvider;
+  series : TFGraphSeries;
+begin
+  FgrHR := TFGraph.Create(self);
+  pnlHR.AddObject(FgrHR);
+  configureGraph(FgrHR);
+  FgrHR.addBand(TAlphaColors.Green, 60, 90, 0.1);
+  FgrHR.addBand(TAlphaColors.Orange, 90, 150, 0.1);
+  FgrHR.addBand(TAlphaColors.Red, 150, 170, 0.1);
+
+  dp := TObservationDataProvider.Create;
+  try
+    dp.code := '8867-4';
+    dp.server := FClient.address;
+    dp.window := 1 / 3;
+    dp.SeriesName := 'Heart Rate';
+    dp.patientId := Patient.id;
+    dp.load;
+    series := TFGraphSeries.Create(dp.link);
+    try
+      series.DrawPoints := true;
+      series.PointColor := TAlphaColors.Black;
+      series.PointShape := ps_Circle;
+      series.PointSize := 2;
+      series.FillPoints := true;
+      series.Active := true;
+      FgrHR.Series.Add(series.Link);
+    finally
+      series.Free;
+    end;
+  finally
+    dp.Free;
+  end;
+end;
 
 procedure TPatientHomeFrame.Button1Click(Sender: TObject);
 begin
@@ -156,6 +290,8 @@ var
   start : TDateTime;
 begin
   inherited;
+  buildGraphs;
+
   lblName.text := gen(patient.nameList[0]);
 
   if FResources = nil then

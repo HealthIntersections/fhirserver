@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, ZLib,
-  FHIR.Support.Strings, FHIR.Support.Json, FHIR.Web.Parsers, FHIR.Web.Fetcher, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Web.Parsers, FHIR.Web.Fetcher,
   FHIR.Base.Objects, FHIR.Base.Lang;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;

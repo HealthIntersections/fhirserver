@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils, Classes, System.Character,
-  FHIR.Support.Objects,
-  FHIR.Support.Strings, FHIR.Support.Text,
+  FHIR.Support.Base,
+  FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Support.MXml, FHIR.Support.Xml,
   FHIR.Base.Objects, FHIR.Base.Lang;
 

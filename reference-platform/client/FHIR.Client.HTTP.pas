@@ -33,10 +33,9 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime,
-  FHIR.Support.Stream, FHIR.Support.Mime, FHIR.Support.Json,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdComponent,
-  {$IFNDEF OSX}FHIR.Support.WinInet, {$ENDIF}
+  {$IFNDEF OSX}FHIR.Web.WinInet, {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang,
   FHIR.Smart.Utilities;
 

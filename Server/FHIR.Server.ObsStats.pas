@@ -39,9 +39,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Lang,
-  FHIR.Database.Manager, FHIR.Support.DateTime,
+  FHIR.Database.Manager,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations;
 
 type

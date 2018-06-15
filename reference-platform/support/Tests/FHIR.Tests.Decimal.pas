@@ -33,7 +33,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Objects,
+  FHIR.Support.Base,FHIR.Support.Utilities,
   DUnitX.TestFramework;
 
 Type

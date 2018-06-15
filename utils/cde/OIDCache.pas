@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Strings;
+  FHIR.Support.Utilities;
 
 function DescribeOID(oid : String) : String;
 procedure ReadOids(ts : TStringList);

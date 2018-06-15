@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Text, FHIR.Support.Strings,
+  FHIR.Support.Stream, FHIR.Support.Utilities,
   FHIR.Support.MXml, FHIR.Support.Xml,
   FHIR.Base.Objects, FHIR.Server.Session, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Xhtml,
   {$IFDEF FHIR2}

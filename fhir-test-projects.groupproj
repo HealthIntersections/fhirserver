@@ -6,6 +6,12 @@
         <Projects Include="tests\FHIRServerTests.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="tests\UITester.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="tests\UITesterFMX.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="reference-platform\r4\fhirtests4.dproj">
             <Dependencies/>
         </Projects>
@@ -13,12 +19,6 @@
             <Dependencies/>
         </Projects>
         <Projects Include="reference-platform\dstu2\fhirtests2.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="tests\UITester.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="tests\UITesterFMX.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -37,6 +37,24 @@
     </Target>
     <Target Name="FHIRServerTests:Make">
         <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UITester">
+        <MSBuild Projects="tests\UITester.dproj"/>
+    </Target>
+    <Target Name="UITester:Clean">
+        <MSBuild Projects="tests\UITester.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UITester:Make">
+        <MSBuild Projects="tests\UITester.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UITesterFMX">
+        <MSBuild Projects="tests\UITesterFMX.dproj"/>
+    </Target>
+    <Target Name="UITesterFMX:Clean">
+        <MSBuild Projects="tests\UITesterFMX.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UITesterFMX:Make">
+        <MSBuild Projects="tests\UITesterFMX.dproj" Targets="Make"/>
     </Target>
     <Target Name="fhirtests4">
         <MSBuild Projects="reference-platform\r4\fhirtests4.dproj"/>
@@ -65,32 +83,14 @@
     <Target Name="fhirtests2:Make">
         <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Make"/>
     </Target>
-    <Target Name="UITester">
-        <MSBuild Projects="tests\UITester.dproj"/>
-    </Target>
-    <Target Name="UITester:Clean">
-        <MSBuild Projects="tests\UITester.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="UITester:Make">
-        <MSBuild Projects="tests\UITester.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="UITesterFMX">
-        <MSBuild Projects="tests\UITesterFMX.dproj"/>
-    </Target>
-    <Target Name="UITesterFMX:Clean">
-        <MSBuild Projects="tests\UITesterFMX.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="UITesterFMX:Make">
-        <MSBuild Projects="tests\UITesterFMX.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRServerTests;fhirtests4;fhirtests3;fhirtests2;UITester;UITesterFMX"/>
+        <CallTarget Targets="FHIRServerTests;UITester;UITesterFMX;fhirtests4;fhirtests3;fhirtests2"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRServerTests:Clean;fhirtests4:Clean;fhirtests3:Clean;fhirtests2:Clean;UITester:Clean;UITesterFMX:Clean"/>
+        <CallTarget Targets="FHIRServerTests:Clean;UITester:Clean;UITesterFMX:Clean;fhirtests4:Clean;fhirtests3:Clean;fhirtests2:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRServerTests:Make;fhirtests4:Make;fhirtests3:Make;fhirtests2:Make;UITester:Make;UITesterFMX:Make"/>
+        <CallTarget Targets="FHIRServerTests:Make;UITester:Make;UITesterFMX:Make;fhirtests4:Make;fhirtests3:Make;fhirtests2:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

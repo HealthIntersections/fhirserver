@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Math, FHIR.Web.Parsers, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json,
-  FHIR.Misc.GraphQL,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json,
+  FHIR.Web.Parsers, FHIR.Web.GraphQL,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   FHIR.Version.Context, FHIR.Version.PathEngine, FHIR.Version.PathNode,

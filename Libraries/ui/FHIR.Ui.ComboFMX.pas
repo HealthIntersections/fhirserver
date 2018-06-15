@@ -32,7 +32,7 @@ interface
 
 uses
   Classes,
-  FHIR.Support.Strings,
+  FHIR.Support.Utilities,
   FHIR.Version.Resources,
   FMX.ListBox;
 

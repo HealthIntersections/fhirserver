@@ -35,7 +35,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, FHIR.Npp.DockingForm, Vcl.StdCtrls, FHIR.Npp.Base, Vcl.ToolWin,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
-  FHIR.Support.Generics,
+  FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Smart.Utilities,
   FHIRPathDocumentation, Vcl.Menus, Vcl.Buttons, FHIR.Ui.ColorSB, FHIR.Npp.Context;
 

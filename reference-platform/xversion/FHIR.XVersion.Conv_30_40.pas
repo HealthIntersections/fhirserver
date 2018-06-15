@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects,
+  FHIR.Support.Base,
   FHIR.Base.Lang,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Utilities,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities,

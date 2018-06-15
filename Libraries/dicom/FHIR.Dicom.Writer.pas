@@ -33,7 +33,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Binary, FHIR.Support.Strings,
+  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities,
   FHIR.Dicom.Objects, FHIR.Dicom.Dictionary;
 
 Const

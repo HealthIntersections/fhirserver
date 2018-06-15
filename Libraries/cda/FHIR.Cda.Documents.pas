@@ -32,8 +32,7 @@ Interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.DateTime, FHIR.Support.System,
-  FHIR.Support.Stream, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.Binary,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Xml, FHIR.Support.MXml,
   FHIR.Cda.Base, FHIR.Cda.Types, FHIR.Cda.Objects, FHIR.Cda.Parser, FHIR.Cda.Writer;
 
 type
@@ -268,9 +267,6 @@ Function ParseCDA(Const sSource : String; bErrors : Boolean = False) : TcdaClini
 Function WriteCDA(Const oDoc : TcdaClinicalDocument; bIsPretty : Boolean = True) : TBytes;
 
 implementation
-
-Uses
-  FHIR.Support.Zip;
 
 Function SrcIsZip(s : TBytes):Boolean;
 begin

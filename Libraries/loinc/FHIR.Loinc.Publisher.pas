@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Math, FHIR.Support.Threads,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Collections,
+   FHIR.Support.Base, FHIR.Support.Collections,
   FHIR.Web.HtmlGen, FHIR.LOINC.Services;
 
 Const
@@ -72,7 +72,7 @@ Type
 Implementation
 
 Uses
-  FHIR.Support.Strings;
+  FHIR.Support.Utilities;
 
 function StringToBoolDef(s : String; def : boolean):boolean;
 begin

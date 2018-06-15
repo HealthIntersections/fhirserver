@@ -37,7 +37,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.Decimal,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Xml, FHIR.Support.MXml,
   FHIR.Base.Parser, FHIR.Base.Objects,
   FHIR.R4.ParserBase, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types;
 

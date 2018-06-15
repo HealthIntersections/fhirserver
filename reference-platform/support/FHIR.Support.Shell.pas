@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Messages, Windows, ShellAPI, ShlObj, MultiMon,
-  FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Strings;
+  FHIR.Support.Utilities;
 
 
 Type

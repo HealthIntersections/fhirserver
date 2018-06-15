@@ -778,6 +778,9 @@ object Form4: TForm4
     ExplicitHeight = 443
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 405
       object Panel2: TPanel
         Left = 0
@@ -1166,6 +1169,9 @@ object Form4: TForm4
     object TabSheet4: TTabSheet
       Caption = 'Snomed Combination'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 405
       object Panel20: TPanel
         Left = 0
@@ -1649,6 +1655,9 @@ object Form4: TForm4
     object TabSheet2: TTabSheet
       Caption = 'LOINC Import'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 405
       object Panel8: TPanel
         Left = 0
@@ -2026,6 +2035,9 @@ object Form4: TForm4
     object TabSheet3: TTabSheet
       Caption = 'Process UMLS'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
       ExplicitHeight = 405
       object Panel14: TPanel
         Left = 0
@@ -2359,7 +2371,9 @@ object Form4: TForm4
     object TabSheet5: TTabSheet
       Caption = 'Package Manager'
       ImageIndex = 4
+      ExplicitLeft = 0
       ExplicitTop = 89
+      ExplicitWidth = 0
       ExplicitHeight = 350
       object pnlPackageManager: TPanel
         Left = 0

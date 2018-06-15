@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Objects,
+  FHIR.Support.Base,
   FHIR.Base.Objects;
 
 type

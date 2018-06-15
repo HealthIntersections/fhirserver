@@ -34,7 +34,7 @@ uses
   IdHTTP, IdSSLOpenSSL, IdComponent,
   FHIR.Ui.OSX,
   FMX.Edit, FMX.ListBox, FMX.StdCtrls,
-  FHIR.Support.Objects, FHIR.Support.Threads, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Threads, 
   FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Parser,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.Profiles;

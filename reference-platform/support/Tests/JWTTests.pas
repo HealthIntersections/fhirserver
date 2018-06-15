@@ -33,9 +33,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Json,
-  FHIR.Support.Certs,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Certs,
   DUnitX.TestFramework;
 
 Type

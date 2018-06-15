@@ -33,7 +33,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, IniFiles,
   Controls, Forms, Dialogs, StdCtrls,
-  FHIR.Support.WinInet, FHIR.Support.Zip, FHIR.Support.Stream;
+  FHIR.Web.WinInet, FHIR.Support.Stream;
 
 const
   UM_ACTIVATED = WM_USER + 1;

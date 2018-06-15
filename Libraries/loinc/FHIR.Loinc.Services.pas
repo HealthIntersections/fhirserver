@@ -32,13 +32,12 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
   RegularExpressions, YuStemmer,
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Operations,
   FHIR.CdsHooks.Utilities,
-  FHIR.Tx.Service, FHIR.Support.DateTime;
+  FHIR.Tx.Service;
 
 {axes
 

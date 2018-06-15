@@ -38,13 +38,13 @@ todo:
 }
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.DateTime, FHIR.Support.Exceptions,
+  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Utilities, 
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Tx.Service, FHIR.Base.Factory, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.Tools.CodeSystemProvider;
 
-{  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Generics,
-  FHIR.Support.DateTime,
-  FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
+{  SysUtils, Classes, FHIR.Support.Utilities, FHIR.Support.Utilities, 
+  FHIR.Support.Utilities,
+  FHIR.Support.Collections, FHIR.Support.Base,  
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Tx.Service;
   //, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services, FHIR.Tx.Server, FHIR.Tx.Manager;}

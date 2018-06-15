@@ -40,7 +40,7 @@ uses
   {$ELSE}
   WinApi.Windows, Messages, Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Clipbrd,
   {$ENDIF}
-  FHIR.Support.Objects, FHIR.Support.Generics;
+  FHIR.Support.Base;
 
 const
   tiny = 1.0e-20;  { used to avoid divide by zero errors }
@@ -90,6 +90,9 @@ type
   TPenStyle = TStrokeDash;
   TBrushStyle = TBrushKind;
   TPenMode = (pmXOr);
+  {$ELSE}
+Type
+  TAlphaColor = TColor;
   {$ENDIF}
 
 type
@@ -215,25 +218,25 @@ type
     FHighlighted : Boolean;
     FZeroOffset : DOuble;
     FAutoZero : Boolean;
-    FLineColor : TColor;
+    FLineColor : TAlphaColor;
     FLineStyle : TPenStyle;
-    FPointColor : TColor;
+    FPointColor : TAlphaColor;
     FFillPoints : boolean;
     FLegendStatus : TFGraphLegendStatus;
     FPointSize : Word;
     FPointShape : TFGraphPointShape;
     FBarOffset : Double;
     FBarWidth : Double;
-    FBoundsColor : TColor;
+    FBoundsColor : TAlphaColor;
     FBoundsLineStyle : TPenStyle;
     FBoundsType : TFGraphBoundType;
     FUpperBound : Double;
     FLowerBound : Double;
-    FErrorslineColor : TColor;
+    FErrorslineColor : TAlphaColor;
     FErrorsLineStyle : TPenStyle;
     FRegrLineStyle: TPenStyle;
     FRegressionType: TGraphStyleRegressionType;
-    FRegrColor: TColor;
+    FRegrColor: TAlphaColor;
     FTolerance: Double;
     FRegControl1: LongInt;
     FRegControl2: Double;
@@ -247,22 +250,22 @@ type
     procedure SetHighlighted(v : boolean);
     procedure SetZeroOffset(v: Double);
     procedure SetAutoZero(v: Boolean);
-    procedure SetLineColor(v : TColor);
+    procedure SetLineColor(v : TAlphaColor);
     procedure SetLinestyle(v : TPenStyle);
-    procedure SetPointColor(v : TColor);
+    procedure SetPointColor(v : TAlphaColor);
     procedure setFillPoints(v : Boolean);
     procedure SetPointShape(v : TFGraphPointShape);
     procedure setPointSize(v : Word);
     procedure SetBarOffset(v : Double);
     procedure SetBarWidth(v : Double);
-    procedure SetBoundsColor(v : TColor);
+    procedure SetBoundsColor(v : TAlphaColor);
     procedure SetBoundsLineStyle(v : TPenstyle);
     procedure setBoundsType(v : TFGraphBoundType);
     procedure SetUpperBound(v : double);
     procedure SetLowerBound(v : Double);
     procedure setErrorsLinestyle(v : TPenStyle);
-    procedure SetErrorsLineColor(v : TColor);
-    procedure SetRegrColor(const v: TColor);
+    procedure SetErrorsLineColor(v : TAlphaColor);
+    procedure SetRegrColor(const v: TAlphaColor);
     procedure SetRegressionType(const v: TGraphStyleRegressionType);
     procedure SetRegrLineStyle(const v: TPenStyle);
     procedure SetRegControl1(v: LongInt);
@@ -292,6 +295,9 @@ type
   public
     constructor Create(provider : TFGraphDataProvider);
     destructor Destroy; override;
+
+    function link : TFGraphSeries; overload;
+
     property Data : TFGraphDataProvider read FData;
 
     property Active : Boolean read FActive write setActive;
@@ -308,24 +314,24 @@ type
     property HighLighted : boolean read FHighlighted write SetHighlighted;
     property ZeroOffset : Double read FZeroOffset write setZeroOffset;
     property AutoZero: Boolean read FAutoZero write SetAutoZero;
-    property LineColor : TColor read FLineColor write SetLineColor;
+    property LineColor : TAlphaColor read FLineColor write SetLineColor;
     property LineStyle : TPenStyle read FLineStyle write setLinestyle;
-    property PointColor : TColor read FPointColor write SetPointColor;
+    property PointColor : TAlphaColor read FPointColor write SetPointColor;
     property FillPoints : Boolean read FFillPoints write setFillPoints;
     property PointShape : TFGraphPointShape read FPointShape write SetPointShape;
     property PointSize : Word read FPointSize write setPointsize;
     property BarOffset : Double read FBarOffset write SetBarOffset;
     property BarWidth : Double read FBarWidth write SetBarWidth;
-    property BoundsColor : TColor read FBoundsColor write SetBoundsColor;
+    property BoundsColor : TAlphaColor read FBoundsColor write SetBoundsColor;
     property BoundsLineStyle : TPenStyle read FBoundsLineStyle write SetBoundsLineStyle;
     property BoundsType : TFGraphBoundType read FBoundstype write SetBoundstype;
     property UpperBound : double read FUpperBound write SetUpperBound;
     property LowerBound : double read FLowerBound write SetLowerBound;
-    property ErrorsLineColor : TColor read FErrorsLineColor write SetErrorsLineColor;
+    property ErrorsLineColor : TAlphaColor read FErrorsLineColor write SetErrorsLineColor;
     property ErrorsLineStyle : TPenStyle read FErrorsLineStyle write setErrorsLinestyle;
 
     property RegressionType : TGraphStyleRegressionType read FRegressionType write SetRegressionType;
-    property RegressionLineColor : TColor read FRegrColor write SetRegrColor;
+    property RegressionLineColor : TAlphaColor read FRegrColor write SetRegrColor;
     property RegressionLineStyle : TPenStyle read FRegrLineStyle write SetRegrLineStyle;
     property Tolerance: Double read FTolerance write FTolerance;
     property RegControl1: LongInt read FRegControl1 write SetRegControl1;
@@ -418,11 +424,11 @@ type
 
   TFGraphMark = class (TFGraphAnnotation)
   private
-    FColor : TColor;
+    FColor : TAlphaColor;
     FX1, FY1, FX2, FY2 : double;
     FMarkType : TFGraphMarkType;
     FMarkPos : TFGraphMarkPos;
-    procedure SetColor(v : TColor);
+    procedure SeTAlphaColor(v : TAlphaColor);
     procedure Setx1(v : double);
     procedure Sety1(v : double);
     procedure Setx2(v : double);
@@ -432,7 +438,7 @@ type
   protected
     function  TypeLabel : string; override;
   public
-    property  Color : TColor read FColor write SetColor;
+    property  Color : TAlphaColor read FColor write SeTAlphaColor;
     property  x1 : double read Fx1 write Setx1;
     property  y1 : double read Fy1 write Sety1;
     property  x2 : double read Fx2 write Setx2;
@@ -443,24 +449,46 @@ type
 
   TFGraphFunctionEvent = function (sender : TObject; v : Double) : Double of object;
 
+  TFGraphBand = class (TFGraphComponent)
+  private
+    FOpacity: Double;
+    FMax: Double;
+    FMin: Double;
+    FColor: TAlphaColor;
+    FYAxis2: boolean;
+    procedure SeTAlphaColor(const Value: TAlphaColor);
+    procedure SetMax(const Value: Double);
+    procedure SetMin(const Value: Double);
+    procedure SetOpacity(const Value: Double);
+    procedure SetYAxis2(const Value: boolean);
+  public
+    function link : TFGraphBand; overload;
+
+    property color : TAlphaColor read FColor write SeTAlphaColor;
+    property YAxis2 : boolean read FYAxis2 write SetYAxis2;
+    property Max : Double read FMax write SetMax;
+    property Min : Double read FMin write SetMin;
+    property opacity : Double read FOpacity write SetOpacity;
+  end;
+
   //  A convenient way to graph a function; automatically fills graph; handles
   //  singularities in the function.
   TFGraphFunction = class (TFGraphComponent)
   private
     FOnGetValue: TFGraphFunctionEvent;
-    FColor: TColor;
+    FColor: TAlphaColor;
     FXMax: Double;
     FBounded: boolean;
     FStyle: TPenStyle;
     FXMin: Double;
     procedure SetBounded(const Value: boolean);
-    procedure SetColor(const Value: TColor);
+    procedure SeTAlphaColor(const Value: TAlphaColor);
     procedure SetStyle(const Value: TPenStyle);
     procedure SetXMax(const Value: Double);
     procedure SetXMin(const Value: Double);
   public
     property OnGetValue : TFGraphFunctionEvent read FOnGetValue write FOnGetValue;
-    property color : TColor read FColor write SetColor;
+    property color : TAlphaColor read FColor write SeTAlphaColor;
     property style : TPenStyle read FStyle write SetStyle;
     property bounded : boolean read FBounded write SetBounded;
     property xMin : Double read FXMin write SetXMin;
@@ -606,7 +634,7 @@ type
     FTickMarks, FShowMarks, FCrossAtZero,FPrintLineStyle : Boolean;
     FPlotOffGraph, FAllowDuplicates : Boolean;
     FLabelGraph : Boolean;
-    FGridColor, FAxesColor, FBkgdColor, FMarginColor, FCrossColor : TColor;
+    FGridColor, FAxesColor, FBkgdColor, FMarginColor, FCrossColor : TAlphaColor;
     FGridStyle : TPenStyle;
     FBkgdWhenPrint : Boolean;
     FErrorCaption : string;
@@ -616,11 +644,11 @@ type
     FMinPointClearance : double;
     FCrossWire : Boolean;
     FErrorFont: TFontAdapted;
-    procedure SetAxesColor(v : TColor);
-    procedure SetBkgdColor(v : TColor);
-    procedure SetMarginColor(v : TColor);
+    procedure SetAxesColor(v : TAlphaColor);
+    procedure SetBkgdColor(v : TAlphaColor);
+    procedure SetMarginColor(v : TAlphaColor);
     procedure SetErrorCaption(v : string);
-    procedure SetGridColor(v : TColor);
+    procedure SetGridColor(v : TAlphaColor);
     procedure SetGridStyle(v : TPenStyle);
     procedure SetLabelGraph(v : Boolean);
     procedure SetPlotOffGraph(v : Boolean);
@@ -634,17 +662,17 @@ type
     procedure setCaptionFont(v : TFontAdapted);
     procedure setErrorFont(const Value: TFontAdapted);
     procedure setCrossAtZero(v : boolean);
-    procedure setCrossColor(v : tColor);
+    procedure setCrossColor(v : TAlphaColor);
     procedure setCrosslength(v : word);
     procedure SetMinPointClearance(v : double);
     procedure FontChanged(Sender : TObject);
   published
-    property AxesColor : TColor read FAxesColor write SetAxescolor default clBlack;
-    property BackgroundColor : TColor read FBkgdColor write SetBkgdColor;
-    property MarginColor : TColor read FMarginColor write SetMarginColor;
+    property AxesColor : TAlphaColor read FAxesColor write SetAxescolor default clBlack;
+    property BackgroundColor : TAlphaColor read FBkgdColor write SetBkgdColor;
+    property MarginColor : TAlphaColor read FMarginColor write SetMarginColor;
     property PrintBkgndColor : Boolean read FBkgdWhenPrint write FBkgdWhenPrint;
     property ErrorCaption : string read FErrorCaption write SetErrorCaption;
-    property GridColor : TColor read FGridColor write SetGridcolor default clSilver;
+    property GridColor : TAlphaColor read FGridColor write SetGridcolor default clSilver;
     property GridStyle : TPenStyle read FGridStyle write SetGridStyle default psDot;
     property ShowGraphLabels : Boolean read FLabelGraph write SetLabelGraph default True;
     property PlotOffGraph : Boolean read FPlotOffGraph write SetPlotOffGraph default False;
@@ -658,7 +686,7 @@ type
     property ErrorFont : TFontAdapted read FErrorFont write setErrorFont;
     property LabelFont : TFontAdapted read FLabelFont write setLabelFont;
     property CrossAtZero : Boolean read FCrossatZero write setCrossAtZero default false;
-    property CrossColor : tColor read FCrossColor write SetCrossColor default clRed;
+    property CrossColor : TAlphaColor read FCrossColor write SetCrossColor default clRed;
     property Crosslength : word read FCrosslength write SetCrossLength default 4;
     property PrintLineStyle : boolean read FPrintLineStyle write FPrintLineStyle default true;
     property MinPointClearance : double read FMinPointClearance write setMinPointClearance;
@@ -670,16 +698,16 @@ type
   TFGraphLegend = class (TFGraphComponent)
   private
      Fvisible : Boolean;
-     Fcolor : TColor;
+     Fcolor : TAlphaColor;
      FborderStyle : TPenStyle;
-     FborderColor : TColor;
+     FborderColor : TAlphaColor;
      FLayout : TFGraphLegendStyle;
      Ftop, Fleft, Fwidth, Fheight, FSymbolSpace, FXMargin, FYmargin : integer;
      Ffont : TFontAdapted;
      procedure setvisible(v : Boolean);
-     procedure setcolor(v : TColor);
+     procedure seTAlphaColor(v : TAlphaColor);
      procedure setborderStyle(v : TPenStyle);
-     procedure setborderColor(v : TColor);
+     procedure setborderColor(v : TAlphaColor);
      procedure setLayout(v : TFGraphLegendStyle);
      procedure settop(v : integer);
      procedure setleft(v : integer);
@@ -693,9 +721,9 @@ type
      procedure fontchanged(sender : TObject);
   published
      property visible : Boolean read FVisible write SetVisible default false;
-     property color : TColor read Fcolor write SetColor default clWhite;
+     property color : TAlphaColor read Fcolor write SeTAlphaColor default clWhite;
      property borderStyle : TPenStyle read FBorderstyle write SetBorderStyle;
-     property borderColor : TColor read FBorderColor write SetBorderColor;
+     property borderColor : TAlphaColor read FBorderColor write SetBorderColor;
      property Layout : TFGraphLegendStyle read FLayout write SetLayout default lsAcross;
      property top : integer read FTop write settop default 10;
      property left : integer read FLeft write setleft default 10;
@@ -715,12 +743,12 @@ type
     FCanvas : TCanvas;
     {$IFDEF FMX}
     FState : TCanvasSaveState;
-    FFontColor : TColor;
+    FFonTAlphaColor : TAlphaColor;
     {$ENDIF}
     function GetFont: TFont;
     procedure SetFont(const Value: TFont);
-    function GetPenColor: TColor;
-    procedure SetPenColor(const Value: TColor);
+    function GetPenColor: TAlphaColor;
+    procedure SetPenColor(const Value: TAlphaColor);
     function GetPenStyle: TPenStyle;
     procedure SetPenStyle(const Value: TPenStyle);
     function GetPenMode: TPenMode;
@@ -729,10 +757,10 @@ type
     procedure SetPenWidth(const Value: integer);
     function GetBrushStyle: TBrushStyle;
     procedure SetBrushStyle(const Value: TBrushStyle);
-    function GetBrushColor: TColor;
-    procedure SetBrushColor(const Value: TColor);
-    function GetFontColor: TColor;
-    procedure SetFontColor(const Value: TColor);
+    function GetBrushColor: TAlphaColor;
+    procedure SetBrushColor(const Value: TAlphaColor);
+    function GetFonTAlphaColor: TAlphaColor;
+    procedure SetFonTAlphaColor(const Value: TAlphaColor);
   public
     constructor create(canvas : TCanvas);
     destructor Destroy; override;
@@ -740,20 +768,20 @@ type
     procedure start;
     procedure finish;
 
-    property PenColor : TColor read GetPenColor write SetPenColor;
+    property PenColor : TAlphaColor read GetPenColor write SetPenColor;
     property PenStyle : TPenStyle read GetPenStyle write SetPenStyle;
     property PenMode : TPenMode read GetPenMode write SetPenMode;
     property PenWidth : integer read GetPenWidth write SetPenWidth;
     property BrushStyle : TBrushStyle read GetBrushStyle write SetBrushStyle;
-    property BrushColor : TColor read GetBrushColor write SetBrushColor;
+    property BrushColor : TAlphaColor read GetBrushColor write SetBrushColor;
     property Font : TFont read GetFont write SetFont;
-    property fontcolor : TColor read GetFontColor write SetFontColor;
+    property fonTAlphaColor : TAlphaColor read GetFonTAlphaColor write SetFonTAlphaColor;
     procedure Polyline(const Points: array of TPoint); overload;
     procedure Polyline(points : pLinePoints; count : integer); overload;
     procedure Ellipse(X1, Y1, X2, Y2: Integer);
     procedure Polygon(const Points: array of TPoint);
     procedure Line(x1,y1, x2,y2 : integer);
-    procedure Rectangle(x1,y1, x2,y2 : integer);
+    procedure Rectangle(x1,y1, x2,y2 : integer; opacity : Double = 1.0);
     procedure Clip(x1,y1, x2,y2 : integer);
     procedure UnClip(x1,y1, x2,y2 : integer);
     function TextWidth(text : String) : integer;
@@ -768,13 +796,13 @@ type
     FCanvas : TGraphCanvas;
     FSeries : TFslList<TFGraphSeries>;
     FAnnotations : TFslList<TFGraphAnnotation>;
+    FBands : TFslList<TFGraphBand>;
     FFunctions : TFslList<TFGraphFunction>;
 
     FDimensions : TFGraphDimensions;
     FAppearance : TFGraphAppearance;
     FXAxis, FYAxis, FYAxis2 : TFGraphAxis;
     FLegend : TFGraphLegend;
-    FLastSeries, FLastAnnotation : integer;
     AllScalesOK, FNoGridlines : Boolean;
 
   {Graph property data : }
@@ -795,12 +823,11 @@ type
     FOnRescale, FOnScaleError, FOnWantDesigner : TNotifyEvent;
     FOnPaintStart, FOnPaintEnd : TFGraphPaintEvent;
 
-    FFilingSeriesCount,FFilingMarksCount,FFilingAnnotationsCount : word;
     FSaveData : boolean;
 
     // scaling:
     FSM, FSD : Integer;
-    FColor: TColor;
+    FColor: TAlphaColor;
 
     procedure SetPlotting(v : Boolean);
     procedure SetHasDragged(v : boolean);
@@ -813,6 +840,7 @@ type
     procedure PaintSeriesBounds(series : TFGraphSeries);
     procedure PaintSeriesErrors(series : TFGraphSeries);
     procedure PaintSeriesRegression(series : TFGraphSeries);
+    procedure PaintBand(band : TFGraphBand);
     procedure PaintAnnotation(annotation : TFGraphAnnotation);
     procedure PaintXMark(mark : TFGraphMark);
     procedure PaintYMark(mark : TFGraphMark);
@@ -847,6 +875,7 @@ type
     procedure DoRescaleEvent;
     function  DataFound(yaxis2 : boolean) : Boolean;
     procedure SeriesChange(Sender: TObject; const Item: TFGraphSeries; Action: TCollectionNotification);
+    procedure BandChange(Sender: TObject; const Item: TFGraphBand; Action: TCollectionNotification);
     procedure AnnotationChange(Sender: TObject; const Item: TFGraphAnnotation; Action: TCollectionNotification);
     procedure FunctionsChange(Sender: TObject; const Item: TFGraphFunction; Action: TCollectionNotification);
 
@@ -868,9 +897,10 @@ type
 
     property Series : TFslList<TFGraphSeries> read FSeries;
     property Annotations : TFslList<TFGraphAnnotation> read FAnnotations;
+    property Bands : TFslList<TFGraphBand> read FBands;
     property Functions : TFslList<TFGraphFunction> read FFunctions;
 
-    procedure ClearAll; // clear both series and annotations
+    procedure ClearAll; // clear series, bands, functions, and annotations
 
    { for mouse events }
     property HasDragged : boolean read FHasDragged write SetHasDragged;
@@ -879,10 +909,11 @@ type
     function  GetMouseY2(y : Integer) : Double;
     function findNearestPoint(x,y : integer; var series : TFGraphSeries; var point : TFGraphDataPoint) : boolean;
 
-    function createMark(x1, y1, x2, y2: Double; c: Tcolor; name: string; marktype: TFGraphMarkType; markpos: TFGraphMarkPos; DrawTime: TFGraphDrawTime): TFGraphMark;
+    function createMark(x1, y1, x2, y2: Double; c: TAlphaColor; name: string; marktype: TFGraphMarkType; markpos: TFGraphMarkPos; DrawTime: TFGraphDrawTime): TFGraphMark;
     function createSeries(data : TFGraphDataProvider) : TFGraphSeries;
     function CreateFunction(event : TFGraphFunctionEvent) : TFGraphFunction;
 
+    procedure addBand(color :  TAlphaColor; min, max, opacity : Double);
     {$IFNDEF FMX}
     function settingsText(code : boolean) : String;
     {$ENDIF}
@@ -904,7 +935,7 @@ type
 
     property Plotting : Boolean read FPlotting write SetPlotting;
     {$IFDEF FMX}
-    property Color : TColor read FColor write FColor;
+    property Color : TAlphaColor read FColor write FColor;
     {$ELSE}
     property Align;
     property BevelInner default bvNone;
@@ -1002,7 +1033,7 @@ begin
       FGraph.Repaint;
 end;
 
-procedure TFGraphSeries.setActive(v: Boolean);
+procedure TFGraphSeries.SetActive(v: Boolean);
 begin
   if v <> FActive then
   begin
@@ -1029,7 +1060,7 @@ begin
   end;
 end;
 
-procedure TFGraphSeries.setYAxis2(v: Boolean);
+procedure TFGraphSeries.SetYAxis2(v: Boolean);
 begin
   if v <> FYAxis2 then
   begin
@@ -1056,7 +1087,7 @@ begin
   end;
 end;
 
-procedure TFGraphSeries.setDrawLine(v : boolean);
+procedure TFGraphSeries.SetDrawLine(v : boolean);
 begin
   if v <> FDrawline then
   begin
@@ -1083,7 +1114,7 @@ begin
   end;
 end;
 
-procedure TFGraphSeries.SetLineColor(v : TColor);
+procedure TFGraphSeries.SetLineColor(v : TAlphaColor);
 begin
   if v <> FLineColor then
   begin
@@ -1101,7 +1132,7 @@ begin
   end;
 end;
 
-procedure TFGraphSeries.SetPointColor(v : TColor);
+procedure TFGraphSeries.SetPointColor(v : TAlphaColor);
 begin
   if v <> FPointColor then
   begin
@@ -1110,7 +1141,7 @@ begin
   end;
 end;
 
-procedure TFGraphSeries.setFillPoints(v : boolean);
+procedure TFGraphSeries.SetFillPoints(v : boolean);
 begin
   if v <> Ffillpoints then
   begin
@@ -1151,7 +1182,7 @@ begin
   end;
 end;
 
-procedure TFGraphSeries.setRegcontrol2(v: Double);
+procedure TFGraphSeries.SetRegcontrol2(v: Double);
 begin
   if v <> FRegControl2 then
   begin
@@ -1179,7 +1210,7 @@ begin
     end;
 end;
 
-procedure TFGraphSeries.SetBoundsColor(v : TColor);
+procedure TFGraphSeries.SetBoundsColor(v : TAlphaColor);
 begin
   if v <> FBoundsColor then
   begin
@@ -1207,7 +1238,7 @@ begin
   end;
 end;
 
-procedure TFGraphSeries.SetRegrColor(const v: TColor);
+procedure TFGraphSeries.SetRegrColor(const v: TAlphaColor);
 begin
   if v <> FRegrColor then
   begin
@@ -1253,7 +1284,7 @@ begin
    end;
 end;
 
-procedure TFGraphSeries.setBoundsType(v : TFGraphBoundType);
+procedure TFGraphSeries.SetBoundsType(v : TFGraphBoundType);
 begin
   if v <> FBoundsType then
     begin
@@ -1271,7 +1302,7 @@ begin
   end;
 end;
 
-procedure TFGraphSeries.SetErrorsLineColor(v : TColor);
+procedure TFGraphSeries.SetErrorsLineColor(v : TAlphaColor);
 begin
   if v <> FErrorsLineColor then
   begin
@@ -2004,6 +2035,11 @@ begin
   result := FYStats;
 end;
 
+function TFGraphSeries.link: TFGraphSeries;
+begin
+  result := TFGraphSeries(inherited link);
+end;
+
 function TFGraphSeries.GetXStats;
 begin
   checkRegenStats;
@@ -2055,7 +2091,7 @@ end;
 
 { TFGraphMark }
 
-procedure TFGraphMark.SetColor(v : TColor);
+procedure TFGraphMark.SetAlphaColor(v : TAlphaColor);
 begin
   if v <> FColor then
   begin
@@ -2863,7 +2899,7 @@ begin
   change;
 end;
 
-procedure TFGraphAxis.setdateticktype;
+procedure TFGraphAxis.Setdateticktype;
 begin
   if v <> FDateTickType then
     begin
@@ -2939,7 +2975,7 @@ begin
   then FGraph.rePaint;
 end;
 
-procedure TFGraphAxis.setShowASTime;
+procedure TFGraphAxis.SetShowASTime;
 begin
   if v <> FShowASTime then
   begin
@@ -2980,7 +3016,7 @@ begin
     end;
 end;
 
-procedure TFGraphAxis.setOffsetType;
+procedure TFGraphAxis.SetOffsetType;
 begin
   if v <> FOffsetType then
     begin
@@ -2989,7 +3025,7 @@ begin
     end;
 end;
 
-procedure TFGraphAxis.setoffset;
+procedure TFGraphAxis.Setoffset;
 begin
   if v <> FOffset then
     begin
@@ -3112,25 +3148,25 @@ begin
   end;
 end;
 
-procedure TFGraphAppearance.SetGridcolor(v : TColor);
+procedure TFGraphAppearance.SetGridcolor(v : TAlphaColor);
 begin
   FGridColor := v;
   change;
 end;
 
-procedure TFGraphAppearance.SetAxescolor(v : TColor);
+procedure TFGraphAppearance.SetAxescolor(v : TAlphaColor);
 begin
   FAxesColor := v;
   change;
 end;
 
-procedure TFGraphAppearance.SetBkgdcolor(v : TColor);
+procedure TFGraphAppearance.SetBkgdcolor(v : TAlphaColor);
 begin
   FBkgdColor := v;
   change;
 end;
 
-procedure TFGraphAppearance.SetMarginColor(v : TColor);
+procedure TFGraphAppearance.SetMarginColor(v : TAlphaColor);
 begin
   FMarginColor := v;
   change;
@@ -3148,7 +3184,7 @@ begin
   change;
 end;
 
-procedure TFGraphAppearance.setErrorFont(const Value: TFontAdapted);
+procedure TFGraphAppearance.SetErrorFont(const Value: TFontAdapted);
 begin
   FErrorFont.Assign(Value);
   change;
@@ -3174,25 +3210,25 @@ begin
   change;
 end;
 
-procedure TFGraphAppearance.setTitleFont(v : TFontAdapted);
+procedure TFGraphAppearance.SetTitleFont(v : TFontAdapted);
 begin
   FTitleFont.assign(v);
   change;
 end;
 
-procedure TFGraphAppearance.setCaptionFont(v : TFontAdapted);
+procedure TFGraphAppearance.SetCaptionFont(v : TFontAdapted);
 begin
   FCaptionFont.assign(v);
   change;
 end;
 
-procedure TFGraphAppearance.setLabelFont(v : TFontAdapted);
+procedure TFGraphAppearance.SetLabelFont(v : TFontAdapted);
 begin
   FLabelFont.assign(v);
   change;
 end;
 
-procedure TFGraphAppearance.setCrossAtZero;
+procedure TFGraphAppearance.SetCrossAtZero;
 begin
   if v <> FCrossAtZero then
   begin
@@ -3236,7 +3272,7 @@ end;
 
 { TFGraphLegend }
 
-procedure TFGraphLegend.setvisible(v : Boolean);
+procedure TFGraphLegend.Setvisible(v : Boolean);
 begin
   if v <> FVisible then
   begin
@@ -3245,7 +3281,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setcolor(v : TColor);
+procedure TFGraphLegend.SetAlphaColor(v : TAlphaColor);
 begin
   if v <> FColor then
   begin
@@ -3254,7 +3290,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setborderColor(v: TColor);
+procedure TFGraphLegend.SetborderColor(v: TAlphaColor);
 begin
   if v <> FborderColor then
   begin
@@ -3263,7 +3299,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setborderStyle(v : TPenStyle);
+procedure TFGraphLegend.SetborderStyle(v : TPenStyle);
 begin
   if v <> Fborderstyle then
   begin
@@ -3272,7 +3308,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setLayout(v : TFGraphLegendStyle);
+procedure TFGraphLegend.SetLayout(v : TFGraphLegendStyle);
 begin
   if v <> FLayout then
   begin
@@ -3281,7 +3317,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.settop(v : integer);
+procedure TFGraphLegend.Settop(v : integer);
 begin
   if v <> Ftop then
   begin
@@ -3290,7 +3326,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setleft(v : integer);
+procedure TFGraphLegend.Setleft(v : integer);
 begin
   if v <> Fleft then
   begin
@@ -3299,7 +3335,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setwidth(v : integer);
+procedure TFGraphLegend.Setwidth(v : integer);
 begin
   if v <> Fwidth then
   begin
@@ -3308,7 +3344,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setheight(v : integer);
+procedure TFGraphLegend.Setheight(v : integer);
 begin
   if v <> Fheight then
   begin
@@ -3317,7 +3353,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setSymbolSpace(v : integer);
+procedure TFGraphLegend.SetSymbolSpace(v : integer);
 begin
   if v <> FSymbolSpace then
   begin
@@ -3326,7 +3362,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setXMargin(v : integer);
+procedure TFGraphLegend.SetXMargin(v : integer);
 begin
   if v <> FXMargin then
   begin
@@ -3335,7 +3371,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setYMargin(v : integer);
+procedure TFGraphLegend.SetYMargin(v : integer);
 begin
   if v <> FYMargin then
   begin
@@ -3344,7 +3380,7 @@ begin
   end;
 end;
 
-procedure TFGraphLegend.setfont(v : TFontAdapted);
+procedure TFGraphLegend.Setfont(v : TFontAdapted);
 begin
   FFont.assign(v);    {procedure below hooks FFont.OnChange}
 end;
@@ -3366,10 +3402,10 @@ begin
   FAnnotations.OnNotify := AnnotationChange;
   FFunctions := TFslList<TFGraphFunction>.create;
   FFunctions.OnNotify := FunctionsChange;
+  FBands := TFslList<TFGraphBand>.create;
+  FBands.OnNotify := BandChange;
 
   FCanvas := TGraphCanvas.Create(Canvas);
-  FLastSeries := 0;
-  FLastAnnotation := 0;
   FScale := 1.0;
   FXOffset := 0;
   FYOffset := 0;
@@ -3452,7 +3488,7 @@ begin
   end;
 end;
 
-procedure TFGraph.setDefaultPropertyValues;
+procedure TFGraph.SetDefaultPropertyValues;
 begin
   with FXAxis do
   begin
@@ -3616,6 +3652,7 @@ begin
   FSeries.Free;
   FFunctions.Free;
   FAnnotations.Free;
+  FBands.Free;
   inherited Destroy;
 end;
 
@@ -3953,7 +3990,31 @@ begin
     FOnRescale(self);
 end;
 
+procedure TFGraph.addBand(color: TAlphaColor; min, max, opacity: Double);
+var
+  bnd : TFGraphBand;
+begin
+  bnd := TFGraphBand.Create;
+  try
+    bnd.color := color;
+    bnd.Min := min;
+    bnd.Max := max;
+    bnd.opacity := opacity;
+    Bands.Add(bnd.link);
+  finally
+    bnd.Free;
+  end;
+end;
+
 procedure TFGraph.AnnotationChange(Sender: TObject; const Item: TFGraphAnnotation; Action: TCollectionNotification);
+begin
+  if Action = cnAdded then
+    item.FGraph := self;
+  if FPlotting then
+    Repaint;
+end;
+
+procedure TFGraph.BandChange(Sender: TObject; const Item: TFGraphBand; Action: TCollectionNotification);
 begin
   if Action = cnAdded then
     item.FGraph := self;
@@ -4379,7 +4440,7 @@ procedure TFGraph.PaintXMark(mark : TFGraphMark);
 begin
   Fcanvas.pencolor := mark.fcolor;
   FCanvas.Font := Appearance.CaptionFont;
-  FCanvas.FontColor := mark.FColor;
+  FCanvas.FonTAlphaColor := mark.FColor;
   FCanvas.TextOut(fx(mark.fx1),fy(FYAxis.FMin, false) - 3, 0, trunc(FCanvas.font.size + 5), mark.FCaption, pi/2);
   FCanvas.Line(fx(mark.fx1), fy(FYAxis.FMin, false), fx(mark.fx1), fy(FYAxis.FMax, false));
 end;
@@ -4389,7 +4450,7 @@ var
   xPos, yPos : integer;
 begin
   FCanvas.Font := FAppearance.FCaptionFont;
-  FCanvas.fontcolor := mark.fcolor;
+  FCanvas.fonTAlphaColor := mark.fcolor;
   case mark.FMarkPos of
     mpUpLeft :
       begin
@@ -4422,6 +4483,13 @@ begin
   FCanvas.Line(fx(FXAxis.Fmin), fy(mark.fy1, false), fx(FXAxis.Fmax), fy(mark.fy1, false));
 end;
 
+procedure TFGraph.PaintBand(band: TFGraphBand);
+begin
+  FCanvas.BrushStyle := bsSolid;
+  FCanvas.BrushColor := band.color;
+  FCanvas.Rectangle(fx(XAxis.FMin), fy(band.Min, band.YAxis2), fx(XAxis.FMax), fy(band.Max, band.YAxis2), band.opacity);
+end;
+
 procedure TFGraph.PaintBoxMark(mark : TFGraphMark);
 var
   d : integer;
@@ -4430,7 +4498,7 @@ begin
   FCanvas.pencolor := mark.color;
   FCanvas.brushstyle := bsClear;
   FCanvas.rectangle(fx(mark.fx1) - d, fy(mark.fy1, false) - d, fx(mark.fx1) + d, fy(mark.fy1, false) + d);
-  FCanvas.fontcolor := mark.color;
+  FCanvas.fonTAlphaColor := mark.color;
   FCanvas.TextOut(fx(mark.fx1) - d, fy(mark.fy1, false) + d, mark.caption);
 end;
 
@@ -4454,7 +4522,7 @@ begin
   else
     angle := - arctan((maxy-miny)/(maxx-minx));
   FCanvas.Font := Appearance.CaptionFont;
-  FCanvas.FontColor := mark.FColor;
+  FCanvas.FonTAlphaColor := mark.FColor;
   FCanvas.TextOut(minx, miny, 0, FCanvas.TextHeight(mark.FCaption) + 5, mark.FCaption, angle);
   FCanvas.Line(minx, miny, maxx, maxy);
 end;
@@ -4726,9 +4794,13 @@ begin
 end;
 
 procedure TFGraph.DrawAxes;
+var
+  bnd : TFGraphBand;
 begin
   {if (FCanvas <> Printer.Canvas) or FAppearance.FBkgdWhenPrint then}
-    ColorBackground;
+  ColorBackground;
+  for bnd in FBands do
+    PaintBand(bnd);
   if FAppearance.FShowMarks then
     DrawAnnotations(dtBefore);
   DrawXAxis;
@@ -4765,8 +4837,8 @@ begin
   end
   else
   begin
-    min := XAxis.FOMin;
-    max := XAxis.FOMax;
+    min := XAxis.FMin;
+    max := XAxis.FMax;
   end;
   FCanvas.PenColor := f.color;
   FCanvas.PenStyle := f.style;
@@ -4806,7 +4878,7 @@ var
   xbase,ybase,xwid,yhei,xleft,ytop,xoffset,yoffset,th,symspace, w, h, t : integer;
   OldPenWidth : word;
 
-  procedure DrawLegendEntry(SeriesName : string; LegendStatus : TFGraphLegendStatus; LineColor, PointColor : Tcolor; DrawLine, DrawPoints, FillPoints : boolean;
+  procedure DrawLegendEntry(SeriesName : string; LegendStatus : TFGraphLegendStatus; LineColor, PointColor : TAlphaColor; DrawLine, DrawPoints, FillPoints : boolean;
       Pointshape : TFGraphPointShape; Linestyle : TPenstyle; Psize, x, y : integer);
   begin
     FCanvas.BrushStyle := bsClear;
@@ -4823,12 +4895,12 @@ var
       with FCanvas do
       begin
         x := x + SymSpace div 2;
-        brushcolor := pointcolor;
+        brushcolor := PointColor;
         if FillPoints then
           brushStyle := bsSolid
         else
           brushstyle := bsClear;
-        pencolor := pointcolor;
+        pencolor := PointColor;
         case Pointshape of
           ps_Square : Polygon([Pt(x - pSize, y - pSize), Pt(x + psize, y - pSize), Pt(x + pSize, y + psize), Pt(x - pSize, y + pSize)]);
           ps_Circle : Ellipse(x - pSize, y - pSize, x + psize, y + psize);
@@ -5006,7 +5078,7 @@ var
   p : TFGraphSeries;
   f : TFGraphFunction;
   oldPenWidth : word;
-  obc : Tcolor;
+  obc : TAlphaColor;
 
 begin
   FCanvas.start;
@@ -5229,7 +5301,7 @@ var
     FCanvas.PenColor := series.LineColor;
     FCanvas.BrushColor := clInfoBk;
     FCanvas.Font.Assign(Appearance.ErrorFont);
-    FCanvas.fontcolor := clMaroon;
+    FCanvas.fonTAlphaColor := clMaroon;
     h := FCanvas.TextHeight(error)+8;
     w := FCanvas.TextWidth(error)+8;
     FCanvas.Rectangle(x-(h div 2), y, x+(h div 2), y-w);
@@ -5311,6 +5383,7 @@ begin
 
   for i := 0 to series.Data.count - 1 do
   begin
+
     pp := series.Data.getPoint(i);
     if (Appearance.PlotOffGraph and (series.FPointShape <> ps_Bar)) or
       ((pp.x >= FXAxis.Min) and (pp.x <= FXAxis.Max) and
@@ -5504,7 +5577,7 @@ var
   CODES_TFGraphDateTickType : array [TFGraphDateTickType] of String = ('dt_minute', 'dt_5minute', 'dt_halfhourly', 'dt_hourly', 'dt_daily', 'dt_weekly', 'dt_monthly', 'dt_2monthly', 'dt_quarterly', 'dt_annually', 'dt_decade', 'dt_century', 'dt_custom');
   CODES_TFGraphAxisOffsetType : array [TFGraphAxisOffsetType] of String = ('ao_Minimum', 'ao_Maximum', 'ao_percentage', 'ao_absolute');
 
-function TFGraph.settingsText(code : boolean): String;
+function TFGraph.SettingsText(code : boolean): String;
 var
   b : TStringBuilder;
   procedure p(name, value : String); overload;
@@ -5965,7 +6038,7 @@ begin
     RePaint;
 end;
 
-function TFGraph.createMark(x1,y1, x2,y2 : Double; c : Tcolor; name : string; marktype : TFGraphMarkType; markpos : TFGraphMarkPos; DrawTime : TFGraphDrawTime) : TFGraphMark;
+function TFGraph.createMark(x1,y1, x2,y2 : Double; c : TAlphaColor; name : string; marktype : TFGraphMarkType; markpos : TFGraphMarkPos; DrawTime : TFGraphDrawTime) : TFGraphMark;
 begin
   result := TFGraphMark.create(name, drawtime);
   try
@@ -6044,7 +6117,7 @@ begin
     FGraph.RePaint;
 end;
 
-procedure TFGraphFunction.SetColor(const Value: TColor);
+procedure TFGraphFunction.SetAlphaColor(const Value: TAlphaColor);
 begin
   FColor := Value;
   if assigned(FGraph) then
@@ -6079,7 +6152,7 @@ begin
   inherited create;
   FCanvas := canvas;
   {$IFDEF FMX}
-  FFontColor := TAlphaColors.Black;
+  FFonTAlphaColor := TAlphaColors.Black;
   {$ENDIF}
 end;
 
@@ -6135,7 +6208,7 @@ begin
   {$ENDIF}
 end;
 
-function TGraphCanvas.GetBrushColor: TColor;
+function TGraphCanvas.GetBrushColor: TAlphaColor;
 begin
   {$IFDEF FMX}
   result := FCanvas.Fill.Color;
@@ -6158,16 +6231,16 @@ begin
   result := FCanvas.Font;
 end;
 
-function TGraphCanvas.GetFontColor: TColor;
+function TGraphCanvas.GetFonTAlphaColor: TAlphaColor;
 begin
   {$IFDEF FMX}
-  result := FFontColor;
+  result := FFonTAlphaColor;
   {$ELSE}
   result := FCanvas.Font.Color;
   {$ENDIF}
 end;
 
-function TGraphCanvas.GetPenColor: TColor;
+function TGraphCanvas.GetPenColor: TAlphaColor;
 begin
   {$IFDEF FMX}
   result := FCanvas.Stroke.Color;
@@ -6275,14 +6348,36 @@ begin
   {$ENDIF}
 end;
 
-procedure TGraphCanvas.Rectangle(x1, y1, x2, y2: integer);
+procedure TGraphCanvas.Rectangle(x1, y1, x2, y2: integer; opacity : double = 1.0);
+{$IFNDEF FMX}
+Var
+  bmp : TBitmap;
+  Blend : _BLENDFUNCTION;
+{$ENDIF}
 begin
   {$IFDEF FMX}
-  FCanvas.FillRect(TRectF.Create(x1,y1,x2,y2), 0, 0, AllCorners, 1.0);
-  FCanvas.DrawRect(TRectF.Create(x1,y1,x2,y2), 0, 0, AllCorners, 1.0);
+  FCanvas.FillRect(TRectF.Create(x1,y1,x2,y2), 0, 0, AllCorners, opacity);
+  FCanvas.DrawRect(TRectF.Create(x1,y1,x2,y2), 0, 0, AllCorners, opacity);
   {$ELSE}
-  FCanvas.Rectangle(x1, y1, x2, y2);
-  {$ENDIF}
+  if opacity <> 1 then
+  begin
+    bmp := TBitmap.Create;
+    try
+      bmp.Width := 1;
+      bmp.Height := 1;
+      bmp.Canvas.Pixels[0,0] := BrushColor;
+      Blend.BlendOp := AC_SRC_OVER;
+      Blend.BlendFlags := 0;
+      Blend.SourceConstantAlpha := trunc(50+255*opacity*100) Div 100;
+      Blend.AlphaFormat := 0;
+      AlphaBlend(FCanvas.Handle, x1, y2, x2-x1, y1-y2, bmp.Canvas.Handle, 0, 0, 1, 1, Blend);
+    finally
+      bmp.Free;
+     end;
+  end
+  else
+    FCanvas.Rectangle(x1, y1, x2, y2);
+ {$ENDIF}
 end;
 
 function TGraphCanvas.SelectObject(obj: THandle): THandle;
@@ -6293,7 +6388,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TGraphCanvas.SetBrushColor(const Value: TColor);
+procedure TGraphCanvas.SetBrushColor(const Value: TAlphaColor);
 begin
   {$IFDEF FMX}
   FCanvas.Fill.Color := Value;
@@ -6320,16 +6415,16 @@ begin
   {$ENDIF}
 end;
 
-procedure TGraphCanvas.SetFontColor(const Value: TColor);
+procedure TGraphCanvas.SetFonTAlphaColor(const Value: TAlphaColor);
 begin
   {$IFDEF FMX}
-  FFontColor := Value;
+  FFonTAlphaColor := Value;
   {$ELSE}
   FCanvas.Font.Color := Value;
   {$ENDIF}
 end;
 
-procedure TGraphCanvas.SetPenColor(const Value: TColor);
+procedure TGraphCanvas.SetPenColor(const Value: TAlphaColor);
 begin
   {$IFDEF FMX}
   FCanvas.Stroke.Color := value;
@@ -6426,7 +6521,7 @@ end;
 procedure TGraphCanvas.TextOut(x, y: integer; text: String);
 begin
   {$IFDEF FMX}
-  FCanvas.Fill.Color := fontcolor;
+  FCanvas.Fill.Color := fonTAlphaColor;
   FCanvas.FillText(TRectF.Create(x, y, x+TextWidth(text), y+Textheight(text)), text, false, 1.0, [], TTextAlign.Leading);
   {$ELSE}
   FCanvas.TextOut(x,y, text);
@@ -6468,6 +6563,43 @@ begin
   y2 := NO_VALUE;
   xe := NO_VALUE;
   ye := NO_VALUE;
+end;
+
+{ TFGraphBand }
+
+function TFGraphBand.link: TFGraphBand;
+begin
+   result := TFGraphBand(inherited link);
+end;
+
+procedure TFGraphBand.SetAlphaColor(const Value: TAlphaColor);
+begin
+  FColor := Value;
+  change;
+end;
+
+procedure TFGraphBand.SetMax(const Value: Double);
+begin
+  FMax := Value;
+  change;
+end;
+
+procedure TFGraphBand.SetMin(const Value: Double);
+begin
+  FMin := Value;
+  change;
+end;
+
+procedure TFGraphBand.SetOpacity(const Value: Double);
+begin
+  FOpacity := Value;
+  change;
+end;
+
+procedure TFGraphBand.SetYAxis2(const Value: boolean);
+begin
+  FYAxis2 := Value;
+  change;
 end;
 
 end.

@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils, Classes, DUnitX.TestFramework, Variants,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.MXml,
-  FHIR.Misc.GraphQL, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, FHIR.Version.Factory,
+   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.MXml,
+  FHIR.Web.GraphQL, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, FHIR.Version.Factory,
   FHIR.R4.Tests.Worker, JsonTests;
 
 type

@@ -33,7 +33,7 @@ interface
 uses
   SysUtils,
   DUnitX.TestFramework,
-  FHIR.Support.Text,
+  FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Parser,
   FHIR.R3.Parser, FHIR.R4.Parser,
   FHIR.XVersion.Convertors;

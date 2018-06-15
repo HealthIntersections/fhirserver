@@ -35,7 +35,7 @@ Interface
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ExtCtrls, ImgList,
-  FHIR.Support.System, FHIR.Support.Graphics;
+  FHIR.Support.Utilities, FHIR.Support.Graphics;
 
 
 Type

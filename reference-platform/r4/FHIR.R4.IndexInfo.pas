@@ -37,7 +37,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.DateTime,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Common,
   FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.Tools.Indexing;
 

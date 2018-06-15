@@ -65,8 +65,8 @@ interface
 
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
-  FHIR.Support.Exceptions,
-  FHIR.Support.Service, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Objects,
+
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Service,
   FHIR.Web.Fetcher,
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
@@ -142,7 +142,7 @@ procedure ExecuteFhirServer;
 implementation
 
 uses
-  FHIR.Debug.Logging, JclDebug;
+  FHIR.Support.Logging, JclDebug;
 
 procedure CauseException;
 begin

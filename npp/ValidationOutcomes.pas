@@ -40,7 +40,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, clipbrd, Vcl.OleCtrls,
   SHDocVw, ActiveX,
   VirtualTrees, FHIR.Npp.Form, FHIR.Npp.Base,
-  FHIR.Support.System, FHIR.Support.Text, FHIR.Support.Generics,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Narrative;
 
 const

@@ -54,7 +54,7 @@ uses
   Windows,
   SysUtils, Classes, AnsiStrings,
   Generics.Collections,
-  FHIR.Support.Exceptions, FHIR.Javascript.Chakra;
+  FHIR.Support.Base, FHIR.Javascript.Chakra;
 
 type
   // facade for ChakraCommon:

@@ -33,9 +33,7 @@ interface
 Uses
   SysUtils, Classes,
   Xml.xmlintf,
-  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Math,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Exceptions, FHIR.Support.Generics,
-  FHIR.Support.MXml;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml;
 
 
 function getChildNode(node : IXMLNode; name, ns : String) : IXMLNode; overload;
@@ -2048,32 +2046,32 @@ end;
 
 Function TFslXMLAttributeList.CompareByNamespacedName(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Namespace, TFslXMLAttribute(pB).Namespace);
+  Result := StringCompare(TFslXMLAttribute(pA).Namespace, TFslXMLAttribute(pB).Namespace);
   If Result = 0 Then
-    Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Name, TFslXMLAttribute(pB).Name);
+    Result := StringCompare(TFslXMLAttribute(pA).Name, TFslXMLAttribute(pB).Name);
 End;
 
 
 function TFslXMLAttributeList.CompareBySortKey(pA, pB: Pointer): Integer;
 begin
-  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).SortKey, TFslXMLAttribute(pB).SortKey);
+  Result := StringCompare(TFslXMLAttribute(pA).SortKey, TFslXMLAttribute(pB).SortKey);
 end;
 
 Function TFslXMLAttributeList.CompareByNamespace(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Namespace, TFslXMLAttribute(pB).Namespace);
+  Result := StringCompare(TFslXMLAttribute(pA).Namespace, TFslXMLAttribute(pB).Namespace);
 End;
 
 
 Function TFslXMLAttributeList.CompareByName(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Name, TFslXMLAttribute(pB).Name);
+  Result := StringCompare(TFslXMLAttribute(pA).Name, TFslXMLAttribute(pB).Name);
 End;
 
 
 Function TFslXMLAttributeList.CompareByValue(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TFslXMLAttribute(pA).Value, TFslXMLAttribute(pB).Value);
+  Result := StringCompare(TFslXMLAttribute(pA).Value, TFslXMLAttribute(pB).Value);
 End;
 
 
@@ -2622,7 +2620,7 @@ End;
 
 Function TFslXMLElementList.CompareById(pA, pB : Pointer) : Integer;
 Begin
-  Result := FHIR.Support.Strings.StringCompare(TFslXMLElement(pA).Id, TFslXMLElement(pB).Id);
+  Result := StringCompare(TFslXMLElement(pA).Id, TFslXMLElement(pB).Id);
 End;
 
 
@@ -2987,7 +2985,7 @@ Function TFslXMLNamespaceManager.LocalNameOf(Const sElementName: String): String
 Var
   iColonIndex : Integer;
 Begin
-  iColonIndex := FHIR.Support.Strings.StringFind(sElementName, ':');
+  iColonIndex := StringFind(sElementName, ':');
 
   If iColonIndex <= 0  Then
     Result := sElementName
@@ -3042,7 +3040,7 @@ Function TFslXMLNamespaceManager.PrefixOf(Const sElementName: String): String;
 Var
   iColonIndex : Integer;
 Begin
-  iColonIndex := FHIR.Support.Strings.StringFind(sElementName, ':');
+  iColonIndex := StringFind(sElementName, ':');
 
   If iColonIndex <= 0 Then
     Result := ''
@@ -3071,7 +3069,7 @@ Begin
       // Determine if this is a namespace name
       sName := oAttributes.KeyByIndex[iAttributeIndex];
 
-      If FHIR.Support.Strings.StringStartsWith(sName, XMLNS_STRING) Then
+      If StringStartsWith(sName, XMLNS_STRING) Then
       Begin
         // Obtain the prefix
         If Length(sName) = XMLNS_LENGTH Then

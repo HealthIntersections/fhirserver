@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Threads, FHIR.Javascript, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
+   FHIR.Support.Threads, FHIR.Javascript, FHIR.Support.Utilities, FHIR.Support.Base, 
   FHIR.Base.Objects, FHIR.Base.Factory,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Client,
   FHIR.Javascript.Base;

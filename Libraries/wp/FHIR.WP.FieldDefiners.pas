@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils, Vcl.Graphics, RegularExpressions,
-  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Collections,
+  FHIR.Support.Utilities, FHIR.Support.Collections,
   FHIR.WP.Definers, FHIR.WP.Control, FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Icons, FHIR.WP.Dialogs;
 
 type

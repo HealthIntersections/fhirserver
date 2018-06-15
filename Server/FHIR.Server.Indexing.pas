@@ -47,8 +47,7 @@ combinations to enable:
 }
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Objects,  FHIR.Support.Xml, FHIR.Support.Generics,
-  FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Xml, FHIR.Support.Utilities, FHIR.Support.Threads,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Tools.Indexing, FHIR.Version.Context, FHIR.Server.Session, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Tags, FHIR.Version.Utilities, FHIR.Version.Parser, FHIR.Version.PathEngine, FHIR.Version.Profiles, FHIR.Base.Xhtml,

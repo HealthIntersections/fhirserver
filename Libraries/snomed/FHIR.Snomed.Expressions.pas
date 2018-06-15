@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics;
+   FHIR.Support.Base;
 
 const
   MAX_TERM_LENGTH = 1024;

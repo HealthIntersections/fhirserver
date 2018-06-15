@@ -30,7 +30,10 @@ package fhir_core_library;
 requires
   rtl,
   xmlrtl,
-  soaprtl;
+  soaprtl,
+  IndySystem,
+  IndyProtocols,
+  IndyCore;
 
 contains
   FHIR.Base.Factory in '..\reference-platform\base\FHIR.Base.Factory.pas',
@@ -42,25 +45,18 @@ contains
   FHIR.Base.Narrative in '..\reference-platform\base\FHIR.Base.Narrative.pas',
   FHIR.Base.PathEngine in '..\reference-platform\base\FHIR.Base.PathEngine.pas',
   FHIR.Client.Base in '..\reference-platform\client\FHIR.Client.Base.pas',
-  FHIR.Support.Decimal in '..\reference-platform\support\FHIR.Support.Decimal.pas',
-  FHIR.Support.Objects in '..\reference-platform\support\FHIR.Support.Objects.pas',
-  FHIR.Support.Exceptions in '..\reference-platform\support\FHIR.Support.Exceptions.pas',
-  FHIR.Support.Strings in '..\reference-platform\support\FHIR.Support.Strings.pas',
-  FHIR.Support.Math in '..\reference-platform\support\FHIR.Support.Math.pas',
+  FHIR.Support.Base in '..\reference-platform\support\FHIR.Support.Base.pas',
+  FHIR.Support.Utilities in '..\reference-platform\support\FHIR.Support.Utilities.pas',
   FHIR.Support.Fpc in '..\reference-platform\support\FHIR.Support.Fpc.pas',
-  FHIR.Support.System in '..\reference-platform\support\FHIR.Support.System.pas',
-  FHIR.Support.DateTime in '..\reference-platform\support\FHIR.Support.DateTime.pas',
   FHIR.Support.Collections in '..\reference-platform\support\FHIR.Support.Collections.pas',
-  FHIR.Support.Text in '..\reference-platform\support\FHIR.Support.Text.pas',
   FHIR.Support.Stream in '..\reference-platform\support\FHIR.Support.Stream.pas',
-  FHIR.Support.Binary in '..\reference-platform\support\FHIR.Support.Binary.pas',
-  FHIR.Support.Generics in '..\reference-platform\support\FHIR.Support.Generics.pas',
   FHIR.Support.Xml in '..\reference-platform\support\FHIR.Support.Xml.pas',
   FHIR.Support.MXml in '..\reference-platform\support\FHIR.Support.MXml.pas',
   FHIR.Support.Turtle in '..\reference-platform\support\FHIR.Support.Turtle.pas',
   FHIR.Support.Json in '..\reference-platform\support\FHIR.Support.Json.pas',
   FHIR.Ucum.IFace in '..\reference-platform\support\FHIR.Ucum.IFace.pas',
   FHIR.Support.Shell in '..\reference-platform\support\FHIR.Support.Shell.pas',
-  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas';
+  FHIR.Base.Common in '..\reference-platform\base\FHIR.Base.Common.pas',
+  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas';
 
 end.

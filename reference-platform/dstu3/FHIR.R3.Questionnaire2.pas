@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.DateTime,
-  FHIR.Support.Objects,
+  FHIR.Support.Utilities,
+  FHIR.Support.Base,
   FHIR.Web.HtmlGen,
   FHIR.Base.Objects, FHIR.Version.Client,
   FHIR.R3.Types, FHIR.R3.Resources;

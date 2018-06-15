@@ -32,8 +32,7 @@ interface
 
 Uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Support.Binary, FHIR.Support.Decimal, FHIR.Support.Text, FHIR.Support.DateTime,
-  FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.MXml,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml,
   FHIR.Ucum.IFace,
   FHIR.Cda.Base;
 

@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   DUnitX.TestFramework,
   TextUtilities,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, 
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.ElementModel,
   FHIR.Version.Context, FHIRTestWorker, FHIR.Version.MapUtilities, FHIR.Version.Profiles;
 

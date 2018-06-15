@@ -33,12 +33,12 @@ interface
 
 uses
   SysUtils, Classes, FHIR.Support.Threads, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Exceptions,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.Collections,  
   FHIR.Database.Manager,
   FHIR.Base.Lang, FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Operations, FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR, FHIR.Tx.Uri, FHIR.Tx.ICD10,
-  FHIR.Tx.AreaCode, FHIR.Tx.Lang, FHIR.Debug.Logging,
+  FHIR.Tx.AreaCode, FHIR.Tx.Lang, FHIR.Support.Logging,
   YuStemmer;
 
 const

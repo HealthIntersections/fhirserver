@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, FHIR.Support.Shell, IniFiles,
-  FHIR.Support.Objects, GuidSupport, AdvXmlBuilders,
+  FHIR.Support.Base, GuidSupport, AdvXmlBuilders,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
   FHIR.Tx.Server, FHIRDataStore, FHIR.Version.Client, FHIR.Version.PathEngine;
 

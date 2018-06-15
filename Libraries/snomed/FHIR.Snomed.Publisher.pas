@@ -33,8 +33,8 @@ Interface
 
 Uses
   SysUtils, Classes, Math,
-  FHIR.Support.Math, FHIR.Support.Threads,
-  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Support.Utilities, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Collections,
   FHIR.Web.HtmlGen, FHIR.Snomed.Services;
 
 Const
@@ -81,8 +81,6 @@ Type
 
 Implementation
 
-Uses
-  FHIR.Support.Strings;
 
 Function Screen(Const s, s2: String):String;
 Begin

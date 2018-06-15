@@ -36,7 +36,9 @@ interface
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Stream, FHIR.Support.DateTime, FHIR.Base.Objects, FHIR.R2.Types, FHIR.R2.Resources;
+  SysUtils, Classes,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Base.Objects, FHIR.R2.Types, FHIR.R2.Resources;
 
 Type
 {$IFDEF FHIR_ACCOUNT}

@@ -141,18 +141,12 @@
             <Form>Form4</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Strings.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Math.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.DateTime.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Binary.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Objects.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Exceptions.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.System.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Base.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Parsers.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Decimal.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.WinInet.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Web.WinInet.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Json.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Services.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Handlers.pas"/>
@@ -165,10 +159,10 @@
         <DCCReference Include="..\Libraries\Stem\DISystemCompat.pas"/>
         <DCCReference Include="..\Libraries\Snomed\FHIR.Snomed.Services.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Fetcher.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Misc.Facebook.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Web.Facebook.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Service.pas"/>
         <DCCReference Include="..\server\FHIR.Server.DBInstaller.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Database.Dialects.pas"/>
+        <DCCReference Include="..\Libraries\db\FHIR.Database.Dialects.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Logging.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Manager.pas"/>
         <DCCReference Include="..\Libraries\db\FHIR.Database.Utilities.pas"/>
@@ -190,7 +184,6 @@
         <DCCReference Include="..\server\FHIR.Scim.Search.pas"/>
         <DCCReference Include="..\Libraries\security\FHIR.Misc.Twilio.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Shell.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Generics.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\server\FHIR.Tx.Uri.pas"/>
         <DCCReference Include="..\server\FHIR.Tx.Unii.pas"/>
@@ -201,7 +194,6 @@
         <DCCReference Include="..\server\FHIR.Server.Subscriptions.pas"/>
         <DCCReference Include="..\server\FHIR.Server.Validator.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Web.Socket.pas"/>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Support.Mime.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Questionnaire.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
@@ -236,7 +228,7 @@
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.MapUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Context.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Debug.Logging.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Logging.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.AuthMap.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.Indexing.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.Adaptations.pas"/>
@@ -304,11 +296,9 @@
         <DCCReference Include="..\reference-platform\client\FHIR.Client.HTTP.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Base.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Threaded.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Text.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Zip.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Common.pas"/>
@@ -317,7 +307,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Common.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Factory.pas"/>
         <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
         <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Smart.Utilities.pas"/>

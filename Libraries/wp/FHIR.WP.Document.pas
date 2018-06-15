@@ -32,8 +32,7 @@ Interface
 
 Uses
   Windows, Classes, SysUtils, Vcl.Graphics,
-  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Math, FHIR.Support.Stream,
-  FHIR.Support.Graphics, FHIR.Support.Collections, FHIR.Support.Exceptions,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Graphics, FHIR.Support.Collections,
   FHIR.WP.Types;
 
 Type

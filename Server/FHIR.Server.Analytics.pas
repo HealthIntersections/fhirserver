@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
   FHIR.Support.Threads,
-  FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Support.Objects,
+   FHIR.Support.Utilities, FHIR.Support.Base,
   FHIR.Base.Lang;
 
 type

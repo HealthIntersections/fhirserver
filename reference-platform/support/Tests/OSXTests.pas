@@ -65,8 +65,7 @@ implementation
 uses
   SysUtils, Classes, SyncObjs,
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}
-  FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Threads,
-  FHIR.Support.Objects, FHIR.Support.Stream;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream;
 
 var
   globalInt : cardinal;

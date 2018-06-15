@@ -89,7 +89,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIR.Support.Strings;
+  FHIR.Support.Utilities;
 
 
 { TForm1 }

@@ -34,10 +34,8 @@ uses
   Classes,
   SysUtils,
   IdGlobal,
-  FHIR.Web.Parsers,
-  FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics, FHIR.Support.Stream,
-  FHIR.Support.Mime, FHIR.Support.Certs, FHIR.Base.Scim, FHIR.Support.MXml, FHIR.Misc.GraphQL,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Certs, FHIR.Base.Scim, FHIR.Support.MXml,
+  FHIR.Web.Parsers, FHIR.Web.GraphQL,
   FHIR.Base.Objects, FHIR.Tools.Indexing, FHIR.Server.Security, FHIR.Base.Lang, FHIR.Base.Xhtml,
   {$IFDEF FHIR2}
   FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Types, FHIR.R2.Context, FHIR.R2.Tags;

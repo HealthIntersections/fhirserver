@@ -32,10 +32,10 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Decimal,
+  FHIR.Support.Utilities,
   FHIR.Ucum.Base,
   
-  FHIR.Support.Objects, FHIR.Support.Collections;
+  FHIR.Support.Base, FHIR.Support.Collections;
 
 Type
   TUcumUnitHandler = class (TFslName)

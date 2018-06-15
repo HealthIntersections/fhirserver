@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Turtle;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Turtle;
 
 const
 	GOOD_IRI_CHAR = 'a-zA-Z0-9\u00A0-\uFFFE';

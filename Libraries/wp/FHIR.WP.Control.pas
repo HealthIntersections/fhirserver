@@ -35,10 +35,8 @@ uses
 
   DropBMPTarget, DropSource, DropTarget,
 
-  FHIR.Support.Exceptions, FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Graphics,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream,
-  FHIR.Support.Printing, FHIR.Support.Math, FHIR.Support.Strings,
-  FHIR.Support.Shell, FHIR.Web.Mapi,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Printing, FHIR.Support.Shell,
+  FHIR.Web.Mapi,
 
   FHIR.Uix.Base, FHIR.Uix.Controls,
 

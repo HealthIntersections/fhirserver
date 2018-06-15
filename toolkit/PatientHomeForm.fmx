@@ -73,6 +73,8 @@ object PatientHomeFrame: TPatientHomeFrame
       StyleLookup = ''
       TabOrder = 0
       Text = 'Home Page'
+      ExplicitSize.cx = 82.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
     end
     object TabItem2: TTabItem
       CustomIcon = <
@@ -85,6 +87,8 @@ object PatientHomeFrame: TPatientHomeFrame
       StyleLookup = ''
       TabOrder = 0
       Text = 'Vital Signs'
+      ExplicitSize.cx = 75.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
       object pnlHR: TPanel
         Align = Top
         Padding.Left = 10.000000000000000000
@@ -101,6 +105,14 @@ object PatientHomeFrame: TPatientHomeFrame
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
+          object Label3: TLabel
+            Align = Left
+            Size.Width = 449.000000000000000000
+            Size.Height = 25.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Heart Rate (Beats/min over last 24 hours)'
+            TabOrder = 1
+          end
         end
       end
       object pnlO2: TPanel
@@ -120,6 +132,14 @@ object PatientHomeFrame: TPatientHomeFrame
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
+          object Label5: TLabel
+            Align = Left
+            Size.Width = 120.000000000000000000
+            Size.Height = 25.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'O2 Saturation'
+            TabOrder = 1
+          end
         end
       end
       object pnlBP: TPanel
@@ -139,6 +159,14 @@ object PatientHomeFrame: TPatientHomeFrame
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
+          object Label4: TLabel
+            Align = Left
+            Size.Width = 120.000000000000000000
+            Size.Height = 25.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Blood Pressure'
+            TabOrder = 1
+          end
         end
       end
     end
@@ -153,6 +181,8 @@ object PatientHomeFrame: TPatientHomeFrame
       StyleLookup = ''
       TabOrder = 0
       Text = 'Compositions'
+      ExplicitSize.cx = 93.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
       object Panel2: TPanel
         Align = Client
         Padding.Left = 2.000000000000000000
@@ -195,8 +225,8 @@ object PatientHomeFrame: TPatientHomeFrame
           DefaultItemStyles.ItemStyle = ''
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
-          Viewport.Width = 938.000000000000000000
-          Viewport.Height = 536.000000000000000000
+          Viewport.Width = 942.000000000000000000
+          Viewport.Height = 540.000000000000000000
         end
       end
     end

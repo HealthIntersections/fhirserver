@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Exceptions, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Turtle,
+  FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Turtle,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.R4.Types, FHIR.R4.Resources;
 
 type

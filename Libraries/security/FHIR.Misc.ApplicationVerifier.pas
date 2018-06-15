@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL,
-  FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Certs,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Support.Certs, FHIR.Support.Stream,
   FHIR.Base.Lang,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities;
 

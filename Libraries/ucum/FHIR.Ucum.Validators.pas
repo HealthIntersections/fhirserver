@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Exceptions, FHIR.Support.Decimal, FHIR.Support.Collections, FHIR.Support.Objects,
+   FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Base,
   FHIR.Ucum.Base, FHIR.Ucum.Expressions, FHIR.Ucum.Handlers;
 
 Type

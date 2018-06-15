@@ -33,8 +33,8 @@ interface
 
 Uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Strings, FHIR.Support.Threads,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Utilities, FHIR.Support.Threads,
+  FHIR.Support.Base, 
   FHIR.Database.Manager,
   FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities,
   FHIR.Tx.Manager;

@@ -43,7 +43,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Collections,
   FHIR.CDA.Base, FHIR.Cda.Types, FHIR.Cda.Narrative;
 
 Type

@@ -31,7 +31,7 @@ Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthinte
 interface
 
 uses
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Support.Json, FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Base.Common;
 

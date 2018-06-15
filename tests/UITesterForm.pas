@@ -45,11 +45,13 @@ type
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
+    Button5: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
   private
     FGraph : TFGraph;
     procedure runDesigner(sender : TObject);
@@ -82,6 +84,11 @@ end;
 procedure TForm10.Button4Click(Sender: TObject);
 begin
   FGraph.Functions.Add(FGraph.CreateFunction(GetFuncValue));
+end;
+
+procedure TForm10.Button5Click(Sender: TObject);
+begin
+  TFGraphTester.addBand(FGraph);
 end;
 
 procedure TForm10.FormCreate(Sender: TObject);

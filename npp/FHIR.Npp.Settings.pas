@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Json,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.Client.Registry;
 
 const

@@ -32,8 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Text,
-  FHIR.Support.DateTime, EncdDecd, FHIR.Support.Decimal;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections;
 
 Const
   ID_LENGTH = 64;
@@ -552,7 +551,7 @@ function isEmptyProp(v : TFHIRObjectList) : boolean; overload;
 Implementation
 
 Uses
-  FHIR.Support.Strings,
+  EncdDecd,
   FHIR.Base.Lang;
 
 { TFHIRObject }

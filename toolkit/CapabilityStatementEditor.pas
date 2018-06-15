@@ -36,8 +36,7 @@ uses
   FMX.ImgList, FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit,
   System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Menus,
   BaseResourceFrame,
-  FHIR.Support.DateTime, FHIR.Support.Strings,
-  FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Factory, FHIR.Version.Common,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog, TranslationsEditorDialog, MemoEditorDialog;
 

@@ -33,8 +33,7 @@ interface
 Uses
   SysUtils, Classes, System.Character, RegularExpressions,
 
-  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
 
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 

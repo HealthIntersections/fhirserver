@@ -34,8 +34,7 @@ Interface
 Uses
   Windows, Math, Graphics, Classes, Controls, SysUtils, System.UITypes, System.Types, ActiveX, Messages, Forms,
   Winapi.GdipObj, Winapi.GdipApi,
-  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Math,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Graphics, FHIR.Support.Collections;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Graphics, FHIR.Support.Collections;
 
 Type
   TArgbColour = ARGB;
@@ -1387,17 +1386,17 @@ Begin
   If R <= 0.03928 Then
     R := R / 12.92
   Else
-    R := FHIR.Support.Math.Power((R + 0.055) / 1.055, 2.4);
+    R := FHIR.Support.Utilities.Power((R + 0.055) / 1.055, 2.4);
 
   If G <= 0.03928 Then
     G := G / 12.92
   Else
-    G := FHIR.Support.Math.Power((G + 0.055) / 1.055, 2.4);
+    G := FHIR.Support.Utilities.Power((G + 0.055) / 1.055, 2.4);
 
   If B <= 0.03928 Then
     B := B / 12.92
   Else
-    B := FHIR.Support.Math.Power((B + 0.055) / 1.055, 2.4);
+    B := FHIR.Support.Utilities.Power((B + 0.055) / 1.055, 2.4);
 
   Result := 0.2126 * R + 0.7152 * G + 0.0722 * B;
 End;

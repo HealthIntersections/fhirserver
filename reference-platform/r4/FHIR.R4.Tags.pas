@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Stream,
   FHIR.Base.Objects, 
   FHIR.R4.Types;
 

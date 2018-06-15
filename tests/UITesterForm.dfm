@@ -67,5 +67,14 @@ object Form10: TForm10
       TabOrder = 3
       OnClick = Button4Click
     end
+    object Button5: TButton
+      Left = 340
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'Band'
+      TabOrder = 4
+      OnClick = Button5Click
+    end
   end
 end

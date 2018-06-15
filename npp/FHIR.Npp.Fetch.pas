@@ -40,7 +40,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Samples.Spin,
   VirtualTrees,
   FHIR.Npp.Form,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Strings, FHIR.Web.Parsers,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.PathEngine, FHIR.Base.Utilities,
   FHIR.Smart.Utilities,
   FHIR.Npp.Context, FHIR.Npp.Settings;

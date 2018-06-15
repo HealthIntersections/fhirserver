@@ -1,8 +1,8 @@
-object HakForm: TUixForm
+object UixForm: TUixForm
   Left = 254
   Top = 169
-  Width = 696
-  Height = 480
+  ClientHeight = 441
+  ClientWidth = 680
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object HakForm: TUixForm
     Left = 0
     Top = 0
     Width = 680
-    Height = 409
+    Height = 406
     Align = alClient
     Alignment = taLeftJustify
     BevelOuter = bvNone
@@ -26,11 +26,11 @@ object HakForm: TUixForm
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
-    DoubleBuffered = False
+    ExplicitHeight = 409
   end
   object pnlBottom: TUixPanel
     Left = 0
-    Top = 409
+    Top = 406
     Width = 680
     Height = 35
     Align = alBottom
@@ -41,7 +41,10 @@ object HakForm: TUixForm
     ParentShowHint = False
     ShowHint = True
     TabOrder = 1
-    DoubleBuffered = False
+    ExplicitTop = 409
+    DesignSize = (
+      680
+      35)
     object btnCancel: TUixButton
       Left = 606
       Top = 0

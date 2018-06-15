@@ -32,8 +32,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime,
-  FHIR.Support.Exceptions, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Database.Manager,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Server.Session, FHIR.Version.Operations,

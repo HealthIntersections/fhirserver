@@ -34,7 +34,7 @@ interface
 Uses
   SysUtils, Classes,
   IdGlobal, IdComponent, IdTCPConnection, IdContext, IdCustomHTTPServer, IdHashSHA, IdCoderMIME,
-  FHIR.Support.Exceptions;
+  FHIR.Support.Base;
 
 Type
   TIdWebSocketOperation = (wsoNoOp, wsoText, wsoBinary, wsoClose);

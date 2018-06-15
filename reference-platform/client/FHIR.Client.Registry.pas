@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Json, 
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities;
 

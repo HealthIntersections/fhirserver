@@ -35,7 +35,8 @@ interface
 uses
   {$IFDEF MSWINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Text, MarkDownProcessor, FHIR.Support.Threads, FHIR.Support.System, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream,
+  MarkDownProcessor,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Smart.Utilities,
   FHIR.Client.base, FHIR.Client.HTTP,
   FHIR.CdsHooks.Utilities;

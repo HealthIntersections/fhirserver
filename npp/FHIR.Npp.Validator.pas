@@ -33,7 +33,7 @@ interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
+   FHIR.Support.Utilities, FHIR.Support.Base, 
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Tx.Service,
 

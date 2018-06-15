@@ -69,7 +69,7 @@ begin
     ffJson: result := FHIR.R3.Json.TFHIRJsonParser.Create(worker, lang);
     ffTurtle: result := FHIR.R3.Turtle.TFHIRTurtleParser.Create(worker, lang);
   else
-    raise EFHIRException.create('Unspecified/unsupported format');
+    raise EFHIRException.create('Unspecified/unsupported format '+CODES_TFHIRFormat[format]);
   end;
 end;
 

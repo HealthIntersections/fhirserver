@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
+   FHIR.Support.Base, FHIR.Support.Collections,
   FHIR.Base.Objects,
   FHIR.Tx.Service, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Lang, FHIR.Base.Factory;
 

@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
-uses SysUtils, Classes, FHIR.Support.Objects;
+uses SysUtils, Classes, FHIR.Support.Base;
 
 type
 

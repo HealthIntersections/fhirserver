@@ -35,8 +35,8 @@ Interface
 
 Uses
   SysUtils, Vcl.Graphics,
-  FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Collections,
+  FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Collections,
   FHIR.WP.Document, FHIR.WP.Types, FHIR.WP.Icons;
 
 Const

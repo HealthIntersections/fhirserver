@@ -35,7 +35,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
   FHIR.Npp.Form,
-  FHIR.Support.Generics,
+  FHIR.Support.Base,
   FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common,
   FHIR.Npp.Context;

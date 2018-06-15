@@ -34,10 +34,10 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
-  FHIR.Utilities.SCrypt, FHIR.Web.Parsers, FHIR.Support.Text,
-  FHIR.Database.Manager, FHIR.Support.Json, FHIR.Support.Threads, FHIR.Support.DateTime,
-  FHIR.Support.Strings,  FHIR.Server.Session,
-  FHIR.Support.Objects, FHIR.Support.Exceptions,
+  FHIR.Support.Base, FHIR.Support.Json, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream,
+  FHIR.Utilities.SCrypt, FHIR.Web.Parsers,
+  FHIR.Database.Manager,
+  FHIR.Server.Session,
   FHIR.Server.Utilities,
   FHIR.Server.UserMgr, FHIR.Scim.Search, FHIR.Base.Scim, FHIR.Base.Lang;
 

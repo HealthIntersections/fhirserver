@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.DateTime, FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser,
   {$IFDEF FHIR2} FHIR.R2.Client, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Client, {$ENDIF}

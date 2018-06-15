@@ -32,8 +32,7 @@ interface
 
 Uses
   SysUtils,
-  FHIR.Support.Exceptions, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml,
   FHIR.Cda.Base, FHIR.Cda.Types, FHIR.Cda.Narrative, FHIR.Cda.Objects;
 
 

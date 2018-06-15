@@ -32,8 +32,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Objects, FHIR.Support.System, FHIR.Support.Collections, FHIR.Support.Strings,
-  FHIR.Support.Math, FHIR.Support.Stream, FHIR.Support.MXML, FHIR.Support.DateTime;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.MXML;
 
 Type
   EDicomException = class (EFslException);

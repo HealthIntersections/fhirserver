@@ -33,7 +33,7 @@ interface
 
 uses
   Classes,
-  FHIR.Support.Objects,
+  FHIR.Support.Base,
   FHIR.Support.Threads,
   SysUtils;
 
@@ -82,10 +82,9 @@ type
 implementation
 
 uses
-  FHIR.Support.DateTime,
+  FHIR.Support.Utilities,
   Math,
-  IdGlobal,
-  FHIR.Support.Strings;
+  IdGlobal;
 
 const
   ASSERT_UNIT = 'KDBLogger';

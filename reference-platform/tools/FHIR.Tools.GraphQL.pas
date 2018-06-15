@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
-  FHIR.Web.Parsers, FHIR.Misc.GraphQL,
+   FHIR.Support.Utilities, FHIR.Support.Base, 
+  FHIR.Web.Parsers, FHIR.Web.GraphQL,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory, FHIR.Base.Lang;
   {FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Parser, FHIR.Version.Utilities, FHIR.Version.PathNode, FHIR.Version.PathEngine;}
 

@@ -32,8 +32,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.Objects, FHIR.Support.Stream,
-  FHIR.Support.Collections, FHIR.Support.Text, FHIR.Support.Xml;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Xml;
 
 
 Type

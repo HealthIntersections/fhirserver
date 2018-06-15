@@ -81,30 +81,21 @@
         </DelphiCompile>
         <DCCReference Include="..\..\Libraries\FMM\FastMM4.pas"/>
         <DCCReference Include="..\..\Libraries\FMM\FastMM4Messages.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Strings.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Math.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.DateTime.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Binary.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Objects.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Exceptions.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.System.pas"/>
+        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Base.pas"/>
+        <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Utilities.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.Manager.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.Settings.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.Logging.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Database.Dialects.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Decimal.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <DCCReference Include="..\..\Libraries\db\FHIR.Database.Dialects.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.ODBC.Objects.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.ODBC.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.ODBC.Headers.pas"/>
         <DCCReference Include="..\..\reference-platform\support\fhir.support.fpc.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Text.pas"/>
         <DCCReference Include="..\..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Tarball.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Web.Fetcher.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

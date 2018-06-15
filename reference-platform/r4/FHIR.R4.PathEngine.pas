@@ -32,8 +32,7 @@ interface
 
 uses
   SysUtils, Classes, Math, RegularExpressions, Generics.Collections, Character,
-  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.Math,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Decimal, FHIR.Support.DateTime,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang,
   FHIR.R4.PathNode, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.Context, FHIR.R4.Constants;
@@ -5519,7 +5518,7 @@ begin
     result := true
   else if incDoubleQuotes and (FCurrent[1] = '"') then
     result := true
-  else if FHIR.Support.Decimal.StringIsDecimal(FCurrent) then
+  else if StringIsDecimal(FCurrent) then
     result := true
   else
     result := StringArrayExistsSensitive(['true', 'false', '{}'], FCurrent);

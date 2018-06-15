@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Exceptions,
+  FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Stream, 
   FHIR.Database.Manager,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
 
@@ -107,7 +107,7 @@ Procedure ImportUnii(filename : String; dbm : TKDBManager);
 implementation
 
 uses
-  FHIR.Debug.Logging;
+  FHIR.Support.Logging;
 
 { TUniiServices }
 

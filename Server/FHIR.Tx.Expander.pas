@@ -41,9 +41,8 @@ todo:
 
 }
 uses
-  SysUtils, Classes, FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Support.DateTime,
-  FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Exceptions, FHIR.Support.Generics,
+  SysUtils, Classes,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Common, FHIR.Version.Utilities, FHIR.Base.Xhtml,
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Ucum.Services,
   FHIR.Tx.Server, FHIR.Tx.Manager;

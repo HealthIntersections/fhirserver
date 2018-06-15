@@ -32,6 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Menus, Dialogs,
+  FHIR.Support.Utilities,
   FHIR.Uix.Base, FHIR.Uix.Controls,
   FHIR.Wp.Types;
 
@@ -224,7 +225,7 @@ Implementation
 
 
 Uses
-  FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Collections,
+  FHIR.Support.Collections,
 
   FHIR.WP.Icons, FHIR.WP.Control, FHIR.WP.Definers, FHIR.WP.Engine, FHIR.WP.Working;
 

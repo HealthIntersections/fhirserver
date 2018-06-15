@@ -33,10 +33,10 @@ interface
 
 uses
   SysUtils, Classes, Math,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Web.Parsers, FHIR.Support.Text, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Zip, FHIR.Support.Stream,
+  FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json,
   FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Constants, FHIR.Version.Parser,
   FHIR.Snomed.Services, FHIR.Base.Parser,
-  FHIR.Support.Objects;
+  FHIR.Support.Base;
 
 type
   TRelationship = class (TFslObject)

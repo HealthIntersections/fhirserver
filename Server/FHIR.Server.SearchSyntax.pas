@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, RegularExpressions,
-  FHIR.Support.Strings, FHIR.Support.Objects,
+  FHIR.Support.Utilities, FHIR.Support.Base,
   FHIR.Base.Lang;
 
 Type

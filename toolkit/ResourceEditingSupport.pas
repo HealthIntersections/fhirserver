@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.DateTime,
+  FHIR.Support.Utilities,
   FHIR.Version.Types, FHIR.Version.Resources,
   FMX.DateTimeCtrls;
 

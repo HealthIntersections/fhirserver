@@ -68,8 +68,8 @@ interface
 Uses
   SysUtils, Classes, IniFiles,
 
-  FHIR.Support.Threads, FHIR.Support.DateTime, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Text, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities,
+  FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Stream,
 
   FHIR.Base.Objects,
   FHIR.Version.Types, FHIR.Base.Lang, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Server.Session, FHIR.Version.Utilities, FHIR.Base.Scim,
@@ -311,14 +311,14 @@ begin
   FPath := path;
   FPatients := TCSVData.Create;
   FObservations := TCSVData.Create;
-  FPatients.load(FHIR.Support.System.Path([path, 'patients.csv']), ['Version', 'LastModified', 'MRN', 'Surname', 'First', 'Middle', 'Gender', 'BirthDate', 'Active']);
-  FObservations.load(FHIR.Support.System.Path([path, 'observations.csv']), ['Version', 'LastModified']);
+  FPatients.load(FHIR.Support.Utilities.Path([path, 'patients.csv']), ['Version', 'LastModified', 'MRN', 'Surname', 'First', 'Middle', 'Gender', 'BirthDate', 'Active']);
+  FObservations.load(FHIR.Support.Utilities.Path([path, 'observations.csv']), ['Version', 'LastModified']);
 end;
 
 destructor TExampleServerData.Destroy;
 begin
-  FPatients.save(FHIR.Support.System.Path([Fpath, 'patients.csv']));
-  FObservations.save(FHIR.Support.System.Path([Fpath, 'observations.csv']));
+  FPatients.save(FHIR.Support.Utilities.Path([Fpath, 'patients.csv']));
+  FObservations.save(FHIR.Support.Utilities.Path([Fpath, 'observations.csv']));
   FPatients.free;
   FObservations.free;
   FLock.Free;

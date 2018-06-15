@@ -32,9 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IOUtils,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Threads, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
-  FHIR.Support.Stream, FHIR.Support.Zip,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Support.Collections,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Lang,
   FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Types, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.Constants;
 

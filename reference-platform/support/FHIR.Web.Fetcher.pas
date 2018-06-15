@@ -33,7 +33,7 @@ Interface
 Uses
   SysUtils, Classes,
   IdComponent,
-  FHIR.Support.Exceptions, FHIR.Support.Stream, FHIR.Support.Objects, FHIR.Support.Json;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json;
 
 Type
   TInternetFetcherMethod = (imfGet, imfPost);
@@ -82,8 +82,6 @@ Type
 Implementation
 
 Uses
-  FHIR.Support.Strings,
-
   IdURi,
   IdFTP,
   IdHTTP,

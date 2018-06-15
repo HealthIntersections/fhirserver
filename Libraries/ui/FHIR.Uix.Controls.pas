@@ -36,8 +36,7 @@ Uses
   System.UITypes, UxTheme, ToolWin, ComCtrls, Menus, ImgList, Mask, CommCtrl, VirtualTrees, ActiveX,
   Winapi.GdipApi, WinApi.GdipObj,
   SynEdit, SynEditKeyCmds, SynEditHighlighter, SynEditTypes,
-  FHIR.Support.System, FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Math, FHIR.Support.Graphics,
-  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Collections, FHIR.Support.Threads,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads,
   FHIR.Graphics.GdiPlus, FHIR.Uix.Base, FHIR.Uix.Images;
 
   {$IFNDEF VER130}  {$ENDIF}
@@ -748,8 +747,8 @@ Type
       FMaxCurrencyValue : TCurrency;
       FDenominationCurrencyValue : TCurrency;
 
-      FMinDurationValue : TDuration;
-      FMaxDurationValue : TDuration;
+      FMinDurationValue : TDurationMS;
+      FMaxDurationValue : TDurationMS;
       FIncludeHours : Boolean;
       FIncludeMinutes : Boolean;
       FIncludeSeconds : Boolean;
@@ -869,11 +868,11 @@ Type
       Function GetMaxDateTimeValue : TDateTime;
       Procedure SetMaxDateTimeValue(Const Value : TDateTime);
 
-      Function GetMinDurationValue : TDuration;
-      Procedure SetMinDurationValue(Const Value : TDuration);
+      Function GetMinDurationValue : TDurationMS;
+      Procedure SetMinDurationValue(Const Value : TDurationMS);
 
-      Function GetMaxDurationValue : TDuration;
-      Procedure SetMaxDurationValue(Const Value : TDuration);
+      Function GetMaxDurationValue : TDurationMS;
+      Procedure SetMaxDurationValue(Const Value : TDurationMS);
 
       Function GetMinCurrencyValue : TCurrency;
       Procedure SetMinCurrencyValue(Const Value : TCurrency);
@@ -911,8 +910,8 @@ Type
       Function GetValueAsDateTime : TDateTime;
       Procedure SetValueAsDateTime(Const Value : TDateTime);
 
-      Function GetValueAsDuration : TDuration;
-      Procedure SetValueAsDuration(Const Value : TDuration);
+      Function GetValueAsDuration : TDurationMS;
+      Procedure SetValueAsDuration(Const Value : TDurationMS);
 
       Function GetValueAsString : String;
       Procedure SetValueAsString(Const Value : String);
@@ -962,7 +961,7 @@ Type
 
       Function DisplayDateTime(Const aValue : TDateTime) : String; Overload;
       Function DisplayDateTime(Const aValue : TDateTimeOffset) : String; Overload;
-      Function DisplayDuration(Const aValue : TDuration) : String;
+      Function DisplayDuration(Const aValue : TDurationMS) : String;
       Function DisplayExtended(Const aValue : Extended) : String;
 
       Function IsValidContent : Boolean;
@@ -1107,8 +1106,8 @@ Type
       Property AssumedNow : TDateTime Read FAssumedNow Write FAssumedNow;
       Property TimeOptional : Boolean Read GetTimeOptional Write SetTimeOptional;
 
-      Property MinDurationValue : TDuration Read GetMinDurationValue Write SetMinDurationValue;
-      Property MaxDurationValue : TDuration Read GetMaxDurationValue Write SetMaxDurationValue;
+      Property MinDurationValue : TDurationMS Read GetMinDurationValue Write SetMinDurationValue;
+      Property MaxDurationValue : TDurationMS Read GetMaxDurationValue Write SetMaxDurationValue;
       Property IncludeHours : Boolean Read GetIncludeHours Write SetIncludeHours;
       Property IncludeMinutes : Boolean Read GetIncludeMinutes Write SetIncludeMinutes;
       Property IncludeSeconds : Boolean Read GetIncludeSeconds Write SetIncludeSeconds;
@@ -1127,7 +1126,7 @@ Type
       Property ValueAsString : String Read GetValueAsString Write SetValueAsString;
       Property ValueAsDateTimeOffset : TDateTimeOffset Read GetValueAsDateTimeOffset Write SetValueAsDateTimeOffset;
       Property ValueAsDateTime : TDateTime Read GetValueAsDateTime Write SetValueAsDateTime;
-      Property ValueAsDuration : TDuration Read GetValueAsDuration Write SetValueAsDuration;
+      Property ValueAsDuration : TDurationMS Read GetValueAsDuration Write SetValueAsDuration;
       Property ValueAsCurrency : TCurrency Read GetValueAsCurrency Write SetValueAsCurrency;
       Property ValueAsInteger64 : Int64 Read GetValueAsInteger64 Write SetValueAsInteger64;
       Property ValueAsInteger32 : LongInt Read GetValueAsInteger32 Write SetValueAsInteger32;
@@ -5827,7 +5826,7 @@ Var
   aCurrencyValue : TCurrency;
   aDateTimeNow : TDateTime;
   aDateTimeValue : TDateTime;
-  aDurationValue : TDuration;
+  aDurationValue : TDurationMS;
   iLoop : Integer;
   iIntegerValue : Int64;
   rValue : Extended;
@@ -6088,8 +6087,8 @@ Begin
 
   MaxLength := Length(sFormat);
   sFormat := StringReplace(sFormat, ['d', 'm', 'y', 'h', 'n', 's'], '9');
-  sFormat := StringReplace(sFormat, ['/'], FHIR.Support.DateTime.DateSeparator);
-  sFormat := StringReplace(sFormat, [':'], FHIR.Support.DateTime.TimeSeparator);
+  sFormat := StringReplace(sFormat, ['/'], FHIR.Support.Utilities.DateSeparator);
+  sFormat := StringReplace(sFormat, [':'], FHIR.Support.Utilities.TimeSeparator);
   Mask := sFormat;
 
   If TimeOptional Then
@@ -6120,9 +6119,9 @@ Begin
   If DateTimeEquals(aValue, 0, DATETIME_MILLISECOND_ONE) Then
     Result := ''
   Else If FIncludeDate Then
-    Result := FHIR.Support.DateTime.DateTimeFormat(aValue, DateTimeFormat)
+    Result := FHIR.Support.Utilities.DateTimeFormat(aValue, DateTimeFormat)
   Else If FIncludeTime Then
-    Result := FHIR.Support.DateTime.DateTimeFormat(aValue, TimeFormat)
+    Result := FHIR.Support.Utilities.DateTimeFormat(aValue, TimeFormat)
   Else
     Result := '';
 End;
@@ -6133,15 +6132,15 @@ Begin
   If DateTimeOffsetEquals(aValue, DateTimeOffsetZero, DATETIME_MILLISECOND_ONE) Then
     Result := ''
   Else If FIncludeDate Then
-    Result := FHIR.Support.DateTime.DateTimeFormat(aValue, DateTimeFormat)
+    Result := FHIR.Support.Utilities.DateTimeFormat(aValue, DateTimeFormat)
   Else If FIncludeTime Then
-    Result := FHIR.Support.DateTime.DateTimeFormat(aValue, TimeFormat)
+    Result := FHIR.Support.Utilities.DateTimeFormat(aValue, TimeFormat)
   Else
     Result := '';
 End;
 
 
-Function TUixCodeEdit.DisplayDuration(Const aValue : TDuration) : String;
+Function TUixCodeEdit.DisplayDuration(Const aValue : TDurationMS) : String;
 Var
   iSeparator : Integer;
   iCount : Integer;
@@ -7090,7 +7089,7 @@ Begin
   EnforceValidationModeDateTime;
 
   If Not bValue And (DisplayDateTime(ValueAsDateTime) <> '') Then
-    Text := FHIR.Support.DateTime.DateTimeFormat(ValueAsDateTime, DateFormat);
+    Text := FHIR.Support.Utilities.DateTimeFormat(ValueAsDateTime, DateFormat);
 End;
 
 
@@ -7144,7 +7143,7 @@ Begin
 End;
 
 
-Function TUixCodeEdit.GetMinDurationValue : TDuration;
+Function TUixCodeEdit.GetMinDurationValue : TDurationMS;
 Begin
   EnforceValidationModeDuration;
 
@@ -7152,7 +7151,7 @@ Begin
 End;
 
 
-Procedure TUixCodeEdit.SetMinDurationValue(Const Value : TDuration);
+Procedure TUixCodeEdit.SetMinDurationValue(Const Value : TDurationMS);
 Begin
   EnforceValidationModeDuration;
 
@@ -7160,7 +7159,7 @@ Begin
 End;
 
 
-Function TUixCodeEdit.GetMaxDurationValue : TDuration;
+Function TUixCodeEdit.GetMaxDurationValue : TDurationMS;
 Begin
   EnforceValidationModeDuration;
 
@@ -7168,7 +7167,7 @@ Begin
 End;
 
 
-Procedure TUixCodeEdit.SetMaxDurationValue(Const Value : TDuration);
+Procedure TUixCodeEdit.SetMaxDurationValue(Const Value : TDurationMS);
 Begin
   EnforceValidationModeDuration;
 
@@ -7398,7 +7397,7 @@ Begin
 End;
 
 
-Function TUixCodeEdit.GetValueAsDuration : TDuration;
+Function TUixCodeEdit.GetValueAsDuration : TDurationMS;
 Var
   sText : String;
 Begin
@@ -7413,7 +7412,7 @@ Begin
 End;
 
 
-Procedure TUixCodeEdit.SetValueAsDuration(Const Value : TDuration);
+Procedure TUixCodeEdit.SetValueAsDuration(Const Value : TDurationMS);
 Begin
   EnforceValidationModeDuration;
 

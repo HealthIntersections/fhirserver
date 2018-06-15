@@ -33,9 +33,7 @@ Interface
 
 uses
   SysUtils, Classes, Inifiles, Generics.Collections,
-
-  FHIR.Support.Exceptions, FHIR.Support.Text, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Strings,
-
+  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Utilities, FHIR.Support.Collections,
   FHIR.Loinc.Services, FHIR.Snomed.Services, FHIR.Snomed.Expressions,
   FHIR.Database.Manager, FHIR.Database.Dialects,
   YuStemmer;

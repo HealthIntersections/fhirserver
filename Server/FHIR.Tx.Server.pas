@@ -39,7 +39,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
 
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
   FHIR.Database.Manager,
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.CdsHooks.Utilities, FHIR.Version.Operations, FHIR.Server.Session, FHIR.Version.Common,
@@ -126,7 +126,7 @@ Type
 implementation
 
 uses
-  FHIR.Debug.Logging,
+  FHIR.Support.Logging,
   FHIR.Version.Constants,
   FHIR.Tx.Expander;
 

@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, 
   FHIR.Base.Factory, FHIR.Base.Scim, FHIR.Base.Lang;
 
 Const

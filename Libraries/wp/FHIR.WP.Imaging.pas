@@ -33,7 +33,7 @@ Interface
 Uses
   Windows, SysUtils,
   VCL.Graphics,
-  FHIR.Support.Objects, FHIR.Support.System, FHIR.Support.Math, FHIR.Support.Graphics, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Graphics, FHIR.Support.Stream,
   FHIR.Graphics.GdiPlus,
   FHIR.Dicom.Dictionary, FHIR.Dicom.Objects, FHIR.Dicom.Parser, FHIR.Dicom.Extractor,
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working;
@@ -83,8 +83,7 @@ Type
 Implementation
 
 Uses
-  GraphicEx,
-  FHIR.Support.Strings;
+  GraphicEx;
 
 { TWPImageLoader }
 

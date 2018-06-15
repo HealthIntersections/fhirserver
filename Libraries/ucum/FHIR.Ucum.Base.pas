@@ -32,8 +32,8 @@ Interface
 
 Uses
   Sysutils,
-  FHIR.Support.Decimal,
-  FHIR.Support.Objects,
+  FHIR.Support.Utilities,
+  FHIR.Support.Base,
   
   FHIR.Support.Collections;
 

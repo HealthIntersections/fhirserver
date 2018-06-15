@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls,
   FMX.Edit, FMX.Controls.Presentation, FMX.ListBox, FMX.Platform,
-  FHIR.Support.Text, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Smart.Utilities,
   SettingsDialog, BaseFrame, ProcessForm,

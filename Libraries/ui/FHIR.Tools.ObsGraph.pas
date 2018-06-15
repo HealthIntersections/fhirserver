@@ -4,9 +4,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Math,
-  FHIR.Support.DateTime, FHIR.Support.Generics, FHIR.Support.Threads, FHIR.Support.Objects, FHIR.Support.Decimal,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads,
   FHIR.Ui.Graph,
-  FHIR.Client.Base,
+  FHIR.Base.Objects, FHIR.Client.Base,
   FHIR.Smart.Utilities,
   FHIR.Version.Client, FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities;
 
@@ -23,7 +23,7 @@ type
 
   TFHIRObsNode = class (TFslObject)
   private
-    FTime : TDateTime;
+    FTime : Double; // duration back from 'now'
     FValue : Double;
     FResource: TFhirObservation;
     FMessage: String;
@@ -31,7 +31,7 @@ type
   public
     destructor Destroy; override;
 
-    property time : TDateTime read FTime write FTime;
+    property time : Double read FTime write FTime;
     property value : Double read FValue write FValue;
     property message : String read FMessage write FMessage;
     property resource : TFhirObservation read FResource write SetResource;
@@ -55,7 +55,7 @@ type
     FTaskId : Integer;
     FCode : String;
     FWindow : TDuration;
-    FServer : TRegisteredFHIRServer;
+    FServer : String;
 
     FObervations : TFslList<TFHIRObsNode>;
     FDataCount : integer;
@@ -67,12 +67,6 @@ type
     FSeriesName: String;
     FPatientId: String;
 
-    procedure SetServer(const Value: TRegisteredFHIRServer);
-    procedure SetWindow(const Value: TDuration);
-    procedure SetCode(const Value: String);
-    procedure SetSeriesName(const Value: String);
-    procedure SetPatientId(const Value: String);
-
     procedure processData(id : integer; response : TBackgroundTaskPackage);
 
     function queryString : String;
@@ -81,14 +75,13 @@ type
     destructor Destroy; override;
     function link : TObservationDataProvider;
 
-    property server : TRegisteredFHIRServer read FServer write SetServer;
-    property code : String read FCode write SetCode;
-    property window : TDuration read FWindow write SetWindow;
-    property SeriesName : String read FSeriesName write SetSeriesName;
-    property patientId : String read FPatientId write SetPatientId;
+    property server : String read FServer write FServer;
+    property code : String read FCode write FCode;
+    property window : TDuration read FWindow write FWindow;
+    property SeriesName : String read FSeriesName write FSeriesName;
+    property patientId : String read FPatientId write FPatientId;
 
-    procedure update;
-
+    procedure load;
 
     function name : String; override;
     function HasDuplicateXValues : boolean; override;
@@ -128,13 +121,15 @@ end;
 
 destructor TObservationDataProvider.Destroy;
 begin
-  FServer.free;
   inherited;
 end;
 
 function TObservationDataProvider.count: integer;
 begin
-  result := FObervations.Count;
+  if FObervations = nil then
+    result := 0
+  else
+    result := FObervations.Count;
 end;
 
 function TObservationDataProvider.dataCount: integer;
@@ -166,10 +161,11 @@ function TObservationDataProvider.getPoint(i: integer): TFGraphDataPoint;
 begin
   result.clear;
   result.id := i;
+  result.x := FObervations[i].time;
   if FObervations[i].message <> '' then
     result.error := FObervations[i].message
   else
-    result.x := FObervations[i].value;
+    result.y := FObervations[i].value;
 end;
 
 function TObservationDataProvider.HasDuplicateXValues: boolean;
@@ -196,7 +192,7 @@ var
   i, j : integer;
 begin
   FObervations.Free;
-  FObervations := response as TFslList<TFHIRObsNode>;
+  FObervations := (response as TFslList<TFHIRObsNode>).Link;
 
   FDataCount := 0;
   FXmin := NO_VALUE;
@@ -240,43 +236,12 @@ end;
 
 function TObservationDataProvider.queryString: String;
 begin
-  result := 'patient='+patientId+'&code='+code+'&_sort=date&date=gt'+(TDateTimeEx.makeUTC-window).toXML;
+  result := 'patient:patient='+patientId+'&code='+code+'&_sort=date&date=gt'+(TDateTimeEx.makeUTC-window).toXML;
 end;
 
-procedure TObservationDataProvider.SetServer(const Value: TRegisteredFHIRServer);
+procedure TObservationDataProvider.load;
 begin
-  FServer.free;
-  FServer := Value;
-  update;
-end;
-
-procedure TObservationDataProvider.SetCode(const Value: String);
-begin
-  FCode := Value;
-  update;
-end;
-
-procedure TObservationDataProvider.SetPatientId(const Value: String);
-begin
-  FPatientId := Value;
-  update;
-end;
-
-procedure TObservationDataProvider.SetSeriesName(const Value: String);
-begin
-  FSeriesName := Value;
-  Change;
-end;
-
-procedure TObservationDataProvider.SetWindow(const Value: TDuration);
-begin
-  FWindow := Value;
-  update;
-end;
-
-procedure TObservationDataProvider.update;
-begin
-  GBackgroundTasks.queueTask(FTaskId, TObservationGraphingContext.Create(server.fhirEndpoint, queryString));
+  GBackgroundTasks.queueTask(FTaskId, TObservationGraphingContext.Create(server, queryString));
 end;
 
 { TObservationGraphRetrievalTask }
@@ -297,6 +262,7 @@ begin
   begin
     FClient.Free;
     FClient := TFhirClient.create(nil, 'en', TFHIRHTTPCommunicator.Create(details.address));
+    FClient.format := ffJson;
     FClient.onProgress := clientProgress;
 //    FClient.smartToken := todo.........
   end;
@@ -348,7 +314,7 @@ begin
   result := TFHIRObsNode.Create;
   try
     result.resource := obs.Link;
-    result.time := t;
+    result.time := (t - now) * HoursPerDay;
     if obs.value = nil then
     begin
       if obs.comment <> '' then

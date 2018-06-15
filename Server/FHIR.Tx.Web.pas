@@ -34,8 +34,7 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   FHIR.Web.Parsers,
-  FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   IdContext, IdCustomHTTPServer,
   FHIR.Base.Lang, FHIR.Version.Context, FHIR.Server.Session, FHIR.Version.Utilities, FHIR.Version.Resources, FHIR.Version.Types, FHIR.Base.Xhtml, FHIR.Base.Objects,
   FHIR.Web.HtmlGen, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
@@ -110,7 +109,7 @@ Type
 implementation
 
 uses
-  FHIR.Debug.Logging,
+  FHIR.Support.Logging,
   FHIR.Version.Parser;
 
 { TTerminologyWebServer }

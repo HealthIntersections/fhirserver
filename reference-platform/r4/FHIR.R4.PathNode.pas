@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Support.Stream, FHIR.Support.Xml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Xml,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Parser, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Parser;
 

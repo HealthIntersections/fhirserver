@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Objects,
+  FHIR.Support.Base,
   IdContext, IdCustomHTTPServer,
   FHIR.Base.Lang,
   FHIR.Server.Session, FHIR.Base.Scim,

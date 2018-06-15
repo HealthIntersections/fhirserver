@@ -32,8 +32,7 @@ interface
 
 uses
   SysUtils, Classes, Variants, Math,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream,
-  FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.DateTime, FHIR.Support.Text,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common,
   FHIR.R3.Base, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Utilities, FHIR.R3.PathNode, FHIR.R3.Common;
 
@@ -328,7 +327,6 @@ type
 implementation
 
 uses
-  FHIR.Support.Strings,
   FHIR.R3.Constants,
   FHIR.R3.Profiles;
 
@@ -1222,7 +1220,7 @@ begin
   try
     Fcontext.listStructures(list);
     for sd in list do
-      if (name = sd.Id) then
+      if sd.url = 'http://hl7.org/fhir/StructureDefinition/'+name then
         exit(sd.Link);
   finally
     list.Free;

@@ -33,9 +33,7 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   System.SysUtils, Classes,
   IdGlobal, IdSSLOpenSSL, IdSSLOpenSSLHeaders, IdHMAC, IdHash, IdHMACSHA1,
-  FHIR.Support.Exceptions, FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.DateTime, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Collections,
-  FHIR.Support.Json;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json;
 
 
 function BN_num_bytes(const a: pBIGNUM): integer;

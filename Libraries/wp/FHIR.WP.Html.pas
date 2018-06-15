@@ -35,9 +35,7 @@ Interface
 
 Uses
   SysUtils, Vcl.Graphics,
-  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.System, FHIR.Support.Math,
-  FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Html, FHIR.Support.Graphics,
-  FHIR.Support.Mime, FHIR.Support.Text,
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Html, FHIR.Support.Graphics, 
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.Format, FHIR.WP.Renderer;
 
 

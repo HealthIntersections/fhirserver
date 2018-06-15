@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes, Graphics, Controls, StdCtrls, ExtCtrls, Dialogs, Buttons,
-  FHIR.Support.Strings, FHIR.Support.Math,
+  FHIR.Support.Utilities,
   FHIR.Uix.Base, FHIR.Uix.Images, FHIR.Uix.Controls, FHIR.Uix.Advanced,
   FHIR.WP.Types, FHIR.WP.Widgets, FHIR.WP.Definers,
   FHIR.WP.Icons, FHIR.WP.Control;

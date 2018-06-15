@@ -35,7 +35,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Edit,
   FMX.ListBox, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Layouts, FMX.TreeView,
   FMX.WebBrowser, FMX.TabControl, FMX.Controls.Presentation,
-  FHIR.Support.Generics,
+  FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Client,
   ToolkitSettings, System.ImageList, FMX.ImgList;
 

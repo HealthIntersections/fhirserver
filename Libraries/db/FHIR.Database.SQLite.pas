@@ -33,9 +33,8 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles,
-  FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Strings, FHIR.Support.Exceptions, FHIR.Support.Generics,
-  FHIR.Support.DateTime, FHIR.Database.Dialects, FHIR.Database.Manager, FHIR.Database.Settings,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Database.Dialects, FHIR.Database.Manager, FHIR.Database.Settings,
   FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper;
 
 type

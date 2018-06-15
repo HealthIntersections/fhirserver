@@ -32,8 +32,7 @@ Interface
 
 Uses
   SysUtils, Vcl.Graphics,
-  FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Text, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream,
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.Format;
 
 Const

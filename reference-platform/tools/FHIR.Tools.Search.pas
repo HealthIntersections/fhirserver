@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Web.Parsers, FHIR.Support.DateTime,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Web.Parsers,
   FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Tools.Indexing, FHIR.Server.Indexing;{,
   FHIR.Version.Types, FHIR.Base.Objects, FHIR.Version.PathEngine, , , FHIR.Version.Utilities}

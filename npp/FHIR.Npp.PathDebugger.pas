@@ -37,7 +37,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} FHIR.Npp.Form,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Buttons, Vcl.ComCtrls, System.ImageList, Vcl.ImgList,
   VirtualTrees,
-  FHIR.Support.Generics,
+  
   FHIR.Base.Objects, FHIR.Support.Collections, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Lang,
   FHIR.CdsHooks.Client,
   FHIR.Npp.Utilities, FHIR.Npp.Base;
@@ -156,7 +156,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FHIR.Npp.Settings, FHIR.Support.Text;
+  FHIR.Npp.Settings, FHIR.Support.Stream;
 
 
 function getId(expr : TFHIRPathExpressionNodeV; op : boolean) : String;

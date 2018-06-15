@@ -32,9 +32,7 @@ Interface
 
 Uses
   Windows, SysUtils, Vcl.Graphics, Vcl.Imaging.pngimage,
-
-  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Objects,
-  FHIR.Support.Stream, FHIR.Support.Graphics,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Graphics,
   FHIR.Dicom.Dictionary,
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Imaging, FHIR.WP.Working; 
 

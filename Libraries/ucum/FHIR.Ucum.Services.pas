@@ -33,9 +33,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Math, FHIR.Support.System,
-  FHIR.Support.Collections, FHIR.Support.Objects,
-  FHIR.Support.Decimal, FHIR.Support.Text, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.MXml,
   FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, FHIR.Ucum.IFace,
   FHIR.Base.Common,
   FHIR.Version.Parser,

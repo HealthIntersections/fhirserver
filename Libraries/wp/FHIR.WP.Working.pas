@@ -34,7 +34,7 @@ Interface
 Uses
   Windows, SysUtils, Classes, Vcl.Graphics, System.UITypes,
   GraphicEx,
-  FHIR.Support.System, FHIR.Support.Math, FHIR.Support.Objects, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Support.Collections, FHIR.Support.Graphics, FHIR.Support.Xml,
 
   FHIR.Support.Printing, FHIR.WP.Definers, FHIR.WP.Types, FHIR.WP.Document;
@@ -1884,9 +1884,6 @@ type
   End;
 
 Implementation
-
-Uses
-  FHIR.Support.Strings;
 
 procedure prop(var result : String; name, value : string);overload;
 begin

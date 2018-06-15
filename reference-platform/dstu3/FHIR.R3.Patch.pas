@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  FHIR.Support.Objects,
+  FHIR.Support.Base,
   FHIR.Base.Objects, 
   FHIR.R3.Types, FHIR.R3.Resources;
 

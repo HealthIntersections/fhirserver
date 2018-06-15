@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Text, FHIR.Support.Exceptions,
+  FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Stream, 
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
 

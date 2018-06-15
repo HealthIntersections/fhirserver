@@ -44,6 +44,7 @@ type
     class procedure configure(graph : TFGraph);
     class procedure addMarks(graph : TFGraph);
     class procedure addSeries(graph : TFGraph);
+    class procedure addBand(graph : TFGraph);
   end;
 
 implementation
@@ -210,6 +211,24 @@ begin
   graph.Legend.top := 20;
   graph.Legend.height := 0;
   graph.Legend.width := 0;
+end;
+
+class procedure TFGraphTester.addBand(graph : TFGraph);
+var
+  band : TFGraphBand;
+begin
+  band := TFGraphBand.Create;
+  try
+    band.YAxis2 := false;
+    band.color := clGreen;
+    band.Min := 0.5;
+    band.Max := 0.75;
+    band.opacity := 0.1;
+
+    graph.Bands.Add(band.link);
+  finally
+    band.Free;
+  end;
 end;
 
 end.

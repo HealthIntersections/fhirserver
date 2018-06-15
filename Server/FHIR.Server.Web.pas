@@ -80,20 +80,15 @@ Uses
   SysUtils, Classes, IniFiles, System.Generics.Collections, {JCL JclDebug,}
   EncdDecd,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
-  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, FHIR.Support.Mime, IdCookie,
+  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, IdCookie,
   IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdSchedulerOfThreadPool,
   IdGlobalProtocols, FHIR.Web.Socket,
 
-  FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Binary, FHIR.Support.Strings,
-  FHIR.Support.Certs, FHIR.Debug.Logging,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Support.Logging, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.JSON,
+  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
+  FHIR.Web.Rdf,
 
-  FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Zip, FHIR.Support.Exceptions, FHIR.Support.Text,
-  FHIR.Support.Generics,
-
-  FHIR.Support.Threads, FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Web.HtmlGen, FHIR.Database.Dialects,
-  FHIR.Support.JSON, FHIR.Web.Rdf,
-
-  FHIR.Support.MXml, FHIR.Misc.GraphQL, {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF}
+  FHIR.Support.MXml, FHIR.Web.GraphQL, {$IFDEF MSWINDOWS} FHIR.Support.MsXml, {$ENDIF}
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Version.Constants,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Version.Tags, FHIR.Server.Session, FHIR.Base.Lang, FHIR.Server.Storage,
   FHIR.Version.Utilities, FHIR.Server.Security, FHIR.Smart.Utilities, FHIR.Server.XhtmlComp,
@@ -425,7 +420,7 @@ Uses
 {$IFDEF MSWINDOWS}
   Registry,
 {$ENDIF}
-  FHIR.Misc.Facebook;
+  FHIR.Web.Facebook;
 
 Function GetMimeTypeForExt(AExt: String): String;
 {$IFDEF MSWINDOWS}

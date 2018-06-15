@@ -34,8 +34,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Strings, FHIR.Support.Binary, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Dicom.Dictionary, FHIR.Dicom.Objects, FHIR.Dicom.Writer;
 
   

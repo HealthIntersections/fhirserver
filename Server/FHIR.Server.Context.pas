@@ -33,8 +33,7 @@ interface
 
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Threads, FHIR.Support.System, FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Collections,
   FHIR.Base.Factory,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Server.Indexing, FHIR.Version.Utilities,
   FHIR.Version.Validator, FHIR.Server.Validator, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Utilities, FHIR.Tx.Server,

@@ -34,9 +34,7 @@ Interface
 
 uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  FHIR.Support.Exceptions, FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Support.System,
-  FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Generics, FHIR.Support.Text,
-  FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.Turtle,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml;
 
 const

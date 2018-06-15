@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Generics, FHIR.Support.DateTime, FHIR.Support.System,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Operations;
 

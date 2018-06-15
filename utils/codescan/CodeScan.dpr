@@ -36,24 +36,15 @@ POSSIBILITY OF SUCH DAMAGE.
 uses
   System.SysUtils,
   IOUtils,
-  FHIR.Support.Binary in '..\..\reference-platform\support\FHIR.Support.Binary.pas',
   FHIR.Support.Collections in '..\..\reference-platform\support\FHIR.Support.Collections.pas',
-  FHIR.Support.DateTime in '..\..\reference-platform\support\FHIR.Support.DateTime.pas',
-  FHIR.Support.Exceptions in '..\..\reference-platform\support\FHIR.Support.Exceptions.pas',
-  FHIR.Support.Generics in '..\..\reference-platform\support\FHIR.Support.Generics.pas',
-  FHIR.Support.Math in '..\..\reference-platform\support\FHIR.Support.Math.pas',
-  FHIR.Support.Objects in '..\..\reference-platform\support\FHIR.Support.Objects.pas',
-  FHIR.Support.Strings in '..\..\reference-platform\support\FHIR.Support.Strings.pas',
-  FHIR.Support.System in '..\..\reference-platform\support\FHIR.Support.System.pas',
-  FHIR.Support.Text in '..\..\reference-platform\support\FHIR.Support.Text.pas',
+  FHIR.Support.Base in '..\..\reference-platform\support\FHIR.Support.Base.pas',
+  FHIR.Support.Utilities in '..\..\reference-platform\support\FHIR.Support.Utilities.pas',
   FHIR.Support.Fpc in '..\..\reference-platform\support\FHIR.Support.Fpc.pas',
   FHIR.Support.Stream in '..\..\reference-platform\support\FHIR.Support.Stream.pas',
-  FHIR.Support.Decimal in '..\..\reference-platform\support\FHIR.Support.Decimal.pas';
 
 function isExemptUnit(s : String) : boolean;
 begin
   result := StringArrayExistsInsensitive([
-      'FHIR.Support.Tarball',
       'NppForms',
       'NppDockingForms',
       'FHIR.Npp.Include',

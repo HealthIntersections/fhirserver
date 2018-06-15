@@ -32,8 +32,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Decimal,
-  FHIR.Support.Objects;
+  FHIR.Support.Base, FHIR.Support.Utilities;
 
 Type
   TUcumPair = class (TFslObject)

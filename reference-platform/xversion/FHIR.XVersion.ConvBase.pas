@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Objects;
+  FHIR.Support.Base;
 
 type
   TVersionConvertorBase = class (TFslObject)

@@ -37,7 +37,7 @@ uses
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
   FMX.Memo, FMX.TreeView,
   BaseFrame,
-  FHIR.Support.Exceptions, FHIR.Support.Generics, FHIR.Support.System, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Web.Fetcher, FHIR.Support.Osx,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Web.Fetcher, FHIR.Support.Osx,
   FHIR.Cache.PackageManager;
 
 const

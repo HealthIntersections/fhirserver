@@ -55,8 +55,7 @@ The content loads and works extremely quickly.
 Uses
   SysUtils, Classes, Generics.Collections, Character,
   YuStemmer,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Math,
-  FHIR.Support.Collections, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.DateTime,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
   FHIR.Base.Common,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.CdsHooks.Utilities, FHIR.Version.Operations,
   FHIR.Snomed.Expressions, FHIR.Tx.Service;

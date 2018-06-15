@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Objects, AdvBuffers,
+  FHIR.Support.Base, AdvBuffers,
   FHIR.Base.Objects, FHIR.Server.Session, FHIRTestWorker3, FHIR.Version.Parser,
   FHIR.R3.Context, FHIR.R3.Validator,
   DUnitX.TestFramework;
@@ -117,7 +117,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes, FHIR.Support.Strings,
+  SysUtils, Classes, FHIR.Support.Utilities,
   FHIR.Base.Parser,
   FHIR.R3.Types, FHIR.R3.Resources;
 

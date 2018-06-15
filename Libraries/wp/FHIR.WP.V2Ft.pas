@@ -157,7 +157,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Text,
+  FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.WP.Format, FHIR.WP.Text,
   FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working;
 

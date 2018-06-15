@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, 
   FHIR.Cache.PackageManager,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative,

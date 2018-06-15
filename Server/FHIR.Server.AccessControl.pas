@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  FHIR.Support.Objects,
+  FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Server.Security;
 
 Type

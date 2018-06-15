@@ -33,8 +33,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Objects,
-  FHIR.Support.Text,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.Base.Parser,
   FHIR.Version.Constants; // todo: really need to sort out how XHTML template is done

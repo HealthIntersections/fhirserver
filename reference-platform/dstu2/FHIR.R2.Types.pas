@@ -36,8 +36,8 @@ interface
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  Classes, SysUtils, EncdDecd, 
-  FHIR.Support.Signatures, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.DateTime, FHIR.Support.Generics,
+  Classes, SysUtils, EncdDecd,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Signatures,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.R2.Base;
 
@@ -10564,7 +10564,7 @@ end;
 
 function TFhirBase64Binary.AsStringValue : string;
 begin
-  if (length(FValue) = 0) then result := '' else result := string(EncodeBase64(@FValue[0], length(FValue)));
+  if (length(FValue) = 0) then result := '' else result := string(EncodeBase64(FValue));
 end;
 
 procedure TFhirBase64Binary.SetStringValue(value : string);

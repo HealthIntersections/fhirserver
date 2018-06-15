@@ -171,19 +171,11 @@
         </DelphiCompile>
         <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
         <DCCReference Include="..\reference-platform\version\FHIR.Version.Client.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Strings.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Math.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Decimal.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.DateTime.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Mime.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Objects.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Exceptions.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Generics.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Base.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Binary.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.System.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Json.pas"/>
         <DCCReference Include="..\reference-platform\version\FHIR.Version.Parser.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Xml.pas"/>
@@ -350,7 +342,7 @@
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathNode.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Debug.Logging.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Logging.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Questionnaire2.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Base.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.ParserBase.pas"/>
@@ -359,11 +351,9 @@
         <DCCReference Include="..\reference-platform\client\FHIR.Client.HTTP.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Threaded.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Client.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Text.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Zip.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Misc.GraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.Common.pas"/>
@@ -374,9 +364,8 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Async.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.WinInet.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.WinInet.pas"/>
         <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Tarball.pas"/>
         <DCCReference Include="PackageManagerFrame.pas">
             <Form>PackageManagerFrame</Form>
             <DesignClass>TFrame</DesignClass>
@@ -446,17 +435,17 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo44x44.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
                         <RemoteName>profiles-resources.xml</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

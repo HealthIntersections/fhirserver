@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Text, FHIR.Support.Zip,
+  IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Version.Parser, 
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
 

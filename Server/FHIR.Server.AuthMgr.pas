@@ -36,9 +36,9 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections, IniFiles,
   IdContext, IdCustomHTTPServer, IdCookie,
-  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Threads, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Exceptions, FHIR.Support.Generics,
-  FHIR.Misc.Facebook, FHIR.Scim.Server, FHIR.Base.Scim, FHIR.Support.Certs, FHIR.Smart.Utilities,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Threads,
+  FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects,
+  FHIR.Web.Facebook, FHIR.Scim.Server, FHIR.Base.Scim, FHIR.Support.Certs, FHIR.Smart.Utilities,
   FHIR.Base.Lang,
   FHIR.Server.Session, FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Server.Security, FHIR.Version.Utilities,
   FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Misc.ApplicationVerifier,
@@ -156,7 +156,7 @@ type
 implementation
 
 uses
-  FHIR.Debug.Logging, FHIR.Version.AuthMap;
+  FHIR.Support.Logging, FHIR.Version.AuthMap;
 
 
 { TAuth2Server }

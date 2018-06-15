@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, SysUtils, classes,
-  FHIR.Support.Strings, FHIR.Support.Generics, FHIR.Support.Text,
+  FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Version.Parser,
   {$IFDEF FHIR2}

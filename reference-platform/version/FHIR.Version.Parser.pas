@@ -36,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Xml,
+  FHIR.Support.Base, FHIR.Support.Stream, FHIR.Support.Xml,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang,
 
   {$IFDEF FHIR2}

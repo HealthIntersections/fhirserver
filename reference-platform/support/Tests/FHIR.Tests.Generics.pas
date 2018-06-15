@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics;
+   FHIR.Support.Base;
 
 Type
   TFslString = class (TFslObject)

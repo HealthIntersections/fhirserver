@@ -32,7 +32,7 @@ Interface
 
 Uses
   Windows, SysUtils, Graphics, Controls, Classes, Forms, StdCtrls, ExtCtrls, Spin, Math, ComCtrls, Dialogs, Contnrs,
-  FHIR.Support.Math, FHIR.Support.Collections, FHIR.Support.Graphics, FHIR.Support.Strings, FHIR.Support.System,
+  FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Graphics,
   FHIR.Graphics.GdiPlus,
   FHIR.Uix.Base, FHIR.Uix.Controls, FHIR.Uix.Forms, FHIR.Uix.Images, FHIR.Uix.Advanced, FHIR.Uix.Dialogs,
 

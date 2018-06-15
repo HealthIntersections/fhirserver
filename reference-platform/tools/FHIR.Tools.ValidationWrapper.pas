@@ -33,7 +33,7 @@ interface
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
-  FHIR.Support.Objects, FHIR.Support.System,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Cache.PackageManager;
 
 type

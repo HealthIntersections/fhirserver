@@ -34,7 +34,7 @@ Interface
 
 Uses
   Windows, Mapi,
-  FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Exceptions;
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections;
 
 
 Type

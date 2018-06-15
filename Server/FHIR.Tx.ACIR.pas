@@ -34,7 +34,7 @@ interface
 // based on a table by importing the excel spreadsheet directly
 uses
   SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
+   FHIR.Support.Utilities, FHIR.Support.Base, 
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
 
 type

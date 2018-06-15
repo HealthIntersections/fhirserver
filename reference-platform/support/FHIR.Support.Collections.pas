@@ -35,8 +35,7 @@ Interface
 
 Uses
   SysUtils,
-  FHIR.Support.Math, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.DateTime,
-  FHIR.Support.Exceptions, FHIR.Support.Objects;
+  FHIR.Support.Base, FHIR.Support.Utilities;
 
 
 Type
@@ -242,7 +241,7 @@ Type
 
   TFslDurationIterator = Class(TFslIterator)
     Public
-      Function Current : TDuration; Virtual;
+      Function Current : TDurationMS; Virtual;
   End;
 
   TFslCurrencyIterator = Class(TFslIterator)
@@ -700,8 +699,8 @@ Type
     property List: TFslObjectList read GetList write SetList;
   end;
 
-  TFslObject = FHIR.Support.Objects.TFslObject;
-  TFslObjectClass = FHIR.Support.Objects.TFslObjectClass;
+  TFslObject = FHIR.Support.Base.TFslObject;
+  TFslObjectClass = FHIR.Support.Base.TFslObjectClass;
 
   TFslHashTableList = Class(TFslObjectList)
     Private
@@ -1634,11 +1633,31 @@ Type
       Property BooleanList : TFslBooleanList Read GetBooleanList Write SetBooleanList;
   End;
 
+  TFslCharacterSet = Class(TFslOrdinalSet)
+    Private
+      FDataSet : TCharSet;
+
+      Function GetAsText: String;
+      Procedure SetAsText(Const Value: String);
+
+    Public
+      Constructor Create; Override;
+      Destructor Destroy; Override;
+
+      Procedure AddRange(Const aFromValue, aToValue : Char);
+      Procedure AddValue(Const aValue : Char);
+      Function ContainsValue(Const aValue : Char) : Boolean;
+
+      Property AsText : String Read GetAsText Write SetAsText;
+      Property Data : TCharSet Read FDataSet Write FDataSet;
+  End;
+
+
 
 Implementation
 
 uses
-  FHIR.Support.Stream, FHIR.Support.Text;
+  FHIR.Support.Stream;
 
 
 Procedure TFslCollection.BeforeDestruction;
@@ -4178,7 +4197,7 @@ End;
 
 Procedure TFslStringHashEntry.Generate;
 Begin 
-  Code := FHIR.Support.System.HashStringToCode32(FName);
+  Code := FHIR.Support.Utilities.HashStringToCode32(FName);
 End;
 
 
@@ -7415,7 +7434,7 @@ Begin
 End;
 
 
-Function TFslDurationIterator.Current : TDuration;
+Function TFslDurationIterator.Current : TDurationMS;
 Begin
   RaiseError('Current', 'Current not implemented.');
 
@@ -8128,6 +8147,98 @@ Begin
   FBooleanList.Free;
   FBooleanList := Value;
 End;
+
+Constructor TFslCharacterSet.Create;
+Begin
+  Inherited;
+
+  Owns := False;
+  Parts := @FDataSet;
+  Size := SizeOf(FDataSet);
+End;
+
+
+Destructor TFslCharacterSet.Destroy;
+Begin
+  Inherited;
+End;
+
+
+Procedure TFslCharacterSet.AddRange(Const aFromValue, aToValue: Char);
+Begin
+  FDataSet := FDataSet + [aFromValue..aToValue];
+End;
+
+
+Procedure TFslCharacterSet.AddValue(Const aValue: Char);
+Begin
+  FDataSet := FDataSet + [aValue];
+End;
+
+
+Function TFslCharacterSet.ContainsValue(Const aValue: Char): Boolean;
+Begin
+  Result := CharInSet(aValue, FDataSet);
+End;
+
+
+Function TFslCharacterSet.GetAsText : String;
+Var
+  iLoop : Integer;
+  iStart : Integer;
+Begin
+  iLoop := 0;
+  Result := '';
+
+  While (iLoop < Count) Do
+  Begin
+    iStart := iLoop;
+    While (iLoop < Count) And Checked(iLoop) Do
+      Inc(iLoop);
+
+    If iLoop = iStart + 1 Then
+      StringAppend(Result, Char(iStart), ', ')
+    Else If iLoop > iStart + 1 Then
+      StringAppend(Result, Char(iStart) + '-' + Char(iLoop - 1), ', ');
+
+    Inc(iLoop);
+  End;
+End;
+
+
+Procedure TFslCharacterSet.SetAsText(Const Value: String);
+Var
+  oStrings : TFslStringList;
+  iLoop    : Integer;
+  sField   : String;
+  sLeft    : String;
+  sRight   : String;
+Begin
+  Fill(False);
+
+  oStrings := TFslStringList.Create;
+  Try
+    oStrings.Symbol := ',';
+
+    oStrings.AsText := Value;
+
+    For iLoop := 0 To oStrings.Count - 1 Do
+    Begin
+      sField := StringTrimWhitespace(oStrings[iLoop]);
+
+      If sField <> '' Then
+      Begin
+        If Length(sField) = 1 Then
+          Check(Ord(sField[1]))
+        Else If StringSplit(sField, '-', sLeft, sRight) And (Length(sLeft) = 1) And (Length(sRight) = 1) Then
+          CheckRange(Ord(sLeft[1]), Ord(sRight[1]));
+      End;
+    End;
+  Finally
+    oStrings.Free;
+  End;
+End;
+
 
 
 End.

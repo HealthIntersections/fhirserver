@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {
-  Subclasses the Javascript library so it knows about FHIR.Support.Objects library reference counting
+  Subclasses the Javascript library so it knows about FHIR.Support.Base library reference counting
 }
 
 interface
@@ -37,7 +37,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
   FHIR.Javascript,
-  FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Generics;
+  FHIR.Support.Base, FHIR.Support.Collections;
 
 type
   TFslJavascript = class (TJavascript)

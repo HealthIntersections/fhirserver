@@ -32,8 +32,7 @@ interface
 uses
   Windows, Sysutils, Classes, IniFiles,
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
-  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Version.Constants, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Utilities,
   FHIR.Client.Base, FHIR.Version.Client, FHIR.Base.Scim,
   FHIR.Smart.Utilities, SmartOnFhirTestingLogin,

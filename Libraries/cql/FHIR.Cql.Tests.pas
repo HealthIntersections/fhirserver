@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  FHIR.Support.Text,
+  FHIR.Support.Stream,
   FHIR.Cql.Model, FHIR.Cql.Parser;
 
 Type

@@ -31,9 +31,9 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  FHIR.Support.Strings,
+  FHIR.Support.Utilities,
   FHIR.Support.Collections,
-  FHIR.Support.Objects,
+  FHIR.Support.Base,
   RegularExpressions,
   FHIR.Ucum.Base;
 

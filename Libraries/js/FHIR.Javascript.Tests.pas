@@ -36,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Exceptions,
+  FHIR.Support.Base,
   FHIR.Javascript,
   DUnitX.TestFramework;
 

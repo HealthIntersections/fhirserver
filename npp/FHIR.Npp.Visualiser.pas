@@ -40,7 +40,7 @@ uses
 
   FHIR.Npp.Base, FHIR.Npp.DockingForm,
 
-  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Stream, FHIR.Support.Text, FHIR.Support.Generics, FHIR.Support.Threads, FHIR.Support.Shell,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Threads, FHIR.Support.Shell,
 
   FHIR.Base.Objects, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,

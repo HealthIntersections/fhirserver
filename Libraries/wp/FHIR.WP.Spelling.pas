@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  FHIR.Support.Exceptions, FHIR.Support.Collections,
+   FHIR.Support.Collections,
   FHIR.WP.Settings, FHIR.WP.Types, FHIR.WP.Working;
 
 Type

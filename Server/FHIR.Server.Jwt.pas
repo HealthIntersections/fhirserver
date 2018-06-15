@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.System,
-  FHIR.Support.Objects, FHIR.Support.Json,
+  FHIR.Support.Utilities,
+  FHIR.Support.Base, FHIR.Support.Json,
   FHIR.Support.Certs;
 
 type

@@ -33,7 +33,8 @@ interface
 
 uses
   SysUtils, classes,
-  ActiveX, ComObj, Variants, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Generics,
+  ActiveX, ComObj, Variants,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Version.Parser,
   FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.PathEngine, FHIR.R4.Types, FHIR.R4.PathNode,
   FHIR.Ucum.Services,

@@ -32,8 +32,7 @@ interface
 uses
   SysUtils, Classes,
   IdHttp, IdSSLOpenSSL,
-  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Text, FHIR.Support.Binary,
-  FHIR.Support.Objects,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Smart.Login;
 
 type

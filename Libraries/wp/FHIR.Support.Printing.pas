@@ -33,8 +33,7 @@ Interface
 Uses
   Windows, WinSpool, SysUtils, Vcl.Graphics, Consts,
   Winapi.GdipObj, Winapi.GdipApi,
-  FHIR.Support.Strings, FHIR.Support.Math, FHIR.Support.System, FHIR.Support.Collections,
-  FHIR.Support.Objects, FHIR.Support.Threads, FHIR.Support.Graphics,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Threads, FHIR.Support.Graphics,
   FHIR.Graphics.GdiPlus;
 
 Type

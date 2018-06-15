@@ -37,8 +37,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, Character, RegularExpressions,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Decimal,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Text;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream;
 
 const
   DEF_BUF_SIZE = 128;

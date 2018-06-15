@@ -35,7 +35,7 @@ uses
   {$IFDEF NPPUNICODE}FHIR.Npp.Form, {$ENDIF}
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   VirtualTrees,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json, FHIR.Web.Fetcher, FHIR.Support.DateTime,
+  FHIR.Support.Base, FHIR.Support.Json, FHIR.Web.Fetcher, FHIR.Support.Utilities,
   FHIR.Cache.PackageManager;
 
 type

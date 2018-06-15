@@ -38,7 +38,7 @@ Uses
 
   ScintInt, ScintEdit, ScintCDA,
 
-  FHIR.Support.Stream, FHIR.Support.Printing, FHIR.Support.System, FHIR.Support.Shell, FHIR.Support.Graphics,
+  FHIR.Support.Stream, FHIR.Support.Printing, FHIR.Support.Utilities, FHIR.Support.Shell, FHIR.Support.Graphics,
   FHIR.Dicom.Dictionary,
   FHIR.Cda.Documents, FHIR.Cda.Objects,
 
@@ -433,7 +433,7 @@ var
 Implementation
 
 Uses
-  FHIR.Support.Zip, FHIR.Support.Collections, FHIR.Support.Strings,
+  FHIR.Support.Collections,
   FHIR.Uix.Base,
   FHIR.WP.FieldDefiners, FHIR.WP.AnnotationDefiners;
 

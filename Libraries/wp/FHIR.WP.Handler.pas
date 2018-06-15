@@ -32,8 +32,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.System, FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml,
 
   FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.Types,
   FHIR.WP.Format, FHIR.WP.Native, FHIR.WP.Html, FHIR.WP.Rtf, FHIR.WP.Text, FHIR.WP.Odt, FHIR.WP.Cda, FHIR.WP.V2Ft,

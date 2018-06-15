@@ -32,9 +32,8 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Threads, FHIR.Support.DateTime,  FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Decimal, FHIR.Support.Binary, FHIR.Support.Text, FHIR.Support.Xml, FHIR.Support.MXml, 
-  FHIR.Support.Certs, FHIR.Support.Objects, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Generics, FHIR.Support.Exceptions, FHIR.Support.Json,
-  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Web.Parsers, FHIR.Misc.GraphQL, 
+  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.Certs, FHIR.Support.Collections, FHIR.Support.Json,
+  FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Web.Parsers, FHIR.Web.GraphQL, 
   FHIR.Base.Utilities,
   FHIR.Version.Resources, FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Parser, FHIR.Base.Parser, FHIR.Version.Constants, FHIR.Version.Context, FHIR.Version.Operations, FHIR.Base.Xhtml,
   FHIR.Version.Tags, FHIR.Tx.Expander, FHIR.Server.Indexing, FHIR.Server.Session, FHIR.Tools.DiffEngine, FHIR.Version.ElementModel, FHIR.Version.PathNode,
@@ -768,8 +767,8 @@ implementation
 uses
   IdMessage, IdSMTP, IdSSLOpenSSL, IdExplicitTLSClientServerBase,
   FHIR.Support.Service,
-  FHIR.Support.Mime,
-  FHIR.Debug.Logging,
+  
+  FHIR.Support.Logging,
   {$IFDEF FHIR4} FHIR.R4.Factory, {$ENDIF}
   {$IFDEF FHIR3} FHIR.R3.Factory, {$ENDIF}
   {$IFDEF FHIR2} FHIR.R2.Factory, {$ENDIF}

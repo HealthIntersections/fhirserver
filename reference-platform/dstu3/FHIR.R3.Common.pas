@@ -32,8 +32,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Support.Generics, FHIR.Support.DateTime, FHIR.Support.System,
-  FHIR.Base.Objects, FHIR.Base.Common,  FHIR.Base.Lang,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Operations;
 
 const

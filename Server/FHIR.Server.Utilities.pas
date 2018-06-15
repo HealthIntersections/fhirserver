@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
-  FHIR.Support.Strings, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Utilities, FHIR.Support.Base, 
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
   FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Constants,
   FHIR.Server.Session;

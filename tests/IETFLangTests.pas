@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, Sysutils, DUnitX.TestFramework,
-  FHIR.Support.Text,
+  FHIR.Support.Stream,
   FHIR.Tx.Lang;
 
 

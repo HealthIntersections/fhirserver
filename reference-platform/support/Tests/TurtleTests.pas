@@ -34,7 +34,7 @@ interface
 Uses
   Sysutils, Classes,
   IdGlobalProtocols,
-  FHIR.Support.Text, FHIR.Support.Shell,
+  FHIR.Support.Stream, FHIR.Support.Shell,
   FHIR.Support.Turtle, FHIR.Web.Rdf,
   FHIR.Version.Resources, FHIR.Base.Parser, FHIR.Version.Parser, FHIR.Base.Objects,
   DUnitX.TestFramework;

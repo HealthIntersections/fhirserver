@@ -32,7 +32,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Json,
+  FHIR.Support.Base, FHIR.Support.Json,
   FHIR.Base.Lang,
   FHIR.Server.Session, FHIR.Version.Client,
   FHIR.CdsHooks.Utilities, FHIR.Server.Utilities, FHIR.Server.Context;

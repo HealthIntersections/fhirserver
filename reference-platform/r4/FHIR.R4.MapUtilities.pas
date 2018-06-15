@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Strings, FHIR.Support.Decimal, FHIR.Support.System, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang,
   FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.PathEngine, FHIR.R4.Utilities, FHIR.R4.PathNode, FHIR.R4.Factory;
 

@@ -32,8 +32,7 @@ interface
 
 uses
   SysUtils, Classes, Variants, Math,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream,
-  FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json, FHIR.Support.DateTime, FHIR.Support.Text,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common,
   FHIR.R4.Base, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Utilities, FHIR.R4.PathNode, FHIR.R4.Common;
 
@@ -329,7 +328,6 @@ type
 implementation
 
 uses
-  FHIR.Support.Strings,
   FHIR.R4.Constants,
   FHIR.R4.Profiles;
 

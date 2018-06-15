@@ -32,14 +32,13 @@ Interface
 
 Uses
   Windows, Graphics, Math, StdCtrls, ExtCtrls, Dialogs, SysUtils, Controls, Forms, Classes, Menus,
-  FHIR.Support.Graphics, FHIR.Support.System, FHIR.Support.Math, FHIR.Support.Collections,
-  FHIR.Support.Strings;
+  FHIR.Support.Graphics, FHIR.Support.Utilities, FHIR.Support.Collections;
 
 
 Type
   TRect = FHIR.Support.Graphics.TRect;
   TPoint = FHIR.Support.Graphics.TPoint;
-  TColour = FHIR.Support.System.TColour;
+  TColour = FHIR.Support.Utilities.TColour;
   TUixIdentifier = Integer;
   TUixEvent = Procedure (oSender : TObject) Of Object;
 

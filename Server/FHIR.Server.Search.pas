@@ -34,8 +34,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, System.Character,
   FHIR.Web.Parsers,
-  FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.DateTime, FHIR.Support.Decimal, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common,
   FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Types,
   FHIR.Database.Manager, FHIR.Database.Dialects,
@@ -1402,7 +1401,9 @@ begin
       ok := true
     else if (length(s) = 19) and (s[14] = ':') and (s[17] = ':') and
           StringIsCardinal16(copy(s, 12, 2)) and StringIsCardinal16(copy(s, 15, 2)) and StringIsCardinal16(copy(s, 18, 2)) then
-      ok := true;
+      ok := true
+    else if (length(s) > 20) and (length(s) < 29)  then
+      ok := (s[14] = ':') and (s[17] = ':') and (s[20] = '.') and StringisNumeric(copy(s, 21, 9));
   end;
   if not ok then
     raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));

@@ -68,10 +68,7 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX,
   FHIR.Npp.Base, FHIR.Npp.Scintilla,
-  FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Threads,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.WinInet,
-  FHIR.Support.Text, FHIR.Support.Zip, FHIR.Support.MsXml,
-
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Web.WinInet, FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Constants, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Common,
   FHIR.Npp.Context,
@@ -115,48 +112,65 @@ type
     function summary : String;
   end;
 
-  TBackgroundValidatorThread = class(TThread)
+  TBackgroundValidatorEngineTask = class (TFslBuffer)
   private
-    FLock : TFslLock;
-    FVersion : TFHIRVersion;
-    FFmt : TFHIRFormat;
-    FWaiting : TFslBuffer;
-    FWantStop : boolean;
-    FWantBreak : boolean;
-    FIssues : TFslList<TFhirOperationOutcomeIssueW>;
-    procedure validate(r : TFslBuffer; fmt : TFHIRFormat; v : TFHIRVersion);
-    procedure validatorCheck(sender : TObject; message : String);
-  protected
-    procedure execute; override;
+    FVersion  : TFHIRVersion;
+    FFormat : TFHIRFormat;
   public
-    Constructor Create;
-    Destructor Destroy; override;
+    constructor create(version : TFHIRVersion; format : TFHIRFormat; src : TBytes);
 
-    procedure queue(res : TFslBuffer; fmt : TFHIRFormat; v : TFHIRVersion);
-    procedure stop;
-    procedure break;
-    function grabIssues : TFslList<TFhirOperationOutcomeIssueW>;
+    property Version : TFHIRVersion read FVersion;
+    property Format : TFHIRFormat read FFormat;
   end;
 
-  TContextLoadingThread = class(TThread)
+  TBackgroundValidatorEngine = class (TBackgroundTaskEngine)
   private
-    FPlugin : TFHIRPlugin; // no link
+    function input : TBackgroundValidatorEngineTask;
+    procedure validatorCheck(sender : TObject; message : String);
+  public
+    function name : String; override;
+    procedure execute; override;
+  end;
+
+  TContextLoadingEngineTask = class (TFslObject)
+  private
+    FPlugin : TFHIRPlugin;
     FFactory : TFHIRFactory;
     FTerminologyServer : String;
   public
     constructor Create(plugin : TFHIRPlugin; factory : TFHIRFactory; TerminologyServer : string);
-    Destructor Destroy; override;
+    property plugin : TFHIRPlugin read FPlugin;
+    property factory : TFHIRFactory read FFactory;
+    property terminologyServer : String read FTerminologyServer;
+  end;
+
+  TContextLoadingEngine = class (TBackgroundTaskEngine)
+  private
+    function input : TContextLoadingEngineTask;
+  public
+    function name : String; override;
     procedure Execute(); override;
   end;
 
-  TUpgradeCheckThread = class(TThread)
+  TUpgradeCheckEngineOutput = class (TFslObject)
   private
-    FPlugin : TFHIRPlugin; // no link
-    function getServerLink(doc: IXMLDOMDocument2): string;
-    function loadXml(b: TFslBuffer): IXMLDOMDocument2;
-    function getUpgradeNotes(doc: IXMLDOMDocument2; current: String): string;
+    FNotes : String;
+    FReference : String;
+    FGo : boolean;
   public
-    constructor Create(plugin : TFHIRPlugin);
+    property notes : string read FNotes write FNotes;
+    property reference : String read FReference write FReference;
+    property go : boolean read FGo write FGo;
+  end;
+
+  TUpgradeCheckEngine = class (TBackgroundTaskEngine)
+  private
+    function output : TUpgradeCheckEngineOutput;
+
+    function getServerLink(doc: TMXmlDocument): string;
+    function getUpgradeNotes(doc: TMXmlDocument; current: String): string;
+  public
+    function name : String; override;
     procedure Execute(); override;
   end;
 
@@ -174,13 +188,15 @@ type
     init : boolean;
     FLastSrc : TBytes;
     FLastRes : TFHIRResourceV;
-    FUpgradeReference : String;
-    FUpgradeNotes : String;
     FCurrentServer : TRegisteredFHIRServer;
     FWantUpdate : boolean;
     FRedoMatches : boolean;
 
-    FBackgroundValidator : TBackgroundValidatorThread;
+    FValidatorTask : integer;
+    FLoader2Task : integer;
+    FLoader3Task : integer;
+    FLoader4Task : integer;
+    FUpgradeTask : integer;
 
     // Scintilla control
     procedure setUpSquiggles;
@@ -205,14 +221,13 @@ type
 //    function DoSmartOnFHIR(server : TRegisteredFHIRServer) : boolean;
     procedure configureSSL;
 
-    // version tracking
-    procedure launchUpgradeCheck;
-    procedure CheckUpgrade;
-
     procedure AnalyseFile(revisit : boolean);
     function checkSource(src : TBytes; v : TFHIRVersion; fmt : TFHIRFormat) : TFHIRVersionStatus;
     function checkContext(version: TFHIRVersion): boolean;
 
+    procedure processValidatorResults(id : integer; response : TBackgroundTaskPackage);
+    procedure processLoadingResults(id : integer; response : TBackgroundTaskPackage);
+    procedure processUpgradeResults(id : integer; response : TBackgroundTaskPackage);
   public
     constructor Create;
     destructor Destroy; override;
@@ -262,7 +277,6 @@ type
     // from other places in the plugin
     procedure refreshStatus;
     procedure checkTrigger;
-    procedure Trigger;
     procedure TreatAsVersion(v : TFHIRVersion);
     procedure MarkAsVersion(v : TFHIRVersion);
     procedure newResource(src : String; version : TFHIRVersion; fmt : TFHIRFormat; url : String); overload;
@@ -322,7 +336,12 @@ begin
   inherited;
   FContext := TFHIRNppContext.Create;
   FFileInfo := TFslMap<TFHIRPluginFileInformation>.create;
-  FBackgroundValidator := TBackgroundValidatorThread.Create;
+  FValidatorTask := GBackgroundTasks.registerTaskEngine(TBackgroundValidatorEngine.Create(processValidatorResults));
+  FLoader2Task := GBackgroundTasks.registerTaskEngine(TContextLoadingEngine.Create(processLoadingResults));
+  FLoader3Task := GBackgroundTasks.registerTaskEngine(TContextLoadingEngine.Create(processLoadingResults));
+  FLoader4Task := GBackgroundTasks.registerTaskEngine(TContextLoadingEngine.Create(processLoadingResults));
+  FUpgradeTask := GBackgroundTasks.registerTaskEngine(TUpgradeCheckEngine.Create(processUpgradeResults));
+
   errors := TFslList<TFHIRAnnotation>.create;
   errorSorter := TFHIRAnnotationComparer.create;
   errors.Sort(errorSorter);
@@ -553,7 +572,7 @@ begin
   if not waitForContext(ver, true) then
     exit;
 
-  FBackgroundValidator.break;
+  GBackgroundTasks.killTask(FValidatorTask);
 
   if (FCurrentFileInfo.Format <> ffUnspecified) then
   begin
@@ -701,10 +720,6 @@ begin
   end;
 end;
 
-procedure TFHIRPlugin.launchUpgradeCheck;
-begin
-  TUpgradeCheckThread.create(self);
-end;
 
 function TFHIRPlugin.locate(res: TFHIRResourceV; var path: String; var focus : TArray<TFHIRObject>): boolean;
 var
@@ -1516,11 +1531,6 @@ begin
   DoNppnBufferChange;
 end;
 
-procedure TFHIRPlugin.Trigger;
-begin
-  FWantUpdate := true;
-end;
-
 function TFHIRPlugin.checkSource(src: Tbytes; v: TFHIRVersion; fmt: TFHIRFormat): TFHIRVersionStatus;
 var
   p : TFHIRParser;
@@ -1550,10 +1560,6 @@ begin
 end;
 
 procedure TFHIRPlugin.checkTrigger;
-var
-  issues : TFslList<TFhirOperationOutcomeIssueW>;
-  iss : TFhirOperationOutcomeIssueW;
-  error : TFHIRAnnotation;
 begin
   if FWantUpdate then
   begin
@@ -1563,22 +1569,7 @@ begin
     DoNppnBufferChange;
   end
   else
-  begin
-    issues := FBackgroundValidator.grabIssues;
-    if issues <> nil then
-      try
-        FuncValidateClear;
-        for iss in Issues do
-          errors.add(convertIssue(iss));
-        setUpSquiggles;
-        for error in errors do
-          squiggle(LEVEL_INDICATORS[error.level], error.line, error.start, error.stop - error.start, Settings.ValidationAnnotations, error.message);
-        if FHIRVisualizer <> nil then
-          FHIRVisualizer.setValidationOutcomes(errors);
-      finally
-        issues.Free;
-      end;
-  end;
+    GBackgroundTasks.primaryThreadCheck;
 end;
 
 function TFHIRPlugin.checkContext(version: TFHIRVersion): boolean;
@@ -1644,18 +1635,6 @@ begin
     FHIRToolbox.updateStatus(info.Format, info.Versions, FContext.VersionLoading[info.workingVersion] = vlsLoaded, info.url);
 end;
 
-procedure TFHIRPlugin.CheckUpgrade;
-var
-  s : String;
-begin
-  if FUpgradeReference <> '' then
-  begin
-    s := FUpgradeReference;
-    FUpgradeReference := '';
-    ShowUpgradeprompt(self, s, FUpgradeNotes);
-  end;
-end;
-
 procedure TFHIRPlugin.clearSquiggle(level, line, start, length: integer);
 begin
   mcheck(SendMessage(NppData.ScintillaMainHandle, SCI_SETINDICATORCURRENT, level, 0));
@@ -1665,18 +1644,18 @@ end;
 
 destructor TFHIRPlugin.Destroy;
 begin
-  FBackgroundValidator.Stop;
+  GBackgroundTasks.stopAll;
   if FetchResourceFrm <> nil then
     FetchResourceFrm.Free;
   FCurrentServer.Free;
   FLastRes.free;
   FFileInfo.Free;
-  FBackgroundValidator.Free;
   inherited;
 end;
 
 procedure TFHIRPlugin.DoNppnReady;
 begin
+  init := true;
   Settings := TFHIRPluginSettings.create(IncludeTrailingPathDelimiter(GetPluginsConfigDir)+'FHIR.Npp.Plugin.json',
     [fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4]);
   if (Settings.TerminologyServerR2 = '') then
@@ -1693,18 +1672,18 @@ begin
     FContext.VersionLoading[fhirVersionRelease4] := vlsLoading;
   reset;
   if Settings.loadR2 and FContext.Cache.packageExists('hl7.fhir.core', '1.0.2') then
-    TContextLoadingThread.create(self, TFHIRFactoryR2.create, Settings.TerminologyServerR2)
+    GBackgroundTasks.queueTask(FLoader2Task, TContextLoadingEngineTask.Create(self, TFHIRFactoryR2.create, Settings.TerminologyServerR2))
   else
     FContext.VersionLoading[fhirVersionRelease2] := vlsNotLoaded;
   if Settings.loadR3 and FContext.Cache.packageExists('hl7.fhir.core', '3.0.1') then
-    TContextLoadingThread.create(self, TFHIRFactoryR3.create, Settings.TerminologyServerR3)
+    GBackgroundTasks.queueTask(FLoader3Task, TContextLoadingEngineTask.Create(self, TFHIRFactoryR3.create, Settings.TerminologyServerR3))
   else
     FContext.VersionLoading[fhirVersionRelease3] := vlsNotLoaded;
   if Settings.loadR4 and (FContext.Cache.packageExists('hl7.fhir.core', FHIR.R4.Constants.FHIR_GENERATED_VERSION) or FContext.Cache.packageExists('hl7.fhir.core', 'current')) then
-    TContextLoadingThread.create(self, TFHIRFactoryR4.create, Settings.TerminologyServerR4)
+    GBackgroundTasks.queueTask(FLoader4Task, TContextLoadingEngineTask.Create(self, TFHIRFactoryR4.create, Settings.TerminologyServerR4))
   else
     FContext.VersionLoading[fhirVersionRelease4] := vlsNotLoaded;
-  launchUpgradeCheck;
+  GBackgroundTasks.queueTask(FUpgradeTask, TFslObject.create);
   if not Settings.NoWelcomeForm then
     ShowWelcomeForm(self);
 
@@ -1716,7 +1695,6 @@ begin
     FHIRToolbox.updateStatus(FCurrentFileInfo.Format, FCurrentFileInfo.Versions, FContext.VersionLoading[FCurrentFileInfo.workingVersion] = vlsLoaded, FCurrentFileInfo.url);
 
   DoNppnBufferChange;
-  init := true;
 end;
 
 procedure TFHIRPlugin.DoNppnShutdown;
@@ -1762,7 +1740,6 @@ var
   first : boolean;
   chars : TBytes;
 begin
-  CheckUpgrade;
   first := true;
   msg := TStringBuilder.Create;
   try
@@ -1860,6 +1837,40 @@ begin
 end;
 
 
+procedure TFHIRPlugin.processLoadingResults(id: integer; response: TBackgroundTaskPackage);
+begin
+  FWantUpdate := true;
+end;
+
+procedure TFHIRPlugin.processUpgradeResults(id: integer; response: TBackgroundTaskPackage);
+var
+  outcome : TUpgradeCheckEngineOutput;
+begin
+  outcome := response as TUpgradeCheckEngineOutput;
+  if outcome.go then
+    ShowUpgradeprompt(self, outcome.reference, outcome.notes);
+end;
+
+procedure TFHIRPlugin.processValidatorResults(id: integer; response: TBackgroundTaskPackage);
+var
+  issues : TFslList<TFhirOperationOutcomeIssueW>;
+  iss : TFhirOperationOutcomeIssueW;
+  error : TFHIRAnnotation;
+begin
+  issues := response as TFslList<TFhirOperationOutcomeIssueW>;
+  if issues <> nil then
+  begin
+    FuncValidateClear;
+    for iss in Issues do
+      errors.add(convertIssue(iss));
+    setUpSquiggles;
+    for error in errors do
+      squiggle(LEVEL_INDICATORS[error.level], error.line, error.start, error.stop - error.start, Settings.ValidationAnnotations, error.message);
+    if FHIRVisualizer <> nil then
+      FHIRVisualizer.setValidationOutcomes(errors);
+  end;
+end;
+
 procedure TFHIRPlugin.DoNppnTextModified;
 var
   src : TBytes;
@@ -1878,7 +1889,6 @@ var
   b : TFslBuffer;
 begin
   try
-    CheckUpgrade;
     if not init then
       exit;
 
@@ -1914,15 +1924,7 @@ begin
     else
     try
       if (Settings.BackgroundValidation) then
-      begin
-        b := TFslBuffer.Create();
-        try
-          b.AsBytes := src;
-          FBackgroundValidator.queue(b, fmt, FCurrentFileInfo.workingVersion);
-        finally
-          b.Free;
-        end;
-      end;
+        GBackgroundTasks.queueTask(FValidatorTask, TBackgroundValidatorEngineTask.Create(FCurrentFileInfo.workingVersion, fmt, src));
       FLastRes := res.Link;
       if res = nil then
         case VisualiserMode of
@@ -2037,82 +2039,65 @@ begin
   end;
 end;
 
-{ TUpgradeCheckThread }
+{ TUpgradeCheckEngine }
 
-constructor TUpgradeCheckThread.Create(plugin: TFHIRPlugin);
-begin
-  Fplugin := plugin;
-  inherited create(false);
-end;
-
-function TUpgradeCheckThread.loadXml(b : TFslBuffer): IXMLDOMDocument2;
+function TUpgradeCheckEngine.getServerLink(doc : TMXmlDocument) : string;
 var
-  v, vAdapter : Variant;
-  s : TBytesStream;
+  e1, e2, e3 : TMXmlElement;
 begin
-  v := LoadMsXMLDom;
-  Result := IUnknown(TVarData(v).VDispatch) as IXMLDomDocument2;
-  result.validateOnParse := False;
-  result.preserveWhiteSpace := True;
-  result.resolveExternals := False;
-  result.setProperty('NewParser', True);
-  s := TBytesStream.Create(b.AsBytes);
-  try
-    vAdapter := TStreamAdapter.Create(s) As IStream;
-    result.load(vAdapter);
-  finally
-    s.Free;
-  end;
-end;
-
-function TUpgradeCheckThread.getServerLink(doc : IXMLDOMDocument2) : string;
-var
-  e1, e2, e3 : IXMLDOMElement;
-begin
-  e1 := TMsXmlParser.FirstChild(doc.documentElement);
-  e2 := TMsXmlParser.FirstChild(e1);
-  while (e2.nodeName <> 'item') do
-    e2 := TMsXmlParser.NextSibling(e2);
-  e3 := TMsXmlParser.FirstChild(e2);
-  while (e3 <> nil) and (e3.nodeName <> 'link') do
-    e3 := TMsXmlParser.NextSibling(e3);
+  e1 := doc.docElement.firstElement;
+  e2 := e1.firstElement;
+  while (e2.Name <> 'item') do
+    e2 := e2.nextElement;
+  e3 := e2.firstElement;
+  while (e3 <> nil) and (e3.Name <> 'link') do
+    e3 := e3.nextElement;
   if (e3 = nil) then
     result := ''
   else
     result := e3.text;
 end;
 
-function TUpgradeCheckThread.getUpgradeNotes(doc : IXMLDOMDocument2; current : String) : string;
+function TUpgradeCheckEngine.getUpgradeNotes(doc : TMXmlDocument; current : String) : string;
 var
-  e1, e2, e3 : IXMLDOMElement;
+  e1, e2, e3 : TMXmlElement;
 begin
-  e1 := TMsXmlParser.FirstChild(doc.documentElement);
-  e2 := TMsXmlParser.FirstChild(e1);
-  while (e2.nodeName <> 'item') do
-    e2 := TMsXmlParser.NextSibling(e2);
+  e1 := doc.docElement.firstElement;
+  e2 := e1.firstElement;
+  while (e2.Name <> 'item') do
+    e2 := e2.nextElement;
   result := '';
-  while (e2 <> nil) and (e2.nodeName = 'item') do
+  while (e2 <> nil) and (e2.Name = 'item') do
   begin
-    e3 := TMsXmlParser.FirstChild(e2);
-    while (e3.nodeName <> 'link') do
-      e3 := TMsXmlParser.NextSibling(e3);
+    e3 := e2.firstElement;
+    while (e3.Name <> 'link') do
+      e3 := e3.nextElement;
     if e3.text = current then
       exit;
-    e3 := TMsXmlParser.FirstChild(e2);
-    while (e3.nodeName <> 'description') do
-      e3 := TMsXmlParser.NextSibling(e3);
+    e3 := e2.firstElement;
+    while (e3.Name <> 'description') do
+      e3 := e3.nextElement;
     result := result + e3.text + #13#10;
-    e2 := TMsXmlParser.NextSibling(e2);
+    e2 := e2.nextElement;
   end;
-  result := e3.text;
 end;
 
-procedure TUpgradeCheckThread.Execute;
+function TUpgradeCheckEngine.name: String;
+begin
+  result := 'Upgrade Checker';
+end;
+
+function TUpgradeCheckEngine.output: TUpgradeCheckEngineOutput;
+begin
+  result := response as TUpgradeCheckEngineOutput;
+end;
+
+procedure TUpgradeCheckEngine.Execute;
 var
   web : TFslWinInetClient;
-  doc : IXMLDOMDocument2;
-  bc : string;
+  doc : TMXmlDocument;
 begin
+  response := TUpgradeCheckEngineOutput.create;
   try
     web := TFslWinInetClient.Create;
     try
@@ -2121,12 +2106,13 @@ begin
       web.Resource := 'FhirServer/fhirnpp.rss';
       web.Response := TFslBuffer.Create;
       web.Execute;
-      doc := loadXml(web.Response);
-      bc := getServerLink(doc);
-      if (bc > 'http://www.healthintersections.com.au/FhirServer/npp-install-1.0.'+inttostr(BuildCount)+'.exe') and (bc <> Settings.BuildPrompt) then
-      begin
-        FPlugin.FUpgradeNotes  := getUpgradeNotes(doc, 'http://www.healthintersections.com.au/FhirServer/npp-install-1.0.'+inttostr(BuildCount)+'.exe');
-        FPlugin.FUpgradeReference := bc;
+      doc := TMXmlParser.parse(web.Response.AsBytes, [xpDropWhitespace, xpDropComments]);
+      try
+        output.reference := getServerLink(doc);
+        output.notes  := getUpgradeNotes(doc, 'http://www.healthintersections.com.au/FhirServer/npp-install-1.0.'+inttostr(BuildCount)+'.exe');
+        output.go := (output.reference > 'http://www.healthintersections.com.au/FhirServer/npp-install-1.0.'+inttostr(BuildCount)+'.exe') and (output.reference <> Settings.BuildPrompt);
+      finally
+        doc.Free;
       end;
     finally
       web.free;
@@ -2185,39 +2171,24 @@ begin
   end;
 end;
 
-{ TContextLoadingThread }
+{ TContextLoadingEngine }
 
-constructor TContextLoadingThread.Create(plugin : TFHIRPlugin; factory : TFHIRFactory; TerminologyServer : string);
-begin
-  FPlugin := plugin;
-  FFactory := factory;
-  FreeOnTerminate := true;
-  FTerminologyServer := TerminologyServer;
-  inherited Create;
-end;
-
-destructor TContextLoadingThread.Destroy;
-begin
-  FFactory.free;
-  inherited;
-end;
-
-procedure TContextLoadingThread.Execute;
+procedure TContextLoadingEngine.Execute;
 var
   vf : TFHIRNppVersionFactory;
   ctxt : TFHIRWorkerContextWithFactory;
   rset : TFslStringSet;
 begin
-  vf := TFHIRNppVersionFactory.Create(FFactory.link);
+  vf := TFHIRNppVersionFactory.Create(input.factory.link);
   try
     try
-      FPlugin.FContext.Version[FFactory.version] := vf.Link;
-      ctxt := TFHIRPluginValidatorContext.create(FFactory.link, FTerminologyServer);
+      input.plugin.FContext.Version[input.factory.version] := vf.Link;
+      ctxt := TFHIRPluginValidatorContext.create(input.factory.link, input.TerminologyServer);
       try
         // limit the amount of resource types loaded for convenience...
         rset := TFslStringSet.Create(['StructureDefinition', 'CodeSystem', 'ValueSet']);
         try
-          FPlugin.Context.Cache.loadPackage('hl7.fhir.core', FFactory.versionString, rset, ctxt.loadResourceJson);
+          input.Plugin.Context.Cache.loadPackage('hl7.fhir.core', input.Factory.versionString, rset, ctxt.loadResourceJson);
         finally
           rset.Free;
         end;
@@ -2225,12 +2196,12 @@ begin
       finally
         ctxt.Free;
       end;
-      FPlugin.FContext.VersionLoading[FFactory.version] := vlsLoaded;
-      FPlugin.Trigger;
+      input.Plugin.FContext.VersionLoading[input.Factory.version] := vlsLoaded;
+      response := TFslObject.Create;
     except
       on e : Exception do
       begin
-        FPlugin.FContext.VersionLoading[FFactory.version] := vlsLoadingFailed;
+        input.Plugin.FContext.VersionLoading[input.Factory.version] := vlsLoadingFailed;
         vf.error := e.Message;
       end;
     end;
@@ -2239,153 +2210,100 @@ begin
   end;
 end;
 
-{ TBackgroundValidatorThread }
-
-procedure TBackgroundValidatorThread.break;
+function TContextLoadingEngine.input: TContextLoadingEngineTask;
 begin
-  FWantBreak := true;
+  result := request as TContextLoadingEngineTask;
 end;
 
-constructor TBackgroundValidatorThread.Create;
+function TContextLoadingEngine.name: String;
 begin
-  inherited;
-  FLock := TFslLock.Create('Background Validation Lock');
+  result := 'Context Loader';
+
 end;
 
-destructor TBackgroundValidatorThread.Destroy;
-begin
-  FWaiting.Free;
-  FLock.Free;
-  inherited;
-end;
+{ TBackgroundValidatorEngine }
 
-procedure TBackgroundValidatorThread.execute;
-var
-  res : TFslBuffer;
-  v : TFHIRVersion;
-  fmt : TFHIRFormat;
-begin
-  try
-    while not FWantStop do
-    begin
-      res := nil;
-      v := fhirVersionUnknown;
-      fmt := ffUnspecified;
-      FLock.Lock;
-      try
-        if FWaiting <> nil then
-        begin
-          res := FWaiting;
-          v := FVersion;
-          fmt := FFmt;
-          FWaiting := nil;
-        end;
-      finally
-        FLock.Unlock;
-      end;
-      if (res <> nil) then
-      begin
-        try
-          validate(res, fmt, v);
-        finally
-          res.Free;
-        end;
-      end;
-      sleep(50);
-    end;
-  except
-  end;
-end;
-
-function TBackgroundValidatorThread.grabIssues: TFslList<TFhirOperationOutcomeIssueW>;
-begin
-  FLock.Lock;
-  try
-    result := FIssues;
-    FIssues := nil;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TBackgroundValidatorThread.queue(res: TFslBuffer; fmt : TFHIRFormat; v : TFHIRVersion);
-begin
-  FLock.Lock;
-  try
-    FWaiting.Free;
-    FWaiting := res.link;
-    FVersion := v;
-    FFmt := fmt;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TBackgroundValidatorThread.stop;
-begin
-  FWantStop := true;
-end;
-
-procedure TBackgroundValidatorThread.validate(r: TFslBuffer; fmt : TFHIRFormat; v : TFHIRVersion);
+procedure TBackgroundValidatorEngine.execute;
 var
   ctxt: TFHIRValidatorContext;
   val : TFHIRValidatorV;
   op : FHIR.R4.Resources.TFhirOperationOutcomeIssue; // version doesn't matter
 begin
-  if not FNpp.waitForContext(v, false) then
-    exit;
-  FWantBreak := false;
-  try
-    ctxt := TFHIRValidatorContext.Create;
-    try
-      ctxt.ResourceIdRule := risOptional;
-      ctxt.OperationDescription := 'validate';
-      val := FNpp.FContext.Version[v].makeValidator;
-      try
-        val.OnProgress := validatorCheck;
-        try
-          val.validate(ctxt, r, fmt);
-        except
-          on e : exception do
-          begin
-            if not (e is EAbort) then
-            begin
-              op := TFhirOperationOutcomeIssue.Create;
-              try
-                op.severity := IssueSeverityFatal;
-                op.details := TFhirCodeableConcept.Create;
-                op.details.text := 'Validation Process Failed: '+e.Message;
-                ctxt.Issues.add(TFhirOperationOutcomeIssue4.create(op.Link));
-              finally
-                op.Free;
-              end;
-            end;
-          end;
-        end;
-      finally
-        val.free;
-      end;
-      FLock.Lock;
-      try
-        FIssues.Free;
-        FIssues := ctxt.Issues.link;
-      finally
-        FLock.Unlock;
-      end;
-    finally
-      ctxt.Free;
-    end;
-  except
-   // we do nothing
-  end;
+//  if not FNpp.waitForContext(input.Version, false) then
+//    exit;
+//  ctxt := TFHIRValidatorContext.Create;
+//  try
+//    ctxt.ResourceIdRule := risOptional;
+//    ctxt.OperationDescription := 'validate';
+//    val := FNpp.FContext.Version[input.Version].makeValidator;
+//    try
+//      val.OnProgress := validatorCheck;
+//      try
+//        val.validate(ctxt, input, input.Format);
+//      except
+//        on e : exception do
+//        begin
+//          if not (e is EAbort) then
+//          begin
+//            op := TFhirOperationOutcomeIssue.Create;
+//            try
+//              op.severity := IssueSeverityFatal;
+//              op.details := TFhirCodeableConcept.Create;
+//              op.details.text := 'Validation Process Failed: '+e.Message;
+//              ctxt.Issues.add(TFhirOperationOutcomeIssue4.create(op.Link));
+//            finally
+//              op.Free;
+//            end;
+//          end;
+//        end;
+//      end;
+//      response := ctxt.Issues.link;
+//    finally
+//      val.free;
+//    end;
+//  finally
+//    ctxt.free;
+//  end;
+  response := TFslList<TFhirOperationOutcomeIssueW>.create;
 end;
 
-procedure TBackgroundValidatorThread.validatorCheck(sender: TObject; message: String);
+function TBackgroundValidatorEngine.input: TBackgroundValidatorEngineTask;
 begin
-  if FWantStop or (FWaiting <> nil) or FWantBreak then
-    abort;
+  result := request as TBackgroundValidatorEngineTask;
+end;
+
+function TBackgroundValidatorEngine.name: String;
+begin
+  result := 'Background Validator';
+end;
+
+procedure TBackgroundValidatorEngine.validatorCheck(sender: TObject; message: String);
+begin
+  progress(message, -1);
+end;
+
+{ TBackgroundValidatorEngineTask }
+
+constructor TBackgroundValidatorEngineTask.create(version: TFHIRVersion; format: TFHIRFormat; src: TBytes);
+begin
+  inherited create;
+  FVersion := version;
+  FFormat := format;
+  AsBytes := src;
+end;
+
+{ TContextLoadingEngineTask }
+
+constructor TContextLoadingEngineTask.Create(plugin: TFHIRPlugin; factory: TFHIRFactory; TerminologyServer: string);
+begin
+  inherited create;
+  FPlugin := plugin;
+  FFactory := factory;
+  FTerminologyServer := TerminologyServer;
 end;
 
 initialization
   FNpp := TFHIRPlugin.Create;
 end.
+
+

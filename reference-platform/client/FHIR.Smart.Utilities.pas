@@ -108,8 +108,7 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP, IdSSLOpenSSL,
-  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Certs, FHIR.Web.Parsers, FHIR.Support.System, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Json, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Certs, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang;
 
 type

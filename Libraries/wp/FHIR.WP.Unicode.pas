@@ -32,7 +32,7 @@ interface
 
 Uses
   Windows, SysUtils, Classes, Graphics, Generics.Collections,
-  FHIR.Support.Strings;
+  FHIR.Support.Utilities;
 
 
 Const

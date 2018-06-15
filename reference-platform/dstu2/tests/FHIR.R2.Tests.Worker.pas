@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
-  FHIR.Support.Strings,
+  FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Parser,
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Profiles, FHIR.R2.PathEngine, FHIR.R2.Context,
@@ -73,7 +73,7 @@ Type
 implementation
 
 uses
-  FHIR.Support.Text, IdGlobalProtocols, FHIR.Support.Binary;
+  FHIR.Support.Stream, IdGlobalProtocols;
 
 
 

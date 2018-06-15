@@ -102,19 +102,11 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Binary.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Collections.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.DateTime.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Exceptions.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Generics.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Math.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Objects.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Strings.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.System.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Text.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Base.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Utilities.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Fpc.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Stream.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Decimal.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

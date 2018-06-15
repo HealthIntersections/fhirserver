@@ -74,8 +74,8 @@ certificate you nominate
 uses
   SysUtils, Classes, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdHashSHA, IdGlobal,
-  FHIR.Support.Exceptions, FHIR.Support.Binary, FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Collections,
+   FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Support.Base, FHIR.Support.Collections,
   FHIR.Support.MXml, FHIR.Support.Xml,
   IdSSLOpenSSLHeaders, FHIR.Support.Certs, FHIR.Web.Fetcher;
 

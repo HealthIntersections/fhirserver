@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, IniFiles, System.ODBC,
-  FHIR.Support.Objects, FHIR.Support.Strings, FHIR.Support.Exceptions, FHIR.Support.Generics,
-  FHIR.Support.DateTime, FHIR.Database.Dialects, FHIR.Database.Manager, FHIR.Database.Settings,
+  FHIR.Support.Base, FHIR.Support.Utilities,  
+  FHIR.Database.Dialects, FHIR.Database.Manager, FHIR.Database.Settings,
   FHIR.Database.ODBC.Objects;
 
 type
@@ -215,7 +215,7 @@ begin
   Result := FStmt.ColNull[ACol];
 end;
 
-function TKDBOdbcConnection.GetColTimestampV(ACol: Word): FHIR.Support.DateTime.TTimestamp;
+function TKDBOdbcConnection.GetColTimestampV(ACol: Word): FHIR.Support.Utilities.TTimestamp;
 begin
   Result := FStmt.ColTimestamp[ACol];
 end;
@@ -470,7 +470,7 @@ type
 
   TOdbcBoundDate = class (TKDBBoundParam)
   private
-    FDate: FHIR.Support.DateTime.TTimeStamp
+    FDate: FHIR.Support.Utilities.TTimeStamp
   end;
 
   TOdbcBoundDouble = class (TKDBBoundParam)
@@ -535,7 +535,7 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TKDBOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: FHIR.Support.DateTime.TTimeStamp);
+procedure TKDBOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: FHIR.Support.Utilities.TTimeStamp);
 var
   LBind: TOdbcBoundDate;
 begin

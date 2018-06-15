@@ -1698,7 +1698,7 @@ procedure unloadChakra;
 implementation
 
 uses
-  FHIR.Support.System;
+  FHIR.Support.Utilities;
 
 var
   GHandle : THandle;

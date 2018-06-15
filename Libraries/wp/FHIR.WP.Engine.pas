@@ -34,10 +34,7 @@ Uses
   Windows, SysUtils, Classes, Graphics, StdCtrls,
   IdUri,
 
-  FHIR.Support.System, FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Math,
-  FHIR.Support.Objects, FHIR.Support.Stream, FHIR.Support.Collections,
-  FHIR.Support.Graphics, FHIR.Support.Text, FHIR.Support.Shell, FHIR.Support.WinInet,
-  FHIR.Support.Xml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Graphics, FHIR.Support.Shell, FHIR.Web.WinInet, FHIR.Support.Xml,
 
   FHIR.Uix.Base,
   FHIR.WP.Definers, FHIR.WP.Types, FHIR.WP.Document, FHIR.WP.Working, FHIR.WP.v2Ft, FHIR.WP.Format,

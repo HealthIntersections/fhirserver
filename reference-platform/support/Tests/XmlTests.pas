@@ -35,9 +35,8 @@ interface
 
 Uses
   Windows, SysUtils, Classes, ShellApi, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF}
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.System, FHIR.Support.Binary, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream, FHIR.Support.Xml,
-  FHIR.Support.MXml, FHIR.Support.MsXml, DUnitX.TestFramework;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Xml, FHIR.Support.MXml, FHIR.Support.MsXml,
+  DUnitX.TestFramework;
 
 Type
   XmlParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)

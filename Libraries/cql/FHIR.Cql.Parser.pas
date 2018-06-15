@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  FHIR.Support.Exceptions, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Decimal, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Version.PathNode, FHIR.Version.PathEngine,
   FHIR.CQL.Model;
 

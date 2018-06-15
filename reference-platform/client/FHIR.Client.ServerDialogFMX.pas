@@ -34,7 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.Objects, FMX.ListBox, FMX.Edit, FMX.StdCtrls, FMX.TabControl,
   FMX.Controls.Presentation,
-  FHIR.Support.Strings,
+  FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Client.Base, FHIR.Smart.Utilities, FHIR.Client.ClientDialogFMX;
 

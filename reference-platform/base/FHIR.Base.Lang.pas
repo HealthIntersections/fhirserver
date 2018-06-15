@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, classes, Generics.Collections,
-  FHIR.Support.Exceptions,
+  FHIR.Support.Base,
   FHIR.Base.Objects;
 
 function GetFhirMessage(id, lang : String):String; overload;
@@ -107,10 +107,7 @@ implementation
 {$R FHIRTranslations.res}
 
 uses
-  FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Objects, FHIR.Support.Generics,
-  {$IFDEF MSWINDOWS}FHIR.Support.Stream,{$ENDIF}
-  FHIR.Support.MXml;
+  FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml;
 
 Type
   TFHIRMessage = class (TFslObject)
@@ -126,7 +123,7 @@ var
 Function LoadSource : TBytes;
 {$IFDEF MACOS}
 begin
-  result := FHIR.Support.Text.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
+  result := FHIR.Support.Stream.FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'translations.xml');
 end;
 {$ELSE}
 var

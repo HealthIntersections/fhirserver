@@ -33,7 +33,7 @@ interface
 uses
   FastMM4,
   Windows, WinSvc, PSApi, TlHelp32, SysUtils, Classes,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.System;
+   FHIR.Support.Base, FHIR.Support.Utilities;
 
 type
   TSystemService = { Abstract } class (TFslObject)
@@ -141,10 +141,8 @@ function DescribeServiceStatus(ACode: DWord): String;
 implementation
 
 uses
-  FHIR.Support.DateTime,
-  FHIR.Support.Strings,
   FHIR.Support.Threads,
-  FHIR.Debug.Logging;
+  FHIR.Support.Logging;
 
 const
   ASSERT_UNIT = 'FHIR.Support.Service';

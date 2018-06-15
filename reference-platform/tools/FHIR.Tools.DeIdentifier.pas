@@ -31,8 +31,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.DateTime, FHIR.Support.Threads, FHIR.Support.Strings,
-  FHIR.Support.Objects, FHIR.Support.Generics, AdvCSVExtractors, AdvStringLists, AdvFiles,
+  FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Utilities,
+  FHIR.Support.Base,  AdvCSVExtractors, AdvStringLists, AdvFiles,
   FHIR.Database.Manager,
   FHIR.Base.Objects{, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources};
 

@@ -34,8 +34,7 @@ uses
   Windows,
   SysUtils, Classes, Vcl.Graphics, Types,
   GraphicEx, Jpeg, PNGImage,
-  FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Text, FHIR.Support.Math,
-  FHIR.Support.Exceptions, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Shell;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Shell;
 
 Type
   TRect = Windows.TRect;

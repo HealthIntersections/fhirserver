@@ -31,8 +31,7 @@ interface
 
 uses
   SysUtils, Classes, System.Character, System.RegularExpressions, System.Generics.Collections,
-  FHIR.Support.Decimal, FHIR.Support.System, FHIR.Support.Strings, FHIR.Support.Text,
-  FHIR.Support.Exceptions, FHIR.Support.Objects, FHIR.Support.Generics, FHIR.Support.Stream;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream;
 
 Const
 	GOOD_IRI_CHAR = 'a-zA-Z0-9'; // \u00A0-\uFFFE'; todo

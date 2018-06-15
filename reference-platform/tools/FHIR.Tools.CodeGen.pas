@@ -31,7 +31,7 @@ interface
 
 uses
   SysUtils, Classes, Character,
-  FHIR.Support.Strings, FHIR.Support.DateTime, FHIR.Support.Objects, FHIR.Support.Generics,
+  FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Lang;
 
 type
@@ -651,7 +651,7 @@ begin
     line(indent, an+' := '''+value.primitiveValue+''';')
   else if StringArrayExistsSensitive(['date', 'dateTime', 'instant'], t) then
   begin
-    units.add('FHIR.Support.DateTime');
+    units.add('FHIR.Support.Utilities');
     line(indent, an+' := TDateTimeEx.fromXML('''+value.primitiveValue+''');')
   end
   // we assume this is an object

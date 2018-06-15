@@ -32,7 +32,7 @@ Interface
 
 Uses
   Classes, Dialogs, ExtDlgs,
-  FHIR.Support.Strings;
+  FHIR.Support.Utilities;
 
 Type
   TUixOpenFileDialog = Class(TOpenDialog)

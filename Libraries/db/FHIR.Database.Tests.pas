@@ -34,7 +34,7 @@ interface
 
 Uses
   SysUtils, Classes,
-  FHIR.Support.DateTime, FHIR.Support.Text,
+  FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Database.Dialects,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.SQLite, FHIR.Database.SQLite3.Objects, FHIR.Database.SQLite3.Wrapper,
   DUnitX.TestFramework, FHIR.R4.Tests.Worker;

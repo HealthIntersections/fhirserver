@@ -32,7 +32,7 @@ Interface
 
 Uses
   Sysutils,
-  FHIR.Support.Objects, FHIR.Support.Xml, FHIR.Support.Decimal, FHIR.Support.Strings, FHIR.Support.Text,
+  FHIR.Support.Base, FHIR.Support.Xml, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Cda.Base, FHIR.Cda.Types, FHIR.Cda.Narrative, FHIR.Cda.Objects;
 
 Type
