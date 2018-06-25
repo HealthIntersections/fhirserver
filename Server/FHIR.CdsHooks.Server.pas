@@ -33,8 +33,8 @@ uses
   SysUtils, Classes, Generics.Collections,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
   FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.Base.Lang,
-  FHIR.Server.Session, FHIR.Version.Client,
+  FHIR.Base.Lang, FHIR.Client.Base,
+  FHIR.Server.Session,
   FHIR.CdsHooks.Utilities, FHIR.Server.Utilities, FHIR.Server.Context;
 
 type
@@ -42,8 +42,8 @@ type
   private
     Frequest: TCDSHookRequest;
     Fresponse: TCDSHookResponse;
-    FClient: TFhirClient;
-    procedure SetClient(const Value: TFhirClient);
+    FClient: TFHIRClientV;
+    procedure SetClient(const Value: TFHIRClientV);
     procedure Setrequest(const Value: TCDSHookRequest);
     procedure Setresponse(const Value: TCDSHookResponse);
   public
@@ -52,7 +52,7 @@ type
 
     property request : TCDSHookRequest read Frequest write Setrequest;
     property response : TCDSHookResponse read Fresponse write Setresponse;
-    property Client : TFhirClient read FClient write SetClient;
+    property Client : TFHIRClientV read FClient write SetClient;
 
     function execute : boolean; virtual;
 
@@ -228,7 +228,7 @@ begin
         card := resp.addCard;
         card.indicator := 'error';
         card.summary := e.Message;
-        card.sourceLabel := server.OwnerName;
+        card.sourceLabel := server.Globals.OwnerName;
         card.sourceURL := request.Document;
         response.ResponseNo := 200;
         response.ResponseText := 'OK';
@@ -254,7 +254,7 @@ end;
 
 function TCDSHooksService.ProcessRequestEngines(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest; response: TCDSHookResponse): boolean;
 var
-  client : TFhirClient;
+  client : TFHIRClientV;
   t : TCDSHooksProcessorClass;
   p : TCDSHooksProcessor;
 begin
@@ -336,7 +336,7 @@ begin
   result := TCDSHooksProcessor(inherited Link);
 end;
 
-procedure TCDSHooksProcessor.SetClient(const Value: TFhirClient);
+procedure TCDSHooksProcessor.SetClient(const Value: TFHIRClientV);
 begin
   FClient.Free;
   FClient := Value;

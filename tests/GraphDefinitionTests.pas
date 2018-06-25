@@ -36,6 +36,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
   FHIR.Web.GraphQL, FHIR.Tools.GraphQL, FHIR.Server.GraphDefinition,
+  FHIR.R4.GraphDefinition,
   FHIR.R4.Tests.Worker, JsonTests;
 
 type
@@ -196,8 +197,8 @@ var
   test, rule : TMXmlElement;
   src : String;
   gd : TFHIRGraphDefinition;
-  parser : TFHIRGraphDefinitionParser;
-  engine : TFHIRGraphDefinitionEngine;
+  parser : TFHIRGraphDefinitionParser4;
+  engine : TFHIRGraphDefinitionEngine4;
   x : TFHIRXmlComposer;
   f : TFileStream;
 begin
@@ -206,14 +207,14 @@ begin
   src := FileToString(path(['C:\work\org.hl7.fhir\build\tests\graphdefinition', test.attribute['source']]), TEncoding.UTF8);
   gd := nil;
   try
-    parser := TFHIRGraphDefinitionParser.create;
+    parser := TFHIRGraphDefinitionParser4.create;
     try
-      gd := parser.parse(src);
+      gd := parser.parseV(src) as TFHIRGraphDefinition;
     finally
       parser.free;
     end;
-    StringToFile(TFHIRGraphDefinitionParser.asString(gd, false), path(['C:\work\org.hl7.fhir\build\tests\graphdefinition', test.attribute['source']+'.out']), TEncoding.UTF8);
-    engine := TFHIRGraphDefinitionEngine.Create(TTestingWorkerContext.Use);
+//    StringToFile(TFHIRGraphDefinitionParser4.asString(gd, false), path(['C:\work\org.hl7.fhir\build\tests\graphdefinition', test.attribute['source']+'.out']), TEncoding.UTF8);
+    engine := TFHIRGraphDefinitionEngine4.Create(TTestingWorkerContext.Use);
     try
       engine.OnListResources := ListResources;
       engine.OnFollowReference := ResolveReference;

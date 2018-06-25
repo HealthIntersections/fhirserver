@@ -36,10 +36,10 @@ interface
 
 uses
   SysUtils, Classes, FHIR.Support.Utilities,
-  FHIR.Support.Base, 
+  FHIR.Support.Base,
   FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Factory,
-  FHIR.Server.Indexing, FHIR.Version.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Utilities,
+  FHIR.Server.Indexing, FHIR.Server.Factory,
   FHIR.Scim.Server;
 
 const
@@ -86,6 +86,9 @@ Type
     FBases: TStringList;
     FSupportSystemHistory: boolean;
     FTxPath : String;
+    FFactory : TFHIRFactory;
+    FServerFactory : TFHIRServerFactory;
+
     procedure CreateResourceCompartments;
     procedure CreateResourceConfig;
     procedure CreateResourceIndexEntries;
@@ -126,7 +129,7 @@ Type
     procedure CreatePseudoData;
     procedure runScript(s : String);
   public
-    Constructor create(conn : TKDBConnection; txpath : String);
+    Constructor create(conn : TKDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     Destructor Destroy; override;
     Property Transactions : boolean read FTransactions write FTransactions;
     Property SupportSystemHistory : boolean read FSupportSystemHistory write FSupportSystemHistory;
@@ -157,9 +160,11 @@ Begin
 End;
 
 
-constructor TFHIRDatabaseInstaller.create(conn: TKDBConnection; txpath : String);
+constructor TFHIRDatabaseInstaller.create(conn: TKDBConnection; txpath : String; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
 begin
   inherited Create;
+  FFactory := factory;
+  FServerFactory := serverFactory;
   FBases := TStringList.Create;
   FDoAudit := true;
   FTransactions := true;
@@ -217,7 +222,8 @@ end;
 
 procedure TFHIRDatabaseInstaller.CreateResourceTypes;
 var
-  a : TFHIRResourceType;
+  a : String;
+  i : integer;
 Begin
   FConn.ExecSQL('CREATE TABLE Types( '+#13#10+
        ' ResourceTypeKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
@@ -241,16 +247,20 @@ Begin
        ' versionUpdates int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
 
        PrimaryKeyType(FConn.owner.Platform, 'PK_Types', 'ResourceTypeKey')+') '+CreateTableInfo(FConn.owner.platform));
-  for a := Low(TFHIRResourceType) to High(TFHIRResourceType) do
-    if (a = frtBinary) then
+  i := 1;
+  for a in FFactory.ResourceNames do
+  begin
+    if (a = 'Binary') then
       FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
-      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0)')
-    else if (a = frtAuditEvent) then
+      '('+inttostr(i)+', '''+a+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0)')
+    else if (a = 'AuditEvent') then
       FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
-      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0)')
-    else if (a <> frtCustom) then
+      '('+inttostr(i)+', '''+a+''', 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0)')
+    else if (a <> 'Custom') then
       FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
-      '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)');
+      '('+inttostr(i)+', '''+a+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)');
+    inc(i);
+  end;
 End;
 
 FUnction BooleanToInt(b : boolean) : String;
@@ -280,7 +290,7 @@ Begin
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (5, '''+inttostr(ServerDBVersion)+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (6, '''+NewGuidURN+''')');
   FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (7, ''1'')');
-  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (8, '''+FHIR_GENERATED_VERSION+''')');
+  FConn.ExecSQL('Insert into Config (ConfigKey, Value) values (8, '''+FFactory.versionString+''')');
 End;
 
 procedure TFHIRDatabaseInstaller.CreateAuthorizations;
@@ -852,7 +862,9 @@ End;
 
 destructor TFHIRDatabaseInstaller.Destroy;
 begin
+  FServerFactory.free;
   FBases.Free;
+  FFactory.Free;
   inherited;
 end;
 
@@ -902,7 +914,7 @@ begin
 //  inc(k);
 //  FConn.terminate;
 
-  m := TFHIRIndexInformation.create(TFHIRFactoryX.create);
+  m := TFHIRIndexInformation.create(FFactory.link, FServerFactory.link);
   names := TStringList.Create;
   try
     for i := 0 to m.Indexes.count - 1 do

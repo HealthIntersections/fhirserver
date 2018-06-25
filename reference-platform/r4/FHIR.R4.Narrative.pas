@@ -178,13 +178,13 @@ Type
     procedure filterGrandChildren(grandChildren: TFslList<TFHIRElementDefinition>; s: String; prop: TPropertyWrapper);
     function isBase(code: String): boolean;
     function isPrimitive(e: TFHIRElementDefinition): boolean;
-    function isDefaultValue(displayHints: TDictionary<String, String>; list: TFslList<TBaseWrapper>): boolean; overload;
-    function isDefault(displayHints: TDictionary<String, String>; primitiveType: TFHIRPrimitiveType): boolean; overload;
+    function isDefaultValue(displayHints: TFslStringDictionary; list: TFslList<TBaseWrapper>): boolean; overload;
+    function isDefault(displayHints: TFslStringDictionary; primitiveType: TFHIRPrimitiveType): boolean; overload;
     Function renderAsList(child: TFHIRElementDefinition): boolean;
     function canDoTable(path: String; p: TPropertyWrapper; grandChildren: TFslList<TFHIRElementDefinition>): boolean;
     procedure addColumnHeadings(tr: TFHIRXhtmlNode; grandChildren: TFslList<TFHIRElementDefinition>);
     procedure addColumnValues(res: TResourceWrapper; tr: TFHIRXhtmlNode; grandChildren: TFslList<TFHIRElementDefinition>; v: TBaseWrapper; showCodeDetails: boolean;
-      displayHints: TDictionary<String, String>);
+      displayHints: TFslStringDictionary);
     function getValues(path: String; p: TPropertyWrapper; e: TFHIRElementDefinition): TFslList<TPropertyWrapper>;
     function canCollapse(e: TFHIRElementDefinition): boolean;
     Function resolveReference(res: TResourceWrapper; url: String): TResourceWrapperWithReference;
@@ -199,8 +199,8 @@ Type
     procedure generateOD(od: TFHIROperationDefinition); overload;
 
     procedure renderLeaf(res: TResourceWrapper; ew: TBaseWrapper; defn: TFHIRElementDefinition; x: TFHIRXhtmlNode; title: boolean; showCodeDetails: boolean;
-      displayHints: TDictionary<String, String>);
-    function readDisplayHints(defn: TFHIRElementDefinition): TDictionary<String, String>;
+      displayHints: TFslStringDictionary);
+    function readDisplayHints(defn: TFHIRElementDefinition): TFslStringDictionary;
 
     procedure generateByProfile(res: TResourceWrapper; profile: TFHIRStructureDefinition; e: TBaseWrapper; allElements: TFHIRElementDefinitionList; defn: TFHIRElementDefinition;
       children: TFslList<TFHIRElementDefinition>; x: TFHIRXhtmlNode; path: String; showCodeDetails: boolean); overload;
@@ -642,7 +642,7 @@ var
   p: TPropertyWrapper;
   pList: TFslList<TPropertyWrapper>;
   child: TFHIRElementDefinition;
-  displayHints: TDictionary<String, String>;
+  displayHints: TFslStringDictionary;
   grandChildren: TFslList<TFHIRElementDefinition>;
   para, list, tbl, tr, bq: TFHIRXhtmlNode;
   name: String;
@@ -854,7 +854,7 @@ begin
   end;
 end;
 
-function TFHIRNarrativeGenerator.isDefaultValue(displayHints: TDictionary<String, String>; list: TFslList<TBaseWrapper>): boolean;
+function TFHIRNarrativeGenerator.isDefaultValue(displayHints: TFslStringDictionary; list: TFslList<TBaseWrapper>): boolean;
 begin
   if (list.Count <> 1) then
     result := false
@@ -864,7 +864,7 @@ begin
     result := false;
 end;
 
-function TFHIRNarrativeGenerator.isDefault(displayHints: TDictionary<String, String>; primitiveType: TFHIRPrimitiveType): boolean;
+function TFHIRNarrativeGenerator.isDefault(displayHints: TFslStringDictionary; primitiveType: TFHIRPrimitiveType): boolean;
 var
   v: String;
 begin
@@ -906,7 +906,7 @@ begin
 end;
 
 procedure TFHIRNarrativeGenerator.addColumnValues(res: TResourceWrapper; tr: TFHIRXhtmlNode; grandChildren: TFslList<TFHIRElementDefinition>; v: TBaseWrapper;
-  showCodeDetails: boolean; displayHints: TDictionary<String, String>);
+  showCodeDetails: boolean; displayHints: TFslStringDictionary);
 var
   e: TFHIRElementDefinition;
   p: TPropertyWrapper;
@@ -1027,7 +1027,7 @@ begin
 end;
 
 procedure TFHIRNarrativeGenerator.renderLeaf(res: TResourceWrapper; ew: TBaseWrapper; defn: TFHIRElementDefinition; x: TFHIRXhtmlNode; title: boolean; showCodeDetails: boolean;
-  displayHints: TDictionary<String, String>);
+  displayHints: TFslStringDictionary);
 var
   e: TFHIRObject;
   p: TFHIRPeriod;
@@ -1148,7 +1148,7 @@ function TFHIRNarrativeGenerator.displayLeaf(res: TResourceWrapper; ew: TBaseWra
   showCodeDetails: boolean): boolean;
 var
   e: TFHIRObject;
-  displayHints: TDictionary<String, String>;
+  displayHints: TFslStringDictionary;
   p: TFHIRPeriod;
   r: TFHIRReference;
   tr: TResourceWrapperWithReference;
@@ -1263,12 +1263,12 @@ begin
   end;
 end;
 
-function TFHIRNarrativeGenerator.readDisplayHints(defn: TFHIRElementDefinition): TDictionary<String, String>;
+function TFHIRNarrativeGenerator.readDisplayHints(defn: TFHIRElementDefinition): TFslStringDictionary;
 var
   displayHint, item: String;
   list, parts: TArray<String>;
 begin
-  result := TDictionary<String, String>.create();
+  result := TFslStringDictionary.create();
   if (defn <> nil) then
   begin
     displayHint := defn.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-display-hint');

@@ -40,18 +40,16 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.MXml, 
   FHIR.Web.Fetcher,
 
-  FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml,
+  FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Utilities,
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Context;
 
 
 const
-  ExceptionTypeTranslations : array [TExceptionType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
+  ExceptionTypeTranslations : array [TFhirIssueType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
     IssueTypeInvariant, IssueTypeSecurity, IssueTypeLogin, IssueTypeUnknown, IssueTypeExpired, IssueTypeForbidden, IssueTypeSuppressed, IssueTypeProcessing,
     IssueTypeNotSupported, IssueTypeDuplicate, IssueTypeNotFound, IssueTypeTooLong, IssueTypeCodeInvalid, IssueTypeExtension, IssueTypeTooCostly, IssueTypeBusinessRule,
     IssueTypeConflict, IssueTypeIncomplete, IssueTypeTransient, IssueTypeLockError, IssueTypeNoStore, IssueTypeException, IssueTypeTimeout, IssueTypeThrottled, IssueTypeInformational);
 
-  MIN_DATE = DATETIME_MIN;
-  MAX_DATE = DATETIME_MAX;
   CANONICAL_URL_RESOURCE_TYPES = [
     {$IFDEF FHIR_ACTIVITYDEFINITION}frtActivityDefinition, {$ENDIF}
     {$IFDEF FHIR_CAPABILITYSTATEMENT}frtCapabilityStatement, {$ENDIF}
@@ -189,18 +187,6 @@ type
   TFhirCapabilityStatementRestSecurity = TFhirConformanceRestSecurity;
 
 
-  TResourceWithReference = class (TFslObject)
-  private
-    FReference: String;
-    FResource: TFHIRResource;
-    procedure SetResource(const Value: TFHIRResource);
-  public
-    Constructor Create(reference : String; resource : TFHIRResource);
-    Destructor Destroy; override;
-    property Reference : String read FReference write FReference;
-    property Resource : TFHIRResource read FResource write SetResource;
-  end;
-
  TFhirPeriodHelper = class helper for TFhirPeriod
   private
     function GetEditString: String;
@@ -208,6 +194,7 @@ type
   public
     class function fromEdit(s : String) : TFhirPeriod;
     property editString : String read GetEditString write SetEditString;
+    function point : TDateTime;
   end;
 
 
@@ -459,6 +446,14 @@ type
     function groupList : TFhirConceptMap;
   end;
 
+  TFHIRBundleEntryHelper = class helper (TFhirElementHelper) for TFHIRBundleEntry
+  private
+    function GetLinks(s: string): String;
+    procedure SetLinks(s: string; const Value: String);
+  public
+    property Links[s : string] : String read GetLinks write SetLinks;
+  end;
+
 
   TFHIRBundleHelper = class helper (TFhirResourceHelper) for TFHIRBundle
   private
@@ -517,8 +512,6 @@ type
     function AddParameter(name: String) : TFhirParametersParameter; overload;
     procedure AddParameter(p :  TFhirParametersParameter); overload;
 
-    function EncodeVersionsJson : TBytes;
-    function EncodeVersionsXml : TBytes;
   end;
 
   TFhirParametersParameterHelper = class helper for TFhirParametersParameter
@@ -546,6 +539,7 @@ type
     function HasTag(system, code : String)  : boolean;
     function addTag(system, code, display : String) : TFhirCoding;
     function removeTag(system, code : String) : boolean;
+    function removeLabel(system, code : String) : boolean;
   end;
 
   TFhirOperationOutcomeIssueHelper = class helper for TFhirOperationOutcomeIssue
@@ -727,52 +721,6 @@ begin
 end;
   {$ENDIF}
 
-
-function DetectFormat(oContent : TStream) : TFHIRFormat; overload;
-var
-  i : integer;
-  s : AnsiString;
-begin
-  i := oContent.Position;
-  setlength(s, ocontent.Size - oContent.Position);
-  ocontent.Read(s[1], length(s));
-  oContent.Position := i;
-  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := ffXml
-  else if (pos('{', s) > 0) and ((pos('{', s) < 10)) then
-    result := ffJson
-  else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
-    result := ffTurtle
-  else
-    result := ffUnspecified;
-end;
-
-function DetectFormat(bytes : TBytes) : TFHIRFormat; overload;
-var
-  sa : AnsiString;
-  s : String;
-begin
-  setlength(sa, length(bytes));
-  move(bytes[0], sa[1], length(sa));
-  s := String(sa);
-  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := ffXml
-  else
-    result := ffJson;
-end;
-
-
-function DetectFormat(oContent : TFslBuffer) : TFHIRFormat; overload;
-var
-  s : String;
-begin
-  s := oContent.AsText;
-  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := ffXml
-  else
-    result := ffJson;
-
-end;
 
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 var
@@ -2456,28 +2404,6 @@ begin
     result := result.Substring(1);
 end;
 
-{ TResourceWithReference }
-
-constructor TResourceWithReference.Create(reference: String; resource: TFHIRResource);
-begin
-  inherited Create;
-  self.Reference := reference;
-  self.Resource := resource;
-
-end;
-
-destructor TResourceWithReference.Destroy;
-begin
-  FResource.free;
-  inherited;
-end;
-
-procedure TResourceWithReference.SetResource(const Value: TFHIRResource);
-begin
-  FResource.free;
-  FResource := Value;
-end;
-
 
 { TFHIRResourceHelper }
 
@@ -2922,44 +2848,6 @@ begin
   self.parameterList.Add(p);
 end;
 
-function TFhirParametersHelper.EncodeVersionsJson: TBytes;
-var
-  j : TJsonObject;
-  a : TJsonArray;
-  p : TFhirParametersParameter;
-  s : String;
-begin
-  j := TJsonObject.create;
-  try
-    a := j.forceArr['versions'];
-    for p in parameterList do
-      if p.name = 'version' then
-        a.add(p.value.primitiveValue);
-    s := TJSONWriter.writeObjectStr(j, true);
-  finally
-    j.free;
-  end;
-  result := TEncoding.UTF8.GetBytes(s);
-end;
-
-function TFhirParametersHelper.EncodeVersionsXml: TBytes;
-var
-  x : TMXmlDocument;
-  p : TFhirParametersParameter;
-  s : String;
-begin
-  x := TMXmlDocument.Create;
-  try
-    for p in parameterList do
-      if p.name = 'version' then
-        x.addElement('version').addText(p.value.primitiveValue);
-    s := x.ToXml(true);
-  finally
-    x.free;
-  end;
-  result := TEncoding.UTF8.GetBytes(s);
-end;
-
 { TFhirParametersParameterHelper }
 
 procedure TFhirParametersParameterHelper.AddParameter(name: String; value: TFhirType);
@@ -3166,6 +3054,23 @@ begin
     begin
       result := true;
       TagList.DeleteByIndex(i);
+    end;
+  end;
+end;
+
+function TFhirResourceMetaHelper.removeLabel(system, code : String): boolean;
+var
+  i : integer;
+  c : TFhirCoding;
+begin
+  result := false;
+  for i := securityList.Count -1 downto 0 do
+  begin
+    c := securityList[i];
+    if (c.system = system) and (c.code = code) then
+    begin
+      result := true;
+      securityList.DeleteByIndex(i);
     end;
   end;
 end;
@@ -5203,6 +5108,18 @@ begin
 
 end;
 
+function TFhirPeriodHelper.point: TDateTime;
+begin
+  if (startElement <> nil) and (end_Element <> nil) then
+    result := (start.DateTime + end_.DateTime) / 2
+  else if startElement <> nil then
+    result := start.DateTime
+  else if end_Element <> nil then
+    result := end_.DateTime
+  else
+    result := 0;
+end;
+
 procedure TFhirPeriodHelper.SetEditString(const Value: String);
 var
   s, c : String;
@@ -5242,4 +5159,37 @@ begin
     end;
   end;
 end;
+
+{ TFHIRBundleEntryHelper }
+
+function TFHIRBundleEntryHelper.GetLinks(s: string): String;
+var
+  i : integer;
+begin
+  result := '';
+  for i := 0 to link_List.count -  1 do
+    if link_List[i].relation = s then
+    begin
+      result := link_List[i].url;
+      exit;
+    end;
+end;
+
+procedure TFHIRBundleEntryHelper.SetLinks(s: string; const Value: String);
+var
+  i : integer;
+begin
+  for i := 0 to link_List.count -  1 do
+    if link_List[i].relation = s then
+    begin
+      link_List[i].url := value;
+      exit;
+    end;
+  with link_List.Append do
+  begin
+    relation := s;
+    url := value;
+  end;
+end;
+
 end.

@@ -31,22 +31,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes,
-  SysUtils,
+  SysUtils, Classes, Generics.Collections,
   IdGlobal,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Certs, FHIR.Base.Scim, FHIR.Support.MXml,
   FHIR.Web.Parsers, FHIR.Web.GraphQL,
-  FHIR.Base.Objects, FHIR.Tools.Indexing, FHIR.Server.Security, FHIR.Base.Lang, FHIR.Base.Xhtml,
-  {$IFDEF FHIR2}
-  FHIR.R2.Resources, FHIR.R2.Constants, FHIR.R2.Types, FHIR.R2.Context, FHIR.R2.Tags;
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Types, FHIR.R3.Context, FHIR.R3.Tags;
-  {$ENDIF}
-  {$IFDEF FHIR4}
-  FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types, FHIR.R4.Context, FHIR.R4.Tags;
-  {$ENDIF}
-
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Common, FHIR.Base.Factory,
+  FHIR.Tools.Indexing, FHIR.Server.Security, FHIR.Server.Tags, FHIR.Server.BundleBuilder;
 
 Type
   TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload);
@@ -60,17 +50,18 @@ Const
   CODES_SystemIdEvidence : array [TFHIRSystemIdEvidence] of String = ('?', 'Unknown', 'This Server', 'by OAuth', 'By OWin', 'By Certificate', 'By JWT');
 
 Type
+
   {$M+}
 
   TFHIRCompartmentId = class (TFslObject)
   private
-    FEnum: TFhirResourceType;
+    FResourceType : String;
     FId: String;
   public
-    Constructor Create(enum : TFhirResourceType; id : String);
+    Constructor Create(ResourceType, id : String);
     function Link : TFHIRCompartmentId; overload;
 
-    property Enum : TFhirResourceType read FEnum write FEnum;
+    property ResourceType : String read FResourceType write FResourceType;
     property Id : String read FId write FId;
 
     function ToString : String; override;
@@ -104,7 +95,7 @@ Type
   }
   TFhirSession = class (TFslObject)
   private
-    Fworker : TFHIRWorkerContext;
+    Fworker : TFHIRWorkerContextWithFactory;
     FProviderCode : TFHIRAuthProvider;
     FProviderName : String;
     FId : String;
@@ -129,7 +120,7 @@ Type
     FSecurity : TFHIRSecurityRights;
     FSecure : boolean;
     FUserKey: integer;
-    FTestScript: TFhirTestScript;
+    FTestScript: TFhirTestScriptW;
     FExternalUserKey: integer;
     FCompartments : TFslList<TFHIRCompartmentId>;
 
@@ -137,9 +128,9 @@ Type
     procedure SetUser(const Value: TSCIMUser);
     function GetScopes: String;
     procedure setScopes(scopes: String);
-    procedure SetTestScript(const Value: TFhirTestScript);
+    procedure SetTestScript(const Value: TFhirTestScriptW);
   public
-    Constructor Create(worker : TFHIRWorkerContext; secure : boolean);
+    Constructor Create(worker : TFHIRWorkerContextWithFactory; secure : boolean);
     destructor Destroy; Override;
     function Link : TFhirSession; overload;
     procedure describe(b : TStringBuilder);
@@ -253,7 +244,7 @@ Type
     procedure allowAll; // for internal use
 
     property sessionLength : String read FsessionLength write FsessionLength;
-    Property TestScript : TFhirTestScript read FTestScript write SetTestScript;
+    Property TestScript : TFhirTestScriptW read FTestScript write SetTestScript;
     property ExternalUserKey : integer read FExternalUserKey write FExternalUserKey;
     property Compartments : TFslList<TFHIRCompartmentId> read FCompartments;
 
@@ -272,15 +263,14 @@ Type
   }
   TFHIRRequest = class (TFslObject)
   Private
-    Fworker: TFHIRWorkerContext;
+    Fworker: TFHIRWorkerContextWithFactory;
     FCompartmentInformation : TFHIRCompartmentList;
     FId: String;
     FSubId: String;
     FCommandType: TFHIRCommandType;
     FResourceName : String;
-    FResourceEnum : TFhirResourceType;
     FFormat: TFHIRFormat;
-    FResource: TFhirResource;
+    FResource: TFhirResourceV;
     FUrl: String;
     FBaseUrl: String;
     ForiginalId: String;
@@ -298,7 +288,7 @@ Type
     FForm: TMimeMessage;
     FOperationName: String;
     FIfMatch : String;
-    FProvenance: TFhirProvenance;
+    FProvenance: TFHIRResourceV;
     FIfNoneMatch: String;
     FIfModifiedSince: TDateTime;
     FIfNoneExist: String;
@@ -309,21 +299,21 @@ Type
     FPatchXml: TMXmlElement;
     FExternalRequestId: String;
     FInternalRequestId: String;
-    FCustom : TFHIRCustomResourceInformation;
+    // FCustom : TFHIRCustomResourceInformation;
     FStrictSearch: boolean;
     FAdaptor : TFHIRFormatAdaptor;
     FLoadObjects : boolean;
     FGraphQL: TGraphQLPackage;
     FElements: TStringList;
     FVersion: TFHIRVersion;
-    procedure SetResource(const Value: TFhirResource);
+    procedure SetResource(const Value: TFhirResourceV);
     procedure SetSource(const Value: TFslBuffer);
     procedure SetSession(const Value: TFhirSession);
-    procedure SetProvenance(const Value: TFhirProvenance);
+    procedure SetProvenance(const Value: TFHIRResourceV);
     procedure processParams;
     procedure SetForm(const Value: TMimeMessage);
     procedure SetPatchJson(const Value: TJsonArray);
-    function RecogniseCustomResource(stype : String; var resourceType : TFhirResourceType) : boolean;
+    // function RecogniseCustomResource(stype : String; var resourceType : TFhirResourceType) : boolean;
     procedure SetResourceName(const Value: String);
     procedure SetAdaptor(const Value: TFHIRFormatAdaptor);
     procedure SetGraphQL(const Value: TGraphQLPackage);
@@ -332,11 +322,11 @@ Type
     procedure SetCompartment(const Value: TFHIRCompartmentId);
     function GetHasCompartments: boolean;
   Public
-    Constructor Create(worker: TFHIRWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+    Constructor Create(worker: TFHIRWorkerContextWithFactory; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
     Function Link : TFHIRRequest; Overload;
 
-      function clone() : TFHIRRequest;
+    function clone() : TFHIRRequest;
     Function Compose : String;
     procedure LoadParams(s : String); overload;
     procedure LoadParams(form : TMimeMessage); overload;
@@ -352,7 +342,7 @@ Type
     function canGetUser : boolean;
     function NewIdStatus : TCreateIdState;
     procedure reset;
-    property Context : TFHIRWorkerContext read FWorker;
+    property Context : TFHIRWorkerContextWithFactory read FWorker;
     property Adaptor : TFHIRFormatAdaptor read FAdaptor write SetAdaptor;
 
     // main rest function. Set the following things before calling this:
@@ -394,7 +384,7 @@ Type
       frtNull if this is a bundle
     }
     Property ResourceName : String Read FResourceName write SetResourceName;
-    Property ResourceEnum : TFHIRResourceType Read FResourceEnum;
+//    Property ResourceEnum : TFHIRResourceType Read FResourceEnum;
 
     {
       The command (http transaction). This can be changed, though it is unusual to
@@ -431,7 +421,7 @@ Type
       Note that actual kind of the resource will be one of the ones defined as
       part of the FHIR specification
     }
-    Property Resource : TFhirResource read FResource write SetResource;
+    Property Resource : TFhirResourceV read FResource write SetResource;
 
     Property patchJson : TJsonArray read FPatchJson write SetPatchJson;
     Property patchXml : TMXmlElement read FPatchXml write SetPatchXml;
@@ -489,7 +479,7 @@ Type
     Property IfModifiedSince : TDateTime read FIfModifiedSince write FIfModifiedSince;
     Property IfNoneExist : String read FIfNoneExist write FIfNoneExist;
 
-    Property Provenance : TFhirProvenance read FProvenance write SetProvenance;
+    Property Provenance : TFhirResourceV read FProvenance write SetProvenance;
     Property Origin : TFHIRRequestOrigin read FOrigin;
 
     property externalRequestId : String read FExternalRequestId write FExternalRequestId;
@@ -498,36 +488,7 @@ Type
     property loadObjects : boolean read FLoadObjects write FLoadObjects;
   End;
 
-  TFHIRBundleBuilder = class (TFslObject)
-  private
-    FHasSecureOp: boolean;
-  protected
-    FBundle : TFHIRBundle;
-  public
-    constructor Create(bundle : TFHIRBundle);
-    destructor Destroy; override;
-
-    Property hasSecureOp : boolean read FHasSecureOp write FHasSecureOp;
-
-    procedure setId(id : string);
-    procedure setLastUpdated(dt : TDateTimeEx);
-    procedure setTotal(t : integer);
-    procedure tag(n, v : String);
-    procedure addLink(rt, url : String);
-    procedure addEntry(entry : TFhirBundleEntry; first : boolean); virtual; abstract;
-    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; virtual; abstract;
-    function getBundle : TFHIRBundle; virtual; abstract;
-  end;
-
-  TCreateBundleBuilderEvent = procedure (request : TFHIRRequest; context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder) of object;
-
-  TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
-  public
-    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
-    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
-    function getBundle : TFHIRBundle; override;
-  end;
-
+  TCreateBundleBuilderEvent = procedure (request : TFHIRRequest; context : TFHIRResponse; aType : TBundleType; out builder : TFhirBundleBuilder) of object;
 
   {
     A FHIR response.
@@ -547,10 +508,11 @@ Type
   }
   TFHIRResponse = class (TFslObject)
   private
+    Fworker: TFHIRWorkerContextWithFactory;
     FHTTPCode: Integer;
     FBody: String;
     FMessage: String;
-    FResource: TFhirResource;
+    FResource: TFhirResourceV;
     FversionId: String;
     ForiginalId: String;
     FlastModifiedDate: TDateTime;
@@ -559,27 +521,25 @@ Type
     FContentLocation: String;
     FLocation: String;
     FTags : TFHIRTagList;
-    Flink_list : TFhirBundleLinkList;
+    Flinks : TFslStringDictionary;
     FOrigin: String;
     FId: String;
-    FOutcome: TFHIROperationOutcome;
+    FOutcome: TFHIROperationOutcomeW;
     FCacheControl : TFHIRCacheControl;
     FProgress: String;
     FStream : TFslStream;
     FOnCreateBuilder: TCreateBundleBuilderEvent;
     FVersion: TFHIRVersion;
 
-    procedure SetResource(const Value: TFhirResource);
-    function GetBundle: TFhirBundle;
-    procedure SetBundle(const Value: TFhirBundle);
-    procedure SetOutcome(const Value: TFHIROperationOutcome);
+    procedure SetResource(const Value: TFhirResourceV);
+    procedure SetOutcome(const Value: TFHIROperationOutcomeW);
     procedure SetStream(const Value: TFslStream);
   public
-    Constructor Create; Override;
+    Constructor Create(worker: TFHIRWorkerContextWithFactory);
     Destructor Destroy; Override;
 
       Function Link : TFHIRResponse; Overload;
-  
+
     {
       The logical outcome of the request. Usual values are
         * 0 - the outcome of the transaction is not yet known
@@ -615,10 +575,9 @@ Type
       Note that actual kind of the resource will be one of the ones defined as
       part of the FHIR specification
     }
-    Property Resource : TFhirResource read FResource write SetResource;
-    Property Bundle : TFhirBundle read GetBundle write SetBundle;
+    Property Resource : TFhirResourceV read FResource write SetResource;
 
-    Property outcome : TFHIROperationOutcome read FOutcome write SetOutcome;
+    Property outcome : TFHIROperationOutcomeW read FOutcome write SetOutcome;
     Property Stream : TFslStream read FStream write SetStream;
 
     {
@@ -671,10 +630,7 @@ Type
 
     property Version : TFHIRVersion read FVersion write FVersion;
 
-    {
-      link_list for the response
-    }
-    property link_list : TFhirBundleLinkList read Flink_list;
+    property links : TFslStringDictionary read Flinks;
 
     {
       HTTP Origin header - see http://en.wikipedia.org/wiki/Cross-origin_resource_sharing
@@ -699,17 +655,7 @@ Function IdHead(s : String):String;
 implementation
 
 uses
-  FHIR.Version.Parser,
-  FHIR.Base.Parser,
-  {$IFDEF FHIR2}
-  FHIR.R2.Utilities;
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  FHIR.R3.Utilities;
-  {$ENDIF}
-  {$IFDEF FHIR4}
-  FHIR.R4.Utilities;
-  {$ENDIF}
+  FHIR.Base.Parser;
 
 
 { TFHIRRequest }
@@ -738,17 +684,16 @@ var
   i : integer;
 begin
   if (Length(id) > ID_LENGTH) then
-    Raise ERestfulException.Create('TFhirWebServer.CheckId', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_ID_TOO_LONG', lang, [id]);
+    Raise ERestfulException.Create('TFhirWebServer.CheckId', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_ID_TOO_LONG', lang, [id]);
   for i := 1 to length(id) do
     if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-', '_']) then
-      Raise ERestfulException.Create('TFhirWebServer.CheckId', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_ID_INVALID', lang, [id, id[i]]);
+      Raise ERestfulException.Create('TFhirWebServer.CheckId', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_ID_INVALID', lang, [id, id[i]]);
 end;
 
 
 procedure TFHIRRequest.analyse(sCommand, sUrl: String; out relativeReferenceAdjustment : integer; adaptors : TFslMap<TFHIRFormatAdaptor>);
 Var
   sId, sType : String;
-  aResourceType : TFHIRResourceType;
   Function NextSegment(var url : String):String;
   var
     i : integer;
@@ -769,7 +714,7 @@ Var
   procedure ForceMethod(sMethod : String);
   begin
     if (sCommand <> sMethod) Then
-      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, sMethod]);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, itInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, sMethod]);
   end;
 var
   s, soURL : String;
@@ -841,11 +786,11 @@ begin
     if FId.endsWith('.zip') then
       StringSplit(FId, '.', FId, FSubId);
     if not IsGuid(FId) then
-      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, FId]);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, itInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, FId]);
     if sCommand = 'DELETE' then
     begin
       if FSubid <> '' then
-        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, FSubid]);
+        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, itInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, FSubid]);
       CommandType := fcmdDeleteTask;
     end
     else
@@ -862,17 +807,10 @@ begin
   begin
     CommandType := fcmdSearch;
     if (sCommand <> 'GET') and (sCommand <> 'POST') then
-      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
   end
   else
   begin
-    {$IFDEF FHIR2}
-    if (sType <> '') then
-      if not RecogniseFHIRResourceManagerName(sType, aResourceType) and not RecogniseCustomResource(sType, aResourceType) then
-      Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, etNotSupported, 'MSG_NO_MODULE', lang, [sType]);
-    ResourceName := sType;
-    FResourceEnum := aResourceType;
-    {$ELSE}
     Adaptor := nil;
     if (sType <> '') then
       if (adaptors <> nil) and adaptors.ContainsKey(sType) then
@@ -880,12 +818,10 @@ begin
         adaptor := adaptors[sType].link;
         ResourceName := adaptor.ResourceName;
       end
-      else if not RecogniseFHIRResourceManagerName(sType, aResourceType) and not RecogniseCustomResource(sType, aResourceType) then
-        Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, etNotSupported, 'MSG_NO_MODULE', lang, [sType])
+      else if not Fworker.factory.isResourceName(sType) {and not RecogniseCustomResource(sType, aResourceType)} then
+        Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, itNotSupported, 'MSG_NO_MODULE', lang, [sType])
       else
         ResourceName := sType;
-    // FResourceEnum := aResourceType;
-    {$ENDIF}
     sId := NextSegment(sURL);
     if sId = '' then
     begin
@@ -902,7 +838,7 @@ begin
         DefaultSearch := true;
       end
       else
-        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
+        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
     end
     else if StringStartsWith(sId, '$', false) then
     begin
@@ -930,7 +866,7 @@ begin
         else if sCommand = 'OPTIONS' then // CORS
           CommandType := fcmdConformanceStmt
         else
-          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etNotSupported, 'MSG_BAD_FORMAT', lang, [soURL, 'GET, PUT or DELETE']);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, itNotSupported, 'MSG_BAD_FORMAT', lang, [soURL, 'GET, PUT or DELETE']);
       end
       else if StringStartsWith(sId, '$', false)  then
       begin
@@ -976,38 +912,38 @@ begin
             OperationName := 'meta-delete';
           end
           else
-            raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
+            raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
         end
         else
-          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
       end
       else if sId = '*' then // all types
       begin
         if not FCompartmentInformation.hasCompartment(ResourceName) then
-          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etNotSupported, 'MSG_UNKNOWN_COMPARTMENT', lang, [soURL, 'GET, POST or DELETE']);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, itNotSupported, 'MSG_UNKNOWN_COMPARTMENT', lang, [soURL, 'GET, POST or DELETE']);
 
-        compartment := TFHIRCompartmentId.Create(ResourceEnum, Id);
+        compartment := TFHIRCompartmentId.Create(ResourceName, Id);
         CommandType := fcmdSearch;
         ResourceName := '';
         Id := '';
       end
-      else if StringArrayExistsInSensitive(CODES_TFhirResourceType, sId) or FWorker.hasCustomResource(sId) then
+      else if FWorker.factory.isResourceName(sId) {or FWorker.hasCustomResource(sId)} then
       begin
         if FCompartmentInformation.existsInCompartment(ResourceName, sId) then
         begin
           if not FCompartmentInformation.hasCompartment(ResourceName) then
-            raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etNotSupported, 'MSG_UNKNOWN_COMPARTMENT', lang, [soURL, 'GET, POST or DELETE']);
+            raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, itNotSupported, 'MSG_UNKNOWN_COMPARTMENT', lang, [soURL, 'GET, POST or DELETE']);
 
-          compartment := TFHIRCompartmentId.Create(ResourceEnum, Id);
+          compartment := TFHIRCompartmentId.Create(ResourceName, Id);
           CommandType := fcmdSearch;
           ResourceName := sId;
           Id := '';
         end
         else
-          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
       end
       else
-        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
+        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
     end
     else if (sId = '_validate') Then
     begin
@@ -1017,7 +953,7 @@ begin
       if sId <> '' Then
       Begin
         if (sURL <> '') or (sId = '') Then
-          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
         CheckId(lang, copy(sId, 2, $FF));
         Id := copy(sId, 2, $FF);
       End;
@@ -1036,15 +972,13 @@ begin
       PostFormat := ffXhtml;
     end
     else
-      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, ['URL'+soURL]);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, ['URL'+soURL]);
   End;
   if (CommandType <> fcmdNull)  then
     if (sURL <> '') then
-      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
-  {$IFNDEF FHIR2}
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, itInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
   if (CommandType = fcmdSearch) and (Adaptor <> nil) then
     Adaptor.editSearch(self);
-  {$ENDIF}
 end;
 
 function TFHIRRequest.canGetUser: boolean;
@@ -1087,12 +1021,12 @@ end;
 
 function TFHIRRequest.Compose: String;
 var
-  comp : TFHIRXmlComposer;
+  comp : TFHIRComposer;
   stream : TStringStream;
 begin
   stream := TStringStream.Create('');
   try
-    comp := TFHIRXmlComposer.create(Fworker.link, OutputStylePretty, lang);
+    comp := Fworker.Factory.makeComposer(Fworker.link, ffXml, lang, OutputStylePretty);
     try
       comp.Compose(stream, resource);
     finally
@@ -1118,15 +1052,15 @@ begin
   FSource.AsBytes := b;
 end;
 
-constructor TFHIRRequest.Create(worker: TFHIRWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+constructor TFHIRRequest.Create(worker: TFHIRWorkerContextWithFactory; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
 begin
   inherited Create;
   FWorker := worker;
-  FTags := TFHIRTagList.create;
+  FTags := TFHIRTagList.create(worker.Factory.link);
   FOrigin := origin;
   FCompartmentInformation := compartmentInformation;
   FElements := TStringList.Create;
-  Version := COMPILED_FHIR_VERSION;
+  Version := worker.Factory.version;
 end;
 
 destructor TFHIRRequest.Destroy;
@@ -1134,7 +1068,7 @@ begin
   FElements.Free;
   FAdaptor.Free;
   FCompartmentInformation.free;
-  FCustom.Free;
+//  FCustom.Free;
   FWorker.Free;
   FPatchJson.Free;
   FTags.free;
@@ -1159,7 +1093,7 @@ end;
 
 function TFHIRRequest.hasTestingTag: boolean;
 begin
-  result := {$IFDEF FHIR2}false{$ELSE}Tags.hasTestingTag{$ENDIF};
+  result := Tags.hasTestingTag;
 end;
 
 function TFHIRRequest.Link: TFHIRRequest;
@@ -1229,6 +1163,7 @@ begin
     Summary := soFull;
 end;
 
+{
 function TFHIRRequest.RecogniseCustomResource(stype: String; var resourceType: TFhirResourceType): boolean;
 begin
   FCustom := Fworker.getCustomResource(stype);
@@ -1236,13 +1171,13 @@ begin
   if result then
     resourceType := frtCustom;
 end;
+}
 
 procedure TFHIRRequest.reset;
 begin
   FId := '';
   FSubId := '';
   FCommandType := fcmdUnknown;
-  FResourceEnum := frtNull;
   FResourceName := '';
   FResource := nil;
   FUrl := '';
@@ -1272,10 +1207,8 @@ procedure TFHIRRequest.SetAdaptor(const Value: TFHIRFormatAdaptor);
 begin
   FAdaptor.Free;
   FAdaptor := Value;
-  {$IFNDEF FHIR2}
   if FAdaptor <> nil then
     FLoadObjects := true;
-  {$ENDIF}
 end;
 
 procedure TFHIRRequest.SetCompartment(const Value: TFHIRCompartmentId);
@@ -1314,13 +1247,13 @@ begin
   FPatchXml := Value;
 end;
 
-procedure TFHIRRequest.SetProvenance(const Value: TFhirProvenance);
+procedure TFHIRRequest.SetProvenance(const Value: TFHIRResourceV);
 begin
   FProvenance.Free;
   FProvenance := Value;
 end;
 
-procedure TFHIRRequest.SetResource(const Value: TFhirResource);
+procedure TFHIRRequest.SetResource(const Value: TFhirResourceV);
 begin
   FResource.Free;
   FResource := Value;
@@ -1329,12 +1262,13 @@ end;
 procedure TFHIRRequest.SetResourceName(const Value: String);
 begin
   FResourceName := Value;
-  if (value = '') then
+{  if (value = '') then
     FResourceEnum := frtNull
   else if StringArrayExistsInSensitive(CODES_TFhirResourceType, Value) then
     FResourceEnum := TFhirResourceType(StringArrayIndexOfSensitive(CODES_TFhirResourceType, Value))
   else
     FResourceEnum := frtCustom;
+}
 end;
 
 procedure TFHIRRequest.SetSession(const Value: TFhirSession);
@@ -1360,7 +1294,7 @@ begin
   addValue('Command', CODES_TFHIRCommandType[CommandType], true);
   addValue('Url', FUrl, true);
   addValue('format', CODES_TFHIRFormat[PostFormat], true);
-  addValue('type', ResourceName, ResourceEnum <> frtNull);
+  addValue('type', ResourceName, true);
   addValue('id', FId, true);
   addValue('subId', FSubId, FSubId <> '');
   addValue('baseUrl', FBaseUrl, FBaseUrl <> '');
@@ -1378,49 +1312,51 @@ end;
 
 { TFHIRResponse }
 
-constructor TFHIRResponse.Create;
+constructor TFHIRResponse.Create(worker: TFHIRWorkerContextWithFactory);
 begin
-  inherited;
-  FTags := TFHIRTagList.create;
-  Flink_list := TFhirBundleLinkList.create;
+  inherited create;
+  Fworker := worker;
+  FTags := TFHIRTagList.create(worker.Factory.link);
+  Flinks := TFslStringDictionary.create;
   FCacheControl := cacheNormal;
-  Version := COMPILED_FHIR_VERSION;
+  Version := worker.version;
 end;
 
 destructor TFHIRResponse.Destroy;
 begin
   FStream.Free;
   FOutcome.Free;
-  Flink_list.Free;
+  Flinks.Free;
   FTags.free;
   FResource.Free;
+  FWorker.Free;
   inherited;
 end;
 
-function TFHIRResponse.GetBundle: TFhirBundle;
-begin
-  if not (resource is TFHIRBundle) then
-    raise EFHIRException.create('Attempt to cast a '+resource.FhirType+' to a Bundle');
-  result := FResource as TFhirBundle;
-end;
+//function TFHIRResponse.GetBundle: TFhirBundle;
+//begin
+//  if not (resource is TFHIRBundle) then
+//    raise EFHIRException.create('Attempt to cast a '+resource.FhirType+' to a Bundle');
+//  result := FResource as TFhirBundle;
+//end;
+//procedure TFHIRResponse.SetBundle(const Value: TFhirBundle);
+//begin
+//  SetResource(value);
+//end;
+
 
 function TFHIRResponse.Link: TFHIRResponse;
 begin
   result := TFHIRResponse(Inherited Link);
 end;
 
-procedure TFHIRResponse.SetBundle(const Value: TFhirBundle);
-begin
-  SetResource(value);
-end;
-
-procedure TFHIRResponse.SetOutcome(const Value: TFHIROperationOutcome);
+procedure TFHIRResponse.SetOutcome(const Value: TFHIROperationOutcomeW);
 begin
   FOutcome.Free;
   FOutcome := Value;
 end;
 
-procedure TFHIRResponse.SetResource(const Value: TFhirResource);
+procedure TFHIRResponse.SetResource(const Value: TFhirResourceV);
 begin
   FResource.free;
   FResource := nil;
@@ -1465,7 +1401,7 @@ begin
   result := FSecurity.canWrite(resourceName);
 end;
 
-constructor TFhirSession.Create(worker : TFHIRWorkerContext; secure : boolean);
+constructor TFhirSession.Create(worker : TFHIRWorkerContextWithFactory; secure : boolean);
 begin
   inherited Create;
   FWOrker := worker;
@@ -1591,7 +1527,7 @@ begin
   FSecurity := TFHIRSecurityRights.create(FWorker.Link, FUser, scopes, FSecure);
 end;
 
-procedure TFhirSession.SetTestScript(const Value: TFhirTestScript);
+procedure TFhirSession.SetTestScript(const Value: TFhirTestScriptW);
 begin
   FTestScript.Free;
   FTestScript := Value;
@@ -1611,53 +1547,13 @@ begin
   result := TFHIRFormatAdaptor(inherited Link);
 end;
 
-{ TFHIRBundleBuilder }
-
-procedure TFHIRBundleBuilder.addLink(rt, url: String);
-begin
-  FBundle.Link_List.AddRelRef(rt, url);
-end;
-
-constructor TFHIRBundleBuilder.Create;
-begin
-  inherited Create;
-  FBundle := bundle;
-end;
-
-destructor TFHIRBundleBuilder.Destroy;
-begin
-  FBundle.Free;
-  inherited;
-end;
-
-procedure TFHIRBundleBuilder.setId(id: string);
-begin
-  FBundle.id := id;
-end;
-
-procedure TFHIRBundleBuilder.setLastUpdated(dt: TDateTimeEx);
-begin
-  FBundle.meta := TFhirMeta.Create;
-  FBundle.meta.lastUpdated := dt;
-end;
-
-procedure TFHIRBundleBuilder.setTotal(t: integer);
-begin
-  FBundle.total := inttostr(t);
-end;
-
-procedure TFHIRBundleBuilder.tag(n, v: String);
-begin
-  FBundle.Tags[n] := v;
-end;
-
 
 { TFHIRCompartmentId }
 
-constructor TFHIRCompartmentId.Create(enum: TFhirResourceType; id: String);
+constructor TFHIRCompartmentId.Create(ResourceType, id: String);
 begin
   inherited Create;
-  FEnum := enum;
+  FResourceType := ResourceType;
   FId := id;
 end;
 
@@ -1668,7 +1564,7 @@ end;
 
 function TFHIRCompartmentId.ToString: String;
 begin
-  result := CODES_TFhirResourceType[Enum]+'/'+FId;
+  result := FResourceType+'/'+FId;
 end;
 
 Function IdTail(s : String):String;
@@ -1689,38 +1585,6 @@ begin
     result := copy(s, 1, LastDelimiter('/', s))
   else
     result := '';
-end;
-
-{ TFHIRBundleBuilderSimple }
-
-procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry; first : boolean);
-begin
-  if first then
-    FBundle.entryList.InsertItem(0, entry)
-  else
-    FBundle.entryList.AddItem(entry);
-end;
-
-
-function TFHIRBundleBuilderSimple.getBundle: TFHIRBundle;
-begin
-  result := FBundle.Link;
-end;
-
-function TFHIRBundleBuilderSimple.moveToFirst(res: TFhirResource): TFhirBundleEntry;
-var
-  fu : String;
-  i : integer;
-begin
-  for i := Fbundle.entryList.Count -1 downto 0 do
-    if Fbundle.entryList[i].resource = res then
-    begin
-      fu := Fbundle.entryList[i].fullurl;
-      Fbundle.entrylist.DeleteByIndex(i);
-    end;
-  Fbundle.entryList.Insert(0).resource := res.Link;
-  Fbundle.entryList[0].fullurl := fu;
-  result := Fbundle.entryList[0];
 end;
 
 

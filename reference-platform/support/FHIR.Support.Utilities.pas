@@ -1105,7 +1105,7 @@ type
     function TimeStamp : TTimeStamp;
     function truncToDay : TDateTimeEx;
 
-    function fixPrecision(Precision : TDateTimeExPrecision) : TDateTimeEx;
+    function fixPrecision(precision : TDateTimeExPrecision) : TDateTimeEx;
 
     function Local : TDateTimeEx;
     function UTC : TDateTimeEx;
@@ -8785,10 +8785,10 @@ begin
 end;
 
 
-function TDateTimeEx.fixPrecision(Precision: TDateTimeExPrecision): TDateTimeEx;
+function TDateTimeEx.fixPrecision(precision: TDateTimeExPrecision): TDateTimeEx;
 begin
   result := Self;
-  result.FPrecision := FPrecision;
+  result.FPrecision := precision;
 end;
 
 function TDateTimeEx.SameTime(other: TDateTimeEx): Boolean;

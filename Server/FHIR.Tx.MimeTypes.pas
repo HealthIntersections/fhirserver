@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
    FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Web.Parsers,
   FHIR.Base.Common,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
+  FHIR.Tx.Service;
 
 type
   TMTCodeSystemProviderContext = class (TCodeSystemProviderContext)

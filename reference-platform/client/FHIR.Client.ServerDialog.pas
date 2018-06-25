@@ -178,6 +178,7 @@ end;
 procedure TEditRegisteredServerForm.loadCapabilityStatement;
 var
   client : TFhirClientV;
+  msg : String;
 begin
   try
     try
@@ -188,18 +189,22 @@ begin
       finally
         client.Free;
       end;
-      loadHooks;
+      // loadHooks;
     except
-      client := FVersions[readServerVersion].makeClient(nil, edtServer.text, fctWinInet, ffXml, 5000);
-      try
-        FCapabilityStatement := FVersions[readServerVersion].wrapCapabilityStatement(client.conformanceV(false));
-      finally
-        client.Free;
+      on e : exception do
+      begin
+        msg := e.Message;
+        client := FVersions[readServerVersion].makeClient(nil, edtServer.text, fctWinInet, ffXml, 5000);
+        try
+          FCapabilityStatement := FVersions[readServerVersion].wrapCapabilityStatement(client.conformanceV(false));
+        finally
+          client.Free;
+        end;
       end;
     end;
   except
     on e : Exception do
-      raise EFHIRException.create('Error reading Server conformance statement: "'+'" - tried both xml and json for '+FVersions[readServerVersion].description);
+      raise EFHIRException.create('Error reading Server conformance statement: "'+msg+'" and "'+e.message+'" - tried both xml and json for '+FVersions[readServerVersion].description);
   end;
 end;
 

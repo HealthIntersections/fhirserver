@@ -100,7 +100,7 @@ type
     FResourceType : String;
     FKey: Integer;
     FName: String;
-    FComponents : TDictionary<String, String>;
+    FComponents : TFslStringDictionary;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -112,7 +112,7 @@ type
     property ResourceType : String read FResourceType write FResourceType;
     property Name : String read FName write FName;
     Property Key : Integer read FKey write FKey;
-    Property Components : TDictionary<String, String> read FComponents;
+    Property Components : TFslStringDictionary read FComponents;
   end;
 
   TFhirCompositeList = class (TFslObjectList)
@@ -147,6 +147,10 @@ type
 //    procedure register(comp: TFHIRResourceType; resource : String; list : String); overload;
   end;
 
+  TFHIRIndexBuilder = class abstract (TFslObject)
+  public
+    procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList); virtual; abstract;
+  end;
 
 implementation
 
@@ -326,7 +330,7 @@ end;
 constructor TFhirComposite.Create;
 begin
   inherited;
-  FComponents := TDictionary<String,String>.create;
+  FComponents := TFslStringDictionary.create;
 end;
 
 destructor TFhirComposite.Destroy;

@@ -34,28 +34,29 @@ uses
   SysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Database.Manager,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Server.Session, FHIR.Version.Operations,
-  FHIR.Server.Storage, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Tx.Server, FHIR.Server.ClosureMgr;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
+  FHIR.Tools.ValueSets,
+  FHIR.Server.Session, FHIR.Server.Storage, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Tx.Server, FHIR.Server.ClosureMgr;
 
 type
   TFhirTerminologyOperation = class (TFhirOperation)
   protected
     FServer : TTerminologyServer;
-    function buildExpansionProfile(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParameters) : TFHIRExpansionProfile;
+    function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
+    function loadCoded(request : TFHIRRequest) : TFhirCodeableConceptW;
   public
-    Constructor Create(server : TTerminologyServer);
+    Constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
     Destructor Destroy; override;
   end;
 
   TFhirExpandValueSetOperation = class (TFhirTerminologyOperation)
   protected
     function isWrite : boolean; override;
-    function owningResource : TFhirResourceType; override;
+    function owningResource : String; override;
   public
     function Name : String; override;
-    function Types : TFhirResourceTypeSet; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
@@ -63,49 +64,49 @@ type
   TFhirValueSetValidationOperation = class (TFhirTerminologyOperation)
   protected
     function isWrite : boolean; override;
-    function owningResource : TFhirResourceType; override;
+    function owningResource : String; override;
   public
     function Name : String; override;
-    function Types : TFhirResourceTypeSet; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  {$IFNDEF FHIR2}
+(**
   TFhirCodeSystemComposeOperation = class (TFhirTerminologyOperation)
   protected
     function isWrite : boolean; override;
-    function owningResource : TFhirResourceType; override;
+    function owningResource : String; override;
   public
     function Name : String; override;
-    function Types : TFhirResourceTypeSet; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
+*)
 
   TFhirSubsumesOperation = class (TFhirTerminologyOperation)
   protected
     function isWrite : boolean; override;
-    function owningResource : TFhirResourceType; override;
+    function owningResource : String; override;
   public
     function Name : String; override;
-    function Types : TFhirResourceTypeSet; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
-  {$ENDIF}
 
   TFhirConceptMapTranslationOperation = class (TFhirTerminologyOperation)
   protected
     function isWrite : boolean; override;
-    function owningResource : TFhirResourceType; override;
+    function owningResource : String; override;
   public
     function Name : String; override;
-    function Types : TFhirResourceTypeSet; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
@@ -114,109 +115,32 @@ type
   TFhirLookupCodeSystemOperation = class (TFhirTerminologyOperation)
   protected
     function isWrite : boolean; override;
-    function owningResource : TFhirResourceType; override;
+    function owningResource : String; override;
   public
     function Name : String; override;
-    function Types : TFhirResourceTypeSet; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
 
   TFhirConceptMapClosureOperation = class (TFhirTerminologyOperation)
-  private
-    FConnection : TKDBConnection;
   protected
     function isWrite : boolean; override;
-    function owningResource : TFhirResourceType; override;
+    function owningResource : String; override;
     function checkName(request: TFHIRRequest; response : TFHIRResponse; var name : String) : boolean;
   public
-    Constructor Create(server : TTerminologyServer; Connection : TKDBConnection);
+    Constructor Create(factory : TFHIRFactory; server : TTerminologyServer);
     function Name : String; override;
-    function Types : TFhirResourceTypeSet; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
 
 implementation
-
-{ TFhirTerminologyOperation }
-
-function TFhirTerminologyOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParameters): TFHIRExpansionProfile;
-var
-  needSecure : boolean;
-  exp : TFhirExpansionProfile;
-  res : boolean;
-begin
-  res := false;
-  {$IFNDEF FHIR2}
-  exp := params.res['profile'] as TFHIRExpansionProfile;
-  if exp <> nil then
-    res := true
-  else
-    if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
-      exp := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', true, needSecure) as TFhirExpansionProfile
-    else if params.str['profile'] <> '' then
-      exp := manager.GetResourceById(request, 'ExpansionProfile', params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile
-    else
-  {$ENDIF}
-     exp := nil;
-
-  try
-   if exp = nil then
-     result := TFhirExpansionProfile.Create
-   else
-     result := exp.Clone;
-   try
-     if (not res) and (params.str['profile'] = 'http://www.healthintersections.com.au/fhir/expansion/no-details') then
-       result.includeDefinition := true;
-     if (params.str['_incomplete'] <> '') then
-       result.limitedExpansion := StrToBoolDef(params.str['_incomplete'], false);
-     if (params.str['limitedExpansion'] <> '') then
-       result.limitedExpansion := StrToBoolDef(params.str['limitedExpansion'], false);
-     if (params.str['displayLanguage'] <> '') then
-       result.displayLanguage := params.str['displayLanguage'];
-     if (params.str['includeDesignations'] <> '') then
-       result.includeDesignations := StrToBoolDef(params.str['includeDesignations'], false);
-     if (params.str['includeDefinition'] <> '') then
-       result.includeDefinition := StrToBoolDef(params.str['includeDefinition'], false);
-     if (params.str['activeOnly'] <> '') then
-       result.activeOnly := StrToBoolDef(params.str['activeOnly'], false);
-     if (params.str['excludeNested'] <> '') then
-       result.excludeNested := StrToBoolDef(params.str['excludeNested'], false);
-     if (params.str['excludeNotForUI'] <> '') then
-       result.excludeNotForUI := StrToBoolDef(params.str['excludeNotForUI'], false);
-     if (params.str['excludePostCoordinated'] <> '') then
-       result.excludePostCoordinated := StrToBoolDef(params.str['excludePostCoordinated'], false);
-     {$IFNDEF FHIR2}
-     if (result.url = '') and not res then
-       result.url := params.str['profile'];
-     {$ENDIF}
-
-     result.Link;
-   finally
-     result.free;
-   end;
-  finally
-    if not res then
-      exp.free;
-  end;
-end;
-
-constructor TFhirTerminologyOperation.Create(server: TTerminologyServer);
-begin
-  inherited Create;
-  FServer := server;
-end;
-
-destructor TFhirTerminologyOperation.Destroy;
-begin
-  FServer.Free;
-  inherited;
-end;
 
 { TFhirExpandValueSetOperation }
 
@@ -225,34 +149,34 @@ begin
   result := 'expand';
 end;
 
-function TFhirExpandValueSetOperation.owningResource: TFhirResourceType;
+function TFhirExpandValueSetOperation.owningResource: String;
 begin
-  result := frtValueSet;
+  result := 'ValueSet';
 end;
 
-function TFhirExpandValueSetOperation.Types: TFhirResourceTypeSet;
+function TFhirExpandValueSetOperation.Types: TArray<String>;
 begin
-  result := [frtValueSet];
+  result := ['ValueSet'];
 end;
 
-function TFhirExpandValueSetOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+function TFhirExpandValueSetOperation.CreateDefinition(base : String): TFHIROperationDefinitionW;
 begin
   result := nil;
 end;
 
 procedure TFhirExpandValueSetOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
-  vs, dst : TFHIRValueSet;
+  vs, dst : TFHIRValueSetW;
   resourceKey, versionKey : integer;
   url, cacheId, filter, id : String;
-  profile : TFhirExpansionProfile;
+  profile : TFHIRExpansionParams;
   limit, count, offset : integer;
-  params : TFhirParameters;
+  params : TFhirParametersW;
   needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil)) then
       begin
@@ -263,34 +187,34 @@ begin
           // first, we have to identify the value set.
           if request.Id <> '' then // and it must exist, because of the check above
           begin
-            vs := manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
+            vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure));
             cacheId := vs.url;
             if vs.version <> '' then
               cacheId := cacheId + vs.version;
           end
-          else if params.hasParameter('url') then
+          else if params.has('url') then
           begin
-            url := params.str['url'];
+            url := params.str('url');
             if (url.startsWith('ValueSet/')) then
-              vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
+              vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure))
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
-              vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
+              vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure))
             else if not FServer.isKnownValueSet(url, vs) then
-              vs := manager.GetResourceByUrl(frtValueSet, url, request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
+              vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, request.Parameters.getvar('version'), false, needSecure));
             cacheId := vs.url;
             if vs.version <> '' then
               cacheId := cacheId + vs.version;
           end
-          else if params.hasParameter('valueSet') then
-            vs := params['valueSet'].Link as TFhirValueSet
-          else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
-            vs := request.Resource.Link as TFhirValueSet
-          else if params.hasParameter('context') then
+          else if params.has('valueSet') then
+            vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV)
+          else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
+            vs := FFactory.wrapValueSet(request.Resource.Link)
+          else if params.has('context') then
           begin
-            id := params.str['context'];
-            if params.hasParameter('operation') then
-              id := id+'-'+params.str['operation'];
-            vs := manager.GetResourceById(request, 'ValueSet', id, request.baseUrl, needSecure) as TFHIRValueSet;
+            id := params.str('context');
+            if params.has('operation') then
+              id := id+'-'+params.str('operation');
+            vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', id, request.baseUrl, needSecure));
             if vs = nil then
               raise ETerminologyError.create('The context '+id+' was not understood');
             cacheId := vs.url;
@@ -301,14 +225,14 @@ begin
             raise ETerminologyError.create('Unable to find value set to expand (not provided by id, identifier, or directly)');
 
           vs.checkNoImplicitRules('ExpandValueSet', 'ValueSet');
-          vs.checkNoModifiers('ExpandValueSet', 'ValueSet');
+          FFactory.checkNoModifiers(vs.Resource, 'ExpandValueSet', 'ValueSet');
 
-          profile := buildExpansionProfile(request, manager, params);
+          profile := buildExpansionParams(request, manager, params);
           try
-            filter := params.str['filter'];
-            count := StrToIntDef(params.str['count'], 0);
-            offset := StrToIntDef(params.str['offset'], 0);
-            limit := StrToIntDef(params.str['_limit'], 0);
+            filter := params.str('filter');
+            count := StrToIntDef(params.str('count'), 0);
+            offset := StrToIntDef(params.str('offset'), 0);
+            limit := StrToIntDef(params.str('_limit'), 0);
             if profile.displayLanguage = '' then
               profile.displayLanguage := request.Lang;
 
@@ -318,7 +242,7 @@ begin
               response.Message := 'OK';
               response.Body := '';
               response.LastModifiedDate := now;
-              response.Resource := dst.Link;
+              response.Resource := dst.Resource.Link;
               // response.categories.... no tags to go on this resource
             finally
               dst.free;
@@ -360,14 +284,14 @@ begin
   result := 'validate-code';
 end;
 
-function TFhirValueSetValidationOperation.owningResource: TFhirResourceType;
+function TFhirValueSetValidationOperation.owningResource: String;
 begin
-  result := frtValueSet;
+  result := 'ValueSet';
 end;
 
-function TFhirValueSetValidationOperation.Types: TFhirResourceTypeSet;
+function TFhirValueSetValidationOperation.Types: TArray<String>;
 begin
-  result := [frtValueSet, frtCodeSystem];
+  result := ['ValueSet', 'CodeSystem'];
 end;
 
 function TFhirValueSetValidationOperation.isWrite: boolean;
@@ -375,26 +299,26 @@ begin
   result := false;
 end;
 
-function TFhirValueSetValidationOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+function TFhirValueSetValidationOperation.CreateDefinition(base : String): TFHIROperationDefinitionW;
 begin
   result := nil;
 end;
 
 procedure TFhirValueSetValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
-  vs : TFHIRValueSet;
+  vs : TFHIRValueSetW;
   resourceKey, versionKey : integer;
   cacheId  : String;
-  coded : TFhirCodeableConcept;
-  coding : TFhirCoding;
+  coded : TFhirCodeableConceptW;
+  coding : TFhirCodingW;
   abstractOk : boolean;
-  params, pout : TFhirParameters;
+  params, pout : TFhirParametersW;
   needSecure : boolean;
-  profile : TFhirExpansionProfile;
+  profile : TFhirExpansionParams;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil)) then
       begin
@@ -406,72 +330,28 @@ begin
             // first, we have to identify the value set.
             if request.Id <> '' then // and it must exist, because of the check above
             begin
-              vs := manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
+              vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure));
               cacheId := vs.url;
             end
-            else if params.hasParameter('url') then
+            else if params.has('url') then
             begin
-              if not FServer.isKnownValueSet(params.str['url'], vs) then
-                vs := manager.GetResourceByUrl(frtValueSet, params.str['url'], params.str['version'], false, needSecure) as TFHIRValueSet;
+              if not FServer.isKnownValueSet(params.str('url'), vs) then
+                vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', params.str('url'), params.str('version'), false, needSecure));
               if vs = nil then
                 raise ETerminologySetup.Create('Error Message');
               cacheId := vs.url;
             end
-            else if params.hasParameter('valueSet') then
-              vs := (params.res['valueSet'] as TFhirValueSet).Link
-            else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
-              vs := request.Resource.Link as TFhirValueSet
+            else if params.has('valueSet') then
+              vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV)
+            else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
+              vs := FFactory.wrapValueSet(request.Resource.Link)
             else
               vs := nil;
               // raise ETerminologyError.create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
 
-            coded := nil;
+            coded := loadCoded(request);
             try
-              // ok, now we need to find the source code to validate
-              if (request.form <> nil) and request.form.hasParam('coding') then
-              begin
-                coded := TFhirCodeableConcept.Create;
-                coded.codingList.add(LoadDTFromFormParam(request.Context, request.form.getParam('coding'), request.lang, 'coding', TFhirCoding) as TFhirCoding)
-              end
-              else if (request.form <> nil) and request.form.hasParam('codeableConcept') then
-                coded := LoadDTFromFormParam(request.Context, request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
-              else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
-              begin
-                coded := TFhirCodeableConcept.Create;
-                coding := coded.codingList.Append;
-                coding.system := request.Parameters.GetVar('system');
-                coding.version := request.Parameters.GetVar('version');
-                coding.code := request.Parameters.GetVar('code');
-                coding.display := request.Parameters.GetVar('display');
-              end
-
-              else if ((request.resource <> nil) and (request.Resource.ResourceType = frtParameters)) then
-              begin
-                params := request.Resource as TFhirParameters;
-                if params.hasParameter('coding') then
-                begin
-                  coded := TFhirCodeableConcept.Create;
-                  coded.codingList.Add(params['coding'].Link);
-                end
-                else if params.hasParameter('codeableConcept') then
-                  coded := params['codeableConcept'].Link as TFhirCodeableConcept
-                else if params.hasParameter('code') and params.hasParameter('system') then
-                begin
-                  coded := TFhirCodeableConcept.Create;
-                  coding := coded.codingList.Append;
-                  coding.system := TFHIRPrimitiveType(params['system']).StringValue;
-                  if params.hasParameter('version') then
-                    coding.version := TFHIRPrimitiveType(params['version']).StringValue;
-                  coding.code := TFHIRPrimitiveType(params['code']).StringValue;
-                  if params.hasParameter('display') then
-                    coding.display := TFHIRPrimitiveType(params['display']).StringValue;
-                end
-                else
-                  raise ETerminologyError.create('Unable to find code to validate (params. coding | codeableConcept | code');
-              end
-              else
-                raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code');
-              abstractOk := params.hasParameter('abstract') and TFHIRBoolean(params['abstract']).Value;
+              abstractOk := params.str('abstract') = 'true';
 
               if (coded = nil) then
                 raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code');
@@ -479,23 +359,32 @@ begin
               if vs <> nil then
               begin
                 vs.checkNoImplicitRules('ValueSetValidation', 'ValueSet');
-                vs.checkNoModifiers('ValueSetValidation', 'ValueSet');
+                FFactory.checkNoModifiers(vs.Resource, 'ValueSetValidation', 'ValueSet');
               end;
 
-              profile := buildExpansionProfile(request, manager, params);
+              profile := buildExpansionParams(request, manager, params);
               try
                 if profile.displayLanguage = '' then
                   profile.displayLanguage := request.Lang;
                 try
-                  response.resource := FServer.validate(vs, coded, profile, abstractOk);
+                  pout := FServer.validate(vs, coded, profile, abstractOk);
+                  try
+                    response.resource := pout.Resource.link;
+                  finally
+                    pOut.free;
+                  end;
                 except
                   on e : Exception do
                   begin
-                    pout := TFHIRParameters.create;
-                    response.resource := pout;
-                    pout.AddParameter('result', false);
-                    pout.AddParameter('message', e.Message);
-                    pout.AddParameter('cause', 'unknown');
+                    pout := FFactory.wrapParams(ffactory.makeResource('Parameters'));
+                    try
+                      response.resource := pout.Resource.link;
+                      pout.addParamBool('result', false);
+                      pout.addParamStr('message', e.Message);
+                      pout.addParamStr('cause', 'unknown');
+                    finally
+                      pOut.Free;
+                    end;
                   end;
                 end;
                 response.HTTPCode := 200;
@@ -532,7 +421,7 @@ begin
   result := 'http://hl7.org/fhir/OperationDefinition/Resource-validate';
 end;
 
-  {$IFNDEF FHIR2}
+(*
 { TFhirCodeSystemComposeOperation }
 
 function TFhirCodeSystemComposeOperation.Name: String;
@@ -540,17 +429,17 @@ begin
   result := 'compose';
 end;
 
-function TFhirCodeSystemComposeOperation.owningResource: TFhirResourceType;
+function TFhirCodeSystemComposeOperation.owningResource: String;
 begin
-  result := frtCodeSystem;
+  result := 'CodeSystem';
 end;
 
-function TFhirCodeSystemComposeOperation.Types: TFhirResourceTypeSet;
+function TFhirCodeSystemComposeOperation.Types: TArray<String>;
 begin
-  result := [frtCodeSystem];
+  result := ['CodeSystem'];
 end;
 
-function TFhirCodeSystemComposeOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+function TFhirCodeSystemComposeOperation.CreateDefinition(base : String): TFHIROperationDefinitionW;
 begin
   result := nil;
 end;
@@ -563,7 +452,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil)) then
       begin
@@ -625,141 +514,16 @@ function TFhirCodeSystemComposeOperation.isWrite: boolean;
 begin
   result := false;
 end;
-
-{ TFhirSubsumesSystemOperation }
-
-function TFhirSubsumesOperation.Name: String;
-begin
-  result := 'subsumes';
-end;
-
-function TFhirSubsumesOperation.owningResource: TFhirResourceType;
-begin
-  result := frtCodeSystem;
-end;
-
-function TFhirSubsumesOperation.Types: TFhirResourceTypeSet;
-begin
-  result := [frtCodeSystem];
-end;
-
-function TFhirSubsumesOperation.CreateDefinition(base : String): TFHIROperationDefinition;
-begin
-  result := nil;
-end;
-
-procedure TFhirSubsumesOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
-var
-  req : TFHIRSubsumesOpRequest;
-  resp : TFHIRSubsumesOpResponse;
-  resourceKey, versionKey : integer;
-  cs : TFhirCodeSystem;
-  cacheId : string;
-  needSecure : boolean;
-begin
-  try
-    manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
-    begin
-      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil)) then
-      begin
-        req := TFHIRSubsumesOpRequest.create();
-        try
-          if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
-            req.load(request.Resource as TFHIRParameters)
-          else
-            req.load(request.Parameters);
-
-          response.Body := '';
-          response.LastModifiedDate := now;
-          resp := TFHIRSubsumesOpResponse.Create;
-          try
-            try
-              if (request.Id = '') and (req.system <> '') and (req.codeA <> '') and (req.codeB <> '') then
-              begin
-                if not FServer.isValidCode(req.system, req.codeA) or not FServer.isValidCode(req.system, req.codeB) then
-                  raise ETerminologyError.create('Invalid code')
-                else if (req.codeA = req.codeB) then
-                  resp.outcome := 'equivalent'
-                else if FServer.subsumes(req.system, req.codeA, req.system, req.codeB) then
-                  resp.outcome := 'subsumes'
-                else if FServer.subsumes(req.system, req.codeB, req.system, req.codeA) then
-                  resp.outcome := 'subsumed-by'
-                else
-                  resp.outcome := 'not-subsumed';
-              end
-              else
-              begin
-                // first, we have to identify the Code System
-                if request.Id <> '' then // and it must exist, because of the check above
-                  cs := manager.GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure) as TFhirCodeSystem
-                else if req.system <> '' then
-                  cs := manager.GetResourceByUrl(frtCodeSystem, req.system, req.version, false, needSecure) as TFhirCodeSystem
-                else
-                  raise ETerminologyError.create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
-
-                cacheId := cs.url;
-                if (req.codingA = nil) and (req.codeA <> '') then
-                  req.codingA := TFhirCoding.Create(cs.url, req.codeA);
-                if (req.codingB = nil) and (req.codeB <> '') then
-                  req.codingB := TFhirCoding.Create(cs.url, req.codeB);
-                if req.codingA = nil then
-                  raise ETerminologyError.create('No codeA or codingA parameter found');
-                if req.codingB = nil then
-                  raise ETerminologyError.create('No codeB or codingB parameter found');
-
-                resp.outcome := FServer.subsumes(cs, req.codingA, req.codingB);
-              end;
-              response.Resource := resp.asParams;
-              response.HTTPCode := 200;
-              response.Message := 'OK';
-            except
-              on e : Exception do
-              begin
-                response.HTTPCode := 400;
-                response.Message := 'Error';
-                response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeCodeInvalid);
-              end;
-            end;
-          finally
-            resp.Free;
-          end;
-        finally
-          req.Free;
-        end;
-      end;
-    end;
-    manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
-  except
-    on e: exception do
-    begin
-      manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
-      recordStack(e);
-      raise;
-    end;
-  end;
-end;
-
-function TFhirSubsumesOperation.formalURL: String;
-begin
-  result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-subsumes';
-end;
-
-function TFhirSubsumesOperation.isWrite: boolean;
-begin
-  result := false;
-end;
-
-{$ENDIF}
+*)
 
 { TFhirConceptMapTranslationOperation }
 
-function TFhirConceptMapTranslationOperation.Types: TFhirResourceTypeSet;
+function TFhirConceptMapTranslationOperation.Types: TArray<String>;
 begin
-  result := [frtConceptMap];
+  result := ['ConceptMap'];
 end;
 
-function TFhirConceptMapTranslationOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+function TFhirConceptMapTranslationOperation.CreateDefinition(base: String): TFHIROperationDefinitionW;
 begin
   result := nil;
 end;
@@ -774,9 +538,9 @@ begin
   result := false;
 end;
 
-function TFhirConceptMapTranslationOperation.owningResource: TFhirResourceType;
+function TFhirConceptMapTranslationOperation.owningResource: String;
 begin
-  result := frtConceptMap;
+  result := 'ConceptMap';
 end;
 
 procedure TFhirConceptMapTranslationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
@@ -784,14 +548,14 @@ var
   cm : TLoadedConceptMap;
 //  op : TFhirOperationOutcome;
 //  resourceKey : integer;
-  coded : TFhirCodeableConcept;
-  coding : TFhirCoding;
+  coded : TFhirCodeableConceptW;
+  coding : TFslList<TFhirCodingW>;
 //  abstractOk : boolean;
-  params : TFhirParameters;
+  params, pOut : TFhirParametersW;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
         params := makeParams(request);
         try
@@ -800,20 +564,20 @@ begin
           if request.id <> '' then
             cm := FServer.getConceptMapById(request.id)
           else
-            cm := FServer.getConceptMapBySrcTgt(params.str['valueset'], params.str['target']);
+            cm := FServer.getConceptMapBySrcTgt(params.str('valueset'), params.str('target'));
           if cm = nil then
             raise ETerminologyError.create('Unable to find concept map to use');
           try
             // ok, now we need to find the source code to validate
-            coded := nil;
-            if params.hasParameter('coding') then
+            coded := loadCoded(request);
+(*            if params.has('coding') then
             begin
               coded := TFhirCodeableConcept.Create;
               coded.codingList.add(LoadDTFromParam(request.Context, params.str['coding'], request.lang, 'coding', TFhirCoding) as TFhirCoding)
             end
-            else if params.hasParameter('codeableConcept') then
+            else if params.has('codeableConcept') then
               coded := LoadDTFromParam(request.Context, params.str['codeableConcept'], request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
-            else if params.hasParameter('code') and params.hasParameter('system') then
+            else if params.has('code') and params.has('system') then
             begin
               coded := TFhirCodeableConcept.Create;
               coding := coded.codingList.Append;
@@ -824,12 +588,23 @@ begin
             end
             else
               raise ETerminologyError.create('Unable to find code to translate (coding | codeableConcept | code');
+              *)
             try
-              response.resource := FServer.translate(request.Lang, cm, coded.codingList[0]);
-              response.HTTPCode := 200;
-              response.Message := 'OK';
-              response.Body := '';
-              response.LastModifiedDate := now;
+              coding := coded.codings;
+              try
+                pOut := FServer.translate(request.Lang, cm, coding[0]);
+                try
+                  response.resource := pOut.Resource.link;
+                  response.HTTPCode := 200;
+                  response.Message := 'OK';
+                  response.Body := '';
+                  response.LastModifiedDate := now;
+                finally
+                  pOut.Free;
+                end;
+              finally
+                coding.Free;
+              end;
             finally
               coded.Free;
             end;
@@ -863,61 +638,56 @@ begin
   result := 'lookup';
 end;
 
-function TFhirLookupCodeSystemOperation.owningResource: TFhirResourceType;
+function TFhirLookupCodeSystemOperation.owningResource: String;
 begin
-  result := frtCodeSystem;
+  result := 'CodeSystem';
 end;
 
-function TFhirLookupCodeSystemOperation.Types: TFhirResourceTypeSet;
+function TFhirLookupCodeSystemOperation.Types: TArray<String>;
 begin
-  result := [frtCodeSystem];
+  result := ['CodeSystem'];
 end;
 
-function TFhirLookupCodeSystemOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+function TFhirLookupCodeSystemOperation.CreateDefinition(base : String): TFHIROperationDefinitionW;
 begin
   result := nil;
 end;
 
 procedure TFhirLookupCodeSystemOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
-  req : TFHIRLookupOpRequest;
-  resp : TFHIRLookupOpResponse;
+  req : TFHIRLookupOpRequestW;
+  resp : TFHIRLookupOpResponseW;
+  c : TFhirCodingW;
   lang : String;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
       if (request.id <> '') then
         raise ETerminologyError.create('Lookup does not take an identified resource');
-      req := TFHIRLookupOpRequest.create();
+      req := ffactory.makeOpReqLookup;
       try
-        if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
-          req.load(request.Resource as TFHIRParameters)
+        if (request.Resource <> nil) and (request.Resource.fhirType = 'Parameters') then
+          req.load(request.Resource)
         else
           req.load(request.Parameters);
-
-        if (req.coding = nil) and (req.system <> '') then
-        begin
-          req.coding := TFhirCoding.Create;
-          req.coding.system := req.system;
-          req.coding.code := req.code;
-          req.coding.version := req.version;
-        end;
-        if req.coding = nil then
-          raise ETerminologyError.create('Unable to find a code to lookup (need coding or system/code)');
+        req.loadCoding;
         lang := request.lang;
-        {$IFNDEF FHIR2}
         if req.displayLanguage <> '' then
           lang := req.displayLanguage;
-        {$ENDIF}
 
         response.Body := '';
         response.LastModifiedDate := now;
-        resp := TFHIRLookupOpResponse.Create;
+        resp := ffactory.makeOpRespLookup;
         try
           try
-            FServer.lookupCode(req.coding, lang, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
+            c := req.coding;
+            try
+              FServer.lookupCode(c, lang, req.propList, resp);  // currently, we ignore the date
+            finally
+              c.Free;
+            end;
             response.Resource := resp.asParams;
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -926,7 +696,7 @@ begin
             begin
               response.HTTPCode := 400;
               response.Message := 'Error';
-              response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeCodeInvalid);
+              response.Resource := FFactory.BuildOperationOutcome(request.Lang, e, itInvalid);
             end;
           end;
         finally
@@ -949,11 +719,10 @@ end;
 
 function TFhirLookupCodeSystemOperation.formalURL: String;
 begin
-  {$IFNDEF FHIR2}
-  result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup';
-  {$ELSE}
-  result := 'http://hl7.org/fhir/OperationDefinition/ValueSet-lookup';
-  {$ENDIF}
+  if FFactory.version = fhirVersionRelease2 then
+    result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup'
+  else
+    result := 'http://hl7.org/fhir/OperationDefinition/ValueSet-lookup';
 end;
 
 function TFhirLookupCodeSystemOperation.isWrite: boolean;
@@ -978,58 +747,56 @@ begin
     response.HTTPCode := 400;
     response.Message := StringFormat('invalid closure name %s', [request.ResourceName+':'+request.Id]);
     response.Body := response.Message;
-    response.Resource := BuildOperationOutcome(request.lang, response.Message);
+    response.Resource := FFactory.BuildOperationOutcome(request.lang, response.Message);
   end;
 end;
 
-constructor TFhirConceptMapClosureOperation.Create(server: TTerminologyServer; Connection: TKDBConnection);
+constructor TFhirConceptMapClosureOperation.Create(factory : TFHIRFactory; server: TTerminologyServer);
 begin
-  inherited Create(server);
-  FConnection := Connection;
+  inherited Create(factory, server);
 end;
 
-function TFhirConceptMapClosureOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+function TFhirConceptMapClosureOperation.CreateDefinition(base: String): TFHIROperationDefinitionW;
 begin
   result := nil;
 end;
 
 procedure TFhirConceptMapClosureOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
-  params : TFhirParameters;
-  p : TFhirParametersParameter;
+  params : TFhirParametersW;
+  p : TFhirParametersParameterW;
   n, v : String;
   cm : TClosureManager;
-  map : TFhirConceptMap;
-  concepts : TFslList<TFHIRCoding>;
+  map : TFhirConceptMapW;
+  concepts : TFslList<TFHIRCodingW>;
   procedure errorResp(code : integer; message : String);
   begin
     response.HTTPCode := code;
     response.Message := message;
     response.Body := response.Message;
-    response.Resource := BuildOperationOutcome(request.lang, response.Message);
+    response.Resource := FFactory.BuildOperationOutcome(request.lang, response.Message);
   end;
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
       params := makeParams(request);
       cm := nil;
       map := nil;
       try
-        n := params.str['name'];
+        n := params.str('name');
         if checkName(request, response, n) then
         begin
-          v := params.str['version'];
-          if (v = '') and not params.hasParameter('concept') then
+          v := params.str('version');
+          if (v = '') and not params.has('concept') then
           begin
             v := FServer.InitClosure(n);
-            map := TFhirConceptMap.Create;
-            response.resource := map.Link;
+            map := FFactory.wrapConceptMap(FFactory.makeResource('ConceptMap'));
+            response.resource := map.Resource.Link;
             map.id := NewGuidId;
             map.version := v;
-            map.status := PublicationStatusActive;
-            map.experimental := true; // for now
+            map.status := psActive;
             map.date := TDateTimeEx.makeUTC;
             map.name := 'Closure Table '+n+' initialized';
             response.HTTPCode := 200;
@@ -1040,7 +807,7 @@ begin
           begin
             if not FServer.UseClosure(n, cm) then
               errorResp(404, StringFormat('closure name ''%s'' not known', [n]))
-            else if (v <> '') and params.hasParameter('concept') then
+            else if (v <> '') and params.has('concept') then
              errorResp(404, StringFormat('closure ''%s'': cannot combine version and concept', [n]))
             else if (v <> '') and not StringIsInteger32(v) then
               errorResp(404, StringFormat('closure ''%s'': version %s is not valid', [n, v]))
@@ -1049,28 +816,27 @@ begin
               response.HTTPCode := 200;
               response.Message := 'OK';
               response.Body := '';
-              map := TFhirConceptMap.Create;
-              response.resource := map.Link;
+              map := FFactory.wrapConceptMap(FFactory.makeResource('ConceptMap'));
+              response.resource := map.Resource.Link;
               map.id := NewGuidId;
               map.version := inttostr(cm.version);
-              map.status := PublicationStatusActive;
-              map.experimental := true; // for now
+              map.status := psActive;
               map.date := TDateTimeEx.makeUTC;
               map.name := 'Updates for Closure Table '+n;
               if (v <> '') then
               begin
                 map.name := 'Replay for Closure Table '+n+' from version '+v;
-                cm.rerun(Fconnection, map, StrToInt(v))
+                // cm.rerun(Fconnection, map, StrToInt(v))
               end
               else
               begin
                 map.name := 'Updates for Closure Table '+n;
-                concepts := TFslList<TFHIRCoding>.create;
+                concepts := TFslList<TFHIRCodingW>.create;
                 try
                   for p in params.parameterList do
                     if p.Name = 'concept' then
-                      concepts.Add((p.value as TFHIRCoding).link);
-                  cm.processConcepts(FConnection, concepts, map);
+                      concepts.Add(FFactory.wrapCoding(p.value));
+                  // cm.processConcepts(FConnection, concepts, map);
                 finally
                   concepts.Free;
                 end;
@@ -1110,15 +876,294 @@ begin
   result := 'closure';
 end;
 
-function TFhirConceptMapClosureOperation.owningResource: TFhirResourceType;
+function TFhirConceptMapClosureOperation.owningResource: String;
 begin
-  result := frtNull;
+  result := '';
 end;
 
-function TFhirConceptMapClosureOperation.Types: TFhirResourceTypeSet;
+function TFhirConceptMapClosureOperation.Types: TArray<String>;
 begin
-  result := [frtNull];
+  result := [];
 end;
 
+{ TFhirSubsumesSystemOperation }
+
+function TFhirSubsumesOperation.Name: String;
+begin
+  result := 'subsumes';
+end;
+
+function TFhirSubsumesOperation.owningResource: String;
+begin
+  result := 'CodeSystem';
+end;
+
+function TFhirSubsumesOperation.Types: TArray<String>;
+begin
+  result := ['CodeSystem'];
+end;
+
+function TFhirSubsumesOperation.CreateDefinition(base : String): TFHIROperationDefinitionW;
+begin
+  result := nil;
+end;
+
+procedure TFhirSubsumesOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+var
+  req : TFHIRSubsumesOpRequestW;
+  resp : TFHIRSubsumesOpResponseW;
+  resourceKey, versionKey : integer;
+  cs : TFhirCodeSystemW;
+  ca, cb : TFhirCodingW;
+  cacheId : string;
+  needSecure : boolean;
+begin
+  try
+    manager.NotFound(request, response);
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    begin
+      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil)) then
+      begin
+        req := FFactory.makeOpReqSubsumes;
+        try
+          if (request.Resource <> nil) and (request.Resource.fhirType = 'Parameters') then
+            req.load(request.Resource)
+          else
+            req.load(request.Parameters);
+
+          response.Body := '';
+          response.LastModifiedDate := now;
+          resp := FFactory.makeOpRespSubsumes;
+          try
+            try
+              if (request.Id = '') and (req.system <> '') and (req.codeA <> '') and (req.codeB <> '') then
+              begin
+                if not FServer.isValidCode(req.system, req.codeA) or not FServer.isValidCode(req.system, req.codeB) then
+                  raise ETerminologyError.create('Invalid code')
+                else if (req.codeA = req.codeB) then
+                  resp.outcome := 'equivalent'
+                else if FServer.subsumes(req.system, req.codeA, req.system, req.codeB) then
+                  resp.outcome := 'subsumes'
+                else if FServer.subsumes(req.system, req.codeB, req.system, req.codeA) then
+                  resp.outcome := 'subsumed-by'
+                else
+                  resp.outcome := 'not-subsumed';
+              end
+              else
+              begin
+                // first, we have to identify the Code System
+                if request.Id <> '' then // and it must exist, because of the check above
+                  cs := FFactory.wrapCodeSystem(manager.GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure))
+                else if req.system <> '' then
+                  cs := FFactory.wrapCodeSystem(manager.GetResourceByUrl('CodeSystem', req.system, req.version, false, needSecure))
+                else
+                  raise ETerminologyError.create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
+
+                cacheId := cs.url;
+                ca := req.codingA;
+                cb := req.codingB;
+                try
+                  if (ca = nil) and (req.codeA <> '') then
+                    ca := FFactory.wrapCoding(FFactory.makeCoding(cs.url, req.codeA));
+                  if (cb = nil) and (req.codeB <> '') then
+                    cb := FFactory.wrapCoding(FFactory.makeCoding(cs.url, req.codeB));
+                  if ca = nil then
+                    raise ETerminologyError.create('No codeA or codingA parameter found');
+                  if cb = nil then
+                    raise ETerminologyError.create('No codeB or codingB parameter found');
+
+                  resp.outcome := FServer.subsumes(cs, ca, cb);
+                finally
+                  ca.Free;
+                  cb.Free;
+                end;
+              end;
+              response.Resource := resp.asParams;
+              response.HTTPCode := 200;
+              response.Message := 'OK';
+            except
+              on e : Exception do
+              begin
+                response.HTTPCode := 400;
+                response.Message := 'Error';
+                response.Resource := FFactory.BuildOperationOutcome(request.Lang, e, itInvalid);
+              end;
+            end;
+          finally
+            resp.Free;
+          end;
+        finally
+          req.Free;
+        end;
+      end;
+    end;
+    manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirSubsumesOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-subsumes';
+end;
+
+function TFhirSubsumesOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+
+{ TFhirTerminologyOperation }
+
+function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRExpansionParams;
+var
+  needSecure : boolean;
+  p : TFhirParametersParameterW;
+  exp : TFhirExpansionParams;
+begin
+  result := TFHIRExpansionParams.Create;
+  try
+//    if FFactory.version = fhirVersionRelease3 then
+//    begin
+//      exp := nil;
+//      try
+//        if params.has('profile') then
+//        begin
+//          p := params.param['profile'];
+//          if p.hasResource then
+//            exp := p.resource.link as FHIR.R3.Resources.TFhirExpansionProfile
+//          else if params.str('profile').StartsWith('http:') or params.str('profile').StartsWith('https:') then
+//           exp := manager.getResourceByUrl('ExpansionProfile', params.str('profile'), '', true, needSecure) as FHIR.R3.Resources.TFhirExpansionProfile
+//         else if params.str('profile') <> '' then
+//           exp := manager.GetResourceById(request, 'ExpansionProfile', params.str('profile'), request.baseUrl, needSecure) as FHIR.R3.Resources.TFhirExpansionProfile
+//        end;
+//        if (exp <> nil) then
+//        begin
+//          if (exp.limitedExpansionElement <> nil) then
+//            result.limitedExpansion := exp.limitedExpansion;
+//          if (exp.displayLanguageElement <> nil) then
+//            result.displayLanguage := exp.displayLanguage;
+//          if (exp.includeDesignationsElement <> nil) then
+//            result.includeDesignations := exp.includeDesignations;
+//          if (exp.includeDefinitionElement <> nil) then
+//            result.includeDefinition := exp.includeDefinition;
+//          if (exp.activeOnlyElement <> nil) then
+//            result.activeOnly := exp.activeOnly;
+//          if (exp.excludeNestedElement <> nil) then
+//            result.excludeNested := exp.excludeNested;
+//          if (exp.excludeNotForUIElement <> nil) then
+//            result.excludeNotForUI := exp.excludeNotForUI;
+//          if (exp.excludePostCoordinatedElement <> nil) then
+//            result.excludePostCoordinated := exp.excludePostCoordinated;
+//        end;
+//      finally
+//        exp.Free;
+//      end;
+//    end;
+    if (params.str('_incomplete') <> '') then
+      result.limitedExpansion := StrToBoolDef(params.str('_incomplete'), false);
+    if (params.str('limitedExpansion') <> '') then
+      result.limitedExpansion := StrToBoolDef(params.str('limitedExpansion'), false);
+    if (params.str('displayLanguage') <> '') then
+      result.displayLanguage := params.str('displayLanguage');
+    if (params.str('includeDesignations') <> '') then
+      result.includeDesignations := StrToBoolDef(params.str('includeDesignations'), false);
+    if (params.str('includeDefinition') <> '') then
+      result.includeDefinition := StrToBoolDef(params.str('includeDefinition'), false);
+    if (params.str('activeOnly') <> '') then
+      result.activeOnly := StrToBoolDef(params.str('activeOnly'), false);
+    if (params.str('excludeNested') <> '') then
+      result.excludeNested := StrToBoolDef(params.str('excludeNested'), false);
+    if (params.str('excludeNotForUI') <> '') then
+      result.excludeNotForUI := StrToBoolDef(params.str('excludeNotForUI'), false);
+    if (params.str('excludePostCoordinated') <> '') then
+      result.excludePostCoordinated := StrToBoolDef(params.str('excludePostCoordinated'), false);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+constructor TFhirTerminologyOperation.Create(factory : TFHIRFactory; server: TTerminologyServer);
+begin
+  inherited Create(factory);
+  FServer := server;
+end;
+
+destructor TFhirTerminologyOperation.Destroy;
+begin
+  FServer.Free;
+  inherited;
+end;
+
+function TFhirTerminologyOperation.loadCoded(request : TFHIRRequest): TFhirCodeableConceptW;
+var
+  coding : TFhirCodingW;
+  params : TFhirParametersW;
+begin
+  // ok, now we need to find the source code to validate
+  if (request.form <> nil) and request.form.hasParam('coding') then
+  begin
+    result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
+    coding := FFactory.makeDtFromForm(request.form.getParam('coding'), request.lang, 'coding', 'Coding') as TFHIRCodingW;
+    try
+      result.addCoding(coding);
+    finally
+      coding.free;
+    end;
+  end
+  else if (request.form <> nil) and request.form.hasParam('codeableConcept') then
+    result := FFactory.makeDtFromForm(request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', 'CodeableConcept') as TFhirCodeableConceptW
+  else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
+  begin
+    result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
+    coding := result.addCoding;
+    coding.system := request.Parameters.GetVar('system');
+    coding.version := request.Parameters.GetVar('version');
+    coding.code := request.Parameters.GetVar('code');
+    coding.display := request.Parameters.GetVar('display');
+  end
+  else if ((request.resource <> nil) and (request.Resource.fhirType = 'Parameters')) then
+  begin
+    params := FFactory.wrapParams(request.Resource.link);
+    try
+      if params.has('coding') then
+      begin
+        result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
+        coding := FFactory.wrapCoding(params.obj('coding').Link);
+        try
+          result.addCoding(coding);
+        finally
+          coding.free;
+        end;
+      end
+      else if params.has('codeableConcept') then
+        result := FFactory.wrapCodeableConcept(params.obj('codeableConcept').Link)
+      else if params.has('code') and params.has('system') then
+      begin
+        result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
+        coding := result.addCoding;
+        coding.system := params.str('system');
+        if params.has('version') then
+          coding.version := params.str('version');
+        coding.code := params.str('code');
+        if params.has('display') then
+          coding.display := params.str('display');
+      end
+      else
+        raise ETerminologyError.create('Unable to find code to validate (params. coding | codeableConcept | code');
+    finally
+      params.free;
+    end;
+  end
+  else
+    raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code');
+end;
 
 end.

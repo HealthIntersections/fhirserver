@@ -32,8 +32,8 @@ interface
 
 uses
   SysUtils,
-  FHIR.Support.Base, FHIR.Support.Stream,
-  FHIR.Base.Objects;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Base.Objects, FHIR.Base.Lang;
 
 type
   TFHIRTypeDetailsV = class (TFslObject)
@@ -63,6 +63,77 @@ type
     function nodeChildCount : integer; virtual; abstract;
     function nodeOpNext : TFHIRPathExpressionNodeV; virtual; abstract;
     function nodeGetChild(nodeIndex : integer; var offset : integer) : TFHIRPathExpressionNodeV; virtual; abstract;
+  end;
+
+  TFHIRPathLexer = class abstract (TFslObject)
+  private
+    FCursor : integer;
+    FCurrentLocation : TSourceLocation;
+    FCurrent : String;
+    FCurrentStart : integer;
+    FCurrentStartLocation : TSourceLocation;
+    FId : integer;
+    FPath : String;
+    flast13 : boolean;
+
+    FMarkedCursor : integer;
+    FMarkedCurrentLocation : TSourceLocation;
+    FMarkedCurrent : String;
+    FMarkedCurrentStart : integer;
+    FMarkedCurrentStartLocation : TSourceLocation;
+    FMarkedLast13 : boolean;
+
+    function getLine(line : integer) : String;
+    procedure nextChar;
+    procedure prevChar;
+  protected
+    function collapseEmptyLists : boolean; virtual;
+    function opCodes : TArray<String>; virtual; abstract;
+  public
+    constructor Create(path : String); overload;
+    destructor Destroy; override;
+    procedure next; virtual;
+    property current : String read FCurrent write FCurrent;
+    property CurrentStart : integer read FCurrentStart;
+    function done : boolean;
+    function take : String;
+
+    procedure mark;
+    procedure revert;
+
+    function hasComment: boolean;
+    procedure skipComments;
+    procedure checkArithmeticPrefixes;
+
+    function nextId : integer;
+    function error(msg : String) : Exception; overload;
+    function error(msg : String; offset : integer) : Exception; overload;
+    function error(msg : String; location : TSourceLocation) : Exception; overload;
+
+    function isConstant(incDoubleQuotes : boolean = false) : boolean;
+    function isStringConstant: boolean;
+    function readConstant(desc: String): String;
+    function readIdentifier(desc : String) : String;
+    class function processConstant(s: String): String; overload;
+    class function endingToken(s : String) : boolean;
+
+    function isOp : boolean;
+    function isNumericalConstant : boolean;
+    function isToken : boolean; overload;
+    function isNameToken : boolean;
+    function isUnit() : boolean;
+    function hasToken(kw : String) : boolean; overload;
+    function hasToken(kw : Array of String) : boolean; overload;
+    function takeToken(kw : String) : boolean; overload;
+    procedure token(kw : String); overload;
+    procedure skiptoken(kw : String); overload;
+    function takeDottedToken: String;
+    function readTo(token : char; include : boolean) : String;
+    function readToWS : String;
+    property CurrentLocation : TSourceLocation read FCurrentLocation;
+    property CurrentStartLocation : TSourceLocation read FCurrentStartLocation;
+    property path : String read FPath;
+    function processConstant : TFHIRObject; overload; virtual; abstract;
   end;
 
   TFHIRPathExecutionContext = class (TFslObject)
@@ -139,10 +210,7 @@ type
     function extractPath(pathBase : String; loc : TSourceLocation; base : TFHIRObject; var pathObjects : TArray<TFHIRObject>) : String; overload;
   end;
 
-
 implementation
-
-{ TFHIRPathEngineV }
 
 
 { TFHIRPathEngineV }
@@ -313,6 +381,526 @@ end;
 function TFHIRTypeDetailsV.link: TFHIRTypeDetailsV;
 begin
   result := TFHIRTypeDetailsV(inherited Link);
+end;
+
+
+{ TFHIRPathLexer }
+
+procedure TFHIRPathLexer.prevChar;
+begin
+  dec(FCursor);
+  dec(FCurrentLocation.col);
+end;
+
+class function TFHIRPathLexer.processConstant(s: String) : String;
+var
+  b : TStringBuilder;
+  i : integer;
+  ch : char;
+  u : String;
+begin
+  b := TStringBuilder.Create;
+  try
+    i := 2;
+    while i < length(s) do
+    begin
+      ch := s[i];
+      if ch = '\' then
+      begin
+        inc(i);
+        ch := s[i];
+        case ch of
+          't': b.Append(#9);
+          'r': b.Append(#13);
+          'n': b.Append(#10);
+          'f': b.Append(#12);
+          '\': b.Append('\');
+          '/': b.Append('/');
+          '''': b.Append('''');
+          '"': b.Append('"');
+          'u':
+            begin
+            if i < length(s) - 4 then
+            begin
+              u := s.Substring(i, 4);
+              b.Append(char(StrToInt('$'+u)));
+              inc(i,4);
+            end
+            else
+              raise EFHIRException.create('Improper unicode escape in '+s);
+            end
+        else
+          raise EFHIRException.create('Unknown character escape \'+ch);
+        end;
+        inc(i);
+      end
+      else
+      begin
+        b.Append(ch);
+        inc(i);
+      end;
+    end;
+    result := b.toString;
+  finally
+    b.Free;
+  end;
+end;
+
+procedure TFHIRPathLexer.checkArithmeticPrefixes;
+begin
+  if (Current = '-') and CharInSet(FPath[FCursor], ['0'..'9']) then
+  begin
+    take;
+    Fcurrent := '-' + Fcurrent;
+  end;
+
+  if (Current = '+') and CharInSet(FPath[FCursor], ['0'..'9']) then
+  begin
+    take;
+    Fcurrent := '+' + Fcurrent;
+  end;
+end;
+
+function TFHIRPathLexer.collapseEmptyLists: boolean;
+begin
+  result := true;
+end;
+
+constructor TFHIRPathLexer.Create(path: String);
+begin
+  inherited Create;
+  FPath := path;
+  FCursor := 1;
+  FCurrentLocation.line := 1;
+  FCurrentLocation.col := 1;
+  next;
+end;
+
+destructor TFHIRPathLexer.Destroy;
+begin
+
+  inherited;
+end;
+
+function isWhitespace(ch : char) : Boolean;
+begin
+  result := CharInSet(ch, [#9, #10, #13, ' ']);
+end;
+
+function isDateChar(ch : char) : Boolean;
+begin
+ result := CharInSet(ch, ['-', ':', 'T', '+', 'Z', '0'..'9', '.']);
+end;
+
+procedure TFHIRPathLexer.nextChar();
+begin
+  if FPath[FCursor] = #13 then
+  begin
+    inc(FCurrentLocation.line);
+    FCurrentLocation.col := 1;
+    flast13 := true;
+  end
+  else if not flast13 and (FPath[FCursor] = #10) then
+  begin
+    inc(FCurrentLocation.line);
+    FCurrentLocation.col := 1;
+    flast13 := false;
+  end
+  else
+  begin
+    flast13 := false;
+    inc(FCurrentLocation.col);
+  end;
+  inc(FCursor);
+end;
+
+procedure TFHIRPathLexer.next;
+  procedure Grab(length : Integer);
+  var
+    i : integer;
+  begin
+    FCurrent := copy(FPath, FCurrentStart, length);
+    for i := 1 to length do
+      nextChar;
+  end;
+var
+  ch : char;
+  escape, dotted : boolean;
+begin
+  FCurrent := '';
+  while (FCursor <= FPath.Length) and isWhitespace(FPath[FCursor]) do
+    nextChar;
+  FCurrentStart := FCursor;
+  FCurrentStartLocation := FCurrentLocation;
+  if (FCursor <= FPath.Length) then
+  begin
+    ch := FPath[FCursor];
+    if charInSet(ch, ['!', '>', '<', ':', '=', '-']) then
+    begin
+      if (FCursor < FPath.Length) and charInSet(FPath[FCursor+1], ['=', '~', '-']) then
+        Grab(2)
+      else
+        Grab(1);
+    end
+    else if CharInSet(ch, ['0'..'9']) then
+    begin
+      nextChar;
+      dotted := false;
+      while (FCursor <= FPath.Length) and (CharInSet(FPath[FCursor], ['0'..'9']) or (not dotted and (FPath[FCursor] = '.'))) do
+      begin
+        if (FPath[FCursor] = '.') then
+          dotted := true;
+        nextChar;
+      end;
+      if (FPath[FCursor-1] = '.') then
+        prevChar;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
+    else if CharInSet(ch, ['A'..'Z', 'a'..'z']) then
+    begin
+      while (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['A'..'Z', 'a'..'z', '0'..'9', '_']) do
+        nextChar;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
+    else if (ch = '%') then
+    begin
+      nextChar;
+      if FPath[FCursor] = '"' then
+      begin
+        nextChar;
+        while (FCursor <= FPath.Length) and (FPath[FCursor] <> '"') do
+          nextChar;
+        nextChar;
+      end
+      else
+        while (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['A'..'Z', 'a'..'z', '0'..'9', ':', '-']) do
+          nextChar;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
+    else if (ch = '/') then
+    begin
+      nextChar;
+      if (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['*']) then
+      begin
+        while (FCursor <= FPath.Length) and not ((FPath[FCursor-1] = '*') and (FPath[FCursor] = '/'))  do
+          nextChar;
+        if (FCursor <= FPath.Length) then
+          nextChar;
+      end
+      else if (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['/']) then
+      begin
+        nextChar;
+        while (FCursor <= FPath.Length) and not CharInSet(FPath[FCursor], [#13, #10]) do
+          nextChar;
+      end;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
+    else if (ch = '$') then
+    begin
+      nextChar;
+      while (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['a'..'z']) do
+        nextChar;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
+    else if (ch = '{') then
+    begin
+      nextChar;
+      if (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['}']) and collapseEmptyLists then
+        nextChar;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
+    else if (ch = '"') then
+    begin
+      nextChar;
+      escape := false;
+      while (FCursor <= FPath.length) and (escape or (FPath[FCursor] <> '"')) do
+      begin
+        if (escape) then
+          escape := false
+        else
+          escape := (FPath[FCursor] = '\');
+        if CharInSet(FPath[FCursor], [#13, #10, #9]) then
+          raise EFHIRPath.create('illegal character in string');
+        nextChar;
+      end;
+      if (FCursor > FPath.length) then
+        raise error('Unterminated string');
+      nextChar;
+      FCurrent := '"'+copy(FPath, FCurrentStart+1, FCursor-FCurrentStart-2)+'"';
+    end
+    else if (ch = '''') then
+    begin
+      nextChar;
+      escape := false;
+      while (FCursor <= FPath.length) and (escape or (FPath[FCursor] <> ch)) do
+      begin
+        if (escape) then
+          escape := false
+        else
+          escape := (FPath[FCursor] = '\');
+        if CharInSet(FPath[FCursor], [#13, #10, #9]) then
+          raise EFHIRPath.create('illegal character in string');
+        nextChar;
+      end;
+      if (FCursor > FPath.length) then
+        raise error('Unterminated string');
+      nextChar;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+      FCurrent := ''''+copy(FCurrent, 2, FCurrent.Length - 2)+'''';
+    end
+    else if (ch = '@') then
+    begin
+      nextChar;
+      while (FCursor <= FPath.length) and isDateChar(FPath[FCursor]) do
+        nextChar;
+      if (FPath[FCursor-1] = '.') then
+        prevChar;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
+    else // if CharInSet(ch, ['.', ',', '(', ')', '=']) then
+      Grab(1);
+  end;
+end;
+
+
+function TFHIRPathLexer.nextId: integer;
+begin
+  inc(FId);
+  result := FId;
+end;
+
+function TFHIRPathLexer.hasComment : boolean;
+begin
+  result := not done() and (FCurrent.startsWith('//') or (FCurrent.startsWith('/*')));
+end;
+
+function TFHIRPathLexer.hasToken(kw: array of String): boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in kw do
+    if hasToken(s) then
+      exit(true);
+end;
+
+procedure TFHIRPathLexer.skipComments;
+begin
+  while (not done and hasComment()) do
+    next();
+end;
+
+procedure TFHIRPathLexer.skiptoken(kw: String);
+begin
+  if (kw = current) then
+    next();
+end;
+
+function TFHIRPathLexer.done: boolean;
+begin
+  result := FCurrentStart > FPath.Length;
+end;
+
+class function TFHIRPathLexer.endingToken(s: String): boolean;
+begin
+  result := StringArrayExistsSensitive([']', ')', '}', ','], s)
+end;
+
+function TFHIRPathLexer.error(msg: String; location: TSourceLocation): Exception;
+begin
+  result := Exception.Create('Error "'+msg+'" at line '+inttostr(location.line)+' col '+inttostr(location.col)+' in "'+getLine(location.line)+'"');
+end;
+
+function TFHIRPathLexer.getLine(line: integer): String;
+begin
+  result := FPath.Split([#10])[line-1].Trim;
+end;
+
+function TFHIRPathLexer.error(msg: String; offset: integer): Exception;
+begin
+  result := EFHIRPath.Create('Error "'+msg+'" at '+inttostr(offset)+' in "'+FPath+'"');
+end;
+
+function TFHIRPathLexer.error(msg: String): Exception;
+begin
+  result := error(msg, FCurrentLocation);
+end;
+
+function TFHIRPathLexer.isConstant(incDoubleQuotes : boolean): boolean;
+begin
+  if FCurrent = '' then
+    result := false
+  else if (FCurrent[1] = '''') or (FCurrent[1] = '%') or (FCurrent[1] = '@') then
+    result := true
+  else if incDoubleQuotes and (FCurrent[1] = '"') then
+    result := true
+  else if StringIsDecimal(FCurrent) then
+    result := true
+  else
+    result := StringArrayExistsSensitive(['true', 'false', '{}'], FCurrent);
+end;
+
+function TFHIRPathLexer.isNameToken: boolean;
+var
+  i : integer;
+begin
+  result := false;
+  if isToken and CharInSet(FCurrent[1], ['a'..'z', 'A'..'Z']) then
+  begin
+    result := true;
+    for i := 2 to length(FCurrent) do
+      if not CharInSet(FCurrent[i], ['a'..'z', 'A'..'Z', '0'..'Z', '_']) then
+        exit(false);
+  end;
+end;
+
+function TFHIRPathLexer.isNumericalConstant: boolean;
+begin
+  result := (FCurrent <> '') and StringIsDecimal(FCurrent);
+end;
+
+function TFHIRPathLexer.isOp: boolean;
+begin
+  if current = '' then
+    result := false
+  else
+    result := StringArrayExistsSensitive(opCodes, current);
+end;
+
+function TFHIRPathLexer.hasToken(kw: String): boolean;
+begin
+  result := not done() and (kw = current);
+end;
+
+function TFHIRPathLexer.isToken: boolean;
+var
+  i : integer;
+begin
+  if current = '' then
+    result := false
+  else if current.StartsWith('$') then
+    result := true
+  else if StringArrayExistsSensitive(['*', '**'], current) then
+    result := true
+  else if CharInSet(current[1], ['A'..'Z', 'a'..'z']) then
+  begin
+    result := true;
+    for i := 1 to length(current) do
+      result := result and (CharInSet(current[i], ['A'..'Z', 'a'..'z', '0'..'9', '_']) or ((i = current.Length) and (current[i] = '*')));
+  end
+  else
+    result := false;
+end;
+
+function TFHIRPathLexer.isUnit(): boolean;
+begin
+  result := StringArrayExistsSensitive(['year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond'], current)
+         or StringArrayExistsSensitive(['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'], current);
+end;
+
+procedure TFHIRPathLexer.mark;
+begin
+  FMarkedCursor := FCursor;
+  FMarkedCurrentLocation := FCurrentLocation;
+  FMarkedCurrent := FCurrent;
+  FMarkedCurrentStart := FCurrentStart;
+  FMarkedCurrentStartLocation := FCurrentStartLocation;
+  FMarkedLast13 := flast13;
+end;
+
+function TFHIRPathLexer.take: String;
+begin
+  result := current;
+  next;
+end;
+
+procedure TFHIRPathLexer.token(kw: String);
+begin
+  if (kw <> current) then
+    raise error('Found "'+current+'" expecting "'+kw+'"');
+  next();
+end;
+
+function TFHIRPathLexer.readConstant(desc : String): String;
+begin
+  if (not isStringConstant()) then
+    raise error('Found '+current+' expecting "['+desc+']"');
+
+  result := processConstant(take);
+end;
+
+function TFHIRPathLexer.readIdentifier(desc: String): String;
+begin
+  if (current.startsWith('"')) then
+    result := readConstant(desc)
+  else
+    result := take;
+end;
+
+function TFHIRPathLexer.readTo(token: char; include: boolean): String;
+begin
+  result := Current;
+  repeat
+    result := result + FPath[FCursor];
+    nextChar;
+  until done or (FPath[FCursor] = token);
+  if include then
+    result := result + FPath[FCursor];
+  nextChar;
+  next;
+end;
+
+function TFHIRPathLexer.readToWS: String;
+begin
+  result := Current;
+  repeat
+    result := result + FPath[FCursor];
+    nextChar;
+  until done or isWhitespace(FPath[FCursor]);
+  next;
+end;
+
+procedure TFHIRPathLexer.revert;
+begin
+  FCursor := FMarkedCursor;
+  FCurrentLocation := FMarkedCurrentLocation;
+  FCurrent := FMarkedCurrent;
+  FCurrentStart := FMarkedCurrentStart;
+  FCurrentStartLocation := FMarkedCurrentStartLocation;
+  flast13 := FMarkedLast13;
+end;
+
+function TFHIRPathLexer.isStringConstant : boolean;
+begin
+  result := (current[1] = '''') or (current[1] = '"');
+end;
+
+
+function TFHIRPathLexer.takeDottedToken() : String;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.create;
+  try
+    b.append(take());
+    while not done() and (FCurrent = '.') do
+    begin
+      b.append(take());
+      b.append(take());
+    end;
+    result := b.toString();
+  finally
+    b.free;
+  end;
+end;
+
+
+
+function TFHIRPathLexer.takeToken(kw: String): boolean;
+begin
+  result := not done() and (kw = current);
+  if result then
+    token(kw);
 end;
 
 end.

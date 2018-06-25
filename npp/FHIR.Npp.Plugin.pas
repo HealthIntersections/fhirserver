@@ -371,7 +371,7 @@ begin
   self.AddFuncItem('Save on &a Server', _FuncPOST);
   self.AddFuncItem('Validate &resource on server', _FuncServerValidate);
   self.AddFuncItem('-', Nil);
-  self.AddFuncItem('Server &Manager', _FuncPackageManager);
+  self.AddFuncItem('Server &Manager', _FuncServers);
   self.AddFuncItem('Pac&kage Manager', _FuncPackageManager);
   self.AddFuncItem('Confi&gure Tools', _FuncSettings);
   self.AddFuncItem('View &Toolbox', _FuncToolbox);
@@ -796,7 +796,7 @@ end;
 
 procedure TFHIRPlugin.FuncServers;
 begin
-  ShowMessage('not done yet');
+  FuncSettings(true);
 end;
 
 procedure TFHIRPlugin.FuncServerValidate;

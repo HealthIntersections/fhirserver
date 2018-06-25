@@ -137,7 +137,7 @@ begin
     procedure
     var
       be : TFhirBundleEntry;
-      params : TDictionary<String, String>;
+      params : TFslStringDictionary;
       start : TDateTime;
     begin
       FConfMatches.Clear;
@@ -145,7 +145,7 @@ begin
       FConfBundle.Free;
       FConfBundle := nil;
 
-      params := TDictionary<String, String>.create;
+      params := TFslStringDictionary.create;
       try
         case cbxType.ItemIndex of
           0 : {Profiles}

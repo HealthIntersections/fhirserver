@@ -57,7 +57,7 @@ type
 implementation
 
 uses
-  FHIR.R4.Types;
+  FHIR.R4.Types, FHIR.R4.Utilities;
 
 
 { TFHIRObject4 }

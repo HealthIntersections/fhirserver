@@ -251,7 +251,7 @@ Type
 
   TMXmlDocument = class(TMXmlElement)
   private
-    FNamespaceAbbreviations : TDictionary<String, String>;
+    FNamespaceAbbreviations : TFslStringDictionary;
     function list(value : boolean) : TFslList<TMXmlNode>;
     function contains(list : TFslList<TMXmlNode>; item : TMXmlNode) : boolean;
 
@@ -314,7 +314,7 @@ Type
     function select(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TFslList<TMXmlNode>; overload;
     function selectElements(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TFslList<TMXmlElement>; overload;
     function evaluateBoolean(nodes : TFslList<TMXmlNode>): boolean;
-    property NamespaceAbbreviations : TDictionary<String, String> read FNamespaceAbbreviations;
+    property NamespaceAbbreviations : TFslStringDictionary read FNamespaceAbbreviations;
   end;
 
   TMXmlParserOption = (xpResolveNamespaces, xpDropWhitespace, xpDropComments);
@@ -1899,7 +1899,7 @@ end;
 constructor TMXmlDocument.Create;
 begin
   inherited Create(ntDocument);
-  FNamespaceAbbreviations := TDictionary<String, String>.create;
+  FNamespaceAbbreviations := TFslStringDictionary.create;
 end;
 
 constructor TMXmlDocument.Create(nodeType: TMXmlElementType; name: String);

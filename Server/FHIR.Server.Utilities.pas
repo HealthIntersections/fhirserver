@@ -32,21 +32,19 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, IniFiles, Generics.Collections,
+  Windows, SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
-  FHIR.Support.Utilities, FHIR.Support.Base, 
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Constants,
+  FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Threads,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.Server.Session;
 
 
 type
-  TProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
+  TProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TFslStringDictionary = nil) of Object;
 
   TFHIRResourceConfig = class (TFslObject)
   public
     name : String;
-    enum : TFHIRResourceType;
     key: integer;
     Supported: Boolean;
     IdGuids: Boolean;
@@ -78,61 +76,171 @@ type
     Property ServerContext : TFslObject read FServerContext;
   end;
 
-  TFHIRServerIniFileVersionOption = (voVersioningNotApplicable, voMaybeVersioned, voMustBeVersioned);
+  TFHIRServerIniComplex = class (TFslObject)
+  private
+    FDetails : TFslStringDictionary;
+    function getValue(name: String): String;
+  public
+    constructor create(value : String);
+    destructor Destroy; override;
+    property value[name : String] : String read getValue; default;
+  end;
 
   TFHIRServerIniFile = class (TFslObject)
   private
-    FIni : TCustomIniFile;
-    function GetFileName: string;
+    FIni : TIniFile;
+
+    FTerminologies: TFslMap<TFHIRServerIniComplex>;
+    FIdentityProviders: TFslMap<TFHIRServerIniComplex>;
+    FDatabases: TFslMap<TFHIRServerIniComplex>;
+    FEndPoints: TFslMap<TFHIRServerIniComplex>;
+    FDestinations: TFslMap<TFHIRServerIniComplex>;
+
+    function GetFileName : String;
+    function getAdminValue(name: String): String;
+    function getWebValue(name: String): String;
+    function GetRunNumber: integer;
+    procedure SetRunNumber(const Value: integer);
+    procedure readSection(name : String; map : TFslMap<TFHIRServerIniComplex>);
   public
     constructor Create(const FileName: string);
     Destructor Destroy; override;
     Function Link : TFHIRServerIniFile; overload;
-
     property FileName: string read GetFileName;
 
-    procedure ReadSection(versioning: TFHIRServerIniFileVersionOption; const Section: string; Strings: TStrings);
-    function SectionExists(versioning: TFHIRServerIniFileVersionOption; const Section: string): Boolean;
+    property web[name : String] : String read getWebValue;
+    property admin[name : String] : String  read getAdminValue;
+    property terminologies : TFslMap<TFHIRServerIniComplex> read FTerminologies;
+    property databases : TFslMap<TFHIRServerIniComplex> read FDatabases;
+    property endpoints : TFslMap<TFHIRServerIniComplex> read FEndPoints;
+    property identityProviders : TFslMap<TFHIRServerIniComplex> read FIdentityProviders;
+    property destinations : TFslMap<TFHIRServerIniComplex> read FDestinations;
 
-    function ReadString(versioning: TFHIRServerIniFileVersionOption; const Section, Ident, Default: string): string;
-    function ReadInteger(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string; Default: Integer): Integer;
-    function ReadBool(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string; Default: Boolean): Boolean;
-    function ValueExists(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string): Boolean;
+    property runNumber : integer read GetRunNumber write SetRunNumber;
+  end;
 
-    procedure WriteString(const Section, Ident, Value: String);
-    procedure WriteInteger(const Section, Ident: string; Value: Integer);
-    procedure DeleteKey(const Section, Ident: String);
+  TFHIRServerSettings = class (TFslObject)
+  private
+    FLock : TFslLock;
+
+    FBases: TStringList;
+    FOwnerName: String;
+    FForLoad : boolean;
+    FRunNumber: integer;
+    FRequestId : integer;
+
+    FMaintenanceThreadStatus : String;
+    FSubscriptionThreadStatus : String;
+    FEmailThreadStatus : String;
+
+    FSMTPPort: String;
+    FSMTPPassword: String;
+    FSMTPHost: String;
+    FSMTPSender: String;
+    FSMTPUsername: String;
+    FDirectPort: String;
+    FDirectPassword: String;
+    FDirectHost: String;
+    FDirectSender: String;
+    FDirectUsername: String;
+    FDirectPopHost : String;
+    FDirectPopPort : String;
+    FSMTPUseTLS: boolean;
+    FSMSFrom: String;
+    FSMSToken: String;
+    FSMSAccount: String;
+
+    function GetMaintenanceThreadStatus: String;
+    procedure SetMaintenanceThreadStatus(const Value: String);
+    function GetSubscriptionThreadStatus: String;
+    procedure SetSubscriptionThreadStatus(const Value: String);
+    function GetEmailThreadStatus: String;
+    procedure SetEmailThreadStatus(const Value: String);
+  public
+    Constructor Create; override;
+    Destructor Destroy; override;
+    Function Link : TFHIRServerSettings; overload;
+
+    procedure load(ini : TFHIRServerIniFile);
+
+    Property Bases: TStringList read FBases;
+    Property OwnerName: String read FOwnerName;// write FOwnerName;
+    property ForLoad : boolean read FForLoad write FForLoad;
+    Property RunNumber : integer read FRunNumber;
+    function nextRequestId : string;
+
+    Property SMTPHost : String read FSMTPHost;// write FSMTPHost;
+    Property SMTPPort : String read FSMTPPort;// write FSMTPPort;
+    Property SMTPUsername : String read FSMTPUsername;// write FSMTPUsername;
+    Property SMTPPassword : String read FSMTPPassword;// write FSMTPPassword;
+    Property SMTPSender : String read FSMTPSender;// write FSMTPSender;
+    Property SMTPUseTLS : boolean read FSMTPUseTLS;// write FSMTPUseTLS;
+    Property DirectHost : String read FDirectHost;// write FDirectHost;
+    Property DirectPort : String read FDirectPort;// write FDirectPort;
+    Property DirectUsername : String read FDirectUsername;// write FDirectUsername;
+    Property DirectPassword : String read FDirectPassword;// write FDirectPassword;
+    Property DirectSender : String read FDirectSender;// write FDirectSender;
+    Property SMSAccount : String read FSMSAccount;// write FSMSAccount;
+    Property SMSToken : String read FSMSToken;// write FSMSToken;
+    Property SMSFrom : String read FSMSFrom;// write FSMSFrom;
+    property DirectPopHost : String read FDirectPopHost;// write FDirectPopHost;
+    property DirectPopPort : String read FDirectPopPort;// write FDirectPopPort;
+
+    Property MaintenanceThreadStatus : String read GetMaintenanceThreadStatus write SetMaintenanceThreadStatus;
+    Property SubscriptionThreadStatus : String read GetSubscriptionThreadStatus write SetSubscriptionThreadStatus;
+    Property EmailThreadStatus : String read GetEmailThreadStatus write SetEmailThreadStatus;
   end;
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 
-function LoadBinaryResource(lang : String; b: TBytes): TFhirBinary;
+function LoadBinaryResource(factory : TFHIRFactory; lang : String; b: TBytes): TFhirResourceV;
 
 implementation
 
-function LoadBinaryResource(lang : String; b: TBytes): TFhirBinary;
+function LoadBinaryResource(factory : TFHIRFactory; lang : String; b: TBytes): TFhirResourceV;
 var
   s : TBytes;
   i, j : integer;
   ct : AnsiString;
 begin
-  result := TFhirBinary.create;
-  try
-    s := ZDecompressBytes(b);
-    move(s[0], i, 4);
-    setLength(ct, i);
-    move(s[4], ct[1], i);
-    move(s[4+i], j, 4);
+  s := ZDecompressBytes(b);
+  move(s[0], i, 4);
+  setLength(ct, i);
+  move(s[4], ct[1], i);
+  move(s[4+i], j, 4);
 
-    result.Content := copy(s, 8+i, j);
+  result := factory.makeBinary(copy(s, 8+i, j), String(ct));
+end;
 
-    result.ContentType := String(ct);
-    result.Link;
-  finally
-    result.free;
+function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
+var
+  first : boolean;
+  c : TFHIRCompartmentId;
+begin
+  result := '';
+  if (compartment <> nil) then
+    if compartment.Id = '*' then
+      result := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ResConfig[compartment.ResourceType].key)+' and Id is not null)'
+    else
+      result := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ResConfig[compartment.ResourceType].key)+' and Id = '''+compartment.Id+''')';
+
+  if (sessionCompartments <> nil) and (sessionCompartments.Count > 0) then
+  begin
+    result := result +' and Ids.ResourceKey in (select ResourceKey from Compartments where ';
+    first := true;
+    for c in sessionCompartments do
+    begin
+      if first then
+        first := false
+      else
+        result := result + ' or ';
+      result := result + 'TypeKey = '+inttostr(ResConfig[c.ResourceType].key)+' and Id = '''+c.id+'''';
+    end;
+    result := result + ')';
   end;
 end;
 
+{ TFHIRResourceConfig }
 
 constructor TFHIRResourceConfig.Create;
 begin
@@ -166,32 +274,53 @@ begin
   inherited;
 end;
 
-
 { TFHIRServerIniFile }
 
 constructor TFHIRServerIniFile.Create(const FileName: string);
 begin
   inherited create;
-  if filename <> '' then
-    FIni := TIniFile.Create(filename)
-  else
-    FIni := TMemIniFile.Create('');
+  FIni := TIniFile.Create(filename);
+  FTerminologies := TFslMap<TFHIRServerIniComplex>.create;
+  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.create;
+  FDatabases := TFslMap<TFHIRServerIniComplex>.create;
+  FEndPoints := TFslMap<TFHIRServerIniComplex>.create;
+  FDestinations := TFslMap<TFHIRServerIniComplex>.create;
+  readSection('terminologies', FTerminologies);
+  readSection('identity-providers', FIdentityProviders);
+  readSection('endpoints', FEndPoints);
+  readSection('databases', FDatabases);
+  readSection('destinations', FDestinations);
 end;
 
 destructor TFHIRServerIniFile.Destroy;
 begin
+  FTerminologies.Free;
+  FIdentityProviders.Free;
+  FDatabases.Free;
+  FEndPoints.Free;
+  FDestinations.Free;
   FIni.Free;
   inherited;
 end;
 
-procedure TFHIRServerIniFile.DeleteKey(const Section, Ident: String);
+function TFHIRServerIniFile.getAdminValue(name: String): String;
 begin
-  FIni.DeleteKey(Section, Ident);
+  result := FIni.ReadString('admin', name, '');
 end;
 
-function TFHIRServerIniFile.GetFileName: string;
+function TFHIRServerIniFile.GetFileName: String;
 begin
   result := FIni.FileName;
+end;
+
+function TFHIRServerIniFile.GetRunNumber: integer;
+begin
+  result := FIni.ReadInteger('server', 'run-number', 0);
+end;
+
+function TFHIRServerIniFile.getWebValue(name: String): String;
+begin
+  result := FIni.ReadString('web', name, '');
 end;
 
 function TFHIRServerIniFile.Link: TFHIRServerIniFile;
@@ -199,102 +328,180 @@ begin
   result := TFHIRServerIniFile(inherited Link);
 end;
 
-function TFHIRServerIniFile.ReadBool(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string; Default: Boolean): Boolean;
-begin
-  if (versioning = voMustBeVersioned) then
-    result := FIni.ReadBool(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
-  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, ident) then
-    result := FIni.ReadBool(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
-  else
-    result := FIni.ReadBool(section, ident, default);
-end;
-
-function TFHIRServerIniFile.ReadInteger(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string; Default: Integer): Integer;
-begin
-  if (versioning = voMustBeVersioned) then
-    result := FIni.ReadInteger(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
-  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, ident) then
-    result := FIni.ReadInteger(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
-  else
-    result := FIni.ReadInteger(section, ident, default);
-end;
-
-function TFHIRServerIniFile.ReadString(versioning: TFHIRServerIniFileVersionOption; const Section, Ident, Default: string): string;
-begin
-  if (versioning = voMustBeVersioned) then
-    result := FIni.ReadString(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
-  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, ident) then
-    result := FIni.ReadString(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
-  else
-    result := FIni.ReadString(section, ident, default);
-end;
-
-procedure TFHIRServerIniFile.ReadSection(versioning: TFHIRServerIniFileVersionOption; const Section: string; Strings: TStrings);
-begin
-  if (versioning = voMustBeVersioned) then
-    FIni.ReadSection(section+'-'+FHIR_GENERATED_PUBLICATION, Strings)
-  else if (versioning = voMaybeVersioned) and Fini.SectionExists(section+'-'+FHIR_GENERATED_PUBLICATION) then
-    FIni.ReadSection(section+'-'+FHIR_GENERATED_PUBLICATION, Strings)
-  else
-    FIni.ReadSection(section, Strings);
-end;
-
-function TFHIRServerIniFile.SectionExists(versioning: TFHIRServerIniFileVersionOption; const Section: string): Boolean;
-begin
-  if (versioning = voMustBeVersioned) then
-    result := FIni.SectionExists(section+'-'+FHIR_GENERATED_PUBLICATION)
-  else if (versioning = voMaybeVersioned) and Fini.SectionExists(section+'-'+FHIR_GENERATED_PUBLICATION) then
-    result := true
-  else
-    result := FIni.SectionExists(section);
-end;
-
-function TFHIRServerIniFile.ValueExists(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string): Boolean;
-begin
-  if (versioning = voMustBeVersioned) then
-    result := FIni.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, Ident)
-  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, Ident) then
-    result := true
-  else
-    result := FIni.ValueExists(section, Ident);
-end;
-
-procedure TFHIRServerIniFile.WriteInteger(const Section, Ident: string; Value: Integer);
-begin
-  FIni.WriteInteger(section, ident, value);
-end;
-
-procedure TFHIRServerIniFile.WriteString(const Section, Ident, Value: String);
-begin
-  FIni.WriteString(section, ident, value);
-end;
-
-function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
+procedure TFHIRServerIniFile.readSection(name: String; map: TFslMap<TFHIRServerIniComplex>);
 var
-  first : boolean;
-  c : TFHIRCompartmentId;
+  ts : TStringList;
+  s : String;
 begin
-  result := '';
-  if (compartment <> nil) then
-    if compartment.Id = '*' then
-      result := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ResConfig[CODES_TFHIRResourceType[compartment.Enum]].key)+' and Id is not null)'
-    else
-      result := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ResConfig[CODES_TFHIRResourceType[compartment.Enum]].key)+' and Id = '''+compartment.Id+''')';
-
-  if (sessionCompartments <> nil) and (sessionCompartments.Count > 0) then
-  begin
-    result := result +' and Ids.ResourceKey in (select ResourceKey from Compartments where ';
-    first := true;
-    for c in sessionCompartments do
-    begin
-      if first then
-        first := false
-      else
-        result := result + ' or ';
-      result := result + 'TypeKey = '+inttostr(ResConfig[CODES_TFHIRResourceType[c.Enum]].key)+' and Id = '''+c.id+'''';
-    end;
-    result := result + ')';
+  ts := TStringList.Create;
+  try
+    FIni.ReadSection(name, ts);
+    for s in ts do
+      map.Add(s, TFHIRServerIniComplex.create(FIni.ReadString(name, s, '')));
+  finally
+    ts.free;
   end;
 end;
+
+procedure TFHIRServerIniFile.SetRunNumber(const Value: integer);
+begin
+  FIni.writeInteger('server', 'run-number', value);
+end;
+
+{ TFHIRServerSettings }
+
+constructor TFHIRServerSettings.Create;
+begin
+  inherited;
+  FBases := TStringList.Create;
+  FBases.add('http://localhost/');
+  FLock := TFslLock.Create('Settings');
+end;
+
+destructor TFHIRServerSettings.Destroy;
+begin
+  FBases.free;
+  FLock.Free;
+  inherited;
+end;
+
+function TFHIRServerSettings.Link: TFHIRServerSettings;
+begin
+  result := TFHIRServerSettings(inherited Link);
+end;
+
+procedure TFHIRServerSettings.load(ini: TFHIRServerIniFile);
+begin
+   // FBases - set in kernel
+   // FForLoad - set in kernel
+  FRunNumber := ini.runNumber + 1;
+  ini.runNumber := FRunNumber;
+  FRequestId := 0;
+
+  FMaintenanceThreadStatus := 'Not started';
+  FSubscriptionThreadStatus := 'Not started';
+  FEmailThreadStatus := 'Not started';
+
+  FOwnerName := ini.admin['ownername'];
+  FSMTPPort := ini.destinations['email']['port'];
+  FSMTPPassword := ini.destinations['email']['password'];
+  FSMTPHost := ini.destinations['email']['host'];
+  FSMTPSender := ini.destinations['email']['sender'];
+  FSMTPUsername := ini.destinations['email']['username'];
+  FSMTPUseTLS := ini.destinations['email']['secure'] = 'true';
+  FDirectPort := ini.destinations['direct']['port'];
+  FDirectPassword := ini.destinations['direct']['password'];
+  FDirectHost := ini.destinations['direct']['host'];
+  FDirectSender := ini.destinations['direct']['sender'];
+  FDirectUsername := ini.destinations['direct']['username'];
+  FDirectPopHost  := ini.destinations['direct']['pop-host'];
+  FDirectPopPort  := ini.destinations['direct']['pop-port'];
+  FSMSFrom := ini.destinations['sms']['from'];
+  FSMSToken := ini.destinations['sms']['token'];
+  FSMSAccount := ini.destinations['sms']['account'];
+end;
+
+function TFHIRServerSettings.nextRequestId: string;
+var
+  v : integer;
+begin
+  v := InterlockedIncrement(FRequestId);
+  result := inttostr(FRunNumber)+'-'+inttostr(v);
+end;
+
+
+procedure TFHIRServerSettings.SetMaintenanceThreadStatus(const Value: String);
+begin
+  FLock.Lock;
+  try
+    FMaintenanceThreadStatus := Value;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TFHIRServerSettings.SetSubscriptionThreadStatus(const Value: String);
+begin
+  FLock.Lock;
+  try
+    FSubscriptionThreadStatus := Value;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TFHIRServerSettings.SetEmailThreadStatus(const Value: String);
+begin
+  FLock.Lock;
+  try
+    FEmailThreadStatus := Value;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFHIRServerSettings.GetMaintenanceThreadStatus: String;
+begin
+  FLock.Lock;
+  try
+    result := FMaintenanceThreadStatus;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFHIRServerSettings.GetSubscriptionThreadStatus: String;
+begin
+  FLock.Lock;
+  try
+    result := FSubscriptionThreadStatus;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFHIRServerSettings.GetEmailThreadStatus: String;
+begin
+  FLock.Lock;
+  try
+    result := FEmailThreadStatus;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+{ TFHIRServerIniComplex }
+
+constructor TFHIRServerIniComplex.create(value: String);
+var
+  sl : TArray<String>;
+  s, l, r : String;
+begin
+  inherited Create;
+  FDetails := TFslStringDictionary.Create;
+  sl := value.Split([';']);
+  for s in sl do
+  begin
+    StringSplit(s, ':', l, r);
+    l := l.Trim;
+    r := r.Trim;
+    if r.StartsWith('"') and r.EndsWith('"') then
+      r := r.Substring(1, r.Length-2);
+    FDetails.Add(l, r);
+  end;
+end;
+
+destructor TFHIRServerIniComplex.Destroy;
+begin
+  FDetails.Free;
+  inherited;
+end;
+
+function TFHIRServerIniComplex.getValue(name: String): String;
+begin
+  result := FDetails[name];
+end;
+
 end.
+
 

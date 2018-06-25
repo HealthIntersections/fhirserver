@@ -32,6 +32,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
+  FHIR.Base.PathEngine,
   FHIR.Base.Objects, FHIR.Version.PathNode, FHIR.Version.PathEngine,
   FHIR.CQL.Model;
 
@@ -60,6 +61,7 @@ Type
     function isUnaryOperator : boolean;
   protected
     function collapseEmptyLists : boolean; override;
+    function opCodes : TArray<String>; override;
   public
     procedure next; override;
   end;
@@ -1091,6 +1093,15 @@ begin
   inherited next;
   while hasComment do
     inherited next;
+end;
+
+function TCqlLexer.opCodes: TArray<String>;
+var
+  i : integer;
+begin
+  setLength(result, length(CODES_TFHIRPathOperation));
+  for i := 0 to length(CODES_TFHIRPathOperation) do
+    result[i] := CODES_TFHIRPathOperation[TFHIRPathOperation(i)];
 end;
 
 function TCqlLexer.collapseEmptyLists: boolean;

@@ -140,8 +140,8 @@ type
     FConnection : TFHIRNppServerConnection;
     FType : String;
     FSearchItems : TFslList<TSearchEntryPanel>;
-    FColumns : TDictionary<String, String>;
-    FLinks : TDictionary<String, String>;
+    FColumns : TFslStringDictionary;
+    FLinks : TFslStringDictionary;
     FMatches : TFslList<TFHIRResourceV>;
     FQuery : TFHIRPathEngineV;
 
@@ -480,9 +480,9 @@ procedure TFetchResourceFrm.FormCreate(Sender: TObject);
 begin
   FServers := TFslList<TRegisteredFHIRServer>.create;
   FSearchItems := TFslList<TSearchEntryPanel>.create;
-  FColumns := TDictionary<String, String>.create;
+  FColumns := TFslStringDictionary.create;
   FMatches := TFslList<TFHIRResourceV>.create;
-  FLinks := TDictionary<String, String>.create;
+  FLinks := TFslStringDictionary.create;
 end;
 
 procedure TFetchResourceFrm.FormDestroy(Sender: TObject);
@@ -839,7 +839,7 @@ var
   bundle : TFHIRBundleW;
   be : TFhirBundleEntryW;
   bel : TFslList<TFhirBundleEntryW>;
-  links : TDictionary<String, String>;
+  links : TFslStringDictionary;
   link : String;
 begin
   clearSearch;

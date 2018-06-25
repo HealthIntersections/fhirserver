@@ -160,6 +160,7 @@ end;
 function TObservationDataProvider.getPoint(i: integer): TFGraphDataPoint;
 begin
   result.clear;
+  result.error := '';
   result.id := i;
   result.x := FObervations[i].time;
   if FObervations[i].message <> '' then
@@ -190,6 +191,7 @@ end;
 procedure TObservationDataProvider.processData(id : integer; response : TBackgroundTaskPackage);
 var
   i, j : integer;
+  n : TFHIRObsNode;
 begin
   FObervations.Free;
   FObervations := (response as TFslList<TFHIRObsNode>).Link;
@@ -236,7 +238,7 @@ end;
 
 function TObservationDataProvider.queryString: String;
 begin
-  result := 'patient:patient='+patientId+'&code='+code+'&_sort=date&date=gt'+(TDateTimeEx.makeUTC-window).toXML;
+  result := 'patient:patient='+patientId+'&code='+code+'&_sort=date&date=gt'+(TDateTimeEx.makeUTC-window-1).fixPrecision(dtpSec).toXML;
 end;
 
 procedure TObservationDataProvider.load;
@@ -267,24 +269,32 @@ begin
 //    FClient.smartToken := todo.........
   end;
 
-  bnd := FClient.search(frtObservation, true, details.params);
+  writeln('Query: '+fclient.address+'/Observation?'+details.params);
   try
-    proc := TFslList<TFHIRObsNode>.create;
+    bnd := FClient.search(frtObservation, true, details.params);
     try
-      for be in bnd.entryList do
-        if ((be.search = nil) or (be.search.mode = SearchEntryModeMatch)) and (be.resource is TFhirObservation) then
-        begin
-          node := processObs(be.resource as TFhirObservation);
-          if node <> nil then
-            proc.Add(node);
-        end;
-      proc.Sort(self);
-      Response := proc.link;
+      proc := TFslList<TFHIRObsNode>.create;
+      try
+        writeln('.. found : '+inttostr(bnd.entryList.Count));
+        for be in bnd.entryList do
+          if ((be.search = nil) or (be.search.mode = SearchEntryModeMatch)) and (be.resource is TFhirObservation) then
+          begin
+            node := processObs(be.resource as TFhirObservation);
+            if node <> nil then
+              proc.Add(node);
+          end;
+        proc.Sort(self);
+
+        Response := proc.link;
+      finally
+        proc.Free;
+      end;
     finally
-      proc.Free;
+      bnd.Free;
     end;
-  finally
-    bnd.Free;
+  except
+    on e : exception do
+      writeln('.. failed: '+e.Message);
   end;
 end;
 
@@ -305,11 +315,15 @@ begin
   t := 0;
   // time - we *must* find a time, or we ignore the obs
   if obs.effective is TFhirDateTime then
-    t := (obs.effective as TFhirDateTime).value.DateTime
+    t := (obs.effective as TFhirDateTime).value.Local.DateTime
   else if obs.effective is TFhirPeriod then
     t := (obs.effective as TFhirPeriod).point;
   if t = 0 then
     exit(nil);
+
+//  if (obs.value is TFhirQuantity) and ((obs.value as TFhirQuantity).valueElement <> nil) then
+//    if TFslDecimal.ValueOf((obs.value as TFhirQuantity).value).AsDouble >= 100 then
+//      exit(nil);
 
   result := TFHIRObsNode.Create;
   try

@@ -154,7 +154,8 @@ uses
   FHIR.Tools.ValidationWrapper in '..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas',
   FHIR.Ui.Graph in '..\Libraries\ui\FHIR.Ui.Graph.pas',
   FHIR.Tools.ObsGraph in '..\Libraries\ui\FHIR.Tools.ObsGraph.pas',
-  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas';
+  FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas',
+  FHIR.R3.AuthMap in '..\reference-platform\dstu3\FHIR.R3.AuthMap.pas';
 
 {$R *.res}
 

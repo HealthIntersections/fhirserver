@@ -58,7 +58,7 @@ const
     '<script type="text/javascript" src="/js/fhir-gw.js"></script>'+#13#10;
   MAP_ATTR_NAME = 'B88BF977DA9543B8A5915C84A70F03F7';
 
-  FHIR_SPEC_URL = 'http://hl7.org/fhir';
+//  FHIR_SPEC_URL = 'http://hl7.org/fhir';
   FHIR_TTL_URI_BASE = 'http://hl7.org/fhir/';
   BOOLEAN_STRING_CODES : array [boolean] of String = ('false', 'true');
 
@@ -229,6 +229,7 @@ Type
     Constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; lang : String); Virtual;
     Destructor Destroy; override;
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
+    Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
 
     function Compose(oResource : TFhirResourceV) : String; Overload;
     function ComposeBytes(oResource : TFhirResourceV) : TBytes; Overload;
@@ -264,6 +265,7 @@ Type
     function GetFormat: TFHIRFormat; override;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
+    Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); Override;
     Procedure Compose(node : TMXmlElement; oResource : TFhirResourceV); Overload;
     Function MimeType : String; Override;
     function Extension : String; Override;
@@ -292,7 +294,7 @@ Type
     function GetFormat: TFHIRFormat; override;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
-    Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); overload;
+    Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); overload; override;
     Procedure Compose(json: TJSONWriter; oResource : TFhirResourceV); Overload;
     Function MimeType : String; Override;
     function Extension : String; Override;
@@ -300,7 +302,6 @@ Type
     procedure ComposeBase(json: TJSONWriter; name : String; base : TFHIRObject); virtual;
   End;
 
-  {$IFNDEF FHIR2}
   TFHIRTurtleComposerBase = class (TFHIRComposer)
   private
     FURL: String;
@@ -318,11 +319,11 @@ Type
     function GetFormat: TFHIRFormat; override;
   public
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
+    Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); Override;
     Function MimeType : String; Override;
     property URL : String read FURL write FURL;
     function Extension : String; Override;
   end;
-  {$ENDIF}
 
   TFHIRTextComposer = class (TFHIRComposer)
   private
@@ -637,6 +638,19 @@ begin
     xml.Finish;
   finally
     xml.Free;
+  end;
+end;
+
+procedure TFHIRXmlComposerBase.Compose(stream: TFslStream; oResource: TFhirResourceV);
+var
+  s : TVCLStream;
+begin
+  s := TVCLStream.Create;
+  try
+    s.Stream := stream.Link;
+    compose(s, oResource);
+  finally
+    s.Free;
   end;
 end;
 
@@ -1447,7 +1461,6 @@ begin
 end;
 
 
-{$IFNDEF FHIR2}
 { TFHIRTurtleComposerBase }
 
 procedure TFHIRTurtleComposerBase.Compose(stream: TStream; oResource: TFhirResourceV);
@@ -1494,6 +1507,19 @@ begin
     TTurtleComposer.compose(Fttl, stream);
   finally
     Fttl.Free;
+  end;
+end;
+
+procedure TFHIRTurtleComposerBase.Compose(stream: TFslStream; oResource: TFhirResourceV);
+var
+  s : TVCLStream;
+begin
+  s := TVCLStream.Create;
+  try
+    s.Stream := stream.Link;
+    compose(s, oResource);
+  finally
+    s.Free;
   end;
 end;
 
@@ -1563,7 +1589,6 @@ function TFHIRTurtleComposerBase.MimeType: String;
 begin
   result := 'text/turtle';
 end;
-{$ENDIF}
 
 { TFHIRTextParser }
 

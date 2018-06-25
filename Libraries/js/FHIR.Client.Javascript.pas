@@ -34,11 +34,13 @@ uses
   SysUtils, Classes,
   FHIR.Javascript,
   FHIR.Support.Base,
-  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities;
+  FHIR.Base.Objects, FHIR.Base.Factory,
+  FHIR.Client.Base;
 
 type
   TFHIRClientJSHelper = class (TFslObject)
   private
+    FWorker : TFHIRWorkerContextWithFactory;
     function CreateFHIRClientJs(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
     function FHIRClientAddressJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function FHIRClientCapabilitiesJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
@@ -51,44 +53,62 @@ type
     function FHIRClientTransactionJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
     function FHIRClientUpdateJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
   public
-    class procedure registerFHIRClient(js : TJavascript);
+    constructor Create(worker : TFHIRWorkerContextWithFactory);
+    destructor Destroy; override;
+
+    class procedure registerFHIRClient(js : TJavascript; worker : TFHIRWorkerContextWithFactory);
   end;
 
 
 implementation
 
+constructor TFHIRClientJSHelper.Create(worker: TFHIRWorkerContextWithFactory);
+begin
+  inherited Create;
+  FWorker := worker;
+end;
+
+destructor TFHIRClientJSHelper.Destroy;
+begin
+  FWorker.Free;
+  inherited;
+end;
+
 function TFHIRClientJSHelper.CreateFHIRClientJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
 begin
-  result := TFhirClients.makeHTTP(nil, js.asString(params[0]), js.asBoolean(params[1]));
+  if js.asBoolean(params[1]) then
+    result := FWorker.Factory.makeClient(FWorker.link, js.asString(params[0]), ffJson)
+  else
+    result := FWorker.Factory.makeClient(FWorker.link, js.asString(params[0]), ffXml);
 end;
 
 function TFHIRClientJSHelper.FHIRClientAddressJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 begin
-  result := js.wrap(TFhirClient(this).address);
+  result := js.wrap(TFhirClientV(this).address);
 end;
 
 function TFHIRClientJSHelper.FHIRClientCapabilitiesJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 begin
   if (length(parameters) > 0) then
-    result := js.wrap(TFhirClient(this).conformance(js.asBoolean(parameters[0])), 'CapabilityStatement', true)
+    result := js.wrap(TFhirClientV(this).conformanceV(js.asBoolean(parameters[0])), 'CapabilityStatement', true)
   else
-    result := js.wrap(TFhirClient(this).conformance(false), 'CapabilityStatement', true);
+    result := js.wrap(TFhirClientV(this).conformanceV(false), 'CapabilityStatement', true);
 end;
 
 function TFHIRClientJSHelper.FHIRClientTransactionJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
-  bnd : TFhirBundle;
+  bnd : TFhirResourceV;
   def : TJavascriptClassDefinition;
   owns : boolean;
 begin
-  bnd := js.getWrapped<TFhirBundle>(parameters[0]).link;
+  bnd := js.getWrapped<TFhirResourceV>(parameters[0]).link;
   try
     if bnd = nil then
     begin
       def := js.getDefinedClass('Bundle');
-      bnd := def.factory(js, def, parameters, owns) as TFhirBundle;
+      bnd := def.factory(js, def, parameters, owns) as TFhirResourceV;
     end;
-    result := js.wrap(TFhirClient(this).transaction(bnd), 'Bundle', true);
+    result := js.wrap(TFhirClientV(this).transactionV(bnd), 'Bundle', true);
   finally
     bnd.Free;
   end;
@@ -96,19 +116,19 @@ end;
 
 function TFHIRClientJSHelper.FHIRClientCreateJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
-  res, o : TFhirResource;
+  res, o : TFhirResourceV;
   def : TJavascriptClassDefinition;
   owns : boolean;
   id : String;
 begin
-  res := js.getWrapped<TFhirResource>(parameters[0]).link;
+  res := js.getWrapped<TFhirResourceV>(parameters[0]).link;
   try
     if res = nil then
     begin
       def := js.getDefinedClass('Resource');
-      res := def.factory(js, def, parameters, owns) as TFhirBundle;
+      res := def.factory(js, def, parameters, owns) as TFhirResourceV;
     end;
-    o := TFhirClient(this).createResource(res, id);
+    o := TFhirClientV(this).createResourceV(res, id);
     try
       result := js.wrap(o.Link, o.fhirType, true);
     finally
@@ -121,30 +141,28 @@ end;
 
 function TFHIRClientJSHelper.FHIRClientReadJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
-  a : TFhirResourceType;
   id : String;
-  res : TFhirResource;
+  res : TFhirResourceV;
 begin
-  a := ResourceTypeByName(js.asString(parameters[0]));
   id := js.asString(parameters[1]);
-  res := TFhirClient(this).readResource(a, id);
+  res := TFhirClientV(this).readResourceV(js.asString(parameters[0]), id);
   result := js.wrap(res, res.fhirType, true);
 end;
 
 function TFHIRClientJSHelper.FHIRClientUpdateJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
-  res, o : TFhirResource;
+  res, o : TFhirResourceV;
   def : TJavascriptClassDefinition;
   owns : boolean;
 begin
-  res := js.getWrapped<TFhirResource>(parameters[0]).link;
+  res := js.getWrapped<TFhirResourceV>(parameters[0]).link;
   try
     if res = nil then
     begin
       def := js.getDefinedClass('Resource');
-      res := def.factory(js, def, parameters, owns) as TFhirBundle;
+      res := def.factory(js, def, parameters, owns) as TFhirResourceV;
     end;
-    o := TFhirClient(this).updateResource(res);
+    o := TFhirClientV(this).updateResourceV(res);
     try
       result := js.wrap(o.Link, o.fhirType, true);
     finally
@@ -157,27 +175,23 @@ end;
 
 function TFHIRClientJSHelper.FHIRClientDeleteJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
-  a : TFhirResourceType;
   id : String;
 begin
-  a := ResourceTypeByName(js.asString(parameters[0]));
   id := js.asString(parameters[1]);
-  TFhirClient(this).deleteResource(a, id);
+  TFhirClientV(this).deleteResourceV(js.asString(parameters[0]), id);
   result := JS_INVALID_REFERENCE;
 end;
 
 function TFHIRClientJSHelper.FHIRClientSearchJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   ts : TStringList;
-  a : TFhirResourceType;
   s : String;
-  bnd : TFHIRBundle;
+  bnd : TFhirResourceV;
 begin
-  a := ResourceTypeByName(js.asString(parameters[0]));
   ts := TStringList.create;
   try
     if js.getType(parameters[1]) = JsString then
-      bnd := TFhirClient(this).search(a, true, js.asString(parameters[1]))
+      bnd := TFhirClientV(this).searchV(js.asString(parameters[0]), true, js.asString(parameters[1]))
     else
     begin
       js.iterateProperties(parameters[1],
@@ -191,7 +205,7 @@ begin
            else
              ts.AddPair(name, js.asString(value));
         end);
-      bnd := TFhirClient(this).search(a, true, js.asString(parameters[1]))
+      bnd := TFhirClientV(this).searchV(js.asString(parameters[0]), true, js.asString(parameters[1]))
     end;
     result := js.wrap(bnd, 'Bundle', true);
   finally
@@ -204,12 +218,12 @@ function TFHIRClientJSHelper.FHIRClientSearchAllJs(js : TJavascript; propDef : T
 var
   ts : TStringList;
   s : String;
-  bnd : TFHIRBundle;
+  bnd : TFhirResourceV;
 begin
   ts := TStringList.create;
   try
     if js.getType(parameters[0]) = JsString then
-      bnd := TFhirClient(this).search(true, js.asString(parameters[1]))
+      bnd := TFhirClientV(this).searchV(true, js.asString(parameters[1]))
     else
     begin
       js.iterateProperties(parameters[0],
@@ -223,9 +237,9 @@ begin
            else
              ts.AddPair(name, js.asString(value));
         end);
-      bnd := TFhirClient(this).search(true, js.asString(parameters[1]))
+      bnd := TFhirClientV(this).searchV(true, js.asString(parameters[1]))
     end;
-    result := js.wrap(TFhirClient(this).transaction(bnd), 'Bundle', true);
+    result := js.wrap(TFhirClientV(this).transactionV(bnd), 'Bundle', true);
   finally
     ts.free;
   end;
@@ -233,22 +247,20 @@ end;
 
 function TFHIRClientJSHelper.FHIRClientOperationJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
-  res, o : TFhirResource;
+  res, o : TFhirResourceV;
   def : TJavascriptClassDefinition;
-  a : TFhirResourceType;
   n : String;
   owns : boolean;
 begin
-  a := ResourceTypeByName(js.asString(parameters[0]));
   n := js.asString(parameters[1]);
-  res := js.getWrapped<TFhirResource>(parameters[0]).link;
+  res := js.getWrapped<TFhirResourceV>(parameters[0]).link;
   try
     if res = nil then
     begin
       def := js.getDefinedClass('Resource');
-      res := def.factory(js, def, parameters, owns) as TFhirBundle;
+      res := def.factory(js, def, parameters, owns) as TFhirResourceV;
     end;
-    o := TFhirClient(this).operation(a, n, res as TFhirParameters);
+    o := TFhirClientV(this).operationV(js.asString(parameters[0]), n, res);
     try
       result := js.wrap(o, o.fhirType, true);
     finally
@@ -259,12 +271,12 @@ begin
   end;
 end;
 
-class procedure TFHIRClientJSHelper.registerFHIRClient(js : TJavascript);
+class procedure TFHIRClientJSHelper.registerFHIRClient(js : TJavascript; worker : TFHIRWorkerContextWithFactory);
 var
   this : TFHIRClientJSHelper;
   def : TJavascriptClassDefinition;
 begin
-  this := TFHIRClientJSHelper.Create;
+  this := TFHIRClientJSHelper.Create(worker.link);
   js.ownObject(this);
   def := js.defineClass('FHIR.Version.Client', nil, 'FHIR.Version.Client', this.CreateFHIRClientJs);
   def.defineRoutine('address', nil, this.FHIRClientAddressJs);

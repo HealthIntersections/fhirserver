@@ -67,7 +67,7 @@ Type
       FUsername: String;
       FProxyPassword: String;
       FProxyUsername: String;
-      FHeaders : TDictionary<String, String>;
+      FHeaders : TFslStringDictionary;
       FReqHandle : HINTERNET;
 
       FIgnoreContentTypeHeader : Boolean;
@@ -101,7 +101,7 @@ Type
 
       Procedure Execute;
 
-      Property Headers : TDictionary<String, String> read FHeaders;
+      Property Headers : TFslStringDictionary read FHeaders;
 
       Procedure SetAddress(Const Value : String);
 
@@ -356,7 +356,7 @@ End;
 Constructor TFslWinInetClient.Create;
 Begin
   Inherited;
-  FHeaders := TDictionary<String, String>.create;;
+  FHeaders := TFslStringDictionary.create;;
 
 {$IFDEF VER130}
   Check(@mInternetOpen <> Nil, 'TFslWinInetClient.Create', RS_ERR_WININET_NO_ROUTINE, 'InternetOpenA', 0);

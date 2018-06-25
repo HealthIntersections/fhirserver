@@ -1003,7 +1003,7 @@ end;
 
 procedure TSCIMServer.processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  variables : TDictionary<String,String>;
+  variables : TFslStringDictionary;
   conn : TKDBConnection;
   user : TSCIMUser;
   bnew : boolean;
@@ -1015,7 +1015,7 @@ var
   uk : integer;
 begin
   bDone := false;
-  variables := TDictionary<String,String>.create;
+  variables := TFslStringDictionary.create;
   try
     conn := db.GetConnection('scim.user.search');
     try
@@ -1138,7 +1138,7 @@ end;
 
 procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  variables : TDictionary<String,String>;
+  variables : TFslStringDictionary;
   conn : TKDBConnection;
   b : TStringBuilder;
   user : TSCIMUser;
@@ -1205,7 +1205,7 @@ begin
       end;
     end;
 
-    variables := TDictionary<String,String>.create;
+    variables := TFslStringDictionary.create;
     try
       variables.Add('usertable', b.ToString);
       OnProcessFile(request, response, session, '/scimusers.html', true, variables);

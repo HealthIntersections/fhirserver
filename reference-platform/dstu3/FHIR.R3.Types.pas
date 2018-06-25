@@ -2505,6 +2505,7 @@ Type
     Function Link : TFhirType; Overload;
     Function Clone : TFhirType; Overload;
     function isType : boolean; override;
+    function toString : String; override;
   End;
   TFHIRTypeClass = class of TFhirType;
   
@@ -11309,6 +11310,11 @@ end;
 function TFhirType.Link : TFhirType;
 begin
   result := TFhirType(inherited Link);
+end;
+
+function TFhirType.toString: String;
+begin
+  result := gen(self);
 end;
 
 function TFhirType.Clone : TFhirType;

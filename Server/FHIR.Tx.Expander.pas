@@ -51,7 +51,7 @@ const
   UPPER_LIMIT_NO_TEXT = 10000;
   UPPER_LIMIT_TEXT = 1000;// won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
 
-  FHIR_VERSION_CANONICAL_SPLIT = {$IFDEF FHIR2} '?version=' {$ELSE} '|' {$ENDIF};
+  FHIR_VERSION_CANONICAL_SPLIT = !{$IFDEF FHIR2} '?version=' {$ELSE} '|' {$ENDIF};
 
 
 Type
@@ -120,7 +120,7 @@ var
 begin
   source.checkNoImplicitRules('ValueSetExpander.Expand', 'ValueSet');
   source.checkNoModifiers('ValueSetExpander.Expand', 'ValueSet');
-  {$IFNDEF FHIR2}
+  !{$IFNDEF FHIR2}
   profile.checkNoImplicitRules('ValueSetExpander.Expand', 'ExpansionProfile');
   profile.checkNoModifiers('ValueSetExpander.Expand', 'ExpansionProfile');
   {$ENDIF}
@@ -130,7 +130,7 @@ begin
   result := source.Clone;
   if not profile.includeDefinition then
   begin
-    {$IFDEF FHIR2}
+    !{$IFDEF FHIR2}
     result.codeSystem := nil;
     result.requirements := '';
     {$ELSE}
@@ -188,7 +188,7 @@ begin
       result.expansion.addParam('expansion-source', 'ValueSet/'+source.id)
     else if source.url <> '' then
       result.expansion.addParam('expansion-source', source.url);
-    {$IFNDEF FHIR2}
+    !{$IFNDEF FHIR2}
     if profile.url <> '' then
       result.expansion.addParam('expansion-profile', profile.url);
     {$ENDIF}
@@ -210,7 +210,7 @@ begin
       result.expansion.addParam('excludePostCoordinated', profile.excludePostCoordinated);
 
     try
-      {$IFDEF FHIR2}
+      !{$IFDEF FHIR2}
       if (source.codeSystem <> nil) then
       begin
         source.codeSystem.checkNoModifiers('ValueSetExpander.Expand', 'code system');
@@ -330,11 +330,11 @@ end;
 procedure TFHIRValueSetExpander.handleCompose(list: TFhirValueSetExpansionContainsList; map: TFslStringObjectMatch; source: TFhirValueSetCompose; filter : TSearchFilterText; dependencies : TStringList; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; var notClosed : boolean);
 var
   i : integer;
-  {$IFDEF FHIR2}
+  !{$IFDEF FHIR2}
   vs : TFHIRValueSet;
   {$ENDIF}
 begin
-  {$IFDEF FHIR2}
+  !{$IFDEF FHIR2}
   for i := 0 to source.importList.count - 1 do
   begin
     vs := expandValueSet(source.importList[i].value, filter.filter, dependencies, notClosed);
@@ -384,13 +384,13 @@ begin
 end;
 
 function TFHIRValueSetExpander.chooseDisplay(c: TFhirValueSetComposeIncludeConcept; profile : TFHIRExpansionProfile) : String;
-{$IFNDEF FHIR2}
+!{$IFNDEF FHIR2}
 var
   ccd : TFhirValueSetComposeIncludeConceptDesignation;
 {$ENDIF}
 begin
   result := c.display;
-{$IFNDEF FHIR2}
+!{$IFNDEF FHIR2}
   for ccd in c.designationList do
     if (profile.displayLanguage = '') or languageMatches(profile.displayLanguage, ccd.language) then
       result := ccd.value;
@@ -401,7 +401,7 @@ procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystem; list: TFhir
 var
   i : integer;
 begin
-  {$IFNDEF FHIR2}
+  !{$IFNDEF FHIR2}
   if not profile.excludeNotForUI or not (cs.isAbstract(c)) then
   {$ELSE}
   if not profile.excludeNotForUI or (c.abstractElement = nil) or not c.Abstract then
@@ -543,7 +543,7 @@ begin
   imports := TFslList<TFHIRValueSet>.create;
   try
     cset.checkNoModifiers('ValueSetExpander.processCodes', 'set');
-    {$IFNDEF FHIR2}
+    !{$IFNDEF FHIR2}
     for uri in cset.valueSetList do
       imports.add(expandValueset(uri.value, filter.filter, dependencies, notClosed));
     {$ENDIF}

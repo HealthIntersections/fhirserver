@@ -31,8 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, ZLib,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Json, FHIR.Web.Parsers, FHIR.Web.Fetcher,
+  SysUtils, Classes, ZLib, Generics.Collections,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Web.Parsers, FHIR.Web.Fetcher,
   FHIR.Base.Objects, FHIR.Base.Lang;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
@@ -51,6 +51,31 @@ function UrlPath(const parts : array of String) : String;
 function ZCompressBytes(const s: TBytes): TBytes;
 function ZDecompressBytes(const s: TBytes): TBytes;
 function TryZDecompressBytes(const s: TBytes): TBytes;
+function fullResourceUri(base: String; aType : string; id : String) : String; overload;
+function fullResourceUri(base: String; url : String) : String; overload;
+
+function hasProp(props : TArray<String>; name : String; def : boolean) : boolean;
+
+type
+  TResourceWithReference = class (TFslObject)
+  private
+    FReference: String;
+    FResource: TFHIRResourceV;
+    procedure SetResource(const Value: TFHIRResourceV);
+  public
+    Constructor Create(reference : String; resource : TFHIRResourceV);
+    Destructor Destroy; override;
+    property Reference : String read FReference write FReference;
+    property Resource : TFHIRResourceV read FResource write SetResource;
+  end;
+
+const
+  MIN_DATE = DATETIME_MIN;
+  MAX_DATE = DATETIME_MAX;
+
+function DetectFormat(oContent : TStream) : TFHIRFormat; overload;
+function DetectFormat(bytes : TBytes) : TFHIRFormat; overload;
+function DetectFormat(oContent : TFslBuffer) : TFHIRFormat; overload;
 
 
 implementation
@@ -132,7 +157,7 @@ Begin
   else if sName = '' then
     result := ffUnspecified
   else
-    raise ERestfulException.create('FHIR.Base.Objects.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, etStructure, 'Unknown format '+sName, lang);
+    raise ERestfulException.create('FHIR.Base.Objects.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, itStructure, 'Unknown format '+sName, lang);
 End;
 
 Function FhirGUIDToString(aGuid : TGuid):String;
@@ -294,5 +319,117 @@ begin
     StringArrayExistsSensitive(PF_CONST, url.Substring(20, 3));
 end;
 
+function hasProp(props : TArray<String>; name : String; def : boolean) : boolean;
+begin
+  if (props = nil) or (length(props) = 0) then
+    result := def
+  else
+    result := StringArrayExistsSensitive(props, name);
+end;
+
+
+{ TResourceWithReference }
+
+constructor TResourceWithReference.Create(reference: String; resource: TFHIRResourceV);
+begin
+  inherited Create;
+  self.Reference := reference;
+  self.Resource := resource;
+
+end;
+
+destructor TResourceWithReference.Destroy;
+begin
+  FResource.free;
+  inherited;
+end;
+
+procedure TResourceWithReference.SetResource(const Value: TFHIRResourceV);
+begin
+  FResource.free;
+  FResource := Value;
+end;
+
+function fullResourceUri(base: String; aType : string; id : String) : String;
+begin
+  if (base = 'urn:oid:') then
+  begin
+    if isOid(id) then
+      result := base+id
+    else
+      raise EFHIRException.create('The resource id "'+'" has a base of "urn:oid:" but is not a valid OID');
+  end
+  else if (base = 'urn:uuid:') then
+  begin
+    if isGuid(id) then
+      result := base+id
+    else
+      raise EFHIRException.create('The resource id "'+id+'" has a base of "urn:uuid:" but is not a valid UUID');
+  end
+  else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
+    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
+  else
+    result := AppendForwardSlash(base)+aType+'/'+id;
+end;
+
+function fullResourceUri(base: String; url : String) : String; overload;
+begin
+  if url = '' then
+    result := ''
+  else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
+    result := url
+  else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
+    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
+  else
+    result := AppendForwardSlash(base)+url;
+end;
+
+
+
+function DetectFormat(oContent : TStream) : TFHIRFormat; overload;
+var
+  i : integer;
+  s : AnsiString;
+begin
+  i := oContent.Position;
+  setlength(s, ocontent.Size - oContent.Position);
+  ocontent.Read(s[1], length(s));
+  oContent.Position := i;
+  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
+    result := ffXml
+  else if (pos('{', s) > 0) and ((pos('{', s) < 10)) then
+    result := ffJson
+  else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
+    result := ffTurtle
+  else
+    result := ffUnspecified;
+end;
+
+function DetectFormat(bytes : TBytes) : TFHIRFormat; overload;
+var
+  sa : AnsiString;
+  s : String;
+begin
+  setlength(sa, length(bytes));
+  move(bytes[0], sa[1], length(sa));
+  s := String(sa);
+  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
+    result := ffXml
+  else
+    result := ffJson;
+end;
+
+
+function DetectFormat(oContent : TFslBuffer) : TFHIRFormat; overload;
+var
+  s : String;
+begin
+  s := oContent.AsText;
+  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
+    result := ffXml
+  else
+    result := ffJson;
+
+end;
 
 end.

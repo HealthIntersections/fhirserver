@@ -35,7 +35,7 @@ uses
   FHIR.Support.Base,
   FHIR.Web.HtmlGen,
   FHIR.Base.Objects, FHIR.Version.Client,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Utilities, FHIR.R4.Factory;
 
 type
   TQuestionnaireRenderer = class (TFslObject)
@@ -156,7 +156,7 @@ function TQuestionnaireRenderer.render: String;
 var
   html : THtmlPublisher;
 begin
-  html := THtmlPublisher.create;
+  html := THtmlPublisher.create(TFHIRFactoryR4.create);
   try
     generate(html);
     result := html.output;

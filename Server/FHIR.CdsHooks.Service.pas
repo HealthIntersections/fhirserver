@@ -33,13 +33,13 @@ uses
   SysUtils, Classes,
   IdContext,
   FHIR.Support.Base, FHIR.Support.Json,
-  FHIR.Base.Lang,
-  FHIR.Server.Session, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.Base.Lang, FHIR.Base.Common,
+  FHIR.Server.Session,
   FHIR.CdsHooks.Utilities,
   FHIR.CdsHooks.Server, FHIR.Server.Context, FHIR.Server.Storage;
 
 type
-  TCDAHooksCodeViewService = class (TCDSHooksService)
+(*  TCDAHooksCodeViewService = class (TCDSHooksService)
   public
     function hook : string; override;
     function name : String; override;
@@ -47,10 +47,10 @@ type
 
     function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; override;
   end;
-
+*)
   TCDAHooksIdentifierViewService = class (TCDSHooksService)
   private
-    procedure addNamingSystemInfo(ns: TFHIRNamingSystem; baseURL : String; resp: TCDSHookResponse);
+    procedure addNamingSystemInfo(ns: TFHIRNamingSystemW; baseURL : String; resp: TCDSHookResponse);
     procedure addSystemCard(resp: TCDSHookResponse; name, publisher, responsible, type_, usage, realm: String);
   public
     function hook : string; override;
@@ -59,11 +59,11 @@ type
 
     function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; override;
   end;
-
+(*
   TCDAHooksPatientViewService = class (TCDSHooksService)
   private
-    function identifyPatient(engine : TFHIROperationEngine; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest; var needSecure : boolean) : TFHIRPatient;
-    function buildPatientView(server: TFHIRServerContext; engine : TFHIROperationEngine; base : String; secure : boolean; patient : TFHIRPatient; session : TFHIRSession) : TCDSHookResponse;
+    function identifyPatient(engine : TFHIROperationEngine; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest; var needSecure : boolean) : TFHIRPatientW;
+    function buildPatientView(server: TFHIRServerContext; engine : TFHIROperationEngine; base : String; secure : boolean; patient : TFHIRPatientW; session : TFHIRSession) : TCDSHookResponse;
   public
     function hook : string; override;
     function name : String; override;
@@ -85,14 +85,12 @@ type
 
     function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; override;
   end;
-
+*)
 implementation
 
-{$IFNDEF FHIR2}
-uses
-  FHIR.Server.HackingHealth;
-{$ENDIF}
-
+//uses
+//  FHIR.Server.HackingHealth;
+(*
 { TCDAHooksCodeViewService }
 
 function TCDAHooksCodeViewService.name: String;
@@ -107,8 +105,8 @@ end;
 
 function TCDAHooksCodeViewService.HandleRequest(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest): TCDSHookResponse;
 var
-  params: TFHIRParameters;
-  code : TFhirType;
+  params: TFHIRParametersW;
+  code : TFhirObject;
   card : TCDSHookCard;
 begin
   require((request.context.Count = 1) and (request.context[0] is TFhirParameters), 'Must have a single parameters resource as the context');
@@ -152,7 +150,7 @@ end;
 constructor TCDAHackingHealthOrderService.Create;
 begin
   inherited;
-  {$IFNDEF FHIR2}
+  !{$IFNDEF FHIR2}
   FEngines.add(THackingHealthBNPLogic);
   {$ENDIF}
 end;
@@ -213,7 +211,7 @@ begin
   raise EFHIRException.create('to do');
 
 (*
-{$IFNDEF FHIR2}
+!{$IFNDEF FHIR2}
    for res in request.context do
     begin
       if check(issues, res.ResourceType = frtProcedureRequest, 'Context resources must be a ProcedureRequest') then
@@ -282,12 +280,12 @@ begin
         b.Free;
       end;
       card.indicator := 'warning';
-    end; *)
+    end; *.)
   finally
     issues.Free;
   end;
 end;
-
+  *)
 { TCDAHooksIdentifierViewService }
 
 function TCDAHooksIdentifierViewService.description: String;
@@ -329,21 +327,22 @@ begin
 
 end;
 
-procedure TCDAHooksIdentifierViewService.addNamingSystemInfo(ns: TFHIRNamingSystem; baseURL : String; resp: TCDSHookResponse);
+procedure TCDAHooksIdentifierViewService.addNamingSystemInfo(ns: TFHIRNamingSystemW; baseURL : String; resp: TCDSHookResponse);
 var
   card : TCDSHookCard;
   b : TStringBuilder;
-  cp : TFhirNamingSystemContact;
-  {$IFNDEF FHIR2}
-  uc : TFhirUsageContext;
-  {$ENDIF}
-  cc : TFhirCodeableConcept;
+//  cp : TFhirNamingSystemContact;
+//  !{$IFNDEF FHIR2}
+//  uc : TFhirUsageContext;
+//  {$ENDIF}
+//  cc : TFhirCodeableConcept;
 begin
   card := resp.addCard;
   card.addLink('Further Detail', baseURL+'/open/NamingSystem/'+ns.id);
   b := TStringBuilder.Create;
   try
-    b.append('* Identifier System Name: '+ns.name+#13#10);
+    b.Append('todo');
+(*    b.append('* Identifier System Name: '+ns.name+#13#10);
     if ns.publisher <> '' then
       b.append('* Publisher: '+ns.publisher+#13#10);
     if ns.responsible <> '' then
@@ -355,10 +354,10 @@ begin
 
     b.append(#13#10);
 
-    if (ns.useContextList.Count > 0) {$IFNDEF FHIR2}or (ns.jurisdictionList.Count > 0){$ENDIF} then
+    if (ns.useContextList.Count > 0) !{$IFNDEF FHIR2}or (ns.jurisdictionList.Count > 0){$ENDIF} then
     begin
       b.Append('Contexts of Use'#13#10#13#10);
-      {$IFNDEF FHIR2}
+      !{$IFNDEF FHIR2}
       for uc in ns.useContextList do
         b.Append('* '+gen(uc.code)+':'+gen(uc.value)+#13#10);
       for cc in ns.jurisdictionList do
@@ -376,7 +375,8 @@ begin
       for cp in ns.contactList do
         b.Append('* '+cp.name+#13#10);
       b.append(#13#10);
-    end;
+    end;                       *)
+
     card.detail := b.ToString;
   finally
     b.Free;
@@ -385,52 +385,57 @@ end;
 
 function TCDAHooksIdentifierViewService.HandleRequest(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest): TCDSHookResponse;
 var
-  params: TFHIRParameters;
-  id : TFhirIdentifier;
-  systems : TFslList<TFHIRResource>;
+  params: TFHIRParametersW;
+//  id : TFhirIdentifier;
+//  systems : TFslList<TFHIRResource>;
   card : TCDSHookCard;
   engine : TFHIROperationEngine;
   needSecure: boolean;
-  r : TFhirResource;
+//  r : TFhirResource;
 begin
-  require((request.context.Count = 1) and (request.context[0] is TFhirParameters), 'Must have a single parameters resource as the context');
-  params := request.context[0] as TFhirParameters;
-  require(params.NamedParameter['identifier'] <> nil, 'No "identifier" parameter found');
-  require((params.NamedParameter['identifier'] is TFHIRIdentifier), '"identifier" parameter has wrong type '+params.NamedParameter['identifier'].fhirType);
-  id := params.NamedParameter['identifier'] as TFHIRIdentifier;
-  result := TCDSHookResponse.Create;
+  require((request.context.Count = 1) and (request.context[0].fhirType = 'Parameters'), 'Must have a single parameters resource as the context');
+  params := server.Factory.wrapParams(request.context[0]);
   try
-    if (id.type_ <> nil) then
-      server.TerminologyServer.getCodeView(request.Lang, id.type_, result);
+//    require(params.param('identifier') <> nil, 'No "identifier" parameter found');
+//    require((params.param('identifier').fhirType = 'Identifier', '"identifier" parameter has wrong type '+params.param('identifier').fhirType);
+//{    id := params.NamedParameter['identifier'] as TFHIRIdentifier;
+    result := TCDSHookResponse.Create;
+    try
+//      if (id.type_ <> nil) then
+//        server.TerminologyServer.getCodeView(request.Lang, id.type_, result);
+//
+//      if (id.system <> '') then
+//      begin
+//        engine := server.Storage.createOperationContext(request.lang);
+//        try
+//          systems := engine.getResourcesByParam(frtNamingSystem, 'value', id.system, needSecure);
+//          try
+//            for r in systems do
+//              addNamingSystemInfo(r as TFHIRNamingSystem, request.baseUrl, result);
+//          finally
+//            systems.Free;
+//          end;
+//
+//        finally
+//          server.Storage.Yield(engine, nil);
+//        end;
+//      end;
+//      }
+//      if (id.system = 'urn:ietf:rfc:3986') then
+//        addSystemCard(result, 'URI', '', 'W3C', '(any)', 'For when the identifier is any valid URI', '');
 
-    if (id.system <> '') then
-    begin
-      engine := server.Storage.createOperationContext(request.lang);
-      try
-        systems := engine.getResourcesByParam(frtNamingSystem, 'value', id.system, needSecure);
-        try
-          for r in systems do
-            addNamingSystemInfo(r as TFHIRNamingSystem, request.baseUrl, result);
-        finally
-          systems.Free;
-        end;
-
-      finally
-        server.Storage.Yield(engine, nil);
+      for card in result.cards do
+      begin
+        card.sourceLabel := server.Globals.OwnerName;
+        card.sourceURL := request.baseUrl;
+        card.indicator := 'info';
       end;
+      result.Link;
+    finally
+      result.Free;
     end;
-    if (id.system = 'urn:ietf:rfc:3986') then
-      addSystemCard(result, 'URI', '', 'W3C', '(any)', 'For when the identifier is any valid URI', '');
-
-    for card in result.cards do
-    begin
-      card.sourceLabel := server.OwnerName;
-      card.sourceURL := request.baseUrl;
-      card.indicator := 'info';
-    end;
-    result.Link;
   finally
-    result.Free;
+    params.free;
   end;
 end;
 
@@ -444,6 +449,7 @@ begin
   result := 'identifier-view';
 end;
 
+(*
 { TCDAHooksPatientViewService }
 
 function TCDAHooksPatientViewService.description: String;
@@ -538,7 +544,7 @@ begin
         matches.Free;
       end;
     end;
-  end; *)
+  end; *.)
 end;
 
 function TCDAHooksPatientViewService.buildPatientView(server: TFHIRServerContext; engine: TFHIROperationEngine; base : String; secure : boolean; patient: TFHIRPatient; session : TFHIRSession): TCDSHookResponse;
@@ -592,6 +598,8 @@ begin
     result.Free;
   end;
 end;
+
+*)
 
 end.
 

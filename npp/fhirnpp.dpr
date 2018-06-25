@@ -183,7 +183,10 @@ uses
   FHIR.R2.Operations in '..\reference-platform\dstu2\FHIR.R2.Operations.pas',
   FHIR.R2.OpBase in '..\reference-platform\dstu2\FHIR.R2.OpBase.pas',
   FHIR.Tools.CodeSystemProvider in '..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas',
-  FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas';
+  FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas',
+  FHIR.R3.AuthMap in '..\reference-platform\dstu3\FHIR.R3.AuthMap.pas',
+  FHIR.R2.AuthMap in '..\reference-platform\dstu2\FHIR.R2.AuthMap.pas',
+  FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas';
 
 {$R *.res}
 

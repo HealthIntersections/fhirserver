@@ -392,6 +392,7 @@
         <DCCReference Include="..\Libraries\ui\FHIR.Ui.Graph.pas"/>
         <DCCReference Include="..\Libraries\ui\FHIR.Tools.ObsGraph.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Threads.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.AuthMap.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

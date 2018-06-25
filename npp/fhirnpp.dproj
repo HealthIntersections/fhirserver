@@ -303,6 +303,9 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.OpBase.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ValueSets.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.AuthMap.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIR.R2.AuthMap.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.AuthMap.pas"/>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>

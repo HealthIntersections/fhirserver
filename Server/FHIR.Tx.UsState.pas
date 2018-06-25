@@ -36,7 +36,7 @@ uses
   FHIR.Support.Utilities,
   FHIR.Support.Base, FHIR.Support.Stream, 
   FHIR.Base.Common,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
+  FHIR.Tx.Service;
 
 type
   TUSStateConcept = class (TCodeSystemProviderContext)

@@ -33,19 +33,21 @@ interface
 
 uses
   SysUtils, Classes, FHIR.Support.Threads,
-  FHIR.Support.Base, 
-  FHIR.Version.Tags;
+  FHIR.Support.Base,
+  FHIR.Base.Factory,
+  FHIR.Server.Tags;
 
 type
   TFHIRTagManager = class (TFslObject)
   private
     FLock: TFslLock;
+    FFactory : TFHIRFactory;
     FTags: TFHIRTagList;
     FTagsByKey: TFslMap<TFHIRTag>;
     FLastTagVersionKey: integer;
     FLastTagKey: integer;
   public
-    constructor Create(); override;
+    constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
 
     property LastTagVersionKey: integer read FLastTagVersionKey write FLastTagVersionKey;
@@ -71,12 +73,13 @@ begin
   FTagsByKey.add(inttostr(FLastTagKey), tag.Link);
 end;
 
-constructor TFHIRTagManager.Create;
+constructor TFHIRTagManager.Create(factory : TFHIRFactory);
 begin
   inherited create;
   FLock := TFslLock.Create('session-manager');
-  FTags := TFHIRTagList.Create;
+  FTags := TFHIRTagList.Create(factory.link);
   FTagsByKey := TFslMap<TFHIRTag>.Create;
+  FFactory := factory;
 end;
 
 procedure TFHIRTagManager.crossLink;
@@ -94,6 +97,7 @@ end;
 
 destructor TFHIRTagManager.Destroy;
 begin
+  FFactory.Free;
   FTagsByKey.free;
   FTags.free;
   FLock.Free;

@@ -391,6 +391,7 @@ var
   ok : boolean;
   cnt : String;
   op : TFHIROperationOutcomeW;
+  iss : TFhirOperationOutcomeIssueW;
 begin
   indy.Request.ContentType := MIMETYPES_TFHIRFormat_Version[FClient.format, FCLient.version]+'; charset=utf-8';
   indy.Request.Accept := indy.Request.ContentType;
@@ -474,6 +475,9 @@ begin
               try
                 if (op.hasText) then
                   Raise EFHIRClientException.create(op.text, op.link)
+                else if (op.issueCount > 0) then
+                  for iss in op.issues.forEnum do
+                    Raise EFHIRClientException.create(iss.display, op.link)
                 else
                   raise EFHIRException.create(cnt)
               finally

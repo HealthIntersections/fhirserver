@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  FHIR.Support.Utilities;
+  FHIR.Support.Base, FHIR.Support.Utilities;
 
 function DescribeOID(oid : String) : String;
 procedure ReadOids(ts : TStringList);
@@ -40,7 +40,7 @@ procedure ReadOids(ts : TStringList);
 implementation
 
 var
-  cache : TDictionary<String, String>;
+  cache : TFslStringDictionary;
 
 procedure load;
 var
@@ -72,7 +72,7 @@ end;
 
 procedure start;
 begin
-  cache := TDictionary<String, String>.create;
+  cache := TFslStringDictionary.create;
 end;
 
 procedure stop;

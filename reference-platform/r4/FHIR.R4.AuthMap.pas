@@ -32,17 +32,13 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  FHIR.Base.Common,
   FHIR.R4.Resources;
-
-type
-    TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcMedicationDefinition, tcOther);
-
-const
-  CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
 
 // categories for web login
 // tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther
 
+const
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
     tcOther , // frtNull,

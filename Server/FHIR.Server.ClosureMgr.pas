@@ -36,7 +36,7 @@ Uses
   FHIR.Support.Utilities, FHIR.Support.Threads,
   FHIR.Support.Base, 
   FHIR.Database.Manager,
-  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities,
+  FHIR.Base.Common,
   FHIR.Tx.Manager;
 
 Type
@@ -66,8 +66,8 @@ Type
     FLock : TFslLock;
     FVersion : integer;
     function GetConceptKey(conn : TKDBConnection; uri, code : String) : integer;
-    procedure processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMap);
-    function getGroup(map: TFHIRConceptMap; source, target: String): TFHIRConceptMapGroup;
+    procedure processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMapW);
+    function getGroup(map: TFHIRConceptMapW; source, target: String): TFHIRConceptMapGroupW;
   public
     Constructor Create(name : String; key, version : integer; store : TTerminologyServerStore);
     Destructor Destroy; override;
@@ -83,9 +83,9 @@ Type
     procedure processEntry(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code: String);
 
     // this is the inline variant; subsumption is determined immediately
-    procedure processConcepts(conn: TKDBConnection; codings : TFslList<TFHIRCoding>; map : TFHIRConceptMap);
+    procedure processConcepts(conn: TKDBConnection; codings : TFslList<TFHIRCodingW>; map : TFHIRConceptMapW);
 
-    procedure reRun(conn: TKDBConnection; map : TFHIRConceptMap; version : integer);
+    procedure reRun(conn: TKDBConnection; map : TFHIRConceptMapW; version : integer);
   end;
 
 implementation
@@ -159,9 +159,9 @@ begin
   end;
 end;
 
-procedure TClosureManager.processConcepts(conn: TKDBConnection; codings : TFslList<TFHIRCoding>; map : TFHIRConceptMap);
+procedure TClosureManager.processConcepts(conn: TKDBConnection; codings : TFslList<TFHIRCodingW>; map : TFHIRConceptMapW);
 var
-  coding : TFHIRCoding;
+  coding : TFHIRCodingW;
   ck, cek : integer;
 begin
   FLock.Lock;
@@ -187,13 +187,13 @@ begin
   end;
 end;
 
-procedure TClosureManager.processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMap);
+procedure TClosureManager.processEntryInternal(conn: TKDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String; map : TFHIRConceptMapW);
 var
   matches : TFslList<TSubsumptionMatch>;
   match : TSubsumptionMatch;
-  group, g : TFhirConceptMapGroup;
-  element, e : TFhirConceptMapGroupElement;
-  target, t : TFhirConceptMapGroupElementTarget;
+  group, g : TFhirConceptMapGroupW;
+  element, e : TFhirConceptMapGroupElementW;
+  target, t : TFhirConceptMapGroupElementTargetW;
 begin
   group := nil;
   matches := TFslList<TSubsumptionMatch>.create;
@@ -223,44 +223,26 @@ begin
         if (map <> nil) then
         begin
           element := nil;
-          {$IFDEF FHIR2}
-            for e in g.elementList do
-              if (e.system = match.uriSrc) and (e.code = match.codeSrc) then
-          {$ELSE}
-          for g in map.groupList do
-            for e in g.elementList do
+          for g in map.groups.forEnum do
+            for e in g.elements.forEnum do
               if (g.source = match.uriSrc) and (e.code = match.codeSrc) then
-          {$ENDIF}
               begin
                 group := g;
                 element := e;
               end;
           target := nil;
           if (element <> nil) then
-            for t in element.targetList do
-              {$IFDEF FHIR2}
-              if (t.system = match.uriTgt) and (t.code = match.codeTgt) then
-              {$ELSE}
+            for t in element.targets.forEnum do
               if (group.target = match.uriTgt) and (t.code = match.codeTgt) then
-              {$ENDIF}
                 target := t;
           if (target = nil) then
           begin
             if element = nil then
             begin
               group := getGroup(map, match.uriSrc, match.uritgt);
-              element := group.elementList.Append;
-              {$IFDEF FHIR2}
-              element.system := match.uriSrc;
-              {$ENDIF}
-              element.code := match.codeSrc;
+              element := group.addElement(match.codeSrc);
             end;
-            target := element.targetList.Append;
-            {$IFDEF FHIR2}
-            target.system := match.uriTgt;
-            {$ENDIF}
-            target.code := match.codetgt;
-            target.equivalence := ConceptMapEquivalenceSpecializes;
+            target := element.addTarget(match.codetgt, cmeSpecializes);
           end;
         end;
       end;
@@ -270,31 +252,24 @@ begin
   end;
 end;
 
-function TClosureManager.getGroup(map: TFHIRConceptMap; source, target: String): TFHIRConceptMapGroup;
+function TClosureManager.getGroup(map: TFHIRConceptMapW; source, target: String): TFhirConceptMapGroupW;
 var
-  g : TFHIRConceptMapGroup;
+  g : TFhirConceptMapGroupW;
 begin
-  {$IFDEF FHIR2}
-    result := map;
-  {$ELSE}
-  for g in map.groupList do
+  for g in map.groups.forEnum do
     if (g.source = source) and (g.target = target) then
-      exit(g);
-  g := map.groupList.Append;
-  g.source := source;
-  g.target := target;
-  exit(g);
-  {$ENDIF}
+      exit(g.link);
+  result := map.addGroup(source, target);
 end;
 
-procedure TClosureManager.reRun(conn: TKDBConnection; map: TFHIRConceptMap; version: integer);
+procedure TClosureManager.reRun(conn: TKDBConnection; map: TFHIRConceptMapW; version: integer);
 var
   key : String;
-  elements : TFslMap<TFhirConceptMapGroupElement>;
-  element : TFhirConceptMapGroupElement;
-  target : TFhirConceptMapGroupElementTarget;
+  elements : TFslMap<TFhirConceptMapGroupElementW>;
+  element : TFhirConceptMapGroupElementW;
+  target : TFhirConceptMapGroupElementTargetW;
 begin
-  elements := TFslMap<TFhirConceptMapGroupElement>.create;
+  elements := TFslMap<TFhirConceptMapGroupElementW>.create;
   try
     conn.SQL := 'Select ClosureEntryKey, src.URL as UrlSrc, src.Code as CodeSrc, tgt.URL as UrlTgt, tgt.Code as CodeTgt '+
        'from ClosureEntries, Concepts as src, Concepts as tgt '+
@@ -308,18 +283,13 @@ begin
         element := elements[key]
       else
       begin
-        element := getGroup(map, conn.ColStringByName['UrlSrc'], conn.ColStringByName['UrlTgt']).elementList.Append;
-        {$IFDEF FHIR2}
-        element.system := conn.ColStringByName['UrlSrc'];
-        {$ENDIF}
-        elements.Add(key, element.link);
-        element.code := conn.ColStringByName['CodeSrc'];
-        target := element.targetList.Append;
-        {$IFDEF FHIR2}
-        target.system := conn.ColStringByName['UrlTgt'];
-        {$ENDIF}
-        target.code := conn.ColStringByName['CodeTgt'];
-        target.equivalence := ConceptMapEquivalenceSubsumes;
+        element := getGroup(map, conn.ColStringByName['UrlSrc'], conn.ColStringByName['UrlTgt']).addElement(conn.ColStringByName['CodeSrc']);
+        try
+          elements.Add(key, element.link);
+          element.addTarget(conn.ColStringByName['CodeTgt'], cmeSubsumes).Free;
+        finally
+          element.Free;
+        end;
       end;
     end;
     conn.terminate;

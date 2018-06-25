@@ -1205,17 +1205,17 @@ Type
 
   // The degree of equivalence between concepts. from http://hl7.org/fhir/ValueSet/concept-map-equivalence
   TFhirConceptMapEquivalenceEnum = (
-    ConceptMapEquivalenceNull, // Value is missing from Instance 
-    ConceptMapEquivalenceRelatedto, 
-    ConceptMapEquivalenceEquivalent, 
-    ConceptMapEquivalenceEqual, 
-    ConceptMapEquivalenceWider, 
-    ConceptMapEquivalenceSubsumes, 
-    ConceptMapEquivalenceNarrower, 
-    ConceptMapEquivalenceSpecializes, 
-    ConceptMapEquivalenceInexact, 
-    ConceptMapEquivalenceUnmatched, 
-    ConceptMapEquivalenceDisjoint); 
+    ConceptMapEquivalenceNull, // Value is missing from Instance
+    ConceptMapEquivalenceRelatedto,
+    ConceptMapEquivalenceEquivalent,
+    ConceptMapEquivalenceEqual,
+    ConceptMapEquivalenceWider,
+    ConceptMapEquivalenceSubsumes,
+    ConceptMapEquivalenceNarrower,
+    ConceptMapEquivalenceSpecializes,
+    ConceptMapEquivalenceInexact,
+    ConceptMapEquivalenceUnmatched,
+    ConceptMapEquivalenceDisjoint);
   TFhirConceptMapEquivalenceEnumList = set of TFhirConceptMapEquivalenceEnum;
 
   // Defines which action to take if there is no match in the group. from http://hl7.org/fhir/ValueSet/conceptmap-unmapped-mode
@@ -3004,6 +3004,7 @@ Type
     Function Link : TFhirType; Overload;
     Function Clone : TFhirType; Overload;
     Function isType : boolean; Override;
+    function toString : String; override;
   End;
   TFHIRTypeClass = class of TFhirType;
   
@@ -13342,6 +13343,11 @@ end;
 function TFhirType.Link : TFhirType;
 begin
   result := TFhirType(inherited Link);
+end;
+
+function TFhirType.toString: String;
+begin
+  result := gen(self);
 end;
 
 function TFhirType.isType : boolean;

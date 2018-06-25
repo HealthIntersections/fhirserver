@@ -32,9 +32,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-   FHIR.Support.Base, 
-  FHIR.Base.Common,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations,
+  FHIR.Support.Base,
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
 
@@ -72,6 +71,7 @@ type
   public
     constructor Create(isDefault : boolean; filename : String);
     destructor Destroy; override;
+    function link : TICD10Provider; overload;
 
     Property Title : String read FTitle;
 
@@ -106,7 +106,7 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
 
     function SpecialEnumeration : String; override;
@@ -259,21 +259,20 @@ begin
   result := false;
 end;
 
-procedure TICD10Provider.extendLookup(ctxt: TCodeSystemProviderContext; lang: String; props: TList<String>; resp: TFHIRLookupOpResponseW);
-{$IFNDEF FHIR2}
+procedure TICD10Provider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang: String; props : TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   p : TFHIRLookupOpRespPropertyW;
-{$ENDIF}
 begin
-{$IFNDEF FHIR2}
-  resp.version := FVersion;
-  if TICD10Node(ctxt).FDisplay <> '' then
+  if factory.version <> fhirVersionRelease2 then
   begin
-    resp.addDesignation('en', TICD10Node(ctxt).FDisplay);
+    resp.version := FVersion;
+    if TICD10Node(ctxt).FDisplay <> '' then
+    begin
+      resp.addDesignation('en', TICD10Node(ctxt).FDisplay);
+    end;
+    p := resp.addProp('descendents');
+    p.value := factory.makeInteger(inttostr(TICD10Node(ctxt).FDescendentCount));
   end;
-  p := resp.addProp('descendents');
-  p.value := TFHIRInteger.Create(inttostr(TICD10Node(ctxt).FDescendentCount));
-{$ENDIF}
 end;
 
 function TICD10Provider.filter(prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
@@ -362,6 +361,11 @@ begin
     if c.FCode = code then
       exit(c);
   message := 'Code "'+code+'" not found';
+end;
+
+function TICD10Provider.link: TICD10Provider;
+begin
+  result := TICD10Provider(Inherited Link);
 end;
 
 procedure TICD10Provider.load(filename: String);

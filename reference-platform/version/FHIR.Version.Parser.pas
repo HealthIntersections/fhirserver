@@ -79,74 +79,8 @@ Type
   TFHIRParsers = TFHIRParsers4;
   {$ENDIF}
 
-  TFHIRNDJsonComposer = class (TFHIRComposer)
-  protected
-    function GetFormat: TFHIRFormat; override;
-  public
-    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
-    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload; override;
-  end;
-
 
 implementation
-
-{ TFHIRNDJsonComposer }
-
-procedure TFHIRNDJsonComposer.Compose(stream: TStream; oResource: TFhirResourceV);
-var
-  oStream : TFslVCLStream;
-  json : TFHIRJsonComposer;
-  be : TFhirBundleEntry;
-  first : boolean;
-  ch : char;
-  res : TFHIRResource;
-begin
-  res := oResource as TFHIRResource;
-  ch := #10;
-  if res.ResourceType = frtBundle then
-  begin
-    first := true;
-    for be in TFHIRBundle(oResource).entryList do
-    begin
-      if first then
-        first := false
-      else
-        stream.Write(ch, 1);
-      if be.resource <> nil then
-      begin
-        json := TFHIRJsonComposer.Create(FWorker.link, OutputStyleNormal, lang);
-        try
-          json.Compose(stream, be.resource);
-        finally
-          json.Free;
-        end;
-      end
-      else if be.tag is TFslBuffer then
-      begin
-        TFslBuffer(be.tag).SaveToStream(stream);
-      end;
-    end;
-  end
-  else
-  begin
-    json := TFHIRJsonComposer.Create(FWorker.link, OutputStyleNormal, lang);
-    try
-      json.Compose(stream, oResource);
-    finally
-      json.Free;
-    end;
-  end;
-end;
-
-procedure TFHIRNDJsonComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
-begin
-  raise EFHIRException.create('Not done yet');
-end;
-
-function TFHIRNDJsonComposer.GetFormat: TFHIRFormat;
-begin
-  result := ffNDJson;
-end;
 
 end.
 

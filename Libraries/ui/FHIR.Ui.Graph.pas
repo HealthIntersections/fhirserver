@@ -148,7 +148,7 @@ type
     // data  count: the number of point that are not errors
     function dataCount : integer; virtual; abstract;
 
-    function getPoint( i : integer) : TFGraphDataPoint; virtual; abstract;  // must be ordered by x
+    function getPoint(i : integer) : TFGraphDataPoint; virtual; abstract;  // must be ordered by x
     procedure prepare; virtual; abstract;
     function getMinXValue : Double; virtual; abstract;
     function getMaxXValue : Double; virtual; abstract;
@@ -6563,6 +6563,7 @@ begin
   y2 := NO_VALUE;
   xe := NO_VALUE;
   ye := NO_VALUE;
+  error := '';
 end;
 
 { TFGraphBand }

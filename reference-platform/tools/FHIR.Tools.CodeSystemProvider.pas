@@ -32,9 +32,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
-   FHIR.Support.Base, FHIR.Support.Collections,
-  FHIR.Base.Objects,
-  FHIR.Tx.Service, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Lang, FHIR.Base.Factory;
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common, FHIR.CdsHooks.Utilities, FHIR.Base.Lang,
+  FHIR.Tx.Service;
 
 type
   TConceptAdornment = class (TFslStringList)
@@ -149,7 +149,7 @@ type
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
   end;
 
@@ -639,15 +639,15 @@ begin
     result := TFhirCodeSystemProviderContext.Create(c.Link);
 end;
 
-function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
+function hasProp(props : TArray<String>; name : String; def : boolean) : boolean;
 begin
-  if (props = nil) or (props.Count = 0) then
+  if (props = nil) or (length(props) = 0) then
     result := def
   else
-    result := props.Contains(name);
+    result := StringArrayExistsSensitive(props, name);
 end;
 
-procedure TFhirCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponseW);
+procedure TFhirCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   concepts : TFslList<TFhirCodeSystemConceptW>;
   cc, context : TFhirCodeSystemConceptW;

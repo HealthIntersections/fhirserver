@@ -50,15 +50,14 @@ uses
   FHIR.Database.Manager, FHIR.Database.Dialects,
   FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, FHIR.Web.Socket, IdText, IdAttachment, IdPop3, IdMessageParts,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities,
-  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Constants, FHIR.Version.Utilities, FHIR.Version.Client, FHIR.Version.PathNode,
-  FHIR.Server.Session, FHIR.Server.Indexing, FHIR.Server.Utilities, FHIR.Version.Parser, FHIR.Base.Parser, FHIR.Version.PathEngine, FHIR.Version.Context, FHIR.Support.Logging;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
+  FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Base.Parser, FHIR.Support.Logging;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
 
 Type
-  TSubscriptionOperation = (subscriptionCreate, subscriptionUpdate, subscriptionDelete);
+  TFHIRSubscriptionWOperation = (subscriptionCreate, subscriptionUpdate, subscriptionDelete);
 
   TFHIRIdAttachment = class (TIdAttachment)
   private
@@ -72,7 +71,7 @@ Type
     procedure FinishTempStream; override;
   end;
 
-  TSubscriptionTracker = class (TFslObject)
+  TFHIRSubscriptionTracker = class (TFslObject)
   private
     FKey: Integer;
     FErrorCount: Integer;
@@ -102,77 +101,71 @@ Type
     property Queue : TFslList<TFslBuffer> read FQueue;
   end;
 
-  TSubscriptionTrackerList = class (TFslObjectList)
+  TFHIRSubscriptionTrackerList = class (TFslObjectList)
   private
-    function GetTracker(i: integer): TSubscriptionTracker;
+    function GetTracker(i: integer): TFHIRSubscriptionTracker;
   protected
     function ItemClass : TFslObjectClass; override;
   public
-    procedure addOrUpdate(Key : integer; info : String; status : TFhirSubscriptionStatusEnum); overload;
-    function getByKey(Key : integer) : TSubscriptionTracker;
-    property TrackerItem[i : integer] : TSubscriptionTracker read GetTracker; default;
+    procedure addOrUpdate(Key : integer; info : String; status : TSubscriptionStatus); overload;
+    function getByKey(Key : integer) : TFHIRSubscriptionTracker;
+    property TrackerItem[i : integer] : TFHIRSubscriptionTracker read GetTracker; default;
   end;
 
-  TSubscriptionEntry = class (TFslObject)
+  TEventDefinition = class (TFslObject)
   private
-    FSubscription : TFhirSubscription;
+    FResource: TFHIRResourceV;
+    FId: String;
+    FUrl: String;
+    procedure SetResource(const Value: TFHIRResourceV);
+  public
+    destructor Destroy; override;
+    function link : TEventDefinition;
+    property id : String read FId write FId;
+    property url : String read FUrl write FUrl;
+    property resource : TFHIRResourceV read FResource write SetResource;
+  end;
+
+  TFHIRSubscriptionEntry = class (TFslObject)
+  private
+    FSubscription : TFHIRSubscriptionW;
     FKey : Integer;
     FResourceType: Integer;
     FId: String;
-    procedure SetSubscription(const Value: TFhirSubscription);
+    procedure SeTFHIRSubscriptionW(const Value: TFHIRSubscriptionW);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
     Property Key : integer read FKey write FKey;
     Property Id : String read FId write FId;
     Property ResourceType : Integer read FResourceType write FResourceType;
-    Property Subscription : TFhirSubscription read FSubscription write SetSubscription;
+    Property Subscription : TFHIRSubscriptionW read FSubscription write SeTFHIRSubscriptionW;
   end;
 
-  TSubscriptionEntryList = class (TFslObjectList)
+  TFHIRSubscriptionEntryList = class (TFslObjectList)
   private
-    function GetEntry(i: integer): TSubscriptionEntry;
+    function GetEntry(i: integer): TFHIRSubscriptionEntry;
   protected
     function ItemClass : TFslObjectClass; override;
   public
-    procedure add(Key, ResourceType : Integer; id : String; Subscription : TFhirSubscription); overload;
-    function getByKey(Key : integer) : TSubscriptionEntry;
-    property EntryItem[i : integer] : TSubscriptionEntry read GetEntry; default;
+    procedure add(Key, ResourceType : Integer; id : String; Subscription : TFHIRSubscriptionW); overload;
+    function getByKey(Key : integer) : TFHIRSubscriptionEntry;
+    property EntryItem[i : integer] : TFHIRSubscriptionEntry read GetEntry; default;
   end;
 
   TGetSessionEvent = function (userkey : Integer) : TFhirSession of object;
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
   TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : TParseMap; conn : TKDBConnection): String of object;
 
-  TSubscriptionManager = class (TFHIRServerWorker)
+  TSubscriptionManager = class abstract (TFHIRServerWorker)
   private
-    FLock : TFslLock;
-    FSubscriptions : TSubscriptionEntryList;
-    {$IFDEF FHIR4}
-    FEventDefinitions : TFslMap<TFHIREventDefinition>;
-    {$ENDIF}
-    FSubscriptionTrackers  : TSubscriptionTrackerList;
+    FSubscriptions : TFHIRSubscriptionEntryList;
+    FSubscriptionTrackers  : TFHIRSubscriptionTrackerList;
     FLastSubscriptionKey, FLastNotificationQueueKey, FLastWebSocketKey : integer;
     FDatabase: TKDBManager;
     EmptyQueue : boolean;
-    FSMTPPort: String;
-    FSMTPPassword: String;
-    FSMTPHost: String;
-    FSMTPSender: String;
-    FSMTPUsername: String;
-    FDirectPort: String;
-    FDirectPassword: String;
-    FDirectHost: String;
-    FDirectSender: String;
-    FDirectUsername: String;
-    FDirectPopHost : String;
-    FDirectPopPort : String;
     FOnExecuteOperation : TExecuteOperationEvent;
     FOnExecuteSearch : TExecuteSearchEvent;
-    FSMTPUseTLS: boolean;
-    FSMSFrom: String;
-    FSMSToken: String;
-    FSMSAccount: String;
     FBase : String;
     FOnGetSessionEvent: TGetSessionEvent;
     FLastPopCheck : TDateTime;
@@ -180,8 +173,8 @@ Type
     FCloseAll : boolean;
     FSemaphores : TFslMap<TWebSocketQueueInfo>;
 
-    fpp : TFHIRPathParser;
-    fpe : TFHIRPathEngine;
+    function settings : TFHIRServerSettings;
+    function factory : TFHIRFactory;
     function wsWait(id : String) : boolean;
     function wsConnect(id : String; persistent : boolean) : boolean;
     procedure wsDisconnect(id : String);
@@ -189,87 +182,73 @@ Type
     procedure wsWake(id : String);
     function wsPersists(id : String; b : TBytes) : boolean;
 
-//    procedure go(id : String; content : TFslBuffer);
-//    procedure goAll;
-//    procedure done(id : String);
-
     function chooseSMTPPort(direct : boolean): String;
     function chooseSMTPPassword(direct : boolean): String;
     function chooseSMTPHost(direct : boolean): String;
     function chooseSMTPSender(direct : boolean): String;
     function chooseSMTPUsername(direct : boolean): String;
 
-//    FMessageQueue : TNotification;
-    {$IFDEF FHIR4}
-    function getEventDefinition(subscription : TFhirSubscription) : TFhirEventDefinition;
-    function MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TKDBConnection) : boolean;
-    {$ENDIF}
     function determineResourceTypeKey(criteria : String; conn : TKDBConnection) : integer;
-    procedure checkAcceptable(subscription : TFhirSubscription; session : TFHIRSession);
-    procedure SeeNewSubscription(key : Integer; id : String; subscription : TFhirSubscription; session : TFHIRSession; conn : TKDBConnection);
+    procedure SeeNewSubscription(key : Integer; id : String; subscription : TFHIRResourceV; session : TFHIRSession; conn : TKDBConnection);
     function ProcessSubscription(conn : TKDBConnection): Boolean;
     function ProcessNotification(conn : TKDBConnection): Boolean;
-    function preparePackage(userkey : integer; created : boolean; subscription : TFhirSubscription; resource : TFHIRResource) : TFHIRResource;
-    function MeetsCriteria(subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TKDBConnection) : boolean;
-    function MeetsCriteriaSearch(criteria : String; typekey, key : integer; conn : TKDBConnection) : boolean;
     procedure createNotification(vkey, skey : integer; created : boolean; conn : TKDBConnection);
-    function LoadResourceFromDBByKey(conn : TKDBConnection; key: integer; var userkey : integer) : TFhirResource;
-    function LoadResourceFromDBByVer(conn : TKDBConnection; vkey: integer; var id : String) : TFhirResource;
+    function LoadResourceFromDBByKey(conn : TKDBConnection; key: integer; var userkey : integer) : TFhirResourceV;
 
-    procedure doSendEmail(subst : TFhirSubscription; resource : TFHIRResource; dest : String; direct : boolean);  overload;
+    procedure doSendEmail(subst : TFHIRSubscriptionW; resource : TFHIRResourceV; dest : String; direct : boolean);  overload;
     procedure sendDirectResponse(id, address, message: String; ok: boolean);
     procedure processReportDeliveryMessage(id : string; txt : String; details : TStringList);
     procedure processReportDeliveryNotification(id : string; txt : String; details : TStringList);
     procedure processDirectMessage(txt, ct : String; res : TBytesStream);
     procedure processIncomingDirectMessage(msg : TIdMessage);
 
-    procedure sendByRest(id : String; subst : TFhirSubscription; package : TFHIRResource);
-    procedure sendByEmail(id : String; subst : TFhirSubscription; package : TFHIRResource);  overload;
-    procedure sendBySms(id : String; subst : TFhirSubscription; package : TFHIRResource);
-    procedure sendByWebSocket(conn : TKDBConnection; id : String; subst : TFhirSubscription; package : TFHIRResource);
-    procedure processByScript(conn : TKDBConnection; id : String; subst : TFhirSubscription; package : TFHIRResource);
+    procedure sendByRest(id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
+    procedure sendByEmail(id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);  overload;
+    procedure sendBySms(id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
+    procedure sendByWebSocket(conn : TKDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
+    procedure processByScript(conn : TKDBConnection; id : String; subst : TFHIRSubscriptionW; package : TFHIRResourceV);
 
-    procedure saveTags(conn : TKDBConnection; ResourceKey : integer; res : TFHIRResource);
+    procedure saveTags(conn : TKDBConnection; ResourceKey : integer; res : TFHIRResourceV);
     procedure NotifySuccess(userkey, SubscriptionKey : integer);
     procedure NotifyFailure(userkey, SubscriptionKey : integer; message : string);
     procedure DoDropResource(key, vkey, pvkey : Integer; internal : boolean);
-    function getSummaryForChannel(subst : TFhirSubscription) : String;
-    procedure ApplyUpdateToResource(userkey : integer; id : String; resource : TFhirResource);
     procedure HandleWebSocketBind(id: String; connection: TIdWebSocket);
     procedure HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
     function checkForClose(connection: TIdWebSocket; id : String; worked: boolean): boolean;
+    procedure ApplyUpdateToResource(userkey : integer; id : String; resource : TFhirResourceV);
+    procedure checkSaveTags(subst : TFHIRSubscriptionW; conn : TKDBConnection; key : integer; res : TFHIRResourceV);
+  protected
+    FLock : TFslLock;
+    FEventDefinitions : TFslMap<TEventDefinition>;
+    function MeetsCriteriaSearch(criteria : String; typekey, key : integer; conn : TKDBConnection) : boolean;
+    function LoadResourceFromDBByVer(conn : TKDBConnection; vkey: integer; var id : String) : TFhirResourceV;
+
+    procedure checkAcceptable(subscription : TFHIRSubscriptionW; session : TFHIRSession); virtual; abstract;
+    function makeSubscription(resource : TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
+    function preparePackage(userkey : integer; created : boolean; subscription : TFHIRSubscriptionW; resource : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
+    function MeetsCriteria(subscription : TFHIRSubscriptionW; typekey, key, ResourceVersionKey, ResourcePreviousKey : integer; conn : TKDBConnection) : boolean; virtual; abstract;
+    function checkSubscription(subscription: TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
+    function loadEventDefinition(res : TFHIRResourceV) : TEventDefinition; virtual; abstract;
+    function loadSubscription(res : TFHIRResourceV) : TFHIRSubscriptionW; virtual; abstract;
+    function bundleIsTransaction(res : TFHIRResourceV) : boolean; virtual; abstract;
+    function processUrlTemplate(url : String; resource : TFhirResourceV) : String; virtual; abstract;
+    // function getSummaryForChannel(subst : TFHIRSubscriptionW) : String; virtual; abstract;
   public
     Constructor Create(ServerContext : TFslObject);
     Destructor Destroy; Override;
 
     procedure loadQueue(conn : TKDBConnection);
-    procedure SeeResource(key, vkey, pvkey : Integer; id : String; op : TSubscriptionOperation; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFHIRSession);
+    procedure SeeResource(key, vkey, pvkey : Integer; id : String; op : TFHIRSubscriptionWOperation; resource : TFHIRResourceV; conn : TKDBConnection; reload : boolean; session : TFHIRSession);
     procedure DropResource(key, vkey, pvkey : Integer);
     procedure Process; // spend up to 30 seconds working on subscriptions
     procedure ProcessEmails; // on a separate thread to Process
     procedure HandleWebSocket(connection : TIdWebSocket);
 
-    procedure sendByEmail(resource : TFHIRResource; dest : String; direct : boolean); overload;
+    procedure sendByEmail(resource : TFHIRResourceV; dest : String; direct : boolean); overload;
 
     Property Database : TKDBManager read FDatabase write FDatabase;
 
     Property Base : String read FBase write FBase;
-    Property SMTPHost : String read FSMTPHost write FSMTPHost;
-    Property SMTPPort : String read FSMTPPort write FSMTPPort;
-    Property SMTPUsername : String read FSMTPUsername write FSMTPUsername;
-    Property SMTPPassword : String read FSMTPPassword write FSMTPPassword;
-    Property SMTPSender : String read FSMTPSender write FSMTPSender;
-    Property SMTPUseTLS : boolean read FSMTPUseTLS write FSMTPUseTLS;
-    Property DirectHost : String read FDirectHost write FDirectHost;
-    Property DirectPort : String read FDirectPort write FDirectPort;
-    Property DirectUsername : String read FDirectUsername write FDirectUsername;
-    Property DirectPassword : String read FDirectPassword write FDirectPassword;
-    Property DirectSender : String read FDirectSender write FDirectSender;
-    Property SMSAccount : String read FSMSAccount write FSMSAccount;
-    Property SMSToken : String read FSMSToken write FSMSToken;
-    Property SMSFrom : String read FSMSFrom write FSMSFrom;
-    property DirectPopHost : String read FDirectPopHost write FDirectPopHost;
-    property DirectPopPort : String read FDirectPopPort write FDirectPopPort;
     Property OnExecuteOperation : TExecuteOperationEvent read FOnExecuteOperation write FOnExecuteOperation;
     Property OnExecuteSearch : TExecuteSearchEvent read FOnExecuteSearch write FOnExecuteSearch;
     Property OnGetSessionEvent : TGetSessionEvent read FOnGetSessionEvent write FOnGetSessionEvent;
@@ -285,28 +264,20 @@ uses
 
 constructor TSubscriptionManager.Create(ServerContext : TFslObject);
 begin
-  inherited Create(TFHIRServerContext(ServerContext));
+  inherited Create(ServerContext as TFHIRServerContext);
   FLock := TFslLock.Create('Subscriptions');
-  FSubscriptions := TSubscriptionEntryList.Create;
-  FSubscriptionTrackers := TSubscriptionTrackerList.Create;
+  FSubscriptions := TFHIRSubscriptionEntryList.Create;
+  FSubscriptionTrackers := TFHIRSubscriptionTrackerList.Create;
   FSemaphores := TFslMap<TWebSocketQueueInfo>.Create;
-  fpp := TFHIRPathParser.create;
-  fpe := TFHIRPathEngine.Create(TFHIRServerContext(ServerContext).ValidatorContext.Link, nil);
   FCloseAll := false;
   FLastPopCheck := 0;
-  {$IFDEF FHIR4}
-  FEventDefinitions := TFslMap<TFHIREventDefinition>.create;
-  {$ENDIF}
+  FEventDefinitions := TFslMap<TEventDefinition>.create;
 end;
 
 destructor TSubscriptionManager.Destroy;
 begin
-  fpe.Free;
-  fpp.Free;
   wsWakeAll;
-  {$IFDEF FHIR4}
   FEventDefinitions.Free;
-  {$ENDIF}
   FSemaphores.Free;
   FSubscriptionTrackers.Free;
   FSubscriptions.Free;
@@ -315,17 +286,15 @@ begin
   inherited;
 end;
 
-
-// , TFHIRServerContext(ServerContext).ValidatorContext.link, TFHIRServerContext(ServerContext).Indexes.Compartments.Link
-procedure TSubscriptionManager.ApplyUpdateToResource(userkey : integer; id: String; resource: TFhirResource);
+procedure TSubscriptionManager.ApplyUpdateToResource(userkey : integer; id: String; resource: TFhirResourceV);
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
   request := TFHIRRequest.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, roSubscription, TFHIRServerContext(ServerContext).Indexes.Compartments.Link);
-  response := TFHIRResponse.Create;
+  response := TFHIRResponse.Create(TFHIRServerContext(ServerContext).ValidatorContext.link);
   try
-    request.internalRequestId := TFHIRServerContext(ServerContext).nextRequestId;
+    request.internalRequestId := TFHIRServerContext(ServerContext).Globals.nextRequestId;
     request.Id := id;
     request.Session := OnGetSessionEvent(userkey);
     request.Resource := resource.Link;
@@ -337,87 +306,6 @@ begin
   finally
     request.Free;
     response.Free;
-  end;
-end;
-
-procedure TSubscriptionManager.checkAcceptable(subscription: TFhirSubscription; session: TFHIRSession);
-var
-  ts : TStringList;
-{$IFDEF FHIR4}
-  evd : TFHIREventDefinition;
-{$ENDIF}
-  function rule(test : boolean; message : String) : boolean;
-  begin
-    if not test then
-      ts.Add(message);
-    result := test;
-  end;
-var
-  expr : TFHIRPathExpressionNode;
-begin
-  ts := TStringList.Create;
-  try
-    // permissions. Anyone who is authenticated can set up a subscription
-  //  if (session <> nil) and (session.Name <> 'server') and (session.Name <> 'service') then // session is nil if we are reloading. Service is always allowed to create a subscription
-  //  begin
-  //    if session.Email = '' then
-  //      raise EFHIRException.create('This server does not accept subscription request unless an email address is the client login is associated with an email address');
-  //    ok := false;
-  //    for i := 0 to subscription.contactList.Count - 1 do
-  //      ok := ok or ((subscription.contactList[i].systemST = ContactSystemEmail) and (subscription.contactList[i].valueST = session.Email));
-  //    if not ok then
-  //      raise EFHIRException.create('The subscription must explicitly list the logged in user email ('+session.Email+') as a contact');
-  //  end;
-
-    // basic setup stuff
-    subscription.checkNoModifiers('SubscriptionManager.checkAcceptable', 'subscription');
-    subscription.channel.checkNoModifiers('SubscriptionManager.checkAcceptable', 'subscription');
-    rule(subscription.channel.type_ <> SubscriptionChannelTypeNull, 'A channel type must be specified');
-    rule(not (subscription.channel.type_ in [SubscriptionChannelTypeMessage]), 'The channel type '+CODES_TFhirSubscriptionChannelTypeEnum[subscription.channel.type_]+' is not supported');
-    rule((subscription.channel.type_ = SubscriptionChannelTypeWebsocket) or (subscription.channel.endpoint <> ''), 'A channel URL must be specified if not websockets');
-    rule((subscription.channel.type_ <> SubscriptionChannelTypeSms) or subscription.channel.endpoint.StartsWith('tel:'), 'When the channel type is "sms", then the URL must start with "tel:"');
-
-    {$IFDEF FHIR4}
-    if subscription.hasExtension('http://hl7.org/fhir/subscription/topics') then
-    begin
-      evd := getEventDefinition(subscription);
-      if rule(evd <> nil, 'Topic not understood or found') then
-      try
-        evd.checkNoModifiers('SubscriptionManager.checkAcceptable', 'topic definition');
-        if rule(evd.trigger <> nil, 'Topic has no trigger') then
-        begin
-          rule(evd.trigger.type_ in [TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved], 'Topic has trigger type = '+CODES_TFhirTriggerTypeEnum[evd.trigger.type_]+', which is not supported');
-          rule(evd.trigger.name = '', 'Topic has named trigger, which is not supported');
-          rule(evd.trigger.timing = nil, 'Topic has event timing on trigger, which is not supported');
-          rule((evd.trigger.data = nil) or (evd.trigger.condition = nil), 'Topic has both data and condition on trigger, which is not supported');
-          if evd.trigger.data <> nil then
-          begin
-            rule(evd.trigger.data.type_ <> AllTypesNull, 'DataRequirement type must not be present');
-            rule(evd.trigger.data.profileList.IsEmpty, 'DataRequirement profile must be absent');
-            if evd.trigger.condition <> nil then
-            begin
-              rule(evd.trigger.condition.language = 'text\FHIR.Version.PathEngine', 'Condition language must be FHIR.Version.PathEngine');
-              rule(evd.trigger.condition.expression <> '', 'Condition FHIR.Version.PathEngine must not be blank');
-              try
-                expr := fpp.parse(evd.trigger.condition.expression);
-                evd.trigger.condition.expressionElement.Tag := expr;
-                fpe.check(nil, CODES_TFhirAllTypesEnum[evd.trigger.data.type_], CODES_TFhirAllTypesEnum[evd.trigger.data.type_], CODES_TFhirAllTypesEnum[evd.trigger.data.type_], expr, false);
-              except
-                on e : exception do
-                  rule(false, 'Error parsing expression: '+e.Message);
-              end;
-            end;
-          end;
-        end;
-      finally
-        evd.Free;
-      end;
-    end;
-    {$ENDIF}
-    if ts.Count > 0 then
-      raise EFHIRException.create(ts.Text);
-  finally
-    ts.Free;
   end;
 end;
 
@@ -436,19 +324,19 @@ begin
   try
     pop := TIdPop3.Create(Nil);
     try
-      pop.Host := FDirectPopHost;
-      pop.port := StrToInt(FDirectPopPort);
-      pop.Username := FDirectUsername;
-      pop.Password := FDirectPassword;
-      if SMTPUseTLS then
+      pop.Host := settings.DirectPopHost;
+      pop.port := StrToInt(settings.DirectPopPort);
+      pop.Username := settings.DirectUsername;
+      pop.Password := settings.DirectPassword;
+      if settings.SMTPUseTLS then
       begin
         ssl := TIdSSLIOHandlerSocketOpenSSL.create;
         pop.IOHandler := ssl;
         pop.UseTLS := utUseExplicitTLS;
-        ssl.Destination := FDirectPopHost+':'+FDirectPopPort;
-        ssl.Host := FDirectPopHost;
+        ssl.Destination := settings.DirectPopHost+':'+settings.DirectPopPort;
+        ssl.Host := settings.DirectPopHost;
         ssl.MaxLineAction := maException;
-        ssl.Port := StrToInt(FDirectPopPort);
+        ssl.Port := StrToInt(settings.DirectPopPort);
         ssl.SSLOptions.Method := sslvTLSv1;
         ssl.SSLOptions.Mode := sslmUnassigned;
         ssl.SSLOptions.VerifyMode := [];
@@ -483,13 +371,10 @@ begin
 end;
 
 procedure TSubscriptionManager.DropResource(key, vkey, pvkey: Integer);
-{$IFDEF FHIR4}
 var
-  evd : TFHIREventDefinition;
-{$ENDIF}
+  evd : TEventDefinition;
 begin
   DoDropResource(key, vKey, pvkey, false);
-  {$IFDEF FHIR4}
   FLock.Lock('DropResource');
   try
     if FEventDefinitions.ContainsKey('key:'+inttostr(key)) then
@@ -502,47 +387,11 @@ begin
   finally
     FLock.Unlock;
   end;
-  {$ENDIF}
 end;
 
-{$IFDEF FHIR4}
-function TSubscriptionManager.getEventDefinition(subscription: TFhirSubscription): TFhirEventDefinition;
-var
-  ext : TFhirType;
-  s : String;
+function TSubscriptionManager.factory: TFHIRFactory;
 begin
-  result := nil;
-  ext := subscription.getExtensionValue('http://hl7.org/fhir/subscription/topics');
-  if (ext <> nil) and (ext is TFHIRReference) then
-  begin
-    s := (ext as TFHIRReference).reference;
-    FLock.Lock('getEventDefinition');
-    try
-      if (s.StartsWith('EventDefinition/')) then
-      begin
-        if FEventDefinitions.TryGetValue(s.Substring(16), result) then
-          result.Link;
-      end
-      else if FEventDefinitions.TryGetValue(s, result) then
-        result.Link;
-    finally
-      FLock.Unlock;
-    end;
-  end;
-end;
-  {$ENDIF}
-
-function TSubscriptionManager.getSummaryForChannel(subst: TFhirSubscription): String;
-var
-  s : TFHIRString;
-begin
-  result := subst.channel.type_Element.value+#1+subst.channel.endpoint+#1+subst.channel.payload;
-  {$IFNDEF FHIR2}
-  for s in subst.channel.headerList do
-    result := result+#0+s.value;
-  {$ELSE}
-  result := result+#0+subst.channel.header;
-  {$ENDIF}
+  result := TFHIRServerContext(ServerContext).Factory;
 end;
 
 function TSubscriptionManager.checkForClose(connection: TIdWebSocket; id : String; worked : boolean) : boolean;
@@ -576,27 +425,32 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
-var
-  parser : TFHIRJsonParser;
-  subscription : TFhirSubscription;
+procedure TSubscriptionManager.checkSaveTags(subst: TFHIRSubscriptionW; conn: TKDBConnection; key: integer; res: TFHIRResourceV);
 begin
-  parser := TFHIRJsonParser.Create(nil, connection.request.AcceptLanguage);
-  try
-    subscription := parser.ParseFragment(json, 'TFhirSubscription') as TFhirSubscription;
-  finally
-    parser.Free;
-  end;
-  try
-    subscription.id := NewGuidId;
-//    SeeNewSubscription(-1, vkey, id, resource as TFhirSubscription, session, conn);
-//    register subscription
-//    loop until disconnected
-//    unregister subscription
-//    disconnect
-  finally
-    subscription.free;
-  end;
+  // todo....
+end;
+
+procedure TSubscriptionManager.HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
+//var
+//  parser : TFHIRJsonParser;
+//  subscription : TFhirSubscription;
+begin
+//  parser := TFHIRJsonParser.Create(nil, connection.request.AcceptLanguage);
+//  try
+//    subscription := parser.ParseFragment(json, 'TFhirSubscription') as TFhirSubscription;
+//  finally
+//    parser.Free;
+//  end;
+//  try
+//    subscription.id := NewGuidId;
+////    SeeNewSubscription(-1, vkey, id, resource as TFhirSubscription, session, conn);
+////    register subscription
+////    loop until disconnected
+////    unregister subscription
+////    disconnect
+//  finally
+//    subscription.free;
+//  end;
 end;
 
 procedure TSubscriptionManager.HandleWebSocketBind(id : String; connection: TIdWebSocket);
@@ -724,23 +578,22 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.SeeNewSubscription(key: Integer; id : String; subscription: TFhirSubscription; session: TFHIRSession; conn : TKDBConnection);
+procedure TSubscriptionManager.SeeNewSubscription(key: Integer; id : String; subscription: TFHIRResourceV; session: TFHIRSession; conn : TKDBConnection);
+var
+  s : TFHIRSubscriptionW;
 begin
-  subscription.checkNoImplicitRules('SubscriptionManager.SeeNewSubscription', 'subscription');
-  if subscription.status in [SubscriptionStatusActive, SubscriptionStatusError] then
+  s := checkSubscription(subscription);
+  if s <> nil then
   begin
-    CheckAcceptable(subscription, session);
     DoDropResource(Key, 0, 0, true); // delete any previously existing entry for this subscription
-    FSubscriptions.add(key, determineResourceTypeKey(subscription.criteria, conn), id, subscription.Link);
-    FSubscriptionTrackers.addorUpdate(key, getSummaryForChannel(subscription), subscription.status);
+    FSubscriptions.add(key, determineResourceTypeKey(s.criteria, conn), id, s.Link);
+    FSubscriptionTrackers.addorUpdate(key, s.summary, s.status);
   end;
 end;
 
-procedure TSubscriptionManager.SeeResource(key, vkey, pvkey: Integer; id : String; op : TSubscriptionOperation; resource: TFHIRResource; conn : TKDBConnection; reload: boolean; session : TFHIRSession);
-{$IFDEF FHIR4}
+procedure TSubscriptionManager.SeeResource(key, vkey, pvkey: Integer; id : String; op : TFHIRSubscriptionWOperation; resource: TFHIRResourceV; conn : TKDBConnection; reload: boolean; session : TFHIRSession);
 var
-  evd : TFHIREventDefinition;
-{$ENDIF}
+  evd : TEventDefinition;
 begin
   FLock.Enter('SeeResource');
   try
@@ -755,12 +608,11 @@ begin
       EmptyQueue := false;
     end;
 
-    if resource is TFhirSubscription then
-      SeeNewSubscription(key, id, resource as TFhirSubscription, session, conn);
-    {$IFDEF FHIR4}
-    if resource is TFHIREventDefinition then
+    if resource.fhirType = 'Subscription' then
+      SeeNewSubscription(key, id, resource, session, conn);
+    if resource.fhirType = 'EventDefinition' then
     begin
-      evd := resource as TFHIREventDefinition;
+      evd := loadEventDefinition(resource);
       FLock.Lock('getEventDefinition');
       try
         FEventDefinitions.addOrSetValue(evd.url, evd.link);
@@ -770,14 +622,13 @@ begin
         FLock.Unlock;
       end;
     end;
-    {$ENDIF}
   finally
     FLock.Leave;
   end;
 end;
 
 
-procedure TSubscriptionManager.doSendEmail(subst : TFhirSubscription; resource : TFHIRResource; dest : String; direct : boolean);
+procedure TSubscriptionManager.doSendEmail(subst : TFHIRSubscriptionW; resource : TFHIRResourceV; dest : String; direct : boolean);
 var
   sender : TIdSMTP;
   msg : TIdMessage;
@@ -794,7 +645,7 @@ begin
       sender.port := StrToInt(chooseSMTPPort(direct));
     sender.Username := chooseSMTPUsername(direct);
     sender.Password := chooseSMTPPassword(direct);
-    if SMTPUseTLS then
+    if settings.SMTPUseTLS then
     begin
       ssl := TIdSSLIOHandlerSocketOpenSSL.create;
       sender.IOHandler := ssl;
@@ -811,8 +662,8 @@ begin
     sender.Connect;
     msg := TIdMessage.Create(Nil);
     try
-      if (subst <> nil) and ({$IFNDEF FHIR2} subst.channel.headerList.count > 0 {$ELSE} subst.channel.header <> '' {$ENDIF}) then
-        msg.Subject := {$IFNDEF FHIR2} subst.channel.headerList[0].value {$ELSE} subst.channel.header {$ENDIF}
+      if (subst <> nil) and (length(subst.headers) > 0) then
+        msg.Subject := subst.headers[0]
       else
         msg.Subject := 'FHIR Message';
       msg.Recipients.Add.Address := dest;
@@ -824,9 +675,9 @@ begin
       part.ContentType := 'text/plain';
       part.ContentTransfer := '7bit';
       if subst = nil then
-        comp := MakeComposer(OutputStylePretty, 'en', 'application/json', nil)
-      else if subst.channel.payload <> '' then
-        comp := MakeComposer(OutputStylePretty, 'en', subst.channel.payload, nil)
+        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, ffJson, 'en', OutputStylePretty)
+      else if subst.payload <> '' then
+        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, mimeTypeToFormat(subst.payload), 'en', OutputStylePretty)
       else
         comp := nil;
       try
@@ -864,27 +715,25 @@ begin
   End;
 end;
 
-procedure TSubscriptionManager.sendByEmail(id : String; subst: TFhirSubscription; package : TFHIRResource);
+procedure TSubscriptionManager.sendByEmail(id : String; subst: TFHIRSubscriptionW; package : TFHIRResourceV);
 begin
-  doSendEmail(subst, package, subst.channel.endpoint.Replace('mailto:', ''),
-   subst.channel.endpointElement.hasExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct') and
-    (subst.channel.endpointElement.getExtensionString('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct') = 'true'));
+  doSendEmail(subst, package, subst.endpoint.Replace('mailto:', ''), subst.direct);
 end;
 
-procedure TSubscriptionManager.sendByEmail(resource : TFHIRResource; dest: String; direct : boolean);
+procedure TSubscriptionManager.sendByEmail(resource : TFHIRResourceV; dest: String; direct : boolean);
 begin
   doSendEmail(nil, resource, dest, direct);
 end;
 
-procedure TSubscriptionManager.sendByRest(id : String; subst: TFhirSubscription; package : TFHIRResource);
+procedure TSubscriptionManager.sendByRest(id : String; subst: TFHIRSubscriptionW; package : TFHIRResourceV);
 var
   http : TIdHTTP;
-  client : TFhirClient;
+  client : TFhirClientV;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   stream : TMemoryStream;
-  s : TFHIRString;
+  s : String;
 begin
-  if subst.channel.payload = '' then
+  if subst.payload = '' then
   begin
     stream := TMemoryStream.Create;
     http := TIdHTTP.create(nil);
@@ -892,14 +741,9 @@ begin
     try
       http.IOHandler := ssl;
       ssl.SSLOptions.Mode := sslmClient;
-      {$IFNDEF FHIR2}
-      for s in subst.channel.headerList do
-        http.Request.CustomHeaders.Add(s.value);
-      {$ELSE}
-      if subst.channel.header <> '' then
-        http.Request.CustomHeaders.Add(subst.channel.header);
-      {$ENDIF}
-      http.Post(subst.channel.endpoint, stream);
+      for s in subst.headers do
+        http.Request.CustomHeaders.Add(s);
+      http.Post(subst.endpoint, stream);
     finally
       ssl.Free;
       http.Free;
@@ -908,35 +752,35 @@ begin
   end
   else
   begin
-    client := TFhirClients.makeHTTP(nil, subst.channel.endpoint, subst.channel.payload);
+    client := factory.makeClient(TFHIRServerContext(ServerContext).ValidatorContext.link, subst.endpoint, mimeTypeToFormat(subst.payload));
     try
-      if (package is TFHIRBundle) and (TFHIRBundle(package).type_ = BundleTypeTransaction) then
-        client.transaction(TFHIRBundle(package))
+      if (package.fhirType = 'Bundle') and bundleIsTransaction(package) then
+        client.transactionV(package)
       else
-        client.createResource(package, id);
+        client.createResourceV(package, id);
     finally
       client.Free;
     end;
   end;
 end;
 
-procedure TSubscriptionManager.sendBySms(id: String; subst: TFhirSubscription; package : TFHIRResource);
+procedure TSubscriptionManager.sendBySms(id: String; subst: TFHIRSubscriptionW; package : TFHIRResourceV);
 var
   client : TTwilioClient;
 begin
   client := TTwilioClient.Create;
   try
-    client.Account := SMSAccount;
-    client.Token := SMSToken;
-    client.From := SMSFrom;
-    if subst.channel.endpoint.StartsWith('tel:') then
-      client.dest := subst.channel.endpoint.Substring(4)
+    client.Account := settings.SMSAccount;
+    client.Token := settings.SMSToken;
+    client.From := settings.SMSFrom;
+    if subst.endpoint.StartsWith('tel:') then
+      client.dest := subst.endpoint.Substring(4)
     else
-      client.dest := subst.channel.endpoint;
-    if subst.channel.payload <> '' then
-      client.Body := subst.channel.payload
+      client.dest := subst.endpoint;
+    if subst.payload <> '' then
+      client.Body := subst.payload
     else
-      client.Body := 'A new matching resource has been received for Subscription '+subst.id;
+      client.Body := 'A new matching resource has been received for Subscription '+subst.resource.id;
     client.send;
   finally
     client.Free;
@@ -944,19 +788,13 @@ begin
 end;
 
 
-procedure TSubscriptionManager.sendByWebSocket(conn : TKDBConnection; id: String; subst: TFhirSubscription; package : TFHIRResource);
+procedure TSubscriptionManager.sendByWebSocket(conn : TKDBConnection; id: String; subst: TFHIRSubscriptionW; package : TFHIRResourceV);
 var
   key : integer;
   comp : TFHIRComposer;
   b : TBytes;
 begin
-  comp := nil;
-  if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/fhir+xml') or (subst.channel.payload = 'application/xml') then
-    comp := TFHIRXmlComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, OutputStyleNormal, 'en')
-  else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/fhir+json') or (subst.channel.payload = 'application/json') then
-    comp := TFHIRJsonComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, OutputStyleNormal,'en')
-  else if subst.channel.payload <> '' then
-    raise EFHIRException.create('unknown payload type '+subst.channel.payload);
+  comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, mimeTypeToFormat(subst.payload), 'en', OutputStyleNormal);
   try
     if comp <> nil then
       b := TEncoding.UTF8.GetBytes(comp.Compose(package))
@@ -966,7 +804,7 @@ begin
     comp.Free;
   end;
 
-  if wsPersists(subst.id, b) then
+  if wsPersists(subst.resource.id, b) then
   begin
     FLock.Lock;
     try
@@ -976,9 +814,9 @@ begin
       FLock.Unlock;
     end;
 
-    conn.SQL := 'insert into WebSocketsQueue (WebSocketsQueueKey, SubscriptionId, Handled, Content) values ('+inttostr(key)+', '''+SQLWrapString(subst.id)+''', 0, :c)';
+    conn.SQL := 'insert into WebSocketsQueue (WebSocketsQueueKey, SubscriptionId, Handled, Content) values ('+inttostr(key)+', '''+SQLWrapString(subst.resource.id)+''', 0, :c)';
     conn.Prepare;
-    if subst.channel.payload = '' then
+    if subst.payload = '' then
       conn.BindNull('c')
     else
     begin
@@ -987,7 +825,7 @@ begin
     conn.Execute;
     conn.Terminate;
   end;
-  wsWake(subst.id);
+  wsWake(subst.resource.id);
 end;
 
 procedure TSubscriptionManager.sendDirectResponse(id, address, message: String; ok: boolean);
@@ -1005,20 +843,20 @@ begin
     exit; // on advice from Luis Maas
   sender := TIdSMTP.Create(Nil);
   try
-    sender.Host := FDirectHost;
-    if FDirectPort <> '' then
-      sender.port := StrToInt(FDirectPort);
-    sender.Username := FDirectUsername;
-    sender.Password := FDirectPassword;
-    if SMTPUseTLS then
+    sender.Host := settings.DirectHost;
+    if settings.DirectPort <> '' then
+      sender.port := StrToInt(settings.DirectPort);
+    sender.Username := settings.DirectUsername;
+    sender.Password := settings.DirectPassword;
+    if settings.SMTPUseTLS then
     begin
       ssl := TIdSSLIOHandlerSocketOpenSSL.create;
       sender.IOHandler := ssl;
       sender.UseTLS := utUseExplicitTLS;
-      ssl.Destination := FDirectHost+':'+FDirectPort;
-      ssl.Host := FDirectHost;
+      ssl.Destination := settings.DirectHost+':'+settings.DirectPort;
+      ssl.Host := settings.DirectHost;
       ssl.MaxLineAction := maException;
-      ssl.Port := StrToInt(FDirectPort);
+      ssl.Port := StrToInt(settings.DirectPort);
       ssl.SSLOptions.Method := sslvTLSv1;
       ssl.SSLOptions.Mode := sslmUnassigned;
       ssl.SSLOptions.VerifyMode := [];
@@ -1029,7 +867,7 @@ begin
     try
       msg.Subject := 'Direct Response';
       msg.Recipients.Add.Address := address;
-      msg.From.Text := FDirectSender;
+      msg.From.Text := settings.DirectSender;
       msg.Body.Clear;
       msg.MsgId := NewGuidId;
       msg.InReplyTo := id;
@@ -1044,8 +882,8 @@ begin
         part.Body.Text := 'The receiving server has accepted your message and will attempt to process it.';
         att.ContentType := 'message/disposition-notification';
         s :=
-          'Reporting-UA: '+FDirectUsername+'; ('+TFHIRServerContext(ServerContext).OwnerName+')'+#13#10+
-          'Final-Recipient: '+FDirectUsername+#13#10+
+          'Reporting-UA: '+settings.DirectUsername+'; ('+TFHIRServerContext(ServerContext).Globals.OwnerName+')'+#13#10+
+          'Final-Recipient: '+settings.DirectUsername+#13#10+
           'Original-Message-ID: '+id+#13#10+
           'Disposition: automatic-action/MDN-sent-automatically;processed'+#13#10;
       end
@@ -1054,10 +892,10 @@ begin
         part.Body.Text := 'Error accepting your message: '+message;
         att.ContentType := 'message/delivery-status';
         att.ContentType := 'Content-Disposition: attachment ';
-        s := 'Reporting-MTA: dns;'+DirectUsername+#13#10+
+        s := 'Reporting-MTA: dns;'+settings.DirectUsername+#13#10+
              'X-Original-Message-ID: '+id+#13#10+
              ''+#13#10+
-             'Final-Recipient: rfc822'+DirectUsername+#13#10+
+             'Final-Recipient: rfc822'+settings.DirectUsername+#13#10+
              'Action: failed'+#13#10+
              'Diagnostic-Code: '+message+#13#10;
       end;
@@ -1080,6 +918,11 @@ begin
     sender.IOHandler.free;
     sender.Free;
   End;
+end;
+
+function TSubscriptionManager.settings: TFHIRServerSettings;
+begin
+  result := TFHIRServerContext(ServerContext).Globals;
 end;
 
 procedure TSubscriptionManager.Process;
@@ -1130,7 +973,7 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.processByScript(conn: TKDBConnection; id: String; subst: TFhirSubscription; package: TFHIRResource);
+procedure TSubscriptionManager.processByScript(conn: TKDBConnection; id: String; subst: TFHIRSubscriptionW; package: TFHIRResourceV);
 begin
   raise EFHIRException.create('Not done yet');
 end;
@@ -1139,12 +982,12 @@ procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytes
 var
   p : TFHIRParser;
 begin
-  p := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext, 'en', ct, res.bytes, xppReject);
+  p := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(ct), 'en');
   try
     p.source := res;
     p.Parse;
     p.resource.Tags['process'] := 'true';
-    TFHIRServerContext(ServerContext).Storage.QueueResource(p.resource as TFHIRResource);
+    TFHIRServerContext(ServerContext).Storage.QueueResource(p.resource);
   finally
     p.Free;
   end;
@@ -1252,13 +1095,13 @@ end;
 function TSubscriptionManager.ProcessNotification(conn : TKDBConnection): Boolean;
 var
   NotificationnQueueKey, ResourceKey, SubscriptionKey : integer;
-  res : TFhirResource;
+  res : TFhirResourceV;
   id : string;
-  subst : TFhirSubscription;
+  subst : TFHIRSubscriptionW;
   done, created : boolean;
   tnow, dnow : TDateTime;
   userkey: Integer;
-  package : TFHIRResource;
+  package : TFHIRResourceV;
 begin
   NotificationnQueueKey := 0;
   SubscriptionKey := 0;
@@ -1295,24 +1138,20 @@ begin
   if result then
   begin
     try
-      subst := LoadResourceFromDBByKey(conn, SubscriptionKey, userkey) as TFhirSubscription;
+      subst := loadSubscription(LoadResourceFromDBByKey(conn, SubscriptionKey, userkey));
       try
         res := LoadResourceFromDBByVer(conn, ResourceKey, id);
         try
           package := preparePackage(userkey, created, subst, res);
           try
-            case subst.channel.type_ of
-              SubscriptionChannelTypeRestHook: sendByRest(id, subst, package);
-              SubscriptionChannelTypeEmail: sendByEmail(id, subst, package);
-              SubscriptionChannelTypeSms: sendBySms(id, subst, package);
-              SubscriptionChannelTypeWebsocket: sendByWebSocket(conn, id, subst, package);
-              {$IFDEF FHIR4}
-//              SubscriptionChannelTypeChangeScript: processByScript(conn, id, subst, package);
-              {$ENDIF}
+            case subst.method of
+              smRestHook: sendByRest(id, subst, package);
+              smEmail: sendByEmail(id, subst, package);
+              smSms: sendBySms(id, subst, package);
+              smWebsocket: sendByWebSocket(conn, id, subst, package);
+//              smChangeScript: processByScript(conn, id, subst, package);
             end;
-
-            if (subst.tagList.Count > 0) then
-              saveTags(conn, ResourceKey, res);
+            checkSaveTags(subst, conn, resourceKey, res);
             conn.ExecSQL('update NotificationQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
           finally
             package.Free;
@@ -1348,55 +1187,11 @@ begin
   logt('Direct Message '+id+' notice: '+details.Values['Disposition'].Trim);
 end;
 
-function processUrlTemplate(url : String; resource : TFhirResource) : String;
-var
-  b, e : integer;
-  code, value : String;
-  qry : TFHIRPathEngine;
-  o : TFHIRSelection;
-  results : TFHIRSelectionList;
-begin
-  while url.Contains('{{') do
-  begin
-    b := url.IndexOf('{{');
-    e := url.IndexOf('}}');
-    code := url.Substring(b+2, e-(b+2));
-    if (code = 'id') then
-      value := Codes_TFHIRResourceType[resource.ResourceType]+'/'+resource.id
-    else
-    begin
-      qry := TFHIRPathEngine.create(nil, nil);
-      try
-        results := qry.evaluate(nil, resource, code);
-        try
-          value := '';
-          for o in results do
-          begin
-            if o.value is TFHIRPrimitiveType then
-              CommaAdd(value, TFHIRPrimitiveType(o.value).StringValue)
-            else
-              raise EFHIRException.create('URL templates can only refer to primitive types (found '+o.ClassName+')');
-          end;
-          if (value = '') then
-            value := '(nil)';
-        finally
-          results.Free;
-        end;
-      finally
-        qry.Free;
-      end;
-    end;
-
-    url := url.Substring(0, b)+value+url.Substring(e+2);
-  end;
-  result := url;
-end;
-
 function TSubscriptionManager.ProcessSubscription(conn: TKDBConnection): Boolean;
 var
   SubscriptionQueueKey, ResourceKey, ResourceVersionKey, ResourcePreviousKey, ResourceTypeKey : integer;
   i : integer;
-  list : TSubscriptionEntryList;
+  list : TFHIRSubscriptionEntryList;
   created : boolean;
 begin
   SubscriptionQueueKey := 0;
@@ -1426,7 +1221,7 @@ begin
   end;
   if result then
   begin
-    list := TSubscriptionEntryList.Create;
+    list := TFHIRSubscriptionEntryList.Create;
     try
       // keep the lock short
       FLock.Lock('List Subscriptions');
@@ -1453,7 +1248,8 @@ begin
   end;
 end;
 
-procedure TSubscriptionManager.saveTags(conn: TKDBConnection; ResourceKey: integer; res : TFHIRResource);
+
+procedure TSubscriptionManager.saveTags(conn: TKDBConnection; ResourceKey: integer; res: TFHIRResourceV);
 begin
 {  conn.SQL := 'Update Versions set content = :t where ResourceVersionKey = '+inttostr(ResourceKey);
   conn.Prepare;
@@ -1473,7 +1269,7 @@ begin
   FLastWebSocketKey := conn.CountSQL('select max(WebSocketsQueueKey) from WebSocketsQueue');
 end;
 
-function TSubscriptionManager.LoadResourceFromDBByVer(conn: TKDBConnection; vkey: integer; var id : String): TFhirResource;
+function TSubscriptionManager.LoadResourceFromDBByVer(conn: TKDBConnection; vkey: integer; var id : String): TFhirResourceV;
 var
   parser : TFHIRParser;
 begin
@@ -1486,12 +1282,12 @@ begin
       raise EFHIRException.create('Cannot find resource');
     id := conn.ColStringByName['Id'];
     if conn.ColStringByName['ResourceName'] = 'Binary' then
-      result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
+      result := LoadBinaryResource(factory, 'en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
+      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, 'en');
       try
-        result := parser.resource.Link as TFHIRResource;
+        result := parser.parseResource(conn.ColBlobByName['XmlContent']);
       finally
         parser.free;
       end;
@@ -1501,7 +1297,7 @@ begin
   end;
 end;
 
-function TSubscriptionManager.LoadResourceFromDBByKey(conn: TKDBConnection; key: integer; var userkey : integer): TFhirResource;
+function TSubscriptionManager.LoadResourceFromDBByKey(conn: TKDBConnection; key: integer; var userkey : integer): TFhirResourceV;
 var
   parser : TFHIRParser;
 begin
@@ -1516,12 +1312,12 @@ begin
       raise EFHIRException.create('Cannot find resource');
     userKey := conn.ColIntegerByName['UserKey'];
     if conn.ColStringByName['ResourceName'] = 'Binary' then
-      result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
+      result := LoadBinaryResource(factory, 'en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
+      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, 'en');
       try
-        result := parser.resource.Link as TFHIRResource;
+        result := parser.parseResource(conn.ColBlobByName['XmlContent']);
       finally
         parser.free;
       end;
@@ -1547,72 +1343,6 @@ begin
   end;
 end;
 
-function TSubscriptionManager.MeetsCriteria(subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TKDBConnection): boolean;
-{$IFDEF FHIR4}
-var
-  evd : TFHIREventDefinition;
-{$ENDIF}
-begin
-
-  if subscription.criteria = '*' then
-    result := true
-  else
-    result := MeetsCriteriaSearch(subscription.criteria, typekey, key, conn);
-
-  {$IFDEF FHIR4}
-  // extension for San Deigo Subscription connectathon
-  if result then
-  begin
-    evd := getEventDefinition(subscription);
-    try
-      if evd <> nil then
-        result := MeetsCriteriaEvent(evd, subscription, typekey, key, ResourceVersionKey, ResourcePreviousKey, conn);
-    finally
-      evd.Free;
-    end;
-  end;
-  {$ENDIF}
-end;
-
-{$IFDEF FHIR4}
-function TSubscriptionManager.MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TKDBConnection): boolean;
-var
-  old : TFhirResource;
-  new : TFhirResource;
-  oldId, newId : string;
-begin
-  result := false;
-
-  new := LoadResourceFromDBByVer(conn, ResourceVersionKey, newId);
-  try
-    old := nil;
-    if ResourcePreviousKey <> 0 then
-    begin
-      old := LoadResourceFromDBByVer(conn, ResourcePreviousKey, oldId);
-      assert(newId = oldId);
-    end;
-    try
-      // todo: code and date requirements from DataRequirement
-      if evd.trigger.condition <> nil then
-      begin
-
-      end
-      else
-        result := false;
-    finally
-      old.Free;
-    end;
-  finally
-    new.Free;
-  end;
-
-//  is the date criteria met?
-//  is the code criteria met?
-//  is the expression criteria met?
-//  result := false; // todo
-end;
-{$ENDIF}
-
 function TSubscriptionManager.MeetsCriteriaSearch(criteria: String; typekey, key : integer; conn: TKDBConnection): boolean;
 var
   l, r, sql : String;
@@ -1630,10 +1360,10 @@ end;
 
 procedure TSubscriptionManager.NotifySuccess(userkey, SubscriptionKey: integer);
 var
-  tracker : TSubscriptionTracker;
+  tracker : TFHIRSubscriptionTracker;
   notify : boolean;
-  entry : TSubscriptionEntry;
-  subst : TFhirSubscription;
+  entry : TFHIRSubscriptionEntry;
+  subst : TFHIRSubscriptionW;
   id : string;
 begin
   subst := nil;
@@ -1655,112 +1385,17 @@ begin
   end;
   if notify then
   begin
-    subst.status := SubscriptionStatusActive;
+    subst.status := ssActive;
     subst.error := '';
-    ApplyUpdateToResource(userkey, id, subst);
+    ApplyUpdateToResource(userkey, id, subst.Resource);
   end;
-end;
-
-function TSubscriptionManager.preparePackage(userkey : integer; created : boolean; subscription: TFhirSubscription; resource: TFHIRResource): TFHIRResource;
-var
-  request : TFHIRRequest;
-  response : TFHIRResponse;
-  url : string;
-  i : integer;
-  ex: TFhirExtension;
-  entry : TFhirBundleEntry;
-  bundle : TFHIRBundle;
-begin
-  if subscription.hasExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch') then
-  begin
-    bundle := TFhirBundle.Create(BundleTypeCollection);
-    try
-      bundle.id := NewGuidId;
-      bundle.link_List.AddRelRef('source', AppendForwardSlash(base)+'Subsecription/'+subscription.id);
-      request := TFHIRRequest.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, roSubscription, TFHIRServerContext(ServerContext).Indexes.Compartments.Link);
-      response := TFHIRResponse.Create;
-      try
-        bundle.entryList.Append.resource := resource.Link;
-        request.Session := OnGetSessionEvent(userkey);
-        request.baseUrl := FBase;
-        for ex in subscription.extensionList do
-          if ex.url = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch' then
-          begin
-            entry := bundle.entryList.Append;
-            try
-              url := (ex.value as TFHIRPrimitiveType).StringValue;
-              entry.link_List.AddRelRef('source', url);
-              if (url = '{{id}}') then
-              begin
-                // copy the specified tags on the subscription to the resource.
-                for i := 0 to subscription.tagList.Count - 1 do
-                  if (subscription.tagList[i].code <> '') and (subscription.tagList[i].system <> '') then
-                    if not resource.meta.HasTag(subscription.tagList[i].system, subscription.tagList[i].code) then
-                      resource.meta.tagList.AddCoding(subscription.tagList[i].system, subscription.tagList[i].code, subscription.tagList[i].display);
-                entry.request := TFhirBundleEntryRequest.Create;
-                if created then
-                begin
-                  entry.request.url := CODES_TFHIRResourceType[resource.ResourceType];
-                  entry.request.method := HttpVerbPOST;
-                end
-                else
-                begin
-                  entry.request.url := CODES_TFHIRResourceType[resource.ResourceType]+'/'+resource.id;
-                  entry.request.method := HttpVerbPUT;
-                end;
-                entry.resource := resource.link;
-              end
-              else
-              begin
-                url := processUrlTemplate((ex.value as TFHIRPrimitiveType).StringValue, resource);
-                entry.request := TFhirBundleEntryRequest.Create;
-                entry.request.url := url;
-                entry.request.method := HttpVerbGET;
-                if (url.Contains('?')) then
-                  request.CommandType := fcmdSearch
-                else
-                  request.CommandType := fcmdRead;
-                FOnExecuteOperation(request, response, false);
-                entry.response := TFhirBundleEntryResponse.Create;
-                entry.response.status := inttostr(response.HTTPCode);
-                entry.response.location := response.Location;
-                entry.response.etag := 'W/'+response.versionId;
-                entry.response.lastModified := TDateTimeEx.makeUTC(response.lastModifiedDate);
-                entry.resource := response.resource.link;
-              end;
-            except
-              on e : ERestfulException do
-              begin
-                entry.response := TFhirBundleEntryResponse.Create;
-                entry.response.status := inttostr(e.Status);
-                entry.resource := BuildOperationOutcome(request.Lang, e);
-              end;
-              on e : Exception do
-              begin
-                entry.response := TFhirBundleEntryResponse.Create;
-                entry.response.status := '500';
-                entry.resource := BuildOperationOutcome(request.Lang, e);
-              end;
-            end;
-          end;
-      finally
-        request.Free;
-        response.Free;
-      end;
-      result := bundle.Link;
-    finally
-      bundle.free;
-    end;
-  end
-  else
-    result := resource.Link;
 end;
 
 procedure TSubscriptionManager.NotifyFailure(userkey, SubscriptionKey: integer; message: string);
 var
-  tracker : TSubscriptionTracker;
-  entry : TSubscriptionEntry;
-  subst : TFhirSubscription;
+  tracker : TFHIRSubscriptionTracker;
+  entry : TFHIRSubscriptionEntry;
+  subst : TFhirSubscriptionW;
   action : integer;
   id : string;
 begin
@@ -1792,11 +1427,11 @@ begin
   if action >  0then
   begin
     if action = 1 then
-      subst.status := SubscriptionStatusError
+      subst.status := ssError
     else
-      subst.status := SubscriptionStatusOff;
+      subst.status := ssOff;
     subst.error := message;
-    ApplyUpdateToResource(userkey, id, subst);
+    ApplyUpdateToResource(userkey, id, subst.Resource);
   end;
 end;
 
@@ -1821,13 +1456,13 @@ begin
        '('+inttostr(k)+', '+inttostr(skey)+', '+inttostr(vkey)+', '+DBGetDate(conn.Owner.Platform)+', 0, '+c+')');
 end;
 
-{ TSubscriptionEntryList }
+{ TFHIRSubscriptionEntryList }
 
-procedure TSubscriptionEntryList.add(Key, ResourceType: Integer; Id : String; Subscription: TFhirSubscription);
+procedure TFHIRSubscriptionEntryList.add(Key, ResourceType: Integer; Id : String; Subscription: TFhirSubscriptionW);
 var
-  entry : TSubscriptionEntry;
+  entry : TFHIRSubscriptionEntry;
 begin
-  entry := TSubscriptionEntry.Create;
+  entry := TFHIRSubscriptionEntry.Create;
   try
     entry.Key := key;
     entry.resourceType := ResourceType;
@@ -1839,7 +1474,7 @@ begin
   end;
 end;
 
-function TSubscriptionEntryList.getByKey(Key: integer): TSubscriptionEntry;
+function TFHIRSubscriptionEntryList.getByKey(Key: integer): TFHIRSubscriptionEntry;
 var
   i : integer;
 begin
@@ -1852,32 +1487,32 @@ begin
     end;
 end;
 
-function TSubscriptionEntryList.GetEntry(i: integer): TSubscriptionEntry;
+function TFHIRSubscriptionEntryList.GetEntry(i: integer): TFHIRSubscriptionEntry;
 begin
-  result := TSubscriptionEntry(ObjectByIndex[i]);
+  result := TFHIRSubscriptionEntry(ObjectByIndex[i]);
 end;
 
-function TSubscriptionEntryList.ItemClass: TFslObjectClass;
+function TFHIRSubscriptionEntryList.ItemClass: TFslObjectClass;
 begin
-  result := TSubscriptionEntry;
+  result := TFHIRSubscriptionEntry;
 end;
 
-{ TSubscriptionTrackerList }
+{ TFHIRSubscriptionTrackerList }
 
-procedure TSubscriptionTrackerList.addOrUpdate(Key: integer; info: String; status : TFhirSubscriptionStatusEnum);
+procedure TFHIRSubscriptionTrackerList.addOrUpdate(Key: integer; info: String; status : TSubscriptionStatus);
 var
-  t : TSubscriptionTracker;
+  t : TFHIRSubscriptionTracker;
 begin
   t := getByKey(key);
   if t = nil then
   begin
-    t := TSubscriptionTracker.Create;
+    t := TFHIRSubscriptionTracker.Create;
     try
       t.FKey := key;
       t.FInfo := info;
-      if status = SubscriptionStatusError then
+      if status = ssError then
         t.FErrorCount := 1;
-        
+
       add(t.Link);
     finally
       t.Free;
@@ -1887,7 +1522,7 @@ begin
     t.UpdateForInfo(info);
 end;
 
-function TSubscriptionTrackerList.getByKey(Key: integer): TSubscriptionTracker;
+function TFHIRSubscriptionTrackerList.getByKey(Key: integer): TFHIRSubscriptionTracker;
 var
   i : integer;
 begin
@@ -1900,14 +1535,14 @@ begin
     end;
 end;
 
-function TSubscriptionTrackerList.GetTracker(i: integer): TSubscriptionTracker;
+function TFHIRSubscriptionTrackerList.GetTracker(i: integer): TFHIRSubscriptionTracker;
 begin
-  result := TSubscriptionTracker(ObjectByIndex[i]);
+  result := TFHIRSubscriptionTracker(ObjectByIndex[i]);
 end;
 
-function TSubscriptionTrackerList.ItemClass: TFslObjectClass;
+function TFHIRSubscriptionTrackerList.ItemClass: TFslObjectClass;
 begin
-  result := TSubscriptionTracker;
+  result := TFHIRSubscriptionTracker;
 end;
 
 function TSubscriptionManager.wsConnect(id : String; persistent : boolean) : boolean;
@@ -2019,66 +1654,66 @@ end;
 function TSubscriptionManager.chooseSMTPPort(direct : boolean): String;
 begin
   if (direct) then
-    result := DirectPort
+    result := settings.DirectPort
   else
-    result:= SMTPPort;
+    result:= settings.SMTPPort;
 end;
 
 function TSubscriptionManager.chooseSMTPPassword(direct : boolean): String;
 begin
   if (direct) then
-    result := DirectPassword
+    result := settings.DirectPassword
   else
-    result:= SMTPPassword;
+    result:= settings.SMTPPassword;
 end;
 
 function TSubscriptionManager.chooseSMTPHost(direct : boolean): String;
 begin
   if (direct) then
-    result := DirectHost
+    result := settings.DirectHost
   else
-    result:= SMTPHost;
+    result:= settings.SMTPHost;
 end;
 
 function TSubscriptionManager.chooseSMTPSender(direct : boolean): String;
 begin
   if (direct) then
-    result := DirectSender
+    result := settings.DirectSender
   else
-    result:= SMTPSender;
+    result:= settings.SMTPSender;
 end;
 
 function TSubscriptionManager.chooseSMTPUsername(direct : boolean): String;
 begin
   if (direct) then
-    result := DirectUsername
+    result := settings.DirectUsername
   else
-    result:= SMTPUsername;
+    result:= settings.SMTPUsername;
 end;
 
 
-{ TSubscriptionEntry }
+{ TFHIRSubscriptionEntry }
 
-constructor TSubscriptionEntry.Create;
+constructor TFHIRSubscriptionEntry.Create;
 begin
   inherited;
 end;
 
-destructor TSubscriptionEntry.Destroy;
+destructor TFHIRSubscriptionEntry.Destroy;
 begin
   FSubscription.Free;
   inherited;
 end;
 
-procedure TSubscriptionEntry.SetSubscription(const Value: TFhirSubscription);
+procedure TFHIRSubscriptionEntry.SeTFHIRSubscriptionW(const Value: TFhirSubscriptionW);
 begin
   FSubscription.Free;
   FSubscription := Value;
 end;
 
-{ TSubscriptionTracker }
+{ TFHIRSubscriptionTracker }
 
-procedure TSubscriptionTracker.UpdateForInfo(info: String);
+procedure TFHIRSubscriptionTracker.UpdateForInfo(info: String);
 begin
   if FInfo <> info then
   begin
@@ -2144,6 +1779,26 @@ begin
   FStream.Clear;
   result := FStream;
 end;
+
+{ TEventDefinition }
+
+destructor TEventDefinition.Destroy;
+begin
+  FResource.free;
+  inherited;
+end;
+
+function TEventDefinition.link: TEventDefinition;
+begin
+  result := TEventDefinition(inherited link);
+end;
+
+procedure TEventDefinition.SetResource(const Value: TFHIRResourceV);
+begin
+  FResource.Free;
+  FResource := value;
+end;
+
 
 end.
 

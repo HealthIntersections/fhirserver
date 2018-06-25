@@ -96,8 +96,8 @@ type
     FFhirVersion: string;
     FInstalled: TDateTime;
     FSize: integer;
-    FProfiles: TDictionary<String, String>;
-    FCanonicals : TDictionary<String, String>;
+    FProfiles: TFslStringDictionary;
+    FCanonicals : TFslStringDictionary;
     FFolder: String;
     function listDependencies : String;
     procedure report (b : TStringBuilder);
@@ -115,8 +115,8 @@ type
     property size : integer read FSize write FSize;
     property installed : TDateTime read FInstalled write FInstalled;
     property dependencies : TFslList<TFHIRPackageDependencyInfo> read FDependencies;
-    property profiles : TDictionary<String, String> read FProfiles;
-    property canonicals : TDictionary<String, String> read FCanonicals;
+    property profiles : TFslStringDictionary read FProfiles;
+    property canonicals : TFslStringDictionary read FCanonicals;
     property folder : String read FFolder write FFolder;
   end;
 
@@ -156,7 +156,7 @@ type
     procedure clearCache;
     function readNpmKind(kind, id: String): TFHIRPackageKind;
     function checkPackageSize(dir : String) : integer;
-    procedure analysePackage(dir : String; v : String; profiles, canonicals : TDictionary<String, String>);
+    procedure analysePackage(dir : String; v : String; profiles, canonicals : TFslStringDictionary);
     procedure work(pct : integer; done : boolean; desc : String);
     function check(desc : String) : boolean;
   public
@@ -299,7 +299,7 @@ var
   s, p : string;
   ini : TIniFile;
   size : integer;
-  pl, cl : TDictionary<String, String>;
+  pl, cl : TFslStringDictionary;
 begin
   files := loadArchive(content);
   try
@@ -340,8 +340,8 @@ begin
     try
       ini.WriteInteger('Package', 'size', size);
       ini.WriteDateTime('Package', 'install', now);
-      pl := TDictionary<String, String>.create;
-      cl := TDictionary<String, String>.create;
+      pl := TFslStringDictionary.create;
+      cl := TFslStringDictionary.create;
       try
         analysePackage(dir, fver, pl, cl);
         for p in pl.Keys do
@@ -706,7 +706,7 @@ begin
   loadPackage(id, ver, resources, loadEvent);
 end;
 
-procedure TFHIRPackageManager.analysePackage(dir: String; v : String; profiles, canonicals: TDictionary<String, String>);
+procedure TFHIRPackageManager.analysePackage(dir: String; v : String; profiles, canonicals: TFslStringDictionary);
 var
   s, bd : String;
   l : TStringDynArray;
@@ -908,8 +908,8 @@ constructor TFHIRPackageVersionInfo.Create;
 begin
   inherited;
   FDependencies := TFslList<TFHIRPackageDependencyInfo>.create;
-  FProfiles := TDictionary<String, String>.create;
-  FCanonicals := TDictionary<String, String>.create;
+  FProfiles := TFslStringDictionary.create;
+  FCanonicals := TFslStringDictionary.create;
 end;
 
 destructor TFHIRPackageVersionInfo.Destroy;

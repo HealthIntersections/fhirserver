@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
    FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, 
   FHIR.Base.Common,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
+  FHIR.Tx.Service;
 
 type
   TIETFLanguageCodeConcept = class (TCodeSystemProviderContext)
@@ -102,12 +102,12 @@ type
     FScripts : TFslMap<TIETFLanguageScript>;
     FRegions : TFslMap<TIETFLanguageRegion>;
     FVariants : TFslMap<TIETFLanguageVariant>;
-    function readVars(st : TStringList; i : integer; vars : TDictionary<string, string>) :integer;
-    function loadLanguage(vars : TDictionary<string, string>; i : integer) :integer;
-    function loadExtLang(vars : TDictionary<string, string>; i : integer) :integer;
-    function loadScript(vars : TDictionary<string, string>; i : integer) :integer;
-    function loadRegion(vars : TDictionary<string, string>; i : integer) :integer;
-    function loadVariant(vars : TDictionary<string, string>; i : integer) :integer;
+    function readVars(st : TStringList; i : integer; vars : TFslStringDictionary) :integer;
+    function loadLanguage(vars : TFslStringDictionary; i : integer) :integer;
+    function loadExtLang(vars : TFslStringDictionary; i : integer) :integer;
+    function loadScript(vars : TFslStringDictionary; i : integer) :integer;
+    function loadRegion(vars : TFslStringDictionary; i : integer) :integer;
+    function loadVariant(vars : TFslStringDictionary; i : integer) :integer;
     procedure Load(source : String);
   public
     constructor Create(source : String);
@@ -392,11 +392,9 @@ var
   i : integer;
 begin
   i := StringArrayIndexOfSensitive(CODES_TIETFLanguageComponent, prop);
-  {$IFDEF FHIR3}
   if (i >= 0) and (op = foExists) and ((value = 'true') or (value = 'false')) then
     result := TIETFLanguageCodeFilter.Create(TIETFLanguageComponent(i), value = 'true')
   else
-  {$ENDIF}
     raise ETerminologyError.Create('Not a supported filter');
 end;
 
@@ -623,7 +621,7 @@ begin
   end;
 end;
 
-function TIETFLanguageDefinitions.readVars(st: TStringList; i: integer; vars: TDictionary<string, string>): integer;
+function TIETFLanguageDefinitions.readVars(st: TStringList; i: integer; vars: TFslStringDictionary): integer;
 var
   l, r : String;
 begin
@@ -898,13 +896,13 @@ procedure TIETFLanguageDefinitions.Load(source : String);
 var
   st : TStringList;
   i : integer;
-  vars : TDictionary<string, string>;
+  vars : TFslStringDictionary;
 begin
   st := TStringList.Create;
   try
     st.Text := source;
     i := 0;
-    vars := TDictionary<string, string>.create;
+    vars := TFslStringDictionary.create;
     try
       while (i < st.Count) and (st[i] = '%%') do
       begin
@@ -933,7 +931,7 @@ begin
   end;
 end;
 
-function TIETFLanguageDefinitions.loadExtLang(vars: TDictionary<string, string>; i: integer): integer;
+function TIETFLanguageDefinitions.loadExtLang(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageExtLang;
 begin
@@ -950,7 +948,7 @@ begin
   end;
 end;
 
-function TIETFLanguageDefinitions.loadLanguage(vars : TDictionary<string, string>; i: integer): integer;
+function TIETFLanguageDefinitions.loadLanguage(vars : TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageLanguage;
 begin
@@ -971,7 +969,7 @@ begin
   end;
 end;
 
-function TIETFLanguageDefinitions.loadRegion(vars: TDictionary<string, string>; i: integer): integer;
+function TIETFLanguageDefinitions.loadRegion(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageRegion;
 begin
@@ -988,7 +986,7 @@ begin
   end;
 end;
 
-function TIETFLanguageDefinitions.loadScript(vars: TDictionary<string, string>; i: integer): integer;
+function TIETFLanguageDefinitions.loadScript(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageScript;
 begin
@@ -1005,7 +1003,7 @@ begin
   end;
 end;
 
-function TIETFLanguageDefinitions.loadVariant(vars: TDictionary<string, string>; i: integer): integer;
+function TIETFLanguageDefinitions.loadVariant(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageVariant;
 begin

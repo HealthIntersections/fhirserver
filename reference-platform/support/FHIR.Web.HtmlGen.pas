@@ -35,21 +35,23 @@ uses
   SysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang,
-  FHIR.Base.Parser,
-  FHIR.Version.Constants; // todo: really need to sort out how XHTML template is done
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.Factory,
+  FHIR.Base.Parser;
 
 Type
 
   THtmlPublisher = class (TFslObject)
   private
     FBuilder : TStringBuilder;
+    FFactory : TFHIRFactory;
     FBaseURL: String;
     FLang: String;
     FVersion: String;
     FLogId: String;
+    function Footer(base, lang, logId: String; tail: boolean = true): string;
+    function HeaderX(base, lang, version: String): String;
   public
-    Constructor Create; Override;
+    Constructor Create(factory : TFHIRFactory);
     Destructor Destroy; Override;
 
     procedure Header(s : String);
@@ -183,17 +185,19 @@ end;
 
 constructor THtmlPublisher.Create;
 begin
-  inherited;
+  inherited Create;
   FBuilder := TStringBuilder.create;
+  FFactory := factory;
 end;
 
 destructor THtmlPublisher.Destroy;
 begin
   FBuilder.Free;
+  FFactory.Free;
   inherited;
 end;
 
-function Footer(base, lang, logId : String; tail : boolean = true): string;
+function THtmlPublisher.Footer(base, lang, logId : String; tail : boolean = true): string;
 begin
   result :=
     '</div>'+#13#10+
@@ -209,7 +213,7 @@ begin
     '		<div class="container">  <!-- container -->'+#13#10+
     '			<div class="inner-wrapper">'+#13#10+
     '				<p>'+#13#10+
-    '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+FHIR_SPEC_URL+'" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
+    '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+Ffactory.specUrl+'" style="color: gold">'+FFactory.versionString+'</a>'+#13#10+
     '        | Request-id: '+logId+
     '        </span>'+#13#10+
     '        </p>'+#13#10+
@@ -302,7 +306,7 @@ begin
   FBuilder.Append('</tr>'#13#10);
 end;
 
-function HeaderX(base, lang, version: String): String;
+function THtmlPublisher.HeaderX(base, lang, version: String): String;
 var
    f : boolean;
 begin
@@ -322,7 +326,7 @@ begin
     '  &nbsp;|&nbsp;'#13#10+
     '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
     '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="'+FHIR_SPEC_URL+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
+    '  <a href="'+Ffactory.specUrl+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FFactory.versionString+'</a>'#13#10;
 
   result := result +
     '  &nbsp;'#13#10+

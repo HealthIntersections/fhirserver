@@ -71,22 +71,39 @@ Uses
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang,
-  {$IFDEF FHIR2} FHIR.R2.Factory, {$ENDIF}
-  {$IFDEF FHIR3} FHIR.R3.Factory, {$ENDIF}
-  {$IFDEF FHIR4} FHIR.R4.Factory, {$ENDIF}
-  FHIR.Version.Resources, FHIR.Version.Parser,
-  FHIR.Tx.Server,
+  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base,
+
+  FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory,
+  FHIR.R2.IndexInfo, FHIR.R3.IndexInfo, FHIR.R4.IndexInfo,
+  FHIR.Server.IndexingR2, FHIR.Server.IndexingR3, FHIR.Server.IndexingR4,
+  FHIR.Server.SubscriptionsR2, FHIR.Server.SubscriptionsR3, FHIR.Server.SubscriptionsR4,
+  FHIR.Server.OperationsR2, FHIR.Server.OperationsR3, FHIR.Server.OperationsR4,
+  FHIR.R2.Validator, FHIR.R3.Validator, FHIR.R4.Validator,
+  FHIR.Server.ValidatorR2, FHIR.Server.ValidatorR3, FHIR.Server.ValidatorR4,
+  FHIR.R2.Javascript, FHIR.R3.Javascript, FHIR.R4.Javascript,
+
+  FHIR.Tools.Indexing,
+  FHIR.Tx.Manager, FHIR.Tx.Server,
   FHIR.Server.Storage,
-  FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Version.Constants, FHIR.Server.Database, FHIR.Base.Objects, FHIR.Version.PathEngine,
+  FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Server.Database, FHIR.Base.Objects,
   FHIR.Server.Constants, FHIR.Server.Context, FHIR.Server.Utilities, FHIR.Server.WebSource,
-  FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript;
+  FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript, FHIR.Server.Factory,
+  FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Manager;
 
 Type
-  TFHIRServerDataStore = class (TFHIRNativeStorageService)
+  TKernelServerFactory = class (TFHIRServerFactory)
+  private
+    FVersion : TFHIRVersion;
   public
-    function createOperationContext(lang : String) : TFHIROperationEngine; override;
-    Procedure Yield(op : TFHIROperationEngine; e : Exception); override;
+    constructor create(version : TFHIRVersion);
+
+    function makeIndexes : TFHIRIndexBuilder; override;
+    function makeValidator: TFHIRValidatorV; override;
+    function makeIndexer : TFHIRIndexManager; override;
+    function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
+
+    procedure registerJs(js : TFHIRJavascript); override;
+    procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
 
   TFHIRService = class (TSystemService)
@@ -94,18 +111,19 @@ Type
     FStartTime : cardinal;
     TestMode : Boolean;
     FIni : TFHIRServerIniFile;
-    FDb : TKDBManager;
-    FTerminologyServer : TTerminologyServer;
+    FSettings : TFHIRServerSettings;
+    FDatabases : TFslMap<TKDBManager>;
+    FTerminologies : TCommonTerminologies;
     FWebServer : TFhirWebServer;
 
     FNotServing : boolean;
     FLoadStore : boolean;
     FInstaller : boolean;
     Fcallback: TInstallerCallback;
-    FRunNumber : integer;
 
-    function connectToDB(name : String; max, timeout : integer; driver, server, database, username, password : String; forCreate : boolean) : TKDBManager;
-    procedure ConnectToDatabase(noCheck : boolean = false);
+    function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TKDBManager;
+    Procedure checkDatabase(db : TKDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+    procedure ConnectToDatabases();
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
     procedure StopRestServer;
@@ -114,10 +132,9 @@ Type
     procedure validate;
     procedure InstallerCallBack(i : integer; s : String);
     procedure cb(i : integer; s : WideString);
-    procedure identifyValueSets;
-    function RegisterValueSet(id: String; conn: TKDBConnection): integer;
+    procedure identifyValueSets(db : TKDBManager);
+//    function RegisterValueSet(id: String; conn: TKDBConnection): integer;
     function fetchFromUrl(fn : String; var bytes : TBytes) : boolean;
-    function makeFactory : TFHIRFactory;
   protected
     function CanStart : boolean; Override;
     procedure postStart; override;
@@ -128,10 +145,10 @@ Type
     Destructor Destroy; override;
 
     procedure Load(fn : String);
-    procedure LoadbyProfile(fn : String; init : boolean);
+//    procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
-    procedure InstallDatabase;
-    procedure UnInstallDatabase;
+    function InstallDatabase(name : String) : String;
+    procedure UnInstallDatabase(name : String);
 
     property NotServing : boolean read FNotServing write FNotServing;
     property callback : TInstallerCallback read Fcallback write Fcallback;
@@ -154,7 +171,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
-  dir, fn, ver, ldate, lver, dest : String;
+  dir, fn, ver, ldate, lver, dest, name : String;
   svc : TFHIRService;
   ini : TIniFile;
   factory : TFHIRFactory;
@@ -183,14 +200,11 @@ begin
       logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
     if filelog then
       logt('Log File = '+logfile);
-    logt('FHIR Version '+FHIR_GENERATED_VERSION);
-    dispName := dispName + ' '+SERVER_VERSION+' (FHIR v '+FHIR_GENERATED_VERSION+')';
+    dispName := dispName + ' '+SERVER_VERSION;
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
     try
-      factory := svc.makeFactory;
-      try
-        GJsHost := TJsHost.Create(svc.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), factory);
+//        GJsHost := TJsHost.Create(svc.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), factory);
         try
           if FindCmdLineSwitch('installer') then
           begin
@@ -199,25 +213,35 @@ begin
           end;
 
           svc.FLoadStore := not FindCmdLineSwitch('noload');
-          if FindCmdLineSwitch('mount') then
+          if FindCmdLineSwitch('manager') then
           begin
-            svc.InstallDatabase;
-            if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-              ImportUnii(fn, svc.Fdb);
+            ServerManagerForm := TServerManagerForm.Create(nil);
+            try
+              ServerManagerForm.ShowModal;
+            finally
+              FreeAndNil(ServerManagerForm);
+            end;
           end
-          else if FindCmdLineSwitch('unmount') then
-            svc.UninstallDatabase
-          else if FindCmdLineSwitch('remount') then
+          else if FindCmdLineSwitch('mount', fn, true, [clstValueNextParam]) then
+          begin
+            name:= svc.InstallDatabase(fn);
+            if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+              ImportUnii(fn,  svc.FDatabases[name]);
+          end
+          else if FindCmdLineSwitch('unmount', fn, true, [clstValueNextParam]) then
+            svc.UninstallDatabase(fn)
+          else if FindCmdLineSwitch('remount', fn, true, [clstValueNextParam]) then
           begin
             svc.DebugMode := true;
             svc.FNotServing := true;
-            svc.UninstallDatabase;
-            svc.InstallDatabase;
+            svc.UninstallDatabase(fn);
+            name := svc.InstallDatabase(fn);
             if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-              ImportUnii(fn, svc.Fdb);
-            if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-              svc.LoadByProfile(fn, true)
-            else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
+              ImportUnii(fn, svc.FDatabases[name]);
+//            if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+//              svc.LoadByProfile(fn, true)
+//            else
+            if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
               svc.Load(fn);
           end
           else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
@@ -226,14 +250,14 @@ begin
             svc.FNotServing := true;
             svc.Load(fn);
           end
-          else if FindCmdLineSwitch('txdirect') then
+          else if FindCmdLineSwitch('txdirect', fn, true, [clstValueNextParam]) then
           begin
-            svc.UninstallDatabase;
-            svc.InstallDatabase;
+            svc.UninstallDatabase(fn);
+            svc.InstallDatabase(fn);
             svc.ConsoleExecute;
           end
-          else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-            svc.LoadByProfile(fn, false)
+//          else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+//            svc.LoadByProfile(fn, false)
           else if FindCmdLineSwitch('validate') then
           begin
             svc.FNotServing := true;
@@ -241,51 +265,21 @@ begin
           end
           else if FindCmdLineSwitch('index') then
             svc.index
-          else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
-          begin
-            FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
-            if not FindCmdLineSwitch('sdest', dest, true, [clstValueNextParam]) then
-              dest := svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver');
-            svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, dest, ver, svc.callback));
-          end
-          else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) then
-          begin
-            if not FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
-              writeln('LOINC Version parameter needed: -lver X.XX')
-            else if not FindCmdLineSwitch('ldate', ldate, true, [clstValueNextParam]) then
-              writeln('LOINC Date parameter needed: -ldate MONTH 20XX')
-           else
-              svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, ldate, svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
-          end
-          else if FindCmdLineSwitch('rxstems', dir, true, []) then
-          begin
-            generateRxStems(TKDBOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
-              svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
-              svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
-          end
-          else if FindCmdLineSwitch('ncistems', dir, true, []) then
-          begin
-            generateRxStems(TKDBOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
-              svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
-              svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
-          end
-      //    procedure ReIndex;
-      //    procedure clear(types : String);
           else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
           begin
-           svc.ConnectToDatabase;
-           ImportUnii(fn, svc.Fdb)
+           svc.ConnectToDatabases;
+           // ImportUnii(fn, svc.Fdb)
           end
           else
           begin
             svc.Execute;
           end;
         finally
-          GJsHost.free;
+//          GJsHost.free;
         end;
-      finally
-        factory.Free;
-      end;
+//      finally
+//        factory.Free;
+//      end;
     finally
       svc.Free;
     end;
@@ -301,6 +295,77 @@ begin
   end;
 end;
 
+{ TKernelServerFactory }
+
+constructor TKernelServerFactory.create(version : TFHIRVersion);
+begin
+  inherited Create;
+  FVersion := version;
+end;
+
+function TKernelServerFactory.makeValidator: TFHIRValidatorV;
+begin
+  case FVersion of
+    fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create));
+    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create));
+    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
+  else
+    raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
+  end;
+end;
+
+function TKernelServerFactory.makeIndexer : TFHIRIndexManager;
+begin
+  case FVersion of
+    fhirVersionRelease2 : result := TFhirIndexManager2.Create;
+    fhirVersionRelease3 : result := TFhirIndexManager3.Create;
+    fhirVersionRelease4 : result := TFhirIndexManager4.Create;
+  else
+    raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Indexes');
+  end;
+end;
+
+function TKernelServerFactory.makeIndexes: TFHIRIndexBuilder;
+begin
+  case FVersion of
+    fhirVersionRelease2 : result := TFHIRIndexBuilderR2.create;
+    fhirVersionRelease3 : result := TFHIRIndexBuilderR3.create;
+    fhirVersionRelease4 : result := TFHIRIndexBuilderR4.create;
+  else
+    raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating index information');
+  end;
+end;
+
+function TKernelServerFactory.makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager;
+begin
+  case FVersion of
+    fhirVersionRelease2 : result := TSubscriptionManagerR2.Create(ServerContext);
+    fhirVersionRelease3 : result := TSubscriptionManagerR3.Create(ServerContext);
+    fhirVersionRelease4 : result := TSubscriptionManagerR4.Create(ServerContext);
+  else
+    raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating subcription manager');
+  end;
+end;
+
+procedure TKernelServerFactory.registerJs(js : TFHIRJavascript);
+begin
+  FHIR.R2.Javascript.registerFHIRTypes(js);
+  FHIR.R3.Javascript.registerFHIRTypes(js);
+  FHIR.R4.Javascript.registerFHIRTypes(js);
+end;
+
+procedure TKernelServerFactory.setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer});
+begin
+  case FVersion of
+    fhirVersionRelease2 : TFHIRServerWorkerContextR2(ValidatorContext).TerminologyServer := (server as TTerminologyServer).Link;
+    fhirVersionRelease3 : TFHIRServerWorkerContextR3(ValidatorContext).TerminologyServer := (server as TTerminologyServer).Link;
+    fhirVersionRelease4 : TFHIRServerWorkerContextR4(ValidatorContext).TerminologyServer := (server as TTerminologyServer).Link;
+  else
+    raise EFHIRUnsupportedVersion.Create(FVersion, 'Setting Terminology Server');
+  end;
+end;
+
+
 { TFHIRService }
 
 constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName: String);
@@ -308,11 +373,16 @@ begin
   FStartTime := GetTickCount;
   inherited create(ASystemName, ADisplayName);
   FIni := TFHIRServerIniFile.Create(AIniName);
+  FSettings := TFHIRServerSettings.Create;
+  FSettings.ForLoad := not FindCmdLineSwitch('noload');
+  FSettings.load(FIni);
+  FDatabases := TFslMap<TKDBManager>.create;
 end;
 
 destructor TFHIRService.Destroy;
 begin
   CloseDatabase;
+  FDatabases.Free;
   FIni.Free;
   inherited;
 end;
@@ -324,15 +394,13 @@ begin
     filelog := true;
     Consolelog := true;
   end;
-  FRunNumber := FIni.ReadInteger(voVersioningNotApplicable, 'server', 'run-number', 0) + 1;
-  FIni.WriteInteger('server', 'run-number', FRunNumber);
-  logt('Run Number '+inttostr(FRunNumber));
+  logt('Run Number '+inttostr(FSettings.RunNumber));
 
   result := false;
   try
-    if FDb = nil then
-      ConnectToDatabase;
-    if FTerminologyServer = nil then
+    if FDatabases.IsEmpty then
+      ConnectToDatabases;
+    if FTerminologies = nil then
       LoadTerminologies;
     InitialiseRestServer;
     result := true;
@@ -394,113 +462,85 @@ begin
   end;
 end;
 
-function TFHIRService.RegisterValueSet(id: String; conn : TKDBConnection): integer;
-begin
-  result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
-  if result = 0 then
-  begin
-    result := FTerminologyServer.NextValueSetKey;
-    Conn.ExecSQL('Insert into ValueSets (ValueSetKey, URL, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', 1)');
-  end;
-end;
 
-
-procedure TFHIRService.identifyValueSets;
-begin
-  logt('Register ValueSets');
-  FDb.Connection('register value sets',
-    procedure (conn : TKDBConnection)
-    var
-      vs : TFhirValueSet;
-      vsl : TFHIRValueSetList;
-    begin
-      vsl := FTerminologyServer.GetValueSetList;
-      try
-        for vs in vsl do
-          vs.Tags['tracker'] := inttostr(RegisterValueSet(vs.url, conn));
-      finally
-        vsl.Free;
-      end;
-    end);
-end;
-
-Procedure TFHIRService.ConnectToDatabase(noCheck : boolean = false);
+function TFHIRService.connectToDatabase(s : String; details : TFHIRServerIniComplex) : TKDBManager;
 var
-  dbn,ddr : String;
+  dbn, ddr : String;
+begin
+  dbn := details['database'];
+  ddr := details['driver'];
+  if details['type'] = 'mssql' then
+  begin
+    logt('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
+    if ddr = '' then
+      ddr := 'SQL Server Native Client 11.0';
+    result := TKDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+  end
+  else if details['type'] = 'mysql' then
+  begin
+    logt('Connect to '+s+' ('+details['type']+'://'+details['server']+'/'+dbn+')');
+    result := TKDBOdbcManager.create(s, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+  end
+  else if details['type'] = 'SQLite' then
+  begin
+    logt('Connect to '+s+' ('+details['type']+':'+dbn+')');
+    result := TKDBSQLiteManager.create(s, dbn, false);
+  end
+  else
+    raise ELibraryException.Create('Unknown database type '+s);
+end;
+
+Procedure TFHIRService.ConnectToDatabases();
+var
+  s : String;
+  details : TFHIRServerIniComplex;
+begin
+  logt('Load Databases. Config file = '+FIni.FileName);
+  for s in FIni.databases.keys do
+  begin
+    details := FIni.databases[s];
+    FDatabases.Add(s, connectToDatabase(s, details));
+  end;
+  logt('Databases Loaded');
+end;
+
+Procedure TFHIRService.checkDatabase(db : TKDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
+var
   ver : integer;
   conn : TKDBConnection;
   dbi : TFHIRDatabaseInstaller;
   meta : TKDBMetaData;
 begin
-  logt('Config file = '+FIni.FileName);
-  dbn := FIni.ReadString(voMaybeVersioned, 'database', 'database', '');
-  ddr := FIni.ReadString(voMaybeVersioned, 'database', 'driver', 'SQL Server Native Client 11.0');
-  if TestMode then
-    FDb := TKDBOdbcManager.create('fhir', 100, 0, ddr, '(local)', 'fhir-test', '', '')
-  else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'mssql' then
-  begin
-    logt('Database mssql://'+FIni.ReadString(voMaybeVersioned, 'database', 'server', '')+'/'+dbn);
-    FDb := TKDBOdbcManager.create('fhir', 100, 0, ddr,
-      FIni.ReadString(voMaybeVersioned, 'database', 'server', ''), dbn,
-      FIni.ReadString(voMaybeVersioned, 'database', 'username', ''), FIni.ReadString(voMaybeVersioned, 'database', 'password', ''));
-  end
-  else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'mysql' then
-  begin
-    logt('Database mysql://'+FIni.ReadString(voMaybeVersioned, 'database', 'server', '')+'/'+dbn);
-    FDb := TKDBOdbcManager.create('fhir', 100, 0, ddr,
-      FIni.ReadString(voMaybeVersioned, 'database', 'server', ''), dbn,
-      FIni.ReadString(voMaybeVersioned, 'database', 'username', ''), FIni.ReadString(voMaybeVersioned, 'database', 'password', ''));
-  end
-  else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'SQLite' then
-    FDb := TKDBSQLiteManager.create('fhir', dbn, noCheck)
-  else
-  begin
-    logt('Database not configured');
-    raise EDBException.create('Database Access not configured');
-  end;
-  if not noCheck then
-  begin
-    conn := FDb.GetConnection('check version');
+  conn := Db.GetConnection('check version');
+  try
+    meta := conn.FetchMetaData;
     try
-      meta := conn.FetchMetaData;
-      try
-        if meta.HasTable('Config') then
+      if meta.HasTable('Config') then
+      begin
+        // db version check
+        ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
+        if (ver <> ServerDBVersion) then
         begin
-          // db version check
-          ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
-          if (ver <> ServerDBVersion) then
-          begin
-            logt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
-            dbi := TFHIRDatabaseInstaller.create(conn, '');
-            try
-              dbi.upgrade(ver);
-            finally
-              dbi.Free;
-            end;
+          logt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
+          dbi := TFHIRDatabaseInstaller.create(conn, '', factory.link, serverfactory.link);
+          try
+            dbi.upgrade(ver);
+          finally
+            dbi.Free;
           end;
         end;
-      finally
-        meta.Free;
       end;
-      conn.Release;
-    except
-      on e : Exception do
-      begin
-        conn.Error(e);
-        raise;
-      end;
+    finally
+      meta.Free;
+    end;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise;
     end;
   end;
-end;
-
-
-
-function TFHIRService.connectToDB(name: String; max, timeout: integer; driver, server, database, username, password: String; forCreate : boolean): TKDBManager;
-begin
-  if driver = 'SQLite' then
-    result := TKDBSQLiteManager.create(name, database, forCreate)
-  else
-    result := TKDBOdbcManager.create(name, max, timeout, driver, server, database, username, password);
 end;
 
 procedure TFHIRService.cb(i: integer; s: WideString);
@@ -510,8 +550,10 @@ begin
 end;
 
 procedure TFHIRService.CloseDatabase;
+var
+  db : TKDBManager;
 begin
-  FDB.Free;
+  FDatabases.Clear;
 end;
 
 function Locate(s, fn : String; first : boolean) : String;
@@ -528,43 +570,6 @@ begin
     raise EIOException.create('Unable to find file '+s);
 end;
 
-type
-  TPackageLoader = class (TFslObject)
-  private
-    bundle : TFHIRBundle;
-    procedure load(rType, id : String; stream : TStream);
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-  end;
-
-constructor TPackageLoader.Create;
-begin
-  inherited;
-  bundle := TFHIRBundle.Create;
-end;
-
-destructor TPackageLoader.Destroy;
-begin
-  bundle.Free;
-  inherited;
-end;
-
-procedure TPackageLoader.load(rType, id : String; stream : TStream);
-var
-  p : TFHIRParser;
-  r : TFHIRResource;
-begin
-  Logt('  '+inttostr(bundle.entryList.count)+': '+rType+'/'+id);
-  p := TFHIRParsers.parser(nil, ffJson, 'en');
-  try
-    r := p.parseResource(stream) as TFhirResource;
-    bundle.entryList.Append.resource := r;
-  finally
-    p.Free;
-  end;
-end;
-
 procedure TFHIRService.Load(fn: String);
 var
   f : TFileStream;
@@ -576,16 +581,16 @@ var
   bytes : TBytes;
   bs : TBytesStream;
   pl : TArray<String>;
-  ploader : TPackageLoader;
+//  ploader : TPackageLoader;
   pcm : TFHIRPackageManager;
 begin
   FNotServing := true;
-  cb(1, 'Load: Connect to database');
-  if FDb = nil then
-    ConnectToDatabase;
+  cb(1, 'Load: Connect to databases');
+  if FDatabases.IsEmpty then
+    ConnectToDatabases;
   cb(1, 'Load: start kernel');
   CanStart;
-  logt('Load: register value sets');
+(*  logt('Load: register value sets');
   identifyValueSets;
 
   // first we load any packages in the -packages parameter
@@ -628,7 +633,7 @@ begin
     else
       raise EIOException.create('Unable to fetch from "'+fn+'"');
   end
-  else if {$IFDEF FHIR2} true {$ELSE} fn.EndsWith('.json') or fn.EndsWith('.xml') {$ENDIF} then
+  else if !{$IFDEF FHIR2} true {$ELSE} fn.EndsWith('.json') or fn.EndsWith('.xml') {$ENDIF} then
   begin
     logt('Load database from '+fn);
     f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
@@ -685,8 +690,9 @@ begin
   cb(100, 'Cleaning up');
 
   DoStop;
+  *)
 end;
-
+(*
 procedure TFHIRService.LoadbyProfile(fn: String; init : boolean);
 var
   ini : TFHIRServerIniFile;
@@ -734,19 +740,12 @@ begin
     ini.free;
   end;
 end;
+*)
 
 procedure TFHIRService.LoadTerminologies;
 begin
-  FTerminologyServer := TTerminologyServer.create(FDB.Link);
-  FTerminologyServer.OnConnectDB := connectToDB;
-  FTerminologyServer.load(FIni);
-end;
-
-function TFHIRService.makeFactory: TFHIRFactory;
-begin
-  {$IFDEF FHIR2} result := TFHIRFactoryR2.Create; {$ENDIF}
-  {$IFDEF FHIR3} result := TFHIRFactoryR3.Create; {$ENDIF}
-  {$IFDEF FHIR4} result := TFHIRFactoryR4.Create; {$ENDIF}
+  FTerminologies := TCommonTerminologies.Create(FSettings.link);
+  FTerminologies.load(FIni, FDatabases);
 end;
 
 procedure TFHIRService.postStart;
@@ -755,91 +754,101 @@ end;
 
 procedure TFHIRService.UnloadTerminologies;
 begin
-  FTerminologyServer.Free;
-  FTerminologyServer := nil;
-end;
-
-procedure TFHIRService.Index;
-begin
-  FNotServing := true;
-  if FDb = nil then
-    ConnectToDatabase;
-  CanStart;
-  logt('index database');
-  FTerminologyServer.BuildIndexes(true);
-  DoStop;
-end;
-
-procedure TFHIRService.validate;
-begin
-  FNotServing := true;
-  if FDb = nil then
-    ConnectToDatabase;
-  CanStart;
-  logt('validate resources');
-  FWebServer.ServerContext.Storage.RunValidation;
-  DoStop;
+  FTerminologies.Free;
+  FTerminologies := nil;
 end;
 
 procedure TFHIRService.InitialiseRestServer;
 var
   ctxt : TFHIRServerContext;
-  store : TFHIRServerDataStore;
-  jp : String;
+  store : TFHIRNativeStorageService;
+  s : String;
+  details : TFHIRServerIniComplex;
+  ep : TFhirWebServerEndpoint;
 begin
-  store := TFHIRServerDataStore.create(FDB.Link, ProcessPath(ExtractFilePath(Fini.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', '')));
-  try
-    ctxt := TFHIRServerContext.Create(store.Link);
-    try
-      store.ServerContext := ctxt;
-      ctxt.Factory := makeFactory;
-      ctxt.RunNumber := FRunNumber;
-      ctxt.TerminologyServer := FterminologyServer.Link;
-      ctxt.Validate := FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
-      ctxt.ForLoad := not FindCmdLineSwitch('noload');
-      ctxt.ownername := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
-      store.Initialise(FIni);
-      FWebServer := TFhirWebServer.create(FIni.link, DisplayName, FTerminologyServer, ctxt.link);
-      ctxt.userProvider := TSCIMServer.Create(Fdb.link, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), FWebServer.host, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
-      ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
-      FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', '')));
-      FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
-      FWebServer.CDSHooksServer.registerService(TCDAHooksCodeViewService.create);
-      FWebServer.CDSHooksServer.registerService(TCDAHooksIdentifierViewService.create);
-      FWebServer.CDSHooksServer.registerService(TCDAHooksPatientViewService.create);
-      FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
+  FWebServer := TFhirWebServer.create(FSettings.Link, DisplayName);
+  FWebServer.loadConfiguration(FIni);
+  FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));
 
-      FWebServer.Start(not FNotServing);
+  for s in FIni.endpoints.Keys do
+  begin
+    details := FIni.endpoints[s];
+    if details['version'] = 'r2' then
+    begin
+      store := TFHIRNativeStorageServiceR2.create(FDatabases[details['database']], TFHIRFactoryR2.Create);
+    end
+    else if details['version'] = 'r3' then
+    begin
+      store := TFHIRNativeStorageServiceR3.create(FDatabases[details['database']], TFHIRFactoryR3.Create);
+    end
+    else if details['version'] = 'r4' then
+    begin
+      store := TFHIRNativeStorageServiceR4.create(FDatabases[details['database']], TFHIRFactoryR4.Create);
+    end
+    else
+      raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);
+
+    try
+      ctxt := TFHIRServerContext.Create(store.Link, TKernelServerFactory.create(store.Factory.version));
+      try
+        checkDatabase(store.DB, store.Factory, ctxt.ServerFactory);
+        ctxt.Globals := FSettings.Link;
+        store.ServerContext := ctxt;
+        ctxt.TerminologyServer := TTerminologyServer.Create(store.DB.link, ctxt.factory.Link, FTerminologies.link);
+        ctxt.Validate := true; // move to database config FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
+        store.Initialise();
+        ctxt.userProvider := TSCIMServer.Create(store.db.link, FIni.admin['scim-salt'], FWebServer.host, FIni.admin['default-rights'], false);
+        ep := FWebServer.registerEndPoint(s, details['path'], ctxt.Link);
+      finally
+        ctxt.Free;
+      end;
     finally
-      ctxt.free;
+      store.Free;
     end;
-  finally
-    store.free;
+  end;
+//      FWebServer.CDSHooksServer.registerService(TCDAHooksCodeViewService.create);
+//      FWebServer.CDSHooksServer.registerService(TCDAHooksIdentifierViewService.create);
+//      FWebServer.CDSHooksServer.registerService(TCDAHooksPatientViewService.create);
+//      FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
+
+  FWebServer.Start(not FNotServing);
+end;
+
+function factoryFactory(v : TFHIRVersion) : TFHIRFactory;
+begin
+  case v of
+    fhirVersionRelease2: result := TFHIRFactoryR2.create;
+    fhirVersionRelease3: result := TFHIRFactoryR3.create;
+    fhirVersionRelease4: result := TFHIRFactoryR4.create;
+  else
+    raise EFHIRUnsupportedVersion.Create(v, 'creating factory');
   end;
 end;
 
-procedure TFHIRService.InstallDatabase;
+function TFHIRService.InstallDatabase(name : String) : String;
 var
-  db : TFHIRDatabaseInstaller;
+  db : TKDBManager;
+  dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
   salt, un, pw, em, sql, dr : String;
   conn : TKDBConnection;
-
+  details : TFHIRServerIniComplex;
+  v : TFHIRVersion;
 begin
   // check that user account details are provided
-  salt := FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', '');
+  salt := FIni.admin['scim-salt'];
   if (salt = '') then
     raise EFHIRException.create('You must define a scim salt in the ini file');
-  dr := FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', '');
+  dr := FIni.admin['default-rights'];
   if (dr = '') then
     raise EFHIRException.create('You must define some default rights for SCIM users in the ini file');
-  un := FIni.ReadString(voVersioningNotApplicable, 'admin', 'username', '');
+  un := FIni.admin['username'];
   if (un = '') then
     raise EFHIRException.create('You must define an admin username in the ini file');
   FindCmdLineSwitch('password', pw, true, [clstValueNextParam]);
   if (pw = '') then
     raise EFHIRException.create('You must provide a admin password as a parameter to the command');
-  em := FIni.ReadString(voVersioningNotApplicable, 'admin', 'email', '');
+  em := FIni.admin['email'];
   if (em = '') then
     raise EFHIRException.create('You must define an admin email in the ini file');
 
@@ -847,25 +856,107 @@ begin
   if not DirectoryExists(sql) then
     sql := IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'sql';
 
+  details := FIni.databases[name];
+  if details = nil then
+    raise EFslException.Create('Undefined endpoint '+name);
 
-  if FDb = nil then
-    ConnectToDatabase(true);
-  logt('mount database');
-  scim := TSCIMServer.Create(FDB.Link, salt, FIni.ReadString(voVersioningNotApplicable, 'web', 'host', ''), FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), true);
+  if details['version'] = 'r2' then
+    v := fhirVersionRelease2
+  else if details['version'] = 'r3' then
+    v := fhirVersionRelease3
+  else if details['version'] = 'r4' then
+    v := fhirVersionRelease4
+  else
+    raise EFslException.Create('unknown version '+details['version']);
+
+  result := details['database'];
+  if result = '' then
+    raise EFslException.Create('No defined database '+name);
+  if FDatabases.ContainsKey(result) then
+    db := FDatabases[result].Link
+  else
+    db := connectToDatabase(result, FIni.databases[result]);
   try
-    conn := FDb.GetConnection('setup');
+    logt('mount endpoint '+result);
+    scim := TSCIMServer.Create(db.Link, salt, FIni.web['host'], FIni.admin['default-rights'], true);
     try
-      db := TFHIRDatabaseInstaller.create(conn, sql);
+      conn := db.GetConnection('setup');
       try
-        db.callback := callback;
-        db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
-        db.Bases.Add('http://hl7.org/fhir');
-        db.Install(scim);
+        dbi := TFHIRDatabaseInstaller.create(conn, sql, factoryFactory(v), TKernelServerFactory(v));
+        try
+          dbi.callback := callback;
+          dbi.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
+          dbi.Bases.Add('http://hl7.org/fhir');
+          dbi.Install(scim);
+        finally
+          db.free;
+        end;
+        scim.DefineAnonymousUser(conn);
+        scim.DefineAdminUser(conn, un, pw, em);
+        conn.Release;
+        logt('done');
+      except
+         on e:exception do
+         begin
+           logt('Error: '+e.Message);
+           conn.Error(e);
+           recordStack(e);
+           raise;
+         end;
+      end;
+    finally
+      scim.Free;
+    end;
+  finally
+    db.free;
+  end;
+end;
+
+procedure TFHIRService.InstallerCallBack(i: integer; s: String);
+begin
+  writeln('##> '+inttostr(i)+' '+s);
+end;
+
+procedure TFHIRService.UnInstallDatabase;
+var
+  db : TKDBManager;
+  dbi : TFHIRDatabaseInstaller;
+  conn : TKDBConnection;
+  n : String;
+  details : TFHIRServerIniComplex;
+  v : TFHIRVersion;
+begin
+  details := FIni.databases[name];
+  if details = nil then
+    raise EFslException.Create('Undefined endpoint '+name);
+
+  if details['version'] = 'r2' then
+    v := fhirVersionRelease2
+  else if details['version'] = 'r3' then
+    v := fhirVersionRelease3
+  else if details['version'] = 'r4' then
+    v := fhirVersionRelease4
+  else
+    raise EFslException.Create('unknown version '+details['version']);
+
+  n := details['database'];
+  if n = '' then
+    raise EFslException.Create('No defined database '+name);
+  if FDatabases.ContainsKey(n) then
+    db := FDatabases[n].Link
+  else
+    db := connectToDatabase(n, FIni.databases[n]);
+  try
+    logt('unmount database '+n);
+    conn := db.GetConnection('setup');
+    try
+      dbi := TFHIRDatabaseInstaller.create(conn, '', factoryFactory(v), TKernelServerFactory(v));
+      try
+        dbi.callback := callback;
+        dbi.UnInstall;
       finally
         db.free;
       end;
-      scim.DefineAnonymousUser(conn);
-      scim.DefineAdminUser(conn, un, pw, em);
       conn.Release;
       logt('done');
     except
@@ -878,42 +969,7 @@ begin
        end;
     end;
   finally
-    scim.Free;
-  end;
-end;
-
-procedure TFHIRService.InstallerCallBack(i: integer; s: String);
-begin
-  writeln('##> '+inttostr(i)+' '+s);
-end;
-
-procedure TFHIRService.UnInstallDatabase;
-var
-  db : TFHIRDatabaseInstaller;
-  conn : TKDBConnection;
-begin
-  if FDb = nil then
-    ConnectToDatabase(true);
-  logt('unmount database');
-  conn := FDb.GetConnection('setup');
-  try
-    db := TFHIRDatabaseInstaller.create(conn, '');
-    try
-      db.callback := callback;
-      db.UnInstall;
-    finally
-      db.free;
-    end;
-    conn.Release;
-    logt('done');
-  except
-     on e:exception do
-     begin
-       logt('Error: '+e.Message);
-       conn.Error(e);
-       recordStack(e);
-       raise;
-     end;
+    db.Free;
   end;
 end;
 
@@ -923,25 +979,66 @@ begin
   FWebServer.free;
 end;
 
-{ TFHIRServerDataStore }
-
-function TFHIRServerDataStore.createOperationContext(lang: String): TFHIROperationEngine;
+procedure TFHIRService.identifyValueSets(db : TKDBManager);
 begin
-  result := TFHIRNativeOperationEngine.Create(lang, ServerContext, self.Link, DB.GetConnection('Operation'));
-end;
-
-procedure TFHIRServerDataStore.Yield(op: TFHIROperationEngine; e : Exception);
+(*
+function TFHIRService.RegisterValueSet(id: String; conn : TKDBConnection): integer;
 begin
-  try
-    if e = nil then
-      TFHIRNativeOperationEngine(op).Connection.Release
-    else
-      TFHIRNativeOperationEngine(op).Connection.Error(e);
-  finally
-    op.Free;
+  result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
+  if result = 0 then
+  begin
+    result := FTerminologyServer.NextValueSetKey;
+    Conn.ExecSQL('Insert into ValueSets (ValueSetKey, URL, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', 1)');
   end;
 end;
 
 
+
+ logt('Register ValueSets');
+  Db.Connection('register value sets',
+    procedure (conn : TKDBConnection)
+    var
+      vs : TFhirValueSetW;
+      vsl : TFslList TFHIRValueSetList;
+    begin
+      vsl := FTerminologyServer.GetValueSetList;
+      try
+        for vs in vsl do
+          vs.Tags['tracker'] := inttostr(RegisterValueSet(vs.url, conn));
+      finally
+        vsl.Free;
+      end;
+    end);*)
+end;
+
+procedure TFHIRService.Index;
+begin
+  raise EFslException.Create('not supported yet');
+(*
+  FNotServing := true;
+  if FDb = nil then
+    ConnectToDatabase;
+  CanStart;
+  logt('index database');
+  FTerminologyServer.BuildIndexes(true);
+  DoStop;
+*)
+end;
+
+procedure TFHIRService.validate;
+begin
+  raise EFslException.Create('not supported yet');
+(*
+  FNotServing := true;
+  if FDb = nil then
+    ConnectToDatabase;
+  CanStart;
+  logt('validate resources');
+  FWebServer.ServerContext.Storage.RunValidation;
+  DoStop;
+*)
+end;
+
 end.
+
 

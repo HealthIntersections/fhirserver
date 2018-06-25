@@ -76,7 +76,7 @@ uses
   MarkdownDaringFireballTests, FHIR.Support.Json;
 
 const
-  {$IFDEF FHIR2}
+  !{$IFDEF FHIR2}
   PUB_PATH = 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish';
   {$ELSE}
   PUB_PATH = 'C:\work\org.hl7.fhir.old\org.hl7.fhir.2016May\build\publish';
@@ -147,13 +147,13 @@ begin
 //// others to add:
 ////  // ;
 //// // TDigitalSignatureTests.test;
-//////  {$IFDEF FHIR2}
+//////  !{$IFDEF FHIR2}
 //////  TFHIRParserTests.runTests('C:\work\org.hl7.fhir.dstu2\build\publish\examples');
 //////  {$ELSE}
 //////  TFHIRParserTests.runTests('C:\work\org.hl7.fhir\build\publish\examples');
 //////  {$ENDIF}
 //////  TFslXmlBuilderCanonicalizationTests.test;
-//////  {$IFDEF FHIR2}
+//////  !{$IFDEF FHIR2}
 //////  TFhirHTTPClientTests.tests('http://local.healthintersections.com.au:960/open');
 //////  {$ELSE}
 //////  TFhirHTTPClientTests.tests('http://fhir21.healthintersections.com.au');

@@ -34,7 +34,7 @@ interface
 Uses
   SysUtils, Classes, System.Character, RegularExpressions, ActiveX, ComObj,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.R2.PathNode, FHIR.R2.Context, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.PathEngine, FHIR.R2.ElementModel;
 
 
@@ -197,7 +197,7 @@ Type
     procedure checkInnerNS(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
   public
-    Constructor Create(context: TFHIRWorkerContextV); override;
+    Constructor Create(context: TFHIRWorkerContextWithFactory); override;
     Destructor Destroy; Override;
 
     Property Context : TFHIRWorkerContext read FContext;
@@ -226,7 +226,7 @@ Type
     procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV; profile : string); overload; override;
     procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV; profiles : TValidationProfileSet); overload;
 
-    function  describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
+    function  describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcomeW; override;
   end;
 
   TFHIRValidator = TFHIRValidator2;
@@ -406,7 +406,7 @@ end;
 
 { TFHIRValidator }
 
-constructor TFHIRValidator.Create(context: TFHIRWorkerContextV);
+constructor TFHIRValidator.Create(context: TFHIRWorkerContextWithFactory);
 begin
   inherited Create(context);
   FContext := context as TFHIRWorkerContext;
@@ -3352,19 +3352,19 @@ begin
   end;
 end;
 
-function TFHIRValidator.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
+function TFHIRValidator.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcomeW;
 var
   o : TFhirOperationOutcomeIssueW;
   gen : TFHIRNarrativeGenerator;
 begin
-  result := TFhirOperationOutcome.create;
+  result := context.Factory.wrapOperationOutcome(context.factory.makeResource('OperationOutcome'));
   try
     for o in ctxt.Issues do
-      result.issueList.add(o.Element.Link);
+      result.addIssue(o.Link);
     gen := TFHIRNarrativeGenerator.create(Context.Link);
     try
       gen.description := ctxt.OperationDescription;
-      gen.generate(result);
+      gen.generate(result.Resource);
     finally
       gen.Free;
     end;

@@ -637,42 +637,42 @@ begin
     begin
       if diff.FOp = diffDelete then
       begin
-        p := result.appendParameter('operation');
-        pp := p.appendPart('type');
+        p := result.addParam('operation');
+        pp := p.addParam('type');
         pp.value := FFactory.makeCode(CODES_DIFF_OP[diffDelete]);
-        pp := p.appendPart('path');
+        pp := p.addParam('path');
         pp.value := FFactory.makeString(diff.Path);
       end
       else if diff.FOp = diffMove then
       begin
-        p := result.appendParameter('operation');
-        pp := p.appendPart('type');
+        p := result.addParam('operation');
+        pp := p.addParam('type');
         pp.value := FFactory.makeCode(CODES_DIFF_OP[diffMove]);
-        pp := p.appendPart('path');
+        pp := p.addParam('path');
         pp.value := FFactory.makeString(diff.Path);
-        pp := p.appendPart('source');
+        pp := p.addParam('source');
         pp.value := FFactory.makeInteger(inttostr(diff.Index));
-        pp := p.appendPart('destination');
+        pp := p.addParam('destination');
         pp.value := FFactory.makeInteger(inttostr(diff.Index2));
       end
       else
       begin
-        p := result.appendParameter('operation');
-        pp := p.appendPart('type');
+        p := result.addParam('operation');
+        pp := p.addParam('type');
         pp.value := FFactory.makeCode(CODES_DIFF_OP[diff.FOp]);
-        pp := p.appendPart('path');
+        pp := p.addParam('path');
         pp.value := FFactory.makeString(diff.Path);
         if diff.Name <> '' then
         begin
-          pp := p.appendPart('name');
+          pp := p.addParam('name');
           pp.value := FFactory.makeString(diff.Name);
         end;
         if diff.FOp = diffInsert then
         begin
-          pp := p.appendPart('index');
+          pp := p.addParam('index');
           pp.value := FFactory.makeInteger(inttostr(diff.Index));
         end;
-        pp := p.appendPart('value');
+        pp := p.addParam('value');
         encodeValue(pp, diff.Value);
       end;
     end;
@@ -776,7 +776,7 @@ begin
         p.forceValues;
         for b in p.Values do
         begin
-          pp := part.appendPart(p.Name);
+          pp := part.addParam(p.Name);
           encodeValue(pp, b as TFHIRObject);
         end;
       end;

@@ -64,7 +64,7 @@ Const
   CURRENT_FHIR_VERSION = fhirVersionRelease2;
   COMPILED_FHIR_VERSION = fhirVersionRelease2;
   {$ELSE}
-  {$IFDEF FHIR3} 
+  {$IFDEF FHIR3}
   CURRENT_FHIR_VERSION = fhirVersionRelease3;
   COMPILED_FHIR_VERSION = fhirVersionRelease3;
   {$ELSE}
@@ -79,7 +79,7 @@ Const
   CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
   CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4');
   PF_CONST : array [TFHIRVersion] of string = ('', '0.0', '1.0', '3.0', '3.4');
-  
+
 
   FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
   FHIR_VERSIONS : Array [TFHIRVersion] of String = ('', '0.0.82', '1.0.2', '3.0.1', '3.4.0');
@@ -143,15 +143,17 @@ Type
 
   TFHIRAuthProvider = (apNone, apInternal, apFacebook, apGoogle, apHL7);
 
-
   TFHIRXhtmlParserPolicy = (xppAllow, xppDrop, xppReject);
 
   TFHIRSummaryOption = (soFull, soSummary, soText, soData, soCount);
 
-  TExceptionType = (etNull, etInvalid, etStructure, etRequired, etValue, etInvariant, etSecurity, etLogin, etUnknown, etExpired, etForbidden, etSuppressed, etProcessing, etNotSupported, etDuplicate, etNotFound, etTooLong, etCodeInvalid, etExtension, etTooCostly, etBusinessRule, etConflict, etIncomplete, etTransient, etLockError, etNoStore, etException, etTimeout, etThrottled, etInformational);
-  TIssueSeverity = (isNull, isFatal, isError, isWarning, isInformation);
   TFhirIssueType = (itNull, itInvalid, itStructure, itRequired, itValue, itInvariant, itSecurity, itLogin, itUnknown, itExpired, itForbidden, itSuppressed, itProcessing, itNotSupported, itDuplicate, itNotFound, itTooLong, itCodeInvalid, itExtension, itTooCostly, itBusinessRule, itConflict, itIncomplete, itTransient, itLockError, itNoStore, itException, itTimeout, itThrottled, itInformational);
+  TIssueSeverity = (isNull, isFatal, isError, isWarning, isInformation);
 
+  EFHIRUnsupportedVersion = class (EFslException)
+  public
+    constructor Create(version : TFHIRVersion; action : String);
+  end;
 
 //  TFhirTag = class (TFslName)
 //  private
@@ -277,7 +279,7 @@ type
   {$M+}
   TFHIRObject = class (TFslObject)
   private
-    FTags : TDictionary<String,String>;
+    FTags : TFslStringDictionary;
     FTag : TFslObject;
     FTagObject : TObject;
     FLocationStart : TSourceLocation;
@@ -343,7 +345,7 @@ type
 
     // tags...
     Property Tags[name : String] : String read getTags write SetTags;
-    function HasTag(name : String): boolean;
+    function HasTag(name : String): boolean; overload;
     property Tag : TFslObject read FTag write SetTag;
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
     property TagInt : integer read FTagInt write FTagInt;
@@ -410,7 +412,7 @@ type
 
   TFHIRObjectList = class (TFslObjectList)
   private
-    FTags : TDictionary<String,String>;
+    FTags : TFslStringDictionary;
     FJsHandle: pointer;
     FJsInstance: cardinal;
     Function GetItemN(index : Integer) : TFHIRObject;
@@ -439,10 +441,13 @@ type
   protected
     function GetProfileVersion: TFHIRVersion; virtual;
     procedure SetProfileVersion(Value: TFHIRVersion); virtual;
+
   public
     function link : TFHIRResourceV; overload;
     function isResource : boolean; override;
     function isDomainResource : boolean; virtual;
+
+    procedure checkNoImplicitRules(place, role : String); virtual; abstract;
 
     property profileVersion : TFHIRVersion read GetProfileVersion write SetProfileVersion;
   end;
@@ -653,7 +658,7 @@ end;
 function TFHIRObject.getTags(name: String): String;
 begin
   if FTags = nil then
-    FTags := TDictionary<String, String>.create;
+    FTags := TFslStringDictionary.create;
   if FTags.ContainsKey(name) then
     result := FTags[name]
   else
@@ -691,7 +696,7 @@ end;
 procedure TFHIRObject.SetTags(name: String; const Value: String);
 begin
   if FTags = nil then
-    FTags := TDictionary<String,String>.create;
+    FTags := TFslStringDictionary.create;
   FTags.AddOrSetValue(name, value);
 end;
 
@@ -980,7 +985,7 @@ end;
 function TFHIRObjectList.getTags(name: String): String;
 begin
   if FTags = nil then
-    FTags := TDictionary<String, String>.create;
+    FTags := TFslStringDictionary.create;
   if FTags.ContainsKey(name) then
     result := FTags[name]
   else
@@ -1005,7 +1010,7 @@ end;
 procedure TFHIRObjectList.SetTags(name: String; const Value: String);
 begin
   if FTags = nil then
-    FTags := TDictionary<String,String>.create;
+    FTags := TFslStringDictionary.create;
   FTags.AddOrSetValue(name, value);
 end;
 
@@ -1580,6 +1585,13 @@ begin
   result := not (Severity in [isError, isFatal]);
 end;
 
+
+{ EFHIRUnsupportedVersion }
+
+constructor EFHIRUnsupportedVersion.Create(version: TFHIRVersion; action: String);
+begin
+  inherited Create('Version '+FHIR_VERSIONS[version]+' not supported '+action);
+end;
 
 End.
 

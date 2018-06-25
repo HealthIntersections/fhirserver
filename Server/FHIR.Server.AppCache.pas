@@ -156,7 +156,7 @@ end;
 
 procedure TApplicationCache.seeObservation(obs: TFHIRObservation);
 begin
-  {$IFDEF FHIR2}
+  !{$IFDEF FHIR2}
   if (obs.category <> nil) and obs.category.hasCode(MAGIC_OBS, 'endorsement') then
   {$ELSE}
   if obs.categoryList.hasCode[MAGIC_OBS, 'endorsement'] then

@@ -39,17 +39,18 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Threads,
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects,
   FHIR.Web.Facebook, FHIR.Scim.Server, FHIR.Base.Scim, FHIR.Support.Certs, FHIR.Smart.Utilities,
-  FHIR.Base.Lang,
-  FHIR.Server.Session, FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Server.Security, FHIR.Version.Utilities,
-  FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Misc.ApplicationVerifier,
-  FHIR.Server.Jwt, FHIR.Server.AppCache;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
+  FHIR.Server.Session, FHIR.Server.Security,
+  FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage,
+  FHIR.Server.Jwt;
 
 Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
   INTERNAL_SECRET = '\8u8J*O{a0Y78.}o%ql9';
 
 type
-  TDoSearchEvent = function (session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundle of object;
+  TGetPatientsEvent = procedure (details : TFslStringDictionary) of object;
+//  TDoSearchEvent = function (session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundleW of object;
 
   TFhirLoginToken = Class (TFslObject)
   private
@@ -60,11 +61,10 @@ type
     Function Link : TFhirLoginToken; overload;
   end;
 
-  // predefined token per user for testing
-
   // this is a server that lives at /oauth2 (or elsewhere, if configured)
-  TAuth2Server = class (TFslObject)
+  TAuth2Server = class abstract (TFslObject)
   private
+    FFactory : TFHIRFactory;
     FLock : TFslLock;
     FServerContext : TFHIRServerContext;
     FOnProcessFile : TProcessFileEvent;
@@ -83,22 +83,16 @@ type
     FAdminEmail : String;
     FUserProvider : TFHIRUserProvider;
     FEndPoint: String;
-    FOnDoSearch : TDoSearchEvent;
     FPath: String;
     FActive : boolean;
     FPassword : String;
     FNonceList : TStringList;
-
-    function GetPatientListAsOptions : String;
-    {$IFNDEF FHIR2}
-    procedure populateFromConsent(consentKey : integer; session : TFhirSession);
-    {$ENDIF}
+    FOnGetPatients : TGetPatientsEvent;
 
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
-    Procedure HandleCAVS(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     procedure HandleTokenBearer(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
     procedure HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
@@ -114,13 +108,14 @@ type
     procedure SetServerContext(const Value: TFHIRServerContext);
     function BuildLoginList(id : String) : String;
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
-    procedure loadScopeVariables(variables: TDictionary<String, String>; scope: String; user : TSCIMUser);
-    procedure readScopes(scopes: TStringList; params: TParseMap);
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     function nonceIsUnique(nonce : String) : boolean;
-
+    procedure readScopes(scopes: TStringList; params: TParseMap);
+    procedure loadScopeVariables(variables: TFslStringDictionary; scope: String; user : TSCIMUser);
+    function GetPatientListAsOptions : String;
+    procedure populateFromConsent(consentKey : integer; session : TFhirSession);
   public
-    Constructor Create(ini : TFHIRServerIniFile; Host, SSLPort : String);
+    Constructor Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort : String);
     Destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
@@ -146,24 +141,24 @@ type
     function KeyPath : String;
     function CavsPath : String;
     Property EndPoint : String read FEndPoint write FEndPoint;
-    property OnDoSearch : TDoSearchEvent read FOnDoSearch write FOnDoSearch;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
     property Active : boolean read FActive write FActive;
     property Host : String read FHost write FHost;
+    property OnGetPatients : TGetPatientsEvent read FOnGetPatients write FOnGetPatients;
   end;
 
 
 implementation
 
 uses
-  FHIR.Support.Logging, FHIR.Version.AuthMap;
-
+  FHIR.Support.Logging;
 
 { TAuth2Server }
 
-constructor TAuth2Server.Create(ini : TFHIRServerIniFile; Host, SSLPort : String);
+constructor TAuth2Server.Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort : String);
 begin
   inherited create;
+  FFactory := factory;
   FHost := host;
   FSSLPort := SSLPort;
   FLock := TFslLock.Create('auth-server');
@@ -171,14 +166,14 @@ begin
   FNonceList := TStringList.create;
   FNonceList.Sorted := true;
 
-  FHL7Appid := ini.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-id', '');
-  FHL7AppSecret := ini.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-secret', '');
-  FFacebookAppid := ini.ReadString(voVersioningNotApplicable, 'facebook.com', 'app-id', '');
-  FFacebookAppSecret := ini.ReadString(voVersioningNotApplicable, 'facebook.com', 'app-secret', '');
-  FGoogleAppid := ini.ReadString(voVersioningNotApplicable, 'google.com', 'app-id', '');
-  FGoogleAppSecret := ini.ReadString(voVersioningNotApplicable, 'google.com', 'app-secret', '');
-  FGoogleAppKey := ini.ReadString(voVersioningNotApplicable, 'google.com', 'app-key', '');
-  FPassword := ini.ReadString(voVersioningNotApplicable, 'admin', 'password', '');
+  FHL7Appid := ini.identityProviders['hl7.org']['app-id'];
+  FHL7AppSecret := ini.identityProviders['hl7.org']['app-secret'];
+  FFacebookAppid := ini.identityProviders['facebook.com']['app-id'];
+  FFacebookAppSecret := ini.identityProviders['facebook.com']['app-secret'];
+  FGoogleAppid := ini.identityProviders['google.com']['app-id'];
+  FGoogleAppSecret := ini.identityProviders['google.com']['app-secret'];
+  FGoogleAppKey := ini.identityProviders['google.com']['app-key'];
+  FPassword := ini.admin['password'];
   FPath := '/auth';
 end;
 
@@ -189,38 +184,10 @@ begin
   FLock.Free;
   FServerContext.Free;
   FUserProvider.free;
+  FFactory.Free;
   inherited;
 end;
 
-
-function TAuth2Server.GetPatientListAsOptions: String;
-var
-  bundle : TFhirBundle;
-  entry : TFhirBundleEntry;
-  patient : TFhirPatient;
-  b : TStringBuilder;
-begin
-  bundle := OnDoSearch(nil, 'Patient', 'en', '_summary=true&__wantObject=true');
-  b := TStringBuilder.create;
-  try
-    b.Append('<option value=""/>');
-    for entry in bundle.entryList do
-    begin
-      patient := entry.resource as TFhirPatient;
-      b.Append('<option value="');
-      b.Append(patient.id);
-      b.Append('">');
-      b.Append(HumanNamesAsText(patient.nameList));
-      b.Append(' (');
-      b.Append(patient.id);
-      b.Append(')</option>');
-    end;
-    result := b.ToString;
-  finally
-    b.Free;
-    bundle.Free;
-  end;
-end;
 
 function TAuth2Server.BasePath: String;
 begin
@@ -283,29 +250,6 @@ begin
   end;
 end;
 
-{$IFNDEF FHIR2}
-procedure TAuth2Server.populateFromConsent(consentKey: integer; session: TFhirSession);
-var
-  consent : TFhirConsent;
-  c : TFhirCoding;
-  s : String;
-begin
-  consent := ServerContext.Storage.FetchResource(consentKey) as TFhirConsent;
-  try
-    s := '';
-    {$IFDEF FHIR3}
-    for c in consent.except_List[0].class_List do
-      if (c.System = 'http://smarthealthit.org/fhir/scopes') then
-        s := s +' '+c.code;
-    {$ELSE}
-    raise EFHIRException.create('This operation is only supported in R3 for now');
-    {$ENDIF}
-    session.scopes := s.Trim;
-  finally
-    consent.Free;
-  end;
-end;
-{$ENDIF}
 
 function TAuth2Server.checkNotEmpty(v , n : String) : String;
 begin
@@ -373,7 +317,7 @@ var
   message : String;
   b : TStringBuilder;
   ok : boolean;
-  variables : TDictionary<String,String>;
+  variables : TFslStringDictionary;
   client : TRegisteredClientInformation;
 begin
   if params.GetVar('response_type') <> 'code' then
@@ -398,19 +342,7 @@ begin
     b := TStringBuilder.Create;
     try
       ok := true;
-      if (client.jwt <> '') and (ServerContext.ClientApplicationVerifier <> nil) then
-      begin
-        jwt := TJWTUtils.unpack(client.jwt, false, nil);
-        try
-          ok := ServerContext.ClientApplicationVerifier.check(jwt, b, message);
-        finally
-          jwt.Free;
-        end;
-      end
-      else
-        message := ' <li>The Client Application Service has not checked this client</li>';
-
-      variables := TDictionary<String,String>.create;
+      variables := TFslStringDictionary.create;
       try
         variables.Add('/oauth2', FPath);
         variables.Add('idmethods', BuildLoginList(id));
@@ -431,197 +363,15 @@ begin
   end;
 end;
 
-procedure TAuth2Server.loadScopeVariables(variables : TDictionary<String,String>; scope : String; user : TSCIMUser);
-//patient/*.read	Permission to read any resource for the current patient
-//user/*.*	Permission to read and write all resources that the current user can access
-//openid profile	Permission to retrieve information about the current logged-in user
-//launch	Permission to obtain launch context when app is launched from an EHR
-//launch/patient	When launching outside the EHR, ask for a patient to be selected at launch time
-var
-  security : TFHIRSecurityRights;
-  t : TFhirResourceType;
-begin
-  variables.add('userlevel', '');
-  variables.add('userinfo', '');
-  security := TFHIRSecurityRights.create(ServerContext.ValidatorContext.Link, user, scope, true);
-  try
-    if security.canAdministerUsers then
-      variables.add('useradmin', '<input type="checkbox" name="useradmin" value="1"/> Administer Users')
-    else
-      variables.add('useradmin', '');
-    if security.canGetUserInfo then
-      variables['userinfo'] := 'checked';
-
-    for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
-    begin
-      variables.AddOrSetValue('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]], '');
-      variables.AddOrSetValue('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]], '');
-      variables.AddOrSetValue('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled', 'disabled');
-      variables.AddOrSetValue('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled', 'disabled');
-    end;
-
-    for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
-    begin
-      if security.canRead(CODES_TFHIRResourceType[t]) then
-      begin
-        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
-        variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled'] := '';
-      end;
-      if security.canWrite(CODES_TFHIRResourceType[t]) then
-      begin
-        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
-        variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled'] := '';
-      end;
-    end;
-  finally
-    security.free;
-  end;
-end;
-
-procedure TAuth2Server.readScopes(scopes : TStringList; params : TParseMap);
-var
-  pfx : String;
-  t : TFhirResourceType;
-  all : boolean;
-begin
-  scopes.clear;
-  if (params.getVar('userInfo') = '1') then
-  begin
-    scopes.add('openid');
-    scopes.add('profile');
-  end;
-  if (params.getVar('useradmin') = '1') then
-    scopes.add(SCIM_ADMINISTRATOR);
-
-  // if there's a patient, then the scopes a patient specific
-  if (params.getVar('patient') = '') then
-    pfx := 'User/'
-  else
-    pfx := 'Patient/';
-
-  all := true;
-  for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
-    if (params.GetVar('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]) <> '1') or
-      (params.GetVar('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]) <> '1') then
-      all := false;
-
-  if all then
-    scopes.Add(pfx+'*.*')
-  else
-  begin
-    for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
-    begin
-      if params.GetVar('read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]) = '1' then
-        scopes.Add(pfx+CODES_TFHIRResourceType[t]+'.read');
-      if params.GetVar('write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]) = '1' then
-        scopes.Add(pfx+CODES_TFHIRResourceType[t]+'.write');
-    end;
-  end;
-end;
-
 function TAuth2Server.RegisterPath: String;
 begin
   result := FPath+'/register';
 end;
 
-const
-  MAGIC_OBS = 'http://healthintersections.com.au/fhir/codes/obs';
-
-procedure TAuth2Server.HandleCAVS(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
-var
-  pbody : TParseMap;
-  json, item, endorser : TJsonObject;
-  jwt : TJWT;
-  jwk : TJWKList;
-  endorsements: TFslList<TEndorsement>;
-  endorsement : TEndorsement;
-  app : TFhirDevice;
-  list : TJsonArray;
-  c : TFhirContactPoint;
-begin
-  pbody := TParseMap.create(request.formParams);
-  try
-    if not pbody.VarExists('jwt') then
-      raise EFHIRException.create('Unable to understand post body - no jwt parameter found');
-    jwk := ServerContext.JWTServices.jwkList;
-    try
-      json := TJsonObject.Create;
-      try
-        try
-          jwt := TJWTUtils.unpack(pbody.GetVar('jwt'), true, jwk);
-        except
-          on e : exception do
-          begin
-            jwt := nil;
-            json.str['status'] := 'invalid';
-            json.str['message'] := e.Message;
-          end;
-        end;
-        try
-          if jwt <> nil then
-          begin
-            endorsements := TFslList<TEndorsement>.create;
-            try
-              app := ServerContext.ApplicationCache.recogniseJWT(jwt.originalSource, endorsements);
-              try
-                if (app = nil) then
-                begin
-                  json.str['status'] := 'unknown';
-                  json.str['message'] := 'Unknown JWT';
-                end
-                else if not (app.status in [{$IFDEF FHIR2}DevicestatusAvailable{$ELSE}DeviceStatusActive{$ENDIF}]) then
-                begin
-                  json.str['status'] := 'unsuitable';
-                  json.str['message'] := 'This Application cannot be used because it''s status is '+CODES_TFhirDeviceStatusEnum[app.status];
-                end
-                else
-                begin
-                  json.str['status'] := 'approved';
-                  json.str['message'] := 'Approved for use by '+FHost;
-                  list := json.forceArr['endorsements'];
-                  for endorsement in endorsements do
-                  begin
-                    item := list.addObject;
-                    endorser := item.forceObj['endorser'];
-                    endorser.str['name'] := endorsement.Organization.name;
-                    for c in endorsement.Organization.telecomList do
-                      if c.system = {$IFDEF FHIR2} ContactPointSystemOther {$ELSE} ContactPointSystemUrl {$ENDIF} then
-                        endorser.str['url'] := c.value;
-                    if (endorsement.Observation.code = nil) or (endorsement.Observation.code.codingList.Count = 0) or (endorsement.Observation.code.codingList[0].system <> MAGIC_OBS) then
-                      endorser.str['type'] := 'usage-note' // ???
-                    else
-                      endorser.str['type'] := endorsement.Observation.code.codingList[0].code;
-                    endorser.str['comment'] := endorsement.Observation.{$IFDEF FHIR2}comments{$ELSE}comment{$ENDIF};
-                  end;
-                end;
-              finally
-                app.Free;
-              end;
-            finally
-              endorsements.Free;
-            end;
-          end;
-        finally
-          jwt.free;
-        end;
-        response.ResponseNo := 200;
-        response.ResponseText := 'OK';
-        response.ContentText := TJSONWriter.writeObjectStr(json, true);
-      finally
-        json.free;
-      end;
-    finally
-      jwk.Free;
-    end;
-  finally
-    pBody.Free;
-  end;
-end;
-
 procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   client_id, name, authurl: String;
-  variables : TDictionary<String,String>;
+  variables : TFslStringDictionary;
   scopes : TStringList;
   redirect, state, scope : String;
 begin
@@ -662,7 +412,7 @@ begin
       ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params.GetVar('patient'));
       if params.GetVar('patient') <> '' then
 // Will these compartments be freed?
-        session.Compartments.Add(TFHIRCompartmentId.Create(frtPatient, params.GetVar('patient')));
+        session.Compartments.Add(TFHIRCompartmentId.Create('Patient', params.GetVar('patient')));
 
       session.scopes := scopes.CommaText.Replace(',', ' ');
       ServerContext.Storage.RegisterConsentRecord(session);
@@ -673,7 +423,7 @@ begin
   end
   else
   begin
-    variables := TDictionary<String,String>.create;
+    variables := TFslStringDictionary.create;
     try
       variables.Add('client', ServerContext.Storage.getClientName(client_id));
       variables.Add('/oauth2', FPath);
@@ -995,8 +745,6 @@ begin
           HandleRegistration(AContext, request, session, response)
         else if (request.Document = FPath+'/userdetails') then
           HandleUserDetails(AContext, request, session, params, response)
-        else if (request.Document = FPath+'/cavs') then
-          HandleCAVS(AContext, request, session, params, response)
         else
           raise EFHIRException.create('Invalid URL');
       finally
@@ -1016,7 +764,7 @@ end;
 procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   token, id, name, email, password, domain, client_id : String;
-  variables : TDictionary<String,String>;
+  variables : TFslStringDictionary;
 begin
   domain := request.Host;
   if domain.Contains(':') then
@@ -1059,7 +807,7 @@ begin
   end
   else
   begin
-    variables := TDictionary<String,String>.create;
+    variables := TFslStringDictionary.create;
     try
       variables.Add('/oauth2', FPath);
       OnProcessFile(request, response, session, FPath+'/auth_skype.html', true, variables);
@@ -1156,11 +904,10 @@ begin
       try
         session.SystemName := jwt.subject;
         session.SystemEvidence := systemFromJWT;
-        session.Compartments.Add(TFHIRCompartmentId.Create(frtPatient, PatientId));
+        session.Compartments.Add(TFHIRCompartmentId.Create('Patient', PatientId));
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        {$IFNDEF FHIR2}
-        populateFromConsent(consentKey, session);
-        {$ENDIF}
+        if FFactory.version <> fhirVersionRelease2 then
+          populateFromConsent(consentKey, session);
         json := TJsonWriterDirect.create;
         try
           json.Start;
@@ -1491,7 +1238,7 @@ end;
 
 procedure TAuth2Server.HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  variables : TDictionary<String,String>;
+  variables : TFslStringDictionary;
 begin
   if session = nil then
     response.Redirect(FPath+'/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+EndPoint+'/internal&aud='+EndPoint+'&state='+MakeLoginToken(EndPoint, apGoogle))
@@ -1503,7 +1250,7 @@ begin
     end
     else
     begin
-      variables := TDictionary<String,String>.create;
+      variables := TFslStringDictionary.create;
       try
         variables.Add('username', session.User.username);
         variables.Add('/oauth2', FPath);
@@ -1583,6 +1330,151 @@ end;
 function TFhirLoginToken.Link: TFhirLoginToken;
 begin
   result := TFhirLoginToken(inherited link);
+end;
+
+function TAuth2Server.GetPatientListAsOptions: String;
+var
+  b : TStringBuilder;
+  dict : TFslStringDictionary;
+  s : String;
+begin
+  dict := TFslStringDictionary.Create;
+  try
+    FOnGetPatients(dict);
+    b := TStringBuilder.create;
+    try
+      b.Append('<option value=""/>');
+      for s in dict.Keys do
+      begin
+        b.Append('<option value="');
+        b.Append(s);
+        b.Append('">');
+        b.Append(dict[s]);
+        b.Append(' (');
+        b.Append(s);
+        b.Append(')</option>');
+      end;
+      result := b.ToString;
+    finally
+      b.Free;
+    end;
+  finally
+    dict.Free;
+  end;
+end;
+
+procedure TAuth2Server.populateFromConsent(consentKey: integer; session: TFhirSession);
+//var
+//  consent : TFhirConsent;
+//  c : TFhirCoding;
+//  s : String;
+begin
+//  consent := ServerContext.Storage.FetchResource(consentKey) as TFhirConsent;
+//  try
+//    s := '';
+//    !{$IFDEF FHIR3}
+//    for c in consent.except_List[0].class_List do
+//      if (c.System = 'http://smarthealthit.org/fhir/scopes') then
+//        s := s +' '+c.code;
+//    {$ELSE}
+//    raise EFHIRException.create('This operation is only supported in R3 for now');
+//    {$ENDIF}
+//    session.scopes := s.Trim;
+//  finally
+//    consent.Free;
+//  end;
+//  raise Exception.Create('Needs further development right now');
+end;
+
+procedure TAuth2Server.loadScopeVariables(variables : TFslStringDictionary; scope : String; user : TSCIMUser);
+//patient/*.read	Permission to read any resource for the current patient
+//user/*.*	Permission to read and write all resources that the current user can access
+//openid profile	Permission to retrieve information about the current logged-in user
+//launch	Permission to obtain launch context when app is launched from an EHR
+//launch/patient	When launching outside the EHR, ask for a patient to be selected at launch time
+var
+  security : TFHIRSecurityRights;
+  s, c : String;
+begin
+  variables.add('userlevel', '');
+  variables.add('userinfo', '');
+  security := TFHIRSecurityRights.create(ServerContext.ValidatorContext.Link, user, scope, true);
+  try
+    if security.canAdministerUsers then
+      variables.add('useradmin', '<input type="checkbox" name="useradmin" value="1"/> Administer Users')
+    else
+      variables.add('useradmin', '');
+    if security.canGetUserInfo then
+      variables['userinfo'] := 'checked';
+
+  for s in FFactory.ResourceNames do
+  begin
+    c := CODES_TTokenCategory[FFactory.resCategory(s)];
+    variables.AddOrSetValue('read'+c, '');
+    variables.AddOrSetValue('write'+c, '');
+    variables.AddOrSetValue('read'+c+'disabled', 'disabled');
+    variables.AddOrSetValue('write'+c+'disabled', 'disabled');
+  end;
+
+    for s in FFactory.ResourceNames do
+    begin
+      c := CODES_TTokenCategory[FFactory.resCategory(s)];
+      if security.canRead(s) then
+      begin
+        variables['read'+c] := 'checked';
+        variables['read'+c+'disabled'] := '';
+      end;
+      if security.canWrite(s) then
+      begin
+        variables['write'+c] := 'checked';
+        variables['write'+c+'disabled'] := '';
+      end;
+    end;
+  finally
+    security.free;
+  end;
+end;
+
+
+procedure TAuth2Server.readScopes(scopes : TStringList; params : TParseMap);
+var
+  pfx : String;
+  s : String;
+  all : boolean;
+begin
+  scopes.clear;
+  if (params.getVar('userInfo') = '1') then
+  begin
+    scopes.add('openid');
+    scopes.add('profile');
+  end;
+  if (params.getVar('useradmin') = '1') then
+    scopes.add(SCIM_ADMINISTRATOR);
+
+  // if there's a patient, then the scopes a patient specific
+  if (params.getVar('patient') = '') then
+    pfx := 'User/'
+  else
+    pfx := 'Patient/';
+
+  all := true;
+  for s in FFactory.ResourceNames do
+    if (params.GetVar('read'+CODES_TTokenCategory[Ffactory.resCategory(s)]) <> '1') or
+      (params.GetVar('write'+CODES_TTokenCategory[Ffactory.resCategory(s)]) <> '1') then
+      all := false;
+
+  if all then
+    scopes.Add(pfx+'*.*')
+  else
+  begin
+  for s in FFactory.ResourceNames do
+    begin
+      if params.GetVar('read'+CODES_TTokenCategory[Ffactory.resCategory(s)]) = '1' then
+        scopes.Add(pfx+s+'.read');
+      if params.GetVar('write'+CODES_TTokenCategory[Ffactory.resCategory(s)]) = '1' then
+        scopes.Add(pfx+s+'.write');
+    end;
+  end;
 end;
 
 end.

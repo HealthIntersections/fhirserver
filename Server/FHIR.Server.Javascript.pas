@@ -32,19 +32,14 @@ interface
 
 uses
   SysUtils, Classes,
-   FHIR.Support.Threads, FHIR.Javascript, FHIR.Support.Utilities, FHIR.Support.Base, 
-  FHIR.Base.Objects, FHIR.Base.Factory,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Client,
-  FHIR.Javascript.Base;
-
-{$IFDEF FHIR2}
-Type
-  TFhirTriggerTypeEnum = (TriggerTypeNull, TriggerTypeNamedEvent, TriggerTypePeriodic, TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved, TriggerTypeDataAccessed, TriggerTypeDataAccessEnded);
-{$ENDIF}
+  FHIR.Support.Threads, FHIR.Javascript, FHIR.Support.Utilities, FHIR.Support.Base,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
+  FHIR.Javascript.Base,
+  FHIR.Server.Session, FHIR.Server.Factory;
 
 Const
-  ROUTINE_NAMES : array[TFhirTriggerTypeEnum] of String = ('xx', 'xx', 'xx', {$IFDEF FHIR4}'dataChanged', {$ENDIF} 'dataAdded', 'dataModified', 'dataRemoved', 'dataAccessed', 'xx');
-  SUPPORTED_TRIGGER_TYPES = [{$IFDEF FHIR4}TriggerTypeDataChanged, {$ENDIF}TriggerTypeDataAdded,  TriggerTypeDataModified, TriggerTypeDataRemoved, TriggerTypeDataAccessed];
+  ROUTINE_NAMES : array[TTriggerType] of String = ('xx', 'xx', 'xx', 'dataChanged', 'dataAdded', 'dataModified', 'dataRemoved', 'dataAccessed', 'xx');
+  SUPPORTED_TRIGGER_TYPES = [ttDataChanged, ttDataAdded,  ttDataModified, ttDataRemoved, ttDataAccessed];
 
 Type
   TEventScriptLanguage = (langJavascript, langFHIRPath);
@@ -52,7 +47,7 @@ Type
   TEventScript = class (TFslObject)
   private
     FId : String;
-    FCommand : TFhirTriggerTypeEnum;
+    FCommand : TTriggerType;
     FResources : TStringList;
     FLang : TEventScriptLanguage;
     FScript : string;
@@ -63,31 +58,32 @@ Type
 
     property id : String read FId write FId;
     property script : String read FScript write FScript;
-    property Commands : TFhirTriggerTypeEnum read FCommand write FCommand;
+    property Commands : TTriggerType read FCommand write FCommand;
     property Resources : TStringList read FResources;
   end;
 
   TEventScriptRegistry = class (TFslObject)
   private
     FLock : TFslLock;
+    FFactory : TFHIRFactory;
     FScripts : TFslMap<TEventScript>;
+    function matches(actual, specified : TTriggerType) : boolean; overload;
+    function matches(actual : String; specified : TStringList) : boolean; overload;
   public
-    constructor Create; override;
+    constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
 
     function link : TEventScriptRegistry; overload;
 
     procedure getScripts(list: TFslList<TEventScript>);
-    procedure getApplicableScripts(event : TFhirTriggerTypeEnum; resource : String; list : TFslList<TEventScript>);
+    procedure getApplicableScripts(event : TTriggerType; resource : String; list : TFslList<TEventScript>);
 
-{$IFDEF FHIR4}
-    procedure checkResource(event : TFhirEventDefinition);
-    procedure seeResource(event : TFhirEventDefinition);
-{$ENDIF}
+    procedure checkResource(event : TFhirEventDefinitionW);
+    procedure seeResource(event : TFhirEventDefinitionW);
   end;
 
-  TJsGetFHIRResource = reference to function : TFHIRResource;
-  TJsGetFHIRClient = reference to function : TFHIRClient;
+  TJsGetFHIRResource = reference to function : TFHIRResourceV;
+  TJsGetFHIRClient = reference to function : TFHIRClientV;
 
   // we create one of these for evrey thread, but it will only actually create a javscript engine when it needs to.
   // then, we retain it as long as we can
@@ -98,13 +94,13 @@ Type
     procedure SetRegistry(const Value: TEventScriptRegistry);
     procedure checkHasEngine;
   public
-    constructor Create(chakraPath : String; factory : TFHIRFactory);
+    constructor Create(chakraPath : String; worker : TFHIRWorkerContextWithFactory; serverFactory : TFHIRServerFactory);
     destructor Destroy; override;
 
     property registry : TEventScriptRegistry read FRegistry write SetRegistry;
 
     procedure previewRequest(session : TFHIRSession; request : TFHIRRequest);
-    procedure checkChanges(event: TFhirTriggerTypeEnum; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResource);
+    procedure checkChanges(event: TTriggerType; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResourceV);
   end;
 
 threadvar
@@ -112,9 +108,10 @@ threadvar
 
 implementation
 
+
 { TJsHost }
 
-procedure TJsHost.checkChanges(event: TFhirTriggerTypeEnum; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResource);
+procedure TJsHost.checkChanges(event: TTriggerType; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResourceV);
 var
   scripts : TFslList<TEventScript>;
   script : TEventScript;
@@ -152,11 +149,14 @@ begin
     raise EJavascriptApplication.Create('Javascript is not supported on this server');
 end;
 
-constructor TJsHost.Create(chakraPath : String; factory : TFHIRFactory);
+constructor TJsHost.Create(chakraPath : String; worker : TFHIRWorkerContextWithFactory; serverFactory : TFHIRServerFactory);
 begin
   inherited create;
   if (chakraPath <> '') then
-    FEngine := TFHIRJavascript.Create(chakraPath, factory.link);
+  begin
+    FEngine := TFHIRJavascript.Create(chakraPath, worker.link, nil);
+    serverFactory.registerJs(FEngine);
+  end;
 end;
 
 destructor TJsHost.Destroy;
@@ -175,7 +175,7 @@ var
 begin
   scripts := TFslList<TEventScript>.create;
   try
-    FRegistry.getApplicableScripts(TriggerTypeDataAccessed, '', scripts);
+    FRegistry.getApplicableScripts(ttDataAccessed, '', scripts);
     if (scripts.count > 0) then
     begin
       checkHasEngine;
@@ -199,24 +199,26 @@ end;
 
 constructor TEventScriptRegistry.Create;
 begin
-  inherited;
+  inherited Create;
   FLock := TFslLock.create;
   FScripts := TFslMap<TEventScript>.create;
+  FFactory := factory;
 end;
 
 destructor TEventScriptRegistry.Destroy;
 begin
+  FFactory.Free;
   FLock.Free;
   FScripts.Free;
   inherited;
 end;
 
-function matches(actual, specified : TFhirTriggerTypeEnum) : boolean; overload;
+function TEventScriptRegistry.matches(actual, specified : TTriggerType) : boolean;
 begin
-  result := (actual = specified) {$IFDEF FHIR4}or ((actual in [TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved]) and (specified = TriggerTypeDataChanged)) {$ENDIF};
+  result := (actual = specified) or ((FFactory.version = fhirVersionRelease4) and (actual in [ttDataAdded, ttDataModified, ttDataRemoved]) and (specified = ttDataChanged));
 end;
 
-function matches(actual : String; specified : TStringList) : boolean; overload;
+function TEventScriptRegistry.matches(actual : String; specified : TStringList) : boolean;
 begin
   if actual = '' then
     result := specified.Count = 0
@@ -224,7 +226,7 @@ begin
     result := (specified.Count = 0) or (specified.IndexOf(actual) > -1);
 end;
 
-procedure TEventScriptRegistry.getApplicableScripts(event: TFhirTriggerTypeEnum; resource: String; list: TFslList<TEventScript>);
+procedure TEventScriptRegistry.getApplicableScripts(event: TTriggerType; resource: String; list: TFslList<TEventScript>);
 var
   e : TEventScript;
 begin
@@ -258,75 +260,85 @@ begin
   result := TEventScriptRegistry(inherited Link);
 end;
 
-{$IFDEF FHIR4}
-procedure TEventScriptRegistry.checkResource(event: TFhirEventDefinition);
+procedure TEventScriptRegistry.checkResource(event: TFhirEventDefinitionW);
 var
   tag : boolean;
-  c : TFHIRCoding;
+  c : TFHIRCodingW;
+  m : TFhirMetaW;
 begin
-  tag := false;
-  for c in event.meta.tagList do
-    tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
-
-  if tag then
-  begin
-    if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.trigger.condition.language) then
-      raise EJavascriptSource.create('Unknown script language');
-    if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
-      raise EJavascriptSource.create('Unsupported Trigger type');
-    if not event.trigger.condition.expression.Contains('function '+ROUTINE_NAMES[event.trigger.type_]+'(') then
-      raise EJavascriptSource.create('Unable to find function '+ROUTINE_NAMES[event.trigger.type_]);
-  end;
-end;
-
-procedure TEventScriptRegistry.seeResource(event: TFhirEventDefinition);
-var
-  tag : boolean;
-  c : TFHIRCoding;
-  ev : TEventScript;
-begin
-  tag := false;
-  for c in event.meta.tagList do
-    tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
-
-  if tag then
-  begin
-    if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.trigger.condition.language) then
-      raise EJavascriptSource.create('Unknown script language');
-    if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
-      raise EJavascriptSource.create('Unsupported Trigger type');
-    if not event.trigger.condition.expression.Contains('function '+ROUTINE_NAMES[event.trigger.type_]+'(') then
-      raise EJavascriptSource.create('Unable to find function '+ROUTINE_NAMES[event.trigger.type_]);
-  end;
-
-  FLock.Lock;
+  m := FFactory.wrapMeta(event.Resource);
   try
+    tag := false;
+    for c in m.tags.forEnum do
+      tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
+
     if tag then
     begin
-      ev := TEventScript.Create;
-      try
-        ev.FId := event.id;
-        ev.FScript := event.trigger.condition.expression;
-        ev.FCommand := event.trigger.type_;
-        case StringArrayIndexOfSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.trigger.condition.language)  of
-          0: ev.FLang := langJavascript;
-          1: ev.FLang := langFHIRPath;
-//          2: ev.FLang := langCQL;
-        end;
-        if (event.trigger.data <> nil) and (event.trigger.data.type_ <> AllTypesNull) then
-          ev.FResources.Add(CODES_TFhirAllTypesEnum[event.trigger.data.type_]);
-        FScripts.AddOrSetValue(event.id, ev.link);
-      finally
-        ev.Free;
-      end;
-    end
-    else if FScripts.ContainsKey(event.id) then
-      FScripts.Remove(event.id);
+      if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.language) then
+        raise EJavascriptSource.create('Unknown script language');
+      if not (event.triggerType in SUPPORTED_TRIGGER_TYPES) then
+        raise EJavascriptSource.create('Unsupported Trigger type');
+      if not event.expression.Contains('function '+ROUTINE_NAMES[event.triggerType]+'(') then
+        raise EJavascriptSource.create('Unable to find function '+ROUTINE_NAMES[event.triggerType]);
+    end;
   finally
-    FLock.Unlock;
+    m.free;
   end;
 end;
-{$ENDIF}
+
+procedure TEventScriptRegistry.seeResource(event: TFhirEventDefinitionW);
+var
+  tag : boolean;
+  c : TFHIRCodingW;
+  ev : TEventScript;
+  m : TFhirMetaW;
+begin
+  m := FFactory.wrapMeta(event.Resource);
+  try
+    tag := false;
+    for c in m.tags.forEnum do
+      tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
+
+    if tag then
+    begin
+      if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.language) then
+        raise EJavascriptSource.create('Unknown script language');
+      if not (event.triggerType in SUPPORTED_TRIGGER_TYPES) then
+        raise EJavascriptSource.create('Unsupported Trigger type');
+      if not event.expression.Contains('function '+ROUTINE_NAMES[event.triggerType]+'(') then
+        raise EJavascriptSource.create('Unable to find function '+ROUTINE_NAMES[event.triggerType]);
+    end;
+
+    FLock.Lock;
+    try
+      if tag then
+      begin
+        ev := TEventScript.Create;
+        try
+          ev.FId := event.id;
+          ev.FScript := event.expression;
+          ev.FCommand := event.triggerType;
+          case StringArrayIndexOfSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.language)  of
+            0: ev.FLang := langJavascript;
+            1: ev.FLang := langFHIRPath;
+  //          2: ev.FLang := langCQL;
+          end;
+          if (event.dataType <> '') then
+            ev.FResources.Add(event.dataType);
+          FScripts.AddOrSetValue(event.id, ev.link);
+        finally
+          ev.Free;
+        end;
+      end
+      else if FScripts.ContainsKey(event.id) then
+        FScripts.Remove(event.id);
+    finally
+      FLock.Unlock;
+    end;
+  finally
+    m.free;
+  end;
+end;
 
 
 { TJsEventScript }

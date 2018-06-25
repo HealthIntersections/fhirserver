@@ -35,8 +35,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Web.Parsers,
   FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Client, FHIR.Version.Utilities,
-  FHIR.Server.Context;
+  FHIR.Server.Context, FHIR.Server.Session;
 
 Type
   TFHIRServerPostHandler = class (TFslObject)
@@ -64,14 +63,14 @@ Type
     property context : TFHIRServerContext read FContext write SetContext;
     property session : TFHIRSession read FSession write SetSession;
 
-    function execute : TDictionary<String, String>; virtual; abstract;
+    function execute : TFslStringDictionary; virtual; abstract;
   end;
 
-  {$IFDEF FHIR3}
+  !{$IFDEF FHIR3}
   TFHIRServerCoveragePostHandler = class (TFHIRServerPostHandler)
   private
   public
-    function execute : TDictionary<String, String>; override;
+    function execute : TFslStringDictionary; override;
   end;
   {$ENDIF}
 
@@ -202,11 +201,11 @@ begin
   FSession := Value;
 end;
 
-{$IFDEF FHIR3}
+!{$IFDEF FHIR3}
 
 { TFHIRServerCoveragePostHandler }
 
-function TFHIRServerCoveragePostHandler.execute: TDictionary<String, String>;
+function TFHIRServerCoveragePostHandler.execute: TFslStringDictionary;
 var
   coverage : TFhirCoverage;
   prov : TFhirProvenance;
@@ -347,7 +346,7 @@ begin
         client.Free;
       end;
 
-      result := TDictionary<String,String>.create;
+      result := TFslStringDictionary.create;
       result.Add('rid', id);
     finally
       coverage.Free;

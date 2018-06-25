@@ -35,9 +35,8 @@ uses
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList, FHIR.Support.Collections,
-  FHIR.Support.DateTime, FHIR.Support.Strings, FHIR.Support.Decimal,
-  FHIR.Support.Generics, FHIR.Support.Text,
-  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Server.Session,
+  FHIR.Support.Base, FHIR.Support.Utilities,
+  FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame, ToolKitUtilities,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
   FMX.Platform, System.ImageList, TranslationsEditorDialog;
@@ -402,79 +401,79 @@ begin
   Item.tagObject := obj;
 
 // do this for the object - any object type:
-  if obj is tfhirexamplescenarioinstance then
-  begin
-    current_item := Item;
-
-// do this for each object in that object type:
-    for i := 0 to tfhirexamplescenarioinstance(obj).versionList.Count - 1 do
-    begin
-      addTVItem(TreeView, current_item, 'version', tfhirexamplescenarioinstance(obj).versionList[i].versionId, tfhirexamplescenarioinstance(obj).versionList[i]);
-    end;
-// until here
-  end;
-
-  if obj is tfhirexamplescenarioProcess then
-  begin
-    current_item := Item;
-    for i := 0 to tfhirexamplescenarioProcess(obj).stepList.Count - 1 do
-    begin
-      addTVItem(TreeView, current_item, 'step', 'Step', tfhirexamplescenarioProcess(obj).stepList[i]);
-    end;
-  end;
-
-  if obj is tfhirexamplescenarioProcessStep then
-  begin
-    current_item := Item;
-    if tfhirexamplescenarioProcessStep(obj).processList.Count <> 0 then
-      for i := 0 to tfhirexamplescenarioProcessStep(obj).processList.Count - 1 do
-      begin
-        addTVItem(TreeView, current_item, 'process', tfhirexamplescenarioProcessStep(obj).processList[i].title, tfhirexamplescenarioProcessStep(obj).processList[i]);
-      end;
-
-    if tfhirexamplescenarioProcessStep(obj).pauseElement <> nil then
-    begin
-//      addTVItem(TreeView1, current_item, 'pause', '(pause)', tfhirexamplescenarioProcessStep(obj).pauseElement);
-    end;
-    if tfhirexamplescenarioProcessStep(obj).operation <> nil then
-    begin
-      addTVItem(TreeView, current_item, 'operation', tfhirexamplescenarioProcessStep(obj).operation.name, tfhirexamplescenarioProcessStep(obj).operation);
-    end;
-
-    if tfhirexamplescenarioProcessStep(obj).alternative <> nil then
-    begin
-      addTVItem(TreeView, current_item, 'alternative', tfhirexamplescenarioProcessStep(obj).alternative.name, tfhirexamplescenarioProcessStep(obj).alternative);
-    end;
-  end;
-
-  if obj is tfhirexamplescenarioProcessStepAlternative then
-  begin
-    current_item := Item;
-    for i := 0 to tfhirexamplescenarioProcessStepAlternative(obj).optionList.Count - 1 do
-    begin
-      addTVItem(TreeView, current_item, 'option', 'Option', tfhirexamplescenarioProcessStepAlternative(obj).optionList[i]);
-    end;
-  end;
-
-
-  if obj is tfhirexamplescenario then
-  begin
-    current_item := Item;
-    for i := 0 to tfhirexamplescenario(obj).actorList.Count - 1 do
-      addTVItem(TreeView, current_item, 'actor', tfhirexamplescenario(obj).actorList[i].name, tfhirexamplescenario(obj).actorList[i]);
-
-    for i := 0 to tfhirexamplescenario(obj).instanceList.Count - 1 do
-      addTVItem(TreeView, current_item, 'instance', tfhirexamplescenario(obj).instanceList[i].name, tfhirexamplescenario(obj).instanceList[i]);
-
-    for i := 0 to tfhirexamplescenario(obj).processList.count - 1 do
-      if tfhirexamplescenario(obj).ProcessList[i] <> nil then
-        addTVItem(TreeView, current_item, 'process', tfhirexamplescenario(obj).ProcessList[i].title, tfhirexamplescenario(obj).ProcessList[i]);
-  end;
-
-  TreeView.EndUpdate;
-  TreeView.repaint;
-  result := Item;
-
+//  if obj is tfhirexamplescenarioinstance then
+//  begin
+//    current_item := Item;
+//
+//// do this for each object in that object type:
+//    for i := 0 to tfhirexamplescenarioinstance(obj).versionList.Count - 1 do
+//    begin
+//      addTVItem(TreeView, current_item, 'version', tfhirexamplescenarioinstance(obj).versionList[i].versionId, tfhirexamplescenarioinstance(obj).versionList[i]);
+//    end;
+//// until here
+//  end;
+//
+//  if obj is tfhirexamplescenarioProcess then
+//  begin
+//    current_item := Item;
+//    for i := 0 to tfhirexamplescenarioProcess(obj).stepList.Count - 1 do
+//    begin
+//      addTVItem(TreeView, current_item, 'step', 'Step', tfhirexamplescenarioProcess(obj).stepList[i]);
+//    end;
+//  end;
+//
+//  if obj is tfhirexamplescenarioProcessStep then
+//  begin
+//    current_item := Item;
+//    if tfhirexamplescenarioProcessStep(obj).processList.Count <> 0 then
+//      for i := 0 to tfhirexamplescenarioProcessStep(obj).processList.Count - 1 do
+//      begin
+//        addTVItem(TreeView, current_item, 'process', tfhirexamplescenarioProcessStep(obj).processList[i].title, tfhirexamplescenarioProcessStep(obj).processList[i]);
+//      end;
+//
+//    if tfhirexamplescenarioProcessStep(obj).pauseElement <> nil then
+//    begin
+////      addTVItem(TreeView1, current_item, 'pause', '(pause)', tfhirexamplescenarioProcessStep(obj).pauseElement);
+//    end;
+//    if tfhirexamplescenarioProcessStep(obj).operation <> nil then
+//    begin
+//      addTVItem(TreeView, current_item, 'operation', tfhirexamplescenarioProcessStep(obj).operation.name, tfhirexamplescenarioProcessStep(obj).operation);
+//    end;
+//
+//    if tfhirexamplescenarioProcessStep(obj).alternative <> nil then
+//    begin
+//      addTVItem(TreeView, current_item, 'alternative', tfhirexamplescenarioProcessStep(obj).alternative.name, tfhirexamplescenarioProcessStep(obj).alternative);
+//    end;
+//  end;
+//
+//  if obj is tfhirexamplescenarioProcessStepAlternative then
+//  begin
+//    current_item := Item;
+//    for i := 0 to tfhirexamplescenarioProcessStepAlternative(obj).optionList.Count - 1 do
+//    begin
+//      addTVItem(TreeView, current_item, 'option', 'Option', tfhirexamplescenarioProcessStepAlternative(obj).optionList[i]);
+//    end;
+//  end;
+//
+//
+//  if obj is tfhirexamplescenario then
+//  begin
+//    current_item := Item;
+//    for i := 0 to tfhirexamplescenario(obj).actorList.Count - 1 do
+//      addTVItem(TreeView, current_item, 'actor', tfhirexamplescenario(obj).actorList[i].name, tfhirexamplescenario(obj).actorList[i]);
+//
+//    for i := 0 to tfhirexamplescenario(obj).instanceList.Count - 1 do
+//      addTVItem(TreeView, current_item, 'instance', tfhirexamplescenario(obj).instanceList[i].name, tfhirexamplescenario(obj).instanceList[i]);
+//
+//    for i := 0 to tfhirexamplescenario(obj).processList.count - 1 do
+//      if tfhirexamplescenario(obj).ProcessList[i] <> nil then
+//        addTVItem(TreeView, current_item, 'process', tfhirexamplescenario(obj).ProcessList[i].title, tfhirexamplescenario(obj).ProcessList[i]);
+//  end;
+//
+//  TreeView.EndUpdate;
+//  TreeView.repaint;
+//  result := Item;
+//
 end;
 
 

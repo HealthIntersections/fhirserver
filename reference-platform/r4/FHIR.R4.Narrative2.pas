@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Server.Session, FHIR.Base.Xhtml, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.Utilities,
   FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.R4.Utilities, FHIR.R4.Profiles, FHIR.R4.Questionnaire;
 
 type
@@ -44,21 +44,21 @@ type
     FProfiles : TProfileManager;
     FOnLookupCode : TLookupCodeEvent;
     FOnLookupReference : TLookupReferenceEvent;
-    FContext : TFHIRRequest;
+    FContext : TFslObject;
 
     procedure generateByProfile(res : TFHIRDomainResource; e : TFHIRObject; allElements : TFhirElementDefinitionList; defn : TFhirElementDefinition; children : TFhirElementDefinitionList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
     function getChildrenForPath(elements : TFhirElementDefinitionList; path : String) : TFhirElementDefinitionList;
     procedure inject(res : TFHIRDomainResource; x : TFHIRXhtmlNode; status : TFhirNarrativeStatusEnum);
-    procedure renderLeaf(res : TFHIRResource; e : TFHIRObject; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
-    procedure readDisplayHints(defn : TFhirElementDefinition; hints : TDictionary<String, String>);
+    procedure renderLeaf(res : TFHIRResource; e : TFHIRObject; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TFslStringDictionary);
+    procedure readDisplayHints(defn : TFhirElementDefinition; hints : TFslStringDictionary);
     function getElementDefinition(elements : TFhirElementDefinitionList; path : String) : TFhirElementDefinition;
     function exemptFromRendering(child : TFhirElementDefinition) : boolean;
-    function isDefaultValue(displayHints : TDictionary<String, String>; list: TFHIRObjectList) : boolean;
+    function isDefaultValue(displayHints : TFslStringDictionary; list: TFHIRObjectList) : boolean;
     function renderAsList(child : TFhirElementDefinition) : boolean;
     function canDoTable(path : String; p : TFHIRProperty; grandChildren  : TFhirElementDefinitionList) : boolean;
     procedure addColumnHeadings(tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList);
-    procedure addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TDictionary<String, String>);
-    function isDefault(displayHints : TDictionary<String, String>; primitiveType : TFHIRPrimitiveType) : boolean;
+    procedure addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TFslStringDictionary);
+    function isDefault(displayHints : TFslStringDictionary; primitiveType : TFHIRPrimitiveType) : boolean;
     procedure getValues(path : string; p : TFHIRProperty; e : TFhirElementDefinition; list : TFHIRObjectList);
     function canCollapse(e : TFhirElementDefinition) : boolean;
     procedure generateResourceSummary(x : TFHIRXhtmlNode; res : TFHIRResource; textAlready, showCodeDetails : boolean);
@@ -92,7 +92,7 @@ type
     function describeSystem(system : String) : String; overload;
     function describeSystem(system : TFHIRContactPointSystemEnum) : String;  overload;
   public
-    Constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFHIRRequest);
+    Constructor Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFslObject);
     Destructor Destroy; Override;
 
     Procedure generate(r : TFHIRDomainResource; profile : TFHirStructureDefinition);
@@ -121,7 +121,7 @@ begin
   result := s+'s';
 end;
 
-Constructor TNarrativeGenerator.create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFHIRRequest);
+Constructor TNarrativeGenerator.create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFslObject);
 begin
   inherited create;
   Fprefix := prefix;
@@ -161,13 +161,13 @@ var
   i : integer;
   iter : TFHIRPropertyIterator;
   child : TFhirElementDefinition;
-  displayHints : TDictionary<String, String>;
+  displayHints : TFslStringDictionary;
   grandChildren : TFhirElementDefinitionList;
   para, list, tbl, bq : TFHIRXhtmlNode;
   name : String;
   first : boolean;
 begin
-  displayHints := TDictionary<String, String>.create;
+  displayHints := TFslStringDictionary.create;
   try
     if (children.isEmpty) then
     begin
@@ -257,7 +257,7 @@ begin
   end;
 end;
 
-function TNarrativeGenerator.isDefaultValue(displayHints : TDictionary<String, String>; list: TFHIRObjectList) : boolean;
+function TNarrativeGenerator.isDefaultValue(displayHints : TFslStringDictionary; list: TFHIRObjectList) : boolean;
 begin
   if (list.count <> 1) then
     result := false
@@ -267,7 +267,7 @@ begin
     result := false;
 end;
 
-function TNarrativeGenerator.isDefault(displayHints : TDictionary<String, String>; primitiveType : TFHIRPrimitiveType) : boolean;
+function TNarrativeGenerator.isDefault(displayHints : TFslStringDictionary; primitiveType : TFHIRPrimitiveType) : boolean;
 var
   v : string;
 begin
@@ -308,7 +308,7 @@ begin
     tr.addTag('td').addTag('b').addText(capitalize(tail(grandChildren[i].Path)));
 end;
 
-procedure TNarrativeGenerator.addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TDictionary<String, String>);
+procedure TNarrativeGenerator.addColumnValues(res : TFHIRResource; tr : TFHIRXhtmlNode; grandChildren : TFhirElementDefinitionList; v : TFHIRElement; showCodeDetails : boolean; displayHints : TFslStringDictionary);
 var
   i : integer;
   e : TFhirElementDefinition;
@@ -414,7 +414,7 @@ begin
   end;
 end;
 
-procedure TNarrativeGenerator.renderLeaf(res : TFHIRResource; e : TFHIRObject; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
+procedure TNarrativeGenerator.renderLeaf(res : TFHIRResource; e : TFHIRObject; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TFslStringDictionary);
 var
   p : TFHIRPeriod;
   r : TFhirReference;
@@ -507,11 +507,11 @@ begin
         if (tr <> nil) then
         begin
           c.addText('. Generated Summary: ');
-          generateResourceSummary(c, tr.Resource, true, r.Reference.startsWith('#'));
+          generateResourceSummary(c, tr.Resource as TFhirResource, true, r.Reference.startsWith('#'));
         end;
       end
       else if (tr <> nil) then
-        generateResourceSummary(c, tr.Resource, r.Reference.startsWith('#'), r.Reference.startsWith('#'))
+        generateResourceSummary(c, tr.Resource as TFhirResource, r.Reference.startsWith('#'), r.Reference.startsWith('#'))
       else
         c.addText(r.Reference);
     finally
@@ -524,7 +524,7 @@ end;
 
 function TNarrativeGenerator.displayLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; name : String; showCodeDetails : boolean) : boolean;
 var
-  displayHints : TDictionary<String, String>;
+  displayHints : TFslStringDictionary;
   p : TFHIRPeriod;
   r : TFhirReference;
 begin
@@ -532,7 +532,7 @@ begin
   if (e = nil) then
     exit;
 
-  displayHints := TDictionary<String,String>.create;
+  displayHints := TFslStringDictionary.create;
   try
     readDisplayHints(defn, displayHints);
     if (name.endsWith('[x]')) then
@@ -684,7 +684,7 @@ begin
   end;
 end;
 
-procedure TNarrativeGenerator.readDisplayHints(defn : TFhirElementDefinition; hints : TDictionary<String, String>);
+procedure TNarrativeGenerator.readDisplayHints(defn : TFhirElementDefinition; hints : TFslStringDictionary);
 var
   d, item : String;
   list, parts : TArray<String>;

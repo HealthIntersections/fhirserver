@@ -32,7 +32,7 @@ interface
 uses
   SysUtils,
   FHIR.Base.Lang,
-  FHIR.Version.Resources, FHIR.Version.Utilities,
+  FHIR.R3.Resources, FHIR.R3.Utilities,
   FHIR.CdsHooks.Server;
 
 type

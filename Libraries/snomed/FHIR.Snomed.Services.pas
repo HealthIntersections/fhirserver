@@ -56,8 +56,8 @@ Uses
   SysUtils, Classes, Generics.Collections, Character,
   YuStemmer,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
-  FHIR.Base.Common,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.CdsHooks.Utilities, FHIR.Version.Operations,
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Utilities,
+  FHIR.CdsHooks.Utilities,
   FHIR.Snomed.Expressions, FHIR.Tx.Service;
 
 Const
@@ -619,12 +619,12 @@ operations
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function buildValueSet(url : String) : TFhirValueSet;
+    function buildValueSet(factory : TFHIRFactory; url : String) : TFhirValueSetW;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; slang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; slang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; overload; override;
     procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
@@ -2916,11 +2916,11 @@ begin
   FBuilder := TFslBytesBuilder.Create;
 end;
 
-function TSnomedServices.buildValueSet(url : String): TFhirValueSet;
+function TSnomedServices.buildValueSet(factory : TFHIRFactory; url : String): TFhirValueSetW;
 var
-  inc : TFhirValueSetComposeInclude;
-  filt :  TFhirValueSetComposeIncludeFilter;
-  cc : TFhirValueSetComposeIncludeConcept;
+  inc : TFhirValueSetComposeIncludeW;
+  filt :  TFhirValueSetComposeIncludeFilterW;
+  cc : TFhirValueSetComposeIncludeConceptW;
   i : integer;
   code, iDummy : Cardinal;
   id : String;
@@ -2937,23 +2937,30 @@ begin
 
   if id = '?fhir_vs=refset' then
   begin
-    result := TFhirValueSet.Create;
+    result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
-      result.status := PublicationStatusActive;
+      result.status := psActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set List';
       result.description := 'Reference Sets defined in this SNOMED-CT version';
       result.date := TDateTimeEx.makeUTC;
-      result.compose := TFhirValueSetCompose.Create;
-      inc := result.compose.includeList.Append;
-      inc.system := 'http://snomed.info/sct';
-      // get the list of reference sets
-      for i := 0 to RefSetIndex.Count - 1 Do
-      begin
-        cc := inc.conceptList.Append;
-        RefSetIndex.GetReferenceSet(i, code, iDummy, iDummy, iDummy, iDummy, iDummy, iDummy);
-        cc.code := GetConceptId(code);
+      inc := result.addInclude;
+      try
+        inc.system := 'http://snomed.info/sct';
+        // get the list of reference sets
+        for i := 0 to RefSetIndex.Count - 1 Do
+        begin
+          cc := inc.addConcept;
+          try
+            RefSetIndex.GetReferenceSet(i, code, iDummy, iDummy, iDummy, iDummy, iDummy, iDummy);
+            cc.code := GetConceptId(code);
+          finally
+            cc.Free;
+          end;
+        end;
+      finally
+        inc.Free;
       end;
       result.link;
     finally
@@ -2962,17 +2969,20 @@ begin
   end
   else if id = '?fhir_vs' then
   begin
-    result := TFhirValueSet.Create;
+    result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
-      result.status := PublicationStatusActive;
+      result.status := psActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set (All of SNOMED CT)';
       result.description := 'SNOMED CT Reference Set (All of SNOMED CT)';
       result.date := TDateTimeEx.makeUTC;
-      result.compose := TFhirValueSetCompose.Create;
-      inc := result.compose.includeList.Append;
-      inc.system := 'http://snomed.info/sct';
+      inc := result.addInclude;
+      try
+        inc.system := 'http://snomed.info/sct';
+      finally
+        inc.Free;
+      end;
       result.link;
     finally
       result.free;
@@ -2980,21 +2990,28 @@ begin
   end
   else if id.StartsWith('?fhir_vs=refset/') And ReferenceSetExists(id.Substring(16)) then
   begin
-    result := TFhirValueSet.Create;
+    result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
-      result.status := PublicationStatusActive;
+      result.status := psActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set '+id.Substring(16);
       result.description := GetDisplayName(id.Substring(16), '');
       result.date := TDateTimeEx.makeUTC;
-      result.compose := TFhirValueSetCompose.Create;
-      inc := result.compose.includeList.Append;
-      inc.system := 'http://snomed.info/sct';
-      filt := inc.filterList.Append;
-      filt.property_ := 'concept';
-      filt.op := FilterOperatorIn;
-      filt.value := id.Substring(16);
+      inc := result.addInclude;
+      try
+        inc.system := 'http://snomed.info/sct';
+        filt := inc.addFilter;
+        try
+          filt.prop := 'concept';
+          filt.op := foIn;
+          filt.value := id.Substring(16);
+        finally
+          filt.Free;
+        end;
+      finally
+        inc.Free;
+      end;
       result.link;
     finally
       result.free;
@@ -3002,20 +3019,19 @@ begin
   end
   else if id.StartsWith('?fhir_vs=isa/') And ConceptExists(id.Substring(13)) then
   begin
-    result := TFhirValueSet.Create;
+    result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
-      result.status := PublicationStatusActive;
+      result.status := psActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Concept '+id.Substring(13)+' and descendants';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');
       result.date := TDateTimeEx.makeUTC;
-      result.compose := TFhirValueSetCompose.Create;
-      inc := result.compose.includeList.Append;
+      inc := result.addInclude;
       inc.system := 'http://snomed.info/sct';
-      filt := inc.filterList.Append;
-      filt.property_ := 'concept';
-      filt.op := FilterOperatorIsA;
+      filt := inc.addFilter;
+      filt.prop := 'concept';
+      filt.op := foIsA;
       filt.value := id.Substring(13);
       result.link;
     finally
@@ -3243,7 +3259,7 @@ begin
   Displays(Code(context), list, lang);
 end;
 
-procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; slang : String; props : TList<String>; resp : TFHIRLookupOpResponseW);
+procedure TSnomedServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; slang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 var
   Identity : UInt64;
   Flags, lang : Byte;
@@ -3258,7 +3274,7 @@ var
   Parents : TCardinalArray;
   i, group : integer;
   {$IFNDEF FHIR2}
-  d : TFHIRLookupOpRespDesignation;
+  d : TFHIRLookupOpRespDesignationW;
   p : TFHIRLookupOpRespPropertyW;
   {$ENDIF}
   did : UInt64;
@@ -3272,26 +3288,24 @@ begin
 
     {$IFNDEF FHIR2}
     p := resp.addProp('copyright');
-    p.value := TFHIRString.create('This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
+    p.value := factory.makeString('This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
     {$ELSE}
     resp.addExtension('copyright', 'This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), '+'and distributed by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
     {$ENDIF}
     if hasProp(props, 'inactive', true) then
     begin
       {$IFNDEF FHIR2}
-      resp.addProp('inactive').value := TFHIRBoolean.create(not IsActive(TSnomedExpressionContext(ctxt).reference));
+      resp.addProp('inactive').value := factory.makeBoolean(not IsActive(TSnomedExpressionContext(ctxt).reference));
       {$ELSE}
       resp.addExtension('inactive', BooleanToString(IsActive(TSnomedExpressionContext(ctxt).reference)));
       {$ENDIF}
     end;
 
-
-
     if hasProp(props, 'moduleId', true) then
     begin
       {$IFNDEF FHIR2}
       p := resp.addProp('moduleId');
-      p.value := TFhirCode.Create(getConceptId(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
+      p.value := factory.makeCode(getConceptId(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
       {$ELSE}
       resp.addExtension('moduleId', inttostr(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
       {$ENDIF}
@@ -3303,9 +3317,9 @@ begin
       try
         {$IFNDEF FHIR2}
         p := resp.addProp('normalForm');
-        p.value := TFHIRString.Create(renderExpression(exp, sroFillMissing));
+        p.value := factory.makeString(renderExpression(exp, sroFillMissing));
         p := resp.addProp('normalFormTerse');
-        p.value := TFHIRString.Create(renderExpression(exp, sroMinimal));
+        p.value := factory.makeString(renderExpression(exp, sroMinimal));
         {$ELSE}
         resp.addExtension('normalForm', renderExpression(exp, sroFillMissing));
         resp.addExtension('normalFormTerse', renderExpression(exp, sroMinimal));
@@ -3345,7 +3359,7 @@ begin
           Descriptions := Refs.GetReferences(DescriptionIndex);
           {$IFNDEF FHIR2}
           p := resp.addProp('parent');
-          p.value := TFHIRCode.Create(IntToStr(Identity));
+          p.value := factory.makeCode(IntToStr(Identity));
           p.description := GetPN(Descriptions);
           {$ELSE}
           resp.addExtension('parent', IntToStr(Identity));
@@ -3366,7 +3380,7 @@ begin
           Descriptions := Refs.GetReferences(DescriptionIndex);
           {$IFNDEF FHIR2}
           p := resp.addProp('child');
-          p.value := TFHIRCode.create(IntToStr(Identity));
+          p.value := factory.makeCode(IntToStr(Identity));
           p.description := GetPN(Descriptions);
           {$ELSE}
           resp.addExtension('child', IntToStr(Identity));
@@ -3381,9 +3395,9 @@ begin
     try
       {$IFNDEF FHIR2}
       p := resp.addProp('normalForm');
-      p.value := TFHIRString.create(renderExpression(exp, sroFillMissing));
+      p.value := factory.makeString(renderExpression(exp, sroFillMissing));
       p := resp.addProp('normalFormTerse');
-      p.value := TFHIRString.create(renderExpression(exp, sroMinimal));
+      p.value := factory.makeString(renderExpression(exp, sroMinimal));
       {$ELSE}
       resp.addExtension('normalForm', renderExpression(exp, sroFillMissing));
       resp.addExtension('normalFormTerse', renderExpression(exp, sroMinimal));

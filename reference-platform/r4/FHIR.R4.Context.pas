@@ -38,23 +38,6 @@ uses
   FHIR.R4.Types, FHIR.R4.Resources;
 
 type
-{
-  TValidationResult = class (TFslObject)
-  private
-    FSeverity : TFhirIssueSeverityEnum;
-    FMessage  : String;
-    FDisplay: String;
-  public
-    constructor Create; overload; override;
-    constructor Create(Severity : TFhirIssueSeverityEnum; Message : String); overload; virtual;
-    constructor Create(display : String); overload; virtual;
-    Property Severity : TFhirIssueSeverityEnum read FSeverity write FSeverity;
-    Property Message : String read FMessage write FMessage;
-    Property Display : String read FDisplay write FDisplay;
-    function isOk : boolean;
-  end;
-}
-
   TFHIRCustomResourceInformation = class (TFslObject)
   private
     FName: String;

@@ -35,10 +35,10 @@ uses
   SysUtils, Classes, Generics.Collections, System.Character,
   FHIR.Web.Parsers,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common,
-  FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Types,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Client.Base,
   FHIR.Database.Manager, FHIR.Database.Dialects,
-  FHIR.Tools.Indexing, FHIR.Server.Indexing, FHIR.Version.Utilities, FHIR.Server.SearchSyntax, FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Version.Client,
+  FHIR.Tools.Indexing,
+  FHIR.Server.Indexing, FHIR.Server.SearchSyntax, FHIR.Server.Session, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Constants,
   FHIR.Ucum.Services;
 
 type
@@ -63,12 +63,12 @@ type
     FReverse: boolean;
     FStrict : boolean;
     FConnection: TKDBConnection;
-    FWarnings : TFhirOperationOutcomeIssueList;
+    FWarnings : TFslList<TFhirOperationOutcomeIssueW>;
     FResConfig : TFslMap<TFHIRResourceConfig>;
 
+    function factory : TFHIRFactory;
     function order(s : String) : String;
-    function fetchGroup(id : String) : TFHIRGroup;
-    procedure warning(issue : TFhirIssueTypeEnum; location, message : String);
+    function fetchGroup(id : String) : TFHIRResourceV;
     function processValueSetMembership(code, vs : String) : String;
     function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
     function BuildFilterParameter(filter : TFSFilterParameter; path : TFSFilterParameterPath; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
@@ -84,8 +84,8 @@ type
     function buildParameterDate(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
     function buildParameterToken(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
     function buildParameterReference(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
-    procedure replaceNames(paramPath : TFSFilterParameterPath; components : TDictionary<String, String>); overload;
-    procedure replaceNames(filter : TFSFilter; components : TDictionary<String, String>); overload;
+    procedure replaceNames(paramPath : TFSFilterParameterPath; components : TFslStringDictionary); overload;
+    procedure replaceNames(filter : TFSFilter; components : TFslStringDictionary); overload;
     procedure processQuantityValue(name, lang: String; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
     procedure processNumberValue(value : TFslDecimal; op : TQuantityOperation; var minv, maxv : String);
     procedure SetSession(const Value: TFhirSession);
@@ -127,7 +127,7 @@ type
     property filter : String read FFilter write FFilter;
     property reverse : boolean read FReverse write FReverse;
     property strict : boolean read FStrict write FStrict;
-    property Warnings : TFhirOperationOutcomeIssueList read FWarnings;
+    property Warnings : TFslList<TFhirOperationOutcomeIssueW> read FWarnings;
   end;
 
 
@@ -348,7 +348,7 @@ begin
         raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID', lang), [name]));
     end
   end
-  else if isResourceName(modifier, true) then
+  else if StringArrayExistsSensitive(factory.ResourceNames, modifier) then
   begin
     if IsId(value) then
       result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(modifier) + ''') and Value = ''' + sqlwrapString(value) + ''')'
@@ -887,7 +887,7 @@ begin
     try
       specified.Value := value;
       specified.UnitCode := space;
-      canonical := TFHIRServerContext(ServerContext).TerminologyServer.Ucum.getCanonicalForm(specified);
+      canonical := TFHIRServerContext(ServerContext).TerminologyServer.CommonTerminologies.Ucum.getCanonicalForm(specified);
       try
         mincv := canonical.Value.lowerBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, false);
         maxcv := canonical.Value.upperBound.normaliseDecimal(INDEX_DIGITS, INDEX_DECIMALS, true);
@@ -904,13 +904,18 @@ begin
     space := ns+'#'+space;
 end;
 
-function TSearchProcessor.fetchGroup(id: String): TFHIRGroup;
+function TSearchProcessor.factory: TFHIRFactory;
+begin
+  result := TFHIRServerContext(ServerContext).Factory;
+end;
+
+function TSearchProcessor.fetchGroup(id: String): TFHIRResourceV;
 var
-  client : TFhirClient;
+  client : TFhirClientV;
 begin
   client := TFHIRServerContext(ServerContext).Storage.createClient(lang, ServerContext, TFHIRServerContext(ServerContext).ValidatorContext.link, FSession.link);
   try
-    result := client.readResource(frtGroup, id) as TFhirGroup;
+    result := client.readResourceV('Group', id);
     if result = nil then
       raise EFHIRException.create('Unable to find group '+id);
   finally
@@ -949,9 +954,9 @@ var
   date : TDateTimeEx;
   a : String;
   type_ : TFhirSearchParamType;
-  group : TFHIRGroup;
+  group : TFHIRGroupW;
   each: TObject;
-  characteristic : TFhirGroupCharacteristic;
+  characteristic : TFhirGroupCharacteristicW;
 begin
   isReverse := false;
   a := '';
@@ -990,21 +995,21 @@ begin
   end
   else if (name = '_group') then
   begin
-    group := fetchGroup(value);
+    group := factory.wrapGroup(fetchGroup(value));
     try
-      if group.memberList.Count > 0 then
+      if group.hasMembers then
       begin
         result := result + '(IndexKey = '+inttostr(FIndexes.GroupMemberIndex)+' /*'+left+'*/ and ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['Group'].key)+' and Id = '''+SQLWrapString(value)+'''))';
         bHandled := true;
         isReverse := true;
       end
-      else if group.characteristicList.Count > 0 then
+      else if group.hasCharacteristics then
       begin
-        for characteristic in group.characteristicList do
+        for characteristic in group.characteristics.forEnum do
         begin
           n := characteristic.code.fromSystem(['http://hl7.org/fhir/StructureDefinition/Patient', 'http://hl7.org/fhir/StructureDefinition/Practitioner', 'http://hl7.org/fhir/StructureDefinition/Device', 'http://hl7.org/fhir/StructureDefinition/Medication', 'http://hl7.org/fhir/StructureDefinition/Substance']);
           if n = 'Patient.gender' then
-            params.addItem('gender', (characteristic.value as TFhirCodeableConcept).fromSystem('http://hl7.org/fhir/ValueSet/administrative-gender', true));
+            params.addItem('gender', characteristic.value.fromSystem('http://hl7.org/fhir/ValueSet/administrative-gender', true));
         end;
       end
       else
@@ -1026,7 +1031,7 @@ begin
     if (pos(':', left) > 0) then
     begin
       StringSplit(left, ':', left, modifier);
-      if not StringArrayExistsInSensitive(CODES_TFHIRResourceType, modifier) then
+      if not StringArrayExistsInSensitive(factory.ResourceNames, modifier) then
         raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [modifier]));
       types := filterTypes(TArray<String>.create(modifier));
     end
@@ -1160,7 +1165,7 @@ end;
 
 function TSearchProcessor.processValueSetMembership(code, vs: String): String;
 var
-  vso : TFHIRValueSet;
+  vso : TFHIRValueSetW;
   key : integer;
 begin
   // firstly, the vs can be a logical reference or a literal reference
@@ -1178,11 +1183,11 @@ begin
   end;
   key := FConnection.CountSQL('select ValueSetKey from ValueSets where URL = '''+sqlWrapString(vs)+'''');
   if key = 0 then
-    warning(IssueTypeNotFound, 'http.url.'+code, 'The value set "'+vs+'" is not indexed, and cannot be searched on');
+    FWarnings.Add(factory.makeIssue(isWarning, itNotFound, 'http.url.'+code, 'The value set "'+vs+'" is not indexed, and cannot be searched on'));
   result := 'Concept in (select ConceptKey from ValueSetMembers where ValueSetKey = '+inttostr(key)+')';
 end;
 
-procedure TSearchProcessor.replaceNames(paramPath: TFSFilterParameterPath; components: TDictionary<String, String>);
+procedure TSearchProcessor.replaceNames(paramPath: TFSFilterParameterPath; components: TFslStringDictionary);
 begin
   if components.ContainsKey(paramPath.Name) then
     paramPath.Name := components[paramPath.Name]
@@ -1190,7 +1195,7 @@ begin
     raise EFHIRException.create('Unknown Search Parameter Name "'+paramPath.Name+'"');
 end;
 
-procedure TSearchProcessor.replaceNames(filter: TFSFilter; components: TDictionary<String, String>);
+procedure TSearchProcessor.replaceNames(filter: TFSFilter; components: TFslStringDictionary);
 begin
   if (filter = nil) then
     exit
@@ -1246,18 +1251,6 @@ var
 begin
   for s in value.Split([',']) do
     list.add(s);
-end;
-
-procedure TSearchProcessor.warning(issue: TFhirIssueTypeEnum; location, message: String);
-var
-  iss : TFhirOperationOutcomeIssue;
-begin
-  iss := FWarnings.Append;
-  iss.severity := IssueSeverityWarning;
-  iss.code := issue;
-  iss.details := TFhirCodeableConcept.Create;
-  iss.details.text := message;
-  iss.locationList.add(location);
 end;
 
 function TSearchProcessor.findPrefix(var value : String; subst : String) : boolean;
@@ -1413,7 +1406,7 @@ constructor TSearchProcessor.create(serverContext : TFslObject);
 begin
   Inherited Create(serverContext);
   FStrict := false;
-  FWarnings := TFhirOperationOutcomeIssueList.create;
+  FWarnings := TFslList<TFhirOperationOutcomeIssueW>.create;
 end;
 
 destructor TSearchProcessor.Destroy;

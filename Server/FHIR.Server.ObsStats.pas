@@ -40,9 +40,8 @@ interface
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Base.Lang,
   FHIR.Database.Manager,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Common;
 
 type
   TObservationStatsParameter = (
@@ -73,13 +72,14 @@ Type
 
   TObservationStatsEvaluator = class (TFslObject, IComparer<TObservation>)
   private
+    FFactory : TFHIRFactory;
     FConn : TKDBConnection;
     FSubject: String;
-    FConcepts : TFslList<TFHIRCoding>;
+    FConcepts : TFslList<TFHIRCodingW>;
     FFinish: TDateTime;
     FStart: TDateTime;
     FParameters: TObservationStatsParameterSet;
-    FResp: TFHIRStatsOpResponse;
+    FResp: TFHIRStatsOpResponseW;
     FSubjectKey: integer;
     FAllData : TFslList<TObservation>; // by date
     FValidData : TFslList<TObservation>; // by date
@@ -108,13 +108,13 @@ Type
     FRegression : Double;
     FIntercept : Double;
 
-    function qty(value : double; humanUnits, ucumUnits : String) : TFhirQuantity;
+    function qty(value : double; humanUnits, ucumUnits : String) : TFhirQuantityW;
 
     procedure init;
-    procedure executeConcept(c : TFHIRCoding);
-    function lookupConcept(c : TFHIRCoding) : integer;
-    procedure loadData(c : TFHIRCoding);
-    function genStat(p : TObservationStatsParameter) : TFhirQuantity;
+    procedure executeConcept(c : TFHIRCodingW);
+    function lookupConcept(c : TFHIRCodingW) : integer;
+    procedure loadData(c : TFHIRCodingW);
+    function genStat(p : TObservationStatsParameter) : TFhirQuantityW;
     function genAverage() : Double;
     function genMaximum() : Double;
     function genMinimum() : Double;
@@ -138,19 +138,19 @@ Type
     function Compare(const Left, Right: TObservation): Integer;
 
   public
-    Constructor Create(conn : TKDBConnection);
+    Constructor Create(factory : TFHIRFactory; conn : TKDBConnection; resp : TFHIRStatsOpResponseW);
     Destructor Destroy; override;
 
     property subject : String read FSubject write FSubject;
     property subjectKey : integer read FSubjectKey write FSubjectKey;
-    property concepts : TFslList<TFHIRCoding> read FConcepts;
+    property concepts : TFslList<TFHIRCodingW> read FConcepts;
     property start : TDateTime read FStart write FStart;
     property finish : TDateTime read FFinish write FFinish;
     property parameters : TObservationStatsParameterSet read FParameters write FParameters;
 
     procedure execute;
 
-    property Resp : TFHIRStatsOpResponse read FResp;
+    property Resp : TFHIRStatsOpResponseW read FResp;
     property Observations : TList<Integer> read FObservations;
 
   end;
@@ -162,22 +162,22 @@ Type
     FCount: integer;
     FObservations : TStringList;
     FSubjectKey: integer;
-    FConcepts: TFslList<TFHIRCoding>;
-    FCategory: TFHIRCoding;
-    procedure SetCategory(const Value: TFHIRCoding);
+    FConcepts: TFslList<TFHIRCodingW>;
+    FCategory: TFHIRCodingW;
+    procedure SetCategory(const Value: TFHIRCodingW);
     function GetObservations: String;
 
     procedure listConcepts(cks : TStringList);
     procedure addMostRecentObservations(ck : integer);
-    function lookupConcept(c : TFHIRCoding) : integer;
+    function lookupConcept(c : TFHIRCodingW) : integer;
   public
     Constructor Create(conn : TKDBConnection);
     Destructor Destroy; override;
 
     // in
     property subjectKey : integer read FSubjectKey write FSubjectKey;
-    property category : TFHIRCoding read FCategory write SetCategory;
-    property concepts : TFslList<TFHIRCoding> read FConcepts;
+    property category : TFHIRCodingW read FCategory write SetCategory;
+    property concepts : TFslList<TFHIRCodingW> read FConcepts;
     property count : integer read FCount write FCount;
 
     procedure execute;
@@ -203,17 +203,19 @@ begin
     result := 1;
 end;
 
-constructor TObservationStatsEvaluator.Create(conn: TKDBConnection);
+constructor TObservationStatsEvaluator.Create(factory : TFHIRFactory; conn: TKDBConnection; resp : TFHIRStatsOpResponseW);
 begin
   inherited create;
+  FFactory := factory;
   FConn := conn;
-  FConcepts := TFslList<TFHIRCoding>.create;
-  FResp := TFHIRStatsOpResponse.Create;
+  FConcepts := TFslList<TFHIRCodingW>.create;
+  FResp := resp;
   FObservations := TList<Integer>.create;
 end;
 
 destructor TObservationStatsEvaluator.Destroy;
 begin
+  FFactory.Free;
   FObservations.Free;
   FResp.Free;
   FConcepts.free;
@@ -222,7 +224,7 @@ end;
 
 procedure TObservationStatsEvaluator.execute;
 var
-  c : TFHIRCoding;
+  c : TFHIRCodingW;
 begin
   if osp_regression in FParameters then
     FParameters := FParameters + [osp_intercept];
@@ -230,39 +232,37 @@ begin
     executeConcept(c);
 end;
 
-procedure TObservationStatsEvaluator.executeConcept(c: TFHIRCoding);
+procedure TObservationStatsEvaluator.executeConcept(c: TFHIRCodingW);
 var
-  obs : TFhirObservation;
-  comp : TFhirObservationComponent;
+  obs : TFhirObservationW;
+  comp : TFhirObservationComponentW;
   p : TObservationStatsParameter;
-  t : TFHIRType;
+  t : TFHIRObject;
 begin
   init();
-  obs := TFhirObservation.Create;
+  obs := FFactory.wrapObservation(ffactory.makeResource('Observation'));
   try
-    resp.{$IFDEF FHIR4}statisticsList{$ELSE}returnList{$ENDIF}.Add(obs.Link);
-    obs.status := ObservationStatusFinal;
-    obs.code := TFhirCodeableConcept.create;
-    obs.code.codingList.Add(c.Link);
-    obs.subject := TFhirReference.Create;
-    obs.subject.reference := subject;
-    obs.effective := TFhirPeriod.Create;
-    TFhirPeriod(obs.effective).start := TDateTimeEx.makeUTC(start);
-    TFhirPeriod(obs.effective).end_ := TDateTimeEx.makeUTC(finish);
+    resp.addObs(obs.Resource.Link);
+    obs.status := obssFinal;
+    obs.addCode(c);
+    obs.setSubj(subject);
+    obs.setPeriod(start, finish);
     FAllData := TFslList<TObservation>.create;
     FValidData := TFslList<TObservation>.create;
     try
       loadData(c);
-      comp := obs.componentList.Append;
-      comp.code := TFhirCodeableConcept.Create;
-      comp.code.codingList.Append.system := 'http://hl7.org/fhir/observation-paramcode';
-      comp.code.codingList[0].code := 'totalcount';
-      comp.value := qty(FAllData.Count, '', '{count}');
-      comp := obs.componentList.Append;
-      comp.code := TFhirCodeableConcept.Create;
-      comp.code.codingList.Append.system := 'http://hl7.org/fhir/observation-paramcode';
-      comp.code.codingList[0].code := 'count';
-      comp.value := qty(FValidData.Count, '', '{count}');
+      comp := obs.addComp('http://hl7.org/fhir/observation-paramcode', 'totalcount');
+      try
+        comp.value := qty(FAllData.Count, '', '{count}');
+      finally
+        comp.free;
+      end;
+      comp := obs.addComp('http://hl7.org/fhir/observation-paramcode', 'count');
+      try
+        comp.value := qty(FValidData.Count, '', '{count}');
+      finally
+        comp.free;
+      end;
       if FValidData.count > 0 then
       begin
         for p in FParameters do
@@ -271,11 +271,12 @@ begin
             t := genStat(p);
             if (t <> nil) then
             begin
-              comp := obs.componentList.Append;
-              comp.value := t;
-              comp.code := TFhirCodeableConcept.Create;
-              comp.code.codingList.Append.system := 'http://hl7.org/fhir/observation-paramcode';
-              comp.code.codingList[0].code := CODES_TObservationStatsParameter[p];
+              comp := obs.addComp('http://hl7.org/fhir/observation-paramcode', CODES_TObservationStatsParameter[p]);
+              try
+                comp.value := t;
+              finally
+                comp.free;
+              end;
             end;
           end;
       end;
@@ -288,7 +289,7 @@ begin
   end;
 end;
 
-procedure TObservationStatsEvaluator.loadData(c: TFHIRCoding);
+procedure TObservationStatsEvaluator.loadData(c: TFHIRCodingW);
 var
   obs : TObservation;
   ck, u, cu : integer;
@@ -352,7 +353,7 @@ begin
 end;
 
 
-function TObservationStatsEvaluator.lookupConcept(c: TFHIRCoding): integer;
+function TObservationStatsEvaluator.lookupConcept(c: TFHIRCodingW): integer;
 begin
   FConn.sql := 'Select ConceptKey from Concepts where Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.system)+'''';
   FConn.prepare;
@@ -364,12 +365,12 @@ begin
   FConn.terminate;
 end;
 
-function TObservationStatsEvaluator.qty(value: double; humanUnits, ucumUnits: String): TFhirQuantity;
+function TObservationStatsEvaluator.qty(value: double; humanUnits, ucumUnits: String): TFhirQuantityW;
 begin
-  result := TFhirQuantity.Create;
+  result := ffactory.wrapQuantity(FFactory.makeByName('Quantity'));
   try
     result.value := FloatToStr(value);
-    result.unit_ := humanUnits;
+    result.units := humanUnits;
     if ucumUnits <> '' then
     begin
       result.system := 'http://unitsofmeasure.org';
@@ -607,7 +608,7 @@ begin
   FSkew := result;
 end;
 
-function TObservationStatsEvaluator.genStat(p: TObservationStatsParameter): TFhirQuantity;
+function TObservationStatsEvaluator.genStat(p: TObservationStatsParameter): TFhirQuantityW;
 var
   d : Double;
   u : string;
@@ -646,13 +647,13 @@ begin
       exit(nil)
     else
     begin
-      result := TFhirQuantity.Create;
+      result := ffactory.wrapQuantity(FFactory.makeByName('Quantity'));
       try
         result.value := FloatToStr(d);
         u := HUNITS_TObservationStatsParameter[p];
         if u = '*' then
           u := FUnit;
-        result.unit_ := u;
+        result.units := u;
         u := UNITS_TObservationStatsParameter[p];
         if u = '*' then
           u := FUnit;
@@ -787,7 +788,7 @@ begin
   FObservations.Sorted := true;
   FObservations.Duplicates := dupIgnore;
   FSubjectKey := 0;
-  FConcepts := TFslList<TFHIRCoding>.create;
+  FConcepts := TFslList<TFHIRCodingW>.create;
 end;
 
 destructor TObservationLastNEvaluator.Destroy;
@@ -798,7 +799,7 @@ begin
   inherited;
 end;
 
-procedure TObservationLastNEvaluator.SetCategory(const Value: TFHIRCoding);
+procedure TObservationLastNEvaluator.SetCategory(const Value: TFHIRCodingW);
 begin
   FCategory.Free;
   FCategory := Value;
@@ -828,7 +829,7 @@ end;
 
 procedure TObservationLastNEvaluator.listConcepts(cks: TStringList);
 var
-  c : TFHIRCoding;
+  c : TFHIRCodingW;
 begin
   if FCategory <> nil then
   begin
@@ -844,7 +845,7 @@ begin
       cks.AddObject(c.system+'::'+c.code, TObject(lookupConcept(c)));
 end;
 
-function TObservationLastNEvaluator.lookupConcept(c: TFHIRCoding): integer;
+function TObservationLastNEvaluator.lookupConcept(c: TFHIRCodingW): integer;
 begin
   FConn.sql := 'Select ConceptKey from Concepts where Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.system)+'''';
   FConn.prepare;

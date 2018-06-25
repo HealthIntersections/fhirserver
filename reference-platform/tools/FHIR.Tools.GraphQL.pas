@@ -33,10 +33,9 @@ interface
 
 uses
   SysUtils, Classes,
-   FHIR.Support.Utilities, FHIR.Support.Base, 
+  FHIR.Support.Utilities, FHIR.Support.Base,
   FHIR.Web.Parsers, FHIR.Web.GraphQL,
   FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.PathEngine, FHIR.Base.Factory, FHIR.Base.Lang;
-  {FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Version.Parser, FHIR.Version.Utilities, FHIR.Version.PathNode, FHIR.Version.PathEngine;}
 
 type
   TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TFslObject; context : TFHIRResourceV; reference : TFHIRObject; out targetContext, target : TFHIRResourceV) : boolean of Object;
@@ -114,13 +113,14 @@ type
 
   TFHIRGraphQLSearchWrapper = class (TFHIRObject)
   private
+    FFactory : TFHIRFactory;
     FBundle: TFHIRBundleW;
     FParseMap : TParseMap;
     procedure SetBundle(const Value: TFHIRBundleW);
     function extractLink(name : String) : TFhirObject;
     function extractParam(name : String; int : boolean) : TFhirObject;
   public
-    Constructor Create(bundle : TFHIRBundleW);
+    Constructor Create(factory : TFHIRFactory; bundle : TFHIRBundleW);
     Destructor Destroy; override;
 
     property Bundle : TFHIRBundleW read FBundle write SetBundle;
@@ -138,10 +138,11 @@ type
 
   TFHIRGraphQLSearchEdge = class (TFHIRObject)
   private
+    FFactory : TFHIRFactory;
     FEntry: TFHIRBundleEntryW;
     procedure SetEntry(const Value: TFHIRBundleEntryW);
   public
-    Constructor Create(entry : TFHIRBundleEntryW);
+    Constructor Create(factory : TFHIRFactory; entry : TFHIRBundleEntryW);
     Destructor Destroy; override;
 
     property Entry : TFHIRBundleEntryW read FEntry write SetEntry;
@@ -838,7 +839,7 @@ begin
     arg.addValue(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
     bnd := FOnSearch(FAppinfo, field.Name.Substring(0, field.Name.Length-10), params);
     try
-      bndWrapper := TFHIRGraphQLSearchWrapper.create(bnd.link);
+      bndWrapper := TFHIRGraphQLSearchWrapper.create(FFactory.link, bnd.link);
       try
         arg := target.addField(field.Alias, listStatus(field, false));
         new := TGraphQLObjectValue.Create;
@@ -975,7 +976,7 @@ begin
 
     bnd := FOnSearch(FAppinfo, field.Name.Substring(0, field.Name.Length-10), params);
     try
-      bndWrapper := TFHIRGraphQLSearchWrapper.create(bnd.link);
+      bndWrapper := TFHIRGraphQLSearchWrapper.create(FFactory.link, bnd.link);
       try
         arg := target.addField(field.Alias, listStatus(field, false));
         new := TGraphQLObjectValue.Create;
@@ -994,11 +995,12 @@ end;
 
 { TFHIRGraphQLSearchWrapper }
 
-constructor TFHIRGraphQLSearchWrapper.Create(bundle : TFHIRBundleW);
+constructor TFHIRGraphQLSearchWrapper.Create(factory : TFHIRFactory; bundle : TFHIRBundleW);
 var
   s : String;
 begin
   inherited Create;
+  FFactory := factory;
   FBundle := bundle;
   s := bundle.links['self'];
   FParseMap := TParseMap.create(s.Substring(s.IndexOf('?')+1));
@@ -1013,6 +1015,7 @@ destructor TFHIRGraphQLSearchWrapper.Destroy;
 begin
   FParseMap.free;
   FBundle.Free;
+  FFactory.Free;
   inherited;
 end;
 
@@ -1075,7 +1078,7 @@ begin
   else if propName = 'last' then
     result := TFHIRProperty.Create(self, propname, 'string', false, nil, extractLink('last'))
   else if propName = 'count' then
-    result := TFHIRProperty.Create(self, propname, 'integer', false, nil, FBundle.total.link)
+    result := TFHIRProperty.Create(self, propname, 'integer', false, nil, makeIntValue(inttostr(FBundle.total)))
   else if propName = 'offset' then
     result := TFHIRProperty.Create(self, propname, 'integer', false, nil, extractParam('search-offset', true))
   else if propName = 'pagesize' then
@@ -1087,7 +1090,7 @@ begin
       bel := FBundle.entries;
       try
         for be in bel do
-          list.Add(TFHIRGraphQLSearchEdge.create(be.Link));
+          list.Add(TFHIRGraphQLSearchEdge.create(ffactory.link, be.Link));
         result := TFHIRProperty.Create(self, propname, 'edge', true, nil, TFslList<TFHIRObject>(list));
       finally
         bel.Free;
@@ -1131,10 +1134,11 @@ end;
 
 { TFHIRGraphQLSearchEdge }
 
-constructor TFHIRGraphQLSearchEdge.Create(entry: TFHIRBundleEntryW);
+constructor TFHIRGraphQLSearchEdge.Create(factory : TFHIRFactory; entry: TFHIRBundleEntryW);
 begin
   inherited Create;
   FEntry := entry;
+  FFactory := factory;
 end;
 
 function TFHIRGraphQLSearchEdge.createPropertyValue(propName: string): TFHIRObject;
@@ -1145,6 +1149,7 @@ end;
 destructor TFHIRGraphQLSearchEdge.Destroy;
 begin
   FEntry.Free;
+  FFactory.Free;
   inherited;
 end;
 
@@ -1162,15 +1167,15 @@ function TFHIRGraphQLSearchEdge.getPropertyValue(propName: string): TFHIRPropert
 begin
   if propName = 'mode' then
   begin
-    if FEntry.searchModeE <> nil then
-      result := TFHIRProperty.Create(self, propname, 'code', false, nil, FEntry.searchModeE.Link)
+    if FEntry.searchMode <> smUnknown then
+      result := TFHIRProperty.Create(self, propname, 'code', false, nil, ffactory.makeCode(CODES_TFHIRBundleEntrySearchMode[FEntry.searchMode]))
     else
       result := TFHIRProperty.Create(self, propname, 'code', false, nil, TFHIRObject(nil));
   end
   else if propName = 'score' then
   begin
-    if FEntry.searchScoreE <> nil then
-      result := TFHIRProperty.Create(self, propname, 'decimal', false, nil, FEntry.searchScoreE.Link)
+    if FEntry.searchScore <> '' then
+      result := TFHIRProperty.Create(self, propname, 'decimal', false, nil, FFactory.makeString(FEntry.searchScore))
     else
       result := TFHIRProperty.Create(self, propname, 'decimal', false, nil, TFHIRObject(nil));
   end

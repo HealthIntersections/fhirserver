@@ -35,7 +35,6 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Javascript,
   FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
   FHIR.Server.Session;
 
 type

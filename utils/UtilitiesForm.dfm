@@ -30,7 +30,6 @@ object Form4: TForm4
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 436
     object pnlPackageManagerLink: TPanel
       Left = 3
       Top = 347
@@ -45,7 +44,6 @@ object Form4: TForm4
       TabOrder = 0
       VerticalAlignment = taAlignBottom
       OnClick = pnlPackageManagerLinkClick
-      ExplicitTop = 261
       object Image1: TImage
         Left = 30
         Top = 10
@@ -770,12 +768,11 @@ object Form4: TForm4
     Top = 0
     Width = 678
     Height = 444
-    ActivePage = TabSheet5
+    ActivePage = TabSheet3
     Align = alClient
     Style = tsButtons
     TabOrder = 1
     StyleElements = [seFont, seClient]
-    ExplicitHeight = 443
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
       ExplicitLeft = 0
@@ -2035,10 +2032,6 @@ object Form4: TForm4
     object TabSheet3: TTabSheet
       Caption = 'Process UMLS'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 405
       object Panel14: TPanel
         Left = 0
         Top = 0
@@ -2104,7 +2097,6 @@ object Form4: TForm4
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 2
-        ExplicitHeight = 212
         DesignSize = (
           670
           220)
@@ -2213,7 +2205,6 @@ object Form4: TForm4
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 3
-        ExplicitTop = 313
         DesignSize = (
           670
           51)
@@ -2251,7 +2242,6 @@ object Form4: TForm4
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 4
-        ExplicitTop = 364
         DesignSize = (
           670
           41)
@@ -2371,10 +2361,6 @@ object Form4: TForm4
     object TabSheet5: TTabSheet
       Caption = 'Package Manager'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 89
-      ExplicitWidth = 0
-      ExplicitHeight = 350
       object pnlPackageManager: TPanel
         Left = 0
         Top = 41
@@ -2383,10 +2369,6 @@ object Form4: TForm4
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitLeft = 168
-        ExplicitTop = 128
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
       object Panel26: TPanel
         Left = 0
@@ -2404,7 +2386,6 @@ object Form4: TForm4
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
-        ExplicitTop = 8
       end
     end
   end

@@ -32,106 +32,10 @@ interface
 
 uses
   FHIR.Support.Base, FHIR.Support.Stream,
-  FHIR.Support.Json, FHIR.Support.MXml,
   FHIR.Base.Objects, FHIR.Base.Common;
 
-type
-  TBestPracticeWarningLevel = (bpwlIgnore, bpwlHint, bpwlWarning, bpwlError);
-  TCheckDisplayOption = (cdoIgnore, cdopCheck, cdoCheckCaseAndSpace, cdoCheckCase, cdoCheckSpace);
-  TResourceIdStatus = (risOptional, risRequired, risProhibited);
-
-  TFHIRValidatorContext = class (TFslObject)
-  private
-    FCheckDisplay: TCheckDisplayOption;
-    FBPWarnings: TBestPracticeWarningLevel;
-    FSuppressLoincSnomedMessages: boolean;
-    FResourceIdRule: TResourceIdStatus;
-    FIsAnyExtensionsAllowed: boolean;
-    FIssues : TFslList<TFhirOperationOutcomeIssueW>;
-    Fowned : TFslList<TFslObject>;
-    FOperationDescription : String;
-    procedure SetIssues(const Value: TFslList<TFhirOperationOutcomeIssueW>);
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-
-    property CheckDisplay : TCheckDisplayOption read FCheckDisplay write FCheckDisplay;
-    property BPWarnings: TBestPracticeWarningLevel read FBPWarnings write FBPWarnings;
-    property SuppressLoincSnomedMessages: boolean read FSuppressLoincSnomedMessages write FSuppressLoincSnomedMessages;
-    property ResourceIdRule: TResourceIdStatus read FResourceIdRule write FResourceIdRule;
-    property IsAnyExtensionsAllowed: boolean read FIsAnyExtensionsAllowed write FIsAnyExtensionsAllowed;
-    property OperationDescription : String read FOperationDescription write FOperationDescription;
-
-    property owned : TFslList<TFslObject> read FOwned;
-    property Issues : TFslList<TFhirOperationOutcomeIssueW> read FIssues write SetIssues;
-  end;
-
-  TValidatorProgressEvent = procedure (sender : TObject; message : String) of object;
-
-  TFHIRValidatorV = class abstract(TFslObject)
-  private
-    FOnProgress : TValidatorProgressEvent;
-  protected
-    procedure doProgress(path : String);
-  public
-    Constructor Create(context: TFHIRWorkerContextV); virtual;
-
-    property OnProgress : TValidatorProgressEvent read FOnProgress write FOnProgress;
-
-    procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject); overload; virtual; abstract;
-    procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String); overload; virtual; abstract;
-
-    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement); overload; virtual; abstract;
-    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profile: String); overload; virtual; abstract;
-
-    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument); overload; virtual; abstract;
-    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String); overload; virtual; abstract;
-
-    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat); overload; virtual; abstract;
-    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat; profile : String); overload; virtual; abstract;
-
-    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV); overload; virtual; abstract;
-    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV; profile : string); overload; virtual; abstract;
-  end;
-
-  TFHIRValidatorClass = class of TFHIRValidatorV;
 
 implementation
 
-{ TFHIRValidatorContext }
-
-constructor TFHIRValidatorContext.create;
-begin
-  inherited;
-  FOwned := TFslList<TFslObject>.create;
-  FIssues := TFslList<TFhirOperationOutcomeIssueW>.create;
-end;
-
-destructor TFHIRValidatorContext.destroy;
-  begin
-  FOwned.Free;
-  FIssues.Free;
-  inherited;
-end;
-
-procedure TFHIRValidatorContext.SetIssues(const Value: TFslList<TFhirOperationOutcomeIssueW>);
-begin
-  FIssues.Free;
-  FIssues := Value;
-end;
-
-
-{ TFHIRValidatorV }
-
-constructor TFHIRValidatorV.Create(context: TFHIRWorkerContextV);
-begin
-  inherited create;
-end;
-
-procedure TFHIRValidatorV.doProgress(path: String);
-begin
-  if assigned(FOnProgress) then
-    FOnProgress(self, path);
-end;
 
 end.

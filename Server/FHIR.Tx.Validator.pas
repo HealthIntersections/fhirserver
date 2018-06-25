@@ -33,8 +33,7 @@ interface
 
 uses
   SysUtils, Classes,
-   FHIR.Support.Base, FHIR.Support.Collections,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Base.Objects, FHIR.Version.Common,
+  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Base.Objects,
   FHIR.Tx.Service, FHIR.Tx.Manager;
 
 Type
@@ -91,7 +90,7 @@ procedure TValueSetChecker.prepare(vs: TFHIRValueSet; profile : TFhirExpansionPr
 var
   cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeInclude;
-  {$IFDEF FHIR2}
+  !{$IFDEF FHIR2}
   i, j : integer;
   other : TFHIRValueSet;
   checker : TValueSetChecker;
@@ -106,7 +105,7 @@ begin
   else
   begin
     FVs := vs.link;
-    {$IFDEF FHIR2}
+    !{$IFDEF FHIR2}
     if fvs.codeSystem <> nil then
     begin
       fvs.codeSystem.checkNoModifiers('ValueSetChecker.prepare', 'CodeSystem');
@@ -116,7 +115,7 @@ begin
     if (fvs.compose <> nil) then
     begin
       fvs.compose.checkNoModifiers('ValueSetChecker.prepare', 'compose', []);
-    {$IFDEF FHIR2}
+    !{$IFDEF FHIR2}
       for i := 0 to fvs.compose.importList.Count - 1 do
       begin
         other := FStore.getValueSetByUrl(fvs.compose.importList[i].value);
@@ -145,7 +144,7 @@ end;
 
 procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeInclude; var cs: TCodeSystemProvider);
 var
-  {$IFNDEF FHIR2}
+  !{$IFNDEF FHIR2}
   ivs: TFhirUri;
   other: TFhirValueSet;
   {$ENDIF}
@@ -153,7 +152,7 @@ var
   ccf: TFhirValueSetComposeIncludeFilter;
 begin
   cc.checkNoModifiers('ValueSetChecker.prepare', desc, []);
-  {$IFNDEF FHIR2}
+  !{$IFNDEF FHIR2}
   for ivs in cc.valueSetList do
   begin
     other := FStore.getValueSetByUrl(ivs.value);
@@ -194,7 +193,7 @@ begin
     if (code = list[i].code) then
     begin
       result := true;
-      {$IFNDEF FHIR2}
+      !{$IFNDEF FHIR2}
       isabstract := cs.isAbstract(list[i]);
       {$ELSE}
       isabstract := list[i].abstract;
@@ -241,7 +240,7 @@ var
   cc : TFhirValueSetComposeInclude;
 //  uri : TFhirUri;
   excluded : boolean;
-  {$IFDEF FHIR2}
+  !{$IFDEF FHIR2}
   i : integer;
   isabstract : boolean;
   {$ENDIF}
@@ -276,7 +275,7 @@ begin
   end
   else
   begin
-    {$IFDEF FHIR2}
+    !{$IFDEF FHIR2}
     if (fvs.codeSystem <> nil) and ((system = fvs.codeSystem.system) or (system = SYSTEM_NOT_APPLICABLE)) then
     begin
       result := FindCode(fvs, code, fvs.codeSystem.conceptList, displays, isabstract);
@@ -290,7 +289,7 @@ begin
     if (fvs.compose <> nil) then
     begin
       result := false;
-      {$IFDEF FHIR2}
+      !{$IFDEF FHIR2}
       for i := 0 to fvs.compose.importList.Count - 1 do
       begin
         if not result then
@@ -316,7 +315,7 @@ begin
 
           result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
         end;
-        {$IFNDEF FHIR2}
+        !{$IFNDEF FHIR2}
         for uri in cc.valueSetList do
         begin
           checker := TValueSetChecker(FOthers.matches[uri.value]);
@@ -342,7 +341,7 @@ begin
             end;
             excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
           end;
-          {$IFDEF FHIR3}
+          !{$IFDEF FHIR3}
           for uri in cc.valueSetList do
           begin
             checker := TValueSetChecker(FOthers.matches[uri.value]);

@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
    FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Collections,
-  FHIR.Base.Common,
+  FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.CdsHooks.Utilities,
   YuStemmer;
 
@@ -121,7 +121,7 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); virtual;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); virtual;
     function subsumesTest(codeA, codeB : String) : String; virtual;
 
     function SpecialEnumeration : String; virtual;
@@ -162,7 +162,7 @@ end;
 
 
 
-procedure TCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW);
+procedure TCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 begin
   // nothing here
 end;

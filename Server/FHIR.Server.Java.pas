@@ -133,14 +133,14 @@ begin
   Jvm.addToClasspath(jarPath); // 'C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar';
   JThrowableClass := TJavaClass.Create('java.lang.Throwable');
   JStringClass := TJavaClass.Create('java.lang.String');
-  {$IFDEF FHIR4}
+  !{$IFDEF FHIR4}
   JLibraryClass := TJavaClass.Create('org.hl7.fhir.r4.validation.NativeHostServices');
   checkException;
   {$ENDIF}
-  {$IFDEF FHIR3}
+  !{$IFDEF FHIR3}
   JLibraryClass := TJavaClass.Create('org.hl7.fhir.dstu3.validation.NativeHostServices');
   {$ENDIF}
-  {$IFDEF FHIR2}
+  !{$IFDEF FHIR2}
   raise EFHIRException.create('There is no Java bridge for DSTU2');
   {$ENDIF}
 

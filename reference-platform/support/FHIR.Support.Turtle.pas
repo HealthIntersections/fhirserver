@@ -150,14 +150,14 @@ Type
 
   TTurtleDocument = class (TFslObject)
   private
-    FPrefixes : TDictionary<String, String>;
+    FPrefixes : TFslStringDictionary;
     FObjects : TFslList<TTurtlePredicate>;
     FBase : String;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     property objects : TFslList<TTurtlePredicate> read FObjects;
-    property prefixes : TDictionary<String, String> read FPrefixes;
+    property prefixes : TFslStringDictionary read FPrefixes;
     function getPredicate(uri : String) : TTurtlePredicate;
     function getObject(uri : String) : TTurtleComplex;
     procedure addObject(uri : String; obj : TTurtleComplex); overload;
@@ -1368,7 +1368,7 @@ constructor TTurtleDocument.Create;
 begin
   inherited;
   FObjects := TFslList<TTurtlePredicate>.create;
-  FPrefixes := TDictionary<String, String>.create;
+  FPrefixes := TFslStringDictionary.create;
   FPrefixes.clear();
   FPrefixes.add('_', 'urn:uuid:4425b440-2c33-4488-b9fc-cf9456139995#');
 end;

@@ -33,7 +33,9 @@ uses
   Windows, Sysutils, Classes, IniFiles,
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Version.Constants, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Utilities,
+  FHIR.Base.Factory,
+  FHIR.Version.Constants, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Utilities,
+  FHIR.Version.Factory,
   FHIR.Client.Base, FHIR.Version.Client, FHIR.Base.Scim,
   FHIR.Smart.Utilities, SmartOnFhirTestingLogin,
   FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.UserMgr,
@@ -65,10 +67,10 @@ type
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
-    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; override;
-    function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; override;
+    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
+    function getResourceByUrl(aType : string; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResourceV; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; httpCode : Integer; name, message : String); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String); overload; override;
 
     property IsReadAllowed : boolean read FIsReadAllowed write FIsReadAllowed;
   end;
@@ -103,10 +105,10 @@ type
   protected
     function GetTotalResourceCount: integer; override;
   public
-    Constructor Create; override;
+    Constructor Create(factory : TFHIRFactory); override;
     Destructor Destroy; override;
     procedure RecordFhirSession(session: TFhirSession); override;
-    procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); override;
+    procedure QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx); override;
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
@@ -123,14 +125,14 @@ type
     function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; override;
     procedure Sweep; override;
     procedure CloseFhirSession(key: integer); override;
-    procedure QueueResource(r: TFhirResource); overload; override;
+    procedure QueueResource(r: TFhirResourceV); overload; override;
     function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; override;
     function ProfilesAsOptionList : String; override;
     procedure ProcessSubscriptions; override;
     procedure ProcessEmails; override;
     procedure ProcessObservations; override;
     procedure RunValidation; override;
-    function FetchResource(key : integer) : TFHIRResource; override;
+    function FetchResource(key : integer) : TFHIRResourceV; override;
     procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
 
   end;
@@ -194,7 +196,7 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
-constructor TTestStorageService.Create;
+constructor TTestStorageService.Create(factory : TFHIRFactory);
 begin
   inherited;
   FOAuths := TFslMap<TTestOAuthLogin>.create;
@@ -217,7 +219,7 @@ begin
   result := 1;
 end;
 
-procedure TTestStorageService.QueueResource(r: TFhirResource; dateTime: TDateTimeEx);
+procedure TTestStorageService.QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx);
 begin
 end;
 
@@ -278,7 +280,7 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
-procedure TTestStorageService.QueueResource(r: TFhirResource);
+procedure TTestStorageService.QueueResource(r: TFhirResourceV);
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -314,7 +316,7 @@ begin
   end;
 end;
 
-function TTestStorageService.FetchResource(key: integer): TFHIRResource;
+function TTestStorageService.FetchResource(key: integer): TFHIRResourceV;
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -416,12 +418,12 @@ end;
 
 { TTestFHIROperationEngine }
 
-procedure TTestFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; httpCode: Integer; name, message: String);
+procedure TTestFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; httpCode: Integer; name, message: String);
 begin
   raise EFslException.Create('Not Implemented');
 end;
 
-procedure TTestFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; opName: String; httpCode: Integer; name, message: String);
+procedure TTestFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; opName: String; httpCode: Integer; name, message: String);
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -476,7 +478,7 @@ begin
   result := false;
   NotFound(request, response);
   filename := Path(['C:\work\org.hl7.fhir\build\publish', 'patient-'+request.Id+'.xml']);
-  if check(response, FIsReadAllowed and (request.ResourceName = 'Patient') and FileExists(filename), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
+  if check(response, FIsReadAllowed and (request.ResourceName = 'Patient') and FileExists(filename), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
   begin
     result := true;
     FStorage.FLastReadUser := request.Session.Username;
@@ -496,15 +498,15 @@ end;
 
 procedure TTestFHIROperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  response.bundle := TFhirBundle.Create(BundleTypeSearchset);
+  response.resource := TFhirBundle.Create(BundleTypeSearchset);
 end;
 
-function TTestFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResource;
+function TTestFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResourceV;
 begin
   raise EFslException.Create('Not Implemented');
 end;
 
-function TTestFHIROperationEngine.getResourceByUrl(aType: TFhirResourceType; url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResource;
+function TTestFHIROperationEngine.getResourceByUrl(aType: String; url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResourceV;
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -536,24 +538,24 @@ end;
 procedure TRestFulServerTests.Setup;
 begin
   FIni := TFHIRServerIniFile.Create('C:\work\fhirserver\tests\server-tests.ini');
-  FStore := TTestStorageService.create();
-  FContext := TFHIRServerContext.Create(FStore.Link);
-  FContext.ownername := 'Test-Server';
-  FServer := TFhirWebServer.Create(FIni.Link, 'Test-Server', nil, FContext.Link);
+  FStore := TTestStorageService.create(TFHIRFactoryX.create);
+  FContext := TFHIRServerContext.Create(FStore.Link, nil);
+//  FContext.ownername := 'Test-Server';
+//  FServer := TFhirWebServer.Create(FIni.Link, 'Test-Server', nil, FContext.Link);
 //      ctxt.FHIR.Tx.Server := FterminologyServer.Link;
-  FContext.UserProvider := TTestingFHIRUserProvider.Create;
-  FContext.userProvider.OnProcessFile := FServer.ReturnProcessedFile;
-  FServer.AuthServer.UserProvider := FContext.userProvider.Link;
-  FServer.OWinSecuritySecure := true;
-  FServer.ServeMissingCertificate := true;
-  FServer.ServeUnknownCertificate := true;
-  FServer.Start(true);
-  FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\web');
+//  FContext.UserProvider := TTestingFHIRUserProvider.Create;
+//  FContext.userProvider.OnProcessFile := FServer.ReturnProcessedFile;
+//  FServer.AuthServer.UserProvider := FContext.userProvider.Link;
+//  FServer.OWinSecuritySecure := true;
+//  FServer.ServeMissingCertificate := true;
+//  FServer.ServeUnknownCertificate := true;
+//  FServer.Start(true);
+//  FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\web');
 
-  FClientXml := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
-  FClientJson := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(false), true);
-  FClientSSL := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(true), false);
-  FClientSSLCert := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(true), true);
+//  FClientXml := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
+//  FClientJson := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(false), true);
+//  FClientSSL := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(true), false);
+//  FClientSSLCert := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(true), true);
 end;
 
 procedure TRestFulServerTests.TearDown;
@@ -625,7 +627,7 @@ begin
     http.Request.Accept := 'application/fhir+xml';
     resp := TBytesStream.create;
     try
-      http.Get(FServer.ClientAddress(false)+'/metadata', resp);
+//      http.Get(FServer.ClientAddress(false)+'/metadata', resp);
       resp.position := 0;
       Assert.isTrue(http.ResponseCode = 200, 'response code <> 200');
       Assert.isTrue(http.Response.ContentType = 'application/fhir+xml', 'response content type <> application/fhir+xml');;
@@ -886,7 +888,7 @@ begin
     end;
   except
     on e:EFHIRClientException do
-      Assert.isTrue(e.issue.code = etLogin, 'Isseue type is wrong');
+      Assert.isTrue(e.issue.code = itLogin, 'Isseue type is wrong');
     on e:exception do
       Assert.isTrue(false, e.ClassName+'; '+ e.Message);
   end;
@@ -1016,9 +1018,9 @@ begin
 
   tester := TSmartOnFhirTestingLogin.create;
   try
-    tester.server.fhirEndPoint := FServer.AuthServer.EndPoint;
-    tester.server.authorizeEndpoint := 'https://'+FIni.readString(voMaybeVersioned, 'web', 'host', '')+':'+FIni.readString(voMaybeVersioned, 'web', 'https', '')+FIni.readString(voMaybeVersioned, 'web', 'auth-path', '')+'/auth';
-    tester.server.tokenEndPoint := 'https://'+FIni.readString(voMaybeVersioned, 'web', 'host', '')+':'+FIni.readString(voMaybeVersioned, 'web', 'https', '')+FIni.readString(voMaybeVersioned, 'web', 'auth-path', '')+'/token';
+//    tester.server.fhirEndPoint := FServer.AuthServer.EndPoint;
+//    tester.server.authorizeEndpoint := 'https://'+FIni.readString(voMaybeVersioned, 'web', 'host', '')+':'+FIni.readString(voMaybeVersioned, 'web', 'https', '')+FIni.readString(voMaybeVersioned, 'web', 'auth-path', '')+'/auth';
+//    tester.server.tokenEndPoint := 'https://'+FIni.readString(voMaybeVersioned, 'web', 'host', '')+':'+FIni.readString(voMaybeVersioned, 'web', 'https', '')+FIni.readString(voMaybeVersioned, 'web', 'auth-path', '')+'/token';
     tester.scopes := 'openid profile user/*.*';
     tester.server.clientid := 'web';
     tester.server.redirectport := 961;
@@ -1067,7 +1069,7 @@ begin
     end;
   except
     on e:EFHIRClientException do
-      Assert.isTrue(e.issue.code = etLogin, 'Isseue type is wrong');
+      Assert.isTrue(e.issue.code = itLogin, 'Isseue type is wrong');
     on e:exception do
       Assert.isTrue(false, e.ClassName+'; '+ e.Message);
   end;
@@ -1113,7 +1115,7 @@ begin
       http.Request.Accept := 'application/fhir+xml';
       resp := TBytesStream.create;
       try
-        http.Get(FServer.ClientAddress(true)+'/metadata', resp);
+//        http.Get(FServer.ClientAddress(true)+'/metadata', resp);
         resp.position := 0;
         Assert.isTrue(http.ResponseCode = 200, 'response code <> 200');
         Assert.isTrue(http.Response.ContentType = 'application/fhir+xml', 'response content type <> application/fhir+xml');;
@@ -1147,7 +1149,7 @@ begin
     http.Request.Accept := 'application/fhir+json';
     resp := TBytesStream.create;
     try
-      http.Get(FServer.ClientAddress(false)+'/metadata', resp);
+//      http.Get(FServer.ClientAddress(false)+'/metadata', resp);
       resp.position := 0;
       Assert.isTrue(http.ResponseCode = 200, 'response code <> 200');
       Assert.isTrue(http.Response.ContentType = 'application/fhir+json', 'response content type <> application/fhir+json');;

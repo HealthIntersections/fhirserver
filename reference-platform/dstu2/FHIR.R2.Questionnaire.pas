@@ -33,8 +33,9 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Shell, FHIR.Support.Utilities, FHIR.Support.Collections,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Version.Parser, FHIR.R2.Factory, FHIR.Server.Session, FHIR.Tx.Service,
-  FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants, FHIR.R2.Profiles, FHIR.R2.Utilities;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Utilities, FHIR.Base.Common,
+  FHIR.R2.Parser, FHIR.R2.Factory, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Constants, FHIR.R2.Profiles, FHIR.R2.Utilities,
+  FHIR.Tx.Service;
 
 Const
   TYPE_EXTENSION = 'http://www.healthintersections.com.au/fhir/StructureDefinition/questionnnaire-type';
@@ -61,9 +62,9 @@ const
 
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : string; lang : String; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSetW; ref : string; lang : String; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSetW of object;
   TLookupCodeEvent = function(system, version, code : String) : String of object;
-  TLookupReferenceEvent = function(Context : TFHIRRequest; uri : String) : TResourceWithReference of object;
+  TLookupReferenceEvent = function(Context : TFslObject; uri : String) : TResourceWithReference of object;
 
   {
  * This class takes a StructureDefinition, and builds a questionnaire from it
@@ -95,7 +96,7 @@ Type
     FPrebuiltQuestionnaire: TFhirQuestionnaire;
     FOnLookupCode : TLookupCodeEvent;
     FOnLookupReference : TLookupReferenceEvent;
-    FContext : TFHIRRequest;
+    FContext : TFslObject;
     FDependencies: TList<String>;
     FLang : String;
 
@@ -159,7 +160,7 @@ Type
     procedure processExisting(path : String; answerGroups, nAnswers: TFhirQuestionnaireResponseItemList);
     procedure SetAnswers(const Value: TFhirQuestionnaireResponse);
     procedure SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
-    procedure SetContext(const Value: TFHIRRequest);
+    procedure SetContext(const Value: TFslObject);
   public
     Constructor Create(lang : String);
     Destructor Destroy; override;
@@ -168,7 +169,7 @@ Type
     Property OnExpand : TGetValueSetExpansion read FOnExpand write FOnExpand;
     Property onLookupCode : TLookupCodeEvent read FonLookupCode write FonLookupCode;
     Property onLookupReference : TLookupReferenceEvent read FonLookupReference write FonLookupReference;
-    Property Context : TFHIRRequest read FContext write SetContext;
+    Property Context : TFslObject read FContext write SetContext;
 
     Property Profile : TFHirStructureDefinition read FProfile write SetProfile;
     Property Resource : TFhirDomainResource read FResource write SetResource;
@@ -332,6 +333,7 @@ var
   ref : TFhirReference;
   dependencies : TStringList;
   s : String;
+  vs : TFhirValueSetW;
 begin
   result := nil;
   if PrebuiltQuestionnaire <> nil then
@@ -346,10 +348,15 @@ begin
     try
       ref.reference := url;
       try
-        result := OnExpand(nil, ref.reference, FLang, MaxListboxCodings, 0, 0, false, dependencies);
-        for s in dependencies do
-          if not FDependencies.Contains(s) then
-            FDependencies.Add(s);
+        vs := OnExpand(nil, ref.reference, FLang, MaxListboxCodings, 0, 0, false, dependencies);
+        try
+          for s in dependencies do
+            if not FDependencies.Contains(s) then
+              FDependencies.Add(s);
+          result := vs.Resource.link as TFhirValueSet;
+        finally
+          vs.free;
+        end;
       except
         on e: ETooCostly do
         begin
@@ -380,6 +387,7 @@ var
   vs : TFHIRValueSet;
   dependencies : TStringList;
   s : String;
+  v, vsw : TFhirValueSetW;
 begin
   result := nil;
   if PrebuiltQuestionnaire <> nil then
@@ -395,10 +403,20 @@ begin
     begin
       vs := TFhirValueSet(Fprofile.contained[ref.reference.Substring(1)]);
       try
-        result := OnExpand(vs, '', FLang, MaxListboxCodings, 0, 0, false, dependencies);
-        for s in dependencies do
-          if not FDependencies.Contains(s) then
-            FDependencies.Add(s);
+        v := FFactory.wrapValueSet(vs);
+        try
+          vsw := OnExpand(v, '', FLang, MaxListboxCodings, 0, 0, false, dependencies);
+          try
+            for s in dependencies do
+              if not FDependencies.Contains(s) then
+                FDependencies.Add(s);
+            result := vsw.Resource.link as TFhirValueSet;
+          finally
+            vsw.Free;
+          end;
+        finally
+          v.Free;
+        end;
       except
         on e: ETooCostly do
         begin
@@ -416,16 +434,20 @@ begin
           raise;
         end;
       end;
-
     end
     else if vsCache.ExistsByKey(ref.reference) then
       result := FQuestionnaire.contained[vsCache.GetValueByKey(ref.reference)].link as TFhirValueSet
     else
       try
-        result := OnExpand(nil, ref.reference, FLang, MaxListboxCodings, 0, 0,false, dependencies);
-        for s in dependencies do
-          if not FDependencies.Contains(s) then
-            FDependencies.Add(s);
+        vsw := OnExpand(nil, ref.reference, FLang, MaxListboxCodings, 0, 0,false, dependencies);
+        try
+          for s in dependencies do
+            if not FDependencies.Contains(s) then
+              FDependencies.Add(s);
+          result := vsw.Resource.link as TFhirValueSet;
+        finally
+          vsw.Free;
+        end;
       except
         on e: ETooCostly do
         begin
@@ -454,7 +476,7 @@ begin
   FAnswers := Value;
 end;
 
-procedure TQuestionnaireBuilder.SetContext(const Value: TFHIRRequest);
+procedure TQuestionnaireBuilder.SetContext(const Value: TFslObject);
 begin
   FContext.Free;
   FContext := Value;

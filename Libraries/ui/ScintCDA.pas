@@ -215,7 +215,7 @@ begin
       begin
       ct := TCDAClassType(style shr 4);
       case ct of
-        etNull, etSpacer: Attributes.BackColor := clWhite;
+        itNull, etSpacer: Attributes.BackColor := clWhite;
         etAct: Attributes.BackColor := COLOUR_ACT;
         etParticipation: Attributes.BackColor := COLOUR_PARTICIPATION;
         etRole: Attributes.BackColor := COLOUR_ROLE;
@@ -284,15 +284,15 @@ function TCDAStyler.getTypeForLocation(location : TSourceLocation): TCDAClassTyp
 var
   el : Tv3Base;
 begin
-  if (FLastType <> etNull) then
+  if (FLastType <> itNull) then
     result := FLastType
   else if FDoc = nil then
-    result := etNull
+    result := itNull
   else
   begin
     el := getElementForLocation(FDoc.Root, location);
     if el = nil then
-      result := etNull
+      result := itNull
     else
       result := el.CDAClassType;
     while (result = etDatatype) and (el.Parent <> nil) do
@@ -317,7 +317,7 @@ function TCDAStyler.getCategoryForLocation(location : TSourceLocation): TCDAStyl
 var
   el : Tv3Base;
 begin
-  if (FLastType <> etNull) then
+  if (FLastType <> itNull) then
     result := FLastCategory
   else if FDoc = nil then
     result := scNull
@@ -457,7 +457,7 @@ begin
   ConsumeChar('/');
   ConsumeChar('>');
   CommitStyle(stEndElement);
-  FLastType := etNull;
+  FLastType := itNull;
   FLastCategory := scNull;
   scanText;
 end;
@@ -481,7 +481,7 @@ end;
 
 procedure TCDAStyler.scanStartElement;
 begin
-  FLastType := etNull;
+  FLastType := itNull;
   FLastCategory := scNull;
   if ConsumeChar('?') then
     scanInstruction

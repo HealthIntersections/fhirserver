@@ -34,8 +34,8 @@ interface
 // based on a table by importing the excel spreadsheet directly
 uses
   SysUtils, Classes,
-   FHIR.Support.Utilities, FHIR.Support.Base, 
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
+  FHIR.Support.Utilities, FHIR.Support.Base,
+  FHIR.Tx.Service;
 
 type
   TACIRConcept = class (TCodeSystemProviderContext)

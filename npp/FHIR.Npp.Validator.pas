@@ -33,13 +33,13 @@ interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-   FHIR.Support.Utilities, FHIR.Support.Base, 
+   FHIR.Support.Utilities, FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.Tx.Service,
-
   FHIR.R2.Types, FHIR.R2.Resources, FHIR.R2.Context, FHIR.R2.Profiles, FHIR.R2.Client,
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.Profiles, FHIR.R3.Client,
-  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.Client;
+  FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Context, FHIR.R4.Profiles, FHIR.R4.Client,
+  FHIR.Tools.ValueSets;
 
 Type
   TFHIRPluginValidatorContextR2 = class (TBaseWorkerContextR2)
@@ -53,7 +53,7 @@ Type
     function  findCode(list : FHIR.R2.Resources.TFhirValueSetCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R2.Resources.TFhirValueSetCodeSystemConcept;
     function validateInternally(system, version, code: String; vs: FHIR.R2.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
     function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
-    function doGetCs(sender : TObject; url, version : String; params : TFslStringMap) : TCodeSystemProvider;
+    function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams) : TCodeSystemProvider;
   protected
     procedure SeeResource(r : FHIR.R2.Resources.TFhirResource); override;
   public
@@ -83,7 +83,7 @@ Type
     function  findCode(list : FHIR.R3.Resources.TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R3.Resources.TFhirCodeSystemConcept;
     function validateInternally(system, version, code: String; vs: FHIR.R3.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
     function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
-    function doGetCs(sender : TObject; url, version : String; params : TFslStringMap) : TCodeSystemProvider;
+    function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams) : TCodeSystemProvider;
   protected
     procedure SeeResource(r : FHIR.R3.Resources.TFhirResource); override;
   public
@@ -113,7 +113,7 @@ Type
     function  findCode(list : FHIR.R4.Resources.TFhirCodeSystemConceptList; code : String; caseSensitive : boolean) : FHIR.R4.Resources.TFhirCodeSystemConcept;
     function validateInternally(system, version, code: String; vs: FHIR.R4.Resources.TFHIRValueSet; var res : TValidationResult) : boolean;
     function doGetVs(sender : TObject; url : String) : TFHIRValueSetW;
-    function doGetCs(sender : TObject; url, version : String; params : TFslStringMap) : TCodeSystemProvider;
+    function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams) : TCodeSystemProvider;
   protected
     procedure SeeResource(r : FHIR.R4.Resources.TFhirResource); override;
   public
@@ -140,7 +140,7 @@ Type
 implementation
 
 uses
-  FHIR.Tools.ValueSets, FHIR.Tools.CodeSystemProvider,
+  FHIR.Tools.CodeSystemProvider,
   FHIR.R2.Constants, FHIR.R2.Utilities,
   FHIR.R3.Constants, FHIR.R3.Utilities,
   FHIR.R4.Constants, FHIR.R4.Utilities;
@@ -177,7 +177,7 @@ begin
   inherited;
 end;
 
-function TFHIRPluginValidatorContextR2.doGetCs(sender: TObject; url, version: String; params: TFslStringMap): TCodeSystemProvider;
+function TFHIRPluginValidatorContextR2.doGetCs(sender: TObject; url, version: String; params: TFHIRExpansionParams): TCodeSystemProvider;
 var
   cs : FHIR.R2.Resources.TFHIRValueSet;
 begin
@@ -371,14 +371,14 @@ var
   vsw : TFhirValueSetW;
   validator : TValueSetChecker;
   p : TFHIRParametersW;
-  params : TFslStringMap;
+  params : TFHIRExpansionParams;
 begin
   try
     vsw := Factory.wrapValueSet(vs.Link);
     try
       validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, '');
       try
-        params := TFslStringMap.Create;
+        params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
           p := validator.check(system, version, code);
@@ -464,7 +464,7 @@ begin
   inherited;
 end;
 
-function TFHIRPluginValidatorContextR3.doGetCs(sender: TObject; url, version: String; params: TFslStringMap): TCodeSystemProvider;
+function TFHIRPluginValidatorContextR3.doGetCs(sender: TObject; url, version: String; params: TFHIRExpansionParams): TCodeSystemProvider;
 var
   cs : FHIR.R3.Resources.TFHIRCodeSystem;
 begin
@@ -659,14 +659,14 @@ var
   vsw : TFhirValueSetW;
   validator : TValueSetChecker;
   p : TFHIRParametersW;
-  params : TFslStringMap;
+  params : TFHIRExpansionParams;
 begin
   try
     vsw := Factory.wrapValueSet(vs.Link);
     try
       validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, '');
       try
-        params := TFslStringMap.Create;
+        params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
           p := validator.check(system, version, code);
@@ -752,7 +752,7 @@ begin
   inherited;
 end;
 
-function TFHIRPluginValidatorContextR4.doGetCs(sender: TObject; url, version: String; params: TFslStringMap): TCodeSystemProvider;
+function TFHIRPluginValidatorContextR4.doGetCs(sender: TObject; url, version: String; params: TFHIRExpansionParams): TCodeSystemProvider;
 var
   cs : FHIR.R4.Resources.TFHIRCodeSystem;
 begin
@@ -947,14 +947,14 @@ var
   vsw : TFhirValueSetW;
   validator : TValueSetChecker;
   p : TFHIRParametersW;
-  params : TFslStringMap;
+  params : TFHIRExpansionParams;
 begin
   try
     vsw := FFactory.wrapValueSet(vs.Link);
     try
       validator := TValueSetChecker.Create(FFactory.link, doGetVs, doGetCs, '');
       try
-        params := TFslStringMap.Create;
+        params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
           p := validator.check(system, version, code);

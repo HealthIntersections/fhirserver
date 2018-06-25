@@ -221,7 +221,8 @@ uses
   VTHeaderPopup in '..\..\Components\treeview\Source\VTHeaderPopup.pas',
   FHIR.Cache.PackageBrowser in '..\reference-platform\cache\FHIR.Cache.PackageBrowser.pas' {PackageFinderForm},
   FHIR.Tx.MimeTypes in '..\Server\FHIR.Tx.MimeTypes.pas',
-  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas';
+  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas',
+  FHIR.Server.BundleBuilder in '..\Server\FHIR.Server.BundleBuilder.pas';
 
 {$R *.res}
 

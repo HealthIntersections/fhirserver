@@ -36,8 +36,8 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities,
   YuStemmer,
   FHIR.Database.Manager,
-  FHIR.Base.Common,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Operations, FHIR.Version.Utilities, FHIR.CdsHooks.Utilities,
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.base.Utilities,
+  FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
 
 type
@@ -109,7 +109,7 @@ type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
@@ -437,13 +437,11 @@ begin
   list.AddStrings(TUMLSConcept(context).FOthers);
 end;
 
-procedure TUMLSServices.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponseW);
+procedure TUMLSServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   qry : TKDBConnection;
   b : boolean;
-  {$IFNDEF FHIR2}
   p : TFHIRLookupOpRespPropertyW;
-  {$ENDIF}
 begin
   if hasProp(props, 'inactive', true) then
   begin
@@ -466,12 +464,13 @@ begin
       end;
     end;
 
-    {$IFNDEF FHIR2}
-    p := resp.addProp('inactive');
-    p.value := TFHIRBoolean.create(b);
-    {$ELSE}
-    resp.addExtension('inactive', b);
-    {$ENDIF}
+    if factory.version <> fhirVersionRelease2 then
+    begin
+      p := resp.addProp('inactive');
+      p.value := factory.makeBoolean(b);
+    end
+    else
+      resp.addExtension('inactive', b);
   end;
 end;
 

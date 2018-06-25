@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$DEFINE EXAMPLESCENARIO}
+{.$.DEFINE EXAMPLESCENARIO}
 
 interface
 
@@ -1303,7 +1303,7 @@ begin
   begin
     FIndexes := TFhirIndexList.Create(TFHIRFactoryX.Create);
     comps := TFHIRCompartmentList.Create;
-    builder := TFHIRIndexBuilder.Create;
+    builder := TFHIRIndexBuilderX.Create;
     try
       builder.registerIndexes(Findexes, comps);
     finally

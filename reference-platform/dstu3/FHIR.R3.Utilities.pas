@@ -39,7 +39,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Json, FHIR.Support.Turtle, FHIR.Support.MXml, FHIR.Support.Signatures, FHIR.Support.Certs,
   FHIR.Web.Fetcher,
 
-  FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml,
+  FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Utilities,
   FHIR.R3.Context, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants;
 
 
@@ -179,18 +179,6 @@ type
   TFhirNamingSystemContact = TFHIRContactDetail;
   TFhirConformanceContact = TFHIRContactDetail;
   TFhirCanonical = TFhirUri;
-
-  TResourceWithReference = class (TFslObject)
-  private
-    FReference: String;
-    FResource: TFHIRResource;
-    procedure SetResource(const Value: TFHIRResource);
-  public
-    Constructor Create(reference : String; resource : TFHIRResource);
-    Destructor Destroy; override;
-    property Reference : String read FReference write FReference;
-    property Resource : TFHIRResource read FResource write SetResource;
-  end;
 
   TFhirPeriodHelper = class helper for TFhirPeriod
   private
@@ -491,6 +479,14 @@ const
                 '1.2.840.10065.1.12.1.16', '1.2.840.10065.1.12.1.17', '1.2.840.10065.1.12.1.18');
 
 type
+  TFHIRBundleEntryHelper = class helper (TFhirElementHelper) for TFHIRBundleEntry
+  private
+    function GetLinks(s: string): String;
+    procedure SetLinks(s: string; const Value: String);
+  public
+    property Links[s : string] : String read GetLinks write SetLinks;
+  end;
+
 
   TFHIRBundleHelper = class helper (TFhirResourceHelper) for TFHIRBundle
   private
@@ -552,9 +548,6 @@ type
     procedure AddParameter(name, value: string); overload;
     function AddParameter(name: String) : TFhirParametersParameter; overload;
     procedure AddParameter(p :  TFhirParametersParameter); overload;
-
-    function EncodeVersionsJson : TBytes;
-    function EncodeVersionsXml : TBytes;
   end;
 
   TFhirParametersParameterHelper = class helper for TFhirParametersParameter
@@ -588,6 +581,7 @@ type
     function HasTag(system, code : String)  : boolean;
     function addTag(system, code, display : String) : TFhirCoding;
     function removeTag(system, code : String) : boolean;
+    function removeLabel(system, code : String) : boolean;
     function hasProfile(url : String) : boolean;
     procedure addProfile(url : String);
     procedure dropProfile(url : String);
@@ -733,7 +727,6 @@ function gen(t : TFhirType):String; overload;
 function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
-function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
 
 type
   TResourceIteratorProcedure = reference to procedure (node : TFHIRObject);
@@ -778,52 +771,6 @@ begin
 end;
 {$ENDIF}
 
-
-function DetectFormat(oContent : TStream) : TFHIRFormat; overload;
-var
-  i : integer;
-  s : AnsiString;
-begin
-  i := oContent.Position;
-  setlength(s, ocontent.Size - oContent.Position);
-  ocontent.Read(s[1], length(s));
-  oContent.Position := i;
-  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := ffXml
-  else if (pos('{', s) > 0) and ((pos('{', s) < 10)) then
-    result := ffJson
-  else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
-    result := ffTurtle
-  else
-    result := ffUnspecified;
-end;
-
-function DetectFormat(bytes : TBytes) : TFHIRFormat; overload;
-var
-  sa : AnsiString;
-  s : String;
-begin
-  setlength(sa, length(bytes));
-  move(bytes[0], sa[1], length(sa));
-  s := String(sa);
-  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := ffXml
-  else
-    result := ffJson;
-end;
-
-
-function DetectFormat(oContent : TFslBuffer) : TFHIRFormat; overload;
-var
-  s : String;
-begin
-  s := oContent.AsText;
-  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
-    result := ffXml
-  else
-    result := ffJson;
-
-end;
 
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 var
@@ -2564,29 +2511,6 @@ begin
     result := result.Substring(1);
 end;
 
-{ TResourceWithReference }
-
-constructor TResourceWithReference.Create(reference: String; resource: TFHIRResource);
-begin
-  inherited Create;
-  self.Reference := reference;
-  self.Resource := resource;
-
-end;
-
-destructor TResourceWithReference.Destroy;
-begin
-  FResource.free;
-  inherited;
-end;
-
-procedure TResourceWithReference.SetResource(const Value: TFHIRResource);
-begin
-  FResource.free;
-  FResource := Value;
-end;
-
-
 { TFHIRResourceHelper }
 
 procedure TFHIRResourceHelper.checkNoImplicitRules(place, role: String);
@@ -3205,44 +3129,6 @@ begin
   self.parameterList.Add(p);
 end;
 
-function TFhirParametersHelper.EncodeVersionsJson: TBytes;
-var
-  j : TJsonObject;
-  a : TJsonArray;
-  p : TFhirParametersParameter;
-  s : String;
-begin
-  j := TJsonObject.create;
-  try
-    a := j.forceArr['versions'];
-    for p in parameterList do
-      if p.name = 'version' then
-        a.add(p.value.primitiveValue);
-    s := TJSONWriter.writeObjectStr(j, true);
-  finally
-    j.free;
-  end;
-  result := TEncoding.UTF8.GetBytes(s);
-end;
-
-function TFhirParametersHelper.EncodeVersionsXml: TBytes;
-var
-  x : TMXmlDocument;
-  p : TFhirParametersParameter;
-  s : String;
-begin
-  x := TMXmlDocument.Create;
-  try
-    for p in parameterList do
-      if p.name = 'version' then
-        x.addElement('version').addText(p.value.primitiveValue);
-    s := x.ToXml(true);
-  finally
-    x.free;
-  end;
-  result := TEncoding.UTF8.GetBytes(s);
-end;
-
 { TFhirParametersParameterHelper }
 
 procedure TFhirParametersParameterHelper.AddParameter(name: String; value: TFhirType);
@@ -3458,6 +3344,23 @@ begin
   for u in profileList do
     if u.value = url then
       exit(true);
+end;
+
+function TFhirResourceMetaHelper.removeLabel(system, code: String): boolean;
+var
+  i : integer;
+  c : TFhirCoding;
+begin
+  result := false;
+  for i := securityList.Count -1 downto 0 do
+  begin
+    c := securityList[i];
+    if (c.system = system) and (c.code = code) then
+    begin
+      result := true;
+      securityList.DeleteByIndex(i);
+    end;
+  end;
 end;
 
 function TFhirResourceMetaHelper.removeTag(system, code : String): boolean;
@@ -4946,14 +4849,6 @@ begin
   p.value := TFhirBoolean.Create(value);
 end;
 
-function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
-begin
-  if (props = nil) or (props.Count = 0) then
-    result := def
-  else
-    result := props.Contains(name);
-end;
-
 { TFHIRObservationHelper }
 
 function TFHIRObservationHelper.addComponent(system, code: String): TFhirObservationComponent;
@@ -5946,6 +5841,38 @@ begin
     result := low
   else
     result := high;
+end;
+
+{ TFHIRBundleEntryHelper }
+
+function TFHIRBundleEntryHelper.GetLinks(s: string): String;
+var
+  i : integer;
+begin
+  result := '';
+  for i := 0 to link_List.count -  1 do
+    if link_List[i].relation = s then
+    begin
+      result := link_List[i].url;
+      exit;
+    end;
+end;
+
+procedure TFHIRBundleEntryHelper.SetLinks(s: string; const Value: String);
+var
+  i : integer;
+begin
+  for i := 0 to link_List.count -  1 do
+    if link_List[i].relation = s then
+    begin
+      link_List[i].url := value;
+      exit;
+    end;
+  with link_List.Append do
+  begin
+    relation := s;
+    url := value;
+  end;
 end;
 
 end.

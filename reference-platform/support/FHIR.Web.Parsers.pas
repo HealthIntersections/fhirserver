@@ -87,7 +87,7 @@ type
   TMimeContentType = class (TFslObject)
   private
     FSource : String;
-    FParams: TDictionary<String, String>;
+    FParams: TFslStringDictionary;
     FBase: String;
     function GetMain: String;
     function GetSub: String;
@@ -109,7 +109,7 @@ type
 
     function isValid : boolean;
 
-    property Params : TDictionary<String, String> read FParams;
+    property Params : TFslStringDictionary read FParams;
     function hasParam(name : String) : boolean;
   end;
 
@@ -611,7 +611,7 @@ end;
 constructor TMimeContentType.Create;
 begin
   inherited;
-  FParams := TDictionary<String, String>.create;
+  FParams := TFslStringDictionary.create;
 end;
 
 destructor TMimeContentType.Destroy;

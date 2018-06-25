@@ -32,20 +32,91 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Support.Base, 
+  FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.MXml, FHIR.Support.Stream,
   FHIR.Ucum.IFace,
-  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml,
+  FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Narrative, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Xhtml,
   FHIR.Client.Base;
 
 type
+  TFHIRWorkerContextWithFactory = class;
+
+  TBestPracticeWarningLevel = (bpwlIgnore, bpwlHint, bpwlWarning, bpwlError);
+  TCheckDisplayOption = (cdoIgnore, cdopCheck, cdoCheckCaseAndSpace, cdoCheckCase, cdoCheckSpace);
+  TResourceIdStatus = (risOptional, risRequired, risProhibited);
+
+  TFHIRValidatorContext = class (TFslObject)
+  private
+    FCheckDisplay: TCheckDisplayOption;
+    FBPWarnings: TBestPracticeWarningLevel;
+    FSuppressLoincSnomedMessages: boolean;
+    FResourceIdRule: TResourceIdStatus;
+    FIsAnyExtensionsAllowed: boolean;
+    FIssues : TFslList<TFhirOperationOutcomeIssueW>;
+    Fowned : TFslList<TFslObject>;
+    FOperationDescription : String;
+    procedure SetIssues(const Value: TFslList<TFhirOperationOutcomeIssueW>);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    property CheckDisplay : TCheckDisplayOption read FCheckDisplay write FCheckDisplay;
+    property BPWarnings: TBestPracticeWarningLevel read FBPWarnings write FBPWarnings;
+    property SuppressLoincSnomedMessages: boolean read FSuppressLoincSnomedMessages write FSuppressLoincSnomedMessages;
+    property ResourceIdRule: TResourceIdStatus read FResourceIdRule write FResourceIdRule;
+    property IsAnyExtensionsAllowed: boolean read FIsAnyExtensionsAllowed write FIsAnyExtensionsAllowed;
+    property OperationDescription : String read FOperationDescription write FOperationDescription;
+
+    property owned : TFslList<TFslObject> read FOwned;
+    property Issues : TFslList<TFhirOperationOutcomeIssueW> read FIssues write SetIssues;
+  end;
+
+  TValidatorProgressEvent = procedure (sender : TObject; message : String) of object;
+
+  TFHIRValidatorV = class abstract(TFslObject)
+  private
+    FOnProgress : TValidatorProgressEvent;
+    FContext : TFHIRWorkerContextWithFactory;
+  protected
+    procedure doProgress(path : String);
+  public
+    Constructor Create(context: TFHIRWorkerContextWithFactory); virtual;
+    Destructor Destroy; override;
+
+    property Context : TFHIRWorkerContextWithFactory read FContext;
+
+    property OnProgress : TValidatorProgressEvent read FOnProgress write FOnProgress;
+
+    procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject); overload; virtual; abstract;
+    procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String); overload; virtual; abstract;
+
+    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement); overload; virtual; abstract;
+    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profile: String); overload; virtual; abstract;
+
+    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument); overload; virtual; abstract;
+    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String); overload; virtual; abstract;
+
+    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat); overload; virtual; abstract;
+    procedure validate(ctxt : TFHIRValidatorContext; source : TFslBuffer; format : TFHIRFormat; profile : String); overload; virtual; abstract;
+
+    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV); overload; virtual; abstract;
+    procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV; profile : string); overload; virtual; abstract;
+
+    function  describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcomeW; virtual; abstract;
+  end;
+
+  TFHIRValidatorClass = class of TFHIRValidatorV;
+
   TFHIRFactory = class (TFslObject)
   public
     function link : TFHIRFactory; overload;
     function version : TFHIRVersion; virtual;
     function versionString : String; virtual;
+    function specUrl : String; virtual; abstract;
     function description : String; virtual;
     function ResourceNames : TArray<String>; virtual; abstract;
+    function canonicalResources : TArray<String>; virtual; abstract;
     function isResourceName(name : String) : boolean; virtual;
+    function resCategory(name: String) : TTokenCategory; virtual; abstract;
 
     function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String) : TFHIRParser; virtual; abstract;
     function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; lang : String; style: TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
@@ -60,30 +131,64 @@ type
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal) : TFhirClientV; overload;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; virtual;  abstract;// because using indy is necessary if you're writing a server, or unixready code
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; virtual; abstract;
+    function makeClientInt(worker : TFHIRWorkerContextV; lang : String; comm : TFHIRClientCommunicator) : TFhirClientV; overload; virtual; abstract;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
+    procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); virtual; abstract;
     function resetXhtml(r : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
+    function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; virtual; abstract;
 
-    procedure checkNoImplicitRules(res : TFHIRObject; method, param : string); virtual; abstract;
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); virtual; abstract;
+    function buildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
+    Function buildOperationOutcome(lang, message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
 
     function makeByName(const name : String) : TFHIRObject; virtual; abstract;
+    function makeResource(const name : String) : TFHIRResourceV;
     function makeBoolean(b : boolean): TFHIRObject; virtual; abstract;
     function makeCode(s : string) : TFHIRObject; virtual; abstract;
+    function makeCoding(system, code : String) : TFHIRObject; overload;
+    function makeCoding(system, code, display : String) : TFHIRObject; overload;
+    function makeCoding(system, version, code, display : String) : TFHIRObject; overload; virtual; abstract;
     function makeString(s : string) : TFHIRObject; virtual; abstract;
     function makeInteger(s : string) : TFHIRObject; virtual; abstract;
     function makeDecimal(s : string) : TFHIRObject; virtual; abstract;
     function makeBase64Binary(s : string) : TFHIRObject; virtual;  abstract;// must DecodeBase64
+    function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; virtual; abstract;
+    function makeParamsFromForm(s : TStream) : TFHIRResourceV; virtual; abstract;
+    function makeDtFromForm(part : TMimePart; lang, name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
+
     function makeParameters : TFHIRParametersW; virtual; abstract;
+    function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; virtual; abstract;
 
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; virtual; abstract;
     function wrapValueSet(r : TFHIRResourceV) : TFhirValueSetW; virtual; abstract;
     function wrapCodeSystem(r : TFHIRResourceV) : TFhirCodeSystemW; virtual; abstract;
+    function wrapConceptMap(r : TFHIRResourceV) : TFhirConceptMapW; virtual; abstract;
     function wrapExtension(o : TFHIRObject) : TFhirExtensionW; virtual; abstract;
     function wrapCoding(o : TFHIRObject) : TFhirCodingW; virtual; abstract;
+    function wrapCodeableConcept(o : TFHIRObject) : TFhirCodeableConceptW; virtual; abstract;
     function wrapOperationOutcome(r : TFHIRResourceV) : TFhirOperationOutcomeW; virtual; abstract;
     function wrapBundle(r : TFHIRResourceV) : TFhirBundleW; virtual; abstract;
+    function wrapParams(r : TFHIRResourceV) : TFHIRParametersW; virtual; abstract;
+    function wrapMeta(r : TFHIRResourceV) : TFhirMetaW; overload; virtual; abstract;
+    function wrapMeta(r : TFHIRObject) : TFhirMetaW; overload; virtual; abstract;
+    function wrapBinary(r : TFHIRResourceV) : TFhirBinaryW; virtual; abstract;
+    function wrapAuditEvent(r : TFHIRResourceV) : TFhirAuditEventW; virtual; abstract;
+    function wrapSubscription(r : TFHIRResourceV) : TFhirSubscriptionW; virtual; abstract;
+    function wrapObservation(r : TFHIRResourceV) : TFhirObservationW; virtual; abstract;
+    function wrapQuantity(r : TFHIRObject) : TFhirQuantityW; virtual; abstract;
+    function wrapGroup(r : TFHIRResourceV) : TFhirGroupW; virtual; abstract;
+    function wrapPatient(r : TFHIRResourceV) : TFhirPatientW; virtual; abstract;
+    function wrapBundleEntry(o : TFHIRObject) : TFhirBundleEntryW; virtual; abstract;
+    function wrapNamingSystem(o : TFHIRResourceV) : TFHIRNamingSystemW; virtual; abstract;
+    function wrapStructureMap(o : TFHIRResourceV) : TFHIRStructureMapW; virtual; abstract;
+    function wrapEventDefinition(o : TFHIRResourceV) : TFHIREventDefinitionW; virtual; abstract;
+
+    function makeOpReqLookup : TFHIRLookupOpRequestW; virtual; abstract;
+    function makeOpRespLookup : TFHIRLookupOpResponseW; virtual; abstract;
+    function makeOpReqSubsumes : TFHIRSubsumesOpRequestW; virtual; abstract;
+    function makeOpRespSubsumes : TFHIRSubsumesOpResponseW; virtual; abstract;
   end;
 
   TFHIRVersionFactories = class (TFslObject)
@@ -113,7 +218,10 @@ type
     property Factory : TFHIRFactory read FFactory;
 
     procedure loadResourceJson(rType, id : String; json : TStream); override;
-    procedure seeResource(res : TFHIRResourceV); overload; virtual;
+    procedure seeResource(res : TFHIRResourceV); overload; virtual; abstract;
+    procedure dropResource(rtpe, id : String); overload; virtual; abstract;
+
+    procedure setNonSecureTypes(names : Array of String); virtual; abstract;
 
     function getResourceNames : TFslStringSet; virtual; abstract;
     function fetchResource(rType : String; url : String) : TFhirResourceV; overload; virtual; abstract;
@@ -124,6 +232,7 @@ type
     function allResourceNames : TArray<String>; overload; virtual; abstract;
     function nonSecureResourceNames : TArray<String>; overload; virtual; abstract;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; virtual; abstract;
+    function getProfileLinks(non_resources : boolean) : TFslStringMatch; virtual; abstract;
   end;
 
 implementation
@@ -185,6 +294,21 @@ end;
 function TFHIRFactory.versionString: String;
 begin
   result := '??';
+end;
+
+function TFHIRFactory.makeResource(const name: String): TFHIRResourceV;
+begin
+  result := makeByName(name) as TFHIRResourceV;
+end;
+
+function TFHIRFactory.makeCoding(system, code, display: String): TFHIRObject;
+begin
+  result := makeCoding(system, '', code, display);
+end;
+
+function TFHIRFactory.makeCoding(system, code: String): TFHIRObject;
+begin
+  result := makeCoding(system, '', code, '');
 end;
 
 { TFHIRVersionFactories }
@@ -261,8 +385,47 @@ begin
   end;
 end;
 
-procedure TFHIRWorkerContextWithFactory.seeResource(res: TFHIRResourceV);
+{ TFHIRValidatorContext }
+
+constructor TFHIRValidatorContext.create;
 begin
+  inherited;
+  FOwned := TFslList<TFslObject>.create;
+  FIssues := TFslList<TFhirOperationOutcomeIssueW>.create;
+end;
+
+destructor TFHIRValidatorContext.destroy;
+  begin
+  FOwned.Free;
+  FIssues.Free;
+  inherited;
+end;
+
+procedure TFHIRValidatorContext.SetIssues(const Value: TFslList<TFhirOperationOutcomeIssueW>);
+begin
+  FIssues.Free;
+  FIssues := Value;
+end;
+
+
+{ TFHIRValidatorV }
+
+constructor TFHIRValidatorV.Create(context: TFHIRWorkerContextWithFactory);
+begin
+  inherited create;
+  FContext := context;
+end;
+
+destructor TFHIRValidatorV.Destroy;
+begin
+  FContext.Free;
+  inherited;
+end;
+
+procedure TFHIRValidatorV.doProgress(path: String);
+begin
+  if assigned(FOnProgress) then
+    FOnProgress(self, path);
 end;
 
 end.

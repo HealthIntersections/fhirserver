@@ -76,7 +76,7 @@ end;
 
 procedure TFHIRJavascriptTests.Setup;
 begin
-  FJs := TFHIRJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll', makeFactory);
+//  FJs := TFHIRJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll', makeFactory, nil);
   FJs.OnLog := JSLog;
   FLog := TStringList.create;
 end;

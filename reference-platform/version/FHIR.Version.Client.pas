@@ -34,11 +34,16 @@ interface
 uses
   SysUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser,
-  {$IFDEF FHIR2} FHIR.R2.Client, {$ENDIF}
-  {$IFDEF FHIR3} FHIR.R3.Client, {$ENDIF}
-  {$IFDEF FHIR4} FHIR.R4.Client, {$ENDIF}
-  FHIR.Version.Context, FHIR.Version.Constants, FHIR.Version.Resources;
+  FHIR.Base.Objects, FHIR.Client.Base, FHIR.Client.HTTP, FHIR.Client.Threaded, FHIR.Base.Parser, FHIR.Base.Factory,
+  {$IFDEF FHIR2}
+  FHIR.R2.Client, FHIR.R2.Context;
+  {$ENDIF}
+  {$IFDEF FHIR3}
+  FHIR.R3.Client, FHIR.R3.Context;
+  {$ENDIF}
+  {$IFDEF FHIR4}
+  FHIR.R4.Client, FHIR.R4.Context;
+  {$ENDIF}
 
 
 Type

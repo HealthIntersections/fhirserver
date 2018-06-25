@@ -1,4 +1,3 @@
-
 unit FHIR.Ucum.Services;
 
 {
@@ -36,8 +35,6 @@ Uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Stream, FHIR.Support.MXml,
   FHIR.Ucum.Handlers, FHIR.Ucum.Validators, FHIR.Ucum.Expressions, FHIR.Ucum.Base, FHIR.Ucum.IFace,
   FHIR.Base.Common,
-  FHIR.Version.Parser,
-  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Utilities,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
 
@@ -46,13 +43,13 @@ Type
 
   TUCUMContext = class (TCodeSystemProviderContext)
   private
-    FConcept: TFhirValueSetComposeIncludeConcept;
-    procedure SetConcept(const Value: TFhirValueSetComposeIncludeConcept);
+    FConcept: TFhirValueSetComposeIncludeConceptW;
+    procedure SetConcept(const Value: TFhirValueSetComposeIncludeConceptW);
   public
-    Constructor Create(concept : TFhirValueSetComposeIncludeConcept); overload;
+    Constructor Create(concept : TFhirValueSetComposeIncludeConceptW); overload;
     Constructor Create(code : String); overload;
     Destructor Destroy; override;
-    property concept : TFhirValueSetComposeIncludeConcept read FConcept write SetConcept;
+    property concept : TFhirValueSetComposeIncludeConceptW read FConcept write SetConcept;
   end;
 
   TUcumFilterContext = class (TCodeSystemProviderFilterContext)
@@ -72,7 +69,8 @@ Type
     FKey: Integer;
     FName: String;
     FPath: String;
-    FCommonUnits : TFhirValueSet;
+    FCommonUnits : TFhirValueSetW;
+    FCommonUnitList : TFslList<TFhirValueSetComposeIncludeConceptW>;
 
     Function ParseDecimal(S,s1 : String):TFslDecimal;
     Function ParsePrefix(oElem : TMXmlElement):TUcumPrefix;
@@ -85,7 +83,7 @@ Type
     Destructor Destroy; Override;
     Function Link : TUcumServices; Overload;
 
-    Procedure SetCommonUnits(vs : TFHIRValueSet);
+    Procedure SetCommonUnits(vs : TFHIRValueSetW);
 
     Property Model : TUcumModel read FModel;
     Property Key : Integer read FKey write FKey;
@@ -278,6 +276,44 @@ Implementation
 Uses
   FHIR.Ucum.Search;
 
+type
+  TFhirValueSetComposeIncludeConceptLocal = class (TFhirValueSetComposeIncludeConceptW)
+  private
+    FCode : String;
+  protected
+    function getCode : String; override;
+    function getDisplay : String; override;
+    procedure SetCode(const Value: String); override;
+    procedure SetDisplay(const Value: String); override;
+    function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
+  end;
+
+{ TFhirValueSetComposeIncludeConceptLocal }
+
+function TFhirValueSetComposeIncludeConceptLocal.designations: TFslList<TFhirValueSetComposeIncludeConceptDesignationW>;
+begin
+  result := nil;
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.getCode: String;
+begin
+  result := FCode;
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.getDisplay: String;
+begin
+  result := '';
+end;
+
+procedure TFhirValueSetComposeIncludeConceptLocal.SetCode(const Value: String);
+begin
+  FCode := value;
+end;
+
+procedure TFhirValueSetComposeIncludeConceptLocal.SetDisplay(const Value: String);
+begin
+end;
+
 { TUcumServices }
 
 function TUcumServices.analyse(code: String): String;
@@ -355,6 +391,7 @@ end;
 destructor TUcumServices.Destroy;
 begin
   FCommonUnits.Free;
+  FCommonUnitList.Free;
   FHandlers.Free;
   FModel.Free;
   inherited;
@@ -525,36 +562,16 @@ begin
   raise ETerminologyError.Create('to do');
 end;
 
-procedure TUcumServices.SetCommonUnits(vs: TFHIRValueSet);
-//var
-//  i : integer;
-//  xml : TFHIRXmlComposer;
-//  f : TFileStream;
-//  c, d : String;
+procedure TUcumServices.SetCommonUnits(vs: TFHIRValueSetW);
+var
+  inc : TFhirValueSetComposeIncludeW;
 begin
   FCommonUnits.Free;
   FCommonUnits := vs;
-
-//  for i := 0 to vs.compose.includeList[0].codeList.count - 1 do
-//    if not vs.compose.includeList[0].codeList[i].HasExtension('http://hl7.org/fhir/Profile/tools-extensions#display') then
-//    begin
-//      c := vs.compose.includeList[0].codeList[i].value;
-//      d := analyse(c);
-//      writeln(c+' -> '+d);
-//      vs.compose.includeList[0].codeList[i].setExtensionString('http://hl7.org/fhir/Profile/tools-extensions#display', d);
-//    end;
-//
-//  f := TFileStream.Create('C:\work\org.hl7.fhir\build\source\valueset\valueset-ucum-common.xml', fmCreate);
-//  try
-//    xml := TFHIRXmlComposer.Create('en');
-//    try
-//      xml.Compose(f, '', '', '', vs, true, nil);
-//    finally
-//      xml.Free;
-//    end;
-//  finally
-//    f.free;
-//  end;
+  FCommonUnitList := nil;
+  for inc in FCommonUnits.includes.forEnum do
+    if FCommonUnitList <> nil then
+      FCommonUnitList := inc.concepts.link;
 end;
 
 function TUcumServices.SpecialEnumeration: String;
@@ -803,11 +820,13 @@ end;
 
 function TUcumServices.getDisplay(code: String; lang : String): String;
 var
-  cc : TFhirValueSetComposeIncludeConcept;
+  inc : TFhirValueSetComposeIncludeW;
+  cc : TFhirValueSetComposeIncludeConceptW;
 begin
   result := analyse(code);
   if FCommonUnits <> nil then
-    for cc in FCommonUnits.compose.includeList[0].conceptList do
+    for inc in FCommonUnits.includes.forEnum do
+      for cc in inc.concepts.forEnum do
         if (cc.code = code) and (cc.display <> '') then
           result := cc.display;
 end;
@@ -920,7 +939,7 @@ var
   context : TUcumFilterContext;
 begin
   context := TUcumFilterContext(ctxt);
-  result := TUCUMContext.create(FCommonUnits.compose.includeList[0].conceptList[context.FCursor].link);
+  result := TUCUMContext.create(FCommonUnitList[context.FCursor].link);
 end;
 
 function TUcumServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
@@ -929,7 +948,7 @@ var
 begin
   context := TUcumFilterContext(ctxt);
   inc(context.FCursor);
-  result := context.FCursor < FCommonUnits.compose.includeList[0].conceptList.count;
+  result := context.FCursor < FCommonUnitList.count;
 end;
 
 function TUcumServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
@@ -1078,7 +1097,7 @@ end;
 
 { TUCUMContext }
 
-constructor TUCUMContext.Create(concept: TFhirValueSetComposeIncludeConcept);
+constructor TUCUMContext.Create(concept: TFhirValueSetComposeIncludeConceptW);
 begin
   inherited Create;
   FConcept := concept;
@@ -1087,7 +1106,7 @@ end;
 constructor TUCUMContext.Create(code: String);
 begin
   inherited Create;
-  FConcept := TFhirValueSetComposeIncludeConcept.Create;
+  FConcept := TFhirValueSetComposeIncludeConceptLocal.Create(nil);
   FConcept.code := code;
 end;
 
@@ -1097,7 +1116,7 @@ begin
   inherited;
 end;
 
-procedure TUCUMContext.SetConcept(const Value: TFhirValueSetComposeIncludeConcept);
+procedure TUCUMContext.SetConcept(const Value: TFhirValueSetComposeIncludeConceptW);
 begin
   FConcept.Free;
   FConcept := Value;

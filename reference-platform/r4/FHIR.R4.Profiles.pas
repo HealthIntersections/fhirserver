@@ -117,12 +117,13 @@ Type
     property Profiles : TProfileManager read FProfiles;
     procedure SeeResource(r : TFhirResource); overload; virtual;
     procedure seeResource(res : TFHIRResourceV); overload; override;
+    procedure dropResource(rtype, id : string); override;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
     procedure LoadFromFile(filename : string); overload;
     procedure LoadFromFile(filename: string; parser : TFHIRParser); overload;
     procedure registerCustomResource(cr : TFHIRCustomResourceInformation);
-    procedure setNonSecureTypes(names : Array of String);
+    procedure setNonSecureTypes(names : Array of String); override;
     function hasCustomResourceDefinition(sd : TFHIRStructureDefinition) : boolean;
 
     function getResourceNames : TFslStringSet; override;
@@ -135,6 +136,7 @@ Type
     function hasCustomResource(name : String) : boolean; override;
     function allResourceNames : TArray<String>; override;
     function nonSecureResourceNames : TArray<String>; override;
+    function getProfileLinks(non_resources : boolean) : TFslStringMatch; override;
 
     Property factory : TFHIRFactory read FFactory;
   end;
@@ -1519,6 +1521,12 @@ begin
   inherited;
 end;
 
+procedure TBaseWorkerContextR4.dropResource(rtype, id: string);
+begin
+  if rtype = 'StructureDefinition' then
+    Profiles.DropProfile(frtStructureDefinition, id);
+end;
+
 function TBaseWorkerContextR4.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
 begin
   case t of
@@ -1544,6 +1552,11 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+function TBaseWorkerContextR4.getProfileLinks(non_resources: boolean): TFslStringMatch;
+begin
+  result := FProfiles.getLinks(non_resources);
 end;
 
 function TBaseWorkerContextR4.getResourceNames: TFslStringSet;

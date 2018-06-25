@@ -32,27 +32,48 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, System.Generics.Collections,
+  SysUtils, Classes, System.Generics.Collections, Generics.Defaults,
   FHIR.Web.Parsers,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   IdContext, IdCustomHTTPServer,
-  FHIR.Base.Lang, FHIR.Version.Context, FHIR.Server.Session, FHIR.Version.Utilities, FHIR.Version.Resources, FHIR.Version.Types, FHIR.Base.Xhtml, FHIR.Base.Objects,
+  FHIR.Base.Lang, FHIR.Server.Session, FHIR.Base.Xhtml, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Factory, FHIR.Base.Parser,
+  FHIR.Tools.ValueSets,
   FHIR.Web.HtmlGen, FHIR.Snomed.Publisher, FHIR.Snomed.Services, FHIR.Loinc.Publisher, FHIR.Loinc.Services, FHIR.Snomed.Expressions, FHIR.Snomed.Analysis,
-  FHIR.Tx.Server, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Server.Constants, FHIR.Version.Operations;
+  FHIR.Tx.Server, FHIR.Tx.Service, FHIR.Tx.Manager, FHIR.Server.Constants;
 
 Type
-  TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
+  TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TFslStringDictionary) of Object;
+
+  TSorterType = (byUrl, byVer, byName, byContext, byPub, bySource);
+
+  TCodeSystemSorter = class (TFslObject, IComparer<TFHIRCodeSystemW>)
+  private
+    FSortType : TSorterType;
+  public
+    function Compare(const Left, Right: TFHIRCodeSystemW): Integer;
+  end;
+
+  TValueSetSorter = class (TFslObject, IComparer<TFHIRValueSetW>)
+  private
+    FSortType : TSorterType;
+  public
+    function Compare(const Left, Right: TFHIRValueSetW): Integer;
+  end;
 
   TTerminologyWebServer = class (TFslObject)
   private
-    FWorker : TFHIRWorkerContext;
+    FWorker : TFHIRWorkerContextWithFactory;
     FServer : TTerminologyServer;
     FFHIRPath : String;
     FReturnProcessFileEvent : TReturnProcessFileEvent;
-    function asJson(r : TFHIRResource) : String;
-    function asXml(r : TFHIRResource) : String;
-    function asHtml(r : TFHIRDomainResource) : String;
-    function paramsAsHtml(p : TFhirParameters) : String;
+    FCSSorter : TCodeSystemSorter;
+    FVSSorter : TValueSetSorter;
+
+    function asJson(r : TFHIRResourceV) : String;
+    function asXml(r : TFHIRResourceV) : String;
+    function asHtml(r : TFHIRResourceV) : String;
+    function paramsAsHtml(p : TFhirResourceV) : String; overload;
+    function paramsAsHtml(p : TFhirParametersW) : String; overload;
     function vsSelect(id : String) : String;
 
     function processFind(pm : TParseMap) : String;
@@ -71,19 +92,6 @@ Type
 //    Procedure BuildVsByURL(html : THtmlPublisher; id : String);
     function processSnomedForTool(ss : TSnomedServices; code : String) : String;
 
-    function sortVsByUrl(pA, pB : Pointer) : Integer;
-    function sortVsByVer(pA, pB : Pointer) : Integer;
-    function sortVsByName(pA, pB : Pointer) : Integer;
-    function sortVsByCtxt(pA, pB : Pointer) : Integer;
-    function sortVsByPub(pA, pB : Pointer) : Integer;
-    function sortVsBySrc(pA, pB : Pointer) : Integer;
-    function sortCsByUrl(pA, pB : Pointer) : Integer;
-    function sortCsByVer(pA, pB : Pointer) : Integer;
-    function sortCsByName(pA, pB : Pointer) : Integer;
-    function sortCsByCtxt(pA, pB : Pointer) : Integer;
-    function sortCsByPub(pA, pB : Pointer) : Integer;
-//    function sortVsByDefUrl(pA, pB : Pointer) : Integer;
-//    function sortVsByDefVer(pA, pB : Pointer) : Integer;
     function sortCmByUrl(pA, pB : Pointer) : Integer;
     function sortCmByVer(pA, pB : Pointer) : Integer;
     function sortCmByName(pA, pB : Pointer) : Integer;
@@ -100,7 +108,7 @@ Type
     procedure ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
   public
-    constructor create(server : TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
+    constructor create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -109,8 +117,7 @@ Type
 implementation
 
 uses
-  FHIR.Support.Logging,
-  FHIR.Version.Parser;
+  FHIR.Support.Logging;
 
 { TTerminologyWebServer }
 
@@ -119,7 +126,7 @@ var
   html : THtmlPublisher;
   ss : TSnomedServices;
 begin
-  html := THtmlPublisher.Create;
+  html := THtmlPublisher.Create(FWorker.Factory.link);
   try
     html.Version := SERVER_VERSION;
     html.Header('Choose SNOMED CT Version');
@@ -129,7 +136,7 @@ begin
     html.AddTableCell('Version');
     html.AddTableCell('Date');
     html.EndTableRow;
-    for ss in FServer.Snomed do
+    for ss in FServer.CommonTerminologies.Snomed do
     begin
       html.StartTableRow;
       html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId);
@@ -145,7 +152,7 @@ begin
   end;
 end;
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
   create;
   FServer := server;
@@ -176,9 +183,9 @@ begin
     HandleTxForm(AContext, request, session, response, secure)
   else if path.StartsWith('/tx') then
     HandleTxRequest(AContext, request, response, session)
-  else if path.StartsWith('/snomed') and (FServer.Snomed <> nil) then
+  else if path.StartsWith('/snomed') and (FServer.CommonTerminologies.Snomed <> nil) then
     HandleSnomedRequest(AContext, request, response)
-  else if request.Document.StartsWith('/loinc') and (FServer.Loinc <> nil) then
+  else if request.Document.StartsWith('/loinc') and (FServer.CommonTerminologies.Loinc <> nil) then
     HandleLoincRequest(AContext, request, response)
 end;
 
@@ -186,9 +193,9 @@ procedure TTerminologyWebServer.ProcessHome(AContext: TIdContext; request: TIdHT
 var
   pm: TParseMap;
 var
-  vars : TDictionary<String, String>;
+  vars : TFslStringDictionary;
 begin
-  vars := TDictionary<String, String>.create;
+  vars := TFslStringDictionary.create;
   try
     pm := TParseMap.create(request.UnparsedParams);
     try
@@ -234,17 +241,17 @@ end;
 procedure TTerminologyWebServer.ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
   cm: TLoadedConceptMap;
-  vars : TDictionary<String, String>;
+  vars : TFslStringDictionary;
 begin
-  vars := TDictionary<String, String>.create;
+  vars := TFslStringDictionary.create;
   try
     cm := FServer.getConceptMapById(request.Document.Substring(9));
     try
       vars.Add('url', cm.resource.url);
       vars.Add('name', cm.resource.name);
-      vars.Add('html', ashtml(cm.resource));
-      vars.Add('json', asJson(cm.resource));
-      vars.Add('xml', asXml(cm.resource));
+      vars.Add('html', ashtml(cm.resource.Resource));
+      vars.Add('json', asJson(cm.resource.Resource));
+      vars.Add('xml', asXml(cm.resource.Resource));
     finally
       cm.Free;
     end;
@@ -256,18 +263,18 @@ end;
 
 procedure TTerminologyWebServer.ProcessValueSet(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
-  vs: TFhirValueSet;
-  vars : TDictionary<String, String>;
+  vs: TFhirValueSetW;
+  vars : TFslStringDictionary;
 begin
-  vars := TDictionary<String, String>.create;
+  vars := TFslStringDictionary.create;
   try
     vs := FServer.getValueSetById(request.Document.Substring(14));
     try
       vars.Add('url', vs.url);
       vars.Add('name', vs.name);
-      vars.Add('html', ashtml(vs));
-      vars.Add('json', asJson(vs));
-      vars.Add('xml', asXml(vs));
+      vars.Add('html', ashtml(vs.Resource));
+      vars.Add('json', asJson(vs.Resource));
+      vars.Add('xml', asXml(vs.Resource));
     finally
       vs.Free;
     end;
@@ -279,18 +286,18 @@ end;
 
 procedure TTerminologyWebServer.ProcessCodeSystem(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
-  cs: TFhirCodeSystem;
-  vars : TDictionary<String, String>;
+  cs: TFhirCodeSystemW;
+  vars : TFslStringDictionary;
 begin
-  vars := TDictionary<String, String>.create;
+  vars := TFslStringDictionary.create;
   try
     cs := FServer.getCodeSystemById(request.Document.Substring(16));
     try
       vars.Add('url', cs.url);
       vars.Add('name', cs.name);
-      vars.Add('html', ashtml(cs));
-      vars.Add('json', asJson(cs));
-      vars.Add('xml', asXml(cs));
+      vars.Add('html', ashtml(cs.Resource));
+      vars.Add('json', asJson(cs.Resource));
+      vars.Add('xml', asXml(cs.Resource));
     finally
       cs.Free;
     end;
@@ -306,11 +313,11 @@ var
   cs: TCodeSystemProvider;
   c: Integer;
 var
-  vars : TDictionary<String, String>;
+  vars : TFslStringDictionary;
 begin
-  vars := TDictionary<String, String>.create;
+  vars := TFslStringDictionary.create;
   try
-    html := THtmlPublisher.Create;
+    html := THtmlPublisher.Create(FWorker.Factory.link);
     try
       html.Version := SERVER_VERSION;
       html.StartTable(true);
@@ -347,26 +354,28 @@ end;
 
 procedure TTerminologyWebServer.ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
-  list: TFhirCodeSystemList;
-  vs: TFhirCodeSystem;
-  vars : TDictionary<String, String>;
+  list: TFslList<TFhirCodeSystemW>;
+  vs: TFhirCodeSystemW;
+  vars : TFslStringDictionary;
   html : THtmlPublisher;
 begin
-  vars := TDictionary<String, String>.create;
+  vars := TFslStringDictionary.create;
   try
     list := FServer.GetCodeSystemList;
     try
       if (request.UnparsedParams.EndsWith('=ver')) then
-        list.SortedBy(sortCsByVer)
+        FCSSorter.FSortType := byVer
       else if (request.UnparsedParams.EndsWith('=name')) then
-        list.SortedBy(sortCsByName)
+        FCSSorter.FSortType := byName
       else if (request.UnparsedParams.EndsWith('=ctxt')) then
-        list.SortedBy(sortCsByCtxt)
+        FCSSorter.FSortType := byContext
       else if (request.UnparsedParams.EndsWith('=pub')) then
-        list.SortedBy(sortCsByPub)
+        FCSSorter.FSortType := byPub
       else
-        list.SortedBy(sortCsByUrl);
-      html := THtmlPublisher.Create;
+        FCSSorter.FSortType := byUrl;
+      list.Sort(FCSSorter);
+
+      html := THtmlPublisher.Create(FWorker.Factory.link);
       try
         html.Version := SERVER_VERSION;
         html.StartTable(true);
@@ -380,11 +389,11 @@ begin
         for vs in list do
         begin
           html.StartTableRow;
-          html.AddTableCellURL(vs.codeSystem.system, '/tx/codesystems/' + vs.id);
-          html.AddTableCell(vs.codeSystem.version);
+          html.AddTableCellURL(vs.url, '/tx/codesystems/' + vs.id);
+          html.AddTableCell(vs.version);
           html.AddTableCell(vs.name);
-          html.AddTableCell(vs.context);
-          html.AddTableCell(vs.publisher);
+//          html.AddTableCell(vs.context);
+//          html.AddTableCell(vs.publisher);
           html.EndTableRow;
         end;
         html.EndTable;
@@ -406,11 +415,11 @@ procedure TTerminologyWebServer.ProcessConceptMapList(AContext: TIdContext; requ
 var
   mlist: TLoadedConceptMapList;
   i: Integer;
-  vars : TDictionary<String, String>;
+  vars : TFslStringDictionary;
   html : THtmlPublisher;
   cm : TLoadedConceptMap;
 begin
-  vars := TDictionary<String, String>.create;
+  vars := TFslStringDictionary.create;
   try
     mlist := FServer.GetConceptMapList;
     try
@@ -430,7 +439,7 @@ begin
       else
         mlist.SortedBy(sortCmByUrl);
       // build the table
-      html := THtmlPublisher.Create;
+      html := THtmlPublisher.Create(FWorker.Factory.link);
       try
         html.Version := SERVER_VERSION;
         html.StartTable(true);
@@ -479,12 +488,12 @@ end;
 
 function TTerminologyWebServer.processExpand(pm: TParseMap; lang : string): String;
 var
-  res : TFHIRValueSet;
-  vs : TFHIRValueSet;
-  profile : TFhirExpansionProfile;
+  res : TFHIRValueSetW;
+  vs : TFHIRValueSetW;
+  profile : TFhirExpansionParams;
 begin
   vs := FServer.getValueSetById(pm.GetVar('valueset'));
-  profile := TFhirExpansionProfile.Create;
+  profile := TFhirExpansionParams.Create;
   try
     profile.includeDefinition := pm.GetVar('nodetails') <> '1';
     profile.limitedExpansion := true;
@@ -494,10 +503,10 @@ begin
     try
       res := FServer.expandVS(vs, vs.url, profile, pm.GetVar('filter'), 1000, 0, 0);
       try
-        result := asHtml(res)+#13#10;
-        if (not profile.includeDefinition) then
-          res.text := nil;
-        result := result + '<pre class="json">'+asJson(res)+'</pre>'#13#10+'<pre class="xml">'+asXml(res)+'</pre>';
+        result := asHtml(res.Resource)+#13#10;
+//        if (not profile.includeDefinition) then
+//          res.text := nil;
+        result := result + '<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>';
       finally
         res.Free;
       end;
@@ -513,16 +522,16 @@ end;
 
 function TTerminologyWebServer.processFind(pm: TParseMap): String;
 var
-  coding : TFHIRCoding;
-  resp : TFHIRLookupOpResponse;
-  p : TFhirParameters;
+  coding : TFHIRCodingW;
+  resp : TFHIRLookupOpResponseW;
+  p : TFhirResourceV;
 begin
-  coding := TFhirCoding.Create;
+  coding := FWorker.Factory.wrapCoding(FWorker.Factory.makeByName('Coding'));
   try
     coding.system := pm.GetVar('system');
     coding.version := pm.GetVar('version');
     coding.code := pm.GetVar('code');
-    resp := TFHIRLookupOpResponse.Create;
+    resp := FWorker.Factory.makeOpRespLookup;
     try
       try
         FServer.lookupCode(coding, 'en', nil, resp);
@@ -547,30 +556,32 @@ end;
 
 procedure TTerminologyWebServer.ProcessValueSetList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
-  vs: TFhirValueSet;
-  vars : TDictionary<String, String>;
-  list : TFhirValueSetList;
+  vs: TFhirValueSetW;
+  vars : TFslStringDictionary;
+  list : TFslList<TFhirValueSetW>;
   html : THtmlPublisher;
 begin
-  vars := TDictionary<String, String>.create;
+  vars := TFslStringDictionary.create;
   try
     list := FServer.GetValueSetList;
     try
       // determine sort order
       if (request.UnparsedParams.EndsWith('=ver')) then
-        list.SortedBy(sortVsByVer)
+        FVSSorter.FSortType := byVer
       else if (request.UnparsedParams.EndsWith('=name')) then
-        list.SortedBy(sortVsByName)
+        FVSSorter.FSortType := byName
       else if (request.UnparsedParams.EndsWith('=ctxt')) then
-        list.SortedBy(sortVsByCtxt)
+        FVSSorter.FSortType := byContext
       else if (request.UnparsedParams.EndsWith('=pub')) then
-        list.SortedBy(sortVsByPub)
+        FVSSorter.FSortType := byPub
       else if (request.UnparsedParams.EndsWith('=src')) then
-        list.SortedBy(sortVsBySrc)
+        FVSSorter.FSortType := bySource
       else
-        list.SortedBy(sortVsByUrl);
+        FVSSorter.FSortType := byUrl;
+      list.Sort(FVSSorter);
+
       // build the table
-      html := THtmlPublisher.Create;
+      html := THtmlPublisher.Create(FWorker.Factory.link);
       try
         html.Version := SERVER_VERSION;
         html.StartTable(true);
@@ -621,13 +632,13 @@ end;
 procedure TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 {var
   vs : String;
-  vars : TDictionary<String, String>;
+  vars : TFslStringDictionary;
   list : TFslStringMatch;
   ts : TStringList;
   i : integer;
   }
 begin
-{  vars := TDictionary<String, String>.create;
+{  vars := TFslStringDictionary.create;
   try
     vs := '';
 
@@ -671,12 +682,23 @@ begin
     ProcessHome(AContext, request, response, session);
 end;
 
-function TTerminologyWebServer.paramsAsHtml(p: TFhirParameters): String;
+function TTerminologyWebServer.paramsAsHtml(p: TFhirResourceV): String;
+var
+  pw : TFHIRParametersW;
+begin
+  pw := FWorker.Factory.wrapParams(p);
+  try
+    result := paramsAsHtml(pw);
+  finally
+    pw.free;
+  end;
+end;
+function TTerminologyWebServer.paramsAsHtml(p: TFhirParametersW): String;
 var
   html : THtmlPublisher;
-  pp : TFhirParametersParameter;
+  pp : TFhirParametersParameterW;
 begin
-  html := THtmlPublisher.Create;
+  html := THtmlPublisher.Create(FWorker.Factory.link);
   try
     html.Version := SERVER_VERSION;
     html.StartTable(true);
@@ -684,7 +706,7 @@ begin
     begin
       html.StartTableRow;
       html.AddTableCell(pp.name);
-      html.AddTableCell(gen(pp.value));
+      html.AddTableCell(pp.value.toString);
       html.EndTableRow;
     end;
     html.EndTable;
@@ -692,25 +714,24 @@ begin
   finally
     html.Free;
   end;
-
 end;
 
-function TTerminologyWebServer.asHtml(r: TFHIRDomainResource): String;
+function TTerminologyWebServer.asHtml(r: TFHIRResourceV): String;
 begin
-  if (r.text <> nil) then
-    result := TFHIRXhtmlParser.Compose(r.text.div_)
+  if (FWorker.factory.getXhtml(r) <> nil) then
+    result := TFHIRXhtmlParser.Compose(FWorker.factory.getXhtml(r))
   else
     result := '<i>(no narrative)</i>';
 end;
 
-function TTerminologyWebServer.asJson(r: TFHIRResource): String;
+function TTerminologyWebServer.asJson(r: TFHIRResourceV): String;
 var
-  json : TFHIRJsonComposer;
+  json : TFHIRComposer;
   b : TBytesStream;
 begin
   b := TBytesStream.Create();
   try
-    json := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en');
+    json := FWorker.factory.makeComposer(FWorker.link, ffJson, 'en', OutputStylePretty);
     try
       json.Compose(b, r);
     finally
@@ -722,14 +743,14 @@ begin
   end;
 end;
 
-function TTerminologyWebServer.asXml(r: TFHIRResource): String;
+function TTerminologyWebServer.asXml(r: TFHIRResourceV): String;
 var
-  xml : TFHIRXmlComposer;
+  xml : TFHIRComposer;
   b : TBytesStream;
 begin
   b := TBytesStream.Create();
   try
-    xml := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en');
+    xml := FWorker.factory.makeComposer(FWorker.link, ffXMl, 'en', OutputStylePretty);
     try
       xml.Compose(b, r);
     finally
@@ -902,7 +923,7 @@ begin
   begin
     parts := request.Document.Split(['/']);
     ss := nil;
-    for t in FServer.Snomed do
+    for t in FServer.CommonTerminologies.Snomed do
       if t.EditionId = parts[3] then
         ss := t;
     if ss = nil then
@@ -922,15 +943,15 @@ begin
         on e : Exception do
         begin
           response.ResponseNo := 500;
-          response.ContentText := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="error" message="'+FormatTextToXml(e.Message, xmlAttribute)+'"/>';
+          response.ContentText := '<snomed version="'+FServer.CommonTerminologies.DefSnomed.VersionDate+'" type="error" message="'+FormatTextToXml(e.Message, xmlAttribute)+'"/>';
         end;
       end;
     end;
   end
   else if request.Document.StartsWith('/snomed/analysis/')  then
   begin
-    FServer.DefSnomed.RecordUse;
-    analysis := TSnomedAnalysis.create(FServer.DefSnomed.Link);
+    FServer.CommonTerminologies.DefSnomed.RecordUse;
+    analysis := TSnomedAnalysis.create(FServer.CommonTerminologies.DefSnomed.Link);
     try
       pm := TParseMap.create(request.UnparsedParams);
       try
@@ -959,7 +980,7 @@ begin
   begin
     parts := request.Document.Split(['/']);
     ss := nil;
-    for t in FServer.Snomed do
+    for t in FServer.CommonTerminologies.Snomed do
       if t.EditionId = parts[2] then
         ss := t;
     if ss = nil then
@@ -975,7 +996,7 @@ begin
       logt('Snomed Doco ('+ss.EditionName+'): '+code);
 
       try
-        html := THtmlPublisher.Create;
+        html := THtmlPublisher.Create(FWorker.factory.link);
         pub := TSnomedPublisher.create(ss, FFHIRPath);
         try
           html.Version := SERVER_VERSION;
@@ -1015,22 +1036,22 @@ var
   i : integer;
   st : TStringList;
 begin
-  FServer.Loinc.RecordUse;
+  FServer.CommonTerminologies.Loinc.RecordUse;
   if request.Document.StartsWith('/loinc/doco/') then
   begin
     code := request.UnparsedParams;
     lang := request.Document.Substring(12);
-    if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.Loinc.supportsLang(lang)) then
+    if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.CommonTerminologies.Loinc.supportsLang(lang)) then
     begin
       st := TStringList.create;
       try
-        for i := 0 to FServer.Loinc.Lang.count - 1 do
+        for i := 0 to FServer.CommonTerminologies.Loinc.Lang.count - 1 do
         begin
-          FServer.Loinc.Lang.GetEntry(i, lang, country);
+          FServer.CommonTerminologies.Loinc.Lang.GetEntry(i, lang, country);
           st.add(lang+'-'+country);
         end;
         st.sort;
-        html := THtmlPublisher.Create;
+        html := THtmlPublisher.Create(FWorker.factory.link);
         try
           html.Version := SERVER_VERSION;
           html.BaseURL := '/loinc/doco/';
@@ -1063,8 +1084,8 @@ begin
     begin
       logt('Loinc Doco: '+code);
       try
-        html := THtmlPublisher.Create;
-        pub := TLoincPublisher.create(FServer.Loinc, FFHIRPath, lang);
+        html := THtmlPublisher.Create(FWorker.factory.link);
+        pub := TLoincPublisher.create(FServer.CommonTerminologies.Loinc, FFHIRPath, lang);
         try
           html.Version := SERVER_VERSION;
           html.BaseURL := '/loinc/doco/'+lang;
@@ -1153,13 +1174,13 @@ end;
 
 function TTerminologyWebServer.processTranslate(pm: TParseMap): String;
 var
-  res : TFhirParameters;
-  vs : TFHIRValueSet;
-  coding : TFhirCoding;
+  res : TFhirParametersW;
+  vs : TFHIRValueSetW;
+  coding : TFhirCodingW;
 begin
   vs := FServer.getValueSetById(pm.GetVar('valueset')); // this is the target
   try
-    coding := TFhirCoding.Create;
+    coding := FWorker.factory.wrapCoding(FWorker.factory.makeByName('Coding'));
     try
       coding.system := pm.GetVar('system');
       coding.version := pm.GetVar('version');
@@ -1167,7 +1188,7 @@ begin
       try
         res := FServer.translate('en', nil, coding, vs);
         try
-          result := paramsAsHtml(res)+#13#10 + '<pre class="json">'+asJson(res)+'</pre>'#13#10+'<pre class="xml">'+asXml(res)+'</pre>';
+          result := paramsAsHtml(res)+#13#10 + '<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>';
         finally
           res.Free;
         end;
@@ -1185,13 +1206,13 @@ end;
 
 function TTerminologyWebServer.processValidate(pm: TParseMap): String;
 var
-  coding : TFHIRCoding;
-  res : TFhirResource;
-  vs : TFHIRValueSet;
+  coding : TFHIRCodingW;
+  res : TFHIRParametersW;
+  vs : TFHIRValueSetW;
 begin
   vs := FServer.getValueSetById(pm.GetVar('valueset'));
   try
-    coding := TFhirCoding.Create;
+    coding := FWorker.factory.wrapCoding(FWorker.factory.makeByName('Coding'));
     try
       coding.system := pm.GetVar('system');
       coding.version := pm.GetVar('version');
@@ -1199,12 +1220,8 @@ begin
       coding.display := pm.GetVar('display');
       res := FServer.validate(vs, coding, nil, pm.GetVar('abstract') = '1');
       try
-        if res is TFhirOperationOutcome then
-          result := '<div style="background: red">'+asHtml(res as TFhirOperationOutcome)+'</div>'#13 +
-            #10'<pre class="json">'+asJson(res)+'</pre>'#13#10+'<pre class="xml">'+asXml(res)+'</pre>'
-        else
-          result := '<div>'+paramsAsHtml(res as TFhirParameters)+'</div>'#13 +
-            #10'<pre class="json">'+asJson(res)+'</pre>'#13#10+'<pre class="xml">'+asXml(res)+'</pre>'
+        result := '<div>'+paramsAsHtml(res)+'</div>'#13 +
+            #10'<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>'
       finally
         res.Free;
       end;
@@ -1216,88 +1233,18 @@ begin
   end;
 end;
 
-function TTerminologyWebServer.sortVsByCtxt(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirValueSet;
-begin
-  vA := TFhirValueSet(pA);
-  vB := TFhirValueSet(pB);
-  result := CompareStr(vA.context, vb.context);
-end;
-
-//function TTerminologyWebServer.sortVsByDefUrl(pA, pB: Pointer): Integer;
-//var
-//  vA, vB : TFhirValueSet;
-//begin
-//  vA := TFhirValueSet(pA);
-//  vB := TFhirValueSet(pB);
-//  result := CompareStr(vA.codeSystem.system, vb.codeSystem.system);
-//end;
-//
-//function TTerminologyWebServer.sortVsByDefVer(pA, pB: Pointer): Integer;
-//var
-//  vA, vB : TFhirValueSet;
-//begin
-//  vA := TFhirValueSet(pA);
-//  vB := TFhirValueSet(pB);
-//  result := CompareStr(vA.codeSystem.version, vb.codeSystem.version);
-//end;
-
-function TTerminologyWebServer.sortVsByName(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirValueSet;
-begin
-  vA := TFhirValueSet(pA);
-  vB := TFhirValueSet(pB);
-  result := CompareStr(vA.name, vb.name);
-end;
-
-function TTerminologyWebServer.sortVsByPub(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirValueSet;
-begin
-  vA := TFhirValueSet(pA);
-  vB := TFhirValueSet(pB);
-  result := CompareStr(vA.publisher, vb.publisher);
-end;
-
-function TTerminologyWebServer.sortVsBySrc(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirValueSet;
-begin
-  vA := TFhirValueSet(pA);
-  vB := TFhirValueSet(pB);
-  result := CompareStr(vA.source, vb.source);
-end;
-
-function TTerminologyWebServer.sortVsByUrl(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirValueSet;
-begin
-  vA := TFhirValueSet(pA);
-  vB := TFhirValueSet(pB);
-  result := CompareStr(vA.url, vb.url);
-end;
-
-function TTerminologyWebServer.sortVsByVer(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirValueSet;
-begin
-  vA := TFhirValueSet(pA);
-  vB := TFhirValueSet(pB);
-  result := CompareStr(vA.version, vb.version);
-end;
 
 function TTerminologyWebServer.vsSelect(id: String): String;
 var
-  vs: TFhirValueSet;
-  list : TFhirValueSetList;
+  vs: TFhirValueSetW;
+  list : TFslList<TFhirValueSetW>;
   s : String;
 begin
   list := FServer.GetValueSetList;
   try
     // determine sort order
-    list.SortedBy(sortVsByName);
+    FVSSorter.FSortType := byName;
+    list.Sort(FVSSorter);
     s := '<select name="valueset" size="1">'#13#10;
     for vs in list do
       if (vs.id = id) then
@@ -1374,49 +1321,35 @@ begin
   result := CompareStr(vA.Resource.version, vb.Resource.version);
 end;
 
-function TTerminologyWebServer.sortCsByCtxt(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirCodeSystem;
+{ TCodeSystemSorter }
+
+function TCodeSystemSorter.Compare(const Left, Right: TFHIRCodeSystemW): Integer;
 begin
-  vA := TFhirCodeSystem(pA);
-  vB := TFhirCodeSystem(pB);
-  result := CompareStr(vA.context, vb.context);
+  case FSortType of
+    byUrl: result := CompareStr(left.url, right.url);
+    byVer: result := CompareStr(left.version, right.version);
+    byName: result := CompareStr(left.name, right.name);
+    byContext: result := CompareStr(left.context, right.context);
+    byPub: result := CompareStr(left.publisher, right.publisher);
+  else
+    result := 0;
+  end;
 end;
 
-function TTerminologyWebServer.sortCsByName(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirCodeSystem;
-begin
-  vA := TFhirCodeSystem(pA);
-  vB := TFhirCodeSystem(pB);
-  result := CompareStr(vA.name, vb.name);
-end;
+{ TValueSetSorter }
 
-function TTerminologyWebServer.sortCsByPub(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirCodeSystem;
+function TValueSetSorter.Compare(const Left, Right: TFHIRValueSetW): Integer;
 begin
-  vA := TFhirCodeSystem(pA);
-  vB := TFhirCodeSystem(pB);
-  result := CompareStr(vA.publisher, vb.publisher);
-end;
-
-function TTerminologyWebServer.sortCsByUrl(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirCodeSystem;
-begin
-  vA := TFhirCodeSystem(pA);
-  vB := TFhirCodeSystem(pB);
-  result := CompareStr(vA.url, vb.url);
-end;
-
-function TTerminologyWebServer.sortCsByVer(pA, pB: Pointer): Integer;
-var
-  vA, vB : TFhirCodeSystem;
-begin
-  vA := TFhirCodeSystem(pA);
-  vB := TFhirCodeSystem(pB);
-  result := CompareStr(vA.version, vb.version);
+  case FSortType of
+    byUrl: result := CompareStr(left.url, right.url);
+    byVer: result := CompareStr(left.version, right.version);
+    byName: result := CompareStr(left.name, right.name);
+    byContext: result := CompareStr(left.context, right.context);
+    byPub: result := CompareStr(left.publisher, right.publisher);
+    bySource : result := CompareStr(left.source, right.source);
+  else
+    result := 0;
+  end;
 end;
 
 end.

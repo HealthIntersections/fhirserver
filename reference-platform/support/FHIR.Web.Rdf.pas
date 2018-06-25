@@ -131,7 +131,7 @@ type
     FSubjectSet : TList<String>;
     FPredicateSet : TList<String>;
     FObjectSet : TList<String>;
-    FPrefixes : TDictionary<String, String>;
+    FPrefixes : TFslStringDictionary;
     FFormat: TRDFFormat;
     FLastId : integer;
 
@@ -470,7 +470,7 @@ begin
   FSubjectSet := TList<String>.create;
   FPredicateSet := TList<String>.create;
   FObjectSet := TList<String>.create;
-  FPrefixes := TDictionary<String, String>.create;
+  FPrefixes := TFslStringDictionary.create;
 end;
 
 destructor TRDFGenerator.Destroy;

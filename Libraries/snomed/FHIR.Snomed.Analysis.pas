@@ -34,7 +34,6 @@ interface
 uses
   SysUtils, Classes, Math,
   FHIR.Support.Utilities, FHIR.Web.Parsers, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Json,
-  FHIR.Version.Resources, FHIR.Version.Types, FHIR.Version.Constants, FHIR.Version.Parser,
   FHIR.Snomed.Services, FHIR.Base.Parser,
   FHIR.Support.Base;
 
@@ -391,7 +390,6 @@ begin
     b.appendLine('  <a href="/" style="color: gold">Server Home</a>   &nbsp;|&nbsp;');
     b.appendLine('  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> FHIR Server');
     b.appendLine('  &nbsp;|&nbsp;');
-    b.appendLine('  <a href="'+FHIR_SPEC_URL+'" style="color: gold">FHIR Version 0.5.0-5264</a>');
     b.appendLine('  &nbsp;');
     b.appendLine('		</div>  <!-- /container -->');
     b.appendLine('		</div>  <!-- /container -->');
@@ -470,7 +468,7 @@ begin
     b.appendLine('		<div class="container">  <!-- container -->');
     b.appendLine('			<div class="inner-wrapper">');
     b.appendLine('				<p>');
-    b.appendLine('        <a href="/snomed/'+FSnomed.EditionId+'/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR Version <a href="'+FHIR_SPEC_URL+'" style="color: gold">0.5.0-5264</a>');
+    b.appendLine('        <a href="/snomed/'+FSnomed.EditionId+'/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp;');
     b.appendLine('        </span>');
     b.appendLine('        </p>');
     b.appendLine('			</div>  <!-- /inner-wrapper -->');

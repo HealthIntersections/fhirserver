@@ -390,7 +390,7 @@ begin
             compartments := TFHIRCompartmentList.create;
             indexes := TFhirIndexList.Create(TFHIRFactoryX.create);
             try
-              builder := TFHIRIndexBuilder.Create;
+              builder := TFHIRIndexBuilderX.Create;
               try
                 builder.registerIndexes(indexes, compartments);
               finally
@@ -557,7 +557,7 @@ begin
     compartments := TFHIRCompartmentList.create;
     indexes := TFhirIndexList.Create(TFHIRFactoryX.Create);
     try
-      builder := TFHIRIndexBuilder.Create;
+      builder := TFHIRIndexBuilderX.Create;
       try
         builder.registerIndexes(indexes, compartments);
       finally

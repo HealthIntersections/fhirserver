@@ -82,13 +82,13 @@ Type
   Private
     FContext : String;
     FStatus : word;
-    FCode : TExceptionType;
+    FCode : TFhirIssueType;
   Public
-    Constructor Create(Const sContext : String; aStatus : word; code : TExceptionType; sMessage, lang : String); Overload; Virtual;
-    Constructor Create(Const sContext : String; aStatus : word; code : TExceptionType; sMessage, lang : String; const Args: array of const); Overload; Virtual;
+    Constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage, lang : String); Overload; Virtual;
+    Constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage, lang : String; const Args: array of const); Overload; Virtual;
 
     Property Status : word read FStatus write FStatus;
-    Property Code : TExceptionType read FCode write FCode;
+    Property Code : TFhirIssueType read FCode write FCode;
   End;
 
   EFHIRPath = class (EFHIRException)
@@ -112,7 +112,7 @@ uses
 Type
   TFHIRMessage = class (TFslObject)
   private
-    FMessages : TDictionary<String,String>;
+    FMessages : TFslStringDictionary;
   public
     constructor Create; override;
     Destructor Destroy; override;
@@ -236,7 +236,7 @@ end;
 constructor TFHIRMessage.Create;
 begin
   inherited;
-  FMessages := TDictionary<String,String>.create;
+  FMessages := TFslStringDictionary.create;
 end;
 
 destructor TFHIRMessage.Destroy;
@@ -260,7 +260,7 @@ end;
 
 { ERestfulException }
 
-constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TExceptionType; sMessage, lang: String; const Args: array of const);
+constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage, lang: String; const Args: array of const);
 begin
   inherited Create(Format(GetFhirMessage(sMessage, lang), args));
 
@@ -269,7 +269,7 @@ begin
   FCode := code;
 end;
 
-constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TExceptionType; sMessage, lang: String);
+constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage, lang: String);
 begin
   inherited Create(GetFhirMessage(sMessage, lang));
 

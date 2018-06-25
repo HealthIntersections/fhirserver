@@ -142,7 +142,7 @@ Type
     Enumeration of the general type that a CDA class can have
   }
   TCDAClassType = (
-    etNull, etAct, etSpacer, etParticipation, etRole, etEntity, etActRel, etDatatype, etNarrative, etExtension
+    itNull, etAct, etSpacer, etParticipation, etRole, etEntity, etActRel, etDatatype, etNarrative, etExtension
   );
 
   {
@@ -636,7 +636,7 @@ end;
 
 function Tv3Base.CDAClassTypeV: TCDAClassType;
 begin
-  result := etNull;
+  result := itNull;
 end;
 
 procedure Tv3Base.Clear;

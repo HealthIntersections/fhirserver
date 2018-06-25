@@ -37,7 +37,7 @@ Uses
 
   FHIR.Support.MXml, FHIR.Support.Xml, FHIR.Support.Json,
 
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Validator, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Factory, FHIR.Base.Common,
   FHIR.R3.PathNode, FHIR.R3.Context, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.PathEngine, FHIR.R3.ElementModel;
 
 
@@ -203,7 +203,7 @@ Type
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     function FHIRPathResolveReference(source : TFHIRPathEngine; appInfo : TFslObject; url : String) : TFHIRObject;
   public
-    Constructor Create(context: TFHIRWorkerContextV); override;
+    Constructor Create(context: TFHIRWorkerContextWithFactory); override;
     Destructor Destroy; Override;
 
     Property Context : TFHIRWorkerContext read FContext;
@@ -232,7 +232,7 @@ Type
     procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV; profile : string); overload; override;
     procedure validate(ctxt : TFHIRValidatorContext; resource : TFhirResourceV; profiles : TValidationProfileSet); overload;
 
-    function  describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
+    function  describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcomeW; override;
   end;
 
   TFHIRValidator = TFHIRValidator3;
@@ -421,7 +421,7 @@ end;
 
 { TFHIRValidator3 }
 
-constructor TFHIRValidator3.Create(context: TFHIRWorkerContextV);
+constructor TFHIRValidator3.Create(context: TFHIRWorkerContextWithFactory);
 begin
   inherited Create(context);
   FContext := context as TFHIRWorkerContext;
@@ -3458,19 +3458,19 @@ begin
   end;
 end;
 
-function TFHIRValidator3.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcome;
+function TFHIRValidator3.describe(ctxt : TFHIRValidatorContext): TFHIROperationOutcomeW;
 var
   o : TFhirOperationOutcomeIssueW;
   gen : TFHIRNarrativeGenerator;
 begin
-  result := TFhirOperationOutcome.create;
+  result := context.Factory.wrapOperationOutcome(context.factory.makeResource('OperationOutcome'));
   try
     for o in ctxt.Issues do
-      result.issueList.add(o.Element.Link);
+      result.addIssue(o.Link);
     gen := TFHIRNarrativeGenerator.create(Context.Link);
     try
       gen.description := ctxt.OperationDescription;
-      gen.generate(result);
+      gen.generate(result.Resource);
     finally
       gen.Free;
     end;

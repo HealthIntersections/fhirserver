@@ -34,9 +34,8 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Version.Parser, FHIR.Base.Factory, FHIR.Tx.Service,
-  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.R4.Utilities, FHIR.R4.Profiles,
-  FHIR.Server.Session;
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.R4.Parser, FHIR.Base.Factory, FHIR.Tx.Service, FHIR.Base.Utilities, FHIR.Base.Common,
+  FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Constants, FHIR.R4.Utilities, FHIR.R4.Profiles;
 
 Const
   TYPE_EXTENSION = 'http://hl7.org/fhir/StructureDefinition/questionnnaire-baseType';
@@ -47,9 +46,9 @@ Const
 
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : String; lang : String; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSetW; ref : String; lang : String; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSetW of object;
   TLookupCodeEvent = function(system, version, code : String) : String of object;
-  TLookupReferenceEvent = function(Context : TFHIRRequest; uri : String) : TResourceWithReference of object;
+  TLookupReferenceEvent = function(Context : TFslObject; uri : String) : TResourceWithReference of object;
 
   {
  * This class takes a StructureDefinition, and builds a questionnaire from it
@@ -81,7 +80,7 @@ Type
     FPrebuiltQuestionnaire: TFhirQuestionnaire;
     FOnLookupCode : TLookupCodeEvent;
     FOnLookupReference : TLookupReferenceEvent;
-    FContext : TFHIRRequest;
+    FContext : TFslObject;
     FDependencies: TList<String>;
     FLang : String;
 
@@ -145,7 +144,7 @@ Type
     procedure processExisting(path : String; answerGroups, nAnswers: TFhirQuestionnaireResponseItemList);
     procedure SetAnswers(const Value: TFhirQuestionnaireResponse);
     procedure SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
-    procedure SetContext(const Value: TFHIRRequest);
+    procedure SetContext(const Value: TFslObject);
   public
     Constructor Create(lang : String);
     Destructor Destroy; override;
@@ -154,7 +153,7 @@ Type
     Property OnExpand : TGetValueSetExpansion read FOnExpand write FOnExpand;
     Property onLookupCode : TLookupCodeEvent read FonLookupCode write FonLookupCode;
     Property onLookupReference : TLookupReferenceEvent read FonLookupReference write FonLookupReference;
-    Property Context : TFHIRRequest read FContext write SetContext;
+    Property Context : TFslObject read FContext write SetContext;
 
     Property Profile : TFHirStructureDefinition read FProfile write SetProfile;
     Property Resource : TFhirDomainResource read FResource write SetResource;
@@ -295,7 +294,7 @@ begin
   begin
     // no identifier - this is transient
     FQuestionnaire.xmlId := nextId('qs');
-    FAnswers.questionnaire := {$IFNDEF FHIR4}TFHIRReference.Create{$ENDIF}('#'+FQuestionnaire.xmlId);
+    FAnswers.questionnaire := '#'+FQuestionnaire.xmlId;
     FAnswers.containedList.Add(FQuestionnaire.Link);
     FAnswers.status := QuestionnaireAnswersStatusInProgress;
     FAnswers.ItemList.Add(TFhirQuestionnaireResponseItem.Create);
@@ -307,6 +306,7 @@ function TQuestionnaireBuilder.resolveValueSet(url: String): TFHIRValueSet;
 var
   dependencies : TStringList;
   s : String;
+  vs : TFhirValueSetW;
 begin
   result := nil;
   if PrebuiltQuestionnaire <> nil then
@@ -319,10 +319,15 @@ begin
     dependencies := TStringList.create;
     try
       try
-        result := OnExpand(nil, url, FLang, MaxListboxCodings, 0, 0, false, dependencies);
+        vs := OnExpand(nil, url, FLang, MaxListboxCodings, 0, 0, false, dependencies);
+        try
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
+          result := vs.Resource.link as TFhirValueSet;
+        finally
+          vs.free;
+        end;
       except
         on e: ETooCostly do
         begin
@@ -351,6 +356,7 @@ var
   vs : TFHIRValueSet;
   dependencies : TStringList;
   s : String;
+  v, vsw : TFhirValueSetW;
 begin
   result := nil;
   if PrebuiltQuestionnaire <> nil then
@@ -365,10 +371,20 @@ begin
     begin
       vs := TFhirValueSet(Fprofile.contained[binding.valueset.Substring(1)]);
       try
-        result := OnExpand(vs, '', FLang, MaxListboxCodings, 0, 0, false, dependencies);
-        for s in dependencies do
-          if not FDependencies.Contains(s) then
-            FDependencies.Add(s);
+        v := FFactory.wrapValueSet(vs);
+        try
+          vsw := OnExpand(v, '', FLang, MaxListboxCodings, 0, 0, false, dependencies);
+          try
+            for s in dependencies do
+              if not FDependencies.Contains(s) then
+                FDependencies.Add(s);
+            result := vsw.Resource.link as TFhirValueSet;
+          finally
+            vsw.Free;
+          end;
+        finally
+          v.Free;
+        end;
       except
         on e: ETooCostly do
         begin
@@ -392,10 +408,15 @@ begin
       result := FQuestionnaire.contained[vsCache.GetValueByKey(binding.valueset)].link as TFhirValueSet
     else
       try
-        result := OnExpand(nil, binding.valueset, FLang, MaxListboxCodings, 0, 0,false, dependencies);
+        vsw := OnExpand(nil, binding.valueset, FLang, MaxListboxCodings, 0, 0,false, dependencies);
+        try
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
+          result := vsw.Resource.link as TFhirValueSet;
+        finally
+          vsw.Free;
+        end;
       except
         on e: ETooCostly do
         begin
@@ -424,7 +445,7 @@ begin
   FAnswers := Value;
 end;
 
-procedure TQuestionnaireBuilder.SetContext(const Value: TFHIRRequest);
+procedure TQuestionnaireBuilder.SetContext(const Value: TFslObject);
 begin
   FContext.Free;
   FContext := Value;
@@ -1220,7 +1241,7 @@ begin
     begin
       if (vs.expansion = nil) then
       begin
-        result.options := {$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}(vs.url);
+        result.options := vs.url;
         result.optionsElement.addExtension(EXTENSION_FILTER_ONLY, TFhirBoolean.Create(true));
       end
       else
@@ -1237,13 +1258,13 @@ begin
             vse.publisherElement := nil;
             vse.copyrightElement := nil;
             questionnaire.containedList.Add(vse.Link);
-            result.options := {$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}('#'+vse.xmlId);
+            result.options := '#'+vse.xmlId;
           finally
             vse.Free;
           end;
         end
         else
-          result.options := {$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}('#'+vs.xmlId);
+          result.options := '#'+vs.xmlId;
       end;
     end;
 

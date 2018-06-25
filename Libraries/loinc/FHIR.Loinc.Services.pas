@@ -34,8 +34,7 @@ Uses
   SysUtils, Classes, Generics.Collections, IOUtils,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
   RegularExpressions, YuStemmer,
-  FHIR.Base.Common,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Version.Operations,
+  FHIR.Base.Objects, FHIR.Base.Common, FHIR.Base.Utilities, FHIR.Base.Factory,
   FHIR.CdsHooks.Utilities,
   FHIR.Tx.Service;
 
@@ -411,12 +410,12 @@ Type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
-    function buildValueSet(id : String) : TFhirValueSet;
+    function buildValueSet(factory : TFHIRFactory; id : String) : TFhirValueSetW;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
   End;
@@ -1756,31 +1755,34 @@ begin
   end;
 end;
 
-function TLOINCServices.buildValueSet(id: String): TFhirValueSet;
+function TLOINCServices.buildValueSet(factory : TFHIRFactory; id: String): TFhirValueSetW;
 var
   index : cardinal;
   code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
   answers : TCardinalArray;
-  inc : TFhirValueSetComposeInclude;
-  filt :  TFhirValueSetComposeIncludeFilter;
+  inc : TFhirValueSetComposeIncludeW;
+  filt :  TFhirValueSetComposeIncludeFilterW;
   i : integer;
-  cc : TFhirValueSetComposeIncludeConcept;
+  cc : TFhirValueSetComposeIncludeConceptW;
   lang : byte;
 begin
   result := nil;
   if (id = '') then
   begin
-    result := TFhirValueSet.Create;
+    result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := id;
-      result.status := PublicationStatusActive;
+      result.status := psActive;
       result.version := Version(nil);
       result.name := 'LOINC Value Set - all LOINC codes';
       result.description := 'All LOINC codes';
       result.date := TDateTimeEx.makeUTC;
-      result.compose := TFhirValueSetCompose.Create;
-      inc := result.compose.includeList.Append;
-      inc.system := 'http://loinc.org';
+      inc := result.addInclude;
+      try
+        inc.system := 'http://loinc.org';
+      finally
+        inc.free;
+      end;
       result.link;
     finally
       result.free;
@@ -1790,21 +1792,28 @@ begin
   begin
     FEntries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
 
-    result := TFhirValueSet.Create;
+    result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := id;
-      result.status := PublicationStatusActive;
+      result.status := psActive;
       result.version := Version(nil);
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text, lang);
       result.date := TDateTimeEx.makeUTC;
-      result.compose := TFhirValueSetCompose.Create;
-      inc := result.compose.includeList.Append;
-      inc.system := 'http://loinc.org';
-      filt := inc.filterList.Append;
-      filt.property_ := 'ancestor';
-      filt.op := FilterOperatorEqual;
-      filt.value := id.Substring(20);
+      inc := result.addInclude;
+      try
+        inc.system := 'http://loinc.org';
+        filt := inc.addFilter;
+        try
+          filt.prop := 'ancestor';
+          filt.op := foEqual;
+          filt.value := id.Substring(20);
+        finally
+          filt.Free;
+        end;
+      finally
+        inc.Free;
+      end;
       result.link;
     finally
       result.free;
@@ -1813,24 +1822,31 @@ begin
   else if (id.StartsWith('http://loinc.org/vs/') and FAnswerLists.FindCode(id.Substring(20), index, FDesc)) then
   begin
     FAnswerLists.GetEntry(index, code, text, children);
-    result := TFhirValueSet.Create;
+    result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := id;
-      result.status := PublicationStatusActive;
+      result.status := psActive;
       result.version := Version(nil);
       result.name := 'LOINC Answer List '+id.Substring(20);
       result.description := 'LOINC Answer list for '+Desc.GetEntry(text, lang);
       result.date := TDateTimeEx.makeUTC;
-      result.compose := TFhirValueSetCompose.Create;
-      inc := result.compose.includeList.Append;
-      inc.system := 'http://loinc.org';
-      answers := FRefs.GetCardinals(children);
-      for i := 0 to Length(answers) - 1 do
-      begin
-        cc := inc.conceptList.Append;
-        FAnswerLists.GetEntry(answers[i], code, text, children);
-        cc.code := Desc.GetEntry(code, lang);
-        cc.display := Desc.GetEntry(text, lang);
+      inc := result.addInclude;
+      try
+        inc.system := 'http://loinc.org';
+        answers := FRefs.GetCardinals(children);
+        for i := 0 to Length(answers) - 1 do
+        begin
+          cc := inc.addConcept;
+          try
+            FAnswerLists.GetEntry(answers[i], code, text, children);
+            cc.code := Desc.GetEntry(code, lang);
+            cc.display := Desc.GetEntry(text, lang);
+          finally
+            cc.free;
+          end;
+        end;
+      finally
+        inc.Free;
       end;
       result.link;
     finally
@@ -1902,7 +1918,7 @@ begin
   GetDisplaysByName(Code(context), langsForLang(lang), list);
 end;
 
-procedure TLOINCServices.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponseW);
+procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; lang : String; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   index : integer;
   iDescription, iStems, iOtherNames : Cardinal;

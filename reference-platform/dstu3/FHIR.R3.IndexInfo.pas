@@ -43,7 +43,7 @@ uses
 
 Type
 
-  TFHIRIndexBuilder = class (TFslObject)
+  TFHIRIndexBuilderR3 = class (TFHIRIndexBuilder)
   private
     {$IFDEF FHIR_ACCOUNT}
     procedure buildIndexesForAccount(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -394,13 +394,14 @@ Type
     procedure buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
   public
-    procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList); override;
  end;
+ TFHIRIndexBuilderX = TFHIRIndexBuilderR3;
 
 implementation
 
 {$IFDEF FHIR_ACCOUNT}
-procedure TFHIRIndexBuilder.buildIndexesForAccount(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForAccount(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Account', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Account', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -426,7 +427,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ACTIVITYDEFINITION}
-procedure TFHIRIndexBuilder.buildIndexesForActivityDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForActivityDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ActivityDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ActivityDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -457,7 +458,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ADVERSEEVENT}
-procedure TFHIRIndexBuilder.buildIndexesForAdverseEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForAdverseEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AdverseEvent', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('AdverseEvent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -484,7 +485,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ALLERGYINTOLERANCE}
-procedure TFHIRIndexBuilder.buildIndexesForAllergyIntolerance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForAllergyIntolerance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AllergyIntolerance', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('AllergyIntolerance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -517,7 +518,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_APPOINTMENT}
-procedure TFHIRIndexBuilder.buildIndexesForAppointment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForAppointment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Appointment', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Appointment', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -546,7 +547,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_APPOINTMENTRESPONSE}
-procedure TFHIRIndexBuilder.buildIndexesForAppointmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForAppointmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AppointmentResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('AppointmentResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -571,7 +572,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_AUDITEVENT}
-procedure TFHIRIndexBuilder.buildIndexesForAuditEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForAuditEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AuditEvent', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('AuditEvent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -608,7 +609,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_BASIC}
-procedure TFHIRIndexBuilder.buildIndexesForBasic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForBasic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Basic', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Basic', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -631,7 +632,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_BINARY}
-procedure TFHIRIndexBuilder.buildIndexesForBinary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForBinary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Binary', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Binary', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -645,7 +646,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_BODYSITE}
-procedure TFHIRIndexBuilder.buildIndexesForBodySite(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForBodySite(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('BodySite', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('BodySite', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -663,7 +664,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_BUNDLE}
-procedure TFHIRIndexBuilder.buildIndexesForBundle(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForBundle(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Bundle', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Bundle', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -680,7 +681,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CAPABILITYSTATEMENT}
-procedure TFHIRIndexBuilder.buildIndexesForCapabilityStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCapabilityStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CapabilityStatement', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('CapabilityStatement', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -713,7 +714,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CAREPLAN}
-procedure TFHIRIndexBuilder.buildIndexesForCarePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCarePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CarePlan', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('CarePlan', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -750,7 +751,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CARETEAM}
-procedure TFHIRIndexBuilder.buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CareTeam', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('CareTeam', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -776,7 +777,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CHARGEITEM}
-procedure TFHIRIndexBuilder.buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ChargeItem', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ChargeItem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -812,7 +813,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CLAIM}
-procedure TFHIRIndexBuilder.buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Claim', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Claim', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -843,7 +844,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CLAIMRESPONSE}
-procedure TFHIRIndexBuilder.buildIndexesForClaimResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForClaimResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ClaimResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ClaimResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -868,7 +869,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CLINICALIMPRESSION}
-procedure TFHIRIndexBuilder.buildIndexesForClinicalImpression(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForClinicalImpression(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ClinicalImpression', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ClinicalImpression', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -898,7 +899,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CODESYSTEM}
-procedure TFHIRIndexBuilder.buildIndexesForCodeSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCodeSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CodeSystem', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('CodeSystem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -926,7 +927,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_COMMUNICATION}
-procedure TFHIRIndexBuilder.buildIndexesForCommunication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCommunication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Communication', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Communication', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -960,7 +961,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_COMMUNICATIONREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForCommunicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCommunicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CommunicationRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('CommunicationRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -996,7 +997,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_COMPARTMENTDEFINITION}
-procedure TFHIRIndexBuilder.buildIndexesForCompartmentDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCompartmentDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CompartmentDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('CompartmentDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1020,7 +1021,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_COMPOSITION}
-procedure TFHIRIndexBuilder.buildIndexesForComposition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForComposition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Composition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Composition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1057,7 +1058,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CONCEPTMAP}
-procedure TFHIRIndexBuilder.buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ConceptMap', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ConceptMap', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1092,7 +1093,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CONDITION}
-procedure TFHIRIndexBuilder.buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Condition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Condition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1133,7 +1134,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CONSENT}
-procedure TFHIRIndexBuilder.buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Consent', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Consent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1162,7 +1163,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_CONTRACT}
-procedure TFHIRIndexBuilder.buildIndexesForContract(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForContract(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Contract', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Contract', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1185,7 +1186,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_COVERAGE}
-procedure TFHIRIndexBuilder.buildIndexesForCoverage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForCoverage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Coverage', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Coverage', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1215,7 +1216,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DATAELEMENT}
-procedure TFHIRIndexBuilder.buildIndexesForDataElement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDataElement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DataElement', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DataElement', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1243,7 +1244,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DETECTEDISSUE}
-procedure TFHIRIndexBuilder.buildIndexesForDetectedIssue(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDetectedIssue(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DetectedIssue', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DetectedIssue', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1266,7 +1267,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DEVICE}
-procedure TFHIRIndexBuilder.buildIndexesForDevice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDevice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Device', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Device', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1293,7 +1294,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DEVICECOMPONENT}
-procedure TFHIRIndexBuilder.buildIndexesForDeviceComponent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDeviceComponent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceComponent', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DeviceComponent', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1312,7 +1313,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DEVICEMETRIC}
-procedure TFHIRIndexBuilder.buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceMetric', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DeviceMetric', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1332,7 +1333,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DEVICEREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForDeviceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDeviceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DeviceRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1366,7 +1367,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DEVICEUSESTATEMENT}
-procedure TFHIRIndexBuilder.buildIndexesForDeviceUseStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDeviceUseStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceUseStatement', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DeviceUseStatement', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1386,7 +1387,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DIAGNOSTICREPORT}
-procedure TFHIRIndexBuilder.buildIndexesForDiagnosticReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDiagnosticReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DiagnosticReport', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DiagnosticReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1420,7 +1421,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DOCUMENTMANIFEST}
-procedure TFHIRIndexBuilder.buildIndexesForDocumentManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDocumentManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DocumentManifest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DocumentManifest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1451,7 +1452,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_DOCUMENTREFERENCE}
-procedure TFHIRIndexBuilder.buildIndexesForDocumentReference(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForDocumentReference(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DocumentReference', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('DocumentReference', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1496,7 +1497,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ELIGIBILITYREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForEligibilityRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForEligibilityRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EligibilityRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('EligibilityRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1519,7 +1520,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ELIGIBILITYRESPONSE}
-procedure TFHIRIndexBuilder.buildIndexesForEligibilityResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForEligibilityResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EligibilityResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('EligibilityResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1542,7 +1543,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ENCOUNTER}
-procedure TFHIRIndexBuilder.buildIndexesForEncounter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForEncounter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Encounter', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Encounter', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1581,7 +1582,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ENDPOINT}
-procedure TFHIRIndexBuilder.buildIndexesForEndpoint(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForEndpoint(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Endpoint', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Endpoint', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1601,7 +1602,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ENROLLMENTREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EnrollmentRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('EnrollmentRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1620,7 +1621,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ENROLLMENTRESPONSE}
-procedure TFHIRIndexBuilder.buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EnrollmentResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('EnrollmentResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1637,7 +1638,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_EPISODEOFCARE}
-procedure TFHIRIndexBuilder.buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EpisodeOfCare', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('EpisodeOfCare', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1662,7 +1663,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_EXPANSIONPROFILE}
-procedure TFHIRIndexBuilder.buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ExpansionProfile', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ExpansionProfile', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1685,7 +1686,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
-procedure TFHIRIndexBuilder.buildIndexesForExplanationOfBenefit(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForExplanationOfBenefit(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ExplanationOfBenefit', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ExplanationOfBenefit', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1716,7 +1717,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_FAMILYMEMBERHISTORY}
-procedure TFHIRIndexBuilder.buildIndexesForFamilyMemberHistory(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForFamilyMemberHistory(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('FamilyMemberHistory', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('FamilyMemberHistory', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1739,7 +1740,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_FLAG}
-procedure TFHIRIndexBuilder.buildIndexesForFlag(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForFlag(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Flag', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Flag', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1762,7 +1763,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_GOAL}
-procedure TFHIRIndexBuilder.buildIndexesForGoal(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForGoal(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Goal', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Goal', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1784,7 +1785,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_GRAPHDEFINITION}
-procedure TFHIRIndexBuilder.buildIndexesForGraphDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForGraphDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('GraphDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('GraphDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1807,7 +1808,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_GROUP}
-procedure TFHIRIndexBuilder.buildIndexesForGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Group', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Group', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1833,7 +1834,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_GUIDANCERESPONSE}
-procedure TFHIRIndexBuilder.buildIndexesForGuidanceResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForGuidanceResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('GuidanceResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('GuidanceResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1851,7 +1852,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_HEALTHCARESERVICE}
-procedure TFHIRIndexBuilder.buildIndexesForHealthcareService(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForHealthcareService(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('HealthcareService', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('HealthcareService', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1875,7 +1876,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_IMAGINGMANIFEST}
-procedure TFHIRIndexBuilder.buildIndexesForImagingManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForImagingManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImagingManifest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ImagingManifest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1900,7 +1901,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_IMAGINGSTUDY}
-procedure TFHIRIndexBuilder.buildIndexesForImagingStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForImagingStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImagingStudy', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ImagingStudy', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1930,7 +1931,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_IMMUNIZATION}
-procedure TFHIRIndexBuilder.buildIndexesForImmunization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForImmunization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Immunization', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Immunization', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1961,7 +1962,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
-procedure TFHIRIndexBuilder.buildIndexesForImmunizationRecommendation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForImmunizationRecommendation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImmunizationRecommendation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ImmunizationRecommendation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -1986,7 +1987,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-procedure TFHIRIndexBuilder.buildIndexesForImplementationGuide(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForImplementationGuide(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImplementationGuide', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ImplementationGuide', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2011,7 +2012,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_LIBRARY}
-procedure TFHIRIndexBuilder.buildIndexesForLibrary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForLibrary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Library', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Library', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2042,7 +2043,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_LINKAGE}
-procedure TFHIRIndexBuilder.buildIndexesForLinkage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForLinkage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Linkage', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Linkage', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2060,7 +2061,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_LIST}
-procedure TFHIRIndexBuilder.buildIndexesForList(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForList(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('List', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('List', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2089,7 +2090,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_LOCATION}
-procedure TFHIRIndexBuilder.buildIndexesForLocation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForLocation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Location', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Location', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2119,7 +2120,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MEASURE}
-procedure TFHIRIndexBuilder.buildIndexesForMeasure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMeasure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Measure', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Measure', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2150,7 +2151,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MEASUREREPORT}
-procedure TFHIRIndexBuilder.buildIndexesForMeasureReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMeasureReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MeasureReport', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MeasureReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2168,7 +2169,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MEDIA}
-procedure TFHIRIndexBuilder.buildIndexesForMedia(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMedia(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Media', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Media', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2198,7 +2199,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MEDICATION}
-procedure TFHIRIndexBuilder.buildIndexesForMedication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMedication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Medication', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Medication', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2222,7 +2223,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MEDICATIONADMINISTRATION}
-procedure TFHIRIndexBuilder.buildIndexesForMedicationAdministration(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMedicationAdministration(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationAdministration', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MedicationAdministration', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2255,7 +2256,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MEDICATIONDISPENSE}
-procedure TFHIRIndexBuilder.buildIndexesForMedicationDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMedicationDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationDispense', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MedicationDispense', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2286,7 +2287,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MEDICATIONREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForMedicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMedicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MedicationRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2317,7 +2318,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MEDICATIONSTATEMENT}
-procedure TFHIRIndexBuilder.buildIndexesForMedicationStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMedicationStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationStatement', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MedicationStatement', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2345,7 +2346,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MESSAGEDEFINITION}
-procedure TFHIRIndexBuilder.buildIndexesForMessageDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMessageDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MessageDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MessageDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2372,7 +2373,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_MESSAGEHEADER}
-procedure TFHIRIndexBuilder.buildIndexesForMessageHeader(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForMessageHeader(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MessageHeader', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('MessageHeader', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2403,7 +2404,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_NAMINGSYSTEM}
-procedure TFHIRIndexBuilder.buildIndexesForNamingSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForNamingSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('NamingSystem', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('NamingSystem', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2432,7 +2433,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_NUTRITIONORDER}
-procedure TFHIRIndexBuilder.buildIndexesForNutritionOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForNutritionOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('NutritionOrder', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('NutritionOrder', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2459,7 +2460,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_OBSERVATION}
-procedure TFHIRIndexBuilder.buildIndexesForObservation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForObservation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Observation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Observation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2519,7 +2520,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_OPERATIONDEFINITION}
-procedure TFHIRIndexBuilder.buildIndexesForOperationDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForOperationDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('OperationDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('OperationDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2548,7 +2549,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_OPERATIONOUTCOME}
-procedure TFHIRIndexBuilder.buildIndexesForOperationOutcome(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForOperationOutcome(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('OperationOutcome', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('OperationOutcome', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2562,7 +2563,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_ORGANIZATION}
-procedure TFHIRIndexBuilder.buildIndexesForOrganization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForOrganization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Organization', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Organization', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2589,7 +2590,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PATIENT}
-procedure TFHIRIndexBuilder.buildIndexesForPatient(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForPatient(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Patient', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Patient', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2631,7 +2632,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PAYMENTNOTICE}
-procedure TFHIRIndexBuilder.buildIndexesForPaymentNotice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForPaymentNotice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PaymentNotice', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('PaymentNotice', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2654,7 +2655,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PAYMENTRECONCILIATION}
-procedure TFHIRIndexBuilder.buildIndexesForPaymentReconciliation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForPaymentReconciliation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PaymentReconciliation', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('PaymentReconciliation', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2677,7 +2678,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PERSON}
-procedure TFHIRIndexBuilder.buildIndexesForPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Person', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Person', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2713,7 +2714,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PLANDEFINITION}
-procedure TFHIRIndexBuilder.buildIndexesForPlanDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForPlanDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PlanDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('PlanDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2744,7 +2745,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PRACTITIONER}
-procedure TFHIRIndexBuilder.buildIndexesForPractitioner(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForPractitioner(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Practitioner', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Practitioner', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2776,7 +2777,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PRACTITIONERROLE}
-procedure TFHIRIndexBuilder.buildIndexesForPractitionerRole(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForPractitionerRole(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PractitionerRole', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('PractitionerRole', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2804,7 +2805,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PROCEDURE}
-procedure TFHIRIndexBuilder.buildIndexesForProcedure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForProcedure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Procedure', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Procedure', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2836,7 +2837,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PROCEDUREREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForProcedureRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForProcedureRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ProcedureRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ProcedureRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2875,7 +2876,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PROCESSREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForProcessRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForProcessRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ProcessRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ProcessRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2894,7 +2895,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PROCESSRESPONSE}
-procedure TFHIRIndexBuilder.buildIndexesForProcessResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForProcessResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ProcessResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ProcessResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2914,7 +2915,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_PROVENANCE}
-procedure TFHIRIndexBuilder.buildIndexesForProvenance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForProvenance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Provenance', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Provenance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2943,7 +2944,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_QUESTIONNAIRE}
-procedure TFHIRIndexBuilder.buildIndexesForQuestionnaire(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForQuestionnaire(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Questionnaire', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Questionnaire', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2969,7 +2970,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
-procedure TFHIRIndexBuilder.buildIndexesForQuestionnaireResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForQuestionnaireResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('QuestionnaireResponse', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('QuestionnaireResponse', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -2999,7 +3000,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_REFERRALREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForReferralRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForReferralRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ReferralRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ReferralRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3034,7 +3035,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_RELATEDPERSON}
-procedure TFHIRIndexBuilder.buildIndexesForRelatedPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForRelatedPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RelatedPerson', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('RelatedPerson', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3066,7 +3067,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_REQUESTGROUP}
-procedure TFHIRIndexBuilder.buildIndexesForRequestGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForRequestGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RequestGroup', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('RequestGroup', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3098,7 +3099,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_RESEARCHSTUDY}
-procedure TFHIRIndexBuilder.buildIndexesForResearchStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForResearchStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ResearchStudy', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ResearchStudy', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3126,7 +3127,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_RESEARCHSUBJECT}
-procedure TFHIRIndexBuilder.buildIndexesForResearchSubject(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForResearchSubject(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ResearchSubject', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ResearchSubject', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3146,7 +3147,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_RISKASSESSMENT}
-procedure TFHIRIndexBuilder.buildIndexesForRiskAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForRiskAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RiskAssessment', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('RiskAssessment', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3173,7 +3174,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SCHEDULE}
-procedure TFHIRIndexBuilder.buildIndexesForSchedule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSchedule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Schedule', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Schedule', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3196,7 +3197,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SEARCHPARAMETER}
-procedure TFHIRIndexBuilder.buildIndexesForSearchParameter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSearchParameter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SearchParameter', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('SearchParameter', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3224,7 +3225,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SEQUENCE}
-procedure TFHIRIndexBuilder.buildIndexesForSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Sequence', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Sequence', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3245,7 +3246,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SERVICEDEFINITION}
-procedure TFHIRIndexBuilder.buildIndexesForServiceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForServiceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ServiceDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ServiceDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3276,7 +3277,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SLOT}
-procedure TFHIRIndexBuilder.buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Slot', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Slot', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3295,7 +3296,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SPECIMEN}
-procedure TFHIRIndexBuilder.buildIndexesForSpecimen(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSpecimen(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Specimen', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Specimen', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3324,7 +3325,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_STRUCTUREDEFINITION}
-procedure TFHIRIndexBuilder.buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('StructureDefinition', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('StructureDefinition', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3360,7 +3361,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_STRUCTUREMAP}
-procedure TFHIRIndexBuilder.buildIndexesForStructureMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForStructureMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('StructureMap', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('StructureMap', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3384,7 +3385,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SUBSCRIPTION}
-procedure TFHIRIndexBuilder.buildIndexesForSubscription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSubscription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Subscription', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Subscription', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3405,7 +3406,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SUBSTANCE}
-procedure TFHIRIndexBuilder.buildIndexesForSubstance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSubstance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Substance', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Substance', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3427,7 +3428,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SUPPLYDELIVERY}
-procedure TFHIRIndexBuilder.buildIndexesForSupplyDelivery(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSupplyDelivery(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SupplyDelivery', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('SupplyDelivery', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3448,7 +3449,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_SUPPLYREQUEST}
-procedure TFHIRIndexBuilder.buildIndexesForSupplyRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForSupplyRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SupplyRequest', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('SupplyRequest', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3472,7 +3473,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_TASK}
-procedure TFHIRIndexBuilder.buildIndexesForTask(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForTask(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Task', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('Task', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3506,7 +3507,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_TESTREPORT}
-procedure TFHIRIndexBuilder.buildIndexesForTestReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForTestReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('TestReport', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('TestReport', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3526,7 +3527,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_TESTSCRIPT}
-procedure TFHIRIndexBuilder.buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('TestScript', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('TestScript', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3551,7 +3552,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_VALUESET}
-procedure TFHIRIndexBuilder.buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ValueSet', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('ValueSet', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3577,7 +3578,7 @@ end;
 {$ENDIF}
 
 {$IFDEF FHIR_VISIONPRESCRIPTION}
-procedure TFHIRIndexBuilder.buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('VisionPrescription', '_content', 'Search on the entire content of the resource', sptSTRING, [], '', sxpNormal);
   indexes.add('VisionPrescription', '_id', 'Logical id of this artifact', sptTOKEN, [], 'Resource.id', sxpNormal);
@@ -3598,7 +3599,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TFHIRIndexBuilder.registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilderR3.registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   {$IFDEF FHIR_ACCOUNT}
   buildIndexesForAccount(Indexes, compartments);

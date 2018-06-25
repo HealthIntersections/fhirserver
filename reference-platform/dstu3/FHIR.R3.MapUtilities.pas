@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
-  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang,
+  FHIR.Base.Objects, FHIR.Base.Xhtml, FHIR.Base.Lang, FHIR.Base.PathEngine,
   FHIR.R3.PathNode, FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Context, FHIR.R3.PathEngine, FHIR.R3.Factory;
 
 type
@@ -101,7 +101,7 @@ type
 
     function getGroup(map : TFHIRConceptMap; source, target : String) : TFHIRConceptMapGroup;
     function fromEnum(s : String; codes : Array of String) : integer;
-    function readPrefix(prefixes : TDictionary<String, String>; lexer : TFHIRPathLexer) : String;
+    function readPrefix(prefixes : TFslStringDictionary; lexer : TFHIRPathLexer) : String;
     function readEquivalence(lexer : TFHIRPathLexer) : TFhirConceptMapEquivalenceEnum;
     function readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRType;
     procedure parseConceptMap(result : TFHIRStructureMap; lexer : TFHIRPathLexer);
@@ -462,7 +462,7 @@ procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TF
 const
   CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', ':', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
 var
-  prefixes : TDictionary<String, String>;
+  prefixes : TFslStringDictionary;
   g : TFhirConceptMapGroup;
   e : TFhirConceptMapGroupElement;
   t : TFhirConceptMapGroupElementTarget;
@@ -496,7 +496,7 @@ var
       b.append(jsonEscape(code, false));
   end;
 begin
-  prefixes := TDictionary<String, String>.create;
+  prefixes := TFslStringDictionary.create;
   try
     b.append('conceptmap "');
     b.append(map.Url);
@@ -608,7 +608,7 @@ function TFHIRStructureMapUtilities.parse(text : String) : TFHIRStructureMap;
 var
   lexer : TFHIRPathLexer;
 begin
-  lexer := TFHIRPathLexer.Create(text);
+  lexer := TFHIRPathLexer3.Create(text);
   try
 		if (lexer.done()) then
 			raise EFHIRException.create('Map Input cannot be empty');
@@ -653,7 +653,7 @@ procedure TFHIRStructureMapUtilities.parseConceptMap(result : TFHIRStructureMap;
 var
   map : TFhirConceptMap;
   id, n, v : String;
-  prefixes : TDictionary<String, String>;
+  prefixes : TFslStringDictionary;
   e : TFhirConceptMapGroupElement;
   tgt : TFhirConceptMapGroupElementTarget;
   vs, vc, vt : String;
@@ -673,7 +673,7 @@ begin
   //	  map.Source := new UriType(lexer.readConstant('source')));
   //	  lexer.token('target');
   //	  map.Source := new UriType(lexer.readConstant('target')));
-  prefixes := TDictionary<String, String>.create;
+  prefixes := TFslStringDictionary.create;
   try
     while (lexer.hasToken('prefix')) do
     begin
@@ -713,7 +713,7 @@ begin
 end;
 
 
-function TFHIRStructureMapUtilities.readPrefix(prefixes : TDictionary<String, String>; lexer : TFHIRPathLexer) : String;
+function TFHIRStructureMapUtilities.readPrefix(prefixes : TFslStringDictionary; lexer : TFHIRPathLexer) : String;
 var
   prefix : String;
 begin

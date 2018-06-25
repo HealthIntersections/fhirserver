@@ -53,7 +53,6 @@ uses
   FHIR.Ucum.Validators in '..\Libraries\Ucum\FHIR.Ucum.Validators.pas',
   FHIR.Ucum.Expressions in '..\Libraries\Ucum\FHIR.Ucum.Expressions.pas',
   FHIR.Ucum.Search in '..\Libraries\Ucum\FHIR.Ucum.Search.pas',
-  FHIR.Tx.Expander in '..\server\FHIR.Tx.Expander.pas',
   YuStemmer in '..\Libraries\Stem\YuStemmer.pas',
   FHIR.Loinc.Services in '..\Libraries\loinc\FHIR.Loinc.Services.pas',
   DISystemCompat in '..\Libraries\Stem\DISystemCompat.pas',
@@ -76,7 +75,6 @@ uses
   FHIR.Loinc.Publisher in '..\Libraries\loinc\FHIR.Loinc.Publisher.pas',
   FHIR.Tx.Manager in '..\server\FHIR.Tx.Manager.pas',
   FHIR.Tx.Service in '..\Libraries\FHIR.Tx.Service.pas',
-  FHIR.Tx.Validator in '..\server\FHIR.Tx.Validator.pas',
   FHIR.Tx.Web in '..\server\FHIR.Tx.Web.pas',
   FHIR.Server.Constants in '..\server\FHIR.Server.Constants.pas',
   FHIR.Server.Utilities in '..\server\FHIR.Server.Utilities.pas',
@@ -94,7 +92,6 @@ uses
   FHIR.Snomed.Analysis in '..\Libraries\snomed\FHIR.Snomed.Analysis.pas',
   FHIR.Tx.AreaCode in '..\server\FHIR.Tx.AreaCode.pas',
   FHIR.Server.Subscriptions in '..\server\FHIR.Server.Subscriptions.pas',
-  FHIR.Server.Validator in '..\server\FHIR.Server.Validator.pas',
   FHIR.Web.Socket in '..\reference-platform\Support\FHIR.Web.Socket.pas',
   FHIR.Support.Threads in '..\reference-platform\Support\FHIR.Support.Threads.pas',
   FHIR.R4.Questionnaire in '..\reference-platform\r4\FHIR.R4.Questionnaire.pas',
@@ -191,7 +188,6 @@ uses
   FHIR.CdsHooks.Client in '..\reference-platform\support\FHIR.CdsHooks.Client.pas',
   FHIR.Server.HackingHealth in '..\Server\Modules\FHIR.Server.HackingHealth.pas',
   FHIR.Utilities.SCrypt in '..\Libraries\security\FHIR.Utilities.SCrypt.pas',
-  FHIR.Server.AppCache in '..\Server\FHIR.Server.AppCache.pas',
   FHIR.Tx.Operations in '..\Server\FHIR.Tx.Operations.pas',
   FHIR.Server.WebSource in '..\Server\FHIR.Server.WebSource.pas',
   FHIR.Tools.Indexing in '..\reference-platform\tools\FHIR.Tools.Indexing.pas',
@@ -203,7 +199,6 @@ uses
   FHIR.Database.SQLite3.Utilities in '..\Libraries\db\FHIR.Database.SQLite3.Utilities.pas',
   FHIR.Database.SQLite3.Wrapper in '..\Libraries\db\FHIR.Database.SQLite3.Wrapper.pas',
   FHIR.Database.SQLite in '..\Libraries\db\FHIR.Database.SQLite.pas',
-  FHIR.Server.PostHandlers in '..\Server\FHIR.Server.PostHandlers.pas',
   FHIR.Tx.Server in '..\Server\FHIR.Tx.Server.pas',
   FHIR.Tx.ICD10 in '..\Server\FHIR.Tx.ICD10.pas',
   FHIR.Javascript.Tests in '..\Libraries\js\FHIR.Javascript.Tests.pas',
@@ -281,7 +276,16 @@ uses
   FHIR.Tx.MimeTypes in '..\Server\FHIR.Tx.MimeTypes.pas',
   FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas',
   FHIR.XVersion.ConvBase in '..\reference-platform\xversion\FHIR.XVersion.ConvBase.pas',
-  FHIR.Tests.Generics in '..\reference-platform\support\Tests\FHIR.Tests.Generics.pas';
+  FHIR.Tests.Generics in '..\reference-platform\support\Tests\FHIR.Tests.Generics.pas',
+  FHIR.Tools.NDJsonParser in '..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas',
+  FHIR.R3.AuthMap in '..\reference-platform\dstu3\FHIR.R3.AuthMap.pas',
+  FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas',
+  FHIR.Tools.CodeSystemProvider in '..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas',
+  FHIR.Server.Tags in '..\Server\FHIR.Server.Tags.pas',
+  FHIR.Server.BundleBuilder in '..\Server\FHIR.Server.BundleBuilder.pas',
+  FHIR.Server.Factory in '..\Server\FHIR.Server.Factory.pas',
+  FHIR.R4.GraphDefinition in '..\reference-platform\r4\FHIR.R4.GraphDefinition.pas',
+  FHIR.Base.GraphDefinition in '..\reference-platform\base\FHIR.Base.GraphDefinition.pas';
 
 var
   runner : ITestRunner;

@@ -36,7 +36,7 @@ uses
   FHIR.Support.Utilities,
   FHIR.Support.Base, FHIR.Support.Collections, FHIR.Support.Stream, 
   FHIR.Database.Manager,
-  FHIR.Version.Types, FHIR.Version.Resources, FHIR.Tx.Service;
+  FHIR.Tx.Service;
 
 type
   TUniiConcept = class (TCodeSystemProviderContext)

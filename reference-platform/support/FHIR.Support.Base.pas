@@ -535,7 +535,7 @@ Type
 
   TFslStringMap = class (TFslObject)
   private
-    FDict : TDictionary<String, String>;
+    FDict : TFslStringDictionary;
     function GetItem(const Key: String): String;
     procedure SetItem(const Key, Value: String);
   public
@@ -2516,7 +2516,7 @@ end;
 constructor TFslStringMap.Create;
 begin
   inherited;
-  FDict := TDictionary<String, String>.create;
+  FDict := TFslStringDictionary.create;
 end;
 
 destructor TFslStringMap.Destroy;
