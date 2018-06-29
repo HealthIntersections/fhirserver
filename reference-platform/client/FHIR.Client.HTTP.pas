@@ -110,6 +110,7 @@ type
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; override;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; override;
+    function vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV; override;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; override;
     procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String); override;
     function searchV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; overload; override;
@@ -118,6 +119,7 @@ type
     function operationV(atype : TFHIRResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
+    function historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
 
     // special case that gives direct access to the communicator...
     function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
@@ -745,6 +747,19 @@ begin
   end;
 end;
 
+function TFHIRHTTPCommunicator.vreadResourceV(atype: TFhirResourceTypeV; id, vid: String): TFHIRResourceV;
+var
+  headers : THTTPHeaders;
+begin
+  result := nil;
+  try
+    result := fetchResource(MakeUrl(AType+'/'+id+'/_history/'+vid), httpGet, nil, headers);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 function TFHIRHTTPCommunicator.updateResourceV(resource : TFhirResourceV) : TFHIRResourceV;
 Var
   src : TStream;
@@ -883,6 +898,40 @@ begin
     begin
       inc(i);
       notify('Fetch History for '+aType+' page '+inttostr(i));
+      feed := fetchResource(s, httpGet, nil, headers) as TFHIRResourceV;
+      try
+        bh.addEntries(feed);
+        s := bh.next(feed);
+      finally
+        feed.free;
+      end;
+    end;
+    if allRecords then
+      bh.clearLinks;;
+    result := bh.resource.Link;
+  finally
+    bh.Free;
+  end;
+end;
+
+function TFHIRHTTPCommunicator.historyInstanceV(atype: TFhirResourceTypeV; id : String; allRecords: boolean; params: string): TFHIRResourceV;
+var
+  s : String;
+  feed : TFHIRResourceV;
+  i : integer;
+  headers : THTTPHeaders;
+  bh : TFHIRBundleW;
+begin
+//    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
+  notify('Fetch History for '+aType+'/'+id);
+  bh := FClient.BundleFactory.Create(fetchResource(makeUrl(aType)+'/'+id+'/_history?'+params, httpGet, nil, headers) as TFHIRResourceV);
+  try
+    s := bh.next;
+    i := 1;
+    while AllRecords and (s <> '') do
+    begin
+      inc(i);
+      notify('Fetch History for '+aType+'/'+id+' page '+inttostr(i));
       feed := fetchResource(s, httpGet, nil, headers) as TFHIRResourceV;
       try
         bh.addEntries(feed);

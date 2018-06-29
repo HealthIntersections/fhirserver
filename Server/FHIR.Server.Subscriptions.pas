@@ -586,7 +586,7 @@ begin
   if s <> nil then
   begin
     DoDropResource(Key, 0, 0, true); // delete any previously existing entry for this subscription
-    FSubscriptions.add(key, determineResourceTypeKey(s.criteria, conn), id, s.Link);
+    FSubscriptions.add(key, determineResourceTypeKey(s.criteria, conn), id, s);
     FSubscriptionTrackers.addorUpdate(key, s.summary, s.status);
   end;
 end;
@@ -613,13 +613,17 @@ begin
     if resource.fhirType = 'EventDefinition' then
     begin
       evd := loadEventDefinition(resource);
-      FLock.Lock('getEventDefinition');
       try
-        FEventDefinitions.addOrSetValue(evd.url, evd.link);
-        FEventDefinitions.addOrSetValue(evd.id, evd.link);
-        FEventDefinitions.addOrSetValue('key:'+inttostr(key), evd.link);
+        FLock.Lock('getEventDefinition');
+        try
+          FEventDefinitions.addOrSetValue(evd.url, evd.link);
+          FEventDefinitions.addOrSetValue(evd.id, evd.link);
+          FEventDefinitions.addOrSetValue('key:'+inttostr(key), evd.link);
+        finally
+          FLock.Unlock;
+        end;
       finally
-        FLock.Unlock;
+        evd.free;
       end;
     end;
   finally

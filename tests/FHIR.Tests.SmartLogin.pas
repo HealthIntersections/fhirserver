@@ -1,4 +1,4 @@
-unit SmartOnFhirTestingLogin;
+unit FHIR.Tests.SmartLogin;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

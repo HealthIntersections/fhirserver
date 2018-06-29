@@ -52,6 +52,7 @@ Type
     function transaction(bundle : TFHIRBundle) : TFHIRBundle;
     function createResource(resource : TFhirResource; var id : String) : TFHIRResource;
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
+    function vreadResource(atype : TFhirResourceType; id, vid : String) : TFHIRResource;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload;
     procedure deleteResource(atype : TFhirResourceType; id : String);
     function search(allRecords : boolean; params : TStringList) : TFHIRBundle; overload;
@@ -63,6 +64,7 @@ Type
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; overload;
     function operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource; overload;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle;
+    function historyInstance(atype : TFhirResourceType; id : String; allRecords : boolean; params : TStringList) : TFHIRBundle;
   end;
 
 
@@ -106,6 +108,11 @@ end;
 function TFhirClient4.readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
 begin
   result := readResourceV(CODES_TFHIRResourceType[aType], id) as TFhirResource;
+end;
+
+function TFhirClient4.vreadResource(atype : TFhirResourceType; id, vid : String) : TFHIRResource;
+begin
+  result := vreadResourceV(CODES_TFHIRResourceType[aType], id, vid) as TFhirResource;
 end;
 
 function TFhirClient4.updateResource(resource : TFhirResource) : TFHIRResource;
@@ -177,6 +184,11 @@ end;
 function TFhirClient4.historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle;
 begin
   result := historyTypeV(CODES_TFHIRResourceType[aType], allRecords, params) as TFhirBundle;
+end;
+
+function TFhirClient4.historyInstance(atype : TFhirResourceType; id : String; allRecords : boolean; params : TStringList) : TFHIRBundle;
+begin
+  result := historyInstanceV(CODES_TFHIRResourceType[aType], id, allRecords, params) as TFhirBundle;
 end;
 
 

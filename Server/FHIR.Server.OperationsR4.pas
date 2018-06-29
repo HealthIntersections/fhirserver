@@ -3699,7 +3699,7 @@ begin
     if resource.ResourceType = frtValueSet then
       ServerContext.QuestionnaireCache.clearVS(TFHIRValueSet(resource).url);
     if resource.ResourceType = frtStructureMap then
-      ServerContext.seeMap(factory.wrapStructureMap(resource));
+      ServerContext.seeMap(factory.wrapStructureMap(resource.link));
     if resource.ResourceType = frtNamingSystem then
       ServerContext.seeNamingSystem(key, factory.wrapNamingSystem(resource.link));
     if not reload and (resource.ResourceType = frtObservation) then

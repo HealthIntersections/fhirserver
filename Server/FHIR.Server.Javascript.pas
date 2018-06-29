@@ -35,7 +35,7 @@ uses
   FHIR.Support.Threads, FHIR.Javascript, FHIR.Support.Utilities, FHIR.Support.Base,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Client.Base, FHIR.Base.Common,
   FHIR.Javascript.Base,
-  FHIR.Server.Session, FHIR.Server.Factory;
+  FHIR.Server.Session;
 
 Const
   ROUTINE_NAMES : array[TTriggerType] of String = ('xx', 'xx', 'xx', 'dataChanged', 'dataAdded', 'dataModified', 'dataRemoved', 'dataAccessed', 'xx');
@@ -89,13 +89,16 @@ Type
   // then, we retain it as long as we can
   TJsHost = class (TFslObject)
   private
+    FChakraPath : String;
     FRegistry: TEventScriptRegistry;
-    FEngine : TFHIRJavascript;
+    FEngines : array[TFHIRVersion] of TFHIRJavascript;
     procedure SetRegistry(const Value: TEventScriptRegistry);
-    procedure checkHasEngine;
+    function checkHasEngine(version : TFHIRVersion) : TFHIRJavascript;
   public
-    constructor Create(chakraPath : String; worker : TFHIRWorkerContextWithFactory; serverFactory : TFHIRServerFactory);
+    constructor Create(chakraPath : String);
     destructor Destroy; override;
+
+    procedure registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
 
     property registry : TEventScriptRegistry read FRegistry write SetRegistry;
 
@@ -117,6 +120,7 @@ var
   script : TEventScript;
   rn : String;
   s, b, a, c : TJsValue;
+  engine : TFHIRJavascript;
 begin
   scripts := TFslList<TEventScript>.create;
   try
@@ -128,42 +132,55 @@ begin
     FRegistry.getApplicableScripts(event, rn, scripts);
     if (scripts.count > 0) then
     begin
-      checkHasEngine;
-      FEngine.readOnly := true;
-      s := FEngine.wrap(session.Link, 'Session', true);
-      b := FEngine.wrap(before.Link, rn, true);
-      a := FEngine.wrap(after.Link, rn, true);
-      c := FEngine.wrap(client.link, 'FHIR.Version.Client', true);
-      FEngine.addGlobal('fhir', c);
+      engine := checkHasEngine(before.fhirObjectVersion);
+      engine.readOnly := true;
+      s := engine.wrap(session.Link, 'Session', true);
+      b := engine.wrap(before.Link, rn, true);
+      a := engine.wrap(after.Link, rn, true);
+      c := engine.wrap(client.link, 'FHIR.Version.Client', true);
+      engine.addGlobal('fhir', c);
       for script in scripts do
-        FEngine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b, a]);
+        engine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b, a]);
     end;
   finally
     scripts.Free;
   end;
 end;
 
-procedure TJsHost.checkHasEngine;
+function TJsHost.checkHasEngine(version : TFHIRVersion) : TFHIRJavascript;
 begin
-  if FEngine = nil then
-    raise EJavascriptApplication.Create('Javascript is not supported on this server');
+  if FEngines[version] = nil then
+    raise EJavascriptApplication.Create('Javascript is not supported on this server for version '+CODES_TFHIRVersion[version]);
+  result := FEngines[version];
 end;
 
-constructor TJsHost.Create(chakraPath : String; worker : TFHIRWorkerContextWithFactory; serverFactory : TFHIRServerFactory);
+constructor TJsHost.Create(chakraPath : String);
+var
+  v : TFHIRVersion;
 begin
   inherited create;
-  if (chakraPath <> '') then
-  begin
-    FEngine := TFHIRJavascript.Create(chakraPath, worker.link, nil);
-    serverFactory.registerJs(FEngine);
-  end;
+  FChakraPath := chakraPath;
+  for v in FHIR_ALL_VERSIONS do
+    FEngines[v] := nil;
 end;
 
 destructor TJsHost.Destroy;
+var
+  v : TFHIRVersion;
 begin
-  FEngine.Free;
+  for v in FHIR_ALL_VERSIONS do
+    FEngines[v].Free;
   FRegistry.Free;
   inherited;
+end;
+
+
+procedure TJsHost.registerVersion(worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes);
+begin
+  if (FChakraPath <> '') then
+    FEngines[worker.version] := TFHIRJavascript.Create(FChakraPath, worker.link, reg)
+  else
+    worker.free;
 end;
 
 procedure TJsHost.previewRequest(session : TFHIRSession; request: TFHIRRequest);
@@ -172,17 +189,19 @@ var
   script : TEventScript;
   rn : String;
   s, r : TJsValue;
+  engine : TFHIRJavascript;
 begin
   scripts := TFslList<TEventScript>.create;
   try
-    FRegistry.getApplicableScripts(ttDataAccessed, '', scripts);
+    if FRegistry <> nil then
+      FRegistry.getApplicableScripts(ttDataAccessed, '', scripts);
     if (scripts.count > 0) then
     begin
-      checkHasEngine;
-      s := FEngine.wrap(session.Link, 'Session', true);
-      r := FEngine.wrap(request.Link, 'Request', true);
+      engine := checkHasEngine(request.Version);
+      s := engine.wrap(session.Link, 'Session', true);
+      r := engine.wrap(request.Link, 'Request', true);
       for script in scripts do
-        FEngine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, r]);
+        engine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, r]);
     end;
   finally
     scripts.Free;
@@ -293,50 +312,54 @@ var
   ev : TEventScript;
   m : TFhirMetaW;
 begin
-  m := FFactory.wrapMeta(event.Resource);
   try
-    tag := false;
-    for c in m.tags.forEnum do
-      tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
-
-    if tag then
-    begin
-      if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.language) then
-        raise EJavascriptSource.create('Unknown script language');
-      if not (event.triggerType in SUPPORTED_TRIGGER_TYPES) then
-        raise EJavascriptSource.create('Unsupported Trigger type');
-      if not event.expression.Contains('function '+ROUTINE_NAMES[event.triggerType]+'(') then
-        raise EJavascriptSource.create('Unable to find function '+ROUTINE_NAMES[event.triggerType]);
-    end;
-
-    FLock.Lock;
+    m := FFactory.wrapMeta(event.Resource);
     try
+      tag := false;
+      for c in m.tags.forEnum do
+        tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
+
       if tag then
       begin
-        ev := TEventScript.Create;
-        try
-          ev.FId := event.id;
-          ev.FScript := event.expression;
-          ev.FCommand := event.triggerType;
-          case StringArrayIndexOfSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.language)  of
-            0: ev.FLang := langJavascript;
-            1: ev.FLang := langFHIRPath;
-  //          2: ev.FLang := langCQL;
+        if not StringArrayExistsSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.language) then
+          raise EJavascriptSource.create('Unknown script language');
+        if not (event.triggerType in SUPPORTED_TRIGGER_TYPES) then
+          raise EJavascriptSource.create('Unsupported Trigger type');
+        if not event.expression.Contains('function '+ROUTINE_NAMES[event.triggerType]+'(') then
+          raise EJavascriptSource.create('Unable to find function '+ROUTINE_NAMES[event.triggerType]);
+      end;
+
+      FLock.Lock;
+      try
+        if tag then
+        begin
+          ev := TEventScript.Create;
+          try
+            ev.FId := event.id;
+            ev.FScript := event.expression;
+            ev.FCommand := event.triggerType;
+            case StringArrayIndexOfSensitive(['application/javascript', 'text/FHIR.Version.PathEngine'{, 'text/cql'}], event.language)  of
+              0: ev.FLang := langJavascript;
+              1: ev.FLang := langFHIRPath;
+    //          2: ev.FLang := langCQL;
+            end;
+            if (event.dataType <> '') then
+              ev.FResources.Add(event.dataType);
+            FScripts.AddOrSetValue(event.id, ev.link);
+          finally
+            ev.Free;
           end;
-          if (event.dataType <> '') then
-            ev.FResources.Add(event.dataType);
-          FScripts.AddOrSetValue(event.id, ev.link);
-        finally
-          ev.Free;
-        end;
-      end
-      else if FScripts.ContainsKey(event.id) then
-        FScripts.Remove(event.id);
+        end
+        else if FScripts.ContainsKey(event.id) then
+          FScripts.Remove(event.id);
+      finally
+        FLock.Unlock;
+      end;
     finally
-      FLock.Unlock;
+      m.free;
     end;
   finally
-    m.free;
+    event.free;
   end;
 end;
 

@@ -9,9 +9,6 @@
         <Projects Include="tests\FHIRServerTests.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="utils\FhirServerUtils.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="bridge\ExampleBridgeServer.dproj">
             <Dependencies/>
         </Projects>
@@ -47,15 +44,6 @@
     <Target Name="FHIRServerTests:Make">
         <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
-    <Target Name="FhirServerUtils">
-        <MSBuild Projects="utils\FhirServerUtils.dproj"/>
-    </Target>
-    <Target Name="FhirServerUtils:Clean">
-        <MSBuild Projects="utils\FhirServerUtils.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FhirServerUtils:Make">
-        <MSBuild Projects="utils\FhirServerUtils.dproj" Targets="Make"/>
-    </Target>
     <Target Name="ExampleBridgeServer">
         <MSBuild Projects="bridge\ExampleBridgeServer.dproj"/>
     </Target>
@@ -84,13 +72,13 @@
         <MSBuild Projects="Server\fhirserverOSX4.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver;FHIRServerTests;FhirServerUtils;ExampleBridgeServer;VocabTxServer;fhirserverOSX4"/>
+        <CallTarget Targets="fhirserver;FHIRServerTests;ExampleBridgeServer;VocabTxServer;fhirserverOSX4"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;ExampleBridgeServer:Clean;VocabTxServer:Clean;fhirserverOSX4:Clean"/>
+        <CallTarget Targets="fhirserver:Clean;FHIRServerTests:Clean;ExampleBridgeServer:Clean;VocabTxServer:Clean;fhirserverOSX4:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver:Make;FHIRServerTests:Make;FhirServerUtils:Make;ExampleBridgeServer:Make;VocabTxServer:Make;fhirserverOSX4:Make"/>
+        <CallTarget Targets="fhirserver:Make;FHIRServerTests:Make;ExampleBridgeServer:Make;VocabTxServer:Make;fhirserverOSX4:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

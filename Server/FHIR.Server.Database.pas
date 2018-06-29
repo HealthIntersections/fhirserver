@@ -526,7 +526,7 @@ begin
     try
       addRequest(result);
       result.Url := AppendForwardSlash(base)+type_+'/'+sId;
-      bundle.addEntry(result.Link, first);
+      bundle.addEntry(result, first);
     finally
       result.Free;
     end;
@@ -540,7 +540,7 @@ begin
       result.resource := Factory.BuildOperationOutcome('en', 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', itSuppressed);
       result.resource.Tags[OP_MASK_TAG] := 'secure';
       addRequest(result);
-      bundle.addEntry(result.link, first);
+      bundle.addEntry(result, first);
       bundle.hasSecureOp := true;
     finally
       result.Free;
@@ -567,7 +567,7 @@ begin
           end;
         end;
         addRequest(result);
-        bundle.addEntry(result.link, first);
+        bundle.addEntry(result, first);
       finally
         result.Free;
       end;
@@ -596,7 +596,7 @@ begin
               end;
             end;
             addRequest(result);
-            bundle.addEntry(result.Link, first);
+            bundle.addEntry(result, first);
           finally
             result.Free;
           end;
@@ -6911,7 +6911,7 @@ begin
 //  finally
 //    names.Free;
 //  end;
-  raise Exception.Create('not currently supported');
+//  raise Exception.Create('not currently supported');
 end;
 
 procedure TFHIRNativeStorageService.LoadExistingResources(conn: TKDBConnection);

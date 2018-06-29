@@ -165,3 +165,8 @@ System
 /freepascal/lib/x86_64-win64
 /Exec/32/*.adu
 /toolkit/OSX32/Debug/FHIRToolkitR3
+/reference-platform/r4/fhirtests4_Icon.ico
+/toolkit/*.deployproj
+/toolkit/OSX32/Debug
+/toolkit/Win64/Debug/*.cmds
+*.cmds

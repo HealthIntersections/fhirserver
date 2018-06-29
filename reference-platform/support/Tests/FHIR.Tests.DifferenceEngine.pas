@@ -1,4 +1,4 @@
-unit DifferenceEngineTests;
+unit FHIR.Tests.DifferenceEngine;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)

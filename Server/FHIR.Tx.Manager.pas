@@ -79,7 +79,7 @@ Type
     property Settings : TFHIRServerSettings read FSettings;
 
     // load external terminology resources (snomed, Loinc, etc)
-    procedure load(ini : TFHIRServerIniFile; databases : TFslMap<TKDBManager>);
+    procedure load(ini : TFHIRServerIniFile; databases : TFslMap<TKDBManager>; testing : boolean);
 
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TFslList<TSnomedServices> read FSnomed;
@@ -676,7 +676,6 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
   procedure processConcepts(parent : TFhirCodeSystemConceptW; list : TFslList<TFhirCodeSystemConceptW>; map : TFslMap<TFhirCodeSystemConceptW>);
   var
     c : TFhirCodeSystemConceptW;
-    l : TFslList<TFhirCodeSystemConceptW>;
   begin
     for c in list do
     begin
@@ -685,12 +684,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
         logt('Duplicate code '+c.code+' in '+cs.url)
       else
         map.Add(c.code, c.Link);
-      l := c.conceptList;
-      try
-        processConcepts(c, l, map);
-      finally
-        l.Free;
-      end;
+      processConcepts(c, c.conceptList, map);
     end;
   end;
 var
@@ -698,7 +692,7 @@ var
 begin
   map := TFslMap<TFhirCodeSystemConceptW>.create;
   try
-    cs.Tag := TCodeSystemAdornment.create(map);
+    cs.Tag := TCodeSystemAdornment.create(map.link);
     processConcepts(nil, cs.conceptList, map);
   finally
     map.Free;
@@ -1085,7 +1079,7 @@ begin
         end;
         UpdateConceptMaps;
       finally
-
+        vs.free;
       end;
     end
     else if (resource.fhirType = 'CodeSystem') then
@@ -1730,7 +1724,7 @@ begin
 end;
 
 
-procedure TCommonTerminologies.load(ini: TFHIRServerIniFile; databases: TFslMap<TKDBManager>);
+procedure TCommonTerminologies.load(ini: TFHIRServerIniFile; databases: TFslMap<TKDBManager>; testing : boolean);
 var
   details : TFHIRServerIniComplex;
   s : string;
@@ -1752,66 +1746,57 @@ begin
   begin
     logt('load '+s);
     details := ini.terminologies[s];
-    if details['type'] = 'icd10' then
+    if not testing or (details['when-testing'] = 'true') then
     begin
-      icdX := TICD10Provider.Create(true, details['source']);
-      add(icdX);
-      icd10.Add(icdX.Link);
-    end
-    else if details['type'] = 'snomed' then
-    begin
-      sn := TSnomedServices.Create;
-      try
-        sn.Load(details['source']);
-        add(sn.Link);
-        snomed.Add(sn.Link);
-        if details['default'] = 'true' then
-          DefSnomed := sn.Link;
-        ProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.versionUri, sn.Link);
-        ProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.editionUri, sn.Link);
-      finally
-        sn.Free;
-      end;
-    end
-    else if details['type'] = 'loinc' then
-    begin
-      Loinc := TLoincServices.Create;
-      add(Loinc.link);
-      Loinc.Load(details['source']);
-    end
-    else if details['type'] = 'ucum' then
-    begin
-      Ucum := TUcumServices.Create;
-      Ucum.Import(details['source']);
-    end
-    else if details['type'] = 'rxnorm' then
-      RxNorm := TRxNormServices.create(databases[details['database']].link)
-    else if details['type'] = 'mcimeta' then
-      NciMeta := TNciMetaServices.Create(databases[details['database']].link)
-    else if details['type'] = 'unii' then
-      Unii := TUniiServices.Create(databases[details['database']].link)
-    else if details['type'] = 'lang' then
-      add(TIETFLanguageCodeServices.Create(details['source']))
-    else
-      raise Exception.Create('Unknown type '+details['type']);
+      if details['type'] = 'icd10' then
+      begin
+        icdX := TICD10Provider.Create(true, details['source']);
+        add(icdX);
+        icd10.Add(icdX.Link);
+      end
+      else if details['type'] = 'snomed' then
+      begin
+        sn := TSnomedServices.Create;
+        try
+          sn.Load(details['source']);
+          add(sn.Link);
+          snomed.Add(sn.Link);
+          if details['default'] = 'true' then
+            DefSnomed := sn.Link;
+        finally
+          sn.Free;
+        end;
+      end
+      else if details['type'] = 'loinc' then
+      begin
+        Loinc := TLoincServices.Create;
+        add(Loinc.link);
+        Loinc.Load(details['source']);
+      end
+      else if details['type'] = 'ucum' then
+      begin
+        Ucum := TUcumServices.Create;
+        Ucum.Import(details['source']);
+      end
+      else if details['type'] = 'rxnorm' then
+        RxNorm := TRxNormServices.create(databases[details['database']].link)
+      else if details['type'] = 'mcimeta' then
+        NciMeta := TNciMetaServices.Create(databases[details['database']].link)
+      else if details['type'] = 'unii' then
+        Unii := TUniiServices.Create(databases[details['database']].link)
+      else if details['type'] = 'lang' then
+        add(TIETFLanguageCodeServices.Create(details['source']))
+      else
+        raise Exception.Create('Unknown type '+details['type']);
+    end;
   end;
   logt(' - done');
 end;
 
 procedure TCommonTerminologies.SetLoinc(const Value: TLOINCServices);
 begin
-  if FLoinc <> nil then
-  begin
-    FProviderClasses.Remove(FLoinc.system(nil));
-    FProviderClasses.Remove(FLoinc.system(nil)+URI_VERSION_BREAK+FLoinc.version(nil));
-  end;
   FLoinc.Free;
   FLoinc := Value;
-  if FLoinc <> nil then
-  begin
-    FProviderClasses.add(FLoinc.system(nil), FLoinc.Link);
-    FProviderClasses.add(FLoinc.system(nil)+URI_VERSION_BREAK+FLoinc.version(nil), FLoinc.Link);
-  end;
 end;
 
 procedure TCommonTerminologies.SetRxNorm(const Value: TRxNormServices);
@@ -1880,12 +1865,8 @@ end;
 
 procedure TCommonTerminologies.SetDefSnomed(const Value: TSnomedServices);
 begin
-  if FDefSnomed <> nil then
-    FProviderClasses.Remove(FDefSnomed.system(nil));
   FDefSnomed.Free;
   FDefSnomed := Value;
-  if FDefSnomed <> nil then
-    FProviderClasses.add(FDefSnomed.system(nil), FDefSnomed.Link);
 end;
 
 procedure TCommonTerminologies.SetUcum(const Value: TUcumServices);

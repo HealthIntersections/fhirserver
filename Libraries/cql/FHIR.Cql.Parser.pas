@@ -33,11 +33,11 @@ uses
   SysUtils, Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream,
   FHIR.Base.PathEngine,
-  FHIR.Base.Objects, FHIR.Version.PathNode, FHIR.Version.PathEngine,
+  FHIR.Base.Objects, FHIR.R4.PathNode, FHIR.R4.PathEngine,
   FHIR.CQL.Model;
 
 Type
-  TCqlLexer = class (TFHIRPathLexer)
+  TCqlLexer = class (TFHIRPathLexer4)
   protected
     procedure checkStart(var details : TCqlIntervalOperationDetails);
     procedure readDateTimePrecision(var details : TCqlIntervalOperationDetails);
@@ -1100,7 +1100,7 @@ var
   i : integer;
 begin
   setLength(result, length(CODES_TFHIRPathOperation));
-  for i := 0 to length(CODES_TFHIRPathOperation) do
+  for i := 0 to length(CODES_TFHIRPathOperation) - 1 do
     result[i] := CODES_TFHIRPathOperation[TFHIRPathOperation(i)];
 end;
 

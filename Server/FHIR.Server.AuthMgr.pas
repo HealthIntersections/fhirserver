@@ -115,7 +115,7 @@ type
     function GetPatientListAsOptions : String;
     procedure populateFromConsent(consentKey : integer; session : TFhirSession);
   public
-    Constructor Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort : String);
+    Constructor Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort, path : String);
     Destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
@@ -155,7 +155,7 @@ uses
 
 { TAuth2Server }
 
-constructor TAuth2Server.Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort : String);
+constructor TAuth2Server.Create(factory : TFHIRFactory; ini : TFHIRServerIniFile; Host, SSLPort, path : String);
 begin
   inherited create;
   FFactory := factory;
@@ -174,7 +174,7 @@ begin
   FGoogleAppSecret := ini.identityProviders['google.com']['app-secret'];
   FGoogleAppKey := ini.identityProviders['google.com']['app-key'];
   FPassword := ini.admin['password'];
-  FPath := '/auth';
+  FPath := path+'/auth';
 end;
 
 destructor TAuth2Server.Destroy;

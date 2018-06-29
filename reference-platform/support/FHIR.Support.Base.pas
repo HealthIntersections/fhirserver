@@ -87,6 +87,7 @@ Type
   EJavascriptSource = class (EJavascriptException); // error compiling
   EJavascriptHost = class (EJavascriptException);   // error from hosting infrastructure
   EJavascriptApplication = class (EJavascriptException);    // error running application functionality
+  ETestExceptionNotDone = class (EFslException);
 
 Function ExceptObject : Exception;
 Function HasExceptObject : Boolean;
@@ -107,13 +108,6 @@ Type
       Function _AddRef : Integer; Stdcall;
       Function _Release : Integer; Stdcall;
       Function QueryInterface({$IFDEF FPC}Constref{$ELSE}Const{$ENDIF} IID : TGUID; Out Obj): HResult; Virtual; Stdcall;
-
-      Procedure FreezeChildren; Overload; Virtual;
-      Procedure AllowDestructionChildren; Overload; Virtual;
-      Procedure PreventDestructionChildren; Overload; Virtual;
-
-      Procedure FreeReference; Overload; Virtual;
-
       // May be called from Nil or invalid references (so can't be virtual).
       Function Invariant(Const sMethod, sMessage : String) : Boolean; Overload;
       Function Invariants(Const sLocation : String; oObject : TObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
@@ -359,6 +353,8 @@ Type
     FCount: Integer;
     FGrowThreshold: Integer;
     FSortedKeys : TStringList;
+    FDefault : T;
+    FHasDefault : boolean;
 
     procedure SetCapacity(ACapacity: Integer);
     procedure Rehash(NewCapPow2: Integer);
@@ -374,6 +370,9 @@ Type
     function InCircularRange(Bottom, Item, TopInc: Integer): Boolean;
   private
     function GetEmpty: Boolean;
+  private
+    procedure SetDefault(const Value: T);
+    procedure SetHasDefault(const Value: Boolean);
   protected
     function DoGetEnumerator: TEnumerator<TFslPair<T>>; override;
     procedure KeyNotify(const Key: String; Action: TCollectionNotification); virtual;
@@ -399,6 +398,8 @@ Type
     property Items[const Key: String]: T read GetItem write SetItem; default;
     property Count: Integer read FCount;
     property IsEmpty : Boolean read GetEmpty;
+    property defaultValue : T read FDefault write SetDefault;
+    property hasDefault : Boolean read FHasDefault write SetHasDefault;
 
     type
       TFslPairEnumerator = class(TEnumerator<TFslPair<T>>)
@@ -689,7 +690,6 @@ End;
 Procedure TFslObject.AfterConstruction;
 Begin
   Inherited;
-
 End;
 
 
@@ -702,34 +702,14 @@ Begin
 End;
 
 
-Procedure TFslObject.AllowDestructionChildren;
-Begin
-End;
-
-
-Procedure TFslObject.PreventDestructionChildren;
-Begin
-End;
-
-
-Procedure TFslObject.FreezeChildren;
-Begin
-End;
-
-Procedure TFslObject.FreeReference;
-Begin
-  If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
-    Destroy;
-End;
-
-
 Procedure TFslObject.Free;
 Begin
   If Assigned(Self) Then
   Begin
     Assert(Invariants('Free', TFslObject));
 
-    FreeReference;
+    If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
+      Destroy;
   End;
 End;  
 
@@ -1743,6 +1723,18 @@ begin
   end
 end;
 
+procedure TFslMap<T>.SetDefault(const Value: T);
+begin
+  FDefault.free;
+  FDefault := Value;
+  FHasDefault := true;
+end;
+
+procedure TFslMap<T>.SetHasDefault(const Value: Boolean);
+begin
+  FHasDefault := Value;
+end;
+
 procedure TFslMap<T>.Grow;
 var
   newCap: Integer;
@@ -1785,9 +1777,12 @@ var
   index: Integer;
 begin
   index := GetBucketIndex(Key, Hash(Key));
-  if index < 0 then
+  if index >= 0 then
+    Result := FItems[index].Value
+  else if hasDefault then
+    result := FDefault
+  else
     raise EListError.CreateRes(@SGenericItemNotFound);
-  Result := FItems[index].Value;
 end;
 
 procedure TFslMap<T>.SetItem(const Key: String; const Value: T);
@@ -1859,6 +1854,7 @@ end;
 destructor TFslMap<T>.Destroy;
 begin
   Clear;
+  FDefault.free;
   FKeyCollection.Free;
   FValueCollection.Free;
   FSortedKeys.Free;
@@ -1991,6 +1987,11 @@ begin
   Result := index >= 0;
   if Result then
     Value := FItems[index].Value
+  else if FHasDefault then
+  begin
+    result := true;
+    value := FDefault;
+  end
   else
     Value := nil;
 end;
@@ -2057,7 +2058,7 @@ end;
 
 function TFslMap<T>.ContainsKey(const Key: String): Boolean;
 begin
-  Result := GetBucketIndex(Key, Hash(Key)) >= 0;
+  Result := HasDefault or (GetBucketIndex(Key, Hash(Key)) >= 0);
 end;
 
 function TFslMap<T>.ContainsValue(const Value: T): Boolean;
@@ -2067,7 +2068,10 @@ begin
   for i := 0 to Length(FItems) - 1 do
     if (FItems[i].HashCode <> EMPTY_HASH) and (FItems[i].Value = Value) then
       Exit(True);
-  Result := False;
+  if FHasDefault then
+    result := FDefault = value
+  else
+    Result := False;
 end;
 
 function TFslMap<T>.GetEmpty: Boolean;

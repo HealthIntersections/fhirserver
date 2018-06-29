@@ -271,7 +271,7 @@ begin
         form.client := Client.link;
         form.patient := Patient.Link;
         form.Document := doc.link;
-        form.Authors := prac.link;
+//        form.Authors := prac.link;
         form.ShowModal;
       finally
         form.free;

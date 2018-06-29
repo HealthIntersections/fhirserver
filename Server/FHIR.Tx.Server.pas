@@ -1136,6 +1136,9 @@ procedure TTerminologyServer.BuildIndexes(prog : boolean);
 var
   conn1, conn2, conn3 : TKDBConnection;
 begin
+  if DB = nil then
+    exit;
+
   conn1 := DB.GetConnection('BuildIndexes');
   try
     conn2 := DB.GetConnection('BuildIndexes');

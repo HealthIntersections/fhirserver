@@ -92,7 +92,7 @@ Uses
   FHIR.Tx.Server, FHIR.Tx.Manager, FHIR.Snomed.Expressions, FHIR.Loinc.Services, FHIR.Loinc.Publisher, FHIR.Tx.Web, FHIR.Tx.Service,
   FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Storage, FHIR.Server.Security, FHIR.Server.XhtmlComp, FHIR.Snomed.Services, FHIR.Snomed.Publisher,
   FHIR.Scim.Server,
-  FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder,
+  FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder, FHIR.Server.Factory,
   FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt, FHIR.Server.Javascript, FHIR.Server.Subscriptions;
 
 Const
@@ -293,6 +293,7 @@ Type
     function ClientAddress(secure: boolean): String;
     property code : String read FCode;
     property Context : TFHIRServerContext read FContext;
+    property AuthServer : TAuth2Server  read FAuthServer;
   end;
 
   TFhirWebServer = Class(TFslObject)
@@ -310,6 +311,7 @@ Type
     FFacebookLike: boolean;
     FHostSms: String; // for status update messages
     FSourceProvider: TFHIRWebServerSourceProvider;
+    FJsPath : String;
 
     // web configuration
     FHost: String;
@@ -347,6 +349,7 @@ Type
     FStartTime: cardinal;
     FTotalTime: cardinal;
     FRestTime: cardinal;
+    FFactory : TFHIRServerFactory;
     FClients: TFslList<TFHIRWebServerClientInfo>;
     FEndPoints : TFslList<TFhirWebServerEndpoint>;
     FMaintenanceThread: TFhirServerMaintenanceThread;
@@ -392,7 +395,7 @@ Type
     procedure StopAsyncTasks;
 
   Public
-    Constructor Create(settings : TFHIRServerSettings; name: String);
+    Constructor Create(settings : TFHIRServerSettings; name: String; factory : TFHIRServerFactory);
     Destructor Destroy; Override;
     procedure loadConfiguration(ini : TFHIRServerIniFile);
 
@@ -402,6 +405,7 @@ Type
     Property SourceProvider: TFHIRWebServerSourceProvider read FSourceProvider write SetSourceProvider;
     property host: String read FHost;
 
+    property SSLPort: integer read FActualSSLPort;
     property UseOAuth: boolean read FUseOAuth write FUseOAuth;
     property OWinSecurityPlain: boolean read FOWinSecurityPlain write FOWinSecurityPlain;
     property OWinSecuritySecure: boolean read FOWinSecuritySecure write FOWinSecuritySecure;
@@ -414,7 +418,7 @@ Type
     property settings : TFHIRServerSettings read FSettings;
 
     property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
-    function registerEndPoint(code, path : String; context : TFHIRServerContext) : TFhirWebServerEndpoint;
+    function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerIniFile) : TFhirWebServerEndpoint;
   End;
 
 Function ProcessPath(base, path: String): string;
@@ -793,7 +797,7 @@ begin
     end;
 
     sp := FWebServer.FSourceProvider;
-    if request.Document.StartsWith(FPath+FAuthServer.path) then
+    if request.Document.StartsWith(FAuthServer.path) then
       FAuthServer.HandleRequest(AContext, request, Session, response)
     else if FWebServer.OWinSecuritySecure and (request.Document = URLPath([FPath, OWIN_TOKEN_PATH])) then
       HandleOWinToken(AContext, true, request, response)
@@ -1736,10 +1740,9 @@ end;
 procedure TFhirWebServerEndpoint.SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueType);
 var
   issue: TFhirOperationOutcomeW;
-//  report: TFhirOperationOutcomeIssue;
   oComp: TFHIRComposer;
-//  ext: TFhirExtension;
   d: String;
+  iss : TFhirOperationOutcomeIssueW;
 begin
   response.ResponseNo := status;
   response.FreeContentStream := true;
@@ -1753,7 +1756,13 @@ begin
     issue := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
     try
       factory.setXhtml(issue.Resource, TFHIRXhtmlParser.Parse(lang, xppReject, [], '<div><p>' + FormatTextToXML(message, xmlText) + '</p></div>'));
-      factory.makeIssue(isError, code, '', message).diagnostics := ExceptionStack(e);
+      iss := factory.makeIssue(isError, code, '', message);
+      try
+        iss.diagnostics := ExceptionStack(e);
+        issue.addIssue(iss);
+      finally
+        iss.Free;
+      end;
       response.ContentStream := TMemoryStream.Create;
       oComp := nil;
       case format of
@@ -1768,7 +1777,7 @@ begin
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           end;
         ffJson, ffNDJson:
-          oComp := factory.makeComposer(FContext.ValidatorContext.link, ffXml, lang, OutputStyleNormal);
+          oComp := factory.makeComposer(FContext.ValidatorContext.link, ffJson, lang, OutputStyleNormal);
         ffText:
           oComp := TFHIRTextComposer.Create(FContext.ValidatorContext.link, OutputStyleNormal, lang);
       end;
@@ -3596,18 +3605,20 @@ end;
 
 { TFhirWebServer }
 
-Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String);
+Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String; factory : TFHIRServerFactory);
 var
   fn : String;
 Begin
   Inherited Create;
   FLock := TFslLock.Create('fhir-rest');
   FThreads := TList<TAsyncTaskThread>.create;
+  FEndPoints := TFslList<TFhirWebServerEndpoint>.create;
   FCertificateIdList := TStringList.Create;
   FName := Name;
   FInLog := nil;
 
   FSettings := settings;
+  FFactory := factory;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
   FPatientViewServers := TFslStringDictionary.Create;
 
@@ -3634,10 +3645,10 @@ End;
 Destructor TFhirWebServer.Destroy;
 Begin
   StopAsyncTasks;
+  FEndPoints.Free;
   FSettings.Free;
   FPatientViewServers.Free;
   FClients.Free;
-  FEndPoints.Free;
   FThreads.Free;
   FLock.Free;
   FCertificateIdList.Free;
@@ -3645,6 +3656,7 @@ Begin
   FInLog.Free;
   FOutLog.Free;
   FGoogle.Free;
+  FFactory.free;
   Inherited;
 End;
 
@@ -3677,6 +3689,7 @@ var
 begin
   logt('Load Configuration');
 
+  FJsPath := ini.admin['js-path'];
   fn := ini.admin['logging-in'];
   if (fn <> '') and ((fn <> '-')) then
   begin
@@ -3712,7 +3725,7 @@ begin
   FActualSSLPort := StrToIntDef(ini.web['https'], 0);
   FCertFile := ini.web['certname'];
   FRootCertFile := ini.web['cacertname'];
-  FSSLPassword := ini.web['certpword'];
+  FSSLPassword := ini.web['password'];
 
   FUseOAuth := ini.web['oauth'] <> 'false';
   FOWinSecuritySecure := ini.web['owin'] = 'true';
@@ -3759,7 +3772,8 @@ begin
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
 {$ENDIF}
-//  GJsHost := TJsHost.Create(ini.admin('js-path'), FServerContext.ValidatorContext);
+  GJsHost := TJsHost.Create(FJsPath);
+  FFactory.registerJs(GJsHost);
 //  GJsHost.registry := ServerContext.EventScriptRegistry.Link;
   AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
   FLock.Lock;
@@ -4103,12 +4117,12 @@ begin
           ReturnDiagnostics(AContext, request, response, false, false)
         else if request.Document = '/' then
           ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), false)
-      end
-      else
-      begin
-        response.ResponseNo := 404;
-        response.ContentText := 'Document ' + request.Document + ' not found';
-        logt('miss: ' + request.Document);
+        else
+        begin
+          response.ResponseNo := 404;
+          response.ContentText := 'Document ' + request.Document + ' not found';
+          logt('miss: ' + request.Document);
+        end;
       end;
     end;
     logResponse(id, response);
@@ -4163,12 +4177,12 @@ begin
           ReturnDiagnostics(AContext, request, response, false, false)
         else if request.Document = '/' then
           ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), true)
-      end
-      else
-      begin
-        response.ResponseNo := 404;
-        response.ContentText := 'Document ' + request.Document + ' not found';
-        logt('miss: ' + request.Document);
+        else
+        begin
+          response.ResponseNo := 404;
+          response.ContentText := 'Document ' + request.Document + ' not found';
+          logt('miss: ' + request.Document);
+        end;
       end;
     end;
 
@@ -4490,12 +4504,24 @@ begin
 //  op.url := req.url;
 end;
 
-function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext): TFhirWebServerEndpoint;
+function TFhirWebServer.registerEndPoint(code, path: String; context: TFHIRServerContext; ini : TFHIRServerIniFile): TFhirWebServerEndpoint;
 begin
   result := TFhirWebServerEndpoint.create(code, path, self, context);
   FEndPoints.Add(result);
   context.userProvider.OnProcessFile := result.ReturnProcessedFile;
+  result.FAuthServer := TAuth2Server.Create(context.Factory.link, ini, FHost, inttostr(sslPort), path);
   result.FAuthServer.UserProvider := context.userProvider.Link;
+  result.FAuthServer.ServerContext := context.Link;
+  result.FAuthServer.EndPoint := result.ClientAddress(true);
+  result.FAuthServer.OnProcessFile := result.ReturnProcessedFile;
+  result.FAuthServer.OnGetPatients := result.GetPatients;
+  result.FAuthServer.Active := true;
+  context.JWTServices := TJWTServices.Create;
+  context.JWTServices.Cert := FCertFile;
+  context.JWTServices.Password := FSSLPassword;
+  context.JWTServices.DatabaseId := context.DatabaseId;
+  context.JWTServices.Host := FHost;
+//  context.JWTServices.JWKAddress := ?;
 end;
 
 procedure TFhirWebServer.ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean);
@@ -4684,7 +4710,8 @@ begin
 {$IFDEF MSWINDOWS}
     CoInitialize(nil);
 {$ENDIF}
-//    GJsHost := TJsHost.Create(FServer.ini.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.ValidatorContext);
+    GJsHost := TJsHost.Create(FServer.FJsPath);
+    FServer.FFactory.registerJs(GJsHost);
 //    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
 
     repeat
@@ -4763,7 +4790,8 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   SetThreadName('Server Subscription Thread');
-//  GJsHost := TJsHost.Create(FServer.ini.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.ValidatorContext);
+  GJsHost := TJsHost.Create(FServer.FJsPath);
+  FServer.FFactory.registerJs(GJsHost);
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerSubscriptionThread');
   try
@@ -4810,7 +4838,8 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   SetThreadName('Server Email Thread');
-//  GJsHost := TJsHost.Create(FServer.ini.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.ValidatorContext);
+  GJsHost := TJsHost.Create(FServer.FJsPath);
+  FServer.FFactory.registerJs(GJsHost);
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerEmailThread');
   try
@@ -4996,9 +5025,9 @@ begin
   t := 0;
 
   SetThreadName('Server Async Thread');
-//  GJsHost := TJsHost.Create(FServer.ini.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), FServer.ServerContext.ValidatorContext);
+  GJsHost := TJsHost.Create(FServer.FWebServer.FJsPath);
   try
-//    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
+    FServer.FWebServer.FFactory.registerJs(GJsHost);
     status(atsWaiting, 'Waiting to start');
     sleep(100);
     response := TFHIRResponse.Create(FServer.Context.ValidatorContext.link);

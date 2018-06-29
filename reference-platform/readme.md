@@ -5,7 +5,9 @@ This Delphi/Pascal reference implementation is maintained by Grahame Grieve
 (grahame@healthintersections.com.au) and used in the following tools:
 * FHIR Reference Server
 * Notepad++ Plug-in for FHIR
-* FHIR Value Set Editor 
+* FHIR Tookit
+
+There are a number of other commercial uses of the reference implementation.
 
 For bug reports concerning the reference implementation, use the 
 GitHub issues page at https://github.com/grahamegrieve/fhirserver/issues.
@@ -41,14 +43,10 @@ Delphi / Lazarus Versions supported
 -----------------------------------
 
 As released, this code supports all unicode versions of delphi, though
-the project files may need to rebuilt for versions older than Delphi
-Seattle
+the project files may need to rebuilt for versions older than Delphi 10.2
 
-The library depends on msxml, so won't work on anything but windows
-
-Free Pascal / Lazarus: this code doesn't compile under FPC because I can't
-figure out how to maintain dual source around the Unicode issue. If anyone
-wants to help, assistance will be welcome. 
+Free Pascal / Lazarus: this code doesn't compile under Lazarus at this; it's
+work in progress. 
 
 FHIR Versions
 -------------
@@ -57,35 +55,6 @@ This reference implementation supports 3 FHIR versions:
 * FHIR DSTU 3 - stable supported release
 * FHIR DSTU 4 - current trunk. This is unstable and may not work at times
 
-It's possible to support more than one version of FHIR in a single executable,
-but one version of FHIR must be selected as the primary version, and is the
-version on which all the caching/logic is based. 
-
-With respect to version, the FHIR units fit into 3 categories
-* supports any FHIR verson: FHIRBase and FHIRParserBase
-* version specific: any fhir unit that has a name ending in 2, 3, or 4
-* all other code: supports the primary FHIR version
-
-The primary version is indicated by the presence of a compile directive:
-
-  FHIR2
-  FHIR3
-  FHIR4
-  
-One (and only one) of these must be defined in the project somewhere, or 
-the code will not compile. In addition, unit aliases must be set up that
-alias the un-versioned reference to one of the version specific units.
-
-These are the alias strings for the project options:
-
-* 2: FHIRAuthMap=FHIRAuthMap2;FHIRConstants=FHIRConstants2;FHIRContext=FHIRContext2;FHIRIndexInformation=FHIRIndexInformation2;FHIRJavascriptReg=FHIRJavascriptReg2;FHIRMetaModel=FHIRMetaModel2;FHIRNarrativeGenerator=FHIRNarrativeGenerator2;FHIROperations=FHIROperations2;FHIRParserJson=FHIRParserJson2;FHIRParserTurtle=FHIRParserTurtle2;FHIRParserXml=FHIRParserXml2;FHIRPathNode=FHIRPathNode2;FHIRProfileUtilities=FHIRProfileUtilities2;FHIRResources=FHIRResources2;FHIRStructureMapUtilities=FHIRStructureMapUtilities2;FHIRTags=FHIRTags2;FHIRTestWorker=FHIRTestWorker2;FHIRTypes=FHIRTypes2;FHIRUtilities=FHIRUtilities2;FHIRValidator=FHIRValidator2;FhirOpBase=FhirOpBase2;FhirPath=FhirPath2;NarrativeGenerator=NarrativeGenerator2;QuestionnaireBuilder=QuestionnaireBuilder2;FHIRBaseX=FHIRBase2
-* 3: FHIRAuthMap=FHIRAuthMap3;FHIRConstants=FHIRConstants3;FHIRContext=FHIRContext3;FHIRIndexInformation=FHIRIndexInformation3;FHIRJavascriptReg=FHIRJavascriptReg3;FHIRMetaModel=FHIRMetaModel3;FHIRNarrativeGenerator=FHIRNarrativeGenerator3;FHIROperations=FHIROperations3;FHIRParserJson=FHIRParserJson3;FHIRParserTurtle=FHIRParserTurtle3;FHIRParserXml=FHIRParserXml3;FHIRPathNode=FHIRPathNode3;FHIRProfileUtilities=FHIRProfileUtilities3;FHIRResources=FHIRResources3;FHIRStructureMapUtilities=FHIRStructureMapUtilities3;FHIRTags=FHIRTags3;FHIRTestWorker=FHIRTestWorker3;FHIRTypes=FHIRTypes3;FHIRUtilities=FHIRUtilities3;FHIRValidator=FHIRValidator3;FhirOpBase=FhirOpBase3;FhirPath=FhirPath3;NarrativeGenerator=NarrativeGenerator3;QuestionnaireBuilder=QuestionnaireBuilder3;FHIRBaseX=FHIRBase3
-* 4: FHIRAuthMap=FHIRAuthMap4;FHIRConstants=FHIRConstants4;FHIRContext=FHIRContext4;FHIRIndexInformation=FHIRIndexInformation4;FHIRJavascriptReg=FHIRJavascriptReg4;FHIRMetaModel=FHIRMetaModel4;FHIRNarrativeGenerator=FHIRNarrativeGenerator4;FHIROperations=FHIROperations4;FHIRParserJson=FHIRParserJson4;FHIRParserTurtle=FHIRParserTurtle4;FHIRParserXml=FHIRParserXml4;FHIRPathNode=FHIRPathNode4;FHIRProfileUtilities=FHIRProfileUtilities4;FHIRResources=FHIRResources4;FHIRStructureMapUtilities=FHIRStructureMapUtilities4;FHIRTags=FHIRTags4;FHIRTestWorker=FHIRTestWorker4;FHIRTypes=FHIRTypes4;FHIRUtilities=FHIRUtilities4;FHIRValidator=FHIRValidator4;FhirOpBase=FhirOpBase4;FhirPath=FhirPath4;NarrativeGenerator=NarrativeGenerator4;QuestionnaireBuilder=QuestionnaireBuilder4;FHIRBaseX=FHIRBase4
-
-Note: FHIR DSTU 1 units are still found in the code, but these are no longer maintained 
-actively and don't compile correctly anymore.
-
-
 Using the library 
 -----------------
 
@@ -93,23 +62,120 @@ This library provides an object model for all FHIR resources, and
 parsers and serialisers for the XML and JSON formats, a client, 
 and various utilities including validation.
 
-To create an object model: resources or bundles, or supporting classes
-can be created directly (TFhirPatient.create), or using appropriate
-methods from TFhirFactory (FhirSupport.pas). See below for notes about
-managing object life cycles.
+There are multiple ways to work with resources, and there are examples
+of all them through out the library. 
 
-To read a stream into an object model, create a TFHIRXmlParser, or
-a TFHIRJsonParser (FhirParser.pas) (you must know which in advance - 
-this should be known by the mime type). Then assign it's source 
-property (a stream of any type is required), call "parse", and 
-then check to see whether a resource or a bundle (or a taglist, 
-in some circumstances) was decoded.
+Understanding the library
+-------------------------
 
-To write a stream, create an object model, and then create 
-either a TFHIRXmlComposer, or a TFHIRJsonComposer, and call 
-the compose methods with appropriate parameters.
+In general, these are the kind of things you do with the library:
+* Create a worker context
+* read a resource from a stream 
+* create resources
+* write a resource to a stream
+* read and write resources from a server
 
-There's some useful example code in FHIRTest.dpr
+You can choose to do these in several different ways; which way 
+depends on whether you want to support multiple versions or not. 
+
+Context
+-------
+
+Almost all the units in the library depend on a context. The context
+keeps all the useful information that the library needs in the background,
+including a factory that is capable of creating the various objects
+used through out the library 
+
+Some uses of the library (validation, some cross-version use) requires
+the context to have content loaded from one (or more) of the FHIR 
+distribution packages. 
+
+Note that reading and writing resources as documented here does not require
+any packages to be loaded.
+
+Using the library for a single version
+--------------------------------------
+
+Choose a version, and include the units. Typically
+ 
+   uses
+     FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Factory;
+
+Note that there's a long tail of unit dependencies to deal with, and 
+other units than these may be required.
+
+Next, create a context, with a factory
+
+   var
+     context : TFHIRWorkerContext;
+     
+   context := TFHIRWorkerContext.create(TFHIRFactory4.create)
+
+Reading a resource from a stream:
+
+  var
+    r : Resource;
+    p : TFHIRParser;
+  
+  p := context.factory.makeParser(context.link, ffJson, 'en');
+  try
+    r := p.parseResource(stream); 
+  finally
+    p.free;
+  end;
+  
+See below for doco about the .link. ffJson is the format to read - ffXml and ffTurtle 
+are also supported. 'en' is the language - an http Accept-Language string is supported. 
+If you don't know the format of the stream, see FHIR.Base.Utilities.DetectFormat
+
+Creating a resource:
+
+  var
+    r : Resource;
+  
+  r := TFHIRPatient.create;
+  
+Then just use the properties to access to object model of the resource. 
+  
+Writing a resource to a stream is similar to reading it:
+
+  var
+    r : Resource;
+    c : TFHIRComposer;
+  
+  c := context.factory.makeComposer(context.link, ffJson, 'en', OutputStylePretty);
+  try
+    c.compose(r, stream); 
+  finally
+    c.free;
+  end;
+  
+The one addition parameter specifies whether to produce a human readable resource or not. 
+
+Reading and writing resources from the server:
+
+  var
+    r : TFHIRPatient;
+    client : TFHIRClient;
+  
+  client := factory.makeClient(context.link, 'http://test/fhir.org/r4', ffJson) as TFHIRClient;
+  try
+    r := client.readResource(frtPatient, 'example') as TFHIRPatient;
+    try
+      // change R....
+      client.updateResource(r).free;  // remember to .free the return if you're not interested in it.      
+    finally
+      r.free;
+    end;
+  finally
+    client.free;
+  end;
+
+
+Working across versions
+-----------------------
+
+todo....
 
 
 Object life-cycle management
@@ -243,3 +309,8 @@ pattern that would make it easy to keep objects alive when you
 need them, and not have any leaks, in a large programming team.
 Once you're used to it, it's hard to think any other way.
 
+These are the alias strings for the project options:
+
+* 2: FHIRAuthMap=FHIRAuthMap2;FHIRConstants=FHIRConstants2;FHIRContext=FHIRContext2;FHIRIndexInformation=FHIRIndexInformation2;FHIRJavascriptReg=FHIRJavascriptReg2;FHIRMetaModel=FHIRMetaModel2;FHIRNarrativeGenerator=FHIRNarrativeGenerator2;FHIROperations=FHIROperations2;FHIRParserJson=FHIRParserJson2;FHIRParserTurtle=FHIRParserTurtle2;FHIRParserXml=FHIRParserXml2;FHIRPathNode=FHIRPathNode2;FHIRProfileUtilities=FHIRProfileUtilities2;FHIRResources=FHIRResources2;FHIRStructureMapUtilities=FHIRStructureMapUtilities2;FHIRTags=FHIRTags2;FHIRTestWorker=FHIRTestWorker2;FHIRTypes=FHIRTypes2;FHIRUtilities=FHIRUtilities2;FHIRValidator=FHIRValidator2;FhirOpBase=FhirOpBase2;FhirPath=FhirPath2;NarrativeGenerator=NarrativeGenerator2;QuestionnaireBuilder=QuestionnaireBuilder2;FHIRBaseX=FHIRBase2
+* 3: FHIRAuthMap=FHIRAuthMap3;FHIRConstants=FHIRConstants3;FHIRContext=FHIRContext3;FHIRIndexInformation=FHIRIndexInformation3;FHIRJavascriptReg=FHIRJavascriptReg3;FHIRMetaModel=FHIRMetaModel3;FHIRNarrativeGenerator=FHIRNarrativeGenerator3;FHIROperations=FHIROperations3;FHIRParserJson=FHIRParserJson3;FHIRParserTurtle=FHIRParserTurtle3;FHIRParserXml=FHIRParserXml3;FHIRPathNode=FHIRPathNode3;FHIRProfileUtilities=FHIRProfileUtilities3;FHIRResources=FHIRResources3;FHIRStructureMapUtilities=FHIRStructureMapUtilities3;FHIRTags=FHIRTags3;FHIRTestWorker=FHIRTestWorker3;FHIRTypes=FHIRTypes3;FHIRUtilities=FHIRUtilities3;FHIRValidator=FHIRValidator3;FhirOpBase=FhirOpBase3;FhirPath=FhirPath3;NarrativeGenerator=NarrativeGenerator3;QuestionnaireBuilder=QuestionnaireBuilder3;FHIRBaseX=FHIRBase3
+* 4: FHIRAuthMap=FHIRAuthMap4;FHIRConstants=FHIRConstants4;FHIRContext=FHIRContext4;FHIRIndexInformation=FHIRIndexInformation4;FHIRJavascriptReg=FHIRJavascriptReg4;FHIRMetaModel=FHIRMetaModel4;FHIRNarrativeGenerator=FHIRNarrativeGenerator4;FHIROperations=FHIROperations4;FHIRParserJson=FHIRParserJson4;FHIRParserTurtle=FHIRParserTurtle4;FHIRParserXml=FHIRParserXml4;FHIRPathNode=FHIRPathNode4;FHIRProfileUtilities=FHIRProfileUtilities4;FHIRResources=FHIRResources4;FHIRStructureMapUtilities=FHIRStructureMapUtilities4;FHIRTags=FHIRTags4;FHIRTestWorker=FHIRTestWorker4;FHIRTypes=FHIRTypes4;FHIRUtilities=FHIRUtilities4;FHIRValidator=FHIRValidator4;FhirOpBase=FhirOpBase4;FhirPath=FhirPath4;NarrativeGenerator=NarrativeGenerator4;QuestionnaireBuilder=QuestionnaireBuilder4;FHIRBaseX=FHIRBase4

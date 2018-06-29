@@ -3857,7 +3857,7 @@ var
   i : integer;
 begin
   setLength(result, length(CODES_TFHIRPathOperation));
-  for i := 0 to length(CODES_TFHIRPathOperation) do
+  for i := 0 to length(CODES_TFHIRPathOperation) -1 do
     result[i] := CODES_TFHIRPathOperation[TFHIRPathOperation(i)];
 end;
 

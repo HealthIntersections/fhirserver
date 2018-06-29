@@ -1,4 +1,4 @@
-unit GraphQLTests;
+unit FHIR.Tests.GraphQL;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, DUnitX.TestFramework, Variants,
    FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Base, FHIR.Support.MXml,
   FHIR.Web.GraphQL, FHIR.Base.Objects, FHIR.Base.Common, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Tools.GraphQL, FHIR.Version.Factory,
-  FHIR.R4.Tests.Worker, JsonTests;
+  FHIR.R4.Tests.Worker, FHIR.Tests.Json;
 
 type
   GraphQLParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)

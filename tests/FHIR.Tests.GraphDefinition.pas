@@ -1,4 +1,4 @@
-unit GraphDefinitionTests;
+unit FHIR.Tests.GraphDefinition;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -37,7 +37,7 @@ uses
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Parser,
   FHIR.Web.GraphQL, FHIR.Tools.GraphQL, FHIR.Server.GraphDefinition,
   FHIR.R4.GraphDefinition,
-  FHIR.R4.Tests.Worker, JsonTests;
+  FHIR.R4.Tests.Worker, FHIR.Tests.Json;
 
 type
   GraphDefinitionTestCaseAttribute = class (CustomTestCaseSourceAttribute)

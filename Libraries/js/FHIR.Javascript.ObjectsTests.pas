@@ -32,16 +32,16 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  FHIR.Javascript,
-  FHIR.Base.Factory, FHIR.Base.Common,
+  FHIR.Support.Base, FHIR.Javascript,
+  FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Common,
   {$IFDEF FHIR2}
-  FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Factory, FHIR.R2.Common, FHIR.R2.Utilities,
+  FHIR.R2.Tests.Worker, FHIR.R2.Resources, FHIR.R2.Types, FHIR.R2.Factory, FHIR.R2.Profiles, FHIR.R2.Context, FHIR.R2.Common, FHIR.R2.Utilities, FHIR.R2.Javascript,
   {$ENDIF}
   {$IFDEF FHIR3}
-  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Factory, FHIR.R3.Common, FHIR.R3.Utilities,
+  FHIR.R3.Tests.Worker, FHIR.R3.Resources, FHIR.R3.Types, FHIR.R3.Factory, FHIR.R3.Profiles, FHIR.R3.Context, FHIR.R3.Common, FHIR.R3.Utilities, FHIR.R3.Javascript,
   {$ENDIF}
   {$IFDEF FHIR4}
-  FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Factory, FHIR.R4.Common, FHIR.R4.Utilities,
+  FHIR.R4.Tests.Worker, FHIR.R4.Resources, FHIR.R4.Types, FHIR.R4.Factory, FHIR.R4.Profiles, FHIR.R4.Context, FHIR.R4.Common, FHIR.R4.Utilities, FHIR.R4.Javascript,
   {$ENDIF}
   FHIR.Javascript.Base,
   DUnitX.TestFramework;
@@ -54,7 +54,7 @@ Type
     FLog : TStringList;
     FJs : TFHIRJavascript;
     procedure JSLog(sender : TJavascript; message : String);
-    function makeFactory : TFHIRFactory;
+    function makeContext : TFHIRWorkerContextWithFactory;
   Published
     [SetUp]    Procedure Setup;
     [TearDown] Procedure TearDown;
@@ -65,18 +65,31 @@ Type
 
 implementation
 
+type
+  TTestWorkerContext = class (TBaseWorkerContext)
+  public
+    function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
+    function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; override;
+    function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; override;
+    function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; override;
+    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
+    function getStructure(url : String) : TFHIRStructureDefinition; overload; override;
+    function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; override;
+    function getCustomResource(name : String) : TFHIRCustomResourceInformation; override;
+    function hasCustomResource(name : String) : boolean; override;
+    function supportsSystem(system, version : string) : boolean; overload; override;
+  end;
+
 { TJavascriptTests }
 
-function TFHIRJavascriptTests.makeFactory: TFHIRFactory;
+function TFHIRJavascriptTests.makeContext: TFHIRWorkerContextWithFactory;
 begin
-  {$IFDEF FHIR2} result := TFHIRFactoryR2.Create; {$ENDIF}
-  {$IFDEF FHIR3} result := TFHIRFactoryR3.Create; {$ENDIF}
-  {$IFDEF FHIR4} result := TFHIRFactoryR4.Create; {$ENDIF}
+  result := TTestWorkerContext.Create(TFHIRFactoryX.Create);
 end;
 
 procedure TFHIRJavascriptTests.Setup;
 begin
-//  FJs := TFHIRJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll', makeFactory, nil);
+  FJs := TFHIRJavascript.Create('C:\work\fhirserver\Exec\64\ChakraCore.dll', makeContext, registerFHIRTypes);
   FJs.OnLog := JSLog;
   FLog := TStringList.create;
 end;
@@ -206,6 +219,58 @@ begin
   finally
     obs.Free;
   end;
+end;
+
+{ TTestWorkerContext }
+
+function TTestWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.expand');
+end;
+
+function TTestWorkerContext.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.getChildMap');
+end;
+
+function TTestWorkerContext.getCustomResource(name: String): TFHIRCustomResourceInformation;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.getCustomResource');
+end;
+
+function TTestWorkerContext.getStructure(url: String): TFHIRStructureDefinition;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.getStructure');
+end;
+
+function TTestWorkerContext.getStructure(ns, name: String): TFHIRStructureDefinition;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.getStructure');
+end;
+
+function TTestWorkerContext.hasCustomResource(name: String): boolean;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.hasCustomResource');
+end;
+
+function TTestWorkerContext.supportsSystem(system, version: string): boolean;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.supportsSystem');
+end;
+
+function TTestWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.validateCode');
+end;
+
+function TTestWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.validateCode');
+end;
+
+function TTestWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
+begin
+  raise ETestExceptionNotDone.Create('TTestWorkerContext.validateCode');
 end;
 
 initialization

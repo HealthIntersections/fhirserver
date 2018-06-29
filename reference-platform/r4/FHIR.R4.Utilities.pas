@@ -68,7 +68,6 @@ const
     {$IFDEF FHIR_PLANDEFINITION}frtPlanDefinition, {$ENDIF}
     {$IFDEF FHIR_QUESTIONNAIRE}frtQuestionnaire, {$ENDIF}
     {$IFDEF FHIR_SEARCHPARAMETER}frtSearchParameter, {$ENDIF}
-    {$IFDEF FHIR_SERVICEDEFINITION}frtServiceDefinition, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREDEFINITION}frtStructureDefinition, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREMAP}frtStructureMap, {$ENDIF}
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}frtTerminologyCapabilities, {$ENDIF}
@@ -3665,6 +3664,8 @@ begin
       result := 'true'
     else
       result := 'false'
+  else if t.isPrimitive then
+    result := t.primitiveValue
   else
     raise EFHIRException.create('Type '+t.className+' not handled yet');
 end;

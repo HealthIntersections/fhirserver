@@ -53,8 +53,6 @@ const
     {$IFDEF FHIR_CODESYSTEM}frtCodeSystem, {$ENDIF}
     {$IFDEF FHIR_COMPARTMENTDEFINITION}frtCompartmentDefinition, {$ENDIF}
     {$IFDEF FHIR_CONCEPTMAP}frtConceptMap, {$ENDIF}
-    {$IFDEF FHIR_ENTRYDEFINITION}frtEntryDefinition, {$ENDIF}
-    {$IFDEF FHIR_EVENTDEFINITION}frtEventDefinition, {$ENDIF}
     {$IFDEF FHIR_EXPANSIONPROFILE}frtExpansionProfile, {$ENDIF}
     {$IFDEF FHIR_GRAPHDEFINITION}frtGraphDefinition, {$ENDIF}
     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide, {$ENDIF}
@@ -63,7 +61,6 @@ const
     {$IFDEF FHIR_LIBRARY}frtLibrary, {$ENDIF}
     {$IFDEF FHIR_MESSAGEDEFINITION}frtMessageDefinition, {$ENDIF}
     {$IFDEF FHIR_NAMINGSYSTEM}frtNamingSystem, {$ENDIF}
-    {$IFDEF FHIR_OBSERVATIONDEFINITION}frtObservationDefinition, {$ENDIF}
     {$IFDEF FHIR_OPERATIONDEFINITION}frtOperationDefinition, {$ENDIF}
     {$IFDEF FHIR_PLANDEFINITION}frtPlanDefinition, {$ENDIF}
     {$IFDEF FHIR_QUESTIONNAIRE}frtQuestionnaire, {$ENDIF}
@@ -71,7 +68,6 @@ const
     {$IFDEF FHIR_SERVICEDEFINITION}frtServiceDefinition, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREDEFINITION}frtStructureDefinition, {$ENDIF}
     {$IFDEF FHIR_STRUCTUREMAP}frtStructureMap, {$ENDIF}
-    {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}frtTerminologyCapabilities, {$ENDIF}
     frtValueSet];
 
 
@@ -3531,6 +3527,8 @@ begin
       result := 'true'
     else
       result := 'false'
+  else if t.isPrimitive then
+    result := t.primitiveValue
   else
     raise EFHIRException.create('Type '+t.className+' not handled yet');
 end;

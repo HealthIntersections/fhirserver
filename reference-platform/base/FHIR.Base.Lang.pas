@@ -117,6 +117,7 @@ Type
     constructor Create; override;
     Destructor Destroy; override;
   end;
+
 var
   GMessages : TFslMap<TFHIRMessage>;
 

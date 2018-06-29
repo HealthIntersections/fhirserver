@@ -83,7 +83,7 @@ type
     FClient: TFHIRClient;
     FBundle: TFhirBundle;
     FSettings: TFHIRToolkitSettings;
-    FAuthors: TFslList<TFHIRPractitioner>;
+//    FAuthors: TFslList<TFHIRPractitioner>;
     FDocumentReference: TFhirDocumentReference;
     FProvenance: TFhirProvenance;
     procedure SetClient(const Value: TFHIRClient);
@@ -95,7 +95,7 @@ type
     procedure loadComposition(doc : TTreeViewItem; cmp : TFHIRComposition; refList : TFslList<TFhirResource>);
     procedure Remember;
     procedure Prepare;
-    procedure SetAuthors(const Value: TFslList<TFHIRPractitioner>);
+//    procedure SetAuthors(const Value: TFslList<TFHIRPractitioner>);
     procedure SetDocumentReference(const Value: TFhirDocumentReference);
     procedure SetProvenance(const Value: TFhirProvenance);
   public
@@ -107,7 +107,7 @@ type
     property Provenance : TFhirProvenance read FProvenance write SetProvenance;
     property DocumentReference : TFhirDocumentReference read FDocumentReference write SetDocumentReference;
     property Patient : TFHIRPatient read FPatient write SetPatient;
-    property Authors : TFslList<TFHIRPractitioner> read FAuthors write SetAuthors;
+//    property Authors : TFslList<TFHIRPractitioner> read FAuthors write SetAuthors;
   end;
 
 var
@@ -228,7 +228,7 @@ destructor TDocumentGeneratorForm.Destroy;
 begin
   FProvenance.Free;
   FDocumentReference.Free;
-  FAuthors.Free;
+  //FAuthors.Free;
   FSettings.Free;
   FPatient.Free;
   FClient.Free;
@@ -258,12 +258,12 @@ begin
 
   cbxIdentity.Items.Clear;
   pid := Settings.getValue('documents', 'author', '');
-  for p in FAuthors do
-  begin
-    cbxIdentity.Items.AddObject(p.display, p);
-    if (p.id = pid) then
-      cbxIdentity.ItemIndex := cbxIdentity.Items.Count - 1;
-  end;
+//  for p in FAuthors do
+//  begin
+//    cbxIdentity.Items.AddObject(p.display, p);
+//    if (p.id = pid) then
+//      cbxIdentity.ItemIndex := cbxIdentity.Items.Count - 1;
+//  end;
   if cbxIdentity.ItemIndex = -1 then
     cbxIdentity.ItemIndex := 0;
 end;
@@ -482,12 +482,12 @@ begin
     Settings.storeValue('documents', 'author', (cbxIdentity.Items.Objects[cbxIdentity.ItemIndex] as TFhirResource).id);
 end;
 
-procedure TDocumentGeneratorForm.SetAuthors(const Value: TFslList<TFHIRPractitioner>);
-begin
-  FAuthors.Free;
-  FAuthors := Value;
-end;
-
+//procedure TDocumentGeneratorForm.SetAuthors(const Value: TFslList<TFHIRPractitioner>);
+//begin
+//  FAuthors.Free;
+//  FAuthors := Value;
+//end;
+//
 procedure TDocumentGeneratorForm.SetBundle(const Value: TFhirBundle);
 begin
   FBundle.Free;

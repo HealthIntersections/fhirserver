@@ -726,7 +726,7 @@ uses
 
 procedure TFhirOperationOutcome2.addIssue(issue: TFhirOperationOutcomeIssueW);
 begin
-  (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue));
+  (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue).link);
 end;
 
 function TFhirOperationOutcome2.code: TFhirIssueType;
@@ -997,7 +997,7 @@ end;
 
 function TFHIRCapabilityStatement2.addResource(code: String): TFhirCapabilityStatementRestResourceW;
 begin
-  result := TFhirCapabilityStatementRestResource2.create(statement.restList[0].resourceList.append);
+  result := TFhirCapabilityStatementRestResource2.create(statement.restList[0].resourceList.append.link);
   result.code := code;
 end;
 
@@ -1006,6 +1006,9 @@ var
   c: TFHIRCoding;
   ext: TFhirExtension;
 begin
+  if statement.restList.isEmpty then
+    statement.restList.append.mode := RestfulCapabilityModeServer;
+
   if statement.restList[0].security = nil then
     statement.restList[0].security := TFhirCapabilityStatementRestSecurity.Create;
   statement.restList[0].security.cors := true;
@@ -3736,7 +3739,7 @@ end;
 
 function TFhirCodeableConcept2.addCoding: TFHIRCodingW;
 begin
-  result := TFHIRCoding2.create((Element as TFhirCodeableConcept).codingList.Append);
+  result := TFHIRCoding2.create((Element as TFhirCodeableConcept).codingList.Append.link);
 end;
 
 function TFhirCodeableConcept2.codingCount: integer;

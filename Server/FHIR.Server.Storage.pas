@@ -233,6 +233,7 @@ Type
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; override;
     function readResourceV(atype : string; id : String) : TFHIRResourceV; override;
+    function vreadResourceV(atype : string; id, vid : String) : TFHIRResourceV; override;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; override;
     procedure deleteResourceV(atype : string; id : String); override;
     function searchV(atype : string; allRecords : boolean; params : string) : TFHIRResourceV; overload; override;
@@ -241,6 +242,7 @@ Type
     function operationV(atype : string; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function operationV(atype : string; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function historyTypeV(atype : string; allRecords : boolean; params : string) : TFHIRResourceV; override;
+    function historyInstanceV(atype : string; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
     function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
     function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
     procedure terminate; override;
@@ -343,7 +345,7 @@ end;
 
 procedure TFHIRStorageService.fetchExpiredTasks(tasks: TFslList<TAsyncTaskInformation>);
 begin
-  raise EFHIRException.create('This server does not support Async tasks');
+  //
 end;
 
 function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
@@ -588,172 +590,176 @@ begin
 
     response.HTTPCode := 200;
     oConf := factory.wrapCapabilityStatement(factory.makeResource('CapabilityStatement'));
-    response.Resource := oConf.Resource;
-
-    oConf.id := 'FhirServer';
-    oConf.contact(cpsOther, 'http://healthintersections.com.au/');
-    if ServerContext.FormalURLPlain <> '' then
-      oConf.url := AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'metadata'
-    else
-      oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
-
-    oConf.version := factory.versionString+'-'+SERVER_VERSION; // this conformance statement is versioned by both
-    oConf.name := 'FHIR Reference Server Conformance Statement';
-    oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
-    oConf.status := psActive;
-    oConf.date := TDateTimeEx.makeUTC;
-    oConf.software('Reference Server', SERVER_VERSION, SERVER_RELEASE_DATE);
-    if ServerContext.FormalURLPlainOpen <> '' then
-      oConf.impl(ServerContext.FormalURLPlainOpen, 'FHIR Server running at '+ServerContext.FormalURLPlainOpen);
-    if assigned(OnPopulateConformance) then
-      OnPopulateConformance(self, oConf);
-    if factory.version <> fhirVersionRelease2 then
-    begin
-      oConf.fmt('application/fhir+xml');
-      oConf.fmt('application/fhir+json');
-    end
-    else
-    begin
-      oConf.fmt('application/xml+fhir');
-      oConf.fmt('application/json+fhir');
-    end;
-
-    oConf.fhirVersion := factory.versionString;
-    oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', request.baseUrl+'websockets', TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView);
-    if assigned(OnPopulateConformance) and request.secure then // only add Smart App Launch things on a secure interface
-      OnPopulateConformance(self, oConf);
-
-    html := TFslStringBuilder.Create;
     try
-      html.append('<div><h2>'+ServerContext.Globals.OwnerName+' Conformance Statement</h2><p>FHIR v'+factory.versionString+' released '+SERVER_RELEASE_DATE+'. '+
-       'Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
-      for a in ServerContext.ValidatorContext.allResourceNames do
+      response.Resource := oConf.Resource.link;
+
+      oConf.id := 'FhirServer';
+      oConf.contact(cpsOther, 'http://healthintersections.com.au/');
+      if ServerContext.FormalURLPlain <> '' then
+        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'metadata'
+      else
+        oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
+
+      oConf.version := factory.versionString+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+      oConf.name := 'FHIR Reference Server Conformance Statement';
+      oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
+      oConf.status := psActive;
+      oConf.date := TDateTimeEx.makeUTC;
+      oConf.software('Reference Server', SERVER_VERSION, SERVER_RELEASE_DATE);
+      if ServerContext.FormalURLPlainOpen <> '' then
+        oConf.impl(ServerContext.FormalURLPlainOpen, 'FHIR Server running at '+ServerContext.FormalURLPlainOpen);
+      if assigned(OnPopulateConformance) then
+        OnPopulateConformance(self, oConf);
+      if factory.version <> fhirVersionRelease2 then
       begin
-        if ServerContext.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
-        begin
-          if a = 'Binary' then
-            html.append('<tr><td>'+a+'</td>'+
-            '<td>--</td>')
-          else
-            html.append('<tr><td>'+a+'</td>'+
-            '<td><a href="'+request.baseUrl+'StructureDefinition/'+lowercase(a)+'?format=text/html">'+lowercase(a)+'</a></td>');
-          res := oConf.addResource(a);
-          try
-            res.profile := request.baseUrl+'StructureDefinition/'+lowercase(a);
-            if (a <> 'MessageHeader') and (a <> 'Parameters') Then
+        oConf.fmt('application/fhir+xml');
+        oConf.fmt('application/fhir+json');
+      end
+      else
+      begin
+        oConf.fmt('application/xml+fhir');
+        oConf.fmt('application/json+fhir');
+      end;
+
+      oConf.fhirVersion := factory.versionString;
+      oConf.standardServer('http://hl7.org/fhir/CapabilityStatement/terminology-server', request.baseUrl+'websockets', TCDSHooks.patientView, TCDSHooks.codeView, TCDSHooks.identifierView);
+      if assigned(OnPopulateConformance) and request.secure then // only add Smart App Launch things on a secure interface
+        OnPopulateConformance(self, oConf);
+
+      html := TFslStringBuilder.Create;
+      try
+        html.append('<div><h2>'+ServerContext.Globals.OwnerName+' Conformance Statement</h2><p>FHIR v'+factory.versionString+' released '+SERVER_RELEASE_DATE+'. '+
+         'Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
+        for a in ServerContext.ValidatorContext.allResourceNames do
+          if a <> 'Custom' then
+          begin
+            if ServerContext.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
             begin
-              if request.canRead(a)  then
-              begin
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                res.addInteraction('read');
-                if ServerContext.ResConfig[a].cmdVRead then
+              if a = 'Binary' then
+                html.append('<tr><td>'+a+'</td>'+
+                '<td>--</td>')
+              else
+                html.append('<tr><td>'+a+'</td>'+
+                '<td><a href="'+request.baseUrl+'StructureDefinition/'+lowercase(a)+'?format=text/html">'+lowercase(a)+'</a></td>');
+              res := oConf.addResource(a);
+              try
+                res.profile := request.baseUrl+'StructureDefinition/'+lowercase(a);
+                if (a <> 'MessageHeader') and (a <> 'Parameters') Then
                 begin
-                  html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                  res.addInteraction('vread');
-                  res.readHistory := true;
-                end
-                else
-                  html.append('<td></td>');
-              end
-              else
-                html.append('<td align="center"></td><td align="center"></td>');
-              if ServerContext.ResConfig[a].cmdSearch and request.canRead(a) then
-              begin
-                res.addInteraction('search-type');
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdUpdate and request.canWrite(a) then
-              begin
-                res.addInteraction('update');
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdHistoryType and request.canRead(a) then
-              begin
-                res.addInteraction('history-type');
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdCreate and request.canWrite(a) then
-              begin
-                res.addInteraction('create');
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdDelete and request.canWrite(a) then
-              begin
-                res.addInteraction('delete');
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdHistoryInstance and request.canRead(a) then
-              begin
-                res.addInteraction('history-instance');
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-//                html.append('<br/>search</td><td><ul>');
-              for i := 0 to ServerContext.Indexes.Indexes.count - 1 do
-                if (ServerContext.Indexes.Indexes[i].ResourceType = a) then
-                  if ServerContext.Indexes.Indexes[i].Name <> '_query' then
-                    res.addParam(html.AsString, ServerContext.Indexes.Indexes[i].Name, ServerContext.Indexes.Indexes[i].uri, ServerContext.Indexes.Indexes[i].Description, ServerContext.Indexes.Indexes[i].SearchType, ServerContext.Indexes.Indexes[i].TargetTypes);
+                  if request.canRead(a)  then
+                  begin
+                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                    res.addInteraction('read');
+                    if ServerContext.ResConfig[a].cmdVRead then
+                    begin
+                      html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                      res.addInteraction('vread');
+                      res.readHistory := true;
+                    end
+                    else
+                      html.append('<td></td>');
+                  end
+                  else
+                    html.append('<td align="center"></td><td align="center"></td>');
+                  if ServerContext.ResConfig[a].cmdSearch and request.canRead(a) then
+                  begin
+                    res.addInteraction('search-type');
+                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                  end
+                  else
+                    html.append('<td></td>');
+                  if ServerContext.ResConfig[a].cmdUpdate and request.canWrite(a) then
+                  begin
+                    res.addInteraction('update');
+                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                  end
+                  else
+                    html.append('<td></td>');
+                  if ServerContext.ResConfig[a].cmdHistoryType and request.canRead(a) then
+                  begin
+                    res.addInteraction('history-type');
+                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                  end
+                  else
+                    html.append('<td></td>');
+                  if ServerContext.ResConfig[a].cmdCreate and request.canWrite(a) then
+                  begin
+                    res.addInteraction('create');
+                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                  end
+                  else
+                    html.append('<td></td>');
+                  if ServerContext.ResConfig[a].cmdDelete and request.canWrite(a) then
+                  begin
+                    res.addInteraction('delete');
+                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                  end
+                  else
+                    html.append('<td></td>');
+                  if ServerContext.ResConfig[a].cmdHistoryInstance and request.canRead(a) then
+                  begin
+                    res.addInteraction('history-instance');
+                    html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                  end
+                  else
+                    html.append('<td></td>');
+    //                html.append('<br/>search</td><td><ul>');
+                  for i := 0 to ServerContext.Indexes.Indexes.count - 1 do
+                    if (ServerContext.Indexes.Indexes[i].ResourceType = a) then
+                      if ServerContext.Indexes.Indexes[i].Name <> '_query' then
+                        res.addParam(html.AsString, ServerContext.Indexes.Indexes[i].Name, ServerContext.Indexes.Indexes[i].uri, ServerContext.Indexes.Indexes[i].Description, ServerContext.Indexes.Indexes[i].SearchType, ServerContext.Indexes.Indexes[i].TargetTypes);
 
-//              addParam(res, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
-              res.addParam(html.AsString, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', sptString, []);
-              res.addParam(html.AsString, '_profile', 'http://hl7.org/fhir/search', 'Search for resources that conform to a profile', sptReference, []);
-              res.addParam(html.AsString, '_security', 'http://hl7.org/fhir/search', 'Search for resources that have a particular security tag', sptReference, []);
-              res.addParam(html.AsString, '_sort', 'http://hl7.org/fhir/search', 'Specify one or more other parameters to use as the sort order', sptToken, []);
-              res.addParam(html.AsString, '_count', 'http://hl7.org/fhir/search', 'Number of records to return', sptNumber, []);
-              res.addParam(html.AsString, '_summary', 'http://hl7.org/fhir/search', 'Return just a summary for resources that define a summary view', sptNumber, []);
-              res.addParam(html.AsString, '_include', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that matching resources refer to', sptToken, factory.ResourceNames);
-              res.addParam(html.AsString, '_reverseInclude', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that refer to matching resources (this is trialing an extension to the specification)', sptToken, factory.ResourceNames);
-              res.addParam(html.AsString, '_filter', 'http://hl7.org/fhir/search', 'filter parameter as documented in the specification', sptToken, factory.ResourceNames);
+    //              addParam(res, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
+                  res.addParam(html.AsString, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', sptString, []);
+                  res.addParam(html.AsString, '_profile', 'http://hl7.org/fhir/search', 'Search for resources that conform to a profile', sptReference, []);
+                  res.addParam(html.AsString, '_security', 'http://hl7.org/fhir/search', 'Search for resources that have a particular security tag', sptReference, []);
+                  res.addParam(html.AsString, '_sort', 'http://hl7.org/fhir/search', 'Specify one or more other parameters to use as the sort order', sptToken, []);
+                  res.addParam(html.AsString, '_count', 'http://hl7.org/fhir/search', 'Number of records to return', sptNumber, []);
+                  res.addParam(html.AsString, '_summary', 'http://hl7.org/fhir/search', 'Return just a summary for resources that define a summary view', sptNumber, []);
+                  res.addParam(html.AsString, '_include', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that matching resources refer to', sptToken, factory.ResourceNames);
+                  res.addParam(html.AsString, '_reverseInclude', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that refer to matching resources (this is trialing an extension to the specification)', sptToken, factory.ResourceNames);
+                  res.addParam(html.AsString, '_filter', 'http://hl7.org/fhir/search', 'filter parameter as documented in the specification', sptToken, factory.ResourceNames);
 
-//              html.append('</ul>');                                                                                                                               }
+    //              html.append('</ul>');                                                                                                                               }
+                end;
+                html.append('</tr>'#13#10);
+
+
+                  //<th>Search/Updates Params</th>
+                  // html.append('n : offset<br/>');
+                  // html.append('count : # resources per request<br/>');
+                  // html.append(m.Indexes[i]+' : ?<br/>');
+              finally
+                res.free;
+              end;
             end;
-            html.append('</tr>'#13#10);
-
-
-              //<th>Search/Updates Params</th>
-              // html.append('n : offset<br/>');
-              // html.append('count : # resources per request<br/>');
-              // html.append(m.Indexes[i]+' : ?<br/>');
-          finally
-            res.free;
           end;
+        html.append('</table>'#13#10);
+
+        html.append('<p>Operations</p>'#13#10'<ul>'+#13#10);
+        for i := 0 to FOperations.Count - 1 do
+        begin
+          if TFhirOperation(FOperations[i]).formalURL <> '' then
+            oConf.addOperation(TFhirOperation(FOperations[i]).Name, TFhirOperation(FOperations[i]).formalURL)
+          else
+            oConf.addOperation(TFhirOperation(FOperations[i]).Name, AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name);
+          html.append(' <li>'+TFhirOperation(FOperations[i]).name+': see OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name+'</li>'#13#10);
         end;
+        html.append('</ul>'#13#10);
+
+
+        html.append('</div>'#13#10);
+        // operations
+        factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString));
+      finally
+        html.free;
       end;
-      html.append('</table>'#13#10);
 
-      html.append('<p>Operations</p>'#13#10'<ul>'+#13#10);
-      for i := 0 to FOperations.Count - 1 do
-      begin
-        if TFhirOperation(FOperations[i]).formalURL <> '' then
-          oConf.addOperation(TFhirOperation(FOperations[i]).Name, TFhirOperation(FOperations[i]).formalURL)
-        else
-          oConf.addOperation(TFhirOperation(FOperations[i]).Name, AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name);
-        html.append(' <li>'+TFhirOperation(FOperations[i]).name+': see OperationDefinition/fso-'+TFhirOperation(FOperations[i]).name+'</li>'#13#10);
-      end;
-      html.append('</ul>'#13#10);
-
-
-      html.append('</div>'#13#10);
-      // operations
-      factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString));
+      if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
+        processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
     finally
-      html.free;
+      oConf.free;
     end;
-
-    if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
-      processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
-
 
     AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
@@ -1149,6 +1155,11 @@ begin
   raise EFHIRException.create('Not done yet');
 end;
 
+function TFHIRInternalCommunicator.historyInstanceV(atype: string; id : String; allRecords: boolean; params : string): TFHIRResourceV;
+begin
+  raise EFHIRException.create('Not done yet');
+end;
+
 function TFHIRInternalCommunicator.link: TFHIRInternalCommunicator;
 begin
   result := TFHIRInternalCommunicator(inherited link);
@@ -1181,6 +1192,38 @@ begin
       resp := TFHIRResponse.Create(FContext.link);
       try
         FEngine.ExecuteRead(req, resp, true);
+        checkOutcome(resp);
+        id := resp.Id;
+        result := resp.Resource.Link;
+      finally
+        resp.Free;
+      end;
+    finally
+      req.Free;
+    end;
+  finally
+    ctxt.free;
+  end;
+end;
+
+function TFHIRInternalCommunicator.vreadResourceV(atype: string; id, vid: String): TFHIRResourceV;
+var
+  req : TFHIRRequest;
+  resp : TFHIRResponse;
+  ctxt : TOperationContext;
+begin
+  ctxt := TOperationContext.Create(false, nil, 'internal');
+  try
+    req := TFHIRRequest.Create(context, roOperation, nil);
+    try
+      req.CommandType := fcmdRead;
+      req.ResourceName := aType;
+      req.id := id;
+      req.SubId := vid;
+
+      resp := TFHIRResponse.Create(FContext.link);
+      try
+        FEngine.ExecuteVersionRead(req, resp);
         checkOutcome(resp);
         id := resp.Id;
         result := resp.Resource.Link;

@@ -51,9 +51,12 @@ type
   private
     FDefinedElements : TFslMap<TFHIRJavascriptDefinedElement>;
     FWorker : TFHIRWorkerContextWithFactory;
+    FVersion : TFHIRVersion;
   public
     constructor Create(chakraPath : String; worker : TFHIRWorkerContextWithFactory; reg : TRegisterFHIRTypes); overload;
     destructor Destroy; override;
+
+    property version : TFHIRVersion read FVersion;
 
     procedure registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter : TJsGetterFunction; setter : TJsSetterProcedure);
 
@@ -89,8 +92,7 @@ begin
   inherited create(chakraPath);
   FDefinedElements := TFslMap<TFHIRJavascriptDefinedElement>.create;
   FWorker := worker;
-  if @reg <> nil then
-    reg(self);
+  reg(self);
   TFHIRClientJSHelper.registerFHIRClient(self, worker);
   TFHIRServerJsHelper.registerFHIRServerEvent(self);
 end;
@@ -117,7 +119,6 @@ begin
   end;
   classDef.defineProperty(name, def, getter, setter);
 end;
-
 
 function TFHIRJavascript.FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
 var

@@ -1,4 +1,4 @@
-unit RestFulServerTests;
+unit FHIR.Tests.RestfulServer;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,12 +34,15 @@ uses
   DUnitX.TestFramework, IdHttp, IdSSLOpenSSL,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Factory,
-  FHIR.Version.Constants, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Server.Session, FHIR.Version.Utilities,
-  FHIR.Version.Factory,
+  FHIR.Version.Constants, FHIR.Version.Context, FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Version.Types, FHIR.Version.Resources,
+  FHIR.Version.Utilities, FHIR.Version.Validator, FHIR.Version.IndexInfo, FHIR.R4.Javascript,
+  FHIR.Version.Factory, FHIR.Tools.Indexing, FHIR.Javascript.Base,
   FHIR.Client.Base, FHIR.Version.Client, FHIR.Base.Scim,
-  FHIR.Smart.Utilities, SmartOnFhirTestingLogin,
-  FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.UserMgr,
-  FHIR.Server.Web, FHIR.Server.WebSource;
+  FHIR.Smart.Utilities, FHIR.Tests.SmartLogin,
+  FHIR.Tx.Server,
+  FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Server.Indexing, FHIR.Server.Session,
+  FHIR.Server.Web, FHIR.Server.WebSource, FHIR.Server.Factory, FHIR.Server.Subscriptions, FHIR.Server.Javascript, FHIR.Server.JWT,
+  FHIR.Server.ValidatorR4, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4;
 
 Const
   TEST_USER_NAME = 'DunitX-test-user';
@@ -48,7 +51,22 @@ Const
      'eyJhenAiOiI5NDAwMDYzMTAxMzguYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI5NDAwMDYzMTAxMzguYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTE5MDQ2MjAwNTMzNjQzOTIyODYiLCJlbWFpbCI6ImdyYWhhbWVnQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLC'+'JhdF9oYXNoIjoiRGltRTh0Zy1XM1U3dFY1ZkxFS2tuUSIsImlzcyI6ImFjY291bnRzLmdvb2dsZS5jb20iLCJpYXQiOjE1MDExMjg2NTgsImV4cCI6MTUwMTEzMjI1OH0.'+
      'DIQA4SvN66r6re8WUxcM9sa5PnVaX1t0Sh34H7ltJE1ElFrwzRAQ3Hz2u_M_gE7a4NaxmbJDFQnVGI3PvZ1TD_bT5zFcFKcq1NWe6kHNFYYn3slxSzGuj02bCdRsTRKu9LXs0YZM1uhbbimOyyajJHckT3tT2dpXYCdfZvBLVu7LUwchBigxE7Q-QnsXwJh28f9P-C1SrA-hLkVf9F7E7zBXgUtkoEyN4rI7FLI6tP7Yc_i'+'ryICAVu2rR9AZCU-hTICbN-uBC7Fuy-kMr-yuu9zdZsaS4LYJxyoAPZNIengjtNcceDVX9m-Evw-Z1iwSFTtDvVyBlC7xbf4JdxaSRw'; // token from google for Grahame Grieve
 
-type
+Type
+  TTestServerFactory = class (TFHIRServerFactory)
+  private
+    FVersion : TFHIRVersion;
+  public
+    constructor create(version : TFHIRVersion);
+
+    function makeIndexes : TFHIRIndexBuilder; override;
+    function makeValidator: TFHIRValidatorV; override;
+    function makeIndexer : TFHIRIndexManager; override;
+    function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
+
+    procedure registerJs(js : TJsHost); override;
+    procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
+  end;
+
   TTestStorageService = class;
 
   TTestFHIROperationEngine = class (TFHIROperationEngine)
@@ -98,10 +116,12 @@ type
     FLastReadUser : String;
     FLastUserEvidence : TFHIRUseridEvidence;
     FLastSystemEvidence : TFHIRSystemIdEvidence;
+    FContext : TFHIRServerContext;
 
     FOAuths : TFslMap<TTestOAuthLogin>;
 
     procedure reset;
+    procedure SetContext(const Value: TFHIRServerContext);
   protected
     function GetTotalResourceCount: integer; override;
   public
@@ -134,6 +154,7 @@ type
     procedure RunValidation; override;
     function FetchResource(key : integer) : TFHIRResourceV; override;
     procedure fetchClients(list : TFslList<TRegisteredClientInformation>); override;
+    property ServerContext : TFHIRServerContext read FContext write SetContext;
 
   end;
 
@@ -142,6 +163,7 @@ type
   TRestFulServerTests = Class (TObject)
   private
     FIni : TFHIRServerIniFile;
+    FGlobals : TFHIRServerSettings;
     FStore : TTestStorageService;
     FContext : TFHIRServerContext;
     FServer : TFhirWebServer;
@@ -149,9 +171,10 @@ type
     FClientJson : TFhirClient;
     FClientSSL : TFhirClient;
     FClientSSLCert : TFhirClient;
+    FEndpoint : TFhirWebServerEndpoint;
   public
-    [Setup] procedure Setup;
-    [TearDown] procedure TearDown;
+    [SetupFixture] procedure Setup;
+    [TearDownFixture] procedure TearDown;
 
     [TestCase] Procedure TestLowLevelXml;
     [TestCase] Procedure TestLowLevelJson;
@@ -204,13 +227,14 @@ end;
 
 function TTestStorageService.createOperationContext(lang: String): TFHIROperationEngine;
 begin
-  result := TTestFHIROperationEngine.create(nil, lang);
+  result := TTestFHIROperationEngine.create(FContext.Link, lang);
   TTestFHIROperationEngine(result).FIsReadAllowed := true;
   TTestFHIROperationEngine(result).FStorage := self;
 end;
 
 procedure TTestStorageService.Yield(op: TFHIROperationEngine; exception: Exception);
 begin
+  TTestFHIROperationEngine(op).FServerContext.Free;
   op.free;
 end;
 
@@ -267,12 +291,12 @@ end;
 
 procedure TTestStorageService.ProcessObservations;
 begin
-  raise EFslException.Create('Not Implemented');
+  //
 end;
 
 procedure TTestStorageService.ProcessSubscriptions;
 begin
-  raise EFslException.Create('Not Implemented');
+  // do nothing...
 end;
 
 function TTestStorageService.ProfilesAsOptionList: String;
@@ -368,15 +392,19 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
-function TTestStorageService.storeClient(client: TRegisteredClientInformation;
-  sessionKey: integer): String;
+procedure TTestStorageService.SetContext(const Value: TFHIRServerContext);
+begin
+  FContext := Value;
+end;
+
+function TTestStorageService.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;
 begin
 
 end;
 
 procedure TTestStorageService.Sweep;
 begin
-  raise EFslException.Create('Not Implemented');
+  //
 end;
 
 { TTestingFHIRUserProvider }
@@ -538,24 +566,30 @@ end;
 procedure TRestFulServerTests.Setup;
 begin
   FIni := TFHIRServerIniFile.Create('C:\work\fhirserver\tests\server-tests.ini');
-  FStore := TTestStorageService.create(TFHIRFactoryX.create);
-  FContext := TFHIRServerContext.Create(FStore.Link, nil);
-//  FContext.ownername := 'Test-Server';
-//  FServer := TFhirWebServer.Create(FIni.Link, 'Test-Server', nil, FContext.Link);
-//      ctxt.FHIR.Tx.Server := FterminologyServer.Link;
-//  FContext.UserProvider := TTestingFHIRUserProvider.Create;
-//  FContext.userProvider.OnProcessFile := FServer.ReturnProcessedFile;
-//  FServer.AuthServer.UserProvider := FContext.userProvider.Link;
-//  FServer.OWinSecuritySecure := true;
-//  FServer.ServeMissingCertificate := true;
-//  FServer.ServeUnknownCertificate := true;
-//  FServer.Start(true);
-//  FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\web');
+  FGlobals := TFHIRServerSettings.Create;
+  FGLobals.load(FIni);
 
-//  FClientXml := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
-//  FClientJson := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(false), true);
-//  FClientSSL := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(true), false);
-//  FClientSSLCert := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(true), true);
+  FServer := TFhirWebServer.create(FGlobals.Link, 'Test-Server', TTestServerFactory.create(COMPILED_FHIR_VERSION));
+  FServer.loadConfiguration(FIni);
+  FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\web');
+
+  FStore := TTestStorageService.create(TFHIRFactoryX.create);
+  FContext := TFHIRServerContext.Create(FStore.Link, TTestServerFactory.create(FStore.Factory.version));
+  FContext.Globals := FGlobals.Link;
+  FStore.ServerContext := FContext;
+  FContext.TerminologyServer := TTerminologyServer.Create(nil, FContext.factory.Link, nil);
+  FContext.Validate := true; // move to database config FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
+  FContext.UserProvider := TTestingFHIRUserProvider.Create;
+  FEndpoint := FServer.registerEndPoint('test', '/test', FContext.Link, FIni);
+  FServer.OWinSecuritySecure := true;
+  FServer.ServeMissingCertificate := true;
+  FServer.ServeUnknownCertificate := true;
+  FServer.Start(true);
+
+  FClientXml := TFhirClients.makeIndy(FContext.ValidatorContext.Link as TFHIRWorkerContext, FEndpoint.ClientAddress(false), false);
+  FClientJson := TFhirClients.makeIndy(FContext.ValidatorContext.Link as TFHIRWorkerContext, FEndpoint.ClientAddress(false), true);
+  FClientSSL := TFhirClients.makeIndy(FContext.ValidatorContext.Link as TFHIRWorkerContext, FEndpoint.ClientAddress(true), false);
+  FClientSSLCert := TFhirClients.makeIndy(FContext.ValidatorContext.Link as TFHIRWorkerContext, FEndpoint.ClientAddress(true), true);
 end;
 
 procedure TRestFulServerTests.TearDown;
@@ -568,6 +602,7 @@ begin
   FServer.Free;
   FStore.Free;
   FContext.Free;
+  FGlobals.Free;
   FIni.Free;
 end;
 
@@ -627,7 +662,7 @@ begin
     http.Request.Accept := 'application/fhir+xml';
     resp := TBytesStream.create;
     try
-//      http.Get(FServer.ClientAddress(false)+'/metadata', resp);
+      http.Get(FEndpoint.ClientAddress(false)+'/metadata', resp);
       resp.position := 0;
       Assert.isTrue(http.ResponseCode = 200, 'response code <> 200');
       Assert.isTrue(http.Response.ContentType = 'application/fhir+xml', 'response content type <> application/fhir+xml');;
@@ -1018,9 +1053,9 @@ begin
 
   tester := TSmartOnFhirTestingLogin.create;
   try
-//    tester.server.fhirEndPoint := FServer.AuthServer.EndPoint;
-//    tester.server.authorizeEndpoint := 'https://'+FIni.readString(voMaybeVersioned, 'web', 'host', '')+':'+FIni.readString(voMaybeVersioned, 'web', 'https', '')+FIni.readString(voMaybeVersioned, 'web', 'auth-path', '')+'/auth';
-//    tester.server.tokenEndPoint := 'https://'+FIni.readString(voMaybeVersioned, 'web', 'host', '')+':'+FIni.readString(voMaybeVersioned, 'web', 'https', '')+FIni.readString(voMaybeVersioned, 'web', 'auth-path', '')+'/token';
+    tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
+    tester.server.authorizeEndpoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.AuthServer.AuthPath;
+    tester.server.tokenEndPoint := 'https://'+FServer.host+':'+inttostr(FServer.SSLPort)+FEndpoint.AuthServer.TokenPath;
     tester.scopes := 'openid profile user/*.*';
     tester.server.clientid := 'web';
     tester.server.redirectport := 961;
@@ -1115,7 +1150,7 @@ begin
       http.Request.Accept := 'application/fhir+xml';
       resp := TBytesStream.create;
       try
-//        http.Get(FServer.ClientAddress(true)+'/metadata', resp);
+        http.Get(FEndpoint.ClientAddress(true)+'/metadata', resp);
         resp.position := 0;
         Assert.isTrue(http.ResponseCode = 200, 'response code <> 200');
         Assert.isTrue(http.Response.ContentType = 'application/fhir+xml', 'response content type <> application/fhir+xml');;
@@ -1149,7 +1184,7 @@ begin
     http.Request.Accept := 'application/fhir+json';
     resp := TBytesStream.create;
     try
-//      http.Get(FServer.ClientAddress(false)+'/metadata', resp);
+      http.Get(FEndpoint.ClientAddress(false)+'/metadata', resp);
       resp.position := 0;
       Assert.isTrue(http.ResponseCode = 200, 'response code <> 200');
       Assert.isTrue(http.Response.ContentType = 'application/fhir+json', 'response content type <> application/fhir+json');;
@@ -1167,6 +1202,45 @@ function TTestOAuthLogin.Link: TTestOAuthLogin;
 begin
   result := TTestOAuthLogin(inherited Link);
 end;
+
+{ TTestServerFactory }
+
+constructor TTestServerFactory.create(version : TFHIRVersion);
+begin
+  inherited Create;
+  FVersion := version;
+end;
+
+function TTestServerFactory.makeValidator: TFHIRValidatorV;
+begin
+  result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
+end;
+
+function TTestServerFactory.makeIndexer : TFHIRIndexManager;
+begin
+  result := TFhirIndexManager4.Create;
+end;
+
+function TTestServerFactory.makeIndexes: TFHIRIndexBuilder;
+begin
+  result := TFHIRIndexBuilderR4.create;
+end;
+
+function TTestServerFactory.makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager;
+begin
+  result := TSubscriptionManagerR4.Create(ServerContext);
+end;
+
+procedure TTestServerFactory.registerJs(js : TJsHost);
+begin
+  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
+end;
+
+procedure TTestServerFactory.setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer});
+begin
+  TFHIRServerWorkerContextR4(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
+end;
+
 
 initialization
   TDUnitX.RegisterTestFixture(TRestFulServerTests);

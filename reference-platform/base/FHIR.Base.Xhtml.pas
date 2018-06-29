@@ -1188,7 +1188,7 @@ begin
       for i := 0 to node.ChildNodes.count - 1 do
         docompose(node.ChildNodes[i], xml);
   else
-    raise EFHIRException.create('not supported');
+    raise EFHIRException.create('not supported: '+CODES_TFHIRHtmlNodeType[node.NodeType]);
   end;
 end;
 

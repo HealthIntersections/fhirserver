@@ -7822,7 +7822,7 @@ begin
     ((precision < dtpHour) or (hour = other.hour)) and
     ((precision < dtpMin) or (minute = other.minute)) and
     ((precision < dtpSec) or (second = other.second)) and
-    ((precision < dtpNanoSeconds) or (fraction = other.fraction)) and (FractionPrecision = other.FractionPrecision) and
+    ((precision < dtpNanoSeconds) or ((fraction = other.fraction) and (FractionPrecision = other.FractionPrecision))) and
     (TimezoneType = other.TimezoneType) and (TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins);
 end;
 

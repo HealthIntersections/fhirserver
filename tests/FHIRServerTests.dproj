@@ -105,6 +105,7 @@
         <DCC_ExeOutput>C:\work\fhirserver\tests\Win64\Debug\</DCC_ExeOutput>
         <DCC_UnitAlias>FHIR.Version.AuthMap=FHIR.R4.AuthMap;FHIR.Version.Constants=FHIR.R4.Constants;FHIR.Version.Context=FHIR.R4.Context;FHIR.Version.IndexInfo=FHIR.R4.IndexInfo;FHIR.Version.Javascript=FHIR.R4.Javascript;FHIR.Version.ElementModel=FHIR.R4.ElementModel;FHIR.Version.Narrative=FHIR.R4.Narrative;FHIR.Version.Operations=FHIR.R4.Operations;FHIR.Version.Json=FHIR.R4.Json;FHIR.Version.Turtle=FHIR.R4.Turtle;FHIR.Version.Xml=FHIR.R4.Xml;FHIR.Version.PathNode=FHIR.R4.PathNode;FHIR.Version.Profiles=FHIR.R4.Profiles;FHIR.Version.Resources=FHIR.R4.Resources;FHIR.Version.MapUtilities=FHIR.R4.MapUtilities;FHIR.Version.Tags=FHIR.R4.Tags;FHIRTestWorker=FHIRTestWorker4;FHIR.Version.Types=FHIR.R4.Types;FHIR.Version.Utilities=FHIR.R4.Utilities;FHIR.Version.Validator=FHIR.R4.Validator;FHIR.Version.OpBase=FHIR.R4.OpBase;FHIR.Version.PathEngine=FHIR.R4.PathEngine;FHIR.Version.Narrative2=FHIR.R4.Narrative2;FHIR.Version.Questionnaire=FHIR.R4.Questionnaire;FHIRBaseX=FHIR.R4.Base;FHIR.Version.Common=FHIR.R4.Common;FHIR.Version.Factory=FHIR.R4.Factory;$(DCC_UnitAlias)</DCC_UnitAlias>
         <DCC_CONSTRUCTING_ABSTRACT>error</DCC_CONSTRUCTING_ABSTRACT>
+        <DCC_DebugDCUs>false</DCC_DebugDCUs>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -222,14 +223,14 @@
         <DCCReference Include="..\Server\FHIR.Server.SessionMgr.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.Storage.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.GraphQL.pas"/>
-        <DCCReference Include="..\reference-platform\support\Tests\JsonTests.pas"/>
-        <DCCReference Include="..\reference-platform\support\Tests\XmlTests.pas"/>
-        <DCCReference Include="GraphQLTests.pas"/>
-        <DCCReference Include="SnomedTests.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\FHIR.Tests.Json.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\FHIR.Tests.Xml.pas"/>
+        <DCCReference Include="FHIR.Tests.GraphQL.pas"/>
+        <DCCReference Include="FHIR.Tests.Snomed.pas"/>
         <DCCReference Include="..\reference-platform\support\tests\FHIR.Tests.Decimal.pas"/>
-        <DCCReference Include="IETFLangTests.pas"/>
-        <DCCReference Include="..\reference-platform\support\Tests\JWTTests.pas"/>
-        <DCCReference Include="..\reference-platform\support\tests\DifferenceEngineTests.pas"/>
+        <DCCReference Include="FHIR.Tests.IETFLang.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\FHIR.Tests.JWT.pas"/>
+        <DCCReference Include="..\reference-platform\support\tests\FHIR.Tests.DifferenceEngine.pas"/>
         <DCCReference Include="..\reference-platform\r4\tests\FHIR.R4.Tests.Client.pas"/>
         <DCCReference Include="..\reference-platform\r4\tests\FHIR.R4.Tests.Parser.pas"/>
         <DCCReference Include="..\reference-platform\r4\tests\FHIR.R4.Tests.PathEngine.pas"/>
@@ -238,24 +239,24 @@
         <DCCReference Include="..\reference-platform\r4\tests\FHIR.R4.Tests.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="..\reference-platform\support\Tests\OSXTests.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\FHIR.Tests.OSX.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.CodeGen.pas"/>
         <DCCReference Include="..\Server\FHIR.CdsHooks.Service.pas"/>
         <DCCReference Include="..\Server\FHIR.CdsHooks.Server.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
-        <DCCReference Include="..\reference-platform\support\Tests\TurtleTests.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\FHIR.Tests.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Xml.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Json.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Turtle.pas"/>
         <DCCReference Include="..\Libraries\cql\FHIR.Cql.Model.pas"/>
         <DCCReference Include="..\Libraries\cql\FHIR.Cql.Parser.pas"/>
         <DCCReference Include="..\Libraries\cql\FHIR.Cql.Tests.pas"/>
-        <DCCReference Include="RestFulServerTests.pas"/>
-        <DCCReference Include="SmartOnFhirTestingLogin.pas"/>
+        <DCCReference Include="FHIR.Tests.RestFulServer.pas"/>
+        <DCCReference Include="FHIR.Tests.SmartLogin.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.GraphDefinition.pas"/>
-        <DCCReference Include="GraphDefinitionTests.pas"/>
+        <DCCReference Include="FHIR.Tests.GraphDefinition.pas"/>
         <DCCReference Include="..\Libraries\Ucum\FHIR.Ucum.Tests.pas"/>
         <DCCReference Include="..\Libraries\security\FHIR.Misc.ApplicationVerifier.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.Jwt.pas"/>
@@ -286,7 +287,7 @@
         <DCCReference Include="..\Libraries\js\FHIR.Client.Javascript.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.EventJs.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.Javascript.pas"/>
-        <DCCReference Include="IdUriParserTests.pas"/>
+        <DCCReference Include="FHIR.Tests.IdUriParser.pas"/>
         <DCCReference Include="..\Libraries\cql\FHIR.Cql.Engine.pas"/>
         <DCCReference Include="..\Server\FHIR.Tx.CountryCode.pas"/>
         <DCCReference Include="..\Server\FHIR.Tx.UsState.pas"/>
@@ -360,6 +361,11 @@
         <DCCReference Include="..\Server\FHIR.Server.Factory.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.GraphDefinition.pas"/>
         <DCCReference Include="..\reference-platform\base\FHIR.Base.GraphDefinition.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.ValidatorR4.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.IndexingR4.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.SubscriptionsR4.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.OperationsR4.pas"/>
+        <DCCReference Include="FHIR.Tests.FullServer.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

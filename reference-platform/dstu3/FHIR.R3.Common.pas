@@ -784,7 +784,7 @@ uses
 
 procedure TFhirOperationOutcome3.addIssue(issue: TFhirOperationOutcomeIssueW);
 begin
-  (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue));
+  (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue).link);
 end;
 
 function TFhirOperationOutcome3.code: TFhirIssueType;
@@ -1055,7 +1055,7 @@ end;
 
 function TFHIRCapabilityStatement3.addResource(code: String): TFhirCapabilityStatementRestResourceW;
 begin
-  result := TFhirCapabilityStatementRestResource3.create(statement.restList[0].resourceList.append);
+  result := TFhirCapabilityStatementRestResource3.create(statement.restList[0].resourceList.append.link);
   result.code := code;
 end;
 
@@ -1064,6 +1064,9 @@ var
   c: TFHIRCoding;
   ext: TFhirExtension;
 begin
+  if statement.restList.isEmpty then
+    statement.restList.append.mode := RestfulCapabilityModeServer;
+
   if statement.restList[0].security = nil then
     statement.restList[0].security := TFhirCapabilityStatementRestSecurity.Create;
   statement.restList[0].security.cors := true;
@@ -2123,12 +2126,12 @@ end;
 
 function TFhirValueSetComposeInclude3.addConcept: TFhirValueSetComposeIncludeConceptW;
 begin
-  result := TFhirValueSetComposeIncludeConcept3.create((Element as TFhirValueSetComposeInclude).conceptList.Append);
+  result := TFhirValueSetComposeIncludeConcept3.create((Element as TFhirValueSetComposeInclude).conceptList.Append.link);
 end;
 
 function TFhirValueSetComposeInclude3.addFilter: TFhirValueSetComposeIncludeFilterW;
 begin
-  result := TFhirValueSetComposeIncludeFilter3.create((Element as TFhirValueSetComposeInclude).filterList.Append);
+  result := TFhirValueSetComposeIncludeFilter3.create((Element as TFhirValueSetComposeInclude).filterList.Append.link);
 end;
 
 function TFhirValueSetComposeInclude3.concepts: TFslList<TFhirValueSetComposeIncludeConceptW>;
@@ -3930,7 +3933,7 @@ end;
 
 function TFhirCodeableConcept3.addCoding: TFHIRCodingW;
 begin
-  result := TFHIRCoding3.create((Element as TFhirCodeableConcept).codingList.Append);
+  result := TFHIRCoding3.create((Element as TFhirCodeableConcept).codingList.Append.link);
 end;
 
 function TFhirCodeableConcept3.codingCount: integer;

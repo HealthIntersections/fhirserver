@@ -58,6 +58,7 @@ type
     FLastStatus : integer;
     FHeaders : THTTPHeaders;
     FBuffer : TFslBuffer;
+    FVId: String;
     procedure SetResult(const Value: TFhirResourceV);
     procedure SetResource(const Value: TFhirResourceV);
     procedure SetBuffer(const Value: TFslBuffer);
@@ -76,6 +77,7 @@ type
     property paramString : string read FParamString write FParamString;
     property url : String read FUrl write FUrl;
     property id : String read FId write FId;
+    property vid : String read FVId write FVId;
     property name : String read FName write FName;
     property resource : TFhirResourceV read FResource write SetResource;
     property buffer : TFslBuffer read FBuffer write SetBuffer;
@@ -112,6 +114,7 @@ type
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; override;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; override;
+    function vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV; override;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; override;
     procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String); override;
     function searchV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; overload; override;
@@ -120,6 +123,7 @@ type
     function operationV(atype : TFHIRResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; override;
+    function historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
 
     // special case that gives direct access to the communicator...
     function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
@@ -190,6 +194,7 @@ begin
         fcmdConformanceStmt: FPackage.result := FClient.conformanceV(FPackage.summary);
         fcmdTransaction : FPackage.result := FCLient.transactionV(FPackage.resource as TFHIRResourceV);
         fcmdRead : FPackage.result := FClient.readResourceV(FPackage.ResourceType, FPackage.id);
+        fcmdVersionRead : FPackage.result := FClient.vreadResourceV(FPackage.ResourceType, FPackage.id, FPackage.vid);
         fcmdCreate :
           begin
             FPackage.result := FClient.createResourceV(FPackage.resource, id);
@@ -352,6 +357,11 @@ begin
   raise EFHIRException.create('Not Done Yet');
 end;
 
+function TFhirThreadedCommunicator.historyInstanceV(atype: TFhirResourceTypeV; id : String; allRecords: boolean; params : string): TFHIRResourceV;
+begin
+  raise EFHIRException.create('Not Done Yet');
+end;
+
 function TFhirThreadedCommunicator.operationV(atype: TFhirResourceTypeV; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
 var
   pack : TFhirThreadedClientPackage;
@@ -404,6 +414,27 @@ begin
     pack.command := fcmdRead;
     pack.resourceType := aType;
     pack.id := id;
+    pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link;
+    FHeaders := FInternal.LastHeaders;
+    FClient.LastUrl := pack.lastUrl;
+    FClient.LastStatus := pack.lastStatus;
+  finally
+    pack.free;
+  end;
+end;
+
+function TFhirThreadedCommunicator.vreadResourceV(atype: TFhirResourceTypeV; id, vid: String): TFHIRResourceV;
+var
+  pack : TFhirThreadedClientPackage;
+begin
+  pack := TFhirThreadedClientPackage.create;
+  try
+    pack.command := fcmdRead;
+    pack.resourceType := aType;
+    pack.id := id;
+    pack.vid := vid;
     pack.Thread := TFhirThreadedClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link;

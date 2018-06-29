@@ -307,13 +307,17 @@ begin
   FServerFactory := serverFactory;
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FResConfig := TFslMap<TFHIRResourceConfig>.create;
-  for a in Factory.ResourceNames  do
+  for a in Factory.ResourceNames do
   begin
     cfg := TFHIRResourceConfig.Create;
     cfg.name := a;
     cfg.Supported := false;
     FResConfig.Add(cfg.name, cfg);
   end;
+  cfg := TFHIRResourceConfig.Create;
+  cfg.name := '';
+  cfg.Supported := false;
+  FResConfig.Add(cfg.name, cfg);
   FValidator := serverFactory.makeValidator;
   FValidatorContext := FValidator.Context.link;
   FIndexes := TFHIRIndexInformation.create(FValidatorContext.factory.link, ServerFactory.link);
@@ -348,11 +352,9 @@ begin
   UserProvider.Free;
   FServerFactory.Free;
 
-  FValidator.free;
-//  if FValidatorContext.FslObjectReferenceCount > 0 then
-//    raise EFHIRException.create('There are still '+inttostr(FValidatorContext.FslObjectReferenceCount)+' uses of the WorkerContext live');
-
   FValidatorContext.Free;
+  FValidator.free;
+
   FResConfig.free;
   FLock.Free;
   inherited;

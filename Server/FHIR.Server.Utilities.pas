@@ -341,6 +341,7 @@ begin
   finally
     ts.free;
   end;
+  map.defaultValue := TFHIRServerIniComplex.create('');
 end;
 
 procedure TFHIRServerIniFile.SetRunNumber(const Value: integer);
@@ -383,12 +384,14 @@ begin
   FEmailThreadStatus := 'Not started';
 
   FOwnerName := ini.admin['ownername'];
+
   FSMTPPort := ini.destinations['email']['port'];
   FSMTPPassword := ini.destinations['email']['password'];
   FSMTPHost := ini.destinations['email']['host'];
   FSMTPSender := ini.destinations['email']['sender'];
   FSMTPUsername := ini.destinations['email']['username'];
   FSMTPUseTLS := ini.destinations['email']['secure'] = 'true';
+
   FDirectPort := ini.destinations['direct']['port'];
   FDirectPassword := ini.destinations['direct']['password'];
   FDirectHost := ini.destinations['direct']['host'];
@@ -396,6 +399,7 @@ begin
   FDirectUsername := ini.destinations['direct']['username'];
   FDirectPopHost  := ini.destinations['direct']['pop-host'];
   FDirectPopPort  := ini.destinations['direct']['pop-port'];
+
   FSMSFrom := ini.destinations['sms']['from'];
   FSMSToken := ini.destinations['sms']['token'];
   FSMSAccount := ini.destinations['sms']['account'];
@@ -499,7 +503,8 @@ end;
 
 function TFHIRServerIniComplex.getValue(name: String): String;
 begin
-  result := FDetails[name];
+  if not FDetails.TryGetValue(name, result) then
+    result := '';
 end;
 
 end.

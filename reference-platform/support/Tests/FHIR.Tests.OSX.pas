@@ -1,4 +1,4 @@
-unit OSXTests;
+unit FHIR.Tests.OSX;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

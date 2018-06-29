@@ -431,7 +431,7 @@ end;
 destructor TFHIRValidator.Destroy;
 begin
   FPathEngine.Free;
-  FContext.Free;
+  // FContext don't free- just a copy of what parent owns
   inherited;
 end;
 

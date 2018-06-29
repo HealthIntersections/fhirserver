@@ -1,4 +1,4 @@
-unit JsonTests;
+unit FHIR.Tests.Json;
 
 {$DEFINE DIFF}
 
@@ -71,7 +71,7 @@ function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : bool
 implementation
 
 uses
-  IdGlobalProtocols, FHIR.Support.Stream, FHIR.Support.Shell, XmlTests;
+  IdGlobalProtocols, FHIR.Support.Stream, FHIR.Support.Shell, FHIR.Tests.Xml;
 
 { TJsonTests }
 

@@ -126,6 +126,7 @@ Type
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; virtual; abstract;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; virtual; abstract;
+    function vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV; virtual; abstract;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload; virtual; abstract;
     procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String); virtual; abstract;
     function searchV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; overload; virtual; abstract;
@@ -134,6 +135,7 @@ Type
     function operationV(atype : TFHIRResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual; abstract;
     function operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; virtual; abstract;
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : string) : TFHIRResourceV; virtual; abstract;
+    function historyInstanceV(atype : TFHIRResourceTypeV; id : string; allRecords : boolean; params : string) : TFHIRResourceV; virtual; abstract;
 
     // special case that gives direct access to the communicator...
     function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual; abstract;
@@ -200,6 +202,7 @@ Type
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV;
+    function vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV;
     function updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV; overload;
     procedure deleteResourceV(atype : TFHIRResourceTypeV; id : String);
     function searchV(allRecords : boolean; params : TStringList) : TFHIRResourceV; overload;
@@ -211,6 +214,7 @@ Type
     function operationV(atype : TFHIRResourceTypeV; opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload;
     function operationV(atype : TFHIRResourceTypeV; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload;
     function historyTypeV(atype : TFHIRResourceTypeV; allRecords : boolean; params : TStringList) : TFHIRResourceV;
+    function historyinstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : TStringList) : TFHIRResourceV;
 
     // special case that gives direct access to the communicator...
     function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
@@ -385,6 +389,11 @@ begin
   result := FCommunicator.readResourceV(aType, id);
 end;
 
+function TFhirClientV.vreadResourceV(atype : TFhirResourceTypeV; id, vid : String) : TFHIRResourceV;
+begin
+  result := FCommunicator.vreadResourceV(aType, id, vid);
+end;
+
 function TFhirClientV.updateResourceV(resource : TFHIRResourceV) : TFHIRResourceV;
 begin
   result := FCommunicator.updateResourceV(resource);
@@ -440,6 +449,11 @@ begin
   result := FCommunicator.historyTypeV(aType, allRecords, encodeParams(params));
 end;
 
+function TFhirClientV.historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : TStringList) : TFHIRResourceV;
+begin
+  result := FCommunicator.historyinstanceV(aType, id, allRecords, encodeParams(params));
+end;
+
 function TFhirClientV.customGet(path : String; headers : THTTPHeaders) : TFslBuffer;
 begin
   result := FCommunicator.customGet(path, headers);
@@ -468,11 +482,12 @@ var
   s : String;
 begin
   result := '';
-  for i := 0 to params.Count - 1 do
-  begin
-    s := params.Names[i];
-    result := result + s+'='+EncodeMIME(params.ValueFromIndex[i])+'&';
-  end;
+  if params <> nil then
+    for i := 0 to params.Count - 1 do
+    begin
+      s := params.Names[i];
+      result := result + s+'='+EncodeMIME(params.ValueFromIndex[i])+'&';
+    end;
 end;
 
 { TClientAccessToken }

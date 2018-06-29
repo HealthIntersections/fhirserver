@@ -186,7 +186,15 @@ uses
   FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas',
   FHIR.R3.AuthMap in '..\reference-platform\dstu3\FHIR.R3.AuthMap.pas',
   FHIR.R2.AuthMap in '..\reference-platform\dstu2\FHIR.R2.AuthMap.pas',
-  FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas';
+  FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas',
+  VTAccessibilityFactory in '..\..\Components\treeview\Source\VTAccessibilityFactory.pas',
+  VirtualTrees.StyleHooks in '..\..\Components\treeview\Source\VirtualTrees.StyleHooks.pas',
+  VirtualTrees.Classes in '..\..\Components\treeview\Source\VirtualTrees.Classes.pas',
+  VirtualTrees.WorkerThread in '..\..\Components\treeview\Source\VirtualTrees.WorkerThread.pas',
+  VirtualTrees.ClipBoard in '..\..\Components\treeview\Source\VirtualTrees.ClipBoard.pas',
+  VirtualTrees.Utils in '..\..\Components\treeview\Source\VirtualTrees.Utils.pas',
+  VirtualTrees.Export in '..\..\Components\treeview\Source\VirtualTrees.Export.pas',
+  VTHeaderPopup in '..\..\Components\treeview\Source\VTHeaderPopup.pas';
 
 {$R *.res}
 

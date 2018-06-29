@@ -799,7 +799,7 @@ uses
 
 procedure TFhirOperationOutcome4.addIssue(issue: TFhirOperationOutcomeIssueW);
 begin
-  (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue));
+  (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue).link);
 end;
 
 function TFhirOperationOutcome4.code: TFhirIssueType;
@@ -1071,7 +1071,7 @@ end;
 
 function TFHIRCapabilityStatement4.addResource(code: String): TFhirCapabilityStatementRestResourceW;
 begin
-  result := TFhirCapabilityStatementRestResource4.create(statement.restList[0].resourceList.append);
+  result := TFhirCapabilityStatementRestResource4.create(statement.restList[0].resourceList.append.link);
   result.code := code;
 end;
 
@@ -1080,6 +1080,9 @@ var
   c: TFHIRCoding;
   ext: TFhirExtension;
 begin
+  if statement.restList.isEmpty then
+    statement.restList.append.mode := RestfulCapabilityModeServer;
+
   if statement.restList[0].security = nil then
     statement.restList[0].security := TFhirCapabilityStatementRestSecurity.Create;
   statement.restList[0].security.cors := true;
@@ -3941,7 +3944,7 @@ end;
 
 function TFhirCodeableConcept4.addCoding: TFHIRCodingW;
 begin
-  result := TFHIRCoding4.create((Element as TFhirCodeableConcept).codingList.Append);
+  result := TFHIRCoding4.create((Element as TFhirCodeableConcept).codingList.Append.link);
 end;
 
 function TFhirCodeableConcept4.codingCount: integer;

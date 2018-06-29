@@ -5114,10 +5114,15 @@ end;
 function TFHIRPathLexer4.opCodes: TArray<String>;
 var
   i : integer;
+  s : string;
 begin
   setLength(result, length(CODES_TFHIRPathOperation));
-  for i := 0 to length(CODES_TFHIRPathOperation) do
-    result[i] := CODES_TFHIRPathOperation[TFHIRPathOperation(i)];
+  for i := 0 to length(CODES_TFHIRPathOperation) - 1 do
+  begin
+    s := CODES_TFHIRPathOperation[TFHIRPathOperation(i)];
+    result[i] := s;
+    s := '';
+  end;
 end;
 
 function TFHIRPathLexer4.processConstant : TFHIRObject;

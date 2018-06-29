@@ -213,6 +213,7 @@ valueOf()	Returns the primitive value of an array
     function doLog(js: TJavascript; context: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
   protected
     procedure freeObject(obj : TObject); virtual;
+    function checkSetupDefinitions(definitions : String) : string; virtual;
   public
     constructor Create(chakraPath : String); overload; virtual;
     destructor Destroy; override;
@@ -259,7 +260,7 @@ valueOf()	Returns the primitive value of an array
       script - the contents of the script
       scriptName - an arbitrary name for the sript that is bing executed (when debugging)
     }
-    function execute(script : String; scriptName: AnsiString) : JsValueRef; overload;
+    function execute(script: String; scriptName: AnsiString) : JsValueRef; overload;
 
     {
       Execute a named function in the script. Note that global functions in the script are executed before the named function
@@ -270,7 +271,7 @@ valueOf()	Returns the primitive value of an array
       params - params to pass to the function (must match the named parameters on the function).
          Prepare these using wrap() functions or makeArray
     }
-    function execute(script : String; scriptName, funcName: AnsiString; params : TJsValues) : JsValueRef; overload;
+    function execute(script: String; scriptName, funcName: AnsiString; params : TJsValues) : JsValueRef; overload;
 
     {
       Convert whatever javascript variable is in val to a string representation
@@ -905,7 +906,6 @@ begin
   end;
 end;
 
-
 function TJavascript.wrap(s: String): JsValueRef;
 begin
   if s = '' then
@@ -985,6 +985,12 @@ begin
   // Project script result back to C++.
   jsCheck(JsStringToPointer(str, p, l));
   result := p;
+end;
+
+function TJavascript.checkSetupDefinitions(definitions : String): string;
+begin
+  // nothing
+  result := '';
 end;
 
 function TJavascript.asBoolean(val: JsValueRef): boolean;
