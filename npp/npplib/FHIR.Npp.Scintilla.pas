@@ -40,12 +40,12 @@ uses Windows;
 
 type
   TScintillaMessageFnc = function(ptr : Pointer; Msg, wParam, lParam : LongInt) : LongInt; cdecl;
-  uptr_t = Longword;
-  sptr_t = Longint;
+  uptr_t = ULONG_PTR; // Longword;
+  sptr_t = LONG_PTR; // Longint;
   TNotifyHeader = record
 	  hwndFrom : Pointer;
-	  idFrom : Cardinal;
-	  code : Cardinal;
+	  idFrom : uptr_t;
+	  code : uptr_t;
   end;
   PSCNotification = ^TSCNotification;
   TSCNotification = record

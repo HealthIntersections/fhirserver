@@ -173,8 +173,8 @@ Type
     FClientSSLCert : TFhirClient;
     FEndpoint : TFhirWebServerEndpoint;
   public
-    [SetupFixture] procedure Setup;
-    [TearDownFixture] procedure TearDown;
+    [Setup] procedure Setup;
+    [TearDown] procedure TearDown;
 
     [TestCase] Procedure TestLowLevelXml;
     [TestCase] Procedure TestLowLevelJson;
