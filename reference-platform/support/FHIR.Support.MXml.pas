@@ -797,10 +797,12 @@ var
   s : String;
   c : TMXmlElement;
 begin
+  if pretty then
+    b.Append(StringPadLeft('', ' ', indent*2));
   case FNodeType of
     ntDocument :
       for c in Children do
-        c.writeToXml(b, pretty, indent + 1);
+        c.writeToXml(b, pretty, indent);
     ntElement:
       begin
       if (Name = '') then
@@ -832,17 +834,31 @@ begin
       if HasChildren then
       begin
         b.append('>');
+        if pretty then
+          b.Append(#13#10);
         for c in Children do
           c.writeToXml(b, pretty, indent + 1);
+        if pretty then
+        begin
+          b.Append(StringPadLeft('', ' ', indent*2));
+        end;
         b.Append('</');
         b.Append(Name);
         b.append('>');
+        if pretty then
+          b.Append(#13#10);
       end
       else
         b.append('/>');
       end;
     ntText:
-      b.Append(FormaTXmlForTextArea(Text));
+      if pretty then
+        b.Append(FormaTXmlForTextArea(Text))
+      else
+      begin
+        b.Append(FormaTXmlForTextArea(Text.trim));
+        b.Append(#13#10);
+      end;
     ntComment:
       begin
       b.Append('<!-- ');

@@ -736,6 +736,8 @@ type
     function GetCurrentBytes: TBytes;
     procedure SetCurrentBytes(value : TBytes);
     function GetCurrentName: String;
+    function GetSelectedBytes: TBytes;
+    procedure SetSelectedBytes(Value: TBytes);
   protected
     PluginName: nppString;
     function GetPluginsConfigDir: string;
@@ -771,6 +773,7 @@ type
 
     // df
     property CurrentBytes : TBytes read GetCurrentBytes write SetCurrentBytes;
+    property SelectedBytes : TBytes read GetSelectedBytes write SetSelectedBytes;
     property currentFileName : String read GetCurrentName;
     Procedure NewFile(content : TBytes);
     procedure SaveFileAs(filename : String);
@@ -909,6 +912,17 @@ begin
   Result := s;
 end;
 
+function TNppPlugin.GetSelectedBytes: TBytes;
+var
+  l : integer;
+begin
+  setLength(result, 0);
+  l := SendMessage(self.NppData.ScintillaMainHandle, SCI_GETSELTEXT, 0, 0)+1;
+  SetLength(result, l);
+  SendMessage(self.NppData.ScintillaMainHandle, SCI_GETSELTEXT, l, LPARAM(Pointer(result)));
+  SetLength(result, l-2);
+end;
+
 procedure TNppPlugin.BeNotified(sn: PSCNotification);
 begin
   if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_TB_MODIFICATION) then
@@ -998,6 +1012,13 @@ procedure TNppPlugin.SetInfo(NppData: TNppData);
 begin
   self.NppData := NppData;
   Application.Handle := NppData.NppHandle;
+end;
+
+procedure TNppPlugin.SetSelectedBytes(Value: TBytes);
+begin
+  SetLength(value, length(Value)+1);
+  value[length(Value)-1] := 0;
+  SendMessage(self.NppData.ScintillaMainHandle, SCI_REPLACESEL, length(value)-1, LPARAM(@value[0]));
 end;
 
 // utils

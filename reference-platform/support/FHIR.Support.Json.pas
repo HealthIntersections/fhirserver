@@ -35,6 +35,7 @@ uses
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections;
 
 Function JSONString(const value : String) : String;
+Function UnJSONString(const value : String) : String;
 
 Type
   TJsonObject = class;
@@ -668,6 +669,47 @@ Begin
     else
       result := result + value[i];
     End;
+End;
+
+Function UnJSONString(const value : String) : String;
+var
+  i : integer;
+  b : TStringBuilder;
+  hex : String;
+Begin
+  b := TStringBuilder.Create;
+  try
+    i := 1;
+    while i <= length(value) do
+    begin
+      if (i < length(value)) and (value[i] = '\') Then
+      begin
+        inc(i);
+        case value[i] of
+          '"':  b.append('"');
+          '''': b.append('''');
+          '\':  b.append('\');
+          '/':  b.append('/');
+          'n':  b.append(#10);
+          'r':  b.append(#13);
+          't':  b.append(#09);
+          'u':  begin
+                hex := value.Substring(i, 4);
+                b.append(chr(StrToInt('$'+hex)));
+                inc(i, 4);
+                end;
+        else
+          raise EJsonException.create('illegal escape: \'+value[i]);
+        End;
+      End
+      Else
+        b.append(value[i]);
+      inc(i);
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
 End;
 
 procedure TJSONWriter.Value(const name : String; const avalue: String);

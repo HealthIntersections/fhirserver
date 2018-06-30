@@ -68,7 +68,7 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX,
   FHIR.Npp.Base, FHIR.Npp.Scintilla,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Web.WinInet, FHIR.Support.MXml,
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Threads, FHIR.Support.Stream, FHIR.Web.WinInet, FHIR.Support.MXml, FHIR.Support.Json,
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Validator, FHIR.Base.Narrative, FHIR.Base.Factory, FHIR.Base.PathEngine, FHIR.Base.Common, FHIR.Base.Lang,
   FHIR.R4.Constants, FHIR.R4.Types, FHIR.R4.Resources, FHIR.R4.Common,
   FHIR.Npp.Context,
@@ -258,6 +258,20 @@ type
     procedure funcDifference;
     procedure funcGenerateCode;
 
+    procedure FuncXmlPrettyPrint;
+    procedure FuncXmlCollapse;
+    procedure FuncXmlEscape;
+    procedure FuncXmlUnescape;
+    procedure FuncJsonPrettyPrint;
+    procedure FuncJsonCollapse;
+    procedure FuncJsonEscape;
+    procedure FuncJsonUnescape;
+    procedure FuncJsonHtmlLink;
+    procedure FuncJsonHtmlCode;
+    procedure FuncJsonHtmlParapraph;
+    procedure FuncJsonHtmlEscape;
+    procedure FuncJsonHtmlUnescape;
+
     procedure reset;
     procedure SetSelection(start, stop : integer);
 
@@ -305,6 +319,19 @@ procedure _FuncNarrative; cdecl;
 procedure _FuncDebug; cdecl;
 procedure _FuncDifference; cdecl;
 procedure _FuncGenerateCode; cdecl;
+procedure _FuncPrettyPrintXml; cdecl;
+procedure _FuncCollapseXml; cdecl;
+procedure _FuncEscapeXml; cdecl;
+procedure _FuncUnescapeXml; cdecl;
+procedure _FuncPrettyPrintJson; cdecl;
+procedure _FuncCollapseJson; cdecl;
+procedure _FuncEscapeJson; cdecl;
+procedure _FuncUnescapeJson; cdecl;
+procedure _FuncJsonHtmlLink; cdecl;
+procedure _FuncJsonHtmlCode; cdecl;
+procedure _FuncJsonHtmlParapraph; cdecl;
+procedure _FuncJsonHtmlEscape; cdecl;
+procedure _FuncJsonHtmlUnescape; cdecl;
 
 var
   FNpp: TFHIRPlugin;
@@ -379,7 +406,22 @@ begin
   self.AddFuncItem('Debug Install', _FuncDebug);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('&About the FHIR Plugin', _FuncAbout);
-
+  self.AddFuncItem('-', Nil);
+  self.AddFuncItem('&Pretty Print XML', _FuncPrettyPrintXml);
+  self.AddFuncItem('&Collapse XML', _FuncCollapseXml);
+  self.AddFuncItem('&Escape XML', _FuncEscapeXml);
+  self.AddFuncItem('&Unescape XML', _FuncUnescapeXml);
+  self.AddFuncItem('-', Nil);
+  self.AddFuncItem('&Pretty Print Json', _FuncPrettyPrintJson);
+  self.AddFuncItem('&Collapse Json', _FuncCollapseJson);
+  self.AddFuncItem('&Escape Json', _FuncEscapeJson);
+  self.AddFuncItem('&Unescape Json', _FuncUnescapeJson);
+  self.AddFuncItem('-', Nil);
+  self.AddFuncItem('HTML &Link', _FuncJsonHtmlLink);
+  self.AddFuncItem('HTML &Code', _FuncJsonHtmlCode);
+  self.AddFuncItem('HTML &Pargraph', _FuncJsonHtmlParapraph);
+  self.AddFuncItem('HTML &Escape', _FuncJsonHtmlEscape);
+  self.AddFuncItem('HTML &Unescape', _FuncJsonHtmlUnescape);
   configureSSL;
 end;
 
@@ -519,6 +561,72 @@ procedure _FuncDifference; cdecl;
 begin
   FNpp.FuncDifference;
 end;
+
+procedure _FuncPrettyPrintXml; cdecl;
+begin
+  FNpp.FuncXmlPrettyPrint;
+end;
+
+procedure _FuncCollapseXml; cdecl;
+begin
+  FNpp.FuncXmlCollapse;
+end;
+
+procedure _FuncEscapeXml; cdecl;
+begin
+  FNpp.FuncXmlEscape;
+end;
+
+procedure _FuncUnescapeXml; cdecl;
+begin
+  FNpp.FuncXmlUnescape;
+end;
+
+procedure _FuncPrettyPrintJson; cdecl;
+begin
+  FNpp.FuncJsonPrettyPrint;
+end;
+
+procedure _FuncCollapseJson; cdecl;
+begin
+  FNpp.FuncJsonCollapse;
+end;
+
+procedure _FuncEscapeJson; cdecl;
+begin
+  FNpp.FuncJsonEscape;
+end;
+
+procedure _FuncUnescapeJson; cdecl;
+begin
+  FNpp.FuncJsonUnescape;
+end;
+
+procedure _FuncJsonHtmlLink;
+begin
+  FNpp.FuncJsonHtmlLink;
+end;
+
+procedure _FuncJsonHtmlCode;
+begin
+  FNpp.FuncJsonHtmlCode;
+end;
+
+procedure _FuncJsonHtmlParapraph;
+begin
+  FNpp.FuncJsonHtmlParapraph;
+end;
+
+procedure _FuncJsonHtmlEscape;
+begin
+  FNpp.FuncJsonHtmlEscape;
+end;
+
+procedure _FuncJsonHtmlUnescape;
+begin
+  FNpp.FuncJsonHtmlUnescape;
+end;
+
 
 
 procedure _FuncDebug; cdecl;
@@ -1355,6 +1463,135 @@ begin
   else
     ShowMessage('This does not appear to be valid FHIR content');
     *)
+end;
+
+procedure TFHIRPlugin.FuncXmlCollapse;
+var
+  x : TMXmlDocument;
+begin
+  x := TMXmlParser.parse(SelectedBytes, [xpDropWhitespace]);
+  try
+    SelectedBytes := TEncoding.UTF8.GetBytes(x.ToXml(false, false));
+  finally
+    x.Free;
+  end;
+end;
+
+procedure TFHIRPlugin.FuncXmlEscape;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := FormatTextToXML(s, xmlText);
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFHIRPlugin.FuncXmlPrettyPrint;
+var
+  x : TMXmlDocument;
+begin
+  x := TMXmlParser.parse(SelectedBytes, [xpDropWhitespace]);
+  try
+    SelectedBytes := TEncoding.UTF8.GetBytes(x.ToXml(true, true));
+  finally
+    x.Free;
+  end;
+end;
+
+procedure TFHIRPlugin.FuncXmlUnescape;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := DecodeXML(s);
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFHIRPlugin.FuncJsonCollapse;
+var
+  j : TJsonObject;
+begin
+  j := TJSONParser.Parse(SelectedBytes);
+  try
+    SelectedBytes := TEncoding.UTF8.GetBytes(TJsonWriter.writeObjectStr(j, false));
+  finally
+    j.Free;
+  end;
+end;
+
+procedure TFHIRPlugin.FuncJsonEscape;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := JsonString(s);
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFHIRPlugin.FuncJsonHtmlCode;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := '<code>'+s+'</code>';
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFHIRPlugin.FuncJsonHtmlEscape;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := FormatTextToHTML(s);
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFHIRPlugin.FuncJsonHtmlLink;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := '<a href="">'+s+'</a>';
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFHIRPlugin.FuncJsonHtmlParapraph;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := '<p>'+s+'</p>';
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFHIRPlugin.FuncJsonHtmlUnescape;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := DecodeXML(s);
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
+end;
+
+procedure TFHIRPlugin.FuncJsonPrettyPrint;
+var
+  j : TJsonObject;
+begin
+  j := TJSONParser.Parse(SelectedBytes);
+  try
+    SelectedBytes := TEncoding.UTF8.GetBytes(TJsonWriter.writeObjectStr(j, true));
+  finally
+    j.Free;
+  end;
+end;
+
+procedure TFHIRPlugin.FuncJsonUnescape;
+var
+  s : String;
+begin
+  s := TEncoding.UTF8.getString(SelectedBytes);
+  s := UnJsonString(s);
+  SelectedBytes := TEncoding.UTF8.GetBytes(s);
 end;
 
 
