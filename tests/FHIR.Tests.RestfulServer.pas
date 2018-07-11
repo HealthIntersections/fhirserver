@@ -63,7 +63,6 @@ Type
     function makeIndexer : TFHIRIndexManager; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
 
-    procedure registerJs(js : TJsHost); override;
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
 
@@ -172,6 +171,7 @@ Type
     FClientSSL : TFhirClient;
     FClientSSLCert : TFhirClient;
     FEndpoint : TFhirWebServerEndpoint;
+    procedure registerJs(snder : TObject; js : TJsHost);
   public
     [Setup] procedure Setup;
     [TearDown] procedure TearDown;
@@ -563,13 +563,19 @@ begin
 end;
 { TRestFulServerTests }
 
+procedure TRestFulServerTests.registerJs(snder: TObject; js: TJsHost);
+begin
+  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
+end;
+
 procedure TRestFulServerTests.Setup;
 begin
   FIni := TFHIRServerIniFile.Create('C:\work\fhirserver\tests\server-tests.ini');
   FGlobals := TFHIRServerSettings.Create;
   FGLobals.load(FIni);
 
-  FServer := TFhirWebServer.create(FGlobals.Link, 'Test-Server', TTestServerFactory.create(COMPILED_FHIR_VERSION));
+  FServer := TFhirWebServer.create(FGlobals.Link, 'Test-Server');
+  FServer.OnRegisterJs := registerJs;
   FServer.loadConfiguration(FIni);
   FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\web');
 
@@ -1229,11 +1235,6 @@ end;
 function TTestServerFactory.makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager;
 begin
   result := TSubscriptionManagerR4.Create(ServerContext);
-end;
-
-procedure TTestServerFactory.registerJs(js : TJsHost);
-begin
-  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
 end;
 
 procedure TTestServerFactory.setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer});

@@ -231,15 +231,12 @@
         <DCCReference Include="..\..\Server\FHIR.Tx.ACIR.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.AreaCode.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.Lang.pas"/>
-        <DCCReference Include="..\..\Server\FHIR.Tx.Validator.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.Manager.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.Uri.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.ClosureMgr.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Adaptations.pas"/>
-        <DCCReference Include="..\..\Server\FHIR.Tx.Expander.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.IndexInfo.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIR.R4.Validator.pas"/>
-        <DCCReference Include="..\..\Server\FHIR.Server.Validator.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Subscriptions.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Web.Socket.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Utilities.pas"/>
@@ -249,7 +246,6 @@
         <DCCReference Include="..\..\Server\FHIR.Server.TagMgr.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Jwt.pas"/>
         <DCCReference Include="..\..\Libraries\security\FHIR.Misc.ApplicationVerifier.pas"/>
-        <DCCReference Include="..\..\Server\FHIR.Server.AppCache.pas"/>
         <DCCReference Include="..\..\Libraries\security\FHIR.Misc.Twilio.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Context.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Web.HtmlGen.pas"/>
@@ -278,7 +274,6 @@
         <DCCReference Include="..\..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
         <DCCReference Include="..\..\Libraries\security\FHIR.Utilities.SCrypt.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.ICD10.pas"/>
-        <DCCReference Include="..\..\Server\FHIR.Server.PostHandlers.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIR.Support.Signatures.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Javascript.pas"/>
         <DCCReference Include="..\..\Libraries\js\FHIR.Support.Javascript.pas"/>
@@ -319,6 +314,12 @@
         <DCCReference Include="..\..\reference-platform\support\fhir.support.fpc.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.MimeTypes.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Tx.Iso4217.pas"/>
+        <DCCReference Include="..\..\reference-platform\tools\FHIR.Tools.ValueSets.pas"/>
+        <DCCReference Include="..\..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas"/>
+        <DCCReference Include="..\..\Server\FHIR.Server.Tags.pas"/>
+        <DCCReference Include="..\..\Server\FHIR.Server.BundleBuilder.pas"/>
+        <DCCReference Include="..\..\Server\FHIR.Server.Factory.pas"/>
+        <DCCReference Include="..\..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -388,13 +389,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\sql\lang.txt" Configuration="Debug" Class="File">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>lang.txt</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win64\Debug\VocabTxServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>VocabTxServer.exe</RemoteName>
@@ -405,6 +399,13 @@
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
                         <RemoteName>VocabTxServer.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\sql\lang.txt" Configuration="Debug" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>lang.txt</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

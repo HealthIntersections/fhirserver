@@ -1023,16 +1023,23 @@ begin
   begin
     defn := element.prop.Structure;
     if (defn = nil) then
+    begin
       defn := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
+      ctxt.owned.Add(defn);
+    end;
     ok := rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.addToLiteralPath(resourceName), defn <> nil, 'No definition found for resource type "' + resourceName + '"');
   end;
   if (profiles <> nil) then
     for p in profiles.FCanonical do
     begin
       sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, p));
-      if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+p+'" could not be resolved')) then
-        if (rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
-          resource.profiles.addProfile(sd);
+      try
+        if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+p+'" could not be resolved')) then
+          if (rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
+            resource.profiles.addProfile(sd.link);
+      finally
+        sd.Free;
+      end;
     end;
 
   if (defn.kind = StructureDefinitionKindLogical) then
@@ -1120,9 +1127,13 @@ begin
         if (rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, p, ref <> '', 'StructureDefinition reference invalid')) then
         begin
           sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, ref));
-          if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+ref+'" could not be resolved')) then
-            if (rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
-              resource.profiles.addProfile(sd);
+          try
+            if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+ref+'" could not be resolved')) then
+              if (rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
+                resource.profiles.addProfile(sd.link);
+          finally
+            sd.Free;
+          end;
           inc(i);
         end;
       end;
@@ -1495,10 +1506,14 @@ begin
       if (actualType = '') then
         exit; // there'll be an error elsewhere in this case, and we're going to stop.
       dt := TFHIRStructureDefinition(self.context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + actualType));
-      if (dt = nil) then
-        raise EDefinitionException.create('Unable to resolve actual type ' + actualType);
-      childDefinitions.free;
-      childDefinitions := getChildMap(dt, dt.snapshot.ElementList[0]);
+      try
+        if (dt = nil) then
+          raise EDefinitionException.create('Unable to resolve actual type ' + actualType);
+        childDefinitions.free;
+        childDefinitions := getChildMap(dt, dt.snapshot.ElementList[0]);
+      finally
+        dt.Free;
+      end;
     end;
 
     // 1. List the children, and remember their exact path (convenience)
@@ -2729,12 +2744,14 @@ begin
       result := nil;
     end
     else
-      result := TFHIRValueSet(FContext.fetchResource(frtValueSet, s))
+    begin
+      result := TFHIRValueSet(FContext.fetchResource(frtValueSet, s));
+      if result <> nil then
+        ctxt.owned.add(result);
+    end;
   end
   else
     result := nil;
-  if result <> nil then
-    ctxt.owned.add(result);
 end;
 
 function readAsCodeableConcept(element: TFHIRMMElement): TFHIRCodeableConcept;
@@ -3466,7 +3483,7 @@ begin
   result := context.Factory.wrapOperationOutcome(context.factory.makeResource('OperationOutcome'));
   try
     for o in ctxt.Issues do
-      result.addIssue(o.Link);
+      result.addIssue(o, false);
     gen := TFHIRNarrativeGenerator.create(Context.Link);
     try
       gen.description := ctxt.OperationDescription;

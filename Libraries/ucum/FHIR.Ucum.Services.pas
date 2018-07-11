@@ -44,7 +44,7 @@ Type
   TUCUMContext = class (TCodeSystemProviderContext)
   private
     FConcept: TFhirValueSetComposeIncludeConceptW;
-    procedure SetConcept(const Value: TFhirValueSetComposeIncludeConceptW);
+    procedure SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
   public
     Constructor Create(concept : TFhirValueSetComposeIncludeConceptW); overload;
     Constructor Create(code : String); overload;
@@ -76,7 +76,7 @@ Type
     Function ParsePrefix(oElem : TMXmlElement):TUcumPrefix;
     Function ParseBaseUnit(oElem : TMXmlElement):TUcumBaseUnit;
     Function ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
-    Function GetPropertyIndex(const sName : String):Integer;
+    Function GetPropertyIndex(sName : String):Integer;
 
   public
     Constructor Create; Override;
@@ -208,7 +208,7 @@ Type
     Function multiply(o1, o2 : TUcumPair) : TUcumPair;
 
     // load from ucum-essence.xml
-    Procedure Import(Const sFilename : String);
+    Procedure Import(sFilename : String);
 
     Property Loaded : Boolean read FLoaded write FLoaded;
 
@@ -248,7 +248,7 @@ Type
   Private
     FDefinition: TUcumServices;
     function GetDefinition(iIndex: Integer): TUcumServices;
-    procedure SetDefinition(const Value: TUcumServices);
+    procedure SetDefinition(Value: TUcumServices);
   Protected
     Function ItemClass : TFslObjectClass; Override;
   Public
@@ -283,8 +283,8 @@ type
   protected
     function getCode : String; override;
     function getDisplay : String; override;
-    procedure SetCode(const Value: String); override;
-    procedure SetDisplay(const Value: String); override;
+    procedure SetCode(Value: String); override;
+    procedure SetDisplay(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
   end;
 
@@ -305,12 +305,12 @@ begin
   result := '';
 end;
 
-procedure TFhirValueSetComposeIncludeConceptLocal.SetCode(const Value: String);
+procedure TFhirValueSetComposeIncludeConceptLocal.SetCode(Value: String);
 begin
   FCode := value;
 end;
 
-procedure TFhirValueSetComposeIncludeConceptLocal.SetDisplay(const Value: String);
+procedure TFhirValueSetComposeIncludeConceptLocal.SetDisplay(Value: String);
 begin
 end;
 
@@ -770,7 +770,7 @@ begin
   result := TUcumServices;
 end;
 
-procedure TUcumServiceList.SetDefinition(const Value: TUcumServices);
+procedure TUcumServiceList.SetDefinition(Value: TUcumServices);
 begin
   FDefinition.Free;
   FDefinition := Value;
@@ -831,7 +831,7 @@ begin
           result := cc.display;
 end;
 
-procedure TUcumServices.Import(const sFilename: String);
+procedure TUcumServices.Import(sFilename: String);
 var
   oXml : TMXmlDocument;
   oElem : TMXmlElement;
@@ -1076,7 +1076,7 @@ Begin
 End;
 
 
-function TUcumServices.GetPropertyIndex(const sName: String): Integer;
+function TUcumServices.GetPropertyIndex(sName: String): Integer;
 begin
   result :=  FModel.Properties.IndexByName(sName);
   if result = -1 then
@@ -1116,7 +1116,7 @@ begin
   inherited;
 end;
 
-procedure TUCUMContext.SetConcept(const Value: TFhirValueSetComposeIncludeConceptW);
+procedure TUCUMContext.SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
 begin
   FConcept.Free;
   FConcept := Value;

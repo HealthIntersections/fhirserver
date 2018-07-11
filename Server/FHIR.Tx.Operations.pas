@@ -1149,12 +1149,16 @@ begin
       begin
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := result.addCoding;
-        coding.system := params.str('system');
-        if params.has('version') then
-          coding.version := params.str('version');
-        coding.code := params.str('code');
-        if params.has('display') then
-          coding.display := params.str('display');
+        try
+          coding.system := params.str('system');
+          if params.has('version') then
+            coding.version := params.str('version');
+          coding.code := params.str('code');
+          if params.has('display') then
+            coding.display := params.str('display');
+        finally
+          coding.free;
+        end;
       end
       else
         raise ETerminologyError.create('Unable to find code to validate (params. coding | codeableConcept | code');

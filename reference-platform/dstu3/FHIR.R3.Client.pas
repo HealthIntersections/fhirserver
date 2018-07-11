@@ -33,7 +33,8 @@ interface
 
 uses
   SysUtils, Classes,
-  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Client.Base, FHIR.Base.Common,
+  FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Parser, FHIR.Base.Common,
+  FHIR.Client.Base, FHIR.Client.HTTP,
   FHIR.R3.Parser, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Context, FHIR.R3.Common;
 
 Type
@@ -65,6 +66,14 @@ Type
     function operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource; overload;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle;
     function historyInstance(atype : TFhirResourceType; id : String; allRecords : boolean; params : TStringList) : TFHIRBundle;
+
+    class function makeHTTP(worker : TFHIRWorkerContext; url : String; json : boolean) : TFhirClient3; overload;
+    class function makeHTTP(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : cardinal) : TFhirClient3; overload;
+    class function makeHTTP(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : cardinal; proxy : String) : TFhirClient3; overload;
+    class function makeHTTP(worker : TFHIRWorkerContext; url : String; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClient3; overload;
+    class function makeHTTP(worker : TFHIRWorkerContext; url : String; mimeType : String) : TFhirClient3; overload;
+    class function makeIndy(worker : TFHIRWorkerContext; url : String; json : boolean) : TFhirClient3; overload;
+    class function makeIndy(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : cardinal) : TFhirClient3; overload;
   end;
 
 
@@ -196,6 +205,64 @@ end;
 function TFhirClient3.link: TFhirClient3;
 begin
   result := TFhirClient3(inherited link);
+end;
+
+class function TFhirClient3.makeHTTP(worker: TFHIRWorkerContext; url: String; json: boolean; timeout : cardinal): TFhirClient3;
+begin
+  result := makeHTTP(worker, url, json, timeout, '');
+end;
+
+class function TFhirClient3.makeHTTP(worker: TFHIRWorkerContext; url: String; json: boolean; timeout : cardinal; proxy : String): TFhirClient3;
+begin
+  if json then
+    result := makeHTTP(worker, url, ffJson, timeout, proxy)
+  else
+    result := makeHTTP(worker, url, ffXml, timeout, proxy);
+end;
+
+class function TFhirClient3.makeHTTP(worker: TFHIRWorkerContext; url: String; json: boolean): TFhirClient3;
+begin
+  result := makeHTTP(worker, url, json, 0);
+end;
+
+class function TFhirClient3.makeHTTP(worker: TFHIRWorkerContext; url, mimeType: String): TFhirClient3;
+begin
+  result := makeHTTP(worker, url, mimeType.contains('json'));
+end;
+
+class function TFhirClient3.makeHTTP(worker: TFHIRWorkerContext; url: String;
+  fmt: TFHIRFormat; timeout: cardinal; proxy: String): TFhirClient3;
+var
+  http : TFHIRHTTPCommunicator;
+begin
+  http := TFHIRHTTPCommunicator.Create(url);
+  try
+    http.timeout := timeout;
+    http.proxy := proxy;
+    if fmt = ffUnspecified then
+      fmt := ffJson;
+
+    result := TFhirClient3.create(worker, 'en', http.link);
+    try
+      result.format := fmt;
+      result.link;
+    finally
+      result.Free;
+    end;
+  finally
+    http.free;
+  end;
+end;
+
+class function TFhirClient3.makeIndy(worker: TFHIRWorkerContext; url: String; json: boolean; timeout: cardinal): TFhirClient3;
+begin
+  result := makeHTTP(worker, url, json, timeout);
+  TFHIRHTTPCommunicator(result.Communicator).UseIndy := true;
+end;
+
+class function TFhirClient3.makeIndy(worker: TFHIRWorkerContext; url: String; json: boolean): TFhirClient3;
+begin
+  result := makeIndy(worker, url, json, 0);
 end;
 
 end.

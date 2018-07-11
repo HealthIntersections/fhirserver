@@ -13772,114 +13772,6 @@ Const
   setUriUnreserved : Set Of AnsiChar = ['a'..'z', 'A'..'Z', '0'..'9', '-', '.', '_', '~'];
 
 
-Function EncodePercent(Const aBuffer; iSize : Integer) : AnsiString; overload;
-Var
-  iSource, iDest : Integer;
-  pSource : PAnsiChar;
-Begin
-  SetLength(Result, iSize);
-
-  pSource := PAnsiChar(@aBuffer);
-  iSource := 0;
-  iDest := 1;
-
-  While iSource < iSize Do
-  Begin
-    If CharInSet(pSource^, setUriUnreserved) Then
-    Begin
-      Result[iDest] := pSource^;
-      Inc(iDest);
-    End
-    Else
-    Begin
-      Result[iDest] := '%';
-      Inc(iDest);
-
-      System.Insert(EncodeHexadecimal(Byte(pSource^)), Result, iDest);
-      Inc(iDest, 2);
-    End;
-
-    Inc(pSource);
-    Inc(iSource);
-  End;
-End;
-
-
-Function DecodePercent(Const sValue : AnsiString; Const aBuffer; iSize : Integer) : Integer; Overload;
-Var
-  iSourceSize : Integer;
-  pDest : PAnsiChar;
-  iSource, iDest : Integer;
-  cHi, cLo : AnsiChar;
-Begin
-  iSourceSize := Length(sValue);
-  pDest := PAnsiChar(@aBuffer);
-  iSource := 1;
-  iDest := 0;
-
-  While (iSource <= iSourceSize) And (iDest < iSize) Do
-  Begin
-    If sValue[iSource] = '%' Then
-    Begin
-      cHi := #0;
-      cLo := #0;
-
-      Inc(iSource);
-
-      If iSource <= iSourceSize Then
-      Begin
-        cHi := sValue[iSource];
-        Inc(iSource);
-      End;
-
-      If iSource <= iSourceSize Then
-      Begin
-        cLo := sValue[iSource];
-        Inc(iSource);
-      End;
-
-      If (cHi <> #0) And (cLo <> #0) Then
-      Begin
-        pDest^ := AnsiChar(DecodeHexadecimal(cHi, cLo));
-        Inc(pDest);
-        Inc(iDest);
-      End;
-    End
-    Else
-    Begin
-      pDest^ := sValue[iSource];
-      Inc(iSource);
-      Inc(pDest);
-      Inc(iDest);
-    End;
-  End;
-
-  Result := iDest;
-End;
-
-Function EncodePercent(Const sValue : String) : String; overload;
-Begin
-  If Length(sValue) > 0 Then
-    Result := string(EncodePercent(sValue[1], Length(sValue)))
-  Else
-    Result := '';
-End;
-
-
-Function DecodePercent(Const sValue : String) : String; overload;
-Var
-  iSize : Integer;
-Begin
-  Result := '';
-
-  If Length(sValue) > 0 Then
-  Begin
-    SetLength(Result, Length(sValue));
-    iSize := DecodePercent(AnsiString(sValue), Result[1], Length(Result));
-    SetLength(Result, iSize);
-  End;
-End;
-
 Function TFslCodeMask.Link: TFslCodeMask;
 Begin
   Result := TFslCodeMask(Inherited Link);
@@ -14152,6 +14044,64 @@ Begin
   Else
     Result := [charLower(cSymbol), charUpper(cSymbol)];
 End;
+
+
+Function EncodePercent(Const sValue : String) : String;
+var
+  b : TStringBuilder;
+  c : char;
+  i : integer;
+begin
+  b := TStringBuilder.create;
+  try
+    for c in sValue do
+    begin
+      if CharInSet(c, ['a'..'z', 'A'..'Z', '0'..'9']) then
+        b.append(c)
+      else
+      begin
+        i := ord(c);
+        if i <= 255 then
+        begin
+          b.Append('%');
+          b.append(inttostr(i));
+        end
+        else
+          raise Exception.Create('Not handled - non-ansi characters in URLs');
+      end;
+    end;
+    result := b.toString;
+  finally
+    b.free;
+  end;
+end;
+
+Function DecodePercent(Const sValue : String) : String;
+var
+  i : integer;
+  b : TStringBuilder;
+  c : char;
+begin
+  b := TStringBuilder.create;
+  try
+    i := 1;
+    while i <= length(sValue) do
+    begin
+      c := sValue[i];
+      if (c = '%') and (i <= length(sValue)-2) then
+      begin
+        b.append(chr(StrToInt(copy(sValue, i+1, 2))));
+        inc(i, 2);
+      end
+      else
+        b.append(c);
+      inc(i);
+    end;
+    result := b.toString;
+  finally
+    b.free;
+  end;
+end;
 
 
 procedure init;

@@ -106,6 +106,8 @@ Type
     procedure checkChanges(event: TTriggerType; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResourceV);
   end;
 
+  TRegisterJavascriptEvent = procedure (sender : TObject; js : TJsHost) of Object;
+
 threadvar
   GJsHost : TJsHost;
 
@@ -122,6 +124,9 @@ var
   s, b, a, c : TJsValue;
   engine : TFHIRJavascript;
 begin
+  if FRegistry = nil then
+    exit;
+
   scripts := TFslList<TEventScript>.create;
   try
     if before <> nil then

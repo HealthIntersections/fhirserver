@@ -89,10 +89,10 @@ type
     function getcode : String; override;
     function getversion : String; override;
     function getdisplay : String; override;
-    procedure SetCode(const Value: String); override;
-    procedure SetDisplay(const Value: String); override;
-    procedure SetSystem(const Value: String); override;
-    procedure SetVersion(const Value: String); override;
+    procedure SetCode(Value: String); override;
+    procedure SetDisplay(Value: String); override;
+    procedure SetSystem(Value: String); override;
+    procedure SetVersion(Value: String); override;
   end;
 
   TFhirCodeableConcept3 = class (TFhirCodeableConceptW)
@@ -111,7 +111,7 @@ type
     function hasText : boolean; override;
     function text : String; override;
     function code : TFhirIssueType; override;
-    procedure addIssue(issue : TFhirOperationOutcomeIssueW); override;
+    procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); override;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; override;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; override;
     function severity : TIssueSeverity; override;
@@ -132,26 +132,26 @@ type
     function getSearchMode: TFHIRBundleEntrySearchMode; override;
     function getSearchMpiMatch: String; override;
     function getSearchScore: String; override;
-    procedure SetRequestMethod(const Value: String); override;
-    procedure SetRequestUrl(const Value: String); override;
-    procedure SetResource(const Value: TFHIRResourceV); override;
-    procedure SetResponseDate(const Value: TDateTimeEx); override;
-    procedure SetResponseETag(const Value: string); override;
-    procedure SetResponseLocation(const Value: string); override;
-    procedure SetResponseStatus(const Value: String); override;
-    procedure SetSearchMode(const Value: TFHIRBundleEntrySearchMode); override;
-    procedure SetSearchMpiMatch(const Value: String); override;
-    procedure SetSearchScore(const Value: String); override;
+    procedure SetRequestMethod(Value: String); override;
+    procedure SetRequestUrl(Value: String); override;
+    procedure SetResource(Value: TFHIRResourceV); override;
+    procedure SetResponseDate(Value: TDateTimeEx); override;
+    procedure SetResponseETag(Value: string); override;
+    procedure SetResponseLocation(Value: string); override;
+    procedure SetResponseStatus(Value: String); override;
+    procedure SetSearchMode(Value: TFHIRBundleEntrySearchMode); override;
+    procedure SetSearchMpiMatch(Value: String); override;
+    procedure SetSearchScore(Value: String); override;
     function GetUrl: String; override;
-    procedure SetUrl(const Value: String);  override;
+    procedure SetUrl(Value: String);  override;
     function GetrequestIfNoneExist: String; override;
-    procedure SetrequestIfNoneExist(const Value: String); override;
+    procedure SetrequestIfNoneExist(Value: String); override;
     function GetrequestIfMatch: String; override;
-    procedure SetrequestIfMatch(const Value: String); override;
+    procedure SetrequestIfMatch(Value: String); override;
     function GetrequestIfNoneMatch: String; override;
-    procedure SetrequestIfNoneMatch(const Value: String); override;
+    procedure SetrequestIfNoneMatch(Value: String); override;
     function GetrequestIfModifiedSince: TDateTimeEx; override;
-    procedure SetrequestIfModifiedSince(const Value: TDateTimeEx); override;
+    procedure SetrequestIfModifiedSince(Value: TDateTimeEx); override;
   public
     function GetLink(rel: String): String; override;
     procedure SetLink(rel: String; const Value: String); override;
@@ -180,14 +180,14 @@ type
     function GetLink(rel: String): String; override;
     procedure SetLink(rel: String; const Value: String); override;
     function GetTotal: integer; override;
-    procedure SetTotal(const Value: integer); override;
+    procedure SetTotal(Value: integer); override;
     function title : String; override;
     function gettype : TBundleType; override;
-    procedure settype(const value: TBundleType); override;
+    procedure settype(value: TBundleType); override;
     function GetLastUpdated : TDateTimeEx; override;
     procedure SetLastUpdated(Value: TDateTimeEx); override;
     function GetTimestamp: TDateTimeEx; override;
-    procedure SetTimestamp(const Value: TDateTimeEx); override;
+    procedure SetTimestamp(Value: TDateTimeEx); override;
   end;
 
   TFHIROperationOutcomeIssue3 = class (TFHIROperationOutcomeIssueW)
@@ -197,7 +197,7 @@ type
     function display : String; override;
     function severity : TIssueSeverity; override;
     function GetDiagnostics: String; override;
-    procedure SetDiagnostics(const Value: String); override;
+    procedure SetDiagnostics(Value: String); override;
   end;
 
   TFHIRSearchParamDefinition3 = class (TFHIRSearchParamDefinitionW)
@@ -212,12 +212,12 @@ type
   TFhirCapabilityStatementRestResource3 = class (TFhirCapabilityStatementRestResourceW)
   public
     function GetCode: String; override;
-    procedure SetCode(const Value: String); override;
+    procedure SetCode(Value: String); override;
     function GetProfile: String; override;
-    procedure SetProfile(const Value: String); override;
+    procedure SetProfile(Value: String); override;
     procedure addInteraction(code : String);  override;
     function GetReadHistory: boolean; override;
-    procedure SetReadHistory(const Value: boolean); override;
+    procedure SetReadHistory(Value: boolean); override;
     procedure addParam(html, n, url, d : String; t : TFHIRSearchParamType; tgts : Array of String); override;
   end;
 
@@ -241,7 +241,7 @@ type
     procedure addOperation(name, url : String); override;
 
     function GetUrl: String; override;
-    procedure SetUrl(const Value: String); override;
+    procedure SetUrl(Value: String); override;
     function getName : String; override;
     procedure setName(value : String); override;
     function getVersion : String; override;
@@ -249,11 +249,11 @@ type
     function getDescription : String; override;
     procedure setDescription(value : String); override;
     function GetStatus: TPublicationStatus; override;
-    procedure SetStatus(const Value: TPublicationStatus); override;
+    procedure SetStatus(Value: TPublicationStatus); override;
     function GetDate: TDateTimeEx; override;
-    procedure SetDate(const Value: TDateTimeEx); override;
+    procedure SetDate(Value: TDateTimeEx); override;
     function GetFhirVersion: string; override;
-    procedure SetFhirVersion(const Value: string); override;
+    procedure SetFhirVersion(Value: string); override;
 
     function supportsType(name : String; interaction : TFHIRInteraction) : boolean; override;
     procedure listTypes(interactions : TFHIRInteractions; names : TStrings); override;
@@ -292,7 +292,7 @@ type
     function parameter : TFhirParametersParameter;
   protected
     function GetValue: TFHIRObject; override;
-    procedure SetValue(const Value: TFHIRObject); override;
+    procedure SetValue(Value: TFHIRObject); override;
     procedure populateList; override;
     function GetParameterParameter(name: String): TFhirParametersParameterW; override;
     function GetResourceParameter(name: String): TFHIRResourceV; override;
@@ -301,7 +301,7 @@ type
     function name : String; override;
     function hasValue : boolean; override;
     function GetResource: TFHIRResourceV; override;
-    procedure SetResource(const Value: TFHIRResourceV); override;
+    procedure SetResource(Value: TFHIRResourceV); override;
     function hasResource : boolean; override;
     procedure addParamBool(name : String; value : boolean); override;
     procedure addParamStr(name : String; value : string); override;
@@ -333,9 +333,9 @@ type
     function getSystem : String; override;
     function getCode : String; override;
     function getDisplay : String; override;
-    procedure SetCode(const Value: String); override;
-    procedure SetDisplay(const Value: String); override;
-    procedure SetSystem(const Value: String); override;
+    procedure SetCode(Value: String); override;
+    procedure SetDisplay(Value: String); override;
+    procedure SetSystem(Value: String); override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
   end;
 
@@ -357,9 +357,9 @@ type
     function getprop : String; override;
     function getop : TFilterOperator; override;
     function getvalue : String; override;
-    procedure SetOp(const Value: TFilterOperator); override;
-    procedure SetProp(const Value: String); override;
-    procedure SetValue(const Value: String); override;
+    procedure SetOp(Value: TFilterOperator); override;
+    procedure SetProp(Value: String); override;
+    procedure SetValue(Value: String); override;
   end;
 
   TFhirValueSetComposeIncludeConceptDesignation3 = class (TFhirValueSetComposeIncludeConceptDesignationW)
@@ -372,8 +372,8 @@ type
   public
     function getcode : String; override;
     function getdisplay : String; override;
-    procedure SetCode(const Value: String); override;
-    procedure SetDisplay(const Value: String); override;
+    procedure SetCode(Value: String); override;
+    procedure SetDisplay(Value: String); override;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
   end;
 
@@ -382,8 +382,8 @@ type
     function valueSets : TArray<String>; override;
     function GetSystem : String; override;
     function GetVersion : String; override;
-    procedure SetSystem(const Value: String); override;
-    procedure SetVersion(const Value: String); override;
+    procedure SetSystem(Value: String); override;
+    procedure SetVersion(Value: String); override;
     function hasConcepts : boolean; override;
     function concepts : TFslList<TFhirValueSetComposeIncludeConceptW>; override;
     function hasFilters : boolean; override;
@@ -414,14 +414,14 @@ type
     function getDescription : String; override;
     procedure setDescription(value : String); override;
     function GetStatus: TPublicationStatus; override;
-    procedure SetStatus(const Value: TPublicationStatus); override;
+    procedure SetStatus(Value: TPublicationStatus); override;
     function GetDate: TDateTimeEx; override;
-    procedure SetDate(const Value: TDateTimeEx); override;
+    procedure SetDate(Value: TDateTimeEx); override;
     function hasInlineCS : boolean; override;
     function addInclude : TFhirValueSetComposeIncludeW; override;
     function getContext: String; override;
     function GetPublisher: String; override;
-    procedure SetPublisher(const Value: String); override;
+    procedure SetPublisher(Value: String); override;
     function source : String; override;
   end;
 
@@ -475,21 +475,21 @@ type
     function GetDescription : String; override;
     function copyright : String; override;
     function language : String; override;
-    procedure SetDate(const Value: TDateTimeEx); override;
-    procedure SetDescription(const Value: String); override;
-    procedure SetName(const Value: String); override;
-    procedure SetStatus(const Value: TPublicationStatus); override;
-    procedure SetUrl(const Value: String); override;
-    procedure SetVersion(const Value: String); override;
+    procedure SetDate(Value: TDateTimeEx); override;
+    procedure SetDescription(Value: String); override;
+    procedure SetName(Value: String); override;
+    procedure SetStatus(Value: TPublicationStatus); override;
+    procedure SetUrl(Value: String); override;
+    procedure SetVersion(Value: String); override;
     function getContent: TFhirCodeSystemContentMode; override;
-    procedure SetContent(const Value: TFhirCodeSystemContentMode); override;
+    procedure SetContent(Value: TFhirCodeSystemContentMode); override;
     function GetCount: integer; override;
-    procedure SetCount(const Value: integer); override;
+    procedure SetCount(Value: integer); override;
     function GetDate: TDateTimeEx; override;
     function GetStatus: TPublicationStatus; override;
     function getContext: String; override;
     function GetPublisher: String; override;
-    procedure SetPublisher(const Value: String); override;
+    procedure SetPublisher(Value: String); override;
 
     function valueSet : String; override;
     function supplements : String; override;
@@ -523,15 +523,15 @@ type
   TFHIRLookupOpRespProperty3 = class (TFHIRLookupOpRespPropertyW)
   public
     function GetDescription: string; override;
-    procedure SetDescription(const Value: string); override;
+    procedure SetDescription(Value: string); override;
     function GetValue: TFHIRObject; override;
-    procedure SetValue(const Value: TFHIRObject); override;
+    procedure SetValue(Value: TFHIRObject); override;
   end;
 
   TFHIRLookupOpRespDesignation3 = class (TFHIRLookupOpRespDesignationW)
   public
     function GetUse: TFHIRObject; override;
-    procedure SetUse(const Value: TFHIRObject); override;
+    procedure SetUse(Value: TFHIRObject); override;
   end;
 
   TFHIRLookupOpResponse3 = class (TFHIRLookupOpResponseW)
@@ -543,13 +543,13 @@ type
     function addDesignation(system, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; override;
     function GetVersion: String; override;
-    procedure SetVersion(const Value: String); override;
+    procedure SetVersion(Value: String); override;
     procedure addExtension(name, value : String); overload; override;
     procedure addExtension(name : String; value : boolean); overload; override;
     function GetName: String; override;
-    procedure SetName(const Value: String); override;
+    procedure SetName(Value: String); override;
     function GetDisplay: String; override;
-    procedure SetDisplay(const Value: String); override;
+    procedure SetDisplay(Value: String); override;
   end;
 
   TFhirConceptMapGroupElementTarget3 = class (TFhirConceptMapGroupElementTargetW)
@@ -580,25 +580,25 @@ type
     function cm : TFhirConceptMap;
   protected
     function GetVersion: String; override;
-    procedure SetVersion(const Value: String); override;
+    procedure SetVersion(Value: String); override;
   public
     function geturl : String; override;
     function GetDate: TDateTimeEx; override;
     function GetDescription: String; override;
     function GetName: String; override;
     function GetStatus: TPublicationStatus; override;
-    procedure SetDate(const Value: TDateTimeEx); override;
-    procedure SetDescription(const Value: String); override;
-    procedure SetName(const Value: String); override;
-    procedure SetStatus(const Value: TPublicationStatus); override;
-    procedure SetUrl(const Value: String); override;
+    procedure SetDate(Value: TDateTimeEx); override;
+    procedure SetDescription(Value: String); override;
+    procedure SetName(Value: String); override;
+    procedure SetStatus(Value: TPublicationStatus); override;
+    procedure SetUrl(Value: String); override;
     function source : String; override;
     function target : String; override;
     function groups : TFslList<TFhirConceptMapGroupW>; override;
     function addGroup(source, target : String) : TFhirConceptMapGroupW; override;
     function getContext: String; override;
     function GetPublisher: String; override;
-    procedure SetPublisher(const Value: String); override;
+    procedure SetPublisher(Value: String); override;
     function sourceDesc : String; override;
     function targetDesc : String; override;
   end;
@@ -608,9 +608,9 @@ type
     function m : TFhirMeta;
   public
     function GetVersionId: String; override;
-    procedure SetVersionId(const Value: String); override;
+    procedure SetVersionId(Value: String); override;
     function GetLastUpdated: TDateTimeEx; override;
-    procedure SetLastUpdated(const Value: TDateTimeEx); override;
+    procedure SetLastUpdated(Value: TDateTimeEx); override;
     function tags : TFslList<TFHIRCodingW>; override;
     function labels : TFslList<TFHIRCodingW>; override;
     function profiles : TArray<String>; override;
@@ -654,14 +654,14 @@ type
     function GetStatus: TSubscriptionStatus; override;
     function GetSummary: String; override;
     function GetHeaders: TArray<String>; override;
-    procedure SetCriteria(const Value: String); override;
-    procedure SetDirect(const Value: boolean); override;
-    procedure SetEndpoint(const Value: String); override;
-    procedure SetError(const Value: String); override;
-    procedure Setheaders(const Value: TArray<String>); override;
-    procedure SetMethod(const Value: TSubscriptionMethod); override;
-    procedure SetPayload(const Value: String); override;
-    procedure SetStatus(const Value: TSubscriptionStatus); override;
+    procedure SetCriteria(Value: String); override;
+    procedure SetDirect(Value: boolean); override;
+    procedure SetEndpoint(Value: String); override;
+    procedure SetError(Value: String); override;
+    procedure Setheaders(Value: TArray<String>); override;
+    procedure SetMethod(Value: TSubscriptionMethod); override;
+    procedure SetPayload(Value: String); override;
+    procedure SetStatus(Value: TSubscriptionStatus); override;
   end;
 
   TFhirObservationComponent3 = class (TFhirObservationComponentW)
@@ -669,7 +669,7 @@ type
     function comp : TFhirObservationComponent;
   public
     function GetValue: TFHIRObject; override;
-    procedure SetValue(const Value: TFHIRObject); override;
+    procedure SetValue(Value: TFHIRObject); override;
     function codings : TFslList<TFHIRCodingW>; override;
     function valueW : TFHIRXVersionElementWrapper; override;
     function dataAbsentReason : TFhirCodeableConceptW; override;
@@ -680,10 +680,10 @@ type
     function obs : TFHIRObservation;
   protected
     function GetValue: TFHIRObject;  override;
-    procedure SetValue(const Value: TFHIRObject); override;
+    procedure SetValue(Value: TFHIRObject); override;
   public
     function GetStatus: TObservationStatus;  override;
-    procedure SetStatus(const Value: TObservationStatus);  override;
+    procedure SetStatus(Value: TObservationStatus);  override;
     procedure addCode(c : TFHIRCodingW); override;
     procedure setSubj(url : String); override;
     procedure setPeriod(start, finish : TDateTime); override;
@@ -706,10 +706,10 @@ type
     function GetSystem: String; override;
     function GetUnit: String; override;
     function GetValue: String; override;
-    procedure SetCode(const Value: String); override;
-    procedure SetSystem(const Value: String); override;
-    procedure SetUnit(const Value: String); override;
-    procedure SetValue(const Value: String); override;
+    procedure SetCode(Value: String); override;
+    procedure SetSystem(Value: String); override;
+    procedure SetUnit(Value: String); override;
+    procedure SetValue(Value: String); override;
   end;
 
   TFHIRSubsumesOpRequest3 = class (TFHIRSubsumesOpRequestW)
@@ -733,7 +733,7 @@ type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRResourceV; override;
     function GetOutcome: String; override;
-    procedure SetOutcome(const Value: String); override;
+    procedure SetOutcome(Value: String); override;
   end;
 
   TFHIRGroupCharacteristic3 = class (TFHIRGroupCharacteristicW)
@@ -782,9 +782,11 @@ uses
 
 { TFhirOperationOutcome3 }
 
-procedure TFhirOperationOutcome3.addIssue(issue: TFhirOperationOutcomeIssueW);
+procedure TFhirOperationOutcome3.addIssue(issue: TFhirOperationOutcomeIssueW; free : boolean);
 begin
   (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue).link);
+  if free then
+    issue.Free;
 end;
 
 function TFhirOperationOutcome3.code: TFhirIssueType;
@@ -975,11 +977,11 @@ begin
   bundle.Links[rel] := value;
 end;
 
-procedure TFHIRBundle3.SetTimestamp(const Value: TDateTimeEx);
+procedure TFHIRBundle3.SetTimestamp(Value: TDateTimeEx);
 begin
 end;
 
-procedure TFHIRBundle3.SetTotal(const Value: integer);
+procedure TFHIRBundle3.SetTotal(Value: integer);
 begin
   bundle.total := inttostr(value);
 end;
@@ -1004,7 +1006,7 @@ begin
   result := MAP_TFHIRBundleTypeR[bundle.type_];
 end;
 
-procedure TFHIRBundle3.settype(const value : TBundleType);
+procedure TFHIRBundle3.settype(value : TBundleType);
 begin
   bundle.type_ := MAP_TFHIRBundleType[value];
 end;
@@ -1036,7 +1038,7 @@ begin
   result := issue.diagnostics;
 end;
 
-procedure TFHIROperationOutcomeIssue3.SetDiagnostics(const Value: String);
+procedure TFHIROperationOutcomeIssue3.SetDiagnostics(Value: String);
 begin
   issue.diagnostics := value;
 end;
@@ -1214,7 +1216,7 @@ begin
           register := TFHIRUri(ex2.value).value;
 end;
 
-procedure TFHIRCapabilityStatement3.SetUrl(const Value: String);
+procedure TFHIRCapabilityStatement3.SetUrl(Value: String);
 begin
   statement.url := value;
 end;
@@ -1263,7 +1265,7 @@ begin
   statement.Description := value;
 end;
 
-procedure TFHIRCapabilityStatement3.SetFhirVersion(const Value: string);
+procedure TFHIRCapabilityStatement3.SetFhirVersion(Value: string);
 begin
   statement.fhirVersion := value;
 end;
@@ -1273,7 +1275,7 @@ begin
   result := MAP_TPublicationStatusR[statement.Status];
 end;
 
-procedure TFHIRCapabilityStatement3.SetStatus(const Value: TPublicationStatus);
+procedure TFHIRCapabilityStatement3.SetStatus(Value: TPublicationStatus);
 begin
   statement.Status := MAP_TPublicationStatus[value];
 end;
@@ -1288,7 +1290,7 @@ begin
   result := statement.Date;
 end;
 
-procedure TFHIRCapabilityStatement3.SetDate(const Value: TDateTimeEx);
+procedure TFHIRCapabilityStatement3.SetDate(Value: TDateTimeEx);
 begin
   statement.Date := value;
 end;
@@ -1467,12 +1469,12 @@ begin
     FList.Add(TFhirParametersParameter3.Create(t.Link));
 end;
 
-procedure TFhirParametersParameter3.SetResource(const Value: TFHIRResourceV);
+procedure TFhirParametersParameter3.SetResource(Value: TFHIRResourceV);
 begin
   parameter.resource := value as TFhirResource;
 end;
 
-procedure TFhirParametersParameter3.SetValue(const Value: TFHIRObject);
+procedure TFhirParametersParameter3.SetValue(Value: TFHIRObject);
 begin
   parameter.value := value as TFHIRType;
 end;
@@ -1813,68 +1815,68 @@ begin
   result := entry.fullUrl;
 end;
 
-procedure TFHIRBundleEntry3.SetRequestMethod(const Value: String);
+procedure TFHIRBundleEntry3.SetRequestMethod(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFHIRBundleEntryRequest.create;
   entry.request.method := TFhirHttpVerbEnum(ord(StringArrayIndexOfSensitive(CODES_TFhirHttpVerbEnum, value)));
 end;
 
-procedure TFHIRBundleEntry3.SetRequestUrl(const Value: String);
+procedure TFHIRBundleEntry3.SetRequestUrl(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFHIRBundleEntryRequest.create;
   entry.request.url := value;
 end;
 
-procedure TFHIRBundleEntry3.SetResource(const Value: TFHIRResourceV);
+procedure TFHIRBundleEntry3.SetResource(Value: TFHIRResourceV);
 begin
   entry.resource := value as TFHIRResource;
 end;
 
-procedure TFHIRBundleEntry3.SetResponseDate(const Value: TDateTimeEx);
+procedure TFHIRBundleEntry3.SetResponseDate(Value: TDateTimeEx);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
   entry.response.lastModified := value;
 end;
 
-procedure TFHIRBundleEntry3.SetResponseETag(const Value: string);
+procedure TFHIRBundleEntry3.SetResponseETag(Value: string);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
   entry.response.ETag := value;
 end;
 
-procedure TFHIRBundleEntry3.SetResponseLocation(const Value: string);
+procedure TFHIRBundleEntry3.SetResponseLocation(Value: string);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
   entry.response.Location := value;
 end;
 
-procedure TFHIRBundleEntry3.SetResponseStatus(const Value: String);
+procedure TFHIRBundleEntry3.SetResponseStatus(Value: String);
 begin
   if entry.response = nil then
     entry.response := TFHIRBundleEntryResponse.create;
   entry.response.status := value;
 end;
 
-procedure TFHIRBundleEntry3.SetSearchMode(const Value: TFHIRBundleEntrySearchMode);
+procedure TFHIRBundleEntry3.SetSearchMode(Value: TFHIRBundleEntrySearchMode);
 begin
   if entry.search = nil then
     entry.search := TFHIRBundleEntrySearch.create;
   entry.search.mode := MAP_SEARCH_MODE2[value];
 end;
 
-procedure TFHIRBundleEntry3.SetSearchMpiMatch(const Value: String);
+procedure TFHIRBundleEntry3.SetSearchMpiMatch(Value: String);
 begin
   if entry.search = nil then
     entry.search := TFHIRBundleEntrySearch.create;
   entry.search.setExtensionString('http://hl7.org/fhir/StructureDefinition/patient-mpi-match', value)
 end;
 
-procedure TFHIRBundleEntry3.SetSearchScore(const Value: String);
+procedure TFHIRBundleEntry3.SetSearchScore(Value: String);
 begin
   if entry.search = nil then
     entry.search := TFHIRBundleEntrySearch.create;
@@ -1882,7 +1884,7 @@ begin
 end;
 
 
-procedure TFHIRBundleEntry3.SetUrl(const Value: String);
+procedure TFHIRBundleEntry3.SetUrl(Value: String);
 begin
   entry.fullUrl := value;
 end;
@@ -1905,7 +1907,7 @@ begin
     result := entry.request.ifNoneExist;
 end;
 
-procedure TFHIRBundleEntry3.SetrequestIfNoneExist(const Value: String);
+procedure TFHIRBundleEntry3.SetrequestIfNoneExist(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
@@ -1920,7 +1922,7 @@ begin
     result := entry.request.IfMatch;
 end;
 
-procedure TFHIRBundleEntry3.SetrequestIfMatch(const Value: String);
+procedure TFHIRBundleEntry3.SetrequestIfMatch(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
@@ -1935,7 +1937,7 @@ begin
     result := entry.request.IfNoneMatch;
 end;
 
-procedure TFHIRBundleEntry3.SetrequestIfNoneMatch(const Value: String);
+procedure TFHIRBundleEntry3.SetrequestIfNoneMatch(Value: String);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
@@ -1951,7 +1953,7 @@ begin
 end;
 
 
-procedure TFHIRBundleEntry3.SetrequestIfModifiedSince(const Value: TDateTimeEx);
+procedure TFHIRBundleEntry3.SetrequestIfModifiedSince(Value: TDateTimeEx);
 begin
   if entry.request = nil then
     entry.request := TFhirBundleEntryRequest.create;
@@ -1971,7 +1973,7 @@ function TFHIRValueSet3.checkCompose(place, role: String): boolean;
 begin
   result := vs.compose <> nil;
   if result then
-    vs.compose.checkNoModifiers(place, role, []);
+    vs.compose.checkNoModifiers(place, role, nil);
 end;
 
 procedure TFHIRValueSet3.clearDefinition;
@@ -2052,7 +2054,7 @@ begin
   result := vs.date;
 end;
 
-procedure TFHIRValueSet3.SetDate(const Value: TDateTimeEx);
+procedure TFHIRValueSet3.SetDate(Value: TDateTimeEx);
 begin
   vs.date := value;
 end;
@@ -2067,12 +2069,12 @@ begin
   vs.name := value;
 end;
 
-procedure TFHIRValueSet3.SetPublisher(const Value: String);
+procedure TFHIRValueSet3.SetPublisher(Value: String);
 begin
   vs.publisher := value;
 end;
 
-procedure TFHIRValueSet3.SetStatus(const Value: TPublicationStatus);
+procedure TFHIRValueSet3.SetStatus(Value: TPublicationStatus);
 begin
   vs.status := MAP_TPublicationStatus[value];
 end;
@@ -2162,12 +2164,12 @@ begin
   result := (Element as TFhirValueSetComposeInclude).filterList.Count > 0;
 end;
 
-procedure TFhirValueSetComposeInclude3.SetSystem(const Value: String);
+procedure TFhirValueSetComposeInclude3.SetSystem(Value: String);
 begin
   (Element as TFhirValueSetComposeInclude).system := value;
 end;
 
-procedure TFhirValueSetComposeInclude3.SetVersion(const Value: String);
+procedure TFhirValueSetComposeInclude3.SetVersion(Value: String);
 begin
   (Element as TFhirValueSetComposeInclude).version := value;
 end;
@@ -2208,17 +2210,17 @@ begin
   result := (Element as TFhirValueSetComposeIncludeFilter).value;
 end;
 
-procedure TFhirValueSetComposeIncludeFilter3.SetOp(const Value: TFilterOperator);
+procedure TFhirValueSetComposeIncludeFilter3.SetOp(Value: TFilterOperator);
 begin
   (Element as TFhirValueSetComposeIncludeFilter).op := MAP_TFilterOperatorR[value];
 end;
 
-procedure TFhirValueSetComposeIncludeFilter3.SetProp(const Value: String);
+procedure TFhirValueSetComposeIncludeFilter3.SetProp(Value: String);
 begin
   (Element as TFhirValueSetComposeIncludeFilter).property_ := value;
 end;
 
-procedure TFhirValueSetComposeIncludeFilter3.SetValue(const Value: String);
+procedure TFhirValueSetComposeIncludeFilter3.SetValue(Value: String);
 begin
   (Element as TFhirValueSetComposeIncludeFilter).value := value;
 end;
@@ -2244,12 +2246,12 @@ begin
   result := (Element as TFhirValueSetComposeIncludeConcept).display;
 end;
 
-procedure TFhirValueSetComposeIncludeConcept3.SetCode(const Value: String);
+procedure TFhirValueSetComposeIncludeConcept3.SetCode(Value: String);
 begin
   (Element as TFhirValueSetComposeIncludeConcept).code := Value;
 end;
 
-procedure TFhirValueSetComposeIncludeConcept3.SetDisplay(const Value: String);
+procedure TFhirValueSetComposeIncludeConcept3.SetDisplay(Value: String);
 begin
   (Element as TFhirValueSetComposeIncludeConcept).display := Value;
 end;
@@ -2343,17 +2345,17 @@ begin
   (op as TFHIRLookupOpResponse).load(params as TFHIRParameters);
 end;
 
-procedure TFHIRLookupOpResponse3.SetDisplay(const Value: String);
+procedure TFHIRLookupOpResponse3.SetDisplay(Value: String);
 begin
   (op as TFHIRLookupOpResponse).display := value;
 end;
 
-procedure TFHIRLookupOpResponse3.SetName(const Value: String);
+procedure TFHIRLookupOpResponse3.SetName(Value: String);
 begin
   (op as TFHIRLookupOpResponse).name := value;
 end;
 
-procedure TFHIRLookupOpResponse3.SetVersion(const Value: String);
+procedure TFHIRLookupOpResponse3.SetVersion(Value: String);
 begin
   (op as TFHIRLookupOpResponse).version := value;
 end;
@@ -2365,7 +2367,7 @@ begin
   result := (obj as TFHIRLookupOpRespDesignation).use;
 end;
 
-procedure TFHIRLookupOpRespDesignation3.SetUse(const Value: TFHIRObject);
+procedure TFHIRLookupOpRespDesignation3.SetUse(Value: TFHIRObject);
 begin
   (obj as TFHIRLookupOpRespDesignation).use := value as TFhirCoding;
 end;
@@ -2382,12 +2384,12 @@ begin
   result := (obj as TFHIRLookupOpRespProperty_).value;
 end;
 
-procedure TFHIRLookupOpRespProperty3.SetDescription(const Value: string);
+procedure TFHIRLookupOpRespProperty3.SetDescription(Value: string);
 begin
   (obj as TFHIRLookupOpRespProperty_).description := value;
 end;
 
-procedure TFHIRLookupOpRespProperty3.SetValue(const Value: TFHIRObject);
+procedure TFHIRLookupOpRespProperty3.SetValue(Value: TFHIRObject);
 begin
   (obj as TFHIRLookupOpRespProperty_).value := value as TFhirType;
 end;
@@ -2426,22 +2428,22 @@ begin
   result := (element as TFHIRCoding).version;
 end;
 
-procedure TFHIRCoding3.SetCode(const Value: String);
+procedure TFHIRCoding3.SetCode(Value: String);
 begin
   (element as TFHIRCoding).code := value;
 end;
 
-procedure TFHIRCoding3.SetDisplay(const Value: String);
+procedure TFHIRCoding3.SetDisplay(Value: String);
 begin
   (element as TFHIRCoding).display := value;
 end;
 
-procedure TFHIRCoding3.SetSystem(const Value: String);
+procedure TFHIRCoding3.SetSystem(Value: String);
 begin
   (element as TFHIRCoding).system := value;
 end;
 
-procedure TFHIRCoding3.SetVersion(const Value: String);
+procedure TFHIRCoding3.SetVersion(Value: String);
 begin
   (element as TFHIRCoding).version := value;
 end;
@@ -2750,47 +2752,47 @@ begin
     result.Add(TFhirCodeSystemProperty3.Create(i.Link));
 end;
 
-procedure TFhirCodeSystem3.SetContent(const Value: TFhirCodeSystemContentMode);
+procedure TFhirCodeSystem3.SetContent(Value: TFhirCodeSystemContentMode);
 begin
   cs.content := MAP_TFhirCodeSystemContentMode[Value];
 end;
 
-procedure TFhirCodeSystem3.SetCount(const Value: integer);
+procedure TFhirCodeSystem3.SetCount(Value: integer);
 begin
   cs.count := inttostr(Value);
 end;
 
-procedure TFhirCodeSystem3.SetDate(const Value: TDateTimeEx);
+procedure TFhirCodeSystem3.SetDate(Value: TDateTimeEx);
 begin
   cs.date := Value;
 end;
 
-procedure TFhirCodeSystem3.SetDescription(const Value: String);
+procedure TFhirCodeSystem3.SetDescription(Value: String);
 begin
   cs.description := Value;
 end;
 
-procedure TFhirCodeSystem3.SetName(const Value: String);
+procedure TFhirCodeSystem3.SetName(Value: String);
 begin
   cs.name := Value;
 end;
 
-procedure TFhirCodeSystem3.SetPublisher(const Value: String);
+procedure TFhirCodeSystem3.SetPublisher(Value: String);
 begin
   cs.publisher := value;
 end;
 
-procedure TFhirCodeSystem3.SetStatus(const Value: TPublicationStatus);
+procedure TFhirCodeSystem3.SetStatus(Value: TPublicationStatus);
 begin
   cs.status := MAP_TPublicationStatus[Value];
 end;
 
-procedure TFhirCodeSystem3.SetUrl(const Value: String);
+procedure TFhirCodeSystem3.SetUrl(Value: String);
 begin
   cs.url := Value;
 end;
 
-procedure TFhirCodeSystem3.SetVersion(const Value: String);
+procedure TFhirCodeSystem3.SetVersion(Value: String);
 begin
   cs.version := Value;
 end;
@@ -2829,12 +2831,12 @@ end;
 
 procedure TFhirValueSetExpansion3.addContains(item: TFhirValueSetExpansionContainsW);
 begin
-  exp.containsList.Add(item.Element as TFhirValueSetExpansionContains);
+  exp.containsList.Add((item.Element as TFhirValueSetExpansionContains).link);
 end;
 
 function TFhirValueSetExpansion3.addContains: TFhirValueSetExpansionContainsW;
 begin
-  result := TFhirValueSetExpansionContains3.Create((element as TFhirValueSetExpansionContains).containsList.Append.Link);
+  result := TFhirValueSetExpansionContains3.Create((element as TFhirValueSetExpansion).containsList.Append.Link);
 end;
 
 procedure TFhirValueSetExpansion3.addParam(name, value: String);
@@ -2910,17 +2912,17 @@ begin
   result := (Element as TFhirValueSetExpansionContains).system;
 end;
 
-procedure TFhirValueSetExpansionContains3.SetCode(const Value: String);
+procedure TFhirValueSetExpansionContains3.SetCode(Value: String);
 begin
   (Element as TFhirValueSetExpansionContains).code := value;
 end;
 
-procedure TFhirValueSetExpansionContains3.SetDisplay(const Value: String);
+procedure TFhirValueSetExpansionContains3.SetDisplay(Value: String);
 begin
   (Element as TFhirValueSetExpansionContains).display := value;
 end;
 
-procedure TFhirValueSetExpansionContains3.SetSystem(const Value: String);
+procedure TFhirValueSetExpansionContains3.SetSystem(Value: String);
 begin
   (Element as TFhirValueSetExpansionContains).system := value;
 end;
@@ -2968,7 +2970,7 @@ begin
     result.Add(TFhirConceptMapGroup3.create(g.Link))
 end;
 
-procedure TFhirConceptMap3.SetVersion(const Value: String);
+procedure TFhirConceptMap3.SetVersion(Value: String);
 begin
   cm.version := value;
 end;
@@ -3024,32 +3026,32 @@ begin
   result := MAP_TPublicationStatusR[cm.Status];
 end;
 
-procedure TFhirConceptMap3.SetDate(const Value: TDateTimeEx);
+procedure TFhirConceptMap3.SetDate(Value: TDateTimeEx);
 begin
   cm.Date := value;
 end;
 
-procedure TFhirConceptMap3.SetDescription(const Value: String);
+procedure TFhirConceptMap3.SetDescription(Value: String);
 begin
   cm.Description := value;
 end;
 
-procedure TFhirConceptMap3.SetName(const Value: String);
+procedure TFhirConceptMap3.SetName(Value: String);
 begin
   cm.Name := value;
 end;
 
-procedure TFhirConceptMap3.SetStatus(const Value: TPublicationStatus);
+procedure TFhirConceptMap3.SetStatus(Value: TPublicationStatus);
 begin
   cm.Status := MAP_TPublicationStatus[value];
 end;
 
-procedure TFhirConceptMap3.SetUrl(const Value: String);
+procedure TFhirConceptMap3.SetUrl(Value: String);
 begin
   cm.Url := value;
 end;
 
-procedure TFhirConceptMap3.SetPublisher(const Value: String);
+procedure TFhirConceptMap3.SetPublisher(Value: String);
 begin
   cm.publisher := value;
 end;
@@ -3262,12 +3264,12 @@ begin
   m.removeTag(system, code);
 end;
 
-procedure TFHIRMeta3.SetLastUpdated(const Value: TDateTimeEx);
+procedure TFHIRMeta3.SetLastUpdated(Value: TDateTimeEx);
 begin
   m.lastUpdated := value;
 end;
 
-procedure TFHIRMeta3.SetVersionId(const Value: String);
+procedure TFHIRMeta3.SetVersionId(Value: String);
 begin
   m.versionId := value;
 end;
@@ -3407,7 +3409,7 @@ begin
   result := CODES_TFhirResourceTypesEnum[(Element as TFhirCapabilityStatementRestResource).type_];
 end;
 
-procedure TFhirCapabilityStatementRestResource3.SetCode(const Value: String);
+procedure TFhirCapabilityStatementRestResource3.SetCode(Value: String);
 begin
   (Element as TFhirCapabilityStatementRestResource).type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', value);
 end;
@@ -3419,7 +3421,7 @@ begin
     result := (Element as TFhirCapabilityStatementRestResource).profile.reference;
 end;
 
-procedure TFhirCapabilityStatementRestResource3.SetProfile(const Value: String);
+procedure TFhirCapabilityStatementRestResource3.SetProfile(Value: String);
 begin
   if value = '' then
     (Element as TFhirCapabilityStatementRestResource).profile := nil
@@ -3437,7 +3439,7 @@ begin
   result := (Element as TFhirCapabilityStatementRestResource).readHistory;
 end;
 
-procedure TFhirCapabilityStatementRestResource3.SetReadHistory(const Value: boolean);
+procedure TFhirCapabilityStatementRestResource3.SetReadHistory(Value: boolean);
 begin
   (Element as TFhirCapabilityStatementRestResource).readHistory := Value;
 end;
@@ -3501,12 +3503,12 @@ begin
 //  result := result+#0+subst.channel.header;
 end;
 
-procedure TFHIRSubscription3.SetCriteria(const Value: String);
+procedure TFHIRSubscription3.SetCriteria(Value: String);
 begin
   sub.criteria := value;
 end;
 
-procedure TFHIRSubscription3.SetDirect(const Value: boolean);
+procedure TFHIRSubscription3.SetDirect(Value: boolean);
 begin
   if value then
     sub.channel.endpointElement.setExtensionBoolean('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct', 'true')
@@ -3514,17 +3516,17 @@ begin
     sub.channel.endpointElement.removeExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct');
 end;
 
-procedure TFHIRSubscription3.SetEndpoint(const Value: String);
+procedure TFHIRSubscription3.SetEndpoint(Value: String);
 begin
   sub.channel.endpoint := value;
 end;
 
-procedure TFHIRSubscription3.SetError(const Value: String);
+procedure TFHIRSubscription3.SetError(Value: String);
 begin
   sub.error := value;
 end;
 
-procedure TFHIRSubscription3.Setheaders(const Value: TArray<String>);
+procedure TFHIRSubscription3.Setheaders(Value: TArray<String>);
 var
   s : String;
 begin
@@ -3533,17 +3535,17 @@ begin
     sub.channel.headerList.Append.value := s;
 end;
 
-procedure TFHIRSubscription3.SetMethod(const Value: TSubscriptionMethod);
+procedure TFHIRSubscription3.SetMethod(Value: TSubscriptionMethod);
 begin
   sub.channel.type_ := MAP_TSubscriptionMethod2[value];
 end;
 
-procedure TFHIRSubscription3.SetPayload(const Value: String);
+procedure TFHIRSubscription3.SetPayload(Value: String);
 begin
   sub.channel.payload := value;
 end;
 
-procedure TFHIRSubscription3.SetStatus(const Value: TSubscriptionStatus);
+procedure TFHIRSubscription3.SetStatus(Value: TSubscriptionStatus);
 begin
   sub.status := MAP_TSubscriptionStatus2[value];
 end;
@@ -3583,7 +3585,7 @@ begin
   result := comp.value;
 end;
 
-procedure TFhirObservationComponent3.SetValue(const Value: TFHIRObject);
+procedure TFhirObservationComponent3.SetValue(Value: TFHIRObject);
 begin
   comp.value := value as TFHIRType;
 end;
@@ -3634,7 +3636,7 @@ begin
   TFhirPeriod(obs.effective).end_ := TDateTimeEx.makeUTC(finish);
 end;
 
-procedure TFhirObservation3.SetStatus(const Value: TObservationStatus);
+procedure TFhirObservation3.SetStatus(Value: TObservationStatus);
 begin
   obs.status := MAP_TObservationStatus[value];
 end;
@@ -3700,7 +3702,7 @@ begin
   result := obs.value;
 end;
 
-procedure TFhirObservation3.SetValue(const Value: TFHIRObject);
+procedure TFhirObservation3.SetValue(Value: TFHIRObject);
 begin
   obs.value := value as TFhirType;
 end;
@@ -3766,22 +3768,22 @@ begin
   result := Element as TFHIRQuantity;
 end;
 
-procedure TFHIRQuantity3.SetCode(const Value: String);
+procedure TFHIRQuantity3.SetCode(Value: String);
 begin
   qty.code := Value;
 end;
 
-procedure TFHIRQuantity3.SetSystem(const Value: String);
+procedure TFHIRQuantity3.SetSystem(Value: String);
 begin
   qty.system := Value;
 end;
 
-procedure TFHIRQuantity3.SetUnit(const Value: String);
+procedure TFHIRQuantity3.SetUnit(Value: String);
 begin
   qty.unit_ := Value;
 end;
 
-procedure TFHIRQuantity3.SetValue(const Value: String);
+procedure TFHIRQuantity3.SetValue(Value: String);
 begin
   qty.value := Value;
 end;
@@ -3918,7 +3920,7 @@ begin
   (op as TFHIRSubsumesOpResponse).load(params);
 end;
 
-procedure TFHIRSubsumesOpResponse3.SetOutcome(const Value: String);
+procedure TFHIRSubsumesOpResponse3.SetOutcome(Value: String);
 begin
   (op as TFHIRSubsumesOpResponse).outcome := value;
 end;

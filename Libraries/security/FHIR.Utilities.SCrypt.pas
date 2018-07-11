@@ -2444,14 +2444,14 @@ procedure TSHA1.UpdateLen(NumBytes: LongWord);
 //   the number of bits in the block (a 64-bit number)
 begin
 	//the HashLength is in BITS, so multiply NumBytes by 8
-	Inc(LARGE_INTEGER(FHashLength).QuadPart, NumBytes * 8);
+	Inc(FHashLength, NumBytes * 8);
 end;
 
 { TSHA2_256 }
 
 procedure TSHA256.Burn;
 begin
-	LARGE_INTEGER(FHashLength).QuadPart := 0;
+	FHashLength := 0;
 
 	FillChar(FHashBuffer[0], Length(FHashBuffer), 0);
 	FHashBufferIndex := 0;
@@ -2712,7 +2712,7 @@ procedure TSHA256.UpdateLen(NumBytes: LongWord);
 //   the number of bits in the block (a 64-bit number)
 begin
 	//the HashLength is in BITS, so multiply NumBytes by 8
-	Inc(LARGE_INTEGER(FHashLength).QuadPart, NumBytes * 8);
+	Inc(FHashLength, NumBytes * 8);
 end;
 
 {$IFDEF MSWINDOWS}

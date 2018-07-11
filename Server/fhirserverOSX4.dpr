@@ -44,7 +44,6 @@ uses
   FHIR.Web.Rdf in '..\reference-platform\support\FHIR.Web.Rdf.pas',
   FHIR.Support.Utilities in '..\reference-platform\support\FHIR.Support.Utilities.pas',
   FHIR.Support.Threads in '..\reference-platform\support\FHIR.Support.Threads.pas',
-  OSXTests in '..\reference-platform\support\Tests\OSXTests.pas',
   FHIR.Support.MXml in '..\reference-platform\support\FHIR.Support.MXml.pas',
   FHIR.Support.Json in '..\reference-platform\support\FHIR.Support.Json.pas',
   FHIR.Support.Turtle in '..\reference-platform\support\FHIR.Support.Turtle.pas',
@@ -111,7 +110,9 @@ uses
   FHIR.R4.Narrative in '..\reference-platform\r4\FHIR.R4.Narrative.pas',
   FHIR.R4.Client in '..\reference-platform\r4\FHIR.R4.Client.pas',
   FHIR.R4.Operations in '..\reference-platform\r4\FHIR.R4.Operations.pas',
-  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas';
+  FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas',
+  FHIR.Tests.OSX in '..\reference-platform\support\Tests\FHIR.Tests.OSX.pas',
+  FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas';
 
 var
   runner : ITestRunner;

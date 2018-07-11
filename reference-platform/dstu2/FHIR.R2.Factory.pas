@@ -535,7 +535,7 @@ begin
     result := TFHIRMeta2.create((r as TFHIRResource).meta.link);
   end
   else
-    result := TFHIRMeta2.create((r as TFhirMeta).Link)
+    result := TFHIRMeta2.create(r as TFhirMeta)
 end;
 
 function TFHIRFactoryR2.wrapNamingSystem(o: TFHIRResourceV): TFHIRNamingSystemW;

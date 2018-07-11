@@ -37,8 +37,9 @@ uses
   FHIR.Ui.OSX,
   FHIR.Support.Utilities, FHIR.Support.Threads,
   FHIR.Base.Objects, FHIR.Base.Lang,
-  FHIR.Version.Resources, FHIR.Version.Parser, FHIR.Server.Security,
-  FHIR.Server.Context, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Support.Logging,
+  FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Factory,
+  FHIR.Tx.Manager,
+  FHIR.Server.Security, FHIR.Server.Context, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Support.Logging,
   VocabPocServerCore, FHIR.Tx.Server, FHIR.Server.WebSource;
 
 const
@@ -57,6 +58,7 @@ type
     FLock : TFslLock;
     FMsgs : TStringList;
     FIni : TFHIRServerIniFile;
+    FSettings : TFHIRServerSettings;
     FWebServer : TFhirWebServer;
     FStart : TDateTime;
 
@@ -137,7 +139,7 @@ implementation
 
 procedure TTxServerForm.btnBrowserClick(Sender: TObject);
 begin
-  OpenURL(FServer.FWebServer.ServerContext.FormalURLPlainOpen);
+  OpenURL(FServer.FWebServer.EndPoints[0].ClientAddress(false));
 end;
 
 procedure TTxServerForm.btnPoCFolderClick(Sender: TObject);
@@ -163,15 +165,15 @@ begin
       raise EFHIRException.create('Port must be a Positive Integer between 0 and 65535');
 
     FServer.FSource := edtFolder.Text;
-    FServer.FIni.WriteString('web', 'http', edtPort.Text);
-    FServer.FIni.WriteString('web', 'host', 'localhost');
-    FServer.FIni.WriteString('web', 'base', '/vocab');
-    FServer.FIni.WriteString('web', 'clients', IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini');
-    FServer.FIni.WriteString('admin', 'email', 'grahame@hl7.org');
-    FServer.FIni.WriteString('ucum', 'source', path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml']));
-    FServer.FIni.WriteString('loinc', 'cache', path([ExtractFilePath(paramstr(0)), 'loinc_263.cache']));
-    FServer.FIni.WriteString('lang', 'source', path([ExtractFilePath(paramstr(0)), 'lang.txt']));
-    FServer.FIni.WriteString('snomed', 'cache', edtSnomed.text);
+//    FServer.FIni.WriteString('web', 'http', edtPort.Text);
+//    FServer.FIni.WriteString('web', 'host', 'localhost');
+//    FServer.FIni.WriteString('web', 'base', '/vocab');
+//    FServer.FIni.WriteString('web', 'clients', IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini');
+//    FServer.FIni.WriteString('admin', 'email', 'grahame@hl7.org');
+//    FServer.FIni.WriteString('ucum', 'source', path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml']));
+//    FServer.FIni.WriteString('loinc', 'cache', path([ExtractFilePath(paramstr(0)), 'loinc_263.cache']));
+//    FServer.FIni.WriteString('lang', 'source', path([ExtractFilePath(paramstr(0)), 'lang.txt']));
+//    FServer.FIni.WriteString('snomed', 'cache', edtSnomed.text);
     FServer.start;
   end
   else
@@ -389,6 +391,7 @@ procedure TServerControl.DoStart;
 var
   ctxt : TFHIRServerContext;
   store : TTerminologyServerStorage;
+  ct : TCommonTerminologies;
   procedure SetAccess(cfg : TFHIRResourceConfig);
   begin
     cfg.Supported := true;
@@ -406,24 +409,24 @@ begin
   FStart := now;
   FStatus := Starting;
   Log('Starting Server');
+  ct := TCommonTerminologies.create(FSettings.link);
   Try
-    store := TTerminologyServerStorage.create(TTerminologyServer.create(nil));
+    ct.load(FIni, nil, false);
+    store := TTerminologyServerStorage.create(TTerminologyServer.create(nil, TFHIRFactoryR4.Create, ct.link));
     try
-      ctxt := TFHIRServerContext.Create(store.Link);
+      ctxt := TFHIRServerContext.Create(store.Link, nil);
       try
         ctxt.TerminologyServer := store.Server.Link;
         store.ServerContext := ctxt;
-        ctxt.TerminologyServer.load(FIni);
         setAccess(ctxt.ResConfig['CodeSystem']);
         setAccess(ctxt.ResConfig['ValueSet']);
         setAccess(ctxt.ResConfig['ConceptMap']);
         loadPoC(ctxt.TerminologyServer);
-        ctxt.ownername := 'Vocab PoC Server';
-        FWebServer := TFhirWebServer.create(FIni.Link, ctxt.ownername, ctxt.TerminologyServer, ctxt.link);
+        FWebServer := TFhirWebServer.create(FSettings.Link, FSettings.ownername);
         FWebServer.SourceProvider := TFHIRWebServerSourceZipProvider.Create(path([ExtractFilePath(paramstr(0)), 'web.zip']));
         ctxt.UserProvider := TTerminologyServerUserProvider.Create;
-        ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
-        FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
+//        ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
+//        FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
         FWebServer.IsTerminologyServerOnly := true;
         FWebServer.Start(true);
       finally
@@ -433,7 +436,7 @@ begin
       store.free;
     end;
 
-    Log('Server is Started and ready for business at '+FWebServer.ServerContext.FormalURLPlainOpen);
+    Log('Server is Started and ready for business at '+FWebServer.EndPoints[0].ClientAddress(false));
     FStatus := Running;
   except
     on e : Exception do
@@ -512,7 +515,7 @@ var
     res : TFHIRResource;
   begin
     inc(count);
-    res := TFHIRParsers.ParseFile(nil, ffXML, 'en', fn);
+    res := TFHIRParsers4.ParseFile(nil, ffXML, 'en', fn);
     try
       server.SeeTerminologyResource(res);
     finally

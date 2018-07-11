@@ -34,7 +34,7 @@ Interface
 
 Uses
   {$IFDEF MACOS} FHIR.Support.Osx, {$ELSE} Windows, {$ENDIF}    // Interlocked* API and HResult
-  SysUtils, Classes, Types, RTLConsts, Generics.Collections, Generics.Defaults;
+  SysUtils, Classes, System.Types, RTLConsts, Generics.Collections, Generics.Defaults;
 
 threadvar
   gExceptionStack : String;
@@ -545,7 +545,6 @@ Type
 
     function link : TFslStringMap;
     property Items[const Key: String]: String read GetItem write SetItem; default;
-
   end;
 
 Implementation
@@ -708,6 +707,8 @@ Begin
   Begin
     Assert(Invariants('Free', TFslObject));
 
+    if FFslObjectReferenceCount = -1 then
+      raise EFslException.Create('Attempt to free a class a second time');
     If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
       Destroy;
   End;

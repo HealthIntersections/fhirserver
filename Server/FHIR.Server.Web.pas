@@ -88,7 +88,7 @@ Uses
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Base.Xhtml, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
   FHIR.Smart.Utilities, FHIR.CdsHooks.Utilities, FHIR.CdsHooks.Client,
   FHIR.Tools.GraphQL, FHIR.Tools.NDJsonParser,
-  FHIR.XVersion.Convertors,
+  {$IFNDEF NO_CONVERSION} FHIR.XVersion.Convertors,{$ENDIF}
   FHIR.Tx.Server, FHIR.Tx.Manager, FHIR.Snomed.Expressions, FHIR.Loinc.Services, FHIR.Loinc.Publisher, FHIR.Tx.Web, FHIR.Tx.Service,
   FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Storage, FHIR.Server.Security, FHIR.Server.XhtmlComp, FHIR.Snomed.Services, FHIR.Snomed.Publisher,
   FHIR.Scim.Server,
@@ -335,11 +335,6 @@ Type
     FJWTAuthorities: TFslStringDictionary;
     FGoogle : TGoogleAnalyticsProvider;
 
-    // Reverse proxy support. stated vs actual: to allow for a reverse proxy
-    FStatedPort: integer;
-    FStatedSSLPort: integer;
-    FSecureToken: String;
-
     // operational fields
     FPlainServer: TIdHTTPServer;
     FSSLServer: TIdHTTPServer;
@@ -349,7 +344,6 @@ Type
     FStartTime: cardinal;
     FTotalTime: cardinal;
     FRestTime: cardinal;
-    FFactory : TFHIRServerFactory;
     FClients: TFslList<TFHIRWebServerClientInfo>;
     FEndPoints : TFslList<TFhirWebServerEndpoint>;
     FMaintenanceThread: TFhirServerMaintenanceThread;
@@ -358,12 +352,14 @@ Type
     FPatientViewServers: TFslStringDictionary;
     FIsTerminologyServerOnly: boolean;
     FThreads : TList<TAsyncTaskThread>;
+    FOnRegisterJs: TRegisterJavascriptEvent;
 
     procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     function WebDump: String;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure: boolean; variables: TFslStringDictionary = nil); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslStringDictionary = nil); overload;
+    Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
 
     function hasInternalSSLToken(request: TIdHTTPRequestInfo): boolean;
 
@@ -395,7 +391,7 @@ Type
     procedure StopAsyncTasks;
 
   Public
-    Constructor Create(settings : TFHIRServerSettings; name: String; factory : TFHIRServerFactory);
+    Constructor Create(settings : TFHIRServerSettings; name: String);
     Destructor Destroy; Override;
     procedure loadConfiguration(ini : TFHIRServerIniFile);
 
@@ -404,6 +400,7 @@ Type
 
     Property SourceProvider: TFHIRWebServerSourceProvider read FSourceProvider write SetSourceProvider;
     property host: String read FHost;
+    property EndPoints : TFslList<TFhirWebServerEndpoint> read FEndPoints;
 
     property SSLPort: integer read FActualSSLPort;
     property UseOAuth: boolean read FUseOAuth write FUseOAuth;
@@ -419,6 +416,7 @@ Type
 
     property IsTerminologyServerOnly: boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
     function registerEndPoint(code, path : String; context : TFHIRServerContext; ini : TFHIRServerIniFile) : TFhirWebServerEndpoint;
+    property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
   End;
 
 Function ProcessPath(base, path: String): string;
@@ -742,7 +740,6 @@ begin
     begin
       response.ResponseNo := 404;
       response.ContentText := 'Document ' + request.Document + ' not found';
-      logt('miss: ' + request.Document);
     end;
   finally
     session.Free;
@@ -830,7 +827,6 @@ begin
     begin
       response.ResponseNo := 404;
       response.ContentText := 'Document ' + request.Document + ' not found';
-      logt('miss: ' + request.Document);
     end;
   finally
     session.Free;
@@ -1542,28 +1538,28 @@ begin
   s := s.Replace('[%ver%]', factory.versionString, [rfReplaceAll]);
   s := s.Replace('[%web%]', FWebServer.WebDesc, [rfReplaceAll]);
   s := s.Replace('[%patient-details%]', xhtml, [rfReplaceAll]);
-  if FWebServer.FStatedSSLPort = 443 then
+  if FWebServer.FActualSSLPort = 443 then
     s := s.Replace('[%patient-app-list%]', patientAppList(FWebServer.FHost + FPath, id), [rfReplaceAll])
   else
-    s := s.Replace('[%patient-app-list%]', patientAppList(FWebServer.FHost + ':' + inttostr(FWebServer.FStatedSSLPort) + FPath, id), [rfReplaceAll]);
+    s := s.Replace('[%patient-app-list%]', patientAppList(FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort) + FPath, id), [rfReplaceAll]);
   s := s.Replace('[%patient-id%]', id, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FWebServer.FAdminEmail, [rfReplaceAll]);
-  if FWebServer.FStatedPort = 80 then
+  if FWebServer.FActualPort = 80 then
     s := s.Replace('[%host%]', FWebServer.FHost, [rfReplaceAll])
   else
-    s := s.Replace('[%host%]', FWebServer.FHost + ':' + inttostr(FWebServer.FStatedPort), [rfReplaceAll]);
-  if FWebServer.FStatedSSLPort = 443 then
+    s := s.Replace('[%host%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualPort), [rfReplaceAll]);
+  if FWebServer.FActualSSLPort = 443 then
     s := s.Replace('[%securehost%]', FWebServer.FHost, [rfReplaceAll])
   else
-    s := s.Replace('[%securehost%]', FWebServer.FHost + ':' + inttostr(FWebServer.FStatedSSLPort), [rfReplaceAll]);
-  if FWebServer.FStatedPort = 80 then
+    s := s.Replace('[%securehost%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort), [rfReplaceAll]);
+  if FWebServer.FActualPort = 80 then
     s := s.Replace('[%baseOpen%]', FWebServer.FHost + FPath, [rfReplaceAll])
   else
-    s := s.Replace('[%baseOpen%]', FWebServer.FHost + ':' + inttostr(FWebServer.FStatedPort) + FPath, [rfReplaceAll]);
-  if FWebServer.FStatedSSLPort = 443 then
+    s := s.Replace('[%baseOpen%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualPort) + FPath, [rfReplaceAll]);
+  if FWebServer.FActualSSLPort = 443 then
     s := s.Replace('[%baseSecure%]', FWebServer.FHost + FPath, [rfReplaceAll])
   else
-    s := s.Replace('[%baseSecure%]', FWebServer.FHost + ':' + inttostr(FWebServer.FStatedSSLPort) + FPath, [rfReplaceAll]);
+    s := s.Replace('[%baseSecure%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort) + FPath, [rfReplaceAll]);
   s := s.Replace('[%root%]', FPath, [rfReplaceAll]);
 
   s := s.Replace('[%endpoints%]', EndPointDesc(secure), [rfReplaceAll]);
@@ -1759,7 +1755,7 @@ begin
       iss := factory.makeIssue(isError, code, '', message);
       try
         iss.diagnostics := ExceptionStack(e);
-        issue.addIssue(iss);
+        issue.addIssue(iss, false);
       finally
         iss.Free;
       end;
@@ -1985,7 +1981,7 @@ Begin
                 if oRequest.PostFormat = ffUnspecified then
                   oRequest.PostFormat := detectFormat(oPostStream);
 
-                parser := factory.makeParser(FContext.ValidatorContext, oRequest.PostFormat, lang);
+                parser := factory.makeParser(FContext.ValidatorContext.link, oRequest.PostFormat, lang);
                 try
                   oRequest.resource := parser.parseresource(oPostStream);
 
@@ -2697,7 +2693,7 @@ begin
     + '&redirect_uri=' + authurl + '/internal&aud=' + authurl + '&state=' + FAuthServer.MakeLoginToken(path, apGoogle) + '">Login using OAuth</a></p>' + #13#10;
 
   if FWebServer.FActualSSLPort <> 0 then
-    result := result + '<p>Or use the <a href="http://' + FWebServer.FHost + port(FWebServer.FStatedPort, 80) + FPath + '">unsecured API</a>.</p>'#13#10;
+    result := result + '<p>Or use the <a href="http://' + FWebServer.FHost + port(FWebServer.FActualPort, 80) + FPath + '">unsecured API</a>.</p>'#13#10;
 
   result := result + '<p>&nbsp;</p>'#13#10 +
     '<p>This server uses <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">Smart App Launch</a> for OAuth logins</p>'#13#10;
@@ -2753,7 +2749,7 @@ begin
           else if FWebServer.FActualSSLPort = 0 then
             b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10)
           else
-            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + ' (or use <a href="https://' + FWebServer.FHost + port(FWebServer.FStatedSSLPort, 443) + FPath +
+            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + ' (or use <a href="https://' + FWebServer.FHost + port(FWebServer.FActualSSLPort, 443) + FPath +
               '">Secure API</a>)</p>'#13#10);
 
         b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +
@@ -3201,17 +3197,17 @@ function TFhirWebServerEndPoint.OAuthPath(secure: boolean): String;
 begin
   if secure then
   begin
-    if FWebServer.FStatedSSLPort = 443 then
+    if FWebServer.FActualSSLPort = 443 then
       result := 'https://' + FWebServer.FHost + FPath
     else
-      result := 'https://' + FWebServer.FHost + ':' + inttostr(FWebServer.FStatedSSLPort) + FPath;
+      result := 'https://' + FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort) + FPath;
   end
   else
   begin
-    if FWebServer.FStatedPort = 80 then
+    if FWebServer.FActualPort = 80 then
       result := 'http://' + FWebServer.FHost + FPath
     else
-      result := 'http://' + FWebServer.FHost + ':' + inttostr(FWebServer.FStatedPort) + FPath;
+      result := 'http://' + FWebServer.FHost + ':' + inttostr(FWebServer.FActualPort) + FPath;
   end;
 end;
 
@@ -3349,19 +3345,19 @@ begin
   else
     s := s.Replace('[%logout%]', '|&nbsp;User: ' + Session.SessionName + '&nbsp; <a href="/closed/logout" title="Log Out"><img src="/logout.png"></a>  &nbsp;',
       [rfReplaceAll]);
-  if FWebServer.FStatedPort = 80 then
+  if FWebServer.FActualPort = 80 then
     s := s.Replace('[%host%]', FWebServer.FHost, [rfReplaceAll])
   else
-    s := s.Replace('[%host%]', FWebServer.FHost + ':' + inttostr(FWebServer.FStatedPort), [rfReplaceAll]);
+    s := s.Replace('[%host%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualPort), [rfReplaceAll]);
   if (Session <> nil) and Session.canGetUser and (Session.User <> nil) then
     s := s.Replace('[%jwt%]', Session.JWTPacked, [rfReplaceAll])
   else
     s := s.Replace('[%jwt%]', 'JWT not available', [rfReplaceAll]);
 
-  if FWebServer.FStatedSSLPort = 443 then
+  if FWebServer.FActualSSLPort = 443 then
     s := s.Replace('[%securehost%]', FWebServer.FHost, [rfReplaceAll])
   else
-    s := s.Replace('[%securehost%]', FWebServer.FHost + ':' + inttostr(FWebServer.FStatedSSLPort), [rfReplaceAll]);
+    s := s.Replace('[%securehost%]', FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort), [rfReplaceAll]);
 //  if s.Contains('[%fitbit-redirect%]') then
 //    s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
 //      FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), // key
@@ -3393,7 +3389,6 @@ procedure TFhirWebServerEndPoint.ReturnSpecFile(response: TIdHTTPResponseInfo; s
 var
   src : String;
 begin
-  logt('file: ' + stated);
   if not secure and path.EndsWith('.html') then
   begin
     src := FWebServer.FSourceProvider.getSource(path);
@@ -3478,10 +3473,10 @@ begin
   proc.Input := doc;
   proc.addParameter('useMicrosoft', 'true', '');
 
-  if FWebServer.FStatedPort <> 0 then
-    url := 'http://' + FWebServer.FHost + ':' + inttostr(FWebServer.FStatedPort)
+  if FWebServer.FActualPort <> 0 then
+    url := 'http://' + FWebServer.FHost + ':' + inttostr(FWebServer.FActualPort)
   else
-    url := 'https://' + FWebServer.FHost + ':' + inttostr(FWebServer.FStatedSSLPort);
+    url := 'https://' + FWebServer.FHost + ':' + inttostr(FWebServer.FActualSSLPort);
 
   if saveOnly then
     proc.addParameter('saveOnly', 'true', '');
@@ -3586,7 +3581,7 @@ begin
   if (secure) then
   begin
     if FPath <> '' then
-      result := result + ' <li><a href="http://' + FWebServer.FHost + port(FWebServer.FStatedPort, 80) + FPath + '">Unsecured access at ' + FPath +
+      result := result + ' <li><a href="http://' + FWebServer.FHost + port(FWebServer.FActualPort, 80) + FPath + '">Unsecured access at ' + FPath +
         '</a> - direct access with no security considerations</li>'#13#10;
     if FWebServer.FActualSSLPort <> 0 then
       result := result + ' <li><a href="' + FPath + '">Secured access at ' + FPath +
@@ -3597,7 +3592,7 @@ begin
     result := result + ' <li><a href="' + FPath + '">Unsecured access at ' + FPath +
         '</a> - direct access with no security considerations</li>'#13#10;
     if FPath <> '' then
-      result := result + ' <li><a href="https://' + FWebServer.FHost + port(FWebServer.FStatedSSLPort, 443) + FPath + '">Secured access at ' + FPath +
+      result := result + ' <li><a href="https://' + FWebServer.FHost + port(FWebServer.FActualSSLPort, 443) + FPath + '">Secured access at ' + FPath +
         '</a> - Login required using <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">SMART-ON-FHIR</a></li>'#13#10;
   end;
 end;
@@ -3605,7 +3600,7 @@ end;
 
 { TFhirWebServer }
 
-Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String; factory : TFHIRServerFactory);
+Constructor TFhirWebServer.Create(settings : TFHIRServerSettings; name: String);
 var
   fn : String;
 Begin
@@ -3618,24 +3613,8 @@ Begin
   FInLog := nil;
 
   FSettings := settings;
-  FFactory := factory;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
   FPatientViewServers := TFslStringDictionary.Create;
-
-  logt('Web Server:');
-  if (FActualPort = 0) then
-    logt('  http: not active')
-  else if FStatedPort <> FActualPort then
-    logt('  http: listen on ' + inttostr(FActualPort) + ', but claim = ' + inttostr(FStatedPort) + ' (reverse proxy mode')
-  else
-    logt('  http: listen on ' + inttostr(FActualPort));
-
-  if (FActualSSLPort = 0) then
-    logt('  https: not active')
-  else if FStatedSSLPort <> FActualSSLPort then
-    logt('  https: listen on ' + inttostr(FActualSSLPort) + ', but claim = ' + inttostr(FStatedSSLPort) + ' (reverse proxy mode')
-  else
-    logt('  https: listen on ' + inttostr(FActualSSLPort));
 
   FGoogle := TGoogleAnalyticsProvider.Create;
   // FAuthRequired := ini.ReadString('fhir', 'oauth-secure', '') = '1';
@@ -3656,7 +3635,6 @@ Begin
   FInLog.Free;
   FOutLog.Free;
   FGoogle.Free;
-  FFactory.free;
   Inherited;
 End;
 
@@ -3687,8 +3665,6 @@ var
   txu: String;
   ts: TStringList;
 begin
-  logt('Load Configuration');
-
   FJsPath := ini.admin['js-path'];
   fn := ini.admin['logging-in'];
   if (fn <> '') and ((fn <> '-')) then
@@ -3755,14 +3731,15 @@ begin
     raise EFHIRException.create('Ad admin email is required');
 
   FHostSms := ini.admin['owner-sms'];
-  if FStatedPort = 80 then
+  if FActualPort = 80 then
     txu := 'http://' + FHost
   else
-    txu := 'http://' + FHost + ':' + inttostr(FStatedPort);
+    txu := 'http://' + FHost + ':' + inttostr(FActualPort);
 
   if ini.web['clients'] = '' then
     raise EIOException.create('No Authorization file found');
   FGoogle.serverId := ini.web['googleid'];
+
 end;
 
 procedure TFhirWebServer.DoConnect(AContext: TIdContext);
@@ -3773,7 +3750,7 @@ begin
   CoInitialize(nil);
 {$ENDIF}
   GJsHost := TJsHost.Create(FJsPath);
-  FFactory.registerJs(GJsHost);
+  OnRegisterJs(self, GJsHost);
 //  GJsHost.registry := ServerContext.EventScriptRegistry.Link;
   AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
   FLock.Lock;
@@ -3837,6 +3814,16 @@ end;
 
 Procedure TFhirWebServer.Start(active: boolean);
 Begin
+  logt('Start Web Server:');
+  if (FActualPort = 0) then
+    logt('  http: not active')
+  else
+    logt('  http: listen on ' + inttostr(FActualPort));
+
+  if (FActualSSLPort = 0) then
+    logt('  https: not active')
+  else
+    logt('  https: listen on ' + inttostr(FActualSSLPort));
   FActive := active;
   FStartTime := GetTickCount;
   StartServer(active);
@@ -4020,11 +4007,11 @@ End;
 function TFhirWebServer.WebDesc: String;
 begin
   if (FActualPort = 0) then
-    result := 'HTTPS is supported on Port ' + inttostr(FStatedSSLPort) + '.'
+    result := 'HTTPS is supported on Port ' + inttostr(FActualSSLPort) + '.'
   else if FActualSSLPort = 0 then
-    result := 'HTTP is supported on Port ' + inttostr(FStatedPort) + '.'
+    result := 'HTTP is supported on Port ' + inttostr(FActualPort) + '.'
   else
-    result := 'HTTPS is supported on Port ' + inttostr(FStatedSSLPort) + '. HTTP is supported on Port ' + inttostr(FStatedPort) + '.'
+    result := 'HTTPS is supported on Port ' + inttostr(FActualSSLPort) + '. HTTP is supported on Port ' + inttostr(FActualPort) + '.'
 end;
 
 function TFhirWebServer.WebDump: String;
@@ -4083,6 +4070,7 @@ var
   t: cardinal;
   ep : TFhirWebServerEndpoint;
   ok : boolean;
+  sp : TFHIRWebServerSourceProvider;
 begin
   t := GetTickCount;
   SetThreadName('WebRequest - '+request.Document);
@@ -4113,15 +4101,17 @@ begin
         end;
       if not ok then
       begin
+        sp := FSourceProvider;
         if request.Document = '/diagnostics' then
           ReturnDiagnostics(AContext, request, response, false, false)
+        else if sp.exists(sp.AltFile(request.Document, '/')) then
+          ReturnSpecFile(response, request.Document, sp.AltFile(request.Document, '/'), false)
         else if request.Document = '/' then
           ReturnProcessedFile(request, response, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, ''), false)
         else
         begin
           response.ResponseNo := 404;
           response.ContentText := 'Document ' + request.Document + ' not found';
-          logt('miss: ' + request.Document);
         end;
       end;
     end;
@@ -4181,7 +4171,6 @@ begin
         begin
           response.ResponseNo := 404;
           response.ContentText := 'Document ' + request.Document + ' not found';
-          logt('miss: ' + request.Document);
         end;
       end;
     end;
@@ -4198,7 +4187,7 @@ end;
 
 function TFhirWebServer.hasInternalSSLToken(request: TIdHTTPRequestInfo): boolean;
 begin
-  result := request.RawHeaders.Values[SECURE_TOKEN_HEADER] = FSecureToken;
+  result := false; // requesst.RawHeaders.Values[SECURE_TOKEN_HEADER] = FSecureToken;
 end;
 
 procedure TFhirWebServer.SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
@@ -4572,15 +4561,15 @@ begin
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
-  if FStatedPort = 80 then
+  if FActualPort = 80 then
     s := s.Replace('[%host%]', FHost, [rfReplaceAll])
   else
-    s := s.Replace('[%host%]', FHost + ':' + inttostr(FStatedPort), [rfReplaceAll]);
+    s := s.Replace('[%host%]', FHost + ':' + inttostr(FActualPort), [rfReplaceAll]);
 
-  if FStatedSSLPort = 443 then
+  if FActualSSLPort = 443 then
     s := s.Replace('[%securehost%]', FHost, [rfReplaceAll])
   else
-    s := s.Replace('[%securehost%]', FHost + ':' + inttostr(FStatedSSLPort), [rfReplaceAll]);
+    s := s.Replace('[%securehost%]', FHost + ':' + inttostr(FActualSSLPort), [rfReplaceAll]);
 //  if s.Contains('[%fitbit-redirect%]') then
 //    s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
 //      FAuthServer.ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), // key
@@ -4600,8 +4589,17 @@ begin
   response.contentType := 'text/html; charset=UTF-8';
 end;
 
-procedure TFhirWebServer.ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; Session: TFHIRSession;
-  response: TIdHTTPResponseInfo; secure: boolean);
+procedure TFhirWebServer.ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure: boolean);
+var
+  src : String;
+begin
+  response.Expires := Now + 1;
+  response.ContentStream := SourceProvider.asStream(path);
+  response.FreeContentStream := true;
+  response.contentType := GetMimeTypeForExt(ExtractFileExt(path));
+end;
+
+procedure TFhirWebServer.ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; Session: TFHIRSession; response: TIdHTTPResponseInfo; secure: boolean);
 var
   client: TReverseClient;
 begin
@@ -4611,8 +4609,8 @@ begin
     client.Context := AContext;
     client.request := request;
     client.response := response;
-    if secure then
-      client.SecureToken := FSecureToken;
+//    if secure then
+//      client.SecureToken := FSecureToken;
     client.Execute;
   finally
     client.Free;
@@ -4711,7 +4709,7 @@ begin
     CoInitialize(nil);
 {$ENDIF}
     GJsHost := TJsHost.Create(FServer.FJsPath);
-    FServer.FFactory.registerJs(GJsHost);
+    FServer.OnRegisterJs(self, GJsHost);
 //    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
 
     repeat
@@ -4791,7 +4789,7 @@ var
 begin
   SetThreadName('Server Subscription Thread');
   GJsHost := TJsHost.Create(FServer.FJsPath);
-  FServer.FFactory.registerJs(GJsHost);
+  FServer.OnRegisterJs(self, GJsHost);
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerSubscriptionThread');
   try
@@ -4839,7 +4837,7 @@ var
 begin
   SetThreadName('Server Email Thread');
   GJsHost := TJsHost.Create(FServer.FJsPath);
-  FServer.FFactory.registerJs(GJsHost);
+  FServer.OnRegisterJs(self, GJsHost);
 //  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerEmailThread');
   try
@@ -5027,7 +5025,7 @@ begin
   SetThreadName('Server Async Thread');
   GJsHost := TJsHost.Create(FServer.FWebServer.FJsPath);
   try
-    FServer.FWebServer.FFactory.registerJs(GJsHost);
+    FServer.FWebServer.OnRegisterJs(self, GJsHost);
     status(atsWaiting, 'Waiting to start');
     sleep(100);
     response := TFHIRResponse.Create(FServer.Context.ValidatorContext.link);

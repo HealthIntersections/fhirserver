@@ -71,9 +71,11 @@ Uses
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities,
   FHIR.Support.Collections, FHIR.Support.Json, FHIR.Support.Stream,
 
-  FHIR.Base.Objects,
-  FHIR.Version.Types, FHIR.Base.Lang, FHIR.Version.Resources, FHIR.Version.Constants, FHIR.Server.Session, FHIR.Version.Utilities, FHIR.Base.Scim,
-  FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Server.WebSource;
+  FHIR.Base.Objects, FHIR.Base.Utilities, FHIR.Base.Lang, FHIR.Base.Factory, FHIR.Base.Scim,
+  FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Factory,
+  FHIR.Tools.Indexing,
+  FHIR.Server.Session, FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Server.WebSource,
+  FHIR.Server.Factory, FHIR.Server.Indexing, FHIR.Server.Subscriptions;
 
 Const
   SYSTEM_ID = 'http://example.org/mrn-id';
@@ -91,6 +93,16 @@ Type
 
     function GetById(id : String) : TFslStringList;
     function addRow(data : TFslStringList) : integer;
+  end;
+
+ TExampleServerFactory = class (TFHIRServerFactory)
+  public
+    function makeIndexes : TFHIRIndexBuilder; override;
+    function makeValidator: TFHIRValidatorV; override;
+    function makeIndexer : TFHIRIndexManager; override;
+    function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
+
+    procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
 
   TExampleServerData = class (TObject)
@@ -127,10 +139,10 @@ Type
     Constructor create(Data : TExampleServerData; lang : String);
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
-    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; override;
-    function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; override;
-    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; override;
+    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
+    function getResourceByUrl(aType : string; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResourceV; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; httpCode : Integer; name, message : String); overload; override;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirResourceV; opName : String; httpCode : Integer; name, message : String); overload; override;
 
   end;
 
@@ -150,8 +162,8 @@ Type
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
-    procedure QueueResource(r: TFhirResource); overload; override;
-    procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; override;
+    procedure QueueResource(r: TFhirResourceV); overload; override;
+    procedure QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx); overload; override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
     function ProfilesAsOptionList : String; override;
@@ -166,7 +178,7 @@ Type
     procedure Sweep; override;
     function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; override;
     procedure ProcessEmails; override;
-    function FetchResource(key : integer) : TFHIRResource; override;
+    function FetchResource(key : integer) : TFHIRResourceV; override;
     function getClientInfo(id : String) : TRegisteredClientInformation; override;
     function getClientName(id : String) : string; override;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
@@ -187,6 +199,7 @@ Type
   private
     FData : TExampleServerData;
     FIni : TFHIRServerIniFile;
+    FSettings : TFHIRServerSettings;
     FIPMask: String;
     FPort: word;
     FIPClient: String;
@@ -334,7 +347,8 @@ end;
 constructor TExampleFhirServer.Create;
 begin
   inherited Create;
-  FIni := TFHIRServerIniFile.Create('');
+  FIni := TFHIRServerIniFile.Create('example.ini');
+  FSettings := TFHIRServerSettings.create;
 end;
 
 destructor TExampleFhirServer.Destroy;
@@ -347,36 +361,31 @@ procedure TExampleFhirServer.Start;
 var
   ctxt : TFHIRServerContext;
   store : TExampleFhirServerStorage;
+  s : String;
+  details : TFHIRServerIniComplex;
+  ep : TFhirWebServerEndpoint;
 begin
   FData := TExampleServerData.Create('c:\temp');
-  FIni.WriteInteger('web', 'http', FPort);
-  FIni.WriteString('web', 'host', 'local.fhir.org');
-  FIni.WriteString('web', 'base', '/');
-  FIni.WriteString('web', 'clients', 'c:\temp\auth.ini');
-  FIni.WriteString('admin', 'email', 'grahame@hl7.org');
 
-//  todo: figure out the FTerminologyServer := TTerminologyServer.create(FDB.Link);
-//  FTerminologyServer.load(FIni);
+  FWebServer := TFhirWebServer.create(FSettings.Link, FSystemname);
+  FWebServer.loadConfiguration(FIni);
+  FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));
+  FWebServer.OWinSecurityPlain := true;
 
   store := TExampleFhirServerStorage.create(FData);
   try
-    ctxt := TFHIRServerContext.Create(store.Link);
+    ctxt := TFHIRServerContext.Create(store.Link, TExampleServerFactory.create);
     try
-//      ctxt.FHIR.Tx.Server := FterminologyServer.Link;
-      ctxt.ownername := FSystemName;
-      FWebServer := TFhirWebServer.create(FIni.Link, FSystemname, nil {FTerminologyServer}, ctxt.link);
-      FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', '')));
-      ctxt.UserProvider := TExampleFHIRUserProvider.Create;
-      ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
-      FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
-      FWebServer.OWinSecurityPlain := true;
-      FWebServer.Start(true);
+      ctxt.Globals := FSettings.Link;
+      ctxt.userProvider := TExampleFHIRUserProvider.Create;
+      ep := FWebServer.registerEndPoint(s, details['path'], ctxt.Link, FIni);
     finally
-      ctxt.free;
+      ctxt.Free;
     end;
   finally
-    store.free;
+    store.Free;
   end;
+  FWebServer.Start(true);
 end;
 
 procedure TExampleFhirServer.Stop;
@@ -404,12 +413,12 @@ begin
   FData.FLock.Unlock;
 end;
 
-procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; httpCode: Integer; name, message: String);
+procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; httpCode: Integer; name, message: String);
 begin
   raise EFslException.Create('Not Implemented');
 end;
 
-procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; opName: String; httpCode: Integer; name, message: String);
+procedure TExampleFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirResourceV; opName: String; httpCode: Integer; name, message: String);
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -421,40 +430,36 @@ end;
 
 function TExampleFHIROperationEngine.ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;
 begin
-  case request.ResourceEnum of
-    frtPatient: result := patientCreate(request, response);
+  if request.ResourceName = 'Patient' then
+    result := patientCreate(request, response)
   else
     raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
-  end;
-
 end;
 
 function TExampleFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean;
 begin
-  case request.ResourceEnum of
-    frtPatient: result := patientRead(request, response);
+  if request.ResourceName = 'Patient' then
+    result := patientRead(request, response)
   else
     raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
-  end;
 end;
 
 
 function TExampleFHIROperationEngine.ExecuteUpdate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
   result := true;
-  case request.ResourceEnum of
-    frtPatient: patientUpdate(request, response);
+  if request.ResourceName = 'Patient' then
+    patientUpdate(request, response)
   else
     raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
-  end;
 end;
 
-function TExampleFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResource;
+function TExampleFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResourceV;
 begin
   raise EFslException.Create('Not Implemented');
 end;
 
-function TExampleFHIROperationEngine.getResourceByUrl(aType: TFhirResourceType; url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResource;
+function TExampleFHIROperationEngine.getResourceByUrl(aType: String; url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResourceV;
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -504,15 +509,15 @@ begin
 
     id := pat.identifierList.BySystem(SYSTEM_ID);
     if (id = nil) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, etRequired, 'A MRN is required', lang);
+      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'A MRN is required', lang);
     result.Add(id.value);
 
     if (pat.nameList.IsEmpty) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, etRequired, 'A name is required', lang);
+      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'A name is required', lang);
     if (pat.nameList[0].family = '') then
-      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, etRequired, 'A family name is required', lang);
+      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'A family name is required', lang);
     if (pat.nameList[0].givenList.isEmpty) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, etRequired, 'A given name is required', lang);
+      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'A given name is required', lang);
     result.Add(pat.nameList[0].family);
     result.Add(pat.nameList[0].givenList[0].value);
     if (pat.nameList[0].givenList.Count > 1) then
@@ -534,13 +539,15 @@ end;
 function TExampleFHIROperationEngine.patientCreate(request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   data : TFslStringList;
+  r : TFHIRPatient;
 begin
-  if request.Resource.meta = nil then
-    request.Resource.meta := TFHIRMeta.Create;
-  request.Resource.meta.versionId := '1';
-  request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
+  r := request.Resource as TFHIRPatient;
+  if r.meta = nil then
+    r.meta := TFHIRMeta.Create;
+  r.meta.versionId := '1';
+  r.meta.lastUpdated := TDateTimeEx.makeUTC;
 
-  data := dataFromPatient(request.Resource as TFHIRPatient);
+  data := dataFromPatient(r);
   try
     response.Resource := patientFromData(data);
     result := inttostr(FData.FPatients.addRow(data));
@@ -550,7 +557,7 @@ begin
     response.HTTPCode := 201;
     response.Message := 'Created';
     response.Location := request.baseUrl+request.ResourceName+'/'+result+'/_history/1';
-    response.LastModifiedDate := response.Resource.meta.lastUpdated.DateTime;
+    response.LastModifiedDate := TFHIRPatient(response.Resource).meta.lastUpdated.DateTime;
   finally
     data.Free;
   end;
@@ -559,21 +566,23 @@ end;
 procedure TExampleFHIROperationEngine.patientUpdate(request: TFHIRRequest; response: TFHIRResponse);
 var
   odata, ndata : TFslStringList;
+  r : TFHIRPatient;
 begin
+  r := request.Resource as TFHIRPatient;
   odata := FData.FPatients.GetById(request.Id);
   if odata = nil then
-    raise ERestfulException.Create('TExampleFHIROperationEngine.patientUpdate', 422, etBusinessRule, 'Cannot update a patient that does not already exist', lang);
+    raise ERestfulException.Create('TExampleFHIROperationEngine.patientUpdate', 422, itBusinessRule, 'Cannot update a patient that does not already exist', lang);
   try
-    if request.Resource.meta = nil then
-      request.Resource.meta := TFHIRMeta.Create;
-    request.Resource.meta.versionId := inttostr(StrToInt(odata[0])+1);
-    request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
+    if r.meta = nil then
+      r.meta := TFHIRMeta.Create;
+    r.meta.versionId := inttostr(StrToInt(odata[0])+1);
+    r.meta.lastUpdated := TDateTimeEx.makeUTC;
 
     ndata := dataFromPatient(request.Resource as TFHIRPatient);
     try
       // can't change MRN
       if odata[2] <> ndata[2] then
-        raise ERestfulException.Create('TExampleFHIROperationEngine.patientUpdate', 422, etBusinessRule, 'Cannot change a patient''s MRN', lang);
+        raise ERestfulException.Create('TExampleFHIROperationEngine.patientUpdate', 422, itBusinessRule, 'Cannot change a patient''s MRN', lang);
 
       response.Resource := patientFromData(ndata);
       response.Id := request.Id;
@@ -581,7 +590,7 @@ begin
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.Location := request.baseUrl+request.ResourceName+'/'+request.id+'/_history/'+response.versionId;
-      response.LastModifiedDate := response.Resource.meta.lastUpdated.DateTime;
+      response.LastModifiedDate := TFHIRPatient(response.Resource).meta.lastUpdated.DateTime;
     finally
       ndata.Free;
     end;
@@ -624,7 +633,7 @@ end;
 
 constructor TExampleFhirServerStorage.Create;
 begin
-  inherited Create;
+  inherited Create(TFHIRFactoryR3.create);
   FData := Data;
 end;
 
@@ -655,7 +664,7 @@ begin
 end;
 
 
-function TExampleFhirServerStorage.FetchResource(key: integer): TFHIRResource;
+function TExampleFhirServerStorage.FetchResource(key: integer): TFHIRResourceV;
 begin
   raise EFslException.Create('Not Implemented');
 end;
@@ -707,12 +716,12 @@ begin
   result := '';
 end;
 
-procedure TExampleFhirServerStorage.QueueResource(r: TFhirResource);
+procedure TExampleFhirServerStorage.QueueResource(r: TFhirResourceV);
 begin
   // nothing in this server
 end;
 
-procedure TExampleFhirServerStorage.QueueResource(r: TFhirResource; dateTime: TDateTimeEx);
+procedure TExampleFhirServerStorage.QueueResource(r: TFhirResourceV; dateTime: TDateTimeEx);
 begin
   // nothing in this server
 end;
@@ -792,5 +801,32 @@ begin
   result := LoadUser(key);
 end;
 
+
+{ TExampleServerFactory }
+
+function TExampleServerFactory.makeIndexer: TFHIRIndexManager;
+begin
+  raise Exception.Create('Not supported in this server');
+end;
+
+function TExampleServerFactory.makeIndexes: TFHIRIndexBuilder;
+begin
+  raise Exception.Create('Not supported in this server');
+end;
+
+function TExampleServerFactory.makeSubscriptionManager(ServerContext: TFslObject): TSubscriptionManager;
+begin
+  raise Exception.Create('Not supported in this server');
+end;
+
+function TExampleServerFactory.makeValidator: TFHIRValidatorV;
+begin
+  raise Exception.Create('Not supported in this server');
+end;
+
+procedure TExampleServerFactory.setTerminologyServer(validatorContext: TFHIRWorkerContextWithFactory; server: TFslObject);
+begin
+  raise Exception.Create('Not supported in this server');
+end;
 
 end.

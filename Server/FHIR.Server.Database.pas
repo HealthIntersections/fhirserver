@@ -1575,7 +1575,7 @@ begin
     reverse := sp.reverse;
     if (op <> nil) then
       for iss  in sp.Warnings do
-        op.addIssue(iss.link);
+        op.addIssue(iss, false);
   finally
     sp.free;
   end;
@@ -1974,7 +1974,7 @@ begin
        not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), itInvalid)) then
       ok := false;
 
-    ok := checkOkToStore(request, response, needSecure);
+    ok := ok and checkOkToStore(request, response, needSecure);
     if ok and ServerContext.Validate and not context.upload then
     begin
       if not ExecuteValidation(request, response, 'Update Resource '+request.ResourceName+'/'+request.Id) then
@@ -1982,7 +1982,6 @@ begin
       else
         response.Resource := nil;
     end;
-
 
     if request.DefaultSearch then // conditional update
     begin
@@ -2412,7 +2411,7 @@ begin
         b := factory.wrapBinary(request.Resource.link);
         try
           if b.contentType = '' then
-            op.addIssue(factory.makeIssue(isError, itInvalid, 'Binary', 'A contentType is required'));
+            op.addIssue(factory.makeIssue(isError, itInvalid, 'Binary', 'A contentType is required'), true);
         finally
           b.Free;
         end;
@@ -2448,7 +2447,7 @@ begin
     end;
 
     if response.outcome.issueCount = 0 then
-      response.outcome.addIssue(factory.makeIssue(isInformation, itInformational, '', 'No issues detected during validation'));
+      response.outcome.addIssue(factory.makeIssue(isInformation, itInformational, '', 'No issues detected during validation'), true);
     result := true;
     for iss in response.outcome.issues.forEnum do
       result := result and (iss.severity in [isInformation, isWarning]);
@@ -4705,7 +4704,7 @@ begin
           request.lastModifiedDate := TDateTimeExWrapper(TFHIRResourceV(list[i]).Tag).Value.DateTime;
         request.Session := nil;
         context.upload := true;
-        Execute(context, request, response);
+        //!! Execute(context, request, response);
       end;
     finally
       response.Free;
@@ -4894,36 +4893,11 @@ var
 //  profile : TFHirStructureDefinition;
 begin
   x := factory.getXhtml(request.Resource);
-  if x <> nil then
-    x.Free
-  else
+  if x = nil then
   begin
     gen := factory.makeGenerator(ServerContext.ValidatorContext.link);
     gen.generate(request.Resource);
   end;
-(*  if request.Resource is TFhirDomainResource then
-  begin
-    r := request.Resource as TFhirDomainResource;
-    if (r <> nil) and ((r.text = nil) or (r.text.div_ = nil)) then
-    begin
-      profile := ServerContext.ValidatorContext.Profiles.ProfileByType[r.ResourceType].Link;
-      try
-        if profile = nil then
-          r.text := nil
-        else
-        begin
-          gen := TNarrativeGenerator.Create('', ServerContext.ValidatorContext.Profiles.Link, FRepository.LookupCode, LookupReference, request.Link);
-          try
-            gen.generate(r, profile);
-          finally
-            gen.Free;
-          end;
-        end;
-      finally
-        profile.Free;
-      end;
-    end;
-  end;*)
 end;
 
 
@@ -5273,7 +5247,7 @@ begin
       if ServerContext.TerminologyServer <> nil then
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
-        logt('Load Package hl7.fhir.org-' + ServerContext.Factory.versionString);
+        logt('  .. Load Package hl7.fhir.org-' + ServerContext.Factory.versionString);
         pcm := TFHIRPackageManager.Create(false);
         try
           res := TFslStringSet.Create(['StructureDefinition']); // we only load structure definitions; everything else is left to the database
@@ -5287,17 +5261,17 @@ begin
         end;
         if ServerContext.Globals.forLoad then
         begin
-          logt('Load Custom Resources');
-          LoadCustomResources(implGuides);
-          logt('Load Store');
+//          logt('Load Custom Resources');
+//          LoadCustomResources(implGuides);
+          logt('  .. Load Stored Resources');
           LoadExistingResources(conn);
           if (false) then
           begin
-          logt('Check Definitions');
-          checkDefinitions();
+            logt('  .. Check Definitions');
+            checkDefinitions();
           end;
         end;
-        logt('Load Subscription Queue');
+        logt('  .. Load Subscription Queue');
         ServerContext.SubscriptionManager.LoadQueue(conn);
       end;
       conn.Release;

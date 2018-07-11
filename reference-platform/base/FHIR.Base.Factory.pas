@@ -138,7 +138,7 @@ type
     function resetXhtml(r : TFHIRResourceV) : TFHIRXhtmlNode; virtual; abstract;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; virtual; abstract;
 
-    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); virtual; abstract;
+    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); virtual; abstract;
     function buildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
     Function buildOperationOutcome(lang, message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
 

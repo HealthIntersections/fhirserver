@@ -44,6 +44,7 @@ uses
 
 var
   GBasePath : String;
+  GContentPath : String;
 
 Type
   FHIRFolderBasedTestCaseAttribute = class (CustomTestCaseSourceAttribute)

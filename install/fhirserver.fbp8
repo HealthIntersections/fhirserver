@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "test new release"
+        as.returnvalue = test
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -117,87 +117,44 @@ begin
         id = {D7D8191F-6D6F-4351-A074-B63B3529E85F}
         action.directory.create
         begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p232
+          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p32
           force = true
           id = {189F22AF-F4F5-46D8-829D-EB6796FBFC98}
         end
         action.directory.create
         begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p264
+          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p64
           force = false
           id = {FC77AD06-E97D-497E-AE1E-9EAFD69D50AA}
         end
         action.directory.create
         begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d232
+          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d32
           force = false
           id = {7B1AF238-AD6E-4D91-96B5-840AA58F41D1}
         end
         action.directory.create
         begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d264
+          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d64
           force = false
           id = {54541897-B810-4290-B8F8-C7CB101CED29}
         end
         action.directory.create
         begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p332
-          force = true
-          id = {F8880E87-97EF-4624-9307-E6B239406434}
-        end
-        action.directory.create
-        begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p364
+          description = "Create Directory [ C:\\work\\com.healthintersections.fhir\\scratch\\units_dx64 ]"
+          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d64
           force = false
-          id = {D68EE937-C033-4070-BC8F-8F05F7627AF3}
-        end
-        action.directory.create
-        begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d332
-          force = false
-          id = {203D405E-913B-45CB-A189-1730F4952B15}
-        end
-        action.directory.create
-        begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d364
-          force = false
-          id = {4086749F-64D2-475D-9556-870E2482DF38}
-        end
-        action.directory.create
-        begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p432
-          force = true
-          id = {71EAFED5-A6B1-4BDA-B2B9-9B04EFBB2A00}
-        end
-        action.directory.create
-        begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_p464
-          force = false
-          id = {C242D480-E682-4B55-BB9A-41EBD851FABB}
-        end
-        action.directory.create
-        begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d432
-          force = false
-          id = {610DBA93-BA64-463D-A70C-B06533E07707}
-        end
-        action.directory.create
-        begin
-          fileordirectory = C:\\work\\com.healthintersections.fhir\\scratch\\units_d464
-          force = false
-          id = {38D18502-28AF-4D99-9AF5-E6AA0640D1A3}
+          id = {D32B69A4-A025-47C7-9569-488E3E32EDC2}
         end
       end
       action.group
       begin
         description = "DUnit Tests"
-        enabled = false
         id = {77AF12F8-DBE0-4ABB-BD31-13E85E4F5E1D}
         action.files.delete
         begin
           deletehidden = false
           deletereadonly = false
-          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\FHIRServerTests.exe
           id = {91E95BB6-0B1C-46FB-B761-F29762E59894}
@@ -216,9 +173,8 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Berlin
+          delphiversion = Delphi10Tokyo
           description = "Compile the Server Tests"
-          enabled = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -270,7 +226,7 @@ begin
             alwaysuseconditionalsfromdof = false
             alwaysusedelphilibrarypath = false
             alwaysusedofsearchpath = false
-            assertions = false
+            assertions = true
             assignableconst = false
             booleval = false
             compilerwarnings = "-w-UNSAFE_TYPE\=0" +
@@ -297,7 +253,7 @@ begin
             iochecking = true
             librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
             linkeroutput = 0
-            localsymbols = false
+            localsymbols = true
             mapfile = 3
             maxstacksize = 1048576
             minstacksize = 16384
@@ -308,16 +264,16 @@ begin
             overflowchecking = false
             rangechecking = false
             recordfieldalign = fa8
-            referenceinfo = false
+            referenceinfo = true
             safedivide = false
-            searchpath = "C:\\work\\fhirserver\\Libraries\\jcl;c:\\program files (x86)\\embarcadero\\studio\\18.0\\source\\DUnitX"
+            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
             showhints = true
             showwarnings = true
             stackframes = false
             stringchecks = true
             typedpointers = false
             unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;
-            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_4_64
+            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_dx64
             usedebugdcu = false
             usepackages = false
             varstringchecks = true
@@ -326,7 +282,6 @@ begin
         action.process.execute
         begin
           captureoutput = true
-          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -350,2791 +305,964 @@ begin
       action.group
       begin
         description = "64 bit build"
+        enabled = false
         id = {B04497CC-9752-463E-8B55-3B8543974103}
-        action.group
+        action.files.delete
         begin
-          description = "Build R4 Server"
-          id = {323EE148-5CF5-49AC-AABA-35E692B5EEE4}
-          action.files.delete
+          deletehidden = false
+          deletereadonly = false
+          failifnofile = false
+          filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer.*
+          id = {03A12EA2-794D-41B8-8036-E7382503AC94}
+        end
+        action.delphi.build
+        begin
+          allowimplicitimport = true
+          alwaysuseconditionalsfromdof = false
+          autoincbuild = true
+          autoupdatefileversion = true
+          autoupdateproductversion = false
+          buildall = true
+          buildversion = 0
+          codepage = 1252
+          compileprojectresources = false
+          compileridl = true
+          configname = Release
+          debugversionnumbers = false
+          delphiversion = Delphi10Tokyo
+          description = "Compile the Debug Server (DSTU4)"
+          eurekalogverboselogging = false
+          frameworktype = VCL
+          hintsaserror = false
+          iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
+          id = {E254426B-74E8-4A74-80A8-7DCF138AD9E1}
+          includecompiledate = false
+          includemanifest = false
+          includeverinfo = false
+          isdebug = false
+          isdll = false
+          isprerelease = false
+          isprivate = false
+          isspecial = false
+          keepcfg = false
+          linkproductversiontofileversion = true
+          locale = 3081
+          majorversion = 0
+          minorversion = 0
+          platform = Win64
+          platformsdktype = ProjectSDK
+          projectfile = C:\\work\\fhirserver\\Server\\FHIRServer.dpr
+          regenerateresource = true
+          releaseversion = 0
+          resourcecompilertype = rcBorland
+          startingdir = C:\\work\\fhirserver\\Server\\
+          updatedoffile = false
+          updatepackagesource = false
+          updateversioninfokeys = false
+          useeurekalogcompiler = false
+          useprojectsettings = []
+          usepropertyset = false
+          useversionfromdof = false
+          verboseoutput = false
+          versioninfokeys = "CompanyName\=" +
+                            "FileDescription\=" +
+                            "FileVersion\=0.0.0.0" +
+                            "InternalName\=" +
+                            "LegalCopyright\=" +
+                            "LegalTrademarks\=" +
+                            "OriginalFilename\=" +
+                            "ProductName\=" +
+                            "ProductVersion\=0.0.0.0" +
+                            "Comments\=" +
+                            ""
+          warningsaserror = false
+          workaroundd5bug = false
+          delphi.compileroptions
           begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer4.*
-            id = {03A12EA2-794D-41B8-8036-E7382503AC94}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
             alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Debug Server (DSTU4)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {E254426B-74E8-4A74-80A8-7DCF138AD9E1}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win64
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer4.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = true
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR4
-              consoleapp = true
-              debuginfo = true
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = true
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\64
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = true
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d464
-              usedebugdcu = true
-              usepackages = false
-              varstringchecks = true
-            end
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Add Map (3)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {D6FC7646-A2D9-44FC-8F1F-6526395373C2}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "-j -e C:\\work\\fhirserver\\Exec\\64\\FhirServer4.map"
-            programname = C:\\tools\\jcl\\MakeJclDbg.exe
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            terminateontimeout = false
-            timeoutlength = 0
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.directory.rename
-          begin
-            id = {6AE1E277-3565-4395-A930-3361D33189D3}
-            newdirname = fhirserver4.debug.exe
-            overwriteexisting = false
-            renamedir = false
-            sourcefile = C:\\work\\fhirserver\\Exec\\64\\fhirserver4.exe
-          end
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer4.exe
-            id = {5A08D7F1-55CA-4A06-964A-58237EE2EC9D}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU4)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {C0DC42BA-9A87-4916-A9BB-8D7DEE0EA627}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win64
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer4.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR4
-              consoleapp = true
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\64
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p464
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
+            alwaysusedelphilibrarypath = false
+            alwaysusedofsearchpath = false
+            assertions = true
+            assignableconst = false
+            booleval = false
+            compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                               "-w-UNSAFE_CODE\=0" +
+                               "-w-UNSAFE_CAST\=0" +
+                               ""
+            consoleapp = true
+            debuginfo = true
+            definitionsonly = true
+            emitruntimetypeinformation = false
+            exportallsymbols = false
+            extendedsyntax = true
+            externaltd32 = true
+            frameworktype = None
+            generatedocumentation = false
+            generatehpp = false
+            hugestrings = true
+            imagebase = 4194304
+            includenamespaces = false
+            includeremotesymbols = false
+            includetd32 = false
+            inlining = inOn
+            iochecking = true
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+            linkeroutput = 0
+            localsymbols = true
+            mapfile = 3
+            maxstacksize = 1048576
+            minstacksize = 16384
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+            openstrings = true
+            optimisation = false
+            outputdir = C:\\work\\fhirserver\\Exec\\64
+            overflowchecking = false
+            rangechecking = false
+            recordfieldalign = fa8
+            referenceinfo = true
+            safedivide = false
+            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
+            showhints = true
+            showwarnings = true
+            stackframes = false
+            stringchecks = true
+            typedpointers = false
+            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d64
+            usedebugdcu = true
+            usepackages = false
+            varstringchecks = true
           end
         end
-        action.group
+        action.process.execute
         begin
-          description = "Build R3 Server"
-          id = {78F3E5F3-0B09-471F-9389-9FC56201F566}
-          action.files.delete
+          captureoutput = true
+          description = "Add Map (3)"
+          enablelivecapture = true
+          enablereturncodecheck = true
+          enabletimeout = false
+          expandimpersonationtoken = false
+          hidewindow = true
+          id = {D6FC7646-A2D9-44FC-8F1F-6526395373C2}
+          impersonateusenetcredonly = false
+          impersonateuser = false
+          logoutput = true
+          logprocessparameters = true
+          params = "-j -e C:\\work\\fhirserver\\Exec\\64\\FhirServer.map"
+          programname = C:\\tools\\jcl\\MakeJclDbg.exe
+          redirectstderr = true
+          returncodecomparator = rcEqualTo
+          returncodetocheck = 0
+          terminateontimeout = false
+          timeoutlength = 0
+          useerrordialogmonitor = false
+          waitforcompletion = true
+        end
+        action.directory.rename
+        begin
+          id = {6AE1E277-3565-4395-A930-3361D33189D3}
+          newdirname = fhirserver.debug.exe
+          overwriteexisting = false
+          renamedir = false
+          sourcefile = C:\\work\\fhirserver\\Exec\\64\\fhirserver.exe
+        end
+        action.files.delete
+        begin
+          deletehidden = false
+          deletereadonly = false
+          failifnofile = false
+          filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer.exe
+          id = {5A08D7F1-55CA-4A06-964A-58237EE2EC9D}
+        end
+        action.delphi.build
+        begin
+          allowimplicitimport = true
+          alwaysuseconditionalsfromdof = false
+          autoincbuild = true
+          autoupdatefileversion = true
+          autoupdateproductversion = false
+          buildall = true
+          buildversion = 0
+          codepage = 1252
+          compileprojectresources = false
+          compileridl = true
+          configname = Release
+          debugversionnumbers = false
+          delphiversion = Delphi10Tokyo
+          description = "Compile the Server (DSTU4)"
+          eurekalogverboselogging = false
+          frameworktype = VCL
+          hintsaserror = false
+          iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
+          id = {C0DC42BA-9A87-4916-A9BB-8D7DEE0EA627}
+          includecompiledate = false
+          includemanifest = false
+          includeverinfo = false
+          isdebug = false
+          isdll = false
+          isprerelease = false
+          isprivate = false
+          isspecial = false
+          keepcfg = false
+          linkproductversiontofileversion = true
+          locale = 3081
+          majorversion = 0
+          minorversion = 0
+          platform = Win64
+          platformsdktype = ProjectSDK
+          projectfile = C:\\work\\fhirserver\\Server\\FHIRServer.dpr
+          regenerateresource = true
+          releaseversion = 0
+          resourcecompilertype = rcBorland
+          startingdir = C:\\work\\fhirserver\\Server\\
+          updatedoffile = false
+          updatepackagesource = false
+          updateversioninfokeys = false
+          useeurekalogcompiler = false
+          useprojectsettings = []
+          usepropertyset = false
+          useversionfromdof = false
+          verboseoutput = false
+          versioninfokeys = "CompanyName\=" +
+                            "FileDescription\=" +
+                            "FileVersion\=0.0.0.0" +
+                            "InternalName\=" +
+                            "LegalCopyright\=" +
+                            "LegalTrademarks\=" +
+                            "OriginalFilename\=" +
+                            "ProductName\=" +
+                            "ProductVersion\=0.0.0.0" +
+                            "Comments\=" +
+                            ""
+          warningsaserror = false
+          workaroundd5bug = false
+          delphi.compileroptions
           begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer3.*
-            id = {2F678A2D-A0FD-4C3B-B847-E20E3F682FB3}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
             alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Debug Server (DSTU3)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {C28AF294-E4DE-45A6-9239-1EE9948CD165}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win64
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer3.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = true
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR3
-              consoleapp = true
-              debuginfo = true
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = true
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\64
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = true
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorkeR3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base;FHIR.Version.Common\=FHIR.R3.Common;FHIR.Version.Factory\=FHIR.R3.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d364
-              usedebugdcu = true
-              usepackages = false
-              varstringchecks = true
-            end
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Add Map (3)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {9F64319F-DCB2-43DD-B07A-20EDF1018A42}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "-j -e C:\\work\\fhirserver\\Exec\\64\\FhirServer3.map"
-            programname = C:\\tools\\jcl\\MakeJclDbg.exe
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            terminateontimeout = false
-            timeoutlength = 0
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.directory.rename
-          begin
-            id = {3E186DC0-E609-4291-9939-8EB337D85461}
-            newdirname = fhirserver3.debug.exe
-            overwriteexisting = false
-            renamedir = false
-            sourcefile = C:\\work\\fhirserver\\Exec\\64\\fhirserver3.exe
-          end
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer3.exe
-            id = {8E64D180-D947-4902-A2A4-6443DB83C183}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU3)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {0B5F4CE8-4EB9-4E9E-8D7A-8A4944442293}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win64
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer3.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR3
-              consoleapp = true
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\64
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorkeR3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base;FHIR.Version.Common\=FHIR.R3.Common;FHIR.Version.Factory\=FHIR.R3.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p364
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
+            alwaysusedelphilibrarypath = false
+            alwaysusedofsearchpath = false
+            assertions = false
+            assignableconst = false
+            booleval = false
+            compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                               "-w-UNSAFE_CODE\=0" +
+                               "-w-UNSAFE_CAST\=0" +
+                               ""
+            consoleapp = true
+            debuginfo = false
+            definitionsonly = true
+            emitruntimetypeinformation = false
+            exportallsymbols = false
+            extendedsyntax = true
+            externaltd32 = true
+            frameworktype = None
+            generatedocumentation = false
+            generatehpp = false
+            hugestrings = true
+            imagebase = 4194304
+            includenamespaces = false
+            includeremotesymbols = false
+            includetd32 = false
+            inlining = inOn
+            iochecking = true
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+            linkeroutput = 0
+            localsymbols = false
+            mapfile = 3
+            maxstacksize = 1048576
+            minstacksize = 16384
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+            openstrings = true
+            optimisation = false
+            outputdir = C:\\work\\fhirserver\\Exec\\64
+            overflowchecking = false
+            rangechecking = false
+            recordfieldalign = fa8
+            referenceinfo = false
+            safedivide = false
+            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
+            showhints = true
+            showwarnings = true
+            stackframes = false
+            stringchecks = true
+            typedpointers = false
+            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p64
+            usedebugdcu = false
+            usepackages = false
+            varstringchecks = true
           end
         end
-        action.group
+        action.process.execute
         begin
-          description = "Build R2 Server"
-          id = {62943F50-9BF5-4739-8069-CE9D92037FD5}
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer2.*
-            id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Debug Server (DSTU2)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {217F3077-B26C-48A2-B7CF-5FE7B5106B4B}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win64
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer2.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR2;FHIR2CM;NO_CONVERSION
-              consoleapp = true
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\64
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R2.AuthMap;FHIR.Version.Constants\=FHIR.R2.Constants;FHIR.Version.Context\=FHIR.R2.Context;FHIR.Version.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Version.Javascript\=FHIR.R2.Javascript;FHIR.Version.ElementModel\=FHIR.R2.ElementModel;FHIR.Version.Narrative\=FHIR.R2.Narrative;FHIR.Version.Operations\=FHIR.R2.Operations;FHIR.Version.Json\=FHIR.R2.Json;FHIR.Version.Turtle\=FHIR.R2.Turtle;FHIR.Version.Xml\=FHIR.R2.Xml;FHIR.Version.PathNode\=FHIR.R2.PathNode;FHIR.Version.Profiles\=FHIR.R2.Profiles;FHIR.Version.Resources\=FHIR.R2.Resources;FHIR.Version.MapUtilities\=FHIR.R2.MapUtilities;FHIR.Version.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorkeR2;FHIR.Version.Types\=FHIR.R2.Types;FHIR.Version.Utilities\=FHIR.R2.Utilities;FHIR.Version.Validator\=FHIR.R2.Validator;FHIR.Version.OpBase\=FHIR.R2.OpBase;FHIR.Version.PathEngine\=FHIR.R2.PathEngine;FHIR.Version.Narrative2\=FHIR.R2.Narrative2;FHIR.Version.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base;FHIR.Version.Common\=FHIR.R2.Common;FHIR.Version.Factory\=FHIR.R2.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d264
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Add Map (2)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {00DFD84B-C1DA-4256-AE55-7B550862E539}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "-j -e C:\\work\\fhirserver\\Exec\\64\\FhirServer2.map"
-            programname = C:\\tools\\jcl\\MakeJclDbg.exe
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            terminateontimeout = false
-            timeoutlength = 0
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.directory.rename
-          begin
-            id = {B7B76493-7C0F-4AC6-9956-89091938200C}
-            newdirname = fhirserver2.debug.exe
-            overwriteexisting = false
-            renamedir = false
-            sourcefile = C:\\work\\fhirserver\\Exec\\64\\fhirserver2.exe
-          end
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServer2.exe
-            id = {2C95092F-AC3A-41DA-896B-8AA1C6752A0C}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU2)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {66703C0F-0495-48FD-9BF6-AAD5E99F4063}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win64
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer2.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR2;FHIR2CM;NO_CONVERSION
-              consoleapp = true
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\64
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R2.AuthMap;FHIR.Version.Constants\=FHIR.R2.Constants;FHIR.Version.Context\=FHIR.R2.Context;FHIR.Version.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Version.Javascript\=FHIR.R2.Javascript;FHIR.Version.ElementModel\=FHIR.R2.ElementModel;FHIR.Version.Narrative\=FHIR.R2.Narrative;FHIR.Version.Operations\=FHIR.R2.Operations;FHIR.Version.Json\=FHIR.R2.Json;FHIR.Version.Turtle\=FHIR.R2.Turtle;FHIR.Version.Xml\=FHIR.R2.Xml;FHIR.Version.PathNode\=FHIR.R2.PathNode;FHIR.Version.Profiles\=FHIR.R2.Profiles;FHIR.Version.Resources\=FHIR.R2.Resources;FHIR.Version.MapUtilities\=FHIR.R2.MapUtilities;FHIR.Version.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorkeR2;FHIR.Version.Types\=FHIR.R2.Types;FHIR.Version.Utilities\=FHIR.R2.Utilities;FHIR.Version.Validator\=FHIR.R2.Validator;FHIR.Version.OpBase\=FHIR.R2.OpBase;FHIR.Version.PathEngine\=FHIR.R2.PathEngine;FHIR.Version.Narrative2\=FHIR.R2.Narrative2;FHIR.Version.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base;FHIR.Version.Common\=FHIR.R2.Common;FHIR.Version.Factory\=FHIR.R2.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_2_64
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
-          end
+          captureoutput = true
+          description = "Sign the Server (64)"
+          enablelivecapture = true
+          enablereturncodecheck = true
+          enabletimeout = false
+          expandimpersonationtoken = false
+          hidewindow = false
+          id = {10CA498F-3322-4E89-9626-95B594AF39CE}
+          impersonateusenetcredonly = false
+          impersonateuser = false
+          logoutput = true
+          logprocessparameters = true
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer.exe\""
+          programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+          redirectstderr = true
+          returncodecomparator = rcEqualTo
+          returncodetocheck = 0
+          startindir = "C:\\Program Files (x86)\\kSign"
+          terminateontimeout = false
+          timeoutlength = 1
+          useerrordialogmonitor = false
+          waitforcompletion = true
         end
-        action.group
+        action.process.execute
         begin
-          description = "Build Server Utils"
-          id = {09782113-23C1-4485-9C83-8C271BE0CCCE}
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\64\\FHIRServerUtils.exe
-            id = {71963D09-2A47-4E6A-908F-CFC669A9CBF2}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the ServerUtils"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\utils\\mainicon.ico
-            id = {37CDABF0-A1B4-404E-B41A-F4783027A20A}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win64
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\utils\\FhirServerUtils.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\utils\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR4
-              consoleapp = false
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\64
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p464
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Add Map (3)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {F9ECBA02-349E-4CD4-8C6B-2488C4628250}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "-j -e C:\\work\\fhirserver\\Exec\\64\\FhirServerUtils.map"
-            programname = C:\\tools\\jcl\\MakeJclDbg.exe
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            terminateontimeout = false
-            timeoutlength = 0
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-        end
-        action.group
-        begin
-          description = "Sign executables"
-          id = {DC8781EF-7FEC-44BD-93F6-AB1772EA8B1E}
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (64)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = false
-            id = {10CA498F-3322-4E89-9626-95B594AF39CE}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer4.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (64)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = false
-            id = {1DC6A8E2-771B-4C8E-A70F-D10CD3CFFB81}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer4.debug.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (64)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {D1D81162-5F75-4947-83DD-AB87D7E7F6B5}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer3.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (64)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {44430AA5-B2D1-4FBE-89B6-FD8C5AB527A7}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer3.debug.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (64)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {9F01F557-BE77-4FF3-9066-591BF7CB030D}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer2.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (64)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {089DEEB5-9243-45AF-92D2-F3C347734BBE}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer2.debug.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (64)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {E7812714-C66F-42FB-BAEA-F7302128DA75}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServerUtils.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-        end
-        action.group
-        begin
-          description = "Build Install"
-          id = {537C033D-7A5F-4928-B79E-5B5A59F4F38A}
-          action.ini.write
-          begin
-            allowcreate = false
-            deleteifblank = false
-            description = "Set AppVerName in Inno Script"
-            id = {E3A38EAF-30F3-4B06-9770-C111B7E0A1E7}
-            inifile = C:\\work\\fhirserver\\install\\install64.iss
-            newvalue = "Version 1.0.%BuildCount%"
-            section = Setup
-            valuename = AppVerName
-            valuetype = vtString
-          end
-          action.ini.write
-          begin
-            allowcreate = false
-            deleteifblank = false
-            description = "Set OutputFilename in Inno Script"
-            id = {4CCDCB7F-C397-47A0-A936-0D320AF5B9D9}
-            inifile = C:\\work\\fhirserver\\install\\install64.iss
-            newvalue = fhirserver64-1.0.%BuildCount%
-            section = Setup
-            valuename = OutputBaseFilename
-            valuetype = vtString
-          end
-          action.innosetup.execute
-          begin
-            description = "Build the server install"
-            id = {8413CA91-F62B-48D7-952E-8CEF6C236C73}
-            innoversion = Inno5
-            scriptfile = C:\\work\\fhirserver\\install\\install64.iss
-            showprogress = true
-            unicode = false
-            usecommandline = true
-            usepreprocessor = false
-          end
+          captureoutput = true
+          description = "Sign the Server (64)"
+          enablelivecapture = true
+          enablereturncodecheck = true
+          enabletimeout = false
+          expandimpersonationtoken = false
+          hidewindow = false
+          id = {1DC6A8E2-771B-4C8E-A70F-D10CD3CFFB81}
+          impersonateusenetcredonly = false
+          impersonateuser = false
+          logoutput = true
+          logprocessparameters = true
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\64\\FHIRServer.debug.exe\""
+          programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+          redirectstderr = true
+          returncodecomparator = rcEqualTo
+          returncodetocheck = 0
+          startindir = "C:\\Program Files (x86)\\kSign"
+          terminateontimeout = false
+          timeoutlength = 1
+          useerrordialogmonitor = false
+          waitforcompletion = true
         end
       end
       action.group
       begin
         description = "32 bit build"
-        id = {C42EC044-C80A-4901-AE36-65C021CB903C}
-        action.group
+        enabled = false
+        id = {E0E09074-DAE5-4B7A-A5C3-342806452053}
+        action.files.delete
         begin
-          description = "Build R4 Server"
-          id = {C2AAA22F-26E6-4702-962F-F4C5EC91C41F}
-          action.files.delete
+          deletehidden = false
+          deletereadonly = false
+          failifnofile = false
+          filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer.*
+          id = {F35DC880-1F5E-465B-80EE-75A689F63241}
+        end
+        action.delphi.build
+        begin
+          allowimplicitimport = true
+          alwaysuseconditionalsfromdof = false
+          autoincbuild = true
+          autoupdatefileversion = true
+          autoupdateproductversion = false
+          buildall = true
+          buildversion = 0
+          codepage = 1252
+          compileprojectresources = false
+          compileridl = true
+          configname = Release
+          debugversionnumbers = false
+          delphiversion = Delphi10Tokyo
+          description = "Compile the Debug Server (DSTU4)"
+          eurekalogverboselogging = false
+          frameworktype = VCL
+          hintsaserror = false
+          iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
+          id = {2D36B63C-F097-4EA8-8263-98DBF8FEFA6A}
+          includecompiledate = false
+          includemanifest = false
+          includeverinfo = false
+          isdebug = false
+          isdll = false
+          isprerelease = false
+          isprivate = false
+          isspecial = false
+          keepcfg = false
+          linkproductversiontofileversion = true
+          locale = 3081
+          majorversion = 0
+          minorversion = 0
+          platform = Win32
+          platformsdktype = ProjectSDK
+          projectfile = C:\\work\\fhirserver\\Server\\FHIRServer.dpr
+          regenerateresource = true
+          releaseversion = 0
+          resourcecompilertype = rcBorland
+          startingdir = C:\\work\\fhirserver\\Server\\
+          updatedoffile = false
+          updatepackagesource = false
+          updateversioninfokeys = false
+          useeurekalogcompiler = false
+          useprojectsettings = []
+          usepropertyset = false
+          useversionfromdof = false
+          verboseoutput = false
+          versioninfokeys = "CompanyName\=" +
+                            "FileDescription\=" +
+                            "FileVersion\=0.0.0.0" +
+                            "InternalName\=" +
+                            "LegalCopyright\=" +
+                            "LegalTrademarks\=" +
+                            "OriginalFilename\=" +
+                            "ProductName\=" +
+                            "ProductVersion\=0.0.0.0" +
+                            "Comments\=" +
+                            ""
+          warningsaserror = false
+          workaroundd5bug = false
+          delphi.compileroptions
           begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer4.*
-            id = {3ECD965B-6D90-40F8-9072-E1042BAF522C}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
             alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU4)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {18E38537-14B7-4036-8D27-B29D8CCEE515}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win32
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer4.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = true
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR4
-              consoleapp = true
-              debuginfo = true
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = true
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\32
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = true
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d432
-              usedebugdcu = true
-              usepackages = false
-              varstringchecks = true
-            end
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Add Map (3)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {1BB8B1AB-8B0B-453B-BDE2-F7113D034B05}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "-j -e C:\\work\\fhirserver\\Exec\\32\\FhirServer4.map"
-            programname = C:\\tools\\jcl\\MakeJclDbg.exe
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            terminateontimeout = false
-            timeoutlength = 0
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.directory.rename
-          begin
-            id = {BAB5AF8F-184A-4A73-BE6B-CCC328CA8FFF}
-            newdirname = fhirserver4.debug.exe
-            overwriteexisting = false
-            renamedir = false
-            sourcefile = C:\\work\\fhirserver\\Exec\\32\\fhirserver4.exe
-          end
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer4.exe
-            id = {D5CAB004-E4FB-46DB-A337-60AF6A8159C7}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU4)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {CEBE47AB-06D1-4953-B3A9-D8519DB82301}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win32
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer4.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR4
-              consoleapp = true
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\32
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p432
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
+            alwaysusedelphilibrarypath = false
+            alwaysusedofsearchpath = false
+            assertions = true
+            assignableconst = false
+            booleval = false
+            compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                               "-w-UNSAFE_CODE\=0" +
+                               "-w-UNSAFE_CAST\=0" +
+                               ""
+            consoleapp = true
+            debuginfo = true
+            definitionsonly = true
+            emitruntimetypeinformation = false
+            exportallsymbols = false
+            extendedsyntax = true
+            externaltd32 = true
+            frameworktype = None
+            generatedocumentation = false
+            generatehpp = false
+            hugestrings = true
+            imagebase = 4194304
+            includenamespaces = false
+            includeremotesymbols = false
+            includetd32 = false
+            inlining = inOn
+            iochecking = true
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+            linkeroutput = 0
+            localsymbols = true
+            mapfile = 3
+            maxstacksize = 1048576
+            minstacksize = 16384
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
+            openstrings = true
+            optimisation = false
+            outputdir = C:\\work\\fhirserver\\Exec\\32
+            overflowchecking = false
+            rangechecking = false
+            recordfieldalign = fa8
+            referenceinfo = true
+            safedivide = false
+            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
+            showhints = true
+            showwarnings = true
+            stackframes = false
+            stringchecks = true
+            typedpointers = false
+            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d32
+            usedebugdcu = true
+            usepackages = false
+            varstringchecks = true
           end
         end
-        action.group
+        action.process.execute
         begin
-          description = "Build R3 Server"
-          id = {2FD4473F-0129-48F7-8C6D-9F0A95153D25}
-          action.files.delete
+          captureoutput = true
+          description = "Add Map (3)"
+          enablelivecapture = true
+          enablereturncodecheck = true
+          enabletimeout = false
+          expandimpersonationtoken = false
+          hidewindow = true
+          id = {71B12A8D-582D-477F-818D-1A6F10D90131}
+          impersonateusenetcredonly = false
+          impersonateuser = false
+          logoutput = true
+          logprocessparameters = true
+          params = "-j -e C:\\work\\fhirserver\\Exec\\32\\FhirServer.map"
+          programname = C:\\tools\\jcl\\MakeJclDbg.exe
+          redirectstderr = true
+          returncodecomparator = rcEqualTo
+          returncodetocheck = 0
+          terminateontimeout = false
+          timeoutlength = 0
+          useerrordialogmonitor = false
+          waitforcompletion = true
+        end
+        action.directory.rename
+        begin
+          id = {BD1861B5-4953-48CD-AAFA-126B7D5BA195}
+          newdirname = fhirserver.debug.exe
+          overwriteexisting = false
+          renamedir = false
+          sourcefile = C:\\work\\fhirserver\\Exec\\32\\fhirserver.exe
+        end
+        action.files.delete
+        begin
+          deletehidden = false
+          deletereadonly = false
+          failifnofile = false
+          filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer.exe
+          id = {527CD1D2-2DFA-4E34-B065-3390702471E0}
+        end
+        action.delphi.build
+        begin
+          allowimplicitimport = true
+          alwaysuseconditionalsfromdof = false
+          autoincbuild = true
+          autoupdatefileversion = true
+          autoupdateproductversion = false
+          buildall = true
+          buildversion = 0
+          codepage = 1252
+          compileprojectresources = false
+          compileridl = true
+          configname = Release
+          debugversionnumbers = false
+          delphiversion = Delphi10Tokyo
+          description = "Compile the Server (DSTU4)"
+          eurekalogverboselogging = false
+          frameworktype = VCL
+          hintsaserror = false
+          iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
+          id = {C95479DA-8AC7-4919-BB43-97913B8D0E9B}
+          includecompiledate = false
+          includemanifest = false
+          includeverinfo = false
+          isdebug = false
+          isdll = false
+          isprerelease = false
+          isprivate = false
+          isspecial = false
+          keepcfg = false
+          linkproductversiontofileversion = true
+          locale = 3081
+          majorversion = 0
+          minorversion = 0
+          platform = Win32
+          platformsdktype = ProjectSDK
+          projectfile = C:\\work\\fhirserver\\Server\\FHIRServer.dpr
+          regenerateresource = true
+          releaseversion = 0
+          resourcecompilertype = rcBorland
+          startingdir = C:\\work\\fhirserver\\Server\\
+          updatedoffile = false
+          updatepackagesource = false
+          updateversioninfokeys = false
+          useeurekalogcompiler = false
+          useprojectsettings = []
+          usepropertyset = false
+          useversionfromdof = false
+          verboseoutput = false
+          versioninfokeys = "CompanyName\=" +
+                            "FileDescription\=" +
+                            "FileVersion\=0.0.0.0" +
+                            "InternalName\=" +
+                            "LegalCopyright\=" +
+                            "LegalTrademarks\=" +
+                            "OriginalFilename\=" +
+                            "ProductName\=" +
+                            "ProductVersion\=0.0.0.0" +
+                            "Comments\=" +
+                            ""
+          warningsaserror = false
+          workaroundd5bug = false
+          delphi.compileroptions
           begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer3.*
-            id = {49E4974F-4181-4AD6-B4E0-60A1F975C589}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
             alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU3)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {0C640AD9-66BF-4BB3-B81E-674CDEB53FCA}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win32
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer3.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = true
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR3
-              consoleapp = true
-              debuginfo = true
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = true
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\32
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = true
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorkeR3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base;FHIR.Version.Common\=FHIR.R3.Common;FHIR.Version.Factory\=FHIR.R3.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d332
-              usedebugdcu = true
-              usepackages = false
-              varstringchecks = true
-            end
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Add Map (3)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {A5A71699-006B-4367-9A5B-F109C0402A4B}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "-j -e C:\\work\\fhirserver\\Exec\\32\\FhirServer3.map"
-            programname = C:\\tools\\jcl\\MakeJclDbg.exe
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            terminateontimeout = false
-            timeoutlength = 0
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.directory.rename
-          begin
-            id = {51315597-0B71-4696-95BE-1EA27044BC99}
-            newdirname = fhirserver3.debug.exe
-            overwriteexisting = false
-            renamedir = false
-            sourcefile = C:\\work\\fhirserver\\Exec\\32\\fhirserver3.exe
-          end
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer3.exe
-            id = {7CF27741-9B0E-4E35-A100-E5029BF88579}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU3)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {FC512BF0-5C9A-4066-8A7A-776F690CF490}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win32
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer3.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR3
-              consoleapp = true
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\32
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R3.AuthMap;FHIR.Version.Constants\=FHIR.R3.Constants;FHIR.Version.Context\=FHIR.R3.Context;FHIR.Version.IndexInfo\=FHIR.R3.IndexInfo;FHIR.Version.Javascript\=FHIR.R3.Javascript;FHIR.Version.ElementModel\=FHIR.R3.ElementModel;FHIR.Version.Narrative\=FHIR.R3.Narrative;FHIR.Version.Operations\=FHIR.R3.Operations;FHIR.Version.Json\=FHIR.R3.Json;FHIR.Version.Turtle\=FHIR.R3.Turtle;FHIR.Version.Xml\=FHIR.R3.Xml;FHIR.Version.PathNode\=FHIR.R3.PathNode;FHIR.Version.Profiles\=FHIR.R3.Profiles;FHIR.Version.Resources\=FHIR.R3.Resources;FHIR.Version.MapUtilities\=FHIR.R3.MapUtilities;FHIR.Version.Tags\=FHIR.R3.Tags;FHIRTestWorker\=FHIRTestWorkeR3;FHIR.Version.Types\=FHIR.R3.Types;FHIR.Version.Utilities\=FHIR.R3.Utilities;FHIR.Version.Validator\=FHIR.R3.Validator;FHIR.Version.OpBase\=FHIR.R3.OpBase;FHIR.Version.PathEngine\=FHIR.R3.PathEngine;FHIR.Version.Narrative2\=FHIR.R3.Narrative2;FHIR.Version.Questionnaire\=FHIR.R3.Questionnaire;FHIRBaseX\=FHIR.R3.Base;FHIR.Version.Common\=FHIR.R3.Common;FHIR.Version.Factory\=FHIR.R3.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p332
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
+            alwaysusedelphilibrarypath = false
+            alwaysusedofsearchpath = false
+            assertions = false
+            assignableconst = false
+            booleval = false
+            compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                               "-w-UNSAFE_CODE\=0" +
+                               "-w-UNSAFE_CAST\=0" +
+                               ""
+            consoleapp = true
+            debuginfo = false
+            definitionsonly = true
+            emitruntimetypeinformation = false
+            exportallsymbols = false
+            extendedsyntax = true
+            externaltd32 = true
+            frameworktype = None
+            generatedocumentation = false
+            generatehpp = false
+            hugestrings = true
+            imagebase = 4194304
+            includenamespaces = false
+            includeremotesymbols = false
+            includetd32 = false
+            inlining = inOn
+            iochecking = true
+            librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
+            linkeroutput = 0
+            localsymbols = false
+            mapfile = 3
+            maxstacksize = 1048576
+            minstacksize = 16384
+            namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
+            openstrings = true
+            optimisation = false
+            outputdir = C:\\work\\fhirserver\\Exec\\32
+            overflowchecking = false
+            rangechecking = false
+            recordfieldalign = fa8
+            referenceinfo = false
+            safedivide = false
+            searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
+            showhints = true
+            showwarnings = true
+            stackframes = false
+            stringchecks = true
+            typedpointers = false
+            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
+            unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p32
+            usedebugdcu = false
+            usepackages = false
+            varstringchecks = true
           end
         end
-        action.group
+        action.process.execute
         begin
-          description = "Build R2 Server"
-          id = {5782C596-ACF5-403F-95A0-C0EB0AA3C208}
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer2.*
-            id = {6C4977C8-E272-4A28-A7A2-FFE3C9F30DE4}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU2)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {9AF85D64-D06B-4664-B262-272734BDA062}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win32
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer2.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = true
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR2;FHIR2CM;NO_CONVERSION
-              consoleapp = true
-              debuginfo = true
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = true
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\32
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = true
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R2.AuthMap;FHIR.Version.Constants\=FHIR.R2.Constants;FHIR.Version.Context\=FHIR.R2.Context;FHIR.Version.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Version.Javascript\=FHIR.R2.Javascript;FHIR.Version.ElementModel\=FHIR.R2.ElementModel;FHIR.Version.Narrative\=FHIR.R2.Narrative;FHIR.Version.Operations\=FHIR.R2.Operations;FHIR.Version.Json\=FHIR.R2.Json;FHIR.Version.Turtle\=FHIR.R2.Turtle;FHIR.Version.Xml\=FHIR.R2.Xml;FHIR.Version.PathNode\=FHIR.R2.PathNode;FHIR.Version.Profiles\=FHIR.R2.Profiles;FHIR.Version.Resources\=FHIR.R2.Resources;FHIR.Version.MapUtilities\=FHIR.R2.MapUtilities;FHIR.Version.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorkeR2;FHIR.Version.Types\=FHIR.R2.Types;FHIR.Version.Utilities\=FHIR.R2.Utilities;FHIR.Version.Validator\=FHIR.R2.Validator;FHIR.Version.OpBase\=FHIR.R2.OpBase;FHIR.Version.PathEngine\=FHIR.R2.PathEngine;FHIR.Version.Narrative2\=FHIR.R2.Narrative2;FHIR.Version.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base;FHIR.Version.Common\=FHIR.R2.Common;FHIR.Version.Factory\=FHIR.R2.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_d232
-              usedebugdcu = true
-              usepackages = false
-              varstringchecks = true
-            end
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Add Map (2)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {D5A897EB-1CE4-4246-81AB-D34791C7E98F}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "-j -e C:\\work\\fhirserver\\Exec\\32\\FhirServer2.map"
-            programname = C:\\tools\\jcl\\MakeJclDbg.exe
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            terminateontimeout = false
-            timeoutlength = 0
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.directory.rename
-          begin
-            id = {DDD315EB-E3EC-4165-B012-4E1FFFEBF512}
-            newdirname = fhirserver2.debug.exe
-            overwriteexisting = false
-            renamedir = false
-            sourcefile = C:\\work\\fhirserver\\Exec\\32\\fhirserver2.exe
-          end
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServer2.exe
-            id = {8A8ED833-33DA-4D3F-9662-00310C3690CB}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the Server (DSTU2)"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\Server\\mainicon.ico
-            id = {66519E51-BD70-49B4-8BD1-6B43A0626D20}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win32
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\Server\\FHIRServer2.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\Server\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR2;FHIR2CM;NO_CONVERSION
-              consoleapp = true
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\32
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R2.AuthMap;FHIR.Version.Constants\=FHIR.R2.Constants;FHIR.Version.Context\=FHIR.R2.Context;FHIR.Version.IndexInfo\=FHIR.R2.IndexInfo;FHIR.Version.Javascript\=FHIR.R2.Javascript;FHIR.Version.ElementModel\=FHIR.R2.ElementModel;FHIR.Version.Narrative\=FHIR.R2.Narrative;FHIR.Version.Operations\=FHIR.R2.Operations;FHIR.Version.Json\=FHIR.R2.Json;FHIR.Version.Turtle\=FHIR.R2.Turtle;FHIR.Version.Xml\=FHIR.R2.Xml;FHIR.Version.PathNode\=FHIR.R2.PathNode;FHIR.Version.Profiles\=FHIR.R2.Profiles;FHIR.Version.Resources\=FHIR.R2.Resources;FHIR.Version.MapUtilities\=FHIR.R2.MapUtilities;FHIR.Version.Tags\=FHIR.R2.Tags;FHIRTestWorker\=FHIRTestWorkeR2;FHIR.Version.Types\=FHIR.R2.Types;FHIR.Version.Utilities\=FHIR.R2.Utilities;FHIR.Version.Validator\=FHIR.R2.Validator;FHIR.Version.OpBase\=FHIR.R2.OpBase;FHIR.Version.PathEngine\=FHIR.R2.PathEngine;FHIR.Version.Narrative2\=FHIR.R2.Narrative2;FHIR.Version.Questionnaire\=FHIR.R2.Questionnaire;FHIRBaseX\=FHIR.R2.Base;FHIR.Version.Common\=FHIR.R2.Common;FHIR.Version.Factory\=FHIR.R2.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p232
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
-          end
+          captureoutput = true
+          description = "Sign the Server"
+          enablelivecapture = true
+          enablereturncodecheck = true
+          enabletimeout = false
+          expandimpersonationtoken = false
+          hidewindow = false
+          id = {1C6B42E9-5D3E-4452-8EC4-6DD246C1AE39}
+          impersonateusenetcredonly = false
+          impersonateuser = false
+          logoutput = true
+          logprocessparameters = true
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer.exe\""
+          programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+          redirectstderr = true
+          returncodecomparator = rcEqualTo
+          returncodetocheck = 0
+          startindir = "C:\\Program Files (x86)\\kSign"
+          terminateontimeout = false
+          timeoutlength = 1
+          useerrordialogmonitor = false
+          waitforcompletion = true
         end
-        action.group
+        action.process.execute
         begin
-          description = "Build Server Utils"
-          id = {F7B197F8-03A9-41ED-8B7E-9DADB5F8F984}
-          action.files.delete
-          begin
-            deletehidden = false
-            deletereadonly = false
-            failifnofile = false
-            filespec = C:\\work\\fhirserver\\Exec\\32\\FHIRServerUtils.exe
-            id = {3565B8BE-84F7-4080-A11D-EC84F0F27CBF}
-          end
-          action.delphi.build
-          begin
-            allowimplicitimport = true
-            alwaysuseconditionalsfromdof = false
-            autoincbuild = true
-            autoupdatefileversion = true
-            autoupdateproductversion = false
-            buildall = true
-            buildversion = 0
-            codepage = 1252
-            compileprojectresources = false
-            compileridl = true
-            configname = Release
-            debugversionnumbers = false
-            delphiversion = Delphi10Tokyo
-            description = "Compile the ServerUtils"
-            eurekalogverboselogging = false
-            frameworktype = VCL
-            hintsaserror = false
-            iconfile = C:\\work\\fhirserver\\utils\\mainicon.ico
-            id = {E97775AB-5217-46AD-9F71-8C646DC7D858}
-            includecompiledate = false
-            includemanifest = false
-            includeverinfo = false
-            isdebug = false
-            isdll = false
-            isprerelease = false
-            isprivate = false
-            isspecial = false
-            keepcfg = false
-            linkproductversiontofileversion = true
-            locale = 3081
-            majorversion = 0
-            minorversion = 0
-            platform = Win32
-            platformsdktype = ProjectSDK
-            projectfile = C:\\work\\fhirserver\\utils\\FhirServerUtils.dpr
-            regenerateresource = true
-            releaseversion = 0
-            resourcecompilertype = rcBorland
-            startingdir = C:\\work\\fhirserver\\utils\\
-            updatedoffile = false
-            updatepackagesource = false
-            updateversioninfokeys = false
-            useeurekalogcompiler = false
-            useprojectsettings = []
-            usepropertyset = false
-            useversionfromdof = false
-            verboseoutput = false
-            versioninfokeys = "CompanyName\=" +
-                              "FileDescription\=" +
-                              "FileVersion\=0.0.0.0" +
-                              "InternalName\=" +
-                              "LegalCopyright\=" +
-                              "LegalTrademarks\=" +
-                              "OriginalFilename\=" +
-                              "ProductName\=" +
-                              "ProductVersion\=0.0.0.0" +
-                              "Comments\=" +
-                              ""
-            warningsaserror = false
-            workaroundd5bug = false
-            delphi.compileroptions
-            begin
-              alwaysuseconditionalsfromdof = false
-              alwaysusedelphilibrarypath = false
-              alwaysusedofsearchpath = false
-              assertions = false
-              assignableconst = false
-              booleval = false
-              compilerwarnings = "-w-UNSAFE_TYPE\=0" +
-                                 "-w-UNSAFE_CODE\=0" +
-                                 "-w-UNSAFE_CAST\=0" +
-                                 ""
-              conditionals = FHIR4
-              consoleapp = false
-              debuginfo = false
-              definitionsonly = true
-              emitruntimetypeinformation = false
-              exportallsymbols = false
-              extendedsyntax = true
-              externaltd32 = true
-              frameworktype = None
-              generatedocumentation = false
-              generatehpp = false
-              hugestrings = true
-              imagebase = 4194304
-              includenamespaces = false
-              includeremotesymbols = false
-              includetd32 = false
-              inlining = inOn
-              iochecking = true
-              librarypath = "$(BDSLIB)\\$(Platform)\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\$(Platform);$(BDS)\\include;C:\\Program Files (x86)\\FastReports\\LibD19x64;C:\\Program Files (x86)\\Raize\\CS5\\Lib\\RS-XE5\\Win64"
-              linkeroutput = 0
-              localsymbols = false
-              mapfile = 3
-              maxstacksize = 1048576
-              minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
-              openstrings = true
-              optimisation = false
-              outputdir = C:\\work\\fhirserver\\Exec\\32
-              overflowchecking = false
-              rangechecking = false
-              recordfieldalign = fa8
-              referenceinfo = false
-              safedivide = false
-              searchpath = C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System;C:\\temp\\jcl-master\\jcl\\source\\common;C:\\temp\\jcl-master\\jcl\\source\\include;C:\\temp\\jcl-master\\jcl\\source\\vcl;C:\\temp\\jcl-master\\jcl\\source\\windows
-              showhints = true
-              showwarnings = true
-              stackframes = false
-              stringchecks = true
-              typedpointers = false
-              unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIR.Version.AuthMap\=FHIR.R4.AuthMap;FHIR.Version.Constants\=FHIR.R4.Constants;FHIR.Version.Context\=FHIR.R4.Context;FHIR.Version.IndexInfo\=FHIR.R4.IndexInfo;FHIR.Version.Javascript\=FHIR.R4.Javascript;FHIR.Version.ElementModel\=FHIR.R4.ElementModel;FHIR.Version.Narrative\=FHIR.R4.Narrative;FHIR.Version.Operations\=FHIR.R4.Operations;FHIR.Version.Json\=FHIR.R4.Json;FHIR.Version.Turtle\=FHIR.R4.Turtle;FHIR.Version.Xml\=FHIR.R4.Xml;FHIR.Version.PathNode\=FHIR.R4.PathNode;FHIR.Version.Profiles\=FHIR.R4.Profiles;FHIR.Version.Resources\=FHIR.R4.Resources;FHIR.Version.MapUtilities\=FHIR.R4.MapUtilities;FHIR.Version.Tags\=FHIR.R4.Tags;FHIRTestWorker\=FHIRTestWorkeR4;FHIR.Version.Types\=FHIR.R4.Types;FHIR.Version.Utilities\=FHIR.R4.Utilities;FHIR.Version.Validator\=FHIR.R4.Validator;FHIR.Version.OpBase\=FHIR.R4.OpBase;FHIR.Version.PathEngine\=FHIR.R4.PathEngine;FHIR.Version.Narrative2\=FHIR.R4.Narrative2;FHIR.Version.Questionnaire\=FHIR.R4.Questionnaire;FHIRBaseX\=FHIR.R4.Base;FHIR.Version.Common\=FHIR.R4.Common;FHIR.Version.Factory\=FHIR.R4.Factory
-              unitoutputdir = C:\\work\\com.healthintersections.fhir\\scratch\\units_p432
-              usedebugdcu = false
-              usepackages = false
-              varstringchecks = true
-            end
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Add Map (3)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {0A098D93-063A-4964-9981-2D9BFD6A0968}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "-j -e C:\\work\\fhirserver\\Exec\\32\\FhirServerUtils.map"
-            programname = C:\\tools\\jcl\\MakeJclDbg.exe
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            terminateontimeout = false
-            timeoutlength = 0
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
+          captureoutput = true
+          description = "Sign the Server (debug)"
+          enablelivecapture = true
+          enablereturncodecheck = true
+          enabletimeout = false
+          expandimpersonationtoken = false
+          hidewindow = false
+          id = {3A020517-0069-4DC7-AF9B-FC10110A0783}
+          impersonateusenetcredonly = false
+          impersonateuser = false
+          logoutput = true
+          logprocessparameters = true
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer.debug.exe\""
+          programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+          redirectstderr = true
+          returncodecomparator = rcEqualTo
+          returncodetocheck = 0
+          startindir = "C:\\Program Files (x86)\\kSign"
+          terminateontimeout = false
+          timeoutlength = 1
+          useerrordialogmonitor = false
+          waitforcompletion = true
         end
-        action.group
-        begin
-          description = "sign executables"
-          id = {EB639197-5295-42ED-8AF1-D1CBCC10F5CD}
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (32)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = false
-            id = {B6F62FD6-C85A-4D8C-8D78-1D2C5DEBC003}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer4.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (32)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = false
-            id = {3C0234AB-4367-4B5F-ABC2-A7450C7B3C06}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer4.debug.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (32)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {C16AA9CB-EF06-4E64-A40D-742920DAF667}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer3.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (32)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {302422D5-3D1A-4182-A855-FBC647BA2BA7}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer3.debug.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (32)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {C9C4F4E7-2C80-40CA-A6A2-381E623B538C}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer2.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (32)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {A65BB5E9-EDB7-49D1-B092-A6B0F695522B}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServer2.debug.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-          action.process.execute
-          begin
-            captureoutput = true
-            description = "Sign the Server (32)"
-            enablelivecapture = true
-            enablereturncodecheck = true
-            enabletimeout = false
-            expandimpersonationtoken = false
-            hidewindow = true
-            id = {100E74CB-57E0-4886-97C0-70553B9643B6}
-            impersonateusenetcredonly = false
-            impersonateuser = false
-            logoutput = true
-            logprocessparameters = true
-            params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\32\\FHIRServerUtils.exe\""
-            programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-            redirectstderr = true
-            returncodecomparator = rcEqualTo
-            returncodetocheck = 0
-            startindir = "C:\\Program Files (x86)\\kSign"
-            terminateontimeout = false
-            timeoutlength = 1
-            useerrordialogmonitor = false
-            waitforcompletion = true
-          end
-        end
-        action.group
-        begin
-          description = "Build Install"
-          id = {7C6EF671-FE82-4122-99AF-47FAB8487C57}
-          action.ini.write
-          begin
-            allowcreate = false
-            deleteifblank = false
-            description = "Set AppVerName in Inno Script"
-            id = {243C561C-5C79-4E75-B512-65C50C8C1CDE}
-            inifile = C:\\work\\fhirserver\\install\\install32.iss
-            newvalue = "Version 1.0.%BuildCount%"
-            section = Setup
-            valuename = AppVerName
-            valuetype = vtString
-          end
-          action.ini.write
-          begin
-            allowcreate = false
-            deleteifblank = false
-            description = "Set OutputFilename in Inno Script"
-            id = {2184568E-999D-490C-BFBC-07DF2C1E36E8}
-            inifile = C:\\work\\fhirserver\\install\\install32.iss
-            newvalue = fhirserver32-1.0.%BuildCount%
-            section = Setup
-            valuename = OutputBaseFilename
-            valuetype = vtString
-          end
-          action.innosetup.execute
-          begin
-            description = "Build the server install"
-            id = {9D73FA91-BC13-4AAD-B87F-77A584C233CE}
-            innoversion = Inno5
-            scriptfile = C:\\work\\fhirserver\\install\\install32.iss
-            showprogress = true
-            unicode = false
-            usecommandline = true
-            usepreprocessor = false
-          end
-        end
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Set AppVerName in Inno Script"
+        id = {67BCA8BE-B229-4DB8-AC45-6ECA07F624AC}
+        inifile = C:\\work\\fhirserver\\install\\install.iss
+        newvalue = "Version 1.0.%BuildCount%"
+        section = Setup
+        valuename = AppVerName
+        valuetype = vtString
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Set OutputFilename in Inno Script"
+        id = {E61E92EC-ECAC-4806-8F79-4DEBED5FCA9E}
+        inifile = C:\\work\\fhirserver\\install\\install.iss
+        newvalue = fhirserver-1.0.%BuildCount%
+        section = Setup
+        valuename = OutputBaseFilename
+        valuetype = vtString
+      end
+      action.innosetup.execute
+      begin
+        description = "Build the server install"
+        id = {C5CF014A-87B5-452D-86B1-40CC349E5F4A}
+        innoversion = Inno5
+        scriptfile = C:\\work\\fhirserver\\install\\install.iss
+        showprogress = true
+        unicode = false
+        usecommandline = true
+        usepreprocessor = false
+      end
+      action.process.execute
+      begin
+        captureoutput = true
+        description = "Sign the server install"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {AA3BB9B0-F4A4-478F-8D47-80366B463656}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver-1.0.%BuildCount%.exe\""
+        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        startindir = "C:\\Program Files (x86)\\kSign"
+        terminateontimeout = false
+        timeoutlength = 1
+        useerrordialogmonitor = false
+        waitforcompletion = true
       end
       action.group
       begin
-        description = "Sign Installs"
-        id = {8C3D4CBC-6388-4AA1-8AE8-157BE12FCCC9}
-        action.process.execute
+        description = "Do the upload"
+        enabled = false
+        id = {10259440-4D8D-497E-8521-A9AF3BB6ADED}
+        action.ftp.connect
         begin
-          captureoutput = true
-          description = "Sign the server install"
-          enablelivecapture = true
-          enablereturncodecheck = true
-          enabletimeout = false
-          expandimpersonationtoken = false
-          hidewindow = true
-          id = {AA3BB9B0-F4A4-478F-8D47-80366B463656}
-          impersonateusenetcredonly = false
-          impersonateuser = false
-          logoutput = true
-          logprocessparameters = true
-          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver64-1.0.%BuildCount%.exe\""
-          programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-          redirectstderr = true
-          returncodecomparator = rcEqualTo
-          returncodetocheck = 0
-          startindir = "C:\\Program Files (x86)\\kSign"
-          terminateontimeout = false
-          timeoutlength = 1
-          useerrordialogmonitor = false
-          waitforcompletion = true
+          connecttimeoutinsec = 0
+          cookie = q3B4xMWDXfAo74OHdw\=\=
+          detailedlogging = false
+          enablekeepalives = false
+          ftpconnectionname = HealthIntersections2
+          ftphost = 27.123.25.1
+          ftpport = 21
+          id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+          passive = true
+          proxyport = 0
+          proxytype = fpcmNone
+          transfertype = ftBinary
+          useglobalopt = false
+          usehost = true
+          useproxy = false
+          userid = healthi3
         end
-        action.process.execute
+        action.ftp.upload.file
         begin
-          captureoutput = true
-          description = "Sign the server install"
-          enablelivecapture = true
-          enablereturncodecheck = true
+          allowgap = true
+          autoreconnect = true
+          autoupdateskew = true
+          checkfilesizes = false
+          connectionname = HealthIntersections2
+          detailedlogging = false
           enabletimeout = false
-          expandimpersonationtoken = false
-          hidewindow = true
-          id = {A21F5A75-6F23-4E0B-B0A1-69B27E646EE8}
-          impersonateusenetcredonly = false
-          impersonateuser = false
-          logoutput = true
-          logprocessparameters = true
-          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver32-1.0.%BuildCount%.exe\""
-          programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
-          redirectstderr = true
-          returncodecomparator = rcEqualTo
-          returncodetocheck = 0
-          startindir = "C:\\Program Files (x86)\\kSign"
-          terminateontimeout = false
-          timeoutlength = 1
-          useerrordialogmonitor = false
-          waitforcompletion = true
+          filespec = fhirserver64-1.0.%BuildCount%.exe
+          forcenextclockskewupdate = true
+          gaplength = 5
+          id = {616E5E3D-0227-428E-ABAE-E5FE924B32D3}
+          localdir = C:\\work\\fhirserver\\install\\build
+          recursive = false
+          remotefile = public_html/FhirServer/fhirserver64-1.0.%BuildCount%.exe
+          retryifuploadfails = true
+          serverclockskew = 0
+          throttlespeed = 128
+          throttleupload = false
+          timeoutlength = 10
+          updateonly = false
+          usefilespec = true
         end
-      end
-      action.ftp.connect
-      begin
-        connecttimeoutinsec = 0
-        cookie = q3B4xMWDXfAo74OHdw\=\=
-        detailedlogging = false
-        enablekeepalives = false
-        ftpconnectionname = HealthIntersections2
-        ftphost = 27.123.25.1
-        ftpport = 21
-        id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
-        passive = true
-        proxyport = 0
-        proxytype = fpcmNone
-        transfertype = ftBinary
-        useglobalopt = false
-        usehost = true
-        useproxy = false
-        userid = healthi3
-      end
-      action.ftp.upload.file
-      begin
-        allowgap = true
-        autoreconnect = true
-        autoupdateskew = true
-        checkfilesizes = false
-        connectionname = HealthIntersections2
-        detailedlogging = false
-        enabletimeout = false
-        filespec = fhirserver64-1.0.%BuildCount%.exe
-        forcenextclockskewupdate = true
-        gaplength = 5
-        id = {616E5E3D-0227-428E-ABAE-E5FE924B32D3}
-        localdir = C:\\work\\fhirserver\\install\\build
-        recursive = false
-        remotefile = public_html/FhirServer/fhirserver64-1.0.%BuildCount%.exe
-        retryifuploadfails = true
-        serverclockskew = 0
-        throttlespeed = 128
-        throttleupload = false
-        timeoutlength = 10
-        updateonly = false
-        usefilespec = true
-      end
-      action.ftp.upload.file
-      begin
-        allowgap = true
-        autoreconnect = true
-        autoupdateskew = true
-        checkfilesizes = false
-        connectionname = HealthIntersections2
-        detailedlogging = false
-        enabletimeout = false
-        filespec = fhirserver32-1.0.%BuildCount%.exe
-        forcenextclockskewupdate = true
-        gaplength = 5
-        id = {C32184C1-BC1D-48D4-AC50-51DE54F2BC5D}
-        localdir = C:\\work\\fhirserver\\install\\build
-        recursive = false
-        remotefile = public_html/FhirServer/fhirserver32-1.0.%BuildCount%.exe
-        retryifuploadfails = true
-        serverclockskew = 0
-        throttlespeed = 128
-        throttleupload = false
-        timeoutlength = 10
-        updateonly = false
-        usefilespec = true
-      end
-      action.xml.node.create
-      begin
-        addnewline = true
-        allowdtds = false
-        description = "update RSS"
-        existsbehaviour = neCreate
-        expanddocumentnodenamespace = false
-        failifmultiple = false
-        id = {4EB5B17E-F3B3-4C5C-B55D-7A19D21A1F53}
-        insertat = inAfterXPath
-        insertatxpath = /rss/channel/link
-        nodename = item
-        nodetext = "" +
-                   "      <title\>FHIRServer release 1.0.%BuildCount% %BuildDate%</title\>" +
-                   "      <link\>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.%BuildCount%.exe</link\>" +
-                   "      <description\>%BuildDate% (v1.0.%BuildCount%): %purpose%</description\>" +
-                   ""
-        parentxpath = /rss/channel
-        parserver = HighestMSXML
-        resolveexternal = true
-        treatastext = false
-        usexmldocobject = false
-        validateonparse = true
-        xmlsourcefile = C:\\work\\fhirserver\\install\\fhirserver.rss
-      end
-      action.variables.savetoini
-      begin
-        description = "Save BuildCount"
-        erasesection = false
-        id = {4F98E56B-5E79-4601-9312-F9B2D7BD0FBD}
-        inifile = C:\\work\\ftp.ini
-        saveall = false
-        sectionname = settings
-        variables = "BuildCount" +
-                    ""
-      end
-      action.ftp.upload.file
-      begin
-        allowgap = true
-        autoreconnect = true
-        autoupdateskew = true
-        checkfilesizes = false
-        connectionname = HealthIntersections2
-        detailedlogging = false
-        enabletimeout = false
-        filespec = fhirserver.rss
-        forcenextclockskewupdate = true
-        gaplength = 5
-        id = {ED9AC6CC-690A-48DB-A2BD-5ABEE6AFB29B}
-        localdir = C:\\work\\fhirserver\\install
-        recursive = false
-        remotefile = public_html/FhirServer/fhirserver.rss
-        retryifuploadfails = true
-        serverclockskew = 0
-        throttlespeed = 128
-        throttleupload = false
-        timeoutlength = 10
-        updateonly = false
-        usefilespec = true
-      end
-      action.xml.document.transform
-      begin
-        allowdtds = false
-        expanddocumentnodenamespace = false
-        id = {CBD9C18F-C5C9-467B-8F29-5A7A94DB7945}
-        outputfile = C:\\work\\fhirserver\\install\\fhirserver.htm
-        overwriteoutputfile = true
-        parserver = HighestMSXML
-        preservewhitespace = false
-        resolveexternal = true
-        usexmldocobject = false
-        validateonparse = true
-        xmlfile = C:\\work\\fhirserver\\install\\fhirserver.rss
-        xsltfile = C:\\work\\fhirserver\\install\\rsss.xslt
-      end
-      action.textfile.create
-      begin
-        createdirectory = true
-        encoding = ANSI
-        filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
-                       "   <td\>%BuildDate%</td\>" +
-                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
-                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver32-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
-                       "   <td\></td\>" +
-                       ""
-        id = {DD774D63-84AB-4364-90E6-6EB06228AC1D}
-        newfilename = C:\\work\\fhirserver\\install\\server.inc
-        overwriteexisting = true
-        writebom = true
-      end
-      action.ftp.upload.file
-      begin
-        allowgap = true
-        autoreconnect = true
-        autoupdateskew = true
-        checkfilesizes = false
-        connectionname = HealthIntersections2
-        detailedlogging = false
-        enabletimeout = false
-        filespec = fhirserver.htm
-        forcenextclockskewupdate = true
-        gaplength = 5
-        id = {5F9410EF-2277-4D2F-AD1A-37033D0FC7ED}
-        localdir = C:\\work\\fhirserver\\install
-        recursive = false
-        remotefile = public_html/FhirServer/fhirserver.htm
-        retryifuploadfails = true
-        serverclockskew = 0
-        throttlespeed = 128
-        throttleupload = false
-        timeoutlength = 10
-        updateonly = false
-        usefilespec = true
-      end
-      action.ftp.upload.file
-      begin
-        allowgap = true
-        autoreconnect = true
-        autoupdateskew = true
-        checkfilesizes = false
-        connectionname = HealthIntersections2
-        detailedlogging = false
-        enabletimeout = false
-        filespec = server.inc
-        forcenextclockskewupdate = true
-        gaplength = 5
-        id = {79D59EEA-7A31-4999-B3C1-EC5DF6FCE75F}
-        localdir = C:\\work\\fhirserver\\install
-        recursive = false
-        remotefile = public_html/FhirServer/server.inc
-        retryifuploadfails = true
-        serverclockskew = 0
-        throttlespeed = 128
-        throttleupload = false
-        timeoutlength = 10
-        updateonly = false
-        usefilespec = true
-      end
-      action.ftp.disconnect
-      begin
-        autoreconnect = false
-        connectionname = HealthIntersections2
-        detailedlogging = false
-        id = {58346928-77F3-4C2F-A158-2DF37D0A7337}
+        action.ftp.upload.file
+        begin
+          allowgap = true
+          autoreconnect = true
+          autoupdateskew = true
+          checkfilesizes = false
+          connectionname = HealthIntersections2
+          detailedlogging = false
+          enabletimeout = false
+          filespec = fhirserver32-1.0.%BuildCount%.exe
+          forcenextclockskewupdate = true
+          gaplength = 5
+          id = {C32184C1-BC1D-48D4-AC50-51DE54F2BC5D}
+          localdir = C:\\work\\fhirserver\\install\\build
+          recursive = false
+          remotefile = public_html/FhirServer/fhirserver32-1.0.%BuildCount%.exe
+          retryifuploadfails = true
+          serverclockskew = 0
+          throttlespeed = 128
+          throttleupload = false
+          timeoutlength = 10
+          updateonly = false
+          usefilespec = true
+        end
+        action.xml.node.create
+        begin
+          addnewline = true
+          allowdtds = false
+          description = "update RSS"
+          existsbehaviour = neCreate
+          expanddocumentnodenamespace = false
+          failifmultiple = false
+          id = {4EB5B17E-F3B3-4C5C-B55D-7A19D21A1F53}
+          insertat = inAfterXPath
+          insertatxpath = /rss/channel/link
+          nodename = item
+          nodetext = "" +
+                     "      <title\>FHIRServer release 1.0.%BuildCount% %BuildDate%</title\>" +
+                     "      <link\>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.%BuildCount%.exe</link\>" +
+                     "      <description\>%BuildDate% (v1.0.%BuildCount%): %purpose%</description\>" +
+                     ""
+          parentxpath = /rss/channel
+          parserver = HighestMSXML
+          resolveexternal = true
+          treatastext = false
+          usexmldocobject = false
+          validateonparse = true
+          xmlsourcefile = C:\\work\\fhirserver\\install\\fhirserver.rss
+        end
+        action.variables.savetoini
+        begin
+          description = "Save BuildCount"
+          erasesection = false
+          id = {4F98E56B-5E79-4601-9312-F9B2D7BD0FBD}
+          inifile = C:\\work\\ftp.ini
+          saveall = false
+          sectionname = settings
+          variables = "BuildCount" +
+                      ""
+        end
+        action.ftp.upload.file
+        begin
+          allowgap = true
+          autoreconnect = true
+          autoupdateskew = true
+          checkfilesizes = false
+          connectionname = HealthIntersections2
+          detailedlogging = false
+          enabletimeout = false
+          filespec = fhirserver.rss
+          forcenextclockskewupdate = true
+          gaplength = 5
+          id = {ED9AC6CC-690A-48DB-A2BD-5ABEE6AFB29B}
+          localdir = C:\\work\\fhirserver\\install
+          recursive = false
+          remotefile = public_html/FhirServer/fhirserver.rss
+          retryifuploadfails = true
+          serverclockskew = 0
+          throttlespeed = 128
+          throttleupload = false
+          timeoutlength = 10
+          updateonly = false
+          usefilespec = true
+        end
+        action.xml.document.transform
+        begin
+          allowdtds = false
+          expanddocumentnodenamespace = false
+          id = {CBD9C18F-C5C9-467B-8F29-5A7A94DB7945}
+          outputfile = C:\\work\\fhirserver\\install\\fhirserver.htm
+          overwriteoutputfile = true
+          parserver = HighestMSXML
+          preservewhitespace = false
+          resolveexternal = true
+          usexmldocobject = false
+          validateonparse = true
+          xmlfile = C:\\work\\fhirserver\\install\\fhirserver.rss
+          xsltfile = C:\\work\\fhirserver\\install\\rsss.xslt
+        end
+        action.textfile.create
+        begin
+          createdirectory = true
+          encoding = ANSI
+          filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
+                         "   <td\>%BuildDate%</td\>" +
+                         "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                         "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhirserver32-1.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                         "   <td\></td\>" +
+                         ""
+          id = {DD774D63-84AB-4364-90E6-6EB06228AC1D}
+          newfilename = C:\\work\\fhirserver\\install\\server.inc
+          overwriteexisting = true
+          writebom = true
+        end
+        action.ftp.upload.file
+        begin
+          allowgap = true
+          autoreconnect = true
+          autoupdateskew = true
+          checkfilesizes = false
+          connectionname = HealthIntersections2
+          detailedlogging = false
+          enabletimeout = false
+          filespec = fhirserver.htm
+          forcenextclockskewupdate = true
+          gaplength = 5
+          id = {5F9410EF-2277-4D2F-AD1A-37033D0FC7ED}
+          localdir = C:\\work\\fhirserver\\install
+          recursive = false
+          remotefile = public_html/FhirServer/fhirserver.htm
+          retryifuploadfails = true
+          serverclockskew = 0
+          throttlespeed = 128
+          throttleupload = false
+          timeoutlength = 10
+          updateonly = false
+          usefilespec = true
+        end
+        action.ftp.upload.file
+        begin
+          allowgap = true
+          autoreconnect = true
+          autoupdateskew = true
+          checkfilesizes = false
+          connectionname = HealthIntersections2
+          detailedlogging = false
+          enabletimeout = false
+          filespec = server.inc
+          forcenextclockskewupdate = true
+          gaplength = 5
+          id = {79D59EEA-7A31-4999-B3C1-EC5DF6FCE75F}
+          localdir = C:\\work\\fhirserver\\install
+          recursive = false
+          remotefile = public_html/FhirServer/server.inc
+          retryifuploadfails = true
+          serverclockskew = 0
+          throttlespeed = 128
+          throttleupload = false
+          timeoutlength = 10
+          updateonly = false
+          usefilespec = true
+        end
+        action.ftp.disconnect
+        begin
+          autoreconnect = false
+          connectionname = HealthIntersections2
+          detailedlogging = false
+          id = {58346928-77F3-4C2F-A158-2DF37D0A7337}
+        end
       end
     end
   end

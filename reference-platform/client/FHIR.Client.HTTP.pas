@@ -150,9 +150,12 @@ begin
       raise EFHIRException.create('Unable to process location header (version specific, but resource doesn''t match). Location: '+location);
     result := a[length(a)-3]; // 1 for offset, 2 for _history and vers
   end
-  else if a[length(a)-2] <> resType then
-    raise EFHIRException.create('Unable to process location header (resource doesn''t match). Location: '+location);
-  result := a[length(a)-1];
+  else
+  begin
+    if a[length(a)-2] <> resType then
+      raise EFHIRException.create('Unable to process location header (resource doesn''t match). Location: '+location);
+    result := a[length(a)-1];
+  end;
 end;
 
 

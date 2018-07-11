@@ -40,7 +40,7 @@ uses
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
   FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Client.Base,
 
-  FHIR.R4.Factory, FHIR.R4.IndexInfo, FHIR.R4.Resources, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4, FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client,
+  FHIR.R4.Factory, FHIR.R4.IndexInfo, FHIR.R4.Resources, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4, FHIR.Server.OperationsR4, FHIR.R4.Validator, FHIR.R4.Context, FHIR.Server.ValidatorR4, FHIR.R4.Javascript, FHIR.R4.Client, FHIR.R4.Utilities,
 
   FHIR.Tools.Indexing, FHIR.Version.Client,
   FHIR.Tx.Manager, FHIR.Tx.Server,
@@ -58,7 +58,6 @@ Type
     function makeIndexer : TFHIRIndexManager; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
 
-    procedure registerJs(js : TJsHost); override;
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
 
@@ -78,6 +77,7 @@ Type
     Procedure checkDatabase(db : TKDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
+    procedure registerJs(sender: TObject; js: TJsHost);
   public
     [SetupFixture] procedure Setup;
     [TearDownFixture] procedure TearDown;
@@ -85,12 +85,25 @@ Type
     [TestCase] Procedure TestStarted;
     [TestCase] Procedure TestCapabilityStatement;
     [TestCase] Procedure TestPatientRead;
+    [TestCase] Procedure TestPatientReadFail;
     [TestCase] Procedure TestPatientSearch;
     [TestCase] Procedure TestSystemSearch;
     [TestCase] Procedure TestPatientVRead;
     [TestCase] Procedure TestPatientHistoryI;
     [TestCase] Procedure TestPatientHistoryT;
     [TestCase] Procedure TestSystemHistory;
+
+    [TestCase] Procedure TestPatientUpdate;
+    [TestCase] Procedure TestPatientDelete;
+    [TestCase] Procedure TestPatientCreate;
+//    [TestCase] Procedure TestBatch;
+//    [TestCase] Procedure TestTransaction;
+//    [TestCase] Procedure TestPatientPatch;
+
+    [TestCase] Procedure TestValueSetExpand1;
+    [TestCase] Procedure TestValueSetExpand2;
+    [TestCase] Procedure TestValueSetValidate;
+
   end;
 
 implementation
@@ -117,11 +130,6 @@ begin
   result := TSubscriptionManagerR4.Create(ServerContext);
 end;
 
-procedure TFullTestServerFactory.registerJs(js : TJsHost);
-begin
-  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
-end;
-
 procedure TFullTestServerFactory.setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer});
 begin
   TFHIRServerWorkerContextR4(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
@@ -132,6 +140,11 @@ end;
 
 
 { TFullServerTests }
+
+procedure TFullServerTests.registerJs(sender : TObject; js : TJsHost);
+begin
+  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
+end;
 
 procedure TFullServerTests.checkDatabase(db: TKDBManager; factory: TFHIRFactory; serverFactory: TFHIRServerFactory);
 var
@@ -215,7 +228,8 @@ var
   s : String;
   details : TFHIRServerIniComplex;
 begin
-  FWebServer := TFhirWebServer.create(FSettings.Link, 'Test-Server', TFullTestServerFactory.Create);
+  FWebServer := TFhirWebServer.create(FSettings.Link, 'Test-Server');
+  FWebServer.OnRegisterJs := registerJs;
   FWebServer.loadConfiguration(FIni);
   FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));
 
@@ -303,6 +317,45 @@ begin
   end;
 end;
 
+procedure TFullServerTests.TestPatientCreate;
+var
+  rb, ra : TFhirPatient;
+  id : String;
+begin
+  rb := FClientJson.readResource(frtPatient, 'example') as TFHIRPatient;
+  try
+    rb.id := '';
+    ra := FClientJson.createResource(rb, id) as TFhirPatient;
+    try
+      Assert.IsTrue(ra.id = id);
+      Assert.IsTrue(ra.meta.lastUpdated <> rb.meta.lastUpdated);
+    finally
+      ra.free;
+    end;
+  finally
+    rb.Free;
+  end;
+end;
+
+procedure TFullServerTests.TestPatientDelete;
+var
+  rb, ra : TFhirPatient;
+  id : String;
+begin
+  rb := FClientJson.readResource(frtPatient, 'example') as TFHIRPatient;
+  try
+    rb.id := '';
+    FClientJson.createResource(rb, id).free;
+    FClientJson.readResource(frtPatient, id).free;
+    FClientJson.DeleteResource(frtPatient, id);
+    Assert.WillRaiseAny(procedure begin
+      FClientJson.readResource(frtPatient, id);
+    end);
+  finally
+    rb.Free;
+  end;
+end;
+
 procedure TFullServerTests.TestPatientHistoryI;
 var
   r : TFhirBundle;
@@ -339,6 +392,13 @@ begin
   end;
 end;
 
+procedure TFullServerTests.TestPatientReadFail;
+begin
+  Assert.WillRaiseAny(procedure begin
+    FClientJson.readResource(frtPatient, 'xxxxxxxxx');
+  end);
+end;
+
 procedure TFullServerTests.TestPatientSearch;
 var
   r : TFhirBundle;
@@ -348,6 +408,28 @@ begin
     Assert.IsTrue(r.entryList.Count > 0);
   finally
     r.Free;
+  end;
+end;
+
+procedure TFullServerTests.TestPatientUpdate;
+var
+  rb, ra : TFhirPatient;
+  d : TDateTimeEx;
+begin
+  rb := FClientJson.readResource(frtPatient, 'example') as TFHIRPatient;
+  try
+    Assert.IsTrue(rb.meta.lastUpdated.notNull);
+    d := rb.birthDate;
+    rb.birthDate := d - 365;
+    ra := FClientJson.updateResource(rb) as TFhirPatient;
+    try
+      Assert.IsTrue(ra.birthDate = rb.birthDate);
+      Assert.IsTrue(ra.meta.lastUpdated <> rb.meta.lastUpdated);
+    finally
+      ra.free;
+    end;
+  finally
+    rb.Free;
   end;
 end;
 
@@ -372,7 +454,7 @@ procedure TFullServerTests.TestSystemHistory;
 var
   r : TFhirBundle;
 begin
-  r := FClientJson.historyType(frtNull, true, nil);
+  r := FClientJson.historyType(frtNull, false, nil);
   try
     Assert.IsTrue(r.entryList.Count > 0);
   finally
@@ -384,11 +466,58 @@ procedure TFullServerTests.TestSystemSearch;
 var
   r : TFhirBundle;
 begin
-  r := FClientJson.search(frtNull, true, 'text=peter') as TFHIRBundle;
+  r := FClientJson.search(frtNull, false, 'text=peter') as TFHIRBundle;
   try
-    Assert.IsTrue(r.entryList.Count > 0);
+    Assert.IsTrue(r.entryList.Count = 50);
   finally
     r.Free;
+  end;
+end;
+
+procedure TFullServerTests.TestValueSetExpand1;
+var
+  vs : TFHIRValueSet;
+begin
+  vs := FClientJson.operation(frtValueSet, 'account-status', 'expand', nil) as TFHIRValueSet;
+  try
+    Assert.IsTrue(vs.expansion <> nil);
+  finally
+    vs.Free;
+  end;
+end;
+
+procedure TFullServerTests.TestValueSetExpand2;
+var
+  vs : TFHIRValueSet;
+begin
+  vs := FClientJson.operation(frtValueSet, 'bodysite-laterality', 'expand', nil) as TFHIRValueSet;
+  try
+    Assert.IsTrue(vs.expansion <> nil);
+  finally
+    vs.Free;
+  end;
+end;
+
+procedure TFullServerTests.TestValueSetValidate;
+var
+  pIn, pOut : TFhirParameters;
+  cs : TFHIRValueSet;
+  def : TFhirCodeSystemConcept;
+begin
+  pIn := TFhirParameters.Create;
+  try
+    pIn.AddParameter('system', 'http://hl7.org/fhir/audit-event-outcome');
+    pIn.AddParameter('code', '4');
+    pIn.AddParameter('display', 'something');
+    pOut := FClientJson.operation(frtValueSet, 'validate-code', pIn) as TFhirParameters;
+    try
+      assert.IsTrue(pOut.bool['result']);
+      assert.IsTrue(pOut.str['message'] <> '');
+    finally
+      pOut.Free;
+    end;
+  finally
+    pIn.Free;
   end;
 end;
 

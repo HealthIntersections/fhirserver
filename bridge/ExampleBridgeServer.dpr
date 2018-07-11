@@ -116,8 +116,6 @@ uses
   FHIR.Server.Storage in '..\Server\FHIR.Server.Storage.pas',
   FHIR.Server.Subscriptions in '..\Server\FHIR.Server.Subscriptions.pas',
   FHIR.Server.TagMgr in '..\Server\FHIR.Server.TagMgr.pas',
-  FHIR.Tx.Validator in '..\Server\FHIR.Tx.Validator.pas',
-  FHIR.Tx.Expander in '..\Server\FHIR.Tx.Expander.pas',
   FHIR.Tx.Lang in '..\Server\FHIR.Tx.Lang.pas',
   FHIR.Server.OpenMHealth in '..\Server\FHIR.Server.OpenMHealth.pas',
   FHIR.Server.ReverseClient in '..\Server\FHIR.Server.ReverseClient.pas',
@@ -125,7 +123,6 @@ uses
   FHIR.Scim.Search in '..\Server\FHIR.Scim.Search.pas',
   FHIR.Scim.Server in '..\Server\FHIR.Scim.Server.pas',
   FHIR.Server.Adaptations in '..\Server\FHIR.Server.Adaptations.pas',
-  FHIR.Server.Validator in '..\Server\FHIR.Server.Validator.pas',
   FHIR.Tx.Server in '..\Server\FHIR.Tx.Server.pas',
   FHIR.Tx.Manager in '..\Server\FHIR.Tx.Manager.pas',
   FHIR.Tx.Web in '..\Server\FHIR.Tx.Web.pas',
@@ -183,7 +180,13 @@ uses
   fhir.support.fpc in '..\reference-platform\support\fhir.support.fpc.pas',
   FHIR.Support.Osx in '..\reference-platform\support\FHIR.Support.Osx.pas',
   FHIR.Tx.MimeTypes in '..\Server\FHIR.Tx.MimeTypes.pas',
-  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas';
+  FHIR.Tx.Iso4217 in '..\Server\FHIR.Tx.Iso4217.pas',
+  FHIR.Server.Tags in '..\Server\FHIR.Server.Tags.pas',
+  FHIR.Server.BundleBuilder in '..\Server\FHIR.Server.BundleBuilder.pas',
+  FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas',
+  FHIR.Tools.CodeSystemProvider in '..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas',
+  FHIR.Server.Factory in '..\Server\FHIR.Server.Factory.pas',
+  FHIR.Tools.NDJsonParser in '..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas';
 
 var
   gsrv : TExampleFhirServer;

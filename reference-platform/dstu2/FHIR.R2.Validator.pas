@@ -2617,11 +2617,13 @@ begin
       result := nil;
     end
     else
-      result := TFHIRValueSet(FContext.fetchResource(frtValueSet, s))
+    begin
+      result := TFHIRValueSet(FContext.fetchResource(frtValueSet, s));
+      ctxt.Owned.add(result);
+    end;
   end
   else
     result := nil;
-  ctxt.Owned.add(result);
 end;
 
 function readAsCodeableConcept(element: TFHIRMMElement): TFHIRCodeableConcept;
@@ -3360,7 +3362,7 @@ begin
   result := context.Factory.wrapOperationOutcome(context.factory.makeResource('OperationOutcome'));
   try
     for o in ctxt.Issues do
-      result.addIssue(o.Link);
+      result.addIssue(o.Link, false);
     gen := TFHIRNarrativeGenerator.create(Context.Link);
     try
       gen.description := ctxt.OperationDescription;

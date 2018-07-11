@@ -74,7 +74,6 @@ Type
     function makeIndexer : TFHIRIndexManager; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
 
-    procedure registerJs(js : TFHIRJavascript); override;
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
 
@@ -107,6 +106,7 @@ Type
     procedure identifyValueSets(db : TKDBManager);
 //    function RegisterValueSet(id: String; conn: TKDBConnection): integer;
     function fetchFromUrl(fn : String; var bytes : TBytes) : boolean;
+    procedure registerJs(sender: TObject; js: TJsHost);
   protected
     function CanStart : boolean; Override;
     procedure postStart; override;
@@ -319,15 +319,6 @@ begin
   end;
 end;
 
-procedure TKernelServerFactory.registerJs(js : TFHIRJavascript);
-begin
-  case js.version of
-    fhirVersionRelease2 : FHIR.R2.Javascript.registerFHIRTypes(js);
-    fhirVersionRelease3 : FHIR.R3.Javascript.registerFHIRTypes(js);
-    fhirVersionRelease4 : FHIR.R4.Javascript.registerFHIRTypes(js);
-  end;
-end;
-
 procedure TKernelServerFactory.setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer});
 begin
   case FVersion of
@@ -359,6 +350,13 @@ begin
   FDatabases.Free;
   FIni.Free;
   inherited;
+end;
+
+procedure TFHIRService.registerJs(sender : TObject; js : TJsHost);
+begin
+  js.registerVersion(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create), FHIR.R2.Javascript.registerFHIRTypes);
+  js.registerVersion(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create), FHIR.R3.Javascript.registerFHIRTypes);
+  js.registerVersion(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create), FHIR.R4.Javascript.registerFHIRTypes);
 end;
 
 function TFHIRService.CanStart: boolean;
@@ -719,7 +717,7 @@ end;
 procedure TFHIRService.LoadTerminologies;
 begin
   FTerminologies := TCommonTerminologies.Create(FSettings.link);
-  FTerminologies.load(FIni, FDatabases);
+  FTerminologies.load(FIni, FDatabases, false);
 end;
 
 procedure TFHIRService.postStart;
@@ -741,12 +739,16 @@ var
   ep : TFhirWebServerEndpoint;
 begin
   FWebServer := TFhirWebServer.create(FSettings.Link, DisplayName);
+  FWebServer.OnRegisterJs := registerJs;
   FWebServer.loadConfiguration(FIni);
+  logt('Web source from '+FIni.web['folder']);
   FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));
 
   for s in FIni.endpoints.Keys do
   begin
     details := FIni.endpoints[s];
+    logt('Initialise endpoint '+s+' at '+details['path']+' for '+details['version']);
+
     if details['version'] = 'r2' then
     begin
       store := TFHIRNativeStorageServiceR2.create(FDatabases[details['database']], TFHIRFactoryR2.Create);
@@ -765,6 +767,7 @@ begin
     try
       ctxt := TFHIRServerContext.Create(store.Link, TKernelServerFactory.create(store.Factory.version));
       try
+        logt('  .. check DB '+details['database']);
         checkDatabase(store.DB, store.Factory, ctxt.ServerFactory);
         ctxt.Globals := FSettings.Link;
         store.ServerContext := ctxt;
@@ -772,7 +775,7 @@ begin
         ctxt.Validate := true; // move to database config FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
         store.Initialise();
         ctxt.userProvider := TSCIMServer.Create(store.db.link, FIni.admin['scim-salt'], FWebServer.host, FIni.admin['default-rights'], false);
-        ep := FWebServer.registerEndPoint(s, details['path'], ctxt.Link);
+        ep := FWebServer.registerEndPoint(s, details['path'], ctxt.Link, FIni);
       finally
         ctxt.Free;
       end;

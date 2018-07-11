@@ -538,7 +538,7 @@ begin
     result := TFHIRMeta4.create((r as TFHIRResource).meta.link);
   end
   else
-    result := TFHIRMeta4.create((r as TFhirMeta).Link)
+    result := TFHIRMeta4.create((r as TFhirMeta))
 end;
 
 function TFHIRFactoryR4.wrapNamingSystem(o: TFHIRResourceV): TFHIRNamingSystemW;

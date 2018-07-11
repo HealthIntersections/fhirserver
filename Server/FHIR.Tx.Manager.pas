@@ -156,8 +156,6 @@ Type
     FConceptMapsById : TFslMap<TLoadedConceptMap>;
     FConceptMapsByURL : TFslMap<TLoadedConceptMap>;
 
-    FProviderClasses : TFslMap<TCodeSystemProvider>;
-
     procedure UpdateConceptMaps;
     procedure BuildStems(cs : TFhirCodeSystemW);
 
@@ -166,6 +164,7 @@ Type
     function checkVersion(system, version: String; profile: TFHIRExpansionParams): String;
     procedure AddCodeSystemToCache(cs : TFhirCodeSystemW; base : boolean);
     procedure RemoveCodeSystemFromCache(id : String);
+    function getProviderClasses: TFslMap<TCodeSystemProvider>;
   protected
     FLock : TFslLock;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TKDBManager;
@@ -199,10 +198,12 @@ Type
     function getConceptMapBySrcTgt(src, tgt : String) : TLoadedConceptMap;
 
     // publishing access
-    function GetCodeSystemList : TFslList<TFhirCodeSystemW>;
-    function GetValueSetList : TFslList<TFhirValueSetW>;
+    procedure GetCodeSystemList(list : TFslList<TFHIRCodeSystemW>); overload;
+    procedure GetCodeSystemList(list : TFslList<TFHIRMetadataResourceW>); overload;
+    procedure GetValueSetList(list : TFslList<TFhirValueSetW>); overload;
+    procedure GetValueSetList(list : TFslList<TFHIRMetadataResourceW>); overload;
     function GetConceptMapList : TLoadedConceptMapList;
-    Property ProviderClasses : TFslMap<TCodeSystemProvider> read FProviderClasses;
+    Property ProviderClasses : TFslMap<TCodeSystemProvider> read getProviderClasses;
     function ValueSetCount : integer;
     function CodeSystemCount : integer;
 
@@ -750,7 +751,6 @@ begin
   inherited Create;
   FFactory := factory;
   FLock := TFslLock.Create('Terminology Server Store');
-  FProviderClasses := TFslMap<TCodeSystemProvider>.Create;
   FCommonTerminologies := common;
 
   FDB := db;
@@ -861,7 +861,6 @@ begin
   FConceptMapsById.Free;
   FConceptMapsByURL.Free;
 
-  FProviderClasses.Free;
   FLock.Free;
   FDB.free;
   FFactory.Free;
@@ -1248,22 +1247,29 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.GetCodeSystemList: TFslList<TFhirCodeSystemW>;
+procedure TTerminologyServerStore.GetCodeSystemList(list: TFslList<TFHIRMetadataResourceW>);
 var
   vs : TFHIRCodeSystemEntry;
 begin
-  result := TFslList<TFhirCodeSystemW>.Create;
+  FLock.Lock('GetCodeSystemList');
   try
-    FLock.Lock('GetCodeSystemList');
-    try
-      for vs in FCodeSystemsByUrl.values do
-        result.add(vs.CodeSystem.link);
-    finally
-      FLock.Unlock;
-    end;
-    result.Link;
+    for vs in FCodeSystemsByUrl.values do
+      list.add(vs.CodeSystem.link);
   finally
-    result.Free;
+    FLock.Unlock;
+  end;
+end;
+
+procedure TTerminologyServerStore.GetCodeSystemList(list : TFslList<TFHIRCodeSystemW>);
+var
+  vs : TFHIRCodeSystemEntry;
+begin
+  FLock.Lock('GetCodeSystemList');
+  try
+    for vs in FCodeSystemsByUrl.values do
+      list.add(vs.CodeSystem.link);
+  finally
+    FLock.Unlock;
   end;
 end;
 
@@ -1319,22 +1325,16 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.GetValueSetList: TFslList<TFhirValueSetW>;
+procedure TTerminologyServerStore.GetValueSetList(list : TFslList<TFhirValueSetW>);
 var
   vs : TFhirValueSetW;
 begin
-  result := TFslList<TFhirValueSetW>.Create;
+  FLock.Lock('GetValueSetList');
   try
-    FLock.Lock('GetValueSetList');
-    try
-      for vs in FValueSetsById.values do
-        result.Add(vs.Link);
-    finally
-      FLock.Unlock;
-    end;
-    result.Link;
+    for vs in FValueSetsById.values do
+      list.Add(vs.Link);
   finally
-    result.Free;
+    FLock.Unlock;
   end;
 end;
 
@@ -1362,19 +1362,19 @@ begin
   result := nil;
   version := checkVersion(system, version, profile);
 
-  if FProviderClasses.ContainsKey(system) then
+  if ProviderClasses.ContainsKey(system) then
   begin
     if (version <> '') then
     begin
-      if FProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version) then
-        result := FProviderClasses[system+URI_VERSION_BREAK+version].Link
+      if ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version) then
+        result := ProviderClasses[system+URI_VERSION_BREAK+version].Link
       else
       begin
         // special support for SNOMED Editions
-        if (system = 'http://snomed.info/sct') and version.contains('/version/') and FProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))) then
-          result := FProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].Link
+        if (system = 'http://snomed.info/sct') and version.contains('/version/') and ProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))) then
+          result := ProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].Link
         else
-          result := FProviderClasses[system].Link;
+          result := ProviderClasses[system].Link;
         if not result.defToThisVersion(version) then
         begin
           result.Free;
@@ -1383,7 +1383,7 @@ begin
       end;
     end
     else
-      result := FProviderClasses[system].Link
+      result := ProviderClasses[system].Link
   end
   else if system = ANY_CODE_VS then
     result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://hl7.org/fhir/v3/ActCode', '', nil))
@@ -1418,6 +1418,11 @@ function TTerminologyServerStore.getProvider(codesystem: TFhirCodeSystemW; profi
 begin
   checkVersion(codeSystem.url, codeSystem.version, profile);
   result := TFhirCodeSystemProvider.create(FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
+end;
+
+function TTerminologyServerStore.getProviderClasses: TFslMap<TCodeSystemProvider>;
+begin
+  result := FCommonTerminologies.ProviderClasses;
 end;
 
 procedure TTerminologyServerStore.getSummary(b: TStringBuilder);
@@ -1457,6 +1462,19 @@ begin
       result.Link
     else
       result := nil;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TTerminologyServerStore.GetValueSetList(list: TFslList<TFHIRMetadataResourceW>);
+var
+  vs : TFhirValueSetW;
+begin
+  FLock.Lock('GetValueSetList');
+  try
+    for vs in FValueSetsById.values do
+      list.Add(vs.Link);
   finally
     FLock.Unlock;
   end;
@@ -1642,7 +1660,8 @@ end;
 
 procedure TCommonTerminologies.add(p: TCodeSystemProvider);
 begin
-  FProviderClasses.Add(p.system(nil), p);
+  if not FProviderClasses.ContainsKey(p.system(nil)) then
+    FProviderClasses.Add(p.system(nil), p);
   if p.version(nil) <> '' then
     FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
 end;
@@ -1744,18 +1763,19 @@ begin
 
   for s in ini.terminologies.Keys do
   begin
-    logt('load '+s);
     details := ini.terminologies[s];
     if not testing or (details['when-testing'] = 'true') then
     begin
       if details['type'] = 'icd10' then
       begin
+        logt('load '+s+' from '+details['source']);
         icdX := TICD10Provider.Create(true, details['source']);
         add(icdX);
         icd10.Add(icdX.Link);
       end
       else if details['type'] = 'snomed' then
       begin
+        logt('load '+s+' from '+details['source']);
         sn := TSnomedServices.Create;
         try
           sn.Load(details['source']);
@@ -1769,28 +1789,41 @@ begin
       end
       else if details['type'] = 'loinc' then
       begin
+        logt('load '+s+' from '+details['source']);
         Loinc := TLoincServices.Create;
         add(Loinc.link);
         Loinc.Load(details['source']);
       end
       else if details['type'] = 'ucum' then
       begin
+        logt('load '+s+' from '+details['source']);
         Ucum := TUcumServices.Create;
         Ucum.Import(details['source']);
       end
       else if details['type'] = 'rxnorm' then
+      begin
+        logt('load '+s+' from '+details['database']);
         RxNorm := TRxNormServices.create(databases[details['database']].link)
+      end
       else if details['type'] = 'mcimeta' then
+      begin
+        logt('load '+s+' from '+details['database']);
         NciMeta := TNciMetaServices.Create(databases[details['database']].link)
+      end
       else if details['type'] = 'unii' then
+      begin
+        logt('load '+s+' from '+details['database']);
         Unii := TUniiServices.Create(databases[details['database']].link)
+      end
       else if details['type'] = 'lang' then
+      begin
+        logt('load '+s+' from '+details['source']);
         add(TIETFLanguageCodeServices.Create(details['source']))
+      end
       else
         raise Exception.Create('Unknown type '+details['type']);
     end;
   end;
-  logt(' - done');
 end;
 
 procedure TCommonTerminologies.SetLoinc(const Value: TLOINCServices);

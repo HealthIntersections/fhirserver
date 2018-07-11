@@ -6,7 +6,7 @@
         <MainSource>fhirserverOSX4.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>5</TargetedPlatforms>
         <AppType>Console</AppType>
     </PropertyGroup>
@@ -114,7 +114,6 @@
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Rdf.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Threads.pas"/>
-        <DCCReference Include="..\reference-platform\support\Tests\OSXTests.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Json.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
@@ -182,6 +181,8 @@
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Client.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.Operations.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.OpBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\FHIR.Tests.OSX.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIR.R4.AuthMap.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

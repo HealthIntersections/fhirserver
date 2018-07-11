@@ -544,7 +544,7 @@ begin
     pfChildren: checkParamCount(lexer, location, exp, 0);
     pfDescendants: checkParamCount(lexer, location, exp, 0);
     pfMemberOf: checkParamCount(lexer, location, exp, 1);
-    pfTrace: checkParamCount(lexer, location, exp, 1);
+    pfTrace: checkParamCount(lexer, location, exp, 1, 2);
     pfToday: checkParamCount(lexer, location, exp, 0);
     pfNow: checkParamCount(lexer, location, exp, 0);
     pfResolve: checkParamCount(lexer, location, exp, 0);
@@ -1176,7 +1176,7 @@ begin
   try
     ctxt := TFHIRPathExecutionContext.Create(appInfo.Link, resource.Link, base.Link);
     try
-      ctxt.This := base.Link;
+      ctxt.This := base;
       result := execute(ctxt, list, expr as TFHIRPathExpressionNode, true);
     finally
       ctxt.Free;
@@ -1791,13 +1791,23 @@ end;
 
 function TFHIRPathEngine.funcTrace(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
-  n1 : TFHIRSelectionList;
+  n1, n2 : TFHIRSelectionList;
   name : String;
 begin
   n1 := execute(context, focus, exp.Parameters[0], true);
   try
     name := n1[0].value.primitiveValue;
-    log(name, convertToString(focus));
+    if exp.Parameters.Count = 2 then
+    begin
+      n2 := execute(context, focus, exp.Parameters[1], true);
+      try
+        log(name, convertToString(n2));
+      finally
+        n2.Free;
+      end;
+    end
+    else
+      log(name, convertToString(focus));
     result := focus.Link;
   finally
     n1.Free;
@@ -1869,7 +1879,7 @@ begin
         begin
           pc.clear();
           pc.add(item.link);
-          ctxt := context.changeThis(item.value.Link);
+          ctxt := context.changeThis(item.value);
           try
             work := execute(ctxt, pc, exp.parameters[0], true);
             try
@@ -1976,7 +1986,7 @@ begin
       begin
         pc.clear();
         pc.add(item.link);
-        ctxt := context.changeThis(item.value.Link);
+        ctxt := context.changeThis(item.value);
         try
           work := execute(ctxt, pc, exp.parameters[0], true);
           try
@@ -2277,7 +2287,7 @@ begin
       begin
         pc.Clear;
         pc.Add(item.Link);
-        ctxt := context.changeThis(item.value.Link);
+        ctxt := context.changeThis(item.value);
         try
           res := execute(ctxt, pc, exp.Parameters[0], true);
           try
@@ -2543,7 +2553,7 @@ begin
     try
       for item in focus do
       begin
-        c := context.changeThis(item.value.Link);
+        c := context.changeThis(item.value);
         try
           c.total := total.Link;
           work := execute(c, pc, exp.Parameters[0], true);

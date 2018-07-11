@@ -398,52 +398,6 @@ type
       Property Stream : TFslStream Read GetStream Write SetStream;
   End;
 
-  // dealing with changes to the Stream Interface:
-  {$IFDEF FPC} // VER260 ?
-  TStreamDWord = Longint;
-  TStreamFixedUInt = LongWord;
-  PStreamFixedUInt = PDWord;
-  TStreamLargeUInt = QWord;
-  {$ELSE}
-  TStreamDWord = DWord; // or longint
-  TStreamFixedUInt = FixedUInt;  // or longint
-  PStreamFixedUInt = PFixedUInt; // or plongint
-  TStreamLargeUInt = LargeUInt; // or largeint
-  {$ENDIF}
-
-  {$IFDEF MSWINDOWS}
-  TFslStreamAdapterI = Class(TStreamAdapter)
-    Public
-      Function Stat(Out statstg: TStatStg; grfStatFlag: {$IFDEF FPC}longint{$ELSE}TStreamDWord{$ENDIF}): HResult; Override; Stdcall;
-  End;
-
-  TFslIStreamAdapter = Class(TFslObject, IStream)
-    Private
-      FStream : TFslAccessStream;
-
-      Function GetStream: TFslAccessStream;
-      Procedure SetStream(Const Value: TFslAccessStream);
-
-    Public
-      Constructor Create; Override;
-      Destructor Destroy; Override;
-
-      function Seek(dlibMove: {$IFDEF FPC}TStreamLargeUInt{$ELSE}Largeint{$ENDIF}; dwOrigin: TStreamDWord; out libNewPosition: TStreamLargeUInt): HResult; stdcall;
-      function SetSize(libNewSize: TStreamLargeUInt): HResult; stdcall;
-      function CopyTo(stm: IStream; cb: TStreamLargeUInt; out cbRead: TStreamLargeUInt; out cbWritten: TStreamLargeUInt): HResult; stdcall;
-      function Commit(grfCommitFlags: TStreamDWord): HResult; stdcall;
-      function Revert: HResult; stdcall;
-      function LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWord): HResult; stdcall;
-      function UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWord): HResult; stdcall;
-      function Stat(out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; stdcall;
-      function Clone(out stm: IStream): HResult; stdcall;
-      function Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult; stdcall;
-      function Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult; stdcall;
-
-      Property Stream: TFslAccessStream Read GetStream Write SetStream;
-  End;
-  {$ENDIF}
-
   TStream = Classes.TStream;
 
 type
@@ -1370,7 +1324,7 @@ type
     procedure ReadFile (Buffer   : pointer); overload;       // Reads file data for last Directory Record
     procedure ReadFile (Stream   : TStream); overload;       // -;-
     procedure ReadFile (Filename : String);  overload;       // -;-
-    function  ReadFile : String; overload;         // -;-  RawByteString in D2009+. Not active due to FPC unicode architecture not being finalized
+    function  ReadFile : TBytes; overload;         // -;-  RawByteString in D2009+. Not active due to FPC unicode architecture not being finalized
     procedure GetFilePos (var Current, Size : int64);        // Current File Position
     procedure SetFilePos (NewPos : int64);                   // Set new Current File Position
   end;
@@ -1946,257 +1900,6 @@ Begin
   FStream.Write(aBuffer, iCount);
   Result := iCount;
 End;
-
-{$IFDEF MSWINDOWS}
-Function TFslStreamAdapterI.Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; stdcall;
-Begin
-  // TStreamAdapter.stat does not clear the STATSTG structure.
-  // http://qc.embarcadero.com/wc/qcmain.aspx?d=45528
-
-  FillChar(statstg, SizeOf(statstg), 0);
-  Result := Inherited Stat(statstg, grfStatFlag);
-End;
-
-
-Constructor TFslIStreamAdapter.Create;
-Begin
-  Inherited;
-
-  FStream := TFslAccessStream.Create;
-End;
-
-Destructor TFslIStreamAdapter.Destroy;
-Begin
-  FStream.Free;
-
-  Inherited;
-End;
-
-
-Function TFslIStreamAdapter.Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult; stdcall;
-
-Var
-  iReadable : TStreamFixedUInt;
-Begin
-  Try
-    If pv = Nil Then
-    Begin
-      Result := STG_E_INVALIDPOINTER;
-      Exit;
-    End;
-
-    iReadable := Stream.Readable;
-    If iReadable > cb Then
-      iReadable := cb;
-
-    FStream.Read(pv^, iReadable);
-
-    If pcbRead <> Nil Then
-      pcbRead^ := iReadable;
-
-    Result := S_OK;
-  Except
-    Result := S_FALSE;
-  End;
-End;
-
-Function TFslIStreamAdapter.Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult; stdcall;
-Begin
-  Try
-    If pv = Nil Then
-    Begin
-      Result := STG_E_INVALIDPOINTER;
-      Exit;
-    End;
-
-    FStream.Write(pv^, cb);
-
-    If pcbWritten <> Nil Then
-      pcbWritten^ := cb;
-
-    Result := S_OK;
-  Except
-    Result := STG_E_CANTSAVE;
-  End;
-End;
-
-
-Function TFslIStreamAdapter.Seek(dlibMove: {$IFDEF FPC}TStreamLargeUInt{$ELSE}Largeint{$ENDIF}; dwOrigin: TStreamDWORD; out libNewPosition: TStreamLargeUInt): HResult; stdcall;
-Var
-  iNewPos: Integer;
-Begin
-  Try
-    If (dwOrigin > STREAM_SEEK_END) Then
-    Begin
-      Result := STG_E_INVALIDFUNCTION;
-      Exit;
-    End;
-
-    Case dwOrigin Of
-      STREAM_SEEK_SET : iNewPos := dlibMove;
-      STREAM_SEEK_CUR : iNewPos := Stream.Position + dlibMove;
-      STREAM_SEEK_END : iNewPos := Stream.Size - dlibMove;
-    Else
-      iNewPos := dlibMove;
-    End;
-
-    Stream.Position := iNewPos;
-
-    If @libNewPosition <> Nil Then
-      libNewPosition := iNewPos;
-
-    Result := S_OK;
-  Except
-    Result := STG_E_INVALIDPOINTER;
-  End;
-End;
-
-
-Function TFslIStreamAdapter.Revert: HResult; stdcall;
-Begin
-  Result := STG_E_REVERTED;
-End;
-
-
-Function TFslIStreamAdapter.SetSize(libNewSize: TStreamLargeUInt): HResult; stdcall;
-Begin
-  Try
-    Stream.Size := LongInt(libNewSize);
-    
-    If libNewSize <> Stream.Size Then
-      Result := E_FAIL
-    Else
-      Result := S_OK;
-  Except
-    Result := E_UNEXPECTED;
-  End;
-End;
-
-
-Function TFslIStreamAdapter.Stat(out statstg: TStatStg; grfStatFlag: TStreamDWORD): HResult; stdcall;
-Begin
-  Result := S_OK;
-  Try
-    If (@statstg <> Nil) Then
-    Begin
-      FillChar(statstg, SizeOf(statstg), 0);
-
-      statstg.dwType := STGTY_STREAM;
-      statstg.cbSize := FStream.Size;
-      statstg.grfLocksSupported := LOCK_WRITE;
-    End;
-  Except
-    Result := E_UNEXPECTED;
-  End;
-End;
-
-
-Function TFslIStreamAdapter.UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult; stdcall;
-Begin
-  Result := STG_E_INVALIDFUNCTION;
-End;
-
-
-Function TFslIStreamAdapter.Clone(Out stm: IStream): HResult; stdcall;
-Begin
-  Result := E_NOTIMPL;
-End;
-
-
-Function TFslIStreamAdapter.Commit(grfCommitFlags: TStreamDWORD): HResult; stdcall;
-Begin
-  Result := S_OK;
-End;
-
-
-Function TFslIStreamAdapter.CopyTo(stm: IStream; cb: TStreamLargeUInt; out cbRead: TStreamLargeUInt; out cbWritten: TStreamLargeUInt): HResult; stdcall;
-Const
-  MaxBufSize = 1024 * 1024;  // 1mb
-Var
-  Buffer: Pointer;
-  BufSize, N, I: Integer;
-  BytesRead, BytesWritten, W: LargeInt;
-  iNumRead : Integer;
-Begin
-  Result := S_OK;
-  BytesRead := 0;
-  BytesWritten := 0;
-  Try
-    If cb > MaxBufSize Then
-      BufSize := MaxBufSize
-    Else
-      BufSize := Integer(cb);
-
-    GetMem(Buffer, BufSize);
-    Try
-      While cb > 0 Do
-      Begin
-        If cb > MaxInt Then
-          I := MaxInt
-        Else
-          I := cb;
-
-        While I > 0 Do
-        Begin
-          If I > BufSize Then
-            N := BufSize
-          Else
-            N := I;
-
-          Read(Buffer, N, @iNumRead);
-          Inc(BytesRead, iNumRead);
-          //Inc(BytesRead, FStream.Read(Buffer^, N));
-
-          W := 0;
-          Result := stm.Write(Buffer, N, @W);
-          
-          Inc(BytesWritten, W);
-
-          If (Result = S_OK) And (Integer(W) <> N) Then
-            Result := E_FAIL;
-
-          If Result <> S_OK Then
-            Exit;
-            
-          Dec(I, N);
-        End;
-        
-        Dec(cb, I);
-      End;
-    Finally
-      FreeMem(Buffer);
-      If (@cbWritten <> Nil) Then
-        cbWritten := BytesWritten;
-
-      If (@cbRead <> Nil) Then
-        cbRead := BytesRead;
-    End;
-  Except
-    Result := E_UNEXPECTED;
-  End;
-End;
-
-
-Function TFslIStreamAdapter.LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWORD): HResult; stdcall;
-Begin
-  Result := STG_E_INVALIDFUNCTION;
-End;
-
-
-Procedure TFslIStreamAdapter.SetStream(Const Value: TFslAccessStream);
-Begin
-  FStream.Free;
-  FStream := Value;
-End;
-
-
-Function TFslIStreamAdapter.GetStream: TFslAccessStream;
-Begin
-  Result := FStream;
-End;
-
-{$ENDIF}
-
 
 (*
 Procedure TFslStreamFilerReferenceHashEntry.Assign(oSource: TFslObject);
@@ -6318,7 +6021,7 @@ begin
 end;
 
 
-function  TTarArchive.ReadFile : String;
+function  TTarArchive.ReadFile : TBytes;
           // Reads file data for the last Directory Record. The entire file is returned
           // as a large ANSI String.
 var
@@ -6327,7 +6030,7 @@ begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
   SetLength (Result, FBytesToGo);
-  FStream.ReadBuffer (PAnsiChar (Result)^, FBytesToGo);
+  FStream.ReadBuffer(Result, 0, FBytesToGo);
   FStream.Seek (RestBytes, soFromCurrent);
   FBytesToGo := 0;
 end;

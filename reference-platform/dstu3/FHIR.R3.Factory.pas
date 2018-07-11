@@ -70,7 +70,7 @@ type
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
 
-    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); override;
+    procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
     function buildOperationOutcome(lang : String; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(lang, message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
 
@@ -163,7 +163,7 @@ begin
     (res as TFHIRResource).checkNoImplicitRules(method, param);
 end;
 
-procedure TFHIRFactoryR3.checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []);
+procedure TFHIRFactoryR3.checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil);
 begin
   if res is TFHIRDomainResource then
     TFHIRDomainResource(res).checkNoModifiers(method, param, allowed)
@@ -546,7 +546,7 @@ begin
     result := TFHIRMeta3.create((r as TFHIRResource).meta.link);
   end
   else
-    result := TFHIRMeta3.create((r as TFhirMeta).Link)
+    result := TFHIRMeta3.create(r as TFhirMeta)
 end;
 
 function TFHIRFactoryR3.wrapNamingSystem(o: TFHIRResourceV): TFHIRNamingSystemW;

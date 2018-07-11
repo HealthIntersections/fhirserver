@@ -271,7 +271,7 @@ valueOf()	Returns the primitive value of an array
       params - params to pass to the function (must match the named parameters on the function).
          Prepare these using wrap() functions or makeArray
     }
-    function execute(script: String; scriptName, funcName: AnsiString; params : TJsValues) : JsValueRef; overload;
+    function execute(script: String; scriptName, funcName: AnsiString; params : Array of TJsValue) : JsValueRef; overload;
 
     {
       Convert whatever javascript variable is in val to a string representation
@@ -872,7 +872,7 @@ begin
   jsCheck(JsRunScript(PChar(script), FContext, '', result));
 end;
 
-function TJavascript.execute(script : String; scriptName, funcName: AnsiString; params: TJsValues): JsValueRef;
+function TJavascript.execute(script : String; scriptName, funcName: AnsiString; params: Array of TJsValue): JsValueRef;
 var
   global, func, scriptJ, scriptNameJ, res : JsValueRef;
   pl : PJsValueRefArray;

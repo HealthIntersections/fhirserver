@@ -301,6 +301,9 @@ begin
   GBasePath  := paramstr(1);
   if GBasePath = '' then
     GBasePath := 'C:\work\org.hl7.fhir';
+  GContentPath  := paramstr(2);
+  if GContentPath = '' then
+    GContentPath := 'r:\fhir';
 
 {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX.RunRegisteredTests;

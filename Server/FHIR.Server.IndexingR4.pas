@@ -346,6 +346,7 @@ begin
     for i := 0 to FInfo.Indexes.Count - 1 do
     begin
       ndx := FInfo.Indexes[i];
+
       if (ndx.Path <> '') and (ndx.ResourceType = resource.fhirType) then
       begin
         matches := path.evaluate(nil, resource, ndx.Path);

@@ -845,102 +845,105 @@ begin
     FOffset := offset;
 
     exp := result.forceExpansion;
-
-    if source.id <> '' then
-      exp.addParam('expansion-source', 'ValueSet/'+source.id)
-    else if source.url <> '' then
-      exp.addParam('expansion-source', source.url);
-
-    if FParams.limitedExpansion then
-      exp.addParam('limitedExpansion', boolToStr(FParams.limitedExpansion));
-    if FParams.displayLanguage <> '' then
-      exp.addParam('displayLanguage', FParams.displayLanguage);
-    if FParams.includeDesignations then
-      exp.addParam('includeDesignations', boolToStr(FParams.includeDesignations));
-    if FParams.includeDefinition then
-      exp.addParam('includeDefinition', boolToStr(FParams.includeDefinition));
-    if FParams.activeOnly then
-      exp.addParam('activeOnly', boolToStr(FParams.activeOnly));
-    if FParams.excludeNested then
-      exp.addParam('excludeNested', boolToStr(FParams.excludeNested));
-    if FParams.excludeNotForUI then
-      exp.addParam('excludeNotForUI', boolToStr(FParams.excludeNotForUI));
-    if FParams.excludePostCoordinated then
-      exp.addParam('excludePostCoordinated', boolToStr(FParams.excludePostCoordinated));
-
     try
-      ics := source.inlineCS;
+      if source.id <> '' then
+        exp.addParam('expansion-source', 'ValueSet/'+source.id)
+      else if source.url <> '' then
+        exp.addParam('expansion-source', source.url);
+
+      if FParams.limitedExpansion then
+        exp.addParam('limitedExpansion', boolToStr(FParams.limitedExpansion));
+      if FParams.displayLanguage <> '' then
+        exp.addParam('displayLanguage', FParams.displayLanguage);
+      if FParams.includeDesignations then
+        exp.addParam('includeDesignations', boolToStr(FParams.includeDesignations));
+      if FParams.includeDefinition then
+        exp.addParam('includeDefinition', boolToStr(FParams.includeDefinition));
+      if FParams.activeOnly then
+        exp.addParam('activeOnly', boolToStr(FParams.activeOnly));
+      if FParams.excludeNested then
+        exp.addParam('excludeNested', boolToStr(FParams.excludeNested));
+      if FParams.excludeNotForUI then
+        exp.addParam('excludeNotForUI', boolToStr(FParams.excludeNotForUI));
+      if FParams.excludePostCoordinated then
+        exp.addParam('excludePostCoordinated', boolToStr(FParams.excludePostCoordinated));
+
       try
-        if (ics <> nil) then
-        begin
-          FFactory.checkNoModifiers(ics, 'ValueSetExpander.Expand', 'code system');
-          cl := ics.concepts;
-          try
-            cs2 := FFactory.wrapCodeSystem(source.Resource.link);
+        ics := source.inlineCS;
+        try
+          if (ics <> nil) then
+          begin
+            FFactory.checkNoModifiers(ics, 'ValueSetExpander.Expand', 'code system');
+            cl := ics.concepts;
             try
-              handleDefine(cs2, list, map, ics, cl, filter, exp, params, nil);
+              cs2 := FFactory.wrapCodeSystem(source.Resource.link);
+              try
+                handleDefine(cs2, list, map, ics, cl, filter, exp, params, nil);
+              finally
+                cs2.Free;
+              end;
             finally
-              cs2.Free;
+              cl.Free;
             end;
-          finally
-            cl.Free;
+          end;
+        finally
+          ics.Free;
+        end;
+        notClosed := false;
+        if (source.checkCompose('ValueSetExpander.Expand', 'compose')) then
+          handleCompose(list, map, source, filter, dependencies, exp, params, notClosed);
+      except
+        on e : ETooCostly do
+        begin
+          if FParams.limitedExpansion then
+          begin
+            exp.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+            if (table <> nil) then
+              div_.addTag('p').setAttribute('style', 'color: Maroon').addText(e.message);
+          end
+          else
+          begin
+            recordStack(e);
+            raise;
           end;
         end;
-      finally
-        ics.Free;
-      end;
-      notClosed := false;
-      if (source.checkCompose('ValueSetExpander.Expand', 'compose')) then
-        handleCompose(list, map, source, filter, dependencies, exp, params, notClosed);
-    except
-      on e : ETooCostly do
-      begin
-        if FParams.limitedExpansion then
-        begin
-          exp.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
-          if (table <> nil) then
-            div_.addTag('p').setAttribute('style', 'color: Maroon').addText(e.message);
-        end
-        else
+        on e : Exception do
         begin
           recordStack(e);
           raise;
         end;
       end;
-      on e : Exception do
+      if notClosed then
       begin
-        recordStack(e);
-        raise;
+        exp.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-unclosed', FFactory.makeBoolean(true));
+        if (table <> nil) then
+          div_.addTag('p').setAttribute('style', 'color: Navy').addText('Because of the way that this value set is defined, not all the possible codes can be listed in advance');
       end;
-    end;
-    if notClosed then
-    begin
-      exp.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-unclosed', FFactory.makeBoolean(true));
-      if (table <> nil) then
-        div_.addTag('p').setAttribute('style', 'color: Navy').addText('Because of the way that this value set is defined, not all the possible codes can be listed in advance');
-    end;
 
-    t := 0;
-    o := 0;
-    for i := 0 to list.count - 1 do
-    begin
-      c := list[i];
-      if map.containsKey(key(c)) then
+      t := 0;
+      o := 0;
+      for i := 0 to list.count - 1 do
       begin
-        inc(o);
-        if (o >= offset) and ((count = 0) or (t < count)) then
+        c := list[i];
+        if map.containsKey(key(c)) then
         begin
-          inc(t);
-          exp.addContains(c.link);
-          if (table <> nil) then
+          inc(o);
+          if (o >= offset) and ((count = 0) or (t < count)) then
           begin
-            tr := table.AddChild('tr');
-            tr.AddChild('td').AddText(c.system);
-            tr.AddChild('td').AddText(c.code);
-            tr.AddChild('td').AddText(c.display);
+            inc(t);
+            exp.addContains(c);
+            if (table <> nil) then
+            begin
+              tr := table.AddChild('tr');
+              tr.AddChild('td').AddText(c.system);
+              tr.AddChild('td').AddText(c.code);
+              tr.AddChild('td').AddText(c.display);
+            end;
           end;
         end;
       end;
+    finally
+      exp.free;
     end;
 
     result.link;
@@ -1362,13 +1365,17 @@ procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; li
 var
   i : integer;
 begin
-  if (cs.version(nil) <> '') and (expansion <> nil) then
-    expansion.addParam('version', cs.system(nil)+'?version='+cs.version(nil));
+  try
+    if (cs.version(nil) <> '') and (expansion <> nil) then
+      expansion.addParam('version', cs.system(nil)+'?version='+cs.version(nil));
 
-  if not FParams.excludeNotForUI or not cs.IsAbstract(context) then
-    processCode(doDelete, list, map, cs.system(context), '', cs.Code(context), cs.Display(context, FParams.displayLanguage), cs.definition(context), nil, params, importHash);
-  for i := 0 to cs.ChildCount(context) - 1 do
-    processCodeAndDescendants(doDelete, list, map, cs, cs.getcontext(context, i), nil, params, importHash);
+    if not FParams.excludeNotForUI or not cs.IsAbstract(context) then
+      processCode(doDelete, list, map, cs.system(context), '', cs.Code(context), cs.Display(context, FParams.displayLanguage), cs.definition(context), expansion, params, importHash);
+    for i := 0 to cs.ChildCount(context) - 1 do
+      processCodeAndDescendants(doDelete, list, map, cs, cs.getcontext(context, i), expansion, params, importHash);
+  finally
+    cs.Close(context);
+  end;
 end;
 
 { TFHIRExpansionParams }

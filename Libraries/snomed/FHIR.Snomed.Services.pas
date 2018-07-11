@@ -3340,7 +3340,6 @@ begin
         {$IFDEF FHIR3}
         if Active and (kind <> 0) Then
         Begin
-          d := TFHIRLookupOpRespDesignation.create;
           resp.addDesignation('http://snomed.info/sct', GetConceptId(kind), GetPNForConcept(kind), Strings.GetEntry(iWork));
         End;
         {$ENDIF}

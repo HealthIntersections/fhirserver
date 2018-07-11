@@ -813,8 +813,10 @@ var
   e : TFHIRObject;
   ex: TFhirExtensionW;
   ctxt : TCodeSystemProviderContext;
+  s : TArray<String>;
 begin
-  FFactory.checkNoModifiers(base, 'CodeSystemProvider.iterateCodes', 'code', ['http://hl7.org/fhir/StructureDefinition/codesystem-subsumes']);
+  s[0] := 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes';
+  FFactory.checkNoModifiers(base, 'CodeSystemProvider.iterateCodes', 'code', s);
   list.Add(base.Link, 0);
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list);

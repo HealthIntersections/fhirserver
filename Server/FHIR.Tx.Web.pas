@@ -354,15 +354,16 @@ end;
 
 procedure TTerminologyWebServer.ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
 var
-  list: TFslList<TFhirCodeSystemW>;
+  list: TFslList<TFHIRCodeSystemW>;
   vs: TFhirCodeSystemW;
   vars : TFslStringDictionary;
   html : THtmlPublisher;
 begin
   vars := TFslStringDictionary.create;
   try
-    list := FServer.GetCodeSystemList;
+    list := TFslList<TFHIRCodeSystemW>.create;
     try
+      FServer.GetCodeSystemList(list);
       if (request.UnparsedParams.EndsWith('=ver')) then
         FCSSorter.FSortType := byVer
       else if (request.UnparsedParams.EndsWith('=name')) then
@@ -563,8 +564,9 @@ var
 begin
   vars := TFslStringDictionary.create;
   try
-    list := FServer.GetValueSetList;
+    list := TFslList<TFhirValueSetW>.create;
     try
+      FServer.GetValueSetList(list);
       // determine sort order
       if (request.UnparsedParams.EndsWith('=ver')) then
         FVSSorter.FSortType := byVer
@@ -1240,8 +1242,9 @@ var
   list : TFslList<TFhirValueSetW>;
   s : String;
 begin
-  list := FServer.GetValueSetList;
+  list := TFslList<TFhirValueSetW>.create;
   try
+    FServer.GetValueSetList(list);
     // determine sort order
     FVSSorter.FSortType := byName;
     list.Sort(FVSSorter);

@@ -5,7 +5,6 @@ interface
 uses
   FHIR.Support.Base,
   FHIR.Base.Factory,
-  FHIR.Server.Javascript,
   FHIR.Server.Indexing, FHIR.Server.Subscriptions;
 
 {
@@ -18,8 +17,6 @@ type
     function makeValidator: TFHIRValidatorV; virtual; abstract;
     function makeIndexer : TFHIRIndexManager; virtual; abstract;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; virtual; abstract;
-
-    procedure registerJs(js : TJsHost); virtual; abstract;
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); virtual; abstract;
   end;
 

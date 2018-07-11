@@ -200,10 +200,10 @@ begin
            if js.getType(value) = JsArray then
              js.iterateArray(value, procedure (i : integer; v : TJsValue)
                begin
-                 ts.AddPair(name, js.asString(v));
+                 ts.Add(name+'='+js.asString(v));
                end)
            else
-             ts.AddPair(name, js.asString(value));
+             ts.Add(name+'='+js.asString(value));
         end);
       bnd := TFhirClientV(this).searchV(js.asString(parameters[0]), true, js.asString(parameters[1]))
     end;
@@ -232,10 +232,10 @@ begin
            if js.getType(value) = JsArray then
              js.iterateArray(value, procedure (i : integer; v : TJsValue)
                begin
-                 ts.AddPair(name, js.asString(v));
+                 ts.Add(name+'='+js.asString(v));
                end)
            else
-             ts.AddPair(name, js.asString(value));
+             ts.Add(name+'='+js.asString(value));
         end);
       bnd := TFhirClientV(this).searchV(true, js.asString(parameters[1]))
     end;

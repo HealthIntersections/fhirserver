@@ -328,7 +328,7 @@ type
     function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
-    procedure checkNoModifiers(place, role : String; allowed : TArray<String> = []);
+    procedure checkNoModifiers(place, role : String; allowed : TArray<String> = nil);
   end;
 
   TFhirCodeListHelper = class helper for TFhirCodeList
@@ -2461,7 +2461,7 @@ begin
   result.url := url;
 end;
 
-procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String; allowed : TArray<String> = []);
+procedure TFHIRDomainResourceHelper.checkNoModifiers(place, role: String; allowed : TArray<String> = nil);
 begin
   if modifierExtensionList.Count > 0 then
     raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
@@ -5874,4 +5874,5 @@ begin
 end;
 
 end.
+
 

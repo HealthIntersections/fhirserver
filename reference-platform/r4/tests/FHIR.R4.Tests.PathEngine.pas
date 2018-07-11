@@ -185,7 +185,7 @@ begin
           begin
             p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
             try
-              f := TFileStream.Create(Path([GBasePath, 'build' ,'publish', input]), fmOpenRead);
+              f := TFileStream.Create(Path([GContentPath, 'publish', input]), fmOpenRead);
               try
                 p.source := f;
                 p.parse;

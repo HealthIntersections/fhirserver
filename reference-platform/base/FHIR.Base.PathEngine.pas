@@ -219,12 +219,12 @@ function TFHIRPathEngineV.extractPath(pathBase: String; loc: TSourceLocation; ba
 var
   pathObjects : TArray<TFHIRObject>;
 begin
-  result := findPath(pathBase, loc, [], base, pathObjects);
+  result := findPath(pathBase, loc, nil, base, pathObjects);
 end;
 
 function TFHIRPathEngineV.extractPath(pathBase: String; loc: TSourceLocation; base: TFHIRObject; var pathObjects: TArray<TFHIRObject>): String;
 begin
-  result := findPath(pathBase, loc, [], base, pathObjects);
+  result := findPath(pathBase, loc, nil, base, pathObjects);
 end;
 
 function TFHIRPathEngineV.findPath(path: String; loc: TSourceLocation; context: TArray<TFHIRObject>; base: TFHIRObject; var focus: TArray<TFHIRObject>): String;

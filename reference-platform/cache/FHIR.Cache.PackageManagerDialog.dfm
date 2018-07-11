@@ -126,7 +126,6 @@ object PackageCacheForm: TPackageCacheForm
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitHeight = 251
     DesignSize = (
       112
       281)
@@ -185,7 +184,6 @@ object PackageCacheForm: TPackageCacheForm
       Caption = 'Reload'
       TabOrder = 5
       OnClick = btnReloadClick
-      ExplicitTop = 194
     end
     object Button7: TButton
       Left = 6
@@ -196,7 +194,6 @@ object PackageCacheForm: TPackageCacheForm
       Caption = 'Debug'
       TabOrder = 6
       OnClick = Button7Click
-      ExplicitTop = 225
     end
   end
   object vtPackages: TVirtualStringTree
@@ -224,14 +221,13 @@ object PackageCacheForm: TPackageCacheForm
     OnInitChildren = vtPackagesInitChildren
     OnInitNode = vtPackagesInitNode
     OnRemoveFromSelection = vtPackagesRemoveFromSelection
-    ExplicitHeight = 251
     Columns = <>
   end
   object ImageList1: TImageList
     Left = 120
     Top = 393
     Bitmap = {
-      494C01010800B8008C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010800B800980010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

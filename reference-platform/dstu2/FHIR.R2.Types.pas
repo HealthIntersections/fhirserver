@@ -7944,7 +7944,7 @@ procedure TFhirElement.addExtension(url: String; value: TFHIRObject);
 var
   ex : TFhirExtension;
 begin
-  ex := FextensionList.Append;
+  ex := extensionList.Append;
   ex.url := url;
   ex.value := value as TFhirType;
 end;

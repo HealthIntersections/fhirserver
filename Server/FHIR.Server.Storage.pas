@@ -59,6 +59,7 @@ Type
   public
     constructor Create; overload; override;
     constructor Create(upload : boolean; callback : TInstallerCallback; message : String); overload;
+    constructor Create(upload : boolean; message : String); overload;
 
     property upload : boolean read FUpload write FUpload;
     property callback : TInstallerCallback read FCallback write FCallback;
@@ -438,6 +439,13 @@ begin
   Create;
   FUpload := upload;
   FCallback := callback;
+  FMessage := message;
+end;
+
+constructor TOperationContext.Create(upload: boolean; message: String);
+begin
+  Create;
+  FUpload := upload;
   FMessage := message;
 end;
 
@@ -1100,7 +1108,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(false, nil, 'internal');
+  ctxt := TOperationContext.Create(false, 'internal');
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1181,7 +1189,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(false, nil, 'internal');
+  ctxt := TOperationContext.Create(false, 'internal');
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1212,7 +1220,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(false, nil, 'internal');
+  ctxt := TOperationContext.Create(false, 'internal');
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1259,7 +1267,7 @@ var
   resp : TFHIRResponse;
   ctxt : TOperationContext;
 begin
-  ctxt := TOperationContext.Create(false, nil, 'internal');
+  ctxt := TOperationContext.Create(false, 'internal');
   try
     req := TFHIRRequest.Create(context, roOperation, nil);
     try
@@ -1363,7 +1371,7 @@ end;
 
 function TFhirOperation.Types: TArray<String>;
 begin
-  result := [];
+  result := nil;
 end;
 
 constructor TFhirOperation.Create(factory: TFHIRFactory);

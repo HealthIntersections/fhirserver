@@ -100,15 +100,12 @@ uses
   FHIR.Tx.ACIR in '..\..\Server\FHIR.Tx.ACIR.pas',
   FHIR.Tx.AreaCode in '..\..\Server\FHIR.Tx.AreaCode.pas',
   FHIR.Tx.Lang in '..\..\Server\FHIR.Tx.Lang.pas',
-  FHIR.Tx.Validator in '..\..\Server\FHIR.Tx.Validator.pas',
   FHIR.Tx.Manager in '..\..\Server\FHIR.Tx.Manager.pas',
   FHIR.Tx.Uri in '..\..\Server\FHIR.Tx.Uri.pas',
   FHIR.Server.ClosureMgr in '..\..\Server\FHIR.Server.ClosureMgr.pas',
   FHIR.Server.Adaptations in '..\..\Server\FHIR.Server.Adaptations.pas',
-  FHIR.Tx.Expander in '..\..\Server\FHIR.Tx.Expander.pas',
   FHIR.R4.IndexInfo in '..\..\reference-platform\r4\FHIR.R4.IndexInfo.pas',
   FHIR.R4.Validator in '..\..\reference-platform\r4\FHIR.R4.Validator.pas',
-  FHIR.Server.Validator in '..\..\Server\FHIR.Server.Validator.pas',
   FHIR.Server.Subscriptions in '..\..\Server\FHIR.Server.Subscriptions.pas',
   FHIR.Web.Socket in '..\..\reference-platform\support\FHIR.Web.Socket.pas',
   FHIR.Server.Utilities in '..\..\Server\FHIR.Server.Utilities.pas',
@@ -118,7 +115,6 @@ uses
   FHIR.Server.TagMgr in '..\..\Server\FHIR.Server.TagMgr.pas',
   FHIR.Server.Jwt in '..\..\Server\FHIR.Server.Jwt.pas',
   FHIR.Misc.ApplicationVerifier in '..\..\Libraries\security\FHIR.Misc.ApplicationVerifier.pas',
-  FHIR.Server.AppCache in '..\..\Server\FHIR.Server.AppCache.pas',
   FHIR.Misc.Twilio in '..\..\Libraries\security\FHIR.Misc.Twilio.pas',
   FHIR.Server.Context in '..\..\Server\FHIR.Server.Context.pas',
   FHIR.Web.HtmlGen in '..\..\reference-platform\support\FHIR.Web.HtmlGen.pas',
@@ -147,7 +143,6 @@ uses
   FHIR.Tools.Indexing in '..\..\reference-platform\tools\FHIR.Tools.Indexing.pas',
   FHIR.Utilities.SCrypt in '..\..\Libraries\security\FHIR.Utilities.SCrypt.pas',
   FHIR.Tx.ICD10 in '..\..\Server\FHIR.Tx.ICD10.pas',
-  FHIR.Server.PostHandlers in '..\..\Server\FHIR.Server.PostHandlers.pas',
   FHIR.Support.Signatures in '..\..\reference-platform\support\FHIR.Support.Signatures.pas',
   FHIR.Server.Javascript in '..\..\Server\FHIR.Server.Javascript.pas',
   FHIR.Support.Javascript in '..\..\Libraries\js\FHIR.Support.Javascript.pas',
@@ -187,7 +182,13 @@ uses
   FHIR.Base.Utilities in '..\..\reference-platform\base\FHIR.Base.Utilities.pas',
   fhir.support.fpc in '..\..\reference-platform\support\fhir.support.fpc.pas',
   FHIR.Tx.MimeTypes in '..\..\Server\FHIR.Tx.MimeTypes.pas',
-  FHIR.Tx.Iso4217 in '..\..\Server\FHIR.Tx.Iso4217.pas';
+  FHIR.Tx.Iso4217 in '..\..\Server\FHIR.Tx.Iso4217.pas',
+  FHIR.Tools.ValueSets in '..\..\reference-platform\tools\FHIR.Tools.ValueSets.pas',
+  FHIR.Tools.CodeSystemProvider in '..\..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas',
+  FHIR.Server.Tags in '..\..\Server\FHIR.Server.Tags.pas',
+  FHIR.Server.BundleBuilder in '..\..\Server\FHIR.Server.BundleBuilder.pas',
+  FHIR.Server.Factory in '..\..\Server\FHIR.Server.Factory.pas',
+  FHIR.Tools.NDJsonParser in '..\..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas';
 
 {$R *.res}
 
