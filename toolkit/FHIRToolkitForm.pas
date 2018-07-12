@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {.$.DEFINE EXAMPLESCENARIO}
+{.$.DEFINE IMPLEMENTATIONGUIDE}
 
 interface
 
@@ -44,7 +45,10 @@ uses
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo, FHIR.Version.Constants,
   FHIR.Version.Context, FHIR.Version.Profiles, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Cache.PackageManager,
   FHIR.Smart.Utilities, FHIR.Smart.Login, FHIR.Client.ServerDialogFMX, FHIR.Ui.OSX,
-  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF} AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
+  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog,
+  {$IFDEF EXAMPLESCENARIO} ExampleScenarioEditor, {$ENDIF}
+  AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
+  {$IFDEF IMPLEMENTATIONGUIDE} ImplementationGuideEditor, {$ENDIF}
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog,
   PackageManagerFrame, ValidationFrame, TransformationFrame;
@@ -420,6 +424,9 @@ begin
 {$IFDEF EXAMPLESCENARIO}
     form.ListBox1.items.Add('ExampleScenario');
 {$ENDIF}
+{$IFDEF IMPLEMENTATIONGUIDE}
+    form.ListBox1.items.Add('ImplementationGuide');
+{$ENDIF}
 
     form.caption := 'Create New File';
     if (form.ShowModal = mrOk) then
@@ -432,7 +439,10 @@ begin
 {$IFDEF EXAMPLESCENARIO}
         5 : newResource(TFHIRExampleScenario, TExampleScenarioEditorFrame);
 {$ENDIF}
-      end;
+{$IFDEF IMPLEMENTATIONGUIDE}
+        5 : newResource(TFHIRImplementationGuide, TImplementationGuideEditorFrame);
+{$ENDIF}
+       end;
   finally
     form.Free;
   end;
@@ -463,7 +473,11 @@ begin
         else if res is TFHIRExampleScenario then
           openResourceFromFile(odFile.Filename, res, format, TExampleScenarioEditorFrame)
 {$ENDIF}
-        else
+{$IFDEF IMPLEMENTATIONGUIDE}
+        else if res is TFHIRImplementationGuide then
+          openResourceFromFile(odFile.Filename, res, format, TImplementationGuideEditorFrame)
+{$ENDIF}
+         else
           MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
       finally
         res.free;
@@ -949,7 +963,11 @@ begin
   else if res is TFhirExampleScenario then
     result := TExampleScenarioEditorFrame
 {$ENDIF}
-  else
+{$IFDEF IMPLEMENTATIONGUIDE}
+  else if res is TFhirImplementationGuide then
+    result := TImplementationGuideEditorFrame
+{$ENDIF}
+   else
     MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
 end;
 
