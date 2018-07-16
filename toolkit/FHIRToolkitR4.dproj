@@ -407,6 +407,15 @@
         <DCCReference Include="..\Libraries\ui\FHIR.Ui.Graph.pas"/>
         <DCCReference Include="..\Libraries\ui\FHIR.Tools.ObsGraph.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.AuthMap.pas"/>
+        <DCCReference Include="IGSettings.pas">
+            <Form>IGSettingsForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
+        <DCCReference Include="ImplementationGuideEditor.pas">
+            <Form>ImplementationGuideEditorFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
