@@ -16,19 +16,11 @@ uses
   FMX.Controls.Presentation, FMX.DateTimeCtrls, FMX.Edit,
   FMX.Memo, FMX.TreeView, FMX.Dialogs, FMX.DialogService,
   FMX.StdCtrls, FMX.ListBox, FMX.Layouts, FMX.TabControl,
-<<<<<<< HEAD
   FMX.Menus, FMX.WebBrowser, FMX.Controls, FMX.Forms, IGSettings, FMX.ImgList,
 
   shellapi, winapi.windows,fmx.platform.win,
   BaseResourceFrame,
   FMX.ComboEdit;
-=======
-  FMX.Menus, FMX.WebBrowser, FMX.Controls, FMX.Forms
-
-  ,shellapi, winapi.windows,fmx.platform.win,
-  BaseResourceFrame,
-   FMX.ImgList, FMX.ComboEdit;
->>>>>>> master
 
 
 type
@@ -157,10 +149,6 @@ type
     OpenDialog1: TOpenDialog;
     AutoPreview: TCheckBox;
     Button2: TButton;
-<<<<<<< HEAD
-=======
-    Button8: TButton;
->>>>>>> master
     function addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
     procedure packageUpClick(Sender: TObject);
     procedure packageDownClick(Sender: TObject);
@@ -294,10 +282,7 @@ begin
 // do this for the object - any object type:
   if obj is tfhirImplementationGuide then
   begin
-<<<<<<< HEAD
     tab.Text:=text ;
-=======
->>>>>>> master
     current_item := Item;
     for i := 0 to tfhirImplementationGuide(obj).dependsOnList.Count - 1 do
       addTVItem(TreeView, current_item, 'Depends On', tfhirImplementationGuide(obj).dependsOnList[i].version, tfhirImplementationGuide(obj).dependsOnList[i]);
@@ -483,12 +468,8 @@ begin
 //    webbrowser1.Enabled:=false;
      application.ProcessMessages;
     tvstructure.Selected:=tvstructure.ItemByGlobalIndex(0);
-<<<<<<< HEAD
 
-=======
-    ReloadTreeview(tvStructure.Selected);
- ////   showTab(resource);
->>>>>>> master
+	 
   end;
 
   tabcontrol1.TabHeight:=1;
@@ -502,11 +483,8 @@ end;
 
 procedure TImplementationGuideEditorFrame.CornerButton1Click(Sender: TObject);
 begin
-<<<<<<< HEAD
   TDialogService.MessageDialog('Not Implemented yet', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
-=======
-//
->>>>>>> master
+
 end;
 
 procedure TImplementationGuideEditorFrame.CornerButton4Click(Sender: TObject);
@@ -786,22 +764,16 @@ begin
 
 procedure TImplementationGuideEditorFrame.Button9Click(Sender: TObject);
 var dir:string;
-<<<<<<< HEAD
    IGSettingsForm:TIGSettingsForm;
 begin
+  IGSettingsForm:=TIGSettingsForm.create(self);
+  IGSettingsForm.fwBinFolder:=fwbinfolder;
 
-IGSettingsForm:=TIGSettingsForm.create(self);
+  IGSettingsForm.ShowModal;
+  if IGSettingsForm.ModalResult=mrOK then
 
-//if SelectDirectory('Select Framework Directory (contains pandoc)', binfolder, dir) then
-//fwbinfolder:=dir;
-
-IGSettingsForm.destroy;
-=======
-begin
-
-if SelectDirectory('Select Framework Directory (contains pandoc)', binfolder, dir) then
-fwbinfolder:=dir;
->>>>>>> master
+  fwbinfolder:=IGSettingsForm.fwBinFolder;
+  IGSettingsForm.destroy;
 
 end;
 
