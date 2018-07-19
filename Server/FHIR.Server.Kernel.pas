@@ -43,7 +43,7 @@ Uses
   FHIR.Snomed.Importer, FHIR.Snomed.Services, FHIR.Snomed.Expressions, FHIR.Tx.RxNorm, FHIR.Tx.Unii,
   FHIR.Loinc.Importer, FHIR.Loinc.Services,
   FHIR.Database.Manager, FHIR.Database.ODBC, FHIR.Database.Dialects, FHIR.Database.SQLite,
-  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base,
+  FHIR.Base.Factory, FHIR.Cache.PackageManager, FHIR.Base.Parser, FHIR.Base.Lang, FHIR.Javascript.Base, FHIR.Base.Common,
 
   FHIR.R2.Factory, FHIR.R3.Factory, FHIR.R4.Factory,
   FHIR.R2.IndexInfo, FHIR.R3.IndexInfo, FHIR.R4.IndexInfo,
@@ -75,6 +75,18 @@ Type
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
 
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
+  end;
+
+  TPackageLoader = class (TFslObject)
+  private
+    FFactory : TFHIRFactory;
+    FBundle: TFHIRBundleW;
+  public
+    constructor Create(factory : TFHIRFactory);
+    destructor Destroy; override;
+
+    property bundle : TFHIRBundleW read FBundle;
+    procedure load(rType, id : String; stream : TStream);
   end;
 
   TFHIRService = class (TSystemService)
@@ -116,7 +128,7 @@ Type
     Constructor Create(const ASystemName, ADisplayName, AIniName: String);
     Destructor Destroy; override;
 
-    procedure Load(fn : String);
+    procedure Load(name, fn : String);
 //    procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
     function InstallDatabase(name : String) : String;
@@ -143,7 +155,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
-  dir, fn, ver, ldate, lver, dest, name : String;
+  dir, fn, fn2, ver, ldate, lver, dest, name : String;
   svc : TFHIRService;
   ini : TIniFile;
   factory : TFHIRFactory;
@@ -208,19 +220,19 @@ begin
             svc.FNotServing := true;
             svc.UninstallDatabase(fn);
             name := svc.InstallDatabase(fn);
-            if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-              ImportUnii(fn, svc.FDatabases[name]);
+            if FindCmdLineSwitch('unii', fn2, true, [clstValueNextParam]) then
+              ImportUnii(fn2, svc.FDatabases[name]);
 //            if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
 //              svc.LoadByProfile(fn, true)
 //            else
-            if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
-              svc.Load(fn);
+            if FindCmdLineSwitch('load', fn2, true, [clstValueNextParam]) then
+              svc.Load(fn, fn2);
           end
           else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
           begin
             svc.DebugMode := true;
             svc.FNotServing := true;
-            svc.Load(fn);
+//            svc.Load(fn);
           end
           else if FindCmdLineSwitch('txdirect', fn, true, [clstValueNextParam]) then
           begin
@@ -327,6 +339,17 @@ begin
     fhirVersionRelease4 : TFHIRServerWorkerContextR4(ValidatorContext).TerminologyServer := (server as TTerminologyServer).Link;
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Setting Terminology Server');
+  end;
+end;
+
+function factoryFactory(v : TFHIRVersion) : TFHIRFactory;
+begin
+  case v of
+    fhirVersionRelease2: result := TFHIRFactoryR2.create;
+    fhirVersionRelease3: result := TFHIRFactoryR3.create;
+    fhirVersionRelease4: result := TFHIRFactoryR4.create;
+  else
+    raise EFHIRUnsupportedVersion.Create(v, 'creating factory');
   end;
 end;
 
@@ -525,7 +548,8 @@ procedure TFHIRService.CloseDatabase;
 var
   db : TKDBManager;
 begin
-  FDatabases.Clear;
+  if FDatabases <> nil then
+    FDatabases.Clear;
 end;
 
 function Locate(s, fn : String; first : boolean) : String;
@@ -542,127 +566,153 @@ begin
     raise EIOException.create('Unable to find file '+s);
 end;
 
-procedure TFHIRService.Load(fn: String);
+procedure TFHIRService.Load(name, fn: String);
 var
   f : TFileStream;
   st : TStringList;
   s, src, plist, p, pi, pv : String;
   first : boolean;
-  ini : TFHIRServerIniFile;
+  ini : TIniFile;
   i : integer;
   bytes : TBytes;
   bs : TBytesStream;
   pl : TArray<String>;
-//  ploader : TPackageLoader;
+  ploader : TPackageLoader;
   pcm : TFHIRPackageManager;
+  details : TFHIRServerIniComplex;
+  v : TFHIRVersion;
+  dbn : String;
+  db : TKDBManager;
 begin
   FNotServing := true;
   cb(1, 'Load: Connect to databases');
   if FDatabases.IsEmpty then
     ConnectToDatabases;
+  details := FIni.endpoints[name];
+  if details = nil then
+    raise EFslException.Create('Undefined endpoint '+name);
+
+  if details['version'] = 'r2' then
+    v := fhirVersionRelease2
+  else if details['version'] = 'r3' then
+    v := fhirVersionRelease3
+  else if details['version'] = 'r4' then
+    v := fhirVersionRelease4
+  else
+    raise EFslException.Create('unknown version '+details['version']);
+
+  dbn := details['database'];
+  if dbn = '' then
+    raise EFslException.Create('No defined database '+name);
   cb(1, 'Load: start kernel');
   CanStart;
-(*  logt('Load: register value sets');
-  identifyValueSets;
 
-  // first we load any packages in the -packages parameter
-  if FindCmdLineSwitch('packages', plist, true, [clstValueNextParam]) then
-  begin
-    pcm := TFHIRPackageManager.Create(false);
-    try
-      pl := plist.substring(1).Split([',']);
-      for p in pl do
-      begin
-        StringSplit(p, '-', pi, pv);
-        if not pcm.packageExists(pi, pv) then
-          raise EFHIRException.create('Package '+p+' not found');
-        logt('Load Package '+pi+'-'+pv);
-        ploader := TPackageLoader.create;
-        try
-          pcm.loadPackage(pi, pv, ALL_RESOURCE_TYPE_NAMES, ploader.load);
-          FWebServer.Transaction(ploader.bundle, true, p, '', callback);
-        finally
-          ploader.Free;
-        end;
-      end;
-    finally
-      pcm.Free;
-    end;
-  end;
+  db := FDatabases[dbn].Link;
+  try
 
-  cb(2, 'Load from '+fn);
-  if fn.StartsWith('http://') or fn.StartsWith('https://') then
-  begin
-    if fetchFromUrl(fn, bytes) then
+    logt('Load: register value sets');
+    identifyValueSets(db);
+
+    // first we load any packages in the -packages parameter
+    if FindCmdLineSwitch('packages', plist, true, [clstValueNextParam]) then
     begin
-      bs := TBytesStream.Create(bytes);
+      pcm := TFHIRPackageManager.Create(false);
       try
-        FWebServer.Transaction(bs, true, fn, '', nil, callback);
+        pl := plist.substring(1).Split([',']);
+        for p in pl do
+        begin
+          StringSplit(p, '-', pi, pv);
+          if not pcm.packageExists(pi, pv) then
+            raise EFHIRException.create('Package '+p+' not found');
+          logt('Load Package '+pi+'-'+pv);
+          ploader := TPackageLoader.create(factoryFactory(v));
+          try
+            pcm.loadPackage(pi, pv, ploader.FFactory.canonicalResources, ploader.load);
+            FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
+          finally
+            ploader.Free;
+          end;
+        end;
       finally
-        bs.Free;
+        pcm.Free;
       end;
+    end;
+
+    cb(2, 'Load from '+fn);
+    if fn.StartsWith('http://') or fn.StartsWith('https://') then
+    begin
+      if fetchFromUrl(fn, bytes) then
+      begin
+        bs := TBytesStream.Create(bytes);
+        try
+          FWebServer.EndPoint(name).Transaction(bs, true, fn, '', nil, callback);
+        finally
+          bs.Free;
+        end;
+      end
+      else
+        raise EIOException.create('Unable to fetch from "'+fn+'"');
+    end
+    else if fn.EndsWith('.json') or fn.EndsWith('.xml') then
+    begin
+      logt('Load database from '+fn);
+      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+      try
+        FWebServer.EndPoint(name).Transaction(f, true, fn, 'http://hl7.org/fhir', nil, callback);
+      finally
+        f.Free;
+      end
     end
     else
-      raise EIOException.create('Unable to fetch from "'+fn+'"');
-  end
-  else if !{$IFDEF FHIR2} true {$ELSE} fn.EndsWith('.json') or fn.EndsWith('.xml') {$ENDIF} then
-  begin
-    logt('Load database from '+fn);
-    f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
-    try
-      FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', nil, callback);
-    finally
-      f.Free;
-    end
-  end
-  else
-  begin
-    if FolderExists(fn) then
-      fn := IncludeTrailingPathDelimiter(fn)+'load.ini';
-    logt('Load database from sources listed in '+fn);
-    if not FileExists(fn) then
-      raise EIOException.create('Load Ini file '+fn+' not found');
-    ini := TFHIRServerIniFile.Create(fn);
-    st := TStringList.Create;
-    try
-      ini.ReadSection(voMustBeVersioned, 'files', st);
-      first := true;
-      for s in st do
-      begin
-        logt('Check file '+s);
-        src := locate(s, fn, first);
-        first := false;
-      end;
-
-      i := 0;
-      first := true;
-      for s in st do
-      begin
-        inc(i);
-        logt('Load file '+inttostr(i)+' of '+inttostr(st.count)+':'+s);
-        cb(0, 'Load from '+s);
-        src := locate(s, fn, first);
-        f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
-        try
-          FWebServer.Transaction(f, first, src, ini.ReadString(voMustBeVersioned, 'files', s, ''), nil, callback);
-        finally
-          f.Free;
+    begin
+      if FolderExists(fn) then
+        fn := IncludeTrailingPathDelimiter(fn)+'load.ini';
+      logt('Load database from sources listed in '+fn);
+      if not FileExists(fn) then
+        raise EIOException.create('Load Ini file '+fn+' not found');
+      ini := TIniFile.Create(fn);
+      st := TStringList.Create;
+      try
+        ini.ReadSection('files', st);
+        first := true;
+        for s in st do
+        begin
+          logt('Check file '+s);
+          src := locate(s, fn, first);
+          first := false;
         end;
-        first := false;
+
+        i := 0;
+        first := true;
+        for s in st do
+        begin
+          inc(i);
+          logt('Load file '+inttostr(i)+' of '+inttostr(st.count)+':'+s);
+          cb(0, 'Load from '+s);
+          src := locate(s, fn, first);
+          f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
+          try
+            FWebServer.EndPoint(name).Transaction(f, first, src, ini.ReadString('files', s, ''), nil, callback);
+          finally
+            f.Free;
+          end;
+          first := false;
+        end;
+      finally
+        st.Free;
+        ini.Free;
       end;
-    finally
-      st.Free;
-      ini.Free;
     end;
+
+    logt('done');
+    cb(95, 'Building Terminology Closure Tables');
+    FWebServer.EndPoint(name).Context.TerminologyServer.BuildIndexes(not assigned(callback));
+    cb(100, 'Cleaning up');
+
+    DoStop;
+  finally
+    db.free;
   end;
-
-  logt('done');
-  cb(95, 'Building Terminology Closure Tables');
-  FTerminologyServer.BuildIndexes(not assigned(callback));
-  cb(100, 'Cleaning up');
-
-  DoStop;
-  *)
 end;
 (*
 procedure TFHIRService.LoadbyProfile(fn: String; init : boolean);
@@ -749,6 +799,9 @@ begin
     details := FIni.endpoints[s];
     logt('Initialise endpoint '+s+' at '+details['path']+' for '+details['version']);
 
+    if FindCmdLineSwitch('r4') and (details['version'] <> 'r4') then
+      break;
+
     if details['version'] = 'r2' then
     begin
       store := TFHIRNativeStorageServiceR2.create(FDatabases[details['database']], TFHIRFactoryR2.Create);
@@ -763,6 +816,7 @@ begin
     end
     else
       raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);
+
 
     try
       ctxt := TFHIRServerContext.Create(store.Link, TKernelServerFactory.create(store.Factory.version));
@@ -789,17 +843,6 @@ begin
 //      FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
 
   FWebServer.Start(not FNotServing);
-end;
-
-function factoryFactory(v : TFHIRVersion) : TFHIRFactory;
-begin
-  case v of
-    fhirVersionRelease2: result := TFHIRFactoryR2.create;
-    fhirVersionRelease3: result := TFHIRFactoryR3.create;
-    fhirVersionRelease4: result := TFHIRFactoryR4.create;
-  else
-    raise EFHIRUnsupportedVersion.Create(v, 'creating factory');
-  end;
 end;
 
 function TFHIRService.InstallDatabase(name : String) : String;
@@ -833,7 +876,7 @@ begin
   if not DirectoryExists(sql) then
     sql := IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'sql';
 
-  details := FIni.databases[name];
+  details := FIni.endpoints[name];
   if details = nil then
     raise EFslException.Create('Undefined endpoint '+name);
 
@@ -859,14 +902,14 @@ begin
     try
       conn := db.GetConnection('setup');
       try
-        dbi := TFHIRDatabaseInstaller.create(conn, sql, factoryFactory(v), TKernelServerFactory(v));
+        dbi := TFHIRDatabaseInstaller.create(conn, sql, factoryFactory(v), TKernelServerFactory.create(v));
         try
           dbi.callback := callback;
           dbi.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
           dbi.Bases.Add('http://hl7.org/fhir');
           dbi.Install(scim);
         finally
-          db.free;
+          dbi.free;
         end;
         scim.DefineAnonymousUser(conn);
         scim.DefineAdminUser(conn, un, pw, em);
@@ -903,7 +946,7 @@ var
   details : TFHIRServerIniComplex;
   v : TFHIRVersion;
 begin
-  details := FIni.databases[name];
+  details := FIni.endpoints[name];
   if details = nil then
     raise EFslException.Create('Undefined endpoint '+name);
 
@@ -927,12 +970,12 @@ begin
     logt('unmount database '+n);
     conn := db.GetConnection('setup');
     try
-      dbi := TFHIRDatabaseInstaller.create(conn, '', factoryFactory(v), TKernelServerFactory(v));
+      dbi := TFHIRDatabaseInstaller.create(conn, '', factoryFactory(v), TKernelServerFactory.create(v));
       try
         dbi.callback := callback;
         dbi.UnInstall;
       finally
-        db.free;
+        dbi.free;
       end;
       conn.Release;
       logt('done');
@@ -1014,6 +1057,35 @@ begin
   FWebServer.ServerContext.Storage.RunValidation;
   DoStop;
 *)
+end;
+
+{ TPackageLoader }
+
+constructor TPackageLoader.Create(factory: TFHIRFactory);
+begin
+  inherited Create;
+  FFactory := factory;
+  FBundle := FFactory.wrapBundle(FFactory.makeResource('Bundle'));
+end;
+
+destructor TPackageLoader.Destroy;
+begin
+  FFactory.Free;
+  FBundle.Free;
+  inherited;
+end;
+
+procedure TPackageLoader.load(rType, id: String; stream: TStream);
+var
+  p : TFHIRParser;
+begin
+  p := FFactory.makeParser(nil, ffJson, 'en');
+  try
+    FBundle.addEntry.resource := p.parseResource(stream);
+  finally
+    p.Free;
+  end;
+
 end;
 
 end.

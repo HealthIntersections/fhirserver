@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections,
+  FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Logging,
   FHIR.Web.Parsers,
   FHIR.Database.Dialects, FHIR.Web.GraphQL,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Common, FHIR.Base.Xhtml, FHIR.Base.Parser, FHIR.Base.Factory, FHIR.Base.Utilities,
@@ -450,12 +450,17 @@ begin
 end;
 
 procedure TOperationContext.progress(i: integer);
+var
+  s : String;
 begin
+  if MessageDetail <> '' then
+    s := FMessage+' '+MessageDetail
+  else
+    s := FMessage;
   if assigned(FCallback) then
-    if MessageDetail <> '' then
-      FCallback(i, FMessage+' '+MessageDetail)
-    else
-      FCallback(i, FMessage)
+    FCallback(i, s)
+  else
+    logt(inttostr(i)+' : '+s);
 end;
 
 

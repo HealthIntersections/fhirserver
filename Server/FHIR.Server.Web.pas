@@ -276,8 +276,6 @@ Type
     function DoSearch(Session: TFHIRSession; rtype: string; lang, params: String): TFHIRBundleW;
 
     Function ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
-    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback); overload;
-    Procedure Transaction(bundle : TFHIRBundleW; init : boolean; name, base: String; callback: TInstallerCallback); overload;
 
     function BuildRequest(lang, sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
@@ -294,6 +292,9 @@ Type
     property code : String read FCode;
     property Context : TFHIRServerContext read FContext;
     property AuthServer : TAuth2Server  read FAuthServer;
+
+    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback); overload;
+    Procedure Transaction(bundle : TFHIRBundleW; init : boolean; name, base: String; callback: TInstallerCallback); overload;
   end;
 
   TFhirWebServer = Class(TFslObject)
@@ -401,6 +402,7 @@ Type
     Property SourceProvider: TFHIRWebServerSourceProvider read FSourceProvider write SetSourceProvider;
     property host: String read FHost;
     property EndPoints : TFslList<TFhirWebServerEndpoint> read FEndPoints;
+    function EndPoint(name : String) : TFhirWebServerEndpoint;
 
     property SSLPort: integer read FActualSSLPort;
     property UseOAuth: boolean read FUseOAuth write FUseOAuth;
@@ -486,7 +488,7 @@ begin
 //  FAdaptors.Add('dataPoints', TOpenMHealthAdaptor.Create);
   // FAuthServer: TAuth2Server;
   //  FCDSHooksServer: TCDSHooksServer;
-  //   FTerminologyWebServer: TTerminologyWebServer;
+  FTerminologyWebServer := TTerminologyWebServer.create(FContext.TerminologyServer.Link, FContext.ValidatorContext.link, FPath, '?', ReturnProcessedFile);
 end;
 
 destructor TFhirWebServerEndpoint.Destroy;
@@ -552,7 +554,7 @@ begin
       req.LoadParams('');
       req.baseUrl := FContext.Globals.Bases[0];
       Context.message := 'Process ' + name;
-      GJSHost.registry := FContext.EventScriptRegistry.link;
+      // GJSHost.registry := FContext.EventScriptRegistry.link;
       resp := TFHIRResponse.Create(FContext.ValidatorContext.link);
       try
         resp.OnCreateBuilder := doGetBundleBuilder;
@@ -730,12 +732,12 @@ begin
       FCDSHooksServer.HandleRequest(false, FPath, Session, AContext, request, response)
     else if request.Document.StartsWith(AppendForwardSlash(FPath) + 'websockets', false) then
       HandleWebSockets(AContext, request, response, false, false, FPath)
+    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
+      FTerminologyWebServer.Process(AContext, request, Session, response, false)
     else if request.Document.StartsWith(FPath, false) then
       HandleRequest(AContext, request, response, false, false, FPath, id, Session, nil)
     else if request.Document.StartsWith(AppendForwardSlash(FPath) + 'FSecurePath', false) then
       HandleWebSockets(AContext, request, response, false, false, FPath)
-    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
-      FTerminologyWebServer.Process(AContext, request, Session, response, false)
     else
     begin
       response.ResponseNo := 404;
@@ -3810,6 +3812,16 @@ begin
   finally
     j.Free;
   end;
+end;
+
+function TFhirWebServer.EndPoint(name: String): TFhirWebServerEndpoint;
+var
+  t : TFhirWebServerEndpoint;
+begin
+  result := nil;
+  for t in FEndPoints do
+    if t.code = name then
+      exit(t);
 end;
 
 Procedure TFhirWebServer.Start(active: boolean);

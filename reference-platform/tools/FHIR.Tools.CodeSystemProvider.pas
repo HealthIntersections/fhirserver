@@ -815,6 +815,7 @@ var
   ctxt : TCodeSystemProviderContext;
   s : TArray<String>;
 begin
+  SetLength(s, 1);
   s[0] := 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes';
   FFactory.checkNoModifiers(base, 'CodeSystemProvider.iterateCodes', 'code', s);
   list.Add(base.Link, 0);

@@ -171,7 +171,7 @@ end;
 
 function TTerminologyWebServer.HandlesRequest(path: String): boolean;
 begin
-  result := path.StartsWith('/tx') or path.StartsWith('/snomed') or path.StartsWith('/loinc') ;
+  result := path.StartsWith(FServer.webBase+'/tx') or path.StartsWith(FServer.webBase+'/snomed') or path.StartsWith(FServer.webBase+'/loinc') ;
 end;
 
 procedure TTerminologyWebServer.Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -179,13 +179,13 @@ var
   path : string;
 begin
   path := request.Document;
-  if path.StartsWith('/tx/form') then
+  if path.StartsWith(FServer.webBase+'/tx/form') then
     HandleTxForm(AContext, request, session, response, secure)
-  else if path.StartsWith('/tx') then
+  else if path.StartsWith(FServer.webBase+'/tx') then
     HandleTxRequest(AContext, request, response, session)
-  else if path.StartsWith('/snomed') and (FServer.CommonTerminologies.Snomed <> nil) then
+  else if path.StartsWith(FServer.webBase+'/snomed') and (FServer.CommonTerminologies.Snomed <> nil) then
     HandleSnomedRequest(AContext, request, response)
-  else if request.Document.StartsWith('/loinc') and (FServer.CommonTerminologies.Loinc <> nil) then
+  else if request.Document.StartsWith(FServer.webBase+'/loinc') and (FServer.CommonTerminologies.Loinc <> nil) then
     HandleLoincRequest(AContext, request, response)
 end;
 
@@ -921,12 +921,12 @@ var
   pm : TParseMap;
   buf : TFslNameBuffer;
 begin
-  if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
+  if request.Document.StartsWith(FServer.webBase+'/snomed/tool/') then // FHIR build process support
   begin
     parts := request.Document.Split(['/']);
     ss := nil;
     for t in FServer.CommonTerminologies.Snomed do
-      if t.EditionId = parts[3] then
+      if t.EditionId = parts[length(parts)-2] then
         ss := t;
     if ss = nil then
     begin
@@ -939,7 +939,7 @@ begin
       ss.RecordUse;
       response.ContentType := 'text/xml';
       try
-        response.ContentText := processSnomedForTool(ss, parts[4]);
+        response.ContentText := processSnomedForTool(ss, parts[length(parts)-1]);
         response.ResponseNo := 200;
       except
         on e : Exception do
@@ -1039,7 +1039,7 @@ var
   st : TStringList;
 begin
   FServer.CommonTerminologies.Loinc.RecordUse;
-  if request.Document.StartsWith('/loinc/doco/') then
+  if request.Document.StartsWith(FServer.webBase+'/loinc/doco/') then
   begin
     code := request.UnparsedParams;
     lang := request.Document.Substring(12);
