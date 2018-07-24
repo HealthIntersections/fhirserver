@@ -2,8 +2,8 @@ object IGSettingsForm: TIGSettingsForm
   Left = 0
   Top = 0
   Caption = 'Implementation Guide Settings'
-  ClientHeight = 165
-  ClientWidth = 368
+  ClientHeight = 420
+  ClientWidth = 989
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -11,80 +11,69 @@ object IGSettingsForm: TIGSettingsForm
   DesignerMasterStyle = 0
   object btnCheckDependencies: TButton
     Position.X = 8.000000000000000000
-    Position.Y = 24.000000000000000000
+    Position.Y = 8.000000000000000000
     Size.Width = 153.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 1
+    TabOrder = 0
     Text = 'Check Dependencies'
     OnClick = btnCheckDependenciesClick
   end
   object Edit1: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 2
+    TabOrder = 3
     Position.X = 8.000000000000000000
-    Position.Y = 88.000000000000000000
+    Position.Y = 104.000000000000000000
     Size.Width = 313.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
   end
   object Label1: TLabel
     Position.X = 8.000000000000000000
-    Position.Y = 68.000000000000000000
+    Position.Y = 84.000000000000000000
     Size.Width = 129.000000000000000000
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
-    Text = 'IG Framework location:'
-    TabOrder = 3
-  end
-  object Button2: TButton
-    Position.X = 8.000000000000000000
-    Position.Y = 160.000000000000000000
-    Size.Width = 145.000000000000000000
-    Size.Height = 25.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 0
-    Text = 'Download'
-    Visible = False
-    OnClick = Button2Click
+    Text = 'IG Publisher location:'
+    TabOrder = 4
+    TabStop = False
   end
   object CheckBox1: TCheckBox
     Position.X = 8.000000000000000000
-    Position.Y = 136.000000000000000000
+    Position.Y = 160.000000000000000000
     Size.Width = 145.000000000000000000
     Size.Height = 19.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 4
+    TabOrder = 5
     Text = 'Include Portable Jekyll'
     Visible = False
   end
   object Button1: TButton
     Position.X = 328.000000000000000000
-    Position.Y = 88.000000000000000000
+    Position.Y = 104.000000000000000000
     Size.Width = 33.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 6
+    TabOrder = 8
     Text = '...'
     OnClick = Button1Click
   end
   object Memo1: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
-    Position.X = 200.000000000000000000
-    Position.Y = 144.000000000000000000
-    Size.Width = 145.000000000000000000
-    Size.Height = 50.000000000000000000
+    Position.X = 536.000000000000000000
+    Position.Y = 184.000000000000000000
+    Size.Width = 401.000000000000000000
+    Size.Height = 105.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 7
-    Visible = False
-    Viewport.Width = 141.000000000000000000
-    Viewport.Height = 46.000000000000000000
+    TabOrder = 9
+    Viewport.Width = 397.000000000000000000
+    Viewport.Height = 101.000000000000000000
   end
   object ProgressBar1: TProgressBar
     Orientation = Horizontal
     Position.X = 8.000000000000000000
-    Position.Y = 136.000000000000000000
+    Position.Y = 160.000000000000000000
     Size.Width = 353.000000000000000000
     Size.Height = 20.000000000000000000
     Size.PlatformDefault = False
@@ -93,31 +82,121 @@ object IGSettingsForm: TIGSettingsForm
   object Button3: TButton
     ModalResult = 1
     Position.X = 232.000000000000000000
-    Position.Y = 120.000000000000000000
+    Position.Y = 256.000000000000000000
     Size.Width = 129.000000000000000000
     Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 10
+    TabOrder = 12
     Text = 'OK'
+    OnClick = Button3Click
   end
   object Button4: TButton
     ModalResult = 2
     Position.X = 7.000000000000000000
-    Position.Y = 120.000000000000000000
+    Position.Y = 256.000000000000000000
     Size.Width = 129.000000000000000000
     Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 9
+    TabOrder = 11
     Text = 'Cancel'
   end
-  object NetHTTPClient1: TNetHTTPClient
-    Asynchronous = False
-    ConnectionTimeout = 60000
-    ResponseTimeout = 60000
-    AllowCookies = True
-    HandleRedirects = True
-    UserAgent = 'Embarcadero URI Client/1.0'
-    Left = 248
-    Top = 16
+  object BStartDownload: TButton
+    Position.X = 8.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 97.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 14
+    Text = 'BStartDownload'
+    OnClick = BStartDownloadClick
+  end
+  object BStopDownload: TButton
+    Enabled = False
+    Position.X = 164.000000000000000000
+    Position.Y = 52.000000000000000000
+    Size.Width = 85.000000000000000000
+    Size.Height = 20.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+  end
+  object EditFileName: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 2
+    Text = 'localFileName.zip'
+    Position.X = 392.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 561.000000000000000000
+    Size.Height = 30.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object EditURL: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 1
+    Text = 'https://github.com/costateixeira/ihe_mma/archive/master.zip'
+    Position.X = 392.000000000000000000
+    Position.Y = 68.000000000000000000
+    Size.Width = 561.000000000000000000
+    Size.Height = 30.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object CheckBox2: TCheckBox
+    Position.X = 8.000000000000000000
+    Position.Y = 160.000000000000000000
+    Size.Width = 145.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 16
+    Text = 'Use Base Template'
+  end
+  object GroupBox1: TGroupBox
+    Position.X = 512.000000000000000000
+    Position.Y = 272.000000000000000000
+    Size.Width = 385.000000000000000000
+    Size.Height = 113.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'GroupBox1'
+    TabOrder = 17
+    object Button2: TButton
+      Position.X = 16.000000000000000000
+      Position.Y = 96.000000000000000000
+      Size.Width = 145.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Download'
+      Visible = False
+      OnClick = Button2Click
+    end
+    object Button5: TButton
+      Position.X = 336.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 33.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 10
+      Text = '...'
+      OnClick = Button5Click
+    end
+    object Edit2: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 2
+      Position.X = 16.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 313.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Label2: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 177.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'IG Base Template location:'
+      TabOrder = 4
+      TabStop = False
+    end
   end
 end

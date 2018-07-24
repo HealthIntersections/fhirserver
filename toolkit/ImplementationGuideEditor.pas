@@ -12,6 +12,7 @@ uses
   FHIR.R4.Resources,
   FHIR.R4.Utilities,
   FHIR.Support.Utilities,
+  JclSysUtils,
   System.ImageList, FMX.types, FMX.ScrollBox, System.Classes,
   FMX.Controls.Presentation, FMX.DateTimeCtrls, FMX.Edit,
   FMX.Memo, FMX.TreeView, FMX.Dialogs, FMX.DialogService,
@@ -148,6 +149,9 @@ type
     OpenDialog1: TOpenDialog;
     AutoPreview: TCheckBox;
     Button2: TButton;
+    Button8: TButton;
+    OpenDialog3: TOpenDialog;
+    CornerButton2: TCornerButton;
     function addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
     procedure packageUpClick(Sender: TObject);
     procedure packageDownClick(Sender: TObject);
@@ -185,6 +189,9 @@ type
     procedure Button9Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
+    procedure CornerButton2Click(Sender: TObject);
+    procedure CornerButton10Click(Sender: TObject);
+    procedure CornerButton9Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -199,7 +206,7 @@ type
 var
   ImplementationGuideEditorFrame: TImplementationGuideEditorFrame;
   // resource: TFHIRImplementationGuide;
-  fwbinfolder, binfolder, igrootfolder, filename: string;
+  BaseIGTemplateFolder, fwbinfolder, binfolder, igrootfolder, filename: string;
   internal: boolean;
   resourceIsDirty: boolean;
 
@@ -471,6 +478,19 @@ begin
 
 end;
 
+procedure TImplementationGuideEditorFrame.CornerButton10Click(Sender: TObject);
+var
+  idx:integer;
+
+begin
+
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.IndexOf(tfhirImplementationGuideDefinitionResource(tvStructure.Selected.tagObject));
+  resourceIsDirty := true;
+  tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.Remove(idx);
+  reloadtreeview(tvStructure.Selected.ParentItem);
+
+end;
+
 procedure TImplementationGuideEditorFrame.CornerButton1Click(Sender: TObject);
 var
   filestr, tempstr: string;
@@ -490,7 +510,42 @@ if fileexists(tempstr+'\_genonce.bat') then begin
   filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
   runAndWait(igrootfolder, 'open', filestr);
 end else
-  TDialogService.MessageDialog('IG Builder Template not found. '#13#10'Ensure the IG Builder template is in the same folder as the IG file.', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+  TDialogService.MessageDialog('IG Publisher not found. '#13#10'Ensure the IG Publisher is in the same folder as the IG file.', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+
+
+end;
+
+procedure TImplementationGuideEditorFrame.CornerButton2Click(Sender: TObject);
+var i:integer;
+resx: TFHIRImplementationGuideDefinitionResource;
+  resref: tfhirReference;
+begin
+//opendialog3.Options:=[TOpenOption.ofAllowMultiSelect, TOpenOption.ofHideReadOnly];
+opendialog3.Options:=[TOpenOption.ofAllowMultiSelect];
+
+
+if opendialog3.Execute then begin
+  for i:= 0 to opendialog3.Files.Count-1 do begin
+
+    resX:=TFHIRImplementationGuideDefinitionResource.Create;
+    resX.reference:=TFHIRReference.Create;
+    resX.reference.reference:=ChangeFileExt((extractfilename(opendialog3.Files[i])), '');
+    resX.name:=ChangeFileExt(extractfilename(opendialog3.Files[i]), '');
+
+    tfhirImplementationGuide(resource).definition.resourceList.Add(resX);
+//    tfhirImplementationGuideDefinition(tvStructure.Selected.parent.tagObject).resourceList.Add(resx);
+
+    end;
+
+
+  resourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
+
+
+
+  end;
+
+
 
 
 end;
@@ -523,6 +578,37 @@ begin
   tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).resourceList.Add(res);
   resourceIsDirty := true;
   ReloadTreeview(tvStructure.Selected);
+
+end;
+
+procedure TImplementationGuideEditorFrame.CornerButton9Click(Sender: TObject);
+var
+  idx:integer;
+
+begin
+
+
+  TDialogService.MessageDialog('Delete element and all its children?', TMsgDlgType.mtConfirmation, mbYesNo, TMsgDlgBtn.mbNo, 0,
+    procedure (const AResult: TModalResult)
+    begin
+if (tvStructure.Selected.ParentItem.tagObject) is TFHIRImplementationGuideDefinition then begin
+  resourceIsDirty := true;
+  tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).deleteProperty('page',tfhirImplementationGuideDefinitionPage(tvStructure.Selected.tagObject));
+  reloadtreeview(tvStructure.Selected.ParentItem);
+end
+
+else if (tvStructure.Selected.ParentItem.tagObject) is TFHIRImplementationGuideDefinitionPage then begin
+  idx := tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.IndexOf(tfhirImplementationGuideDefinitionPage(tvStructure.Selected.tagObject));
+  resourceIsDirty := true;
+  tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.Remove(idx);
+  reloadtreeview(tvStructure.Selected.ParentItem);
+end;
+
+    end
+  );
+
+
+
 
 end;
 
@@ -670,60 +756,84 @@ end;
 
 procedure TImplementationGuideEditorFrame.Button7Click(Sender: TObject);
 var
-  tempstr, filestr: string;
+  optionsStr, tempstr, filestr, mediafolder, pandocfolder, tempfolder: string;
   SEInfo: TShellExecuteInfo;
   ExitCode: DWORD;
   sCmd, ExecuteFile, ParamString, StartInString: string;
   SL: TStringList;
-  InsTextPos: integer;
-  lResultStr: String;
+  i, InsTextPos: integer;
+  destfile, lResultStr: String;
+  sa:TStringDynArray;
+
 begin
   if fwbinfolder = '' then
-    fwbinfolder := binfolder;
-  OpenDialog2.InitialDir := igrootfolder;
+    igrootfolder:='C:\ImpGuide';
+    fwbinfolder := igrootfolder+'\publish';
+    OpenDialog2.InitialDir := igrootfolder;
 
   if OpenDialog2.Execute then
   begin
-    tempstr := fwbinfolder + '\tmp.docx';
+
+    tempfolder:=igrootfolder+'\publish\temp';
+    mediafolder:=igrootfolder+'\publish\src\images';
+
+    tempstr := tempfolder + '\tmp.docx';
     copyfile(pwidechar(OpenDialog2.filename), pwidechar(tempstr), false);
-    tempstr := fwbinfolder + '';
+    pandocfolder := fwbinfolder + '\framework\pandoc';
+
+// HERE should be something about checking that the FW is already there. Not further below, but HERE
 
     // runandwait(tempstr, 'pandoc', '--from=docx -s --to=html4 tmp.docx -o tmp.html');
-    runAndWait(tempstr, 'pandoc', '--extract-media . --from=docx --to=html4 tmp.docx -o tmp.txt');
-    // concatenatefiles(['xheader.txt','tmp.txt','xfooter.txt'],'tmp.xml');
+
+    optionsStr:= '--extract-media '+tempfolder+' --from=docx --to=html4 '+tempfolder+'\tmp.docx -o '+tempfolder+'\tmp.txt';
+    runAndWait(pandocfolder, 'pandoc', optionsStr);
+
+    sa:=TDirectory.GetFiles(tempfolder+'\media');
+    for i:= 0 to Length(sa) - 1 do
+    begin
+      destfile:=mediafolder+'\'+extractfilename(sa[i]);
+      movefile(pwidechar(sa[i]), pwidechar(destfile));
+
+    end;
+
+    delete media folder
+    delete all files in temp folder
+
+//    runAndWait(pandocfolder,'cmd.exe /C','mv '+tempfolder+'\media\*.* ' +mediafolder);
+//    execute('cmd.exe /C mv '+tempfolder+'\media\*.* ' +mediafolder,tempstr, true);
 
     SL := TStringList.Create;
     try
-      SL.LoadFromFile(fwbinfolder + '\tmp.txt');
+      SL.LoadFromFile(tempfolder + '\tmp.txt');
       begin
         SL.Insert(0,
           '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
         SL.Append('</div>');
-        SL.SaveToFile(fwbinfolder + '\tmp.xml');
+        SL.SaveToFile(tempfolder + '\tmp.xml');
       end;
 
       begin
         SL.Insert(0, '<html><body>');
         SL.Append('</body></html>');
-        SL.SaveToFile(fwbinfolder + '\tmp.html');
+        SL.SaveToFile(tempfolder + '\tmp.html');
       end;
 
     finally
       SL.Free;
     end;
 
-    filestr := fwbinfolder + '\tmp.html';
+    filestr := tempfolder + '\tmp.html';
     filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
     runAndWait(igrootfolder, filestr, filestr);
-    tempstr := fwbinfolder + '\tmp.docx';
+    tempstr := tempfolder + '\tmp.docx';
     deletefile(pwidechar(tempstr));
 
     if Edit1.text <> '' then
       try
-        filestr := fwbinfolder + '\tmp.html';
-        if (directoryexists(pwidechar(igrootfolder + '\pages'))) then
+        filestr := tempfolder + '\tmp.html';
+        if (directoryexists(pwidechar(fwbinfolder + '\src\pagecontent'))) then
         begin
-          tempstr := igrootfolder + '\pages\' + Edit1.text + '.xml';
+          tempstr := fwbinfolder + '\src\pagecontent\' + Edit1.text + '.xml';
           copyfile(pwidechar(filestr), pwidechar(tempstr), false)
         end
         else
@@ -735,8 +845,8 @@ begin
               case AResult of
                 mrYES:
                   begin
-                    tempstr := igrootfolder + '\pages\' + Edit1.text + '.xml';
-                    createdir(pwidechar(igrootfolder + '\pages'));
+                    tempstr := igrootfolder + '\pagecontent\' + Edit1.text + '.xml';
+                    createdir(pwidechar(igrootfolder + '\pagecontent'));
                     copyfile(pwidechar(filestr), pwidechar(tempstr), false);
                   end;
                 mrNo:
@@ -756,8 +866,39 @@ begin
 end;
 
 procedure TImplementationGuideEditorFrame.Button8Click(Sender: TObject);
+var i:integer;
+resx: TFHIRImplementationGuideDefinitionResource;
+  resref: tfhirReference;
 begin
-  TDialogService.MessageDialog('Not Implemented yet', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+//opendialog3.Options:=[TOpenOption.ofHideReadOnly];
+opendialog3.Options:=[];
+
+
+if opendialog3.Execute then begin
+
+///  if tvStructure.Selected.TagObject then
+
+
+  for i:= 0 to opendialog3.Files.Count-1 do begin
+    resX:=TFHIRImplementationGuideDefinitionResource.Create;
+    resX.reference:=TFHIRReference.Create;
+    resX.reference.reference:=ChangeFileExt((extractfilename(opendialog3.Files[i])), '');
+    resX.name:=ChangeFileExt(extractfilename(opendialog3.Files[i]), '');
+
+    tfhirImplementationGuide(resource).definition.resourceList.Add(resX);
+//    tfhirImplementationGuideDefinition(tvStructure.Selected.parent.tagObject).resourceList.Add(resx);
+
+    end;
+  resourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
+
+
+
+  end;
+
+
+
+
 end;
 
 procedure TImplementationGuideEditorFrame.Button9Click(Sender: TObject);
@@ -769,11 +910,11 @@ begin
   IGSettingsForm.fwbinfolder := fwbinfolder;
 
   IGSettingsForm.ShowModal;
-  if IGSettingsForm.ModalResult = mrOK then
-
+  if IGSettingsForm.ModalResult = mrOK then begin
     fwbinfolder := IGSettingsForm.fwbinfolder;
-  IGSettingsForm.Destroy;
-
+    BaseIGTemplateFolder := IGSettingsForm.BaseIGTemplateFolder;
+  end;
+    IGSettingsForm.Destroy;
 end;
 
 Procedure TImplementationGuideEditorFrame.ReloadTreeview(sel_item: TTreeViewItem);
@@ -926,13 +1067,37 @@ var
   obj: tFHIRObject;
 
 begin
-  resourceIsDirty := true;
-  prt := tvStructure.Selected.ParentItem;
-  obj := tFHIRObject(tvStructure.Selected.tagObject);
 
-  tfhirImplementationGuide(tvStructure.Selected.ParentItem.tagObject).dropEmpty;
+  TDialogService.MessageDialog('Delete element and all its children?', TMsgDlgType.mtConfirmation, mbYesNo, TMsgDlgBtn.mbNo, 0,
+    procedure (const AResult: TModalResult)
+    begin
+      resourceIsDirty := true;
+      prt := tvStructure.Selected.ParentItem;
+      obj := tFHIRObject(tvStructure.Selected.tagObject);
 
-  ReloadTreeview(prt);
+      if sender is TFHIRObjectList then
+     begin
+         TFHIRObjectList(sender).DeleteByReference(obj);
+     end else
+      tfhirObject(tvStructure.Selected.ParentItem.tagObject).dropEmpty;
+
+      ReloadTreeview(prt);
+    end
+  );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 end;
 
