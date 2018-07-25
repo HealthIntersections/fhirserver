@@ -157,7 +157,9 @@ uses
   OsxPopupmenuWorkaround in 'OsxPopupmenuWorkaround.pas' {PopupMenuWorkaroundForm},
   FHIR.Ui.Graph in '..\Libraries\ui\FHIR.Ui.Graph.pas',
   FHIR.Tools.ObsGraph in '..\Libraries\ui\FHIR.Tools.ObsGraph.pas',
-  FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas';
+  FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas',
+  IGSettings in 'IGSettings.pas' {IGSettingsForm},
+  ImplementationGuideEditor in 'ImplementationGuideEditor.pas' {ImplementationGuideEditorFrame: TFrame};
 
 {$R *.res}
 
