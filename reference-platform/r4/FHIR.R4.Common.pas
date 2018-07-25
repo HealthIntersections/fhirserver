@@ -3344,9 +3344,10 @@ var
   p: TFhirAuditEventParticipant;
 begin
   p := ae.participantList.append;
-  p.userId := TFhirIdentifier.Create;
-  p.userId.system := system;
-  p.userId.value := value;
+  p.who := TFhirReference.Create;
+  p.who.identifier := TFhirIdentifier.Create;
+  p.who.identifier.system := system;
+  p.who.identifier.value := value;
   p.altId := alt;
   p.name := name;
 end;
@@ -3366,9 +3367,10 @@ begin
   if ae.source = nil then
     ae.source := TFhirAuditEventSource.Create;
   ae.source.site := name;
-  ae.source.identifier := TFhirIdentifier.Create;
-  ae.source.identifier.system := system;
-  ae.source.identifier.value := value;
+  ae.source.observer := TFhirReference.Create();
+  ae.source.observer.identifier := TFhirIdentifier.Create;
+  ae.source.observer.identifier.system := system;
+  ae.source.observer.identifier.value := value;
 end;
 
 procedure TFHIRAuditEvent4.sourceType(system, code, display: String);
@@ -4079,12 +4081,13 @@ begin
   result := ed.trigger.condition.language;
 end;
 
-const
-  MAP_TTriggerType : array [TFhirTriggerTypeEnum] of TTriggerType = (ttNull, ttNamedEvent, ttPeriodic, ttDataChanged, ttDataAdded, ttDataModified, ttDataRemoved, ttDataAccessed, ttDataAccessEnded);
+//const
+//  MAP_TTriggerType : array [TFhirTriggerTypeEnum] of TTriggerType = (ttNull, ttNamedEvent, ttPeriodic, ttDataChanged, ttDataAdded, ttDataModified, ttDataRemoved, ttDataAccessed, ttDataAccessEnded);
 
 function TFHIREventDefinition4.triggerType: TTriggerType;
 begin
-  result := MAP_TTriggerType[ed.trigger.type_];
+//  result := MAP_TTriggerType[ed.trigger.type_];
+  result := ttNull;
 end;
 
 function TFHIREventDefinition4.url: String;

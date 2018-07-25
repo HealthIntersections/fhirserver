@@ -188,7 +188,7 @@ begin
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
     try
-//        GJsHost := TJsHost.Create(svc.FIni.ReadString(voMaybeVersioned, 'Javascript', 'path', ''), factory);
+        GJsHost := TJsHost.Create('');
         try
           if FindCmdLineSwitch('installer') then
           begin
@@ -259,7 +259,7 @@ begin
             svc.Execute;
           end;
         finally
-//          GJsHost.free;
+          GJsHost.free;
         end;
 //      finally
 //        factory.Free;

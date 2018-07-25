@@ -295,7 +295,7 @@ public class DelphiGenerator {
       prsrCodeJ.finish();
       prsrCodeT.finish();
       
-    String fact = TextFile.fileToString(Utilities.path(Utilities.getDirectoryForFile(destDir), "template", "FHIR.RX.Factory.pas"));
+    String fact = TextFile.fileToString(Utilities.path(Utilities.getDirectoryForFile(destDir), "generator", "template", "FHIR.RX.Factory.pas"));
     fact = fact.replaceAll("\\{\\{v\\}\\}", vId);
     fact = fact.replace("{{fact}}", "  "+factoryByName.toString().substring(7));
     fact = fact.replace("{{gen}}", "FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -373,12 +373,13 @@ public class DelphiGenerator {
   }
 
   private void finishIndexer() {
-    defIndexer.classDefs.add("  TFHIRIndexBuilder"+rId+" = class (TFslObject)\r\n"+
+    defIndexer.classDefs.add("  TFHIRIndexBuilderR"+vId+" = class (TFHIRIndexBuilder)\r\n"+
         "  private\r\n"+
         indexHeaders.toString()+
         "  public\r\n"+
-        "    procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n"+
-        " end;\r\n");
+        "    procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList); override;\r\n"+
+        "  end;\r\n"+
+        "  TFHIRIndexBuilderX = TFHIRIndexBuilderR"+vId+";\r\n");
     defIndexer.classImpls.add(
         indexMethods.toString()+
         "procedure TFHIRIndexBuilder"+rId+".registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n"+
@@ -674,12 +675,9 @@ public class DelphiGenerator {
     defCodeRes.uses.add("SysUtils");
     defCodeRes.uses.add("Classes");
     defCodeRes.usesBreak();
-    defCodeRes.uses.add("FHIR.Support.Strings");
-    defCodeRes.uses.add("FHIR.Support.Decimal");
+    defCodeRes.uses.add("FHIR.Support.Base");
+    defCodeRes.uses.add("FHIR.Support.Utilities");
     defCodeRes.uses.add("FHIR.Support.Stream");
-    defCodeRes.uses.add("FHIR.Support.Objects");
-    defCodeRes.uses.add("FHIR.Support.DateTime");
-    defCodeRes.uses.add("FHIR.Support.Generics");
     defCodeRes.usesBreak();
     defCodeRes.uses.add("FHIR.Base.Objects");
     defCodeRes.uses.add("FHIR.Base.Utilities");
@@ -702,12 +700,10 @@ public class DelphiGenerator {
     defCodeConstGen.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
     defCodeConstGen.uses.add("SysUtils");
     defCodeConstGen.uses.add("Classes");
-    defCodeConstGen.uses.add("FHIR.Support.Strings");
-    defCodeConstGen.uses.add("FHIR.Support.Decimal");
+    defCodeConstGen.usesBreak();
+    defCodeConstGen.uses.add("FHIR.Support.Utilities");
     defCodeConstGen.uses.add("FHIR.Support.Stream");
-    if (generics)
-      defCodeConstGen.uses.add("FHIR.Support.Generics");
-    defCodeConstGen.uses.add("FHIR.Support.DateTime");
+    defCodeConstGen.usesBreak();
     defCodeConstGen.uses.add("FHIR.Base.Objects");
     defCodeConstGen.uses.add("FHIR.R"+vId+".Types"+rId);
     defCodeConstGen.uses.add("FHIR.R"+vId+".Resources"+rId);
@@ -719,11 +715,9 @@ public class DelphiGenerator {
     defIndexer.uses.add("SysUtils");
     defIndexer.uses.add("Classes");
     defIndexer.usesBreak();
-    defIndexer.uses.add("FHIR.Support.Strings");
-    defIndexer.uses.add("FHIR.Support.Decimal");
-    defIndexer.uses.add("FHIR.Support.Objects");
+    defIndexer.uses.add("FHIR.Support.Base");
+    defIndexer.uses.add("FHIR.Support.Utilities");
     defIndexer.uses.add("FHIR.Support.Stream");
-    defIndexer.uses.add("FHIR.Support.DateTime");
     defIndexer.usesBreak();
     defIndexer.uses.add("FHIR.Base.Common");
     defIndexer.usesBreak();
@@ -745,13 +739,10 @@ public class DelphiGenerator {
     defCodeType.uses.add("SysUtils");
     defCodeType.uses.add("EncdDecd");
     defCodeType.usesBreak();
+    defCodeType.uses.add("FHIR.Support.Base");
+    defCodeType.uses.add("FHIR.Support.Utilities");
     defCodeType.uses.add("FHIR.Support.Signatures");
-    defCodeType.uses.add("FHIR.Support.Decimal");
-    defCodeType.uses.add("FHIR.Support.Strings");
-    defCodeType.uses.add("FHIR.Support.Objects");
     defCodeType.uses.add("FHIR.Support.Stream");
-    defCodeType.uses.add("FHIR.Support.DateTime");
-    defCodeType.uses.add("FHIR.Support.Generics");
     defCodeType.usesBreak();
     defCodeType.uses.add("FHIR.Base.Objects");
     defCodeType.uses.add("FHIR.Base.Xhtml");
@@ -784,12 +775,10 @@ public class DelphiGenerator {
     defCodeOp.uses.add("Classes");
     defCodeOp.uses.add("Generics.Collections");
     defCodeOp.usesBreak();
-    defCodeOp.uses.add("FHIR.Support.Strings");
-    defCodeOp.uses.add("FHIR.Support.Decimal");
+    defCodeOp.uses.add("FHIR.Support.Base");
+    defCodeOp.uses.add("FHIR.Support.Utilities");
     defCodeOp.uses.add("FHIR.Support.Stream");
-    defCodeOp.uses.add("FHIR.Support.Generics");
     defCodeOp.uses.add("FHIR.Web.Parsers");
-    defCodeOp.uses.add("FHIR.Support.DateTime");
     defCodeOp.usesBreak();
     defCodeOp.uses.add("FHIR.R"+vId+".Base");
     defCodeOp.uses.add("FHIR.R"+vId+".Types"+rId);
@@ -1006,7 +995,7 @@ public class DelphiGenerator {
       impl2.append("var\r\n");
       impl2.append("  ex : TFhirExtension;\r\n");
       impl2.append("begin\r\n");
-      impl2.append("  ex := FextensionList.Append;\r\n");
+      impl2.append("  ex := extensionList.Append;\r\n");
       impl2.append("  ex.url := url;\r\n");
       impl2.append("  ex.value := value as TFhirType;\r\n");
       impl2.append("end;\r\n");
@@ -1273,9 +1262,9 @@ public class DelphiGenerator {
       def.append("    function getId : string; override;\r\n");
       def.append("    procedure setIdValue(id : String); override;\r\n");
     } else if (tn.equals("TFhirDomainResource")) {
-      def.append("    function equalsDeep(other : TFHIRObject) : boolean; override;\r\n");
-      def.append("    function equalsShallow(other : TFHIRObject) : boolean; override;\r\n");
-      def.append("    function isEmpty : boolean; override;\r\n");
+//      def.append("    function equalsDeep(other : TFHIRObject) : boolean; override;\r\n");
+//      def.append("    function equalsShallow(other : TFHIRObject) : boolean; override;\r\n");
+//      def.append("    function isEmpty : boolean; override;\r\n");
       def.append("    function isDomainResource : boolean; override;\r\n");
       def.append("    function hasExtension(url : string) : boolean; override;\r\n");
       def.append("    function getExtensionString(url : String) : String; override;\r\n");
@@ -1283,6 +1272,8 @@ public class DelphiGenerator {
       def.append("    function extensions(url : String) : TFslList<TFHIRObject>; override;\r\n");
       def.append("    procedure addExtension(url : String; value : TFHIRObject); override;\r\n");
     }
+    if (tn.equals("TFhirResource")) 
+      def.append("    procedure checkNoImplicitRules(place, role : String); override;\r\n");
     def.append("    function equalsDeep(other : TFHIRObject) : boolean; override;\r\n");
     def.append("    function equalsShallow(other : TFHIRObject) : boolean; override;\r\n");
     def.append("    function isEmpty : boolean; override;\r\n");
@@ -1373,12 +1364,17 @@ public class DelphiGenerator {
       impl2.append("    end;\r\n");
       impl2.append("end;\r\n");
       impl2.append("\r\n");
+      impl2.append("procedure TFhirResource.checkNoImplicitRules(place, role: String);\r\n");
+      impl2.append("begin\r\n");
+      impl2.append("  if implicitRules <> '' then\r\n");
+        impl2.append("    raise EUnsafeOperation.Create('The resource '+role+' has an unknown implicitRules tag at '+place);\r\n");
+      impl2.append("end;\r\n\r\n");
     } else if (tn.equals("TFhirDomainResource")) {
       impl2.append("procedure TFhirDomainResource.addExtension(url: String; value: TFHIRObject);\r\n");
       impl2.append("var\r\n");
       impl2.append("  ex : TFhirExtension;\r\n");
       impl2.append("begin\r\n");
-      impl2.append("  ex := FextensionList.Append;\r\n");
+      impl2.append("  ex := extensionList.Append;\r\n");
       impl2.append("  ex.url := url;\r\n");
       impl2.append("  ex.value := value as TFhirType;\r\n");
       impl2.append("end;\r\n");
@@ -1517,6 +1513,7 @@ public class DelphiGenerator {
     impl2.append("begin\r\n");
     impl2.append("  result := "+tn+"(inherited Clone);\r\n");
     impl2.append("end;\r\n\r\n");
+    
     getCode(category).classDefs.add(def.toString());
     getCode(category).classImpls.add(impl2.toString() + impl.toString());
     getCode(category).classFwds.add("  "+tn+" = class;\r\n");
@@ -1636,7 +1633,7 @@ public class DelphiGenerator {
     StringBuilder b = new StringBuilder();
     indexHeaders.append("    {$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\n    procedure buildIndexesFor"+r.getName()+"(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n    {$ENDIF}\r\n");
     indexBody.append("  {$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\n  buildIndexesFor"+r.getName()+"(Indexes, compartments);\r\n  {$ENDIF}\r\n");
-    b.append("{$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\nprocedure TFHIRIndexBuilder"+rId+".buildIndexesFor"+r.getName()+"(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n");
+    b.append("{$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\nprocedure TFHIRIndexBuilderR"+vId+".buildIndexesFor"+r.getName()+"(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n");
     b.append("begin\r\n");
     List<String> names = new ArrayList<String>();
     Map<String, SearchParameterDefn> params = new HashMap<String, SearchParameterDefn>();
@@ -2599,7 +2596,7 @@ public class DelphiGenerator {
     literalPath = literalPath +"."+e.getName();
 
     String tn = null;
-    if (e.typeCode().equals("code") && e.hasBinding() && !e.getBinding().getName().equals("FHIRDefinedType")) {
+    if (e.typeCode().equals("code") && e.hasBinding() && e.getBinding().getName() != null && !"FHIRDefinedType".equals(e.getBinding().getName())) {
       BindingSpecification cd = e.getBinding();
       if (cd != null && !cd.isNoEnum() && (cd.getBinding() == BindingSpecification.BindingMethod.CodeList)) {
         tn = "TFhir"+enumName(getTitle(getCodeList(cd.getReference()).substring(1)))+"Enum"+rId;
@@ -3963,7 +3960,7 @@ public class DelphiGenerator {
       if (pn.equals("Boolean"))
         impl2.append("  result := LCBooleanToString(FValue);\r\n");
       else if (pn.equals("TBytes"))
-        impl2.append("  if (length(FValue) = 0) then result := '' else result := string(EncodeBase64(@FValue[0], length(FValue)));\r\n");
+        impl2.append("  if (length(FValue) = 0) then result := '' else result := string(EncodeBase64(FValue));\r\n");
       else if (tn.equals("DateTime") || tn.equals("Date") || tn.equals("Instant") ) {
         impl2.append("  if (FValue.null) then\r\n");
         impl2.append("    result := ''\r\n");
@@ -4380,6 +4377,7 @@ public class DelphiGenerator {
     def.append("    Function Link : TFhirType"+rId+"; Overload;\r\n");
     def.append("    Function Clone : TFhirType"+rId+"; Overload;\r\n");
     def.append("    Function isType : boolean; Override;\r\n");
+    def.append("    Function toString : String; Override;\r\n");
     def.append("  End;\r\n");   
     def.append("  TFHIRType"+rId+"Class = class of TFhirType"+rId+";\r\n");
     def.append("  \r\n");
@@ -4408,6 +4406,10 @@ public class DelphiGenerator {
     impl2.append("function TFhirType"+rId+".Link : TFhirType"+rId+";\r\n");
     impl2.append("begin\r\n");
     impl2.append("  result := TFhirType"+rId+"(inherited Link);\r\n");
+    impl2.append("end;\r\n\r\n");
+    impl2.append("function TFhirType"+rId+".toString : String"+rId+";\r\n");
+    impl2.append("begin\r\n");
+    impl2.append("  result := gen(self);\r\n");
     impl2.append("end;\r\n\r\n");
     impl2.append("function TFhirType"+rId+".isType : boolean"+rId+";\r\n");
     impl2.append("begin\r\n");
@@ -4493,9 +4495,7 @@ public class DelphiGenerator {
     prsrImplJ.append("  element.LocationStart := jsn.LocationStart;\r\n");
     prsrImplJ.append("  element.LocationEnd := jsn.LocationEnd;\r\n");
     prsrImplJ.append("  if jsn.has('id') then\r\n");
-    prsrImplJ.append("    element.Id := jsn.node['id']\r\n");
-    prsrImplJ.append("  else if jsn.has('_id') then\r\n");
-    prsrImplJ.append("    element.Id := jsn['_id'];\r\n");
+    prsrImplJ.append("    element.Id := jsn.node['id'];\r\n");
     prsrImplJ.append("  if jsn.has('extension') then\r\n");
     prsrImplJ.append("    iterateArray(jsn.vArr['extension'], element.extensionList, parseExtension);\r\n");
     prsrImplJ.append("end;\r\n\r\n");
@@ -4738,13 +4738,11 @@ public class DelphiGenerator {
     prsrCodeX.uses.add("SysUtils");
     prsrCodeX.uses.add("Classes");
     prsrCodeX.usesBreak();
-    prsrCodeX.uses.add("FHIR.Support.Exceptions");
-    prsrCodeX.uses.add("FHIR.Support.Strings");
-    prsrCodeX.uses.add("FHIR.Support.DateTime");
+    prsrCodeX.uses.add("FHIR.Support.Base");
+    prsrCodeX.uses.add("FHIR.Support.Utilities");
     prsrCodeX.uses.add("FHIR.Support.Collections");
     prsrCodeX.uses.add("FHIR.Support.Xml");
     prsrCodeX.uses.add("FHIR.Support.MXml");
-    prsrCodeX.uses.add("FHIR.Support.Decimal");
     prsrCodeX.usesBreak();
     prsrCodeX.uses.add("FHIR.Base.Parser");
     prsrCodeX.uses.add("FHIR.Base.Objects");
@@ -4757,10 +4755,8 @@ public class DelphiGenerator {
     prsrCodeJ.uses.add("SysUtils");
     prsrCodeJ.uses.add("Classes");
     prsrCodeJ.usesBreak();
-    prsrCodeJ.uses.add("FHIR.Support.Exceptions");
-    prsrCodeJ.uses.add("FHIR.Support.Strings");
-    prsrCodeJ.uses.add("FHIR.Support.DateTime");
-    prsrCodeJ.uses.add("FHIR.Support.Decimal");
+    prsrCodeJ.uses.add("FHIR.Support.Base");
+    prsrCodeJ.uses.add("FHIR.Support.Utilities");
     prsrCodeJ.uses.add("FHIR.Support.Collections");
     prsrCodeJ.uses.add("FHIR.Support.Json");
     prsrCodeJ.usesBreak();
@@ -4775,10 +4771,8 @@ public class DelphiGenerator {
     prsrCodeT.uses.add("SysUtils");
     prsrCodeT.uses.add("Classes");
     prsrCodeT.usesBreak();
-    prsrCodeT.uses.add("FHIR.Support.Exceptions");
-    prsrCodeT.uses.add("FHIR.Support.Strings");
-    prsrCodeT.uses.add("FHIR.Support.DateTime");
-    prsrCodeT.uses.add("FHIR.Support.Decimal");
+    prsrCodeT.uses.add("FHIR.Support.Base");
+    prsrCodeT.uses.add("FHIR.Support.Utilities");
     prsrCodeT.uses.add("FHIR.Support.Collections");
     prsrCodeT.uses.add("FHIR.Support.Turtle");
     prsrCodeT.usesBreak();

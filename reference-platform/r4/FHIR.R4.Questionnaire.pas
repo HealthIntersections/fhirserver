@@ -1241,8 +1241,8 @@ begin
     begin
       if (vs.expansion = nil) then
       begin
-        result.options := vs.url;
-        result.optionsElement.addExtension(EXTENSION_FILTER_ONLY, TFhirBoolean.Create(true));
+        result.answerValueSet := vs.url;
+        result.answerValueSetElement.addExtension(EXTENSION_FILTER_ONLY, TFhirBoolean.Create(true));
       end
       else
       begin
@@ -1258,13 +1258,13 @@ begin
             vse.publisherElement := nil;
             vse.copyrightElement := nil;
             questionnaire.containedList.Add(vse.Link);
-            result.options := '#'+vse.xmlId;
+            result.answerValueSet := '#'+vse.xmlId;
           finally
             vse.Free;
           end;
         end
         else
-          result.options := '#'+vs.xmlId;
+          result.answerValueSet := '#'+vs.xmlId;
       end;
     end;
 

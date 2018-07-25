@@ -55,7 +55,6 @@ const
     {$IFDEF FHIR_CONCEPTMAP}frtConceptMap, {$ENDIF}
     {$IFDEF FHIR_ENTRYDEFINITION}frtEntryDefinition, {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION}frtEventDefinition, {$ENDIF}
-    {$IFDEF FHIR_EXPANSIONPROFILE}frtExpansionProfile, {$ENDIF}
     {$IFDEF FHIR_GRAPHDEFINITION}frtGraphDefinition, {$ENDIF}
     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide, {$ENDIF}
     {$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}frtImplementationGuideInput, {$ENDIF}
@@ -673,12 +672,6 @@ type
   TFhirQuestionnaireHelper = class helper for TFhirQuestionnaire
   public
     function itemCount : integer;
-  end;
-
-  TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
-  public
-    function hash : String;
-    class function defaultProfile : TFhirExpansionProfile;
   end;
 
   TFhirValueSetCodeSystem = TFhirCodeSystem;
@@ -1925,7 +1918,6 @@ begin
     frtCodeSystem: result := TFHIRCodeSystem(res).url;
     frtConceptMap: result := TFHIRConceptMap(res).url;
     frtCapabilityStatement: result := TFHIRCapabilityStatement(res).url;
-    frtExpansionProfile: result := TFHIRExpansionProfile(res).url;
     frtImplementationGuide: result := TFHIRImplementationGuide(res).url;
     frtOperationDefinition: result := TFHIROperationDefinition(res).url;
     frtSearchParameter: result := TFHIRSearchParameter(res).url;
@@ -4685,18 +4677,6 @@ begin
       exit(true);
 end;
 
-{ TFhirExpansionProfileHelper }
-
-class function TFhirExpansionProfileHelper.defaultProfile: TFhirExpansionProfile;
-begin
-  result := TFhirExpansionProfile.Create;
-end;
-
-function TFhirExpansionProfileHelper.hash: String;
-begin
- result := BooleanToString(includeDefinition)+'|'+BooleanToString(limitedExpansion)+BooleanToString(includeDesignations)+BooleanToString(activeOnly)+
-   BooleanToString(excludeNested)+BooleanToString(excludeNotForUI)+BooleanToString(excludePostCoordinated)+displayLanguage;
-end;
 
 { TFhirAuditEventHelper }
 

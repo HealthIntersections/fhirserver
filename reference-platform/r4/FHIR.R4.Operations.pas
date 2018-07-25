@@ -33,7 +33,7 @@ unit FHIR.R4.Operations;
 
 interface
 
-// FHIR v3.4.0 generated 2018-05-15T06:48:00+10:00
+// FHIR v3.4.0 generated 2018-07-19T12:02:16+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, 
@@ -1412,11 +1412,11 @@ Type
     FValueSetVersion : String;
     FContext : String;
     FFilter : String;
-    FProfile : String;
     FDate : TDateTimeEx;
     FOffset : String;
     FCount : String;
     FIncludeDesignations : Boolean;
+    FDesignationList : TList<String>;
     FIncludeDefinition : Boolean;
     FActiveOnly : Boolean;
     FExcludeNested : Boolean;
@@ -1424,6 +1424,10 @@ Type
     FExcludePostCoordinated : Boolean;
     FDisplayLanguage : String;
     FLimitedExpansion : Boolean;
+    FExcludeSystemList : TList<String>;
+    FSystemVersionList : TList<String>;
+    FCheckSystemVersionList : TList<String>;
+    FForceSystemVersionList : TList<String>;
     procedure SetValueSet(value : TFhirValueSet);
   protected
     function isKnownName(name : String) : boolean; override;
@@ -1438,11 +1442,11 @@ Type
     property valueSetVersion : String read FValueSetVersion write FValueSetVersion;
     property context : String read FContext write FContext;
     property filter : String read FFilter write FFilter;
-    property profile : String read FProfile write FProfile;
     property date : TDateTimeEx read FDate write FDate;
     property offset : String read FOffset write FOffset;
     property count : String read FCount write FCount;
     property includeDesignations : Boolean read FIncludeDesignations write FIncludeDesignations;
+    property designationList : TList<String> read FDesignationList;
     property includeDefinition : Boolean read FIncludeDefinition write FIncludeDefinition;
     property activeOnly : Boolean read FActiveOnly write FActiveOnly;
     property excludeNested : Boolean read FExcludeNested write FExcludeNested;
@@ -1450,6 +1454,10 @@ Type
     property excludePostCoordinated : Boolean read FExcludePostCoordinated write FExcludePostCoordinated;
     property displayLanguage : String read FDisplayLanguage write FDisplayLanguage;
     property limitedExpansion : Boolean read FLimitedExpansion write FLimitedExpansion;
+    property excludeSystemList : TList<String> read FExcludeSystemList;
+    property systemVersionList : TList<String> read FSystemVersionList;
+    property checkSystemVersionList : TList<String> read FCheckSystemVersionList;
+    property forceSystemVersionList : TList<String> read FForceSystemVersionList;
   end;
 
   TFHIRExpandOpResponse = class (TFHIROperationResponse)
@@ -5461,20 +5469,29 @@ end;
 constructor TFHIRExpandOpRequest.create;
 begin
   inherited create();
+  FDesignationList := TList<String>.create;
+  FExcludeSystemList := TList<String>.create;
+  FSystemVersionList := TList<String>.create;
+  FCheckSystemVersionList := TList<String>.create;
+  FForceSystemVersionList := TList<String>.create;
 end;
 
 procedure TFHIRExpandOpRequest.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
 begin
   FUrl := params.str['url'];
   FValueSet := (params.res['valueSet'] as TFhirValueSet).Link;{ob.5a}
   FValueSetVersion := params.str['valueSetVersion'];
   FContext := params.str['context'];
   FFilter := params.str['filter'];
-  FProfile := params.str['profile'];
   FDate := TDateTimeEx.fromXml(params.str['date']);
   FOffset := params.str['offset'];
   FCount := params.str['count'];
   FIncludeDesignations := params.bool['includeDesignations'];
+  for p in params.parameterList do
+    if p.name = 'designation' then
+      FDesignationList.Add((p.value as TFhirString).value);{ob.1}
   FIncludeDefinition := params.bool['includeDefinition'];
   FActiveOnly := params.bool['activeOnly'];
   FExcludeNested := params.bool['excludeNested'];
@@ -5482,20 +5499,35 @@ begin
   FExcludePostCoordinated := params.bool['excludePostCoordinated'];
   FDisplayLanguage := params.str['displayLanguage'];
   FLimitedExpansion := params.bool['limitedExpansion'];
+  for p in params.parameterList do
+    if p.name = 'exclude-system' then
+      FExcludeSystemList.Add((p.value as TFhirCanonical).value);{ob.1}
+  for p in params.parameterList do
+    if p.name = 'system-version' then
+      FSystemVersionList.Add((p.value as TFhirCanonical).value);{ob.1}
+  for p in params.parameterList do
+    if p.name = 'check-system-version' then
+      FCheckSystemVersionList.Add((p.value as TFhirCanonical).value);{ob.1}
+  for p in params.parameterList do
+    if p.name = 'force-system-version' then
+      FForceSystemVersionList.Add((p.value as TFhirCanonical).value);{ob.1}
   loadExtensions(params);
 end;
 
 procedure TFHIRExpandOpRequest.load(params : TParseMap);
+var
+  s : String;
 begin
   FUrl := params.getVar('url');
   FValueSetVersion := params.getVar('valueSetVersion');
   FContext := params.getVar('context');
   FFilter := params.getVar('filter');
-  FProfile := params.getVar('profile');
   FDate := TDateTimeEx.fromXml(params.getVar('date'));
   FOffset := params.getVar('offset');
   FCount := params.getVar('count');
   FIncludeDesignations := StrToBoolDef(params.getVar('includeDesignations'), false);
+  for s in params.getVar('designation').Split([';']) do
+    FDesignationList.add(s); 
   FIncludeDefinition := StrToBoolDef(params.getVar('includeDefinition'), false);
   FActiveOnly := StrToBoolDef(params.getVar('activeOnly'), false);
   FExcludeNested := StrToBoolDef(params.getVar('excludeNested'), false);
@@ -5503,16 +5535,35 @@ begin
   FExcludePostCoordinated := StrToBoolDef(params.getVar('excludePostCoordinated'), false);
   FDisplayLanguage := params.getVar('displayLanguage');
   FLimitedExpansion := StrToBoolDef(params.getVar('limitedExpansion'), false);
+  for s in params.getVar('exclude-system').Split([';']) do
+    FExcludeSystemList.add(s); 
+  for s in params.getVar('system-version').Split([';']) do
+    FSystemVersionList.add(s); 
+  for s in params.getVar('check-system-version').Split([';']) do
+    FCheckSystemVersionList.add(s); 
+  for s in params.getVar('force-system-version').Split([';']) do
+    FForceSystemVersionList.add(s); 
   loadExtensions(params);
 end;
 
 destructor TFHIRExpandOpRequest.Destroy;
 begin
   FValueSet.free;
+  FDesignationList.free;
+  FExcludeSystemList.free;
+  FSystemVersionList.free;
+  FCheckSystemVersionList.free;
+  FForceSystemVersionList.free;
   inherited;
 end;
 
 function TFHIRExpandOpRequest.asParams : TFhirParameters;
+var
+  v1 : String;
+  v2 : String;
+  v3 : String;
+  v4 : String;
+  v5 : String;
 begin
   result := TFHIRParameters.create;
   try
@@ -5526,8 +5577,6 @@ begin
       result.addParameter('context', TFHIRUri.create(FContext));{oz.5f}
     if (FFilter <> '') then
       result.addParameter('filter', TFHIRString.create(FFilter));{oz.5f}
-    if (FProfile <> '') then
-      result.addParameter('profile', TFHIRUri.create(FProfile));{oz.5f}
     if (FDate.notNull) then
       result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5f}
     if (FOffset <> '') then
@@ -5535,6 +5584,8 @@ begin
     if (FCount <> '') then
       result.addParameter('count', TFHIRInteger.create(FCount));{oz.5f}
       result.addParameter('includeDesignations', TFHIRBoolean.create(FIncludeDesignations));{oz.5f}
+    for v1 in FDesignationList do
+      result.AddParameter('designation', TFhirString.create(v1));
       result.addParameter('includeDefinition', TFHIRBoolean.create(FIncludeDefinition));{oz.5f}
       result.addParameter('activeOnly', TFHIRBoolean.create(FActiveOnly));{oz.5f}
       result.addParameter('excludeNested', TFHIRBoolean.create(FExcludeNested));{oz.5f}
@@ -5543,6 +5594,14 @@ begin
     if (FDisplayLanguage <> '') then
       result.addParameter('displayLanguage', TFHIRCode.create(FDisplayLanguage));{oz.5f}
       result.addParameter('limitedExpansion', TFHIRBoolean.create(FLimitedExpansion));{oz.5f}
+    for v2 in FExcludeSystemList do
+      result.AddParameter('exclude-system', TFhirCanonical.create(v2));
+    for v3 in FSystemVersionList do
+      result.AddParameter('system-version', TFhirCanonical.create(v3));
+    for v4 in FCheckSystemVersionList do
+      result.AddParameter('check-system-version', TFhirCanonical.create(v4));
+    for v5 in FForceSystemVersionList do
+      result.AddParameter('force-system-version', TFhirCanonical.create(v5));
     writeExtensions(result);
     result.link;
   finally
@@ -5552,7 +5611,7 @@ end;
 
 function TFHIRExpandOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['url', 'valueSet', 'valueSetVersion', 'context', 'filter', 'profile', 'date', 'offset', 'count', 'includeDesignations', 'includeDefinition', 'activeOnly', 'excludeNested', 'excludeNotForUI', 'excludePostCoordinated', 'displayLanguage', 'limitedExpansion'], name);
+  result := StringArrayExists(['url', 'valueSet', 'valueSetVersion', 'context', 'filter', 'date', 'offset', 'count', 'includeDesignations', 'designation', 'includeDefinition', 'activeOnly', 'excludeNested', 'excludeNotForUI', 'excludePostCoordinated', 'displayLanguage', 'limitedExpansion', 'exclude-system', 'system-version', 'check-system-version', 'force-system-version'], name);
 end;
 
 procedure TFHIRExpandOpResponse.SetReturn(value : TFhirValueSet);

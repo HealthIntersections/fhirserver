@@ -665,12 +665,12 @@ public class ElementDefn {
     bs.setDefinition(b.getDescription());
     bs.setStrength(BindingStrength.REQUIRED);
     org.hl7.fhir.r4.model.ValueSet vs = vsmap.get(b.getValueSet());
-    if (vs == null)
-      throw new Error("Unable to find value set "+b.getValueSet());
-    bs.loadFromExpansion(vs);
-    bs.setUri(vs.getUrl());
-    bs.setName(vs.getName().replace(" ", ""));
-    bs.setReference(urlTail(vs.getUrl()));
+    if (vs != null) {
+      bs.loadFromExpansion(vs);
+      bs.setUri(vs.getUrl());
+      bs.setName(vs.getName().replace(" ", ""));
+      bs.setReference(urlTail(vs.getUrl()));
+    }
     return bs;
   }
 

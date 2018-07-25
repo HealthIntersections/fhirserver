@@ -91,7 +91,6 @@ const
     tcSchedule, // frtEpisodeOfCare
     tcOther, // frtEventDefinition
     tcOther, // frtExampleScenario
-    tcOther, // frtExpansionProfile
     tcFinancial, // frtExplanationOfBenefit
     tcClinical, // frtFamilyMemberHistory
     tcClinical, // frtFlag
@@ -133,7 +132,6 @@ const
     tcClinical, // frtNutritionOrder
     tcClinical, // frtObservation
     tcOther, // frtObservationDefinition
-    tcData, // frtOccupationalData
     tcOther, // frtOperationDefinition
     tcData, // frtOperationOutcome
     tcData, // frtOrganization
