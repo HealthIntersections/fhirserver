@@ -90,8 +90,8 @@ Type
     class function convertDayOfWeek(src : FHIR.R4.Types.TFhirDaysOfWeekEnum) : FHIR.R3.Types.TFhirDaysOfWeekEnum; overload;
     class function convertEventTiming(src : FHIR.R3.Types.TFhirEventTimingEnum) : FHIR.R4.Types.TFhirEventTimingEnum; overload;
     class function convertEventTiming(src : FHIR.R4.Types.TFhirEventTimingEnum) : FHIR.R3.Types.TFhirEventTimingEnum; overload;
-    class function convertTriggerType(src : FHIR.R3.Types.TFhirTriggerTypeEnum) : String; {FHIR.R4.Types.TFhirTriggerTypeEnum;} overload;
-    class function convertTriggerType(src : String{FHIR.R4.Types.TFhirTriggerTypeEnum}) : FHIR.R3.Types.TFhirTriggerTypeEnum; overload;
+    class function convertTriggerType(src : FHIR.R3.Types.TFhirTriggerTypeEnum) : FHIR.R4.Types.TFhirTriggerTypeEnum; overload;
+    class function convertTriggerType(src : FHIR.R4.Types.TFhirTriggerTypeEnum) : FHIR.R3.Types.TFhirTriggerTypeEnum; overload;
     class procedure copyDomainResource(src : FHIR.R3.Resources.TFhirDomainResource; tgt : FHIR.R4.Resources.TFhirDomainResource); overload;
     class procedure copyDomainResource(src : FHIR.R4.Resources.TFhirDomainResource; tgt : FHIR.R3.Resources.TFhirDomainResource); overload;
     class procedure copyResource(src : FHIR.R3.Resources.TFhirResource; tgt : FHIR.R4.Resources.TFhirResource); overload;
@@ -1594,34 +1594,32 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertTriggerType(src : FHIR.R3.Types.TFhirTriggerTypeEnum) : String;
+class function TVersionConvertor_30_40.convertTriggerType(src : FHIR.R3.Types.TFhirTriggerTypeEnum) : FHIR.R4.Types.TFhirTriggerTypeEnum;
 begin
-  result := FHIR.R3.Types.CODES_TFhirTriggerTypeEnum[src];
-//  case (src) of
-//    FHIR.R3.Types.TriggerTypeNamedEvent: exit(FHIR.R4.Types.TriggerTypeNamedEvent);
-//    FHIR.R3.Types.TriggerTypePeriodic: exit(FHIR.R4.Types.TriggerTypePeriodic);
-//    FHIR.R3.Types.TriggerTypeDataAdded: exit(FHIR.R4.Types.TriggerTypeDataAdded);
-//    FHIR.R3.Types.TriggerTypeDataModified: exit(FHIR.R4.Types.TriggerTypeDataModified);
-//    FHIR.R3.Types.TriggerTypeDataRemoved: exit(FHIR.R4.Types.TriggerTypeDataRemoved);
-//    FHIR.R3.Types.TriggerTypeDataAccessed: exit(FHIR.R4.Types.TriggerTypeDataAccessed);
-//    FHIR.R3.Types.TriggerTypeDataAccessEnded: exit(FHIR.R4.Types.TriggerTypeDataAccessEnded);
-//    else exit(FHIR.R4.Types.TriggerTypeNull);
-//  end;
+  case (src) of
+    FHIR.R3.Types.TriggerTypeNamedEvent: exit(FHIR.R4.Types.TriggerTypeNamedEvent);
+    FHIR.R3.Types.TriggerTypePeriodic: exit(FHIR.R4.Types.TriggerTypePeriodic);
+    FHIR.R3.Types.TriggerTypeDataAdded: exit(FHIR.R4.Types.TriggerTypeDataAdded);
+    FHIR.R3.Types.TriggerTypeDataModified: exit(FHIR.R4.Types.TriggerTypeDataModified);
+    FHIR.R3.Types.TriggerTypeDataRemoved: exit(FHIR.R4.Types.TriggerTypeDataRemoved);
+    FHIR.R3.Types.TriggerTypeDataAccessed: exit(FHIR.R4.Types.TriggerTypeDataAccessed);
+    FHIR.R3.Types.TriggerTypeDataAccessEnded: exit(FHIR.R4.Types.TriggerTypeDataAccessEnded);
+    else exit(FHIR.R4.Types.TriggerTypeNull);
+  end;
 end;
 
-class function TVersionConvertor_30_40.convertTriggerType(src : String) : FHIR.R3.Types.TFhirTriggerTypeEnum;
+class function TVersionConvertor_30_40.convertTriggerType(src : FHIR.R4.Types.TFhirTriggerTypeEnum) : FHIR.R3.Types.TFhirTriggerTypeEnum;
 begin
-  result := FHIR.R3.Types.TFhirTriggerTypeEnum(StringArrayIndexOf(FHIR.R3.Types.CODES_TFhirTriggerTypeEnum, src));
-//  case (src) of
-//    FHIR.R4.Types.TriggerTypeNamedEvent: exit(FHIR.R3.Types.TriggerTypeNamedEvent);
-//    FHIR.R4.Types.TriggerTypePeriodic: exit(FHIR.R3.Types.TriggerTypePeriodic);
-//    FHIR.R4.Types.TriggerTypeDataAdded: exit(FHIR.R3.Types.TriggerTypeDataAdded);
-//    FHIR.R4.Types.TriggerTypeDataModified: exit(FHIR.R3.Types.TriggerTypeDataModified);
-//    FHIR.R4.Types.TriggerTypeDataRemoved: exit(FHIR.R3.Types.TriggerTypeDataRemoved);
-//    FHIR.R4.Types.TriggerTypeDataAccessed: exit(FHIR.R3.Types.TriggerTypeDataAccessed);
-//    FHIR.R4.Types.TriggerTypeDataAccessEnded: exit(FHIR.R3.Types.TriggerTypeDataAccessEnded);
-//    else exit(FHIR.R3.Types.TriggerTypeNull);
-//  end;
+  case (src) of
+    FHIR.R4.Types.TriggerTypeNamedEvent: exit(FHIR.R3.Types.TriggerTypeNamedEvent);
+    FHIR.R4.Types.TriggerTypePeriodic: exit(FHIR.R3.Types.TriggerTypePeriodic);
+    FHIR.R4.Types.TriggerTypeDataAdded: exit(FHIR.R3.Types.TriggerTypeDataAdded);
+    FHIR.R4.Types.TriggerTypeDataModified: exit(FHIR.R3.Types.TriggerTypeDataModified);
+    FHIR.R4.Types.TriggerTypeDataRemoved: exit(FHIR.R3.Types.TriggerTypeDataRemoved);
+    FHIR.R4.Types.TriggerTypeDataAccessed: exit(FHIR.R3.Types.TriggerTypeDataAccessed);
+    FHIR.R4.Types.TriggerTypeDataAccessEnded: exit(FHIR.R3.Types.TriggerTypeDataAccessEnded);
+    else exit(FHIR.R3.Types.TriggerTypeNull);
+  end;
 end;
 
 class procedure TVersionConvertor_30_40.copyDomainResource(src : FHIR.R3.Resources.TFhirDomainResource; tgt : FHIR.R4.Resources.TFhirDomainResource);
@@ -6636,7 +6634,7 @@ begin
   if (src.contentType <> '') then
     tgt.sigFormat := src.contentType;
 
-  tgt.blob := src.blob;
+  tgt.data := src.blob;
 
   exit(tgt.link);
   finally
@@ -6669,7 +6667,7 @@ begin
   if (src.sigFormat <> '') then
     tgt.contentType := src.sigFormat;
 
-  tgt.blob := src.blob;
+  tgt.blob := src.data;
 
   exit(tgt.link);
   finally
@@ -9131,17 +9129,22 @@ begin
   tgt := FHIR.R4.Resources.TFhirActivityDefinitionDynamicValue.Create();
   try
   copyBackboneElement(src, tgt);
-  if (src.description <> '') then
-    tgt.description := src.description;
 
   if (src.path <> '') then
     tgt.path := src.path;
 
-  if (src.language <> '') then
-    tgt.language := src.language;
+  if (src.description <> '') or (src.language <> '') or (src.expression <> '') then
+  begin
+    tgt.expression := FHIR.R4.Types.TFhirExpression.Create;
+    if (src.description <> '') then
+      tgt.expression.description := src.description;
 
-  if (src.expression <> '') then
-    tgt.expression := src.expression;
+    if (src.language <> '') then
+      tgt.expression.language := src.language;
+
+    if (src.expression <> '') then
+      tgt.expression.expression := src.expression;
+  end;
 
   exit(tgt.link);
   finally
@@ -9158,17 +9161,20 @@ begin
   tgt := FHIR.R3.Resources.TFhirActivityDefinitionDynamicValue.Create();
   try
   copyBackboneElement(src, tgt);
-  if (src.description <> '') then
-    tgt.description := src.description;
-
   if (src.path <> '') then
     tgt.path := src.path;
 
-  if (src.language <> '') then
-    tgt.language := src.language;
+  if (src.expression <> nil) then
+  begin
+  if (src.expression.description <> '') then
+    tgt.description := src.expression.description;
 
-  if (src.expression <> '') then
-    tgt.expression := src.expression;
+  if (src.expression.language <> '') then
+    tgt.language := src.expression.language;
+
+  if (src.expression.expression <> '') then
+    tgt.expression := src.expression.expression;
+  end;
 
   exit(tgt.link);
   finally
@@ -10218,7 +10224,7 @@ begin
   if (src.securityContext <> nil) then
     tgt.securityContext := convertReference(src.securityContext);
 
-  tgt.content := src.content;
+  tgt.data := src.content;
 
   exit(tgt.link);
   finally
@@ -10241,7 +10247,7 @@ begin
   if (src.securityContext <> nil) then
     tgt.securityContext := convertReference(src.securityContext);
 
-  tgt.content := src.content;
+  tgt.content := src.data;
 
   exit(tgt.link);
   finally
@@ -21945,7 +21951,7 @@ begin
     tgt.dataAbsentReason := convertCodeableConcept(src.dataAbsentReason);
 
   if (src.interpretation <> nil) then
-    tgt.interpretation := convertCodeableConcept(src.interpretation);
+    tgt.interpretationList.Add(convertCodeableConcept(src.interpretation));
 
   if (src.comment <> '') then
     tgt.comment := src.comment;
@@ -22037,8 +22043,8 @@ begin
   if (src.dataAbsentReason <> nil) then
     tgt.dataAbsentReason := convertCodeableConcept(src.dataAbsentReason);
 
-  if (src.interpretation <> nil) then
-    tgt.interpretation := convertCodeableConcept(src.interpretation);
+  if (src.interpretationList.Count > 0) then
+    tgt.interpretation := convertCodeableConcept(src.interpretationList[0]);
 
   if (src.comment <> '') then
     tgt.comment := src.comment;
@@ -22181,7 +22187,7 @@ begin
     tgt.dataAbsentReason := convertCodeableConcept(src.dataAbsentReason);
 
   if (src.interpretation <> nil) then
-    tgt.interpretation := convertCodeableConcept(src.interpretation);
+    tgt.interpretationList.add(convertCodeableConcept(src.interpretation));
 
   for t in src.referenceRangeList do
   begin
@@ -22211,8 +22217,8 @@ begin
   if (src.dataAbsentReason <> nil) then
     tgt.dataAbsentReason := convertCodeableConcept(src.dataAbsentReason);
 
-  if (src.interpretation <> nil) then
-    tgt.interpretation := convertCodeableConcept(src.interpretation);
+  if (src.interpretationList.Count > 0) then
+    tgt.interpretation := convertCodeableConcept(src.interpretationList[0]);
 
   for t in src.referenceRangeList do
   begin
@@ -24548,8 +24554,8 @@ begin
   if (src.text <> '') then
     tgt.text := src.text;
 
-  if (src.subject <> nil) then
-    tgt.subject := convertReference(src.subject);
+//  if (src.subject <> nil) then
+//    tgt.subject := convertReference(src.subject);
 
   for t1 in src.answerList do
   begin
@@ -24585,8 +24591,8 @@ begin
   if (src.text <> '') then
     tgt.text := src.text;
 
-  if (src.subject <> nil) then
-    tgt.subject := convertReference(src.subject);
+//  if (src.subject <> nil) then
+//    tgt.subject := convertReference(src.subject);
 
   for t1 in src.answerList do
   begin
@@ -28680,14 +28686,18 @@ begin
   copyBackboneElement(src, tgt);
   tgt.kind := convertActionConditionKind(src.kind);
 
-  if (src.description <> '') then
-    tgt.description := src.description;
+  if (src.description <> '') or (src.language <> '') or (src.expression <> '') then
+  begin
+    tgt.expression := TFHIRExpression.Create;
+    if (src.description <> '') then
+      tgt.expression.description := src.description;
 
-  if (src.language <> '') then
-    tgt.language := src.language;
+    if (src.language <> '') then
+      tgt.expression.language := src.language;
 
-  if (src.expression <> '') then
-    tgt.expression := src.expression;
+    if (src.expression <> '') then
+      tgt.expression.expression := src.expression;
+  end;
 
   exit(tgt.link);
   finally
@@ -28706,14 +28716,17 @@ begin
   copyBackboneElement(src, tgt);
   tgt.kind := convertActionConditionKind(src.kind);
 
-  if (src.description <> '') then
-    tgt.description := src.description;
+  if src.expression <> nil then
+  begin
+    if (src.expression.description <> '') then
+      tgt.description := src.expression.description;
 
-  if (src.language <> '') then
-    tgt.language := src.language;
+    if (src.expression.language <> '') then
+      tgt.language := src.expression.language;
 
-  if (src.expression <> '') then
-    tgt.expression := src.expression;
+    if (src.expression.expression <> '') then
+      tgt.expression := src.expression.expression;
+  end;
 
   exit(tgt.link);
   finally
@@ -28816,17 +28829,22 @@ begin
   tgt := FHIR.R4.Resources.TFhirPlanDefinitionActionDynamicValue.Create();
   try
   copyBackboneElement(src, tgt);
-  if (src.description <> '') then
-    tgt.description := src.description;
 
   if (src.path <> '') then
     tgt.path := src.path;
 
-  if (src.language <> '') then
-    tgt.language := src.language;
+  if (src.description <> '') or (src.language <> '') or (src.expression <> '') then
+  begin
+    tgt.expression := TFhirExpression.Create;
+    if (src.description <> '') then
+      tgt.expression.description := src.description;
 
-  if (src.expression <> '') then
-    tgt.expression := src.expression;
+    if (src.language <> '') then
+      tgt.expression.language := src.language;
+
+    if (src.expression <> '') then
+      tgt.expression.expression := src.expression;
+  end;
 
   exit(tgt.link);
   finally
@@ -28843,17 +28861,20 @@ begin
   tgt := FHIR.R3.Resources.TFhirPlanDefinitionActionDynamicValue.Create();
   try
   copyBackboneElement(src, tgt);
-  if (src.description <> '') then
-    tgt.description := src.description;
-
   if (src.path <> '') then
     tgt.path := src.path;
 
-  if (src.language <> '') then
-    tgt.language := src.language;
+  if src.expression <> nil then
+  begin
+    if (src.expression.description <> '') then
+      tgt.description := src.expression.description;
 
-  if (src.expression <> '') then
-    tgt.expression := src.expression;
+    if (src.expression.language <> '') then
+      tgt.language := src.expression.language;
+
+    if (src.expression.expression <> '') then
+      tgt.expression := src.expression.expression;
+  end;
 
   exit(tgt.link);
   finally

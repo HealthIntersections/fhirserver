@@ -1075,7 +1075,7 @@ begin
   if resp.HTTPCode >= 300 then
     if (resp.Resource <> nil) and (resp.Resource.fhirType = 'OperationOutcome') then
     begin
-      oow := FContext.factory.wrapOperationOutcome(resp.Resource);
+      oow := FContext.factory.wrapOperationOutcome(resp.Resource.Link);
       try
         raise EFHIRClientException.Create(oow.text, oow.link);
       finally

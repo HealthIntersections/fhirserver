@@ -825,7 +825,7 @@ begin
   try
     for e in el do
     begin
-      ex := FFactory.wrapExtension(e);
+      ex := FFactory.wrapExtension(e.Link);
       try
         ctxt := doLocate(ex.value.primitiveValue);
         try
@@ -874,7 +874,7 @@ begin
                 ok := cp.value.primitiveValue = value;
               cptCoding:
                 begin
-                  coding := FFactory.wrapCoding(cp.value);
+                  coding := FFactory.wrapCoding(cp.value.Link);
                   try
                     ok := coding.code = value;
                   finally

@@ -171,7 +171,7 @@ type
     function wrapOperationOutcome(r : TFHIRResourceV) : TFhirOperationOutcomeW; virtual; abstract;
     function wrapBundle(r : TFHIRResourceV) : TFhirBundleW; virtual; abstract;
     function wrapParams(r : TFHIRResourceV) : TFHIRParametersW; virtual; abstract;
-    function wrapMeta(r : TFHIRResourceV) : TFhirMetaW; overload; virtual; abstract;
+    function wrapMeta(r : TFHIRResourceV) : TFhirMetaW; overload; virtual; abstract;  // speecial: does not take ownership
     function wrapMeta(r : TFHIRObject) : TFhirMetaW; overload; virtual; abstract;
     function wrapBinary(r : TFHIRResourceV) : TFhirBinaryW; virtual; abstract;
     function wrapAuditEvent(r : TFHIRResourceV) : TFhirAuditEventW; virtual; abstract;

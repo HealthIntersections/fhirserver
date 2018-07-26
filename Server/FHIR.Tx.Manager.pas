@@ -997,7 +997,7 @@ begin
       vs := FFactory.wrapValueSet(resource.link);
       try
         if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
-          FCommonTerminologies.FUcum.SetCommonUnits(factory.wrapValueSet(resource));
+          FCommonTerminologies.FUcum.SetCommonUnits(factory.wrapValueSet(resource.Link));
 
         FBaseValueSets.AddOrSetValue(vs.url, vs.Link);
         FValueSetsById.AddOrSetValue(vs.id, vs.Link);
@@ -1006,7 +1006,7 @@ begin
         begin
           if vs.hasInlineCS then
           begin
-            cs := FFactory.wrapCodeSystem(resource);
+            cs := FFactory.wrapCodeSystem(resource.Link);
             try
               AddCodeSystemToCache(cs, true);
             finally
@@ -1064,12 +1064,15 @@ begin
     begin
       vs := FFactory.wrapValueSet(resource.link);
       try
+        if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
+          FCommonTerminologies.FUcum.SetCommonUnits(vs.link);
+
         FValueSetsById.AddOrSetValue(vs.id, vs.Link);
         FValueSetsByUrl.AddOrSetValue(vs.url, vs.Link);
         invalidateVS(vs.url);
         if vs.hasInlineCS then
         begin
-          cs := FFactory.wrapCodeSystem(resource);
+          cs := FFactory.wrapCodeSystem(resource.Link);
           try
             AddCodeSystemToCache(cs, true);
           finally
@@ -1386,7 +1389,10 @@ begin
       result := ProviderClasses[system].Link
   end
   else if system = ANY_CODE_VS then
-    result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://hl7.org/fhir/v3/ActCode', '', nil))
+    if FFactory.version in [fhirVersionRelease2, fhirVersionRelease3] then
+      result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://hl7.org/fhir/v3/ActCode', '', nil))
+    else
+      result := TAllCodeSystemsProvider.create(FCommonTerminologies.link, getProvider('http://terminology.hl7.org/CodeSystem/v3-ActCode', '', nil))
   else
   begin
     FLock.Lock('getProvider');

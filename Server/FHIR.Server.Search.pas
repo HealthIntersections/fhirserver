@@ -995,7 +995,7 @@ begin
   end
   else if (name = '_group') then
   begin
-    group := factory.wrapGroup(fetchGroup(value));
+    group := factory.wrapGroup(fetchGroup(value).Link);
     try
       if group.hasMembers then
       begin

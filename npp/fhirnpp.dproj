@@ -118,7 +118,7 @@
         <VerInfo_Build>0</VerInfo_Build>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <Manifest_File>(None)</Manifest_File>
-        <DCC_ExeOutput>C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins</DCC_ExeOutput>
+        <DCC_ExeOutput>C:\Users\graha\AppData\Roaming\Notepad++\plugins</DCC_ExeOutput>
         <Debugger_HostApplication>C:\Program Files\Notepad++\notepad++.exe</Debugger_HostApplication>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
     </PropertyGroup>

@@ -17,12 +17,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 }
 
-unit FHIR.Npp.Base;
+unit FHIR.Npp.BaseFU;
 
 interface
 
 uses
-  Windows, Messages, FHIR.Npp.Scintilla, SysUtils,
+  Windows, Messages, FHIR.Npp.ScintillaFU, SysUtils,
   Vcl.Dialogs, Classes, Vcl.Forms;
 
 const
@@ -886,8 +886,8 @@ begin
   SetLength(s, StrLen(PChar(s)));
   filename := s;
 
-  r := SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.Scintilla.SCI_GETCURRENTPOS, 0, 0);
-  Line := SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.Scintilla.SCI_LINEFROMPOSITION, r, 0);
+  r := SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.ScintillaFU.SCI_GETCURRENTPOS, 0, 0);
+  Line := SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.ScintillaFU.SCI_LINEFROMPOSITION, r, 0);
 end;
 
 function TNppPlugin.GetFuncsArray(var FuncsCount: Integer): Pointer;
@@ -925,49 +925,33 @@ end;
 
 procedure TNppPlugin.BeNotified(sn: PSCNotification);
 begin
-  if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_TB_MODIFICATION) then
+  if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) then
   begin
-    self.DoNppnToolbarModification;
+    if (sn^.nmhdr.code = NPPN_TB_MODIFICATION) then
+      self.DoNppnToolbarModification
+    else if (sn^.nmhdr.code = NPPN_SHUTDOWN) then
+      self.DoNppnShutdown
+    else if (sn^.nmhdr.code = NPPN_READY) then
+      self.DoNppnReady
+    else if (sn^.nmhdr.code = NPPN_FILEOPENED) then
+      self.DoNppnFileOpened
+    else if (sn^.nmhdr.code = NPPN_FILEBEFORECLOSE) then
+      self.DoNppnFilebeforeClose
+    else if (sn^.nmhdr.code = NPPN_FILECLOSED) then
+      self.DoNppnFileClosed
+    else if (sn^.nmhdr.code = NPPN_BUFFERACTIVATED) then
+      self.DoNppnBufferChange
   end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_SHUTDOWN) then
+  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) then
   begin
-    self.DoNppnShutdown;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_READY) then
-  begin
-    self.DoNppnReady;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILEOPENED) then
-  begin
-    self.DoNppnFileOpened;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILEBEFORECLOSE) then
-  begin
-    self.DoNppnFilebeforeClose;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILECLOSED) then
-  begin
-    self.DoNppnFileClosed;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_BUFFERACTIVATED) then
-  begin
-    self.DoNppnBufferChange;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_MODIFIED) then
-  begin
-    self.DoNppnTextModified;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_UPDATEUI) then
-  begin
-    self.DoStateChanged;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_DWELLSTART) then
-  begin
-    self.DoNppnDwellStart(sn^.position);
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_DWELLEND) then
-  begin
-    self.DoNppnDwellEnd;
+    if (sn^.nmhdr.code = SCN_MODIFIED) then
+      self.DoNppnTextModified
+    else if (sn^.nmhdr.code = SCN_UPDATEUI) then
+      self.DoStateChanged
+    else if (sn^.nmhdr.code = SCN_DWELLSTART) then
+      self.DoNppnDwellStart(sn^.position)
+    else if (sn^.nmhdr.code = SCN_DWELLEND) then
+      self.DoNppnDwellEnd
   end;
   // @todo
 end;
@@ -1053,7 +1037,7 @@ var
 begin
   r := self.DoOpen(filename);
   if (r) then
-    SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.Scintilla.SCI_GOTOLINE, Line,0);
+    SendMessage(self.NppData.ScintillaMainHandle, FHIR.Npp.ScintillaFU.SCI_GOTOLINE, Line,0);
   Result := r;
 end;
 

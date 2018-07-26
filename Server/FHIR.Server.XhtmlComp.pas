@@ -129,7 +129,7 @@ var
 begin
   if (res.fhirType = 'Bundle') then
   begin
-    b := FFactory.wrapBundle(res);
+    b := FFactory.wrapBundle(res.link);
     try
       composeBundle(stream, b);
     finally

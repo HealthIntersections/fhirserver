@@ -637,7 +637,7 @@ function TFHIRFactoryR4.makeBinary(content: TBytes; contentType: String): TFHIRR
 begin
   result := TFhirBinary.Create;
   try
-    TFhirBinary(result).content := content;
+    TFhirBinary(result).data := content;
     TFhirBinary(result).contentType := contentType;
     result.link;
   finally

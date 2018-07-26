@@ -835,7 +835,7 @@ begin
                 try
                   for p in params.parameterList do
                     if p.Name = 'concept' then
-                      concepts.Add(FFactory.wrapCoding(p.value));
+                      concepts.Add(FFactory.wrapCoding(p.value.Link));
                   // cm.processConcepts(FConnection, concepts, map);
                 finally
                   concepts.Free;

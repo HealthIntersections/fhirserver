@@ -150,11 +150,18 @@ begin
   raise EFHIRException.create('Test');
 end;
 
+function endpoint : String;
+begin
+  if not FindCmdLineSwitch('endpoint', result, true, [clstValueNextParam]) then
+    raise Exception.Create('No endpoint parameter supplied');
+end;
+
 procedure ExecuteFhirServer;
 var
   iniName : String;
   svcName : String;
   dispName : String;
+  cmd : String;
   dir, fn, fn2, ver, ldate, lver, dest, name : String;
   svc : TFHIRService;
   ini : TIniFile;
@@ -197,65 +204,74 @@ begin
           end;
 
           svc.FLoadStore := not FindCmdLineSwitch('noload');
-          if FindCmdLineSwitch('manager') then
+
+          if FindCmdLineSwitch('cmd', cmd, true, [clstValueNextParam]) then
           begin
-            ServerManagerForm := TServerManagerForm.Create(nil);
-            try
-              ServerManagerForm.ShowModal;
-            finally
-              FreeAndNil(ServerManagerForm);
-            end;
-          end
-          else if FindCmdLineSwitch('mount', fn, true, [clstValueNextParam]) then
-          begin
-            name:= svc.InstallDatabase(fn);
-            if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-              ImportUnii(fn,  svc.FDatabases[name]);
-          end
-          else if FindCmdLineSwitch('unmount', fn, true, [clstValueNextParam]) then
-            svc.UninstallDatabase(fn)
-          else if FindCmdLineSwitch('remount', fn, true, [clstValueNextParam]) then
-          begin
-            svc.DebugMode := true;
-            svc.FNotServing := true;
-            svc.UninstallDatabase(fn);
-            name := svc.InstallDatabase(fn);
-            if FindCmdLineSwitch('unii', fn2, true, [clstValueNextParam]) then
-              ImportUnii(fn2, svc.FDatabases[name]);
-//            if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-//              svc.LoadByProfile(fn, true)
-//            else
-            if FindCmdLineSwitch('load', fn2, true, [clstValueNextParam]) then
-              svc.Load(fn, fn2);
-          end
-          else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
-          begin
-            svc.DebugMode := true;
-            svc.FNotServing := true;
-//            svc.Load(fn);
-          end
-          else if FindCmdLineSwitch('txdirect', fn, true, [clstValueNextParam]) then
-          begin
-            svc.UninstallDatabase(fn);
-            svc.InstallDatabase(fn);
-            svc.ConsoleExecute;
-          end
-//          else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-//            svc.LoadByProfile(fn, false)
-          else if FindCmdLineSwitch('validate') then
-          begin
-            svc.FNotServing := true;
-            svc.validate;
-          end
-          else if FindCmdLineSwitch('index') then
-            svc.index
-          else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-          begin
-           svc.ConnectToDatabases;
-           // ImportUnii(fn, svc.Fdb)
+            if cmd = 'manager' then
+            begin
+              ServerManagerForm := TServerManagerForm.Create(nil);
+              try
+                ServerManagerForm.ShowModal;
+              finally
+                FreeAndNil(ServerManagerForm);
+              end;
+            end
+            else if cmd = 'mount' then
+            begin
+              name:= svc.InstallDatabase(endpoint);
+              if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+                ImportUnii(fn,  svc.FDatabases[name]);
+            end
+            else if cmd = 'unmount' then
+              svc.UninstallDatabase(endpoint)
+            else if cmd = 'remount' then
+            begin
+              svc.DebugMode := true;
+              svc.FNotServing := true;
+              svc.UninstallDatabase(endpoint);
+              name := svc.InstallDatabase(endpoint);
+              if FindCmdLineSwitch('unii', fn2, true, [clstValueNextParam]) then
+                ImportUnii(fn2, svc.FDatabases[name]);
+  //            if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+  //              svc.LoadByProfile(fn, true)
+  //            else
+              if FindCmdLineSwitch('load', fn2, true, [clstValueNextParam]) then
+                svc.Load(endpoint, fn2);
+            end
+            else if cmd = 'load' then
+            begin
+              svc.DebugMode := true;
+              svc.FNotServing := true;
+  //            svc.Load(fn);
+            end
+            else if cmd = 'txdirect' then
+            begin
+              svc.UninstallDatabase(fn);
+              svc.InstallDatabase(fn);
+              svc.ConsoleExecute;
+            end
+  //          else if cmd = 'profile' then
+  //            svc.LoadByProfile(fn, false)
+            else if cmd = 'validate' then
+            begin
+              svc.FNotServing := true;
+              svc.validate;
+            end
+            else if cmd = 'index' then
+              svc.index
+            else if cmd = 'unii' then
+            begin
+              svc.ConnectToDatabases;
+             // ImportUnii(fn, svc.Fdb)
+            end
+            else if cmd = 'exec' then
+              svc.ConsoleExecute
+            else
+              raise Exception.Create('Unknown command '+cmd);
           end
           else
           begin
+            writeln('No -cmd parameter - exiting now'); // won't see this if an actual service
             svc.Execute;
           end;
         finally

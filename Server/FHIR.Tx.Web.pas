@@ -688,7 +688,7 @@ function TTerminologyWebServer.paramsAsHtml(p: TFhirResourceV): String;
 var
   pw : TFHIRParametersW;
 begin
-  pw := FWorker.Factory.wrapParams(p);
+  pw := FWorker.Factory.wrapParams(p.Link);
   try
     result := paramsAsHtml(pw);
   finally

@@ -54,7 +54,7 @@ const
   MAP_TFilterOperator : array [TFhirFilterOperatorEnum] of TFilterOperator = (foNull, foEqual, foIsA, foIsNotA, foRegex, foIn, foNotIn);
   MAP_TFilterOperator2 : array [TFilterOperator] of TFHIRFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorNull, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorNull, filterOperatorNull);
   MAP_TFHIRSearchParamType1 : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptNull, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri);
-  MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri);
+  MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri, SearchParamTypeNull);
   MAP_TPublicationStatus : array [TPublicationStatus] of TFhirConformanceResourceStatusEnum = (ConformanceResourceStatusNull, ConformanceResourceStatusDraft, ConformanceResourceStatusActive, ConformanceResourceStatusRetired);
   MAP_TPublicationStatusR : array [TFhirConformanceResourceStatusEnum] of TPublicationStatus = (psNull, psDraft, psActive, psRetired);
   MAP_TFHIRConceptEquivalence : array [TFhirConceptMapEquivalenceEnum] of TFHIRConceptEquivalence = (cmeNull, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact, cmeUnmatched, cmeDisjoint);
@@ -3736,7 +3736,7 @@ end;
 
 procedure TFhirCodeableConcept2.addCoding(coding: TFHIRCodingW);
 begin
-  (Element as TFhirCodeableConcept).codingList.Add(coding.Element as TFHIRCoding);
+  (Element as TFhirCodeableConcept).codingList.Add((coding.Element as TFHIRCoding).link);
 end;
 
 function TFhirCodeableConcept2.addCoding: TFHIRCodingW;

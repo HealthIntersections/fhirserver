@@ -40,7 +40,7 @@ begin
   if oResource.fhirType = 'Bundle' then
   begin
     first := true;
-    b := FFactory.wrapBundle(oResource);
+    b := FFactory.wrapBundle(oResource.link);
     try
       for be in b.entries.forEnum do
       begin

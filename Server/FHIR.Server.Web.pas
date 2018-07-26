@@ -2095,7 +2095,7 @@ begin
               p.Parse;
               if p.resource.fhirType = 'Bundle' then
               begin
-                bnd := factory.wrapBundle(p.resource);
+                bnd := factory.wrapBundle(p.resource.Link);
                 try
                 case bnd.type_ of
                   btDocument, btMessage, btHistory, btSearchset, btCollection:
@@ -2210,7 +2210,7 @@ begin
             oComp := factory.makeComposer(FContext.ValidatorContext.link, ffJson, oRequest.lang, style)
           else if oResponse.format = ffXhtml then
           begin
-            oComp := TFHIRXhtmlComposer.Create(FContext.ValidatorContext.link, style, oRequest.lang);
+            oComp := TFHIRXhtmlComposer.Create(FContext.ValidatorContext.link, style, oRequest.lang, oRequest.baseUrl);
             TFHIRXhtmlComposer(oComp).baseUrl := AppendForwardSlash(oRequest.baseUrl);
             TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
             TFHIRXhtmlComposer(oComp).Session := oRequest.Session.link;

@@ -801,6 +801,7 @@ begin
   try
     map := TFslMap<TPropertyWrapper>.create;
     try
+      map.defaultValue := nil;
       for p in children do
         if (p.getName() = 'extension') or (p.getName() = 'modifierExtension') then
         begin

@@ -570,7 +570,7 @@ begin
   FCommonUnits := vs;
   FCommonUnitList := nil;
   for inc in FCommonUnits.includes.forEnum do
-    if FCommonUnitList <> nil then
+    if FCommonUnitList = nil then
       FCommonUnitList := inc.concepts.link;
 end;
 

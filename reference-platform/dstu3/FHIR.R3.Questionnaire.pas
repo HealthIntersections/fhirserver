@@ -379,7 +379,7 @@ begin
     begin
       vs := TFhirValueSet(Fprofile.contained[ref.reference.Substring(1)]);
       try
-        v := FFactory.wrapValueSet(vs);
+        v := FFactory.wrapValueSet(vs.Link);
         try
           vsw := OnExpand(v, '', FLang, MaxListboxCodings, 0, 0, false, dependencies);
           try

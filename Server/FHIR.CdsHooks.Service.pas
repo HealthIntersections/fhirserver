@@ -394,7 +394,7 @@ var
 //  r : TFhirResource;
 begin
   require((request.context.Count = 1) and (request.context[0].fhirType = 'Parameters'), 'Must have a single parameters resource as the context');
-  params := server.Factory.wrapParams(request.context[0]);
+  params := server.Factory.wrapParams(request.context[0].link);
   try
 //    require(params.param('identifier') <> nil, 'No "identifier" parameter found');
 //    require((params.param('identifier').fhirType = 'Identifier', '"identifier" parameter has wrong type '+params.param('identifier').fhirType);

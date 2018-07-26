@@ -33,7 +33,7 @@ unit FHIR.R4.Constants;
 
 interface
 
-// FHIR v3.4.0 generated 2018-07-19T12:02:16+10:00
+// FHIR v3.4.0 generated 2018-07-25T14:31:35+10:00
 
 uses
   SysUtils, Classes,
@@ -76,7 +76,11 @@ Type
     spActivityDefinition__tag, 
     spActivityDefinition__text, 
     spActivityDefinition_Composedof, 
+    spActivityDefinition_Context, 
+    spActivityDefinition_Contextquantity, 
     spActivityDefinition_Contexttype, 
+    spActivityDefinition_Contexttypequantity, 
+    spActivityDefinition_Contexttypevalue, 
     spActivityDefinition_Date, 
     spActivityDefinition_Dependson, 
     spActivityDefinition_Derivedfrom, 
@@ -324,6 +328,11 @@ Type
     spCapabilityStatement__source, 
     spCapabilityStatement__tag, 
     spCapabilityStatement__text, 
+    spCapabilityStatement_Context, 
+    spCapabilityStatement_Contextquantity, 
+    spCapabilityStatement_Contexttype, 
+    spCapabilityStatement_Contexttypequantity, 
+    spCapabilityStatement_Contexttypevalue, 
     spCapabilityStatement_Date, 
     spCapabilityStatement_Description, 
     spCapabilityStatement_Fhirversion, 
@@ -445,7 +454,11 @@ Type
     spChargeItemDefinition__source, 
     spChargeItemDefinition__tag, 
     spChargeItemDefinition__text, 
+    spChargeItemDefinition_Context, 
+    spChargeItemDefinition_Contextquantity, 
     spChargeItemDefinition_Contexttype, 
+    spChargeItemDefinition_Contexttypequantity, 
+    spChargeItemDefinition_Contexttypevalue, 
     spChargeItemDefinition_Date, 
     spChargeItemDefinition_Description, 
     spChargeItemDefinition_Effective, 
@@ -550,6 +563,11 @@ Type
     spCodeSystem__text, 
     spCodeSystem_Code, 
     spCodeSystem_Contentmode, 
+    spCodeSystem_Context, 
+    spCodeSystem_Contextquantity, 
+    spCodeSystem_Contexttype, 
+    spCodeSystem_Contexttypequantity, 
+    spCodeSystem_Contexttypevalue, 
     spCodeSystem_Date, 
     spCodeSystem_Description, 
     spCodeSystem_Identifier, 
@@ -639,15 +657,17 @@ Type
     spCompartmentDefinition__tag, 
     spCompartmentDefinition__text, 
     spCompartmentDefinition_Code, 
+    spCompartmentDefinition_Context, 
+    spCompartmentDefinition_Contextquantity, 
     spCompartmentDefinition_Contexttype, 
+    spCompartmentDefinition_Contexttypequantity, 
+    spCompartmentDefinition_Contexttypevalue, 
     spCompartmentDefinition_Date, 
     spCompartmentDefinition_Description, 
-    spCompartmentDefinition_Jurisdiction, 
     spCompartmentDefinition_Name, 
     spCompartmentDefinition_Publisher, 
     spCompartmentDefinition_Resource, 
     spCompartmentDefinition_Status, 
-    spCompartmentDefinition_Title, 
     spCompartmentDefinition_Url, 
     spCompartmentDefinition_Version); 
 {$ENDIF}
@@ -696,6 +716,11 @@ Type
     spConceptMap__source, 
     spConceptMap__tag, 
     spConceptMap__text, 
+    spConceptMap_Context, 
+    spConceptMap_Contextquantity, 
+    spConceptMap_Contexttype, 
+    spConceptMap_Contexttypequantity, 
+    spConceptMap_Contexttypevalue, 
     spConceptMap_Date, 
     spConceptMap_Dependson, 
     spConceptMap_Description, 
@@ -1246,6 +1271,11 @@ Type
     spEventDefinition__tag, 
     spEventDefinition__text, 
     spEventDefinition_Composedof, 
+    spEventDefinition_Context, 
+    spEventDefinition_Contextquantity, 
+    spEventDefinition_Contexttype, 
+    spEventDefinition_Contexttypequantity, 
+    spEventDefinition_Contexttypevalue, 
     spEventDefinition_Date, 
     spEventDefinition_Dependson, 
     spEventDefinition_Derivedfrom, 
@@ -1276,6 +1306,11 @@ Type
     spExampleScenario__source, 
     spExampleScenario__tag, 
     spExampleScenario__text, 
+    spExampleScenario_Context, 
+    spExampleScenario_Contextquantity, 
+    spExampleScenario_Contexttype, 
+    spExampleScenario_Contexttypequantity, 
+    spExampleScenario_Contexttypevalue, 
     spExampleScenario_Date, 
     spExampleScenario_Identifier, 
     spExampleScenario_Jurisdiction, 
@@ -1389,6 +1424,11 @@ Type
     spGraphDefinition__source, 
     spGraphDefinition__tag, 
     spGraphDefinition__text, 
+    spGraphDefinition_Context, 
+    spGraphDefinition_Contextquantity, 
+    spGraphDefinition_Contexttype, 
+    spGraphDefinition_Contexttypequantity, 
+    spGraphDefinition_Contexttypevalue, 
     spGraphDefinition_Date, 
     spGraphDefinition_Description, 
     spGraphDefinition_Jurisdiction, 
@@ -1581,6 +1621,11 @@ Type
     spImplementationGuide__source, 
     spImplementationGuide__tag, 
     spImplementationGuide__text, 
+    spImplementationGuide_Context, 
+    spImplementationGuide_Contextquantity, 
+    spImplementationGuide_Contexttype, 
+    spImplementationGuide_Contexttypequantity, 
+    spImplementationGuide_Contexttypevalue, 
     spImplementationGuide_Date, 
     spImplementationGuide_Dependson, 
     spImplementationGuide_Description, 
@@ -1650,6 +1695,11 @@ Type
     spLibrary__tag, 
     spLibrary__text, 
     spLibrary_Composedof, 
+    spLibrary_Context, 
+    spLibrary_Contextquantity, 
+    spLibrary_Contexttype, 
+    spLibrary_Contexttypequantity, 
+    spLibrary_Contexttypevalue, 
     spLibrary_Date, 
     spLibrary_Dependson, 
     spLibrary_Derivedfrom, 
@@ -1755,6 +1805,11 @@ Type
     spMeasure__tag, 
     spMeasure__text, 
     spMeasure_Composedof, 
+    spMeasure_Context, 
+    spMeasure_Contextquantity, 
+    spMeasure_Contexttype, 
+    spMeasure_Contexttypequantity, 
+    spMeasure_Contexttypevalue, 
     spMeasure_Date, 
     spMeasure_Dependson, 
     spMeasure_Derivedfrom, 
@@ -1785,8 +1840,13 @@ Type
     spMeasureReport__source, 
     spMeasureReport__tag, 
     spMeasureReport__text, 
+    spMeasureReport_Date, 
+    spMeasureReport_Evaluatedresource, 
     spMeasureReport_Identifier, 
+    spMeasureReport_Measure, 
     spMeasureReport_Patient, 
+    spMeasureReport_Period, 
+    spMeasureReport_Reporter, 
     spMeasureReport_Status, 
     spMeasureReport_Subject); 
 {$ENDIF}
@@ -2104,6 +2164,11 @@ Type
     spMessageDefinition__tag, 
     spMessageDefinition__text, 
     spMessageDefinition_Category, 
+    spMessageDefinition_Context, 
+    spMessageDefinition_Contextquantity, 
+    spMessageDefinition_Contexttype, 
+    spMessageDefinition_Contexttypequantity, 
+    spMessageDefinition_Contexttypevalue, 
     spMessageDefinition_Date, 
     spMessageDefinition_Description, 
     spMessageDefinition_Event, 
@@ -2159,6 +2224,11 @@ Type
     spNamingSystem__tag, 
     spNamingSystem__text, 
     spNamingSystem_Contact, 
+    spNamingSystem_Context, 
+    spNamingSystem_Contextquantity, 
+    spNamingSystem_Contexttype, 
+    spNamingSystem_Contexttypequantity, 
+    spNamingSystem_Contexttypevalue, 
     spNamingSystem_Date, 
     spNamingSystem_Description, 
     spNamingSystem_Idtype, 
@@ -2282,7 +2352,11 @@ Type
     spOperationDefinition__text, 
     spOperationDefinition_Base, 
     spOperationDefinition_Code, 
+    spOperationDefinition_Context, 
+    spOperationDefinition_Contextquantity, 
     spOperationDefinition_Contexttype, 
+    spOperationDefinition_Contexttypequantity, 
+    spOperationDefinition_Contexttypevalue, 
     spOperationDefinition_Date, 
     spOperationDefinition_Description, 
     spOperationDefinition_Inputprofile, 
@@ -2294,6 +2368,7 @@ Type
     spOperationDefinition_Publisher, 
     spOperationDefinition_Status, 
     spOperationDefinition_System, 
+    spOperationDefinition_Title, 
     spOperationDefinition_Type, 
     spOperationDefinition_Url, 
     spOperationDefinition_Version); 
@@ -2495,6 +2570,11 @@ Type
     spPlanDefinition__tag, 
     spPlanDefinition__text, 
     spPlanDefinition_Composedof, 
+    spPlanDefinition_Context, 
+    spPlanDefinition_Contextquantity, 
+    spPlanDefinition_Contexttype, 
+    spPlanDefinition_Contexttypequantity, 
+    spPlanDefinition_Contexttypevalue, 
     spPlanDefinition_Date, 
     spPlanDefinition_Definition, 
     spPlanDefinition_Dependson, 
@@ -2706,7 +2786,11 @@ Type
     spQuestionnaire__tag, 
     spQuestionnaire__text, 
     spQuestionnaire_Code, 
+    spQuestionnaire_Context, 
+    spQuestionnaire_Contextquantity, 
     spQuestionnaire_Contexttype, 
+    spQuestionnaire_Contexttypequantity, 
+    spQuestionnaire_Contexttypevalue, 
     spQuestionnaire_Date, 
     spQuestionnaire_Definition, 
     spQuestionnaire_Description, 
@@ -2911,7 +2995,11 @@ Type
     spSearchParameter_Base, 
     spSearchParameter_Code, 
     spSearchParameter_Component, 
+    spSearchParameter_Context, 
+    spSearchParameter_Contextquantity, 
     spSearchParameter_Contexttype, 
+    spSearchParameter_Contexttypequantity, 
+    spSearchParameter_Contexttypevalue, 
     spSearchParameter_Date, 
     spSearchParameter_Derivedfrom, 
     spSearchParameter_Description, 
@@ -3058,6 +3146,11 @@ Type
     spStructureDefinition_Abstract, 
     spStructureDefinition_Base, 
     spStructureDefinition_Basepath, 
+    spStructureDefinition_Context, 
+    spStructureDefinition_Contextquantity, 
+    spStructureDefinition_Contexttype, 
+    spStructureDefinition_Contexttypequantity, 
+    spStructureDefinition_Contexttypevalue, 
     spStructureDefinition_Date, 
     spStructureDefinition_Derivation, 
     spStructureDefinition_Description, 
@@ -3090,6 +3183,11 @@ Type
     spStructureMap__source, 
     spStructureMap__tag, 
     spStructureMap__text, 
+    spStructureMap_Context, 
+    spStructureMap_Contextquantity, 
+    spStructureMap_Contexttype, 
+    spStructureMap_Contexttypequantity, 
+    spStructureMap_Contexttypevalue, 
     spStructureMap_Date, 
     spStructureMap_Description, 
     spStructureMap_Identifier, 
@@ -3271,6 +3369,11 @@ Type
     spTerminologyCapabilities__source, 
     spTerminologyCapabilities__tag, 
     spTerminologyCapabilities__text, 
+    spTerminologyCapabilities_Context, 
+    spTerminologyCapabilities_Contextquantity, 
+    spTerminologyCapabilities_Contexttype, 
+    spTerminologyCapabilities_Contexttypequantity, 
+    spTerminologyCapabilities_Contexttypevalue, 
     spTerminologyCapabilities_Date, 
     spTerminologyCapabilities_Description, 
     spTerminologyCapabilities_Jurisdiction, 
@@ -3314,6 +3417,11 @@ Type
     spTestScript__source, 
     spTestScript__tag, 
     spTestScript__text, 
+    spTestScript_Context, 
+    spTestScript_Contextquantity, 
+    spTestScript_Contexttype, 
+    spTestScript_Contexttypequantity, 
+    spTestScript_Contexttypevalue, 
     spTestScript_Date, 
     spTestScript_Description, 
     spTestScript_Identifier, 
@@ -3360,6 +3468,11 @@ Type
     spValueSet__tag, 
     spValueSet__text, 
     spValueSet_Code, 
+    spValueSet_Context, 
+    spValueSet_Contextquantity, 
+    spValueSet_Contexttype, 
+    spValueSet_Contexttypequantity, 
+    spValueSet_Contexttypevalue, 
     spValueSet_Date, 
     spValueSet_Description, 
     spValueSet_Expansion, 
@@ -4120,7 +4233,7 @@ Const
   CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_ACTIVITYDEFINITION}
-  CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context-type', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_ADVERSEEVENT}
   CODES_TSearchParamsAdverseEvent : Array[TSearchParamsAdverseEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'actuality', 'category', 'date', 'event', 'location', 'recorder', 'resultingcondition', 'seriousness', 'severity', 'study', 'subject', 'substance');
@@ -4153,7 +4266,7 @@ Const
   CODES_TSearchParamsBundle : Array[TSearchParamsBundle] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', 'composition', 'identifier', 'message', 'timestamp', 'type');
 {$ENDIF}
 {$IFDEF FHIR_CAPABILITYSTATEMENT}
-  CODES_TSearchParamsCapabilityStatement : Array[TSearchParamsCapabilityStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'fhirversion', 'format', 'guide', 'jurisdiction', 'mode', 'name', 'publisher', 'resource', 'resource-profile', 'security-service', 'software', 'status', 'supported-profile', 'title', 'url', 'version');
+  CODES_TSearchParamsCapabilityStatement : Array[TSearchParamsCapabilityStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'fhirversion', 'format', 'guide', 'jurisdiction', 'mode', 'name', 'publisher', 'resource', 'resource-profile', 'security-service', 'software', 'status', 'supported-profile', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_CAREPLAN}
   CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'activity-code', 'activity-date', 'activity-reference', 'based-on', 'care-team', 'category', 'condition', 'context', 'date', 'encounter', 'goal', 'identifier', 'instantiates-canonical', 'instantiates-uri', 'intent', 'part-of', 'patient', 'performer', 'replaces', 'status', 'subject');
@@ -4165,7 +4278,7 @@ Const
   CODES_TSearchParamsChargeItem : Array[TSearchParamsChargeItem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'account', 'code', 'context', 'entered-date', 'enterer', 'factor-override', 'identifier', 'occurrence', 'patient', 'performer-actor', 'performer-function', 'performing-organization', 'price-override', 'quantity', 'requesting-organization', 'service', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_CHARGEITEMDEFINITION}
-  CODES_TSearchParamsChargeItemDefinition : Array[TSearchParamsChargeItemDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context-type', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsChargeItemDefinition : Array[TSearchParamsChargeItemDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_CLAIM}
   CODES_TSearchParamsClaim : Array[TSearchParamsClaim] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-team', 'created', 'encounter', 'enterer', 'facility', 'identifier', 'insurer', 'patient', 'payee', 'priority', 'provider', 'status', 'use');
@@ -4177,7 +4290,7 @@ Const
   CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'identifier', 'investigation', 'patient', 'previous', 'problem', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_CODESYSTEM}
-  CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'content-mode', 'date', 'description', 'identifier', 'jurisdiction', 'language', 'name', 'publisher', 'status', 'supplements', 'system', 'title', 'url', 'version');
+  CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'content-mode', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'identifier', 'jurisdiction', 'language', 'name', 'publisher', 'status', 'supplements', 'system', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_COMMUNICATION}
   CODES_TSearchParamsCommunication : Array[TSearchParamsCommunication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'context', 'encounter', 'identifier', 'instantiates-canonical', 'instantiates-uri', 'medium', 'part-of', 'patient', 'received', 'recipient', 'sender', 'sent', 'status', 'subject');
@@ -4186,13 +4299,13 @@ Const
   CODES_TSearchParamsCommunicationRequest : Array[TSearchParamsCommunicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored', 'based-on', 'category', 'context', 'encounter', 'group-identifier', 'identifier', 'medium', 'occurrence', 'patient', 'priority', 'recipient', 'replaces', 'requester', 'sender', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_COMPARTMENTDEFINITION}
-  CODES_TSearchParamsCompartmentDefinition : Array[TSearchParamsCompartmentDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context-type', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsCompartmentDefinition : Array[TSearchParamsCompartmentDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'name', 'publisher', 'resource', 'status', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_COMPOSITION}
   CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'attester', 'author', 'class', 'confidentiality', 'context', 'date', 'encounter', 'entry', 'identifier', 'patient', 'period', 'related-id', 'related-ref', 'section', 'status', 'subject', 'title', 'type');
 {$ENDIF}
 {$IFDEF FHIR_CONCEPTMAP}
-  CODES_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dependson', 'description', 'identifier', 'jurisdiction', 'name', 'other', 'product', 'publisher', 'source', 'source-code', 'source-system', 'source-uri', 'status', 'target', 'target-code', 'target-system', 'target-uri', 'title', 'url', 'version');
+  CODES_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'dependson', 'description', 'identifier', 'jurisdiction', 'name', 'other', 'product', 'publisher', 'source', 'source-code', 'source-system', 'source-uri', 'status', 'target', 'target-code', 'target-system', 'target-uri', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_CONDITION}
   CODES_TSearchParamsCondition : Array[TSearchParamsCondition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'abatement-age', 'abatement-date', 'abatement-string', 'asserter', 'body-site', 'category', 'clinical-status', 'code', 'context', 'encounter', 'evidence', 'evidence-detail', 'identifier', 'onset-age', 'onset-date', 'onset-info', 'patient', 'recorded-date', 'severity', 'stage', 'subject', 'verification-status');
@@ -4258,10 +4371,10 @@ Const
   CODES_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-manager', 'condition', 'date', 'identifier', 'incomingreferral', 'organization', 'patient', 'status', 'type');
 {$ENDIF}
 {$IFDEF FHIR_EVENTDEFINITION}
-  CODES_TSearchParamsEventDefinition : Array[TSearchParamsEventDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsEventDefinition : Array[TSearchParamsEventDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_EXAMPLESCENARIO}
-  CODES_TSearchParamsExampleScenario : Array[TSearchParamsExampleScenario] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
+  CODES_TSearchParamsExampleScenario : Array[TSearchParamsExampleScenario] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   CODES_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-team', 'claim', 'coverage', 'created', 'disposition', 'encounter', 'enterer', 'facility', 'identifier', 'patient', 'payee', 'provider', 'status');
@@ -4276,7 +4389,7 @@ Const
   CODES_TSearchParamsGoal : Array[TSearchParamsGoal] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'identifier', 'patient', 'start-date', 'status', 'subject', 'target-date');
 {$ENDIF}
 {$IFDEF FHIR_GRAPHDEFINITION}
-  CODES_TSearchParamsGraphDefinition : Array[TSearchParamsGraphDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'start', 'status', 'url', 'version');
+  CODES_TSearchParamsGraphDefinition : Array[TSearchParamsGraphDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'start', 'status', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_GROUP}
   CODES_TSearchParamsGroup : Array[TSearchParamsGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'actual', 'characteristic', 'characteristic-value', 'code', 'exclude', 'identifier', 'member', 'type', 'value');
@@ -4300,7 +4413,7 @@ Const
   CODES_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dose-number', 'dose-sequence', 'identifier', 'information', 'patient', 'status', 'support', 'target-disease', 'vaccine-type');
 {$ENDIF}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'depends-on', 'description', 'experimental', 'global', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'description', 'experimental', 'global', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_INVOICE}
   CODES_TSearchParamsInvoice : Array[TSearchParamsInvoice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'account', 'date', 'identifier', 'issuer', 'participant', 'participant-role', 'patient', 'recipient', 'status', 'subject', 'totalgross', 'totalnet', 'type');
@@ -4309,7 +4422,7 @@ Const
   CODES_TSearchParamsItemInstance : Array[TSearchParamsItemInstance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_LIBRARY}
-  CODES_TSearchParamsLibrary : Array[TSearchParamsLibrary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'type', 'url', 'version');
+  CODES_TSearchParamsLibrary : Array[TSearchParamsLibrary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'type', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_LINKAGE}
   CODES_TSearchParamsLinkage : Array[TSearchParamsLinkage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'item', 'source');
@@ -4321,10 +4434,10 @@ Const
   CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'near', 'near-distance', 'operational-status', 'organization', 'partof', 'status', 'type');
 {$ENDIF}
 {$IFDEF FHIR_MEASURE}
-  CODES_TSearchParamsMeasure : Array[TSearchParamsMeasure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsMeasure : Array[TSearchParamsMeasure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_MEASUREREPORT}
-  CODES_TSearchParamsMeasureReport : Array[TSearchParamsMeasureReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'patient', 'status', 'subject');
+  CODES_TSearchParamsMeasureReport : Array[TSearchParamsMeasureReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'evaluated-resource', 'identifier', 'measure', 'patient', 'period', 'reporter', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_MEDIA}
   CODES_TSearchParamsMedia : Array[TSearchParamsMedia] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'context', 'created', 'device', 'identifier', 'modality', 'operator', 'patient', 'site', 'status', 'subject', 'type', 'view');
@@ -4372,13 +4485,13 @@ Const
   CODES_TSearchParamsMedicinalProductPharmaceutical : Array[TSearchParamsMedicinalProductPharmaceutical] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_MESSAGEDEFINITION}
-  CODES_TSearchParamsMessageDefinition : Array[TSearchParamsMessageDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'date', 'description', 'event', 'focus', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsMessageDefinition : Array[TSearchParamsMessageDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'event', 'focus', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_MESSAGEHEADER}
   CODES_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'code', 'destination', 'destination-uri', 'enterer', 'event', 'focus', 'receiver', 'response-id', 'responsible', 'sender', 'source', 'source-uri', 'target');
 {$ENDIF}
 {$IFDEF FHIR_NAMINGSYSTEM}
-  CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'contact', 'date', 'description', 'id-type', 'jurisdiction', 'kind', 'name', 'period', 'publisher', 'responsible', 'status', 'telecom', 'type', 'value');
+  CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'contact', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'id-type', 'jurisdiction', 'kind', 'name', 'period', 'publisher', 'responsible', 'status', 'telecom', 'type', 'value');
 {$ENDIF}
 {$IFDEF FHIR_NUTRITIONORDER}
   CODES_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'additive', 'context', 'datetime', 'formula', 'identifier', 'oraldiet', 'patient', 'provider', 'status', 'supplement');
@@ -4390,7 +4503,7 @@ Const
   CODES_TSearchParamsObservationDefinition : Array[TSearchParamsObservationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_OPERATIONDEFINITION}
-  CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'base', 'code', 'context-type', 'date', 'description', 'input-profile', 'instance', 'jurisdiction', 'kind', 'name', 'output-profile', 'publisher', 'status', 'system', 'type', 'url', 'version');
+  CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'base', 'code', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'input-profile', 'instance', 'jurisdiction', 'kind', 'name', 'output-profile', 'publisher', 'status', 'system', 'title', 'type', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_OPERATIONOUTCOME}
   CODES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
@@ -4414,7 +4527,7 @@ Const
   CODES_TSearchParamsPerson : Array[TSearchParamsPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'link', 'name', 'organization', 'patient', 'phone', 'phonetic', 'practitioner', 'relatedperson', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_PLANDEFINITION}
-  CODES_TSearchParamsPlanDefinition : Array[TSearchParamsPlanDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'definition', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'type', 'url', 'version');
+  CODES_TSearchParamsPlanDefinition : Array[TSearchParamsPlanDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'definition', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'type', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_PRACTITIONER}
   CODES_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'communication', 'email', 'family', 'gender', 'given', 'identifier', 'name', 'phone', 'phonetic', 'telecom');
@@ -4438,7 +4551,7 @@ Const
   CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'agent', 'agent-role', 'agent-type', 'entity', 'location', 'patient', 'recorded', 'signature-type', 'target', 'when');
 {$ENDIF}
 {$IFDEF FHIR_QUESTIONNAIRE}
-  CODES_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context-type', 'date', 'definition', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'subject-type', 'title', 'url', 'version');
+  CODES_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'definition', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'subject-type', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   CODES_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'authored', 'based-on', 'context', 'identifier', 'part-of', 'patient', 'questionnaire', 'source', 'status', 'subject');
@@ -4462,7 +4575,7 @@ Const
   CODES_TSearchParamsSchedule : Array[TSearchParamsSchedule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'actor', 'date', 'identifier', 'type');
 {$ENDIF}
 {$IFDEF FHIR_SEARCHPARAMETER}
-  CODES_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'base', 'code', 'component', 'context-type', 'date', 'derived-from', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'target', 'type', 'url', 'version');
+  CODES_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'base', 'code', 'component', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'derived-from', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'target', 'type', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_SEQUENCE}
   CODES_TSearchParamsSequence : Array[TSearchParamsSequence] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'chromosome', 'coordinate', 'end', 'identifier', 'patient', 'start', 'type');
@@ -4480,10 +4593,10 @@ Const
   CODES_TSearchParamsSpecimenDefinition : Array[TSearchParamsSpecimenDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'container', 'identifier', 'type');
 {$ENDIF}
 {$IFDEF FHIR_STRUCTUREDEFINITION}
-  CODES_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'abstract', 'base', 'base-path', 'date', 'derivation', 'description', 'experimental', 'ext-context', 'identifier', 'jurisdiction', 'keyword', 'kind', 'name', 'path', 'publisher', 'status', 'title', 'type', 'url', 'valueset', 'version');
+  CODES_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'abstract', 'base', 'base-path', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'derivation', 'description', 'experimental', 'ext-context', 'identifier', 'jurisdiction', 'keyword', 'kind', 'name', 'path', 'publisher', 'status', 'title', 'type', 'url', 'valueset', 'version');
 {$ENDIF}
 {$IFDEF FHIR_STRUCTUREMAP}
-  CODES_TSearchParamsStructureMap : Array[TSearchParamsStructureMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsStructureMap : Array[TSearchParamsStructureMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_SUBSCRIPTION}
   CODES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'add-tag', 'contact', 'criteria', 'payload', 'status', 'type', 'url');
@@ -4510,19 +4623,19 @@ Const
   CODES_TSearchParamsTask : Array[TSearchParamsTask] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored-on', 'based-on', 'business-status', 'code', 'context', 'focus', 'group-identifier', 'identifier', 'intent', 'modified', 'owner', 'part-of', 'patient', 'performer', 'period', 'priority', 'requester', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
-  CODES_TSearchParamsTerminologyCapabilities : Array[TSearchParamsTerminologyCapabilities] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsTerminologyCapabilities : Array[TSearchParamsTerminologyCapabilities] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_TESTREPORT}
   CODES_TSearchParamsTestReport : Array[TSearchParamsTestReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'issued', 'participant', 'result', 'tester', 'testscript');
 {$ENDIF}
 {$IFDEF FHIR_TESTSCRIPT}
-  CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'testscript-capability', 'title', 'url', 'version');
+  CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'testscript-capability', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_USERSESSION}
   CODES_TSearchParamsUserSession : Array[TSearchParamsUserSession] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'focus', 'identifier', 'patient', 'status', 'user', 'workstation');
 {$ENDIF}
 {$IFDEF FHIR_VALUESET}
-  CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_VERIFICATIONRESULT}
   CODES_TSearchParamsVerificationResult : Array[TSearchParamsVerificationResult] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'target');
@@ -4536,7 +4649,7 @@ Const
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2018-07-19T12:02:16+10:00';
+  FHIR_GENERATED_DATE = '2018-07-25T14:31:35+10:00';
 
 
 

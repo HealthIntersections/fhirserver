@@ -2867,7 +2867,7 @@ begin
       dig := TDigitalSigner.Create;
       try
         dig.PrivateKey := ansistring(cert);
-        signature.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
+        signature.data := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
       finally
         dig.free;
       end;
@@ -2877,7 +2877,7 @@ begin
       signature.sigFormat := 'application/jose';
       src := resourceToBytes(self, ffJson, OutputStyleCanonical);
       BytesToFile(src, 'c:\temp\can.json');
-      signature.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
+      signature.data := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
       end
   else
     raise EFHIRException.create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
@@ -2914,7 +2914,7 @@ begin
         dig := TDigitalSigner.Create;
         try
           dig.PrivateKey := cert;
-          sig.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
+          sig.data := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
         finally
           dig.free;
         end;
@@ -2924,7 +2924,7 @@ begin
         sig.sigFormat := 'application/jose';
         src := resourceToBytes(self, ffJson, OutputStyleCanonical);
         BytesToFile(src, 'c:\temp\can.json');
-        sig.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
+        sig.data := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
         end
     else
       raise EFHIRException.create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
@@ -4046,7 +4046,7 @@ begin
     TFHIRSignature(element).when := TDateTimeEx.makeUTC;
     TFHIRSignature(element).who := CreateBasicChildren(TFhirReference.Create, nil) as TFhirReference;
     TFHIRSignature(element).sigFormat := 'application/signature+xml';
-    TFHIRSignature(element).blob := AnsiStringAsBytes('signature content');
+    TFHIRSignature(element).data := AnsiStringAsBytes('signature content');
   end
   else if element.FhirType = 'HumanName' then
   begin

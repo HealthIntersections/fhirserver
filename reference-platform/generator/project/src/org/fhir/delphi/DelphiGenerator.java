@@ -1679,10 +1679,16 @@ public class DelphiGenerator {
 
 
   private Object breakStringConstIntoLines(String str, int llen) {
-    while (llen + getLastLineLength(str) > 1000) {
-      str = str.substring(0, str.length()-(1000-llen))+"'+\r\n   '"+str.substring(0, str.length()-(1000-llen));
+    if (llen + str.length() < 1000) 
+      return str;
+    StringBuilder b = new StringBuilder();
+    while (str.length() > 1000-llen) {
+      b.append(str.substring(0, 1000-llen)+"'+\r\n   '");
+      str = str.substring(1000-llen);
+      llen = 4;
     }
-    return str;
+    b.append(str);
+    return b.toString();
   }
 
   private int getLastLineLength(String s) {

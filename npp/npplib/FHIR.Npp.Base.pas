@@ -925,49 +925,33 @@ end;
 
 procedure TNppPlugin.BeNotified(sn: PSCNotification);
 begin
-  if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_TB_MODIFICATION) then
+  if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) then
   begin
-    self.DoNppnToolbarModification;
+    if (longint(sn^.nmhdr.code) = NPPN_TB_MODIFICATION) then
+      self.DoNppnToolbarModification
+    else if (longint(sn^.nmhdr.code) = NPPN_SHUTDOWN) then
+      self.DoNppnShutdown
+    else if (longint(sn^.nmhdr.code) = NPPN_READY) then
+      self.DoNppnReady
+    else if (longint(sn^.nmhdr.code) = NPPN_FILEOPENED) then
+      self.DoNppnFileOpened
+    else if (longint(sn^.nmhdr.code) = NPPN_FILEBEFORECLOSE) then
+      self.DoNppnFilebeforeClose
+    else if (longint(sn^.nmhdr.code) = NPPN_FILECLOSED) then
+      self.DoNppnFileClosed
+    else if (longint(sn^.nmhdr.code) = NPPN_BUFFERACTIVATED) then
+      self.DoNppnBufferChange
   end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_SHUTDOWN) then
+  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) then
   begin
-    self.DoNppnShutdown;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_READY) then
-  begin
-    self.DoNppnReady;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILEOPENED) then
-  begin
-    self.DoNppnFileOpened;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILEBEFORECLOSE) then
-  begin
-    self.DoNppnFilebeforeClose;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILECLOSED) then
-  begin
-    self.DoNppnFileClosed;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_BUFFERACTIVATED) then
-  begin
-    self.DoNppnBufferChange;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_MODIFIED) then
-  begin
-    self.DoNppnTextModified;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_UPDATEUI) then
-  begin
-    self.DoStateChanged;
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_DWELLSTART) then
-  begin
-    self.DoNppnDwellStart(sn^.position);
-  end
-  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.ScintillaMainHandle) and (sn^.nmhdr.code = SCN_DWELLEND) then
-  begin
-    self.DoNppnDwellEnd;
+    if (sn^.nmhdr.code = SCN_MODIFIED) then
+      self.DoNppnTextModified
+    else if (sn^.nmhdr.code = SCN_UPDATEUI) then
+      self.DoStateChanged
+    else if (sn^.nmhdr.code = SCN_DWELLSTART) then
+      self.DoNppnDwellStart(sn^.position)
+    else if (sn^.nmhdr.code = SCN_DWELLEND) then
+      self.DoNppnDwellEnd
   end;
   // @todo
 end;

@@ -34,7 +34,7 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX, Vcl.Clipbrd,
   MarkdownProcessor,
-  FHIR.Npp.Base, FHIR.Npp.Scintilla,
+  FHIR.Npp.BaseFU, FHIR.Npp.ScintillaFU,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Json;
 
 type
@@ -61,6 +61,7 @@ type
     procedure FuncTextUUID;
     procedure FuncUrlEscape;
     procedure FuncUrlUnEscape;
+    procedure FuncRemoveDuplicates;
   end;
 
 procedure _FuncPrettyPrintXml; cdecl;
@@ -81,6 +82,7 @@ procedure _FuncHtmlUnescape; cdecl;
 procedure _FuncTextUUID; cdecl;
 procedure _FuncUrlEscape; cdecl;
 procedure _FuncUrlUnescape; cdecl;
+procedure _FuncRemoveDuplicates; cdecl;
 
 var
   FNpp: TFormatUtilitiesPlugin;
@@ -115,6 +117,8 @@ begin
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Url &Escape', _FuncUrlEscape);
   self.AddFuncItem('Url &Unescape', _FuncUrlUnescape);
+  self.AddFuncItem('-', Nil);
+  self.AddFuncItem('Remove Duplicate Lines', _FuncRemoveDuplicates);
 end;
 
 procedure _FuncPrettyPrintXml; cdecl;
@@ -205,6 +209,11 @@ end;
 procedure _FuncUrlUnescape;
 begin
   FNpp.FuncUrlUnescape;
+end;
+
+procedure _FuncRemoveDuplicates;
+begin
+  FNpp.FuncRemoveDuplicates;
 end;
 
 procedure TFormatUtilitiesPlugin.FuncXmlCollapse;
@@ -367,6 +376,26 @@ begin
   SelectedBytes := TEncoding.UTF8.GetBytes(s);
 end;
 
+
+procedure TFormatUtilitiesPlugin.FuncRemoveDuplicates;
+var
+  sl : TStringList;
+  i, j : integer;
+begin
+  sl := TStringList.Create;
+  try
+    sl.Text := TEncoding.UTF8.getString(SelectedBytes);
+    for i := 0 to sl.Count - 1 do
+    begin
+      for j := sl.Count - 1 downto i+1 do
+        if sl[i] = sl[j] then
+          sl.Delete(j);
+    end;
+    SelectedBytes := TEncoding.UTF8.GetBytes(sl.Text);
+  finally
+    sl.Free;
+  end;
+end;
 
 procedure TFormatUtilitiesPlugin.FuncTextUUID;
 var
