@@ -208,10 +208,10 @@ Header(FFactory, Session, FBaseURL, lang, version)+
         else
           s.append('<p><a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+#13#10);
 
-        if (links <> nil) and (links['z-edit-src'] <> '') then
+        if (links <> nil) and (links.ContainsKey('z-edit-src')) then
           s.append('. Edit this as <a href="'+patchToWeb(links['z-edit-src'])+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(links['z-edit-src'])+'?srcformat=json">JSON</a>');
         {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
-        if (links <> nil) and (links['edit-form'] <> '') then
+        if (links <> nil) and links.ContainsKey('edit-form') then
           if (res is TFHIRQuestionnaireResponse) then
           begin
             if (TFHIRQuestionnaireResponse(res).questionnaire <> nil) then
@@ -220,7 +220,7 @@ Header(FFactory, Session, FBaseURL, lang, version)+
           else
             s.append('. <a href="'+patchToWeb(links['edit-form'])+'">Edit this Resource</a> (or <a href="'+links['edit-form']+'">see resources underlying that</a>)');
         {$ENDIF}
-        if (links <> nil) and (links['edit-post'] <> '') then
+        if (links <> nil) and links.ContainsKey('edit-post') then
           s.append('. Submit edited content by POST to '+links['edit-post']);
         if (res.fhirType <> 'Provenance') and (res.fhirType <> 'AuditEvent') then
           s.append('. <a href="'+FBaseURL+'Provenance?target='+res.fhirType+'/'+res.id+'">provenance for this resource</a>');

@@ -642,6 +642,7 @@ type
     function hasParam(name, value : string) : boolean; overload; virtual; abstract;
     procedure copyParams(source : TFhirValueSetExpansionW); virtual; abstract;
     procedure addContains(item : TFhirValueSetExpansionContainsW); overload; virtual; abstract;
+    function makeContains : TFhirValueSetExpansionContainsW; overload; virtual; abstract;
     function addContains : TFhirValueSetExpansionContainsW; overload; virtual; abstract;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; virtual; abstract;
   end;

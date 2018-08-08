@@ -349,6 +349,7 @@ type
     procedure copyParams(source : TFhirValueSetExpansionW); override;
     procedure addContains(item : TFhirValueSetExpansionContainsW); override;
     function addContains : TFhirValueSetExpansionContainsW; override;
+    function makeContains : TFhirValueSetExpansionContainsW; override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
   end;
 
@@ -2874,6 +2875,11 @@ begin
   for param in (Element as TFhirValueSetExpansion).parameterList do
     if (param.name = name) and (param.value.primitiveValue = value) then
       exit(true);
+end;
+
+function TFhirValueSetExpansion3.makeContains: TFhirValueSetExpansionContainsW;
+begin
+  result := TFhirValueSetExpansionContains3.Create(TFhirValueSetExpansionContains.create);
 end;
 
 function TFhirValueSetExpansion3.hasParam(name: string): boolean;

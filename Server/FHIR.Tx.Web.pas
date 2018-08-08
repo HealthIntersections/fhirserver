@@ -1042,7 +1042,7 @@ begin
   if request.Document.StartsWith(FServer.webBase+'/loinc/doco/') then
   begin
     code := request.UnparsedParams;
-    lang := request.Document.Substring(12);
+    lang := request.Document.substring(FServer.webBase.Length).Substring(12);
     if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.CommonTerminologies.Loinc.supportsLang(lang)) then
     begin
       st := TStringList.create;
@@ -1056,7 +1056,7 @@ begin
         html := THtmlPublisher.Create(FWorker.factory.link);
         try
           html.Version := SERVER_VERSION;
-          html.BaseURL := '/loinc/doco/';
+          html.BaseURL := FServer.webBase+'/loinc/doco/';
           html.Lang := lang;
           html.Header('LOINC Languages');
           html.StartList();
@@ -1090,9 +1090,9 @@ begin
         pub := TLoincPublisher.create(FServer.CommonTerminologies.Loinc, FFHIRPath, lang);
         try
           html.Version := SERVER_VERSION;
-          html.BaseURL := '/loinc/doco/'+lang;
+          html.BaseURL := FServer.webBase+'/loinc/doco/'+lang;
           html.Lang := Lang;
-          pub.PublishDict(code, '/loinc/doco/'+lang, html);
+          pub.PublishDict(code, FServer.webBase+'/loinc/doco/'+lang, html);
           mem := TMemoryStream.Create;
           response.ContentStream := mem;
           response.FreeContentStream := true;

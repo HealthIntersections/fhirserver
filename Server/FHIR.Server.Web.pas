@@ -1768,8 +1768,7 @@ begin
           oComp := factory.makeComposer(FContext.ValidatorContext.link, ffXml, lang, OutputStyleNormal);
         ffXhtml:
           begin
-            oComp := TFHIRXhtmlComposer.Create(FContext.ValidatorContext.link, OutputStyleNormal, lang);
-            TFHIRXhtmlComposer(oComp).baseUrl := AppendForwardSlash(url);
+            oComp := TFHIRXhtmlComposer.Create(FContext.ValidatorContext.link, OutputStyleNormal, lang, AppendForwardSlash(url));
             TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
             TFHIRXhtmlComposer(oComp).Session := Session.link;
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;

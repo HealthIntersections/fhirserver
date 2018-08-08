@@ -554,7 +554,7 @@ end;
 
 procedure TFHIRNarrativeGenerator.generateVS(vs: TFHIRValueSet; b: boolean);
 begin
-  raise EFHIRException.create('Not done yet');
+  // raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRNarrativeGenerator.generateCM(cm: TFHIRConceptMap);

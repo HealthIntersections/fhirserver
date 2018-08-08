@@ -167,7 +167,7 @@ var
   ini : TIniFile;
   factory : TFHIRFactory;
 begin
-  AllocConsole;
+  //AllocConsole;
   try
     Consolelog := true;
     if FindCmdLineSwitch('log', fn, true, [clstValueNextParam]) then
@@ -209,6 +209,7 @@ begin
           begin
             if cmd = 'manager' then
             begin
+              FreeConsole;
               ServerManagerForm := TServerManagerForm.Create(nil);
               try
                 ServerManagerForm.ShowModal;

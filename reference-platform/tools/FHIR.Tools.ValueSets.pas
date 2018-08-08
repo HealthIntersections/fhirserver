@@ -1107,32 +1107,36 @@ begin
       expansion.addParam('version', s);
   end;
 
-  n := expansion.addContains;
-  try
-    n.System := system;
-    n.Code := code;
-    if (display <> '') then
-      n.Display := display
-    else
-      n.Display := code;
-    s := key(n);
-    if (dodelete) then
-    begin
-      if map.ContainsKey(s) then
+  s := key(system, code, display);
+
+  if doDelete or not map.containsKey(s) then
+  begin
+    n := expansion.makeContains;
+    try
+      n.System := system;
+      n.Code := code;
+      if (display <> '') then
+        n.Display := display
+      else
+        n.Display := code;
+      if (dodelete) then
       begin
-        list.Remove(map[s]);
-        map.Remove(s);
+        if map.ContainsKey(s) then
+        begin
+          list.Remove(map[s]);
+          map.Remove(s);
+        end;
+      end
+      else if not map.ContainsKey(s) then
+      begin
+        list.add(n.link);
+        map.add(s, n.link);
       end;
-    end
-    else if not map.ContainsKey(s) then
-    begin
-      list.add(n.link);
-      map.add(s, n.link);
+      if definition <> '' then
+        n.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-definition', FFactory.makeString(definition));
+    finally
+      n.free;
     end;
-    if definition <> '' then
-      n.addExtension('http://hl7.org/fhir/StructureDefinition/valueset-definition', FFactory.makeString(definition));
-  finally
-    n.free;
   end;
 end;
 

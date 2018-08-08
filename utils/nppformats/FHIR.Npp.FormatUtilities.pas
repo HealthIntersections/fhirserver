@@ -37,6 +37,7 @@ uses
   FHIR.Npp.BaseFU, FHIR.Npp.ScintillaFU,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Json;
 
+
 type
   TFormatUtilitiesPlugin = class(TNppPlugin)
   public
@@ -62,6 +63,7 @@ type
     procedure FuncUrlEscape;
     procedure FuncUrlUnEscape;
     procedure FuncRemoveDuplicates;
+    procedure FuncPasteHtml;
   end;
 
 procedure _FuncPrettyPrintXml; cdecl;
@@ -83,17 +85,22 @@ procedure _FuncTextUUID; cdecl;
 procedure _FuncUrlEscape; cdecl;
 procedure _FuncUrlUnescape; cdecl;
 procedure _FuncRemoveDuplicates; cdecl;
+procedure _FuncPasteHtml; cdecl;
 
 var
   FNpp: TFormatUtilitiesPlugin;
 
 implementation
 
+var
+  CF_HTML : Integer = 0;
+
 { TFormatUtilitiesPlugin }
 
 constructor TFormatUtilitiesPlugin.Create;
 begin
   inherited;
+  CF_HTML := RegisterClipboardFormat('HTML Format');
   self.PluginName := 'Format &Utils';
   self.AddFuncItem('&Pretty Print XML', _FuncPrettyPrintXml);
   self.AddFuncItem('&Collapse XML', _FuncCollapseXml);
@@ -112,6 +119,7 @@ begin
   self.AddFuncItem('HTML &Paragraph', _FuncHtmlParapraph);
   self.AddFuncItem('HTML &Escape', _FuncHtmlEscape);
   self.AddFuncItem('HTML &Unescape', _FuncHtmlUnescape);
+  self.AddFuncItem('Paste Html', _FuncPasteHtml);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Text &UUID', _FuncHtmlUnescape);
   self.AddFuncItem('-', Nil);
@@ -214,6 +222,11 @@ end;
 procedure _FuncRemoveDuplicates;
 begin
   FNpp.FuncRemoveDuplicates;
+end;
+
+procedure _FuncPasteHtml;
+begin
+  FNpp.FuncPasteHtml;
 end;
 
 procedure TFormatUtilitiesPlugin.FuncXmlCollapse;
@@ -394,6 +407,39 @@ begin
     SelectedBytes := TEncoding.UTF8.GetBytes(sl.Text);
   finally
     sl.Free;
+  end;
+end;
+
+procedure TFormatUtilitiesPlugin.FuncPasteHtml;
+var
+  ClipboardData: Windows.HGLOBAL;
+  Ptr: Pointer;
+  Size: DWORD;
+  b : TBytes;
+begin
+  Clipboard.Open;
+  try
+    if Clipboard.HasFormat(CF_HTML) then
+    begin
+      ClipboardData := Clipboard.GetAsHandle(CF_HTML);
+      if ClipboardData <> 0 then
+      begin
+        Ptr := Windows.GlobalLock(ClipboardData);
+        if Ptr <> nil then
+        begin
+          try
+            Size := Windows.GlobalSize(ClipboardData);
+            setLength(b, Size);
+            Move(ptr^, b[0], Size);
+            SelectedBytes := b;
+          finally
+            Windows.GlobalUnlock(ClipboardData);
+          end;
+        end;
+      end;
+    end;
+  finally
+    Clipboard.Close;
   end;
 end;
 
