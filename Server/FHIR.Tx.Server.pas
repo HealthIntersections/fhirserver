@@ -95,8 +95,8 @@ Type
     function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFhirValueSetW; overload;
 
     procedure lookupCode(coding : TFHIRCodingW; lang : String; props : TArray<String>; resp : TFHIRLookupOpResponseW);
-    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk : boolean) : TFhirParametersW; overload;
-    function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk : boolean) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean) : TFhirParametersW; overload;
+    function validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem: boolean) : TFhirParametersW; overload;
     function translate(lang : String; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
     function translate(lang : String; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
     function translate(lang : String; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW; overload;
@@ -483,7 +483,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk : boolean) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -496,7 +496,7 @@ begin
     check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, vs.url);
     try
       check.prepare(vs, profile);
-      result := check.check(coding, abstractOk);
+      result := check.check(coding, abstractOk, implySystem);
     finally
       check.Free;
     end;
@@ -506,7 +506,7 @@ begin
 end;
 
 
-function TTerminologyServer.validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk : boolean) : TFhirParametersW;
+function TTerminologyServer.validate(vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, implySystem : boolean) : TFhirParametersW;
 var
   check : TValueSetChecker;
 begin
@@ -519,7 +519,7 @@ begin
     check := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, vs.url);
     try
       check.prepare(vs, profile);
-      result := check.check(coded, abstractOk);
+      result := check.check(coded, abstractOk, implySystem);
     finally
       check.Free;
    end;
@@ -899,7 +899,7 @@ begin
         raise ETerminologyError.create('Code '+coding.code+' in system '+coding.system+' not recognized');
 
       // check to see whether the coding is already in the target value set, and if so, just return it
-      p := validate(target, coding, nil, false);
+      p := validate(target, coding, nil, false, false);
       try
         if p.bool('result') then
         begin
@@ -1194,7 +1194,7 @@ begin
             val := TValueSetChecker.create(Factory.link, workerGetDefinition, workerGetProvider, vs.url);
             try
               val.prepare(vs, profile);
-              if not val.check(URL, version, code, true) then
+              if not val.check(URL, version, code, true, false) then
                 conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
               else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
                 conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+conn2.ColStringByName['ValueSetKey']+', '+inttostr(ConceptKey)+')');
@@ -1243,7 +1243,7 @@ begin
             begin
               system := conn2.ColStringByName['URL'];
               code := conn2.ColStringByName['Code'];
-              if not val.check(system, version, code, true) then
+              if not val.check(system, version, code, true, false) then
                 conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey'])
               else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey']) = 0 then
                 conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+inttostr(ValueSetKey)+', '+conn2.ColStringByName['ConceptKey']+')');

@@ -3948,8 +3948,13 @@ end;
 { TFhirCodeableConcept4 }
 
 procedure TFhirCodeableConcept4.addCoding(coding: TFHIRCodingW);
+var
+  list : TFHIRCodingList;
+  c : TFHIRCoding;
 begin
-  (Element as TFhirCodeableConcept).codingList.Add((coding.Element as TFHIRCoding).link);
+  list := (Element as TFhirCodeableConcept).codingList;
+  c := (coding.Element as TFHIRCoding).link;
+  list.Add(c);
 end;
 
 function TFhirCodeableConcept4.addCoding: TFHIRCodingW;

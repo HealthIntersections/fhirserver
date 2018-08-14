@@ -122,7 +122,8 @@ Type
     FValueSet : TFHIRValueSetW;
     FId: String;
 
-    function check(system, version, code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean; overload;
+    function determineSystem(code : String) : String;
+    function check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String) : boolean; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFslList<TFhirCodeSystemConceptW>; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; var cs: TCodeSystemProvider);
@@ -136,10 +137,10 @@ Type
 
     procedure prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams);
 
-    function check(system, version, code : String; abstractOk : boolean) : boolean; overload;
-    function check(system, version, code : String) : TFhirParametersW; overload;
-    function check(coding : TFhirCodingW; abstractOk : boolean): TFhirParametersW; overload;
-    function check(code: TFhirCodeableConceptW; abstractOk : boolean) : TFhirParametersW; overload;
+    function check(system, version, code : String; abstractOk, implySystem : boolean) : boolean; overload;
+    function check(system, version, code : String; implySystem : boolean) : TFhirParametersW; overload;
+    function check(coding : TFhirCodingW; abstractOk, implySystem : boolean): TFhirParametersW; overload;
+    function check(code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW; overload;
 
   end;
 
@@ -209,6 +210,64 @@ begin
   FValueSet.Free;
   FOthers.Free;
   inherited;
+end;
+
+function TValueSetChecker.determineSystem(code: String): String;
+var
+  vsi : TFhirValueSetComposeIncludeW;
+  cs : TCodeSystemProvider;
+  cc : TFhirValueSetComposeIncludeConceptW;
+  match : boolean;
+  msg : String;
+  loc : TCodeSystemProviderContext;
+begin
+  result := '';
+  for vsi in FValueSet.excludes.forEnum do
+    exit('');
+
+  for vsi in FValueSet.includes do
+  begin
+    if length(vsi.valueSets) > 0 then
+      exit('');
+    if vsi.system = '' then
+      exit('');
+    if vsi.hasFilters then
+      exit('');
+    cs := FOnGetCSProvider(self, vsi.system, '', nil);
+    if (cs = nil) then
+      exit('');
+    try
+      if (vsi.hasConcepts) then
+      begin
+        for cc in vsi.concepts.forEnum do
+        begin
+          // if cs.casesensitive then
+          match := cc.code = code;
+          if (match) then
+          begin
+            if (result = '') then
+              result := vsi.system
+            else if (result <> vsi.System) then
+              exit('');
+          end;
+        end;
+      end
+      else
+      begin
+        loc := cs.locate(code, msg);
+        if loc <> nil then
+        begin
+          cs.Close(loc);
+          if (result = '') then
+            result := vsi.system
+          else if (result <> vsi.System) then
+            exit('');
+        end;
+      end;
+    finally
+      cs.Free;
+    end;
+  end;
 end;
 
 procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams);
@@ -341,7 +400,7 @@ begin
     result := '??';
 end;
 
-function TValueSetChecker.check(system, version, code: String; abstractOk : boolean): boolean;
+function TValueSetChecker.check(system, version, code: String; abstractOk, implySystem : boolean): boolean;
 var
   list : TStringList;
   msg : string;
@@ -350,13 +409,13 @@ begin
   try
     list.Duplicates := Classes.dupIgnore;
     list.CaseSensitive := false;
-    result := check(system, version, code, abstractOk, list, msg);
+    result := check(system, version, code, abstractOk, implySystem, list, msg);
   finally
     list.Free;
   end;
 end;
 
-function TValueSetChecker.check(system, version, code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
+function TValueSetChecker.check(system, version, code : String; abstractOk, implySystem : boolean; displays : TStringList; var message : String) : boolean;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -396,6 +455,9 @@ begin
   end
   else
   begin
+    if (system = '') and implySystem then
+      system := determineSystem(code);
+
     ics := FValueSet.inlineCS; // r2
     if ics <> nil then
     begin
@@ -428,7 +490,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := checker.check(system, version, code, abstractOk, displays, message);
+          result := checker.check(system, version, code, abstractOk, implySystem, displays, message);
         end;
       end;
       for cc in FValueSet.includes.forEnum do
@@ -450,7 +512,7 @@ begin
         for s in cc.valueSets do
         begin
           checker := TValueSetChecker(FOthers.matches[s]);
-          result := result and checker.check(system, version, code, abstractOk, displays, message);
+          result := result and checker.check(system, version, code, abstractOk, implySystem, displays, message);
         end;
         if result then
           break;
@@ -474,7 +536,7 @@ begin
           for s in cc.valueSets do
           begin
             checker := TValueSetChecker(FOthers.matches[s]);
-            excluded := excluded and checker.check(system, version, code, abstractOk, displays, message);
+            excluded := excluded and checker.check(system, version, code, abstractOk, implySystem, displays, message);
           end;
           if excluded then
             exit(false);
@@ -484,7 +546,7 @@ begin
 end;
 
 
-function TValueSetChecker.check(coding: TFhirCodingW; abstractOk : boolean) : TFhirParametersW;
+function TValueSetChecker.check(coding: TFhirCodingW; abstractOk, implySystem : boolean) : TFhirParametersW;
 var
   list : TStringList;
   message : String;
@@ -495,7 +557,7 @@ begin
     try
       list.Duplicates := Classes.dupIgnore;
       list.CaseSensitive := false;
-      if check(coding.system, coding.version, coding.code, abstractOk, list, message) then
+      if check(coding.system, coding.version, coding.code, abstractOk, implySystem, list, message) then
       begin
         result.AddParamBool('result', true);
         if (coding.display <> '') and (list.IndexOf(coding.display) < 0) then
@@ -524,12 +586,12 @@ var
   p : TFhirParametersParameterW;
 begin
   result := false;
-  for p in params.parameterList.forEnum do
+  for p in params.parameterList do
     if (p.name = 'message') and (p.value.primitiveValue = msg) then
       exit(true);
 end;
 
-function TValueSetChecker.check(code: TFhirCodeableConceptW; abstractOk : boolean) : TFhirParametersW;
+function TValueSetChecker.check(code: TFhirCodeableConceptW; abstractOk, implySystem : boolean) : TFhirParametersW;
   function Summary(code: TFhirCodeableConceptW) : String;
   begin
     if (code.codingCount = 1) then
@@ -562,7 +624,7 @@ begin
         list.Clear;
         cc := ',{'+c.system+'}'+c.code;
         codelist := codelist + cc;
-        v := check(c.system, c.version, c.code, abstractOk, list, message);
+        v := check(c.system, c.version, c.code, abstractOk, implySystem, list, message);
         if not v and (message <> '') then
           result.AddParamStr('message', message);
         ok := ok or v;
@@ -625,7 +687,7 @@ begin
   end;
 end;
 
-function TValueSetChecker.check(system, version, code: String): TFhirParametersW;
+function TValueSetChecker.check(system, version, code: String; implySystem : boolean): TFhirParametersW;
 var
   list : TStringList;
   message : String;
@@ -636,7 +698,7 @@ begin
     try
       list.Duplicates := Classes.dupIgnore;
       list.CaseSensitive := false;
-      if check(system, version, code, true, list, message) then
+      if check(system, version, code, true, implySystem, list, message) then
       begin
         result.AddParamBool('result', true);
         if list.Count > 0 then

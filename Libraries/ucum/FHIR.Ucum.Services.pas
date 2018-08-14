@@ -274,7 +274,7 @@ Type
 Implementation
 
 Uses
-  FHIR.Ucum.Search;
+  FHIR.Ucum.Search, FHIR.R4.Resources;
 
 type
   TFhirValueSetComposeIncludeConceptLocal = class (TFhirValueSetComposeIncludeConceptW)
@@ -1106,7 +1106,7 @@ end;
 constructor TUCUMContext.Create(code: String);
 begin
   inherited Create;
-  FConcept := TFhirValueSetComposeIncludeConceptLocal.Create(nil);
+  FConcept := TFhirValueSetComposeIncludeConceptLocal.Create(TFhirValueSetComposeIncludeConcept.create);
   FConcept.code := code;
 end;
 

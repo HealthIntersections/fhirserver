@@ -311,7 +311,7 @@ var
   cacheId  : String;
   coded : TFhirCodeableConceptW;
   coding : TFhirCodingW;
-  abstractOk : boolean;
+  abstractOk, implySystem : boolean;
   params, pout : TFhirParametersW;
   needSecure : boolean;
   profile : TFhirExpansionParams;
@@ -352,6 +352,7 @@ begin
             coded := loadCoded(request);
             try
               abstractOk := params.str('abstract') = 'true';
+              implySystem := params.str('implySystem') = 'true';
 
               if (coded = nil) then
                 raise ETerminologyError.create('Unable to find code to validate (coding | codeableConcept | code');
@@ -367,7 +368,7 @@ begin
                 if profile.displayLanguage = '' then
                   profile.displayLanguage := request.Lang;
                 try
-                  pout := FServer.validate(vs, coded, profile, abstractOk);
+                  pout := FServer.validate(vs, coded, profile, abstractOk, implySystem);
                   try
                     response.resource := pout.Resource.link;
                   finally
@@ -1133,7 +1134,7 @@ begin
   begin
     params := FFactory.wrapParams(request.Resource.link);
     try
-      if params.has('coding') then
+      if params.obj('coding') <> nil then
       begin
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := FFactory.wrapCoding(params.obj('coding').Link);

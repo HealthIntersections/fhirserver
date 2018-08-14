@@ -1128,13 +1128,16 @@ var
   s : String;
   id : UInt64;
   exp : TSnomedExpression;
+  index : cardinal;
 begin
   logt('Snomed: '+code);
   if StringIsInteger64(code) then
   begin
-    if ss.IsValidConcept(code) then
+    if ss.ConceptExists(code, index) then
     begin
-      result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+'" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+'">';
+      result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+
+       '" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+
+       '" active="'+booleanToString(ss.isActive(index))+'">';
       sl := TStringList.Create;
       try
         ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
@@ -1220,7 +1223,7 @@ begin
       coding.version := pm.GetVar('version');
       coding.code := pm.GetVar('code');
       coding.display := pm.GetVar('display');
-      res := FServer.validate(vs, coding, nil, pm.GetVar('abstract') = '1');
+      res := FServer.validate(vs, coding, nil, pm.GetVar('abstract') = '1', pm.GetVar('implySystem') = '1');
       try
         result := '<div>'+paramsAsHtml(res)+'</div>'#13 +
             #10'<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>'

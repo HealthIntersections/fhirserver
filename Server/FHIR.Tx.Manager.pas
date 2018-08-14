@@ -1764,7 +1764,7 @@ begin
   add(TAreaCodeServices.Create);
   add(TIso4217Services.Create);
   add(TMimeTypeCodeServices.Create);
-  add(TCountryCodeServices.Create);
+  add(TCountryCodeServices.Create());
   add(TUSStateServices.Create);
 
   for s in ini.terminologies.Keys do
