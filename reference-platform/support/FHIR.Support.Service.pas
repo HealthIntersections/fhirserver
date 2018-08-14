@@ -304,7 +304,7 @@ procedure TSystemService.ConsoleExecute;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.ConsoleExecute';
 begin
   SetThreadName('Service.Execute.Console');
-  AllocConsole;
+//  AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
   SetConsoleCtrlHandler(@DebugCtrlC, true);
   FDebugMode := True;

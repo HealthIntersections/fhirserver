@@ -335,12 +335,12 @@ type
   end;
   TFHIRBundleWClass = class of TFHIRBundleW;
 
-  TFHIRSearchParamType = (sptNull, sptString, sptToken, sptComposite, sptUri, sptReference, sptNumber, sptDate, sptQuantity);
+  TFHIRSearchParamType = (sptNull, sptString, sptToken, sptComposite, sptUri, sptReference, sptNumber, sptDate, sptQuantity, sptSpecial);
   TFhirSearchParamTypeList = set of TFhirSearchParamType;
   TFhirSearchXpathUsage = (sxpNull,  sxpNormal, sxpPhonetic, sxpNearby, sxpDistance, sxpOther);
 
 const
-  CODES_TFhirSearchParamType : Array[TFhirSearchParamType] of String = ('', 'string', 'token', 'composite', 'uri', 'reference', 'number', 'date', 'quantity');
+  CODES_TFhirSearchParamType : Array[TFhirSearchParamType] of String = ('', 'string', 'token', 'composite', 'uri', 'reference', 'number', 'date', 'quantity', 'special');
 
 type
   TFhirSearchParameterW = class (TFHIRXVersionResourceWrapper)
@@ -642,6 +642,7 @@ type
     function hasParam(name, value : string) : boolean; overload; virtual; abstract;
     procedure copyParams(source : TFhirValueSetExpansionW); virtual; abstract;
     procedure addContains(item : TFhirValueSetExpansionContainsW); overload; virtual; abstract;
+    function makeContains : TFhirValueSetExpansionContainsW; overload; virtual; abstract;
     function addContains : TFhirValueSetExpansionContainsW; overload; virtual; abstract;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; virtual; abstract;
   end;

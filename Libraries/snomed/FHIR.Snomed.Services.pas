@@ -582,7 +582,8 @@ operations
     function getRelationshipValues(index : cardinal) : String;
 
     // simplified interface for consumers
-    Function ConceptExists(conceptId : String) : Boolean;
+    Function ConceptExists(conceptId : String) : Boolean; overload;
+    Function ConceptExists(conceptId : String; var index : cardinal) : Boolean; overload;
     Function Subsumes(Const sParent, sChild : String) : Boolean; Overload;
     Function Search(iRoot : UInt64; sText : String; iLang : Cardinal; bInactive : Boolean; bAll : boolean = false) : TMatchArray; overload;
     Function IsValidConcept(Const sTerm : String):Boolean;
@@ -3102,6 +3103,11 @@ begin
     Concept.GetConcept(TSnomedExpressionContext(context).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
     result := inttostr(identity);
   end;
+end;
+
+function TSnomedServices.ConceptExists(conceptId: String; var index: cardinal): Boolean;
+begin
+  result := FConcept.FindConcept(StringToIdOrZero(conceptId), index);
 end;
 
 function TSnomedServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;

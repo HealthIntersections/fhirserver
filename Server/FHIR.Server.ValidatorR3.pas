@@ -114,7 +114,7 @@ begin
       c.system := system;
       c.code := code;
       c.version := version;
-      p := FTerminologyServer.validate(vsw, c, FProfile, false);
+      p := FTerminologyServer.validate(vsw, c, FProfile, false, true);
       try
         result := TValidationResult.Create;
         try
@@ -236,7 +236,7 @@ begin
     try
       c := factory.wrapCoding(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, nil, false);
+        p := FTerminologyServer.validate(vsw, c, nil, false, true);
         try
           result.Message := p.str('message');
           if p.bool('result') then
@@ -271,7 +271,7 @@ begin
     try
       c := factory.wrapCoding(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, FProfile, false);
+        p := FTerminologyServer.validate(vsw, c, FProfile, false, true);
         try
           result.Message := p.str('message');
           if p.bool('result') then

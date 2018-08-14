@@ -637,7 +637,8 @@ begin
       with se.entityList.Append do
       begin
         type_ := TFhirCoding.Create('', 'X-Request-Id');
-        identifier := TFhirIdentifier.Create(extreqid);
+        what := TFhirReference.Create;
+        what.identifier := TFhirIdentifier.Create(extreqid);
       end;
 
     se.event := TFhirAuditEventEvent.create;
@@ -678,9 +679,10 @@ begin
 
     se.source := TFhirAuditEventSource.create;
     se.source.site := ServerContext.Globals.OwnerName;
-    se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.value := ServerContext.DatabaseId;
-    se.source.identifier.system := 'urn:ietf:rfc:4986';
+    se.source.observer := TFhirReference.Create;
+    se.source.observer.identifier := TFhirIdentifier.Create;
+    se.source.observer.identifier.value := ServerContext.DatabaseId;
+    se.source.observer.identifier.system := 'urn:ietf:rfc:4986';
 
     c := se.source.type_List.Append;
     c.code := '4';
@@ -693,9 +695,10 @@ begin
       p.name := 'Server'
     else
     begin
-      p.userId := TFhirIdentifier.Create;
-      p.userId.value := inttostr(session.Key);
-      p.userId.system := ServerContext.DatabaseId;
+      p.who := TFhirReference.Create;
+      p.who.identifier := TFhirIdentifier.Create;
+      p.who.identifier.value := inttostr(session.Key);
+      p.who.identifier.system := ServerContext.DatabaseId;
       p.altId := session.Id;
       p.name := session.SessionName;
     end;
@@ -707,11 +710,11 @@ begin
     if resourceName <> '' then
     begin
       o := se.object_List.Append;
-      o.reference := TFhirReference.create;
+      o.what := TFhirReference.create;
       if ver <> '' then
-        o.reference.reference := resourceName+'/'+id+'/_history/'+ver
+        o.what.reference := resourceName+'/'+id+'/_history/'+ver
       else if id <> '' then
-        o.reference.reference := resourceName+'/'+id;
+        o.what.reference := resourceName+'/'+id;
       o.type_ := TFhirCoding.Create;
       o.type_.system := 'http://hl7.org/fhir/security-source-type';
       o.type_.code := '2';
@@ -3595,9 +3598,10 @@ begin
     se.event.dateTime := TDateTimeEx.makeUTC;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := ServerContext.Globals.OwnerName;
-    se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.system := 'urn:ietf:rfc:3986';
-    se.source.identifier.value := ServerContext.DatabaseId;
+    se.source.observer := TFhirReference.Create;
+    se.source.observer.identifier := TFhirIdentifier.Create;
+    se.source.observer.identifier.system := 'urn:ietf:rfc:3986';
+    se.source.observer.identifier.value := ServerContext.DatabaseId;
     C := se.source.type_List.append;
     C.code := '3';
     C.Display := 'Web Server';
@@ -3605,9 +3609,10 @@ begin
 
     // participant - the web browser / user proxy
     p := se.participantList.append;
-    p.userId := TFhirIdentifier.Create;
-    p.userId.system := ServerContext.DatabaseId;
-    p.userId.value := inttostr(session.key);
+    p.who := TFhirReference.Create;
+    p.who.identifier := TFhirIdentifier.Create;
+    p.who.identifier.system := ServerContext.DatabaseId;
+    p.who.identifier.value := inttostr(session.key);
     p.altId := session.id;
     p.name := session.SessionName;
     if (ip <> '') then

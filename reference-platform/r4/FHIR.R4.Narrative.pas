@@ -554,7 +554,7 @@ end;
 
 procedure TFHIRNarrativeGenerator.generateVS(vs: TFHIRValueSet; b: boolean);
 begin
-  raise EFHIRException.create('Not done yet');
+  // raise EFHIRException.create('Not done yet');
 end;
 
 procedure TFHIRNarrativeGenerator.generateCM(cm: TFHIRConceptMap);
@@ -801,6 +801,7 @@ begin
   try
     map := TFslMap<TPropertyWrapper>.create;
     try
+      map.defaultValue := nil;
       for p in children do
         if (p.getName() = 'extension') or (p.getName() = 'modifierExtension') then
         begin
@@ -1138,6 +1139,7 @@ begin
       c.addText(r.reference);
   end
   else if (e is TFHIRResource) then
+  else if (e is TFHIRContactDetail) then
   else if (e is TFHIRElementDefinition) then
     x.addText('todo-bundle')
   else if (e <> nil) and not((e is TFHIRAttachment) or (e is TFHIRNarrative) or (e is TFHIRMeta)) then

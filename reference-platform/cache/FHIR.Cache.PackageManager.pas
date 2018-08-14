@@ -686,7 +686,7 @@ begin
       t := PathTitle(s);
       i := t.substring(t.IndexOf('-')+1);
       t := t.substring(0, t.IndexOf('-'));
-      if resources.contains(t) then
+      if (resources = nil) or resources.contains(t) then
       begin
         f := TFileStream.Create(s, fmOpenRead + fmShareDenyWrite);
         try

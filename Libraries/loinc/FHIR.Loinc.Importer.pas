@@ -541,7 +541,7 @@ begin
       oSubsets[a].SortedByCode;
     end;
     Progress(0, 24, 'Loading Languages');
-    if FileExists(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_LinguisticVariants.csv') then
+    if FileExists(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv') then
       ReadLanguageVariants();
 
 
@@ -717,11 +717,11 @@ begin
     oCodes.SortedByCode;
 
     // now, process the multi-axial file
-    if FileExists(IncludeTrailingPathDelimiter(folder) + 'LOINC_'+Version+'_MULTI-AXIAL_HIERARCHY.CSV') then
+    if FileExists(IncludeTrailingPathDelimiter(folder) + 'MultiAxialHierarchy.csv') then
     begin
       Progress(3,0,'Loading Multi-Axial Source');
       oHeirarchy.SortedByCode;
-      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'LOINC_'+Version+'_MULTI-AXIAL_HIERARCHY.CSV');
+      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'MultiAxialHierarchy.csv');
       Reset(ma);
       Readln(ma, ln); // skip header
 
@@ -740,10 +740,10 @@ begin
         oHeirarchy[i].index := i;
     end;
 
-    if FileExists(IncludeTrailingPathDelimiter(folder) + 'answers.csv') then
+    if FileExists(IncludeTrailingPathDelimiter(folder) + 'answerList.csv') then
     begin
       Progress(5, 0, 'Loading Answer Lists');
-      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'answers.csv');
+      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'answerList.csv');
       Reset(ma);
       Readln(ma, ln); // skip header
       iCount := 0;
@@ -866,6 +866,8 @@ begin
 
       for i := 0 to st2.Count - 1 do
       begin
+
+
         if i mod STEP_COUNT = 0 then
           Progress(8, i/st2.Count, '');
         answer := TAnswer(st2.Objects[i]);
@@ -991,7 +993,7 @@ var
   i : integer;
 begin
   items := TFslStringList.create;
-  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_LinguisticVariants.csv', fmOpenRead);
+  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv', fmOpenRead);
   try
     csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
     Try
@@ -1112,6 +1114,7 @@ begin
     FStemmer.Free;
     FLanguages.Free;
   End;
+  TLoincServices.Create.Load(FOutputFile);
 End;
 
 function TLoincImporter.listConcepts(arr: TConceptArray): TCardinalArray;
@@ -1180,13 +1183,11 @@ var
 
 procedure TLoincImporter.ProcessAnswerLine(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln: string);
 var
-  s, s1, AnswerListId, AnswerListName, AnswerStringID, AnswerCode, DisplayText : String;
+  s, AnswerListId, AnswerListName, AnswerStringID, AnswerCode, DisplayText : String;
   list : TAnswerList;
   answer : TAnswer;
 begin
   inc(gc);
-  CSVStringSplit(ln, ',', s1, ln);
-  CSVStringSplit(ln, ',', s, ln);
   CSVStringSplit(ln, ',', AnswerListId, ln);
   CSVStringSplit(ln, ',', AnswerListName, ln);
   CSVStringSplit(ln, ',', s, ln);
@@ -1196,9 +1197,10 @@ begin
   CSVStringSplit(ln, ',', AnswerStringID, ln);
   CSVStringSplit(ln, ',', AnswerCode, ln);
   CSVStringSplit(ln, ',', s, ln);
+  CSVStringSplit(ln, ',', s, ln);
   CSVStringSplit(ln, ',', DisplayText, ln);
 
-  if isLoinc(s1) and isLoinc(AnswerListId) then
+  if isLoinc(AnswerListId) then
   begin
     if FAnswerLists.ContainsKey(AnswerListId) then
       list := FAnswerLists[AnswerListId]
@@ -1321,7 +1323,7 @@ var
 begin
   Progress(i, 0, 'Loading Language '+lang.Lang+'-'+lang.Country);
   items := TFslStringList.create;
-  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_'+lang.Lang+'_'+lang.Country+'_'+index+'_LinguisticVariant.csv', fmOpenRead);
+  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ lang.Lang+lang.Country+index+'LinguisticVariant.csv', fmOpenRead);
   try
     csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8, false, f.Size);
     Try

@@ -171,7 +171,7 @@ end;
 
 function TTerminologyWebServer.HandlesRequest(path: String): boolean;
 begin
-  result := path.StartsWith('/tx') or path.StartsWith('/snomed') or path.StartsWith('/loinc') ;
+  result := path.StartsWith(FServer.webBase+'/tx') or path.StartsWith(FServer.webBase+'/snomed') or path.StartsWith(FServer.webBase+'/loinc') ;
 end;
 
 procedure TTerminologyWebServer.Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -179,13 +179,13 @@ var
   path : string;
 begin
   path := request.Document;
-  if path.StartsWith('/tx/form') then
+  if path.StartsWith(FServer.webBase+'/tx/form') then
     HandleTxForm(AContext, request, session, response, secure)
-  else if path.StartsWith('/tx') then
+  else if path.StartsWith(FServer.webBase+'/tx') then
     HandleTxRequest(AContext, request, response, session)
-  else if path.StartsWith('/snomed') and (FServer.CommonTerminologies.Snomed <> nil) then
+  else if path.StartsWith(FServer.webBase+'/snomed') and (FServer.CommonTerminologies.Snomed <> nil) then
     HandleSnomedRequest(AContext, request, response)
-  else if request.Document.StartsWith('/loinc') and (FServer.CommonTerminologies.Loinc <> nil) then
+  else if request.Document.StartsWith(FServer.webBase+'/loinc') and (FServer.CommonTerminologies.Loinc <> nil) then
     HandleLoincRequest(AContext, request, response)
 end;
 
@@ -688,7 +688,7 @@ function TTerminologyWebServer.paramsAsHtml(p: TFhirResourceV): String;
 var
   pw : TFHIRParametersW;
 begin
-  pw := FWorker.Factory.wrapParams(p);
+  pw := FWorker.Factory.wrapParams(p.Link);
   try
     result := paramsAsHtml(pw);
   finally
@@ -921,12 +921,12 @@ var
   pm : TParseMap;
   buf : TFslNameBuffer;
 begin
-  if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
+  if request.Document.StartsWith(FServer.webBase+'/snomed/tool/') then // FHIR build process support
   begin
     parts := request.Document.Split(['/']);
     ss := nil;
     for t in FServer.CommonTerminologies.Snomed do
-      if t.EditionId = parts[3] then
+      if t.EditionId = parts[length(parts)-2] then
         ss := t;
     if ss = nil then
     begin
@@ -939,7 +939,7 @@ begin
       ss.RecordUse;
       response.ContentType := 'text/xml';
       try
-        response.ContentText := processSnomedForTool(ss, parts[4]);
+        response.ContentText := processSnomedForTool(ss, parts[length(parts)-1]);
         response.ResponseNo := 200;
       except
         on e : Exception do
@@ -1039,10 +1039,10 @@ var
   st : TStringList;
 begin
   FServer.CommonTerminologies.Loinc.RecordUse;
-  if request.Document.StartsWith('/loinc/doco/') then
+  if request.Document.StartsWith(FServer.webBase+'/loinc/doco/') then
   begin
     code := request.UnparsedParams;
-    lang := request.Document.Substring(12);
+    lang := request.Document.substring(FServer.webBase.Length).Substring(12);
     if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.CommonTerminologies.Loinc.supportsLang(lang)) then
     begin
       st := TStringList.create;
@@ -1056,7 +1056,7 @@ begin
         html := THtmlPublisher.Create(FWorker.factory.link);
         try
           html.Version := SERVER_VERSION;
-          html.BaseURL := '/loinc/doco/';
+          html.BaseURL := FServer.webBase+'/loinc/doco/';
           html.Lang := lang;
           html.Header('LOINC Languages');
           html.StartList();
@@ -1090,9 +1090,9 @@ begin
         pub := TLoincPublisher.create(FServer.CommonTerminologies.Loinc, FFHIRPath, lang);
         try
           html.Version := SERVER_VERSION;
-          html.BaseURL := '/loinc/doco/'+lang;
+          html.BaseURL := FServer.webBase+'/loinc/doco/'+lang;
           html.Lang := Lang;
-          pub.PublishDict(code, '/loinc/doco/'+lang, html);
+          pub.PublishDict(code, FServer.webBase+'/loinc/doco/'+lang, html);
           mem := TMemoryStream.Create;
           response.ContentStream := mem;
           response.FreeContentStream := true;
@@ -1128,13 +1128,16 @@ var
   s : String;
   id : UInt64;
   exp : TSnomedExpression;
+  index : cardinal;
 begin
   logt('Snomed: '+code);
   if StringIsInteger64(code) then
   begin
-    if ss.IsValidConcept(code) then
+    if ss.ConceptExists(code, index) then
     begin
-      result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+'" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+'">';
+      result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+
+       '" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+
+       '" active="'+booleanToString(ss.isActive(index))+'">';
       sl := TStringList.Create;
       try
         ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
@@ -1220,7 +1223,7 @@ begin
       coding.version := pm.GetVar('version');
       coding.code := pm.GetVar('code');
       coding.display := pm.GetVar('display');
-      res := FServer.validate(vs, coding, nil, pm.GetVar('abstract') = '1');
+      res := FServer.validate(vs, coding, nil, pm.GetVar('abstract') = '1', pm.GetVar('implySystem') = '1');
       try
         result := '<div>'+paramsAsHtml(res)+'</div>'#13 +
             #10'<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>'

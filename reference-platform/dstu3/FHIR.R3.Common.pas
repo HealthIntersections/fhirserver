@@ -55,7 +55,7 @@ const
   MAP_TFilterOperatorR : array [TFilterOperator] of TFhirFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorNull, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorNull, filterOperatorNull);
   MAP_TFhirConceptPropertyTypeEnum : array [TFhirConceptPropertyTypeEnum] of TFhirCodeSystemPropertyType = (cptNull, cptCode, cptCoding, cptString, cptInteger, cptBoolean, cptDateTime);
   MAP_TFHIRSearchParamType1 : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptNull, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri);
-  MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri);
+  MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri, SearchParamTypeNull);
   MAP_TPublicationStatus : array [TPublicationStatus] of TFHIRPublicationStatusEnum = (PublicationStatusNull, PublicationStatusDraft, PublicationStatusActive, PublicationStatusRetired);
   MAP_TPublicationStatusR : array [TFHIRPublicationStatusEnum] of TPublicationStatus = (psNull, psDraft, psActive, psRetired, psNull);
   MAP_TFhirCodeSystemContentMode : array [TFhirCodeSystemContentMode] of TFhirCodeSystemContentModeEnum = (CodesystemContentModeNull, CodesystemContentModeNotPresent, CodesystemContentModeExample, CodesystemContentModeFragment, CodesystemContentModeComplete, CodesystemContentModeNull);
@@ -349,6 +349,7 @@ type
     procedure copyParams(source : TFhirValueSetExpansionW); override;
     procedure addContains(item : TFhirValueSetExpansionContainsW); override;
     function addContains : TFhirValueSetExpansionContainsW; override;
+    function makeContains : TFhirValueSetExpansionContainsW; override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
   end;
 
@@ -2876,6 +2877,11 @@ begin
       exit(true);
 end;
 
+function TFhirValueSetExpansion3.makeContains: TFhirValueSetExpansionContainsW;
+begin
+  result := TFhirValueSetExpansionContains3.Create(TFhirValueSetExpansionContains.create);
+end;
+
 function TFhirValueSetExpansion3.hasParam(name: string): boolean;
 var
   param : TFhirValueSetExpansionParameter;
@@ -3930,7 +3936,7 @@ end;
 
 procedure TFhirCodeableConcept3.addCoding(coding: TFHIRCodingW);
 begin
-  (Element as TFhirCodeableConcept).codingList.Add(coding.Element as TFHIRCoding);
+  (Element as TFhirCodeableConcept).codingList.Add((coding.Element as TFHIRCoding).link);
 end;
 
 function TFhirCodeableConcept3.addCoding: TFHIRCodingW;

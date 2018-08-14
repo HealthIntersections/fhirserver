@@ -1047,7 +1047,8 @@ var
   function readBytes : TBytes;
   begin
     SetLength(result, oRead.ReadInteger);
-    oread.Read(result[0], length(result));
+    if length(result) > 0 then
+      oread.Read(result[0], length(result));
   end;
 begin
   oFile := TFileStream.Create(sFilename, fmOpenread);

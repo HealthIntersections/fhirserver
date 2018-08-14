@@ -47,15 +47,15 @@ const
   ISSUE_SEVERITY_MAP2 : array [TIssueSeverity] of TFhirIssueSeverityEnum = (IssueSeverityNull, IssueSeverityFatal, IssueSeverityError, IssueSeverityWarning, IssueSeverityInformation);
   INTERACTION_MAP : array [TFHIRInteraction] of TFhirTypeRestfulInteractionEnum = (TypeRestfulInteractionRead, TypeRestfulInteractionSearchType, TypeRestfulInteractionHistoryType, TypeRestfulInteractionCreate, TypeRestfulInteractionUpdate, TypeRestfulInteractionDelete, TypeRestfulInteractionPatch);
   INTERACTION_MAP2 : array [TFHIRInteraction] of TFhirSystemRestfulInteractionEnum = (SystemRestfulInteractionNull, SystemRestfulInteractionSearchSystem, SystemRestfulInteractionHistorySystem, SystemRestfulInteractionHistorySystem, SystemRestfulInteractionHistorySystem, SystemRestfulInteractionHistorySystem, SystemRestfulInteractionHistorySystem);
-  MAP_SearchParamType : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptString, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri);
+  MAP_SearchParamType : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptString, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri, sptSpecial);
   MAP_SEARCH_MODE : array [TFhirSearchEntryModeEnum] of TFHIRBundleEntrySearchMode = (smUnknown, smMatch, smInclude, smOutcome);
   MAP_SEARCH_MODE2 : array [TFHIRBundleEntrySearchMode] of TFhirSearchEntryModeEnum = (SearchEntryModeNull, SearchEntryModeMatch, searchEntryModeInclude, searchEntryModeOutcome);
   MAP_ELEMENT_DEFINITION_BINDING : array [TFhirBindingStrengthEnum] of TElementDefinitionBinding = (edbNone, edbRequired, edbExtensible, edbPreferred, edpExample);
   MAP_TFilterOperator : array [TFhirFilterOperatorEnum] of TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists);
   MAP_TFilterOperatorR : array [TFilterOperator] of TFhirFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorDescendentOf, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorGeneralizes, filterOperatorExists);
   MAP_TFhirConceptPropertyTypeEnum : array [TFhirConceptPropertyTypeEnum] of TFhirCodeSystemPropertyType = (cptNull, cptCode, cptCoding, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal);
-  MAP_TFHIRSearchParamType1 : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptNull, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri);
-  MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri);
+  MAP_TFHIRSearchParamType1 : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptNull, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri, sptSpecial);
+  MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri, SearchParamTypeNull);
   MAP_TPublicationStatus : array [TPublicationStatus] of TFHIRPublicationStatusEnum = (PublicationStatusNull, PublicationStatusDraft, PublicationStatusActive, PublicationStatusRetired);
   MAP_TPublicationStatusR : array [TFHIRPublicationStatusEnum] of TPublicationStatus = (psNull, psDraft, psActive, psRetired, psNull);
   MAP_TFhirCodeSystemContentMode : array [TFhirCodeSystemContentMode] of TFhirCodeSystemContentModeEnum = (CodesystemContentModeNull, CodesystemContentModeNotPresent, CodesystemContentModeExample, CodesystemContentModeFragment, CodesystemContentModeComplete, CodesystemContentModeSupplement);
@@ -351,6 +351,7 @@ type
     procedure copyParams(source : TFhirValueSetExpansionW); override;
     procedure addContains(item : TFhirValueSetExpansionContainsW); overload; override;
     function addContains : TFhirValueSetExpansionContainsW; overload; override;
+    function makeContains : TFhirValueSetExpansionContainsW; overload; override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
   end;
 
@@ -2893,6 +2894,11 @@ begin
       exit(true);
 end;
 
+function TFhirValueSetExpansion4.makeContains: TFhirValueSetExpansionContainsW;
+begin
+  result := TFhirValueSetExpansionContains4.Create(TFhirValueSetExpansionContains.create);
+end;
+
 function TFhirValueSetExpansion4.hasParam(name: string): boolean;
 var
   param : TFhirValueSetExpansionParameter;
@@ -3344,9 +3350,10 @@ var
   p: TFhirAuditEventParticipant;
 begin
   p := ae.participantList.append;
-  p.userId := TFhirIdentifier.Create;
-  p.userId.system := system;
-  p.userId.value := value;
+  p.who := TFhirReference.Create;
+  p.who.identifier := TFhirIdentifier.Create;
+  p.who.identifier.system := system;
+  p.who.identifier.value := value;
   p.altId := alt;
   p.name := name;
 end;
@@ -3366,9 +3373,10 @@ begin
   if ae.source = nil then
     ae.source := TFhirAuditEventSource.Create;
   ae.source.site := name;
-  ae.source.identifier := TFhirIdentifier.Create;
-  ae.source.identifier.system := system;
-  ae.source.identifier.value := value;
+  ae.source.observer := TFhirReference.Create();
+  ae.source.observer.identifier := TFhirIdentifier.Create;
+  ae.source.observer.identifier.system := system;
+  ae.source.observer.identifier.value := value;
 end;
 
 procedure TFHIRAuditEvent4.sourceType(system, code, display: String);
@@ -3560,7 +3568,7 @@ end;
 
 function TFhirBinary4.content: TBytes;
 begin
-  result := (resource as TFHIRBinary).content;
+  result := (resource as TFHIRBinary).data;
 end;
 
 function TFhirBinary4.ContentType: String;
@@ -3940,8 +3948,13 @@ end;
 { TFhirCodeableConcept4 }
 
 procedure TFhirCodeableConcept4.addCoding(coding: TFHIRCodingW);
+var
+  list : TFHIRCodingList;
+  c : TFHIRCoding;
 begin
-  (Element as TFhirCodeableConcept).codingList.Add(coding.Element as TFHIRCoding);
+  list := (Element as TFhirCodeableConcept).codingList;
+  c := (coding.Element as TFHIRCoding).link;
+  list.Add(c);
 end;
 
 function TFhirCodeableConcept4.addCoding: TFHIRCodingW;
@@ -4079,12 +4092,13 @@ begin
   result := ed.trigger.condition.language;
 end;
 
-const
-  MAP_TTriggerType : array [TFhirTriggerTypeEnum] of TTriggerType = (ttNull, ttNamedEvent, ttPeriodic, ttDataChanged, ttDataAdded, ttDataModified, ttDataRemoved, ttDataAccessed, ttDataAccessEnded);
+//const
+//  MAP_TTriggerType : array [TFhirTriggerTypeEnum] of TTriggerType = (ttNull, ttNamedEvent, ttPeriodic, ttDataChanged, ttDataAdded, ttDataModified, ttDataRemoved, ttDataAccessed, ttDataAccessEnded);
 
 function TFHIREventDefinition4.triggerType: TTriggerType;
 begin
-  result := MAP_TTriggerType[ed.trigger.type_];
+//  result := MAP_TTriggerType[ed.trigger.type_];
+  result := ttNull;
 end;
 
 function TFHIREventDefinition4.url: String;

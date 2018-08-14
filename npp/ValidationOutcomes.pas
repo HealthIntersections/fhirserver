@@ -88,7 +88,7 @@ begin
   op := context.Factory.wrapOperationOutcome(context.Factory.makeByName('OperationOutcome') as TFHIRResourceV);
   try
     for iss in outcome do
-      op.addIssue(iss.link);
+      op.addIssue(iss, false);
     gen := context.Factory.makeGenerator(context.link);
     try
       gen.description := 'Validation Outcomes';

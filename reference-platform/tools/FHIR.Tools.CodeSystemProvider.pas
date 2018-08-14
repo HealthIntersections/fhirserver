@@ -815,6 +815,7 @@ var
   ctxt : TCodeSystemProviderContext;
   s : TArray<String>;
 begin
+  SetLength(s, 1);
   s[0] := 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes';
   FFactory.checkNoModifiers(base, 'CodeSystemProvider.iterateCodes', 'code', s);
   list.Add(base.Link, 0);
@@ -824,7 +825,7 @@ begin
   try
     for e in el do
     begin
-      ex := FFactory.wrapExtension(e);
+      ex := FFactory.wrapExtension(e.Link);
       try
         ctxt := doLocate(ex.value.primitiveValue);
         try
@@ -873,7 +874,7 @@ begin
                 ok := cp.value.primitiveValue = value;
               cptCoding:
                 begin
-                  coding := FFactory.wrapCoding(cp.value);
+                  coding := FFactory.wrapCoding(cp.value.Link);
                   try
                     ok := coding.code = value;
                   finally

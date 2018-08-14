@@ -55,7 +55,6 @@ const
     {$IFDEF FHIR_CONCEPTMAP}frtConceptMap, {$ENDIF}
     {$IFDEF FHIR_ENTRYDEFINITION}frtEntryDefinition, {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION}frtEventDefinition, {$ENDIF}
-    {$IFDEF FHIR_EXPANSIONPROFILE}frtExpansionProfile, {$ENDIF}
     {$IFDEF FHIR_GRAPHDEFINITION}frtGraphDefinition, {$ENDIF}
     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide, {$ENDIF}
     {$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}frtImplementationGuideInput, {$ENDIF}
@@ -673,12 +672,6 @@ type
   TFhirQuestionnaireHelper = class helper for TFhirQuestionnaire
   public
     function itemCount : integer;
-  end;
-
-  TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
-  public
-    function hash : String;
-    class function defaultProfile : TFhirExpansionProfile;
   end;
 
   TFhirValueSetCodeSystem = TFhirCodeSystem;
@@ -1925,7 +1918,6 @@ begin
     frtCodeSystem: result := TFHIRCodeSystem(res).url;
     frtConceptMap: result := TFHIRConceptMap(res).url;
     frtCapabilityStatement: result := TFHIRCapabilityStatement(res).url;
-    frtExpansionProfile: result := TFHIRExpansionProfile(res).url;
     frtImplementationGuide: result := TFHIRImplementationGuide(res).url;
     frtOperationDefinition: result := TFHIROperationDefinition(res).url;
     frtSearchParameter: result := TFHIRSearchParameter(res).url;
@@ -2875,7 +2867,7 @@ begin
       dig := TDigitalSigner.Create;
       try
         dig.PrivateKey := ansistring(cert);
-        signature.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
+        signature.data := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
       finally
         dig.free;
       end;
@@ -2885,7 +2877,7 @@ begin
       signature.sigFormat := 'application/jose';
       src := resourceToBytes(self, ffJson, OutputStyleCanonical);
       BytesToFile(src, 'c:\temp\can.json');
-      signature.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
+      signature.data := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
       end
   else
     raise EFHIRException.create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
@@ -2922,7 +2914,7 @@ begin
         dig := TDigitalSigner.Create;
         try
           dig.PrivateKey := cert;
-          sig.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
+          sig.data := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
         finally
           dig.free;
         end;
@@ -2932,7 +2924,7 @@ begin
         sig.sigFormat := 'application/jose';
         src := resourceToBytes(self, ffJson, OutputStyleCanonical);
         BytesToFile(src, 'c:\temp\can.json');
-        sig.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
+        sig.data := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
         end
     else
       raise EFHIRException.create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
@@ -4054,7 +4046,7 @@ begin
     TFHIRSignature(element).when := TDateTimeEx.makeUTC;
     TFHIRSignature(element).who := CreateBasicChildren(TFhirReference.Create, nil) as TFhirReference;
     TFHIRSignature(element).sigFormat := 'application/signature+xml';
-    TFHIRSignature(element).blob := AnsiStringAsBytes('signature content');
+    TFHIRSignature(element).data := AnsiStringAsBytes('signature content');
   end
   else if element.FhirType = 'HumanName' then
   begin
@@ -4685,18 +4677,6 @@ begin
       exit(true);
 end;
 
-{ TFhirExpansionProfileHelper }
-
-class function TFhirExpansionProfileHelper.defaultProfile: TFhirExpansionProfile;
-begin
-  result := TFhirExpansionProfile.Create;
-end;
-
-function TFhirExpansionProfileHelper.hash: String;
-begin
- result := BooleanToString(includeDefinition)+'|'+BooleanToString(limitedExpansion)+BooleanToString(includeDesignations)+BooleanToString(activeOnly)+
-   BooleanToString(excludeNested)+BooleanToString(excludeNotForUI)+BooleanToString(excludePostCoordinated)+displayLanguage;
-end;
 
 { TFhirAuditEventHelper }
 

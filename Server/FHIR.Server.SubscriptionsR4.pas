@@ -236,7 +236,7 @@ begin
         evd.checkNoModifiers('SubscriptionManager.checkAcceptable', 'topic definition');
         if rule(evd.trigger <> nil, 'Topic has no trigger') then
         begin
-          rule(evd.trigger.type_ in [TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved], 'Topic has trigger type = '+CODES_TFhirTriggerTypeEnum[evd.trigger.type_]+', which is not supported');
+// todo...          rule(evd.trigger.type_ in [TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved], 'Topic has trigger type = '+CODES_TFhirTriggerTypeEnum[evd.trigger.type_]+', which is not supported');
           rule(evd.trigger.name = '', 'Topic has named trigger, which is not supported');
           rule(evd.trigger.timing = nil, 'Topic has event timing on trigger, which is not supported');
           rule((evd.trigger.data = nil) or (evd.trigger.condition = nil), 'Topic has both data and condition on trigger, which is not supported');

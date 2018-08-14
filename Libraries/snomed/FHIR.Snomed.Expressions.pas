@@ -835,7 +835,7 @@ begin
     result[i] := next;
   end;
   SetLength(result, i);
-  rule(i > 0, 'Concept not found (next char = "'+peekDisp+'")');
+  rule(i > 0, 'Concept not found (next char = "'+peekDisp+'", in "'+source+'")');
 
 end;
 

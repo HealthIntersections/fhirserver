@@ -66,7 +66,7 @@ Type
     procedure recordSpace(space : string; key : integer);
     function TypeForKey(key : integer) : String;
 
-              // addToCompartment
+    // addToCompartment
     procedure patientCompartment(key : integer; reference : TFhirReference); overload;
     procedure patientCompartmentNot(key : integer; type_, id : String); overload;
     procedure patientCompartment(key : integer; type_, id : String); overload;

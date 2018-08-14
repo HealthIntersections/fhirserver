@@ -2114,7 +2114,7 @@ begin
 
           if (response.Resource <> nil) and (response.Resource.fhirType = 'Bundle') then
           begin
-            b := factory.wrapBundle(response.Resource);
+            b := factory.wrapBundle(response.Resource.Link);
             try
               b.addEntry('', request.Resource.link);
             finally
@@ -2356,7 +2356,7 @@ begin
 
           if (response.Resource <> nil) and (response.Resource.fhirType = 'Bundle') then
           begin
-            b := factory.wrapBundle(response.Resource);
+            b := factory.wrapBundle(response.Resource.Link);
             try
               b.addEntry('', request.Resource.link);
             finally

@@ -34,8 +34,9 @@ interface
 uses
   Windows, SysUtils, Classes, Forms, Vcl.Dialogs, Messages, Consts, UITypes, System.Generics.Defaults, ActiveX, Vcl.Clipbrd,
   MarkdownProcessor,
-  FHIR.Npp.Base, FHIR.Npp.Scintilla,
+  FHIR.Npp.BaseFU, FHIR.Npp.ScintillaFU,
   FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.MXml, FHIR.Support.Json;
+
 
 type
   TFormatUtilitiesPlugin = class(TNppPlugin)
@@ -61,6 +62,8 @@ type
     procedure FuncTextUUID;
     procedure FuncUrlEscape;
     procedure FuncUrlUnEscape;
+    procedure FuncRemoveDuplicates;
+    procedure FuncPasteHtml;
   end;
 
 procedure _FuncPrettyPrintXml; cdecl;
@@ -81,17 +84,23 @@ procedure _FuncHtmlUnescape; cdecl;
 procedure _FuncTextUUID; cdecl;
 procedure _FuncUrlEscape; cdecl;
 procedure _FuncUrlUnescape; cdecl;
+procedure _FuncRemoveDuplicates; cdecl;
+procedure _FuncPasteHtml; cdecl;
 
 var
   FNpp: TFormatUtilitiesPlugin;
 
 implementation
 
+var
+  CF_HTML : Integer = 0;
+
 { TFormatUtilitiesPlugin }
 
 constructor TFormatUtilitiesPlugin.Create;
 begin
   inherited;
+  CF_HTML := RegisterClipboardFormat('HTML Format');
   self.PluginName := 'Format &Utils';
   self.AddFuncItem('&Pretty Print XML', _FuncPrettyPrintXml);
   self.AddFuncItem('&Collapse XML', _FuncCollapseXml);
@@ -110,11 +119,14 @@ begin
   self.AddFuncItem('HTML &Paragraph', _FuncHtmlParapraph);
   self.AddFuncItem('HTML &Escape', _FuncHtmlEscape);
   self.AddFuncItem('HTML &Unescape', _FuncHtmlUnescape);
+  self.AddFuncItem('Paste Html', _FuncPasteHtml);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Text &UUID', _FuncHtmlUnescape);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Url &Escape', _FuncUrlEscape);
   self.AddFuncItem('Url &Unescape', _FuncUrlUnescape);
+  self.AddFuncItem('-', Nil);
+  self.AddFuncItem('Remove Duplicate Lines', _FuncRemoveDuplicates);
 end;
 
 procedure _FuncPrettyPrintXml; cdecl;
@@ -205,6 +217,16 @@ end;
 procedure _FuncUrlUnescape;
 begin
   FNpp.FuncUrlUnescape;
+end;
+
+procedure _FuncRemoveDuplicates;
+begin
+  FNpp.FuncRemoveDuplicates;
+end;
+
+procedure _FuncPasteHtml;
+begin
+  FNpp.FuncPasteHtml;
 end;
 
 procedure TFormatUtilitiesPlugin.FuncXmlCollapse;
@@ -367,6 +389,59 @@ begin
   SelectedBytes := TEncoding.UTF8.GetBytes(s);
 end;
 
+
+procedure TFormatUtilitiesPlugin.FuncRemoveDuplicates;
+var
+  sl : TStringList;
+  i, j : integer;
+begin
+  sl := TStringList.Create;
+  try
+    sl.Text := TEncoding.UTF8.getString(SelectedBytes);
+    for i := 0 to sl.Count - 1 do
+    begin
+      for j := sl.Count - 1 downto i+1 do
+        if sl[i] = sl[j] then
+          sl.Delete(j);
+    end;
+    SelectedBytes := TEncoding.UTF8.GetBytes(sl.Text);
+  finally
+    sl.Free;
+  end;
+end;
+
+procedure TFormatUtilitiesPlugin.FuncPasteHtml;
+var
+  ClipboardData: Windows.HGLOBAL;
+  Ptr: Pointer;
+  Size: DWORD;
+  b : TBytes;
+begin
+  Clipboard.Open;
+  try
+    if Clipboard.HasFormat(CF_HTML) then
+    begin
+      ClipboardData := Clipboard.GetAsHandle(CF_HTML);
+      if ClipboardData <> 0 then
+      begin
+        Ptr := Windows.GlobalLock(ClipboardData);
+        if Ptr <> nil then
+        begin
+          try
+            Size := Windows.GlobalSize(ClipboardData);
+            setLength(b, Size);
+            Move(ptr^, b[0], Size);
+            SelectedBytes := b;
+          finally
+            Windows.GlobalUnlock(ClipboardData);
+          end;
+        end;
+      end;
+    end;
+  finally
+    Clipboard.Close;
+  end;
+end;
 
 procedure TFormatUtilitiesPlugin.FuncTextUUID;
 var
