@@ -8,20 +8,20 @@ uses
   System.types,
   System.UITypes,
   FHIR.Base.Objects,
-  FHIR.R4.Types,
+  FHIR.R4.types,
   FHIR.R4.Resources,
   FHIR.R4.Utilities,
   FHIR.Support.Utilities,
-  System.ImageList, FMX.Types, FMX.ScrollBox, System.Classes,
+  JclSysUtils,
+  System.ImageList, FMX.types, FMX.ScrollBox, System.Classes,
   FMX.Controls.Presentation, FMX.DateTimeCtrls, FMX.Edit,
   FMX.Memo, FMX.TreeView, FMX.Dialogs, FMX.DialogService,
   FMX.StdCtrls, FMX.ListBox, FMX.Layouts, FMX.TabControl,
   FMX.Menus, FMX.WebBrowser, FMX.Controls, FMX.Forms, IGSettings, FMX.ImgList,
 
-  shellapi, winapi.windows,fmx.platform.win,
+  shellapi, winapi.windows, FMX.platform.win,
   BaseResourceFrame,
   FMX.ComboEdit;
-
 
 type
   TFrame = TBaseResourceFrame;
@@ -149,6 +149,15 @@ type
     OpenDialog1: TOpenDialog;
     AutoPreview: TCheckBox;
     Button2: TButton;
+    Button8: TButton;
+    OpenDialog3: TOpenDialog;
+    CornerButton2: TCornerButton;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Edit2: TEdit;
+    Edit10: TEdit;
+    Label9: TLabel;
     function addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
     procedure packageUpClick(Sender: TObject);
     procedure packageDownClick(Sender: TObject);
@@ -186,29 +195,36 @@ type
     procedure Button9Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
+    procedure CornerButton2Click(Sender: TObject);
+    procedure CornerButton10Click(Sender: TObject);
+    procedure CornerButton9Click(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
-   procedure ConcatenateFiles(const InFileNames: array of string; const OutFileName: string);
-   Destructor Destroy; override;
-   procedure load;  override;
-   procedure commit; override;
-   procedure cancel;  override;
+    igrootfolder, igcontentfolder, pagecontentfolder, mediafolder,
+    // pandocfolder,
+    tempfolder: string;
+    procedure ConcatenateFiles(const InFileNames: array of string; const OutFileName: string);
+    Destructor Destroy; override;
+    procedure load; override;
+    procedure commit; override;
+    procedure cancel; override;
   end;
-
 
 var
   ImplementationGuideEditorFrame: TImplementationGuideEditorFrame;
-//  resource: TFHIRImplementationGuide;
-  fwbinfolder, binfolder, igrootfolder, filename: string;
+  // resource: TFHIRImplementationGuide;
+  IGFileName, BaseTemplateFolder, IGPublisherFolder, binaryfolder: string;
   internal: boolean;
-  resourceIsDirty:Boolean;
+  resourceIsDirty: boolean;
+  foldersDefined: boolean;
 
 implementation
 
 {$R *.fmx}
 
+uses Import2html;
 
 procedure TImplementationGuideEditorFrame.cancel;
 begin
@@ -216,16 +232,13 @@ end;
 
 procedure TImplementationGuideEditorFrame.commit;
 begin
-{if tvStructure.Selected = tvMetadata then
+  { if tvStructure.Selected = tvMetadata then
     CommitMetadata;
-  if tvStructure.Selected = tvSDC then
+    if tvStructure.Selected = tvSDC then
     CommitSDC;
-}  ResourceIsDirty := true;
+  } resourceIsDirty := true;
 
 end;
-
-
-
 
 Destructor TImplementationGuideEditorFrame.Destroy;
 begin
@@ -234,43 +247,48 @@ end;
 
 procedure TImplementationGuideEditorFrame.Edit4DragDrop(Sender: TObject; const Data: TDragObject; const Point: TPointF);
 begin
-  edit4.Text:=ttabitem(data.source).Text;
+  Edit4.text := TTabItem(Data.source).text;
 end;
 
 procedure TImplementationGuideEditorFrame.Edit4DragOver(Sender: TObject; const Data: TDragObject; const Point: TPointF; var Operation: TDragOperation);
 begin
-  Operation:=TDragOperation.Link;
+  Operation := TDragOperation.Link;
 end;
 
-
-///////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
 // 1. 1 recursive procedure to add a FHIRObject to a treeview
 // each part must know what to recurse - e.g. if it is an exampleScenario it must check the actors, resources, and processes
 // so we could scan this from the structureDefinition
-///////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
 
 function TImplementationGuideEditorFrame.addTVItem(TreeView: TTreeView; parent: TTreeViewItem; itemType, text: string; obj: tFHIRObject): TTreeViewItem;
 var
   current_item, Item: TTreeViewItem;
   i: integer;
-  objtype:string;
+  objtype: string;
 begin
 
   Item := TTreeViewItem.Create(TreeView);
-  objtype:=obj.fhirType;
+  objtype := obj.fhirType;
   TreeView.AddObject(Item);
   if (parent = nil) then
-    item.Parent:=TreeView
+    Item.parent := TreeView
   else
-    item.Parent:=parent;
+    Item.parent := parent;
 
-  Item.ImageIndex:=-1;
-  if itemType = 'page' then Item.ImageIndex:=9;
-  if itemType = 'manifest' then Item.ImageIndex:=10;
-  if itemType = 'definition' then Item.ImageIndex:=11;
-  if itemType = 'resource' then Item.ImageIndex:=12;
-  if itemType = 'package' then Item.ImageIndex:=15;
-  if itemType = 'implementationguide' then Item.ImageIndex:=14;
+  Item.ImageIndex := -1;
+  if itemType = 'page' then
+    Item.ImageIndex := 9;
+  if itemType = 'manifest' then
+    Item.ImageIndex := 10;
+  if itemType = 'definition' then
+    Item.ImageIndex := 11;
+  if itemType = 'resource' then
+    Item.ImageIndex := 12;
+  if itemType = 'package' then
+    Item.ImageIndex := 15;
+  if itemType = 'implementationguide' then
+    Item.ImageIndex := 14;
 
   Item.StylesData['attrType'] := itemType;
   Item.StylesData['sortOrder'] := 1;
@@ -279,10 +297,13 @@ begin
   Item.text := text;
   Item.tagObject := obj;
 
-// do this for the object - any object type:
+  Item.IsExpanded := true;
+
+  // do this for the object - any object type:
   if obj is tfhirImplementationGuide then
   begin
-    tab.Text:=text ;
+    if text <> '' then
+      tab.text := text;
     current_item := Item;
     for i := 0 to tfhirImplementationGuide(obj).dependsOnList.Count - 1 do
       addTVItem(TreeView, current_item, 'Depends On', tfhirImplementationGuide(obj).dependsOnList[i].version, tfhirImplementationGuide(obj).dependsOnList[i]);
@@ -302,16 +323,15 @@ begin
 
   end;
 
-
   if obj is tfhirImplementationGuideDefinition then
   begin
     current_item := Item;
 
     for i := 0 to tfhirImplementationGuideDefinition(obj).packageList.Count - 1 do
-      addTVItem(TreeView, current_item, 'package', tfhirImplementationGuideDefinition(obj).packageList[i].name, tfhirImplementationGuideDefinition(obj).packageList[i]);
+      addTVItem(TreeView, current_item, 'package', tfhirImplementationGuideDefinition(obj).packageList[i].Name, tfhirImplementationGuideDefinition(obj).packageList[i]);
 
     for i := 0 to tfhirImplementationGuideDefinition(obj).resourceList.Count - 1 do
-      addTVItem(TreeView, current_item, 'resource', tfhirImplementationGuideDefinition(obj).resourceList[i].name, tfhirImplementationGuideDefinition(obj).resourceList[i]);
+      addTVItem(TreeView, current_item, 'resource', tfhirImplementationGuideDefinition(obj).resourceList[i].Name, tfhirImplementationGuideDefinition(obj).resourceList[i]);
 
     if tfhirImplementationGuideDefinition(obj).page <> nil then
     begin
@@ -323,55 +343,46 @@ begin
 
   end;
 
-
-
-    if obj is tfhirImplementationGuideDefinitionPage then
+  if obj is tfhirImplementationGuideDefinitionPage then
   begin
     current_item := Item;
 
     for i := 0 to tfhirImplementationGuideDefinitionPage(obj).pageList.Count - 1 do
     begin
-      addTVItem(TreeView, current_item, 'page', tfhirImplementationGuideDefinitionPage(obj).pageList[i].title , tfhirImplementationGuideDefinitionPage(obj).pageList[i]);
+      addTVItem(TreeView, current_item, 'page', tfhirImplementationGuideDefinitionPage(obj).pageList[i].title, tfhirImplementationGuideDefinitionPage(obj).pageList[i]);
     end;
-
 
   end;
 
   result := Item;
 
-
 end;
-
-
-
 
 procedure TImplementationGuideEditorFrame.autopreviewClick(Sender: TObject);
 begin
-  autopreview.IsChecked:=not autopreview.IsChecked;
+  AutoPreview.IsChecked := not AutoPreview.IsChecked;
 
 end;
 
 procedure TImplementationGuideEditorFrame.FormShow(Sender: TObject);
 begin
-  filename := '';
-  binfolder:=getCurrentDir;
 
+  // binfolder := getCurrentDir;
 
-  if TVstructure.globalCount = 0 then
+  if tvStructure.globalCount = 0 then
   begin
     if not Assigned(resource) then
       NewImplementationGuideClick(Self);
   end;
 
+  TabControl1.TabHeight := 1;
+  TabControl2.TabHeight := 1;
 
-  tabcontrol1.TabHeight:=1;
-  tabcontrol2.TabHeight:=1;
-
-// form1.Caption:= inttostr(trunc(double(now)));
-//if trunc(double(now)) > 43275 then begin
-//  ShowMessage('This is a preview. Please check the FHIR toolkit for official release and updates.');
-//close;
-//end;
+  // form1.Caption:= inttostr(trunc(double(now)));
+  // if trunc(double(now)) > 43275 then begin
+  // ShowMessage('This is a preview. Please check the FHIR toolkit for official release and updates.');
+  // close;
+  // end;
 end;
 
 procedure TImplementationGuideEditorFrame.packageDownClick(Sender: TObject);
@@ -379,29 +390,30 @@ var
   idx: integer;
 begin
 
-  idx := tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).packageList.IndexOf(tfhirImplementationGuideDefinitionPackage(TVStructure.Selected.TagObject));
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.IndexOf(tfhirImplementationGuideDefinitionPackage(tvStructure.Selected.tagObject));
 
-  if idx < tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).packageList.Count - 1 then begin
-  tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).packageList.Exchange(idx, idx + 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
-  ResourceIsDirty := true;
+  if idx < tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.Count - 1 then
+  begin
+    tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.Exchange(idx, idx + 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+    resourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
 
- end;
+end;
 
 procedure TImplementationGuideEditorFrame.packageUpClick(Sender: TObject);
 var
   idx: integer;
 begin
-  idx := tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).packageList.IndexOf(tfhirImplementationGuideDefinitionPackage(TVStructure.Selected.TagObject));
-  if idx > 0 then begin
-  tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).packageList.Exchange(idx, idx - 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
-  ResourceIsDirty := true;
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.IndexOf(tfhirImplementationGuideDefinitionPackage(tvStructure.Selected.tagObject));
+  if idx > 0 then
+  begin
+    tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).packageList.Exchange(idx, idx - 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+    resourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
-
 
 end;
 
@@ -410,18 +422,18 @@ var
   idx: integer;
 begin
 
-  if not (TVStructure.Selected.ParentItem.TagObject is tfhirImplementationGuideDefinitionPage) then exit;
+  if not(tvStructure.Selected.ParentItem.tagObject is tfhirImplementationGuideDefinitionPage) then
+    exit;
 
+  idx := tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.IndexOf(tfhirImplementationGuideDefinitionPage(tvStructure.Selected.tagObject));
 
-  idx := tfhirImplementationGuideDefinitionPage(TVStructure.Selected.ParentItem.TagObject).pageList.IndexOf(tfhirImplementationGuideDefinitionPage(TVStructure.Selected.TagObject));
-
-  if idx < tfhirImplementationGuideDefinitionPage(TVStructure.Selected.ParentItem.TagObject).pageList.Count - 1 then begin
-  tfhirImplementationGuideDefinitionPage(TVStructure.Selected.ParentItem.TagObject).pageList.Exchange(idx, idx + 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
-  ResourceIsDirty := true;
+  if idx < tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.Count - 1 then
+  begin
+    tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.Exchange(idx, idx + 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+    resourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
-
 
 end;
 
@@ -430,60 +442,146 @@ var
   idx: integer;
 begin
 
-  if not (TVStructure.Selected.ParentItem.TagObject is tfhirImplementationGuideDefinitionPage) then exit;
+  if not(tvStructure.Selected.ParentItem.tagObject is tfhirImplementationGuideDefinitionPage) then
+    exit;
 
-
-  idx := tfhirImplementationGuideDefinitionPage(TVStructure.Selected.ParentItem.TagObject).pageList.IndexOf(tfhirImplementationGuideDefinitionPage(TVStructure.Selected.TagObject));
-  if idx > 0 then begin
-  tfhirImplementationGuideDefinitionPage(TVStructure.Selected.ParentItem.TagObject).pageList.Exchange(idx, idx - 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
-  ResourceIsDirty := true;
+  idx := tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.IndexOf(tfhirImplementationGuideDefinitionPage(tvStructure.Selected.tagObject));
+  if idx > 0 then
+  begin
+    tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.Exchange(idx, idx - 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+    resourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
 
 end;
-
 
 procedure TImplementationGuideEditorFrame.load;
 begin
 
   inherited;
 
-  filename := '';
-  binfolder:=getCurrentDir;
+  // binfolder := getCurrentDir;
+  TabControl1.TabHeight := 1;
+  TabControl2.TabHeight := 1;
 
-  if TVstructure.globalCount = 0 then
   begin
-    if not Assigned(resource) then
-      NewImplementationGuideClick(Self)
-    else begin
-     tvStructure.beginUpdate;
-     try
-      addTVItem(tvStructure, nil, 'implementationguide', TFHIRImplementationGuide(resource).name, resource);
-     finally
-     tvStructure.EndUpdate;
-     tvstructure.Repaint;
-     end;
+    tvStructure.beginUpdate;
+    try
+      addTVItem(tvStructure, nil, 'implementationguide', tfhirImplementationGuide(resource).Name, resource);
+    finally
+      tvStructure.EndUpdate;
+      // tvStructure.Repaint;
     end;
-//    webbrowser1.Enabled:=false;
-     application.ProcessMessages;
-    tvstructure.Selected:=tvstructure.ItemByGlobalIndex(0);
-
-	 
+    // webbrowser1.Enabled:=false;
   end;
 
-  tabcontrol1.TabHeight:=1;
-  tabcontrol2.TabHeight:=1;
+  tfhirImplementationGuide(resource).id:=extractfilename(changefileext(filename,''));
 
-//  showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
+
+  application.ProcessMessages;
+  tvStructure.ExpandAll;
+
+  tvStructure.Selected := tvStructure.ItemByGlobalIndex(0);
+
+  showTab(tFHIRObject(tFHIRObject(tvStructure.Selected.tagObject)));
+  // application.ProcessMessages;
 
 end;
 
+procedure TImplementationGuideEditorFrame.CornerButton10Click(Sender: TObject);
+var
+  idx: integer;
 
+begin
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.IndexOf(tfhirImplementationGuideDefinitionResource(tvStructure.Selected.tagObject));
+  resourceIsDirty := true;
+  tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.Remove(idx);
+  ReloadTreeview(tvStructure.Selected.ParentItem);
+
+end;
 
 procedure TImplementationGuideEditorFrame.CornerButton1Click(Sender: TObject);
+var
+  filestr: string;
+  IGSettingsForm: TIGSettingsForm;
 begin
-  TDialogService.MessageDialog('Not Implemented yet', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+
+  // IGFileName:=nameForSaveDialog;
+
+  if filename <> '' then
+  begin
+    igrootfolder := extractfilepath(filename);
+    IGFileName := extractfilename(filename);
+  end;
+
+  IGSettingsForm := TIGSettingsForm.Create(Self);
+
+  if igrootfolder <> '' then
+    if copy(igrootfolder, length(igrootfolder), 1) = '\' then
+      igrootfolder := copy(igrootfolder, 1, length(igrootfolder) - 1);
+
+  IGSettingsForm.igrootfolder := igrootfolder;
+  IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
+  IGSettingsForm.BaseTemplateFolder := BaseTemplateFolder;
+  IGSettingsForm.IGFileName := IGFileName; //
+
+  IGSettingsForm.ShowModal;
+
+  if IGSettingsForm.ModalResult = mrOK then
+  begin
+    igrootfolder := IGSettingsForm.igrootfolder;
+    IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
+    BaseTemplateFolder := IGSettingsForm.BaseTemplateFolder;
+
+    igcontentfolder := IGSettingsForm.igcontentfolder;
+    mediafolder := IGSettingsForm.mediafolder;
+    pagecontentfolder := IGSettingsForm.pagecontentfolder;
+    tempfolder := IGSettingsForm.tempfolder;
+    // pandocfolder := IGSettingsForm.pandocFolder;
+
+  end;
+  IGSettingsForm.Destroy;
+
+  // TDialogService.MessageDialog('Not Implemented yet', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
+
+end;
+
+procedure TImplementationGuideEditorFrame.CornerButton2Click(Sender: TObject);
+var
+  i: integer;
+  resx: tfhirImplementationGuideDefinitionResource;
+  resref: tfhirReference;
+begin
+
+  // opendialog3.Options:=[TOpenOption.ofAllowMultiSelect, TOpenOption.ofHideReadOnly];
+  OpenDialog3.Options := [TOpenOption.ofAllowMultiSelect];
+
+  if OpenDialog3.Execute then
+  begin
+    for i := 0 to OpenDialog3.Files.Count - 1 do
+    begin
+      resx := tfhirImplementationGuideDefinitionResource(tvStructure.Selected.TagObject);
+      if not assigned(resx) then resx.reference:= tfhirReference.Create;
+      resx.reference.reference := ChangeFileExt((extractfilename(OpenDialog3.Files[i])), '');
+      resx.Name := ChangeFileExt(extractfilename(OpenDialog3.Files[i]), '');
+      if igcontentfolder <> '' then
+        try
+          TFile.copy(OpenDialog3.Files[i], igcontentfolder + '\resources\' + extractfilename(OpenDialog3.Files[i]));
+        except
+
+        end;
+
+//      tfhirImplementationGuide(resource).definition.resourceList.Add(resx);
+      // tfhirImplementationGuideDefinition(tvStructure.Selected.parent.tagObject).resourceList.Add(resx);
+
+    end;
+
+
+    resourceIsDirty := true;
+    ReloadTreeview(tvStructure.Selected);
+
+  end;
 
 end;
 
@@ -492,30 +590,57 @@ var
   package: tfhirImplementationGuideDefinitionPackage;
 begin
   package := tfhirImplementationGuideDefinitionPackage.Create;
-  Package.name:='Package';
+  Package.Name := 'Package';
 
-  if TVStructure.Selected.TagObject is tfhirImplementationGuideDefinition then
-    tfhirImplementationGuideDefinition(TVStructure.Selected.TagObject).packageList.Add(Package);
+  if tvStructure.Selected.tagObject is tfhirImplementationGuideDefinition then
+    tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).packageList.Add(Package);
 
-    ResourceIsDirty := true;
-      ReloadTreeview(tvStructure.Selected);
+  resourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
 
 end;
 
 procedure TImplementationGuideEditorFrame.CornerButton5Click(Sender: TObject);
-var res :tfhirImplementationGuideDefinitionResource;
-    resref :tfhirReference;
-
+var
+  res: tfhirImplementationGuideDefinitionResource;
+  resref: tfhirReference;
 
 begin
   res := tfhirImplementationGuideDefinitionResource.Create;
-  res.name:='resource';
-  res.reference:=tfhirReference.Create;
+  res.Name := 'resource';
+  res.reference := tfhirReference.Create;
 
-  tfhirImplementationGuideDefinition(TVStructure.Selected.TagObject).resourceList.Add(res);
-  ResourceIsDirty := true;
-  ReloadTreeview(TVStructure.Selected);
+  tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).resourceList.Add(res);
+  resourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
 
+end;
+
+procedure TImplementationGuideEditorFrame.CornerButton9Click(Sender: TObject);
+var
+  idx: integer;
+
+begin
+
+  TDialogService.MessageDialog('Delete element and all its children?', TMsgDlgType.mtConfirmation, mbYesNo, TMsgDlgBtn.mbNo, 0,
+    procedure(const AResult: TModalResult)
+    begin
+      if (tvStructure.Selected.ParentItem.tagObject) is tfhirImplementationGuideDefinition then
+      begin
+        resourceIsDirty := true;
+        tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).deleteProperty('page', tfhirImplementationGuideDefinitionPage(tvStructure.Selected.tagObject));
+        ReloadTreeview(tvStructure.Selected.ParentItem);
+      end
+
+      else if (tvStructure.Selected.ParentItem.tagObject) is tfhirImplementationGuideDefinitionPage then
+      begin
+        idx := tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.IndexOf(tfhirImplementationGuideDefinitionPage(tvStructure.Selected.tagObject));
+        resourceIsDirty := true;
+        tfhirImplementationGuideDefinitionPage(tvStructure.Selected.ParentItem.tagObject).pageList.Remove(idx);
+        ReloadTreeview(tvStructure.Selected.ParentItem);
+      end;
+
+    end);
 
 end;
 
@@ -533,42 +658,38 @@ begin
 
 end;
 
-
-
-
-
 procedure TImplementationGuideEditorFrame.btnDefinitionClick(Sender: TObject);
 var
-  Definition: tfhirImplementationGuideDefinition;
+  definition: tfhirImplementationGuideDefinition;
 
 begin
-  Definition := tfhirImplementationGuideDefinition.Create;
-  tfhirImplementationGuide(TVStructure.Selected.TagObject).definition:=Definition;
-  ResourceIsDirty := true;
-  ReloadTreeview(TVStructure.Selected);
+  definition := tfhirImplementationGuideDefinition.Create;
+  tfhirImplementationGuide(tvStructure.Selected.tagObject).definition := definition;
+  resourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
 
 end;
-
 
 procedure TImplementationGuideEditorFrame.btnNewPageClick(Sender: TObject);
 var
   page: tfhirImplementationGuideDefinitionPage;
 begin
 
-  if TVStructure.Selected.TagObject is tfhirImplementationGuideDefinition then if tfhirImplementationGuideDefinition(TVStructure.Selected.TagObject).page <> nil then exit;
+  if tvStructure.Selected.tagObject is tfhirImplementationGuideDefinition then
+    if tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).page <> nil then
+      exit;
 
+  page := tfhirImplementationGuideDefinitionPage.Create;
+  page.title := 'Page';
 
-  Page := tfhirImplementationGuideDefinitionPage.Create;
-  Page.title:='Page';
+  if tvStructure.Selected.tagObject is tfhirImplementationGuideDefinition then
+    tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).page := page;
 
-  if TVStructure.Selected.TagObject is tfhirImplementationGuideDefinition then
-    tfhirImplementationGuideDefinition(TVStructure.Selected.TagObject).page:=Page;
+  if tvStructure.Selected.tagObject is tfhirImplementationGuideDefinitionPage then
+    tfhirImplementationGuideDefinitionPage(tvStructure.Selected.tagObject).pageList.Add(page);
 
-  if TVStructure.Selected.TagObject is tfhirImplementationGuideDefinitionPage then
-    tfhirImplementationGuideDefinitionPage(TVStructure.Selected.TagObject).pageList.Add(Page);
-
-    ResourceIsDirty := true;
-      ReloadTreeview(tvStructure.Selected);
+  resourceIsDirty := true;
+  ReloadTreeview(tvStructure.Selected);
 
 end;
 
@@ -576,21 +697,20 @@ procedure TImplementationGuideEditorFrame.btnProcess2Click(Sender: TObject);
 begin
 end;
 
-//2.5 Main process
+// 2.5 Main process
 procedure TImplementationGuideEditorFrame.NewImplementationGuideClick(Sender: TObject);
 
 var
-  ImplementationGuide: TFHIRImplementationGuide;
+  ImplementationGuide: tfhirImplementationGuide;
 begin
-  ImplementationGuide := TFHIRImplementationGuide.create;
-  ImplementationGuide.name := 'Implementation Guide';
+  ImplementationGuide := tfhirImplementationGuide.Create;
+  ImplementationGuide.Name := 'Implementation Guide';
   resource := ImplementationGuide;
   ReloadTreeview(nil);
 
- //// showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
+  /// / showTab(TFHIRObject(TFHIRObject(TVStructure.Selected.TagObject)));
 
-//  showTab(exsc);
-
+  // showTab(exsc);
 
 end;
 
@@ -600,20 +720,21 @@ var
   SL: TStringList;
 begin
 
-    tempstr:=igrootfolder+'\pagecontent\'+ChangeFileExt(edit1.Text, '.xml');
+  tempstr := igrootfolder + '\pagecontent\' + ChangeFileExt(Edit1.text, '.xml');
 
-    filestr:=binfolder+'\tmp.html';
+  filestr := tempfolder + '\tmp.html';
 
   SL := TStringList.Create;
   try
     SL.LoadFromFile(tempstr);
     begin
-      SL.Insert(0, '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
+      SL.Insert(0,
+        '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
       SL.Append('</div>');
     end;
 
     begin
-      SL.Insert(0,'<html><body>');
+      SL.Insert(0, '<html><body>');
       SL.Append('</body></html>');
       SL.SaveToFile(filestr);
     end;
@@ -622,9 +743,9 @@ begin
     SL.Free;
   end;
 
-  filestr:= stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
+  filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
 
-  //webbrowser1.Navigate( filestr );
+  // webbrowser1.Navigate( filestr );
 
 end;
 
@@ -633,22 +754,21 @@ var
   tempstr, filestr: string;
   SL: TStringList;
 begin
-if True then
 
-    tempstr:=igrootfolder+'\pagecontent\'+ChangeFileExt(edit1.Text, '.xml');
-
-    filestr:=binfolder+'\tmp.html';
+  tempstr := igrootfolder + '\pagecontent\' + ChangeFileExt(Edit1.text, '.xml');
+  filestr := igrootfolder + '\tmp.html';
 
   SL := TStringList.Create;
   try
     SL.LoadFromFile(tempstr);
     begin
-      SL.Insert(0, '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
+      SL.Insert(0,
+        '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
       SL.Append('</div>');
     end;
 
     begin
-      SL.Insert(0,'<html><body>');
+      SL.Insert(0, '<html><body>');
       SL.Append('</body></html>');
       SL.SaveToFile(filestr);
     end;
@@ -657,274 +777,402 @@ if True then
     SL.Free;
   end;
 
-  filestr:= stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
-
-  runandwait(igrootfolder, 'open', filestr);
-//  webbrowser1.Navigate( filestr );
+  filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
+  runAndWait(igrootfolder, 'open', filestr);
+  // webbrowser1.Navigate( filestr );
 
 end;
 
 procedure TImplementationGuideEditorFrame.Button7Click(Sender: TObject);
 var
-  tempstr, filestr: string;
+  optionsStr, tempstr, filestr, sCmd, ExecuteFile, ParamString, StartInString: string;
   SEInfo: TShellExecuteInfo;
   ExitCode: DWORD;
-  sCmd,ExecuteFile, ParamString, StartInString: string;
   SL: TStringList;
-  InsTextPos: Integer;
-  lResultStr: String;
+  i, InsTextPos: integer;
+  destfile, lResultStr: String;
+  contentImport: TcontentImport;
+  sa: TStringDynArray;
+
 begin
-  if fwbinfolder='' then fwbinfolder:=binfolder;
-  opendialog2.InitialDir := igrootfolder;
 
-  if opendialog2.Execute then begin
-    tempstr:=fwbinfolder+'\tmp.docx';
-    copyfile(pwidechar(opendialog2.filename),pwidechar(tempstr), false);
-    tempstr:=fwbinfolder+'';
+  { igrootfolder:='C:\ImpGuide';
+    igcontentfolder := igrootfolder + '\content';
+    tempfolder := igcontentfolder + '\temp';
+    pagecontentfolder := igcontentfolder + '\pagecontent';
+    mediafolder := igcontentfolder + '\images';
+  }
+  IGPublisherFolder := igrootfolder + '\publish';
 
-    //runandwait(tempstr, 'pandoc', '--from=docx -s --to=html4 tmp.docx -o tmp.html');
-    runandwait(tempstr, 'pandoc', '--extract-media . --from=docx --to=html4 tmp.docx -o tmp.txt');
-    //concatenatefiles(['xheader.txt','tmp.txt','xfooter.txt'],'tmp.xml');
-
-  SL := TStringList.Create;
-  try
-    SL.LoadFromFile(fwbinfolder+'\tmp.txt');
-    begin
-      SL.Insert(0, '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
-      SL.Append('</div>');
-      SL.SaveToFile(fwbinfolder+'\tmp.xml');
-    end;
-
-    begin
-      SL.Insert(0,'<html><body>');
-      SL.Append('</body></html>');
-      SL.SaveToFile(fwbinfolder+'\tmp.html');
-    end;
-
-  finally
-    SL.Free;
+  If (igcontentfolder = '') or not(directoryexists(pwidechar(igcontentfolder)) and directoryexists(pwidechar(pagecontentfolder)) and directoryexists(pwidechar(mediafolder))) then
+  begin
+    TDialogService.MessageDialog('IG content folders not defined or not found.' + #13#10 + ' Do you want to create them?', System.UITypes.TMsgDlgType.mtConfirmation,
+      [System.UITypes.TMsgDlgBtn.mbYes, System.UITypes.TMsgDlgBtn.mbNo], System.UITypes.TMsgDlgBtn.mbYes, 0,
+      procedure(const AResult: TModalResult)
+      begin
+        case AResult of
+          mrYES:
+            begin
+              Button9Click(nil);
+            end;
+          mrNo:
+            begin
+            end;
+        end;
+      end);
   end;
 
+  If ((igcontentfolder <> '') and (IGPublisherFolder <> '') and (directoryexists(pwidechar(igcontentfolder)) and directoryexists(pwidechar(pagecontentfolder)) and
+    directoryexists(pwidechar(mediafolder)))) then
+  begin
 
+    contentImport := TcontentImport.Create(Self);
+    contentImport.igContentfolder:=igContentFolder;
+    contentImport.igPublisherfolder:=igPublisherFolder;
+    contentImport.Edit1.text := Edit1.text;
+    contentImport.ShowModal;
+    contentImport.Free;
 
+    exit;
 
+  end;
 
-    filestr:=fwbinfolder+'\tmp.html';
-    filestr:= stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
-  runandwait(igrootfolder, filestr, filestr);
-    tempstr:=fwbinfolder+'\tmp.docx';
-    deletefile(pwidechar(tempstr));
+  exit;
 
+  {
+    if OpenDialog2.Execute then
+    begin
 
+    tempstr := tempfolder + '\tmp.docx';
+    copyfile(pwidechar(OpenDialog2.filename), pwidechar(tempstr), false);
 
-    if edit1.Text<>'' then try
-      filestr:=fwbinfolder+'\tmp.html';
-      if (directoryexists(pwidechar(igrootfolder+'\pages'))) then
-        begin
-          tempstr:=igrootfolder+'\pages\'+edit1.text+'.xml';
-          copyfile(pwidechar(filestr),pwidechar(tempstr), false)
-        end
-      else
-        begin
-            TDialogService.MessageDialog('Pages folder not found. Do you want to create it? '+#13#10+'Click No if you want to save in the same folder, cancel to skip saving', System.UITypes.TMsgDlgType.mtInformation,
-              [System.UITypes.TMsgDlgBtn.mbYes, System.UITypes.TMsgDlgBtn.mbNo, System.UITypes.TMsgDlgBtn.mbCancel],
-              System.UITypes.TMsgDlgBtn.mbYes, 0,
-                  procedure(const AResult: TModalResult)
-                  begin
-                    case AResult of
-                      mrYES:
-                        begin
-                          tempstr:=igrootfolder+'\pages\'+edit1.text+'.xml';
-                          createdir(pwidechar(igrootfolder+'\pages'));
-                          copyfile(pwidechar(filestr),pwidechar(tempstr), false);
-                        end;
-                      mrNo:
-                        begin
-                          tempstr:=igrootfolder+'\'+edit1.text+'.xml';
-                          copyfile(pwidechar(filestr),pwidechar(tempstr), true);
-                        end;
-                    end;
-                  end);
-        end;
-    except
+    optionsStr:= '--extract-media '+tempfolder+' --from=docx --to=html4 '+tempfolder+'\tmp.docx -o '+tempfolder+'\tmp.txt';
+    runAndWait(pandocfolder, 'pandoc', optionsStr);
+
+    if directoryexists(tempfolder+'\media') then begin
+
+    sa:=TDirectory.GetFiles(tempfolder+'\media');
+    for i:= 0 to Length(sa) - 1 do
+    begin
+    destfile:=mediafolder+'\'+extractfilename(sa[i]);
+    movefile(pwidechar(sa[i]), pwidechar(destfile));
     end;
+    end;
+
+    //    delete media folder
+
+    SL := TStringList.Create;
+    try
+    SL.LoadFromFile(tempfolder + '\tmp.txt');
+    begin
+    SL.Insert(0,
+    '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head>');
+    SL.Append('</div>');
+    SL.SaveToFile(tempfolder + '\tmp.xml');
+    end;
+    begin
+    SL.Insert(0, '<html><body>');
+    SL.Append('</body></html>');
+    SL.SaveToFile(tempfolder + '\tmp.html');
+    end;
+    finally
+    SL.Free;
+    end;
+
+    filestr := tempfolder + '\tmp.html';
+    filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
+    // If preview
+    runAndWait(igrootfolder, filestr, filestr);
+    //
+    tempstr := tempfolder + '\tmp.docx';
+    deletefile(pwidechar(tempstr));
+    //    deletefile(pwidechar(tempfolder + '\tmp.html'));
+
+    if Edit1.text <> '' then
+    try
+    filestr := tempfolder + '\tmp.xml';
+    copyfile(pwidechar(filestr), pwidechar(pagecontentfolder + '\'+ Edit1.text + '.xml'), false);
+    except
+    end
+    else
+    TDialogService.MessageDialog('File not saved - page name is empty.' + #13#10 + 'To save, enter a page name and import again.',
+    System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOK], System.UITypes.TMsgDlgBtn.mbOK, 0,
+    procedure(const AResult: TModalResult)
+    begin
+    end);
+    ;
+
+    //    TDirectory.Delete(mediafolder, True);
+    TDirectory.Delete(tempfolder, True);
 
     SetCurrentDir(binfolder);
-  end;
 
-
+    end;
+  }
 
 end;
 
-
 procedure TImplementationGuideEditorFrame.Button8Click(Sender: TObject);
+var
+  i: integer;
+  resx: tfhirImplementationGuideDefinitionResource;
+  resref: tfhirReference;
+  extResource:TFHIRResource;
+   format : TFHIRFormat;
+   restype:string;
+   resFileName:string;
 begin
-  TDialogService.MessageDialog('Not Implemented yet', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk], System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
- end;
+  // opendialog3.Options:=[TOpenOption.ofHideReadOnly];
+  OpenDialog3.Options := [];
+
+  if OpenDialog3.Execute then
+  begin
+
+    /// if tvStructure.Selected.TagObject then
+
+    for i := 0 to OpenDialog3.Files.Count - 1 do
+    begin
+      resx := tfhirImplementationGuideDefinitionResource(tvStructure.Selected.TagObject);
+      if not assigned(resx) then resx.reference:= tfhirReference.Create;
+
+      format := ffUnspecified;
+
+      resType:='';
+      try
+        extResource:=fileToResource(OpenDialog3.Files[i], format);
+        resType:=extResource.fhirType;
+
+      finally
+      extresource.Free;
+
+      end;
+
+      resFileName:=ChangeFileExt(extractfilename(OpenDialog3.Files[i]),'');
+
+// This bit is because the publisher expects the resource to be called [type]/name   ... from here...
+
+if (pos('-',extractfilename(resFileName))>0) and
+   ( uppercase(copy(resFileName,1,pos('-',resFileName)-1))=uppercase(resType) ) then
+      resx.reference.reference := resType+'/'+
+      ChangeFileExt(copy(resFileName,pos('-',resFileName)+1, length(resFileName)-pos('-',resFileName)), '')
+else
+// ...until here
+      resx.reference.reference := resType+'/'+resFileName;
+
+
+      resx.Name := ChangeFileExt(extractfilename(OpenDialog3.Files[i]), '');
+      if igcontentfolder <> '' then
+        try
+          TFile.copy(OpenDialog3.Files[i], igcontentfolder + '\resources\' + extractfilename(OpenDialog3.Files[i]));
+        except
+
+        end;
+
+//      tfhirImplementationGuide(resource).definition.resourceList.Add(resx);
+      // tfhirImplementationGuideDefinition(tvStructure.Selected.parent.tagObject).resourceList.Add(resx);
+
+    end;
+    resourceIsDirty := true;
+    ReloadTreeview(tvStructure.Selected);
+
+  end;
+
+end;
 
 procedure TImplementationGuideEditorFrame.Button9Click(Sender: TObject);
-var dir:string;
-   IGSettingsForm:TIGSettingsForm;
+// var
+// dir: string;
+// IGSettingsForm: TIGSettingsForm;
 begin
-  IGSettingsForm:=TIGSettingsForm.create(self);
-  IGSettingsForm.fwBinFolder:=fwbinfolder;
+  {
+    IGSettingsForm := TIGSettingsForm.Create(Self);
+    IGSettingsForm.IGPublisherFolder := IGPublisherFolder;
+    IGSettingsForm.BaseIGTemplateFolder := BaseIGTemplateFolder;
 
-  IGSettingsForm.ShowModal;
-  if IGSettingsForm.ModalResult=mrOK then
-
-  fwbinfolder:=IGSettingsForm.fwBinFolder;
-  IGSettingsForm.destroy;
-
+    IGSettingsForm.ShowModal;
+    if IGSettingsForm.ModalResult = mrOK then
+    begin
+    IGPublisherFolder := IGSettingsForm.IGPublisherFolder;
+    BaseIGTemplateFolder := IGSettingsForm.BaseIGTemplateFolder;
+    end;
+    IGSettingsForm.Destroy;
+  }
 end;
 
 Procedure TImplementationGuideEditorFrame.ReloadTreeview(sel_item: TTreeViewItem);
 var
   current_item: TTreeViewItem;
   i: integer;
-  Instance: TFHIRImplementationGuide;
+  Instance: tfhirImplementationGuide;
   sel_index: integer;
   sel_text: string;
 
 begin
   sel_index := -1;
   sel_text := '';
-  if sel_item <> nil then sel_index := sel_item.GlobalIndex;
+  if sel_item <> nil then
+    sel_index := sel_item.GlobalIndex;
 
-//  tvStructure.BeginUpdate;
+  // tvStructure.BeginUpdate;
 
   try
-  tvStructure.Clear;
-  current_item := addTVItem(tvStructure, nil, 'implementationguide', 'Implementation Guide', resource);
+    tvStructure.Clear;
+    current_item := addTVItem(tvStructure, nil, 'implementationguide', 'Implementation Guide', resource);
   finally
-//  tvStructure.EndUpdate;
-  tvstructure.Repaint;
+    // tvStructure.EndUpdate;
+    tvStructure.Repaint;
   end;
-//  tvStructure.repaint;
-//  application.ProcessMessages;
-  if sel_index <> -1 then tvStructure.Selected := tvStructure.ItemByGlobalIndex(sel_index);
-//  application.ProcessMessages;
-  //// showTab(TFHIRObject(TVStructure.Selected.TagObject));
+  // tvStructure.repaint;
+  // application.ProcessMessages;
+  if sel_index <> -1 then
+    tvStructure.Selected := tvStructure.ItemByGlobalIndex(sel_index);
+  // application.ProcessMessages;
+  /// / showTab(TFHIRObject(TVStructure.Selected.TagObject));
 
 end;
 
-
-
 procedure TImplementationGuideEditorFrame.showTab(obj: tFHIRObject);
 var
-  selIndex, i: integer;
-  ImplementationGuide:TFHIRImplementationGuide;
+  selIndex, i, lastSlashPos: integer;
+  extracted_ID:string;
+  ImplementationGuide: tfhirImplementationGuide;
 
 begin
   selIndex := 0;
-//  webbrowser1.Enabled:=false;
+  // webbrowser1.Enabled:=false;
 
-  if obj is TFHIRImplementationGuide then
+  if obj is tfhirImplementationGuide then
   begin
 
-    btnDefinition.enabled:=true;
-    if tfhirImplementationGuide(TVStructure.Selected.TagObject).definition <> nil then btnDefinition.enabled:=false;
+    btnDefinition.enabled := true;
+    if tfhirImplementationGuide(tvStructure.Selected.tagObject).definition <> nil then
+      btnDefinition.enabled := false;
 
     selIndex := 2;
     UpdateImplementationGuide.enabled := true;
-    edtESName.text := TFHIRImplementationGuide(obj).name;
-    edtESURL.text := TFHIRImplementationGuide(obj).url;
-    ComboBox2.ItemIndex := integer(TFHIRImplementationGuide(obj).status);
-    if TFHIRImplementationGuide(obj).experimental then
+    edtESName.text := tfhirImplementationGuide(obj).Name;
+
+    edtESURL.text := tfhirImplementationGuide(obj).url;
+
+    LastSlashPos:=-1;
+    LastSlashPos:=LastDelimiter('/',edtESURL.text);
+    if LastSlashPos>=0 then
+    extracted_id:= copy(edtESURL.text, lastSlashPos+1, length(edtESURL.text)-lastSlashPos);
+    if LastSlashPos>=0 then
+    edtESURL.text:= copy(edtESURL.text, 1, lastSlashPos);
+
+
+    edtESid.text := tfhirImplementationGuide(obj).id;
+
+  if (edtESURL.text <>'') and (copy(edtESURL.text,length(edtESURL.text),1) <>'/') then
+   edtESURL.text:=edtESURL.text + '/';
+
+
+
+
+  label7.text:=edtESURL.text+edtESid.text;
+  label7.hint:=edtESURL.text+edtESid.text;
+
+    if extracted_id=edtESid.text then
+    edtESURL.text := copy(edtESURL.text, 1, lastSlashPos);
+
+
+    ComboBox2.ItemIndex := integer(tfhirImplementationGuide(obj).status);
+    if tfhirImplementationGuide(obj).experimental then
       CheckBox1.IsChecked := true
     else
       CheckBox1.IsChecked := false;
-    edtESid.text := TFHIRImplementationGuide(obj).id;
-    DateEdit1.text := TFHIRImplementationGuide(obj).date.toString;
-    Edit8.text := TFHIRImplementationGuide(obj).packageID;
-    Edit7.text := TFHIRImplementationGuide(obj).publisher;
-    Memo3.text := TFHIRImplementationGuide(obj).description;
-    Edit3.text := TFHIRImplementationGuide(obj).version;
+    DateEdit1.text := tfhirImplementationGuide(obj).date.toString;
+    Edit8.text := tfhirImplementationGuide(obj).packageID;
+    Edit7.text := tfhirImplementationGuide(obj).publisher;
+    Memo3.text := tfhirImplementationGuide(obj).Description;
+    Edit3.text := tfhirImplementationGuide(obj).version;
+    combobox8.itemIndex := integer(tfhirImplementationGuide(obj).license);
+
+// This needs to change - only US supported now;
+
+    edit10.Text := 'US';
+
 
   end;
 
-
-
-  if obj is TFHIRImplementationGuideDefinition then
+  if obj is tfhirImplementationGuideDefinition then
   begin
     selIndex := 1;
-    pageUp.Visible:=False;
-    pageDown.Visible:=False;
-    btnNewPage.Visible:=True;
-    if tfhirImplementationGuideDefinition(TVStructure.Selected.TagObject).page <> nil then btnNewPage.Visible:=false;
+    pageUp.Visible := false;
+    pageDown.Visible := false;
+    btnNewPage.Visible := true;
+    if tfhirImplementationGuideDefinition(tvStructure.Selected.tagObject).page <> nil then
+      btnNewPage.Visible := false;
 
   end;
 
-  if obj is TFHIRImplementationGuideDefinitionPackage then
+  if obj is tfhirImplementationGuideDefinitionPackage then
   begin
     selIndex := 3;
     UpdatePage.enabled := true;
-    Edit12.text := TFHIRImplementationGuideDefinitionPackage(obj).name ;
-    Memo2.text := TFHIRImplementationGuideDefinitionPackage(obj).description ;
-
+    Edit12.text := tfhirImplementationGuideDefinitionPackage(obj).Name;
+    Memo2.text := tfhirImplementationGuideDefinitionPackage(obj).Description;
 
   end;
 
-
-  if obj is TFHIRImplementationGuideDefinitionResource then
+  if obj is tfhirImplementationGuideDefinitionResource then
   begin
     selIndex := 5;
     UpdatePage.enabled := true;
-//    Edit1.text := TFHIRImplementationGuideDefinitionPage(obj).name ;
+    // Edit1.text := TFHIRImplementationGuideDefinitionPage(obj).name ;
 
     ComboBox1.Items.Clear;
-    for I := 0 to tfhirimplementationguide(resource).definition.packageList.Count-1 do
-      ComboBox1.Items.Add(tfhirimplementationguide(resource).definition.packageList[i].name);
+    for i := 0 to tfhirImplementationGuide(resource).definition.packageList.Count - 1 do
+      ComboBox1.Items.Add(tfhirImplementationGuide(resource).definition.packageList[i].Name);
 
-    ComboBox1.ItemIndex :=ComboBox1.Items.IndexOf(TFHIRImplementationGuideDefinitionResource(obj).package) ;
+    ComboBox1.ItemIndex := ComboBox1.Items.IndexOf(tfhirImplementationGuideDefinitionResource(obj).package);
 
-
-    Edit6.Text:=TFHIRImplementationGuideDefinitionResource(obj).reference.reference;
-    edit9.Text:=TFHIRImplementationGuideDefinitionResource(obj).name;
-    memo4.Text:=TFHIRImplementationGuideDefinitionResource(obj).description;
+    Edit6.text := tfhirImplementationGuideDefinitionResource(obj).reference.reference;
+    Edit9.text := tfhirImplementationGuideDefinitionResource(obj).Name;
+    Memo4.text := tfhirImplementationGuideDefinitionResource(obj).Description;
 
   end;
 
-
-
-  if obj is TFHIRImplementationGuideDefinitionPage then
+  if obj is tfhirImplementationGuideDefinitionPage then
   begin
-    pageUp.Visible:=True;
-    pageDown.Visible:=True;
+    pageUp.Visible := true;
+    pageDown.Visible := true;
     selIndex := 4;
     UpdatePage.enabled := true;
-    if TFHIRImplementationGuideDefinitionPage(obj).nameElement <> nil then begin
-      Edit1.text := (TFHIRImplementationGuideDefinitionPage(obj).nameElement as tfhirURL).value ;
-    end else Edit1.text := '';
-//    webbrowser1.Enabled:=true;
-    Edit5.text := TFHIRImplementationGuideDefinitionPage(obj).title ;
-    ComboBox9.ItemIndex := integer(TFHIRImplementationGuideDefinitionPage(obj).generation);
-    if autoPreview.IsChecked then Button6click(self);
+    if tfhirImplementationGuideDefinitionPage(obj).nameElement <> nil then
+    begin
+      Edit1.text := (tfhirImplementationGuideDefinitionPage(obj).nameElement as tfhirURL).value;
+    end
+    else
+      Edit1.text := '';
+    // webbrowser1.Enabled:=true;
+    Edit5.text := tfhirImplementationGuideDefinitionPage(obj).title;
+    ComboBox9.ItemIndex := integer(tfhirImplementationGuideDefinitionPage(obj).generation);
+    if AutoPreview.IsChecked then
+      Button6Click(Self);
 
   end;
 
   TabControl2.tabindex := selIndex;
   for i := 0 to TabControl2.TabCount - 1 do
-    TabControl2.Tabs[i].Visible := (i=selIndex);
-  TabControl2.ActiveTab:=TabControl2.Tabs[selindex];
+    TabControl2.Tabs[i].Visible := (i = selIndex);
+  TabControl2.ActiveTab := TabControl2.Tabs[selIndex];
 
-
-//  tabcontrol2.EndUpdate;
-tabcontrol2.Repaint;
+  // tabcontrol2.EndUpdate;
+  TabControl2.Repaint;
 end;
-
 
 procedure TImplementationGuideEditorFrame.tvStructureChange(Sender: TObject);
 var
   obj: tFHIRObject;
 begin
-  if tvStructure.Selected <> nil then begin
-    obj := TFHIRObject(TVStructure.Selected.TagObject);
+  if tvStructure.Selected <> nil then
+  begin
+    obj := tFHIRObject(tvStructure.Selected.tagObject);
     showTab(obj);
   end;
 end;
-
-
-
 
 procedure TImplementationGuideEditorFrame.DeleteItemClick(Sender: TObject);
 var
@@ -932,35 +1180,37 @@ var
   obj: tFHIRObject;
 
 begin
-  ResourceIsDirty := true;
-  prt := tvStructure.Selected.ParentItem;
-  obj := TFHIRObject(TVStructure.Selected.TagObject);
 
-    TFHIRImplementationGuide(tvStructure.Selected.ParentItem.tagObject).dropEmpty;
+  TDialogService.MessageDialog('Delete element and all its children?', TMsgDlgType.mtConfirmation, mbYesNo, TMsgDlgBtn.mbNo, 0,
+    procedure(const AResult: TModalResult)
+    begin
+      resourceIsDirty := true;
+      prt := tvStructure.Selected.ParentItem;
+      obj := tFHIRObject(tvStructure.Selected.tagObject);
 
-  ReloadTreeview(prt);
+      if Sender is TFHIRObjectList then
+      begin
+        TFHIRObjectList(Sender).DeleteByReference(obj);
+      end
+      else
+        tFHIRObject(tvStructure.Selected.ParentItem.tagObject).dropEmpty;
+
+      ReloadTreeview(prt);
+    end);
 
 end;
-
-
-
-
 
 procedure TImplementationGuideEditorFrame.MenuItem5Click(Sender: TObject);
 var
   filestr, tempstr: string;
 
 begin
-
-tempStr:=binFolder+'\IGPub';
-runandwait(tempstr, '_genonce', '');
-
-filestr:=binfolder+'\igPub\output\index.html';
-runandwait(tempstr, filestr, '');
-filestr:= stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
-  runandwait(igrootfolder, 'open', filestr);
-
-
+  { tempstr := binfolder + '\IGPub';
+    runAndWait(tempstr, '_genonce', '');
+    filestr := binfolder + '\igPub\output\index.html';
+    runAndWait(tempstr, filestr, '');
+    filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
+    runAndWait(igrootfolder, 'open', filestr); }
 end;
 
 procedure TImplementationGuideEditorFrame.mnSaveClick(Sender: TObject);
@@ -974,11 +1224,9 @@ begin
     end;
   end;
   resourceToFile(resource, filename, ffXml, OutputStylePretty);
-  reloadtreeview(tvstructure.ItemByGlobalIndex(0));
+  ReloadTreeview(tvStructure.ItemByGlobalIndex(0));
   showTab(resource);
-
 end;
-
 
 function TImplementationGuideEditorFrame.SaveAs: integer;
 begin
@@ -986,7 +1234,7 @@ begin
   if SaveDialog1.Execute then
   begin
     filename := SaveDialog1.filename;
-    igrootfolder:=extractfiledir(filename);
+    igrootfolder := extractfiledir(filename);
     resourceToFile(resource, filename, ffXml, OutputStylePretty);
     showTab(resource);
     result := 0;
@@ -994,81 +1242,101 @@ begin
 
 end;
 
-
 procedure TImplementationGuideEditorFrame.UpdateImplementationGuideClick(Sender: TObject);
 var
-  obj: TFHIRImplementationGuide;
+  obj: tfhirImplementationGuide;
+  jurisdiction:TFhirCodeableConcept;
 
 begin
-  obj := TFHIRImplementationGuide(TTreeViewItem(tvStructure.Selected).TagObject);
+  obj := tfhirImplementationGuide(TTreeViewItem(tvStructure.Selected).tagObject);
   if obj = nil then
     exit;
-  obj.name := edtESName.text;
-  (obj).url := edtESURL.text;
+  obj.Name := edtESName.text;
+
+  if (edtESURL.text <>'') and (copy(edtESURL.text,length(edtESURL.text),1) <>'/') then
+   edtESURL.text:=edtESURL.text + '/';
+
+  (obj).url := edtESURL.text+edtESid.text;
+  label7.text:=(obj).url;
+  label7.hint:=(obj).url;
+
   (obj).status := TfHIRPublicationStatusEnum(ComboBox2.ItemIndex);
   obj.experimental := CheckBox1.IsChecked;
   obj.id := edtESid.text;
   obj.date := TDateTimeEx.makeLocal(DateEdit1.DateTime);
   obj.version := Edit3.text;
-  obj.packageId := Edit8.text;
+  obj.packageID := Edit8.text;
   obj.publisher := Edit7.text;
-  obj.description := Memo3.text;
-  tvStructure.Selected.Text:=obj.name;
+  obj.Description := Memo3.text;
+  obj.license:=TFHIRspdxLicenseEnum(combobox8.itemIndex);
+  tvStructure.Selected.text := obj.Name;
+
+
+// this must change - at this moment nly us is upported
+
+
+
+
+  if (obj).jurisdictionList.Count=0 then begin
+    jurisdiction:=TFhirCodeableConcept.Create('urn:iso:std:iso:3166', 'US');
+    (obj).jurisdictionList.AddItem(jurisdiction);
+  end;
+
+
 
 end;
 
-//6.2
+// 6.2
 procedure TImplementationGuideEditorFrame.UpdatePackageClick(Sender: TObject);
-var obj:TFHIRImplementationGuideDefinitionPackage;
+var
+  obj: tfhirImplementationGuideDefinitionPackage;
 begin
-  obj := TFHIRImplementationGuideDefinitionPackage(TVStructure.Selected.TagObject);
+  obj := tfhirImplementationGuideDefinitionPackage(tvStructure.Selected.tagObject);
   if obj = nil then
-      exit;
-      obj.name:=edit12.Text;
-      obj.description:=memo2.Text;
-      tvstructure.Selected.Text:=obj.name;
-      ReloadTreeview(tvStructure.Selected);
-      tvStructure.Selected.Text:=obj.name;
+    exit;
+  obj.Name := Edit12.text;
+  obj.Description := Memo2.text;
+  tvStructure.Selected.text := obj.Name;
+  ReloadTreeview(tvStructure.Selected);
+  tvStructure.Selected.text := obj.Name;
 
 end;
 
 procedure TImplementationGuideEditorFrame.UpdatePageClick(Sender: TObject);
 var
-  obj: TFHIRImplementationGuideDefinitionPage;
+  obj: tfhirImplementationGuideDefinitionPage;
 begin
-  obj := TFHIRImplementationGuideDefinitionPage(TTreeViewItem(tvStructure.Selected).TagObject);
+  obj := tfhirImplementationGuideDefinitionPage(TTreeViewItem(tvStructure.Selected).tagObject);
   if obj = nil then
-      exit;
-  if (obj).nameElement = nil then (obj).nameElement:=tfhirURL.Create;
+    exit;
+  if (obj).nameElement = nil then
+    (obj).nameElement := tfhirURL.Create;
   tfhirURL((obj).nameElement).value := Edit1.text;
   obj.generation := TFHIRGuidePageGenerationEnum(ComboBox9.ItemIndex);
   obj.title := Edit5.text;
-  tvStructure.Selected.Text:=obj.title;
+  tvStructure.Selected.text := obj.title;
 
 end;
 
 procedure TImplementationGuideEditorFrame.UpdateResourceClick(Sender: TObject);
 var
-  obj: TFHIRImplementationGuideDefinitionResource;
+  obj: tfhirImplementationGuideDefinitionResource;
 begin
-  obj := TFHIRImplementationGuideDefinitionResource(TTreeViewItem(tvStructure.Selected).TagObject);
+  obj := tfhirImplementationGuideDefinitionResource(TTreeViewItem(tvStructure.Selected).tagObject);
   if obj = nil then
-      exit;
-    obj.reference.reference:=Edit6.Text;
-    obj.name:=edit9.Text;
-    obj.description:=memo4.Text;
-    if ComboBox1.ItemIndex <> -1 then
-      obj.package:= ComboBox1.Items[ComboBox1.ItemIndex];
-    tvStructure.Selected.Text:=obj.name;
+    exit;
+  obj.reference.reference := Edit6.text;
+  obj.Name := Edit9.text;
+  obj.Description := Memo4.text;
+  if ComboBox1.ItemIndex <> -1 then
+    obj.package := ComboBox1.Items[ComboBox1.ItemIndex];
+  tvStructure.Selected.text := obj.Name;
 
-
-      end;
-
-
+end;
 
 procedure TImplementationGuideEditorFrame.ConcatenateFiles(const InFileNames: array of string; const OutFileName: string);
 var
-  i: Integer;
+  i: integer;
   InStream, OutStream: TFileStream;
 begin
   OutStream := TFileStream.Create(OutFileName, fmCreate);
@@ -1092,12 +1360,13 @@ var
   idx: integer;
 begin
 
-  idx := tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).resourceList.IndexOf(tfhirImplementationGuideDefinitionResource(TVStructure.Selected.TagObject));
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.IndexOf(tfhirImplementationGuideDefinitionResource(tvStructure.Selected.tagObject));
 
-  if idx < tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).resourceList.Count - 1 then begin
-  tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).resourceList.Exchange(idx, idx + 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
-  ResourceIsDirty := true;
+  if idx < tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.Count - 1 then
+  begin
+    tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.Exchange(idx, idx + 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index + 1;
+    resourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
 
@@ -1107,14 +1376,14 @@ procedure TImplementationGuideEditorFrame.resourceUpClick(Sender: TObject);
 var
   idx: integer;
 begin
-  idx := tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).resourceList.IndexOf(tfhirImplementationGuideDefinitionResource(TVStructure.Selected.TagObject));
-  if idx > 0 then begin
-  tfhirImplementationGuideDefinition(TVStructure.Selected.ParentItem.TagObject).resourceList.Exchange(idx, idx - 1);
-  tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
-  ResourceIsDirty := true;
+  idx := tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.IndexOf(tfhirImplementationGuideDefinitionResource(tvStructure.Selected.tagObject));
+  if idx > 0 then
+  begin
+    tfhirImplementationGuideDefinition(tvStructure.Selected.ParentItem.tagObject).resourceList.Exchange(idx, idx - 1);
+    tvStructure.Selected.Index := tvStructure.Selected.Index - 1;
+    resourceIsDirty := true;
   end;
   ReloadTreeview(tvStructure.Selected);
-
 
 end;
 
@@ -1123,33 +1392,32 @@ var
   folderstr, filestr: string;
   SEInfo: TShellExecuteInfo;
   ExitCode: DWORD;
-  sCmd,ExecuteFile, ParamString, StartInString: string;
+  sCmd, ExecuteFile, ParamString, StartInString: string;
 
 begin
   folderstr := getCurrentDir;
 
+  begin
+    FillChar(SEInfo, SizeOf(SEInfo), 0);
+    SEInfo.cbSize := SizeOf(TShellExecuteInfo);
+    with SEInfo do
     begin
-      FillChar(SEInfo, SizeOf(SEInfo), 0);
-      SEInfo.cbSize := SizeOf(TShellExecuteInfo);
-      with SEInfo do
-      begin
-        fMask := SEE_MASK_NOCLOSEPROCESS;
-//        Wnd := FmxHandleToHWND(ImplementationGuideEditor.Handle);
-        lpFile := PChar(command);
-        lpDirectory := PChar(Path);
-        lpParameters := PChar(Parameters);
-        nShow := SW_SHOWNORMAL;
-      end;
-      if ShellExecuteEx(@SEInfo) then
-      begin
-        repeat
-          Application.ProcessMessages;
-          GetExitCodeProcess(SEInfo.hProcess, ExitCode);
-        until (ExitCode <> STILL_ACTIVE) or Application.Terminated;
-      end;
+      fMask := SEE_MASK_NOCLOSEPROCESS;
+      // Wnd := FmxHandleToHWND(ImplementationGuideEditor.Handle);
+      lpFile := PChar(command);
+      lpDirectory := PChar(Path);
+      lpParameters := PChar(parameters);
+      nShow := SW_SHOWNORMAL;
     end;
+    if ShellExecuteEx(@SEInfo) then
+    begin
+      repeat
+        application.ProcessMessages;
+        GetExitCodeProcess(SEInfo.hProcess, ExitCode);
+      until (ExitCode <> STILL_ACTIVE) or application.Terminated;
+    end;
+  end;
 
 end;
-
 
 end.

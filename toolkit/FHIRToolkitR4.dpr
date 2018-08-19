@@ -159,6 +159,7 @@ uses
   FHIR.Tools.ObsGraph in '..\Libraries\ui\FHIR.Tools.ObsGraph.pas',
   FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas',
   IGSettings in 'IGSettings.pas' {IGSettingsForm},
+  FDownloadForm in 'FDownloadForm.pas' {IGSettingsForm},
   ImplementationGuideEditor in 'ImplementationGuideEditor.pas' {ImplementationGuideEditorFrame: TFrame};
 
 {$R *.res}
