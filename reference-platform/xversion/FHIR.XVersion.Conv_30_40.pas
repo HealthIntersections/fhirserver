@@ -162,8 +162,6 @@ Type
     class function convertCareTeamStatus(src : FHIR.R4.Types.TFhirCareTeamStatusEnum) : FHIR.R3.Types.TFhirCareTeamStatusEnum; overload;
     class function convertChargeItemStatus(src : FHIR.R3.Types.TFhirChargeitemStatusEnum) : FHIR.R4.Types.TFhirChargeitemStatusEnum; overload;
     class function convertChargeItemStatus(src : FHIR.R4.Types.TFhirChargeitemStatusEnum) : FHIR.R3.Types.TFhirChargeitemStatusEnum; overload;
-    class function convertClaimStatus(src : FHIR.R3.Types.TFhirFmStatusEnum) : FHIR.R4.Types.TFhirFmStatusEnum; overload;
-    class function convertClaimStatus(src : FHIR.R4.Types.TFhirFmStatusEnum) : FHIR.R3.Types.TFhirFmStatusEnum; overload;
     class function convertUse(src : FHIR.R3.Types.TFhirClaimUseEnum) : FHIR.R4.Types.TFhirClaimUseEnum; overload;
     class function convertUse(src : FHIR.R4.Types.TFhirClaimUseEnum) : FHIR.R3.Types.TFhirClaimUseEnum; overload;
     class function convertClinicalImpressionStatus(src : FHIR.R3.Types.TFhirClinicalImpressionStatusEnum) : FHIR.R4.Types.TFhirClinicalImpressionStatusEnum; overload;
@@ -208,8 +206,6 @@ Type
     class function convertFHIRDeviceStatus(src : FHIR.R4.Types.TFhirDeviceStatusEnum) : FHIR.R3.Types.TFhirDeviceStatusEnum; overload;
     class function convertUDIEntryType(src : FHIR.R3.Types.TFhirUdiEntryTypeEnum) : FHIR.R4.Types.TFhirUdiEntryTypeEnum; overload;
     class function convertUDIEntryType(src : FHIR.R4.Types.TFhirUdiEntryTypeEnum) : FHIR.R3.Types.TFhirUdiEntryTypeEnum; overload;
-    class function convertMeasmntPrinciple(src : FHIR.R3.Types.TFhirMeasurementPrincipleEnum) : FHIR.R4.Types.TFhirMeasurementPrincipleEnum; overload;
-    class function convertMeasmntPrinciple(src : FHIR.R4.Types.TFhirMeasurementPrincipleEnum) : FHIR.R3.Types.TFhirMeasurementPrincipleEnum; overload;
     class function convertDeviceMetricOperationalStatus(src : FHIR.R3.Types.TFhirMetricOperationalStatusEnum) : FHIR.R4.Types.TFhirMetricOperationalStatusEnum; overload;
     class function convertDeviceMetricOperationalStatus(src : FHIR.R4.Types.TFhirMetricOperationalStatusEnum) : FHIR.R3.Types.TFhirMetricOperationalStatusEnum; overload;
     class function convertDeviceMetricColor(src : FHIR.R3.Types.TFhirMetricColorEnum) : FHIR.R4.Types.TFhirMetricColorEnum; overload;
@@ -593,30 +589,6 @@ Type
     class function convertCareTeam(src : FHIR.R4.Resources.TFhirCareTeam) : FHIR.R3.Resources.TFhirCareTeam; overload;
     class function convertCareTeamParticipantComponent(src : FHIR.R3.Resources.TFhirCareTeamParticipant) : FHIR.R4.Resources.TFhirCareTeamParticipant; overload;
     class function convertCareTeamParticipantComponent(src : FHIR.R4.Resources.TFhirCareTeamParticipant) : FHIR.R3.Resources.TFhirCareTeamParticipant; overload;
-    class function convertClaim(src : FHIR.R3.Resources.TFhirClaim) : FHIR.R4.Resources.TFhirClaim; overload;
-    class function convertClaim(src : FHIR.R4.Resources.TFhirClaim) : FHIR.R3.Resources.TFhirClaim; overload;
-    class function convertRelatedClaimComponent(src : FHIR.R3.Resources.TFhirClaimRelated) : FHIR.R4.Resources.TFhirClaimRelated; overload;
-    class function convertRelatedClaimComponent(src : FHIR.R4.Resources.TFhirClaimRelated) : FHIR.R3.Resources.TFhirClaimRelated; overload;
-    class function convertPayeeComponent(src : FHIR.R3.Resources.TFhirClaimPayee) : FHIR.R4.Resources.TFhirClaimPayee; overload;
-    class function convertPayeeComponent(src : FHIR.R4.Resources.TFhirClaimPayee) : FHIR.R3.Resources.TFhirClaimPayee; overload;
-    class function convertCareTeamComponent(src : FHIR.R3.Resources.TFhirClaimCareTeam) : FHIR.R4.Resources.TFhirClaimCareTeam; overload;
-    class function convertCareTeamComponent(src : FHIR.R4.Resources.TFhirClaimCareTeam) : FHIR.R3.Resources.TFhirClaimCareTeam; overload;
-    class function convertSpecialConditionComponent(src : FHIR.R3.Resources.TFhirClaimInformation) : FHIR.R4.Resources.TFhirClaimInformation; overload;
-    class function convertSpecialConditionComponent(src : FHIR.R4.Resources.TFhirClaimInformation) : FHIR.R3.Resources.TFhirClaimInformation; overload;
-    class function convertDiagnosisComponent(src : FHIR.R3.Resources.TFhirClaimDiagnosis) : FHIR.R4.Resources.TFhirClaimDiagnosis; overload;
-    class function convertDiagnosisComponent(src : FHIR.R4.Resources.TFhirClaimDiagnosis) : FHIR.R3.Resources.TFhirClaimDiagnosis; overload;
-    class function convertProcedureComponent(src : FHIR.R3.Resources.TFhirClaimProcedure) : FHIR.R4.Resources.TFhirClaimProcedure; overload;
-    class function convertProcedureComponent(src : FHIR.R4.Resources.TFhirClaimProcedure) : FHIR.R3.Resources.TFhirClaimProcedure; overload;
-    class function convertInsuranceComponent(src : FHIR.R3.Resources.TFhirClaimInsurance) : FHIR.R4.Resources.TFhirClaimInsurance; overload;
-    class function convertInsuranceComponent(src : FHIR.R4.Resources.TFhirClaimInsurance) : FHIR.R3.Resources.TFhirClaimInsurance; overload;
-    class function convertAccidentComponent(src : FHIR.R3.Resources.TFhirClaimAccident) : FHIR.R4.Resources.TFhirClaimAccident; overload;
-    class function convertAccidentComponent(src : FHIR.R4.Resources.TFhirClaimAccident) : FHIR.R3.Resources.TFhirClaimAccident; overload;
-    class function convertItemComponent(src : FHIR.R3.Resources.TFhirClaimItem) : FHIR.R4.Resources.TFhirClaimItem; overload;
-    class function convertItemComponent(src : FHIR.R4.Resources.TFhirClaimItem) : FHIR.R3.Resources.TFhirClaimItem; overload;
-    class function convertDetailComponent(src : FHIR.R3.Resources.TFhirClaimItemDetail) : FHIR.R4.Resources.TFhirClaimItemDetail; overload;
-    class function convertDetailComponent(src : FHIR.R4.Resources.TFhirClaimItemDetail) : FHIR.R3.Resources.TFhirClaimItemDetail; overload;
-    class function convertSubDetailComponent(src : FHIR.R3.Resources.TFhirClaimItemDetailSubDetail) : FHIR.R4.Resources.TFhirClaimItemDetailSubDetail; overload;
-    class function convertSubDetailComponent(src : FHIR.R4.Resources.TFhirClaimItemDetailSubDetail) : FHIR.R3.Resources.TFhirClaimItemDetailSubDetail; overload;
     class function convertClinicalImpression(src : FHIR.R3.Resources.TFhirClinicalImpression) : FHIR.R4.Resources.TFhirClinicalImpression; overload;
     class function convertClinicalImpression(src : FHIR.R4.Resources.TFhirClinicalImpression) : FHIR.R3.Resources.TFhirClinicalImpression; overload;
     class function convertClinicalImpressionInvestigationComponent(src : FHIR.R3.Resources.TFhirClinicalImpressionInvestigation) : FHIR.R4.Resources.TFhirClinicalImpressionInvestigation; overload;
@@ -683,12 +655,6 @@ Type
     class function convertDetectedIssueMitigationComponent(src : FHIR.R4.Resources.TFhirDetectedIssueMitigation) : FHIR.R3.Resources.TFhirDetectedIssueMitigation; overload;
     class function convertDevice(src : FHIR.R3.Resources.TFhirDevice) : FHIR.R4.Resources.TFhirDevice; overload;
     class function convertDevice(src : FHIR.R4.Resources.TFhirDevice) : FHIR.R3.Resources.TFhirDevice; overload;
-    class function convertDeviceUdiComponent(src : FHIR.R3.Resources.TFhirDeviceUdi) : FHIR.R4.Resources.TFhirDeviceUdi; overload;
-    class function convertDeviceUdiComponent(src : FHIR.R4.Resources.TFhirDeviceUdi) : FHIR.R3.Resources.TFhirDeviceUdi; overload;
-    class function convertDeviceComponent(src : FHIR.R3.Resources.TFhirDeviceComponent) : FHIR.R4.Resources.TFhirDeviceComponent; overload;
-    class function convertDeviceComponent(src : FHIR.R4.Resources.TFhirDeviceComponent) : FHIR.R3.Resources.TFhirDeviceComponent; overload;
-    class function convertDeviceComponentProductionSpecificationComponent(src : FHIR.R3.Resources.TFhirDeviceComponentProductionSpecification) : FHIR.R4.Resources.TFhirDeviceComponentProductionSpecification; overload;
-    class function convertDeviceComponentProductionSpecificationComponent(src : FHIR.R4.Resources.TFhirDeviceComponentProductionSpecification) : FHIR.R3.Resources.TFhirDeviceComponentProductionSpecification; overload;
     class function convertDeviceMetric(src : FHIR.R3.Resources.TFhirDeviceMetric) : FHIR.R4.Resources.TFhirDeviceMetric; overload;
     class function convertDeviceMetric(src : FHIR.R4.Resources.TFhirDeviceMetric) : FHIR.R3.Resources.TFhirDeviceMetric; overload;
     class function convertDeviceMetricCalibrationComponent(src : FHIR.R3.Resources.TFhirDeviceMetricCalibration) : FHIR.R4.Resources.TFhirDeviceMetricCalibration; overload;
@@ -709,8 +675,8 @@ Type
     class function convertDocumentReferenceContentComponent(src : FHIR.R4.Resources.TFhirDocumentReferenceContent) : FHIR.R3.Resources.TFhirDocumentReferenceContent; overload;
     class function convertDocumentReferenceContextComponent(src : FHIR.R3.Resources.TFhirDocumentReferenceContext) : FHIR.R4.Resources.TFhirDocumentReferenceContext; overload;
     class function convertDocumentReferenceContextComponent(src : FHIR.R4.Resources.TFhirDocumentReferenceContext) : FHIR.R3.Resources.TFhirDocumentReferenceContext; overload;
-    class function convertDocumentReferenceContextRelatedComponent(src : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated) : FHIR.R4.Resources.TFhirDocumentReferenceContextRelated; overload;
-    class function convertDocumentReferenceContextRelatedComponent(src : FHIR.R4.Resources.TFhirDocumentReferenceContextRelated) : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated; overload;
+    class function convertDocumentReferenceContextRelatedComponent(src : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated) : FHIR.R4.Types.TFhirReference; overload;
+    class function convertDocumentReferenceContextRelatedComponent(src : FHIR.R4.Types.TFhirReference) : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated; overload;
     class function convertEncounter(src : FHIR.R3.Resources.TFhirEncounter) : FHIR.R4.Resources.TFhirEncounter; overload;
     class function convertEncounter(src : FHIR.R4.Resources.TFhirEncounter) : FHIR.R3.Resources.TFhirEncounter; overload;
     class function convertStatusHistoryComponent(src : FHIR.R3.Resources.TFhirEncounterStatusHistory) : FHIR.R4.Resources.TFhirEncounterStatusHistory; overload;
@@ -1757,7 +1723,6 @@ begin
     FHIR.R3.Types.ResourceTypesCoverage: exit(FHIR.R4.Types.ResourceTypesCoverage);
     FHIR.R3.Types.ResourceTypesDetectedIssue: exit(FHIR.R4.Types.ResourceTypesDetectedIssue);
     FHIR.R3.Types.ResourceTypesDevice: exit(FHIR.R4.Types.ResourceTypesDevice);
-    FHIR.R3.Types.ResourceTypesDeviceComponent: exit(FHIR.R4.Types.ResourceTypesDeviceComponent);
     FHIR.R3.Types.ResourceTypesDeviceMetric: exit(FHIR.R4.Types.ResourceTypesDeviceMetric);
     FHIR.R3.Types.ResourceTypesDeviceRequest: exit(FHIR.R4.Types.ResourceTypesDeviceRequest);
     FHIR.R3.Types.ResourceTypesDeviceUseStatement: exit(FHIR.R4.Types.ResourceTypesDeviceUseStatement);
@@ -1765,8 +1730,8 @@ begin
     FHIR.R3.Types.ResourceTypesDocumentManifest: exit(FHIR.R4.Types.ResourceTypesDocumentManifest);
     FHIR.R3.Types.ResourceTypesDocumentReference: exit(FHIR.R4.Types.ResourceTypesDocumentReference);
     FHIR.R3.Types.ResourceTypesDomainResource: exit(FHIR.R4.Types.ResourceTypesDomainResource);
-    FHIR.R3.Types.ResourceTypesEligibilityRequest: exit(FHIR.R4.Types.ResourceTypesEligibilityRequest);
-    FHIR.R3.Types.ResourceTypesEligibilityResponse: exit(FHIR.R4.Types.ResourceTypesEligibilityResponse);
+    FHIR.R3.Types.ResourceTypesEligibilityRequest: exit(FHIR.R4.Types.ResourceTypesCoverageEligibilityRequest);
+    FHIR.R3.Types.ResourceTypesEligibilityResponse: exit(FHIR.R4.Types.ResourceTypesCoverageEligibilityResponse);
     FHIR.R3.Types.ResourceTypesEncounter: exit(FHIR.R4.Types.ResourceTypesEncounter);
     FHIR.R3.Types.ResourceTypesEndpoint: exit(FHIR.R4.Types.ResourceTypesEndpoint);
     FHIR.R3.Types.ResourceTypesEnrollmentRequest: exit(FHIR.R4.Types.ResourceTypesEnrollmentRequest);
@@ -1880,7 +1845,6 @@ begin
     FHIR.R4.Types.ResourceTypesCoverage: exit(FHIR.R3.Types.ResourceTypesCoverage);
     FHIR.R4.Types.ResourceTypesDetectedIssue: exit(FHIR.R3.Types.ResourceTypesDetectedIssue);
     FHIR.R4.Types.ResourceTypesDevice: exit(FHIR.R3.Types.ResourceTypesDevice);
-    FHIR.R4.Types.ResourceTypesDeviceComponent: exit(FHIR.R3.Types.ResourceTypesDeviceComponent);
     FHIR.R4.Types.ResourceTypesDeviceMetric: exit(FHIR.R3.Types.ResourceTypesDeviceMetric);
     FHIR.R4.Types.ResourceTypesDeviceRequest: exit(FHIR.R3.Types.ResourceTypesDeviceRequest);
     FHIR.R4.Types.ResourceTypesDeviceUseStatement: exit(FHIR.R3.Types.ResourceTypesDeviceUseStatement);
@@ -1888,8 +1852,8 @@ begin
     FHIR.R4.Types.ResourceTypesDocumentManifest: exit(FHIR.R3.Types.ResourceTypesDocumentManifest);
     FHIR.R4.Types.ResourceTypesDocumentReference: exit(FHIR.R3.Types.ResourceTypesDocumentReference);
     FHIR.R4.Types.ResourceTypesDomainResource: exit(FHIR.R3.Types.ResourceTypesDomainResource);
-    FHIR.R4.Types.ResourceTypesEligibilityRequest: exit(FHIR.R3.Types.ResourceTypesEligibilityRequest);
-    FHIR.R4.Types.ResourceTypesEligibilityResponse: exit(FHIR.R3.Types.ResourceTypesEligibilityResponse);
+    FHIR.R4.Types.ResourceTypesCoverageEligibilityRequest: exit(FHIR.R3.Types.ResourceTypesEligibilityRequest);
+    FHIR.R4.Types.ResourceTypesCoverageEligibilityResponse: exit(FHIR.R3.Types.ResourceTypesEligibilityResponse);
     FHIR.R4.Types.ResourceTypesEncounter: exit(FHIR.R3.Types.ResourceTypesEncounter);
     FHIR.R4.Types.ResourceTypesEndpoint: exit(FHIR.R3.Types.ResourceTypesEndpoint);
     FHIR.R4.Types.ResourceTypesEnrollmentRequest: exit(FHIR.R3.Types.ResourceTypesEnrollmentRequest);
@@ -2663,28 +2627,6 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertClaimStatus(src : FHIR.R3.Types.TFhirFmStatusEnum) : FHIR.R4.Types.TFhirFmStatusEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.FmStatusActive: exit(FHIR.R4.Types.FmStatusActive);
-    FHIR.R3.Types.FmStatusCancelled: exit(FHIR.R4.Types.FmStatusCancelled);
-    FHIR.R3.Types.FmStatusDraft: exit(FHIR.R4.Types.FmStatusDraft);
-    FHIR.R3.Types.FmStatusEnteredInError: exit(FHIR.R4.Types.FmStatusEnteredInError);
-    else exit(FHIR.R4.Types.FmStatusNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertClaimStatus(src : FHIR.R4.Types.TFhirFmStatusEnum) : FHIR.R3.Types.TFhirFmStatusEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.FmStatusActive: exit(FHIR.R3.Types.FmStatusActive);
-    FHIR.R4.Types.FmStatusCancelled: exit(FHIR.R3.Types.FmStatusCancelled);
-    FHIR.R4.Types.FmStatusDraft: exit(FHIR.R3.Types.FmStatusDraft);
-    FHIR.R4.Types.FmStatusEnteredInError: exit(FHIR.R3.Types.FmStatusEnteredInError);
-    else exit(FHIR.R3.Types.FmStatusNull);
-  end;
-end;
-
 class function TVersionConvertor_30_40.convertUse(src : FHIR.R3.Types.TFhirClaimUseEnum) : FHIR.R4.Types.TFhirClaimUseEnum;
 begin
   case (src) of
@@ -2833,8 +2775,8 @@ begin
   case (src) of
     FHIR.R3.Types.EventStatusPreparation: exit(FHIR.R4.Types.EventStatusPreparation);
     FHIR.R3.Types.EventStatusInProgress: exit(FHIR.R4.Types.EventStatusInProgress);
-    FHIR.R3.Types.EventStatusSuspended: exit(FHIR.R4.Types.EventStatusSuspended);
-    FHIR.R3.Types.EventStatusAborted: exit(FHIR.R4.Types.EventStatusAborted);
+    FHIR.R3.Types.EventStatusSuspended: exit(FHIR.R4.Types.EventStatusOnHold);
+    FHIR.R3.Types.EventStatusAborted: exit(FHIR.R4.Types.EventStatusNotDone);
     FHIR.R3.Types.EventStatusCompleted: exit(FHIR.R4.Types.EventStatusCompleted);
     FHIR.R3.Types.EventStatusEnteredInError: exit(FHIR.R4.Types.EventStatusEnteredInError);
     FHIR.R3.Types.EventStatusUnknown: exit(FHIR.R4.Types.EventStatusUnknown);
@@ -2847,8 +2789,8 @@ begin
   case (src) of
     FHIR.R4.Types.EventStatusPreparation: exit(FHIR.R3.Types.EventStatusPreparation);
     FHIR.R4.Types.EventStatusInProgress: exit(FHIR.R3.Types.EventStatusInProgress);
-    FHIR.R4.Types.EventStatusSuspended: exit(FHIR.R3.Types.EventStatusSuspended);
-    FHIR.R4.Types.EventStatusAborted: exit(FHIR.R3.Types.EventStatusAborted);
+    FHIR.R4.Types.EventStatusOnHold: exit(FHIR.R3.Types.EventStatusSuspended);
+    FHIR.R4.Types.EventStatusNotDone: exit(FHIR.R3.Types.EventStatusAborted);
     FHIR.R4.Types.EventStatusCompleted: exit(FHIR.R3.Types.EventStatusCompleted);
     FHIR.R4.Types.EventStatusEnteredInError: exit(FHIR.R3.Types.EventStatusEnteredInError);
     FHIR.R4.Types.EventStatusUnknown: exit(FHIR.R3.Types.EventStatusUnknown);
@@ -3222,42 +3164,6 @@ begin
     FHIR.R4.Types.UdiEntryTypeSelfReported: exit(FHIR.R3.Types.UdiEntryTypeSelfReported);
     FHIR.R4.Types.UdiEntryTypeUnknown: exit(FHIR.R3.Types.UdiEntryTypeUnknown);
     else exit(FHIR.R3.Types.UdiEntryTypeNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertMeasmntPrinciple(src : FHIR.R3.Types.TFhirMeasurementPrincipleEnum) : FHIR.R4.Types.TFhirMeasurementPrincipleEnum;
-begin
-  case (src) of
-    FHIR.R3.Types.MeasurementPrincipleOther: exit(FHIR.R4.Types.MeasurementPrincipleOther);
-    FHIR.R3.Types.MeasurementPrincipleChemical: exit(FHIR.R4.Types.MeasurementPrincipleChemical);
-    FHIR.R3.Types.MeasurementPrincipleElectrical: exit(FHIR.R4.Types.MeasurementPrincipleElectrical);
-    FHIR.R3.Types.MeasurementPrincipleImpedance: exit(FHIR.R4.Types.MeasurementPrincipleImpedance);
-    FHIR.R3.Types.MeasurementPrincipleNuclear: exit(FHIR.R4.Types.MeasurementPrincipleNuclear);
-    FHIR.R3.Types.MeasurementPrincipleOptical: exit(FHIR.R4.Types.MeasurementPrincipleOptical);
-    FHIR.R3.Types.MeasurementPrincipleThermal: exit(FHIR.R4.Types.MeasurementPrincipleThermal);
-    FHIR.R3.Types.MeasurementPrincipleBiological: exit(FHIR.R4.Types.MeasurementPrincipleBiological);
-    FHIR.R3.Types.MeasurementPrincipleMechanical: exit(FHIR.R4.Types.MeasurementPrincipleMechanical);
-    FHIR.R3.Types.MeasurementPrincipleAcoustical: exit(FHIR.R4.Types.MeasurementPrincipleAcoustical);
-    FHIR.R3.Types.MeasurementPrincipleManual: exit(FHIR.R4.Types.MeasurementPrincipleManual);
-    else exit(FHIR.R4.Types.MeasurementPrincipleNull);
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertMeasmntPrinciple(src : FHIR.R4.Types.TFhirMeasurementPrincipleEnum) : FHIR.R3.Types.TFhirMeasurementPrincipleEnum;
-begin
-  case (src) of
-    FHIR.R4.Types.MeasurementPrincipleOther: exit(FHIR.R3.Types.MeasurementPrincipleOther);
-    FHIR.R4.Types.MeasurementPrincipleChemical: exit(FHIR.R3.Types.MeasurementPrincipleChemical);
-    FHIR.R4.Types.MeasurementPrincipleElectrical: exit(FHIR.R3.Types.MeasurementPrincipleElectrical);
-    FHIR.R4.Types.MeasurementPrincipleImpedance: exit(FHIR.R3.Types.MeasurementPrincipleImpedance);
-    FHIR.R4.Types.MeasurementPrincipleNuclear: exit(FHIR.R3.Types.MeasurementPrincipleNuclear);
-    FHIR.R4.Types.MeasurementPrincipleOptical: exit(FHIR.R3.Types.MeasurementPrincipleOptical);
-    FHIR.R4.Types.MeasurementPrincipleThermal: exit(FHIR.R3.Types.MeasurementPrincipleThermal);
-    FHIR.R4.Types.MeasurementPrincipleBiological: exit(FHIR.R3.Types.MeasurementPrincipleBiological);
-    FHIR.R4.Types.MeasurementPrincipleMechanical: exit(FHIR.R3.Types.MeasurementPrincipleMechanical);
-    FHIR.R4.Types.MeasurementPrincipleAcoustical: exit(FHIR.R3.Types.MeasurementPrincipleAcoustical);
-    FHIR.R4.Types.MeasurementPrincipleManual: exit(FHIR.R3.Types.MeasurementPrincipleManual);
-    else exit(FHIR.R3.Types.MeasurementPrincipleNull);
   end;
 end;
 
@@ -6626,10 +6532,16 @@ begin
   tgt.when := src.when;
 
   if (src.who <> nil) then
-    tgt.who := convertType(src.who);
+    if src.who is FHIR.R3.Types.TFhirUri then
+      tgt.who := TFhirReference.Create((src.who as FHIR.R3.Types.TFhirUri).value)
+    else
+      tgt.who := convertReference(src.who as FHIR.R3.Types.TFhirReference);
 
   if (src.onBehalfOf <> nil) then
-    tgt.onBehalfOf := convertType(src.onBehalfOf);
+    if src.who is FHIR.R3.Types.TFhirUri then
+      tgt.onBehalfOf := TFhirReference.Create((src.onBehalfOf as FHIR.R3.Types.TFhirUri).value)
+    else
+      tgt.onBehalfOf := convertReference(src.onBehalfOf as FHIR.R3.Types.TFhirReference);
 
   if (src.contentType <> '') then
     tgt.sigFormat := src.contentType;
@@ -8890,7 +8802,12 @@ begin
   end;
   for t5 in src.contributorList do
   begin
-    tgt.contributorList.add(convertContributor(t5));
+    case t5.type_ of
+      FHIR.R3.Types.ContributorTypeAuthor : for t6 in t5.contactList do tgt.authorList.Add(convertContactDetail(t6));
+      FHIR.R3.Types.ContributorTypeEditor: for t6 in t5.contactList do tgt.editorList.Add(convertContactDetail(t6));
+      FHIR.R3.Types.ContributorTypeReviewer: for t6 in t5.contactList do tgt.reviewerList.Add(convertContactDetail(t6));
+      FHIR.R3.Types.ContributorTypeEndorser: for t6 in t5.contactList do tgt.endorserList.Add(convertContactDetail(t6));
+    end;
   end;
   for t6 in src.contactList do
   begin
@@ -8907,7 +8824,7 @@ begin
   begin
     tgt.Library_List.add(convertReferenceToCanonical(t8));
   end;
-  tgt.kind := convertActivityDefinitionKind(src.kind);
+//  tgt.kind := convertActivityDefinitionKind(src.kind);
 
   if (src.code <> nil) then
     tgt.code := convertCodeableConcept(src.code);
@@ -8956,7 +8873,7 @@ var
   t2 : FHIR.R4.Types.TFhirUsageContext;
   t3 : FHIR.R4.Types.TFhirCodeableConcept;
   t4 : FHIR.R4.Types.TFhirCodeableConcept;
-  t5 : FHIR.R4.Types.TFhirContributor;
+  t5 : FHIR.R4.Types.TFhirContactDetail;
   t6 : FHIR.R4.Types.TFhirContactDetail;
   t7 : FHIR.R4.Types.TFhirRelatedArtifact;
   t8 : FHIR.R4.Types.TFhirCanonical;
@@ -8964,6 +8881,7 @@ var
   ta : FHIR.R4.Types.TFhirDosage;
   tb : FHIR.R4.Types.TFhirCodeableConcept;
   tc : FHIR.R4.Resources.TFhirActivityDefinitionDynamicValue;
+  tz : FHIR.R3.Types.TFhirContributor;
 begin
   if (src = nil) then
     exit(nil);
@@ -9019,9 +8937,29 @@ begin
   begin
     tgt.topicList.add(convertCodeableConcept(t4));
   end;
-  for t5 in src.contributorList do
+  for t5 in src.authorList do
   begin
-    tgt.contributorList.add(convertContributor(t5));
+    tz := tgt.contributorList.Append;
+    tz.type_ := FHIR.R3.Types.ContributorTypeAuthor;
+    tz.contactList.Add(convertContactDetail(t5));
+  end;
+  for t5 in src.editorList do
+  begin
+    tz := tgt.contributorList.Append;
+    tz.type_ := FHIR.R3.Types.ContributorTypeEditor;
+    tz.contactList.Add(convertContactDetail(t5));
+  end;
+  for t5 in src.reviewerList do
+  begin
+    tz := tgt.contributorList.Append;
+    tz.type_ := FHIR.R3.Types.ContributorTypeReviewer;
+    tz.contactList.Add(convertContactDetail(t5));
+  end;
+  for t5 in src.endorserList do
+  begin
+    tz := tgt.contributorList.Append;
+    tz.type_ := FHIR.R3.Types.ContributorTypeEndorser;
+    tz.contactList.Add(convertContactDetail(t5));
   end;
   for t6 in src.contactList do
   begin
@@ -9038,7 +8976,7 @@ begin
   begin
     tgt.library_List.add(convertCanonicalToReference(t8));
   end;
-  tgt.kind := convertActivityDefinitionKind(src.kind);
+//  tgt.kind := convertActivityDefinitionKind(src.kind);
 
   if (src.code <> nil) then
     tgt.code := convertCodeableConcept(src.code);
@@ -11731,7 +11669,7 @@ begin
   try
   copyBackboneElement(src, tgt);
   if (src.role <> nil) then
-    tgt.role := convertCodeableConcept(src.role);
+    tgt.roleList.Add(convertCodeableConcept(src.role));
 
   if (src.member <> nil) then
     tgt.member := convertReference(src.member);
@@ -11757,8 +11695,8 @@ begin
   tgt := FHIR.R3.Resources.TFhirCareTeamParticipant.Create();
   try
   copyBackboneElement(src, tgt);
-  if (src.role <> nil) then
-    tgt.role := convertCodeableConcept(src.role);
+  if (not src.roleList.IsEmpty) then
+    tgt.role := convertCodeableConcept(src.roleList[0]);
 
   if (src.member <> nil) then
     tgt.member := convertReference(src.member);
@@ -11769,1057 +11707,6 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertClaim(src : FHIR.R3.Resources.TFhirClaim) : FHIR.R4.Resources.TFhirClaim;
-var
-  tgt : FHIR.R4.Resources.TFhirClaim;
-  t1 : FHIR.R3.Types.TFhirIdentifier;
-  t2 : FHIR.R3.Types.TFhirCodeableConcept;
-  t3 : FHIR.R3.Resources.TFhirClaimRelated;
-  t4 : FHIR.R3.Resources.TFhirClaimCareTeam;
-  t5 : FHIR.R3.Resources.TFhirClaimInformation;
-  t6 : FHIR.R3.Resources.TFhirClaimDiagnosis;
-  t7 : FHIR.R3.Resources.TFhirClaimProcedure;
-  t8 : FHIR.R3.Resources.TFhirClaimInsurance;
-  t9 : FHIR.R3.Resources.TFhirClaimItem;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaim.Create();
-  try
-  copyDomainResource(src, tgt);
-  for t1 in src.identifierList do
-  begin
-    tgt.identifierList.add(convertIdentifier(t1));
-  end;
-  tgt.status := convertClaimStatus(src.status);
-
-  tgt.type_ := convertCodeableConcept(src.type_);
-
-  for t2 in src.subTypeList do
-  begin
-    tgt.subTypeList.add(convertCodeableConcept(t2));
-  end;
-  tgt.use := convertUse(src.use);
-
-  if (src.patient <> nil) then
-    tgt.patient := convertReference(src.patient);
-
-  if (src.billablePeriod <> nil) then
-    tgt.billablePeriod := convertPeriod(src.billablePeriod);
-
-  tgt.created := src.created;
-
-  if (src.enterer <> nil) then
-    tgt.enterer := convertReference(src.enterer);
-
-  if (src.insurer <> nil) then
-    tgt.insurer := convertReference(src.insurer);
-
-  if (src.provider <> nil) then
-    tgt.provider := convertReference(src.provider);
-
-  if (src.priority <> nil) then
-    tgt.priority := convertCodeableConcept(src.priority);
-
-  if (src.fundsReserve <> nil) then
-    tgt.fundsReserve := convertCodeableConcept(src.fundsReserve);
-
-  for t3 in src.relatedList do
-  begin
-    tgt.relatedList.add(convertRelatedClaimComponent(t3));
-  end;
-  if (src.prescription <> nil) then
-    tgt.prescription := convertReference(src.prescription);
-
-  if (src.originalPrescription <> nil) then
-    tgt.originalPrescription := convertReference(src.originalPrescription);
-
-  if (src.payee <> nil) then
-    tgt.payee := convertPayeeComponent(src.payee);
-
-  if (src.referral <> nil) then
-    tgt.referral := convertReference(src.referral);
-
-  if (src.facility <> nil) then
-    tgt.facility := convertReference(src.facility);
-
-  for t4 in src.careTeamList do
-  begin
-    tgt.careTeamList.add(convertCareTeamComponent(t4));
-  end;
-  for t5 in src.informationList do
-  begin
-    tgt.informationList.add(convertSpecialConditionComponent(t5));
-  end;
-  for t6 in src.diagnosisList do
-  begin
-    tgt.diagnosisList.add(convertDiagnosisComponent(t6));
-  end;
-  for t7 in src.procedure_List do
-  begin
-    tgt.procedure_List.add(convertProcedureComponent(t7));
-  end;
-  for t8 in src.insuranceList do
-  begin
-    tgt.insuranceList.add(convertInsuranceComponent(t8));
-  end;
-  if (src.accident <> nil) then
-    tgt.accident := convertAccidentComponent(src.accident);
-
-  for t9 in src.itemList do
-  begin
-    tgt.itemList.add(convertItemComponent(t9));
-  end;
-  if (src.total <> nil) then
-    tgt.total := convertMoney(src.total);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertClaim(src : FHIR.R4.Resources.TFhirClaim) : FHIR.R3.Resources.TFhirClaim;
-var
-  tgt : FHIR.R3.Resources.TFhirClaim;
-  t1 : FHIR.R4.Types.TFhirIdentifier;
-  t2 : FHIR.R4.Types.TFhirCodeableConcept;
-  t3 : FHIR.R4.Resources.TFhirClaimRelated;
-  t4 : FHIR.R4.Resources.TFhirClaimCareTeam;
-  t5 : FHIR.R4.Resources.TFhirClaimInformation;
-  t6 : FHIR.R4.Resources.TFhirClaimDiagnosis;
-  t7 : FHIR.R4.Resources.TFhirClaimProcedure;
-  t8 : FHIR.R4.Resources.TFhirClaimInsurance;
-  t9 : FHIR.R4.Resources.TFhirClaimItem;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaim.Create();
-  try
-  copyDomainResource(src, tgt);
-  for t1 in src.identifierList do
-  begin
-    tgt.identifierList.add(convertIdentifier(t1));
-  end;
-  tgt.status := convertClaimStatus(src.status);
-
-  tgt.type_ := convertCodeableConcept(src.type_);
-
-  for t2 in src.subTypeList do
-  begin
-    tgt.subTypeList.add(convertCodeableConcept(t2));
-  end;
-  tgt.use := convertUse(src.use);
-
-  if (src.patient <> nil) then
-    tgt.patient := convertReference(src.patient);
-
-  if (src.billablePeriod <> nil) then
-    tgt.billablePeriod := convertPeriod(src.billablePeriod);
-
-  tgt.created := src.created;
-
-  if (src.enterer <> nil) then
-    tgt.enterer := convertReference(src.enterer);
-
-  if (src.insurer <> nil) then
-    tgt.insurer := convertReference(src.insurer);
-
-  if (src.provider <> nil) then
-    tgt.provider := convertReference(src.provider);
-
-  if (src.priority <> nil) then
-    tgt.priority := convertCodeableConcept(src.priority);
-
-  if (src.fundsReserve <> nil) then
-    tgt.fundsReserve := convertCodeableConcept(src.fundsReserve);
-
-  for t3 in src.relatedList do
-  begin
-    tgt.relatedList.add(convertRelatedClaimComponent(t3));
-  end;
-  if (src.prescription <> nil) then
-    tgt.prescription := convertReference(src.prescription);
-
-  if (src.originalPrescription <> nil) then
-    tgt.originalPrescription := convertReference(src.originalPrescription);
-
-  if (src.payee <> nil) then
-    tgt.payee := convertPayeeComponent(src.payee);
-
-  if (src.referral <> nil) then
-    tgt.referral := convertReference(src.referral);
-
-  if (src.facility <> nil) then
-    tgt.facility := convertReference(src.facility);
-
-  for t4 in src.careTeamList do
-  begin
-    tgt.careTeamList.add(convertCareTeamComponent(t4));
-  end;
-  for t5 in src.informationList do
-  begin
-    tgt.informationList.add(convertSpecialConditionComponent(t5));
-  end;
-  for t6 in src.diagnosisList do
-  begin
-    tgt.diagnosisList.add(convertDiagnosisComponent(t6));
-  end;
-  for t7 in src.procedure_List do
-  begin
-    tgt.procedure_List.add(convertProcedureComponent(t7));
-  end;
-  for t8 in src.insuranceList do
-  begin
-    tgt.insuranceList.add(convertInsuranceComponent(t8));
-  end;
-  if (src.accident <> nil) then
-    tgt.accident := convertAccidentComponent(src.accident);
-
-  for t9 in src.itemList do
-  begin
-    tgt.itemList.add(convertItemComponent(t9));
-  end;
-  if (src.total <> nil) then
-    tgt.total := convertMoney(src.total);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertRelatedClaimComponent(src : FHIR.R3.Resources.TFhirClaimRelated) : FHIR.R4.Resources.TFhirClaimRelated;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimRelated;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimRelated.Create();
-  try
-  copyBackboneElement(src, tgt);
-  if (src.claim <> nil) then
-    tgt.claim := convertReference(src.claim);
-
-  if (src.relationship <> nil) then
-    tgt.relationship := convertCodeableConcept(src.relationship);
-
-  if (src.reference <> nil) then
-    tgt.reference := convertIdentifier(src.reference);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertRelatedClaimComponent(src : FHIR.R4.Resources.TFhirClaimRelated) : FHIR.R3.Resources.TFhirClaimRelated;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimRelated;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimRelated.Create();
-  try
-  copyBackboneElement(src, tgt);
-  if (src.claim <> nil) then
-    tgt.claim := convertReference(src.claim);
-
-  if (src.relationship <> nil) then
-    tgt.relationship := convertCodeableConcept(src.relationship);
-
-  if (src.reference <> nil) then
-    tgt.reference := convertIdentifier(src.reference);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertPayeeComponent(src : FHIR.R3.Resources.TFhirClaimPayee) : FHIR.R4.Resources.TFhirClaimPayee;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimPayee;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimPayee.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.type_ := convertCodeableConcept(src.type_);
-
-  if (src.resourceType <> nil) then
-    tgt.resource := convertCoding(src.resourceType);
-
-  if (src.party <> nil) then
-    tgt.party := convertReference(src.party);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertPayeeComponent(src : FHIR.R4.Resources.TFhirClaimPayee) : FHIR.R3.Resources.TFhirClaimPayee;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimPayee;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimPayee.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.type_ := convertCodeableConcept(src.type_);
-
-  if (src.resource <> nil) then
-    tgt.resourceType := convertCoding(src.resource);
-
-  if (src.party <> nil) then
-    tgt.party := convertReference(src.party);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertCareTeamComponent(src : FHIR.R3.Resources.TFhirClaimCareTeam) : FHIR.R4.Resources.TFhirClaimCareTeam;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimCareTeam;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimCareTeam.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.provider <> nil) then
-    tgt.provider := convertReference(src.provider);
-
-  tgt.responsible := src.responsible;
-
-  if (src.role <> nil) then
-    tgt.role := convertCodeableConcept(src.role);
-
-  if (src.qualification <> nil) then
-    tgt.qualification := convertCodeableConcept(src.qualification);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertCareTeamComponent(src : FHIR.R4.Resources.TFhirClaimCareTeam) : FHIR.R3.Resources.TFhirClaimCareTeam;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimCareTeam;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimCareTeam.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.provider <> nil) then
-    tgt.provider := convertReference(src.provider);
-
-  tgt.responsible := src.responsible;
-
-  if (src.role <> nil) then
-    tgt.role := convertCodeableConcept(src.role);
-
-  if (src.qualification <> nil) then
-    tgt.qualification := convertCodeableConcept(src.qualification);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertSpecialConditionComponent(src : FHIR.R3.Resources.TFhirClaimInformation) : FHIR.R4.Resources.TFhirClaimInformation;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimInformation;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimInformation.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
-
-  tgt.code := convertCodeableConcept(src.code);
-
-  if (src.timing <> nil) then
-    tgt.timing := convertType(src.timing);
-
-  if (src.value <> nil) then
-    tgt.value := convertType(src.value);
-
-  if (src.reason <> nil) then
-    tgt.reason := convertCodeableConcept(src.reason);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertSpecialConditionComponent(src : FHIR.R4.Resources.TFhirClaimInformation) : FHIR.R3.Resources.TFhirClaimInformation;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimInformation;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimInformation.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
-
-  tgt.code := convertCodeableConcept(src.code);
-
-  if (src.timing <> nil) then
-    tgt.timing := convertType(src.timing);
-
-  if (src.value <> nil) then
-    tgt.value := convertType(src.value);
-
-  if (src.reason <> nil) then
-    tgt.reason := convertCodeableConcept(src.reason);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDiagnosisComponent(src : FHIR.R3.Resources.TFhirClaimDiagnosis) : FHIR.R4.Resources.TFhirClaimDiagnosis;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimDiagnosis;
-  t : FHIR.R3.Types.TFhirCodeableConcept;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimDiagnosis.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.diagnosis <> nil) then
-    tgt.diagnosis := convertType(src.diagnosis);
-
-  for t in src.type_List do
-  begin
-    tgt.type_List.add(convertCodeableConcept(t));
-  end;
-  if (src.packageCode <> nil) then
-    tgt.packageCode := convertCodeableConcept(src.packageCode);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDiagnosisComponent(src : FHIR.R4.Resources.TFhirClaimDiagnosis) : FHIR.R3.Resources.TFhirClaimDiagnosis;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimDiagnosis;
-  t : FHIR.R4.Types.TFhirCodeableConcept;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimDiagnosis.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.diagnosis <> nil) then
-    tgt.diagnosis := convertType(src.diagnosis);
-
-  for t in src.type_List do
-  begin
-    tgt.type_List.add(convertCodeableConcept(t));
-  end;
-  if (src.packageCode <> nil) then
-    tgt.packageCode := convertCodeableConcept(src.packageCode);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertProcedureComponent(src : FHIR.R3.Resources.TFhirClaimProcedure) : FHIR.R4.Resources.TFhirClaimProcedure;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimProcedure;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimProcedure.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-  tgt.date := src.date;
-
-  if (src.procedure_ <> nil) then
-    tgt.procedure_ := convertType(src.procedure_);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertProcedureComponent(src : FHIR.R4.Resources.TFhirClaimProcedure) : FHIR.R3.Resources.TFhirClaimProcedure;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimProcedure;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimProcedure.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  tgt.date := src.date;
-
-  if (src.procedure_ <> nil) then
-    tgt.procedure_ := convertType(src.procedure_);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertInsuranceComponent(src : FHIR.R3.Resources.TFhirClaimInsurance) : FHIR.R4.Resources.TFhirClaimInsurance;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimInsurance;
-  t : FHIR.R3.Types.TFhirString;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimInsurance.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  tgt.focal := src.focal;
-
-  if (src.coverage <> nil) then
-    tgt.coverage := convertReference(src.coverage);
-
-  if (src.businessArrangement <> '') then
-    tgt.businessArrangement := src.businessArrangement;
-
-  for t in src.preAuthRefList do
-  begin
-    tgt.preAuthRefList.add(convertString(t));
-  end;
-  if (src.claimResponse <> nil) then
-    tgt.claimResponse := convertReference(src.claimResponse);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertInsuranceComponent(src : FHIR.R4.Resources.TFhirClaimInsurance) : FHIR.R3.Resources.TFhirClaimInsurance;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimInsurance;
-  t : FHIR.R4.Types.TFhirString;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimInsurance.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  tgt.focal := src.focal;
-
-  if (src.coverage <> nil) then
-    tgt.coverage := convertReference(src.coverage);
-
-  if (src.businessArrangement <> '') then
-    tgt.businessArrangement := src.businessArrangement;
-
-  for t in src.preAuthRefList do
-  begin
-    tgt.preAuthRefList.add(convertString(t));
-  end;
-  if (src.claimResponse <> nil) then
-    tgt.claimResponse := convertReference(src.claimResponse);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertAccidentComponent(src : FHIR.R3.Resources.TFhirClaimAccident) : FHIR.R4.Resources.TFhirClaimAccident;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimAccident;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimAccident.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.date := src.date;
-
-  tgt.type_ := convertCodeableConcept(src.type_);
-
-  if (src.location <> nil) then
-    tgt.location := convertType(src.location);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertAccidentComponent(src : FHIR.R4.Resources.TFhirClaimAccident) : FHIR.R3.Resources.TFhirClaimAccident;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimAccident;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimAccident.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.date := src.date;
-
-  tgt.type_ := convertCodeableConcept(src.type_);
-
-  if (src.location <> nil) then
-    tgt.location := convertType(src.location);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertItemComponent(src : FHIR.R3.Resources.TFhirClaimItem) : FHIR.R4.Resources.TFhirClaimItem;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimItem;
-  t1 : FHIR.R3.Types.TFhirPositiveInt;
-  t2 : FHIR.R3.Types.TFhirPositiveInt;
-  t3 : FHIR.R3.Types.TFhirPositiveInt;
-  t4 : FHIR.R3.Types.TFhirPositiveInt;
-  t5 : FHIR.R3.Types.TFhirCodeableConcept;
-  t6 : FHIR.R3.Types.TFhirCodeableConcept;
-  t7 : FHIR.R3.Types.TFhirReference;
-  t8 : FHIR.R3.Types.TFhirCodeableConcept;
-  t9 : FHIR.R3.Types.TFhirReference;
-  ta : FHIR.R3.Resources.TFhirClaimItemDetail;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimItem.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  for t1 in src.careTeamLinkIdList do
-  begin
-    tgt.careTeamSequenceList.add(convertPositiveInt(t1));
-  end;
-  for t2 in src.diagnosisLinkIdList do
-  begin
-    tgt.diagnosisSequenceList.add(convertPositiveInt(t2));
-  end;
-  for t3 in src.procedureLinkIdList do
-  begin
-    tgt.procedureSequenceList.add(convertPositiveInt(t3));
-  end;
-  for t4 in src.informationLinkIdList do
-  begin
-    tgt.informationSequenceList.add(convertPositiveInt(t4));
-  end;
-  if (src.revenue <> nil) then
-    tgt.revenue := convertCodeableConcept(src.revenue);
-
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
-
-  if (src.service <> nil) then
-    tgt.service := convertCodeableConcept(src.service);
-
-  for t5 in src.modifierList do
-  begin
-    tgt.modifierList.add(convertCodeableConcept(t5));
-  end;
-  for t6 in src.programCodeList do
-  begin
-    tgt.programCodeList.add(convertCodeableConcept(t6));
-  end;
-  if (src.serviced <> nil) then
-    tgt.serviced := convertType(src.serviced);
-
-  if (src.location <> nil) then
-    tgt.location := convertType(src.location);
-
-  if (src.quantity <> nil) then
-    tgt.quantity := convertSimpleQuantity(src.quantity);
-
-  if (src.unitPrice <> nil) then
-    tgt.unitPrice := convertMoney(src.unitPrice);
-
-   tgt.factor := src.factor;
-
-  if (src.net <> nil) then
-    tgt.net := convertMoney(src.net);
-
-  for t7 in src.udiList do
-  begin
-    tgt.udiList.add(convertReference(t7));
-  end;
-  if (src.bodySite <> nil) then
-    tgt.bodySite := convertCodeableConcept(src.bodySite);
-
-  for t8 in src.subSiteList do
-  begin
-    tgt.subSiteList.add(convertCodeableConcept(t8));
-  end;
-  for t9 in src.encounterList do
-  begin
-    tgt.encounterList.add(convertReference(t9));
-  end;
-  for ta in src.detailList do
-  begin
-    tgt.detailList.add(convertDetailComponent(ta));
-  end;
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertItemComponent(src : FHIR.R4.Resources.TFhirClaimItem) : FHIR.R3.Resources.TFhirClaimItem;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimItem;
-  t1 : FHIR.R4.Types.TFhirPositiveInt;
-  t2 : FHIR.R4.Types.TFhirPositiveInt;
-  t3 : FHIR.R4.Types.TFhirPositiveInt;
-  t4 : FHIR.R4.Types.TFhirPositiveInt;
-  t5 : FHIR.R4.Types.TFhirCodeableConcept;
-  t6 : FHIR.R4.Types.TFhirCodeableConcept;
-  t7 : FHIR.R4.Types.TFhirReference;
-  t8 : FHIR.R4.Types.TFhirCodeableConcept;
-  t9 : FHIR.R4.Types.TFhirReference;
-  ta : FHIR.R4.Resources.TFhirClaimItemDetail;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimItem.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  for t1 in src.careTeamSequenceList do
-  begin
-    tgt.careTeamLinkIdList.add(convertPositiveInt(t1));
-  end;
-  for t2 in src.diagnosisSequenceList do
-  begin
-    tgt.diagnosisLinkIdList.add(convertPositiveInt(t2));
-  end;
-  for t3 in src.procedureSequenceList do
-  begin
-    tgt.procedureLinkIdList.add(convertPositiveInt(t3));
-  end;
-  for t4 in src.informationSequenceList do
-  begin
-    tgt.informationLinkIdList.add(convertPositiveInt(t4));
-  end;
-  if (src.revenue <> nil) then
-    tgt.revenue := convertCodeableConcept(src.revenue);
-
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
-
-  if (src.service <> nil) then
-    tgt.service := convertCodeableConcept(src.service);
-
-  for t5 in src.modifierList do
-  begin
-    tgt.modifierList.add(convertCodeableConcept(t5));
-  end;
-  for t6 in src.programCodeList do
-  begin
-    tgt.programCodeList.add(convertCodeableConcept(t6));
-  end;
-  if (src.serviced <> nil) then
-    tgt.serviced := convertType(src.serviced);
-
-  if (src.location <> nil) then
-    tgt.location := convertType(src.location);
-
-  if (src.quantity <> nil) then
-    tgt.quantity := convertSimpleQuantity(src.quantity);
-
-  if (src.unitPrice <> nil) then
-    tgt.unitPrice := convertMoney(src.unitPrice);
-
-  tgt.factor := src.factor;
-
-  if (src.net <> nil) then
-    tgt.net := convertMoney(src.net);
-
-  for t7 in src.udiList do
-  begin
-    tgt.udiList.add(convertReference(t7));
-  end;
-  if (src.bodySite <> nil) then
-    tgt.bodySite := convertCodeableConcept(src.bodySite);
-
-  for t8 in src.subSiteList do
-  begin
-    tgt.subSiteList.add(convertCodeableConcept(t8));
-  end;
-  for t9 in src.encounterList do
-  begin
-    tgt.encounterList.add(convertReference(t9));
-  end;
-  for ta in src.detailList do
-  begin
-    tgt.detailList.add(convertDetailComponent(ta));
-  end;
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDetailComponent(src : FHIR.R3.Resources.TFhirClaimItemDetail) : FHIR.R4.Resources.TFhirClaimItemDetail;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimItemDetail;
-  t1 : FHIR.R3.Types.TFhirCodeableConcept;
-  t2 : FHIR.R3.Types.TFhirCodeableConcept;
-  t3 : FHIR.R3.Types.TFhirReference;
-  t4 : FHIR.R3.Resources.TFhirClaimItemDetailSubDetail;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimItemDetail.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.revenue <> nil) then
-    tgt.revenue := convertCodeableConcept(src.revenue);
-
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
-
-  if (src.service <> nil) then
-    tgt.service := convertCodeableConcept(src.service);
-
-  for t1 in src.modifierList do
-  begin
-    tgt.modifierList.add(convertCodeableConcept(t1));
-  end;
-  for t2 in src.programCodeList do
-  begin
-    tgt.programCodeList.add(convertCodeableConcept(t2));
-  end;
-  if (src.quantity <> nil) then
-    tgt.quantity := convertSimpleQuantity(src.quantity);
-
-  if (src.unitPrice <> nil) then
-    tgt.unitPrice := convertMoney(src.unitPrice);
-
-  tgt.factor := src.factor;
-
-  if (src.net <> nil) then
-    tgt.net := convertMoney(src.net);
-
-  for t3 in src.udiList do
-  begin
-    tgt.udiList.add(convertReference(t3));
-  end;
-  for t4 in src.subDetailList do
-  begin
-    tgt.subDetailList.add(convertSubDetailComponent(t4));
-  end;
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDetailComponent(src : FHIR.R4.Resources.TFhirClaimItemDetail) : FHIR.R3.Resources.TFhirClaimItemDetail;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimItemDetail;
-  t1 : FHIR.R4.Types.TFhirCodeableConcept;
-  t2 : FHIR.R4.Types.TFhirCodeableConcept;
-  t3 : FHIR.R4.Types.TFhirReference;
-  t4 : FHIR.R4.Resources.TFhirClaimItemDetailSubDetail;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimItemDetail.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.revenue <> nil) then
-    tgt.revenue := convertCodeableConcept(src.revenue);
-
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
-
-  if (src.service <> nil) then
-    tgt.service := convertCodeableConcept(src.service);
-
-  for t1 in src.modifierList do
-  begin
-    tgt.modifierList.add(convertCodeableConcept(t1));
-  end;
-  for t2 in src.programCodeList do
-  begin
-    tgt.programCodeList.add(convertCodeableConcept(t2));
-  end;
-  if (src.quantity <> nil) then
-    tgt.quantity := convertSimpleQuantity(src.quantity);
-
-  if (src.unitPrice <> nil) then
-    tgt.unitPrice := convertMoney(src.unitPrice);
-
-  tgt.factor := src.factor;
-
-  if (src.net <> nil) then
-    tgt.net := convertMoney(src.net);
-
-  for t3 in src.udiList do
-  begin
-    tgt.udiList.add(convertReference(t3));
-  end;
-  for t4 in src.subDetailList do
-  begin
-    tgt.subDetailList.add(convertSubDetailComponent(t4));
-  end;
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertSubDetailComponent(src : FHIR.R3.Resources.TFhirClaimItemDetailSubDetail) : FHIR.R4.Resources.TFhirClaimItemDetailSubDetail;
-var
-  tgt : FHIR.R4.Resources.TFhirClaimItemDetailSubDetail;
-  t1 : FHIR.R3.Types.TFhirCodeableConcept;
-  t2 : FHIR.R3.Types.TFhirCodeableConcept;
-  t3 : FHIR.R3.Types.TFhirReference;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirClaimItemDetailSubDetail.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.revenue <> nil) then
-    tgt.revenue := convertCodeableConcept(src.revenue);
-
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
-
-  if (src.service <> nil) then
-    tgt.service := convertCodeableConcept(src.service);
-
-  for t1 in src.modifierList do
-  begin
-    tgt.modifierList.add(convertCodeableConcept(t1));
-  end;
-  for t2 in src.programCodeList do
-  begin
-    tgt.programCodeList.add(convertCodeableConcept(t2));
-  end;
-  if (src.quantity <> nil) then
-    tgt.quantity := convertSimpleQuantity(src.quantity);
-
-  if (src.unitPrice <> nil) then
-    tgt.unitPrice := convertMoney(src.unitPrice);
-
-  tgt.factor := src.factor;
-
-  if (src.net <> nil) then
-    tgt.net := convertMoney(src.net);
-
-  for t3 in src.udiList do
-  begin
-    tgt.udiList.add(convertReference(t3));
-  end;
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertSubDetailComponent(src : FHIR.R4.Resources.TFhirClaimItemDetailSubDetail) : FHIR.R3.Resources.TFhirClaimItemDetailSubDetail;
-var
-  tgt : FHIR.R3.Resources.TFhirClaimItemDetailSubDetail;
-  t1 : FHIR.R4.Types.TFhirCodeableConcept;
-  t2 : FHIR.R4.Types.TFhirCodeableConcept;
-  t3 : FHIR.R4.Types.TFhirReference;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirClaimItemDetailSubDetail.Create();
-  try
-  copyBackboneElement(src, tgt);
-  tgt.sequence := src.sequence;
-
-  if (src.revenue <> nil) then
-    tgt.revenue := convertCodeableConcept(src.revenue);
-
-  if (src.category <> nil) then
-    tgt.category := convertCodeableConcept(src.category);
-
-  if (src.service <> nil) then
-    tgt.service := convertCodeableConcept(src.service);
-
-  for t1 in src.modifierList do
-  begin
-    tgt.modifierList.add(convertCodeableConcept(t1));
-  end;
-  for t2 in src.programCodeList do
-  begin
-    tgt.programCodeList.add(convertCodeableConcept(t2));
-  end;
-  if (src.quantity <> nil) then
-    tgt.quantity := convertSimpleQuantity(src.quantity);
-
-  if (src.unitPrice <> nil) then
-    tgt.unitPrice := convertMoney(src.unitPrice);
-
-  tgt.factor := src.factor;
-
-  if (src.net <> nil) then
-    tgt.net := convertMoney(src.net);
-
-  for t3 in src.udiList do
-  begin
-    tgt.udiList.add(convertReference(t3));
-  end;
   exit(tgt.link);
   finally
     tgt.free;
@@ -12901,7 +11788,7 @@ begin
   end;
   for t8 in src.actionList do
   begin
-    tgt.actionList.add(convertReference(t8));
+    tgt.supportingInfoList.add(convertReference(t8));
   end;
   for t9 in src.noteList do
   begin
@@ -12986,7 +11873,7 @@ begin
   begin
     tgt.prognosisReferenceList.add(convertReference(t7));
   end;
-  for t8 in src.actionList do
+  for t8 in src.supportingInfoList do
   begin
     tgt.actionList.add(convertReference(t8));
   end;
@@ -13111,7 +11998,7 @@ begin
     tgt.url := src.url;
 
   if (src.identifier <> nil) then
-    tgt.identifier := convertIdentifier(src.identifier);
+    tgt.identifierList.add(convertIdentifier(src.identifier));
 
   if (src.version <> '') then
     tgt.version := src.version;
@@ -13202,8 +12089,8 @@ begin
   if (src.url <> '') then
     tgt.url := src.url;
 
-  if (src.identifier <> nil) then
-    tgt.identifier := convertIdentifier(src.identifier);
+  if (not src.identifierList.IsEmpty) then
+    tgt.identifier := convertIdentifier(src.identifierList[0]);
 
   if (src.version <> '') then
     tgt.version := src.version;
@@ -13973,7 +12860,7 @@ begin
   tgt.type_ := convertCodeableConcept(src.type_);
 
   if (src.class_ <> nil) then
-    tgt.class_ := convertCodeableConcept(src.class_);
+    tgt.categoryList.Add(convertCodeableConcept(src.class_));
 
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
@@ -14038,8 +12925,8 @@ begin
 
   tgt.type_ := convertCodeableConcept(src.type_);
 
-  if (src.class_ <> nil) then
-    tgt.class_ := convertCodeableConcept(src.class_);
+  if (src.categoryList.Count > 0) then
+    tgt.class_ := convertCodeableConcept(src.categoryList[0]);
 
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
@@ -15335,8 +14222,6 @@ begin
   begin
     tgt.identifierList.add(convertIdentifier(t1));
   end;
-  if (src.udi <> nil) then
-    tgt.udi := convertDeviceUdiComponent(src.udi);
 
   tgt.status := convertFHIRDeviceStatus(src.status);
 
@@ -15351,12 +14236,6 @@ begin
   tgt.manufactureDate := src.manufactureDate.link;
 
   tgt.expirationDate := src.expirationDate.link;
-
-  if (src.model <> '') then
-    tgt.model := src.model;
-
-  if (src.version <> '') then
-    tgt.version := src.version;
 
   if (src.patient <> nil) then
     tgt.patient := convertReference(src.patient);
@@ -15405,8 +14284,6 @@ begin
   begin
     tgt.identifierList.add(convertIdentifier(t1));
   end;
-  if (src.udi <> nil) then
-    tgt.udi := convertDeviceUdiComponent(src.udi);
 
   tgt.status := convertFHIRDeviceStatus(src.status);
 
@@ -15422,11 +14299,6 @@ begin
 
   tgt.expirationDate := src.expirationDate.link;
 
-  if (src.model <> '') then
-    tgt.model := src.model;
-
-  if (src.version <> '') then
-    tgt.version := src.version;
 
   if (src.patient <> nil) then
     tgt.patient := convertReference(src.patient);
@@ -15452,216 +14324,6 @@ begin
   begin
     tgt.safetyList.add(convertCodeableConcept(t4));
   end;
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDeviceUdiComponent(src : FHIR.R3.Resources.TFhirDeviceUdi) : FHIR.R4.Resources.TFhirDeviceUdi;
-var
-  tgt : FHIR.R4.Resources.TFhirDeviceUdi;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirDeviceUdi.Create();
-  try
-  copyBackboneElement(src, tgt);
-  if (src.deviceIdentifier <> '') then
-    tgt.deviceIdentifier := src.deviceIdentifier;
-
-  if (src.name <> '') then
-    tgt.name := src.name;
-
-  if (src.jurisdiction <> '') then
-    tgt.jurisdiction := src.jurisdiction;
-
-  if (src.carrierHRF <> '') then
-    tgt.carrierHRF := src.carrierHRF;
-
-  if (src.carrierAIDC <> nil) then
-    tgt.carrierAIDC := src.carrierAIDC;
-
-  if (src.issuer <> '') then
-    tgt.issuer := src.issuer;
-
-  tgt.entryType := convertUDIEntryType(src.entryType);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDeviceUdiComponent(src : FHIR.R4.Resources.TFhirDeviceUdi) : FHIR.R3.Resources.TFhirDeviceUdi;
-var
-  tgt : FHIR.R3.Resources.TFhirDeviceUdi;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirDeviceUdi.Create();
-  try
-  copyBackboneElement(src, tgt);
-  if (src.deviceIdentifier <> '') then
-    tgt.deviceIdentifier := src.deviceIdentifier;
-
-  if (src.name <> '') then
-    tgt.name := src.name;
-
-  if (src.jurisdiction <> '') then
-    tgt.jurisdiction := src.jurisdiction;
-
-  if (src.carrierHRF <> '') then
-    tgt.carrierHRF := src.carrierHRF;
-
-  if (src.carrierAIDC <> nil) then
-    tgt.carrierAIDC := src.carrierAIDC;
-
-  if (src.issuer <> '') then
-    tgt.issuer := src.issuer;
-
-  tgt.entryType := convertUDIEntryType(src.entryType);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDeviceComponent(src : FHIR.R3.Resources.TFhirDeviceComponent) : FHIR.R4.Resources.TFhirDeviceComponent;
-var
-  tgt : FHIR.R4.Resources.TFhirDeviceComponent;
-  t1 : FHIR.R3.Types.TFhirCodeableConcept;
-  t2 : FHIR.R3.Resources.TFhirDeviceComponentProductionSpecification;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirDeviceComponent.Create();
-  try
-  copyDomainResource(src, tgt);
-  if (src.identifier <> nil) then
-    tgt.identifierList.add(convertIdentifier(src.Identifier));
-
-  tgt.type_ := convertCodeableConcept(src.type_);
-
-  tgt.lastSystemChange := src.lastSystemChange.link;
-
-  if (src.source <> nil) then
-    tgt.source := convertReference(src.source);
-
-  if (src.parent <> nil) then
-    tgt.parent := convertReference(src.parent);
-
-  for t1 in src.operationalStatusList do
-  begin
-    tgt.operationalStatusList.add(convertCodeableConcept(t1));
-  end;
-  if (src.parameterGroup <> nil) then
-    tgt.parameterGroup := convertCodeableConcept(src.parameterGroup);
-
-  tgt.measurementPrinciple := convertMeasmntPrinciple(src.measurementPrinciple);
-
-  for t2 in src.productionSpecificationList do
-  begin
-    tgt.productionSpecificationList.add(convertDeviceComponentProductionSpecificationComponent(t2));
-  end;
-  if (src.languageCode <> nil) then
-    tgt.languageCode := convertCodeableConcept(src.languageCode);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDeviceComponent(src : FHIR.R4.Resources.TFhirDeviceComponent) : FHIR.R3.Resources.TFhirDeviceComponent;
-var
-  tgt : FHIR.R3.Resources.TFhirDeviceComponent;
-  t1 : FHIR.R4.Types.TFhirCodeableConcept;
-  t2 : FHIR.R4.Resources.TFhirDeviceComponentProductionSpecification;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirDeviceComponent.Create();
-  try
-  copyDomainResource(src, tgt);
-  if (src.identifierList.count > 0) then
-    tgt.identifier := convertIdentifier(src.identifierList[0]);
-
-  tgt.type_ := convertCodeableConcept(src.type_);
-
-  tgt.lastSystemChange := src.lastSystemChange.link;
-
-  if (src.source <> nil) then
-    tgt.source := convertReference(src.source);
-
-  if (src.parent <> nil) then
-    tgt.parent := convertReference(src.parent);
-
-  for t1 in src.operationalStatusList do
-  begin
-    tgt.operationalStatusList.add(convertCodeableConcept(t1));
-  end;
-  if (src.parameterGroup <> nil) then
-    tgt.parameterGroup := convertCodeableConcept(src.parameterGroup);
-
-  tgt.measurementPrinciple := convertMeasmntPrinciple(src.measurementPrinciple);
-
-  for t2 in src.productionSpecificationList do
-  begin
-    tgt.productionSpecificationList.add(convertDeviceComponentProductionSpecificationComponent(t2));
-  end;
-  if (src.languageCode <> nil) then
-    tgt.languageCode := convertCodeableConcept(src.languageCode);
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDeviceComponentProductionSpecificationComponent(src : FHIR.R3.Resources.TFhirDeviceComponentProductionSpecification) : FHIR.R4.Resources.TFhirDeviceComponentProductionSpecification;
-var
-  tgt : FHIR.R4.Resources.TFhirDeviceComponentProductionSpecification;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R4.Resources.TFhirDeviceComponentProductionSpecification.Create();
-  try
-  copyBackboneElement(src, tgt);
-  if (src.specType <> nil) then
-    tgt.specType := convertCodeableConcept(src.specType);
-
-  if (src.componentId <> nil) then
-    tgt.componentId := convertIdentifier(src.componentId);
-
-  if (src.productionSpec <> '') then
-    tgt.productionSpec := src.productionSpec;
-
-  exit(tgt.link);
-  finally
-    tgt.free;
-  end;
-end;
-
-class function TVersionConvertor_30_40.convertDeviceComponentProductionSpecificationComponent(src : FHIR.R4.Resources.TFhirDeviceComponentProductionSpecification) : FHIR.R3.Resources.TFhirDeviceComponentProductionSpecification;
-var
-  tgt : FHIR.R3.Resources.TFhirDeviceComponentProductionSpecification;
-begin
-  if (src = nil) then
-    exit(nil);
-  tgt := FHIR.R3.Resources.TFhirDeviceComponentProductionSpecification.Create();
-  try
-  copyBackboneElement(src, tgt);
-  if (src.specType <> nil) then
-    tgt.specType := convertCodeableConcept(src.specType);
-
-  if (src.componentId <> nil) then
-    tgt.componentId := convertIdentifier(src.componentId);
-
-  if (src.productionSpec <> '') then
-    tgt.productionSpec := src.productionSpec;
-
   exit(tgt.link);
   finally
     tgt.free;
@@ -15956,7 +14618,7 @@ begin
 
   for t7 in src.codedDiagnosisList do
   begin
-    tgt.codedDiagnosisList.add(convertCodeableConcept(t7));
+    tgt.conclusionCodeList.add(convertCodeableConcept(t7));
   end;
   for t8 in src.presentedFormList do
   begin
@@ -16106,7 +14768,7 @@ begin
   if (src.conclusion <> '') then
     tgt.conclusion := src.conclusion;
 
-  for t7 in src.codedDiagnosisList do
+  for t7 in src.conclusionCodeList do
   begin
     tgt.codedDiagnosisList.add(convertCodeableConcept(t7));
   end;
@@ -16231,12 +14893,12 @@ begin
   tgt.type_ := convertCodeableConcept(src.type_);
 
   if (src.class_ <> nil) then
-    tgt.class_ := convertCodeableConcept(src.class_);
+    tgt.categoryList.Add(convertCodeableConcept(src.class_));
 
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  tgt.created := src.created;
+  tgt.date := src.created;
 
   if (src.authenticator <> nil) then
     tgt.authenticator := convertReference(src.authenticator);
@@ -16294,13 +14956,13 @@ begin
 
   tgt.type_ := convertCodeableConcept(src.type_);
 
-  if (src.class_ <> nil) then
-    tgt.class_ := convertCodeableConcept(src.class_);
+  if (src.categoryList.Count > 0) then
+    tgt.class_ := convertCodeableConcept(src.categoryList[0]);
 
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  tgt.created := src.created;
+  tgt.created := src.date;
 
   if (src.authenticator <> nil) then
     tgt.authenticator := convertReference(src.authenticator);
@@ -16426,7 +15088,7 @@ begin
   try
   copyBackboneElement(src, tgt);
   if (src.encounter <> nil) then
-    tgt.encounter := convertReference(src.encounter);
+    tgt.encounterList.Add(convertReference(src.encounter));
 
   for t1 in src.eventList do
   begin
@@ -16458,15 +15120,15 @@ class function TVersionConvertor_30_40.convertDocumentReferenceContextComponent(
 var
   tgt : FHIR.R3.Resources.TFhirDocumentReferenceContext;
   t1 : FHIR.R4.Types.TFhirCodeableConcept;
-  t2 : FHIR.R4.Resources.TFhirDocumentReferenceContextRelated;
+  t2 : FHIR.R4.Types.TFhirReference;
 begin
   if (src = nil) then
     exit(nil);
   tgt := FHIR.R3.Resources.TFhirDocumentReferenceContext.Create();
   try
   copyBackboneElement(src, tgt);
-  if (src.encounter <> nil) then
-    tgt.encounter := convertReference(src.encounter);
+  if (src.encounterList.Count > 0) then
+    tgt.encounter := convertReference(src.encounterList[0]);
 
   for t1 in src.eventList do
   begin
@@ -16494,20 +15156,20 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertDocumentReferenceContextRelatedComponent(src : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated) : FHIR.R4.Resources.TFhirDocumentReferenceContextRelated;
+class function TVersionConvertor_30_40.convertDocumentReferenceContextRelatedComponent(src : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated) : FHIR.R4.Types.TFhirReference;
 var
-  tgt : FHIR.R4.Resources.TFhirDocumentReferenceContextRelated;
+  tgt : FHIR.R4.Types.TFhirReference;
 begin
   if (src = nil) then
     exit(nil);
-  tgt := FHIR.R4.Resources.TFhirDocumentReferenceContextRelated.Create();
+  tgt := FHIR.R4.Types.TFhirReference.Create();
   try
-  copyBackboneElement(src, tgt);
+  copyElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
   if (src.ref <> nil) then
-    tgt.ref := convertReference(src.ref);
+    tgt.reference := src.ref.reference;
 
   exit(tgt.link);
   finally
@@ -16515,7 +15177,7 @@ begin
   end;
 end;
 
-class function TVersionConvertor_30_40.convertDocumentReferenceContextRelatedComponent(src : FHIR.R4.Resources.TFhirDocumentReferenceContextRelated) : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated;
+class function TVersionConvertor_30_40.convertDocumentReferenceContextRelatedComponent(src : FHIR.R4.Types.TFhirReference) : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated;
 var
   tgt : FHIR.R3.Resources.TFhirDocumentReferenceContextRelated;
 begin
@@ -16523,12 +15185,12 @@ begin
     exit(nil);
   tgt := FHIR.R3.Resources.TFhirDocumentReferenceContextRelated.Create();
   try
-  copyBackboneElement(src, tgt);
+  copyElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
-  if (src.ref <> nil) then
-    tgt.ref := convertReference(src.ref);
+  if (src.reference <> '') then
+    tgt.ref := convertReference(src);
 
   exit(tgt.link);
   finally
@@ -17780,7 +16442,7 @@ begin
   if (src.relationship <> nil) then
     tgt.relationship := convertCodeableConcept(src.relationship);
 
-  tgt.gender := convertAdministrativeGender(src.gender);
+//  tgt.gender := convertAdministrativeGender(src.gender);
 
   if (src.born <> nil) then
     tgt.born := convertType(src.born);
@@ -17854,7 +16516,7 @@ begin
   if (src.relationship <> nil) then
     tgt.relationship := convertCodeableConcept(src.relationship);
 
-  tgt.gender := convertAdministrativeGender(src.gender);
+//  tgt.gender := convertAdministrativeGender(src.gender);
 
   if (src.born <> nil) then
     tgt.born := convertType(src.born);
@@ -21203,7 +19865,7 @@ begin
     tgt.url := src.url;
 
   if (src.identifier <> nil) then
-    tgt.identifier := convertIdentifier(src.identifier);
+    tgt.identifierList.Add(convertIdentifier(src.identifier));
 
   if (src.version <> '') then
     tgt.version := src.version;
@@ -21302,8 +19964,8 @@ begin
   if (src.url <> '') then
     tgt.url := src.url;
 
-  if (src.identifier <> nil) then
-    tgt.identifier := convertIdentifier(src.identifier);
+  if (src.identifierList.Count <> 0) then
+    tgt.identifier := convertIdentifier(src.identifierList[0]);
 
   if (src.version <> '') then
     tgt.version := src.version;
@@ -21933,7 +20595,7 @@ begin
     tgt.subject := convertReference(src.subject);
 
   if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+    tgt.encounter := convertReference(src.context);
 
   if (src.effective <> nil) then
     tgt.effective := convertType(src.effective);
@@ -22025,8 +20687,8 @@ begin
   if (src.subject <> nil) then
     tgt.subject := convertReference(src.subject);
 
-  if (src.context <> nil) then
-    tgt.context := convertReference(src.context);
+  if (src.encounter <> nil) then
+    tgt.context := convertReference(src.encounter);
 
   if (src.effective <> nil) then
     tgt.effective := convertType(src.effective);
@@ -27572,8 +26234,6 @@ begin
   if (src.copyright <> '') then
     tgt.copyright := src.copyright;
 
-  tgt.extensible := src.extensible;
-
   if (src.compose <> nil) then
     tgt.compose := convertValueSetComposeComponent(src.compose);
 
@@ -27645,8 +26305,6 @@ begin
 
   if (src.copyright <> '') then
     tgt.copyright := src.copyright;
-
-   tgt.extensible := src.extensible;
 
   if (src.compose <> nil) then
     tgt.compose := convertValueSetComposeComponent(src.compose);
@@ -28194,7 +26852,12 @@ begin
   end;
   for t5 in src.contributorList do
   begin
-    tgt.contributorList.add(convertContributor(t5));
+    case t5.type_ of
+      FHIR.R3.Types.ContributorTypeAuthor : for t6 in t5.contactList do tgt.authorList.Add(convertContactDetail(t6));
+      FHIR.R3.Types.ContributorTypeEditor: for t6 in t5.contactList do tgt.editorList.Add(convertContactDetail(t6));
+      FHIR.R3.Types.ContributorTypeReviewer: for t6 in t5.contactList do tgt.reviewerList.Add(convertContactDetail(t6));
+      FHIR.R3.Types.ContributorTypeEndorser: for t6 in t5.contactList do tgt.endorserList.Add(convertContactDetail(t6));
+    end;
   end;
   for t6 in src.contactList do
   begin
@@ -28232,12 +26895,13 @@ var
   t2 : FHIR.R4.Types.TFhirUsageContext;
   t3 : FHIR.R4.Types.TFhirCodeableConcept;
   t4 : FHIR.R4.Types.TFhirCodeableConcept;
-  t5 : FHIR.R4.Types.TFhirContributor;
+  t5 : FHIR.R4.Types.TFhirContactDetail;
   t6 : FHIR.R4.Types.TFhirContactDetail;
   t7 : FHIR.R4.Types.TFhirRelatedArtifact;
   t8 : FHIR.R4.Types.TFhirCanonical;
   t9 : FHIR.R4.Resources.TFhirPlanDefinitionGoal;
   ta : FHIR.R4.Resources.TFhirPlanDefinitionAction;
+  tz : FHIR.R3.Types.TFhirContributor;
 begin
   if (src = nil) then
     exit(nil);
@@ -28296,9 +26960,29 @@ begin
   begin
     tgt.topicList.add(convertCodeableConcept(t4));
   end;
-  for t5 in src.contributorList do
+  for t5 in src.authorList do
   begin
-    tgt.contributorList.add(convertContributor(t5));
+    tz := tgt.contributorList.Append;
+    tz.type_ := FHIR.R3.Types.ContributorTypeAuthor;
+    tz.contactList.Add(convertContactDetail(t5));
+  end;
+  for t5 in src.editorList do
+  begin
+    tz := tgt.contributorList.Append;
+    tz.type_ := FHIR.R3.Types.ContributorTypeEditor;
+    tz.contactList.Add(convertContactDetail(t5));
+  end;
+  for t5 in src.reviewerList do
+  begin
+    tz := tgt.contributorList.Append;
+    tz.type_ := FHIR.R3.Types.ContributorTypeReviewer;
+    tz.contactList.Add(convertContactDetail(t5));
+  end;
+  for t5 in src.endorserList do
+  begin
+    tz := tgt.contributorList.Append;
+    tz.type_ := FHIR.R3.Types.ContributorTypeEndorser;
+    tz.contactList.Add(convertContactDetail(t5));
   end;
   for t6 in src.contactList do
   begin
@@ -28910,8 +27594,6 @@ begin
     exit(convertCapabilityStatement(src as FHIR.R3.Resources.TFhirCapabilityStatement));
   if (src is FHIR.R3.Resources.TFhirCareTeam) then
     exit(convertCareTeam(src as FHIR.R3.Resources.TFhirCareTeam));
-  if (src is FHIR.R3.Resources.TFhirClaim) then
-    exit(convertClaim(src as FHIR.R3.Resources.TFhirClaim));
   if (src is FHIR.R3.Resources.TFhirClinicalImpression) then
     exit(convertClinicalImpression(src as FHIR.R3.Resources.TFhirClinicalImpression));
   if (src is FHIR.R3.Resources.TFhirCodeSystem) then
@@ -28934,8 +27616,6 @@ begin
     exit(convertDetectedIssue(src as FHIR.R3.Resources.TFhirDetectedIssue));
   if (src is FHIR.R3.Resources.TFhirDevice) then
     exit(convertDevice(src as FHIR.R3.Resources.TFhirDevice));
-  if (src is FHIR.R3.Resources.TFhirDeviceComponent) then
-    exit(convertDeviceComponent(src as FHIR.R3.Resources.TFhirDeviceComponent));
   if (src is FHIR.R3.Resources.TFhirDeviceMetric) then
     exit(convertDeviceMetric(src as FHIR.R3.Resources.TFhirDeviceMetric));
   if (src is FHIR.R3.Resources.TFhirDeviceUseStatement) then
@@ -29069,8 +27749,6 @@ begin
     exit(convertCapabilityStatement(src as FHIR.R4.Resources.TFhirCapabilityStatement));
   if (src is FHIR.R4.Resources.TFhirCareTeam) then
     exit(convertCareTeam(src as FHIR.R4.Resources.TFhirCareTeam));
-  if (src is FHIR.R4.Resources.TFhirClaim) then
-    exit(convertClaim(src as FHIR.R4.Resources.TFhirClaim));
   if (src is FHIR.R4.Resources.TFhirClinicalImpression) then
     exit(convertClinicalImpression(src as FHIR.R4.Resources.TFhirClinicalImpression));
   if (src is FHIR.R4.Resources.TFhirCodeSystem) then
@@ -29091,8 +27769,6 @@ begin
     exit(convertDetectedIssue(src as FHIR.R4.Resources.TFhirDetectedIssue));
   if (src is FHIR.R4.Resources.TFhirDevice) then
     exit(convertDevice(src as FHIR.R4.Resources.TFhirDevice));
-  if (src is FHIR.R4.Resources.TFhirDeviceComponent) then
-    exit(convertDeviceComponent(src as FHIR.R4.Resources.TFhirDeviceComponent));
   if (src is FHIR.R4.Resources.TFhirDeviceMetric) then
     exit(convertDeviceMetric(src as FHIR.R4.Resources.TFhirDeviceMetric));
   if (src is FHIR.R4.Resources.TFhirDeviceUseStatement) then

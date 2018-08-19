@@ -227,7 +227,7 @@ var
 Begin
   FConn.ExecSQL('CREATE TABLE Types( '+#13#10+
        ' ResourceTypeKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
-       ' ResourceName nchar(32) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ResourceName nchar(64) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ImplementationGuide nchar(64) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Supported int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' LastId int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+

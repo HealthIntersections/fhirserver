@@ -583,7 +583,7 @@ public class ElementDefn {
     } else {
       for (org.hl7.fhir.r4.model.ElementDefinition.TypeRefComponent t : ed.getType()) {
         if (t.getCode() == null)
-          throw new Error("no code on "+ed.getPath());
+          t.setCode("string");
         if (t.getCode().equals("Reference") && t.hasTargetProfile()) {
           String ref = t.getTargetProfile().get(0).getValue().substring(40);
           if (ref.equals("Resource"))

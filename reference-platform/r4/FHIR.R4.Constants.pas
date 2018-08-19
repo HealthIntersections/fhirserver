@@ -33,7 +33,7 @@ unit FHIR.R4.Constants;
 
 interface
 
-// FHIR v3.4.0 generated 2018-07-25T14:31:35+10:00
+// FHIR v3.5.0 generated 2018-08-19T19:30:08+10:00
 
 uses
   SysUtils, Classes,
@@ -534,7 +534,6 @@ Type
     spClinicalImpression__source, 
     spClinicalImpression__tag, 
     spClinicalImpression__text, 
-    spClinicalImpression_Action, 
     spClinicalImpression_Assessor, 
     spClinicalImpression_Context, 
     spClinicalImpression_Date, 
@@ -546,7 +545,8 @@ Type
     spClinicalImpression_Previous, 
     spClinicalImpression_Problem, 
     spClinicalImpression_Status, 
-    spClinicalImpression_Subject); 
+    spClinicalImpression_Subject, 
+    spClinicalImpression_Supportinginfo); 
 {$ENDIF}
 
 {$IFDEF FHIR_CODESYSTEM}
@@ -686,7 +686,7 @@ Type
     spComposition__text, 
     spComposition_Attester, 
     spComposition_Author, 
-    spComposition_Class, 
+    spComposition_Category, 
     spComposition_Confidentiality, 
     spComposition_Context, 
     spComposition_Date, 
@@ -825,11 +825,13 @@ Type
     spContract_Authority, 
     spContract_Domain, 
     spContract_Identifier, 
+    spContract_Instantiates, 
     spContract_Issued, 
     spContract_Patient, 
     spContract_Signer, 
     spContract_Status, 
-    spContract_Subject); 
+    spContract_Subject, 
+    spContract_Url); 
 {$ENDIF}
 
 {$IFDEF FHIR_COVERAGE}
@@ -853,6 +855,50 @@ Type
     spCoverage_Status, 
     spCoverage_Subscriber, 
     spCoverage_Type); 
+{$ENDIF}
+
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  // Search Parameters for CoverageEligibilityRequest
+  TSearchParamsCoverageEligibilityRequest = (
+    spCoverageEligibilityRequest__content, 
+    spCoverageEligibilityRequest__id, 
+    spCoverageEligibilityRequest__lastUpdated, 
+    spCoverageEligibilityRequest__profile, 
+    spCoverageEligibilityRequest__query, 
+    spCoverageEligibilityRequest__security, 
+    spCoverageEligibilityRequest__source, 
+    spCoverageEligibilityRequest__tag, 
+    spCoverageEligibilityRequest__text, 
+    spCoverageEligibilityRequest_Created, 
+    spCoverageEligibilityRequest_Enterer, 
+    spCoverageEligibilityRequest_Facility, 
+    spCoverageEligibilityRequest_Identifier, 
+    spCoverageEligibilityRequest_Patient, 
+    spCoverageEligibilityRequest_Provider, 
+    spCoverageEligibilityRequest_Status); 
+{$ENDIF}
+
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  // Search Parameters for CoverageEligibilityResponse
+  TSearchParamsCoverageEligibilityResponse = (
+    spCoverageEligibilityResponse__content, 
+    spCoverageEligibilityResponse__id, 
+    spCoverageEligibilityResponse__lastUpdated, 
+    spCoverageEligibilityResponse__profile, 
+    spCoverageEligibilityResponse__query, 
+    spCoverageEligibilityResponse__security, 
+    spCoverageEligibilityResponse__source, 
+    spCoverageEligibilityResponse__tag, 
+    spCoverageEligibilityResponse__text, 
+    spCoverageEligibilityResponse_Created, 
+    spCoverageEligibilityResponse_Disposition, 
+    spCoverageEligibilityResponse_Identifier, 
+    spCoverageEligibilityResponse_Insurer, 
+    spCoverageEligibilityResponse_Outcome, 
+    spCoverageEligibilityResponse_Patient, 
+    spCoverageEligibilityResponse_Request, 
+    spCoverageEligibilityResponse_Requestprovider, 
+    spCoverageEligibilityResponse_Status); 
 {$ENDIF}
 
 {$IFDEF FHIR_DETECTEDISSUE}
@@ -901,22 +947,21 @@ Type
     spDevice_Url); 
 {$ENDIF}
 
-{$IFDEF FHIR_DEVICECOMPONENT}
-  // Search Parameters for DeviceComponent
-  TSearchParamsDeviceComponent = (
-    spDeviceComponent__content, 
-    spDeviceComponent__id, 
-    spDeviceComponent__lastUpdated, 
-    spDeviceComponent__profile, 
-    spDeviceComponent__query, 
-    spDeviceComponent__security, 
-    spDeviceComponent__source, 
-    spDeviceComponent__tag, 
-    spDeviceComponent__text, 
-    spDeviceComponent_Identifier, 
-    spDeviceComponent_Parent, 
-    spDeviceComponent_Source, 
-    spDeviceComponent_Type); 
+{$IFDEF FHIR_DEVICEDEFINITION}
+  // Search Parameters for DeviceDefinition
+  TSearchParamsDeviceDefinition = (
+    spDeviceDefinition__content, 
+    spDeviceDefinition__id, 
+    spDeviceDefinition__lastUpdated, 
+    spDeviceDefinition__profile, 
+    spDeviceDefinition__query, 
+    spDeviceDefinition__security, 
+    spDeviceDefinition__source, 
+    spDeviceDefinition__tag, 
+    spDeviceDefinition__text, 
+    spDeviceDefinition_Identifier, 
+    spDeviceDefinition_Parent, 
+    spDeviceDefinition_Type); 
 {$ENDIF}
 
 {$IFDEF FHIR_DEVICEMETRIC}
@@ -958,7 +1003,8 @@ Type
     spDeviceRequest_Eventdate, 
     spDeviceRequest_Groupidentifier, 
     spDeviceRequest_Identifier, 
-    spDeviceRequest_Instantiates, 
+    spDeviceRequest_Instantiatescanonical, 
+    spDeviceRequest_Instantiatesuri, 
     spDeviceRequest_Insurance, 
     spDeviceRequest_Intent, 
     spDeviceRequest_Patient, 
@@ -1002,9 +1048,9 @@ Type
     spDiagnosticReport_Basedon, 
     spDiagnosticReport_Category, 
     spDiagnosticReport_Code, 
+    spDiagnosticReport_Conclusion, 
     spDiagnosticReport_Context, 
     spDiagnosticReport_Date, 
-    spDiagnosticReport_Diagnosis, 
     spDiagnosticReport_Encounter, 
     spDiagnosticReport_Identifier, 
     spDiagnosticReport_Issued, 
@@ -1059,9 +1105,8 @@ Type
     spDocumentReference__text, 
     spDocumentReference_Agent, 
     spDocumentReference_Authenticator, 
-    spDocumentReference_Class, 
+    spDocumentReference_Category, 
     spDocumentReference_Contenttype, 
-    spDocumentReference_Created, 
     spDocumentReference_Custodian, 
     spDocumentReference_Date, 
     spDocumentReference_Description, 
@@ -1074,8 +1119,7 @@ Type
     spDocumentReference_Location, 
     spDocumentReference_Patient, 
     spDocumentReference_Period, 
-    spDocumentReference_Relatedid, 
-    spDocumentReference_Relatedref, 
+    spDocumentReference_Related, 
     spDocumentReference_Relatesto, 
     spDocumentReference_Relation, 
     spDocumentReference_Relationship, 
@@ -1084,50 +1128,6 @@ Type
     spDocumentReference_Status, 
     spDocumentReference_Subject, 
     spDocumentReference_Type); 
-{$ENDIF}
-
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  // Search Parameters for EligibilityRequest
-  TSearchParamsEligibilityRequest = (
-    spEligibilityRequest__content, 
-    spEligibilityRequest__id, 
-    spEligibilityRequest__lastUpdated, 
-    spEligibilityRequest__profile, 
-    spEligibilityRequest__query, 
-    spEligibilityRequest__security, 
-    spEligibilityRequest__source, 
-    spEligibilityRequest__tag, 
-    spEligibilityRequest__text, 
-    spEligibilityRequest_Created, 
-    spEligibilityRequest_Enterer, 
-    spEligibilityRequest_Facility, 
-    spEligibilityRequest_Identifier, 
-    spEligibilityRequest_Patient, 
-    spEligibilityRequest_Provider, 
-    spEligibilityRequest_Status); 
-{$ENDIF}
-
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  // Search Parameters for EligibilityResponse
-  TSearchParamsEligibilityResponse = (
-    spEligibilityResponse__content, 
-    spEligibilityResponse__id, 
-    spEligibilityResponse__lastUpdated, 
-    spEligibilityResponse__profile, 
-    spEligibilityResponse__query, 
-    spEligibilityResponse__security, 
-    spEligibilityResponse__source, 
-    spEligibilityResponse__tag, 
-    spEligibilityResponse__text, 
-    spEligibilityResponse_Created, 
-    spEligibilityResponse_Disposition, 
-    spEligibilityResponse_Identifier, 
-    spEligibilityResponse_Insurer, 
-    spEligibilityResponse_Outcome, 
-    spEligibilityResponse_Patient, 
-    spEligibilityResponse_Request, 
-    spEligibilityResponse_Requestprovider, 
-    spEligibilityResponse_Status); 
 {$ENDIF}
 
 {$IFDEF FHIR_ENCOUNTER}
@@ -1636,8 +1636,37 @@ Type
     spImplementationGuide_Publisher, 
     spImplementationGuide_Resource, 
     spImplementationGuide_Status, 
+    spImplementationGuide_Title, 
     spImplementationGuide_Url, 
     spImplementationGuide_Version); 
+{$ENDIF}
+
+{$IFDEF FHIR_INSURANCEPLAN}
+  // Search Parameters for InsurancePlan
+  TSearchParamsInsurancePlan = (
+    spInsurancePlan__content, 
+    spInsurancePlan__id, 
+    spInsurancePlan__lastUpdated, 
+    spInsurancePlan__profile, 
+    spInsurancePlan__query, 
+    spInsurancePlan__security, 
+    spInsurancePlan__source, 
+    spInsurancePlan__tag, 
+    spInsurancePlan__text, 
+    spInsurancePlan_Address, 
+    spInsurancePlan_Addresscity, 
+    spInsurancePlan_Addresscountry, 
+    spInsurancePlan_Addresspostalcode, 
+    spInsurancePlan_Addressstate, 
+    spInsurancePlan_Addressuse, 
+    spInsurancePlan_Administeredby, 
+    spInsurancePlan_Endpoint, 
+    spInsurancePlan_Identifier, 
+    spInsurancePlan_Name, 
+    spInsurancePlan_Ownedby, 
+    spInsurancePlan_Phonetic, 
+    spInsurancePlan_Status, 
+    spInsurancePlan_Type); 
 {$ENDIF}
 
 {$IFDEF FHIR_INVOICE}
@@ -1784,7 +1813,6 @@ Type
     spLocation_Identifier, 
     spLocation_Name, 
     spLocation_Near, 
-    spLocation_Neardistance, 
     spLocation_Operationalstatus, 
     spLocation_Organization, 
     spLocation_Partof, 
@@ -2064,7 +2092,8 @@ Type
     spMedicinalProductAuthorization__security, 
     spMedicinalProductAuthorization__source, 
     spMedicinalProductAuthorization__tag, 
-    spMedicinalProductAuthorization__text); 
+    spMedicinalProductAuthorization__text, 
+    spMedicinalProductAuthorization_Subject); 
 {$ENDIF}
 
 {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}
@@ -2081,6 +2110,21 @@ Type
     spMedicinalProductClinicals__text); 
 {$ENDIF}
 
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  // Search Parameters for MedicinalProductContraindication
+  TSearchParamsMedicinalProductContraindication = (
+    spMedicinalProductContraindication__content, 
+    spMedicinalProductContraindication__id, 
+    spMedicinalProductContraindication__lastUpdated, 
+    spMedicinalProductContraindication__profile, 
+    spMedicinalProductContraindication__query, 
+    spMedicinalProductContraindication__security, 
+    spMedicinalProductContraindication__source, 
+    spMedicinalProductContraindication__tag, 
+    spMedicinalProductContraindication__text, 
+    spMedicinalProductContraindication_Subject); 
+{$ENDIF}
+
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   // Search Parameters for MedicinalProductDeviceSpec
   TSearchParamsMedicinalProductDeviceSpec = (
@@ -2095,6 +2139,21 @@ Type
     spMedicinalProductDeviceSpec__text); 
 {$ENDIF}
 
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  // Search Parameters for MedicinalProductIndication
+  TSearchParamsMedicinalProductIndication = (
+    spMedicinalProductIndication__content, 
+    spMedicinalProductIndication__id, 
+    spMedicinalProductIndication__lastUpdated, 
+    spMedicinalProductIndication__profile, 
+    spMedicinalProductIndication__query, 
+    spMedicinalProductIndication__security, 
+    spMedicinalProductIndication__source, 
+    spMedicinalProductIndication__tag, 
+    spMedicinalProductIndication__text, 
+    spMedicinalProductIndication_Subject); 
+{$ENDIF}
+
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   // Search Parameters for MedicinalProductIngredient
   TSearchParamsMedicinalProductIngredient = (
@@ -2107,6 +2166,21 @@ Type
     spMedicinalProductIngredient__source, 
     spMedicinalProductIngredient__tag, 
     spMedicinalProductIngredient__text); 
+{$ENDIF}
+
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  // Search Parameters for MedicinalProductInteraction
+  TSearchParamsMedicinalProductInteraction = (
+    spMedicinalProductInteraction__content, 
+    spMedicinalProductInteraction__id, 
+    spMedicinalProductInteraction__lastUpdated, 
+    spMedicinalProductInteraction__profile, 
+    spMedicinalProductInteraction__query, 
+    spMedicinalProductInteraction__security, 
+    spMedicinalProductInteraction__source, 
+    spMedicinalProductInteraction__tag, 
+    spMedicinalProductInteraction__text, 
+    spMedicinalProductInteraction_Subject); 
 {$ENDIF}
 
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
@@ -2151,6 +2225,21 @@ Type
     spMedicinalProductPharmaceutical__text); 
 {$ENDIF}
 
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  // Search Parameters for MedicinalProductUndesirableEffect
+  TSearchParamsMedicinalProductUndesirableEffect = (
+    spMedicinalProductUndesirableEffect__content, 
+    spMedicinalProductUndesirableEffect__id, 
+    spMedicinalProductUndesirableEffect__lastUpdated, 
+    spMedicinalProductUndesirableEffect__profile, 
+    spMedicinalProductUndesirableEffect__query, 
+    spMedicinalProductUndesirableEffect__security, 
+    spMedicinalProductUndesirableEffect__source, 
+    spMedicinalProductUndesirableEffect__tag, 
+    spMedicinalProductUndesirableEffect__text, 
+    spMedicinalProductUndesirableEffect_Subject); 
+{$ENDIF}
+
 {$IFDEF FHIR_MESSAGEDEFINITION}
   // Search Parameters for MessageDefinition
   TSearchParamsMessageDefinition = (
@@ -2176,6 +2265,7 @@ Type
     spMessageDefinition_Identifier, 
     spMessageDefinition_Jurisdiction, 
     spMessageDefinition_Name, 
+    spMessageDefinition_Parent, 
     spMessageDefinition_Publisher, 
     spMessageDefinition_Status, 
     spMessageDefinition_Title, 
@@ -2261,6 +2351,8 @@ Type
     spNutritionOrder_Datetime, 
     spNutritionOrder_Formula, 
     spNutritionOrder_Identifier, 
+    spNutritionOrder_Instantiatescanonical, 
+    spNutritionOrder_Instantiatesuri, 
     spNutritionOrder_Oraldiet, 
     spNutritionOrder_Patient, 
     spNutritionOrder_Provider, 
@@ -2299,7 +2391,6 @@ Type
     spObservation_Componentdataabsentreason, 
     spObservation_Componentvalueconcept, 
     spObservation_Componentvaluequantity, 
-    spObservation_Context, 
     spObservation_Dataabsentreason, 
     spObservation_Date, 
     spObservation_Derivedfrom, 
@@ -2415,32 +2506,32 @@ Type
     spOrganization_Type); 
 {$ENDIF}
 
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  // Search Parameters for OrganizationRole
-  TSearchParamsOrganizationRole = (
-    spOrganizationRole__content, 
-    spOrganizationRole__id, 
-    spOrganizationRole__lastUpdated, 
-    spOrganizationRole__profile, 
-    spOrganizationRole__query, 
-    spOrganizationRole__security, 
-    spOrganizationRole__source, 
-    spOrganizationRole__tag, 
-    spOrganizationRole__text, 
-    spOrganizationRole_Active, 
-    spOrganizationRole_Date, 
-    spOrganizationRole_Email, 
-    spOrganizationRole_Endpoint, 
-    spOrganizationRole_Identifier, 
-    spOrganizationRole_Location, 
-    spOrganizationRole_Network, 
-    spOrganizationRole_Participatingorganization, 
-    spOrganizationRole_Phone, 
-    spOrganizationRole_Primaryorganization, 
-    spOrganizationRole_Role, 
-    spOrganizationRole_Service, 
-    spOrganizationRole_Specialty, 
-    spOrganizationRole_Telecom); 
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  // Search Parameters for OrganizationAffiliation
+  TSearchParamsOrganizationAffiliation = (
+    spOrganizationAffiliation__content, 
+    spOrganizationAffiliation__id, 
+    spOrganizationAffiliation__lastUpdated, 
+    spOrganizationAffiliation__profile, 
+    spOrganizationAffiliation__query, 
+    spOrganizationAffiliation__security, 
+    spOrganizationAffiliation__source, 
+    spOrganizationAffiliation__tag, 
+    spOrganizationAffiliation__text, 
+    spOrganizationAffiliation_Active, 
+    spOrganizationAffiliation_Date, 
+    spOrganizationAffiliation_Email, 
+    spOrganizationAffiliation_Endpoint, 
+    spOrganizationAffiliation_Identifier, 
+    spOrganizationAffiliation_Location, 
+    spOrganizationAffiliation_Network, 
+    spOrganizationAffiliation_Participatingorganization, 
+    spOrganizationAffiliation_Phone, 
+    spOrganizationAffiliation_Primaryorganization, 
+    spOrganizationAffiliation_Role, 
+    spOrganizationAffiliation_Service, 
+    spOrganizationAffiliation_Specialty, 
+    spOrganizationAffiliation_Telecom); 
 {$ENDIF}
 
 {$IFDEF FHIR_PATIENT}
@@ -2721,34 +2812,6 @@ Type
     spProcessResponse_Status); 
 {$ENDIF}
 
-{$IFDEF FHIR_PRODUCTPLAN}
-  // Search Parameters for ProductPlan
-  TSearchParamsProductPlan = (
-    spProductPlan__content, 
-    spProductPlan__id, 
-    spProductPlan__lastUpdated, 
-    spProductPlan__profile, 
-    spProductPlan__query, 
-    spProductPlan__security, 
-    spProductPlan__source, 
-    spProductPlan__tag, 
-    spProductPlan__text, 
-    spProductPlan_Address, 
-    spProductPlan_Addresscity, 
-    spProductPlan_Addresscountry, 
-    spProductPlan_Addresspostalcode, 
-    spProductPlan_Addressstate, 
-    spProductPlan_Addressuse, 
-    spProductPlan_Administeredby, 
-    spProductPlan_Endpoint, 
-    spProductPlan_Identifier, 
-    spProductPlan_Name, 
-    spProductPlan_Ownedby, 
-    spProductPlan_Phonetic, 
-    spProductPlan_Status, 
-    spProductPlan_Type); 
-{$ENDIF}
-
 {$IFDEF FHIR_PROVENANCE}
   // Search Parameters for Provenance
   TSearchParamsProvenance = (
@@ -2858,6 +2921,7 @@ Type
     spRelatedPerson_Patient, 
     spRelatedPerson_Phone, 
     spRelatedPerson_Phonetic, 
+    spRelatedPerson_Relationship, 
     spRelatedPerson_Telecom); 
 {$ENDIF}
 
@@ -3054,7 +3118,8 @@ Type
     spServiceRequest_Context, 
     spServiceRequest_Encounter, 
     spServiceRequest_Identifier, 
-    spServiceRequest_Instantiates, 
+    spServiceRequest_Instantiatescanonical, 
+    spServiceRequest_Instantiatesuri, 
     spServiceRequest_Intent, 
     spServiceRequest_Occurrence, 
     spServiceRequest_Patient, 
@@ -3553,17 +3618,17 @@ Const
       {$IFDEF FHIR_CONSENT}'Consent',{$ENDIF}
       {$IFDEF FHIR_CONTRACT}'Contract',{$ENDIF}
       {$IFDEF FHIR_COVERAGE}'Coverage',{$ENDIF}
+      {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}'CoverageEligibilityRequest',{$ENDIF}
+      {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}'CoverageEligibilityResponse',{$ENDIF}
       {$IFDEF FHIR_DETECTEDISSUE}'DetectedIssue',{$ENDIF}
       {$IFDEF FHIR_DEVICE}'Device',{$ENDIF}
-      {$IFDEF FHIR_DEVICECOMPONENT}'DeviceComponent',{$ENDIF}
+      {$IFDEF FHIR_DEVICEDEFINITION}'DeviceDefinition',{$ENDIF}
       {$IFDEF FHIR_DEVICEMETRIC}'DeviceMetric',{$ENDIF}
       {$IFDEF FHIR_DEVICEREQUEST}'DeviceRequest',{$ENDIF}
       {$IFDEF FHIR_DEVICEUSESTATEMENT}'DeviceUseStatement',{$ENDIF}
       {$IFDEF FHIR_DIAGNOSTICREPORT}'DiagnosticReport',{$ENDIF}
       {$IFDEF FHIR_DOCUMENTMANIFEST}'DocumentManifest',{$ENDIF}
       {$IFDEF FHIR_DOCUMENTREFERENCE}'DocumentReference',{$ENDIF}
-      {$IFDEF FHIR_ELIGIBILITYREQUEST}'EligibilityRequest',{$ENDIF}
-      {$IFDEF FHIR_ELIGIBILITYRESPONSE}'EligibilityResponse',{$ENDIF}
       {$IFDEF FHIR_ENCOUNTER}'Encounter',{$ENDIF}
       {$IFDEF FHIR_ENDPOINT}'Endpoint',{$ENDIF}
       {$IFDEF FHIR_ENROLLMENTREQUEST}'EnrollmentRequest',{$ENDIF}
@@ -3577,15 +3642,16 @@ Const
       {$IFDEF FHIR_FLAG}'Flag',{$ENDIF}
       {$IFDEF FHIR_GOAL}'Goal',{$ENDIF}
       {$IFDEF FHIR_GRAPHDEFINITION}'GraphDefinition',{$ENDIF}
+      
       {$IFDEF FHIR_GROUP}'Group',{$ENDIF}
       {$IFDEF FHIR_GUIDANCERESPONSE}'GuidanceResponse',{$ENDIF}
-      
       {$IFDEF FHIR_HEALTHCARESERVICE}'HealthcareService',{$ENDIF}
       {$IFDEF FHIR_IMAGINGSTUDY}'ImagingStudy',{$ENDIF}
       {$IFDEF FHIR_IMMUNIZATION}'Immunization',{$ENDIF}
       {$IFDEF FHIR_IMMUNIZATIONEVALUATION}'ImmunizationEvaluation',{$ENDIF}
       {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'ImmunizationRecommendation',{$ENDIF}
       {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'ImplementationGuide',{$ENDIF}
+      {$IFDEF FHIR_INSURANCEPLAN}'InsurancePlan',{$ENDIF}
       {$IFDEF FHIR_INVOICE}'Invoice',{$ENDIF}
       {$IFDEF FHIR_ITEMINSTANCE}'ItemInstance',{$ENDIF}
       {$IFDEF FHIR_LIBRARY}'Library',{$ENDIF}
@@ -3604,11 +3670,15 @@ Const
       {$IFDEF FHIR_MEDICINALPRODUCT}'MedicinalProduct',{$ENDIF}
       {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}'MedicinalProductAuthorization',{$ENDIF}
       {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}'MedicinalProductClinicals',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}'MedicinalProductContraindication',{$ENDIF}
       {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}'MedicinalProductDeviceSpec',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}'MedicinalProductIndication',{$ENDIF}
       {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}'MedicinalProductIngredient',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}'MedicinalProductInteraction',{$ENDIF}
       {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}'MedicinalProductManufactured',{$ENDIF}
       {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}'MedicinalProductPackaged',{$ENDIF}
       {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}'MedicinalProductPharmaceutical',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}'MedicinalProductUndesirableEffect',{$ENDIF}
       {$IFDEF FHIR_MESSAGEDEFINITION}'MessageDefinition',{$ENDIF}
       {$IFDEF FHIR_MESSAGEHEADER}'MessageHeader',{$ENDIF}
       {$IFDEF FHIR_NAMINGSYSTEM}'NamingSystem',{$ENDIF}
@@ -3618,8 +3688,9 @@ Const
       {$IFDEF FHIR_OPERATIONDEFINITION}'OperationDefinition',{$ENDIF}
       {$IFDEF FHIR_OPERATIONOUTCOME}'OperationOutcome',{$ENDIF}
       {$IFDEF FHIR_ORGANIZATION}'Organization',{$ENDIF}
-      {$IFDEF FHIR_ORGANIZATIONROLE}'OrganizationRole',{$ENDIF}
+      {$IFDEF FHIR_ORGANIZATIONAFFILIATION}'OrganizationAffiliation',{$ENDIF}
       {$IFDEF FHIR_PARAMETERS}'Parameters',{$ENDIF}
+      
       {$IFDEF FHIR_PATIENT}'Patient',{$ENDIF}
       {$IFDEF FHIR_PAYMENTNOTICE}'PaymentNotice',{$ENDIF}
       {$IFDEF FHIR_PAYMENTRECONCILIATION}'PaymentReconciliation',{$ENDIF}
@@ -3630,9 +3701,7 @@ Const
       {$IFDEF FHIR_PROCEDURE}'Procedure',{$ENDIF}
       {$IFDEF FHIR_PROCESSREQUEST}'ProcessRequest',{$ENDIF}
       {$IFDEF FHIR_PROCESSRESPONSE}'ProcessResponse',{$ENDIF}
-      {$IFDEF FHIR_PRODUCTPLAN}'ProductPlan',{$ENDIF}
       {$IFDEF FHIR_PROVENANCE}'Provenance',{$ENDIF}
-      
       {$IFDEF FHIR_QUESTIONNAIRE}'Questionnaire',{$ENDIF}
       {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'QuestionnaireResponse',{$ENDIF}
       {$IFDEF FHIR_RELATEDPERSON}'RelatedPerson',{$ENDIF}
@@ -3695,17 +3764,17 @@ Const
      {$IFDEF FHIR_CONSENT}'consent',{$ENDIF}
      {$IFDEF FHIR_CONTRACT}'contract',{$ENDIF}
      {$IFDEF FHIR_COVERAGE}'coverage',{$ENDIF}
+     {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}'coverageeligibilityrequest',{$ENDIF}
+     {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}'coverageeligibilityresponse',{$ENDIF}
      {$IFDEF FHIR_DETECTEDISSUE}'detectedissue',{$ENDIF}
      {$IFDEF FHIR_DEVICE}'device',{$ENDIF}
-     {$IFDEF FHIR_DEVICECOMPONENT}'devicecomponent',{$ENDIF}
+     {$IFDEF FHIR_DEVICEDEFINITION}'devicedefinition',{$ENDIF}
      {$IFDEF FHIR_DEVICEMETRIC}'devicemetric',{$ENDIF}
      {$IFDEF FHIR_DEVICEREQUEST}'devicerequest',{$ENDIF}
      {$IFDEF FHIR_DEVICEUSESTATEMENT}'deviceusestatement',{$ENDIF}
      {$IFDEF FHIR_DIAGNOSTICREPORT}'diagnosticreport',{$ENDIF}
      {$IFDEF FHIR_DOCUMENTMANIFEST}'documentmanifest',{$ENDIF}
      {$IFDEF FHIR_DOCUMENTREFERENCE}'documentreference',{$ENDIF}
-     {$IFDEF FHIR_ELIGIBILITYREQUEST}'eligibilityrequest',{$ENDIF}
-     {$IFDEF FHIR_ELIGIBILITYRESPONSE}'eligibilityresponse',{$ENDIF}
      {$IFDEF FHIR_ENCOUNTER}'encounter',{$ENDIF}
      {$IFDEF FHIR_ENDPOINT}'endpoint',{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTREQUEST}'enrollmentrequest',{$ENDIF}
@@ -3727,6 +3796,7 @@ Const
      {$IFDEF FHIR_IMMUNIZATIONEVALUATION}'immunizationevaluation',{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'immunizationrecommendation',{$ENDIF}
      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'implementationguide',{$ENDIF}
+     {$IFDEF FHIR_INSURANCEPLAN}'insuranceplan',{$ENDIF}
      {$IFDEF FHIR_INVOICE}'invoice',{$ENDIF}
      {$IFDEF FHIR_ITEMINSTANCE}'iteminstance',{$ENDIF}
      {$IFDEF FHIR_LIBRARY}'library',{$ENDIF}
@@ -3745,11 +3815,15 @@ Const
      {$IFDEF FHIR_MEDICINALPRODUCT}'medicinalproduct',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}'medicinalproductauthorization',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}'medicinalproductclinicals',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}'medicinalproductcontraindication',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}'medicinalproductdevicespec',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}'medicinalproductindication',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}'medicinalproductingredient',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}'medicinalproductinteraction',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}'medicinalproductmanufactured',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}'medicinalproductpackaged',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}'medicinalproductpharmaceutical',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}'medicinalproductundesirableeffect',{$ENDIF}
      {$IFDEF FHIR_MESSAGEDEFINITION}'messagedefinition',{$ENDIF}
      {$IFDEF FHIR_MESSAGEHEADER}'messageheader',{$ENDIF}
      {$IFDEF FHIR_NAMINGSYSTEM}'namingsystem',{$ENDIF}
@@ -3759,7 +3833,7 @@ Const
      {$IFDEF FHIR_OPERATIONDEFINITION}'operationdefinition',{$ENDIF}
      {$IFDEF FHIR_OPERATIONOUTCOME}'operationoutcome',{$ENDIF}
      {$IFDEF FHIR_ORGANIZATION}'organization',{$ENDIF}
-     {$IFDEF FHIR_ORGANIZATIONROLE}'organizationrole',{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATIONAFFILIATION}'organizationaffiliation',{$ENDIF}
      {$IFDEF FHIR_PARAMETERS}'parameters',{$ENDIF}
      {$IFDEF FHIR_PATIENT}'patient',{$ENDIF}
      {$IFDEF FHIR_PAYMENTNOTICE}'paymentnotice',{$ENDIF}
@@ -3771,7 +3845,6 @@ Const
      {$IFDEF FHIR_PROCEDURE}'procedure',{$ENDIF}
      {$IFDEF FHIR_PROCESSREQUEST}'processrequest',{$ENDIF}
      {$IFDEF FHIR_PROCESSRESPONSE}'processresponse',{$ENDIF}
-     {$IFDEF FHIR_PRODUCTPLAN}'productplan',{$ENDIF}
      {$IFDEF FHIR_PROVENANCE}'provenance',{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRE}'questionnaire',{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'questionnaireresponse',{$ENDIF}
@@ -3836,17 +3909,17 @@ Const
      {$IFDEF FHIR_CONSENT}TFhirConsent,{$ENDIF}
      {$IFDEF FHIR_CONTRACT}TFhirContract,{$ENDIF}
      {$IFDEF FHIR_COVERAGE}TFhirCoverage,{$ENDIF}
+     {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}TFhirCoverageEligibilityRequest,{$ENDIF}
+     {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}TFhirCoverageEligibilityResponse,{$ENDIF}
      {$IFDEF FHIR_DETECTEDISSUE}TFhirDetectedIssue,{$ENDIF}
      {$IFDEF FHIR_DEVICE}TFhirDevice,{$ENDIF}
-     {$IFDEF FHIR_DEVICECOMPONENT}TFhirDeviceComponent,{$ENDIF}
+     {$IFDEF FHIR_DEVICEDEFINITION}TFhirDeviceDefinition,{$ENDIF}
      {$IFDEF FHIR_DEVICEMETRIC}TFhirDeviceMetric,{$ENDIF}
      {$IFDEF FHIR_DEVICEREQUEST}TFhirDeviceRequest,{$ENDIF}
      {$IFDEF FHIR_DEVICEUSESTATEMENT}TFhirDeviceUseStatement,{$ENDIF}
      {$IFDEF FHIR_DIAGNOSTICREPORT}TFhirDiagnosticReport,{$ENDIF}
      {$IFDEF FHIR_DOCUMENTMANIFEST}TFhirDocumentManifest,{$ENDIF}
      {$IFDEF FHIR_DOCUMENTREFERENCE}TFhirDocumentReference,{$ENDIF}
-     {$IFDEF FHIR_ELIGIBILITYREQUEST}TFhirEligibilityRequest,{$ENDIF}
-     {$IFDEF FHIR_ELIGIBILITYRESPONSE}TFhirEligibilityResponse,{$ENDIF}
      {$IFDEF FHIR_ENCOUNTER}TFhirEncounter,{$ENDIF}
      {$IFDEF FHIR_ENDPOINT}TFhirEndpoint,{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTREQUEST}TFhirEnrollmentRequest,{$ENDIF}
@@ -3868,6 +3941,7 @@ Const
      {$IFDEF FHIR_IMMUNIZATIONEVALUATION}TFhirImmunizationEvaluation,{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}TFhirImmunizationRecommendation,{$ENDIF}
      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}TFhirImplementationGuide,{$ENDIF}
+     {$IFDEF FHIR_INSURANCEPLAN}TFhirInsurancePlan,{$ENDIF}
      {$IFDEF FHIR_INVOICE}TFhirInvoice,{$ENDIF}
      {$IFDEF FHIR_ITEMINSTANCE}TFhirItemInstance,{$ENDIF}
      {$IFDEF FHIR_LIBRARY}TFhirLibrary,{$ENDIF}
@@ -3886,11 +3960,15 @@ Const
      {$IFDEF FHIR_MEDICINALPRODUCT}TFhirMedicinalProduct,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}TFhirMedicinalProductAuthorization,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}TFhirMedicinalProductClinicals,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}TFhirMedicinalProductContraindication,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}TFhirMedicinalProductDeviceSpec,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}TFhirMedicinalProductIndication,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}TFhirMedicinalProductIngredient,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}TFhirMedicinalProductInteraction,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}TFhirMedicinalProductManufactured,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}TFhirMedicinalProductPackaged,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}TFhirMedicinalProductPharmaceutical,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}TFhirMedicinalProductUndesirableEffect,{$ENDIF}
      {$IFDEF FHIR_MESSAGEDEFINITION}TFhirMessageDefinition,{$ENDIF}
      {$IFDEF FHIR_MESSAGEHEADER}TFhirMessageHeader,{$ENDIF}
      {$IFDEF FHIR_NAMINGSYSTEM}TFhirNamingSystem,{$ENDIF}
@@ -3900,7 +3978,7 @@ Const
      {$IFDEF FHIR_OPERATIONDEFINITION}TFhirOperationDefinition,{$ENDIF}
      {$IFDEF FHIR_OPERATIONOUTCOME}TFhirOperationOutcome,{$ENDIF}
      {$IFDEF FHIR_ORGANIZATION}TFhirOrganization,{$ENDIF}
-     {$IFDEF FHIR_ORGANIZATIONROLE}TFhirOrganizationRole,{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATIONAFFILIATION}TFhirOrganizationAffiliation,{$ENDIF}
      {$IFDEF FHIR_PARAMETERS}TFhirParameters,{$ENDIF}
      {$IFDEF FHIR_PATIENT}TFhirPatient,{$ENDIF}
      {$IFDEF FHIR_PAYMENTNOTICE}TFhirPaymentNotice,{$ENDIF}
@@ -3912,7 +3990,6 @@ Const
      {$IFDEF FHIR_PROCEDURE}TFhirProcedure,{$ENDIF}
      {$IFDEF FHIR_PROCESSREQUEST}TFhirProcessRequest,{$ENDIF}
      {$IFDEF FHIR_PROCESSRESPONSE}TFhirProcessResponse,{$ENDIF}
-     {$IFDEF FHIR_PRODUCTPLAN}TFhirProductPlan,{$ENDIF}
      {$IFDEF FHIR_PROVENANCE}TFhirProvenance,{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRE}TFhirQuestionnaire,{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}TFhirQuestionnaireResponse,{$ENDIF}
@@ -3977,17 +4054,17 @@ Const
      {$IFDEF FHIR_CONSENT}frtConsent,{$ENDIF}
      {$IFDEF FHIR_CONTRACT}frtContract,{$ENDIF}
      {$IFDEF FHIR_COVERAGE}frtCoverage,{$ENDIF}
+     {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}frtCoverageEligibilityRequest,{$ENDIF}
+     {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}frtCoverageEligibilityResponse,{$ENDIF}
      {$IFDEF FHIR_DETECTEDISSUE}frtDetectedIssue,{$ENDIF}
      {$IFDEF FHIR_DEVICE}frtDevice,{$ENDIF}
-     {$IFDEF FHIR_DEVICECOMPONENT}frtDeviceComponent,{$ENDIF}
+     {$IFDEF FHIR_DEVICEDEFINITION}frtDeviceDefinition,{$ENDIF}
      {$IFDEF FHIR_DEVICEMETRIC}frtDeviceMetric,{$ENDIF}
      {$IFDEF FHIR_DEVICEREQUEST}frtDeviceRequest,{$ENDIF}
      {$IFDEF FHIR_DEVICEUSESTATEMENT}frtDeviceUseStatement,{$ENDIF}
      {$IFDEF FHIR_DIAGNOSTICREPORT}frtDiagnosticReport,{$ENDIF}
      {$IFDEF FHIR_DOCUMENTMANIFEST}frtDocumentManifest,{$ENDIF}
      {$IFDEF FHIR_DOCUMENTREFERENCE}frtDocumentReference,{$ENDIF}
-     {$IFDEF FHIR_ELIGIBILITYREQUEST}frtEligibilityRequest,{$ENDIF}
-     {$IFDEF FHIR_ELIGIBILITYRESPONSE}frtEligibilityResponse,{$ENDIF}
      {$IFDEF FHIR_ENCOUNTER}frtEncounter,{$ENDIF}
      {$IFDEF FHIR_ENDPOINT}frtEndpoint,{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTREQUEST}frtEnrollmentRequest,{$ENDIF}
@@ -4009,6 +4086,7 @@ Const
      {$IFDEF FHIR_IMMUNIZATIONEVALUATION}frtImmunizationEvaluation,{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}frtImmunizationRecommendation,{$ENDIF}
      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide,{$ENDIF}
+     {$IFDEF FHIR_INSURANCEPLAN}frtInsurancePlan,{$ENDIF}
      {$IFDEF FHIR_INVOICE}frtInvoice,{$ENDIF}
      {$IFDEF FHIR_ITEMINSTANCE}frtItemInstance,{$ENDIF}
      {$IFDEF FHIR_LIBRARY}frtLibrary,{$ENDIF}
@@ -4027,11 +4105,15 @@ Const
      {$IFDEF FHIR_MEDICINALPRODUCT}frtMedicinalProduct,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}frtMedicinalProductAuthorization,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}frtMedicinalProductClinicals,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}frtMedicinalProductContraindication,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}frtMedicinalProductDeviceSpec,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}frtMedicinalProductIndication,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}frtMedicinalProductIngredient,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}frtMedicinalProductInteraction,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}frtMedicinalProductManufactured,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}frtMedicinalProductPackaged,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}frtMedicinalProductPharmaceutical,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}frtMedicinalProductUndesirableEffect,{$ENDIF}
      {$IFDEF FHIR_MESSAGEDEFINITION}frtMessageDefinition,{$ENDIF}
      {$IFDEF FHIR_MESSAGEHEADER}frtMessageHeader,{$ENDIF}
      {$IFDEF FHIR_NAMINGSYSTEM}frtNamingSystem,{$ENDIF}
@@ -4041,7 +4123,7 @@ Const
      {$IFDEF FHIR_OPERATIONDEFINITION}frtOperationDefinition,{$ENDIF}
      {$IFDEF FHIR_OPERATIONOUTCOME}frtOperationOutcome,{$ENDIF}
      {$IFDEF FHIR_ORGANIZATION}frtOrganization,{$ENDIF}
-     {$IFDEF FHIR_ORGANIZATIONROLE}frtOrganizationRole,{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATIONAFFILIATION}frtOrganizationAffiliation,{$ENDIF}
      {$IFDEF FHIR_PARAMETERS}frtParameters,{$ENDIF}
      {$IFDEF FHIR_PATIENT}frtPatient,{$ENDIF}
      {$IFDEF FHIR_PAYMENTNOTICE}frtPaymentNotice,{$ENDIF}
@@ -4053,7 +4135,6 @@ Const
      {$IFDEF FHIR_PROCEDURE}frtProcedure,{$ENDIF}
      {$IFDEF FHIR_PROCESSREQUEST}frtProcessRequest,{$ENDIF}
      {$IFDEF FHIR_PROCESSRESPONSE}frtProcessResponse,{$ENDIF}
-     {$IFDEF FHIR_PRODUCTPLAN}frtProductPlan,{$ENDIF}
      {$IFDEF FHIR_PROVENANCE}frtProvenance,{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRE}frtQuestionnaire,{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}frtQuestionnaireResponse,{$ENDIF}
@@ -4118,17 +4199,17 @@ Const
      {$IFDEF FHIR_CONSENT}'Consent',{$ENDIF}
      {$IFDEF FHIR_CONTRACT}'Contract',{$ENDIF}
      {$IFDEF FHIR_COVERAGE}'Coverage',{$ENDIF}
+     {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}'CoverageEligibilityRequest',{$ENDIF}
+     {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}'CoverageEligibilityResponse',{$ENDIF}
      {$IFDEF FHIR_DETECTEDISSUE}'DetectedIssue',{$ENDIF}
      {$IFDEF FHIR_DEVICE}'Device',{$ENDIF}
-     {$IFDEF FHIR_DEVICECOMPONENT}'DeviceComponent',{$ENDIF}
+     {$IFDEF FHIR_DEVICEDEFINITION}'DeviceDefinition',{$ENDIF}
      {$IFDEF FHIR_DEVICEMETRIC}'DeviceMetric',{$ENDIF}
      {$IFDEF FHIR_DEVICEREQUEST}'DeviceRequest',{$ENDIF}
      {$IFDEF FHIR_DEVICEUSESTATEMENT}'DeviceUseStatement',{$ENDIF}
      {$IFDEF FHIR_DIAGNOSTICREPORT}'DiagnosticReport',{$ENDIF}
      {$IFDEF FHIR_DOCUMENTMANIFEST}'DocumentManifest',{$ENDIF}
      {$IFDEF FHIR_DOCUMENTREFERENCE}'DocumentReference',{$ENDIF}
-     {$IFDEF FHIR_ELIGIBILITYREQUEST}'EligibilityRequest',{$ENDIF}
-     {$IFDEF FHIR_ELIGIBILITYRESPONSE}'EligibilityResponse',{$ENDIF}
      {$IFDEF FHIR_ENCOUNTER}'Encounter',{$ENDIF}
      {$IFDEF FHIR_ENDPOINT}'Endpoint',{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTREQUEST}'EnrollmentRequest',{$ENDIF}
@@ -4150,6 +4231,7 @@ Const
      {$IFDEF FHIR_IMMUNIZATIONEVALUATION}'ImmunizationEvaluation',{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'ImmunizationRecommendation',{$ENDIF}
      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'ImplementationGuide',{$ENDIF}
+     {$IFDEF FHIR_INSURANCEPLAN}'InsurancePlan',{$ENDIF}
      {$IFDEF FHIR_INVOICE}'Invoice',{$ENDIF}
      {$IFDEF FHIR_ITEMINSTANCE}'ItemInstance',{$ENDIF}
      {$IFDEF FHIR_LIBRARY}'Library',{$ENDIF}
@@ -4168,11 +4250,15 @@ Const
      {$IFDEF FHIR_MEDICINALPRODUCT}'MedicinalProduct',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}'MedicinalProductAuthorization',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}'MedicinalProductClinicals',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}'MedicinalProductContraindication',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}'MedicinalProductDeviceSpec',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}'MedicinalProductIndication',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}'MedicinalProductIngredient',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}'MedicinalProductInteraction',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}'MedicinalProductManufactured',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}'MedicinalProductPackaged',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}'MedicinalProductPharmaceutical',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}'MedicinalProductUndesirableEffect',{$ENDIF}
      {$IFDEF FHIR_MESSAGEDEFINITION}'MessageDefinition',{$ENDIF}
      {$IFDEF FHIR_MESSAGEHEADER}'MessageHeader',{$ENDIF}
      {$IFDEF FHIR_NAMINGSYSTEM}'NamingSystem',{$ENDIF}
@@ -4182,7 +4268,7 @@ Const
      {$IFDEF FHIR_OPERATIONDEFINITION}'OperationDefinition',{$ENDIF}
      {$IFDEF FHIR_OPERATIONOUTCOME}'OperationOutcome',{$ENDIF}
      {$IFDEF FHIR_ORGANIZATION}'Organization',{$ENDIF}
-     {$IFDEF FHIR_ORGANIZATIONROLE}'OrganizationRole',{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATIONAFFILIATION}'OrganizationAffiliation',{$ENDIF}
      {$IFDEF FHIR_PARAMETERS}'Parameters',{$ENDIF}
      {$IFDEF FHIR_PATIENT}'Patient',{$ENDIF}
      {$IFDEF FHIR_PAYMENTNOTICE}'PaymentNotice',{$ENDIF}
@@ -4194,7 +4280,6 @@ Const
      {$IFDEF FHIR_PROCEDURE}'Procedure',{$ENDIF}
      {$IFDEF FHIR_PROCESSREQUEST}'ProcessRequest',{$ENDIF}
      {$IFDEF FHIR_PROCESSRESPONSE}'ProcessResponse',{$ENDIF}
-     {$IFDEF FHIR_PRODUCTPLAN}'ProductPlan',{$ENDIF}
      {$IFDEF FHIR_PROVENANCE}'Provenance',{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRE}'Questionnaire',{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'QuestionnaireResponse',{$ENDIF}
@@ -4287,7 +4372,7 @@ Const
   CODES_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'patient', 'payment-date', 'request', 'request-provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_CLINICALIMPRESSION}
-  CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'identifier', 'investigation', 'patient', 'previous', 'problem', 'status', 'subject');
+  CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'identifier', 'investigation', 'patient', 'previous', 'problem', 'status', 'subject', 'supporting-info');
 {$ENDIF}
 {$IFDEF FHIR_CODESYSTEM}
   CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'content-mode', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'identifier', 'jurisdiction', 'language', 'name', 'publisher', 'status', 'supplements', 'system', 'title', 'url', 'version');
@@ -4302,7 +4387,7 @@ Const
   CODES_TSearchParamsCompartmentDefinition : Array[TSearchParamsCompartmentDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'name', 'publisher', 'resource', 'status', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_COMPOSITION}
-  CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'attester', 'author', 'class', 'confidentiality', 'context', 'date', 'encounter', 'entry', 'identifier', 'patient', 'period', 'related-id', 'related-ref', 'section', 'status', 'subject', 'title', 'type');
+  CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'attester', 'author', 'category', 'confidentiality', 'context', 'date', 'encounter', 'entry', 'identifier', 'patient', 'period', 'related-id', 'related-ref', 'section', 'status', 'subject', 'title', 'type');
 {$ENDIF}
 {$IFDEF FHIR_CONCEPTMAP}
   CODES_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'dependson', 'description', 'identifier', 'jurisdiction', 'name', 'other', 'product', 'publisher', 'source', 'source-code', 'source-system', 'source-uri', 'status', 'target', 'target-code', 'target-system', 'target-uri', 'title', 'url', 'version');
@@ -4311,13 +4396,19 @@ Const
   CODES_TSearchParamsCondition : Array[TSearchParamsCondition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'abatement-age', 'abatement-date', 'abatement-string', 'asserter', 'body-site', 'category', 'clinical-status', 'code', 'context', 'encounter', 'evidence', 'evidence-detail', 'identifier', 'onset-age', 'onset-date', 'onset-info', 'patient', 'recorded-date', 'severity', 'stage', 'subject', 'verification-status');
 {$ENDIF}
 {$IFDEF FHIR_CONSENT}
-  CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'actor', 'category', 'consentor', 'data', 'date', 'identifier', 'organization', 'patient', 'period', 'purpose', 'scope', 'securitylabel', 'source-identifier', 'source-reference', 'status');
+  CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'actor', 'category', 'consentor', 'data', 'date', 'identifier', 'organization', 'patient', 'period', 'purpose', 'scope', 'security-label', 'source-identifier', 'source-reference', 'status');
 {$ENDIF}
 {$IFDEF FHIR_CONTRACT}
-  CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authority', 'domain', 'identifier', 'issued', 'patient', 'signer', 'status', 'subject');
+  CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authority', 'domain', 'identifier', 'instantiates', 'issued', 'patient', 'signer', 'status', 'subject', 'url');
 {$ENDIF}
 {$IFDEF FHIR_COVERAGE}
   CODES_TSearchParamsCoverage : Array[TSearchParamsCoverage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'beneficiary', 'dependent', 'identifier', 'patient', 'payor', 'policy-holder', 'status', 'subscriber', 'type');
+{$ENDIF}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  CODES_TSearchParamsCoverageEligibilityRequest : Array[TSearchParamsCoverageEligibilityRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'enterer', 'facility', 'identifier', 'patient', 'provider', 'status');
+{$ENDIF}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  CODES_TSearchParamsCoverageEligibilityResponse : Array[TSearchParamsCoverageEligibilityResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'patient', 'request', 'request-provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_DETECTEDISSUE}
   CODES_TSearchParamsDetectedIssue : Array[TSearchParamsDetectedIssue] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'category', 'date', 'identifier', 'implicated', 'patient');
@@ -4325,35 +4416,29 @@ Const
 {$IFDEF FHIR_DEVICE}
   CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'device-name', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'status', 'type', 'udi-carrier', 'udi-di', 'url');
 {$ENDIF}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  CODES_TSearchParamsDeviceComponent : Array[TSearchParamsDeviceComponent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'parent', 'source', 'type');
+{$IFDEF FHIR_DEVICEDEFINITION}
+  CODES_TSearchParamsDeviceDefinition : Array[TSearchParamsDeviceDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'parent', 'type');
 {$ENDIF}
 {$IFDEF FHIR_DEVICEMETRIC}
   CODES_TSearchParamsDeviceMetric : Array[TSearchParamsDeviceMetric] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'identifier', 'parent', 'source', 'type');
 {$ENDIF}
 {$IFDEF FHIR_DEVICEREQUEST}
-  CODES_TSearchParamsDeviceRequest : Array[TSearchParamsDeviceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored-on', 'based-on', 'code', 'device', 'encounter', 'event-date', 'group-identifier', 'identifier', 'instantiates', 'insurance', 'intent', 'patient', 'performer', 'priorrequest', 'requester', 'status', 'subject');
+  CODES_TSearchParamsDeviceRequest : Array[TSearchParamsDeviceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored-on', 'based-on', 'code', 'device', 'encounter', 'event-date', 'group-identifier', 'identifier', 'instantiates-canonical', 'instantiates-uri', 'insurance', 'intent', 'patient', 'performer', 'prior-request', 'requester', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_DEVICEUSESTATEMENT}
   CODES_TSearchParamsDeviceUseStatement : Array[TSearchParamsDeviceUseStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'device', 'identifier', 'patient', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_DIAGNOSTICREPORT}
-  CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'code', 'context', 'date', 'diagnosis', 'encounter', 'identifier', 'issued', 'media', 'patient', 'performer', 'result', 'results-interpreter', 'specimen', 'status', 'subject');
+  CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'code', 'conclusion', 'context', 'date', 'encounter', 'identifier', 'issued', 'media', 'patient', 'performer', 'result', 'results-interpreter', 'specimen', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
   CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'agent', 'created', 'description', 'identifier', 'item', 'patient', 'recipient', 'related-id', 'related-ref', 'source', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
-  CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'agent', 'authenticator', 'class', 'contenttype', 'created', 'custodian', 'date', 'description', 'encounter', 'event', 'facility', 'format', 'identifier', 'language', 'location', 'patient', 'period', 'related-id', 'related-ref', 'relatesto', 'relation', 'relationship', 'securitylabel', 'setting', 'status', 'subject', 'type');
-{$ENDIF}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  CODES_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'enterer', 'facility', 'identifier', 'patient', 'provider', 'status');
-{$ENDIF}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  CODES_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'patient', 'request', 'request-provider', 'status');
+  CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'agent', 'authenticator', 'category', 'contenttype', 'custodian', 'date', 'description', 'encounter', 'event', 'facility', 'format', 'identifier', 'language', 'location', 'patient', 'period', 'related', 'relatesto', 'relation', 'relationship', 'security-label', 'setting', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_ENCOUNTER}
-  CODES_TSearchParamsEncounter : Array[TSearchParamsEncounter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'account', 'appointment', 'based-on', 'class', 'date', 'diagnosis', 'episodeofcare', 'identifier', 'length', 'location', 'location-period', 'part-of', 'participant', 'participant-type', 'patient', 'practitioner', 'reason', 'service-provider', 'special-arrangement', 'status', 'subject', 'type');
+  CODES_TSearchParamsEncounter : Array[TSearchParamsEncounter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'account', 'appointment', 'based-on', 'class', 'date', 'diagnosis', 'episode-of-care', 'identifier', 'length', 'location', 'location-period', 'part-of', 'participant', 'participant-type', 'patient', 'practitioner', 'reason', 'service-provider', 'special-arrangement', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_ENDPOINT}
   CODES_TSearchParamsEndpoint : Array[TSearchParamsEndpoint] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'connection-type', 'identifier', 'name', 'organization', 'payload-type', 'status');
@@ -4368,7 +4453,7 @@ Const
   CODES_TSearchParamsEntryDefinition : Array[TSearchParamsEntryDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_EPISODEOFCARE}
-  CODES_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-manager', 'condition', 'date', 'identifier', 'incomingreferral', 'organization', 'patient', 'status', 'type');
+  CODES_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-manager', 'condition', 'date', 'identifier', 'incoming-referral', 'organization', 'patient', 'status', 'type');
 {$ENDIF}
 {$IFDEF FHIR_EVENTDEFINITION}
   CODES_TSearchParamsEventDefinition : Array[TSearchParamsEventDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
@@ -4413,7 +4498,10 @@ Const
   CODES_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dose-number', 'dose-sequence', 'identifier', 'information', 'patient', 'status', 'support', 'target-disease', 'vaccine-type');
 {$ENDIF}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'description', 'experimental', 'global', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'description', 'experimental', 'global', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_INSURANCEPLAN}
+  CODES_TSearchParamsInsurancePlan : Array[TSearchParamsInsurancePlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'administered-by', 'endpoint', 'identifier', 'name', 'owned-by', 'phonetic', 'status', 'type');
 {$ENDIF}
 {$IFDEF FHIR_INVOICE}
   CODES_TSearchParamsInvoice : Array[TSearchParamsInvoice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'account', 'date', 'identifier', 'issuer', 'participant', 'participant-role', 'patient', 'recipient', 'status', 'subject', 'totalgross', 'totalnet', 'type');
@@ -4431,7 +4519,7 @@ Const
   CODES_TSearchParamsList : Array[TSearchParamsList] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'date', 'empty-reason', 'encounter', 'identifier', 'item', 'notes', 'patient', 'source', 'status', 'subject', 'title');
 {$ENDIF}
 {$IFDEF FHIR_LOCATION}
-  CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'near', 'near-distance', 'operational-status', 'organization', 'partof', 'status', 'type');
+  CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'near', 'operational-status', 'organization', 'partof', 'status', 'type');
 {$ENDIF}
 {$IFDEF FHIR_MEASURE}
   CODES_TSearchParamsMeasure : Array[TSearchParamsMeasure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
@@ -4464,16 +4552,25 @@ Const
   CODES_TSearchParamsMedicinalProduct : Array[TSearchParamsMedicinalProduct] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}
-  CODES_TSearchParamsMedicinalProductAuthorization : Array[TSearchParamsMedicinalProductAuthorization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+  CODES_TSearchParamsMedicinalProductAuthorization : Array[TSearchParamsMedicinalProductAuthorization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}
   CODES_TSearchParamsMedicinalProductClinicals : Array[TSearchParamsMedicinalProductClinicals] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  CODES_TSearchParamsMedicinalProductContraindication : Array[TSearchParamsMedicinalProductContraindication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'subject');
+{$ENDIF}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   CODES_TSearchParamsMedicinalProductDeviceSpec : Array[TSearchParamsMedicinalProductDeviceSpec] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  CODES_TSearchParamsMedicinalProductIndication : Array[TSearchParamsMedicinalProductIndication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'subject');
+{$ENDIF}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   CODES_TSearchParamsMedicinalProductIngredient : Array[TSearchParamsMedicinalProductIngredient] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  CODES_TSearchParamsMedicinalProductInteraction : Array[TSearchParamsMedicinalProductInteraction] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   CODES_TSearchParamsMedicinalProductManufactured : Array[TSearchParamsMedicinalProductManufactured] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
@@ -4484,8 +4581,11 @@ Const
 {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
   CODES_TSearchParamsMedicinalProductPharmaceutical : Array[TSearchParamsMedicinalProductPharmaceutical] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  CODES_TSearchParamsMedicinalProductUndesirableEffect : Array[TSearchParamsMedicinalProductUndesirableEffect] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'subject');
+{$ENDIF}
 {$IFDEF FHIR_MESSAGEDEFINITION}
-  CODES_TSearchParamsMessageDefinition : Array[TSearchParamsMessageDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'event', 'focus', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsMessageDefinition : Array[TSearchParamsMessageDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'event', 'focus', 'identifier', 'jurisdiction', 'name', 'parent', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_MESSAGEHEADER}
   CODES_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'code', 'destination', 'destination-uri', 'enterer', 'event', 'focus', 'receiver', 'response-id', 'responsible', 'sender', 'source', 'source-uri', 'target');
@@ -4494,10 +4594,10 @@ Const
   CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'contact', 'context', 'context-quantity', 'context-type', 'context-type-quantity', 'context-type-value', 'date', 'description', 'id-type', 'jurisdiction', 'kind', 'name', 'period', 'publisher', 'responsible', 'status', 'telecom', 'type', 'value');
 {$ENDIF}
 {$IFDEF FHIR_NUTRITIONORDER}
-  CODES_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'additive', 'context', 'datetime', 'formula', 'identifier', 'oraldiet', 'patient', 'provider', 'status', 'supplement');
+  CODES_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'additive', 'context', 'datetime', 'formula', 'identifier', 'instantiates-canonical', 'instantiates-uri', 'oraldiet', 'patient', 'provider', 'status', 'supplement');
 {$ENDIF}
 {$IFDEF FHIR_OBSERVATION}
-  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'code', 'code-value-concept', 'code-value-date', 'code-value-quantity', 'code-value-string', 'combo-code', 'combo-code-value-concept', 'combo-code-value-quantity', 'combo-data-absent-reason', 'combo-value-concept', 'combo-value-quantity', 'component-code', 'component-code-value-concept', 'component-code-value-quantity', 'component-data-absent-reason', 'component-value-concept', 'component-value-quantity', 'context', 'data-absent-reason', 'date', 'derived-from', 'device', 'dna-variant', 'encounter', 'focus', 'gene-dnavariant', 'gene-identifier', 'has-member', 'identifier', 'method', 'part-of', 'patient', 'performer', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
+  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'code', 'code-value-concept', 'code-value-date', 'code-value-quantity', 'code-value-string', 'combo-code', 'combo-code-value-concept', 'combo-code-value-quantity', 'combo-data-absent-reason', 'combo-value-concept', 'combo-value-quantity', 'component-code', 'component-code-value-concept', 'component-code-value-quantity', 'component-data-absent-reason', 'component-value-concept', 'component-value-quantity', 'data-absent-reason', 'date', 'derived-from', 'device', 'dna-variant', 'encounter', 'focus', 'gene-dnavariant', 'gene-identifier', 'has-member', 'identifier', 'method', 'part-of', 'patient', 'performer', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
 {$ENDIF}
 {$IFDEF FHIR_OBSERVATIONDEFINITION}
   CODES_TSearchParamsObservationDefinition : Array[TSearchParamsObservationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
@@ -4511,8 +4611,8 @@ Const
 {$IFDEF FHIR_ORGANIZATION}
   CODES_TSearchParamsOrganization : Array[TSearchParamsOrganization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'partof', 'phonetic', 'type');
 {$ENDIF}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  CODES_TSearchParamsOrganizationRole : Array[TSearchParamsOrganizationRole] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'date', 'email', 'endpoint', 'identifier', 'location', 'network', 'participating-organization', 'phone', 'primary-organization', 'role', 'service', 'specialty', 'telecom');
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  CODES_TSearchParamsOrganizationAffiliation : Array[TSearchParamsOrganizationAffiliation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'date', 'email', 'endpoint', 'identifier', 'location', 'network', 'participating-organization', 'phone', 'primary-organization', 'role', 'service', 'specialty', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_PATIENT}
   CODES_TSearchParamsPatient : Array[TSearchParamsPatient] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'death-date', 'deceased', 'email', 'family', 'gender', 'general-practitioner', 'given', 'identifier', 'language', 'link', 'name', 'organization', 'phone', 'phonetic', 'telecom');
@@ -4544,9 +4644,6 @@ Const
 {$IFDEF FHIR_PROCESSRESPONSE}
   CODES_TSearchParamsProcessResponse : Array[TSearchParamsProcessResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'organization', 'request', 'request-provider', 'status');
 {$ENDIF}
-{$IFDEF FHIR_PRODUCTPLAN}
-  CODES_TSearchParamsProductPlan : Array[TSearchParamsProductPlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'administered-by', 'endpoint', 'identifier', 'name', 'owned-by', 'phonetic', 'status', 'type');
-{$ENDIF}
 {$IFDEF FHIR_PROVENANCE}
   CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'agent', 'agent-role', 'agent-type', 'entity', 'location', 'patient', 'recorded', 'signature-type', 'target', 'when');
 {$ENDIF}
@@ -4557,7 +4654,7 @@ Const
   CODES_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'authored', 'based-on', 'context', 'identifier', 'part-of', 'patient', 'questionnaire', 'source', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_RELATEDPERSON}
-  CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'name', 'patient', 'phone', 'phonetic', 'telecom');
+  CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'name', 'patient', 'phone', 'phonetic', 'relationship', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_REQUESTGROUP}
   CODES_TSearchParamsRequestGroup : Array[TSearchParamsRequestGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'authored', 'code', 'context', 'encounter', 'group-identifier', 'identifier', 'instantiates-canonical', 'instantiates-uri', 'intent', 'participant', 'patient', 'priority', 'status', 'subject');
@@ -4581,7 +4678,7 @@ Const
   CODES_TSearchParamsSequence : Array[TSearchParamsSequence] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'chromosome', 'coordinate', 'end', 'identifier', 'patient', 'start', 'type');
 {$ENDIF}
 {$IFDEF FHIR_SERVICEREQUEST}
-  CODES_TSearchParamsServiceRequest : Array[TSearchParamsServiceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored', 'based-on', 'body-site', 'category', 'code', 'context', 'encounter', 'identifier', 'instantiates', 'intent', 'occurrence', 'patient', 'performer', 'performer-type', 'priority', 'replaces', 'requester', 'requisition', 'specimen', 'status', 'subject');
+  CODES_TSearchParamsServiceRequest : Array[TSearchParamsServiceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored', 'based-on', 'body-site', 'category', 'code', 'context', 'encounter', 'identifier', 'instantiates-canonical', 'instantiates-uri', 'intent', 'occurrence', 'patient', 'performer', 'performer-type', 'priority', 'replaces', 'requester', 'requisition', 'specimen', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_SLOT}
   CODES_TSearchParamsSlot : Array[TSearchParamsSlot] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'schedule', 'slot-type', 'start', 'status');
@@ -4643,13 +4740,13 @@ Const
 {$IFDEF FHIR_VISIONPRESCRIPTION}
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
 {$ENDIF}
-  FHIR_GENERATED_VERSION = '3.4.0';
+  FHIR_GENERATED_VERSION = '3.5.0';
 
-  FHIR_GENERATED_VERSION_BASE = '3.4';
+  FHIR_GENERATED_VERSION_BASE = '3.5';
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2018-07-25T14:31:35+10:00';
+  FHIR_GENERATED_DATE = '2018-08-19T19:30:08+10:00';
 
 
 

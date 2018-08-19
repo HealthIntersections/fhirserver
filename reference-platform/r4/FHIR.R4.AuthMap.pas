@@ -41,92 +41,97 @@ uses
 const
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
-    tcOther , // frtNull,
-    tcFinancial, // frtAccount | frtAccount
-    tcOther, // frtActivityDefinition | frtActivityDefinition
-    tcClinical, // frtAdverseEvent | frtAdverseEvent
-    tcClinical, // frtAllergyIntolerance | frtAllergyIntolerance
-    tcSchedule, // frtAppointment | frtAppointment
-    tcSchedule, // frtAppointmentResponse | frtAppointmentResponse
-    tcAudit, // frtAuditEvent | frtAuditEvent
-    tcClinical, // frtBasic | frtBasic
-    tcDocuments, // frtBinary | frtBinary
-    tcMedicationDefinition, // frtBiologicallyDerivedProduct | frtBiologicallyDerivedProduct
-    tcClinical, // frtBodyStructure | frtBodyStructure
-    tcDocuments, // frtBundle | frtBundle
-    tcOther, // frtCapabilityStatement | frtCapabilityStatement
-    tcClinical, // frtCarePlan | frtCarePlan
-    tcClinical, // frtCareTeam | frtCareTeam
-    tcFinancial, // frtChargeItem | frtChargeItem
-    tcFinancial, // frtChargeItemDefinition | frtChargeItemDefinition
-    tcFinancial, // frtClaim | frtClaim
-    tcFinancial, // frtClaimResponse | frtClaimResponse
-    tcClinical, // frtClinicalImpression | frtClinicalImpression
-    tcOther, // frtCodeSystem | frtCodeSystem
-    tcDocuments, // frtCommunication | frtCommunication
-    tcDocuments, // frtCommunicationRequest | frtCommunicationRequest
-    tcOther, // frtCompartmentDefinition | frtCompartmentDefinition
-    tcDocuments, // frtComposition | frtComposition
-    tcOther, // frtConceptMap | frtConceptMap
-    tcClinical, // frtCondition | frtCondition
-    tcData, // frtConsent | frtConsent
-    tcDocuments, // frtContract | frtContract
-    tcFinancial, // frtCoverage | frtCoverage
-    tcClinical, // frtDetectedIssue | frtDetectedIssue
-    tcData, // frtDevice | frtDevice
-    tcData, // frtDeviceComponent | frtDeviceComponent
-    tcData, // frtDeviceMetric | frtDeviceMetric
-    tcClinical, // frtDeviceRequest | frtDeviceRequest
-    tcClinical, // frtDeviceUseStatement | frtDeviceUseStatement
-    tcClinical, // frtDiagnosticReport | frtDiagnosticReport
-    tcDocuments, // frtDocumentManifest | frtDocumentManifest
-    tcDocuments, // frtDocumentReference | frtDocumentReference
-    tcFinancial, // frtEligibilityRequest | frtEligibilityRequest
-    tcFinancial, // frtEligibilityResponse | frtEligibilityResponse
-    tcSchedule, // frtEncounter | frtEncounter
-    tcData, // frtEndpoint | frtEndpoint
-    tcFinancial, // frtEnrollmentRequest | frtEnrollmentRequest
-    tcFinancial, // frtEnrollmentResponse | frtEnrollmentResponse
-    tcOther, // frtEntryDefinition | frtEntryDefinition
-    tcSchedule, // frtEpisodeOfCare | frtEpisodeOfCare
-    tcOther, // frtEventDefinition | frtEventDefinition
-    tcOther, // frtExampleScenario | frtExampleScenario
-    tcFinancial, // frtExplanationOfBenefit | frtExplanationOfBenefit
-    tcClinical, // frtFamilyMemberHistory | frtFamilyMemberHistory
-    tcClinical, // frtFlag | frtFlag
-    tcClinical, // frtGoal | frtGoal
-    tcOther, // frtGraphDefinition | frtGraphDefinition
-    tcData, // frtGroup | frtGroup
-    tcClinical, // frtGuidanceResponse | frtGuidanceResponse
-    tcData, // frtHealthcareService | frtHealthcareService
-    tcClinical, // frtImagingStudy | frtImagingStudy
-    tcClinical, // frtImmunization | frtImmunization
-    tcClinical, // frtImmunizationEvaluation | frtImmunizationEvaluation
-    tcClinical, // frtImmunizationRecommendation | frtImmunizationRecommendation
-    tcOther, // frtImplementationGuide | frtImplementationGuide
-    tcFinancial, // frtInvoice | frtInvoice
-    tcMedicationDefinition, // frtItemInstance | frtItemInstance
-    tcOther, // frtLibrary | frtLibrary
-    tcData, // frtLinkage | frtLinkage
-    tcDocuments, // frtList | frtList
-    tcData, // frtLocation | frtLocation
-    tcOther, // frtMeasure | frtMeasure
-    tcData, // frtMeasureReport | frtMeasureReport
-    tcDocuments, // frtMedia | frtMedia
-    tcMeds, // frtMedication | frtMedication
-    tcMeds, // frtMedicationAdministration | frtMedicationAdministration
-    tcMeds, // frtMedicationDispense | frtMedicationDispense
-    tcMedicationDefinition, // frtMedicinalKnowledge9 | frtMedicationKnowledge
-    tcMeds, // frtMedicationRequest | frtMedicationRequest
-    tcMeds, // frtMedicationStatement | frtMedicationStatement
-    tcMedicationDefinition, // frtMedicinalProduct | frtMedicinalProduct
-    tcMedicationDefinition, // frtMedicinalProductAuthorization
-    tcMedicationDefinition, // frtMedicinalProductClinicals
-    tcMedicationDefinition, // frtMedicinalProductDeviceSpec
-    tcMedicationDefinition, // frtMedicinalProductIngredient
-    tcMedicationDefinition, // frtMedicinalProductManufactured
-    tcMedicationDefinition, // frtMedicinalProductPackaged
-    tcMedicationDefinition, //
+    tcOther, // frtNull
+    tcFinancial, // frtAccount : frtAccount
+    tcOther, // frtActivityDefinition : frtActivityDefinition
+    tcClinical, // frtAdverseEvent : frtAdverseEvent
+    tcClinical, // frtAllergyIntolerance : frtAllergyIntolerance
+    tcSchedule, // frtAppointment : frtAppointment
+    tcSchedule, // frtAppointmentResponse : frtAppointmentResponse
+    tcAudit, // frtAuditEvent : frtAuditEvent
+    tcClinical, // frtBasic : frtBasic
+    tcDocuments, // frtBinary : frtBinary
+    tcMedicationDefinition, // frtBiologicallyDerivedProduct : frtBiologicallyDerivedProduct
+    tcClinical, // frtBodyStructure : frtBodyStructure
+    tcDocuments, // frtBundle : frtBundle
+    tcOther, // frtCapabilityStatement : frtCapabilityStatement
+    tcClinical, // frtCarePlan : frtCarePlan
+    tcClinical, // frtCareTeam : frtCareTeam
+    tcFinancial, // frtChargeItem : frtChargeItem
+    tcFinancial, // frtChargeItemDefinition : frtChargeItemDefinition
+    tcFinancial, // frtClaim : frtClaim
+    tcFinancial, // frtClaimResponse : frtClaimResponse
+    tcClinical, // frtClinicalImpression : frtClinicalImpression
+    tcOther, // frtCodeSystem : frtCodeSystem
+    tcDocuments, // frtCommunication : frtCommunication
+    tcDocuments, // frtCommunicationRequest : frtCommunicationRequest
+    tcOther, // frtCompartmentDefinition : frtCompartmentDefinition
+    tcDocuments, // frtComposition : frtComposition
+    tcOther, // frtConceptMap : frtConceptMap
+    tcClinical, // frtCondition : frtCondition
+    tcData, // frtConsent : frtConsent
+    tcDocuments, // frtContract : frtContract
+    tcFinancial, // frtCoverage : frtCoverage
+    tcFinancial, // frtEligibilityRequest : frtCoverageEligibilityRequest
+    tcFinancial, // frtEligibilityResponse : frtCoverageEligibilityResponse
+    tcClinical, // frtDetectedIssue : frtDetectedIssue
+    tcData, // frtDevice : frtDevice
+    tcOther, // frtDeviceComponent : frtDeviceDefinition
+    tcData, // frtDeviceMetric : frtDeviceMetric
+    tcClinical, // frtDeviceRequest : frtDeviceRequest
+    tcClinical, // frtDeviceUseStatement : frtDeviceUseStatement
+    tcClinical, // frtDiagnosticReport : frtDiagnosticReport
+    tcDocuments, // frtDocumentManifest : frtDocumentManifest
+    tcDocuments, // frtDocumentReference : frtDocumentReference
+    tcSchedule, // frtEncounter : frtEncounter
+    tcData, // frtEndpoint : frtEndpoint
+    tcFinancial, // frtEnrollmentRequest : frtEnrollmentRequest
+    tcFinancial, // frtEnrollmentResponse : frtEnrollmentResponse
+    tcOther, // frtEntryDefinition : frtEntryDefinition
+    tcSchedule, // frtEpisodeOfCare : frtEpisodeOfCare
+    tcOther, // frtEventDefinition : frtEventDefinition
+    tcOther, // frtExampleScenario : frtExampleScenario
+    tcFinancial, // frtExplanationOfBenefit : frtExplanationOfBenefit
+    tcClinical, // frtFamilyMemberHistory : frtFamilyMemberHistory
+    tcClinical, // frtFlag : frtFlag
+    tcClinical, // frtGoal : frtGoal
+    tcOther, // frtGraphDefinition : frtGraphDefinition
+    tcData, // frtGroup : frtGroup
+    tcClinical, // frtGuidanceResponse : frtGuidanceResponse
+    tcData, // frtHealthcareService : frtHealthcareService
+    tcClinical, // frtImagingStudy : frtImagingStudy
+    tcClinical, // frtImmunization : frtImmunization
+    tcClinical, // frtImmunizationEvaluation : frtImmunizationEvaluation
+    tcClinical, // frtImmunizationRecommendation : frtImmunizationRecommendation
+    tcOther, // frtImplementationGuide : frtImplementationGuide
+    tcFinancial, // frtInsurancePlan : frtInsurancePlan
+    tcFinancial, // frtInvoice : frtInvoice
+    tcMedicationDefinition, // frtItemInstance : frtItemInstance
+    tcOther, // frtLibrary : frtLibrary
+    tcData, // frtLinkage : frtLinkage
+    tcDocuments, // frtList : frtList
+    tcData, // frtLocation : frtLocation
+    tcOther, // frtMeasure : frtMeasure
+    tcData, // frtMeasureReport : frtMeasureReport
+    tcDocuments, // frtMedia : frtMedia
+    tcMeds, // frtMedication : frtMedication
+    tcMeds, // frtMedicationAdministration : frtMedicationAdministration
+    tcMeds, // frtMedicationDispense : frtMedicationDispense
+    tcMedicationDefinition, // frtMedicinalKnowledge9 : frtMedicationKnowledge
+    tcMeds, // frtMedicationRequest : frtMedicationRequest
+    tcMeds, // frtMedicationStatement : frtMedicationStatement
+    tcMedicationDefinition, // frtMedicinalProduct : frtMedicinalProduct
+    tcMedicationDefinition, // frtMedicinalProductAuthorization : frtMedicinalProductAuthorization
+    tcMedicationDefinition, // frtMedicinalProductAuthorization : frtMedicinalProductClinicals
+    tcMedicationDefinition, // frtMedicinalProductClinicals : frtMedicinalProductContraindication
+    tcMedicationDefinition, // frtMedicinalProductContraindication : frtMedicinalProductDeviceSpec
+    tcMedicationDefinition, // frtMedicinalProductDeviceSpec : frtMedicinalProductIndication
+    tcMedicationDefinition, // frtMedicinalProductIndication : frtMedicinalProductIngredient
+    tcMedicationDefinition, // frtMedicinalProductIngredient : frtMedicinalProductInteraction
+    tcMedicationDefinition, // frtMedicinalProductInteraction : frtMedicinalProductManufactured
+    tcMedicationDefinition, // frtMedicinalProductManufactured : frtMedicinalProductPackaged
+    tcMedicationDefinition, // frtMedicinalProductPackaged : frtMedicinalProductPharmaceutical
+    tcMedicationDefinition, // frtMedicinalProductPharmaceutical : frtMedicinalProductUndesirableEffect
     tcOther, // frtMessageDefinition
     tcData, // frtMessageHeader
     tcOther, // frtNamingSystem
@@ -148,7 +153,6 @@ const
     tcClinical, // frtProcedure
     tcFinancial, // frtProcessRequest
     tcFinancial, // frtProcessResponse
-    tcMedicationDefinition, // frtProductPlan
     tcAudit, // frtProvenance
     tcOther, // frtQuestionnaire
     tcClinical, // frtQuestionnaireResponse
@@ -160,8 +164,7 @@ const
     tcSchedule, // frtSchedule
     tcOther, // frtSearchParameter
     tcClinical, // frtSequence
-    tcOther, // frtServiceDefinition
-//    tcClinical, // frtServiceRequest
+    tcClinical, // frtServiceRequest
     tcSchedule, // frtSlot
     tcClinical, // frtSpecimen
     tcOther, // frtSpecimenDefinition
@@ -182,7 +185,7 @@ const
     tcOther, // frtValueSet
     tcMedicationDefinition, // frtVerificationResult
     tcClinical, // frtVisionPrescription
-    tcOther); // frtCustom);
+    tcOther); // frtCustom)
 
 
     {$IFDEF FHIR_ACCOUNT}frtAccount, {$ENDIF}
@@ -215,17 +218,17 @@ const
     {$IFDEF FHIR_CONSENT}frtConsent, {$ENDIF}
     {$IFDEF FHIR_CONTRACT}frtContract, {$ENDIF}
     {$IFDEF FHIR_COVERAGE}frtCoverage, {$ENDIF}
+    {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}frtCoverageEligibilityRequest, {$ENDIF}
+    {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}frtCoverageEligibilityResponse, {$ENDIF}
     {$IFDEF FHIR_DETECTEDISSUE}frtDetectedIssue, {$ENDIF}
     {$IFDEF FHIR_DEVICE}frtDevice, {$ENDIF}
-    {$IFDEF FHIR_DEVICECOMPONENT}frtDeviceComponent, {$ENDIF}
+    {$IFDEF FHIR_DEVICEDEFINITION}frtDeviceDefinition, {$ENDIF}
     {$IFDEF FHIR_DEVICEMETRIC}frtDeviceMetric, {$ENDIF}
     {$IFDEF FHIR_DEVICEREQUEST}frtDeviceRequest, {$ENDIF}
     {$IFDEF FHIR_DEVICEUSESTATEMENT}frtDeviceUseStatement, {$ENDIF}
     {$IFDEF FHIR_DIAGNOSTICREPORT}frtDiagnosticReport, {$ENDIF}
     {$IFDEF FHIR_DOCUMENTMANIFEST}frtDocumentManifest, {$ENDIF}
     {$IFDEF FHIR_DOCUMENTREFERENCE}frtDocumentReference, {$ENDIF}
-    {$IFDEF FHIR_ELIGIBILITYREQUEST}frtEligibilityRequest, {$ENDIF}
-    {$IFDEF FHIR_ELIGIBILITYRESPONSE}frtEligibilityResponse, {$ENDIF}
     {$IFDEF FHIR_ENCOUNTER}frtEncounter, {$ENDIF}
     {$IFDEF FHIR_ENDPOINT}frtEndpoint, {$ENDIF}
     {$IFDEF FHIR_ENROLLMENTREQUEST}frtEnrollmentRequest, {$ENDIF}
@@ -247,6 +250,7 @@ const
     {$IFDEF FHIR_IMMUNIZATIONEVALUATION}frtImmunizationEvaluation, {$ENDIF}
     {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}frtImmunizationRecommendation, {$ENDIF}
     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide, {$ENDIF}
+    {$IFDEF FHIR_INSURANCEPLAN}frtInsurancePlan, {$ENDIF}
     {$IFDEF FHIR_INVOICE}frtInvoice, {$ENDIF}
     {$IFDEF FHIR_ITEMINSTANCE}frtItemInstance, {$ENDIF}
     {$IFDEF FHIR_LIBRARY}frtLibrary, {$ENDIF}
@@ -265,11 +269,15 @@ const
     {$IFDEF FHIR_MEDICINALPRODUCT}frtMedicinalProduct, {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}frtMedicinalProductAuthorization, {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}frtMedicinalProductClinicals, {$ENDIF}
+    {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}frtMedicinalProductContraindication, {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}frtMedicinalProductDeviceSpec, {$ENDIF}
+    {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}frtMedicinalProductIndication, {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}frtMedicinalProductIngredient, {$ENDIF}
+    {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}frtMedicinalProductInteraction, {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}frtMedicinalProductManufactured, {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}frtMedicinalProductPackaged, {$ENDIF}
     {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}frtMedicinalProductPharmaceutical, {$ENDIF}
+    {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}frtMedicinalProductUndesirableEffect, {$ENDIF}
     {$IFDEF FHIR_MESSAGEDEFINITION}frtMessageDefinition, {$ENDIF}
     {$IFDEF FHIR_MESSAGEHEADER}frtMessageHeader, {$ENDIF}
     {$IFDEF FHIR_NAMINGSYSTEM}frtNamingSystem, {$ENDIF}
@@ -279,7 +287,7 @@ const
     {$IFDEF FHIR_OPERATIONDEFINITION}frtOperationDefinition, {$ENDIF}
     {$IFDEF FHIR_OPERATIONOUTCOME}frtOperationOutcome, {$ENDIF}
     {$IFDEF FHIR_ORGANIZATION}frtOrganization, {$ENDIF}
-    {$IFDEF FHIR_ORGANIZATIONROLE}frtOrganizationRole, {$ENDIF}
+    {$IFDEF FHIR_ORGANIZATIONAFFILIATION}frtOrganizationAffiliation, {$ENDIF}
     {$IFDEF FHIR_PARAMETERS}frtParameters, {$ENDIF}
     {$IFDEF FHIR_PATIENT}frtPatient, {$ENDIF}
     {$IFDEF FHIR_PAYMENTNOTICE}frtPaymentNotice, {$ENDIF}
@@ -291,7 +299,6 @@ const
     {$IFDEF FHIR_PROCEDURE}frtProcedure, {$ENDIF}
     {$IFDEF FHIR_PROCESSREQUEST}frtProcessRequest, {$ENDIF}
     {$IFDEF FHIR_PROCESSRESPONSE}frtProcessResponse, {$ENDIF}
-    {$IFDEF FHIR_PRODUCTPLAN}frtProductPlan, {$ENDIF}
     {$IFDEF FHIR_PROVENANCE}frtProvenance, {$ENDIF}
     {$IFDEF FHIR_QUESTIONNAIRE}frtQuestionnaire, {$ENDIF}
     {$IFDEF FHIR_QUESTIONNAIRERESPONSE}frtQuestionnaireResponse, {$ENDIF}

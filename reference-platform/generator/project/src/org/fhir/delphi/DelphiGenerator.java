@@ -4501,7 +4501,7 @@ public class DelphiGenerator {
     prsrImplJ.append("  element.LocationStart := jsn.LocationStart;\r\n");
     prsrImplJ.append("  element.LocationEnd := jsn.LocationEnd;\r\n");
     prsrImplJ.append("  if jsn.has('id') then\r\n");
-    prsrImplJ.append("    element.Id := jsn.node['id'];\r\n");
+    prsrImplJ.append("    element.Id := jsn.str['id'];\r\n");
     prsrImplJ.append("  if jsn.has('extension') then\r\n");
     prsrImplJ.append("    iterateArray(jsn.vArr['extension'], element.extensionList, parseExtension);\r\n");
     prsrImplJ.append("end;\r\n\r\n");

@@ -33,7 +33,7 @@ unit FHIR.R4.Xml;
 
 interface
 
-// FHIR v3.4.0 generated 2018-07-25T23:10:31+10:00
+// FHIR v3.5.0 generated 2018-08-19T19:30:08+10:00
 
 uses
   SysUtils, Classes, 
@@ -489,18 +489,28 @@ Type
     function ParseConsentChild(element : TFhirConsent; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+    function ParseContractContentDefinition(element : TMXmlElement; path : string) : TFhirContractContentDefinition;
+    function ParseContractContentDefinitionChild(element : TFhirContractContentDefinition; path : string; child : TMXmlElement) : boolean;
     function ParseContractTerm(element : TMXmlElement; path : string) : TFhirContractTerm;
     function ParseContractTermChild(element : TFhirContractTerm; path : string; child : TMXmlElement) : boolean;
+    function ParseContractTermSecurityLabel(element : TMXmlElement; path : string) : TFhirContractTermSecurityLabel;
+    function ParseContractTermSecurityLabelChild(element : TFhirContractTermSecurityLabel; path : string; child : TMXmlElement) : boolean;
     function ParseContractTermOffer(element : TMXmlElement; path : string) : TFhirContractTermOffer;
     function ParseContractTermOfferChild(element : TFhirContractTermOffer; path : string; child : TMXmlElement) : boolean;
+    function ParseContractTermOfferParty(element : TMXmlElement; path : string) : TFhirContractTermOfferParty;
+    function ParseContractTermOfferPartyChild(element : TFhirContractTermOfferParty; path : string; child : TMXmlElement) : boolean;
+    function ParseContractTermOfferAnswer(element : TMXmlElement; path : string) : TFhirContractTermOfferAnswer;
+    function ParseContractTermOfferAnswerChild(element : TFhirContractTermOfferAnswer; path : string; child : TMXmlElement) : boolean;
     function ParseContractTermAsset(element : TMXmlElement; path : string) : TFhirContractTermAsset;
     function ParseContractTermAssetChild(element : TFhirContractTermAsset; path : string; child : TMXmlElement) : boolean;
-    function ParseContractTermAssetData(element : TMXmlElement; path : string) : TFhirContractTermAssetData;
-    function ParseContractTermAssetDataChild(element : TFhirContractTermAssetData; path : string; child : TMXmlElement) : boolean;
+    function ParseContractTermAssetContext(element : TMXmlElement; path : string) : TFhirContractTermAssetContext;
+    function ParseContractTermAssetContextChild(element : TFhirContractTermAssetContext; path : string; child : TMXmlElement) : boolean;
     function ParseContractTermAssetValuedItem(element : TMXmlElement; path : string) : TFhirContractTermAssetValuedItem;
     function ParseContractTermAssetValuedItemChild(element : TFhirContractTermAssetValuedItem; path : string; child : TMXmlElement) : boolean;
-    function ParseContractTermAgent(element : TMXmlElement; path : string) : TFhirContractTermAgent;
-    function ParseContractTermAgentChild(element : TFhirContractTermAgent; path : string; child : TMXmlElement) : boolean;
+    function ParseContractTermAction(element : TMXmlElement; path : string) : TFhirContractTermAction;
+    function ParseContractTermActionChild(element : TFhirContractTermAction; path : string; child : TMXmlElement) : boolean;
+    function ParseContractTermActionSubject(element : TMXmlElement; path : string) : TFhirContractTermActionSubject;
+    function ParseContractTermActionSubjectChild(element : TFhirContractTermActionSubject; path : string; child : TMXmlElement) : boolean;
     function ParseContractSigner(element : TMXmlElement; path : string) : TFhirContractSigner;
     function ParseContractSignerChild(element : TFhirContractSigner; path : string; child : TMXmlElement) : boolean;
     function ParseContractFriendly(element : TMXmlElement; path : string) : TFhirContractFriendly;
@@ -520,6 +530,30 @@ Type
     function ParseCoverage(element : TMXmlElement; path : string) : TFhirCoverage;
     function ParseCoverageChild(element : TFhirCoverage; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+    function ParseCoverageEligibilityRequestSupportingInformation(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequestSupportingInformation;
+    function ParseCoverageEligibilityRequestSupportingInformationChild(element : TFhirCoverageEligibilityRequestSupportingInformation; path : string; child : TMXmlElement) : boolean;
+    function ParseCoverageEligibilityRequestInsurance(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequestInsurance;
+    function ParseCoverageEligibilityRequestInsuranceChild(element : TFhirCoverageEligibilityRequestInsurance; path : string; child : TMXmlElement) : boolean;
+    function ParseCoverageEligibilityRequestItem(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequestItem;
+    function ParseCoverageEligibilityRequestItemChild(element : TFhirCoverageEligibilityRequestItem; path : string; child : TMXmlElement) : boolean;
+    function ParseCoverageEligibilityRequestItemDiagnosis(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequestItemDiagnosis;
+    function ParseCoverageEligibilityRequestItemDiagnosisChild(element : TFhirCoverageEligibilityRequestItemDiagnosis; path : string; child : TMXmlElement) : boolean;
+    function ParseCoverageEligibilityRequest(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequest;
+    function ParseCoverageEligibilityRequestChild(element : TFhirCoverageEligibilityRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+    function ParseCoverageEligibilityResponseInsurance(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponseInsurance;
+    function ParseCoverageEligibilityResponseInsuranceChild(element : TFhirCoverageEligibilityResponseInsurance; path : string; child : TMXmlElement) : boolean;
+    function ParseCoverageEligibilityResponseInsuranceItem(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponseInsuranceItem;
+    function ParseCoverageEligibilityResponseInsuranceItemChild(element : TFhirCoverageEligibilityResponseInsuranceItem; path : string; child : TMXmlElement) : boolean;
+    function ParseCoverageEligibilityResponseInsuranceItemBenefit(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponseInsuranceItemBenefit;
+    function ParseCoverageEligibilityResponseInsuranceItemBenefitChild(element : TFhirCoverageEligibilityResponseInsuranceItemBenefit; path : string; child : TMXmlElement) : boolean;
+    function ParseCoverageEligibilityResponseError(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponseError;
+    function ParseCoverageEligibilityResponseErrorChild(element : TFhirCoverageEligibilityResponseError; path : string; child : TMXmlElement) : boolean;
+    function ParseCoverageEligibilityResponse(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponse;
+    function ParseCoverageEligibilityResponseChild(element : TFhirCoverageEligibilityResponse; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
     function ParseDetectedIssueMitigation(element : TMXmlElement; path : string) : TFhirDetectedIssueMitigation;
     function ParseDetectedIssueMitigationChild(element : TFhirDetectedIssueMitigation; path : string; child : TMXmlElement) : boolean;
@@ -527,19 +561,35 @@ Type
     function ParseDetectedIssueChild(element : TFhirDetectedIssue; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-    function ParseDeviceUdi(element : TMXmlElement; path : string) : TFhirDeviceUdi;
-    function ParseDeviceUdiChild(element : TFhirDeviceUdi; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceUdiCarrier(element : TMXmlElement; path : string) : TFhirDeviceUdiCarrier;
+    function ParseDeviceUdiCarrierChild(element : TFhirDeviceUdiCarrier; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceDeviceName(element : TMXmlElement; path : string) : TFhirDeviceDeviceName;
+    function ParseDeviceDeviceNameChild(element : TFhirDeviceDeviceName; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceSpecialization(element : TMXmlElement; path : string) : TFhirDeviceSpecialization;
+    function ParseDeviceSpecializationChild(element : TFhirDeviceSpecialization; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceVersion(element : TMXmlElement; path : string) : TFhirDeviceVersion;
+    function ParseDeviceVersionChild(element : TFhirDeviceVersion; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceProperty(element : TMXmlElement; path : string) : TFhirDeviceProperty;
+    function ParseDevicePropertyChild(element : TFhirDeviceProperty; path : string; child : TMXmlElement) : boolean;
     function ParseDevice(element : TMXmlElement; path : string) : TFhirDevice;
     function ParseDeviceChild(element : TFhirDevice; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-    function ParseDeviceComponentProductionSpecification(element : TMXmlElement; path : string) : TFhirDeviceComponentProductionSpecification;
-    function ParseDeviceComponentProductionSpecificationChild(element : TFhirDeviceComponentProductionSpecification; path : string; child : TMXmlElement) : boolean;
-    function ParseDeviceComponentProperty(element : TMXmlElement; path : string) : TFhirDeviceComponentProperty;
-    function ParseDeviceComponentPropertyChild(element : TFhirDeviceComponentProperty; path : string; child : TMXmlElement) : boolean;
-    function ParseDeviceComponent(element : TMXmlElement; path : string) : TFhirDeviceComponent;
-    function ParseDeviceComponentChild(element : TFhirDeviceComponent; path : string; child : TMXmlElement) : boolean;
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+    function ParseDeviceDefinitionUdiDeviceIdentifier(element : TMXmlElement; path : string) : TFhirDeviceDefinitionUdiDeviceIdentifier;
+    function ParseDeviceDefinitionUdiDeviceIdentifierChild(element : TFhirDeviceDefinitionUdiDeviceIdentifier; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceDefinitionDeviceName(element : TMXmlElement; path : string) : TFhirDeviceDefinitionDeviceName;
+    function ParseDeviceDefinitionDeviceNameChild(element : TFhirDeviceDefinitionDeviceName; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceDefinitionSpecialization(element : TMXmlElement; path : string) : TFhirDeviceDefinitionSpecialization;
+    function ParseDeviceDefinitionSpecializationChild(element : TFhirDeviceDefinitionSpecialization; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceDefinitionCapability(element : TMXmlElement; path : string) : TFhirDeviceDefinitionCapability;
+    function ParseDeviceDefinitionCapabilityChild(element : TFhirDeviceDefinitionCapability; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceDefinitionProperty(element : TMXmlElement; path : string) : TFhirDeviceDefinitionProperty;
+    function ParseDeviceDefinitionPropertyChild(element : TFhirDeviceDefinitionProperty; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceDefinitionMaterial(element : TMXmlElement; path : string) : TFhirDeviceDefinitionMaterial;
+    function ParseDeviceDefinitionMaterialChild(element : TFhirDeviceDefinitionMaterial; path : string; child : TMXmlElement) : boolean;
+    function ParseDeviceDefinition(element : TMXmlElement; path : string) : TFhirDeviceDefinition;
+    function ParseDeviceDefinitionChild(element : TFhirDeviceDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
     function ParseDeviceMetricCalibration(element : TMXmlElement; path : string) : TFhirDeviceMetricCalibration;
     function ParseDeviceMetricCalibrationChild(element : TFhirDeviceMetricCalibration; path : string; child : TMXmlElement) : boolean;
@@ -579,33 +629,9 @@ Type
     function ParseDocumentReferenceContentChild(element : TFhirDocumentReferenceContent; path : string; child : TMXmlElement) : boolean;
     function ParseDocumentReferenceContext(element : TMXmlElement; path : string) : TFhirDocumentReferenceContext;
     function ParseDocumentReferenceContextChild(element : TFhirDocumentReferenceContext; path : string; child : TMXmlElement) : boolean;
-    function ParseDocumentReferenceContextRelated(element : TMXmlElement; path : string) : TFhirDocumentReferenceContextRelated;
-    function ParseDocumentReferenceContextRelatedChild(element : TFhirDocumentReferenceContextRelated; path : string; child : TMXmlElement) : boolean;
     function ParseDocumentReference(element : TMXmlElement; path : string) : TFhirDocumentReference;
     function ParseDocumentReferenceChild(element : TFhirDocumentReference; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-    function ParseEligibilityRequestInsurance(element : TMXmlElement; path : string) : TFhirEligibilityRequestInsurance;
-    function ParseEligibilityRequestInsuranceChild(element : TFhirEligibilityRequestInsurance; path : string; child : TMXmlElement) : boolean;
-    function ParseEligibilityRequestDetail(element : TMXmlElement; path : string) : TFhirEligibilityRequestDetail;
-    function ParseEligibilityRequestDetailChild(element : TFhirEligibilityRequestDetail; path : string; child : TMXmlElement) : boolean;
-    function ParseEligibilityRequestDetailDiagnosis(element : TMXmlElement; path : string) : TFhirEligibilityRequestDetailDiagnosis;
-    function ParseEligibilityRequestDetailDiagnosisChild(element : TFhirEligibilityRequestDetailDiagnosis; path : string; child : TMXmlElement) : boolean;
-    function ParseEligibilityRequest(element : TMXmlElement; path : string) : TFhirEligibilityRequest;
-    function ParseEligibilityRequestChild(element : TFhirEligibilityRequest; path : string; child : TMXmlElement) : boolean;
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-    function ParseEligibilityResponseInsurance(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsurance;
-    function ParseEligibilityResponseInsuranceChild(element : TFhirEligibilityResponseInsurance; path : string; child : TMXmlElement) : boolean;
-    function ParseEligibilityResponseInsuranceDetail(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsuranceDetail;
-    function ParseEligibilityResponseInsuranceDetailChild(element : TFhirEligibilityResponseInsuranceDetail; path : string; child : TMXmlElement) : boolean;
-    function ParseEligibilityResponseInsuranceDetailBenefit(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsuranceDetailBenefit;
-    function ParseEligibilityResponseInsuranceDetailBenefitChild(element : TFhirEligibilityResponseInsuranceDetailBenefit; path : string; child : TMXmlElement) : boolean;
-    function ParseEligibilityResponseError(element : TMXmlElement; path : string) : TFhirEligibilityResponseError;
-    function ParseEligibilityResponseErrorChild(element : TFhirEligibilityResponseError; path : string; child : TMXmlElement) : boolean;
-    function ParseEligibilityResponse(element : TMXmlElement; path : string) : TFhirEligibilityResponse;
-    function ParseEligibilityResponseChild(element : TFhirEligibilityResponse; path : string; child : TMXmlElement) : boolean;
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
     function ParseEncounterStatusHistory(element : TMXmlElement; path : string) : TFhirEncounterStatusHistory;
     function ParseEncounterStatusHistoryChild(element : TFhirEncounterStatusHistory; path : string; child : TMXmlElement) : boolean;
@@ -822,6 +848,28 @@ Type
     function ParseImplementationGuide(element : TMXmlElement; path : string) : TFhirImplementationGuide;
     function ParseImplementationGuideChild(element : TFhirImplementationGuide; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+    function ParseInsurancePlanContact(element : TMXmlElement; path : string) : TFhirInsurancePlanContact;
+    function ParseInsurancePlanContactChild(element : TFhirInsurancePlanContact; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlanCoverage(element : TMXmlElement; path : string) : TFhirInsurancePlanCoverage;
+    function ParseInsurancePlanCoverageChild(element : TFhirInsurancePlanCoverage; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlanCoverageBenefit(element : TMXmlElement; path : string) : TFhirInsurancePlanCoverageBenefit;
+    function ParseInsurancePlanCoverageBenefitChild(element : TFhirInsurancePlanCoverageBenefit; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlanCoverageBenefitLimit(element : TMXmlElement; path : string) : TFhirInsurancePlanCoverageBenefitLimit;
+    function ParseInsurancePlanCoverageBenefitLimitChild(element : TFhirInsurancePlanCoverageBenefitLimit; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlanPlan(element : TMXmlElement; path : string) : TFhirInsurancePlanPlan;
+    function ParseInsurancePlanPlanChild(element : TFhirInsurancePlanPlan; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlanPlanGeneralCost(element : TMXmlElement; path : string) : TFhirInsurancePlanPlanGeneralCost;
+    function ParseInsurancePlanPlanGeneralCostChild(element : TFhirInsurancePlanPlanGeneralCost; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlanPlanSpecificCost(element : TMXmlElement; path : string) : TFhirInsurancePlanPlanSpecificCost;
+    function ParseInsurancePlanPlanSpecificCostChild(element : TFhirInsurancePlanPlanSpecificCost; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlanPlanSpecificCostBenefit(element : TMXmlElement; path : string) : TFhirInsurancePlanPlanSpecificCostBenefit;
+    function ParseInsurancePlanPlanSpecificCostBenefitChild(element : TFhirInsurancePlanPlanSpecificCostBenefit; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlanPlanSpecificCostBenefitCost(element : TMXmlElement; path : string) : TFhirInsurancePlanPlanSpecificCostBenefitCost;
+    function ParseInsurancePlanPlanSpecificCostBenefitCostChild(element : TFhirInsurancePlanPlanSpecificCostBenefitCost; path : string; child : TMXmlElement) : boolean;
+    function ParseInsurancePlan(element : TMXmlElement; path : string) : TFhirInsurancePlan;
+    function ParseInsurancePlanChild(element : TFhirInsurancePlan; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
     function ParseInvoiceParticipant(element : TMXmlElement; path : string) : TFhirInvoiceParticipant;
     function ParseInvoiceParticipantChild(element : TFhirInvoiceParticipant; path : string; child : TMXmlElement) : boolean;
@@ -973,8 +1021,8 @@ Type
     function ParseMedicinalProductNameCountryLanguageChild(element : TFhirMedicinalProductNameCountryLanguage; path : string; child : TMXmlElement) : boolean;
     function ParseMedicinalProductManufacturingBusinessOperation(element : TMXmlElement; path : string) : TFhirMedicinalProductManufacturingBusinessOperation;
     function ParseMedicinalProductManufacturingBusinessOperationChild(element : TFhirMedicinalProductManufacturingBusinessOperation; path : string; child : TMXmlElement) : boolean;
-    function ParseMedicinalProductOrphanDesignation(element : TMXmlElement; path : string) : TFhirMedicinalProductOrphanDesignation;
-    function ParseMedicinalProductOrphanDesignationChild(element : TFhirMedicinalProductOrphanDesignation; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicinalProductSpecialDesignation(element : TMXmlElement; path : string) : TFhirMedicinalProductSpecialDesignation;
+    function ParseMedicinalProductSpecialDesignationChild(element : TFhirMedicinalProductSpecialDesignation; path : string; child : TMXmlElement) : boolean;
     function ParseMedicinalProduct(element : TMXmlElement; path : string) : TFhirMedicinalProduct;
     function ParseMedicinalProductChild(element : TFhirMedicinalProduct; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_MEDICINALPRODUCT}
@@ -1002,12 +1050,28 @@ Type
     function ParseMedicinalProductClinicals(element : TMXmlElement; path : string) : TFhirMedicinalProductClinicals;
     function ParseMedicinalProductClinicalsChild(element : TFhirMedicinalProductClinicals; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+    function ParseMedicinalProductContraindicationOtherTherapy(element : TMXmlElement; path : string) : TFhirMedicinalProductContraindicationOtherTherapy;
+    function ParseMedicinalProductContraindicationOtherTherapyChild(element : TFhirMedicinalProductContraindicationOtherTherapy; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicinalProductContraindicationPopulation(element : TMXmlElement; path : string) : TFhirMedicinalProductContraindicationPopulation;
+    function ParseMedicinalProductContraindicationPopulationChild(element : TFhirMedicinalProductContraindicationPopulation; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicinalProductContraindication(element : TMXmlElement; path : string) : TFhirMedicinalProductContraindication;
+    function ParseMedicinalProductContraindicationChild(element : TFhirMedicinalProductContraindication; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
     function ParseMedicinalProductDeviceSpecMaterial(element : TMXmlElement; path : string) : TFhirMedicinalProductDeviceSpecMaterial;
     function ParseMedicinalProductDeviceSpecMaterialChild(element : TFhirMedicinalProductDeviceSpecMaterial; path : string; child : TMXmlElement) : boolean;
     function ParseMedicinalProductDeviceSpec(element : TMXmlElement; path : string) : TFhirMedicinalProductDeviceSpec;
     function ParseMedicinalProductDeviceSpecChild(element : TFhirMedicinalProductDeviceSpec; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+    function ParseMedicinalProductIndicationOtherTherapy(element : TMXmlElement; path : string) : TFhirMedicinalProductIndicationOtherTherapy;
+    function ParseMedicinalProductIndicationOtherTherapyChild(element : TFhirMedicinalProductIndicationOtherTherapy; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicinalProductIndicationPopulation(element : TMXmlElement; path : string) : TFhirMedicinalProductIndicationPopulation;
+    function ParseMedicinalProductIndicationPopulationChild(element : TFhirMedicinalProductIndicationPopulation; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicinalProductIndication(element : TMXmlElement; path : string) : TFhirMedicinalProductIndication;
+    function ParseMedicinalProductIndicationChild(element : TFhirMedicinalProductIndication; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
     function ParseMedicinalProductIngredientSpecifiedSubstance(element : TMXmlElement; path : string) : TFhirMedicinalProductIngredientSpecifiedSubstance;
     function ParseMedicinalProductIngredientSpecifiedSubstanceChild(element : TFhirMedicinalProductIngredientSpecifiedSubstance; path : string; child : TMXmlElement) : boolean;
@@ -1020,6 +1084,10 @@ Type
     function ParseMedicinalProductIngredient(element : TMXmlElement; path : string) : TFhirMedicinalProductIngredient;
     function ParseMedicinalProductIngredientChild(element : TFhirMedicinalProductIngredient; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+    function ParseMedicinalProductInteraction(element : TMXmlElement; path : string) : TFhirMedicinalProductInteraction;
+    function ParseMedicinalProductInteractionChild(element : TFhirMedicinalProductInteraction; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
     function ParseMedicinalProductManufactured(element : TMXmlElement; path : string) : TFhirMedicinalProductManufactured;
     function ParseMedicinalProductManufacturedChild(element : TFhirMedicinalProductManufactured; path : string; child : TMXmlElement) : boolean;
@@ -1044,6 +1112,12 @@ Type
     function ParseMedicinalProductPharmaceutical(element : TMXmlElement; path : string) : TFhirMedicinalProductPharmaceutical;
     function ParseMedicinalProductPharmaceuticalChild(element : TFhirMedicinalProductPharmaceutical; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+    function ParseMedicinalProductUndesirableEffectPopulation(element : TMXmlElement; path : string) : TFhirMedicinalProductUndesirableEffectPopulation;
+    function ParseMedicinalProductUndesirableEffectPopulationChild(element : TFhirMedicinalProductUndesirableEffectPopulation; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicinalProductUndesirableEffect(element : TMXmlElement; path : string) : TFhirMedicinalProductUndesirableEffect;
+    function ParseMedicinalProductUndesirableEffectChild(element : TFhirMedicinalProductUndesirableEffect; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
     function ParseMessageDefinitionFocus(element : TMXmlElement; path : string) : TFhirMessageDefinitionFocus;
     function ParseMessageDefinitionFocusChild(element : TFhirMessageDefinitionFocus; path : string; child : TMXmlElement) : boolean;
@@ -1105,6 +1179,8 @@ Type
     function ParseOperationDefinitionParameterChild(element : TFhirOperationDefinitionParameter; path : string; child : TMXmlElement) : boolean;
     function ParseOperationDefinitionParameterBinding(element : TMXmlElement; path : string) : TFhirOperationDefinitionParameterBinding;
     function ParseOperationDefinitionParameterBindingChild(element : TFhirOperationDefinitionParameterBinding; path : string; child : TMXmlElement) : boolean;
+    function ParseOperationDefinitionParameterReferencedFrom(element : TMXmlElement; path : string) : TFhirOperationDefinitionParameterReferencedFrom;
+    function ParseOperationDefinitionParameterReferencedFromChild(element : TFhirOperationDefinitionParameterReferencedFrom; path : string; child : TMXmlElement) : boolean;
     function ParseOperationDefinitionOverload(element : TMXmlElement; path : string) : TFhirOperationDefinitionOverload;
     function ParseOperationDefinitionOverloadChild(element : TFhirOperationDefinitionOverload; path : string; child : TMXmlElement) : boolean;
     function ParseOperationDefinition(element : TMXmlElement; path : string) : TFhirOperationDefinition;
@@ -1122,14 +1198,10 @@ Type
     function ParseOrganization(element : TMXmlElement; path : string) : TFhirOrganization;
     function ParseOrganizationChild(element : TFhirOrganization; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-    function ParseOrganizationRoleAvailableTime(element : TMXmlElement; path : string) : TFhirOrganizationRoleAvailableTime;
-    function ParseOrganizationRoleAvailableTimeChild(element : TFhirOrganizationRoleAvailableTime; path : string; child : TMXmlElement) : boolean;
-    function ParseOrganizationRoleNotAvailable(element : TMXmlElement; path : string) : TFhirOrganizationRoleNotAvailable;
-    function ParseOrganizationRoleNotAvailableChild(element : TFhirOrganizationRoleNotAvailable; path : string; child : TMXmlElement) : boolean;
-    function ParseOrganizationRole(element : TMXmlElement; path : string) : TFhirOrganizationRole;
-    function ParseOrganizationRoleChild(element : TFhirOrganizationRole; path : string; child : TMXmlElement) : boolean;
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+    function ParseOrganizationAffiliation(element : TMXmlElement; path : string) : TFhirOrganizationAffiliation;
+    function ParseOrganizationAffiliationChild(element : TFhirOrganizationAffiliation; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
     function ParsePatientContact(element : TMXmlElement; path : string) : TFhirPatientContact;
     function ParsePatientContactChild(element : TFhirPatientContact; path : string; child : TMXmlElement) : boolean;
@@ -1210,28 +1282,6 @@ Type
     function ParseProcessResponse(element : TMXmlElement; path : string) : TFhirProcessResponse;
     function ParseProcessResponseChild(element : TFhirProcessResponse; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-    function ParseProductPlanContact(element : TMXmlElement; path : string) : TFhirProductPlanContact;
-    function ParseProductPlanContactChild(element : TFhirProductPlanContact; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlanCoverage(element : TMXmlElement; path : string) : TFhirProductPlanCoverage;
-    function ParseProductPlanCoverageChild(element : TFhirProductPlanCoverage; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlanCoverageBenefit(element : TMXmlElement; path : string) : TFhirProductPlanCoverageBenefit;
-    function ParseProductPlanCoverageBenefitChild(element : TFhirProductPlanCoverageBenefit; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlanCoverageBenefitLimit(element : TMXmlElement; path : string) : TFhirProductPlanCoverageBenefitLimit;
-    function ParseProductPlanCoverageBenefitLimitChild(element : TFhirProductPlanCoverageBenefitLimit; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlanPlan(element : TMXmlElement; path : string) : TFhirProductPlanPlan;
-    function ParseProductPlanPlanChild(element : TFhirProductPlanPlan; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlanPlanGeneralCost(element : TMXmlElement; path : string) : TFhirProductPlanPlanGeneralCost;
-    function ParseProductPlanPlanGeneralCostChild(element : TFhirProductPlanPlanGeneralCost; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlanPlanSpecificCost(element : TMXmlElement; path : string) : TFhirProductPlanPlanSpecificCost;
-    function ParseProductPlanPlanSpecificCostChild(element : TFhirProductPlanPlanSpecificCost; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlanPlanSpecificCostBenefit(element : TMXmlElement; path : string) : TFhirProductPlanPlanSpecificCostBenefit;
-    function ParseProductPlanPlanSpecificCostBenefitChild(element : TFhirProductPlanPlanSpecificCostBenefit; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlanPlanSpecificCostBenefitCost(element : TMXmlElement; path : string) : TFhirProductPlanPlanSpecificCostBenefitCost;
-    function ParseProductPlanPlanSpecificCostBenefitCostChild(element : TFhirProductPlanPlanSpecificCostBenefitCost; path : string; child : TMXmlElement) : boolean;
-    function ParseProductPlan(element : TMXmlElement; path : string) : TFhirProductPlan;
-    function ParseProductPlanChild(element : TFhirProductPlan; path : string; child : TMXmlElement) : boolean;
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
     function ParseProvenanceAgent(element : TMXmlElement; path : string) : TFhirProvenanceAgent;
     function ParseProvenanceAgentChild(element : TFhirProvenanceAgent; path : string; child : TMXmlElement) : boolean;
@@ -1471,6 +1521,10 @@ Type
     function ParseTaskChild(element : TFhirTask; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+    function ParseTerminologyCapabilitiesSoftware(element : TMXmlElement; path : string) : TFhirTerminologyCapabilitiesSoftware;
+    function ParseTerminologyCapabilitiesSoftwareChild(element : TFhirTerminologyCapabilitiesSoftware; path : string; child : TMXmlElement) : boolean;
+    function ParseTerminologyCapabilitiesImplementation(element : TMXmlElement; path : string) : TFhirTerminologyCapabilitiesImplementation;
+    function ParseTerminologyCapabilitiesImplementationChild(element : TFhirTerminologyCapabilitiesImplementation; path : string; child : TMXmlElement) : boolean;
     function ParseTerminologyCapabilitiesCodeSystem(element : TMXmlElement; path : string) : TFhirTerminologyCapabilitiesCodeSystem;
     function ParseTerminologyCapabilitiesCodeSystemChild(element : TFhirTerminologyCapabilitiesCodeSystem; path : string; child : TMXmlElement) : boolean;
     function ParseTerminologyCapabilitiesCodeSystemVersion(element : TMXmlElement; path : string) : TFhirTerminologyCapabilitiesCodeSystemVersion;
@@ -2067,18 +2121,28 @@ Type
     procedure ComposeConsentChildren(xml : TXmlBuilder; elem : TFhirConsent);
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+    procedure ComposeContractContentDefinition(xml : TXmlBuilder; name : string; elem : TFhirContractContentDefinition);
+    procedure ComposeContractContentDefinitionChildren(xml : TXmlBuilder; elem : TFhirContractContentDefinition);
     procedure ComposeContractTerm(xml : TXmlBuilder; name : string; elem : TFhirContractTerm);
     procedure ComposeContractTermChildren(xml : TXmlBuilder; elem : TFhirContractTerm);
+    procedure ComposeContractTermSecurityLabel(xml : TXmlBuilder; name : string; elem : TFhirContractTermSecurityLabel);
+    procedure ComposeContractTermSecurityLabelChildren(xml : TXmlBuilder; elem : TFhirContractTermSecurityLabel);
     procedure ComposeContractTermOffer(xml : TXmlBuilder; name : string; elem : TFhirContractTermOffer);
     procedure ComposeContractTermOfferChildren(xml : TXmlBuilder; elem : TFhirContractTermOffer);
+    procedure ComposeContractTermOfferParty(xml : TXmlBuilder; name : string; elem : TFhirContractTermOfferParty);
+    procedure ComposeContractTermOfferPartyChildren(xml : TXmlBuilder; elem : TFhirContractTermOfferParty);
+    procedure ComposeContractTermOfferAnswer(xml : TXmlBuilder; name : string; elem : TFhirContractTermOfferAnswer);
+    procedure ComposeContractTermOfferAnswerChildren(xml : TXmlBuilder; elem : TFhirContractTermOfferAnswer);
     procedure ComposeContractTermAsset(xml : TXmlBuilder; name : string; elem : TFhirContractTermAsset);
     procedure ComposeContractTermAssetChildren(xml : TXmlBuilder; elem : TFhirContractTermAsset);
-    procedure ComposeContractTermAssetData(xml : TXmlBuilder; name : string; elem : TFhirContractTermAssetData);
-    procedure ComposeContractTermAssetDataChildren(xml : TXmlBuilder; elem : TFhirContractTermAssetData);
+    procedure ComposeContractTermAssetContext(xml : TXmlBuilder; name : string; elem : TFhirContractTermAssetContext);
+    procedure ComposeContractTermAssetContextChildren(xml : TXmlBuilder; elem : TFhirContractTermAssetContext);
     procedure ComposeContractTermAssetValuedItem(xml : TXmlBuilder; name : string; elem : TFhirContractTermAssetValuedItem);
     procedure ComposeContractTermAssetValuedItemChildren(xml : TXmlBuilder; elem : TFhirContractTermAssetValuedItem);
-    procedure ComposeContractTermAgent(xml : TXmlBuilder; name : string; elem : TFhirContractTermAgent);
-    procedure ComposeContractTermAgentChildren(xml : TXmlBuilder; elem : TFhirContractTermAgent);
+    procedure ComposeContractTermAction(xml : TXmlBuilder; name : string; elem : TFhirContractTermAction);
+    procedure ComposeContractTermActionChildren(xml : TXmlBuilder; elem : TFhirContractTermAction);
+    procedure ComposeContractTermActionSubject(xml : TXmlBuilder; name : string; elem : TFhirContractTermActionSubject);
+    procedure ComposeContractTermActionSubjectChildren(xml : TXmlBuilder; elem : TFhirContractTermActionSubject);
     procedure ComposeContractSigner(xml : TXmlBuilder; name : string; elem : TFhirContractSigner);
     procedure ComposeContractSignerChildren(xml : TXmlBuilder; elem : TFhirContractSigner);
     procedure ComposeContractFriendly(xml : TXmlBuilder; name : string; elem : TFhirContractFriendly);
@@ -2098,6 +2162,30 @@ Type
     procedure ComposeCoverage(xml : TXmlBuilder; name : string; elem : TFhirCoverage);
     procedure ComposeCoverageChildren(xml : TXmlBuilder; elem : TFhirCoverage);
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+    procedure ComposeCoverageEligibilityRequestSupportingInformation(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityRequestSupportingInformation);
+    procedure ComposeCoverageEligibilityRequestSupportingInformationChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequestSupportingInformation);
+    procedure ComposeCoverageEligibilityRequestInsurance(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityRequestInsurance);
+    procedure ComposeCoverageEligibilityRequestInsuranceChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequestInsurance);
+    procedure ComposeCoverageEligibilityRequestItem(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityRequestItem);
+    procedure ComposeCoverageEligibilityRequestItemChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequestItem);
+    procedure ComposeCoverageEligibilityRequestItemDiagnosis(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityRequestItemDiagnosis);
+    procedure ComposeCoverageEligibilityRequestItemDiagnosisChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequestItemDiagnosis);
+    procedure ComposeCoverageEligibilityRequest(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityRequest);
+    procedure ComposeCoverageEligibilityRequestChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequest);
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+    procedure ComposeCoverageEligibilityResponseInsurance(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityResponseInsurance);
+    procedure ComposeCoverageEligibilityResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponseInsurance);
+    procedure ComposeCoverageEligibilityResponseInsuranceItem(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityResponseInsuranceItem);
+    procedure ComposeCoverageEligibilityResponseInsuranceItemChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponseInsuranceItem);
+    procedure ComposeCoverageEligibilityResponseInsuranceItemBenefit(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityResponseInsuranceItemBenefit);
+    procedure ComposeCoverageEligibilityResponseInsuranceItemBenefitChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponseInsuranceItemBenefit);
+    procedure ComposeCoverageEligibilityResponseError(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityResponseError);
+    procedure ComposeCoverageEligibilityResponseErrorChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponseError);
+    procedure ComposeCoverageEligibilityResponse(xml : TXmlBuilder; name : string; elem : TFhirCoverageEligibilityResponse);
+    procedure ComposeCoverageEligibilityResponseChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponse);
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
     procedure ComposeDetectedIssueMitigation(xml : TXmlBuilder; name : string; elem : TFhirDetectedIssueMitigation);
     procedure ComposeDetectedIssueMitigationChildren(xml : TXmlBuilder; elem : TFhirDetectedIssueMitigation);
@@ -2105,19 +2193,35 @@ Type
     procedure ComposeDetectedIssueChildren(xml : TXmlBuilder; elem : TFhirDetectedIssue);
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-    procedure ComposeDeviceUdi(xml : TXmlBuilder; name : string; elem : TFhirDeviceUdi);
-    procedure ComposeDeviceUdiChildren(xml : TXmlBuilder; elem : TFhirDeviceUdi);
+    procedure ComposeDeviceUdiCarrier(xml : TXmlBuilder; name : string; elem : TFhirDeviceUdiCarrier);
+    procedure ComposeDeviceUdiCarrierChildren(xml : TXmlBuilder; elem : TFhirDeviceUdiCarrier);
+    procedure ComposeDeviceDeviceName(xml : TXmlBuilder; name : string; elem : TFhirDeviceDeviceName);
+    procedure ComposeDeviceDeviceNameChildren(xml : TXmlBuilder; elem : TFhirDeviceDeviceName);
+    procedure ComposeDeviceSpecialization(xml : TXmlBuilder; name : string; elem : TFhirDeviceSpecialization);
+    procedure ComposeDeviceSpecializationChildren(xml : TXmlBuilder; elem : TFhirDeviceSpecialization);
+    procedure ComposeDeviceVersion(xml : TXmlBuilder; name : string; elem : TFhirDeviceVersion);
+    procedure ComposeDeviceVersionChildren(xml : TXmlBuilder; elem : TFhirDeviceVersion);
+    procedure ComposeDeviceProperty(xml : TXmlBuilder; name : string; elem : TFhirDeviceProperty);
+    procedure ComposeDevicePropertyChildren(xml : TXmlBuilder; elem : TFhirDeviceProperty);
     procedure ComposeDevice(xml : TXmlBuilder; name : string; elem : TFhirDevice);
     procedure ComposeDeviceChildren(xml : TXmlBuilder; elem : TFhirDevice);
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-    procedure ComposeDeviceComponentProductionSpecification(xml : TXmlBuilder; name : string; elem : TFhirDeviceComponentProductionSpecification);
-    procedure ComposeDeviceComponentProductionSpecificationChildren(xml : TXmlBuilder; elem : TFhirDeviceComponentProductionSpecification);
-    procedure ComposeDeviceComponentProperty(xml : TXmlBuilder; name : string; elem : TFhirDeviceComponentProperty);
-    procedure ComposeDeviceComponentPropertyChildren(xml : TXmlBuilder; elem : TFhirDeviceComponentProperty);
-    procedure ComposeDeviceComponent(xml : TXmlBuilder; name : string; elem : TFhirDeviceComponent);
-    procedure ComposeDeviceComponentChildren(xml : TXmlBuilder; elem : TFhirDeviceComponent);
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+    procedure ComposeDeviceDefinitionUdiDeviceIdentifier(xml : TXmlBuilder; name : string; elem : TFhirDeviceDefinitionUdiDeviceIdentifier);
+    procedure ComposeDeviceDefinitionUdiDeviceIdentifierChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionUdiDeviceIdentifier);
+    procedure ComposeDeviceDefinitionDeviceName(xml : TXmlBuilder; name : string; elem : TFhirDeviceDefinitionDeviceName);
+    procedure ComposeDeviceDefinitionDeviceNameChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionDeviceName);
+    procedure ComposeDeviceDefinitionSpecialization(xml : TXmlBuilder; name : string; elem : TFhirDeviceDefinitionSpecialization);
+    procedure ComposeDeviceDefinitionSpecializationChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionSpecialization);
+    procedure ComposeDeviceDefinitionCapability(xml : TXmlBuilder; name : string; elem : TFhirDeviceDefinitionCapability);
+    procedure ComposeDeviceDefinitionCapabilityChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionCapability);
+    procedure ComposeDeviceDefinitionProperty(xml : TXmlBuilder; name : string; elem : TFhirDeviceDefinitionProperty);
+    procedure ComposeDeviceDefinitionPropertyChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionProperty);
+    procedure ComposeDeviceDefinitionMaterial(xml : TXmlBuilder; name : string; elem : TFhirDeviceDefinitionMaterial);
+    procedure ComposeDeviceDefinitionMaterialChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionMaterial);
+    procedure ComposeDeviceDefinition(xml : TXmlBuilder; name : string; elem : TFhirDeviceDefinition);
+    procedure ComposeDeviceDefinitionChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinition);
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
     procedure ComposeDeviceMetricCalibration(xml : TXmlBuilder; name : string; elem : TFhirDeviceMetricCalibration);
     procedure ComposeDeviceMetricCalibrationChildren(xml : TXmlBuilder; elem : TFhirDeviceMetricCalibration);
@@ -2157,33 +2261,9 @@ Type
     procedure ComposeDocumentReferenceContentChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceContent);
     procedure ComposeDocumentReferenceContext(xml : TXmlBuilder; name : string; elem : TFhirDocumentReferenceContext);
     procedure ComposeDocumentReferenceContextChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceContext);
-    procedure ComposeDocumentReferenceContextRelated(xml : TXmlBuilder; name : string; elem : TFhirDocumentReferenceContextRelated);
-    procedure ComposeDocumentReferenceContextRelatedChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceContextRelated);
     procedure ComposeDocumentReference(xml : TXmlBuilder; name : string; elem : TFhirDocumentReference);
     procedure ComposeDocumentReferenceChildren(xml : TXmlBuilder; elem : TFhirDocumentReference);
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-    procedure ComposeEligibilityRequestInsurance(xml : TXmlBuilder; name : string; elem : TFhirEligibilityRequestInsurance);
-    procedure ComposeEligibilityRequestInsuranceChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequestInsurance);
-    procedure ComposeEligibilityRequestDetail(xml : TXmlBuilder; name : string; elem : TFhirEligibilityRequestDetail);
-    procedure ComposeEligibilityRequestDetailChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequestDetail);
-    procedure ComposeEligibilityRequestDetailDiagnosis(xml : TXmlBuilder; name : string; elem : TFhirEligibilityRequestDetailDiagnosis);
-    procedure ComposeEligibilityRequestDetailDiagnosisChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequestDetailDiagnosis);
-    procedure ComposeEligibilityRequest(xml : TXmlBuilder; name : string; elem : TFhirEligibilityRequest);
-    procedure ComposeEligibilityRequestChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequest);
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-    procedure ComposeEligibilityResponseInsurance(xml : TXmlBuilder; name : string; elem : TFhirEligibilityResponseInsurance);
-    procedure ComposeEligibilityResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsurance);
-    procedure ComposeEligibilityResponseInsuranceDetail(xml : TXmlBuilder; name : string; elem : TFhirEligibilityResponseInsuranceDetail);
-    procedure ComposeEligibilityResponseInsuranceDetailChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsuranceDetail);
-    procedure ComposeEligibilityResponseInsuranceDetailBenefit(xml : TXmlBuilder; name : string; elem : TFhirEligibilityResponseInsuranceDetailBenefit);
-    procedure ComposeEligibilityResponseInsuranceDetailBenefitChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsuranceDetailBenefit);
-    procedure ComposeEligibilityResponseError(xml : TXmlBuilder; name : string; elem : TFhirEligibilityResponseError);
-    procedure ComposeEligibilityResponseErrorChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseError);
-    procedure ComposeEligibilityResponse(xml : TXmlBuilder; name : string; elem : TFhirEligibilityResponse);
-    procedure ComposeEligibilityResponseChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponse);
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
     procedure ComposeEncounterStatusHistory(xml : TXmlBuilder; name : string; elem : TFhirEncounterStatusHistory);
     procedure ComposeEncounterStatusHistoryChildren(xml : TXmlBuilder; elem : TFhirEncounterStatusHistory);
@@ -2400,6 +2480,28 @@ Type
     procedure ComposeImplementationGuide(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuide);
     procedure ComposeImplementationGuideChildren(xml : TXmlBuilder; elem : TFhirImplementationGuide);
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+    procedure ComposeInsurancePlanContact(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanContact);
+    procedure ComposeInsurancePlanContactChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanContact);
+    procedure ComposeInsurancePlanCoverage(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanCoverage);
+    procedure ComposeInsurancePlanCoverageChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanCoverage);
+    procedure ComposeInsurancePlanCoverageBenefit(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanCoverageBenefit);
+    procedure ComposeInsurancePlanCoverageBenefitChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanCoverageBenefit);
+    procedure ComposeInsurancePlanCoverageBenefitLimit(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanCoverageBenefitLimit);
+    procedure ComposeInsurancePlanCoverageBenefitLimitChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanCoverageBenefitLimit);
+    procedure ComposeInsurancePlanPlan(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanPlan);
+    procedure ComposeInsurancePlanPlanChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlan);
+    procedure ComposeInsurancePlanPlanGeneralCost(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanPlanGeneralCost);
+    procedure ComposeInsurancePlanPlanGeneralCostChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlanGeneralCost);
+    procedure ComposeInsurancePlanPlanSpecificCost(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanPlanSpecificCost);
+    procedure ComposeInsurancePlanPlanSpecificCostChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlanSpecificCost);
+    procedure ComposeInsurancePlanPlanSpecificCostBenefit(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanPlanSpecificCostBenefit);
+    procedure ComposeInsurancePlanPlanSpecificCostBenefitChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlanSpecificCostBenefit);
+    procedure ComposeInsurancePlanPlanSpecificCostBenefitCost(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlanPlanSpecificCostBenefitCost);
+    procedure ComposeInsurancePlanPlanSpecificCostBenefitCostChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlanSpecificCostBenefitCost);
+    procedure ComposeInsurancePlan(xml : TXmlBuilder; name : string; elem : TFhirInsurancePlan);
+    procedure ComposeInsurancePlanChildren(xml : TXmlBuilder; elem : TFhirInsurancePlan);
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
     procedure ComposeInvoiceParticipant(xml : TXmlBuilder; name : string; elem : TFhirInvoiceParticipant);
     procedure ComposeInvoiceParticipantChildren(xml : TXmlBuilder; elem : TFhirInvoiceParticipant);
@@ -2551,8 +2653,8 @@ Type
     procedure ComposeMedicinalProductNameCountryLanguageChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductNameCountryLanguage);
     procedure ComposeMedicinalProductManufacturingBusinessOperation(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductManufacturingBusinessOperation);
     procedure ComposeMedicinalProductManufacturingBusinessOperationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductManufacturingBusinessOperation);
-    procedure ComposeMedicinalProductOrphanDesignation(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductOrphanDesignation);
-    procedure ComposeMedicinalProductOrphanDesignationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductOrphanDesignation);
+    procedure ComposeMedicinalProductSpecialDesignation(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductSpecialDesignation);
+    procedure ComposeMedicinalProductSpecialDesignationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductSpecialDesignation);
     procedure ComposeMedicinalProduct(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProduct);
     procedure ComposeMedicinalProductChildren(xml : TXmlBuilder; elem : TFhirMedicinalProduct);
 {$ENDIF FHIR_MEDICINALPRODUCT}
@@ -2580,12 +2682,28 @@ Type
     procedure ComposeMedicinalProductClinicals(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductClinicals);
     procedure ComposeMedicinalProductClinicalsChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductClinicals);
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+    procedure ComposeMedicinalProductContraindicationOtherTherapy(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductContraindicationOtherTherapy);
+    procedure ComposeMedicinalProductContraindicationOtherTherapyChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductContraindicationOtherTherapy);
+    procedure ComposeMedicinalProductContraindicationPopulation(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductContraindicationPopulation);
+    procedure ComposeMedicinalProductContraindicationPopulationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductContraindicationPopulation);
+    procedure ComposeMedicinalProductContraindication(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductContraindication);
+    procedure ComposeMedicinalProductContraindicationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductContraindication);
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
     procedure ComposeMedicinalProductDeviceSpecMaterial(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductDeviceSpecMaterial);
     procedure ComposeMedicinalProductDeviceSpecMaterialChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductDeviceSpecMaterial);
     procedure ComposeMedicinalProductDeviceSpec(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductDeviceSpec);
     procedure ComposeMedicinalProductDeviceSpecChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductDeviceSpec);
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+    procedure ComposeMedicinalProductIndicationOtherTherapy(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductIndicationOtherTherapy);
+    procedure ComposeMedicinalProductIndicationOtherTherapyChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductIndicationOtherTherapy);
+    procedure ComposeMedicinalProductIndicationPopulation(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductIndicationPopulation);
+    procedure ComposeMedicinalProductIndicationPopulationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductIndicationPopulation);
+    procedure ComposeMedicinalProductIndication(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductIndication);
+    procedure ComposeMedicinalProductIndicationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductIndication);
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
     procedure ComposeMedicinalProductIngredientSpecifiedSubstance(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductIngredientSpecifiedSubstance);
     procedure ComposeMedicinalProductIngredientSpecifiedSubstanceChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductIngredientSpecifiedSubstance);
@@ -2598,6 +2716,10 @@ Type
     procedure ComposeMedicinalProductIngredient(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductIngredient);
     procedure ComposeMedicinalProductIngredientChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductIngredient);
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+    procedure ComposeMedicinalProductInteraction(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductInteraction);
+    procedure ComposeMedicinalProductInteractionChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductInteraction);
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
     procedure ComposeMedicinalProductManufactured(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductManufactured);
     procedure ComposeMedicinalProductManufacturedChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductManufactured);
@@ -2622,6 +2744,12 @@ Type
     procedure ComposeMedicinalProductPharmaceutical(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductPharmaceutical);
     procedure ComposeMedicinalProductPharmaceuticalChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductPharmaceutical);
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+    procedure ComposeMedicinalProductUndesirableEffectPopulation(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductUndesirableEffectPopulation);
+    procedure ComposeMedicinalProductUndesirableEffectPopulationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductUndesirableEffectPopulation);
+    procedure ComposeMedicinalProductUndesirableEffect(xml : TXmlBuilder; name : string; elem : TFhirMedicinalProductUndesirableEffect);
+    procedure ComposeMedicinalProductUndesirableEffectChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductUndesirableEffect);
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
     procedure ComposeMessageDefinitionFocus(xml : TXmlBuilder; name : string; elem : TFhirMessageDefinitionFocus);
     procedure ComposeMessageDefinitionFocusChildren(xml : TXmlBuilder; elem : TFhirMessageDefinitionFocus);
@@ -2683,6 +2811,8 @@ Type
     procedure ComposeOperationDefinitionParameterChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionParameter);
     procedure ComposeOperationDefinitionParameterBinding(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinitionParameterBinding);
     procedure ComposeOperationDefinitionParameterBindingChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionParameterBinding);
+    procedure ComposeOperationDefinitionParameterReferencedFrom(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinitionParameterReferencedFrom);
+    procedure ComposeOperationDefinitionParameterReferencedFromChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionParameterReferencedFrom);
     procedure ComposeOperationDefinitionOverload(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinitionOverload);
     procedure ComposeOperationDefinitionOverloadChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionOverload);
     procedure ComposeOperationDefinition(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinition);
@@ -2700,14 +2830,10 @@ Type
     procedure ComposeOrganization(xml : TXmlBuilder; name : string; elem : TFhirOrganization);
     procedure ComposeOrganizationChildren(xml : TXmlBuilder; elem : TFhirOrganization);
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-    procedure ComposeOrganizationRoleAvailableTime(xml : TXmlBuilder; name : string; elem : TFhirOrganizationRoleAvailableTime);
-    procedure ComposeOrganizationRoleAvailableTimeChildren(xml : TXmlBuilder; elem : TFhirOrganizationRoleAvailableTime);
-    procedure ComposeOrganizationRoleNotAvailable(xml : TXmlBuilder; name : string; elem : TFhirOrganizationRoleNotAvailable);
-    procedure ComposeOrganizationRoleNotAvailableChildren(xml : TXmlBuilder; elem : TFhirOrganizationRoleNotAvailable);
-    procedure ComposeOrganizationRole(xml : TXmlBuilder; name : string; elem : TFhirOrganizationRole);
-    procedure ComposeOrganizationRoleChildren(xml : TXmlBuilder; elem : TFhirOrganizationRole);
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+    procedure ComposeOrganizationAffiliation(xml : TXmlBuilder; name : string; elem : TFhirOrganizationAffiliation);
+    procedure ComposeOrganizationAffiliationChildren(xml : TXmlBuilder; elem : TFhirOrganizationAffiliation);
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
     procedure ComposePatientContact(xml : TXmlBuilder; name : string; elem : TFhirPatientContact);
     procedure ComposePatientContactChildren(xml : TXmlBuilder; elem : TFhirPatientContact);
@@ -2788,28 +2914,6 @@ Type
     procedure ComposeProcessResponse(xml : TXmlBuilder; name : string; elem : TFhirProcessResponse);
     procedure ComposeProcessResponseChildren(xml : TXmlBuilder; elem : TFhirProcessResponse);
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-    procedure ComposeProductPlanContact(xml : TXmlBuilder; name : string; elem : TFhirProductPlanContact);
-    procedure ComposeProductPlanContactChildren(xml : TXmlBuilder; elem : TFhirProductPlanContact);
-    procedure ComposeProductPlanCoverage(xml : TXmlBuilder; name : string; elem : TFhirProductPlanCoverage);
-    procedure ComposeProductPlanCoverageChildren(xml : TXmlBuilder; elem : TFhirProductPlanCoverage);
-    procedure ComposeProductPlanCoverageBenefit(xml : TXmlBuilder; name : string; elem : TFhirProductPlanCoverageBenefit);
-    procedure ComposeProductPlanCoverageBenefitChildren(xml : TXmlBuilder; elem : TFhirProductPlanCoverageBenefit);
-    procedure ComposeProductPlanCoverageBenefitLimit(xml : TXmlBuilder; name : string; elem : TFhirProductPlanCoverageBenefitLimit);
-    procedure ComposeProductPlanCoverageBenefitLimitChildren(xml : TXmlBuilder; elem : TFhirProductPlanCoverageBenefitLimit);
-    procedure ComposeProductPlanPlan(xml : TXmlBuilder; name : string; elem : TFhirProductPlanPlan);
-    procedure ComposeProductPlanPlanChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlan);
-    procedure ComposeProductPlanPlanGeneralCost(xml : TXmlBuilder; name : string; elem : TFhirProductPlanPlanGeneralCost);
-    procedure ComposeProductPlanPlanGeneralCostChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlanGeneralCost);
-    procedure ComposeProductPlanPlanSpecificCost(xml : TXmlBuilder; name : string; elem : TFhirProductPlanPlanSpecificCost);
-    procedure ComposeProductPlanPlanSpecificCostChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlanSpecificCost);
-    procedure ComposeProductPlanPlanSpecificCostBenefit(xml : TXmlBuilder; name : string; elem : TFhirProductPlanPlanSpecificCostBenefit);
-    procedure ComposeProductPlanPlanSpecificCostBenefitChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlanSpecificCostBenefit);
-    procedure ComposeProductPlanPlanSpecificCostBenefitCost(xml : TXmlBuilder; name : string; elem : TFhirProductPlanPlanSpecificCostBenefitCost);
-    procedure ComposeProductPlanPlanSpecificCostBenefitCostChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlanSpecificCostBenefitCost);
-    procedure ComposeProductPlan(xml : TXmlBuilder; name : string; elem : TFhirProductPlan);
-    procedure ComposeProductPlanChildren(xml : TXmlBuilder; elem : TFhirProductPlan);
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
     procedure ComposeProvenanceAgent(xml : TXmlBuilder; name : string; elem : TFhirProvenanceAgent);
     procedure ComposeProvenanceAgentChildren(xml : TXmlBuilder; elem : TFhirProvenanceAgent);
@@ -3049,6 +3153,10 @@ Type
     procedure ComposeTaskChildren(xml : TXmlBuilder; elem : TFhirTask);
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+    procedure ComposeTerminologyCapabilitiesSoftware(xml : TXmlBuilder; name : string; elem : TFhirTerminologyCapabilitiesSoftware);
+    procedure ComposeTerminologyCapabilitiesSoftwareChildren(xml : TXmlBuilder; elem : TFhirTerminologyCapabilitiesSoftware);
+    procedure ComposeTerminologyCapabilitiesImplementation(xml : TXmlBuilder; name : string; elem : TFhirTerminologyCapabilitiesImplementation);
+    procedure ComposeTerminologyCapabilitiesImplementationChildren(xml : TXmlBuilder; elem : TFhirTerminologyCapabilitiesImplementation);
     procedure ComposeTerminologyCapabilitiesCodeSystem(xml : TXmlBuilder; name : string; elem : TFhirTerminologyCapabilitiesCodeSystem);
     procedure ComposeTerminologyCapabilitiesCodeSystemChildren(xml : TXmlBuilder; elem : TFhirTerminologyCapabilitiesCodeSystem);
     procedure ComposeTerminologyCapabilitiesCodeSystemVersion(xml : TXmlBuilder; name : string; elem : TFhirTerminologyCapabilitiesCodeSystemVersion);
@@ -4996,7 +5104,7 @@ var
 begin
   composeElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeString(xml, 'path', elem.pathElement);{x.2b}
+    ComposeString(xml, 'path', elem.pathElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'searchParam', elem.searchParamElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -5060,7 +5168,7 @@ procedure TFHIRXmlComposer.ComposeDataRequirementDateFilterChildren(xml : TXmlBu
 begin
   composeElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeString(xml, 'path', elem.pathElement);{x.2b}
+    ComposeString(xml, 'path', elem.pathElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'searchParam', elem.searchParamElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.value is TFhirPeriod) {6} then
@@ -6531,7 +6639,7 @@ begin
       if (child.localName = 'description') then
         element.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.localName = 'name') then
-        element.nameElement := ParseCode(child, path+'/name') {b}
+        element.nameElement := ParseId(child, path+'/name') {b}
       else if (child.localName = 'language') then
         element.languageElement := ParseCode(child, path+'/language') {b}
       else if (child.localName = 'expression') then
@@ -6559,7 +6667,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeCode(xml, 'name', elem.nameElement);{x.2b}
+    ComposeId(xml, 'name', elem.nameElement);{x.2b}
   ComposeCode(xml, 'language', elem.languageElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeString(xml, 'expression', elem.expressionElement);{x.2b}
@@ -6656,14 +6764,10 @@ begin
         element.type_List.Add(ParseCoding(child, path+'/type')){y.2}
       else if (child.localName = 'when') then
         element.whenElement := ParseInstant(child, path+'/when') {b}
-      else if (child.localName = 'whoReference') then
-        element.who := ParseReference(child, path+'/whoReference') {a}
-      else if (child.localName = 'whoUri') then
-        element.who := ParseUri(child, path+'/whoUri'){x.3}
-      else if (child.localName = 'onBehalfOfReference') then
-        element.onBehalfOf := ParseReference(child, path+'/onBehalfOfReference') {a}
-      else if (child.localName = 'onBehalfOfUri') then
-        element.onBehalfOf := ParseUri(child, path+'/onBehalfOfUri'){x.3}
+      else if (child.localName = 'who') then
+        element.who := ParseReference{TFhirPractitioner}(child, path+'/who') {b}
+      else if (child.localName = 'onBehalfOf') then
+        element.onBehalfOf := ParseReference{TFhirPractitioner}(child, path+'/onBehalfOf') {b}
       else if (child.localName = 'targetFormat') then
         element.targetFormatElement := ParseCode(child, path+'/targetFormat') {b}
       else if (child.localName = 'sigFormat') then
@@ -6693,14 +6797,9 @@ begin
   for i := 0 to elem.type_List.Count - 1 do
       ComposeCoding(xml, 'type', elem.type_List[i]);
   ComposeInstant(xml, 'when', elem.whenElement);{x.2b}
-  if (elem.who is TFhirReference) {2} then
-    ComposeReference(xml, 'whoReference', TFhirReference(elem.who))
-  else if (elem.who is TFhirUri) {6} then
-    ComposeUri(xml, 'whoUri', TFhirUri(elem.who));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.onBehalfOf is TFhirReference) {2} then
-    ComposeReference(xml, 'onBehalfOfReference', TFhirReference(elem.onBehalfOf))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.onBehalfOf is TFhirUri) {6} then
-    ComposeUri(xml, 'onBehalfOfUri', TFhirUri(elem.onBehalfOf));
+  ComposeReference{TFhirPractitioner}(xml, 'who', elem.who);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeReference{TFhirPractitioner}(xml, 'onBehalfOf', elem.onBehalfOf);{x.2a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeCode(xml, 'targetFormat', elem.targetFormatElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -7778,7 +7877,8 @@ begin
     ComposeString(xml, 'requirements', elem.requirementsElement);{x.2b}
   ComposeEnum(xml, 'severity', elem.SeverityElement, CODES_TFhirConstraintSeverityEnum);
   ComposeString(xml, 'human', elem.humanElement);{x.2b}
-  ComposeString(xml, 'expression', elem.expressionElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'expression', elem.expressionElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'xpath', elem.xpathElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -7931,6 +8031,8 @@ begin
         element.representationList.Add(ParseEnum(CODES_TFhirPropertyRepresentationEnum, SYSTEMS_TFhirPropertyRepresentationEnum, path+'/representation', child)){y.1}
       else if (child.localName = 'sliceName') then
         element.sliceNameElement := ParseString(child, path+'/sliceName') {b}
+      else if (child.localName = 'sliceIsConstraining') then
+        element.sliceIsConstrainingElement := ParseBoolean(child, path+'/sliceIsConstraining') {b}
       else if (child.localName = 'label') then
         element.label_Element := ParseString(child, path+'/label') {b}
       else if (child.localName = 'code') then
@@ -8337,6 +8439,8 @@ begin
       ComposeEnum(xml, 'representation', elem.representationList[i], CODES_TFhirPropertyRepresentationEnum);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeString(xml, 'sliceName', elem.sliceNameElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeBoolean(xml, 'sliceIsConstraining', elem.sliceIsConstrainingElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeString(xml, 'label', elem.label_Element);{x.2b}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -8758,9 +8862,9 @@ begin
       else if (child.localName = 'boundsPeriod') then
         element.bounds := ParsePeriod(child, path+'/boundsPeriod'){x.3}
       else if (child.localName = 'count') then
-        element.countElement := ParseInteger(child, path+'/count') {b}
+        element.countElement := ParsePositiveInt(child, path+'/count') {b}
       else if (child.localName = 'countMax') then
-        element.countMaxElement := ParseInteger(child, path+'/countMax') {b}
+        element.countMaxElement := ParsePositiveInt(child, path+'/countMax') {b}
       else if (child.localName = 'duration') then
         element.durationElement := ParseDecimal(child, path+'/duration') {b}
       else if (child.localName = 'durationMax') then
@@ -8768,9 +8872,9 @@ begin
       else if (child.localName = 'durationUnit') then
         element.durationUnitElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, path+'/durationUnit', child){1a}
       else if (child.localName = 'frequency') then
-        element.frequencyElement := ParseInteger(child, path+'/frequency') {b}
+        element.frequencyElement := ParsePositiveInt(child, path+'/frequency') {b}
       else if (child.localName = 'frequencyMax') then
-        element.frequencyMaxElement := ParseInteger(child, path+'/frequencyMax') {b}
+        element.frequencyMaxElement := ParsePositiveInt(child, path+'/frequencyMax') {b}
       else if (child.localName = 'period') then
         element.periodElement := ParseDecimal(child, path+'/period') {b}
       else if (child.localName = 'periodMax') then
@@ -8812,9 +8916,9 @@ begin
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) {6} then
     ComposePeriod(xml, 'boundsPeriod', TFhirPeriod(elem.bounds));
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(xml, 'count', elem.countElement);{x.2b}
+    ComposePositiveInt(xml, 'count', elem.countElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(xml, 'countMax', elem.countMaxElement);{x.2b}
+    ComposePositiveInt(xml, 'countMax', elem.countMaxElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimal(xml, 'duration', elem.durationElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -8822,9 +8926,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeEnum(xml, 'durationUnit', elem.DurationUnitElement, CODES_TFhirUnitsOfTimeEnum);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(xml, 'frequency', elem.frequencyElement);{x.2b}
+    ComposePositiveInt(xml, 'frequency', elem.frequencyElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(xml, 'frequencyMax', elem.frequencyMaxElement);{x.2b}
+    ComposePositiveInt(xml, 'frequencyMax', elem.frequencyMaxElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimal(xml, 'period', elem.periodElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -9227,7 +9331,7 @@ begin
       else if (child.localName = 'name') then
         element.nameElement := ParseString(child, path+'/name') {b}
       else if (child.localName = 'subject') then
-        element.subject := ParseReference{TFhirPatient}(child, path+'/subject') {b}
+        element.subjectList.Add(ParseReference{TFhirPatient}(child, path+'/subject')){y.2}
       else if (child.localName = 'servicePeriod') then
         element.servicePeriod := ParsePeriod(child, path+'/servicePeriod') {b}
       else if (child.localName = 'coverage') then
@@ -9269,7 +9373,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
     ComposeString(xml, 'name', elem.nameElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
-    ComposeReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2a}
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirPatient}(xml, 'subject', elem.subjectList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('servicePeriod') then
     ComposePeriod(xml, 'servicePeriod', elem.servicePeriod);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('coverage') then
@@ -9387,7 +9492,7 @@ end;
 procedure TFHIRXmlComposer.ComposeActivityDefinitionDynamicValueChildren(xml : TXmlBuilder; elem : TFhirActivityDefinitionDynamicValue);
 begin
   composeBackboneElementChildren(xml, elem);
-    ComposeString(xml, 'path', elem.pathElement);{x.2b}
+  ComposeString(xml, 'path', elem.pathElement);{x.2b}
   ComposeExpression(xml, 'expression', elem.expression);{x.2a}
 end;
 
@@ -9462,16 +9567,28 @@ begin
         element.effectivePeriod := ParsePeriod(child, path+'/effectivePeriod') {b}
       else if (child.localName = 'topic') then
         element.topicList.Add(ParseCodeableConcept(child, path+'/topic')){y.2}
-      else if (child.localName = 'contributor') then
-        element.contributorList.Add(ParseContributor(child, path+'/contributor')){y.2}
+      else if (child.localName = 'author') then
+        element.authorList.Add(ParseContactDetail(child, path+'/author')){y.2}
+      else if (child.localName = 'editor') then
+        element.editorList.Add(ParseContactDetail(child, path+'/editor')){y.2}
+      else if (child.localName = 'reviewer') then
+        element.reviewerList.Add(ParseContactDetail(child, path+'/reviewer')){y.2}
+      else if (child.localName = 'endorser') then
+        element.endorserList.Add(ParseContactDetail(child, path+'/endorser')){y.2}
       else if (child.localName = 'relatedArtifact') then
         element.relatedArtifactList.Add(ParseRelatedArtifact(child, path+'/relatedArtifact')){y.2}
       else if (child.localName = 'library') then
         element.library_List.Add(ParseCanonical(child, path+'/library')){y.2}
       else if (child.localName = 'kind') then
-        element.kindElement := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, path+'/kind', child){1a}
+        element.kindElement := ParseEnum(CODES_TFhirRequestResourceTypesEnum, SYSTEMS_TFhirRequestResourceTypesEnum, path+'/kind', child){1a}
+      else if (child.localName = 'profile') then
+        element.profileElement := ParseCanonical(child, path+'/profile') {b}
       else if (child.localName = 'code') then
         element.code := ParseCodeableConcept(child, path+'/code') {b}
+      else if (child.localName = 'intent') then
+        element.intentElement := ParseEnum(CODES_TFhirRequestIntentEnum, SYSTEMS_TFhirRequestIntentEnum, path+'/intent', child){1a}
+      else if (child.localName = 'priority') then
+        element.priorityElement := ParseEnum(CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, path+'/priority', child){1a}
       else if (child.localName = 'doNotPerform') then
         element.doNotPerformElement := ParseBoolean(child, path+'/doNotPerform') {b}
       else if (child.localName = 'timingTiming') then
@@ -9502,6 +9619,10 @@ begin
         element.bodySiteList.Add(ParseCodeableConcept(child, path+'/bodySite')){y.2}
       else if (child.localName = 'specimenRequirement') then
         element.specimenRequirementList.Add(ParseReference{TFhirSpecimenDefinition}(child, path+'/specimenRequirement')){y.2}
+      else if (child.localName = 'observationRequirement') then
+        element.observationRequirementList.Add(ParseReference{TFhirObservationDefinition}(child, path+'/observationRequirement')){y.2}
+      else if (child.localName = 'observationResultRequirement') then
+        element.observationResultRequirementList.Add(ParseReference{TFhirObservationDefinition}(child, path+'/observationResultRequirement')){y.2}
       else if (child.localName = 'transform') then
         element.transformElement := ParseCanonical(child, path+'/transform') {b}
       else if (child.localName = 'dynamicValue') then
@@ -9576,9 +9697,18 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('topic') then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(xml, 'topic', elem.topicList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') then
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(xml, 'contributor', elem.contributorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('author') then
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(xml, 'author', elem.authorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') then
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(xml, 'editor', elem.editorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') then
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(xml, 'reviewer', elem.reviewerList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') then
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(xml, 'endorser', elem.endorserList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(xml, 'relatedArtifact', elem.relatedArtifactList[i]);
@@ -9586,9 +9716,15 @@ begin
     for i := 0 to elem.library_List.Count - 1 do
       ComposeCanonical(xml, 'library', elem.library_List[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('kind') then
-    ComposeEnum(xml, 'kind', elem.KindElement, CODES_TFhirResourceTypesEnum);
+    ComposeEnum(xml, 'kind', elem.KindElement, CODES_TFhirRequestResourceTypesEnum);
+  if (SummaryOption in [soFull, soData]) and doCompose('profile') then
+    ComposeCanonical(xml, 'profile', elem.profileElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('code') then
     ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('intent') then
+    ComposeEnum(xml, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum);
+  if (SummaryOption in [soFull, soData]) and doCompose('priority') then
+    ComposeEnum(xml, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('doNotPerform') then
     ComposeBoolean(xml, 'doNotPerform', elem.doNotPerformElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and (elem.timing is TFhirTiming) {6} then
@@ -9623,6 +9759,12 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('specimenRequirement') then
     for i := 0 to elem.specimenRequirementList.Count - 1 do
       ComposeReference{TFhirSpecimenDefinition}(xml, 'specimenRequirement', elem.specimenRequirementList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('observationRequirement') then
+    for i := 0 to elem.observationRequirementList.Count - 1 do
+      ComposeReference{TFhirObservationDefinition}(xml, 'observationRequirement', elem.observationRequirementList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('observationResultRequirement') then
+    for i := 0 to elem.observationResultRequirementList.Count - 1 do
+      ComposeReference{TFhirObservationDefinition}(xml, 'observationResultRequirement', elem.observationResultRequirementList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('transform') then
     ComposeCanonical(xml, 'transform', elem.transformElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('dynamicValue') then
@@ -13110,7 +13252,7 @@ function TFHIRXmlParser.ParseCareTeamParticipantChild(element : TFhirCareTeamPar
 begin
   result := true;
       if (child.localName = 'role') then
-        element.role := ParseCodeableConcept(child, path+'/role') {b}
+        element.roleList.Add(ParseCodeableConcept(child, path+'/role')){y.2}
       else if (child.localName = 'member') then
         element.member := ParseReference{TFhirPractitioner}(child, path+'/member') {b}
       else if (child.localName = 'onBehalfOf') then
@@ -13133,10 +13275,13 @@ begin
 end;
 
 procedure TFHIRXmlComposer.ComposeCareTeamParticipantChildren(xml : TXmlBuilder; elem : TFhirCareTeamParticipant);
+var
+  i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(xml, 'role', elem.role);{x.2a}
+    for i := 0 to elem.roleList.Count - 1 do
+      ComposeCodeableConcept(xml, 'role', elem.roleList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(xml, 'member', elem.member);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -14093,6 +14238,8 @@ begin
         element.diagnosis := ParseReference(child, path+'/diagnosisReference') {a}
       else if (child.localName = 'type') then
         element.type_List.Add(ParseCodeableConcept(child, path+'/type')){y.2}
+      else if (child.localName = 'onAdmission') then
+        element.onAdmission := ParseCodeableConcept(child, path+'/onAdmission') {b}
       else if (child.localName = 'packageCode') then
         element.packageCode := ParseCodeableConcept(child, path+'/packageCode') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
@@ -14123,6 +14270,8 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'onAdmission', elem.onAdmission);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'packageCode', elem.packageCode);{x.2a}
 end;
@@ -14359,8 +14508,8 @@ begin
         element.revenue := ParseCodeableConcept(child, path+'/revenue') {b}
       else if (child.localName = 'category') then
         element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
       else if (child.localName = 'programCode') then
@@ -14431,7 +14580,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
@@ -14503,8 +14652,8 @@ begin
         element.revenue := ParseCodeableConcept(child, path+'/revenue') {b}
       else if (child.localName = 'category') then
         element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
       else if (child.localName = 'programCode') then
@@ -14547,7 +14696,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
@@ -14601,8 +14750,8 @@ begin
         element.revenue := ParseCodeableConcept(child, path+'/revenue') {b}
       else if (child.localName = 'category') then
         element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
       else if (child.localName = 'programCode') then
@@ -14643,7 +14792,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
@@ -14695,7 +14844,7 @@ begin
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.localName = 'subType') then
-        element.subTypeList.Add(ParseCodeableConcept(child, path+'/subType')){y.2}
+        element.subType := ParseCodeableConcept(child, path+'/subType') {b}
       else if (child.localName = 'use') then
         element.useElement := ParseEnum(CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, path+'/use', child){1a}
       else if (child.localName = 'patient') then
@@ -14770,8 +14919,7 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('type_') then
     ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('subType') then
-    for i := 0 to elem.subTypeList.Count - 1 do
-      ComposeCodeableConcept(xml, 'subType', elem.subTypeList[i]);
+    ComposeCodeableConcept(xml, 'subType', elem.subType);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
     ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirClaimUseEnum);
   if (SummaryOption in [soFull, soData]) and doCompose('patient') then
@@ -15110,8 +15258,10 @@ begin
         element.detailSequenceList.Add(ParsePositiveInt(child, path+'/detailSequence')){y.2}
       else if (child.localName = 'subdetailSequence') then
         element.subdetailSequenceList.Add(ParsePositiveInt(child, path+'/subdetailSequence')){y.2}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      else if (child.localName = 'provider') then
+        element.providerList.Add(ParseReference{TFhirPractitioner}(child, path+'/provider')){y.2}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
       else if (child.localName = 'programCode') then
@@ -15174,7 +15324,10 @@ begin
     for i := 0 to elem.subdetailSequenceList.Count - 1 do
       ComposePositiveInt(xml, 'subdetailSequence', elem.subdetailSequenceList[i]);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    for i := 0 to elem.providerList.Count - 1 do
+      ComposeReference{TFhirPractitioner}(xml, 'provider', elem.providerList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
@@ -15240,12 +15393,10 @@ end;
 function TFHIRXmlParser.ParseClaimResponseAddItemDetailChild(element : TFhirClaimResponseAddItemDetail; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
-      else if (child.localName = 'programCode') then
-        element.programCodeList.Add(ParseCodeableConcept(child, path+'/programCode')){y.2}
       else if (child.localName = 'quantity') then
         element.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.localName = 'unitPrice') then
@@ -15281,13 +15432,10 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.programCodeList.Count - 1 do
-      ComposeCodeableConcept(xml, 'programCode', elem.programCodeList[i]);
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
   if (SummaryOption in [soFull, soData]) then
@@ -15332,12 +15480,10 @@ end;
 function TFHIRXmlParser.ParseClaimResponseAddItemDetailSubDetailChild(element : TFhirClaimResponseAddItemDetailSubDetail; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
-      else if (child.localName = 'programCode') then
-        element.programCodeList.Add(ParseCodeableConcept(child, path+'/programCode')){y.2}
       else if (child.localName = 'quantity') then
         element.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.localName = 'unitPrice') then
@@ -15371,13 +15517,10 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.programCodeList.Count - 1 do
-      ComposeCodeableConcept(xml, 'programCode', elem.programCodeList[i]);
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
   if (SummaryOption in [soFull, soData]) then
@@ -15668,8 +15811,6 @@ begin
         element.coverage := ParseReference{TFhirCoverage}(child, path+'/coverage') {b}
       else if (child.localName = 'businessArrangement') then
         element.businessArrangementElement := ParseString(child, path+'/businessArrangement') {b}
-      else if (child.localName = 'preAuthRef') then
-        element.preAuthRefList.Add(ParseString(child, path+'/preAuthRef')){y.2}
       else if (child.localName = 'claimResponse') then
         element.claimResponse := ParseReference{TFhirClaimResponse}(child, path+'/claimResponse') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
@@ -15688,8 +15829,6 @@ begin
 end;
 
 procedure TFHIRXmlComposer.ComposeClaimResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirClaimResponseInsurance);
-var
-  i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
   ComposePositiveInt(xml, 'sequence', elem.sequenceElement);{x.2b}
@@ -15697,9 +15836,6 @@ begin
   ComposeReference{TFhirCoverage}(xml, 'coverage', elem.coverage);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'businessArrangement', elem.businessArrangementElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.preAuthRefList.Count - 1 do
-      ComposeString(xml, 'preAuthRef', elem.preAuthRefList[i]);
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaimResponse}(xml, 'claimResponse', elem.claimResponse);{x.2a}
 end;
@@ -15736,7 +15872,7 @@ begin
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.localName = 'subType') then
-        element.subTypeList.Add(ParseCodeableConcept(child, path+'/subType')){y.2}
+        element.subType := ParseCodeableConcept(child, path+'/subType') {b}
       else if (child.localName = 'use') then
         element.useElement := ParseEnum(CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, path+'/use', child){1a}
       else if (child.localName = 'patient') then
@@ -15753,6 +15889,8 @@ begin
         element.outcomeElement := ParseEnum(CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, path+'/outcome', child){1a}
       else if (child.localName = 'disposition') then
         element.dispositionElement := ParseString(child, path+'/disposition') {b}
+      else if (child.localName = 'preAuthRef') then
+        element.preAuthRefElement := ParseString(child, path+'/preAuthRef') {b}
       else if (child.localName = 'payeeType') then
         element.payeeType := ParseCodeableConcept(child, path+'/payeeType') {b}
       else if (child.localName = 'item') then
@@ -15803,8 +15941,7 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('type_') then
     ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('subType') then
-    for i := 0 to elem.subTypeList.Count - 1 do
-      ComposeCodeableConcept(xml, 'subType', elem.subTypeList[i]);
+    ComposeCodeableConcept(xml, 'subType', elem.subType);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
     ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirClaimUseEnum);
   if (SummaryOption in [soFull, soData]) and doCompose('patient') then
@@ -15821,6 +15958,8 @@ begin
     ComposeEnum(xml, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum);
   if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
     ComposeString(xml, 'disposition', elem.dispositionElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
+    ComposeString(xml, 'preAuthRef', elem.preAuthRefElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('payeeType') then
     ComposeCodeableConcept(xml, 'payeeType', elem.payeeType);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('item') then
@@ -16029,8 +16168,8 @@ begin
         element.prognosisCodeableConceptList.Add(ParseCodeableConcept(child, path+'/prognosisCodeableConcept')){y.2}
       else if (child.localName = 'prognosisReference') then
         element.prognosisReferenceList.Add(ParseReference{TFhirRiskAssessment}(child, path+'/prognosisReference')){y.2}
-      else if (child.localName = 'action') then
-        element.actionList.Add(ParseReference{TFhirServiceRequest}(child, path+'/action')){y.2}
+      else if (child.localName = 'supportingInfo') then
+        element.supportingInfoList.Add(ParseReference{TFhirReference}(child, path+'/supportingInfo')){y.2}
       else if (child.localName = 'note') then
         element.noteList.Add(ParseAnnotation(child, path+'/note')){y.2}
       else if Not ParseDomainResourceChild(element, path, child) then
@@ -16096,9 +16235,9 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('prognosisReference') then
     for i := 0 to elem.prognosisReferenceList.Count - 1 do
       ComposeReference{TFhirRiskAssessment}(xml, 'prognosisReference', elem.prognosisReferenceList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('action') then
-    for i := 0 to elem.actionList.Count - 1 do
-      ComposeReference{TFhirServiceRequest}(xml, 'action', elem.actionList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('supportingInfo') then
+    for i := 0 to elem.supportingInfoList.Count - 1 do
+      ComposeReference{TFhirReference}(xml, 'supportingInfo', elem.supportingInfoList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('note') then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
@@ -16459,7 +16598,7 @@ begin
       if (child.localName = 'url') then
         element.urlElement := ParseUri(child, path+'/url') {b}
       else if (child.localName = 'identifier') then
-        element.identifier := ParseIdentifier(child, path+'/identifier') {b}
+        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.localName = 'version') then
         element.versionElement := ParseString(child, path+'/version') {b}
       else if (child.localName = 'name') then
@@ -16531,7 +16670,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('url') then
     ComposeUri(xml, 'url', elem.urlElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
-    ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2a}
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
     ComposeString(xml, 'version', elem.versionElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
@@ -17219,9 +17359,9 @@ procedure TFHIRXmlComposer.ComposeCompositionAttesterChildren(xml : TXmlBuilder;
 begin
   composeBackboneElementChildren(xml, elem);
   ComposeEnum(xml, 'mode', elem.ModeElement, CODES_TFhirCompositionAttestationModeEnum);
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     ComposeDateTime(xml, 'time', elem.timeElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(xml, 'party', elem.party);{x.2a}
 end;
 
@@ -17409,12 +17549,12 @@ begin
     ComposeString(xml, 'title', elem.titleElement);{x.2b}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.authorList.Count - 1 do
       ComposeReference{TFhirPractitioner}(xml, 'author', elem.authorList[i]);
   if (SummaryOption in [soFull, soData]) then
     ComposeNarrative(xml, 'text', elem.text);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     ComposeEnum(xml, 'mode', elem.ModeElement, CODES_TFhirListModeEnum);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'orderedBy', elem.orderedBy);{x.2a}
@@ -17459,8 +17599,8 @@ begin
         element.statusElement := ParseEnum(CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum, path+'/status', child){1a}
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'class') then
-        element.class_ := ParseCodeableConcept(child, path+'/class') {b}
+      else if (child.localName = 'category') then
+        element.categoryList.Add(ParseCodeableConcept(child, path+'/category')){y.2}
       else if (child.localName = 'subject') then
         element.subject := ParseReference{TFhirReference}(child, path+'/subject') {b}
       else if (child.localName = 'encounter') then
@@ -17507,8 +17647,9 @@ begin
     ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2a}
   ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirCompositionStatusEnum);
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('class_') then
-    ComposeCodeableConcept(xml, 'class', elem.class_);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('category') then
+    for i := 0 to elem.categoryList.Count - 1 do
+      ComposeCodeableConcept(xml, 'category', elem.categoryList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
     ComposeReference{TFhirReference}(xml, 'subject', elem.subject);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('encounter') then
@@ -17519,12 +17660,12 @@ begin
   ComposeString(xml, 'title', elem.titleElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('confidentiality') then
     ComposeEnum(xml, 'confidentiality', elem.ConfidentialityElement, CODES_TFhirV3ConfidentialityClassificationEnum);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('attester') then
+  if (SummaryOption in [soFull, soData]) and doCompose('attester') then
     for i := 0 to elem.attesterList.Count - 1 do
       ComposeCompositionAttester(xml, 'attester', elem.attesterList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('custodian') then
     ComposeReference{TFhirOrganization}(xml, 'custodian', elem.custodian);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('relatesTo') then
+  if (SummaryOption in [soFull, soData]) and doCompose('relatesTo') then
     for i := 0 to elem.relatesToList.Count - 1 do
       ComposeCompositionRelatesTo(xml, 'relatesTo', elem.relatesToList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('event') then
@@ -18684,6 +18825,73 @@ end;
 
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+function TFHIRXmlParser.ParseContractContentDefinition(element : TMXmlElement; path : string) : TFhirContractContentDefinition;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirContractContentDefinition.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseContractContentDefinitionChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseContractContentDefinitionChild(element : TFhirContractContentDefinition; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'subType') then
+        element.subType := ParseCodeableConcept(child, path+'/subType') {b}
+      else if (child.localName = 'publisher') then
+        element.publisher := ParseReference{TFhirPerson}(child, path+'/publisher') {b}
+      else if (child.localName = 'publicationDate') then
+        element.publicationDateElement := ParseDateTime(child, path+'/publicationDate') {b}
+      else if (child.localName = 'publicationStatus') then
+        element.publicationStatusElement := ParseEnum(CODES_TFhirContractPublicationstatusEnum, SYSTEMS_TFhirContractPublicationstatusEnum, path+'/publicationStatus', child){1a}
+      else if (child.localName = 'copyright') then
+        element.copyrightElement := ParseMarkdown(child, path+'/copyright') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeContractContentDefinition(xml : TXmlBuilder; name : String; elem : TFhirContractContentDefinition);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeContractContentDefinitionChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeContractContentDefinitionChildren(xml : TXmlBuilder; elem : TFhirContractContentDefinition);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'subType', elem.subType);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirPerson}(xml, 'publisher', elem.publisher);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTime(xml, 'publicationDate', elem.publicationDateElement);{x.2b}
+  ComposeEnum(xml, 'publicationStatus', elem.PublicationStatusElement, CODES_TFhirContractPublicationstatusEnum);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'copyright', elem.copyrightElement);{x.2b}
+end;
+
 function TFHIRXmlParser.ParseContractTerm(element : TMXmlElement; path : string) : TFhirContractTerm;
 var
   child : TMXmlElement;
@@ -18715,20 +18923,24 @@ begin
         element.issuedElement := ParseDateTime(child, path+'/issued') {b}
       else if (child.localName = 'applies') then
         element.applies := ParsePeriod(child, path+'/applies') {b}
+      else if (child.localName = 'topicCodeableConcept') then
+        element.topic := ParseCodeableConcept(child, path+'/topicCodeableConcept'){x.3}
+      else if (child.localName = 'topicReference') then
+        element.topic := ParseReference(child, path+'/topicReference') {a}
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.localName = 'subType') then
         element.subType := ParseCodeableConcept(child, path+'/subType') {b}
+      else if (child.localName = 'text') then
+        element.textElement := ParseString(child, path+'/text') {b}
+      else if (child.localName = 'securityLabel') then
+        element.securityLabelList.Add(ParseContractTermSecurityLabel(child, path+'/securityLabel')){y.2}
       else if (child.localName = 'offer') then
         element.offer := ParseContractTermOffer(child, path+'/offer') {b}
       else if (child.localName = 'asset') then
         element.assetList.Add(ParseContractTermAsset(child, path+'/asset')){y.2}
-      else if (child.localName = 'agent') then
-        element.agentList.Add(ParseContractTermAgent(child, path+'/agent')){y.2}
       else if (child.localName = 'action') then
-        element.actionList.Add(ParseCodeableConcept(child, path+'/action')){y.2}
-      else if (child.localName = 'actionReason') then
-        element.actionReasonList.Add(ParseCodeableConcept(child, path+'/actionReason')){y.2}
+        element.actionList.Add(ParseContractTermAction(child, path+'/action')){y.2}
       else if (child.localName = 'group') then
         element.groupList.Add(ParseContractTerm(child, path+'/group')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
@@ -18757,26 +18969,94 @@ begin
     ComposeDateTime(xml, 'issued', elem.issuedElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(xml, 'applies', elem.applies);{x.2a}
+  if (SummaryOption in [soFull, soData]) and (elem.topic is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'topicCodeableConcept', TFhirCodeableConcept(elem.topic))
+  else if (SummaryOption in [soFull, soData]) and (elem.topic is TFhirReference) {2} then
+    ComposeReference(xml, 'topicReference', TFhirReference(elem.topic));
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'subType', elem.subType);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'text', elem.textElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.securityLabelList.Count - 1 do
+      ComposeContractTermSecurityLabel(xml, 'securityLabel', elem.securityLabelList[i]);
   ComposeContractTermOffer(xml, 'offer', elem.offer);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.assetList.Count - 1 do
       ComposeContractTermAsset(xml, 'asset', elem.assetList[i]);
   if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.agentList.Count - 1 do
-      ComposeContractTermAgent(xml, 'agent', elem.agentList[i]);
-  if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.actionList.Count - 1 do
-      ComposeCodeableConcept(xml, 'action', elem.actionList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.actionReasonList.Count - 1 do
-      ComposeCodeableConcept(xml, 'actionReason', elem.actionReasonList[i]);
+      ComposeContractTermAction(xml, 'action', elem.actionList[i]);
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.groupList.Count - 1 do
       ComposeContractTerm(xml, 'group', elem.groupList[i]);
+end;
+
+function TFHIRXmlParser.ParseContractTermSecurityLabel(element : TMXmlElement; path : string) : TFhirContractTermSecurityLabel;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirContractTermSecurityLabel.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseContractTermSecurityLabelChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseContractTermSecurityLabelChild(element : TFhirContractTermSecurityLabel; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'number') then
+        element.numberList.Add(ParseUnsignedInt(child, path+'/number')){y.2}
+      else if (child.localName = 'classification') then
+        element.classification := ParseCoding(child, path+'/classification') {b}
+      else if (child.localName = 'category') then
+        element.categoryList.Add(ParseCoding(child, path+'/category')){y.2}
+      else if (child.localName = 'control') then
+        element.controlList.Add(ParseCoding(child, path+'/control')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeContractTermSecurityLabel(xml : TXmlBuilder; name : String; elem : TFhirContractTermSecurityLabel);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeContractTermSecurityLabelChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeContractTermSecurityLabelChildren(xml : TXmlBuilder; elem : TFhirContractTermSecurityLabel);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.numberList.Count - 1 do
+      ComposeUnsignedInt(xml, 'number', elem.numberList[i]);
+  ComposeCoding(xml, 'classification', elem.classification);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.categoryList.Count - 1 do
+      ComposeCoding(xml, 'category', elem.categoryList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.controlList.Count - 1 do
+      ComposeCoding(xml, 'control', elem.controlList[i]);
 end;
 
 function TFHIRXmlParser.ParseContractTermOffer(element : TMXmlElement; path : string) : TFhirContractTermOffer;
@@ -18804,16 +19084,26 @@ end;
 function TFHIRXmlParser.ParseContractTermOfferChild(element : TFhirContractTermOffer; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'topic') then
+      if (child.localName = 'identifier') then
+        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'party') then
+        element.partyList.Add(ParseContractTermOfferParty(child, path+'/party')){y.2}
+      else if (child.localName = 'topic') then
         element.topic := ParseReference{TFhirReference}(child, path+'/topic') {b}
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.localName = 'decision') then
         element.decision := ParseCodeableConcept(child, path+'/decision') {b}
+      else if (child.localName = 'decisionMode') then
+        element.decisionModeList.Add(ParseCodeableConcept(child, path+'/decisionMode')){y.2}
+      else if (child.localName = 'answer') then
+        element.answerList.Add(ParseContractTermOfferAnswer(child, path+'/answer')){y.2}
       else if (child.localName = 'text') then
         element.textElement := ParseString(child, path+'/text') {b}
       else if (child.localName = 'linkId') then
-        element.linkIdElement := ParseString(child, path+'/linkId') {b}
+        element.linkIdList.Add(ParseString(child, path+'/linkId')){y.2}
+      else if (child.localName = 'securityLabelNumber') then
+        element.securityLabelNumberList.Add(ParseUnsignedInt(child, path+'/securityLabelNumber')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
@@ -18830,8 +19120,16 @@ begin
 end;
 
 procedure TFHIRXmlComposer.ComposeContractTermOfferChildren(xml : TXmlBuilder; elem : TFhirContractTermOffer);
+var
+  i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.partyList.Count - 1 do
+      ComposeContractTermOfferParty(xml, 'party', elem.partyList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(xml, 'topic', elem.topic);{x.2a}
   if (SummaryOption in [soFull, soData]) then
@@ -18839,9 +19137,166 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'decision', elem.decision);{x.2a}
   if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.decisionModeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'decisionMode', elem.decisionModeList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.answerList.Count - 1 do
+      ComposeContractTermOfferAnswer(xml, 'answer', elem.answerList[i]);
+  if (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'text', elem.textElement);{x.2b}
   if (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'linkId', elem.linkIdElement);{x.2b}
+    for i := 0 to elem.linkIdList.Count - 1 do
+      ComposeString(xml, 'linkId', elem.linkIdList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.securityLabelNumberList.Count - 1 do
+      ComposeUnsignedInt(xml, 'securityLabelNumber', elem.securityLabelNumberList[i]);
+end;
+
+function TFHIRXmlParser.ParseContractTermOfferParty(element : TMXmlElement; path : string) : TFhirContractTermOfferParty;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirContractTermOfferParty.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseContractTermOfferPartyChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseContractTermOfferPartyChild(element : TFhirContractTermOfferParty; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'reference') then
+        element.referenceList.Add(ParseReference{TFhirPatient}(child, path+'/reference')){y.2}
+      else if (child.localName = 'role') then
+        element.role := ParseCodeableConcept(child, path+'/role') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeContractTermOfferParty(xml : TXmlBuilder; name : String; elem : TFhirContractTermOfferParty);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeContractTermOfferPartyChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeContractTermOfferPartyChildren(xml : TXmlBuilder; elem : TFhirContractTermOfferParty);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  for i := 0 to elem.referenceList.Count - 1 do
+      ComposeReference{TFhirPatient}(xml, 'reference', elem.referenceList[i]);
+  ComposeCodeableConcept(xml, 'role', elem.role);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseContractTermOfferAnswer(element : TMXmlElement; path : string) : TFhirContractTermOfferAnswer;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirContractTermOfferAnswer.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseContractTermOfferAnswerChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseContractTermOfferAnswerChild(element : TFhirContractTermOfferAnswer; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'valueAttachment') then
+        element.value := ParseAttachment(child, path+'/valueAttachment'){x.3}
+      else if (child.localName = 'valueCoding') then
+        element.value := ParseCoding(child, path+'/valueCoding'){x.3}
+      else if (child.localName = 'valueQuantity') then
+        element.value := ParseQuantity(child, path+'/valueQuantity'){x.3}
+      else if (child.localName = 'valueReference') then
+        element.value := ParseReference(child, path+'/valueReference') {a}
+      else if (child.localName = 'valueBoolean') then
+        element.value := ParseBoolean(child, path+'/valueBoolean'){x.3}
+      else if (child.localName = 'valueDecimal') then
+        element.value := ParseDecimal(child, path+'/valueDecimal'){x.3}
+      else if (child.localName = 'valueInteger') then
+        element.value := ParseInteger(child, path+'/valueInteger'){x.3}
+      else if (child.localName = 'valueDate') then
+        element.value := ParseDate(child, path+'/valueDate'){x.3}
+      else if (child.localName = 'valueDateTime') then
+        element.value := ParseDateTime(child, path+'/valueDateTime'){x.3}
+      else if (child.localName = 'valueTime') then
+        element.value := ParseTime(child, path+'/valueTime'){x.3}
+      else if (child.localName = 'valueString') then
+        element.value := ParseString(child, path+'/valueString'){x.3}
+      else if (child.localName = 'valueUri') then
+        element.value := ParseUri(child, path+'/valueUri'){x.3}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeContractTermOfferAnswer(xml : TXmlBuilder; name : String; elem : TFhirContractTermOfferAnswer);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeContractTermOfferAnswerChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeContractTermOfferAnswerChildren(xml : TXmlBuilder; elem : TFhirContractTermOfferAnswer);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (elem.value is TFhirAttachment) {6} then
+    ComposeAttachment(xml, 'valueAttachment', TFhirAttachment(elem.value))
+  else if (elem.value is TFhirCoding) {6} then
+    ComposeCoding(xml, 'valueCoding', TFhirCoding(elem.value))
+  else if (elem.value is TFhirQuantity) {6} then
+    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
+  else if (elem.value is TFhirReference) {2} then
+    ComposeReference(xml, 'valueReference', TFhirReference(elem.value))
+  else if (elem.value is TFhirBoolean) {6} then
+    ComposeBoolean(xml, 'valueBoolean', TFhirBoolean(elem.value))
+  else if (elem.value is TFhirDecimal) {6} then
+    ComposeDecimal(xml, 'valueDecimal', TFhirDecimal(elem.value))
+  else if (elem.value is TFhirInteger) {6} then
+    ComposeInteger(xml, 'valueInteger', TFhirInteger(elem.value))
+  else if (elem.value is TFhirDate) {6} then
+    ComposeDate(xml, 'valueDate', TFhirDate(elem.value))
+  else if (elem.value is TFhirDateTime) {6} then
+    ComposeDateTime(xml, 'valueDateTime', TFhirDateTime(elem.value))
+  else if (elem.value is TFhirTime) {6} then
+    ComposeTime(xml, 'valueTime', TFhirTime(elem.value))
+  else if (elem.value is TFhirString) {6} then
+    ComposeString(xml, 'valueString', TFhirString(elem.value))
+  else if (elem.value is TFhirUri) {6} then
+    ComposeUri(xml, 'valueUri', TFhirUri(elem.value));
 end;
 
 function TFHIRXmlParser.ParseContractTermAsset(element : TMXmlElement; path : string) : TFhirContractTermAsset;
@@ -18869,20 +19324,36 @@ end;
 function TFHIRXmlParser.ParseContractTermAssetChild(element : TFhirContractTermAsset; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'class') then
-        element.class_ := ParseCoding(child, path+'/class') {b}
-      else if (child.localName = 'code') then
-        element.code := ParseCoding(child, path+'/code') {b}
+      if (child.localName = 'scope') then
+        element.scope := ParseCodeableConcept(child, path+'/scope') {b}
+      else if (child.localName = 'type') then
+        element.type_List.Add(ParseCodeableConcept(child, path+'/type')){y.2}
+      else if (child.localName = 'typeReference') then
+        element.typeReferenceList.Add(ParseReference{TFhirReference}(child, path+'/typeReference')){y.2}
+      else if (child.localName = 'subtype') then
+        element.subtypeList.Add(ParseCodeableConcept(child, path+'/subtype')){y.2}
+      else if (child.localName = 'relationship') then
+        element.relationship := ParseCoding(child, path+'/relationship') {b}
+      else if (child.localName = 'context') then
+        element.contextList.Add(ParseContractTermAssetContext(child, path+'/context')){y.2}
+      else if (child.localName = 'condition') then
+        element.conditionElement := ParseString(child, path+'/condition') {b}
+      else if (child.localName = 'periodType') then
+        element.periodTypeList.Add(ParseCodeableConcept(child, path+'/periodType')){y.2}
       else if (child.localName = 'period') then
-        element.period := ParsePeriod(child, path+'/period') {b}
-      else if (child.localName = 'dataPeriod') then
-        element.dataPeriod := ParsePeriod(child, path+'/dataPeriod') {b}
-      else if (child.localName = 'data') then
-        element.dataList.Add(ParseContractTermAssetData(child, path+'/data')){y.2}
+        element.periodList.Add(ParsePeriod(child, path+'/period')){y.2}
+      else if (child.localName = 'usePeriod') then
+        element.usePeriodList.Add(ParsePeriod(child, path+'/usePeriod')){y.2}
+      else if (child.localName = 'text') then
+        element.textElement := ParseString(child, path+'/text') {b}
+      else if (child.localName = 'linkId') then
+        element.linkIdList.Add(ParseString(child, path+'/linkId')){y.2}
+      else if (child.localName = 'answer') then
+        element.answerList.Add(ParseContractTermOfferAnswer(child, path+'/answer')){y.2}
+      else if (child.localName = 'securityLabelNumber') then
+        element.securityLabelNumberList.Add(ParseUnsignedInt(child, path+'/securityLabelNumber')){y.2}
       else if (child.localName = 'valuedItem') then
         element.valuedItemList.Add(ParseContractTermAssetValuedItem(child, path+'/valuedItem')){y.2}
-      else if (child.localName = 'securityLabel') then
-        element.securityLabelList.Add(ParseCoding(child, path+'/securityLabel')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
@@ -18904,35 +19375,59 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCoding(xml, 'class', elem.class_);{x.2a}
+    ComposeCodeableConcept(xml, 'scope', elem.scope);{x.2a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCoding(xml, 'code', elem.code);{x.2a}
+    for i := 0 to elem.type_List.Count - 1 do
+      ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
   if (SummaryOption in [soFull, soData]) then
-    ComposePeriod(xml, 'period', elem.period);{x.2a}
+    for i := 0 to elem.typeReferenceList.Count - 1 do
+      ComposeReference{TFhirReference}(xml, 'typeReference', elem.typeReferenceList[i]);
   if (SummaryOption in [soFull, soData]) then
-    ComposePeriod(xml, 'dataPeriod', elem.dataPeriod);{x.2a}
+    for i := 0 to elem.subtypeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'subtype', elem.subtypeList[i]);
   if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.dataList.Count - 1 do
-      ComposeContractTermAssetData(xml, 'data', elem.dataList[i]);
+    ComposeCoding(xml, 'relationship', elem.relationship);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.contextList.Count - 1 do
+      ComposeContractTermAssetContext(xml, 'context', elem.contextList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'condition', elem.conditionElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.periodTypeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'periodType', elem.periodTypeList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.periodList.Count - 1 do
+      ComposePeriod(xml, 'period', elem.periodList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.usePeriodList.Count - 1 do
+      ComposePeriod(xml, 'usePeriod', elem.usePeriodList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'text', elem.textElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.linkIdList.Count - 1 do
+      ComposeString(xml, 'linkId', elem.linkIdList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.answerList.Count - 1 do
+      ComposeContractTermOfferAnswer(xml, 'answer', elem.answerList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.securityLabelNumberList.Count - 1 do
+      ComposeUnsignedInt(xml, 'securityLabelNumber', elem.securityLabelNumberList[i]);
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.valuedItemList.Count - 1 do
       ComposeContractTermAssetValuedItem(xml, 'valuedItem', elem.valuedItemList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.securityLabelList.Count - 1 do
-      ComposeCoding(xml, 'securityLabel', elem.securityLabelList[i]);
 end;
 
-function TFHIRXmlParser.ParseContractTermAssetData(element : TMXmlElement; path : string) : TFhirContractTermAssetData;
+function TFHIRXmlParser.ParseContractTermAssetContext(element : TMXmlElement; path : string) : TFhirContractTermAssetContext;
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractTermAssetData.create;
+  result := TFhirContractTermAssetContext.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseContractTermAssetDataChild(result, path, child) then
+      if not ParseContractTermAssetContextChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -18944,35 +19439,42 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseContractTermAssetDataChild(element : TFhirContractTermAssetData; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseContractTermAssetContextChild(element : TFhirContractTermAssetContext; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'meaning') then
-        element.meaningElement := ParseEnum(CODES_TFhirContractDataMeaningEnum, SYSTEMS_TFhirContractDataMeaningEnum, path+'/meaning', child){1a}
-      else if (child.localName = 'reference') then
+      if (child.localName = 'reference') then
         element.reference := ParseReference{TFhirReference}(child, path+'/reference') {b}
+      else if (child.localName = 'code') then
+        element.codeList.Add(ParseCodeableConcept(child, path+'/code')){y.2}
+      else if (child.localName = 'text') then
+        element.textElement := ParseString(child, path+'/text') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeContractTermAssetData(xml : TXmlBuilder; name : String; elem : TFhirContractTermAssetData);
+procedure TFHIRXmlComposer.ComposeContractTermAssetContext(xml : TXmlBuilder; name : String; elem : TFhirContractTermAssetContext);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
-  composeContractTermAssetDataChildren(xml, elem);
+  composeContractTermAssetContextChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeContractTermAssetDataChildren(xml : TXmlBuilder; elem : TFhirContractTermAssetData);
+procedure TFHIRXmlComposer.ComposeContractTermAssetContextChildren(xml : TXmlBuilder; elem : TFhirContractTermAssetContext);
+var
+  i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeEnum(xml, 'meaning', elem.MeaningElement, CODES_TFhirContractDataMeaningEnum);
-  if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(xml, 'reference', elem.reference);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.codeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'code', elem.codeList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'text', elem.textElement);{x.2b}
 end;
 
 function TFHIRXmlParser.ParseContractTermAssetValuedItem(element : TMXmlElement; path : string) : TFhirContractTermAssetValuedItem;
@@ -19018,6 +19520,18 @@ begin
         element.pointsElement := ParseDecimal(child, path+'/points') {b}
       else if (child.localName = 'net') then
         element.net := ParseMoney(child, path+'/net') {b}
+      else if (child.localName = 'payment') then
+        element.paymentElement := ParseString(child, path+'/payment') {b}
+      else if (child.localName = 'paymentDate') then
+        element.paymentDateElement := ParseDateTime(child, path+'/paymentDate') {b}
+      else if (child.localName = 'responsible') then
+        element.responsible := ParseReference{TFhirOrganization}(child, path+'/responsible') {b}
+      else if (child.localName = 'recipient') then
+        element.recipient := ParseReference{TFhirOrganization}(child, path+'/recipient') {b}
+      else if (child.localName = 'linkId') then
+        element.linkIdList.Add(ParseString(child, path+'/linkId')){y.2}
+      else if (child.localName = 'securityLabelNumber') then
+        element.securityLabelNumberList.Add(ParseUnsignedInt(child, path+'/securityLabelNumber')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
@@ -19034,6 +19548,8 @@ begin
 end;
 
 procedure TFHIRXmlComposer.ComposeContractTermAssetValuedItemChildren(xml : TXmlBuilder; elem : TFhirContractTermAssetValuedItem);
+var
+  i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) and (elem.entity is TFhirCodeableConcept) {6} then
@@ -19054,19 +19570,33 @@ begin
     ComposeDecimal(xml, 'points', elem.pointsElement);{x.2b}
   if (SummaryOption in [soFull, soData]) then
     ComposeMoney(xml, 'net', elem.net);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'payment', elem.paymentElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTime(xml, 'paymentDate', elem.paymentDateElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirOrganization}(xml, 'responsible', elem.responsible);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirOrganization}(xml, 'recipient', elem.recipient);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.linkIdList.Count - 1 do
+      ComposeString(xml, 'linkId', elem.linkIdList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.securityLabelNumberList.Count - 1 do
+      ComposeUnsignedInt(xml, 'securityLabelNumber', elem.securityLabelNumberList[i]);
 end;
 
-function TFHIRXmlParser.ParseContractTermAgent(element : TMXmlElement; path : string) : TFhirContractTermAgent;
+function TFHIRXmlParser.ParseContractTermAction(element : TMXmlElement; path : string) : TFhirContractTermAction;
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractTermAgent.create;
+  result := TFhirContractTermAction.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseContractTermAgentChild(result, path, child) then
+      if not ParseContractTermActionChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -19078,37 +19608,186 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseContractTermAgentChild(element : TFhirContractTermAgent; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseContractTermActionChild(element : TFhirContractTermAction; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'actor') then
-        element.actor := ParseReference{TFhirContract}(child, path+'/actor') {b}
-      else if (child.localName = 'role') then
-        element.roleList.Add(ParseCodeableConcept(child, path+'/role')){y.2}
+      if (child.localName = 'doNotPerform') then
+        element.doNotPerformElement := ParseBoolean(child, path+'/doNotPerform') {b}
+      else if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'subject') then
+        element.subjectList.Add(ParseContractTermActionSubject(child, path+'/subject')){y.2}
+      else if (child.localName = 'intent') then
+        element.intent := ParseCodeableConcept(child, path+'/intent') {b}
+      else if (child.localName = 'linkId') then
+        element.linkIdList.Add(ParseString(child, path+'/linkId')){y.2}
+      else if (child.localName = 'status') then
+        element.status := ParseCodeableConcept(child, path+'/status') {b}
+      else if (child.localName = 'context') then
+        element.context := ParseReference{TFhirEncounter}(child, path+'/context') {b}
+      else if (child.localName = 'contextLinkId') then
+        element.contextLinkIdList.Add(ParseString(child, path+'/contextLinkId')){y.2}
+      else if (child.localName = 'occurrencePeriod') then
+        element.occurrence := ParsePeriod(child, path+'/occurrencePeriod'){x.3}
+      else if (child.localName = 'occurrenceTiming') then
+        element.occurrence := ParseTiming(child, path+'/occurrenceTiming'){x.3}
+      else if (child.localName = 'occurrenceDateTime') then
+        element.occurrence := ParseDateTime(child, path+'/occurrenceDateTime'){x.3}
+      else if (child.localName = 'requester') then
+        element.requesterList.Add(ParseReference{TFhirPatient}(child, path+'/requester')){y.2}
+      else if (child.localName = 'requesterLinkId') then
+        element.requesterLinkIdList.Add(ParseString(child, path+'/requesterLinkId')){y.2}
+      else if (child.localName = 'performerType') then
+        element.performerTypeList.Add(ParseCodeableConcept(child, path+'/performerType')){y.2}
+      else if (child.localName = 'performerRole') then
+        element.performerRole := ParseCodeableConcept(child, path+'/performerRole') {b}
+      else if (child.localName = 'performer') then
+        element.performer := ParseReference{TFhirPerson}(child, path+'/performer') {b}
+      else if (child.localName = 'performerLinkId') then
+        element.performerLinkIdList.Add(ParseString(child, path+'/performerLinkId')){y.2}
+      else if (child.localName = 'reasonCode') then
+        element.reasonCodeList.Add(ParseCodeableConcept(child, path+'/reasonCode')){y.2}
+      else if (child.localName = 'reasonReference') then
+        element.reasonReferenceList.Add(ParseReference{TFhirCondition}(child, path+'/reasonReference')){y.2}
+      else if (child.localName = 'reason') then
+        element.reasonList.Add(ParseString(child, path+'/reason')){y.2}
+      else if (child.localName = 'reasonLinkId') then
+        element.reasonLinkIdList.Add(ParseString(child, path+'/reasonLinkId')){y.2}
+      else if (child.localName = 'note') then
+        element.noteList.Add(ParseAnnotation(child, path+'/note')){y.2}
+      else if (child.localName = 'securityLabelNumber') then
+        element.securityLabelNumberList.Add(ParseUnsignedInt(child, path+'/securityLabelNumber')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeContractTermAgent(xml : TXmlBuilder; name : String; elem : TFhirContractTermAgent);
+procedure TFHIRXmlComposer.ComposeContractTermAction(xml : TXmlBuilder; name : String; elem : TFhirContractTermAction);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
-  composeContractTermAgentChildren(xml, elem);
+  composeContractTermActionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeContractTermAgentChildren(xml : TXmlBuilder; elem : TFhirContractTermAgent);
+procedure TFHIRXmlComposer.ComposeContractTermActionChildren(xml : TXmlBuilder; elem : TFhirContractTermAction);
 var
   i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
-  ComposeReference{TFhirContract}(xml, 'actor', elem.actor);{x.2a}
   if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.roleList.Count - 1 do
-      ComposeCodeableConcept(xml, 'role', elem.roleList[i]);
+    ComposeBoolean(xml, 'doNotPerform', elem.doNotPerformElement);{x.2b}
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeContractTermActionSubject(xml, 'subject', elem.subjectList[i]);
+  ComposeCodeableConcept(xml, 'intent', elem.intent);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.linkIdList.Count - 1 do
+      ComposeString(xml, 'linkId', elem.linkIdList[i]);
+  ComposeCodeableConcept(xml, 'status', elem.status);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirEncounter}(xml, 'context', elem.context);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.contextLinkIdList.Count - 1 do
+      ComposeString(xml, 'contextLinkId', elem.contextLinkIdList[i]);
+  if (SummaryOption in [soFull, soData]) and (elem.occurrence is TFhirPeriod) {6} then
+    ComposePeriod(xml, 'occurrencePeriod', TFhirPeriod(elem.occurrence))
+  else if (SummaryOption in [soFull, soData]) and (elem.occurrence is TFhirTiming) {6} then
+    ComposeTiming(xml, 'occurrenceTiming', TFhirTiming(elem.occurrence))
+  else if (SummaryOption in [soFull, soData]) and (elem.occurrence is TFhirDateTime) {6} then
+    ComposeDateTime(xml, 'occurrenceDateTime', TFhirDateTime(elem.occurrence));
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.requesterList.Count - 1 do
+      ComposeReference{TFhirPatient}(xml, 'requester', elem.requesterList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.requesterLinkIdList.Count - 1 do
+      ComposeString(xml, 'requesterLinkId', elem.requesterLinkIdList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.performerTypeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'performerType', elem.performerTypeList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'performerRole', elem.performerRole);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirPerson}(xml, 'performer', elem.performer);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.performerLinkIdList.Count - 1 do
+      ComposeString(xml, 'performerLinkId', elem.performerLinkIdList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.reasonCodeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'reasonCode', elem.reasonCodeList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.reasonReferenceList.Count - 1 do
+      ComposeReference{TFhirCondition}(xml, 'reasonReference', elem.reasonReferenceList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.reasonList.Count - 1 do
+      ComposeString(xml, 'reason', elem.reasonList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.reasonLinkIdList.Count - 1 do
+      ComposeString(xml, 'reasonLinkId', elem.reasonLinkIdList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.noteList.Count - 1 do
+      ComposeAnnotation(xml, 'note', elem.noteList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.securityLabelNumberList.Count - 1 do
+      ComposeUnsignedInt(xml, 'securityLabelNumber', elem.securityLabelNumberList[i]);
+end;
+
+function TFHIRXmlParser.ParseContractTermActionSubject(element : TMXmlElement; path : string) : TFhirContractTermActionSubject;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirContractTermActionSubject.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseContractTermActionSubjectChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseContractTermActionSubjectChild(element : TFhirContractTermActionSubject; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'reference') then
+        element.referenceList.Add(ParseReference{TFhirPatient}(child, path+'/reference')){y.2}
+      else if (child.localName = 'role') then
+        element.role := ParseCodeableConcept(child, path+'/role') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeContractTermActionSubject(xml : TXmlBuilder; name : String; elem : TFhirContractTermActionSubject);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeContractTermActionSubjectChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeContractTermActionSubjectChildren(xml : TXmlBuilder; elem : TFhirContractTermActionSubject);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  for i := 0 to elem.referenceList.Count - 1 do
+      ComposeReference{TFhirPatient}(xml, 'reference', elem.referenceList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'role', elem.role);{x.2a}
 end;
 
 function TFHIRXmlParser.ParseContractSigner(element : TMXmlElement; path : string) : TFhirContractSigner;
@@ -19354,26 +20033,62 @@ begin
   result := true;
       if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'url') then
+        element.urlElement := ParseUri(child, path+'/url') {b}
+      else if (child.localName = 'version') then
+        element.versionElement := ParseString(child, path+'/version') {b}
       else if (child.localName = 'status') then
         element.statusElement := ParseEnum(CODES_TFhirContractStatusEnum, SYSTEMS_TFhirContractStatusEnum, path+'/status', child){1a}
+      else if (child.localName = 'legalState') then
+        element.legalState := ParseCodeableConcept(child, path+'/legalState') {b}
+      else if (child.localName = 'instantiatesCanonical') then
+        element.instantiatesCanonical := ParseReference{TFhirContract}(child, path+'/instantiatesCanonical') {b}
+      else if (child.localName = 'instantiatesUri') then
+        element.instantiatesUriElement := ParseUri(child, path+'/instantiatesUri') {b}
       else if (child.localName = 'contentDerivative') then
         element.contentDerivative := ParseCodeableConcept(child, path+'/contentDerivative') {b}
       else if (child.localName = 'issued') then
         element.issuedElement := ParseDateTime(child, path+'/issued') {b}
       else if (child.localName = 'applies') then
         element.applies := ParsePeriod(child, path+'/applies') {b}
+      else if (child.localName = 'expirationType') then
+        element.expirationType := ParseCodeableConcept(child, path+'/expirationType') {b}
       else if (child.localName = 'subject') then
         element.subjectList.Add(ParseReference{TFhirReference}(child, path+'/subject')){y.2}
       else if (child.localName = 'authority') then
         element.authorityList.Add(ParseReference{TFhirOrganization}(child, path+'/authority')){y.2}
       else if (child.localName = 'domain') then
         element.domainList.Add(ParseReference{TFhirLocation}(child, path+'/domain')){y.2}
+      else if (child.localName = 'site') then
+        element.siteList.Add(ParseReference{TFhirLocation}(child, path+'/site')){y.2}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'title') then
+        element.titleElement := ParseString(child, path+'/title') {b}
+      else if (child.localName = 'subtitle') then
+        element.subtitleElement := ParseString(child, path+'/subtitle') {b}
+      else if (child.localName = 'alias') then
+        element.aliasList.Add(ParseString(child, path+'/alias')){y.2}
+      else if (child.localName = 'author') then
+        element.author := ParseReference{TFhirPerson}(child, path+'/author') {b}
+      else if (child.localName = 'scope') then
+        element.scope := ParseCodeableConcept(child, path+'/scope') {b}
+      else if (child.localName = 'topicCodeableConcept') then
+        element.topic := ParseCodeableConcept(child, path+'/topicCodeableConcept'){x.3}
+      else if (child.localName = 'topicReference') then
+        element.topic := ParseReference(child, path+'/topicReference') {a}
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.localName = 'subType') then
         element.subTypeList.Add(ParseCodeableConcept(child, path+'/subType')){y.2}
+      else if (child.localName = 'contentDefinition') then
+        element.contentDefinition := ParseContractContentDefinition(child, path+'/contentDefinition') {b}
       else if (child.localName = 'term') then
         element.termList.Add(ParseContractTerm(child, path+'/term')){y.2}
+      else if (child.localName = 'supportingInfo') then
+        element.supportingInfoList.Add(ParseReference{TFhirReference}(child, path+'/supportingInfo')){y.2}
+      else if (child.localName = 'relevantHistory') then
+        element.relevantHistoryList.Add(ParseReference{TFhirProvenance}(child, path+'/relevantHistory')){y.2}
       else if (child.localName = 'signer') then
         element.signerList.Add(ParseContractSigner(child, path+'/signer')){y.2}
       else if (child.localName = 'friendly') then
@@ -19381,7 +20096,7 @@ begin
       else if (child.localName = 'legal') then
         element.legalList.Add(ParseContractLegal(child, path+'/legal')){y.2}
       else if (child.localName = 'rule') then
-        element.rule := ParseContractRule(child, path+'/rule') {b}
+        element.ruleList.Add(ParseContractRule(child, path+'/rule')){y.2}
       else if (child.localName = 'legallyBindingAttachment') then
         element.legallyBinding := ParseAttachment(child, path+'/legallyBindingAttachment'){x.3}
       else if (child.localName = 'legallyBindingReference') then
@@ -19409,14 +20124,26 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('url') then
+    ComposeUri(xml, 'url', elem.urlElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
+    ComposeString(xml, 'version', elem.versionElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
     ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirContractStatusEnum);
+  if (SummaryOption in [soFull, soData]) and doCompose('legalState') then
+    ComposeCodeableConcept(xml, 'legalState', elem.legalState);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('instantiatesCanonical') then
+    ComposeReference{TFhirContract}(xml, 'instantiatesCanonical', elem.instantiatesCanonical);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('instantiatesUri') then
+    ComposeUri(xml, 'instantiatesUri', elem.instantiatesUriElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('contentDerivative') then
     ComposeCodeableConcept(xml, 'contentDerivative', elem.contentDerivative);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('issued') then
     ComposeDateTime(xml, 'issued', elem.issuedElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('applies') then
     ComposePeriod(xml, 'applies', elem.applies);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('expirationType') then
+    ComposeCodeableConcept(xml, 'expirationType', elem.expirationType);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
     for i := 0 to elem.subjectList.Count - 1 do
       ComposeReference{TFhirReference}(xml, 'subject', elem.subjectList[i]);
@@ -19426,14 +20153,42 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('domain') then
     for i := 0 to elem.domainList.Count - 1 do
       ComposeReference{TFhirLocation}(xml, 'domain', elem.domainList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('site') then
+    for i := 0 to elem.siteList.Count - 1 do
+      ComposeReference{TFhirLocation}(xml, 'site', elem.siteList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('title') then
+    ComposeString(xml, 'title', elem.titleElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('subtitle') then
+    ComposeString(xml, 'subtitle', elem.subtitleElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('alias') then
+    for i := 0 to elem.aliasList.Count - 1 do
+      ComposeString(xml, 'alias', elem.aliasList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('author') then
+    ComposeReference{TFhirPerson}(xml, 'author', elem.author);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('scope') then
+    ComposeCodeableConcept(xml, 'scope', elem.scope);{x.2a}
+  if (SummaryOption in [soFull, soData]) and (elem.topic is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'topicCodeableConcept', TFhirCodeableConcept(elem.topic))
+  else if (SummaryOption in [soFull, soData]) and (elem.topic is TFhirReference) {2} then
+    ComposeReference(xml, 'topicReference', TFhirReference(elem.topic));
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
     ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subType') then
     for i := 0 to elem.subTypeList.Count - 1 do
       ComposeCodeableConcept(xml, 'subType', elem.subTypeList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('contentDefinition') then
+    ComposeContractContentDefinition(xml, 'contentDefinition', elem.contentDefinition);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('term') then
     for i := 0 to elem.termList.Count - 1 do
       ComposeContractTerm(xml, 'term', elem.termList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('supportingInfo') then
+    for i := 0 to elem.supportingInfoList.Count - 1 do
+      ComposeReference{TFhirReference}(xml, 'supportingInfo', elem.supportingInfoList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('relevantHistory') then
+    for i := 0 to elem.relevantHistoryList.Count - 1 do
+      ComposeReference{TFhirProvenance}(xml, 'relevantHistory', elem.relevantHistoryList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('signer') then
     for i := 0 to elem.signerList.Count - 1 do
       ComposeContractSigner(xml, 'signer', elem.signerList[i]);
@@ -19444,7 +20199,8 @@ begin
     for i := 0 to elem.legalList.Count - 1 do
       ComposeContractLegal(xml, 'legal', elem.legalList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('rule') then
-    ComposeContractRule(xml, 'rule', elem.rule);{x.2a}
+    for i := 0 to elem.ruleList.Count - 1 do
+      ComposeContractRule(xml, 'rule', elem.ruleList[i]);
   if (SummaryOption in [soFull, soData]) and (elem.legallyBinding is TFhirAttachment) {6} then
     ComposeAttachment(xml, 'legallyBindingAttachment', TFhirAttachment(elem.legallyBinding))
   else if (SummaryOption in [soFull, soData]) and (elem.legallyBinding is TFhirReference) {2} then
@@ -19677,6 +20433,776 @@ begin
 end;
 
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+function TFHIRXmlParser.ParseCoverageEligibilityRequestSupportingInformation(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequestSupportingInformation;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityRequestSupportingInformation.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityRequestSupportingInformationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequestSupportingInformationChild(element : TFhirCoverageEligibilityRequestSupportingInformation; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'sequence') then
+        element.sequenceElement := ParsePositiveInt(child, path+'/sequence') {b}
+      else if (child.localName = 'information') then
+        element.information := ParseReference{TFhirReference}(child, path+'/information') {b}
+      else if (child.localName = 'appliesToAll') then
+        element.appliesToAllElement := ParseBoolean(child, path+'/appliesToAll') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestSupportingInformation(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityRequestSupportingInformation);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityRequestSupportingInformationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestSupportingInformationChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequestSupportingInformation);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposePositiveInt(xml, 'sequence', elem.sequenceElement);{x.2b}
+  ComposeReference{TFhirReference}(xml, 'information', elem.information);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'appliesToAll', elem.appliesToAllElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequestInsurance(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequestInsurance;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityRequestInsurance.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityRequestInsuranceChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequestInsuranceChild(element : TFhirCoverageEligibilityRequestInsurance; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'focal') then
+        element.focalElement := ParseBoolean(child, path+'/focal') {b}
+      else if (child.localName = 'coverage') then
+        element.coverage := ParseReference{TFhirCoverage}(child, path+'/coverage') {b}
+      else if (child.localName = 'businessArrangement') then
+        element.businessArrangementElement := ParseString(child, path+'/businessArrangement') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestInsurance(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityRequestInsurance);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityRequestInsuranceChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestInsuranceChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequestInsurance);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'focal', elem.focalElement);{x.2b}
+  ComposeReference{TFhirCoverage}(xml, 'coverage', elem.coverage);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'businessArrangement', elem.businessArrangementElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequestItem(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequestItem;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityRequestItem.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityRequestItemChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequestItemChild(element : TFhirCoverageEligibilityRequestItem; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'supportingInformationSequence') then
+        element.supportingInformationSequenceList.Add(ParsePositiveInt(child, path+'/supportingInformationSequence')){y.2}
+      else if (child.localName = 'category') then
+        element.category := ParseCodeableConcept(child, path+'/category') {b}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
+      else if (child.localName = 'modifier') then
+        element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
+      else if (child.localName = 'provider') then
+        element.provider := ParseReference{TFhirPractitioner}(child, path+'/provider') {b}
+      else if (child.localName = 'quantity') then
+        element.quantity := ParseQuantity(child, path+'/quantity') {b}
+      else if (child.localName = 'unitPrice') then
+        element.unitPrice := ParseMoney(child, path+'/unitPrice') {b}
+      else if (child.localName = 'facility') then
+        element.facility := ParseReference{TFhirLocation}(child, path+'/facility') {b}
+      else if (child.localName = 'diagnosis') then
+        element.diagnosisList.Add(ParseCoverageEligibilityRequestItemDiagnosis(child, path+'/diagnosis')){y.2}
+      else if (child.localName = 'detail') then
+        element.detailList.Add(ParseReference{TFhirReference}(child, path+'/detail')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestItem(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityRequestItem);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityRequestItemChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestItemChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequestItem);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.supportingInformationSequenceList.Count - 1 do
+      ComposePositiveInt(xml, 'supportingInformationSequence', elem.supportingInformationSequenceList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.modifierList.Count - 1 do
+      ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirPractitioner}(xml, 'provider', elem.provider);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMoney(xml, 'unitPrice', elem.unitPrice);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirLocation}(xml, 'facility', elem.facility);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.diagnosisList.Count - 1 do
+      ComposeCoverageEligibilityRequestItemDiagnosis(xml, 'diagnosis', elem.diagnosisList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.detailList.Count - 1 do
+      ComposeReference{TFhirReference}(xml, 'detail', elem.detailList[i]);
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequestItemDiagnosis(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequestItemDiagnosis;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityRequestItemDiagnosis.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityRequestItemDiagnosisChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequestItemDiagnosisChild(element : TFhirCoverageEligibilityRequestItemDiagnosis; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'diagnosisCodeableConcept') then
+        element.diagnosis := ParseCodeableConcept(child, path+'/diagnosisCodeableConcept'){x.3}
+      else if (child.localName = 'diagnosisReference') then
+        element.diagnosis := ParseReference(child, path+'/diagnosisReference') {a}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestItemDiagnosis(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityRequestItemDiagnosis);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityRequestItemDiagnosisChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestItemDiagnosisChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequestItemDiagnosis);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) and (elem.diagnosis is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'diagnosisCodeableConcept', TFhirCodeableConcept(elem.diagnosis))
+  else if (SummaryOption in [soFull, soData]) and (elem.diagnosis is TFhirReference) {2} then
+    ComposeReference(xml, 'diagnosisReference', TFhirReference(elem.diagnosis));
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequest(element : TMXmlElement; path : string) : TFhirCoverageEligibilityRequest;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityRequest.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityRequestChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityRequestChild(element : TFhirCoverageEligibilityRequest; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'identifier') then
+        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'status') then
+        element.statusElement := ParseEnum(CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, path+'/status', child){1a}
+      else if (child.localName = 'priority') then
+        element.priority := ParseCodeableConcept(child, path+'/priority') {b}
+      else if (child.localName = 'purpose') then
+        element.purposeList.Add(ParseEnum(CODES_TFhirEligibilityrequestPurposeEnum, SYSTEMS_TFhirEligibilityrequestPurposeEnum, path+'/purpose', child)){y.1}
+      else if (child.localName = 'patient') then
+        element.patient := ParseReference{TFhirPatient}(child, path+'/patient') {b}
+      else if (child.localName = 'servicedPeriod') then
+        element.serviced := ParsePeriod(child, path+'/servicedPeriod'){x.3}
+      else if (child.localName = 'servicedDate') then
+        element.serviced := ParseDate(child, path+'/servicedDate'){x.3}
+      else if (child.localName = 'created') then
+        element.createdElement := ParseDateTime(child, path+'/created') {b}
+      else if (child.localName = 'enterer') then
+        element.enterer := ParseReference{TFhirPractitioner}(child, path+'/enterer') {b}
+      else if (child.localName = 'provider') then
+        element.provider := ParseReference{TFhirPractitioner}(child, path+'/provider') {b}
+      else if (child.localName = 'insurer') then
+        element.insurer := ParseReference{TFhirOrganization}(child, path+'/insurer') {b}
+      else if (child.localName = 'facility') then
+        element.facility := ParseReference{TFhirLocation}(child, path+'/facility') {b}
+      else if (child.localName = 'supportingInformation') then
+        element.supportingInformationList.Add(ParseCoverageEligibilityRequestSupportingInformation(child, path+'/supportingInformation')){y.2}
+      else if (child.localName = 'insurance') then
+        element.insuranceList.Add(ParseCoverageEligibilityRequestInsurance(child, path+'/insurance')){y.2}
+      else if (child.localName = 'item') then
+        element.itemList.Add(ParseCoverageEligibilityRequestItem(child, path+'/item')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequest(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityRequest);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityRequestChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityRequestChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityRequest);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum);
+  if (SummaryOption in [soFull, soData]) and doCompose('priority') then
+    ComposeCodeableConcept(xml, 'priority', elem.priority);{x.2a}
+  for i := 0 to elem.purposeList.Count - 1 do
+      ComposeEnum(xml, 'purpose', elem.purposeList[i], CODES_TFhirEligibilityrequestPurposeEnum);
+  if (SummaryOption in [soFull, soData]) and doCompose('patient') then
+    ComposeReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2a}
+  if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) {6} then
+    ComposePeriod(xml, 'servicedPeriod', TFhirPeriod(elem.serviced))
+  else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) {6} then
+    ComposeDate(xml, 'servicedDate', TFhirDate(elem.serviced));
+  if (SummaryOption in [soFull, soData]) and doCompose('created') then
+    ComposeDateTime(xml, 'created', elem.createdElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('enterer') then
+    ComposeReference{TFhirPractitioner}(xml, 'enterer', elem.enterer);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('provider') then
+    ComposeReference{TFhirPractitioner}(xml, 'provider', elem.provider);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('insurer') then
+    ComposeReference{TFhirOrganization}(xml, 'insurer', elem.insurer);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('facility') then
+    ComposeReference{TFhirLocation}(xml, 'facility', elem.facility);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('supportingInformation') then
+    for i := 0 to elem.supportingInformationList.Count - 1 do
+      ComposeCoverageEligibilityRequestSupportingInformation(xml, 'supportingInformation', elem.supportingInformationList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('insurance') then
+    for i := 0 to elem.insuranceList.Count - 1 do
+      ComposeCoverageEligibilityRequestInsurance(xml, 'insurance', elem.insuranceList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('item') then
+    for i := 0 to elem.itemList.Count - 1 do
+      ComposeCoverageEligibilityRequestItem(xml, 'item', elem.itemList[i]);
+end;
+
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+function TFHIRXmlParser.ParseCoverageEligibilityResponseInsurance(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponseInsurance;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityResponseInsurance.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityResponseInsuranceChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponseInsuranceChild(element : TFhirCoverageEligibilityResponseInsurance; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'coverage') then
+        element.coverage := ParseReference{TFhirCoverage}(child, path+'/coverage') {b}
+      else if (child.localName = 'contract') then
+        element.contract := ParseReference{TFhirContract}(child, path+'/contract') {b}
+      else if (child.localName = 'inforce') then
+        element.inforceElement := ParseBoolean(child, path+'/inforce') {b}
+      else if (child.localName = 'item') then
+        element.itemList.Add(ParseCoverageEligibilityResponseInsuranceItem(child, path+'/item')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseInsurance(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityResponseInsurance);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityResponseInsuranceChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponseInsurance);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirCoverage}(xml, 'coverage', elem.coverage);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirContract}(xml, 'contract', elem.contract);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'inforce', elem.inforceElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.itemList.Count - 1 do
+      ComposeCoverageEligibilityResponseInsuranceItem(xml, 'item', elem.itemList[i]);
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponseInsuranceItem(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponseInsuranceItem;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityResponseInsuranceItem.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityResponseInsuranceItemChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponseInsuranceItemChild(element : TFhirCoverageEligibilityResponseInsuranceItem; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'category') then
+        element.category := ParseCodeableConcept(child, path+'/category') {b}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
+      else if (child.localName = 'modifier') then
+        element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
+      else if (child.localName = 'provider') then
+        element.provider := ParseReference{TFhirPractitioner}(child, path+'/provider') {b}
+      else if (child.localName = 'excluded') then
+        element.excludedElement := ParseBoolean(child, path+'/excluded') {b}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseString(child, path+'/description') {b}
+      else if (child.localName = 'network') then
+        element.network := ParseCodeableConcept(child, path+'/network') {b}
+      else if (child.localName = 'unit') then
+        element.unit_ := ParseCodeableConcept(child, path+'/unit') {b}
+      else if (child.localName = 'term') then
+        element.term := ParseCodeableConcept(child, path+'/term') {b}
+      else if (child.localName = 'benefit') then
+        element.benefitList.Add(ParseCoverageEligibilityResponseInsuranceItemBenefit(child, path+'/benefit')){y.2}
+      else if (child.localName = 'authorizationRequired') then
+        element.authorizationRequiredElement := ParseBoolean(child, path+'/authorizationRequired') {b}
+      else if (child.localName = 'authorizationSupporting') then
+        element.authorizationSupportingList.Add(ParseCodeableConcept(child, path+'/authorizationSupporting')){y.2}
+      else if (child.localName = 'authorizationUrl') then
+        element.authorizationUrlElement := ParseUri(child, path+'/authorizationUrl') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseInsuranceItem(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityResponseInsuranceItem);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityResponseInsuranceItemChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseInsuranceItemChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponseInsuranceItem);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.modifierList.Count - 1 do
+      ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirPractitioner}(xml, 'provider', elem.provider);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'excluded', elem.excludedElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'network', elem.network);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'unit', elem.unit_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'term', elem.term);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.benefitList.Count - 1 do
+      ComposeCoverageEligibilityResponseInsuranceItemBenefit(xml, 'benefit', elem.benefitList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'authorizationRequired', elem.authorizationRequiredElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.authorizationSupportingList.Count - 1 do
+      ComposeCodeableConcept(xml, 'authorizationSupporting', elem.authorizationSupportingList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeUri(xml, 'authorizationUrl', elem.authorizationUrlElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponseInsuranceItemBenefit(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponseInsuranceItemBenefit;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityResponseInsuranceItemBenefit.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityResponseInsuranceItemBenefitChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponseInsuranceItemBenefitChild(element : TFhirCoverageEligibilityResponseInsuranceItemBenefit; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'allowedUnsignedInt') then
+        element.allowed := ParseUnsignedInt(child, path+'/allowedUnsignedInt'){x.3}
+      else if (child.localName = 'allowedMoney') then
+        element.allowed := ParseMoney(child, path+'/allowedMoney'){x.3}
+      else if (child.localName = 'allowedString') then
+        element.allowed := ParseString(child, path+'/allowedString'){x.3}
+      else if (child.localName = 'usedUnsignedInt') then
+        element.used := ParseUnsignedInt(child, path+'/usedUnsignedInt'){x.3}
+      else if (child.localName = 'usedMoney') then
+        element.used := ParseMoney(child, path+'/usedMoney'){x.3}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseInsuranceItemBenefit(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityResponseInsuranceItemBenefit);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityResponseInsuranceItemBenefitChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseInsuranceItemBenefitChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponseInsuranceItemBenefit);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirUnsignedInt) {6} then
+    ComposeUnsignedInt(xml, 'allowedUnsignedInt', TFhirUnsignedInt(elem.allowed))
+  else if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirMoney) {6} then
+    ComposeMoney(xml, 'allowedMoney', TFhirMoney(elem.allowed))
+  else if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirString) {6} then
+    ComposeString(xml, 'allowedString', TFhirString(elem.allowed));
+  if (SummaryOption in [soFull, soData]) and (elem.used is TFhirUnsignedInt) {6} then
+    ComposeUnsignedInt(xml, 'usedUnsignedInt', TFhirUnsignedInt(elem.used))
+  else if (SummaryOption in [soFull, soData]) and (elem.used is TFhirMoney) {6} then
+    ComposeMoney(xml, 'usedMoney', TFhirMoney(elem.used));
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponseError(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponseError;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityResponseError.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityResponseErrorChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponseErrorChild(element : TFhirCoverageEligibilityResponseError; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'code') then
+        element.code := ParseCodeableConcept(child, path+'/code') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseError(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityResponseError);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityResponseErrorChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseErrorChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponseError);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponse(element : TMXmlElement; path : string) : TFhirCoverageEligibilityResponse;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCoverageEligibilityResponse.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCoverageEligibilityResponseChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCoverageEligibilityResponseChild(element : TFhirCoverageEligibilityResponse; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'identifier') then
+        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'status') then
+        element.statusElement := ParseEnum(CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, path+'/status', child){1a}
+      else if (child.localName = 'purpose') then
+        element.purposeList.Add(ParseEnum(CODES_TFhirEligibilityresponsePurposeEnum, SYSTEMS_TFhirEligibilityresponsePurposeEnum, path+'/purpose', child)){y.1}
+      else if (child.localName = 'patient') then
+        element.patient := ParseReference{TFhirPatient}(child, path+'/patient') {b}
+      else if (child.localName = 'servicedPeriod') then
+        element.serviced := ParsePeriod(child, path+'/servicedPeriod'){x.3}
+      else if (child.localName = 'servicedDate') then
+        element.serviced := ParseDate(child, path+'/servicedDate'){x.3}
+      else if (child.localName = 'created') then
+        element.createdElement := ParseDateTime(child, path+'/created') {b}
+      else if (child.localName = 'requestProvider') then
+        element.requestProvider := ParseReference{TFhirPractitioner}(child, path+'/requestProvider') {b}
+      else if (child.localName = 'request') then
+        element.request := ParseReference{TFhirCoverageEligibilityRequest}(child, path+'/request') {b}
+      else if (child.localName = 'outcome') then
+        element.outcomeElement := ParseEnum(CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, path+'/outcome', child){1a}
+      else if (child.localName = 'disposition') then
+        element.dispositionElement := ParseString(child, path+'/disposition') {b}
+      else if (child.localName = 'insurer') then
+        element.insurer := ParseReference{TFhirOrganization}(child, path+'/insurer') {b}
+      else if (child.localName = 'insurance') then
+        element.insuranceList.Add(ParseCoverageEligibilityResponseInsurance(child, path+'/insurance')){y.2}
+      else if (child.localName = 'preAuthRef') then
+        element.preAuthRefElement := ParseString(child, path+'/preAuthRef') {b}
+      else if (child.localName = 'form') then
+        element.form := ParseCodeableConcept(child, path+'/form') {b}
+      else if (child.localName = 'error') then
+        element.errorList.Add(ParseCoverageEligibilityResponseError(child, path+'/error')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponse(xml : TXmlBuilder; name : String; elem : TFhirCoverageEligibilityResponse);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeCoverageEligibilityResponseChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCoverageEligibilityResponseChildren(xml : TXmlBuilder; elem : TFhirCoverageEligibilityResponse);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum);
+  for i := 0 to elem.purposeList.Count - 1 do
+      ComposeEnum(xml, 'purpose', elem.purposeList[i], CODES_TFhirEligibilityresponsePurposeEnum);
+  if (SummaryOption in [soFull, soData]) and doCompose('patient') then
+    ComposeReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2a}
+  if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) {6} then
+    ComposePeriod(xml, 'servicedPeriod', TFhirPeriod(elem.serviced))
+  else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) {6} then
+    ComposeDate(xml, 'servicedDate', TFhirDate(elem.serviced));
+  if (SummaryOption in [soFull, soData]) and doCompose('created') then
+    ComposeDateTime(xml, 'created', elem.createdElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('requestProvider') then
+    ComposeReference{TFhirPractitioner}(xml, 'requestProvider', elem.requestProvider);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('request') then
+    ComposeReference{TFhirCoverageEligibilityRequest}(xml, 'request', elem.request);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('outcome') then
+    ComposeEnum(xml, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum);
+  if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
+    ComposeString(xml, 'disposition', elem.dispositionElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('insurer') then
+    ComposeReference{TFhirOrganization}(xml, 'insurer', elem.insurer);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('insurance') then
+    for i := 0 to elem.insuranceList.Count - 1 do
+      ComposeCoverageEligibilityResponseInsurance(xml, 'insurance', elem.insuranceList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
+    ComposeString(xml, 'preAuthRef', elem.preAuthRefElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('form') then
+    ComposeCodeableConcept(xml, 'form', elem.form);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('error') then
+    for i := 0 to elem.errorList.Count - 1 do
+      ComposeCoverageEligibilityResponseError(xml, 'error', elem.errorList[i]);
+end;
+
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
 function TFHIRXmlParser.ParseDetectedIssueMitigation(element : TMXmlElement; path : string) : TFhirDetectedIssueMitigation;
 var
@@ -19829,17 +21355,17 @@ end;
 
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-function TFHIRXmlParser.ParseDeviceUdi(element : TMXmlElement; path : string) : TFhirDeviceUdi;
+function TFHIRXmlParser.ParseDeviceUdiCarrier(element : TMXmlElement; path : string) : TFhirDeviceUdiCarrier;
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceUdi.create;
+  result := TFhirDeviceUdiCarrier.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseDeviceUdiChild(result, path, child) then
+      if not ParseDeviceUdiCarrierChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -19851,55 +21377,270 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseDeviceUdiChild(element : TFhirDeviceUdi; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseDeviceUdiCarrierChild(element : TFhirDeviceUdiCarrier; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
       if (child.localName = 'deviceIdentifier') then
         element.deviceIdentifierElement := ParseString(child, path+'/deviceIdentifier') {b}
-      else if (child.localName = 'name') then
-        element.nameElement := ParseString(child, path+'/name') {b}
-      else if (child.localName = 'jurisdiction') then
-        element.jurisdictionElement := ParseUri(child, path+'/jurisdiction') {b}
-      else if (child.localName = 'carrierHRF') then
-        element.carrierHRFElement := ParseString(child, path+'/carrierHRF') {b}
-      else if (child.localName = 'carrierAIDC') then
-        element.carrierAIDCElement := ParseBase64Binary(child, path+'/carrierAIDC') {b}
       else if (child.localName = 'issuer') then
         element.issuerElement := ParseUri(child, path+'/issuer') {b}
+      else if (child.localName = 'jurisdiction') then
+        element.jurisdictionElement := ParseUri(child, path+'/jurisdiction') {b}
+      else if (child.localName = 'carrierAIDC') then
+        element.carrierAIDCElement := ParseBase64Binary(child, path+'/carrierAIDC') {b}
+      else if (child.localName = 'carrierHRF') then
+        element.carrierHRFElement := ParseString(child, path+'/carrierHRF') {b}
       else if (child.localName = 'entryType') then
         element.entryTypeElement := ParseEnum(CODES_TFhirUdiEntryTypeEnum, SYSTEMS_TFhirUdiEntryTypeEnum, path+'/entryType', child){1a}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceUdi(xml : TXmlBuilder; name : String; elem : TFhirDeviceUdi);
+procedure TFHIRXmlComposer.ComposeDeviceUdiCarrier(xml : TXmlBuilder; name : String; elem : TFhirDeviceUdiCarrier);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
-  composeDeviceUdiChildren(xml, elem);
+  composeDeviceUdiCarrierChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceUdiChildren(xml : TXmlBuilder; elem : TFhirDeviceUdi);
+procedure TFHIRXmlComposer.ComposeDeviceUdiCarrierChildren(xml : TXmlBuilder; elem : TFhirDeviceUdiCarrier);
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'deviceIdentifier', elem.deviceIdentifierElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(xml, 'name', elem.nameElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeUri(xml, 'jurisdiction', elem.jurisdictionElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(xml, 'carrierHRF', elem.carrierHRFElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBase64Binary(xml, 'carrierAIDC', elem.carrierAIDCElement);{x.2b}
   if (SummaryOption in [soFull, soData]) then
     ComposeUri(xml, 'issuer', elem.issuerElement);{x.2b}
   if (SummaryOption in [soFull, soData]) then
+    ComposeUri(xml, 'jurisdiction', elem.jurisdictionElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBase64Binary(xml, 'carrierAIDC', elem.carrierAIDCElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'carrierHRF', elem.carrierHRFElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
     ComposeEnum(xml, 'entryType', elem.EntryTypeElement, CODES_TFhirUdiEntryTypeEnum);
+end;
+
+function TFHIRXmlParser.ParseDeviceDeviceName(element : TMXmlElement; path : string) : TFhirDeviceDeviceName;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDeviceDeviceName.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDeviceDeviceNameChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDeviceDeviceNameChild(element : TFhirDeviceDeviceName; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'type') then
+        element.type_Element := ParseEnum(CODES_TFhirDeviceNametypeEnum, SYSTEMS_TFhirDeviceNametypeEnum, path+'/type', child){1a}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDeviceName(xml : TXmlBuilder; name : String; elem : TFhirDeviceDeviceName);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDeviceDeviceNameChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDeviceNameChildren(xml : TXmlBuilder; elem : TFhirDeviceDeviceName);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirDeviceNametypeEnum);
+end;
+
+function TFHIRXmlParser.ParseDeviceSpecialization(element : TMXmlElement; path : string) : TFhirDeviceSpecialization;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDeviceSpecialization.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDeviceSpecializationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDeviceSpecializationChild(element : TFhirDeviceSpecialization; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'systemType') then
+        element.systemType := ParseCodeableConcept(child, path+'/systemType') {b}
+      else if (child.localName = 'version') then
+        element.versionElement := ParseString(child, path+'/version') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceSpecialization(xml : TXmlBuilder; name : String; elem : TFhirDeviceSpecialization);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDeviceSpecializationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceSpecializationChildren(xml : TXmlBuilder; elem : TFhirDeviceSpecialization);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'systemType', elem.systemType);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'version', elem.versionElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseDeviceVersion(element : TMXmlElement; path : string) : TFhirDeviceVersion;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDeviceVersion.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDeviceVersionChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDeviceVersionChild(element : TFhirDeviceVersion; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'component') then
+        element.component := ParseIdentifier(child, path+'/component') {b}
+      else if (child.localName = 'value') then
+        element.valueElement := ParseString(child, path+'/value') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceVersion(xml : TXmlBuilder; name : String; elem : TFhirDeviceVersion);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDeviceVersionChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceVersionChildren(xml : TXmlBuilder; elem : TFhirDeviceVersion);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeIdentifier(xml, 'component', elem.component);{x.2a}
+  ComposeString(xml, 'value', elem.valueElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseDeviceProperty(element : TMXmlElement; path : string) : TFhirDeviceProperty;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDeviceProperty.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDevicePropertyChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDevicePropertyChild(element : TFhirDeviceProperty; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'valueQuanity') then
+        element.valueQuanityList.Add(ParseQuantity(child, path+'/valueQuanity')){y.2}
+      else if (child.localName = 'valueCode') then
+        element.valueCodeList.Add(ParseCodeableConcept(child, path+'/valueCode')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceProperty(xml : TXmlBuilder; name : String; elem : TFhirDeviceProperty);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDevicePropertyChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDevicePropertyChildren(xml : TXmlBuilder; elem : TFhirDeviceProperty);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.valueQuanityList.Count - 1 do
+      ComposeQuantity(xml, 'valueQuanity', elem.valueQuanityList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.valueCodeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'valueCode', elem.valueCodeList[i]);
 end;
 
 function TFHIRXmlParser.ParseDevice(element : TMXmlElement; path : string) : TFhirDevice;
@@ -19929,24 +21670,40 @@ begin
   result := true;
       if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
-      else if (child.localName = 'udi') then
-        element.udi := ParseDeviceUdi(child, path+'/udi') {b}
+      else if (child.localName = 'definition') then
+        element.definition := ParseReference{TFhirDeviceDefinition}(child, path+'/definition') {b}
+      else if (child.localName = 'udiCarrier') then
+        element.udiCarrierList.Add(ParseDeviceUdiCarrier(child, path+'/udiCarrier')){y.2}
       else if (child.localName = 'status') then
         element.statusElement := ParseEnum(CODES_TFhirDeviceStatusEnum, SYSTEMS_TFhirDeviceStatusEnum, path+'/status', child){1a}
-      else if (child.localName = 'type') then
-        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'lotNumber') then
-        element.lotNumberElement := ParseString(child, path+'/lotNumber') {b}
+      else if (child.localName = 'statusReason') then
+        element.statusReasonList.Add(ParseCodeableConcept(child, path+'/statusReason')){y.2}
+      else if (child.localName = 'distinctIdentificationCode') then
+        element.distinctIdentificationCodeElement := ParseString(child, path+'/distinctIdentificationCode') {b}
       else if (child.localName = 'manufacturer') then
         element.manufacturerElement := ParseString(child, path+'/manufacturer') {b}
       else if (child.localName = 'manufactureDate') then
         element.manufactureDateElement := ParseDateTime(child, path+'/manufactureDate') {b}
       else if (child.localName = 'expirationDate') then
         element.expirationDateElement := ParseDateTime(child, path+'/expirationDate') {b}
-      else if (child.localName = 'model') then
-        element.modelElement := ParseString(child, path+'/model') {b}
+      else if (child.localName = 'lotNumber') then
+        element.lotNumberElement := ParseString(child, path+'/lotNumber') {b}
+      else if (child.localName = 'serialNumber') then
+        element.serialNumberElement := ParseString(child, path+'/serialNumber') {b}
+      else if (child.localName = 'deviceName') then
+        element.deviceNameList.Add(ParseDeviceDeviceName(child, path+'/deviceName')){y.2}
+      else if (child.localName = 'modelNumber') then
+        element.modelNumberElement := ParseString(child, path+'/modelNumber') {b}
+      else if (child.localName = 'partNumber') then
+        element.partNumberElement := ParseString(child, path+'/partNumber') {b}
+      else if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'specialization') then
+        element.specializationList.Add(ParseDeviceSpecialization(child, path+'/specialization')){y.2}
       else if (child.localName = 'version') then
-        element.versionElement := ParseString(child, path+'/version') {b}
+        element.versionList.Add(ParseDeviceVersion(child, path+'/version')){y.2}
+      else if (child.localName = 'property') then
+        element.property_List.Add(ParseDeviceProperty(child, path+'/property')){y.2}
       else if (child.localName = 'patient') then
         element.patient := ParseReference{TFhirPatient}(child, path+'/patient') {b}
       else if (child.localName = 'owner') then
@@ -19961,6 +21718,8 @@ begin
         element.noteList.Add(ParseAnnotation(child, path+'/note')){y.2}
       else if (child.localName = 'safety') then
         element.safetyList.Add(ParseCodeableConcept(child, path+'/safety')){y.2}
+      else if (child.localName = 'parent') then
+        element.parent := ParseReference{TFhirDevice}(child, path+'/parent') {b}
       else if Not ParseDomainResourceChild(element, path, child) then
     result := false;
 end;
@@ -19984,24 +21743,46 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('udi') then
-    ComposeDeviceUdi(xml, 'udi', elem.udi);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('definition') then
+    ComposeReference{TFhirDeviceDefinition}(xml, 'definition', elem.definition);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('udiCarrier') then
+    for i := 0 to elem.udiCarrierList.Count - 1 do
+      ComposeDeviceUdiCarrier(xml, 'udiCarrier', elem.udiCarrierList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
     ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirDeviceStatusEnum);
-  if (SummaryOption in [soFull, soData]) and doCompose('type_') then
-    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('lotNumber') then
-    ComposeString(xml, 'lotNumber', elem.lotNumberElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('statusReason') then
+    for i := 0 to elem.statusReasonList.Count - 1 do
+      ComposeCodeableConcept(xml, 'statusReason', elem.statusReasonList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('distinctIdentificationCode') then
+    ComposeString(xml, 'distinctIdentificationCode', elem.distinctIdentificationCodeElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('manufacturer') then
     ComposeString(xml, 'manufacturer', elem.manufacturerElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('manufactureDate') then
     ComposeDateTime(xml, 'manufactureDate', elem.manufactureDateElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('expirationDate') then
     ComposeDateTime(xml, 'expirationDate', elem.expirationDateElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) and doCompose('model') then
-    ComposeString(xml, 'model', elem.modelElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('lotNumber') then
+    ComposeString(xml, 'lotNumber', elem.lotNumberElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('serialNumber') then
+    ComposeString(xml, 'serialNumber', elem.serialNumberElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('deviceName') then
+    for i := 0 to elem.deviceNameList.Count - 1 do
+      ComposeDeviceDeviceName(xml, 'deviceName', elem.deviceNameList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('modelNumber') then
+    ComposeString(xml, 'modelNumber', elem.modelNumberElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('partNumber') then
+    ComposeString(xml, 'partNumber', elem.partNumberElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('type_') then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('specialization') then
+    for i := 0 to elem.specializationList.Count - 1 do
+      ComposeDeviceSpecialization(xml, 'specialization', elem.specializationList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('version') then
-    ComposeString(xml, 'version', elem.versionElement);{x.2b}
+    for i := 0 to elem.versionList.Count - 1 do
+      ComposeDeviceVersion(xml, 'version', elem.versionList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('property_') then
+    for i := 0 to elem.property_List.Count - 1 do
+      ComposeDeviceProperty(xml, 'property', elem.property_List[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('patient') then
     ComposeReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('owner') then
@@ -20019,21 +21800,23 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('safety') then
     for i := 0 to elem.safetyList.Count - 1 do
       ComposeCodeableConcept(xml, 'safety', elem.safetyList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('parent') then
+    ComposeReference{TFhirDevice}(xml, 'parent', elem.parent);{x.2a}
 end;
 
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-function TFHIRXmlParser.ParseDeviceComponentProductionSpecification(element : TMXmlElement; path : string) : TFhirDeviceComponentProductionSpecification;
+{$IFDEF FHIR_DEVICEDEFINITION}
+function TFHIRXmlParser.ParseDeviceDefinitionUdiDeviceIdentifier(element : TMXmlElement; path : string) : TFhirDeviceDefinitionUdiDeviceIdentifier;
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceComponentProductionSpecification.create;
+  result := TFhirDeviceDefinitionUdiDeviceIdentifier.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseDeviceComponentProductionSpecificationChild(result, path, child) then
+      if not ParseDeviceDefinitionUdiDeviceIdentifierChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -20045,52 +21828,49 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseDeviceComponentProductionSpecificationChild(element : TFhirDeviceComponentProductionSpecification; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseDeviceDefinitionUdiDeviceIdentifierChild(element : TFhirDeviceDefinitionUdiDeviceIdentifier; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'specType') then
-        element.specType := ParseCodeableConcept(child, path+'/specType') {b}
-      else if (child.localName = 'componentId') then
-        element.componentId := ParseIdentifier(child, path+'/componentId') {b}
-      else if (child.localName = 'productionSpec') then
-        element.productionSpecElement := ParseString(child, path+'/productionSpec') {b}
+      if (child.localName = 'deviceIdentifier') then
+        element.deviceIdentifierElement := ParseString(child, path+'/deviceIdentifier') {b}
+      else if (child.localName = 'issuer') then
+        element.issuerElement := ParseUri(child, path+'/issuer') {b}
+      else if (child.localName = 'jurisdiction') then
+        element.jurisdictionElement := ParseUri(child, path+'/jurisdiction') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceComponentProductionSpecification(xml : TXmlBuilder; name : String; elem : TFhirDeviceComponentProductionSpecification);
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionUdiDeviceIdentifier(xml : TXmlBuilder; name : String; elem : TFhirDeviceDefinitionUdiDeviceIdentifier);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
-  composeDeviceComponentProductionSpecificationChildren(xml, elem);
+  composeDeviceDefinitionUdiDeviceIdentifierChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceComponentProductionSpecificationChildren(xml : TXmlBuilder; elem : TFhirDeviceComponentProductionSpecification);
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionUdiDeviceIdentifierChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionUdiDeviceIdentifier);
 begin
   composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(xml, 'specType', elem.specType);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIdentifier(xml, 'componentId', elem.componentId);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(xml, 'productionSpec', elem.productionSpecElement);{x.2b}
+  ComposeString(xml, 'deviceIdentifier', elem.deviceIdentifierElement);{x.2b}
+  ComposeUri(xml, 'issuer', elem.issuerElement);{x.2b}
+  ComposeUri(xml, 'jurisdiction', elem.jurisdictionElement);{x.2b}
 end;
 
-function TFHIRXmlParser.ParseDeviceComponentProperty(element : TMXmlElement; path : string) : TFhirDeviceComponentProperty;
+function TFHIRXmlParser.ParseDeviceDefinitionDeviceName(element : TMXmlElement; path : string) : TFhirDeviceDefinitionDeviceName;
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceComponentProperty.create;
+  result := TFhirDeviceDefinitionDeviceName.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseDeviceComponentPropertyChild(result, path, child) then
+      if not ParseDeviceDefinitionDeviceNameChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -20102,55 +21882,213 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseDeviceComponentPropertyChild(element : TFhirDeviceComponentProperty; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseDeviceDefinitionDeviceNameChild(element : TFhirDeviceDefinitionDeviceName; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'type') then
+        element.type_Element := ParseEnum(CODES_TFhirDeviceNametypeEnum, SYSTEMS_TFhirDeviceNametypeEnum, path+'/type', child){1a}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionDeviceName(xml : TXmlBuilder; name : String; elem : TFhirDeviceDefinitionDeviceName);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDeviceDefinitionDeviceNameChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionDeviceNameChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionDeviceName);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirDeviceNametypeEnum);
+end;
+
+function TFHIRXmlParser.ParseDeviceDefinitionSpecialization(element : TMXmlElement; path : string) : TFhirDeviceDefinitionSpecialization;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDeviceDefinitionSpecialization.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDeviceDefinitionSpecializationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDeviceDefinitionSpecializationChild(element : TFhirDeviceDefinitionSpecialization; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'systemType') then
+        element.systemTypeElement := ParseString(child, path+'/systemType') {b}
+      else if (child.localName = 'version') then
+        element.versionElement := ParseString(child, path+'/version') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionSpecialization(xml : TXmlBuilder; name : String; elem : TFhirDeviceDefinitionSpecialization);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDeviceDefinitionSpecializationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionSpecializationChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionSpecialization);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeString(xml, 'systemType', elem.systemTypeElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'version', elem.versionElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseDeviceDefinitionCapability(element : TMXmlElement; path : string) : TFhirDeviceDefinitionCapability;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDeviceDefinitionCapability.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDeviceDefinitionCapabilityChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDeviceDefinitionCapabilityChild(element : TFhirDeviceDefinitionCapability; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
       if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'valueQuantity') then
-        element.valueQuantityList.Add(ParseQuantity(child, path+'/valueQuantity')){y.2}
+      else if (child.localName = 'description') then
+        element.descriptionList.Add(ParseCodeableConcept(child, path+'/description')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionCapability(xml : TXmlBuilder; name : String; elem : TFhirDeviceDefinitionCapability);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDeviceDefinitionCapabilityChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionCapabilityChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionCapability);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.descriptionList.Count - 1 do
+      ComposeCodeableConcept(xml, 'description', elem.descriptionList[i]);
+end;
+
+function TFHIRXmlParser.ParseDeviceDefinitionProperty(element : TMXmlElement; path : string) : TFhirDeviceDefinitionProperty;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDeviceDefinitionProperty.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDeviceDefinitionPropertyChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDeviceDefinitionPropertyChild(element : TFhirDeviceDefinitionProperty; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'valueQuanity') then
+        element.valueQuanityList.Add(ParseQuantity(child, path+'/valueQuanity')){y.2}
       else if (child.localName = 'valueCode') then
         element.valueCodeList.Add(ParseCodeableConcept(child, path+'/valueCode')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceComponentProperty(xml : TXmlBuilder; name : String; elem : TFhirDeviceComponentProperty);
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionProperty(xml : TXmlBuilder; name : String; elem : TFhirDeviceDefinitionProperty);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
-  composeDeviceComponentPropertyChildren(xml, elem);
+  composeDeviceDefinitionPropertyChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceComponentPropertyChildren(xml : TXmlBuilder; elem : TFhirDeviceComponentProperty);
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionPropertyChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionProperty);
 var
   i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
   ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.valueQuantityList.Count - 1 do
-      ComposeQuantity(xml, 'valueQuantity', elem.valueQuantityList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.valueQuanityList.Count - 1 do
+      ComposeQuantity(xml, 'valueQuanity', elem.valueQuanityList[i]);
+  if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.valueCodeList.Count - 1 do
       ComposeCodeableConcept(xml, 'valueCode', elem.valueCodeList[i]);
 end;
 
-function TFHIRXmlParser.ParseDeviceComponent(element : TMXmlElement; path : string) : TFhirDeviceComponent;
+function TFHIRXmlParser.ParseDeviceDefinitionMaterial(element : TMXmlElement; path : string) : TFhirDeviceDefinitionMaterial;
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceComponent.create;
+  result := TFhirDeviceDefinitionMaterial.create;
   try
-    parseDomainResourceAttributes(result, path, element);
+    parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseDeviceComponentChild(result, path, child) then
+      if not ParseDeviceDefinitionMaterialChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -20162,79 +22100,193 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseDeviceComponentChild(element : TFhirDeviceComponent; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseDeviceDefinitionMaterialChild(element : TFhirDeviceDefinitionMaterial; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'substance') then
+        element.substance := ParseCodeableConcept(child, path+'/substance') {b}
+      else if (child.localName = 'alternate') then
+        element.alternateElement := ParseBoolean(child, path+'/alternate') {b}
+      else if (child.localName = 'allergenicIndicator') then
+        element.allergenicIndicatorElement := ParseBoolean(child, path+'/allergenicIndicator') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionMaterial(xml : TXmlBuilder; name : String; elem : TFhirDeviceDefinitionMaterial);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDeviceDefinitionMaterialChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionMaterialChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinitionMaterial);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'substance', elem.substance);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'alternate', elem.alternateElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'allergenicIndicator', elem.allergenicIndicatorElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseDeviceDefinition(element : TMXmlElement; path : string) : TFhirDeviceDefinition;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDeviceDefinition.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDeviceDefinitionChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDeviceDefinitionChild(element : TFhirDeviceDefinition; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
       if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'udiDeviceIdentifier') then
+        element.udiDeviceIdentifierList.Add(ParseDeviceDefinitionUdiDeviceIdentifier(child, path+'/udiDeviceIdentifier')){y.2}
+      else if (child.localName = 'manufacturerReference') then
+        element.manufacturer := ParseReference(child, path+'/manufacturerReference') {a}
+      else if (child.localName = 'manufacturerString') then
+        element.manufacturer := ParseString(child, path+'/manufacturerString'){x.3}
+      else if (child.localName = 'deviceName') then
+        element.deviceNameList.Add(ParseDeviceDefinitionDeviceName(child, path+'/deviceName')){y.2}
+      else if (child.localName = 'modelNumber') then
+        element.modelNumberElement := ParseString(child, path+'/modelNumber') {b}
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'lastSystemChange') then
-        element.lastSystemChangeElement := ParseInstant(child, path+'/lastSystemChange') {b}
-      else if (child.localName = 'source') then
-        element.source := ParseReference{TFhirDevice}(child, path+'/source') {b}
-      else if (child.localName = 'parent') then
-        element.parent := ParseReference{TFhirDeviceComponent}(child, path+'/parent') {b}
-      else if (child.localName = 'operationalStatus') then
-        element.operationalStatusList.Add(ParseCodeableConcept(child, path+'/operationalStatus')){y.2}
-      else if (child.localName = 'parameterGroup') then
-        element.parameterGroup := ParseCodeableConcept(child, path+'/parameterGroup') {b}
-      else if (child.localName = 'measurementPrinciple') then
-        element.measurementPrincipleElement := ParseEnum(CODES_TFhirMeasurementPrincipleEnum, SYSTEMS_TFhirMeasurementPrincipleEnum, path+'/measurementPrinciple', child){1a}
-      else if (child.localName = 'productionSpecification') then
-        element.productionSpecificationList.Add(ParseDeviceComponentProductionSpecification(child, path+'/productionSpecification')){y.2}
+      else if (child.localName = 'specialization') then
+        element.specializationList.Add(ParseDeviceDefinitionSpecialization(child, path+'/specialization')){y.2}
+      else if (child.localName = 'version') then
+        element.versionList.Add(ParseString(child, path+'/version')){y.2}
+      else if (child.localName = 'safety') then
+        element.safetyList.Add(ParseCodeableConcept(child, path+'/safety')){y.2}
+      else if (child.localName = 'shelfLifeStorage') then
+        element.shelfLifeStorageList.Add(ParseProductShelfLife(child, path+'/shelfLifeStorage')){y.2}
+      else if (child.localName = 'physicalCharacteristics') then
+        element.physicalCharacteristics := ParseProdCharacteristic(child, path+'/physicalCharacteristics') {b}
       else if (child.localName = 'languageCode') then
-        element.languageCode := ParseCodeableConcept(child, path+'/languageCode') {b}
+        element.languageCodeList.Add(ParseCodeableConcept(child, path+'/languageCode')){y.2}
+      else if (child.localName = 'capability') then
+        element.capabilityList.Add(ParseDeviceDefinitionCapability(child, path+'/capability')){y.2}
       else if (child.localName = 'property') then
-        element.property_List.Add(ParseDeviceComponentProperty(child, path+'/property')){y.2}
+        element.property_List.Add(ParseDeviceDefinitionProperty(child, path+'/property')){y.2}
+      else if (child.localName = 'owner') then
+        element.owner := ParseReference{TFhirOrganization}(child, path+'/owner') {b}
+      else if (child.localName = 'contact') then
+        element.contactList.Add(ParseContactPoint(child, path+'/contact')){y.2}
+      else if (child.localName = 'url') then
+        element.urlElement := ParseUri(child, path+'/url') {b}
+      else if (child.localName = 'onlineInformation') then
+        element.onlineInformationElement := ParseUri(child, path+'/onlineInformation') {b}
+      else if (child.localName = 'note') then
+        element.noteList.Add(ParseAnnotation(child, path+'/note')){y.2}
+      else if (child.localName = 'quantity') then
+        element.quantity := ParseQuantity(child, path+'/quantity') {b}
+      else if (child.localName = 'parentDevice') then
+        element.parentDevice := ParseReference{TFhirDeviceDefinition}(child, path+'/parentDevice') {b}
+      else if (child.localName = 'material') then
+        element.materialList.Add(ParseDeviceDefinitionMaterial(child, path+'/material')){y.2}
       else if Not ParseDomainResourceChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceComponent(xml : TXmlBuilder; name : String; elem : TFhirDeviceComponent);
+procedure TFHIRXmlComposer.ComposeDeviceDefinition(xml : TXmlBuilder; name : String; elem : TFhirDeviceDefinition);
 begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
   xml.open(name);
-  composeDeviceComponentChildren(xml, elem);
+  composeDeviceDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceComponentChildren(xml : TXmlBuilder; elem : TFhirDeviceComponent);
+procedure TFHIRXmlComposer.ComposeDeviceDefinitionChildren(xml : TXmlBuilder; elem : TFhirDeviceDefinition);
 var
   i : integer;
 begin
   composeDomainResourceChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
+  if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('lastSystemChange') then
-    ComposeInstant(xml, 'lastSystemChange', elem.lastSystemChangeElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('source') then
-    ComposeReference{TFhirDevice}(xml, 'source', elem.source);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('parent') then
-    ComposeReference{TFhirDeviceComponent}(xml, 'parent', elem.parent);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('operationalStatus') then
-    for i := 0 to elem.operationalStatusList.Count - 1 do
-      ComposeCodeableConcept(xml, 'operationalStatus', elem.operationalStatusList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('parameterGroup') then
-    ComposeCodeableConcept(xml, 'parameterGroup', elem.parameterGroup);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('measurementPrinciple') then
-    ComposeEnum(xml, 'measurementPrinciple', elem.MeasurementPrincipleElement, CODES_TFhirMeasurementPrincipleEnum);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('productionSpecification') then
-    for i := 0 to elem.productionSpecificationList.Count - 1 do
-      ComposeDeviceComponentProductionSpecification(xml, 'productionSpecification', elem.productionSpecificationList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('languageCode') then
-    ComposeCodeableConcept(xml, 'languageCode', elem.languageCode);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('property_') then
+  if (SummaryOption in [soFull, soData]) and doCompose('udiDeviceIdentifier') then
+    for i := 0 to elem.udiDeviceIdentifierList.Count - 1 do
+      ComposeDeviceDefinitionUdiDeviceIdentifier(xml, 'udiDeviceIdentifier', elem.udiDeviceIdentifierList[i]);
+  if (SummaryOption in [soFull, soData]) and (elem.manufacturer is TFhirReference) {2} then
+    ComposeReference(xml, 'manufacturerReference', TFhirReference(elem.manufacturer))
+  else if (SummaryOption in [soFull, soData]) and (elem.manufacturer is TFhirString) {6} then
+    ComposeString(xml, 'manufacturerString', TFhirString(elem.manufacturer));
+  if (SummaryOption in [soFull, soData]) and doCompose('deviceName') then
+    for i := 0 to elem.deviceNameList.Count - 1 do
+      ComposeDeviceDefinitionDeviceName(xml, 'deviceName', elem.deviceNameList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('modelNumber') then
+    ComposeString(xml, 'modelNumber', elem.modelNumberElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('type_') then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('specialization') then
+    for i := 0 to elem.specializationList.Count - 1 do
+      ComposeDeviceDefinitionSpecialization(xml, 'specialization', elem.specializationList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('version') then
+    for i := 0 to elem.versionList.Count - 1 do
+      ComposeString(xml, 'version', elem.versionList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('safety') then
+    for i := 0 to elem.safetyList.Count - 1 do
+      ComposeCodeableConcept(xml, 'safety', elem.safetyList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('shelfLifeStorage') then
+    for i := 0 to elem.shelfLifeStorageList.Count - 1 do
+      ComposeProductShelfLife(xml, 'shelfLifeStorage', elem.shelfLifeStorageList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('physicalCharacteristics') then
+    ComposeProdCharacteristic(xml, 'physicalCharacteristics', elem.physicalCharacteristics);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('languageCode') then
+    for i := 0 to elem.languageCodeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'languageCode', elem.languageCodeList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('capability') then
+    for i := 0 to elem.capabilityList.Count - 1 do
+      ComposeDeviceDefinitionCapability(xml, 'capability', elem.capabilityList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('property_') then
     for i := 0 to elem.property_List.Count - 1 do
-      ComposeDeviceComponentProperty(xml, 'property', elem.property_List[i]);
+      ComposeDeviceDefinitionProperty(xml, 'property', elem.property_List[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('owner') then
+    ComposeReference{TFhirOrganization}(xml, 'owner', elem.owner);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('contact') then
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeContactPoint(xml, 'contact', elem.contactList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('url') then
+    ComposeUri(xml, 'url', elem.urlElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('onlineInformation') then
+    ComposeUri(xml, 'onlineInformation', elem.onlineInformationElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('note') then
+    for i := 0 to elem.noteList.Count - 1 do
+      ComposeAnnotation(xml, 'note', elem.noteList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('quantity') then
+    ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('parentDevice') then
+    ComposeReference{TFhirDeviceDefinition}(xml, 'parentDevice', elem.parentDevice);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('material') then
+    for i := 0 to elem.materialList.Count - 1 do
+      ComposeDeviceDefinitionMaterial(xml, 'material', elem.materialList[i]);
 end;
 
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
 function TFHIRXmlParser.ParseDeviceMetricCalibration(element : TMXmlElement; path : string) : TFhirDeviceMetricCalibration;
 var
@@ -20327,7 +22379,7 @@ begin
       else if (child.localName = 'source') then
         element.source := ParseReference{TFhirDevice}(child, path+'/source') {b}
       else if (child.localName = 'parent') then
-        element.parent := ParseReference{TFhirDeviceComponent}(child, path+'/parent') {b}
+        element.parent := ParseReference{TFhirDevice}(child, path+'/parent') {b}
       else if (child.localName = 'operationalStatus') then
         element.operationalStatusElement := ParseEnum(CODES_TFhirMetricOperationalStatusEnum, SYSTEMS_TFhirMetricOperationalStatusEnum, path+'/operationalStatus', child){1a}
       else if (child.localName = 'color') then
@@ -20367,7 +22419,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('source') then
     ComposeReference{TFhirDevice}(xml, 'source', elem.source);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('parent') then
-    ComposeReference{TFhirDeviceComponent}(xml, 'parent', elem.parent);{x.2a}
+    ComposeReference{TFhirDevice}(xml, 'parent', elem.parent);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('operationalStatus') then
     ComposeEnum(xml, 'operationalStatus', elem.OperationalStatusElement, CODES_TFhirMetricOperationalStatusEnum);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('color') then
@@ -20474,8 +22526,10 @@ begin
   result := true;
       if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
-      else if (child.localName = 'instantiates') then
-        element.instantiatesList.Add(ParseUri(child, path+'/instantiates')){y.2}
+      else if (child.localName = 'instantiatesCanonical') then
+        element.instantiatesCanonicalList.Add(ParseCanonical(child, path+'/instantiatesCanonical')){y.2}
+      else if (child.localName = 'instantiatesUri') then
+        element.instantiatesUriList.Add(ParseUri(child, path+'/instantiatesUri')){y.2}
       else if (child.localName = 'basedOn') then
         element.basedOnList.Add(ParseReference{TFhirReference}(child, path+'/basedOn')){y.2}
       else if (child.localName = 'priorRequest') then
@@ -20547,9 +22601,12 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiates') then
-    for i := 0 to elem.instantiatesList.Count - 1 do
-      ComposeUri(xml, 'instantiates', elem.instantiatesList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') then
+    for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+      ComposeCanonical(xml, 'instantiatesCanonical', elem.instantiatesCanonicalList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') then
+    for i := 0 to elem.instantiatesUriList.Count - 1 do
+      ComposeUri(xml, 'instantiatesUri', elem.instantiatesUriList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('basedOn') then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(xml, 'basedOn', elem.basedOnList[i]);
@@ -20832,8 +22889,8 @@ begin
         element.mediaList.Add(ParseDiagnosticReportMedia(child, path+'/media')){y.2}
       else if (child.localName = 'conclusion') then
         element.conclusionElement := ParseString(child, path+'/conclusion') {b}
-      else if (child.localName = 'codedDiagnosis') then
-        element.codedDiagnosisList.Add(ParseCodeableConcept(child, path+'/codedDiagnosis')){y.2}
+      else if (child.localName = 'conclusionCode') then
+        element.conclusionCodeList.Add(ParseCodeableConcept(child, path+'/conclusionCode')){y.2}
       else if (child.localName = 'presentedForm') then
         element.presentedFormList.Add(ParseAttachment(child, path+'/presentedForm')){y.2}
       else if Not ParseDomainResourceChild(element, path, child) then
@@ -20896,9 +22953,9 @@ begin
       ComposeDiagnosticReportMedia(xml, 'media', elem.mediaList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('conclusion') then
     ComposeString(xml, 'conclusion', elem.conclusionElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) and doCompose('codedDiagnosis') then
-    for i := 0 to elem.codedDiagnosisList.Count - 1 do
-      ComposeCodeableConcept(xml, 'codedDiagnosis', elem.codedDiagnosisList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('conclusionCode') then
+    for i := 0 to elem.conclusionCodeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'conclusionCode', elem.conclusionCodeList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('presentedForm') then
     for i := 0 to elem.presentedFormList.Count - 1 do
       ComposeAttachment(xml, 'presentedForm', elem.presentedFormList[i]);
@@ -21292,7 +23349,7 @@ function TFHIRXmlParser.ParseDocumentReferenceContextChild(element : TFhirDocume
 begin
   result := true;
       if (child.localName = 'encounter') then
-        element.encounter := ParseReference{TFhirEncounter}(child, path+'/encounter') {b}
+        element.encounterList.Add(ParseReference{TFhirEncounter}(child, path+'/encounter')){y.2}
       else if (child.localName = 'event') then
         element.eventList.Add(ParseCodeableConcept(child, path+'/event')){y.2}
       else if (child.localName = 'period') then
@@ -21304,7 +23361,7 @@ begin
       else if (child.localName = 'sourcePatientInfo') then
         element.sourcePatientInfo := ParseReference{TFhirPatient}(child, path+'/sourcePatientInfo') {b}
       else if (child.localName = 'related') then
-        element.relatedList.Add(ParseDocumentReferenceContextRelated(child, path+'/related')){y.2}
+        element.relatedList.Add(ParseReference{TFhirReference}(child, path+'/related')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
@@ -21326,7 +23383,8 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirEncounter}(xml, 'encounter', elem.encounter);{x.2a}
+    for i := 0 to elem.encounterList.Count - 1 do
+      ComposeReference{TFhirEncounter}(xml, 'encounter', elem.encounterList[i]);
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.eventList.Count - 1 do
       ComposeCodeableConcept(xml, 'event', elem.eventList[i]);
@@ -21340,60 +23398,7 @@ begin
     ComposeReference{TFhirPatient}(xml, 'sourcePatientInfo', elem.sourcePatientInfo);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedList.Count - 1 do
-      ComposeDocumentReferenceContextRelated(xml, 'related', elem.relatedList[i]);
-end;
-
-function TFHIRXmlParser.ParseDocumentReferenceContextRelated(element : TMXmlElement; path : string) : TFhirDocumentReferenceContextRelated;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirDocumentReferenceContextRelated.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseDocumentReferenceContextRelatedChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseDocumentReferenceContextRelatedChild(element : TFhirDocumentReferenceContextRelated; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'identifier') then
-        element.identifier := ParseIdentifier(child, path+'/identifier') {b}
-      else if (child.localName = 'ref') then
-        element.ref := ParseReference{TFhirReference}(child, path+'/ref') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeDocumentReferenceContextRelated(xml : TXmlBuilder; name : String; elem : TFhirDocumentReferenceContextRelated);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeDocumentReferenceContextRelatedChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeDocumentReferenceContextRelatedChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceContextRelated);
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirReference}(xml, 'ref', elem.ref);{x.2a}
+      ComposeReference{TFhirReference}(xml, 'related', elem.relatedList[i]);
 end;
 
 function TFHIRXmlParser.ParseDocumentReference(element : TMXmlElement; path : string) : TFhirDocumentReference;
@@ -21431,12 +23436,10 @@ begin
         element.docStatusElement := ParseEnum(CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum, path+'/docStatus', child){1a}
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'class') then
-        element.class_ := ParseCodeableConcept(child, path+'/class') {b}
+      else if (child.localName = 'category') then
+        element.categoryList.Add(ParseCodeableConcept(child, path+'/category')){y.2}
       else if (child.localName = 'subject') then
         element.subject := ParseReference{TFhirPatient}(child, path+'/subject') {b}
-      else if (child.localName = 'created') then
-        element.createdElement := ParseDateTime(child, path+'/created') {b}
       else if (child.localName = 'date') then
         element.dateElement := ParseInstant(child, path+'/date') {b}
       else if (child.localName = 'agent') then
@@ -21485,12 +23488,11 @@ begin
     ComposeEnum(xml, 'docStatus', elem.DocStatusElement, CODES_TFhirCompositionStatusEnum);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
     ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('class_') then
-    ComposeCodeableConcept(xml, 'class', elem.class_);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('category') then
+    for i := 0 to elem.categoryList.Count - 1 do
+      ComposeCodeableConcept(xml, 'category', elem.categoryList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
     ComposeReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTime(xml, 'created', elem.createdElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('date') then
     ComposeInstant(xml, 'date', elem.dateElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('agent') then
@@ -21515,706 +23517,6 @@ begin
 end;
 
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-function TFHIRXmlParser.ParseEligibilityRequestInsurance(element : TMXmlElement; path : string) : TFhirEligibilityRequestInsurance;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityRequestInsurance.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityRequestInsuranceChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityRequestInsuranceChild(element : TFhirEligibilityRequestInsurance; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'focal') then
-        element.focalElement := ParseBoolean(child, path+'/focal') {b}
-      else if (child.localName = 'coverage') then
-        element.coverage := ParseReference{TFhirCoverage}(child, path+'/coverage') {b}
-      else if (child.localName = 'businessArrangement') then
-        element.businessArrangementElement := ParseString(child, path+'/businessArrangement') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityRequestInsurance(xml : TXmlBuilder; name : String; elem : TFhirEligibilityRequestInsurance);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityRequestInsuranceChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityRequestInsuranceChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequestInsurance);
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBoolean(xml, 'focal', elem.focalElement);{x.2b}
-  ComposeReference{TFhirCoverage}(xml, 'coverage', elem.coverage);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'businessArrangement', elem.businessArrangementElement);{x.2b}
-end;
-
-function TFHIRXmlParser.ParseEligibilityRequestDetail(element : TMXmlElement; path : string) : TFhirEligibilityRequestDetail;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityRequestDetail.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityRequestDetailChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityRequestDetailChild(element : TFhirEligibilityRequestDetail; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'category') then
-        element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
-      else if (child.localName = 'modifier') then
-        element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
-      else if (child.localName = 'provider') then
-        element.provider := ParseReference{TFhirPractitioner}(child, path+'/provider') {b}
-      else if (child.localName = 'quantity') then
-        element.quantity := ParseQuantity(child, path+'/quantity') {b}
-      else if (child.localName = 'unitPrice') then
-        element.unitPrice := ParseMoney(child, path+'/unitPrice') {b}
-      else if (child.localName = 'facility') then
-        element.facility := ParseReference{TFhirLocation}(child, path+'/facility') {b}
-      else if (child.localName = 'diagnosis') then
-        element.diagnosisList.Add(ParseEligibilityRequestDetailDiagnosis(child, path+'/diagnosis')){y.2}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityRequestDetail(xml : TXmlBuilder; name : String; elem : TFhirEligibilityRequestDetail);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityRequestDetailChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityRequestDetailChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequestDetail);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.modifierList.Count - 1 do
-      ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirPractitioner}(xml, 'provider', elem.provider);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeMoney(xml, 'unitPrice', elem.unitPrice);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirLocation}(xml, 'facility', elem.facility);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.diagnosisList.Count - 1 do
-      ComposeEligibilityRequestDetailDiagnosis(xml, 'diagnosis', elem.diagnosisList[i]);
-end;
-
-function TFHIRXmlParser.ParseEligibilityRequestDetailDiagnosis(element : TMXmlElement; path : string) : TFhirEligibilityRequestDetailDiagnosis;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityRequestDetailDiagnosis.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityRequestDetailDiagnosisChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityRequestDetailDiagnosisChild(element : TFhirEligibilityRequestDetailDiagnosis; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'diagnosisCodeableConcept') then
-        element.diagnosis := ParseCodeableConcept(child, path+'/diagnosisCodeableConcept'){x.3}
-      else if (child.localName = 'diagnosisReference') then
-        element.diagnosis := ParseReference(child, path+'/diagnosisReference') {a}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityRequestDetailDiagnosis(xml : TXmlBuilder; name : String; elem : TFhirEligibilityRequestDetailDiagnosis);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityRequestDetailDiagnosisChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityRequestDetailDiagnosisChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequestDetailDiagnosis);
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) and (elem.diagnosis is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(xml, 'diagnosisCodeableConcept', TFhirCodeableConcept(elem.diagnosis))
-  else if (SummaryOption in [soFull, soData]) and (elem.diagnosis is TFhirReference) {2} then
-    ComposeReference(xml, 'diagnosisReference', TFhirReference(elem.diagnosis));
-end;
-
-function TFHIRXmlParser.ParseEligibilityRequest(element : TMXmlElement; path : string) : TFhirEligibilityRequest;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityRequest.create;
-  try
-    parseDomainResourceAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityRequestChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityRequestChild(element : TFhirEligibilityRequest; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'identifier') then
-        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
-      else if (child.localName = 'status') then
-        element.statusElement := ParseEnum(CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, path+'/status', child){1a}
-      else if (child.localName = 'priority') then
-        element.priority := ParseCodeableConcept(child, path+'/priority') {b}
-      else if (child.localName = 'use') then
-        element.useList.Add(ParseEnum(CODES_TFhirEligibilityrequestUseEnum, SYSTEMS_TFhirEligibilityrequestUseEnum, path+'/use', child)){y.1}
-      else if (child.localName = 'patient') then
-        element.patient := ParseReference{TFhirPatient}(child, path+'/patient') {b}
-      else if (child.localName = 'servicedPeriod') then
-        element.serviced := ParsePeriod(child, path+'/servicedPeriod'){x.3}
-      else if (child.localName = 'servicedDate') then
-        element.serviced := ParseDate(child, path+'/servicedDate'){x.3}
-      else if (child.localName = 'created') then
-        element.createdElement := ParseDateTime(child, path+'/created') {b}
-      else if (child.localName = 'enterer') then
-        element.enterer := ParseReference{TFhirPractitioner}(child, path+'/enterer') {b}
-      else if (child.localName = 'provider') then
-        element.provider := ParseReference{TFhirPractitioner}(child, path+'/provider') {b}
-      else if (child.localName = 'insurer') then
-        element.insurer := ParseReference{TFhirOrganization}(child, path+'/insurer') {b}
-      else if (child.localName = 'facility') then
-        element.facility := ParseReference{TFhirLocation}(child, path+'/facility') {b}
-      else if (child.localName = 'insurance') then
-        element.insuranceList.Add(ParseEligibilityRequestInsurance(child, path+'/insurance')){y.2}
-      else if (child.localName = 'detail') then
-        element.detailList.Add(ParseEligibilityRequestDetail(child, path+'/detail')){y.2}
-      else if Not ParseDomainResourceChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityRequest(xml : TXmlBuilder; name : String; elem : TFhirEligibilityRequest);
-begin
-  if (elem = nil) then
-    exit;
-  composeDomainResourceAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityRequestChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityRequestChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequest);
-var
-  i : integer;
-begin
-  composeDomainResourceChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum);
-  if (SummaryOption in [soFull, soData]) and doCompose('priority') then
-    ComposeCodeableConcept(xml, 'priority', elem.priority);{x.2a}
-  for i := 0 to elem.useList.Count - 1 do
-      ComposeEnum(xml, 'use', elem.useList[i], CODES_TFhirEligibilityrequestUseEnum);
-  if (SummaryOption in [soFull, soData]) and doCompose('patient') then
-    ComposeReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2a}
-  if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) {6} then
-    ComposePeriod(xml, 'servicedPeriod', TFhirPeriod(elem.serviced))
-  else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) {6} then
-    ComposeDate(xml, 'servicedDate', TFhirDate(elem.serviced));
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTime(xml, 'created', elem.createdElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) and doCompose('enterer') then
-    ComposeReference{TFhirPractitioner}(xml, 'enterer', elem.enterer);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('provider') then
-    ComposeReference{TFhirPractitioner}(xml, 'provider', elem.provider);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('insurer') then
-    ComposeReference{TFhirOrganization}(xml, 'insurer', elem.insurer);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('facility') then
-    ComposeReference{TFhirLocation}(xml, 'facility', elem.facility);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('insurance') then
-    for i := 0 to elem.insuranceList.Count - 1 do
-      ComposeEligibilityRequestInsurance(xml, 'insurance', elem.insuranceList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('detail') then
-    for i := 0 to elem.detailList.Count - 1 do
-      ComposeEligibilityRequestDetail(xml, 'detail', elem.detailList[i]);
-end;
-
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-function TFHIRXmlParser.ParseEligibilityResponseInsurance(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsurance;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityResponseInsurance.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityResponseInsuranceChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponseInsuranceChild(element : TFhirEligibilityResponseInsurance; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'coverage') then
-        element.coverage := ParseReference{TFhirCoverage}(child, path+'/coverage') {b}
-      else if (child.localName = 'contract') then
-        element.contract := ParseReference{TFhirContract}(child, path+'/contract') {b}
-      else if (child.localName = 'inforce') then
-        element.inforceElement := ParseBoolean(child, path+'/inforce') {b}
-      else if (child.localName = 'detail') then
-        element.detailList.Add(ParseEligibilityResponseInsuranceDetail(child, path+'/detail')){y.2}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseInsurance(xml : TXmlBuilder; name : String; elem : TFhirEligibilityResponseInsurance);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityResponseInsuranceChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsurance);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirCoverage}(xml, 'coverage', elem.coverage);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirContract}(xml, 'contract', elem.contract);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBoolean(xml, 'inforce', elem.inforceElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.detailList.Count - 1 do
-      ComposeEligibilityResponseInsuranceDetail(xml, 'detail', elem.detailList[i]);
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponseInsuranceDetail(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsuranceDetail;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityResponseInsuranceDetail.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityResponseInsuranceDetailChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponseInsuranceDetailChild(element : TFhirEligibilityResponseInsuranceDetail; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'category') then
-        element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
-      else if (child.localName = 'modifier') then
-        element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
-      else if (child.localName = 'provider') then
-        element.provider := ParseReference{TFhirPractitioner}(child, path+'/provider') {b}
-      else if (child.localName = 'excluded') then
-        element.excludedElement := ParseBoolean(child, path+'/excluded') {b}
-      else if (child.localName = 'name') then
-        element.nameElement := ParseString(child, path+'/name') {b}
-      else if (child.localName = 'description') then
-        element.descriptionElement := ParseString(child, path+'/description') {b}
-      else if (child.localName = 'network') then
-        element.network := ParseCodeableConcept(child, path+'/network') {b}
-      else if (child.localName = 'unit') then
-        element.unit_ := ParseCodeableConcept(child, path+'/unit') {b}
-      else if (child.localName = 'term') then
-        element.term := ParseCodeableConcept(child, path+'/term') {b}
-      else if (child.localName = 'benefit') then
-        element.benefitList.Add(ParseEligibilityResponseInsuranceDetailBenefit(child, path+'/benefit')){y.2}
-      else if (child.localName = 'authorizationRequired') then
-        element.authorizationRequiredElement := ParseBoolean(child, path+'/authorizationRequired') {b}
-      else if (child.localName = 'authorizationSupporting') then
-        element.authorizationSupportingList.Add(ParseCodeableConcept(child, path+'/authorizationSupporting')){y.2}
-      else if (child.localName = 'authorizationUrl') then
-        element.authorizationUrlElement := ParseUri(child, path+'/authorizationUrl') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseInsuranceDetail(xml : TXmlBuilder; name : String; elem : TFhirEligibilityResponseInsuranceDetail);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityResponseInsuranceDetailChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseInsuranceDetailChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsuranceDetail);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.modifierList.Count - 1 do
-      ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirPractitioner}(xml, 'provider', elem.provider);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBoolean(xml, 'excluded', elem.excludedElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'name', elem.nameElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'network', elem.network);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'unit', elem.unit_);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'term', elem.term);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.benefitList.Count - 1 do
-      ComposeEligibilityResponseInsuranceDetailBenefit(xml, 'benefit', elem.benefitList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBoolean(xml, 'authorizationRequired', elem.authorizationRequiredElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.authorizationSupportingList.Count - 1 do
-      ComposeCodeableConcept(xml, 'authorizationSupporting', elem.authorizationSupportingList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeUri(xml, 'authorizationUrl', elem.authorizationUrlElement);{x.2b}
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponseInsuranceDetailBenefit(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsuranceDetailBenefit;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityResponseInsuranceDetailBenefit.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityResponseInsuranceDetailBenefitChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponseInsuranceDetailBenefitChild(element : TFhirEligibilityResponseInsuranceDetailBenefit; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'type') then
-        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'allowedUnsignedInt') then
-        element.allowed := ParseUnsignedInt(child, path+'/allowedUnsignedInt'){x.3}
-      else if (child.localName = 'allowedMoney') then
-        element.allowed := ParseMoney(child, path+'/allowedMoney'){x.3}
-      else if (child.localName = 'allowedString') then
-        element.allowed := ParseString(child, path+'/allowedString'){x.3}
-      else if (child.localName = 'usedUnsignedInt') then
-        element.used := ParseUnsignedInt(child, path+'/usedUnsignedInt'){x.3}
-      else if (child.localName = 'usedMoney') then
-        element.used := ParseMoney(child, path+'/usedMoney'){x.3}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseInsuranceDetailBenefit(xml : TXmlBuilder; name : String; elem : TFhirEligibilityResponseInsuranceDetailBenefit);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityResponseInsuranceDetailBenefitChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseInsuranceDetailBenefitChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsuranceDetailBenefit);
-begin
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirUnsignedInt) {6} then
-    ComposeUnsignedInt(xml, 'allowedUnsignedInt', TFhirUnsignedInt(elem.allowed))
-  else if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirMoney) {6} then
-    ComposeMoney(xml, 'allowedMoney', TFhirMoney(elem.allowed))
-  else if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirString) {6} then
-    ComposeString(xml, 'allowedString', TFhirString(elem.allowed));
-  if (SummaryOption in [soFull, soData]) and (elem.used is TFhirUnsignedInt) {6} then
-    ComposeUnsignedInt(xml, 'usedUnsignedInt', TFhirUnsignedInt(elem.used))
-  else if (SummaryOption in [soFull, soData]) and (elem.used is TFhirMoney) {6} then
-    ComposeMoney(xml, 'usedMoney', TFhirMoney(elem.used));
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponseError(element : TMXmlElement; path : string) : TFhirEligibilityResponseError;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityResponseError.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityResponseErrorChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponseErrorChild(element : TFhirEligibilityResponseError; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'code') then
-        element.code := ParseCodeableConcept(child, path+'/code') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseError(xml : TXmlBuilder; name : String; elem : TFhirEligibilityResponseError);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityResponseErrorChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseErrorChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseError);
-begin
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponse(element : TMXmlElement; path : string) : TFhirEligibilityResponse;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirEligibilityResponse.create;
-  try
-    parseDomainResourceAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseEligibilityResponseChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseEligibilityResponseChild(element : TFhirEligibilityResponse; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'identifier') then
-        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
-      else if (child.localName = 'status') then
-        element.statusElement := ParseEnum(CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, path+'/status', child){1a}
-      else if (child.localName = 'use') then
-        element.useList.Add(ParseEnum(CODES_TFhirEligibilityresponseUseEnum, SYSTEMS_TFhirEligibilityresponseUseEnum, path+'/use', child)){y.1}
-      else if (child.localName = 'patient') then
-        element.patient := ParseReference{TFhirPatient}(child, path+'/patient') {b}
-      else if (child.localName = 'servicedPeriod') then
-        element.serviced := ParsePeriod(child, path+'/servicedPeriod'){x.3}
-      else if (child.localName = 'servicedDate') then
-        element.serviced := ParseDate(child, path+'/servicedDate'){x.3}
-      else if (child.localName = 'created') then
-        element.createdElement := ParseDateTime(child, path+'/created') {b}
-      else if (child.localName = 'requestProvider') then
-        element.requestProvider := ParseReference{TFhirPractitioner}(child, path+'/requestProvider') {b}
-      else if (child.localName = 'request') then
-        element.request := ParseReference{TFhirEligibilityRequest}(child, path+'/request') {b}
-      else if (child.localName = 'outcome') then
-        element.outcomeElement := ParseEnum(CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum, path+'/outcome', child){1a}
-      else if (child.localName = 'disposition') then
-        element.dispositionElement := ParseString(child, path+'/disposition') {b}
-      else if (child.localName = 'insurer') then
-        element.insurer := ParseReference{TFhirOrganization}(child, path+'/insurer') {b}
-      else if (child.localName = 'insurance') then
-        element.insuranceList.Add(ParseEligibilityResponseInsurance(child, path+'/insurance')){y.2}
-      else if (child.localName = 'preAuthRef') then
-        element.preAuthRefElement := ParseString(child, path+'/preAuthRef') {b}
-      else if (child.localName = 'form') then
-        element.form := ParseCodeableConcept(child, path+'/form') {b}
-      else if (child.localName = 'error') then
-        element.errorList.Add(ParseEligibilityResponseError(child, path+'/error')){y.2}
-      else if Not ParseDomainResourceChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponse(xml : TXmlBuilder; name : String; elem : TFhirEligibilityResponse);
-begin
-  if (elem = nil) then
-    exit;
-  composeDomainResourceAttributes(xml, elem);
-  xml.open(name);
-  composeEligibilityResponseChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeEligibilityResponseChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponse);
-var
-  i : integer;
-begin
-  composeDomainResourceChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum);
-  for i := 0 to elem.useList.Count - 1 do
-      ComposeEnum(xml, 'use', elem.useList[i], CODES_TFhirEligibilityresponseUseEnum);
-  if (SummaryOption in [soFull, soData]) and doCompose('patient') then
-    ComposeReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2a}
-  if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) {6} then
-    ComposePeriod(xml, 'servicedPeriod', TFhirPeriod(elem.serviced))
-  else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) {6} then
-    ComposeDate(xml, 'servicedDate', TFhirDate(elem.serviced));
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTime(xml, 'created', elem.createdElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) and doCompose('requestProvider') then
-    ComposeReference{TFhirPractitioner}(xml, 'requestProvider', elem.requestProvider);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('request') then
-    ComposeReference{TFhirEligibilityRequest}(xml, 'request', elem.request);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('outcome') then
-    ComposeEnum(xml, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum);
-  if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
-    ComposeString(xml, 'disposition', elem.dispositionElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) and doCompose('insurer') then
-    ComposeReference{TFhirOrganization}(xml, 'insurer', elem.insurer);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('insurance') then
-    for i := 0 to elem.insuranceList.Count - 1 do
-      ComposeEligibilityResponseInsurance(xml, 'insurance', elem.insuranceList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
-    ComposeString(xml, 'preAuthRef', elem.preAuthRefElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) and doCompose('form') then
-    ComposeCodeableConcept(xml, 'form', elem.form);{x.2a}
-  if (SummaryOption in [soFull, soData]) and doCompose('error') then
-    for i := 0 to elem.errorList.Count - 1 do
-      ComposeEligibilityResponseError(xml, 'error', elem.errorList[i]);
-end;
-
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
 function TFHIRXmlParser.ParseEncounterStatusHistory(element : TMXmlElement; path : string) : TFhirEncounterStatusHistory;
 var
@@ -23408,8 +24710,14 @@ begin
         element.effectivePeriod := ParsePeriod(child, path+'/effectivePeriod') {b}
       else if (child.localName = 'topic') then
         element.topicList.Add(ParseCodeableConcept(child, path+'/topic')){y.2}
-      else if (child.localName = 'contributor') then
-        element.contributorList.Add(ParseContributor(child, path+'/contributor')){y.2}
+      else if (child.localName = 'author') then
+        element.authorList.Add(ParseContactDetail(child, path+'/author')){y.2}
+      else if (child.localName = 'editor') then
+        element.editorList.Add(ParseContactDetail(child, path+'/editor')){y.2}
+      else if (child.localName = 'reviewer') then
+        element.reviewerList.Add(ParseContactDetail(child, path+'/reviewer')){y.2}
+      else if (child.localName = 'endorser') then
+        element.endorserList.Add(ParseContactDetail(child, path+'/endorser')){y.2}
       else if (child.localName = 'relatedArtifact') then
         element.relatedArtifactList.Add(ParseRelatedArtifact(child, path+'/relatedArtifact')){y.2}
       else if (child.localName = 'trigger') then
@@ -23484,9 +24792,18 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('topic') then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(xml, 'topic', elem.topicList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') then
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(xml, 'contributor', elem.contributorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('author') then
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(xml, 'author', elem.authorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') then
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(xml, 'editor', elem.editorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') then
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(xml, 'reviewer', elem.reviewerList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') then
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(xml, 'endorser', elem.endorserList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(xml, 'relatedArtifact', elem.relatedArtifactList[i]);
@@ -24479,6 +25796,8 @@ begin
         element.diagnosis := ParseReference(child, path+'/diagnosisReference') {a}
       else if (child.localName = 'type') then
         element.type_List.Add(ParseCodeableConcept(child, path+'/type')){y.2}
+      else if (child.localName = 'onAdmission') then
+        element.onAdmission := ParseCodeableConcept(child, path+'/onAdmission') {b}
       else if (child.localName = 'packageCode') then
         element.packageCode := ParseCodeableConcept(child, path+'/packageCode') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
@@ -24509,6 +25828,8 @@ begin
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'onAdmission', elem.onAdmission);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'packageCode', elem.packageCode);{x.2a}
 end;
@@ -24598,10 +25919,10 @@ end;
 function TFHIRXmlParser.ParseExplanationOfBenefitInsuranceChild(element : TFhirExplanationOfBenefitInsurance; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'coverage') then
+      if (child.localName = 'focal') then
+        element.focalElement := ParseBoolean(child, path+'/focal') {b}
+      else if (child.localName = 'coverage') then
         element.coverage := ParseReference{TFhirCoverage}(child, path+'/coverage') {b}
-      else if (child.localName = 'preAuthRef') then
-        element.preAuthRefList.Add(ParseString(child, path+'/preAuthRef')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
@@ -24618,15 +25939,10 @@ begin
 end;
 
 procedure TFHIRXmlComposer.ComposeExplanationOfBenefitInsuranceChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitInsurance);
-var
-  i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirCoverage}(xml, 'coverage', elem.coverage);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.preAuthRefList.Count - 1 do
-      ComposeString(xml, 'preAuthRef', elem.preAuthRefList[i]);
+  ComposeBoolean(xml, 'focal', elem.focalElement);{x.2b}
+  ComposeReference{TFhirCoverage}(xml, 'coverage', elem.coverage);{x.2a}
 end;
 
 function TFHIRXmlParser.ParseExplanationOfBenefitAccident(element : TMXmlElement; path : string) : TFhirExplanationOfBenefitAccident;
@@ -24729,8 +26045,8 @@ begin
         element.revenue := ParseCodeableConcept(child, path+'/revenue') {b}
       else if (child.localName = 'category') then
         element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
       else if (child.localName = 'programCode') then
@@ -24805,7 +26121,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
@@ -24943,8 +26259,8 @@ begin
         element.revenue := ParseCodeableConcept(child, path+'/revenue') {b}
       else if (child.localName = 'category') then
         element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
       else if (child.localName = 'programCode') then
@@ -24991,7 +26307,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
@@ -25051,8 +26367,8 @@ begin
         element.revenue := ParseCodeableConcept(child, path+'/revenue') {b}
       else if (child.localName = 'category') then
         element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
       else if (child.localName = 'programCode') then
@@ -25097,7 +26413,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
@@ -25154,8 +26470,10 @@ begin
         element.detailSequenceList.Add(ParsePositiveInt(child, path+'/detailSequence')){y.2}
       else if (child.localName = 'subDetailSequence') then
         element.subDetailSequenceList.Add(ParsePositiveInt(child, path+'/subDetailSequence')){y.2}
-      else if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      else if (child.localName = 'provider') then
+        element.providerList.Add(ParseReference{TFhirPractitioner}(child, path+'/provider')){y.2}
+      else if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
       else if (child.localName = 'programCode') then
@@ -25218,7 +26536,10 @@ begin
     for i := 0 to elem.subDetailSequenceList.Count - 1 do
       ComposePositiveInt(xml, 'subDetailSequence', elem.subDetailSequenceList[i]);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    for i := 0 to elem.providerList.Count - 1 do
+      ComposeReference{TFhirPractitioner}(xml, 'provider', elem.providerList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
@@ -25284,12 +26605,10 @@ end;
 function TFHIRXmlParser.ParseExplanationOfBenefitAddItemDetailChild(element : TFhirExplanationOfBenefitAddItemDetail; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
-      else if (child.localName = 'programCode') then
-        element.programCodeList.Add(ParseCodeableConcept(child, path+'/programCode')){y.2}
       else if (child.localName = 'quantity') then
         element.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.localName = 'unitPrice') then
@@ -25325,13 +26644,10 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.programCodeList.Count - 1 do
-      ComposeCodeableConcept(xml, 'programCode', elem.programCodeList[i]);
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
   if (SummaryOption in [soFull, soData]) then
@@ -25376,12 +26692,10 @@ end;
 function TFHIRXmlParser.ParseExplanationOfBenefitAddItemDetailSubDetailChild(element : TFhirExplanationOfBenefitAddItemDetailSubDetail; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'service') then
-        element.service := ParseCodeableConcept(child, path+'/service') {b}
+      if (child.localName = 'billcode') then
+        element.billcode := ParseCodeableConcept(child, path+'/billcode') {b}
       else if (child.localName = 'modifier') then
         element.modifierList.Add(ParseCodeableConcept(child, path+'/modifier')){y.2}
-      else if (child.localName = 'programCode') then
-        element.programCodeList.Add(ParseCodeableConcept(child, path+'/programCode')){y.2}
       else if (child.localName = 'quantity') then
         element.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.localName = 'unitPrice') then
@@ -25415,13 +26729,10 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'service', elem.service);{x.2a}
+    ComposeCodeableConcept(xml, 'billcode', elem.billcode);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(xml, 'modifier', elem.modifierList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.programCodeList.Count - 1 do
-      ComposeCodeableConcept(xml, 'programCode', elem.programCodeList[i]);
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
   if (SummaryOption in [soFull, soData]) then
@@ -25798,7 +27109,7 @@ begin
       else if (child.localName = 'type') then
         element.type_ := ParseCodeableConcept(child, path+'/type') {b}
       else if (child.localName = 'subType') then
-        element.subTypeList.Add(ParseCodeableConcept(child, path+'/subType')){y.2}
+        element.subType := ParseCodeableConcept(child, path+'/subType') {b}
       else if (child.localName = 'use') then
         element.useElement := ParseEnum(CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, path+'/use', child){1a}
       else if (child.localName = 'patient') then
@@ -25844,7 +27155,7 @@ begin
       else if (child.localName = 'precedence') then
         element.precedenceElement := ParsePositiveInt(child, path+'/precedence') {b}
       else if (child.localName = 'insurance') then
-        element.insurance := ParseExplanationOfBenefitInsurance(child, path+'/insurance') {b}
+        element.insuranceList.Add(ParseExplanationOfBenefitInsurance(child, path+'/insurance')){y.2}
       else if (child.localName = 'accident') then
         element.accident := ParseExplanationOfBenefitAccident(child, path+'/accident') {b}
       else if (child.localName = 'item') then
@@ -25889,8 +27200,7 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('type_') then
     ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('subType') then
-    for i := 0 to elem.subTypeList.Count - 1 do
-      ComposeCodeableConcept(xml, 'subType', elem.subTypeList[i]);
+    ComposeCodeableConcept(xml, 'subType', elem.subType);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
     ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirClaimUseEnum);
   if (SummaryOption in [soFull, soData]) and doCompose('patient') then
@@ -25941,7 +27251,8 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('precedence') then
     ComposePositiveInt(xml, 'precedence', elem.precedenceElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('insurance') then
-    ComposeExplanationOfBenefitInsurance(xml, 'insurance', elem.insurance);{x.2a}
+    for i := 0 to elem.insuranceList.Count - 1 do
+      ComposeExplanationOfBenefitInsurance(xml, 'insurance', elem.insuranceList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('accident') then
     ComposeExplanationOfBenefitAccident(xml, 'accident', elem.accident);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('item') then
@@ -26086,7 +27397,7 @@ begin
       else if (child.localName = 'relationship') then
         element.relationship := ParseCodeableConcept(child, path+'/relationship') {b}
       else if (child.localName = 'gender') then
-        element.genderElement := ParseEnum(CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum, path+'/gender', child){1a}
+        element.gender := ParseCodeableConcept(child, path+'/gender') {b}
       else if (child.localName = 'bornPeriod') then
         element.born := ParsePeriod(child, path+'/bornPeriod'){x.3}
       else if (child.localName = 'bornDate') then
@@ -26158,7 +27469,7 @@ begin
     ComposeString(xml, 'name', elem.nameElement);{x.2b}
   ComposeCodeableConcept(xml, 'relationship', elem.relationship);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('gender') then
-    ComposeEnum(xml, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum);
+    ComposeCodeableConcept(xml, 'gender', elem.gender);{x.2a}
   if (SummaryOption in [soFull, soData]) and (elem.born is TFhirPeriod) {6} then
     ComposePeriod(xml, 'bornPeriod', TFhirPeriod(elem.born))
   else if (SummaryOption in [soFull, soData]) and (elem.born is TFhirDate) {6} then
@@ -27014,8 +28325,8 @@ end;
 function TFHIRXmlParser.ParseGuidanceResponseChild(element : TFhirGuidanceResponse; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'requestId') then
-        element.requestIdElement := ParseId(child, path+'/requestId') {b}
+      if (child.localName = 'requestIdentifier') then
+        element.requestIdentifier := ParseIdentifier(child, path+'/requestIdentifier') {b}
       else if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.localName = 'moduleCanonical') then
@@ -27068,8 +28379,8 @@ var
   i : integer;
 begin
   composeDomainResourceChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('requestId') then
-    ComposeId(xml, 'requestId', elem.requestIdElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('requestIdentifier') then
+    ComposeIdentifier(xml, 'requestIdentifier', elem.requestIdentifier);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
@@ -27655,6 +28966,8 @@ begin
         element.reasonReferenceList.Add(ParseReference{TFhirCondition}(child, path+'/reasonReference')){y.2}
       else if (child.localName = 'note') then
         element.noteList.Add(ParseAnnotation(child, path+'/note')){y.2}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.localName = 'series') then
         element.seriesList.Add(ParseImagingStudySeries(child, path+'/series')){y.2}
       else if Not ParseDomainResourceChild(element, path, child) then
@@ -27720,6 +29033,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('note') then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('description') then
+    ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('series') then
     for i := 0 to elem.seriesList.Count - 1 do
       ComposeImagingStudySeries(xml, 'series', elem.seriesList[i]);
@@ -27945,6 +29260,8 @@ begin
         element.occurrence := ParseDateTime(child, path+'/occurrenceDateTime'){x.3}
       else if (child.localName = 'occurrenceString') then
         element.occurrence := ParseString(child, path+'/occurrenceString'){x.3}
+      else if (child.localName = 'recorded') then
+        element.recordedElement := ParseDateTime(child, path+'/recorded') {b}
       else if (child.localName = 'primarySource') then
         element.primarySourceElement := ParseBoolean(child, path+'/primarySource') {b}
       else if (child.localName = 'reportOrigin') then
@@ -28017,6 +29334,8 @@ begin
     ComposeDateTime(xml, 'occurrenceDateTime', TFhirDateTime(elem.occurrence))
   else if (elem.occurrence is TFhirString) {6} then
     ComposeString(xml, 'occurrenceString', TFhirString(elem.occurrence));
+  if (SummaryOption in [soFull, soData]) and doCompose('recorded') then
+    ComposeDateTime(xml, 'recorded', elem.recordedElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('primarySource') then
     ComposeBoolean(xml, 'primarySource', elem.primarySourceElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('reportOrigin') then
@@ -29089,6 +30408,8 @@ begin
         element.versionElement := ParseString(child, path+'/version') {b}
       else if (child.localName = 'name') then
         element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'title') then
+        element.titleElement := ParseString(child, path+'/title') {b}
       else if (child.localName = 'status') then
         element.statusElement := ParseEnum(CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, path+'/status', child){1a}
       else if (child.localName = 'experimental') then
@@ -29145,6 +30466,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
     ComposeString(xml, 'version', elem.versionElement);{x.2b}
   ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('title') then
+    ComposeString(xml, 'title', elem.titleElement);{x.2b}
   ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('experimental') then
     ComposeBoolean(xml, 'experimental', elem.experimentalElement);{x.2b}
@@ -29184,6 +30507,665 @@ begin
 end;
 
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+function TFHIRXmlParser.ParseInsurancePlanContact(element : TMXmlElement; path : string) : TFhirInsurancePlanContact;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanContact.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanContactChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanContactChild(element : TFhirInsurancePlanContact; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'purpose') then
+        element.purpose := ParseCodeableConcept(child, path+'/purpose') {b}
+      else if (child.localName = 'name') then
+        element.name := ParseHumanName(child, path+'/name') {b}
+      else if (child.localName = 'telecom') then
+        element.telecomList.Add(ParseContactPoint(child, path+'/telecom')){y.2}
+      else if (child.localName = 'address') then
+        element.address := ParseAddress(child, path+'/address') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanContact(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanContact);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanContactChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanContactChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanContact);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'purpose', elem.purpose);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeHumanName(xml, 'name', elem.name);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.telecomList.Count - 1 do
+      ComposeContactPoint(xml, 'telecom', elem.telecomList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeAddress(xml, 'address', elem.address);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanCoverage(element : TMXmlElement; path : string) : TFhirInsurancePlanCoverage;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanCoverage.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanCoverageChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanCoverageChild(element : TFhirInsurancePlanCoverage; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'network') then
+        element.networkList.Add(ParseReference{TFhirOrganization}(child, path+'/network')){y.2}
+      else if (child.localName = 'benefit') then
+        element.benefitList.Add(ParseInsurancePlanCoverageBenefit(child, path+'/benefit')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanCoverage(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanCoverage);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanCoverageChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanCoverageChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanCoverage);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.networkList.Count - 1 do
+      ComposeReference{TFhirOrganization}(xml, 'network', elem.networkList[i]);
+  for i := 0 to elem.benefitList.Count - 1 do
+      ComposeInsurancePlanCoverageBenefit(xml, 'benefit', elem.benefitList[i]);
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanCoverageBenefit(element : TMXmlElement; path : string) : TFhirInsurancePlanCoverageBenefit;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanCoverageBenefit.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanCoverageBenefitChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanCoverageBenefitChild(element : TFhirInsurancePlanCoverageBenefit; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'requirement') then
+        element.requirementElement := ParseString(child, path+'/requirement') {b}
+      else if (child.localName = 'limit') then
+        element.limitList.Add(ParseInsurancePlanCoverageBenefitLimit(child, path+'/limit')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanCoverageBenefit(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanCoverageBenefit);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanCoverageBenefitChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanCoverageBenefitChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanCoverageBenefit);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'requirement', elem.requirementElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.limitList.Count - 1 do
+      ComposeInsurancePlanCoverageBenefitLimit(xml, 'limit', elem.limitList[i]);
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanCoverageBenefitLimit(element : TMXmlElement; path : string) : TFhirInsurancePlanCoverageBenefitLimit;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanCoverageBenefitLimit.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanCoverageBenefitLimitChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanCoverageBenefitLimitChild(element : TFhirInsurancePlanCoverageBenefitLimit; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'value') then
+        element.value := ParseQuantity(child, path+'/value') {b}
+      else if (child.localName = 'code') then
+        element.code := ParseCodeableConcept(child, path+'/code') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanCoverageBenefitLimit(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanCoverageBenefitLimit);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanCoverageBenefitLimitChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanCoverageBenefitLimitChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanCoverageBenefitLimit);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(xml, 'value', elem.value);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlan(element : TMXmlElement; path : string) : TFhirInsurancePlanPlan;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanPlan.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanPlanChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanChild(element : TFhirInsurancePlanPlan; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'identifier') then
+        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'coverageArea') then
+        element.coverageAreaList.Add(ParseReference{TFhirLocation}(child, path+'/coverageArea')){y.2}
+      else if (child.localName = 'network') then
+        element.networkList.Add(ParseReference{TFhirOrganization}(child, path+'/network')){y.2}
+      else if (child.localName = 'generalCost') then
+        element.generalCostList.Add(ParseInsurancePlanPlanGeneralCost(child, path+'/generalCost')){y.2}
+      else if (child.localName = 'specificCost') then
+        element.specificCostList.Add(ParseInsurancePlanPlanSpecificCost(child, path+'/specificCost')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlan(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanPlan);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanPlanChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlan);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.coverageAreaList.Count - 1 do
+      ComposeReference{TFhirLocation}(xml, 'coverageArea', elem.coverageAreaList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.networkList.Count - 1 do
+      ComposeReference{TFhirOrganization}(xml, 'network', elem.networkList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.generalCostList.Count - 1 do
+      ComposeInsurancePlanPlanGeneralCost(xml, 'generalCost', elem.generalCostList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.specificCostList.Count - 1 do
+      ComposeInsurancePlanPlanSpecificCost(xml, 'specificCost', elem.specificCostList[i]);
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanGeneralCost(element : TMXmlElement; path : string) : TFhirInsurancePlanPlanGeneralCost;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanPlanGeneralCost.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanPlanGeneralCostChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanGeneralCostChild(element : TFhirInsurancePlanPlanGeneralCost; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'groupSize') then
+        element.groupSizeElement := ParsePositiveInt(child, path+'/groupSize') {b}
+      else if (child.localName = 'cost') then
+        element.cost := ParseMoney(child, path+'/cost') {b}
+      else if (child.localName = 'comment') then
+        element.commentElement := ParseString(child, path+'/comment') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanGeneralCost(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanPlanGeneralCost);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanPlanGeneralCostChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanGeneralCostChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlanGeneralCost);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposePositiveInt(xml, 'groupSize', elem.groupSizeElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMoney(xml, 'cost', elem.cost);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'comment', elem.commentElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanSpecificCost(element : TMXmlElement; path : string) : TFhirInsurancePlanPlanSpecificCost;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanPlanSpecificCost.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanPlanSpecificCostChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanSpecificCostChild(element : TFhirInsurancePlanPlanSpecificCost; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'category') then
+        element.category := ParseCodeableConcept(child, path+'/category') {b}
+      else if (child.localName = 'benefit') then
+        element.benefitList.Add(ParseInsurancePlanPlanSpecificCostBenefit(child, path+'/benefit')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanSpecificCost(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanPlanSpecificCost);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanPlanSpecificCostChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanSpecificCostChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlanSpecificCost);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.benefitList.Count - 1 do
+      ComposeInsurancePlanPlanSpecificCostBenefit(xml, 'benefit', elem.benefitList[i]);
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanSpecificCostBenefit(element : TMXmlElement; path : string) : TFhirInsurancePlanPlanSpecificCostBenefit;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanPlanSpecificCostBenefit.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanPlanSpecificCostBenefitChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanSpecificCostBenefitChild(element : TFhirInsurancePlanPlanSpecificCostBenefit; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'cost') then
+        element.costList.Add(ParseInsurancePlanPlanSpecificCostBenefitCost(child, path+'/cost')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanSpecificCostBenefit(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanPlanSpecificCostBenefit);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanPlanSpecificCostBenefitChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanSpecificCostBenefitChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlanSpecificCostBenefit);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.costList.Count - 1 do
+      ComposeInsurancePlanPlanSpecificCostBenefitCost(xml, 'cost', elem.costList[i]);
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanSpecificCostBenefitCost(element : TMXmlElement; path : string) : TFhirInsurancePlanPlanSpecificCostBenefitCost;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlanPlanSpecificCostBenefitCost.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanPlanSpecificCostBenefitCostChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanPlanSpecificCostBenefitCostChild(element : TFhirInsurancePlanPlanSpecificCostBenefitCost; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'applicability') then
+        element.applicability := ParseCodeableConcept(child, path+'/applicability') {b}
+      else if (child.localName = 'qualifiers') then
+        element.qualifiersList.Add(ParseCodeableConcept(child, path+'/qualifiers')){y.2}
+      else if (child.localName = 'value') then
+        element.value := ParseQuantity(child, path+'/value') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanSpecificCostBenefitCost(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlanPlanSpecificCostBenefitCost);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanPlanSpecificCostBenefitCostChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanPlanSpecificCostBenefitCostChildren(xml : TXmlBuilder; elem : TFhirInsurancePlanPlanSpecificCostBenefitCost);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'applicability', elem.applicability);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.qualifiersList.Count - 1 do
+      ComposeCodeableConcept(xml, 'qualifiers', elem.qualifiersList[i]);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(xml, 'value', elem.value);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseInsurancePlan(element : TMXmlElement; path : string) : TFhirInsurancePlan;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirInsurancePlan.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseInsurancePlanChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseInsurancePlanChild(element : TFhirInsurancePlan; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'identifier') then
+        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'status') then
+        element.statusElement := ParseEnum(CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, path+'/status', child){1a}
+      else if (child.localName = 'type') then
+        element.type_List.Add(ParseCodeableConcept(child, path+'/type')){y.2}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'alias') then
+        element.aliasList.Add(ParseString(child, path+'/alias')){y.2}
+      else if (child.localName = 'period') then
+        element.period := ParsePeriod(child, path+'/period') {b}
+      else if (child.localName = 'ownedBy') then
+        element.ownedBy := ParseReference{TFhirOrganization}(child, path+'/ownedBy') {b}
+      else if (child.localName = 'administeredBy') then
+        element.administeredBy := ParseReference{TFhirOrganization}(child, path+'/administeredBy') {b}
+      else if (child.localName = 'coverageArea') then
+        element.coverageAreaList.Add(ParseReference{TFhirLocation}(child, path+'/coverageArea')){y.2}
+      else if (child.localName = 'contact') then
+        element.contactList.Add(ParseInsurancePlanContact(child, path+'/contact')){y.2}
+      else if (child.localName = 'endpoint') then
+        element.endpointList.Add(ParseReference{TFhirEndpoint}(child, path+'/endpoint')){y.2}
+      else if (child.localName = 'network') then
+        element.networkList.Add(ParseReference{TFhirOrganization}(child, path+'/network')){y.2}
+      else if (child.localName = 'coverage') then
+        element.coverageList.Add(ParseInsurancePlanCoverage(child, path+'/coverage')){y.2}
+      else if (child.localName = 'plan') then
+        element.planList.Add(ParseInsurancePlanPlan(child, path+'/plan')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlan(xml : TXmlBuilder; name : String; elem : TFhirInsurancePlan);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeInsurancePlanChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeInsurancePlanChildren(xml : TXmlBuilder; elem : TFhirInsurancePlan);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
+    for i := 0 to elem.type_List.Count - 1 do
+      ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) and doCompose('alias') then
+    for i := 0 to elem.aliasList.Count - 1 do
+      ComposeString(xml, 'alias', elem.aliasList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('period') then
+    ComposePeriod(xml, 'period', elem.period);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('ownedBy') then
+    ComposeReference{TFhirOrganization}(xml, 'ownedBy', elem.ownedBy);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('administeredBy') then
+    ComposeReference{TFhirOrganization}(xml, 'administeredBy', elem.administeredBy);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('coverageArea') then
+    for i := 0 to elem.coverageAreaList.Count - 1 do
+      ComposeReference{TFhirLocation}(xml, 'coverageArea', elem.coverageAreaList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('contact') then
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeInsurancePlanContact(xml, 'contact', elem.contactList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('endpoint') then
+    for i := 0 to elem.endpointList.Count - 1 do
+      ComposeReference{TFhirEndpoint}(xml, 'endpoint', elem.endpointList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('network') then
+    for i := 0 to elem.networkList.Count - 1 do
+      ComposeReference{TFhirOrganization}(xml, 'network', elem.networkList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('coverage') then
+    for i := 0 to elem.coverageList.Count - 1 do
+      ComposeInsurancePlanCoverage(xml, 'coverage', elem.coverageList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('plan') then
+    for i := 0 to elem.planList.Count - 1 do
+      ComposeInsurancePlanPlan(xml, 'plan', elem.planList[i]);
+end;
+
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
 function TFHIRXmlParser.ParseInvoiceParticipant(element : TMXmlElement; path : string) : TFhirInvoiceParticipant;
 var
@@ -29264,8 +31246,10 @@ begin
   result := true;
       if (child.localName = 'sequence') then
         element.sequenceElement := ParsePositiveInt(child, path+'/sequence') {b}
-      else if (child.localName = 'chargeItem') then
-        element.chargeItem := ParseReference{TFhirChargeItem}(child, path+'/chargeItem') {b}
+      else if (child.localName = 'chargeItemReference') then
+        element.chargeItem := ParseReference(child, path+'/chargeItemReference') {a}
+      else if (child.localName = 'chargeItemCodeableConcept') then
+        element.chargeItem := ParseCodeableConcept(child, path+'/chargeItemCodeableConcept'){x.3}
       else if (child.localName = 'priceComponent') then
         element.priceComponentList.Add(ParseInvoiceLineItemPriceComponent(child, path+'/priceComponent')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
@@ -29290,7 +31274,10 @@ begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveInt(xml, 'sequence', elem.sequenceElement);{x.2b}
-  ComposeReference{TFhirChargeItem}(xml, 'chargeItem', elem.chargeItem);{x.2a}
+  if (elem.chargeItem is TFhirReference) {2} then
+    ComposeReference(xml, 'chargeItemReference', TFhirReference(elem.chargeItem))
+  else if (elem.chargeItem is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'chargeItemCodeableConcept', TFhirCodeableConcept(elem.chargeItem));
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.priceComponentList.Count - 1 do
       ComposeInvoiceLineItemPriceComponent(xml, 'priceComponent', elem.priceComponentList[i]);
@@ -29632,8 +31619,14 @@ begin
         element.effectivePeriod := ParsePeriod(child, path+'/effectivePeriod') {b}
       else if (child.localName = 'topic') then
         element.topicList.Add(ParseCodeableConcept(child, path+'/topic')){y.2}
-      else if (child.localName = 'contributor') then
-        element.contributorList.Add(ParseContributor(child, path+'/contributor')){y.2}
+      else if (child.localName = 'author') then
+        element.authorList.Add(ParseContactDetail(child, path+'/author')){y.2}
+      else if (child.localName = 'editor') then
+        element.editorList.Add(ParseContactDetail(child, path+'/editor')){y.2}
+      else if (child.localName = 'reviewer') then
+        element.reviewerList.Add(ParseContactDetail(child, path+'/reviewer')){y.2}
+      else if (child.localName = 'endorser') then
+        element.endorserList.Add(ParseContactDetail(child, path+'/endorser')){y.2}
       else if (child.localName = 'relatedArtifact') then
         element.relatedArtifactList.Add(ParseRelatedArtifact(child, path+'/relatedArtifact')){y.2}
       else if (child.localName = 'parameter') then
@@ -29713,9 +31706,18 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('topic') then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(xml, 'topic', elem.topicList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') then
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(xml, 'contributor', elem.contributorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('author') then
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(xml, 'author', elem.authorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') then
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(xml, 'editor', elem.editorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') then
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(xml, 'reviewer', elem.reviewerList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') then
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(xml, 'endorser', elem.endorserList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(xml, 'relatedArtifact', elem.relatedArtifactList[i]);
@@ -30559,8 +32561,14 @@ begin
         element.effectivePeriod := ParsePeriod(child, path+'/effectivePeriod') {b}
       else if (child.localName = 'topic') then
         element.topicList.Add(ParseCodeableConcept(child, path+'/topic')){y.2}
-      else if (child.localName = 'contributor') then
-        element.contributorList.Add(ParseContributor(child, path+'/contributor')){y.2}
+      else if (child.localName = 'author') then
+        element.authorList.Add(ParseContactDetail(child, path+'/author')){y.2}
+      else if (child.localName = 'editor') then
+        element.editorList.Add(ParseContactDetail(child, path+'/editor')){y.2}
+      else if (child.localName = 'reviewer') then
+        element.reviewerList.Add(ParseContactDetail(child, path+'/reviewer')){y.2}
+      else if (child.localName = 'endorser') then
+        element.endorserList.Add(ParseContactDetail(child, path+'/endorser')){y.2}
       else if (child.localName = 'relatedArtifact') then
         element.relatedArtifactList.Add(ParseRelatedArtifact(child, path+'/relatedArtifact')){y.2}
       else if (child.localName = 'library') then
@@ -30661,9 +32669,18 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('topic') then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(xml, 'topic', elem.topicList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') then
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(xml, 'contributor', elem.contributorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('author') then
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(xml, 'author', elem.authorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') then
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(xml, 'editor', elem.editorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') then
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(xml, 'reviewer', elem.reviewerList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') then
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(xml, 'endorser', elem.endorserList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(xml, 'relatedArtifact', elem.relatedArtifactList[i]);
@@ -32628,7 +34645,9 @@ end;
 function TFHIRXmlParser.ParseMedicationKnowledgeRegulatoryChild(element : TFhirMedicationKnowledgeRegulatory; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'substitution') then
+      if (child.localName = 'regulatoryAuthority') then
+        element.regulatoryAuthority := ParseReference{TFhirOrganization}(child, path+'/regulatoryAuthority') {b}
+      else if (child.localName = 'substitution') then
         element.substitutionList.Add(ParseMedicationKnowledgeRegulatorySubstitution(child, path+'/substitution')){y.2}
       else if (child.localName = 'schedule') then
         element.scheduleList.Add(ParseMedicationKnowledgeRegulatorySchedule(child, path+'/schedule')){y.2}
@@ -32654,6 +34673,7 @@ var
   i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
+  ComposeReference{TFhirOrganization}(xml, 'regulatoryAuthority', elem.regulatoryAuthority);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.substitutionList.Count - 1 do
       ComposeMedicationKnowledgeRegulatorySubstitution(xml, 'substitution', elem.substitutionList[i]);
@@ -32740,9 +34760,7 @@ end;
 function TFHIRXmlParser.ParseMedicationKnowledgeRegulatoryScheduleChild(element : TFhirMedicationKnowledgeRegulatorySchedule; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'jurisdiction') then
-        element.jurisdiction := ParseReference{TFhirOrganization}(child, path+'/jurisdiction') {b}
-      else if (child.localName = 'schedule') then
+      if (child.localName = 'schedule') then
         element.schedule := ParseCodeableConcept(child, path+'/schedule') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
@@ -32762,7 +34780,6 @@ end;
 procedure TFHIRXmlComposer.ComposeMedicationKnowledgeRegulatoryScheduleChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeRegulatorySchedule);
 begin
   composeBackboneElementChildren(xml, elem);
-  ComposeReference{TFhirOrganization}(xml, 'jurisdiction', elem.jurisdiction);{x.2a}
   ComposeCodeableConcept(xml, 'schedule', elem.schedule);{x.2a}
 end;
 
@@ -33278,6 +35295,8 @@ begin
         element.groupIdentifier := ParseIdentifier(child, path+'/groupIdentifier') {b}
       else if (child.localName = 'statusReason') then
         element.statusReason := ParseCodeableConcept(child, path+'/statusReason') {b}
+      else if (child.localName = 'courseOfTherapyType') then
+        element.courseOfTherapyType := ParseCodeableConcept(child, path+'/courseOfTherapyType') {b}
       else if (child.localName = 'insurance') then
         element.insuranceList.Add(ParseReference{TFhirCoverage}(child, path+'/insurance')){y.2}
       else if (child.localName = 'note') then
@@ -33362,6 +35381,8 @@ begin
     ComposeIdentifier(xml, 'groupIdentifier', elem.groupIdentifier);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('statusReason') then
     ComposeCodeableConcept(xml, 'statusReason', elem.statusReason);{x.2a}
+  if (SummaryOption in [soFull, soData]) and doCompose('courseOfTherapyType') then
+    ComposeCodeableConcept(xml, 'courseOfTherapyType', elem.courseOfTherapyType);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('insurance') then
     for i := 0 to elem.insuranceList.Count - 1 do
       ComposeReference{TFhirCoverage}(xml, 'insurance', elem.insuranceList[i]);
@@ -33757,17 +35778,17 @@ begin
     ComposeReference{TFhirOrganization}(xml, 'regulator', elem.regulator);{x.2a}
 end;
 
-function TFHIRXmlParser.ParseMedicinalProductOrphanDesignation(element : TMXmlElement; path : string) : TFhirMedicinalProductOrphanDesignation;
+function TFHIRXmlParser.ParseMedicinalProductSpecialDesignation(element : TMXmlElement; path : string) : TFhirMedicinalProductSpecialDesignation;
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicinalProductOrphanDesignation.create;
+  result := TFhirMedicinalProductSpecialDesignation.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseMedicinalProductOrphanDesignationChild(result, path, child) then
+      if not ParseMedicinalProductSpecialDesignationChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -33779,7 +35800,7 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseMedicinalProductOrphanDesignationChild(element : TFhirMedicinalProductOrphanDesignation; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseMedicinalProductSpecialDesignationChild(element : TFhirMedicinalProductSpecialDesignation; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
       if (child.localName = 'identifier') then
@@ -33798,18 +35819,18 @@ begin
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeMedicinalProductOrphanDesignation(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductOrphanDesignation);
+procedure TFHIRXmlComposer.ComposeMedicinalProductSpecialDesignation(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductSpecialDesignation);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
-  composeMedicinalProductOrphanDesignationChildren(xml, elem);
+  composeMedicinalProductSpecialDesignationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeMedicinalProductOrphanDesignationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductOrphanDesignation);
+procedure TFHIRXmlComposer.ComposeMedicinalProductSpecialDesignationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductSpecialDesignation);
 var
   i : integer;
 begin
@@ -33878,8 +35899,14 @@ begin
         element.packagedMedicinalProductList.Add(ParseReference{TFhirMedicinalProductPackaged}(child, path+'/packagedMedicinalProduct')){y.2}
       else if (child.localName = 'pharmaceuticalProduct') then
         element.pharmaceuticalProductList.Add(ParseReference{TFhirMedicinalProductPharmaceutical}(child, path+'/pharmaceuticalProduct')){y.2}
-      else if (child.localName = 'clinicalParticulars') then
-        element.clinicalParticularsList.Add(ParseReference{TFhirMedicinalProductClinicals}(child, path+'/clinicalParticulars')){y.2}
+      else if (child.localName = 'contraindication') then
+        element.contraindicationList.Add(ParseReference{TFhirMedicinalProductContraindication}(child, path+'/contraindication')){y.2}
+      else if (child.localName = 'interaction') then
+        element.interactionList.Add(ParseReference{TFhirMedicinalProductInteraction}(child, path+'/interaction')){y.2}
+      else if (child.localName = 'therapeuticIndication') then
+        element.therapeuticIndicationList.Add(ParseReference{TFhirMedicinalProductIndication}(child, path+'/therapeuticIndication')){y.2}
+      else if (child.localName = 'undesirableEffect') then
+        element.undesirableEffectList.Add(ParseReference{TFhirMedicinalProductUndesirableEffect}(child, path+'/undesirableEffect')){y.2}
       else if (child.localName = 'attachedDocument') then
         element.attachedDocumentList.Add(ParseReference{TFhirDocumentReference}(child, path+'/attachedDocument')){y.2}
       else if (child.localName = 'masterFile') then
@@ -33894,8 +35921,8 @@ begin
         element.crossReferenceList.Add(ParseIdentifier(child, path+'/crossReference')){y.2}
       else if (child.localName = 'manufacturingBusinessOperation') then
         element.manufacturingBusinessOperationList.Add(ParseMedicinalProductManufacturingBusinessOperation(child, path+'/manufacturingBusinessOperation')){y.2}
-      else if (child.localName = 'orphanDesignation') then
-        element.orphanDesignationList.Add(ParseMedicinalProductOrphanDesignation(child, path+'/orphanDesignation')){y.2}
+      else if (child.localName = 'specialDesignation') then
+        element.specialDesignationList.Add(ParseMedicinalProductSpecialDesignation(child, path+'/specialDesignation')){y.2}
       else if Not ParseDomainResourceChild(element, path, child) then
     result := false;
 end;
@@ -33946,9 +35973,18 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('pharmaceuticalProduct') then
     for i := 0 to elem.pharmaceuticalProductList.Count - 1 do
       ComposeReference{TFhirMedicinalProductPharmaceutical}(xml, 'pharmaceuticalProduct', elem.pharmaceuticalProductList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('clinicalParticulars') then
-    for i := 0 to elem.clinicalParticularsList.Count - 1 do
-      ComposeReference{TFhirMedicinalProductClinicals}(xml, 'clinicalParticulars', elem.clinicalParticularsList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('contraindication') then
+    for i := 0 to elem.contraindicationList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductContraindication}(xml, 'contraindication', elem.contraindicationList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('interaction') then
+    for i := 0 to elem.interactionList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductInteraction}(xml, 'interaction', elem.interactionList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('therapeuticIndication') then
+    for i := 0 to elem.therapeuticIndicationList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductIndication}(xml, 'therapeuticIndication', elem.therapeuticIndicationList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('undesirableEffect') then
+    for i := 0 to elem.undesirableEffectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductUndesirableEffect}(xml, 'undesirableEffect', elem.undesirableEffectList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('attachedDocument') then
     for i := 0 to elem.attachedDocumentList.Count - 1 do
       ComposeReference{TFhirDocumentReference}(xml, 'attachedDocument', elem.attachedDocumentList[i]);
@@ -33969,9 +36005,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('manufacturingBusinessOperation') then
     for i := 0 to elem.manufacturingBusinessOperationList.Count - 1 do
       ComposeMedicinalProductManufacturingBusinessOperation(xml, 'manufacturingBusinessOperation', elem.manufacturingBusinessOperationList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('orphanDesignation') then
-    for i := 0 to elem.orphanDesignationList.Count - 1 do
-      ComposeMedicinalProductOrphanDesignation(xml, 'orphanDesignation', elem.orphanDesignationList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('specialDesignation') then
+    for i := 0 to elem.specialDesignationList.Count - 1 do
+      ComposeMedicinalProductSpecialDesignation(xml, 'specialDesignation', elem.specialDesignationList[i]);
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCT}
@@ -34139,6 +36175,8 @@ begin
   result := true;
       if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'subject') then
+        element.subject := ParseReference{TFhirMedicinalProduct}(child, path+'/subject') {b}
       else if (child.localName = 'country') then
         element.countryList.Add(ParseCodeableConcept(child, path+'/country')){y.2}
       else if (child.localName = 'jurisdiction') then
@@ -34159,6 +36197,8 @@ begin
         element.dateOfFirstAuthorizationElement := ParseDateTime(child, path+'/dateOfFirstAuthorization') {b}
       else if (child.localName = 'internationalBirthDate') then
         element.internationalBirthDateElement := ParseDateTime(child, path+'/internationalBirthDate') {b}
+      else if (child.localName = 'legalBasis') then
+        element.legalBasis := ParseCodeableConcept(child, path+'/legalBasis') {b}
       else if (child.localName = 'jurisdictionalAuthorization') then
         element.jurisdictionalAuthorizationList.Add(ParseMedicinalProductAuthorizationJurisdictionalAuthorization(child, path+'/jurisdictionalAuthorization')){y.2}
       else if (child.localName = 'holder') then
@@ -34190,6 +36230,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
+    ComposeReference{TFhirMedicinalProduct}(xml, 'subject', elem.subject);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('country') then
     for i := 0 to elem.countryList.Count - 1 do
       ComposeCodeableConcept(xml, 'country', elem.countryList[i]);
@@ -34212,6 +36254,8 @@ begin
     ComposeDateTime(xml, 'dateOfFirstAuthorization', elem.dateOfFirstAuthorizationElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('internationalBirthDate') then
     ComposeDateTime(xml, 'internationalBirthDate', elem.internationalBirthDateElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('legalBasis') then
+    ComposeCodeableConcept(xml, 'legalBasis', elem.legalBasis);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('jurisdictionalAuthorization') then
     for i := 0 to elem.jurisdictionalAuthorizationList.Count - 1 do
       ComposeMedicinalProductAuthorizationJurisdictionalAuthorization(xml, 'jurisdictionalAuthorization', elem.jurisdictionalAuthorizationList[i]);
@@ -34707,6 +36751,209 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+function TFHIRXmlParser.ParseMedicinalProductContraindicationOtherTherapy(element : TMXmlElement; path : string) : TFhirMedicinalProductContraindicationOtherTherapy;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductContraindicationOtherTherapy.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductContraindicationOtherTherapyChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductContraindicationOtherTherapyChild(element : TFhirMedicinalProductContraindicationOtherTherapy; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'therapyRelationshipType') then
+        element.therapyRelationshipType := ParseCodeableConcept(child, path+'/therapyRelationshipType') {b}
+      else if (child.localName = 'medicationCodeableConcept') then
+        element.medication := ParseCodeableConcept(child, path+'/medicationCodeableConcept'){x.3}
+      else if (child.localName = 'medicationReference') then
+        element.medication := ParseReference(child, path+'/medicationReference') {a}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductContraindicationOtherTherapy(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductContraindicationOtherTherapy);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductContraindicationOtherTherapyChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductContraindicationOtherTherapyChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductContraindicationOtherTherapy);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'therapyRelationshipType', elem.therapyRelationshipType);{x.2a}
+  if (elem.medication is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication))
+  else if (elem.medication is TFhirReference) {2} then
+    ComposeReference(xml, 'medicationReference', TFhirReference(elem.medication));
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductContraindicationPopulation(element : TMXmlElement; path : string) : TFhirMedicinalProductContraindicationPopulation;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductContraindicationPopulation.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductContraindicationPopulationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductContraindicationPopulationChild(element : TFhirMedicinalProductContraindicationPopulation; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'ageRange') then
+        element.age := ParseRange(child, path+'/ageRange'){x.3}
+      else if (child.localName = 'ageCodeableConcept') then
+        element.age := ParseCodeableConcept(child, path+'/ageCodeableConcept'){x.3}
+      else if (child.localName = 'gender') then
+        element.gender := ParseCodeableConcept(child, path+'/gender') {b}
+      else if (child.localName = 'race') then
+        element.race := ParseCodeableConcept(child, path+'/race') {b}
+      else if (child.localName = 'physiologicalCondition') then
+        element.physiologicalCondition := ParseCodeableConcept(child, path+'/physiologicalCondition') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductContraindicationPopulation(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductContraindicationPopulation);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductContraindicationPopulationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductContraindicationPopulationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductContraindicationPopulation);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirRange) {6} then
+    ComposeRange(xml, 'ageRange', TFhirRange(elem.age))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'ageCodeableConcept', TFhirCodeableConcept(elem.age));
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'gender', elem.gender);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'race', elem.race);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'physiologicalCondition', elem.physiologicalCondition);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductContraindication(element : TMXmlElement; path : string) : TFhirMedicinalProductContraindication;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductContraindication.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductContraindicationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductContraindicationChild(element : TFhirMedicinalProductContraindication; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'subject') then
+        element.subjectList.Add(ParseReference{TFhirMedicinalProduct}(child, path+'/subject')){y.2}
+      else if (child.localName = 'disease') then
+        element.disease := ParseCodeableConcept(child, path+'/disease') {b}
+      else if (child.localName = 'diseaseStatus') then
+        element.diseaseStatus := ParseCodeableConcept(child, path+'/diseaseStatus') {b}
+      else if (child.localName = 'comorbidity') then
+        element.comorbidityList.Add(ParseCodeableConcept(child, path+'/comorbidity')){y.2}
+      else if (child.localName = 'therapeuticIndication') then
+        element.therapeuticIndicationList.Add(ParseReference{TFhirMedicinalProductIndication}(child, path+'/therapeuticIndication')){y.2}
+      else if (child.localName = 'otherTherapy') then
+        element.otherTherapyList.Add(ParseMedicinalProductContraindicationOtherTherapy(child, path+'/otherTherapy')){y.2}
+      else if (child.localName = 'population') then
+        element.populationList.Add(ParseMedicinalProductContraindicationPopulation(child, path+'/population')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductContraindication(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductContraindication);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductContraindicationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductContraindicationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductContraindication);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProduct}(xml, 'subject', elem.subjectList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('disease') then
+    ComposeCodeableConcept(xml, 'disease', elem.disease);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('diseaseStatus') then
+    ComposeCodeableConcept(xml, 'diseaseStatus', elem.diseaseStatus);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('comorbidity') then
+    for i := 0 to elem.comorbidityList.Count - 1 do
+      ComposeCodeableConcept(xml, 'comorbidity', elem.comorbidityList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('therapeuticIndication') then
+    for i := 0 to elem.therapeuticIndicationList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductIndication}(xml, 'therapeuticIndication', elem.therapeuticIndicationList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('otherTherapy') then
+    for i := 0 to elem.otherTherapyList.Count - 1 do
+      ComposeMedicinalProductContraindicationOtherTherapy(xml, 'otherTherapy', elem.otherTherapyList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('population') then
+    for i := 0 to elem.populationList.Count - 1 do
+      ComposeMedicinalProductContraindicationPopulation(xml, 'population', elem.populationList[i]);
+end;
+
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
 function TFHIRXmlParser.ParseMedicinalProductDeviceSpecMaterial(element : TMXmlElement; path : string) : TFhirMedicinalProductDeviceSpecMaterial;
 var
@@ -34881,6 +37128,217 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+function TFHIRXmlParser.ParseMedicinalProductIndicationOtherTherapy(element : TMXmlElement; path : string) : TFhirMedicinalProductIndicationOtherTherapy;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductIndicationOtherTherapy.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductIndicationOtherTherapyChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductIndicationOtherTherapyChild(element : TFhirMedicinalProductIndicationOtherTherapy; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'therapyRelationshipType') then
+        element.therapyRelationshipType := ParseCodeableConcept(child, path+'/therapyRelationshipType') {b}
+      else if (child.localName = 'medicationCodeableConcept') then
+        element.medication := ParseCodeableConcept(child, path+'/medicationCodeableConcept'){x.3}
+      else if (child.localName = 'medicationReference') then
+        element.medication := ParseReference(child, path+'/medicationReference') {a}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductIndicationOtherTherapy(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductIndicationOtherTherapy);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductIndicationOtherTherapyChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductIndicationOtherTherapyChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductIndicationOtherTherapy);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeCodeableConcept(xml, 'therapyRelationshipType', elem.therapyRelationshipType);{x.2a}
+  if (elem.medication is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication))
+  else if (elem.medication is TFhirReference) {2} then
+    ComposeReference(xml, 'medicationReference', TFhirReference(elem.medication));
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductIndicationPopulation(element : TMXmlElement; path : string) : TFhirMedicinalProductIndicationPopulation;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductIndicationPopulation.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductIndicationPopulationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductIndicationPopulationChild(element : TFhirMedicinalProductIndicationPopulation; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'ageRange') then
+        element.age := ParseRange(child, path+'/ageRange'){x.3}
+      else if (child.localName = 'ageCodeableConcept') then
+        element.age := ParseCodeableConcept(child, path+'/ageCodeableConcept'){x.3}
+      else if (child.localName = 'gender') then
+        element.gender := ParseCodeableConcept(child, path+'/gender') {b}
+      else if (child.localName = 'race') then
+        element.race := ParseCodeableConcept(child, path+'/race') {b}
+      else if (child.localName = 'physiologicalCondition') then
+        element.physiologicalCondition := ParseCodeableConcept(child, path+'/physiologicalCondition') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductIndicationPopulation(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductIndicationPopulation);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductIndicationPopulationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductIndicationPopulationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductIndicationPopulation);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirRange) {6} then
+    ComposeRange(xml, 'ageRange', TFhirRange(elem.age))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'ageCodeableConcept', TFhirCodeableConcept(elem.age));
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'gender', elem.gender);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'race', elem.race);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'physiologicalCondition', elem.physiologicalCondition);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductIndication(element : TMXmlElement; path : string) : TFhirMedicinalProductIndication;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductIndication.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductIndicationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductIndicationChild(element : TFhirMedicinalProductIndication; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'subject') then
+        element.subjectList.Add(ParseReference{TFhirMedicinalProduct}(child, path+'/subject')){y.2}
+      else if (child.localName = 'diseaseSymptomProcedure') then
+        element.diseaseSymptomProcedure := ParseCodeableConcept(child, path+'/diseaseSymptomProcedure') {b}
+      else if (child.localName = 'diseaseStatus') then
+        element.diseaseStatus := ParseCodeableConcept(child, path+'/diseaseStatus') {b}
+      else if (child.localName = 'comorbidity') then
+        element.comorbidityList.Add(ParseCodeableConcept(child, path+'/comorbidity')){y.2}
+      else if (child.localName = 'intendedEffect') then
+        element.intendedEffect := ParseCodeableConcept(child, path+'/intendedEffect') {b}
+      else if (child.localName = 'duration') then
+        element.duration := ParseQuantity(child, path+'/duration') {b}
+      else if (child.localName = 'otherTherapy') then
+        element.otherTherapyList.Add(ParseMedicinalProductIndicationOtherTherapy(child, path+'/otherTherapy')){y.2}
+      else if (child.localName = 'undesirableEffect') then
+        element.undesirableEffectList.Add(ParseReference{TFhirMedicinalProductUndesirableEffect}(child, path+'/undesirableEffect')){y.2}
+      else if (child.localName = 'population') then
+        element.populationList.Add(ParseMedicinalProductIndicationPopulation(child, path+'/population')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductIndication(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductIndication);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductIndicationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductIndicationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductIndication);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProduct}(xml, 'subject', elem.subjectList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('diseaseSymptomProcedure') then
+    ComposeCodeableConcept(xml, 'diseaseSymptomProcedure', elem.diseaseSymptomProcedure);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('diseaseStatus') then
+    ComposeCodeableConcept(xml, 'diseaseStatus', elem.diseaseStatus);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('comorbidity') then
+    for i := 0 to elem.comorbidityList.Count - 1 do
+      ComposeCodeableConcept(xml, 'comorbidity', elem.comorbidityList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('intendedEffect') then
+    ComposeCodeableConcept(xml, 'intendedEffect', elem.intendedEffect);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('duration') then
+    ComposeQuantity(xml, 'duration', elem.duration);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('otherTherapy') then
+    for i := 0 to elem.otherTherapyList.Count - 1 do
+      ComposeMedicinalProductIndicationOtherTherapy(xml, 'otherTherapy', elem.otherTherapyList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('undesirableEffect') then
+    for i := 0 to elem.undesirableEffectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductUndesirableEffect}(xml, 'undesirableEffect', elem.undesirableEffectList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('population') then
+    for i := 0 to elem.populationList.Count - 1 do
+      ComposeMedicinalProductIndicationPopulation(xml, 'population', elem.populationList[i]);
+end;
+
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
 function TFHIRXmlParser.ParseMedicinalProductIngredientSpecifiedSubstance(element : TMXmlElement; path : string) : TFhirMedicinalProductIngredientSpecifiedSubstance;
 var
@@ -34971,8 +37429,12 @@ begin
   result := true;
       if (child.localName = 'presentation') then
         element.presentation := ParseRatio(child, path+'/presentation') {b}
+      else if (child.localName = 'presentationLowLimit') then
+        element.presentationLowLimit := ParseRatio(child, path+'/presentationLowLimit') {b}
       else if (child.localName = 'concentration') then
         element.concentration := ParseRatio(child, path+'/concentration') {b}
+      else if (child.localName = 'concentrationLowLimit') then
+        element.concentrationLowLimit := ParseRatio(child, path+'/concentrationLowLimit') {b}
       else if (child.localName = 'measurementPoint') then
         element.measurementPointElement := ParseString(child, path+'/measurementPoint') {b}
       else if (child.localName = 'country') then
@@ -35001,7 +37463,11 @@ begin
   composeBackboneElementChildren(xml, elem);
   ComposeRatio(xml, 'presentation', elem.presentation);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeRatio(xml, 'presentationLowLimit', elem.presentationLowLimit);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeRatio(xml, 'concentration', elem.concentration);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeRatio(xml, 'concentrationLowLimit', elem.concentrationLowLimit);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'measurementPoint', elem.measurementPointElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -35203,6 +37669,85 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+function TFHIRXmlParser.ParseMedicinalProductInteraction(element : TMXmlElement; path : string) : TFhirMedicinalProductInteraction;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductInteraction.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductInteractionChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductInteractionChild(element : TFhirMedicinalProductInteraction; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'subject') then
+        element.subjectList.Add(ParseReference{TFhirMedicinalProduct}(child, path+'/subject')){y.2}
+      else if (child.localName = 'interaction') then
+        element.interactionElement := ParseString(child, path+'/interaction') {b}
+      else if (child.localName = 'interactant') then
+        element.interactantList.Add(ParseCodeableConcept(child, path+'/interactant')){y.2}
+      else if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'effect') then
+        element.effect := ParseCodeableConcept(child, path+'/effect') {b}
+      else if (child.localName = 'incidence') then
+        element.incidence := ParseCodeableConcept(child, path+'/incidence') {b}
+      else if (child.localName = 'management') then
+        element.management := ParseCodeableConcept(child, path+'/management') {b}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductInteraction(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductInteraction);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductInteractionChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductInteractionChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductInteraction);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProduct}(xml, 'subject', elem.subjectList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('interaction') then
+    ComposeString(xml, 'interaction', elem.interactionElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('interactant') then
+    for i := 0 to elem.interactantList.Count - 1 do
+      ComposeCodeableConcept(xml, 'interactant', elem.interactantList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('effect') then
+    ComposeCodeableConcept(xml, 'effect', elem.effect);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('incidence') then
+    ComposeCodeableConcept(xml, 'incidence', elem.incidence);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('management') then
+    ComposeCodeableConcept(xml, 'management', elem.management);{x.2a}
+end;
+
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
 function TFHIRXmlParser.ParseMedicinalProductManufactured(element : TMXmlElement; path : string) : TFhirMedicinalProductManufactured;
 var
@@ -35831,6 +38376,142 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+function TFHIRXmlParser.ParseMedicinalProductUndesirableEffectPopulation(element : TMXmlElement; path : string) : TFhirMedicinalProductUndesirableEffectPopulation;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductUndesirableEffectPopulation.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductUndesirableEffectPopulationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductUndesirableEffectPopulationChild(element : TFhirMedicinalProductUndesirableEffectPopulation; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'ageRange') then
+        element.age := ParseRange(child, path+'/ageRange'){x.3}
+      else if (child.localName = 'ageCodeableConcept') then
+        element.age := ParseCodeableConcept(child, path+'/ageCodeableConcept'){x.3}
+      else if (child.localName = 'gender') then
+        element.gender := ParseCodeableConcept(child, path+'/gender') {b}
+      else if (child.localName = 'race') then
+        element.race := ParseCodeableConcept(child, path+'/race') {b}
+      else if (child.localName = 'physiologicalCondition') then
+        element.physiologicalCondition := ParseCodeableConcept(child, path+'/physiologicalCondition') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductUndesirableEffectPopulation(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductUndesirableEffectPopulation);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductUndesirableEffectPopulationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductUndesirableEffectPopulationChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductUndesirableEffectPopulation);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirRange) {6} then
+    ComposeRange(xml, 'ageRange', TFhirRange(elem.age))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'ageCodeableConcept', TFhirCodeableConcept(elem.age));
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'gender', elem.gender);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'race', elem.race);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'physiologicalCondition', elem.physiologicalCondition);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductUndesirableEffect(element : TMXmlElement; path : string) : TFhirMedicinalProductUndesirableEffect;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicinalProductUndesirableEffect.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicinalProductUndesirableEffectChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicinalProductUndesirableEffectChild(element : TFhirMedicinalProductUndesirableEffect; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'subject') then
+        element.subjectList.Add(ParseReference{TFhirMedicinalProduct}(child, path+'/subject')){y.2}
+      else if (child.localName = 'symptomConditionEffect') then
+        element.symptomConditionEffect := ParseCodeableConcept(child, path+'/symptomConditionEffect') {b}
+      else if (child.localName = 'classification') then
+        element.classification := ParseCodeableConcept(child, path+'/classification') {b}
+      else if (child.localName = 'frequencyOfOccurrence') then
+        element.frequencyOfOccurrence := ParseCodeableConcept(child, path+'/frequencyOfOccurrence') {b}
+      else if (child.localName = 'population') then
+        element.populationList.Add(ParseMedicinalProductUndesirableEffectPopulation(child, path+'/population')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductUndesirableEffect(xml : TXmlBuilder; name : String; elem : TFhirMedicinalProductUndesirableEffect);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeMedicinalProductUndesirableEffectChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicinalProductUndesirableEffectChildren(xml : TXmlBuilder; elem : TFhirMedicinalProductUndesirableEffect);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProduct}(xml, 'subject', elem.subjectList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('symptomConditionEffect') then
+    ComposeCodeableConcept(xml, 'symptomConditionEffect', elem.symptomConditionEffect);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('classification') then
+    ComposeCodeableConcept(xml, 'classification', elem.classification);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('frequencyOfOccurrence') then
+    ComposeCodeableConcept(xml, 'frequencyOfOccurrence', elem.frequencyOfOccurrence);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('population') then
+    for i := 0 to elem.populationList.Count - 1 do
+      ComposeMedicinalProductUndesirableEffectPopulation(xml, 'population', elem.populationList[i]);
+end;
+
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
 function TFHIRXmlParser.ParseMessageDefinitionFocus(element : TMXmlElement; path : string) : TFhirMessageDefinitionFocus;
 var
@@ -35971,7 +38652,7 @@ begin
       if (child.localName = 'url') then
         element.urlElement := ParseUri(child, path+'/url') {b}
       else if (child.localName = 'identifier') then
-        element.identifier := ParseIdentifier(child, path+'/identifier') {b}
+        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
       else if (child.localName = 'version') then
         element.versionElement := ParseString(child, path+'/version') {b}
       else if (child.localName = 'name') then
@@ -36016,6 +38697,8 @@ begin
         element.responseRequiredElement := ParseEnum(CODES_TFhirMessageheaderResponseRequestEnum, SYSTEMS_TFhirMessageheaderResponseRequestEnum, path+'/responseRequired', child){1a}
       else if (child.localName = 'allowedResponse') then
         element.allowedResponseList.Add(ParseMessageDefinitionAllowedResponse(child, path+'/allowedResponse')){y.2}
+      else if (child.localName = 'graph') then
+        element.graphList.Add(ParseCanonical(child, path+'/graph')){y.2}
       else if Not ParseDomainResourceChild(element, path, child) then
     result := false;
 end;
@@ -36039,7 +38722,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('url') then
     ComposeUri(xml, 'url', elem.urlElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
-    ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2a}
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
     ComposeString(xml, 'version', elem.versionElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
@@ -36089,6 +38773,9 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('allowedResponse') then
     for i := 0 to elem.allowedResponseList.Count - 1 do
       ComposeMessageDefinitionAllowedResponse(xml, 'allowedResponse', elem.allowedResponseList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('graph') then
+    for i := 0 to elem.graphList.Count - 1 do
+      ComposeCanonical(xml, 'graph', elem.graphList[i]);
 end;
 
 {$ENDIF FHIR_MESSAGEDEFINITION}
@@ -36955,6 +39642,10 @@ begin
   result := true;
       if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'instantiatesCanonical') then
+        element.instantiatesCanonicalList.Add(ParseCanonical(child, path+'/instantiatesCanonical')){y.2}
+      else if (child.localName = 'instantiatesUri') then
+        element.instantiatesUriList.Add(ParseUri(child, path+'/instantiatesUri')){y.2}
       else if (child.localName = 'instantiates') then
         element.instantiatesList.Add(ParseUri(child, path+'/instantiates')){y.2}
       else if (child.localName = 'status') then
@@ -37006,6 +39697,12 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') then
+    for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+      ComposeCanonical(xml, 'instantiatesCanonical', elem.instantiatesCanonicalList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') then
+    for i := 0 to elem.instantiatesUriList.Count - 1 do
+      ComposeUri(xml, 'instantiatesUri', elem.instantiatesUriList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('instantiates') then
     for i := 0 to elem.instantiatesList.Count - 1 do
       ComposeUri(xml, 'instantiates', elem.instantiatesList[i]);
@@ -37261,14 +39958,16 @@ begin
         element.subject := ParseReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.localName = 'focus') then
         element.focusList.Add(ParseReference{TFhirReference}(child, path+'/focus')){y.2}
-      else if (child.localName = 'context') then
-        element.context := ParseReference{TFhirEncounter}(child, path+'/context') {b}
+      else if (child.localName = 'encounter') then
+        element.encounter := ParseReference{TFhirEncounter}(child, path+'/encounter') {b}
       else if (child.localName = 'effectivePeriod') then
         element.effective := ParsePeriod(child, path+'/effectivePeriod'){x.3}
       else if (child.localName = 'effectiveTiming') then
         element.effective := ParseTiming(child, path+'/effectiveTiming'){x.3}
       else if (child.localName = 'effectiveDateTime') then
         element.effective := ParseDateTime(child, path+'/effectiveDateTime'){x.3}
+      else if (child.localName = 'effectiveInstant') then
+        element.effective := ParseInstant(child, path+'/effectiveInstant'){x.3}
       else if (child.localName = 'issued') then
         element.issuedElement := ParseInstant(child, path+'/issued') {b}
       else if (child.localName = 'performer') then
@@ -37356,14 +40055,16 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('focus') then
     for i := 0 to elem.focusList.Count - 1 do
       ComposeReference{TFhirReference}(xml, 'focus', elem.focusList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('context') then
-    ComposeReference{TFhirEncounter}(xml, 'context', elem.context);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('encounter') then
+    ComposeReference{TFhirEncounter}(xml, 'encounter', elem.encounter);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) {6} then
     ComposePeriod(xml, 'effectivePeriod', TFhirPeriod(elem.effective))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirTiming) {6} then
     ComposeTiming(xml, 'effectiveTiming', TFhirTiming(elem.effective))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirDateTime) {6} then
-    ComposeDateTime(xml, 'effectiveDateTime', TFhirDateTime(elem.effective));
+    ComposeDateTime(xml, 'effectiveDateTime', TFhirDateTime(elem.effective))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirInstant) {6} then
+    ComposeInstant(xml, 'effectiveInstant', TFhirInstant(elem.effective));
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('issued') then
     ComposeInstant(xml, 'issued', elem.issuedElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('performer') then
@@ -37700,6 +40401,8 @@ begin
         element.searchTypeElement := ParseEnum(CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum, path+'/searchType', child){1a}
       else if (child.localName = 'binding') then
         element.binding := ParseOperationDefinitionParameterBinding(child, path+'/binding') {b}
+      else if (child.localName = 'referencedFrom') then
+        element.referencedFromList.Add(ParseOperationDefinitionParameterReferencedFrom(child, path+'/referencedFrom')){y.2}
       else if (child.localName = 'part') then
         element.partList.Add(ParseOperationDefinitionParameter(child, path+'/part')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
@@ -37737,6 +40440,9 @@ begin
     ComposeEnum(xml, 'searchType', elem.SearchTypeElement, CODES_TFhirSearchParamTypeEnum);
   if (SummaryOption in [soFull, soData]) then
     ComposeOperationDefinitionParameterBinding(xml, 'binding', elem.binding);{x.2a}
+  if (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.referencedFromList.Count - 1 do
+      ComposeOperationDefinitionParameterReferencedFrom(xml, 'referencedFrom', elem.referencedFromList[i]);
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.partList.Count - 1 do
       ComposeOperationDefinitionParameter(xml, 'part', elem.partList[i]);
@@ -37791,6 +40497,58 @@ begin
   composeBackboneElementChildren(xml, elem);
   ComposeEnum(xml, 'strength', elem.StrengthElement, CODES_TFhirBindingStrengthEnum);
   ComposeCanonical(xml, 'valueSet', elem.valueSetElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseOperationDefinitionParameterReferencedFrom(element : TMXmlElement; path : string) : TFhirOperationDefinitionParameterReferencedFrom;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirOperationDefinitionParameterReferencedFrom.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseOperationDefinitionParameterReferencedFromChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseOperationDefinitionParameterReferencedFromChild(element : TFhirOperationDefinitionParameterReferencedFrom; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'source') then
+        element.sourceElement := ParseString(child, path+'/source') {b}
+      else if (child.localName = 'sourceId') then
+        element.sourceIdElement := ParseString(child, path+'/sourceId') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeOperationDefinitionParameterReferencedFrom(xml : TXmlBuilder; name : String; elem : TFhirOperationDefinitionParameterReferencedFrom);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeOperationDefinitionParameterReferencedFromChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeOperationDefinitionParameterReferencedFromChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionParameterReferencedFrom);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeString(xml, 'source', elem.sourceElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'sourceId', elem.sourceIdElement);{x.2b}
 end;
 
 function TFHIRXmlParser.ParseOperationDefinitionOverload(element : TMXmlElement; path : string) : TFhirOperationDefinitionOverload;
@@ -38284,134 +41042,18 @@ begin
 end;
 
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-function TFHIRXmlParser.ParseOrganizationRoleAvailableTime(element : TMXmlElement; path : string) : TFhirOrganizationRoleAvailableTime;
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+function TFHIRXmlParser.ParseOrganizationAffiliation(element : TMXmlElement; path : string) : TFhirOrganizationAffiliation;
 var
   child : TMXmlElement;
 begin
-  result := TFhirOrganizationRoleAvailableTime.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseOrganizationRoleAvailableTimeChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseOrganizationRoleAvailableTimeChild(element : TFhirOrganizationRoleAvailableTime; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'daysOfWeek') then
-        element.daysOfWeekList.Add(ParseEnum(CODES_TFhirDaysOfWeekEnum, SYSTEMS_TFhirDaysOfWeekEnum, path+'/daysOfWeek', child)){y.1}
-      else if (child.localName = 'allDay') then
-        element.allDayElement := ParseBoolean(child, path+'/allDay') {b}
-      else if (child.localName = 'availableStartTime') then
-        element.availableStartTimeElement := ParseTime(child, path+'/availableStartTime') {b}
-      else if (child.localName = 'availableEndTime') then
-        element.availableEndTimeElement := ParseTime(child, path+'/availableEndTime') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeOrganizationRoleAvailableTime(xml : TXmlBuilder; name : String; elem : TFhirOrganizationRoleAvailableTime);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeOrganizationRoleAvailableTimeChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeOrganizationRoleAvailableTimeChildren(xml : TXmlBuilder; elem : TFhirOrganizationRoleAvailableTime);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.daysOfWeekList.Count - 1 do
-      ComposeEnum(xml, 'daysOfWeek', elem.daysOfWeekList[i], CODES_TFhirDaysOfWeekEnum);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBoolean(xml, 'allDay', elem.allDayElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeTime(xml, 'availableStartTime', elem.availableStartTimeElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeTime(xml, 'availableEndTime', elem.availableEndTimeElement);{x.2b}
-end;
-
-function TFHIRXmlParser.ParseOrganizationRoleNotAvailable(element : TMXmlElement; path : string) : TFhirOrganizationRoleNotAvailable;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirOrganizationRoleNotAvailable.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseOrganizationRoleNotAvailableChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseOrganizationRoleNotAvailableChild(element : TFhirOrganizationRoleNotAvailable; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'description') then
-        element.descriptionElement := ParseString(child, path+'/description') {b}
-      else if (child.localName = 'during') then
-        element.during := ParsePeriod(child, path+'/during') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeOrganizationRoleNotAvailable(xml : TXmlBuilder; name : String; elem : TFhirOrganizationRoleNotAvailable);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeOrganizationRoleNotAvailableChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeOrganizationRoleNotAvailableChildren(xml : TXmlBuilder; elem : TFhirOrganizationRoleNotAvailable);
-begin
-  composeBackboneElementChildren(xml, elem);
-  ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    ComposePeriod(xml, 'during', elem.during);{x.2a}
-end;
-
-function TFHIRXmlParser.ParseOrganizationRole(element : TMXmlElement; path : string) : TFhirOrganizationRole;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirOrganizationRole.create;
+  result := TFhirOrganizationAffiliation.create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseOrganizationRoleChild(result, path, child) then
+      if not ParseOrganizationAffiliationChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -38423,7 +41065,7 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseOrganizationRoleChild(element : TFhirOrganizationRole; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseOrganizationAffiliationChild(element : TFhirOrganizationAffiliation; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
       if (child.localName = 'identifier') then
@@ -38448,30 +41090,24 @@ begin
         element.healthcareServiceList.Add(ParseReference{TFhirHealthcareService}(child, path+'/healthcareService')){y.2}
       else if (child.localName = 'telecom') then
         element.telecomList.Add(ParseContactPoint(child, path+'/telecom')){y.2}
-      else if (child.localName = 'availableTime') then
-        element.availableTimeList.Add(ParseOrganizationRoleAvailableTime(child, path+'/availableTime')){y.2}
-      else if (child.localName = 'notAvailable') then
-        element.notAvailableList.Add(ParseOrganizationRoleNotAvailable(child, path+'/notAvailable')){y.2}
-      else if (child.localName = 'availabilityExceptions') then
-        element.availabilityExceptionsElement := ParseString(child, path+'/availabilityExceptions') {b}
       else if (child.localName = 'endpoint') then
         element.endpointList.Add(ParseReference{TFhirEndpoint}(child, path+'/endpoint')){y.2}
       else if Not ParseDomainResourceChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeOrganizationRole(xml : TXmlBuilder; name : String; elem : TFhirOrganizationRole);
+procedure TFHIRXmlComposer.ComposeOrganizationAffiliation(xml : TXmlBuilder; name : String; elem : TFhirOrganizationAffiliation);
 begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
   xml.open(name);
-  composeOrganizationRoleChildren(xml, elem);
+  composeOrganizationAffiliationChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeOrganizationRoleChildren(xml : TXmlBuilder; elem : TFhirOrganizationRole);
+procedure TFHIRXmlComposer.ComposeOrganizationAffiliationChildren(xml : TXmlBuilder; elem : TFhirOrganizationAffiliation);
 var
   i : integer;
 begin
@@ -38505,20 +41141,12 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('telecom') then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(xml, 'telecom', elem.telecomList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('availableTime') then
-    for i := 0 to elem.availableTimeList.Count - 1 do
-      ComposeOrganizationRoleAvailableTime(xml, 'availableTime', elem.availableTimeList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('notAvailable') then
-    for i := 0 to elem.notAvailableList.Count - 1 do
-      ComposeOrganizationRoleNotAvailable(xml, 'notAvailable', elem.notAvailableList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('availabilityExceptions') then
-    ComposeString(xml, 'availabilityExceptions', elem.availabilityExceptionsElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('endpoint') then
     for i := 0 to elem.endpointList.Count - 1 do
       ComposeReference{TFhirEndpoint}(xml, 'endpoint', elem.endpointList[i]);
 end;
 
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
 function TFHIRXmlParser.ParsePatientContact(element : TMXmlElement; path : string) : TFhirPatientContact;
 var
@@ -39466,6 +42094,8 @@ begin
         element.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.localName = 'textEquivalent') then
         element.textEquivalentElement := ParseString(child, path+'/textEquivalent') {b}
+      else if (child.localName = 'priority') then
+        element.priorityElement := ParseEnum(CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, path+'/priority', child){1a}
       else if (child.localName = 'code') then
         element.codeList.Add(ParseCodeableConcept(child, path+'/code')){y.2}
       else if (child.localName = 'reason') then
@@ -39546,6 +42176,8 @@ begin
     ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
   if (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'textEquivalent', elem.textEquivalentElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeEnum(xml, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum);
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.codeList.Count - 1 do
       ComposeCodeableConcept(xml, 'code', elem.codeList[i]);
@@ -39901,8 +42533,14 @@ begin
         element.effectivePeriod := ParsePeriod(child, path+'/effectivePeriod') {b}
       else if (child.localName = 'topic') then
         element.topicList.Add(ParseCodeableConcept(child, path+'/topic')){y.2}
-      else if (child.localName = 'contributor') then
-        element.contributorList.Add(ParseContributor(child, path+'/contributor')){y.2}
+      else if (child.localName = 'author') then
+        element.authorList.Add(ParseContactDetail(child, path+'/author')){y.2}
+      else if (child.localName = 'editor') then
+        element.editorList.Add(ParseContactDetail(child, path+'/editor')){y.2}
+      else if (child.localName = 'reviewer') then
+        element.reviewerList.Add(ParseContactDetail(child, path+'/reviewer')){y.2}
+      else if (child.localName = 'endorser') then
+        element.endorserList.Add(ParseContactDetail(child, path+'/endorser')){y.2}
       else if (child.localName = 'relatedArtifact') then
         element.relatedArtifactList.Add(ParseRelatedArtifact(child, path+'/relatedArtifact')){y.2}
       else if (child.localName = 'library') then
@@ -39983,9 +42621,18 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('topic') then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(xml, 'topic', elem.topicList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') then
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(xml, 'contributor', elem.contributorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('author') then
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(xml, 'author', elem.authorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') then
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(xml, 'editor', elem.editorList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') then
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(xml, 'reviewer', elem.reviewerList[i]);
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') then
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(xml, 'endorser', elem.endorserList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(xml, 'relatedArtifact', elem.relatedArtifactList[i]);
@@ -41001,665 +43648,6 @@ begin
 end;
 
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-function TFHIRXmlParser.ParseProductPlanContact(element : TMXmlElement; path : string) : TFhirProductPlanContact;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanContact.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanContactChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanContactChild(element : TFhirProductPlanContact; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'purpose') then
-        element.purpose := ParseCodeableConcept(child, path+'/purpose') {b}
-      else if (child.localName = 'name') then
-        element.name := ParseHumanName(child, path+'/name') {b}
-      else if (child.localName = 'telecom') then
-        element.telecomList.Add(ParseContactPoint(child, path+'/telecom')){y.2}
-      else if (child.localName = 'address') then
-        element.address := ParseAddress(child, path+'/address') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanContact(xml : TXmlBuilder; name : String; elem : TFhirProductPlanContact);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanContactChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanContactChildren(xml : TXmlBuilder; elem : TFhirProductPlanContact);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'purpose', elem.purpose);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeHumanName(xml, 'name', elem.name);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.telecomList.Count - 1 do
-      ComposeContactPoint(xml, 'telecom', elem.telecomList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeAddress(xml, 'address', elem.address);{x.2a}
-end;
-
-function TFHIRXmlParser.ParseProductPlanCoverage(element : TMXmlElement; path : string) : TFhirProductPlanCoverage;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanCoverage.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanCoverageChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanCoverageChild(element : TFhirProductPlanCoverage; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'type') then
-        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'network') then
-        element.networkList.Add(ParseReference{TFhirOrganization}(child, path+'/network')){y.2}
-      else if (child.localName = 'benefit') then
-        element.benefitList.Add(ParseProductPlanCoverageBenefit(child, path+'/benefit')){y.2}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanCoverage(xml : TXmlBuilder; name : String; elem : TFhirProductPlanCoverage);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanCoverageChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanCoverageChildren(xml : TXmlBuilder; elem : TFhirProductPlanCoverage);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.networkList.Count - 1 do
-      ComposeReference{TFhirOrganization}(xml, 'network', elem.networkList[i]);
-  for i := 0 to elem.benefitList.Count - 1 do
-      ComposeProductPlanCoverageBenefit(xml, 'benefit', elem.benefitList[i]);
-end;
-
-function TFHIRXmlParser.ParseProductPlanCoverageBenefit(element : TMXmlElement; path : string) : TFhirProductPlanCoverageBenefit;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanCoverageBenefit.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanCoverageBenefitChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanCoverageBenefitChild(element : TFhirProductPlanCoverageBenefit; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'type') then
-        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'requirement') then
-        element.requirementElement := ParseString(child, path+'/requirement') {b}
-      else if (child.localName = 'limit') then
-        element.limitList.Add(ParseProductPlanCoverageBenefitLimit(child, path+'/limit')){y.2}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanCoverageBenefit(xml : TXmlBuilder; name : String; elem : TFhirProductPlanCoverageBenefit);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanCoverageBenefitChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanCoverageBenefitChildren(xml : TXmlBuilder; elem : TFhirProductPlanCoverageBenefit);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'requirement', elem.requirementElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.limitList.Count - 1 do
-      ComposeProductPlanCoverageBenefitLimit(xml, 'limit', elem.limitList[i]);
-end;
-
-function TFHIRXmlParser.ParseProductPlanCoverageBenefitLimit(element : TMXmlElement; path : string) : TFhirProductPlanCoverageBenefitLimit;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanCoverageBenefitLimit.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanCoverageBenefitLimitChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanCoverageBenefitLimitChild(element : TFhirProductPlanCoverageBenefitLimit; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'value') then
-        element.value := ParseQuantity(child, path+'/value') {b}
-      else if (child.localName = 'code') then
-        element.code := ParseCodeableConcept(child, path+'/code') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanCoverageBenefitLimit(xml : TXmlBuilder; name : String; elem : TFhirProductPlanCoverageBenefitLimit);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanCoverageBenefitLimitChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanCoverageBenefitLimitChildren(xml : TXmlBuilder; elem : TFhirProductPlanCoverageBenefitLimit);
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeQuantity(xml, 'value', elem.value);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlan(element : TMXmlElement; path : string) : TFhirProductPlanPlan;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanPlan.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanPlanChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanChild(element : TFhirProductPlanPlan; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'identifier') then
-        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
-      else if (child.localName = 'type') then
-        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'coverageArea') then
-        element.coverageAreaList.Add(ParseReference{TFhirLocation}(child, path+'/coverageArea')){y.2}
-      else if (child.localName = 'network') then
-        element.networkList.Add(ParseReference{TFhirOrganization}(child, path+'/network')){y.2}
-      else if (child.localName = 'generalCost') then
-        element.generalCostList.Add(ParseProductPlanPlanGeneralCost(child, path+'/generalCost')){y.2}
-      else if (child.localName = 'specificCost') then
-        element.specificCostList.Add(ParseProductPlanPlanSpecificCost(child, path+'/specificCost')){y.2}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlan(xml : TXmlBuilder; name : String; elem : TFhirProductPlanPlan);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanPlanChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlan);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.coverageAreaList.Count - 1 do
-      ComposeReference{TFhirLocation}(xml, 'coverageArea', elem.coverageAreaList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.networkList.Count - 1 do
-      ComposeReference{TFhirOrganization}(xml, 'network', elem.networkList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.generalCostList.Count - 1 do
-      ComposeProductPlanPlanGeneralCost(xml, 'generalCost', elem.generalCostList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.specificCostList.Count - 1 do
-      ComposeProductPlanPlanSpecificCost(xml, 'specificCost', elem.specificCostList[i]);
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanGeneralCost(element : TMXmlElement; path : string) : TFhirProductPlanPlanGeneralCost;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanPlanGeneralCost.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanPlanGeneralCostChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanGeneralCostChild(element : TFhirProductPlanPlanGeneralCost; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'type') then
-        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'groupSize') then
-        element.groupSizeElement := ParsePositiveInt(child, path+'/groupSize') {b}
-      else if (child.localName = 'cost') then
-        element.cost := ParseMoney(child, path+'/cost') {b}
-      else if (child.localName = 'comment') then
-        element.commentElement := ParseString(child, path+'/comment') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanGeneralCost(xml : TXmlBuilder; name : String; elem : TFhirProductPlanPlanGeneralCost);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanPlanGeneralCostChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanGeneralCostChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlanGeneralCost);
-begin
-  composeBackboneElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposePositiveInt(xml, 'groupSize', elem.groupSizeElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeMoney(xml, 'cost', elem.cost);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'comment', elem.commentElement);{x.2b}
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanSpecificCost(element : TMXmlElement; path : string) : TFhirProductPlanPlanSpecificCost;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanPlanSpecificCost.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanPlanSpecificCostChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanSpecificCostChild(element : TFhirProductPlanPlanSpecificCost; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'category') then
-        element.category := ParseCodeableConcept(child, path+'/category') {b}
-      else if (child.localName = 'benefit') then
-        element.benefitList.Add(ParseProductPlanPlanSpecificCostBenefit(child, path+'/benefit')){y.2}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanSpecificCost(xml : TXmlBuilder; name : String; elem : TFhirProductPlanPlanSpecificCost);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanPlanSpecificCostChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanSpecificCostChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlanSpecificCost);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'category', elem.category);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.benefitList.Count - 1 do
-      ComposeProductPlanPlanSpecificCostBenefit(xml, 'benefit', elem.benefitList[i]);
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanSpecificCostBenefit(element : TMXmlElement; path : string) : TFhirProductPlanPlanSpecificCostBenefit;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanPlanSpecificCostBenefit.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanPlanSpecificCostBenefitChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanSpecificCostBenefitChild(element : TFhirProductPlanPlanSpecificCostBenefit; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'type') then
-        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'cost') then
-        element.costList.Add(ParseProductPlanPlanSpecificCostBenefitCost(child, path+'/cost')){y.2}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanSpecificCostBenefit(xml : TXmlBuilder; name : String; elem : TFhirProductPlanPlanSpecificCostBenefit);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanPlanSpecificCostBenefitChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanSpecificCostBenefitChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlanSpecificCostBenefit);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.costList.Count - 1 do
-      ComposeProductPlanPlanSpecificCostBenefitCost(xml, 'cost', elem.costList[i]);
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanSpecificCostBenefitCost(element : TMXmlElement; path : string) : TFhirProductPlanPlanSpecificCostBenefitCost;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlanPlanSpecificCostBenefitCost.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanPlanSpecificCostBenefitCostChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanPlanSpecificCostBenefitCostChild(element : TFhirProductPlanPlanSpecificCostBenefitCost; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'type') then
-        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
-      else if (child.localName = 'applicability') then
-        element.applicability := ParseCodeableConcept(child, path+'/applicability') {b}
-      else if (child.localName = 'qualifiers') then
-        element.qualifiersList.Add(ParseCodeableConcept(child, path+'/qualifiers')){y.2}
-      else if (child.localName = 'value') then
-        element.value := ParseQuantity(child, path+'/value') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanSpecificCostBenefitCost(xml : TXmlBuilder; name : String; elem : TFhirProductPlanPlanSpecificCostBenefitCost);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanPlanSpecificCostBenefitCostChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanPlanSpecificCostBenefitCostChildren(xml : TXmlBuilder; elem : TFhirProductPlanPlanSpecificCostBenefitCost);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(xml, 'applicability', elem.applicability);{x.2a}
-  if (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.qualifiersList.Count - 1 do
-      ComposeCodeableConcept(xml, 'qualifiers', elem.qualifiersList[i]);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeQuantity(xml, 'value', elem.value);{x.2a}
-end;
-
-function TFHIRXmlParser.ParseProductPlan(element : TMXmlElement; path : string) : TFhirProductPlan;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirProductPlan.create;
-  try
-    parseDomainResourceAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseProductPlanChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseProductPlanChild(element : TFhirProductPlan; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'identifier') then
-        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
-      else if (child.localName = 'status') then
-        element.statusElement := ParseEnum(CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, path+'/status', child){1a}
-      else if (child.localName = 'type') then
-        element.type_List.Add(ParseCodeableConcept(child, path+'/type')){y.2}
-      else if (child.localName = 'name') then
-        element.nameElement := ParseString(child, path+'/name') {b}
-      else if (child.localName = 'alias') then
-        element.aliasList.Add(ParseString(child, path+'/alias')){y.2}
-      else if (child.localName = 'period') then
-        element.period := ParsePeriod(child, path+'/period') {b}
-      else if (child.localName = 'ownedBy') then
-        element.ownedBy := ParseReference{TFhirOrganization}(child, path+'/ownedBy') {b}
-      else if (child.localName = 'administeredBy') then
-        element.administeredBy := ParseReference{TFhirOrganization}(child, path+'/administeredBy') {b}
-      else if (child.localName = 'coverageArea') then
-        element.coverageAreaList.Add(ParseReference{TFhirLocation}(child, path+'/coverageArea')){y.2}
-      else if (child.localName = 'contact') then
-        element.contactList.Add(ParseProductPlanContact(child, path+'/contact')){y.2}
-      else if (child.localName = 'endpoint') then
-        element.endpointList.Add(ParseReference{TFhirEndpoint}(child, path+'/endpoint')){y.2}
-      else if (child.localName = 'network') then
-        element.networkList.Add(ParseReference{TFhirOrganization}(child, path+'/network')){y.2}
-      else if (child.localName = 'coverage') then
-        element.coverageList.Add(ParseProductPlanCoverage(child, path+'/coverage')){y.2}
-      else if (child.localName = 'plan') then
-        element.planList.Add(ParseProductPlanPlan(child, path+'/plan')){y.2}
-      else if Not ParseDomainResourceChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlan(xml : TXmlBuilder; name : String; elem : TFhirProductPlan);
-begin
-  if (elem = nil) then
-    exit;
-  composeDomainResourceAttributes(xml, elem);
-  xml.open(name);
-  composeProductPlanChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeProductPlanChildren(xml : TXmlBuilder; elem : TFhirProductPlan);
-var
-  i : integer;
-begin
-  composeDomainResourceChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
-    for i := 0 to elem.type_List.Count - 1 do
-      ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
-    ComposeString(xml, 'name', elem.nameElement);{x.2b}
-  if (SummaryOption in [soFull, soData]) and doCompose('alias') then
-    for i := 0 to elem.aliasList.Count - 1 do
-      ComposeString(xml, 'alias', elem.aliasList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('period') then
-    ComposePeriod(xml, 'period', elem.period);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('ownedBy') then
-    ComposeReference{TFhirOrganization}(xml, 'ownedBy', elem.ownedBy);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('administeredBy') then
-    ComposeReference{TFhirOrganization}(xml, 'administeredBy', elem.administeredBy);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('coverageArea') then
-    for i := 0 to elem.coverageAreaList.Count - 1 do
-      ComposeReference{TFhirLocation}(xml, 'coverageArea', elem.coverageAreaList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('contact') then
-    for i := 0 to elem.contactList.Count - 1 do
-      ComposeProductPlanContact(xml, 'contact', elem.contactList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('endpoint') then
-    for i := 0 to elem.endpointList.Count - 1 do
-      ComposeReference{TFhirEndpoint}(xml, 'endpoint', elem.endpointList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('network') then
-    for i := 0 to elem.networkList.Count - 1 do
-      ComposeReference{TFhirOrganization}(xml, 'network', elem.networkList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('coverage') then
-    for i := 0 to elem.coverageList.Count - 1 do
-      ComposeProductPlanCoverage(xml, 'coverage', elem.coverageList[i]);
-  if (SummaryOption in [soFull, soData]) and doCompose('plan') then
-    for i := 0 to elem.planList.Count - 1 do
-      ComposeProductPlanPlan(xml, 'plan', elem.planList[i]);
-end;
-
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
 function TFHIRXmlParser.ParseProvenanceAgent(element : TMXmlElement; path : string) : TFhirProvenanceAgent;
 var
@@ -42787,6 +44775,8 @@ begin
         element.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.localName = 'textEquivalent') then
         element.textEquivalentElement := ParseString(child, path+'/textEquivalent') {b}
+      else if (child.localName = 'priority') then
+        element.priorityElement := ParseEnum(CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, path+'/priority', child){1a}
       else if (child.localName = 'code') then
         element.codeList.Add(ParseCodeableConcept(child, path+'/code')){y.2}
       else if (child.localName = 'documentation') then
@@ -42853,6 +44843,8 @@ begin
     ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'textEquivalent', elem.textEquivalentElement);{x.2b}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeEnum(xml, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum);
   if (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.codeList.Count - 1 do
       ComposeCodeableConcept(xml, 'code', elem.codeList[i]);
@@ -44704,8 +46696,10 @@ begin
   result := true;
       if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
-      else if (child.localName = 'instantiates') then
-        element.instantiatesList.Add(ParseUri(child, path+'/instantiates')){y.2}
+      else if (child.localName = 'instantiatesCanonical') then
+        element.instantiatesCanonicalList.Add(ParseCanonical(child, path+'/instantiatesCanonical')){y.2}
+      else if (child.localName = 'instantiatesUri') then
+        element.instantiatesUriList.Add(ParseUri(child, path+'/instantiatesUri')){y.2}
       else if (child.localName = 'basedOn') then
         element.basedOnList.Add(ParseReference{TFhirCarePlan}(child, path+'/basedOn')){y.2}
       else if (child.localName = 'replaces') then
@@ -44726,6 +46720,12 @@ begin
         element.code := ParseCodeableConcept(child, path+'/code') {b}
       else if (child.localName = 'orderDetail') then
         element.orderDetailList.Add(ParseCodeableConcept(child, path+'/orderDetail')){y.2}
+      else if (child.localName = 'quantityQuantity') then
+        element.quantity := ParseQuantity(child, path+'/quantityQuantity'){x.3}
+      else if (child.localName = 'quantityRatio') then
+        element.quantity := ParseRatio(child, path+'/quantityRatio'){x.3}
+      else if (child.localName = 'quantityRange') then
+        element.quantity := ParseRange(child, path+'/quantityRange'){x.3}
       else if (child.localName = 'subject') then
         element.subject := ParseReference{TFhirPatient}(child, path+'/subject') {b}
       else if (child.localName = 'context') then
@@ -44748,6 +46748,10 @@ begin
         element.performerType := ParseCodeableConcept(child, path+'/performerType') {b}
       else if (child.localName = 'performer') then
         element.performerList.Add(ParseReference{TFhirPractitioner}(child, path+'/performer')){y.2}
+      else if (child.localName = 'locationCode') then
+        element.locationCodeList.Add(ParseCodeableConcept(child, path+'/locationCode')){y.2}
+      else if (child.localName = 'locationReference') then
+        element.locationReferenceList.Add(ParseReference{TFhirLocation}(child, path+'/locationReference')){y.2}
       else if (child.localName = 'reasonCode') then
         element.reasonCodeList.Add(ParseCodeableConcept(child, path+'/reasonCode')){y.2}
       else if (child.localName = 'reasonReference') then
@@ -44789,9 +46793,12 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiates') then
-    for i := 0 to elem.instantiatesList.Count - 1 do
-      ComposeUri(xml, 'instantiates', elem.instantiatesList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') then
+    for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+      ComposeCanonical(xml, 'instantiatesCanonical', elem.instantiatesCanonicalList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') then
+    for i := 0 to elem.instantiatesUriList.Count - 1 do
+      ComposeUri(xml, 'instantiatesUri', elem.instantiatesUriList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('basedOn') then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirCarePlan}(xml, 'basedOn', elem.basedOnList[i]);
@@ -44814,6 +46821,12 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('orderDetail') then
     for i := 0 to elem.orderDetailList.Count - 1 do
       ComposeCodeableConcept(xml, 'orderDetail', elem.orderDetailList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirQuantity) {6} then
+    ComposeQuantity(xml, 'quantityQuantity', TFhirQuantity(elem.quantity))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirRatio) {6} then
+    ComposeRatio(xml, 'quantityRatio', TFhirRatio(elem.quantity))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirRange) {6} then
+    ComposeRange(xml, 'quantityRange', TFhirRange(elem.quantity));
   ComposeReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('context') then
     ComposeReference{TFhirEncounter}(xml, 'context', elem.context);{x.2a}
@@ -44836,6 +46849,12 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('performer') then
     for i := 0 to elem.performerList.Count - 1 do
       ComposeReference{TFhirPractitioner}(xml, 'performer', elem.performerList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('locationCode') then
+    for i := 0 to elem.locationCodeList.Count - 1 do
+      ComposeCodeableConcept(xml, 'locationCode', elem.locationCodeList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('locationReference') then
+    for i := 0 to elem.locationReferenceList.Count - 1 do
+      ComposeReference{TFhirLocation}(xml, 'locationReference', elem.locationReferenceList[i]);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('reasonCode') then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(xml, 'reasonCode', elem.reasonCodeList[i]);
@@ -44990,12 +47009,18 @@ begin
         element.collected := ParsePeriod(child, path+'/collectedPeriod'){x.3}
       else if (child.localName = 'collectedDateTime') then
         element.collected := ParseDateTime(child, path+'/collectedDateTime'){x.3}
+      else if (child.localName = 'duration') then
+        element.duration := ParseDuration(child, path+'/duration') {b}
       else if (child.localName = 'quantity') then
         element.quantity := ParseQuantity(child, path+'/quantity') {b}
       else if (child.localName = 'method') then
         element.method := ParseCodeableConcept(child, path+'/method') {b}
       else if (child.localName = 'bodySite') then
         element.bodySite := ParseCodeableConcept(child, path+'/bodySite') {b}
+      else if (child.localName = 'fastingStatusCodeableConcept') then
+        element.fastingStatus := ParseCodeableConcept(child, path+'/fastingStatusCodeableConcept'){x.3}
+      else if (child.localName = 'fastingStatusDuration') then
+        element.fastingStatus := ParseDuration(child, path+'/fastingStatusDuration'){x.3}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
@@ -45020,12 +47045,18 @@ begin
     ComposePeriod(xml, 'collectedPeriod', TFhirPeriod(elem.collected))
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.collected is TFhirDateTime) {6} then
     ComposeDateTime(xml, 'collectedDateTime', TFhirDateTime(elem.collected));
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDuration(xml, 'duration', elem.duration);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'method', elem.method);{x.2a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(xml, 'bodySite', elem.bodySite);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.fastingStatus is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'fastingStatusCodeableConcept', TFhirCodeableConcept(elem.fastingStatus))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.fastingStatus is TFhirDuration) {6} then
+    ComposeDuration(xml, 'fastingStatusDuration', TFhirDuration(elem.fastingStatus));
 end;
 
 function TFHIRXmlParser.ParseSpecimenProcessing(element : TMXmlElement; path : string) : TFhirSpecimenProcessing;
@@ -45219,6 +47250,8 @@ begin
         element.processingList.Add(ParseSpecimenProcessing(child, path+'/processing')){y.2}
       else if (child.localName = 'container') then
         element.containerList.Add(ParseSpecimenContainer(child, path+'/container')){y.2}
+      else if (child.localName = 'condition') then
+        element.conditionList.Add(ParseCodeableConcept(child, path+'/condition')){y.2}
       else if (child.localName = 'note') then
         element.noteList.Add(ParseAnnotation(child, path+'/note')){y.2}
       else if Not ParseDomainResourceChild(element, path, child) then
@@ -45250,7 +47283,8 @@ begin
     ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirSpecimenStatusEnum);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
     ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
-  ComposeReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
+    ComposeReference{TFhirPatient}(xml, 'subject', elem.subject);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('receivedTime') then
     ComposeDateTime(xml, 'receivedTime', elem.receivedTimeElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('parent') then
@@ -45267,6 +47301,9 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('container') then
     for i := 0 to elem.containerList.Count - 1 do
       ComposeSpecimenContainer(xml, 'container', elem.containerList[i]);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('condition') then
+    for i := 0 to elem.conditionList.Count - 1 do
+      ComposeCodeableConcept(xml, 'condition', elem.conditionList[i]);
   if (SummaryOption in [soFull, soData]) and doCompose('note') then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
@@ -49672,10 +51709,10 @@ begin
   result := true;
       if (child.localName = 'identifier') then
         element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
-      else if (child.localName = 'instantiatesReference') then
-        element.instantiates := ParseReference(child, path+'/instantiatesReference') {a}
+      else if (child.localName = 'instantiatesCanonical') then
+        element.instantiatesCanonicalElement := ParseCanonical(child, path+'/instantiatesCanonical') {b}
       else if (child.localName = 'instantiatesUri') then
-        element.instantiates := ParseUri(child, path+'/instantiatesUri'){x.3}
+        element.instantiatesUriElement := ParseUri(child, path+'/instantiatesUri') {b}
       else if (child.localName = 'basedOn') then
         element.basedOnList.Add(ParseReference{TFhirReference}(child, path+'/basedOn')){y.2}
       else if (child.localName = 'groupIdentifier') then
@@ -49755,10 +51792,10 @@ begin
   if (SummaryOption in [soFull, soData]) and doCompose('identifier') then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.instantiates is TFhirReference) {2} then
-    ComposeReference(xml, 'instantiatesReference', TFhirReference(elem.instantiates))
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.instantiates is TFhirUri) {6} then
-    ComposeUri(xml, 'instantiatesUri', TFhirUri(elem.instantiates));
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') then
+    ComposeCanonical(xml, 'instantiatesCanonical', elem.instantiatesCanonicalElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') then
+    ComposeUri(xml, 'instantiatesUri', elem.instantiatesUriElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('basedOn') then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(xml, 'basedOn', elem.basedOnList[i]);
@@ -49825,6 +51862,110 @@ end;
 
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+function TFHIRXmlParser.ParseTerminologyCapabilitiesSoftware(element : TMXmlElement; path : string) : TFhirTerminologyCapabilitiesSoftware;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirTerminologyCapabilitiesSoftware.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseTerminologyCapabilitiesSoftwareChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseTerminologyCapabilitiesSoftwareChild(element : TFhirTerminologyCapabilitiesSoftware; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'version') then
+        element.versionElement := ParseString(child, path+'/version') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeTerminologyCapabilitiesSoftware(xml : TXmlBuilder; name : String; elem : TFhirTerminologyCapabilitiesSoftware);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeTerminologyCapabilitiesSoftwareChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeTerminologyCapabilitiesSoftwareChildren(xml : TXmlBuilder; elem : TFhirTerminologyCapabilitiesSoftware);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'version', elem.versionElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseTerminologyCapabilitiesImplementation(element : TMXmlElement; path : string) : TFhirTerminologyCapabilitiesImplementation;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirTerminologyCapabilitiesImplementation.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseTerminologyCapabilitiesImplementationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseTerminologyCapabilitiesImplementationChild(element : TFhirTerminologyCapabilitiesImplementation; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'description') then
+        element.descriptionElement := ParseString(child, path+'/description') {b}
+      else if (child.localName = 'url') then
+        element.urlElement := ParseUrl(child, path+'/url') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeTerminologyCapabilitiesImplementation(xml : TXmlBuilder; name : String; elem : TFhirTerminologyCapabilitiesImplementation);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeTerminologyCapabilitiesImplementationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeTerminologyCapabilitiesImplementationChildren(xml : TXmlBuilder; elem : TFhirTerminologyCapabilitiesImplementation);
+begin
+  composeBackboneElementChildren(xml, elem);
+  ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUrl(xml, 'url', elem.urlElement);{x.2b}
+end;
+
 function TFHIRXmlParser.ParseTerminologyCapabilitiesCodeSystem(element : TMXmlElement; path : string) : TFhirTerminologyCapabilitiesCodeSystem;
 var
   child : TMXmlElement;
@@ -50331,6 +52472,12 @@ begin
         element.purposeElement := ParseMarkdown(child, path+'/purpose') {b}
       else if (child.localName = 'copyright') then
         element.copyrightElement := ParseMarkdown(child, path+'/copyright') {b}
+      else if (child.localName = 'kind') then
+        element.kindElement := ParseEnum(CODES_TFhirCapabilityStatementKindEnum, SYSTEMS_TFhirCapabilityStatementKindEnum, path+'/kind', child){1a}
+      else if (child.localName = 'software') then
+        element.software := ParseTerminologyCapabilitiesSoftware(child, path+'/software') {b}
+      else if (child.localName = 'implementation') then
+        element.implementation_ := ParseTerminologyCapabilitiesImplementation(child, path+'/implementation') {b}
       else if (child.localName = 'lockedDate') then
         element.lockedDateElement := ParseBoolean(child, path+'/lockedDate') {b}
       else if (child.localName = 'codeSystem') then
@@ -50394,6 +52541,11 @@ begin
     ComposeMarkdown(xml, 'purpose', elem.purposeElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('copyright') then
     ComposeMarkdown(xml, 'copyright', elem.copyrightElement);{x.2b}
+  ComposeEnum(xml, 'kind', elem.KindElement, CODES_TFhirCapabilityStatementKindEnum);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('software') then
+    ComposeTerminologyCapabilitiesSoftware(xml, 'software', elem.software);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('implementation_') then
+    ComposeTerminologyCapabilitiesImplementation(xml, 'implementation', elem.implementation_);{x.2a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('lockedDate') then
     ComposeBoolean(xml, 'lockedDate', elem.lockedDateElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('codeSystem') then
@@ -53322,6 +55474,8 @@ begin
         element.value := ParseDecimal(child, path+'/valueDecimal'){x.3}
       else if (child.localName = 'valueUri') then
         element.value := ParseUri(child, path+'/valueUri'){x.3}
+      else if (child.localName = 'valueDateTime') then
+        element.value := ParseDateTime(child, path+'/valueDateTime'){x.3}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
@@ -53352,7 +55506,9 @@ begin
   else if (SummaryOption in [soFull, soData]) and (elem.value is TFhirDecimal) {6} then
     ComposeDecimal(xml, 'valueDecimal', TFhirDecimal(elem.value))
   else if (SummaryOption in [soFull, soData]) and (elem.value is TFhirUri) {6} then
-    ComposeUri(xml, 'valueUri', TFhirUri(elem.value));
+    ComposeUri(xml, 'valueUri', TFhirUri(elem.value))
+  else if (SummaryOption in [soFull, soData]) and (elem.value is TFhirDateTime) {6} then
+    ComposeDateTime(xml, 'valueDateTime', TFhirDateTime(elem.value));
 end;
 
 function TFHIRXmlParser.ParseValueSetExpansionContains(element : TMXmlElement; path : string) : TFhirValueSetExpansionContains;
@@ -53493,8 +55649,6 @@ begin
         element.purposeElement := ParseMarkdown(child, path+'/purpose') {b}
       else if (child.localName = 'copyright') then
         element.copyrightElement := ParseMarkdown(child, path+'/copyright') {b}
-      else if (child.localName = 'extensible') then
-        element.extensibleElement := ParseBoolean(child, path+'/extensible') {b}
       else if (child.localName = 'compose') then
         element.compose := ParseValueSetCompose(child, path+'/compose') {b}
       else if (child.localName = 'expansion') then
@@ -53554,8 +55708,6 @@ begin
     ComposeMarkdown(xml, 'purpose', elem.purposeElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('copyright') then
     ComposeMarkdown(xml, 'copyright', elem.copyrightElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('extensible') then
-    ComposeBoolean(xml, 'extensible', elem.extensibleElement);{x.2b}
   if (SummaryOption in [soFull, soData]) and doCompose('compose') then
     ComposeValueSetCompose(xml, 'compose', elem.compose);{x.2a}
   if (SummaryOption in [soFull, soData]) and doCompose('expansion') then
@@ -54326,6 +56478,18 @@ begin
     result := ParseCoverage(element, path+'/Coverage') 
   {$ENDIF}
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+   else if element.localName = 'CoverageEligibilityRequest' Then
+    result := ParseCoverageEligibilityRequest(element, path+'/CoverageEligibilityRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+   else if element.localName = 'CoverageEligibilityResponse' Then
+    result := ParseCoverageEligibilityResponse(element, path+'/CoverageEligibilityResponse') 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   {$IFDEF FHIR_DETECTEDISSUE}
    else if element.localName = 'DetectedIssue' Then
@@ -54338,12 +56502,12 @@ begin
     result := ParseDevice(element, path+'/Device') 
   {$ENDIF}
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  {$IFDEF FHIR_DEVICECOMPONENT}
-   else if element.localName = 'DeviceComponent' Then
-    result := ParseDeviceComponent(element, path+'/DeviceComponent') 
+{$IFDEF FHIR_DEVICEDEFINITION}
+  {$IFDEF FHIR_DEVICEDEFINITION}
+   else if element.localName = 'DeviceDefinition' Then
+    result := ParseDeviceDefinition(element, path+'/DeviceDefinition') 
   {$ENDIF}
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   {$IFDEF FHIR_DEVICEMETRIC}
    else if element.localName = 'DeviceMetric' Then
@@ -54380,18 +56544,6 @@ begin
     result := ParseDocumentReference(element, path+'/DocumentReference') 
   {$ENDIF}
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  {$IFDEF FHIR_ELIGIBILITYREQUEST}
-   else if element.localName = 'EligibilityRequest' Then
-    result := ParseEligibilityRequest(element, path+'/EligibilityRequest') 
-  {$ENDIF}
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
-   else if element.localName = 'EligibilityResponse' Then
-    result := ParseEligibilityResponse(element, path+'/EligibilityResponse') 
-  {$ENDIF}
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   {$IFDEF FHIR_ENCOUNTER}
    else if element.localName = 'Encounter' Then
@@ -54518,6 +56670,12 @@ begin
     result := ParseImplementationGuide(element, path+'/ImplementationGuide') 
   {$ENDIF}
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  {$IFDEF FHIR_INSURANCEPLAN}
+   else if element.localName = 'InsurancePlan' Then
+    result := ParseInsurancePlan(element, path+'/InsurancePlan') 
+  {$ENDIF}
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   {$IFDEF FHIR_INVOICE}
    else if element.localName = 'Invoice' Then
@@ -54626,18 +56784,36 @@ begin
     result := ParseMedicinalProductClinicals(element, path+'/MedicinalProductClinicals') 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+   else if element.localName = 'MedicinalProductContraindication' Then
+    result := ParseMedicinalProductContraindication(element, path+'/MedicinalProductContraindication') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
    else if element.localName = 'MedicinalProductDeviceSpec' Then
     result := ParseMedicinalProductDeviceSpec(element, path+'/MedicinalProductDeviceSpec') 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+   else if element.localName = 'MedicinalProductIndication' Then
+    result := ParseMedicinalProductIndication(element, path+'/MedicinalProductIndication') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
    else if element.localName = 'MedicinalProductIngredient' Then
     result := ParseMedicinalProductIngredient(element, path+'/MedicinalProductIngredient') 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+   else if element.localName = 'MedicinalProductInteraction' Then
+    result := ParseMedicinalProductInteraction(element, path+'/MedicinalProductInteraction') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
    else if element.localName = 'MedicinalProductManufactured' Then
@@ -54656,6 +56832,12 @@ begin
     result := ParseMedicinalProductPharmaceutical(element, path+'/MedicinalProductPharmaceutical') 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+   else if element.localName = 'MedicinalProductUndesirableEffect' Then
+    result := ParseMedicinalProductUndesirableEffect(element, path+'/MedicinalProductUndesirableEffect') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   {$IFDEF FHIR_MESSAGEDEFINITION}
    else if element.localName = 'MessageDefinition' Then
@@ -54710,12 +56892,12 @@ begin
     result := ParseOrganization(element, path+'/Organization') 
   {$ENDIF}
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  {$IFDEF FHIR_ORGANIZATIONROLE}
-   else if element.localName = 'OrganizationRole' Then
-    result := ParseOrganizationRole(element, path+'/OrganizationRole') 
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  {$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+   else if element.localName = 'OrganizationAffiliation' Then
+    result := ParseOrganizationAffiliation(element, path+'/OrganizationAffiliation') 
   {$ENDIF}
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   {$IFDEF FHIR_PATIENT}
    else if element.localName = 'Patient' Then
@@ -54776,12 +56958,6 @@ begin
     result := ParseProcessResponse(element, path+'/ProcessResponse') 
   {$ENDIF}
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  {$IFDEF FHIR_PRODUCTPLAN}
-   else if element.localName = 'ProductPlan' Then
-    result := ParseProductPlan(element, path+'/ProductPlan') 
-  {$ENDIF}
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   {$IFDEF FHIR_PROVENANCE}
    else if element.localName = 'Provenance' Then
@@ -55136,6 +57312,16 @@ begin
      frtCoverage: ComposeCoverage(xml, 'Coverage', TFhirCoverage(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+     frtCoverageEligibilityRequest: ComposeCoverageEligibilityRequest(xml, 'CoverageEligibilityRequest', TFhirCoverageEligibilityRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+     frtCoverageEligibilityResponse: ComposeCoverageEligibilityResponse(xml, 'CoverageEligibilityResponse', TFhirCoverageEligibilityResponse(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   {$IFDEF FHIR_DETECTEDISSUE}
      frtDetectedIssue: ComposeDetectedIssue(xml, 'DetectedIssue', TFhirDetectedIssue(resource)); 
@@ -55146,11 +57332,11 @@ begin
      frtDevice: ComposeDevice(xml, 'Device', TFhirDevice(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  {$IFDEF FHIR_DEVICECOMPONENT}
-     frtDeviceComponent: ComposeDeviceComponent(xml, 'DeviceComponent', TFhirDeviceComponent(resource)); 
+{$IFDEF FHIR_DEVICEDEFINITION}
+  {$IFDEF FHIR_DEVICEDEFINITION}
+     frtDeviceDefinition: ComposeDeviceDefinition(xml, 'DeviceDefinition', TFhirDeviceDefinition(resource)); 
   {$ENDIF}
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   {$IFDEF FHIR_DEVICEMETRIC}
      frtDeviceMetric: ComposeDeviceMetric(xml, 'DeviceMetric', TFhirDeviceMetric(resource)); 
@@ -55181,16 +57367,6 @@ begin
      frtDocumentReference: ComposeDocumentReference(xml, 'DocumentReference', TFhirDocumentReference(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  {$IFDEF FHIR_ELIGIBILITYREQUEST}
-     frtEligibilityRequest: ComposeEligibilityRequest(xml, 'EligibilityRequest', TFhirEligibilityRequest(resource)); 
-  {$ENDIF}
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
-     frtEligibilityResponse: ComposeEligibilityResponse(xml, 'EligibilityResponse', TFhirEligibilityResponse(resource)); 
-  {$ENDIF}
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   {$IFDEF FHIR_ENCOUNTER}
      frtEncounter: ComposeEncounter(xml, 'Encounter', TFhirEncounter(resource)); 
@@ -55296,6 +57472,11 @@ begin
      frtImplementationGuide: ComposeImplementationGuide(xml, 'ImplementationGuide', TFhirImplementationGuide(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  {$IFDEF FHIR_INSURANCEPLAN}
+     frtInsurancePlan: ComposeInsurancePlan(xml, 'InsurancePlan', TFhirInsurancePlan(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   {$IFDEF FHIR_INVOICE}
      frtInvoice: ComposeInvoice(xml, 'Invoice', TFhirInvoice(resource)); 
@@ -55386,16 +57567,31 @@ begin
      frtMedicinalProductClinicals: ComposeMedicinalProductClinicals(xml, 'MedicinalProductClinicals', TFhirMedicinalProductClinicals(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+     frtMedicinalProductContraindication: ComposeMedicinalProductContraindication(xml, 'MedicinalProductContraindication', TFhirMedicinalProductContraindication(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
      frtMedicinalProductDeviceSpec: ComposeMedicinalProductDeviceSpec(xml, 'MedicinalProductDeviceSpec', TFhirMedicinalProductDeviceSpec(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+     frtMedicinalProductIndication: ComposeMedicinalProductIndication(xml, 'MedicinalProductIndication', TFhirMedicinalProductIndication(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
      frtMedicinalProductIngredient: ComposeMedicinalProductIngredient(xml, 'MedicinalProductIngredient', TFhirMedicinalProductIngredient(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+     frtMedicinalProductInteraction: ComposeMedicinalProductInteraction(xml, 'MedicinalProductInteraction', TFhirMedicinalProductInteraction(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
      frtMedicinalProductManufactured: ComposeMedicinalProductManufactured(xml, 'MedicinalProductManufactured', TFhirMedicinalProductManufactured(resource)); 
@@ -55411,6 +57607,11 @@ begin
      frtMedicinalProductPharmaceutical: ComposeMedicinalProductPharmaceutical(xml, 'MedicinalProductPharmaceutical', TFhirMedicinalProductPharmaceutical(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+     frtMedicinalProductUndesirableEffect: ComposeMedicinalProductUndesirableEffect(xml, 'MedicinalProductUndesirableEffect', TFhirMedicinalProductUndesirableEffect(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   {$IFDEF FHIR_MESSAGEDEFINITION}
      frtMessageDefinition: ComposeMessageDefinition(xml, 'MessageDefinition', TFhirMessageDefinition(resource)); 
@@ -55456,11 +57657,11 @@ begin
      frtOrganization: ComposeOrganization(xml, 'Organization', TFhirOrganization(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  {$IFDEF FHIR_ORGANIZATIONROLE}
-     frtOrganizationRole: ComposeOrganizationRole(xml, 'OrganizationRole', TFhirOrganizationRole(resource)); 
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  {$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+     frtOrganizationAffiliation: ComposeOrganizationAffiliation(xml, 'OrganizationAffiliation', TFhirOrganizationAffiliation(resource)); 
   {$ENDIF}
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   {$IFDEF FHIR_PATIENT}
      frtPatient: ComposePatient(xml, 'Patient', TFhirPatient(resource)); 
@@ -55511,11 +57712,6 @@ begin
      frtProcessResponse: ComposeProcessResponse(xml, 'ProcessResponse', TFhirProcessResponse(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  {$IFDEF FHIR_PRODUCTPLAN}
-     frtProductPlan: ComposeProductPlan(xml, 'ProductPlan', TFhirProductPlan(resource)); 
-  {$ENDIF}
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   {$IFDEF FHIR_PROVENANCE}
      frtProvenance: ComposeProvenance(xml, 'Provenance', TFhirProvenance(resource)); 
@@ -55891,6 +58087,14 @@ begin
   else if SameText(element.Name, 'TFhirCoverage') then
     result := parseCoverage(element, element.Name)
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  else if SameText(element.Name, 'TFhirCoverageEligibilityRequest') then
+    result := parseCoverageEligibilityRequest(element, element.Name)
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  else if SameText(element.Name, 'TFhirCoverageEligibilityResponse') then
+    result := parseCoverageEligibilityResponse(element, element.Name)
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   else if SameText(element.Name, 'TFhirDetectedIssue') then
     result := parseDetectedIssue(element, element.Name)
@@ -55899,10 +58103,10 @@ begin
   else if SameText(element.Name, 'TFhirDevice') then
     result := parseDevice(element, element.Name)
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  else if SameText(element.Name, 'TFhirDeviceComponent') then
-    result := parseDeviceComponent(element, element.Name)
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+  else if SameText(element.Name, 'TFhirDeviceDefinition') then
+    result := parseDeviceDefinition(element, element.Name)
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   else if SameText(element.Name, 'TFhirDeviceMetric') then
     result := parseDeviceMetric(element, element.Name)
@@ -55927,14 +58131,6 @@ begin
   else if SameText(element.Name, 'TFhirDocumentReference') then
     result := parseDocumentReference(element, element.Name)
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  else if SameText(element.Name, 'TFhirEligibilityRequest') then
-    result := parseEligibilityRequest(element, element.Name)
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  else if SameText(element.Name, 'TFhirEligibilityResponse') then
-    result := parseEligibilityResponse(element, element.Name)
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   else if SameText(element.Name, 'TFhirEncounter') then
     result := parseEncounter(element, element.Name)
@@ -56019,6 +58215,10 @@ begin
   else if SameText(element.Name, 'TFhirImplementationGuide') then
     result := parseImplementationGuide(element, element.Name)
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  else if SameText(element.Name, 'TFhirInsurancePlan') then
+    result := parseInsurancePlan(element, element.Name)
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   else if SameText(element.Name, 'TFhirInvoice') then
     result := parseInvoice(element, element.Name)
@@ -56091,14 +58291,26 @@ begin
   else if SameText(element.Name, 'TFhirMedicinalProductClinicals') then
     result := parseMedicinalProductClinicals(element, element.Name)
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  else if SameText(element.Name, 'TFhirMedicinalProductContraindication') then
+    result := parseMedicinalProductContraindication(element, element.Name)
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   else if SameText(element.Name, 'TFhirMedicinalProductDeviceSpec') then
     result := parseMedicinalProductDeviceSpec(element, element.Name)
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  else if SameText(element.Name, 'TFhirMedicinalProductIndication') then
+    result := parseMedicinalProductIndication(element, element.Name)
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   else if SameText(element.Name, 'TFhirMedicinalProductIngredient') then
     result := parseMedicinalProductIngredient(element, element.Name)
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  else if SameText(element.Name, 'TFhirMedicinalProductInteraction') then
+    result := parseMedicinalProductInteraction(element, element.Name)
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   else if SameText(element.Name, 'TFhirMedicinalProductManufactured') then
     result := parseMedicinalProductManufactured(element, element.Name)
@@ -56111,6 +58323,10 @@ begin
   else if SameText(element.Name, 'TFhirMedicinalProductPharmaceutical') then
     result := parseMedicinalProductPharmaceutical(element, element.Name)
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  else if SameText(element.Name, 'TFhirMedicinalProductUndesirableEffect') then
+    result := parseMedicinalProductUndesirableEffect(element, element.Name)
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   else if SameText(element.Name, 'TFhirMessageDefinition') then
     result := parseMessageDefinition(element, element.Name)
@@ -56147,10 +58363,10 @@ begin
   else if SameText(element.Name, 'TFhirOrganization') then
     result := parseOrganization(element, element.Name)
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  else if SameText(element.Name, 'TFhirOrganizationRole') then
-    result := parseOrganizationRole(element, element.Name)
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  else if SameText(element.Name, 'TFhirOrganizationAffiliation') then
+    result := parseOrganizationAffiliation(element, element.Name)
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   else if SameText(element.Name, 'TFhirPatient') then
     result := parsePatient(element, element.Name)
@@ -56191,10 +58407,6 @@ begin
   else if SameText(element.Name, 'TFhirProcessResponse') then
     result := parseProcessResponse(element, element.Name)
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  else if SameText(element.Name, 'TFhirProductPlan') then
-    result := parseProductPlan(element, element.Name)
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   else if SameText(element.Name, 'TFhirProvenance') then
     result := parseProvenance(element, element.Name)
@@ -56862,18 +59074,28 @@ begin
     composeConsent(xml, name,  TFhirConsent(base))
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+  else if (base is TFhirContractContentDefinition) then
+    composeContractContentDefinition(xml, name,  TFhirContractContentDefinition(base))
   else if (base is TFhirContractTerm) then
     composeContractTerm(xml, name,  TFhirContractTerm(base))
+  else if (base is TFhirContractTermSecurityLabel) then
+    composeContractTermSecurityLabel(xml, name,  TFhirContractTermSecurityLabel(base))
   else if (base is TFhirContractTermOffer) then
     composeContractTermOffer(xml, name,  TFhirContractTermOffer(base))
+  else if (base is TFhirContractTermOfferParty) then
+    composeContractTermOfferParty(xml, name,  TFhirContractTermOfferParty(base))
+  else if (base is TFhirContractTermOfferAnswer) then
+    composeContractTermOfferAnswer(xml, name,  TFhirContractTermOfferAnswer(base))
   else if (base is TFhirContractTermAsset) then
     composeContractTermAsset(xml, name,  TFhirContractTermAsset(base))
-  else if (base is TFhirContractTermAssetData) then
-    composeContractTermAssetData(xml, name,  TFhirContractTermAssetData(base))
+  else if (base is TFhirContractTermAssetContext) then
+    composeContractTermAssetContext(xml, name,  TFhirContractTermAssetContext(base))
   else if (base is TFhirContractTermAssetValuedItem) then
     composeContractTermAssetValuedItem(xml, name,  TFhirContractTermAssetValuedItem(base))
-  else if (base is TFhirContractTermAgent) then
-    composeContractTermAgent(xml, name,  TFhirContractTermAgent(base))
+  else if (base is TFhirContractTermAction) then
+    composeContractTermAction(xml, name,  TFhirContractTermAction(base))
+  else if (base is TFhirContractTermActionSubject) then
+    composeContractTermActionSubject(xml, name,  TFhirContractTermActionSubject(base))
   else if (base is TFhirContractSigner) then
     composeContractSigner(xml, name,  TFhirContractSigner(base))
   else if (base is TFhirContractFriendly) then
@@ -56893,6 +59115,30 @@ begin
   else if (base is TFhirCoverage) then
     composeCoverage(xml, name,  TFhirCoverage(base))
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  else if (base is TFhirCoverageEligibilityRequestSupportingInformation) then
+    composeCoverageEligibilityRequestSupportingInformation(xml, name,  TFhirCoverageEligibilityRequestSupportingInformation(base))
+  else if (base is TFhirCoverageEligibilityRequestInsurance) then
+    composeCoverageEligibilityRequestInsurance(xml, name,  TFhirCoverageEligibilityRequestInsurance(base))
+  else if (base is TFhirCoverageEligibilityRequestItem) then
+    composeCoverageEligibilityRequestItem(xml, name,  TFhirCoverageEligibilityRequestItem(base))
+  else if (base is TFhirCoverageEligibilityRequestItemDiagnosis) then
+    composeCoverageEligibilityRequestItemDiagnosis(xml, name,  TFhirCoverageEligibilityRequestItemDiagnosis(base))
+  else if (base is TFhirCoverageEligibilityRequest) then
+    composeCoverageEligibilityRequest(xml, name,  TFhirCoverageEligibilityRequest(base))
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  else if (base is TFhirCoverageEligibilityResponseInsurance) then
+    composeCoverageEligibilityResponseInsurance(xml, name,  TFhirCoverageEligibilityResponseInsurance(base))
+  else if (base is TFhirCoverageEligibilityResponseInsuranceItem) then
+    composeCoverageEligibilityResponseInsuranceItem(xml, name,  TFhirCoverageEligibilityResponseInsuranceItem(base))
+  else if (base is TFhirCoverageEligibilityResponseInsuranceItemBenefit) then
+    composeCoverageEligibilityResponseInsuranceItemBenefit(xml, name,  TFhirCoverageEligibilityResponseInsuranceItemBenefit(base))
+  else if (base is TFhirCoverageEligibilityResponseError) then
+    composeCoverageEligibilityResponseError(xml, name,  TFhirCoverageEligibilityResponseError(base))
+  else if (base is TFhirCoverageEligibilityResponse) then
+    composeCoverageEligibilityResponse(xml, name,  TFhirCoverageEligibilityResponse(base))
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   else if (base is TFhirDetectedIssueMitigation) then
     composeDetectedIssueMitigation(xml, name,  TFhirDetectedIssueMitigation(base))
@@ -56900,19 +59146,35 @@ begin
     composeDetectedIssue(xml, name,  TFhirDetectedIssue(base))
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-  else if (base is TFhirDeviceUdi) then
-    composeDeviceUdi(xml, name,  TFhirDeviceUdi(base))
+  else if (base is TFhirDeviceUdiCarrier) then
+    composeDeviceUdiCarrier(xml, name,  TFhirDeviceUdiCarrier(base))
+  else if (base is TFhirDeviceDeviceName) then
+    composeDeviceDeviceName(xml, name,  TFhirDeviceDeviceName(base))
+  else if (base is TFhirDeviceSpecialization) then
+    composeDeviceSpecialization(xml, name,  TFhirDeviceSpecialization(base))
+  else if (base is TFhirDeviceVersion) then
+    composeDeviceVersion(xml, name,  TFhirDeviceVersion(base))
+  else if (base is TFhirDeviceProperty) then
+    composeDeviceProperty(xml, name,  TFhirDeviceProperty(base))
   else if (base is TFhirDevice) then
     composeDevice(xml, name,  TFhirDevice(base))
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  else if (base is TFhirDeviceComponentProductionSpecification) then
-    composeDeviceComponentProductionSpecification(xml, name,  TFhirDeviceComponentProductionSpecification(base))
-  else if (base is TFhirDeviceComponentProperty) then
-    composeDeviceComponentProperty(xml, name,  TFhirDeviceComponentProperty(base))
-  else if (base is TFhirDeviceComponent) then
-    composeDeviceComponent(xml, name,  TFhirDeviceComponent(base))
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+  else if (base is TFhirDeviceDefinitionUdiDeviceIdentifier) then
+    composeDeviceDefinitionUdiDeviceIdentifier(xml, name,  TFhirDeviceDefinitionUdiDeviceIdentifier(base))
+  else if (base is TFhirDeviceDefinitionDeviceName) then
+    composeDeviceDefinitionDeviceName(xml, name,  TFhirDeviceDefinitionDeviceName(base))
+  else if (base is TFhirDeviceDefinitionSpecialization) then
+    composeDeviceDefinitionSpecialization(xml, name,  TFhirDeviceDefinitionSpecialization(base))
+  else if (base is TFhirDeviceDefinitionCapability) then
+    composeDeviceDefinitionCapability(xml, name,  TFhirDeviceDefinitionCapability(base))
+  else if (base is TFhirDeviceDefinitionProperty) then
+    composeDeviceDefinitionProperty(xml, name,  TFhirDeviceDefinitionProperty(base))
+  else if (base is TFhirDeviceDefinitionMaterial) then
+    composeDeviceDefinitionMaterial(xml, name,  TFhirDeviceDefinitionMaterial(base))
+  else if (base is TFhirDeviceDefinition) then
+    composeDeviceDefinition(xml, name,  TFhirDeviceDefinition(base))
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   else if (base is TFhirDeviceMetricCalibration) then
     composeDeviceMetricCalibration(xml, name,  TFhirDeviceMetricCalibration(base))
@@ -56952,33 +59214,9 @@ begin
     composeDocumentReferenceContent(xml, name,  TFhirDocumentReferenceContent(base))
   else if (base is TFhirDocumentReferenceContext) then
     composeDocumentReferenceContext(xml, name,  TFhirDocumentReferenceContext(base))
-  else if (base is TFhirDocumentReferenceContextRelated) then
-    composeDocumentReferenceContextRelated(xml, name,  TFhirDocumentReferenceContextRelated(base))
   else if (base is TFhirDocumentReference) then
     composeDocumentReference(xml, name,  TFhirDocumentReference(base))
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  else if (base is TFhirEligibilityRequestInsurance) then
-    composeEligibilityRequestInsurance(xml, name,  TFhirEligibilityRequestInsurance(base))
-  else if (base is TFhirEligibilityRequestDetail) then
-    composeEligibilityRequestDetail(xml, name,  TFhirEligibilityRequestDetail(base))
-  else if (base is TFhirEligibilityRequestDetailDiagnosis) then
-    composeEligibilityRequestDetailDiagnosis(xml, name,  TFhirEligibilityRequestDetailDiagnosis(base))
-  else if (base is TFhirEligibilityRequest) then
-    composeEligibilityRequest(xml, name,  TFhirEligibilityRequest(base))
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  else if (base is TFhirEligibilityResponseInsurance) then
-    composeEligibilityResponseInsurance(xml, name,  TFhirEligibilityResponseInsurance(base))
-  else if (base is TFhirEligibilityResponseInsuranceDetail) then
-    composeEligibilityResponseInsuranceDetail(xml, name,  TFhirEligibilityResponseInsuranceDetail(base))
-  else if (base is TFhirEligibilityResponseInsuranceDetailBenefit) then
-    composeEligibilityResponseInsuranceDetailBenefit(xml, name,  TFhirEligibilityResponseInsuranceDetailBenefit(base))
-  else if (base is TFhirEligibilityResponseError) then
-    composeEligibilityResponseError(xml, name,  TFhirEligibilityResponseError(base))
-  else if (base is TFhirEligibilityResponse) then
-    composeEligibilityResponse(xml, name,  TFhirEligibilityResponse(base))
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   else if (base is TFhirEncounterStatusHistory) then
     composeEncounterStatusHistory(xml, name,  TFhirEncounterStatusHistory(base))
@@ -57195,6 +59433,28 @@ begin
   else if (base is TFhirImplementationGuide) then
     composeImplementationGuide(xml, name,  TFhirImplementationGuide(base))
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  else if (base is TFhirInsurancePlanContact) then
+    composeInsurancePlanContact(xml, name,  TFhirInsurancePlanContact(base))
+  else if (base is TFhirInsurancePlanCoverage) then
+    composeInsurancePlanCoverage(xml, name,  TFhirInsurancePlanCoverage(base))
+  else if (base is TFhirInsurancePlanCoverageBenefit) then
+    composeInsurancePlanCoverageBenefit(xml, name,  TFhirInsurancePlanCoverageBenefit(base))
+  else if (base is TFhirInsurancePlanCoverageBenefitLimit) then
+    composeInsurancePlanCoverageBenefitLimit(xml, name,  TFhirInsurancePlanCoverageBenefitLimit(base))
+  else if (base is TFhirInsurancePlanPlan) then
+    composeInsurancePlanPlan(xml, name,  TFhirInsurancePlanPlan(base))
+  else if (base is TFhirInsurancePlanPlanGeneralCost) then
+    composeInsurancePlanPlanGeneralCost(xml, name,  TFhirInsurancePlanPlanGeneralCost(base))
+  else if (base is TFhirInsurancePlanPlanSpecificCost) then
+    composeInsurancePlanPlanSpecificCost(xml, name,  TFhirInsurancePlanPlanSpecificCost(base))
+  else if (base is TFhirInsurancePlanPlanSpecificCostBenefit) then
+    composeInsurancePlanPlanSpecificCostBenefit(xml, name,  TFhirInsurancePlanPlanSpecificCostBenefit(base))
+  else if (base is TFhirInsurancePlanPlanSpecificCostBenefitCost) then
+    composeInsurancePlanPlanSpecificCostBenefitCost(xml, name,  TFhirInsurancePlanPlanSpecificCostBenefitCost(base))
+  else if (base is TFhirInsurancePlan) then
+    composeInsurancePlan(xml, name,  TFhirInsurancePlan(base))
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   else if (base is TFhirInvoiceParticipant) then
     composeInvoiceParticipant(xml, name,  TFhirInvoiceParticipant(base))
@@ -57346,8 +59606,8 @@ begin
     composeMedicinalProductNameCountryLanguage(xml, name,  TFhirMedicinalProductNameCountryLanguage(base))
   else if (base is TFhirMedicinalProductManufacturingBusinessOperation) then
     composeMedicinalProductManufacturingBusinessOperation(xml, name,  TFhirMedicinalProductManufacturingBusinessOperation(base))
-  else if (base is TFhirMedicinalProductOrphanDesignation) then
-    composeMedicinalProductOrphanDesignation(xml, name,  TFhirMedicinalProductOrphanDesignation(base))
+  else if (base is TFhirMedicinalProductSpecialDesignation) then
+    composeMedicinalProductSpecialDesignation(xml, name,  TFhirMedicinalProductSpecialDesignation(base))
   else if (base is TFhirMedicinalProduct) then
     composeMedicinalProduct(xml, name,  TFhirMedicinalProduct(base))
 {$ENDIF FHIR_MEDICINALPRODUCT}
@@ -57375,12 +59635,28 @@ begin
   else if (base is TFhirMedicinalProductClinicals) then
     composeMedicinalProductClinicals(xml, name,  TFhirMedicinalProductClinicals(base))
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  else if (base is TFhirMedicinalProductContraindicationOtherTherapy) then
+    composeMedicinalProductContraindicationOtherTherapy(xml, name,  TFhirMedicinalProductContraindicationOtherTherapy(base))
+  else if (base is TFhirMedicinalProductContraindicationPopulation) then
+    composeMedicinalProductContraindicationPopulation(xml, name,  TFhirMedicinalProductContraindicationPopulation(base))
+  else if (base is TFhirMedicinalProductContraindication) then
+    composeMedicinalProductContraindication(xml, name,  TFhirMedicinalProductContraindication(base))
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   else if (base is TFhirMedicinalProductDeviceSpecMaterial) then
     composeMedicinalProductDeviceSpecMaterial(xml, name,  TFhirMedicinalProductDeviceSpecMaterial(base))
   else if (base is TFhirMedicinalProductDeviceSpec) then
     composeMedicinalProductDeviceSpec(xml, name,  TFhirMedicinalProductDeviceSpec(base))
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  else if (base is TFhirMedicinalProductIndicationOtherTherapy) then
+    composeMedicinalProductIndicationOtherTherapy(xml, name,  TFhirMedicinalProductIndicationOtherTherapy(base))
+  else if (base is TFhirMedicinalProductIndicationPopulation) then
+    composeMedicinalProductIndicationPopulation(xml, name,  TFhirMedicinalProductIndicationPopulation(base))
+  else if (base is TFhirMedicinalProductIndication) then
+    composeMedicinalProductIndication(xml, name,  TFhirMedicinalProductIndication(base))
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   else if (base is TFhirMedicinalProductIngredientSpecifiedSubstance) then
     composeMedicinalProductIngredientSpecifiedSubstance(xml, name,  TFhirMedicinalProductIngredientSpecifiedSubstance(base))
@@ -57393,6 +59669,10 @@ begin
   else if (base is TFhirMedicinalProductIngredient) then
     composeMedicinalProductIngredient(xml, name,  TFhirMedicinalProductIngredient(base))
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  else if (base is TFhirMedicinalProductInteraction) then
+    composeMedicinalProductInteraction(xml, name,  TFhirMedicinalProductInteraction(base))
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   else if (base is TFhirMedicinalProductManufactured) then
     composeMedicinalProductManufactured(xml, name,  TFhirMedicinalProductManufactured(base))
@@ -57417,6 +59697,12 @@ begin
   else if (base is TFhirMedicinalProductPharmaceutical) then
     composeMedicinalProductPharmaceutical(xml, name,  TFhirMedicinalProductPharmaceutical(base))
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  else if (base is TFhirMedicinalProductUndesirableEffectPopulation) then
+    composeMedicinalProductUndesirableEffectPopulation(xml, name,  TFhirMedicinalProductUndesirableEffectPopulation(base))
+  else if (base is TFhirMedicinalProductUndesirableEffect) then
+    composeMedicinalProductUndesirableEffect(xml, name,  TFhirMedicinalProductUndesirableEffect(base))
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   else if (base is TFhirMessageDefinitionFocus) then
     composeMessageDefinitionFocus(xml, name,  TFhirMessageDefinitionFocus(base))
@@ -57478,6 +59764,8 @@ begin
     composeOperationDefinitionParameter(xml, name,  TFhirOperationDefinitionParameter(base))
   else if (base is TFhirOperationDefinitionParameterBinding) then
     composeOperationDefinitionParameterBinding(xml, name,  TFhirOperationDefinitionParameterBinding(base))
+  else if (base is TFhirOperationDefinitionParameterReferencedFrom) then
+    composeOperationDefinitionParameterReferencedFrom(xml, name,  TFhirOperationDefinitionParameterReferencedFrom(base))
   else if (base is TFhirOperationDefinitionOverload) then
     composeOperationDefinitionOverload(xml, name,  TFhirOperationDefinitionOverload(base))
   else if (base is TFhirOperationDefinition) then
@@ -57495,14 +59783,10 @@ begin
   else if (base is TFhirOrganization) then
     composeOrganization(xml, name,  TFhirOrganization(base))
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  else if (base is TFhirOrganizationRoleAvailableTime) then
-    composeOrganizationRoleAvailableTime(xml, name,  TFhirOrganizationRoleAvailableTime(base))
-  else if (base is TFhirOrganizationRoleNotAvailable) then
-    composeOrganizationRoleNotAvailable(xml, name,  TFhirOrganizationRoleNotAvailable(base))
-  else if (base is TFhirOrganizationRole) then
-    composeOrganizationRole(xml, name,  TFhirOrganizationRole(base))
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  else if (base is TFhirOrganizationAffiliation) then
+    composeOrganizationAffiliation(xml, name,  TFhirOrganizationAffiliation(base))
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   else if (base is TFhirPatientContact) then
     composePatientContact(xml, name,  TFhirPatientContact(base))
@@ -57583,28 +59867,6 @@ begin
   else if (base is TFhirProcessResponse) then
     composeProcessResponse(xml, name,  TFhirProcessResponse(base))
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  else if (base is TFhirProductPlanContact) then
-    composeProductPlanContact(xml, name,  TFhirProductPlanContact(base))
-  else if (base is TFhirProductPlanCoverage) then
-    composeProductPlanCoverage(xml, name,  TFhirProductPlanCoverage(base))
-  else if (base is TFhirProductPlanCoverageBenefit) then
-    composeProductPlanCoverageBenefit(xml, name,  TFhirProductPlanCoverageBenefit(base))
-  else if (base is TFhirProductPlanCoverageBenefitLimit) then
-    composeProductPlanCoverageBenefitLimit(xml, name,  TFhirProductPlanCoverageBenefitLimit(base))
-  else if (base is TFhirProductPlanPlan) then
-    composeProductPlanPlan(xml, name,  TFhirProductPlanPlan(base))
-  else if (base is TFhirProductPlanPlanGeneralCost) then
-    composeProductPlanPlanGeneralCost(xml, name,  TFhirProductPlanPlanGeneralCost(base))
-  else if (base is TFhirProductPlanPlanSpecificCost) then
-    composeProductPlanPlanSpecificCost(xml, name,  TFhirProductPlanPlanSpecificCost(base))
-  else if (base is TFhirProductPlanPlanSpecificCostBenefit) then
-    composeProductPlanPlanSpecificCostBenefit(xml, name,  TFhirProductPlanPlanSpecificCostBenefit(base))
-  else if (base is TFhirProductPlanPlanSpecificCostBenefitCost) then
-    composeProductPlanPlanSpecificCostBenefitCost(xml, name,  TFhirProductPlanPlanSpecificCostBenefitCost(base))
-  else if (base is TFhirProductPlan) then
-    composeProductPlan(xml, name,  TFhirProductPlan(base))
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   else if (base is TFhirProvenanceAgent) then
     composeProvenanceAgent(xml, name,  TFhirProvenanceAgent(base))
@@ -57844,6 +60106,10 @@ begin
     composeTask(xml, name,  TFhirTask(base))
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+  else if (base is TFhirTerminologyCapabilitiesSoftware) then
+    composeTerminologyCapabilitiesSoftware(xml, name,  TFhirTerminologyCapabilitiesSoftware(base))
+  else if (base is TFhirTerminologyCapabilitiesImplementation) then
+    composeTerminologyCapabilitiesImplementation(xml, name,  TFhirTerminologyCapabilitiesImplementation(base))
   else if (base is TFhirTerminologyCapabilitiesCodeSystem) then
     composeTerminologyCapabilitiesCodeSystem(xml, name,  TFhirTerminologyCapabilitiesCodeSystem(base))
   else if (base is TFhirTerminologyCapabilitiesCodeSystemVersion) then

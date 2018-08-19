@@ -1101,18 +1101,28 @@ begin
     result := TFhirConsent.create()
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+  else if name = 'Contract.contentDefinition' then
+    result := TFhirContractContentDefinition.create()
   else if name = 'Contract.term' then
     result := TFhirContractTerm.create()
+  else if name = 'Contract.term.securityLabel' then
+    result := TFhirContractTermSecurityLabel.create()
   else if name = 'Contract.term.offer' then
     result := TFhirContractTermOffer.create()
+  else if name = 'Contract.term.offer.party' then
+    result := TFhirContractTermOfferParty.create()
+  else if name = 'Contract.term.offer.answer' then
+    result := TFhirContractTermOfferAnswer.create()
   else if name = 'Contract.term.asset' then
     result := TFhirContractTermAsset.create()
-  else if name = 'Contract.term.asset.data' then
-    result := TFhirContractTermAssetData.create()
+  else if name = 'Contract.term.asset.context' then
+    result := TFhirContractTermAssetContext.create()
   else if name = 'Contract.term.asset.valuedItem' then
     result := TFhirContractTermAssetValuedItem.create()
-  else if name = 'Contract.term.agent' then
-    result := TFhirContractTermAgent.create()
+  else if name = 'Contract.term.action' then
+    result := TFhirContractTermAction.create()
+  else if name = 'Contract.term.action.subject' then
+    result := TFhirContractTermActionSubject.create()
   else if name = 'Contract.signer' then
     result := TFhirContractSigner.create()
   else if name = 'Contract.friendly' then
@@ -1132,6 +1142,30 @@ begin
   else if name = 'Coverage' then
     result := TFhirCoverage.create()
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  else if name = 'CoverageEligibilityRequest.supportingInformation' then
+    result := TFhirCoverageEligibilityRequestSupportingInformation.create()
+  else if name = 'CoverageEligibilityRequest.insurance' then
+    result := TFhirCoverageEligibilityRequestInsurance.create()
+  else if name = 'CoverageEligibilityRequest.item' then
+    result := TFhirCoverageEligibilityRequestItem.create()
+  else if name = 'CoverageEligibilityRequest.item.diagnosis' then
+    result := TFhirCoverageEligibilityRequestItemDiagnosis.create()
+  else if name = 'CoverageEligibilityRequest' then
+    result := TFhirCoverageEligibilityRequest.create()
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  else if name = 'CoverageEligibilityResponse.insurance' then
+    result := TFhirCoverageEligibilityResponseInsurance.create()
+  else if name = 'CoverageEligibilityResponse.insurance.item' then
+    result := TFhirCoverageEligibilityResponseInsuranceItem.create()
+  else if name = 'CoverageEligibilityResponse.insurance.item.benefit' then
+    result := TFhirCoverageEligibilityResponseInsuranceItemBenefit.create()
+  else if name = 'CoverageEligibilityResponse.error' then
+    result := TFhirCoverageEligibilityResponseError.create()
+  else if name = 'CoverageEligibilityResponse' then
+    result := TFhirCoverageEligibilityResponse.create()
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   else if name = 'DetectedIssue.mitigation' then
     result := TFhirDetectedIssueMitigation.create()
@@ -1139,19 +1173,35 @@ begin
     result := TFhirDetectedIssue.create()
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-  else if name = 'Device.udi' then
-    result := TFhirDeviceUdi.create()
+  else if name = 'Device.udiCarrier' then
+    result := TFhirDeviceUdiCarrier.create()
+  else if name = 'Device.deviceName' then
+    result := TFhirDeviceDeviceName.create()
+  else if name = 'Device.specialization' then
+    result := TFhirDeviceSpecialization.create()
+  else if name = 'Device.version' then
+    result := TFhirDeviceVersion.create()
+  else if name = 'Device.property' then
+    result := TFhirDeviceProperty.create()
   else if name = 'Device' then
     result := TFhirDevice.create()
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  else if name = 'DeviceComponent.productionSpecification' then
-    result := TFhirDeviceComponentProductionSpecification.create()
-  else if name = 'DeviceComponent.property' then
-    result := TFhirDeviceComponentProperty.create()
-  else if name = 'DeviceComponent' then
-    result := TFhirDeviceComponent.create()
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+  else if name = 'DeviceDefinition.udiDeviceIdentifier' then
+    result := TFhirDeviceDefinitionUdiDeviceIdentifier.create()
+  else if name = 'DeviceDefinition.deviceName' then
+    result := TFhirDeviceDefinitionDeviceName.create()
+  else if name = 'DeviceDefinition.specialization' then
+    result := TFhirDeviceDefinitionSpecialization.create()
+  else if name = 'DeviceDefinition.capability' then
+    result := TFhirDeviceDefinitionCapability.create()
+  else if name = 'DeviceDefinition.property' then
+    result := TFhirDeviceDefinitionProperty.create()
+  else if name = 'DeviceDefinition.material' then
+    result := TFhirDeviceDefinitionMaterial.create()
+  else if name = 'DeviceDefinition' then
+    result := TFhirDeviceDefinition.create()
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   else if name = 'DeviceMetric.calibration' then
     result := TFhirDeviceMetricCalibration.create()
@@ -1191,33 +1241,9 @@ begin
     result := TFhirDocumentReferenceContent.create()
   else if name = 'DocumentReference.context' then
     result := TFhirDocumentReferenceContext.create()
-  else if name = 'DocumentReference.context.related' then
-    result := TFhirDocumentReferenceContextRelated.create()
   else if name = 'DocumentReference' then
     result := TFhirDocumentReference.create()
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  else if name = 'EligibilityRequest.insurance' then
-    result := TFhirEligibilityRequestInsurance.create()
-  else if name = 'EligibilityRequest.detail' then
-    result := TFhirEligibilityRequestDetail.create()
-  else if name = 'EligibilityRequest.detail.diagnosis' then
-    result := TFhirEligibilityRequestDetailDiagnosis.create()
-  else if name = 'EligibilityRequest' then
-    result := TFhirEligibilityRequest.create()
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  else if name = 'EligibilityResponse.insurance' then
-    result := TFhirEligibilityResponseInsurance.create()
-  else if name = 'EligibilityResponse.insurance.detail' then
-    result := TFhirEligibilityResponseInsuranceDetail.create()
-  else if name = 'EligibilityResponse.insurance.detail.benefit' then
-    result := TFhirEligibilityResponseInsuranceDetailBenefit.create()
-  else if name = 'EligibilityResponse.error' then
-    result := TFhirEligibilityResponseError.create()
-  else if name = 'EligibilityResponse' then
-    result := TFhirEligibilityResponse.create()
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   else if name = 'Encounter.statusHistory' then
     result := TFhirEncounterStatusHistory.create()
@@ -1434,6 +1460,28 @@ begin
   else if name = 'ImplementationGuide' then
     result := TFhirImplementationGuide.create()
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  else if name = 'InsurancePlan.contact' then
+    result := TFhirInsurancePlanContact.create()
+  else if name = 'InsurancePlan.coverage' then
+    result := TFhirInsurancePlanCoverage.create()
+  else if name = 'InsurancePlan.coverage.benefit' then
+    result := TFhirInsurancePlanCoverageBenefit.create()
+  else if name = 'InsurancePlan.coverage.benefit.limit' then
+    result := TFhirInsurancePlanCoverageBenefitLimit.create()
+  else if name = 'InsurancePlan.plan' then
+    result := TFhirInsurancePlanPlan.create()
+  else if name = 'InsurancePlan.plan.generalCost' then
+    result := TFhirInsurancePlanPlanGeneralCost.create()
+  else if name = 'InsurancePlan.plan.specificCost' then
+    result := TFhirInsurancePlanPlanSpecificCost.create()
+  else if name = 'InsurancePlan.plan.specificCost.benefit' then
+    result := TFhirInsurancePlanPlanSpecificCostBenefit.create()
+  else if name = 'InsurancePlan.plan.specificCost.benefit.cost' then
+    result := TFhirInsurancePlanPlanSpecificCostBenefitCost.create()
+  else if name = 'InsurancePlan' then
+    result := TFhirInsurancePlan.create()
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   else if name = 'Invoice.participant' then
     result := TFhirInvoiceParticipant.create()
@@ -1585,8 +1633,8 @@ begin
     result := TFhirMedicinalProductNameCountryLanguage.create()
   else if name = 'MedicinalProduct.manufacturingBusinessOperation' then
     result := TFhirMedicinalProductManufacturingBusinessOperation.create()
-  else if name = 'MedicinalProduct.orphanDesignation' then
-    result := TFhirMedicinalProductOrphanDesignation.create()
+  else if name = 'MedicinalProduct.specialDesignation' then
+    result := TFhirMedicinalProductSpecialDesignation.create()
   else if name = 'MedicinalProduct' then
     result := TFhirMedicinalProduct.create()
 {$ENDIF FHIR_MEDICINALPRODUCT}
@@ -1614,12 +1662,28 @@ begin
   else if name = 'MedicinalProductClinicals' then
     result := TFhirMedicinalProductClinicals.create()
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  else if name = 'MedicinalProductContraindication.otherTherapy' then
+    result := TFhirMedicinalProductContraindicationOtherTherapy.create()
+  else if name = 'MedicinalProductContraindication.population' then
+    result := TFhirMedicinalProductContraindicationPopulation.create()
+  else if name = 'MedicinalProductContraindication' then
+    result := TFhirMedicinalProductContraindication.create()
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   else if name = 'MedicinalProductDeviceSpec.material' then
     result := TFhirMedicinalProductDeviceSpecMaterial.create()
   else if name = 'MedicinalProductDeviceSpec' then
     result := TFhirMedicinalProductDeviceSpec.create()
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  else if name = 'MedicinalProductIndication.otherTherapy' then
+    result := TFhirMedicinalProductIndicationOtherTherapy.create()
+  else if name = 'MedicinalProductIndication.population' then
+    result := TFhirMedicinalProductIndicationPopulation.create()
+  else if name = 'MedicinalProductIndication' then
+    result := TFhirMedicinalProductIndication.create()
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   else if name = 'MedicinalProductIngredient.specifiedSubstance' then
     result := TFhirMedicinalProductIngredientSpecifiedSubstance.create()
@@ -1632,6 +1696,10 @@ begin
   else if name = 'MedicinalProductIngredient' then
     result := TFhirMedicinalProductIngredient.create()
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  else if name = 'MedicinalProductInteraction' then
+    result := TFhirMedicinalProductInteraction.create()
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   else if name = 'MedicinalProductManufactured' then
     result := TFhirMedicinalProductManufactured.create()
@@ -1656,6 +1724,12 @@ begin
   else if name = 'MedicinalProductPharmaceutical' then
     result := TFhirMedicinalProductPharmaceutical.create()
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  else if name = 'MedicinalProductUndesirableEffect.population' then
+    result := TFhirMedicinalProductUndesirableEffectPopulation.create()
+  else if name = 'MedicinalProductUndesirableEffect' then
+    result := TFhirMedicinalProductUndesirableEffect.create()
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   else if name = 'MessageDefinition.focus' then
     result := TFhirMessageDefinitionFocus.create()
@@ -1717,6 +1791,8 @@ begin
     result := TFhirOperationDefinitionParameter.create()
   else if name = 'OperationDefinition.parameter.binding' then
     result := TFhirOperationDefinitionParameterBinding.create()
+  else if name = 'OperationDefinition.parameter.referencedFrom' then
+    result := TFhirOperationDefinitionParameterReferencedFrom.create()
   else if name = 'OperationDefinition.overload' then
     result := TFhirOperationDefinitionOverload.create()
   else if name = 'OperationDefinition' then
@@ -1734,14 +1810,10 @@ begin
   else if name = 'Organization' then
     result := TFhirOrganization.create()
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  else if name = 'OrganizationRole.availableTime' then
-    result := TFhirOrganizationRoleAvailableTime.create()
-  else if name = 'OrganizationRole.notAvailable' then
-    result := TFhirOrganizationRoleNotAvailable.create()
-  else if name = 'OrganizationRole' then
-    result := TFhirOrganizationRole.create()
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  else if name = 'OrganizationAffiliation' then
+    result := TFhirOrganizationAffiliation.create()
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   else if name = 'Patient.contact' then
     result := TFhirPatientContact.create()
@@ -1822,28 +1894,6 @@ begin
   else if name = 'ProcessResponse' then
     result := TFhirProcessResponse.create()
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  else if name = 'ProductPlan.contact' then
-    result := TFhirProductPlanContact.create()
-  else if name = 'ProductPlan.coverage' then
-    result := TFhirProductPlanCoverage.create()
-  else if name = 'ProductPlan.coverage.benefit' then
-    result := TFhirProductPlanCoverageBenefit.create()
-  else if name = 'ProductPlan.coverage.benefit.limit' then
-    result := TFhirProductPlanCoverageBenefitLimit.create()
-  else if name = 'ProductPlan.plan' then
-    result := TFhirProductPlanPlan.create()
-  else if name = 'ProductPlan.plan.generalCost' then
-    result := TFhirProductPlanPlanGeneralCost.create()
-  else if name = 'ProductPlan.plan.specificCost' then
-    result := TFhirProductPlanPlanSpecificCost.create()
-  else if name = 'ProductPlan.plan.specificCost.benefit' then
-    result := TFhirProductPlanPlanSpecificCostBenefit.create()
-  else if name = 'ProductPlan.plan.specificCost.benefit.cost' then
-    result := TFhirProductPlanPlanSpecificCostBenefitCost.create()
-  else if name = 'ProductPlan' then
-    result := TFhirProductPlan.create()
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   else if name = 'Provenance.agent' then
     result := TFhirProvenanceAgent.create()
@@ -2083,6 +2133,10 @@ begin
     result := TFhirTask.create()
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+  else if name = 'TerminologyCapabilities.software' then
+    result := TFhirTerminologyCapabilitiesSoftware.create()
+  else if name = 'TerminologyCapabilities.implementation' then
+    result := TFhirTerminologyCapabilitiesImplementation.create()
   else if name = 'TerminologyCapabilities.codeSystem' then
     result := TFhirTerminologyCapabilitiesCodeSystem.create()
   else if name = 'TerminologyCapabilities.codeSystem.version' then

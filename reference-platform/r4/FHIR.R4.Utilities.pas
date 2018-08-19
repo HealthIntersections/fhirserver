@@ -2714,11 +2714,10 @@ begin
     result.status := DocumentReferenceStatusCurrent;
     result.docStatus := cmp.status;
     result.identifierList.Add(cmp.identifier.Link);
-    result.class_ := cmp.class_.Link;
+    result.categoryList.AddAll(cmp.categoryList);
     result.type_ := cmp.type_.Link;
     result.subject := cmp.subject.Link;
-    result.created := cmp.date;
-    result.date := TDateTimeEx.makeUTC;
+    result.date := cmp.date;
     result.Link;
   finally
     result.free;
@@ -4601,7 +4600,7 @@ begin
   try
     result.url := valueSet;
     result.name := name;
-    result.identifierList.Add(identifier.Link);
+    result.identifierList.Add(identifierList);
     result.status := status;
     result.experimental := experimental;
     result.date := date;

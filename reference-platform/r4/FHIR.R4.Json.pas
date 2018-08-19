@@ -33,11 +33,11 @@ unit FHIR.R4.Json;
 
 interface
 
-// FHIR v3.4.0 generated 2018-07-25T14:31:35+10:00
+// FHIR v3.5.0 generated 2018-08-19T19:30:08+10:00
 
 uses
-  SysUtils, Classes,
-  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json,
+  SysUtils, Classes, 
+  FHIR.Support.Base, FHIR.Support.Utilities, FHIR.Support.Collections, FHIR.Support.Json, 
   FHIR.Base.Parser, FHIR.Base.Objects, 
   FHIR.R4.ParserBase, FHIR.R4.Resources, FHIR.R4.Constants, FHIR.R4.Types;
 
@@ -685,24 +685,39 @@ Type
     procedure ParseConsent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+    function ParseContractContentDefinition(jsn : TJsonObject) : TFhirContractContentDefinition; overload; {b\}
+    procedure ParseContractContentDefinitionProperties(jsn : TJsonObject; result : TFhirContractContentDefinition); overload; {b\}
+    procedure ParseContractContentDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseContractTerm(jsn : TJsonObject) : TFhirContractTerm; overload; {b\}
     procedure ParseContractTermProperties(jsn : TJsonObject; result : TFhirContractTerm); overload; {b\}
     procedure ParseContractTerm(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContractTermSecurityLabel(jsn : TJsonObject) : TFhirContractTermSecurityLabel; overload; {b\}
+    procedure ParseContractTermSecurityLabelProperties(jsn : TJsonObject; result : TFhirContractTermSecurityLabel); overload; {b\}
+    procedure ParseContractTermSecurityLabel(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseContractTermOffer(jsn : TJsonObject) : TFhirContractTermOffer; overload; {b\}
     procedure ParseContractTermOfferProperties(jsn : TJsonObject; result : TFhirContractTermOffer); overload; {b\}
     procedure ParseContractTermOffer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContractTermOfferParty(jsn : TJsonObject) : TFhirContractTermOfferParty; overload; {b\}
+    procedure ParseContractTermOfferPartyProperties(jsn : TJsonObject; result : TFhirContractTermOfferParty); overload; {b\}
+    procedure ParseContractTermOfferParty(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContractTermOfferAnswer(jsn : TJsonObject) : TFhirContractTermOfferAnswer; overload; {b\}
+    procedure ParseContractTermOfferAnswerProperties(jsn : TJsonObject; result : TFhirContractTermOfferAnswer); overload; {b\}
+    procedure ParseContractTermOfferAnswer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseContractTermAsset(jsn : TJsonObject) : TFhirContractTermAsset; overload; {b\}
     procedure ParseContractTermAssetProperties(jsn : TJsonObject; result : TFhirContractTermAsset); overload; {b\}
     procedure ParseContractTermAsset(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseContractTermAssetData(jsn : TJsonObject) : TFhirContractTermAssetData; overload; {b\}
-    procedure ParseContractTermAssetDataProperties(jsn : TJsonObject; result : TFhirContractTermAssetData); overload; {b\}
-    procedure ParseContractTermAssetData(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContractTermAssetContext(jsn : TJsonObject) : TFhirContractTermAssetContext; overload; {b\}
+    procedure ParseContractTermAssetContextProperties(jsn : TJsonObject; result : TFhirContractTermAssetContext); overload; {b\}
+    procedure ParseContractTermAssetContext(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseContractTermAssetValuedItem(jsn : TJsonObject) : TFhirContractTermAssetValuedItem; overload; {b\}
     procedure ParseContractTermAssetValuedItemProperties(jsn : TJsonObject; result : TFhirContractTermAssetValuedItem); overload; {b\}
     procedure ParseContractTermAssetValuedItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseContractTermAgent(jsn : TJsonObject) : TFhirContractTermAgent; overload; {b\}
-    procedure ParseContractTermAgentProperties(jsn : TJsonObject; result : TFhirContractTermAgent); overload; {b\}
-    procedure ParseContractTermAgent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContractTermAction(jsn : TJsonObject) : TFhirContractTermAction; overload; {b\}
+    procedure ParseContractTermActionProperties(jsn : TJsonObject; result : TFhirContractTermAction); overload; {b\}
+    procedure ParseContractTermAction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContractTermActionSubject(jsn : TJsonObject) : TFhirContractTermActionSubject; overload; {b\}
+    procedure ParseContractTermActionSubjectProperties(jsn : TJsonObject; result : TFhirContractTermActionSubject); overload; {b\}
+    procedure ParseContractTermActionSubject(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseContractSigner(jsn : TJsonObject) : TFhirContractSigner; overload; {b\}
     procedure ParseContractSignerProperties(jsn : TJsonObject; result : TFhirContractSigner); overload; {b\}
     procedure ParseContractSigner(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -730,6 +745,40 @@ Type
     procedure ParseCoverageProperties(jsn : TJsonObject; result : TFhirCoverage); overload;
     procedure ParseCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+    function ParseCoverageEligibilityRequestSupportingInformation(jsn : TJsonObject) : TFhirCoverageEligibilityRequestSupportingInformation; overload; {b\}
+    procedure ParseCoverageEligibilityRequestSupportingInformationProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequestSupportingInformation); overload; {b\}
+    procedure ParseCoverageEligibilityRequestSupportingInformation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCoverageEligibilityRequestInsurance(jsn : TJsonObject) : TFhirCoverageEligibilityRequestInsurance; overload; {b\}
+    procedure ParseCoverageEligibilityRequestInsuranceProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequestInsurance); overload; {b\}
+    procedure ParseCoverageEligibilityRequestInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCoverageEligibilityRequestItem(jsn : TJsonObject) : TFhirCoverageEligibilityRequestItem; overload; {b\}
+    procedure ParseCoverageEligibilityRequestItemProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequestItem); overload; {b\}
+    procedure ParseCoverageEligibilityRequestItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCoverageEligibilityRequestItemDiagnosis(jsn : TJsonObject) : TFhirCoverageEligibilityRequestItemDiagnosis; overload; {b\}
+    procedure ParseCoverageEligibilityRequestItemDiagnosisProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequestItemDiagnosis); overload; {b\}
+    procedure ParseCoverageEligibilityRequestItemDiagnosis(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCoverageEligibilityRequest(jsn : TJsonObject) : TFhirCoverageEligibilityRequest; overload;
+    procedure ParseCoverageEligibilityRequestProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequest); overload;
+    procedure ParseCoverageEligibilityRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+    function ParseCoverageEligibilityResponseInsurance(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsurance; overload; {b\}
+    procedure ParseCoverageEligibilityResponseInsuranceProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponseInsurance); overload; {b\}
+    procedure ParseCoverageEligibilityResponseInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCoverageEligibilityResponseInsuranceItem(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsuranceItem; overload; {b\}
+    procedure ParseCoverageEligibilityResponseInsuranceItemProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponseInsuranceItem); overload; {b\}
+    procedure ParseCoverageEligibilityResponseInsuranceItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCoverageEligibilityResponseInsuranceItemBenefit(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsuranceItemBenefit; overload; {b\}
+    procedure ParseCoverageEligibilityResponseInsuranceItemBenefitProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponseInsuranceItemBenefit); overload; {b\}
+    procedure ParseCoverageEligibilityResponseInsuranceItemBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCoverageEligibilityResponseError(jsn : TJsonObject) : TFhirCoverageEligibilityResponseError; overload; {b\}
+    procedure ParseCoverageEligibilityResponseErrorProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponseError); overload; {b\}
+    procedure ParseCoverageEligibilityResponseError(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCoverageEligibilityResponse(jsn : TJsonObject) : TFhirCoverageEligibilityResponse; overload;
+    procedure ParseCoverageEligibilityResponseProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponse); overload;
+    procedure ParseCoverageEligibilityResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
     function ParseDetectedIssueMitigation(jsn : TJsonObject) : TFhirDetectedIssueMitigation; overload; {b\}
     procedure ParseDetectedIssueMitigationProperties(jsn : TJsonObject; result : TFhirDetectedIssueMitigation); overload; {b\}
@@ -739,24 +788,48 @@ Type
     procedure ParseDetectedIssue(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-    function ParseDeviceUdi(jsn : TJsonObject) : TFhirDeviceUdi; overload; {b\}
-    procedure ParseDeviceUdiProperties(jsn : TJsonObject; result : TFhirDeviceUdi); overload; {b\}
-    procedure ParseDeviceUdi(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceUdiCarrier(jsn : TJsonObject) : TFhirDeviceUdiCarrier; overload; {b\}
+    procedure ParseDeviceUdiCarrierProperties(jsn : TJsonObject; result : TFhirDeviceUdiCarrier); overload; {b\}
+    procedure ParseDeviceUdiCarrier(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceDeviceName(jsn : TJsonObject) : TFhirDeviceDeviceName; overload; {b\}
+    procedure ParseDeviceDeviceNameProperties(jsn : TJsonObject; result : TFhirDeviceDeviceName); overload; {b\}
+    procedure ParseDeviceDeviceName(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceSpecialization(jsn : TJsonObject) : TFhirDeviceSpecialization; overload; {b\}
+    procedure ParseDeviceSpecializationProperties(jsn : TJsonObject; result : TFhirDeviceSpecialization); overload; {b\}
+    procedure ParseDeviceSpecialization(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceVersion(jsn : TJsonObject) : TFhirDeviceVersion; overload; {b\}
+    procedure ParseDeviceVersionProperties(jsn : TJsonObject; result : TFhirDeviceVersion); overload; {b\}
+    procedure ParseDeviceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceProperty(jsn : TJsonObject) : TFhirDeviceProperty; overload; {b\}
+    procedure ParseDevicePropertyProperties(jsn : TJsonObject; result : TFhirDeviceProperty); overload; {b\}
+    procedure ParseDeviceProperty(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDevice(jsn : TJsonObject) : TFhirDevice; overload;
     procedure ParseDeviceProperties(jsn : TJsonObject; result : TFhirDevice); overload;
     procedure ParseDevice(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-    function ParseDeviceComponentProductionSpecification(jsn : TJsonObject) : TFhirDeviceComponentProductionSpecification; overload; {b\}
-    procedure ParseDeviceComponentProductionSpecificationProperties(jsn : TJsonObject; result : TFhirDeviceComponentProductionSpecification); overload; {b\}
-    procedure ParseDeviceComponentProductionSpecification(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseDeviceComponentProperty(jsn : TJsonObject) : TFhirDeviceComponentProperty; overload; {b\}
-    procedure ParseDeviceComponentPropertyProperties(jsn : TJsonObject; result : TFhirDeviceComponentProperty); overload; {b\}
-    procedure ParseDeviceComponentProperty(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseDeviceComponent(jsn : TJsonObject) : TFhirDeviceComponent; overload;
-    procedure ParseDeviceComponentProperties(jsn : TJsonObject; result : TFhirDeviceComponent); overload;
-    procedure ParseDeviceComponent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+    function ParseDeviceDefinitionUdiDeviceIdentifier(jsn : TJsonObject) : TFhirDeviceDefinitionUdiDeviceIdentifier; overload; {b\}
+    procedure ParseDeviceDefinitionUdiDeviceIdentifierProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionUdiDeviceIdentifier); overload; {b\}
+    procedure ParseDeviceDefinitionUdiDeviceIdentifier(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceDefinitionDeviceName(jsn : TJsonObject) : TFhirDeviceDefinitionDeviceName; overload; {b\}
+    procedure ParseDeviceDefinitionDeviceNameProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionDeviceName); overload; {b\}
+    procedure ParseDeviceDefinitionDeviceName(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceDefinitionSpecialization(jsn : TJsonObject) : TFhirDeviceDefinitionSpecialization; overload; {b\}
+    procedure ParseDeviceDefinitionSpecializationProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionSpecialization); overload; {b\}
+    procedure ParseDeviceDefinitionSpecialization(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceDefinitionCapability(jsn : TJsonObject) : TFhirDeviceDefinitionCapability; overload; {b\}
+    procedure ParseDeviceDefinitionCapabilityProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionCapability); overload; {b\}
+    procedure ParseDeviceDefinitionCapability(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceDefinitionProperty(jsn : TJsonObject) : TFhirDeviceDefinitionProperty; overload; {b\}
+    procedure ParseDeviceDefinitionPropertyProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionProperty); overload; {b\}
+    procedure ParseDeviceDefinitionProperty(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceDefinitionMaterial(jsn : TJsonObject) : TFhirDeviceDefinitionMaterial; overload; {b\}
+    procedure ParseDeviceDefinitionMaterialProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionMaterial); overload; {b\}
+    procedure ParseDeviceDefinitionMaterial(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceDefinition(jsn : TJsonObject) : TFhirDeviceDefinition; overload;
+    procedure ParseDeviceDefinitionProperties(jsn : TJsonObject; result : TFhirDeviceDefinition); overload;
+    procedure ParseDeviceDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
     function ParseDeviceMetricCalibration(jsn : TJsonObject) : TFhirDeviceMetricCalibration; overload; {b\}
     procedure ParseDeviceMetricCalibrationProperties(jsn : TJsonObject; result : TFhirDeviceMetricCalibration); overload; {b\}
@@ -810,44 +883,10 @@ Type
     function ParseDocumentReferenceContext(jsn : TJsonObject) : TFhirDocumentReferenceContext; overload; {b\}
     procedure ParseDocumentReferenceContextProperties(jsn : TJsonObject; result : TFhirDocumentReferenceContext); overload; {b\}
     procedure ParseDocumentReferenceContext(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseDocumentReferenceContextRelated(jsn : TJsonObject) : TFhirDocumentReferenceContextRelated; overload; {b\}
-    procedure ParseDocumentReferenceContextRelatedProperties(jsn : TJsonObject; result : TFhirDocumentReferenceContextRelated); overload; {b\}
-    procedure ParseDocumentReferenceContextRelated(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDocumentReference(jsn : TJsonObject) : TFhirDocumentReference; overload;
     procedure ParseDocumentReferenceProperties(jsn : TJsonObject; result : TFhirDocumentReference); overload;
     procedure ParseDocumentReference(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-    function ParseEligibilityRequestInsurance(jsn : TJsonObject) : TFhirEligibilityRequestInsurance; overload; {b\}
-    procedure ParseEligibilityRequestInsuranceProperties(jsn : TJsonObject; result : TFhirEligibilityRequestInsurance); overload; {b\}
-    procedure ParseEligibilityRequestInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseEligibilityRequestDetail(jsn : TJsonObject) : TFhirEligibilityRequestDetail; overload; {b\}
-    procedure ParseEligibilityRequestDetailProperties(jsn : TJsonObject; result : TFhirEligibilityRequestDetail); overload; {b\}
-    procedure ParseEligibilityRequestDetail(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseEligibilityRequestDetailDiagnosis(jsn : TJsonObject) : TFhirEligibilityRequestDetailDiagnosis; overload; {b\}
-    procedure ParseEligibilityRequestDetailDiagnosisProperties(jsn : TJsonObject; result : TFhirEligibilityRequestDetailDiagnosis); overload; {b\}
-    procedure ParseEligibilityRequestDetailDiagnosis(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseEligibilityRequest(jsn : TJsonObject) : TFhirEligibilityRequest; overload;
-    procedure ParseEligibilityRequestProperties(jsn : TJsonObject; result : TFhirEligibilityRequest); overload;
-    procedure ParseEligibilityRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-    function ParseEligibilityResponseInsurance(jsn : TJsonObject) : TFhirEligibilityResponseInsurance; overload; {b\}
-    procedure ParseEligibilityResponseInsuranceProperties(jsn : TJsonObject; result : TFhirEligibilityResponseInsurance); overload; {b\}
-    procedure ParseEligibilityResponseInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseEligibilityResponseInsuranceDetail(jsn : TJsonObject) : TFhirEligibilityResponseInsuranceDetail; overload; {b\}
-    procedure ParseEligibilityResponseInsuranceDetailProperties(jsn : TJsonObject; result : TFhirEligibilityResponseInsuranceDetail); overload; {b\}
-    procedure ParseEligibilityResponseInsuranceDetail(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseEligibilityResponseInsuranceDetailBenefit(jsn : TJsonObject) : TFhirEligibilityResponseInsuranceDetailBenefit; overload; {b\}
-    procedure ParseEligibilityResponseInsuranceDetailBenefitProperties(jsn : TJsonObject; result : TFhirEligibilityResponseInsuranceDetailBenefit); overload; {b\}
-    procedure ParseEligibilityResponseInsuranceDetailBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseEligibilityResponseError(jsn : TJsonObject) : TFhirEligibilityResponseError; overload; {b\}
-    procedure ParseEligibilityResponseErrorProperties(jsn : TJsonObject; result : TFhirEligibilityResponseError); overload; {b\}
-    procedure ParseEligibilityResponseError(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseEligibilityResponse(jsn : TJsonObject) : TFhirEligibilityResponse; overload;
-    procedure ParseEligibilityResponseProperties(jsn : TJsonObject; result : TFhirEligibilityResponse); overload;
-    procedure ParseEligibilityResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
     function ParseEncounterStatusHistory(jsn : TJsonObject) : TFhirEncounterStatusHistory; overload; {b\}
     procedure ParseEncounterStatusHistoryProperties(jsn : TJsonObject; result : TFhirEncounterStatusHistory); overload; {b\}
@@ -1151,6 +1190,38 @@ Type
     procedure ParseImplementationGuideProperties(jsn : TJsonObject; result : TFhirImplementationGuide); overload;
     procedure ParseImplementationGuide(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+    function ParseInsurancePlanContact(jsn : TJsonObject) : TFhirInsurancePlanContact; overload; {b\}
+    procedure ParseInsurancePlanContactProperties(jsn : TJsonObject; result : TFhirInsurancePlanContact); overload; {b\}
+    procedure ParseInsurancePlanContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlanCoverage(jsn : TJsonObject) : TFhirInsurancePlanCoverage; overload; {b\}
+    procedure ParseInsurancePlanCoverageProperties(jsn : TJsonObject; result : TFhirInsurancePlanCoverage); overload; {b\}
+    procedure ParseInsurancePlanCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlanCoverageBenefit(jsn : TJsonObject) : TFhirInsurancePlanCoverageBenefit; overload; {b\}
+    procedure ParseInsurancePlanCoverageBenefitProperties(jsn : TJsonObject; result : TFhirInsurancePlanCoverageBenefit); overload; {b\}
+    procedure ParseInsurancePlanCoverageBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlanCoverageBenefitLimit(jsn : TJsonObject) : TFhirInsurancePlanCoverageBenefitLimit; overload; {b\}
+    procedure ParseInsurancePlanCoverageBenefitLimitProperties(jsn : TJsonObject; result : TFhirInsurancePlanCoverageBenefitLimit); overload; {b\}
+    procedure ParseInsurancePlanCoverageBenefitLimit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlanPlan(jsn : TJsonObject) : TFhirInsurancePlanPlan; overload; {b\}
+    procedure ParseInsurancePlanPlanProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlan); overload; {b\}
+    procedure ParseInsurancePlanPlan(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlanPlanGeneralCost(jsn : TJsonObject) : TFhirInsurancePlanPlanGeneralCost; overload; {b\}
+    procedure ParseInsurancePlanPlanGeneralCostProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlanGeneralCost); overload; {b\}
+    procedure ParseInsurancePlanPlanGeneralCost(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlanPlanSpecificCost(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCost; overload; {b\}
+    procedure ParseInsurancePlanPlanSpecificCostProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlanSpecificCost); overload; {b\}
+    procedure ParseInsurancePlanPlanSpecificCost(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlanPlanSpecificCostBenefit(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCostBenefit; overload; {b\}
+    procedure ParseInsurancePlanPlanSpecificCostBenefitProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlanSpecificCostBenefit); overload; {b\}
+    procedure ParseInsurancePlanPlanSpecificCostBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlanPlanSpecificCostBenefitCost(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCostBenefitCost; overload; {b\}
+    procedure ParseInsurancePlanPlanSpecificCostBenefitCostProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlanSpecificCostBenefitCost); overload; {b\}
+    procedure ParseInsurancePlanPlanSpecificCostBenefitCost(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseInsurancePlan(jsn : TJsonObject) : TFhirInsurancePlan; overload;
+    procedure ParseInsurancePlanProperties(jsn : TJsonObject; result : TFhirInsurancePlan); overload;
+    procedure ParseInsurancePlan(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
     function ParseInvoiceParticipant(jsn : TJsonObject) : TFhirInvoiceParticipant; overload; {b\}
     procedure ParseInvoiceParticipantProperties(jsn : TJsonObject; result : TFhirInvoiceParticipant); overload; {b\}
@@ -1362,9 +1433,9 @@ Type
     function ParseMedicinalProductManufacturingBusinessOperation(jsn : TJsonObject) : TFhirMedicinalProductManufacturingBusinessOperation; overload; {b\}
     procedure ParseMedicinalProductManufacturingBusinessOperationProperties(jsn : TJsonObject; result : TFhirMedicinalProductManufacturingBusinessOperation); overload; {b\}
     procedure ParseMedicinalProductManufacturingBusinessOperation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseMedicinalProductOrphanDesignation(jsn : TJsonObject) : TFhirMedicinalProductOrphanDesignation; overload; {b\}
-    procedure ParseMedicinalProductOrphanDesignationProperties(jsn : TJsonObject; result : TFhirMedicinalProductOrphanDesignation); overload; {b\}
-    procedure ParseMedicinalProductOrphanDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicinalProductSpecialDesignation(jsn : TJsonObject) : TFhirMedicinalProductSpecialDesignation; overload; {b\}
+    procedure ParseMedicinalProductSpecialDesignationProperties(jsn : TJsonObject; result : TFhirMedicinalProductSpecialDesignation); overload; {b\}
+    procedure ParseMedicinalProductSpecialDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseMedicinalProduct(jsn : TJsonObject) : TFhirMedicinalProduct; overload;
     procedure ParseMedicinalProductProperties(jsn : TJsonObject; result : TFhirMedicinalProduct); overload;
     procedure ParseMedicinalProduct(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1403,6 +1474,17 @@ Type
     procedure ParseMedicinalProductClinicalsProperties(jsn : TJsonObject; result : TFhirMedicinalProductClinicals); overload;
     procedure ParseMedicinalProductClinicals(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+    function ParseMedicinalProductContraindicationOtherTherapy(jsn : TJsonObject) : TFhirMedicinalProductContraindicationOtherTherapy; overload; {b\}
+    procedure ParseMedicinalProductContraindicationOtherTherapyProperties(jsn : TJsonObject; result : TFhirMedicinalProductContraindicationOtherTherapy); overload; {b\}
+    procedure ParseMedicinalProductContraindicationOtherTherapy(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicinalProductContraindicationPopulation(jsn : TJsonObject) : TFhirMedicinalProductContraindicationPopulation; overload; {b\}
+    procedure ParseMedicinalProductContraindicationPopulationProperties(jsn : TJsonObject; result : TFhirMedicinalProductContraindicationPopulation); overload; {b\}
+    procedure ParseMedicinalProductContraindicationPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicinalProductContraindication(jsn : TJsonObject) : TFhirMedicinalProductContraindication; overload;
+    procedure ParseMedicinalProductContraindicationProperties(jsn : TJsonObject; result : TFhirMedicinalProductContraindication); overload;
+    procedure ParseMedicinalProductContraindication(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
     function ParseMedicinalProductDeviceSpecMaterial(jsn : TJsonObject) : TFhirMedicinalProductDeviceSpecMaterial; overload; {b\}
     procedure ParseMedicinalProductDeviceSpecMaterialProperties(jsn : TJsonObject; result : TFhirMedicinalProductDeviceSpecMaterial); overload; {b\}
@@ -1411,6 +1493,17 @@ Type
     procedure ParseMedicinalProductDeviceSpecProperties(jsn : TJsonObject; result : TFhirMedicinalProductDeviceSpec); overload;
     procedure ParseMedicinalProductDeviceSpec(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+    function ParseMedicinalProductIndicationOtherTherapy(jsn : TJsonObject) : TFhirMedicinalProductIndicationOtherTherapy; overload; {b\}
+    procedure ParseMedicinalProductIndicationOtherTherapyProperties(jsn : TJsonObject; result : TFhirMedicinalProductIndicationOtherTherapy); overload; {b\}
+    procedure ParseMedicinalProductIndicationOtherTherapy(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicinalProductIndicationPopulation(jsn : TJsonObject) : TFhirMedicinalProductIndicationPopulation; overload; {b\}
+    procedure ParseMedicinalProductIndicationPopulationProperties(jsn : TJsonObject; result : TFhirMedicinalProductIndicationPopulation); overload; {b\}
+    procedure ParseMedicinalProductIndicationPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicinalProductIndication(jsn : TJsonObject) : TFhirMedicinalProductIndication; overload;
+    procedure ParseMedicinalProductIndicationProperties(jsn : TJsonObject; result : TFhirMedicinalProductIndication); overload;
+    procedure ParseMedicinalProductIndication(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
     function ParseMedicinalProductIngredientSpecifiedSubstance(jsn : TJsonObject) : TFhirMedicinalProductIngredientSpecifiedSubstance; overload; {b\}
     procedure ParseMedicinalProductIngredientSpecifiedSubstanceProperties(jsn : TJsonObject; result : TFhirMedicinalProductIngredientSpecifiedSubstance); overload; {b\}
@@ -1428,6 +1521,11 @@ Type
     procedure ParseMedicinalProductIngredientProperties(jsn : TJsonObject; result : TFhirMedicinalProductIngredient); overload;
     procedure ParseMedicinalProductIngredient(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+    function ParseMedicinalProductInteraction(jsn : TJsonObject) : TFhirMedicinalProductInteraction; overload;
+    procedure ParseMedicinalProductInteractionProperties(jsn : TJsonObject; result : TFhirMedicinalProductInteraction); overload;
+    procedure ParseMedicinalProductInteraction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
     function ParseMedicinalProductManufactured(jsn : TJsonObject) : TFhirMedicinalProductManufactured; overload;
     procedure ParseMedicinalProductManufacturedProperties(jsn : TJsonObject; result : TFhirMedicinalProductManufactured); overload;
@@ -1461,6 +1559,14 @@ Type
     procedure ParseMedicinalProductPharmaceuticalProperties(jsn : TJsonObject; result : TFhirMedicinalProductPharmaceutical); overload;
     procedure ParseMedicinalProductPharmaceutical(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+    function ParseMedicinalProductUndesirableEffectPopulation(jsn : TJsonObject) : TFhirMedicinalProductUndesirableEffectPopulation; overload; {b\}
+    procedure ParseMedicinalProductUndesirableEffectPopulationProperties(jsn : TJsonObject; result : TFhirMedicinalProductUndesirableEffectPopulation); overload; {b\}
+    procedure ParseMedicinalProductUndesirableEffectPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicinalProductUndesirableEffect(jsn : TJsonObject) : TFhirMedicinalProductUndesirableEffect; overload;
+    procedure ParseMedicinalProductUndesirableEffectProperties(jsn : TJsonObject; result : TFhirMedicinalProductUndesirableEffect); overload;
+    procedure ParseMedicinalProductUndesirableEffect(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
     function ParseMessageDefinitionFocus(jsn : TJsonObject) : TFhirMessageDefinitionFocus; overload; {b\}
     procedure ParseMessageDefinitionFocusProperties(jsn : TJsonObject; result : TFhirMessageDefinitionFocus); overload; {b\}
@@ -1546,6 +1652,9 @@ Type
     function ParseOperationDefinitionParameterBinding(jsn : TJsonObject) : TFhirOperationDefinitionParameterBinding; overload; {b\}
     procedure ParseOperationDefinitionParameterBindingProperties(jsn : TJsonObject; result : TFhirOperationDefinitionParameterBinding); overload; {b\}
     procedure ParseOperationDefinitionParameterBinding(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseOperationDefinitionParameterReferencedFrom(jsn : TJsonObject) : TFhirOperationDefinitionParameterReferencedFrom; overload; {b\}
+    procedure ParseOperationDefinitionParameterReferencedFromProperties(jsn : TJsonObject; result : TFhirOperationDefinitionParameterReferencedFrom); overload; {b\}
+    procedure ParseOperationDefinitionParameterReferencedFrom(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseOperationDefinitionOverload(jsn : TJsonObject) : TFhirOperationDefinitionOverload; overload; {b\}
     procedure ParseOperationDefinitionOverloadProperties(jsn : TJsonObject; result : TFhirOperationDefinitionOverload); overload; {b\}
     procedure ParseOperationDefinitionOverload(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1569,17 +1678,11 @@ Type
     procedure ParseOrganizationProperties(jsn : TJsonObject; result : TFhirOrganization); overload;
     procedure ParseOrganization(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-    function ParseOrganizationRoleAvailableTime(jsn : TJsonObject) : TFhirOrganizationRoleAvailableTime; overload; {b\}
-    procedure ParseOrganizationRoleAvailableTimeProperties(jsn : TJsonObject; result : TFhirOrganizationRoleAvailableTime); overload; {b\}
-    procedure ParseOrganizationRoleAvailableTime(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseOrganizationRoleNotAvailable(jsn : TJsonObject) : TFhirOrganizationRoleNotAvailable; overload; {b\}
-    procedure ParseOrganizationRoleNotAvailableProperties(jsn : TJsonObject; result : TFhirOrganizationRoleNotAvailable); overload; {b\}
-    procedure ParseOrganizationRoleNotAvailable(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseOrganizationRole(jsn : TJsonObject) : TFhirOrganizationRole; overload;
-    procedure ParseOrganizationRoleProperties(jsn : TJsonObject; result : TFhirOrganizationRole); overload;
-    procedure ParseOrganizationRole(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+    function ParseOrganizationAffiliation(jsn : TJsonObject) : TFhirOrganizationAffiliation; overload;
+    procedure ParseOrganizationAffiliationProperties(jsn : TJsonObject; result : TFhirOrganizationAffiliation); overload;
+    procedure ParseOrganizationAffiliation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
     function ParsePatientContact(jsn : TJsonObject) : TFhirPatientContact; overload; {b\}
     procedure ParsePatientContactProperties(jsn : TJsonObject; result : TFhirPatientContact); overload; {b\}
@@ -1690,38 +1793,6 @@ Type
     procedure ParseProcessResponseProperties(jsn : TJsonObject; result : TFhirProcessResponse); overload;
     procedure ParseProcessResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-    function ParseProductPlanContact(jsn : TJsonObject) : TFhirProductPlanContact; overload; {b\}
-    procedure ParseProductPlanContactProperties(jsn : TJsonObject; result : TFhirProductPlanContact); overload; {b\}
-    procedure ParseProductPlanContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlanCoverage(jsn : TJsonObject) : TFhirProductPlanCoverage; overload; {b\}
-    procedure ParseProductPlanCoverageProperties(jsn : TJsonObject; result : TFhirProductPlanCoverage); overload; {b\}
-    procedure ParseProductPlanCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlanCoverageBenefit(jsn : TJsonObject) : TFhirProductPlanCoverageBenefit; overload; {b\}
-    procedure ParseProductPlanCoverageBenefitProperties(jsn : TJsonObject; result : TFhirProductPlanCoverageBenefit); overload; {b\}
-    procedure ParseProductPlanCoverageBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlanCoverageBenefitLimit(jsn : TJsonObject) : TFhirProductPlanCoverageBenefitLimit; overload; {b\}
-    procedure ParseProductPlanCoverageBenefitLimitProperties(jsn : TJsonObject; result : TFhirProductPlanCoverageBenefitLimit); overload; {b\}
-    procedure ParseProductPlanCoverageBenefitLimit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlanPlan(jsn : TJsonObject) : TFhirProductPlanPlan; overload; {b\}
-    procedure ParseProductPlanPlanProperties(jsn : TJsonObject; result : TFhirProductPlanPlan); overload; {b\}
-    procedure ParseProductPlanPlan(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlanPlanGeneralCost(jsn : TJsonObject) : TFhirProductPlanPlanGeneralCost; overload; {b\}
-    procedure ParseProductPlanPlanGeneralCostProperties(jsn : TJsonObject; result : TFhirProductPlanPlanGeneralCost); overload; {b\}
-    procedure ParseProductPlanPlanGeneralCost(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlanPlanSpecificCost(jsn : TJsonObject) : TFhirProductPlanPlanSpecificCost; overload; {b\}
-    procedure ParseProductPlanPlanSpecificCostProperties(jsn : TJsonObject; result : TFhirProductPlanPlanSpecificCost); overload; {b\}
-    procedure ParseProductPlanPlanSpecificCost(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlanPlanSpecificCostBenefit(jsn : TJsonObject) : TFhirProductPlanPlanSpecificCostBenefit; overload; {b\}
-    procedure ParseProductPlanPlanSpecificCostBenefitProperties(jsn : TJsonObject; result : TFhirProductPlanPlanSpecificCostBenefit); overload; {b\}
-    procedure ParseProductPlanPlanSpecificCostBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlanPlanSpecificCostBenefitCost(jsn : TJsonObject) : TFhirProductPlanPlanSpecificCostBenefitCost; overload; {b\}
-    procedure ParseProductPlanPlanSpecificCostBenefitCostProperties(jsn : TJsonObject; result : TFhirProductPlanPlanSpecificCostBenefitCost); overload; {b\}
-    procedure ParseProductPlanPlanSpecificCostBenefitCost(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseProductPlan(jsn : TJsonObject) : TFhirProductPlan; overload;
-    procedure ParseProductPlanProperties(jsn : TJsonObject; result : TFhirProductPlan); overload;
-    procedure ParseProductPlan(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
     function ParseProvenanceAgent(jsn : TJsonObject) : TFhirProvenanceAgent; overload; {b\}
     procedure ParseProvenanceAgentProperties(jsn : TJsonObject; result : TFhirProvenanceAgent); overload; {b\}
@@ -2055,6 +2126,12 @@ Type
     procedure ParseTask(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+    function ParseTerminologyCapabilitiesSoftware(jsn : TJsonObject) : TFhirTerminologyCapabilitiesSoftware; overload; {b\}
+    procedure ParseTerminologyCapabilitiesSoftwareProperties(jsn : TJsonObject; result : TFhirTerminologyCapabilitiesSoftware); overload; {b\}
+    procedure ParseTerminologyCapabilitiesSoftware(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseTerminologyCapabilitiesImplementation(jsn : TJsonObject) : TFhirTerminologyCapabilitiesImplementation; overload; {b\}
+    procedure ParseTerminologyCapabilitiesImplementationProperties(jsn : TJsonObject; result : TFhirTerminologyCapabilitiesImplementation); overload; {b\}
+    procedure ParseTerminologyCapabilitiesImplementation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseTerminologyCapabilitiesCodeSystem(jsn : TJsonObject) : TFhirTerminologyCapabilitiesCodeSystem; overload; {b\}
     procedure ParseTerminologyCapabilitiesCodeSystemProperties(jsn : TJsonObject; result : TFhirTerminologyCapabilitiesCodeSystem); overload; {b\}
     procedure ParseTerminologyCapabilitiesCodeSystem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -2559,12 +2636,17 @@ Type
     procedure ComposeConsent(json : TJSONWriter; name : string; elem : TFhirConsent; noObj : boolean = false);
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+    procedure ComposeContractContentDefinition(json : TJSONWriter; name : string; elem : TFhirContractContentDefinition; noObj : boolean = false);
     procedure ComposeContractTerm(json : TJSONWriter; name : string; elem : TFhirContractTerm; noObj : boolean = false);
+    procedure ComposeContractTermSecurityLabel(json : TJSONWriter; name : string; elem : TFhirContractTermSecurityLabel; noObj : boolean = false);
     procedure ComposeContractTermOffer(json : TJSONWriter; name : string; elem : TFhirContractTermOffer; noObj : boolean = false);
+    procedure ComposeContractTermOfferParty(json : TJSONWriter; name : string; elem : TFhirContractTermOfferParty; noObj : boolean = false);
+    procedure ComposeContractTermOfferAnswer(json : TJSONWriter; name : string; elem : TFhirContractTermOfferAnswer; noObj : boolean = false);
     procedure ComposeContractTermAsset(json : TJSONWriter; name : string; elem : TFhirContractTermAsset; noObj : boolean = false);
-    procedure ComposeContractTermAssetData(json : TJSONWriter; name : string; elem : TFhirContractTermAssetData; noObj : boolean = false);
+    procedure ComposeContractTermAssetContext(json : TJSONWriter; name : string; elem : TFhirContractTermAssetContext; noObj : boolean = false);
     procedure ComposeContractTermAssetValuedItem(json : TJSONWriter; name : string; elem : TFhirContractTermAssetValuedItem; noObj : boolean = false);
-    procedure ComposeContractTermAgent(json : TJSONWriter; name : string; elem : TFhirContractTermAgent; noObj : boolean = false);
+    procedure ComposeContractTermAction(json : TJSONWriter; name : string; elem : TFhirContractTermAction; noObj : boolean = false);
+    procedure ComposeContractTermActionSubject(json : TJSONWriter; name : string; elem : TFhirContractTermActionSubject; noObj : boolean = false);
     procedure ComposeContractSigner(json : TJSONWriter; name : string; elem : TFhirContractSigner; noObj : boolean = false);
     procedure ComposeContractFriendly(json : TJSONWriter; name : string; elem : TFhirContractFriendly; noObj : boolean = false);
     procedure ComposeContractLegal(json : TJSONWriter; name : string; elem : TFhirContractLegal; noObj : boolean = false);
@@ -2576,19 +2658,41 @@ Type
     procedure ComposeCoverageCopay(json : TJSONWriter; name : string; elem : TFhirCoverageCopay; noObj : boolean = false);
     procedure ComposeCoverage(json : TJSONWriter; name : string; elem : TFhirCoverage; noObj : boolean = false);
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+    procedure ComposeCoverageEligibilityRequestSupportingInformation(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequestSupportingInformation; noObj : boolean = false);
+    procedure ComposeCoverageEligibilityRequestInsurance(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequestInsurance; noObj : boolean = false);
+    procedure ComposeCoverageEligibilityRequestItem(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequestItem; noObj : boolean = false);
+    procedure ComposeCoverageEligibilityRequestItemDiagnosis(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequestItemDiagnosis; noObj : boolean = false);
+    procedure ComposeCoverageEligibilityRequest(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequest; noObj : boolean = false);
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+    procedure ComposeCoverageEligibilityResponseInsurance(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponseInsurance; noObj : boolean = false);
+    procedure ComposeCoverageEligibilityResponseInsuranceItem(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponseInsuranceItem; noObj : boolean = false);
+    procedure ComposeCoverageEligibilityResponseInsuranceItemBenefit(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponseInsuranceItemBenefit; noObj : boolean = false);
+    procedure ComposeCoverageEligibilityResponseError(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponseError; noObj : boolean = false);
+    procedure ComposeCoverageEligibilityResponse(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponse; noObj : boolean = false);
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
     procedure ComposeDetectedIssueMitigation(json : TJSONWriter; name : string; elem : TFhirDetectedIssueMitigation; noObj : boolean = false);
     procedure ComposeDetectedIssue(json : TJSONWriter; name : string; elem : TFhirDetectedIssue; noObj : boolean = false);
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-    procedure ComposeDeviceUdi(json : TJSONWriter; name : string; elem : TFhirDeviceUdi; noObj : boolean = false);
+    procedure ComposeDeviceUdiCarrier(json : TJSONWriter; name : string; elem : TFhirDeviceUdiCarrier; noObj : boolean = false);
+    procedure ComposeDeviceDeviceName(json : TJSONWriter; name : string; elem : TFhirDeviceDeviceName; noObj : boolean = false);
+    procedure ComposeDeviceSpecialization(json : TJSONWriter; name : string; elem : TFhirDeviceSpecialization; noObj : boolean = false);
+    procedure ComposeDeviceVersion(json : TJSONWriter; name : string; elem : TFhirDeviceVersion; noObj : boolean = false);
+    procedure ComposeDeviceProperty(json : TJSONWriter; name : string; elem : TFhirDeviceProperty; noObj : boolean = false);
     procedure ComposeDevice(json : TJSONWriter; name : string; elem : TFhirDevice; noObj : boolean = false);
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-    procedure ComposeDeviceComponentProductionSpecification(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProductionSpecification; noObj : boolean = false);
-    procedure ComposeDeviceComponentProperty(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProperty; noObj : boolean = false);
-    procedure ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+    procedure ComposeDeviceDefinitionUdiDeviceIdentifier(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionUdiDeviceIdentifier; noObj : boolean = false);
+    procedure ComposeDeviceDefinitionDeviceName(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionDeviceName; noObj : boolean = false);
+    procedure ComposeDeviceDefinitionSpecialization(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionSpecialization; noObj : boolean = false);
+    procedure ComposeDeviceDefinitionCapability(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionCapability; noObj : boolean = false);
+    procedure ComposeDeviceDefinitionProperty(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionProperty; noObj : boolean = false);
+    procedure ComposeDeviceDefinitionMaterial(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionMaterial; noObj : boolean = false);
+    procedure ComposeDeviceDefinition(json : TJSONWriter; name : string; elem : TFhirDeviceDefinition; noObj : boolean = false);
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
     procedure ComposeDeviceMetricCalibration(json : TJSONWriter; name : string; elem : TFhirDeviceMetricCalibration; noObj : boolean = false);
     procedure ComposeDeviceMetric(json : TJSONWriter; name : string; elem : TFhirDeviceMetric; noObj : boolean = false);
@@ -2614,22 +2718,8 @@ Type
     procedure ComposeDocumentReferenceRelatesTo(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceRelatesTo; noObj : boolean = false);
     procedure ComposeDocumentReferenceContent(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContent; noObj : boolean = false);
     procedure ComposeDocumentReferenceContext(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContext; noObj : boolean = false);
-    procedure ComposeDocumentReferenceContextRelated(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContextRelated; noObj : boolean = false);
     procedure ComposeDocumentReference(json : TJSONWriter; name : string; elem : TFhirDocumentReference; noObj : boolean = false);
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-    procedure ComposeEligibilityRequestInsurance(json : TJSONWriter; name : string; elem : TFhirEligibilityRequestInsurance; noObj : boolean = false);
-    procedure ComposeEligibilityRequestDetail(json : TJSONWriter; name : string; elem : TFhirEligibilityRequestDetail; noObj : boolean = false);
-    procedure ComposeEligibilityRequestDetailDiagnosis(json : TJSONWriter; name : string; elem : TFhirEligibilityRequestDetailDiagnosis; noObj : boolean = false);
-    procedure ComposeEligibilityRequest(json : TJSONWriter; name : string; elem : TFhirEligibilityRequest; noObj : boolean = false);
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-    procedure ComposeEligibilityResponseInsurance(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsurance; noObj : boolean = false);
-    procedure ComposeEligibilityResponseInsuranceDetail(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsuranceDetail; noObj : boolean = false);
-    procedure ComposeEligibilityResponseInsuranceDetailBenefit(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsuranceDetailBenefit; noObj : boolean = false);
-    procedure ComposeEligibilityResponseError(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseError; noObj : boolean = false);
-    procedure ComposeEligibilityResponse(json : TJSONWriter; name : string; elem : TFhirEligibilityResponse; noObj : boolean = false);
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
     procedure ComposeEncounterStatusHistory(json : TJSONWriter; name : string; elem : TFhirEncounterStatusHistory; noObj : boolean = false);
     procedure ComposeEncounterClassHistory(json : TJSONWriter; name : string; elem : TFhirEncounterClassHistory; noObj : boolean = false);
@@ -2759,6 +2849,18 @@ Type
     procedure ComposeImplementationGuideManifestPage(json : TJSONWriter; name : string; elem : TFhirImplementationGuideManifestPage; noObj : boolean = false);
     procedure ComposeImplementationGuide(json : TJSONWriter; name : string; elem : TFhirImplementationGuide; noObj : boolean = false);
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+    procedure ComposeInsurancePlanContact(json : TJSONWriter; name : string; elem : TFhirInsurancePlanContact; noObj : boolean = false);
+    procedure ComposeInsurancePlanCoverage(json : TJSONWriter; name : string; elem : TFhirInsurancePlanCoverage; noObj : boolean = false);
+    procedure ComposeInsurancePlanCoverageBenefit(json : TJSONWriter; name : string; elem : TFhirInsurancePlanCoverageBenefit; noObj : boolean = false);
+    procedure ComposeInsurancePlanCoverageBenefitLimit(json : TJSONWriter; name : string; elem : TFhirInsurancePlanCoverageBenefitLimit; noObj : boolean = false);
+    procedure ComposeInsurancePlanPlan(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlan; noObj : boolean = false);
+    procedure ComposeInsurancePlanPlanGeneralCost(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlanGeneralCost; noObj : boolean = false);
+    procedure ComposeInsurancePlanPlanSpecificCost(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlanSpecificCost; noObj : boolean = false);
+    procedure ComposeInsurancePlanPlanSpecificCostBenefit(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlanSpecificCostBenefit; noObj : boolean = false);
+    procedure ComposeInsurancePlanPlanSpecificCostBenefitCost(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlanSpecificCostBenefitCost; noObj : boolean = false);
+    procedure ComposeInsurancePlan(json : TJSONWriter; name : string; elem : TFhirInsurancePlan; noObj : boolean = false);
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
     procedure ComposeInvoiceParticipant(json : TJSONWriter; name : string; elem : TFhirInvoiceParticipant; noObj : boolean = false);
     procedure ComposeInvoiceLineItem(json : TJSONWriter; name : string; elem : TFhirInvoiceLineItem; noObj : boolean = false);
@@ -2850,7 +2952,7 @@ Type
     procedure ComposeMedicinalProductNameNamePart(json : TJSONWriter; name : string; elem : TFhirMedicinalProductNameNamePart; noObj : boolean = false);
     procedure ComposeMedicinalProductNameCountryLanguage(json : TJSONWriter; name : string; elem : TFhirMedicinalProductNameCountryLanguage; noObj : boolean = false);
     procedure ComposeMedicinalProductManufacturingBusinessOperation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductManufacturingBusinessOperation; noObj : boolean = false);
-    procedure ComposeMedicinalProductOrphanDesignation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductOrphanDesignation; noObj : boolean = false);
+    procedure ComposeMedicinalProductSpecialDesignation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductSpecialDesignation; noObj : boolean = false);
     procedure ComposeMedicinalProduct(json : TJSONWriter; name : string; elem : TFhirMedicinalProduct; noObj : boolean = false);
 {$ENDIF FHIR_MEDICINALPRODUCT}
 {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}
@@ -2867,10 +2969,20 @@ Type
     procedure ComposeMedicinalProductClinicalsInteractions(json : TJSONWriter; name : string; elem : TFhirMedicinalProductClinicalsInteractions; noObj : boolean = false);
     procedure ComposeMedicinalProductClinicals(json : TJSONWriter; name : string; elem : TFhirMedicinalProductClinicals; noObj : boolean = false);
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+    procedure ComposeMedicinalProductContraindicationOtherTherapy(json : TJSONWriter; name : string; elem : TFhirMedicinalProductContraindicationOtherTherapy; noObj : boolean = false);
+    procedure ComposeMedicinalProductContraindicationPopulation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductContraindicationPopulation; noObj : boolean = false);
+    procedure ComposeMedicinalProductContraindication(json : TJSONWriter; name : string; elem : TFhirMedicinalProductContraindication; noObj : boolean = false);
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
     procedure ComposeMedicinalProductDeviceSpecMaterial(json : TJSONWriter; name : string; elem : TFhirMedicinalProductDeviceSpecMaterial; noObj : boolean = false);
     procedure ComposeMedicinalProductDeviceSpec(json : TJSONWriter; name : string; elem : TFhirMedicinalProductDeviceSpec; noObj : boolean = false);
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+    procedure ComposeMedicinalProductIndicationOtherTherapy(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIndicationOtherTherapy; noObj : boolean = false);
+    procedure ComposeMedicinalProductIndicationPopulation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIndicationPopulation; noObj : boolean = false);
+    procedure ComposeMedicinalProductIndication(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIndication; noObj : boolean = false);
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
     procedure ComposeMedicinalProductIngredientSpecifiedSubstance(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIngredientSpecifiedSubstance; noObj : boolean = false);
     procedure ComposeMedicinalProductIngredientSpecifiedSubstanceStrength(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIngredientSpecifiedSubstanceStrength; noObj : boolean = false);
@@ -2878,6 +2990,9 @@ Type
     procedure ComposeMedicinalProductIngredientSubstance(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIngredientSubstance; noObj : boolean = false);
     procedure ComposeMedicinalProductIngredient(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIngredient; noObj : boolean = false);
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+    procedure ComposeMedicinalProductInteraction(json : TJSONWriter; name : string; elem : TFhirMedicinalProductInteraction; noObj : boolean = false);
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
     procedure ComposeMedicinalProductManufactured(json : TJSONWriter; name : string; elem : TFhirMedicinalProductManufactured; noObj : boolean = false);
 {$ENDIF FHIR_MEDICINALPRODUCTMANUFACTURED}
@@ -2893,6 +3008,10 @@ Type
     procedure ComposeMedicinalProductPharmaceuticalRouteOfAdministrationTargetSpeciesWithdrawalPeriod(json : TJSONWriter; name : string; elem : TFhirMedicinalProductPharmaceuticalRouteOfAdministrationTargetSpeciesWithdrawalPeriod; noObj : boolean = false);
     procedure ComposeMedicinalProductPharmaceutical(json : TJSONWriter; name : string; elem : TFhirMedicinalProductPharmaceutical; noObj : boolean = false);
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+    procedure ComposeMedicinalProductUndesirableEffectPopulation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductUndesirableEffectPopulation; noObj : boolean = false);
+    procedure ComposeMedicinalProductUndesirableEffect(json : TJSONWriter; name : string; elem : TFhirMedicinalProductUndesirableEffect; noObj : boolean = false);
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
     procedure ComposeMessageDefinitionFocus(json : TJSONWriter; name : string; elem : TFhirMessageDefinitionFocus; noObj : boolean = false);
     procedure ComposeMessageDefinitionAllowedResponse(json : TJSONWriter; name : string; elem : TFhirMessageDefinitionAllowedResponse; noObj : boolean = false);
@@ -2930,6 +3049,7 @@ Type
 {$IFDEF FHIR_OPERATIONDEFINITION}
     procedure ComposeOperationDefinitionParameter(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameter; noObj : boolean = false);
     procedure ComposeOperationDefinitionParameterBinding(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameterBinding; noObj : boolean = false);
+    procedure ComposeOperationDefinitionParameterReferencedFrom(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameterReferencedFrom; noObj : boolean = false);
     procedure ComposeOperationDefinitionOverload(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionOverload; noObj : boolean = false);
     procedure ComposeOperationDefinition(json : TJSONWriter; name : string; elem : TFhirOperationDefinition; noObj : boolean = false);
 {$ENDIF FHIR_OPERATIONDEFINITION}
@@ -2941,11 +3061,9 @@ Type
     procedure ComposeOrganizationContact(json : TJSONWriter; name : string; elem : TFhirOrganizationContact; noObj : boolean = false);
     procedure ComposeOrganization(json : TJSONWriter; name : string; elem : TFhirOrganization; noObj : boolean = false);
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-    procedure ComposeOrganizationRoleAvailableTime(json : TJSONWriter; name : string; elem : TFhirOrganizationRoleAvailableTime; noObj : boolean = false);
-    procedure ComposeOrganizationRoleNotAvailable(json : TJSONWriter; name : string; elem : TFhirOrganizationRoleNotAvailable; noObj : boolean = false);
-    procedure ComposeOrganizationRole(json : TJSONWriter; name : string; elem : TFhirOrganizationRole; noObj : boolean = false);
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+    procedure ComposeOrganizationAffiliation(json : TJSONWriter; name : string; elem : TFhirOrganizationAffiliation; noObj : boolean = false);
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
     procedure ComposePatientContact(json : TJSONWriter; name : string; elem : TFhirPatientContact; noObj : boolean = false);
     procedure ComposePatientCommunication(json : TJSONWriter; name : string; elem : TFhirPatientCommunication; noObj : boolean = false);
@@ -2996,18 +3114,6 @@ Type
     procedure ComposeProcessResponseProcessNote(json : TJSONWriter; name : string; elem : TFhirProcessResponseProcessNote; noObj : boolean = false);
     procedure ComposeProcessResponse(json : TJSONWriter; name : string; elem : TFhirProcessResponse; noObj : boolean = false);
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-    procedure ComposeProductPlanContact(json : TJSONWriter; name : string; elem : TFhirProductPlanContact; noObj : boolean = false);
-    procedure ComposeProductPlanCoverage(json : TJSONWriter; name : string; elem : TFhirProductPlanCoverage; noObj : boolean = false);
-    procedure ComposeProductPlanCoverageBenefit(json : TJSONWriter; name : string; elem : TFhirProductPlanCoverageBenefit; noObj : boolean = false);
-    procedure ComposeProductPlanCoverageBenefitLimit(json : TJSONWriter; name : string; elem : TFhirProductPlanCoverageBenefitLimit; noObj : boolean = false);
-    procedure ComposeProductPlanPlan(json : TJSONWriter; name : string; elem : TFhirProductPlanPlan; noObj : boolean = false);
-    procedure ComposeProductPlanPlanGeneralCost(json : TJSONWriter; name : string; elem : TFhirProductPlanPlanGeneralCost; noObj : boolean = false);
-    procedure ComposeProductPlanPlanSpecificCost(json : TJSONWriter; name : string; elem : TFhirProductPlanPlanSpecificCost; noObj : boolean = false);
-    procedure ComposeProductPlanPlanSpecificCostBenefit(json : TJSONWriter; name : string; elem : TFhirProductPlanPlanSpecificCostBenefit; noObj : boolean = false);
-    procedure ComposeProductPlanPlanSpecificCostBenefitCost(json : TJSONWriter; name : string; elem : TFhirProductPlanPlanSpecificCostBenefitCost; noObj : boolean = false);
-    procedure ComposeProductPlan(json : TJSONWriter; name : string; elem : TFhirProductPlan; noObj : boolean = false);
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
     procedure ComposeProvenanceAgent(json : TJSONWriter; name : string; elem : TFhirProvenanceAgent; noObj : boolean = false);
     procedure ComposeProvenanceEntity(json : TJSONWriter; name : string; elem : TFhirProvenanceEntity; noObj : boolean = false);
@@ -3153,6 +3259,8 @@ Type
     procedure ComposeTask(json : TJSONWriter; name : string; elem : TFhirTask; noObj : boolean = false);
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+    procedure ComposeTerminologyCapabilitiesSoftware(json : TJSONWriter; name : string; elem : TFhirTerminologyCapabilitiesSoftware; noObj : boolean = false);
+    procedure ComposeTerminologyCapabilitiesImplementation(json : TJSONWriter; name : string; elem : TFhirTerminologyCapabilitiesImplementation; noObj : boolean = false);
     procedure ComposeTerminologyCapabilitiesCodeSystem(json : TJSONWriter; name : string; elem : TFhirTerminologyCapabilitiesCodeSystem; noObj : boolean = false);
     procedure ComposeTerminologyCapabilitiesCodeSystemVersion(json : TJSONWriter; name : string; elem : TFhirTerminologyCapabilitiesCodeSystemVersion; noObj : boolean = false);
     procedure ComposeTerminologyCapabilitiesCodeSystemVersionFilter(json : TJSONWriter; name : string; elem : TFhirTerminologyCapabilitiesCodeSystemVersionFilter; noObj : boolean = false);
@@ -3497,7 +3605,7 @@ begin
       result.LocationStart := value.LocationStart;
       result.LocationEnd := value.LocationEnd;
     end;
-    result.value := toTDateTimeEx(JsonToString(value));
+     result.value := toTDateTimeEx(JsonToString(value));
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -5001,7 +5109,7 @@ procedure TFHIRJsonParser.ParseExtensionProperties(jsn : TJsonObject; result : T
 begin
     ParseElementProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := parseUri(jsn.node['url'], jsn.vObj['_url']);{q}
+        result.urlElement := parseString(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('valueCanonical') or jsn.has('_valueCanonical') then
       result.value := parseCanonical(jsn.node['valueCanonical'], jsn.vObj['_valueCanonical']);
     if jsn.has('valueCode') or jsn.has('_valueCode') then
@@ -5108,8 +5216,8 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeElement(json, '', elem, true);
-  ComposeUriValue(json, 'url', elem.urlElement, false);
-  ComposeUriProps(json, 'url', elem.urlElement, false);
+  ComposeStringValue(json, 'url', elem.urlElement, false);
+  ComposeStringProps(json, 'url', elem.urlElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCanonical) then 
   begin
     ComposeCanonicalValue(json, 'valueCanonical', TFhirCanonical(elem.value), false);
@@ -5470,9 +5578,9 @@ begin
   if not noObj then json.valueObject(name);
   ComposeElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeStringValue(json, 'path', elem.pathElement, false);
+    ComposeStringValue(json, 'path', elem.pathElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeStringProps(json, 'path', elem.pathElement, false);
+    ComposeStringProps(json, 'path', elem.pathElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'searchParam', elem.searchParamElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -5529,9 +5637,9 @@ begin
   if not noObj then json.valueObject(name);
   ComposeElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeStringValue(json, 'path', elem.pathElement, false);
+    ComposeStringValue(json, 'path', elem.pathElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeStringProps(json, 'path', elem.pathElement, false);
+    ComposeStringProps(json, 'path', elem.pathElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'searchParam', elem.searchParamElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -5898,7 +6006,7 @@ begin
     ParseElementProperties(jsn, result);
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := parseDecimal(jsn.node['value'], jsn.vObj['_value']);{q}
-    if jsn.has('currency') or jsn.has('_currency')  then
+    if jsn.has('currency') or jsn.has('_currency') then
         result.currencyElement := parseCode(jsn.node['currency'], jsn.vObj['_currency']);{q}
 end;
 
@@ -6845,7 +6953,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := parseCode(jsn.node['name'], jsn.vObj['_name']);{q}
+        result.nameElement := parseId(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('language') or jsn.has('_language') then
         result.languageElement := parseCode(jsn.node['language'], jsn.vObj['_language']);{q}
     if jsn.has('expression') or jsn.has('_expression') then
@@ -6865,9 +6973,9 @@ begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeCodeValue(json, 'name', elem.nameElement, false);
+    ComposeIdValue(json, 'name', elem.nameElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeCodeProps(json, 'name', elem.nameElement, false);
+    ComposeIdProps(json, 'name', elem.nameElement, false);
   ComposeCodeValue(json, 'language', elem.languageElement, false);
   ComposeCodeProps(json, 'language', elem.languageElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -6949,14 +7057,10 @@ begin
       iterateArray(jsn.vArr['type'], result.type_List, parseCoding);
     if jsn.has('when') or jsn.has('_when') then
         result.whenElement := parseInstant(jsn.node['when'], jsn.vObj['_when']);{q}
-    if jsn.has('whoReference') {a3} then
-      result.who := ParseReference(jsn.vObj['whoReference']);
-    if jsn.has('whoUri') or jsn.has('_whoUri') then
-      result.who := parseUri(jsn.node['whoUri'], jsn.vObj['_whoUri']);
-    if jsn.has('onBehalfOfReference') {a3} then
-      result.onBehalfOf := ParseReference(jsn.vObj['onBehalfOfReference']);
-    if jsn.has('onBehalfOfUri') or jsn.has('_onBehalfOfUri') then
-      result.onBehalfOf := parseUri(jsn.node['onBehalfOfUri'], jsn.vObj['_onBehalfOfUri']);
+    if jsn.has('who') then
+        result.who := ParseReference{TFhirPractitioner}(jsn.vObj['who']);{q3}
+    if jsn.has('onBehalfOf') then
+        result.onBehalfOf := ParseReference{TFhirPractitioner}(jsn.vObj['onBehalfOf']);{q3}
     if jsn.has('targetFormat') or jsn.has('_targetFormat') then
         result.targetFormatElement := parseCode(jsn.node['targetFormat'], jsn.vObj['_targetFormat']);{q}
     if jsn.has('sigFormat') or jsn.has('_sigFormat') then
@@ -6982,20 +7086,9 @@ begin
   end;
   ComposeInstantValue(json, 'when', elem.whenElement, false);
   ComposeInstantProps(json, 'when', elem.whenElement, false);
-  if (elem.who is TFhirReference) then
-    ComposeReference(json, 'whoReference', TFhirReference(elem.who))
-  else if (elem.who is TFhirUri) then 
-  begin
-    ComposeUriValue(json, 'whoUri', TFhirUri(elem.who), false);
-    ComposeUriProps(json, 'whoUri', TFhirUri(elem.who), false);
-  end;
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.onBehalfOf is TFhirReference) then
-    ComposeReference(json, 'onBehalfOfReference', TFhirReference(elem.onBehalfOf))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.onBehalfOf is TFhirUri) then 
-  begin
-    ComposeUriValue(json, 'onBehalfOfUri', TFhirUri(elem.onBehalfOf), false);
-    ComposeUriProps(json, 'onBehalfOfUri', TFhirUri(elem.onBehalfOf), false);
-  end;
+  ComposeReference{TFhirPractitioner}(json, 'who', elem.who); {a}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeReference{TFhirPractitioner}(json, 'onBehalfOf', elem.onBehalfOf); {a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeCodeValue(json, 'targetFormat', elem.targetFormatElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -8252,8 +8345,10 @@ begin
   ComposeEnumProps(json, 'severity', elem.SeverityElement, CODES_TFhirConstraintSeverityEnum, false);
   ComposeStringValue(json, 'human', elem.humanElement, false);
   ComposeStringProps(json, 'human', elem.humanElement, false);
-  ComposeStringValue(json, 'expression', elem.expressionElement, false);
-  ComposeStringProps(json, 'expression', elem.expressionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'expression', elem.expressionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'expression', elem.expressionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'xpath', elem.xpathElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -8386,6 +8481,8 @@ begin
       iterateEnumArray(jsn.vArr['representation'], jsn.vArr['_representation'], jsn.path+'/representation', result.representationList, parseEnum, CODES_TFhirPropertyRepresentationEnum, SYSTEMS_TFhirPropertyRepresentationEnum);
     if jsn.has('sliceName') or jsn.has('_sliceName') then
         result.sliceNameElement := parseString(jsn.node['sliceName'], jsn.vObj['_sliceName']);{q}
+    if jsn.has('sliceIsConstraining') or jsn.has('_sliceIsConstraining') then
+        result.sliceIsConstrainingElement := parseBoolean(jsn.node['sliceIsConstraining'], jsn.vObj['_sliceIsConstraining']);{q}
     if jsn.has('label') or jsn.has('_label') then
         result.label_Element := parseString(jsn.node['label'], jsn.vObj['_label']);{q}
     if jsn.has('code') then
@@ -8808,6 +8905,10 @@ begin
     ComposeStringValue(json, 'sliceName', elem.sliceNameElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringProps(json, 'sliceName', elem.sliceNameElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeBooleanValue(json, 'sliceIsConstraining', elem.sliceIsConstrainingElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeBooleanProps(json, 'sliceIsConstraining', elem.sliceIsConstrainingElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringValue(json, 'label', elem.label_Element, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -9535,9 +9636,9 @@ begin
     if jsn.has('boundsPeriod') {a4} then
       result.bounds := ParsePeriod(jsn.vObj['boundsPeriod']);
     if jsn.has('count') or jsn.has('_count') then
-        result.countElement := parseInteger(jsn.node['count'], jsn.vObj['_count']);{q}
+        result.countElement := parsePositiveInt(jsn.node['count'], jsn.vObj['_count']);{q}
     if jsn.has('countMax') or jsn.has('_countMax') then
-        result.countMaxElement := parseInteger(jsn.node['countMax'], jsn.vObj['_countMax']);{q}
+        result.countMaxElement := parsePositiveInt(jsn.node['countMax'], jsn.vObj['_countMax']);{q}
     if jsn.has('duration') or jsn.has('_duration') then
         result.durationElement := parseDecimal(jsn.node['duration'], jsn.vObj['_duration']);{q}
     if jsn.has('durationMax') or jsn.has('_durationMax') then
@@ -9545,9 +9646,9 @@ begin
     if jsn.has('durationUnit') or jsn.has('_durationUnit')  then
       result.durationUnitElement := parseEnum(jsn.path+'/durationUnit', jsn.node['durationUnit'], jsn.vObj['_durationUnit'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
     if jsn.has('frequency') or jsn.has('_frequency') then
-        result.frequencyElement := parseInteger(jsn.node['frequency'], jsn.vObj['_frequency']);{q}
+        result.frequencyElement := parsePositiveInt(jsn.node['frequency'], jsn.vObj['_frequency']);{q}
     if jsn.has('frequencyMax') or jsn.has('_frequencyMax') then
-        result.frequencyMaxElement := parseInteger(jsn.node['frequencyMax'], jsn.vObj['_frequencyMax']);{q}
+        result.frequencyMaxElement := parsePositiveInt(jsn.node['frequencyMax'], jsn.vObj['_frequencyMax']);{q}
     if jsn.has('period') or jsn.has('_period') then
         result.periodElement := parseDecimal(jsn.node['period'], jsn.vObj['_period']);{q}
     if jsn.has('periodMax') or jsn.has('_periodMax') then
@@ -9581,13 +9682,13 @@ begin
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) then 
     ComposePeriod(json, 'boundsPeriod', TFhirPeriod(elem.bounds)) ;
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerValue(json, 'count', elem.countElement, false);
+    ComposePositiveIntValue(json, 'count', elem.countElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerProps(json, 'count', elem.countElement, false);
+    ComposePositiveIntProps(json, 'count', elem.countElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerValue(json, 'countMax', elem.countMaxElement, false);
+    ComposePositiveIntValue(json, 'countMax', elem.countMaxElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerProps(json, 'countMax', elem.countMaxElement, false);
+    ComposePositiveIntProps(json, 'countMax', elem.countMaxElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimalValue(json, 'duration', elem.durationElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -9601,13 +9702,13 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeEnumProps(json, 'durationUnit', elem.DurationUnitElement, CODES_TFhirUnitsOfTimeEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerValue(json, 'frequency', elem.frequencyElement, false);
+    ComposePositiveIntValue(json, 'frequency', elem.frequencyElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerProps(json, 'frequency', elem.frequencyElement, false);
+    ComposePositiveIntProps(json, 'frequency', elem.frequencyElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerValue(json, 'frequencyMax', elem.frequencyMaxElement, false);
+    ComposePositiveIntValue(json, 'frequencyMax', elem.frequencyMaxElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerProps(json, 'frequencyMax', elem.frequencyMaxElement, false);
+    ComposePositiveIntProps(json, 'frequencyMax', elem.frequencyMaxElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimalValue(json, 'period', elem.periodElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -9998,7 +10099,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
+      iterateArray(jsn.vArr['subject'], result.subjectList, parseReference{TFhirPatient});
     if jsn.has('servicePeriod') then
         result.servicePeriod := ParsePeriod(jsn.vObj['servicePeriod']);{q3}
     if jsn.has('coverage') then
@@ -10035,8 +10136,13 @@ begin
     ComposeStringValue(json, 'name', elem.nameElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
-    ComposeReference{TFhirPatient}(json, 'subject', elem.subject); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') and (elem.subjectList.Count > 0) then
+  begin
+    json.valueArray('subject');
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirPatient}(json, '', elem.subjectList[i]); {z - Reference(Patient)}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('servicePeriod') then
     ComposePeriod(json, 'servicePeriod', elem.servicePeriod); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('coverage') and (elem.coverageList.Count > 0) then
@@ -10134,8 +10240,8 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-    ComposeStringValue(json, 'path', elem.pathElement, false);
-    ComposeStringProps(json, 'path', elem.pathElement, false);
+  ComposeStringValue(json, 'path', elem.pathElement, false);
+  ComposeStringProps(json, 'path', elem.pathElement, false);
   ComposeExpression(json, 'expression', elem.expression); {a}
   if not noObj then json.finishObject;
 end;
@@ -10205,16 +10311,28 @@ begin
         result.effectivePeriod := ParsePeriod(jsn.vObj['effectivePeriod']);{q3}
     if jsn.has('topic') then
       iterateArray(jsn.vArr['topic'], result.topicList, parseCodeableConcept);
-    if jsn.has('contributor') then
-      iterateArray(jsn.vArr['contributor'], result.contributorList, parseContributor);
+    if jsn.has('author') then
+      iterateArray(jsn.vArr['author'], result.authorList, parseContactDetail);
+    if jsn.has('editor') then
+      iterateArray(jsn.vArr['editor'], result.editorList, parseContactDetail);
+    if jsn.has('reviewer') then
+      iterateArray(jsn.vArr['reviewer'], result.reviewerList, parseContactDetail);
+    if jsn.has('endorser') then
+      iterateArray(jsn.vArr['endorser'], result.endorserList, parseContactDetail);
     if jsn.has('relatedArtifact') then
       iterateArray(jsn.vArr['relatedArtifact'], result.relatedArtifactList, parseRelatedArtifact);
       if jsn.has('library') or jsn.has('_library') then
       iteratePrimitiveArray(jsn.vArr['library'], jsn.vArr['_library'], result.library_List, parseCanonical);
     if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn.node['kind'], jsn.vObj['_kind'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn.node['kind'], jsn.vObj['_kind'], CODES_TFhirRequestResourceTypesEnum, SYSTEMS_TFhirRequestResourceTypesEnum);
+    if jsn.has('profile') or jsn.has('_profile') then
+        result.profileElement := parseCanonical(jsn.node['profile'], jsn.vObj['_profile']);{q}
     if jsn.has('code') then
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
+    if jsn.has('intent') or jsn.has('_intent')  then
+      result.intentElement := parseEnum(jsn.path+'/intent', jsn.node['intent'], jsn.vObj['_intent'], CODES_TFhirRequestIntentEnum, SYSTEMS_TFhirRequestIntentEnum);
+    if jsn.has('priority') or jsn.has('_priority')  then
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn.node['priority'], jsn.vObj['_priority'], CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum);
     if jsn.has('doNotPerform') or jsn.has('_doNotPerform') then
         result.doNotPerformElement := parseBoolean(jsn.node['doNotPerform'], jsn.vObj['_doNotPerform']);{q}
     if jsn.has('timingTiming') {a4} then
@@ -10245,6 +10363,10 @@ begin
       iterateArray(jsn.vArr['bodySite'], result.bodySiteList, parseCodeableConcept);
     if jsn.has('specimenRequirement') then
       iterateArray(jsn.vArr['specimenRequirement'], result.specimenRequirementList, parseReference{TFhirSpecimenDefinition});
+    if jsn.has('observationRequirement') then
+      iterateArray(jsn.vArr['observationRequirement'], result.observationRequirementList, parseReference{TFhirObservationDefinition});
+    if jsn.has('observationResultRequirement') then
+      iterateArray(jsn.vArr['observationResultRequirement'], result.observationResultRequirementList, parseReference{TFhirObservationDefinition});
     if jsn.has('transform') or jsn.has('_transform') then
         result.transformElement := parseCanonical(jsn.node['transform'], jsn.vObj['_transform']);{q}
     if jsn.has('dynamicValue') then
@@ -10359,11 +10481,32 @@ begin
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') and (elem.contributorList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('author') and (elem.authorList.Count > 0) then
   begin
-    json.valueArray('contributor');
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
+    json.valueArray('author');
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.authorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') and (elem.editorList.Count > 0) then
+  begin
+    json.valueArray('editor');
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.editorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') and (elem.reviewerList.Count > 0) then
+  begin
+    json.valueArray('reviewer');
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(json, '', elem.reviewerList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') and (elem.endorserList.Count > 0) then
+  begin
+    json.valueArray('endorser');
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(json, '', elem.endorserList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') and (elem.relatedArtifactList.Count > 0) then
@@ -10398,11 +10541,23 @@ begin
     end;
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('kind') then
-    ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirResourceTypesEnum, false);
+    ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirRequestResourceTypesEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('kind') then
-    ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirResourceTypesEnum, false);
+    ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirRequestResourceTypesEnum, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('profile') then
+    ComposeCanonicalValue(json, 'profile', elem.profileElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('profile') then
+    ComposeCanonicalProps(json, 'profile', elem.profileElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('code') then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('intent') then
+    ComposeEnumValue(json, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('intent') then
+    ComposeEnumProps(json, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('priority') then
+    ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('priority') then
+    ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('doNotPerform') then
     ComposeBooleanValue(json, 'doNotPerform', elem.doNotPerformElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('doNotPerform') then
@@ -10456,6 +10611,20 @@ begin
     json.valueArray('specimenRequirement');
     for i := 0 to elem.specimenRequirementList.Count - 1 do
       ComposeReference{TFhirSpecimenDefinition}(json, '', elem.specimenRequirementList[i]); {z - Reference(SpecimenDefinition)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('observationRequirement') and (elem.observationRequirementList.Count > 0) then
+  begin
+    json.valueArray('observationRequirement');
+    for i := 0 to elem.observationRequirementList.Count - 1 do
+      ComposeReference{TFhirObservationDefinition}(json, '', elem.observationRequirementList[i]); {z - Reference(ObservationDefinition)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('observationResultRequirement') and (elem.observationResultRequirementList.Count > 0) then
+  begin
+    json.valueArray('observationResultRequirement');
+    for i := 0 to elem.observationResultRequirementList.Count - 1 do
+      ComposeReference{TFhirObservationDefinition}(json, '', elem.observationResultRequirementList[i]); {z - Reference(ObservationDefinition)}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('transform') then
@@ -14184,7 +14353,7 @@ procedure TFHIRJsonParser.ParseCareTeamParticipantProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('role') then
-        result.role := ParseCodeableConcept(jsn.vObj['role']);{q3}
+      iterateArray(jsn.vArr['role'], result.roleList, parseCodeableConcept);
     if jsn.has('member') then
         result.member := ParseReference{TFhirPractitioner}(jsn.vObj['member']);{q3}
     if jsn.has('onBehalfOf') then
@@ -14194,13 +14363,20 @@ begin
 end;
 
 procedure TFHIRJsonComposer.ComposeCareTeamParticipant(json : TJSONWriter; name : string; elem : TFhirCareTeamParticipant; noObj : boolean = false);
+var
+  i : integer;
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(json, 'role', elem.role); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.roleList.Count > 0) then
+  begin
+    json.valueArray('role');
+    for i := 0 to elem.roleList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.roleList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'member', elem.member); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -15229,6 +15405,8 @@ begin
       result.diagnosis := ParseReference(jsn.vObj['diagnosisReference']);
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
+    if jsn.has('onAdmission') then
+        result.onAdmission := ParseCodeableConcept(jsn.vObj['onAdmission']);{q3}
     if jsn.has('packageCode') then
         result.packageCode := ParseCodeableConcept(jsn.vObj['packageCode']);{q3}
 end;
@@ -15254,6 +15432,8 @@ begin
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'onAdmission', elem.onAdmission); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'packageCode', elem.packageCode); {a}
   if not noObj then json.finishObject;
@@ -15471,8 +15651,8 @@ begin
         result.revenue := ParseCodeableConcept(jsn.vObj['revenue']);{q3}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('programCode') then
@@ -15620,7 +15800,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
@@ -15716,8 +15896,8 @@ begin
         result.revenue := ParseCodeableConcept(jsn.vObj['revenue']);{q3}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('programCode') then
@@ -15751,7 +15931,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
@@ -15818,8 +15998,8 @@ begin
         result.revenue := ParseCodeableConcept(jsn.vObj['revenue']);{q3}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('programCode') then
@@ -15851,7 +16031,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
@@ -15912,7 +16092,7 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('subType') then
-      iterateArray(jsn.vArr['subType'], result.subTypeList, parseCodeableConcept);
+        result.subType := ParseCodeableConcept(jsn.vObj['subType']);{q3}
     if jsn.has('use') or jsn.has('_use')  then
       result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum);
     if jsn.has('patient') then
@@ -15981,13 +16161,8 @@ begin
     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
   if (SummaryOption in [soFull, soData]) and doCompose('type_') then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('subType') and (elem.subTypeList.Count > 0) then
-  begin
-    json.valueArray('subType');
-    for i := 0 to elem.subTypeList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.subTypeList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('subType') then
+    ComposeCodeableConcept(json, 'subType', elem.subType); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirClaimUseEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
@@ -16386,8 +16561,10 @@ begin
       iteratePrimitiveArray(jsn.vArr['detailSequence'], jsn.vArr['_detailSequence'], result.detailSequenceList, parsePositiveInt);
       if jsn.has('subdetailSequence') or jsn.has('_subdetailSequence') then
       iteratePrimitiveArray(jsn.vArr['subdetailSequence'], jsn.vArr['_subdetailSequence'], result.subdetailSequenceList, parsePositiveInt);
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('provider') then
+      iterateArray(jsn.vArr['provider'], result.providerList, parseReference{TFhirPractitioner});
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('programCode') then
@@ -16504,8 +16681,15 @@ begin
       json.FinishArray;
     end;
   end;
+  if (SummaryOption in [soFull, soData]) and (elem.providerList.Count > 0) then
+  begin
+    json.valueArray('provider');
+    for i := 0 to elem.providerList.Count - 1 do
+      ComposeReference{TFhirPractitioner}(json, '', elem.providerList[i]); {z - Reference(Practitioner)}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
@@ -16612,12 +16796,10 @@ end;
 procedure TFHIRJsonParser.ParseClaimResponseAddItemDetailProperties(jsn : TJsonObject; result : TFhirClaimResponseAddItemDetail);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
-    if jsn.has('programCode') then
-      iterateArray(jsn.vArr['programCode'], result.programCodeList, parseCodeableConcept);
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
@@ -16645,19 +16827,12 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.modifierList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.programCodeList.Count > 0) then
-  begin
-    json.valueArray('programCode');
-    for i := 0 to elem.programCodeList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.programCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) then
@@ -16730,12 +16905,10 @@ end;
 procedure TFHIRJsonParser.ParseClaimResponseAddItemDetailSubDetailProperties(jsn : TJsonObject; result : TFhirClaimResponseAddItemDetailSubDetail);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
-    if jsn.has('programCode') then
-      iterateArray(jsn.vArr['programCode'], result.programCodeList, parseCodeableConcept);
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
@@ -16761,19 +16934,12 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.modifierList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.programCodeList.Count > 0) then
-  begin
-    json.valueArray('programCode');
-    for i := 0 to elem.programCodeList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.programCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) then
@@ -17042,17 +17208,11 @@ begin
         result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
     if jsn.has('businessArrangement') or jsn.has('_businessArrangement') then
         result.businessArrangementElement := parseString(jsn.node['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
-      if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
-      iteratePrimitiveArray(jsn.vArr['preAuthRef'], jsn.vArr['_preAuthRef'], result.preAuthRefList, parseString);
     if jsn.has('claimResponse') then
         result.claimResponse := ParseReference{TFhirClaimResponse}(jsn.vObj['claimResponse']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseInsurance(json : TJSONWriter; name : string; elem : TFhirClaimResponseInsurance; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-  val : boolean;
 begin
   if (elem = nil) then
     exit;
@@ -17067,30 +17227,6 @@ begin
     ComposeStringValue(json, 'businessArrangement', elem.businessArrangementElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'businessArrangement', elem.businessArrangementElement, false);
-  if (SummaryOption in [soFull, soData]) and (elem.preAuthRefList.Count > 0) then
-  begin
-    ext := false;
-    val := false;
-    for i := 0 to elem.preAuthRefList.Count - 1 do
-    begin
-      ext := ext or ((elem.preAuthRefList[i].id <> '') or (elem.preAuthRefList[i].hasExtensionList) {no-comments or (elem.preAuthRefList[i].hasComments)});
-      val := val or (elem.preAuthRefList[i].hasPrimitiveValue);
-    end;
-    if val then
-    begin
-      json.valueArray('preAuthRef');
-      for i := 0 to elem.preAuthRefList.Count - 1 do
-        ComposeStringValue(json, '',elem.preAuthRefList[i], true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_preAuthRef');
-      for i := 0 to elem.preAuthRefList.Count - 1 do
-        ComposeStringProps(json, '',elem.preAuthRefList[i], true);
-      json.FinishArray;
-    end;
-  end;
   if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaimResponse}(json, 'claimResponse', elem.claimResponse); {a}
   if not noObj then json.finishObject;
@@ -17122,7 +17258,7 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('subType') then
-      iterateArray(jsn.vArr['subType'], result.subTypeList, parseCodeableConcept);
+        result.subType := ParseCodeableConcept(jsn.vObj['subType']);{q3}
     if jsn.has('use') or jsn.has('_use')  then
       result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum);
     if jsn.has('patient') then
@@ -17139,6 +17275,8 @@ begin
       result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := parseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
+    if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
+        result.preAuthRefElement := parseString(jsn.node['preAuthRef'], jsn.vObj['_preAuthRef']);{q}
     if jsn.has('payeeType') then
         result.payeeType := ParseCodeableConcept(jsn.vObj['payeeType']);{q3}
     if jsn.has('item') then
@@ -17183,13 +17321,8 @@ begin
     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
   if (SummaryOption in [soFull, soData]) and doCompose('type_') then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('subType') and (elem.subTypeList.Count > 0) then
-  begin
-    json.valueArray('subType');
-    for i := 0 to elem.subTypeList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.subTypeList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('subType') then
+    ComposeCodeableConcept(json, 'subType', elem.subType); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirClaimUseEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
@@ -17214,6 +17347,10 @@ begin
     ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
     ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
+    ComposeStringValue(json, 'preAuthRef', elem.preAuthRefElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
+    ComposeStringProps(json, 'preAuthRef', elem.preAuthRefElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('payeeType') then
     ComposeCodeableConcept(json, 'payeeType', elem.payeeType); {a}
   if (SummaryOption in [soFull, soData]) and doCompose('item') and (elem.itemList.Count > 0) then
@@ -17420,8 +17557,8 @@ begin
       iterateArray(jsn.vArr['prognosisCodeableConcept'], result.prognosisCodeableConceptList, parseCodeableConcept);
     if jsn.has('prognosisReference') then
       iterateArray(jsn.vArr['prognosisReference'], result.prognosisReferenceList, parseReference{TFhirRiskAssessment});
-    if jsn.has('action') then
-      iterateArray(jsn.vArr['action'], result.actionList, parseReference{TFhirServiceRequest});
+    if jsn.has('supportingInfo') then
+      iterateArray(jsn.vArr['supportingInfo'], result.supportingInfoList, parseReference{TFhirReference});
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
 end;
@@ -17533,11 +17670,11 @@ begin
       ComposeReference{TFhirRiskAssessment}(json, '', elem.prognosisReferenceList[i]); {z - Reference(RiskAssessment)}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('action') and (elem.actionList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('supportingInfo') and (elem.supportingInfoList.Count > 0) then
   begin
-    json.valueArray('action');
-    for i := 0 to elem.actionList.Count - 1 do
-      ComposeReference{TFhirServiceRequest}(json, '', elem.actionList[i]); {z - Reference(ServiceRequest)}
+    json.valueArray('supportingInfo');
+    for i := 0 to elem.supportingInfoList.Count - 1 do
+      ComposeReference{TFhirReference}(json, '', elem.supportingInfoList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('note') and (elem.noteList.Count > 0) then
@@ -17896,7 +18033,7 @@ begin
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := parseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('version') or jsn.has('_version') then
         result.versionElement := parseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
@@ -17958,8 +18095,13 @@ begin
     ComposeUriValue(json, 'url', elem.urlElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('url') then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
-    ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
     ComposeStringValue(json, 'version', elem.versionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
@@ -18808,11 +18950,11 @@ begin
   ComposeBackboneElementProperties(json, elem);
   ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirCompositionAttestationModeEnum, false);
   ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirCompositionAttestationModeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'time', elem.timeElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'time', elem.timeElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'party', elem.party); {a}
   if not noObj then json.finishObject;
 end;
@@ -18966,7 +19108,7 @@ begin
     ComposeStringProps(json, 'title', elem.titleElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.authorList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.authorList.Count > 0) then
   begin
     json.valueArray('author');
     for i := 0 to elem.authorList.Count - 1 do
@@ -18975,9 +19117,9 @@ begin
   end;
   if (SummaryOption in [soFull, soData]) then
     ComposeNarrative(json, 'text', elem.text); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirListModeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
+  if (SummaryOption in [soFull, soData]) then
     ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirListModeEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'orderedBy', elem.orderedBy); {a}
@@ -19025,8 +19167,8 @@ begin
       result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('class') then
-        result.class_ := ParseCodeableConcept(jsn.vObj['class']);{q3}
+    if jsn.has('category') then
+      iterateArray(jsn.vArr['category'], result.categoryList, parseCodeableConcept);
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('encounter') then
@@ -19063,8 +19205,13 @@ begin
   ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirCompositionStatusEnum, false);
   ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirCompositionStatusEnum, false);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('class_') then
-    ComposeCodeableConcept(json, 'class', elem.class_); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('category') and (elem.categoryList.Count > 0) then
+  begin
+    json.valueArray('category');
+    for i := 0 to elem.categoryList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
     ComposeReference{TFhirReference}(json, 'subject', elem.subject); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('encounter') then
@@ -19084,7 +19231,7 @@ begin
     ComposeEnumValue(json, 'confidentiality', elem.ConfidentialityElement, CODES_TFhirV3ConfidentialityClassificationEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('confidentiality') then
     ComposeEnumProps(json, 'confidentiality', elem.ConfidentialityElement, CODES_TFhirV3ConfidentialityClassificationEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('attester') and (elem.attesterList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('attester') and (elem.attesterList.Count > 0) then
   begin
     json.valueArray('attester');
     for i := 0 to elem.attesterList.Count - 1 do
@@ -19093,7 +19240,7 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('custodian') then
     ComposeReference{TFhirOrganization}(json, 'custodian', elem.custodian); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('relatesTo') and (elem.relatesToList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('relatesTo') and (elem.relatesToList.Count > 0) then
   begin
     json.valueArray('relatesTo');
     for i := 0 to elem.relatesToList.Count - 1 do
@@ -20252,6 +20399,63 @@ end;
 
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+procedure TFHIRJsonParser.ParseContractContentDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseContractContentDefinition(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseContractContentDefinition(jsn : TJsonObject) : TFhirContractContentDefinition;
+begin
+  result := TFhirContractContentDefinition.create;
+  try
+    ParseContractContentDefinitionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseContractContentDefinitionProperties(jsn : TJsonObject; result : TFhirContractContentDefinition);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('subType') then
+        result.subType := ParseCodeableConcept(jsn.vObj['subType']);{q3}
+    if jsn.has('publisher') then
+        result.publisher := ParseReference{TFhirPerson}(jsn.vObj['publisher']);{q3}
+    if jsn.has('publicationDate') or jsn.has('_publicationDate') then
+        result.publicationDateElement := parseDateTime(jsn.node['publicationDate'], jsn.vObj['_publicationDate']);{q}
+    if jsn.has('publicationStatus') or jsn.has('_publicationStatus')  then
+      result.publicationStatusElement := parseEnum(jsn.path+'/publicationStatus', jsn.node['publicationStatus'], jsn.vObj['_publicationStatus'], CODES_TFhirContractPublicationstatusEnum, SYSTEMS_TFhirContractPublicationstatusEnum);
+    if jsn.has('copyright') or jsn.has('_copyright') then
+        result.copyrightElement := parseMarkdown(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeContractContentDefinition(json : TJSONWriter; name : string; elem : TFhirContractContentDefinition; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'subType', elem.subType); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirPerson}(json, 'publisher', elem.publisher); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTimeValue(json, 'publicationDate', elem.publicationDateElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTimeProps(json, 'publicationDate', elem.publicationDateElement, false);
+  ComposeEnumValue(json, 'publicationStatus', elem.PublicationStatusElement, CODES_TFhirContractPublicationstatusEnum, false);
+  ComposeEnumProps(json, 'publicationStatus', elem.PublicationStatusElement, CODES_TFhirContractPublicationstatusEnum, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
+  if not noObj then json.finishObject;
+end;
+
 procedure TFHIRJsonParser.ParseContractTerm(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseContractTerm(jsn)); {2}
@@ -20277,20 +20481,24 @@ begin
         result.issuedElement := parseDateTime(jsn.node['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('applies') then
         result.applies := ParsePeriod(jsn.vObj['applies']);{q3}
+    if jsn.has('topicCodeableConcept') {a4} then
+      result.topic := ParseCodeableConcept(jsn.vObj['topicCodeableConcept']);
+    if jsn.has('topicReference') {a3} then
+      result.topic := ParseReference(jsn.vObj['topicReference']);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('subType') then
         result.subType := ParseCodeableConcept(jsn.vObj['subType']);{q3}
+    if jsn.has('text') or jsn.has('_text') then
+        result.textElement := parseString(jsn.node['text'], jsn.vObj['_text']);{q}
+    if jsn.has('securityLabel') then
+      iterateArray(jsn.vArr['securityLabel'], result.securityLabelList, parseContractTermSecurityLabel);
     if jsn.has('offer') then
         result.offer := ParseContractTermOffer(jsn.vObj['offer']);{q3}
     if jsn.has('asset') then
       iterateArray(jsn.vArr['asset'], result.assetList, parseContractTermAsset);
-    if jsn.has('agent') then
-      iterateArray(jsn.vArr['agent'], result.agentList, parseContractTermAgent);
     if jsn.has('action') then
-      iterateArray(jsn.vArr['action'], result.actionList, parseCodeableConcept);
-    if jsn.has('actionReason') then
-      iterateArray(jsn.vArr['actionReason'], result.actionReasonList, parseCodeableConcept);
+      iterateArray(jsn.vArr['action'], result.actionList, parseContractTermAction);
     if jsn.has('group') then
       iterateArray(jsn.vArr['group'], result.groupList, parseContractTerm);
 end;
@@ -20311,10 +20519,25 @@ begin
     ComposeDateTimeProps(json, 'issued', elem.issuedElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'applies', elem.applies); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.topic is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'topicCodeableConcept', TFhirCodeableConcept(elem.topic)) 
+  else if (SummaryOption in [soFull, soData]) and (elem.topic is TFhirReference) then
+    ComposeReference(json, 'topicReference', TFhirReference(elem.topic));
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'subType', elem.subType); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'text', elem.textElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'text', elem.textElement, false);
+  if (SummaryOption in [soFull, soData]) and (elem.securityLabelList.Count > 0) then
+  begin
+    json.valueArray('securityLabel');
+    for i := 0 to elem.securityLabelList.Count - 1 do
+      ComposeContractTermSecurityLabel(json, '', elem.securityLabelList[i]); {z - }
+    json.FinishArray;
+  end;
   ComposeContractTermOffer(json, 'offer', elem.offer); {a}
   if (SummaryOption in [soFull, soData]) and (elem.assetList.Count > 0) then
   begin
@@ -20323,25 +20546,11 @@ begin
       ComposeContractTermAsset(json, '', elem.assetList[i]); {z - }
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and (elem.agentList.Count > 0) then
-  begin
-    json.valueArray('agent');
-    for i := 0 to elem.agentList.Count - 1 do
-      ComposeContractTermAgent(json, '', elem.agentList[i]); {z - }
-    json.FinishArray;
-  end;
   if (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
   begin
     json.valueArray('action');
     for i := 0 to elem.actionList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.actionList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.actionReasonList.Count > 0) then
-  begin
-    json.valueArray('actionReason');
-    for i := 0 to elem.actionReasonList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.actionReasonList[i]); {z - CodeableConcept}
+      ComposeContractTermAction(json, '', elem.actionList[i]); {z - }
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and (elem.groupList.Count > 0) then
@@ -20349,6 +20558,87 @@ begin
     json.valueArray('group');
     for i := 0 to elem.groupList.Count - 1 do
       ComposeContractTerm(json, '', elem.groupList[i]); {z - @Contract.term}
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseContractTermSecurityLabel(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseContractTermSecurityLabel(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseContractTermSecurityLabel(jsn : TJsonObject) : TFhirContractTermSecurityLabel;
+begin
+  result := TFhirContractTermSecurityLabel.create;
+  try
+    ParseContractTermSecurityLabelProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseContractTermSecurityLabelProperties(jsn : TJsonObject; result : TFhirContractTermSecurityLabel);
+begin
+    ParseBackboneElementProperties(jsn, result);
+      if jsn.has('number') or jsn.has('_number') then
+      iteratePrimitiveArray(jsn.vArr['number'], jsn.vArr['_number'], result.numberList, parseUnsignedInt);
+    if jsn.has('classification') then
+        result.classification := ParseCoding(jsn.vObj['classification']);{q3}
+    if jsn.has('category') then
+      iterateArray(jsn.vArr['category'], result.categoryList, parseCoding);
+    if jsn.has('control') then
+      iterateArray(jsn.vArr['control'], result.controlList, parseCoding);
+end;
+
+procedure TFHIRJsonComposer.ComposeContractTermSecurityLabel(json : TJSONWriter; name : string; elem : TFhirContractTermSecurityLabel; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) and (elem.numberList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.numberList.Count - 1 do
+    begin
+      ext := ext or ((elem.numberList[i].id <> '') or (elem.numberList[i].hasExtensionList) {no-comments or (elem.numberList[i].hasComments)});
+      val := val or (elem.numberList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('number');
+      for i := 0 to elem.numberList.Count - 1 do
+        ComposeUnsignedIntValue(json, '',elem.numberList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_number');
+      for i := 0 to elem.numberList.Count - 1 do
+        ComposeUnsignedIntProps(json, '',elem.numberList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  ComposeCoding(json, 'classification', elem.classification); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
+  begin
+    json.valueArray('category');
+    for i := 0 to elem.categoryList.Count - 1 do
+      ComposeCoding(json, '', elem.categoryList[i]); {z - Coding}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.controlList.Count > 0) then
+  begin
+    json.valueArray('control');
+    for i := 0 to elem.controlList.Count - 1 do
+      ComposeCoding(json, '', elem.controlList[i]); {z - Coding}
     json.FinishArray;
   end;
   if not noObj then json.finishObject;
@@ -20373,38 +20663,270 @@ end;
 procedure TFHIRJsonParser.ParseContractTermOfferProperties(jsn : TJsonObject; result : TFhirContractTermOffer);
 begin
     ParseBackboneElementProperties(jsn, result);
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('party') then
+      iterateArray(jsn.vArr['party'], result.partyList, parseContractTermOfferParty);
     if jsn.has('topic') then
         result.topic := ParseReference{TFhirReference}(jsn.vObj['topic']);{q3}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('decision') then
         result.decision := ParseCodeableConcept(jsn.vObj['decision']);{q3}
+    if jsn.has('decisionMode') then
+      iterateArray(jsn.vArr['decisionMode'], result.decisionModeList, parseCodeableConcept);
+    if jsn.has('answer') then
+      iterateArray(jsn.vArr['answer'], result.answerList, parseContractTermOfferAnswer);
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := parseString(jsn.node['text'], jsn.vObj['_text']);{q}
-    if jsn.has('linkId') or jsn.has('_linkId') then
-        result.linkIdElement := parseString(jsn.node['linkId'], jsn.vObj['_linkId']);{q}
+      if jsn.has('linkId') or jsn.has('_linkId') then
+      iteratePrimitiveArray(jsn.vArr['linkId'], jsn.vArr['_linkId'], result.linkIdList, parseString);
+      if jsn.has('securityLabelNumber') or jsn.has('_securityLabelNumber') then
+      iteratePrimitiveArray(jsn.vArr['securityLabelNumber'], jsn.vArr['_securityLabelNumber'], result.securityLabelNumberList, parseUnsignedInt);
 end;
 
 procedure TFHIRJsonComposer.ComposeContractTermOffer(json : TJSONWriter; name : string; elem : TFhirContractTermOffer; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.partyList.Count > 0) then
+  begin
+    json.valueArray('party');
+    for i := 0 to elem.partyList.Count - 1 do
+      ComposeContractTermOfferParty(json, '', elem.partyList[i]); {z - }
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'topic', elem.topic); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'decision', elem.decision); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.decisionModeList.Count > 0) then
+  begin
+    json.valueArray('decisionMode');
+    for i := 0 to elem.decisionModeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.decisionModeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.answerList.Count > 0) then
+  begin
+    json.valueArray('answer');
+    for i := 0 to elem.answerList.Count - 1 do
+      ComposeContractTermOfferAnswer(json, '', elem.answerList[i]); {z - }
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'text', elem.textElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'text', elem.textElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'linkId', elem.linkIdElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'linkId', elem.linkIdElement, false);
+  if (SummaryOption in [soFull, soData]) and (elem.linkIdList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.linkIdList.Count - 1 do
+    begin
+      ext := ext or ((elem.linkIdList[i].id <> '') or (elem.linkIdList[i].hasExtensionList) {no-comments or (elem.linkIdList[i].hasComments)});
+      val := val or (elem.linkIdList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('linkId');
+      for i := 0 to elem.linkIdList.Count - 1 do
+        ComposeStringValue(json, '',elem.linkIdList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_linkId');
+      for i := 0 to elem.linkIdList.Count - 1 do
+        ComposeStringProps(json, '',elem.linkIdList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.securityLabelNumberList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.securityLabelNumberList.Count - 1 do
+    begin
+      ext := ext or ((elem.securityLabelNumberList[i].id <> '') or (elem.securityLabelNumberList[i].hasExtensionList) {no-comments or (elem.securityLabelNumberList[i].hasComments)});
+      val := val or (elem.securityLabelNumberList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('securityLabelNumber');
+      for i := 0 to elem.securityLabelNumberList.Count - 1 do
+        ComposeUnsignedIntValue(json, '',elem.securityLabelNumberList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_securityLabelNumber');
+      for i := 0 to elem.securityLabelNumberList.Count - 1 do
+        ComposeUnsignedIntProps(json, '',elem.securityLabelNumberList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseContractTermOfferParty(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseContractTermOfferParty(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseContractTermOfferParty(jsn : TJsonObject) : TFhirContractTermOfferParty;
+begin
+  result := TFhirContractTermOfferParty.create;
+  try
+    ParseContractTermOfferPartyProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseContractTermOfferPartyProperties(jsn : TJsonObject; result : TFhirContractTermOfferParty);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('reference') then
+      iterateArray(jsn.vArr['reference'], result.referenceList, parseReference{TFhirPatient});
+    if jsn.has('role') then
+        result.role := ParseCodeableConcept(jsn.vObj['role']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeContractTermOfferParty(json : TJSONWriter; name : string; elem : TFhirContractTermOfferParty; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (elem.referenceList.Count > 0) then
+  begin
+    json.valueArray('reference');
+    for i := 0 to elem.referenceList.Count - 1 do
+      ComposeReference{TFhirPatient}(json, '', elem.referenceList[i]); {z - Reference(Patient)}
+    json.FinishArray;
+  end;
+  ComposeCodeableConcept(json, 'role', elem.role); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseContractTermOfferAnswer(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseContractTermOfferAnswer(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseContractTermOfferAnswer(jsn : TJsonObject) : TFhirContractTermOfferAnswer;
+begin
+  result := TFhirContractTermOfferAnswer.create;
+  try
+    ParseContractTermOfferAnswerProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseContractTermOfferAnswerProperties(jsn : TJsonObject; result : TFhirContractTermOfferAnswer);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('valueAttachment') {a4} then
+      result.value := ParseAttachment(jsn.vObj['valueAttachment']);
+    if jsn.has('valueCoding') {a4} then
+      result.value := ParseCoding(jsn.vObj['valueCoding']);
+    if jsn.has('valueQuantity') {a4} then
+      result.value := ParseQuantity(jsn.vObj['valueQuantity']);
+    if jsn.has('valueReference') {a3} then
+      result.value := ParseReference(jsn.vObj['valueReference']);
+    if jsn.has('valueBoolean') or jsn.has('_valueBoolean') then
+      result.value := parseBoolean(jsn.node['valueBoolean'], jsn.vObj['_valueBoolean']);
+    if jsn.has('valueDecimal') or jsn.has('_valueDecimal') then
+      result.value := parseDecimal(jsn.node['valueDecimal'], jsn.vObj['_valueDecimal']);
+    if jsn.has('valueInteger') or jsn.has('_valueInteger') then
+      result.value := parseInteger(jsn.node['valueInteger'], jsn.vObj['_valueInteger']);
+    if jsn.has('valueDate') or jsn.has('_valueDate') then
+      result.value := parseDate(jsn.node['valueDate'], jsn.vObj['_valueDate']);
+    if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
+      result.value := parseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
+    if jsn.has('valueTime') or jsn.has('_valueTime') then
+      result.value := parseTime(jsn.node['valueTime'], jsn.vObj['_valueTime']);
+    if jsn.has('valueString') or jsn.has('_valueString') then
+      result.value := parseString(jsn.node['valueString'], jsn.vObj['_valueString']);
+    if jsn.has('valueUri') or jsn.has('_valueUri') then
+      result.value := parseUri(jsn.node['valueUri'], jsn.vObj['_valueUri']);
+end;
+
+procedure TFHIRJsonComposer.ComposeContractTermOfferAnswer(json : TJSONWriter; name : string; elem : TFhirContractTermOfferAnswer; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (elem.value is TFhirAttachment) then 
+    ComposeAttachment(json, 'valueAttachment', TFhirAttachment(elem.value)) 
+  else if (elem.value is TFhirCoding) then 
+    ComposeCoding(json, 'valueCoding', TFhirCoding(elem.value)) 
+  else if (elem.value is TFhirQuantity) then 
+    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value)) 
+  else if (elem.value is TFhirReference) then
+    ComposeReference(json, 'valueReference', TFhirReference(elem.value))
+  else if (elem.value is TFhirBoolean) then 
+  begin
+    ComposeBooleanValue(json, 'valueBoolean', TFhirBoolean(elem.value), false);
+    ComposeBooleanProps(json, 'valueBoolean', TFhirBoolean(elem.value), false);
+  end
+  else if (elem.value is TFhirDecimal) then 
+  begin
+    ComposeDecimalValue(json, 'valueDecimal', TFhirDecimal(elem.value), false);
+    ComposeDecimalProps(json, 'valueDecimal', TFhirDecimal(elem.value), false);
+  end
+  else if (elem.value is TFhirInteger) then 
+  begin
+    ComposeIntegerValue(json, 'valueInteger', TFhirInteger(elem.value), false);
+    ComposeIntegerProps(json, 'valueInteger', TFhirInteger(elem.value), false);
+  end
+  else if (elem.value is TFhirDate) then 
+  begin
+    ComposeDateValue(json, 'valueDate', TFhirDate(elem.value), false);
+    ComposeDateProps(json, 'valueDate', TFhirDate(elem.value), false);
+  end
+  else if (elem.value is TFhirDateTime) then 
+  begin
+    ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
+    ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false);
+  end
+  else if (elem.value is TFhirTime) then 
+  begin
+    ComposeTimeValue(json, 'valueTime', TFhirTime(elem.value), false);
+    ComposeTimeProps(json, 'valueTime', TFhirTime(elem.value), false);
+  end
+  else if (elem.value is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'valueString', TFhirString(elem.value), false);
+    ComposeStringProps(json, 'valueString', TFhirString(elem.value), false);
+  end
+  else if (elem.value is TFhirUri) then 
+  begin
+    ComposeUriValue(json, 'valueUri', TFhirUri(elem.value), false);
+    ComposeUriProps(json, 'valueUri', TFhirUri(elem.value), false);
+  end;
   if not noObj then json.finishObject;
 end;
 
@@ -20427,44 +20949,163 @@ end;
 procedure TFHIRJsonParser.ParseContractTermAssetProperties(jsn : TJsonObject; result : TFhirContractTermAsset);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('class') then
-        result.class_ := ParseCoding(jsn.vObj['class']);{q3}
-    if jsn.has('code') then
-        result.code := ParseCoding(jsn.vObj['code']);{q3}
+    if jsn.has('scope') then
+        result.scope := ParseCodeableConcept(jsn.vObj['scope']);{q3}
+    if jsn.has('type') then
+      iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
+    if jsn.has('typeReference') then
+      iterateArray(jsn.vArr['typeReference'], result.typeReferenceList, parseReference{TFhirReference});
+    if jsn.has('subtype') then
+      iterateArray(jsn.vArr['subtype'], result.subtypeList, parseCodeableConcept);
+    if jsn.has('relationship') then
+        result.relationship := ParseCoding(jsn.vObj['relationship']);{q3}
+    if jsn.has('context') then
+      iterateArray(jsn.vArr['context'], result.contextList, parseContractTermAssetContext);
+    if jsn.has('condition') or jsn.has('_condition') then
+        result.conditionElement := parseString(jsn.node['condition'], jsn.vObj['_condition']);{q}
+    if jsn.has('periodType') then
+      iterateArray(jsn.vArr['periodType'], result.periodTypeList, parseCodeableConcept);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q3}
-    if jsn.has('dataPeriod') then
-        result.dataPeriod := ParsePeriod(jsn.vObj['dataPeriod']);{q3}
-    if jsn.has('data') then
-      iterateArray(jsn.vArr['data'], result.dataList, parseContractTermAssetData);
+      iterateArray(jsn.vArr['period'], result.periodList, parsePeriod);
+    if jsn.has('usePeriod') then
+      iterateArray(jsn.vArr['usePeriod'], result.usePeriodList, parsePeriod);
+    if jsn.has('text') or jsn.has('_text') then
+        result.textElement := parseString(jsn.node['text'], jsn.vObj['_text']);{q}
+      if jsn.has('linkId') or jsn.has('_linkId') then
+      iteratePrimitiveArray(jsn.vArr['linkId'], jsn.vArr['_linkId'], result.linkIdList, parseString);
+    if jsn.has('answer') then
+      iterateArray(jsn.vArr['answer'], result.answerList, parseContractTermOfferAnswer);
+      if jsn.has('securityLabelNumber') or jsn.has('_securityLabelNumber') then
+      iteratePrimitiveArray(jsn.vArr['securityLabelNumber'], jsn.vArr['_securityLabelNumber'], result.securityLabelNumberList, parseUnsignedInt);
     if jsn.has('valuedItem') then
       iterateArray(jsn.vArr['valuedItem'], result.valuedItemList, parseContractTermAssetValuedItem);
-    if jsn.has('securityLabel') then
-      iterateArray(jsn.vArr['securityLabel'], result.securityLabelList, parseCoding);
 end;
 
 procedure TFHIRJsonComposer.ComposeContractTermAsset(json : TJSONWriter; name : string; elem : TFhirContractTermAsset; noObj : boolean = false);
 var
   i : integer;
+  ext : boolean;
+  val : boolean;
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCoding(json, 'class', elem.class_); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCoding(json, 'code', elem.code); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposePeriod(json, 'period', elem.period); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposePeriod(json, 'dataPeriod', elem.dataPeriod); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.dataList.Count > 0) then
+    ComposeCodeableConcept(json, 'scope', elem.scope); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.type_List.Count > 0) then
   begin
-    json.valueArray('data');
-    for i := 0 to elem.dataList.Count - 1 do
-      ComposeContractTermAssetData(json, '', elem.dataList[i]); {z - }
+    json.valueArray('type');
+    for i := 0 to elem.type_List.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.typeReferenceList.Count > 0) then
+  begin
+    json.valueArray('typeReference');
+    for i := 0 to elem.typeReferenceList.Count - 1 do
+      ComposeReference{TFhirReference}(json, '', elem.typeReferenceList[i]); {z - Reference(Any)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.subtypeList.Count > 0) then
+  begin
+    json.valueArray('subtype');
+    for i := 0 to elem.subtypeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.subtypeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCoding(json, 'relationship', elem.relationship); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.contextList.Count > 0) then
+  begin
+    json.valueArray('context');
+    for i := 0 to elem.contextList.Count - 1 do
+      ComposeContractTermAssetContext(json, '', elem.contextList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'condition', elem.conditionElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'condition', elem.conditionElement, false);
+  if (SummaryOption in [soFull, soData]) and (elem.periodTypeList.Count > 0) then
+  begin
+    json.valueArray('periodType');
+    for i := 0 to elem.periodTypeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.periodTypeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.periodList.Count > 0) then
+  begin
+    json.valueArray('period');
+    for i := 0 to elem.periodList.Count - 1 do
+      ComposePeriod(json, '', elem.periodList[i]); {z - Period}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.usePeriodList.Count > 0) then
+  begin
+    json.valueArray('usePeriod');
+    for i := 0 to elem.usePeriodList.Count - 1 do
+      ComposePeriod(json, '', elem.usePeriodList[i]); {z - Period}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'text', elem.textElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'text', elem.textElement, false);
+  if (SummaryOption in [soFull, soData]) and (elem.linkIdList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.linkIdList.Count - 1 do
+    begin
+      ext := ext or ((elem.linkIdList[i].id <> '') or (elem.linkIdList[i].hasExtensionList) {no-comments or (elem.linkIdList[i].hasComments)});
+      val := val or (elem.linkIdList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('linkId');
+      for i := 0 to elem.linkIdList.Count - 1 do
+        ComposeStringValue(json, '',elem.linkIdList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_linkId');
+      for i := 0 to elem.linkIdList.Count - 1 do
+        ComposeStringProps(json, '',elem.linkIdList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.answerList.Count > 0) then
+  begin
+    json.valueArray('answer');
+    for i := 0 to elem.answerList.Count - 1 do
+      ComposeContractTermOfferAnswer(json, '', elem.answerList[i]); {z - @Contract.term.offer.answer}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.securityLabelNumberList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.securityLabelNumberList.Count - 1 do
+    begin
+      ext := ext or ((elem.securityLabelNumberList[i].id <> '') or (elem.securityLabelNumberList[i].hasExtensionList) {no-comments or (elem.securityLabelNumberList[i].hasComments)});
+      val := val or (elem.securityLabelNumberList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('securityLabelNumber');
+      for i := 0 to elem.securityLabelNumberList.Count - 1 do
+        ComposeUnsignedIntValue(json, '',elem.securityLabelNumberList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_securityLabelNumber');
+      for i := 0 to elem.securityLabelNumberList.Count - 1 do
+        ComposeUnsignedIntProps(json, '',elem.securityLabelNumberList[i], true);
+      json.FinishArray;
+    end;
   end;
   if (SummaryOption in [soFull, soData]) and (elem.valuedItemList.Count > 0) then
   begin
@@ -20473,53 +21114,57 @@ begin
       ComposeContractTermAssetValuedItem(json, '', elem.valuedItemList[i]); {z - }
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.securityLabelList.Count > 0) then
-  begin
-    json.valueArray('securityLabel');
-    for i := 0 to elem.securityLabelList.Count - 1 do
-      ComposeCoding(json, '', elem.securityLabelList[i]); {z - Coding}
-    json.FinishArray;
-  end;
   if not noObj then json.finishObject;
 end;
 
-procedure TFHIRJsonParser.ParseContractTermAssetData(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseContractTermAssetContext(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseContractTermAssetData(jsn)); {2}
+  ctxt.add(ParseContractTermAssetContext(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseContractTermAssetData(jsn : TJsonObject) : TFhirContractTermAssetData;
+function TFHIRJsonParser.ParseContractTermAssetContext(jsn : TJsonObject) : TFhirContractTermAssetContext;
 begin
-  result := TFhirContractTermAssetData.create;
+  result := TFhirContractTermAssetContext.create;
   try
-    ParseContractTermAssetDataProperties(jsn, result);
+    ParseContractTermAssetContextProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseContractTermAssetDataProperties(jsn : TJsonObject; result : TFhirContractTermAssetData);
+procedure TFHIRJsonParser.ParseContractTermAssetContextProperties(jsn : TJsonObject; result : TFhirContractTermAssetContext);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('meaning') or jsn.has('_meaning')  then
-      result.meaningElement := parseEnum(jsn.path+'/meaning', jsn.node['meaning'], jsn.vObj['_meaning'], CODES_TFhirContractDataMeaningEnum, SYSTEMS_TFhirContractDataMeaningEnum);
     if jsn.has('reference') then
         result.reference := ParseReference{TFhirReference}(jsn.vObj['reference']);{q3}
+    if jsn.has('code') then
+      iterateArray(jsn.vArr['code'], result.codeList, parseCodeableConcept);
+    if jsn.has('text') or jsn.has('_text') then
+        result.textElement := parseString(jsn.node['text'], jsn.vObj['_text']);{q}
 end;
 
-procedure TFHIRJsonComposer.ComposeContractTermAssetData(json : TJSONWriter; name : string; elem : TFhirContractTermAssetData; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeContractTermAssetContext(json : TJSONWriter; name : string; elem : TFhirContractTermAssetContext; noObj : boolean = false);
+var
+  i : integer;
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeEnumValue(json, 'meaning', elem.MeaningElement, CODES_TFhirContractDataMeaningEnum, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeEnumProps(json, 'meaning', elem.MeaningElement, CODES_TFhirContractDataMeaningEnum, false);
-  if (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'reference', elem.reference); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.codeList.Count > 0) then
+  begin
+    json.valueArray('code');
+    for i := 0 to elem.codeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.codeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'text', elem.textElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'text', elem.textElement, false);
   if not noObj then json.finishObject;
 end;
 
@@ -20560,9 +21205,25 @@ begin
         result.pointsElement := parseDecimal(jsn.node['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
         result.net := ParseMoney(jsn.vObj['net']);{q3}
+    if jsn.has('payment') or jsn.has('_payment') then
+        result.paymentElement := parseString(jsn.node['payment'], jsn.vObj['_payment']);{q}
+    if jsn.has('paymentDate') or jsn.has('_paymentDate') then
+        result.paymentDateElement := parseDateTime(jsn.node['paymentDate'], jsn.vObj['_paymentDate']);{q}
+    if jsn.has('responsible') then
+        result.responsible := ParseReference{TFhirOrganization}(jsn.vObj['responsible']);{q3}
+    if jsn.has('recipient') then
+        result.recipient := ParseReference{TFhirOrganization}(jsn.vObj['recipient']);{q3}
+      if jsn.has('linkId') or jsn.has('_linkId') then
+      iteratePrimitiveArray(jsn.vArr['linkId'], jsn.vArr['_linkId'], result.linkIdList, parseString);
+      if jsn.has('securityLabelNumber') or jsn.has('_securityLabelNumber') then
+      iteratePrimitiveArray(jsn.vArr['securityLabelNumber'], jsn.vArr['_securityLabelNumber'], result.securityLabelNumberList, parseUnsignedInt);
 end;
 
 procedure TFHIRJsonComposer.ComposeContractTermAssetValuedItem(json : TJSONWriter; name : string; elem : TFhirContractTermAssetValuedItem; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
 begin
   if (elem = nil) then
     exit;
@@ -20592,35 +21253,407 @@ begin
     ComposeDecimalProps(json, 'points', elem.pointsElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'net', elem.net); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'payment', elem.paymentElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'payment', elem.paymentElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTimeValue(json, 'paymentDate', elem.paymentDateElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeDateTimeProps(json, 'paymentDate', elem.paymentDateElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirOrganization}(json, 'responsible', elem.responsible); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirOrganization}(json, 'recipient', elem.recipient); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.linkIdList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.linkIdList.Count - 1 do
+    begin
+      ext := ext or ((elem.linkIdList[i].id <> '') or (elem.linkIdList[i].hasExtensionList) {no-comments or (elem.linkIdList[i].hasComments)});
+      val := val or (elem.linkIdList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('linkId');
+      for i := 0 to elem.linkIdList.Count - 1 do
+        ComposeStringValue(json, '',elem.linkIdList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_linkId');
+      for i := 0 to elem.linkIdList.Count - 1 do
+        ComposeStringProps(json, '',elem.linkIdList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.securityLabelNumberList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.securityLabelNumberList.Count - 1 do
+    begin
+      ext := ext or ((elem.securityLabelNumberList[i].id <> '') or (elem.securityLabelNumberList[i].hasExtensionList) {no-comments or (elem.securityLabelNumberList[i].hasComments)});
+      val := val or (elem.securityLabelNumberList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('securityLabelNumber');
+      for i := 0 to elem.securityLabelNumberList.Count - 1 do
+        ComposeUnsignedIntValue(json, '',elem.securityLabelNumberList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_securityLabelNumber');
+      for i := 0 to elem.securityLabelNumberList.Count - 1 do
+        ComposeUnsignedIntProps(json, '',elem.securityLabelNumberList[i], true);
+      json.FinishArray;
+    end;
+  end;
   if not noObj then json.finishObject;
 end;
 
-procedure TFHIRJsonParser.ParseContractTermAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseContractTermAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseContractTermAgent(jsn)); {2}
+  ctxt.add(ParseContractTermAction(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseContractTermAgent(jsn : TJsonObject) : TFhirContractTermAgent;
+function TFHIRJsonParser.ParseContractTermAction(jsn : TJsonObject) : TFhirContractTermAction;
 begin
-  result := TFhirContractTermAgent.create;
+  result := TFhirContractTermAction.create;
   try
-    ParseContractTermAgentProperties(jsn, result);
+    ParseContractTermActionProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseContractTermAgentProperties(jsn : TJsonObject; result : TFhirContractTermAgent);
+procedure TFHIRJsonParser.ParseContractTermActionProperties(jsn : TJsonObject; result : TFhirContractTermAction);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('actor') then
-        result.actor := ParseReference{TFhirContract}(jsn.vObj['actor']);{q3}
-    if jsn.has('role') then
-      iterateArray(jsn.vArr['role'], result.roleList, parseCodeableConcept);
+    if jsn.has('doNotPerform') or jsn.has('_doNotPerform') then
+        result.doNotPerformElement := parseBoolean(jsn.node['doNotPerform'], jsn.vObj['_doNotPerform']);{q}
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('subject') then
+      iterateArray(jsn.vArr['subject'], result.subjectList, parseContractTermActionSubject);
+    if jsn.has('intent') then
+        result.intent := ParseCodeableConcept(jsn.vObj['intent']);{q3}
+      if jsn.has('linkId') or jsn.has('_linkId') then
+      iteratePrimitiveArray(jsn.vArr['linkId'], jsn.vArr['_linkId'], result.linkIdList, parseString);
+    if jsn.has('status') then
+        result.status := ParseCodeableConcept(jsn.vObj['status']);{q3}
+    if jsn.has('context') then
+        result.context := ParseReference{TFhirEncounter}(jsn.vObj['context']);{q3}
+      if jsn.has('contextLinkId') or jsn.has('_contextLinkId') then
+      iteratePrimitiveArray(jsn.vArr['contextLinkId'], jsn.vArr['_contextLinkId'], result.contextLinkIdList, parseString);
+    if jsn.has('occurrencePeriod') {a4} then
+      result.occurrence := ParsePeriod(jsn.vObj['occurrencePeriod']);
+    if jsn.has('occurrenceTiming') {a4} then
+      result.occurrence := ParseTiming(jsn.vObj['occurrenceTiming']);
+    if jsn.has('occurrenceDateTime') or jsn.has('_occurrenceDateTime') then
+      result.occurrence := parseDateTime(jsn.node['occurrenceDateTime'], jsn.vObj['_occurrenceDateTime']);
+    if jsn.has('requester') then
+      iterateArray(jsn.vArr['requester'], result.requesterList, parseReference{TFhirPatient});
+      if jsn.has('requesterLinkId') or jsn.has('_requesterLinkId') then
+      iteratePrimitiveArray(jsn.vArr['requesterLinkId'], jsn.vArr['_requesterLinkId'], result.requesterLinkIdList, parseString);
+    if jsn.has('performerType') then
+      iterateArray(jsn.vArr['performerType'], result.performerTypeList, parseCodeableConcept);
+    if jsn.has('performerRole') then
+        result.performerRole := ParseCodeableConcept(jsn.vObj['performerRole']);{q3}
+    if jsn.has('performer') then
+        result.performer := ParseReference{TFhirPerson}(jsn.vObj['performer']);{q3}
+      if jsn.has('performerLinkId') or jsn.has('_performerLinkId') then
+      iteratePrimitiveArray(jsn.vArr['performerLinkId'], jsn.vArr['_performerLinkId'], result.performerLinkIdList, parseString);
+    if jsn.has('reasonCode') then
+      iterateArray(jsn.vArr['reasonCode'], result.reasonCodeList, parseCodeableConcept);
+    if jsn.has('reasonReference') then
+      iterateArray(jsn.vArr['reasonReference'], result.reasonReferenceList, parseReference{TFhirCondition});
+      if jsn.has('reason') or jsn.has('_reason') then
+      iteratePrimitiveArray(jsn.vArr['reason'], jsn.vArr['_reason'], result.reasonList, parseString);
+      if jsn.has('reasonLinkId') or jsn.has('_reasonLinkId') then
+      iteratePrimitiveArray(jsn.vArr['reasonLinkId'], jsn.vArr['_reasonLinkId'], result.reasonLinkIdList, parseString);
+    if jsn.has('note') then
+      iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
+      if jsn.has('securityLabelNumber') or jsn.has('_securityLabelNumber') then
+      iteratePrimitiveArray(jsn.vArr['securityLabelNumber'], jsn.vArr['_securityLabelNumber'], result.securityLabelNumberList, parseUnsignedInt);
 end;
 
-procedure TFHIRJsonComposer.ComposeContractTermAgent(json : TJSONWriter; name : string; elem : TFhirContractTermAgent; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeContractTermAction(json : TJSONWriter; name : string; elem : TFhirContractTermAction; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'doNotPerform', elem.doNotPerformElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'doNotPerform', elem.doNotPerformElement, false);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.subjectList.Count > 0) then
+  begin
+    json.valueArray('subject');
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeContractTermActionSubject(json, '', elem.subjectList[i]); {z - }
+    json.FinishArray;
+  end;
+  ComposeCodeableConcept(json, 'intent', elem.intent); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.linkIdList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.linkIdList.Count - 1 do
+    begin
+      ext := ext or ((elem.linkIdList[i].id <> '') or (elem.linkIdList[i].hasExtensionList) {no-comments or (elem.linkIdList[i].hasComments)});
+      val := val or (elem.linkIdList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('linkId');
+      for i := 0 to elem.linkIdList.Count - 1 do
+        ComposeStringValue(json, '',elem.linkIdList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_linkId');
+      for i := 0 to elem.linkIdList.Count - 1 do
+        ComposeStringProps(json, '',elem.linkIdList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  ComposeCodeableConcept(json, 'status', elem.status); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirEncounter}(json, 'context', elem.context); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.contextLinkIdList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.contextLinkIdList.Count - 1 do
+    begin
+      ext := ext or ((elem.contextLinkIdList[i].id <> '') or (elem.contextLinkIdList[i].hasExtensionList) {no-comments or (elem.contextLinkIdList[i].hasComments)});
+      val := val or (elem.contextLinkIdList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('contextLinkId');
+      for i := 0 to elem.contextLinkIdList.Count - 1 do
+        ComposeStringValue(json, '',elem.contextLinkIdList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_contextLinkId');
+      for i := 0 to elem.contextLinkIdList.Count - 1 do
+        ComposeStringProps(json, '',elem.contextLinkIdList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.occurrence is TFhirPeriod) then 
+    ComposePeriod(json, 'occurrencePeriod', TFhirPeriod(elem.occurrence)) 
+  else if (SummaryOption in [soFull, soData]) and (elem.occurrence is TFhirTiming) then 
+    ComposeTiming(json, 'occurrenceTiming', TFhirTiming(elem.occurrence)) 
+  else if (SummaryOption in [soFull, soData]) and (elem.occurrence is TFhirDateTime) then 
+  begin
+    ComposeDateTimeValue(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
+    ComposeDateTimeProps(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.requesterList.Count > 0) then
+  begin
+    json.valueArray('requester');
+    for i := 0 to elem.requesterList.Count - 1 do
+      ComposeReference{TFhirPatient}(json, '', elem.requesterList[i]); {z - Reference(Patient)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.requesterLinkIdList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.requesterLinkIdList.Count - 1 do
+    begin
+      ext := ext or ((elem.requesterLinkIdList[i].id <> '') or (elem.requesterLinkIdList[i].hasExtensionList) {no-comments or (elem.requesterLinkIdList[i].hasComments)});
+      val := val or (elem.requesterLinkIdList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('requesterLinkId');
+      for i := 0 to elem.requesterLinkIdList.Count - 1 do
+        ComposeStringValue(json, '',elem.requesterLinkIdList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_requesterLinkId');
+      for i := 0 to elem.requesterLinkIdList.Count - 1 do
+        ComposeStringProps(json, '',elem.requesterLinkIdList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.performerTypeList.Count > 0) then
+  begin
+    json.valueArray('performerType');
+    for i := 0 to elem.performerTypeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.performerTypeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'performerRole', elem.performerRole); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirPerson}(json, 'performer', elem.performer); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.performerLinkIdList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.performerLinkIdList.Count - 1 do
+    begin
+      ext := ext or ((elem.performerLinkIdList[i].id <> '') or (elem.performerLinkIdList[i].hasExtensionList) {no-comments or (elem.performerLinkIdList[i].hasComments)});
+      val := val or (elem.performerLinkIdList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('performerLinkId');
+      for i := 0 to elem.performerLinkIdList.Count - 1 do
+        ComposeStringValue(json, '',elem.performerLinkIdList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_performerLinkId');
+      for i := 0 to elem.performerLinkIdList.Count - 1 do
+        ComposeStringProps(json, '',elem.performerLinkIdList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
+  begin
+    json.valueArray('reasonCode');
+    for i := 0 to elem.reasonCodeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
+  begin
+    json.valueArray('reasonReference');
+    for i := 0 to elem.reasonReferenceList.Count - 1 do
+      ComposeReference{TFhirCondition}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.reasonList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.reasonList.Count - 1 do
+    begin
+      ext := ext or ((elem.reasonList[i].id <> '') or (elem.reasonList[i].hasExtensionList) {no-comments or (elem.reasonList[i].hasComments)});
+      val := val or (elem.reasonList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('reason');
+      for i := 0 to elem.reasonList.Count - 1 do
+        ComposeStringValue(json, '',elem.reasonList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_reason');
+      for i := 0 to elem.reasonList.Count - 1 do
+        ComposeStringProps(json, '',elem.reasonList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.reasonLinkIdList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.reasonLinkIdList.Count - 1 do
+    begin
+      ext := ext or ((elem.reasonLinkIdList[i].id <> '') or (elem.reasonLinkIdList[i].hasExtensionList) {no-comments or (elem.reasonLinkIdList[i].hasComments)});
+      val := val or (elem.reasonLinkIdList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('reasonLinkId');
+      for i := 0 to elem.reasonLinkIdList.Count - 1 do
+        ComposeStringValue(json, '',elem.reasonLinkIdList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_reasonLinkId');
+      for i := 0 to elem.reasonLinkIdList.Count - 1 do
+        ComposeStringProps(json, '',elem.reasonLinkIdList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  begin
+    json.valueArray('note');
+    for i := 0 to elem.noteList.Count - 1 do
+      ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.securityLabelNumberList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.securityLabelNumberList.Count - 1 do
+    begin
+      ext := ext or ((elem.securityLabelNumberList[i].id <> '') or (elem.securityLabelNumberList[i].hasExtensionList) {no-comments or (elem.securityLabelNumberList[i].hasComments)});
+      val := val or (elem.securityLabelNumberList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('securityLabelNumber');
+      for i := 0 to elem.securityLabelNumberList.Count - 1 do
+        ComposeUnsignedIntValue(json, '',elem.securityLabelNumberList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_securityLabelNumber');
+      for i := 0 to elem.securityLabelNumberList.Count - 1 do
+        ComposeUnsignedIntProps(json, '',elem.securityLabelNumberList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseContractTermActionSubject(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseContractTermActionSubject(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseContractTermActionSubject(jsn : TJsonObject) : TFhirContractTermActionSubject;
+begin
+  result := TFhirContractTermActionSubject.create;
+  try
+    ParseContractTermActionSubjectProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseContractTermActionSubjectProperties(jsn : TJsonObject; result : TFhirContractTermActionSubject);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('reference') then
+      iterateArray(jsn.vArr['reference'], result.referenceList, parseReference{TFhirPatient});
+    if jsn.has('role') then
+        result.role := ParseCodeableConcept(jsn.vObj['role']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeContractTermActionSubject(json : TJSONWriter; name : string; elem : TFhirContractTermActionSubject; noObj : boolean = false);
 var
   i : integer;
 begin
@@ -20628,14 +21661,15 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeReference{TFhirContract}(json, 'actor', elem.actor); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.roleList.Count > 0) then
+  if (elem.referenceList.Count > 0) then
   begin
-    json.valueArray('role');
-    for i := 0 to elem.roleList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.roleList[i]); {z - CodeableConcept}
+    json.valueArray('reference');
+    for i := 0 to elem.referenceList.Count - 1 do
+      ComposeReference{TFhirPatient}(json, '', elem.referenceList[i]); {z - Reference(Patient)}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'role', elem.role); {a}
   if not noObj then json.finishObject;
 end;
 
@@ -20821,26 +21855,62 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('url') or jsn.has('_url') then
+        result.urlElement := parseUri(jsn.node['url'], jsn.vObj['_url']);{q}
+    if jsn.has('version') or jsn.has('_version') then
+        result.versionElement := parseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirContractStatusEnum, SYSTEMS_TFhirContractStatusEnum);
+    if jsn.has('legalState') then
+        result.legalState := ParseCodeableConcept(jsn.vObj['legalState']);{q3}
+    if jsn.has('instantiatesCanonical') then
+        result.instantiatesCanonical := ParseReference{TFhirContract}(jsn.vObj['instantiatesCanonical']);{q3}
+    if jsn.has('instantiatesUri') or jsn.has('_instantiatesUri') then
+        result.instantiatesUriElement := parseUri(jsn.node['instantiatesUri'], jsn.vObj['_instantiatesUri']);{q}
     if jsn.has('contentDerivative') then
         result.contentDerivative := ParseCodeableConcept(jsn.vObj['contentDerivative']);{q3}
     if jsn.has('issued') or jsn.has('_issued') then
         result.issuedElement := parseDateTime(jsn.node['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('applies') then
         result.applies := ParsePeriod(jsn.vObj['applies']);{q3}
+    if jsn.has('expirationType') then
+        result.expirationType := ParseCodeableConcept(jsn.vObj['expirationType']);{q3}
     if jsn.has('subject') then
       iterateArray(jsn.vArr['subject'], result.subjectList, parseReference{TFhirReference});
     if jsn.has('authority') then
       iterateArray(jsn.vArr['authority'], result.authorityList, parseReference{TFhirOrganization});
     if jsn.has('domain') then
       iterateArray(jsn.vArr['domain'], result.domainList, parseReference{TFhirLocation});
+    if jsn.has('site') then
+      iterateArray(jsn.vArr['site'], result.siteList, parseReference{TFhirLocation});
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
+    if jsn.has('title') or jsn.has('_title') then
+        result.titleElement := parseString(jsn.node['title'], jsn.vObj['_title']);{q}
+    if jsn.has('subtitle') or jsn.has('_subtitle') then
+        result.subtitleElement := parseString(jsn.node['subtitle'], jsn.vObj['_subtitle']);{q}
+      if jsn.has('alias') or jsn.has('_alias') then
+      iteratePrimitiveArray(jsn.vArr['alias'], jsn.vArr['_alias'], result.aliasList, parseString);
+    if jsn.has('author') then
+        result.author := ParseReference{TFhirPerson}(jsn.vObj['author']);{q3}
+    if jsn.has('scope') then
+        result.scope := ParseCodeableConcept(jsn.vObj['scope']);{q3}
+    if jsn.has('topicCodeableConcept') {a4} then
+      result.topic := ParseCodeableConcept(jsn.vObj['topicCodeableConcept']);
+    if jsn.has('topicReference') {a3} then
+      result.topic := ParseReference(jsn.vObj['topicReference']);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('subType') then
       iterateArray(jsn.vArr['subType'], result.subTypeList, parseCodeableConcept);
+    if jsn.has('contentDefinition') then
+        result.contentDefinition := ParseContractContentDefinition(jsn.vObj['contentDefinition']);{q3}
     if jsn.has('term') then
       iterateArray(jsn.vArr['term'], result.termList, parseContractTerm);
+    if jsn.has('supportingInfo') then
+      iterateArray(jsn.vArr['supportingInfo'], result.supportingInfoList, parseReference{TFhirReference});
+    if jsn.has('relevantHistory') then
+      iterateArray(jsn.vArr['relevantHistory'], result.relevantHistoryList, parseReference{TFhirProvenance});
     if jsn.has('signer') then
       iterateArray(jsn.vArr['signer'], result.signerList, parseContractSigner);
     if jsn.has('friendly') then
@@ -20848,7 +21918,7 @@ begin
     if jsn.has('legal') then
       iterateArray(jsn.vArr['legal'], result.legalList, parseContractLegal);
     if jsn.has('rule') then
-        result.rule := ParseContractRule(jsn.vObj['rule']);{q3}
+      iterateArray(jsn.vArr['rule'], result.ruleList, parseContractRule);
     if jsn.has('legallyBindingAttachment') {a4} then
       result.legallyBinding := ParseAttachment(jsn.vObj['legallyBindingAttachment']);
     if jsn.has('legallyBindingReference') {a3} then
@@ -20858,6 +21928,8 @@ end;
 procedure TFHIRJsonComposer.ComposeContract(json : TJSONWriter; name : string; elem : TFhirContract; noObj : boolean = false);
 var
   i : integer;
+  ext : boolean;
+  val : boolean;
 begin
   if (elem = nil) then
     exit;
@@ -20869,10 +21941,26 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soData]) and doCompose('url') then
+    ComposeUriValue(json, 'url', elem.urlElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('url') then
+    ComposeUriProps(json, 'url', elem.urlElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
+    ComposeStringValue(json, 'version', elem.versionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
+    ComposeStringProps(json, 'version', elem.versionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
     ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirContractStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirContractStatusEnum, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('legalState') then
+    ComposeCodeableConcept(json, 'legalState', elem.legalState); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('instantiatesCanonical') then
+    ComposeReference{TFhirContract}(json, 'instantiatesCanonical', elem.instantiatesCanonical); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('instantiatesUri') then
+    ComposeUriValue(json, 'instantiatesUri', elem.instantiatesUriElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('instantiatesUri') then
+    ComposeUriProps(json, 'instantiatesUri', elem.instantiatesUriElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('contentDerivative') then
     ComposeCodeableConcept(json, 'contentDerivative', elem.contentDerivative); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('issued') then
@@ -20881,6 +21969,8 @@ begin
     ComposeDateTimeProps(json, 'issued', elem.issuedElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('applies') then
     ComposePeriod(json, 'applies', elem.applies); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('expirationType') then
+    ComposeCodeableConcept(json, 'expirationType', elem.expirationType); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') and (elem.subjectList.Count > 0) then
   begin
     json.valueArray('subject');
@@ -20902,6 +21992,57 @@ begin
       ComposeReference{TFhirLocation}(json, '', elem.domainList[i]); {z - Reference(Location)}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soData]) and doCompose('site') and (elem.siteList.Count > 0) then
+  begin
+    json.valueArray('site');
+    for i := 0 to elem.siteList.Count - 1 do
+      ComposeReference{TFhirLocation}(json, '', elem.siteList[i]); {z - Reference(Location)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('title') then
+    ComposeStringValue(json, 'title', elem.titleElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('title') then
+    ComposeStringProps(json, 'title', elem.titleElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('subtitle') then
+    ComposeStringValue(json, 'subtitle', elem.subtitleElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('subtitle') then
+    ComposeStringProps(json, 'subtitle', elem.subtitleElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('alias') and (elem.aliasList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.aliasList.Count - 1 do
+    begin
+      ext := ext or ((elem.aliasList[i].id <> '') or (elem.aliasList[i].hasExtensionList) {no-comments or (elem.aliasList[i].hasComments)});
+      val := val or (elem.aliasList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('alias');
+      for i := 0 to elem.aliasList.Count - 1 do
+        ComposeStringValue(json, '',elem.aliasList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_alias');
+      for i := 0 to elem.aliasList.Count - 1 do
+        ComposeStringProps(json, '',elem.aliasList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('author') then
+    ComposeReference{TFhirPerson}(json, 'author', elem.author); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('scope') then
+    ComposeCodeableConcept(json, 'scope', elem.scope); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.topic is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'topicCodeableConcept', TFhirCodeableConcept(elem.topic)) 
+  else if (SummaryOption in [soFull, soData]) and (elem.topic is TFhirReference) then
+    ComposeReference(json, 'topicReference', TFhirReference(elem.topic));
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subType') and (elem.subTypeList.Count > 0) then
@@ -20911,11 +22052,27 @@ begin
       ComposeCodeableConcept(json, '', elem.subTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soData]) and doCompose('contentDefinition') then
+    ComposeContractContentDefinition(json, 'contentDefinition', elem.contentDefinition); {a}
   if (SummaryOption in [soFull, soData]) and doCompose('term') and (elem.termList.Count > 0) then
   begin
     json.valueArray('term');
     for i := 0 to elem.termList.Count - 1 do
       ComposeContractTerm(json, '', elem.termList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('supportingInfo') and (elem.supportingInfoList.Count > 0) then
+  begin
+    json.valueArray('supportingInfo');
+    for i := 0 to elem.supportingInfoList.Count - 1 do
+      ComposeReference{TFhirReference}(json, '', elem.supportingInfoList[i]); {z - Reference(Any)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('relevantHistory') and (elem.relevantHistoryList.Count > 0) then
+  begin
+    json.valueArray('relevantHistory');
+    for i := 0 to elem.relevantHistoryList.Count - 1 do
+      ComposeReference{TFhirProvenance}(json, '', elem.relevantHistoryList[i]); {z - Reference(Provenance)}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('signer') and (elem.signerList.Count > 0) then
@@ -20939,8 +22096,13 @@ begin
       ComposeContractLegal(json, '', elem.legalList[i]); {z - }
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('rule') then
-    ComposeContractRule(json, 'rule', elem.rule); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('rule') and (elem.ruleList.Count > 0) then
+  begin
+    json.valueArray('rule');
+    for i := 0 to elem.ruleList.Count - 1 do
+      ComposeContractRule(json, '', elem.ruleList[i]); {z - }
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) and (elem.legallyBinding is TFhirAttachment) then 
     ComposeAttachment(json, 'legallyBindingAttachment', TFhirAttachment(elem.legallyBinding)) 
   else if (SummaryOption in [soFull, soData]) and (elem.legallyBinding is TFhirReference) then
@@ -21159,6 +22321,797 @@ begin
 end;
 
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestSupportingInformation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityRequestSupportingInformation(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityRequestSupportingInformation(jsn : TJsonObject) : TFhirCoverageEligibilityRequestSupportingInformation;
+begin
+  result := TFhirCoverageEligibilityRequestSupportingInformation.create;
+  try
+    ParseCoverageEligibilityRequestSupportingInformationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestSupportingInformationProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequestSupportingInformation);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('sequence') or jsn.has('_sequence') then
+        result.sequenceElement := parsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
+    if jsn.has('information') then
+        result.information := ParseReference{TFhirReference}(jsn.vObj['information']);{q3}
+    if jsn.has('appliesToAll') or jsn.has('_appliesToAll') then
+        result.appliesToAllElement := parseBoolean(jsn.node['appliesToAll'], jsn.vObj['_appliesToAll']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityRequestSupportingInformation(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequestSupportingInformation; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
+  ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
+  ComposeReference{TFhirReference}(json, 'information', elem.information); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'appliesToAll', elem.appliesToAllElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'appliesToAll', elem.appliesToAllElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityRequestInsurance(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityRequestInsurance(jsn : TJsonObject) : TFhirCoverageEligibilityRequestInsurance;
+begin
+  result := TFhirCoverageEligibilityRequestInsurance.create;
+  try
+    ParseCoverageEligibilityRequestInsuranceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestInsuranceProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequestInsurance);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('focal') or jsn.has('_focal') then
+        result.focalElement := parseBoolean(jsn.node['focal'], jsn.vObj['_focal']);{q}
+    if jsn.has('coverage') then
+        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
+    if jsn.has('businessArrangement') or jsn.has('_businessArrangement') then
+        result.businessArrangementElement := parseString(jsn.node['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityRequestInsurance(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequestInsurance; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'focal', elem.focalElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'focal', elem.focalElement, false);
+  ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'businessArrangement', elem.businessArrangementElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'businessArrangement', elem.businessArrangementElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityRequestItem(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityRequestItem(jsn : TJsonObject) : TFhirCoverageEligibilityRequestItem;
+begin
+  result := TFhirCoverageEligibilityRequestItem.create;
+  try
+    ParseCoverageEligibilityRequestItemProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestItemProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequestItem);
+begin
+    ParseBackboneElementProperties(jsn, result);
+      if jsn.has('supportingInformationSequence') or jsn.has('_supportingInformationSequence') then
+      iteratePrimitiveArray(jsn.vArr['supportingInformationSequence'], jsn.vArr['_supportingInformationSequence'], result.supportingInformationSequenceList, parsePositiveInt);
+    if jsn.has('category') then
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
+    if jsn.has('modifier') then
+      iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
+    if jsn.has('provider') then
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
+    if jsn.has('quantity') then
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
+    if jsn.has('unitPrice') then
+        result.unitPrice := ParseMoney(jsn.vObj['unitPrice']);{q3}
+    if jsn.has('facility') then
+        result.facility := ParseReference{TFhirLocation}(jsn.vObj['facility']);{q3}
+    if jsn.has('diagnosis') then
+      iterateArray(jsn.vArr['diagnosis'], result.diagnosisList, parseCoverageEligibilityRequestItemDiagnosis);
+    if jsn.has('detail') then
+      iterateArray(jsn.vArr['detail'], result.detailList, parseReference{TFhirReference});
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityRequestItem(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequestItem; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) and (elem.supportingInformationSequenceList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.supportingInformationSequenceList.Count - 1 do
+    begin
+      ext := ext or ((elem.supportingInformationSequenceList[i].id <> '') or (elem.supportingInformationSequenceList[i].hasExtensionList) {no-comments or (elem.supportingInformationSequenceList[i].hasComments)});
+      val := val or (elem.supportingInformationSequenceList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('supportingInformationSequence');
+      for i := 0 to elem.supportingInformationSequenceList.Count - 1 do
+        ComposePositiveIntValue(json, '',elem.supportingInformationSequenceList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_supportingInformationSequence');
+      for i := 0 to elem.supportingInformationSequenceList.Count - 1 do
+        ComposePositiveIntProps(json, '',elem.supportingInformationSequenceList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'category', elem.category); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
+  begin
+    json.valueArray('modifier');
+    for i := 0 to elem.modifierList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.modifierList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(json, 'quantity', elem.quantity); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMoney(json, 'unitPrice', elem.unitPrice); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirLocation}(json, 'facility', elem.facility); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.diagnosisList.Count > 0) then
+  begin
+    json.valueArray('diagnosis');
+    for i := 0 to elem.diagnosisList.Count - 1 do
+      ComposeCoverageEligibilityRequestItemDiagnosis(json, '', elem.diagnosisList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.detailList.Count > 0) then
+  begin
+    json.valueArray('detail');
+    for i := 0 to elem.detailList.Count - 1 do
+      ComposeReference{TFhirReference}(json, '', elem.detailList[i]); {z - Reference(Any)}
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestItemDiagnosis(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityRequestItemDiagnosis(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityRequestItemDiagnosis(jsn : TJsonObject) : TFhirCoverageEligibilityRequestItemDiagnosis;
+begin
+  result := TFhirCoverageEligibilityRequestItemDiagnosis.create;
+  try
+    ParseCoverageEligibilityRequestItemDiagnosisProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestItemDiagnosisProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequestItemDiagnosis);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('diagnosisCodeableConcept') {a4} then
+      result.diagnosis := ParseCodeableConcept(jsn.vObj['diagnosisCodeableConcept']);
+    if jsn.has('diagnosisReference') {a3} then
+      result.diagnosis := ParseReference(jsn.vObj['diagnosisReference']);
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityRequestItemDiagnosis(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequestItemDiagnosis; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) and (elem.diagnosis is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'diagnosisCodeableConcept', TFhirCodeableConcept(elem.diagnosis)) 
+  else if (SummaryOption in [soFull, soData]) and (elem.diagnosis is TFhirReference) then
+    ComposeReference(json, 'diagnosisReference', TFhirReference(elem.diagnosis));
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityRequest(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityRequest(jsn : TJsonObject) : TFhirCoverageEligibilityRequest;
+begin
+  result := TFhirCoverageEligibilityRequest.create;
+  try
+    ParseCoverageEligibilityRequestProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityRequestProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityRequest);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('status') or jsn.has('_status')  then
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum);
+    if jsn.has('priority') then
+        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q3}
+    if jsn.has('purpose') or jsn.has('_purpose') then
+      iterateEnumArray(jsn.vArr['purpose'], jsn.vArr['_purpose'], jsn.path+'/purpose', result.purposeList, parseEnum, CODES_TFhirEligibilityrequestPurposeEnum, SYSTEMS_TFhirEligibilityrequestPurposeEnum);
+    if jsn.has('patient') then
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
+    if jsn.has('servicedPeriod') {a4} then
+      result.serviced := ParsePeriod(jsn.vObj['servicedPeriod']);
+    if jsn.has('servicedDate') or jsn.has('_servicedDate') then
+      result.serviced := parseDate(jsn.node['servicedDate'], jsn.vObj['_servicedDate']);
+    if jsn.has('created') or jsn.has('_created') then
+        result.createdElement := parseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
+    if jsn.has('enterer') then
+        result.enterer := ParseReference{TFhirPractitioner}(jsn.vObj['enterer']);{q3}
+    if jsn.has('provider') then
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
+    if jsn.has('insurer') then
+        result.insurer := ParseReference{TFhirOrganization}(jsn.vObj['insurer']);{q3}
+    if jsn.has('facility') then
+        result.facility := ParseReference{TFhirLocation}(jsn.vObj['facility']);{q3}
+    if jsn.has('supportingInformation') then
+      iterateArray(jsn.vArr['supportingInformation'], result.supportingInformationList, parseCoverageEligibilityRequestSupportingInformation);
+    if jsn.has('insurance') then
+      iterateArray(jsn.vArr['insurance'], result.insuranceList, parseCoverageEligibilityRequestInsurance);
+    if jsn.has('item') then
+      iterateArray(jsn.vArr['item'], result.itemList, parseCoverageEligibilityRequestItem);
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityRequest(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityRequest; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('priority') then
+    ComposeCodeableConcept(json, 'priority', elem.priority); {a}
+  if (elem.purposeList.Count > 0) then
+  begin
+    val := false;
+    ext := false;
+    for i := 0 to elem.purposeList.Count - 1 do
+    begin
+      val := val or (elem.purposeList[i].hasPrimitiveValue);
+      ext := ext or ((elem.purposeList[i].id <> '') or (elem.purposeList[i].hasExtensionList));
+    end;
+    if val then
+    begin
+      json.valueArray('purpose');
+      for i := 0 to elem.purposeList.Count - 1 do
+        ComposeEnumValue(json, '', elem.purposeList[i], CODES_TFhirEligibilityrequestPurposeEnum, true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_purpose');
+      for i := 0 to elem.purposeList.Count - 1 do
+        ComposeEnumProps(json, '', elem.purposeList[i], CODES_TFhirEligibilityrequestPurposeEnum, true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('patient') then
+    ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) then 
+    ComposePeriod(json, 'servicedPeriod', TFhirPeriod(elem.serviced)) 
+  else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) then 
+  begin
+    ComposeDateValue(json, 'servicedDate', TFhirDate(elem.serviced), false);
+    ComposeDateProps(json, 'servicedDate', TFhirDate(elem.serviced), false);
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('created') then
+    ComposeDateTimeValue(json, 'created', elem.createdElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('created') then
+    ComposeDateTimeProps(json, 'created', elem.createdElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('enterer') then
+    ComposeReference{TFhirPractitioner}(json, 'enterer', elem.enterer); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('provider') then
+    ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('insurer') then
+    ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('facility') then
+    ComposeReference{TFhirLocation}(json, 'facility', elem.facility); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('supportingInformation') and (elem.supportingInformationList.Count > 0) then
+  begin
+    json.valueArray('supportingInformation');
+    for i := 0 to elem.supportingInformationList.Count - 1 do
+      ComposeCoverageEligibilityRequestSupportingInformation(json, '', elem.supportingInformationList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('insurance') and (elem.insuranceList.Count > 0) then
+  begin
+    json.valueArray('insurance');
+    for i := 0 to elem.insuranceList.Count - 1 do
+      ComposeCoverageEligibilityRequestInsurance(json, '', elem.insuranceList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('item') and (elem.itemList.Count > 0) then
+  begin
+    json.valueArray('item');
+    for i := 0 to elem.itemList.Count - 1 do
+      ComposeCoverageEligibilityRequestItem(json, '', elem.itemList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityResponseInsurance(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityResponseInsurance(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsurance;
+begin
+  result := TFhirCoverageEligibilityResponseInsurance.create;
+  try
+    ParseCoverageEligibilityResponseInsuranceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponseInsurance);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('coverage') then
+        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
+    if jsn.has('contract') then
+        result.contract := ParseReference{TFhirContract}(jsn.vObj['contract']);{q3}
+    if jsn.has('inforce') or jsn.has('_inforce') then
+        result.inforceElement := parseBoolean(jsn.node['inforce'], jsn.vObj['_inforce']);{q}
+    if jsn.has('item') then
+      iterateArray(jsn.vArr['item'], result.itemList, parseCoverageEligibilityResponseInsuranceItem);
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityResponseInsurance(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponseInsurance; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirContract}(json, 'contract', elem.contract); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'inforce', elem.inforceElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'inforce', elem.inforceElement, false);
+  if (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
+  begin
+    json.valueArray('item');
+    for i := 0 to elem.itemList.Count - 1 do
+      ComposeCoverageEligibilityResponseInsuranceItem(json, '', elem.itemList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityResponseInsuranceItem(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceItem(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsuranceItem;
+begin
+  result := TFhirCoverageEligibilityResponseInsuranceItem.create;
+  try
+    ParseCoverageEligibilityResponseInsuranceItemProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceItemProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponseInsuranceItem);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('category') then
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
+    if jsn.has('modifier') then
+      iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
+    if jsn.has('provider') then
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
+    if jsn.has('excluded') or jsn.has('_excluded') then
+        result.excludedElement := parseBoolean(jsn.node['excluded'], jsn.vObj['_excluded']);{q}
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']);{q}
+    if jsn.has('network') then
+        result.network := ParseCodeableConcept(jsn.vObj['network']);{q3}
+    if jsn.has('unit') then
+        result.unit_ := ParseCodeableConcept(jsn.vObj['unit']);{q3}
+    if jsn.has('term') then
+        result.term := ParseCodeableConcept(jsn.vObj['term']);{q3}
+    if jsn.has('benefit') then
+      iterateArray(jsn.vArr['benefit'], result.benefitList, parseCoverageEligibilityResponseInsuranceItemBenefit);
+    if jsn.has('authorizationRequired') or jsn.has('_authorizationRequired') then
+        result.authorizationRequiredElement := parseBoolean(jsn.node['authorizationRequired'], jsn.vObj['_authorizationRequired']);{q}
+    if jsn.has('authorizationSupporting') then
+      iterateArray(jsn.vArr['authorizationSupporting'], result.authorizationSupportingList, parseCodeableConcept);
+    if jsn.has('authorizationUrl') or jsn.has('_authorizationUrl') then
+        result.authorizationUrlElement := parseUri(jsn.node['authorizationUrl'], jsn.vObj['_authorizationUrl']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityResponseInsuranceItem(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponseInsuranceItem; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'category', elem.category); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
+  begin
+    json.valueArray('modifier');
+    for i := 0 to elem.modifierList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.modifierList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'excluded', elem.excludedElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'excluded', elem.excludedElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'network', elem.network); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'unit', elem.unit_); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'term', elem.term); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.benefitList.Count > 0) then
+  begin
+    json.valueArray('benefit');
+    for i := 0 to elem.benefitList.Count - 1 do
+      ComposeCoverageEligibilityResponseInsuranceItemBenefit(json, '', elem.benefitList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'authorizationRequired', elem.authorizationRequiredElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'authorizationRequired', elem.authorizationRequiredElement, false);
+  if (SummaryOption in [soFull, soData]) and (elem.authorizationSupportingList.Count > 0) then
+  begin
+    json.valueArray('authorizationSupporting');
+    for i := 0 to elem.authorizationSupportingList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.authorizationSupportingList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeUriValue(json, 'authorizationUrl', elem.authorizationUrlElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeUriProps(json, 'authorizationUrl', elem.authorizationUrlElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceItemBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityResponseInsuranceItemBenefit(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceItemBenefit(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsuranceItemBenefit;
+begin
+  result := TFhirCoverageEligibilityResponseInsuranceItemBenefit.create;
+  try
+    ParseCoverageEligibilityResponseInsuranceItemBenefitProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceItemBenefitProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponseInsuranceItemBenefit);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('allowedUnsignedInt') or jsn.has('_allowedUnsignedInt') then
+      result.allowed := parseUnsignedInt(jsn.node['allowedUnsignedInt'], jsn.vObj['_allowedUnsignedInt']);
+    if jsn.has('allowedMoney') {a4} then
+      result.allowed := ParseMoney(jsn.vObj['allowedMoney']);
+    if jsn.has('allowedString') or jsn.has('_allowedString') then
+      result.allowed := parseString(jsn.node['allowedString'], jsn.vObj['_allowedString']);
+    if jsn.has('usedUnsignedInt') or jsn.has('_usedUnsignedInt') then
+      result.used := parseUnsignedInt(jsn.node['usedUnsignedInt'], jsn.vObj['_usedUnsignedInt']);
+    if jsn.has('usedMoney') {a4} then
+      result.used := ParseMoney(jsn.vObj['usedMoney']);
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityResponseInsuranceItemBenefit(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponseInsuranceItemBenefit; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirUnsignedInt) then 
+  begin
+    ComposeUnsignedIntValue(json, 'allowedUnsignedInt', TFhirUnsignedInt(elem.allowed), false);
+    ComposeUnsignedIntProps(json, 'allowedUnsignedInt', TFhirUnsignedInt(elem.allowed), false);
+  end
+  else if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirMoney) then 
+    ComposeMoney(json, 'allowedMoney', TFhirMoney(elem.allowed)) 
+  else if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'allowedString', TFhirString(elem.allowed), false);
+    ComposeStringProps(json, 'allowedString', TFhirString(elem.allowed), false);
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.used is TFhirUnsignedInt) then 
+  begin
+    ComposeUnsignedIntValue(json, 'usedUnsignedInt', TFhirUnsignedInt(elem.used), false);
+    ComposeUnsignedIntProps(json, 'usedUnsignedInt', TFhirUnsignedInt(elem.used), false);
+  end
+  else if (SummaryOption in [soFull, soData]) and (elem.used is TFhirMoney) then 
+    ComposeMoney(json, 'usedMoney', TFhirMoney(elem.used)) ;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseError(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityResponseError(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityResponseError(jsn : TJsonObject) : TFhirCoverageEligibilityResponseError;
+begin
+  result := TFhirCoverageEligibilityResponseError.create;
+  try
+    ParseCoverageEligibilityResponseErrorProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseErrorProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponseError);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('code') then
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityResponseError(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponseError; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'code', elem.code); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCoverageEligibilityResponse(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCoverageEligibilityResponse(jsn : TJsonObject) : TFhirCoverageEligibilityResponse;
+begin
+  result := TFhirCoverageEligibilityResponse.create;
+  try
+    ParseCoverageEligibilityResponseProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCoverageEligibilityResponseProperties(jsn : TJsonObject; result : TFhirCoverageEligibilityResponse);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('status') or jsn.has('_status')  then
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum);
+    if jsn.has('purpose') or jsn.has('_purpose') then
+      iterateEnumArray(jsn.vArr['purpose'], jsn.vArr['_purpose'], jsn.path+'/purpose', result.purposeList, parseEnum, CODES_TFhirEligibilityresponsePurposeEnum, SYSTEMS_TFhirEligibilityresponsePurposeEnum);
+    if jsn.has('patient') then
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
+    if jsn.has('servicedPeriod') {a4} then
+      result.serviced := ParsePeriod(jsn.vObj['servicedPeriod']);
+    if jsn.has('servicedDate') or jsn.has('_servicedDate') then
+      result.serviced := parseDate(jsn.node['servicedDate'], jsn.vObj['_servicedDate']);
+    if jsn.has('created') or jsn.has('_created') then
+        result.createdElement := parseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
+    if jsn.has('requestProvider') then
+        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q3}
+    if jsn.has('request') then
+        result.request := ParseReference{TFhirCoverageEligibilityRequest}(jsn.vObj['request']);{q3}
+    if jsn.has('outcome') or jsn.has('_outcome')  then
+      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
+    if jsn.has('disposition') or jsn.has('_disposition') then
+        result.dispositionElement := parseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
+    if jsn.has('insurer') then
+        result.insurer := ParseReference{TFhirOrganization}(jsn.vObj['insurer']);{q3}
+    if jsn.has('insurance') then
+      iterateArray(jsn.vArr['insurance'], result.insuranceList, parseCoverageEligibilityResponseInsurance);
+    if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
+        result.preAuthRefElement := parseString(jsn.node['preAuthRef'], jsn.vObj['_preAuthRef']);{q}
+    if jsn.has('form') then
+        result.form := ParseCodeableConcept(jsn.vObj['form']);{q3}
+    if jsn.has('error') then
+      iterateArray(jsn.vArr['error'], result.errorList, parseCoverageEligibilityResponseError);
+end;
+
+procedure TFHIRJsonComposer.ComposeCoverageEligibilityResponse(json : TJSONWriter; name : string; elem : TFhirCoverageEligibilityResponse; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
+  if (elem.purposeList.Count > 0) then
+  begin
+    val := false;
+    ext := false;
+    for i := 0 to elem.purposeList.Count - 1 do
+    begin
+      val := val or (elem.purposeList[i].hasPrimitiveValue);
+      ext := ext or ((elem.purposeList[i].id <> '') or (elem.purposeList[i].hasExtensionList));
+    end;
+    if val then
+    begin
+      json.valueArray('purpose');
+      for i := 0 to elem.purposeList.Count - 1 do
+        ComposeEnumValue(json, '', elem.purposeList[i], CODES_TFhirEligibilityresponsePurposeEnum, true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_purpose');
+      for i := 0 to elem.purposeList.Count - 1 do
+        ComposeEnumProps(json, '', elem.purposeList[i], CODES_TFhirEligibilityresponsePurposeEnum, true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('patient') then
+    ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) then 
+    ComposePeriod(json, 'servicedPeriod', TFhirPeriod(elem.serviced)) 
+  else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) then 
+  begin
+    ComposeDateValue(json, 'servicedDate', TFhirDate(elem.serviced), false);
+    ComposeDateProps(json, 'servicedDate', TFhirDate(elem.serviced), false);
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('created') then
+    ComposeDateTimeValue(json, 'created', elem.createdElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('created') then
+    ComposeDateTimeProps(json, 'created', elem.createdElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('requestProvider') then
+    ComposeReference{TFhirPractitioner}(json, 'requestProvider', elem.requestProvider); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('request') then
+    ComposeReference{TFhirCoverageEligibilityRequest}(json, 'request', elem.request); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('outcome') then
+    ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('outcome') then
+    ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
+    ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
+    ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('insurer') then
+    ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('insurance') and (elem.insuranceList.Count > 0) then
+  begin
+    json.valueArray('insurance');
+    for i := 0 to elem.insuranceList.Count - 1 do
+      ComposeCoverageEligibilityResponseInsurance(json, '', elem.insuranceList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
+    ComposeStringValue(json, 'preAuthRef', elem.preAuthRefElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
+    ComposeStringProps(json, 'preAuthRef', elem.preAuthRefElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('form') then
+    ComposeCodeableConcept(json, 'form', elem.form); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('error') and (elem.errorList.Count > 0) then
+  begin
+    json.valueArray('error');
+    for i := 0 to elem.errorList.Count - 1 do
+      ComposeCoverageEligibilityResponseError(json, '', elem.errorList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
 procedure TFHIRJsonParser.ParseDetectedIssueMitigation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -21302,42 +23255,40 @@ end;
 
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-procedure TFHIRJsonParser.ParseDeviceUdi(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDeviceUdiCarrier(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseDeviceUdi(jsn)); {2}
+  ctxt.add(ParseDeviceUdiCarrier(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseDeviceUdi(jsn : TJsonObject) : TFhirDeviceUdi;
+function TFHIRJsonParser.ParseDeviceUdiCarrier(jsn : TJsonObject) : TFhirDeviceUdiCarrier;
 begin
-  result := TFhirDeviceUdi.create;
+  result := TFhirDeviceUdiCarrier.create;
   try
-    ParseDeviceUdiProperties(jsn, result);
+    ParseDeviceUdiCarrierProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDeviceUdiProperties(jsn : TJsonObject; result : TFhirDeviceUdi);
+procedure TFHIRJsonParser.ParseDeviceUdiCarrierProperties(jsn : TJsonObject; result : TFhirDeviceUdiCarrier);
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('deviceIdentifier') or jsn.has('_deviceIdentifier') then
         result.deviceIdentifierElement := parseString(jsn.node['deviceIdentifier'], jsn.vObj['_deviceIdentifier']);{q}
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
-    if jsn.has('jurisdiction') or jsn.has('_jurisdiction') then
-        result.jurisdictionElement := parseUri(jsn.node['jurisdiction'], jsn.vObj['_jurisdiction']);{q}
-    if jsn.has('carrierHRF') or jsn.has('_carrierHRF') then
-        result.carrierHRFElement := parseString(jsn.node['carrierHRF'], jsn.vObj['_carrierHRF']);{q}
-    if jsn.has('carrierAIDC') or jsn.has('_carrierAIDC') then
-        result.carrierAIDCElement := parseBase64Binary(jsn.node['carrierAIDC'], jsn.vObj['_carrierAIDC']);{q}
     if jsn.has('issuer') or jsn.has('_issuer') then
         result.issuerElement := parseUri(jsn.node['issuer'], jsn.vObj['_issuer']);{q}
+    if jsn.has('jurisdiction') or jsn.has('_jurisdiction') then
+        result.jurisdictionElement := parseUri(jsn.node['jurisdiction'], jsn.vObj['_jurisdiction']);{q}
+    if jsn.has('carrierAIDC') or jsn.has('_carrierAIDC') then
+        result.carrierAIDCElement := parseBase64Binary(jsn.node['carrierAIDC'], jsn.vObj['_carrierAIDC']);{q}
+    if jsn.has('carrierHRF') or jsn.has('_carrierHRF') then
+        result.carrierHRFElement := parseString(jsn.node['carrierHRF'], jsn.vObj['_carrierHRF']);{q}
     if jsn.has('entryType') or jsn.has('_entryType')  then
       result.entryTypeElement := parseEnum(jsn.path+'/entryType', jsn.node['entryType'], jsn.vObj['_entryType'], CODES_TFhirUdiEntryTypeEnum, SYSTEMS_TFhirUdiEntryTypeEnum);
 end;
 
-procedure TFHIRJsonComposer.ComposeDeviceUdi(json : TJSONWriter; name : string; elem : TFhirDeviceUdi; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeDeviceUdiCarrier(json : TJSONWriter; name : string; elem : TFhirDeviceUdiCarrier; noObj : boolean = false);
 begin
   if (elem = nil) then
     exit;
@@ -21347,30 +23298,198 @@ begin
     ComposeStringValue(json, 'deviceIdentifier', elem.deviceIdentifierElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'deviceIdentifier', elem.deviceIdentifierElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeUriValue(json, 'jurisdiction', elem.jurisdictionElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeUriProps(json, 'jurisdiction', elem.jurisdictionElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'carrierHRF', elem.carrierHRFElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'carrierHRF', elem.carrierHRFElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBase64BinaryValue(json, 'carrierAIDC', elem.carrierAIDCElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBase64BinaryProps(json, 'carrierAIDC', elem.carrierAIDCElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'issuer', elem.issuerElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'issuer', elem.issuerElement, false);
   if (SummaryOption in [soFull, soData]) then
+    ComposeUriValue(json, 'jurisdiction', elem.jurisdictionElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeUriProps(json, 'jurisdiction', elem.jurisdictionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBase64BinaryValue(json, 'carrierAIDC', elem.carrierAIDCElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBase64BinaryProps(json, 'carrierAIDC', elem.carrierAIDCElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'carrierHRF', elem.carrierHRFElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'carrierHRF', elem.carrierHRFElement, false);
+  if (SummaryOption in [soFull, soData]) then
     ComposeEnumValue(json, 'entryType', elem.EntryTypeElement, CODES_TFhirUdiEntryTypeEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeEnumProps(json, 'entryType', elem.EntryTypeElement, CODES_TFhirUdiEntryTypeEnum, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDeviceName(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceDeviceName(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceDeviceName(jsn : TJsonObject) : TFhirDeviceDeviceName;
+begin
+  result := TFhirDeviceDeviceName.create;
+  try
+    ParseDeviceDeviceNameProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDeviceNameProperties(jsn : TJsonObject; result : TFhirDeviceDeviceName);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
+    if jsn.has('type') or jsn.has('_type')  then
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirDeviceNametypeEnum, SYSTEMS_TFhirDeviceNametypeEnum);
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceDeviceName(json : TJSONWriter; name : string; elem : TFhirDeviceDeviceName; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirDeviceNametypeEnum, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirDeviceNametypeEnum, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceSpecialization(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceSpecialization(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceSpecialization(jsn : TJsonObject) : TFhirDeviceSpecialization;
+begin
+  result := TFhirDeviceSpecialization.create;
+  try
+    ParseDeviceSpecializationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceSpecializationProperties(jsn : TJsonObject; result : TFhirDeviceSpecialization);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('systemType') then
+        result.systemType := ParseCodeableConcept(jsn.vObj['systemType']);{q3}
+    if jsn.has('version') or jsn.has('_version') then
+        result.versionElement := parseString(jsn.node['version'], jsn.vObj['_version']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceSpecialization(json : TJSONWriter; name : string; elem : TFhirDeviceSpecialization; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'systemType', elem.systemType); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'version', elem.versionElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'version', elem.versionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceVersion(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceVersion(jsn : TJsonObject) : TFhirDeviceVersion;
+begin
+  result := TFhirDeviceVersion.create;
+  try
+    ParseDeviceVersionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceVersionProperties(jsn : TJsonObject; result : TFhirDeviceVersion);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('component') then
+        result.component := ParseIdentifier(jsn.vObj['component']);{q3}
+    if jsn.has('value') or jsn.has('_value') then
+        result.valueElement := parseString(jsn.node['value'], jsn.vObj['_value']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceVersion(json : TJSONWriter; name : string; elem : TFhirDeviceVersion; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeIdentifier(json, 'component', elem.component); {a}
+  ComposeStringValue(json, 'value', elem.valueElement, false);
+  ComposeStringProps(json, 'value', elem.valueElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceProperty(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceProperty(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceProperty(jsn : TJsonObject) : TFhirDeviceProperty;
+begin
+  result := TFhirDeviceProperty.create;
+  try
+    ParseDevicePropertyProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDevicePropertyProperties(jsn : TJsonObject; result : TFhirDeviceProperty);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('valueQuanity') then
+      iterateArray(jsn.vArr['valueQuanity'], result.valueQuanityList, parseQuantity);
+    if jsn.has('valueCode') then
+      iterateArray(jsn.vArr['valueCode'], result.valueCodeList, parseCodeableConcept);
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceProperty(json : TJSONWriter; name : string; elem : TFhirDeviceProperty; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.valueQuanityList.Count > 0) then
+  begin
+    json.valueArray('valueQuanity');
+    for i := 0 to elem.valueQuanityList.Count - 1 do
+      ComposeQuantity(json, '', elem.valueQuanityList[i]); {z - Quantity}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.valueCodeList.Count > 0) then
+  begin
+    json.valueArray('valueCode');
+    for i := 0 to elem.valueCodeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.valueCodeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
   if not noObj then json.finishObject;
 end;
 
@@ -21395,24 +23514,40 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('udi') then
-        result.udi := ParseDeviceUdi(jsn.vObj['udi']);{q3}
+    if jsn.has('definition') then
+        result.definition := ParseReference{TFhirDeviceDefinition}(jsn.vObj['definition']);{q3}
+    if jsn.has('udiCarrier') then
+      iterateArray(jsn.vArr['udiCarrier'], result.udiCarrierList, parseDeviceUdiCarrier);
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirDeviceStatusEnum, SYSTEMS_TFhirDeviceStatusEnum);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('lotNumber') or jsn.has('_lotNumber') then
-        result.lotNumberElement := parseString(jsn.node['lotNumber'], jsn.vObj['_lotNumber']);{q}
+    if jsn.has('statusReason') then
+      iterateArray(jsn.vArr['statusReason'], result.statusReasonList, parseCodeableConcept);
+    if jsn.has('distinctIdentificationCode') or jsn.has('_distinctIdentificationCode') then
+        result.distinctIdentificationCodeElement := parseString(jsn.node['distinctIdentificationCode'], jsn.vObj['_distinctIdentificationCode']);{q}
     if jsn.has('manufacturer') or jsn.has('_manufacturer') then
         result.manufacturerElement := parseString(jsn.node['manufacturer'], jsn.vObj['_manufacturer']);{q}
     if jsn.has('manufactureDate') or jsn.has('_manufactureDate') then
         result.manufactureDateElement := parseDateTime(jsn.node['manufactureDate'], jsn.vObj['_manufactureDate']);{q}
     if jsn.has('expirationDate') or jsn.has('_expirationDate') then
         result.expirationDateElement := parseDateTime(jsn.node['expirationDate'], jsn.vObj['_expirationDate']);{q}
-    if jsn.has('model') or jsn.has('_model') then
-        result.modelElement := parseString(jsn.node['model'], jsn.vObj['_model']);{q}
-    if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := parseString(jsn.node['version'], jsn.vObj['_version']);{q}
+    if jsn.has('lotNumber') or jsn.has('_lotNumber') then
+        result.lotNumberElement := parseString(jsn.node['lotNumber'], jsn.vObj['_lotNumber']);{q}
+    if jsn.has('serialNumber') or jsn.has('_serialNumber') then
+        result.serialNumberElement := parseString(jsn.node['serialNumber'], jsn.vObj['_serialNumber']);{q}
+    if jsn.has('deviceName') then
+      iterateArray(jsn.vArr['deviceName'], result.deviceNameList, parseDeviceDeviceName);
+    if jsn.has('modelNumber') or jsn.has('_modelNumber') then
+        result.modelNumberElement := parseString(jsn.node['modelNumber'], jsn.vObj['_modelNumber']);{q}
+    if jsn.has('partNumber') or jsn.has('_partNumber') then
+        result.partNumberElement := parseString(jsn.node['partNumber'], jsn.vObj['_partNumber']);{q}
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('specialization') then
+      iterateArray(jsn.vArr['specialization'], result.specializationList, parseDeviceSpecialization);
+    if jsn.has('version') then
+      iterateArray(jsn.vArr['version'], result.versionList, parseDeviceVersion);
+    if jsn.has('property') then
+      iterateArray(jsn.vArr['property'], result.property_List, parseDeviceProperty);
     if jsn.has('patient') then
         result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('owner') then
@@ -21427,6 +23562,8 @@ begin
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
     if jsn.has('safety') then
       iterateArray(jsn.vArr['safety'], result.safetyList, parseCodeableConcept);
+    if jsn.has('parent') then
+        result.parent := ParseReference{TFhirDevice}(jsn.vObj['parent']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDevice(json : TJSONWriter; name : string; elem : TFhirDevice; noObj : boolean = false);
@@ -21443,18 +23580,30 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('udi') then
-    ComposeDeviceUdi(json, 'udi', elem.udi); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('definition') then
+    ComposeReference{TFhirDeviceDefinition}(json, 'definition', elem.definition); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('udiCarrier') and (elem.udiCarrierList.Count > 0) then
+  begin
+    json.valueArray('udiCarrier');
+    for i := 0 to elem.udiCarrierList.Count - 1 do
+      ComposeDeviceUdiCarrier(json, '', elem.udiCarrierList[i]); {z - }
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
     ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDeviceStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDeviceStatusEnum, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('type_') then
-    ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('lotNumber') then
-    ComposeStringValue(json, 'lotNumber', elem.lotNumberElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('lotNumber') then
-    ComposeStringProps(json, 'lotNumber', elem.lotNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('statusReason') and (elem.statusReasonList.Count > 0) then
+  begin
+    json.valueArray('statusReason');
+    for i := 0 to elem.statusReasonList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.statusReasonList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('distinctIdentificationCode') then
+    ComposeStringValue(json, 'distinctIdentificationCode', elem.distinctIdentificationCodeElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('distinctIdentificationCode') then
+    ComposeStringProps(json, 'distinctIdentificationCode', elem.distinctIdentificationCodeElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('manufacturer') then
     ComposeStringValue(json, 'manufacturer', elem.manufacturerElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('manufacturer') then
@@ -21467,14 +23616,52 @@ begin
     ComposeDateTimeValue(json, 'expirationDate', elem.expirationDateElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('expirationDate') then
     ComposeDateTimeProps(json, 'expirationDate', elem.expirationDateElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('model') then
-    ComposeStringValue(json, 'model', elem.modelElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('model') then
-    ComposeStringProps(json, 'model', elem.modelElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('version') then
-    ComposeStringValue(json, 'version', elem.versionElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('version') then
-    ComposeStringProps(json, 'version', elem.versionElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('lotNumber') then
+    ComposeStringValue(json, 'lotNumber', elem.lotNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('lotNumber') then
+    ComposeStringProps(json, 'lotNumber', elem.lotNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('serialNumber') then
+    ComposeStringValue(json, 'serialNumber', elem.serialNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('serialNumber') then
+    ComposeStringProps(json, 'serialNumber', elem.serialNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('deviceName') and (elem.deviceNameList.Count > 0) then
+  begin
+    json.valueArray('deviceName');
+    for i := 0 to elem.deviceNameList.Count - 1 do
+      ComposeDeviceDeviceName(json, '', elem.deviceNameList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('modelNumber') then
+    ComposeStringValue(json, 'modelNumber', elem.modelNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('modelNumber') then
+    ComposeStringProps(json, 'modelNumber', elem.modelNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('partNumber') then
+    ComposeStringValue(json, 'partNumber', elem.partNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('partNumber') then
+    ComposeStringProps(json, 'partNumber', elem.partNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('type_') then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('specialization') and (elem.specializationList.Count > 0) then
+  begin
+    json.valueArray('specialization');
+    for i := 0 to elem.specializationList.Count - 1 do
+      ComposeDeviceSpecialization(json, '', elem.specializationList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('version') and (elem.versionList.Count > 0) then
+  begin
+    json.valueArray('version');
+    for i := 0 to elem.versionList.Count - 1 do
+      ComposeDeviceVersion(json, '', elem.versionList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('property_') and (elem.property_List.Count > 0) then
+  begin
+    json.valueArray('property');
+    for i := 0 to elem.property_List.Count - 1 do
+      ComposeDeviceProperty(json, '', elem.property_List[i]); {z - }
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) and doCompose('patient') then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
   if (SummaryOption in [soFull, soData]) and doCompose('owner') then
@@ -21506,82 +23693,158 @@ begin
       ComposeCodeableConcept(json, '', elem.safetyList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soData]) and doCompose('parent') then
+    ComposeReference{TFhirDevice}(json, 'parent', elem.parent); {a}
 end;
 
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-procedure TFHIRJsonParser.ParseDeviceComponentProductionSpecification(jsn : TJsonObject; ctxt : TFHIRObjectList);
+{$IFDEF FHIR_DEVICEDEFINITION}
+procedure TFHIRJsonParser.ParseDeviceDefinitionUdiDeviceIdentifier(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseDeviceComponentProductionSpecification(jsn)); {2}
+  ctxt.add(ParseDeviceDefinitionUdiDeviceIdentifier(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseDeviceComponentProductionSpecification(jsn : TJsonObject) : TFhirDeviceComponentProductionSpecification;
+function TFHIRJsonParser.ParseDeviceDefinitionUdiDeviceIdentifier(jsn : TJsonObject) : TFhirDeviceDefinitionUdiDeviceIdentifier;
 begin
-  result := TFhirDeviceComponentProductionSpecification.create;
+  result := TFhirDeviceDefinitionUdiDeviceIdentifier.create;
   try
-    ParseDeviceComponentProductionSpecificationProperties(jsn, result);
+    ParseDeviceDefinitionUdiDeviceIdentifierProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDeviceComponentProductionSpecificationProperties(jsn : TJsonObject; result : TFhirDeviceComponentProductionSpecification);
+procedure TFHIRJsonParser.ParseDeviceDefinitionUdiDeviceIdentifierProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionUdiDeviceIdentifier);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('specType') then
-        result.specType := ParseCodeableConcept(jsn.vObj['specType']);{q3}
-    if jsn.has('componentId') then
-        result.componentId := ParseIdentifier(jsn.vObj['componentId']);{q3}
-    if jsn.has('productionSpec') or jsn.has('_productionSpec') then
-        result.productionSpecElement := parseString(jsn.node['productionSpec'], jsn.vObj['_productionSpec']);{q}
+    if jsn.has('deviceIdentifier') or jsn.has('_deviceIdentifier') then
+        result.deviceIdentifierElement := parseString(jsn.node['deviceIdentifier'], jsn.vObj['_deviceIdentifier']);{q}
+    if jsn.has('issuer') or jsn.has('_issuer') then
+        result.issuerElement := parseUri(jsn.node['issuer'], jsn.vObj['_issuer']);{q}
+    if jsn.has('jurisdiction') or jsn.has('_jurisdiction') then
+        result.jurisdictionElement := parseUri(jsn.node['jurisdiction'], jsn.vObj['_jurisdiction']);{q}
 end;
 
-procedure TFHIRJsonComposer.ComposeDeviceComponentProductionSpecification(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProductionSpecification; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeDeviceDefinitionUdiDeviceIdentifier(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionUdiDeviceIdentifier; noObj : boolean = false);
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeableConcept(json, 'specType', elem.specType); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIdentifier(json, 'componentId', elem.componentId); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'productionSpec', elem.productionSpecElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'productionSpec', elem.productionSpecElement, false);
+  ComposeStringValue(json, 'deviceIdentifier', elem.deviceIdentifierElement, false);
+  ComposeStringProps(json, 'deviceIdentifier', elem.deviceIdentifierElement, false);
+  ComposeUriValue(json, 'issuer', elem.issuerElement, false);
+  ComposeUriProps(json, 'issuer', elem.issuerElement, false);
+  ComposeUriValue(json, 'jurisdiction', elem.jurisdictionElement, false);
+  ComposeUriProps(json, 'jurisdiction', elem.jurisdictionElement, false);
   if not noObj then json.finishObject;
 end;
 
-procedure TFHIRJsonParser.ParseDeviceComponentProperty(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDeviceDefinitionDeviceName(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseDeviceComponentProperty(jsn)); {2}
+  ctxt.add(ParseDeviceDefinitionDeviceName(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseDeviceComponentProperty(jsn : TJsonObject) : TFhirDeviceComponentProperty;
+function TFHIRJsonParser.ParseDeviceDefinitionDeviceName(jsn : TJsonObject) : TFhirDeviceDefinitionDeviceName;
 begin
-  result := TFhirDeviceComponentProperty.create;
+  result := TFhirDeviceDefinitionDeviceName.create;
   try
-    ParseDeviceComponentPropertyProperties(jsn, result);
+    ParseDeviceDefinitionDeviceNameProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDeviceComponentPropertyProperties(jsn : TJsonObject; result : TFhirDeviceComponentProperty);
+procedure TFHIRJsonParser.ParseDeviceDefinitionDeviceNameProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionDeviceName);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
+    if jsn.has('type') or jsn.has('_type')  then
+      result.type_Element := parseEnum(jsn.path+'/type', jsn.node['type'], jsn.vObj['_type'], CODES_TFhirDeviceNametypeEnum, SYSTEMS_TFhirDeviceNametypeEnum);
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceDefinitionDeviceName(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionDeviceName; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirDeviceNametypeEnum, false);
+  ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirDeviceNametypeEnum, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDefinitionSpecialization(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceDefinitionSpecialization(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceDefinitionSpecialization(jsn : TJsonObject) : TFhirDeviceDefinitionSpecialization;
+begin
+  result := TFhirDeviceDefinitionSpecialization.create;
+  try
+    ParseDeviceDefinitionSpecializationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDefinitionSpecializationProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionSpecialization);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('systemType') or jsn.has('_systemType') then
+        result.systemTypeElement := parseString(jsn.node['systemType'], jsn.vObj['_systemType']);{q}
+    if jsn.has('version') or jsn.has('_version') then
+        result.versionElement := parseString(jsn.node['version'], jsn.vObj['_version']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceDefinitionSpecialization(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionSpecialization; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeStringValue(json, 'systemType', elem.systemTypeElement, false);
+  ComposeStringProps(json, 'systemType', elem.systemTypeElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'version', elem.versionElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'version', elem.versionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDefinitionCapability(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceDefinitionCapability(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceDefinitionCapability(jsn : TJsonObject) : TFhirDeviceDefinitionCapability;
+begin
+  result := TFhirDeviceDefinitionCapability.create;
+  try
+    ParseDeviceDefinitionCapabilityProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDefinitionCapabilityProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionCapability);
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('valueQuantity') then
-      iterateArray(jsn.vArr['valueQuantity'], result.valueQuantityList, parseQuantity);
-    if jsn.has('valueCode') then
-      iterateArray(jsn.vArr['valueCode'], result.valueCodeList, parseCodeableConcept);
+    if jsn.has('description') then
+      iterateArray(jsn.vArr['description'], result.descriptionList, parseCodeableConcept);
 end;
 
-procedure TFHIRJsonComposer.ComposeDeviceComponentProperty(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProperty; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeDeviceDefinitionCapability(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionCapability; noObj : boolean = false);
 var
   i : integer;
 begin
@@ -21590,14 +23853,60 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.valueQuantityList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.descriptionList.Count > 0) then
   begin
-    json.valueArray('valueQuantity');
-    for i := 0 to elem.valueQuantityList.Count - 1 do
-      ComposeQuantity(json, '', elem.valueQuantityList[i]); {z - Quantity}
+    json.valueArray('description');
+    for i := 0 to elem.descriptionList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.descriptionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.valueCodeList.Count > 0) then
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDefinitionProperty(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceDefinitionProperty(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceDefinitionProperty(jsn : TJsonObject) : TFhirDeviceDefinitionProperty;
+begin
+  result := TFhirDeviceDefinitionProperty.create;
+  try
+    ParseDeviceDefinitionPropertyProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDefinitionPropertyProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionProperty);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('valueQuanity') then
+      iterateArray(jsn.vArr['valueQuanity'], result.valueQuanityList, parseQuantity);
+    if jsn.has('valueCode') then
+      iterateArray(jsn.vArr['valueCode'], result.valueCodeList, parseCodeableConcept);
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceDefinitionProperty(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionProperty; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.valueQuanityList.Count > 0) then
+  begin
+    json.valueArray('valueQuanity');
+    for i := 0 to elem.valueQuanityList.Count - 1 do
+      ComposeQuantity(json, '', elem.valueQuanityList[i]); {z - Quantity}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.valueCodeList.Count > 0) then
   begin
     json.valueArray('valueCode');
     for i := 0 to elem.valueCodeList.Count - 1 do
@@ -21607,104 +23916,267 @@ begin
   if not noObj then json.finishObject;
 end;
 
-procedure TFHIRJsonParser.ParseDeviceComponent(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDeviceDefinitionMaterial(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseDeviceComponent(jsn)); {2}
+  ctxt.add(ParseDeviceDefinitionMaterial(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseDeviceComponent(jsn : TJsonObject) : TFhirDeviceComponent;
+function TFHIRJsonParser.ParseDeviceDefinitionMaterial(jsn : TJsonObject) : TFhirDeviceDefinitionMaterial;
 begin
-  result := TFhirDeviceComponent.create;
+  result := TFhirDeviceDefinitionMaterial.create;
   try
-    ParseDeviceComponentProperties(jsn, result);
+    ParseDeviceDefinitionMaterialProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDeviceComponentProperties(jsn : TJsonObject; result : TFhirDeviceComponent);
+procedure TFHIRJsonParser.ParseDeviceDefinitionMaterialProperties(jsn : TJsonObject; result : TFhirDeviceDefinitionMaterial);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('substance') then
+        result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q3}
+    if jsn.has('alternate') or jsn.has('_alternate') then
+        result.alternateElement := parseBoolean(jsn.node['alternate'], jsn.vObj['_alternate']);{q}
+    if jsn.has('allergenicIndicator') or jsn.has('_allergenicIndicator') then
+        result.allergenicIndicatorElement := parseBoolean(jsn.node['allergenicIndicator'], jsn.vObj['_allergenicIndicator']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceDefinitionMaterial(json : TJSONWriter; name : string; elem : TFhirDeviceDefinitionMaterial; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'substance', elem.substance); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'alternate', elem.alternateElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'alternate', elem.alternateElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'allergenicIndicator', elem.allergenicIndicatorElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'allergenicIndicator', elem.allergenicIndicatorElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceDefinition(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceDefinition(jsn : TJsonObject) : TFhirDeviceDefinition;
+begin
+  result := TFhirDeviceDefinition.create;
+  try
+    ParseDeviceDefinitionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceDefinitionProperties(jsn : TJsonObject; result : TFhirDeviceDefinition);
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('udiDeviceIdentifier') then
+      iterateArray(jsn.vArr['udiDeviceIdentifier'], result.udiDeviceIdentifierList, parseDeviceDefinitionUdiDeviceIdentifier);
+    if jsn.has('manufacturerReference') {a3} then
+      result.manufacturer := ParseReference(jsn.vObj['manufacturerReference']);
+    if jsn.has('manufacturerString') or jsn.has('_manufacturerString') then
+      result.manufacturer := parseString(jsn.node['manufacturerString'], jsn.vObj['_manufacturerString']);
+    if jsn.has('deviceName') then
+      iterateArray(jsn.vArr['deviceName'], result.deviceNameList, parseDeviceDefinitionDeviceName);
+    if jsn.has('modelNumber') or jsn.has('_modelNumber') then
+        result.modelNumberElement := parseString(jsn.node['modelNumber'], jsn.vObj['_modelNumber']);{q}
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('lastSystemChange') or jsn.has('_lastSystemChange') then
-        result.lastSystemChangeElement := parseInstant(jsn.node['lastSystemChange'], jsn.vObj['_lastSystemChange']);{q}
-    if jsn.has('source') then
-        result.source := ParseReference{TFhirDevice}(jsn.vObj['source']);{q3}
-    if jsn.has('parent') then
-        result.parent := ParseReference{TFhirDeviceComponent}(jsn.vObj['parent']);{q3}
-    if jsn.has('operationalStatus') then
-      iterateArray(jsn.vArr['operationalStatus'], result.operationalStatusList, parseCodeableConcept);
-    if jsn.has('parameterGroup') then
-        result.parameterGroup := ParseCodeableConcept(jsn.vObj['parameterGroup']);{q3}
-    if jsn.has('measurementPrinciple') or jsn.has('_measurementPrinciple')  then
-      result.measurementPrincipleElement := parseEnum(jsn.path+'/measurementPrinciple', jsn.node['measurementPrinciple'], jsn.vObj['_measurementPrinciple'], CODES_TFhirMeasurementPrincipleEnum, SYSTEMS_TFhirMeasurementPrincipleEnum);
-    if jsn.has('productionSpecification') then
-      iterateArray(jsn.vArr['productionSpecification'], result.productionSpecificationList, parseDeviceComponentProductionSpecification);
+    if jsn.has('specialization') then
+      iterateArray(jsn.vArr['specialization'], result.specializationList, parseDeviceDefinitionSpecialization);
+      if jsn.has('version') or jsn.has('_version') then
+      iteratePrimitiveArray(jsn.vArr['version'], jsn.vArr['_version'], result.versionList, parseString);
+    if jsn.has('safety') then
+      iterateArray(jsn.vArr['safety'], result.safetyList, parseCodeableConcept);
+    if jsn.has('shelfLifeStorage') then
+      iterateArray(jsn.vArr['shelfLifeStorage'], result.shelfLifeStorageList, parseProductShelfLife);
+    if jsn.has('physicalCharacteristics') then
+        result.physicalCharacteristics := ParseProdCharacteristic(jsn.vObj['physicalCharacteristics']);{q3}
     if jsn.has('languageCode') then
-        result.languageCode := ParseCodeableConcept(jsn.vObj['languageCode']);{q3}
+      iterateArray(jsn.vArr['languageCode'], result.languageCodeList, parseCodeableConcept);
+    if jsn.has('capability') then
+      iterateArray(jsn.vArr['capability'], result.capabilityList, parseDeviceDefinitionCapability);
     if jsn.has('property') then
-      iterateArray(jsn.vArr['property'], result.property_List, parseDeviceComponentProperty);
+      iterateArray(jsn.vArr['property'], result.property_List, parseDeviceDefinitionProperty);
+    if jsn.has('owner') then
+        result.owner := ParseReference{TFhirOrganization}(jsn.vObj['owner']);{q3}
+    if jsn.has('contact') then
+      iterateArray(jsn.vArr['contact'], result.contactList, parseContactPoint);
+    if jsn.has('url') or jsn.has('_url') then
+        result.urlElement := parseUri(jsn.node['url'], jsn.vObj['_url']);{q}
+    if jsn.has('onlineInformation') or jsn.has('_onlineInformation') then
+        result.onlineInformationElement := parseUri(jsn.node['onlineInformation'], jsn.vObj['_onlineInformation']);{q}
+    if jsn.has('note') then
+      iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
+    if jsn.has('quantity') then
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
+    if jsn.has('parentDevice') then
+        result.parentDevice := ParseReference{TFhirDeviceDefinition}(jsn.vObj['parentDevice']);{q3}
+    if jsn.has('material') then
+      iterateArray(jsn.vArr['material'], result.materialList, parseDeviceDefinitionMaterial);
 end;
 
-procedure TFHIRJsonComposer.ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeDeviceDefinition(json : TJSONWriter; name : string; elem : TFhirDeviceDefinition; noObj : boolean = false);
 var
   i : integer;
+  ext : boolean;
+  val : boolean;
 begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('lastSystemChange') then
-    ComposeInstantValue(json, 'lastSystemChange', elem.lastSystemChangeElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('lastSystemChange') then
-    ComposeInstantProps(json, 'lastSystemChange', elem.lastSystemChangeElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('source') then
-    ComposeReference{TFhirDevice}(json, 'source', elem.source); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('parent') then
-    ComposeReference{TFhirDeviceComponent}(json, 'parent', elem.parent); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('operationalStatus') and (elem.operationalStatusList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('udiDeviceIdentifier') and (elem.udiDeviceIdentifierList.Count > 0) then
   begin
-    json.valueArray('operationalStatus');
-    for i := 0 to elem.operationalStatusList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.operationalStatusList[i]); {z - CodeableConcept}
+    json.valueArray('udiDeviceIdentifier');
+    for i := 0 to elem.udiDeviceIdentifierList.Count - 1 do
+      ComposeDeviceDefinitionUdiDeviceIdentifier(json, '', elem.udiDeviceIdentifierList[i]); {z - }
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('parameterGroup') then
-    ComposeCodeableConcept(json, 'parameterGroup', elem.parameterGroup); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('measurementPrinciple') then
-    ComposeEnumValue(json, 'measurementPrinciple', elem.MeasurementPrincipleElement, CODES_TFhirMeasurementPrincipleEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('measurementPrinciple') then
-    ComposeEnumProps(json, 'measurementPrinciple', elem.MeasurementPrincipleElement, CODES_TFhirMeasurementPrincipleEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('productionSpecification') and (elem.productionSpecificationList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and (elem.manufacturer is TFhirReference) then
+    ComposeReference(json, 'manufacturerReference', TFhirReference(elem.manufacturer))
+  else if (SummaryOption in [soFull, soData]) and (elem.manufacturer is TFhirString) then 
   begin
-    json.valueArray('productionSpecification');
-    for i := 0 to elem.productionSpecificationList.Count - 1 do
-      ComposeDeviceComponentProductionSpecification(json, '', elem.productionSpecificationList[i]); {z - }
+    ComposeStringValue(json, 'manufacturerString', TFhirString(elem.manufacturer), false);
+    ComposeStringProps(json, 'manufacturerString', TFhirString(elem.manufacturer), false);
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('deviceName') and (elem.deviceNameList.Count > 0) then
+  begin
+    json.valueArray('deviceName');
+    for i := 0 to elem.deviceNameList.Count - 1 do
+      ComposeDeviceDefinitionDeviceName(json, '', elem.deviceNameList[i]); {z - }
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('languageCode') then
-    ComposeCodeableConcept(json, 'languageCode', elem.languageCode); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('property_') and (elem.property_List.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('modelNumber') then
+    ComposeStringValue(json, 'modelNumber', elem.modelNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('modelNumber') then
+    ComposeStringProps(json, 'modelNumber', elem.modelNumberElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('type_') then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('specialization') and (elem.specializationList.Count > 0) then
+  begin
+    json.valueArray('specialization');
+    for i := 0 to elem.specializationList.Count - 1 do
+      ComposeDeviceDefinitionSpecialization(json, '', elem.specializationList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('version') and (elem.versionList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.versionList.Count - 1 do
+    begin
+      ext := ext or ((elem.versionList[i].id <> '') or (elem.versionList[i].hasExtensionList) {no-comments or (elem.versionList[i].hasComments)});
+      val := val or (elem.versionList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('version');
+      for i := 0 to elem.versionList.Count - 1 do
+        ComposeStringValue(json, '',elem.versionList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_version');
+      for i := 0 to elem.versionList.Count - 1 do
+        ComposeStringProps(json, '',elem.versionList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('safety') and (elem.safetyList.Count > 0) then
+  begin
+    json.valueArray('safety');
+    for i := 0 to elem.safetyList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.safetyList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('shelfLifeStorage') and (elem.shelfLifeStorageList.Count > 0) then
+  begin
+    json.valueArray('shelfLifeStorage');
+    for i := 0 to elem.shelfLifeStorageList.Count - 1 do
+      ComposeProductShelfLife(json, '', elem.shelfLifeStorageList[i]); {z - ProductShelfLife}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('physicalCharacteristics') then
+    ComposeProdCharacteristic(json, 'physicalCharacteristics', elem.physicalCharacteristics); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('languageCode') and (elem.languageCodeList.Count > 0) then
+  begin
+    json.valueArray('languageCode');
+    for i := 0 to elem.languageCodeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.languageCodeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('capability') and (elem.capabilityList.Count > 0) then
+  begin
+    json.valueArray('capability');
+    for i := 0 to elem.capabilityList.Count - 1 do
+      ComposeDeviceDefinitionCapability(json, '', elem.capabilityList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('property_') and (elem.property_List.Count > 0) then
   begin
     json.valueArray('property');
     for i := 0 to elem.property_List.Count - 1 do
-      ComposeDeviceComponentProperty(json, '', elem.property_List[i]); {z - }
+      ComposeDeviceDefinitionProperty(json, '', elem.property_List[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('owner') then
+    ComposeReference{TFhirOrganization}(json, 'owner', elem.owner); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('contact') and (elem.contactList.Count > 0) then
+  begin
+    json.valueArray('contact');
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeContactPoint(json, '', elem.contactList[i]); {z - ContactPoint}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('url') then
+    ComposeUriValue(json, 'url', elem.urlElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('url') then
+    ComposeUriProps(json, 'url', elem.urlElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('onlineInformation') then
+    ComposeUriValue(json, 'onlineInformation', elem.onlineInformationElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('onlineInformation') then
+    ComposeUriProps(json, 'onlineInformation', elem.onlineInformationElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('note') and (elem.noteList.Count > 0) then
+  begin
+    json.valueArray('note');
+    for i := 0 to elem.noteList.Count - 1 do
+      ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('quantity') then
+    ComposeQuantity(json, 'quantity', elem.quantity); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('parentDevice') then
+    ComposeReference{TFhirDeviceDefinition}(json, 'parentDevice', elem.parentDevice); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('material') and (elem.materialList.Count > 0) then
+  begin
+    json.valueArray('material');
+    for i := 0 to elem.materialList.Count - 1 do
+      ComposeDeviceDefinitionMaterial(json, '', elem.materialList[i]); {z - }
     json.FinishArray;
   end;
 end;
 
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
 procedure TFHIRJsonParser.ParseDeviceMetricCalibration(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -21782,7 +24254,7 @@ begin
     if jsn.has('source') then
         result.source := ParseReference{TFhirDevice}(jsn.vObj['source']);{q3}
     if jsn.has('parent') then
-        result.parent := ParseReference{TFhirDeviceComponent}(jsn.vObj['parent']);{q3}
+        result.parent := ParseReference{TFhirDevice}(jsn.vObj['parent']);{q3}
     if jsn.has('operationalStatus') or jsn.has('_operationalStatus')  then
       result.operationalStatusElement := parseEnum(jsn.path+'/operationalStatus', jsn.node['operationalStatus'], jsn.vObj['_operationalStatus'], CODES_TFhirMetricOperationalStatusEnum, SYSTEMS_TFhirMetricOperationalStatusEnum);
     if jsn.has('color') or jsn.has('_color')  then
@@ -21815,7 +24287,7 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('source') then
     ComposeReference{TFhirDevice}(json, 'source', elem.source); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('parent') then
-    ComposeReference{TFhirDeviceComponent}(json, 'parent', elem.parent); {a}
+    ComposeReference{TFhirDevice}(json, 'parent', elem.parent); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('operationalStatus') then
     ComposeEnumValue(json, 'operationalStatus', elem.OperationalStatusElement, CODES_TFhirMetricOperationalStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('operationalStatus') then
@@ -21913,8 +24385,10 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-      if jsn.has('instantiates') or jsn.has('_instantiates') then
-      iteratePrimitiveArray(jsn.vArr['instantiates'], jsn.vArr['_instantiates'], result.instantiatesList, parseUri);
+      if jsn.has('instantiatesCanonical') or jsn.has('_instantiatesCanonical') then
+      iteratePrimitiveArray(jsn.vArr['instantiatesCanonical'], jsn.vArr['_instantiatesCanonical'], result.instantiatesCanonicalList, parseCanonical);
+      if jsn.has('instantiatesUri') or jsn.has('_instantiatesUri') then
+      iteratePrimitiveArray(jsn.vArr['instantiatesUri'], jsn.vArr['_instantiatesUri'], result.instantiatesUriList, parseUri);
     if jsn.has('basedOn') then
       iterateArray(jsn.vArr['basedOn'], result.basedOnList, parseReference{TFhirReference});
     if jsn.has('priorRequest') then
@@ -21981,27 +24455,51 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiates') and (elem.instantiatesList.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') and (elem.instantiatesCanonicalList.Count > 0) then
   begin
     ext := false;
     val := false;
-    for i := 0 to elem.instantiatesList.Count - 1 do
+    for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
     begin
-      ext := ext or ((elem.instantiatesList[i].id <> '') or (elem.instantiatesList[i].hasExtensionList) {no-comments or (elem.instantiatesList[i].hasComments)});
-      val := val or (elem.instantiatesList[i].hasPrimitiveValue);
+      ext := ext or ((elem.instantiatesCanonicalList[i].id <> '') or (elem.instantiatesCanonicalList[i].hasExtensionList) {no-comments or (elem.instantiatesCanonicalList[i].hasComments)});
+      val := val or (elem.instantiatesCanonicalList[i].hasPrimitiveValue);
     end;
     if val then
     begin
-      json.valueArray('instantiates');
-      for i := 0 to elem.instantiatesList.Count - 1 do
-        ComposeUriValue(json, '',elem.instantiatesList[i], true);
+      json.valueArray('instantiatesCanonical');
+      for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+        ComposeCanonicalValue(json, '',elem.instantiatesCanonicalList[i], true);
       json.FinishArray;
     end;
     if ext then
     begin
-      json.valueArray('_instantiates');
-      for i := 0 to elem.instantiatesList.Count - 1 do
-        ComposeUriProps(json, '',elem.instantiatesList[i], true);
+      json.valueArray('_instantiatesCanonical');
+      for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+        ComposeCanonicalProps(json, '',elem.instantiatesCanonicalList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') and (elem.instantiatesUriList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.instantiatesUriList.Count - 1 do
+    begin
+      ext := ext or ((elem.instantiatesUriList[i].id <> '') or (elem.instantiatesUriList[i].hasExtensionList) {no-comments or (elem.instantiatesUriList[i].hasComments)});
+      val := val or (elem.instantiatesUriList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('instantiatesUri');
+      for i := 0 to elem.instantiatesUriList.Count - 1 do
+        ComposeUriValue(json, '',elem.instantiatesUriList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_instantiatesUri');
+      for i := 0 to elem.instantiatesUriList.Count - 1 do
+        ComposeUriProps(json, '',elem.instantiatesUriList[i], true);
       json.FinishArray;
     end;
   end;
@@ -22327,8 +24825,8 @@ begin
       iterateArray(jsn.vArr['media'], result.mediaList, parseDiagnosticReportMedia);
     if jsn.has('conclusion') or jsn.has('_conclusion') then
         result.conclusionElement := parseString(jsn.node['conclusion'], jsn.vObj['_conclusion']);{q}
-    if jsn.has('codedDiagnosis') then
-      iterateArray(jsn.vArr['codedDiagnosis'], result.codedDiagnosisList, parseCodeableConcept);
+    if jsn.has('conclusionCode') then
+      iterateArray(jsn.vArr['conclusionCode'], result.conclusionCodeList, parseCodeableConcept);
     if jsn.has('presentedForm') then
       iterateArray(jsn.vArr['presentedForm'], result.presentedFormList, parseAttachment);
 end;
@@ -22420,11 +24918,11 @@ begin
     ComposeStringValue(json, 'conclusion', elem.conclusionElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('conclusion') then
     ComposeStringProps(json, 'conclusion', elem.conclusionElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('codedDiagnosis') and (elem.codedDiagnosisList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('conclusionCode') and (elem.conclusionCodeList.Count > 0) then
   begin
-    json.valueArray('codedDiagnosis');
-    for i := 0 to elem.codedDiagnosisList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.codedDiagnosisList[i]); {z - CodeableConcept}
+    json.valueArray('conclusionCode');
+    for i := 0 to elem.conclusionCodeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.conclusionCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('presentedForm') and (elem.presentedFormList.Count > 0) then
@@ -22755,7 +25253,7 @@ procedure TFHIRJsonParser.ParseDocumentReferenceContextProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
+      iterateArray(jsn.vArr['encounter'], result.encounterList, parseReference{TFhirEncounter});
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseCodeableConcept);
     if jsn.has('period') then
@@ -22767,7 +25265,7 @@ begin
     if jsn.has('sourcePatientInfo') then
         result.sourcePatientInfo := ParseReference{TFhirPatient}(jsn.vObj['sourcePatientInfo']);{q3}
     if jsn.has('related') then
-      iterateArray(jsn.vArr['related'], result.relatedList, parseDocumentReferenceContextRelated);
+      iterateArray(jsn.vArr['related'], result.relatedList, parseReference{TFhirReference});
 end;
 
 procedure TFHIRJsonComposer.ComposeDocumentReferenceContext(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContext; noObj : boolean = false);
@@ -22778,8 +25276,13 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.encounterList.Count > 0) then
+  begin
+    json.valueArray('encounter');
+    for i := 0 to elem.encounterList.Count - 1 do
+      ComposeReference{TFhirEncounter}(json, '', elem.encounterList[i]); {z - Reference(Encounter)}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) and (elem.eventList.Count > 0) then
   begin
     json.valueArray('event');
@@ -22799,47 +25302,9 @@ begin
   begin
     json.valueArray('related');
     for i := 0 to elem.relatedList.Count - 1 do
-      ComposeDocumentReferenceContextRelated(json, '', elem.relatedList[i]); {z - }
+      ComposeReference{TFhirReference}(json, '', elem.relatedList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseDocumentReferenceContextRelated(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseDocumentReferenceContextRelated(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseDocumentReferenceContextRelated(jsn : TJsonObject) : TFhirDocumentReferenceContextRelated;
-begin
-  result := TFhirDocumentReferenceContextRelated.create;
-  try
-    ParseDocumentReferenceContextRelatedProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseDocumentReferenceContextRelatedProperties(jsn : TJsonObject; result : TFhirDocumentReferenceContextRelated);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
-    if jsn.has('ref') then
-        result.ref := ParseReference{TFhirReference}(jsn.vObj['ref']);{q3}
-end;
-
-procedure TFHIRJsonComposer.ComposeDocumentReferenceContextRelated(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContextRelated; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirReference}(json, 'ref', elem.ref); {a}
   if not noObj then json.finishObject;
 end;
 
@@ -22872,12 +25337,10 @@ begin
       result.docStatusElement := parseEnum(jsn.path+'/docStatus', jsn.node['docStatus'], jsn.vObj['_docStatus'], CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('class') then
-        result.class_ := ParseCodeableConcept(jsn.vObj['class']);{q3}
+    if jsn.has('category') then
+      iterateArray(jsn.vArr['category'], result.categoryList, parseCodeableConcept);
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
-    if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := parseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := parseInstant(jsn.node['date'], jsn.vObj['_date']);{q}
     if jsn.has('agent') then
@@ -22922,14 +25385,15 @@ begin
     ComposeEnumProps(json, 'docStatus', elem.DocStatusElement, CODES_TFhirCompositionStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('class_') then
-    ComposeCodeableConcept(json, 'class', elem.class_); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('category') and (elem.categoryList.Count > 0) then
+  begin
+    json.valueArray('category');
+    for i := 0 to elem.categoryList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
     ComposeReference{TFhirPatient}(json, 'subject', elem.subject); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTimeProps(json, 'created', elem.createdElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('date') then
     ComposeInstantValue(json, 'date', elem.dateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('date') then
@@ -22975,708 +25439,6 @@ begin
 end;
 
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-procedure TFHIRJsonParser.ParseEligibilityRequestInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityRequestInsurance(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityRequestInsurance(jsn : TJsonObject) : TFhirEligibilityRequestInsurance;
-begin
-  result := TFhirEligibilityRequestInsurance.create;
-  try
-    ParseEligibilityRequestInsuranceProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityRequestInsuranceProperties(jsn : TJsonObject; result : TFhirEligibilityRequestInsurance);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('focal') or jsn.has('_focal') then
-        result.focalElement := parseBoolean(jsn.node['focal'], jsn.vObj['_focal']);{q}
-    if jsn.has('coverage') then
-        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
-    if jsn.has('businessArrangement') or jsn.has('_businessArrangement') then
-        result.businessArrangementElement := parseString(jsn.node['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityRequestInsurance(json : TJSONWriter; name : string; elem : TFhirEligibilityRequestInsurance; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanValue(json, 'focal', elem.focalElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanProps(json, 'focal', elem.focalElement, false);
-  ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'businessArrangement', elem.businessArrangementElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'businessArrangement', elem.businessArrangementElement, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityRequestDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityRequestDetail(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityRequestDetail(jsn : TJsonObject) : TFhirEligibilityRequestDetail;
-begin
-  result := TFhirEligibilityRequestDetail.create;
-  try
-    ParseEligibilityRequestDetailProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityRequestDetailProperties(jsn : TJsonObject; result : TFhirEligibilityRequestDetail);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
-    if jsn.has('modifier') then
-      iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
-    if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
-    if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
-    if jsn.has('unitPrice') then
-        result.unitPrice := ParseMoney(jsn.vObj['unitPrice']);{q3}
-    if jsn.has('facility') then
-        result.facility := ParseReference{TFhirLocation}(jsn.vObj['facility']);{q3}
-    if jsn.has('diagnosis') then
-      iterateArray(jsn.vArr['diagnosis'], result.diagnosisList, parseEligibilityRequestDetailDiagnosis);
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityRequestDetail(json : TJSONWriter; name : string; elem : TFhirEligibilityRequestDetail; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if (SummaryOption in [soFull, soData]) then
-  ComposeCodeableConcept(json, 'service', elem.service); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
-  begin
-    json.valueArray('modifier');
-    for i := 0 to elem.modifierList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.modifierList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeMoney(json, 'unitPrice', elem.unitPrice); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirLocation}(json, 'facility', elem.facility); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.diagnosisList.Count > 0) then
-  begin
-    json.valueArray('diagnosis');
-    for i := 0 to elem.diagnosisList.Count - 1 do
-      ComposeEligibilityRequestDetailDiagnosis(json, '', elem.diagnosisList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityRequestDetailDiagnosis(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityRequestDetailDiagnosis(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityRequestDetailDiagnosis(jsn : TJsonObject) : TFhirEligibilityRequestDetailDiagnosis;
-begin
-  result := TFhirEligibilityRequestDetailDiagnosis.create;
-  try
-    ParseEligibilityRequestDetailDiagnosisProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityRequestDetailDiagnosisProperties(jsn : TJsonObject; result : TFhirEligibilityRequestDetailDiagnosis);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('diagnosisCodeableConcept') {a4} then
-      result.diagnosis := ParseCodeableConcept(jsn.vObj['diagnosisCodeableConcept']);
-    if jsn.has('diagnosisReference') {a3} then
-      result.diagnosis := ParseReference(jsn.vObj['diagnosisReference']);
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityRequestDetailDiagnosis(json : TJSONWriter; name : string; elem : TFhirEligibilityRequestDetailDiagnosis; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) and (elem.diagnosis is TFhirCodeableConcept) then 
-    ComposeCodeableConcept(json, 'diagnosisCodeableConcept', TFhirCodeableConcept(elem.diagnosis)) 
-  else if (SummaryOption in [soFull, soData]) and (elem.diagnosis is TFhirReference) then
-    ComposeReference(json, 'diagnosisReference', TFhirReference(elem.diagnosis));
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityRequest(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityRequest(jsn : TJsonObject) : TFhirEligibilityRequest;
-begin
-  result := TFhirEligibilityRequest.create;
-  try
-    ParseEligibilityRequestProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityRequestProperties(jsn : TJsonObject; result : TFhirEligibilityRequest);
-begin
-    ParseDomainResourceProperties(jsn, result);
-    if jsn.has('identifier') then
-      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum);
-    if jsn.has('priority') then
-        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q3}
-    if jsn.has('use') or jsn.has('_use') then
-      iterateEnumArray(jsn.vArr['use'], jsn.vArr['_use'], jsn.path+'/use', result.useList, parseEnum, CODES_TFhirEligibilityrequestUseEnum, SYSTEMS_TFhirEligibilityrequestUseEnum);
-    if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
-    if jsn.has('servicedPeriod') {a4} then
-      result.serviced := ParsePeriod(jsn.vObj['servicedPeriod']);
-    if jsn.has('servicedDate') or jsn.has('_servicedDate') then
-      result.serviced := parseDate(jsn.node['servicedDate'], jsn.vObj['_servicedDate']);
-    if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := parseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
-    if jsn.has('enterer') then
-        result.enterer := ParseReference{TFhirPractitioner}(jsn.vObj['enterer']);{q3}
-    if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
-    if jsn.has('insurer') then
-        result.insurer := ParseReference{TFhirOrganization}(jsn.vObj['insurer']);{q3}
-    if jsn.has('facility') then
-        result.facility := ParseReference{TFhirLocation}(jsn.vObj['facility']);{q3}
-    if jsn.has('insurance') then
-      iterateArray(jsn.vArr['insurance'], result.insuranceList, parseEligibilityRequestInsurance);
-    if jsn.has('detail') then
-      iterateArray(jsn.vArr['detail'], result.detailList, parseEligibilityRequestDetail);
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityRequest(json : TJSONWriter; name : string; elem : TFhirEligibilityRequest; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-  val : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  ComposeDomainResourceProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
-  begin
-    json.valueArray('identifier');
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('priority') then
-    ComposeCodeableConcept(json, 'priority', elem.priority); {a}
-  if (elem.useList.Count > 0) then
-  begin
-    val := false;
-    ext := false;
-    for i := 0 to elem.useList.Count - 1 do
-    begin
-      val := val or (elem.useList[i].hasPrimitiveValue);
-      ext := ext or ((elem.useList[i].id <> '') or (elem.useList[i].hasExtensionList));
-    end;
-    if val then
-    begin
-      json.valueArray('use');
-      for i := 0 to elem.useList.Count - 1 do
-        ComposeEnumValue(json, '', elem.useList[i], CODES_TFhirEligibilityrequestUseEnum, true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_use');
-      for i := 0 to elem.useList.Count - 1 do
-        ComposeEnumProps(json, '', elem.useList[i], CODES_TFhirEligibilityrequestUseEnum, true);
-      json.FinishArray;
-    end;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('patient') then
-    ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) then 
-    ComposePeriod(json, 'servicedPeriod', TFhirPeriod(elem.serviced)) 
-  else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) then 
-  begin
-    ComposeDateValue(json, 'servicedDate', TFhirDate(elem.serviced), false);
-    ComposeDateProps(json, 'servicedDate', TFhirDate(elem.serviced), false);
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('enterer') then
-    ComposeReference{TFhirPractitioner}(json, 'enterer', elem.enterer); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('provider') then
-    ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('insurer') then
-    ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('facility') then
-    ComposeReference{TFhirLocation}(json, 'facility', elem.facility); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('insurance') and (elem.insuranceList.Count > 0) then
-  begin
-    json.valueArray('insurance');
-    for i := 0 to elem.insuranceList.Count - 1 do
-      ComposeEligibilityRequestInsurance(json, '', elem.insuranceList[i]); {z - }
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('detail') and (elem.detailList.Count > 0) then
-  begin
-    json.valueArray('detail');
-    for i := 0 to elem.detailList.Count - 1 do
-      ComposeEligibilityRequestDetail(json, '', elem.detailList[i]); {z - }
-    json.FinishArray;
-  end;
-end;
-
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-procedure TFHIRJsonParser.ParseEligibilityResponseInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityResponseInsurance(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityResponseInsurance(jsn : TJsonObject) : TFhirEligibilityResponseInsurance;
-begin
-  result := TFhirEligibilityResponseInsurance.create;
-  try
-    ParseEligibilityResponseInsuranceProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponseInsuranceProperties(jsn : TJsonObject; result : TFhirEligibilityResponseInsurance);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('coverage') then
-        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
-    if jsn.has('contract') then
-        result.contract := ParseReference{TFhirContract}(jsn.vObj['contract']);{q3}
-    if jsn.has('inforce') or jsn.has('_inforce') then
-        result.inforceElement := parseBoolean(jsn.node['inforce'], jsn.vObj['_inforce']);{q}
-    if jsn.has('detail') then
-      iterateArray(jsn.vArr['detail'], result.detailList, parseEligibilityResponseInsuranceDetail);
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityResponseInsurance(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsurance; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirContract}(json, 'contract', elem.contract); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanValue(json, 'inforce', elem.inforceElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanProps(json, 'inforce', elem.inforceElement, false);
-  if (SummaryOption in [soFull, soData]) and (elem.detailList.Count > 0) then
-  begin
-    json.valueArray('detail');
-    for i := 0 to elem.detailList.Count - 1 do
-      ComposeEligibilityResponseInsuranceDetail(json, '', elem.detailList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponseInsuranceDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityResponseInsuranceDetail(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityResponseInsuranceDetail(jsn : TJsonObject) : TFhirEligibilityResponseInsuranceDetail;
-begin
-  result := TFhirEligibilityResponseInsuranceDetail.create;
-  try
-    ParseEligibilityResponseInsuranceDetailProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponseInsuranceDetailProperties(jsn : TJsonObject; result : TFhirEligibilityResponseInsuranceDetail);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
-    if jsn.has('modifier') then
-      iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
-    if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
-    if jsn.has('excluded') or jsn.has('_excluded') then
-        result.excludedElement := parseBoolean(jsn.node['excluded'], jsn.vObj['_excluded']);{q}
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']);{q}
-    if jsn.has('network') then
-        result.network := ParseCodeableConcept(jsn.vObj['network']);{q3}
-    if jsn.has('unit') then
-        result.unit_ := ParseCodeableConcept(jsn.vObj['unit']);{q3}
-    if jsn.has('term') then
-        result.term := ParseCodeableConcept(jsn.vObj['term']);{q3}
-    if jsn.has('benefit') then
-      iterateArray(jsn.vArr['benefit'], result.benefitList, parseEligibilityResponseInsuranceDetailBenefit);
-    if jsn.has('authorizationRequired') or jsn.has('_authorizationRequired') then
-        result.authorizationRequiredElement := parseBoolean(jsn.node['authorizationRequired'], jsn.vObj['_authorizationRequired']);{q}
-    if jsn.has('authorizationSupporting') then
-      iterateArray(jsn.vArr['authorizationSupporting'], result.authorizationSupportingList, parseCodeableConcept);
-    if jsn.has('authorizationUrl') or jsn.has('_authorizationUrl') then
-        result.authorizationUrlElement := parseUri(jsn.node['authorizationUrl'], jsn.vObj['_authorizationUrl']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityResponseInsuranceDetail(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsuranceDetail; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-  ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
-  begin
-    json.valueArray('modifier');
-    for i := 0 to elem.modifierList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.modifierList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanValue(json, 'excluded', elem.excludedElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanProps(json, 'excluded', elem.excludedElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'network', elem.network); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'unit', elem.unit_); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'term', elem.term); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.benefitList.Count > 0) then
-  begin
-    json.valueArray('benefit');
-    for i := 0 to elem.benefitList.Count - 1 do
-      ComposeEligibilityResponseInsuranceDetailBenefit(json, '', elem.benefitList[i]); {z - }
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanValue(json, 'authorizationRequired', elem.authorizationRequiredElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanProps(json, 'authorizationRequired', elem.authorizationRequiredElement, false);
-  if (SummaryOption in [soFull, soData]) and (elem.authorizationSupportingList.Count > 0) then
-  begin
-    json.valueArray('authorizationSupporting');
-    for i := 0 to elem.authorizationSupportingList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.authorizationSupportingList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) then
-    ComposeUriValue(json, 'authorizationUrl', elem.authorizationUrlElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeUriProps(json, 'authorizationUrl', elem.authorizationUrlElement, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponseInsuranceDetailBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityResponseInsuranceDetailBenefit(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityResponseInsuranceDetailBenefit(jsn : TJsonObject) : TFhirEligibilityResponseInsuranceDetailBenefit;
-begin
-  result := TFhirEligibilityResponseInsuranceDetailBenefit.create;
-  try
-    ParseEligibilityResponseInsuranceDetailBenefitProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponseInsuranceDetailBenefitProperties(jsn : TJsonObject; result : TFhirEligibilityResponseInsuranceDetailBenefit);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('allowedUnsignedInt') or jsn.has('_allowedUnsignedInt') then
-      result.allowed := parseUnsignedInt(jsn.node['allowedUnsignedInt'], jsn.vObj['_allowedUnsignedInt']);
-    if jsn.has('allowedMoney') {a4} then
-      result.allowed := ParseMoney(jsn.vObj['allowedMoney']);
-    if jsn.has('allowedString') or jsn.has('_allowedString') then
-      result.allowed := parseString(jsn.node['allowedString'], jsn.vObj['_allowedString']);
-    if jsn.has('usedUnsignedInt') or jsn.has('_usedUnsignedInt') then
-      result.used := parseUnsignedInt(jsn.node['usedUnsignedInt'], jsn.vObj['_usedUnsignedInt']);
-    if jsn.has('usedMoney') {a4} then
-      result.used := ParseMoney(jsn.vObj['usedMoney']);
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityResponseInsuranceDetailBenefit(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsuranceDetailBenefit; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirUnsignedInt) then 
-  begin
-    ComposeUnsignedIntValue(json, 'allowedUnsignedInt', TFhirUnsignedInt(elem.allowed), false);
-    ComposeUnsignedIntProps(json, 'allowedUnsignedInt', TFhirUnsignedInt(elem.allowed), false);
-  end
-  else if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirMoney) then 
-    ComposeMoney(json, 'allowedMoney', TFhirMoney(elem.allowed)) 
-  else if (SummaryOption in [soFull, soData]) and (elem.allowed is TFhirString) then 
-  begin
-    ComposeStringValue(json, 'allowedString', TFhirString(elem.allowed), false);
-    ComposeStringProps(json, 'allowedString', TFhirString(elem.allowed), false);
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.used is TFhirUnsignedInt) then 
-  begin
-    ComposeUnsignedIntValue(json, 'usedUnsignedInt', TFhirUnsignedInt(elem.used), false);
-    ComposeUnsignedIntProps(json, 'usedUnsignedInt', TFhirUnsignedInt(elem.used), false);
-  end
-  else if (SummaryOption in [soFull, soData]) and (elem.used is TFhirMoney) then 
-    ComposeMoney(json, 'usedMoney', TFhirMoney(elem.used)) ;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponseError(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityResponseError(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityResponseError(jsn : TJsonObject) : TFhirEligibilityResponseError;
-begin
-  result := TFhirEligibilityResponseError.create;
-  try
-    ParseEligibilityResponseErrorProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponseErrorProperties(jsn : TJsonObject; result : TFhirEligibilityResponseError);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityResponseError(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseError; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseEligibilityResponse(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseEligibilityResponse(jsn : TJsonObject) : TFhirEligibilityResponse;
-begin
-  result := TFhirEligibilityResponse.create;
-  try
-    ParseEligibilityResponseProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseEligibilityResponseProperties(jsn : TJsonObject; result : TFhirEligibilityResponse);
-begin
-    ParseDomainResourceProperties(jsn, result);
-    if jsn.has('identifier') then
-      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum);
-    if jsn.has('use') or jsn.has('_use') then
-      iterateEnumArray(jsn.vArr['use'], jsn.vArr['_use'], jsn.path+'/use', result.useList, parseEnum, CODES_TFhirEligibilityresponseUseEnum, SYSTEMS_TFhirEligibilityresponseUseEnum);
-    if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
-    if jsn.has('servicedPeriod') {a4} then
-      result.serviced := ParsePeriod(jsn.vObj['servicedPeriod']);
-    if jsn.has('servicedDate') or jsn.has('_servicedDate') then
-      result.serviced := parseDate(jsn.node['servicedDate'], jsn.vObj['_servicedDate']);
-    if jsn.has('created') or jsn.has('_created') then
-        result.createdElement := parseDateTime(jsn.node['created'], jsn.vObj['_created']);{q}
-    if jsn.has('requestProvider') then
-        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q3}
-    if jsn.has('request') then
-        result.request := ParseReference{TFhirEligibilityRequest}(jsn.vObj['request']);{q3}
-    if jsn.has('outcome') or jsn.has('_outcome')  then
-      result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn.node['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
-    if jsn.has('disposition') or jsn.has('_disposition') then
-        result.dispositionElement := parseString(jsn.node['disposition'], jsn.vObj['_disposition']);{q}
-    if jsn.has('insurer') then
-        result.insurer := ParseReference{TFhirOrganization}(jsn.vObj['insurer']);{q3}
-    if jsn.has('insurance') then
-      iterateArray(jsn.vArr['insurance'], result.insuranceList, parseEligibilityResponseInsurance);
-    if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
-        result.preAuthRefElement := parseString(jsn.node['preAuthRef'], jsn.vObj['_preAuthRef']);{q}
-    if jsn.has('form') then
-        result.form := ParseCodeableConcept(jsn.vObj['form']);{q3}
-    if jsn.has('error') then
-      iterateArray(jsn.vArr['error'], result.errorList, parseEligibilityResponseError);
-end;
-
-procedure TFHIRJsonComposer.ComposeEligibilityResponse(json : TJSONWriter; name : string; elem : TFhirEligibilityResponse; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-  val : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  ComposeDomainResourceProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
-  begin
-    json.valueArray('identifier');
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if (elem.useList.Count > 0) then
-  begin
-    val := false;
-    ext := false;
-    for i := 0 to elem.useList.Count - 1 do
-    begin
-      val := val or (elem.useList[i].hasPrimitiveValue);
-      ext := ext or ((elem.useList[i].id <> '') or (elem.useList[i].hasExtensionList));
-    end;
-    if val then
-    begin
-      json.valueArray('use');
-      for i := 0 to elem.useList.Count - 1 do
-        ComposeEnumValue(json, '', elem.useList[i], CODES_TFhirEligibilityresponseUseEnum, true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_use');
-      for i := 0 to elem.useList.Count - 1 do
-        ComposeEnumProps(json, '', elem.useList[i], CODES_TFhirEligibilityresponseUseEnum, true);
-      json.FinishArray;
-    end;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('patient') then
-    ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) then 
-    ComposePeriod(json, 'servicedPeriod', TFhirPeriod(elem.serviced)) 
-  else if (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) then 
-  begin
-    ComposeDateValue(json, 'servicedDate', TFhirDate(elem.serviced), false);
-    ComposeDateProps(json, 'servicedDate', TFhirDate(elem.serviced), false);
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('created') then
-    ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('requestProvider') then
-    ComposeReference{TFhirPractitioner}(json, 'requestProvider', elem.requestProvider); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('request') then
-    ComposeReference{TFhirEligibilityRequest}(json, 'request', elem.request); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('outcome') then
-    ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('outcome') then
-    ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
-    ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('disposition') then
-    ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('insurer') then
-    ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('insurance') and (elem.insuranceList.Count > 0) then
-  begin
-    json.valueArray('insurance');
-    for i := 0 to elem.insuranceList.Count - 1 do
-      ComposeEligibilityResponseInsurance(json, '', elem.insuranceList[i]); {z - }
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
-    ComposeStringValue(json, 'preAuthRef', elem.preAuthRefElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('preAuthRef') then
-    ComposeStringProps(json, 'preAuthRef', elem.preAuthRefElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('form') then
-    ComposeCodeableConcept(json, 'form', elem.form); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('error') and (elem.errorList.Count > 0) then
-  begin
-    json.valueArray('error');
-    for i := 0 to elem.errorList.Count - 1 do
-      ComposeEligibilityResponseError(json, '', elem.errorList[i]); {z - }
-    json.FinishArray;
-  end;
-end;
-
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
 procedure TFHIRJsonParser.ParseEncounterStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -24836,8 +26598,14 @@ begin
         result.effectivePeriod := ParsePeriod(jsn.vObj['effectivePeriod']);{q3}
     if jsn.has('topic') then
       iterateArray(jsn.vArr['topic'], result.topicList, parseCodeableConcept);
-    if jsn.has('contributor') then
-      iterateArray(jsn.vArr['contributor'], result.contributorList, parseContributor);
+    if jsn.has('author') then
+      iterateArray(jsn.vArr['author'], result.authorList, parseContactDetail);
+    if jsn.has('editor') then
+      iterateArray(jsn.vArr['editor'], result.editorList, parseContactDetail);
+    if jsn.has('reviewer') then
+      iterateArray(jsn.vArr['reviewer'], result.reviewerList, parseContactDetail);
+    if jsn.has('endorser') then
+      iterateArray(jsn.vArr['endorser'], result.endorserList, parseContactDetail);
     if jsn.has('relatedArtifact') then
       iterateArray(jsn.vArr['relatedArtifact'], result.relatedArtifactList, parseRelatedArtifact);
     if jsn.has('trigger') then
@@ -24950,11 +26718,32 @@ begin
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') and (elem.contributorList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('author') and (elem.authorList.Count > 0) then
   begin
-    json.valueArray('contributor');
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
+    json.valueArray('author');
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.authorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') and (elem.editorList.Count > 0) then
+  begin
+    json.valueArray('editor');
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.editorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') and (elem.reviewerList.Count > 0) then
+  begin
+    json.valueArray('reviewer');
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(json, '', elem.reviewerList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') and (elem.endorserList.Count > 0) then
+  begin
+    json.valueArray('endorser');
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(json, '', elem.endorserList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') and (elem.relatedArtifactList.Count > 0) then
@@ -25908,6 +27697,8 @@ begin
       result.diagnosis := ParseReference(jsn.vObj['diagnosisReference']);
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
+    if jsn.has('onAdmission') then
+        result.onAdmission := ParseCodeableConcept(jsn.vObj['onAdmission']);{q3}
     if jsn.has('packageCode') then
         result.packageCode := ParseCodeableConcept(jsn.vObj['packageCode']);{q3}
 end;
@@ -25933,6 +27724,8 @@ begin
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'onAdmission', elem.onAdmission); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'packageCode', elem.packageCode); {a}
   if not noObj then json.finishObject;
@@ -26005,48 +27798,21 @@ end;
 procedure TFHIRJsonParser.ParseExplanationOfBenefitInsuranceProperties(jsn : TJsonObject; result : TFhirExplanationOfBenefitInsurance);
 begin
     ParseBackboneElementProperties(jsn, result);
+    if jsn.has('focal') or jsn.has('_focal') then
+        result.focalElement := parseBoolean(jsn.node['focal'], jsn.vObj['_focal']);{q}
     if jsn.has('coverage') then
         result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
-      if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
-      iteratePrimitiveArray(jsn.vArr['preAuthRef'], jsn.vArr['_preAuthRef'], result.preAuthRefList, parseString);
 end;
 
 procedure TFHIRJsonComposer.ComposeExplanationOfBenefitInsurance(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefitInsurance; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-  val : boolean;
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.preAuthRefList.Count > 0) then
-  begin
-    ext := false;
-    val := false;
-    for i := 0 to elem.preAuthRefList.Count - 1 do
-    begin
-      ext := ext or ((elem.preAuthRefList[i].id <> '') or (elem.preAuthRefList[i].hasExtensionList) {no-comments or (elem.preAuthRefList[i].hasComments)});
-      val := val or (elem.preAuthRefList[i].hasPrimitiveValue);
-    end;
-    if val then
-    begin
-      json.valueArray('preAuthRef');
-      for i := 0 to elem.preAuthRefList.Count - 1 do
-        ComposeStringValue(json, '',elem.preAuthRefList[i], true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_preAuthRef');
-      for i := 0 to elem.preAuthRefList.Count - 1 do
-        ComposeStringProps(json, '',elem.preAuthRefList[i], true);
-      json.FinishArray;
-    end;
-  end;
+  ComposeBooleanValue(json, 'focal', elem.focalElement, false);
+  ComposeBooleanProps(json, 'focal', elem.focalElement, false);
+  ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
   if not noObj then json.finishObject;
 end;
 
@@ -26131,8 +27897,8 @@ begin
         result.revenue := ParseCodeableConcept(jsn.vObj['revenue']);{q3}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('programCode') then
@@ -26284,7 +28050,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
@@ -26458,8 +28224,8 @@ begin
         result.revenue := ParseCodeableConcept(jsn.vObj['revenue']);{q3}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('programCode') then
@@ -26499,7 +28265,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
@@ -26597,8 +28363,8 @@ begin
         result.revenue := ParseCodeableConcept(jsn.vObj['revenue']);{q3}
     if jsn.has('category') then
         result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('programCode') then
@@ -26636,7 +28402,7 @@ begin
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
@@ -26727,8 +28493,10 @@ begin
       iteratePrimitiveArray(jsn.vArr['detailSequence'], jsn.vArr['_detailSequence'], result.detailSequenceList, parsePositiveInt);
       if jsn.has('subDetailSequence') or jsn.has('_subDetailSequence') then
       iteratePrimitiveArray(jsn.vArr['subDetailSequence'], jsn.vArr['_subDetailSequence'], result.subDetailSequenceList, parsePositiveInt);
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('provider') then
+      iterateArray(jsn.vArr['provider'], result.providerList, parseReference{TFhirPractitioner});
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('programCode') then
@@ -26845,8 +28613,15 @@ begin
       json.FinishArray;
     end;
   end;
+  if (SummaryOption in [soFull, soData]) and (elem.providerList.Count > 0) then
+  begin
+    json.valueArray('provider');
+    for i := 0 to elem.providerList.Count - 1 do
+      ComposeReference{TFhirPractitioner}(json, '', elem.providerList[i]); {z - Reference(Practitioner)}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
@@ -26953,12 +28728,10 @@ end;
 procedure TFHIRJsonParser.ParseExplanationOfBenefitAddItemDetailProperties(jsn : TJsonObject; result : TFhirExplanationOfBenefitAddItemDetail);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
-    if jsn.has('programCode') then
-      iterateArray(jsn.vArr['programCode'], result.programCodeList, parseCodeableConcept);
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
@@ -26986,19 +28759,12 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.modifierList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.programCodeList.Count > 0) then
-  begin
-    json.valueArray('programCode');
-    for i := 0 to elem.programCodeList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.programCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) then
@@ -27071,12 +28837,10 @@ end;
 procedure TFHIRJsonParser.ParseExplanationOfBenefitAddItemDetailSubDetailProperties(jsn : TJsonObject; result : TFhirExplanationOfBenefitAddItemDetailSubDetail);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('service') then
-        result.service := ParseCodeableConcept(jsn.vObj['service']);{q3}
+    if jsn.has('billcode') then
+        result.billcode := ParseCodeableConcept(jsn.vObj['billcode']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
-    if jsn.has('programCode') then
-      iterateArray(jsn.vArr['programCode'], result.programCodeList, parseCodeableConcept);
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
@@ -27102,19 +28866,12 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'service', elem.service); {a}
+    ComposeCodeableConcept(json, 'billcode', elem.billcode); {a}
   if (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     json.valueArray('modifier');
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.modifierList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.programCodeList.Count > 0) then
-  begin
-    json.valueArray('programCode');
-    for i := 0 to elem.programCodeList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.programCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) then
@@ -27467,7 +29224,7 @@ begin
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('subType') then
-      iterateArray(jsn.vArr['subType'], result.subTypeList, parseCodeableConcept);
+        result.subType := ParseCodeableConcept(jsn.vObj['subType']);{q3}
     if jsn.has('use') or jsn.has('_use')  then
       result.useElement := parseEnum(jsn.path+'/use', jsn.node['use'], jsn.vObj['_use'], CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum);
     if jsn.has('patient') then
@@ -27513,7 +29270,7 @@ begin
     if jsn.has('precedence') or jsn.has('_precedence') then
         result.precedenceElement := parsePositiveInt(jsn.node['precedence'], jsn.vObj['_precedence']);{q}
     if jsn.has('insurance') then
-        result.insurance := ParseExplanationOfBenefitInsurance(jsn.vObj['insurance']);{q3}
+      iterateArray(jsn.vArr['insurance'], result.insuranceList, parseExplanationOfBenefitInsurance);
     if jsn.has('accident') then
         result.accident := ParseExplanationOfBenefitAccident(jsn.vObj['accident']);{q3}
     if jsn.has('item') then
@@ -27552,13 +29309,8 @@ begin
     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirExplanationofbenefitStatusEnum, false);
   if (SummaryOption in [soFull, soData]) and doCompose('type_') then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) and doCompose('subType') and (elem.subTypeList.Count > 0) then
-  begin
-    json.valueArray('subType');
-    for i := 0 to elem.subTypeList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.subTypeList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('subType') then
+    ComposeCodeableConcept(json, 'subType', elem.subType); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirClaimUseEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('use') then
@@ -27638,8 +29390,13 @@ begin
     ComposePositiveIntValue(json, 'precedence', elem.precedenceElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('precedence') then
     ComposePositiveIntProps(json, 'precedence', elem.precedenceElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('insurance') then
-    ComposeExplanationOfBenefitInsurance(json, 'insurance', elem.insurance); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('insurance') and (elem.insuranceList.Count > 0) then
+  begin
+    json.valueArray('insurance');
+    for i := 0 to elem.insuranceList.Count - 1 do
+      ComposeExplanationOfBenefitInsurance(json, '', elem.insuranceList[i]); {z - }
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) and doCompose('accident') then
     ComposeExplanationOfBenefitAccident(json, 'accident', elem.accident); {a}
   if (SummaryOption in [soFull, soData]) and doCompose('item') and (elem.itemList.Count > 0) then
@@ -27789,8 +29546,8 @@ begin
         result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
     if jsn.has('relationship') then
         result.relationship := ParseCodeableConcept(jsn.vObj['relationship']);{q3}
-    if jsn.has('gender') or jsn.has('_gender')  then
-      result.genderElement := parseEnum(jsn.path+'/gender', jsn.node['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
+    if jsn.has('gender') then
+        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q3}
     if jsn.has('bornPeriod') {a4} then
       result.born := ParsePeriod(jsn.vObj['bornPeriod']);
     if jsn.has('bornDate') or jsn.has('_bornDate') then
@@ -27904,9 +29661,7 @@ begin
     ComposeStringProps(json, 'name', elem.nameElement, false);
   ComposeCodeableConcept(json, 'relationship', elem.relationship); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('gender') then
-    ComposeEnumValue(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('gender') then
-    ComposeEnumProps(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
+    ComposeCodeableConcept(json, 'gender', elem.gender); {a}
   if (SummaryOption in [soFull, soData]) and (elem.born is TFhirPeriod) then 
     ComposePeriod(json, 'bornPeriod', TFhirPeriod(elem.born)) 
   else if (SummaryOption in [soFull, soData]) and (elem.born is TFhirDate) then 
@@ -28773,8 +30528,8 @@ end;
 procedure TFHIRJsonParser.ParseGuidanceResponseProperties(jsn : TJsonObject; result : TFhirGuidanceResponse);
 begin
     ParseDomainResourceProperties(jsn, result);
-    if jsn.has('requestId') or jsn.has('_requestId') then
-        result.requestIdElement := parseId(jsn.node['requestId'], jsn.vObj['_requestId']);{q}
+    if jsn.has('requestIdentifier') then
+        result.requestIdentifier := ParseIdentifier(jsn.vObj['requestIdentifier']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('moduleCanonical') or jsn.has('_moduleCanonical') then
@@ -28816,10 +30571,8 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('requestId') then
-    ComposeIdValue(json, 'requestId', elem.requestIdElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('requestId') then
-    ComposeIdProps(json, 'requestId', elem.requestIdElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('requestIdentifier') then
+    ComposeIdentifier(json, 'requestIdentifier', elem.requestIdentifier); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
@@ -29487,6 +31240,8 @@ begin
       iterateArray(jsn.vArr['reasonReference'], result.reasonReferenceList, parseReference{TFhirCondition});
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('series') then
       iterateArray(jsn.vArr['series'], result.seriesList, parseImagingStudySeries);
 end;
@@ -29584,6 +31339,10 @@ begin
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('description') then
+    ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('description') then
+    ComposeStringProps(json, 'description', elem.descriptionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('series') and (elem.seriesList.Count > 0) then
   begin
     json.valueArray('series');
@@ -29778,6 +31537,8 @@ begin
       result.occurrence := parseDateTime(jsn.node['occurrenceDateTime'], jsn.vObj['_occurrenceDateTime']);
     if jsn.has('occurrenceString') or jsn.has('_occurrenceString') then
       result.occurrence := parseString(jsn.node['occurrenceString'], jsn.vObj['_occurrenceString']);
+    if jsn.has('recorded') or jsn.has('_recorded') then
+        result.recordedElement := parseDateTime(jsn.node['recorded'], jsn.vObj['_recorded']);{q}
     if jsn.has('primarySource') or jsn.has('_primarySource') then
         result.primarySourceElement := parseBoolean(jsn.node['primarySource'], jsn.vObj['_primarySource']);{q}
     if jsn.has('reportOrigin') then
@@ -29850,10 +31611,14 @@ begin
     ComposeStringValue(json, 'occurrenceString', TFhirString(elem.occurrence), false);
     ComposeStringProps(json, 'occurrenceString', TFhirString(elem.occurrence), false);
   end;
+  if (SummaryOption in [soFull, soData]) and doCompose('recorded') then
+    ComposeDateTimeValue(json, 'recorded', elem.recordedElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('recorded') then
+    ComposeDateTimeProps(json, 'recorded', elem.recordedElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('primarySource') then
-  ComposeBooleanValue(json, 'primarySource', elem.primarySourceElement, false);
+    ComposeBooleanValue(json, 'primarySource', elem.primarySourceElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('primarySource') then
-  ComposeBooleanProps(json, 'primarySource', elem.primarySourceElement, false);
+    ComposeBooleanProps(json, 'primarySource', elem.primarySourceElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('reportOrigin') then
     ComposeCodeableConcept(json, 'reportOrigin', elem.reportOrigin); {a}
   if (SummaryOption in [soFull, soData]) and doCompose('location') then
@@ -30948,6 +32713,8 @@ begin
         result.versionElement := parseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
+    if jsn.has('title') or jsn.has('_title') then
+        result.titleElement := parseString(jsn.node['title'], jsn.vObj['_title']);{q}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
@@ -30997,6 +32764,10 @@ begin
     ComposeStringProps(json, 'version', elem.versionElement, false);
   ComposeStringValue(json, 'name', elem.nameElement, false);
   ComposeStringProps(json, 'name', elem.nameElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('title') then
+    ComposeStringValue(json, 'title', elem.titleElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('title') then
+    ComposeStringProps(json, 'title', elem.titleElement, false);
   ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
   ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('experimental') then
@@ -31073,6 +32844,627 @@ begin
 end;
 
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+procedure TFHIRJsonParser.ParseInsurancePlanContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanContact(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanContact(jsn : TJsonObject) : TFhirInsurancePlanContact;
+begin
+  result := TFhirInsurancePlanContact.create;
+  try
+    ParseInsurancePlanContactProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanContactProperties(jsn : TJsonObject; result : TFhirInsurancePlanContact);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('purpose') then
+        result.purpose := ParseCodeableConcept(jsn.vObj['purpose']);{q3}
+    if jsn.has('name') then
+        result.name := ParseHumanName(jsn.vObj['name']);{q3}
+    if jsn.has('telecom') then
+      iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
+    if jsn.has('address') then
+        result.address := ParseAddress(jsn.vObj['address']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanContact(json : TJSONWriter; name : string; elem : TFhirInsurancePlanContact; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'purpose', elem.purpose); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeHumanName(json, 'name', elem.name); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
+  begin
+    json.valueArray('telecom');
+    for i := 0 to elem.telecomList.Count - 1 do
+      ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeAddress(json, 'address', elem.address); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanCoverage(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanCoverage(jsn : TJsonObject) : TFhirInsurancePlanCoverage;
+begin
+  result := TFhirInsurancePlanCoverage.create;
+  try
+    ParseInsurancePlanCoverageProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanCoverageProperties(jsn : TJsonObject; result : TFhirInsurancePlanCoverage);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('network') then
+      iterateArray(jsn.vArr['network'], result.networkList, parseReference{TFhirOrganization});
+    if jsn.has('benefit') then
+      iterateArray(jsn.vArr['benefit'], result.benefitList, parseInsurancePlanCoverageBenefit);
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanCoverage(json : TJSONWriter; name : string; elem : TFhirInsurancePlanCoverage; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.networkList.Count > 0) then
+  begin
+    json.valueArray('network');
+    for i := 0 to elem.networkList.Count - 1 do
+      ComposeReference{TFhirOrganization}(json, '', elem.networkList[i]); {z - Reference(Organization)}
+    json.FinishArray;
+  end;
+  if (elem.benefitList.Count > 0) then
+  begin
+    json.valueArray('benefit');
+    for i := 0 to elem.benefitList.Count - 1 do
+      ComposeInsurancePlanCoverageBenefit(json, '', elem.benefitList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanCoverageBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanCoverageBenefit(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanCoverageBenefit(jsn : TJsonObject) : TFhirInsurancePlanCoverageBenefit;
+begin
+  result := TFhirInsurancePlanCoverageBenefit.create;
+  try
+    ParseInsurancePlanCoverageBenefitProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanCoverageBenefitProperties(jsn : TJsonObject; result : TFhirInsurancePlanCoverageBenefit);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('requirement') or jsn.has('_requirement') then
+        result.requirementElement := parseString(jsn.node['requirement'], jsn.vObj['_requirement']);{q}
+    if jsn.has('limit') then
+      iterateArray(jsn.vArr['limit'], result.limitList, parseInsurancePlanCoverageBenefitLimit);
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanCoverageBenefit(json : TJSONWriter; name : string; elem : TFhirInsurancePlanCoverageBenefit; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'requirement', elem.requirementElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'requirement', elem.requirementElement, false);
+  if (SummaryOption in [soFull, soData]) and (elem.limitList.Count > 0) then
+  begin
+    json.valueArray('limit');
+    for i := 0 to elem.limitList.Count - 1 do
+      ComposeInsurancePlanCoverageBenefitLimit(json, '', elem.limitList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanCoverageBenefitLimit(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanCoverageBenefitLimit(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanCoverageBenefitLimit(jsn : TJsonObject) : TFhirInsurancePlanCoverageBenefitLimit;
+begin
+  result := TFhirInsurancePlanCoverageBenefitLimit.create;
+  try
+    ParseInsurancePlanCoverageBenefitLimitProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanCoverageBenefitLimitProperties(jsn : TJsonObject; result : TFhirInsurancePlanCoverageBenefitLimit);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('value') then
+        result.value := ParseQuantity(jsn.vObj['value']);{q3}
+    if jsn.has('code') then
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanCoverageBenefitLimit(json : TJSONWriter; name : string; elem : TFhirInsurancePlanCoverageBenefitLimit; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(json, 'value', elem.value); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'code', elem.code); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlan(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanPlan(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanPlan(jsn : TJsonObject) : TFhirInsurancePlanPlan;
+begin
+  result := TFhirInsurancePlanPlan.create;
+  try
+    ParseInsurancePlanPlanProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlan);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('coverageArea') then
+      iterateArray(jsn.vArr['coverageArea'], result.coverageAreaList, parseReference{TFhirLocation});
+    if jsn.has('network') then
+      iterateArray(jsn.vArr['network'], result.networkList, parseReference{TFhirOrganization});
+    if jsn.has('generalCost') then
+      iterateArray(jsn.vArr['generalCost'], result.generalCostList, parseInsurancePlanPlanGeneralCost);
+    if jsn.has('specificCost') then
+      iterateArray(jsn.vArr['specificCost'], result.specificCostList, parseInsurancePlanPlanSpecificCost);
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanPlan(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlan; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.coverageAreaList.Count > 0) then
+  begin
+    json.valueArray('coverageArea');
+    for i := 0 to elem.coverageAreaList.Count - 1 do
+      ComposeReference{TFhirLocation}(json, '', elem.coverageAreaList[i]); {z - Reference(Location)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.networkList.Count > 0) then
+  begin
+    json.valueArray('network');
+    for i := 0 to elem.networkList.Count - 1 do
+      ComposeReference{TFhirOrganization}(json, '', elem.networkList[i]); {z - Reference(Organization)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.generalCostList.Count > 0) then
+  begin
+    json.valueArray('generalCost');
+    for i := 0 to elem.generalCostList.Count - 1 do
+      ComposeInsurancePlanPlanGeneralCost(json, '', elem.generalCostList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and (elem.specificCostList.Count > 0) then
+  begin
+    json.valueArray('specificCost');
+    for i := 0 to elem.specificCostList.Count - 1 do
+      ComposeInsurancePlanPlanSpecificCost(json, '', elem.specificCostList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanGeneralCost(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanPlanGeneralCost(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanPlanGeneralCost(jsn : TJsonObject) : TFhirInsurancePlanPlanGeneralCost;
+begin
+  result := TFhirInsurancePlanPlanGeneralCost.create;
+  try
+    ParseInsurancePlanPlanGeneralCostProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanGeneralCostProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlanGeneralCost);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('groupSize') or jsn.has('_groupSize') then
+        result.groupSizeElement := parsePositiveInt(jsn.node['groupSize'], jsn.vObj['_groupSize']);{q}
+    if jsn.has('cost') then
+        result.cost := ParseMoney(jsn.vObj['cost']);{q3}
+    if jsn.has('comment') or jsn.has('_comment') then
+        result.commentElement := parseString(jsn.node['comment'], jsn.vObj['_comment']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanPlanGeneralCost(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlanGeneralCost; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposePositiveIntValue(json, 'groupSize', elem.groupSizeElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposePositiveIntProps(json, 'groupSize', elem.groupSizeElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeMoney(json, 'cost', elem.cost); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'comment', elem.commentElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'comment', elem.commentElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanSpecificCost(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanPlanSpecificCost(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanPlanSpecificCost(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCost;
+begin
+  result := TFhirInsurancePlanPlanSpecificCost.create;
+  try
+    ParseInsurancePlanPlanSpecificCostProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlanSpecificCost);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('category') then
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
+    if jsn.has('benefit') then
+      iterateArray(jsn.vArr['benefit'], result.benefitList, parseInsurancePlanPlanSpecificCostBenefit);
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanPlanSpecificCost(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlanSpecificCost; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'category', elem.category); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.benefitList.Count > 0) then
+  begin
+    json.valueArray('benefit');
+    for i := 0 to elem.benefitList.Count - 1 do
+      ComposeInsurancePlanPlanSpecificCostBenefit(json, '', elem.benefitList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanPlanSpecificCostBenefit(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostBenefit(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCostBenefit;
+begin
+  result := TFhirInsurancePlanPlanSpecificCostBenefit.create;
+  try
+    ParseInsurancePlanPlanSpecificCostBenefitProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostBenefitProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlanSpecificCostBenefit);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('cost') then
+      iterateArray(jsn.vArr['cost'], result.costList, parseInsurancePlanPlanSpecificCostBenefitCost);
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanPlanSpecificCostBenefit(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlanSpecificCostBenefit; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.costList.Count > 0) then
+  begin
+    json.valueArray('cost');
+    for i := 0 to elem.costList.Count - 1 do
+      ComposeInsurancePlanPlanSpecificCostBenefitCost(json, '', elem.costList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostBenefitCost(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlanPlanSpecificCostBenefitCost(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostBenefitCost(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCostBenefitCost;
+begin
+  result := TFhirInsurancePlanPlanSpecificCostBenefitCost.create;
+  try
+    ParseInsurancePlanPlanSpecificCostBenefitCostProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostBenefitCostProperties(jsn : TJsonObject; result : TFhirInsurancePlanPlanSpecificCostBenefitCost);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('applicability') then
+        result.applicability := ParseCodeableConcept(jsn.vObj['applicability']);{q3}
+    if jsn.has('qualifiers') then
+      iterateArray(jsn.vArr['qualifiers'], result.qualifiersList, parseCodeableConcept);
+    if jsn.has('value') then
+        result.value := ParseQuantity(jsn.vObj['value']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlanPlanSpecificCostBenefitCost(json : TJSONWriter; name : string; elem : TFhirInsurancePlanPlanSpecificCostBenefitCost; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'applicability', elem.applicability); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.qualifiersList.Count > 0) then
+  begin
+    json.valueArray('qualifiers');
+    for i := 0 to elem.qualifiersList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.qualifiersList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(json, 'value', elem.value); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlan(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseInsurancePlan(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseInsurancePlan(jsn : TJsonObject) : TFhirInsurancePlan;
+begin
+  result := TFhirInsurancePlan.create;
+  try
+    ParseInsurancePlanProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseInsurancePlanProperties(jsn : TJsonObject; result : TFhirInsurancePlan);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('status') or jsn.has('_status')  then
+      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum);
+    if jsn.has('type') then
+      iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
+      if jsn.has('alias') or jsn.has('_alias') then
+      iteratePrimitiveArray(jsn.vArr['alias'], jsn.vArr['_alias'], result.aliasList, parseString);
+    if jsn.has('period') then
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
+    if jsn.has('ownedBy') then
+        result.ownedBy := ParseReference{TFhirOrganization}(jsn.vObj['ownedBy']);{q3}
+    if jsn.has('administeredBy') then
+        result.administeredBy := ParseReference{TFhirOrganization}(jsn.vObj['administeredBy']);{q3}
+    if jsn.has('coverageArea') then
+      iterateArray(jsn.vArr['coverageArea'], result.coverageAreaList, parseReference{TFhirLocation});
+    if jsn.has('contact') then
+      iterateArray(jsn.vArr['contact'], result.contactList, parseInsurancePlanContact);
+    if jsn.has('endpoint') then
+      iterateArray(jsn.vArr['endpoint'], result.endpointList, parseReference{TFhirEndpoint});
+    if jsn.has('network') then
+      iterateArray(jsn.vArr['network'], result.networkList, parseReference{TFhirOrganization});
+    if jsn.has('coverage') then
+      iterateArray(jsn.vArr['coverage'], result.coverageList, parseInsurancePlanCoverage);
+    if jsn.has('plan') then
+      iterateArray(jsn.vArr['plan'], result.planList, parseInsurancePlanPlan);
+end;
+
+procedure TFHIRJsonComposer.ComposeInsurancePlan(json : TJSONWriter; name : string; elem : TFhirInsurancePlan; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
+    ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') and (elem.type_List.Count > 0) then
+  begin
+    json.valueArray('type');
+    for i := 0 to elem.type_List.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if (SummaryOption in [soFull, soData]) and doCompose('alias') and (elem.aliasList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.aliasList.Count - 1 do
+    begin
+      ext := ext or ((elem.aliasList[i].id <> '') or (elem.aliasList[i].hasExtensionList) {no-comments or (elem.aliasList[i].hasComments)});
+      val := val or (elem.aliasList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('alias');
+      for i := 0 to elem.aliasList.Count - 1 do
+        ComposeStringValue(json, '',elem.aliasList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_alias');
+      for i := 0 to elem.aliasList.Count - 1 do
+        ComposeStringProps(json, '',elem.aliasList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('period') then
+    ComposePeriod(json, 'period', elem.period); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('ownedBy') then
+    ComposeReference{TFhirOrganization}(json, 'ownedBy', elem.ownedBy); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('administeredBy') then
+    ComposeReference{TFhirOrganization}(json, 'administeredBy', elem.administeredBy); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('coverageArea') and (elem.coverageAreaList.Count > 0) then
+  begin
+    json.valueArray('coverageArea');
+    for i := 0 to elem.coverageAreaList.Count - 1 do
+      ComposeReference{TFhirLocation}(json, '', elem.coverageAreaList[i]); {z - Reference(Location)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('contact') and (elem.contactList.Count > 0) then
+  begin
+    json.valueArray('contact');
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeInsurancePlanContact(json, '', elem.contactList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('endpoint') and (elem.endpointList.Count > 0) then
+  begin
+    json.valueArray('endpoint');
+    for i := 0 to elem.endpointList.Count - 1 do
+      ComposeReference{TFhirEndpoint}(json, '', elem.endpointList[i]); {z - Reference(Endpoint)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('network') and (elem.networkList.Count > 0) then
+  begin
+    json.valueArray('network');
+    for i := 0 to elem.networkList.Count - 1 do
+      ComposeReference{TFhirOrganization}(json, '', elem.networkList[i]); {z - Reference(Organization)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('coverage') and (elem.coverageList.Count > 0) then
+  begin
+    json.valueArray('coverage');
+    for i := 0 to elem.coverageList.Count - 1 do
+      ComposeInsurancePlanCoverage(json, '', elem.coverageList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('plan') and (elem.planList.Count > 0) then
+  begin
+    json.valueArray('plan');
+    for i := 0 to elem.planList.Count - 1 do
+      ComposeInsurancePlanPlan(json, '', elem.planList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
 procedure TFHIRJsonParser.ParseInvoiceParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -31132,8 +33524,10 @@ begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('sequence') or jsn.has('_sequence') then
         result.sequenceElement := parsePositiveInt(jsn.node['sequence'], jsn.vObj['_sequence']);{q}
-    if jsn.has('chargeItem') then
-        result.chargeItem := ParseReference{TFhirChargeItem}(jsn.vObj['chargeItem']);{q3}
+    if jsn.has('chargeItemReference') {a3} then
+      result.chargeItem := ParseReference(jsn.vObj['chargeItemReference']);
+    if jsn.has('chargeItemCodeableConcept') {a4} then
+      result.chargeItem := ParseCodeableConcept(jsn.vObj['chargeItemCodeableConcept']);
     if jsn.has('priceComponent') then
       iterateArray(jsn.vArr['priceComponent'], result.priceComponentList, parseInvoiceLineItemPriceComponent);
 end;
@@ -31150,7 +33544,10 @@ begin
     ComposePositiveIntValue(json, 'sequence', elem.sequenceElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposePositiveIntProps(json, 'sequence', elem.sequenceElement, false);
-  ComposeReference{TFhirChargeItem}(json, 'chargeItem', elem.chargeItem); {a}
+  if (elem.chargeItem is TFhirReference) then
+    ComposeReference(json, 'chargeItemReference', TFhirReference(elem.chargeItem))
+  else if (elem.chargeItem is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'chargeItemCodeableConcept', TFhirCodeableConcept(elem.chargeItem)) ;
   if (SummaryOption in [soFull, soData]) and (elem.priceComponentList.Count > 0) then
   begin
     json.valueArray('priceComponent');
@@ -31487,8 +33884,14 @@ begin
         result.effectivePeriod := ParsePeriod(jsn.vObj['effectivePeriod']);{q3}
     if jsn.has('topic') then
       iterateArray(jsn.vArr['topic'], result.topicList, parseCodeableConcept);
-    if jsn.has('contributor') then
-      iterateArray(jsn.vArr['contributor'], result.contributorList, parseContributor);
+    if jsn.has('author') then
+      iterateArray(jsn.vArr['author'], result.authorList, parseContactDetail);
+    if jsn.has('editor') then
+      iterateArray(jsn.vArr['editor'], result.editorList, parseContactDetail);
+    if jsn.has('reviewer') then
+      iterateArray(jsn.vArr['reviewer'], result.reviewerList, parseContactDetail);
+    if jsn.has('endorser') then
+      iterateArray(jsn.vArr['endorser'], result.endorserList, parseContactDetail);
     if jsn.has('relatedArtifact') then
       iterateArray(jsn.vArr['relatedArtifact'], result.relatedArtifactList, parseRelatedArtifact);
     if jsn.has('parameter') then
@@ -31606,11 +34009,32 @@ begin
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') and (elem.contributorList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('author') and (elem.authorList.Count > 0) then
   begin
-    json.valueArray('contributor');
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
+    json.valueArray('author');
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.authorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') and (elem.editorList.Count > 0) then
+  begin
+    json.valueArray('editor');
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.editorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') and (elem.reviewerList.Count > 0) then
+  begin
+    json.valueArray('reviewer');
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(json, '', elem.reviewerList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') and (elem.endorserList.Count > 0) then
+  begin
+    json.valueArray('endorser');
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(json, '', elem.endorserList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') and (elem.relatedArtifactList.Count > 0) then
@@ -32431,8 +34855,14 @@ begin
         result.effectivePeriod := ParsePeriod(jsn.vObj['effectivePeriod']);{q3}
     if jsn.has('topic') then
       iterateArray(jsn.vArr['topic'], result.topicList, parseCodeableConcept);
-    if jsn.has('contributor') then
-      iterateArray(jsn.vArr['contributor'], result.contributorList, parseContributor);
+    if jsn.has('author') then
+      iterateArray(jsn.vArr['author'], result.authorList, parseContactDetail);
+    if jsn.has('editor') then
+      iterateArray(jsn.vArr['editor'], result.editorList, parseContactDetail);
+    if jsn.has('reviewer') then
+      iterateArray(jsn.vArr['reviewer'], result.reviewerList, parseContactDetail);
+    if jsn.has('endorser') then
+      iterateArray(jsn.vArr['endorser'], result.endorserList, parseContactDetail);
     if jsn.has('relatedArtifact') then
       iterateArray(jsn.vArr['relatedArtifact'], result.relatedArtifactList, parseRelatedArtifact);
       if jsn.has('library') or jsn.has('_library') then
@@ -32453,7 +34883,7 @@ begin
         result.rationaleElement := parseMarkdown(jsn.node['rationale'], jsn.vObj['_rationale']);{q}
     if jsn.has('clinicalRecommendationStatement') or jsn.has('_clinicalRecommendationStatement') then
         result.clinicalRecommendationStatementElement := parseMarkdown(jsn.node['clinicalRecommendationStatement'], jsn.vObj['_clinicalRecommendationStatement']);{q}
-    if jsn.has('improvementNotation') or jsn.has('_improvementNotation') then
+    if jsn.has('improvementNotation') or jsn.has('_improvementNotation')  then
       result.improvementNotationElement := parseEnum(jsn.path+'/improvementNotation', jsn.node['improvementNotation'], jsn.vObj['_improvementNotation'], CODES_TFhirMeasureImprovementNotationEnum, SYSTEMS_TFhirMeasureImprovementNotationEnum);
       if jsn.has('definition') or jsn.has('_definition') then
       iteratePrimitiveArray(jsn.vArr['definition'], jsn.vArr['_definition'], result.definitionList, parseMarkdown);
@@ -32573,11 +35003,32 @@ begin
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') and (elem.contributorList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('author') and (elem.authorList.Count > 0) then
   begin
-    json.valueArray('contributor');
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
+    json.valueArray('author');
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.authorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') and (elem.editorList.Count > 0) then
+  begin
+    json.valueArray('editor');
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.editorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') and (elem.reviewerList.Count > 0) then
+  begin
+    json.valueArray('reviewer');
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(json, '', elem.reviewerList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') and (elem.endorserList.Count > 0) then
+  begin
+    json.valueArray('endorser');
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(json, '', elem.endorserList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') and (elem.relatedArtifactList.Count > 0) then
@@ -34464,6 +36915,8 @@ end;
 procedure TFHIRJsonParser.ParseMedicationKnowledgeRegulatoryProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeRegulatory);
 begin
     ParseBackboneElementProperties(jsn, result);
+    if jsn.has('regulatoryAuthority') then
+        result.regulatoryAuthority := ParseReference{TFhirOrganization}(jsn.vObj['regulatoryAuthority']);{q3}
     if jsn.has('substitution') then
       iterateArray(jsn.vArr['substitution'], result.substitutionList, parseMedicationKnowledgeRegulatorySubstitution);
     if jsn.has('schedule') then
@@ -34480,6 +36933,7 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
+  ComposeReference{TFhirOrganization}(json, 'regulatoryAuthority', elem.regulatoryAuthority); {a}
   if (SummaryOption in [soFull, soData]) and (elem.substitutionList.Count > 0) then
   begin
     json.valueArray('substitution');
@@ -34555,8 +37009,6 @@ end;
 procedure TFHIRJsonParser.ParseMedicationKnowledgeRegulatoryScheduleProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeRegulatorySchedule);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('jurisdiction') then
-        result.jurisdiction := ParseReference{TFhirOrganization}(jsn.vObj['jurisdiction']);{q3}
     if jsn.has('schedule') then
         result.schedule := ParseCodeableConcept(jsn.vObj['schedule']);{q3}
 end;
@@ -34567,7 +37019,6 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  ComposeReference{TFhirOrganization}(json, 'jurisdiction', elem.jurisdiction); {a}
   ComposeCodeableConcept(json, 'schedule', elem.schedule); {a}
   if not noObj then json.finishObject;
 end;
@@ -35080,6 +37531,8 @@ begin
         result.groupIdentifier := ParseIdentifier(jsn.vObj['groupIdentifier']);{q3}
     if jsn.has('statusReason') then
         result.statusReason := ParseCodeableConcept(jsn.vObj['statusReason']);{q3}
+    if jsn.has('courseOfTherapyType') then
+        result.courseOfTherapyType := ParseCodeableConcept(jsn.vObj['courseOfTherapyType']);{q3}
     if jsn.has('insurance') then
       iterateArray(jsn.vArr['insurance'], result.insuranceList, parseReference{TFhirCoverage});
     if jsn.has('note') then
@@ -35208,6 +37661,8 @@ begin
     ComposeIdentifier(json, 'groupIdentifier', elem.groupIdentifier); {a}
   if (SummaryOption in [soFull, soData]) and doCompose('statusReason') then
     ComposeCodeableConcept(json, 'statusReason', elem.statusReason); {a}
+  if (SummaryOption in [soFull, soData]) and doCompose('courseOfTherapyType') then
+    ComposeCodeableConcept(json, 'courseOfTherapyType', elem.courseOfTherapyType); {a}
   if (SummaryOption in [soFull, soData]) and doCompose('insurance') and (elem.insuranceList.Count > 0) then
   begin
     json.valueArray('insurance');
@@ -35604,23 +38059,23 @@ begin
   if not noObj then json.finishObject;
 end;
 
-procedure TFHIRJsonParser.ParseMedicinalProductOrphanDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseMedicinalProductSpecialDesignation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseMedicinalProductOrphanDesignation(jsn)); {2}
+  ctxt.add(ParseMedicinalProductSpecialDesignation(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseMedicinalProductOrphanDesignation(jsn : TJsonObject) : TFhirMedicinalProductOrphanDesignation;
+function TFHIRJsonParser.ParseMedicinalProductSpecialDesignation(jsn : TJsonObject) : TFhirMedicinalProductSpecialDesignation;
 begin
-  result := TFhirMedicinalProductOrphanDesignation.create;
+  result := TFhirMedicinalProductSpecialDesignation.create;
   try
-    ParseMedicinalProductOrphanDesignationProperties(jsn, result);
+    ParseMedicinalProductSpecialDesignationProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseMedicinalProductOrphanDesignationProperties(jsn : TJsonObject; result : TFhirMedicinalProductOrphanDesignation);
+procedure TFHIRJsonParser.ParseMedicinalProductSpecialDesignationProperties(jsn : TJsonObject; result : TFhirMedicinalProductSpecialDesignation);
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') then
@@ -35637,7 +38092,7 @@ begin
         result.species := ParseCodeableConcept(jsn.vObj['species']);{q3}
 end;
 
-procedure TFHIRJsonComposer.ComposeMedicinalProductOrphanDesignation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductOrphanDesignation; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeMedicinalProductSpecialDesignation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductSpecialDesignation; noObj : boolean = false);
 var
   i : integer;
 begin
@@ -35710,8 +38165,14 @@ begin
       iterateArray(jsn.vArr['packagedMedicinalProduct'], result.packagedMedicinalProductList, parseReference{TFhirMedicinalProductPackaged});
     if jsn.has('pharmaceuticalProduct') then
       iterateArray(jsn.vArr['pharmaceuticalProduct'], result.pharmaceuticalProductList, parseReference{TFhirMedicinalProductPharmaceutical});
-    if jsn.has('clinicalParticulars') then
-      iterateArray(jsn.vArr['clinicalParticulars'], result.clinicalParticularsList, parseReference{TFhirMedicinalProductClinicals});
+    if jsn.has('contraindication') then
+      iterateArray(jsn.vArr['contraindication'], result.contraindicationList, parseReference{TFhirMedicinalProductContraindication});
+    if jsn.has('interaction') then
+      iterateArray(jsn.vArr['interaction'], result.interactionList, parseReference{TFhirMedicinalProductInteraction});
+    if jsn.has('therapeuticIndication') then
+      iterateArray(jsn.vArr['therapeuticIndication'], result.therapeuticIndicationList, parseReference{TFhirMedicinalProductIndication});
+    if jsn.has('undesirableEffect') then
+      iterateArray(jsn.vArr['undesirableEffect'], result.undesirableEffectList, parseReference{TFhirMedicinalProductUndesirableEffect});
     if jsn.has('attachedDocument') then
       iterateArray(jsn.vArr['attachedDocument'], result.attachedDocumentList, parseReference{TFhirDocumentReference});
     if jsn.has('masterFile') then
@@ -35726,8 +38187,8 @@ begin
       iterateArray(jsn.vArr['crossReference'], result.crossReferenceList, parseIdentifier);
     if jsn.has('manufacturingBusinessOperation') then
       iterateArray(jsn.vArr['manufacturingBusinessOperation'], result.manufacturingBusinessOperationList, parseMedicinalProductManufacturingBusinessOperation);
-    if jsn.has('orphanDesignation') then
-      iterateArray(jsn.vArr['orphanDesignation'], result.orphanDesignationList, parseMedicinalProductOrphanDesignation);
+    if jsn.has('specialDesignation') then
+      iterateArray(jsn.vArr['specialDesignation'], result.specialDesignationList, parseMedicinalProductSpecialDesignation);
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicinalProduct(json : TJSONWriter; name : string; elem : TFhirMedicinalProduct; noObj : boolean = false);
@@ -35810,11 +38271,32 @@ begin
       ComposeReference{TFhirMedicinalProductPharmaceutical}(json, '', elem.pharmaceuticalProductList[i]); {z - Reference(MedicinalProductPharmaceutical)}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('clinicalParticulars') and (elem.clinicalParticularsList.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('contraindication') and (elem.contraindicationList.Count > 0) then
   begin
-    json.valueArray('clinicalParticulars');
-    for i := 0 to elem.clinicalParticularsList.Count - 1 do
-      ComposeReference{TFhirMedicinalProductClinicals}(json, '', elem.clinicalParticularsList[i]); {z - Reference(MedicinalProductClinicals)}
+    json.valueArray('contraindication');
+    for i := 0 to elem.contraindicationList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductContraindication}(json, '', elem.contraindicationList[i]); {z - Reference(MedicinalProductContraindication)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('interaction') and (elem.interactionList.Count > 0) then
+  begin
+    json.valueArray('interaction');
+    for i := 0 to elem.interactionList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductInteraction}(json, '', elem.interactionList[i]); {z - Reference(MedicinalProductInteraction)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('therapeuticIndication') and (elem.therapeuticIndicationList.Count > 0) then
+  begin
+    json.valueArray('therapeuticIndication');
+    for i := 0 to elem.therapeuticIndicationList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductIndication}(json, '', elem.therapeuticIndicationList[i]); {z - Reference(MedicinalProductIndication)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('undesirableEffect') and (elem.undesirableEffectList.Count > 0) then
+  begin
+    json.valueArray('undesirableEffect');
+    for i := 0 to elem.undesirableEffectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductUndesirableEffect}(json, '', elem.undesirableEffectList[i]); {z - Reference(MedicinalProductUndesirableEffect)}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('attachedDocument') and (elem.attachedDocumentList.Count > 0) then
@@ -35866,11 +38348,11 @@ begin
       ComposeMedicinalProductManufacturingBusinessOperation(json, '', elem.manufacturingBusinessOperationList[i]); {z - }
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('orphanDesignation') and (elem.orphanDesignationList.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('specialDesignation') and (elem.specialDesignationList.Count > 0) then
   begin
-    json.valueArray('orphanDesignation');
-    for i := 0 to elem.orphanDesignationList.Count - 1 do
-      ComposeMedicinalProductOrphanDesignation(json, '', elem.orphanDesignationList[i]); {z - }
+    json.valueArray('specialDesignation');
+    for i := 0 to elem.specialDesignationList.Count - 1 do
+      ComposeMedicinalProductSpecialDesignation(json, '', elem.specialDesignationList[i]); {z - }
     json.FinishArray;
   end;
 end;
@@ -36019,6 +38501,8 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('subject') then
+        result.subject := ParseReference{TFhirMedicinalProduct}(jsn.vObj['subject']);{q3}
     if jsn.has('country') then
       iterateArray(jsn.vArr['country'], result.countryList, parseCodeableConcept);
     if jsn.has('jurisdiction') then
@@ -36039,6 +38523,8 @@ begin
         result.dateOfFirstAuthorizationElement := parseDateTime(jsn.node['dateOfFirstAuthorization'], jsn.vObj['_dateOfFirstAuthorization']);{q}
     if jsn.has('internationalBirthDate') or jsn.has('_internationalBirthDate') then
         result.internationalBirthDateElement := parseDateTime(jsn.node['internationalBirthDate'], jsn.vObj['_internationalBirthDate']);{q}
+    if jsn.has('legalBasis') then
+        result.legalBasis := ParseCodeableConcept(jsn.vObj['legalBasis']);{q3}
     if jsn.has('jurisdictionalAuthorization') then
       iterateArray(jsn.vArr['jurisdictionalAuthorization'], result.jurisdictionalAuthorizationList, parseMedicinalProductAuthorizationJurisdictionalAuthorization);
     if jsn.has('holder') then
@@ -36063,6 +38549,8 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
+    ComposeReference{TFhirMedicinalProduct}(json, 'subject', elem.subject); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('country') and (elem.countryList.Count > 0) then
   begin
     json.valueArray('country');
@@ -36078,19 +38566,19 @@ begin
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('legalStatusOfSupply') then
-  ComposeCodeableConcept(json, 'legalStatusOfSupply', elem.legalStatusOfSupply); {a}
+    ComposeCodeableConcept(json, 'legalStatusOfSupply', elem.legalStatusOfSupply); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-  ComposeCodeableConcept(json, 'status', elem.status); {a}
+    ComposeCodeableConcept(json, 'status', elem.status); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('statusDate') then
-  ComposeDateTimeValue(json, 'statusDate', elem.statusDateElement, false);
+    ComposeDateTimeValue(json, 'statusDate', elem.statusDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('statusDate') then
-  ComposeDateTimeProps(json, 'statusDate', elem.statusDateElement, false);
+    ComposeDateTimeProps(json, 'statusDate', elem.statusDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('restoreDate') then
     ComposeDateTimeValue(json, 'restoreDate', elem.restoreDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('restoreDate') then
     ComposeDateTimeProps(json, 'restoreDate', elem.restoreDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('validityPeriod') then
-  ComposePeriod(json, 'validityPeriod', elem.validityPeriod); {a}
+    ComposePeriod(json, 'validityPeriod', elem.validityPeriod); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('dataExclusivityPeriod') then
     ComposePeriod(json, 'dataExclusivityPeriod', elem.dataExclusivityPeriod); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('dateOfFirstAuthorization') then
@@ -36098,9 +38586,11 @@ begin
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('dateOfFirstAuthorization') then
     ComposeDateTimeProps(json, 'dateOfFirstAuthorization', elem.dateOfFirstAuthorizationElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('internationalBirthDate') then
-  ComposeDateTimeValue(json, 'internationalBirthDate', elem.internationalBirthDateElement, false);
+    ComposeDateTimeValue(json, 'internationalBirthDate', elem.internationalBirthDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('internationalBirthDate') then
-  ComposeDateTimeProps(json, 'internationalBirthDate', elem.internationalBirthDateElement, false);
+    ComposeDateTimeProps(json, 'internationalBirthDate', elem.internationalBirthDateElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('legalBasis') then
+    ComposeCodeableConcept(json, 'legalBasis', elem.legalBasis); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('jurisdictionalAuthorization') and (elem.jurisdictionalAuthorizationList.Count > 0) then
   begin
     json.valueArray('jurisdictionalAuthorization');
@@ -36109,11 +38599,11 @@ begin
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('holder') then
-  ComposeReference{TFhirOrganization}(json, 'holder', elem.holder); {a}
+    ComposeReference{TFhirOrganization}(json, 'holder', elem.holder); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('regulator') then
-  ComposeReference{TFhirOrganization}(json, 'regulator', elem.regulator); {a}
+    ComposeReference{TFhirOrganization}(json, 'regulator', elem.regulator); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('procedure_') then
-  ComposeMedicinalProductAuthorizationProcedure(json, 'procedure', elem.procedure_); {a}
+    ComposeMedicinalProductAuthorizationProcedure(json, 'procedure', elem.procedure_); {a}
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTAUTHORIZATION}
@@ -36552,6 +39042,182 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+procedure TFHIRJsonParser.ParseMedicinalProductContraindicationOtherTherapy(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductContraindicationOtherTherapy(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductContraindicationOtherTherapy(jsn : TJsonObject) : TFhirMedicinalProductContraindicationOtherTherapy;
+begin
+  result := TFhirMedicinalProductContraindicationOtherTherapy.create;
+  try
+    ParseMedicinalProductContraindicationOtherTherapyProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductContraindicationOtherTherapyProperties(jsn : TJsonObject; result : TFhirMedicinalProductContraindicationOtherTherapy);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('therapyRelationshipType') then
+        result.therapyRelationshipType := ParseCodeableConcept(jsn.vObj['therapyRelationshipType']);{q3}
+    if jsn.has('medicationCodeableConcept') {a4} then
+      result.medication := ParseCodeableConcept(jsn.vObj['medicationCodeableConcept']);
+    if jsn.has('medicationReference') {a3} then
+      result.medication := ParseReference(jsn.vObj['medicationReference']);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductContraindicationOtherTherapy(json : TJSONWriter; name : string; elem : TFhirMedicinalProductContraindicationOtherTherapy; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'therapyRelationshipType', elem.therapyRelationshipType); {a}
+  if (elem.medication is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication)) 
+  else if (elem.medication is TFhirReference) then
+    ComposeReference(json, 'medicationReference', TFhirReference(elem.medication));
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductContraindicationPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductContraindicationPopulation(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductContraindicationPopulation(jsn : TJsonObject) : TFhirMedicinalProductContraindicationPopulation;
+begin
+  result := TFhirMedicinalProductContraindicationPopulation.create;
+  try
+    ParseMedicinalProductContraindicationPopulationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductContraindicationPopulationProperties(jsn : TJsonObject; result : TFhirMedicinalProductContraindicationPopulation);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('ageRange') {a4} then
+      result.age := ParseRange(jsn.vObj['ageRange']);
+    if jsn.has('ageCodeableConcept') {a4} then
+      result.age := ParseCodeableConcept(jsn.vObj['ageCodeableConcept']);
+    if jsn.has('gender') then
+        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q3}
+    if jsn.has('race') then
+        result.race := ParseCodeableConcept(jsn.vObj['race']);{q3}
+    if jsn.has('physiologicalCondition') then
+        result.physiologicalCondition := ParseCodeableConcept(jsn.vObj['physiologicalCondition']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductContraindicationPopulation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductContraindicationPopulation; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirRange) then 
+    ComposeRange(json, 'ageRange', TFhirRange(elem.age)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'ageCodeableConcept', TFhirCodeableConcept(elem.age)) ;
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'gender', elem.gender); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'race', elem.race); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'physiologicalCondition', elem.physiologicalCondition); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductContraindication(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductContraindication(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductContraindication(jsn : TJsonObject) : TFhirMedicinalProductContraindication;
+begin
+  result := TFhirMedicinalProductContraindication.create;
+  try
+    ParseMedicinalProductContraindicationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductContraindicationProperties(jsn : TJsonObject; result : TFhirMedicinalProductContraindication);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('subject') then
+      iterateArray(jsn.vArr['subject'], result.subjectList, parseReference{TFhirMedicinalProduct});
+    if jsn.has('disease') then
+        result.disease := ParseCodeableConcept(jsn.vObj['disease']);{q3}
+    if jsn.has('diseaseStatus') then
+        result.diseaseStatus := ParseCodeableConcept(jsn.vObj['diseaseStatus']);{q3}
+    if jsn.has('comorbidity') then
+      iterateArray(jsn.vArr['comorbidity'], result.comorbidityList, parseCodeableConcept);
+    if jsn.has('therapeuticIndication') then
+      iterateArray(jsn.vArr['therapeuticIndication'], result.therapeuticIndicationList, parseReference{TFhirMedicinalProductIndication});
+    if jsn.has('otherTherapy') then
+      iterateArray(jsn.vArr['otherTherapy'], result.otherTherapyList, parseMedicinalProductContraindicationOtherTherapy);
+    if jsn.has('population') then
+      iterateArray(jsn.vArr['population'], result.populationList, parseMedicinalProductContraindicationPopulation);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductContraindication(json : TJSONWriter; name : string; elem : TFhirMedicinalProductContraindication; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') and (elem.subjectList.Count > 0) then
+  begin
+    json.valueArray('subject');
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProduct}(json, '', elem.subjectList[i]); {z - Reference(MedicinalProduct)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('disease') then
+    ComposeCodeableConcept(json, 'disease', elem.disease); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('diseaseStatus') then
+    ComposeCodeableConcept(json, 'diseaseStatus', elem.diseaseStatus); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('comorbidity') and (elem.comorbidityList.Count > 0) then
+  begin
+    json.valueArray('comorbidity');
+    for i := 0 to elem.comorbidityList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.comorbidityList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('therapeuticIndication') and (elem.therapeuticIndicationList.Count > 0) then
+  begin
+    json.valueArray('therapeuticIndication');
+    for i := 0 to elem.therapeuticIndicationList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductIndication}(json, '', elem.therapeuticIndicationList[i]); {z - Reference(MedicinalProductIndication)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('otherTherapy') and (elem.otherTherapyList.Count > 0) then
+  begin
+    json.valueArray('otherTherapy');
+    for i := 0 to elem.otherTherapyList.Count - 1 do
+      ComposeMedicinalProductContraindicationOtherTherapy(json, '', elem.otherTherapyList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('population') and (elem.populationList.Count > 0) then
+  begin
+    json.valueArray('population');
+    for i := 0 to elem.populationList.Count - 1 do
+      ComposeMedicinalProductContraindicationPopulation(json, '', elem.populationList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
 procedure TFHIRJsonParser.ParseMedicinalProductDeviceSpecMaterial(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -36728,6 +39394,190 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+procedure TFHIRJsonParser.ParseMedicinalProductIndicationOtherTherapy(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductIndicationOtherTherapy(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductIndicationOtherTherapy(jsn : TJsonObject) : TFhirMedicinalProductIndicationOtherTherapy;
+begin
+  result := TFhirMedicinalProductIndicationOtherTherapy.create;
+  try
+    ParseMedicinalProductIndicationOtherTherapyProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductIndicationOtherTherapyProperties(jsn : TJsonObject; result : TFhirMedicinalProductIndicationOtherTherapy);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('therapyRelationshipType') then
+        result.therapyRelationshipType := ParseCodeableConcept(jsn.vObj['therapyRelationshipType']);{q3}
+    if jsn.has('medicationCodeableConcept') {a4} then
+      result.medication := ParseCodeableConcept(jsn.vObj['medicationCodeableConcept']);
+    if jsn.has('medicationReference') {a3} then
+      result.medication := ParseReference(jsn.vObj['medicationReference']);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductIndicationOtherTherapy(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIndicationOtherTherapy; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeCodeableConcept(json, 'therapyRelationshipType', elem.therapyRelationshipType); {a}
+  if (elem.medication is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication)) 
+  else if (elem.medication is TFhirReference) then
+    ComposeReference(json, 'medicationReference', TFhirReference(elem.medication));
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductIndicationPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductIndicationPopulation(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductIndicationPopulation(jsn : TJsonObject) : TFhirMedicinalProductIndicationPopulation;
+begin
+  result := TFhirMedicinalProductIndicationPopulation.create;
+  try
+    ParseMedicinalProductIndicationPopulationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductIndicationPopulationProperties(jsn : TJsonObject; result : TFhirMedicinalProductIndicationPopulation);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('ageRange') {a4} then
+      result.age := ParseRange(jsn.vObj['ageRange']);
+    if jsn.has('ageCodeableConcept') {a4} then
+      result.age := ParseCodeableConcept(jsn.vObj['ageCodeableConcept']);
+    if jsn.has('gender') then
+        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q3}
+    if jsn.has('race') then
+        result.race := ParseCodeableConcept(jsn.vObj['race']);{q3}
+    if jsn.has('physiologicalCondition') then
+        result.physiologicalCondition := ParseCodeableConcept(jsn.vObj['physiologicalCondition']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductIndicationPopulation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIndicationPopulation; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirRange) then 
+    ComposeRange(json, 'ageRange', TFhirRange(elem.age)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'ageCodeableConcept', TFhirCodeableConcept(elem.age)) ;
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'gender', elem.gender); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'race', elem.race); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'physiologicalCondition', elem.physiologicalCondition); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductIndication(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductIndication(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductIndication(jsn : TJsonObject) : TFhirMedicinalProductIndication;
+begin
+  result := TFhirMedicinalProductIndication.create;
+  try
+    ParseMedicinalProductIndicationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductIndicationProperties(jsn : TJsonObject; result : TFhirMedicinalProductIndication);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('subject') then
+      iterateArray(jsn.vArr['subject'], result.subjectList, parseReference{TFhirMedicinalProduct});
+    if jsn.has('diseaseSymptomProcedure') then
+        result.diseaseSymptomProcedure := ParseCodeableConcept(jsn.vObj['diseaseSymptomProcedure']);{q3}
+    if jsn.has('diseaseStatus') then
+        result.diseaseStatus := ParseCodeableConcept(jsn.vObj['diseaseStatus']);{q3}
+    if jsn.has('comorbidity') then
+      iterateArray(jsn.vArr['comorbidity'], result.comorbidityList, parseCodeableConcept);
+    if jsn.has('intendedEffect') then
+        result.intendedEffect := ParseCodeableConcept(jsn.vObj['intendedEffect']);{q3}
+    if jsn.has('duration') then
+        result.duration := ParseQuantity(jsn.vObj['duration']);{q3}
+    if jsn.has('otherTherapy') then
+      iterateArray(jsn.vArr['otherTherapy'], result.otherTherapyList, parseMedicinalProductIndicationOtherTherapy);
+    if jsn.has('undesirableEffect') then
+      iterateArray(jsn.vArr['undesirableEffect'], result.undesirableEffectList, parseReference{TFhirMedicinalProductUndesirableEffect});
+    if jsn.has('population') then
+      iterateArray(jsn.vArr['population'], result.populationList, parseMedicinalProductIndicationPopulation);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductIndication(json : TJSONWriter; name : string; elem : TFhirMedicinalProductIndication; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') and (elem.subjectList.Count > 0) then
+  begin
+    json.valueArray('subject');
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProduct}(json, '', elem.subjectList[i]); {z - Reference(MedicinalProduct)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('diseaseSymptomProcedure') then
+    ComposeCodeableConcept(json, 'diseaseSymptomProcedure', elem.diseaseSymptomProcedure); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('diseaseStatus') then
+    ComposeCodeableConcept(json, 'diseaseStatus', elem.diseaseStatus); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('comorbidity') and (elem.comorbidityList.Count > 0) then
+  begin
+    json.valueArray('comorbidity');
+    for i := 0 to elem.comorbidityList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.comorbidityList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('intendedEffect') then
+    ComposeCodeableConcept(json, 'intendedEffect', elem.intendedEffect); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('duration') then
+    ComposeQuantity(json, 'duration', elem.duration); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('otherTherapy') and (elem.otherTherapyList.Count > 0) then
+  begin
+    json.valueArray('otherTherapy');
+    for i := 0 to elem.otherTherapyList.Count - 1 do
+      ComposeMedicinalProductIndicationOtherTherapy(json, '', elem.otherTherapyList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('undesirableEffect') and (elem.undesirableEffectList.Count > 0) then
+  begin
+    json.valueArray('undesirableEffect');
+    for i := 0 to elem.undesirableEffectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProductUndesirableEffect}(json, '', elem.undesirableEffectList[i]); {z - Reference(MedicinalProductUndesirableEffect)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('population') and (elem.populationList.Count > 0) then
+  begin
+    json.valueArray('population');
+    for i := 0 to elem.populationList.Count - 1 do
+      ComposeMedicinalProductIndicationPopulation(json, '', elem.populationList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
 procedure TFHIRJsonParser.ParseMedicinalProductIngredientSpecifiedSubstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -36801,8 +39651,12 @@ begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('presentation') then
         result.presentation := ParseRatio(jsn.vObj['presentation']);{q3}
+    if jsn.has('presentationLowLimit') then
+        result.presentationLowLimit := ParseRatio(jsn.vObj['presentationLowLimit']);{q3}
     if jsn.has('concentration') then
         result.concentration := ParseRatio(jsn.vObj['concentration']);{q3}
+    if jsn.has('concentrationLowLimit') then
+        result.concentrationLowLimit := ParseRatio(jsn.vObj['concentrationLowLimit']);{q3}
     if jsn.has('measurementPoint') or jsn.has('_measurementPoint') then
         result.measurementPointElement := parseString(jsn.node['measurementPoint'], jsn.vObj['_measurementPoint']);{q}
     if jsn.has('country') then
@@ -36821,7 +39675,11 @@ begin
   ComposeBackboneElementProperties(json, elem);
   ComposeRatio(json, 'presentation', elem.presentation); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeRatio(json, 'presentationLowLimit', elem.presentationLowLimit); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeRatio(json, 'concentration', elem.concentration); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeRatio(json, 'concentrationLowLimit', elem.concentrationLowLimit); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'measurementPoint', elem.measurementPointElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
@@ -37007,6 +39865,78 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+procedure TFHIRJsonParser.ParseMedicinalProductInteraction(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductInteraction(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductInteraction(jsn : TJsonObject) : TFhirMedicinalProductInteraction;
+begin
+  result := TFhirMedicinalProductInteraction.create;
+  try
+    ParseMedicinalProductInteractionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductInteractionProperties(jsn : TJsonObject; result : TFhirMedicinalProductInteraction);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('subject') then
+      iterateArray(jsn.vArr['subject'], result.subjectList, parseReference{TFhirMedicinalProduct});
+    if jsn.has('interaction') or jsn.has('_interaction') then
+        result.interactionElement := parseString(jsn.node['interaction'], jsn.vObj['_interaction']);{q}
+    if jsn.has('interactant') then
+      iterateArray(jsn.vArr['interactant'], result.interactantList, parseCodeableConcept);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('effect') then
+        result.effect := ParseCodeableConcept(jsn.vObj['effect']);{q3}
+    if jsn.has('incidence') then
+        result.incidence := ParseCodeableConcept(jsn.vObj['incidence']);{q3}
+    if jsn.has('management') then
+        result.management := ParseCodeableConcept(jsn.vObj['management']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductInteraction(json : TJSONWriter; name : string; elem : TFhirMedicinalProductInteraction; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') and (elem.subjectList.Count > 0) then
+  begin
+    json.valueArray('subject');
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProduct}(json, '', elem.subjectList[i]); {z - Reference(MedicinalProduct)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('interaction') then
+    ComposeStringValue(json, 'interaction', elem.interactionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('interaction') then
+    ComposeStringProps(json, 'interaction', elem.interactionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('interactant') and (elem.interactantList.Count > 0) then
+  begin
+    json.valueArray('interactant');
+    for i := 0 to elem.interactantList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.interactantList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('effect') then
+    ComposeCodeableConcept(json, 'effect', elem.effect); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('incidence') then
+    ComposeCodeableConcept(json, 'incidence', elem.incidence); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('management') then
+    ComposeCodeableConcept(json, 'management', elem.management); {a}
+end;
+
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
 procedure TFHIRJsonParser.ParseMedicinalProductManufactured(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -37570,11 +40500,11 @@ begin
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('device') and (elem.deviceList.Count > 0) then
   begin
-      json.valueArray('device');
-      for i := 0 to elem.deviceList.Count - 1 do
+    json.valueArray('device');
+    for i := 0 to elem.deviceList.Count - 1 do
       ComposeReference{TFhirMedicinalProductDeviceSpec}(json, '', elem.deviceList[i]); {z - Reference(MedicinalProductDeviceSpec)}
-      json.FinishArray;
-    end;
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('characteristics') and (elem.characteristicsList.Count > 0) then
   begin
     json.valueArray('characteristics');
@@ -37592,6 +40522,118 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+procedure TFHIRJsonParser.ParseMedicinalProductUndesirableEffectPopulation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductUndesirableEffectPopulation(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductUndesirableEffectPopulation(jsn : TJsonObject) : TFhirMedicinalProductUndesirableEffectPopulation;
+begin
+  result := TFhirMedicinalProductUndesirableEffectPopulation.create;
+  try
+    ParseMedicinalProductUndesirableEffectPopulationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductUndesirableEffectPopulationProperties(jsn : TJsonObject; result : TFhirMedicinalProductUndesirableEffectPopulation);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('ageRange') {a4} then
+      result.age := ParseRange(jsn.vObj['ageRange']);
+    if jsn.has('ageCodeableConcept') {a4} then
+      result.age := ParseCodeableConcept(jsn.vObj['ageCodeableConcept']);
+    if jsn.has('gender') then
+        result.gender := ParseCodeableConcept(jsn.vObj['gender']);{q3}
+    if jsn.has('race') then
+        result.race := ParseCodeableConcept(jsn.vObj['race']);{q3}
+    if jsn.has('physiologicalCondition') then
+        result.physiologicalCondition := ParseCodeableConcept(jsn.vObj['physiologicalCondition']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductUndesirableEffectPopulation(json : TJSONWriter; name : string; elem : TFhirMedicinalProductUndesirableEffectPopulation; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirRange) then 
+    ComposeRange(json, 'ageRange', TFhirRange(elem.age)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'ageCodeableConcept', TFhirCodeableConcept(elem.age)) ;
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'gender', elem.gender); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'race', elem.race); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'physiologicalCondition', elem.physiologicalCondition); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductUndesirableEffect(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicinalProductUndesirableEffect(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicinalProductUndesirableEffect(jsn : TJsonObject) : TFhirMedicinalProductUndesirableEffect;
+begin
+  result := TFhirMedicinalProductUndesirableEffect.create;
+  try
+    ParseMedicinalProductUndesirableEffectProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicinalProductUndesirableEffectProperties(jsn : TJsonObject; result : TFhirMedicinalProductUndesirableEffect);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('subject') then
+      iterateArray(jsn.vArr['subject'], result.subjectList, parseReference{TFhirMedicinalProduct});
+    if jsn.has('symptomConditionEffect') then
+        result.symptomConditionEffect := ParseCodeableConcept(jsn.vObj['symptomConditionEffect']);{q3}
+    if jsn.has('classification') then
+        result.classification := ParseCodeableConcept(jsn.vObj['classification']);{q3}
+    if jsn.has('frequencyOfOccurrence') then
+        result.frequencyOfOccurrence := ParseCodeableConcept(jsn.vObj['frequencyOfOccurrence']);{q3}
+    if jsn.has('population') then
+      iterateArray(jsn.vArr['population'], result.populationList, parseMedicinalProductUndesirableEffectPopulation);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicinalProductUndesirableEffect(json : TJSONWriter; name : string; elem : TFhirMedicinalProductUndesirableEffect; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') and (elem.subjectList.Count > 0) then
+  begin
+    json.valueArray('subject');
+    for i := 0 to elem.subjectList.Count - 1 do
+      ComposeReference{TFhirMedicinalProduct}(json, '', elem.subjectList[i]); {z - Reference(MedicinalProduct)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('symptomConditionEffect') then
+    ComposeCodeableConcept(json, 'symptomConditionEffect', elem.symptomConditionEffect); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('classification') then
+    ComposeCodeableConcept(json, 'classification', elem.classification); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('frequencyOfOccurrence') then
+    ComposeCodeableConcept(json, 'frequencyOfOccurrence', elem.frequencyOfOccurrence); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('population') and (elem.populationList.Count > 0) then
+  begin
+    json.valueArray('population');
+    for i := 0 to elem.populationList.Count - 1 do
+      ComposeMedicinalProductUndesirableEffectPopulation(json, '', elem.populationList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
 procedure TFHIRJsonParser.ParseMessageDefinitionFocus(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -37705,7 +40747,7 @@ begin
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := parseUri(jsn.node['url'], jsn.vObj['_url']);{q}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('version') or jsn.has('_version') then
         result.versionElement := parseString(jsn.node['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
@@ -37750,6 +40792,8 @@ begin
       result.responseRequiredElement := parseEnum(jsn.path+'/responseRequired', jsn.node['responseRequired'], jsn.vObj['_responseRequired'], CODES_TFhirMessageheaderResponseRequestEnum, SYSTEMS_TFhirMessageheaderResponseRequestEnum);
     if jsn.has('allowedResponse') then
       iterateArray(jsn.vArr['allowedResponse'], result.allowedResponseList, parseMessageDefinitionAllowedResponse);
+      if jsn.has('graph') or jsn.has('_graph') then
+      iteratePrimitiveArray(jsn.vArr['graph'], jsn.vArr['_graph'], result.graphList, parseCanonical);
 end;
 
 procedure TFHIRJsonComposer.ComposeMessageDefinition(json : TJSONWriter; name : string; elem : TFhirMessageDefinition; noObj : boolean = false);
@@ -37765,8 +40809,13 @@ begin
     ComposeUriValue(json, 'url', elem.urlElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('url') then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') then
-    ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
     ComposeStringValue(json, 'version', elem.versionElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('version') then
@@ -37904,6 +40953,30 @@ begin
     for i := 0 to elem.allowedResponseList.Count - 1 do
       ComposeMessageDefinitionAllowedResponse(json, '', elem.allowedResponseList[i]); {z - }
     json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('graph') and (elem.graphList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.graphList.Count - 1 do
+    begin
+      ext := ext or ((elem.graphList[i].id <> '') or (elem.graphList[i].hasExtensionList) {no-comments or (elem.graphList[i].hasComments)});
+      val := val or (elem.graphList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('graph');
+      for i := 0 to elem.graphList.Count - 1 do
+        ComposeCanonicalValue(json, '',elem.graphList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_graph');
+      for i := 0 to elem.graphList.Count - 1 do
+        ComposeCanonicalProps(json, '',elem.graphList[i], true);
+      json.FinishArray;
+    end;
   end;
 end;
 
@@ -38681,6 +41754,10 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+      if jsn.has('instantiatesCanonical') or jsn.has('_instantiatesCanonical') then
+      iteratePrimitiveArray(jsn.vArr['instantiatesCanonical'], jsn.vArr['_instantiatesCanonical'], result.instantiatesCanonicalList, parseCanonical);
+      if jsn.has('instantiatesUri') or jsn.has('_instantiatesUri') then
+      iteratePrimitiveArray(jsn.vArr['instantiatesUri'], jsn.vArr['_instantiatesUri'], result.instantiatesUriList, parseUri);
       if jsn.has('instantiates') or jsn.has('_instantiates') then
       iteratePrimitiveArray(jsn.vArr['instantiates'], jsn.vArr['_instantiates'], result.instantiatesList, parseUri);
     if jsn.has('status') or jsn.has('_status')  then
@@ -38726,6 +41803,54 @@ begin
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') and (elem.instantiatesCanonicalList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+    begin
+      ext := ext or ((elem.instantiatesCanonicalList[i].id <> '') or (elem.instantiatesCanonicalList[i].hasExtensionList) {no-comments or (elem.instantiatesCanonicalList[i].hasComments)});
+      val := val or (elem.instantiatesCanonicalList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('instantiatesCanonical');
+      for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+        ComposeCanonicalValue(json, '',elem.instantiatesCanonicalList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_instantiatesCanonical');
+      for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+        ComposeCanonicalProps(json, '',elem.instantiatesCanonicalList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') and (elem.instantiatesUriList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.instantiatesUriList.Count - 1 do
+    begin
+      ext := ext or ((elem.instantiatesUriList[i].id <> '') or (elem.instantiatesUriList[i].hasExtensionList) {no-comments or (elem.instantiatesUriList[i].hasComments)});
+      val := val or (elem.instantiatesUriList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('instantiatesUri');
+      for i := 0 to elem.instantiatesUriList.Count - 1 do
+        ComposeUriValue(json, '',elem.instantiatesUriList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_instantiatesUri');
+      for i := 0 to elem.instantiatesUriList.Count - 1 do
+        ComposeUriProps(json, '',elem.instantiatesUriList[i], true);
+      json.FinishArray;
+    end;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('instantiates') and (elem.instantiatesList.Count > 0) then
   begin
@@ -39019,14 +42144,16 @@ begin
         result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('focus') then
       iterateArray(jsn.vArr['focus'], result.focusList, parseReference{TFhirReference});
-    if jsn.has('context') then
-        result.context := ParseReference{TFhirEncounter}(jsn.vObj['context']);{q3}
+    if jsn.has('encounter') then
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('effectivePeriod') {a4} then
       result.effective := ParsePeriod(jsn.vObj['effectivePeriod']);
     if jsn.has('effectiveTiming') {a4} then
       result.effective := ParseTiming(jsn.vObj['effectiveTiming']);
     if jsn.has('effectiveDateTime') or jsn.has('_effectiveDateTime') then
       result.effective := parseDateTime(jsn.node['effectiveDateTime'], jsn.vObj['_effectiveDateTime']);
+    if jsn.has('effectiveInstant') or jsn.has('_effectiveInstant') then
+      result.effective := parseInstant(jsn.node['effectiveInstant'], jsn.vObj['_effectiveInstant']);
     if jsn.has('issued') or jsn.has('_issued') then
         result.issuedElement := parseInstant(jsn.node['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('performer') then
@@ -39124,8 +42251,8 @@ begin
       ComposeReference{TFhirReference}(json, '', elem.focusList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('context') then
-    ComposeReference{TFhirEncounter}(json, 'context', elem.context); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('encounter') then
+    ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) then 
     ComposePeriod(json, 'effectivePeriod', TFhirPeriod(elem.effective)) 
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirTiming) then 
@@ -39134,6 +42261,11 @@ begin
   begin
     ComposeDateTimeValue(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
     ComposeDateTimeProps(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
+  end
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirInstant) then 
+  begin
+    ComposeInstantValue(json, 'effectiveInstant', TFhirInstant(elem.effective), false);
+    ComposeInstantProps(json, 'effectiveInstant', TFhirInstant(elem.effective), false);
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('issued') then
     ComposeInstantValue(json, 'issued', elem.issuedElement, false);
@@ -39491,6 +42623,8 @@ begin
       result.searchTypeElement := parseEnum(jsn.path+'/searchType', jsn.node['searchType'], jsn.vObj['_searchType'], CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum);
     if jsn.has('binding') then
         result.binding := ParseOperationDefinitionParameterBinding(jsn.vObj['binding']);{q3}
+    if jsn.has('referencedFrom') then
+      iterateArray(jsn.vArr['referencedFrom'], result.referencedFromList, parseOperationDefinitionParameterReferencedFrom);
     if jsn.has('part') then
       iterateArray(jsn.vArr['part'], result.partList, parseOperationDefinitionParameter);
 end;
@@ -39551,6 +42685,13 @@ begin
     ComposeEnumProps(json, 'searchType', elem.SearchTypeElement, CODES_TFhirSearchParamTypeEnum, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeOperationDefinitionParameterBinding(json, 'binding', elem.binding); {a}
+  if (SummaryOption in [soFull, soData]) and (elem.referencedFromList.Count > 0) then
+  begin
+    json.valueArray('referencedFrom');
+    for i := 0 to elem.referencedFromList.Count - 1 do
+      ComposeOperationDefinitionParameterReferencedFrom(json, '', elem.referencedFromList[i]); {z - }
+    json.FinishArray;
+  end;
   if (SummaryOption in [soFull, soData]) and (elem.partList.Count > 0) then
   begin
     json.valueArray('part');
@@ -39596,6 +42737,46 @@ begin
   ComposeEnumProps(json, 'strength', elem.StrengthElement, CODES_TFhirBindingStrengthEnum, false);
   ComposeCanonicalValue(json, 'valueSet', elem.valueSetElement, false);
   ComposeCanonicalProps(json, 'valueSet', elem.valueSetElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseOperationDefinitionParameterReferencedFrom(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseOperationDefinitionParameterReferencedFrom(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseOperationDefinitionParameterReferencedFrom(jsn : TJsonObject) : TFhirOperationDefinitionParameterReferencedFrom;
+begin
+  result := TFhirOperationDefinitionParameterReferencedFrom.create;
+  try
+    ParseOperationDefinitionParameterReferencedFromProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseOperationDefinitionParameterReferencedFromProperties(jsn : TJsonObject; result : TFhirOperationDefinitionParameterReferencedFrom);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('source') or jsn.has('_source') then
+        result.sourceElement := parseString(jsn.node['source'], jsn.vObj['_source']);{q}
+    if jsn.has('sourceId') or jsn.has('_sourceId') then
+        result.sourceIdElement := parseString(jsn.node['sourceId'], jsn.vObj['_sourceId']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeOperationDefinitionParameterReferencedFrom(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameterReferencedFrom; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeStringValue(json, 'source', elem.sourceElement, false);
+  ComposeStringProps(json, 'source', elem.sourceElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'sourceId', elem.sourceIdElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'sourceId', elem.sourceIdElement, false);
   if not noObj then json.finishObject;
 end;
 
@@ -40203,140 +43384,24 @@ begin
 end;
 
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-procedure TFHIRJsonParser.ParseOrganizationRoleAvailableTime(jsn : TJsonObject; ctxt : TFHIRObjectList);
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+procedure TFHIRJsonParser.ParseOrganizationAffiliation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseOrganizationRoleAvailableTime(jsn)); {2}
+  ctxt.add(ParseOrganizationAffiliation(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseOrganizationRoleAvailableTime(jsn : TJsonObject) : TFhirOrganizationRoleAvailableTime;
+function TFHIRJsonParser.ParseOrganizationAffiliation(jsn : TJsonObject) : TFhirOrganizationAffiliation;
 begin
-  result := TFhirOrganizationRoleAvailableTime.create;
+  result := TFhirOrganizationAffiliation.create;
   try
-    ParseOrganizationRoleAvailableTimeProperties(jsn, result);
+    ParseOrganizationAffiliationProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseOrganizationRoleAvailableTimeProperties(jsn : TJsonObject; result : TFhirOrganizationRoleAvailableTime);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('daysOfWeek') or jsn.has('_daysOfWeek') then
-      iterateEnumArray(jsn.vArr['daysOfWeek'], jsn.vArr['_daysOfWeek'], jsn.path+'/daysOfWeek', result.daysOfWeekList, parseEnum, CODES_TFhirDaysOfWeekEnum, SYSTEMS_TFhirDaysOfWeekEnum);
-    if jsn.has('allDay') or jsn.has('_allDay') then
-        result.allDayElement := parseBoolean(jsn.node['allDay'], jsn.vObj['_allDay']);{q}
-    if jsn.has('availableStartTime') or jsn.has('_availableStartTime') then
-        result.availableStartTimeElement := parseTime(jsn.node['availableStartTime'], jsn.vObj['_availableStartTime']);{q}
-    if jsn.has('availableEndTime') or jsn.has('_availableEndTime') then
-        result.availableEndTimeElement := parseTime(jsn.node['availableEndTime'], jsn.vObj['_availableEndTime']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeOrganizationRoleAvailableTime(json : TJSONWriter; name : string; elem : TFhirOrganizationRoleAvailableTime; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-  val : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) and (elem.daysOfWeekList.Count > 0) then
-  begin
-    val := false;
-    ext := false;
-    for i := 0 to elem.daysOfWeekList.Count - 1 do
-    begin
-      val := val or (elem.daysOfWeekList[i].hasPrimitiveValue);
-      ext := ext or ((elem.daysOfWeekList[i].id <> '') or (elem.daysOfWeekList[i].hasExtensionList));
-    end;
-    if val then
-    begin
-      json.valueArray('daysOfWeek');
-      for i := 0 to elem.daysOfWeekList.Count - 1 do
-        ComposeEnumValue(json, '', elem.daysOfWeekList[i], CODES_TFhirDaysOfWeekEnum, true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_daysOfWeek');
-      for i := 0 to elem.daysOfWeekList.Count - 1 do
-        ComposeEnumProps(json, '', elem.daysOfWeekList[i], CODES_TFhirDaysOfWeekEnum, true);
-      json.FinishArray;
-    end;
-  end;
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanValue(json, 'allDay', elem.allDayElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeBooleanProps(json, 'allDay', elem.allDayElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeTimeValue(json, 'availableStartTime', elem.availableStartTimeElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeTimeProps(json, 'availableStartTime', elem.availableStartTimeElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeTimeValue(json, 'availableEndTime', elem.availableEndTimeElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeTimeProps(json, 'availableEndTime', elem.availableEndTimeElement, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseOrganizationRoleNotAvailable(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseOrganizationRoleNotAvailable(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseOrganizationRoleNotAvailable(jsn : TJsonObject) : TFhirOrganizationRoleNotAvailable;
-begin
-  result := TFhirOrganizationRoleNotAvailable.create;
-  try
-    ParseOrganizationRoleNotAvailableProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseOrganizationRoleNotAvailableProperties(jsn : TJsonObject; result : TFhirOrganizationRoleNotAvailable);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']);{q}
-    if jsn.has('during') then
-        result.during := ParsePeriod(jsn.vObj['during']);{q3}
-end;
-
-procedure TFHIRJsonComposer.ComposeOrganizationRoleNotAvailable(json : TJSONWriter; name : string; elem : TFhirOrganizationRoleNotAvailable; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposePeriod(json, 'during', elem.during); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseOrganizationRole(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseOrganizationRole(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseOrganizationRole(jsn : TJsonObject) : TFhirOrganizationRole;
-begin
-  result := TFhirOrganizationRole.create;
-  try
-    ParseOrganizationRoleProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseOrganizationRoleProperties(jsn : TJsonObject; result : TFhirOrganizationRole);
+procedure TFHIRJsonParser.ParseOrganizationAffiliationProperties(jsn : TJsonObject; result : TFhirOrganizationAffiliation);
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
@@ -40361,17 +43426,11 @@ begin
       iterateArray(jsn.vArr['healthcareService'], result.healthcareServiceList, parseReference{TFhirHealthcareService});
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
-    if jsn.has('availableTime') then
-      iterateArray(jsn.vArr['availableTime'], result.availableTimeList, parseOrganizationRoleAvailableTime);
-    if jsn.has('notAvailable') then
-      iterateArray(jsn.vArr['notAvailable'], result.notAvailableList, parseOrganizationRoleNotAvailable);
-    if jsn.has('availabilityExceptions') or jsn.has('_availabilityExceptions') then
-        result.availabilityExceptionsElement := parseString(jsn.node['availabilityExceptions'], jsn.vObj['_availabilityExceptions']);{q}
     if jsn.has('endpoint') then
       iterateArray(jsn.vArr['endpoint'], result.endpointList, parseReference{TFhirEndpoint});
 end;
 
-procedure TFHIRJsonComposer.ComposeOrganizationRole(json : TJSONWriter; name : string; elem : TFhirOrganizationRole; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeOrganizationAffiliation(json : TJSONWriter; name : string; elem : TFhirOrganizationAffiliation; noObj : boolean = false);
 var
   i : integer;
 begin
@@ -40437,24 +43496,6 @@ begin
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('availableTime') and (elem.availableTimeList.Count > 0) then
-  begin
-    json.valueArray('availableTime');
-    for i := 0 to elem.availableTimeList.Count - 1 do
-      ComposeOrganizationRoleAvailableTime(json, '', elem.availableTimeList[i]); {z - }
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('notAvailable') and (elem.notAvailableList.Count > 0) then
-  begin
-    json.valueArray('notAvailable');
-    for i := 0 to elem.notAvailableList.Count - 1 do
-      ComposeOrganizationRoleNotAvailable(json, '', elem.notAvailableList[i]); {z - }
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('availabilityExceptions') then
-    ComposeStringValue(json, 'availabilityExceptions', elem.availabilityExceptionsElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('availabilityExceptions') then
-    ComposeStringProps(json, 'availabilityExceptions', elem.availabilityExceptionsElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('endpoint') and (elem.endpointList.Count > 0) then
   begin
     json.valueArray('endpoint');
@@ -40464,7 +43505,7 @@ begin
   end;
 end;
 
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
 procedure TFHIRJsonParser.ParsePatientContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -41361,6 +44402,8 @@ begin
         result.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('textEquivalent') or jsn.has('_textEquivalent') then
         result.textEquivalentElement := parseString(jsn.node['textEquivalent'], jsn.vObj['_textEquivalent']);{q}
+    if jsn.has('priority') or jsn.has('_priority')  then
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn.node['priority'], jsn.vObj['_priority'], CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum);
     if jsn.has('code') then
       iterateArray(jsn.vArr['code'], result.codeList, parseCodeableConcept);
     if jsn.has('reason') then
@@ -41441,6 +44484,10 @@ begin
     ComposeStringValue(json, 'textEquivalent', elem.textEquivalentElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'textEquivalent', elem.textEquivalentElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
   if (SummaryOption in [soFull, soData]) and (elem.codeList.Count > 0) then
   begin
     json.valueArray('code');
@@ -41819,8 +44866,14 @@ begin
         result.effectivePeriod := ParsePeriod(jsn.vObj['effectivePeriod']);{q3}
     if jsn.has('topic') then
       iterateArray(jsn.vArr['topic'], result.topicList, parseCodeableConcept);
-    if jsn.has('contributor') then
-      iterateArray(jsn.vArr['contributor'], result.contributorList, parseContributor);
+    if jsn.has('author') then
+      iterateArray(jsn.vArr['author'], result.authorList, parseContactDetail);
+    if jsn.has('editor') then
+      iterateArray(jsn.vArr['editor'], result.editorList, parseContactDetail);
+    if jsn.has('reviewer') then
+      iterateArray(jsn.vArr['reviewer'], result.reviewerList, parseContactDetail);
+    if jsn.has('endorser') then
+      iterateArray(jsn.vArr['endorser'], result.endorserList, parseContactDetail);
     if jsn.has('relatedArtifact') then
       iterateArray(jsn.vArr['relatedArtifact'], result.relatedArtifactList, parseRelatedArtifact);
       if jsn.has('library') or jsn.has('_library') then
@@ -41941,11 +44994,32 @@ begin
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soData]) and doCompose('contributor') and (elem.contributorList.Count > 0) then
+  if (SummaryOption in [soFull, soData]) and doCompose('author') and (elem.authorList.Count > 0) then
   begin
-    json.valueArray('contributor');
-    for i := 0 to elem.contributorList.Count - 1 do
-      ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
+    json.valueArray('author');
+    for i := 0 to elem.authorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.authorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('editor') and (elem.editorList.Count > 0) then
+  begin
+    json.valueArray('editor');
+    for i := 0 to elem.editorList.Count - 1 do
+      ComposeContactDetail(json, '', elem.editorList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('reviewer') and (elem.reviewerList.Count > 0) then
+  begin
+    json.valueArray('reviewer');
+    for i := 0 to elem.reviewerList.Count - 1 do
+      ComposeContactDetail(json, '', elem.reviewerList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soData]) and doCompose('endorser') and (elem.endorserList.Count > 0) then
+  begin
+    json.valueArray('endorser');
+    for i := 0 to elem.endorserList.Count - 1 do
+      ComposeContactDetail(json, '', elem.endorserList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('relatedArtifact') and (elem.relatedArtifactList.Count > 0) then
@@ -43116,627 +46190,6 @@ begin
 end;
 
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-procedure TFHIRJsonParser.ParseProductPlanContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanContact(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanContact(jsn : TJsonObject) : TFhirProductPlanContact;
-begin
-  result := TFhirProductPlanContact.create;
-  try
-    ParseProductPlanContactProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanContactProperties(jsn : TJsonObject; result : TFhirProductPlanContact);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('purpose') then
-        result.purpose := ParseCodeableConcept(jsn.vObj['purpose']);{q3}
-    if jsn.has('name') then
-        result.name := ParseHumanName(jsn.vObj['name']);{q3}
-    if jsn.has('telecom') then
-      iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
-    if jsn.has('address') then
-        result.address := ParseAddress(jsn.vObj['address']);{q3}
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanContact(json : TJSONWriter; name : string; elem : TFhirProductPlanContact; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'purpose', elem.purpose); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeHumanName(json, 'name', elem.name); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
-  begin
-    json.valueArray('telecom');
-    for i := 0 to elem.telecomList.Count - 1 do
-      ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) then
-    ComposeAddress(json, 'address', elem.address); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanCoverage(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanCoverage(jsn : TJsonObject) : TFhirProductPlanCoverage;
-begin
-  result := TFhirProductPlanCoverage.create;
-  try
-    ParseProductPlanCoverageProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanCoverageProperties(jsn : TJsonObject; result : TFhirProductPlanCoverage);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('network') then
-      iterateArray(jsn.vArr['network'], result.networkList, parseReference{TFhirOrganization});
-    if jsn.has('benefit') then
-      iterateArray(jsn.vArr['benefit'], result.benefitList, parseProductPlanCoverageBenefit);
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanCoverage(json : TJSONWriter; name : string; elem : TFhirProductPlanCoverage; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.networkList.Count > 0) then
-  begin
-    json.valueArray('network');
-    for i := 0 to elem.networkList.Count - 1 do
-      ComposeReference{TFhirOrganization}(json, '', elem.networkList[i]); {z - Reference(Organization)}
-    json.FinishArray;
-  end;
-  if (elem.benefitList.Count > 0) then
-  begin
-    json.valueArray('benefit');
-    for i := 0 to elem.benefitList.Count - 1 do
-      ComposeProductPlanCoverageBenefit(json, '', elem.benefitList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanCoverageBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanCoverageBenefit(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanCoverageBenefit(jsn : TJsonObject) : TFhirProductPlanCoverageBenefit;
-begin
-  result := TFhirProductPlanCoverageBenefit.create;
-  try
-    ParseProductPlanCoverageBenefitProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanCoverageBenefitProperties(jsn : TJsonObject; result : TFhirProductPlanCoverageBenefit);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('requirement') or jsn.has('_requirement') then
-        result.requirementElement := parseString(jsn.node['requirement'], jsn.vObj['_requirement']);{q}
-    if jsn.has('limit') then
-      iterateArray(jsn.vArr['limit'], result.limitList, parseProductPlanCoverageBenefitLimit);
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanCoverageBenefit(json : TJSONWriter; name : string; elem : TFhirProductPlanCoverageBenefit; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'requirement', elem.requirementElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'requirement', elem.requirementElement, false);
-  if (SummaryOption in [soFull, soData]) and (elem.limitList.Count > 0) then
-  begin
-    json.valueArray('limit');
-    for i := 0 to elem.limitList.Count - 1 do
-      ComposeProductPlanCoverageBenefitLimit(json, '', elem.limitList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanCoverageBenefitLimit(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanCoverageBenefitLimit(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanCoverageBenefitLimit(jsn : TJsonObject) : TFhirProductPlanCoverageBenefitLimit;
-begin
-  result := TFhirProductPlanCoverageBenefitLimit.create;
-  try
-    ParseProductPlanCoverageBenefitLimitProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanCoverageBenefitLimitProperties(jsn : TJsonObject; result : TFhirProductPlanCoverageBenefitLimit);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('value') then
-        result.value := ParseQuantity(jsn.vObj['value']);{q3}
-    if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanCoverageBenefitLimit(json : TJSONWriter; name : string; elem : TFhirProductPlanCoverageBenefitLimit; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeQuantity(json, 'value', elem.value); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlan(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanPlan(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanPlan(jsn : TJsonObject) : TFhirProductPlanPlan;
-begin
-  result := TFhirProductPlanPlan.create;
-  try
-    ParseProductPlanPlanProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanProperties(jsn : TJsonObject; result : TFhirProductPlanPlan);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('identifier') then
-      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('coverageArea') then
-      iterateArray(jsn.vArr['coverageArea'], result.coverageAreaList, parseReference{TFhirLocation});
-    if jsn.has('network') then
-      iterateArray(jsn.vArr['network'], result.networkList, parseReference{TFhirOrganization});
-    if jsn.has('generalCost') then
-      iterateArray(jsn.vArr['generalCost'], result.generalCostList, parseProductPlanPlanGeneralCost);
-    if jsn.has('specificCost') then
-      iterateArray(jsn.vArr['specificCost'], result.specificCostList, parseProductPlanPlanSpecificCost);
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanPlan(json : TJSONWriter; name : string; elem : TFhirProductPlanPlan; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
-  begin
-    json.valueArray('identifier');
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.coverageAreaList.Count > 0) then
-  begin
-    json.valueArray('coverageArea');
-    for i := 0 to elem.coverageAreaList.Count - 1 do
-      ComposeReference{TFhirLocation}(json, '', elem.coverageAreaList[i]); {z - Reference(Location)}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.networkList.Count > 0) then
-  begin
-    json.valueArray('network');
-    for i := 0 to elem.networkList.Count - 1 do
-      ComposeReference{TFhirOrganization}(json, '', elem.networkList[i]); {z - Reference(Organization)}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.generalCostList.Count > 0) then
-  begin
-    json.valueArray('generalCost');
-    for i := 0 to elem.generalCostList.Count - 1 do
-      ComposeProductPlanPlanGeneralCost(json, '', elem.generalCostList[i]); {z - }
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and (elem.specificCostList.Count > 0) then
-  begin
-    json.valueArray('specificCost');
-    for i := 0 to elem.specificCostList.Count - 1 do
-      ComposeProductPlanPlanSpecificCost(json, '', elem.specificCostList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanGeneralCost(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanPlanGeneralCost(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanPlanGeneralCost(jsn : TJsonObject) : TFhirProductPlanPlanGeneralCost;
-begin
-  result := TFhirProductPlanPlanGeneralCost.create;
-  try
-    ParseProductPlanPlanGeneralCostProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanGeneralCostProperties(jsn : TJsonObject; result : TFhirProductPlanPlanGeneralCost);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('groupSize') or jsn.has('_groupSize') then
-        result.groupSizeElement := parsePositiveInt(jsn.node['groupSize'], jsn.vObj['_groupSize']);{q}
-    if jsn.has('cost') then
-        result.cost := ParseMoney(jsn.vObj['cost']);{q3}
-    if jsn.has('comment') or jsn.has('_comment') then
-        result.commentElement := parseString(jsn.node['comment'], jsn.vObj['_comment']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanPlanGeneralCost(json : TJSONWriter; name : string; elem : TFhirProductPlanPlanGeneralCost; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposePositiveIntValue(json, 'groupSize', elem.groupSizeElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposePositiveIntProps(json, 'groupSize', elem.groupSizeElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeMoney(json, 'cost', elem.cost); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanSpecificCost(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanPlanSpecificCost(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanPlanSpecificCost(jsn : TJsonObject) : TFhirProductPlanPlanSpecificCost;
-begin
-  result := TFhirProductPlanPlanSpecificCost.create;
-  try
-    ParseProductPlanPlanSpecificCostProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanSpecificCostProperties(jsn : TJsonObject; result : TFhirProductPlanPlanSpecificCost);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
-    if jsn.has('benefit') then
-      iterateArray(jsn.vArr['benefit'], result.benefitList, parseProductPlanPlanSpecificCostBenefit);
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanPlanSpecificCost(json : TJSONWriter; name : string; elem : TFhirProductPlanPlanSpecificCost; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-    ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.benefitList.Count > 0) then
-  begin
-    json.valueArray('benefit');
-    for i := 0 to elem.benefitList.Count - 1 do
-      ComposeProductPlanPlanSpecificCostBenefit(json, '', elem.benefitList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanSpecificCostBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanPlanSpecificCostBenefit(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanPlanSpecificCostBenefit(jsn : TJsonObject) : TFhirProductPlanPlanSpecificCostBenefit;
-begin
-  result := TFhirProductPlanPlanSpecificCostBenefit.create;
-  try
-    ParseProductPlanPlanSpecificCostBenefitProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanSpecificCostBenefitProperties(jsn : TJsonObject; result : TFhirProductPlanPlanSpecificCostBenefit);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('cost') then
-      iterateArray(jsn.vArr['cost'], result.costList, parseProductPlanPlanSpecificCostBenefitCost);
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanPlanSpecificCostBenefit(json : TJSONWriter; name : string; elem : TFhirProductPlanPlanSpecificCostBenefit; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.costList.Count > 0) then
-  begin
-    json.valueArray('cost');
-    for i := 0 to elem.costList.Count - 1 do
-      ComposeProductPlanPlanSpecificCostBenefitCost(json, '', elem.costList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanSpecificCostBenefitCost(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlanPlanSpecificCostBenefitCost(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlanPlanSpecificCostBenefitCost(jsn : TJsonObject) : TFhirProductPlanPlanSpecificCostBenefitCost;
-begin
-  result := TFhirProductPlanPlanSpecificCostBenefitCost.create;
-  try
-    ParseProductPlanPlanSpecificCostBenefitCostProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanPlanSpecificCostBenefitCostProperties(jsn : TJsonObject; result : TFhirProductPlanPlanSpecificCostBenefitCost);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
-    if jsn.has('applicability') then
-        result.applicability := ParseCodeableConcept(jsn.vObj['applicability']);{q3}
-    if jsn.has('qualifiers') then
-      iterateArray(jsn.vArr['qualifiers'], result.qualifiersList, parseCodeableConcept);
-    if jsn.has('value') then
-        result.value := ParseQuantity(jsn.vObj['value']);{q3}
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlanPlanSpecificCostBenefitCost(json : TJSONWriter; name : string; elem : TFhirProductPlanPlanSpecificCostBenefitCost; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'applicability', elem.applicability); {a}
-  if (SummaryOption in [soFull, soData]) and (elem.qualifiersList.Count > 0) then
-  begin
-    json.valueArray('qualifiers');
-    for i := 0 to elem.qualifiersList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.qualifiersList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) then
-    ComposeQuantity(json, 'value', elem.value); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlan(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseProductPlan(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseProductPlan(jsn : TJsonObject) : TFhirProductPlan;
-begin
-  result := TFhirProductPlan.create;
-  try
-    ParseProductPlanProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseProductPlanProperties(jsn : TJsonObject; result : TFhirProductPlan);
-begin
-    ParseDomainResourceProperties(jsn, result);
-    if jsn.has('identifier') then
-      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn.node['status'], jsn.vObj['_status'], CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum);
-    if jsn.has('type') then
-      iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
-      if jsn.has('alias') or jsn.has('_alias') then
-      iteratePrimitiveArray(jsn.vArr['alias'], jsn.vArr['_alias'], result.aliasList, parseString);
-    if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q3}
-    if jsn.has('ownedBy') then
-        result.ownedBy := ParseReference{TFhirOrganization}(jsn.vObj['ownedBy']);{q3}
-    if jsn.has('administeredBy') then
-        result.administeredBy := ParseReference{TFhirOrganization}(jsn.vObj['administeredBy']);{q3}
-    if jsn.has('coverageArea') then
-      iterateArray(jsn.vArr['coverageArea'], result.coverageAreaList, parseReference{TFhirLocation});
-    if jsn.has('contact') then
-      iterateArray(jsn.vArr['contact'], result.contactList, parseProductPlanContact);
-    if jsn.has('endpoint') then
-      iterateArray(jsn.vArr['endpoint'], result.endpointList, parseReference{TFhirEndpoint});
-    if jsn.has('network') then
-      iterateArray(jsn.vArr['network'], result.networkList, parseReference{TFhirOrganization});
-    if jsn.has('coverage') then
-      iterateArray(jsn.vArr['coverage'], result.coverageList, parseProductPlanCoverage);
-    if jsn.has('plan') then
-      iterateArray(jsn.vArr['plan'], result.planList, parseProductPlanPlan);
-end;
-
-procedure TFHIRJsonComposer.ComposeProductPlan(json : TJSONWriter; name : string; elem : TFhirProductPlan; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-  val : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  ComposeDomainResourceProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('identifier') and (elem.identifierList.Count > 0) then
-  begin
-    json.valueArray('identifier');
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('status') then
-    ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') and (elem.type_List.Count > 0) then
-  begin
-    json.valueArray('type');
-    for i := 0 to elem.type_List.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('name') then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if (SummaryOption in [soFull, soData]) and doCompose('alias') and (elem.aliasList.Count > 0) then
-  begin
-    ext := false;
-    val := false;
-    for i := 0 to elem.aliasList.Count - 1 do
-    begin
-      ext := ext or ((elem.aliasList[i].id <> '') or (elem.aliasList[i].hasExtensionList) {no-comments or (elem.aliasList[i].hasComments)});
-      val := val or (elem.aliasList[i].hasPrimitiveValue);
-    end;
-    if val then
-    begin
-      json.valueArray('alias');
-      for i := 0 to elem.aliasList.Count - 1 do
-        ComposeStringValue(json, '',elem.aliasList[i], true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_alias');
-      for i := 0 to elem.aliasList.Count - 1 do
-        ComposeStringProps(json, '',elem.aliasList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('period') then
-    ComposePeriod(json, 'period', elem.period); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('ownedBy') then
-    ComposeReference{TFhirOrganization}(json, 'ownedBy', elem.ownedBy); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('administeredBy') then
-    ComposeReference{TFhirOrganization}(json, 'administeredBy', elem.administeredBy); {a}
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('coverageArea') and (elem.coverageAreaList.Count > 0) then
-  begin
-    json.valueArray('coverageArea');
-    for i := 0 to elem.coverageAreaList.Count - 1 do
-      ComposeReference{TFhirLocation}(json, '', elem.coverageAreaList[i]); {z - Reference(Location)}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('contact') and (elem.contactList.Count > 0) then
-  begin
-    json.valueArray('contact');
-    for i := 0 to elem.contactList.Count - 1 do
-      ComposeProductPlanContact(json, '', elem.contactList[i]); {z - }
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('endpoint') and (elem.endpointList.Count > 0) then
-  begin
-    json.valueArray('endpoint');
-    for i := 0 to elem.endpointList.Count - 1 do
-      ComposeReference{TFhirEndpoint}(json, '', elem.endpointList[i]); {z - Reference(Endpoint)}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('network') and (elem.networkList.Count > 0) then
-  begin
-    json.valueArray('network');
-    for i := 0 to elem.networkList.Count - 1 do
-      ComposeReference{TFhirOrganization}(json, '', elem.networkList[i]); {z - Reference(Organization)}
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('coverage') and (elem.coverageList.Count > 0) then
-  begin
-    json.valueArray('coverage');
-    for i := 0 to elem.coverageList.Count - 1 do
-      ComposeProductPlanCoverage(json, '', elem.coverageList[i]); {z - }
-    json.FinishArray;
-  end;
-  if (SummaryOption in [soFull, soData]) and doCompose('plan') and (elem.planList.Count > 0) then
-  begin
-    json.valueArray('plan');
-    for i := 0 to elem.planList.Count - 1 do
-      ComposeProductPlanPlan(json, '', elem.planList[i]); {z - }
-    json.FinishArray;
-  end;
-end;
-
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
 procedure TFHIRJsonParser.ParseProvenanceAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -45010,6 +47463,8 @@ begin
         result.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']);{q}
     if jsn.has('textEquivalent') or jsn.has('_textEquivalent') then
         result.textEquivalentElement := parseString(jsn.node['textEquivalent'], jsn.vObj['_textEquivalent']);{q}
+    if jsn.has('priority') or jsn.has('_priority')  then
+      result.priorityElement := parseEnum(jsn.path+'/priority', jsn.node['priority'], jsn.vObj['_priority'], CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum);
     if jsn.has('code') then
       iterateArray(jsn.vArr['code'], result.codeList, parseCodeableConcept);
     if jsn.has('documentation') then
@@ -45074,6 +47529,10 @@ begin
     ComposeStringValue(json, 'textEquivalent', elem.textEquivalentElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'textEquivalent', elem.textEquivalentElement, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
+  if (SummaryOption in [soFull, soData]) then
+    ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
   if (SummaryOption in [soFull, soData]) and (elem.codeList.Count > 0) then
   begin
     json.valueArray('code');
@@ -47256,8 +49715,10 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-      if jsn.has('instantiates') or jsn.has('_instantiates') then
-      iteratePrimitiveArray(jsn.vArr['instantiates'], jsn.vArr['_instantiates'], result.instantiatesList, parseUri);
+      if jsn.has('instantiatesCanonical') or jsn.has('_instantiatesCanonical') then
+      iteratePrimitiveArray(jsn.vArr['instantiatesCanonical'], jsn.vArr['_instantiatesCanonical'], result.instantiatesCanonicalList, parseCanonical);
+      if jsn.has('instantiatesUri') or jsn.has('_instantiatesUri') then
+      iteratePrimitiveArray(jsn.vArr['instantiatesUri'], jsn.vArr['_instantiatesUri'], result.instantiatesUriList, parseUri);
     if jsn.has('basedOn') then
       iterateArray(jsn.vArr['basedOn'], result.basedOnList, parseReference{TFhirCarePlan});
     if jsn.has('replaces') then
@@ -47278,6 +49739,12 @@ begin
         result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('orderDetail') then
       iterateArray(jsn.vArr['orderDetail'], result.orderDetailList, parseCodeableConcept);
+    if jsn.has('quantityQuantity') {a4} then
+      result.quantity := ParseQuantity(jsn.vObj['quantityQuantity']);
+    if jsn.has('quantityRatio') {a4} then
+      result.quantity := ParseRatio(jsn.vObj['quantityRatio']);
+    if jsn.has('quantityRange') {a4} then
+      result.quantity := ParseRange(jsn.vObj['quantityRange']);
     if jsn.has('subject') then
         result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('context') then
@@ -47300,6 +49767,10 @@ begin
         result.performerType := ParseCodeableConcept(jsn.vObj['performerType']);{q3}
     if jsn.has('performer') then
       iterateArray(jsn.vArr['performer'], result.performerList, parseReference{TFhirPractitioner});
+    if jsn.has('locationCode') then
+      iterateArray(jsn.vArr['locationCode'], result.locationCodeList, parseCodeableConcept);
+    if jsn.has('locationReference') then
+      iterateArray(jsn.vArr['locationReference'], result.locationReferenceList, parseReference{TFhirLocation});
     if jsn.has('reasonCode') then
       iterateArray(jsn.vArr['reasonCode'], result.reasonCodeList, parseCodeableConcept);
     if jsn.has('reasonReference') then
@@ -47336,27 +49807,51 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiates') and (elem.instantiatesList.Count > 0) then
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') and (elem.instantiatesCanonicalList.Count > 0) then
   begin
     ext := false;
     val := false;
-    for i := 0 to elem.instantiatesList.Count - 1 do
+    for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
     begin
-      ext := ext or ((elem.instantiatesList[i].id <> '') or (elem.instantiatesList[i].hasExtensionList) {no-comments or (elem.instantiatesList[i].hasComments)});
-      val := val or (elem.instantiatesList[i].hasPrimitiveValue);
+      ext := ext or ((elem.instantiatesCanonicalList[i].id <> '') or (elem.instantiatesCanonicalList[i].hasExtensionList) {no-comments or (elem.instantiatesCanonicalList[i].hasComments)});
+      val := val or (elem.instantiatesCanonicalList[i].hasPrimitiveValue);
     end;
     if val then
     begin
-      json.valueArray('instantiates');
-      for i := 0 to elem.instantiatesList.Count - 1 do
-        ComposeUriValue(json, '',elem.instantiatesList[i], true);
+      json.valueArray('instantiatesCanonical');
+      for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+        ComposeCanonicalValue(json, '',elem.instantiatesCanonicalList[i], true);
       json.FinishArray;
     end;
     if ext then
     begin
-      json.valueArray('_instantiates');
-      for i := 0 to elem.instantiatesList.Count - 1 do
-        ComposeUriProps(json, '',elem.instantiatesList[i], true);
+      json.valueArray('_instantiatesCanonical');
+      for i := 0 to elem.instantiatesCanonicalList.Count - 1 do
+        ComposeCanonicalProps(json, '',elem.instantiatesCanonicalList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') and (elem.instantiatesUriList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.instantiatesUriList.Count - 1 do
+    begin
+      ext := ext or ((elem.instantiatesUriList[i].id <> '') or (elem.instantiatesUriList[i].hasExtensionList) {no-comments or (elem.instantiatesUriList[i].hasComments)});
+      val := val or (elem.instantiatesUriList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('instantiatesUri');
+      for i := 0 to elem.instantiatesUriList.Count - 1 do
+        ComposeUriValue(json, '',elem.instantiatesUriList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_instantiatesUri');
+      for i := 0 to elem.instantiatesUriList.Count - 1 do
+        ComposeUriProps(json, '',elem.instantiatesUriList[i], true);
       json.FinishArray;
     end;
   end;
@@ -47404,6 +49899,12 @@ begin
       ComposeCodeableConcept(json, '', elem.orderDetailList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirQuantity) then 
+    ComposeQuantity(json, 'quantityQuantity', TFhirQuantity(elem.quantity)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirRatio) then 
+    ComposeRatio(json, 'quantityRatio', TFhirRatio(elem.quantity)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.quantity is TFhirRange) then 
+    ComposeRange(json, 'quantityRange', TFhirRange(elem.quantity)) ;
   ComposeReference{TFhirPatient}(json, 'subject', elem.subject); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('context') then
     ComposeReference{TFhirEncounter}(json, 'context', elem.context); {a}
@@ -47436,6 +49937,20 @@ begin
     json.valueArray('performer');
     for i := 0 to elem.performerList.Count - 1 do
       ComposeReference{TFhirPractitioner}(json, '', elem.performerList[i]); {z - Reference(Practitioner)}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('locationCode') and (elem.locationCodeList.Count > 0) then
+  begin
+    json.valueArray('locationCode');
+    for i := 0 to elem.locationCodeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.locationCodeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('locationReference') and (elem.locationReferenceList.Count > 0) then
+  begin
+    json.valueArray('locationReference');
+    for i := 0 to elem.locationReferenceList.Count - 1 do
+      ComposeReference{TFhirLocation}(json, '', elem.locationReferenceList[i]); {z - Reference(Location)}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('reasonCode') and (elem.reasonCodeList.Count > 0) then
@@ -47626,12 +50141,18 @@ begin
       result.collected := ParsePeriod(jsn.vObj['collectedPeriod']);
     if jsn.has('collectedDateTime') or jsn.has('_collectedDateTime') then
       result.collected := parseDateTime(jsn.node['collectedDateTime'], jsn.vObj['_collectedDateTime']);
+    if jsn.has('duration') then
+        result.duration := ParseDuration(jsn.vObj['duration']);{q3}
     if jsn.has('quantity') then
         result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('method') then
         result.method := ParseCodeableConcept(jsn.vObj['method']);{q3}
     if jsn.has('bodySite') then
         result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q3}
+    if jsn.has('fastingStatusCodeableConcept') {a4} then
+      result.fastingStatus := ParseCodeableConcept(jsn.vObj['fastingStatusCodeableConcept']);
+    if jsn.has('fastingStatusDuration') {a4} then
+      result.fastingStatus := ParseDuration(jsn.vObj['fastingStatusDuration']);
 end;
 
 procedure TFHIRJsonComposer.ComposeSpecimenCollection(json : TJSONWriter; name : string; elem : TFhirSpecimenCollection; noObj : boolean = false);
@@ -47649,12 +50170,18 @@ begin
     ComposeDateTimeValue(json, 'collectedDateTime', TFhirDateTime(elem.collected), false);
     ComposeDateTimeProps(json, 'collectedDateTime', TFhirDateTime(elem.collected), false);
   end;
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDuration(json, 'duration', elem.duration); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'quantity', elem.quantity); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'method', elem.method); {a}
   if (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'bodySite', elem.bodySite); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.fastingStatus is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'fastingStatusCodeableConcept', TFhirCodeableConcept(elem.fastingStatus)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.fastingStatus is TFhirDuration) then 
+    ComposeDuration(json, 'fastingStatusDuration', TFhirDuration(elem.fastingStatus)) ;
   if not noObj then json.finishObject;
 end;
 
@@ -47828,6 +50355,8 @@ begin
       iterateArray(jsn.vArr['processing'], result.processingList, parseSpecimenProcessing);
     if jsn.has('container') then
       iterateArray(jsn.vArr['container'], result.containerList, parseSpecimenContainer);
+    if jsn.has('condition') then
+      iterateArray(jsn.vArr['condition'], result.conditionList, parseCodeableConcept);
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
 end;
@@ -47854,7 +50383,8 @@ begin
     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirSpecimenStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('type_') then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  ComposeReference{TFhirPatient}(json, 'subject', elem.subject); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('subject') then
+    ComposeReference{TFhirPatient}(json, 'subject', elem.subject); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('receivedTime') then
     ComposeDateTimeValue(json, 'receivedTime', elem.receivedTimeElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('receivedTime') then
@@ -47887,6 +50417,13 @@ begin
     json.valueArray('container');
     for i := 0 to elem.containerList.Count - 1 do
       ComposeSpecimenContainer(json, '', elem.containerList[i]); {z - }
+    json.FinishArray;
+  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('condition') and (elem.conditionList.Count > 0) then
+  begin
+    json.valueArray('condition');
+    for i := 0 to elem.conditionList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.conditionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and doCompose('note') and (elem.noteList.Count > 0) then
@@ -52383,10 +54920,10 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('instantiatesReference') {a3} then
-      result.instantiates := ParseReference(jsn.vObj['instantiatesReference']);
+    if jsn.has('instantiatesCanonical') or jsn.has('_instantiatesCanonical') then
+        result.instantiatesCanonicalElement := parseCanonical(jsn.node['instantiatesCanonical'], jsn.vObj['_instantiatesCanonical']);{q}
     if jsn.has('instantiatesUri') or jsn.has('_instantiatesUri') then
-      result.instantiates := parseUri(jsn.node['instantiatesUri'], jsn.vObj['_instantiatesUri']);
+        result.instantiatesUriElement := parseUri(jsn.node['instantiatesUri'], jsn.vObj['_instantiatesUri']);{q}
     if jsn.has('basedOn') then
       iterateArray(jsn.vArr['basedOn'], result.basedOnList, parseReference{TFhirReference});
     if jsn.has('groupIdentifier') then
@@ -52459,13 +54996,14 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.instantiates is TFhirReference) then
-    ComposeReference(json, 'instantiatesReference', TFhirReference(elem.instantiates))
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.instantiates is TFhirUri) then 
-  begin
-    ComposeUriValue(json, 'instantiatesUri', TFhirUri(elem.instantiates), false);
-    ComposeUriProps(json, 'instantiatesUri', TFhirUri(elem.instantiates), false);
-  end;
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') then
+    ComposeCanonicalValue(json, 'instantiatesCanonical', elem.instantiatesCanonicalElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesCanonical') then
+    ComposeCanonicalProps(json, 'instantiatesCanonical', elem.instantiatesCanonicalElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') then
+    ComposeUriValue(json, 'instantiatesUri', elem.instantiatesUriElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('instantiatesUri') then
+    ComposeUriProps(json, 'instantiatesUri', elem.instantiatesUriElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('basedOn') and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
@@ -52574,6 +55112,86 @@ end;
 
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+procedure TFHIRJsonParser.ParseTerminologyCapabilitiesSoftware(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseTerminologyCapabilitiesSoftware(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseTerminologyCapabilitiesSoftware(jsn : TJsonObject) : TFhirTerminologyCapabilitiesSoftware;
+begin
+  result := TFhirTerminologyCapabilitiesSoftware.create;
+  try
+    ParseTerminologyCapabilitiesSoftwareProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseTerminologyCapabilitiesSoftwareProperties(jsn : TJsonObject; result : TFhirTerminologyCapabilitiesSoftware);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := parseString(jsn.node['name'], jsn.vObj['_name']);{q}
+    if jsn.has('version') or jsn.has('_version') then
+        result.versionElement := parseString(jsn.node['version'], jsn.vObj['_version']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeTerminologyCapabilitiesSoftware(json : TJSONWriter; name : string; elem : TFhirTerminologyCapabilitiesSoftware; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeStringValue(json, 'name', elem.nameElement, false);
+  ComposeStringProps(json, 'name', elem.nameElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'version', elem.versionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'version', elem.versionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseTerminologyCapabilitiesImplementation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseTerminologyCapabilitiesImplementation(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseTerminologyCapabilitiesImplementation(jsn : TJsonObject) : TFhirTerminologyCapabilitiesImplementation;
+begin
+  result := TFhirTerminologyCapabilitiesImplementation.create;
+  try
+    ParseTerminologyCapabilitiesImplementationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseTerminologyCapabilitiesImplementationProperties(jsn : TJsonObject; result : TFhirTerminologyCapabilitiesImplementation);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := parseString(jsn.node['description'], jsn.vObj['_description']);{q}
+    if jsn.has('url') or jsn.has('_url') then
+        result.urlElement := parseUrl(jsn.node['url'], jsn.vObj['_url']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeTerminologyCapabilitiesImplementation(json : TJSONWriter; name : string; elem : TFhirTerminologyCapabilitiesImplementation; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUrlValue(json, 'url', elem.urlElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUrlProps(json, 'url', elem.urlElement, false);
+  if not noObj then json.finishObject;
+end;
+
 procedure TFHIRJsonParser.ParseTerminologyCapabilitiesCodeSystem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseTerminologyCapabilitiesCodeSystem(jsn)); {2}
@@ -52882,7 +55500,7 @@ begin
     result.link;
   finally
     result.free;
-    end;
+  end;
 end;
 
 procedure TFHIRJsonParser.ParseTerminologyCapabilitiesExpansionParameterProperties(jsn : TJsonObject; result : TFhirTerminologyCapabilitiesExpansionParameter);
@@ -53060,6 +55678,12 @@ begin
         result.purposeElement := parseMarkdown(jsn.node['purpose'], jsn.vObj['_purpose']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
         result.copyrightElement := parseMarkdown(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
+    if jsn.has('kind') or jsn.has('_kind')  then
+      result.kindElement := parseEnum(jsn.path+'/kind', jsn.node['kind'], jsn.vObj['_kind'], CODES_TFhirCapabilityStatementKindEnum, SYSTEMS_TFhirCapabilityStatementKindEnum);
+    if jsn.has('software') then
+        result.software := ParseTerminologyCapabilitiesSoftware(jsn.vObj['software']);{q3}
+    if jsn.has('implementation') then
+        result.implementation_ := ParseTerminologyCapabilitiesImplementation(jsn.vObj['implementation']);{q3}
     if jsn.has('lockedDate') or jsn.has('_lockedDate') then
         result.lockedDateElement := parseBoolean(jsn.node['lockedDate'], jsn.vObj['_lockedDate']);{q}
     if jsn.has('codeSystem') then
@@ -53144,6 +55768,12 @@ begin
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('copyright') then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
+  ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirCapabilityStatementKindEnum, false);
+  ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirCapabilityStatementKindEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('software') then
+    ComposeTerminologyCapabilitiesSoftware(json, 'software', elem.software); {a}
+  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('implementation_') then
+    ComposeTerminologyCapabilitiesImplementation(json, 'implementation', elem.implementation_); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('lockedDate') then
     ComposeBooleanValue(json, 'lockedDate', elem.lockedDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('lockedDate') then
@@ -55799,6 +58429,8 @@ begin
       result.value := parseDecimal(jsn.node['valueDecimal'], jsn.vObj['_valueDecimal']);
     if jsn.has('valueUri') or jsn.has('_valueUri') then
       result.value := parseUri(jsn.node['valueUri'], jsn.vObj['_valueUri']);
+    if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
+      result.value := parseDateTime(jsn.node['valueDateTime'], jsn.vObj['_valueDateTime']);
 end;
 
 procedure TFHIRJsonComposer.ComposeValueSetExpansionParameter(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionParameter; noObj : boolean = false);
@@ -55838,6 +58470,11 @@ begin
   begin
     ComposeUriValue(json, 'valueUri', TFhirUri(elem.value), false);
     ComposeUriProps(json, 'valueUri', TFhirUri(elem.value), false);
+  end
+  else if (SummaryOption in [soFull, soData]) and (elem.value is TFhirDateTime) then 
+  begin
+    ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
+    ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false);
   end;
   if not noObj then json.finishObject;
 end;
@@ -55979,8 +58616,6 @@ begin
         result.purposeElement := parseMarkdown(jsn.node['purpose'], jsn.vObj['_purpose']);{q}
     if jsn.has('copyright') or jsn.has('_copyright') then
         result.copyrightElement := parseMarkdown(jsn.node['copyright'], jsn.vObj['_copyright']);{q}
-    if jsn.has('extensible') or jsn.has('_extensible') then
-        result.extensibleElement := parseBoolean(jsn.node['extensible'], jsn.vObj['_extensible']);{q}
     if jsn.has('compose') then
         result.compose := ParseValueSetCompose(jsn.vObj['compose']);{q3}
     if jsn.has('expansion') then
@@ -56068,10 +58703,6 @@ begin
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('copyright') then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('extensible') then
-    ComposeBooleanValue(json, 'extensible', elem.extensibleElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) and doCompose('extensible') then
-    ComposeBooleanProps(json, 'extensible', elem.extensibleElement, false);
   if (SummaryOption in [soFull, soData]) and doCompose('compose') then
     ComposeValueSetCompose(json, 'compose', elem.compose); {a}
   if (SummaryOption in [soFull, soData]) and doCompose('expansion') then
@@ -56149,11 +58780,11 @@ begin
     ComposeCodeableConcept(json, 'canPushUpdates', elem.canPushUpdates); {a}
   if (SummaryOption in [soFull, soData]) and (elem.pushTypeAvailableList.Count > 0) then
   begin
-      json.valueArray('pushTypeAvailable');
-      for i := 0 to elem.pushTypeAvailableList.Count - 1 do
+    json.valueArray('pushTypeAvailable');
+    for i := 0 to elem.pushTypeAvailableList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.pushTypeAvailableList[i]); {z - CodeableConcept}
-      json.FinishArray;
-    end;
+    json.FinishArray;
+  end;
   if not noObj then json.finishObject;
 end;
 
@@ -56205,15 +58836,15 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeReference{TFhirPractitioner}(json, 'source', elem.source); {a}
+    ComposeReference{TFhirPractitioner}(json, 'source', elem.source); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
+    ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeCodeableConcept(json, 'method', elem.method); {a}
+    ComposeCodeableConcept(json, 'method', elem.method); {a}
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeDateValue(json, 'date', elem.dateElement, false);
+    ComposeDateValue(json, 'date', elem.dateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) then
-  ComposeDateProps(json, 'date', elem.dateElement, false);
+    ComposeDateProps(json, 'date', elem.dateElement, false);
   if (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'sourceIdentityCertificate', elem.sourceIdentityCertificateElement, false);
   if (SummaryOption in [soFull, soData]) then
@@ -56392,9 +59023,9 @@ begin
   ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirVerificationresultStatusEnum, false);
   ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirVerificationresultStatusEnum, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('statusDate') then
-  ComposeDateTimeValue(json, 'statusDate', elem.statusDateElement, false);
+    ComposeDateTimeValue(json, 'statusDate', elem.statusDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('statusDate') then
-  ComposeDateTimeProps(json, 'statusDate', elem.statusDateElement, false);
+    ComposeDateTimeProps(json, 'statusDate', elem.statusDateElement, false);
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('validationType') then
     ComposeCodeableConcept(json, 'validationType', elem.validationType); {a}
   if (SummaryOption in [soFull, soSummary, soData]) and doCompose('validationProcess') and (elem.validationProcessList.Count > 0) then
@@ -56862,6 +59493,18 @@ begin
     result := ParseCoverage(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+   else if s = 'CoverageEligibilityRequest' Then
+    result := ParseCoverageEligibilityRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+   else if s = 'CoverageEligibilityResponse' Then
+    result := ParseCoverageEligibilityResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   {$IFDEF FHIR_DETECTEDISSUE}
    else if s = 'DetectedIssue' Then
@@ -56874,12 +59517,12 @@ begin
     result := ParseDevice(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  {$IFDEF FHIR_DEVICECOMPONENT}
-   else if s = 'DeviceComponent' Then
-    result := ParseDeviceComponent(jsn) 
+{$IFDEF FHIR_DEVICEDEFINITION}
+  {$IFDEF FHIR_DEVICEDEFINITION}
+   else if s = 'DeviceDefinition' Then
+    result := ParseDeviceDefinition(jsn) 
   {$ENDIF}
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   {$IFDEF FHIR_DEVICEMETRIC}
    else if s = 'DeviceMetric' Then
@@ -56916,18 +59559,6 @@ begin
     result := ParseDocumentReference(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  {$IFDEF FHIR_ELIGIBILITYREQUEST}
-   else if s = 'EligibilityRequest' Then
-    result := ParseEligibilityRequest(jsn) 
-  {$ENDIF}
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
-   else if s = 'EligibilityResponse' Then
-    result := ParseEligibilityResponse(jsn) 
-  {$ENDIF}
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   {$IFDEF FHIR_ENCOUNTER}
    else if s = 'Encounter' Then
@@ -57054,6 +59685,12 @@ begin
     result := ParseImplementationGuide(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  {$IFDEF FHIR_INSURANCEPLAN}
+   else if s = 'InsurancePlan' Then
+    result := ParseInsurancePlan(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   {$IFDEF FHIR_INVOICE}
    else if s = 'Invoice' Then
@@ -57162,18 +59799,36 @@ begin
     result := ParseMedicinalProductClinicals(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+   else if s = 'MedicinalProductContraindication' Then
+    result := ParseMedicinalProductContraindication(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
    else if s = 'MedicinalProductDeviceSpec' Then
     result := ParseMedicinalProductDeviceSpec(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+   else if s = 'MedicinalProductIndication' Then
+    result := ParseMedicinalProductIndication(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
    else if s = 'MedicinalProductIngredient' Then
     result := ParseMedicinalProductIngredient(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+   else if s = 'MedicinalProductInteraction' Then
+    result := ParseMedicinalProductInteraction(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
    else if s = 'MedicinalProductManufactured' Then
@@ -57192,6 +59847,12 @@ begin
     result := ParseMedicinalProductPharmaceutical(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+   else if s = 'MedicinalProductUndesirableEffect' Then
+    result := ParseMedicinalProductUndesirableEffect(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   {$IFDEF FHIR_MESSAGEDEFINITION}
    else if s = 'MessageDefinition' Then
@@ -57246,12 +59907,12 @@ begin
     result := ParseOrganization(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  {$IFDEF FHIR_ORGANIZATIONROLE}
-   else if s = 'OrganizationRole' Then
-    result := ParseOrganizationRole(jsn) 
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  {$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+   else if s = 'OrganizationAffiliation' Then
+    result := ParseOrganizationAffiliation(jsn) 
   {$ENDIF}
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   {$IFDEF FHIR_PATIENT}
    else if s = 'Patient' Then
@@ -57312,12 +59973,6 @@ begin
     result := ParseProcessResponse(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  {$IFDEF FHIR_PRODUCTPLAN}
-   else if s = 'ProductPlan' Then
-    result := ParseProductPlan(jsn) 
-  {$ENDIF}
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   {$IFDEF FHIR_PROVENANCE}
    else if s = 'Provenance' Then
@@ -57724,6 +60379,14 @@ begin
   else if (type_ = 'TFhirCoverage') then
     result := parseCoverage(jsn)
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  else if (type_ = 'TFhirCoverageEligibilityRequest') then
+    result := parseCoverageEligibilityRequest(jsn)
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  else if (type_ = 'TFhirCoverageEligibilityResponse') then
+    result := parseCoverageEligibilityResponse(jsn)
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   else if (type_ = 'TFhirDetectedIssue') then
     result := parseDetectedIssue(jsn)
@@ -57732,10 +60395,10 @@ begin
   else if (type_ = 'TFhirDevice') then
     result := parseDevice(jsn)
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  else if (type_ = 'TFhirDeviceComponent') then
-    result := parseDeviceComponent(jsn)
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+  else if (type_ = 'TFhirDeviceDefinition') then
+    result := parseDeviceDefinition(jsn)
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   else if (type_ = 'TFhirDeviceMetric') then
     result := parseDeviceMetric(jsn)
@@ -57760,14 +60423,6 @@ begin
   else if (type_ = 'TFhirDocumentReference') then
     result := parseDocumentReference(jsn)
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  else if (type_ = 'TFhirEligibilityRequest') then
-    result := parseEligibilityRequest(jsn)
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  else if (type_ = 'TFhirEligibilityResponse') then
-    result := parseEligibilityResponse(jsn)
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   else if (type_ = 'TFhirEncounter') then
     result := parseEncounter(jsn)
@@ -57852,6 +60507,10 @@ begin
   else if (type_ = 'TFhirImplementationGuide') then
     result := parseImplementationGuide(jsn)
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  else if (type_ = 'TFhirInsurancePlan') then
+    result := parseInsurancePlan(jsn)
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   else if (type_ = 'TFhirInvoice') then
     result := parseInvoice(jsn)
@@ -57924,14 +60583,26 @@ begin
   else if (type_ = 'TFhirMedicinalProductClinicals') then
     result := parseMedicinalProductClinicals(jsn)
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  else if (type_ = 'TFhirMedicinalProductContraindication') then
+    result := parseMedicinalProductContraindication(jsn)
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   else if (type_ = 'TFhirMedicinalProductDeviceSpec') then
     result := parseMedicinalProductDeviceSpec(jsn)
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  else if (type_ = 'TFhirMedicinalProductIndication') then
+    result := parseMedicinalProductIndication(jsn)
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   else if (type_ = 'TFhirMedicinalProductIngredient') then
     result := parseMedicinalProductIngredient(jsn)
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  else if (type_ = 'TFhirMedicinalProductInteraction') then
+    result := parseMedicinalProductInteraction(jsn)
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   else if (type_ = 'TFhirMedicinalProductManufactured') then
     result := parseMedicinalProductManufactured(jsn)
@@ -57944,6 +60615,10 @@ begin
   else if (type_ = 'TFhirMedicinalProductPharmaceutical') then
     result := parseMedicinalProductPharmaceutical(jsn)
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  else if (type_ = 'TFhirMedicinalProductUndesirableEffect') then
+    result := parseMedicinalProductUndesirableEffect(jsn)
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   else if (type_ = 'TFhirMessageDefinition') then
     result := parseMessageDefinition(jsn)
@@ -57980,10 +60655,10 @@ begin
   else if (type_ = 'TFhirOrganization') then
     result := parseOrganization(jsn)
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  else if (type_ = 'TFhirOrganizationRole') then
-    result := parseOrganizationRole(jsn)
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  else if (type_ = 'TFhirOrganizationAffiliation') then
+    result := parseOrganizationAffiliation(jsn)
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   else if (type_ = 'TFhirPatient') then
     result := parsePatient(jsn)
@@ -58024,10 +60699,6 @@ begin
   else if (type_ = 'TFhirProcessResponse') then
     result := parseProcessResponse(jsn)
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  else if (type_ = 'TFhirProductPlan') then
-    result := parseProductPlan(jsn)
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   else if (type_ = 'TFhirProvenance') then
     result := parseProvenance(jsn)
@@ -58693,18 +61364,28 @@ begin
     composeConsent(json, name, TFhirConsent(base), false)
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
+  else if (base is TFhirContractContentDefinition) then
+    composeContractContentDefinition(json, name, TFhirContractContentDefinition(base), false)
   else if (base is TFhirContractTerm) then
     composeContractTerm(json, name, TFhirContractTerm(base), false)
+  else if (base is TFhirContractTermSecurityLabel) then
+    composeContractTermSecurityLabel(json, name, TFhirContractTermSecurityLabel(base), false)
   else if (base is TFhirContractTermOffer) then
     composeContractTermOffer(json, name, TFhirContractTermOffer(base), false)
+  else if (base is TFhirContractTermOfferParty) then
+    composeContractTermOfferParty(json, name, TFhirContractTermOfferParty(base), false)
+  else if (base is TFhirContractTermOfferAnswer) then
+    composeContractTermOfferAnswer(json, name, TFhirContractTermOfferAnswer(base), false)
   else if (base is TFhirContractTermAsset) then
     composeContractTermAsset(json, name, TFhirContractTermAsset(base), false)
-  else if (base is TFhirContractTermAssetData) then
-    composeContractTermAssetData(json, name, TFhirContractTermAssetData(base), false)
+  else if (base is TFhirContractTermAssetContext) then
+    composeContractTermAssetContext(json, name, TFhirContractTermAssetContext(base), false)
   else if (base is TFhirContractTermAssetValuedItem) then
     composeContractTermAssetValuedItem(json, name, TFhirContractTermAssetValuedItem(base), false)
-  else if (base is TFhirContractTermAgent) then
-    composeContractTermAgent(json, name, TFhirContractTermAgent(base), false)
+  else if (base is TFhirContractTermAction) then
+    composeContractTermAction(json, name, TFhirContractTermAction(base), false)
+  else if (base is TFhirContractTermActionSubject) then
+    composeContractTermActionSubject(json, name, TFhirContractTermActionSubject(base), false)
   else if (base is TFhirContractSigner) then
     composeContractSigner(json, name, TFhirContractSigner(base), false)
   else if (base is TFhirContractFriendly) then
@@ -58724,6 +61405,30 @@ begin
   else if (base is TFhirCoverage) then
     composeCoverage(json, name, TFhirCoverage(base), false)
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  else if (base is TFhirCoverageEligibilityRequestSupportingInformation) then
+    composeCoverageEligibilityRequestSupportingInformation(json, name, TFhirCoverageEligibilityRequestSupportingInformation(base), false)
+  else if (base is TFhirCoverageEligibilityRequestInsurance) then
+    composeCoverageEligibilityRequestInsurance(json, name, TFhirCoverageEligibilityRequestInsurance(base), false)
+  else if (base is TFhirCoverageEligibilityRequestItem) then
+    composeCoverageEligibilityRequestItem(json, name, TFhirCoverageEligibilityRequestItem(base), false)
+  else if (base is TFhirCoverageEligibilityRequestItemDiagnosis) then
+    composeCoverageEligibilityRequestItemDiagnosis(json, name, TFhirCoverageEligibilityRequestItemDiagnosis(base), false)
+  else if (base is TFhirCoverageEligibilityRequest) then
+    composeCoverageEligibilityRequest(json, name, TFhirCoverageEligibilityRequest(base), false)
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  else if (base is TFhirCoverageEligibilityResponseInsurance) then
+    composeCoverageEligibilityResponseInsurance(json, name, TFhirCoverageEligibilityResponseInsurance(base), false)
+  else if (base is TFhirCoverageEligibilityResponseInsuranceItem) then
+    composeCoverageEligibilityResponseInsuranceItem(json, name, TFhirCoverageEligibilityResponseInsuranceItem(base), false)
+  else if (base is TFhirCoverageEligibilityResponseInsuranceItemBenefit) then
+    composeCoverageEligibilityResponseInsuranceItemBenefit(json, name, TFhirCoverageEligibilityResponseInsuranceItemBenefit(base), false)
+  else if (base is TFhirCoverageEligibilityResponseError) then
+    composeCoverageEligibilityResponseError(json, name, TFhirCoverageEligibilityResponseError(base), false)
+  else if (base is TFhirCoverageEligibilityResponse) then
+    composeCoverageEligibilityResponse(json, name, TFhirCoverageEligibilityResponse(base), false)
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   else if (base is TFhirDetectedIssueMitigation) then
     composeDetectedIssueMitigation(json, name, TFhirDetectedIssueMitigation(base), false)
@@ -58731,19 +61436,35 @@ begin
     composeDetectedIssue(json, name, TFhirDetectedIssue(base), false)
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
-  else if (base is TFhirDeviceUdi) then
-    composeDeviceUdi(json, name, TFhirDeviceUdi(base), false)
+  else if (base is TFhirDeviceUdiCarrier) then
+    composeDeviceUdiCarrier(json, name, TFhirDeviceUdiCarrier(base), false)
+  else if (base is TFhirDeviceDeviceName) then
+    composeDeviceDeviceName(json, name, TFhirDeviceDeviceName(base), false)
+  else if (base is TFhirDeviceSpecialization) then
+    composeDeviceSpecialization(json, name, TFhirDeviceSpecialization(base), false)
+  else if (base is TFhirDeviceVersion) then
+    composeDeviceVersion(json, name, TFhirDeviceVersion(base), false)
+  else if (base is TFhirDeviceProperty) then
+    composeDeviceProperty(json, name, TFhirDeviceProperty(base), false)
   else if (base is TFhirDevice) then
     composeDevice(json, name, TFhirDevice(base), false)
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  else if (base is TFhirDeviceComponentProductionSpecification) then
-    composeDeviceComponentProductionSpecification(json, name, TFhirDeviceComponentProductionSpecification(base), false)
-  else if (base is TFhirDeviceComponentProperty) then
-    composeDeviceComponentProperty(json, name, TFhirDeviceComponentProperty(base), false)
-  else if (base is TFhirDeviceComponent) then
-    composeDeviceComponent(json, name, TFhirDeviceComponent(base), false)
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEDEFINITION}
+  else if (base is TFhirDeviceDefinitionUdiDeviceIdentifier) then
+    composeDeviceDefinitionUdiDeviceIdentifier(json, name, TFhirDeviceDefinitionUdiDeviceIdentifier(base), false)
+  else if (base is TFhirDeviceDefinitionDeviceName) then
+    composeDeviceDefinitionDeviceName(json, name, TFhirDeviceDefinitionDeviceName(base), false)
+  else if (base is TFhirDeviceDefinitionSpecialization) then
+    composeDeviceDefinitionSpecialization(json, name, TFhirDeviceDefinitionSpecialization(base), false)
+  else if (base is TFhirDeviceDefinitionCapability) then
+    composeDeviceDefinitionCapability(json, name, TFhirDeviceDefinitionCapability(base), false)
+  else if (base is TFhirDeviceDefinitionProperty) then
+    composeDeviceDefinitionProperty(json, name, TFhirDeviceDefinitionProperty(base), false)
+  else if (base is TFhirDeviceDefinitionMaterial) then
+    composeDeviceDefinitionMaterial(json, name, TFhirDeviceDefinitionMaterial(base), false)
+  else if (base is TFhirDeviceDefinition) then
+    composeDeviceDefinition(json, name, TFhirDeviceDefinition(base), false)
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   else if (base is TFhirDeviceMetricCalibration) then
     composeDeviceMetricCalibration(json, name, TFhirDeviceMetricCalibration(base), false)
@@ -58783,33 +61504,9 @@ begin
     composeDocumentReferenceContent(json, name, TFhirDocumentReferenceContent(base), false)
   else if (base is TFhirDocumentReferenceContext) then
     composeDocumentReferenceContext(json, name, TFhirDocumentReferenceContext(base), false)
-  else if (base is TFhirDocumentReferenceContextRelated) then
-    composeDocumentReferenceContextRelated(json, name, TFhirDocumentReferenceContextRelated(base), false)
   else if (base is TFhirDocumentReference) then
     composeDocumentReference(json, name, TFhirDocumentReference(base), false)
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  else if (base is TFhirEligibilityRequestInsurance) then
-    composeEligibilityRequestInsurance(json, name, TFhirEligibilityRequestInsurance(base), false)
-  else if (base is TFhirEligibilityRequestDetail) then
-    composeEligibilityRequestDetail(json, name, TFhirEligibilityRequestDetail(base), false)
-  else if (base is TFhirEligibilityRequestDetailDiagnosis) then
-    composeEligibilityRequestDetailDiagnosis(json, name, TFhirEligibilityRequestDetailDiagnosis(base), false)
-  else if (base is TFhirEligibilityRequest) then
-    composeEligibilityRequest(json, name, TFhirEligibilityRequest(base), false)
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  else if (base is TFhirEligibilityResponseInsurance) then
-    composeEligibilityResponseInsurance(json, name, TFhirEligibilityResponseInsurance(base), false)
-  else if (base is TFhirEligibilityResponseInsuranceDetail) then
-    composeEligibilityResponseInsuranceDetail(json, name, TFhirEligibilityResponseInsuranceDetail(base), false)
-  else if (base is TFhirEligibilityResponseInsuranceDetailBenefit) then
-    composeEligibilityResponseInsuranceDetailBenefit(json, name, TFhirEligibilityResponseInsuranceDetailBenefit(base), false)
-  else if (base is TFhirEligibilityResponseError) then
-    composeEligibilityResponseError(json, name, TFhirEligibilityResponseError(base), false)
-  else if (base is TFhirEligibilityResponse) then
-    composeEligibilityResponse(json, name, TFhirEligibilityResponse(base), false)
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   else if (base is TFhirEncounterStatusHistory) then
     composeEncounterStatusHistory(json, name, TFhirEncounterStatusHistory(base), false)
@@ -59026,6 +61723,28 @@ begin
   else if (base is TFhirImplementationGuide) then
     composeImplementationGuide(json, name, TFhirImplementationGuide(base), false)
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  else if (base is TFhirInsurancePlanContact) then
+    composeInsurancePlanContact(json, name, TFhirInsurancePlanContact(base), false)
+  else if (base is TFhirInsurancePlanCoverage) then
+    composeInsurancePlanCoverage(json, name, TFhirInsurancePlanCoverage(base), false)
+  else if (base is TFhirInsurancePlanCoverageBenefit) then
+    composeInsurancePlanCoverageBenefit(json, name, TFhirInsurancePlanCoverageBenefit(base), false)
+  else if (base is TFhirInsurancePlanCoverageBenefitLimit) then
+    composeInsurancePlanCoverageBenefitLimit(json, name, TFhirInsurancePlanCoverageBenefitLimit(base), false)
+  else if (base is TFhirInsurancePlanPlan) then
+    composeInsurancePlanPlan(json, name, TFhirInsurancePlanPlan(base), false)
+  else if (base is TFhirInsurancePlanPlanGeneralCost) then
+    composeInsurancePlanPlanGeneralCost(json, name, TFhirInsurancePlanPlanGeneralCost(base), false)
+  else if (base is TFhirInsurancePlanPlanSpecificCost) then
+    composeInsurancePlanPlanSpecificCost(json, name, TFhirInsurancePlanPlanSpecificCost(base), false)
+  else if (base is TFhirInsurancePlanPlanSpecificCostBenefit) then
+    composeInsurancePlanPlanSpecificCostBenefit(json, name, TFhirInsurancePlanPlanSpecificCostBenefit(base), false)
+  else if (base is TFhirInsurancePlanPlanSpecificCostBenefitCost) then
+    composeInsurancePlanPlanSpecificCostBenefitCost(json, name, TFhirInsurancePlanPlanSpecificCostBenefitCost(base), false)
+  else if (base is TFhirInsurancePlan) then
+    composeInsurancePlan(json, name, TFhirInsurancePlan(base), false)
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   else if (base is TFhirInvoiceParticipant) then
     composeInvoiceParticipant(json, name, TFhirInvoiceParticipant(base), false)
@@ -59177,8 +61896,8 @@ begin
     composeMedicinalProductNameCountryLanguage(json, name, TFhirMedicinalProductNameCountryLanguage(base), false)
   else if (base is TFhirMedicinalProductManufacturingBusinessOperation) then
     composeMedicinalProductManufacturingBusinessOperation(json, name, TFhirMedicinalProductManufacturingBusinessOperation(base), false)
-  else if (base is TFhirMedicinalProductOrphanDesignation) then
-    composeMedicinalProductOrphanDesignation(json, name, TFhirMedicinalProductOrphanDesignation(base), false)
+  else if (base is TFhirMedicinalProductSpecialDesignation) then
+    composeMedicinalProductSpecialDesignation(json, name, TFhirMedicinalProductSpecialDesignation(base), false)
   else if (base is TFhirMedicinalProduct) then
     composeMedicinalProduct(json, name, TFhirMedicinalProduct(base), false)
 {$ENDIF FHIR_MEDICINALPRODUCT}
@@ -59206,12 +61925,28 @@ begin
   else if (base is TFhirMedicinalProductClinicals) then
     composeMedicinalProductClinicals(json, name, TFhirMedicinalProductClinicals(base), false)
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  else if (base is TFhirMedicinalProductContraindicationOtherTherapy) then
+    composeMedicinalProductContraindicationOtherTherapy(json, name, TFhirMedicinalProductContraindicationOtherTherapy(base), false)
+  else if (base is TFhirMedicinalProductContraindicationPopulation) then
+    composeMedicinalProductContraindicationPopulation(json, name, TFhirMedicinalProductContraindicationPopulation(base), false)
+  else if (base is TFhirMedicinalProductContraindication) then
+    composeMedicinalProductContraindication(json, name, TFhirMedicinalProductContraindication(base), false)
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   else if (base is TFhirMedicinalProductDeviceSpecMaterial) then
     composeMedicinalProductDeviceSpecMaterial(json, name, TFhirMedicinalProductDeviceSpecMaterial(base), false)
   else if (base is TFhirMedicinalProductDeviceSpec) then
     composeMedicinalProductDeviceSpec(json, name, TFhirMedicinalProductDeviceSpec(base), false)
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  else if (base is TFhirMedicinalProductIndicationOtherTherapy) then
+    composeMedicinalProductIndicationOtherTherapy(json, name, TFhirMedicinalProductIndicationOtherTherapy(base), false)
+  else if (base is TFhirMedicinalProductIndicationPopulation) then
+    composeMedicinalProductIndicationPopulation(json, name, TFhirMedicinalProductIndicationPopulation(base), false)
+  else if (base is TFhirMedicinalProductIndication) then
+    composeMedicinalProductIndication(json, name, TFhirMedicinalProductIndication(base), false)
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   else if (base is TFhirMedicinalProductIngredientSpecifiedSubstance) then
     composeMedicinalProductIngredientSpecifiedSubstance(json, name, TFhirMedicinalProductIngredientSpecifiedSubstance(base), false)
@@ -59224,6 +61959,10 @@ begin
   else if (base is TFhirMedicinalProductIngredient) then
     composeMedicinalProductIngredient(json, name, TFhirMedicinalProductIngredient(base), false)
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  else if (base is TFhirMedicinalProductInteraction) then
+    composeMedicinalProductInteraction(json, name, TFhirMedicinalProductInteraction(base), false)
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   else if (base is TFhirMedicinalProductManufactured) then
     composeMedicinalProductManufactured(json, name, TFhirMedicinalProductManufactured(base), false)
@@ -59248,6 +61987,12 @@ begin
   else if (base is TFhirMedicinalProductPharmaceutical) then
     composeMedicinalProductPharmaceutical(json, name, TFhirMedicinalProductPharmaceutical(base), false)
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  else if (base is TFhirMedicinalProductUndesirableEffectPopulation) then
+    composeMedicinalProductUndesirableEffectPopulation(json, name, TFhirMedicinalProductUndesirableEffectPopulation(base), false)
+  else if (base is TFhirMedicinalProductUndesirableEffect) then
+    composeMedicinalProductUndesirableEffect(json, name, TFhirMedicinalProductUndesirableEffect(base), false)
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   else if (base is TFhirMessageDefinitionFocus) then
     composeMessageDefinitionFocus(json, name, TFhirMessageDefinitionFocus(base), false)
@@ -59309,6 +62054,8 @@ begin
     composeOperationDefinitionParameter(json, name, TFhirOperationDefinitionParameter(base), false)
   else if (base is TFhirOperationDefinitionParameterBinding) then
     composeOperationDefinitionParameterBinding(json, name, TFhirOperationDefinitionParameterBinding(base), false)
+  else if (base is TFhirOperationDefinitionParameterReferencedFrom) then
+    composeOperationDefinitionParameterReferencedFrom(json, name, TFhirOperationDefinitionParameterReferencedFrom(base), false)
   else if (base is TFhirOperationDefinitionOverload) then
     composeOperationDefinitionOverload(json, name, TFhirOperationDefinitionOverload(base), false)
   else if (base is TFhirOperationDefinition) then
@@ -59326,14 +62073,10 @@ begin
   else if (base is TFhirOrganization) then
     composeOrganization(json, name, TFhirOrganization(base), false)
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  else if (base is TFhirOrganizationRoleAvailableTime) then
-    composeOrganizationRoleAvailableTime(json, name, TFhirOrganizationRoleAvailableTime(base), false)
-  else if (base is TFhirOrganizationRoleNotAvailable) then
-    composeOrganizationRoleNotAvailable(json, name, TFhirOrganizationRoleNotAvailable(base), false)
-  else if (base is TFhirOrganizationRole) then
-    composeOrganizationRole(json, name, TFhirOrganizationRole(base), false)
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  else if (base is TFhirOrganizationAffiliation) then
+    composeOrganizationAffiliation(json, name, TFhirOrganizationAffiliation(base), false)
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   else if (base is TFhirPatientContact) then
     composePatientContact(json, name, TFhirPatientContact(base), false)
@@ -59414,28 +62157,6 @@ begin
   else if (base is TFhirProcessResponse) then
     composeProcessResponse(json, name, TFhirProcessResponse(base), false)
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  else if (base is TFhirProductPlanContact) then
-    composeProductPlanContact(json, name, TFhirProductPlanContact(base), false)
-  else if (base is TFhirProductPlanCoverage) then
-    composeProductPlanCoverage(json, name, TFhirProductPlanCoverage(base), false)
-  else if (base is TFhirProductPlanCoverageBenefit) then
-    composeProductPlanCoverageBenefit(json, name, TFhirProductPlanCoverageBenefit(base), false)
-  else if (base is TFhirProductPlanCoverageBenefitLimit) then
-    composeProductPlanCoverageBenefitLimit(json, name, TFhirProductPlanCoverageBenefitLimit(base), false)
-  else if (base is TFhirProductPlanPlan) then
-    composeProductPlanPlan(json, name, TFhirProductPlanPlan(base), false)
-  else if (base is TFhirProductPlanPlanGeneralCost) then
-    composeProductPlanPlanGeneralCost(json, name, TFhirProductPlanPlanGeneralCost(base), false)
-  else if (base is TFhirProductPlanPlanSpecificCost) then
-    composeProductPlanPlanSpecificCost(json, name, TFhirProductPlanPlanSpecificCost(base), false)
-  else if (base is TFhirProductPlanPlanSpecificCostBenefit) then
-    composeProductPlanPlanSpecificCostBenefit(json, name, TFhirProductPlanPlanSpecificCostBenefit(base), false)
-  else if (base is TFhirProductPlanPlanSpecificCostBenefitCost) then
-    composeProductPlanPlanSpecificCostBenefitCost(json, name, TFhirProductPlanPlanSpecificCostBenefitCost(base), false)
-  else if (base is TFhirProductPlan) then
-    composeProductPlan(json, name, TFhirProductPlan(base), false)
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   else if (base is TFhirProvenanceAgent) then
     composeProvenanceAgent(json, name, TFhirProvenanceAgent(base), false)
@@ -59675,6 +62396,10 @@ begin
     composeTask(json, name, TFhirTask(base), false)
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+  else if (base is TFhirTerminologyCapabilitiesSoftware) then
+    composeTerminologyCapabilitiesSoftware(json, name, TFhirTerminologyCapabilitiesSoftware(base), false)
+  else if (base is TFhirTerminologyCapabilitiesImplementation) then
+    composeTerminologyCapabilitiesImplementation(json, name, TFhirTerminologyCapabilitiesImplementation(base), false)
   else if (base is TFhirTerminologyCapabilitiesCodeSystem) then
     composeTerminologyCapabilitiesCodeSystem(json, name, TFhirTerminologyCapabilitiesCodeSystem(base), false)
   else if (base is TFhirTerminologyCapabilitiesCodeSystemVersion) then
@@ -59981,6 +62706,16 @@ begin
      frtCoverage: ComposeCoverage(json, 'Coverage', TFhirCoverage(resource));
    {$ENDIF}
 {$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+  {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
+     frtCoverageEligibilityRequest: ComposeCoverageEligibilityRequest(json, 'CoverageEligibilityRequest', TFhirCoverageEligibilityRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
+{$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
+     frtCoverageEligibilityResponse: ComposeCoverageEligibilityResponse(json, 'CoverageEligibilityResponse', TFhirCoverageEligibilityResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   {$IFDEF FHIR_DETECTEDISSUE}
      frtDetectedIssue: ComposeDetectedIssue(json, 'DetectedIssue', TFhirDetectedIssue(resource));
@@ -59991,11 +62726,11 @@ begin
      frtDevice: ComposeDevice(json, 'Device', TFhirDevice(resource));
    {$ENDIF}
 {$ENDIF FHIR_DEVICE}
-{$IFDEF FHIR_DEVICECOMPONENT}
-  {$IFDEF FHIR_DEVICECOMPONENT}
-     frtDeviceComponent: ComposeDeviceComponent(json, 'DeviceComponent', TFhirDeviceComponent(resource));
+{$IFDEF FHIR_DEVICEDEFINITION}
+  {$IFDEF FHIR_DEVICEDEFINITION}
+     frtDeviceDefinition: ComposeDeviceDefinition(json, 'DeviceDefinition', TFhirDeviceDefinition(resource));
    {$ENDIF}
-{$ENDIF FHIR_DEVICECOMPONENT}
+{$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   {$IFDEF FHIR_DEVICEMETRIC}
      frtDeviceMetric: ComposeDeviceMetric(json, 'DeviceMetric', TFhirDeviceMetric(resource));
@@ -60026,16 +62761,6 @@ begin
      frtDocumentReference: ComposeDocumentReference(json, 'DocumentReference', TFhirDocumentReference(resource));
    {$ENDIF}
 {$ENDIF FHIR_DOCUMENTREFERENCE}
-{$IFDEF FHIR_ELIGIBILITYREQUEST}
-  {$IFDEF FHIR_ELIGIBILITYREQUEST}
-     frtEligibilityRequest: ComposeEligibilityRequest(json, 'EligibilityRequest', TFhirEligibilityRequest(resource));
-   {$ENDIF}
-{$ENDIF FHIR_ELIGIBILITYREQUEST}
-{$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
-     frtEligibilityResponse: ComposeEligibilityResponse(json, 'EligibilityResponse', TFhirEligibilityResponse(resource));
-   {$ENDIF}
-{$ENDIF FHIR_ELIGIBILITYRESPONSE}
 {$IFDEF FHIR_ENCOUNTER}
   {$IFDEF FHIR_ENCOUNTER}
      frtEncounter: ComposeEncounter(json, 'Encounter', TFhirEncounter(resource));
@@ -60141,6 +62866,11 @@ begin
      frtImplementationGuide: ComposeImplementationGuide(json, 'ImplementationGuide', TFhirImplementationGuide(resource));
    {$ENDIF}
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_INSURANCEPLAN}
+  {$IFDEF FHIR_INSURANCEPLAN}
+     frtInsurancePlan: ComposeInsurancePlan(json, 'InsurancePlan', TFhirInsurancePlan(resource));
+   {$ENDIF}
+{$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   {$IFDEF FHIR_INVOICE}
      frtInvoice: ComposeInvoice(json, 'Invoice', TFhirInvoice(resource));
@@ -60231,16 +62961,31 @@ begin
      frtMedicinalProductClinicals: ComposeMedicinalProductClinicals(json, 'MedicinalProductClinicals', TFhirMedicinalProductClinicals(resource));
    {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTCLINICALS}
+{$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+  {$IFDEF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
+     frtMedicinalProductContraindication: ComposeMedicinalProductContraindication(json, 'MedicinalProductContraindication', TFhirMedicinalProductContraindication(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTCONTRAINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
   {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
      frtMedicinalProductDeviceSpec: ComposeMedicinalProductDeviceSpec(json, 'MedicinalProductDeviceSpec', TFhirMedicinalProductDeviceSpec(resource));
    {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTDEVICESPEC}
+{$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+  {$IFDEF FHIR_MEDICINALPRODUCTINDICATION}
+     frtMedicinalProductIndication: ComposeMedicinalProductIndication(json, 'MedicinalProductIndication', TFhirMedicinalProductIndication(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTINDICATION}
 {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
   {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
      frtMedicinalProductIngredient: ComposeMedicinalProductIngredient(json, 'MedicinalProductIngredient', TFhirMedicinalProductIngredient(resource));
    {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTINGREDIENT}
+{$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+  {$IFDEF FHIR_MEDICINALPRODUCTINTERACTION}
+     frtMedicinalProductInteraction: ComposeMedicinalProductInteraction(json, 'MedicinalProductInteraction', TFhirMedicinalProductInteraction(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTINTERACTION}
 {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
   {$IFDEF FHIR_MEDICINALPRODUCTMANUFACTURED}
      frtMedicinalProductManufactured: ComposeMedicinalProductManufactured(json, 'MedicinalProductManufactured', TFhirMedicinalProductManufactured(resource));
@@ -60256,6 +63001,11 @@ begin
      frtMedicinalProductPharmaceutical: ComposeMedicinalProductPharmaceutical(json, 'MedicinalProductPharmaceutical', TFhirMedicinalProductPharmaceutical(resource));
    {$ENDIF}
 {$ENDIF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+{$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+  {$IFDEF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
+     frtMedicinalProductUndesirableEffect: ComposeMedicinalProductUndesirableEffect(json, 'MedicinalProductUndesirableEffect', TFhirMedicinalProductUndesirableEffect(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICINALPRODUCTUNDESIRABLEEFFECT}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   {$IFDEF FHIR_MESSAGEDEFINITION}
      frtMessageDefinition: ComposeMessageDefinition(json, 'MessageDefinition', TFhirMessageDefinition(resource));
@@ -60301,11 +63051,11 @@ begin
      frtOrganization: ComposeOrganization(json, 'Organization', TFhirOrganization(resource));
    {$ENDIF}
 {$ENDIF FHIR_ORGANIZATION}
-{$IFDEF FHIR_ORGANIZATIONROLE}
-  {$IFDEF FHIR_ORGANIZATIONROLE}
-     frtOrganizationRole: ComposeOrganizationRole(json, 'OrganizationRole', TFhirOrganizationRole(resource));
+{$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+  {$IFDEF FHIR_ORGANIZATIONAFFILIATION}
+     frtOrganizationAffiliation: ComposeOrganizationAffiliation(json, 'OrganizationAffiliation', TFhirOrganizationAffiliation(resource));
    {$ENDIF}
-{$ENDIF FHIR_ORGANIZATIONROLE}
+{$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PATIENT}
   {$IFDEF FHIR_PATIENT}
      frtPatient: ComposePatient(json, 'Patient', TFhirPatient(resource));
@@ -60356,11 +63106,6 @@ begin
      frtProcessResponse: ComposeProcessResponse(json, 'ProcessResponse', TFhirProcessResponse(resource));
    {$ENDIF}
 {$ENDIF FHIR_PROCESSRESPONSE}
-{$IFDEF FHIR_PRODUCTPLAN}
-  {$IFDEF FHIR_PRODUCTPLAN}
-     frtProductPlan: ComposeProductPlan(json, 'ProductPlan', TFhirProductPlan(resource));
-   {$ENDIF}
-{$ENDIF FHIR_PRODUCTPLAN}
 {$IFDEF FHIR_PROVENANCE}
   {$IFDEF FHIR_PROVENANCE}
      frtProvenance: ComposeProvenance(json, 'Provenance', TFhirProvenance(resource));

@@ -121,7 +121,7 @@ begin
   self.AddFuncItem('HTML &Unescape', _FuncHtmlUnescape);
   self.AddFuncItem('Paste Html', _FuncPasteHtml);
   self.AddFuncItem('-', Nil);
-  self.AddFuncItem('Text &UUID', _FuncHtmlUnescape);
+  self.AddFuncItem('Text &UUID', _FuncTextUUID);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Url &Escape', _FuncUrlEscape);
   self.AddFuncItem('Url &Unescape', _FuncUrlUnescape);
@@ -316,10 +316,8 @@ var
 begin
   s := TEncoding.UTF8.getString(SelectedBytes);
   u := Clipboard.AsText;
-  if isAbsoluteUrl(u) then
+  if isAbsoluteUrl(u) or u.Contains('.htm') then
     s := '<a href="'+u+'">'+s+'</a>'
-  else if isAbsoluteUrl(s) then
-    s := '<a href="'+s+'">'+s+'</a>'
   else
     s := '<a href="">'+s+'</a>';
   SelectedBytes := TEncoding.UTF8.GetBytes(s);

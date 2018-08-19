@@ -33,7 +33,7 @@ unit FHIR.R4.Javascript;
 
 interface
 
-// FHIR v3.4.0 generated 2018-07-25T14:31:35+10:00
+// FHIR v3.5.0 generated 2018-08-19T19:30:08+10:00
 
 uses
   FHIR.Javascript, FHIR.Javascript.Base;
@@ -172,7 +172,7 @@ end;
 procedure defineExtensionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineElementPropsJs(js, def);
-  js.registerElement(def, 'Extension', 'url', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Extension', 'url', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Extension', 'valueBase64Binary', 'base64Binary', js.getFHIRBinaryProp, js.setFHIRBinaryProp);
   js.registerElement(def, 'Extension', 'valueBoolean', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'Extension', 'valueCanonical', 'canonical', js.getFHIRStringProp, js.setFHIRStringProp);
@@ -745,7 +745,7 @@ procedure defineExpressionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDe
 begin
   defineElementPropsJs(js, def);
   js.registerElement(def, 'Expression', 'description', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'Expression', 'name', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Expression', 'name', 'id', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Expression', 'language', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Expression', 'expression', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Expression', 'reference', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
@@ -783,10 +783,8 @@ begin
   defineElementPropsJs(js, def);
   js.registerElement(def, 'Signature', 'type', 'Coding', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Signature', 'when', 'instant', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'Signature', 'whoUri', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'Signature', 'whoReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'Signature', 'onBehalfOfUri', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'Signature', 'onBehalfOfReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Signature', 'who', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Signature', 'onBehalfOf', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Signature', 'targetFormat', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Signature', 'sigFormat', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Signature', 'data', 'base64Binary', js.getFHIRBinaryProp, js.setFHIRBinaryProp);
@@ -1132,6 +1130,7 @@ begin
   defineBackboneTypePropsJs(js, def);
   js.registerElement(def, 'ElementDefinition', 'path', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ElementDefinition', 'sliceName', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ElementDefinition', 'sliceIsConstraining', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'ElementDefinition', 'label', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ElementDefinition', 'code', 'Coding', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ElementDefinition', 'slicing', 'ElementDefinitionSlicing', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -1337,13 +1336,13 @@ begin
   js.registerElement(def, 'TimingRepeat', 'boundsDuration', 'Duration', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'TimingRepeat', 'boundsRange', 'Range', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'TimingRepeat', 'boundsPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'TimingRepeat', 'count', 'integer', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
-  js.registerElement(def, 'TimingRepeat', 'countMax', 'integer', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
+  js.registerElement(def, 'TimingRepeat', 'count', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
+  js.registerElement(def, 'TimingRepeat', 'countMax', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
   js.registerElement(def, 'TimingRepeat', 'duration', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
   js.registerElement(def, 'TimingRepeat', 'durationMax', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
   js.registerElement(def, 'TimingRepeat', 'durationUnit', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'TimingRepeat', 'frequency', 'integer', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
-  js.registerElement(def, 'TimingRepeat', 'frequencyMax', 'integer', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
+  js.registerElement(def, 'TimingRepeat', 'frequency', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
+  js.registerElement(def, 'TimingRepeat', 'frequencyMax', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
   js.registerElement(def, 'TimingRepeat', 'period', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
   js.registerElement(def, 'TimingRepeat', 'periodMax', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
   js.registerElement(def, 'TimingRepeat', 'periodUnit', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
@@ -1471,7 +1470,7 @@ begin
   js.registerElement(def, 'Account', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Account', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Account', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'Account', 'subject', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Account', 'subject', 'Reference(Patient)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Account', 'servicePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Account', 'coverage', 'AccountCoverage', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Account', 'owner', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -1547,10 +1546,16 @@ begin
   js.registerElement(def, 'ActivityDefinition', 'lastReviewDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'ActivityDefinition', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ActivityDefinition', 'topic', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ActivityDefinition', 'contributor', 'Contributor', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ActivityDefinition', 'author', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ActivityDefinition', 'editor', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ActivityDefinition', 'reviewer', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ActivityDefinition', 'endorser', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ActivityDefinition', 'relatedArtifact', 'RelatedArtifact', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ActivityDefinition', 'kind', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ActivityDefinition', 'profile', 'canonical', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ActivityDefinition', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ActivityDefinition', 'intent', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ActivityDefinition', 'priority', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ActivityDefinition', 'doNotPerform', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'ActivityDefinition', 'timingTiming', 'Timing', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ActivityDefinition', 'timingDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -1566,6 +1571,8 @@ begin
   js.registerElement(def, 'ActivityDefinition', 'dosage', 'Dosage', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ActivityDefinition', 'bodySite', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ActivityDefinition', 'specimenRequirement', 'Reference(SpecimenDefinition)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ActivityDefinition', 'observationRequirement', 'Reference(ObservationDefinition)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ActivityDefinition', 'observationResultRequirement', 'Reference(ObservationDefinition)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ActivityDefinition', 'transform', 'canonical', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ActivityDefinition', 'dynamicValue', 'ActivityDefinitionDynamicValue', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
@@ -2523,7 +2530,7 @@ end;
 procedure defineCareTeamParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'CareTeamParticipant', 'role', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CareTeamParticipant', 'role', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'CareTeamParticipant', 'member', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'CareTeamParticipant', 'onBehalfOf', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'CareTeamParticipant', 'period', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -2792,6 +2799,7 @@ begin
   js.registerElement(def, 'ClaimDiagnosis', 'diagnosisCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimDiagnosis', 'diagnosisReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimDiagnosis', 'type', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ClaimDiagnosis', 'onAdmission', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimDiagnosis', 'packageCode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
@@ -2866,7 +2874,7 @@ begin
   js.registerElement(def, 'ClaimItem', 'sequence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
   js.registerElement(def, 'ClaimItem', 'revenue', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimItem', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ClaimItem', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ClaimItem', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimItem', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimItem', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimItem', 'servicedDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -2900,7 +2908,7 @@ begin
   js.registerElement(def, 'ClaimItemDetail', 'sequence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
   js.registerElement(def, 'ClaimItemDetail', 'revenue', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimItemDetail', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ClaimItemDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ClaimItemDetail', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimItemDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimItemDetail', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimItemDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -2926,7 +2934,7 @@ begin
   js.registerElement(def, 'ClaimItemDetailSubDetail', 'sequence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
   js.registerElement(def, 'ClaimItemDetailSubDetail', 'revenue', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimItemDetailSubDetail', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ClaimItemDetailSubDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ClaimItemDetailSubDetail', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimItemDetailSubDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimItemDetailSubDetail', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimItemDetailSubDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -2951,7 +2959,7 @@ begin
   js.registerElement(def, 'Claim', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Claim', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Claim', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'Claim', 'subType', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Claim', 'subType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Claim', 'use', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Claim', 'patient', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Claim', 'billablePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -3057,7 +3065,8 @@ end;
 procedure defineClaimResponseAddItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ClaimResponseAddItem', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ClaimResponseAddItem', 'provider', 'Reference(Practitioner)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ClaimResponseAddItem', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponseAddItem', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimResponseAddItem', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimResponseAddItem', 'servicedDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -3087,9 +3096,8 @@ end;
 procedure defineClaimResponseAddItemDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ClaimResponseAddItemDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ClaimResponseAddItemDetail', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponseAddItemDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ClaimResponseAddItemDetail', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimResponseAddItemDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponseAddItemDetail', 'unitPrice', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponseAddItemDetail', 'factor', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
@@ -3110,9 +3118,8 @@ end;
 procedure defineClaimResponseAddItemDetailSubDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ClaimResponseAddItemDetailSubDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ClaimResponseAddItemDetailSubDetail', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponseAddItemDetailSubDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ClaimResponseAddItemDetailSubDetail', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimResponseAddItemDetailSubDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponseAddItemDetailSubDetail', 'unitPrice', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponseAddItemDetailSubDetail', 'factor', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
@@ -3226,7 +3233,7 @@ begin
   js.registerElement(def, 'ClaimResponse', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimResponse', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ClaimResponse', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ClaimResponse', 'subType', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ClaimResponse', 'subType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponse', 'use', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ClaimResponse', 'patient', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponse', 'created', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -3235,6 +3242,7 @@ begin
   js.registerElement(def, 'ClaimResponse', 'request', 'Reference(Claim)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponse', 'outcome', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ClaimResponse', 'disposition', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ClaimResponse', 'preAuthRef', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ClaimResponse', 'payeeType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ClaimResponse', 'item', 'ClaimResponseItem', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClaimResponse', 'addItem', 'ClaimResponseAddItem', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -3311,7 +3319,7 @@ begin
   js.registerElement(def, 'ClinicalImpression', 'finding', 'ClinicalImpressionFinding', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClinicalImpression', 'prognosisCodeableConcept', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClinicalImpression', 'prognosisReference', 'Reference(RiskAssessment)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ClinicalImpression', 'action', 'Reference(ServiceRequest)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ClinicalImpression', 'supportingInfo', 'Reference(Any)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ClinicalImpression', 'note', 'Annotation', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
@@ -3422,7 +3430,7 @@ procedure defineCodeSystemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDe
 begin
   defineMetadataResourcePropsJs(js, def);
   js.registerElement(def, 'CodeSystem', 'url', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'CodeSystem', 'identifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CodeSystem', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'CodeSystem', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'CodeSystem', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'CodeSystem', 'title', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
@@ -3688,7 +3696,7 @@ begin
   js.registerElement(def, 'Composition', 'identifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Composition', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Composition', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'Composition', 'class', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Composition', 'category', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Composition', 'subject', 'Reference(Any)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Composition', 'encounter', 'Reference(Encounter)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Composition', 'date', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -4029,19 +4037,41 @@ begin
 end;
 
 
+procedure defineContractContentDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'ContractContentDefinition', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractContentDefinition', 'subType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractContentDefinition', 'publisher', 'Reference(Person)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractContentDefinition', 'publicationDate', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'ContractContentDefinition', 'publicationStatus', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ContractContentDefinition', 'copyright', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineContractContentDefinitionJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('ContractContentDefinition', nil, 'ContractContentDefinition', js.FHIRFactoryJs);
+  defineContractContentDefinitionPropsJs(js, def);
+end;
+
+
 procedure defineContractTermPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
   js.registerElement(def, 'ContractTerm', 'identifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ContractTerm', 'issued', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'ContractTerm', 'applies', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTerm', 'topicCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTerm', 'topicReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ContractTerm', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ContractTerm', 'subType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTerm', 'text', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ContractTerm', 'securityLabel', 'ContractTermSecurityLabel', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ContractTerm', 'offer', 'ContractTermOffer', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ContractTerm', 'asset', 'ContractTermAsset', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ContractTerm', 'agent', 'ContractTermAgent', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ContractTerm', 'action', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ContractTerm', 'actionReason', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTerm', 'action', 'ContractTermAction', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ContractTerm', 'group', '@Contract.term', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
@@ -4054,14 +4084,34 @@ begin
 end;
 
 
+procedure defineContractTermSecurityLabelPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'ContractTermSecurityLabel', 'classification', 'Coding', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermSecurityLabel', 'category', 'Coding', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermSecurityLabel', 'control', 'Coding', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineContractTermSecurityLabelJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('ContractTermSecurityLabel', nil, 'ContractTermSecurityLabel', js.FHIRFactoryJs);
+  defineContractTermSecurityLabelPropsJs(js, def);
+end;
+
+
 procedure defineContractTermOfferPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'ContractTermOffer', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermOffer', 'party', 'ContractTermOfferParty', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ContractTermOffer', 'topic', 'Reference(Any)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ContractTermOffer', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ContractTermOffer', 'decision', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermOffer', 'decisionMode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermOffer', 'answer', 'ContractTermOfferAnswer', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ContractTermOffer', 'text', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'ContractTermOffer', 'linkId', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
 end;
 
 procedure defineContractTermOfferJs(js : TFHIRJavascript);
@@ -4073,16 +4123,64 @@ begin
 end;
 
 
+procedure defineContractTermOfferPartyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'ContractTermOfferParty', 'reference', 'Reference(Patient)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermOfferParty', 'role', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineContractTermOfferPartyJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('ContractTermOfferParty', nil, 'ContractTermOfferParty', js.FHIRFactoryJs);
+  defineContractTermOfferPartyPropsJs(js, def);
+end;
+
+
+procedure defineContractTermOfferAnswerPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueBoolean', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueDecimal', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueInteger', 'integer', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueTime', 'time', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueString', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueUri', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueAttachment', 'Attachment', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueCoding', 'Coding', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueQuantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermOfferAnswer', 'valueReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineContractTermOfferAnswerJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('ContractTermOfferAnswer', nil, 'ContractTermOfferAnswer', js.FHIRFactoryJs);
+  defineContractTermOfferAnswerPropsJs(js, def);
+end;
+
+
 procedure defineContractTermAssetPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ContractTermAsset', 'class', 'Coding', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ContractTermAsset', 'code', 'Coding', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ContractTermAsset', 'period', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ContractTermAsset', 'dataPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ContractTermAsset', 'data', 'ContractTermAssetData', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAsset', 'scope', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAsset', 'type', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAsset', 'typeReference', 'Reference(Any)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAsset', 'subtype', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAsset', 'relationship', 'Coding', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAsset', 'context', 'ContractTermAssetContext', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAsset', 'condition', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ContractTermAsset', 'periodType', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAsset', 'period', 'Period', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAsset', 'usePeriod', 'Period', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAsset', 'text', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ContractTermAsset', 'answer', '@Contract.term.offer.answer', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ContractTermAsset', 'valuedItem', 'ContractTermAssetValuedItem', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ContractTermAsset', 'securityLabel', 'Coding', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
 procedure defineContractTermAssetJs(js : TFHIRJavascript);
@@ -4094,19 +4192,20 @@ begin
 end;
 
 
-procedure defineContractTermAssetDataPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+procedure defineContractTermAssetContextPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ContractTermAssetData', 'meaning', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'ContractTermAssetData', 'reference', 'Reference(Any)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAssetContext', 'reference', 'Reference(Any)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAssetContext', 'code', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAssetContext', 'text', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
 end;
 
-procedure defineContractTermAssetDataJs(js : TFHIRJavascript);
+procedure defineContractTermAssetContextJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractTermAssetData', nil, 'ContractTermAssetData', js.FHIRFactoryJs);
-  defineContractTermAssetDataPropsJs(js, def);
+  def := js.defineClass('ContractTermAssetContext', nil, 'ContractTermAssetContext', js.FHIRFactoryJs);
+  defineContractTermAssetContextPropsJs(js, def);
 end;
 
 
@@ -4122,6 +4221,10 @@ begin
   js.registerElement(def, 'ContractTermAssetValuedItem', 'factor', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
   js.registerElement(def, 'ContractTermAssetValuedItem', 'points', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
   js.registerElement(def, 'ContractTermAssetValuedItem', 'net', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAssetValuedItem', 'payment', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ContractTermAssetValuedItem', 'paymentDate', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'ContractTermAssetValuedItem', 'responsible', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAssetValuedItem', 'recipient', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
 procedure defineContractTermAssetValuedItemJs(js : TFHIRJavascript);
@@ -4133,19 +4236,49 @@ begin
 end;
 
 
-procedure defineContractTermAgentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+procedure defineContractTermActionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ContractTermAgent', 'actor', 'Reference(Contract)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ContractTermAgent', 'role', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAction', 'doNotPerform', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'ContractTermAction', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAction', 'subject', 'ContractTermActionSubject', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAction', 'intent', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAction', 'status', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAction', 'context', 'Reference(Encounter)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAction', 'occurrenceDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'ContractTermAction', 'occurrencePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAction', 'occurrenceTiming', 'Timing', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAction', 'requester', 'Reference(Patient)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAction', 'performerType', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAction', 'performerRole', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAction', 'performer', 'Reference(Person)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ContractTermAction', 'reasonCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAction', 'reasonReference', 'Reference(Condition)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermAction', 'note', 'Annotation', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
-procedure defineContractTermAgentJs(js : TFHIRJavascript);
+procedure defineContractTermActionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('ContractTermAgent', nil, 'ContractTermAgent', js.FHIRFactoryJs);
-  defineContractTermAgentPropsJs(js, def);
+  def := js.defineClass('ContractTermAction', nil, 'ContractTermAction', js.FHIRFactoryJs);
+  defineContractTermActionPropsJs(js, def);
+end;
+
+
+procedure defineContractTermActionSubjectPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'ContractTermActionSubject', 'reference', 'Reference(Patient)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ContractTermActionSubject', 'role', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineContractTermActionSubjectJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('ContractTermActionSubject', nil, 'ContractTermActionSubject', js.FHIRFactoryJs);
+  defineContractTermActionSubjectPropsJs(js, def);
 end;
 
 
@@ -4218,20 +4351,37 @@ procedure defineContractPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefi
 begin
   defineDomainResourcePropsJs(js, def);
   js.registerElement(def, 'Contract', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Contract', 'url', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Contract', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Contract', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Contract', 'legalState', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Contract', 'instantiatesCanonical', 'Reference(Contract)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Contract', 'instantiatesUri', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Contract', 'contentDerivative', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Contract', 'issued', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Contract', 'applies', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Contract', 'expirationType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Contract', 'subject', 'Reference(Any)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Contract', 'authority', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Contract', 'domain', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Contract', 'site', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Contract', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Contract', 'title', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Contract', 'subtitle', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Contract', 'author', 'Reference(Person)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Contract', 'scope', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Contract', 'topicCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Contract', 'topicReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Contract', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Contract', 'subType', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Contract', 'contentDefinition', 'ContractContentDefinition', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Contract', 'term', 'ContractTerm', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Contract', 'supportingInfo', 'Reference(Any)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Contract', 'relevantHistory', 'Reference(Provenance)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Contract', 'signer', 'ContractSigner', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Contract', 'friendly', 'ContractFriendly', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Contract', 'legal', 'ContractLegal', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'Contract', 'rule', 'ContractRule', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Contract', 'rule', 'ContractRule', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Contract', 'legallyBindingAttachment', 'Attachment', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Contract', 'legallyBindingReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
@@ -4308,6 +4458,217 @@ begin
 end;
 
 
+procedure defineCoverageEligibilityRequestSupportingInformationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityRequestSupportingInformation', 'sequence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
+  js.registerElement(def, 'CoverageEligibilityRequestSupportingInformation', 'information', 'Reference(Any)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestSupportingInformation', 'appliesToAll', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+end;
+
+procedure defineCoverageEligibilityRequestSupportingInformationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityRequestSupportingInformation', nil, 'CoverageEligibilityRequestSupportingInformation', js.FHIRFactoryJs);
+  defineCoverageEligibilityRequestSupportingInformationPropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityRequestInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityRequestInsurance', 'focal', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'CoverageEligibilityRequestInsurance', 'coverage', 'Reference(Coverage)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestInsurance', 'businessArrangement', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineCoverageEligibilityRequestInsuranceJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityRequestInsurance', nil, 'CoverageEligibilityRequestInsurance', js.FHIRFactoryJs);
+  defineCoverageEligibilityRequestInsurancePropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityRequestItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'provider', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'unitPrice', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'facility', 'Reference(Location)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'diagnosis', 'CoverageEligibilityRequestItemDiagnosis', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItem', 'detail', 'Reference(Any)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineCoverageEligibilityRequestItemJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityRequestItem', nil, 'CoverageEligibilityRequestItem', js.FHIRFactoryJs);
+  defineCoverageEligibilityRequestItemPropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityRequestItemDiagnosisPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityRequestItemDiagnosis', 'diagnosisCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequestItemDiagnosis', 'diagnosisReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineCoverageEligibilityRequestItemDiagnosisJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityRequestItemDiagnosis', nil, 'CoverageEligibilityRequestItemDiagnosis', js.FHIRFactoryJs);
+  defineCoverageEligibilityRequestItemDiagnosisPropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineDomainResourcePropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'priority', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'patient', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'servicedDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'servicedPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'created', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'enterer', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'provider', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'insurer', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'facility', 'Reference(Location)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'supportingInformation', 'CoverageEligibilityRequestSupportingInformation', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'insurance', 'CoverageEligibilityRequestInsurance', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityRequest', 'item', 'CoverageEligibilityRequestItem', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineCoverageEligibilityRequestJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityRequest', nil, 'CoverageEligibilityRequest', js.FHIRFactoryJs);
+  defineCoverageEligibilityRequestPropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityResponseInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityResponseInsurance', 'coverage', 'Reference(Coverage)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsurance', 'contract', 'Reference(Contract)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsurance', 'inforce', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsurance', 'item', 'CoverageEligibilityResponseInsuranceItem', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineCoverageEligibilityResponseInsuranceJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityResponseInsurance', nil, 'CoverageEligibilityResponseInsurance', js.FHIRFactoryJs);
+  defineCoverageEligibilityResponseInsurancePropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityResponseInsuranceItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'provider', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'excluded', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'description', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'network', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'unit', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'term', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'benefit', 'CoverageEligibilityResponseInsuranceItemBenefit', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'authorizationRequired', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'authorizationSupporting', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItem', 'authorizationUrl', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineCoverageEligibilityResponseInsuranceItemJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityResponseInsuranceItem', nil, 'CoverageEligibilityResponseInsuranceItem', js.FHIRFactoryJs);
+  defineCoverageEligibilityResponseInsuranceItemPropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityResponseInsuranceItemBenefitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItemBenefit', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItemBenefit', 'allowedUnsignedInt', 'unsignedInt', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItemBenefit', 'allowedString', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItemBenefit', 'allowedMoney', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItemBenefit', 'usedUnsignedInt', 'unsignedInt', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponseInsuranceItemBenefit', 'usedMoney', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineCoverageEligibilityResponseInsuranceItemBenefitJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityResponseInsuranceItemBenefit', nil, 'CoverageEligibilityResponseInsuranceItemBenefit', js.FHIRFactoryJs);
+  defineCoverageEligibilityResponseInsuranceItemBenefitPropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityResponseErrorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityResponseError', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineCoverageEligibilityResponseErrorJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityResponseError', nil, 'CoverageEligibilityResponseError', js.FHIRFactoryJs);
+  defineCoverageEligibilityResponseErrorPropsJs(js, def);
+end;
+
+
+procedure defineCoverageEligibilityResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineDomainResourcePropsJs(js, def);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'patient', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'servicedDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'servicedPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'created', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'requestProvider', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'request', 'Reference(CoverageEligibilityRequest)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'outcome', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'disposition', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'insurer', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'insurance', 'CoverageEligibilityResponseInsurance', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'preAuthRef', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'form', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'CoverageEligibilityResponse', 'error', 'CoverageEligibilityResponseError', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineCoverageEligibilityResponseJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('CoverageEligibilityResponse', nil, 'CoverageEligibilityResponse', js.FHIRFactoryJs);
+  defineCoverageEligibilityResponsePropsJs(js, def);
+end;
+
+
 procedure defineDetectedIssueMitigationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -4350,24 +4711,89 @@ begin
 end;
 
 
-procedure defineDeviceUdiPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+procedure defineDeviceUdiCarrierPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'DeviceUdi', 'deviceIdentifier', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'DeviceUdi', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'DeviceUdi', 'jurisdiction', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'DeviceUdi', 'carrierHRF', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'DeviceUdi', 'carrierAIDC', 'base64Binary', js.getFHIRBinaryProp, js.setFHIRBinaryProp);
-  js.registerElement(def, 'DeviceUdi', 'issuer', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'DeviceUdi', 'entryType', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceUdiCarrier', 'deviceIdentifier', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceUdiCarrier', 'issuer', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceUdiCarrier', 'jurisdiction', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceUdiCarrier', 'carrierAIDC', 'base64Binary', js.getFHIRBinaryProp, js.setFHIRBinaryProp);
+  js.registerElement(def, 'DeviceUdiCarrier', 'carrierHRF', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceUdiCarrier', 'entryType', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
 end;
 
-procedure defineDeviceUdiJs(js : TFHIRJavascript);
+procedure defineDeviceUdiCarrierJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceUdi', nil, 'DeviceUdi', js.FHIRFactoryJs);
-  defineDeviceUdiPropsJs(js, def);
+  def := js.defineClass('DeviceUdiCarrier', nil, 'DeviceUdiCarrier', js.FHIRFactoryJs);
+  defineDeviceUdiCarrierPropsJs(js, def);
+end;
+
+
+procedure defineDeviceDeviceNamePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'DeviceDeviceName', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDeviceName', 'type', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineDeviceDeviceNameJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('DeviceDeviceName', nil, 'DeviceDeviceName', js.FHIRFactoryJs);
+  defineDeviceDeviceNamePropsJs(js, def);
+end;
+
+
+procedure defineDeviceSpecializationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'DeviceSpecialization', 'systemType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceSpecialization', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineDeviceSpecializationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('DeviceSpecialization', nil, 'DeviceSpecialization', js.FHIRFactoryJs);
+  defineDeviceSpecializationPropsJs(js, def);
+end;
+
+
+procedure defineDeviceVersionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'DeviceVersion', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceVersion', 'component', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceVersion', 'value', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineDeviceVersionJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('DeviceVersion', nil, 'DeviceVersion', js.FHIRFactoryJs);
+  defineDeviceVersionPropsJs(js, def);
+end;
+
+
+procedure defineDevicePropertyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'DeviceProperty', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceProperty', 'valueQuanity', 'Quantity', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceProperty', 'valueCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineDevicePropertyJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('DeviceProperty', nil, 'DeviceProperty', js.FHIRFactoryJs);
+  defineDevicePropertyPropsJs(js, def);
 end;
 
 
@@ -4375,15 +4801,23 @@ procedure defineDevicePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefini
 begin
   defineDomainResourcePropsJs(js, def);
   js.registerElement(def, 'Device', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'Device', 'udi', 'DeviceUdi', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Device', 'definition', 'Reference(DeviceDefinition)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Device', 'udiCarrier', 'DeviceUdiCarrier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Device', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'Device', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'Device', 'lotNumber', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Device', 'statusReason', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Device', 'distinctIdentificationCode', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Device', 'manufacturer', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Device', 'manufactureDate', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Device', 'expirationDate', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'Device', 'model', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'Device', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Device', 'lotNumber', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Device', 'serialNumber', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Device', 'deviceName', 'DeviceDeviceName', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Device', 'modelNumber', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Device', 'partNumber', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Device', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Device', 'specialization', 'DeviceSpecialization', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Device', 'version', 'DeviceVersion', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Device', 'property', 'DeviceProperty', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Device', 'patient', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Device', 'owner', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Device', 'contact', 'ContactPoint', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -4391,6 +4825,7 @@ begin
   js.registerElement(def, 'Device', 'url', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Device', 'note', 'Annotation', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Device', 'safety', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Device', 'parent', 'Reference(Device)', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
 procedure defineDeviceJs(js : TFHIRJavascript);
@@ -4402,62 +4837,138 @@ begin
 end;
 
 
-procedure defineDeviceComponentProductionSpecificationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+procedure defineDeviceDefinitionUdiDeviceIdentifierPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'DeviceComponentProductionSpecification', 'specType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceComponentProductionSpecification', 'componentId', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceComponentProductionSpecification', 'productionSpec', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinitionUdiDeviceIdentifier', 'deviceIdentifier', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinitionUdiDeviceIdentifier', 'issuer', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinitionUdiDeviceIdentifier', 'jurisdiction', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
 end;
 
-procedure defineDeviceComponentProductionSpecificationJs(js : TFHIRJavascript);
+procedure defineDeviceDefinitionUdiDeviceIdentifierJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceComponentProductionSpecification', nil, 'DeviceComponentProductionSpecification', js.FHIRFactoryJs);
-  defineDeviceComponentProductionSpecificationPropsJs(js, def);
+  def := js.defineClass('DeviceDefinitionUdiDeviceIdentifier', nil, 'DeviceDefinitionUdiDeviceIdentifier', js.FHIRFactoryJs);
+  defineDeviceDefinitionUdiDeviceIdentifierPropsJs(js, def);
 end;
 
 
-procedure defineDeviceComponentPropertyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+procedure defineDeviceDefinitionDeviceNamePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'DeviceComponentProperty', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceComponentProperty', 'valueQuantity', 'Quantity', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'DeviceComponentProperty', 'valueCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinitionDeviceName', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinitionDeviceName', 'type', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
 end;
 
-procedure defineDeviceComponentPropertyJs(js : TFHIRJavascript);
+procedure defineDeviceDefinitionDeviceNameJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceComponentProperty', nil, 'DeviceComponentProperty', js.FHIRFactoryJs);
-  defineDeviceComponentPropertyPropsJs(js, def);
+  def := js.defineClass('DeviceDefinitionDeviceName', nil, 'DeviceDefinitionDeviceName', js.FHIRFactoryJs);
+  defineDeviceDefinitionDeviceNamePropsJs(js, def);
 end;
 
 
-procedure defineDeviceComponentPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+procedure defineDeviceDefinitionSpecializationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'DeviceDefinitionSpecialization', 'systemType', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinitionSpecialization', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineDeviceDefinitionSpecializationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('DeviceDefinitionSpecialization', nil, 'DeviceDefinitionSpecialization', js.FHIRFactoryJs);
+  defineDeviceDefinitionSpecializationPropsJs(js, def);
+end;
+
+
+procedure defineDeviceDefinitionCapabilityPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'DeviceDefinitionCapability', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinitionCapability', 'description', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineDeviceDefinitionCapabilityJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('DeviceDefinitionCapability', nil, 'DeviceDefinitionCapability', js.FHIRFactoryJs);
+  defineDeviceDefinitionCapabilityPropsJs(js, def);
+end;
+
+
+procedure defineDeviceDefinitionPropertyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'DeviceDefinitionProperty', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinitionProperty', 'valueQuanity', 'Quantity', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinitionProperty', 'valueCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineDeviceDefinitionPropertyJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('DeviceDefinitionProperty', nil, 'DeviceDefinitionProperty', js.FHIRFactoryJs);
+  defineDeviceDefinitionPropertyPropsJs(js, def);
+end;
+
+
+procedure defineDeviceDefinitionMaterialPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'DeviceDefinitionMaterial', 'substance', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinitionMaterial', 'alternate', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'DeviceDefinitionMaterial', 'allergenicIndicator', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+end;
+
+procedure defineDeviceDefinitionMaterialJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('DeviceDefinitionMaterial', nil, 'DeviceDefinitionMaterial', js.FHIRFactoryJs);
+  defineDeviceDefinitionMaterialPropsJs(js, def);
+end;
+
+
+procedure defineDeviceDefinitionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
-  js.registerElement(def, 'DeviceComponent', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'DeviceComponent', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceComponent', 'lastSystemChange', 'instant', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'DeviceComponent', 'source', 'Reference(Device)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceComponent', 'parent', 'Reference(DeviceComponent)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceComponent', 'operationalStatus', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'DeviceComponent', 'parameterGroup', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceComponent', 'measurementPrinciple', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'DeviceComponent', 'productionSpecification', 'DeviceComponentProductionSpecification', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'DeviceComponent', 'languageCode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceComponent', 'property', 'DeviceComponentProperty', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'udiDeviceIdentifier', 'DeviceDefinitionUdiDeviceIdentifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'manufacturerString', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinition', 'manufacturerReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinition', 'deviceName', 'DeviceDefinitionDeviceName', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'modelNumber', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinition', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinition', 'specialization', 'DeviceDefinitionSpecialization', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'safety', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'shelfLifeStorage', 'ProductShelfLife', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'physicalCharacteristics', 'ProdCharacteristic', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinition', 'languageCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'capability', 'DeviceDefinitionCapability', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'property', 'DeviceDefinitionProperty', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'owner', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinition', 'contact', 'ContactPoint', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'url', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinition', 'onlineInformation', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'DeviceDefinition', 'note', 'Annotation', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DeviceDefinition', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinition', 'parentDevice', 'Reference(DeviceDefinition)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceDefinition', 'material', 'DeviceDefinitionMaterial', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
-procedure defineDeviceComponentJs(js : TFHIRJavascript);
+procedure defineDeviceDefinitionJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('DeviceComponent', nil, 'DeviceComponent', js.FHIRFactoryJs);
-  defineDeviceComponentPropsJs(js, def);
+  def := js.defineClass('DeviceDefinition', nil, 'DeviceDefinition', js.FHIRFactoryJs);
+  defineDeviceDefinitionPropsJs(js, def);
 end;
 
 
@@ -4485,7 +4996,7 @@ begin
   js.registerElement(def, 'DeviceMetric', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'DeviceMetric', 'unit', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'DeviceMetric', 'source', 'Reference(Device)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DeviceMetric', 'parent', 'Reference(DeviceComponent)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DeviceMetric', 'parent', 'Reference(Device)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'DeviceMetric', 'operationalStatus', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'DeviceMetric', 'color', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'DeviceMetric', 'category', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
@@ -4625,7 +5136,7 @@ begin
   js.registerElement(def, 'DiagnosticReport', 'imagingStudy', 'Reference(ImagingStudy)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'DiagnosticReport', 'media', 'DiagnosticReportMedia', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'DiagnosticReport', 'conclusion', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'DiagnosticReport', 'codedDiagnosis', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DiagnosticReport', 'conclusionCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'DiagnosticReport', 'presentedForm', 'Attachment', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
@@ -4747,13 +5258,13 @@ end;
 procedure defineDocumentReferenceContextPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'DocumentReferenceContext', 'encounter', 'Reference(Encounter)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DocumentReferenceContext', 'encounter', 'Reference(Encounter)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'DocumentReferenceContext', 'event', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'DocumentReferenceContext', 'period', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'DocumentReferenceContext', 'facilityType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'DocumentReferenceContext', 'practiceSetting', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'DocumentReferenceContext', 'sourcePatientInfo', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DocumentReferenceContext', 'related', 'DocumentReferenceContextRelated', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'DocumentReferenceContext', 'related', 'Reference(Any)', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
 procedure defineDocumentReferenceContextJs(js : TFHIRJavascript);
@@ -4765,22 +5276,6 @@ begin
 end;
 
 
-procedure defineDocumentReferenceContextRelatedPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'DocumentReferenceContextRelated', 'identifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DocumentReferenceContextRelated', 'ref', 'Reference(Any)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineDocumentReferenceContextRelatedJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('DocumentReferenceContextRelated', nil, 'DocumentReferenceContextRelated', js.FHIRFactoryJs);
-  defineDocumentReferenceContextRelatedPropsJs(js, def);
-end;
-
-
 procedure defineDocumentReferencePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
@@ -4789,9 +5284,8 @@ begin
   js.registerElement(def, 'DocumentReference', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'DocumentReference', 'docStatus', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'DocumentReference', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DocumentReference', 'class', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'DocumentReference', 'category', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'DocumentReference', 'subject', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'DocumentReference', 'created', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'DocumentReference', 'date', 'instant', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'DocumentReference', 'agent', 'DocumentReferenceAgent', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'DocumentReference', 'authenticator', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -4809,198 +5303,6 @@ var
 begin
   def := js.defineClass('DocumentReference', nil, 'DocumentReference', js.FHIRFactoryJs);
   defineDocumentReferencePropsJs(js, def);
-end;
-
-
-procedure defineEligibilityRequestInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'EligibilityRequestInsurance', 'focal', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
-  js.registerElement(def, 'EligibilityRequestInsurance', 'coverage', 'Reference(Coverage)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequestInsurance', 'businessArrangement', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-end;
-
-procedure defineEligibilityRequestInsuranceJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityRequestInsurance', nil, 'EligibilityRequestInsurance', js.FHIRFactoryJs);
-  defineEligibilityRequestInsurancePropsJs(js, def);
-end;
-
-
-procedure defineEligibilityRequestDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'EligibilityRequestDetail', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequestDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequestDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EligibilityRequestDetail', 'provider', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequestDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequestDetail', 'unitPrice', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequestDetail', 'facility', 'Reference(Location)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequestDetail', 'diagnosis', 'EligibilityRequestDetailDiagnosis', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineEligibilityRequestDetailJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityRequestDetail', nil, 'EligibilityRequestDetail', js.FHIRFactoryJs);
-  defineEligibilityRequestDetailPropsJs(js, def);
-end;
-
-
-procedure defineEligibilityRequestDetailDiagnosisPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'EligibilityRequestDetailDiagnosis', 'diagnosisCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequestDetailDiagnosis', 'diagnosisReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineEligibilityRequestDetailDiagnosisJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityRequestDetailDiagnosis', nil, 'EligibilityRequestDetailDiagnosis', js.FHIRFactoryJs);
-  defineEligibilityRequestDetailDiagnosisPropsJs(js, def);
-end;
-
-
-procedure defineEligibilityRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineDomainResourcePropsJs(js, def);
-  js.registerElement(def, 'EligibilityRequest', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EligibilityRequest', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityRequest', 'priority', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequest', 'patient', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequest', 'servicedDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'EligibilityRequest', 'servicedPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequest', 'created', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'EligibilityRequest', 'enterer', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequest', 'provider', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequest', 'insurer', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequest', 'facility', 'Reference(Location)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityRequest', 'insurance', 'EligibilityRequestInsurance', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EligibilityRequest', 'detail', 'EligibilityRequestDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineEligibilityRequestJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityRequest', nil, 'EligibilityRequest', js.FHIRFactoryJs);
-  defineEligibilityRequestPropsJs(js, def);
-end;
-
-
-procedure defineEligibilityResponseInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'EligibilityResponseInsurance', 'coverage', 'Reference(Coverage)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsurance', 'contract', 'Reference(Contract)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsurance', 'inforce', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
-  js.registerElement(def, 'EligibilityResponseInsurance', 'detail', 'EligibilityResponseInsuranceDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineEligibilityResponseInsuranceJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityResponseInsurance', nil, 'EligibilityResponseInsurance', js.FHIRFactoryJs);
-  defineEligibilityResponseInsurancePropsJs(js, def);
-end;
-
-
-procedure defineEligibilityResponseInsuranceDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'provider', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'excluded', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'description', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'network', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'unit', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'term', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'benefit', 'EligibilityResponseInsuranceDetailBenefit', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'authorizationRequired', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'authorizationSupporting', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetail', 'authorizationUrl', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
-end;
-
-procedure defineEligibilityResponseInsuranceDetailJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityResponseInsuranceDetail', nil, 'EligibilityResponseInsuranceDetail', js.FHIRFactoryJs);
-  defineEligibilityResponseInsuranceDetailPropsJs(js, def);
-end;
-
-
-procedure defineEligibilityResponseInsuranceDetailBenefitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetailBenefit', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetailBenefit', 'allowedUnsignedInt', 'unsignedInt', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetailBenefit', 'allowedString', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetailBenefit', 'allowedMoney', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetailBenefit', 'usedUnsignedInt', 'unsignedInt', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponseInsuranceDetailBenefit', 'usedMoney', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineEligibilityResponseInsuranceDetailBenefitJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityResponseInsuranceDetailBenefit', nil, 'EligibilityResponseInsuranceDetailBenefit', js.FHIRFactoryJs);
-  defineEligibilityResponseInsuranceDetailBenefitPropsJs(js, def);
-end;
-
-
-procedure defineEligibilityResponseErrorPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'EligibilityResponseError', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineEligibilityResponseErrorJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityResponseError', nil, 'EligibilityResponseError', js.FHIRFactoryJs);
-  defineEligibilityResponseErrorPropsJs(js, def);
-end;
-
-
-procedure defineEligibilityResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineDomainResourcePropsJs(js, def);
-  js.registerElement(def, 'EligibilityResponse', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EligibilityResponse', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponse', 'patient', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponse', 'servicedDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'EligibilityResponse', 'servicedPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponse', 'created', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'EligibilityResponse', 'requestProvider', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponse', 'request', 'Reference(EligibilityRequest)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponse', 'outcome', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponse', 'disposition', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponse', 'insurer', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponse', 'insurance', 'EligibilityResponseInsurance', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EligibilityResponse', 'preAuthRef', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'EligibilityResponse', 'form', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'EligibilityResponse', 'error', 'EligibilityResponseError', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineEligibilityResponseJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('EligibilityResponse', nil, 'EligibilityResponse', js.FHIRFactoryJs);
-  defineEligibilityResponsePropsJs(js, def);
 end;
 
 
@@ -5339,7 +5641,10 @@ begin
   js.registerElement(def, 'EventDefinition', 'lastReviewDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'EventDefinition', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'EventDefinition', 'topic', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'EventDefinition', 'contributor', 'Contributor', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'EventDefinition', 'author', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'EventDefinition', 'editor', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'EventDefinition', 'reviewer', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'EventDefinition', 'endorser', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'EventDefinition', 'relatedArtifact', 'RelatedArtifact', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'EventDefinition', 'trigger', 'TriggerDefinition', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
@@ -5631,6 +5936,7 @@ begin
   js.registerElement(def, 'ExplanationOfBenefitDiagnosis', 'diagnosisCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitDiagnosis', 'diagnosisReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitDiagnosis', 'type', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ExplanationOfBenefitDiagnosis', 'onAdmission', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitDiagnosis', 'packageCode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
@@ -5664,6 +5970,7 @@ end;
 procedure defineExplanationOfBenefitInsurancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'ExplanationOfBenefitInsurance', 'focal', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'ExplanationOfBenefitInsurance', 'coverage', 'Reference(Coverage)', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
@@ -5700,7 +6007,7 @@ begin
   js.registerElement(def, 'ExplanationOfBenefitItem', 'sequence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
   js.registerElement(def, 'ExplanationOfBenefitItem', 'revenue', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitItem', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ExplanationOfBenefitItem', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ExplanationOfBenefitItem', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitItem', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitItem', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitItem', 'servicedDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -5753,7 +6060,7 @@ begin
   js.registerElement(def, 'ExplanationOfBenefitItemDetail', 'sequence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetail', 'revenue', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetail', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ExplanationOfBenefitItemDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ExplanationOfBenefitItemDetail', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetail', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -5780,7 +6087,7 @@ begin
   js.registerElement(def, 'ExplanationOfBenefitItemDetailSubDetail', 'sequence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetailSubDetail', 'revenue', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetailSubDetail', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ExplanationOfBenefitItemDetailSubDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ExplanationOfBenefitItemDetailSubDetail', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetailSubDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetailSubDetail', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitItemDetailSubDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -5803,7 +6110,8 @@ end;
 procedure defineExplanationOfBenefitAddItemPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ExplanationOfBenefitAddItem', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ExplanationOfBenefitAddItem', 'provider', 'Reference(Practitioner)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ExplanationOfBenefitAddItem', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItem', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItem', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItem', 'servicedDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -5833,9 +6141,8 @@ end;
 procedure defineExplanationOfBenefitAddItemDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ExplanationOfBenefitAddItemDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ExplanationOfBenefitAddItemDetail', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItemDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ExplanationOfBenefitAddItemDetail', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItemDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItemDetail', 'unitPrice', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItemDetail', 'factor', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
@@ -5856,9 +6163,8 @@ end;
 procedure defineExplanationOfBenefitAddItemDetailSubDetailPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ExplanationOfBenefitAddItemDetailSubDetail', 'service', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ExplanationOfBenefitAddItemDetailSubDetail', 'billcode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItemDetailSubDetail', 'modifier', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ExplanationOfBenefitAddItemDetailSubDetail', 'programCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItemDetailSubDetail', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItemDetailSubDetail', 'unitPrice', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefitAddItemDetailSubDetail', 'factor', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
@@ -5977,7 +6283,7 @@ begin
   js.registerElement(def, 'ExplanationOfBenefit', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ExplanationOfBenefit', 'subType', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ExplanationOfBenefit', 'subType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'use', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'patient', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'billablePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -6000,7 +6306,7 @@ begin
   js.registerElement(def, 'ExplanationOfBenefit', 'diagnosis', 'ExplanationOfBenefitDiagnosis', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'procedure', 'ExplanationOfBenefitProcedure', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'precedence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
-  js.registerElement(def, 'ExplanationOfBenefit', 'insurance', 'ExplanationOfBenefitInsurance', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ExplanationOfBenefit', 'insurance', 'ExplanationOfBenefitInsurance', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'accident', 'ExplanationOfBenefitAccident', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'item', 'ExplanationOfBenefitItem', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExplanationOfBenefit', 'addItem', 'ExplanationOfBenefitAddItem', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -6051,7 +6357,7 @@ begin
   js.registerElement(def, 'FamilyMemberHistory', 'date', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'FamilyMemberHistory', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'FamilyMemberHistory', 'relationship', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'FamilyMemberHistory', 'gender', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'FamilyMemberHistory', 'gender', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'FamilyMemberHistory', 'bornPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'FamilyMemberHistory', 'bornDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'FamilyMemberHistory', 'bornString', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
@@ -6302,7 +6608,7 @@ end;
 procedure defineGuidanceResponsePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
-  js.registerElement(def, 'GuidanceResponse', 'requestId', 'id', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'GuidanceResponse', 'requestIdentifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'GuidanceResponse', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'GuidanceResponse', 'moduleUri', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'GuidanceResponse', 'moduleCanonical', 'canonical', js.getFHIRStringProp, js.setFHIRStringProp);
@@ -6481,6 +6787,7 @@ begin
   js.registerElement(def, 'ImagingStudy', 'reasonCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ImagingStudy', 'reasonReference', 'Reference(Condition)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ImagingStudy', 'note', 'Annotation', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ImagingStudy', 'description', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ImagingStudy', 'series', 'ImagingStudySeries', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
@@ -6557,6 +6864,7 @@ begin
   js.registerElement(def, 'Immunization', 'encounter', 'Reference(Encounter)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Immunization', 'occurrenceDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Immunization', 'occurrenceString', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'Immunization', 'recorded', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Immunization', 'primarySource', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'Immunization', 'reportOrigin', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Immunization', 'location', 'Reference(Location)', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -6876,6 +7184,7 @@ begin
   js.registerElement(def, 'ImplementationGuide', 'url', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ImplementationGuide', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ImplementationGuide', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ImplementationGuide', 'title', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ImplementationGuide', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ImplementationGuide', 'experimental', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'ImplementationGuide', 'date', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -6903,6 +7212,189 @@ begin
 end;
 
 
+procedure defineInsurancePlanContactPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanContact', 'purpose', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanContact', 'name', 'HumanName', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanContact', 'telecom', 'ContactPoint', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlanContact', 'address', 'Address', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineInsurancePlanContactJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanContact', nil, 'InsurancePlanContact', js.FHIRFactoryJs);
+  defineInsurancePlanContactPropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanCoveragePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanCoverage', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanCoverage', 'network', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlanCoverage', 'benefit', 'InsurancePlanCoverageBenefit', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineInsurancePlanCoverageJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanCoverage', nil, 'InsurancePlanCoverage', js.FHIRFactoryJs);
+  defineInsurancePlanCoveragePropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanCoverageBenefitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanCoverageBenefit', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanCoverageBenefit', 'requirement', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'InsurancePlanCoverageBenefit', 'limit', 'InsurancePlanCoverageBenefitLimit', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineInsurancePlanCoverageBenefitJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanCoverageBenefit', nil, 'InsurancePlanCoverageBenefit', js.FHIRFactoryJs);
+  defineInsurancePlanCoverageBenefitPropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanCoverageBenefitLimitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanCoverageBenefitLimit', 'value', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanCoverageBenefitLimit', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineInsurancePlanCoverageBenefitLimitJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanCoverageBenefitLimit', nil, 'InsurancePlanCoverageBenefitLimit', js.FHIRFactoryJs);
+  defineInsurancePlanCoverageBenefitLimitPropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanPlanPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanPlan', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlanPlan', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanPlan', 'coverageArea', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlanPlan', 'network', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlanPlan', 'generalCost', 'InsurancePlanPlanGeneralCost', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlanPlan', 'specificCost', 'InsurancePlanPlanSpecificCost', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineInsurancePlanPlanJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanPlan', nil, 'InsurancePlanPlan', js.FHIRFactoryJs);
+  defineInsurancePlanPlanPropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanPlanGeneralCostPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanPlanGeneralCost', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanPlanGeneralCost', 'groupSize', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
+  js.registerElement(def, 'InsurancePlanPlanGeneralCost', 'cost', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanPlanGeneralCost', 'comment', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineInsurancePlanPlanGeneralCostJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanPlanGeneralCost', nil, 'InsurancePlanPlanGeneralCost', js.FHIRFactoryJs);
+  defineInsurancePlanPlanGeneralCostPropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanPlanSpecificCostPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanPlanSpecificCost', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanPlanSpecificCost', 'benefit', 'InsurancePlanPlanSpecificCostBenefit', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineInsurancePlanPlanSpecificCostJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanPlanSpecificCost', nil, 'InsurancePlanPlanSpecificCost', js.FHIRFactoryJs);
+  defineInsurancePlanPlanSpecificCostPropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanPlanSpecificCostBenefitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanPlanSpecificCostBenefit', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanPlanSpecificCostBenefit', 'cost', 'InsurancePlanPlanSpecificCostBenefitCost', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineInsurancePlanPlanSpecificCostBenefitJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanPlanSpecificCostBenefit', nil, 'InsurancePlanPlanSpecificCostBenefit', js.FHIRFactoryJs);
+  defineInsurancePlanPlanSpecificCostBenefitPropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanPlanSpecificCostBenefitCostPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'InsurancePlanPlanSpecificCostBenefitCost', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanPlanSpecificCostBenefitCost', 'applicability', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlanPlanSpecificCostBenefitCost', 'qualifiers', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlanPlanSpecificCostBenefitCost', 'value', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineInsurancePlanPlanSpecificCostBenefitCostJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlanPlanSpecificCostBenefitCost', nil, 'InsurancePlanPlanSpecificCostBenefitCost', js.FHIRFactoryJs);
+  defineInsurancePlanPlanSpecificCostBenefitCostPropsJs(js, def);
+end;
+
+
+procedure defineInsurancePlanPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineDomainResourcePropsJs(js, def);
+  js.registerElement(def, 'InsurancePlan', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlan', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'InsurancePlan', 'type', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlan', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'InsurancePlan', 'period', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlan', 'ownedBy', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlan', 'administeredBy', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InsurancePlan', 'coverageArea', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlan', 'contact', 'InsurancePlanContact', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlan', 'endpoint', 'Reference(Endpoint)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlan', 'network', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlan', 'coverage', 'InsurancePlanCoverage', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'InsurancePlan', 'plan', 'InsurancePlanPlan', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineInsurancePlanJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('InsurancePlan', nil, 'InsurancePlan', js.FHIRFactoryJs);
+  defineInsurancePlanPropsJs(js, def);
+end;
+
+
 procedure defineInvoiceParticipantPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -6923,7 +7415,8 @@ procedure defineInvoiceLineItemPropsJs(js : TFHIRJavascript; def : TJavascriptCl
 begin
   defineBackboneElementPropsJs(js, def);
   js.registerElement(def, 'InvoiceLineItem', 'sequence', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
-  js.registerElement(def, 'InvoiceLineItem', 'chargeItem', 'Reference(ChargeItem)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InvoiceLineItem', 'chargeItemReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'InvoiceLineItem', 'chargeItemCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'InvoiceLineItem', 'priceComponent', 'InvoiceLineItemPriceComponent', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
@@ -7035,7 +7528,10 @@ begin
   js.registerElement(def, 'Library', 'lastReviewDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Library', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Library', 'topic', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'Library', 'contributor', 'Contributor', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Library', 'author', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Library', 'editor', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Library', 'reviewer', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Library', 'endorser', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Library', 'relatedArtifact', 'RelatedArtifact', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Library', 'parameter', 'ParameterDefinition', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Library', 'dataRequirement', 'DataRequirement', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -7289,7 +7785,10 @@ begin
   js.registerElement(def, 'Measure', 'lastReviewDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Measure', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Measure', 'topic', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'Measure', 'contributor', 'Contributor', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Measure', 'author', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Measure', 'editor', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Measure', 'reviewer', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Measure', 'endorser', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Measure', 'relatedArtifact', 'RelatedArtifact', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Measure', 'disclaimer', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Measure', 'scoring', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -7849,6 +8348,7 @@ end;
 procedure defineMedicationKnowledgeRegulatoryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeRegulatory', 'regulatoryAuthority', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicationKnowledgeRegulatory', 'substitution', 'MedicationKnowledgeRegulatorySubstitution', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicationKnowledgeRegulatory', 'schedule', 'MedicationKnowledgeRegulatorySchedule', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicationKnowledgeRegulatory', 'maxDispense', 'MedicationKnowledgeRegulatoryMaxDispense', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -7882,7 +8382,6 @@ end;
 procedure defineMedicationKnowledgeRegulatorySchedulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'MedicationKnowledgeRegulatorySchedule', 'jurisdiction', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicationKnowledgeRegulatorySchedule', 'schedule', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
@@ -8040,6 +8539,7 @@ begin
   js.registerElement(def, 'MedicationRequest', 'basedOn', 'Reference(CarePlan)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicationRequest', 'groupIdentifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicationRequest', 'statusReason', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationRequest', 'courseOfTherapyType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicationRequest', 'insurance', 'Reference(Coverage)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicationRequest', 'note', 'Annotation', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicationRequest', 'dosageInstruction', 'Dosage', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -8162,23 +8662,23 @@ begin
 end;
 
 
-procedure defineMedicinalProductOrphanDesignationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+procedure defineMedicinalProductSpecialDesignationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'MedicinalProductOrphanDesignation', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'MedicinalProductOrphanDesignation', 'intendedUse', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'MedicinalProductOrphanDesignation', 'indication', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'MedicinalProductOrphanDesignation', 'status', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'MedicinalProductOrphanDesignation', 'date', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'MedicinalProductOrphanDesignation', 'species', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductSpecialDesignation', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductSpecialDesignation', 'intendedUse', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductSpecialDesignation', 'indication', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductSpecialDesignation', 'status', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductSpecialDesignation', 'date', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'MedicinalProductSpecialDesignation', 'species', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
-procedure defineMedicinalProductOrphanDesignationJs(js : TFHIRJavascript);
+procedure defineMedicinalProductSpecialDesignationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('MedicinalProductOrphanDesignation', nil, 'MedicinalProductOrphanDesignation', js.FHIRFactoryJs);
-  defineMedicinalProductOrphanDesignationPropsJs(js, def);
+  def := js.defineClass('MedicinalProductSpecialDesignation', nil, 'MedicinalProductSpecialDesignation', js.FHIRFactoryJs);
+  defineMedicinalProductSpecialDesignationPropsJs(js, def);
 end;
 
 
@@ -8196,7 +8696,10 @@ begin
   js.registerElement(def, 'MedicinalProduct', 'marketingAuthorization', 'Reference(MedicinalProductAuthorization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicinalProduct', 'packagedMedicinalProduct', 'Reference(MedicinalProductPackaged)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProduct', 'pharmaceuticalProduct', 'Reference(MedicinalProductPharmaceutical)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'MedicinalProduct', 'clinicalParticulars', 'Reference(MedicinalProductClinicals)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProduct', 'contraindication', 'Reference(MedicinalProductContraindication)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProduct', 'interaction', 'Reference(MedicinalProductInteraction)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProduct', 'therapeuticIndication', 'Reference(MedicinalProductIndication)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProduct', 'undesirableEffect', 'Reference(MedicinalProductUndesirableEffect)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProduct', 'attachedDocument', 'Reference(DocumentReference)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProduct', 'masterFile', 'Reference(DocumentReference)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProduct', 'contact', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -8204,7 +8707,7 @@ begin
   js.registerElement(def, 'MedicinalProduct', 'name', 'MedicinalProductName', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProduct', 'crossReference', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProduct', 'manufacturingBusinessOperation', 'MedicinalProductManufacturingBusinessOperation', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'MedicinalProduct', 'orphanDesignation', 'MedicinalProductOrphanDesignation', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProduct', 'specialDesignation', 'MedicinalProductSpecialDesignation', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
 procedure defineMedicinalProductJs(js : TFHIRJavascript);
@@ -8258,6 +8761,7 @@ procedure defineMedicinalProductAuthorizationPropsJs(js : TFHIRJavascript; def :
 begin
   defineDomainResourcePropsJs(js, def);
   js.registerElement(def, 'MedicinalProductAuthorization', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductAuthorization', 'subject', 'Reference(MedicinalProduct)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicinalProductAuthorization', 'country', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProductAuthorization', 'jurisdiction', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProductAuthorization', 'legalStatusOfSupply', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -8268,6 +8772,7 @@ begin
   js.registerElement(def, 'MedicinalProductAuthorization', 'dataExclusivityPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicinalProductAuthorization', 'dateOfFirstAuthorization', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'MedicinalProductAuthorization', 'internationalBirthDate', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'MedicinalProductAuthorization', 'legalBasis', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicinalProductAuthorization', 'jurisdictionalAuthorization', 'MedicinalProductAuthorizationJurisdictionalAuthorization', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProductAuthorization', 'holder', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicinalProductAuthorization', 'regulator', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -8417,6 +8922,63 @@ begin
 end;
 
 
+procedure defineMedicinalProductContraindicationOtherTherapyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductContraindicationOtherTherapy', 'therapyRelationshipType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductContraindicationOtherTherapy', 'medicationCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductContraindicationOtherTherapy', 'medicationReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicinalProductContraindicationOtherTherapyJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductContraindicationOtherTherapy', nil, 'MedicinalProductContraindicationOtherTherapy', js.FHIRFactoryJs);
+  defineMedicinalProductContraindicationOtherTherapyPropsJs(js, def);
+end;
+
+
+procedure defineMedicinalProductContraindicationPopulationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductContraindicationPopulation', 'ageRange', 'Range', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductContraindicationPopulation', 'ageCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductContraindicationPopulation', 'gender', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductContraindicationPopulation', 'race', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductContraindicationPopulation', 'physiologicalCondition', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicinalProductContraindicationPopulationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductContraindicationPopulation', nil, 'MedicinalProductContraindicationPopulation', js.FHIRFactoryJs);
+  defineMedicinalProductContraindicationPopulationPropsJs(js, def);
+end;
+
+
+procedure defineMedicinalProductContraindicationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineDomainResourcePropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductContraindication', 'subject', 'Reference(MedicinalProduct)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductContraindication', 'disease', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductContraindication', 'diseaseStatus', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductContraindication', 'comorbidity', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductContraindication', 'therapeuticIndication', 'Reference(MedicinalProductIndication)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductContraindication', 'otherTherapy', 'MedicinalProductContraindicationOtherTherapy', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductContraindication', 'population', 'MedicinalProductContraindicationPopulation', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineMedicinalProductContraindicationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductContraindication', nil, 'MedicinalProductContraindication', js.FHIRFactoryJs);
+  defineMedicinalProductContraindicationPropsJs(js, def);
+end;
+
+
 procedure defineMedicinalProductDeviceSpecMaterialPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8464,6 +9026,65 @@ begin
 end;
 
 
+procedure defineMedicinalProductIndicationOtherTherapyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductIndicationOtherTherapy', 'therapyRelationshipType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndicationOtherTherapy', 'medicationCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndicationOtherTherapy', 'medicationReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicinalProductIndicationOtherTherapyJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductIndicationOtherTherapy', nil, 'MedicinalProductIndicationOtherTherapy', js.FHIRFactoryJs);
+  defineMedicinalProductIndicationOtherTherapyPropsJs(js, def);
+end;
+
+
+procedure defineMedicinalProductIndicationPopulationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductIndicationPopulation', 'ageRange', 'Range', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndicationPopulation', 'ageCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndicationPopulation', 'gender', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndicationPopulation', 'race', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndicationPopulation', 'physiologicalCondition', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicinalProductIndicationPopulationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductIndicationPopulation', nil, 'MedicinalProductIndicationPopulation', js.FHIRFactoryJs);
+  defineMedicinalProductIndicationPopulationPropsJs(js, def);
+end;
+
+
+procedure defineMedicinalProductIndicationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineDomainResourcePropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductIndication', 'subject', 'Reference(MedicinalProduct)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductIndication', 'diseaseSymptomProcedure', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndication', 'diseaseStatus', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndication', 'comorbidity', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductIndication', 'intendedEffect', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndication', 'duration', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIndication', 'otherTherapy', 'MedicinalProductIndicationOtherTherapy', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductIndication', 'undesirableEffect', 'Reference(MedicinalProductUndesirableEffect)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductIndication', 'population', 'MedicinalProductIndicationPopulation', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineMedicinalProductIndicationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductIndication', nil, 'MedicinalProductIndication', js.FHIRFactoryJs);
+  defineMedicinalProductIndicationPropsJs(js, def);
+end;
+
+
 procedure defineMedicinalProductIngredientSpecifiedSubstancePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8486,7 +9107,9 @@ procedure defineMedicinalProductIngredientSpecifiedSubstanceStrengthPropsJs(js :
 begin
   defineBackboneElementPropsJs(js, def);
   js.registerElement(def, 'MedicinalProductIngredientSpecifiedSubstanceStrength', 'presentation', 'Ratio', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIngredientSpecifiedSubstanceStrength', 'presentationLowLimit', 'Ratio', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicinalProductIngredientSpecifiedSubstanceStrength', 'concentration', 'Ratio', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductIngredientSpecifiedSubstanceStrength', 'concentrationLowLimit', 'Ratio', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'MedicinalProductIngredientSpecifiedSubstanceStrength', 'measurementPoint', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'MedicinalProductIngredientSpecifiedSubstanceStrength', 'country', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MedicinalProductIngredientSpecifiedSubstanceStrength', 'referenceStrength', 'MedicinalProductIngredientSpecifiedSubstanceStrengthReferenceStrength', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -8552,6 +9175,27 @@ var
 begin
   def := js.defineClass('MedicinalProductIngredient', nil, 'MedicinalProductIngredient', js.FHIRFactoryJs);
   defineMedicinalProductIngredientPropsJs(js, def);
+end;
+
+
+procedure defineMedicinalProductInteractionPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineDomainResourcePropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductInteraction', 'subject', 'Reference(MedicinalProduct)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductInteraction', 'interaction', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'MedicinalProductInteraction', 'interactant', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductInteraction', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductInteraction', 'effect', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductInteraction', 'incidence', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductInteraction', 'management', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicinalProductInteractionJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductInteraction', nil, 'MedicinalProductInteraction', js.FHIRFactoryJs);
+  defineMedicinalProductInteractionPropsJs(js, def);
 end;
 
 
@@ -8730,6 +9374,44 @@ begin
 end;
 
 
+procedure defineMedicinalProductUndesirableEffectPopulationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductUndesirableEffectPopulation', 'ageRange', 'Range', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductUndesirableEffectPopulation', 'ageCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductUndesirableEffectPopulation', 'gender', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductUndesirableEffectPopulation', 'race', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductUndesirableEffectPopulation', 'physiologicalCondition', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicinalProductUndesirableEffectPopulationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductUndesirableEffectPopulation', nil, 'MedicinalProductUndesirableEffectPopulation', js.FHIRFactoryJs);
+  defineMedicinalProductUndesirableEffectPopulationPropsJs(js, def);
+end;
+
+
+procedure defineMedicinalProductUndesirableEffectPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineDomainResourcePropsJs(js, def);
+  js.registerElement(def, 'MedicinalProductUndesirableEffect', 'subject', 'Reference(MedicinalProduct)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicinalProductUndesirableEffect', 'symptomConditionEffect', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductUndesirableEffect', 'classification', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductUndesirableEffect', 'frequencyOfOccurrence', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicinalProductUndesirableEffect', 'population', 'MedicinalProductUndesirableEffectPopulation', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineMedicinalProductUndesirableEffectJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicinalProductUndesirableEffect', nil, 'MedicinalProductUndesirableEffect', js.FHIRFactoryJs);
+  defineMedicinalProductUndesirableEffectPropsJs(js, def);
+end;
+
+
 procedure defineMessageDefinitionFocusPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -8768,7 +9450,7 @@ procedure defineMessageDefinitionPropsJs(js : TFHIRJavascript; def : TJavascript
 begin
   defineMetadataResourcePropsJs(js, def);
   js.registerElement(def, 'MessageDefinition', 'url', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'MessageDefinition', 'identifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MessageDefinition', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'MessageDefinition', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'MessageDefinition', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'MessageDefinition', 'title', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
@@ -9126,10 +9808,11 @@ begin
   js.registerElement(def, 'Observation', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Observation', 'subject', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Observation', 'focus', 'Reference(Any)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'Observation', 'context', 'Reference(Encounter)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Observation', 'encounter', 'Reference(Encounter)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Observation', 'effectiveDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Observation', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Observation', 'effectiveTiming', 'Timing', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'Observation', 'effectiveInstant', 'instant', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Observation', 'issued', 'instant', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'Observation', 'performer', 'Reference(Practitioner)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Observation', 'valueQuantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -9241,6 +9924,7 @@ begin
   js.registerElement(def, 'OperationDefinitionParameter', 'type', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'OperationDefinitionParameter', 'searchType', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'OperationDefinitionParameter', 'binding', 'OperationDefinitionParameterBinding', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OperationDefinitionParameter', 'referencedFrom', 'OperationDefinitionParameterReferencedFrom', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'OperationDefinitionParameter', 'part', '@OperationDefinition.parameter', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
@@ -9266,6 +9950,22 @@ var
 begin
   def := js.defineClass('OperationDefinitionParameterBinding', nil, 'OperationDefinitionParameterBinding', js.FHIRFactoryJs);
   defineOperationDefinitionParameterBindingPropsJs(js, def);
+end;
+
+
+procedure defineOperationDefinitionParameterReferencedFromPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'OperationDefinitionParameterReferencedFrom', 'source', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'OperationDefinitionParameterReferencedFrom', 'sourceId', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineOperationDefinitionParameterReferencedFromJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('OperationDefinitionParameterReferencedFrom', nil, 'OperationDefinitionParameterReferencedFrom', js.FHIRFactoryJs);
+  defineOperationDefinitionParameterReferencedFromPropsJs(js, def);
 end;
 
 
@@ -9397,65 +10097,29 @@ begin
 end;
 
 
-procedure defineOrganizationRoleAvailableTimePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OrganizationRoleAvailableTime', 'allDay', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
-  js.registerElement(def, 'OrganizationRoleAvailableTime', 'availableStartTime', 'time', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'OrganizationRoleAvailableTime', 'availableEndTime', 'time', js.getFHIRStringProp, js.setFHIRStringProp);
-end;
-
-procedure defineOrganizationRoleAvailableTimeJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('OrganizationRoleAvailableTime', nil, 'OrganizationRoleAvailableTime', js.FHIRFactoryJs);
-  defineOrganizationRoleAvailableTimePropsJs(js, def);
-end;
-
-
-procedure defineOrganizationRoleNotAvailablePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OrganizationRoleNotAvailable', 'description', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'OrganizationRoleNotAvailable', 'during', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineOrganizationRoleNotAvailableJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('OrganizationRoleNotAvailable', nil, 'OrganizationRoleNotAvailable', js.FHIRFactoryJs);
-  defineOrganizationRoleNotAvailablePropsJs(js, def);
-end;
-
-
-procedure defineOrganizationRolePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+procedure defineOrganizationAffiliationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
-  js.registerElement(def, 'OrganizationRole', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'active', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
-  js.registerElement(def, 'OrganizationRole', 'period', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OrganizationRole', 'organization', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OrganizationRole', 'participatingOrganization', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OrganizationRole', 'network', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'code', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'specialty', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'location', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'healthcareService', 'Reference(HealthcareService)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'telecom', 'ContactPoint', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'availableTime', 'OrganizationRoleAvailableTime', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'notAvailable', 'OrganizationRoleNotAvailable', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'OrganizationRole', 'availabilityExceptions', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'OrganizationRole', 'endpoint', 'Reference(Endpoint)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'active', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'period', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'organization', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'participatingOrganization', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'network', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'code', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'specialty', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'location', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'healthcareService', 'Reference(HealthcareService)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'telecom', 'ContactPoint', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OrganizationAffiliation', 'endpoint', 'Reference(Endpoint)', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
-procedure defineOrganizationRoleJs(js : TFHIRJavascript);
+procedure defineOrganizationAffiliationJs(js : TFHIRJavascript);
 var
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('OrganizationRole', nil, 'OrganizationRole', js.FHIRFactoryJs);
-  defineOrganizationRolePropsJs(js, def);
+  def := js.defineClass('OrganizationAffiliation', nil, 'OrganizationAffiliation', js.FHIRFactoryJs);
+  defineOrganizationAffiliationPropsJs(js, def);
 end;
 
 
@@ -9718,6 +10382,7 @@ begin
   js.registerElement(def, 'PlanDefinitionAction', 'title', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'PlanDefinitionAction', 'description', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'PlanDefinitionAction', 'textEquivalent', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'PlanDefinitionAction', 'priority', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'PlanDefinitionAction', 'code', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'PlanDefinitionAction', 'reason', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'PlanDefinitionAction', 'documentation', 'RelatedArtifact', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -9847,7 +10512,10 @@ begin
   js.registerElement(def, 'PlanDefinition', 'lastReviewDate', 'date', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'PlanDefinition', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'PlanDefinition', 'topic', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'PlanDefinition', 'contributor', 'Contributor', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'PlanDefinition', 'author', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'PlanDefinition', 'editor', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'PlanDefinition', 'reviewer', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'PlanDefinition', 'endorser', 'ContactDetail', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'PlanDefinition', 'relatedArtifact', 'RelatedArtifact', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'PlanDefinition', 'goal', 'PlanDefinitionGoal', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'PlanDefinition', 'action', 'PlanDefinitionAction', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -10122,189 +10790,6 @@ var
 begin
   def := js.defineClass('ProcessResponse', nil, 'ProcessResponse', js.FHIRFactoryJs);
   defineProcessResponsePropsJs(js, def);
-end;
-
-
-procedure defineProductPlanContactPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanContact', 'purpose', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanContact', 'name', 'HumanName', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanContact', 'telecom', 'ContactPoint', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlanContact', 'address', 'Address', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineProductPlanContactJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanContact', nil, 'ProductPlanContact', js.FHIRFactoryJs);
-  defineProductPlanContactPropsJs(js, def);
-end;
-
-
-procedure defineProductPlanCoveragePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanCoverage', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanCoverage', 'network', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlanCoverage', 'benefit', 'ProductPlanCoverageBenefit', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineProductPlanCoverageJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanCoverage', nil, 'ProductPlanCoverage', js.FHIRFactoryJs);
-  defineProductPlanCoveragePropsJs(js, def);
-end;
-
-
-procedure defineProductPlanCoverageBenefitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanCoverageBenefit', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanCoverageBenefit', 'requirement', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'ProductPlanCoverageBenefit', 'limit', 'ProductPlanCoverageBenefitLimit', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineProductPlanCoverageBenefitJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanCoverageBenefit', nil, 'ProductPlanCoverageBenefit', js.FHIRFactoryJs);
-  defineProductPlanCoverageBenefitPropsJs(js, def);
-end;
-
-
-procedure defineProductPlanCoverageBenefitLimitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanCoverageBenefitLimit', 'value', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanCoverageBenefitLimit', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineProductPlanCoverageBenefitLimitJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanCoverageBenefitLimit', nil, 'ProductPlanCoverageBenefitLimit', js.FHIRFactoryJs);
-  defineProductPlanCoverageBenefitLimitPropsJs(js, def);
-end;
-
-
-procedure defineProductPlanPlanPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanPlan', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlanPlan', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanPlan', 'coverageArea', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlanPlan', 'network', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlanPlan', 'generalCost', 'ProductPlanPlanGeneralCost', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlanPlan', 'specificCost', 'ProductPlanPlanSpecificCost', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineProductPlanPlanJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanPlan', nil, 'ProductPlanPlan', js.FHIRFactoryJs);
-  defineProductPlanPlanPropsJs(js, def);
-end;
-
-
-procedure defineProductPlanPlanGeneralCostPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanPlanGeneralCost', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanPlanGeneralCost', 'groupSize', 'positiveInt', js.getFHIRIntegerProp, js.setFHIRIntegerProp);
-  js.registerElement(def, 'ProductPlanPlanGeneralCost', 'cost', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanPlanGeneralCost', 'comment', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-end;
-
-procedure defineProductPlanPlanGeneralCostJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanPlanGeneralCost', nil, 'ProductPlanPlanGeneralCost', js.FHIRFactoryJs);
-  defineProductPlanPlanGeneralCostPropsJs(js, def);
-end;
-
-
-procedure defineProductPlanPlanSpecificCostPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanPlanSpecificCost', 'category', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanPlanSpecificCost', 'benefit', 'ProductPlanPlanSpecificCostBenefit', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineProductPlanPlanSpecificCostJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanPlanSpecificCost', nil, 'ProductPlanPlanSpecificCost', js.FHIRFactoryJs);
-  defineProductPlanPlanSpecificCostPropsJs(js, def);
-end;
-
-
-procedure defineProductPlanPlanSpecificCostBenefitPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanPlanSpecificCostBenefit', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanPlanSpecificCostBenefit', 'cost', 'ProductPlanPlanSpecificCostBenefitCost', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineProductPlanPlanSpecificCostBenefitJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanPlanSpecificCostBenefit', nil, 'ProductPlanPlanSpecificCostBenefit', js.FHIRFactoryJs);
-  defineProductPlanPlanSpecificCostBenefitPropsJs(js, def);
-end;
-
-
-procedure defineProductPlanPlanSpecificCostBenefitCostPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'ProductPlanPlanSpecificCostBenefitCost', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanPlanSpecificCostBenefitCost', 'applicability', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlanPlanSpecificCostBenefitCost', 'qualifiers', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlanPlanSpecificCostBenefitCost', 'value', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineProductPlanPlanSpecificCostBenefitCostJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlanPlanSpecificCostBenefitCost', nil, 'ProductPlanPlanSpecificCostBenefitCost', js.FHIRFactoryJs);
-  defineProductPlanPlanSpecificCostBenefitCostPropsJs(js, def);
-end;
-
-
-procedure defineProductPlanPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineDomainResourcePropsJs(js, def);
-  js.registerElement(def, 'ProductPlan', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlan', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'ProductPlan', 'type', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlan', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'ProductPlan', 'period', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlan', 'ownedBy', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlan', 'administeredBy', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'ProductPlan', 'coverageArea', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlan', 'contact', 'ProductPlanContact', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlan', 'endpoint', 'Reference(Endpoint)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlan', 'network', 'Reference(Organization)', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlan', 'coverage', 'ProductPlanCoverage', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ProductPlan', 'plan', 'ProductPlanPlan', js.getFHIRArrayProp, js.setFHIRArrayProp);
-end;
-
-procedure defineProductPlanJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('ProductPlan', nil, 'ProductPlan', js.FHIRFactoryJs);
-  defineProductPlanPropsJs(js, def);
 end;
 
 
@@ -10607,6 +11092,7 @@ begin
   js.registerElement(def, 'RequestGroupAction', 'title', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'RequestGroupAction', 'description', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'RequestGroupAction', 'textEquivalent', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'RequestGroupAction', 'priority', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'RequestGroupAction', 'code', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'RequestGroupAction', 'documentation', 'RelatedArtifact', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'RequestGroupAction', 'condition', 'RequestGroupActionCondition', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -11124,6 +11610,9 @@ begin
   js.registerElement(def, 'ServiceRequest', 'doNotPerform', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'ServiceRequest', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ServiceRequest', 'orderDetail', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ServiceRequest', 'quantityQuantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ServiceRequest', 'quantityRatio', 'Ratio', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ServiceRequest', 'quantityRange', 'Range', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ServiceRequest', 'subject', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ServiceRequest', 'context', 'Reference(Encounter)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ServiceRequest', 'occurrenceDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -11135,6 +11624,8 @@ begin
   js.registerElement(def, 'ServiceRequest', 'requester', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ServiceRequest', 'performerType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ServiceRequest', 'performer', 'Reference(Practitioner)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ServiceRequest', 'locationCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'ServiceRequest', 'locationReference', 'Reference(Location)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ServiceRequest', 'reasonCode', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ServiceRequest', 'reasonReference', 'Reference(Condition)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ServiceRequest', 'insurance', 'Reference(Coverage)', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -11186,9 +11677,12 @@ begin
   js.registerElement(def, 'SpecimenCollection', 'collector', 'Reference(Practitioner)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'SpecimenCollection', 'collectedDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'SpecimenCollection', 'collectedPeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'SpecimenCollection', 'duration', 'Duration', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'SpecimenCollection', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'SpecimenCollection', 'method', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'SpecimenCollection', 'bodySite', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'SpecimenCollection', 'fastingStatusCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'SpecimenCollection', 'fastingStatusDuration', 'Duration', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
 procedure defineSpecimenCollectionJs(js : TFHIRJavascript);
@@ -11254,6 +11748,7 @@ begin
   js.registerElement(def, 'Specimen', 'collection', 'SpecimenCollection', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Specimen', 'processing', 'SpecimenProcessing', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Specimen', 'container', 'SpecimenContainer', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Specimen', 'condition', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Specimen', 'note', 'Annotation', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
@@ -12469,8 +12964,8 @@ procedure defineTaskPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefiniti
 begin
   defineDomainResourcePropsJs(js, def);
   js.registerElement(def, 'Task', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'Task', 'instantiatesCanonical', 'canonical', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'Task', 'instantiatesUri', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'Task', 'instantiatesReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Task', 'basedOn', 'Reference(Any)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'Task', 'groupIdentifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'Task', 'partOf', 'Reference(Task)', js.getFHIRArrayProp, js.setFHIRArrayProp);
@@ -12507,6 +13002,38 @@ var
 begin
   def := js.defineClass('Task', nil, 'Task', js.FHIRFactoryJs);
   defineTaskPropsJs(js, def);
+end;
+
+
+procedure defineTerminologyCapabilitiesSoftwarePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'TerminologyCapabilitiesSoftware', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'TerminologyCapabilitiesSoftware', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineTerminologyCapabilitiesSoftwareJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('TerminologyCapabilitiesSoftware', nil, 'TerminologyCapabilitiesSoftware', js.FHIRFactoryJs);
+  defineTerminologyCapabilitiesSoftwarePropsJs(js, def);
+end;
+
+
+procedure defineTerminologyCapabilitiesImplementationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'TerminologyCapabilitiesImplementation', 'description', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'TerminologyCapabilitiesImplementation', 'url', 'url', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineTerminologyCapabilitiesImplementationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('TerminologyCapabilitiesImplementation', nil, 'TerminologyCapabilitiesImplementation', js.FHIRFactoryJs);
+  defineTerminologyCapabilitiesImplementationPropsJs(js, def);
 end;
 
 
@@ -12657,6 +13184,9 @@ begin
   js.registerElement(def, 'TerminologyCapabilities', 'jurisdiction', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'TerminologyCapabilities', 'purpose', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'TerminologyCapabilities', 'copyright', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'TerminologyCapabilities', 'kind', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'TerminologyCapabilities', 'software', 'TerminologyCapabilitiesSoftware', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'TerminologyCapabilities', 'implementation', 'TerminologyCapabilitiesImplementation', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'TerminologyCapabilities', 'lockedDate', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'TerminologyCapabilities', 'codeSystem', 'TerminologyCapabilitiesCodeSystem', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'TerminologyCapabilities', 'expansion', 'TerminologyCapabilitiesExpansion', js.getFHIRObjectProp, js.setFHIRObjectProp);
@@ -13518,6 +14048,7 @@ begin
   js.registerElement(def, 'ValueSetExpansionParameter', 'valueDecimal', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
   js.registerElement(def, 'ValueSetExpansionParameter', 'valueUri', 'uri', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ValueSetExpansionParameter', 'valueCode', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'ValueSetExpansionParameter', 'valueDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
 end;
 
 procedure defineValueSetExpansionParameterJs(js : TFHIRJavascript);
@@ -13570,7 +14101,6 @@ begin
   js.registerElement(def, 'ValueSet', 'immutable', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'ValueSet', 'purpose', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ValueSet', 'copyright', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'ValueSet', 'extensible', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'ValueSet', 'compose', 'ValueSetCompose', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'ValueSet', 'expansion', 'ValueSetExpansion', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
@@ -13919,12 +14449,17 @@ begin
   defineConsentProvisionActorJs(js); 
   defineConsentProvisionDataJs(js); 
   defineConsentJs(js); 
+  defineContractContentDefinitionJs(js); 
   defineContractTermJs(js); 
+  defineContractTermSecurityLabelJs(js); 
   defineContractTermOfferJs(js); 
+  defineContractTermOfferPartyJs(js); 
+  defineContractTermOfferAnswerJs(js); 
   defineContractTermAssetJs(js); 
-  defineContractTermAssetDataJs(js); 
+  defineContractTermAssetContextJs(js); 
   defineContractTermAssetValuedItemJs(js); 
-  defineContractTermAgentJs(js); 
+  defineContractTermActionJs(js); 
+  defineContractTermActionSubjectJs(js); 
   defineContractSignerJs(js); 
   defineContractFriendlyJs(js); 
   defineContractLegalJs(js); 
@@ -13933,13 +14468,31 @@ begin
   defineCoverageClassJs(js); 
   defineCoverageCopayJs(js); 
   defineCoverageJs(js); 
+  defineCoverageEligibilityRequestSupportingInformationJs(js); 
+  defineCoverageEligibilityRequestInsuranceJs(js); 
+  defineCoverageEligibilityRequestItemJs(js); 
+  defineCoverageEligibilityRequestItemDiagnosisJs(js); 
+  defineCoverageEligibilityRequestJs(js); 
+  defineCoverageEligibilityResponseInsuranceJs(js); 
+  defineCoverageEligibilityResponseInsuranceItemJs(js); 
+  defineCoverageEligibilityResponseInsuranceItemBenefitJs(js); 
+  defineCoverageEligibilityResponseErrorJs(js); 
+  defineCoverageEligibilityResponseJs(js); 
   defineDetectedIssueMitigationJs(js); 
   defineDetectedIssueJs(js); 
-  defineDeviceUdiJs(js); 
+  defineDeviceUdiCarrierJs(js); 
+  defineDeviceDeviceNameJs(js); 
+  defineDeviceSpecializationJs(js); 
+  defineDeviceVersionJs(js); 
+  defineDevicePropertyJs(js); 
   defineDeviceJs(js); 
-  defineDeviceComponentProductionSpecificationJs(js); 
-  defineDeviceComponentPropertyJs(js); 
-  defineDeviceComponentJs(js); 
+  defineDeviceDefinitionUdiDeviceIdentifierJs(js); 
+  defineDeviceDefinitionDeviceNameJs(js); 
+  defineDeviceDefinitionSpecializationJs(js); 
+  defineDeviceDefinitionCapabilityJs(js); 
+  defineDeviceDefinitionPropertyJs(js); 
+  defineDeviceDefinitionMaterialJs(js); 
+  defineDeviceDefinitionJs(js); 
   defineDeviceMetricCalibrationJs(js); 
   defineDeviceMetricJs(js); 
   defineDeviceRequestParameterJs(js); 
@@ -13954,17 +14507,7 @@ begin
   defineDocumentReferenceRelatesToJs(js); 
   defineDocumentReferenceContentJs(js); 
   defineDocumentReferenceContextJs(js); 
-  defineDocumentReferenceContextRelatedJs(js); 
   defineDocumentReferenceJs(js); 
-  defineEligibilityRequestInsuranceJs(js); 
-  defineEligibilityRequestDetailJs(js); 
-  defineEligibilityRequestDetailDiagnosisJs(js); 
-  defineEligibilityRequestJs(js); 
-  defineEligibilityResponseInsuranceJs(js); 
-  defineEligibilityResponseInsuranceDetailJs(js); 
-  defineEligibilityResponseInsuranceDetailBenefitJs(js); 
-  defineEligibilityResponseErrorJs(js); 
-  defineEligibilityResponseJs(js); 
   defineEncounterStatusHistoryJs(js); 
   defineEncounterClassHistoryJs(js); 
   defineEncounterParticipantJs(js); 
@@ -14052,6 +14595,16 @@ begin
   defineImplementationGuideManifestResourceJs(js); 
   defineImplementationGuideManifestPageJs(js); 
   defineImplementationGuideJs(js); 
+  defineInsurancePlanContactJs(js); 
+  defineInsurancePlanCoverageJs(js); 
+  defineInsurancePlanCoverageBenefitJs(js); 
+  defineInsurancePlanCoverageBenefitLimitJs(js); 
+  defineInsurancePlanPlanJs(js); 
+  defineInsurancePlanPlanGeneralCostJs(js); 
+  defineInsurancePlanPlanSpecificCostJs(js); 
+  defineInsurancePlanPlanSpecificCostBenefitJs(js); 
+  defineInsurancePlanPlanSpecificCostBenefitCostJs(js); 
+  defineInsurancePlanJs(js); 
   defineInvoiceParticipantJs(js); 
   defineInvoiceLineItemJs(js); 
   defineInvoiceLineItemPriceComponentJs(js); 
@@ -14112,7 +14665,7 @@ begin
   defineMedicinalProductNameNamePartJs(js); 
   defineMedicinalProductNameCountryLanguageJs(js); 
   defineMedicinalProductManufacturingBusinessOperationJs(js); 
-  defineMedicinalProductOrphanDesignationJs(js); 
+  defineMedicinalProductSpecialDesignationJs(js); 
   defineMedicinalProductJs(js); 
   defineMedicinalProductAuthorizationJurisdictionalAuthorizationJs(js); 
   defineMedicinalProductAuthorizationProcedureJs(js); 
@@ -14124,13 +14677,20 @@ begin
   defineMedicinalProductClinicalsContraindicationJs(js); 
   defineMedicinalProductClinicalsInteractionsJs(js); 
   defineMedicinalProductClinicalsJs(js); 
+  defineMedicinalProductContraindicationOtherTherapyJs(js); 
+  defineMedicinalProductContraindicationPopulationJs(js); 
+  defineMedicinalProductContraindicationJs(js); 
   defineMedicinalProductDeviceSpecMaterialJs(js); 
   defineMedicinalProductDeviceSpecJs(js); 
+  defineMedicinalProductIndicationOtherTherapyJs(js); 
+  defineMedicinalProductIndicationPopulationJs(js); 
+  defineMedicinalProductIndicationJs(js); 
   defineMedicinalProductIngredientSpecifiedSubstanceJs(js); 
   defineMedicinalProductIngredientSpecifiedSubstanceStrengthJs(js); 
   defineMedicinalProductIngredientSpecifiedSubstanceStrengthReferenceStrengthJs(js); 
   defineMedicinalProductIngredientSubstanceJs(js); 
   defineMedicinalProductIngredientJs(js); 
+  defineMedicinalProductInteractionJs(js); 
   defineMedicinalProductManufacturedJs(js); 
   defineMedicinalProductPackagedBatchIdentifierJs(js); 
   defineMedicinalProductPackagedPackageItemJs(js); 
@@ -14140,6 +14700,8 @@ begin
   defineMedicinalProductPharmaceuticalRouteOfAdministrationTargetSpeciesJs(js); 
   defineMedicinalProductPharmaceuticalRouteOfAdministrationTargetSpeciesWithdrawalPeriodJs(js); 
   defineMedicinalProductPharmaceuticalJs(js); 
+  defineMedicinalProductUndesirableEffectPopulationJs(js); 
+  defineMedicinalProductUndesirableEffectJs(js); 
   defineMessageDefinitionFocusJs(js); 
   defineMessageDefinitionAllowedResponseJs(js); 
   defineMessageDefinitionJs(js); 
@@ -14164,15 +14726,14 @@ begin
   defineObservationDefinitionJs(js); 
   defineOperationDefinitionParameterJs(js); 
   defineOperationDefinitionParameterBindingJs(js); 
+  defineOperationDefinitionParameterReferencedFromJs(js); 
   defineOperationDefinitionOverloadJs(js); 
   defineOperationDefinitionJs(js); 
   defineOperationOutcomeIssueJs(js); 
   defineOperationOutcomeJs(js); 
   defineOrganizationContactJs(js); 
   defineOrganizationJs(js); 
-  defineOrganizationRoleAvailableTimeJs(js); 
-  defineOrganizationRoleNotAvailableJs(js); 
-  defineOrganizationRoleJs(js); 
+  defineOrganizationAffiliationJs(js); 
   definePatientContactJs(js); 
   definePatientCommunicationJs(js); 
   definePatientLinkJs(js); 
@@ -14203,16 +14764,6 @@ begin
   defineProcessRequestJs(js); 
   defineProcessResponseProcessNoteJs(js); 
   defineProcessResponseJs(js); 
-  defineProductPlanContactJs(js); 
-  defineProductPlanCoverageJs(js); 
-  defineProductPlanCoverageBenefitJs(js); 
-  defineProductPlanCoverageBenefitLimitJs(js); 
-  defineProductPlanPlanJs(js); 
-  defineProductPlanPlanGeneralCostJs(js); 
-  defineProductPlanPlanSpecificCostJs(js); 
-  defineProductPlanPlanSpecificCostBenefitJs(js); 
-  defineProductPlanPlanSpecificCostBenefitCostJs(js); 
-  defineProductPlanJs(js); 
   defineProvenanceAgentJs(js); 
   defineProvenanceEntityJs(js); 
   defineProvenanceJs(js); 
@@ -14307,6 +14858,8 @@ begin
   defineTaskInputJs(js); 
   defineTaskOutputJs(js); 
   defineTaskJs(js); 
+  defineTerminologyCapabilitiesSoftwareJs(js); 
+  defineTerminologyCapabilitiesImplementationJs(js); 
   defineTerminologyCapabilitiesCodeSystemJs(js); 
   defineTerminologyCapabilitiesCodeSystemVersionJs(js); 
   defineTerminologyCapabilitiesCodeSystemVersionFilterJs(js); 
