@@ -37,14 +37,13 @@ uses
   IdComponent,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
-  BaseFrame, AppEndorserFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog,
+  BaseFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog,
   ProviderDirectoryForm, PatientHomeForm, BulkDataForm;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
 
   TServerFrame = class (TFrame)
-    btnTest: TButton;
     Panel1: TPanel;
     Label1: TLabel;
     Button1: TButton;
@@ -141,7 +140,6 @@ type
     Button2: TButton;
     Button3: TButton;
     btnBulkData: TButton;
-    procedure btnTestClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnConfSearchClick(Sender: TObject);
@@ -237,27 +235,6 @@ begin
   except
   end;
   Close;
-end;
-
-procedure TServerFrame.btnTestClick(Sender: TObject);
-var
-  tab : TTabItem;
-  appForm : TAppEndorsementFrame;
-begin
-  tab := Tabs.Add(TTabItem);
-  Tabs.ActiveTab := tab;
-  tab.Text := 'AppEndorser for '+FClient.address;
-  appForm := TAppEndorsementFrame.create(tab);
-  tab.TagObject := appForm;
-  appForm.TagObject := tab;
-  appForm.Parent := tab;
-  appForm.Tabs := tabs;
-  appForm.OnWork := onwork;
-  appForm.Settings := Settings.Link;
-  appForm.tab := tab;
-  appForm.Align := TAlignLayout.Client;
-  appForm.Client := client.link;
-  appForm.load;
 end;
 
 procedure TServerFrame.Button1Click(Sender: TObject);

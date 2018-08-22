@@ -1636,22 +1636,23 @@ Begin
     oMem.Free;
   End;
 End;
+
 Procedure TGdiPlusBitmapImage.LoadFromMemoryStream(Const oMemoryStream : TFslMemoryStream);
-Var
-  oIStreamAdapter : TFslIStreamAdapter;
+//Var
+//  oIStreamAdapter : TFslIStreamAdapter;
 Begin
   Assert(Invariants('SaveToMemoryStream', oMemoryStream, TFslMemoryStream, 'oMemoryStream'));
 
-  oIStreamAdapter := TFslIStreamAdapter.Create;
-  Try
-    oIStreamAdapter.Stream := oMemoryStream.Link;
-
-    Bitmap := TGPBitmap.Create(oIStreamAdapter);
-
-    CheckBitmapStatus;
-  Finally
-    oIStreamAdapter.Free;
-  End;
+//  oIStreamAdapter := TFslIStreamAdapter.Create;
+//  Try
+//    oIStreamAdapter.Stream := oMemoryStream.Link;
+//
+//    Bitmap := TGPBitmap.Create(oIStreamAdapter);
+//
+//    CheckBitmapStatus;
+//  Finally
+//    oIStreamAdapter.Free;
+//  End;
 End;
 
 
@@ -1664,47 +1665,47 @@ End;
 
 
 Procedure TGdiPlusBitmapImage.SaveToMemoryStream(Const oMemoryStream : TFslMemoryStream; Const sImageFormat : String);
-Var
-  oIStreamAdapter : TFslIStreamAdapter;
+//Var
+//  oIStreamAdapter : TFslIStreamAdapter;
 Begin
   Assert(Invariants('SaveToMemoryStream', oMemoryStream, TFslMemoryStream, 'oMemoryStream'));
 
-  oIStreamAdapter := TFslIStreamAdapter.Create;
-  Try
-    oIStreamAdapter.Stream := oMemoryStream.Link;
-
-    Bitmap.Save(oIStreamAdapter, MIMETypeToEncoderCLSID(sImageFormat));
-
-    RaiseGdiPlusStatusException('SaveToMemoryStream', Bitmap, 'Bitmap');
-  Finally
-    oIStreamAdapter.Free;
-  End;
+//  oIStreamAdapter := TFslIStreamAdapter.Create;
+//  Try
+//    oIStreamAdapter.Stream := oMemoryStream.Link;
+//
+//    Bitmap.Save(oIStreamAdapter, MIMETypeToEncoderCLSID(sImageFormat));
+//
+//    RaiseGdiPlusStatusException('SaveToMemoryStream', Bitmap, 'Bitmap');
+//  Finally
+//    oIStreamAdapter.Free;
+//  End;
 End;
 
 
 Procedure TGdiPlusBitmapImage.SaveJPEGToMemoryStream(Const oMemoryStream: TFslMemoryStream; Const iQualityValue: Integer);
 Var
   aParameters : EncoderParameters;
-  oIStreamAdapter : TFslIStreamAdapter;
+//  oIStreamAdapter : TFslIStreamAdapter;
 Begin
   Assert(Invariants('SaveJPEGToMemoryStream', oMemoryStream, TFslMemoryStream, 'oMemoryStream'));
 
-  oIStreamAdapter := TFslIStreamAdapter.Create;
-  Try
-    oIStreamAdapter.Stream := oMemoryStream.Link;
-
-    aParameters.Count := 1;
-    aParameters.Parameter[0].Guid := EncoderQuality;
-    aParameters.Parameter[0].NumberOfValues := 1;
-    aParameters.Parameter[0].Type_ := EncoderParameterValueTypeLong;
-    aParameters.Parameter[0].Value := @iQualityValue;
-
-    Bitmap.Save(oIStreamAdapter, MIMETypeToEncoderCLSID('image/jpeg'), @aParameters);
-
-    RaiseGdiPlusStatusException('SaveJPEGToMemoryStream', Bitmap, 'Bitmap');
-  Finally
-    oIStreamAdapter.Free;
-  End;
+//  oIStreamAdapter := TFslIStreamAdapter.Create;
+//  Try
+//    oIStreamAdapter.Stream := oMemoryStream.Link;
+//
+//    aParameters.Count := 1;
+//    aParameters.Parameter[0].Guid := EncoderQuality;
+//    aParameters.Parameter[0].NumberOfValues := 1;
+//    aParameters.Parameter[0].Type_ := EncoderParameterValueTypeLong;
+//    aParameters.Parameter[0].Value := @iQualityValue;
+//
+//    Bitmap.Save(oIStreamAdapter, MIMETypeToEncoderCLSID('image/jpeg'), @aParameters);
+//
+//    RaiseGdiPlusStatusException('SaveJPEGToMemoryStream', Bitmap, 'Bitmap');
+//  Finally
+//    oIStreamAdapter.Free;
+//  End;
 End;
 
 

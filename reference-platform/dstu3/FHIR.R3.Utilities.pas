@@ -84,6 +84,7 @@ function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRF
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeComposer(style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function makeMarkdownOrString : TFhirString;
 
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 
@@ -5871,6 +5872,11 @@ begin
     relation := s;
     url := value;
   end;
+end;
+
+function makeMarkdownOrString : TFhirString;
+begin
+  result := TFhirString.Create;
 end;
 
 end.

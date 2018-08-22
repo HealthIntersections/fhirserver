@@ -772,6 +772,7 @@ procedure TCodeSystemEditorFrame.commitMetadata;
 var
   s : String;
   cc : TFHIRCodeableConcept;
+  id : TFhirIdentifier;
 begin
    CodeSystem.experimental := cbExperimental.IsChecked;
 
@@ -792,13 +793,26 @@ begin
 
   if (edtIdSystem.Text <> '') or (edtIdValue.Text <> '') then
   begin
+    {$IFDEF FHIR3}
     if CodeSystem.identifier = nil then
       CodeSystem.identifier := TFhirIdentifier.Create;
-    CodeSystem.identifier.system := edtIdSystem.Text;
-    CodeSystem.identifier.value := edtIdValue.Text;
+    id := CodeSystem.identifier;
+    {$ELSE}
+    if CodeSystem.identifierList.Count = 0 then
+      id := CodeSystem.identifierList.Append
+    else
+      id := CodeSystem.identifierList[0];
+    {$ENDIF}
+    id.system := edtIdSystem.Text;
+    id.value := edtIdValue.Text;
   end
   else
+    {$IFDEF FHIR3}
     CodeSystem.identifier := nil;
+    {$ELSE}
+    CodeSystem.identifierList.Clear;
+    {$ENDIF}
+
   CodeSystem.valueSet := edtValueSet.Text;
   CodeSystem.hierarchyMeaning := TFhirCodesystemHierarchyMeaningEnum(cbxHeirarchy.ItemIndex);
   {$IFDEF FHIR4}
@@ -1212,6 +1226,7 @@ end;
 procedure TCodeSystemEditorFrame.loadMetadata;
 var
   url : TFHIRUri;
+  id : TFhirIdentifier;
 begin
   cbExperimental.IsChecked := CodeSystem.experimental;
 
@@ -1236,10 +1251,18 @@ begin
     dedDate.DateTime := CodeSystem.date.DateTime;
   cbxJurisdiction.ItemIndex := readJurisdiction;
 
-  if CodeSystem.identifier <> nil then
+  {$IFDEF FHIR3}
+  id := CodeSystem.identifier;
+  {$ELSE}
+  id := nil;
+  if not CodeSystem.identifierList.IsEmpty then
+    id := CodeSystem.identifierList[0];
+  {$ENDIF}
+
+  if id <> nil then
   begin
-    edtIdSystem.Text := CodeSystem.identifier.system;
-    edtIdValue.Text := CodeSystem.identifier.value;
+    edtIdSystem.Text := id.system;
+    edtIdValue.Text := id.value;
   end
   else
   begin

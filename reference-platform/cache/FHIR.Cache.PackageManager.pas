@@ -675,7 +675,7 @@ var
   s, t, i : String;
   f : TFileStream;
 begin
-  if (id = 'hl7.fhir.core') and (ver = '3.4.0') and packageExists(id, 'current') then
+  if (id = 'hl7.fhir.core') and (ver = '3.5.0') and packageExists(id, 'current') then
     ver := 'current';
 
   if not packageExists(id, ver) then
@@ -1037,11 +1037,11 @@ begin
   p := TPackageDefinition.Create;
   try
     p.Id := 'hl7.fhir.core';
-    p.Version := '3.4.0';
+    p.Version := '3.5.0';
     p.Canonical := 'http://hl7.org/fhir';
     p.Date := Now;
     p.Description := 'FHIR Current Build';
-    p.FHIRVersion := '3.4.0';
+    p.FHIRVersion := '3.5.0';
     p.Url := 'http://build.fhir.org/';
     list.Add(p.Link);
   finally

@@ -8,17 +8,6 @@ object ServerFrame: TServerFrame
     Size.Height = 36.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    object btnTest: TButton
-      HelpContext = 4
-      Position.X = 152.000000000000000000
-      Position.Y = 6.000000000000000000
-      Size.Width = 89.000000000000000000
-      Size.Height = 22.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 1
-      Text = 'AppEndorser'
-      OnClick = btnTestClick
-    end
     object Label1: TLabel
       Position.X = 8.000000000000000000
       Position.Y = 8.000000000000000000
@@ -26,7 +15,7 @@ object ServerFrame: TServerFrame
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Views'
-      TabOrder = 2
+      TabOrder = 1
     end
     object Button1: TButton
       HelpContext = 3
@@ -35,7 +24,7 @@ object ServerFrame: TServerFrame
       Size.Width = 89.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 3
+      TabOrder = 2
       Text = 'Capabilities'
       OnClick = Button1Click
     end
@@ -43,21 +32,21 @@ object ServerFrame: TServerFrame
       Anchors = [akTop, akRight]
       Position.X = 1268.000000000000000000
       Position.Y = 8.000000000000000000
-      TabOrder = 4
+      TabOrder = 3
       Text = 'Close'
       OnClick = btnCloseClick
     end
     object Button2: TButton
       Position.X = 248.000000000000000000
       Position.Y = 6.000000000000000000
-      TabOrder = 7
+      TabOrder = 6
       Text = 'Vital Signs'
       OnClick = Button2Click
     end
     object Button3: TButton
       Position.X = 336.000000000000000000
       Position.Y = 6.000000000000000000
-      TabOrder = 6
+      TabOrder = 5
       Text = 'AU PD Client'
       OnClick = Button3Click
     end
@@ -67,7 +56,7 @@ object ServerFrame: TServerFrame
       Size.Width = 113.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 5
+      TabOrder = 4
       Text = 'Bulk Download'
       OnClick = btnBulkDataClick
     end
@@ -777,8 +766,8 @@ object ServerFrame: TServerFrame
           Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
           OnGetValue = gridPMatchesGetValue
           OnCellDblClick = gridPMatchesCellDblClick
-          Viewport.Width = 703.000000000000000000
-          Viewport.Height = 209.000000000000000000
+          Viewport.Width = 699.000000000000000000
+          Viewport.Height = 184.000000000000000000
           object StringColumn9: TStringColumn
             Header = 'Id'
             Size.Width = 57.000000000000000000

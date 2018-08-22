@@ -82,7 +82,7 @@ Const
 
 
   FHIR_ALL_VERSIONS = [fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
-  FHIR_VERSIONS : Array [TFHIRVersion] of String = ('', '0.0.82', '1.0.2', '3.0.1', '3.4.0');
+  FHIR_VERSIONS : Array [TFHIRVersion] of String = ('', '0.0.82', '1.0.2', '3.0.1', '3.5.0');
   SUPPORTED_VERSIONS = [fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
 
 Type

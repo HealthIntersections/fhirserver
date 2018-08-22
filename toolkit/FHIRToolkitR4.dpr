@@ -68,7 +68,6 @@ uses
   OrganizationChooser in 'OrganizationChooser.pas' {OrganizationSelectionForm},
   FHIRToolkitForm in 'FHIRToolkitForm.pas' {MasterToolsForm},
   ServerForm in 'ServerForm.pas' {ServerFrameForm: TFrame},
-  AppEndorserFrame in 'AppEndorserFrame.pas' {AppEndorsementFrame: TFrame},
   BaseFrame in 'BaseFrame.pas',
   ValueSetEditor in 'ValueSetEditor.pas' {ValueSetEditorFrame: TFrame},
   SearchParameterEditor in 'SearchParameterEditor.pas' {SearchParameterEditorForm},

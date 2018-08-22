@@ -162,6 +162,7 @@ function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFH
 function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
+function makeMarkdownOrString : TFhirMarkdown;
 
 const
   frtProcedureRequest = frtServiceRequest;
@@ -180,6 +181,7 @@ type
   TFhirAuditEventParticipantNetwork  = TFhirAuditEventAgentNetwork;
   TFhirNamingSystemContact = TFHIRContactDetail;
   TFhirConformanceContact = TFHIRContactDetail;
+  TFhirQuestionnaireItemOption = TFhirQuestionnaireItemAnswerOption;
 
   TFhirPeriodHelper = class helper for TFhirPeriod
   private
@@ -191,6 +193,13 @@ type
     function point : TDateTime;
   end;
 
+  TFhirBinaryHelper = class helper for TFhirBinary
+  private
+    function GetContent: TBytes;
+    procedure SetContent(const Value: TBytes);
+  public
+    property content : TBytes read GetContent write SetContent;
+  end;
 
   TFhirIdentifierHelper = class helper for TFhirIdentifier
   private
@@ -344,6 +353,7 @@ type
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
     function getExtensionValue(url : String) : TFHIRType;
+    function forceExtension(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
@@ -664,9 +674,16 @@ type
   private
     function getinitial: TFHIRType;
     procedure SetInitial(const Value: TFHIRType);
+    function getOptions: String;
+
+    procedure SetOptions(const Value: String);
+    function GetOptionList: TFhirQuestionnaireItemAnswerOptionList;
   public
     function countDescendents : integer;
+
     property initial : TFHIRType read GetInitial write SetInitial;
+    property options : String read getOptions write SetOptions;
+    property optionList : TFhirQuestionnaireItemAnswerOptionList read GetOptionList;
   end;
 
   TFhirQuestionnaireHelper = class helper for TFhirQuestionnaire
@@ -2385,14 +2402,8 @@ begin
   ndx := getExtension(url);
   if (ndx = -1) then
     result := ''
-  else if (self.ExtensionList.Item(ndx).value is TFhirString) then
-    result := TFhirString(self.ExtensionList.Item(ndx).value).value
-  else if (self.ExtensionList.Item(ndx).value is TFhirCode) then
-    result := TFhirCode(self.ExtensionList.Item(ndx).value).value
-  else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
-    result := TFhirUri(self.ExtensionList.Item(ndx).value).value
-  else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
-    result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.ToXML
+  else if (self.ExtensionList.Item(ndx).value is TFHIRPrimitiveType) then
+    result := TFHIRPrimitiveType(self.ExtensionList.Item(ndx).value).primitiveValue
   else
     result := '';
 end;
@@ -2615,6 +2626,16 @@ begin
     end;
     inc(i);
   end;
+end;
+
+function TFHIRDomainResourceHelper.forceExtension(url: String): TFHIRExtension;
+var
+  i : integer;
+begin
+  for i := 0 to extensionList.Count - 1 do
+    if extensionList[i].url = url then
+      exit(extensionList[i]);
+  result := addExtension(url);
 end;
 
 function TFHIRDomainResourceHelper.GetContained(id: String): TFhirResource;
@@ -5734,12 +5755,27 @@ begin
     result := initialList[0].value;
 end;
 
+function TFhirQuestionnaireItemHelper.GetOptionList: TFhirQuestionnaireItemAnswerOptionList;
+begin
+ result := answerOptionList;
+end;
+
+function TFhirQuestionnaireItemHelper.getOptions: String;
+begin
+  result := answerValueSet;
+end;
+
 procedure TFhirQuestionnaireItemHelper.SetInitial(const Value: TFHIRType);
 begin
   if initialList.Count = 0 then
     initialList.Append.value := value
   else
     initialList[0].value := value;
+end;
+
+procedure TFhirQuestionnaireItemHelper.SetOptions(const Value: String);
+begin
+  answerValueSet := value;
 end;
 
 { TFhirQuestionnaireHelper }
@@ -6088,6 +6124,24 @@ begin
     relation := s;
     url := value;
   end;
+end;
+
+function makeMarkdownOrString : TFhirMarkdown;
+begin
+  result := TFhirMarkdown.Create;
+end;
+
+
+{ TFhirBinaryHelper }
+
+function TFhirBinaryHelper.GetContent: TBytes;
+begin
+  result := Data;
+end;
+
+procedure TFhirBinaryHelper.SetContent(const Value: TBytes);
+begin
+  Data := value;
 end;
 
 end.

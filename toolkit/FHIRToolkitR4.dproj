@@ -214,10 +214,6 @@
             <Form>ServerFrameForm</Form>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="AppEndorserFrame.pas">
-            <Form>AppEndorsementFrame</Form>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
         <DCCReference Include="BaseFrame.pas"/>
         <DCCReference Include="ValueSetEditor.pas">
             <Form>ValueSetEditorFrame</Form>
@@ -411,6 +407,9 @@
             <Form>IGSettingsForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="FDownloadForm.pas">
+            <Form>IGSettingsForm</Form>
+        </DCCReference>
         <DCCReference Include="ImplementationGuideEditor.pas">
             <Form>ImplementationGuideEditorFrame</Form>
             <FormType>fmx</FormType>
@@ -455,17 +454,17 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>profiles-resources.xml</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="OSX32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>profiles-resources.xml</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

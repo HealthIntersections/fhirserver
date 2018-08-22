@@ -37,7 +37,7 @@ uses
   IdComponent,
   FHIR.Support.Base, FHIR.Support.Utilities,
   FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Base.Xhtml,
-  BaseFrame, AppEndorserFrame, CapabilityStatementEditor, FMX.WebBrowser,
+  BaseFrame, CapabilityStatementEditor, FMX.WebBrowser,
   FMX.Memo;
 
 type

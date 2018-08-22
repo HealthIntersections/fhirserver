@@ -381,7 +381,7 @@ begin
         params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
-          p := validator.check(system, version, code);
+          p := validator.check(system, version, code, false);
           try
             res := TValidationResult.create;
             if p.bool('result') then
@@ -669,7 +669,7 @@ begin
         params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
-          p := validator.check(system, version, code);
+          p := validator.check(system, version, code, false);
           try
             res := TValidationResult.create;
             if p.bool('result') then
@@ -957,7 +957,7 @@ begin
         params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
-          p := validator.check(system, version, code);
+          p := validator.check(system, version, code, false);
           try
             res := TValidationResult.create;
             if p.bool('result') then

@@ -32,7 +32,7 @@ interface
 uses
   Sysutils, Classes, FMX.Graphics, UITypes,
   FMX.Controls, FMX.StdCtrls, FMX.Types, FMX.Objects, FMX.ImgList, FMX.Edit, FMX.DateTimeCtrls, FMX.ListBox, FMX.ComboEdit,
-  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources,
+  FHIR.Base.Objects, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities,
   ToolkitSettings, BaseFrame,
   QuestionnaireItemDialog;
 

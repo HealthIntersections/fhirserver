@@ -1052,6 +1052,20 @@ type
     function link : TFhirGraphDefinitionW; overload;
   end;
 
+  // sometimes you just need an object, but with no functionality on it. that's what this is for
+  TFHIRNullObject = class (TFHIRObject)
+  public
+    function makeStringValue(v : String) : TFHIRObject; override;
+    function makeCodeValue(v : String) : TFHIRObject; override;
+    function makeIntValue(v : String) : TFHIRObject; override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    function getPropertyValue(propName : string): TFHIRProperty; override;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function fhirType : String; override;
+    function getId : String; override;
+    procedure setIdValue(id : String); override;
+  end;
+
 implementation
 
 uses
@@ -1694,8 +1708,54 @@ begin
   result := TFHIRMetadataResourceW(inherited link);
 end;
 
-end.
+{ TFHIRNullObject }
 
+function TFHIRNullObject.createPropertyValue(propName: string): TFHIRObject;
+begin
+  result := nil;
+end;
+
+function TFHIRNullObject.fhirType: String;
+begin
+  result := 'null';
+end;
+
+function TFHIRNullObject.getId: String;
+begin
+  result := '';
+end;
+
+function TFHIRNullObject.getPropertyValue(propName: string): TFHIRProperty;
+begin
+  result := nil;
+end;
+
+function TFHIRNullObject.makeCodeValue(v: String): TFHIRObject;
+begin
+  result := nil;
+end;
+
+function TFHIRNullObject.makeIntValue(v: String): TFHIRObject;
+begin
+  result := nil;
+end;
+
+
+function TFHIRNullObject.makeStringValue(v: String): TFHIRObject;
+begin
+  result := nil;
+end;
+
+
+procedure TFHIRNullObject.setIdValue(id: String);
+begin
+end;
+
+procedure TFHIRNullObject.setProperty(propName: string; propValue: TFHIRObject);
+begin
+end;
+
+end.
 
 
 

@@ -801,8 +801,15 @@ begin
   ValueSet.status := TFhirPublicationStatusEnum(cbxStatus.ItemIndex);
   ValueSet.date := TDateTimeEx.make(dedDate.DateTime, dttzLocal);
   ValueSet.immutable := cbImmutable.IsChecked;
-  ValueSet.extensible := cbExtensible.IsChecked;
   ValueSet.jurisdictionList.Clear;
+  {$IFDEF FHIR3}
+  ValueSet.extensible := cbExtensible.IsChecked;
+  {$ELSE}
+  if cbExtensible.IsChecked then
+    ValueSet.forceExtension('http://hl7.org/fhir/StructureDefinition/valueset-extensible').value := TFHIRBoolean.Create(true)
+  else
+    ValueSet.removeExtension('http://hl7.org/fhir/StructureDefinition/valueset-extensible');
+  {$ENDIF}
   cc := getJurisdiction(cbxJurisdiction.ItemIndex);
   if (cc <> nil) then
     ValueSet.jurisdictionList.add(cc);
@@ -1300,7 +1307,13 @@ begin
     dedDate.DateTime := ValueSet.date.DateTime;
   cbxJurisdiction.ItemIndex := readJurisdiction;
   cbImmutable.IsChecked := ValueSet.immutable;
+  {$IFDEF FHIR3}
   cbExtensible.IsChecked := ValueSet.extensible;
+  {$ELSE}
+  cbExtensible.IsChecked := ValueSet.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-extensible') and
+    (ValueSet.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-extensible') = 'true');
+
+  {$ENDIF}
   gridIdentifiers.RowCount := ValueSet.identifierList.Count;
   btnIdentifierDelete.Enabled := false;
 end;

@@ -249,6 +249,15 @@ implementation
 
 {$R *.fmx}
 
+function editStringorMarkdownDialog(owner : TComponent; title : String; button : TButton; edit : TEdit; resource : TFHIRResource; element : {$IFDEF FHIR3}TFHIRString{$ELSE}TFHIRMarkdown{$ENDIF}) : boolean;
+begin
+  {$IFDEF FHIR3}
+  result := editStringDialog(owner, title, button, edit, resource, element);
+  {$ELSE}
+  result := editMarkdownDialog(owner, title, button, edit, resource, element);
+  {$ENDIF}
+end;
+
 { TCapabilityStatementEditorFrame }
 
 procedure TCapabilityStatementEditorFrame.btnAddClientClick(Sender: TObject);
@@ -461,8 +470,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Batch Documentation', btnBatch, edtBatch, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Batch Documentation', btnBatch, edtBatch, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -724,8 +733,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'System History Documentation', btnSystemHistory, edtSystemHistory, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'System History Documentation', btnSystemHistory, edtSystemHistory, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -737,8 +746,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'System Search Documentation', btnSystemSearch, edtSystemSearch, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'System Search Documentation', btnSystemSearch, edtSystemSearch, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -757,8 +766,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Transaction Documentation', btnTransaction, edtTransaction, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Transaction Documentation', btnTransaction, edtTransaction, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -770,8 +779,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Patch Documentation', btnDocoPatch, edtDocoPatch, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Patch Documentation', btnDocoPatch, edtDocoPatch, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -783,8 +792,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Read Documentation', btnDocoRead, edtDocoRead, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Read Documentation', btnDocoRead, edtDocoRead, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -806,8 +815,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Search Documentation', btnDocoSearch, edtDocoSearch, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Search Documentation', btnDocoSearch, edtDocoSearch, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -819,8 +828,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Update Documentation', btnDocoUpdate, edtDocoUpdate, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Update Documentation', btnDocoUpdate, edtDocoUpdate, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -832,8 +841,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Version Read Documentation', btnDocoVRead, edtDocoVRead, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Version Read Documentation', btnDocoVRead, edtDocoVRead, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -862,8 +871,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Create Documentation', btnDocoCreate, edtDocoCreate, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Create Documentation', btnDocoCreate, edtDocoCreate, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -875,8 +884,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Delete Documentation', btnDocoDelete, edtDocoDelete, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Delete Documentation', btnDocoDelete, edtDocoDelete, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -888,8 +897,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Instance History Documentation', btnDocoHistoryInstance, edtDocoHistoryInstance, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Instance History Documentation', btnDocoHistoryInstance, edtDocoHistoryInstance, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
@@ -901,8 +910,8 @@ begin
   if ri <> nil then
   begin
     if ri.documentationElement = nil then
-      ri.documentationElement := TFhirString.Create;
-    editStringDialog(self, 'Instance History Documentation', btnDocoHistoryType, edtDocoHistoryType, CapabilityStatement, ri.documentationElement);
+      ri.documentationElement := makeMarkdownOrString;
+    editStringOrMarkdownDialog(self, 'Instance History Documentation', btnDocoHistoryType, edtDocoHistoryType, CapabilityStatement, ri.documentationElement);
   end;
 end;
 
