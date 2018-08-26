@@ -2079,7 +2079,8 @@ begin
           Context.progress(trunc(100 * (i - istart) / (iend - istart)));
         if not StringArrayExistsInsensitive(['.info', '.internals', '.zip'], extractFileExt(rdr.Parts[i].name)) then
         begin
-          writeln('Parse ' + rdr.Parts[i].name);
+          if DebugConsoleMessages then
+            writeln('Parse ' + rdr.Parts[i].name);
           if (rdr.Parts[i].name <> 'package.json') then
           begin
             if rdr.Parts[i].name.EndsWith('.json') then
@@ -2715,6 +2716,7 @@ begin
   logt('home page: ' + Session.scopes);
   counts := TStringList.Create;
   try
+
     for a in FContext.ValidatorContext.allResourceNames do
     begin
       ix := counts.Add(a);
@@ -2728,7 +2730,7 @@ begin
     profiles := TFslStringMatch.Create;
     try
       profiles.forced := true;
-      counts := FContext.Storage.FetchResourceCounts(compList);
+      FContext.Storage.FetchResourceCounts(compList, counts);
 
       s := host + sBaseURL;
       b := TStringBuilder.Create;

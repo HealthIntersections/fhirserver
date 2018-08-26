@@ -105,7 +105,6 @@ Type
     FProfiles : TProfileManager;
     FCustomResources : TFslMap<TFHIRCustomResourceInformation>;
     FNonSecureNames : TArray<String>;
-    FFactory : TFHIRFactory;
 
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
@@ -137,8 +136,6 @@ Type
     function allResourceNames : TArray<String>; override;
     function nonSecureResourceNames : TArray<String>; override;
     function getProfileLinks(non_resources : boolean) : TFslStringMatch; override;
-
-    Property factory : TFHIRFactory read FFactory;
   end;
   TBaseWorkerContext = TBaseWorkerContextR4;
 
@@ -1509,12 +1506,10 @@ begin
   FLock := TFslLock.Create('worker-context');
   FProfiles := TProfileManager.Create;
   FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create;
-  FFactory := factory;
 end;
 
 destructor TBaseWorkerContextR4.Destroy;
 begin
-  FFactory.Free;
   FCustomResources.Free;
   FProfiles.free;
   FLock.Free;
@@ -1579,12 +1574,24 @@ var
   list : TFslList<TFhirStructureDefinition>;
   sd : TFhirStructureDefinition;
   sns : String;
+  url : string;
 begin
   list := TFslList<TFhirStructureDefinition>.create;
   try
     listStructures(list);
     result := nil;
+    if (ns = FHIR_NS) then
+    begin
+      url := 'http://hl7.org/fhir/StructureDefinition/'+name;
+      for sd in list do
+      begin
+        if (sd.url = url) then
+          exit(sd);
+      end;
+    end;
+
     for sd in list do
+    begin
       if (name = sd.Id) then
       begin
         if ((ns = '') or (ns = FHIR_NS)) and not sd.hasExtension('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace') then
@@ -1593,6 +1600,7 @@ begin
         if (ns = sns) then
           exit(sd);
       end;
+    end;
   finally
     list.Free;
   end;

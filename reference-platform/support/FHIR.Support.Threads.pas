@@ -264,6 +264,7 @@ end;
 procedure DoneUnit;
 begin
   GThreadManager.Free;
+  GThreadManager := nil;
   GBackgroundTasks.Free;
   DeleteCriticalSection(GCritSct);
 end;
@@ -923,15 +924,17 @@ procedure SetThreadName(name : String);
 begin
   if not GHaveCritSect then
     InitUnit;
-
-  EnterCriticalSection(GCritSct);
-  try
-    if name = '' then
-      GThreadManager.Remove(GetCurrentThreadId)
-    else
-      GThreadManager.AddOrSetValue(GetCurrentThreadId, name);
-  finally
-    LeaveCriticalSection(GCritSct);
+  if GThreadManager <> nil then
+  begin
+    EnterCriticalSection(GCritSct);
+    try
+      if name = '' then
+        GThreadManager.Remove(GetCurrentThreadId)
+      else
+        GThreadManager.AddOrSetValue(GetCurrentThreadId, name);
+    finally
+      LeaveCriticalSection(GCritSct);
+    end;
   end;
 end;
 

@@ -155,6 +155,9 @@ begin
   if FHIRExeModuleName = '##' then
     exit;
 
+  if GMessages <> nil then
+    exit;
+
   source := TMXmlParser.parse(LoadSource, [xpDropWhitespace, xpDropComments]);
   try
     GMessages := TFslMap<TFHIRMessage>.create;

@@ -307,6 +307,7 @@ begin
 //  AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
   SetConsoleCtrlHandler(@DebugCtrlC, true);
+  DebugConsoleMessages := true;
   FDebugMode := True;
   InternalExecute;
   if FTellUser and (FStopReason <> '') then

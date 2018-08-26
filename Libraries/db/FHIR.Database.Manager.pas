@@ -1442,7 +1442,7 @@ begin
          FSemaphore.Release;
       except
         on e : exception do
-          Writeln('Error releasing semaphore for '+s+': '+e.message+' for '+s);
+          if DebugConsoleMessages then Writeln('Error releasing semaphore for '+s+': '+e.message+' for '+s);
       end;
       end;
   finally

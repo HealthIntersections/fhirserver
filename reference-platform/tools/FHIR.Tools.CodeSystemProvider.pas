@@ -258,8 +258,8 @@ var
   m : TFhirCodeSystemConceptMatch;
 begin
   concepts.sort(self);
-  for m in concepts do
-    writeln(m.FItem.code+' ('+m.FItem.display+'): '+FloatToStr(m.FRating));
+//  for m in concepts do
+//    writeln(m.FItem.code+' ('+m.FItem.display+'): '+FloatToStr(m.FRating));
 end;
 
 { TCodeSystemAdornment }

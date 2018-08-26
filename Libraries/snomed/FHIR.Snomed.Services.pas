@@ -3255,7 +3255,7 @@ begin
 
     result := GetDisplayName(TSnomedExpressionContext(context).reference, FDefaultLanguage);
     Concept.GetConcept(TSnomedExpressionContext(context).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
-    if result = GetFSN(Refs.GetReferences(DescriptionIndex)) then
+    if DebugConsoleMessages and (result = GetFSN(Refs.GetReferences(DescriptionIndex))) then
       writeln('returning FSN');
   end;
 end;

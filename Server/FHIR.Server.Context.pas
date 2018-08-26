@@ -346,11 +346,11 @@ begin
   FSessionManager.Free;
   FSubscriptionManager.Free;
   FIndexes.free;
-  FTerminologyServer.Free;
   FStorage.Free;
   FQuestionnaireCache.free;
   UserProvider.Free;
   FServerFactory.Free;
+  FTerminologyServer.Free;
 
   FValidatorContext.Free;
   FValidator.free;
@@ -419,7 +419,7 @@ procedure TFHIRServerContext.SetTerminologyServer(const Value: TTerminologyServe
 begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
-  ServerFactory.setTerminologyServer(FValidatorContext, value.Link);
+  ServerFactory.setTerminologyServer(FValidatorContext, value);
 end;
 
 function TFHIRServerContext.getMaps: TFslMap<TFHIRStructureMapW>;

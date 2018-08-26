@@ -1666,10 +1666,12 @@ end;
 
 procedure TCommonTerminologies.add(p: TCodeSystemProvider);
 begin
-  if not FProviderClasses.ContainsKey(p.system(nil)) then
-    FProviderClasses.Add(p.system(nil), p);
   if p.version(nil) <> '' then
     FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  if FProviderClasses.ContainsKey(p.system(nil)) then
+    p.free
+  else
+    FProviderClasses.Add(p.system(nil), p);
 end;
 
 constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);

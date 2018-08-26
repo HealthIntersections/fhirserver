@@ -272,7 +272,11 @@ begin
           end
           else
           begin
-            writeln('No -cmd parameter - exiting now'); // won't see this if an actual service
+            try
+              writeln('No -cmd parameter - exiting now'); // won't see this if an actual service
+            except
+              // catch 105 err
+            end;
             svc.Execute;
           end;
         finally
@@ -389,6 +393,7 @@ begin
   CloseDatabase;
   FDatabases.Free;
   FIni.Free;
+  FSettings.Free;
   inherited;
 end;
 
@@ -431,15 +436,15 @@ procedure TFHIRService.DoStop;
 begin
   try
     logt('stopping: '+StopReason);
+    logt('stop rest server');
     StopRestServer;
-    logt('stopping.b: '+StopReason);
+    logt('unload terminologies');
     UnloadTerminologies;
-    logt('stopping.c: '+StopReason);
+    logt('stopped');
   except
     on e : Exception do
-      logt(E.ClassName + ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
+      logt('Exception stopping ('+E.ClassName + '): ' + E.Message+#13#10#13#10+ExceptionStack(e));
   end;
-    logt('stopping.d: '+StopReason);
 end;
 
 procedure TFHIRService.dump;
@@ -641,7 +646,7 @@ begin
           StringSplit(p, '-', pi, pv);
           if not pcm.packageExists(pi, pv) then
             raise EFHIRException.create('Package '+p+' not found');
-          logt('Load Package '+pi+'-'+pv);
+          logt('Load Package '+pi+'#'+pv);
           ploader := TPackageLoader.create(factoryFactory(v));
           try
             pcm.loadPackage(pi, pv, ploader.FFactory.canonicalResources, ploader.load);
@@ -817,19 +822,23 @@ begin
     logt('Initialise endpoint '+s+' at '+details['path']+' for '+details['version']);
 
     if FindCmdLineSwitch('r4') and (details['version'] <> 'r4') then
-      break;
+      continue;
+    if FindCmdLineSwitch('r3') and (details['version'] <> 'r3') then
+      continue;
+    if FindCmdLineSwitch('r2') and (details['version'] <> 'r2') then
+      continue;
 
     if details['version'] = 'r2' then
     begin
-      store := TFHIRNativeStorageServiceR2.create(FDatabases[details['database']], TFHIRFactoryR2.Create);
+      store := TFHIRNativeStorageServiceR2.create(FDatabases[details['database']].Link, TFHIRFactoryR2.Create);
     end
     else if details['version'] = 'r3' then
     begin
-      store := TFHIRNativeStorageServiceR3.create(FDatabases[details['database']], TFHIRFactoryR3.Create);
+      store := TFHIRNativeStorageServiceR3.create(FDatabases[details['database']].Link, TFHIRFactoryR3.Create);
     end
     else if details['version'] = 'r4' then
     begin
-      store := TFHIRNativeStorageServiceR4.create(FDatabases[details['database']], TFHIRFactoryR4.Create);
+      store := TFHIRNativeStorageServiceR4.create(FDatabases[details['database']].Link, TFHIRFactoryR4.Create);
     end
     else
       raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);

@@ -251,7 +251,7 @@ Footer(FFactory, FBaseURL, lang, logid)
     s.free;
   end;
   finally
-
+    m.free;
   end;
 end;
 

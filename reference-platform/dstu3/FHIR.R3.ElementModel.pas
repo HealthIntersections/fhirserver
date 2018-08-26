@@ -1419,12 +1419,12 @@ begin
 end;
 
 function TFHIRMMXmlParser.line(node : TMXmlElement) : integer;
-    begin
+begin
   result := node.Start.line;
 end;
 
 function TFHIRMMXmlParser.col(node : TMXmlElement) : integer;
-  begin
+begin
   result := node.Start.col;
 end;
 

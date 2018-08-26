@@ -339,7 +339,9 @@ uses
   VTAccessibilityFactory in '..\..\Components\treeview\Source\VTAccessibilityFactory.pas',
   VTHeaderPopup in '..\..\Components\treeview\Source\VTHeaderPopup.pas',
   FHIR.Cache.PackageBrowser in '..\reference-platform\cache\FHIR.Cache.PackageBrowser.pas' {PackageFinderForm},
-  FHIR.Snomed.Combiner in '..\Libraries\snomed\FHIR.Snomed.Combiner.pas';begin
+  FHIR.Snomed.Combiner in '..\Libraries\snomed\FHIR.Snomed.Combiner.pas';
+
+begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
   if ParamCount = 0 then
   begin

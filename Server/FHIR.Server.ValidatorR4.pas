@@ -51,7 +51,7 @@ implementation
 procedure TFHIRServerWorkerContextR4.checkResource(r: TFhirResource);
 begin
   r.checkNoImplicitRules('Repository.SeeResource', 'Resource');
-  FFactory.checkNoModifiers(r, 'Repository.SeeResource', 'Resource');
+  Factory.checkNoModifiers(r, 'Repository.SeeResource', 'Resource');
 end;
 
 constructor TFHIRServerWorkerContextR4.Create(factory : TFHIRFactory);
@@ -145,16 +145,21 @@ end;
 
 function TFHIRServerWorkerContextR4.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
 var
-  vs : TFHIRValueSetW;
+  vsw : TFHIRValueSetW;
 begin
   if t = frtValueSet then
   begin
-    vs := FTerminologyServer.getValueSetByUrl(url);
-    try
-      result := vs.Resource.link as TFhirResource
-    finally
-      vs.free;
-    end;
+    vsw := FTerminologyServer.getValueSetByUrl(url);
+    if vsw <> nil then
+    begin
+      try
+        result := vsw.Resource.link as TFhirResource;
+      finally
+        vsw.free;
+      end;
+    end
+    else
+      result := nil;
   end
   else if t = frtQuestionnaire then
     result := getQuestionnaire(url)

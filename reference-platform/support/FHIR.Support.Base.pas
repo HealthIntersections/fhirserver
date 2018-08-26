@@ -40,6 +40,9 @@ threadvar
   gExceptionStack : String;
   gException : Exception;
 
+var
+  DebugConsoleMessages : boolean = false;
+
 procedure recordStack(e : Exception);
 function ExceptionStack(e : Exception) : String;
 
@@ -708,7 +711,7 @@ Begin
     Assert(Invariants('Free', TFslObject));
 
     if FFslObjectReferenceCount = -1 then
-      raise EFslException.Create('Attempt to free a class a second time');
+      raise EFslException.Create('Attempt to free a class a second time (of type '+className+'?)');
     If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
       Destroy;
   End;

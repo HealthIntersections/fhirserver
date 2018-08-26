@@ -359,7 +359,7 @@ type
     function FetchAuthorization(uuid : String; var PatientId : String; var ConsentKey, SessionKey : Integer; var Expiry : TDateTime; var jwt : String) : boolean; override;
     function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; override;
 
-    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; override;
+    procedure FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList); override;
     function FetchResource(key : integer) : TFHIRResourceV; override;
     function createAsyncTask(url, id : string; format : TFHIRFormat; secure : boolean) : integer; override;
     procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); override;
@@ -5247,7 +5247,7 @@ begin
       if ServerContext.TerminologyServer <> nil then
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
-        logt('  .. Load Package hl7.fhir.org-' + ServerContext.Factory.versionString);
+        logt('  .. Load Package hl7.fhir.org#' + ServerContext.Factory.versionString);
         pcm := TFHIRPackageManager.Create(false);
         try
           res := TFslStringSet.Create(['StructureDefinition']); // we only load structure definitions; everything else is left to the database
@@ -5629,7 +5629,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>): TStringList;
+procedure TFHIRNativeStorageService.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts: TStringList);
 var
   conn : TKDBConnection;
   j : integer;
@@ -5637,7 +5637,7 @@ var
 begin
   cmp := buildCompartmentsSQL(ServerContext.ResConfig, nil, compList);
 
-  result := TStringList.create;
+  counts.Clear;
   conn := DB.GetConnection('fhir-home-page');
   try
     conn.sql := 'select ResourceName, count(*) as Count from Ids,  Types where MasterResourceKey is null and Ids.ResourceTypeKey = Types.ResourceTypeKey '+cmp+' group by ResourceName';
@@ -5645,10 +5645,10 @@ begin
     conn.execute;
     while conn.fetchNext do
     begin
-      j := result.IndexOf(conn.ColStringByname['ResourceName']);
+      j := counts.IndexOf(conn.ColStringByname['ResourceName']);
       if j = -1 then
-        j := result.add(conn.ColStringByname['ResourceName']);
-      result.objects[j] := TObject(conn.ColIntegerByName['Count']);
+        j := counts.add(conn.ColStringByname['ResourceName']);
+      counts.objects[j] := TObject(conn.ColIntegerByName['Count']);
     end;
     conn.terminate;
     conn.Release;

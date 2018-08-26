@@ -362,7 +362,7 @@ end;
 
 destructor TFHIRWorkerContextWithFactory.Destroy;
 begin
-  FFactory.link;
+  FFactory.free;
   inherited;
 end;
 

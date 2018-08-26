@@ -87,6 +87,7 @@ type
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
     FOnResolveReference: TFHIRResolveReferenceEvent;
+    Fucum : TUcumServiceInterface;
 
     procedure log(name, value : String);
 
@@ -327,6 +328,7 @@ var
 begin
   inherited Create;
   worker := context;
+  FUcum := ucum;
   FLog := TStringBuilder.Create;
   allTypes := TStringList.Create;
   primitiveTypes := TStringList.Create;
@@ -396,6 +398,7 @@ begin
   worker.Free;
   primitiveTypes.Free;
   allTypes.Free;
+  FUcum.Free;
 
   inherited;
 end;

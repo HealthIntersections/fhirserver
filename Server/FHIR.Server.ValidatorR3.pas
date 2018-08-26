@@ -145,9 +145,23 @@ begin
 end;
 
 function TFHIRServerWorkerContextR3.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
+var
+  vsw : TFHIRValueSetW;
 begin
   if t = frtValueSet then
-    result := FTerminologyServer.getValueSetByUrl(url).Resource as TFhirResource
+  begin
+    vsw := FTerminologyServer.getValueSetByUrl(url);
+    if vsw <> nil then
+    begin
+      try
+        result := vsw.Resource.link as TFhirResource;
+      finally
+        vsw.free;
+      end;
+    end
+    else
+      result := nil;
+  end
   else if t = frtQuestionnaire then
     result := getQuestionnaire(url)
   else
@@ -263,13 +277,13 @@ function TFHIRServerWorkerContextR3.validateCode(code: TFHIRCodeableConcept; vs:
 var
   p : TFhirParametersW;
   vsw : TFHIRValueSetW;
-  c : TFhirCodingW;
+  c : TFhirCodeableConceptW;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
     result := TValidationResult.Create;
     try
-      c := factory.wrapCoding(code.Link);
+      c := factory.wrapCodeableConcept(code.Link);
       try
         p := FTerminologyServer.validate(vsw, c, FProfile, false, true);
         try

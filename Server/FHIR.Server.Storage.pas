@@ -270,7 +270,7 @@ Type
     function FetchAuthorization(hash : String; var PatientId : String; var ConsentKey, SessionKey : Integer; var Expiry : TDateTime; var jwt : String) : boolean; virtual;
 
     // server total counts:
-    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; virtual;  abstract;// comps = comma delimited list of patient compartments
+    procedure FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList); virtual;  abstract;// comps = list of patient compartments
     Property TotalResourceCount: integer read GetTotalResourceCount;
 
 

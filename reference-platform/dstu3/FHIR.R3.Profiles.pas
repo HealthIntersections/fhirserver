@@ -845,7 +845,7 @@ begin
     result := context.fetchResource(frtStructureDefinition, type_.profile) as TFhirStructureDefinition;
   if (result = nil) then
     result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code) as TFhirStructureDefinition;
-  if (result = nil) then
+  if DebugConsoleMessages and (result = nil) then
     writeln('XX: failed to find profile for type: ' + type_.code); // debug GJM
 end;
 
@@ -1582,12 +1582,24 @@ var
   list : TFslList<TFhirStructureDefinition>;
   sd : TFhirStructureDefinition;
   sns : String;
+  url : string;
 begin
   list := TFslList<TFhirStructureDefinition>.create;
   try
     listStructures(list);
     result := nil;
+    if (ns = FHIR_NS) then
+    begin
+      url := 'http://hl7.org/fhir/StructureDefinition/'+name;
+      for sd in list do
+      begin
+        if (sd.url = url) then
+          exit(sd);
+      end;
+    end;
+
     for sd in list do
+    begin
       if (name = sd.Id) then
       begin
         if ((ns = '') or (ns = FHIR_NS)) and not sd.hasExtension('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace') then
@@ -1596,6 +1608,7 @@ begin
         if (ns = sns) then
           exit(sd);
       end;
+    end;
   finally
     list.Free;
   end;

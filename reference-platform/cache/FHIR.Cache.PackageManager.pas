@@ -159,6 +159,7 @@ type
     procedure analysePackage(dir : String; v : String; profiles, canonicals : TFslStringDictionary);
     procedure work(pct : integer; done : boolean; desc : String);
     function check(desc : String) : boolean;
+    procedure upgradeCacheFrom1To2;
   public
     constructor Create(user : boolean);
     destructor Destroy; override;
@@ -199,7 +200,7 @@ const
   NAMES_TFHIRPackageKind : Array [TFHIRPackageKind] of String = ('', 'Core Specification', 'Implementation Guides', 'IG Templates', 'Tools');
   NAMES_TFHIRPackageDependencyStatus : Array [TFHIRPackageDependencyStatus] of String = ('?', 'ok', 'ver?', 'bad');
   ANALYSIS_VERSION = 2;
-  CACHE_VERSION = 1;
+  CACHE_VERSION = 2;
 
 
 
@@ -234,7 +235,7 @@ var
   s : String;
 begin
   for s in TDirectory.GetDirectories(FFolder) do
-    if s.Contains('-') then
+    if s.Contains('#') then
       FolderDelete(s);
 end;
 
@@ -248,6 +249,11 @@ begin
     FFolder := path([ProgData, '.fhir', 'packages']);
   ForceFolder(FFolder);
   FIni := TIniFile.create(Path([FFolder, 'packages.ini']));
+  if FIni.ReadInteger('cache', 'version', 0) = 1 then
+  begin
+    upgradeCacheFrom1To2;
+    FIni.WriteInteger('cache', 'version', 2);
+  end;
   if FIni.ReadInteger('cache', 'version', 0) <> CACHE_VERSION then
   begin
     clearCache;
@@ -314,7 +320,7 @@ begin
     if packageExists(id, ver) then
       if not check('Replace existing copy of '+id+' version '+ver+'?') then
         exit;
-    dir := path([FFolder, id+'-'+ver]);
+    dir := path([FFolder, id+'#'+ver]);
     if FolderExists(dir) then
       if not FolderDelete(dir) then
         raise EIOException.create('Unable to delete existing package');
@@ -406,9 +412,9 @@ begin
   for s in TDirectory.GetDirectories(FFolder) do
   begin
     id := s.subString(s.lastIndexOf('\')+1);
-    if id.Contains('-') then
+    if id.Contains('#') then
     begin
-      id := id.Substring(0, id.IndexOf('-'));
+      id := id.Substring(0, id.IndexOf('#'));
       if list.IndexOf(id) = -1 then
         list.Add(id);
     end;
@@ -452,7 +458,7 @@ begin
     ts.Sort;
     for s in ts do
     begin
-      if s.Contains('-') and FileExists(Path([s, 'package', 'package.json'])) then
+      if s.Contains('#') and FileExists(Path([s, 'package', 'package.json'])) then
       begin
         npm := TJSONParser.ParseFile(Path([s, 'package', 'package.json']));
         try
@@ -485,7 +491,7 @@ begin
               v := TFHIRPackageVersionInfo.Create;
               try
                 v.folder := s;
-                v.StatedVersion := s.Substring(s.LastIndexOf('-')+1);
+                v.StatedVersion := s.Substring(s.LastIndexOf('#')+1);
                 v.ActualVersion := npm.str['version'];
                 v.url := npm.str['homepage'];
                 if (v.url = '') then
@@ -575,7 +581,7 @@ begin
       if core or (p.id <> 'hl7.fhir.core') then
         for v in p.versions do
           if v.fhirVersion = version then
-            list.Add(p.id+'-'+v.statedVersion);
+            list.Add(p.id+'#'+v.statedVersion);
   finally
     l.Free;
   end;
@@ -586,7 +592,7 @@ var
   s : String;
 begin
   for s in TDirectory.GetDirectories(FFolder) do
-    if s.Contains('-') then
+    if s.Contains('#') then
       list.Add(s);
 end;
 
@@ -603,7 +609,7 @@ begin
     for s in TDirectory.GetDirectories(FFolder) do
     begin
       f := s.subString(FFolder.length+1);
-      if (f.StartsWith(id+'-')) then
+      if (f.StartsWith(id+'#')) then
         list.Add(f.Substring(id.Length+1));
     end;
   finally
@@ -680,7 +686,7 @@ begin
 
   if not packageExists(id, ver) then
     raise EIOException.create('Unable to load package '+id+' v '+ver+' as it doesn''t exist');
-  for s in TDirectory.GetFiles(Path([FFolder, id+'-'+ver, 'package'])) do
+  for s in TDirectory.GetFiles(Path([FFolder, id+'#'+ver, 'package'])) do
     if not s.endsWith('package.json') then
     begin
       t := PathTitle(s);
@@ -702,7 +708,7 @@ procedure TFHIRPackageManager.loadPackage(idver: String; resources: array of Str
 var
   id, ver : String;
 begin
-  StringSplit(idver, '-', id, ver);
+  StringSplit(idver, '#', id, ver);
   loadPackage(id, ver, resources, loadEvent);
 end;
 
@@ -763,7 +769,7 @@ end;
 
 function TFHIRPackageManager.packageExists(id, ver: String): boolean;
 begin
-  result := FolderExists(Path([FFolder, id+'-'+ver])) and FileExists(Path([FFolder, id+'-'+ver, 'package', 'package.json']));
+  result := FolderExists(Path([FFolder, id+'#'+ver])) and FileExists(Path([FFolder, id+'#'+ver, 'package', 'package.json']));
 end;
 
 procedure TFHIRPackageManager.remove(id : String);
@@ -773,7 +779,7 @@ begin
   for s in TDirectory.GetDirectories(FFolder) do
   begin
     n := s.Substring(s.LastIndexOf('\')+1);
-    if (n.StartsWith(id+'-')) then
+    if (n.StartsWith(id+'#')) then
       if not FolderDelete(s) then
         raise EIOException.create('Unable to delete package '+n+'. Perhaps it is in use?');
   end;
@@ -786,7 +792,7 @@ begin
   for s in TDirectory.GetDirectories(FFolder) do
   begin
     n := s.Substring(s.LastIndexOf('\')+1);
-    if (n = id+'-'+ver) then
+    if (n = id+'#'+ver) then
       if not FolderDelete(s) then
         raise EIOException.create('Unable to delete package '+n+'. Perhaps it is in use?');
   end;
@@ -846,6 +852,31 @@ begin
         if v.actualVersion > dep.version then
           exit(stMoreRecentVersion);
     end;
+end;
+
+procedure TFHIRPackageManager.upgradeCacheFrom1To2;
+var
+  st : TStringList;
+  s, n : String;
+  i : integer;
+begin
+  st := TStringList.Create;
+  try
+    for s in TDirectory.GetDirectories(FFolder) do
+      st.Add(s);
+    for s in st do
+    begin
+      i := s.IndexOf('#');
+      if i > 0 then
+      begin
+        n := s.Substring(0, i) + '#' + s.Substring(i+1);
+        if not RenameFile(s, n) then
+          raise Exception.Create('Unable to rename package from '+s+' to'+n);
+      end;
+    end;
+  finally
+    st.Free;
+  end;
 end;
 
 procedure TFHIRPackageManager.work(pct: integer; done: boolean; desc: String);
@@ -931,7 +962,7 @@ var
 begin
   result := '';
   for d in dependencies do
-    result := result + ', '+d.id+'-'+d.version+' ('+NAMES_TFHIRPackageDependencyStatus[d.status]+')';
+    result := result + ', '+d.id+'#'+d.version+' ('+NAMES_TFHIRPackageDependencyStatus[d.status]+')';
   if result <> '' then
     result := result.Substring(2);
 end;
@@ -968,7 +999,7 @@ end;
 
 function TFHIRPackageDependencyInfo.summary: String;
 begin
-  result := 'Depends on '+Fid+'-'+Fversion;
+  result := 'Depends on '+Fid+'#'+Fversion;
   case status of
     stUnknown: ;
     stOK: result := result + ' (found)';

@@ -478,7 +478,7 @@ begin
   if (length(s) > 0) then
   begin
     FBuilder.Append(lang);
-    if s[1] < ' ' then
+    if (s[1] < ' ') and DebugConsoleMessages then
       writeln('error');
     FBuilder.AddString(s);
   end;
@@ -2515,7 +2515,7 @@ begin
     while L <= H do
     begin
       I := (L + H) shr 1;
-      if (i * 12) > length(FMaster) - 4 then
+      if ((i * 12) > length(FMaster) - 4) and DebugConsoleMessages then
         writeln('err');
       Move(FMaster[i*12], d, 4);
       s := Strings.GetEntry(d, lang);
