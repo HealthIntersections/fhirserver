@@ -60,6 +60,10 @@ type
     ToolbarImages: TImageList;
     btnDisplay: TButton;
     btnDefinition: TButton;
+    Panel5: TPanel;
+    Label26: TLabel;
+    Label4: TLabel;
+    Edit1: TEdit;
     procedure FormShow(Sender: TObject);
     procedure edtCodeChangeTracking(Sender: TObject);
     procedure gridDesignationsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);

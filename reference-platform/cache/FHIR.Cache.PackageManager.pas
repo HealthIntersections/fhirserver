@@ -61,6 +61,7 @@ type
 
     class procedure addStandardPackages(list : TFslList<TPackageDefinition>);
     class procedure addPackagesFromBuild(list : TFslList<TPackageDefinition>);
+    class procedure AddCustomPackages(list : TFslList<TPackageDefinition>);
   end;
 
   TFHIRPackageObject = class abstract (TFslObject)
@@ -328,19 +329,22 @@ begin
     size := 0;
     for s in files.Keys do
     begin
-      fn := path([dir, s]);
-      ForceFolder(PathFolder(fn));
-      if FileExists(fn) then
+      if length(files[s]) > 0 then
       begin
-        if not DeleteFile(fn) then
+        fn := path([dir, s]);
+        ForceFolder(PathFolder(fn));
+        if FileExists(fn) then
         begin
-          Sleep(100);
           if not DeleteFile(fn) then
-            raise EIOException.create('Unable to delete existing file '+fn);
+          begin
+            Sleep(100);
+            if not DeleteFile(fn) then
+              raise EIOException.create('Unable to delete existing file '+fn);
+          end;
         end;
+        BytesToFile(files[s], fn);
+        inc(size, length(files[s]));
       end;
-      BytesToFile(files[s], fn);
-      inc(size, length(files[s]));
     end;
     ini := TIniFile.Create(path([dir, 'cache.ini']));
     try
@@ -1102,6 +1106,52 @@ begin
     p.Description := 'FHIR R2';
     p.FHIRVersion := '1.0.2';
     p.Url := 'http://hl7.org/fhir';
+    list.Add(p.Link);
+  finally
+    p.Free;
+  end;
+end;
+
+class procedure TPackageDefinition.AddCustomPackages;
+var
+  p : TPackageDefinition;
+begin
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'fhir.tx.support';
+    p.Version := '3.5.0';
+    p.Canonical := 'http://fhir.org/test';
+    p.Date := Now;
+    p.Description := 'tx.fhir.org definitions';
+    p.FHIRVersion := '3.5.0';
+    p.Url := 'http://fhir.org/packages/fhir.tx.support/3.5.0';
+    list.Add(p.Link);
+  finally
+    p.Free;
+  end;
+
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'fhir.tx.support';
+    p.Version := '3.0.1';
+    p.Canonical := 'http://fhir.org/test';
+    p.Date := Now;
+    p.Description := 'tx.fhir.org definitions';
+    p.FHIRVersion := '3.0.1';
+    p.Url := 'http://fhir.org/packages/fhir.tx.support/3.0.1';
+    list.Add(p.Link);
+  finally
+    p.Free;
+  end;
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'fhir.tx.support';
+    p.Version := '1.0.2';
+    p.Canonical := 'http://fhir.org/test';
+    p.Date := Now;
+    p.Description := 'tx.fhir.org definitions';
+    p.FHIRVersion := '1.0.2';
+    p.Url := 'http://fhir.org/packages/fhir.tx.support/1.0.2';
     list.Add(p.Link);
   finally
     p.Free;

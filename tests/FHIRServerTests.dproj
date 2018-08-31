@@ -158,7 +158,7 @@
         <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="..\server\FHIR.Tx.Web.pas"/>
         <DCCReference Include="..\server\FHIR.Server.Constants.pas"/>
-        <DCCReference Include="..\server\FHIR.Server.Utilities.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Ini.pas"/>
         <DCCReference Include="..\server\FHIR.Server.Search.pas"/>
         <DCCReference Include="..\server\FHIR.Server.AuthMgr.pas"/>
         <DCCReference Include="..\server\FHIR.Scim.Server.pas"/>

@@ -25,6 +25,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
 Library InstallHelper;
 
 uses
@@ -32,23 +33,26 @@ uses
   WIndows,
   SysUtils,
   RegularExpressions,
-  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
+  JclSysUtils,
   FHIR.Support.Base in '..\..\reference-platform\Support\FHIR.Support.Base.pas',
+  FHIR.Support.Fpc in '..\..\reference-platform\Support\FHIR.Support.Fpc.pas',
   FHIR.Support.Utilities in '..\..\reference-platform\Support\FHIR.Support.Utilities.pas',
-  FHIR.Support.Collections in '..\..\reference-platform\Support\FHIR.Support.Collections.pas',
-  FHIR.Support.Stream in '..\..\reference-platform\Support\FHIR.Support.Stream.pas',
+  FHIR.Server.Ini in '..\..\Server\FHIR.Server.Ini.pas',
+  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
+  FHIR.Database.ODBC.Objects in '..\..\Libraries\db\FHIR.Database.ODBC.Objects.pas',
+  FHIR.Database.Dialects in '..\..\Libraries\db\FHIR.Database.Dialects.pas',
+  FHIR.Database.ODBC.Headers in '..\..\Libraries\db\FHIR.Database.ODBC.Headers.pas',
+  FHIR.Database.ODBC in '..\..\Libraries\db\FHIR.Database.ODBC.pas',
   FHIR.Database.Manager in '..\..\Libraries\db\FHIR.Database.Manager.pas',
   FHIR.Support.Threads in '..\..\reference-platform\support\FHIR.Support.Threads.pas',
   FHIR.Database.Settings in '..\..\Libraries\db\FHIR.Database.Settings.pas',
   FHIR.Database.Logging in '..\..\Libraries\db\FHIR.Database.Logging.pas',
-  FHIR.Database.Dialects in '..\..\Libraries\db\FHIR.Database.Dialects.pas',
-  FHIR.Database.ODBC.Objects in '..\..\Libraries\db\FHIR.Database.ODBC.Objects.pas',
-  FHIR.Database.ODBC in '..\..\Libraries\db\FHIR.Database.ODBC.pas',
-  FHIR.Database.ODBC.Headers in '..\..\Libraries\db\FHIR.Database.ODBC.Headers.pas',
-  fhir.support.fpc in '..\..\reference-platform\support\fhir.support.fpc.pas',
   FHIR.Cache.PackageManager in '..\..\reference-platform\cache\FHIR.Cache.PackageManager.pas',
   FHIR.Support.Json in '..\..\reference-platform\support\FHIR.Support.Json.pas',
-  FHIR.Web.Fetcher in '..\..\reference-platform\support\FHIR.Web.Fetcher.pas';
+  FHIR.Support.Collections in '..\..\reference-platform\support\FHIR.Support.Collections.pas',
+  FHIR.Support.Stream in '..\..\reference-platform\support\FHIR.Support.Stream.pas',
+  FHIR.Web.Fetcher in '..\..\reference-platform\support\FHIR.Web.Fetcher.pas',
+  FHIR.Server.Version in '..\..\Server\FHIR.Server.Version.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin
@@ -107,8 +111,108 @@ Begin
     end;
   end
   else
-
     result := 'Unknown ('+name+')';
+end;
+
+Function MyDllGetIniValue(iniFile : PAnsiChar; name : PAnsiChar) : PAnsiChar; stdcall;
+var
+  ini : TFHIRServerIniFile;
+  cmp : TFHIRServerIniComplex;
+  n, r : String;
+begin
+  r := '';
+  ini := TFHIRServerIniFile.Create(iniFile);
+  try
+    n := name;
+    if n.StartsWith('db.') then
+    begin
+      if n.StartsWith('db.r2.') then      cmp := ini.databases['dbr2']
+      else if n.StartsWith('db.r3.') then cmp := ini.databases['dbr3']
+      else if n.StartsWith('db.r4.') then cmp := ini.databases['dbr4']
+      else  cmp := nil;
+
+      if (cmp <> nil) then
+      begin
+        if n.EndsWith('.server') then        r := cmp.value['server']
+        else if n.EndsWith('.database') then r := cmp.value['database']
+        else if n.EndsWith('.type') then     r := cmp.value['type']
+        else if n.EndsWith('.driver') then   r := cmp.value['driver']
+        else if n.EndsWith('.username') then r := cmp.value['username']
+        else if n.EndsWith('.password') then r := cmp.value['password'];
+      end;
+    end
+    else if n = 'web.host' then r := ini.web['host']
+    else if n = 'web.http' then r := ini.web['http']
+    else if n = 'web.https' then r := ini.web['https']
+    else if n = 'web.certname' then r := ini.web['certname']
+    else if n = 'web.cacertname' then r := ini.web['cacertname']
+    else if n = 'admin.email' then r := ini.admin['email']
+    else if n = 'admin.username' then r := ini.admin['username'];
+  finally
+    ini.Free;
+  end;
+  result := strToPchar(r);
+end;
+
+Procedure MyDllSetIniValue(iniFile : PAnsiChar; name, value : PAnsiChar); stdcall;
+var
+  ini : TFHIRServerIniFile;
+  cmp : TFHIRServerIniComplex;
+  n, v : String;
+begin
+  ini := TFHIRServerIniFile.Create(iniFile);
+  try
+    n := name;
+    v := value;
+    if n.StartsWith('db.') then
+    begin
+      if n.StartsWith('db.r2.') then
+      begin
+        if not ini.databases.ContainsKey('dbr2') then
+          ini.databases.Add('dbr2', TFHIRServerIniComplex.create(''));
+        cmp := ini.databases['dbr2'];
+      end
+      else if n.StartsWith('db.r3.') then
+      begin
+        if not ini.databases.ContainsKey('dbr3') then
+          ini.databases.Add('dbr3', TFHIRServerIniComplex.create(''));
+        cmp := ini.databases['dbr3']
+      end
+      else if n.StartsWith('db.r4.') then
+      begin
+        if not ini.databases.ContainsKey('dbr4') then
+          ini.databases.Add('dbr4', TFHIRServerIniComplex.create(''));
+        cmp := ini.databases['dbr4']
+      end
+      else
+        cmp := nil;
+
+      if (cmp <> nil) then
+      begin
+        if n.EndsWith('.server') then        cmp.value['server'] := v
+        else if n.EndsWith('.database') then cmp.value['database'] := v
+        else if n.EndsWith('.type') then     cmp.value['type'] := v
+        else if n.EndsWith('.driver') then   cmp.value['driver'] := v
+        else if n.EndsWith('.username') then cmp.value['username'] := v
+        else if n.EndsWith('.password') then cmp.value['password'] := v;
+      end;
+    end
+    else if n = 'endpoint.r2' then ini.endpoints.AddOrSetValue('r2', TFHIRServerIniComplex.create(v))
+    else if n = 'endpoint.r3' then ini.endpoints.AddOrSetValue('r3', TFHIRServerIniComplex.create(v))
+    else if n = 'endpoint.r4' then ini.endpoints.AddOrSetValue('r4', TFHIRServerIniComplex.create(v))
+    else if n = 'web.host' then ini.web['host'] := v
+    else if n = 'web.http' then ini.web['http'] := v
+    else if n = 'web.https' then ini.web['https'] := v
+    else if n = 'web.certname' then ini.web['certname'] := v
+    else if n = 'web.cacertname' then ini.web['cacertname'] := v
+    else if n = 'admin.email' then ini.admin['email'] := v
+    else if n = 'admin.username' then ini.admin['username'] := v
+    else if n = 'endpoint' then ini.admin['username'] := v
+    else if (n = 'scim.salt') and (ini.admin['scim-salt'] = '') then ini.admin['scim-salt'] := NewGuidId;
+    ini.save;
+  finally
+    ini.Free;
+  end;
 end;
 
 Function MyDllGetString(name : PAnsiChar) : PAnsiChar; stdcall;
@@ -117,7 +221,6 @@ begin
 end;
 
 Function MyDllCreateDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; stdcall;
-
 begin
 {
 Work In progress, not sure how to achieve this.
@@ -149,17 +252,19 @@ set containment = partial
 CREATE USER sa WITH PASSWORD = 'DBroot123';
 EXEC sp_addrolemember N'db_owner', N'sa'
 }
-
 end;
 
 
 Function MyDllCheckDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; stdcall;
 var
+  state : integer;
   conn : TKDBManager;
   db : TKDBConnection;
   meta : TKDBMetaData;
-  ver : String;
+  fver : String;
+  dver : integer;
 begin
+  state := 1;
   try
     conn := TKDBOdbcManager.Create('config', 1, 0, dbDriver, server, database, username, password);
     try
@@ -167,14 +272,24 @@ begin
       try
         meta := db.FetchMetaData;
         try
-          try
-            ver := db.Lookup('Config', 'ConfigKey', '8', 'Value', '');
-            if (ver <> Version) then
-              result := StrToPchar(ver)
-            else
-              result := nil;
-          except
-            result := StrToPchar('dbi');
+          state := 2;
+          if meta.HasTable('Config') and meta.HasTable('OAuthLogins') and meta.HasTable('AuthorizationSessions') then
+          begin
+            try
+              dver := StrToIntDef(db.Lookup('Config', 'ConfigKey', '5', 'Value', ''), 0);
+              fver := db.Lookup('Config', 'ConfigKey', '8', 'Value', '');
+              if (dver = 0) then
+                result := StrToPchar('2No Version Marker found in database')
+              else if (dver < ServerDBVersionEarliestSupported) or (dver > ServerDBVersion) then
+                result := StrToPchar('3Unsupported database version '+inttostr(dver))
+              else if (fver <> version) then
+                result := StrToPchar('3Wrong FHIR version found ('+fver+')')
+              else
+                result := StrToPchar('4Database ready for use');
+            except
+              on e : exception do
+                result := StrToPchar(inttostr(state)+e.message);
+            end;
           end;
         finally
           meta.free;
@@ -192,7 +307,7 @@ begin
     end;
   except
     on e:exception do
-      result := StrToPchar(e.Message);
+      result := StrToPchar(inttostr(state)+e.Message);
   end;
 end;
 
@@ -211,7 +326,7 @@ Type
 
 procedure msg(s : String);
 begin
-//  MessageBox(0, PWideChar(s), 'installer', MB_OK);
+  MessageBox(0, PWideChar(s), 'installer', MB_OK);
 end;
 
 procedure TCommandCapturer.Execute(CommandLine, WorkDir: string);
@@ -229,13 +344,11 @@ var
   dRunning: DWORD;
   dAvailable: DWORD;
 begin
-  msg(commandLine);
   saSecurity.nLength := SizeOf(TSecurityAttributes);
   saSecurity.bInheritHandle := true;
   saSecurity.lpSecurityDescriptor := nil;
   if CreatePipe(hRead, hWrite, @saSecurity, 0) then
     try
-      msg('piped');
       FillChar(suiStartup, SizeOf(TStartupInfo), #0);
       suiStartup.cb := SizeOf(TStartupInfo);
       suiStartup.hStdInput := hRead;
@@ -264,7 +377,7 @@ begin
                 end;
               until (dRead < CReadBuffer);
               sleep(50);
-          until (dRunning <> WAIT_TIMEOUT);
+          until (dRunning = WAIT_TIMEOUT);
         finally
           CloseHandle(piProcess.hProcess);
           CloseHandle(piProcess.hThread);
@@ -323,6 +436,7 @@ begin
         packages := TFslList<TPackageDefinition>.create;
         try
           TPackageDefinition.addStandardPackages(packages);
+          TPackageDefinition.addCustomPackages(packages);
           TPackageDefinition.addPackagesFromBuild(packages);
           for p in packages do
           begin
@@ -331,9 +445,9 @@ begin
               if b.Length > 0 then
                 b.Append(#13#10);
               if pcm.packageExists(p.Id, p.Version) then
-                b.Append(p.Url+'|1|'+p.Id+'-'+p.Version+'|'+p.Description)
+                b.Append(p.Url+'|1|'+p.Id+'#'+p.Version+'|'+p.Description)
               else
-                b.Append(p.Url+'|0|'+p.Id+'-'+p.Version+'|'+p.Description);
+                b.Append(p.Url+'|0|'+p.Id+'#'+p.Version+'|'+p.Description);
             end;
           end;
         finally
@@ -359,10 +473,12 @@ type
     FUrls : TArray<String>;
     FIndex : integer;
     FCurrent : String;
+
     function pct(p : integer) : integer;
     procedure fetchProgress(sender : TObject; progress : integer);
     procedure exec;
     function check(sender : TObject; msg : String) : boolean;
+    function getUrl(packages : TFslList<TPackageDefinition>; pi, pv : String) : String;
   end;
 
 function TPackageFetcher.check(sender: TObject; msg: String): boolean;
@@ -379,63 +495,74 @@ var
   s : String;
   i : integer;
   pi, pv, url : String;
+  packages : TFslList<TPackageDefinition>;
 begin
-  pcm := TFHIRPackageManager.Create(false);
+  packages := TFslList<TPackageDefinition>.create;
   try
-    pcm.OnCheck := check;
-    for i := 0 to length(FUrls) - 1 do // first will be empty
-    begin
-      FIndex := i;
-      StringSplit(FUrls[i], ':', pi, url);
-      FCurrent := pi;
-      StringSplit(pi, '-', pi, pv);
-      if not pcm.packageExists(pi, pv) then
+    TPackageDefinition.addStandardPackages(packages);
+    TPackageDefinition.addCustomPackages(packages);
+    TPackageDefinition.addPackagesFromBuild(packages);
+
+    pcm := TFHIRPackageManager.Create(false);
+    try
+      pcm.OnCheck := check;
+      for i := 0 to length(FUrls) - 1 do // first will be empty
       begin
-        fetch := TInternetFetcher.Create;
-        try
-          fetch.onProgress := fetchProgress;
-          fetch.Buffer := TFslBuffer.create;
-          s := '';
-          ok := false;
+        FIndex := i;
+        pi := FUrls[i];
+        FCurrent := pi;
+        StringSplit(pi, '#', pi, pv);
+        if not pcm.packageExists(pi, pv) then
+        begin
+          url := getUrl(packages, pi, pv);
+          fetch := TInternetFetcher.Create;
           try
-            fetch.URL := URLPath([url, 'package.tgz']);
-            fetch.Fetch;
-            ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
-          except
-            on e : exception do
-            begin
-              s := e.Message;
-            end;
-          end;
-          if not ok then
-          begin
+            fetch.onProgress := fetchProgress;
+            fetch.Buffer := TFslBuffer.create;
+            s := '';
+            ok := false;
             try
-              fetch.URL := url;
+              fetch.URL := URLPath([url, 'package.tgz']);
               fetch.Fetch;
-              ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
+              ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream') or (fetch.ContentType = 'application/x-tar');
             except
               on e : exception do
               begin
                 s := e.Message;
               end;
             end;
+            if not ok then
+            begin
+              try
+                fetch.URL := url;
+                fetch.Fetch;
+                ok := (fetch.ContentType = 'application/x-compressed') or (fetch.ContentType = 'application/octet-stream');
+              except
+                on e : exception do
+                begin
+                  s := e.Message;
+                end;
+              end;
+            end;
+            if not ok then
+              raise EIOException.create('Unable to find package for '+pi+'#'+pv+' at '+url+': '+s);
+            if ok then
+            begin
+              FCallback(pct(100), 'Installing '+FCurrent);
+              pcm.Import(fetch.Buffer.AsBytes);
+            end;
+          finally
+            fetch.Free;
           end;
-          if not ok then
-            raise EIOException.create('Unable to find package for '+pi+'-'+pv+'at '+url+': '+s);
-          if ok then
-          begin
-            FCallback(pct(100), 'Installing '+FCurrent);
-            pcm.Import(fetch.Buffer.AsBytes);
-          end;
-        finally
-          fetch.Free;
         end;
+        FCallback(pct(i+1), 'Installed '+FCurrent);
       end;
-      FCallback(pct(100), 'Installed '+FCurrent);
+      FCallback(100, 'Done...');
+    finally
+      pcm.Free;
     end;
-    FCallback(100, 'Done...');
   finally
-    pcm.Free;
+    packages.Free;
   end;
 end;
 
@@ -444,6 +571,16 @@ begin
   FCallback(pct(progress), 'Downloading '+FCurrent);
 end;
 
+
+function TPackageFetcher.getUrl(packages: TFslList<TPackageDefinition>; pi, pv: String): String;
+var
+  p : TPackageDefinition;
+begin
+  result := '';
+  for p in packages do
+    if (p.id = pi) and (p.Version = pv) then
+      exit(p.Url);
+end;
 
 function TPackageFetcher.pct(p: integer): integer;
 var
@@ -464,7 +601,7 @@ begin
       fetcher.FCallback := Callback;
       s := urls;
       s := s.Substring(1);
-      fetcher.FUrls := s.Split(['|']);
+      fetcher.FUrls := s.Split([',']);
       fetcher.exec;
     finally
       fetcher.free;
@@ -495,27 +632,44 @@ begin
   end;
 end;
 
-Function MyDllInstallDatabase(ExeName, IniFile, Password : PAnsiChar; load, packages : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
+type
+  THandlingObject = class (TObject)
+  private
+    Callback: TInstallerCallback;
+    procedure handler(const s: string);
+  end;
+
+Function MyDllInstallDatabase(ExeName, IniFile, Password, version, packages, mode : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
 var
+  s : String;
+  o : THandlingObject;
+begin
+  try
+    o := THandlingObject.create;
+    try
+      o.Callback := Callback;
+      s := '"'+exename+'" -cmd remount -installer -password "'+Password+'" -ini "'+IniFile+'" -packages '+packages+' -endpoint '+version+' -mode '+mode;
+      Execute(s, o.handler);
+      result := nil;
+    finally
+      o.Free;
+    end;
+  except
+    on e : Exception do
+      result := StrToPchar(e.message);
+  end;
+end;
+{var
   cmd : TCommandCapturer;
   s : String;
 begin
-  try
+  try         !
     cmd := TCommandCapturer.Create;
     try
       cmd.callback := Callback;
-      if (load = nil) then
-      begin
-        s := '"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'"';
-        windows.MessageBox(0, pchar(s), 'install', MB_SYSTEMMODAL);
-        cmd.Execute('"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'+"', ExtractFilePath(exeName))
-      end
-      else
-      begin
-        s := '"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'" -packages '+packages+' -load "'+load+'"';
-        windows.MessageBox(0, pchar(s), 'install', MB_SYSTEMMODAL);
-        cmd.Execute('"'+exename+'" -installer -remount -password "'+Password+'" -ini "'+IniFile+'" -packages '+packages+' -load "'+load+'"', ExtractFilePath(exeName));
-      end;
+      s := '"'+exename+'" -cmd remount -installer -password "'+Password+'" -ini "'+IniFile+'" -packages '+packages+' -endpoint '+version+'';
+      windows.MessageBox(0, pchar(s), 'install cmd', MB_SYSTEMMODAL);
+      cmd.Execute('"'+exename+'" -cmd remount -installer -password "'+Password+'" -ini "'+IniFile+'" -packages '+packages+' -endpoint '+version, ExtractFilePath(exeName));
     finally
       cmd.Free;
     end;
@@ -525,13 +679,32 @@ begin
       result := StrToPchar(e.Message);
   end;
 end;
+}
 
 exports MyDllGetString;
+exports MyDllGetIniValue;
+exports MyDllSetIniValue;
 exports MyDllCheckDatabase;
-exports MyDllInstallSnomed;
+//exports MyDllInstallSnomed;
 exports MyDllInstallDatabase;
 exports MyDllListPackages;
 exports MyDllDownloadPackages;
+
+{ THandlingObject }
+
+procedure THandlingObject.handler(const s : string);
+var
+  l, r : String;
+begin
+  if (s.StartsWith('##> ')) then // ignore the rest
+  begin
+    StringSplit(s.Substring(4), ' ', l, r);
+    if SameText(l, 'Exception') then
+      raise ELibraryException.create(r)
+    else
+      CallBack(StrToIntDef(l, 0), r);
+  end;
+end;
 
 End.
 

@@ -178,7 +178,7 @@
         <DCCReference Include="..\Libraries\FHIR.Tx.Service.pas"/>
         <DCCReference Include="..\server\FHIR.Tx.Web.pas"/>
         <DCCReference Include="..\server\FHIR.Server.Constants.pas"/>
-        <DCCReference Include="..\server\FHIR.Server.Utilities.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Ini.pas"/>
         <DCCReference Include="..\server\FHIR.Server.AuthMgr.pas"/>
         <DCCReference Include="..\server\FHIR.Scim.Server.pas"/>
         <DCCReference Include="..\server\FHIR.Scim.Search.pas"/>
@@ -364,14 +364,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

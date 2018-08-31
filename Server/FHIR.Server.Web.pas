@@ -90,7 +90,7 @@ Uses
   FHIR.Tools.GraphQL, FHIR.Tools.NDJsonParser,
   {$IFNDEF NO_CONVERSION} FHIR.XVersion.Convertors,{$ENDIF}
   FHIR.Tx.Server, FHIR.Tx.Manager, FHIR.Snomed.Expressions, FHIR.Loinc.Services, FHIR.Loinc.Publisher, FHIR.Tx.Web, FHIR.Tx.Service,
-  FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Storage, FHIR.Server.Security, FHIR.Server.XhtmlComp, FHIR.Snomed.Services, FHIR.Snomed.Publisher,
+  FHIR.Server.Tags, FHIR.Server.Session, FHIR.Server.Storage, FHIR.Server.Security, FHIR.Server.XhtmlComp, FHIR.Snomed.Services, FHIR.Snomed.Publisher, FHIR.Server.Ini,
   FHIR.Scim.Server,
   FHIR.Server.AuthMgr, FHIR.Server.ReverseClient, FHIR.CdsHooks.Server, FHIR.Server.WebSource, FHIR.Server.Analytics, FHIR.Server.BundleBuilder, FHIR.Server.Factory,
   FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Jwt, FHIR.Server.Javascript, FHIR.Server.Subscriptions;
@@ -857,7 +857,7 @@ begin
         if pm.GetVar('grant_type') <> 'password' then
           response.ContentText := 'Unknown content type - must be ''password'''
         else if not FContext.UserProvider.CheckLogin(pm.GetVar('username'), pm.GetVar('password'), userkey) then
-          response.ContentText := 'Unknown usernmame/password'
+          response.ContentText := 'Unknown username/password'
         else
         begin
           Session := FContext.SessionManager.CreateImplicitSession(request.RemoteIP, pm.GetVar('username'), 'Anonymous', systemFromOWin, false, true);
@@ -3749,6 +3749,7 @@ procedure TFhirWebServer.DoConnect(AContext: TIdContext);
 var
   ci: TFHIRWebServerClientInfo;
 begin
+  InterlockedIncrement(GCounterWebConnections);
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
 {$ENDIF}
@@ -3769,6 +3770,7 @@ end;
 
 procedure TFhirWebServer.DoDisconnect(AContext: TIdContext);
 begin
+  InterlockedDecrement(GCounterWebConnections);
   FLock.Lock;
   try
     FClients.Remove(TFHIRWebServerClientInfo(AContext.Data));
@@ -4085,6 +4087,7 @@ var
   ok : boolean;
   sp : TFHIRWebServerSourceProvider;
 begin
+  InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
   SetThreadName('WebRequest - '+request.Document);
   MarkEntry(AContext, request, response);
@@ -4133,6 +4136,7 @@ begin
     logt(id+' http: '+request.RawHTTPCommand+' from '+AContext.Binding.PeerIP+' => '+inttostr(response.ResponseNo)+' in '+inttostr(t)+'ms . mem= '+MemoryStatus);
     response.CloseConnection := true;
   finally
+    InterlockedDecrement(GCounterWebRequests);
     MarkExit(AContext);
     SetThreadName('');
   end;
@@ -4146,6 +4150,7 @@ var
   ok : boolean;
   ep: TFhirWebServerEndpoint;
 begin
+  InterlockedIncrement(GCounterWebRequests);
   t := GetTickCount;
   cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
@@ -4194,6 +4199,7 @@ begin
     if GService <> nil then
       logt(GService.ThreadStatus);
   finally
+    InterlockedDecrement(GCounterWebRequests);
     MarkExit(AContext);
   end;
 end;
@@ -4534,6 +4540,9 @@ begin
   vars := TFslStringDictionary.Create;
   try
     vars.Add('status.db', FormatTextToHTML(KDBManagers.dump));
+    vars.Add('live.connections', inttostr(GCounterWebConnections));
+    vars.Add('live.requests', inttostr(GCounterWebRequests));
+    vars.Add('live.requests.kernel', inttostr(GCounterFHIRRequests));
     vars.Add('status.locks', FormatTextToHTML(DumpLocks));
     vars.Add('status.thread.maintenance', FSettings.MaintenanceThreadStatus);
     vars.Add('status.thread.subscriptions', FSettings.SubscriptionThreadStatus);

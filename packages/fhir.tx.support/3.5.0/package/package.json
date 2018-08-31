@@ -1,0 +1,13 @@
+{
+  "name": "fhir.tx.support",
+  "version": "3.5.0",
+  "license": "CC0-1.0",
+  "canonical": "http://hl7.org/fhir",
+  "title": "tx.fhir.org CodeSystems",
+  "description": "Various supporting code systems for tx.fhir.org",
+  "dependencies": {
+    "hl7.fhir.core": "3.5.0"
+  },
+  "author": "FHIR Project",
+  "url": "http://fhir.org/packages/fhir.tx.support/3.5.0"
+}

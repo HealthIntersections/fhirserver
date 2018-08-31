@@ -28,8 +28,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 687.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 683.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -139,7 +139,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 50.000000000000000000
             HelpContext = 20
-            Size.Width = 500.000000000000000000
+            Size.Width = 309.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -198,7 +198,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             Anchors = [akTop, akRight]
             TabOrder = 8
-            Position.X = 2336.000000000000000000
+            Position.X = 2931.000000000000000000
             Position.Y = 50.000000000000000000
             HelpContext = 19
             Size.Width = 100.000000000000000000
@@ -220,8 +220,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             OnSelChanged = gridIdentifiersSelChanged
             OnGetValue = gridIdentifiersGetValue
             OnSetValue = gridIdentifiersSetValue
-            Viewport.Width = 481.000000000000000000
-            Viewport.Height = 121.000000000000000000
+            Viewport.Width = 461.000000000000000000
+            Viewport.Height = 80.000000000000000000
             object StringColumn1: TStringColumn
               Header = 'System'
               Size.Width = 297.000000000000000000
@@ -256,59 +256,59 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Jurisdiction:'
-            TabOrder = 13
+            TabOrder = 14
           end
           object Label2: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 16.000000000000000000
             Text = 'URL:'
-            TabOrder = 14
+            TabOrder = 15
           end
           object Label3: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 50.000000000000000000
             Text = 'Name:'
-            TabOrder = 15
+            TabOrder = 16
           end
           object Label4: TLabel
             Anchors = [akTop, akRight]
-            Position.X = 2276.000000000000000000
+            Position.X = 2871.000000000000000000
             Position.Y = 50.000000000000000000
             Size.Width = 55.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Version:'
-            TabOrder = 16
+            TabOrder = 17
           end
           object Label5: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 85.000000000000000000
             Text = 'Title'
-            TabOrder = 17
+            TabOrder = 18
           end
           object Label6: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 120.000000000000000000
             Text = 'Status'
-            TabOrder = 18
+            TabOrder = 19
           end
           object Label7: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 154.000000000000000000
             Text = 'Date:'
-            TabOrder = 19
+            TabOrder = 20
           end
           object Label8: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 189.000000000000000000
             Text = 'Publisher'
-            TabOrder = 20
+            TabOrder = 21
           end
           object Label9: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 224.000000000000000000
             Text = 'Description:'
-            TabOrder = 21
+            TabOrder = 22
           end
           object btnFlipCompose: TButton
             HelpContext = 34
@@ -317,7 +317,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Width = 169.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 22
+            TabOrder = 23
             Text = 'Add Content Definition'
             OnClick = btnFlipComposeClick
           end
@@ -328,21 +328,21 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Width = 169.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 23
+            TabOrder = 24
             Text = 'Add Fixed Expansion'
             OnClick = btnFlipExpansionClick
           end
           object btnIdentifierAdd: TButton
             Position.X = 504.000000000000000000
             Position.Y = 384.000000000000000000
-            TabOrder = 24
+            TabOrder = 25
             Text = 'Add'
             OnClick = btnIdentifierAddClick
           end
           object btnIdentifierDelete: TButton
             Position.X = 504.000000000000000000
             Position.Y = 417.000000000000000000
-            TabOrder = 25
+            TabOrder = 26
             Text = 'Delete'
             OnClick = btnIdentifierDeleteClick
           end
@@ -354,7 +354,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 26
+            TabOrder = 27
             OnClick = btnMemoCopyrightClick
           end
           object btnMemoForDesc: TButton
@@ -365,7 +365,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 27
+            TabOrder = 30
             OnClick = btnMemoForDescClick
           end
           object btnMemoPurpose: TButton
@@ -376,18 +376,18 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 28
+            TabOrder = 31
             OnClick = btnMemoPurposeClick
           end
           object cbExperimental: TCheckBox
             Anchors = [akTop, akRight]
             HelpContext = 23
-            Position.X = 2314.000000000000000000
+            Position.X = 2909.000000000000000000
             Position.Y = 120.000000000000000000
             Size.Width = 122.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 29
+            TabOrder = 32
             Text = 'Experimental'
             OnChange = inputChanged
           end
@@ -395,7 +395,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             HelpContext = 33
             Position.X = 16.000000000000000000
             Position.Y = 544.000000000000000000
-            TabOrder = 30
+            TabOrder = 33
             Text = 'Extensible'
             OnChange = inputChanged
           end
@@ -403,7 +403,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             HelpContext = 30
             Position.X = 16.000000000000000000
             Position.Y = 520.000000000000000000
-            TabOrder = 31
+            TabOrder = 34
             Text = 'Immutable'
             OnChange = inputChanged
           end
@@ -443,7 +443,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Width = 500.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 32
+            TabOrder = 35
             OnChange = inputChanged
           end
           object cbxStatus: TComboBox
@@ -459,8 +459,69 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Width = 500.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 33
+            TabOrder = 36
             OnChange = inputChanged
+          end
+          object Label25: TLabel
+            Position.X = 440.000000000000000000
+            Position.Y = 50.000000000000000000
+            Size.Width = 65.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Version:'
+            TabOrder = 28
+          end
+          object edtVSVersion: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 13
+            Position.X = 493.000000000000000000
+            Position.Y = 50.000000000000000000
+            HelpContext = 19
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object btnNameTranslations: TButton
+            Images = ToolbarImages
+            ImageIndex = 0
+            Position.X = 396.000000000000000000
+            Position.Y = 48.000000000000000000
+            Size.Width = 24.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 29
+            OnClick = btnNameTranslationsClick
+          end
+          object Panel5: TPanel
+            Position.X = 200.000000000000000000
+            Position.Y = 544.000000000000000000
+            Size.Width = 297.000000000000000000
+            Size.Height = 89.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 37
+            object Label26: TLabel
+              StyledSettings = [Family, Size]
+              Position.X = 16.000000000000000000
+              Position.Y = 8.000000000000000000
+              TextSettings.Font.StyleExt = {00070000000000000004000000}
+              TextSettings.FontColor = claMaroon
+              Text = 'HL7 Process'
+              TabOrder = 0
+            end
+            object chkMaintained: TCheckBox
+              Position.X = 24.000000000000000000
+              Position.Y = 32.000000000000000000
+              TabOrder = 1
+              Text = 'HL7 Maintained'
+            end
+            object chkApproved: TCheckBox
+              Position.X = 24.000000000000000000
+              Position.Y = 56.000000000000000000
+              TabOrder = 2
+              Text = 'HL7 Approved'
+            end
           end
         end
       end
@@ -1309,31 +1370,31 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              02ED49444154384F7D535B489361187EFEFDCE796873D32D53F310E2E6B46C36
-              51D02CAD2999A051501044B6984A37D29504DD84117421D44D79088D24BA08BD
-              D0D26185A5D485A7083C94269EF330E7D6D6D4A9FFD6F77D89B8821E78F9DEFF
-              3D7DDFFFBCEFCBE12F949696869023CDEBF5AA398E0BFB63C50AF9FE2608427F
-              43438373C7C6E053C0643219B4FA93E53F2CB2A2AE7187786AC1C1EC71113264
-              E8A3363592F9B6A1810F35F5F5F56F998380DF396972A1FA4449D313B3256D62
-              C5CDC71F94E3E26935B25222E1DAD8C2C0D012DF3B2124E5E51B0AE294A291C1
-              C1C1719A27DA49362466963C6DEE9A5635DD29C0F6B6070DB7F3210DF6674275
-              6AA3BEE6AE2915B9A891E6D05CDE68344A0F1F3B75AFB67359DFF1F03CDA3F4E
-              421B178AFC8C58F48D2ED11864EBA260FFE5C682D585AAF22C5454F704171E8F
-              97C6442ACD1CA9942B4EBE6C6E7BF7DD3F3A5C8A994507E4520964C11258EDEB
-              AC40983C100E971B76A71B310764985D72E2527AF89663F655811F615AF3A97F
-              CEBFADBA180A6900726FBC44CBFD2248C43C9A3A4658812B0549706F093853D1
-              8217556761736EC078B753AC9778D59403E51A21E968828A5497625BF020215A
-              CE74852C8009D5A98DFAA84E635D6B5BB4B69291B8179C6F677D20E27C7DE4F5
-              022DB0121420C697710BF97F27789EC3C49C9DE936C70613AA539B48C4319DC6
-              EE0B12830C976D97C4CEEE497F758C1C5FA76DD8AF08442879FABCC5C56E8A52
-              056395145AB6AD23315681B1193BCEA52A1989BC4EA7B36A6355C9039382B699
-              901742D8A74CD7DE32C0E3F542AF0DC7839B3958B4AE21E758342AAFA6E359FB
-              300C478456CBC2F463119DED9181F78F4CC51ACB85CA5664A644E0B97914CEB5
-              4D763B85C3B5C93A427D34C6549C681922397575753F7759A1A39C4CA6B1A67D
-              4CC9F322241D0A656C8BFD78F40E2F925F5B8540BA70BD486319EB6EBC46F6E1
-              35CDF3A1B5ACAC2C4F939A5DF6BF651AF9DC534BF0863908FEE9D99E75D69033
-              8CB68AE85622E31E8FA7CF779D81DFF3BF5098C6577B5D0000000049454E44AE
-              426082}
+              02EE49444154384F7D535B489361187EFEFDCEA96B73EA96A9790871735AB69C
+              256896D69496A051501044664CA51BE94A826EC208BA10EAA63C8446125D845E
+              68A958612975E129020FE5010F691EE6DCDADA74EABFF57D5F22AEA0075EBEF7
+              7F4FDFF73FEFFB72F80B252525C1E448F37ABD6A8EE3C2FE58B142BEBF0982D0
+              5F5F5FEFD8B631F81430994C06ADFE64D98F657941D7845D3CBD6067F6B80839
+              D2F5511B1AC97CEBD0C087EABABABAB7CC41C06F9F34395F7DA2A8F14987396D
+              D2E2E6E3F72B70F1B41A99299170AE6F62606889EF9D149272F30CC638A56864
+              7070709CE689B6930D8919454F9BBA66548D778CD8DAF2A0FE761E64527F2654
+              A736EA6BEA9A56918B1A680ECDE58B8B8B6507534FDDABE95CD6B73F3C8FB68F
+              53D0C685222F3D167DA34B340659BA28D87EB9B16071A2B22C13E5553DD2FCE3
+              F1B298486507472AE588932F77B4BE9BF08F0E976176D10E854C02B954028B6D
+              8D15085304C2EE74C3E67023669F1CDF971CB874347CD33EF7CAE84798D67CEA
+              9FF36FAD2A44882C0039375EA2F97E0124621E8DED23ACC0156312DC9B02CE94
+              37E345E559581DEB28BEDB29D64BBC6ACA81D245483A9CA022D565D8123C4888
+              56303D441EC084EAD4467D54A7B14ED726ADAD6424EE06E7DB591F88385F1F79
+              BD400BAC040588F165DC4CFEDF019EE730396763BAD5BECE84EAD42612714CA7
+              B17B82C420C365DD21B1B37BCA5F1DA3C0D7192BF6860422943C7DDEEC643745
+              A9A458258596AD6B488C0DC1D8AC0DE7744A4622AFD3E92CDA5855F2C094A06D
+              22E40513F629D335B70CF078BDD06BC3F1E06636162D2E64A746A3E2EA313C6B
+              1B86E190D0625E98792CA2B33D32F0FE91A95063BE50D1828C94083CEF1885C3
+              B5C16EA7B03B375847A88FC6980A13CD4324A7B6B6F6E70E2B749493C93456B7
+              8D29795E84A403A18C6DB11F8FDEE145F26BAB104817AE1768CC63DD0DD7C83E
+              BCA6793EB4969696E66A8E6495FE6F99463EF7D410BC610E827F7AB66B9D35E4
+              0CA3AD22BA85C8B8C7E3E9F35D67E037F7275099F7EBA49F0000000049454E44
+              AE426082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'lang-translations'
@@ -1347,32 +1408,32 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             PNG = {
               89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
               61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              031949444154384F5D5369481461187EBE99DD55675ADD5D6F5D77BDD2922E35
-              340B3AE830828A0A337FD861D041111145FD31C8820A822402410ACB8202892C
-              854A0C3A7E04A1289E9566AEA5ADB578EC36EBEEECCE4CF38D26E9032FF3F1BE
-              CFF3BEC37B10CCC385E3C7CD4BFC633B3959CE3128720CF589848C7A15B6A533
-              447E7EBDBA6E5223CE604E82F2C307B71F589A5599EC8D4C655B87E1FAE9D6FC
-              51F1E108E65AE1E05D03F73B7A4E5FBE7BAF410BA86067BEB878F860D1B1A56B
-              EBEC4DA391CCB02AB49A40362E82615922F43E114C9713963EBF39634DCEDE05
-              89A6DEB76DED3D54A725A095A938E1C308EB29DF8190E65EF86FED47A393A08F
-              8B405AD92AE89EB4C0736517A21EB73299B94B76F389E6B6776DED5FD8F3478A
-              220E65663FB3378F5AA66E9742FFBE176CB205BAD599E03A079020FB10956D03
-              26DD202E37C4139B61B9F986495A9354C0A7A4D79287078A4B8B33B6D48AAFFB
-              C1C51A2138DDE08D2100AFDAC414FD41C01406087E081E3FF8B87078473D08D9
-              948EC7FD4D87741C9156EA5A7E40A82C8110CEC170A4069E1B25600C3AF00D1F
-              35BDB03D0FB21844E8C90710AEEE45D0ED0577A91E9C51CE610C8A12ABF80288
-              5864039F1085A024C3981C073EC98641B34533FAA63E1AA31CCA8537003D9458
-              462BF11FC8DCC9CE0143E6C514480C5D1212AAC7E4A72108232EB02C81C7E184
-              F07D08C9E3639AD137F5310CD138940B4E8F0021AED9269277DFC0DA4C0838C6
-              A137AB4D0B0F057E0BD395A279C0ED43607C0A7ABB19D2D004B02E456B22BB30
-              3FCB916AB5EC8BFCEA37F9D4E68163A18B33AA9BB507836030916585E9DC36E0
-              D71882397604CAD643DFD88E812C65F0D584EF0C4377BBB6A3FBD4CFC25429EC
-              EC23882BECC0CB5E88EAD8281C2C07F18F1FCA8B1E2D4639235BD325AAB95655
-              353EDB15BACA47976F7894F0B29F05ABF636C5022C8C86AC63C1743BD54C6380
-              3A85E1C234A9BAE34D49C5DD7B7554377B0B74B78D564B7B5241627E445CBC99
-              F9FC1BAE0F8398EA1801A7C68379367C5B2C0DD474B59655DCA9793AAD9A778D
-              14FFCE394C0AE61A0889A1A312A1FCF2CA4C5B5718EAE79E33F017A39C468D30
-              9103720000000049454E44AE426082}
+              031849444154384F5D5369481461187EBE99DD556758DD1DCFDAC3D552CB4CD2
+              A29328A80C828A8A0E7F98A96044111145FD31E8800AFA2111041D6416544874
+              429741D68F222C45532BCF35B555178FDD66DD9DDD9969BEA9247DE0653EDEF7
+              79DE77780F826938BE6F9F352734B29953947C93AA24519F44C8604065EB9BA3
+              94C7E7AFD48CEBC4BF9892A0A26CCFC6E2F9D995AE407C3AFBA91FDE9F3EDD9F
+              302316918576B8796FD7CDA6D643A7AF573DD1031AD8BF5F9C28DBB37D6FCECA
+              9AD45743F14CBF26B45B40D6CC8129D706635002F3C503A13D64CD589EB7C36C
+              B3B6D53534B6529D9E8056A662DB879FACBF6213A26ADB10BAB81B4F3D04ED5C
+              1C66952E85E17E3DFC67B620F1DE6726337FDE56DE2E34BC6D68FCCE1E2BDF1E
+              579295F7C8553B284C5C2A82F15D1B589700C3F22C70CD5D98A9049190E704C6
+              7D205E1FA4FDEB2054BE611C2B1CCBF8B4D9D5E476F1CEA29D9905D5D2EB0E70
+              C966881E1F787314C06B3636417F10B0C4006208A23F043E251681413FA2D6CE
+              C6DD8E9725068EC88B0CF57D102B0B21C6723095DF80FF4221189301FC938FBA
+              5EDCB8188A1441F4815B10CFEE40C4170077F22138B392CF985435590D861137
+              C7097E660222B202B32B05BCC3891EABA01B7D531F8D510EE5221086116A32A3
+              97F80F64EA64A78021D3622A64862E09893662FC6B2FC4012F5896C0EFF640FC
+              D10BD7E8886EF44D7D0C43740EE58233224C8877B289E46D3758A70561F7288C
+              56AD69B1D1C0B0F8A752220FF882088F4EC0986A85DC3B06AC4AD39BC8662CC9
+              76A7DB855DF19D214B506B1E38168614B3B659DBD0030663D976588E6E008646
+              10C94F45B874358C4F1BD195ADF6BC180B1E66E86E5737B51C1C284893638EDC
+              81B4201578DE06491B1B859BE520FD0A417DD6AAC728A77FFD2C996ACE5DBE3C
+              3AD915BACAE5B9ABEFD85E74B260B5DEA60940462214030BA6C5A3651A01B429
+              F415A4CB579BEB0A4F5DAFAAA1BAC95BA0BB6D76088D8E65B625712933ACCCB7
+              6178DFF760A269009C168F2C76A27BAEDC55D5F2B9F4D4B51B0FFEA8A65D23C5
+              BF738E91230B4D8424D151495087020AD3F025060FA79E33F01BA4A1468D4AF7
+              A0500000000049454E44AE426082}
             FileName = 'C:\temp\flag-un.png'
           end>
         Name = 'flag-2'

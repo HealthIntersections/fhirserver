@@ -60,7 +60,7 @@ Uses
   FHIR.Server.Web, FHIR.Server.DBInstaller, FHIR.Server.Database, FHIR.Base.Objects,
   FHIR.Server.Constants, FHIR.Server.Context, FHIR.Server.Utilities, FHIR.Server.WebSource,
   FHIR.Scim.Server, FHIR.CdsHooks.Service, FHIR.Server.Javascript, FHIR.Server.Factory,
-  FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Manager;
+  FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Manager, FHIR.Server.Ini, FHIR.Server.Version;
 
 Type
   TKernelServerFactory = class (TFHIRServerFactory)
@@ -128,10 +128,10 @@ Type
     Constructor Create(const ASystemName, ADisplayName, AIniName: String);
     Destructor Destroy; override;
 
-    procedure Load(name, fn : String);
+    procedure Load(name, plist : String);
 //    procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
-    function InstallDatabase(name : String) : String;
+    function InstallDatabase(name : String; securityMode : TFHIRInstallerSecurityMode) : String;
     procedure UnInstallDatabase(name : String);
 
     property NotServing : boolean read FNotServing write FNotServing;
@@ -166,6 +166,8 @@ var
   svc : TFHIRService;
   ini : TIniFile;
   factory : TFHIRFactory;
+  smode : String;
+  mode : TFHIRInstallerSecurityMode;
 begin
   //AllocConsole;
   try
@@ -219,7 +221,11 @@ begin
             end
             else if cmd = 'mount' then
             begin
-              name:= svc.InstallDatabase(endpoint);
+              if FindCmdLineSwitch('mode', smode, true, [clstValueNextParam]) then
+                mode := readInstallerSecurityMode(smode)
+              else
+                mode := ismUnstated;
+              name:= svc.InstallDatabase(endpoint, mode);
               if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
                 ImportUnii(fn,  svc.FDatabases[name]);
             end
@@ -227,16 +233,20 @@ begin
               svc.UninstallDatabase(endpoint)
             else if cmd = 'remount' then
             begin
+              if FindCmdLineSwitch('mode', smode, true, [clstValueNextParam]) then
+                mode := readInstallerSecurityMode(smode)
+              else
+                mode := ismUnstated;
               svc.DebugMode := true;
               svc.FNotServing := true;
               svc.UninstallDatabase(endpoint);
-              name := svc.InstallDatabase(endpoint);
+              name := svc.InstallDatabase(endpoint, mode);
               if FindCmdLineSwitch('unii', fn2, true, [clstValueNextParam]) then
                 ImportUnii(fn2, svc.FDatabases[name]);
   //            if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
   //              svc.LoadByProfile(fn, true)
   //            else
-              if FindCmdLineSwitch('load', fn2, true, [clstValueNextParam]) then
+              if FindCmdLineSwitch('packages', fn2, true, [clstValueNextParam]) then
                 svc.Load(endpoint, fn2);
             end
             else if cmd = 'load' then
@@ -248,7 +258,7 @@ begin
             else if cmd = 'txdirect' then
             begin
               svc.UninstallDatabase(fn);
-              svc.InstallDatabase(fn);
+              svc.InstallDatabase(fn, ismTerminologyServer);
               svc.ConsoleExecute;
             end
   //          else if cmd = 'profile' then
@@ -588,11 +598,11 @@ begin
     raise EIOException.create('Unable to find file '+s);
 end;
 
-procedure TFHIRService.Load(name, fn: String);
+procedure TFHIRService.Load(name, plist: String);
 var
   f : TFileStream;
   st : TStringList;
-  s, src, plist, p, pi, pv : String;
+  s, src, p, pi, pv : String;
   first : boolean;
   ini : TIniFile;
   i : integer;
@@ -631,102 +641,31 @@ begin
 
   db := FDatabases[dbn].Link;
   try
-
     logt('Load: register value sets');
     identifyValueSets(db);
 
-    // first we load any packages in the -packages parameter
-    if FindCmdLineSwitch('packages', plist, true, [clstValueNextParam]) then
-    begin
-      pcm := TFHIRPackageManager.Create(false);
-      try
-        pl := plist.substring(1).Split([',']);
-        for p in pl do
-        begin
-          StringSplit(p, '-', pi, pv);
-          if not pcm.packageExists(pi, pv) then
-            raise EFHIRException.create('Package '+p+' not found');
-          logt('Load Package '+pi+'#'+pv);
-          ploader := TPackageLoader.create(factoryFactory(v));
-          try
-            pcm.loadPackage(pi, pv, ploader.FFactory.canonicalResources, ploader.load);
-            FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
-          finally
-            ploader.Free;
-          end;
-        end;
-      finally
-        pcm.Free;
-      end;
-    end;
-
-    cb(2, 'Load from '+fn);
-    if fn.StartsWith('http://') or fn.StartsWith('https://') then
-    begin
-      if fetchFromUrl(fn, bytes) then
+    pcm := TFHIRPackageManager.Create(false);
+    try
+      pl := plist.substring(1).Split([',']);
+      for p in pl do
       begin
-        bs := TBytesStream.Create(bytes);
+        StringSplit(p, '#', pi, pv);
+        if not pcm.packageExists(pi, pv) then
+          raise EFHIRException.create('Package '+p+' not found');
+        logt('Load Package '+pi+'#'+pv);
+        ploader := TPackageLoader.create(factoryFactory(v));
         try
-          FWebServer.EndPoint(name).Transaction(bs, true, fn, '', nil, callback);
+          pcm.loadPackage(pi, pv, ploader.FFactory.canonicalResources, ploader.load);
+          FWebServer.EndPoint(name).Transaction(ploader.bundle, true, p, '', callback);
         finally
-          bs.Free;
+          ploader.Free;
         end;
-      end
-      else
-        raise EIOException.create('Unable to fetch from "'+fn+'"');
-    end
-    else if fn.EndsWith('.json') or fn.EndsWith('.xml') then
-    begin
-      logt('Load database from '+fn);
-      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
-      try
-        FWebServer.EndPoint(name).Transaction(f, true, fn, 'http://hl7.org/fhir', nil, callback);
-      finally
-        f.Free;
-      end
-    end
-    else
-    begin
-      if FolderExists(fn) then
-        fn := IncludeTrailingPathDelimiter(fn)+'load.ini';
-      logt('Load database from sources listed in '+fn);
-      if not FileExists(fn) then
-        raise EIOException.create('Load Ini file '+fn+' not found');
-      ini := TIniFile.Create(fn);
-      st := TStringList.Create;
-      try
-        ini.ReadSection('files', st);
-        first := true;
-        for s in st do
-        begin
-          logt('Check file '+s);
-          src := locate(s, fn, first);
-          first := false;
-        end;
-
-        i := 0;
-        first := true;
-        for s in st do
-        begin
-          inc(i);
-          logt('Load file '+inttostr(i)+' of '+inttostr(st.count)+':'+s);
-          cb(0, 'Load from '+s);
-          src := locate(s, fn, first);
-          f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
-          try
-            FWebServer.EndPoint(name).Transaction(f, first, src, ini.ReadString('files', s, ''), nil, callback);
-          finally
-            f.Free;
-          end;
-          first := false;
-        end;
-      finally
-        st.Free;
-        ini.Free;
       end;
+    finally
+      pcm.Free;
     end;
 
-    logt('done');
+    logt('loaded');
     cb(95, 'Building Terminology Closure Tables');
     FWebServer.EndPoint(name).Context.TerminologyServer.BuildIndexes(not assigned(callback));
     cb(100, 'Cleaning up');
@@ -871,7 +810,7 @@ begin
   FWebServer.Start(not FNotServing);
 end;
 
-function TFHIRService.InstallDatabase(name : String) : String;
+function TFHIRService.InstallDatabase(name : String; securityMode : TFHIRInstallerSecurityMode) : String;
 var
   db : TKDBManager;
   dbi : TFHIRDatabaseInstaller;
@@ -886,6 +825,16 @@ begin
   if (salt = '') then
     raise EFHIRException.create('You must define a scim salt in the ini file');
   dr := FIni.admin['default-rights'];
+  if (dr = '') then
+  begin
+    case securityMode of
+      ismOpenAccess : FIni.admin['default-rights'] := 'openid,profile,user/*.*';
+      ismClosedAccess : FIni.admin['default-rights'] := 'openid,profile';
+      ismReadOnly : FIni.admin['default-rights'] := 'openid,profile,user/*.read';
+      ismTerminologyServer : FIni.admin['default-rights'] := 'openid,profile,user/CodeSystem.read,user/ConceptMap.read,user/ValueSet.read'
+    end;
+    dr := FIni.admin['default-rights'];
+  end;
   if (dr = '') then
     raise EFHIRException.create('You must define some default rights for SCIM users in the ini file');
   un := FIni.admin['username'];

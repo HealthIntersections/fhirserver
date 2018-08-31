@@ -4,11 +4,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=Version 1.0.200
+AppVerName=Version 1.0.dev
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver-1.0.200
+OutputBaseFilename=fhirserver-1.0.dev
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -95,13 +95,11 @@ InfoBeforeFile=C:\work\fhirserver\install\readme.rtf
 
 [Tasks]
 ; Core related tasks
-Name: dep; Description: "Install Dependencies"
 Name: svcInst;   Description: "Install FHIR Server as a Service"
-Name: svcInst\start;   Description: "Start FHIR Server after Installation"
 Name: firewall;  Description: "Allow FHIR Server through the Firewall"
-Name: sct; Description: "Import SNOMED CT (Requires RF2 Snapshot, ~1hr)"; Flags: unchecked
-Name: db; Description: "Initialize Data Base";                            Flags: checkablealone
-Name: db\pop; Description: "Populate Data Base (~30min)"
+Name: r2; Description: "Configure R2"
+Name: r3; Description: "Configure R3"
+Name: r4; Description: "Configure R4"
 
 [Files]
 ; installer support
@@ -129,34 +127,30 @@ Source: "C:\work\fhirserver\Exec\fhir.ini";                                  Des
 Source: "C:\work\fhirserver\web\*.*";                                        DestDir: {app}\web; Flags: ignoreversion recursesubdirs
 
 ; Package Management
-Source: "C:\Users\Grahame Grieve\.fhir\packages\packages.ini";               DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
-
-; Examples
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";      DestDir: {app}\load2;  DestName: fhir.json.zip; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\examples-json.zip";  DestDir: {app}\load3;  DestName: fhir.json.zip; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                        DestDir: {app}\load4;  DestName: fhir.json.zip; Flags: ignoreversion
+Source: "C:\ProgramData\.fhir\packages\packages.ini";               DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
 
 ; Load Data
-Source: "C:\work\fhirserver\install\load2.ini";                           DestDir: {app}\load2; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load3.ini";                           DestDir: {app}\load3; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load4.ini";                           DestDir: {app}\load4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\country-codes.xml";              DestDir: {app}\load3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\cvx.xml";                        DestDir: {app}\load3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\icpc2.xml";                      DestDir: {app}\load3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\nucc.xml";                       DestDir: {app}\load3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\patient-group.xml";              DestDir: {app}\load3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\patient-list.xml";               DestDir: {app}\load3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\tslc.xml";                       DestDir: {app}\load3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\country-codes.xml";              DestDir: {app}\load4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\cvx.xml";                        DestDir: {app}\load4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\icpc2.xml";                      DestDir: {app}\load4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\nucc.xml";                       DestDir: {app}\load4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\patient-group.xml";              DestDir: {app}\load4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\patient-list.xml";               DestDir: {app}\load4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\tslc.xml";                       DestDir: {app}\load4; Flags: ignoreversion
+Source: "C:\work\fhirserver\install\load2.ini";                           DestDir: {app}\r2; Flags: ignoreversion
+Source: "C:\work\fhirserver\install\load3.ini";                           DestDir: {app}\r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\install\load4.ini";                           DestDir: {app}\r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\country-codes.xml";              DestDir: {app}\r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\cvx.xml";                        DestDir: {app}\r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\icpc2.xml";                      DestDir: {app}\r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\nucc.xml";                       DestDir: {app}\r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\patient-group.xml";              DestDir: {app}\r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\patient-list.xml";               DestDir: {app}\r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\tslc.xml";                       DestDir: {app}\r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\country-codes.xml";              DestDir: {app}\r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\cvx.xml";                        DestDir: {app}\r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\icpc2.xml";                      DestDir: {app}\r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\nucc.xml";                       DestDir: {app}\r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\patient-group.xml";              DestDir: {app}\r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\patient-list.xml";               DestDir: {app}\r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\tslc.xml";                       DestDir: {app}\r4; Flags: ignoreversion
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\work\fhirserver\Exec\lang.txt";                           DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\ProgramData\FHIRServer\loinc_263.cache";                  DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
 Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
@@ -170,12 +164,8 @@ Source: "C:\work\fhirserver\Exec\libeay32.dll";  DestName: "libeay32.dll";   Des
 Source: "C:\work\fhirserver\Exec\openssl32.exe"; DestName: "openssl.exe";    DestDir: "{app}";      Flags: ignoreversion; Check: not Is64BitInstallMode
 
 [INI]
-Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "web";  String: "{app}\web"
-Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc_263.cache"
-Filename: "{app}\fhirserver.ini"; Section: "ucum";  Key: "source";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
-Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
+Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "folder";  String: "{app}\web"
 Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "clients";  String: "{app}\auth.ini"
-Filename: "{app}\fhirserver.ini"; Section: "lang";  Key: "source";  String: "{app}\sql\lang.txt"
 
 [Icons]
 Name: "{group}\FHIR Server (Console Mode)";  Filename: "{app}\FHIRServer.exe";     Parameters: "-console";  WorkingDir: "{app}"    
@@ -188,66 +178,388 @@ const
   MB_ICONINFORMATION = $40;
 
 var
-  PackagesPage : TInputOptionWizardPage;
-  packagesLoaded : String;
-  Packages : TStringList;
+  DBInstallPageR2 : TWizardPage;
+  dbStatusR2 : TLabel;
+  dbInstallR2 : TCheckbox;
+  dbPackagesR2 : TNewCheckListBox;
+  DBInstallPageR3 : TWizardPage;
+  dbStatusR3 : TLabel;
+  dbInstallR3 : TCheckbox;
+  dbPackagesR3 : TNewCheckListBox;
+  DBInstallPageR4 : TWizardPage;
+  dbStatusR4 : TLabel;
+  dbInstallR4 : TCheckbox;
+  dbPackagesR4 : TNewCheckListBox;
+
+  PackagesR2 : TStringList;
+  PackagesR3 : TStringList;
+  PackagesR4 : TStringList;
 
   DependenciesPage : TWizardPage;
   ServicePage : TInputQueryWizardPage;
   cbxStartup : TNewComboBox;
 
-  ConnectionPage : TInputQueryWizardPage;
-  dbDriver : TNewComboBox;
-  dbType : TNewComboBox;
+  ConnectionPageR2 : TInputQueryWizardPage;
+  dbDriverR2 : TNewComboBox;
+  dbTypeR2 : TNewComboBox;
+  ConnectionPageR3 : TInputQueryWizardPage;
+  dbDriverR3 : TNewComboBox;
+  dbTypeR3 : TNewComboBox;
+  ConnectionPageR4 : TInputQueryWizardPage;
+  dbDriverR4 : TNewComboBox;
+  dbTypeR4 : TNewComboBox;
 
   WebPage : TWizardPage;
   webHostName : TNewEdit;
   webOpenPort : TNewEdit;
-  webOpenPath : TNewEdit;
   webSecurePort : TNewEdit;
-  webSecurePath : TNewEdit;
   certFile : TNewEdit;
   caCertFile : TNewEdit;
   certPWord : TNewEdit;
   webpop : boolean;
 
   AdminPage : TInputQueryWizardPage;
-  SctPage : TInputDirWizardPage;
-  cbxModule : TNewComboBox;
-  sctVersion : TNewEdit;
   ConfigPage : TInputOptionWizardPage;
 
   SctInstallPage : TOutputProgressWizardPage;
   LoadInstallPage : TOutputProgressWizardPage;
 
   VCStatus, MYSQLStatus, MSSQLStatus,  ODBCStatus : TLabel;
+  iniName : String;
 
 
 // start up check: a jre is required   
 
 function InitializeSetup(): Boolean;
-var
- ErrorCode: Integer;
- ResultMsg : Boolean;
- Versions: TArrayOfString;
- I: Integer;
- regRoot: Integer;
 begin
   Result := true;
-  Packages := TStringList.create;
+  PackagesR2 := TStringList.create;
+  PackagesR3 := TStringList.create;
+  PackagesR4 := TStringList.create;
 end;
 
-// ------ Interfaces ---------------------------------------------------------------------------------
+// ------ Dll Interface ---------------------------------------------------------------------------------
 type
   TMyCallback = procedure(IntParam: Integer; StrParam: WideString);
 
 Function MyDllGetString(name : pansichar) : pansichar; external 'MyDllGetString@files:installer.dll stdcall setuponly';
+Function MyDllGetIniValue(ini, name : pansichar) : pansichar; external 'MyDllGetIniValue@files:installer.dll stdcall setuponly';
+Procedure MyDllSetIniValue(ini, name, value : pansichar); external 'MyDllSetIniValue@files:installer.dll stdcall setuponly';
 Function MyDllCheckDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; external 'MyDllCheckDatabase@files:installer.dll stdcall setuponly';
-Function MyDllInstallSnomed(ExeName, Source, Dest, Version : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallSnomed@files:installer.dll stdcall setuponly';
-Function MyDllInstallDatabase(ExeName, IniName, Password : PAnsiChar; load, packages : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallDatabase@files:installer.dll stdcall setuponly';
+Function MyDllInstallDatabase(ExeName, IniName, Password : PAnsiChar; load, packages, mode : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallDatabase@files:installer.dll stdcall setuponly';
 Function MyDllListPackages(Version : PAnsiChar) : PAnsiChar; external 'MyDllListPackages@files:installer.dll stdcall setuponly';
 Function MyDllDownloadPackages(urls : PAnsiChar; callback: TMyCallback) : PAnsiChar; external 'MyDllDownloadPackages@files:installer.dll stdcall setuponly';
 
+
+// ------ Firewall management ---------------------------------------------------------------------------------
+
+const
+  NET_FW_SCOPE_ALL = 0;
+  NET_FW_IP_VERSION_ANY = 2;
+
+
+procedure SetFirewallException(AppName,FileName:string);
+var
+  FirewallObject: Variant;
+  FirewallManager: Variant;
+  FirewallProfile: Variant;
+begin
+  try
+    FirewallObject := CreateOleObject('HNetCfg.FwAuthorizedApplication');
+    FirewallObject.ProcessImageFileName := FileName;
+    FirewallObject.Name := AppName;
+    FirewallObject.Scope := NET_FW_SCOPE_ALL;
+    FirewallObject.IpVersion := NET_FW_IP_VERSION_ANY;
+    FirewallObject.Enabled := True;
+    FirewallManager := CreateOleObject('HNetCfg.FwMgr');
+    FirewallProfile := FirewallManager.LocalPolicy.CurrentProfile;
+    FirewallProfile.AuthorizedApplications.Add(FirewallObject);
+  except
+    MsgBox('Unable to Register '+AppName+' exemption with the firewall: '+GetExceptionMessage, mbInformation, MB_OK)
+  end;
+end;
+
+
+procedure RemoveFirewallException( FileName:string );
+var
+  FirewallManager: Variant;
+  FirewallProfile: Variant;
+begin
+  try
+    FirewallManager := CreateOleObject('HNetCfg.FwMgr');
+    FirewallProfile := FirewallManager.LocalPolicy.CurrentProfile;
+    FireWallProfile.AuthorizedApplications.Remove(FileName);
+  except
+  end;
+end;
+
+// ------ Wizard Pages ---------------------------------------------------------------------------------
+
+var
+  SQLSERVER_installed,VCREDIST_installed,MYSQLDB_installed,MYSQLODBC_installed:boolean;
+
+procedure InstallMySQL(Sender: TObject);
+var 
+  ResultCode:Integer;
+begin
+  //to do: Make this function get the URL from the TEdit
+  idpDownloadFile('https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi', ExpandConstant('{tmp}\mysql.msi'));
+
+  //if not ShellExec('', 'msiexec.exe', ExpandConstant(' /i {tmp}\mysql-installer-web-community-5.7.20.0.msi'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+  if not ShellExec('', 'msiexec.exe', ExpandConstant(' /i {tmp}\mysql.msi'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+    MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+
+procedure InstallVCRedist(Sender: TObject);
+var 
+  ResultCode:Integer;
+begin
+  //to do: Make this function get the URL from the TEdit
+  idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\vcredist.exe'));
+  if not ShellExec('', ExpandConstant('{tmp}\vcredist.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+    MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+
+
+procedure InstallMSSQL(Sender: TObject);
+var 
+  ResultCode:Integer;
+begin
+  //to do: Make this function get the URL from the TEdit
+  idpDownloadFile('http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe', ExpandConstant('{tmp}\mssql.exe'));
+  if not ShellExec('', ExpandConstant('{tmp}\mssql.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+    MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+procedure InstallODBC(Sender: TObject);
+var 
+  ResultCode:Integer;
+begin
+  //to do: Make this function get the URL from the TEdit
+  // Which ODBC Depends on which Database is setup os is being setup
+  idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\odbc.exe'));
+
+  if not ShellExec('', ExpandConstant('{tmp}\odbc.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+    MsgBox('Installer failed to run!' + #13#10 + ' ' + SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+Procedure CreateDependenciesPage;
+var
+  JRElbl, JREstatus, VClbl, MYSQLlbl,  MSSQLlbl, ODBClbl :Tlabel ;
+  JREInstall, VCInstall, MYSQLInstall, MSSQLInstall, ODBCInstall:TButton;
+  VCPath, MYSQLPath, MSSQLPath, ODBCPath:TEdit;
+  ResultMsg : Boolean;
+  Versions: TArrayOfString;
+  I: Integer;
+  regRoot: Integer;
+Begin
+  DependenciesPage := CreateCustomPage(wpSelectTasks, 'Install Dependencies', 'Choose the dependencies to install');
+ 
+  VClbl := TLabel.Create(DependenciesPage);
+  with VClbl do 
+  begin
+    Caption := 'Visual C++ Redistributables (2015 or 2017)';
+    Top := ScaleX(0);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  VCstatus := TLabel.Create(DependenciesPage);
+  with VCstatus do 
+  begin
+    Caption := 'NOT INSTALLED';
+    font.style:=[fsBold];
+    Top := ScaleX(0);
+    Left := ScaleX(220);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  VCpath := TEdit.Create(DependenciesPage);
+  with VCPath do 
+  begin
+    Text := vcredist2017_url_x64;
+    Top := ScaleX(16);
+    Left := ScaleX(70);
+    Width:=Scalex(300);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  VCInstall := TButton.Create(DependenciesPage);
+  with VCInstall do 
+  begin
+    Caption := 'Install';
+    Top := ScaleX(16);
+    Width := ScaleX(65);
+    Height := VCpath.Height;
+    Parent := DependenciesPage.Surface;
+    OnClick := @InstallVCRedist;
+  end;
+
+
+  MYSQLlbl := TLabel.Create(DependenciesPage);
+  with MYSQLlbl do 
+  begin
+    Caption := 'MySQL (needs ODBC Driver)';
+    Top := ScaleX(40);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLstatus := TLabel.Create(DependenciesPage);
+  with MYSQLstatus do 
+  begin
+    Caption := '';
+    Left := ScaleX(80);
+    font.style:=[fsBold];
+    Top := ScaleX(100);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLpath := TEdit.Create(DependenciesPage);
+  with MYSQLpath do 
+  begin
+    Text := 'https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi';
+    Top := ScaleX(56);
+    Left := ScaleX(70);
+    Width:=Scalex(300);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLInstall := TButton.Create(DependenciesPage);
+  with MYSQLInstall do 
+  begin
+    Caption := 'Install';
+    Top := ScaleX(56);
+    Width := ScaleX(65);
+    Height := VCpath.Height;
+    Parent := DependenciesPage.Surface;
+    OnClick := @InstallMySQL;
+  end;
+
+  ODBClbl := TLabel.Create(DependenciesPage);
+  with ODBClbl do 
+  begin
+    Caption := 'MYSQL ODBC Driver (5.3+)';
+    Top := ScaleX(80);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCstatus := TLabel.Create(DependenciesPage);
+  with ODBCstatus do 
+  begin
+    Caption := '';
+    font.style:=[fsBold];
+    Top := ScaleX(80);
+    Left := ScaleX(140);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCpath := TEdit.Create(DependenciesPage);
+  with ODBCpath do 
+  begin
+    Text := mysqlodbc_url_x64;
+    Top := ScaleX(96);
+    Left := ScaleX(70);
+    Width:=Scalex(300);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCInstall := TButton.Create(DependenciesPage);
+  with ODBCInstall do 
+  begin
+    Caption := 'Install';
+    Top := ScaleX(96);
+    Width := ScaleX(65);
+    Height := VCpath.Height;
+    Parent := DependenciesPage.Surface;
+    OnClick := @InstallODBC;
+  end;
+
+
+
+  MSSQLlbl := TLabel.Create(DependenciesPage);
+  with MSSQLlbl do 
+  begin
+    Caption := 'MS SQL Server';
+    Top := ScaleX(140);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLstatus := TLabel.Create(DependenciesPage);
+  with MSSQLstatus do 
+  begin
+    font.style:=[fsBold];
+    Caption := '';
+    Top := ScaleX(140);
+    Left := ScaleX(100);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLpath := TEdit.Create(DependenciesPage);
+  with MSSQLpath do 
+  begin
+    Text := sql2008expressr2_url_x64;
+    Top := ScaleX(156);
+    Left := ScaleX(70);
+    Width:=Scalex(300);
+    Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLInstall := TButton.Create(DependenciesPage);
+  with MSSQLInstall do 
+  begin
+    Caption := 'Install';
+    Top := ScaleX(156);
+    Width := ScaleX(65);
+    Height := VCpath.Height;
+    Parent := DependenciesPage.Surface;
+    OnClick := @InstallMSSQL;
+  end;
+end;
+
+procedure configureDependenciesPage;
+var  
+  version : String;
+begin
+  // Check if Visual C++ Redist 2015 is installed - should support also 2017?
+  VCREDIST_installed := (msiproductupgrade(GetString(vcredist2015_upgradecode, vcredist2015_upgradecode_x64, ''), '15')) 
+    OR (msiproductupgrade(GetString(vcredist2017_upgradecode, vcredist2017_upgradecode_x64, ''), '15')); 
+
+  // Check if SQL Express is installed - this should be improved - it will return false if the Full version is installed
+  RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Microsoft SQL Server\SQLEXPRESS\MSSQLServer\CurrentVersion', 'CurrentVersion', version);
+  SQLSERVER_installed := not (compareversion(version, '10.5') < 0);
+
+  // Check if MYSQL ODBC is installed
+  MYSQLODBC_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL Connector/ODBC 5.3')
+
+  // Check if MYSQL is installed - this should be fixed
+  MYSQLDB_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL 5.5');
+  MYSQLDB_installed := true;
+
+  if VCREDIST_installed then VCstatus.caption := 'INSTALLED' else VCstatus.caption := 'NOT DETECTED' ;
+  if MYSQLDB_installed then MYSQLstatus.caption := 'INSTALLED' else MYSQLstatus.caption := 'NOT DETECTED' ;
+  if MYSQLODBC_installed then ODBCstatus.caption := 'INSTALLED' else ODBCstatus.caption := 'NOT DETECTED'  ;
+  if SQLSERVER_installed  then MSSQLstatus.caption := 'INSTALLED' else MSSQLstatus.caption := 'NOT DETECTED' ; 
+end;
+
+function checkDependenciesPage : boolean;
+var 
+  Dependencies_OK : boolean;
+  ResultMsg:boolean;
+begin
+  result := true;
+  //check if there are still dependencies 
+  Dependencies_OK := (SQLSERVER_installed) OR (VCREDIST_installed AND MYSQLDB_installed AND  MYSQLODBC_installed );
+  if not Dependencies_OK then 
+  begin
+    ResultMsg := MsgBox('Not all dependencies are met (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
+    if ResultMsg = false then
+      Result := false
+  end;
+end;
+
+
+// ------ Service Installation ---------------------------------------------------------------------------------
 type
   _SERVICE_STATUS = record
     dwServiceType: Longword;
@@ -841,49 +1153,7 @@ Begin
 End;
 
 
-const
-  NET_FW_SCOPE_ALL = 0;
-  NET_FW_IP_VERSION_ANY = 2;
-
-
-procedure SetFirewallException(AppName,FileName:string);
-var
-  FirewallObject: Variant;
-  FirewallManager: Variant;
-  FirewallProfile: Variant;
-begin
-  try
-    FirewallObject := CreateOleObject('HNetCfg.FwAuthorizedApplication');
-    FirewallObject.ProcessImageFileName := FileName;
-    FirewallObject.Name := AppName;
-    FirewallObject.Scope := NET_FW_SCOPE_ALL;
-    FirewallObject.IpVersion := NET_FW_IP_VERSION_ANY;
-    FirewallObject.Enabled := True;
-    FirewallManager := CreateOleObject('HNetCfg.FwMgr');
-    FirewallProfile := FirewallManager.LocalPolicy.CurrentProfile;
-    FirewallProfile.AuthorizedApplications.Add(FirewallObject);
-  except
-    MsgBox('Unable to Register '+AppName+' exemption with the firewall: '+GetExceptionMessage, mbInformation, MB_OK)
-  end;
-end;
-
-
-procedure RemoveFirewallException( FileName:string );
-var
-  FirewallManager: Variant;
-  FirewallProfile: Variant;
-begin
-  try
-    FirewallManager := CreateOleObject('HNetCfg.FwMgr');
-    FirewallProfile := FirewallManager.LocalPolicy.CurrentProfile;
-    FireWallProfile.AuthorizedApplications.Remove(FileName);
-  except
-  end;
-end;
-
-
-// ------ Wizard -------------------------------------------------------------------------------------
-
+// ------ Service Details Page ---------------------------------------------------------------------------------
 
 Procedure LookupUser(Sender : TObject);
 begin
@@ -918,14 +1188,15 @@ Begin
   result := i > 0;
 End;
 
-
-
-procedure dbDriver_OnChange(Sender: TObject);
-begin
-if (pos('MySQL',dbdriver.text)<>0) then dbtype.itemIndex:=1;
-if (pos('SQL Server',dbdriver.text)<>0) then dbtype.itemIndex:=0;
-end;
-
+Function DetermineStartMode : Integer;
+Begin
+  case cbxStartup.ItemIndex of
+    0: result := SERVICE_AUTO_START;
+    1: result := SERVICE_DEMAND_START;
+    2: result := SERVICE_DISABLED;
+    3: result := SERVICE_AUTO_START;
+  End;
+End;
 Procedure CreateServiceUserPage;
 var
   lbl : TLabel;
@@ -963,340 +1234,29 @@ Begin
     cbxStartup.Items.Add('Automatic - Delayed Start');
   cbxStartup.ItemIndex := 0;
 
-  If ServiceExists('HL7Connect') Then
+  If ServiceExists('FHIRServer') Then
   Begin
     ServicePage.Values[0] := GetServiceUser('FHIRServer');
     if (ServicePage.Values[0] = 'Local System') or (ServicePage.Values[0] = 'LocalSystem') then
       ServicePage.Values[0] := '';
-    cbxStartup.ItemIndex := GetServiceStartIndex('HL7Connect');
+    cbxStartup.ItemIndex := GetServiceStartIndex('FHIRServer');
   End;
 End;
-
-
-function ShouldSkipPage(PageID: Integer): Boolean;
+ 
+function checkServicePageDetails : boolean;
 begin
-  if (PageID = DependenciesPage.Id) Then
-    result := not IsTaskSelected('dep') else
-  if (PageID = SctPage.Id) Then
-    result := not IsTaskSelected('sct')
-  else if (PageID = AdminPage.Id) or (PageID = ConfigPage.Id) Then
-    result := not IsTaskSelected('db')
-  else
-    result := false;
-end;
-
-
-function NextButtonClick(CurPageID: Integer): Boolean;
-var
-  dbtypestr, s, t, pl, pi : String;
-  p : integer;
-  i : integer;
-  Dependencies_OK, ResultMsg:boolean;
-  SQLSERVER_installed,VCREDIST_installed,MYSQLDB_installed,MYSQLODBC_installed:boolean;
-  version:string;
-  fver : String;
-begin
-    if IsComponentSelected('r3') then
-      fver := '3.0.1'
-    else if IsComponentSelected('r4') then
-      fver := '3.4.0'
+  // check service page entries
+  if (ServicePage.Values[0] <> '') or (ServicePage.Values[1] <> '') Then
+  Begin
+    if not CheckLogin Then
+      result := MsgBox('Unable to login using this account ('+SysErrorMessage(DLLGetLastError)+'). '+#13#10#13#10+'This may be because the details are wrong, or maybe the installer doesn''t have the rights to log on in service mode. Would you like to continue anyway?',
+         mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES
     else
-      fver := '1.0.2';
-  if (CurpageID = wpSelectTasks) Then
-  Begin
-    // Check if Visual C++ Redist 2015 is installed - should support also 2017?
-    VCREDIST_installed := 
-      (msiproductupgrade(GetString(vcredist2015_upgradecode, vcredist2015_upgradecode_x64, ''), '15')) 
-    OR (msiproductupgrade(GetString(vcredist2017_upgradecode, vcredist2017_upgradecode_x64, ''), '15')); 
-
-    // Check if SQL Express is installed - this should be improved - it will return false if the Full version is installed
-    RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Microsoft SQL Server\SQLEXPRESS\MSSQLServer\CurrentVersion', 'CurrentVersion', version);
-    SQLSERVER_installed := not (compareversion(version, '10.5') < 0);
-
-    // Check if MYSQL ODBC is installed
-    MYSQLODBC_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL Connector/ODBC 5.3')
-
-    // Check if MYSQL is installed - this should be fixed
-    MYSQLDB_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL 5.5');
-    MYSQLDB_installed := true;
-
-    if VCREDIST_installed then VCstatus.caption := 'INSTALLED' else VCstatus.caption := 'NOT DETECTED' ;
-    if MYSQLDB_installed then MYSQLstatus.caption := 'INSTALLED' else MYSQLstatus.caption := 'NOT DETECTED' ;
-    if MYSQLODBC_installed then ODBCstatus.caption := 'INSTALLED' else ODBCstatus.caption := 'NOT DETECTED'  ;
-    if SQLSERVER_installed  then MSSQLstatus.caption := 'INSTALLED' else MSSQLstatus.caption := 'NOT DETECTED' ; 
-
-    if packagesLoaded <> fver then
-    begin
-      pl := MyDllListPackages(fver);
-      Packages.Text := pl;
-      for i := 0 to packages.count - 1 do 
-      begin
-        s := packages[i];
-        s := copy(s, pos('|', s)+1, length(s));
-        t := copy(s, 1, pos('|', s)-1);
-        s := copy(s, pos('|', s)+1, length(s));
-        pi := copy(s, 1, pos('|', s)-1);
-        s := copy(s, pos('|', s)+1, length(s));
-        if (t = '1') then
-          PackagesPage.add(pi+': '+s+' (Already installed)')
-        else
-          PackagesPage.add(pi+': '+s);
-      end;
-      PackagesPage.Values[0] := true;
-      packagesLoaded := fver;
-    end;
-    Result := True;
-  End
-  else if (CurpageID = PackagesPage.id) Then
-  Begin
-    if PackagesPage.Values[0] = false then
-    begin
-      MsgBox('You must select the Core Package', mbError, MB_OK);
-      Result := false;
-    end
-    else
-      Result := True;
-  End
-  else if (CurpageID = ServicePage.Id) Then
-  Begin
-    // check service page entries
-    if (ServicePage.Values[0] <> '') or (ServicePage.Values[1] <> '') Then
-    Begin
-      if not CheckLogin Then
-        result := MsgBox('Unable to login using this account ('+SysErrorMessage(DLLGetLastError)+'). '+#13#10#13#10+'This may be because the details are wrong, or maybe the installer doesn''t have the rights to log on in service mode. Would you like to continue anyway?',
-           mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES
-      else
-        result := true;
-    End
-    Else
       result := true;
-    // populate the next page
-    if (not webpop) then
-    begin
-      ConnectionPage.values[0] := GetIniString('database', 'server', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      ConnectionPage.values[1] := GetIniString('database', 'database', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      ConnectionPage.values[2] := GetIniString('database', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      ConnectionPage.values[3] := GetIniString('database', 'password', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      dbDriver.itemindex:=dbDriver.items.indexof(GetIniString('database', 'driver', '', ExpandConstant('{app}')+'\fhirserver.ini'));
-
-      if (GetIniString('database', 'type', '', ExpandConstant('{app}')+'\fhirserver.ini') = '') then dbDriver_OnChange(dbDriver) else
-      dbType.itemindex:=dbType.items.indexof(GetIniString('database', 'type', '', ExpandConstant('{app}')+'\fhirserver.ini'));
-
-      webHostName.Text := GetIniString('web', 'host', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webOpenPort.Text := GetIniString('web', 'http', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webOpenPath.Text := GetIniString('web', 'base', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webSecurePort.Text := GetIniString('web', 'https', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webSecurePath.Text := GetIniString('web', 'secure', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      certFile.Text := GetIniString('web', 'certname', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      caCertFile.Text := GetIniString('web', 'cacertname', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      certPWord.Text := GetIniString('web', 'certpword', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      AdminPage.Values[0] := GetIniString('admin', 'email', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      AdminPage.Values[1] := GetIniString('admin', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webpop := true;
-    end;
   End
-  Else if (ConnectionPage <> Nil) And (CurPageID = ConnectionPage.ID) then
-  begin
-    s := MyDllCheckDatabase(dbDriver.text, ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], fver);
-    result := s = '';
-    if not result then
-      if (s = 'dbi') then
-      begin
-        if (isTaskSelected('db')) then
-          result := true
-        else
-          MsgBox('The database must be initialized because the FHIRServer tables were not found. Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
-      end
-      else if (s <> '') then
-      begin
-        if (isTaskSelected('db')) then
-          result := true
-        else
-          MsgBox('The database must be reinitialized because the FHIR version has changed (is '+s+', needs to be '+fver+'). Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
-      end
-      else
-        MsgBox(s, mbError, MB_OK); 
-  end
-  Else if (DependenciesPage <> Nil) And (CurPageID = DependenciesPage.ID) then
-    begin
-
-  
- 
-      result:=true;
-      //check if there are still dependencies 
-Dependencies_OK:=
-(SQLSERVER_installed) OR
-(VCREDIST_installed AND MYSQLDB_installed AND  MYSQLODBC_installed );
- 
-
-
-
-      if not Dependencies_OK
-
-      then begin
-        ResultMsg := MsgBox('Not all dependencies are met (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
-        if ResultMsg = false then
-          Result := false
-      end
-    end
-  Else if (WebPage <> Nil) And (CurPageID = WebPage.ID) then
-  begin
-    result := false;
-    if (webHostName.Text = '') then
-    begin
-      MsgBox('A web host name must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (webOpenPort.Text <> '') then
-    begin
-      p := StrToIntDef(webOpenPort.Text, 0);
-      if (p <= 0) or (p > 32760) then
-      begin
-        MsgBox('Insecure Port is illegal', mbError, MB_OK);
-        exit;
-      end;
-      if (webOpenPath.Text = '') then
-      begin
-        MsgBox('Insecure Path must be provided', mbError, MB_OK);
-        exit;
-      end;
-     end
-    else if (webSecurePort.Text <> '') then
-    begin
-      p := StrToIntDef(webSecurePort.Text, 0);
-      if (p <= 0) or (p > 32760) then
-      begin
-        MsgBox('Secure Port is illegal', mbError, MB_OK);
-        exit;
-      end;
-      if (webSecurePath.Text = '') then
-      begin
-        MsgBox('Secure Path must be provided', mbError, MB_OK);
-        exit;
-      end;
-      if (certFile.Text = '') then
-      begin
-        MsgBox('A certificate file is required. If you need to generate one, you can use openSSL', mbError, MB_OK);
-        exit;
-      end;
-      if (caCertFile.Text = '') then
-      begin
-        MsgBox('A CA certificate file is required', mbError, MB_OK);
-        exit;
-      end;
-      if (certPWord.Text = '') then
-      begin
-        MsgBox('A certificate password is required', mbError, MB_OK);
-        exit;
-      end;
-    end
-    else
-    begin
-      MsgBox('Must provide either a secure or an insecure port', mbError, MB_OK);
-      exit;
-    end;
-    Result := True;
-  end
-  Else if (SctPage <> Nil) And (CurPageID = SctPage.ID) then
-  begin
-    Result := true;
-    if not DirExists(SctPage.Values[0]) then
-    begin
-      Result := false;
-      MsgBox('SNOMED CT source not found', mbError, MB_OK);
-    end;
-    if (sctVersion.Text = '') or (length(sctVersion.Text) <> 8) or (StrToIntDef(sctVersion.Text, 0) = 0) then
-    begin
-      Result := false;
-      MsgBox('SNOMED CT version required, with format YYYYMMDD', mbError, MB_OK);
-    end;
-  end
-  Else if (AdminPage <> Nil) And (CurPageID = AdminPage.ID) then
-  begin
-    result := false;
-    if (AdminPage.Values[0] = '') then
-    begin
-      MsgBox('A email address must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (AdminPage.Values[1] = '') then
-    begin
-      MsgBox('A username must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (AdminPage.Values[2] = '') then
-    begin
-      MsgBox('A password must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (AdminPage.Values[3] = '') then
-    begin
-      MsgBox('A confirmation password must be provided', mbError, MB_OK);
-      exit;
-    end;
-    if (AdminPage.Values[2] <> AdminPage.Values[3]) then
-    begin
-      MsgBox('Passwords do not match', mbError, MB_OK);
-      exit;
-    end;
-    Result := True;
-  end
   Else
-    Result := True;
-end;
+    result := true;
 
-Function IsWindows2008 : Boolean;
-var
-  ver : TWindowsVersion;
-Begin
-  GetWindowsVersionEx(ver);
-  result := ((ver.ProductType = VER_NT_DOMAIN_CONTROLLER) or (ver.ProductType = VER_NT_SERVER)) and (ver.Major >= 6);
-End;
-
-// ----- Snomed CT Config  -------------------------------------------------------------------
-
-Procedure InstallSctPage;
-var
-  lbl : TLabel;
-begin
-  SctPage := CreateInputDirPage(ConfigPage.id, 'Load Snomed CT', 'Provide SNOMED CT Details', 'Select a directory that contains the RF2 snapshot', false, '');  
-  SctPage.Add('');
-
-  lbl := TLabel.Create(SctPage);
-  lbl.Caption := 'Module:';
-  lbl.Top := ScaleX(60);
-  lbl.Parent := SctPage.Surface;
-
-  cbxModule := TNewComboBox.Create(SctPage);
-  cbxModule.Top := ScaleX(82);
-  cbxModule.Width := SctPage.SurfaceWidth;
-  cbxModule.Parent := SctPage.Surface;
-  cbxModule.Style := csDropDownList;
-  cbxModule.Items.Add('International');
-  cbxModule.Items.Add('US');
-  cbxModule.Items.Add('Australia');
-  cbxModule.Items.Add('Spanish');
-  cbxModule.Items.Add('Denmark');
-  cbxModule.Items.Add('Netherlands');
-  cbxModule.Items.Add('Sweden');
-  cbxModule.Items.Add('UK');
-  cbxModule.ItemIndex := 0;
-
-  lbl := TLabel.Create(SctPage);
-  lbl.Caption := 'Version (YYYYMMDD):';
-  lbl.Top := ScaleX(110);
-  lbl.Parent := SctPage.Surface;
-  sctVersion := TNewEdit.Create(SctPage);
-  sctVersion.Parent := SctPage.Surface;
-  sctVersion.Width := SctPage.SurfaceWidth;
-  sctVersion.Top := ScaleX(132);
-  sctVersion.Left := 0;
-  sctVersion.Text := '';
-  
-  lbl := TLabel.Create(SctPage);
-  lbl.Caption := 'Importing generally takes ~1hr. If loading fails, you can continue the install, and load SNOMED CT later. Also, you can load additional modules later.';
-  lbl.Top := ScaleX(260);
-  lbl.Parent := SctPage.Surface;
 end;
 
 // ----- Web Server Config  -------------------------------------------------------------------
@@ -1337,18 +1297,6 @@ Begin
   webOpenPort.Text := '80';
 
   lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Path (e.g. /open)';
-  lbl.Top := ScaleX(58);
-  lbl.Left := ScaleX(170);
-  lbl.Parent := WebPage.Surface;
-  webOpenPath := TNewEdit.Create(WebPage);
-  webOpenPath.Parent := WebPage.Surface;
-  webOpenPath.Width := WebPage.Surface.width - ScaleX(280);
-  webOpenPath.Top := ScaleX(54);
-  webOpenPath.Left := ScaleX(280);
-  webOpenPath.Text := '';
-
-  lbl := TLabel.Create(WebPage);
   lbl.Caption := 'HTTPS (SSL access)';
   lbl.Top := ScaleX(86);
   lbl.Left := 0;
@@ -1366,18 +1314,6 @@ Begin
   webSecurePort.Top := ScaleX(110);
   webSecurePort.Left := ScaleX(90);
   webSecurePort.Text := '443';
-
-  lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Path (e.g. /secure)';
-  lbl.Top := ScaleX(114);
-  lbl.Left := ScaleX(170);
-  lbl.Parent := WebPage.Surface;
-  webSecurePath := TNewEdit.Create(WebPage);
-  webSecurePath.Parent := WebPage.Surface;
-  webSecurePath.Width := WebPage.Surface.width - ScaleX(280);
-  webSecurePath.Top := ScaleX(110);
-  webSecurePath.Left := ScaleX(280);
-  webSecurePath.Text := '';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'Cert File';
@@ -1427,85 +1363,117 @@ Begin
   lbl.Parent := WebPage.Surface;
 End;
 
-// ----- Database -----------------------------------------------------------------------------
+procedure loadWebDetailsPage;
+begin
+  webHostName.Text := MyDllGetIniValue(iniName, 'web.host');
+  webOpenPort.Text := MyDllGetIniValue(iniName, 'web.http');
+  webSecurePort.Text := MyDllGetIniValue(iniName, 'web.https');
+  CertFile.Text := MyDllGetIniValue(iniName, 'web.certname');
+  caCertFile.Text := MyDllGetIniValue(iniName, 'web.cacertname');
+  certPWord.Text := MyDllGetIniValue(iniName, 'web.certpword');
+end;
 
-Procedure CreateConnectionPage;
+function checkWebDetailsPage : boolean;
 var
-  lbl : TLabel;
-  btn : TButton;
-  s : string;
-  sl : TStringList;
-  i : integer;
-  shrinkspace: integer;
-  index:integer;
-
-  Names: TArrayOfString;
-  Ii: Integer;
-  Ss: String;
-
-
-Begin
-
-  shrinkSpace:=scalex(8);    //move each edit a few pixels off so that they fit
-
-  ConnectionPage := CreateInputQueryPage(WebPage.id, 'Database Location', 'Select the location of the SQL Server database', 'Leave Username and Password blank to use Windows Authentication');
-  ConnectionPage.add('Server', false);
-  ConnectionPage.add('Database', false);
-  ConnectionPage.add('UserName', false);
-  ConnectionPage.add('Password', true);
-//  ConnectionPage.add('Driver (default = SQL Server Native Client 11.0 / MySQL ODBC 5.3 Unicode Driver)', false);
-
-
-
-  dbDriver := TNewComboBox.Create(ConnectionPage);
-  dbDriver.Width := ConnectionPage.SurfaceWidth;
-  dbDriver.Parent := ConnectionPage.Surface;
-  dbDriver.Style := csDropDownList;
-
-  dbDriver.OnChange := @dbDriver_OnChange;
-
-
-  dbType := TNewComboBox.Create(ConnectionPage);
-  dbType.Width := ConnectionPage.SurfaceWidth;
-  dbType.Parent := ConnectionPage.Surface;
-  dbType.Style := csDropDownList;
-  dbtype.enabled:=false;
-
-
-
-  if RegGetValueNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers', Names) then
+  p : integer;
+begin
+  result := false;
+  if (webHostName.Text = '') then
   begin
-    for iI := 0 to GetArrayLength(Names)-1 do
-       dbDriver.Items.Add(Names[Ii]);
-  end else
-  begin
-    // add any code to handle failure here
+    MsgBox('A web host name must be provided', mbError, MB_OK);
+    exit;
   end;
-
-       dbType.Items.Add('mssql');
-       dbType.Items.Add('mysql');
-
-for index:=0 to 3 do begin
-  ConnectionPage.Edits[Index].Top := ConnectionPage.Edits[Index].Top - ShrinkSpace*(index);
-  ConnectionPage.PromptLabels[Index].Top := ConnectionPage.PromptLabels[Index].Top - ShrinkSpace*(index) +2;
+  if (webOpenPort.Text <> '') then
+  begin
+    p := StrToIntDef(webOpenPort.Text, 0);
+    if (p <= 0) or (p > 32760) then
+    begin
+      MsgBox('Insecure Port is illegal', mbError, MB_OK);
+      exit;
+    end;
+   end
+  else if (webSecurePort.Text <> '') then
+  begin
+    p := StrToIntDef(webSecurePort.Text, 0);
+    if (p <= 0) or (p > 32760) then
+    begin
+      MsgBox('Secure Port is illegal', mbError, MB_OK);
+      exit;
+    end;
+    if (certFile.Text = '') then
+    begin
+      MsgBox('A certificate file is required. If you need to generate one, you can use openSSL', mbError, MB_OK);
+      exit;
+    end;
+    if (caCertFile.Text = '') then
+    begin
+      MsgBox('A CA certificate file is required', mbError, MB_OK);
+      exit;
+    end;
+    if (certPWord.Text = '') then
+    begin
+      MsgBox('A certificate password is required', mbError, MB_OK);
+      exit;
+    end;
+  end
+  else
+  begin
+    MsgBox('Must provide either a secure or an insecure port', mbError, MB_OK);
+    exit;
+  end;
+  Result := True;
 end;
 
 
-  dbtype.top:= ConnectionPage.PromptLabels[3].Top + ConnectionPage.PromptLabels[3].Top - ConnectionPage.PromptLabels[2].Top
-
-
-
-
-end;
 
 Procedure CreateAdminPage;
 Begin
-  AdminPage := CreateInputQueryPage(ConnectionPage.id, 'Administration', '', 'Enter Master Administration details (for administering user accounts)');
+  AdminPage := CreateInputQueryPage(WebPage.id, 'Administration', '', 'Enter Master Administration details (for administering user accounts)');
   AdminPage.Add('Email:', False);
   AdminPage.Add('Username', False);
   AdminPage.Add('Password', True);
   AdminPage.Add('Password Confirmation', True);
 end;
+
+procedure loadAdminPage;
+begin
+  AdminPage.Values[0] := MyDllGetIniValue(iniName, 'admin.email');
+  AdminPage.Values[1] := MyDllGetIniValue(iniName, 'admin.username');
+end;
+
+
+function checkAdminPage : boolean;
+begin
+    result := false;
+    if (AdminPage.Values[0] = '') then
+    begin
+      MsgBox('A email address must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (AdminPage.Values[1] = '') then
+    begin
+      MsgBox('A username must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (AdminPage.Values[2] = '') then
+    begin
+      MsgBox('A password must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (AdminPage.Values[3] = '') then
+    begin
+      MsgBox('A confirmation password must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (AdminPage.Values[2] <> AdminPage.Values[3]) then
+    begin
+      MsgBox('Passwords do not match', mbError, MB_OK);
+      exit;
+    end;
+    Result := True;
+end;
+
+
 
 Procedure CreateConfigPage;
 Begin
@@ -1520,373 +1488,684 @@ end;
 
 
 
-procedure InstallMySQL(Sender: TObject);
-var ResultCode:Integer;
-begin
-//to do: Make this function get the URL from the TEdit
-idpDownloadFile('https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi', ExpandConstant('{tmp}\mysql.msi'));
+// ------ Database Page ---------------------------------------------------------------------------------
 
-//if not ShellExec('', 'msiexec.exe', ExpandConstant(' /i {tmp}\mysql-installer-web-community-5.7.20.0.msi'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
-if not ShellExec('', 'msiexec.exe', ExpandConstant(' /i {tmp}\mysql.msi'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
-  MsgBox('Installer failed to run!' + #13#10 + ' ' +
-    SysErrorMessage(ResultCode), mbError, MB_OK);
+procedure dbDriverR2_OnChange(Sender: TObject);
+begin
+  if (pos('MySQL',dbdriverR2.text)<>0) then 
+    dbtypeR2.itemIndex:=1;
+  if (pos('SQL Server',dbdriverR2.text)<>0) then 
+    dbtypeR2.itemIndex:=0;
 end;
 
-
-procedure InstallVCRedist(Sender: TObject);
-var ResultCode:Integer;
+procedure dbDriverR3_OnChange(Sender: TObject);
 begin
-//to do: Make this function get the URL from the TEdit
-idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\vcredist.exe'));
-if not ShellExec('', ExpandConstant('{tmp}\vcredist.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
-  MsgBox('Installer failed to run!' + #13#10 + ' ' +
-    SysErrorMessage(ResultCode), mbError, MB_OK);
+  if (pos('MySQL',dbdriverR3.text)<>0) then 
+    dbtypeR3.itemIndex:=1;
+  if (pos('SQL Server',dbdriverR3.text)<>0) then 
+    dbtypeR3.itemIndex:=0;
 end;
 
-
-
-procedure InstallMSSQL(Sender: TObject);
-var ResultCode:Integer;
+procedure dbDriverR4_OnChange(Sender: TObject);
 begin
-//to do: Make this function get the URL from the TEdit
-idpDownloadFile('http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe', ExpandConstant('{tmp}\mssql.exe'));
-if not ShellExec('', ExpandConstant('{tmp}\mssql.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
-  MsgBox('Installer failed to run!' + #13#10 + ' ' +
-    SysErrorMessage(ResultCode), mbError, MB_OK);
+  if (pos('MySQL',dbdriverR4.text)<>0) then 
+    dbtypeR4.itemIndex:=1;
+  if (pos('SQL Server',dbdriverR4.text)<>0) then 
+    dbtypeR4.itemIndex:=0;
 end;
 
-procedure InstallODBC(Sender: TObject);
-var ResultCode:Integer;
-begin
-//to do: Make this function get the URL from the TEdit
-// Which ODBC Depends on which Database is setup os is being setup
-idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\odbc.exe'));
-if not ShellExec('', ExpandConstant('{tmp}\odbc.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
-  MsgBox('Installer failed to run!' + #13#10 + ' ' +
-    SysErrorMessage(ResultCode), mbError, MB_OK);
-end;
+// ----- Database -----------------------------------------------------------------------------
 
-
-Procedure CreatePackagesPage;
-begin
-  PackagesPage := CreateInputOptionPage(wpSelectTasks, 'Choose Packages', 'Choose the packages to load with the server', 'Packages will be downloaded as needed', false, false);
-  packagesLoaded := '';
-end;
-
-Procedure CreateDependenciesPage;
+Procedure CreateConnectionPageR2;
 var
-
-JRElbl, JREstatus, VClbl, MYSQLlbl,  MSSQLlbl, ODBClbl :Tlabel ;
-JREInstall, VCInstall, MYSQLInstall, MSSQLInstall, ODBCInstall:TButton;
-VCPath, MYSQLPath, MSSQLPath, ODBCPath:TEdit;
-
-
-ResultMsg : Boolean;
-Versions: TArrayOfString;
-I: Integer;
-regRoot: Integer;
-
-
+  lbl : TLabel;
+  btn : TButton;
+  s : string;
+  sl : TStringList;
+  i : integer;
+  shrinkspace: integer;
+  index:integer;
+  Names: TArrayOfString;
+  Ii: Integer;
+  Ss: String;
 Begin
-  DependenciesPage := CreateCustomPage(PackagesPage.id, 'Install Dependencies', 'Choose the dependencies to install');
+  shrinkSpace:=scalex(8);    //move each edit a few pixels off so that they fit
+  ConnectionPageR2 := CreateInputQueryPage(ConfigPage.id, 'R2 Database Location', 'Select the location of the R2 database', 'Leave Username and Password blank to use Windows Authentication');
+  ConnectionPageR2.add('Server', false);
+  ConnectionPageR2.add('Database', false);
+  ConnectionPageR2.add('UserName', false);
+  ConnectionPageR2.add('Password', true);
+//  ConnectionPageR2.add('Driver (default = SQL Server Native Client 11.0 / MySQL ODBC 5.3 Unicode Driver)', false);
 
- 
-  VClbl := TLabel.Create(DependenciesPage);
-  with VClbl do begin
-  Caption := 'Visual C++ Redistributables (2015 or 2017)';
-  Top := ScaleX(0);
-  Parent := DependenciesPage.Surface;
+  dbDriverR2 := TNewComboBox.Create(ConnectionPageR2);
+  dbDriverR2.Width := ConnectionPageR2.SurfaceWidth;
+  dbDriverR2.Parent := ConnectionPageR2.Surface;
+  dbDriverR2.Style := csDropDownList;
+  dbDriverR2.OnChange := @dbDriverR2_OnChange;
+
+  dbTypeR2 := TNewComboBox.Create(ConnectionPageR2);
+  dbTypeR2.Width := ConnectionPageR2.SurfaceWidth;
+  dbTypeR2.Parent := ConnectionPageR2.Surface;
+  dbTypeR2.Style := csDropDownList;
+  dbtypeR2.enabled:=false;
+
+  if RegGetValueNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers', Names) then
+  begin
+    for iI := 0 to GetArrayLength(Names)-1 do
+       dbDriverR2.Items.Add(Names[Ii]);
+  end 
+  else
+  begin
+    // add any code to handle failure here
   end;
 
-  VCstatus := TLabel.Create(DependenciesPage);
-  with VCstatus do begin
-  Caption := 'NOT INSTALLED';
-  font.style:=[fsBold];
-  Top := ScaleX(0);
-  Left := ScaleX(220);
-  Parent := DependenciesPage.Surface;
+  dbTypeR2.Items.Add('mssql');
+  dbTypeR2.Items.Add('mysql');
+
+  for index:=0 to 3 do 
+  begin
+    ConnectionPageR2.Edits[Index].Top := ConnectionPageR2.Edits[Index].Top - ShrinkSpace*(index);
+    ConnectionPageR2.PromptLabels[Index].Top := ConnectionPageR2.PromptLabels[Index].Top - ShrinkSpace*(index) +2;
   end;
-
-  VCpath := TEdit.Create(DependenciesPage);
-  with VCPath do begin
-  Text := vcredist2017_url_x64;
-  Top := ScaleX(16);
-  Left := ScaleX(70);
-  Width:=Scalex(300);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  VCInstall := TButton.Create(DependenciesPage);
-  with VCInstall do begin
-  Caption := 'Install';
-  Top := ScaleX(16);
-  Width := ScaleX(65);
-  Height := VCpath.Height;
-  Parent := DependenciesPage.Surface;
-  OnClick := @InstallVCRedist;
-  end;
-
-
-  MYSQLlbl := TLabel.Create(DependenciesPage);
-  with MYSQLlbl do begin
-  Caption := 'MySQL (needs ODBC Driver)';
-  Top := ScaleX(40);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  MYSQLstatus := TLabel.Create(DependenciesPage);
-  with MYSQLstatus do begin
-  Caption := '';
-  Left := ScaleX(80);
-  font.style:=[fsBold];
-  Top := ScaleX(100);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  MYSQLpath := TEdit.Create(DependenciesPage);
-  with MYSQLpath do begin
-  Text := 'https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi';
-  Top := ScaleX(56);
-  Left := ScaleX(70);
-  Width:=Scalex(300);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  MYSQLInstall := TButton.Create(DependenciesPage);
-  with MYSQLInstall do begin
-  Caption := 'Install';
-  Top := ScaleX(56);
-  Width := ScaleX(65);
-  Height := VCpath.Height;
-  Parent := DependenciesPage.Surface;
-  OnClick := @InstallMySQL;
-  end;
-
-
-  ODBClbl := TLabel.Create(DependenciesPage);
-  with ODBClbl do begin
-  Caption := 'MYSQL ODBC Driver (5.3+)';
-  Top := ScaleX(80);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  ODBCstatus := TLabel.Create(DependenciesPage);
-  with ODBCstatus do begin
-  Caption := '';
-  font.style:=[fsBold];
-  Top := ScaleX(80);
-  Left := ScaleX(140);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  ODBCpath := TEdit.Create(DependenciesPage);
-  with ODBCpath do begin
-  Text := mysqlodbc_url_x64;
-  Top := ScaleX(96);
-  Left := ScaleX(70);
-  Width:=Scalex(300);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  ODBCInstall := TButton.Create(DependenciesPage);
-  with ODBCInstall do begin
-  Caption := 'Install';
-  Top := ScaleX(96);
-  Width := ScaleX(65);
-  Height := VCpath.Height;
-  Parent := DependenciesPage.Surface;
-  OnClick := @InstallODBC;
-  end;
-
-
-
-  MSSQLlbl := TLabel.Create(DependenciesPage);
-  with MSSQLlbl do begin
-  Caption := 'MS SQL Server';
-  Top := ScaleX(140);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  MSSQLstatus := TLabel.Create(DependenciesPage);
-  with MSSQLstatus do begin
-  font.style:=[fsBold];
-  Caption := '';
-  Top := ScaleX(140);
-  Left := ScaleX(100);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  MSSQLpath := TEdit.Create(DependenciesPage);
-  with MSSQLpath do begin
-  Text := sql2008expressr2_url_x64;
-  Top := ScaleX(156);
-  Left := ScaleX(70);
-  Width:=Scalex(300);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  MSSQLInstall := TButton.Create(DependenciesPage);
-  with MSSQLInstall do begin
-  Caption := 'Install';
-  Top := ScaleX(156);
-  Width := ScaleX(65);
-  Height := VCpath.Height;
-  Parent := DependenciesPage.Surface;
-  OnClick := @InstallMSSQL;
-  end;
-
+  dbtypeR2.top:= ConnectionPageR2.PromptLabels[3].Top + ConnectionPageR2.PromptLabels[3].Top - ConnectionPageR2.PromptLabels[2].Top
 end;
 
+Procedure CreateConnectionPageR3;
+var
+  lbl : TLabel;
+  btn : TButton;
+  s : string;
+  sl : TStringList;
+  i : integer;
+  shrinkspace: integer;
+  index:integer;
+  Names: TArrayOfString;
+  Ii: Integer;
+  Ss: String;
+Begin
+  shrinkSpace:=scalex(8);    //move each edit a few pixels off so that they fit
+  ConnectionPageR3 := CreateInputQueryPage(DBInstallPageR2.id, 'R3 Database Location', 'Select the location of the R3 database', 'Leave Username and Password blank to use Windows Authentication');
+  ConnectionPageR3.add('Server', false);
+  ConnectionPageR3.add('Database', false);
+  ConnectionPageR3.add('UserName', false);
+  ConnectionPageR3.add('Password', true);
+//  ConnectionPageR3.add('Driver (default = SQL Server Native Client 11.0 / MySQL ODBC 5.3 Unicode Driver)', false);
+
+  dbDriverR3 := TNewComboBox.Create(ConnectionPageR3);
+  dbDriverR3.Width := ConnectionPageR3.SurfaceWidth;
+  dbDriverR3.Parent := ConnectionPageR3.Surface;
+  dbDriverR3.Style := csDropDownList;
+  dbDriverR3.OnChange := @dbDriverR3_OnChange;
+
+  dbTypeR3 := TNewComboBox.Create(ConnectionPageR3);
+  dbTypeR3.Width := ConnectionPageR3.SurfaceWidth;
+  dbTypeR3.Parent := ConnectionPageR3.Surface;
+  dbTypeR3.Style := csDropDownList;
+  dbtypeR3.enabled:=false;
+
+  if RegGetValueNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers', Names) then
+  begin
+    for iI := 0 to GetArrayLength(Names)-1 do
+       dbDriverR3.Items.Add(Names[Ii]);
+  end 
+  else
+  begin
+    // add any code to handle failure here
+  end;
+
+  dbTypeR3.Items.Add('mssql');
+  dbTypeR3.Items.Add('mysql');
+
+  for index:=0 to 3 do 
+  begin
+    ConnectionPageR3.Edits[Index].Top := ConnectionPageR3.Edits[Index].Top - ShrinkSpace*(index);
+    ConnectionPageR3.PromptLabels[Index].Top := ConnectionPageR3.PromptLabels[Index].Top - ShrinkSpace*(index) +2;
+  end;
+  dbtypeR3.top:= ConnectionPageR3.PromptLabels[3].Top + ConnectionPageR3.PromptLabels[3].Top - ConnectionPageR3.PromptLabels[2].Top
+end;
+
+Procedure CreateConnectionPageR4;
+var
+  lbl : TLabel;
+  btn : TButton;
+  s : string;
+  sl : TStringList;
+  i : integer;
+  shrinkspace: integer;
+  index:integer;
+  Names: TArrayOfString;
+  Ii: Integer;
+  Ss: String;
+Begin
+
+  shrinkSpace:=scalex(8);    //move each edit a few pixels off so that they fit
+  ConnectionPageR4 := CreateInputQueryPage(DBInstallPageR3.id, 'R4 Database Location', 'Select the location of the R4 database', 'Leave Username and Password blank to use Windows Authentication');
+  ConnectionPageR4.add('Server', false);
+  ConnectionPageR4.add('Database', false);
+  ConnectionPageR4.add('UserName', false);
+  ConnectionPageR4.add('Password', true);
+//  ConnectionPageR4.add('Driver (default = SQL Server Native Client 11.0 / MySQL ODBC 5.3 Unicode Driver)', false);
+
+  dbDriverR4 := TNewComboBox.Create(ConnectionPageR4);
+  dbDriverR4.Width := ConnectionPageR4.SurfaceWidth;
+  dbDriverR4.Parent := ConnectionPageR4.Surface;
+  dbDriverR4.Style := csDropDownList;
+  dbDriverR4.OnChange := @dbDriverR4_OnChange;
+
+  dbTypeR4 := TNewComboBox.Create(ConnectionPageR4);
+  dbTypeR4.Width := ConnectionPageR4.SurfaceWidth;
+  dbTypeR4.Parent := ConnectionPageR4.Surface;
+  dbTypeR4.Style := csDropDownList;
+  dbtypeR4.enabled:=false;
+
+  if RegGetValueNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers', Names) then
+  begin
+    for iI := 0 to GetArrayLength(Names)-1 do
+       dbDriverR4.Items.Add(Names[Ii]);
+  end 
+  else
+  begin
+    // add any code to handle failure here
+  end;
+
+  dbTypeR4.Items.Add('mssql');
+  dbTypeR4.Items.Add('mysql');
+
+  for index:=0 to 3 do 
+  begin
+    ConnectionPageR4.Edits[Index].Top := ConnectionPageR4.Edits[Index].Top - ShrinkSpace*(index);
+    ConnectionPageR4.PromptLabels[Index].Top := ConnectionPageR4.PromptLabels[Index].Top - ShrinkSpace*(index) +2;
+  end;
+
+  dbtypeR4.top:= ConnectionPageR4.PromptLabels[3].Top + ConnectionPageR4.PromptLabels[3].Top - ConnectionPageR4.PromptLabels[2].Top;
+end;
+
+procedure loadConnectionPageR2;
+var
+  s : String;
+begin
+  ConnectionPageR2.values[0] := MyDllGetIniValue(iniName, 'db.r2.server');
+  ConnectionPageR2.values[1] := MyDllGetIniValue(iniName, 'db.r2.database');
+  ConnectionPageR2.values[2] := MyDllGetIniValue(iniName, 'db.r2.username');
+  ConnectionPageR2.values[3] := MyDllGetIniValue(iniName, 'db.r2.password');
+  dbDriverR2.itemindex := dbDriverR2.items.indexof(MyDllGetIniValue(iniName, 'db.r2.driver'));
+
+  s := MyDllGetIniValue(iniName, 'db.r2.type');
+  if s = '' then 
+    dbDriverR2_OnChange(dbDriverR2)
+  else
+    dbTypeR2.itemindex := dbTypeR2.items.indexof(MyDllGetIniValue(iniName, 'db.r2.type'));
+end;
+
+procedure loadConnectionPageR3;
+var
+  s : String;
+begin
+  ConnectionPageR3.values[0] := MyDllGetIniValue(iniName, 'db.r3.server');
+  ConnectionPageR3.values[1] := MyDllGetIniValue(iniName, 'db.r3.database');
+  ConnectionPageR3.values[2] := MyDllGetIniValue(iniName, 'db.r3.username');
+  ConnectionPageR3.values[3] := MyDllGetIniValue(iniName, 'db.r3.password');
+  dbDriverR3.itemindex := dbDriverR3.items.indexof(MyDllGetIniValue(iniName, 'db.r3.driver'));
+
+  s := MyDllGetIniValue(iniName, 'db.r3.type');
+  if s = '' then 
+    dbDriverR3_OnChange(dbDriverR3)
+  else
+    dbTypeR3.itemindex := dbTypeR3.items.indexof(MyDllGetIniValue(iniName, 'db.r3.type'));
+end;
+
+procedure loadConnectionPageR4;
+var
+  s : String;
+begin
+  ConnectionPageR4.values[0] := MyDllGetIniValue(iniName, 'db.r4.server');
+  ConnectionPageR4.values[1] := MyDllGetIniValue(iniName, 'db.r4.database');
+  ConnectionPageR4.values[2] := MyDllGetIniValue(iniName, 'db.r4.username');
+  ConnectionPageR4.values[3] := MyDllGetIniValue(iniName, 'db.r4.password');
+  dbDriverR4.itemindex := dbDriverR4.items.indexof(MyDllGetIniValue(iniName, 'db.r4.driver'));
+
+  s := MyDllGetIniValue(iniName, 'db.r4.type');
+  if s = '' then 
+    dbDriverR4_OnChange(dbDriverR4)
+  else
+    dbTypeR4.itemindex := dbTypeR4.items.indexof(MyDllGetIniValue(iniName, 'db.r4.type'));
+end;
+
+function checkDatabaseR2 : boolean;
+var 
+  s, c : String;
+begin
+  s := MyDllCheckDatabase(dbDriverR2.text, ConnectionPageR2.values[0], ConnectionPageR2.values[1], ConnectionPageR2.values[2], ConnectionPageR2.values[3], '1.0.2');
+  c := s[1];
+  s := copy(s, 2, length(s));
+  result := true;
+  if c = '1' then // couldn't connect
+  begin 
+    result := false;
+    MsgBox(s, mbError, MB_OK)
+  end
+  else 
+  begin 
+    if c = '2' then
+    begin
+      dbStatusR2.caption := 'Database is not initialized ('+s+')'
+      dbInstallR2.checked := true;
+    end 
+    else if c = '3' then
+    begin
+      dbStatusR2.caption := 'Database is initialized, but needs re-initialized ('+s+')'
+      dbInstallR2.checked := true;
+    end 
+    else
+      dbStatusR2.caption := 'Database is ready for use, but can be re-initialized';
+  end;    
+end;
+
+function checkDatabaseR3 : boolean;
+var 
+  s, c : String;
+begin
+  s := MyDllCheckDatabase(dbDriverR3.text, ConnectionPageR3.values[0], ConnectionPageR3.values[1], ConnectionPageR3.values[2], ConnectionPageR3.values[3], '3.0.1');
+  c := s[1];
+  s := copy(s, 2, length(s));
+  result := true;
+  if c = '1' then // couldn't connect
+  begin 
+    result := false;
+    MsgBox(s, mbError, MB_OK)
+  end
+  else 
+  begin 
+    if c = '2' then
+    begin
+      dbStatusR3.caption := 'Database is not initialized ('+s+')'
+      dbInstallR3.checked := true;
+    end 
+    else if c = '3' then
+    begin
+      dbStatusR3.caption := 'Database is initialized, but needs re-initialized ('+s+')'
+      dbInstallR3.checked := true;
+    end 
+    else
+      dbStatusR3.caption := 'Database is ready for use, but can be re-initialized';
+  end;    
+end;
+
+function checkDatabaseR4 : boolean;
+var 
+  s, c : String;
+begin
+  s := MyDllCheckDatabase(dbDriverR4.text, ConnectionPageR4.values[0], ConnectionPageR4.values[1], ConnectionPageR4.values[2], ConnectionPageR4.values[3], '3.5.0');
+  c := s[1];
+  s := copy(s, 2, length(s));
+  result := true;
+  if c = '1' then // couldn't connect
+  begin 
+    result := false;
+    MsgBox(s, mbError, MB_OK)
+  end
+  else 
+  begin 
+    if c = '2' then
+    begin
+      dbStatusR4.caption := 'Database is not initialized ('+s+')'
+      dbInstallR4.checked := true;
+    end 
+    else if c = '3' then
+    begin
+      dbStatusR4.caption := 'Database is initialized, but needs re-initialized ('+s+')'
+      dbInstallR4.checked := true;
+    end 
+    else
+      dbStatusR4.caption := 'Database is ready for use, but can be re-initialized';
+  end;    
+end;
+
+
+
+Procedure CreateDBInstallPageR2;
+var
+  lbl : TLabel; 
+begin
+  DBInstallPageR2 := CreateCustomPage(ConnectionPageR2.id, 'R2 Database Initialization', 'Choose R2 Initialization Options');
+  // a status label
+  dbStatusR2 := TLabel.Create(DBInstallPageR2);
+  dbStatusR2.Caption := '(DB Status)'
+  dbStatusR2.Top := ScaleX(5);
+  dbStatusR2.Left := 5;
+  dbStatusR2.Width := DBInstallPageR2.Surface.Width;
+  dbStatusR2.Autosize := false;
+  dbStatusR2.WordWrap := true;
+  dbStatusR2.Height := ScaleX(30);
+  dbStatusR2.Parent := DBInstallPageR2.Surface;
+
+  dbInstallR2 := TCheckBox.create(DBInstallPageR2);
+  dbInstallR2.Caption := 'Initialize the database, with the following optional packages:';
+  dbInstallR2.Top := ScaleX(25);
+  dbInstallR2.Left := 5;
+  dbInstallR2.Width := DBInstallPageR2.Surface.Width;
+  dbInstallR2.Parent := DBInstallPageR2.Surface;
+
+  dbPackagesR2 := TNewCheckListBox.create(DBInstallPageR2);
+  dbPackagesR2.Top := ScaleX(45);
+  dbPackagesR2.Left := 5;
+  dbPackagesR2.Width := DBInstallPageR2.Surface.Width-ScaleX(10);
+  dbPackagesR2.Parent := DBInstallPageR2.Surface;
+  dbPackagesR2.Height := DBInstallPageR2.Surface.height - (dbPackagesR2.Top + 20);
+
+  lbl := TLabel.Create(DBInstallPageR2);
+  lbl.Caption := 'Packages will be downloaded as needed'
+  lbl.Top := DBInstallPageR2.Surface.height - 15;
+  lbl.Left := 5;
+  lbl.Width := DBInstallPageR2.Surface.Width;
+  lbl.Autosize := false;
+  lbl.WordWrap := true;
+  lbl.Parent := DBInstallPageR2.Surface;
+end;
+
+Procedure CreatePackagesPageR3;
+var
+  lbl : TLabel; 
+begin
+  DBInstallPageR3 := CreateCustomPage(ConnectionPageR3.id, 'R3 Database Initialization', 'Choose R3 Initialization Options');
+  // a status label
+  dbStatusR3 := TLabel.Create(DBInstallPageR3);
+  dbStatusR3.Caption := '(DB Status)'
+  dbStatusR3.Top := ScaleX(5);
+  dbStatusR3.Left := 5;
+  dbStatusR3.Width := DBInstallPageR3.Surface.Width;
+  dbStatusR3.Autosize := false;
+  dbStatusR3.WordWrap := true;
+  dbStatusR3.Height := ScaleX(30);
+  dbStatusR3.Parent := DBInstallPageR3.Surface;
+
+  dbInstallR3 := TCheckBox.create(DBInstallPageR3);
+  dbInstallR3.Caption := 'Initialize the database, with the following optional packages:';
+  dbInstallR3.Top := ScaleX(25);
+  dbInstallR3.Left := 5;
+  dbInstallR3.Width := DBInstallPageR3.Surface.Width;
+  dbInstallR3.Parent := DBInstallPageR3.Surface;
+
+  dbPackagesR3 := TNewCheckListBox.create(DBInstallPageR3);
+  dbPackagesR3.Top := ScaleX(45);
+  dbPackagesR3.Left := 5;
+  dbPackagesR3.Width := DBInstallPageR3.Surface.Width-ScaleX(10);
+  dbPackagesR3.Parent := DBInstallPageR3.Surface;
+  dbPackagesR3.Height := DBInstallPageR3.Surface.height - (dbPackagesR3.Top + 20);
+
+  lbl := TLabel.Create(DBInstallPageR3);
+  lbl.Caption := 'Packages will be downloaded as needed'
+  lbl.Top := DBInstallPageR3.Surface.height - 15;
+  lbl.Left := 5;
+  lbl.Width := DBInstallPageR3.Surface.Width;
+  lbl.Autosize := false;
+  lbl.WordWrap := true;
+  lbl.Parent := DBInstallPageR3.Surface;
+end;
+
+Procedure CreatePackagesPageR4;
+var
+  lbl : TLabel; 
+begin
+  DBInstallPageR4 := CreateCustomPage(ConnectionPageR4.id, 'R4 Database Initialization', 'Choose R4 Initialization Options');
+  // a status label
+  dbStatusR4 := TLabel.Create(DBInstallPageR4);
+  dbStatusR4.Caption := '(DB Status)'
+  dbStatusR4.Top := ScaleX(5);
+  dbStatusR4.Left := 5;
+  dbStatusR4.Width := DBInstallPageR4.Surface.Width;
+  dbStatusR4.Autosize := false;
+  dbStatusR4.WordWrap := true;
+  dbStatusR4.Height := ScaleX(30);
+  dbStatusR4.Parent := DBInstallPageR4.Surface;
+
+  dbInstallR4 := TCheckBox.create(DBInstallPageR4);
+  dbInstallR4.Caption := 'Initialize the database, with the following optional packages:';
+  dbInstallR4.Top := ScaleX(25);
+  dbInstallR4.Left := 5;
+  dbInstallR4.Width := DBInstallPageR4.Surface.Width;
+  dbInstallR4.Parent := DBInstallPageR4.Surface;
+
+  dbPackagesR4 := TNewCheckListBox.create(DBInstallPageR4);
+  dbPackagesR4.Top := ScaleX(45);
+  dbPackagesR4.Left := 5;
+  dbPackagesR4.Width := DBInstallPageR4.Surface.Width-ScaleX(10);
+  dbPackagesR4.Parent := DBInstallPageR4.Surface;
+  dbPackagesR4.Height := DBInstallPageR4.Surface.height - (dbPackagesR4.Top + 20);
+
+  lbl := TLabel.Create(DBInstallPageR4);
+  lbl.Caption := 'Packages will be downloaded as needed'
+  lbl.Top := DBInstallPageR4.Surface.height - 15;
+  lbl.Left := 5;
+  lbl.Width := DBInstallPageR4.Surface.Width;
+  lbl.Autosize := false;
+  lbl.WordWrap := true;
+  lbl.Parent := DBInstallPageR4.Surface;
+ end;
+
+procedure loadR2Packages;
+var
+  pl, s, t, pi : String;
+  i : integer;
+begin
+  pl := MyDllListPackages('1.0.2');
+  
+  PackagesR2.Text := pl;
+  for i := 0 to packagesR2.count - 1 do 
+  begin
+    s := packagesR2[i];
+    s := copy(s, pos('|', s)+1, length(s));
+    t := copy(s, 1, pos('|', s)-1);
+    s := copy(s, pos('|', s)+1, length(s));
+    pi := copy(s, 1, pos('|', s)-1);
+    s := copy(s, pos('|', s)+1, length(s));
+    if (t = '1') then
+      dbPackagesR2.AddCheckBox(pi+': '+s+' (Already installed)', '', 0, True, True, False, True, nil)
+    else
+      dbPackagesR2.AddCheckBox(pi+': '+s, '', 0, False, True, False, True, nil);
+  end;
+end;
+
+procedure loadR3Packages;
+var
+  pl, s, t, pi : String;
+  i : integer;
+begin
+  pl := MyDllListPackages('3.0.1');
+  
+  PackagesR3.Text := pl;
+  for i := 0 to packagesR3.count - 1 do 
+  begin
+    s := packagesR3[i];
+    s := copy(s, pos('|', s)+1, length(s));
+    t := copy(s, 1, pos('|', s)-1);
+    s := copy(s, pos('|', s)+1, length(s));
+    pi := copy(s, 1, pos('|', s)-1);
+    s := copy(s, pos('|', s)+1, length(s));
+    if (t = '1') then
+      dbPackagesR3.AddCheckBox(pi+': '+s+' (Already installed)', '', 0, True, True, False, True, nil)
+    else
+      dbPackagesR3.AddCheckBox(pi+': '+s, '', 0, False, True, False, True, nil);
+  end;
+end;
+
+procedure loadR4Packages;
+var
+  pl, s, t, pi : String;
+  i : integer;
+begin
+  pl := MyDllListPackages('3.5.0');
+  
+  PackagesR4.Text := pl;
+  for i := 0 to packagesR4.count - 1 do 
+  begin
+    s := packagesR4[i];
+    s := copy(s, pos('|', s)+1, length(s));
+    t := copy(s, 1, pos('|', s)-1);
+    s := copy(s, pos('|', s)+1, length(s));
+    pi := copy(s, 1, pos('|', s)-1);
+    s := copy(s, pos('|', s)+1, length(s));
+    if (t = '1') then
+      dbPackagesR4.AddCheckBox(pi+': '+s+' (Already installed)', '', 0, True, True, False, True, nil)
+    else
+      dbPackagesR4.AddCheckBox(pi+': '+s, '', 0, False, True, False, True, nil);
+  end;
+end;
+
+// ------ Wizard Events -------------------------------------------------------------------------------------
+            
+function ShouldSkipPage(PageID: Integer): Boolean;
+begin
+  if (PageID = ServicePage.Id) Then
+    result := not IsTaskSelected('svcInst')
+  else if (PageID = AdminPage.Id) or (PageID = ConfigPage.Id) Then
+    result := not (IsTaskSelected('r2') or IsTaskSelected('r3') or IsTaskSelected('r4'))
+  else if (PageID = DBInstallPageR2.Id) or (PageID = ConnectionPageR2.Id) Then
+    result := not (IsTaskSelected('r2'))
+  else if (PageID = DBInstallPageR3.Id) or (PageID = ConnectionPageR3.Id) Then
+    result := not (IsTaskSelected('r3'))
+  else if (PageID = DBInstallPageR4.Id) or (PageID = ConnectionPageR4.Id) Then
+    result := not (IsTaskSelected('r4'))
+  else
+    result := false;
+end;
+                        
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  if (CurpageID = wpSelectTasks) Then
+  Begin
+    iniName := ExpandConstant('{app}')+'\fhirserver.ini';
+    configureDependenciesPage;
+    loadWebDetailsPage;
+    loadAdminPage;
+    loadConnectionPageR2;
+    loadR2Packages;
+    loadConnectionPageR3;
+    loadR3Packages;
+    loadConnectionPageR4;
+    loadR4Packages;
+    webpop := true;
+    Result := True;
+  End
+  Else if (DependenciesPage <> Nil) And (CurPageID = DependenciesPage.ID) then
+  begin
+    result := checkDependenciesPage;
+  end
+  Else if (CurpageID = ServicePage.Id) Then
+  Begin
+    result := checkServicePageDetails;
+  End
+  Else if (WebPage <> Nil) And (CurPageID = WebPage.ID) then
+  begin
+    result := checkWebDetailsPage;
+  end
+  Else if (AdminPage <> Nil) And (CurPageID = AdminPage.ID) then
+  begin
+    result := checkAdminPage;
+  end
+  Else if (CurPageID = ConnectionPageR2.ID) then
+  begin
+    result := checkDatabaseR2;
+  end
+  Else if (CurPageID = ConnectionPageR3.ID) then
+  begin
+    result := checkDatabaseR3;
+  end
+  Else if (CurPageID = ConnectionPageR4.ID) then
+  begin
+    result := checkDatabaseR4;
+  end
+  Else
+    Result := True;
+end;
 
 Procedure CreatePostInstallPage;
 Begin
-  SctInstallPage := CreateOutputProgressPage('SNOMED CT', 'Load SNOMED CT (~1hr)');
-  LoadInstallPage := CreateOutputProgressPage('Initialize Database', '');
+  LoadInstallPage := CreateOutputProgressPage('Perform Installation tasks', '');
 End;
-
-// ------ Installation Logic -------------------------------------------------------------------------
 
 procedure InitializeWizard();
 Begin
-  CreatePackagesPage;
   CreateDependenciesPage;
   CreateServiceUserPage;
   WebServerPage;
-  CreateConnectionPage;
   CreateAdminPage;
   CreateConfigPage;
-  InstallSctPage;
+
+  CreateConnectionPageR2;
+  CreateDBInstallPageR2;
+  CreateConnectionPageR3;
+  CreatePackagesPageR3;
+  CreateConnectionPageR4;
+  CreatePackagesPageR4;
   CreatePostInstallPage;
-
 End;
 
-Function DetermineStartMode : Integer;
-Begin
-  case cbxStartup.ItemIndex of
-    0: result := SERVICE_AUTO_START;
-    1: result := SERVICE_DEMAND_START;
-    2: result := SERVICE_DISABLED;
-    3: result := SERVICE_AUTO_START;
-  End;
-End;
 
-function BoolToInt(b : Boolean):Integer;
-begin
-  if b then
-    result := 1
-  else
-    result := 0;
-end;
 
-type
-  TMyGUID = record
-    D1: LongWord;
-    D2: Word;
-    D3: Word;
-    D4: array[0..7] of Byte;
-  end;
-
-function CoCreateGuid(var Guid:TMyGuid):integer;
- external 'CoCreateGuid@ole32.dll stdcall';
-
-function inttohex(l:longword; digits:integer):string;
-var hexchars:string;
-begin
- hexchars:='0123456789ABCDEF';
- setlength(result,digits);
- while (digits>0) do begin
-  result[digits]:=hexchars[l mod 16+1];
-  l:=l div 16;
-  digits:=digits-1;
- end;
-end;
-
-function GetGuid():string;
-var Guid:TMyGuid;
-begin
-  if CoCreateGuid(Guid)=0 then begin
-  result:='{'+IntToHex(Guid.D1,8)+'-'+
-           IntToHex(Guid.D2,4)+'-'+
-           IntToHex(Guid.D3,4)+'-'+
-           IntToHex(Guid.D4[0],2)+IntToHex(Guid.D4[1],2)+'-'+
-           IntToHex(Guid.D4[2],2)+IntToHex(Guid.D4[3],2)+
-           IntToHex(Guid.D4[4],2)+IntToHex(Guid.D4[5],2)+
-           IntToHex(Guid.D4[6],2)+IntToHex(Guid.D4[7],2)+
-           '}';
-  end else
-    result:='{00000000-0000-0000-0000-000000000000}';
-end;
+// ------ Installation Logic -------------------------------------------------------------------------
 
 procedure ConfigureIni;
 begin
-  if webpop then
+  MyDllSetIniValue(iniName, 'web.host', webHostName.Text);
+  MyDllSetIniValue(iniName, 'web.http', webOpenPort.Text);
+  MyDllSetIniValue(iniName, 'web.https', webSecurePort.Text);
+  MyDllSetIniValue(iniName, 'web.certname', CertFile.Text);
+  MyDllSetIniValue(iniName, 'web.cacertname', caCertFile.Text);
+  MyDllSetIniValue(iniName, 'web.certpword', certPWord.Text);
+  MyDllSetIniValue(iniName, 'admin.email', AdminPage.Values[0]);
+  MyDllSetIniValue(iniName, 'admin.username', AdminPage.Values[1]);
+  MyDllSetIniValue(iniName, 'tx.loinc', 'type: loinc; source: '+ExpandConstant('{commonappdata}')+'\FHIRServer\loinc-2.64.cache');
+  MyDllSetIniValue(iniName, 'tx.ucum', 'type: ucum; source: '+ExpandConstant('{commonappdata}')+'\FHIRServer\ucum-essence.xml');
+  MyDllSetIniValue(iniName, 'tx.lang', 'type: lang; source: '+ExpandConstant('{commonappdata}')+'\FHIRServer\lang.txt')
+
+  if IsTaskSelected('r2') Then
   begin
-    SetIniString('web', 'host', webHostName.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'http', webOpenPort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'base', webOpenPath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'https', webSecurePort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'secure', webSecurePath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'certname', certFile.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'cacertname', caCertFile.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'certpword', certPWord.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    MyDllSetIniValue(iniName, 'db.r2.server', ConnectionPageR2.values[0]);
+    MyDllSetIniValue(iniName, 'db.r2.database', ConnectionPageR2.values[1]);
+    MyDllSetIniValue(iniName, 'db.r2.username', ConnectionPageR2.values[2]);
+    MyDllSetIniValue(iniName, 'db.r2.password', ConnectionPageR2.values[3]);
+    MyDllSetIniValue(iniName, 'db.r2.driver', dbDriverR2.text);
+    if dbTypeR2.ItemIndex=0 then 
+      MyDllSetIniValue(iniName, 'db.r2.type', 'mssql');
+    if dbTypeR2.ItemIndex=1 then 
+      MyDllSetIniValue(iniName, 'db.r2.type', 'mysql');
+    MyDllSetIniValue(iniName, 'endpoint.r2', 'path: /r2; version: r2; database: dbr2; validate: true');
+   end;
 
-    SetIniString('database', 'server',   ConnectionPage.Values[0], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('database', 'database', ConnectionPage.Values[1], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('database', 'username', ConnectionPage.Values[2], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('database', 'password', ConnectionPage.Values[3], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('database', 'driver', dbDriver.text, ExpandConstant('{app}')+'\fhirserver.ini');
- if dbType.ItemIndex=0 then SetIniString('database', 'type',  'mssql' , ExpandConstant('{app}')+'\fhirserver.ini');
- if dbType.ItemIndex=1 then SetIniString('database', 'type',  'mysql' , ExpandConstant('{app}')+'\fhirserver.ini');
-    
+  if IsTaskSelected('r3') Then
+  begin
+    MyDllSetIniValue(iniName, 'db.r3.server', ConnectionPageR3.values[0]);
+    MyDllSetIniValue(iniName, 'db.r3.database', ConnectionPageR3.values[1]);
+    MyDllSetIniValue(iniName, 'db.r3.username', ConnectionPageR3.values[2]);
+    MyDllSetIniValue(iniName, 'db.r3.password', ConnectionPageR3.values[3]);
+    MyDllSetIniValue(iniName, 'db.r3.driver', dbDriverR3.text);
+    if dbTypeR3.ItemIndex=0 then 
+      MyDllSetIniValue(iniName, 'db.r3.type', 'mssql');
+    if dbTypeR3.ItemIndex=1 then 
+      MyDllSetIniValue(iniName, 'db.r3.type', 'mysql');
+    MyDllSetIniValue(iniName, 'endpoint.r3', 'path: /r3; version: r3; database: dbr3; validate: true');
+   end;
 
+  if IsTaskSelected('r4') Then
+  begin
+    MyDllSetIniValue(iniName, 'db.r4.server', ConnectionPageR4.values[0]);
+    MyDllSetIniValue(iniName, 'db.r4.database', ConnectionPageR4.values[1]);
+    MyDllSetIniValue(iniName, 'db.r4.username', ConnectionPageR4.values[2]);
+    MyDllSetIniValue(iniName, 'db.r4.password', ConnectionPageR4.values[3]);
+    MyDllSetIniValue(iniName, 'db.r4.driver', dbDriverR3.text);
+    if dbTypeR4.ItemIndex=0 then 
+      MyDllSetIniValue(iniName, 'db.r4.type', 'mssql');
+    if dbTypeR4.ItemIndex=1 then 
+      MyDllSetIniValue(iniName, 'db.r4.type', 'mysql');
+    MyDllSetIniValue(iniName, 'endpoint.r4', 'path: /r4; version: r4; database: dbr4; validate: true');
+   end;
 
-    SetIniString('scim', 'salt', GetGuid, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('admin', 'email', AdminPage.Values[0], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('admin', 'username', AdminPage.Values[1], ExpandConstant('{app}')+'\fhirserver.ini');
-  end;
+   MyDllSetIniValue(iniName, 'scim.salt', '');
 end;
 
 var
   dll : longint;
-
-procedure SctCallback(IntParam: Integer; StrParam: WideString);
-begin
-  SctInstallPage.SetProgress(intparam, 100);
-  SctInstallPage.SetText(StrParam, '');
-end;
-
-function getSnomedModule : String;
-begin
-  case cbxModule.itemindex of 
-    0 { International } : result := '900000000000207008';
-    1 { US } :  result := '731000124108';
-    2 { Australia } : result := '32506021000036107';
-    3 { Spanish } : result := '449081005';
-    4 { Denmark } : result := '554471000005108';
-    5 { Netherlands } : result := '11000146104';
-    6 { Sweden } : result := '45991000052106';
-    7 { UK } : result := '999000041000000102';
-  end;
-end;
-
-procedure LoadSnomed;
-var 
-  module, dest, ver, msg : String;
-begin
-  module := getSnomedModule;
-  dest := ExpandConstant('{app}')+'\snomed_'+module+'_'+sctVersion.text+'.cache';
-  SctInstallPage.SetText('Loading Snomed...', '');
-  SctInstallPage.SetProgress(0, 100);
-  SctInstallPage.Show;
-  try
-    msg := MyDllInstallSnomed(ExpandConstant('{app}')+'\fhirserver.exe', SctPage.values[0], dest, 'http://snomed.info/sct/'+module+'/version/'+sctVersion.text, @SctCallback);
-    if msg <> '' then
-      MsgBox('Loading SNOMED CT failed (but the rest of the installation is not affected): '+msg, mbError, MB_OK);
-  finally
-    SctInstallPage.Hide;
-  end;
-  SetIniString('snomed', 'cache', dest, ExpandConstant('{app}')+'\fhirserver.ini');
-end;
 
 procedure InitCallback(IntParam: Integer; StrParam: WideString);
 begin
@@ -1894,49 +2173,120 @@ begin
   LoadInstallPage.SetText(StrParam, '');
 end;
 
-procedure InitialiseDatabase(load : boolean);
+procedure InitialiseDatabase();
 var 
   pw, msg : String;
   done : boolean;
-  pl, pl2, s, p, u : String;
+  pl2, s, p, u : String;
   i : integer;
+  mode : String;
 begin
+  case ConfigPage.SelectedValueIndex of 
+    0 : mode := 'open';
+    1 : mode := 'closed';
+    2 : mode := 'read-only';
+    3 : mode := 'terminology';
+  end;
   LoadInstallPage.SetText('Installing Packages...', '');
   LoadInstallPage.SetProgress(0, 100);
-  pl := '';
   pl2 := '';
-  for i := 0 to Packages.count - 1 do 
-    if PackagesPage.values[i] then
-    begin
-      s := Packages[i];
-      u := copy(s, 1, pos('|', s)-1);
-      s := copy(s, pos('|', s)+1, length(s));
-      s := copy(s, pos('|', s)+1, length(s));
-      p := copy(s, 1, pos('|', s)-1);
-      pl := pl + '|'+p+':'+u;
-      pl2 := pl2+','+p;
-    end;
-  LoadInstallPage.Show;
-  try
-    repeat
-      done := true;
-      msg := MyDllDownloadPackages(pl, @InitCallback);
-      if msg <> '' then
-        done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
-    until done;
+  if IsTaskSelected('r2') and dbInstallR2.checked Then
+    for i := 0 to dbPackagesR2.items.count - 1 do 
+      if dbPackagesR2.checked[i] then
+      begin
+        s := dbPackagesR2.items[i];
+        s := copy(s, 1, pos(':', s)-1);
+        pl2 := pl2+','+s;
+      end;
+  if IsTaskSelected('r3') and dbInstallR3.checked Then 
+    for i := 0 to dbPackagesR3.items.count - 1 do 
+      if dbPackagesR3.checked[i] then
+      begin
+        s := dbPackagesR3.items[i];
+        s := copy(s, 1, pos(':', s)-1);
+        pl2 := pl2+','+s;
+      end;
+  if IsTaskSelected('r4') and dbInstallR4.checked Then 
+    for i := 0 to dbPackagesR4.items.count - 1 do 
+     if dbPackagesR4.checked[i] then
+     begin
+       s := dbPackagesR4.items[i];
+        s := copy(s, 1, pos(':', s)-1);
+       pl2 := pl2+','+s;
+     end;
 
-    LoadInstallPage.SetText('Creating Database...', '');
-    LoadInstallPage.SetProgress(0, 100);
-    repeat
-      done := true;
-      pw := AdminPage.Values[2];
-      if (load) then
-        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, ExpandConstant('{app}')+'\load\load.ini', pl2, @InitCallback)
-      else
-        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\loader.dll', ExpandConstant('{app}')+'\fhirserver.ini', pw, '', '', @InitCallback);
-      if msg <> '' then
-        done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
-    until done;
+    LoadInstallPage.Show;
+    try
+      repeat
+        done := true;
+        msg := MyDllDownloadPackages(pl2, @InitCallback);
+        if msg <> '' then
+          done := MsgBox('Downloading the packages failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
+      until done;
+
+    if IsTaskSelected('r2') and dbInstallR2.checked Then
+    begin
+      pl2 := '';
+      for i := 0 to dbPackagesR2.items.count - 1 do 
+        if dbPackagesR2.checked[i] then
+        begin
+          s := dbPackagesR2.items[i];
+          s := copy(s, 1, pos(':', s)-1);
+          pl2 := pl2+','+s;
+        end;
+      LoadInstallPage.SetText('Initializing R2 Database...', '');
+      LoadInstallPage.SetProgress(0, 100);
+      repeat
+        done := true;
+        pw := AdminPage.Values[2];
+        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, 'r2', pl2, mode, @InitCallback)
+        if msg <> '' then
+          done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
+      until done;
+    end;
+
+    if IsTaskSelected('r3') and dbInstallR3.checked Then
+    begin
+      pl2 := '';
+      for i := 0 to dbPackagesR3.items.count - 1 do 
+        if dbPackagesR3.checked[i] then
+        begin
+          s := dbPackagesR3.items[i];
+          s := copy(s, 1, pos(':', s)-1);
+          pl2 := pl2+','+s;
+        end;
+      LoadInstallPage.SetText('Initializing R3 Database...', '');
+      LoadInstallPage.SetProgress(0, 100);
+      repeat
+        done := true;
+        pw := AdminPage.Values[2];
+        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, 'r3', pl2, mode, @InitCallback)
+        if msg <> '' then
+          done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
+      until done;
+    end;
+
+    if IsTaskSelected('r4') and dbInstallR4.checked Then
+    begin
+      pl2 := '';
+      for i := 0 to dbPackagesR4.items.count - 1 do 
+        if dbPackagesR4.checked[i] then
+        begin
+          s := dbPackagesR4.items[i];
+          s := copy(s, 1, pos(':', s)-1);
+          pl2 := pl2+','+s;
+        end;
+      LoadInstallPage.SetText('Initializing R4 Database...', '');
+      LoadInstallPage.SetProgress(0, 100);
+      repeat
+        done := true;
+        pw := AdminPage.Values[2];
+        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, 'r4', pl2, mode, @InitCallback)
+        if msg <> '' then
+          done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
+      until done;
+    end;
+
   finally
     LoadInstallPage.Hide;
   end;
@@ -1950,48 +2300,39 @@ var
   disp : string;
   resultcode:integer;
 Begin
-
-
   if (CurStep = ssInstall) Then
   Begin
     if ServiceExists('FHIRServer') Then
       SimpleStopService('FHIRServer', true, true);
   End;
 
-if IsTaskSelected('vcredist') Then
-     MsgBox('Install VCREDIST', mbError, MB_YESNO);
-if IsTaskSelected('dbengine') Then
-begin
-     MsgBox('Install DB', mbError, MB_YESNO) ;
-     ShellExec('', 'msiexec.exe', ExpandConstant('/i "{tmp}\mysql-installer-web-community-5.7.20.0.msi"'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode);
-   end;
-if IsTaskSelected('odbc') Then
-     MsgBox('Install ODBC', mbError, MB_YESNO);
+  if IsTaskSelected('vcredist') Then
+    MsgBox('Install VCREDIST', mbError, MB_YESNO);
+  if IsTaskSelected('dbengine') Then
+  begin
+    MsgBox('Install DB', mbError, MB_YESNO) ;
+    ShellExec('', 'msiexec.exe', ExpandConstant('/i "{tmp}\mysql-installer-web-community-5.7.20.0.msi"'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode);
+  end;
+  if IsTaskSelected('odbc') Then
+    MsgBox('Install ODBC', mbError, MB_YESNO);
 
   if (CurStep = ssPostInstall)  Then
   Begin
     If IsTaskSelected('firewall') Then
       SetFirewallException('Fhir Server', ExpandConstant('{app}')+'\FHIRServer.exe');
-    ConfigureIni;
-    if IsTaskSelected('sct') Then
-      LoadSnomed;
-    if IsTaskSelected('db') Then
-
-
-       InitialiseDatabase(isTaskSelected('db\pop'));                                                        
+    if IsTaskSelected('r2') or IsTaskSelected('r3') or IsTaskSelected('r4') Then
+    begin
+      ConfigureIni;
+      InitialiseDatabase();
+    end;
     if IsTaskSelected('svcInst') Then
     begin
-      if IsComponentSelected('r2') then
-        disp := 'FHIR Server DSTU2'
-      else
-        disp := 'FHIR Server STU3';
+      disp := 'FHIR Server ('+'{#SetupSetting("AppVerName")}'+')';
       if ServiceExists('FHIRServer') then
         SimpleDeleteService('FHIRServer');
         
       if not SimpleCreateService('FHIRServer', disp, ExpandConstant('{app}')+'\FHIRServer.exe', DetermineStartMode, ServicePage.Values[0], ServicePage.Values[1], false, false) then
-        MsgBox('Unable to Register FHIRServer Service', mbError, MB_OK)
-      else if IsTaskSelected('svcInst\start') Then
-        SimpleStartService('FHIRServer', false, false);
+        MsgBox('Unable to Register FHIRServer Service', mbError, MB_OK);
     end;
   End;
 End;

@@ -39,32 +39,10 @@ uses
   FHIR.Support.Base,
   FHIR.Database.Manager, FHIR.Database.Dialects, FHIR.Support.Stream,
   FHIR.Base.Objects, FHIR.Base.Factory, FHIR.Base.Utilities,
-  FHIR.Server.Indexing, FHIR.Server.Factory,
+  FHIR.Server.Indexing, FHIR.Server.Factory, FHIR.Server.Version,
   FHIR.Scim.Server;
 
 const
-//  ServerDBVersion = 3;
-//  ServerDBVersion = 4; // added secure flag in versions table
-//  ServerDBVersion = 5; // added scores to search entries table
-//  ServerDBVersion = 6; // added reverse to search entries table
-//  ServerDBVersion = 7; // changed compartment table. breaking change
-//  ServerDBVersion = 8; // added ImplementationGuide column to Types table
-//  ServerDBVersion = 9; // added Observations Table
-//  ServerDBVersion = 10; // added ForTesting flag
-//  ServerDBVersion = 11; // added ResourcePreviousVersion field to SubscriptionQueue
-//  ServerDBVersion = 12; // rework Observations Table (can't do this as an upgrade)
-//  ServerDBVersion = 13; // add Observations.ConceptList
-//  ServerDBVersion = 14; // add Authorizations
-//   ServerDBVersion = 15; // add Uuid to Authorizations
-//  ServerDBVersion = 16; // add PatientId to Authorizations
-//  ServerDBVersion = 17; // add AuthorizationSessions and Connections
-//  ServerDBVersion = 18; // add AsyncTasks
-//  ServerDBVersion = 19; // add RegisteredClients
-//  ServerDBVersion = 20; // add PseudoData
-//  ServerDBVersion = 21; // add ClientRegistrations.PatientContext
-//  ServerDBVersion = 22; // add AsyncTasks.Request and AsyncTasks.TransactionTime
-  ServerDBVersion = 23; // add AsyncTasks.Secure
-
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
   CK_Bases = 2;          // (multiple) list of base urls the server accepts ids for (in addition to itself)
@@ -75,6 +53,11 @@ const
   CK_GlobalSearch = 7; // whether search across all types is allowed
   CK_FHIRVersion = 8; // the version of FHIR for which the database is configured
 
+
+type
+  TFHIRInstallerSecurityMode = (ismUnstated, ismOpenAccess, ismClosedAccess, ismReadOnly, ismTerminologyServer);
+
+function readInstallerSecurityMode(s : String) : TFHIRInstallerSecurityMode;
 
 Type
   TFHIRDatabaseInstaller = class (TFslObject)
@@ -1165,7 +1148,7 @@ begin
   try
     if version > ServerDBVersion then
       raise EDBException.create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
-    if (version < 12) then
+    if (version < ServerDBVersionEarliestSupported) then
       raise EDBException.create('Database must be rebuilt');
     if (version < 13) then
     begin
@@ -1215,6 +1198,21 @@ begin
     FConn.rollback;
     raise;
   end;
+end;
+
+function readInstallerSecurityMode(s : String) : TFHIRInstallerSecurityMode;
+begin
+  s := s.ToLower;
+  if s = 'open' then
+    result := ismOpenAccess
+  else if s = 'closed' then
+    result := ismClosedAccess
+  else if s = 'read-only' then
+    result := ismReadOnly
+  else if s = 'terminology' then
+    result := ismTerminologyServer
+  else
+    result := ismUnstated;
 end;
 
 end.

@@ -379,7 +379,10 @@ begin
     if (code = list[i].code) then
     begin
       result := true;
-      isabstract := cs.isAbstract(list[i]);
+      if cs = nil then
+        isAbstract := false
+      else
+        isAbstract := cs.isAbstract(list[i]);
       displays.Add(list[i].display);
       exit;
     end;

@@ -4896,7 +4896,11 @@ begin
   if x = nil then
   begin
     gen := factory.makeGenerator(ServerContext.ValidatorContext.link);
-    gen.generate(request.Resource);
+    try
+      gen.generate(request.Resource);
+    finally
+      gen.free;
+    end;
   end;
 end;
 

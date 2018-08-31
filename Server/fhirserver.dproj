@@ -108,7 +108,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot; -endpoint r3 -packages ,hl7.fhir.core-3.5.0 -load C:\work\fhirserver\install\load4.ini -password gg</Debugger_RunParams>
+        <Debugger_RunParams>-cmd remount -installer -password &quot;g&quot; -ini &quot;C:\Program Files\FHIRServer\fhirserver.ini&quot; -packages ,hl7.fhir.core#1.0.2,fhir.tx.support#1.0.2 -endpoint r2 -mode open&apos;</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d64</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Server\win64\Debug\</DCC_ExeOutput>
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>

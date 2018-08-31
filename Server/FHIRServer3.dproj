@@ -200,7 +200,7 @@
         <DCCReference Include="FHIR.Tx.Validator.pas"/>
         <DCCReference Include="FHIR.Tx.Web.pas"/>
         <DCCReference Include="FHIR.Server.Constants.pas"/>
-        <DCCReference Include="FHIR.Server.Utilities.pas"/>
+        <DCCReference Include="FHIR.Server.Ini.pas"/>
         <DCCReference Include="FHIR.Server.Search.pas"/>
         <DCCReference Include="FHIR.Server.AuthMgr.pas"/>
         <DCCReference Include="FHIR.Scim.Server.pas"/>

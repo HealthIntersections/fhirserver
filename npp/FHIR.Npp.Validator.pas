@@ -759,7 +759,7 @@ begin
   cs := FCodeSystems[url];
   if cs = nil then
     raise ETerminologyError.create('Unable to resolve code system '+url);
-  result := TFhirCodeSystemProvider.create(FFactory.link, TFHIRCodeSystemEntry.Create(FFactory.wrapCodeSystem(cs.link)));
+  result := TFhirCodeSystemProvider.create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
 end;
 
 function TFHIRPluginValidatorContextR4.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
@@ -769,7 +769,7 @@ begin
   vs := FValueSets[url];
   if vs = nil then
     raise ETerminologyError.create('Unable to resolve value set '+url);
-  result := FFactory.wrapValueSet(vs.link);
+  result := Factory.wrapValueSet(vs.link);
 end;
 
 function TFHIRPluginValidatorContextR4.expand(vs: FHIR.R4.Resources.TFhirValueSet): FHIR.R4.Resources.TFHIRValueSet;
@@ -950,9 +950,9 @@ var
   params : TFHIRExpansionParams;
 begin
   try
-    vsw := FFactory.wrapValueSet(vs.Link);
+    vsw := Factory.wrapValueSet(vs.Link);
     try
-      validator := TValueSetChecker.Create(FFactory.link, doGetVs, doGetCs, '');
+      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, '');
       try
         params := TFHIRExpansionParams.Create;
         try

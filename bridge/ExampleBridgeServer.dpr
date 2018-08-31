@@ -111,7 +111,7 @@ uses
   FHIR.Server.Web in '..\Server\FHIR.Server.Web.pas',
   FHIR.Server.Constants in '..\Server\FHIR.Server.Constants.pas',
   FHIR.Server.Context in '..\Server\FHIR.Server.Context.pas',
-  FHIR.Server.Utilities in '..\Server\FHIR.Server.Utilities.pas',
+  FHIR.Server.Ini in '..\Server\FHIR.Server.Ini.pas',
   FHIR.Server.SessionMgr in '..\Server\FHIR.Server.SessionMgr.pas',
   FHIR.Server.Storage in '..\Server\FHIR.Server.Storage.pas',
   FHIR.Server.Subscriptions in '..\Server\FHIR.Server.Subscriptions.pas',

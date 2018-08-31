@@ -36,8 +36,12 @@ uses
   IdCustomHTTPServer,
   FHIR.Support.Utilities, FHIR.Support.Base, FHIR.Support.Threads,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Factory, FHIR.Base.Common,
-  FHIR.Server.Session;
+  FHIR.Server.Ini, FHIR.Server.Session;
 
+var
+  GCounterWebConnections : integer = 0;
+  GCounterWebRequests : integer = 0;
+  GCounterFHIRRequests : integer = 0;
 
 type
   TProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TFslStringDictionary = nil) of Object;
@@ -74,49 +78,6 @@ type
     Destructor Destroy; override;
 
     Property ServerContext : TFslObject read FServerContext;
-  end;
-
-  TFHIRServerIniComplex = class (TFslObject)
-  private
-    FDetails : TFslStringDictionary;
-    function getValue(name: String): String;
-  public
-    constructor create(value : String);
-    destructor Destroy; override;
-    property value[name : String] : String read getValue; default;
-  end;
-
-  TFHIRServerIniFile = class (TFslObject)
-  private
-    FIni : TIniFile;
-
-    FTerminologies: TFslMap<TFHIRServerIniComplex>;
-    FIdentityProviders: TFslMap<TFHIRServerIniComplex>;
-    FDatabases: TFslMap<TFHIRServerIniComplex>;
-    FEndPoints: TFslMap<TFHIRServerIniComplex>;
-    FDestinations: TFslMap<TFHIRServerIniComplex>;
-
-    function GetFileName : String;
-    function getAdminValue(name: String): String;
-    function getWebValue(name: String): String;
-    function GetRunNumber: integer;
-    procedure SetRunNumber(const Value: integer);
-    procedure readSection(name : String; map : TFslMap<TFHIRServerIniComplex>);
-  public
-    constructor Create(const FileName: string);
-    Destructor Destroy; override;
-    Function Link : TFHIRServerIniFile; overload;
-    property FileName: string read GetFileName;
-
-    property web[name : String] : String read getWebValue;
-    property admin[name : String] : String  read getAdminValue;
-    property terminologies : TFslMap<TFHIRServerIniComplex> read FTerminologies;
-    property databases : TFslMap<TFHIRServerIniComplex> read FDatabases;
-    property endpoints : TFslMap<TFHIRServerIniComplex> read FEndPoints;
-    property identityProviders : TFslMap<TFHIRServerIniComplex> read FIdentityProviders;
-    property destinations : TFslMap<TFHIRServerIniComplex> read FDestinations;
-
-    property runNumber : integer read GetRunNumber write SetRunNumber;
   end;
 
   TFHIRServerSettings = class (TFslObject)
@@ -274,81 +235,6 @@ begin
   inherited;
 end;
 
-{ TFHIRServerIniFile }
-
-constructor TFHIRServerIniFile.Create(const FileName: string);
-begin
-  inherited create;
-  FIni := TIniFile.Create(filename);
-  FTerminologies := TFslMap<TFHIRServerIniComplex>.create;
-  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.create;
-  FDatabases := TFslMap<TFHIRServerIniComplex>.create;
-  FEndPoints := TFslMap<TFHIRServerIniComplex>.create;
-  FDestinations := TFslMap<TFHIRServerIniComplex>.create;
-  readSection('terminologies', FTerminologies);
-  readSection('identity-providers', FIdentityProviders);
-  readSection('endpoints', FEndPoints);
-  readSection('databases', FDatabases);
-  readSection('destinations', FDestinations);
-end;
-
-destructor TFHIRServerIniFile.Destroy;
-begin
-  FTerminologies.Free;
-  FIdentityProviders.Free;
-  FDatabases.Free;
-  FEndPoints.Free;
-  FDestinations.Free;
-  FIni.Free;
-  inherited;
-end;
-
-function TFHIRServerIniFile.getAdminValue(name: String): String;
-begin
-  result := FIni.ReadString('admin', name, '');
-end;
-
-function TFHIRServerIniFile.GetFileName: String;
-begin
-  result := FIni.FileName;
-end;
-
-function TFHIRServerIniFile.GetRunNumber: integer;
-begin
-  result := FIni.ReadInteger('server', 'run-number', 0);
-end;
-
-function TFHIRServerIniFile.getWebValue(name: String): String;
-begin
-  result := FIni.ReadString('web', name, '');
-end;
-
-function TFHIRServerIniFile.Link: TFHIRServerIniFile;
-begin
-  result := TFHIRServerIniFile(inherited Link);
-end;
-
-procedure TFHIRServerIniFile.readSection(name: String; map: TFslMap<TFHIRServerIniComplex>);
-var
-  ts : TStringList;
-  s : String;
-begin
-  ts := TStringList.Create;
-  try
-    FIni.ReadSection(name, ts);
-    for s in ts do
-      map.Add(s, TFHIRServerIniComplex.create(FIni.ReadString(name, s, '')));
-  finally
-    ts.free;
-  end;
-  map.defaultValue := TFHIRServerIniComplex.create('');
-end;
-
-procedure TFHIRServerIniFile.SetRunNumber(const Value: integer);
-begin
-  FIni.writeInteger('server', 'run-number', value);
-end;
-
 { TFHIRServerSettings }
 
 constructor TFHIRServerSettings.Create;
@@ -472,39 +358,6 @@ begin
   finally
     FLock.Unlock;
   end;
-end;
-
-{ TFHIRServerIniComplex }
-
-constructor TFHIRServerIniComplex.create(value: String);
-var
-  sl : TArray<String>;
-  s, l, r : String;
-begin
-  inherited Create;
-  FDetails := TFslStringDictionary.Create;
-  sl := value.Split([';']);
-  for s in sl do
-  begin
-    StringSplit(s, ':', l, r);
-    l := l.Trim;
-    r := r.Trim;
-    if r.StartsWith('"') and r.EndsWith('"') then
-      r := r.Substring(1, r.Length-2);
-    FDetails.Add(l, r);
-  end;
-end;
-
-destructor TFHIRServerIniComplex.Destroy;
-begin
-  FDetails.Free;
-  inherited;
-end;
-
-function TFHIRServerIniComplex.getValue(name: String): String;
-begin
-  if not FDetails.TryGetValue(name, result) then
-    result := '';
 end;
 
 end.

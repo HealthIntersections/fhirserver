@@ -39,7 +39,7 @@ uses
   FHIR.Base.Objects, FHIR.Base.Lang,
   FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   BaseResourceFrame,
-  SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
+  SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog, TranslationsEditorDialog,
   ResourceEditingSupport, System.ImageList, FMX.ImgList;
 
 type
@@ -177,6 +177,13 @@ type
     rbAll: TRadioButton;
     TabItem3: TTabItem;
     ToolbarImages: TImageList;
+    Label25: TLabel;
+    edtVSVersion: TEdit;
+    btnNameTranslations: TButton;
+    Panel5: TPanel;
+    Label26: TLabel;
+    chkMaintained: TCheckBox;
+    chkApproved: TCheckBox;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnFlipComposeClick(Sender: TObject);
@@ -231,6 +238,7 @@ type
     procedure btnMemoCopyrightClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure rbAllClick(Sender: TObject);
+    procedure btnNameTranslationsClick(Sender: TObject);
   private
     tvCompose, tvExpansion : TTreeViewItem;
     function GetValueSet: TFHIRValueSet;
@@ -669,6 +677,13 @@ begin
   editMarkdownDialog(self, 'ValueSet Purpose', btnMemoPurpose, edtPurpose, ValueSet, ValueSet.purposeElement);
 end;
 
+procedure TValueSetEditorFrame.btnNameTranslationsClick(Sender: TObject);
+begin
+  if ValueSet.nameElement = nil then
+    ValueSet.nameElement := TFhirString.Create;
+  editStringDialog(self, 'ValueSet Name', btnNameTranslations, edtVSVersion, ValueSet, ValueSet.nameElement);
+end;
+
 procedure TValueSetEditorFrame.btnExpandClick(Sender: TObject);
 var
   form : TValuesetExpansionForm;
@@ -793,7 +808,7 @@ begin
   ValueSet.url := edtURL.Text;
   ValueSet.name := edtName.Text;
   ValueSet.title := edtTitle.Text;
-  ValueSet.version := edtVersion.Text;
+  ValueSet.version := edtVSVersion.Text;
   ValueSet.publisher := edtPublisher.text;
   ValueSet.description := edtDescription.Text;
   ValueSet.purpose := edtPurpose.Text;
@@ -1295,7 +1310,7 @@ begin
   edtURL.Text := ValueSet.url;
   edtName.Text := ValueSet.name;
   edtTitle.Text := ValueSet.title;
-  edtVersion.Text := ValueSet.version;
+  edtVSVersion.Text := ValueSet.version;
   edtPublisher.text := ValueSet.publisher;
   edtDescription.Text := ValueSet.description;
   edtPurpose.Text := ValueSet.purpose;

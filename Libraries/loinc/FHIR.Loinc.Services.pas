@@ -347,6 +347,7 @@ Type
     function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperator; value: String): TCodeSystemProviderFilterContext;
     function FilterBySubset(op: TFhirFilterOperator; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
     function FilterByHeirarchy(op: TFhirFilterOperator; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
+    function FilterByIsA(value: String; this: boolean): TCodeSystemProviderFilterContext;
     function GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
     function useLang(lang : byte; langs : TLangArray; incLast : boolean) : boolean;
   public
@@ -1882,35 +1883,42 @@ function TLoincServices.Code(context: TCodeSystemProviderContext): string;
 var
   index : integer;
   iDescription, iStems, iOtherNames : Cardinal;
-  iEntry, iCode, iOther : Cardinal;
+  iEntry, iCode, iOther, iConcepts, iDescecendeConcepts, iStem, iParent, iChildren, iDescendents, iDescendantConcepts : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
   lang : byte;
 begin
   index := integer(context)-1;
-  if index > CodeList.Count then
+  if index < CodeList.Count then
+    CodeList.GetInformation(index, nil, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
+  else if index < CodeList.Count + AnswerLists.Count then
   begin
     FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther);
     result := Desc.GetEntry(iCode, lang);
   end
   else
-    CodeList.GetInformation(integer(context)-1, nil, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+  begin
+    FEntries.GetEntry(index - (CodeList.Count + AnswerLists.Count), iCode, iDescription, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem);
+    result := Desc.GetEntry(iCode, lang);
+  end
 end;
 
 function TLoincServices.Display(context: TCodeSystemProviderContext; lang : String): string;
 var
   index : integer;
   iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
-  iEntry : Cardinal;
+  iEntry, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
   ilang : byte;
 begin
   index := integer(context)-1;
-  if index > CodeList.Count then
+  if index < CodeList.Count then
+    CodeList.GetInformation(index, langsForLang(lang), result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
+  else if index < CodeList.Count + AnswerLists.Count then
     FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther)
   else
-    CodeList.GetInformation(index, langsForLang(lang), result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    FEntries.GetEntry(index - (CodeList.Count + AnswerLists.Count), iCode, iDescription, iParent, iChildren, iDescendents, iConcepts, iDescendantConcepts, iStem);
   result := Desc.GetEntry(iDescription, ilang);
 end;
 
@@ -2292,6 +2300,51 @@ begin
   end;
 end;
 
+function TLoincServices.FilterByIsA(value: String; this : boolean): TCodeSystemProviderFilterContext;
+var
+  index, i: Cardinal;
+  aChildren, c : FHIR.Loinc.Services.TCardinalArray;
+  code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
+  s : String;
+begin
+  result := THolder.create;
+  try
+    setLength(aChildren, 0);
+
+    while (value <> '') do
+    begin
+      StringSplit(value, ',', s, value);
+      if (FEntries.FindCode(s, index, FDesc)) then
+      begin
+        if this then
+        begin
+          setLength(aChildren, length(aChildren)+1);
+          aChildren[length(aChildren)-1] := CodeList.Count + AnswerLists.Count + index;
+        end;
+        FEntries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
+        c := Refs.getCardinals(descendants);
+        if (length(c) > 0) then
+        begin
+          setLength(aChildren, length(aChildren) + length(c));
+          for i := 0 to length(c) - 1 do
+            aChildren[length(aChildren) - length(c) + i] := c[i] + CodeList.Count + AnswerLists.Count;
+        end;
+        c := Refs.getCardinals(descendentConcepts);
+        if (length(c) > 0) then
+        begin
+          setLength(aChildren, length(aChildren) + length(c));
+          move(c[0], aChildren[length(aChildren) - length(c)], length(c)*4);
+        end;
+      end;
+    end;
+
+    THolder(result).Children := aChildren;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 function TLoincServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   if prop = 'SCALE_TYP' then
@@ -2320,6 +2373,8 @@ begin
     result := FilterByHeirarchy(op, value, false)
   else if prop = 'ancestor' then
     result := FilterByHeirarchy(op, value, true)
+  else if (prop = 'concept') and (op in [foIsA, foDescendentOf]) then
+    result := FilterByIsA(value, op = foIsA)
   else if prop = 'Type' then
     result := THolder.create
   else

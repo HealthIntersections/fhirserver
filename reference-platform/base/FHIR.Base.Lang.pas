@@ -77,6 +77,7 @@ Type
   ETooCostly = class (EFHIRException);
   EUnsafeOperation = class (EFHIRException);
   EDefinitionException = class (EFHIRException);
+  EFHIRNarrativeException = class (EFHIRException);
 
   ERestfulException = class (EFHIRException)
   Private

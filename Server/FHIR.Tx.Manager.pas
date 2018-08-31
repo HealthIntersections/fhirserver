@@ -40,7 +40,7 @@ uses
   FHIR.Tx.Service, FHIR.Loinc.Services, FHIR.Ucum.Services, FHIR.Snomed.Services, FHIR.Tx.RxNorm, FHIR.Tx.Unii, FHIR.Tx.ACIR,
   FHIR.Tx.Uri, FHIR.Tx.ICD10, FHIR.Tx.AreaCode, FHIR.Tx.CountryCode, FHIR.Tx.UsState, FHIR.Tx.Iso4217,
   FHIR.Tx.MimeTypes, FHIR.Tx.Lang, FHIR.Support.Logging,
-  FHIR.Server.Utilities,
+  FHIR.Server.Utilities, FHIR.Server.Ini,
   YuStemmer;
 
 const
@@ -1064,7 +1064,7 @@ begin
     begin
       vs := FFactory.wrapValueSet(resource.link);
       try
-        if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
+        if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') and (FCommonTerminologies.FUcum <> nil) then
           FCommonTerminologies.FUcum.SetCommonUnits(vs.link);
 
         FValueSetsById.AddOrSetValue(vs.id, vs.Link);
@@ -1568,7 +1568,7 @@ begin
   result := false;
   if (uri1 <> uri2) then
     result := false // todo later - check that concept maps
-  else if (FCommonTerminologies.snomed <> nil) and (uri1 = FCommonTerminologies.DefSnomed.system(nil)) then
+  else if (FCommonTerminologies.DefSnomed <> nil) and (uri1 = FCommonTerminologies.DefSnomed.system(nil)) then
     result := FCommonTerminologies.DefSnomed.Subsumes(code1, code2)
   else
   begin

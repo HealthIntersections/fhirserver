@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, System.Generics.Collections,
+  Windows, SysUtils, Classes, System.Generics.Collections,
   FHIR.Support.Base, FHIR.Support.Threads, FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Collections, FHIR.Support.Logging,
   FHIR.Web.Parsers,
   FHIR.Database.Dialects, FHIR.Web.GraphQL,
@@ -550,35 +550,40 @@ end;
 
 function TFHIROperationEngine.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): String;
 begin
-  StartTransaction;
+  InterlockedIncrement(GCounterFHIRRequests);
   try
-    result := Request.Id;
-    case request.CommandType of
-      fcmdRead : ExecuteRead(request, response, false);
-      fcmdUpdate : ExecuteUpdate(context, request, response);
-      fcmdVersionRead : ExecuteVersionRead(request, response);
-      fcmdDelete : ExecuteDelete(request, response);
-      fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
-      fcmdSearch : ExecuteSearch(request, response);
-      fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
-      fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
-      fcmdTransaction : ExecuteTransaction(context, request, response);
-      fcmdBatch : ExecuteBatch(context, request, response);
-      fcmdOperation : ExecuteOperation(context, request, response);
-      fcmdUpload : ExecuteUpload(context, request, response);
-      fcmdPatch : ExecutePatch(request, response);
-      fcmdValidate : ExecuteValidation(request, response, 'Validation')
-    else
-      raise EFHIRException.create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
-    End;
+    StartTransaction;
+    try
+      result := Request.Id;
+      case request.CommandType of
+        fcmdRead : ExecuteRead(request, response, false);
+        fcmdUpdate : ExecuteUpdate(context, request, response);
+        fcmdVersionRead : ExecuteVersionRead(request, response);
+        fcmdDelete : ExecuteDelete(request, response);
+        fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
+        fcmdSearch : ExecuteSearch(request, response);
+        fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
+        fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
+        fcmdTransaction : ExecuteTransaction(context, request, response);
+        fcmdBatch : ExecuteBatch(context, request, response);
+        fcmdOperation : ExecuteOperation(context, request, response);
+        fcmdUpload : ExecuteUpload(context, request, response);
+        fcmdPatch : ExecutePatch(request, response);
+        fcmdValidate : ExecuteValidation(request, response, 'Validation')
+      else
+        raise EFHIRException.create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
+      End;
 
-    CommitTransaction;
-  except
-    on e:exception do
-    begin
-      RollbackTransaction;
-      raise;
+      CommitTransaction;
+    except
+      on e:exception do
+      begin
+        RollbackTransaction;
+        raise;
+      end;
     end;
+  finally
+    InterlockedDecrement(GCounterFHIRRequests);
   end;
 end;
 

@@ -77,7 +77,7 @@ uses
   FHIR.Tx.Service in '..\Libraries\FHIR.Tx.Service.pas',
   FHIR.Tx.Web in '..\server\FHIR.Tx.Web.pas',
   FHIR.Server.Constants in '..\server\FHIR.Server.Constants.pas',
-  FHIR.Server.Utilities in '..\server\FHIR.Server.Utilities.pas',
+  FHIR.Server.Ini in '..\Server\FHIR.Server.Ini.pas',
   FHIR.Server.Search in '..\server\FHIR.Server.Search.pas',
   FHIR.Server.AuthMgr in '..\server\FHIR.Server.AuthMgr.pas',
   FHIR.Scim.Server in '..\server\FHIR.Scim.Server.pas',

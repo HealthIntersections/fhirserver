@@ -196,7 +196,7 @@
         <DCCReference Include="FHIR.Tx.Validator.pas"/>
         <DCCReference Include="FHIR.Tx.Web.pas"/>
         <DCCReference Include="FHIR.Server.Constants.pas"/>
-        <DCCReference Include="FHIR.Server.Utilities.pas"/>
+        <DCCReference Include="FHIR.Server.Ini.pas"/>
         <DCCReference Include="FHIR.Server.Search.pas"/>
         <DCCReference Include="FHIR.Server.AuthMgr.pas"/>
         <DCCReference Include="FHIR.Scim.Server.pas"/>
@@ -385,14 +385,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServer2.rsm</RemoteName>
+                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRServer2.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

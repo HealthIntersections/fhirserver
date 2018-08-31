@@ -74,7 +74,7 @@ uses
   FHIR.Tx.Service in '..\Libraries\FHIR.Tx.Service.pas',
   FHIR.Tx.Web in '..\server\FHIR.Tx.Web.pas',
   FHIR.Server.Constants in '..\server\FHIR.Server.Constants.pas',
-  FHIR.Server.Utilities in '..\server\FHIR.Server.Utilities.pas',
+  FHIR.Server.Ini in '..\Server\FHIR.Server.Ini.pas',
   FHIR.Server.AuthMgr in '..\server\FHIR.Server.AuthMgr.pas',
   FHIR.Scim.Server in '..\server\FHIR.Scim.Server.pas',
   FHIR.Scim.Search in '..\server\FHIR.Scim.Search.pas',
@@ -229,9 +229,9 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TForm4, Form4);
-  Application.CreateForm(TPackageCacheForm, PackageCacheForm);
+  AApplication.CreateForm(TForm4, Form4);
+  AApplication.CreateForm(TPackageCacheForm, PackageCacheForm);
   Application.CreateForm(TPackageCacheForm, PackageCacheForm);
   Application.CreateForm(TPackageFinderForm, PackageFinderForm);
-  Application.Run;
+  plication.Run;
 end.

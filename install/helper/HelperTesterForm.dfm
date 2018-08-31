@@ -2,7 +2,7 @@ object Form10: TForm10
   Left = 0
   Top = 0
   Caption = 'Form10'
-  ClientHeight = 389
+  ClientHeight = 482
   ClientWidth = 635
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,6 +21,27 @@ object Form10: TForm10
     Width = 31
     Height = 13
     Caption = 'Label1'
+  end
+  object Label2: TLabel
+    Left = 32
+    Top = 400
+    Width = 16
+    Height = 13
+    Caption = 'Ini:'
+  end
+  object Label3: TLabel
+    Left = 32
+    Top = 427
+    Width = 18
+    Height = 13
+    Caption = 'Key'
+  end
+  object Label4: TLabel
+    Left = 32
+    Top = 456
+    Width = 26
+    Height = 13
+    Caption = 'value'
   end
   object Button1: TButton
     Left = 24
@@ -59,7 +80,7 @@ object Form10: TForm10
   end
   object Button4: TButton
     Left = 552
-    Top = 16
+    Top = 8
     Width = 75
     Height = 25
     Caption = 'Button4'
@@ -89,6 +110,48 @@ object Form10: TForm10
     Width = 440
     Height = 17
     TabOrder = 7
+  end
+  object eIni: TEdit
+    Left = 58
+    Top = 397
+    Width = 487
+    Height = 21
+    TabOrder = 8
+    Text = 'c:\program files\FHIRServer\fhirserver.ini'
+  end
+  object eKey: TEdit
+    Left = 56
+    Top = 424
+    Width = 489
+    Height = 21
+    TabOrder = 9
+    Text = 'eKey'
+  end
+  object eValue: TEdit
+    Left = 56
+    Top = 453
+    Width = 489
+    Height = 21
+    TabOrder = 10
+    Text = 'eValue'
+  end
+  object Button6: TButton
+    Left = 551
+    Top = 424
+    Width = 75
+    Height = 25
+    Caption = 'Read'
+    TabOrder = 11
+    OnClick = Button6Click
+  end
+  object Button7: TButton
+    Left = 552
+    Top = 456
+    Width = 75
+    Height = 25
+    Caption = 'Write'
+    TabOrder = 12
+    OnClick = Button7Click
   end
   object od: TOpenDialog
     DefaultExt = '*.dll'

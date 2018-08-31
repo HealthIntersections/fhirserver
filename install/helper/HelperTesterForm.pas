@@ -46,6 +46,14 @@ type
     ProgressBar1: TProgressBar;
     Label1: TLabel;
     od: TOpenDialog;
+    eIni: TEdit;
+    Label2: TLabel;
+    Label3: TLabel;
+    eKey: TEdit;
+    Label4: TLabel;
+    eValue: TEdit;
+    Button6: TButton;
+    Button7: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -53,6 +61,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
   private
     dll : THandle;
     urls : TStringList;
@@ -72,10 +82,16 @@ type
   TInstallerCallback = procedure (IntParam: Integer; StrParam: WideString) of object;
   TMyDllListPackages = Function (Version : PAnsiChar) : PAnsiChar; stdcall;
   TMyDllDownloadPackages = Function (url : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
+  TMyDllInstallDatabase = Function (ExeName, IniFile, Password, version, packages, mode : PAnsiChar; Callback: TInstallerCallback) : PAnsiChar; stdcall;
+  TMyDllGetIniValue = Function (IniFile, Key : PAnsiChar) : PAnsiChar; stdcall;
+  TMyDllSetIniValue = Procedure (IniFile, Key, value : PAnsiChar); stdcall;
 
 var
   MyDllListPackages : TMyDllListPackages;
   MyDllDownloadPackages : TMyDllDownloadPackages;
+  MyDllGetIniValue : TMyDllGetIniValue;
+  MyDllSetIniValue : TMyDllSetIniValue;
+  MyDllInstallDatabase : TMyDllInstallDatabase;
 
 procedure TForm10.Button1Click(Sender: TObject);
 begin
@@ -91,6 +107,15 @@ begin
     @MyDllDownloadPackages := GetProcAddress(dll, 'MyDllDownloadPackages');
     if @MyDllDownloadPackages = nil then
       raise Exception.create('package loader not found');
+    @MyDllGetIniValue := GetProcAddress(dll, 'MyDllGetIniValue');
+    if @MyDllGetIniValue = nil then
+      raise Exception.create('ini get not found');
+    @MyDllSetIniValue := GetProcAddress(dll, 'MyDllSetIniValue');
+    if @MyDllSetIniValue = nil then
+      raise Exception.create('ini setter not found');
+    @MyDllInstallDatabase := GetProcAddress(dll, 'MyDllInstallDatabase');
+    if @MyDllInstallDatabase = nil then
+      raise Exception.create('db installer not found');
   end;
 end;
 
@@ -105,72 +130,38 @@ var
   p : string;
   pl, tl : TArray<String>;
 begin
-  showmessage('a');
   v := edit1.Text;
-  showmessage('b');
   s := MyDllListPackages(PAnsiChar(v));
-  showmessage('c');
   p := s;
   p := p.replace(#13#10, '~');
   pl := p.Split(['~']);
-  showmessage('d');
   CheckListBox1.Items.Clear;
   urls.clear;
-  showmessage('e');
   for p in pl do
   begin
-    showmessage('p: '+p);
     tl := p.Trim.Split(['|']);
-    showmessage('tl-0: '+tl[0]);
-    showmessage('tl-1: '+tl[1]);
-    showmessage('tl-2: '+tl[2]);
-    showmessage('tl-3: '+tl[3]);
     CheckListBox1.Items.Add(tl[2] + ': '+tl[3]);
     CheckListBox1.Checked[CheckListBox1.Items.count- 1] := tl[1] = '1';
-    urls.Add(tl[2]+':'+tl[0]);
+    urls.Add(tl[2]);
   end;
-  showmessage('f');
 end;
+
 
 procedure TForm10.Button4Click(Sender: TObject);
-begin
-(*
-procedure TInstallerCallbackHandler.Callback(IntParam: Integer; StrParam: WideString);
-begin
-  writeln(strParam, ' ', intParam);
-end;
-
 var
-  dll : THandle;
-  funcSCT : TInstallSnomedFunction;
-  funcDB : TInstallDatabaseFunction;
-  cb : TInstallerCallbackHandler;
   msg : PAnsiChar;
 begin
   try
-    Writeln('Installation tester.');
-    Writeln('');
-    cb := TInstallerCallbackHandler.create;
-    dll := LoadLibraryA('C:\work\fhirserver\install\installer.dll');
-    try
-      @funcSCT := GetProcAddress(dll, 'MyDllInstallSnomed');
-      @funcDB := GetProcAddress(dll, 'MyDllInstallDatabase');
-      msg := funcSCT('C:\work\fhirserver\Server\win64_3\Debug\fhirserver3.exe', 'C:\data\terminologies\sct-au\20160430', 'C:\Program Files\FHIRServer\snomed_32506021000036107_20160531.cache', 'http://snomed.info/sct/32506021000036107/version/20160531', cb.Callback);
-      if (msg <> nil) then
-        Writeln('Error: ', msg);
-      msg := funcDB('C:\work\fhirserver\Server\win64_3\Debug\fhirserver3.exe', 'C:\Program Files\FhirServer\fhirserver.ini', 'g', 'C:\Program Files\FhirServer\load\load.ini', cb.Callback);
-      if (msg <> nil) then
-        Writeln('Error: ', msg);
-    finally
-      cb.Free;
-      FreeLibrary(dll);
-    end;
+    msg := MyDllInstallDatabase(
+     'C:\work\fhirserver\Server\win64\Debug\fhirserver.exe', 'C:\Program Files\FHIRServer\fhirserver.ini',
+       'g', 'r2', ',hl7.fhir.core#1.0.2,fhir.tx.support#1.0.2', 'open', progress);
+    if (msg <> nil) then
+      ShowMessage('Error: '+ msg);
+    progress(0, '');
   except
     on E: Exception do
-      Writeln(E.ClassName, ': ', E.Message);
+      ShowMessage(E.ClassName+ ': '+ E.Message);
   end;
-  Readln;
-*)
 end;
 
 procedure TForm10.Button5Click(Sender: TObject);
@@ -181,9 +172,33 @@ begin
   s := '';
   for i := 0 to urls.Count - 1 do
     if CheckListBox1.Checked[i] then
-      s := s + '|'+urls[i];
+      s := s + ','+urls[i];
 
+  showMessage(s);
   showMessage(MyDllDownloadPackages(PAnsiChar(s), progress));
+end;
+
+function StrToPChar(AStr: AnsiString): PAnsiChar;
+begin
+  if AStr = '' then
+    Result := NIL
+  else
+    begin
+    AStr := AStr + #0;
+    GetMem(Result, Length(AStr) + 1);
+    Move(AStr[1], Result^, Length(AStr));
+    end;
+end;
+
+
+procedure TForm10.Button6Click(Sender: TObject);
+begin
+  eValue.text := MyDllGetIniValue(strtopchar(eINi.Text), strtopchar(eKey.Text));
+end;
+
+procedure TForm10.Button7Click(Sender: TObject);
+begin
+  MyDllSetIniValue(strtopchar(eINi.Text), strtopchar(eKey.Text), strtopchar(eValue.text));
 end;
 
 procedure TForm10.FormCreate(Sender: TObject);

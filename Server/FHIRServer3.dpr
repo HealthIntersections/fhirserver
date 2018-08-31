@@ -129,7 +129,7 @@ uses
   FHIR.Tx.Validator in 'FHIR.Tx.Validator.pas',
   FHIR.Tx.Web in 'FHIR.Tx.Web.pas',
   FHIR.Server.Constants in 'FHIR.Server.Constants.pas',
-  FHIR.Server.Utilities in 'FHIR.Server.Utilities.pas',
+  FHIR.Server.Ini in 'FHIR.Server.Ini.pas',
   FHIR.Server.Search in 'FHIR.Server.Search.pas',
   FHIR.Server.AuthMgr in 'FHIR.Server.AuthMgr.pas',
   FHIR.Scim.Server in 'FHIR.Scim.Server.pas',

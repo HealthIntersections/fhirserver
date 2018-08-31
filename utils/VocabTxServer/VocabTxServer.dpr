@@ -108,7 +108,7 @@ uses
   FHIR.R4.Validator in '..\..\reference-platform\r4\FHIR.R4.Validator.pas',
   FHIR.Server.Subscriptions in '..\..\Server\FHIR.Server.Subscriptions.pas',
   FHIR.Web.Socket in '..\..\reference-platform\support\FHIR.Web.Socket.pas',
-  FHIR.Server.Utilities in '..\..\Server\FHIR.Server.Utilities.pas',
+  FHIR.Server.Ini in '..\..\Server\FHIR.Server.Ini.pas',
   FHIR.Server.SessionMgr in '..\..\Server\FHIR.Server.SessionMgr.pas',
   FHIR.Scim.Server in '..\..\Server\FHIR.Scim.Server.pas',
   FHIR.Scim.Search in '..\..\Server\FHIR.Scim.Search.pas',
@@ -194,6 +194,6 @@ uses
 
 begin
   Application.Initialize;
-  Application.CreateForm(TTxServerForm, TxServerForm);
-  Application.Run;
+  AApplication.CreateForm(TTxServerForm, TxServerForm);
+  pplication.Run;
 end.

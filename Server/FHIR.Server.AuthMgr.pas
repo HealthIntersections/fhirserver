@@ -40,7 +40,7 @@ uses
   FHIR.Web.Parsers, FHIR.Database.Manager, FHIR.Database.Dialects,
   FHIR.Web.Facebook, FHIR.Scim.Server, FHIR.Base.Scim, FHIR.Support.Certs, FHIR.Smart.Utilities,
   FHIR.Base.Objects, FHIR.Base.Lang, FHIR.Base.Utilities, FHIR.Base.Common, FHIR.Base.Factory,
-  FHIR.Server.Session, FHIR.Server.Security,
+  FHIR.Server.Session, FHIR.Server.Security, FHIR.Server.Ini,
   FHIR.Server.UserMgr, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage,
   FHIR.Server.Jwt;
 

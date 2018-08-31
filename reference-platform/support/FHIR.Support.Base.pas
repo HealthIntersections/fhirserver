@@ -2062,7 +2062,7 @@ end;
 
 function TFslMap<T>.ContainsKey(const Key: String): Boolean;
 begin
-  Result := HasDefault or (GetBucketIndex(Key, Hash(Key)) >= 0);
+  Result := (GetBucketIndex(Key, Hash(Key)) >= 0);
 end;
 
 function TFslMap<T>.ContainsValue(const Value: T): Boolean;
