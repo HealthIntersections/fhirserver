@@ -1,5 +1,4 @@
-﻿
-[Setup]
+﻿[Setup]
 ; identification.
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
@@ -128,25 +127,6 @@ Source: "C:\work\fhirserver\web\*.*";                                        Des
 
 ; Package Management
 Source: "C:\ProgramData\.fhir\packages\packages.ini";               DestDir: "C:\ProgramData\.fhir\packages"; Flags: onlyifdoesntexist
-
-; Load Data
-Source: "C:\work\fhirserver\install\load2.ini";                           DestDir: {app}\r2; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load3.ini";                           DestDir: {app}\r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load4.ini";                           DestDir: {app}\r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\country-codes.xml";              DestDir: {app}\r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\cvx.xml";                        DestDir: {app}\r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\icpc2.xml";                      DestDir: {app}\r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\nucc.xml";                       DestDir: {app}\r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\patient-group.xml";              DestDir: {app}\r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\patient-list.xml";               DestDir: {app}\r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r3\tslc.xml";                       DestDir: {app}\r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\country-codes.xml";              DestDir: {app}\r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\cvx.xml";                        DestDir: {app}\r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\icpc2.xml";                      DestDir: {app}\r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\nucc.xml";                       DestDir: {app}\r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\patient-group.xml";              DestDir: {app}\r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\patient-list.xml";               DestDir: {app}\r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\resources\r4\tslc.xml";                       DestDir: {app}\r4; Flags: ignoreversion
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
