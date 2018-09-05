@@ -29,7 +29,6 @@ POSSIBILITY OF SUCH DAMAGE.
 Library InstallHelper;
 
 uses
-  FastMM4 in '..\..\Libraries\FMM\FastMM4.pas',
   WIndows,
   SysUtils,
   RegularExpressions,
