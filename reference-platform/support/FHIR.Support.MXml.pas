@@ -1271,7 +1271,7 @@ begin
       If (s[i] = #13) Then
       begin
         b.Append(#10);
-        If (i <= s.Length) And (s[i+1] = #10) Then
+        If (i < s.Length) And (s[i+1] = #10) Then
           inc(i);
       end
       else

@@ -84,7 +84,6 @@
         <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Fpc.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\FHIR.Support.Utilities.pas"/>
         <DCCReference Include="..\..\Server\FHIR.Server.Ini.pas"/>
-        <DCCReference Include="..\..\Libraries\FMM\FastMM4Messages.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.ODBC.Objects.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.Dialects.pas"/>
         <DCCReference Include="..\..\Libraries\db\FHIR.Database.ODBC.Headers.pas"/>

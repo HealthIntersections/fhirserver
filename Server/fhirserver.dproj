@@ -108,9 +108,9 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-cmd exec -installer -password &quot;g&quot; -ini &quot;C:\Program Files\FHIRServer\fhirserver.ini&quot; -packages ,hl7.fhir.core#1.0.2,fhir.tx.support#1.0.2 -endpoint r2 -mode open&apos;</Debugger_RunParams>
+        <Debugger_RunParams>-cmd remount -installer -password &quot;g&quot; -ini &quot;C:\Program Files\FHIRServer\fhirserver.ini&quot; -packages ,hl7.fhir.core#3.5.0,fhir.tx.support#3.5.0,ch.fhir.ig.orf#1.0.0,hl7.fhir.uv.livd#0.1.0,hl7.fhir.uv.sdc#current,hl7.fhir.uv.ips#0.1.0,hl7.fhir.us.davinci-crd#0.2.0,hl7.fhir.uv.pocd#0.2.0,hl7.fhir.uv.genomics-reporting#0.2,hl7.fhir.uv.pddi#0.1.0,hl7.fhir.us.patient-reported-outcomes#0.0.0,hl7.fhir.us.womens-health-registries#0.0.0,hl7.fhir.uv.vhdir#0.2.0,hl7.fhir.us.core.r4#2.0.0 -endpoint r4 -mode open</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_d64</DCC_DcuOutput>
-        <DCC_ExeOutput>C:\work\fhirserver\Server\win64\Debug\</DCC_ExeOutput>
+        <DCC_ExeOutput>C:\work\fhirserver\Exec\64</DCC_ExeOutput>
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>

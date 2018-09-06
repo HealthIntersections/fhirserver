@@ -120,7 +120,7 @@ Source: "C:\work\fhirserver\Exec\32\FHIRServer.debug.exe";                   Des
 Source: "C:\work\fhirserver\Libraries\FMM\32\FastMM_FullDebugMode.dll";      DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode 
 Source: "C:\work\fhirserver\Libraries\js\chakra\x86_release\ChakraCore.dll"; DestDir: "{app}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 
-Source: "C:\work\fhirserver\Exec\fhir.ini";                                  DestDir: "{app}";   Flags: ignoreversion onlyifdoesntexist; DestName: "fhirserver.ini" 
+Source: "C:\work\fhirserver\Exec\fhir.ini";                                  DestDir: "{app}";   Flags: ignoreversion onlyifdoesntexist; DestName: "fhirserver.ini"; Permissions: users-full
 
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*";                                        DestDir: {app}\web; Flags: ignoreversion recursesubdirs

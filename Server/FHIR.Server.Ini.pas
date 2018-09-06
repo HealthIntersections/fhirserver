@@ -177,6 +177,13 @@ begin
     for s in endpoints.Keys do
       if (s <> '') then
         FIni.WriteString('endpoints', s, endpoints[s].save);
+    ts.Clear;
+    FIni.ReadSection('terminologies', ts);
+    for s in ts do
+      FIni.DeleteKey('terminologies', s);
+    for s in terminologies.Keys do
+      if (s <> '') then
+        FIni.WriteString('terminologies', s, terminologies[s].save);
   finally
     ts.Free;
   end;

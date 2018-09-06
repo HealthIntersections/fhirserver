@@ -31,13 +31,13 @@ Library InstallHelper;
 uses
   Windows,
   SysUtils,
+  Dialogs,
   RegularExpressions,
   JclSysUtils,
   FHIR.Support.Base in '..\..\reference-platform\Support\FHIR.Support.Base.pas',
   FHIR.Support.Fpc in '..\..\reference-platform\Support\FHIR.Support.Fpc.pas',
   FHIR.Support.Utilities in '..\..\reference-platform\Support\FHIR.Support.Utilities.pas',
   FHIR.Server.Ini in '..\..\Server\FHIR.Server.Ini.pas',
-  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
   FHIR.Database.ODBC.Objects in '..\..\Libraries\db\FHIR.Database.ODBC.Objects.pas',
   FHIR.Database.Dialects in '..\..\Libraries\db\FHIR.Database.Dialects.pas',
   FHIR.Database.ODBC.Headers in '..\..\Libraries\db\FHIR.Database.ODBC.Headers.pas',
@@ -207,6 +207,9 @@ begin
     else if n = 'admin.email' then ini.admin['email'] := v
     else if n = 'admin.username' then ini.admin['username'] := v
     else if n = 'endpoint' then ini.admin['username'] := v
+    else if n = 'tx.loinc' then ini.terminologies.AddOrSetValue('loinc', TFHIRServerIniComplex.create(v))
+    else if n = 'tx.ucum' then ini.terminologies.AddOrSetValue('ucum', TFHIRServerIniComplex.create(v))
+    else if n = 'tx.lang' then ini.terminologies.AddOrSetValue('lang', TFHIRServerIniComplex.create(v))
     else if (n = 'scim.salt') and (ini.admin['scim-salt'] = '') then ini.admin['scim-salt'] := NewGuidId;
     ini.save;
   finally
@@ -289,7 +292,9 @@ begin
               on e : exception do
                 result := StrToPchar(inttostr(state)+e.message);
             end;
-          end;
+          end
+          else
+            result := '2Database exists but has not previously been installed';
         finally
           meta.free;
         end;
@@ -648,6 +653,7 @@ begin
     try
       o.Callback := Callback;
       s := '"'+exename+'" -cmd remount -installer -password "'+Password+'" -ini "'+IniFile+'" -packages '+packages+' -endpoint '+version+' -mode '+mode;
+//      showmessage(s);
       Execute(s, o.handler);
       result := nil;
     finally

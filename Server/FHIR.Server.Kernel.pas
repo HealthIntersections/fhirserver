@@ -103,12 +103,13 @@ Type
     FLoadStore : boolean;
     FInstaller : boolean;
     Fcallback: TInstallerCallback;
+    FknownVersion : TFHIRVersion;
 
     function connectToDatabase(s : String; details : TFHIRServerIniComplex) : TKDBManager;
     Procedure checkDatabase(db : TKDBManager; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
     procedure ConnectToDatabases();
     procedure LoadTerminologies;
-    procedure InitialiseRestServer;
+    procedure InitialiseRestServer(version : TFHIRVersion);
     procedure StopRestServer;
     procedure UnloadTerminologies;
     procedure CloseDatabase;
@@ -429,7 +430,7 @@ begin
       ConnectToDatabases;
     if FTerminologies = nil then
       LoadTerminologies;
-    InitialiseRestServer;
+    InitialiseRestServer(FknownVersion);
     result := true;
   except
     on e : Exception do
@@ -633,6 +634,8 @@ begin
   else
     raise EFslException.Create('unknown version '+details['version']);
 
+  FknownVersion := v;
+
   dbn := details['database'];
   if dbn = '' then
     raise EFslException.Create('No defined database '+name);
@@ -741,7 +744,7 @@ begin
   FTerminologies := nil;
 end;
 
-procedure TFHIRService.InitialiseRestServer;
+procedure TFHIRService.InitialiseRestServer(version : TFHIRVersion);
 var
   ctxt : TFHIRServerContext;
   store : TFHIRNativeStorageService;
@@ -759,6 +762,12 @@ begin
   begin
     details := FIni.endpoints[s];
     logt('Initialise endpoint '+s+' at '+details['path']+' for '+details['version']);
+
+    case version of
+      fhirVersionRelease2: if details['version'] <> 'r2' then continue;
+      fhirVersionRelease3: if details['version'] <> 'r3' then continue;
+      fhirVersionRelease4: if details['version'] <> 'r4' then continue;
+    end;
 
     if FindCmdLineSwitch('r4') and (details['version'] <> 'r4') then
       continue;
