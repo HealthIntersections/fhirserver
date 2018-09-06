@@ -157,6 +157,7 @@ Type
     function displaySampledData(sd: TFHIRSampledData): String;
     procedure renderCodeableConcept(cc: TFHIRCodeableConcept; x: TFHIRXhtmlNode; showCodeDetails: boolean);
     procedure renderCoding(c: TFHIRCoding; x: TFHIRXhtmlNode; showCodeDetails: boolean);
+    procedure renderMoney(c: TFHIRMoney; x: TFHIRXhtmlNode);
     procedure renderQuantity(q: TFHIRQuantity; x: TFHIRXhtmlNode; showCodeDetails: boolean);
     procedure renderAnnotation(o: TFHIRAnnotation; x: TFHIRXhtmlNode; showCodeDetails: boolean);
     procedure renderIdentifier(ii: TFHIRIdentifier; x: TFHIRXhtmlNode);
@@ -222,7 +223,7 @@ Type
 implementation
 
 uses
-  FHIR.R4.Profiles;
+  FHIR.R4.Profiles, FHIR.Tx.Iso4217;
 
 function tail(path: String): String;
 begin
@@ -1087,6 +1088,8 @@ begin
     renderTiming(TFHIRTiming(e), x)
   else if (e is TFHIRRange) then
     renderRange(TFHIRRange(e), x)
+  else if (e is TFHIRMoney) then
+    renderMoney(TFHIRMoney(e), x)
   else if (e is TFHIRQuantity) then
     renderQuantity(TFHIRQuantity(e), x, showCodeDetails)
   else if (e is TFHIRRatio) then
@@ -1144,6 +1147,14 @@ begin
     x.addText('todo-bundle')
   else if (e <> nil) and not((e is TFHIRAttachment) or (e is TFHIRNarrative) or (e is TFHIRMeta)) then
     raise EFHIRException.create('type ' + e.ClassName + ' not handled yet');
+end;
+
+procedure TFHIRNarrativeGenerator.renderMoney(c: TFHIRMoney; x: TFHIRXhtmlNode);
+begin
+  if (c.currency <> '') then
+    x.addTag('span').addText(currencyForIso4217Code(c.currency)+c.value+' ('+c.currency+')')
+  else
+    x.addTag('span').addText(c.value);
 end;
 
 function TFHIRNarrativeGenerator.displayLeaf(res: TResourceWrapper; ew: TBaseWrapper; defn: TFHIRElementDefinition; x: TFHIRXhtmlNode; name: String;

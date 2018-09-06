@@ -1843,69 +1843,68 @@ var
   coding : TFhirCoding;
   uri : TFhirUri;
   params : TFhirParameters;
+  conn : TKDBConnection;
 begin
+  conn := native(manager).Connection;
   try
     ok := true;
     if request.ResourceName = '' then
     begin
     // well, this operation is always allowed?
-      native(manager).Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids)) as usecount from Tags where TagKey in (Select '+'TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids)) order by Kind, Uri, Code'
+      conn.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids)) as usecount from Tags where TagKey in (Select '+'TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids)) order by Kind, Uri, Code'
     end
     else if request.Id = '' then
     begin
       if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead) and native(manager).ServerContext.ResConfig[request.ResourceName].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
         ok := false
       else
-        native(manager).Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) as usecount  from Tags where TagKey in (Select TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
+        conn.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) as usecount  from Tags where TagKey in (Select TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
     end
-    else if request.SubId = '' then
+    else if request.SubId <> '' then
     begin
-      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
-         Ok := false
-      else
-        native(manager).Connection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount from Tags, VersionTags '+
-        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where ResourceVersionKey in (select MostRecent from Ids where Id = :id and ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
+      manager.check(response, false, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden);
+      Ok := false;
     end
     else
     begin
       if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdVersionRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
         ok := false
       else
-        native(manager).Connection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount  from Tags, VersionTags '+
+        conn.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount  from Tags, VersionTags '+
         'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where VersionId = :vid and ResourceKey in (select ResourceKey from Ids where Id = :id and ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code';
     end;
 
     if ok then
     begin
-      native(manager).Connection.Prepare;
+      conn.Prepare;
       if request.Id <> '' then
       begin
-        native(manager).Connection.BindString('id', request.Id);
+        conn.BindString('id', request.Id);
         if request.SubId <> '' then
-          native(manager).Connection.BindString('vid', request.SubId);
+          conn.BindString('vid', request.SubId);
       end;
-      native(manager).Connection.execute;
+      conn.execute;
       meta := TFHIRMeta.Create;
       try
-        while native(manager).Connection.FetchNext do
+        while conn.FetchNext do
         begin
-          if TFHIRTagCategory(native(manager).Connection.ColIntegerByName['Kind']) = tcProfile then
+          if TFHIRTagCategory(conn.ColIntegerByName['Kind']) = tcProfile then
           begin
             uri := meta.profileList.Append;
-            uri.value := native(manager).Connection.ColStringByName['Code'];
+            uri.value := conn.ColStringByName['Code'];
             if request.Id = '' then
-              uri.AddExtension('http://www.healthintersections.com.au/fhir/ExtensionDefinition/usecount', TFhirInteger.Create(native(manager).Connection.ColStringByName['UseCount']));
+              uri.AddExtension('http://www.healthintersections.com.au/fhir/ExtensionDefinition/usecount', TFhirInteger.Create(conn.ColStringByName['UseCount']));
           end
           else
           begin
             coding := TFhirCoding.create;
             try
-              coding.system := native(manager).Connection.ColStringByName['Uri'];
-              coding.code := native(manager).Connection.ColStringByName['Code'];
-              coding.display := native(manager).Connection.ColStringByName['Display'];
+              coding.system := conn.ColStringByName['Uri'];
+              coding.code := conn.ColStringByName['Code'];
+              coding.display := conn.ColStringByName['Display'];
               if request.Id = '' then
-                coding.AddExtension('http://www.healthintersections.com.au/fhir/ExtensionDefinition/usecount', TFhirInteger.Create(native(manager).Connection.ColStringByName['UseCount']));
-              if TFHIRTagCategory(native(manager).Connection.ColIntegerByName['Kind']) = tcTag then
+                coding.AddExtension('http://www.healthintersections.com.au/fhir/ExtensionDefinition/usecount', TFhirInteger.Create(conn.ColStringByName['UseCount']));
+              if TFHIRTagCategory(conn.ColIntegerByName['Kind']) = tcTag then
                 meta.tagList.add(coding.Link)
               else
                 meta.securityList.add(coding.Link)
@@ -1928,7 +1927,7 @@ begin
         meta.Free;
       end;
 
-      native(manager).Connection.terminate;
+      conn.terminate;
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.Body := '';

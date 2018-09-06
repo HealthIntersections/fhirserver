@@ -1982,6 +1982,9 @@ Begin
                 if oRequest.PostFormat = ffUnspecified then
                   oRequest.PostFormat := detectFormat(oPostStream);
 
+                if (oRequest.Version = fhirVersionRelease4) and (oRequest.PostFormat = ffunspecified) then
+                  Raise ERestfulException.Create('TFhirWebServerEndpoint.BuildRequest', HTTP_ERR_NOT_UNSUPPORTED_MEDIA_TYPE, itUnknown, 'Unsupported media type: '+sContentType, lang);
+
                 parser := factory.makeParser(FContext.ValidatorContext.link, oRequest.PostFormat, lang);
                 try
                   oRequest.resource := parser.parseresource(oPostStream);
@@ -2015,6 +2018,9 @@ Begin
         end;
       end;
     end;
+
+    if (oRequest.Version = fhirVersionRelease4) and (oResponse.Format = ffunspecified) then
+      Raise ERestfulException.Create('TFhirWebServerEndpoint.BuildRequest', HTTP_ERR_NOT_ACCEPTABLE, itUnknown, 'Accept header not supported: '+sContentAccept, lang);
 
     result := oRequest.link;
   Finally

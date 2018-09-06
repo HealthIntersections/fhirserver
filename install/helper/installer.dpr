@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Library InstallHelper;
 
 uses
-  WIndows,
+  Windows,
   SysUtils,
   RegularExpressions,
   JclSysUtils,

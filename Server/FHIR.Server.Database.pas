@@ -2038,7 +2038,7 @@ begin
       begin
         s := request.IfMatch;
 
-        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), itConflict) then
+        if not check(response, s = inttostr(nvid-1), 409, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), itConflict) then
           ok := false;
       end;
     end;
