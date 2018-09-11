@@ -159,7 +159,9 @@ uses
   FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas',
   IGSettings in 'IGSettings.pas' {IGSettingsForm},
   FDownloadForm in 'FDownloadForm.pas' {IGSettingsForm},
-  ImplementationGuideEditor in 'ImplementationGuideEditor.pas' {ImplementationGuideEditorFrame: TFrame};
+  ImplementationGuideEditor in 'ImplementationGuideEditor.pas' {ImplementationGuideEditorFrame: TFrame},
+  FHIR.Support.Lang in '..\reference-platform\support\FHIR.Support.Lang.pas',
+  QuestionnaireContextDialog in 'QuestionnaireContextDialog.pas' {QuestionnaireContextForm};
 
 {$R *.res}
 

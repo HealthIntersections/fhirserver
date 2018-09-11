@@ -223,7 +223,7 @@ Type
 implementation
 
 uses
-  FHIR.R4.Profiles, FHIR.Tx.Iso4217;
+  FHIR.R4.Profiles, FHIR.Support.Lang;
 
 function tail(path: String): String;
 begin

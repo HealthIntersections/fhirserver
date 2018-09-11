@@ -188,12 +188,14 @@ uses
   FHIR.Server.Tags in '..\..\Server\FHIR.Server.Tags.pas',
   FHIR.Server.BundleBuilder in '..\..\Server\FHIR.Server.BundleBuilder.pas',
   FHIR.Server.Factory in '..\..\Server\FHIR.Server.Factory.pas',
-  FHIR.Tools.NDJsonParser in '..\..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas';
+  FHIR.Tools.NDJsonParser in '..\..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas',
+  FHIR.Support.Lang in '..\..\reference-platform\support\FHIR.Support.Lang.pas',
+  FHIR.Server.Utilities in '..\..\Server\FHIR.Server.Utilities.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  AApplication.CreateForm(TTxServerForm, TxServerForm);
-  pplication.Run;
+  Application.CreateForm(TTxServerForm, TxServerForm);
+  Application.Run;
 end.

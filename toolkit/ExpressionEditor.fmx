@@ -1,0 +1,277 @@
+object ExpressionEditorForm: TExpressionEditorForm
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 480
+  ClientWidth = 635
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 1
+  object Label1: TLabel
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 8.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 105.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    Text = 'Expression Editor'
+    TabOrder = 4
+  end
+  object Label2: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 144.000000000000000000
+    Size.Width = 73.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Description'
+    TabOrder = 9
+  end
+  object Label3: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 176.000000000000000000
+    Size.Width = 120.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Name'
+    TabOrder = 10
+  end
+  object Label4: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 208.000000000000000000
+    Text = 'Language'
+    TabOrder = 13
+  end
+  object Panel1: TPanel
+    Anchors = [akLeft, akTop, akRight]
+    Position.X = 8.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 620.000000000000000000
+    Size.Height = 97.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 14
+    object lblDoco: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 601.000000000000000000
+      Size.Height = 81.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.VertAlign = Leading
+      Text = 'lblDoco'
+      TabOrder = 0
+    end
+  end
+  object edtDescription: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 0
+    Position.X = 96.000000000000000000
+    Position.Y = 144.000000000000000000
+    Size.Width = 505.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object btnText: TButton
+    Images = ToolbarImages
+    ImageIndex = 0
+    Position.X = 606.000000000000000000
+    Position.Y = 144.000000000000000000
+    Size.Width = 22.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 16
+    Text = '...'
+    OnClick = btnTextClick
+  end
+  object edtName: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 1
+    Position.X = 96.000000000000000000
+    Position.Y = 176.000000000000000000
+    Size.Width = 529.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object cbeLanguage: TComboEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 2
+    ItemHeight = 19.000000000000000000
+    Items.Strings = (
+      'text/fhirpath'
+      'text/cql'
+      'application/x-fhir-query')
+    ItemIndex = -1
+    Position.X = 96.000000000000000000
+    Position.Y = 208.000000000000000000
+    Size.Width = 531.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtReference: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 3
+    Position.X = 96.000000000000000000
+    Position.Y = 240.000000000000000000
+    Size.Width = 529.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object memExpression: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Position.X = 8.000000000000000000
+    Position.Y = 296.000000000000000000
+    Size.Width = 617.000000000000000000
+    Size.Height = 129.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Viewport.Width = 617.000000000000000000
+    Viewport.Height = 129.000000000000000000
+  end
+  object btnOk: TButton
+    Anchors = [akRight, akBottom]
+    ModalResult = 1
+    Position.X = 456.000000000000000000
+    Position.Y = 440.000000000000000000
+    Size.Width = 80.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    Text = 'OK'
+    OnClick = btnOkClick
+  end
+  object Button3: TButton
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    ModalResult = 2
+    Position.X = 544.000000000000000000
+    Position.Y = 440.000000000000000000
+    Size.Width = 80.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    Text = 'Cancel'
+  end
+  object Label6: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 240.000000000000000000
+    Text = 'Reference'
+    TabOrder = 12
+  end
+  object Label7: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 272.000000000000000000
+    Text = 'Content'
+    TabOrder = 11
+  end
+  object btnClear: TButton
+    Anchors = [akRight, akBottom]
+    ModalResult = 3
+    Position.X = 8.000000000000000000
+    Position.Y = 440.000000000000000000
+    Size.Width = 80.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 8
+    Text = 'Clear'
+  end
+  object ToolbarImages: TImageList
+    Source = <
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              02EE49444154384F7D535B489361187EFEFDCE796873EA96A9790871735A6A4E
+              12344B6B4A4BD0282808225B4CA51BE94A826EC208BA10EAA63CC48C24BA08BD
+              D032B1C252EAC253041E4A130F6953E7DCDA9A3AE7BFF57D5F22AEA0075EBEF7
+              7F4FDFF73FEFFB72F80B15151561E4C8F6F97C2A8EE322FF58B142BEBF0A8230
+              6832999CDB3606BF0246A351A7D11EAFFA619695F64C3BC4336607B32746CB90
+              A38DDD544B163A4686DED7373535BD610E027EFBA4C925AA63E52D8FBA2CD953
+              AB6E3E69BF1CE74FAA90971E03D7860743234B7CFF94905A54ACD3272A4463C3
+              C3C393344FB49DAC4BC92D7FDCDA33AB6CB9A5C7D69617A69BC590860632A13A
+              B5515F6BCF8C925CD44C73682E6F3018A407B34EDC69E85ED6BEBA7F169D1FA6
+              A1498C40714E0206C697680CF2336361FFE586D9EA426D551EAAEBFA424B8E26
+              49E363145D1CA954284EBBD8D5F1F65B605C9414738B0EC8A512C84225B0DAD7
+              59814879301C2E37EC4E37E2F7C9F07DC9890B59511E87F9853E8030ADFE3838
+              1FD85157867069100AAF3D47DBDD5248C43C5A5E8DB10297F4A9707B049CAA6E
+              C3B3DAD3B0393760B8DD2DD64A7C2ACA81628D909491AC24D5A5D812BC488E93
+              333D5C16C484EAD4467D54A7B1AE350FADAD6024EE06E7DF593F88387F1F79BD
+              400BAC840489F179D242FEDF099EE730356F67BACDB1C184EAD42612714CA7B1
+              7B42C420C365DB21B1BB773A50152FC797591BF6860723823C7DC1E26237C52A
+              43B14A0A2DDBD69192108E89393BCE1C523012F9CCCC4CAB26419936342D685A
+              097961847DCA74C30D1DBC3E1FB49A28DCBB5E8045EB1A0AB2E25073F9089E74
+              8E429721B45BCCB30F4574B6C786DE3D3096A92DE76ADA919B1E8DA75DE370AE
+              6DB2DB291CAE4DD611EAA331C6B214CB08C9696C6CFCB9C30A1DE534328DF59D
+              130A9E1721F54004635B1CC0A37F7491FCDA2A04D285ABA56ACB446FF315B20F
+              2F699E1FAD95959545EAC3F995FF5BA6B14F7D0D04AF9983E09F9EED5A673539
+              2369AB886E2532E9F57A07FCD719F80DFC85509CE636CC1E0000000049454E44
+              AE426082}
+            FileName = 'C:\temp\flag-un.png'
+          end>
+        Name = 'lang-translations'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              030C49444154384F5D535B48146114FEFE99DD556758DD5DCD5D6FEBBAB85A52
+              E1250CCB28E8F2104444A9094A3710A48888A25E8AD2870A7AE8A11022D12C31
+              F021CBA20B0495445086A6A56566AE656A2DBBBADBACBBB33B33CD3F9AA41F9C
+              999F73BEEFFFE13BE7102CC1E9DA5AF3CAB0772727CB8506454EA6399190A9A0
+              C276F7C7C8F72F5D6F9FD188F35874C19943FB77EC5B9577C5114C74B2EFC6E1
+              99F06BF9A49478448BD2E1E63D2337FB068ED53736776A0515ECFC1F670FED2F
+              AB7616B5673FF72532E3AA30DD04B279390CABD3A00F89603E4CC2F2256C4ECB
+              CF2DB73892075FF4F40E501D433FF4E52A67519BAB6F860DD4EF02A232C2E7F6
+              E061A25D0B7AA6395ACB79EF6329976AA8963D5553967020B7E09EEB85D7327B
+              B51AFAAE41B00E0B74EB72C1F58F20550E21A9C00ECCF8413C7E8887B7C27AED
+              1593B13EA384CFCA6E21B7F7555457E46C6B119F0D83B31A214CFAC11B63005E
+              8DE959FA08608A038430844018BC2D1EC1A90062B664E3CEF0D3033A8E486B74
+              DD3F205CA98410CFC150D384C0E54A30061DF8CE379A5ED8510C598C22F6C82D
+              0817CA11F507C19DEF0067940B1983A25895500409CBEDE05393109564181D36
+              F019768C9A2D5AD033CDD11AE5502E8211E8A1583513FF0759DCD94560C8929A
+              0289A1434262F598F93406E1A7072C4B10704F42F83E0687CFAB053DD31CC310
+              8D43B9E0F48810E2593091BCFC06D66E42C4ED83DEAC9A161F0BFC16E65E5AC6
+              03FE1022BE59E833CD90C6A6818D599A89AC6B6D9EDB996ED99BF8356C0AA9E6
+              8163A1B319D5C9DA8D51754CA6F3D2613AB91DF8E545B4301391839BA07FD08B
+              913C65F4C974E8384367BBA5EFE3D1E152AB1477A20D627E26F07810A2DA360A
+              37CB41FC1386F26840AB51CE970D2912D55C6C68F02DB84247B92ABBB8CDD535
+              C18255BDCDB200AE6590752C988F93EA4D5E40EDC250A94D6AFDFAB6B2AEB1B9
+              9DEA167681CEB6C569EDCD28495B9B604B31339F7FC3F37A14B37D3FC1A9F568
+              B11DDF564823AD43FD07EB6E34DD9D532DD9468A7FEB1C27458B0C8424D35689
+              507E0565A6E7431C3A16AF33F01722A245A5BB13057E0000000049454E44AE42
+              6082}
+            FileName = 'C:\temp\flag-un.png'
+          end>
+        Name = 'flag-2'
+      end>
+    Destination = <
+      item
+        Layers = <
+          item
+            Name = 'lang-translations'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'flag-2'
+          end>
+      end>
+    Left = 8
+    Top = 452
+  end
+end

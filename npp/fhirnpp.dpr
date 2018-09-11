@@ -194,7 +194,8 @@ uses
   VirtualTrees.ClipBoard in '..\..\Components\treeview\Source\VirtualTrees.ClipBoard.pas',
   VirtualTrees.Utils in '..\..\Components\treeview\Source\VirtualTrees.Utils.pas',
   VirtualTrees.Export in '..\..\Components\treeview\Source\VirtualTrees.Export.pas',
-  VTHeaderPopup in '..\..\Components\treeview\Source\VTHeaderPopup.pas';
+  VTHeaderPopup in '..\..\Components\treeview\Source\VTHeaderPopup.pas',
+  FHIR.Support.Lang in '..\reference-platform\support\FHIR.Support.Lang.pas';
 
 {$R *.res}
 

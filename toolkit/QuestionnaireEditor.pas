@@ -40,7 +40,7 @@ uses
   FHIR.Base.Objects, FHIR.Version.Constants, FHIR.Version.Types, FHIR.Version.Resources, FHIR.Version.Utilities, FHIR.Tools.Indexing, FHIR.Version.IndexInfo,
   FHIR.Version.Questionnaire2,
   BaseResourceFrame,
-  ToolkitUtilities, QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel, TranslationsEditorDialog, UsageContextForm;
+  ToolkitUtilities, QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel, TranslationsEditorDialog, UsageContextForm, QuestionnaireContextDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -164,6 +164,14 @@ type
     btnRemoveCode: TButton;
     gcUsageCode: TStringColumn;
     gcUsageValue: TStringColumn;
+    Label31: TLabel;
+    gridContext: TGrid;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    StringColumn7: TStringColumn;
+    StringColumn8: TStringColumn;
+    StringColumn9: TStringColumn;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnDescriptionClick(Sender: TObject);
@@ -190,6 +198,11 @@ type
     procedure btnAddCodeClick(Sender: TObject);
     procedure btnEditCodeClick(Sender: TObject);
     procedure btnRemoveCodeClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure gridContextGetValue(Sender: TObject; const ACol, ARow: Integer;
+      var Value: TValue);
   private
     flatItems : TFslList<TFhirQuestionnaireItem>;
     FLoading : boolean;
@@ -563,6 +576,74 @@ begin
   editStringDialog(self, 'Questionnaire Title', btnTitle, edtTitle, Questionnaire, Questionnaire.titleElement);
 end;
 
+procedure TQuestionnaireEditorFrame.Button1Click(Sender: TObject);
+var
+  dlg : TQuestionnaireContextForm;
+begin
+  dlg := TQuestionnaireContextForm.create(nil);
+  try
+    dlg.Context := TFHIRExtension.Create;
+    dlg.Context.url := 'http://hl7.org/fhir/StructureDefinition/questionnaire-context';
+    if dlg.ShowModal = mrOk then
+    begin
+      Questionnaire.extensionList.Add(dlg.Context.Link);
+      grdUseContext.RowCount := Questionnaire.GetExtensionCount('http://hl7.org/fhir/StructureDefinition/questionnaire-context');
+    end;
+  finally
+    dlg.free;
+  end;
+end;
+
+procedure TQuestionnaireEditorFrame.Button2Click(Sender: TObject);
+var
+  dlg : TQuestionnaireContextForm;
+  i : integer;
+  ext : TFhirExtension;
+begin
+  i := gridContext.Row;
+  if i < 0 then
+    i := 0;
+
+  ext := Questionnaire.getExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-context', i);
+  dlg := TQuestionnaireContextForm.create(nil);
+  try
+    dlg.Context := ext.Clone;
+    if dlg.ShowModal = mrOk then
+    begin
+      ext.Assign(dlg.Context);
+      grdUseContext.RowCount := 0;
+      grdUseContext.RowCount := Questionnaire.getExtensionCount('http://hl7.org/fhir/StructureDefinition/questionnaire-context');
+      grdUseContext.Row := i;
+    end;
+  finally
+    dlg.free;
+  end;
+end;
+
+function genContext (ext : TFHIRExtension) : String;
+begin
+  result := ext.getExtensionByUrl('name').value.primitiveValue;
+end;
+
+procedure TQuestionnaireEditorFrame.Button3Click(Sender: TObject);
+var
+  i : integer;
+  ext : TFhirExtension;
+begin
+  i := gridContext.Row;
+  ext := Questionnaire.getExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-context', i);
+  if i >= 0 then
+  begin
+    if FMX.Dialogs.MessageDlg('Delete '+genContext(ext)+'?', TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes then
+    begin
+      Questionnaire.RemoveExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-context', i);
+      grdUseContext.RowCount := 0;
+      grdUseContext.RowCount := Questionnaire.getExtensionCount('http://hl7.org/fhir/StructureDefinition/questionnaire-context');
+      grdUseContext.Row := i-1;
+    end;
+  end;
+end;
+
 procedure TQuestionnaireEditorFrame.btnAddQuestionItemClick(Sender: TObject);
 begin
   ResourceIsDirty := true;
@@ -788,6 +869,27 @@ begin
   end;
 end;
 
+procedure TQuestionnaireEditorFrame.gridContextGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  ext : TFhirExtension;
+begin
+  ext := Questionnaire.getExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-context', aRow);
+  case ACol of
+    0 : if ext.hasExtension('name') then
+          value := ext.getExtensionByUrl('name')
+        else
+          value := '';
+    1 : if ext.hasExtension('type') then
+          value := ext.getExtensionByUrl('type')
+        else
+          value := '';
+    2 : if ext.hasExtension('description') then
+          value := ext.getExtensionByUrl('description')
+        else
+          value := '';
+  end;
+end;
+
 function displayLang(lang : String) : string;
 begin
   if lang = '' then
@@ -1008,6 +1110,7 @@ end;
 procedure TQuestionnaireEditorFrame.loadSDC;
 var
   id : TFhirIdentifier;
+  exl : TFhirExtensionList;
 begin
   Loading := true;
   try
@@ -1038,6 +1141,7 @@ begin
       edtSDCTitleStyle.Text := '';
       edtSDCTitleXtml.Text := '';
     end;
+    gridContext.RowCount := Questionnaire.getExtensionCount('http://hl7.org/fhir/StructureDefinition/questionnaire-context');
   finally
     loading := false;
   end;

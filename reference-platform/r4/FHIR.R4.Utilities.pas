@@ -251,6 +251,11 @@ type
     procedure addExtension(url : String; value : String); overload;
   end;
 
+  TFHIRExpressionHelper = class helper for TFHIRExpression
+  public
+    function display : String;
+  end;
+
   TFHIRElementHelper = class helper for TFHIRElement
   public
     function addExtension(ext : TFHIRExtension) : TFHIRExtension; overload;
@@ -266,6 +271,7 @@ type
     procedure removeExtension(url : String);
     procedure setExtension(url : String; t : TFHIRType);
     procedure setExtensionString(url, value : String);
+    procedure setExtensionMarkdown(url, value : String);
     procedure setExtensionCanonical(url, value : String);
     procedure setExtensionInteger(url, value : String);
     procedure setExtensionDecimal(url, value : String);
@@ -351,14 +357,16 @@ type
     function addExtension(url : String) : TFhirExtension; overload;
     function addExtension(url : String; v : String) : TFhirExtension; overload;
     function hasExtension(url : String) : boolean;
-    function getExtension(url : String) : Integer;
+    function getExtension(url : String) : Integer; overload;
+    function getExtension(url : String; index : integer) : TFhirExtension; overload;
     function getExtensionValue(url : String) : TFHIRType;
     function forceExtension(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
     function getExtensionByUrl(url : String) : TFHIRExtension;
-    procedure removeExtension(url : String);
+    procedure removeExtension(url : String); overload;
+    procedure removeExtension(url : String; index : integer); overload;
     procedure setExtensionString(url, value : String);
     procedure checkNoModifiers(place, role : String);
   end;
@@ -2264,6 +2272,16 @@ begin
   ext.value := TFhirInteger.Create(value);
 end;
 
+procedure TFHIRElementHelper.setExtensionMarkdown(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirMarkdown.Create(value);
+end;
+
 procedure TFHIRElementHelper.setExtensionString(url, value: String);
 var
   ext : TFhirExtension;
@@ -2336,6 +2354,22 @@ begin
   for i := 0 to self.ExtensionList.Count -1 do
     if self.ExtensionList[i].url = url then
       result := i;
+end;
+
+function TFHIRDomainResourceHelper.getExtension(url: String; index: integer): TFhirExtension;
+var
+  i, t : integer;
+begin
+  result := nil;
+  t := 0;
+  for i := 0 to self.ExtensionList.Count -1 do
+    if self.ExtensionList[i].url = url then
+    begin
+      if t = index then
+        exit(self.ExtensionList[i])
+      else
+        inc(t);
+    end;
 end;
 
 function TFHIRDomainResourceHelper.getExtensionByUrl( url: String): TFHIRExtension;
@@ -2411,6 +2445,26 @@ end;
 function TFHIRDomainResourceHelper.hasExtension(url: String): boolean;
 begin
   result := getExtension(url) > -1;
+end;
+
+procedure TFHIRDomainResourceHelper.removeExtension(url: String; index: integer);
+var
+  i, t : integer;
+begin
+  t := 0;
+  for i := 0 to extensionList.count - 1 do
+  begin
+    if extensionList[i].url = url then
+    begin
+      if t = index then
+      begin
+        extensionList.Remove(i);
+        exit;
+      end
+      else
+        inc(t);
+    end;
+  end;
 end;
 
 procedure TFHIRDomainResourceHelper.removeExtension(url: String);
@@ -3964,6 +4018,8 @@ begin
     result := TFHIRReference.create
   else if name = 'Narrative' then
     result := TFHIRNarrative.create
+  else if name = 'Money' then
+    result := TFHIRMoney.create
   else if name = 'Meta' then
     result := TFHIRMeta.create
   else if name = 'xhtml' then
@@ -6142,6 +6198,16 @@ end;
 procedure TFhirBinaryHelper.SetContent(const Value: TBytes);
 begin
   Data := value;
+end;
+
+{ TFHIRExpressionHelper }
+
+function TFHIRExpressionHelper.display: String;
+begin
+  if expression <> '' then
+    result := expression
+  else
+    result := reference;
 end;
 
 end.

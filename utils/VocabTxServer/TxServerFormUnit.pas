@@ -40,7 +40,7 @@ uses
   FHIR.R4.Resources, FHIR.R4.Parser, FHIR.R4.Factory,
   FHIR.Tx.Manager,
   FHIR.Server.Security, FHIR.Server.Context, FHIR.Server.UserMgr, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Support.Logging,
-  VocabPocServerCore, FHIR.Tx.Server, FHIR.Server.WebSource;
+  VocabPocServerCore, FHIR.Tx.Server, FHIR.Server.WebSource, FHIR.Server.Ini;
 
 const
   MIN_WIDTH = 400;

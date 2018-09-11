@@ -238,6 +238,8 @@
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.Factory.pas"/>
         <DCCReference Include="..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Lang.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

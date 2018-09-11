@@ -415,6 +415,11 @@
             <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Lang.pas"/>
+        <DCCReference Include="QuestionnaireContextDialog.pas">
+            <Form>QuestionnaireContextForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

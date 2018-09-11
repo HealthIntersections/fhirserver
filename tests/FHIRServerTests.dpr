@@ -290,7 +290,10 @@ uses
   FHIR.Server.IndexingR4 in '..\Server\FHIR.Server.IndexingR4.pas',
   FHIR.Server.SubscriptionsR4 in '..\Server\FHIR.Server.SubscriptionsR4.pas',
   FHIR.Server.OperationsR4 in '..\Server\FHIR.Server.OperationsR4.pas',
-  FHIR.Tests.FullServer in 'FHIR.Tests.FullServer.pas';
+  FHIR.Tests.FullServer in 'FHIR.Tests.FullServer.pas',
+  FHIR.Support.Lang in '..\reference-platform\support\FHIR.Support.Lang.pas',
+  FHIR.Server.Utilities in '..\Server\FHIR.Server.Utilities.pas',
+  FHIR.Server.Version in '..\Server\FHIR.Server.Version.pas';
 
 var
   runner : ITestRunner;

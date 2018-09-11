@@ -186,7 +186,9 @@ uses
   FHIR.Tools.ValueSets in '..\reference-platform\tools\FHIR.Tools.ValueSets.pas',
   FHIR.Tools.CodeSystemProvider in '..\reference-platform\tools\FHIR.Tools.CodeSystemProvider.pas',
   FHIR.Server.Factory in '..\Server\FHIR.Server.Factory.pas',
-  FHIR.Tools.NDJsonParser in '..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas';
+  FHIR.Tools.NDJsonParser in '..\reference-platform\tools\FHIR.Tools.NDJsonParser.pas',
+  FHIR.Server.Utilities in '..\Server\FHIR.Server.Utilities.pas',
+  FHIR.Support.Lang in '..\reference-platform\support\FHIR.Support.Lang.pas';
 
 var
   gsrv : TExampleFhirServer;

@@ -75,7 +75,7 @@ Uses
   FHIR.R3.Types, FHIR.R3.Resources, FHIR.R3.Constants, FHIR.R3.Utilities, FHIR.R3.Factory,
   FHIR.Tools.Indexing,
   FHIR.Server.Session, FHIR.Server.UserMgr, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.Web, FHIR.Server.Utilities, FHIR.Server.WebSource,
-  FHIR.Server.Factory, FHIR.Server.Indexing, FHIR.Server.Subscriptions;
+  FHIR.Server.Factory, FHIR.Server.Indexing, FHIR.Server.Subscriptions, FHIR.Server.Ini;
 
 Const
   SYSTEM_ID = 'http://example.org/mrn-id';
@@ -158,7 +158,7 @@ Type
     // no OAuth Support
 
     // server total counts:
-    function FetchResourceCounts(comps : TFslList<TFHIRCompartmentId>) : TStringList; override;
+    procedure FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList); override;
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -669,12 +669,11 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
-function TExampleFhirServerStorage.FetchResourceCounts(comps : TFslList<TFHIRCompartmentId>): TStringList;
+procedure TExampleFhirServerStorage.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList);
 begin
   FData.FLock.Lock();
   try
-    result := TStringList.Create;
-    result.AddObject('Patient', TObject(FData.FPatients.FRows.Count));
+    counts.AddObject('Patient', TObject(FData.FPatients.FRows.Count));
   finally
       FData.FLock.Unlock;
   end;

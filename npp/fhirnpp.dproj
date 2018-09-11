@@ -332,6 +332,7 @@
         <DCCReference Include="..\..\Components\treeview\Source\VirtualTrees.Utils.pas"/>
         <DCCReference Include="..\..\Components\treeview\Source\VirtualTrees.Export.pas"/>
         <DCCReference Include="..\..\Components\treeview\Source\VTHeaderPopup.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Lang.pas"/>
         <RcCompile Include="helloworldres.rc">
             <Form>helloworldres.res</Form>
         </RcCompile>
@@ -365,7 +366,7 @@
                 <Platform value="Win64">True</Platform>
             </Platforms>
             <Deployment Version="3">
-                <DeployFile LocalName="C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins\fhirnpp.dll" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\graha\AppData\Roaming\Notepad++\plugins\fhirnpp.dll" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>fhirnpp.dll</RemoteName>
                         <Overwrite>true</Overwrite>

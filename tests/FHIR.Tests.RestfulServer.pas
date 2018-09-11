@@ -40,7 +40,7 @@ uses
   FHIR.Client.Base, FHIR.Version.Client, FHIR.Base.Scim,
   FHIR.Smart.Utilities, FHIR.Tests.SmartLogin,
   FHIR.Tx.Server,
-  FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Server.Indexing, FHIR.Server.Session,
+  FHIR.Server.Constants, FHIR.Server.Utilities, FHIR.Server.Context, FHIR.Server.Storage, FHIR.Server.UserMgr, FHIR.Server.Indexing, FHIR.Server.Session, FHIR.Server.Ini,
   FHIR.Server.Web, FHIR.Server.WebSource, FHIR.Server.Factory, FHIR.Server.Subscriptions, FHIR.Server.Javascript, FHIR.Server.JWT,
   FHIR.Server.ValidatorR4, FHIR.Server.IndexingR4, FHIR.Server.SubscriptionsR4;
 
@@ -141,7 +141,7 @@ Type
     function getClientName(id : String) : string; override;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
 
-    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; override;
+    procedure FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList); override;
     procedure Sweep; override;
     procedure CloseFhirSession(key: integer); override;
     procedure QueueResource(r: TFhirResourceV); overload; override;
@@ -345,7 +345,7 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
-function TTestStorageService.FetchResourceCounts(compList: TFslList<TFHIRCompartmentId>): TStringList;
+procedure TTestStorageService.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList);
 begin
   raise EFslException.Create('Not Implemented');
 end;

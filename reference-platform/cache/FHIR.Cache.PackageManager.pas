@@ -1072,12 +1072,26 @@ begin
   p := TPackageDefinition.Create;
   try
     p.Id := 'hl7.fhir.core';
-    p.Version := '3.5.0';
+    p.Version := '3.6.0';
     p.Canonical := 'http://hl7.org/fhir';
     p.Date := Now;
     p.Description := 'FHIR Current Build';
-    p.FHIRVersion := '3.5.0';
+    p.FHIRVersion := '3.6.0';
     p.Url := 'http://build.fhir.org/';
+    list.Add(p.Link);
+  finally
+    p.Free;
+  end;
+
+  p := TPackageDefinition.Create;
+  try
+    p.Id := 'hl7.fhir.core';
+    p.Version := '3.5.0';
+    p.Canonical := 'http://hl7.org/fhir';
+    p.Date := EncodeDate(2018, 8, 21);
+    p.Description := 'FHIR Sept 2018 Ballot';
+    p.FHIRVersion := '3.5.0';
+    p.Url := 'http://hl7.org/fhir/2018Sep';
     list.Add(p.Link);
   finally
     p.Free;
@@ -1091,7 +1105,7 @@ begin
     p.Date := EncodeDate(2017, 4, 19);
     p.Description := 'FHIR R3';
     p.FHIRVersion := '3.0.1';
-    p.Url := 'http://hl7.org/fhir';
+    p.Url := 'http://hl7.org/fhir/STU3';
     list.Add(p.Link);
   finally
     p.Free;
@@ -1105,7 +1119,7 @@ begin
     p.Date := EncodeDate(2016, 5, 15);
     p.Description := 'FHIR R2';
     p.FHIRVersion := '1.0.2';
-    p.Url := 'http://hl7.org/fhir';
+    p.Url := 'http://hl7.org/fhir/DSTU2';
     list.Add(p.Link);
   finally
     p.Free;

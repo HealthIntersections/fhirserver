@@ -99,7 +99,7 @@ type
     // no OAuth Support
 
     // server total counts:
-    function FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>) : TStringList; override;
+    procedure FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts : TStringList); override;
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -165,11 +165,10 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
-function TTerminologyServerStorage.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>): TStringList;
+procedure TTerminologyServerStorage.FetchResourceCounts(compList : TFslList<TFHIRCompartmentId>; counts: TStringList);
 begin
-  result := TStringList.create;
-  result.AddObject('ValueSet', TObject(FServer.ValueSetCount));
-  result.AddObject('CodeSystem', TObject(FServer.CodeSystemCount));
+  counts.AddObject('ValueSet', TObject(FServer.ValueSetCount));
+  counts.AddObject('CodeSystem', TObject(FServer.CodeSystemCount));
 end;
 
 function TTerminologyServerStorage.getClientInfo(id: String): TRegisteredClientInformation;

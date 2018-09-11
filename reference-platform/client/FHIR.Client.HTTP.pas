@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   FHIR.Support.Utilities, FHIR.Support.Stream, FHIR.Support.Json,
   IdHTTP, IdSSLOpenSSL, IdComponent,
-  {$IFNDEF OSX}FHIR.Web.WinInet, {$ENDIF}
+  {$IFDEF MSWINDOWS}FHIR.Web.WinInet, {$ENDIF}
   FHIR.Base.Objects, FHIR.Base.Parser, FHIR.Base.Common, FHIR.Client.Base, FHIR.Base.Lang,
   FHIR.Smart.Utilities;
 

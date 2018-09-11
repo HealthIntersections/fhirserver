@@ -146,6 +146,7 @@ function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum
 function HasExtension(element : TFhirElement; url : string):Boolean;
 function GetExtension(element : TFhirElement; url : string) : TFhirExtension;
 
+procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String); overload;
 procedure BuildNarrative(vs : TFhirValueSet); overload;
 procedure BuildNarrative(cs : TFhirCodeSystem); overload;
 function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String; overload;
@@ -254,12 +255,15 @@ type
     procedure addExtension(url : String; v : String); overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
+    function getExtensionByUrl(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
     procedure setExtension(url : String; t : TFHIRType);
     procedure setExtensionString(url, value : String);
+    procedure setExtensionMarkdown(url, value : String);
+    procedure setExtensionCanonical(url, value : String);
     procedure setExtensionInteger(url, value : String);
     procedure setExtensionBoolean(url, value : String);
     procedure setExtensionDecimal(url, value : String);
@@ -322,12 +326,16 @@ type
     function addExtension(url : String) : TFhirExtension; overload;
     function addExtension(url : String; v : String) : TFhirExtension; overload;
     function hasExtension(url : String) : boolean;
-    function getExtension(url : String) : Integer;
+    function getExtension(url : String) : Integer; overload;
+    function getExtension(url : String; index : integer) : TFhirExtension; overload;
     function getExtensionValue(url : String) : TFHIRType;
+    function forceExtension(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
-    procedure removeExtension(url : String);
+    function getExtensionByUrl(url : String) : TFHIRExtension;
+    procedure removeExtension(url : String); overload;
+    procedure removeExtension(url : String; index : integer); overload;
     procedure setExtensionString(url, value : String);
     procedure checkNoModifiers(place, role : String; allowed : TArray<String> = nil);
   end;
@@ -1370,6 +1378,77 @@ begin
     raise EFHIRException.create('Unhandled type '+extension.Value.ClassName);
 end;
 
+procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String);
+var
+  x, tbl, tr, td : TFhirXHtmlNode;
+  hasSource, success, d : boolean;
+  i, j : integer;
+  issue : TFhirOperationOutcomeIssue;
+  s : TFhirString;
+begin
+  x := TFhirXHtmlNode.create;
+  try
+    x.NodeType := fhntElement;
+    x.Name := 'div';
+    x.AddTag('p').addTag('b').addText('Operation Outcome for :'+opDesc);
+
+    hasSource := false;
+    success := true;
+    for i := 0 to op.issueList.count - 1 do
+    begin
+      issue := op.issueList[i];
+      success := success and (issue.Severity = IssueSeverityInformation);
+      hasSource := hasSource or (hasExtension(issue, 'http://hl7.org/fhir/tools#issue-source'));
+    end;
+    if (success) then
+      x.AddChild('p').addText('All OK');
+    if op.issueList.count > 0 then
+    begin
+      tbl := x.addTag('table');
+      tbl.setAttribute('class', 'grid'); // on the basis that we'll most likely be rendered using the standard fhir css, but it doesn't really matter
+      tr := tbl.addTag('tr');
+      tr.addTag('td').addTag('b').addText('Severity');
+      tr.addTag('td').addTag('b').addText('Location');
+      tr.addTag('td').addTag('b').addText('Details');
+      tr.addTag('td').addTag('b').addText('Diagnostics');
+        tr.addTag('td').addTag('b').addText('Type');
+      if (hasSource) then
+        tr.addTag('td').addTag('b').addText('Source');
+      for i := 0 to op.issueList.count - 1 do
+      begin
+        issue := op.issueList[i];
+        tr := tbl.addTag('tr');
+        tr.addTag('td').addText(CODES_TFhirIssueSeverityEnum[issue.severity]);
+        td := tr.addTag('td');
+        d := false;
+        for j := 0 to issue.locationList.count -1 do
+        begin
+           s := issue.locationList[j];
+           if (d) then
+             td.addText(', ')
+           else
+             d := true;
+           td.addText(s.Value);
+        end;
+        tr.addTag('td').addText(gen(issue.details));
+        tr.addTag('td').addText(issue.diagnostics);
+        tr.addTag('td').addText(CODES_TFhirIssueTypeEnum[issue.code]);
+        if (hasSource) then
+          tr.addTag('td').addText(gen(getExtension(issue, 'http://hl7.org/fhir/tools#issue-source')));
+      end;
+    end;
+    if (op.Text = nil) then
+      op.Text := TFhirNarrative.create;
+    op.Text.div_ := x.link;
+    if hasSource then
+      op.Text.status := NarrativeStatusExtensions
+    else
+      op.Text.status := NarrativeStatusGenerated;
+  finally
+    x.free;
+  end;
+end;
+
 procedure addTableHeaderRowStandard(t : TFhirXHtmlNode);
 var
   tr, td, b : TFhirXHtmlNode;
@@ -2024,6 +2103,16 @@ begin
       result := i;
 end;
 
+function TFHIRElementHelper.getExtensionByUrl(url: String): TFHIRExtension;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to self.ExtensionList.Count -1 do
+    if self.ExtensionList[i].url = url then
+      result := self.ExtensionList[i];
+end;
+
 function TFHIRElementHelper.getExtensionString(url: String): String;
 var
   ndx : Integer;
@@ -2133,6 +2222,16 @@ begin
   ext.value := TFhirInteger.Create(value);
 end;
 
+procedure TFHIRElementHelper.setExtensionMarkdown(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirMarkdown.Create(value);
+end;
+
 procedure TFHIRElementHelper.setExtensionString(url, value: String);
 var
   ext : TFhirExtension;
@@ -2141,6 +2240,16 @@ begin
   ext := self.ExtensionList.Append;
   ext.url := url;
   ext.value := TFhirString.Create(value);
+end;
+
+procedure TFHIRElementHelper.setExtensionCanonical(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirCanonical.Create(value);
 end;
 
 procedure TFHIRElementHelper.setExtensionTime(url, value: String);
@@ -2197,6 +2306,32 @@ begin
       result := i;
 end;
 
+function TFHIRDomainResourceHelper.getExtension(url: String; index: integer): TFhirExtension;
+var
+  i, t : integer;
+begin
+  result := nil;
+  t := 0;
+  for i := 0 to self.ExtensionList.Count -1 do
+    if self.ExtensionList[i].url = url then
+    begin
+      if t = index then
+        exit(self.ExtensionList[i])
+      else
+        inc(t);
+    end;
+end;
+
+function TFHIRDomainResourceHelper.getExtensionByUrl( url: String): TFHIRExtension;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to self.ExtensionList.Count -1 do
+    if self.ExtensionList[i].url = url then
+      result := self.ExtensionList[i];
+end;
+
 function TFHIRDomainResourceHelper.getExtensionCount(url: String): Integer;
 var
   i : integer;
@@ -2251,14 +2386,8 @@ begin
   ndx := getExtension(url);
   if (ndx = -1) then
     result := ''
-  else if (self.ExtensionList.Item(ndx).value is TFhirString) then
-    result := TFhirString(self.ExtensionList.Item(ndx).value).value
-  else if (self.ExtensionList.Item(ndx).value is TFhirCode) then
-    result := TFhirCode(self.ExtensionList.Item(ndx).value).value
-  else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
-    result := TFhirUri(self.ExtensionList.Item(ndx).value).value
-  else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
-    result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.ToXML
+  else if (self.ExtensionList.Item(ndx).value is TFHIRPrimitiveType) then
+    result := TFHIRPrimitiveType(self.ExtensionList.Item(ndx).value).primitiveValue
   else
     result := '';
 end;
@@ -2266,6 +2395,26 @@ end;
 function TFHIRDomainResourceHelper.hasExtension(url: String): boolean;
 begin
   result := getExtension(url) > -1;
+end;
+
+procedure TFHIRDomainResourceHelper.removeExtension(url: String; index: integer);
+var
+  i, t : integer;
+begin
+  t := 0;
+  for i := 0 to extensionList.count - 1 do
+  begin
+    if extensionList[i].url = url then
+    begin
+      if t = index then
+      begin
+        extensionList.Remove(i);
+        exit;
+      end
+      else
+        inc(t);
+    end;
+  end;
 end;
 
 procedure TFHIRDomainResourceHelper.removeExtension(url: String);
@@ -2483,6 +2632,16 @@ begin
     end;
     inc(i);
   end;
+end;
+
+function TFHIRDomainResourceHelper.forceExtension(url: String): TFHIRExtension;
+var
+  i : integer;
+begin
+  for i := 0 to extensionList.Count - 1 do
+    if extensionList[i].url = url then
+      exit(extensionList[i]);
+  result := addExtension(url);
 end;
 
 function TFHIRDomainResourceHelper.GetContained(id: String): TFhirResource;

@@ -366,6 +366,9 @@
         <DCCReference Include="..\Server\FHIR.Server.SubscriptionsR4.pas"/>
         <DCCReference Include="..\Server\FHIR.Server.OperationsR4.pas"/>
         <DCCReference Include="FHIR.Tests.FullServer.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Lang.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Utilities.pas"/>
+        <DCCReference Include="..\Server\FHIR.Server.Version.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
