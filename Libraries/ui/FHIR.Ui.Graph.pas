@@ -60,7 +60,7 @@ const
   defMinXScale = 0.0;
   MouseToleranceMove = 4; { pixels mouse must move before it counts }
   MouseToleranceHit = 5; { how far from target mouse is allowed to be }
-  NO_VALUE = -99999e-9999;
+  NO_VALUE = -2.145e45;
 
   {$IFDEF FMX}
 const
