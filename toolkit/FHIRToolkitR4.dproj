@@ -400,8 +400,6 @@
             <Form>PopupMenuWorkaroundForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-        <DCCReference Include="..\Libraries\ui\FHIR.Ui.Graph.pas"/>
-        <DCCReference Include="..\Libraries\ui\FHIR.Tools.ObsGraph.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIR.R4.AuthMap.pas"/>
         <DCCReference Include="IGSettings.pas">
             <Form>IGSettingsForm</Form>
@@ -459,17 +457,17 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>profiles-resources.xml</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="OSX32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>profiles-resources.xml</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

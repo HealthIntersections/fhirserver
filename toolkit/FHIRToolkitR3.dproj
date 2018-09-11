@@ -171,198 +171,146 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
-        <DCCReference Include="..\reference-platform\version\FHIR.Version.Client.pas"/>
+        <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Osx.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Base.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Stream.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Collections.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Json.pas"/>
-        <DCCReference Include="..\reference-platform\version\FHIR.Version.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Xml.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Parser.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.MXml.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Support.Turtle.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Objects.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Json.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Logging.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
+        <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Support.Threads.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Parsers.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIR.Web.Fetcher.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.WinInet.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIR.Web.HtmlGen.pas"/>
+        <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Objects.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Common.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
+        <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Base.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Xml.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Utilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Context.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Types.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Resources.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Scim.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Constants.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Tags.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Lang.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Xhtml.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Json.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Turtle.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.ElementModel.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Profiles.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathEngine.pas"/>
-        <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
-        <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
-        <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Utilities.pas"/>
-        <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
-        <DCCReference Include="OrganizationChooser.pas">
-            <Form>OrganizationSelectionForm</Form>
-        </DCCReference>
-        <DCCReference Include="FHIRToolkitForm.pas">
-            <Form>MasterToolsForm</Form>
-        </DCCReference>
-        <DCCReference Include="ServerForm.pas">
-            <Form>ServerFrameForm</Form>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="BaseFrame.pas"/>
-        <DCCReference Include="ValueSetEditor.pas">
-            <Form>ValueSetEditorFrame</Form>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="SearchParameterEditor.pas">
-            <Form>SearchParameterEditorForm</Form>
-        </DCCReference>
-        <DCCReference Include="ListSelector.pas">
-            <Form>ListSelectorForm</Form>
-        </DCCReference>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.IndexInfo.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
-        <DCCReference Include="AddRestResourceDialog.pas">
-            <Form>AddRestResourceForm</Form>
-        </DCCReference>
-        <DCCReference Include="SourceViewer.pas">
-            <Form>SourceViewerForm</Form>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.DiffEngine.pas"/>
-        <DCCReference Include="BaseResourceFrame.pas"/>
-        <DCCReference Include="BaseServerFrame.pas"/>
-        <DCCReference Include="CapabilityStatementEditor.pas">
-            <Form>CapabilityStatementEditorFrame</Form>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="ValuesetExpansion.pas">
-            <Form>ValuesetExpansionForm</Form>
-        </DCCReference>
-        <DCCReference Include="HelpContexts.pas"/>
-        <DCCReference Include="ProcessForm.pas">
-            <Form>ProcessingForm</Form>
-        </DCCReference>
-        <DCCReference Include="SettingsDialog.pas">
-            <Form>FHIR.Npp.Settings</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="AboutDialog.pas">
-            <Form>AboutForm</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="..\Libraries\ui\FHIR.Ui.OSX.pas"/>
-        <DCCReference Include="ValuesetSelectDialog.pas">
-            <Form>ValuesetSelectForm</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="MemoEditorDialog.pas">
-            <Form>MemoEditorForm</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Registry.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.ServerDialogFMX.pas">
-            <Form>EditRegisteredServerForm</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="ToolkitSettings.pas"/>
-        <DCCReference Include="CodeSystemEditor.pas">
-            <Form>CodeSystemEditorFrame</Form>
-            <FormType>fmx</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="CodeSystemConceptDialog.pas">
-            <Form>CodeSystemConceptForm</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="ResourceEditingSupport.pas"/>
-        <DCCReference Include="ToolKitUtilities.pas"/>
-        <DCCReference Include="UpgradeNeededDialog.pas">
-            <Form>UpgradeNeededForm</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="QuestionnaireEditor.pas">
-            <Form>QuestionnaireEditorFrame</Form>
-            <FormType>fmx</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\Support\FHIR.Web.HtmlGen.pas"/>
-        <DCCReference Include="QuestionnaireItemDialog.pas">
-            <Form>QuestionnaireItemForm</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="ProviderDirectoryForm.pas">
-            <Form>ProviderDirectoryFrame</Form>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.ClientDialogFMX.pas">
-            <Form>RegisterClientForm</Form>
-        </DCCReference>
-        <DCCReference Include="QuestionnaireItemPanel.pas"/>
-        <DCCReference Include="QuestionnairePanel.pas"/>
-        <DCCReference Include="VitalSignsGeneratorDialog.pas">
-            <Form>VitalSignsGeneratorForm</Form>
-        </DCCReference>
-        <DCCReference Include="TranslationsEditorDialog.pas">
-            <Form>TranslationsEditorForm</Form>
-        </DCCReference>
-        <DCCReference Include="ResourceLanguageDialog.pas">
-            <Form>ResourceLanguageForm</Form>
-        </DCCReference>
-        <DCCReference Include="AddRestOperationDialog.pas">
-            <Form>AddRestOperationForm</Form>
-        </DCCReference>
-        <DCCReference Include="RegistryForm.pas">
-            <Form>RegistryFrame</Form>
-            <FormType>fmx</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\libraries\ui\FHIR.Ui.ComboFMX.pas"/>
-        <DCCReference Include="PatientHomeForm.pas">
-            <Form>PatientHomeFrame</Form>
-            <FormType>fmx</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Signatures.pas"/>
-        <DCCReference Include="DocumentGenerationForm.pas">
-            <Form>DocumentGeneratorForm</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="LibraryEditor.pas">
-            <Form>LibraryEditorFrame</Form>
-            <FormType>fmx</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\reference-platform\support\FHIR.Ucum.IFace.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.PathNode.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Logging.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Questionnaire2.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Base.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.ParserBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Parser.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Base.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.HTTP.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Client.Threaded.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Client.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Xml.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Certs.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.GraphQL.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Factory.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Validator.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Common.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.PathEngine.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Common.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Factory.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Narrative.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Validator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Operations.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.OpBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.AuthMap.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Threaded.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.HTTP.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Utilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Login.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.Indexing.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.DiffEngine.pas"/>
+        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas"/>
+        <DCCReference Include="..\reference-platform\version\FHIR.Version.Client.pas"/>
+        <DCCReference Include="..\reference-platform\version\FHIR.Version.Parser.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.Registry.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.ServerDialogFMX.pas">
+            <Form>EditRegisteredServerForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\reference-platform\client\FHIR.Client.ClientDialogFMX.pas">
+            <Form>RegisterClientForm</Form>
+        </DCCReference>
+        <DCCReference Include="..\reference-platform\support\FHIR.CdsHooks.Utilities.pas"/>
+        <DCCReference Include="..\Libraries\ui\FHIR.Ui.OSX.pas"/>
+        <DCCReference Include="..\libraries\ui\FHIR.Ui.ComboFMX.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIR.Web.GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIR.Client.Async.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Web.WinInet.pas"/>
-        <DCCReference Include="..\reference-platform\cache\FHIR.Cache.PackageManager.pas"/>
+        <DCCReference Include="BaseFrame.pas"/>
+        <DCCReference Include="BaseResourceFrame.pas"/>
+        <DCCReference Include="BaseServerFrame.pas"/>
+        <DCCReference Include="ResourceEditingSupport.pas"/>
+        <DCCReference Include="HelpContexts.pas"/>
+        <DCCReference Include="ToolkitSettings.pas"/>
+        <DCCReference Include="ToolKitUtilities.pas"/>
+        <DCCReference Include="QuestionnairePanel.pas"/>
+        <DCCReference Include="OrganizationChooser.pas">
+            <Form>OrganizationSelectionForm</Form>
+        </DCCReference>
+        <DCCReference Include="ProcessForm.pas">
+            <Form>ProcessingForm</Form>
+        </DCCReference>
+        <DCCReference Include="ListSelector.pas">
+            <Form>ListSelectorForm</Form>
+        </DCCReference>
+        <DCCReference Include="SettingsDialog.pas">
+            <Form>FHIR.Npp.Settings</Form>
+        </DCCReference>
+        <DCCReference Include="AboutDialog.pas">
+            <Form>AboutForm</Form>
+        </DCCReference>
+        <DCCReference Include="UpgradeNeededDialog.pas">
+            <Form>UpgradeNeededForm</Form>
+        </DCCReference>
+        <DCCReference Include="MemoEditorDialog.pas">
+            <Form>MemoEditorForm</Form>
+        </DCCReference>
+        <DCCReference Include="ResourceLanguageDialog.pas">
+            <Form>ResourceLanguageForm</Form>
+        </DCCReference>
+        <DCCReference Include="CodeSystemConceptDialog.pas">
+            <Form>CodeSystemConceptForm</Form>
+        </DCCReference>
+        <DCCReference Include="SearchParameterEditor.pas">
+            <Form>SearchParameterEditorForm</Form>
+        </DCCReference>
+        <DCCReference Include="AddRestResourceDialog.pas">
+            <Form>AddRestResourceForm</Form>
+        </DCCReference>
+        <DCCReference Include="AddRestOperationDialog.pas">
+            <Form>AddRestOperationForm</Form>
+        </DCCReference>
+        <DCCReference Include="TranslationsEditorDialog.pas">
+            <Form>TranslationsEditorForm</Form>
+        </DCCReference>
+        <DCCReference Include="SourceViewer.pas">
+            <Form>SourceViewerForm</Form>
+        </DCCReference>
+        <DCCReference Include="QuestionnaireItemPanel.pas"/>
+        <DCCReference Include="QuestionnaireItemDialog.pas">
+            <Form>QuestionnaireItemForm</Form>
+        </DCCReference>
+        <DCCReference Include="ValuesetSelectDialog.pas">
+            <Form>ValuesetSelectForm</Form>
+        </DCCReference>
         <DCCReference Include="PackageManagerFrame.pas">
             <Form>PackageManagerFrame</Form>
             <DesignClass>TFrame</DesignClass>
@@ -378,17 +326,53 @@
         <DCCReference Include="PackageBrowser.pas">
             <Form>PackageFinderForm</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\support\fhir.support.fpc.pas"/>
-        <DCCReference Include="..\reference-platform\base\FHIR.Base.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Utilities.pas"/>
-        <DCCReference Include="..\reference-platform\client\FHIR.Smart.Login.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.Operations.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.OpBase.pas"/>
-        <DCCReference Include="..\reference-platform\tools\FHIR.Tools.ValidationWrapper.pas"/>
-        <DCCReference Include="..\Libraries\ui\FHIR.Ui.Graph.pas"/>
-        <DCCReference Include="..\Libraries\ui\FHIR.Tools.ObsGraph.pas"/>
-        <DCCReference Include="..\reference-platform\support\FHIR.Support.Threads.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIR.R3.AuthMap.pas"/>
+        <DCCReference Include="ServerForm.pas">
+            <Form>ServerFrameForm</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="FHIRToolkitForm.pas">
+            <Form>MasterToolsForm</Form>
+        </DCCReference>
+        <DCCReference Include="ValueSetEditor.pas">
+            <Form>ValueSetEditorFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="CapabilityStatementEditor.pas">
+            <Form>CapabilityStatementEditorFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="ValuesetExpansion.pas">
+            <Form>ValuesetExpansionForm</Form>
+        </DCCReference>
+        <DCCReference Include="CodeSystemEditor.pas">
+            <Form>CodeSystemEditorFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="QuestionnaireEditor.pas">
+            <Form>QuestionnaireEditorFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="ProviderDirectoryForm.pas">
+            <Form>ProviderDirectoryFrame</Form>
+        </DCCReference>
+        <DCCReference Include="VitalSignsGeneratorDialog.pas">
+            <Form>VitalSignsGeneratorForm</Form>
+        </DCCReference>
+        <DCCReference Include="RegistryForm.pas">
+            <Form>RegistryFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="PatientHomeForm.pas">
+            <Form>PatientHomeFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="DocumentGenerationForm.pas">
+            <Form>DocumentGeneratorForm</Form>
+        </DCCReference>
+        <DCCReference Include="LibraryEditor.pas">
+            <Form>LibraryEditorFrame</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -433,17 +417,17 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>profiles-resources.xml</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="OSX32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>profiles-resources.xml</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

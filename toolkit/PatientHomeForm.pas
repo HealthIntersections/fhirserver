@@ -34,10 +34,10 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox, FMX.TabControl,
-  FHIR.Ui.Graph,
+//  FHIR.Ui.Graph, FHIR.Tools.ObsGraph,
   FHIR.Support.Utilities,
-  FHIR.Support.Base, 
-  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities, FHIR.Tools.ObsGraph,
+  FHIR.Support.Base,
+  FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
   BaseFrame, DocumentGenerationForm;
 
 type
@@ -73,7 +73,7 @@ type
     FPatient: TFHIRPatient;
     FCapabilityStatement: TFhirCapabilityStatement;
     FClient: TFHIRClient;
-    FgrHR : TFGraph;
+//    FgrHR : TFGraph;
 
     FResources : TFslMap<TFHIRResource>;
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
@@ -81,7 +81,7 @@ type
     procedure SetPatient(const Value: TFHIRPatient);
 
     procedure buildGraphs;
-    procedure configureGraph(graph: TFGraph);
+//    procedure configureGraph(graph: TFGraph);
   public
     destructor Destroy; override;
 
@@ -98,6 +98,7 @@ implementation
 
 { TPatientHomeFrame }
 
+(*
 procedure TPatientHomeFrame.configureGraph(graph : TFGraph);
 begin
   graph.Align := TAlignLayout.Client;
@@ -186,12 +187,13 @@ begin
   graph.YAxis1.AutoStepping := False;
   graph.YAxis2.ShowAxis := False;
 end;
-
+*)
 procedure TPatientHomeFrame.buildGraphs;
-var
-  dp : TObservationDataProvider;
-  series : TFGraphSeries;
+//var
+//  dp : TObservationDataProvider;
+//  series : TFGraphSeries;
 begin
+(*
   FgrHR := TFGraph.Create(self);
   pnlHR.AddObject(FgrHR);
   configureGraph(FgrHR);
@@ -222,6 +224,7 @@ begin
   finally
     dp.Free;
   end;
+  *)
 end;
 
 procedure TPatientHomeFrame.Button1Click(Sender: TObject);
