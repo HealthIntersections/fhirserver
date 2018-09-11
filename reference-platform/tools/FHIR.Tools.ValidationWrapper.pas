@@ -34,7 +34,8 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   FHIR.Support.Base, FHIR.Support.Utilities,
-  FHIR.Cache.PackageManager;
+  FHIR.Cache.PackageManager,
+  FHIR.Base.Lang;
 
 type
   TOutputLineEvent = procedure (Sender : TObject; line : String) of Object;

@@ -3,10 +3,12 @@ unit Import2html;
 interface
 
 uses
-  System.SysUtils,
-  System.IOUtils,
-  System.Types, System.UITypes, System.Classes, System.Variants,
-  shellapi, winapi.windows, FMX.platform.win, FMX.DialogService,
+  {$IFDEF OSX}
+  {$ELSE}
+  Shellapi, Winapi.Windows, FMX.Platform.Win, JclSysUtils,
+  {$ENDIF}
+  System.SysUtils, System.IOUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.DialogService,
 
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.WebBrowser, FMX.ScrollBox, FMX.Memo;
 
@@ -78,7 +80,7 @@ begin
   begin
     // copy doc to tmp.ocx
     tempstr := tempfolder + '\tmp.docx';
-    copyfile(pwidechar(OpenDialog2.filename), pwidechar(tempstr), false);
+    TFile.copy(OpenDialog2.filename, tempstr, false);
     ///
 
     // convert to tmp.txt
@@ -215,7 +217,7 @@ begin
         for i := 0 to Length(sa) - 1 do
         begin
           destfile := mediafolder + '\' + extractfilename(sa[i]);
-          movefile(pwidechar(sa[i]), pwidechar(destfile));
+          TFile.Move(sa[i], destfile);
         end;
       end;
       ///
@@ -227,7 +229,7 @@ begin
 
       // copy to edit1-text to actual pageContentFolder
 
-      copyfile(pwidechar(tempfolder + '\tmp.html'), pwidechar(pagecontentfolder + '\' +  ChangeFileExt(pagefilename, '.xml')), false);
+      TFile.Copy(tempfolder + '\tmp.html', pagecontentfolder + '\' +  ChangeFileExt(pagefilename, '.xml'), false);
     except
     end
   else
@@ -246,6 +248,11 @@ begin
 end;
 
 procedure TContentImport.runAndWait(Path, command, parameters: String);
+{$IFDEF OSX}
+begin
+  raise Exception.Create('Not done yet for OSX');
+end;
+{$ELSE}
 var
   folderstr, filestr: string;
   SEInfo: TShellExecuteInfo;
@@ -275,7 +282,7 @@ begin
       until (ExitCode <> STILL_ACTIVE) or application.Terminated;
     end;
   end;
-
 end;
+{$ENDIF}
 
 end.

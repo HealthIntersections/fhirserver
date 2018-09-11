@@ -3,6 +3,10 @@ unit ImplementationGuideEditor;
 interface
 
 uses
+  {$IFDEF OSX}
+  {$ELSE}
+  Shellapi, Winapi.Windows, FMX.Platform.Win, JclSysUtils,
+  {$ENDIF}
   System.SysUtils,
   System.IOUtils,
   System.types,
@@ -12,14 +16,12 @@ uses
   FHIR.R4.Resources,
   FHIR.R4.Utilities,
   FHIR.Support.Utilities,
-  JclSysUtils,
   System.ImageList, FMX.types, FMX.ScrollBox, System.Classes,
   FMX.Controls.Presentation, FMX.DateTimeCtrls, FMX.Edit,
   FMX.Memo, FMX.TreeView, FMX.Dialogs, FMX.DialogService,
   FMX.StdCtrls, FMX.ListBox, FMX.Layouts, FMX.TabControl,
   FMX.Menus, FMX.WebBrowser, FMX.Controls, FMX.Forms, IGSettings, FMX.ImgList,
 
-  shellapi, winapi.windows, FMX.platform.win,
   BaseResourceFrame,
   FMX.ComboEdit;
 
@@ -784,6 +786,11 @@ begin
 end;
 
 procedure TImplementationGuideEditorFrame.Button7Click(Sender: TObject);
+{$IFDEF OSX}
+begin
+  raise Exception.Create('Not done yet for OSX');
+end;
+{$ELSE}
 var
   optionsStr, tempstr, filestr, sCmd, ExecuteFile, ParamString, StartInString: string;
   SEInfo: TShellExecuteInfo;
@@ -911,6 +918,7 @@ begin
   }
 
 end;
+{$ENDIF}
 
 procedure TImplementationGuideEditorFrame.Button8Click(Sender: TObject);
 var
@@ -1388,7 +1396,11 @@ begin
 end;
 
 procedure TImplementationGuideEditorFrame.runAndWait(Path, command, parameters: String);
-var
+{$IFDEF OSX}
+begin
+  raise Exception.Create('Not done yet for OSX');
+end;
+{$ELSE}var
   folderstr, filestr: string;
   SEInfo: TShellExecuteInfo;
   ExitCode: DWORD;
@@ -1419,5 +1431,6 @@ begin
   end;
 
 end;
+{$ENDIF}
 
 end.

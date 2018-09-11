@@ -3,9 +3,13 @@ unit IGSettings;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, JclSysUtils, System.zip, System.IOUtils,
+  {$IFDEF OSX}
+  {$ELSE}
+  ShellApi, Winapi.Windows, FMX.Platform.Win, JclSysUtils,
+  {$ENDIF}
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.zip, System.IOUtils,
   FMX.Dialogs, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.StdCtrls, FMX.Edit, FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Types,
-  FMX.dialogservice, shellapi, winapi.windows, FMX.platform.win, System.Net.URLClient, System.Net.HttpClient, System.Net.HttpClientComponent, FDownloadForm;
+  FMX.dialogservice, System.Net.URLClient, System.Net.HttpClient, System.Net.HttpClientComponent, FDownloadForm;
 
 type
   TIGSettingsForm = class(TForm)
@@ -80,6 +84,11 @@ implementation
 uses ImplementationGuideEditor;
 
 procedure TIGSettingsForm.btnCheckDependenciesClick(Sender: TObject);
+{$IFDEF OSX}
+begin
+  raise Exception.Create('Not done yet for OSX');
+end;
+{$ELSE}
 var
   str: string;
 
@@ -97,6 +106,7 @@ exit;
 
   Memo1.Lines.Add(str);
 end;
+{$ENDIF}
 
 procedure TIGSettingsForm.Button10Click(Sender: TObject);
 var
@@ -327,6 +337,11 @@ begin
 end;
 
 procedure TIGSettingsForm.runAndWait(Path, command, parameters: String);
+{$IFDEF OSX}
+begin
+  raise Exception.Create('Not done yet for OSX');
+end;
+{$ELSE}
 var
   folderstr, filestr: string;
   SEInfo: TShellExecuteInfo;
@@ -358,6 +373,7 @@ begin
   end;
 
 end;
+{$ENDIF}
 
 procedure TIGSettingsForm.SetupIGPublisherFiles;
 var
