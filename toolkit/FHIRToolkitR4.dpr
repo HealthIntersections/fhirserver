@@ -154,14 +154,14 @@ uses
   FHIR.R4.Operations in '..\reference-platform\r4\FHIR.R4.Operations.pas',
   FHIR.R4.OpBase in '..\reference-platform\r4\FHIR.R4.OpBase.pas',
   OsxPopupmenuWorkaround in 'OsxPopupmenuWorkaround.pas' {PopupMenuWorkaroundForm},
-//  FHIR.Ui.Graph in '..\Libraries\ui\FHIR.Ui.Graph.pas',
-//  FHIR.Tools.ObsGraph in '..\Libraries\ui\FHIR.Tools.ObsGraph.pas',
   FHIR.R4.AuthMap in '..\reference-platform\r4\FHIR.R4.AuthMap.pas',
   IGSettings in 'IGSettings.pas' {IGSettingsForm},
   FDownloadForm in 'FDownloadForm.pas' {IGSettingsForm},
   ImplementationGuideEditor in 'ImplementationGuideEditor.pas' {ImplementationGuideEditorFrame: TFrame},
   FHIR.Support.Lang in '..\reference-platform\support\FHIR.Support.Lang.pas',
-  QuestionnaireContextDialog in 'QuestionnaireContextDialog.pas' {QuestionnaireContextForm};
+  QuestionnaireContextDialog in 'QuestionnaireContextDialog.pas' {QuestionnaireContextForm},
+  FHIR.Ui.Graph in '..\Libraries\ui\FHIR.Ui.Graph.pas',
+  FHIR.Tools.ObsGraph in '..\Libraries\ui\FHIR.Tools.ObsGraph.pas';
 
 {$R *.res}
 

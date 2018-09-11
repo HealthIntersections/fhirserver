@@ -34,7 +34,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox, FMX.TabControl,
-//  FHIR.Ui.Graph, FHIR.Tools.ObsGraph,
+  FHIR.Ui.Graph, FHIR.Tools.ObsGraph,
   FHIR.Support.Utilities,
   FHIR.Support.Base,
   FHIR.Version.Resources, FHIR.Version.Client, FHIR.Version.Utilities,
@@ -73,7 +73,7 @@ type
     FPatient: TFHIRPatient;
     FCapabilityStatement: TFhirCapabilityStatement;
     FClient: TFHIRClient;
-//    FgrHR : TFGraph;
+    FgrHR : TFGraph;
 
     FResources : TFslMap<TFHIRResource>;
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
@@ -81,7 +81,7 @@ type
     procedure SetPatient(const Value: TFHIRPatient);
 
     procedure buildGraphs;
-//    procedure configureGraph(graph: TFGraph);
+    procedure configureGraph(graph: TFGraph);
   public
     destructor Destroy; override;
 
@@ -98,13 +98,12 @@ implementation
 
 { TPatientHomeFrame }
 
-(*
 procedure TPatientHomeFrame.configureGraph(graph : TFGraph);
 begin
   graph.Align := TAlignLayout.Client;
   graph.Cursor := 0;
   graph.Visible := True;
-  graph.Plotting := True;
+{  graph.Plotting := True;
   graph.Dimensions.BottomMargin := 20;
   graph.Dimensions.LeftMargin := 25;
   graph.Dimensions.RightMargin := 10;
@@ -185,19 +184,18 @@ begin
   graph.YAxis1.Gridlines := True;
   graph.YAxis1.AutoSizing := False;
   graph.YAxis1.AutoStepping := False;
-  graph.YAxis2.ShowAxis := False;
+  graph.YAxis2.ShowAxis := False;}
 end;
-*)
+
 procedure TPatientHomeFrame.buildGraphs;
 //var
 //  dp : TObservationDataProvider;
 //  series : TFGraphSeries;
 begin
-(*
   FgrHR := TFGraph.Create(self);
   pnlHR.AddObject(FgrHR);
   configureGraph(FgrHR);
-  FgrHR.addBand(TAlphaColors.Green, 60, 90, 0.1);
+{  FgrHR.addBand(TAlphaColors.Green, 60, 90, 0.1);
   FgrHR.addBand(TAlphaColors.Orange, 90, 150, 0.1);
   FgrHR.addBand(TAlphaColors.Red, 150, 170, 0.1);
 
@@ -223,8 +221,7 @@ begin
     end;
   finally
     dp.Free;
-  end;
-  *)
+  end;       }
 end;
 
 procedure TPatientHomeFrame.Button1Click(Sender: TObject);
