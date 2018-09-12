@@ -390,6 +390,7 @@ Type
     procedure smsStatus(Msg: String);
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
     procedure StopAsyncTasks;
+    function endpointList: String;
 
   Public
     Constructor Create(settings : TFHIRServerSettings; name: String);
@@ -4577,6 +4578,24 @@ begin
   ReturnProcessedFile(request, response, path, path, secure, variables);
 end;
 
+function TFhirWebServer.endpointList : String;
+var
+  b : TStringBuilder;
+  ep : TFhirWebServerEndpoint;
+begin
+  b := TStringBuilder.create;
+  try
+    b.append('<ul>');
+    for ep in FEndPoints do
+      b.Append('<li><a href="/'+ep.FPath+'">'+ep.FPath+'</a>: v'+ep.factory.versionString+'</li>');
+
+    b.append('</ul>');
+    result := b.toString;
+  finally
+    b.free;
+  end;
+end;
+
 procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslStringDictionary = nil);
 var
   s, n, p, v, t: String;
@@ -4589,6 +4608,7 @@ begin
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
   s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
+  s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
   if FActualPort = 80 then
     s := s.Replace('[%host%]', FHost, [rfReplaceAll])
   else

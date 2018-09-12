@@ -1378,6 +1378,8 @@ begin
     r.Text := TFHIRNarrative.create;
     r.Text.div_ := x.Link;
     r.Text.status := status;
+    if not x.hasAttribute('xmlns') then
+      x.attribute('xmlns', XHTML_NS);
   end
   else
   begin

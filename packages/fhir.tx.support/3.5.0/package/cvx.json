@@ -18,90 +18,25 @@
   ],
   "concept" : [
     {
-      "code" : "998",
-      "display" : "no vaccine administered",
-      "definition" : "no vaccine administered",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "1"
-        },
-        {
-          "code" : "use-notes",
-          "valueString" : "Code 998 was added for use in VXU HL7 messages where the OBX segment is nested with the RXA segment, but the message does not contain information about a vaccine administration. An example of this use is to report the vaccines due next for a patient when no vaccine administration is being reported."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
-        }
-      ]
-    },
-    {
-      "code" : "99",
-      "display" : "RESERVED - do not use",
-      "definition" : "RESERVED - do not use",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "1"
-        },
-        {
-          "code" : "use-notes",
-          "valueString" : "Code 99 will not be used in this table to avoid confusion with code 999."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
-        }
-      ]
-    },
-    {
-      "code" : "999",
-      "display" : "unknown",
-      "definition" : "unknown vaccine or immune globulin",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "1"
-        },
-        {
-          "code" : "use-notes",
-          "valueString" : "This CVX code has little utility and should rarely be used."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
-        }
-      ]
-    },
-    {
-      "code" : "143",
-      "display" : "Adenovirus types 4 and 7",
+      "code" : "143 ",
       "definition" : "Adenovirus, type 4 and type 7, live, oral",
+      "display" : "Adenovirus types 4 and 7",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "This vaccine is administered as 2 tablets."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "54",
-      "display" : "adenovirus, type 4",
+      "code" : "54 ",
       "definition" : "adenovirus vaccine, type 4, live, oral",
+      "display" : "adenovirus, type 4",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -109,14 +44,10 @@
       ]
     },
     {
-      "code" : "55",
-      "display" : "adenovirus, type 7",
+      "code" : "55 ",
       "definition" : "adenovirus vaccine, type 7, live, oral",
+      "display" : "adenovirus, type 7",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -124,33 +55,25 @@
       ]
     },
     {
-      "code" : "82",
-      "display" : "adenovirus, unspecified formulation",
+      "code" : "82 ",
       "definition" : "adenovirus vaccine, unspecified formulation",
+      "display" : "adenovirus, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a adenovirus vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "24",
-      "display" : "anthrax",
+      "code" : "24 ",
       "definition" : "anthrax vaccine",
+      "display" : "anthrax",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -158,33 +81,36 @@
       ]
     },
     {
-      "code" : "801",
-      "display" : "AS03 Adjuvant",
-      "definition" : "AS03 Adjuvant",
+      "code" : "181 ",
+      "definition" : "anthrax immune globulin",
+      "display" : "anthrax immune globulin",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "801 ",
+      "definition" : "AS03 Adjuvant",
+      "display" : "AS03 Adjuvant",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "This is the adjuvant that is packaged with H5N1 vaccine, adjuvanted"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "19",
-      "display" : "BCG",
+      "code" : "19 ",
       "definition" : "Bacillus Calmette-Guerin vaccine",
+      "display" : "BCG",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -192,14 +118,10 @@
       ]
     },
     {
-      "code" : "27",
-      "display" : "botulinum antitoxin",
+      "code" : "27 ",
       "definition" : "botulinum antitoxin",
+      "display" : "botulinum antitoxin",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -207,14 +129,32 @@
       ]
     },
     {
-      "code" : "26",
-      "display" : "cholera",
-      "definition" : "cholera vaccine",
+      "code" : "173 ",
+      "definition" : "cholera, BivWC",
+      "display" : "cholera, BivWC",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
+          "code" : "status",
+          "valueString" : "Non-US"
+        }
+      ]
+    },
+    {
+      "code" : "174 ",
+      "definition" : "cholera, live attenuated",
+      "display" : "cholera, live attenuated",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "26 ",
+      "definition" : "cholera vaccine, unspecified formulation",
+      "display" : "cholera, unspecified formulation",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -222,14 +162,21 @@
       ]
     },
     {
-      "code" : "29",
-      "display" : "CMVIG",
+      "code" : "172 ",
+      "definition" : "cholera, WC-rBS",
+      "display" : "cholera, WC-rBS",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Non-US"
+        }
+      ]
+    },
+    {
+      "code" : "29 ",
       "definition" : "cytomegalovirus immune globulin, intravenous",
+      "display" : "CMVIG",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -237,29 +184,21 @@
       ]
     },
     {
-      "code" : "56",
-      "display" : "dengue fever",
+      "code" : "56 ",
       "definition" : "dengue fever vaccine",
+      "display" : "dengue fever",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "12",
-      "display" : "diphtheria antitoxin",
+      "code" : "12 ",
       "definition" : "diphtheria antitoxin",
+      "display" : "diphtheria antitoxin",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -267,14 +206,10 @@
       ]
     },
     {
-      "code" : "28",
-      "display" : "DT (pediatric)",
+      "code" : "28 ",
       "definition" : "diphtheria and tetanus toxoids, adsorbed for pediatric use",
+      "display" : "DT (pediatric)",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -282,14 +217,10 @@
       ]
     },
     {
-      "code" : "20",
-      "display" : "DTaP",
+      "code" : "20 ",
       "definition" : "diphtheria, tetanus toxoids and acellular pertussis vaccine",
+      "display" : "DTaP",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -297,14 +228,10 @@
       ]
     },
     {
-      "code" : "106",
-      "display" : "DTaP, 5 pertussis antigens",
+      "code" : "106 ",
       "definition" : "diphtheria, tetanus toxoids and acellular pertussis vaccine, 5 pertussis antigens",
+      "display" : "DTaP, 5 pertussis antigens",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -312,56 +239,51 @@
       ]
     },
     {
-      "code" : "107",
-      "display" : "DTaP, unspecified formulation",
+      "code" : "107 ",
       "definition" : "diphtheria, tetanus toxoids and acellular pertussis vaccine, unspecified formulation",
+      "display" : "DTaP, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a DTaP vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "146",
+      "code" : "146 ",
+      "definition" : "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Protein Conjugate), and Hepatitis B (Recombinant) Vaccine.",
       "display" : "DTaP,IPV,Hib,HepB",
-      "definition" : "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Pending"
         },
         {
           "code" : "use-notes",
           "valueString" : "Note that this vaccine is different from CVX 132."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Pending"
         }
       ]
     },
     {
-      "code" : "102",
-      "display" : "DTaP/DTP-Hib-Hep B",
-      "definition" : "DTP- Haemophilus influenzae type b conjugate and hepatitis b vaccine",
+      "code" : "110 ",
+      "definition" : "DTaP-hepatitis B and poliovirus vaccine",
+      "display" : "DTaP-Hep B-IPV",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "use-notes",
-          "valueString" : "This non-US vaccine contained DTP prior to 2007 and now contains DTaP"
-        },
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "50 ",
+      "definition" : "DTaP-Haemophilus influenzae type b conjugate vaccine",
+      "display" : "DTaP-Hib",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -369,44 +291,10 @@
       ]
     },
     {
-      "code" : "110",
-      "display" : "DTaP-Hep B-IPV",
-      "definition" : "DTaP-hepatitis B and poliovirus vaccine",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
-        }
-      ]
-    },
-    {
-      "code" : "50",
-      "display" : "DTaP-Hib",
-      "definition" : "DTaP-Haemophilus influenzae type b conjugate vaccine",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
-        }
-      ]
-    },
-    {
-      "code" : "120",
-      "display" : "DTaP-Hib-IPV",
+      "code" : "120 ",
       "definition" : "diphtheria, tetanus toxoids and acellular pertussis vaccine, Haemophilus influenzae type b conjugate, and poliovirus vaccine, inactivated (DTaP-Hib-IPV)",
+      "display" : "DTaP-Hib-IPV",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -414,14 +302,10 @@
       ]
     },
     {
-      "code" : "130",
-      "display" : "DTaP-IPV",
+      "code" : "130 ",
       "definition" : "Diphtheria, tetanus toxoids and acellular pertussis vaccine, and poliovirus vaccine, inactivated",
+      "display" : "DTaP-IPV",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -429,33 +313,40 @@
       ]
     },
     {
-      "code" : "132",
+      "code" : "132 ",
+      "definition" : "Historical diphtheria and tetanus toxoids and acellular pertussis, poliovirus, Haemophilus b conjugate and hepatitis B (recombinant) vaccine.",
       "display" : "DTaP-IPV-HIB-HEP B, historical",
-      "definition" : "Historical record of vaccine containing diphtheria, tetanus toxoids and acellular pertussis, poliovirus, inactivated, Haemophilus influenzae type b conjugate, Hepatitis B (DTaP-Hib-IPV)",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This is not the same as CVX 146, Hexavalent vaccine."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "01",
-      "display" : "DTP",
+      "code" : "170 ",
+      "definition" : "non-US diphtheria, tetanus toxoids and acellular pertussis vaccine, Haemophilus influenzae type b conjugate, and poliovirus vaccine, inactivated (DTaP-Hib-IPV)",
+      "display" : "DTAP/IPV/HIB - non-US",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "No-US"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This CVX was split off from CVX 102, to correctly identify the contents of the vaccine."
+        }
+      ]
+    },
+    {
+      "code" : "01 ",
       "definition" : "diphtheria, tetanus toxoids and pertussis vaccine",
+      "display" : "DTP",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -463,14 +354,10 @@
       ]
     },
     {
-      "code" : "22",
-      "display" : "DTP-Hib",
+      "code" : "22 ",
       "definition" : "DTP-Haemophilus influenzae type b conjugate vaccine",
+      "display" : "DTP-Hib",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -478,29 +365,36 @@
       ]
     },
     {
-      "code" : "57",
-      "display" : "hantavirus",
+      "code" : "102 ",
+      "definition" : "DTP- Haemophilus influenzae type b conjugate and hepatitis b vaccine",
+      "display" : "DTP-Hib-Hep B",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "No-US"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This CVX has been corrected. This non-US vaccine contained DTP, Hib and Hep B. It was withdrawn in 2007 ."
+        }
+      ]
+    },
+    {
+      "code" : "57 ",
       "definition" : "hantavirus vaccine",
+      "display" : "hantavirus",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "30",
-      "display" : "HBIG",
+      "code" : "30 ",
       "definition" : "hepatitis B immune globulin",
+      "display" : "HBIG",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -508,14 +402,10 @@
       ]
     },
     {
-      "code" : "52",
-      "display" : "Hep A, adult",
+      "code" : "52 ",
       "definition" : "hepatitis A vaccine, adult dosage",
+      "display" : "Hep A, adult",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -523,33 +413,40 @@
       ]
     },
     {
-      "code" : "154",
-      "display" : "Hep A, IG",
+      "code" : "154 ",
       "definition" : "Hepatitis A immune globulin",
+      "display" : "Hep A, IG",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Never Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "Do not use this code. This product may be used for Hep A and other viral infections. The correct vaccine / CVX is 86 (IG)."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Never"
         }
       ]
     },
     {
-      "code" : "83",
-      "display" : "Hep A, ped/adol, 2 dose",
-      "definition" : "hepatitis A vaccine, pediatric/adolescent dosage, 2 dose schedule",
+      "code" : "169 ",
+      "definition" : "Hep A, live attenuated-IM",
+      "display" : "Hep A, live attenuated",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "No-US"
         },
+        {
+          "code" : "use-notes",
+          "valueString" : "This vaccine is not available in the US."
+        }
+      ]
+    },
+    {
+      "code" : "83 ",
+      "definition" : "hepatitis A vaccine, pediatric/adolescent dosage, 2 dose schedule",
+      "display" : "Hep A, ped/adol, 2 dose",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Active"
@@ -557,71 +454,55 @@
       ]
     },
     {
-      "code" : "84",
-      "display" : "Hep A, ped/adol, 3 dose",
+      "code" : "84 ",
       "definition" : "hepatitis A vaccine, pediatric/adolescent dosage, 3 dose schedule",
+      "display" : "Hep A, ped/adol, 3 dose",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This vaccine formulation is inactive and should not be used, except to record historic vaccinations with this formulation."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "31",
-      "display" : "Hep A, pediatric, unspecified formulation",
+      "code" : "31 ",
       "definition" : "hepatitis A vaccine, pediatric dosage, unspecified formulation",
+      "display" : "Hep A, pediatric, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
-          "valueString" : "Do NOT use this code.  If formulation is unknown, use CVX 85.  There is only one formulation of Hep A, peds."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
+          "valueString" : "Do NOT use this code. If formulation is unknown, use CVX 85. There is only one formulation of Hep A, peds."
         }
       ]
     },
     {
-      "code" : "85",
-      "display" : "Hep A, unspecified formulation",
+      "code" : "85 ",
       "definition" : "hepatitis A vaccine, unspecified formulation",
+      "display" : "Hep A, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a HepA vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "104",
-      "display" : "Hep A-Hep B",
+      "code" : "104 ",
       "definition" : "hepatitis A and hepatitis B vaccine",
+      "display" : "Hep A-Hep B",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -629,71 +510,70 @@
       ]
     },
     {
-      "code" : "08",
-      "display" : "Hep B, adolescent or pediatric",
-      "definition" : "hepatitis B vaccine, pediatric or pediatric/adolescent dosage",
+      "code" : "193 ",
+      "definition" : "hepatitis A and hepatitis B vaccine, pediatric/adolescent (non-US)",
+      "display" : "Hep A-Hep B, pediatric/adolescent",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "No-US"
         },
         {
           "code" : "use-notes",
-          "valueString" : "This code applies to any standard pediatric formulation of Hepatitis B vaccine. It should not be used for the 2-dose hepatitis B schedule for adolescents (11-15 year olds). It requires Merck''s Recombivax HB® adult formulation. Use code 43 for that vaccine."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "e.g. Twinrix Junior available in Canada"
         }
       ]
     },
     {
-      "code" : "42",
-      "display" : "Hep B, adolescent/high risk infant",
-      "definition" : "hepatitis B vaccine, adolescent/high risk infant dosage",
+      "code" : "08 ",
+      "definition" : "hepatitis B vaccine, pediatric or pediatric/adolescent dosage",
+      "display" : "Hep B, adolescent or pediatric",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This code applies to any standard pediatric formulation of Hepatitis B vaccine. It should not be used for the 2-dose hepatitis B schedule for adolescents (11-15 year olds). It requires Merck's Recombivax HB adult formulation. Use code 43 for that vaccine."
+        }
+      ]
+    },
+    {
+      "code" : "42 ",
+      "definition" : "hepatitis B vaccine, adolescent/high risk infant dosage",
+      "display" : "Hep B, adolescent/high risk infant",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "As of August 27, 1998, Merck ceased distribution of their adolescent/high risk infant hepatitis B vaccine dosage. Code 42 should only be used to record historical records. For current administration of hepatitis B vaccine, pediatric/adolescent dosage, use code 08."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "43",
-      "display" : "Hep B, adult",
+      "code" : "43 ",
       "definition" : "hepatitis B vaccine, adult dosage",
+      "display" : "Hep B, adult",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
-          "valueString" : "As of September 1999, a 2-dose hepatitis B schedule for adolescents (11-15 year olds) was FDA approved for Merck''s Recombivax HB® adult formulation. Use code 43 for the 2-dose. This code should be used for any use of standard adult formulation of hepatitis B vaccine."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "As of September 1999, a 2-dose hepatitis B schedule for adolescents (11-15 year olds) was FDA approved for Merck's Recombivax HB adult formulation. Use code 43 for the 2-dose. This code should be used for any use of standard adult formulation of hepatitis B vaccine."
         }
       ]
     },
     {
-      "code" : "44",
-      "display" : "Hep B, dialysis",
+      "code" : "44 ",
       "definition" : "hepatitis B vaccine, dialysis patient dosage",
+      "display" : "Hep B, dialysis",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -701,78 +581,69 @@
       ]
     },
     {
-      "code" : "45",
-      "display" : "Hep B, unspecified formulation",
+      "code" : "45 ",
       "definition" : "hepatitis B vaccine, unspecified formulation",
+      "display" : "Hep B, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a HepB vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "58",
-      "display" : "Hep C",
+      "code" : "58 ",
       "definition" : "hepatitis C vaccine",
+      "display" : "Hep C",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "59",
-      "display" : "Hep E",
+      "code" : "59 ",
       "definition" : "hepatitis E vaccine",
+      "display" : "Hep E",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "60",
-      "display" : "herpes simplex 2",
+      "code" : "189 ",
+      "definition" : "Hepatitis B vaccine (recombinant), CpG adjuvanted",
+      "display" : "HepB-CpG",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "60 ",
       "definition" : "herpes simplex virus, type 2 vaccine",
+      "display" : "herpes simplex 2",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "47",
-      "display" : "Hib (HbOC)",
+      "code" : "47 ",
       "definition" : "Haemophilus influenzae type b vaccine, HbOC conjugate",
+      "display" : "Hib (HbOC)",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -780,14 +651,10 @@
       ]
     },
     {
-      "code" : "46",
-      "display" : "Hib (PRP-D)",
+      "code" : "46 ",
       "definition" : "Haemophilus influenzae type b vaccine, PRP-D conjugate",
+      "display" : "Hib (PRP-D)",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -795,14 +662,10 @@
       ]
     },
     {
-      "code" : "49",
-      "display" : "Hib (PRP-OMP)",
+      "code" : "49 ",
       "definition" : "Haemophilus influenzae type b vaccine, PRP-OMP conjugate",
+      "display" : "Hib (PRP-OMP)",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -810,14 +673,10 @@
       ]
     },
     {
-      "code" : "48",
-      "display" : "Hib (PRP-T)",
+      "code" : "48 ",
       "definition" : "Haemophilus influenzae type b vaccine, PRP-T conjugate",
+      "display" : "Hib (PRP-T)",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -825,14 +684,10 @@
       ]
     },
     {
-      "code" : "17",
-      "display" : "Hib, unspecified formulation",
+      "code" : "17 ",
       "definition" : "Haemophilus influenzae type b vaccine, conjugate unspecified formulation",
+      "display" : "Hib, unspecified formulation",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -840,93 +695,84 @@
       ]
     },
     {
-      "code" : "51",
-      "display" : "Hib-Hep B",
+      "code" : "51 ",
       "definition" : "Haemophilus influenzae type b conjugate and Hepatitis B vaccine",
+      "display" : "Hib-Hep B",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
-          "code" : "status",
-          "valueString" : "Active"
+          "code" : "use-notes",
+          "valueString" : "This vaccine may still be in use until the existing lots expire on 8/19/16."
         }
       ]
     },
     {
-      "code" : "61",
-      "display" : "HIV",
+      "code" : "61 ",
       "definition" : "human immunodeficiency virus vaccine",
+      "display" : "HIV",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "118",
-      "display" : "HPV, bivalent",
+      "code" : "118 ",
       "definition" : "human papilloma virus vaccine, bivalent",
+      "display" : "HPV, bivalent",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "62",
-      "display" : "HPV, quadrivalent",
+      "code" : "62 ",
       "definition" : "human papilloma virus vaccine, quadrivalent",
+      "display" : "HPV, quadrivalent",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "137",
-      "display" : "HPV, unspecified formulation",
+      "code" : "137 ",
       "definition" : "HPV, unspecified formulation",
+      "display" : "HPV, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a HPV vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "86",
-      "display" : "IG",
+      "code" : "165 ",
+      "definition" : "Human Papillomavirus 9-valent vaccine",
+      "display" : "HPV9",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "86 ",
       "definition" : "immune globulin, intramuscular",
+      "display" : "IG",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -934,14 +780,10 @@
       ]
     },
     {
-      "code" : "14",
-      "display" : "IG, unspecified formulation",
+      "code" : "14 ",
       "definition" : "immune globulin, unspecified formulation",
+      "display" : "IG, unspecified formulation",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -949,14 +791,10 @@
       ]
     },
     {
-      "code" : "87",
-      "display" : "IGIV",
+      "code" : "87 ",
       "definition" : "immune globulin, intravenous",
+      "display" : "IGIV",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -964,52 +802,40 @@
       ]
     },
     {
-      "code" : "160",
-      "display" : "Influenza A monovalent (H5N1), ADJUVANTED-2013",
+      "code" : "160 ",
       "definition" : "Influenza A monovalent (H5N1), adjuvanted, National stockpile 2013",
+      "display" : "Influenza A monovalent (H5N1), ADJUVANTED-2013",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "Approved by FDA 2013, adjuvant is mixed at point of administration."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "151",
-      "display" : "influenza nasal, unspecified formulation",
+      "code" : "151 ",
       "definition" : "influenza nasal, unspecified formulation",
+      "display" : "influenza nasal, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX should only be used for historical records where the formulation of nasal flu vaccine is not known."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "123",
-      "display" : "influenza, H5N1-1203",
+      "code" : "123 ",
       "definition" : "influenza virus vaccine, H5N1, A/Vietnam/1203/2004 (national stockpile)",
+      "display" : "influenza, H5N1-1203",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1017,14 +843,10 @@
       ]
     },
     {
-      "code" : "135",
-      "display" : "Influenza, high dose seasonal",
+      "code" : "135 ",
       "definition" : "influenza, high dose seasonal, preservative-free",
+      "display" : "Influenza, high dose seasonal",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1032,18 +854,25 @@
       ]
     },
     {
-      "code" : "153",
-      "display" : "Influenza, injectable, MDCK, preservative free",
+      "code" : "153 ",
       "definition" : "Influenza, injectable, Madin Darby Canine Kidney, preservative free",
+      "display" : "Influenza, injectable, MDCK, preservative free",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "ccIIV3"
-        },
+        }
+      ]
+    },
+    {
+      "code" : "171 ",
+      "definition" : "Influenza, injectable, Madin Darby Canine Kidney, preservative free, quadrivalent",
+      "display" : "Influenza, injectable, MDCK, preservative free, quadrivalent",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1051,52 +880,51 @@
       ]
     },
     {
-      "code" : "158",
-      "display" : "influenza, injectable, quadrivalent",
+      "code" : "186 ",
+      "definition" : "Influenza, injectable, Madin Darby Canine Kidney, quadrivalent with preservative",
+      "display" : "Influenza, injectable, MDCK, quadrivalent, preservative",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "158 ",
       "definition" : "influenza, injectable, quadrivalent, contains preservative",
+      "display" : "influenza, injectable, quadrivalent",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "use-notes",
-          "valueString" : "New in 2013.  IIV4"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "New in 2013. IIV4"
         }
       ]
     },
     {
-      "code" : "150",
-      "display" : "influenza, injectable, quadrivalent, preservative free",
+      "code" : "150 ",
       "definition" : "Influenza, injectable, quadrivalent, preservative free",
+      "display" : "influenza, injectable, quadrivalent, preservative free",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
-          "valueString" : "New in 2012.  IIV4"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "New in 2012. IIV4"
         }
       ]
     },
     {
-      "code" : "161",
-      "display" : "Influenza, injectable,quadrivalent, preservative free, pediatric",
+      "code" : "161 ",
       "definition" : "Influenza, injectable,quadrivalent, preservative free, pediatric",
+      "display" : "Influenza, injectable,quadrivalent, preservative free, pediatric",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1104,55 +932,66 @@
       ]
     },
     {
-      "code" : "111",
-      "display" : "influenza, live, intranasal",
-      "definition" : "influenza virus vaccine, live, attenuated, for intranasal use",
+      "code" : "166 ",
+      "definition" : "influenza, intradermal, quadrivalent, preservative free, injectable",
+      "display" : "influenza, intradermal, quadrivalent, preservative free",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "valueString" : "LAIV3"
-        },
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "111 ",
+      "definition" : "influenza virus vaccine, live, attenuated, for intranasal use",
+      "display" : "influenza, live, intranasal",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Inactive"
-        }
-      ]
-    },
-    {
-      "code" : "149",
-      "display" : "influenza, live, intranasal, quadrivalent",
-      "definition" : "influenza, live, intranasal, quadrivalent",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
         },
         {
           "code" : "use-notes",
-          "valueString" : "new in 2012.  LAIV4"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "LAIV3"
         }
       ]
     },
     {
-      "code" : "155",
-      "display" : "influenza, recombinant, injectable, preservative free",
-      "definition" : "Seasonal, trivalent, recombinant, injectable influenza vaccine, preservative free",
+      "code" : "149 ",
+      "definition" : "influenza, live, intranasal, quadrivalent",
+      "display" : "influenza, live, intranasal, quadrivalent",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "new in 2012. LAIV4"
+        }
+      ]
+    },
+    {
+      "code" : "155 ",
+      "definition" : "Seasonal, trivalent, recombinant, injectable influenza vaccine, preservative free",
+      "display" : "influenza, recombinant, injectable, preservative free",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "RIV"
-        },
+        }
+      ]
+    },
+    {
+      "code" : "185 ",
+      "definition" : "Seasonal, quadrivalent, recombinant, injectable influenza vaccine, preservative free",
+      "display" : "influenza, recombinant, quadrivalent,injectable, preservative free",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1160,109 +999,96 @@
       ]
     },
     {
-      "code" : "141",
-      "display" : "Influenza, seasonal, injectable",
+      "code" : "141 ",
       "definition" : "Influenza, seasonal, injectable",
+      "display" : "Influenza, seasonal, injectable",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "IIV3. This is one of two codes replacing CVX 15, which is being retired."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "140",
-      "display" : "Influenza, seasonal, injectable, preservative free",
+      "code" : "140 ",
       "definition" : "Influenza, seasonal, injectable, preservative free",
+      "display" : "Influenza, seasonal, injectable, preservative free",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "IIV3. This vaccine code is one of two which replace CVX 15, influenza, split virus."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "144",
-      "display" : "influenza, seasonal, intradermal, preservative free",
+      "code" : "144 ",
       "definition" : "seasonal influenza, intradermal, preservative free",
+      "display" : "influenza, seasonal, intradermal, preservative free",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "IIV3"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "15",
-      "display" : "influenza, split (incl. purified surface antigen)",
+      "code" : "15 ",
       "definition" : "influenza virus vaccine, split virus (incl. purified surface antigen)-retired CODE",
+      "display" : "influenza, split (incl. purified surface antigen)",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This code is being retired. It will still be found in older immunization records. It included both preservative free and non-preservative free."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "88",
-      "display" : "influenza, unspecified formulation",
-      "definition" : "influenza virus vaccine, unspecified formulation",
+      "code" : "168 ",
+      "definition" : "Seasonal trivalent influenza vaccine, adjuvanted, preservative free",
+      "display" : "influenza, trivalent, adjuvanted",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "88 ",
+      "definition" : "influenza virus vaccine, unspecified formulation",
+      "display" : "influenza, unspecified formulation",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a Influenza vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "16",
-      "display" : "influenza, whole",
+      "code" : "16 ",
       "definition" : "influenza virus vaccine, whole virus",
+      "display" : "influenza, whole",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1270,14 +1096,10 @@
       ]
     },
     {
-      "code" : "10",
-      "display" : "IPV",
+      "code" : "10 ",
       "definition" : "poliovirus vaccine, inactivated",
+      "display" : "IPV",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1285,14 +1107,10 @@
       ]
     },
     {
-      "code" : "134",
-      "display" : "Japanese Encephalitis IM",
+      "code" : "134 ",
       "definition" : "Japanese Encephalitis vaccine for intramuscular administration",
+      "display" : "Japanese Encephalitis IM",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1300,93 +1118,69 @@
       ]
     },
     {
-      "code" : "39",
-      "display" : "Japanese encephalitis SC",
+      "code" : "39 ",
       "definition" : "Japanese Encephalitis Vaccine SC",
+      "display" : "Japanese encephalitis SC",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "129",
-      "display" : "Japanese Encephalitis, unspecified formulation",
+      "code" : "129 ",
       "definition" : "Japanese Encephalitis vaccine, unspecified formulation",
+      "display" : "Japanese Encephalitis, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a JE vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "63",
-      "display" : "Junin virus",
+      "code" : "63 ",
       "definition" : "Junin virus vaccine",
+      "display" : "Junin virus",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "64",
-      "display" : "leishmaniasis",
+      "code" : "64 ",
       "definition" : "leishmaniasis vaccine",
+      "display" : "leishmaniasis",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "65",
-      "display" : "leprosy",
+      "code" : "65 ",
       "definition" : "leprosy vaccine",
+      "display" : "leprosy",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "66",
-      "display" : "Lyme disease",
+      "code" : "66 ",
       "definition" : "Lyme disease vaccine",
+      "display" : "Lyme disease",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1394,14 +1188,10 @@
       ]
     },
     {
-      "code" : "04",
-      "display" : "M/R",
+      "code" : "04 ",
       "definition" : "measles and rubella virus vaccine",
+      "display" : "M/R",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1409,29 +1199,21 @@
       ]
     },
     {
-      "code" : "67",
-      "display" : "malaria",
+      "code" : "67 ",
       "definition" : "malaria vaccine",
+      "display" : "malaria",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "05",
-      "display" : "measles",
+      "code" : "05 ",
       "definition" : "measles virus vaccine",
+      "display" : "measles",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1439,44 +1221,69 @@
       ]
     },
     {
-      "code" : "68",
-      "display" : "melanoma",
+      "code" : "68 ",
       "definition" : "melanoma vaccine",
+      "display" : "melanoma",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "163",
-      "display" : "meningococcal B, OMV",
+      "code" : "191 ",
+      "definition" : "meningococcal A polysaccharide vaccine (non-US)",
+      "display" : "meningococcal A polysaccharide (non-US)",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Non-US"
+        }
+      ]
+    },
+    {
+      "code" : "192 ",
+      "definition" : "meningococcal AC polysaccharide vaccine (non-US)",
+      "display" : "meningococcal AC polysaccharide (non-US)",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Non-US"
+        }
+      ]
+    },
+    {
+      "code" : "108 ",
+      "definition" : "meningococcal ACWY vaccine, unspecified formulation",
+      "display" : "meningococcal ACWY, unspecified formulation",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This CVX is intended for use when one of the meningococcal vaccines containing serogroups A, C, W and Y (conjugate or polysaccaride) was given and the exact formulation was not recorded. It should not be used to record newly administered immunizations. It is not to be used when one of the meningococcal vaccines containing other serogroups was administered."
+        }
+      ]
+    },
+    {
+      "code" : "163 ",
       "definition" : "meningococcal B vaccine, recombinant, OMV, adjuvanted",
+      "display" : "meningococcal B, OMV",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Pending"
+          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "162",
-      "display" : "meningococcal B, recombinant",
+      "code" : "162 ",
       "definition" : "meningococcal B vaccine, fully recombinant",
+      "display" : "meningococcal B, recombinant",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1484,14 +1291,10 @@
       ]
     },
     {
-      "code" : "164",
-      "display" : "meningococcal B, unspecified",
+      "code" : "164 ",
       "definition" : "meningococcal B, unspecified formulation",
+      "display" : "meningococcal B, unspecified",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1499,14 +1302,10 @@
       ]
     },
     {
-      "code" : "103",
-      "display" : "meningococcal C conjugate",
+      "code" : "103 ",
       "definition" : "meningococcal C conjugate vaccine",
+      "display" : "meningococcal C conjugate",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1514,48 +1313,36 @@
       ]
     },
     {
-      "code" : "148",
-      "display" : "Meningococcal C/Y-HIB PRP",
+      "code" : "148 ",
       "definition" : "Meningococcal Groups C and Y and Haemophilus b Tetanus Toxoid Conjugate Vaccine",
+      "display" : "Meningococcal C/Y-HIB PRP",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "147",
+      "code" : "147 ",
+      "definition" : "Meningococcal, MCV4, unspecified conjugate formulation(groups A, C, Y and W-135)",
       "display" : "meningococcal MCV4, unspecified formulation",
-      "definition" : "Meningococcal, MCV4, unspecified formulation(groups A, C, Y and W-135)",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "use-notes",
-          "valueString" : "This CVX should only be used for historical doses of meningococcal conjugate vaccine where the formulation is unknown (oligosaccharide vs polysaccharide). It is not the same as CVX 108, Meningococcal, unspecified formulation."
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This CVX should only be used for historical doses of meningococcal conjugate vaccine where the formulation is unknown (oligosaccharide vs polysaccharide). It is not the same as CVX 108, Meningococcal, unspecified formulation. This CVX is for unspecified Meningococcal conjugate vaccines."
         }
       ]
     },
     {
-      "code" : "136",
-      "display" : "Meningococcal MCV4O",
+      "code" : "136 ",
       "definition" : "meningococcal oligosaccharide (groups A, C, Y and W-135) diphtheria toxoid conjugate vaccine (MCV4O)",
+      "display" : "Meningococcal MCV4O",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1563,14 +1350,10 @@
       ]
     },
     {
-      "code" : "114",
-      "display" : "meningococcal MCV4P",
+      "code" : "114 ",
       "definition" : "meningococcal polysaccharide (groups A, C, Y and W-135) diphtheria toxoid conjugate vaccine (MCV4P)",
+      "display" : "meningococcal MCV4P",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1578,48 +1361,36 @@
       ]
     },
     {
-      "code" : "32",
-      "display" : "meningococcal MPSV4",
+      "code" : "32 ",
       "definition" : "meningococcal polysaccharide vaccine (MPSV4)",
+      "display" : "meningococcal MPSV4",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "108",
-      "display" : "meningococcal, unspecified formulation",
-      "definition" : "meningococcal vaccine, unspecified formulation",
+      "code" : "167 ",
+      "definition" : "meningococcal vaccine of unknown formulation and unknown serogroups",
+      "display" : "meningococcal, unknown serogroups",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
-          "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a meningococcal vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
+          "valueString" : "This CVX is intended for use when any one of the meningococcal vaccines is recorded and there is no information about which serogroups are protected against. This code should not be used when a newly administered immunization is recorded."
         }
       ]
     },
     {
-      "code" : "03",
-      "display" : "MMR",
+      "code" : "03 ",
       "definition" : "measles, mumps and rubella virus vaccine",
+      "display" : "MMR",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1627,14 +1398,10 @@
       ]
     },
     {
-      "code" : "94",
-      "display" : "MMRV",
+      "code" : "94 ",
       "definition" : "measles, mumps, rubella, and varicella virus vaccine",
+      "display" : "MMRV",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1642,29 +1409,10 @@
       ]
     },
     {
-      "code" : "07",
-      "display" : "mumps",
+      "code" : "07 ",
       "definition" : "mumps virus vaccine",
+      "display" : "mumps",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
-        }
-      ]
-    },
-    {
-      "code" : "127",
-      "display" : "Novel influenza-H1N1-09",
-      "definition" : "Novel influenza-H1N1-09, injectable",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1672,33 +1420,36 @@
       ]
     },
     {
-      "code" : "128",
-      "display" : "Novel Influenza-H1N1-09, all formulations",
-      "definition" : "Novel influenza-H1N1-09, all formulations",
+      "code" : "127 ",
+      "definition" : "Novel influenza-H1N1-09, injectable",
+      "display" : "Novel influenza-H1N1-09",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
+        }
+      ]
+    },
+    {
+      "code" : "128 ",
+      "definition" : "Novel influenza-H1N1-09, all formulations",
+      "display" : "Novel Influenza-H1N1-09, all formulations",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This code is used whenever the actual formulation is not determined or when aggregating all Novel H1N1 Influenza-09 immunizations for reporting to CRA. It should not be used for seasonal influenza vaccine that is not otherwise specified. (NOS)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "125",
-      "display" : "Novel Influenza-H1N1-09, nasal",
+      "code" : "125 ",
       "definition" : "Novel Influenza-H1N1-09, live virus for nasal administration",
+      "display" : "Novel Influenza-H1N1-09, nasal",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1706,14 +1457,10 @@
       ]
     },
     {
-      "code" : "126",
-      "display" : "Novel influenza-H1N1-09, preservative-free",
+      "code" : "126 ",
       "definition" : "Novel influenza-H1N1-09, preservative-free, injectable",
+      "display" : "Novel influenza-H1N1-09, preservative-free",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1721,29 +1468,70 @@
       ]
     },
     {
-      "code" : "02",
+      "code" : "02 ",
+      "definition" : "trivalent poliovirus vaccine, live, oral",
       "display" : "OPV",
-      "definition" : "poliovirus vaccine, live, oral",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This is the OPV that was used in the US"
         }
       ]
     },
     {
-      "code" : "69",
-      "display" : "parainfluenza-3",
+      "code" : "179 ",
+      "definition" : "Non-US monovalent oral polio vaccine, unspecified formulation",
+      "display" : "OPV ,monovalent, unspecified",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "No-US"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This is a non-US vaccine that may be seen in some immunization histories. It is composed of either Type 1, Type 2 or Type 3 oral polio vaccine."
+        }
+      ]
+    },
+    {
+      "code" : "178 ",
+      "definition" : "Non-US bivalent oral polio vaccine (types 1 and 3)",
+      "display" : "OPV bivalent",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "No-US"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This is a non-US vaccine that may be seen in some immunization histories."
+        }
+      ]
+    },
+    {
+      "code" : "182 ",
+      "definition" : "Oral Polio Vaccine, Unspecified formulation",
+      "display" : "OPV, Unspecified",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This code represents an oral polio vaccine where the specific formulation is unknown."
+        }
+      ]
+    },
+    {
+      "code" : "69 ",
       "definition" : "parainfluenza-3 virus vaccine",
+      "display" : "parainfluenza-3",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1751,14 +1539,25 @@
       ]
     },
     {
-      "code" : "11",
-      "display" : "pertussis",
+      "code" : "177 ",
+      "definition" : "pneumococcal conjugate vaccine, 10 valent",
+      "display" : "PCV10",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "No-US"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This is a foreign vaccine"
+        }
+      ]
+    },
+    {
+      "code" : "11 ",
       "definition" : "pertussis vaccine",
+      "display" : "pertussis",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1766,44 +1565,10 @@
       ]
     },
     {
-      "code" : "23",
-      "display" : "plague",
+      "code" : "23 ",
       "definition" : "plague vaccine",
+      "display" : "plague",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
-        }
-      ]
-    },
-    {
-      "code" : "133",
-      "display" : "Pneumococcal conjugate PCV 13",
-      "definition" : "pneumococcal conjugate vaccine, 13 valent",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
-        }
-      ]
-    },
-    {
-      "code" : "100",
-      "display" : "pneumococcal conjugate PCV 7",
-      "definition" : "pneumococcal conjugate vaccine, 7 valent",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1811,33 +1576,47 @@
       ]
     },
     {
-      "code" : "152",
-      "display" : "Pneumococcal Conjugate, unspecified formulation",
-      "definition" : "Pneumococcal Conjugate, unspecified formulation",
+      "code" : "133 ",
+      "definition" : "pneumococcal conjugate vaccine, 13 valent",
+      "display" : "Pneumococcal conjugate PCV 13",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "100 ",
+      "definition" : "pneumococcal conjugate vaccine, 7 valent",
+      "display" : "pneumococcal conjugate PCV 7",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        }
+      ]
+    },
+    {
+      "code" : "152 ",
+      "definition" : "Pneumococcal Conjugate, unspecified formulation",
+      "display" : "Pneumococcal Conjugate, unspecified formulation",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX should only be used for historical records where the formulation of pneumococcal conjugate vaccine is not known."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "33",
-      "display" : "pneumococcal polysaccharide PPV23",
+      "code" : "33 ",
       "definition" : "pneumococcal polysaccharide vaccine, 23 valent",
+      "display" : "pneumococcal polysaccharide PPV23",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -1845,37 +1624,73 @@
       ]
     },
     {
-      "code" : "109",
-      "display" : "pneumococcal, unspecified formulation",
+      "code" : "109 ",
       "definition" : "pneumococcal vaccine, unspecified formulation",
+      "display" : "pneumococcal, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a pneumococcal vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "89",
-      "display" : "polio, unspecified formulation",
+      "code" : "89 ",
       "definition" : "poliovirus vaccine, unspecified formulation",
+      "display" : "polio, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a polio vaccination when noted on a vaccination card)"
-        },
+        }
+      ]
+    },
+    {
+      "code" : "70 ",
+      "definition" : "Q fever vaccine",
+      "display" : "Q fever",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Never Active"
+        }
+      ]
+    },
+    {
+      "code" : "175 ",
+      "definition" : "Human Rabies vaccine from human diploid cell culture",
+      "display" : "Rabies - IM Diploid cell culture",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "176 ",
+      "definition" : "Human rabies vaccine from Chicken fibroblast culture",
+      "display" : "Rabies - IM fibroblast culture",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "40 ",
+      "definition" : "rabies vaccine, for intradermal injection",
+      "display" : "rabies, intradermal injection",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1883,93 +1698,51 @@
       ]
     },
     {
-      "code" : "70",
-      "display" : "Q fever",
-      "definition" : "Q fever vaccine",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Never"
-        }
-      ]
-    },
-    {
-      "code" : "40",
-      "display" : "rabies, intradermal injection",
-      "definition" : "rabies vaccine, for intradermal injection",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
-        }
-      ]
-    },
-    {
-      "code" : "18",
+      "code" : "18 ",
+      "definition" : "rabies vaccine, for intramuscular injection RETIRED CODE",
       "display" : "rabies, intramuscular injection",
-      "definition" : "rabies vaccine, for intramuscular injection",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
-          "code" : "status",
-          "valueString" : "Active"
+          "code" : "use-notes",
+          "valueString" : "This CVX code has been retired. It is replace by CVX 175, or CVX 176. It will continue to be found in historic records."
         }
       ]
     },
     {
-      "code" : "90",
-      "display" : "rabies, unspecified formulation",
+      "code" : "90 ",
       "definition" : "rabies vaccine, unspecified formulation",
+      "display" : "rabies, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a rabies vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "72",
-      "display" : "rheumatic fever",
+      "code" : "72 ",
       "definition" : "rheumatic fever vaccine",
+      "display" : "rheumatic fever",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "159",
-      "display" : "Rho(D) - Unspecified formulation",
+      "code" : "159 ",
       "definition" : "Rho(D) Unspecified formulation",
+      "display" : "Rho(D) - Unspecified formulation",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -1977,67 +1750,51 @@
       ]
     },
     {
-      "code" : "157",
-      "display" : "Rho(D) -IG IM",
+      "code" : "157 ",
       "definition" : "Rho(D) Immune globulin - IM",
+      "display" : "Rho(D) -IG IM",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "This immune globulin may be administered IM only."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "156",
-      "display" : "Rho(D)-IG",
+      "code" : "156 ",
       "definition" : "Rho(D) Immune globulin- IV or IM",
+      "display" : "Rho(D)-IG",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
         {
           "code" : "use-notes",
           "valueString" : "This immune globulin may be administered either IM or IV."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "73",
-      "display" : "Rift Valley fever",
+      "code" : "73 ",
       "definition" : "Rift Valley fever vaccine",
+      "display" : "Rift Valley fever",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Never"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "34",
-      "display" : "RIG",
+      "code" : "34 ",
       "definition" : "rabies immune globulin",
+      "display" : "RIG",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2045,14 +1802,10 @@
       ]
     },
     {
-      "code" : "119",
-      "display" : "rotavirus, monovalent",
+      "code" : "119 ",
       "definition" : "rotavirus, live, monovalent vaccine",
+      "display" : "rotavirus, monovalent",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2060,14 +1813,10 @@
       ]
     },
     {
-      "code" : "116",
-      "display" : "rotavirus, pentavalent",
+      "code" : "116 ",
       "definition" : "rotavirus, live, pentavalent vaccine",
+      "display" : "rotavirus, pentavalent",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2075,14 +1824,10 @@
       ]
     },
     {
-      "code" : "74",
-      "display" : "rotavirus, tetravalent",
+      "code" : "74 ",
       "definition" : "rotavirus, live, tetravalent vaccine",
+      "display" : "rotavirus, tetravalent",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2090,14 +1835,10 @@
       ]
     },
     {
-      "code" : "122",
-      "display" : "rotavirus, unspecified formulation",
+      "code" : "122 ",
       "definition" : "rotavirus vaccine, unspecified formulation",
+      "display" : "rotavirus, unspecified formulation",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2105,14 +1846,10 @@
       ]
     },
     {
-      "code" : "71",
-      "display" : "RSV-IGIV",
+      "code" : "71 ",
       "definition" : "respiratory syncytial virus immune globulin, intravenous",
+      "display" : "RSV-IGIV",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2120,14 +1857,10 @@
       ]
     },
     {
-      "code" : "93",
-      "display" : "RSV-MAb",
+      "code" : "93 ",
       "definition" : "respiratory syncytial virus monoclonal antibody (palivizumab), intramuscular",
+      "display" : "RSV-MAb",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2135,44 +1868,32 @@
       ]
     },
     {
-      "code" : "145",
-      "display" : "RSV-MAb (new)",
+      "code" : "145 ",
       "definition" : "respiratory syncytial virus monoclonal antibody (motavizumab), intramuscular",
+      "display" : "RSV-MAb (new)",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Pending"
+          "valueString" : "Never Active"
         }
       ]
     },
     {
-      "code" : "06",
-      "display" : "rubella",
+      "code" : "06 ",
       "definition" : "rubella virus vaccine",
+      "display" : "rubella",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "38",
-      "display" : "rubella/mumps",
+      "code" : "38 ",
       "definition" : "rubella and mumps virus vaccine",
+      "display" : "rubella/mumps",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2180,14 +1901,10 @@
       ]
     },
     {
-      "code" : "76",
-      "display" : "Staphylococcus bacterio lysate",
+      "code" : "76 ",
       "definition" : "Staphylococcus bacteriophage lysate",
+      "display" : "Staphylococcus bacterio lysate",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2195,86 +1912,62 @@
       ]
     },
     {
-      "code" : "138",
-      "display" : "Td (adult)",
+      "code" : "138 ",
       "definition" : "tetanus and diphtheria toxoids, not adsorbed, for adult use",
+      "display" : "Td (adult)",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "Note that this Td is not adsorbed."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "113",
-      "display" : "Td (adult) preservative free",
-      "definition" : "tetanus and diphtheria toxoids, adsorbed, preservative free, for adult use",
+      "code" : "09 ",
+      "definition" : "tetanus and diphtheria toxoids, adsorbed, preservative free, for adult use (2 Lf of tetanus toxoid and 2 Lf of diphtheria toxoid)",
+      "display" : "Td (adult), 2 Lf tetanus toxoid, preservative free, adsorbed",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
           "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "09",
-      "display" : "Td (adult), adsorbed",
-      "definition" : "tetanus and diphtheria toxoids, adsorbed, for adult use",
+      "code" : "113 ",
+      "definition" : "tetanus and diphtheria toxoids, adsorbed, preservative free, for adult use (5 Lf of tetanus toxoid and 2 Lf of diphtheria toxoid)",
+      "display" : "Td (adult), 5 Lf tetanus toxoid, preservative free, adsorbed",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "use-notes",
-          "valueString" : "Note that this vaccine name has changed.  See also Td (adult). It is not adsorbed."
-        },
-        {
           "code" : "status",
           "valueString" : "Active"
         }
       ]
     },
     {
-      "code" : "139",
-      "display" : "Td(adult) unspecified formulation",
+      "code" : "139 ",
       "definition" : "Td(adult) unspecified formulation",
+      "display" : "Td(adult) unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a Td vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "115",
-      "display" : "Tdap",
+      "code" : "115 ",
       "definition" : "tetanus toxoid, reduced diphtheria toxoid, and acellular pertussis vaccine, adsorbed",
+      "display" : "Tdap",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2282,74 +1975,69 @@
       ]
     },
     {
-      "code" : "35",
-      "display" : "tetanus toxoid, adsorbed",
-      "definition" : "tetanus toxoid, adsorbed",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
-        }
-      ]
-    },
-    {
-      "code" : "142",
-      "display" : "tetanus toxoid, not adsorbed",
-      "definition" : "tetanus toxoid, not adsorbed",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Active"
-        }
-      ]
-    },
-    {
-      "code" : "112",
-      "display" : "tetanus toxoid, unspecified formulation",
-      "definition" : "tetanus toxoid, unspecified formulation",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
-        }
-      ]
-    },
-    {
-      "code" : "77",
-      "display" : "tick-borne encephalitis",
-      "definition" : "tick-borne encephalitis vaccine",
-      "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
-        }
-      ]
-    },
-    {
-      "code" : "13",
-      "display" : "TIG",
+      "code" : "180 ",
       "definition" : "tetanus immune globulin",
+      "display" : "tetanus immune globulin",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
+        {
+          "code" : "use-notes",
+          "valueString" : "This record duplicates CVX 13 (TIG). Do not use CVX 180."
+        }
+      ]
+    },
+    {
+      "code" : "35 ",
+      "definition" : "tetanus toxoid, adsorbed",
+      "display" : "tetanus toxoid, adsorbed",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        }
+      ]
+    },
+    {
+      "code" : "142 ",
+      "definition" : "tetanus toxoid, not adsorbed",
+      "display" : "tetanus toxoid, not adsorbed",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        }
+      ]
+    },
+    {
+      "code" : "112 ",
+      "definition" : "tetanus toxoid, unspecified formulation",
+      "display" : "tetanus toxoid, unspecified formulation",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        }
+      ]
+    },
+    {
+      "code" : "77 ",
+      "definition" : "tick-borne encephalitis vaccine",
+      "display" : "tick-borne encephalitis",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Non-US"
+        }
+      ]
+    },
+    {
+      "code" : "13 ",
+      "definition" : "tetanus immune globulin",
+      "display" : "TIG",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2357,90 +2045,70 @@
       ]
     },
     {
-      "code" : "98",
-      "display" : "TST, unspecified formulation",
+      "code" : "98 ",
       "definition" : "tuberculin skin test; unspecified formulation",
+      "display" : "TST, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "TB Skin test is not vaccine."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "95",
-      "display" : "TST-OT tine test",
+      "code" : "95 ",
       "definition" : "tuberculin skin test; old tuberculin, multipuncture device",
+      "display" : "TST-OT tine test",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "TB Skin test is not vaccine."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "96",
-      "display" : "TST-PPD intradermal",
+      "code" : "96 ",
       "definition" : "tuberculin skin test; purified protein derivative solution, intradermal",
+      "display" : "TST-PPD intradermal",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "TB Skin test is not vaccine."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "97",
-      "display" : "TST-PPD tine test",
+      "code" : "97 ",
       "definition" : "tuberculin skin test; purified protein derivative, multipuncture device",
+      "display" : "TST-PPD tine test",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "TB Skin test is not vaccine."
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "78",
-      "display" : "tularemia vaccine",
+      "code" : "78 ",
       "definition" : "tularemia vaccine",
+      "display" : "tularemia vaccine",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2448,14 +2116,21 @@
       ]
     },
     {
-      "code" : "25",
-      "display" : "typhoid, oral",
+      "code" : "190 ",
+      "definition" : "Typhoid conjugate vaccine (non-US)",
+      "display" : "Typhoid conjugate vaccine (TCV)",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Non-US"
+        }
+      ]
+    },
+    {
+      "code" : "25 ",
       "definition" : "typhoid vaccine, live, oral",
+      "display" : "typhoid, oral",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2463,63 +2138,47 @@
       ]
     },
     {
-      "code" : "41",
-      "display" : "typhoid, parenteral",
+      "code" : "41 ",
       "definition" : "typhoid vaccine, parenteral, other than acetone-killed, dried",
+      "display" : "typhoid, parenteral",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "53",
-      "display" : "typhoid, parenteral, AKD (U.S. military)",
+      "code" : "53 ",
       "definition" : "typhoid vaccine, parenteral, acetone-killed, dried (U.S. military)",
+      "display" : "typhoid, parenteral, AKD (U.S. military)",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
-        {
           "code" : "status",
-          "valueString" : "Active"
+          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "91",
-      "display" : "typhoid, unspecified formulation",
+      "code" : "91 ",
       "definition" : "typhoid vaccine, unspecified formulation",
+      "display" : "typhoid, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a typhoid vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "101",
-      "display" : "typhoid, ViCPs",
+      "code" : "101 ",
       "definition" : "typhoid Vi capsular polysaccharide vaccine",
+      "display" : "typhoid, ViCPs",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2527,14 +2186,10 @@
       ]
     },
     {
-      "code" : "131",
-      "display" : "typhus, historical",
+      "code" : "131 ",
       "definition" : "Historical record of a typhus vaccination",
+      "display" : "typhus, historical",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2542,14 +2197,10 @@
       ]
     },
     {
-      "code" : "75",
-      "display" : "vaccinia (smallpox)",
+      "code" : "75 ",
       "definition" : "vaccinia (smallpox) vaccine",
+      "display" : "vaccinia (smallpox)",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2557,14 +2208,10 @@
       ]
     },
     {
-      "code" : "105",
-      "display" : "vaccinia (smallpox) diluted",
+      "code" : "105 ",
       "definition" : "vaccinia (smallpox) vaccine, diluted",
+      "display" : "vaccinia (smallpox) diluted",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2572,14 +2219,10 @@
       ]
     },
     {
-      "code" : "79",
-      "display" : "vaccinia immune globulin",
+      "code" : "79 ",
       "definition" : "vaccinia immune globulin",
+      "display" : "vaccinia immune globulin",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2587,14 +2230,10 @@
       ]
     },
     {
-      "code" : "21",
-      "display" : "varicella",
+      "code" : "21 ",
       "definition" : "varicella virus vaccine",
+      "display" : "varicella",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2602,14 +2241,10 @@
       ]
     },
     {
-      "code" : "81",
-      "display" : "VEE, inactivated",
+      "code" : "81 ",
       "definition" : "Venezuelan equine encephalitis, inactivated",
+      "display" : "VEE, inactivated",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2617,14 +2252,10 @@
       ]
     },
     {
-      "code" : "80",
-      "display" : "VEE, live",
+      "code" : "80 ",
       "definition" : "Venezuelan equine encephalitis, live, attenuated",
+      "display" : "VEE, live",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2632,33 +2263,25 @@
       ]
     },
     {
-      "code" : "92",
-      "display" : "VEE, unspecified formulation",
+      "code" : "92 ",
       "definition" : "Venezuelan equine encephalitis vaccine, unspecified formulation",
+      "display" : "VEE, unspecified formulation",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
           "code" : "use-notes",
           "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a VEE vaccination when noted on a vaccination card)"
-        },
-        {
-          "code" : "status",
-          "valueString" : "Inactive"
         }
       ]
     },
     {
-      "code" : "36",
-      "display" : "VZIG",
+      "code" : "36 ",
       "definition" : "varicella zoster immune globulin",
+      "display" : "VZIG",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2666,14 +2289,10 @@
       ]
     },
     {
-      "code" : "117",
-      "display" : "VZIG (IND)",
+      "code" : "117 ",
       "definition" : "varicella zoster immune globulin (Investigational New Drug)",
+      "display" : "VZIG (IND)",
       "property" : [
-        {
-          "code" : "non-vaccine",
-          "valueString" : "0"
-        },
         {
           "code" : "status",
           "valueString" : "Inactive"
@@ -2681,14 +2300,51 @@
       ]
     },
     {
-      "code" : "37",
-      "display" : "yellow fever",
+      "code" : "37 ",
       "definition" : "yellow fever vaccine",
+      "display" : "yellow fever",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
         },
+        {
+          "code" : "use-notes",
+          "valueString" : "This is the YF vaccine that has been available in the US for years. It is stabilized with sorbitol and gelatin."
+        }
+      ]
+    },
+    {
+      "code" : "183 ",
+      "definition" : "Yellow fever vaccine alternative formulation",
+      "display" : "Yellow fever vaccine - alt",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Active"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This vaccine is stabilized with sorbitol and lactose and has been used outside the US for some time. It will be made available in the US."
+        }
+      ]
+    },
+    {
+      "code" : "184 ",
+      "definition" : "Yellow fever vaccine, unspecified formulation",
+      "display" : "Yellow fever, unspecified formulation",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        }
+      ]
+    },
+    {
+      "code" : "121 ",
+      "definition" : "zoster vaccine, live",
+      "display" : "zoster live",
+      "property" : [
         {
           "code" : "status",
           "valueString" : "Active"
@@ -2696,17 +2352,73 @@
       ]
     },
     {
-      "code" : "121",
-      "display" : "zoster",
-      "definition" : "zoster vaccine, live",
+      "code" : "187 ",
+      "definition" : "zoster vaccine recombinant",
+      "display" : "zoster recombinant",
       "property" : [
         {
-          "code" : "non-vaccine",
-          "valueString" : "0"
+          "code" : "status",
+          "valueString" : "Active"
+        }
+      ]
+    },
+    {
+      "code" : "188 ",
+      "definition" : "zoster vaccine, unspecified formulation",
+      "display" : "zoster, unspecified formulation",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
         },
         {
-          "code" : "status/",
-          "valueString" : "Active"
+          "code" : "use-notes",
+          "valueString" : "This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a zoster vaccination when noted on a vaccination card)"
+        }
+      ]
+    },
+    {
+      "code" : "998 ",
+      "definition" : "no vaccine administered",
+      "display" : "no vaccine administered",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "Code 998 was added for use in VXU HL7 messages where the OBX segment is nested with the RXA segment, but the message does not contain information about a vaccine administration. An example of this use is to report the vaccines due next for a patient when no vaccine administration is being reported."
+        }
+      ]
+    },
+    {
+      "code" : "99 ",
+      "definition" : "RESERVED - do not use",
+      "display" : "RESERVED - do not use",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "Code 99 will not be used in this table to avoid confusion with code 999."
+        }
+      ]
+    },
+    {
+      "code" : "999 ",
+      "definition" : "nknown vaccine or immune globulin",
+      "display" : "unknown",
+      "property" : [
+        {
+          "code" : "status",
+          "valueString" : "Inactive"
+        },
+        {
+          "code" : "use-notes",
+          "valueString" : "This CVX code has little utility and should rarely be used."
         }
       ]
     }

@@ -1177,6 +1177,8 @@ end;
 
 procedure TNarrativeGenerator.inject(res : TFHIRDomainResource; x : TFHIRXhtmlNode; status : TFhirNarrativeStatusEnum);
 begin
+  if not x.hasAttribute('xmlns') then
+    x.attribute('xmlns', XHTML_NS);
   if (res.Text = nil) then
     res.Text := TFHIRNarrative.create;
   if (res.Text.div_ = nil) or (res.Text.Div_.ChildNodes.isEmpty) then

@@ -139,6 +139,8 @@ Type
     function primitiveValue : string; override;
     function fhirType : String; override;
     function NsDecl : String; virtual;
+    function hasAttribute(name : String): boolean;
+    procedure attribute(name, value : String);
 
     {
       plain text content of html
@@ -690,6 +692,22 @@ begin
     ChildNodes.assign(TFhirXHtmlNode(oSource).FChildNodes);
 end;
 
+procedure TFhirXHtmlNode.attribute(name, value: String);
+var
+  attr : TFHIRAttribute;
+begin
+  if FAttributes = nil then
+    FAttributes := TFHIRAttributeList.Create;
+
+  for attr in FAttributes do
+    if attr.Name = name then
+    begin
+      attr.Value := value;
+      exit;
+    end;
+  FAttributes.Add(name, value);
+end;
+
 function TFhirXHtmlNode.Clone: TFhirXHtmlNode;
 begin
   result := TFhirXHtmlNode(inherited Clone);
@@ -821,6 +839,17 @@ end;
 function TFhirXHtmlNode.getId: String;
 begin
   result := '';
+end;
+
+function TFhirXHtmlNode.hasAttribute(name: String): boolean;
+var
+  attr : TFHIRAttribute;
+begin
+  result := false;
+  if FAttributes <> nil then
+    for attr in FAttributes do
+      if attr.Name = name then
+        exit(true);
 end;
 
 function TFhirXHtmlNode.isEmpty: boolean;

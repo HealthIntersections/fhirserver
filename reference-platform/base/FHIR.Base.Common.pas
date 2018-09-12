@@ -58,6 +58,7 @@ type
   protected
     FElement : TFHIRObject;
     function GetFhirObjectVersion: TFHIRVersion; override;
+    function NoElementOk : boolean; virtual;
   public
     constructor Create(elem : TFHIRObject);
     destructor Destroy; override;
@@ -1223,7 +1224,7 @@ end;
 constructor TFHIRXVersionElementWrapper.Create(elem : TFHIRObject);
 begin
   inherited create;
-  if (elem = nil) then
+  if (elem = nil) and not NoElementOk then
     raise EFHIRException.create('A value must be provided');
   FElement := elem;
 end;
@@ -1287,6 +1288,11 @@ end;
 function TFHIRXVersionElementWrapper.makeStringValue(v: String): TFHIRObject;
 begin
   result := FElement.makeStringValue(v);
+end;
+
+function TFHIRXVersionElementWrapper.NoElementOk: boolean;
+begin
+  result := false;
 end;
 
 procedure TFHIRXVersionElementWrapper.setIdValue(id: String);

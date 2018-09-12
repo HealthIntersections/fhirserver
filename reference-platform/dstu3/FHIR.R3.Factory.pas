@@ -541,9 +541,8 @@ begin
     result := nil
   else if r.isResource then
   begin
-    if (r as TFHIRResource).meta = nil then
-      (r as TFHIRResource).meta := TFHIRMeta.Create;
     result := TFHIRMeta3.create((r as TFHIRResource).meta.link);
+    TFHIRMeta3(result).resource := (r as TFHIRResource).link;
   end
   else
     result := TFHIRMeta3.create(r as TFhirMeta)
@@ -559,9 +558,8 @@ end;
 
 function TFHIRFactoryR3.wrapMeta(r: TFHIRResourceV): TFhirMetaW;
 begin
-  if (r as TFHIRResource).meta = nil then
-    (r as TFHIRResource).meta := TFHIRMeta.Create;
   result := TFHIRMeta3.create((r as TFHIRResource).meta.link);
+  TFHIRMeta3(result).resource := (r as TFHIRResource).link;
 end;
 
 function TFHIRFactoryR3.wrapObservation(r: TFHIRResourceV): TFhirObservationW;

@@ -579,8 +579,14 @@ type
 
   TFHIRMeta2 = class (TFHIRMetaW)
   private
+    FResource : TFHIRResource;
+    procedure force;
+    procedure setResource(value : TFHIRResource);
     function m : TFhirMeta;
+    function NoElementOk : boolean; override;
   public
+    destructor destroy; override;
+    property Resource : TFHIRResource read FResource write SetResource;
     function GetVersionId: String; override;
     procedure SetVersionId(Value: String); override;
     function GetLastUpdated: TDateTimeEx; override;
@@ -3060,6 +3066,7 @@ procedure TFHIRMeta2.addLabel(system, code, display: String);
 var
   c : TFHIRCoding;
 begin
+  force;
   c := TFHIRCoding.create;
   try
     c.system := system;
@@ -3073,6 +3080,7 @@ end;
 
 procedure TFHIRMeta2.addProfile(uri: String);
 begin
+  force;
   m.profileList.Add(TFhirUri.Create(uri));
 end;
 
@@ -3080,6 +3088,7 @@ procedure TFHIRMeta2.addTag(system, code, display: String);
 var
   c : TFHIRCoding;
 begin
+  force;
   c := TFHIRCoding.create;
   try
     c.system := system;
@@ -3093,7 +3102,8 @@ end;
 
 procedure TFHIRMeta2.clearLabels;
 begin
-  m.securityList.Clear;
+  if Element <> nil then
+    m.securityList.Clear;
 end;
 
 procedure TFHIRMeta2.clearProfiles;
@@ -3103,17 +3113,39 @@ end;
 
 procedure TFHIRMeta2.clearTags;
 begin
-  m.tagList.Clear;
+  if Element <> nil then
+    m.tagList.Clear;
+end;
+
+destructor TFHIRMeta2.destroy;
+begin
+  FResource.Free;
+  inherited;
+end;
+
+procedure TFHIRMeta2.force;
+begin
+  if Element = nil then
+  begin
+    FElement := TFHIRMeta.Create;
+    Resource.meta := m.Link;
+  end;
 end;
 
 function TFHIRMeta2.GetLastUpdated: TDateTimeEx;
 begin
-  result := m.lastUpdated;
+  if Element = nil then
+    result := TDateTimeEx.makeNull
+  else
+    result := m.lastUpdated;
 end;
 
 function TFHIRMeta2.GetVersionId: String;
 begin
-  result := m.versionId;
+  if Element = nil then
+    result := ''
+  else
+    result := m.versionId;
 end;
 
 function TFHIRMeta2.hasLabel(system, code: String): boolean;
@@ -3121,9 +3153,10 @@ var
   c : TFhirCoding;
 begin
   result := false;
-  for c in m.securityList do
-    if (c.system = system) and (c.code = code) then
-      exit(true);
+  if Element <> nil then
+    for c in m.securityList do
+      if (c.system = system) and (c.code = code) then
+        exit(true);
 end;
 
 function TFHIRMeta2.hasTag(system, code: String): boolean;
@@ -3131,9 +3164,10 @@ var
   c : TFhirCoding;
 begin
   result := false;
-  for c in m.tagList do
-    if (c.system = system) and (c.code = code) then
-      exit(true);
+  if Element <> nil then
+    for c in m.tagList do
+       if (c.system = system) and (c.code = code) then
+        exit(true);
 end;
 
 function TFHIRMeta2.labels: TFslList<TFHIRCodingW>;
@@ -3141,8 +3175,9 @@ var
   i : TFHIRCoding;
 begin
   result := TFslList<TFHIRCodingW>.create;
-  for i in m.securityList do
-    result.Add(TFHIRCoding2.create(i.Link));
+  if Element <> nil then
+    for i in m.securityList do
+      result.Add(TFHIRCoding2.create(i.Link));
 end;
 
 function TFHIRMeta2.m: TFhirMeta;
@@ -3150,37 +3185,54 @@ begin
   result := Element as TFHIRMeta;
 end;
 
+function TFHIRMeta2.NoElementOk: boolean;
+begin
+  result := true;
+end;
+
 function TFHIRMeta2.profiles: TArray<String>;
 var
   i : integer;
 begin
   SetLength(result, m.profileList.Count);
-  for i := 0 to m.profileList.Count - 1 do
-    result[i] := m.profileList[i].value;
+  if Element <> nil then
+    for i := 0 to m.profileList.Count - 1 do
+      result[i] := m.profileList[i].value;
 end;
 
 procedure TFHIRMeta2.removeLabel(system, code: String);
 begin
-  m.removeLabel(system, code);
+  if Element <> nil then
+    m.removeLabel(system, code);
 end;
 
 procedure TFHIRMeta2.removeProfile(uri: String);
 begin
-  m.profileList.removeUri(uri);
+  if Element <> nil then
+    m.profileList.removeUri(uri);
 end;
 
 procedure TFHIRMeta2.removeTag(system, code: String);
 begin
-  m.removeTag(system, code);
+  if Element <> nil then
+    m.removeTag(system, code);
 end;
 
 procedure TFHIRMeta2.SetLastUpdated(Value: TDateTimeEx);
 begin
+  force;
   m.lastUpdated := value;
+end;
+
+procedure TFHIRMeta2.setResource(value: TFHIRResource);
+begin
+  FResource.Free;
+  FResource := value;
 end;
 
 procedure TFHIRMeta2.SetVersionId(Value: String);
 begin
+  force;
   m.versionId := value;
 end;
 
@@ -3189,8 +3241,9 @@ var
   i : TFHIRCoding;
 begin
   result := TFslList<TFHIRCodingW>.create;
-  for i in m.tagList do
-    result.Add(TFHIRCoding2.create(i.Link));
+  if Element <> nil then
+    for i in m.tagList do
+      result.Add(TFHIRCoding2.create(i.Link));
 end;
 
 

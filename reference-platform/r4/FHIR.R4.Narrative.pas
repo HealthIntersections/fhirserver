@@ -1384,6 +1384,8 @@ procedure TFHIRNarrativeGenerator.inject(r: TFHIRDomainResource; x: TFHIRXhtmlNo
 var
   n: TFHIRXhtmlNode;
 begin
+  if not x.hasAttribute('xmlns') then
+    x.attribute('xmlns', XHTML_NS);
   if (r.Text = nil) or (r.Text.div_ = nil) or (r.Text.div_.ChildNodes.isEmpty) then
   begin
     r.Text := TFHIRNarrative.create;
